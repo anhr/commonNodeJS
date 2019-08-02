@@ -1,0 +1,9 @@
+{
+  "name": "common-node-js",
+  "version": "0.0.0",
+  "description": "commonNodeJS",
+  "main": "server.js",
+  "author": {
+    "name": ""
+  }
+}
