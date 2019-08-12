@@ -18,12 +18,15 @@ CustomController.js:16 GET http://localhost/threejs/dat.gui/src/dat/controllers/
 */
 //import CustomController from '../../dat.gui/src/dat/controllers/CustomController.js';
 //import CustomController from 'http://localhost/threejs/dat.gui/src/dat/controllers/CustomController.js';
-import { controllers } from '../../dat.gui/build/dat.gui.module.js';
-//import UpDownController from '../commonNodeJS/UpDownController.js';
-//import UpDownController from './UpDownController.js';
+
+//import { controllers } from '../../dat.gui/build/dat.gui.module.js';
+import { controllers } from 'http://localhost/threejs/dat.gui/build/dat.gui.module.js';
 
 // Error: 'CustomController' is not exported by ..\..\dat.gui\build\dat.gui.module.js
 //import { CustomController } from '../../dat.gui/build/dat.gui.module.js';
+
+//import UpDownController from '../commonNodeJS/UpDownController.js';
+//import UpDownController from './UpDownController.js';
 
 /**
  * adds new button into controller
