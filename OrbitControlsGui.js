@@ -21,94 +21,47 @@ CustomController.js:16 GET http://localhost/threejs/dat.gui/src/dat/controllers/
 
 //import { controllers } from '../../dat.gui/build/dat.gui.module.js';
 //import { controllers } from 'http://localhost/threejs/dat.gui/build/dat.gui.module.js';
-import { controllers } from 'https://raw.githack.com/anhr/dat.gui/master/build/dat.gui.module.js';
+//import { controllers } from 'https://raw.githack.com/anhr/dat.gui/master/build/dat.gui.module.js';
+import { controllers } from 'https://raw.githack.com/anhr/dat.gui/CustomController/build/dat.gui.module.js';
 
 // Error: 'CustomController' is not exported by ..\..\dat.gui\build\dat.gui.module.js
 //import { CustomController } from '../../dat.gui/build/dat.gui.module.js';
 
 //import UpDownController from '../commonNodeJS/UpDownController.js';
-//import UpDownController from './UpDownController.js';
+import UpDownController from './UpDownController.js';
+//import UpDownController from 'http://localhost/threejs/nodejs/commonNodeJS/UpDownController.js';
 
-/**
- * adds new button into controller
- * @param {string} innerHTML button name
- * @param {object} [options] followed options is available
- * @param {} [options.title] title of the button
- * @param {} [options.onclick] onclick event
- * @param {} [options.onWheel] onWheel event
- */
-function addButton( innerHTML, options ) {
+var OrbitControlsGui = function ( gui, orbitControls, options ) {
+	
+	if ( orbitControls === undefined )
+		return;
 
 	options = options || {};
-	var button = document.createElement( 'span' );
-	button.innerHTML = innerHTML;
-	if ( options.title !== undefined )
-		button.title = options.title;
-	if ( options.onclick !== undefined ) {
 
-		button.style.cursor = 'pointer';
-		button.onclick = options.onclick;
+	//scales
 
-	}
-	if ( options.onwheel !== undefined ) {
+	options.scales = options.scales || {}
 
-		button.style.cursor = 'n-resize';
+	options.scales.x = options.scales.x || {};
+	options.scales.x.positionOffset = options.scales.x.positionOffset || 0.1;
+	options.scales.x.name = options.scales.x.name || 'X';
 
-		//https://learn.javascript.ru/mousewheel
-		if ( button.addEventListener ) {
-			if ( 'onwheel' in document ) {
-				// IE9+, FF17+, Ch31+
-				button.addEventListener( "wheel", onWheel );
-			} else if ( 'onmousewheel' in document ) {
-				// устаревший вариант события
-				button.addEventListener( "mousewheel", onWheel );
-			} else {
-				// Firefox < 17
-				button.addEventListener( "MozMousePixelScroll", onWheel );
-			}
-		} else { // IE8-
-			button.attachEvent( "onmousewheel", onWheel );
-		}
+	options.scales.y = options.scales.y || {};
+	options.scales.y.positionOffset = options.scales.y.positionOffset || 0.1;
+	options.scales.y.name = options.scales.y.name || 'Y';
 
-		function onWheel( e ) {
-			e = e || window.event;
-
-			// wheelDelta не дает возможность узнать количество пикселей
-			var delta = e.deltaY || e.detail || e.wheelDelta;
-			options.onwheel( delta );
-
-		}
-
-	}
-	button.style.margin = '0px 2px';
-	return button;
-
-}
-
-/*
-class PositionController extends controllers.CustomController {
-
-	constructor( onclickController ) {
-
-		super( {
-
-			offset: 0.1,
-			property: property,
-
-		}, 'offset', 0.1, 10, 0.1 );
-
-	}
-
-}
-*/
-
-var OrbitControlsGui = function ( gui, guiParams ) {
-	
-	guiParams = guiParams || {};
+	options.scales.z = options.scales.z || {};
+	options.scales.z.positionOffset = options.scales.z.positionOffset || 0.1;
+	options.scales.z.name = options.scales.z.name || 'Z';
 
 	//Localization
 
 	var lang = {
+
+		orbitControls: 'Orbit controls',
+		defaultButton: 'Default',
+		defaultTitle: 'Restore default Orbit controls settings.',
+		target: 'Target',
 
 		//Position
 		offset: 'Offset',
@@ -118,14 +71,14 @@ var OrbitControlsGui = function ( gui, guiParams ) {
 
 	};
 
-	var _languageCode = guiParams.getLanguageCode === undefined ? function () {
-
-		return 'en';//Default language is English
-
-	} : guiParams.getLanguageCode();
+	var _languageCode = options.getLanguageCode === undefined ? 'en'//Default language is English
+		: options.getLanguageCode();
 	switch ( _languageCode ) {
 
 		case 'ru'://Russian language
+
+			lang.defaultButton = 'Восстановить';
+			lang.defaultTitle = 'Восстановить настройки Orbit controls по умолчанию.';
 
 			//Position
 			lang.offset = 'Сдвиг';
@@ -135,14 +88,14 @@ var OrbitControlsGui = function ( gui, guiParams ) {
 
 			break;
 		default://Custom language
-			if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
+			if ( ( options.lang === undefined ) || ( options.lang.languageCode != _languageCode ) )
 				break;
 
-			Object.keys( guiParams.lang ).forEach( function ( key ) {
+			Object.keys( options.lang ).forEach( function ( key ) {
 
 				if ( lang[key] === undefined )
 					return;
-				lang[key] = guiParams.lang[key];
+				lang[key] = options.lang[key];
 
 			} );
 
@@ -156,7 +109,7 @@ var OrbitControlsGui = function ( gui, guiParams ) {
 				offset: 0.1,
 				property: function ( customController ) {
 
-					var buttons = {};//, addButton = UpDownController.addButton;
+					var buttons = {}, addButton = UpDownController.addButton;
 					buttons.Label = addButton( lang.offset, {
 
 						title: lang.wheelPosition,
@@ -199,13 +152,83 @@ var OrbitControlsGui = function ( gui, guiParams ) {
 		}
 
 	}
-	//gui.add( { color: 3 }, 'color' );
-	var positionController = new PositionController( function ( shift ) {
 
-		console.warn( 'shift = ' + shift );
+	var fOrbitControls = gui.addFolder( lang.orbitControls ),
+		fX = fOrbitControls.addFolder( options.scales.x.name ),
+		fY = fOrbitControls.addFolder( options.scales.y.name ),
+		fZ = fOrbitControls.addFolder( options.scales.z.name );
 
-	} );
-	gui.add( positionController );
+	function addTarget( folder, axisIndex ) {
+
+		function setTarget( value ) {
+
+			if ( value === undefined )
+				value = 0;
+			orbitControls.target[axisIndex] = value;
+			orbitControls.update();
+
+			target.setValue( value );
+
+		}
+
+		folder.add( new PositionController( function ( shift ) {
+
+			//console.warn( 'shift = ' + shift );
+			/*
+					orbitControls.target.x += shift;
+					orbitControls.update();
+					target.setValue( orbitControls.target.x );
+			*/
+			setTarget( orbitControls.target[axisIndex] + shift );
+
+		} ) );
+
+		//target
+		//	target = fX.add( orbitControls.target, 'x' );
+		var target = dat.controllerZeroStep( folder, orbitControls.target, axisIndex, function ( value ) {
+
+			//		console.warn( 'target.x = ' + value );
+			//		orbitControls.target.x = value;
+			setTarget( value );
+
+		} );
+		dat.controllerNameAndTitle( target, lang.target );
+
+		//Default button
+		dat.controllerNameAndTitle( folder.add( {
+
+			defaultF: function ( value ) {
+
+				setTarget();
+
+			},
+
+		}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
+
+		return target;
+
+	}
+	var targetX = addTarget( fX, 'x' ),
+		targetY = addTarget( fY, 'y' ),
+		targetZ = addTarget( fZ, 'z' );
+
+	//Default button
+	dat.controllerNameAndTitle( fOrbitControls.add( {
+
+		defaultF: function ( value ) {
+
+			orbitControls.target.x = 0;
+			orbitControls.target.y = 0;
+			orbitControls.target.z = 0;
+			orbitControls.update();
+			targetX.setValue( 0 );
+			targetY.setValue( 0 );
+			targetZ.setValue( 0 );
+
+		},
+
+	}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
+
 //	gui.add( new PositionController() );
 /*
 	var positionController = gui.add( new PositionController( function ( shift ) {

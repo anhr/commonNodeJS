@@ -12,8 +12,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-export default UpDownController;
-
 var UpDownController = {
 
 	/**
@@ -73,3 +71,5 @@ var UpDownController = {
 	},
 
 }
+
+export default UpDownController;
