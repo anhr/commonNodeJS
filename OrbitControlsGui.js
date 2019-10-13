@@ -1,11 +1,12 @@
 ﻿/**
- * node.js version of the cookie.
+ * OrbitControls graphical user interface
+ * @see {@link three.js\examples\js\controls\OrbitControls.js} about OrbitControls
  *
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
  *
- * Copyright 2011 Data Arts Team, Google Creative Lab
+ * @copyright 2011 Data Arts Team, Google Creative Lab
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * @license under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -22,15 +23,23 @@ CustomController.js:16 GET http://localhost/threejs/dat.gui/src/dat/controllers/
 //import { controllers } from '../../dat.gui/build/dat.gui.module.js';
 //import { controllers } from 'http://localhost/threejs/dat.gui/build/dat.gui.module.js';
 //import { controllers } from 'https://raw.githack.com/anhr/dat.gui/master/build/dat.gui.module.js';
-import { controllers } from 'https://raw.githack.com/anhr/dat.gui/CustomController/build/dat.gui.module.js';
+//import { controllers } from 'https://raw.githack.com/anhr/dat.gui/CustomController/build/dat.gui.module.js';
 
 // Error: 'CustomController' is not exported by ..\..\dat.gui\build\dat.gui.module.js
 //import { CustomController } from '../../dat.gui/build/dat.gui.module.js';
 
 //import UpDownController from '../commonNodeJS/UpDownController.js';
-import UpDownController from './UpDownController.js';
+//import UpDownController from './UpDownController.js';
 //import UpDownController from 'http://localhost/threejs/nodejs/commonNodeJS/UpDownController.js';
 
+import PositionController from './PositionController.js';
+
+/**
+ * OrbitControls graphical user interface
+ * @param {GUI} gui instance of the dat.GUI
+ * @param {any} orbitControls
+ * @param {object} [options] followed options is available:
+ */
 var OrbitControlsGui = function ( gui, orbitControls, options ) {
 	
 	if ( orbitControls === undefined )
@@ -40,7 +49,7 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 	//scales
 
-	options.scales = options.scales || {}
+	options.scales = options.scales || {};
 
 	options.scales.x = options.scales.x || {};
 	options.scales.x.positionOffset = options.scales.x.positionOffset || 0.1;
@@ -62,12 +71,13 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 		defaultButton: 'Default',
 		defaultTitle: 'Restore default Orbit controls settings.',
 		target: 'Target',
-
+/*
 		//Position
 		offset: 'Offset',
 		add: 'add',
 		subtract: 'subtract',
 		wheelPosition: 'Scroll the mouse wheel to change the position',
+*/
 
 	};
 
@@ -79,12 +89,13 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 			lang.defaultButton = 'Восстановить';
 			lang.defaultTitle = 'Восстановить настройки Orbit controls по умолчанию.';
-
+/*
 			//Position
 			lang.offset = 'Сдвиг';
 			lang.add = 'добавить';
 			lang.subtract = 'вычесть';
 			lang.wheelPosition = 'Прокрутите колесико мыши для изменения позиции';
+*/
 
 			break;
 		default://Custom language
@@ -98,58 +109,6 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 				lang[key] = options.lang[key];
 
 			} );
-
-	}
-	class PositionController extends controllers.CustomController {
-
-		constructor( onclickController ) {
-
-			super( {
-
-				offset: 0.1,
-				property: function ( customController ) {
-
-					var buttons = {}, addButton = UpDownController.addButton;
-					buttons.Label = addButton( lang.offset, {
-
-						title: lang.wheelPosition,
-						onwheel: function ( delta ) {
-
-							var shift = customController.controller.getValue();
-							onclickController( delta > 0 ? shift : - shift );
-
-						}
-
-					} );
-					buttons.in = addButton( '↑', {
-
-						title: lang.add,
-						onclick: function () {
-
-							onclickController( customController.controller.getValue() );
-
-						}
-
-					} );
-					buttons.out = addButton( '↓', {
-
-						title: lang.subtract,
-						onclick: function () {
-
-							onclickController( - customController.controller.getValue() );
-
-						}
-
-					} );
-					return buttons;
-
-				},
-
-			}, 'offset', 0.1, 10, 0.1 );
-			if ( this.property === undefined )
-				console.error( 'init() returns ' + this.property );
-
-		}
 
 	}
 

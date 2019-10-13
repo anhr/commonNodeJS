@@ -29,12 +29,27 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="AxesHelperGui.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="clearThree.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="dat.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="lang.js" />
     <Content Include="OrbitControlsGui.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="package.json" />
+    <Content Include="PositionController.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="README.md" />
+    <Content Include="ScaleController.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="UpDownController.js">
       <SubType>Code</SubType>
     </Content>
