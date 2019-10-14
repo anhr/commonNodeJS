@@ -15,7 +15,7 @@
 
 //import CustomController from '../../dat.gui/src/dat/controllers/CustomController.js';
 //import { CustomController } from '../../dat.gui/build/dat.gui.module.js';
-import { controllers } from '../../dat.gui/build/dat.gui.module.js';
+import { controllers } from '../dat.gui/build/dat.gui.module.js';
 
 import UpDownController from './UpDownController.js';
 //import UpDownController from 'http://localhost/threejs/nodejs/commonNodeJS/UpDownController.js';
@@ -25,7 +25,7 @@ import ScaleController from './ScaleController.js';
 
 //import { SpriteTextGui } from '../../three.js/src/objects/SpriteText.js';
 //https://threejs.org/docs/#manual/en/introduction/Import-via-modules
-import { SpriteTextGui, AxesHelperOptions } from '../../three.js/dev/build/three.module.js';//'http://localhost/threejs/three.js/build/three.module.js';
+import { SpriteTextGui, AxesHelperOptions } from '../three.js/dev/build/three.module.js';//'http://localhost/threejs/three.js/build/three.module.js';
 
 /**
  * @callback cookie
