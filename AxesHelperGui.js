@@ -14,8 +14,8 @@
  */
 
 //import CustomController from '../../dat.gui/src/dat/controllers/CustomController.js';
-//import { CustomController } from '../../dat.gui/build/dat.gui.module.js';
-import { controllers } from '../dat.gui/build/dat.gui.module.js';
+//import { CustomController } from '../../dat.gui/master/build/dat.gui.module.js';
+import { controllers } from '../dat.gui/master/build/dat.gui.module.js';
 
 import UpDownController from './UpDownController.js';
 //import UpDownController from 'http://localhost/threejs/nodejs/commonNodeJS/UpDownController.js';

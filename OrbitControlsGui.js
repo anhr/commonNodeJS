@@ -13,25 +13,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-/*Error:
-CustomController.js:15 GET http://localhost/threejs/dat.gui/src/dat/controllers/Controller net::ERR_ABORTED 404 (Not Found)
-CustomController.js:16 GET http://localhost/threejs/dat.gui/src/dat/controllers/ControllerFactory net::ERR_ABORTED 404 (Not Found)
-*/
-//import CustomController from '../../dat.gui/src/dat/controllers/CustomController.js';
-//import CustomController from 'http://localhost/threejs/dat.gui/src/dat/controllers/CustomController.js';
-
-//import { controllers } from '../../dat.gui/build/dat.gui.module.js';
-//import { controllers } from 'http://localhost/threejs/dat.gui/build/dat.gui.module.js';
-//import { controllers } from 'https://raw.githack.com/anhr/dat.gui/master/build/dat.gui.module.js';
-//import { controllers } from 'https://raw.githack.com/anhr/dat.gui/CustomController/build/dat.gui.module.js';
-
-// Error: 'CustomController' is not exported by ..\..\dat.gui\build\dat.gui.module.js
-//import { CustomController } from '../../dat.gui/build/dat.gui.module.js';
-
-//import UpDownController from '../commonNodeJS/UpDownController.js';
-//import UpDownController from './UpDownController.js';
-//import UpDownController from 'http://localhost/threejs/nodejs/commonNodeJS/UpDownController.js';
-
 import PositionController from './PositionController.js';
 
 /**
