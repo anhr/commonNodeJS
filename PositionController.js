@@ -15,7 +15,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { controllers } from '../dat.gui/master/build/dat.gui.module.js';
+import { controllers } from '../../dat.gui/master/build/dat.gui.module.js';
 import UpDownController from './UpDownController.js';
 
 class PositionController extends controllers.CustomController {
