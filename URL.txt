@@ -1,0 +1,8 @@
+Building
+
+Open "Node.js command prompt"
+
+d:
+cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master"
+npm install
+npm run build

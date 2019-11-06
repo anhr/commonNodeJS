@@ -220,7 +220,7 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 
 					axes.max = action( axes.max, zoom );
 					scaleControllers.max.setValue( axes.max );
-
+/*
 					function onchangeWindowRange( windowRange ) {
 
 						if ( options.scene !== undefined ) {
@@ -244,7 +244,8 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 						guiSelectPoint.windowRange( options );
 
 					}
-					onchangeWindowRange( windowRange );
+*/
+					onchangeWindowRange( windowRange, axes );
 
 				}
 
