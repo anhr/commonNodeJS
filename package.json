@@ -1,6 +1,8 @@
 {
+  "name": "common",
   "version": "0.1.0",
   "description": "The node.js version of my common functions.",
+  "main": "build/common.js",
   "scripts": {
     "build": "rollup -c && rollup -c rollup.config.min.js"
   },
