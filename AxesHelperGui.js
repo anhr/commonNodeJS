@@ -15,9 +15,9 @@
 
 //import CustomController from '../../dat.gui/src/dat/controllers/CustomController.js';
 //import { CustomController } from '../../dat.gui/CustomController/build/dat.gui.module.js';
-import { controllers } from '../../dat.gui/CustomController/build/dat.gui.module.js';
+//import { controllers } from '../../dat.gui/CustomController/build/dat.gui.module.js';
 
-import UpDownController from './UpDownController.js';
+//import UpDownController from './UpDownController.js';
 //import UpDownController from 'http://localhost/threejs/commonNodeJS/master/UpDownController.js';
 
 import PositionController from './PositionController.js';
@@ -220,31 +220,6 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 
 					axes.max = action( axes.max, zoom );
 					scaleControllers.max.setValue( axes.max );
-/*
-					function onchangeWindowRange( windowRange ) {
-
-						if ( options.scene !== undefined ) {
-
-							var scene = options.scene, scales = options.scales;
-
-							scene.scale.x = 2 / Math.abs( scales.x.min - scales.x.max );
-							scene.scale.y = 2 / Math.abs( scales.y.min - scales.y.max );
-							scene.scale.z = 2 / Math.abs( scales.z.min - scales.z.max );
-
-							scene.position.x = - ( scales.x.min + scales.x.max ) / 2;
-							scene.position.y = - ( scales.y.min + scales.y.max ) / 2;
-							scene.position.z = - ( scales.z.min + scales.z.max ) / 2;
-							scene.position.multiply( scene.scale );
-
-						}
-						if ( axesHelper !== undefined )
-							axesHelper.onchangeWindowRange();
-						if ( windowRange !== undefined )
-							windowRange( axes );
-						guiSelectPoint.windowRange( options );
-
-					}
-*/
 					onchangeWindowRange( windowRange, axes );
 
 				}
@@ -266,10 +241,6 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 		} ) ).onChange( function ( value ) {
 
 			console.warn( 'ScaleController.onChange' );
-			/*
-						axes.zoomMultiplier = value;
-						options.cookie.setObject( cookieName, options.scales );
-			*/
 
 		} );
 
@@ -282,11 +253,9 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 			var zoom = customController.controller.getValue();
 
 			axes.min = action( axes.min, zoom );
-			//						axes.min *= zoom;
 			scaleControllers.min.setValue( axes.min );
 
 			axes.max = action( axes.max, zoom );
-			//						axes.max *= zoom;
 			scaleControllers.max.setValue( axes.max );
 
 			onchangeWindowRange( windowRange, axes );
@@ -307,7 +276,6 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 
 		var positionController = new PositionController( function ( shift ) {
 
-			//			console.warn( 'shift = ' + shift );
 			onclick( positionController, function ( value, zoom ) {
 
 				value += shift;//zoom;
@@ -388,7 +356,7 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 		}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
 
 	}
-	options.scalesControllers = { x: {}, y: {}, z: {}, w: {}, t: {}, };
+	options.scalesControllers = { x: {}, y: {}, z: {}, w: {} };//, t: {}, };
 	function windowRange() {
 
 		options.cookie.setObject( cookieName, options.scales );
@@ -406,6 +374,7 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 	if ( options.scales.w !== undefined ) {
 		scale( options.scales.w, windowRange, options.scalesControllers.w, optionsDefault.scales.w );
 	}
+/*
 	if ( options.scales.t !== undefined ) {
 
 		scale( options.scales.t, function () {
@@ -416,11 +385,11 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 				options.cookie.setObject( cookieName, options.scales );
 
 			} else console.error( 'THREE.AxesHelper: options.onChangeScaleT = ' + options.onChangeScaleT );
-			//console.warn( 'windowRangeT' + options );
 
 		}, options.scalesControllers.t, optionsDefault.scales.t );
 
 	}
+*/
 
 	//default button
 	var defaultParams = {

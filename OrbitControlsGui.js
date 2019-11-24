@@ -32,16 +32,16 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 	options.scales = options.scales || {};
 
-	options.scales.x = options.scales.x || {};
-	options.scales.x.positionOffset = options.scales.x.positionOffset || 0.1;
+//	options.scales.x = options.scales.x || {};
+//	options.scales.x.positionOffset = options.scales.x.positionOffset || 0.1;
 	options.scales.x.name = options.scales.x.name || 'X';
 
-	options.scales.y = options.scales.y || {};
-	options.scales.y.positionOffset = options.scales.y.positionOffset || 0.1;
+//	options.scales.y = options.scales.y || {};
+//	options.scales.y.positionOffset = options.scales.y.positionOffset || 0.1;
 	options.scales.y.name = options.scales.y.name || 'Y';
 
-	options.scales.z = options.scales.z || {};
-	options.scales.z.positionOffset = options.scales.z.positionOffset || 0.1;
+//	options.scales.z = options.scales.z || {};
+//	options.scales.z.positionOffset = options.scales.z.positionOffset || 0.1;
 	options.scales.z.name = options.scales.z.name || 'Z';
 
 	//Localization
@@ -169,19 +169,6 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 	}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
 
-//	gui.add( new PositionController() );
-/*
-	var positionController = gui.add( new PositionController( function ( shift ) {
-
-		console.warn( 'shift = ' + shift );
-
-	} ) ).onChange( function ( value ) {
-
-		axes.positionOffset = value;
-		options.cookie.setObject( cookieName, options.scales );
-
-	} );
-*/
 }
 
 export default OrbitControlsGui;

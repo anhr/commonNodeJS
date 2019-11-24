@@ -1,4 +1,4 @@
-﻿/**
+/**
  * PositionController is dat.GUI graphical user interface controller for control of the position of threejs 3D object
  * 
  * @see {@link https://threejs.org/} about threejs
@@ -33,14 +33,18 @@ class PositionController extends controllers.CustomController {
 	constructor( onclickController, options ) {
 
 		options = options || {};
-		options.offset = options.offset || 0.1;
+		var settings = options.settings || {}; 
+
+//		options.offset = options.offset || 0.1;
 		options.min = options.min || 0.1;
 		options.max = options.max || 10;
 		options.step = options.step || 0.1;
 
+		settings.offset = settings.offset || 0.1;
+
 		super( {
 
-			offset: options.offset,
+			offset: settings.offset,
 			property: function ( customController ) {
 
 				//Localization
