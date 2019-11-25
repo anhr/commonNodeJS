@@ -24,17 +24,19 @@ export default class ScaleController extends controllers.CustomController {
 	 * dat.GUI graphical user interface controller for control of the scale of threejs 3D object
 	 * @param {Event} onclick
 	 * @param {object} [options] followed options is available:
-	 * @param {number} [options.zoomMultiplier] control value. Default is 1.1
+	 * @param {number} [options.settings] time settings.
+	 * @param {number} [options.settings.zoomMultiplier] control value. Default is 1.1
 	 * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
 	 */
 	constructor( onclick, options ) {
 
 		options = options || {};
-		options.zoomMultiplier = options.zoomMultiplier || 1.1;
+		options.settings = options.settings || {};
+		options.settings.zoomMultiplier = options.settings.zoomMultiplier || 1.1;
 
 		super( {
 
-			multiplier: options.zoomMultiplier,//1.1
+			multiplier: options.settings.zoomMultiplier,//1.1
 			property: function ( customController ) {
 
 

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * AxesHelper graphical user interface
  * @see {@link three.js\src\helpers\AxesHelper.js} about AxesHelper
  *
@@ -40,12 +40,12 @@ import { SpriteTextGui, AxesHelperOptions } from '../../three.js/dev/build/three
  * @param {object} [guiParams] gui options
  * @param {boolean} [guiParams.remember] true - remember in cocies of current user settings. Default is false.
  * @param {AxesHelper} [guiParams.axesHelper] instance of the AxesHelper. Deafault is undefuned.
- * @param {cookie} [guiParams.options] Use only if guiParams.axesHelper is undefined.
+ * @param {object} [guiParams.options] Use only if guiParams.axesHelper is undefined.
  * @param {cookie} [guiParams.cookie] Your custom cookie function for saving and loading of the AxesHelper settings. Default cookie is not saving settings.
  */
 var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 
-	var cookieName = AxesHelperOptions.cookieName;//'AxesHelper';
+//	var cookieName = AxesHelperOptions.cookieName;//'AxesHelper';
 
 	guiParams = guiParams || {};
 	guiParams.remember = guiParams.remember || false;
@@ -236,7 +236,8 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 
 		}, {
 
-			zoomMultiplier: 1.1,
+			settings: { zoomMultiplier: 1.1, },
+			getLanguageCode: guiParams.getLanguageCode,
 
 		} ) ).onChange( function ( value ) {
 
@@ -267,10 +268,12 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 
 		scaleControllers.folder = fAxesHelper.addFolder( axes.name );
 
-		scaleControllers.scaleController = scaleControllers.folder.add( new ScaleController( onclick, axes ) ).onChange( function ( value ) {
+		scaleControllers.scaleController = scaleControllers.folder.add( new ScaleController( onclick,
+			{ settings: axes, getLanguageCode: guiParams.getLanguageCode, } ) ).onChange( function ( value ) {
 
 			axes.zoomMultiplier = value;
-			options.cookie.setObject( cookieName, options.scales );
+//			options.cookie.setObject( cookieName, options.scales );
+			guiParams.axesHelper.setSettings();
 
 		} );
 
@@ -283,11 +286,12 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 
 			} );
 
-		}, { getLanguageCode: guiParams.getLanguageCode, } );
+		}, { settings: axes, getLanguageCode: guiParams.getLanguageCode, } );
 		scaleControllers.positionController = scaleControllers.folder.add( positionController ).onChange( function ( value ) {
 
-			axes.positionOffset = value;
-			options.cookie.setObject( cookieName, options.scales );
+			axes.offset = value;
+//			options.cookie.setObject( cookieName, options.scales );
+			guiParams.axesHelper.setSettings();
 
 		} );
 
@@ -330,13 +334,13 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 
 				axes.max = axesDefault.max;
 				scaleControllers.max.setValue( axes.max );
-				/*Думаю неудобно когда zoomMultiplier и positionOffset устанавливаются в значение по умолчанию когда
+				/*Думаю неудобно когда zoomMultiplier и offset устанавливаются в значение по умолчанию когда
 				 * пользватель решил восстановить предельные значаеия по одной из осей
 				axes.zoomMultiplier = axesDefault.zoomMultiplier;
 				scaleControllers.scaleController.setValue( axes.zoomMultiplier );
 
-				axes.positionOffset = axesDefault.positionOffset;
-				scaleControllers.positionController.setValue( axes.positionOffset );
+				axes.offset = axesDefault.offset;
+				scaleControllers.positionController.setValue( axes.offset );
 				*/
 
 				if ( axesDefault.marks !== undefined ) {
@@ -410,7 +414,7 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 				scaleControllers.max.setValue( scale.max );
 				scaleControllers.marks.setValue( scale.marks );
 				scaleControllers.scaleController.setValue( scale.zoomMultiplier );
-				scaleControllers.positionController.setValue( scale.positionOffset );
+				scaleControllers.positionController.setValue( scale.offset );
 				onchangeWindowRange( windowRange, scale);
 
 			}

@@ -24,7 +24,8 @@ class PositionController extends controllers.CustomController {
 	 * dat.GUI graphical user interface for control of the position of threejs 3D object
 	 * @param {Event} onclickController
 	 * @param {object} [options] followed options is available:
-	 * @param {number} [options.offset] offset. Default is 0.1
+	 * @param {number} [options.settings] time settings.
+	 * @param {number} [options.settings.offset] offset. Default is 0.1
 	 * @param {number} [options.min] Minimal offset. Default is 0.1
 	 * @param {number} [options.max] Maximal offset. Default is 10
 	 * @param {number} [options.step] step of offset. Default is 0.1
@@ -33,14 +34,14 @@ class PositionController extends controllers.CustomController {
 	constructor( onclickController, options ) {
 
 		options = options || {};
-		var settings = options.settings || {}; 
+		options.settings = options.settings || {}; 
+		var settings = options.settings; 
 
 //		options.offset = options.offset || 0.1;
 		options.min = options.min || 0.1;
 		options.max = options.max || 10;
-		options.step = options.step || 0.1;
-
 		settings.offset = settings.offset || 0.1;
+		options.step = options.step || 0.1;
 
 		super( {
 

@@ -32,16 +32,10 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 	options.scales = options.scales || {};
 
-//	options.scales.x = options.scales.x || {};
-//	options.scales.x.positionOffset = options.scales.x.positionOffset || 0.1;
 	options.scales.x.name = options.scales.x.name || 'X';
 
-//	options.scales.y = options.scales.y || {};
-//	options.scales.y.positionOffset = options.scales.y.positionOffset || 0.1;
 	options.scales.y.name = options.scales.y.name || 'Y';
 
-//	options.scales.z = options.scales.z || {};
-//	options.scales.z.positionOffset = options.scales.z.positionOffset || 0.1;
 	options.scales.z.name = options.scales.z.name || 'Z';
 
 	//Localization
@@ -52,13 +46,6 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 		defaultButton: 'Default',
 		defaultTitle: 'Restore default Orbit controls settings.',
 		target: 'Target',
-/*
-		//Position
-		offset: 'Offset',
-		add: 'add',
-		subtract: 'subtract',
-		wheelPosition: 'Scroll the mouse wheel to change the position',
-*/
 
 	};
 
@@ -70,13 +57,6 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 			lang.defaultButton = 'Восстановить';
 			lang.defaultTitle = 'Восстановить настройки Orbit controls по умолчанию.';
-/*
-			//Position
-			lang.offset = 'Сдвиг';
-			lang.add = 'добавить';
-			lang.subtract = 'вычесть';
-			lang.wheelPosition = 'Прокрутите колесико мыши для изменения позиции';
-*/
 
 			break;
 		default://Custom language
@@ -113,22 +93,13 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 		folder.add( new PositionController( function ( shift ) {
 
-			//console.warn( 'shift = ' + shift );
-			/*
-					orbitControls.target.x += shift;
-					orbitControls.update();
-					target.setValue( orbitControls.target.x );
-			*/
 			setTarget( orbitControls.target[axisIndex] + shift );
 
 		} ) );
 
 		//target
-		//	target = fX.add( orbitControls.target, 'x' );
 		var target = dat.controllerZeroStep( folder, orbitControls.target, axisIndex, function ( value ) {
 
-			//		console.warn( 'target.x = ' + value );
-			//		orbitControls.target.x = value;
 			setTarget( value );
 
 		} );
