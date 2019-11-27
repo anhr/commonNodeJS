@@ -13,17 +13,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-//import CustomController from '../../dat.gui/src/dat/controllers/CustomController.js';
-//import { CustomController } from '../../dat.gui/CustomController/build/dat.gui.module.js';
-//import { controllers } from '../../dat.gui/CustomController/build/dat.gui.module.js';
-
-//import UpDownController from './UpDownController.js';
-//import UpDownController from 'http://localhost/threejs/commonNodeJS/master/UpDownController.js';
-
 import PositionController from './PositionController.js';
 import ScaleController from './ScaleController.js';
 
-//import { SpriteTextGui } from '../../three.js/src/objects/SpriteText.js';
 //https://threejs.org/docs/#manual/en/introduction/Import-via-modules
 import { SpriteTextGui, AxesHelperOptions } from '../../three.js/dev/build/three.module.js';//'http://localhost/threejs/three.js/build/three.module.js';
 
@@ -160,6 +152,7 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 		var display = value ? 'block' : 'none';
 		if ( fSpriteText !== undefined )
 			fSpriteText.domElement.style.display = display;
+		controllerPrecision.domElement.parentElement.parentElement.style.display = display;
 /*шкалы осей показывать даже если нет осей координат
 		options.scalesControllers.x.folder.domElement.style.display = display;
 		options.scalesControllers.y.folder.domElement.style.display = display;
@@ -177,7 +170,8 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 			if ( guiParams.axesHelper !== undefined )
 				guiParams.axesHelper.displayScales( value );
 			displayControllers( value );
-			options.cookie.setObject( cookieName, options.scales );
+//			options.cookie.setObject( cookieName, options.scales );
+			guiParams.axesHelper.setSettings();
 
 		} );
 		dat.controllerNameAndTitle( controllerDisplayScales, lang.displayScales, lang.displayScalesTitle );
@@ -378,22 +372,8 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 	if ( options.scales.w !== undefined ) {
 		scale( options.scales.w, windowRange, options.scalesControllers.w, optionsDefault.scales.w );
 	}
-/*
-	if ( options.scales.t !== undefined ) {
 
-		scale( options.scales.t, function () {
-
-			if ( options.onChangeScaleT !== undefined ) {
-
-				options.onChangeScaleT( options.scales.t );
-				options.cookie.setObject( cookieName, options.scales );
-
-			} else console.error( 'THREE.AxesHelper: options.onChangeScaleT = ' + options.onChangeScaleT );
-
-		}, options.scalesControllers.t, optionsDefault.scales.t );
-
-	}
-*/
+	var controllerPrecision;
 
 	//default button
 	var defaultParams = {
@@ -422,13 +402,28 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 			restore( options.scalesControllers.x, optionsDefault.scales.x, axesHelper === undefined ? undefined : axesHelper.windowRangeX );
 			restore( options.scalesControllers.y, optionsDefault.scales.y, axesHelper === undefined ? undefined : axesHelper.windowRangeY );
 			restore( options.scalesControllers.z, optionsDefault.scales.z, axesHelper === undefined ? undefined : axesHelper.windowRangeZ );
-			restore( options.scalesControllers.t, optionsDefault.scales.t, axesHelper === undefined ? undefined : axesHelper.windowRangeT );
+//			restore( options.scalesControllers.t, optionsDefault.scales.t, axesHelper === undefined ? undefined : axesHelper.windowRangeT );
 		},
 
 	};
-	var controllerDefaultF = fAxesHelper.add( defaultParams, 'defaultF' );
-	dat.controllerNameAndTitle( controllerDefaultF, lang.defaultButton, lang.defaultTitle );
+
 	if ( guiParams.axesHelper !== undefined ) {
+
+		controllerPrecision = fScales.add( options.scales, 'precision', 2, 17, 1 ).onChange( function ( value ) {
+
+			guiParams.axesHelper.arraySpriteText.forEach( function ( sprite ) {
+
+				if ( sprite.options.textDefault === undefined )
+					return;
+				sprite.options.text = parseFloat( sprite.options.textDefault.toPrecision( value ) );
+				sprite.update( sprite.options );
+
+			} );
+			//			options.cookie.setObject( cookieName, options.scales );
+			guiParams.axesHelper.setSettings();
+
+		} )
+		dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
 
 		var fSpriteText = SpriteTextGui( gui, guiParams.axesHelper.arraySpriteText,
 			{
@@ -439,26 +434,58 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 					return languageCode;
 
 				},
+/*
+				addControllers: function ( fSpriteText ) {
 
-			} ),
-			controllerPrecision = fSpriteText.add( options.scales, 'precision', 2, 17, 1 ).onChange( function ( value ) {
+					controllerPrecision = fSpriteText.add( options.scales, 'precision', 2, 17, 1 ).onChange( function ( value ) {
 
-			guiParams.axesHelper.arraySpriteText.forEach( function ( sprite ) {
+						guiParams.axesHelper.arraySpriteText.forEach( function ( sprite ) {
 
-				if ( sprite.options.textDefault === undefined )
-					return;
-				sprite.options.text = parseFloat( sprite.options.textDefault.toPrecision( value ) );
-				sprite.update( sprite.options );
+							if ( sprite.options.textDefault === undefined )
+								return;
+							sprite.options.text = parseFloat( sprite.options.textDefault.toPrecision( value ) );
+							sprite.update( sprite.options );
+
+						} );
+						//			options.cookie.setObject( cookieName, options.scales );
+						guiParams.axesHelper.setSettings();
+
+					} )
+					dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
+
+				},
+				default: function() {
+
+					
+				}
+*/
 
 			} );
-			options.cookie.setObject( cookieName, options.scales );
+/*
+		//move controllerPrecision before default button
+		var defaultIndex, precisionIndex;
+		for( var i = 0; i < fSpriteText.__controllers.length; i++ ) {
 
-		} );
-		dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
+			var item = fSpriteText.__controllers[i];
+			if( item.property === "defaultF" )
+				defaultIndex = i;
+			if( item.property === "precision" )
+				precisionIndex = i;
 
+		}
+		//https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another
+		function arraymove(arr, fromIndex, toIndex) {
+			var element = arr[fromIndex];
+			arr.splice(fromIndex, 1);
+			arr.splice(toIndex, 0, element);
+		}
+		arraymove(fSpriteText.__controllers, precisionIndex, defaultIndex);
+*/
 		displayControllers( options.scales.display );
 
 	}
+
+	dat.controllerNameAndTitle( fAxesHelper.add( defaultParams, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
 
 }
 export default AxesHelperGui;
