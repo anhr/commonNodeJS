@@ -25,8 +25,14 @@ function clearThree( obj ) {
 		//in case of map, bumpMap, normalMap, envMap ...
 		Object.keys( obj.material ).forEach( prop => {
 
+			if ( !obj.material[prop] )
+				return
+			if ( typeof obj.material[prop].dispose === 'function' )
+				obj.material[prop].dispose()
+/*
 			if ( obj.material[prop] !== null && typeof obj.material[prop].dispose === 'function' )
 				obj.material[prop].dispose()
+*/
 
 		} )
 		obj.material.dispose()
