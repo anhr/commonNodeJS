@@ -37,9 +37,9 @@ class PositionController extends controllers.CustomController {
 		options.settings = options.settings || {}; 
 		var settings = options.settings; 
 
-//		options.offset = options.offset || 0.1;
 		options.min = options.min || 0.1;
 		options.max = options.max || 10;
+//		options.offset = options.offset || 0.1;
 		settings.offset = settings.offset || 0.1;
 		options.step = options.step || 0.1;
 
