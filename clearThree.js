@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Remove all child objects of the object and call dispose on their geometry, material and texture.
  * 
  * Thanks to https://stackoverflow.com/a/48768960/5175935
@@ -19,7 +19,18 @@ function clearThree( obj ) {
 		clearThree( obj.children[0] )
 		obj.remove( obj.children[0] );
 	}
-	if ( obj.geometry ) obj.geometry.dispose()
+	if ( obj.geometry ) {
+
+		if ( obj.geometry.attributes !== undefined )
+			Object.keys( obj.geometry.attributes ).forEach( prop => {
+
+				obj.geometry.removeAttribute( prop );
+
+			} );
+		obj.geometry.dispose();
+//		delete obj.geometry;
+
+	}
 
 	if ( obj.material ) {
 		//in case of map, bumpMap, normalMap, envMap ...
@@ -28,14 +39,16 @@ function clearThree( obj ) {
 			if ( !obj.material[prop] )
 				return
 			if ( typeof obj.material[prop].dispose === 'function' )
-				obj.material[prop].dispose()
+				obj.material[prop].dispose();
 /*
 			if ( obj.material[prop] !== null && typeof obj.material[prop].dispose === 'function' )
-				obj.material[prop].dispose()
+				obj.material[prop].dispose();
 */
 
 		} )
-		obj.material.dispose()
+		if ( obj.material.uniforms !== undefined )
+			obj.material.uniforms.pointTexture.value.dispose();//Texture
+		obj.material.dispose();
 	}
 }
 export default clearThree;
