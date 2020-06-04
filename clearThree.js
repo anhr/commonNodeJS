@@ -24,7 +24,7 @@ function clearThree( obj ) {
 		if ( obj.geometry.attributes !== undefined )
 			Object.keys( obj.geometry.attributes ).forEach( prop => {
 
-				obj.geometry.removeAttribute( prop );
+				obj.geometry.deleteAttribute( prop );
 
 			} );
 		obj.geometry.dispose();

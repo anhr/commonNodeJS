@@ -17,7 +17,9 @@ import PositionController from './PositionController.js';
 import ScaleController from './ScaleController.js';
 
 //https://threejs.org/docs/#manual/en/introduction/Import-via-modules
-import { SpriteTextGui, AxesHelperOptions } from '../../three.js/dev/build/three.module.js';//'http://localhost/threejs/three.js/build/three.module.js';
+//import { SpriteTextGui, AxesHelperOptions } from '../../three.js/dev/build/three.module.js';//'http://localhost/threejs/three.js/build/three.module.js';
+//import { SpriteTextGui } from '../../nodejs/three.js';
+import { SpriteTextGui } from '../../myThreejs/master/three.js';
 
 /**
  * @callback cookie
@@ -434,53 +436,9 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 					return languageCode;
 
 				},
-/*
-				addControllers: function ( fSpriteText ) {
-
-					controllerPrecision = fSpriteText.add( options.scales, 'precision', 2, 17, 1 ).onChange( function ( value ) {
-
-						guiParams.axesHelper.arraySpriteText.forEach( function ( sprite ) {
-
-							if ( sprite.options.textDefault === undefined )
-								return;
-							sprite.options.text = parseFloat( sprite.options.textDefault.toPrecision( value ) );
-							sprite.update( sprite.options );
-
-						} );
-						//			options.cookie.setObject( cookieName, options.scales );
-						guiParams.axesHelper.setSettings();
-
-					} )
-					dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
-
-				},
-				default: function() {
-
-					
-				}
-*/
 
 			} );
-/*
-		//move controllerPrecision before default button
-		var defaultIndex, precisionIndex;
-		for( var i = 0; i < fSpriteText.__controllers.length; i++ ) {
 
-			var item = fSpriteText.__controllers[i];
-			if( item.property === "defaultF" )
-				defaultIndex = i;
-			if( item.property === "precision" )
-				precisionIndex = i;
-
-		}
-		//https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another
-		function arraymove(arr, fromIndex, toIndex) {
-			var element = arr[fromIndex];
-			arr.splice(fromIndex, 1);
-			arr.splice(toIndex, 0, element);
-		}
-		arraymove(fSpriteText.__controllers, precisionIndex, defaultIndex);
-*/
 		displayControllers( options.scales.display );
 
 	}
