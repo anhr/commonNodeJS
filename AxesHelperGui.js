@@ -20,6 +20,12 @@ import ScaleController from './ScaleController.js';
 //import { SpriteTextGui, AxesHelperOptions } from '../../three.js/dev/build/three.module.js';//'http://localhost/threejs/three.js/build/three.module.js';
 //import { SpriteTextGui } from '../../nodejs/three.js';
 import { SpriteTextGui } from '../../myThreejs/master/three.js';
+import {
+
+//	AxesHelper,
+	AxesHelperOptions,
+
+} from '../../myThreejs/master/src/helpers/AxesHelper.js';
 
 /**
  * @callback cookie
@@ -30,21 +36,21 @@ import { SpriteTextGui } from '../../myThreejs/master/three.js';
  * AxesHelper graphical user interface
  * @see {@link three.js\src\helpers\AxesHelper.js} about AxesHelper
  * @param {GUI} gui instance of the dat.GUI
- * @param {object} [guiSelectPoint] gui select point conrtollers. See function guiSelectPoint() for details
  * @param {object} [guiParams] gui options
+ * @param {object} [guiParams.guiSelectPoint] gui select point conrtollers. See function guiSelectPoint() for details. Deafault is undefuned.
  * @param {boolean} [guiParams.remember] true - remember in cocies of current user settings. Default is false.
  * @param {AxesHelper} [guiParams.axesHelper] instance of the AxesHelper. Deafault is undefuned.
  * @param {object} [guiParams.options] Use only if guiParams.axesHelper is undefined.
  * @param {cookie} [guiParams.cookie] Your custom cookie function for saving and loading of the AxesHelper settings. Default cookie is not saving settings.
  */
-var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
+var AxesHelperGui = function ( gui, guiParams ) {
 
 //	var cookieName = AxesHelperOptions.cookieName;//'AxesHelper';
 
 	guiParams = guiParams || {};
 	guiParams.remember = guiParams.remember || false;
 
-	var options = guiParams.axesHelper === undefined ? guiParams.options : guiParams.axesHelper.options || {};
+	var options = guiParams.axesHelper === undefined ? guiParams.options || {} : guiParams.axesHelper.options || {};
 	if ( guiParams.cookie !== undefined )
 		options.cookie = guiParams.cookie;
 
@@ -55,7 +61,7 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 		optionsDefault = guiParams.axesHelper.optionsDefault;
 	else {
 
-		var scalesOptions = AxesHelperOptions.getScalesOptions( options );//, AxesHelperOptions.cookieName );
+		var scalesOptions = AxesHelperOptions.getScalesOptions( options );
 		optionsDefault = scalesOptions.optionsDefault;
 
 	}
@@ -199,7 +205,8 @@ var AxesHelperGui = function ( gui, guiSelectPoint, guiParams ) {
 			guiParams.axesHelper.onchangeWindowRange();
 		if ( windowRange !== undefined )
 			windowRange( scale );
-		guiSelectPoint.windowRange( options );
+		if ( guiParams.guiSelectPoint !== undefined)
+			guiParams.guiSelectPoint.windowRange( options );
 
 	}
 	fAxesHelper.add( new ScaleController(
