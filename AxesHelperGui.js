@@ -192,12 +192,16 @@ var AxesHelperGui = function ( gui, guiParams ) {
 			var scene = options.scene, scales = options.scales;
 
 			scene.scale.x = 2 / Math.abs( scales.x.min - scales.x.max );
-			scene.scale.y = 2 / Math.abs( scales.y.min - scales.y.max );
-			scene.scale.z = 2 / Math.abs( scales.z.min - scales.z.max );
+			if ( scales.y !== undefined )
+				scene.scale.y = 2 / Math.abs( scales.y.min - scales.y.max );
+			if ( scales.z !== undefined )
+				scene.scale.z = 2 / Math.abs( scales.z.min - scales.z.max );
 
 			scene.position.x = - ( scales.x.min + scales.x.max ) / 2;
-			scene.position.y = - ( scales.y.min + scales.y.max ) / 2;
-			scene.position.z = - ( scales.z.min + scales.z.max ) / 2;
+			if ( scales.y !== undefined )
+				scene.position.y = - ( scales.y.min + scales.y.max ) / 2;
+			if ( scales.z !== undefined )
+				scene.position.z = - ( scales.z.min + scales.z.max ) / 2;
 			scene.position.multiply( scene.scale );
 
 		}
@@ -217,6 +221,9 @@ var AxesHelperGui = function ( gui, guiParams ) {
 				var axesHelper = guiParams.axesHelper;
 
 				function axesZoom( axes, scaleControllers, windowRange ) {
+
+					if ( axes === undefined )
+						return;//not 3D axesHelper
 
 					axes.min = action( axes.min, zoom );
 					scaleControllers.min.setValue( axes.min );
@@ -249,6 +256,9 @@ var AxesHelperGui = function ( gui, guiParams ) {
 		} );
 
 	function scale( axes, windowRange, scaleControllers, axesDefault ) {
+
+		if ( axes === undefined )
+			return;//Not 3D AxesHelper
 
 		Object.freeze( axesDefault );
 
@@ -398,6 +408,9 @@ var AxesHelperGui = function ( gui, guiParams ) {
 				controllerDisplayScales.setValue( optionsDefault.scales.display );
 			controllerPrecision.setValue( optionsDefault.scales.precision );
 			function restore( scaleControllers, scale, windowRange ) {
+
+				if ( scale === undefined )
+					return;//not 3D axesHelper
 
 				scaleControllers.min.setValue( scale.min );
 				scaleControllers.max.setValue( scale.max );
