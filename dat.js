@@ -20,6 +20,8 @@ if ( typeof dat !== 'undefined' ) {
 
 	function elNameAndTitle( el, name, title ) {
 
+		if ( name === undefined )
+			console.warn( 'elNameAndTitle: name = ' + name );
 		el.innerHTML = name;
 		if ( title !== undefined )
 			el.title = title;
@@ -30,8 +32,6 @@ if ( typeof dat !== 'undefined' ) {
 
 		dat.controllerNameAndTitle = function ( controller, name, title ) {
 
-			if ( name === undefined )
-				console.warn( 'dat.controllerNameAndTitle: name = ' + name );
 			elNameAndTitle( controller.__li.querySelector( ".property-name" ), name, title );
 
 		};
