@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Modify of the dat object.
  * @see {@link https://github.com/dataarts/dat.gui} about dat.gui
  *
@@ -30,6 +30,8 @@ if ( typeof dat !== 'undefined' ) {
 
 		dat.controllerNameAndTitle = function ( controller, name, title ) {
 
+			if ( name === undefined )
+				console.warn( 'dat.controllerNameAndTitle: name = ' + name );
 			elNameAndTitle( controller.__li.querySelector( ".property-name" ), name, title );
 
 		};
