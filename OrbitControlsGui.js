@@ -1,4 +1,4 @@
-﻿/**
+/**
  * OrbitControls graphical user interface
  * @see {@link three.js\examples\js\controls\OrbitControls.js} about OrbitControls
  *
@@ -14,6 +14,7 @@
  */
 
 import PositionController from './PositionController.js';
+import { dat } from './dat.module.js';
 
 /**
  * OrbitControls graphical user interface
@@ -32,11 +33,9 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 	options.scales = options.scales || {};
 
-	options.scales.x.name = options.scales.x.name || 'X';
-
-	options.scales.y.name = options.scales.y.name || 'Y';
-
-	options.scales.z.name = options.scales.z.name || 'Z';
+	if ( options.scales.x ) options.scales.x.name = options.scales.x.name || 'X';
+	if ( options.scales.y ) options.scales.y.name = options.scales.y.name || 'Y';
+	if ( options.scales.z ) options.scales.z.name = options.scales.z.name || 'Z';
 
 	//Localization
 
@@ -74,11 +73,14 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 	}
 
 	var fOrbitControls = gui.addFolder( lang.orbitControls ),
-		fX = fOrbitControls.addFolder( options.scales.x.name ),
-		fY = fOrbitControls.addFolder( options.scales.y.name ),
-		fZ = fOrbitControls.addFolder( options.scales.z.name );
+		fX = !options.scales.x ? undefined : fOrbitControls.addFolder( options.scales.x.name ),
+		fY = !options.scales.y ? undefined : fOrbitControls.addFolder( options.scales.y.name ),
+		fZ = !options.scales.z ? undefined : fOrbitControls.addFolder( options.scales.z.name );
 
 	function addTarget( folder, axisIndex ) {
+
+		if ( !folder )
+			return;
 
 		function setTarget( value ) {
 
