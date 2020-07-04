@@ -12,10 +12,10 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-
+/*
 import PositionController from './PositionController.js';
 import ScaleController from './ScaleController.js';
-
+*/
 //https://threejs.org/docs/#manual/en/introduction/Import-via-modules
 //import { SpriteTextGui, AxesHelperOptions } from '../../three.js/dev/build/three.module.js';//'http://localhost/threejs/three.js/build/three.module.js';
 //import { SpriteTextGui } from '../../nodejs/three.js';
@@ -76,13 +76,13 @@ var AxesHelperGui = function ( gui, guiParams ) {
 
 		displayScales: 'Display',
 		displayScalesTitle: 'Display or hide axes scales.',
-
+/*
 		min: 'Min',
 		max: 'Max',
 
 		marks: 'Marks',
 		marksTitle: 'Number of scale marks',
-
+*/
 		defaultButton: 'Default',
 		defaultTitle: 'Restore default Axes Helper settings.',
 
@@ -109,7 +109,7 @@ var AxesHelperGui = function ( gui, guiParams ) {
 
 			lang.displayScales = 'Показать';
 			lang.displayScalesTitle = 'Показать или скрыть шкалы осей координат.';
-
+/*
 			lang.min = 'Минимум';
 			lang.max = 'Максимум';
 
@@ -118,7 +118,7 @@ var AxesHelperGui = function ( gui, guiParams ) {
 
 			lang.defaultButton = 'Восстановить';
 			lang.defaultTitle = 'Восстановить настройки осей координат по умолчанию.';
-
+*/
 			//Zoom
 			lang.zoom = 'Масштаб';
 			lang.in = 'увеличить';
@@ -213,6 +213,7 @@ var AxesHelperGui = function ( gui, guiParams ) {
 			guiParams.guiSelectPoint.windowRange( options );
 
 	}
+/*
 	fAxesHelper.add( new ScaleController(
 		function ( customController, action ) {
 
@@ -347,14 +348,6 @@ var AxesHelperGui = function ( gui, guiParams ) {
 
 				axes.max = axesDefault.max;
 				scaleControllers.max.setValue( axes.max );
-				/*Думаю неудобно когда zoomMultiplier и offset устанавливаются в значение по умолчанию когда
-				 * пользватель решил восстановить предельные значаеия по одной из осей
-				axes.zoomMultiplier = axesDefault.zoomMultiplier;
-				scaleControllers.scaleController.setValue( axes.zoomMultiplier );
-
-				axes.offset = axesDefault.offset;
-				scaleControllers.positionController.setValue( axes.offset );
-				*/
 
 				if ( axesDefault.marks !== undefined ) {
 
@@ -391,7 +384,7 @@ var AxesHelperGui = function ( gui, guiParams ) {
 	if ( options.scales.w !== undefined ) {
 		scale( options.scales.w, windowRange, options.scalesControllers.w, optionsDefault.scales.w );
 	}
-
+*/
 	var controllerPrecision;
 
 	//default button

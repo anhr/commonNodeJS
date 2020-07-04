@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ScaleController is dat.GUI graphical user interface controller for control of the scale of threejs 3D object
  * 
  * @see {@link https://threejs.org/} about threejs
@@ -17,6 +17,7 @@
 
 import { controllers } from '../../dat.gui/CustomController/build/dat.gui.module.js';
 import UpDownController from './UpDownController.js';
+import { dat } from './dat.module.js';
 
 export default class ScaleController extends controllers.CustomController {
 
@@ -24,7 +25,7 @@ export default class ScaleController extends controllers.CustomController {
 	 * dat.GUI graphical user interface controller for control of the scale of threejs 3D object
 	 * @param {Event} onclick
 	 * @param {object} [options] followed options is available:
-	 * @param {number} [options.settings] time settings.
+	 * @param {object} [options.settings] settings.
 	 * @param {number} [options.settings.zoomMultiplier] control value. Default is 1.1
 	 * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
 	 */
@@ -142,3 +143,37 @@ export default class ScaleController extends controllers.CustomController {
 
 }
 
+/**
+ * dat.GUI graphical user interface controllers for manipulate or multiplication of the object's property
+ * @param {GUI} folder folder for new controllers
+ * @param {Object} object The object to be manipulated
+ * @param {String} property The name of the property to be manipulated
+ * @param {function( value )} onChange Callback function that take the new  property of the object
+ * @param {Object} [options] followed options is available
+ * @param {object} [options.settings] settings.
+ * @param {number} [options.settings.zoomMultiplier] control value. Default is 1.1
+ * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
+ * @param {String} [options.text] object's property name. Default is property name.
+ * @param {String} [options.textTitle] object's property title. Default is not title,
+ */
+export function ScaleControllers( folder, object, property, onChange, options ) {
+
+	options = options || {};
+	var scaleController = folder.add( new ScaleController( function ( customController, action ) {
+
+		var value = action( controller.getValue(), scaleController.getValue() );
+		controller.setValue( value );
+		onChange( value );
+
+	},
+		{
+
+			getLanguageCode: options.getLanguageCode,
+			settings: options.settings,
+
+		} ) ).onChange( function ( value ) { scaleController.zoomMultiplier = value; } );
+	var controller = dat.controllerZeroStep( folder, object, property, function ( value ) { onChange( value ); } );
+	if ( options.text )
+		dat.controllerNameAndTitle( controller, options.text, options.textTitle );
+
+}
