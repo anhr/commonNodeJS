@@ -16,7 +16,7 @@
  */
 
 //import { controllers } from '../../dat.gui/CustomController/build/dat.gui.module.js';
-import { controllers } from './dat.gui.module.js';
+import { controllers } from './dat/dat.gui.module.js';
 import UpDownController from './UpDownController.js';
 
 class PositionController extends controllers.CustomController {
