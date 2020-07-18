@@ -16,9 +16,9 @@
  */
 
 //import { controllers } from '../../dat.gui/CustomController/build/dat.gui.module.js';
-import { controllers } from './dat.gui.module.js';
+import { controllers } from './dat/dat.gui.module.js';
+import { dat } from './dat/dat.module.js';
 import UpDownController from './UpDownController.js';
-import { dat } from './dat.module.js';
 
 export default class ScaleController extends controllers.CustomController {
 

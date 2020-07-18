@@ -13,7 +13,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 //import { GUI } from '../../three.js/dev/examples/jsm/libs/dat.gui.module.js';
-import { GUI } from '../../dat.gui/CustomController/build/dat.gui.module.js';
+//import { GUI } from '../../dat.gui/CustomController/build/dat.gui.module.js';
+import { GUI } from './dat.gui.module.js';
 export function dat() { };
 if ( typeof dat !== 'undefined' ) {
 
