@@ -14,7 +14,7 @@
  */
 
 import PositionController from './PositionController.js';
-import { dat } from './dat.module.js';
+import { dat } from './dat/dat.module.js';
 
 /**
  * OrbitControls graphical user interface
