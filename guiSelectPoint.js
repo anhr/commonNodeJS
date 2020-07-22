@@ -1,5 +1,5 @@
 /**
- * @module guiSelectPoint.
+ * @module GuiSelectPoint.
  *
  * A dat.gui based graphical user interface for select a point from the mesh.
  * 
@@ -18,16 +18,13 @@
 
 //import * as THREE from 'https://threejs.org/build/three.module.js';
 //import * as THREE from '../../three.js/dev/build/three.module.js';//https://github.com/anhr/three.js;
-import { THREE } from './three.js';
 //import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-
 import { dat } from './dat/dat.module.js';
-//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
-
-import ScaleController from './ScaleController.js';
 //import ScaleController from 'https://raw.githack.com/anhr/commonNodeJS/master/ScaleController.js';
-
 import PositionController from './PositionController.js';
+//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+import ScaleController from './ScaleController.js';
+import { THREE } from './three.js';
 //import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
 
 /**
@@ -45,7 +42,14 @@ import PositionController from './PositionController.js';
  * Default returns the 'en' is English language.
  * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
  * @param {object} [guiParams.lang] Object with localized language values
- * @example Using of guiParams.lang:
+ * @example
+import { guiSelectPoint as guiSelectPointF } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint.js';
+
+const guiSelectPoint = new guiSelectPointF( { axesHelper: axesHelper, } );
+guiSelectPoint.add( gui, { getLanguageCode: getLanguageCode, } );
+guiSelectPoint.addPointControllers();
+guiSelectPoint.addMesh( points );
+ * @example //Using of guiParams.lang:
 guiParams = {
 
 	getLanguageCode: function() { return 'az'; },
@@ -53,7 +57,7 @@ guiParams = {
 
 }
  */
-function guiSelectPoint( guiParams ) {
+function GuiSelectPoint( guiParams ) {
 
 	guiParams = guiParams || {};
 
@@ -447,6 +451,11 @@ function guiSelectPoint( guiParams ) {
 		}
 
 	}
+	/**
+	 * get index of the mesh in the cMeshs controller
+	 * @param {THREE.Mesh} mesh
+	 * See {@link https://threejs.org/docs/index.html#api/en/objects/Mesh|THREE.Mesh}.
+	 */
 	this.getMeshIndex = function ( mesh ) {
 
 		if ( mesh === undefined )
@@ -477,7 +486,9 @@ function guiSelectPoint( guiParams ) {
 
 	}
 	/**
-	 * removes a mesh from the select point GUI
+	 * Removes a mesh from the select point GUI
+	 * @function GuiSelectPoint.
+	 *removeMesh
 	 * @param {THREE.Mesh} mesh mesh for removing.
 	 */
 	this.removeMesh = function ( mesh ) {
@@ -494,7 +505,9 @@ function guiSelectPoint( guiParams ) {
 
 	}
 	/**
-	 * adds new mesh into select point GUI
+	 * Adds new mesh into select point GUI
+	 * @function GuiSelectPoint.
+	 *addMesh
 	 * @param {THREE.Mesh} mesh new mesh.
 	 */
 	this.addMesh = function ( mesh ) {
@@ -674,6 +687,12 @@ function guiSelectPoint( guiParams ) {
 		if ( cRotations.z ) cRotations.z.setValue( mesh.rotation.z );
 
 	}
+	/**
+	 * Adds select point GUI into dat.gui folder
+	 * @function GuiSelectPoint.
+	 *add
+	 * @param {GUI} folder dat.gui folder.
+	 */
 	this.add = function ( folder ) {
 
 		f3DObjects = folder.addFolder( lang.meshs );
@@ -1033,6 +1052,11 @@ function guiSelectPoint( guiParams ) {
 		cPoints.__select.appendChild( opt );
 
 	}
+	/**
+	 * Adds controllers into select point GUI.
+	 * @function GuiSelectPoint.
+	 *addPointControllers
+	 */
 	this.addPointControllers = function () {
 
 		function isReadOnlyController( controller ) {
@@ -1363,6 +1387,4 @@ function getObjectPosition( object, index ) {
 	return getWorldPosition( object, getObjectLocalPosition( object, index ) )
 
 }
-export { guiSelectPoint, getWorldPosition };
-//	options.guiSelectPoint = new guiSelectPointF();
-
+export { GuiSelectPoint, getWorldPosition };

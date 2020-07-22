@@ -16,6 +16,6 @@ for control of the position of [threejs](https://github.com/anhr/three.js) 3D ob
 * ScaleController.js ScaleController is [dat.gui](https://github.com/dataarts/dat.gui) graphical user interface controller
 for control of the scale of [threejs](https://github.com/anhr/three.js) 3D object.
 [Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
-* guiSelectPoint.js guiSelectPoint is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for select a point from the mesh.
-[guiSelectPoint API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/guiSelectPoint/index.html).
+* guiSelectPoint.js GuiSelectPoint is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for select a point from the mesh.
+[GuiSelectPoint API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/guiSelectPoint/index.html).
 [Example](https://raw.githack.com/anhr/AxesHelper/master/).
