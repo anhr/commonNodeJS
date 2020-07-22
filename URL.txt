@@ -17,10 +17,24 @@ Generating a website:
 	cd "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc"
 	npm install -g jsdoc
 
+	/////////////////////////////////////////////////////////////
+	//guiSelectPoint doc
+
 	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
 
-	//guiSelectPoint doc
 	jsdoc "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\guiSelectPoint.js"
 
 	//copy all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
 	//to "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\guiSelectPoint"
+	/////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////
+	//guiSelectPoint doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
+
+	jsdoc "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\ScaleController.js"
+
+	//copy all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
+	//to "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\ScaleController"
+	/////////////////////////////////////////////////////////////

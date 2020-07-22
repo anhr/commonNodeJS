@@ -43,9 +43,9 @@ import { THREE } from './three.js';
  * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
  * @param {object} [guiParams.lang] Object with localized language values
  * @example
-import { guiSelectPoint as guiSelectPointF } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint.js';
+import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint.js';
 
-const guiSelectPoint = new guiSelectPointF( { axesHelper: axesHelper, } );
+const guiSelectPoint = new GuiSelectPointF( { axesHelper: axesHelper, } );
 guiSelectPoint.add( gui, { getLanguageCode: getLanguageCode, } );
 guiSelectPoint.addPointControllers();
 guiSelectPoint.addMesh( points );

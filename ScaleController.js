@@ -1,5 +1,6 @@
 /**
- * ScaleController is dat.GUI graphical user interface controller for control of the scale of threejs 3D object
+ * @module ScaleController
+ * is dat.GUI graphical user interface controller for control of the scale of threejs 3D object
  * 
  * @see {@link https://threejs.org/} about threejs
  * @see {@link https://github.com/dataarts/dat.gui} about dat.GUI
@@ -20,7 +21,7 @@ import { controllers } from './dat/dat.gui.module.js';
 import { dat } from './dat/dat.module.js';
 import UpDownController from './UpDownController.js';
 
-export default class ScaleController extends controllers.CustomController {
+class ScaleController extends controllers.CustomController {
 
 	/**
 	 * dat.GUI graphical user interface controller for control of the scale of threejs 3D object
@@ -143,6 +144,7 @@ export default class ScaleController extends controllers.CustomController {
 	}
 
 }
+export default ScaleController;
 
 /**
  * dat.GUI graphical user interface controllers for manipulate or multiplication of the object's property
@@ -157,7 +159,7 @@ export default class ScaleController extends controllers.CustomController {
  * @param {String} [options.text] object's property name. Default is property name.
  * @param {String} [options.textTitle] object's property title. Default is not title,
  */
-export function ScaleControllers( folder, object, property, onChange, options ) {
+function ScaleControllers( folder, object, property, onChange, options ) {
 
 	options = options || {};
 	var scaleController = folder.add( new ScaleController( function ( customController, action ) {
@@ -178,3 +180,4 @@ export function ScaleControllers( folder, object, property, onChange, options ) 
 		dat.controllerNameAndTitle( controller, options.text, options.textTitle );
 
 }
+export { ScaleControllers };
