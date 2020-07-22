@@ -1,5 +1,5 @@
 /**
- * @module GuiSelectPoint.
+ * @module guiSelectPoint.
  *
  * A dat.gui based graphical user interface for select a point from the mesh.
  * 
