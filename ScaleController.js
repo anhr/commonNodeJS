@@ -24,12 +24,37 @@ import UpDownController from './UpDownController.js';
 class ScaleController extends controllers.CustomController {
 
 	/**
+	* @callback onclick
+	* @param {ScaleController} customController this controller
+	* @param {Function} action action( value, zoom ) function for multiply or divide value to zoom
+	*/
+
+	/**
 	 * dat.GUI graphical user interface controller for control of the scale of threejs 3D object
-	 * @param {Event} onclick
+	 * @param {onclick} onclick Called whenever user has clicked this controller.
 	 * @param {object} [options] followed options is available:
 	 * @param {object} [options.settings] settings.
 	 * @param {number} [options.settings.zoomMultiplier] control value. Default is 1.1
 	 * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
+	 * @example 
+//Add new ScaleController to the dat.GUI folder
+folder.add( new ScaleController( function ( customController, action ) {
+
+	var zoom = customController.controller.getValue();
+
+	//Scale a THREE.Mesh object
+	mesh.scale.x = action( mesh.scale.x, zoom );
+	mesh.scale.y = action( mesh.scale.y, zoom );
+	mesh.scale.z = action( mesh.scale.z, zoom );
+	mesh.needsUpdate = true;
+
+},
+	{
+
+		settings: { zoomMultiplier: 1.1, },
+		getLanguageCode: getLanguageCode,
+
+	} ) );
 	 */
 	constructor( onclick, options ) {
 
