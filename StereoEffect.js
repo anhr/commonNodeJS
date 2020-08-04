@@ -1,19 +1,35 @@
 /**
- * @author alteredq / http://alteredqualia.com/
- * @authod mrdoob / http://mrdoob.com/
- * @authod arodic / http://aleksandarrodic.com/
- * @authod fonserbc / http://fonserbc.github.io/
- * @authod anhr / https://github.com/anhr/
+ * @module StereoEffect
+ *
+ * Uses dual PerspectiveCameras for Parallax Barrier  effects.
+ *
+ * @see About {@link https://en.wikipedia.org/wiki/Parallax_barrier|Parallax barrier}.
+ * 
+ * @author {@link https://anhr.github.io/AboutMe/|Andrej Hristoliubov}
+ * @author {@link http://alteredqualia.com/|alteredq}
+ * @author {@link http://mrdoob.com/|mrdoob}
+ * @author {@link http://aleksandarrodic.com/|arodic}
+ * @author {@link http://fonserbc.github.io/|fonserbc}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import * as THREE from '../../../../../three.js/dev/build/three.module.js';
-//import { THREE } from '../../../three.js';
-import PositionController from '../../../../../commonNodeJS/master/PositionController.js';
+//import * as THREE from '../../three.js/dev/build/three.module.js';
+import { THREE } from './three.js';
 
-import cookie from '../../../../../cookieNodeJS/master/cookie.js';
+import PositionController from './PositionController.js';
+//import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
+
+import cookie from '../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/cookieNodeJS
 //import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 
-import { dat } from '../../../../../commonNodeJS/master/dat/dat.module.js';
+import { dat } from './dat/dat.module.js';
 
 //Attenttion!!! Save this file as UTF-8 for localization.
 
@@ -252,14 +268,16 @@ var StereoEffect = function ( renderer, options ) {
 
 	/**
 	 * Adds StereoEffects folder into dat.GUI.
-	 * See https://github.com/dataarts/dat.gui/blob/master/API.md about dat.GUI API.
+	 * @function this.
+	 * gui
+	 * @see {@link https://github.com/anhr/dat.gui|dat.gui}.
 	 * @param {GUI} gui dat.GUI object.
 	 * @param {Object} options See options of StereoEffect above for details.
-	 * @param {Object} [guiParams] the following params are available. Optional.
+	 * @param {Object} [guiParams] the following params are available.
 	 * @param {Function} [guiParams.getLanguageCode] Your custom getLanguageCode() function.
 	 * returns the "primary language" subtag of the language version of the browser.
 	 * Examples: "en" - English language, "ru" Russian.
-	 * See the "Syntax" paragraph of RFC 4646 https://tools.ietf.org/html/rfc4646#section-2.1 for details.
+	 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|Syntax} paragraph of RFC 4646 for details.
 	 * Default returns the 'en' is English language.
 	 * @param {Object} [guiParams.lang] Object with localized language values.
 	 * @param {number} [guiParams.scale] scale of allowed values. Default is 1.

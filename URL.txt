@@ -38,3 +38,14 @@ Generating a website:
 	//copy all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
 	//to "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\ScaleController"
 	/////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////
+	//StereoEffect doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
+
+	jsdoc "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\StereoEffect.js"
+
+	//copy all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
+	//to "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\StereoEffect"
+	/////////////////////////////////////////////////////////////
