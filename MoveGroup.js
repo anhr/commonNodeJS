@@ -76,6 +76,7 @@ export function MoveGroup( group, options ) {
 
 		scale: group.scale,
 		position: group.position,
+		rotation: group.rotation,
 		x: { zoomMultiplier: 1.2, offset: 0.1, },
 		y: { zoomMultiplier: 1.2, offset: 0.1, },
 		z: { zoomMultiplier: 1.2, offset: 0.1, },
@@ -109,14 +110,12 @@ export function MoveGroup( group, options ) {
 			return;
 		options.scales[axisName].default = function(){
 
-//			group.scale[axisName] = groupOptionsDefault.scale[axisName];
-			options.scalesControllers[axisName].scale.setValue( groupOptionsDefault.scale[axisName] );
-			options.scalesControllers[axisName].scaleController.setValue( groupOptionsDefault[axisName].zoomMultiplier );
-			options.scalesControllers[axisName].position.setValue( groupOptionsDefault.position[axisName] );
-			options.scalesControllers[axisName].positionController.setValue( groupOptionsDefault[axisName].offset );
-//			optionsGroup.zoomMultiplier = groupOptionsDefault.zoomMultiplier;
-//			cookie.setObject( cookieName, optionsGroup );
-			setSettings();
+			const scalesControllers = options.scalesControllers[axisName];
+			scalesControllers.scale.setValue( groupOptionsDefault.scale[axisName] );
+			scalesControllers.scaleController.setValue( groupOptionsDefault[axisName].zoomMultiplier );
+			scalesControllers.position.setValue( groupOptionsDefault.position[axisName] );
+			scalesControllers.positionController.setValue( groupOptionsDefault[axisName].offset );
+			scalesControllers.rotation.setValue( groupOptionsDefault.rotation['_' + axisName] );
 
 		}
 
@@ -138,6 +137,7 @@ export function MoveGroup( group, options ) {
 			moveGroup: 'Move Group',
 			scale: 'Scale',
 			position: 'Position',
+			rotation: 'Rotation',
 
 			defaultButton: 'Default',
 			defaultTitle: 'Move axis to default position.',
@@ -153,6 +153,7 @@ export function MoveGroup( group, options ) {
 				lang.moveGroup = 'Переместить группу'; scale
 				lang.scale = 'Масштаб'; 
 				lang.position = 'Позиция';
+				lang.rotation = 'Вращение';
 
 				lang.defaultButton = 'Восстановить';
 				lang.defaultTitle = 'Переместить ось а исходное состояние.';
@@ -206,7 +207,15 @@ export function MoveGroup( group, options ) {
 
 		} ) );
 
-		function setSettings() { cookie.setObject( cookieName, optionsGroup ); }
+		function setSettings() {
+
+			if ( options.axesHelper )
+				options.axesHelper.updateAxes();
+			if ( guiParams.guiSelectPoint )
+				guiParams.guiSelectPoint.update();
+			cookie.setObject( cookieName, optionsGroup );
+
+		}
 
 		function scale( axes, windowRange, scaleControllers,// axesDefault,
 			axisName ) {
@@ -229,6 +238,7 @@ export function MoveGroup( group, options ) {
 			scaleControllers.folder = fMoveGroup.addFolder( axes.name );
 
 			//Scale
+
 			scaleControllers.scaleController = scaleControllers.folder.add( new ScaleController( onclick,
 				{ settings: optionsGroup[axisName], getLanguageCode: guiParams.getLanguageCode, } ) ).onChange( function ( value ) {
 
@@ -239,14 +249,12 @@ export function MoveGroup( group, options ) {
 						guiParams.axesHelper.setSettings();
 
 				} );
-			scaleControllers.scale = dat.controllerZeroStep( scaleControllers.folder, group.scale, axisName, function ( value ) {
-
-				setSettings();
-
-			} );
+			scaleControllers.scale = dat.controllerZeroStep( scaleControllers.folder, group.scale, axisName,
+				function ( value ) { setSettings(); } );
 			dat.controllerNameAndTitle( scaleControllers.scale, lang.scale );
 
 			//Position
+
 			var positionController = new PositionController( function ( shift ) {
 
 				//			console.warn( 'shift = ' + shift );
@@ -285,12 +293,16 @@ export function MoveGroup( group, options ) {
 				setSettings();
 
 			} );
-			scaleControllers.position = dat.controllerZeroStep( scaleControllers.folder, group.position, axisName, function ( value ) {
-
-				setSettings();
-
-			} );
+			scaleControllers.position = dat.controllerZeroStep( scaleControllers.folder, group.position, axisName,
+				function ( value ) { setSettings(); } );
 			dat.controllerNameAndTitle( scaleControllers.position, lang.position );
+
+			//rotation
+
+			scaleControllers.rotation = scaleControllers.folder.add( group.rotation, axisName, 0, Math.PI * 2, 1 / 360 ).
+				onChange( function ( value ) { setSettings(); } );
+			//						dat.controllerNameAndTitle( cRotations.x, options.scales.x.name );
+			dat.controllerNameAndTitle( scaleControllers.rotation, lang.rotation );
 
 			//Default button
 			dat.controllerNameAndTitle( scaleControllers.folder.add( {

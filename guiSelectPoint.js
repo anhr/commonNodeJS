@@ -313,7 +313,8 @@ function GuiSelectPoint( guiParams ) {
 		if ( selectedPointIndex === -1 )
 			return;
 
-		const position = getObjectPosition( cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh, selectedPointIndex );
+		const mesh = cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh,
+			position = getObjectPosition( mesh, selectedPointIndex );
 
 		if ( ( axesHelper !== undefined ) )
 
@@ -323,7 +324,8 @@ function GuiSelectPoint( guiParams ) {
 			//когда в gui пользователь выбрал точку frustumPoints из списка '3D objects'(этот пункт будет недоступен когда я уберу frustumPoints из списка '3D objects' когда в настройках frustumPoints не стоит галочка info)
 			//и когда пользователь передвигает камеру с помощью orbitControls
 
-			axesHelper.exposePosition( position );
+			axesHelper.exposePosition( { object: mesh, index: selectedPointIndex } );
+//			axesHelper.exposePosition( position );
 
 		if ( controllerWorld.x ) controllerWorld.x.setValue( position.x );
 		if ( controllerWorld.y ) controllerWorld.y.setValue( position.y );
@@ -474,9 +476,36 @@ function GuiSelectPoint( guiParams ) {
 
 	}
 	/**
+	 * update the values of the controllers of the world position
+	 * @function GuiSelectPoint.
+	 *update 
+	 */
+	this.update = function () {
+
+		const mesh = cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh;
+		if ( !mesh )
+			return;
+		const index = this.getSelectedPointIndex();
+		if ( index === -1 )
+			return;
+		const position = getObjectPosition( mesh, index );
+		controllerWorld.x.setValue( position.x );
+		controllerWorld.y.setValue( position.y );
+		controllerWorld.z.setValue( position.z );
+/*		
+		setValue( controllerWorld.x, position.x );
+		setValue( controllerWorld.y, position.y );
+		setValue( controllerWorld.z, position.z );
+*/		
+
+	}
+	/**
 	 * get index of the mesh in the cMeshs controller
+	 * @function GuiSelectPoint.
+	 *getMeshIndex
 	 * @param {THREE.Mesh} mesh
 	 * See {@link https://threejs.org/docs/index.html#api/en/objects/Mesh|THREE.Mesh}.
+	 * @returns index of selectred mesh.
 	 */
 	this.getMeshIndex = function ( mesh ) {
 
@@ -1402,6 +1431,13 @@ function GuiSelectPoint( guiParams ) {
 	return this;
 
 }
+
+/**
+ * gets the position from the geometry.attributes.position of the object.
+ * @param {THREE.Mesh} object
+ * @param {number} index index of position in the object.geometry.attributes.position
+ * @returns position
+ */
 function getObjectLocalPosition( object, index ) {
 
 	const attributesPosition = object.geometry.attributes.position,
@@ -1419,23 +1455,42 @@ function getObjectLocalPosition( object, index ) {
  */
 function getWorldPosition( object, pos ) {
 
-	var position = new THREE.Vector3(),
-		positionAngle = new THREE.Vector3();
-	position = pos.clone();
-	//position.multiply( new THREE.Vector4(0,0,0,0) );
-	position.multiply( object.scale );
+	var position = pos.clone();
+	function getPosition( object, pos ) {
 
-	//rotation
-	positionAngle.copy( position );
-	positionAngle.applyEuler( object.rotation );
-	position.x = positionAngle.x;
-	position.y = positionAngle.y;
-	position.z = positionAngle.z;
+		var position = new THREE.Vector3(),
+			positionAngle = new THREE.Vector3();
+		position = pos.clone();
+		//position.multiply( new THREE.Vector4(0,0,0,0) );
+		position.multiply( object.scale );
 
-	position.add( object.position );
+		//rotation
+		positionAngle.copy( position );
+		positionAngle.applyEuler( object.rotation );
+		position.x = positionAngle.x;
+		position.y = positionAngle.y;
+		position.z = positionAngle.z;
+
+		position.add( object.position );
+		return position;
+
+	}
+	do {
+
+		position = getPosition( object, position );
+		object = object.parent;
+		
+	} while ( object );
 	return position;
 
 }
+
+/**
+ * gets the position from the geometry.attributes.position of the object in world coordinates.
+ * @param {THREE.Mesh} object
+ * @param {number} index index of position in the object.geometry.attributes.position
+ * @returns position
+ */
 function getObjectPosition( object, index ) {
 
 	if ( index === -1 )
@@ -1445,4 +1500,4 @@ function getObjectPosition( object, index ) {
 	return getWorldPosition( object, getObjectLocalPosition( object, index ) )
 
 }
-export { GuiSelectPoint, getWorldPosition };
+export { GuiSelectPoint, getWorldPosition, getObjectLocalPosition, getObjectPosition };
