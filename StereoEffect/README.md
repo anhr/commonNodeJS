@@ -65,7 +65,7 @@ or
 ```
 import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 ```
-Import getLanguageCode if you want localize the gui.
+Import getLanguageCode if you want to localize the gui.
 ```
 import { getLanguageCode } from '../commonNodeJS/master/lang.js';
 ```
@@ -73,7 +73,7 @@ or
 ```
 import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 ```
-Add effect setting into gui.
+Add StereoEffect setting into gui.
 ```
 const gui =  new dat.GUI( {
 
