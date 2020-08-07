@@ -1,9 +1,9 @@
-# AxesHelper.
+# StereoEffect.
 
-An axis object to visualize the 1, 2 or 3 axes.
+Uses dual PerspectiveCameras for [Parallax Barrier](https://en.wikipedia.org/wiki/Parallax_barrier) effects.
 
-I use AxesHelper in my [three.js](https://threejs.org/) projects for displaying of the axes in canvas.
-[Example](https://raw.githack.com/anhr/AxesHelper/master/).
+I use StereoEffect in my [three.js](https://threejs.org/) projects.
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/).
 
 Uses in my projects:
  * [AxesHelper](https://github.com/anhr/AxesHelper)
