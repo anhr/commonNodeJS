@@ -29,6 +29,32 @@ import { AxesHelper } from 'https://raw.githack.com/anhr/commonNodeJS/master/Ste
 
 Now you can use StereoEffect in your javascript code. See [StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/StereoEffect/index.html) for details.
 
+* Create the StereoEffect instance.
+```
+var stereoEffect;
+stereoEffect = new StereoEffect( THREE, renderer, {
+
+	spatialMultiplex: spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+	far: camera.far,
+	camera: camera,
+	cookie: cookie,//Saves a custom Stereo Effects settings in the cookie
+
+} );
+stereoEffect.setSize( window.innerWidth, window.innerHeight );
+```
+Add code into animate function
+```
+function animate() {
+
+	requestAnimationFrame( animate );
+
+	if ( stereoEffect === undefined )
+		renderer.render( scene, camera );
+	else stereoEffect.render( scene, camera );
+
+}
+```
+
 ## On the following browsers have been successfully tested:
 
 Windows 10

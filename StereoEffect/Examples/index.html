@@ -40,7 +40,7 @@
 		//import { dat } from '../../../commonNodeJS/master/dat/dat.module.js';//https://github.com/anhr/commonNodeJS
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
-		//import cookie from '../../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/cookieNodeJS
+		import cookie from '../../../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/cookieNodeJS
 		//import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 
 		//import { getLanguageCode } from '../../../commonNodeJS/master/lang.js';//https://github.com/anhr/commonNodeJS
@@ -55,7 +55,7 @@
 		import { StereoEffect, spatialMultiplexsIndexs } from '../StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
-		var camera, scene, renderer;//, axesHelper, controls, intersects, guiSelectPoint;
+		var camera, scene, renderer, stereoEffect;//, axesHelper, controls, intersects, guiSelectPoint;
 /*
 		const raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2(), arrayintersectObjects = [], threshold = 0.02;
 		raycaster.params.Points.threshold = threshold;
@@ -244,6 +244,17 @@
 //			const cursor = renderer.domElement.style.cursor;
 			document.body.appendChild( renderer.domElement );
 
+			stereoEffect = new StereoEffect( THREE, renderer, {
+
+				spatialMultiplex: spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+				far: camera.far,
+				camera: camera,
+				cookie: cookie,//Saves a custom Stereo Effects settings in the cookie
+				//stereoAspect: 1,
+
+			} );
+			stereoEffect.setSize( window.innerWidth, window.innerHeight );
+
 			window.addEventListener( 'resize', onWindowResize, false );
 
 			//
@@ -365,7 +376,9 @@
 
 			requestAnimationFrame( animate );
 
-			renderer.render( scene, camera );
+			if ( stereoEffect === undefined )
+				renderer.render( scene, camera );
+			else stereoEffect.render( scene, camera );
 
 		}
 
