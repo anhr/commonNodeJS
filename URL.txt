@@ -42,10 +42,6 @@ Generating a website:
 	/////////////////////////////////////////////////////////////
 	//StereoEffect doc
 
-	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
+	See D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\StereoEffect\URL.txt
 
-	jsdoc "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\StereoEffect.js"
-
-	//copy all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
-	//to "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\StereoEffect"
 	/////////////////////////////////////////////////////////////

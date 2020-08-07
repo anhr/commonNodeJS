@@ -1,0 +1,20 @@
+isdoc https://github.com/jsdoc/jsdoc
+Getting Started with JSDoc 3 https://jsdoc.app/about-getting-started.html
+Generating a website:
+	Download https://github.com/jsdoc/jsdoc into D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc
+	Open "Node.js command prompt"
+
+	d:
+	cd "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc"
+	npm install -g jsdoc
+
+	/////////////////////////////////////////////////////////////
+	//StereoEffect doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
+
+	jsdoc "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\StereoEffect.js"
+
+	//copy all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
+	//to "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\StereoEffect\jsdoc"
+	/////////////////////////////////////////////////////////////
