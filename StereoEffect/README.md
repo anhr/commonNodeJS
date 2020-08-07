@@ -98,6 +98,7 @@ stereoEffect.gui( gui, {
 } );
 ```
 * [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
+
 Get default cursor
 ```
 const cursor = renderer.domElement.style.cursor;
@@ -118,7 +119,7 @@ points.userData.raycaster = {
 	},
 	onMouseDown: function ( intersect ) {
 
-		alert( 'Mouse is down over point' );
+		alert( 'You have clicked over point' );
 
 	}
 
@@ -179,6 +180,7 @@ window.addEventListener( 'mousedown', function( event ) {
 
 }, false );
 ```
+For testing please move cursor over point. Cursor will be changing to 'pointer'. You can see an alert if you click over point.
 
 ## On the following browsers have been successfully tested:
 
