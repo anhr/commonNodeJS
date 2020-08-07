@@ -22,5 +22,5 @@ for control of the scale of [threejs](https://github.com/anhr/three.js) 3D objec
 [Example](https://raw.githack.com/anhr/AxesHelper/master/).
 * StereoEffect.js Uses dual PerspectiveCameras for [Parallax Barrier](https://en.wikipedia.org/wiki/Parallax_barrier) effects.
 [README.md](https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md).
-[StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/StereoEffect/index.html).
+[StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/).
