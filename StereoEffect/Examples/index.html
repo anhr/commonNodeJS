@@ -255,14 +255,9 @@
 			} );
 			stereoEffect.setSize( window.innerWidth, window.innerHeight );
 
-			//Using [dat.gui](https://github.com/anhr/dat.gui) for change of the effect settings.
+			//Using [dat.gui](https://github.com/anhr/dat.gui) for change of the StereoEffect settings.
 
-			const gui =  new dat.GUI( {
-
-				//autoPlace: false,
-				//closed: true,
-
-			} );
+			const gui =  new dat.GUI();
 			stereoEffect.gui( gui, {
 
 				getLanguageCode: getLanguageCode,

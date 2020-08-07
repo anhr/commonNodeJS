@@ -20,6 +20,19 @@ Uses in my projects:
 * Download [dat.gui](https://github.com/anhr/dat.gui) repository into your "[folderName]\dat.gui\CustomController" folder.
 * Open http://localhost/[folderName]/commonNodeJS/master/StereoEffect/Examples/index.html for testing of your downloads.
 
+* import [three.js](https://github.com/anhr/three.js)
+```
+import * as THREE from 'https://threejs.org/build/three.module.js';
+```
+or
+```
+import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+```
+or download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
+```
+import * as THREE from './three.js/dev/build/three.module.js';
+```
+
 The easiest way to use StereoEffect in your code is import StereoEffect from StereoEffect.js file in your JavaScript module. [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/)
 ```
 import { StereoEffect, spatialMultiplexsIndexs } from '../commonNodeJS/master/StereoEffect/StereoEffect.js';
@@ -29,7 +42,7 @@ or
 import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
 
-Now you can use StereoEffect in your javascript code. See [StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/StereoEffect/index.html) for details.
+Now you can use StereoEffect in your javascript code. See [StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/index.html) for details.
 
 * Create the StereoEffect instance.
 ```
@@ -61,33 +74,31 @@ Now you can see, canvas was divided to left and right scenes.
 
 Import dat.gui.
 ```
-import { dat } from '../commonNodeJS/master/dat/dat.module.js';
+import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 ```
 or
 ```
-import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+import { dat } from '../commonNodeJS/master/dat/dat.module.js';
 ```
 Import getLanguageCode if you want to localize the gui.
 ```
-import { getLanguageCode } from '../commonNodeJS/master/lang.js';
+import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 ```
 or
 ```
-import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+import { getLanguageCode } from '../commonNodeJS/master/lang.js';
 ```
 Add StereoEffect setting into gui.
 ```
-const gui =  new dat.GUI( {
-
-	//autoPlace: false,
-	//closed: true,
-
-} );
+const gui =  new dat.GUI();
 stereoEffect.gui( gui, {
 
 	getLanguageCode: getLanguageCode,
 
 } );
+```
+* [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
+```
 ```
 
 ## On the following browsers have been successfully tested:
