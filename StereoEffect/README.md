@@ -20,11 +20,11 @@ Uses in my projects:
 
 The easiest way to use StereoEffect in your code is import StereoEffect from StereoEffect.js file in your JavaScript module. [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/)
 ```
-import { StereoEffect, spatialMultiplexsIndexs } from './StereoEffect.js';
+import { StereoEffect, spatialMultiplexsIndexs } from '../commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
 or
 ```
-import { AxesHelper } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
 
 Now you can use StereoEffect in your javascript code. See [StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/StereoEffect/index.html) for details.
@@ -37,7 +37,7 @@ stereoEffect = new StereoEffect( THREE, renderer, {
 	spatialMultiplex: spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 	far: camera.far,
 	camera: camera,
-	cookie: cookie,//Saves a custom Stereo Effects settings in the cookie
+	cookie: cookie,//Saves a custom Stereo Effects settings to the cookie
 
 } );
 stereoEffect.setSize( window.innerWidth, window.innerHeight );
@@ -53,6 +53,38 @@ function animate() {
 	else stereoEffect.render( scene, camera );
 
 }
+```
+Now you can see, canvas was divided to left and right scenes.
+* Using [dat.gui](https://github.com/anhr/dat.gui) for change of the effect settings.
+import dat.gui.
+```
+import { dat } from '../commonNodeJS/master/dat/dat.module.js';
+```
+or
+```
+import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+```
+Import getLanguageCode if you want localize the gui.
+```
+import { getLanguageCode } from '../commonNodeJS/master/lang.js';
+```
+or
+```
+import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+```
+Add effect setting into gui.
+```
+const gui =  new dat.GUI( {
+
+	//autoPlace: false,
+	//closed: true,
+
+} );
+stereoEffect.gui( gui, {
+
+	getLanguageCode: getLanguageCode,
+
+} );
 ```
 
 ## On the following browsers have been successfully tested:
