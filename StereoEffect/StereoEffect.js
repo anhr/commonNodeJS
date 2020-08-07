@@ -366,10 +366,10 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 		}
 
 		//
-
+/*
 		if ( guiParams.gui !== undefined )
 			guiParams.gui.remember( options );
-
+*/
 		function displayControllers( value ) {
 
 			const display = value == spatialMultiplexsIndexs.Mono ? 'none' : 'block';
