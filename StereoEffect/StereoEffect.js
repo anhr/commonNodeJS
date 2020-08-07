@@ -1,7 +1,7 @@
 /**
  * @module StereoEffect
  *
- * Uses dual PerspectiveCameras for Parallax Barrier  effects.
+ * Uses dual PerspectiveCameras for Parallax Barrier effects.
  *
  * @see About {@link https://en.wikipedia.org/wiki/Parallax_barrier|Parallax barrier}.
  * 
@@ -21,21 +21,23 @@
 */
 
 //import * as THREE from '../../three.js/dev/build/three.module.js';
-import { THREE } from './three.js';
+//import { THREE } from './three.js';
+//import * as THREE from 'https://threejs.org/build/three.module.js';
+var THREE;
 
-import PositionController from './PositionController.js';
+import PositionController from '../PositionController.js';
 //import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
 
-import cookie from '../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/cookieNodeJS
+import cookie from '../../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/cookieNodeJS
 //import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 
-import { dat } from './dat/dat.module.js';
+import { dat } from '../dat/dat.module.js';
 
 //Attenttion!!! Save this file as UTF-8 for localization.
 
 //spatialMultiplex
 //https://en.wikipedia.org/wiki/DVB_3D-TV
-var spatialMultiplexsIndexs = {
+const spatialMultiplexsIndexs = {
 	Mono: 0,
 	SbS: 1, //https://en.wikipedia.org/wiki/DVB_3D-TV#Side_by_side
 	TaB: 2, //https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom
@@ -49,6 +51,7 @@ var spatialMultiplexsIndexs = {
 /**
  * StereoEffect
  * Uses dual PerspectiveCameras for Parallax Barrier https://en.wikipedia.org/wiki/Parallax_barrier effects
+ * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {Object} renderer THREE.WebGLRenderer
  * @param {Object} [options] the following options are available. Optional.
  * @param {Object} [options.spatialMultiplex] spatial multiplex
@@ -69,28 +72,30 @@ var spatialMultiplexsIndexs = {
  * @param {Object} [options.far] Camera frustum far plane. The far key uses for correct calculation default values of Eye separation. Default is 10.
  * @param {Object} [options.cookie] Your custom cookie function for saving and loading of the StereoEffects settings. Default cookie is not saving settings.
  * @param {cookie} [options.cookieName] Name of the cookie is "StereoEffect" + options.cookieName. Default is undefined.
- * @param {Object} [options.stereoAspect] THREE.StereoCamera.aspect. Camera frustum aspect ratio. Default is 0.5 for compatibility with previous version.
+ * @param {Object} [options.stereoAspect] THREE.StereoCamera.aspect. Camera frustum aspect ratio. Default is 1.
  * @param {boolean} [options.rememberSize] true - remember default size of the canvas. Default is undefined.
  * @param {onFullScreen} [options.onFullScreen] Full screen event
  * @param {HTMLElement} [options.elParent] parent of the canvas.
  *  Use only if you use THREE.Raycaster (working out what objects in the 3d space the mouse is over) https://threejs.org/docs/index.html#api/en/core/Raycaster
  *  and your canvas is not full screen.
  */
-var StereoEffect = function ( renderer, options ) {
+const StereoEffect = function ( _THREE, renderer, options ) {
 
-	var stereoEffect = 'StereoEffect' + ( options.cookieName || '' );
+	setTHREE( _THREE );
+
+	const stereoEffect = 'StereoEffect' + ( options.cookieName || '' );
 
 	options = options || {};
 	this.options = options;
 
 	options.stereo = new THREE.StereoCamera();
-	options.stereo.aspect = options.stereoAspect || 0.5;
+	options.stereo.aspect = options.stereoAspect || 1;//0.5;
 	if ( options.far === undefined )
 		options.far = new PerspectiveCamera().focus;
 	options.focus = options.camera === undefined ? new PerspectiveCamera().focus : new THREE.Vector3().distanceTo( options.camera.position );
 	options.zeroParallax = 0;
 	options.cookie = options.cookie || new cookie.defaultCookie();
-	var optionsDefault = {
+	const optionsDefault = {
 
 		spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.SbS, //Use default as 'Side by side' for compability with previous version of THREE.StereoEffect
 		eyeSep: ( new THREE.StereoCamera().eyeSep / 10 ) * options.far,
@@ -118,7 +123,7 @@ var StereoEffect = function ( renderer, options ) {
 
 	this.getRendererSize = function () {
 
-		var el = options.elParent || renderer.domElement,
+		const el = options.elParent || renderer.domElement,
 			style = {
 
 				position: el.style.position,
@@ -137,7 +142,7 @@ var StereoEffect = function ( renderer, options ) {
 
 			fullScreen: function () {
 
-				var size = new THREE.Vector2();
+				const size = new THREE.Vector2();
 				renderer.getSize( size );
 				if ( ( size.x === window.innerWidth ) && ( size.y === window.innerHeight ) )
 					return;
@@ -148,14 +153,14 @@ var StereoEffect = function ( renderer, options ) {
 				renderer.domElement.style.width = '100%';
 				renderer.domElement.style.height = '100%';
 
-				var camera = options.camera;
+				const camera = options.camera;
 				camera.aspect = size.x / size.y;
 				camera.updateProjectionMatrix();
 
 			},
 			restore: function () {
 
-				var sizeCur = new THREE.Vector2();
+				const sizeCur = new THREE.Vector2();
 				renderer.getSize( sizeCur );
 				if ( ( sizeCur.x === size.x ) && ( sizeCur.y === size.y ) )
 					return;
@@ -181,7 +186,7 @@ var StereoEffect = function ( renderer, options ) {
 
 	};
 
-	var rendererSizeDefault = options.rememberSize ? this.getRendererSize() : undefined,
+	const rendererSizeDefault = options.rememberSize ? this.getRendererSize() : undefined,
 		fullScreen = false;
 	this.setFullScreen = function () {
 
@@ -203,7 +208,7 @@ var StereoEffect = function ( renderer, options ) {
 
 		if ( camera.parent === null ) camera.updateMatrixWorld();
 
-		var size = new THREE.Vector2();
+		const size = new THREE.Vector2();
 		renderer.getSize( size );
 
 		if ( renderer.autoClear ) renderer.clear();
@@ -232,7 +237,7 @@ var StereoEffect = function ( renderer, options ) {
 				if ( rendererSizeDefault !== undefined )
 					rendererSizeDefault.fullScreen();
 
-				var _width = size.width / 2;
+				const _width = size.width / 2;
 
 				xL = 0 + parallax;		yL = 0; widthL = _width; heightL = size.height;
 				xR = _width - parallax;	yR = 0; widthR = _width; heightR = size.height;
@@ -292,7 +297,7 @@ var StereoEffect = function ( renderer, options ) {
 
 		//Localization
 
-		var _lang = {
+		const _lang = {
 			stereoEffects: 'Stereo effects',
 
 			spatialMultiplexName: 'Spatial  multiplex',
@@ -318,7 +323,7 @@ var StereoEffect = function ( renderer, options ) {
 
 		};
 
-		var _languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
+		const _languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
 			: guiParams.getLanguageCode();
 		switch ( _languageCode ) {
 
@@ -367,7 +372,7 @@ var StereoEffect = function ( renderer, options ) {
 
 		function displayControllers( value ) {
 
-			var display = value == spatialMultiplexsIndexs.Mono ? 'none' : 'block';
+			const display = value == spatialMultiplexsIndexs.Mono ? 'none' : 'block';
 			_fEyeSeparation.domElement.style.display = display;
 			if ( _controllerCameraFocus !== undefined )
 				_controllerCameraFocus.__li.style.display = display;
@@ -376,10 +381,10 @@ var StereoEffect = function ( renderer, options ) {
 
 		}
 
-		var _fStereoEffects = gui.addFolder( _lang.stereoEffects );//Stero effects folder
+		const _fStereoEffects = gui.addFolder( _lang.stereoEffects );//Stero effects folder
 
 		//Spatial multiplex
-		var _controllerSpatialMultiplex = _fStereoEffects.add( options, 'spatialMultiplex',
+		const _controllerSpatialMultiplex = _fStereoEffects.add( options, 'spatialMultiplex',
 			_lang.spatialMultiplexs ).onChange( function ( value ) {
 
 				value = parseInt( value );
@@ -399,16 +404,17 @@ var StereoEffect = function ( renderer, options ) {
 
 		//eyeSeparation
 		//http://paulbourke.net/papers/vsmm2007/stereoscopy_workshop.pdf
-		var _fEyeSeparation = _fStereoEffects.addFolder( _lang.eyeSeparationName );//Eye Separation
+		const _fEyeSeparation = _fStereoEffects.addFolder( _lang.eyeSeparationName );//Eye Separation
 		dat.folderNameAndTitle( _fEyeSeparation, _lang.eyeSeparationName, _lang.eyeSeparationTitle );
-		var _controllerEyeSepOffset = _fEyeSeparation.add( new PositionController( function ( shift ) {
+//		const _controllerEyeSepOffset = _fEyeSeparation.add( new PositionController( function ( shift )
+		_fEyeSeparation.add( new PositionController( function ( shift ) {
 
 			options.eyeSep += shift;
 			_controllerEyeSep.setValue( options.eyeSep );
 
 		}, { settings: { offset: 0.01 }, min: 0.0001, max: 0.01, step: 0.0001 }
 		) );
-		var _controllerEyeSep = dat.controllerZeroStep( _fEyeSeparation, options.stereo, 'eyeSep', function ( value ) {
+		const _controllerEyeSep = dat.controllerZeroStep( _fEyeSeparation, options.stereo, 'eyeSep', function ( value ) {
 
 			options.eyeSep = value;
 			setObject( stereoEffect );
@@ -434,8 +440,8 @@ var StereoEffect = function ( renderer, options ) {
 
 		//Zero parallax
 		//http://paulbourke.net/papers/vsmm2007/stereoscopy_workshop.pdf
-		var _minMax = ( 60 - ( 400 / 9 ) ) * guiParams.scale + 400 / 9;
-		var _controllerZeroParallax = _fStereoEffects.add( options, 'zeroParallax', - _minMax, _minMax )
+		const _minMax = ( 60 - ( 400 / 9 ) ) * guiParams.scale + 400 / 9;
+		const _controllerZeroParallax = _fStereoEffects.add( options, 'zeroParallax', - _minMax, _minMax )
 			.onChange( function ( value ) {
 
 				options.zeroParallax = value;
@@ -445,7 +451,7 @@ var StereoEffect = function ( renderer, options ) {
 		dat.controllerNameAndTitle( _controllerZeroParallax, _lang.zeroParallaxName, _lang.zeroParallaxTitle );
 
 		//default button
-		var _controllerDefaultF = _fStereoEffects.add( {
+		const _controllerDefaultF = _fStereoEffects.add( {
 			defaultF: function ( value ) {
 
 				options.stereo.eyeSep = optionsDefault.eyeSep;
@@ -476,7 +482,7 @@ var StereoEffect = function ( renderer, options ) {
 	 */
 	function setObject( name ) {
 
-		var object = {};
+		const object = {};
 		//Object.keys( options.optionsDefault ).forEach( function ( key )
 		Object.keys( optionsDefault ).forEach( function ( key ){
 		
@@ -489,231 +495,243 @@ var StereoEffect = function ( renderer, options ) {
 
 };
 
-export { StereoEffect, spatialMultiplexsIndexs };
+function setTHREE( _THREE ) {
 
-//Modifying of THREE.Raycaster for StereoEffect
-Object.assign( THREE.Raycaster.prototype, {
+	if ( THREE ) {
 
-	//options: followed options is available
-	//{
-	//	stereoEffect: THREE.StereoEffect, Default is effectundefined - no stereo effects
-	//	onIntersection: The onIntersection event occurs when user has moved mouse over any particle.
-	//	onIntersectionOut: The onIntersectionOut event occurs when user has moved mouse out any particle.
-	//	onMouseDown: The onMouseDown event occurs when user has cliced any particle.
-	//	renderer: THREE.WebGLRenderer The WebGL renderer displays your beautifully crafted scenes using WebGL.
-	//	Default is renderer parameter of THREE.StereoEffect or renderer global variable.
-	//}
-	setStereoEffect: function ( options ) {
+		if ( !Object.is(THREE, _THREE) )
+			console.error( 'setTHREE: duplicate THREE. Please use one instance of the THREE library.' )
+		return;
 
-		options = options || {};
-		var camera = options.camera, renderer = options.renderer;
+	}
+	THREE = _THREE;
 
-		var stereoEffect = options.stereoEffect !== undefined ? options.stereoEffect : typeof effect !== 'undefined' ? effect :
-			new StereoEffect( renderer, {
+	//Modifying of THREE.Raycaster for StereoEffect
+	Object.assign( THREE.Raycaster.prototype, {
 
-				spatialMultiplex: spatialMultiplexsIndexs.Mono, //.SbS,
-				far: camera.far,
-				camera: camera,
-				stereoAspect: 1,
+		//options: followed options is available
+		//{
+		//	stereoEffect: THREE.StereoEffect, Default is effectundefined - no stereo effects
+		//	onIntersection: The onIntersection event occurs when user has moved mouse over any particle.
+		//	onIntersectionOut: The onIntersectionOut event occurs when user has moved mouse out any particle.
+		//	onMouseDown: The onMouseDown event occurs when user has cliced any particle.
+		//	renderer: THREE.WebGLRenderer The WebGL renderer displays your beautifully crafted scenes using WebGL.
+		//	Default is renderer parameter of THREE.StereoEffect or renderer global variable.
+		//}
+		setStereoEffect: function ( options ) {
 
-			} ),
-			raycaster = this,
-			particles, //The object or array of objects to check for intersection with the ray. See THREE.Raycaster.intersectObject for details.
-			intersects, //An array of intersections is returned by THREE.Raycaster.intersectObject or THREE.Raycaster.intersectObjects.
-			mouse, //Attention!!! Do not assign new THREE.Vector2() here
+			options = options || {};
+			const camera = options.camera, renderer = options.renderer;
+
+			const stereoEffect = options.stereoEffect !== undefined ? options.stereoEffect : typeof effect !== 'undefined' ? effect :
+				new StereoEffect( THREE, renderer, {
+
+					spatialMultiplex: spatialMultiplexsIndexs.Mono, //.SbS,
+					far: camera.far,
+					camera: camera,
+					stereoAspect: 1,
+
+				} ),
+				raycaster = this,
+				mouseL = new THREE.Vector2(),
+				mouseR = new THREE.Vector2(),
+				cursor = renderer.domElement.style.cursor;
+			var particles, //The object or array of objects to check for intersection with the ray. See THREE.Raycaster.intersectObject for details.
+				intersects, //An array of intersections is returned by THREE.Raycaster.intersectObject or THREE.Raycaster.intersectObjects.
+				mouse; //Attention!!! Do not assign new THREE.Vector2() here
 			//for prevention of invalid detection of intersection with zero point ( THREE.Vector3( 0, 0, 0 ) )
 			//after opening of the web page and before user has moved mouse.
 
-			mouseL = new THREE.Vector2(),
-			mouseR = new THREE.Vector2(),
-			cursor = renderer.domElement.style.cursor;
+			function getMousePosition() {
 
-		function getMousePosition() {
+				stereoEffect.getRendererSize().getMousePosition( mouse, event );
 
-			stereoEffect.getRendererSize().getMousePosition( mouse, event );
+				function mousePosition( vectorName, b ) {
 
-			function mousePosition( vectorName, b ) {
+					mouseL.copy( mouse );
+					mouseR.copy( mouse );
+					const a = 0.5;
 
-				mouseL.copy( mouse );
-				mouseR.copy( mouse );
-				var a = 0.5;
+					mouseL[vectorName] += a;
+					mouseL[vectorName] *= 2;
 
-				mouseL[vectorName] += a;
-				mouseL[vectorName] *= 2;
+					mouseR[vectorName] -= a;
+					mouseR[vectorName] *= 2;
 
-				mouseR[vectorName] -= a;
-				mouseR[vectorName] *= 2;
-
-				//zeroParallax
-				var size = new THREE.Vector2();
-				renderer.getSize( size );
-				var zeroParallax = ( stereoEffect.options.zeroParallax / size.x ) * b;
-				mouseL.x -= zeroParallax;
-				mouseR.x += zeroParallax;
-
-			}
-			switch ( parseInt( stereoEffect.options.spatialMultiplex ) ) {
-
-				case spatialMultiplexsIndexs.Mono:
-					return;
-				case spatialMultiplexsIndexs.SbS:
-					mousePosition( 'x', 4 );
-					break;
-				case spatialMultiplexsIndexs.TaB:
-					mousePosition( 'y', 2 );
-					break;
-				default: console.error( 'THREE.Raycaster.setStereoEffect.getMousePosition: Invalid effect.options.spatialMultiplex = ' + effect.options.spatialMultiplex );
-					return;
-
-			}
-
-		}
-		function getIntersects() {
-
-			if ( particles === undefined )
-				return;
-			intersects = Array.isArray( particles ) ? raycaster.intersectObjects( particles ) : raycaster.intersectObject( particles );
-
-		}
-		function intersection( optionsIntersection ) {
-
-			if ( mouse === undefined )
-				return;//User has not moved mouse
-
-			optionsIntersection = optionsIntersection || options;
-			function isIntersection() {
-
-				getIntersects();
-				if ( intersects.length <= 0 ) {
-
-					if ( optionsIntersection.onIntersectionOut !== undefined )
-						optionsIntersection.onIntersectionOut( intersects );
-					renderer.domElement.style.cursor = renderer.cursor === undefined ? cursor : renderer.cursor;
-					return false;
+					//zeroParallax
+					const size = new THREE.Vector2();
+					renderer.getSize( size );
+					const zeroParallax = ( stereoEffect.options.zeroParallax / size.x ) * b;
+					mouseL.x -= zeroParallax;
+					mouseR.x += zeroParallax;
 
 				}
+				switch ( parseInt( stereoEffect.options.spatialMultiplex ) ) {
 
-				//sometimes frustum point is not displayed any info
-				var userData = intersects[0].object.userData;
-				if ( userData.isInfo === undefined || userData.isInfo() )
-					renderer.domElement.style.cursor = renderer.cursor === undefined ? 'pointer' : renderer.cursor;
-
-				if ( optionsIntersection.onIntersection !== undefined )
-					optionsIntersection.onIntersection( intersects, mouse );
-				return true;
-
-			}
-			if ( parseInt( stereoEffect.options.spatialMultiplex ) !== spatialMultiplexsIndexs.Mono ) {
-
-				var mouseCur = mouse;
-				mouse = mouseL;
-				raycaster.setFromCamera( mouseL, camera );
-				if ( !isIntersection() ) {
-
-					mouse = mouseR;
-					raycaster.setFromCamera( mouseR, camera );
-					isIntersection();
-
-				}
-				mouse = mouseCur;
-				return;
-
-			}
-			raycaster.setFromCamera( mouse, camera );
-			isIntersection();
-
-		}
-
-		this.stereo = {
-
-			onDocumentMouseMove: function ( event ) {
-
-				if ( particles === undefined )
-					return;//The object or array of objects to check for intersection with the ray is not defined. See THREE.Raycaster.intersectObject for details.
-				event.preventDefault();
-				if ( mouse === undefined )
-					mouse = new THREE.Vector2();
-				getMousePosition();
-				intersection();
-
-			},
-			onDocumentMouseDown: function ( event ) {
-
-				intersection( {
-
-					onIntersection: options.onMouseDown,
-
-				} );
-
-			},
-			addParticle: function ( particle ) {
-
-				if ( particles === undefined )
-					particles = [];
-				if ( particles.includes(particle) ) {
-
-					console.error( 'Duplicate particle "' + particle.name + '"' );
-					return;
-
-				}
-				particles.push( particle );
-
-			},
-			addParticles: function ( newParticles ) {
-
-				if ( particles !== undefined ) {
-
-					if ( !Array.isArray( particles ) ) {
-
-						var particlesCur = particles;
-						particles = [];
-						particles.push( particlesCur );
-
-					}
-					particles.push( newParticles );
-					return;
-
-				}
-				particles = newParticles;
-
-			},
-			removeParticle: function ( particle ) {
-
-				for ( var i = 0; i < particles.length; i++ ) {
-
-					if ( Object.is(particle, particles[i]) ) {
-
-						particles.splice( i, 1 );
+					case spatialMultiplexsIndexs.Mono:
+						return;
+					case spatialMultiplexsIndexs.SbS:
+						mousePosition( 'x', 4 );
 						break;
-
-					}
+					case spatialMultiplexsIndexs.TaB:
+						mousePosition( 'y', 2 );
+						break;
+					default: console.error( 'THREE.Raycaster.setStereoEffect.getMousePosition: Invalid effect.options.spatialMultiplex = ' + effect.options.spatialMultiplex );
+						return;
 
 				}
 
-			},
-			removeParticles: function () { particles = undefined; },
-			//get position of intersected object
-			//intersection: fi(rst item of array of intersections. See THREE.Raycaster.intersectObject for details
-			getPosition: function ( intersection/*, noscale*/ ) {
+			}
+			function getIntersects() {
 
-				var attributesPosition = intersection.object.geometry.attributes.position,
-					position = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
-				if ( intersection.index !== undefined ) {
+				if ( particles === undefined )
+					return;
+				intersects = Array.isArray( particles ) ? raycaster.intersectObjects( particles ) : raycaster.intersectObject( particles );
 
-					position.fromArray( attributesPosition.array, intersection.index * attributesPosition.itemSize );
+			}
+			function intersection( optionsIntersection ) {
 
-					position.multiply( intersection.object.scale );
+				if ( mouse === undefined )
+					return;//User has not moved mouse
 
-					position.add( intersection.object.position );
+				optionsIntersection = optionsIntersection || options;
+				function isIntersection() {
 
-				} else position = intersection.object.position;
-				return position;
+					getIntersects();
+					if ( intersects.length <= 0 ) {
+
+						if ( optionsIntersection.onIntersectionOut !== undefined )
+							optionsIntersection.onIntersectionOut( intersects );
+						renderer.domElement.style.cursor = renderer.cursor === undefined ? cursor : renderer.cursor;
+						return false;
+
+					}
+
+					//sometimes frustum point is not displayed any info
+					const userData = intersects[0].object.userData;
+					if ( userData.isInfo === undefined || userData.isInfo() )
+						renderer.domElement.style.cursor = renderer.cursor === undefined ? 'pointer' : renderer.cursor;
+
+					if ( optionsIntersection.onIntersection !== undefined )
+						optionsIntersection.onIntersection( intersects, mouse );
+					return true;
+
+				}
+				if ( parseInt( stereoEffect.options.spatialMultiplex ) !== spatialMultiplexsIndexs.Mono ) {
+
+					const mouseCur = mouse;
+					mouse = mouseL;
+					raycaster.setFromCamera( mouseL, camera );
+					if ( !isIntersection() ) {
+
+						mouse = mouseR;
+						raycaster.setFromCamera( mouseR, camera );
+						isIntersection();
+
+					}
+					mouse = mouseCur;
+					return;
+
+				}
+				raycaster.setFromCamera( mouse, camera );
+				isIntersection();
 
 			}
 
-		};
-		var stereo = this.stereo;
+			this.stereo = {
 
-	}
+				onDocumentMouseMove: function ( event ) {
 
-} );
+					if ( particles === undefined )
+						return;//The object or array of objects to check for intersection with the ray is not defined. See THREE.Raycaster.intersectObject for details.
+					event.preventDefault();
+					if ( mouse === undefined )
+						mouse = new THREE.Vector2();
+					getMousePosition();
+					intersection();
+
+				},
+				onDocumentMouseDown: function ( event ) {
+
+					intersection( {
+
+						onIntersection: options.onMouseDown,
+
+					} );
+
+				},
+				addParticle: function ( particle ) {
+
+					if ( particles === undefined )
+						particles = [];
+					if ( particles.includes( particle ) ) {
+
+						console.error( 'Duplicate particle "' + particle.name + '"' );
+						return;
+
+					}
+					particles.push( particle );
+
+				},
+				addParticles: function ( newParticles ) {
+
+					if ( particles !== undefined ) {
+
+						if ( !Array.isArray( particles ) ) {
+
+							var particlesCur = particles;
+							particles = [];
+							particles.push( particlesCur );
+
+						}
+						particles.push( newParticles );
+						return;
+
+					}
+					particles = newParticles;
+
+				},
+				removeParticle: function ( particle ) {
+
+					for ( var i = 0; i < particles.length; i++ ) {
+
+						if ( Object.is( particle, particles[i] ) ) {
+
+							particles.splice( i, 1 );
+							break;
+
+						}
+
+					}
+
+				},
+				removeParticles: function () { particles = undefined; },
+				//get position of intersected object
+				//intersection: fi(rst item of array of intersections. See THREE.Raycaster.intersectObject for details
+				getPosition: function ( intersection/*, noscale*/ ) {
+
+					const attributesPosition = intersection.object.geometry.attributes.position,
+						position = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
+					if ( intersection.index !== undefined ) {
+
+						position.fromArray( attributesPosition.array, intersection.index * attributesPosition.itemSize );
+
+						position.multiply( intersection.object.scale );
+
+						position.add( intersection.object.position );
+
+					} else position = intersection.object.position;
+					return position;
+
+				}
+
+			};
+			//		var stereo = this.stereo;
+
+		}
+
+	} );
+
+}
+
+export { StereoEffect, spatialMultiplexsIndexs };

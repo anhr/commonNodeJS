@@ -19,7 +19,8 @@
 //import * as THREE from 'https://threejs.org/build/three.module.js';
 //import * as THREE from '../../three.js/dev/build/three.module.js';//https://github.com/anhr/three.js;
 //import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-import { THREE } from './three.js';
+//import { THREE } from './three.js';
+var THREE;
 
 import { dat } from './dat/dat.module.js';
 //import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
@@ -35,6 +36,7 @@ import ColorPicker from '../../colorpicker/master/colorpicker.js';//https://gith
 
 /**
  * A dat.gui based graphical user interface for select a point from the mesh.
+ * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {object} [guiParams] Followed parameters is allowed. Default is no parameters
  * @param {AxesHelper} [guiParams.axesHelper] An axis object to visualize axes. Default is undefined.
  * See {@link https://github.com/anhr/AxesHelper|AxesHelper}.
@@ -73,7 +75,9 @@ guiParams = {
 
 }
  */
-function GuiSelectPoint( guiParams ) {
+function GuiSelectPoint( _THREE, guiParams ) {
+
+	GuiSelectPoint.setTHREE( _THREE );
 
 	guiParams = guiParams || {};
 
@@ -132,11 +136,7 @@ function GuiSelectPoint( guiParams ) {
 
 		pointWorld: 'Point World Position',
 		pointWorldTitle: 'The position of the selected point after scaling, moving and rotation of the mesh',
-/*
-		trace: 'Trace',
-		traceTitle: 'Display the trace of the point movement.',
-		traceAllTitle: 'Display the trace of the movement of all points of the mesh.',
-*/
+
 		mesh: 'Mesh',
 		scale: 'Scale',
 		color: 'Сolor',
@@ -150,23 +150,6 @@ function GuiSelectPoint( guiParams ) {
 		default3DObjectTitle: 'Restore default settings of all 3d objects.',
 		defaultRotationTitle: 'Restore default 3d object rotation.',
 		defaultLocalPositionTitle: 'Restore default local position.',
-		/*
-					defaultTitle: 'Restore Orbit controls settings.',
-					pointName: 'Point Name',
-					settings: 'Settings',
-					webglcontextlost: 'The user agent has detected that the drawing buffer associated with a WebGLRenderingContext object has been lost.',
-		
-					light: 'Light',
-					displayLight: 'Display',
-					displayLightTitle: 'Display or hide the light source.',
-					restoreLightTitle: 'Restore position of the light source',
-		
-					pointSettings: 'Point',
-					size: 'Size',
-					sizeTitle: 'Size of the point with "ShaderMaterial" material',
-					defaultPointTitle: 'Restore point.',
-		
-		*/
 
 		moveGroup: 'Move Scene',
 
@@ -194,11 +177,7 @@ function GuiSelectPoint( guiParams ) {
 
 			lang.pointWorld = 'Абсолютная позиция точки';
 			lang.pointWorldTitle = 'Позиция выбранной точки после масштабирования, перемещения и вращения 3D объекта';
-/*
-			lang.trace = 'Трек';
-			lang.traceTitle = 'Показать трек перемещения точки.';
-			lang.traceAllTitle = 'Показать трек перемещения всех точек выбранного 3D объекта.';
-*/
+
 			lang.mesh = '3D объект';
 			lang.scale = 'Масштаб';
 			lang.color = 'Цвет';
@@ -212,28 +191,6 @@ function GuiSelectPoint( guiParams ) {
 			lang.default3DObjectTitle = 'Восстановить настройки всех 3D объектов по умолчанию.';
 			lang.defaultRotationTitle = 'Восстановить поворот 3D объекта по умолчанию.';
 			lang.defaultLocalPositionTitle = 'Восстановить локальную позицию точки по умолчанию.';
-			/*
-							lang.defaultTitle = 'Восстановить положение осей координат по умолчанию.';
-							lang.pointName = 'Имя точки';
-							lang.name = 'Имя';
-							//		lang.opacity = 'Непрозрачность',
-							lang.settings = 'Настройки';
-							lang.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
-			
-							lang.light = 'Свет';
-							lang.displayLight = 'Показать';
-							lang.displayLightTitle = 'Показать или скрыть источник света.';
-							lang.restoreLightTitle = 'Восстановить положение источника света';
-			
-							lang.pointSettings = 'Точка';
-							lang.size = 'Размер';
-							lang.sizeTitle = 'Размер точки с материалом типа "ShaderMaterial"';
-							lang.opacity = 'Непрозрачность';
-							lang.opacityTitle = 'Число в диапазоне 0,0 - 1,0, указывающий, насколько прозрачен материал. Значение 0.0 означает полностью прозрачный, 1.0 - полностью непрозрачный.';
-							lang.defaultPointTitle = 'Восстановить точку';
-			
-							lang.moveGroup = 'Переместить сцену';
-			*/
 			break;
 		default://Custom language
 			if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
@@ -1498,6 +1455,25 @@ function getObjectPosition( object, index ) {
 	if ( index === undefined )
 		return object.position;
 	return getWorldPosition( object, getObjectLocalPosition( object, index ) )
+
+}
+
+/**
+ * set THREE
+ * @function GuiSelectPoint.
+ * setTHREE
+ * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
+ */
+GuiSelectPoint.setTHREE = function ( _THREE ) {
+
+	if ( THREE ) {
+
+		if ( !Object.is(THREE, _THREE) )
+			console.error( 'GuiSelectPoint.setTHREE: duplicate THREE. Please use one instance of the THREE library.' )
+		return;
+
+	}
+	THREE = _THREE;
 
 }
 export { GuiSelectPoint, getWorldPosition, getObjectLocalPosition, getObjectPosition };
