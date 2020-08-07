@@ -55,8 +55,9 @@ function animate() {
 }
 ```
 Now you can see, canvas was divided to left and right scenes.
-* Using [dat.gui](https://github.com/anhr/dat.gui) for change of the effect settings.
-import dat.gui.
+* Using [dat.gui](https://github.com/anhr/dat.gui) for change of the StereoEffect settings.
+
+Import dat.gui.
 ```
 import { dat } from '../commonNodeJS/master/dat/dat.module.js';
 ```
