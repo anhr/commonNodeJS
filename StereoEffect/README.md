@@ -98,7 +98,86 @@ stereoEffect.gui( gui, {
 } );
 ```
 * [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
+Get default cursor
 ```
+const cursor = renderer.domElement.style.cursor;
+```
+Define of the actions for objects in the 3d space the mouse is over.
+```
+points.userData.raycaster = {
+
+	onIntersection: function ( intersection ) {
+
+		renderer.domElement.style.cursor = 'pointer';
+
+	},
+	onIntersectionOut: function ( ) {
+
+		renderer.domElement.style.cursor = cursor;
+
+	},
+	onMouseDown: function ( intersect ) {
+
+		alert( 'Mouse is down over point' );
+
+	}
+
+}
+```
+Create the THREE.Raycaster instance.
+```
+var raycaster;
+raycaster = new THREE.Raycaster();
+raycaster.params.Points.threshold = 0.02;//the precision of the raycaster when intersecting objects, in world units. See [params](https://threejs.org/docs/#api/en/core/Raycaster.params).
+raycaster.setStereoEffect( {
+
+	renderer: renderer,
+	camera: camera,
+	stereoEffect: stereoEffect,
+	onIntersection: function ( intersects, mouse ) {
+
+		points.userData.raycaster.onIntersection( intersects[0] );
+
+	},
+	onIntersectionOut: function ( intersects ) { points.userData.raycaster.onIntersectionOut() },
+	onMouseDown: function ( intersects ) {
+
+		var intersection = intersects[0];
+		if (
+			( intersection.object.userData.raycaster !== undefined )
+			&& ( intersection.object.userData.raycaster.onMouseDown !== undefined ) ) {
+
+			intersection.object.userData.raycaster.onMouseDown( intersection );
+
+		}
+
+	}
+
+} );
+raycaster.stereo.addParticle( points );
+```
+Add event listeners
+```
+const mouse = new THREE.Vector2();
+window.addEventListener( 'mousemove', function( event ) {
+
+	// calculate mouse position in normalized device coordinates
+	// (-1 to +1) for both components
+
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+	// update the picking ray with the camera and mouse position
+	raycaster.setFromCamera( mouse, camera );
+
+	raycaster.stereo.onDocumentMouseMove( event );
+
+}, false );
+window.addEventListener( 'mousedown', function( event ) {
+
+	raycaster.stereo.onDocumentMouseDown( event );
+
+}, false );
 ```
 
 ## On the following browsers have been successfully tested:

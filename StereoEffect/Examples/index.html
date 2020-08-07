@@ -55,7 +55,7 @@
 		import { StereoEffect, spatialMultiplexsIndexs } from '../StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
-		var camera, scene, renderer, stereoEffect;//, axesHelper, controls, intersects, guiSelectPoint;
+		var camera, scene, renderer, stereoEffect, raycaster;//, axesHelper, controls, intersects, guiSelectPoint;
 /*
 		const raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2(), arrayintersectObjects = [], threshold = 0.02;
 		raycaster.params.Points.threshold = threshold;
@@ -157,73 +157,28 @@
 			arrayintersectObjects.push( points );
 			function getIntersectionPosition( intersection )
 				{ return new THREE.Vector3().fromArray( points.geometry.attributes.position.array, intersection.index * points.geometry.attributes.position.itemSize ); }
+*/
+			//[Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
+			//Define of the actions for objects in the 3d space the mouse is over.
 			points.userData.raycaster = {
 
 				onIntersection: function ( intersection ) {
 
-					if ( !this.bIntersectionOut )
-						return;
-					this.bIntersectionOut = false;
-					const position = getIntersectionPosition( intersection );
-					//console.warn( 'onIntersection x = ' + position.x + ' y =  ' + position.y + ' z = ' +  position.z );
-
-					var x, y, z;
-					if ( axesHelper ) {
-
-						const scales = axesHelper.options.scales;
-						x = scales.x.name;
-						y = scales.y.name;
-						z = scales.z.name;
-
-					} else {
-
-						x = 'x';
-						y = 'y';
-						z = 'z';
-						
-					}
-					this.spriteText = new SpriteText(
-						'Point\n' + x + ' = ' + position.x + '\n' + y + ' =  ' + position.y + '\n' + z + ' = ' +  position.z,
-						position, {
-
-							group: scene,
-							rect: {
-
-								displayRect: true,
-								borderRadius: 15,
-
-							},
-							center: new THREE.Vector2( 1, 0 ),
-							//sizeAttenuation: true,
-
-						}
-					);
-					
 					renderer.domElement.style.cursor = 'pointer';
 
 				},
 				onIntersectionOut: function ( ) {
 
-					if ( this.bIntersectionOut )
-						return;
-					this.bIntersectionOut = true;
-					//console.warn( 'onIntersectionOut' );
-					scene.remove( this.spriteText );
 					renderer.domElement.style.cursor = cursor;
 
 				},
-				bIntersectionOut: true,
 				onMouseDown: function ( intersect ) {
 
-					if ( !axesHelper )
-						return;
-					axesHelper.exposePosition( getIntersectionPosition( intersect ) );
+					alert( 'Mouse is down over point' );
 
 				}
 
-
 			}
-*/
 			scene.add( points );
 /*
 			scene.add( new THREE.AmbientLight( 0x222222 ) );
@@ -241,7 +196,7 @@
 			} );
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
-//			const cursor = renderer.domElement.style.cursor;
+			const cursor = renderer.domElement.style.cursor;
 			document.body.appendChild( renderer.domElement );
 
 			stereoEffect = new StereoEffect( THREE, renderer, {
@@ -264,6 +219,37 @@
 
 			} );
 
+			//[Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
+
+			raycaster = new THREE.Raycaster();
+			raycaster.params.Points.threshold = 0.02;//threshold is the precision of the raycaster when intersecting objects, in world units. See [params](https://threejs.org/docs/#api/en/core/Raycaster.params)
+			raycaster.setStereoEffect( {
+
+				renderer: renderer,
+				camera: camera,
+				stereoEffect: stereoEffect,
+				onIntersection: function ( intersects, mouse ) {
+
+					points.userData.raycaster.onIntersection( intersects[0] );
+
+				},
+				onIntersectionOut: function ( intersects ) { points.userData.raycaster.onIntersectionOut() },
+				onMouseDown: function ( intersects ) {
+
+					var intersection = intersects[0];
+					if (
+						( intersection.object.userData.raycaster !== undefined )
+						&& ( intersection.object.userData.raycaster.onMouseDown !== undefined ) ) {
+
+						intersection.object.userData.raycaster.onMouseDown( intersection );
+
+					}
+
+				}
+
+			} );
+			raycaster.stereo.addParticle( points );
+
 			window.addEventListener( 'resize', onWindowResize, false );
 
 			//
@@ -271,42 +257,6 @@
 			controls = new OrbitControls( camera, renderer.domElement );
 			controls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
 			controls.update();
-*/
-/*
-			//dat-gui JavaScript Controller Library
-			if ( typeof dat !== "undefined" ) {
-
-	//			const gui = new dat.GUI();
-				const gui =  new dat.GUI( {
-
-					//autoPlace: false,//Убрать скроллинг когда окно gui не влазит в окно браузера
-					//closed: true,//Icorrect "Open Controls" button name
-
-				} );
-
-				guiSelectPoint = new GuiSelectPoint( { axesHelper: axesHelper, } );
-				guiSelectPoint.add( gui, {
-
-	//				cookie: cookie,
-					//getLanguageCode: getLanguageCode,
-
-				} );
-//				guiSelectPoint.addPointControllers();
-				guiSelectPoint.addMesh( points );
-
-				if ( typeof SpriteTextGui !== "undefined" )
-					SpriteTextGui( gui, scene, {
-
-						getLanguageCode: getLanguageCode,
-						//settings: { zoomMultiplier: 1.5, },
-						cookie: cookie,
-						//cookieName: 'SpriteText',
-						//parentFolder: fScales,
-						//options: groupAxesHelper.userData.optionsSpriteText,
-
-					} );
-
-			}
 */
 
 		}
@@ -318,8 +268,9 @@
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
 		}
-/*
+
 		//Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
+		const mouse = new THREE.Vector2();
 		window.addEventListener( 'mousemove', function( event ) {
 
 			// calculate mouse position in normalized device coordinates
@@ -327,59 +278,18 @@
 
 			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-//			console.warn( 'mouse.x = ' + mouse.x + ' mouse.y = ' + mouse.y );
-
-			//Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
 
 			// update the picking ray with the camera and mouse position
 			raycaster.setFromCamera( mouse, camera );
 
-			// calculate objects intersecting the picking ray
-			intersects = raycaster.intersectObjects( arrayintersectObjects );
-
-			arrayintersectObjects.forEach( function ( object ) {
-
-				if ( !intersects )
-					return;
-				var bIntersected = false;
-				for ( var i = 0; i < intersects.length; i++ ) {
-
-					const intersect = intersects[ i ];
-//					const objectIntersect = intersects[ i ].object;
-					if ( Object.is( object, intersect.object ) ) {
-
-						object.userData.raycaster.onIntersection( intersect );
-						bIntersected = true;
-
-					}
-
-				}
-				if ( !bIntersected )
-					object.userData.raycaster.onIntersectionOut();
-
-			} );
+			raycaster.stereo.onDocumentMouseMove( event );
 
 		}, false );
 		window.addEventListener( 'mousedown', function( event ) {
 
-			if ( raycaster === undefined )
-				return;
-
-			if ( intersects.length > 0 ) {
-
-				if ( intersects[0].object.userData.raycaster ) {
-
-					const intersect = intersects[0];
-					intersect.object.userData.raycaster.onMouseDown( intersect );
-					if ( guiSelectPoint )
-						guiSelectPoint.select( intersect );
-
-				}
-
-			}
+			raycaster.stereo.onDocumentMouseDown( event );
 
 		}, false );
-*/
 
 		function animate() {
 
