@@ -25,13 +25,11 @@
 //import * as THREE from 'https://threejs.org/build/three.module.js';
 var THREE;
 
-import PositionController from '../PositionController.js';
-//import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
+//import PositionController from '../PositionController.js';
+import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
 
-import cookie from '../../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/cookieNodeJS
-//import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
-
-import { dat } from '../dat/dat.module.js';
+//import { dat } from '../dat/dat.module.js';
+import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
 //Attenttion!!! Save this file as UTF-8 for localization.
 
@@ -53,7 +51,7 @@ const spatialMultiplexsIndexs = {
  * Uses dual PerspectiveCameras for Parallax Barrier https://en.wikipedia.org/wiki/Parallax_barrier effects
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {Object} renderer THREE.WebGLRenderer
- * @param {Object} [options] the following options are available. Optional.
+ * @param {Object} [options] the following options are available.
  * @param {Object} [options.spatialMultiplex] spatial multiplex
  * See https://en.wikipedia.org/wiki/DVB_3D-TV for details
  * 	Available values
@@ -509,15 +507,23 @@ function setTHREE( _THREE ) {
 	//Modifying of THREE.Raycaster for StereoEffect
 	Object.assign( THREE.Raycaster.prototype, {
 
-		//options: followed options is available
-		//{
-		//	stereoEffect: THREE.StereoEffect, Default is effectundefined - no stereo effects
-		//	onIntersection: The onIntersection event occurs when user has moved mouse over any particle.
-		//	onIntersectionOut: The onIntersectionOut event occurs when user has moved mouse out any particle.
-		//	onMouseDown: The onMouseDown event occurs when user has cliced any particle.
-		//	renderer: THREE.WebGLRenderer The WebGL renderer displays your beautifully crafted scenes using WebGL.
-		//	Default is renderer parameter of THREE.StereoEffect or renderer global variable.
-		//}
+		/**
+		 * setStereoEffect
+		 * @param {Object} [options]
+		 * @param {THREE.StereoEffect} [options.stereoEffect] stereoEffect. Default is effectundefined - no stereo effects
+		 * @param {Function} [options.onIntersection] onIntersection( intersects, mouse ) The onIntersection event occurs when user has moved mouse over any particle.
+		 * intersects - array of intersections. {@link https://threejs.org/docs/#api/en/core/Raycaster.params|Raycaster.params}
+		 * mouse - THREE.Vector2 mouse position
+		 * Default is undefined.
+		 * @param {Function} [options.onIntersectionOut] onIntersectionOut( intersects ) The onIntersectionOut event occurs when user has moved mouse out any particle.
+		 * intersects - array of intersections. {@link https://threejs.org/docs/#api/en/core/Raycaster.params|Raycaster.params}
+		 * Default is undefined.
+		 * @param {Function} [options.onMouseDown] onMouseDown( intersects )The onMouseDown event occurs when user has cliced any particle.
+		 * intersects - array of intersections. {@link https://threejs.org/docs/#api/en/core/Raycaster.params|Raycaster.params}
+		 * Default is undefined.
+		 * @param {THREE.WebGLRenderer} [options.renderer] renderer. The WebGL renderer displays your beautifully crafted scenes using WebGL.
+		 * Default is renderer parameter of THREE.StereoEffect
+		 */
 		setStereoEffect: function ( options ) {
 
 			options = options || {};

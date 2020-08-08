@@ -157,7 +157,7 @@ raycaster.setStereoEffect( {
 } );
 raycaster.stereo.addParticle( points );
 ```
-Add event listeners
+Add event listeners.
 ```
 const mouse = new THREE.Vector2();
 window.addEventListener( 'mousemove', function( event ) {
