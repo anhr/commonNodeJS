@@ -37,8 +37,8 @@
 		//import { getLanguageCode } from '../../lang.js';//https://github.com/anhr/commonNodeJS
 		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 
-		//import { StereoEffect, spatialMultiplexsIndexs } from '../StereoEffect.js';//https://github.com/anhr/commonNodeJS
-		import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+		import { StereoEffect, spatialMultiplexsIndexs } from '../StereoEffect.js';//https://github.com/anhr/commonNodeJS
+		//import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
 		var camera, scene, renderer, stereoEffect, raycaster;//, axesHelper, controls, intersects, guiSelectPoint;
 
@@ -65,6 +65,7 @@
 					alphaTest: 0.5,
 
 				} ) );
+			scene.add( points );
 
 			//[Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
 			//Define of the actions for objects in the 3d space the mouse is over.
@@ -87,7 +88,6 @@
 				}
 
 			}
-			scene.add( points );
 
 			renderer = new THREE.WebGLRenderer( {
 
@@ -105,7 +105,6 @@
 				spatialMultiplex: spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 				far: camera.far,
 				camera: camera,
-				cookie: cookie,//Saves a custom Stereo Effects settings in the cookie
 				//stereoAspect: 1,
 
 			} );
@@ -117,6 +116,7 @@
 			stereoEffect.gui( gui, {
 
 				getLanguageCode: getLanguageCode,
+				cookie: cookie,//Saves a custom Stereo Effects settings in the cookie
 
 			} );
 

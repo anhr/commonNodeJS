@@ -71,8 +71,6 @@ const spatialMultiplexsIndexs = {
  * 	Default is spatialMultiplexsIndexs.SbS
  * @param {Object} [options.camera] THREE.PerspectiveCamera. Use the camera key if you want control cameras focus.
  * @param {Object} [options.far] Camera frustum far plane. The far key uses for correct calculation default values of Eye separation. Default is 10.
- * @param {Object} [options.cookie] Your custom cookie function for saving and loading of the StereoEffects settings. Default cookie is not saving settings.
- * @param {cookie} [options.cookieName] Name of the cookie is "StereoEffect" + options.cookieName. Default is undefined.
  * @param {Object} [options.stereoAspect] THREE.StereoCamera.aspect. Camera frustum aspect ratio. Default is 1.
  * @param {boolean} [options.rememberSize] true - remember default size of the canvas. Default is undefined.
  * @param {onFullScreen} [options.onFullScreen] Full screen event
@@ -84,8 +82,6 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 
 	setTHREE( _THREE );
 
-	const stereoEffect = 'StereoEffect' + ( options.cookieName || '' );
-
 	options = options || {};
 	this.options = options;
 
@@ -95,6 +91,8 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 		options.far = new PerspectiveCamera().focus;
 	options.focus = options.camera === undefined ? new PerspectiveCamera().focus : new THREE.Vector3().distanceTo( options.camera.position );
 	options.zeroParallax = 0;
+	options.eyeSep = options.eyeSep || ( new THREE.StereoCamera().eyeSep / 10 ) * options.far;
+/*
 	options.cookie = options.cookie || new cookie.defaultCookie();
 	const optionsDefault = {
 
@@ -105,6 +103,7 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 
 	}
 	options.cookie.getObject( stereoEffect, options, optionsDefault );
+*/
 	if ( options.camera !== undefined )
 		options.camera.focus = options.focus;
 
@@ -287,14 +286,28 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 	 * Default returns the 'en' is English language.
 	 * @param {Object} [guiParams.lang] Object with localized language values.
 	 * @param {number} [guiParams.scale] scale of allowed values. Default is 1.
+	 * @param {Object} [guiParams.cookie] Your custom cookie function for saving and loading of the StereoEffects settings. Default cookie is not saving settings.
+	 * @param {cookie} [guiParams.cookieName] Name of the cookie is "StereoEffect" + options.cookieName. Default is undefined.
 	 */
 	this.gui = function ( gui, guiParams ) {
 
 		if ( gui === undefined )
 			return;
-
 		if ( guiParams === undefined ) guiParams = {};
 		guiParams.scale = guiParams.scale || 1;
+
+		const stereoEffect = 'StereoEffect' + ( guiParams.cookieName || '' );
+		guiParams.cookie = guiParams.cookie || new cookie.defaultCookie();
+		const optionsDefault = {
+
+			spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.SbS, //Use default as 'Side by side' for compability with previous version of THREE.StereoEffect
+			eyeSep: ( new THREE.StereoCamera().eyeSep / 10 ) * options.far,
+			focus: options.focus,
+			zeroParallax: 0,
+
+		}
+		Object.freeze( optionsDefault );
+		guiParams.cookie.getObject( stereoEffect, options, optionsDefault );
 
 		//Localization
 
@@ -424,13 +437,15 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 		dat.controllerNameAndTitle( _controllerEyeSep, _lang.eyeSeparationName, _lang.eyeSeparationTitle );
 
 		//camera.focus
+		options.camera.focus = options.focus;
 		var _controllerCameraFocus;
 		if ( options.camera ) {
 
-			_controllerCameraFocus = _fStereoEffects.add( options.camera, 'focus',
-				optionsDefault.focus / 10, optionsDefault.focus * 2, optionsDefault.focus / 1000 )
+			_controllerCameraFocus = _fStereoEffects.add( options.camera,
+				'focus', optionsDefault.focus / 10, optionsDefault.focus * 2, optionsDefault.focus / 1000 )
 				.onChange( function ( value ) {
 
+//					options.camera.focus = value;
 					options.focus = value;
 					setObject( stereoEffect );
 
@@ -475,22 +490,21 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 
 		displayControllers( options.spatialMultiplex );
 
-	};
+		/**
+		 * sets an object into cookie.
+		 * @param {string} name cookie name.
+		 */
+		function setObject( name ) {
 
-	/**
-	 * sets an object into cookie.
-	 * @param {string} name cookie name.
-	 */
-	function setObject( name ) {
+			const object = {};
+			Object.keys( optionsDefault ).forEach( function ( key ) {
 
-		const object = {};
-		//Object.keys( options.optionsDefault ).forEach( function ( key )
-		Object.keys( optionsDefault ).forEach( function ( key ){
-		
-			object[key] = options[key];
-		
-		} );
-		options.cookie.setObject( name, object );
+				object[key] = options[key];
+
+			} );
+			guiParams.cookie.setObject( name, object );
+
+		};
 
 	};
 
