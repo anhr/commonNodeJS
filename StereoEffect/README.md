@@ -14,7 +14,6 @@ Uses in my projects:
 ## Quick start
 
 * Create a folder on your localhost named as [folderName].
-* Download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
 * Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 * Download [cookieNodeJS](https://github.com/anhr/cookieNodeJS) repository into your "[folderName]\cookieNodeJS\master" folder.
 * Download [dat.gui](https://github.com/anhr/dat.gui) repository into your "[folderName]\dat.gui\CustomController" folder.
@@ -35,11 +34,11 @@ import * as THREE from './three.js/dev/build/three.module.js';
 
 The easiest way to use StereoEffect in your code is import StereoEffect from StereoEffect.js file in your JavaScript module. [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/)
 ```
-import { StereoEffect, spatialMultiplexsIndexs } from '../commonNodeJS/master/StereoEffect/StereoEffect.js';
-```
-or
-```
 import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import { StereoEffect, spatialMultiplexsIndexs } from './commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
 
 Now you can use StereoEffect in your javascript code. See [StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/index.html) for details.
@@ -52,7 +51,9 @@ stereoEffect = new StereoEffect( THREE, renderer, {
 	spatialMultiplex: spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 	far: camera.far,
 	camera: camera,
-	cookie: cookie,//Saves a custom Stereo Effects settings to the cookie
+
+	//Saves a custom StereoEffect settings to the cookie
+	//cookie: cookie,
 
 } );
 stereoEffect.setSize( window.innerWidth, window.innerHeight );
@@ -76,11 +77,24 @@ Import dat.gui.
 ```
 import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 ```
-or
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import { dat } from '../commonNodeJS/master/dat/dat.module.js';
+import { dat } from './commonNodeJS/master/dat/dat.module.js';
 ```
-Import getLanguageCode if you want to localize the gui.
+Add StereoEffect setting into gui.
+```
+const gui =  new dat.GUI();
+stereoEffect.gui( gui, {
+
+	//getLanguageCode: getLanguageCode,
+
+} );
+```
+If you want to localize the gui, please uncomment
+```
+getLanguageCode: getLanguageCode,
+```
+line above and import getLanguageCode.
 ```
 import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 ```
@@ -88,15 +102,19 @@ or
 ```
 import { getLanguageCode } from '../commonNodeJS/master/lang.js';
 ```
-Add StereoEffect setting into gui.
+If you want save a custom StereoEffect settings to the cookie, please uncomment
 ```
-const gui =  new dat.GUI();
-stereoEffect.gui( gui, {
-
-	getLanguageCode: getLanguageCode,
-
-} );
+cookie: cookie,
 ```
+line in the new StereoEffect options and import cookie.
+```
+import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
+```
+or 
+```
+import cookie from '../../../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/cookieNodeJS
+```
+
 * [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
 
 Get default cursor
