@@ -36,22 +36,29 @@ import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.mo
 
 //Attenttion!!! Save this file as UTF-8 for localization.
 
-//spatialMultiplex
-//https://en.wikipedia.org/wiki/DVB_3D-TV
+/**
+ * Enumeration of available stereo modes.
+ * @see {@link https://en.wikipedia.org/wiki/DVB_3D-TV|DVB 3D-TV} for details
+ * @readonly
+ * @enum {number}
+ */
 const spatialMultiplexsIndexs = {
+	/** No stereo effect */
 	Mono: 0,
-	SbS: 1, //https://en.wikipedia.org/wiki/DVB_3D-TV#Side_by_side
-	TaB: 2, //https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom
+	/** {@link https://en.wikipedia.org/wiki/DVB_3D-TV#Side_by_side|Side by side} */
+	SbS: 1, //
+	/** {@link https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom|Top and bottom} */
+	TaB: 2, //
 }
 
 /**
  * StereoEffect
  * Uses dual PerspectiveCameras for Parallax Barrier https://en.wikipedia.org/wiki/Parallax_barrier effects
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
- * @param {Object} renderer THREE.WebGLRenderer
+ * @param {Object} renderer {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer}
  * @param {Object} [options] the following options are available.
  * @param {Object} [options.spatialMultiplex] spatial multiplex
- * See https://en.wikipedia.org/wiki/DVB_3D-TV for details
+ * See {@link https://en.wikipedia.org/wiki/DVB_3D-TV|DVB 3D-TV} for details
  * 	Available values
  *
  * 		spatialMultiplexsIndexs.Mono - no stereo effacts
@@ -63,7 +70,7 @@ const spatialMultiplexsIndexs = {
  * 			See //https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom for details
  *
  * 	Example - spatialMultiplex: spatialMultiplexsIndexs.Mono
- * 	Default is spatialMultiplexsIndexs.SbS
+ * 	Default is spatialMultiplexsIndexs.Mono
  * @param {Object} [options.camera] THREE.PerspectiveCamera. Use the camera key if you want control cameras focus.
  * @param {Object} [options.far] Camera frustum far plane. The far key uses for correct calculation default values of Eye separation. Default is 10.
  * @param {Object} [options.stereoAspect] THREE.StereoCamera.aspect. Camera frustum aspect ratio. Default is 1.
@@ -298,7 +305,7 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 		guiParams.cookie = guiParams.cookie || new cookie.defaultCookie();
 		const optionsDefault = {
 
-			spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.SbS, //Use default as 'Side by side' for compability with previous version of THREE.StereoEffect
+			spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.Mono,//SbS,
 			eyeSep: ( new THREE.StereoCamera().eyeSep / 10 ) * options.far,
 			focus: options.focus,
 			zeroParallax: 0,
