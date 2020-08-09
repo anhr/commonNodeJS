@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: StereoEffectUses dual PerspectiveCameras for Parallax Barrier  effects.</title>
+    <title>JSDoc: Module: StereoEffectUses dual PerspectiveCameras for Parallax Barrier effects.</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: StereoEffectUses dual PerspectiveCameras for Parallax Barrier  effects.</h1>
+    <h1 class="page-title">Module: StereoEffectUses dual PerspectiveCameras for Parallax Barrier effects.</h1>
 
     
 
@@ -134,7 +134,7 @@
     
 
     
-    <h4 class="name" id="~StereoEffect"><span class="type-signature">(inner) </span>StereoEffect<span class="signature">(renderer, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~StereoEffect"><span class="type-signature">(inner) </span>StereoEffect<span class="signature">(_THREE, renderer, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -176,6 +176,37 @@
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>_THREE</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="https://github.com/anhr/three.js">THREE</a></td>
+        </tr>
+
     
 
         <tr>
@@ -237,7 +268,7 @@
 
             
 
-            <td class="description last">the following options are available. Optional.
+            <td class="description last">the following options are available.
                 <h6>Properties</h6>
                 
 
@@ -364,72 +395,6 @@
 
         <tr>
             
-                <td class="name"><code>cookie</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Your custom cookie function for saving and loading of the StereoEffects settings. Default cookie is not saving settings.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cookieName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">cookie</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Name of the cookie is "StereoEffect" + options.cookieName. Default is undefined.</td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>stereoAspect</code></td>
             
 
@@ -456,7 +421,7 @@
 
             
 
-            <td class="description last">THREE.StereoCamera.aspect. Camera frustum aspect ratio. Default is 0.5 for compatibility with previous version.</td>
+            <td class="description last">THREE.StereoCamera.aspect. Camera frustum aspect ratio. Default is 1.</td>
         </tr>
 
     
@@ -493,10 +458,17 @@
         </tr>
 
     
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
 
         <tr>
             
-                <td class="name"><code>onFullScreen</code></td>
+                <td class="name"><code>options.</code></td>
             
 
             <td class="type">
@@ -529,7 +501,40 @@
 
         <tr>
             
-                <td class="name"><code>elParent</code></td>
+                <td class="name"><code>options.onFullScreen</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">onFullScreen( fullScreen )fullScreen true - go to full screen mode. false - restore from full screen mode.Default is undefined.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options.elParent</code></td>
             
 
             <td class="type">
@@ -555,14 +560,7 @@
 
             
 
-            <td class="description last">parent of the canvas. Use only if you use THREE.Raycaster (working out what objects in the 3d space the mouse is over) https://threejs.org/docs/index.html#api/en/core/Raycaster and your canvas is not full screen.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last">parent of the canvas.Use only if you use <a href="https://threejs.org/docs/index.html#api/en/core/Raycaster">THREE.Raycaster</a> (working out what objects in the 3d space the mouse is over)and your canvas is not full screen.</td>
         </tr>
 
     
@@ -897,6 +895,72 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>cookie</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Your custom cookie function for saving and loading of the StereoEffects settings. Default cookie is not saving settings.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cookieName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">cookie</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Name of the cookie is "StereoEffect" + options.cookieName. Default is undefined.</td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -941,7 +1005,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line269">line 269</a>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line272">line 272</a>
     </li></ul></dd>
     
 
@@ -979,23 +1043,21 @@
 
 
         
-    
-
-    
-        <h3 class="subsection-title">Type Definitions</h3>
-
-        
-                
+            
 
     
 
     
-    <h4 class="name" id="~onFullScreen"><span class="type-signature"></span>onFullScreen<span class="signature">(fullScreen)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~THREE.Raycaster.setStereoEffect"><span class="type-signature">(inner) </span>THREE.Raycaster.setStereoEffect<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
 
 
+
+<div class="description">
+    sets StereoEffect options to the <a href="https://threejs.org/docs/#api/en/core/Raycaster">THREE.Raycaster</a>
+</div>
 
 
 
@@ -1018,6 +1080,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -1030,23 +1094,226 @@
 
         <tr>
             
-                <td class="name"><code>fullScreen</code></td>
+                <td class="name"><code>options</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">Object</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">true - go to full screen mode. false - restore from full screen mode.</td>
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>stereoEffect</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">StereoEffect</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">stereoEffect. Default is effectundefined - no stereo effects</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onIntersection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">onIntersection( intersects, mouse ) The onIntersection event occurs when user has moved mouse over any particle.intersects - array of intersections. See <a href="https://threejs.org/docs/#api/en/core/Raycaster.intersectObject">Raycaster.intersectObject</a>.mouse - THREE.Vector2 mouse position.Default is undefined.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onIntersectionOut</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">onIntersectionOut( intersects ) The onIntersectionOut event occurs when user has moved mouse out any particle.intersects - array of intersections. See <a href="https://threejs.org/docs/#api/en/core/Raycaster.intersectObject">Raycaster.intersectObject</a>.Default is undefined.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onMouseDown</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">onMouseDown( intersects )The onMouseDown event occurs when user has cliced any particle.intersects - array of intersections. See <a href="https://threejs.org/docs/#api/en/core/Raycaster.intersectObject">Raycaster.intersectObject</a>.Default is undefined.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>renderer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.WebGLRenderer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">renderer. The <a href="https://threejs.org/docs/#api/en/renderers/WebGLRenderer">WebGL renderer</a> displays your beautifully crafted scenes using WebGL.Default is renderer parameter of THREE.StereoEffect</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -1087,7 +1354,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line44">line 44</a>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line525">line 525</a>
     </li></ul></dd>
     
 
@@ -1117,7 +1384,9 @@
 
 
 
-            
+        
+    
+
     
 
     
@@ -1131,13 +1400,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="StereoEffect%250D%250DUses%2520dual%2520PerspectiveCameras%2520for%2520Parallax%2520Barrier%2520%2520effects.module_.html">StereoEffectUses dual PerspectiveCameras for Parallax Barrier  effects.</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="StereoEffect%250D%250DUses%2520dual%2520PerspectiveCameras%2520for%2520Parallax%2520Barrier%2520effects.module_.html">StereoEffectUses dual PerspectiveCameras for Parallax Barrier effects.</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue Aug 04 2020 10:52:10 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Aug 09 2020 12:41:15 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -45,11 +45,6 @@ const spatialMultiplexsIndexs = {
 }
 
 /**
- * @callback onFullScreen
- * @param {boolean} fullScreen true - go to full screen mode. false - restore from full screen mode.
- */
-
-/**
  * StereoEffect
  * Uses dual PerspectiveCameras for Parallax Barrier https://en.wikipedia.org/wiki/Parallax_barrier effects
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
@@ -73,10 +68,13 @@ const spatialMultiplexsIndexs = {
  * @param {Object} [options.far] Camera frustum far plane. The far key uses for correct calculation default values of Eye separation. Default is 10.
  * @param {Object} [options.stereoAspect] THREE.StereoCamera.aspect. Camera frustum aspect ratio. Default is 1.
  * @param {boolean} [options.rememberSize] true - remember default size of the canvas. Default is undefined.
- * @param {onFullScreen} [options.onFullScreen] Full screen event
+ * @param {onFullScreen} [options.] Full screen event
+ * @param {Function} [options.onFullScreen] onFullScreen( fullScreen )
+ * fullScreen true - go to full screen mode. false - restore from full screen mode.
+ * Default is undefined.
  * @param {HTMLElement} [options.elParent] parent of the canvas.
- *  Use only if you use THREE.Raycaster (working out what objects in the 3d space the mouse is over) https://threejs.org/docs/index.html#api/en/core/Raycaster
- *  and your canvas is not full screen.
+ * Use only if you use {@link https://threejs.org/docs/index.html#api/en/core/Raycaster|THREE.Raycaster} (working out what objects in the 3d space the mouse is over)
+ * and your canvas is not full screen.
  */
 const StereoEffect = function ( _THREE, renderer, options ) {
 
@@ -525,20 +523,22 @@ function setTHREE( _THREE ) {
 	Object.assign( THREE.Raycaster.prototype, {
 
 		/**
+		 * sets StereoEffect options to the {@link https://threejs.org/docs/#api/en/core/Raycaster|THREE.Raycaster}
+		 * @function THREE.Raycaster.
 		 * setStereoEffect
 		 * @param {Object} [options]
-		 * @param {THREE.StereoEffect} [options.stereoEffect] stereoEffect. Default is effectundefined - no stereo effects
+		 * @param {StereoEffect} [options.stereoEffect] stereoEffect. Default is effectundefined - no stereo effects
 		 * @param {Function} [options.onIntersection] onIntersection( intersects, mouse ) The onIntersection event occurs when user has moved mouse over any particle.
-		 * intersects - array of intersections. {@link https://threejs.org/docs/#api/en/core/Raycaster.params|Raycaster.params}
-		 * mouse - THREE.Vector2 mouse position
+		 * intersects - array of intersections. See {@link https://threejs.org/docs/#api/en/core/Raycaster.intersectObject|Raycaster.intersectObject}.
+		 * mouse - THREE.Vector2 mouse position.
 		 * Default is undefined.
 		 * @param {Function} [options.onIntersectionOut] onIntersectionOut( intersects ) The onIntersectionOut event occurs when user has moved mouse out any particle.
-		 * intersects - array of intersections. {@link https://threejs.org/docs/#api/en/core/Raycaster.params|Raycaster.params}
+		 * intersects - array of intersections. See {@link https://threejs.org/docs/#api/en/core/Raycaster.intersectObject|Raycaster.intersectObject}.
 		 * Default is undefined.
 		 * @param {Function} [options.onMouseDown] onMouseDown( intersects )The onMouseDown event occurs when user has cliced any particle.
-		 * intersects - array of intersections. {@link https://threejs.org/docs/#api/en/core/Raycaster.params|Raycaster.params}
+		 * intersects - array of intersections. See {@link https://threejs.org/docs/#api/en/core/Raycaster.intersectObject|Raycaster.intersectObject}.
 		 * Default is undefined.
-		 * @param {THREE.WebGLRenderer} [options.renderer] renderer. The WebGL renderer displays your beautifully crafted scenes using WebGL.
+		 * @param {THREE.WebGLRenderer} [options.renderer] renderer. The {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer} displays your beautifully crafted scenes using WebGL.
 		 * Default is renderer parameter of THREE.StereoEffect
 		 */
 		setStereoEffect: function ( options ) {
