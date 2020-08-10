@@ -1,8 +1,6 @@
 /**
  * @module StereoEffect
- *
- * Uses dual PerspectiveCameras for Parallax Barrier effects.
- *
+ * @description Uses dual PerspectiveCameras for Parallax Barrier effects.
  * @see About {@link https://en.wikipedia.org/wiki/Parallax_barrier|Parallax barrier}.
  * 
  * @author {@link https://anhr.github.io/AboutMe/|Andrej Hristoliubov}
@@ -81,7 +79,7 @@ const spatialMultiplexsIndexs = {
  * @param {Object} [options.stereoAspect] THREE.StereoCamera.aspect. Camera frustum aspect ratio. Default is 1.
  * @param {boolean} [options.rememberSize] true - remember default size of the canvas. Default is undefined.
  * @param {onFullScreen} [options.onFullScreen] Full screen event.
- * See {@link #~onFullScreen|onFullScreen(fullScreen)} in the Type Definitions below.
+ * See [onFullScreen(fullScreen)]{@link module-StereoEffect#~onFullScreen} in the Type Definitions below.
  * Default is undefined.
  * @param {HTMLElement} [options.elParent] parent of the canvas.
  * Use only if you use {@link https://threejs.org/docs/index.html#api/en/core/Raycaster|THREE.Raycaster} (working out what objects in the 3d space the mouse is over)
