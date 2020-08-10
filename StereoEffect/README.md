@@ -14,9 +14,7 @@ Uses in my projects:
 ## Quick start
 
 * Create a folder on your localhost named as [folderName].
-* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-* Download [dat.gui](https://github.com/anhr/dat.gui) repository into your "[folderName]\dat.gui\CustomController" folder.
-* Open http://localhost/[folderName]/commonNodeJS/master/StereoEffect/Examples/index.html for testing of your downloads.
+* Add your veb page into [folderName]. See [example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/) web page.
 
 * import [three.js](https://github.com/anhr/three.js)
 ```
