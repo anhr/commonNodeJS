@@ -138,6 +138,8 @@ points.userData.raycaster = {
 
 }
 ```
+points - The [Object3D](https://threejs.org/docs/index.html#api/en/core/Object3D) to check for intersection with the ray.
+
 Create the THREE.Raycaster instance.
 ```
 var raycaster;
