@@ -144,7 +144,7 @@ Create the THREE.Raycaster instance.
 ```
 var raycaster;
 raycaster = new THREE.Raycaster();
-raycaster.params.Points.threshold = 0.1;//the precision of the raycaster when intersecting objects, in world units. See [params](https://threejs.org/docs/#api/en/core/Raycaster.params).
+raycaster.params.Points.threshold = 0.1;//the precision of the raycaster when intersecting objects, in world units. See https://threejs.org/docs/#api/en/core/Raycaster.params.
 raycaster.setStereoEffect( {
 
 	renderer: renderer,
