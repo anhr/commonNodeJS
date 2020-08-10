@@ -156,7 +156,14 @@ raycaster.setStereoEffect( {
 	stereoEffect: stereoEffect,
 	onIntersection: function ( intersects, mouse ) {
 
-		points.userData.raycaster.onIntersection( intersects[0] );
+		var intersection = intersects[0];
+		if (
+			( intersection.object.userData.raycaster !== undefined )
+			&& ( intersection.object.userData.raycaster.onIntersection !== undefined ) ) {
+
+			intersection.object.userData.raycaster.onIntersection( intersection );
+
+		}
 
 	},
 	onIntersectionOut: function ( intersects ) { points.userData.raycaster.onIntersectionOut() },
