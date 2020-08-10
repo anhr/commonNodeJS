@@ -80,6 +80,11 @@ const spatialMultiplexsIndexs = {
 }
 
 /**
+ * @callback onFullScreen
+ * @param {boolean} fullScreen true - go to full screen mode. false - restore from full screen mode.
+ */
+
+/**
  * StereoEffect
  * Uses dual PerspectiveCameras for Parallax Barrier https://en.wikipedia.org/wiki/Parallax_barrier effects
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
@@ -103,9 +108,8 @@ const spatialMultiplexsIndexs = {
  * @param {Object} [options.far] Camera frustum far plane. The far key uses for correct calculation default values of Eye separation. Default is 10.
  * @param {Object} [options.stereoAspect] THREE.StereoCamera.aspect. Camera frustum aspect ratio. Default is 1.
  * @param {boolean} [options.rememberSize] true - remember default size of the canvas. Default is undefined.
- * @param {onFullScreen} [options.] Full screen event
- * @param {Function} [options.onFullScreen] onFullScreen( fullScreen )
- * fullScreen true - go to full screen mode. false - restore from full screen mode.
+ * @param {onFullScreen} [options.onFullScreen] Full screen event.
+ * See {@link #~onFullScreen|onFullScreen(fullScreen)} in the Type Definitions below.
  * Default is undefined.
  * @param {HTMLElement} [options.elParent] parent of the canvas.
  * Use only if you use {@link https://threejs.org/docs/index.html#api/en/core/Raycaster|THREE.Raycaster} (working out what objects in the 3d space the mouse is over)
@@ -125,18 +129,16 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 	options.focus = options.camera === undefined ? new PerspectiveCamera().focus : new THREE.Vector3().distanceTo( options.camera.position );
 	options.zeroParallax = 0;
 	options.eyeSep = options.eyeSep || ( new THREE.StereoCamera().eyeSep / 10 ) * options.far;
-/*
-	options.cookie = options.cookie || new cookie.defaultCookie();
-	const optionsDefault = {
-
-		spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.SbS, //Use default as 'Side by side' for compability with previous version of THREE.StereoEffect
-		eyeSep: ( new THREE.StereoCamera().eyeSep / 10 ) * options.far,
-		focus: options.focus,
-		zeroParallax: 0,
-
-	}
-	options.cookie.getObject( stereoEffect, options, optionsDefault );
-*/
+	/*
+		options.cookie = options.cookie || new cookie.defaultCookie();
+		const optionsDefault = {
+			spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.SbS, //Use default as 'Side by side' for compability with previous version of THREE.StereoEffect
+			eyeSep: ( new THREE.StereoCamera().eyeSep / 10 ) * options.far,
+			focus: options.focus,
+			zeroParallax: 0,
+		}
+		options.cookie.getObject( stereoEffect, options, optionsDefault );
+	*/
 	if ( options.camera !== undefined )
 		options.camera.focus = options.focus;
 
@@ -208,7 +210,7 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 				camera.updateProjectionMatrix();
 
 			},
-			getMousePosition: function( mouse, event ) {
+			getMousePosition: function ( mouse, event ) {
 
 				mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
 				mouse.y = - ( event.clientY / size.y ) * 2 + 1 + ( top / size.y ) * 2;
@@ -223,7 +225,7 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 		fullScreen = false;
 	this.setFullScreen = function () {
 
-		fullScreen = ! fullScreen;
+		fullScreen = !fullScreen;
 		if ( fullScreen )
 			rendererSizeDefault.fullScreen();
 		else rendererSizeDefault.restore();
@@ -256,7 +258,7 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 
 			case spatialMultiplexsIndexs.Mono://Mono
 
-				if ( ! fullScreen &amp;&amp; ( rendererSizeDefault !== undefined ) )
+				if ( !fullScreen &amp;&amp; ( rendererSizeDefault !== undefined ) )
 					rendererSizeDefault.restore();
 
 				renderer.setScissor( 0, 0, size.width, size.height );
@@ -272,8 +274,8 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 
 				const _width = size.width / 2;
 
-				xL = 0 + parallax;		yL = 0; widthL = _width; heightL = size.height;
-				xR = _width - parallax;	yR = 0; widthR = _width; heightR = size.height;
+				xL = 0 + parallax; yL = 0; widthL = _width; heightL = size.height;
+				xR = _width - parallax; yR = 0; widthR = _width; heightR = size.height;
 
 				break;
 
@@ -283,7 +285,7 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 					rendererSizeDefault.fullScreen();
 
 				xL = 0 + parallax; yL = 0; widthL = size.width; heightL = size.height / 2;
-				xR = 0 - parallax; yR = size.height / 2;	widthR = size.width; heightR = size.height / 2;
+				xR = 0 - parallax; yR = size.height / 2; widthR = size.width; heightR = size.height / 2;
 
 				break;
 			default: console.error( 'THREE.StereoEffect.render: Invalid "Spatial  multiplex" parameter: ' + spatialMultiplex );
@@ -404,19 +406,19 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 
 				Object.keys( guiParams.lang ).forEach( function ( key ) {
 
-					if ( _lang[ key ] === undefined )
+					if ( _lang[key] === undefined )
 						return;
-					_lang[ key ] = guiParams.lang[ key ];
+					_lang[key] = guiParams.lang[key];
 
 				} );
 
 		}
 
 		//
-/*
-		if ( guiParams.gui !== undefined )
-			guiParams.gui.remember( options );
-*/
+		/*
+				if ( guiParams.gui !== undefined )
+					guiParams.gui.remember( options );
+		*/
 		function displayControllers( value ) {
 
 			const display = value == spatialMultiplexsIndexs.Mono ? 'none' : 'block';
@@ -453,7 +455,7 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 		//http://paulbourke.net/papers/vsmm2007/stereoscopy_workshop.pdf
 		const _fEyeSeparation = _fStereoEffects.addFolder( _lang.eyeSeparationName );//Eye Separation
 		dat.folderNameAndTitle( _fEyeSeparation, _lang.eyeSeparationName, _lang.eyeSeparationTitle );
-//		const _controllerEyeSepOffset = _fEyeSeparation.add( new PositionController( function ( shift )
+		//		const _controllerEyeSepOffset = _fEyeSeparation.add( new PositionController( function ( shift )
 		_fEyeSeparation.add( new PositionController( function ( shift ) {
 
 			options.eyeSep += shift;
@@ -478,7 +480,7 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 				'focus', optionsDefault.focus / 10, optionsDefault.focus * 2, optionsDefault.focus / 1000 )
 				.onChange( function ( value ) {
 
-//					options.camera.focus = value;
+					//					options.camera.focus = value;
 					options.focus = value;
 					setObject( stereoEffect );
 
@@ -547,7 +549,7 @@ function setTHREE( _THREE ) {
 
 	if ( THREE ) {
 
-		if ( !Object.is(THREE, _THREE) )
+		if ( !Object.is( THREE, _THREE ) )
 			console.error( 'setTHREE: duplicate THREE. Please use one instance of the THREE library.' )
 		return;
 
@@ -792,8 +794,7 @@ function setTHREE( _THREE ) {
 
 }
 
-export { StereoEffect, spatialMultiplexsIndexs };
-</code></pre>
+export { StereoEffect, spatialMultiplexsIndexs };</code></pre>
         </article>
     </section>
 
@@ -809,7 +810,7 @@ export { StereoEffect, spatialMultiplexsIndexs };
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Aug 09 2020 13:18:42 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon Aug 10 2020 10:10:32 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
