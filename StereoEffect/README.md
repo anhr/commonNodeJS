@@ -15,7 +15,6 @@ Uses in my projects:
 
 * Create a folder on your localhost named as [folderName].
 * Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-* Download [cookieNodeJS](https://github.com/anhr/cookieNodeJS) repository into your "[folderName]\cookieNodeJS\master" folder.
 * Download [dat.gui](https://github.com/anhr/dat.gui) repository into your "[folderName]\dat.gui\CustomController" folder.
 * Open http://localhost/[folderName]/commonNodeJS/master/StereoEffect/Examples/index.html for testing of your downloads.
 
@@ -87,6 +86,7 @@ const gui =  new dat.GUI();
 stereoEffect.gui( gui, {
 
 	//getLanguageCode: getLanguageCode,
+	//cookie: cookie,//Saves a custom Stereo Effects settings in the cookie
 
 } );
 ```
@@ -98,21 +98,21 @@ line above and import getLanguageCode.
 ```
 import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 ```
-or
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import { getLanguageCode } from '../commonNodeJS/master/lang.js';
+import { getLanguageCode } from './commonNodeJS/master/lang.js';
 ```
 If you want save a custom StereoEffect settings to the cookie, please uncomment
 ```
 cookie: cookie,
 ```
-line in the new StereoEffect options and import cookie.
+line in the stereoEffect.gui(...) above and import cookie.
 ```
 import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 ```
-or 
+or download [cookieNodeJS](https://github.com/anhr/cookieNodeJS) repository into your "[folderName]\cookieNodeJS\master" folder.
 ```
-import cookie from '../../../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/cookieNodeJS
+import cookie from './cookieNodeJS/master/cookie.js';
 ```
 
 * [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
@@ -198,7 +198,8 @@ window.addEventListener( 'mousedown', function( event ) {
 
 }, false );
 ```
-For testing please move cursor over point. Cursor will be changing to 'pointer'. You can see an alert if you click over point.
+For testing please move cursor over point. Cursor will be changing to 'pointer'.
+You can see an alert if you click over point.
 
 ## On the following browsers have been successfully tested:
 
