@@ -49,9 +49,6 @@ stereoEffect = new StereoEffect( THREE, renderer, {
 	far: camera.far,
 	camera: camera,
 
-	//Saves a custom StereoEffect settings to the cookie
-	//cookie: cookie,
-
 } );
 stereoEffect.setSize( window.innerWidth, window.innerHeight );
 ```
@@ -145,7 +142,7 @@ Create the THREE.Raycaster instance.
 ```
 var raycaster;
 raycaster = new THREE.Raycaster();
-raycaster.params.Points.threshold = 0.02;//the precision of the raycaster when intersecting objects, in world units. See [params](https://threejs.org/docs/#api/en/core/Raycaster.params).
+raycaster.params.Points.threshold = 0.1;//the precision of the raycaster when intersecting objects, in world units. See [params](https://threejs.org/docs/#api/en/core/Raycaster.params).
 raycaster.setStereoEffect( {
 
 	renderer: renderer,
