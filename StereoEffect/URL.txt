@@ -14,6 +14,7 @@ Generating a website:
 	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
 
 	jsdoc "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\StereoEffect\StereoEffect.js"
+	jsdoc -R "..\commonNodeJS\master\StereoEffect\StereoEffect.md" "..\commonNodeJS\master\StereoEffect\StereoEffect.js" -d "..\commonNodeJS\master\StereoEffect\jsdoc"
 
 	//copy all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
 	//to "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\StereoEffect\jsdoc"

@@ -42,6 +42,193 @@
 
 
 
+    <section>
+        <article><h1>StereoEffect.</h1>
+<p>Uses dual PerspectiveCameras for <a href="https://en.wikipedia.org/wiki/Parallax_barrier">Parallax Barrier</a> effects.</p>
+<h2>Quick start</h2>
+<ul>
+<li>
+<p>Create a folder on your localhost named as [folderName].</p>
+</li>
+<li>
+<p>Add your veb page into [folderName]. See <a href="https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/">example</a> web page.</p>
+</li>
+<li>
+<p>import <a href="https://github.com/anhr/three.js">three.js</a></p>
+</li>
+</ul>
+<pre class="prettyprint source"><code>import * as THREE from 'https://threejs.org/build/three.module.js';
+</code></pre>
+<p>or</p>
+<pre class="prettyprint source"><code>import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/three.js">three.js</a> repository into your &quot;[folderName]\three.js\dev&quot; folder.</p>
+<pre class="prettyprint source"><code>import * as THREE from './three.js/dev/build/three.module.js';
+</code></pre>
+<p>The easiest way to use StereoEffect in your code is import StereoEffect from StereoEffect.js file in your JavaScript module. <a href="https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/">Example</a></p>
+<pre class="prettyprint source"><code>import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import { StereoEffect, spatialMultiplexsIndexs } from './commonNodeJS/master/StereoEffect/StereoEffect.js';
+</code></pre>
+<p>Now you can use StereoEffect in your javascript code. See <a href="https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/index.html">StereoEffect API</a> for details.</p>
+<ul>
+<li>Create the StereoEffect instance.</li>
+</ul>
+<pre class="prettyprint source"><code>var stereoEffect;
+stereoEffect = new StereoEffect( THREE, renderer, {
+
+	spatialMultiplex: spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+	far: camera.far,
+	camera: camera,
+
+} );
+stereoEffect.setSize( window.innerWidth, window.innerHeight );
+</code></pre>
+<p>Add code into animate function</p>
+<pre class="prettyprint source"><code>function animate() {
+
+	requestAnimationFrame( animate );
+
+	if ( stereoEffect === undefined )
+		renderer.render( scene, camera );
+	else stereoEffect.render( scene, camera );
+
+}
+</code></pre>
+<p>Now you can see, canvas was divided to left and right scenes.</p>
+<ul>
+<li>Using <a href="https://github.com/anhr/dat.gui">dat.gui</a> for change of the StereoEffect settings.</li>
+</ul>
+<p>Import dat.gui.</p>
+<pre class="prettyprint source"><code>import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import { dat } from './commonNodeJS/master/dat/dat.module.js';
+</code></pre>
+<p>Add StereoEffect setting into gui.</p>
+<pre class="prettyprint source"><code>const gui =  new dat.GUI();
+stereoEffect.gui( gui, {
+
+	//getLanguageCode: getLanguageCode,
+	//cookie: cookie,//Saves a custom Stereo Effects settings in the cookie
+
+} );
+</code></pre>
+<p>If you want to localize the gui, please uncomment</p>
+<pre class="prettyprint source"><code>getLanguageCode: getLanguageCode,
+</code></pre>
+<p>line above and import getLanguageCode.</p>
+<pre class="prettyprint source"><code>import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import { getLanguageCode } from './commonNodeJS/master/lang.js';
+</code></pre>
+<p>If you want save a custom StereoEffect settings to the cookie, please uncomment</p>
+<pre class="prettyprint source"><code>cookie: cookie,
+</code></pre>
+<p>line in the stereoEffect.gui(...) above and import cookie.</p>
+<pre class="prettyprint source"><code>import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/cookieNodeJS">cookieNodeJS</a> repository into your &quot;[folderName]\cookieNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import cookie from './cookieNodeJS/master/cookie.js';
+</code></pre>
+<ul>
+<li><a href="https://threejs.org/docs/index.html#api/en/core/Raycaster">Raycaster</a>. Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.</li>
+</ul>
+<p>Get default cursor</p>
+<pre class="prettyprint source"><code>const cursor = renderer.domElement.style.cursor;
+</code></pre>
+<p>Define of the actions for objects in the 3d space the mouse is over.</p>
+<pre class="prettyprint source"><code>points.userData.raycaster = {
+
+	onIntersection: function ( intersection ) {
+
+		renderer.domElement.style.cursor = 'pointer';
+
+	},
+	onIntersectionOut: function ( ) {
+
+		renderer.domElement.style.cursor = cursor;
+
+	},
+	onMouseDown: function ( intersect ) {
+
+		alert( 'You have clicked over point' );
+
+	}
+
+}
+</code></pre>
+<p>points - The <a href="https://threejs.org/docs/index.html#api/en/core/Object3D">Object3D</a> to check for intersection with the ray.</p>
+<p>Create the THREE.Raycaster instance.</p>
+<pre class="prettyprint source"><code>var raycaster;
+raycaster = new THREE.Raycaster();
+
+//the precision of the raycaster when intersecting objects, in world units.
+//See https://threejs.org/docs/#api/en/core/Raycaster.params.
+raycaster.params.Points.threshold = 0.1;
+
+raycaster.setStereoEffect( {
+
+	renderer: renderer,
+	camera: camera,
+	stereoEffect: stereoEffect,
+	onIntersection: function ( intersects, mouse ) {
+
+		var intersection = intersects[0];
+		if (
+			( intersection.object.userData.raycaster !== undefined )
+			&& ( intersection.object.userData.raycaster.onIntersection !== undefined ) ) {
+
+			intersection.object.userData.raycaster.onIntersection( intersection );
+
+		}
+
+	},
+	onIntersectionOut: function ( intersects ) { points.userData.raycaster.onIntersectionOut() },
+	onMouseDown: function ( intersects ) {
+
+		var intersection = intersects[0];
+		if (
+			( intersection.object.userData.raycaster !== undefined )
+			&& ( intersection.object.userData.raycaster.onMouseDown !== undefined ) ) {
+
+			intersection.object.userData.raycaster.onMouseDown( intersection );
+
+		}
+
+	}
+
+} );
+raycaster.stereo.addParticle( points );
+</code></pre>
+<p>Add event listeners.</p>
+<pre class="prettyprint source"><code>const mouse = new THREE.Vector2();
+window.addEventListener( 'mousemove', function( event ) {
+
+	// calculate mouse position in normalized device coordinates
+	// (-1 to +1) for both components
+
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+	// update the picking ray with the camera and mouse position
+	raycaster.setFromCamera( mouse, camera );
+
+	raycaster.stereo.onDocumentMouseMove( event );
+
+}, false );
+window.addEventListener( 'mousedown', function( event ) {
+
+	raycaster.stereo.onDocumentMouseDown( event );
+
+}, false );
+</code></pre>
+<p>For testing please move cursor over point. Cursor will be changing to 'pointer'.
+You can see an alert if you click over point.</p></article>
+    </section>
+
 
 
 
@@ -56,7 +243,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon Aug 10 2020 21:46:30 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Aug 12 2020 06:02:24 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
