@@ -98,7 +98,7 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 	//THREE.StereoEffect.render: Invalid "Spatial  multiplex" parameter: NaN
 	//если в приложении не используется StereoEffect.gui
 	//и не определен options.spatialMultiplex
-	if( options.spatialMultiplex === undefined ) options.spatialMultiplex = spatialMultiplexsIndexs.Mono,//SbS
+	if ( options.spatialMultiplex === undefined ) options.spatialMultiplex = spatialMultiplexsIndexs.Mono;//SbS
 	options.stereo = new THREE.StereoCamera();
 	options.stereo.aspect = options.stereoAspect || 1;//0.5;
 	if ( options.far === undefined )
