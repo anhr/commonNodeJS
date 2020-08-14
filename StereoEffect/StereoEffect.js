@@ -92,6 +92,13 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 	options = options || {};
 	this.options = options;
 
+	//Убрал spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.Mono,//SbS,
+	//из const optionsDefault
+	//Потому что будет ошибка 
+	//THREE.StereoEffect.render: Invalid "Spatial  multiplex" parameter: NaN
+	//если в приложении не используется StereoEffect.gui
+	//и не определен options.spatialMultiplex
+	if( options.spatialMultiplex === undefined ) options.spatialMultiplex = spatialMultiplexsIndexs.Mono,//SbS
 	options.stereo = new THREE.StereoCamera();
 	options.stereo.aspect = options.stereoAspect || 1;//0.5;
 	if ( options.far === undefined )
@@ -305,7 +312,8 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 		guiParams.cookie = guiParams.cookie || new cookie.defaultCookie();
 		const optionsDefault = {
 
-			spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.Mono,//SbS,
+			//spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.Mono,//SbS,
+			spatialMultiplex: options.spatialMultiplex,
 			eyeSep: ( new THREE.StereoCamera().eyeSep / 10 ) * options.far,
 			focus: options.focus,
 			zeroParallax: 0,
