@@ -4,6 +4,12 @@ Uses dual PerspectiveCameras for [Parallax Barrier](https://en.wikipedia.org/wik
 
 ## Quick start
 
+
+The easiest way to use StereoEffect in your code is import StereoEffect from StereoEffect.js file in your JavaScript module. [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/)
+```
+import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+```
+or 
 * Create a folder on your localhost named as [folderName].
 * Add your veb page into [folderName]. See [example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/) web page.
 
@@ -19,12 +25,7 @@ or download [three.js](https://github.com/anhr/three.js) repository into your "[
 ```
 import * as THREE from './three.js/dev/build/three.module.js';
 ```
-
-The easiest way to use StereoEffect in your code is import StereoEffect from StereoEffect.js file in your JavaScript module. [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/)
-```
-import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
 import { StereoEffect, spatialMultiplexsIndexs } from './commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```

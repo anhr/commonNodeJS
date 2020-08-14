@@ -1,7 +1,7 @@
 /**
  * @module guiSelectPoint.
  *
- * A dat.gui based graphical user interface for select a point from the mesh.
+ * @description A dat.gui based graphical user interface for select a point from the mesh.
  * 
  * @see {@link https://github.com/anhr/dat.gui|dat.gui}, {@link https://threejs.org/docs/index.html#api/en/objects/Mesh|three.js mesh}.
  *

@@ -22,7 +22,7 @@ Generating a website:
 
 	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
 
-	jsdoc "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\guiSelectPoint.js"
+	jsdoc "..\commonNodeJS\master\guiSelectPoint.js" -d "..\commonNodeJS\master\jsdoc\guiSelectPoint"
 
 	//copy all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
 	//to "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\guiSelectPoint"
@@ -34,6 +34,7 @@ Generating a website:
 	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
 
 	jsdoc "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\ScaleController.js"
+	jsdoc "..\commonNodeJS\master\ScaleController.js" -d "..\commonNodeJS\master\jsdoc\ScaleController"
 
 	//copy all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
 	//to "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\ScaleController"

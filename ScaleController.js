@@ -1,6 +1,6 @@
 /**
  * @module ScaleController
- * is dat.GUI graphical user interface controller for control of the scale of threejs 3D object
+ * @description is dat.GUI graphical user interface controller for control of the scale of threejs 3D object
  * 
  * @see {@link https://threejs.org/} about threejs
  * @see {@link https://github.com/dataarts/dat.gui} about dat.GUI
@@ -30,7 +30,7 @@ class ScaleController extends controllers.CustomController {
 	*/
 
 	/**
-	 * dat.GUI graphical user interface controller for control of the scale of threejs 3D object
+	 * @description dat.GUI graphical user interface controller for control of the scale of threejs 3D object
 	 * @param {onclick} onclick Called whenever user has clicked this controller.
 	 * @param {object} [options] followed options is available:
 	 * @param {object} [options.settings] settings.

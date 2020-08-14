@@ -29,7 +29,7 @@
             <pre class="prettyprint source linenums"><code>/**
  * @module guiSelectPoint.
  *
- * A dat.gui based graphical user interface for select a point from the mesh.
+ * @description A dat.gui based graphical user interface for select a point from the mesh.
  * 
  * @see {@link https://github.com/anhr/dat.gui|dat.gui}, {@link https://threejs.org/docs/index.html#api/en/objects/Mesh|three.js mesh}.
  *
@@ -47,7 +47,8 @@
 //import * as THREE from 'https://threejs.org/build/three.module.js';
 //import * as THREE from '../../three.js/dev/build/three.module.js';//https://github.com/anhr/three.js;
 //import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-import { THREE } from './three.js';
+//import { THREE } from './three.js';
+var THREE;
 
 import { dat } from './dat/dat.module.js';
 //import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
@@ -63,6 +64,7 @@ import ColorPicker from '../../colorpicker/master/colorpicker.js';//https://gith
 
 /**
  * A dat.gui based graphical user interface for select a point from the mesh.
+ * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {object} [guiParams] Followed parameters is allowed. Default is no parameters
  * @param {AxesHelper} [guiParams.axesHelper] An axis object to visualize axes. Default is undefined.
  * See {@link https://github.com/anhr/AxesHelper|AxesHelper}.
@@ -101,7 +103,9 @@ guiParams = {
 
 }
  */
-function GuiSelectPoint( guiParams ) {
+function GuiSelectPoint( _THREE, guiParams ) {
+
+	GuiSelectPoint.setTHREE( _THREE );
 
 	guiParams = guiParams || {};
 
@@ -160,11 +164,7 @@ function GuiSelectPoint( guiParams ) {
 
 		pointWorld: 'Point World Position',
 		pointWorldTitle: 'The position of the selected point after scaling, moving and rotation of the mesh',
-/*
-		trace: 'Trace',
-		traceTitle: 'Display the trace of the point movement.',
-		traceAllTitle: 'Display the trace of the movement of all points of the mesh.',
-*/
+
 		mesh: 'Mesh',
 		scale: 'Scale',
 		color: 'Сolor',
@@ -178,23 +178,6 @@ function GuiSelectPoint( guiParams ) {
 		default3DObjectTitle: 'Restore default settings of all 3d objects.',
 		defaultRotationTitle: 'Restore default 3d object rotation.',
 		defaultLocalPositionTitle: 'Restore default local position.',
-		/*
-					defaultTitle: 'Restore Orbit controls settings.',
-					pointName: 'Point Name',
-					settings: 'Settings',
-					webglcontextlost: 'The user agent has detected that the drawing buffer associated with a WebGLRenderingContext object has been lost.',
-		
-					light: 'Light',
-					displayLight: 'Display',
-					displayLightTitle: 'Display or hide the light source.',
-					restoreLightTitle: 'Restore position of the light source',
-		
-					pointSettings: 'Point',
-					size: 'Size',
-					sizeTitle: 'Size of the point with "ShaderMaterial" material',
-					defaultPointTitle: 'Restore point.',
-		
-		*/
 
 		moveGroup: 'Move Scene',
 
@@ -222,11 +205,7 @@ function GuiSelectPoint( guiParams ) {
 
 			lang.pointWorld = 'Абсолютная позиция точки';
 			lang.pointWorldTitle = 'Позиция выбранной точки после масштабирования, перемещения и вращения 3D объекта';
-/*
-			lang.trace = 'Трек';
-			lang.traceTitle = 'Показать трек перемещения точки.';
-			lang.traceAllTitle = 'Показать трек перемещения всех точек выбранного 3D объекта.';
-*/
+
 			lang.mesh = '3D объект';
 			lang.scale = 'Масштаб';
 			lang.color = 'Цвет';
@@ -240,28 +219,6 @@ function GuiSelectPoint( guiParams ) {
 			lang.default3DObjectTitle = 'Восстановить настройки всех 3D объектов по умолчанию.';
 			lang.defaultRotationTitle = 'Восстановить поворот 3D объекта по умолчанию.';
 			lang.defaultLocalPositionTitle = 'Восстановить локальную позицию точки по умолчанию.';
-			/*
-							lang.defaultTitle = 'Восстановить положение осей координат по умолчанию.';
-							lang.pointName = 'Имя точки';
-							lang.name = 'Имя';
-							//		lang.opacity = 'Непрозрачность',
-							lang.settings = 'Настройки';
-							lang.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
-			
-							lang.light = 'Свет';
-							lang.displayLight = 'Показать';
-							lang.displayLightTitle = 'Показать или скрыть источник света.';
-							lang.restoreLightTitle = 'Восстановить положение источника света';
-			
-							lang.pointSettings = 'Точка';
-							lang.size = 'Размер';
-							lang.sizeTitle = 'Размер точки с материалом типа "ShaderMaterial"';
-							lang.opacity = 'Непрозрачность';
-							lang.opacityTitle = 'Число в диапазоне 0,0 - 1,0, указывающий, насколько прозрачен материал. Значение 0.0 означает полностью прозрачный, 1.0 - полностью непрозрачный.';
-							lang.defaultPointTitle = 'Восстановить точку';
-			
-							lang.moveGroup = 'Переместить сцену';
-			*/
 			break;
 		default://Custom language
 			if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
@@ -341,7 +298,8 @@ function GuiSelectPoint( guiParams ) {
 		if ( selectedPointIndex === -1 )
 			return;
 
-		const position = getObjectPosition( cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh, selectedPointIndex );
+		const mesh = cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh,
+			position = getObjectPosition( mesh, selectedPointIndex );
 
 		if ( ( axesHelper !== undefined ) )
 
@@ -351,7 +309,8 @@ function GuiSelectPoint( guiParams ) {
 			//когда в gui пользователь выбрал точку frustumPoints из списка '3D objects'(этот пункт будет недоступен когда я уберу frustumPoints из списка '3D objects' когда в настройках frustumPoints не стоит галочка info)
 			//и когда пользователь передвигает камеру с помощью orbitControls
 
-			axesHelper.exposePosition( position );
+			axesHelper.exposePosition( { object: mesh, index: selectedPointIndex } );
+//			axesHelper.exposePosition( position );
 
 		if ( controllerWorld.x ) controllerWorld.x.setValue( position.x );
 		if ( controllerWorld.y ) controllerWorld.y.setValue( position.y );
@@ -502,9 +461,36 @@ function GuiSelectPoint( guiParams ) {
 
 	}
 	/**
+	 * update the values of the controllers of the world position
+	 * @function GuiSelectPoint.
+	 *update 
+	 */
+	this.update = function () {
+
+		const mesh = cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh;
+		if ( !mesh )
+			return;
+		const index = this.getSelectedPointIndex();
+		if ( index === -1 )
+			return;
+		const position = getObjectPosition( mesh, index );
+		controllerWorld.x.setValue( position.x );
+		controllerWorld.y.setValue( position.y );
+		controllerWorld.z.setValue( position.z );
+/*		
+		setValue( controllerWorld.x, position.x );
+		setValue( controllerWorld.y, position.y );
+		setValue( controllerWorld.z, position.z );
+*/		
+
+	}
+	/**
 	 * get index of the mesh in the cMeshs controller
+	 * @function GuiSelectPoint.
+	 *getMeshIndex
 	 * @param {THREE.Mesh} mesh
 	 * See {@link https://threejs.org/docs/index.html#api/en/objects/Mesh|THREE.Mesh}.
+	 * @returns index of selectred mesh.
 	 */
 	this.getMeshIndex = function ( mesh ) {
 
@@ -1430,6 +1416,13 @@ function GuiSelectPoint( guiParams ) {
 	return this;
 
 }
+
+/**
+ * gets the position from the geometry.attributes.position of the object.
+ * @param {THREE.Mesh} object
+ * @param {number} index index of position in the object.geometry.attributes.position
+ * @returns position
+ */
 function getObjectLocalPosition( object, index ) {
 
 	const attributesPosition = object.geometry.attributes.position,
@@ -1447,23 +1440,42 @@ function getObjectLocalPosition( object, index ) {
  */
 function getWorldPosition( object, pos ) {
 
-	var position = new THREE.Vector3(),
-		positionAngle = new THREE.Vector3();
-	position = pos.clone();
-	//position.multiply( new THREE.Vector4(0,0,0,0) );
-	position.multiply( object.scale );
+	var position = pos.clone();
+	function getPosition( object, pos ) {
 
-	//rotation
-	positionAngle.copy( position );
-	positionAngle.applyEuler( object.rotation );
-	position.x = positionAngle.x;
-	position.y = positionAngle.y;
-	position.z = positionAngle.z;
+		var position = new THREE.Vector3(),
+			positionAngle = new THREE.Vector3();
+		position = pos.clone();
+		//position.multiply( new THREE.Vector4(0,0,0,0) );
+		position.multiply( object.scale );
 
-	position.add( object.position );
+		//rotation
+		positionAngle.copy( position );
+		positionAngle.applyEuler( object.rotation );
+		position.x = positionAngle.x;
+		position.y = positionAngle.y;
+		position.z = positionAngle.z;
+
+		position.add( object.position );
+		return position;
+
+	}
+	do {
+
+		position = getPosition( object, position );
+		object = object.parent;
+		
+	} while ( object );
 	return position;
 
 }
+
+/**
+ * gets the position from the geometry.attributes.position of the object in world coordinates.
+ * @param {THREE.Mesh} object
+ * @param {number} index index of position in the object.geometry.attributes.position
+ * @returns position
+ */
 function getObjectPosition( object, index ) {
 
 	if ( index === -1 )
@@ -1473,7 +1485,26 @@ function getObjectPosition( object, index ) {
 	return getWorldPosition( object, getObjectLocalPosition( object, index ) )
 
 }
-export { GuiSelectPoint, getWorldPosition };
+
+/**
+ * set THREE
+ * @function GuiSelectPoint.
+ * setTHREE
+ * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
+ */
+GuiSelectPoint.setTHREE = function ( _THREE ) {
+
+	if ( THREE ) {
+
+		if ( !Object.is(THREE, _THREE) )
+			console.error( 'GuiSelectPoint.setTHREE: duplicate THREE. Please use one instance of the THREE library.' )
+		return;
+
+	}
+	THREE = _THREE;
+
+}
+export { GuiSelectPoint, getWorldPosition, getObjectLocalPosition, getObjectPosition };
 </code></pre>
         </article>
     </section>
@@ -1484,13 +1515,13 @@ export { GuiSelectPoint, getWorldPosition };
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="guiSelectPoint.%250D%250DA%2520dat.gui%2520based%2520graphical%2520user%2520interface%2520for%2520select%2520a%2520point%2520from%2520the%2520mesh.module_.html">guiSelectPoint.A dat.gui based graphical user interface for select a point from the mesh.</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-guiSelectPoint..html">guiSelectPoint.</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat Jul 25 2020 14:27:44 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Aug 14 2020 08:55:46 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
