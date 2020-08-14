@@ -99,6 +99,7 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 	//если в приложении не используется StereoEffect.gui
 	//и не определен options.spatialMultiplex
 	if ( options.spatialMultiplex === undefined ) options.spatialMultiplex = spatialMultiplexsIndexs.Mono;//SbS
+
 	options.stereo = new THREE.StereoCamera();
 	options.stereo.aspect = options.stereoAspect || 1;//0.5;
 	if ( options.far === undefined )
