@@ -102,7 +102,9 @@ or download [cookieNodeJS](https://github.com/anhr/cookieNodeJS) repository into
 import cookie from './cookieNodeJS/master/cookie.js';
 ```
 
-* [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
+* [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster).
+
+Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
 
 Get default cursor
 ```
