@@ -20,22 +20,9 @@ Generating a website:
 	/////////////////////////////////////////////////////////////
 	//guiSelectPoint doc
 
-	See D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\guiSelectPoint\URL.txt
-
-	/////////////////////////////////////////////////////////////
-
-	/////////////////////////////////////////////////////////////
-	//ScaleController doc
-
 	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
 
-	jsdoc "..\commonNodeJS\master\ScaleController.js" -d "..\commonNodeJS\master\jsdoc\ScaleController"
+	jsdoc -R "..\commonNodeJS\master\guiSelectPoint\guiSelectPoint.md" "..\commonNodeJS\master\guiSelectPoint\guiSelectPoint.js" -d "..\commonNodeJS\master\guiSelectPoint\jsdoc"
 
 	/////////////////////////////////////////////////////////////
 
-	/////////////////////////////////////////////////////////////
-	//StereoEffect doc
-
-	See D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\StereoEffect\URL.txt
-
-	/////////////////////////////////////////////////////////////
