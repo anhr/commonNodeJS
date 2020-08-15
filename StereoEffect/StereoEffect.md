@@ -30,12 +30,11 @@ download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into yo
 import { StereoEffect, spatialMultiplexsIndexs } from './commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
 
-Now you can use StereoEffect in your javascript code. See [StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/index.html) for details.
+Now you can use StereoEffect in your javascript code.
 
 * Create the StereoEffect instance.
 ```
-var stereoEffect;
-stereoEffect = new StereoEffect( THREE, renderer, {
+const stereoEffect = new StereoEffect( THREE, renderer, {
 
 	spatialMultiplex: spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 	far: camera.far,
@@ -104,7 +103,7 @@ import cookie from './cookieNodeJS/master/cookie.js';
 
 * [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster).
 
-Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
+Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over).
 
 Get default cursor
 ```
@@ -136,8 +135,7 @@ points - The [Object3D](https://threejs.org/docs/index.html#api/en/core/Object3D
 
 Create the THREE.Raycaster instance.
 ```
-var raycaster;
-raycaster = new THREE.Raycaster();
+const raycaster = new THREE.Raycaster();
 
 //the precision of the raycaster when intersecting objects, in world units.
 //See https://threejs.org/docs/#api/en/core/Raycaster.params.
