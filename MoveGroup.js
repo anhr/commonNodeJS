@@ -1,7 +1,7 @@
 /**
- * MoveGroup
+ * @module MoveGroup
  *
- * change group's position and scale.
+ * @description change group's position, scale and rotation.
  *
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
  *
@@ -21,7 +21,7 @@ import Cookie from '../../cookieNodeJS/master/cookie.js';
 import { dat } from '../../commonNodeJS/master/dat/dat.module.js';
 
 /**
- * Change group's position and scale.
+ * Change group's position, scale and rotation.
  * @param {any} group THREE group or scene
  * @param {object} [options] followed options is available
  * @param {object} [options.scales] axes scales. See AxesHelper( ... ) for details. Default is {}
@@ -31,7 +31,9 @@ import { dat } from '../../commonNodeJS/master/dat/dat.module.js';
 export function MoveGroup( group, options ) {
 
 	options = options || {};
-	options.scales = options.scales || {};
+	if ( options.axesHelper )
+		options.scales = options.axesHelper.options.scales;
+	else options.scales = options.scales || { x: {}, y: {}, z: {}, };
 	
 /*
 	function getScalePosition() {
@@ -222,6 +224,7 @@ export function MoveGroup( group, options ) {
 
 			if ( axes === undefined )
 				return;//Not 3D AxesHelper
+			axes.name = axes.name || axisName;
 
 //			Object.freeze( axesDefault );
 
