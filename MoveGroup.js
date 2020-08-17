@@ -16,9 +16,10 @@
 
 import ScaleController from './ScaleController.js';
 import PositionController from './PositionController.js';
-import Cookie from '../../cookieNodeJS/master/cookie.js';
-//import { THREE } from './three.js';
-import { dat } from '../../commonNodeJS/master/dat/dat.module.js';
+import { dat } from './dat/dat.module.js';
+
+//import Cookie from '../../cookieNodeJS/master/cookie.js';
+import Cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 
 /**
  * Change group's position, scale and rotation.
