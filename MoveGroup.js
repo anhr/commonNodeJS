@@ -23,7 +23,7 @@ import Cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 
 /**
  * Change group's position, scale and rotation.
- * @param {any} group THREE group or scene
+ * @param {THREE.Group|THREE.Screen} group THREE group or scene
  * @param {object} [options] followed options is available
  * @param {object} [options.scales] axes scales. See AxesHelper( ... ) for details. Default is {}
  * @param {Cookie} [options.cookie] Your custom cookie function for saving and loading of the MoveGroup settings. Default cookie is not saving settings.
@@ -36,35 +36,6 @@ export function MoveGroup( group, options ) {
 		options.scales = options.axesHelper.options.scales;
 	else options.scales = options.scales || { x: {}, y: {}, z: {}, };
 	
-/*
-	function getScalePosition() {
-
-		var scales = options.scales;
-		var scale = new THREE.Vector3(
-			Math.abs( scales.x.min - scales.x.max ) / 2,
-			scales.y === undefined ? 1 : Math.abs( scales.y.min - scales.y.max ) / 2,
-			scales.z === undefined ? 1 : Math.abs( scales.z.min - scales.z.max ) / 2
-		),
-			position = new THREE.Vector3(
-				( scales.x.min + scales.x.max ) / 2,
-//				( scales.x.max - scales.x.min ) / 2,
-				scales.y === undefined ? 0 : ( scales.y.min + scales.y.max ) / 2,
-				scales.z === undefined ? 0 : ( scales.z.min + scales.z.max ) / 2,
-			);
-		return {
-
-			scale: scale,
-			position: position,
-
-		}
-
-	}
-	const scalePosition = getScalePosition();
-	group.scale.copy( new THREE.Vector3( 1, 1, 1 ).divide( scalePosition.scale ) );
-	scalePosition.position.multiply( group.scale );
-	group.position.copy( scalePosition.position );
-	group.position.negate();
-*/	
 
 	const cookie = options.cookie || new Cookie.defaultCookie();
 	const cookieName = 'MoveGroup' + ( options.cookieName ? '_' + options.cookieName : '' );
@@ -86,14 +57,6 @@ export function MoveGroup( group, options ) {
 
 	};
 	const groupOptionsDefault = JSON.parse( JSON.stringify( optionsGroup ) );
-/*	
-	let groupOptionsDefault = {
-
-		scale: new THREE.Vector3().copy( group.scale ),
-		position: new THREE.Vector3().copy( group.position ),
-
-	}
-*/	
 	Object.freeze( groupOptionsDefault );
 	cookie.getObject( cookieName, optionsGroup, groupOptionsDefault );
 
@@ -126,9 +89,23 @@ export function MoveGroup( group, options ) {
 	setDefault( 'x' );
 	setDefault( 'y' );
 	setDefault( 'z' );
-//cookie.setObject( cookieName, options );
 
-//	let group = _group;
+	/**
+	 * Add MoveGroup folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
+	 * @param {GUI} gui is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}.
+	 * @param {object} [guiParams] Followed parameters is allowed. Default is no parameters.
+	 * @param {Function} [guiParams.getLanguageCode] Your custom getLanguageCode() function.
+	 * returns the "primary language" subtag of the language version of the browser.
+	 * Examples: "en" - English language, "ru" Russian.
+	 * See the "Syntax" paragraph of RFC 4646 {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
+	 * Default returns the 'en' is English language.
+	 * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
+	 * @param {object} [guiParams.lang] Object with localized language values
+	 * @param {object} [guiParams.lang.moveGroup] use for rename of the MoveGroup folder. Default is 'Move Group'.
+	 * @param {GuiSelectPoint} [guiParams.guiSelectPoint] A dat.gui based graphical user interface for select a point from the mesh.
+	 * See [GuiSelectPoint]{@link ./guiSelectPoint/jsdoc/index.html} for details.
+	 * Default is undefined.
+	 */
 	this.gui = function ( gui, guiParams ) {
 
 		guiParams = guiParams || {};
@@ -143,7 +120,7 @@ export function MoveGroup( group, options ) {
 			rotation: 'Rotation',
 
 			defaultButton: 'Default',
-			defaultTitle: 'Move axis to default position.',
+			defaultTitle: 'Move group to default position.',
 
 		};
 
@@ -159,7 +136,7 @@ export function MoveGroup( group, options ) {
 				lang.rotation = 'Вращение';
 
 				lang.defaultButton = 'Восстановить';
-				lang.defaultTitle = 'Переместить ось а исходное состояние.';
+				lang.defaultTitle = 'Переместить группу в исходное состояние.';
 
 				break;
 			default://Custom language
@@ -220,22 +197,22 @@ export function MoveGroup( group, options ) {
 
 		}
 
-		function scale( axes, windowRange, scaleControllers,// axesDefault,
-			axisName ) {
+		function scale( axes,// windowRange,
+			scaleControllers, axisName ) {
 
 			if ( axes === undefined )
 				return;//Not 3D AxesHelper
 			axes.name = axes.name || axisName;
-
-//			Object.freeze( axesDefault );
 
 			function onclick( customController, action ) {
 
 				var zoom = customController.controller.getValue();
 
 				axisZoom( axisName, action, zoom );
+/*
 				if ( guiParams.axesHelper !== undefined )
 					guiParams.axesHelper.updateDotLines();
+*/
 
 			}
 
@@ -249,8 +226,10 @@ export function MoveGroup( group, options ) {
 					optionsGroup[axisName].zoomMultiplier = value;
 //					cookie.setObject( cookieName, optionsGroup );
 					setSettings();
+/*
 					if ( guiParams.axesHelper )
 						guiParams.axesHelper.setSettings();
+*/
 
 				} );
 			scaleControllers.scale = dat.controllerZeroStep( scaleControllers.folder, group.scale, axisName,
@@ -278,8 +257,10 @@ export function MoveGroup( group, options ) {
 
 					}
 					axisOffset( axisName, action, offset );
+/*
 					if ( guiParams.axesHelper !== undefined )
 						guiParams.axesHelper.updateDotLines();
+*/
 
 				}
 				onclick( positionController, function ( value, zoom ) {
@@ -314,25 +295,10 @@ export function MoveGroup( group, options ) {
 				defaultF: function ( value ) {
 
 					axes.default();
-
-/*					
-					axes.min = axesDefault.min;
-					scaleControllers.min.setValue( axes.min );
-
-					axes.max = axesDefault.max;
-					scaleControllers.max.setValue( axes.max );
-
-					if ( axesDefault.marks !== undefined ) {
-
-						axes.marks = axesDefault.marks;
-						scaleControllers.marks.setValue( axes.marks );
-
-					}
-
-					onchangeWindowRange( windowRange, axes );
-*/
+/*
 					if ( guiParams.axesHelper !== undefined )
 						guiParams.axesHelper.updateDotLines();
+*/
 
 				},
 
@@ -348,16 +314,14 @@ export function MoveGroup( group, options ) {
 		if ( options.scales ) {
 
 			scale( options.scales.x,
-				guiParams.axesHelper === undefined ? windowRange : guiParams.axesHelper.windowRangeX, options.scalesControllers.x,// optionsDefault.scales.x,
-				'x' );
+//				guiParams.axesHelper === undefined ? windowRange : guiParams.axesHelper.windowRangeX,
+				options.scalesControllers.x, 'x' );
 			scale( options.scales.y,
-				guiParams.axesHelper === undefined ? windowRange : guiParams.axesHelper.windowRangeY,
-				options.scalesControllers.y,// optionsDefault.scales.y,
-				'y' );
+//				guiParams.axesHelper === undefined ? windowRange : guiParams.axesHelper.windowRangeY,
+				options.scalesControllers.y, 'y' );
 			scale( options.scales.z,
-				guiParams.axesHelper === undefined ? windowRange : guiParams.axesHelper.windowRangeZ,
-				options.scalesControllers.z,// optionsDefault.scales.z,
-				'z' );
+//				guiParams.axesHelper === undefined ? windowRange : guiParams.axesHelper.windowRangeZ,
+				options.scalesControllers.z, 'z' );
 			
 		}
 
