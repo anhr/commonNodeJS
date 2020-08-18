@@ -1,5 +1,5 @@
 /**
- * @module GuiSelectPoint.
+ * @module GuiSelectPoint
  *
  * @description A dat.gui based graphical user interface for select a point from the mesh.
  * 
@@ -70,7 +70,7 @@ guiSelectPoint.addMesh( points );
  * @example //Using of guiParams.lang:
 guiParams = {
 
-	getLanguageCode: function() { return 'az'; },
+	getLanguageCode: function() { return 'az'; },//Azerbaijani language
 	lang: { textHeight: 'mətn boyu', languageCode: 'az' },
 
 }
