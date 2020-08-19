@@ -476,7 +476,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				return index;
 
 		}
-		console.error( 'Invalid mesh "' + mesh.name + '" index' );
+//		console.error( 'Invalid mesh "' + mesh.name + '" index' );
+		//Сюда попадает когда Mesh проверяется с помощью THREE.Raycaster находится ли он под мышью, но этот Mesh не внесен в список GuiSelectPoint
 
 	}
 	this.setIndexMesh = function ( index, mesh ) {
@@ -529,10 +530,14 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 			var option = cMeshs.__select.options[i];
 			if ( mesh.userData.boFrustumPoints && ( option.mesh !== undefined ) && option.mesh.userData.boFrustumPoints )
-				return;//duplicate FrustumPoints. Сюда попадает когда пользователь меняет количество слоев или Y точек в FrustumPoints. 
-			if ( option.mesh !== undefined && ( option.mesh.name === mesh.name ) ) {
+				return;//duplicate FrustumPoints. Сюда попадает когда пользователь меняет количество слоев или Y точек в FrustumPoints.
+			if (
+				( option.mesh !== undefined ) &&
+				( mesh.name !== '' ) && //если не делать эту проверку то невозможно вставить два mesh без имени
+				( option.mesh.name === mesh.name )
+			) {
 
-				//							console.error('guiSelectPointF.addMesh: Duplicate item ' + mesh.name );
+				//Нельза добалять два mesh с одинаковым именем
 				return;//сюда попадает когда создаются точки без shaderMaterial
 				//Сначала вызывается из myPoints create.Points function
 				//Потом из guiSelectPointF.addControllers
@@ -578,6 +583,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		//select mesh
 		const index = this.getMeshIndex( intersectionSelected.object );
+		if ( !index )
+			return;//Сюда попадает когда Mesh проверяется с помощью THREE.Raycaster находится ли он под мышью, но этот Mesh не внесен в список GuiSelectPoint
 		if ( cMeshs.__select[index].selected === false ) {
 
 			cMeshs.__select[index].selected = true;
