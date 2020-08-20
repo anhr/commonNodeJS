@@ -573,8 +573,8 @@ function setTHREE( _THREE ) {
 				} ),
 				raycaster = this,
 				mouseL = new THREE.Vector2(),
-				mouseR = new THREE.Vector2(),
-				cursor = renderer.domElement.style.cursor;
+				mouseR = new THREE.Vector2();
+//				cursor = renderer.domElement.style.cursor;
 			var particles, //The object or array of objects to check for intersection with the ray. See THREE.Raycaster.intersectObject for details.
 				intersects, //An array of intersections is returned by THREE.Raycaster.intersectObject or THREE.Raycaster.intersectObjects.
 				mouse; //Attention!!! Do not assign new THREE.Vector2() here
@@ -628,6 +628,7 @@ function setTHREE( _THREE ) {
 				intersects = Array.isArray( particles ) ? raycaster.intersectObjects( particles ) : raycaster.intersectObject( particles );
 
 			}
+			var intersectedObject = undefined;
 			function intersection( optionsIntersection ) {
 
 				if ( mouse === undefined )
@@ -637,6 +638,7 @@ function setTHREE( _THREE ) {
 				function isIntersection() {
 
 					getIntersects();
+/*
 					if ( intersects.length <= 0 ) {
 
 						if ( optionsIntersection.onIntersectionOut !== undefined )
@@ -645,14 +647,38 @@ function setTHREE( _THREE ) {
 						return false;
 
 					}
+*/							
+					if ( intersectedObject && ( intersects.length === 0 ) ) {
 
-					//sometimes frustum point is not displayed any info
-					const userData = intersects[0].object.userData;
-					if ( userData.isInfo === undefined || userData.isInfo() )
-						renderer.domElement.style.cursor = renderer.cursor === undefined ? 'pointer' : renderer.cursor;
+						intersectedObject.userData.raycaster.onIntersectionOut();
+						intersectedObject = undefined;
 
-					if ( optionsIntersection.onIntersection !== undefined )
-						optionsIntersection.onIntersection( intersects, mouse );
+					}
+					else if ( !intersectedObject ) {
+
+/*
+						//sometimes frustum point is not displayed any info
+						const userData = intersects[0].object.userData;
+						if ( userData.isInfo === undefined || userData.isInfo() )
+							renderer.domElement.style.cursor = renderer.cursor === undefined ? 'pointer' : renderer.cursor;
+*/
+
+						var intersection = intersects[0];
+						if (
+							intersection &&
+							intersection.object.userData.raycaster &&
+							intersection.object.userData.raycaster.onIntersection
+						) {
+
+							intersection.object.userData.raycaster.onIntersection( intersection );
+							intersectedObject = intersection.object;
+
+						}
+	/*					
+						if ( optionsIntersection.onIntersection !== undefined )
+							optionsIntersection.onIntersection( intersects, mouse );
+	*/
+					}
 					return true;
 
 				}
@@ -692,11 +718,23 @@ function setTHREE( _THREE ) {
 				},
 				onDocumentMouseDown: function ( event ) {
 
+/*
 					intersection( {
 
 						onIntersection: options.onMouseDown,
 
 					} );
+*/					
+					if ( intersects.length > 0 ) {
+
+						if ( intersects[0].object.userData.raycaster ) {
+
+							const intersect = intersects[0];
+							intersect.object.userData.raycaster.onMouseDown( intersect );
+
+						}
+
+					}
 
 				},
 				addParticle: function ( particle ) {
