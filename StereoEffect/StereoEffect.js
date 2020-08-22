@@ -679,7 +679,7 @@ function setTHREE( _THREE ) {
 							optionsIntersection.onIntersection( intersects, mouse );
 	*/
 					}
-					return true;
+					return intersects.length > 0;//true;
 
 				}
 				if ( parseInt( stereoEffect.options.spatialMultiplex ) !== spatialMultiplexsIndexs.Mono ) {
