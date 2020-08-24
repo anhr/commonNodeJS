@@ -62,7 +62,7 @@ import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpi
  * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
  * @param {object} [guiParams.lang] Object with localized language values
  * @example
-import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint.js';
+import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
 const guiSelectPoint = new GuiSelectPoint( { axesHelper: axesHelper, } );
 guiSelectPoint.add( gui, { getLanguageCode: getLanguageCode, } );
