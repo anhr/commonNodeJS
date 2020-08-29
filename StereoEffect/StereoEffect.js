@@ -543,17 +543,8 @@ function setTHREE( _THREE ) {
 		 * @function THREE.Raycaster.
 		 * setStereoEffect
 		 * @param {Object} [options]
-		 * @param {StereoEffect} [options.stereoEffect] stereoEffect. Default is effectundefined - no stereo effects
-		 * @param {Function} [options.onIntersection] onIntersection( intersects, mouse ) The onIntersection event occurs when user has moved mouse over any particle.
-		 * intersects - array of intersections. See {@link https://threejs.org/docs/#api/en/core/Raycaster.intersectObject|Raycaster.intersectObject}.
-		 * mouse - THREE.Vector2 mouse position.
-		 * Default is undefined.
-		 * @param {Function} [options.onIntersectionOut] onIntersectionOut( intersects ) The onIntersectionOut event occurs when user has moved mouse out any particle.
-		 * intersects - array of intersections. See {@link https://threejs.org/docs/#api/en/core/Raycaster.intersectObject|Raycaster.intersectObject}.
-		 * Default is undefined.
-		 * @param {Function} [options.onMouseDown] onMouseDown( intersects )The onMouseDown event occurs when user has cliced any particle.
-		 * intersects - array of intersections. See {@link https://threejs.org/docs/#api/en/core/Raycaster.intersectObject|Raycaster.intersectObject}.
-		 * Default is undefined.
+		 * @param {THREE.PerspectiveCamera} options.camera {@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera|PerspectiveCamera}
+		 * @param {StereoEffect} [options.stereoEffect] stereoEffect. Default effect is undefined - no stereo effects
 		 * @param {THREE.WebGLRenderer} [options.renderer] renderer. The {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer} displays your beautifully crafted scenes using WebGL.
 		 * Default is renderer parameter of THREE.StereoEffect
 		 */
@@ -670,7 +661,7 @@ function setTHREE( _THREE ) {
 							intersection.object.userData.raycaster.onIntersection
 						) {
 
-							intersection.object.userData.raycaster.onIntersection( intersection );
+							intersection.object.userData.raycaster.onIntersection( intersection, mouse );
 							intersectedObject = intersection.object;
 
 						}
