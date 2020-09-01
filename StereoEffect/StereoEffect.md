@@ -192,7 +192,7 @@ window.addEventListener( 'mousemove', function( event ) {
 	raycaster.stereo.onDocumentMouseMove( event );
 
 }, false );
-window.addEventListener( 'mousedown', function( event ) {
+window.addEventListener( 'pointerdown', function( event ) {
 
 	raycaster.stereo.onDocumentMouseDown( event );
 
