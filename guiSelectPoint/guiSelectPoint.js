@@ -1404,6 +1404,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
  */
 function getObjectLocalPosition( object, index ) {
 
+	if ( !THREE ) {
+
+		console.error( 'getObjectLocalPosition: call GuiSelectPoint.setTHREE( THREE ); first' );
+		return;
+		
+	}
 	const attributesPosition = object.geometry.attributes.position,
 		position = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
 	position.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
