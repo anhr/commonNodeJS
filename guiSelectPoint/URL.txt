@@ -20,9 +20,11 @@ Generating a website:
 	/////////////////////////////////////////////////////////////
 	//guiSelectPoint doc
 
-	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\guiSelectPoint\jsdoc"
 
 	jsdoc -R "..\commonNodeJS\master\guiSelectPoint\guiSelectPoint.md" "..\commonNodeJS\master\guiSelectPoint\guiSelectPoint.js" -d "..\commonNodeJS\master\guiSelectPoint\jsdoc"
+
+	//See results in "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\guiSelectPoint\jsdoc"
 
 	/////////////////////////////////////////////////////////////
 
