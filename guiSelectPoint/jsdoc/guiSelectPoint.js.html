@@ -72,22 +72,28 @@ import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpi
  * @param {string} [guiParams.cFrustumPoints]
  * @param {string} [guiParams.myThreejs] See {@link https://github.com/anhr/myThreejs|myThreejs}.
  * @param {Function} [guiParams.pointControls] pointControls( fPoint, dislayEl, getMesh ) Adds the trace "Display the trace of the point movement" control checkbox into gui.
+ * &lt;pre>
  * fPoint - parent folder for new control.
  * dislayEl( conrtol, true or false ) - function for dislay or hide of the control.
  * getMesh() returns the mesh, selected in the GuiSelectPoint.
  * Default is undefined.
+ * &lt;/pre>
  * @param {Function} [guiParams.pointsControls] pointsControls( fPoints, dislayEl, getMesh ) Adds the trace "Display the trace of the movement of all points of the mesh." control checkbox into gui.
+ * &lt;pre>
  * fPoints - parent folder for new control.
  * dislayEl( conrtol, true or false ) - function for dislay or hide of the control.
  * getMesh() returns the mesh, selected in the GuiSelectPoint.
  * Default is undefined.
+ * &lt;/pre>
  * @param {Function} [guiParams.setIntersection] setIntersection( intersection ) sets the intersection value of myThreejs. Default is undefined
  * @param {Function} [guiParams.getLanguageCode] Your custom getLanguageCode() function.
+ * &lt;pre>
  * returns the "primary language" subtag of the language version of the browser.
  * Examples: "en" - English language, "ru" Russian.
  * See the "Syntax" paragraph of RFC 4646 {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
  * Default returns the 'en' is English language.
  * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
+ * &lt;/pre>
  * @param {object} [guiParams.lang] Object with localized language values
  * @example
 import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
@@ -255,41 +261,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		el.style.display = displayController;
 
 	}
-/*
-	function visibleTraceLine( intersection, value ) {
-
-		if ( intersection.object.userData.arrayFuncs === undefined )
-			return;
-		var index = intersection.index || 0,
-			point = intersection.object.userData.arrayFuncs[index],
-			line = point === undefined ? undefined : point.line;
-		if ( line !== undefined )
-			line.visible( value );
-		if ( !value )
-			return;
-		if ( point.line !== undefined )
-			return;
-		point.line = new traceLine();
-
-		//color
-		var color = intersection.object.geometry.attributes.color;
-		if ( color === undefined )
-			color = new THREE.Color( 0xffffff );//white
-		else {
-			var vector = new THREE.Vector3().fromArray( color.array, index * color.itemSize )
-			color = new THREE.Color( vector.x, vector.y, vector.z );
-		}
-
-		point.line.addPoint(
-
-			getObjectPosition( getMesh(), index ),
-			player.getSelectSceneIndex(),
-			color
-
-		);
-
-	}
-*/
 	function exposePosition( selectedPointIndex ) {
 
 		if ( selectedPointIndex === undefined )
@@ -310,7 +281,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			//и когда пользователь передвигает камеру с помощью orbitControls
 
 			axesHelper.exposePosition( { object: mesh, index: selectedPointIndex } );
-//			axesHelper.exposePosition( position );
 
 		if ( controllerWorld.x ) controllerWorld.x.setValue( position.x );
 		if ( controllerWorld.y ) controllerWorld.y.setValue( position.y );
@@ -435,6 +405,11 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		controllerOpacity.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 
 	}
+	/**
+	 * Sets controllers to position, scale and rotation of the mesh.  If AxesHelper is exist, expose the mesh to the axes.
+	 * @function GuiSelectPoint.
+	 *setMesh
+	 */
 	this.setMesh = function () {
 
 		boSetMesh = true;
@@ -445,6 +420,13 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		boSetMesh = false;
 
 	}
+	/**
+	 * Sets controllers to position, scale and rotation of the mesh.  If AxesHelper is exist, expose the mesh to the axes.
+	 * @function GuiSelectPoint.
+	 *setPosition
+	 * @param position deprecated
+	 * @param intersectionSelected [THREE.Raycaster.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}
+	 */
 	this.setPosition = function ( position, intersectionSelected ) {
 
 		for ( var i = 0; i &lt; cMeshs.__select.length; i++ ) {
@@ -477,11 +459,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		controllerWorld.x.setValue( position.x );
 		controllerWorld.y.setValue( position.y );
 		controllerWorld.z.setValue( position.z );
-/*		
-		setValue( controllerWorld.x, position.x );
-		setValue( controllerWorld.y, position.y );
-		setValue( controllerWorld.z, position.z );
-*/		
 
 	}
 	/**
@@ -549,10 +526,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	 */
 	this.addMesh = function ( mesh ) {
 
-/*
-		if ( !options.dat )
-			return;
-*/			
 		//Test for duplicate item
 		for ( var i = 0; i &lt; cMeshs.__select.options.length; i++ ) {
 
@@ -590,10 +563,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	}
 	this.select = function ( intersectionSelected ) {
 
-/*
-		if ( !options.dat )
-			return;
-*/			
 		const position = getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
 		if ( f3DObjects === undefined ) {
 
@@ -622,10 +591,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		this.selectPoint2 = function ( selectedMesh ) {
 
-/*
-			if ( ( options.guiSelectPoint.renderPhase !== undefined ) &amp;&amp; ( options.guiSelectPoint.renderPhase !== options.guiSelectPoint.renderPhaseEnum.ready ) )
-				return;
-*/				
 			if ( ( intersectionSelected.index === undefined ) || isNaN( intersectionSelected.index ) )
 				return;
 
@@ -807,7 +772,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 						opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
 						opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
 						cPoints.__select.appendChild( opt );
-//						iPosition++;
 
 					}
 
@@ -984,7 +948,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 						options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
 
 				} );
-			//						dat.controllerNameAndTitle( cRotations.x, options.scales.x.name );
 			dat.controllerNameAndTitle( cRotations[name], scale.name );
 
 		}
@@ -1054,20 +1017,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		if ( guiParams.pointsControls )
 			cTraceAll = guiParams.pointsControls( fPoints, dislayEl, getMesh );
-/*			
-		//displays the trace of the movement of all points of the mesh
-		cTraceAll = fPoints.add( { trace: false }, 'trace' ).onChange( function ( value ) {
-
-			var mesh = getMesh();
-			mesh.userData.traceAll = value;
-			for ( var i = 0; i &lt; mesh.geometry.attributes.position.count; i++ )
-				visibleTraceLine( { object: mesh, index: i }, value );
-			cTrace.setValue( value );
-
-		} );
-		dat.controllerNameAndTitle( cTraceAll, lang.trace, lang.traceAllTitle );
-		dislayEl( cTraceAll, options.player === undefined ? false : true );
-*/		
 
 		//Restore default settings of all 3d objects button.
 		dat.controllerNameAndTitle( f3DObjects.add( {
@@ -1085,16 +1034,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					mesh.needsUpdate = true;
 
 				}
-/*				
-				group.children.forEach( function ( mesh ) {
-
-					mesh.scale.copy( mesh.userData.default.scale );
-					mesh.position.copy( mesh.userData.default.position );
-					mesh.rotation.copy( mesh.userData.default.rotation );
-					mesh.needsUpdate = true;
-
-				} );
-*/				
 				setScaleControllers();
 				setPositionControllers();
 				setRotationControllers();
@@ -1160,7 +1099,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		function axesGui( axisName/*axesId, onChange*/ ) {
 
 			var scale, controller;
-//			if ( axesId > axesEnum.z )
 			if ( axisName === 'w' ){
 
 				//W axis
@@ -1209,7 +1147,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 			} else {
 
-//				axesName = axesEnum.getName( axesId );
 				scale = axesHelper === undefined ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
 					axesHelper.options ? axesHelper.options.scales[axisName] : undefined;
 				if ( scale )
@@ -1244,13 +1181,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			return controller;
 
 		}
-/*		
-		var axesEnum = AxesHelperOptions.axesEnum;
-		controllerX = axesGui( axesEnum.x );
-		controllerY = axesGui( axesEnum.y );
-		controllerZ = axesGui( axesEnum.z );
-		controllerW = axesGui( axesEnum.w );
-*/		
 		controllerX = axesGui( 'x' );
 		controllerY = axesGui( 'y' );
 		controllerZ = axesGui( 'z' );
@@ -1293,16 +1223,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		if ( guiParams.pointControls )
 			cTrace = guiParams.pointControls( fPoint, dislayEl, getMesh, intersection );
-/*			
-		//displays the trace of the point movement
-		cTrace = fPoint.add( { trace: false }, 'trace' ).onChange( function ( value ) {
-
-			visibleTraceLine( intersection, value );
-
-		} );
-		dat.controllerNameAndTitle( cTrace, lang.trace, lang.traceTitle );
-		dislayEl( cTrace, options.player === undefined ? false : true );
-*/		
 
 		//Point's world position axes controllers
 
@@ -1321,24 +1241,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		controllerWorld.x = axesWorldGui( 'x' );
 		controllerWorld.y = axesWorldGui( 'y' );
 		controllerWorld.z = axesWorldGui( 'z' );
-/*
-		function axesWorldGui( axesId, onChange ) {
-
-			var axesName = axesEnum.getName( axesId ),
-				scale = axesHelper === undefined ? options.scales[axesName] :
-					axesHelper.options ? axesHelper.options.scales[axesName] : undefined;
-			if ( !scale )
-				return;
-			let controller = dat.controllerZeroStep( fPointWorld, { value: scale.min, }, 'value' );
-			controller.domElement.querySelector( 'input' ).readOnly = true;
-			dat.controllerNameAndTitle( controller, scale.name );
-			return controller;
-
-		}
-		controllerWorld.x = axesWorldGui( axesEnum.x );
-		controllerWorld.y = axesWorldGui( axesEnum.y );
-		controllerWorld.z = axesWorldGui( axesEnum.z );
-*/
 
 		//Restore default local position.
 		cRestoreDefaultLocalPosition = fPoint.add( {
@@ -1534,7 +1436,7 @@ export { GuiSelectPoint, getWorldPosition, getObjectLocalPosition, getObjectPosi
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Aug 28 2020 09:56:19 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Sep 03 2020 10:31:24 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
