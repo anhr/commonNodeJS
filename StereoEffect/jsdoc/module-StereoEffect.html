@@ -541,7 +541,7 @@
 
             
 
-            <td class="description last">spatial multiplexSee <a href="https://en.wikipedia.org/wiki/DVB_3D-TV">DVB 3D-TV</a> for details	Available values		spatialMultiplexsIndexs.Mono - no stereo effacts		spatialMultiplexsIndexs.SbS - 'Side by side' format just put the left and right images one next to the other.			See https://en.wikipedia.org/wiki/DVB_3D-TV#Side_by_side for dretails		spatialMultiplexsIndexs.TaB - 'Top and bottom' format put left and right images one above the other.			See //https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom for details	Example - spatialMultiplex: spatialMultiplexsIndexs.Mono	Default is spatialMultiplexsIndexs.Mono</td>
+            <td class="description last">spatial multiplex<pre>See <a href="https://en.wikipedia.org/wiki/DVB_3D-TV">DVB 3D-TV</a> for details	Available values		spatialMultiplexsIndexs.Mono - no stereo effacts		spatialMultiplexsIndexs.SbS - 'Side by side' format just put the left and right images one next to the other.			See https://en.wikipedia.org/wiki/DVB_3D-TV#Side_by_side for dretails		spatialMultiplexsIndexs.TaB - 'Top and bottom' format put left and right images one above the other.			See //https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom for details	Example - spatialMultiplex: spatialMultiplexsIndexs.Mono	Default is spatialMultiplexsIndexs.Mono</pre></td>
         </tr>
 
     
@@ -787,7 +787,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line88">line 88</a>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line90">line 90</a>
     </li></ul></dd>
     
 
@@ -1191,7 +1191,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line287">line 287</a>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line289">line 289</a>
     </li></ul></dd>
     
 
@@ -1334,6 +1334,37 @@
 
         <tr>
             
+                <td class="name"><code>camera</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.PerspectiveCamera</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">PerspectiveCamera</a></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>stereoEffect</code></td>
             
 
@@ -1360,106 +1391,7 @@
 
             
 
-            <td class="description last">stereoEffect. Default is effectundefined - no stereo effects</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>onIntersection</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">onIntersection( intersects, mouse ) The onIntersection event occurs when user has moved mouse over any particle.intersects - array of intersections. See <a href="https://threejs.org/docs/#api/en/core/Raycaster.intersectObject">Raycaster.intersectObject</a>.mouse - THREE.Vector2 mouse position.Default is undefined.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>onIntersectionOut</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">onIntersectionOut( intersects ) The onIntersectionOut event occurs when user has moved mouse out any particle.intersects - array of intersections. See <a href="https://threejs.org/docs/#api/en/core/Raycaster.intersectObject">Raycaster.intersectObject</a>.Default is undefined.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>onMouseDown</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">onMouseDown( intersects )The onMouseDown event occurs when user has cliced any particle.intersects - array of intersections. See <a href="https://threejs.org/docs/#api/en/core/Raycaster.intersectObject">Raycaster.intersectObject</a>.Default is undefined.</td>
+            <td class="description last">stereoEffect. Default effect is undefined - no stereo effects</td>
         </tr>
 
     
@@ -1540,7 +1472,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line541">line 541</a>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line543">line 543</a>
     </li></ul></dd>
     
 
@@ -1729,7 +1661,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat Aug 15 2020 08:31:08 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Sep 03 2020 09:09:34 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

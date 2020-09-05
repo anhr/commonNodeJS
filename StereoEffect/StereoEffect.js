@@ -61,6 +61,7 @@ const spatialMultiplexsIndexs = {
  * @param {Object} renderer {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer}
  * @param {Object} [options] the following options are available.
  * @param {Object} [options.spatialMultiplex] spatial multiplex
+ * <pre>
  * See {@link https://en.wikipedia.org/wiki/DVB_3D-TV|DVB 3D-TV} for details
  * 	Available values
  *
@@ -74,6 +75,7 @@ const spatialMultiplexsIndexs = {
  *
  * 	Example - spatialMultiplex: spatialMultiplexsIndexs.Mono
  * 	Default is spatialMultiplexsIndexs.Mono
+ * </pre>
  * @param {Object} [options.camera] THREE.PerspectiveCamera. Use the camera key if you want control cameras focus.
  * @param {Object} [options.far] Camera frustum far plane. The far key uses for correct calculation default values of Eye separation. Default is 10.
  * @param {Object} [options.stereoAspect] THREE.StereoCamera.aspect. Camera frustum aspect ratio. Default is 1.
@@ -566,7 +568,7 @@ function setTHREE( _THREE ) {
 				mouseL = new THREE.Vector2(),
 				mouseR = new THREE.Vector2();
 //				cursor = renderer.domElement.style.cursor;
-			var particles, //The object or array of objects to check for intersection with the ray. See THREE.Raycaster.intersectObject for details.
+			var particles, //The object or array of objects to check for intersection with the ray. See THREE.Raycaster.intersectObject https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject for details.
 				intersects, //An array of intersections is returned by THREE.Raycaster.intersectObject or THREE.Raycaster.intersectObjects.
 				mouse; //Attention!!! Do not assign new THREE.Vector2() here
 			//for prevention of invalid detection of intersection with zero point ( THREE.Vector3( 0, 0, 0 ) )
@@ -699,7 +701,7 @@ function setTHREE( _THREE ) {
 				onDocumentMouseMove: function ( event ) {
 
 					if ( particles === undefined )
-						return;//The object or array of objects to check for intersection with the ray is not defined. See THREE.Raycaster.intersectObject for details.
+						return;//The object or array of objects to check for intersection with the ray is not defined. See THREE.Raycaster.intersectObject https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject for details.
 					event.preventDefault();
 					if ( mouse === undefined )
 						mouse = new THREE.Vector2();
