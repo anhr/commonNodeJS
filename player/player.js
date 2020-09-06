@@ -13,11 +13,10 @@
 
 //import cookie from '../../../cookieNodeJS/master/cookie.js';
 //import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
-/*
+
 import ScaleController from '../ScaleController.js';
 import PositionController from '../PositionController.js';
 import { dat } from '../dat/dat.module.js';
-*/
 
 import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
@@ -40,7 +39,8 @@ var settings;
 
 /**
  * 3D objects animation.
- * @param {object} options followed options is available
+ * @param {onSelectScene} onSelectScene event of the changing of scene during animation
+ * @param {object} [options] followed options is available
  * @param {number} [options.settings] time settings.
  * @param {number} [options.settings.marks] Number of scenes of 3D objects animation. Default is 2
  * @param {boolean} [options.settings.repeat] true - Infinitely repeating 3D objects animation. Default is false.
@@ -50,10 +50,10 @@ var settings;
  * @param {number} [options.settings.max] Animation end time. Default is 1.
  * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings.
  * @param {object} [options.cookie] Your custom cookie function for saving and loading of the Player settings. Default cookie is not saving settings.
- * @param {onSelectScene} onSelectScene event of the changing of scene during animation
  */
-function Player( options, onSelectScene ) {
+function Player( onSelectScene, options ) {
 
+	options = options || {};
 	settings = options.settings || {};
 /*	
 	options.min = options.min || 0;
@@ -286,7 +286,7 @@ function Player( options, onSelectScene ) {
 		} );
 
 	}
-/*
+
 	this.gui = function ( folder, getLanguageCode ) {
 
 //		settings.t = scalesT;
@@ -468,7 +468,7 @@ function Player( options, onSelectScene ) {
 		scale();
 
 	}
-*/
+
 }
 /**
  * execute function
