@@ -13,10 +13,11 @@
 
 //import cookie from '../../../cookieNodeJS/master/cookie.js';
 //import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
-
+/*
 import ScaleController from '../ScaleController.js';
 import PositionController from '../PositionController.js';
 import { dat } from '../dat/dat.module.js';
+*/
 
 import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
@@ -285,7 +286,7 @@ function Player( options, onSelectScene ) {
 		} );
 
 	}
-
+/*
 	this.gui = function ( folder, getLanguageCode ) {
 
 //		settings.t = scalesT;
@@ -347,19 +348,10 @@ function Player( options, onSelectScene ) {
 		dat.folderNameAndTitle( fPlayer, lang.player, lang.playerTitle );
 
 		var playController = this.PlayController;
-/*
-		let {default: controllerPlay } = await import('../../controllerPlay/master/controllerPlay.js');
-		var playController = controllerPlay.create( this );//player );
-		fPlayer.add( playController );
-*/
 
 		function scale() {
 
 			var axes = options.settings, scaleControllers = {};
-/*			
-			const axesDefault = JSON.parse( JSON.stringify( axes ) );
-			Object.freeze( axesDefault );
-*/
 			function onclick( customController, action ) {
 
 				var zoom = customController.controller.getValue();
@@ -378,17 +370,6 @@ function Player( options, onSelectScene ) {
 			scaleControllers.folder = fPlayer.addFolder( axes.name );
 
 //			let {default: ScaleController }  = await import('../../commonNodeJS/master/ScaleController.js');
-/*
-			import('../../commonNodeJS/master/ScaleController.js')
-			  .then(module => {
-
-				var ScaleController = module.default;
-
-			  })
-			  .catch(err => {
-				console.error( err.message );
-			  });			
-*/			  
 			scaleControllers.scaleController = scaleControllers.folder.add( new ScaleController( onclick, 
 				{ settings: options.settings, getLanguageCode: getLanguageCode, } ) ).onChange( function ( value ) {
 
@@ -478,10 +459,6 @@ function Player( options, onSelectScene ) {
 					setSettings();
 
 //					onchangeWindowRange( windowRange, axes );
-/*
-					if ( guiParams.axesHelper !== undefined )
-						guiParams.axesHelper.updateDotLines();
-*/
 
 				},
 
@@ -491,9 +468,8 @@ function Player( options, onSelectScene ) {
 		scale();
 
 	}
-
+*/
 }
-
 /**
  * execute function
  * @function Player.
