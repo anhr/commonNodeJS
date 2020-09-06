@@ -1,0 +1,30 @@
+Building
+
+Open "Node.js command prompt"
+
+d:
+cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\player"
+npm install
+npm run build
+--------------------------------
+isdoc https://github.com/jsdoc/jsdoc
+Getting Started with JSDoc 3 https://jsdoc.app/about-getting-started.html
+Generating a website:
+	Download https://github.com/jsdoc/jsdoc into D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc
+	Open "Node.js command prompt"
+
+	d:
+	cd "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc"
+	npm install -g jsdoc
+
+	/////////////////////////////////////////////////////////////
+	//guiSelectPoint doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\player\jsdoc"
+
+	jsdoc -R "..\commonNodeJS\master\player\player.md" "..\commonNodeJS\master\player\player.js" -d "..\commonNodeJS\master\player\jsdoc"
+
+	//Open "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\player\jsdoc"
+
+	/////////////////////////////////////////////////////////////
+

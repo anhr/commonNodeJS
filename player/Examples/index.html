@@ -66,7 +66,18 @@
 			if ( typeof Player !== 'undefined' ) {
 
 				const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
-				player = new Player( {
+				player = new Player( function ( index, t ) {
+
+//					var t = ( ( options.player.max - options.player.min ) / ( options.player.marks - 1 ) ) * index + options.player.min;
+					Player.selectPlayScene( THREE, scene, t, index, { palette: palette } );
+					if ( typeof canvasMenu !== 'undefined' )
+						canvasMenu.setIndex( index, options.player.name + ': ' + t );
+/*						
+					if ( typeof frustumPoints !== 'undefined' )
+						frustumPoints.updateCloudPoints();
+*/						
+
+				}, {
 
 					settings: {
 
@@ -74,8 +85,6 @@
 						name: "Time (sec.)"
 
 					},
-//					cookie: cookie,
-					//cookieName: '_' + getCanvasName(),
 					onChangeScaleT: function ( scale ) {
 
 						if ( canvasMenu !== undefined )
@@ -96,17 +105,6 @@
 						} );
 
 					},
-
-				}, function ( index, t ) {
-
-//					var t = ( ( options.player.max - options.player.min ) / ( options.player.marks - 1 ) ) * index + options.player.min;
-					Player.selectPlayScene( THREE, scene, t, index, { palette: palette } );
-					if ( typeof canvasMenu !== 'undefined' )
-						canvasMenu.setIndex( index, options.player.name + ': ' + t );
-/*						
-					if ( typeof frustumPoints !== 'undefined' )
-						frustumPoints.updateCloudPoints();
-*/						
 
 				} );
 /*				
