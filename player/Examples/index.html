@@ -167,6 +167,13 @@
 			*/
 			scene.add( points );
 
+			points.userData.player = {
+
+				arrayFuncs: arrayFuncs,
+
+			}
+
+			/*
 			//Define this function if you want play the colors of the points.
 			points.userData.selectPlayScene = function ( t ) {
 
@@ -174,6 +181,7 @@
 
 			}
 			points.userData.arrayFuncs = arrayFuncs;
+			*/
 
 			renderer = new THREE.WebGLRenderer( {
 

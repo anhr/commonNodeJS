@@ -614,7 +614,8 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 
 		if (
 
-			( mesh.userData.selectPlayScene === undefined ) ||
+//			( mesh.userData.selectPlayScene === undefined ) ||
+			!mesh.userData.player ||
 			( options.boPlayer && mesh.userData.boFrustumPoints )
 
 		)
@@ -625,11 +626,13 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 		delete mesh.geometry.boundingSphere;
 		mesh.geometry.boundingSphere = null;
 
-		mesh.userData.selectPlayScene( t );
+		if ( mesh.userData.player.selectPlayScene )
+			mesh.userData.player.selectPlayScene( t );
+
 		function setAttributes( a, b ) {
 
 			var attributes = mesh.geometry.attributes,
-				arrayFuncs = mesh.userData.arrayFuncs;
+				arrayFuncs = mesh.userData.player.arrayFuncs;
 			if ( arrayFuncs === undefined )
 				return;
 			if ( t === undefined )
@@ -823,7 +826,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * Can be as:
  * float - position of the point.
  * [float] - array of positions of the point.
- * Function - position of the point is function of the t.
+ * [Function]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} - position of the point is function of the t.
  * Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )
  * 
  * Vector.w is index of the [palette]{@link https://github.com/anhr/colorPicker}.
@@ -1045,7 +1048,7 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
  * Can be as:
  * float - position of the point.
  * [float] - array of positions of the point.
- * Function - position of the point is function of the t.
+ * [Function]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} - position of the point is function of the t.
  * Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )
  *
  * Vector.w is index of the [palette]{@link https://github.com/anhr/colorPicker}.

@@ -1,4 +1,4 @@
-# Player.
+﻿# Player.
 
 I use Player in my [three.js](https://threejs.org/) projects for 3D objects animation.
 
@@ -65,14 +65,30 @@ const arrayFuncs = [
 ```
 You can see, the X and Y values of the first point of the arrayFuncs is function of the t. X is sin(t) and Y is cos(t).
 t is current time of the playing. Default start time t = 0, a = 1, b = 0.
+Read about [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function).
 * Edit points
 ```
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
 	{ group: scene } ) ),
 	new THREE.PointsMaterial( {
-
+	s
 		color: 0xffffff,
 		size: 0.2,
 
 	} ) );
+```
+Currently [Player.getPoints(...)](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints) returns an array of the vectors for t = 0.
+## Directory Contents
+
+```
+└── build - Compiled source code.
+```
+
+## Building your own Player
+
+In the terminal, enter the following:
+
+```
+$ npm install
+$ npm run build
 ```
