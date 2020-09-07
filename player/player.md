@@ -78,6 +78,42 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Playe
 	} ) );
 ```
 Currently [Player.getPoints(...)](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints) returns an array of the vectors for t = 0.
+
+* Define the `points.userData.player` object in your code for including of the points into Player.
+Include `arrayFuncs` into `points.userData.player` object if you want to move points during playing.
+```
+points.userData.player = {
+
+	arrayFuncs: arrayFuncs,
+
+}
+```
+* Edit Player
+```
+const player = new Player(function ( index, t ) {
+
+		Player.selectPlayScene( THREE, scene, t, index );
+
+	});
+```
+Start playing.
+```
+player.play3DObject();
+```
+* Add `player.animate();` into animate function.
+```
+var animate = function () {
+
+	requestAnimationFrame( animate );
+
+	renderer.render( scene, camera );
+
+	if ( player !== undefined )
+		player.animate();
+
+};
+```
+
 ## Directory Contents
 
 ```
