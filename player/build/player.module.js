@@ -4318,7 +4318,7 @@ function Player(onSelectScene, options) {
 	settings = options.settings || {};
 	settings.min = settings.min || 0;
 	settings.max = settings.max || 1;
-	settings.marks = settings.marks || 2;
+	settings.marks = settings.marks || 100;
 	settings.repeat = settings.repeat || false;
 	settings.interval = settings.interval || 25;
 	settings.zoomMultiplier = settings.zoomMultiplier || 1.1;
@@ -4597,8 +4597,8 @@ Player.execFunc = function (funcs, axisName, t, a, b) {
 };
 var paletteDefault = new ColorPicker$1.palette();
 Player.selectPlayScene = function (THREE, group, t, index, options) {
-	options.boPlayer = options.boPlayer || false;
 	options = options || {};
+	options.boPlayer = options.boPlayer || false;
 	options.a = options.a || 1;
 	options.b = options.b || 0;
 	options.palette = options.palette || paletteDefault;

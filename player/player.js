@@ -42,7 +42,7 @@ var settings;
  * @param {onSelectScene} onSelectScene event of the changing of scene during animation
  * @param {object} [options] followed options is available
  * @param {number} [options.settings] time settings.
- * @param {number} [options.settings.marks] Number of scenes of 3D objects animation. Default is 2
+ * @param {number} [options.settings.marks] Number of scenes of 3D objects animation. Default is 100
  * @param {boolean} [options.settings.repeat] true - Infinitely repeating 3D objects animation. Default is false.
  * @param {number} [options.settings.zoomMultiplier] zoom multiplier of the time. Default is 1.1.
  * @param {number} [options.settings.offset] offset of the time. Default is 0.1.
@@ -65,7 +65,7 @@ function Player( onSelectScene, options ) {
 */
 	settings.min = settings.min || 0;
 	settings.max = settings.max || 1;
-	settings.marks = settings.marks || 2;
+	settings.marks = settings.marks || 100;//2;
 	settings.repeat = settings.repeat || false;
 	settings.interval = settings.interval || 25;
 	settings.zoomMultiplier = settings.zoomMultiplier || 1.1;
@@ -598,9 +598,9 @@ const paletteDefault = new ColorPicker.palette();
  */
 Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 
-	options.boPlayer = options.boPlayer || false;
-
 	options = options || {};
+
+	options.boPlayer = options.boPlayer || false;
 
 	options.a = options.a || 1;
 	options.b = options.b || 0;
