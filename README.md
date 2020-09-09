@@ -26,6 +26,8 @@ for control of the scale of [threejs](https://github.com/anhr/three.js) 3D objec
 [README.md](https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md).
 [StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/).
-* Player. 3D objects animation.
+* Player.js 3D objects animation.
 [Player API](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
+* getShaderMaterialPoints.js get THREE.Points with THREE.ShaderMaterial material.
+[getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
