@@ -103,7 +103,7 @@ export function MoveGroup( group, options ) {
 	 * @param {object} [guiParams.lang] Object with localized language values
 	 * @param {object} [guiParams.lang.moveGroup] use for rename of the MoveGroup folder. Default is 'Move Group'.
 	 * @param {GuiSelectPoint} [guiParams.guiSelectPoint] A dat.gui based graphical user interface for select a point from the mesh.
-	 * See [GuiSelectPoint]{@link ./guiSelectPoint/jsdoc/index.html} for details.
+	 * See [GuiSelectPoint]{@link https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html} for details.
 	 * Default is undefined.
 	 */
 	this.gui = function ( gui, guiParams ) {
