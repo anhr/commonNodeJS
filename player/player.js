@@ -11,7 +11,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-//import cookie from '../../../cookieNodeJS/master/cookie.js';
+import cookie from '../../../cookieNodeJS/master/cookie.js';
 //import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 
 import ScaleController from '../ScaleController.js';
@@ -29,26 +29,30 @@ var settings;
 
 /**
  * @callback onSelectScene
+ * @description This function is called at each new step of the playing. See [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player} method.
  * @param {number} index current index of the scene of the animation
+ * @param {number} t current time
  */
 
 /**
  * @callback onChangeScaleT
+ * @description User has updated the time settings. See [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player} method.
  * @param {object} scale the updated time settings
  */
 
 /**
  * 3D objects animation.
- * @param {onSelectScene} onSelectScene event of the changing of scene during animation
+ * @param {onSelectScene} onSelectScene This function is called at each new step of the playing. See [onSelectScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene}.
  * @param {object} [options] followed options is available
  * @param {number} [options.settings] time settings.
- * @param {number} [options.settings.marks] Number of scenes of 3D objects animation. Default is 100
+ * @param {number} [options.settings.marks] Ticks count of the playing. Number of scenes of 3D objects animation. Default is 10
+ * @param {number} [options.settings.interval] Ticks per seconds. Default is 1.
+ * @param {number} [options.settings.min] Animation start time. Default is 0.
+ * @param {number} [options.settings.max] Animation end time. Default is 1.
  * @param {boolean} [options.settings.repeat] true - Infinitely repeating 3D objects animation. Default is false.
  * @param {number} [options.settings.zoomMultiplier] zoom multiplier of the time. Default is 1.1.
  * @param {number} [options.settings.offset] offset of the time. Default is 0.1.
- * @param {number} [options.settings.min] Animation start time. Default is 0.
- * @param {number} [options.settings.max] Animation end time. Default is 1.
- * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings.
+ * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings. See [onChangeScaleT]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onChangeScaleT}.
  * @param {object} [options.cookie] Your custom cookie function for saving and loading of the Player settings. Default cookie is not saving settings.
  */
 function Player( onSelectScene, options ) {
@@ -65,9 +69,9 @@ function Player( onSelectScene, options ) {
 */
 	settings.min = settings.min || 0;
 	settings.max = settings.max || 1;
-	settings.marks = settings.marks || 100;//2;
+	settings.marks = settings.marks || 10;//2;
 	settings.repeat = settings.repeat || false;
-	settings.interval = settings.interval || 25;
+	settings.interval = settings.interval || 1;//25;
 	settings.zoomMultiplier = settings.zoomMultiplier || 1.1;
 	settings.offset = settings.offset || 0.1;
 /*
@@ -83,7 +87,9 @@ function Player( onSelectScene, options ) {
 
 	/**
 	 * select scene for playing
-	 * @param {number} index of the scene. Between 0 and settings.marks - 1
+	 * @function Player.
+	 * selectScene
+	 * @param {number} index Index of the scene. Range from 0 to settings.marks - 1
 	 */
 	this.selectScene = function( index ) {
 
@@ -104,6 +110,8 @@ function Player( onSelectScene, options ) {
 
 	/**
 	 * Go to next object 3D
+	 * @function Player.
+	 * next
 	 */
 	this.next = function() {
 
@@ -113,12 +121,20 @@ function Player( onSelectScene, options ) {
 
 	/**
 	 * Go to previous object 3D
+	 * @function Player.
+	 * prev
 	 */
 	this.prev = function () {
 
 		_this.selectScene( selectSceneIndex - 1 );
 
 	}
+	/**
+	 * Add controller into controllers array
+	 * @function Player.
+	 * pushController
+	 * @param {controller} controller
+	 */
 	this.pushController = function ( controller ) {
 
 		if ( ( controller.object !== undefined ) && ( controller.object.playRate !== undefined ) )
@@ -130,8 +146,8 @@ function Player( onSelectScene, options ) {
 	//Play/Pause
 
 	this.controllers = [];
-	var playing = false, controllers = this.controllers, time, timeNext;
-//		cookie = options.cookie, cookieName = 'Player' + ( options.cookieName || '' );
+	var playing = false, controllers = this.controllers, time, timeNext,
+		cookie = options.cookie, cookieName = 'Player' + ( options.cookieName || '' );
 
 //	options.cookie.getObject( cookieName, settings, settings );
 
@@ -193,6 +209,7 @@ function Player( onSelectScene, options ) {
 	 * Animation of 3D object
 	 * call from function animate()
 	 */
+/*
 	this.animate = function () {
 
 		if ( time === undefined )
@@ -206,8 +223,11 @@ function Player( onSelectScene, options ) {
 		playNext();
 
 	}
+*/
 	/**
 	 * User has clicked the Play ► / Pause ❚❚ button
+	 * @function Player.
+	 * play3DObject
 	 */
 	this.play3DObject = function() {
 
@@ -233,13 +253,48 @@ function Player( onSelectScene, options ) {
 			}
 
 		} );
+/*		
 		time = new Date().getTime();
 		timeNext = time + 1000 / settings.interval;
+*/		
+
+		function step( timestamp ) {
+
+			if ( playing )
+				window.requestAnimationFrame( step );
+			else time = undefined;
+
+			if ( time === undefined ) {
+
+				time = timestamp;
+				timeNext = time + 1000 / settings.interval;
+//				return;
+
+			}
+			if ( isNaN( timeNext ) )
+				console.error( 'Player.animate: timeNext = ' + timeNext );
+			if ( timestamp < timeNext )
+				return;
+			while ( timestamp > timeNext ) timeNext += 1000 / settings.interval;
+/*			
+			var timeCur = new Date().getTime();
+			if ( isNaN( timeNext ) )
+				console.error( 'Player.animate: timeNext = ' + timeNext );
+			if ( timeCur < timeNext )
+				return;
+			while ( timeCur > timeNext ) timeNext += 1000 / settings.interval;
+*/
+			playNext();
+
+		}
+		window.requestAnimationFrame( step );
 
 	}
 
 	/**
 	 * User has clicked the repeat ⥀ button
+	 * @function Player.
+	 * repeat
 	 */
 	this.repeat = function () {
 
@@ -248,8 +303,23 @@ function Player( onSelectScene, options ) {
 
 	}
 
+	/**
+	 * @function Player.
+	 * getOptions
+	 * @returns Player options.
+	 */
 	this.getOptions = function () { return options; }
+	/**
+	 * @function Player.
+	 * getSettings
+	 * @returns Player options.settings.
+	 */
 	this.getSettings = function () { return options.settings; }
+	/**
+	 * @function Player.
+	 * getSelectSceneIndex
+	 * @returns selected scene index.
+	 */
 	this.getSelectSceneIndex = function () { return selectSceneIndex; }
 
 
@@ -262,18 +332,21 @@ function Player( onSelectScene, options ) {
 
 	/**
 	 * User has changed the rate of changing of animation scenes per second.
+	 * @function Player.
+	 * onChangeTimerId
 	 * @param {number} value new rate
 	 */
 	this.onChangeTimerId = function ( value ) {
 
 		settings.interval = value;
 		setSettings();
-//		options.cookie.setObject( cookieName, settings );
 
 	}
 
 	/**
 	 * Event of the changing of the rate of changing of animation scenes per second.
+	 * @function Player.
+	 * onChangeRepeat
 	 * @param {number} value new rate
 	 */
 	this.onChangeRepeat = function ( value ) {
@@ -287,6 +360,19 @@ function Player( onSelectScene, options ) {
 
 	}
 
+	/**
+	 * Adds a Player's controllers into [dat.gui]{@link https://github.com/anhr/dat.gui}.
+	 * @function Player.
+	 * gui
+	 * @param {GUI} folder Player's folder
+	 * @param {Function} [getLanguageCode] Your custom getLanguageCode() function.
+	 * <pre>
+	 * returns the "primary language" subtag of the language version of the browser.
+	 * Examples: "en" - English language, "ru" Russian.
+	 * See the "Syntax" paragraph of RFC 4646 {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
+	 * Default returns the 'en' is English language.
+	 * You can import { getLanguageCode } from 'commonNodeJS/master/lang.js';
+	 */
 	this.gui = function ( folder, getLanguageCode ) {
 
 //		settings.t = scalesT;
@@ -568,7 +654,19 @@ Player.execFunc = function ( funcs, axisName, t, a, b ) {
 
 }
 
-const paletteDefault = new ColorPicker.palette();
+function palette() {
+
+	var paletteDefault;
+	this.get = function() {
+
+		if ( !paletteDefault )
+			paletteDefault = new ColorPicker.palette();
+		return paletteDefault;
+
+	}
+
+}
+palette = new palette();
 
 /**
  * select a scene for playing
@@ -598,6 +696,8 @@ const paletteDefault = new ColorPicker.palette();
  */
 Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 
+	ColorPicker.palette.setTHREE(THREE);
+	
 	options = options || {};
 
 	options.boPlayer = options.boPlayer || false;
@@ -605,7 +705,7 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 	options.a = options.a || 1;
 	options.b = options.b || 0;
 
-	options.palette = options.palette || paletteDefault;
+	options.palette = options.palette || palette.get();//paletteDefault;
 
 	options.scales = options.scales || {};
 	
@@ -723,8 +823,8 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 					color = options.palette.toColor( funcs.w, min, max );
 				if ( color ) {
 
-					if ( mesh.material.vertexColors !== THREE.VertexColors )
-						console.error( 'Player.selectPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.PointsMaterial' );
+					if ( ! mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors )
+						console.error( 'Player.selectPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors' );
 					if ( ! Player.setColorAttribute( attributes, i, color ) && funcs instanceof THREE.Vector4 ) {
 
 						//console.error( 'Player.selectPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" or "ca" attribute' );
@@ -1105,8 +1205,9 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 	if ( t === undefined )
 		console.error( 'getColors: t = ' + t );
 */
+	ColorPicker.palette.setTHREE(THREE);
 	optionsColor = optionsColor || {};
-	optionsColor.palette = optionsColor.palette || paletteDefault;
+	optionsColor.palette = optionsColor.palette || palette.get();//paletteDefault;
 	
 	if (
 		( optionsColor.positions !== undefined ) &&
@@ -1204,16 +1305,21 @@ Player.traceLine = function ( THREE, group, options ) {
 		return;
 		
 	}
+/*
 	if ( !settings ) {
 
 		console.error( 'Player.traceLine: call Player(...) first.' );
 		return;
 		
 	}
+*/
 	//Thanks to https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
 //	var MAX_POINTS = options.player.marks,
-	var MAX_POINTS = settings.marks,
+	var MAX_POINTS,// = settings.marks,
 		line;//, drawCount = 0;
+	if ( settings && settings.marks )
+		MAX_POINTS = settings.marks;
+	else MAX_POINTS = options.player.marks;
 	this.addPoint = function ( point, index, color ) {
 
 		if ( line === undefined ) {
@@ -1259,8 +1365,27 @@ Player.traceLine = function ( THREE, group, options ) {
 		line.geometry.setDrawRange( start, count );
 
 	}
+	/**
+	 * Show or hide trace line.
+	 * @function Player.traceLine.
+	 * visible
+	 * @param {boolean} visible true - show trace line.
+	 * <p>false - hide trace line.</p>
+	 */
 	this.visible = function ( visible ) { line.visible = visible; }
+	/**
+	 * Is trace line visible?
+	 * @function Player.traceLine.
+	 * isVisible
+	 * @returns true - trace line is visible.
+	 * <p>false - trace line is not visible.</p>
+	 */
 	this.isVisible = function () { return line.visible; }
+	/**
+	 * Remove trace line.
+	 * @function Player.traceLine.
+	 * remove
+	 */
 	this.remove = function () {
 
 		if ( line === undefined )
