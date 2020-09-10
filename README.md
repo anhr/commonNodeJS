@@ -31,3 +31,5 @@ for control of the scale of [threejs](https://github.com/anhr/three.js) 3D objec
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
 * getShaderMaterialPoints.js get THREE.Points with THREE.ShaderMaterial material.
 [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
+* myPoints.js Array of my points.
+[myPoints API](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html).
