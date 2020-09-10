@@ -195,7 +195,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line568">line 568</a>
+        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line589">line 589</a>
     </li></ul></dd>
     
 
@@ -223,7 +223,7 @@
     
 
     
-    <h4 class="name" id="~create"><span class="type-signature">(inner) </span>create<span class="signature">(THREE, arrayFuncs, group, Player, options<span class="signature-attributes">opt</span>, pointsOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~create"><span class="type-signature">(inner) </span>create<span class="signature">(THREE, arrayFuncs, group, Player, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -389,6 +389,60 @@
             <td class="description last"><a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html">Player</a></td>
         </tr>
 
+    
+
+        <tr>
+            
+                <td class="name"><code>settings</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">followed options is available
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
     
 
         <tr>
@@ -793,7 +847,7 @@
 
             
 
-            <td class="description last">creates the THREE.Points with THREE.ShaderMaterial material.The size of the each point of the THREE.Points seems the same on canvasbecause I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.See var shaderMaterialDefault of the frustumPoints for details.</td>
+            <td class="description last">creates the THREE.Points with <a href="https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial">THREE.ShaderMaterial</a> material.The size of the each point of the THREE.Points seems the same on canvasbecause I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.See var shaderMaterialDefault of the frustumPoints for details.</td>
         </tr>
 
     
@@ -826,7 +880,7 @@
 
             
 
-            <td class="description last">position of the points. Default is new THREE.Vector3( 0, 0, 0 ).Vector's x, y, z is position of the points.Can be as:float - position of the points.[float] - array of positions of the points.Function - position of the points is function of the t. Example: new Function( 't', 'return 0.1 + t' )</td>
+            <td class="description last">position of the points.<pre>Vector's x, y, z is position of the points.Can be as:float - position of the points.[float] - array of positions of the points.Function - position of the points is function of the t. Example:	<b>new Function( 't', 'return 0.1 + t' )</b>Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.</pre></td>
         </tr>
 
     
@@ -859,7 +913,7 @@
 
             
 
-            <td class="description last">scale of the points. Default is new THREE.Vector3( 1, 1, 1 ).Vector's x, y, z is scale of the points.Can be as:float - scale of the points.[float] - array of scales of the points.Function - scale of the points is function of the t. Example: new Function( 't', 'return 1.1 + t' )</td>
+            <td class="description last">scale of the points.<pre>Vector's x, y, z is scale of the points.Can be as:float - scale of the points.[float] - array of scales of the points.Function - scale of the points is function of the t. Example:	<b>new Function( 't', 'return 1.1 + t' )</b>Default is <b>new THREE.Vector3( 1, 1, 1 )</b>.</pre></td>
         </tr>
 
     
@@ -892,7 +946,7 @@
 
             
 
-            <td class="description last">rotation of the points. Default is new THREE.Vector3( 0, 0, 0 ).Vector's x, y, z is rotation of the points.Can be as:float - rotation of the points.[float] - array of rotations of the points.Function - rotation of the points is function of the t. Example: new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )</td>
+            <td class="description last">rotation of the points.<pre>Vector's x, y, z is rotation of the points.Can be as:float - rotation of the points.[float] - array of rotations of the points.Function - rotation of the points is function of the t. Example:	<b>new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )</b>Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.</pre></td>
         </tr>
 
     
@@ -925,7 +979,7 @@
 
             
 
-            <td class="description last">Array of points with cloud.If you define the array of points with cloud, then you can define a points with cloud.For example you can definearrayCloud: options.arrayCloudon the params of the getShaderMaterialPoints( params, onReady ) function.OrarrayCloud: options.arrayCloudon the pointsOptions of the myThreejs.points function.Default is undefined</td>
+            <td class="description last">Array of points with cloud.<pre>If you define the array of points with cloud,then you can define a points with cloud.For example you can define<b>arrayCloud: options.arrayCloud</b>on the params of the<b>getShaderMaterialPoints( params, onReady )</b>function.Or<b>arrayCloud: options.arrayCloud</b>on the <b>pointsOptions</b> of the <b>myThreejs.points</b> function.Default is undefined</pre></td>
         </tr>
 
     
@@ -959,6 +1013,46 @@
             
 
             <td class="description last">if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details. Default is undefined.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onReady</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback function that take as input the new THREE.Points.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -1006,7 +1100,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line73">line 73</a>
+        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line92">line 92</a>
     </li></ul></dd>
     
 
@@ -1304,7 +1398,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line298">line 298</a>
+        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line319">line 319</a>
     </li></ul></dd>
     
 
@@ -1441,7 +1535,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line442">line 442</a>
+        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line463">line 463</a>
     </li></ul></dd>
     
 
@@ -1601,7 +1695,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line262">line 262</a>
+        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line283">line 283</a>
     </li></ul></dd>
     
 
@@ -1663,7 +1757,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Sep 10 2020 10:41:15 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Sep 10 2020 13:23:00 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
