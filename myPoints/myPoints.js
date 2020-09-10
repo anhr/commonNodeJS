@@ -24,64 +24,85 @@
  * See arrayFuncs parametr of the [Player.getColors(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors} for details.
  * @param {THREE.Group} group Group for new points
  * @param {Player} Player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}
- * @param {object} [options] followed options is available
- * @param {number} [options.point.size] point size. Default is 5.0.
- * @param {object} [options.scales.w] followed w axis scale params is available
- * @param {object} [options.scales.w.min] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [settings] followed options is available
+ * @param {object} [settings.options] followed options is available
+ * @param {number} [settings.options.point.size] point size. Default is 5.0.
+ * @param {object} [settings.options.scales.w] followed w axis scale params is available
+ * @param {object} [settings.options.scales.w.min] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
  * <p>Default is undefined. Minimal palette range is 0.</p>
- * @param {object} [options.scales.w.max] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [settings.options.scales.w.max] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
   * <p>Default is undefined. Maximal palette range is 100</p>
- * @param {GuiSelectPoint} [options.guiSelectPoint] A dat.gui based graphical user interface for select a point from the mesh.
+ * @param {GuiSelectPoint} [settings.options.guiSelectPoint] A dat.gui based graphical user interface for select a point from the mesh.
  * See [GuiSelectPoint]{@link https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html} for details.
  * Default is undefined.
- * @param {object} [pointsOptions] followed points options is availablee:
- * @param {number} [pointsOptions.tMin] start time. Uses for playing of the points. Default is 0.
- * @param {string} [pointsOptions.name] Name of the points. Used for displaying of items of the Select drop down control of the Meshs folder of the dat.gui. Default is "".
- * @param {object} [pointsOptions.shaderMaterial] creates the THREE.Points with THREE.ShaderMaterial material.
+ * @param {object} [settings.pointsOptions] followed points options is availablee:
+ * @param {number} [settings.pointsOptions.tMin] start time. Uses for playing of the points. Default is 0.
+ * @param {string} [settings.pointsOptions.name] Name of the points. Used for displaying of items of the Select drop down control of the Meshs folder of the dat.gui. Default is "".
+ * @param {object} [settings.pointsOptions.shaderMaterial] creates the THREE.Points with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} material.
  * The size of the each point of the THREE.Points seems the same on canvas
  * because I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.
  * See var shaderMaterialDefault of the frustumPoints for details.
- * @param {THREE.Vector3} [pointsOptions.position] position of the points. Default is new THREE.Vector3( 0, 0, 0 ).
+ * @param {THREE.Vector3} [settings.pointsOptions.position] position of the points.
+ * <pre>
  * Vector's x, y, z is position of the points.
  * Can be as:
  * float - position of the points.
  * [float] - array of positions of the points.
- * Function - position of the points is function of the t. Example: new Function( 't', 'return 0.1 + t' )
- * @param {THREE.Vector3} [pointsOptions.scale] scale of the points. Default is new THREE.Vector3( 1, 1, 1 ).
+ * Function - position of the points is function of the t. Example:
+ *	<b>new Function( 't', 'return 0.1 + t' )</b>
+ * Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.
+ * </pre>
+ * @param {THREE.Vector3} [settings.pointsOptions.scale] scale of the points.
+ * <pre>
  * Vector's x, y, z is scale of the points.
  * Can be as:
  * float - scale of the points.
  * [float] - array of scales of the points.
- * Function - scale of the points is function of the t. Example: new Function( 't', 'return 1.1 + t' )
- * @param {THREE.Vector3} [pointsOptions.rotation] rotation of the points. Default is new THREE.Vector3( 0, 0, 0 ).
+ * Function - scale of the points is function of the t. Example:
+ *	<b>new Function( 't', 'return 1.1 + t' )</b>
+ * Default is <b>new THREE.Vector3( 1, 1, 1 )</b>.
+ * </pre>
+ * @param {THREE.Vector3} [settings.pointsOptions.rotation] rotation of the points.
+ * <pre>
  * Vector's x, y, z is rotation of the points.
  * Can be as:
  * float - rotation of the points.
  * [float] - array of rotations of the points.
- * Function - rotation of the points is function of the t. Example: new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )
- * @param {array} [pointsOptions.arrayCloud] Array of points with cloud.
- * If you define the array of points with cloud, then you can define a points with cloud.
+ * Function - rotation of the points is function of the t. Example:
+ *	<b>new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )</b>
+ * Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.
+  * </pre>
+* @param {array} [settings.pointsOptions.arrayCloud] Array of points with cloud.
+ * <pre>
+ * If you define the array of points with cloud,
+ * then you can define a points with cloud.
  * For example you can define
- * arrayCloud: options.arrayCloud
- * on the params of the getShaderMaterialPoints( params, onReady ) function.
+ * <b>arrayCloud: options.arrayCloud</b>
+ * on the params of the
+ * <b>getShaderMaterialPoints( params, onReady )</b>
+ * function.
  * Or
- * arrayCloud: options.arrayCloud
- * on the pointsOptions of the myThreejs.points function.
+ * <b>arrayCloud: options.arrayCloud</b>
+ * on the <b>pointsOptions</b> of the <b>myThreejs.points</b> function.
  * Default is undefined
- * @param {boolean} [pointsOptions.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details. Default is undefined.
- * @param {function(THREE.Points)} onReady Callback function that take as input the new THREE.Points.
+ * </pre>
+ * @param {boolean} [settings.pointsOptions.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details. Default is undefined.
+ * @param {function(THREE.Points)} [settings.pointsOptions.onReady] Callback function that take as input the new THREE.Points.
  */
-function create( THREE, arrayFuncs, group, Player, options, pointsOptions ) {
+function create( THREE, arrayFuncs, group, Player, settings ) {
 
 	if ( ( typeof arrayFuncs !== 'function' ) && ( arrayFuncs.length === 0 ) )
 		arrayFuncs.push( new THREE.Vector3() );
 
-	options = options || {};
+	settings = settings || {};
+
+	const options = settings.options || {};
 	options.point = options.point || {};
 	options.point.size = options.point.size || 5.0;
+	options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
 	options.scales = options.scales || {};
 
-	pointsOptions = pointsOptions || {};
+	const pointsOptions = settings.pointsOptions || {};
 	pointsOptions.tMin = pointsOptions.tMin || 0;
 	pointsOptions.name = pointsOptions.name || '';
 	pointsOptions.position = pointsOptions.position || new THREE.Vector3( 0, 0, 0 );
