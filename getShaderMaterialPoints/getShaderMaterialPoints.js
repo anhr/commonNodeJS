@@ -27,7 +27,7 @@
  * @param {number} [params.options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
  * @param {object} [params.pointsOptions] see myPoints.create pointsOptions for details
  * @param {number} [params.tMin] start time. Uses for playing of the points. Default is 0.
- * @param {number} [params.options.point.size] point size. Default is 0.0.
+ * @param {number} [params.options.point.size] point size. Default is 5.0.
  */
 function getShaderMaterialPoints( THREE, group, arrayFuncs, Player, onReady, params ) {
 
@@ -42,6 +42,9 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, Player, onReady, par
 	params.options.a = params.options.a || 1;
 	params.options.b = params.options.b || 0;
 	params.options.scales = params.options.scales || {};
+
+	params.options.point = params.options.point || {};
+	params.options.point.size = params.options.point.size || 5.0;
 
 	if ( typeof arrayFuncs === 'function' )
 		geometry = arrayFuncs();
@@ -75,7 +78,8 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, Player, onReady, par
 
 			value: ( params.pointsOptions !== undefined ) && ( params.pointsOptions.shaderMaterial !== undefined ) && ( params.pointsOptions.shaderMaterial.point !== undefined ) ?
 				params.pointsOptions.shaderMaterial.point.size :
-				( ( params.options.point === undefined ) || ( params.options.point.size === undefined ) ) ? 0.0 : params.options.point.size
+					params.options.point.size
+//					( ( params.options.point === undefined ) || ( params.options.point.size === undefined ) ) ? 0.0 : params.options.point.size
 
 		},
 
