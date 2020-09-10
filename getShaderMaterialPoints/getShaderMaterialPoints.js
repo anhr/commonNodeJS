@@ -22,20 +22,26 @@
  * @param {Player} Player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}
  * @param {function(THREE.Points)} onReady Callback function that take as input the new THREE.Points.
  * @param {object} [params]
+ * @param {number} [params.tMin] start time. Uses for playing of the points. Default is 0.
+ * @param {object} [params.pointsOptions] see myPoints.create pointsOptions for details
  * @param {object} [params.options] see myThreejs.create options for details
  * @param {number} [params.options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
  * @param {number} [params.options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
- * @param {object} [params.pointsOptions] see myPoints.create pointsOptions for details
- * @param {number} [params.tMin] start time. Uses for playing of the points. Default is 0.
  * @param {number} [params.options.point.size] point size. Default is 5.0.
- */
+ * @param {object} [params.options.scales.w] followed w axis scale params is available
+ * @param {object} [params.options.scales.w.min] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * <p>Default is undefined. Minimal palette range is 0.</p>
+ * @param {object} [params.options.scales.w.max] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+  * <p>Default is undefined. Maximal palette range is 100</p>
+*/
 function getShaderMaterialPoints( THREE, group, arrayFuncs, Player, onReady, params ) {
 
 	params = params || {};
 
-	var geometry, tMin = params.pointsOptions === undefined ?
-		params.tMin === undefined ? 0 : params.tMin :
-		params.pointsOptions.tMin,
+	var geometry,
+		tMin = params.pointsOptions === undefined ?
+			params.tMin === undefined ? 0 : params.tMin :
+			params.pointsOptions.tMin,
 		arrayCloud = params.pointsOptions === undefined ? params.arrayCloud : params.pointsOptions.arrayCloud;
 
 	params.options = params.options || {};
