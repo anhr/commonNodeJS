@@ -639,11 +639,8 @@ Player.execFunc = function ( funcs, axisName, t, a, b ) {
 				return x * t + y;
 
 			}
-			if ( func.func ) {
-
-				return func.func( t, a, b );
-
-			}
+			if ( func.func )
+				return func.func instanceof Function ? func.func( t, a, b ) : func.func;
 			if ( axisName !== 'w' )
 				console.error( 'Player.execFunc: funcs["' + axisName + '"] object is not array' );
 			return;
@@ -1262,7 +1259,13 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 						funcs.w,
 //						funcs.w instanceof Object ? funcs.w.func : funcs.w,
 				min, max );
-*/				
+*/
+			if ( w instanceof Function && ! settings ) {
+
+				console.error( 'Player.getColors: create Player first or remove all functions from all THREE.Vector4.w items of the arrayFuncs' );
+				return;
+				
+			}
 			var color = optionsColor.palette.toColor(
 				funcs === undefined ?
 					new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
@@ -1346,7 +1349,14 @@ Player.traceLine = function ( THREE, group, options ) {
 		line;//, drawCount = 0;
 	if ( settings && settings.marks )
 		MAX_POINTS = settings.marks;
-	else MAX_POINTS = options.player.marks;
+	else if ( options.player && options.player.marks )
+		MAX_POINTS = options.player.marks;
+	else {
+
+		console.error( 'Player.traceLine: MAX_POINTS = ' + MAX_POINTS + '. Create Player first or remove all trace = true from all items of the arrayFuncs' );
+		return;
+
+	}
 	this.addPoint = function ( point, index, color ) {
 
 		if ( line === undefined ) {

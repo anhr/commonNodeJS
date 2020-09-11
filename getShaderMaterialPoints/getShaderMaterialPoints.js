@@ -11,8 +11,10 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-//import Player from '../player/player.js';
+import Player from '../player/player.js';
 import MyPoints from '../myPoints/myPoints.js';
+
+// * @param {Player} Player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}
 
 /**
  * get THREE.Points with THREE.ShaderMaterial material
@@ -20,7 +22,6 @@ import MyPoints from '../myPoints/myPoints.js';
  * @param {THREE.Group|THREE.Scene} group THREE group or scene
  * @param {array} arrayFuncs points.geometry.attributes.position array.
  * See arrayFuncs parametr of the [Player.getColors(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors} for details.
- * @param {Player} Player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}
  * @param {function(THREE.Points)} onReady Callback function that take as input the new THREE.Points.
  * @param {object} [params]
  * @param {number} [params.tMin] start time. Uses for playing of the points. Default is 0.
@@ -35,7 +36,7 @@ import MyPoints from '../myPoints/myPoints.js';
  * @param {object} [params.options.scales.w.max] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
   * <p>Default is undefined. Maximal palette range is 100</p>
 */
-function getShaderMaterialPoints( THREE, group, arrayFuncs, Player, onReady, params ) {
+function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady, params ) {
 
 	params = params || {};
 

@@ -157,7 +157,7 @@
     
 
     
-    <h4 class="name" id="~getShaderMaterialPoints"><span class="type-signature">(inner) </span>getShaderMaterialPoints<span class="signature">(THREE, group, arrayFuncs, Player, onReady, params<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~getShaderMaterialPoints"><span class="type-signature">(inner) </span>getShaderMaterialPoints<span class="signature">(THREE, group, arrayFuncs, onReady, params<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -299,37 +299,6 @@
 
         <tr>
             
-                <td class="name"><code>Player</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Player</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html">Player</a></td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>onReady</code></td>
             
 
@@ -411,6 +380,72 @@
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tMin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">start time. Uses for playing of the points. Default is 0.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>pointsOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">see myPoints pointsOptions for details</td>
+        </tr>
+
     
 
         <tr>
@@ -532,83 +567,10 @@
         </tr>
 
     
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
 
         <tr>
             
-                <td class="name"><code>pointsOptions</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">see myPoints.create pointsOptions for details</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>tMin</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">start time. Uses for playing of the points. Default is 0.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>options.point.size</code></td>
+                <td class="name"><code>point.size</code></td>
             
 
             <td class="type">
@@ -635,6 +597,140 @@
             
 
             <td class="description last">point size. Default is 5.0.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>scales.w</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">followed w axis scale params is available
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>min</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Minimal range of the <a href="https://github.com/anhr/colorPicker">color palette</a>.<p>Default is undefined. Minimal palette range is 0.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>max</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Maximal range of the <a href="https://github.com/anhr/colorPicker">color palette</a>.<p>Default is undefined. Maximal palette range is 100</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -682,7 +778,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="getShaderMaterialPoints.js.html">getShaderMaterialPoints.js</a>, <a href="getShaderMaterialPoints.js.html#line32">line 32</a>
+        <a href="getShaderMaterialPoints.js.html">getShaderMaterialPoints.js</a>, <a href="getShaderMaterialPoints.js.html#line39">line 39</a>
     </li></ul></dd>
     
 
@@ -734,7 +830,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Sep 10 2020 09:11:45 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Sep 11 2020 17:58:17 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
