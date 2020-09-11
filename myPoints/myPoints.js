@@ -119,7 +119,8 @@ function MyPoints( THREE, arrayFuncs, group, Player, settings ) {
 	pointsOptions.group = group;
 
 	if ( pointsOptions.shaderMaterial )
-		getShaderMaterialPoints( THREE, group, arrayFuncs, Player, function ( points ) {
+		getShaderMaterialPoints( THREE, group, arrayFuncs,// Player,
+			function ( points ) {
 
 				Points( points );
 				if ( !points.userData.boFrustumPoints && options.addParticle )

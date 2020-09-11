@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: myPoints</title>
+    <title>JSDoc: Module: MyPoints</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: myPoints</h1>
+    <h1 class="page-title">Module: MyPoints</h1>
 
     
 
@@ -147,72 +147,6 @@
     
 
     
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id=".myPoints"><span class="type-signature">(static) </span>myPoints<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    Loading of the vertex and fragment contents from external files.Creating the new points and adding it into group
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line589">line 589</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -223,7 +157,7 @@
     
 
     
-    <h4 class="name" id="~create"><span class="type-signature">(inner) </span>create<span class="signature">(THREE, arrayFuncs, group, Player, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~MyPoints"><span class="type-signature">(inner) </span>MyPoints<span class="signature">(THREE, arrayFuncs, group, Player, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -880,7 +814,7 @@
 
             
 
-            <td class="description last">position of the points.<pre>Vector's x, y, z is position of the points.Can be as:float - position of the points.[float] - array of positions of the points.Function - position of the points is function of the t. Example:	<b>new Function( 't', 'return 0.1 + t' )</b>Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.</pre></td>
+            <td class="description last">position of the points.<pre>Vector's x, y, z is position of the points.Can be as:float - position of the points.[float] - array of positions of the points.Function - position of the points is function of the t. Example:	<b>new Function( 't', 'return 0.1 + t' )</b>Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.</pre>Example:<b>new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0)</b></td>
         </tr>
 
     
@@ -913,7 +847,7 @@
 
             
 
-            <td class="description last">scale of the points.<pre>Vector's x, y, z is scale of the points.Can be as:float - scale of the points.[float] - array of scales of the points.Function - scale of the points is function of the t. Example:	<b>new Function( 't', 'return 1.1 + t' )</b>Default is <b>new THREE.Vector3( 1, 1, 1 )</b>.</pre></td>
+            <td class="description last">scale of the points.<pre>Vector's x, y, z is scale of the points.Can be as:float - scale of the points.[float] - array of scales of the points.Function - scale of the points is function of the t. Example:	<b>new Function( 't', 'return 1.1 + t' )</b>Default is <b>new THREE.Vector3( 1, 1, 1 )</b>.</pre>Example:<b>new THREE.Vector3 ( new Function( 't', 'return 1 + t' ), 1, 1)</b></td>
         </tr>
 
     
@@ -946,7 +880,7 @@
 
             
 
-            <td class="description last">rotation of the points.<pre>Vector's x, y, z is rotation of the points.Can be as:float - rotation of the points.[float] - array of rotations of the points.Function - rotation of the points is function of the t. Example:	<b>new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )</b>Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.</pre></td>
+            <td class="description last">rotation of the points.<pre>Vector's x, y, z is rotation of the points.Can be as:float - rotation of the points.[float] - array of rotations of the points.Function - rotation of the points is function of the t. Example:	<b>new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )</b>Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.</pre>Example:<b>new THREE.Vector3 ( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), 0, 0)</b></td>
         </tr>
 
     
@@ -1100,7 +1034,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line92">line 92</a>
+        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line100">line 100</a>
     </li></ul></dd>
     
 
@@ -1136,442 +1070,7 @@
     
 
     
-    <h4 class="name" id="~getShaderMaterialPoints"><span class="type-signature">(inner) </span>getShaderMaterialPoints<span class="signature">(params, onReady<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    get THREE.Points with THREE.ShaderMaterial material
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>params</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">see myThreejs.create options for details</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>pointsOptions</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">see myPoints.create pointsOptions for details</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>tMin</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">start time. Uses for playing of the points. Default is 0.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>arrayFuncs</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">points.geometry.attributes.position array.See https://github.com/anhr/myThreejs#arrayfuncs-item  for details.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>onReady</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Callback function that take as input the new THREE.Points. Default is undefined.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line319">line 319</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="~loadShaderText"><span class="type-signature">(inner) </span>loadShaderText<span class="signature">(onLoad)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Loading of the vertex and fragment contents from external files.Thanks to https://stackoverflow.com/a/48188509/5175935
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>onLoad</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Callback function that called after success loading.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line463">line 463</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="~pushArrayCloud"><span class="type-signature">(inner) </span>pushArrayCloud<span class="signature">(arrayCloud, geometry)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~MyPoints.pushArrayCloud"><span class="type-signature">(inner) </span>MyPoints.pushArrayCloud<span class="signature">(THREE, arrayCloud, geometry)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1611,6 +1110,29 @@
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>THREE</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><a href="https://github.com/anhr/three.js">THREE</a></td>
+        </tr>
+
     
 
         <tr>
@@ -1695,7 +1217,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line283">line 283</a>
+        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line285">line 285</a>
     </li></ul></dd>
     
 
@@ -1751,13 +1273,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-myPoints.html">myPoints</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyPoints.html">MyPoints</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Sep 10 2020 13:23:00 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Sep 11 2020 11:16:07 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

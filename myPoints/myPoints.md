@@ -1,15 +1,14 @@
-# getShaderMaterialPoints.
+# MyPoints.
 
-I use <b>getShaderMaterialPoints</b> in my [three.js](https://threejs.org/) projects for create THREE.Points with [THREE.ShaderMaterial](https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial) material.
+I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create THREE.Points.
 
 ## Quick start
 
 Create your web page. [Example](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene).
 
-The easiest way to use <b>getShaderMaterialPoints</b> in your code is import getShaderMaterialPoints from getShaderMaterialPoints.js file in your JavaScript module.
+The easiest way to use <b>MyPoints</b> in your code is import MyPoints from myPoints.js file in your JavaScript module.
 ```
-import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
-import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
+import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
 ```
 or
 * Create a folder on your localhost named as [folderName].
