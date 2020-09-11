@@ -738,6 +738,18 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 			if ( t === undefined )
 				console.error( 'setPosition: t = ' + t );
 
+			var min, max;
+			if ( options.scales.w !== undefined ) {
+
+				min = options.scales.w.min; max = options.scales.w.max;
+
+			} else {
+
+				max = value;
+				min = max - 1;
+
+			}
+
 			for ( var i = 0; i < arrayFuncs.length; i++ ) {
 
 				var funcs = arrayFuncs[i], needsUpdate = false;
@@ -756,17 +768,6 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 				setPosition( 'y', 'setY' );
 				setPosition( 'z', 'setZ' );
 				let color;
-				var min, max;
-				if ( options.scales.w !== undefined ) {
-
-					min = options.scales.w.min; max = options.scales.w.max;
-
-				} else {
-
-					max = value;
-					min = max - 1;
-
-				}
 /*
 				var boSetColorAttribute = true;
 				if ( typeof funcs.w === "function" ) {
@@ -1231,18 +1232,44 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 			( optionsColor.positions.itemSize === 4 )//w position of the positions is color of the point
 			) {
 
-			var min, max;
+			var min, max, w = funcs.w;
 			if ( optionsColor.scale !== undefined ) {
 
 				min = optionsColor.scale.min; max = optionsColor.scale.max;
 
 			} else {
 
-				max = funcs instanceof THREE.Vector4 ? funcs.w : 1;
-				min = max - 1;
+				if ( funcs.w instanceof Object ) {
+
+					if ( funcs.w.max ) max = funcs.w.max;
+					if ( funcs.w.min ) min = funcs.w.min;
+					w = funcs.w.func;
+					
+				} else {
+
+					max = funcs instanceof THREE.Vector4 ? funcs.w : 1;
+					min = max - 1;
+
+				}
 
 			}
-			var color = optionsColor.palette.toColor( funcs === undefined ? new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w : funcs.w, min, max );
+/*
+			var color = optionsColor.palette.toColor(
+				funcs === undefined ?
+					new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
+					funcs.w instanceof Function ?
+						funcs.w( settings.min ) :
+						funcs.w,
+//						funcs.w instanceof Object ? funcs.w.func : funcs.w,
+				min, max );
+*/				
+			var color = optionsColor.palette.toColor(
+				funcs === undefined ?
+					new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
+					w instanceof Function ?
+						w( settings.min ) :
+						w,
+				min, max );
 			optionsColor.colors.push( color.r, color.g, color.b );
 
 		} else if ( optionsColor.colors instanceof THREE.Float32BufferAttribute )
