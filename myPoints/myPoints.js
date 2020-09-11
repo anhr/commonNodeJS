@@ -1,5 +1,5 @@
 /**
- * @module myPoints
+ * @module MyPoints
  * @description Array of my points.
  * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
  *
@@ -16,6 +16,8 @@
 //import { THREE } from '../../../nodejs/three.js';
 //import { THREE } from '../three.js';
 //import loadScript from '../../../loadScriptNodeJS/master/loadScript.js';
+
+import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMaterialPoints.js';
 
 /**
  * Creating the new points and adding it into group
@@ -52,6 +54,8 @@
  *	<b>new Function( 't', 'return 0.1 + t' )</b>
  * Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.
  * </pre>
+ * Example:
+ * <b>new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0)</b>
  * @param {THREE.Vector3} [settings.pointsOptions.scale] scale of the points.
  * <pre>
  * Vector's x, y, z is scale of the points.
@@ -62,6 +66,8 @@
  *	<b>new Function( 't', 'return 1.1 + t' )</b>
  * Default is <b>new THREE.Vector3( 1, 1, 1 )</b>.
  * </pre>
+ * Example:
+ * <b>new THREE.Vector3 ( new Function( 't', 'return 1 + t' ), 1, 1)</b>
  * @param {THREE.Vector3} [settings.pointsOptions.rotation] rotation of the points.
  * <pre>
  * Vector's x, y, z is rotation of the points.
@@ -72,7 +78,9 @@
  *	<b>new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )</b>
  * Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.
   * </pre>
-* @param {array} [settings.pointsOptions.arrayCloud] Array of points with cloud.
+ * Example:
+ * <b>new THREE.Vector3 ( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), 0, 0)</b>
+ * @param {array} [settings.pointsOptions.arrayCloud] Array of points with cloud.
  * <pre>
  * If you define the array of points with cloud,
  * then you can define a points with cloud.
@@ -89,7 +97,7 @@
  * @param {boolean} [settings.pointsOptions.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details. Default is undefined.
  * @param {function(THREE.Points)} [settings.pointsOptions.onReady] Callback function that take as input the new THREE.Points.
  */
-function create( THREE, arrayFuncs, group, Player, settings ) {
+function MyPoints( THREE, arrayFuncs, group, Player, settings ) {
 
 	if ( ( typeof arrayFuncs !== 'function' ) && ( arrayFuncs.length === 0 ) )
 		arrayFuncs.push( new THREE.Vector3() );
@@ -111,18 +119,18 @@ function create( THREE, arrayFuncs, group, Player, settings ) {
 	pointsOptions.group = group;
 
 	if ( pointsOptions.shaderMaterial )
-		getShaderMaterialPoints( {
+		getShaderMaterialPoints( THREE, group, arrayFuncs, Player, function ( points ) {
+
+				Points( points );
+				if ( !points.userData.boFrustumPoints && options.addParticle )
+					options.addParticle( points );
+
+			}, {
 
 			options: options,
 			pointsOptions: pointsOptions,
-			arrayFuncs: arrayFuncs,
+//			arrayFuncs: arrayFuncs,
 
-		}, function ( points ) {
-
-			Points( points );
-			if ( !points.userData.boFrustumPoints )
-				options.addParticle( points );
-			
 		} );
 	else {
 
@@ -138,7 +146,7 @@ function create( THREE, arrayFuncs, group, Player, settings ) {
 		if ( pointsOptions.arrayCloud !== undefined )
 			points.userData.cloud = {
 
-				indexArray: pushArrayCloud( pointsOptions.arrayCloud, points.geometry ),//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
+				indexArray: MyPoints.pushArrayCloud( THREE, pointsOptions.arrayCloud, points.geometry ),//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
 
 			}
 /*
@@ -274,14 +282,16 @@ function create( THREE, arrayFuncs, group, Player, settings ) {
 //	return points;
 
 }
-
 /**
  * Pushes to clouds array all points from geometry
+ * @function MyPoints.
+ * pushArrayCloud
+ * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {array} arrayCloud
  * @param {THREE.BufferGeometry} geometry
  * @returns index of the new array item
  */
-function pushArrayCloud( arrayCloud, geometry ) {
+MyPoints.pushArrayCloud = function( THREE, arrayCloud, geometry ) {
 
 	if ( arrayCloud === undefined ) {
 
@@ -317,6 +327,7 @@ function pushArrayCloud( arrayCloud, geometry ) {
  * See https://github.com/anhr/myThreejs#arrayfuncs-item  for details.
  * @param {function(THREE.Points)} [onReady] Callback function that take as input the new THREE.Points. Default is undefined.
  */
+/*
 function getShaderMaterialPoints( params, onReady ) {
 
 	var geometry, tMin = params.pointsOptions === undefined ?
@@ -342,16 +353,6 @@ function getShaderMaterialPoints( params, onReady ) {
 
 				} ),
 			4 ) );
-/*
- 			( THREE, tMin, params.arrayFuncs, params.options.scales.w,
-				{
-
-					opacity: params.pointsOptions === undefined ? undefined : params.pointsOptions.opacity,
-					positions: geometry.attributes.position
-
-				} ),
-			4 ) );
-*/
 
 	var texture = new THREE.TextureLoader().load( "/anhr/myThreejs/master/textures/point.png" );
 	texture.wrapS = THREE.RepeatWrapping;
@@ -359,18 +360,8 @@ function getShaderMaterialPoints( params, onReady ) {
 
 	var uniforms = {
 
-//		color: { value: new THREE.Color( 0xffffff ) },
 		pointTexture: { value: texture },
 
-/*
-		//если убрать эту переменную, то размер точек невозможно будет регулировать
-		opacity: {
-			value: ( params.shaderMaterial !== undefined ) &&
-				( params.shaderMaterial.point !== undefined ) &&
-				( params.shaderMaterial.point.opacity !== undefined ) ?
-				params.shaderMaterial.point.opacity : 1.0
-		},//Float in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
-*/		
 		pointSize: {
 
 			value: ( params.pointsOptions !== undefined ) && ( params.pointsOptions.shaderMaterial !== undefined ) && ( params.pointsOptions.shaderMaterial.point !== undefined ) ?
@@ -424,18 +415,6 @@ function getShaderMaterialPoints( params, onReady ) {
 		//Convert all points with cloud and shaderMaterial from local to world positions
 		// i.e. calculate scales, positions and rotation of the points.
 		//Converting of all points with cloud, but not shaderMaterial see updateCloudPoint in the frustumPoints.create function
-/*		
-		if (
-			!points.userData.boFrustumPoints &&
-			(
-				(
-					( params.pointsOptions !== undefined ) && ( params.pointsOptions.arrayCloud !== undefined )
-				)
-				|| ( params.arrayCloud !== undefined )
-			)
-		)
-			params.pointsOptions.arrayCloud.frustumPoints.updateCloudPoint( points );
-*/
 		if ( points.userData.boFrustumPoints ) {
 
 			params.pointsOptions.group.children.forEach( function ( mesh ){
@@ -455,54 +434,25 @@ function getShaderMaterialPoints( params, onReady ) {
 	}, params.pointsOptions === undefined ? undefined : params.pointsOptions.path );
 
 }
+*/
 
 /**
  * Loading of the vertex and fragment contents from external files.
  * Thanks to https://stackoverflow.com/a/48188509/5175935
  * @param {function()} onLoad Callback function that called after success loading.
  * */
+/*
 function loadShaderText ( onload, path ) {
 
 	var shaderText = {};
 
-	/**
-	 * This is a basic asyncronous shader loader for THREE.js.
-	 * Thanks to https://www.davideaversa.it/2016/10/three-js-shader-loading-external-file/
-	 * https://github.com/THeK3nger/threejs-async-shaders-example
-	 * 
-	 * It uses the built-in THREE.js async loading capabilities to load shaders from files!
-	 * 
-	 * `onProgress` and `onError` are stadard TREE.js stuff. Look at 
-	 * https://threejs.org/examples/webgl_loader_obj.html for an example. 
-	 * 
-	 * @param {String} vertex_url URL to the vertex shader code.
-	 * @param {String} fragment_url URL to fragment shader code
-	 * @param {function(String, String)} onLoad Callback function(vertex, fragment) that take as input the loaded vertex and fragment contents.
-	 * @param {object} [options] followed options is available
-	 * @param {function(event)} [options.onProgress] Callback for the `onProgress` event.
-	 * @param {function(event)} [options.onError] Callback for the `onError` event.
-	 */
 	function ShaderLoader( vertex_url, fragment_url, onLoad, options ) {
 
 		options = options || {};
-/*
-		var vertex_text, fragment_text;
-		function loaded() {
-
-			if ( ( fragment_text === undefined ) || ( vertex_text === undefined ) )
-				return;
-			onLoad( vertex_text, fragment_text );
-
-		}
-*/
 		//load vertex.c file
 		var vertex_loader = new THREE.FileLoader( THREE.DefaultLoadingManager );
 		vertex_loader.setResponseType( 'text' );
 		vertex_loader.load( vertex_url, function ( vertex_text ) {
-/*
-			vertex_text = _vertex_text;
-			loaded();
-*/
 		//load fragment.c file
 			var fragment_loader = new THREE.FileLoader( THREE.DefaultLoadingManager );
 			fragment_loader.setResponseType( 'text' );
@@ -513,17 +463,6 @@ function loadShaderText ( onload, path ) {
 			}, options.onProgress, options.onError );
 
 		}, options.onProgress, options.onError );
-/*
-		//load fragment.c file
-		var fragment_loader = new THREE.FileLoader( THREE.DefaultLoadingManager );
-		fragment_loader.setResponseType( 'text' );
-		fragment_loader.load( fragment_url, function ( _fragment_text ) {
-
-			fragment_text = _fragment_text;
-			loaded();
-
-		}, options.onProgress, options.onError );
-*/
 
 	}
 
@@ -551,10 +490,6 @@ function loadShaderText ( onload, path ) {
 	var currentScriptPath = getCurrentScriptPath();
 
 	path = path || {};
-/*	
-currentScriptPath = "https://raw.githack.com/anhr/myThreejs/master/myPoints";
-console.warn( 'currentScriptPath = ' + currentScriptPath );
-*/
 	path.vertex = path.vertex || currentScriptPath + "/vertex.c";
 	path.fragment = path.fragment || currentScriptPath + "/fragment.c";
 	ShaderLoader( path.vertex, path.fragment,
@@ -578,40 +513,5 @@ console.warn( 'currentScriptPath = ' + currentScriptPath );
 	);
 
 }
-
-/**
- * The vertex and fragment contents
- * */
-//var shaderText;
-/**
- * Loading of the vertex and fragment contents from external files.
- * Creating the new points and adding it into group
- * */
-export var myPoints = {
-
-	/**
-	 * Creating the new points and adding it into group
-	 * */
-	create: create,
-	getGlobalScale: function ( mesh ) {
-
-		var parent = mesh.parent, scale = new THREE.Vector3( 1, 1, 1 );
-		while ( parent !== null ) {
-
-			scale.multiply( parent.scale );
-			parent = parent.parent;
-
-		}
-		return scale;
-
-	},
-	/**
-	* get THREE.Points with THREE.ShaderMaterial material
-	* */
-	getShaderMaterialPoints: getShaderMaterialPoints,
-	/**
-	 * Pushes to clouds array all point from geometry
-	 */
-	pushArrayCloud: pushArrayCloud,
-
-}
+*/
+export default MyPoints;
