@@ -12,6 +12,7 @@
  */
 
 //import Player from '../player/player.js';
+import MyPoints from '../myPoints/myPoints.js';
 
 /**
  * get THREE.Points with THREE.ShaderMaterial material
@@ -23,7 +24,7 @@
  * @param {function(THREE.Points)} onReady Callback function that take as input the new THREE.Points.
  * @param {object} [params]
  * @param {number} [params.tMin] start time. Uses for playing of the points. Default is 0.
- * @param {object} [params.pointsOptions] see myPoints.create pointsOptions for details
+ * @param {object} [params.pointsOptions] see myPoints pointsOptions for details
  * @param {object} [params.options] see myThreejs.create options for details
  * @param {number} [params.options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
  * @param {number} [params.options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
@@ -59,7 +60,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, Player, onReady, par
 		( Player.getPoints( THREE, arrayFuncs,
 			{ options: { a: params.options.a, b: params.options.b }, group: group, t: tMin, } ),
 			arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
-	var indexArrayCloud = arrayCloud === undefined ? undefined : pushArrayCloud( arrayCloud, geometry );//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
+	var indexArrayCloud = arrayCloud === undefined ? undefined : MyPoints.pushArrayCloud( THREE, arrayCloud, geometry );//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
 	if ( ( params.pointsOptions === undefined ) || !params.pointsOptions.boFrustumPoints )
 		geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( Player.getColors
 			( THREE, arrayFuncs,
@@ -68,11 +69,13 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, Player, onReady, par
 					opacity: params.pointsOptions === undefined ? undefined : params.pointsOptions.opacity,
 					positions: geometry.attributes.position,
 					scale: params.options.scales.w,
+					palette: params.options.palette,
 
 				} ),
 			4 ) );
 
-	var texture = new THREE.TextureLoader().load( "/anhr/myThreejs/master/textures/point.png" );
+//	var texture = new THREE.TextureLoader().load( "/anhr/myThreejs/master/textures/point.png" );
+	var texture = new THREE.TextureLoader().load( "/anhr/commonNodeJS/master/getShaderMaterialPoints/textures/point.png" );
 	texture.wrapS = THREE.RepeatWrapping;
 	texture.wrapT = THREE.RepeatWrapping;
 
