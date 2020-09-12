@@ -17,7 +17,9 @@
 //import { THREE } from '../three.js';
 //import loadScript from '../../../loadScriptNodeJS/master/loadScript.js';
 
+import Player from '../player/player.js';
 import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMaterialPoints.js';
+// * @param {Player} Player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}
 
 /**
  * Creating the new points and adding it into group
@@ -25,7 +27,6 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * @param {array} arrayFuncs points.geometry.attributes.position array.
  * See arrayFuncs parametr of the [Player.getColors(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors} for details.
  * @param {THREE.Group} group Group for new points
- * @param {Player} Player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}
  * @param {object} [settings] followed options is available
  * @param {object} [settings.options] followed options is available
  * @param {number} [settings.options.point.size] point size. Default is 5.0.
@@ -97,7 +98,8 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * @param {boolean} [settings.pointsOptions.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details. Default is undefined.
  * @param {function(THREE.Points)} [settings.pointsOptions.onReady] Callback function that take as input the new THREE.Points.
  */
-function MyPoints( THREE, arrayFuncs, group, Player, settings ) {
+function MyPoints( THREE, arrayFuncs, group,// Player,
+	settings ) {
 
 	if ( ( typeof arrayFuncs !== 'function' ) && ( arrayFuncs.length === 0 ) )
 		arrayFuncs.push( new THREE.Vector3() );
