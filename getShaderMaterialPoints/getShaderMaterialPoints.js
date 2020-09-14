@@ -23,54 +23,58 @@ import MyPoints from '../myPoints/myPoints.js';
  * @param {array} arrayFuncs points.geometry.attributes.position array.
  * See arrayFuncs parametr of the [Player.getColors(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors} for details.
  * @param {function(THREE.Points)} onReady Callback function that take as input the new THREE.Points.
- * @param {object} [params]
- * @param {number} [params.tMin] start time. Uses for playing of the points. Default is 0.
- * @param {object} [params.pointsOptions] see myPoints pointsOptions for details
- * @param {object} [params.options] see myThreejs.create options for details
- * @param {number} [params.options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
- * @param {number} [params.options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
- * @param {number} [params.options.point.size] point size. Default is 5.0.
- * @param {object} [params.options.scales.w] followed w axis scale params is available
- * @param {object} [params.options.scales.w.min] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [settings]
+ * @param {number} [settings.tMin] start time. Uses for playing of the points. Default is 0.
+ * @param {Player} [settings.Player] [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}.
+ * Define Player only if you want trace of the moving of the points during playing.
+ * @param {object} [settings.pointsOptions] see myPoints pointsOptions for details
+ * @param {object} [settings.options] see myThreejs.create options for details
+ * @param {number} [settings.options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
+ * @param {number} [settings.options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
+ * @param {number} [settings.options.point.size] point size. Default is 5.0.
+ * @param {object} [settings.options.scales.w] followed w axis scale params is available
+ * @param {object} [settings.options.scales.w.min] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
  * <p>Default is undefined. Minimal palette range is 0.</p>
- * @param {object} [params.options.scales.w.max] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [settings.options.scales.w.max] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
   * <p>Default is undefined. Maximal palette range is 100</p>
 */
-function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady, params ) {
+function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady, settings ) {
 
-	params = params || {};
+	settings = settings || {};
+	settings.Player = settings.Player || Player;
 
 	var geometry,
-		tMin = params.pointsOptions === undefined ?
-			params.tMin === undefined ? 0 : params.tMin :
-			params.pointsOptions.tMin,
-		arrayCloud = params.pointsOptions === undefined ? params.arrayCloud : params.pointsOptions.arrayCloud;
+		tMin = settings.pointsOptions === undefined ?
+			settings.tMin === undefined ? 0 : settings.tMin :
+			settings.pointsOptions.tMin,
+		arrayCloud = settings.pointsOptions === undefined ? settings.arrayCloud : settings.pointsOptions.arrayCloud;
 
-	params.options = params.options || {};
-	params.options.a = params.options.a || 1;
-	params.options.b = params.options.b || 0;
-	params.options.scales = params.options.scales || {};
+	settings.options = settings.options || {};
+	settings.options.a = settings.options.a || 1;
+	settings.options.b = settings.options.b || 0;
+	settings.options.scales = settings.options.scales || {};
 
-	params.options.point = params.options.point || {};
-	params.options.point.size = params.options.point.size || 5.0;
+	settings.options.point = settings.options.point || {};
+	settings.options.point.size = settings.options.point.size || 5.0;
 
 	if ( typeof arrayFuncs === 'function' )
 		geometry = arrayFuncs();
 	else geometry = new THREE.BufferGeometry().setFromPoints
-//		( params.options.getPoints( THREE, arrayFuncs,
-		( Player.getPoints( THREE, arrayFuncs,
-			{ options: { a: params.options.a, b: params.options.b }, group: group, t: tMin, } ),
+		( settings.Player.getPoints( THREE, arrayFuncs,
+//			{ options: { a: settings.options.a, b: settings.options.b, player: settings.options.player }, group: group, t: tMin, } ),
+			{ options: { a: settings.options.a, b: settings.options.b }, group: group, t: tMin, } ),
 			arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
 	var indexArrayCloud = arrayCloud === undefined ? undefined : MyPoints.pushArrayCloud( THREE, arrayCloud, geometry );//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
-	if ( ( params.pointsOptions === undefined ) || !params.pointsOptions.boFrustumPoints )
-		geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( Player.getColors
+	if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints )
+		geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( settings.Player.getColors
 			( THREE, arrayFuncs,
 				{
 
-					opacity: params.pointsOptions === undefined ? undefined : params.pointsOptions.opacity,
+					opacity: settings.pointsOptions === undefined ? undefined : settings.pointsOptions.opacity,
 					positions: geometry.attributes.position,
-					scale: params.options.scales.w,
-					palette: params.options.palette,
+					scale: settings.options.scales.w,
+					palette: settings.options.palette,
+					tMin: tMin,
 
 				} ),
 			4 ) );
@@ -86,18 +90,18 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady,
 
 		pointSize: {
 
-			value: ( params.pointsOptions !== undefined ) && ( params.pointsOptions.shaderMaterial !== undefined ) && ( params.pointsOptions.shaderMaterial.point !== undefined ) ?
-				params.pointsOptions.shaderMaterial.point.size :
-					params.options.point.size
-//					( ( params.options.point === undefined ) || ( params.options.point.size === undefined ) ) ? 0.0 : params.options.point.size
+			value: ( settings.pointsOptions !== undefined ) && ( settings.pointsOptions.shaderMaterial !== undefined ) && ( settings.pointsOptions.shaderMaterial.point !== undefined ) ?
+				settings.pointsOptions.shaderMaterial.point.size :
+					settings.options.point.size
+//					( ( settings.options.point === undefined ) || ( settings.options.point.size === undefined ) ) ? 0.0 : settings.options.point.size
 
 		},
 
 	}
 
 	var cloud;
-	if ( ( params.pointsOptions !== undefined ) && ( params.pointsOptions.uniforms !== undefined ) )
-		cloud = params.pointsOptions.uniforms( uniforms );//frustumPoints
+	if ( ( settings.pointsOptions !== undefined ) && ( settings.pointsOptions.uniforms !== undefined ) )
+		cloud = settings.pointsOptions.uniforms( uniforms );//frustumPoints
 
 
 	/**
@@ -230,12 +234,12 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady,
 			//		opacity: 0.1,
 
 		} ) );
-		points.userData.shaderMaterial = params.pointsOptions === undefined ? params.shaderMaterial : params.pointsOptions.shaderMaterial;
-		if ( params.options.saveMeshDefault !== undefined )
-			params.options.saveMeshDefault( points );
-		if ( ( params.pointsOptions !== undefined ) && ( params.pointsOptions.arrayCloud !== undefined ) )
+		points.userData.shaderMaterial = settings.pointsOptions === undefined ? settings.shaderMaterial : settings.pointsOptions.shaderMaterial;
+		if ( settings.options.saveMeshDefault !== undefined )
+			settings.options.saveMeshDefault( points );
+		if ( ( settings.pointsOptions !== undefined ) && ( settings.pointsOptions.arrayCloud !== undefined ) )
 			points.userData.cloud = { indexArray: indexArrayCloud, }
-		points.userData.shaderMaterial = params.pointsOptions === undefined ? params.shaderMaterial : params.pointsOptions.shaderMaterial;
+		points.userData.shaderMaterial = settings.pointsOptions === undefined ? settings.shaderMaterial : settings.pointsOptions.shaderMaterial;
 //		if ( onReady !== undefined )
 			onReady( points );
 
@@ -244,9 +248,9 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady,
 		//Converting of all points with cloud, but not shaderMaterial see updateCloudPoint in the frustumPoints.create function
 		if ( points.userData.boFrustumPoints ) {
 
-			params.pointsOptions.group.children.forEach( function ( mesh ) {
+			settings.pointsOptions.group.children.forEach( function ( mesh ) {
 
-				params.options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
+				settings.options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
 
 			} );
 
@@ -258,7 +262,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady,
 		if ( points.material.uniforms.cloudPoints !== undefined )
 			points.material.uniforms.cloudPoints.value.needsUpdate = true;
 
-	}, params.pointsOptions === undefined ? undefined : params.pointsOptions.path );
+	}, settings.pointsOptions === undefined ? undefined : settings.pointsOptions.path );
 
 }
 export default getShaderMaterialPoints;
