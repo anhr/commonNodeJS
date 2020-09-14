@@ -1230,24 +1230,20 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 			) {
 
 			var min, max, w = funcs.w;
-			if ( optionsColor.scale !== undefined ) {
+			if ( funcs.w instanceof Object && funcs.w.func ) {
+
+				if ( funcs.w.max ) max = funcs.w.max;
+				if ( funcs.w.min ) min = funcs.w.min;
+				w = funcs.w.func;
+
+			} else if ( optionsColor.scale !== undefined ) {
 
 				min = optionsColor.scale.min; max = optionsColor.scale.max;
 
 			} else {
 
-				if ( funcs.w instanceof Object ) {
-
-					if ( funcs.w.max ) max = funcs.w.max;
-					if ( funcs.w.min ) min = funcs.w.min;
-					w = funcs.w.func;
-					
-				} else {
-
-					max = funcs instanceof THREE.Vector4 ? funcs.w : 1;
-					min = max - 1;
-
-				}
+				max = funcs instanceof THREE.Vector4 ? funcs.w : 1;
+				min = max - 1;
 
 			}
 /*
@@ -1262,7 +1258,9 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 */
 			if ( w instanceof Function && ! settings ) {
 
-				console.error( 'Player.getColors: create Player first or remove all functions from all THREE.Vector4.w items of the arrayFuncs' );
+				console.error( 'Player.getColors: remove all functions from all THREE.Vector4.w items of the arrayFuncs.' );
+				console.error( ' 	Or create Player.' );
+				console.error( '	If you use MyPoints for create of the points, please add Player: Player into settings parameter of the MyPoints function after creating of the Player.' );
 				return;
 				
 			}
@@ -1335,14 +1333,15 @@ Player.traceLine = function ( THREE, group, options ) {
 		return;
 		
 	}
-/*
 	if ( !settings ) {
 
-		console.error( 'Player.traceLine: call Player(...) first.' );
+		console.error( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
+		console.error( '	Or call Player(...).' );
+		console.error( '	If you use getShaderMaterialPoints or MyPoints for create of the points, please add Player: Player into settings parameter of the getShaderMaterialPoints or MyPoints method after creating of the Player.' );
 		return;
 		
 	}
-*/
+
 	//Thanks to https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
 //	var MAX_POINTS = options.player.marks,
 	var MAX_POINTS,// = settings.marks,
