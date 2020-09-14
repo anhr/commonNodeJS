@@ -19,7 +19,6 @@
 
 import Player from '../player/player.js';
 import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMaterialPoints.js';
-// * @param {Player} Player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}
 
 /**
  * Creating the new points and adding it into group
@@ -28,6 +27,8 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * See arrayFuncs parametr of the [Player.getColors(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors} for details.
  * @param {THREE.Group} group Group for new points
  * @param {object} [settings] followed options is available
+ * @param {Player} [settings.Player] [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}.
+ * Define Player only if you want move or/and you want change color of the points during playing.
  * @param {object} [settings.options] followed options is available
  * @param {number} [settings.options.point.size] point size. Default is 5.0.
  * @param {object} [settings.options.scales.w] followed w axis scale params is available
@@ -105,6 +106,7 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 		arrayFuncs.push( new THREE.Vector3() );
 
 	settings = settings || {};
+	settings.Player = settings.Player || Player;
 
 	const options = settings.options || {};
 	options.point = options.point || {};
@@ -130,6 +132,7 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 
 			}, {
 
+			Player: settings.Player,
 			options: options,
 			pointsOptions: pointsOptions,
 //			arrayFuncs: arrayFuncs,
@@ -141,7 +144,7 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 
 			typeof arrayFuncs === 'function' ? arrayFuncs() :
 //				new THREE.BufferGeometry().setFromPoints( options.getPoints( THREE, arrayFuncs,
-				new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
+				new THREE.BufferGeometry().setFromPoints( settings.Player.getPoints( THREE, arrayFuncs,
 					{ options: options, group: group, t: pointsOptions.tMin } ), 4 ),
 			new THREE.PointsMaterial( { size: options.point.size / options.point.sizePointsMaterial, vertexColors: THREE.VertexColors } )
 
@@ -158,7 +161,7 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 				{ positions: points.geometry.attributes.position }), 4 ) );
 */
 		points.geometry.setAttribute( 'color',
-			new THREE.Float32BufferAttribute( Player.getColors( THREE, arrayFuncs,
+			new THREE.Float32BufferAttribute( settings.Player.getColors( THREE, arrayFuncs,
 				{ positions: points.geometry.attributes.position, scale: options.scales.w } ), 4 ) );
 		Points( points );
 
