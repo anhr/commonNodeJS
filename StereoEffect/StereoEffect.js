@@ -105,8 +105,9 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 	options.stereo = new THREE.StereoCamera();
 	options.stereo.aspect = options.stereoAspect || 1;//0.5;
 	if ( options.far === undefined )
-		options.far = new PerspectiveCamera().focus;
-	options.focus = options.camera === undefined ? new PerspectiveCamera().focus : new THREE.Vector3().distanceTo( options.camera.position );
+		options.far = new THREE.PerspectiveCamera().focus;
+	options.focus = options.camera === undefined ? new THREE.PerspectiveCamera().focus :
+		new THREE.Vector3().distanceTo( options.camera.position );
 	options.zeroParallax = 0;
 	options.eyeSep = options.eyeSep || ( new THREE.StereoCamera().eyeSep / 10 ) * options.far;
 	/*
@@ -546,20 +547,46 @@ function setTHREE( _THREE ) {
 		 * setStereoEffect
 		 * @param {Object} [options]
 		 * @param {THREE.PerspectiveCamera} options.camera {@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera|PerspectiveCamera}
-		 * @param {StereoEffect} [options.stereoEffect] stereoEffect. Default effect is undefined - no stereo effects
-		 * @param {THREE.WebGLRenderer} [options.renderer] renderer. The {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer} displays your beautifully crafted scenes using WebGL.
-		 * Default is renderer parameter of THREE.StereoEffect
+		 * @param {StereoEffect} [options.stereoEffect=no stereo effects] stereoEffect.
+		 * @param {THREE.WebGLRenderer} [options.renderer=renderer parameter of THREE.StereoEffect] renderer. The {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer} displays your beautifully crafted scenes using WebGL.
+		 * @param {boolean} [options.raycasterEvents=true] true - add raycaster events: mousemove and pointerdown.
 		 */
 		setStereoEffect: function ( options ) {
 
 			options = options || {};
+			options.raycasterEvents = options.raycasterEvents === undefined ? true : options.raycasterEvents;
 			const camera = options.camera, renderer = options.renderer;
+
+			if ( options.raycasterEvents ){
+
+				const mouse = new THREE.Vector2();
+				window.addEventListener( 'mousemove', function ( event ) {
+
+					// calculate mouse position in normalized device coordinates
+					// (-1 to +1) for both components
+
+					mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+					mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+					// update the picking ray with the camera and mouse position
+					raycaster.setFromCamera( mouse, camera );
+
+					raycaster.stereo.onDocumentMouseMove( event );
+
+				}, false );
+				window.addEventListener( 'pointerdown', function ( event ) {
+
+					raycaster.stereo.onDocumentMouseDown( event );
+
+				}, false );
+
+			}
 
 			const stereoEffect = options.stereoEffect !== undefined ? options.stereoEffect : typeof effect !== 'undefined' ? effect :
 				new StereoEffect( THREE, renderer, {
 
 					spatialMultiplex: spatialMultiplexsIndexs.Mono, //.SbS,
-					far: camera.far,
+					far: camera ? camera.far : undefined,
 					camera: camera,
 					stereoAspect: 1,
 
