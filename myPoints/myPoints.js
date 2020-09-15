@@ -30,23 +30,31 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * @param {Player} [settings.Player] [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}.
  * Define Player only if you want move or/and you want change color of the points during playing.
  * @param {object} [settings.options] followed options is available
- * @param {number} [settings.options.point.size] point size. Default is 5.0.
+ * @param {number} [settings.options.point.size=5.0] point size.
  * @param {object} [settings.options.scales.w] followed w axis scale params is available
- * @param {object} [settings.options.scales.w.min] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
- * <p>Default is undefined. Minimal palette range is 0.</p>
- * @param {object} [settings.options.scales.w.max] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
-  * <p>Default is undefined. Maximal palette range is 100</p>
+ * @param {object} [settings.options.scales.w.min=0] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [settings.options.scales.w.max=100] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
  * @param {GuiSelectPoint} [settings.options.guiSelectPoint] A dat.gui based graphical user interface for select a point from the mesh.
  * See [GuiSelectPoint]{@link https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html} for details.
- * Default is undefined.
+ * @param {object} [settings.options.raycaster] followed [raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} options is available
+ * @param {Function(particle)} [settings.options.raycaster.addParticle] Callback function that take as input the <b>new THREE.Points</b>.
+ * Add new particle into array of objects to check for intersection with the ray. See [THREE.Raycaster.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
+ * @param {Function(particle)} [settings.options.raycaster.removeParticle] Callback function that take as input the <b>new THREE.Points</b>.
+ * Remove particle from array of objects to check for intersection with the ray. See [THREE.Raycaster.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
+ * @param {Function(intersection, mouse)} [settings.options.raycaster.onIntersection] Callback function that take as input the <b>[intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}</b>, and <b>mouse position</b>.
+ * Fires after intersection of the mouse pointer with a point.
+ * @param {Function()} [settings.options.raycaster.onIntersectionOut] Callback function.
+ * Fires if mouse pointer leaves of intersection with the point.
+ * @param {Function(intersection)} [settings.options.raycaster.onMouseDown] Callback function that take as input the <b>[intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}</b>.
+ * User has clicked over point.
  * @param {object} [settings.pointsOptions] followed points options is availablee:
- * @param {number} [settings.pointsOptions.tMin] start time. Uses for playing of the points. Default is 0.
- * @param {string} [settings.pointsOptions.name] Name of the points. Used for displaying of items of the Select drop down control of the Meshs folder of the dat.gui. Default is "".
+ * @param {number} [settings.pointsOptions.tMin=0] start time. Uses for playing of the points..
+ * @param {string} [settings.pointsOptions.name=""] Name of the points. Used for displaying of items of the Select drop down control of the Meshs folder of the dat.gui.
  * @param {object} [settings.pointsOptions.shaderMaterial] creates the THREE.Points with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} material.
  * The size of the each point of the THREE.Points seems the same on canvas
  * because I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.
  * See var shaderMaterialDefault of the frustumPoints for details.
- * @param {THREE.Vector3} [settings.pointsOptions.position] position of the points.
+ * @param {THREE.Vector3} [settings.pointsOptions.position=new THREE.Vector3( 0, 0, 0 )] position of the points.
  * <pre>
  * Vector's x, y, z is position of the points.
  * Can be as:
@@ -54,11 +62,10 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * [float] - array of positions of the points.
  * Function - position of the points is function of the t. Example:
  *	<b>new Function( 't', 'return 0.1 + t' )</b>
- * Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.
  * </pre>
  * Example:
  * <b>new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0)</b>
- * @param {THREE.Vector3} [settings.pointsOptions.scale] scale of the points.
+ * @param {THREE.Vector3} [settings.pointsOptions.scale=new THREE.Vector3( 1, 1, 1 )] scale of the points.
  * <pre>
  * Vector's x, y, z is scale of the points.
  * Can be as:
@@ -66,11 +73,10 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * [float] - array of scales of the points.
  * Function - scale of the points is function of the t. Example:
  *	<b>new Function( 't', 'return 1.1 + t' )</b>
- * Default is <b>new THREE.Vector3( 1, 1, 1 )</b>.
  * </pre>
  * Example:
  * <b>new THREE.Vector3 ( new Function( 't', 'return 1 + t' ), 1, 1)</b>
- * @param {THREE.Vector3} [settings.pointsOptions.rotation] rotation of the points.
+ * @param {THREE.Vector3} [settings.pointsOptions.rotation=new THREE.Vector3( 0, 0, 0 )] rotation of the points.
  * <pre>
  * Vector's x, y, z is rotation of the points.
  * Can be as:
@@ -78,8 +84,7 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * [float] - array of rotations of the points.
  * Function - rotation of the points is function of the t. Example:
  *	<b>new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )</b>
- * Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.
-  * </pre>
+ * </pre>
  * Example:
  * <b>new THREE.Vector3 ( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), 0, 0)</b>
  * @param {array} [settings.pointsOptions.arrayCloud] Array of points with cloud.
@@ -94,10 +99,10 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * Or
  * <b>arrayCloud: options.arrayCloud</b>
  * on the <b>pointsOptions</b> of the <b>myThreejs.points</b> function.
- * Default is undefined
  * </pre>
- * @param {boolean} [settings.pointsOptions.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details. Default is undefined.
- * @param {function(THREE.Points)} [settings.pointsOptions.onReady] Callback function that take as input the new THREE.Points.
+ * @param {boolean} [settings.pointsOptions.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details.
+ * @param {function(THREE.Points)} [settings.pointsOptions.onReady] Callback function that take as input the <b>new THREE.Points</b>.
+ * Fires after creating of the points.
  */
 function MyPoints( THREE, arrayFuncs, group,// Player,
 	settings ) {
@@ -127,8 +132,10 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 			function ( points ) {
 
 				Points( points );
-				if ( !points.userData.boFrustumPoints && options.addParticle )
-					options.addParticle( points );
+/*				
+				if ( !points.userData.boFrustumPoints && options.raycaster && options.raycaster.addParticle )
+					options.raycaster.addParticle( points );
+*/					
 
 			}, {
 
@@ -183,19 +190,28 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 
 			onIntersection: function ( intersection, mouse ) {
 
-				options.addSpriteTextIntersection( intersection, mouse );
+				if ( options.raycaster && options.raycaster.onIntersection )
+					options.raycaster.onIntersection( intersection, mouse );
 
 			},
 			onIntersectionOut: function () {
 
-				options.removeSpriteTextIntersection();
+				if ( options.raycaster && options.raycaster.onIntersectionOut )
+					options.raycaster.onIntersectionOut();
+/*
+				else if ( options.raycaster.onIntersection )
+					console.error( 'points.userData.raycaster.onIntersectionOut: Please add options.raycaster.onIntersectionOut function if you have added the options.raycaster.onIntersection function' );
+*/
 
 			},
-			onMouseDown: function ( intersection/*intersects*/ ) {
+			onMouseDown: function ( intersection ) {
 
 				if ( ( intersection.object.userData.isInfo !== undefined ) && !intersection.object.userData.isInfo() )
 					return;//No display information about frustum point
-				options.guiSelectPoint.select( intersection );
+				if ( options.guiSelectPoint )
+					options.guiSelectPoint.select( intersection );
+				if ( options.raycaster.onMouseDown )
+					options.raycaster.onMouseDown( intersection );
 
 			}
 
@@ -283,6 +299,8 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 		if ( !points.userData.boFrustumPoints )
 			options.arrayCloud.frustumPoints.updateCloudPoint( points );
 */			
+		if ( !points.userData.boFrustumPoints && options.raycaster && options.raycaster.addParticle )
+			options.raycaster.addParticle( points );
 
 	}
 //	return points;
