@@ -175,28 +175,5 @@ raycaster.setStereoEffect( {
 } );
 raycaster.stereo.addParticle( points );
 ```
-Add event listeners.
-```
-const mouse = new THREE.Vector2();
-window.addEventListener( 'mousemove', function( event ) {
-
-	// calculate mouse position in normalized device coordinates
-	// (-1 to +1) for both components
-
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-	// update the picking ray with the camera and mouse position
-	raycaster.setFromCamera( mouse, camera );
-
-	raycaster.stereo.onDocumentMouseMove( event );
-
-}, false );
-window.addEventListener( 'pointerdown', function( event ) {
-
-	raycaster.stereo.onDocumentMouseDown( event );
-
-}, false );
-```
 For testing please move cursor over point. Cursor will be changing to 'pointer'.
 You can see an alert if you click over point.
