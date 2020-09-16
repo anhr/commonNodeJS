@@ -2,6 +2,9 @@
 My JavaScript library for NodeJS.
 
 * lang.js Web page localization.
+* cookie. Cookies let you store user information in web pages. See [JavaScript Cookies](https://www.w3schools.com/js/js_cookies.asp).
+[README.md](https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/README.md).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/Examples/index.html).
 * OrbitControlsGui.js [OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) graphical user interface.
 [Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
 * UpDownController.js [dat.gui](https://github.com/dataarts/dat.gui) custom controller, allow to user to change a value step by step.
