@@ -9,15 +9,15 @@ These built JavaScript files bundle all the necessary dependencies to run cookie
 
 In your `head` tag, include the following code:
 ```
-<script src="https://raw.githack.com/anhr/cookieNodeJS/master/build/cookie.js"></script>
+<script src="https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.js"></script>
 ```
 or
 ```
-<script src="https://raw.githack.com/anhr/cookieNodeJS/master/build/cookie.min.js"></script>
+<script src="https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.min.js"></script>
 ```
 or you can import cookie from cookie.js file in your JavaScript module. [Example.](https://raw.githack.com/anhr/myThreejs/master/Examples/html/)
 ```
-import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
+import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
 
 Now you can use window.cookie for store user information in web pages.
