@@ -22,8 +22,8 @@ import { dat } from '../dat/dat.module.js';
 import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
-import ColorPicker from '../../../colorpicker/master/colorpicker.js';//https://github.com/anhr/colorPicker
-//import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpicker.js';
+import ColorPicker from '../colorpicker/colorpicker.js';//https://github.com/anhr/colorPicker
+//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 //ColorPicker.palette.setTHREE( THREE );
 
 var settings;
