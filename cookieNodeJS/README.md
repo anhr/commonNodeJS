@@ -1,7 +1,7 @@
 ﻿# cookie
 The node.js version of the [cookie](https://www.w3schools.com/js/js_cookies.asp).
 Cookies let you store user information in web pages.
-[Example of using](https://raw.githack.com/anhr/cookieNodeJS/master/).
+[Example of using](https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/Examples/index.html).
 
 ## Packaged Builds
 The easiest way to use cookie in your code is by using the built source at `build/cookie.js`.
