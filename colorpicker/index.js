@@ -24,9 +24,8 @@ const optionsStyle = {
 	tag: 'style'
 
 }
-//loadScript.sync( 'https://raw.githack.com/anhr/colorPicker/master/colorpicker.css', optionsStyle );
-//loadScript.sync( 'http://localhost/threejs/nodejs/colorpicker/colorpicker.css', optionsStyle );
-loadScript.sync( '/anhr/colorpicker/master/colorpicker.css', optionsStyle );
+//loadScript.sync( 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.css', optionsStyle );
+loadScript.sync( './colorpicker.css', optionsStyle );
 
 const type = ( window.SVGAngle || document.implementation.hasFeature( "http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1" ) ? "SVG" : "VML" ),
 	svgNS = 'http://www.w3.org/2000/svg';
