@@ -2,8 +2,8 @@
 
 Pure JavaScript color picker.
 
-[Example of using](https://raw.githack.com/anhr/ColorPicker/master/Example/index.html).
-[Module version](https://raw.githack.com/anhr/ColorPicker/master/Example/modular.html).
+[Example of using](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html).
+[Module version](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/modular.html).
 
 ## Packaged Builds
 The easiest way to use ColorPicker in your code is by using the built source at `build/colorpicker.js`.
@@ -11,25 +11,25 @@ These built JavaScript files bundle all the necessary dependencies to run ColorP
 
 In your `head` tag, include the following code:
 ```
-<script src="https://raw.githack.com/anhr/ColorPicker/master/build/colorpicker.js"></script>
+<script src="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/build/colorpicker.js"></script>
 ```
 or
 ```
-<script src="https://raw.githack.com/anhr/ColorPicker/master/build/colorpicker.min.js"></script>
+<script src="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/build/colorpicker.min.js"></script>
 ```
 or if your browser support modular JavaScript code, in your `script type="module"` tag, include the following code:
 ```
-import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpicker.js';
+import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 ```
 or
 
 * Create a folder on your localhost named as [folderName].
-* Add your web page into [folderName]. See [example](https://raw.githack.com/anhr/ColorPicker/master/Example/modular.html) web page.
+* Add your web page into [folderName]. See [example](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/modular.html) web page.
 * Download [loadFileNodeJS](https://github.com/anhr/loadFileNodeJS) repository into your "[folderName]\loadFileNodeJS\master" folder.
 * Download [loadScriptNodeJS](https://github.com/anhr/loadScriptNodeJS) repository into your "[folderName]\loadScriptNodeJS\master" folder.
-* Download [colorPicker](https://github.com/anhr/colorPicker) repository into your "[folderName]\colorPicker\master" folder.
+* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import ColorPicker from './colorpicker/master/colorpicker.js';
+import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 ```
 
 In your `body` tag, include the following code:

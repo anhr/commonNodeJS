@@ -30,7 +30,7 @@ Generating a website:
 
 	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\colorpicker\jsdoc"
 
-	jsdoc -R "..\colorpicker.md" "..\index.js" -d "..\jsdoc"
+	jsdoc -R "..\commonNodeJS\master\colorpicker\colorpicker.md" "..\commonNodeJS\master\colorpicker\index.js" -d "..\commonNodeJS\master\colorpicker\jsdoc"
 
 	//See results in "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\colorpicker\jsdoc"
 
