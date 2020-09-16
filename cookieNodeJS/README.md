@@ -19,6 +19,13 @@ or you can import cookie from cookie.js file in your JavaScript module. [Example
 ```
 import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
+or
+* Create a folder on your localhost named as [folderName].
+* Add your web page into [folderName]. See [example](https://github.com/anhr/AxesHelper/blob/master/Examples/AxesHelper.html) web page.
+* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
+```
 
 Now you can use window.cookie for store user information in web pages.
 
