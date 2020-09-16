@@ -1,0 +1,17 @@
+﻿.slider-wrapper {
+    /*
+    width: 200px;
+    height: 30px;
+    overflow: auto;
+    width: auto;
+    border: 10px solid black;
+*/
+    position: relative;
+    display: inline-block;
+}
+.slider-indicator {
+    /*width: 10px;*/
+    position: absolute;
+    border: 1px solid black;
+}
+}

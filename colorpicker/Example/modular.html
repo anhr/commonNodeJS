@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>colorpicker</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<script type="text/javascript" src="example.js"></script>
+
+</head>
+<body>
+	<h1>Colorpicker</h1>
+	<!--
+		 <h2>Simple Colorpicker</h2>
+		 <div id="colorpicker"></div>
+		 <h2>Horizontal Colorpicker with slider indicator</h2>
+		 <div id="color2">color</div><div id="colorpicker2"></div>
+		 <h2>Vertical Colorpicker</h2>
+		 <div id="colorpicker3"></div>
+		 <h2>Vertical Colorpicker with slider indicator</h2>
+		 <div id="color4">color</div><div id="colorpicker4"></div>
+	-->
+	<!--Simple Colorpicker-->
+	<span id="colorpicker"></span>
+
+	<!--Horizontal Colorpicker with slider indicator-->
+	<div id="colorpickerHI"></div><span>11</span>
+
+	<!--Vertical Colorpicker-->
+	<div id="colorpicker3"></div>
+
+	<!--Vertical Colorpicker with slider indicator-->
+	<div id="colorpicker4"></div>
+
+	<!--Horizontal Colorpicker with slider indicator-->
+	<div>Horizontal <input id="valueHI" />% <input type="button" value="Enter" id="enterValueHI" /><span id="colorHI">color</span><span id="colorHItext"></span></div>
+
+	<!--Vertical Colorpicker with slider indicator-->
+	<div>Vertical   <input id="value4" />% <input type="button" value="Enter" id="enterValue4" /><span id="color4">color</span><span id="color4text"></span></div>
+
+	<p>
+		options.direction = false. Position of the mouse pointer relative right side for 'horizontal' slider
+		or relative top side for 'vertical' slider in the percents.
+	</p>
+
+	<!--Horizontal Colorpicker with slider indicator. Direction from right to left-->
+	1<div id="colorpicker5"></div><span>22</span>
+
+	<!--Vertical Colorpicker with slider indicator. Direction from up to down-->
+	<div id="colorpickerVUD"></div>
+
+	<!--Horizontal Colorpicker with slider indicator. Direction from right to left-->
+	<div>Horizontal <input id="value5" />% <input type="button" value="Enter" id="enterValue5" /><span id="color5">color</span><span id="color5text"></span></div>
+
+	<!--Vertical Colorpicker with slider indicator. Direction from up to down-->
+	<div>Vertical   <input id="valueVUD" />% <input type="button" value="Enter" id="enterValueVUD" /><span id="colorVUD">color</span><span id="colorVUDtext"></span></div>
+
+	<!--Blue, green, red, white horizontal Colorpicker with slider indicator-->
+	<h3 id="BGRW">Blue, green, red, white palette.</h3>
+	<div id="colorpickerBGRW"></div>
+	<div>Horizontal <input id="valueBGRW" />% <input type="button" value="Enter" id="enterValueBGRW" /><span id="colorBGRW">color</span><span id="colorBGRWtext"></span></div>
+
+	<!--Monochrome horizontal Colorpicker with slider indicator.-->
+	<h3 id="Monochrome">Monochrome palette. Width = '100%'</h3>
+	<div id="colorpickerMH"></div>
+	<div>Horizontal <input id="valueMH" />% <input type="button" value="Enter" id="enterValueMH" /><span id="colorMH">color</span><span id="colorMHtext"></span></div>
+
+	<!--Bidirectional horizontal Colorpicker with slider indicator.-->
+	<h3 id="Bidirectional">Bidirectional palette.</h3>
+	<div id="colorpickerBH"></div>
+	<div>Horizontal <input id="valueBH" />% <input type="button" value="Enter" id="enterValueBH" /><span id="colorBH">color</span><span id="colorBHtext"></span></div>
+
+	<!--Rainbow horizontal Colorpicker with slider indicator.-->
+	<h3 id="rainbow">Rainbow palette.</h3>
+	<div id="colorpickerRH"></div>
+	<div>Horizontal <input id="valueRH" />% <input type="button" value="Enter" id="enterValueRH" /><span id="colorRH">color</span><span id="colorRHtext"></span></div>
+
+	<!--Custom palette horizontal Colorpicker with slider indicator.-->
+	<h3 id="Custom">Custom palette.</h3>
+	<div id="colorpickerCPH"></div>
+	<div>Horizontal <input id="valueCPH" />% <input type="button" value="Enter" id="enterValueCPH" /><span id="colorCPH">color</span><span id="colorCPHtext"></span></div>
+
+	<script nomodule>
+		if ( confirm( 'Fatal error: Your browser do not support modular JavaScript code. Do you want go to ES5 version page?' ) ) {
+
+			window.location.href = 'index.html';
+
+		}
+	</script>
+	<script type="module">
+
+		import ColorPicker from '../colorpicker.js';
+
+		example( ColorPicker );
+
+	</script>
+</body>
+</html>
