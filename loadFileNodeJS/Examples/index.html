@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>loadFile</title>
+	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
+
+	<!--<script src="../build/loadFile.js"></script>-->
+	<script src="../build/loadFile.min.js"></script>
+	<!--<script src="https://raw.githack.com/anhr/loadFileNodeJS/master/build/loadFile.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/loadFileNodeJS/master/build/loadFile.min.js"></script>-->
+
+</head>
+	<body>
+		<p><a href='https://anhr.github.io/index.html' target="_blank">Home</a> | <a href='https://github.com/anhr/loadFileNodeJS' target="_blank">GitHub</a></p>
+
+		<h1>node.js version of the synchronous download of the file.</h1>
+
+		<p>
+			<div>Result of testing of the synchronous download of the element.html file: <span id="syncres"></span></div>
+		</p>
+		<script type="text/javascript">
+			document.getElementById( "syncres" ).innerHTML = loadFile.sync( 'element.html' );
+		</script>
+
+		<p>
+			<div>Result of testing of the synchronous download of the element.html file into another node: <span id="syncotherres"></span></div>
+			<div>element.html file content: <span id="sync2res"></span></div>
+		</p>
+		<script type="text/javascript">
+			const elSync2Res = document.getElementById( "sync2res" )
+			document.getElementById( "syncotherres" ).innerHTML = loadFile.sync(
+				'element.html',
+				{
+					onload: function ( response ) {
+
+						var str = 'file has been loaded successfully';
+						console.log( str );
+						elSync2Res.innerHTML = loadFile.escapeHtml( response );
+
+					},
+					onerror: function ( str ) {
+
+						elSync2Res.style.color = 'red';
+						elSync2Res.innerHTML = str;
+
+					},
+				},
+			);
+		</script>
+
+	</body>
+	</html>
