@@ -32,7 +32,8 @@ import ScaleController from 'https://raw.githack.com/anhr/commonNodeJS/master/Sc
 import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
 
 //import ColorPicker from '../../../colorpicker/master/colorpicker.js';//https://github.com/anhr/colorPicker
-import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpicker.js';
+import ColorPicker from '../colorpicker/colorpicker.js';//https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 
 /**
  * A dat.gui based graphical user interface for select a point from the mesh.
