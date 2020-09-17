@@ -8,11 +8,11 @@ These built JavaScript files bundle all the necessary dependencies to run loadFi
 
 In your `head` tag, include the following code:
 ```
-<script src="https://raw.githack.com/anhr/loadFileNodeJS/master/build/loadFile.js"></script>
+<script src="https://raw.githack.com/anhr/commonNodeJS/master/loadFileNodeJS/build/loadFile.js"></script>
 ```
 or
 ```
-<script src="https://raw.githack.com/anhr/loadFileNodeJS/master/build/loadFile.min.js"></script>
+<script src="https://raw.githack.com/anhr/commonNodeJS/master/loadFileNodeJS/build/loadFile.min.js">
 ```
 or you can import loadFile from loadFile.js file in your JavaScript module. [Example.](https://raw.githack.com/anhr/TreeElementNodeJS/master/Examples/module/) [Code of example.](https://github.com/anhr/TreeElementNodeJS/blob/master/index.js)
 ```
