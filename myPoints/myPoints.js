@@ -15,7 +15,7 @@
 //import * as THREE from '../../../three.js/dev/build/three.module.js';
 //import { THREE } from '../../../nodejs/three.js';
 //import { THREE } from '../three.js';
-//import loadScript from '../../../loadScriptNodeJS/master/loadScript.js';
+//import loadScript from '../commonNodeJS/master/loadScriptNodeJS/loadScript.js';//https://github.com/anhr/commonNodeJS/tree/master/loadScriptNodeJS
 
 import Player from '../player/player.js';
 import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMaterialPoints.js';
