@@ -15,9 +15,9 @@ My JavaScript library for NodeJS.
 [GuiSelectPoint API](https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/AxesHelper/master/Examples/AxesHelperGui.html).
 * lang.js Web page localization.
-* loadFileNodeJS. Synchronous download of the file [loadFile](https://github.com/anhr/commonNodeJS/tree/master/loadFileNodeJS).
+* [loadFileNodeJS](https://github.com/anhr/commonNodeJS/tree/master/loadFileNodeJS). Synchronous download of the file.
 [Example](https://raw.githack.com/anhr/loadFileNodeJS/master/).
-* loadScriptNodeJS. Load a JavaScript file [loadScript](https://github.com/anhr/commonNodeJS/tree/master/loadScriptNodeJS).
+* [loadScriptNodeJS](https://github.com/anhr/commonNodeJS/tree/master/loadScriptNodeJS). Load a JavaScript file.
 [Example](https://raw.githack.com/anhr/loadScriptNodeJS/master/index.html).
 * MoveGroup.js [MoveGroup](https://github.com/anhr/commonNodeJS/blob/master/MoveGroup.js) is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for change group's position, scale and rotation.
 [Example](https://raw.githack.com/anhr/AxesHelper/master/Examples/AxesHelperGui.html).
