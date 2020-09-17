@@ -16,7 +16,8 @@
 //Please download https://github.com/anhr/loadScriptNodeJS into ../loadScriptNodeJS folder
 
 //import loadScript from '../../../loadScriptNodeJS/master/loadScript.js';
-import loadScript from 'https://raw.githack.com/anhr/loadScriptNodeJS/master/loadScript.js';
+//import loadScript from 'https://raw.githack.com/anhr/loadScriptNodeJS/master/loadScript.js';
+import loadScript from 'http://localhost/anhr/loadScriptNodeJS/master/loadScript.js';
 
 const optionsStyle = {
 
