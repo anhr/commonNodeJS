@@ -15,9 +15,9 @@
 
 //Please download https://github.com/anhr/loadScriptNodeJS into ../loadScriptNodeJS folder
 
-//import loadScript from '../../../loadScriptNodeJS/master/loadScript.js';
-//import loadScript from 'https://raw.githack.com/anhr/loadScriptNodeJS/master/loadScript.js';
-import loadScript from 'http://localhost/anhr/loadScriptNodeJS/master/loadScript.js';
+import loadScript from '../loadScriptNodeJS/loadScript.js';
+//import loadScript from 'https://raw.githack.com/anhr/commonNodeJS/master/loadScriptNodeJS/loadScript.js';
+//import loadScript from 'http://localhost/anhr/commonNodeJS/master/loadScriptNodeJS/loadScript.js';
 
 const optionsStyle = {
 
@@ -26,7 +26,7 @@ const optionsStyle = {
 
 }
 //loadScript.sync( 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.css', optionsStyle );
-loadScript.sync( './colorpicker.css', optionsStyle );
+loadScript.sync( 'colorpicker.css', optionsStyle );
 
 const type = ( window.SVGAngle || document.implementation.hasFeature( "http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1" ) ? "SVG" : "VML" ),
 	svgNS = 'http://www.w3.org/2000/svg';
