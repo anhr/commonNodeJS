@@ -1,0 +1,1 @@
+﻿console.log( 'The appendTo.js file has been loaded successfully' );
