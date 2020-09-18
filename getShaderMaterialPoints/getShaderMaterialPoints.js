@@ -33,9 +33,9 @@ import MyPoints from '../myPoints/myPoints.js';
  * @param {number} [settings.options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
  * @param {number} [settings.options.point.size] point size. Default is 5.0.
  * @param {object} [settings.options.scales.w] followed w axis scale params is available
- * @param {object} [settings.options.scales.w.min] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [settings.options.scales.w.min] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * <p>Default is undefined. Minimal palette range is 0.</p>
- * @param {object} [settings.options.scales.w.max] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [settings.options.scales.w.max] Maximal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
   * <p>Default is undefined. Maximal palette range is 100</p>
 */
 function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady, settings ) {
