@@ -26,6 +26,7 @@ My JavaScript library for NodeJS.
 [Example](https://raw.githack.com/anhr/AxesHelper/master/Examples/AxesHelperGui.html).
 * myPoints.js Array of my points.
 [myPoints API](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/Examples/index.html).
 * OrbitControlsGui.js [OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) graphical user interface.
 [Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
 * Player.js 3D objects animation.
