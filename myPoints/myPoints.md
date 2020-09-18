@@ -40,7 +40,7 @@ MyPoints( THREE, arrayFuncs, scene );
 ```
 You can see two small white points on your canvas.
 
-### Change points size to 25 and point color of the first point.
+### Change points size to 25 and point color of the first point to green.
 ```
 const arrayFuncs = [
 	new THREE.Vector4(
