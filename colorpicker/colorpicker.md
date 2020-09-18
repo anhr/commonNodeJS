@@ -66,6 +66,8 @@ You can select another palette. For example [ColorPicker.paletteIndexes.bidirect
 ```
 const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
 ```
+[Available palettes](https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~paletteIndexes).
+
 Also you can create your own custom palette.
 ```
 const palette = new ColorPicker.palette( { palette: [

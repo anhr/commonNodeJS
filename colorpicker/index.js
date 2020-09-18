@@ -64,13 +64,13 @@ var uniqID = 0;
 const paletteIndexes = {
 	
 
-	/** [blue, green, red, white]{@link https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#BGRW} palette. This is the default palette*/
+	/** [blue, green, red, white]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW} palette. This is the default palette*/
 	BGRW: 0,
-	/** [monochrome]{@link https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#Monochrome} palette */
+	/** [monochrome]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Monochrome} palette */
 	monochrome: 1,
-	/** [red, black, green]{@link https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#Bidirectional} palette */
+	/** [red, black, green]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional} palette */
 	bidirectional: 2,//
-	/** [rainbow]{@link https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#rainbow} palette */
+	/** [rainbow]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#rainbow} palette */
 	rainbow: 3,
 
 }
