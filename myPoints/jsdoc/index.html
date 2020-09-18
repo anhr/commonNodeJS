@@ -48,58 +48,133 @@
 <h2>Quick start</h2>
 <p>Create your web page. <a href="https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene">Example</a>.</p>
 <p>The easiest way to use <b>MyPoints</b> in your code is import MyPoints from myPoints.js file in your JavaScript module.</p>
-<pre class="prettyprint source"><code>import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
-import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
+<pre class="prettyprint source"><code>import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
 </code></pre>
 <p>or</p>
 <ul>
 <li>Create a folder on your localhost named as [folderName].</li>
 <li>Add your web page into [folderName].</li>
-<li>Download <a href="https://github.com/anhr/cookieNodeJS">cookieNodeJS</a> repository into your &quot;[folderName]\cookieNodeJS\master&quot; folder.</li>
 <li>Download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</li>
 </ul>
-<pre class="prettyprint source"><code>import Player from './commonNodeJS/master/player/player.js';
-import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
+<pre class="prettyprint source"><code>import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 </code></pre>
-<p>Now you can use <b>getShaderMaterialPoints</b> in your javascript code. Example:</p>
+<p>Now you can use <b>MyPoints</b> in your javascript code. Example:</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
-	{
-
-		vector: new THREE.Vector4( 
-			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
-			0.5,//z
-			{
-
-					func: new Function( 't', 'return 1-2*t' ),
-					min: -1,
-					max: 1,
-
-			}
-
-		),
-		trace: true,//Displays the trace of the point movement.
-
-	},
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),
+	new THREE.Vector3( 0.5, 0.5, 0.5 ),//first point
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//second point
 ];
-getShaderMaterialPoints( THREE, scene, arrayFuncs, Player, function ( points ) {
+MyPoints( THREE, arrayFuncs, scene );
+</code></pre>
+<p>You can see two small white points on your canvas.</p>
+<h3>Change points size to 25 and point color of the first point.</h3>
+<pre class="prettyprint source"><code>const arrayFuncs = [
+	new THREE.Vector4(
+		0.5,//x
+		0.5,//y
+		0.5,//z
+		33//w - color of the point
+	),//first point
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//second point
+];
+MyPoints( THREE, arrayFuncs, scene, {
 
-	scene.add( points );
-	points.userData.player = {
+	options: {
 
-		arrayFuncs: arrayFuncs,
-		selectPlayScene: function ( t ) {
-
-			points.position.x = t;
-			points.rotation.z = - Math.PI * 2 * t;
-
-		}
+		point: { size: 25 },//new size of all points
 
 	}
 
 } );
-</code></pre></article>
+</code></pre>
+<p>Attention please: I have changed first point from <b>THREE.Vector3</b> to <b>THREE.Vector4</b>.
+<b>w</b> coordinate of the first point is index of the color of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.
+Currently I use default <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW">ColorPicker.paletteIndexes.BGRW</a> (blue, green, red, white) palette.
+You can select another palette. Please import <b>ColorPicker</b> into your web page for it.</p>
+<pre class="prettyprint source"><code>import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
+</code></pre>
+<p>Set <b>THREE</b> for palette.</p>
+<pre class="prettyprint source"><code>ColorPicker.palette.setTHREE(THREE);
+</code></pre>
+<p>Create a palette. For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional">ColorPicker.paletteIndexes.bidirectional</a> palette
+and add new <b>palette</b> into <b>options</b> of the <b>MyPoints</b></p>
+<pre class="prettyprint source"><code>MyPoints( THREE, arrayFuncs, scene, {
+
+	options: {
+
+		point: { size: 25 },//new size of all points
+		palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+
+	}
+
+} );
+</code></pre>
+<h3><a href="https://threejs.org/docs/index.html#api/en/core/Raycaster">Raycaster</a></h3>
+<p>First, import <b>StereoEffect</b>.</p>
+<pre class="prettyprint source"><code>import { StereoEffect } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import { StereoEffect } from './commonNodeJS/master/StereoEffect/StereoEffect.js';
+</code></pre>
+<p>Create raycaster.</p>
+<pre class="prettyprint source"><code>//Raycaster.
+
+const stereoEffect = new StereoEffect( THREE, renderer );
+stereoEffect.setSize( window.innerWidth, window.innerHeight );
+
+const raycaster = new THREE.Raycaster();
+raycaster.setStereoEffect( {
+
+	renderer: renderer,
+	camera: camera,
+
+} );
+
+//the precision of the raycaster when intersecting objects, in world units.
+//See https://threejs.org/docs/#api/en/core/Raycaster.params.
+raycaster.params.Points.threshold = 0.1;
+</code></pre>
+<p>And add new <b>raycaster</b> into <b>options</b> of the <b>MyPoints</b>.</p>
+<pre class="prettyprint source"><code>const cursor = renderer.domElement.style.cursor;
+MyPoints( THREE, arrayFuncs, scene, {
+
+	options: {
+		point: { size: 25 },
+		palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+		raycaster: {
+
+			addParticle: function ( item ) {
+
+				if ( raycaster.stereo !== undefined )
+					raycaster.stereo.addParticle( item );
+
+			},
+			onIntersection: function ( intersection, mouse ) {
+
+				renderer.domElement.style.cursor = 'pointer';
+
+			},
+			onIntersectionOut: function () {
+
+				renderer.domElement.style.cursor = cursor;
+
+			},
+			onMouseDown: function ( intersection ) {
+
+				alert( 'You have clicked over point' );
+
+			},
+
+		}
+
+	},
+
+} );
+</code></pre>
+<p>Please move mouse over any point. Mouse cursor will change to &quot;pointer&quot;.
+You can see an alert if you click a point.</p></article>
     </section>
 
 
@@ -116,7 +191,7 @@ getShaderMaterialPoints( THREE, scene, arrayFuncs, Player, function ( points ) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Sep 11 2020 11:16:07 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Sep 18 2020 11:26:21 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

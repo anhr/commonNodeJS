@@ -157,7 +157,7 @@
     
 
     
-    <h4 class="name" id="~MyPoints"><span class="type-signature">(inner) </span>MyPoints<span class="signature">(THREE, arrayFuncs, group, Player, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~MyPoints"><span class="type-signature">(inner) </span>MyPoints<span class="signature">(THREE, arrayFuncs, group, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -296,37 +296,6 @@
 
         <tr>
             
-                <td class="name"><code>Player</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Player</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html">Player</a></td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>settings</code></td>
             
 
@@ -381,6 +350,39 @@
 
         <tr>
             
+                <td class="name"><code>Player</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Player</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html">Player</a>.Define Player only if you want move or/and you want change color of the points during playing.</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>options</code></td>
             
 
@@ -425,6 +427,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -460,8 +464,14 @@
             
 
             
+                <td class="default">
+                
+                    5.0
+                
+                </td>
+            
 
-            <td class="description last">point size. Default is 5.0.</td>
+            <td class="description last">point size.</td>
         </tr>
 
     
@@ -493,6 +503,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">followed w axis scale params is available
                 <h6>Properties</h6>
@@ -511,6 +525,8 @@
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -547,8 +563,14 @@
             
 
             
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
 
-            <td class="description last">Minimal range of the <a href="https://github.com/anhr/colorPicker">color palette</a>.<p>Default is undefined. Minimal palette range is 0.</p></td>
+            <td class="description last">Minimal range of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.</td>
         </tr>
 
     
@@ -580,8 +602,14 @@
             
 
             
+                <td class="default">
+                
+                    100
+                
+                </td>
+            
 
-            <td class="description last">Maximal range of the <a href="https://github.com/anhr/colorPicker">color palette</a>.<p>Default is undefined. Maximal palette range is 100</p></td>
+            <td class="description last">Maximal range of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.</td>
         </tr>
 
     
@@ -589,6 +617,45 @@
 </table>
 
             </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>palette</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW
+                
+                </td>
+            
+
+            <td class="description last">See <a href="https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette">ColorPicker.palette</a>.<pre>Example:new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );</pre></td>
         </tr>
 
     
@@ -620,8 +687,242 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
-            <td class="description last">A dat.gui based graphical user interface for select a point from the mesh.See <a href="https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html">GuiSelectPoint</a> for details.Default is undefined.</td>
+            <td class="description last">A dat.gui based graphical user interface for select a point from the mesh.See <a href="https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html">GuiSelectPoint</a> for details.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>raycaster</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">followed <a href="https://threejs.org/docs/index.html#api/en/core/Raycaster">raycaster</a> options is available
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>addParticle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback function that take as input the <b>new THREE.Points</b>.Add new particle into array of objects to check for intersection with the ray. See <a href="https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject">THREE.Raycaster.intersectObject</a> for details.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>removeParticle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback function that take as input the <b>new THREE.Points</b>.Remove particle from array of objects to check for intersection with the ray. See <a href="https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject">THREE.Raycaster.intersectObject</a> for details.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onIntersection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback function that take as input the <b><a href="https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject">intersectObject</a></b>, and <b>mouse position</b>.Fires after intersection of the mouse pointer with a point.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onIntersectionOut</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback function.Fires if mouse pointer leaves of intersection with the point.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onMouseDown</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback function that take as input the <b><a href="https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject">intersectObject</a></b>.User has clicked over point.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -679,6 +980,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -714,8 +1017,14 @@
             
 
             
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
 
-            <td class="description last">start time. Uses for playing of the points. Default is 0.</td>
+            <td class="description last">start time. Uses for playing of the points..</td>
         </tr>
 
     
@@ -747,8 +1056,14 @@
             
 
             
+                <td class="default">
+                
+                    ""
+                
+                </td>
+            
 
-            <td class="description last">Name of the points. Used for displaying of items of the Select drop down control of the Meshs folder of the dat.gui. Default is "".</td>
+            <td class="description last">Name of the points. Used for displaying of items of the Select drop down control of the Meshs folder of the dat.gui.</td>
         </tr>
 
     
@@ -779,6 +1094,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">creates the THREE.Points with <a href="https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial">THREE.ShaderMaterial</a> material.The size of the each point of the THREE.Points seems the same on canvasbecause I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.See var shaderMaterialDefault of the frustumPoints for details.</td>
@@ -813,8 +1132,14 @@
             
 
             
+                <td class="default">
+                
+                    new THREE.Vector3( 0, 0, 0 )
+                
+                </td>
+            
 
-            <td class="description last">position of the points.<pre>Vector's x, y, z is position of the points.Can be as:float - position of the points.[float] - array of positions of the points.Function - position of the points is function of the t. Example:	<b>new Function( 't', 'return 0.1 + t' )</b>Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.</pre>Example:<b>new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0)</b></td>
+            <td class="description last">position of the points.<pre>Vector's x, y, z is position of the points.Can be as:float - position of the points.[float] - array of positions of the points.Function - position of the points is function of the t. Example:	<b>new Function( 't', 'return 0.1 + t' )</b></pre>Example:<b>new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0)</b></td>
         </tr>
 
     
@@ -846,8 +1171,14 @@
             
 
             
+                <td class="default">
+                
+                    new THREE.Vector3( 1, 1, 1 )
+                
+                </td>
+            
 
-            <td class="description last">scale of the points.<pre>Vector's x, y, z is scale of the points.Can be as:float - scale of the points.[float] - array of scales of the points.Function - scale of the points is function of the t. Example:	<b>new Function( 't', 'return 1.1 + t' )</b>Default is <b>new THREE.Vector3( 1, 1, 1 )</b>.</pre>Example:<b>new THREE.Vector3 ( new Function( 't', 'return 1 + t' ), 1, 1)</b></td>
+            <td class="description last">scale of the points.<pre>Vector's x, y, z is scale of the points.Can be as:float - scale of the points.[float] - array of scales of the points.Function - scale of the points is function of the t. Example:	<b>new Function( 't', 'return 1.1 + t' )</b></pre>Example:<b>new THREE.Vector3 ( new Function( 't', 'return 1 + t' ), 1, 1)</b></td>
         </tr>
 
     
@@ -879,8 +1210,14 @@
             
 
             
+                <td class="default">
+                
+                    new THREE.Vector3( 0, 0, 0 )
+                
+                </td>
+            
 
-            <td class="description last">rotation of the points.<pre>Vector's x, y, z is rotation of the points.Can be as:float - rotation of the points.[float] - array of rotations of the points.Function - rotation of the points is function of the t. Example:	<b>new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )</b>Default is <b>new THREE.Vector3( 0, 0, 0 )</b>.</pre>Example:<b>new THREE.Vector3 ( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), 0, 0)</b></td>
+            <td class="description last">rotation of the points.<pre>Vector's x, y, z is rotation of the points.Can be as:float - rotation of the points.[float] - array of rotations of the points.Function - rotation of the points is function of the t. Example:	<b>new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )</b></pre>Example:<b>new THREE.Vector3 ( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), 0, 0)</b></td>
         </tr>
 
     
@@ -912,8 +1249,12 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
-            <td class="description last">Array of points with cloud.<pre>If you define the array of points with cloud,then you can define a points with cloud.For example you can define<b>arrayCloud: options.arrayCloud</b>on the params of the<b>getShaderMaterialPoints( params, onReady )</b>function.Or<b>arrayCloud: options.arrayCloud</b>on the <b>pointsOptions</b> of the <b>myThreejs.points</b> function.Default is undefined</pre></td>
+            <td class="description last">Array of points with cloud.<pre>If you define the array of points with cloud,then you can define a points with cloud.For example you can define<b>arrayCloud: options.arrayCloud</b>on the params of the<b>getShaderMaterialPoints( params, onReady )</b>function.Or<b>arrayCloud: options.arrayCloud</b>on the <b>pointsOptions</b> of the <b>myThreejs.points</b> function.</pre></td>
         </tr>
 
     
@@ -945,8 +1286,12 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
-            <td class="description last">if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details. Default is undefined.</td>
+            <td class="description last">if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details.</td>
         </tr>
 
     
@@ -978,8 +1323,12 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
-            <td class="description last">Callback function that take as input the new THREE.Points.</td>
+            <td class="description last">Callback function that take as input the <b>new THREE.Points</b>.Fires after creating of the points.</td>
         </tr>
 
     
@@ -1034,7 +1383,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line100">line 100</a>
+        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line112">line 112</a>
     </li></ul></dd>
     
 
@@ -1217,7 +1566,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line285">line 285</a>
+        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line324">line 324</a>
     </li></ul></dd>
     
 
@@ -1279,7 +1628,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Sep 11 2020 11:16:07 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Sep 18 2020 11:26:21 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

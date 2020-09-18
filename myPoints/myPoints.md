@@ -13,50 +13,136 @@ import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/
 or
 * Create a folder on your localhost named as [folderName].
 * Add your web page into [folderName].
-* Download [cookieNodeJS](https://github.com/anhr/cookieNodeJS) repository into your "[folderName]\cookieNodeJS\master" folder.
 * Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import Player from './commonNodeJS/master/player/player.js';
-import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
+import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 ```
-Now you can use <b>getShaderMaterialPoints</b> in your javascript code. Example:
+Now you can use <b>MyPoints</b> in your javascript code. Example:
 ```
 const arrayFuncs = [
-	{
-
-		vector: new THREE.Vector4( 
-			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
-			0.5,//z
-			{
-
-					func: new Function( 't', 'return 1-2*t' ),
-					min: -1,
-					max: 1,
-
-			}
-
-		),
-		trace: true,//Displays the trace of the point movement.
-
-	},
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),
+	new THREE.Vector3( 0.5, 0.5, 0.5 ),//first point
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//second point
 ];
-getShaderMaterialPoints( THREE, scene, arrayFuncs, Player, function ( points ) {
+MyPoints( THREE, arrayFuncs, scene );
+```
+You can see two small white points on your canvas.
 
-	scene.add( points );
-	points.userData.player = {
+### Change points size to 25 and point color of the first point.
+```
+const arrayFuncs = [
+	new THREE.Vector4(
+		0.5,//x
+		0.5,//y
+		0.5,//z
+		33//w - color of the point
+	),//first point
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//second point
+];
+MyPoints( THREE, arrayFuncs, scene, {
 
-		arrayFuncs: arrayFuncs,
-		selectPlayScene: function ( t ) {
+	options: {
 
-			points.position.x = t;
-			points.rotation.z = - Math.PI * 2 * t;
-
-		}
+		point: { size: 25 },//new size of all points
 
 	}
 
 } );
 ```
+Attention please: I have changed first point from <b>THREE.Vector3</b> to <b>THREE.Vector4</b>. 
+<b>w</b> coordinate of the first point is index of the color of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
+Currently I use default [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW) (blue, green, red, white) palette.
+You can select another palette. Please import <b>ColorPicker</b> into your web page for it.
+```
+import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
+```
+Set <b>THREE</b> for palette.
+```
+ColorPicker.palette.setTHREE(THREE);
+```
+Create a palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette
+and add new <b>palette</b> into <b>options</b> of the <b>MyPoints</b>
+```
+MyPoints( THREE, arrayFuncs, scene, {
 
+	options: {
+
+		point: { size: 25 },//new size of all points
+		palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+
+	}
+
+} );
+```
+### [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster).
+
+First, import <b>StereoEffect</b>.
+```
+import { StereoEffect } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import { StereoEffect } from './commonNodeJS/master/StereoEffect/StereoEffect.js';
+```
+Create raycaster.
+```
+//Raycaster.
+
+const stereoEffect = new StereoEffect( THREE, renderer );
+stereoEffect.setSize( window.innerWidth, window.innerHeight );
+
+const raycaster = new THREE.Raycaster();
+raycaster.setStereoEffect( {
+
+	renderer: renderer,
+	camera: camera,
+
+} );
+
+//the precision of the raycaster when intersecting objects, in world units.
+//See https://threejs.org/docs/#api/en/core/Raycaster.params.
+raycaster.params.Points.threshold = 0.1;
+```
+Add new <b>raycaster</b> into <b>options</b> of the <b>MyPoints</b>.
+```
+const cursor = renderer.domElement.style.cursor;
+MyPoints( THREE, arrayFuncs, scene, {
+
+	options: {
+		point: { size: 25 },
+		palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+		raycaster: {
+
+			addParticle: function ( item ) {
+
+				if ( raycaster.stereo !== undefined )
+					raycaster.stereo.addParticle( item );
+
+			},
+			onIntersection: function ( intersection, mouse ) {
+
+				renderer.domElement.style.cursor = 'pointer';
+
+			},
+			onIntersectionOut: function () {
+
+				renderer.domElement.style.cursor = cursor;
+
+			},
+			onMouseDown: function ( intersection ) {
+
+				alert( 'You have clicked over point' );
+
+			},
+
+		}
+
+	},
+
+} );
+```
+Please move mouse over any point. Mouse cursor will change to "pointer".
+You can see an alert if you click a point.
