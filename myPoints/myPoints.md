@@ -34,7 +34,7 @@ const arrayFuncs = [
 		0.5,//x
 		0.5,//y
 		0.5,//z
-		33//w - color of the point
+		33//w - color of the point is green
 	),//first point
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//second point
 ];
@@ -51,6 +51,7 @@ MyPoints( THREE, arrayFuncs, scene, {
 Attention please: I have changed first point from <b>THREE.Vector3</b> to <b>THREE.Vector4</b>. 
 <b>w</b> coordinate of the first point is index of the color of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
 Currently I use default [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW) (blue, green, red, white) palette.
+33 value of <b>w</b> coordinate of the first point is index of the green color for default color palette.
 You can select another palette. Please import <b>ColorPicker</b> into your web page for it.
 ```
 import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
@@ -77,6 +78,7 @@ MyPoints( THREE, arrayFuncs, scene, {
 
 } );
 ```
+33 value of <b>w</b> coordinate of the first point is index of the dark color for [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
 ### [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster).
 
 First, import <b>StereoEffect</b>.
