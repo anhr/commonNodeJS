@@ -37,9 +37,12 @@
 
 		//import { getLanguageCode } from '../../lang.js';//https://github.com/anhr/commonNodeJS
 		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-
+/*
 		import { StereoEffect, spatialMultiplexsIndexs } from '../StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+*/
+		import StereoEffect from '../StereoEffect.js';//https://github.com/anhr/commonNodeJS
+		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
 		var camera, scene, renderer, stereoEffect, raycaster;//, axesHelper, controls, intersects, guiSelectPoint;
 
@@ -103,7 +106,7 @@
 
 			stereoEffect = new StereoEffect( THREE, renderer, {
 
-				spatialMultiplex: spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+				spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 				far: camera.far,
 				camera: camera,
 				//stereoAspect: 1,
