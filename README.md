@@ -10,7 +10,7 @@ My JavaScript library for NodeJS.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/Examples/index.html).
 * colorpicker. Pure JavaScript color picker.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
-[Example](https://raw.githack.com/anhr/ColorPicker/master/Example/index.html). [Module version](https://raw.githack.com/anhr/ColorPicker/master/Example/modular.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html). [Module version](https://raw.githack.com/anhr/ColorPicker/master/Example/modular.html).
 * dat.js Modify of the [dat.gui](https://github.com/dataarts/dat.gui) object. [Example](https://github.com/anhr/DropdownMenu).
 * getShaderMaterialPoints.js Get THREE.Points with THREE.ShaderMaterial material.
 [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
