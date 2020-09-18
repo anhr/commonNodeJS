@@ -6,6 +6,19 @@ I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create
 
 Create your web page. [Example](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene).
 
+* First, import [three.js](https://github.com/anhr/three.js) in your JavaScript module.
+```
+import * as THREE from 'https://threejs.org/build/three.module.js';
+```
+or
+```
+import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+```
+or download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
+```
+import * as THREE from './three.js/dev/build/three.module.js';
+```
+
 The easiest way to use <b>MyPoints</b> in your code is import MyPoints from myPoints.js file in your JavaScript module.
 ```
 import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
