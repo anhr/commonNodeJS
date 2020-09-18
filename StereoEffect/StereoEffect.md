@@ -96,9 +96,10 @@ line in the stereoEffect.gui(...) above and import cookie.
 ```
 import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
-or download [cookieNodeJS](https://github.com/anhr/cookieNodeJS) repository into your "[folderName]\cookieNodeJS\master" folder.
+or
+* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import cookie from './cookieNodeJS/master/cookie.js';
+import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
 
 * [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster).

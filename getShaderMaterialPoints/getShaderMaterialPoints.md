@@ -14,7 +14,6 @@ import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/m
 or
 * Create a folder on your localhost named as [folderName].
 * Add your web page into [folderName].
-* Download [cookieNodeJS](https://github.com/anhr/cookieNodeJS) repository into your "[folderName]\cookieNodeJS\master" folder.
 * Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
 import Player from './commonNodeJS/master/player/player.js';

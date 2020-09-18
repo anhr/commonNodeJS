@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anhr/cookieNodeJS"
+    "url": "git+https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS"
   },
   "author": "Andrej Hristoliubov https://anhr.github.io/AboutMe/",
   "license": "Apache-2.0",
