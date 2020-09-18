@@ -25,8 +25,6 @@ or
 
 * Create a folder on your localhost named as [folderName].
 * Add your web page into [folderName]. See [example](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/modular.html) web page.
-* Download [loadFileNodeJS](https://github.com/anhr/loadFileNodeJS) repository into your "[folderName]\loadFileNodeJS\master" folder.
-* Download [loadScriptNodeJS](https://github.com/anhr/loadScriptNodeJS) repository into your "[folderName]\loadScriptNodeJS\master" folder.
 * Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
 import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
