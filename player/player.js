@@ -925,7 +925,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * [Function]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} - position of the point is function of the t.
  * Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )
  * 
- * Vector.w is index of the [palette]{@link https://github.com/anhr/colorPicker}.
+ * Vector.w is index of the [palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * Default range of the Vector.w is from 0 to 100. You can change range by use an object:
  * {
  *   func: Vector.w
@@ -1147,7 +1147,7 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
  * [Function]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} - position of the point is function of the t.
  * Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )
  *
- * Vector.w is index of the [palette]{@link https://github.com/anhr/colorPicker}.
+ * Vector.w is index of the [palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * Default range of the Vector.w is from 0 to 100. You can change range by use an object:
  * {
  *   func: Vector.w
@@ -1185,11 +1185,11 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
  * ]
  * </pre>
  * @param {object} [optionsColor] followed options is available:
- * @param {object} [optionsColor.palette] [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [optionsColor.palette] [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * @param {object} [optionsColor.scale]
- * @param {object} [optionsColor.scale.min] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [optionsColor.scale.min] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * <p>Default is undefined. Minimal palette range is 0.</p>
- * @param {object} [optionsColor.scale.max] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [optionsColor.scale.max] Maximal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * <p>Default is undefined. Maximal palette range is 100</p>
  * @param {THREE.BufferAttribute} [optionsColor.positions] geometry.attributes.position of the new mesh. Default is undefined.
  * @param {array} [optionsColor.colors] array for mesh colors. Default is undefined.
