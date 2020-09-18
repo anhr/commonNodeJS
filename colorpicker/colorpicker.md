@@ -59,7 +59,26 @@ ColorPicker.create( "colorpicker", {
 ```
 Create palette.
 ```
-new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } )
+const palette = new ColorPicker.palette();
+```
+Now you have created a default [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW) (blue, green, red, white) palette.
+You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
+```
+const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
+```
+Also you can create your own custom palette.
+```
+const palette = new ColorPicker.palette( { palette: [
+
+	{ percent: 0, r: 0, g: 0, b: 0, },
+	{ percent: 10, r: 0xff, g: 255, b: 0xff, },
+	{ percent: 20, r: 0xff, g: 0, b: 0x0, },
+	{ percent: 30, r: 0x0, g: 255, b: 0x0, },
+	{ percent: 40, r: 0x0, g: 0, b: 0xff, },
+	{ percent: 80, r: 0x0, g: 0, b: 0xff, },
+	{ percent: 90, r: 0xff, g: 255, b: 0xff, },
+
+] } );
 ```
 ## Directory Contents
 

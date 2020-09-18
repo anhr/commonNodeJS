@@ -197,7 +197,7 @@ const arrayFuncs = [
 ];
 ```
 Now you can see the color of the first point as blue at the begin of playing and white at the end of playing
-because default range of the [color palette](https://github.com/anhr/colorPicker) from 0 to 100.
+because default range of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker) from 0 to 100.
 But current range of the function from 1 to -1 for default <b>t</b> range from 0 to 1.
 You can resolve this issue by change of the palette range.
 Replace <b>w</b> coordinate of the <b>THREE.Vector4</b> from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
@@ -224,9 +224,9 @@ const arrayFuncs = [
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),
 ];
 ```
-* Select a [color palette](https://github.com/anhr/colorPicker).
+* Select a [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
 
-Default color palette index is [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#BGRW).
+Default color palette index is [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGRW).
 You can select another palette. Please import ColorPicker into your web page for it.
 ```
 import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
@@ -239,7 +239,7 @@ Set THREE for palette.
 ```
 ColorPicker.palette.setTHREE(THREE);
 ```
-Create a palette. For example <b>ColorPicker.paletteIndexes.bidirectional palette</b>.
+Create a palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
 And use your new palette in <b>Player.selectPlayScene</b>.
 ```
 const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
