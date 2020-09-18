@@ -15,7 +15,7 @@
 //import * as THREE from '../../../three.js/dev/build/three.module.js';
 //import { THREE } from '../../../nodejs/three.js';
 //import { THREE } from '../three.js';
-//import loadScript from '../../../loadScriptNodeJS/master/loadScript.js';
+//import loadScript from '../commonNodeJS/master/loadScriptNodeJS/loadScript.js';//https://github.com/anhr/commonNodeJS/tree/master/loadScriptNodeJS
 
 import Player from '../player/player.js';
 import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMaterialPoints.js';
@@ -32,8 +32,13 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * @param {object} [settings.options] followed options is available
  * @param {number} [settings.options.point.size=5.0] point size.
  * @param {object} [settings.options.scales.w] followed w axis scale params is available
- * @param {object} [settings.options.scales.w.min=0] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
- * @param {object} [settings.options.scales.w.max=100] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [settings.options.scales.w.min=0] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
+ * @param {object} [settings.options.scales.w.max=100] Maximal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
+ * @param {object} [settings.options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
+ * <pre>
+ * Example:
+ * new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
+ * </pre>
  * @param {GuiSelectPoint} [settings.options.guiSelectPoint] A dat.gui based graphical user interface for select a point from the mesh.
  * See [GuiSelectPoint]{@link https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html} for details.
  * @param {object} [settings.options.raycaster] followed [raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} options is available
@@ -117,7 +122,11 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 	options.point = options.point || {};
 	options.point.size = options.point.size || 5.0;
 	options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
+
 	options.scales = options.scales || {};
+	options.scales.w = options.scales.w || {};
+	if ( options.scales.w.min === undefined ) options.scales.w.min = 0;
+	if ( options.scales.w.max === undefined ) options.scales.w.max = 100;
 
 	const pointsOptions = settings.pointsOptions || {};
 	pointsOptions.tMin = pointsOptions.tMin || 0;
@@ -169,7 +178,13 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 */
 		points.geometry.setAttribute( 'color',
 			new THREE.Float32BufferAttribute( settings.Player.getColors( THREE, arrayFuncs,
-				{ positions: points.geometry.attributes.position, scale: options.scales.w } ), 4 ) );
+				{
+
+					positions: points.geometry.attributes.position,
+					scale: options.scales.w,
+					palette: options.palette,
+
+				} ), 4 ) );
 		Points( points );
 
 	}

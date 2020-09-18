@@ -29,8 +29,15 @@
 		//import Player from './commonNodeJS/master/player/build/player.module.js';
 		//import Player from './commonNodeJS/master/player/player.js';
 
-		//import myPoints from './myPoints/myPoints.js';
-		import MyPoints from 'http://localhost/anhr/commonNodeJS/master/myPoints/myPoints.js';
+		import MyPoints from '../myPoints.js';
+		//import MyPoints from 'http://localhost/anhr/commonNodeJS/master/myPoints/myPoints.js';
+
+		import { StereoEffect } from '../../StereoEffect/StereoEffect.js';
+		//import { StereoEffect } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+
+		import ColorPicker from '../../colorpicker/colorpicker.js';//https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+		//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
+		ColorPicker.palette.setTHREE( THREE );
 
 		const scene = new THREE.Scene();
 		const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -42,6 +49,56 @@
 
 		camera.position.z = 5;
 
+		//Raycaster.
+
+		const stereoEffect = new StereoEffect( THREE, renderer/*, {
+
+			//spatialMultiplex: spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+			far: camera.far,
+			camera: camera,
+
+		}*/ );
+		stereoEffect.setSize( window.innerWidth, window.innerHeight );
+
+		const raycaster = new THREE.Raycaster();
+		raycaster.setStereoEffect( {
+
+			renderer: renderer,
+			camera: camera,
+//			stereoEffect: stereoEffect,
+
+		} );
+
+		//the precision of the raycaster when intersecting objects, in world units.
+		//See https://threejs.org/docs/#api/en/core/Raycaster.params.
+		raycaster.params.Points.threshold = 0.1;
+
+		const cursor = renderer.domElement.style.cursor;
+/*
+		const mouse = new THREE.Vector2();
+		window.addEventListener( 'mousemove', function( event ) {
+
+			// calculate mouse position in normalized device coordinates
+			// (-1 to +1) for both components
+
+			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+			// update the picking ray with the camera and mouse position
+			raycaster.setFromCamera( mouse, camera );
+
+			raycaster.stereo.onDocumentMouseMove( event );
+
+		}, false );
+		window.addEventListener( 'pointerdown', function( event ) {
+
+			raycaster.stereo.onDocumentMouseDown( event );
+
+		}, false );
+*/
+
+		//
+
 		const arrayFuncs = [
 			{
 
@@ -49,10 +106,11 @@
 					new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
 					new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
 					0.5,//z
+					//50,//w
 					{
 
-						//							 func: new Function( 't', 'return 1-2*t' ),
-						func: 1,
+						//func: new Function( 't', 'return 1-2*t' ),
+						func: -1,
 						min: -1,
 						max: 1,
 
@@ -67,17 +125,39 @@
 		MyPoints( THREE, arrayFuncs, scene, {
 
 			options: {
-				point: { size: 15 },
-				addSpriteTextIntersection: function ( intersection, mouse ) {
+				point: { size: 25 },
+				palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+				raycaster: {
 
-					console.warn( 'addSpriteTextIntersection' );
+					addParticle: function ( item ) {
+
+						if ( raycaster.stereo !== undefined )
+							raycaster.stereo.addParticle( item );
+
+					},
+					onIntersection: function ( intersection, mouse ) {
+
+						renderer.domElement.style.cursor = 'pointer';
+
+					},
+					onIntersectionOut: function () {
+
+						renderer.domElement.style.cursor = cursor;
+
+					},
+					onMouseDown: function ( intersection ) {
+
+						alert( 'You have clicked over point' );
+
+					},
 
 				}
+
 			},
 			pointsOptions: {
 
 				position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
-				shaderMaterial: {}
+				//shaderMaterial: {}
 
 			}
 
@@ -87,7 +167,9 @@
 
 			requestAnimationFrame( animate );
 
-			renderer.render( scene, camera );
+			if ( stereoEffect === undefined )
+				renderer.render( scene, camera );
+			else stereoEffect.render( scene, camera );
 
 		};
 

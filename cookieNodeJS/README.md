@@ -1,7 +1,7 @@
 ﻿# cookie
 The node.js version of the [cookie](https://www.w3schools.com/js/js_cookies.asp).
 Cookies let you store user information in web pages.
-[Example of using](https://raw.githack.com/anhr/cookieNodeJS/master/).
+[Example of using](https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/Examples/index.html).
 
 ## Packaged Builds
 The easiest way to use cookie in your code is by using the built source at `build/cookie.js`.
@@ -9,15 +9,22 @@ These built JavaScript files bundle all the necessary dependencies to run cookie
 
 In your `head` tag, include the following code:
 ```
-<script src="https://raw.githack.com/anhr/cookieNodeJS/master/build/cookie.js"></script>
+<script src="https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.js"></script>
 ```
 or
 ```
-<script src="https://raw.githack.com/anhr/cookieNodeJS/master/build/cookie.min.js"></script>
+<script src="https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.min.js"></script>
 ```
 or you can import cookie from cookie.js file in your JavaScript module. [Example.](https://raw.githack.com/anhr/myThreejs/master/Examples/html/)
 ```
-import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
+import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
+```
+or
+* Create a folder on your localhost named as [folderName].
+* Add your web page into [folderName].
+* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
 
 Now you can use window.cookie for store user information in web pages.

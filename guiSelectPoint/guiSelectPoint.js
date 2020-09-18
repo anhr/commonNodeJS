@@ -22,17 +22,17 @@
 //import { THREE } from './three.js';
 var THREE;
 
-//import { dat } from '../dat/dat.module.js';
-import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+import { dat } from '../dat/dat.module.js';
+//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
-//import ScaleController from '../ScaleController.js';
-import ScaleController from 'https://raw.githack.com/anhr/commonNodeJS/master/ScaleController.js';
+import ScaleController from '../ScaleController.js';
+//import ScaleController from 'https://raw.githack.com/anhr/commonNodeJS/master/ScaleController.js';
 
-//import PositionController from '../PositionController.js';
-import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
+import PositionController from '../PositionController.js';
+//import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
 
-//import ColorPicker from '../../../colorpicker/master/colorpicker.js';//https://github.com/anhr/colorPicker
-import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpicker.js';
+import ColorPicker from '../colorpicker/colorpicker.js';//https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 
 /**
  * A dat.gui based graphical user interface for select a point from the mesh.

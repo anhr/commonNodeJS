@@ -21,9 +21,6 @@ or
 import Player from './commonNodeJS/master/player/build/player.module.js';
 ```
 or
-* Download [colorPicker](https://github.com/anhr/colorPicker) repository into your "[folderName]\colorPicker\master" folder.
-* Download [loadScriptNodeJS](https://github.com/anhr/loadScriptNodeJS) repository into your "[folderName]\loadScriptNodeJS\master" folder.
-* Download [loadFileNodeJS](https://github.com/anhr/loadFileNodeJS) repository into your "[folderName]\loadFileNodeJS\master" folder.
 ```
 import Player from './commonNodeJS/master/player/player.js';
 ```
@@ -200,7 +197,7 @@ const arrayFuncs = [
 ];
 ```
 Now you can see the color of the first point as blue at the begin of playing and white at the end of playing
-because default range of the [color palette](https://github.com/anhr/colorPicker) from 0 to 100.
+because default range of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker) from 0 to 100.
 But current range of the function from 1 to -1 for default <b>t</b> range from 0 to 1.
 You can resolve this issue by change of the palette range.
 Replace <b>w</b> coordinate of the <b>THREE.Vector4</b> from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
@@ -227,24 +224,22 @@ const arrayFuncs = [
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),
 ];
 ```
-* Select a [color palette](https://github.com/anhr/colorPicker).
+* Select a [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
 
-Default color palette index is [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#BGRW).
+Default color palette index is [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGRW).
 You can select another palette. Please import ColorPicker into your web page for it.
 ```
-import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpicker.js';
+import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 ```
-or
-
-Download [colorPicker](https://github.com/anhr/colorPicker) repository into your "[folderName]\colorPicker\master" folder.
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import ColorPicker from './colorpicker/master/colorpicker.js';
+import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 ```
 Set THREE for palette.
 ```
 ColorPicker.palette.setTHREE(THREE);
 ```
-Create a palette. For example <b>ColorPicker.paletteIndexes.bidirectional palette</b>.
+Create a palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
 And use your new palette in <b>Player.selectPlayScene</b>.
 ```
 const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
@@ -292,7 +287,34 @@ points.rotation.z = - Math.PI * 2 * t;
 ```
 #### Create THREE.Points with [THREE.ShaderMaterial material](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
 
+Please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described in [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
+#### Use myPoints for create points.
 
+Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use [myPoints](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html) for creating of new points.
+Example.
+```
+MyPoints( THREE, arrayFuncs, scene );
+```
+Now you can see, first point is moving and changing color.
+
+Currently all <b>myPoints</b> settings is default.
+You can set your own setting for <b>myPoints</b>. For example set points size to 15 and move all points to right during playing.
+```
+MyPoints( THREE, arrayFuncs, scene, {
+
+	options: {
+
+		point: { size: 15 }
+
+	},
+	pointsOptions: {
+
+		position: new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0)
+
+	}
+
+} );
+```
 ## Directory Contents
 
 ```

@@ -11,8 +11,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import cookie from '../../../cookieNodeJS/master/cookie.js';
-//import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
+import cookie from '../cookieNodeJS/cookie.js';
+//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 import ScaleController from '../ScaleController.js';
 import PositionController from '../PositionController.js';
@@ -21,8 +21,8 @@ import { dat } from '../dat/dat.module.js';
 import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
-import ColorPicker from '../../../colorpicker/master/colorpicker.js';//https://github.com/anhr/colorPicker
-//import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpicker.js';
+import ColorPicker from '../colorpicker/colorpicker.js';
+//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 //ColorPicker.palette.setTHREE( THREE );
 
 var settings;
@@ -678,10 +678,8 @@ palette = new palette();
  * @param {number} [options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
  * @param {number} [options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
  * @param {object} [options.scales] axes scales. See {@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html|AxesHelper}. Default is {}
- * @param {object} [options.palette] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
+ * @param {object} [options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
  * <pre>
- * Default is
- * new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW 
  * Example:
  * new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
  * </pre>
@@ -927,7 +925,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * [Function]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} - position of the point is function of the t.
  * Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )
  * 
- * Vector.w is index of the [palette]{@link https://github.com/anhr/colorPicker}.
+ * Vector.w is index of the [palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * Default range of the Vector.w is from 0 to 100. You can change range by use an object:
  * {
  *   func: Vector.w
@@ -1149,7 +1147,7 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
  * [Function]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} - position of the point is function of the t.
  * Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )
  *
- * Vector.w is index of the [palette]{@link https://github.com/anhr/colorPicker}.
+ * Vector.w is index of the [palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * Default range of the Vector.w is from 0 to 100. You can change range by use an object:
  * {
  *   func: Vector.w
@@ -1187,11 +1185,11 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
  * ]
  * </pre>
  * @param {object} [optionsColor] followed options is available:
- * @param {object} [optionsColor.palette] [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [optionsColor.palette] [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * @param {object} [optionsColor.scale]
- * @param {object} [optionsColor.scale.min] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [optionsColor.scale.min] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * <p>Default is undefined. Minimal palette range is 0.</p>
- * @param {object} [optionsColor.scale.max] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [optionsColor.scale.max] Maximal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * <p>Default is undefined. Maximal palette range is 100</p>
  * @param {THREE.BufferAttribute} [optionsColor.positions] geometry.attributes.position of the new mesh. Default is undefined.
  * @param {array} [optionsColor.colors] array for mesh colors. Default is undefined.

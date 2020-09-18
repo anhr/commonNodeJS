@@ -1,0 +1,14 @@
+test page
+https://raw.githack.com/anhr/loadScriptNodeJS/master/index.html
+-------------------------------------------
+JSDoc 3 is an API documentation generator for JavaScript
+https://jsdoc.app/
+--------------------------------
+Building loadScript
+
+Open "Node.js command prompt"
+
+d:
+cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\loadScriptNodeJS"
+npm install//собирается с ошибками но все равно работает
+npm run build

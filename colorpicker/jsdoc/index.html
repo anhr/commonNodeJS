@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>ColorPicker.</h1>
+<p>Pure JavaScript color picker.</p>
+<p><a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html">Example of using</a>.
+<a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/modular.html">Module version</a>.</p>
+<h2>Packaged Builds</h2>
+<p>The easiest way to use ColorPicker in your code is by using the built source at <code>build/colorpicker.js</code>.
+These built JavaScript files bundle all the necessary dependencies to run ColorPicker.</p>
+<p>In your <code>head</code> tag, include the following code:</p>
+<pre class="prettyprint source"><code>&lt;script src=&quot;https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/build/colorpicker.js&quot;>&lt;/script>
+</code></pre>
+<p>or</p>
+<pre class="prettyprint source"><code>&lt;script src=&quot;https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/build/colorpicker.min.js&quot;>&lt;/script>
+</code></pre>
+<p>or if your browser support modular JavaScript code, in your <code>script type=&quot;module&quot;</code> tag, include the following code:</p>
+<pre class="prettyprint source"><code>import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
+</code></pre>
+<p>or</p>
+<ul>
+<li>Create a folder on your localhost named as [folderName].</li>
+<li>Add your web page into [folderName]. See <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/modular.html">example</a> web page.</li>
+<li>Download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</li>
+</ul>
+<pre class="prettyprint source"><code>import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
+</code></pre>
+<p>In your <code>body</code> tag, include the following code:</p>
+<pre class="prettyprint source"><code>&lt;div id=&quot;colorpicker&quot;>&lt;/div>
+</code></pre>
+<p>Now you can use window.ColorPicker for select a color from picker.</p>
+<p>Example of the simple ColorPicker</p>
+<pre class="prettyprint source"><code>ColorPicker.create( document.getElementById( &quot;colorpicker&quot; ) );
+</code></pre>
+<p>Add a slider, and an event when the user changed color.</p>
+<pre class="prettyprint source"><code>ColorPicker.create( &quot;colorpicker&quot;, {
+
+	sliderIndicator: {
+
+		callback: function ( c ) {
+
+			console.log( 'color: ' + c.percent + ' percent c.hex = ' + c.hex );
+
+		}
+
+	},
+
+} );
+</code></pre>
+<p>Create palette.</p>
+<pre class="prettyprint source"><code>const palette = new ColorPicker.palette();
+</code></pre>
+<p>Now you have created a default <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW">ColorPicker.paletteIndexes.BGRW</a> (blue, green, red, white) palette.
+You can select another palette. For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional">ColorPicker.paletteIndexes.bidirectional</a> palette.</p>
+<pre class="prettyprint source"><code>const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
+</code></pre>
+<p><a href="https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~paletteIndexes">Available palettes</a>.</p>
+<p>Also you can create your own custom palette.</p>
+<pre class="prettyprint source"><code>const palette = new ColorPicker.palette( { palette: [
+
+	{ percent: 0, r: 0, g: 0, b: 0, },
+	{ percent: 10, r: 0xff, g: 255, b: 0xff, },
+	{ percent: 20, r: 0xff, g: 0, b: 0x0, },
+	{ percent: 30, r: 0x0, g: 255, b: 0x0, },
+	{ percent: 40, r: 0x0, g: 0, b: 0xff, },
+	{ percent: 80, r: 0x0, g: 0, b: 0xff, },
+	{ percent: 90, r: 0xff, g: 255, b: 0xff, },
+
+] } );
+</code></pre>
+<h2>Directory Contents</h2>
+<pre class="prettyprint source"><code>build - Compiled source code.
+</code></pre>
+<h2>Building your own ColorPicker</h2>
+<p>In the terminal, enter the following:</p>
+<pre class="prettyprint source"><code>$ npm install
+$ npm run build
+</code></pre></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ColorPicker.html">ColorPicker</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Sep 18 2020 11:54:40 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

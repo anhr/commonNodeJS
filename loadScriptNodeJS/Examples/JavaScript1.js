@@ -1,0 +1,1 @@
+﻿console.log( 'The JavaScript1.js file has been loaded successfully' );
