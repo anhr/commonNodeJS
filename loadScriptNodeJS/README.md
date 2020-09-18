@@ -7,11 +7,11 @@ These built JavaScript files bundle all the necessary dependencies to run loadSc
 
 In your `head` tag, include the following code:
 ```
-<script src="https://raw.githack.com/anhr/loadScriptNodeJS/master/build/loadScript.js"></script>
+<script src="https://raw.githack.com/anhr/commonNodeJS/master/loadScriptNodeJS/build/loadScript.js"></script>
 ```
 or
 ```
-<script src="https://raw.githack.com/anhr/loadScriptNodeJS/master/build/loadScript.min.js"></script>
+<script src="https://raw.githack.com/anhr/commonNodeJS/master/loadScriptNodeJS/build/loadScript.min.js"></script>
 ```
 or you can import loadScript from loadScript.js file into your JavaScript module. [Example.](https://raw.githack.com/anhr/DropdownMenu/master/Examples/html/) [Code of example.](https://github.com/anhr/DropdownMenu/blob/master/index.js)
 ```
