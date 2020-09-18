@@ -3,7 +3,7 @@ import * as THREE from '../../three.js/dev/build/three.module.js';
 import { WEBGL } from '../../three.js/dev/examples/jsm/WebGL.js';
 import { OrbitControls } from '../../three.js/dev/examples/jsm/controls/OrbitControls.js';
 import { ConvexBufferGeometry } from '../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js';
-import { StereoEffect, spatialMultiplexsIndexs } from './Examples/jsm/effects/StereoEffect.js';
+import StereoEffect from './StereoEffect/StereoEffect.js';
 import { SpriteTextGui, SpriteText } from '../../SpriteText/master/SpriteText.js';
 import { AxesHelper, AxesHelperOptions } from '../../AxesHelper/master/AxesHelper.js';
 */
@@ -187,7 +187,7 @@ export {
 	WEBGL,
 	OrbitControls,
 	ConvexBufferGeometry,
-	StereoEffect, spatialMultiplexsIndexs,
+	StereoEffect
 	SpriteText, SpriteTextGui,
 	AxesHelper, AxesHelperOptions,
 */
