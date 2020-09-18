@@ -23,15 +23,14 @@
 //import * as THREE from 'https://threejs.org/build/three.module.js';
 var THREE;
 
-//import PositionController from '../PositionController.js';
-import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
+import PositionController from '../PositionController.js';
+//import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
 
-//import cookie from '../../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/cookieNodeJS
-//import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
-import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
+import cookie from '../cookieNodeJS/cookie.js';
+//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
-//import { dat } from '../dat/dat.module.js';
-import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+import { dat } from '../dat/dat.module.js';
+//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
 //Attenttion!!! Save this file as UTF-8 for localization.
 
