@@ -32,8 +32,8 @@
 		import MyPoints from '../myPoints.js';
 		//import MyPoints from 'http://localhost/anhr/commonNodeJS/master/myPoints/myPoints.js';
 
-		import { StereoEffect } from '../../StereoEffect/StereoEffect.js';
-		//import { StereoEffect } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+		import StereoEffect from '../../StereoEffect/StereoEffect.js';
+		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
 		import ColorPicker from '../../colorpicker/colorpicker.js';//https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 		//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
@@ -53,7 +53,7 @@
 
 		const stereoEffect = new StereoEffect( THREE, renderer/*, {
 
-			//spatialMultiplex: spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+			//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 			far: camera.far,
 			camera: camera,
 

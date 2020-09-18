@@ -35,21 +35,6 @@ import { dat } from '../dat/dat.module.js';
 //Attenttion!!! Save this file as UTF-8 for localization.
 
 /**
- * Enumeration of available stereo modes.
- * @see {@link https://en.wikipedia.org/wiki/DVB_3D-TV|DVB 3D-TV} for details
- * @readonly
- * @enum {number}
- */
-const spatialMultiplexsIndexs = {
-	/** No stereo effect */
-	Mono: 0,
-	/** {@link https://en.wikipedia.org/wiki/DVB_3D-TV#Side_by_side|Side by side} */
-	SbS: 1, //
-	/** {@link https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom|Top and bottom} */
-	TaB: 2, //
-}
-
-/**
  * @callback onFullScreen
  * @param {boolean} fullScreen true - go to full screen mode. false - restore from full screen mode.
  */
@@ -87,7 +72,7 @@ const spatialMultiplexsIndexs = {
  * Use only if you use {@link https://threejs.org/docs/index.html#api/en/core/Raycaster|THREE.Raycaster} (working out what objects in the 3d space the mouse is over)
  * and your canvas is not full screen.
  */
-const StereoEffect = function ( _THREE, renderer, options ) {
+function StereoEffect( _THREE, renderer, options ) {
 
 	setTHREE( _THREE );
 
@@ -527,6 +512,23 @@ const StereoEffect = function ( _THREE, renderer, options ) {
 
 };
 
+/**
+ * Enumeration of available stereo modes. Available as <b>StereoEffect.spatialMultiplexsIndexs</b>.
+ * @see {@link https://en.wikipedia.org/wiki/DVB_3D-TV|DVB 3D-TV} for details
+ * @readonly
+ * @enum {number}
+ */
+const spatialMultiplexsIndexs = {
+	/** No stereo effect */
+	Mono: 0,
+	/** {@link https://en.wikipedia.org/wiki/DVB_3D-TV#Side_by_side|Side by side} */
+	SbS: 1, //
+	/** {@link https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom|Top and bottom} */
+	TaB: 2, //
+}
+Object.freeze( spatialMultiplexsIndexs );
+StereoEffect.spatialMultiplexsIndexs = spatialMultiplexsIndexs;
+
 function setTHREE( _THREE ) {
 
 	if ( THREE ) {
@@ -831,4 +833,5 @@ function setTHREE( _THREE ) {
 
 }
 
-export { StereoEffect, spatialMultiplexsIndexs };
+//export { StereoEffect, spatialMultiplexsIndexs };
+export default StereoEffect;
