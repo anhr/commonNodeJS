@@ -32,8 +32,8 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * @param {object} [settings.options] followed options is available
  * @param {number} [settings.options.point.size=5.0] point size.
  * @param {object} [settings.options.scales.w] followed w axis scale params is available
- * @param {object} [settings.options.scales.w.min=0] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
- * @param {object} [settings.options.scales.w.max=100] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * @param {object} [settings.options.scales.w.min=0] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
+ * @param {object} [settings.options.scales.w.max=100] Maximal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * @param {object} [settings.options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
  * <pre>
  * Example:
