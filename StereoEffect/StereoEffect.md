@@ -7,7 +7,7 @@ Uses dual PerspectiveCameras for [Parallax Barrier](https://en.wikipedia.org/wik
 
 The easiest way to use StereoEffect in your code is import StereoEffect from StereoEffect.js file in your JavaScript module. [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/)
 ```
-import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
 or 
 * Create a folder on your localhost named as [folderName].
@@ -27,7 +27,7 @@ import * as THREE from './three.js/dev/build/three.module.js';
 ```
 download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import { StereoEffect, spatialMultiplexsIndexs } from './commonNodeJS/master/StereoEffect/StereoEffect.js';
+import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
 
 Now you can use StereoEffect in your javascript code.
@@ -36,7 +36,7 @@ Now you can use StereoEffect in your javascript code.
 ```
 const stereoEffect = new StereoEffect( THREE, renderer, {
 
-	spatialMultiplex: spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+	spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 	far: camera.far,
 	camera: camera,
 
