@@ -172,8 +172,8 @@ function StereoEffect( _THREE, renderer, options ) {
 				renderer.domElement.style.width = style.width;
 				renderer.domElement.style.height = style.height;
 
-				camera.aspect = size.x / size.y;
-				camera.updateProjectionMatrix();
+				options.camera.aspect = size.x / size.y;
+				options.camera.updateProjectionMatrix();
 
 			},
 			getMousePosition: function ( mouse, event ) {
