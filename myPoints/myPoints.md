@@ -96,11 +96,11 @@ MyPoints( THREE, arrayFuncs, scene, {
 
 First, import <b>StereoEffect</b>.
 ```
-import { StereoEffect } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
 or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import { StereoEffect } from './commonNodeJS/master/StereoEffect/StereoEffect.js';
+import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
 Create raycaster.
 ```
