@@ -4,16 +4,9 @@ Uses dual PerspectiveCameras for [Parallax Barrier](https://en.wikipedia.org/wik
 
 ## Quick start
 
+Create your web page. [Example](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene).
 
-The easiest way to use StereoEffect in your code is import StereoEffect from StereoEffect.js file in your JavaScript module. [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/)
-```
-import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
-```
-or 
-* Create a folder on your localhost named as [folderName].
-* Add your veb page into [folderName]. See [example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/) web page.
-
-* import [three.js](https://github.com/anhr/three.js)
+* First, import [three.js](https://github.com/anhr/three.js) in your JavaScript module.
 ```
 import * as THREE from 'https://threejs.org/build/three.module.js';
 ```
@@ -25,7 +18,16 @@ or download [three.js](https://github.com/anhr/three.js) repository into your "[
 ```
 import * as THREE from './three.js/dev/build/three.module.js';
 ```
-download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+
+The easiest way to use StereoEffect in your code is import StereoEffect from StereoEffect.js file in your JavaScript module. [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/).
+```
+import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+```
+or 
+* Create a folder on your localhost named as [folderName].
+* Add your veb page into [folderName]. See [example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/) web page.
+
+Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
 import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
@@ -178,3 +180,5 @@ raycaster.stereo.addParticle( points );
 ```
 For testing please move cursor over point. Cursor will be changing to 'pointer'.
 You can see an alert if you click over point.
+
+You can use [MyPoints](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html) for [raycasting](https://threejs.org/docs/index.html#api/en/core/Raycaster).
