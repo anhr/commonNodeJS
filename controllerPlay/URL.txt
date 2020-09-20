@@ -1,0 +1,37 @@
+﻿-------------------------------------------
+ВНИМАНИЕ!!!! обязательно вставить файл .babelrc Иначе будет появляться ошибка 
+Error transforming bundle with 'uglify' plugin: Unexpected token: name (PlayController)
+при выполнении команды "npm run build".
+
+А также не возможно открыть веб страницу в IE11:
+SCRIPT1002: Syntax error
+controllerPlay.js (2511,1)
+SCRIPT5009: 'controllerPlay' is undefined
+html (553,4)
+---------------------------------------------------------
+test page
+https://raw.githack.com/anhr/controllerPlay/master/Examples/html/
+http://localhost/threejs/nodejs/controllerPlay/master/Examples/html/
+-------------------------------------------
+Building menu
+
+Open "Node.js command prompt"
+
+d:
+cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\controllerPlay"
+npm install
+npm run build
+
+ERROR
+------------
+Error: Couldn't find preset "env" relative to directory  "D:\\My documents\\MyProjects\\webgl\\three.js\\GitHub\\nodejs\\commonNodeJS"
+
+Заменить относительный путь
+
+import OrbitControlsGui from '../commonNodeJS/OrbitControlsGui.js';
+
+На абсолютный
+
+import OrbitControlsGui from 'http://localhost/threejs/nodejs/commonNodeJS/OrbitControlsGui.js';
+
+

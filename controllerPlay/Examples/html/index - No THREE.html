@@ -1,0 +1,555 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>myThreejs</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
+
+	<!--<script src="http://192.168.1.2/nodejs/loadScriptNodeJS/build/loadScript.js"></script>-->
+	<!--<script src="http://localhost/threejs/nodejs/loadScriptNodeJS/build/loadScript.js"></script>-->
+	<script src="../../../loadScriptNodeJS/build/loadScript.js"></script>
+	<!--<script src="build/loadScript.min.js"></script>-->
+
+	<!--<script src="http://localhost/threejs/three.js/examples/js/libs/dat.gui.min.js"></script>-->
+	<!--<script src="../../../../three.js/examples/js/libs/dat.gui.min.js"></script>-->
+	<script src="../../../../three.js/examples/js/libs/dat.gui.js"></script>
+
+	<!--<script src="http://localhost/threejs/three.js/src/objects/SpriteText.js"></script>-->
+
+</head>
+<body>
+	<p>
+		<a href='https://anhr.github.io/index.html' target="_blank">Home</a>
+		| <a href='https://github.com/anhr/controllerPlay' target="_blank">GitHub</a>
+	</p>
+
+	<!--Horizontal Colorpicker with slider indicator-->
+	<div id="colorpickerHI"></div>
+	<div>Horizontal <input id="valueHI" />% <input type="button" value="Enter" id="enterValueHI" /><span id="colorHI">color</span><span id="colorHItext"></span></div>
+
+	<script type="module">
+
+		import ColorPicker from '../../../colorpicker/colorpicker.js';
+
+		var elValueHI = document.getElementById( 'valueHI' );
+		var colorpickerHI = ColorPicker.create( document.getElementById( "colorpickerHI" ), {
+
+			//direction: false,
+			sliderIndicator: {
+				callback: function ( c ) {
+
+					//console.warn( 'callback: ' + c.percent + ' percent c.hex = ' + c.hex );
+					var elColorHI = document.getElementById( 'colorHI' );
+					elColorHI.style.backgroundColor = c.hex;
+					document.getElementById( 'colorHItext' ).innerHTML = c.hex;
+					elValueHI.value = c.percent;
+
+				},
+				value: 75,//percent
+
+			},
+			/*
+			style: {
+
+				border: '10px solid black',
+				width: '300px',
+				height: '20px',
+
+			},
+			*/
+			onError: function ( message ) { alert( 'Horizontal Colorpicker with slider indicator error: ' + message ); }
+
+		} );
+		document.getElementById( 'enterValueHI' ).onclick = function () {
+
+			colorpickerHI.setValue( elValueHI.value );
+
+		}
+
+	</script>
+
+	<h1>myThreejs.</h1>
+
+	<h2>Canvas.</h2>
+	<div id="canvasContainer1"><img src="https://raw.githubusercontent.com/anhr/TreeElementNodeJS/master/img/wait.gif"></div>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<script type="module">
+
+		//import * as THREE from '../../../../three.js/build/three.module.js';
+		import {
+
+			Vector3,
+			Color,
+			BufferGeometry,
+			Points,
+			PointsMaterial,
+			VertexColors,
+			Float32BufferAttribute,
+			Mesh,
+			CubeGeometry,
+			MeshLambertMaterial,
+
+		} from '../../../../three.js/build/three.module.js';
+		import { OrbitControls } from '../../../../three.js/examples/jsm/controls/OrbitControls.js';
+		import { ConvexBufferGeometry } from '../../../../three.js/examples/jsm/geometries/ConvexGeometry.js';
+
+		import { StereoEffect, spatialMultiplexsIndexs } from '../../../../three.js/examples/jsm/effects/StereoEffect.js';
+
+		import myThreejs from '../../../myThreejs/myThreejs.js';
+
+		import { WEBGL } from '../../../../three.js/examples/jsm/WEBGL.js';
+
+		if ( WEBGL.isWebGLAvailable() === false ) {
+
+			document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+			alert( WEBGL.getWebGLErrorMessage().innerHTML );
+
+		}
+
+		var playerOptions = {
+
+			marks: 11,//Number of scenes of 3D objects animation.
+			name: 'Time (sec.)',
+/*
+			repeat: true,
+			zoomMultiplier: 1.1,
+			positionOffset: 0.1,
+			min: -10,
+			max: 10,
+*/
+			//					scenesCount: 10,
+
+		};
+
+		myThreejs.create( function ( group ) {
+
+			//Points
+			/*
+						var functions = {
+
+			//					x: 't*Math.sin(t)*a',
+							x: 'Math.sin(t*a)',
+							y: '0.3*t*a-1+b',
+							z: 't*Math.cos(t)*a/2-105',
+
+						};
+						var funcs = {};
+						function setFuncs() {
+
+							funcs.x = new Function( 't', 'a', 'b', 'return ' + functions.x ),
+							funcs.y = new Function( 't', 'a', 'b', 'return ' + functions.y ),
+							funcs.z = new Function( 't', 'a', 'b', 'return ' + functions.z );
+
+						}
+						setFuncs();
+			*/
+			var a = 1, b = 0;
+			var tMin = playerOptions.min === undefined ? 0 : playerOptions.min;
+			/*
+						var funcs = {
+
+							x: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)' ),
+							y: new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)' ),
+							z: new Function( 't', 'a', 'b', 'return 0' ),
+
+						};
+			*/
+			/*
+						function point( funcs ) {
+
+							this.funcs = funcs;
+
+						}
+						var arrayPoints = [
+							new point( funcs ),
+							new point( new Vector3( -0.5, 0.5, -1 ) ),
+						]
+			*/
+			var arrayFuncs = [
+				new Vector3( -0.5, 0.5, -1 ),//white point
+				{
+
+					x: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+0.2' ),
+					y: new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.2' ),
+					z: new Function( 't', 'a', 'b', 'return 0.2' ),
+					color: new Color( "rgb(255, 127, 0)" ),//yellow point
+
+				},
+				{
+
+					vector: new Vector3( 0, 0, 0 ),
+					color: {
+
+						r: new Function( 't', 'return t' ),
+						g: new Function( 't', 'return 1-t' ),
+						b: new Function( 't', 'return t' ),
+
+					}
+
+				}
+			]
+			function getPoints( t ) {
+
+				if ( t === undefined )
+					console.error( 'getPoints: t = ' + t );
+				var points = [];
+				arrayFuncs.forEach( function ( funcs ) {
+
+					if ( funcs instanceof Vector3 )
+						points.push( funcs );
+					else if ( funcs instanceof Object ) {
+
+						if ( funcs.vector === undefined )
+							points.push( new Vector3( funcs.x( t, a, b ), funcs.y( t, a, b ), funcs.z( t, a, b ) ) );
+						else points.push( funcs.vector );
+
+					} else console.error( 'getPoints: funcs = ' + funcs );
+
+				} );
+				return points;
+
+			}
+
+			var points = new Points( new BufferGeometry().setFromPoints( getPoints( tMin )/*[
+								new Vector3( funcs.x( tMin, a, b ), funcs.y( tMin, a, b ), funcs.z( tMin, a, b ) ),
+								new Vector3( -0.5, 0.5, -1 ),
+								new Vector3( 0.5, -0.5, 1 ),
+							]*/ ),
+				new PointsMaterial( { size: 0.05, vertexColors: VertexColors } )
+								/*new PointsMaterial( {
+
+									color: 0xffffff,
+									size: 0.05,//0.05,
+									alphaTest: 0.5
+
+								} )*/ );
+			function getСolors( t ) {
+
+				if ( t === undefined )
+					console.error( 'getСolors: t = ' + t );
+
+				var colors = [];
+				arrayFuncs.forEach( function ( funcs ) {
+
+					if ( funcs instanceof Vector3 ) { }
+					else if ( funcs instanceof Object ) {
+
+						if ( funcs.color !== undefined ) {
+
+							if ( funcs.color instanceof Color )
+								colors.push( funcs.color.r, funcs.color.g, funcs.color.b );
+							else if ( funcs.color instanceof Object )
+								colors.push( funcs.color.r( t ), funcs.color.g( t ), funcs.color.b( t ) );
+							else console.error( 'getСolors: funcs.color = ' + funcs.color );
+							return;
+
+						}
+
+					} else console.error( 'getPoints: funcs = ' + funcs );
+					colors.push( 1, 1, 1 );//white
+
+				} );
+				return colors;
+
+			}
+			points.geometry.addAttribute( 'color', new Float32BufferAttribute( getСolors( tMin ), 3 ) );
+			//			points.geometry.computeBoundingSphere();
+			/*
+						points.position.copy( new Vector3( 0.1, 0.2, 0 ) );
+						points.scale.copy( new Vector3( 2, 2, 1 ) );
+			*/
+			points.userData.color = points.material.color;
+			points.userData.raycaster = {
+
+				onIntersection: function ( raycaster, intersection, scene ) {
+
+					myThreejs.addSpriteTextIntersection( raycaster, intersection, scene );
+
+				},
+				onIntersectionOut: function ( scene ) {
+
+					myThreejs.removeSpriteTextIntersection( scene );
+
+				},
+
+			}
+			points.userData.selectPlayScene = function ( t ) {
+
+				function setAttributes( attributes, t ) {
+
+					if ( t === undefined )
+						console.error( 'setPosition: t = ' + t );
+
+					for ( var i = 0; i < arrayFuncs.length; i++ ) {
+
+						var funcs = arrayFuncs[i];
+						if ( funcs instanceof Vector3 ) {
+
+							//							points.push( funcs );
+
+						} else if ( funcs instanceof Object ) {
+
+							if ( funcs.vector === undefined ) {
+
+								attributes.position.setX( i, funcs.x( t, a, b ) );
+								attributes.position.setY( i, funcs.y( t, a, b ) );
+								attributes.position.setZ( i, funcs.z( t, a, b ) );
+
+							}
+							if ( funcs.color !== undefined ) {
+
+								if ( funcs.color.r instanceof Function ) {
+
+									attributes.color.setX( i, funcs.color.r( t ) );
+									attributes.color.setY( i, funcs.color.g( t ) );
+									attributes.color.setZ( i, funcs.color.b( t ) );
+
+								} else {
+
+									attributes.color.setX( i, funcs.color.r );
+									attributes.color.setY( i, funcs.color.g );
+									attributes.color.setZ( i, funcs.color.b );
+
+								}
+
+							}
+
+						}
+						else console.error( 'getPoints: funcs = ' + funcs );
+
+					};
+
+				}
+				setAttributes( points.geometry.attributes, t );
+				/*
+								points.geometry.attributes.position.setX( 0, funcs.x( t, a, b ) );
+								points.geometry.attributes.position.setY( 0, funcs.y( t, a, b ) );
+								points.geometry.attributes.position.setZ( 0, funcs.z( t, a, b ) );
+				*/
+				points.geometry.attributes.position.needsUpdate = true;
+				points.geometry.attributes.color.needsUpdate = true;
+				/*
+				points.position.x = t;
+				points.position.y = t;
+				points.position.z = t;
+				*/
+
+			}
+			group.add( points );
+
+			//cubes
+			var cubeType = 'cube';
+			function addCube( cubePosition, color, selectPlayScene ) {
+
+				var cube = new Mesh( new ConvexBufferGeometry( new CubeGeometry( 0.4, 0.4, 0.4 ).vertices ),
+					new MeshLambertMaterial( {
+
+						color: color,
+						opacity: 0.8,
+						transparent: true,
+
+					} ) );
+				cube.position.copy( cubePosition );
+				cube.type = cubeType;
+				cube.userData.color = cube.material.color;
+				cube.userData.raycaster = {
+
+					onIntersection: function ( raycaster, intersection, scene, INTERSECTED ) {
+
+						if ( cube.userData.currentHex === undefined )
+							cube.userData.currentHex = cube.material.emissive.getHex();
+						cube.material.emissive.setHex( 0xff0000 );
+
+					},
+					onIntersectionOut: function ( scene, INTERSECTED ) {
+
+						if ( cube.userData.currentHex !== undefined ) cube.material.emissive.setHex( cube.userData.currentHex );
+						cube.userData.currentHex = undefined;
+
+					},
+					onMouseDown: function ( raycaster, intersection, scene ) {
+
+						var position = raycaster.stereo.getPosition( intersection );
+						alert( 'You are clicked the "' + intersection.object.type + '" type object.'
+							+ ( intersection.index === undefined ? '' : ' Index = ' + intersection.index + '.' )
+							+ ' Position( x: ' + position.x + ', y: ' + position.y + ', z: ' + position.z + ' )' );
+
+					},
+
+				}
+				if ( selectPlayScene ) {
+
+					cube.userData.selectPlayScene = selectPlayScene;
+					cube.userData.cube = cube;
+
+				}
+				group.add( cube );
+
+			}
+			addCube( new Vector3( -1, 0, 0 ), 0xffffff, function ( t ) {
+
+				var angle = t * Math.PI * 2;
+				this.cube.rotation.set( angle, 0, 0 );
+				/*
+								this.cube.position.x = t;
+								this.cube.position.y = t;
+								this.cube.position.z = t;
+				*/
+
+			} );
+			addCube( new Vector3( -0.5, 0.5, -0.5 ), 'green', function ( t ) {
+
+				this.cube.scale.x = 1 + t;
+				this.cube.scale.y = 1 + t;
+				this.cube.scale.z = 1 + t;
+
+			} );
+
+		},
+			{
+
+				elContainer: "canvasContainer1",//id of the HTMLElement for canvas and HTMLElement with id="iframe-goes-in-here" for gui.
+				orbitControls: OrbitControls,//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+				//orbitControlsGui: true,//displays the orbit controls gui.
+				stereoEffect: {
+
+					StereoEffect: StereoEffect,
+					spatialMultiplexsIndexs: spatialMultiplexsIndexs,
+
+				},//use stereoEffect. https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js
+				menuPlay: true,
+
+				dat: true,//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
+
+				player: playerOptions,//3D objects animation.
+
+				canvas: {
+
+					width: window.innerWidth / 2,
+					height: window.innerHeight / 2,
+
+				},
+
+				axesHelper2: {
+
+					scales: {
+
+						display: true,
+						t: playerOptions,
+						/*
+						x: {
+
+							zoomMultiplier: 2,
+							positionOffset: 1,
+							name: 'latitude(km.)',
+							min: -10,
+							max: 10,
+							marks: 11,
+
+						},
+						y: {
+
+							//name: 'Temperature(degrees Celsius)',
+							min: -4,
+							max: 2,
+
+						},
+						z: {
+
+							name: 'Radius(m.)',
+							min: -110,
+							max: -100,
+							marks: 11,
+
+						},
+						*/
+
+					},
+
+				}
+
+			} );
+
+	</script>
+	<h2>Simple canvas.</h2>
+	<!--<div id="canvasContainer2"></div>-->
+	<script>
+		return;
+		myThreejs.create( function ( group ) {
+
+			//Points
+
+			var points = new Points( new BufferGeometry().setFromPoints( [
+				new Vector3( 0, 0, 0 ),
+				new Vector3( 0, 0.5, -1 ),
+				new Vector3( 0.5, 0, 1 ),
+			] ),
+				new PointsMaterial( {
+
+					color: 0xffffff,
+					size: 0.05,
+					alphaTest: 0.5
+
+				} ) );
+			points.position.copy( new Vector3( 0.1, 0.2, 0 ) );
+			points.scale.copy( new Vector3( 2, 2, 1 ) );
+			points.userData.color = points.material.color;
+			group.add( points );
+
+			//cubes
+			loadScript.sync( [
+
+				"https://raw.githack.com/anhr/three.js/dev/examples/js/geometries/ConvexGeometry.js",
+				"https://raw.githack.com/anhr/three.js/dev/examples/js/QuickHull.js",
+
+			],
+				{
+					onload: function () {
+
+						var cubeType = 'cube';
+						function addCube( cubePosition, color ) {
+
+							var cube = new Mesh( new THREE.ConvexBufferGeometry( new CubeGeometry( 0.4, 0.4, 0.4 ).vertices ),
+								new MeshLambertMaterial( {
+									color: color,
+								} ) );
+							cube.position.copy( cubePosition );
+							cube.type = cubeType;
+							cube.userData.color = cube.material.color;
+							group.add( cube );
+
+						}
+						addCube( new Vector3( -1, 0, 0 ), 0xffffff );
+						addCube( new Vector3( -0.5, 0.5, -0.5 ), 'green' );
+
+					},
+					onerror: function ( str, e ) {
+
+						console.error( str );
+
+					},
+
+				} );
+
+		},
+			{
+
+				//elContainer: "canvasContainer2",//id of the HTMLElement for canvas and HTMLElement with id="iframe-goes-in-here" for gui.
+				//orbitControls: true,//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+				//stereoEffect: true,//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
+				//menuPlay: true,
+				//dat: true,//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
+				//controllerPlay: true,//use controllerPlay https://github.com/anhr/controllerPlay - my custom controller in my version of dat.gui https://github.com/anhr/dat.gui for playing of 3D objects in my projects.
+				//Available only if dat is true
+
+			}
+		);
+
+	</script>
+</body>
+</html>
