@@ -568,8 +568,8 @@ function Player( onSelectScene, options ) {
  */
 Player.execFunc = function ( funcs, axisName, t, a, b ) {
 
-	a = a || 1;
-	b = b || 0;
+	if ( a === undefined ) a = 1;
+	if ( b === undefined ) b = 0;
 	var func = funcs[axisName], typeofFuncs = typeof func;
 	switch ( typeofFuncs ) {
 
