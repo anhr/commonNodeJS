@@ -11,6 +11,8 @@ My JavaScript library for NodeJS.
 * colorpicker. Pure JavaScript color picker.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html). [Module version](https://raw.githack.com/anhr/ColorPicker/master/Example/modular.html).
+* controllerPlay. PlayController class for using in my version of dat.gui(https://github.com/anhr/dat.gui) for playing of 3D objects in my projects.
+[README.md](https://github.com/anhr/commonNodeJS/tree/master/controllerPlay).
 * dat.js Modify of the [dat.gui](https://github.com/dataarts/dat.gui) object. [Example](https://github.com/anhr/DropdownMenu).
 * getShaderMaterialPoints.js Get THREE.Points with THREE.ShaderMaterial material.
 [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
@@ -29,8 +31,6 @@ My JavaScript library for NodeJS.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/Examples/index.html).
 * OrbitControlsGui.js [OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) graphical user interface.
 [Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
-* PlayController. PlayController class for using in my version of dat.gui(https://github.com/anhr/dat.gui) for playing of 3D objects in my projects.
-[README.md](https://github.com/anhr/commonNodeJS/tree/master/controllerPlay).
 * Player.js 3D objects animation.
 [Player API](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
