@@ -14,6 +14,8 @@ My JavaScript library for NodeJS.
 * controllerPlay. PlayController class for using in my version of dat.gui(https://github.com/anhr/dat.gui) for playing of 3D objects in my projects.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/controllerPlay).
 * dat.js Modify of the [dat.gui](https://github.com/dataarts/dat.gui) object. [Example](https://github.com/anhr/DropdownMenu).
+* DropdownMenu. node.js version of DropdownMenu
+[README.md](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu).
 * getShaderMaterialPoints.js Get THREE.Points with THREE.ShaderMaterial material.
 [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
 * guiSelectPoint.js GuiSelectPoint is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for select a point from the mesh.
@@ -24,6 +26,8 @@ My JavaScript library for NodeJS.
 [Example](https://raw.githack.com/anhr/loadFileNodeJS/master/).
 * [loadScriptNodeJS](https://github.com/anhr/commonNodeJS/tree/master/loadScriptNodeJS). Load a JavaScript file.
 [Example](https://raw.githack.com/anhr/loadScriptNodeJS/master/index.html).
+* menuPlay. My dropdown menu for canvas in my version of [dat.gui](https://github.com/anhr/dat.gui) for playing of 3D objects in my projects.
+[README.md](https://github.com/anhr/commonNodeJS/tree/master/menuPlay).
 * MoveGroup.js [MoveGroup](https://github.com/anhr/commonNodeJS/blob/master/MoveGroup.js) is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for change group's position, scale and rotation.
 [Example](https://raw.githack.com/anhr/AxesHelper/master/Examples/AxesHelperGui.html).
 * myPoints.js Array of my points.
