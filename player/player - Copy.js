@@ -1,32 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>JSDoc: Source: player.js</title>
-
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-</head>
-
-<body>
-
-<div id="main">
-
-    <h1 class="page-title">Source: player.js</h1>
-
-    
-
-
-
-    
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
+/**
  * @module Player
  * @description 3D objects animation.
  * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
@@ -39,8 +11,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import cookie from '../cookieNodeJS/cookie.js';
-//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
+import cookie from '../../../cookieNodeJS/master/cookie.js';
+//import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 
 import ScaleController from '../ScaleController.js';
 import PositionController from '../PositionController.js';
@@ -49,8 +21,8 @@ import { dat } from '../dat/dat.module.js';
 import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
-import ColorPicker from '../colorpicker/colorpicker.js';
-//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
+import ColorPicker from '../../../colorpicker/master/colorpicker.js';//https://github.com/anhr/colorPicker
+//import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpicker.js';
 //ColorPicker.palette.setTHREE( THREE );
 
 var settings;
@@ -123,12 +95,12 @@ function Player( onSelectScene, options ) {
 
 		if ( index >= settings.marks )
 			index = 0;
-		else if ( index &lt; 0 )
+		else if ( index < 0 )
 			index = settings.marks - 1;
 		if( selectSceneIndex > settings.marks )
 			selectSceneIndex = settings.marks;
 		while ( selectSceneIndex !== index ) {
-			if ( selectSceneIndex &lt; index )
+			if ( selectSceneIndex < index )
 				selectSceneIndex++;
 			else selectSceneIndex--;
 			onSelectScene( selectSceneIndex, getTime() );
@@ -165,7 +137,7 @@ function Player( onSelectScene, options ) {
 	 */
 	this.pushController = function ( controller ) {
 
-		if ( ( controller.object !== undefined ) &amp;&amp; ( controller.object.playRate !== undefined ) )
+		if ( ( controller.object !== undefined ) && ( controller.object.playRate !== undefined ) )
 			controller.object.playRate = settings.interval;
 		controllers.push( controller );
 
@@ -245,7 +217,7 @@ function Player( onSelectScene, options ) {
 		var timeCur = new Date().getTime();
 		if ( isNaN( timeNext ) )
 			console.error( 'Player.animate: timeNext = ' + timeNext );
-		if ( timeCur &lt; timeNext )
+		if ( timeCur < timeNext )
 			return;
 		while ( timeCur > timeNext ) timeNext += 1000 / settings.interval;
 		playNext();
@@ -301,14 +273,14 @@ function Player( onSelectScene, options ) {
 			}
 			if ( isNaN( timeNext ) )
 				console.error( 'Player.animate: timeNext = ' + timeNext );
-			if ( timestamp &lt; timeNext )
+			if ( timestamp < timeNext )
 				return;
 			while ( timestamp > timeNext ) timeNext += 1000 / settings.interval;
 /*			
 			var timeCur = new Date().getTime();
 			if ( isNaN( timeNext ) )
 				console.error( 'Player.animate: timeNext = ' + timeNext );
-			if ( timeCur &lt; timeNext )
+			if ( timeCur < timeNext )
 				return;
 			while ( timeCur > timeNext ) timeNext += 1000 / settings.interval;
 */
@@ -394,7 +366,7 @@ function Player( onSelectScene, options ) {
 	 * gui
 	 * @param {GUI} folder Player's folder
 	 * @param {Function} [getLanguageCode] Your custom getLanguageCode() function.
-	 * &lt;pre>
+	 * <pre>
 	 * returns the "primary language" subtag of the language version of the browser.
 	 * Examples: "en" - English language, "ru" Russian.
 	 * See the "Syntax" paragraph of RFC 4646 {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
@@ -596,8 +568,8 @@ function Player( onSelectScene, options ) {
  */
 Player.execFunc = function ( funcs, axisName, t, a, b ) {
 
-	if ( a === undefined ) a = 1;
-	if ( b === undefined ) b = 0;
+	a = a || 1;
+	b = b || 0;
 	var func = funcs[axisName], typeofFuncs = typeof func;
 	switch ( typeofFuncs ) {
 
@@ -623,9 +595,9 @@ Player.execFunc = function ( funcs, axisName, t, a, b ) {
 					tStep = ( max - min ) / l,
 					tStart = min, tStop = max,
 					iStart = 0, iStop = l;
-				for ( var i = 0; i &lt; func.length; i++ ) {
+				for ( var i = 0; i < func.length; i++ ) {
 
-					if ( tStep * i + min &lt; t ) {
+					if ( tStep * i + min < t ) {
 
 						iStart = i;
 						iStop = i + 1;
@@ -706,16 +678,18 @@ palette = new palette();
  * @param {number} [options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
  * @param {number} [options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
  * @param {object} [options.scales] axes scales. See {@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html|AxesHelper}. Default is {}
- * @param {object} [options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
- * &lt;pre>
+ * @param {object} [options.palette] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
+ * <pre>
+ * Default is
+ * new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW 
  * Example:
  * new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
- * &lt;/pre>
+ * </pre>
  * @param {object} [options.guiSelectPoint] See [GuiSelectPoint]{@link https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/module-GuiSelectPoint.html#~GuiSelectPoint}.
- * &lt;pre>
+ * <pre>
  * Example:
  * new GuiSelectPoint();
- * &lt;/pre>
+ * </pre>
  */
 Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 
@@ -739,7 +713,7 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 
 //			( mesh.userData.selectPlayScene === undefined ) ||
 			!mesh.userData.player ||
-			( options.boPlayer &amp;&amp; mesh.userData.boFrustumPoints )
+			( options.boPlayer && mesh.userData.boFrustumPoints )
 
 		)
 			return;
@@ -773,7 +747,7 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 
 			}
 
-			for ( var i = 0; i &lt; arrayFuncs.length; i++ ) {
+			for ( var i = 0; i < arrayFuncs.length; i++ ) {
 
 				var funcs = arrayFuncs[i], needsUpdate = false;
 				function setPosition( axisName, fnName ) {
@@ -808,7 +782,7 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 						color = funcs.w;
 					else color = palette.toColor( execFunc( funcs, 'w', t, a, b ), min, max );
 
-				} else if ( ( typeof funcs.w === "number" ) &amp;&amp; options.palette )
+				} else if ( ( typeof funcs.w === "number" ) && options.palette )
 					color = options.palette.toColor( funcs.w, min, max );
 				else {
 
@@ -843,13 +817,13 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 
 					}
 
-				} else if ( ( typeof funcs.w === "number" ) &amp;&amp; options.palette )
+				} else if ( ( typeof funcs.w === "number" ) && options.palette )
 					color = options.palette.toColor( funcs.w, min, max );
 				if ( color ) {
 
-					if ( ! mesh.material instanceof THREE.ShaderMaterial &amp;&amp; mesh.material.vertexColors !== THREE.VertexColors )
+					if ( ! mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors )
 						console.error( 'Player.selectPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors' );
-					if ( ! Player.setColorAttribute( attributes, i, color ) &amp;&amp; funcs instanceof THREE.Vector4 ) {
+					if ( ! Player.setColorAttribute( attributes, i, color ) && funcs instanceof THREE.Vector4 ) {
 
 						//console.error( 'Player.selectPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" or "ca" attribute' );
 						mesh.geometry.setAttribute( 'color',
@@ -877,9 +851,9 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 		}
 		setAttributes( options.a, options.b );
 		var message = 'Player.selectPlayScene: invalid mesh.scale.';
-		if ( mesh.scale.x &lt;= 0 ) console.error( message + 'x = ' + mesh.scale.x );
-		if ( mesh.scale.y &lt;= 0 ) console.error( message + 'y = ' + mesh.scale.y );
-		if ( mesh.scale.z &lt;= 0 ) console.error( message + 'z = ' + mesh.scale.z );
+		if ( mesh.scale.x <= 0 ) console.error( message + 'x = ' + mesh.scale.x );
+		if ( mesh.scale.y <= 0 ) console.error( message + 'y = ' + mesh.scale.y );
+		if ( mesh.scale.z <= 0 ) console.error( message + 'z = ' + mesh.scale.z );
 
 		if ( !options.guiSelectPoint )
 			return;
@@ -887,7 +861,7 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 		options.guiSelectPoint.setMesh();
 
 		var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
-		if ( ( selectedPointIndex !== -1 ) &amp;&amp; options.guiSelectPoint.isSelectedMesh( mesh ) ) {
+		if ( ( selectedPointIndex !== -1 ) && options.guiSelectPoint.isSelectedMesh( mesh ) ) {
 
 			var position = getObjectPosition( mesh, selectedPointIndex );
 /*
@@ -916,7 +890,7 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
  * @param {number} i index of the arrayFuncs.
  * @param {THREE.Color} color color.
  * @returns true - success
- * &lt;p>false - colorAttribute was not detected.&lt;/p>
+ * <p>false - colorAttribute was not detected.</p>
  */
 Player.setColorAttribute = function ( attributes, i, color ) {
 
@@ -942,7 +916,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * getPoints
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs points.geometry.attributes.position array
- * &lt;pre>
+ * <pre>
  * THREE.Vector4: 4D point.
  * THREE.Vector3: 3D point. w = 1. Default is white color
  * THREE.Vector2: 2D point. w = 1, z = 0. Default is white color
@@ -953,7 +927,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * [Function]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} - position of the point is function of the t.
  * Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )
  * 
- * Vector.w is index of the [palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
+ * Vector.w is index of the [palette]{@link https://github.com/anhr/colorPicker}.
  * Default range of the Vector.w is from 0 to 100. You can change range by use an object:
  * {
  *   func: Vector.w
@@ -989,7 +963,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  *   2: z axis. Defauilt is 0.
  *   3: w axis. Defauilt is 0.
  * ]
- * &lt;/pre>
+ * </pre>
  * @param {object} [optionsPoints] followed optionsPoints is available
  * @param {THREE.Group} [optionsPoints.group] {@link https://threejs.org/docs/index.html#api/en/objects/Group|Group}
  * or {@link https://threejs.org/docs/index.html#api/en/scenes/Scene|Scene}.
@@ -1015,7 +989,7 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
 	if ( t === undefined )
 		console.error( 'getPoints: t = ' + t );
 */
-	for ( var i = 0; i &lt; arrayFuncs.length; i++ ) {
+	for ( var i = 0; i < arrayFuncs.length; i++ ) {
 
 		var item = arrayFuncs[i];
 		if ( Array.isArray( item ) )
@@ -1030,9 +1004,9 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
 		else if (
 
 			( typeof item === "object" )
-			&amp;&amp; ( item instanceof THREE.Vector2 === false )
-			&amp;&amp; ( item instanceof THREE.Vector3 === false )
-			&amp;&amp; ( item instanceof THREE.Vector4 === false )
+			&& ( item instanceof THREE.Vector2 === false )
+			&& ( item instanceof THREE.Vector3 === false )
+			&& ( item instanceof THREE.Vector4 === false )
 
 		) {
 
@@ -1100,7 +1074,7 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
 
 	};
 	var points = [];
-	for ( var i = 0; i &lt; arrayFuncs.length; i++ ) {
+	for ( var i = 0; i < arrayFuncs.length; i++ ) {
 
 		var funcs = arrayFuncs[i];
 		function getAxis( axisName ) {
@@ -1164,7 +1138,7 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
  * getColors
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs points.geometry.attributes.position array
- * &lt;pre>
+ * <pre>
  * THREE.Vector4: 4D point.
  * THREE.Vector3: 3D point. w = 1. Default is white color
  * THREE.Vector2: 2D point. w = 1, z = 0. Default is white color
@@ -1175,7 +1149,7 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
  * [Function]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} - position of the point is function of the t.
  * Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )
  *
- * Vector.w is index of the [palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
+ * Vector.w is index of the [palette]{@link https://github.com/anhr/colorPicker}.
  * Default range of the Vector.w is from 0 to 100. You can change range by use an object:
  * {
  *   func: Vector.w
@@ -1211,14 +1185,14 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
  *   2: z axis. Defauilt is 0.
  *   3: w axis. Defauilt is 0.
  * ]
- * &lt;/pre>
+ * </pre>
  * @param {object} [optionsColor] followed options is available:
- * @param {object} [optionsColor.palette] [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
+ * @param {object} [optionsColor.palette] [color palette]{@link https://github.com/anhr/colorPicker}.
  * @param {object} [optionsColor.scale]
- * @param {object} [optionsColor.scale.min] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
- * &lt;p>Default is undefined. Minimal palette range is 0.&lt;/p>
- * @param {object} [optionsColor.scale.max] Maximal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
- * &lt;p>Default is undefined. Maximal palette range is 100&lt;/p>
+ * @param {object} [optionsColor.scale.min] Minimal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * <p>Default is undefined. Minimal palette range is 0.</p>
+ * @param {object} [optionsColor.scale.max] Maximal range of the [color palette]{@link https://github.com/anhr/colorPicker}.
+ * <p>Default is undefined. Maximal palette range is 100</p>
  * @param {THREE.BufferAttribute} [optionsColor.positions] geometry.attributes.position of the new mesh. Default is undefined.
  * @param {array} [optionsColor.colors] array for mesh colors. Default is undefined.
  * @param {boolean} [optionsColor.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. Default is undefined.
@@ -1234,8 +1208,8 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 	optionsColor.palette = optionsColor.palette || palette.get();//paletteDefault;
 	
 	if (
-		( optionsColor.positions !== undefined ) &amp;&amp;
-		Array.isArray( arrayFuncs ) &amp;&amp;
+		( optionsColor.positions !== undefined ) &&
+		Array.isArray( arrayFuncs ) &&
 		( arrayFuncs.length !== optionsColor.positions.count )
 	) {
 
@@ -1246,7 +1220,7 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 	optionsColor.colors = optionsColor.colors || [];
 	var length = Array.isArray( arrayFuncs ) ? arrayFuncs.length : optionsColor.positions.count;
 
-	for( var i = 0; i &lt; length; i++ ) {
+	for( var i = 0; i < length; i++ ) {
 
 		var funcs = Array.isArray(arrayFuncs) ? arrayFuncs[i] : undefined,
 			vector;
@@ -1256,7 +1230,7 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 			) {
 
 			var min, max, w = funcs.w;
-			if ( funcs.w instanceof Object &amp;&amp; funcs.w.func ) {
+			if ( funcs.w instanceof Object && funcs.w.func ) {
 
 				if ( funcs.w.max ) max = funcs.w.max;
 				if ( funcs.w.min ) min = funcs.w.min;
@@ -1282,11 +1256,9 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 //						funcs.w instanceof Object ? funcs.w.func : funcs.w,
 				min, max );
 */
-			if ( w instanceof Function &amp;&amp; ! settings ) {
+			if ( w instanceof Function && ! settings ) {
 
-				console.error( 'Player.getColors: remove all functions from all THREE.Vector4.w items of the arrayFuncs.' );
-				console.error( ' 	Or create Player.' );
-				console.error( '	If you use MyPoints for create of the points, please add Player: Player into settings parameter of the MyPoints function after creating of the Player.' );
+				console.error( 'Player.getColors: create Player first or remove all functions from all THREE.Vector4.w items of the arrayFuncs' );
 				return;
 				
 			}
@@ -1312,7 +1284,7 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 
 				if ( !mesh.userData.cloud )
 					return;
-				for ( var iMesh = 0; iMesh &lt; mesh.geometry.attributes.position.count; iMesh++ ) {
+				for ( var iMesh = 0; iMesh < mesh.geometry.attributes.position.count; iMesh++ ) {
 
 					var position = getObjectPosition( mesh, iMesh );
 					opacity += getStandardNormalDistribution(
@@ -1361,9 +1333,7 @@ Player.traceLine = function ( THREE, group, options ) {
 	}
 	if ( !settings ) {
 
-		console.error( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
-		console.error( '	Or call Player(...).' );
-		console.error( '	If you use getShaderMaterialPoints or MyPoints for create of the points, please add Player: Player into settings parameter of the getShaderMaterialPoints or MyPoints method after creating of the Player.' );
+		console.error( 'Player.traceLine: call Player(...) first.' );
 		return;
 		
 	}
@@ -1372,9 +1342,9 @@ Player.traceLine = function ( THREE, group, options ) {
 //	var MAX_POINTS = options.player.marks,
 	var MAX_POINTS,// = settings.marks,
 		line;//, drawCount = 0;
-	if ( settings &amp;&amp; settings.marks )
+	if ( settings && settings.marks )
 		MAX_POINTS = settings.marks;
-	else if ( options.player &amp;&amp; options.player.marks )
+	else if ( options.player && options.player.marks )
 		MAX_POINTS = options.player.marks;
 	else {
 
@@ -1432,7 +1402,7 @@ Player.traceLine = function ( THREE, group, options ) {
 	 * @function Player.traceLine.
 	 * visible
 	 * @param {boolean} visible true - show trace line.
-	 * &lt;p>false - hide trace line.&lt;/p>
+	 * <p>false - hide trace line.</p>
 	 */
 	this.visible = function ( visible ) { line.visible = visible; }
 	/**
@@ -1440,7 +1410,7 @@ Player.traceLine = function ( THREE, group, options ) {
 	 * @function Player.traceLine.
 	 * isVisible
 	 * @returns true - trace line is visible.
-	 * &lt;p>false - trace line is not visible.&lt;/p>
+	 * <p>false - trace line is not visible.</p>
 	 */
 	this.isVisible = function () { return line.visible; }
 	/**
@@ -1461,26 +1431,3 @@ Player.traceLine = function ( THREE, group, options ) {
 }
 
 export default Player;
-</code></pre>
-        </article>
-    </section>
-
-
-
-
-</div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Sep 20 2020 14:30:58 GMT+0700 (Красноярск, стандартное время)
-</footer>
-
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
-</body>
-</html>

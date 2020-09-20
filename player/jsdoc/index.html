@@ -48,6 +48,17 @@
 <h2>Quick start</h2>
 <h3>Player.</h3>
 <p>Create your web page. <a href="https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene">Example</a>.</p>
+<ul>
+<li>First, import <a href="https://github.com/anhr/three.js">three.js</a> in your JavaScript module.</li>
+</ul>
+<pre class="prettyprint source"><code>import * as THREE from 'https://threejs.org/build/three.module.js';
+</code></pre>
+<p>or</p>
+<pre class="prettyprint source"><code>import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/three.js">three.js</a> repository into your &quot;[folderName]\three.js\dev&quot; folder.</p>
+<pre class="prettyprint source"><code>import * as THREE from './three.js/dev/build/three.module.js';
+</code></pre>
 <p>The easiest way to use Player in your code is import Player from Player.js file in your JavaScript module.
 <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html">Example</a>.</p>
 <pre class="prettyprint source"><code>import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
@@ -58,14 +69,6 @@
 <li>Add your web page into [folderName]. See <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html">example</a> web page.</li>
 <li>Download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</li>
 </ul>
-<pre class="prettyprint source"><code>import Player from './commonNodeJS/master/player/build/player.module.js';
-</code></pre>
-<p>or</p>
-<ul>
-<li>Download <a href="https://github.com/anhr/colorPicker">colorPicker</a> repository into your &quot;[folderName]\colorPicker\master&quot; folder.</li>
-<li>Download <a href="https://github.com/anhr/loadScriptNodeJS">loadScriptNodeJS</a> repository into your &quot;[folderName]\loadScriptNodeJS\master&quot; folder.</li>
-<li>Download <a href="https://github.com/anhr/loadFileNodeJS">loadFileNodeJS</a> repository into your &quot;[folderName]\loadFileNodeJS\master&quot; folder.</li>
-</ul>
 <pre class="prettyprint source"><code>import Player from './commonNodeJS/master/player/player.js';
 </code></pre>
 <p>Now you can use Player in your javascript code.</p>
@@ -74,8 +77,8 @@
 </code></pre>
 <p>Create a 3d object, for example Points:</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
-	new THREE.Vector3( 0.5, 0.5, 0.5 ),
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),
+	new THREE.Vector3( 0.5, 0.5, 0.5 ),//First point
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( arrayFuncs ),
 	new THREE.PointsMaterial( {
@@ -91,20 +94,14 @@ scene.add( points );
 <li>Edit arrayFuncs</li>
 </ul>
 <pre class="prettyprint source"><code>const arrayFuncs = [
-	new THREE.Vector3( 
+	new THREE.Vector3(
 		new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-		new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
-		0.5 ),
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),
+		0.5,//y
+		new Function( 't', 'a', 'b', 'return 5*Math.cos(t*a*2*Math.PI)*0.5-b' ),//z
+	),//First point
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
-</code></pre>
-<p>You can see, the X and Y values of the first point of the arrayFuncs is function of the t. X is sin(t) and Y is cos(t).
-t is current time of the playing. Default start time t = 0, a = 1, b = 0.
-Read about <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a>.</p>
-<ul>
-<li>Edit points</li>
-</ul>
-<pre class="prettyprint source"><code>const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
+const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
 	{ group: scene } ) ),
 	new THREE.PointsMaterial( {
 
@@ -113,7 +110,10 @@ Read about <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 	} ) );
 </code></pre>
-<p>Currently <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints">Player.getPoints(...)</a> returns an array of the vectors for t = 0.</p>
+<p>You can see, the <b>X</b> and <b>Z</b> values of the first point of the <b>arrayFuncs</b> is function of the <b>t</b>. <b>X</b> is <b>sin(t)</b> and <b>Z</b> is <b>cos(t)</b>.
+<b>t</b> is current time of the playing. Default start time <b>t = 0</b>, <b>a = 1</b>, <b>b = 0</b>.
+Read about <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a>.
+Currently <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints">Player.getPoints(...)</a> returns an array of the vectors for <b>t = 0</b>.</p>
 <ul>
 <li>Define the <b>points.userData.player</b> object in your code for including of the points into Player.
 Include <b>arrayFuncs</b> into <b>points.userData.player</b> object if you want to move points during playing.</li>
@@ -147,7 +147,7 @@ See <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/modul
 Please change your Player for it.</p>
 <pre class="prettyprint source"><code>const player = new Player(function ( index, t ) {
 
-		Player.selectPlayScene( THREE, scene, t, index, { palette: palette } );
+		Player.selectPlayScene( THREE, scene, t, index );
 
 }, {
 
@@ -166,24 +166,23 @@ Please change your Player for it.</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
 	{
 
-		vector: new THREE.Vector3( 
+		vector: new THREE.Vector3(
 			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
-			0.5//z
-		),
-		trace: true,//Displays the trace of the point movement.
+			0.5,//y
+			new Function( 't', 'a', 'b', 'return 5*Math.cos(t*a*2*Math.PI)*0.5-b' ),//z
+		),//First point
+		trace: true,//Displays the trace of the first point movement.
 
 	},
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 </code></pre>
 <p>You can see, first value of the array is object with</p>
-<p>{</p>
+<p><b>{</p>
 <pre><code>vector: position of the point
-
 trace: true - displays the trace of the point movement.
 </code></pre>
-<p>}</p>
+<p>}</b></p>
 <p>Now you can see a trace line of the moving of the first point.</p>
 <h4>Point color.</h4>
 <ul>
@@ -199,26 +198,26 @@ trace: true - displays the trace of the point movement.
 	} ) );
 </code></pre>
 <ul>
-<li>In the first point of the arrayFuncs change vector from THREE.Vector3 to THREE.Vector4.</li>
+<li>In the first point of the arrayFuncs change vector from <b>THREE.Vector3</b> to <b>THREE.Vector4</b>.</li>
 </ul>
 <pre class="prettyprint source"><code>const arrayFuncs = [
 	{
 
 		vector: new THREE.Vector4( 
 			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
-			0.5,//z
+			0.5,//y
+			new Function( 't', 'a', 'b', 'return 5*Math.cos(t*a*2*Math.PI)*0.5-b' ),//z
 			new THREE.Color( &quot;rgb( 0, 255, 0)&quot; )//w is green color
-		),
+		),//First point
 		trace: true,//Displays the trace of the point movement.
 
 	},
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 </code></pre>
 <p>You can see the <b>w</b> coordinate of the <b>THREE.Vector4</b> is green color.</p>
 <ul>
-<li>Point color is function of the time.</li>
+<li>Make the point color is function of the time.</li>
 </ul>
 <p>Change the <b>w</b> coordinate of the <b>THREE.Vector4</b> to <b>new Function( 't', 'return 1-2*t' )</b>.</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
@@ -226,29 +225,29 @@ trace: true - displays the trace of the point movement.
 
 		vector: new THREE.Vector4( 
 			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
-			0.5,//z
+			0.5,//y
+			new Function( 't', 'a', 'b', 'return 5*Math.cos(t*a*2*Math.PI)*0.5-b' ),//z
 			new Function( 't', 'return 1-2*t' )//w
-		),
+		),//First point
 		trace: true,//Displays the trace of the point movement.
 
 	},
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 </code></pre>
 <p>Now you can see the color of the first point as blue at the begin of playing and white at the end of playing
-because default range of the <a href="https://github.com/anhr/colorPicker">color palette</a> from 0 to 100.
-But current range of the function from 1 to -1 for default <b>t</b> range from 0 to 1.
+because default range of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a> from 0 to 100.
+But current range of the <b>1-2 * t</b> function from 1 to -1 for default <b>t</b> range from 0 to 1.
 You can resolve this issue by change of the palette range.
 Replace <b>w</b> coordinate of the <b>THREE.Vector4</b> from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
-See arrayFuncs parametr of the <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors">Player.getColors(...)</a> for details.</p>
+See arrayFuncs parameter of the <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors">Player.getColors(...)</a> for details.</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
 	{
 
 		vector: new THREE.Vector4( 
 			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
-			0.5,//z
+			0.5,//y
+			new Function( 't', 'a', 'b', 'return 5*Math.cos(t*a*2*Math.PI)*0.5-b' ),//z
 			{
 
 				func: new Function( 't', 'return 1-2*t' ),
@@ -256,41 +255,49 @@ See arrayFuncs parametr of the <a href="https://raw.githack.com/anhr/commonNodeJ
 				max: 1,
 
 			},//w
-		),
+		),//First point
 		trace: true,//Displays the trace of the point movement.
 
 	},
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
+
 </code></pre>
 <ul>
-<li>Select a <a href="https://github.com/anhr/colorPicker">color palette</a>.</li>
+<li>Select a <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.</li>
 </ul>
-<p>Default color palette index is <a href="https://raw.githack.com/anhr/ColorPicker/master/Example/index.html#BGRW">ColorPicker.paletteIndexes.BGRW</a>.
-You can select another palette. Please import ColorPicker into your web page for it.</p>
-<pre class="prettyprint source"><code>import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpicker.js';
+<p>Default color palette index is <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGRW">ColorPicker.paletteIndexes.BGRW</a>.
+You can select another palette. Please import <b>ColorPicker</b> into your web page for it.</p>
+<pre class="prettyprint source"><code>import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 </code></pre>
-<p>or</p>
-<p>Download <a href="https://github.com/anhr/colorPicker">colorPicker</a> repository into your &quot;[folderName]\colorPicker\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import ColorPicker from './colorpicker/master/colorpicker.js';
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 </code></pre>
 <p>Set THREE for palette.</p>
 <pre class="prettyprint source"><code>ColorPicker.palette.setTHREE(THREE);
 </code></pre>
-<p>Create a palette. For example <b>ColorPicker.paletteIndexes.bidirectional palette</b>.
+<p>Create a palette. For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional">ColorPicker.paletteIndexes.bidirectional</a> palette.
 And use your new palette in <b>Player.selectPlayScene</b>.</p>
 <pre class="prettyprint source"><code>const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
 const player = new Player(function ( index, t ) {
 
 		Player.selectPlayScene( THREE, scene, t, index, { palette: palette } );
 
-	});
+	}, {
+
+	settings: {
+
+		marks: 100,//Ticks count of the playing.
+		interval: 25,//Ticks per seconds.
+
+	}
+} );
 </code></pre>
 <p>Also you can create your own custom palette.</p>
 <pre class="prettyprint source"><code>const palette = new ColorPicker.palette( { palette: [
 
-	{ percent: 0, r: 0, g: 0, b: 0, },
-	{ percent: 10, r: 0xff, g: 255, b: 0xff, },
+	{ percent: 0, r: 0xff, g: 255, b: 0xff, },
+	{ percent: 10, r: 0, g: 0, b: 0, },
 	{ percent: 20, r: 0xff, g: 0, b: 0x0, },
 	{ percent: 30, r: 0x0, g: 255, b: 0x0, },
 	{ percent: 40, r: 0x0, g: 0, b: 0xff, },
@@ -319,7 +326,51 @@ const player = new Player(function ( index, t ) {
 <p>Also you can scale and rotate any mesh on your canvas. For example.</p>
 <pre class="prettyprint source"><code>points.rotation.z = - Math.PI * 2 * t;
 </code></pre>
-<h4>Create <a href="https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html">THREE.Points with THREE.ShaderMaterial material</a>.</h4>
+<h4>Create THREE.Points with <a href="https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial">THREE.ShaderMaterial</a> material.</h4>
+<p>Currently, it seems to you that the size of the first point changes during of the the playing because point moves near or far from camera.
+Sometimes you want to see the sizes of the points is not depend from distance to camera.
+To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described in <a href="https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html">getShaderMaterialPoints API</a>.</p>
+<h4>Use MyPoints for create points.</h4>
+<p>Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use <a href="https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html">MyPoints</a> for creating of new points.
+Example.</p>
+<pre class="prettyprint source"><code>MyPoints( THREE, arrayFuncs, scene );
+</code></pre>
+<p>Now you can see, first point is moving and changing color.</p>
+<p>Currently all <b>MyPoints</b> settings is default.
+You can set your own setting for <b>MyPoints</b>. For example set points size to 15 and move all points to right during playing.</p>
+<pre class="prettyprint source"><code>MyPoints( THREE, arrayFuncs, scene, {
+
+	options: {
+
+		point: { size: 15 }
+
+	},
+	pointsOptions: {
+
+		position: new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0)
+
+	}
+
+} );
+</code></pre>
+<p>If you want to see the sizes of the points is not depend from distance to camera,
+please add <b>shaderMaterial: {}</b> into <b>pointsOptions</b> of the <b>MyPoints</b> for it.</p>
+<pre class="prettyprint source"><code>MyPoints( THREE, arrayFuncs, scene, {
+
+	options: {
+
+		point: { size: 15 }
+
+	},
+	pointsOptions: {
+
+		position: new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0),
+		shaderMaterial: {}
+
+	}
+
+} );
+</code></pre>
 <h2>Directory Contents</h2>
 <pre class="prettyprint source"><code>build - Compiled source code.
 </code></pre>
@@ -344,7 +395,7 @@ $ npm run build
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Sep 10 2020 08:34:46 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Sep 20 2020 14:30:58 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

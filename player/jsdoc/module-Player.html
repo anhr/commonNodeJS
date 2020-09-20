@@ -408,6 +408,72 @@
 
         <tr>
             
+                <td class="name"><code>min</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Animation start time. Default is 0.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>max</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Animation end time. Default is 1.</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>repeat</code></td>
             
 
@@ -501,72 +567,6 @@
             
 
             <td class="description last">offset of the time. Default is 0.1.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>min</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Animation start time. Default is 0.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>max</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Animation end time. Default is 1.</td>
         </tr>
 
     
@@ -916,7 +916,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line560">line 560</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line559">line 559</a>
     </li></ul></dd>
     
 
@@ -1065,7 +1065,7 @@
 
             
 
-            <td class="description last">points.geometry.attributes.position array<pre>THREE.Vector4: 4D point.THREE.Vector3: 3D point. w = 1. Default is white colorTHREE.Vector2: 2D point. w = 1, z = 0. Default is white colorVector's x, y, z, w is position of the point.Can be as:float - position of the point.[float] - array of positions of the point.<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a> - position of the point is function of the t.Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )Vector.w is index of the <a href="https://github.com/anhr/colorPicker">palette</a>.Default range of the Vector.w is from 0 to 100. You can change range by use an object:{  func: Vector.w  max: new max value of tne Vector.w  min: new min value of tne Vector.w}Example:{  func: new Function( 't', 'return 1-2*t' ),  min: -1,  max: 1,}Vector.w can be as THREE.Color. Example: new THREE.Color( "rgb(255, 127, 0)" )object: {  vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position  [name]: point name. Default is undefined.  [trace]: true - displays the trace of the point movement. Default is undefined.}orobject: {  x: x axis. Defauilt is 0.  y: y axis. Defauilt is 0.  z: z axis. Defauilt is 0.  w: w axis. Defauilt is 0.}array: [  0: x axis. Defauilt is 0.  1: y axis. Defauilt is 0.  2: z axis. Defauilt is 0.  3: w axis. Defauilt is 0.]</pre></td>
+            <td class="description last">points.geometry.attributes.position array<pre>THREE.Vector4: 4D point.THREE.Vector3: 3D point. w = 1. Default is white colorTHREE.Vector2: 2D point. w = 1, z = 0. Default is white colorVector's x, y, z, w is position of the point.Can be as:float - position of the point.[float] - array of positions of the point.<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a> - position of the point is function of the t.Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )Vector.w is index of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">palette</a>.Default range of the Vector.w is from 0 to 100. You can change range by use an object:{  func: Vector.w  max: new max value of tne Vector.w  min: new min value of tne Vector.w}Example:{  func: new Function( 't', 'return 1-2*t' ),  min: -1,  max: 1,}Vector.w can be as THREE.Color. Example: new THREE.Color( "rgb(255, 127, 0)" )object: {  vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position  [name]: point name. Default is undefined.  [trace]: true - displays the trace of the point movement. Default is undefined.}orobject: {  x: x axis. Defauilt is 0.  y: y axis. Defauilt is 0.  z: z axis. Defauilt is 0.  w: w axis. Defauilt is 0.}array: [  0: x axis. Defauilt is 0.  1: y axis. Defauilt is 0.  2: z axis. Defauilt is 0.  3: w axis. Defauilt is 0.]</pre></td>
         </tr>
 
     
@@ -1152,7 +1152,7 @@
 
             
 
-            <td class="description last"><a href="https://github.com/anhr/colorPicker">color palette</a>.</td>
+            <td class="description last"><a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.</td>
         </tr>
 
     
@@ -1239,7 +1239,7 @@
 
             
 
-            <td class="description last">Minimal range of the <a href="https://github.com/anhr/colorPicker">color palette</a>.<p>Default is undefined. Minimal palette range is 0.</p></td>
+            <td class="description last">Minimal range of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.<p>Default is undefined. Minimal palette range is 0.</p></td>
         </tr>
 
     
@@ -1272,7 +1272,7 @@
 
             
 
-            <td class="description last">Maximal range of the <a href="https://github.com/anhr/colorPicker">color palette</a>.<p>Default is undefined. Maximal palette range is 100</p></td>
+            <td class="description last">Maximal range of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.<p>Default is undefined. Maximal palette range is 100</p></td>
         </tr>
 
     
@@ -1426,7 +1426,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1138">line 1138</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1133">line 1133</a>
     </li></ul></dd>
     
 
@@ -1520,7 +1520,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line307">line 307</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line306">line 306</a>
     </li></ul></dd>
     
 
@@ -1679,7 +1679,7 @@
 
             
 
-            <td class="description last">points.geometry.attributes.position array<pre>THREE.Vector4: 4D point.THREE.Vector3: 3D point. w = 1. Default is white colorTHREE.Vector2: 2D point. w = 1, z = 0. Default is white colorVector's x, y, z, w is position of the point.Can be as:float - position of the point.[float] - array of positions of the point.<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a> - position of the point is function of the t.Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )Vector.w is index of the <a href="https://github.com/anhr/colorPicker">palette</a>.Default range of the Vector.w is from 0 to 100. You can change range by use an object:{  func: Vector.w  max: new max value of tne Vector.w  min: new min value of tne Vector.w}Example:{  func: new Function( 't', 'return 1-2*t' ),  min: -1,  max: 1,}Vector.w can be as THREE.Color. Example: new THREE.Color( "rgb(255, 127, 0)" )object: {  vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position  [name]: point name. Default is undefined.  [trace]: true - displays the trace of the point movement. Default is undefined.}orobject: {  x: x axis. Defauilt is 0.  y: y axis. Defauilt is 0.  z: z axis. Defauilt is 0.  w: w axis. Defauilt is 0.}array: [  0: x axis. Defauilt is 0.  1: y axis. Defauilt is 0.  2: z axis. Defauilt is 0.  3: w axis. Defauilt is 0.]</pre></td>
+            <td class="description last">points.geometry.attributes.position array<pre>THREE.Vector4: 4D point.THREE.Vector3: 3D point. w = 1. Default is white colorTHREE.Vector2: 2D point. w = 1, z = 0. Default is white colorVector's x, y, z, w is position of the point.Can be as:float - position of the point.[float] - array of positions of the point.<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a> - position of the point is function of the t.Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )Vector.w is index of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">palette</a>.Default range of the Vector.w is from 0 to 100. You can change range by use an object:{  func: Vector.w  max: new max value of tne Vector.w  min: new min value of tne Vector.w}Example:{  func: new Function( 't', 'return 1-2*t' ),  min: -1,  max: 1,}Vector.w can be as THREE.Color. Example: new THREE.Color( "rgb(255, 127, 0)" )object: {  vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position  [name]: point name. Default is undefined.  [trace]: true - displays the trace of the point movement. Default is undefined.}orobject: {  x: x axis. Defauilt is 0.  y: y axis. Defauilt is 0.  z: z axis. Defauilt is 0.  w: w axis. Defauilt is 0.}array: [  0: x axis. Defauilt is 0.  1: y axis. Defauilt is 0.  2: z axis. Defauilt is 0.  3: w axis. Defauilt is 0.]</pre></td>
         </tr>
 
     
@@ -2007,7 +2007,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line916">line 916</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line911">line 911</a>
     </li></ul></dd>
     
 
@@ -2101,7 +2101,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line319">line 319</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line318">line 318</a>
     </li></ul></dd>
     
 
@@ -2195,7 +2195,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line313">line 313</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line312">line 312</a>
     </li></ul></dd>
     
 
@@ -2385,7 +2385,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line364">line 364</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line363">line 363</a>
     </li></ul></dd>
     
 
@@ -2610,7 +2610,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line347">line 347</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line346">line 346</a>
     </li></ul></dd>
     
 
@@ -2747,7 +2747,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line334">line 334</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line333">line 333</a>
     </li></ul></dd>
     
 
@@ -3148,7 +3148,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line295">line 295</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line294">line 294</a>
     </li></ul></dd>
     
 
@@ -3398,6 +3398,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -3433,6 +3435,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">true - is not select play scene for mesh.userData.boFrustumPoints = true. Default is false.</td>
         </tr>
@@ -3465,6 +3471,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">multiplier. Second parameter of the arrayFuncs item function. Default is 1.</td>
@@ -3499,6 +3509,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">addendum. Third parameter of the arrayFuncs item function. Default is 0.</td>
         </tr>
@@ -3531,6 +3545,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">axes scales. See <a href="https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html">AxesHelper</a>. Default is {}</td>
@@ -3565,8 +3583,14 @@
             
 
             
+                <td class="default">
+                
+                    new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW
+                
+                </td>
+            
 
-            <td class="description last">See <a href="https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette">ColorPicker.palette</a>.<pre>Default isnew ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW Example:new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );</pre></td>
+            <td class="description last">See <a href="https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette">ColorPicker.palette</a>.<pre>Example:new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );</pre></td>
         </tr>
 
     
@@ -3597,6 +3621,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">See <a href="https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/module-GuiSelectPoint.html#~GuiSelectPoint">GuiSelectPoint</a>.<pre>Example:new GuiSelectPoint();</pre></td>
@@ -3647,7 +3675,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line672">line 672</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line668">line 668</a>
     </li></ul></dd>
     
 
@@ -3967,7 +3995,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line888">line 888</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line883">line 883</a>
     </li></ul></dd>
     
 
@@ -4209,7 +4237,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1292">line 1292</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1317">line 1317</a>
     </li></ul></dd>
     
 
@@ -4297,7 +4325,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1377">line 1377</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1410">line 1410</a>
     </li></ul></dd>
     
 
@@ -4395,7 +4423,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1385">line 1385</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1418">line 1418</a>
     </li></ul></dd>
     
 
@@ -4532,7 +4560,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1369">line 1369</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1402">line 1402</a>
     </li></ul></dd>
     
 
@@ -4885,7 +4913,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Sep 10 2020 08:34:46 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Sep 20 2020 14:30:58 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

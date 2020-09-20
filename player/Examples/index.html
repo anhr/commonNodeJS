@@ -10,7 +10,8 @@
 
 	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
 
-	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
+	<link type="text/css" rel="stylesheet" href="../../../../three.js/dev/examples/main.css">
 
 </head>
 <body>
@@ -23,32 +24,43 @@
 
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import * as THREE from '../../../../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
 		//import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
 		//import { dat } from '../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
-		//import cookie from '../../../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/cookieNodeJS
+		//import cookie from '../../../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
 		//import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
+		//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 		//import { getLanguageCode } from '../../lang.js';//https://github.com/anhr/commonNodeJS
 		//import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+/*
+		//import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
+		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+*/		
+		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
+		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
-		//import { StereoEffect, spatialMultiplexsIndexs } from '../StereoEffect.js';//https://github.com/anhr/commonNodeJS
-		//import { StereoEffect, spatialMultiplexsIndexs } from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
-		
 		//import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
 		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 
 		import Player from '../player.js';
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
 
-		import ColorPicker from '../../../../colorpicker/master/colorpicker.js';//https://github.com/anhr/colorPicker
-		//import ColorPicker from 'https://raw.githack.com/anhr/colorpicker/master/colorpicker.js';
-		ColorPicker.palette.setTHREE(THREE);
+		import ColorPicker from '../../colorpicker/colorpicker.js';//https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+		//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
+		ColorPicker.palette.setTHREE( THREE );
+
+		//import getShaderMaterialPoints from 'http://localhost/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
+		//import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
+		//import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
+
+		//import MyPoints from 'http://localhost/anhr/commonNodeJS/master/myPoints/myPoints.js';
+		import MyPoints from '../../myPoints/myPoints.js';
 
 		var camera, scene, renderer, stereoEffect, controls, player;
 
@@ -82,7 +94,8 @@
 					settings: {
 
 						marks: 110,
-						name: "Time (sec.)"
+						name: "Time (sec.)",
+						interval: 25,//Ticks per seconds.
 
 					},
 					onChangeScaleT: function ( scale ) {
@@ -133,7 +146,9 @@
 						new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
 						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
 						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.1' ),//z
+						100,//w
 						//new Function( 't', 'return 100*t' ),//w
+						/*
 						{
 
 							func: new Function( 't', 'return 1-2*t' ),
@@ -141,45 +156,102 @@
 							max: 1,
 
 						},//w
+						*/
 					),//Animated 3D point
 					trace: true,//Displays the trace of the point movement.
 
 				},
 				new THREE.Vector3( -0.5, -0.5, -0.5 ),
 			];
-			const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
-				{ group: scene } ) ),
-				new THREE.PointsMaterial( {
 
-					/*
-					color: 0xffffff,
-					alphaTest: 0.5,
-					*/
-					vertexColors: THREE.VertexColors,
-					size: 5,//0.05,
-					sizeAttenuation: false,
+			if ( typeof getShaderMaterialPoints !== 'undefined' ) {
 
-				} ) );
-			/*				
-			points.geometry.setAttribute( 'color',
-				new THREE.Float32BufferAttribute( Player.getColors( THREE, arrayFuncs,
-					{ positions: points.geometry.attributes.position }), 4 ) );
-			*/
-			scene.add( points );
-			points.userData.player = {
+				console.log( 'Using getShaderMaterialPoints method for creating of the points.' );
+				getShaderMaterialPoints( THREE, scene, arrayFuncs,// Player,
+					function ( points ) {
 
-				arrayFuncs: arrayFuncs,
+						scene.add( points );
+						points.userData.player = {
 
+							arrayFuncs: arrayFuncs,
+							selectPlayScene: function ( t ) {
+
+								points.position.x = t;
+								points.rotation.z = - Math.PI * 2 * t;
+
+							}
+
+						}
+
+					},
+					{ Player: Player, } );
+			} else if ( typeof MyPoints !== 'undefined' ) {
+
+				console.log( 'Using MyPoints method for creating of the points.' );
+				MyPoints( THREE, arrayFuncs,
+					scene, {
+
+						Player: Player,
+						options: {
+
+							point: { size: 15 },
+		//					player: { player: player },
+
+						},
+						pointsOptions: {
+
+							position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+							//shaderMaterial: {}
+
+						}
+
+					} );
+
+			} else {
+
+				console.log( 'Using THREE.Points method for creating of the points.' );
+				const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
+					{ group: scene, options: { player: { player: player } } } ) ),
+					new THREE.PointsMaterial( {
+
+						vertexColors: THREE.VertexColors,
+						size: 5,//0.05,
+						sizeAttenuation: false,
+
+					} ) );
+				scene.add( points );
+				points.userData.player = {
+
+					arrayFuncs: arrayFuncs,
+					selectPlayScene: function ( t ) {
+
+						points.position.x = t;
+						points.rotation.z = - Math.PI * 2 * t;
+
+					}
+
+				}
+				
 			}
-
 			/*
-			//Define this function if you want play the colors of the points.
-			points.userData.selectPlayScene = function ( t ) {
+			MyPoints( THREE, arrayFuncs,
+				scene, {
 
-//				console.warn( 'points.userData.selectPlayScene(' + t + ')' );
+				Player: Player,
+				options: {
 
-			}
-			points.userData.arrayFuncs = arrayFuncs;
+					point: { size: 15 },
+//					player: { player: player },
+
+				},
+				pointsOptions: {
+
+					position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+					shaderMaterial: {}
+
+				}
+
+			} );
 			*/
 
 			renderer = new THREE.WebGLRenderer( {
@@ -205,7 +277,7 @@
 			if ( typeof StereoEffect !== "undefined" ) {
 				stereoEffect = new StereoEffect( THREE, renderer, {
 
-					spatialMultiplex: spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+					//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 					far: camera.far,
 					camera: camera,
 					//stereoAspect: 1,
