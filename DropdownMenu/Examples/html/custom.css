@@ -1,0 +1,45 @@
+﻿/*Plase use options.decorations: 'Custom' for including of this style into your dropdownMenu.create(...)*/
+.menuButtonCustom {
+    color: green;
+    background-color: yellow;
+    transition: color 0.5s, background-color 0.5s;
+    margin: 0px;
+    padding: 2px;
+    /*border: 5px solid black;*/
+    border-color: red;
+    border-style: solid;
+    border-top-width: 1px;
+    border-bottom-width: 2px;
+    border-left-width: 4px;
+    border-right-width: 6px;
+}
+    .menuButtonCustom:hover {
+        color: red;
+        background-color: green;
+    }
+
+.dropdown-childCustom {
+    background-color: white;
+    transition: opacity 0.5s;
+    /*border: 3px solid black;*/
+    border-color: red;
+    border-style: solid;
+    border-top-width: 6px;
+    border-bottom-width: 4px;
+    border-left-width: 2px;
+    border-right-width: 1px;
+}
+
+    .dropdown-childCustom nobr {
+        padding: 5px;
+        margin: 5px;
+        color: bisque;
+        background-color: blue;
+        transition: color 0.5s, background-color 0.5s;
+    }
+
+        .dropdown-childCustom nobr:hover {
+            color: green;
+            background-color: red;
+        }
+

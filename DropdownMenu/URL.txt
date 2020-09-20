@@ -1,0 +1,15 @@
+test page
+https://raw.githack.com/anhr/DropdownMenu/master/Examples/html/
+http://localhost/anhr/DropdownMenu/master/Examples/html/
+-------------------------------------------
+Building menu
+
+Open "Node.js command prompt"
+
+d:
+cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\DropdownMenu"
+npm install
+npm run build
+
+Внимание!!! Надо еще собрать cd "D:\WebFeatures\GoogleSite\nodejs\menuPlay"
+а то внесенные измененя не появятся в браузере в меню, которое было создано с помошью menuPlay

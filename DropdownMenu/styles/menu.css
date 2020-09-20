@@ -1,0 +1,70 @@
+﻿.container {
+    position: relative;
+}
+.controls {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+menu {
+    margin: 0;
+    padding: 0;
+}
+.menuButton {
+    color: white;
+    background-color: black;
+    position: relative;
+    cursor: pointer;
+}
+    .menuButton:hover {
+        color: black;
+        background-color: white;
+    }
+        .menuButton:hover > .dropdown-child {
+            display: block;
+            opacity: 1;
+        }
+
+/*Thank to https://www.hostinger.ru/rukovodstva/kak-sozdat-vipadauyshee-menu-css*/
+.dropdown-child {
+    display: none; /*block;*/
+    opacity: 0;
+    position: absolute;
+}
+    .dropdown-child nobr {
+        color: white;
+        background-color: black;
+        /*opacity: 1;*/
+        text-decoration: none;
+        display: block;
+    }
+        .dropdown-child nobr:hover {
+            color: black;
+            background-color: white;
+            /*opacity: 1;*/
+        }
+        .dropdown-child nobr.checked {
+            color: black;
+            background-color: white;
+            /*opacity: 1;*/
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-child nobr.radio {
+            color: black;
+            background-color: white;
+        }
+        .dropdown-child nobr.checkbox {
+            color: black;
+            background-color: white;
+        }
+.slider {
+    height: 10px;
+    width: 100%;
+    /*for IE 11*/
+    padding: 0px;
+    margin: 0px;
+}
