@@ -29,6 +29,8 @@ My JavaScript library for NodeJS.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/Examples/index.html).
 * OrbitControlsGui.js [OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) graphical user interface.
 [Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
+* PlayController. PlayController class for using in my version of dat.gui(https://github.com/anhr/dat.gui) for playing of 3D objects in my projects.
+[README.md](https://github.com/anhr/commonNodeJS/tree/master/controllerPlay).
 * Player.js 3D objects animation.
 [Player API](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
