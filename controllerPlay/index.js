@@ -16,10 +16,10 @@
 //import { GUI, controllers } from 'D:/My documents/MyProjects/webgl/three.js/GitHub/dat.gui';
 //Please download https://github.com/anhr/dat.gui/tree/CustomController to '../../dat.gui' folder
 //import { GUI, controllers } from '../../dat.gui';
-import { GUI, controllers } from '../../dat.gui/CustomController/build/dat.gui.module.js';
+import { GUI, controllers } from '../dat.gui/CustomController/build/dat.gui.module.js';
 
 //import { getLanguageCode } from '../../commonNodeJS/master/build/common.module.js';
-import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
+import { getLanguageCode } from '../lang.js';
 //import { getLanguageCode } from 'http://localhost/anhr/commonNodeJS/master/lang.js';
 
 //Localization
