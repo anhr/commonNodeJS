@@ -1,29 +1,36 @@
-# menuPlay
-node.js version of the menuPlay.
-My dropdown menu for canvas in my version of [dat.gui](https://github.com/anhr/dat.gui) for playing of 3D obects in my projects.
+# CanvasMenu
+My dropdown menu for canvas in my version of [dat.gui](https://github.com/anhr/dat.gui).
 
 Uses in my projects:
  * [DropdownMenu](https://github.com/anhr/DropdownMenu)
+ * [myThreejs](https://github.com/anhr/myThreejs)
 
 ## Packaged Builds
-The easiest way to use menuPlay in your code is by using the built source at `build/menuPlay.js`. These built JavaScript files bundle all the necessary dependencies to run controllerPlay.
+The easiest way to use CanvasMenu in your code is by using the built source at `build/canvasMenu.js`. These built JavaScript files bundle all the necessary dependencies.
 
 In your `head` tag, include the following code:
 ```
-<script src="https://raw.githack.com/anhr/menuPlay/master/build/menuPlay.js"></script>
+<script src="https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/build/canvasMenu.js"></script>
 ```
 or
 ```
-<script src="https://raw.githack.com/anhr/menuPlay/master/build/menuPlay.min.js"></script>
+<script src="https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/build/canvasMenu.min.js"></script>
 ```
-or you can import menuPlay from menuPlay.js file in your JavaScript module. [Example.](https://raw.githack.com/anhr/myThreejs/master/Examples/html/)
+or you can import CanvasMenu from canvasMenu.js file in your JavaScript module. [Example.](https://raw.githack.com/anhr/myThreejs/master/Examples/html/)
 ```
-import menuPlay from 'https://raw.githack.com/anhr/menuPlay/master/menuPlay.js';
+import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
+```
+or
+* Create a folder on your localhost named as [folderName].
+* Add your web page into [folderName]. See [example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html) web page.
+* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
 ```
 
-Now you can use window.menuPlay for append to the dat.gui.
+Now you can use CanvasMenu for append to the canvas.
 
-### menuPlay.create(  )
+### CanvasMenu(  )
 
 Creates new menu.
 
@@ -32,7 +39,6 @@ Creates new menu.
 | elContainer | <code>HTMLElement|String</code> |  | if the HTMLElement is a container element for canvas. If the String is id of a container element for canvas. |
 | [options] | <code>Object</code> |  | optional options. |
 | [options.stereoEffect] | <code>Object</code> |  | new THREE.StereoEffect(...) https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js |
-| [options.playController] | <code>Object</code> |  | playController https://github.com/anhr/controllerPlay - my custom controller in my version of [dat.gui](https://github.com/anhr/dat.gui) for playing of 3D obects in my projects. |
 
 **Example.**  
 ```
@@ -41,10 +47,9 @@ Creates new menu.
 var stereoEffect = new THREE.StereoEffect(...);
 var playController = controllerPlay.create(...);
 var elContainer = document.getElementById( "canvasContainer" )
-menuPlay.create( elContainer, {
+new CanvasMenu( elContainer, {
 
 	stereoEffect: stereoEffect,
-	playController: playController,
 
 } );
 </script>
