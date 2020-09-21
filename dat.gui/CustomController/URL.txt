@@ -1,0 +1,8 @@
+Building dat.gui\CustomController
+
+Open "Node.js command prompt"
+
+d:
+cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\dat.gui\CustomController"
+npm install
+npm run build
