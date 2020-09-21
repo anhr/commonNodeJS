@@ -507,11 +507,11 @@ function loadShaderText ( onload, path ) {
 
 	//Thanks to https://stackoverflow.com/a/27369985/5175935
 	//Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
-	var getCurrentScript = function () {
+	const getCurrentScript = function () {
 
 		if ( document.currentScript && ( document.currentScript.src !== '' ) )
 			return document.currentScript.src;
-		var scripts = document.getElementsByTagName( 'script' ),
+		const scripts = document.getElementsByTagName( 'script' ),
 			str = scripts[scripts.length - 1].src;
 		if ( str !== '' )
 			return src;
@@ -520,13 +520,13 @@ function loadShaderText ( onload, path ) {
 
 	};
 	//Thanks to https://stackoverflow.com/a/27369985/5175935
-	var getCurrentScriptPath = function () {
-		var script = getCurrentScript(),
+	const getCurrentScriptPath = function () {
+		const script = getCurrentScript(),
 			path = script.substring( 0, script.lastIndexOf( '/' ) );
 		return path;
 	};
 	//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
-	var currentScriptPath = getCurrentScriptPath();
+	const currentScriptPath = getCurrentScriptPath();
 
 	path = path || {};
 	path.vertex = path.vertex || currentScriptPath + "/vertex.c";
