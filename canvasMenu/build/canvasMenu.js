@@ -1,7 +1,5 @@
 /**
- * node.js version of the menuPlay
- *
- * My dropdown menu for canvas in my version of [dat.gui](https://github.com/anhr/dat.gui) for playing of 3D objects in my projects.
+ * My dropdown menu for canvas in my version of [dat.gui](https://github.com/anhr/dat.gui).
  *
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
  * Thanks to https://stackoverflow.com/a/4797877/5175935
