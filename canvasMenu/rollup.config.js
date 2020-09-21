@@ -1,5 +1,5 @@
 /**
- * node.js version of the menuPlay
+ * node.js version of the canvasMenu
  * 
  * http://code.google.com/p/dat-gui
  *
@@ -21,13 +21,13 @@ import babel from 'rollup-plugin-babel';
 const banner = fs.readFileSync(path.join(__dirname, 'licenseBanner.txt'));
 
 export default {
-  input: 'index.js',
+  input: 'canvasMenu.js',
   output: [{
     // TODO: Remove default exports, and this line, in v0.8.0.
     exports: 'named',
-    file: './build/menuPlay.js',
+    file: './build/canvasMenu.js',
     format: 'umd',
-    name: 'menuPlay',
+    name: 'CanvasMenu',
     sourcemap: true,
 	  banner: banner,
 	/*
@@ -37,7 +37,7 @@ export default {
 	  },
 	  */
   }, {
-    file: './build/menuPlay.module.js',
+    file: './build/canvasMenu.module.js',
     format: 'es',
     sourcemap: true,
     banner: banner

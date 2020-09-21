@@ -1,9 +1,9 @@
 {
-  "name": "menuPlay",
+  "name": "canvasMenu",
   "version": "0.1.0",
-  "description": "My dropdown menu for canvas in my version of [dat.gui](https://github.com/anhr/dat.gui) for playing of 3D obects in my projects.",
-  "main": "build/menuPlay.js",
-  "module": "build/menuPlay.module.js",
+  "description": "My dropdown menu for canvas in my version of [dat.gui](https://github.com/anhr/dat.gui).",
+  "main": "build/canvasMenu.js",
+  "module": "build/canvasMenu.module.js",
   "directories": {
     "test": "tests"
   },
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anhr/menuPlay"
+    "url": "git+https://github.com/anhr/commonNodeJS/tree/master/canvasMenu"
   },
   "author": "Andrej Hristoliubov https://anhr.github.io/AboutMe/",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/anhr/menuPlay/issues"
+    "url": "https://github.com/anhr/commonNodeJS/tree/master/canvasMenu/issues"
   },
-  "homepage": "https://github.com/anhr/menuPlay#readme",
+  "homepage": "https://github.com/anhr/commonNodeJS/tree/master/canvasMenu#readme",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-plugin-external-helpers": "^6.22.0",

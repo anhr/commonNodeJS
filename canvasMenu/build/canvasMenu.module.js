@@ -3075,24 +3075,37 @@ var loadScript = {
 };
 
 /**
-* @module DropdownMenu
-* @description node.js version of DropdownMenu
-*
-* @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
-*
-* @copyright 2011 Data Arts Team, Google Creative Lab
-*
-* @license under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*/
+ * @module DropdownMenu
+ * @description node.js version of DropdownMenu
+ *
+ * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
 var optionsStyle = {
 	tag: 'style'
-};loadScript.sync('./styles/menu.css', optionsStyle);
-loadScript.sync('./styles/Decorations/transparent.css', optionsStyle);
-loadScript.sync('./styles/Decorations/gradient.css', optionsStyle);
+};var getCurrentScript = function getCurrentScript() {
+	if (document.currentScript && document.currentScript.src !== '') return document.currentScript.src;
+	var scripts = document.getElementsByTagName('script'),
+	    str = scripts[scripts.length - 1].src;
+	if (str !== '') return src;
+	return new Error().stack.match(/(https?:[^:]*)/)[0];
+};
+var getCurrentScriptPath = function getCurrentScriptPath() {
+	var script = getCurrentScript(),
+	    path = script.substring(0, script.lastIndexOf('/'));
+	return path;
+};
+var currentScriptPath = getCurrentScriptPath();
+loadScript.sync(currentScriptPath + '/styles/menu.css', optionsStyle);
+loadScript.sync(currentScriptPath + '/styles/Decorations/transparent.css', optionsStyle);
+loadScript.sync(currentScriptPath + '/styles/Decorations/gradient.css', optionsStyle);
 function create$1(arrayMenu, options) {
 	options = options || {};
 	options.elParent = options.elParent || document.querySelector('body');
@@ -3236,8 +3249,8 @@ function create$1(arrayMenu, options) {
 }
 
 /**
- * @module menuPlay
- * @description My dropdown menu for canvas in my version of [dat.gui](https://github.com/anhr/dat.gui) for playing of 3D objects in my projects.
+ * @module CanvasMenu
+ * @description My dropdown menu for canvas in my version of [dat.gui](https://github.com/anhr/dat.gui).
  *
  * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
  *
@@ -3249,7 +3262,7 @@ function create$1(arrayMenu, options) {
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-function create$2(elContainer, options) {
+function CanvasMenu(elContainer, options) {
 	var elCanvas = elContainer.querySelector('canvas');
 	options = options || {};
 	if (options.THREE == undefined) options.THREE = THREE;
@@ -3512,5 +3525,5 @@ function create$2(elContainer, options) {
 	var elMenu, elSlider;
 }
 
-export { create$2 as create };
-//# sourceMappingURL=menuPlay.module.js.map
+export default CanvasMenu;
+//# sourceMappingURL=canvasMenu.module.js.map
