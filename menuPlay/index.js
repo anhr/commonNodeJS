@@ -13,8 +13,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { lang } from '../index.js';
-import { lang } from '../../controllerPlay/master/index.js';
+//import { lang } from '../index.js';
+import { lang } from '../controllerPlay/index.js';
 
 import { create as dropdownMenuCreate } from '../DropdownMenu/index.js';
 
