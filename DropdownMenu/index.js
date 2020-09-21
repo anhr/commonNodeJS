@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @module DropdownMenu
  * @description node.js version of DropdownMenu
  * 
@@ -21,10 +21,34 @@ var optionsStyle = {
 	tag: 'style'
 
 }
+
+//Thanks to https://stackoverflow.com/a/27369985/5175935
+//Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
+const getCurrentScript = function () {
+
+	if ( document.currentScript && ( document.currentScript.src !== '' ) )
+		return document.currentScript.src;
+	const scripts = document.getElementsByTagName( 'script' ),
+		str = scripts[scripts.length - 1].src;
+	if ( str !== '' )
+		return src;
+	//Thanks to https://stackoverflow.com/a/42594856/5175935
+	return new Error().stack.match( /(https?:[^:]*)/ )[0];
+
+};
+//Thanks to https://stackoverflow.com/a/27369985/5175935
+const getCurrentScriptPath = function () {
+	const script = getCurrentScript(),
+		path = script.substring( 0, script.lastIndexOf( '/' ) );
+	return path;
+};
+//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
+const currentScriptPath = getCurrentScriptPath();
+
 //Attention! Load menu.css file before other css files for correctly priority of the styles
-loadScript.sync( './styles/menu.css', optionsStyle );
-loadScript.sync( './styles/Decorations/transparent.css', optionsStyle );
-loadScript.sync( './styles/Decorations/gradient.css', optionsStyle );
+loadScript.sync( currentScriptPath + '/styles/menu.css', optionsStyle );
+loadScript.sync( currentScriptPath + '/styles/Decorations/transparent.css', optionsStyle );
+loadScript.sync( currentScriptPath + '/styles/Decorations/gradient.css', optionsStyle );
 /*
 loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/menu.css', optionsStyle );
 loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/Decorations/transparent.css', optionsStyle );
