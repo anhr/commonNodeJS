@@ -30,7 +30,7 @@ import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
 
 Now you can use CanvasMenu for append to the canvas.
 
-### CanvasMenu(  )
+### CanvasMenu( elContainer, options );
 
 Creates new menu.
 
