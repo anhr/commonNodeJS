@@ -353,9 +353,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 };
 
 /**
-* node.js version of DropdownMenu
+* @module DropdownMenu
+* @description node.js version of DropdownMenu
 *
-* @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+* @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
 *
 * @copyright 2011 Data Arts Team, Google Creative Lab
 *
