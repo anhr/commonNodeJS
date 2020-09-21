@@ -2,7 +2,7 @@
 My dropdown menu for canvas in my version of [dat.gui](https://github.com/anhr/dat.gui).
 
 Uses in my projects:
- * [DropdownMenu](https://github.com/anhr/DropdownMenu)
+ * [DropdownMenu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu)
  * [myThreejs](https://github.com/anhr/myThreejs)
 
 ## Packaged Builds
