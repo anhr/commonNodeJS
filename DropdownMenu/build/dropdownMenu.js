@@ -530,7 +530,7 @@ function DropdownMenu(arrayMenu, options) {
 	return elMenu;
 }
 
-exports['default'] = DropdownMenu;
+exports.DropdownMenu = DropdownMenu;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

@@ -455,4 +455,4 @@ function DropdownMenu( arrayMenu, options ) {
 	return elMenu;
 
 }
-export default DropdownMenu;
+export { DropdownMenu };
