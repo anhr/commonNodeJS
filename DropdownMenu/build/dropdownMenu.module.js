@@ -347,25 +347,42 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 };
 
 /**
-* @module DropdownMenu
-* @description node.js version of DropdownMenu
-*
-* @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
-*
-* @copyright 2011 Data Arts Team, Google Creative Lab
-*
-* @license under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*/
+ * @module DropdownMenu
+ * @description node.js version of DropdownMenu
+ *
+ * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
 var optionsStyle = {
 	tag: 'style'
-};loadScript.sync('./styles/menu.css', optionsStyle);
-loadScript.sync('./styles/Decorations/transparent.css', optionsStyle);
-loadScript.sync('./styles/Decorations/gradient.css', optionsStyle);
-function create(arrayMenu, options) {
+};var getCurrentScript = function getCurrentScript() {
+	if (document.currentScript && document.currentScript.src !== '') return document.currentScript.src;
+	var scripts = document.getElementsByTagName('script'),
+	    str = scripts[scripts.length - 1].src;
+	if (str !== '') return src;
+	return new Error().stack.match(/(https?:[^:]*)/)[0];
+};
+var getCurrentScriptPath = function getCurrentScriptPath() {
+	var script = getCurrentScript(),
+	    path = script.substring(0, script.lastIndexOf('/'));
+	return path;
+};
+var currentScriptPath = getCurrentScriptPath();
+var arrayPath = currentScriptPath.split(/(.*)(\/build)/);
+if (arrayPath[2] === '/build') currentScriptPath = arrayPath[1];
+arrayPath = currentScriptPath.split(/(.*)(\/canvasMenu)/);
+if (arrayPath[2] === '/canvasMenu') currentScriptPath = arrayPath[1] + '/DropdownMenu';
+loadScript.sync(currentScriptPath + '/styles/menu.css', optionsStyle);
+loadScript.sync(currentScriptPath + '/styles/Decorations/transparent.css', optionsStyle);
+loadScript.sync(currentScriptPath + '/styles/Decorations/gradient.css', optionsStyle);
+function DropdownMenu(arrayMenu, options) {
 	options = options || {};
 	options.elParent = options.elParent || document.querySelector('body');
 	var elMenu = document.createElement('menu');
@@ -507,5 +524,5 @@ function create(arrayMenu, options) {
 	return elMenu;
 }
 
-export { create };
+export default DropdownMenu;
 //# sourceMappingURL=dropdownMenu.module.js.map

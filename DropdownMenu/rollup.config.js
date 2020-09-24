@@ -21,13 +21,13 @@ import babel from 'rollup-plugin-babel';
 const banner = fs.readFileSync(path.join(__dirname, 'licenseBanner.txt'));
 
 export default {
-  input: 'index.js',
+  input: 'dropdownMenu.js',
   output: [{
     // TODO: Remove default exports, and this line, in v0.8.0.
     exports: 'named',
 	file: './build/dropdownMenu.js',
     format: 'umd',
-	name: 'dropdownMenu',
+    name: 'DropdownMenu',
     sourcemap: true,
     banner: banner
   }, {

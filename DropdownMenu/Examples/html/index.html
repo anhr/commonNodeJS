@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -13,36 +13,35 @@
 	<!--For mobile device debugging-->
 	<!--<script src="../../../nodejs/dropdownMenu/build/dropdownMenu.js"></script>-->
 	<!--For desktop debugging-->
-	<!--<script src="http://localhost/nodejs/dropdownMenu/build/dropdownMenu.js"></script>-->
-	<script src="/anhr/DropdownMenu/master/build/dropdownMenu.min.js"></script>
+	<!--<script src="http://localhost/anhr/commonNodeJS/master/dropdownMenu/build/dropdownMenu.js"></script>-->
+	<!--<script src="../../build/dropdownMenu.min.js"></script>-->
+	<script src="../../build/dropdownMenu.js"></script>
 
-	<script src="/anhr/menuPlay/master/build/menuPlay.js"></script>
+	<script src="../../../canvasMenu/build/canvasMenu.js"></script>
+	<!--<script src="../../../canvasMenu/build/canvasMenu.min.js"></script>-->
+
+	<!--<script src="../../../menuPlay/build/menuPlay.js"></script>-->
 	<!--<script src="http://localhost/nodejs/menuPlay/build/menuPlay.min.js"></script>-->
-
 	<!--Three.js-->
-	<script src="/anhr/three.js/dev/build/three.js"></script>
-	<script src="/anhr/three.js/dev/examples/js/WebGL.js"></script>
-	<script src="/anhr/three.js/dev/examples/js/controls/OrbitControls.js"></script>
-	<script src="/anhr/three.js/dev/examples/js/math/ConvexHull.js"></script><!--for cube-->
-
+	<script src="../../../../../three.js/dev/build/three.js"></script>
+	<script src="../../../../../three.js/dev/examples/js/WebGL.js"></script>
+	<script src="../../../../../three.js/dev/examples/js/controls/OrbitControls.js"></script>
+	<script src="../../../../../three.js/dev/examples/js/math/ConvexHull.js"></script><!--for cube-->
 	<!--A lightweight graphical user interface for changing variables in JavaScript. https://github.com/dataarts/dat.gui -->
-	<script src="/anhr/dat.gui/CustomController/build/dat.gui.js"></script>
-	<script src="/anhr/commonNodeJS/master/dat.js"></script>
+	<script src="../../../dat.gui/CustomController/build/dat.gui.js"></script>
+	<script src="../../../dat.js"></script>
 
 	<!--<script src="/anhr/three.js/dev/examples/js/effects/StereoEffect.js"></script>-->
 	<!--<script src="../../../../commonNodeJS/master/StereoEffect/StereoEffect.js"></script>-->
-
 	<!--Cube-->
-	<script src="/anhr/three.js/dev/examples/js/geometries/ConvexGeometry.js"></script>
+	<script src="../../../../../three.js/dev/examples/js/geometries/ConvexGeometry.js"></script>
 	<!--<script src="/anhr/three.js/dev/examples/js/QuickHull.js"></script>-->
-
 	<!--Attention! Load controllerPlay.js file after StereoEffect.js if you want to localise controllerPlay buttons -->
-	<script src="/anhr/controllerPlay/master/build/controllerPlay.js"></script>
+	<script src="../../../controllerPlay/build/controllerPlay.js"></script>
 	<!--<script src="/anhr/controllerPlay/build/controllerPlay.min.js"></script>-->
-
 	<!--Attention! Load custom.css file after dropdownMenu.js file for correctly priority of the styles-->
 	<link rel="stylesheet" href="custom.css" type="text/css">
-	<link rel="stylesheet" href="/anhr/dropdownMenu/master/styles/gui.css" type="text/css">
+	<link rel="stylesheet" href="../../styles/gui.css" type="text/css">
 
 </head>
 	<body>
@@ -54,7 +53,7 @@
 
 		<h2>Simple menu.</h2>
 		<script>
-			dropdownMenu.create( [
+			DropdownMenu.default( [
 
 				'Menu 1 ',
 				{
@@ -147,7 +146,7 @@
 		<h2>Drop menu to the left or/and up.</h2>
 		<h3><a href="../../styles/Decorations/gradient.css" target="_blank">Gradient decoration</a>.</h3>
 		<script>
-			dropdownMenu.create( [
+			DropdownMenu.default( [
 
 				{
 
@@ -295,7 +294,7 @@
 	<h3><a href="custom.css" target="_blank">Custom decoration</a>.</h3>
 
 	<script>
-		dropdownMenu.create( [
+		DropdownMenu.default( [
 
 			{
 
@@ -407,7 +406,7 @@
 	</div>
 	<script type="module">
 
-		import StereoEffect from "../../../../commonNodeJS/master/StereoEffect/StereoEffect.js";
+		import StereoEffect from "../../../StereoEffect/StereoEffect.js";
 		/*
 		if ( WEBGL.isWebGLAvailable() === false ) {
 
@@ -422,6 +421,35 @@
 
 		function createMenu() {
 
+			if ( typeof CanvasMenu === 'undefined' )
+				return;
+
+			new CanvasMenu.default( elContainer, {
+
+/*
+				stereoEffect: stereoEffect === undefined ? stereoEffect :
+					{ stereoEffect: stereoEffect, spatialMultiplexsIndexs: StereoEffect.spatialMultiplexsIndexs },
+				//player: player,
+				onFullScreenToggle: function ( fullScreen ) {
+
+					return rendererSizeDefault.onFullScreenToggle( fullScreen );
+
+				},
+				onFullScreen: function ( fullScreen, elContainer ) {
+
+					rendererSizeDefault.onFullScreenToggle( !fullScreen );
+
+				},
+				onOver: function ( _mouseenter ) {
+
+					mouseenter = _mouseenter;
+
+				},
+*/
+				THREE: THREE,
+
+			} );
+/*
 			if ( typeof menuPlay !== 'undefined' ) {
 
 				stereoEffect.options = { spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.Mono }
@@ -442,6 +470,7 @@
 				} );
 
 			}
+*/
 
 		}
 
@@ -499,9 +528,10 @@
 					elContainer.style.left = elCanvas.style.left;
 					elContainer.style.top = elCanvas.style.top;
 					elContainer.style.position = elCanvas.style.position;
-
+/*
 					if ( typeof menuPlay !== 'undefined' )
 						menuPlay.setSize( width, height );
+*/
 
 				}, 0 );
 

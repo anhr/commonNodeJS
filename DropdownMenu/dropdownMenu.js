@@ -43,7 +43,13 @@ const getCurrentScriptPath = function () {
 	return path;
 };
 //console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
-const currentScriptPath = getCurrentScriptPath();
+var currentScriptPath = getCurrentScriptPath();
+//Для D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\DropdownMenu\build
+var arrayPath = currentScriptPath.split( /(.*)(\/build)/ );
+if ( arrayPath[2] === '/build' ) currentScriptPath = arrayPath[1];
+//Для D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\canvasMenu\build
+arrayPath = currentScriptPath.split( /(.*)(\/canvasMenu)/ );
+if ( arrayPath[2] === '/canvasMenu' ) currentScriptPath = arrayPath[1] + '/DropdownMenu';
 
 //Attention! Load menu.css file before other css files for correctly priority of the styles
 loadScript.sync( currentScriptPath + '/styles/menu.css', optionsStyle );
@@ -198,7 +204,7 @@ loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/Decora
 	</script>
  *
  */
-export function create( arrayMenu, options ) {
+function DropdownMenu( arrayMenu, options ) {
 
 	options = options || {};
 	options.elParent = options.elParent || document.querySelector( 'body' );
@@ -449,3 +455,4 @@ export function create( arrayMenu, options ) {
 	return elMenu;
 
 }
+export default DropdownMenu;
