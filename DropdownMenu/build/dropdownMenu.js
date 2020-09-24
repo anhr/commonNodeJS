@@ -354,7 +354,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 /**
  * @module DropdownMenu
- * @description node.js version of DropdownMenu
+ * @description Creates a drop down menu in your javaScript code.
  *
  * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
  *
