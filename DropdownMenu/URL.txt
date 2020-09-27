@@ -28,7 +28,7 @@ Generating a website:
 
 	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\DropdownMenu\jsdoc"
 
-	jsdoc -R "..\commonNodeJS\master\DropdownMenu\DropdownMenu.md" "..\commonNodeJS\master\DropdownMenu\dropdownMenu.js" -d "..\commonNodeJS\master\DropdownMenu\jsdoc"
+	jsdoc -R "..\commonNodeJS\master\DropdownMenu\DropdownMenu.md" "..\commonNodeJS\master\DropdownMenu\index.js" -d "..\commonNodeJS\master\DropdownMenu\jsdoc"
 
 	//See results in "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\DropdownMenu\jsdoc"
 

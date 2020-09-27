@@ -388,7 +388,7 @@ if (arrayPath[2] === '/canvasMenu') currentScriptPath = arrayPath[1] + '/Dropdow
 loadScript.sync(currentScriptPath + '/styles/menu.css', optionsStyle);
 loadScript.sync(currentScriptPath + '/styles/Decorations/transparent.css', optionsStyle);
 loadScript.sync(currentScriptPath + '/styles/Decorations/gradient.css', optionsStyle);
-function DropdownMenu(arrayMenu, options) {
+function create(arrayMenu, options) {
 	options = options || {};
 	options.elParent = options.elParent || document.querySelector('body');
 	var elMenu = document.createElement('menu');
@@ -530,7 +530,7 @@ function DropdownMenu(arrayMenu, options) {
 	return elMenu;
 }
 
-exports['default'] = DropdownMenu;
+exports.create = create;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
