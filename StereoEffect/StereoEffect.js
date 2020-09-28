@@ -45,7 +45,7 @@ import { dat } from '../dat/dat.module.js';
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {Object} renderer {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer}
  * @param {Object} [options] the following options are available.
- * @param {Object} [options.spatialMultiplex] spatial multiplex
+ * @param {Object} [options.spatialMultiplex=spatialMultiplexsIndexs.Mono] spatial multiplex
  * <pre>
  * See {@link https://en.wikipedia.org/wiki/DVB_3D-TV|DVB 3D-TV} for details
  * 	Available values
@@ -59,15 +59,13 @@ import { dat } from '../dat/dat.module.js';
  * 			See //https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom for details
  *
  * 	Example - spatialMultiplex: spatialMultiplexsIndexs.Mono
- * 	Default is spatialMultiplexsIndexs.Mono
  * </pre>
  * @param {Object} [options.camera] THREE.PerspectiveCamera. Use the camera key if you want control cameras focus.
- * @param {Object} [options.far] Camera frustum far plane. The far key uses for correct calculation default values of Eye separation. Default is 10.
- * @param {Object} [options.stereoAspect] THREE.StereoCamera.aspect. Camera frustum aspect ratio. Default is 1.
- * @param {boolean} [options.rememberSize] true - remember default size of the canvas. Default is undefined.
+ * @param {Object} [options.far=10] Camera frustum far plane. The far key uses for correct calculation default values of Eye separation.
+ * @param {Object} [options.stereoAspect=1] THREE.StereoCamera.aspect. Camera frustum aspect ratio.
+ * @param {boolean} [options.rememberSize] true - remember default size of the canvas.
  * @param {onFullScreen} [options.onFullScreen] Full screen event.
  * See [onFullScreen(fullScreen)]{@link module-StereoEffect#~onFullScreen} in the Type Definitions below.
- * Default is undefined.
  * @param {HTMLElement} [options.elParent] parent of the canvas.
  * Use only if you use {@link https://threejs.org/docs/index.html#api/en/core/Raycaster|THREE.Raycaster} (working out what objects in the 3d space the mouse is over)
  * and your canvas is not full screen.
