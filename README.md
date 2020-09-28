@@ -3,6 +3,8 @@ My JavaScript library for NodeJS.
 
 * AxesHelperGui.js [AxesHelper](https://github.com/anhr/three.js/blob/dev/src/helpers/ArrowHelper.js) graphical user interface.
 [Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
+* CanvasMenu. My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu) for canvas in my [three.js](https://threejs.org/) projects.
+[README.md](https://github.com/anhr/commonNodeJS/tree/master/canvasMenu).
 * clearThree.js Remove all child objects of the object and call dispose on their geometry, material and texture.
 [Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
 * cookie. Cookies let you store user information in web pages. See [JavaScript Cookies](https://www.w3schools.com/js/js_cookies.asp).
@@ -16,6 +18,7 @@ My JavaScript library for NodeJS.
 * dat.js Modify of the [dat.gui](https://github.com/dataarts/dat.gui) object. [Example](https://github.com/anhr/DropdownMenu).
 * DropdownMenu. node.js version of DropdownMenu
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/Examples/html/index.html).
 * getShaderMaterialPoints.js Get THREE.Points with THREE.ShaderMaterial material.
 [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
 * guiSelectPoint.js GuiSelectPoint is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for select a point from the mesh.
