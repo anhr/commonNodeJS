@@ -132,6 +132,14 @@ function create( arrayMenu, options ) {
 
 	options = options || {};
 	options.elParent = options.elParent || document.querySelector( 'body' );
+	switch ( options.decorations ) {
+
+		case 'Gradient':
+		case 'Transparent':
+		case 'Custom':
+			break;
+		default: console.error( 'DropdownMenu.create: Invalid options.decorations: ' + options.decorations );
+	}
 
 	//create menu element
 	var elMenu = document.createElement( 'menu' );

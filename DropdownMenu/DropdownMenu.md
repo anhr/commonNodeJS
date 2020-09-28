@@ -279,6 +279,161 @@ DropdownMenu.create( [
 
 	} );
 ```
+Custom decoration.
+Please create your own [custom.css](https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/Examples/html/custom.css) file and copy it into your web page folder.
+
+Add
+```
+<link rel="stylesheet" href="custom.css" type="text/css">
+```
+line into <b>head</b> tag.
+
+Set <b>decorations: 'Custom'</b> in your code.
+```
+DropdownMenu.create( [
+
+	{
+
+		name: 'Drop up',
+		drop: 'up',
+		items: [
+
+			'up item 1',
+			{
+
+				name: 'up item 2',
+				onclick: function ( event ) {
+
+					var message = 'up item 2 onclick';
+					//console.log( message );
+					alert( message )
+
+				}
+
+			},
+
+		],
+
+	},
+	{
+
+		name: 'Left',
+		drop: 'left',
+		items: [
+
+			'left item 1',
+			{
+
+				name: 'left item 2',
+				onclick: function ( event ) {
+
+					var message = 'left item 2 onclick';
+					//console.log( message );
+					alert( message )
+
+				}
+
+			},
+
+		],
+
+	},
+	{
+
+		name: 'Up left',
+		drop:
+		{
+
+			left: true,
+			up: true,
+
+		},
+		items: [
+
+			'up left item 1',
+			{
+
+				name: 'up left item 2',
+				onclick: function ( event ) {
+
+					var message = 'up left item 2 onclick';
+					//console.log( message );
+					alert( message )
+
+				}
+
+			},
+
+		],
+
+	},
+	{
+
+		name: 'Radio ',
+		title: 'Please select menu items',
+		drop:
+		{
+
+			left: true,
+			up: false,
+
+		},
+		items: [
+
+			{
+
+				name: 'Radio 1',
+				radio: true,
+
+			},
+			{
+
+				name: 'Radio 2',
+				radio: true,
+				checked: true,
+
+			},
+
+		],
+
+	},
+	{
+
+		name: 'Checkbox ',
+		title: 'Please select menu items',
+		drop:
+		{
+
+			left: true,
+			up: false,
+
+		},
+		items: [
+
+			{
+
+				name: 'Checkbox 1',
+				checkbox: true,
+
+			},
+			{
+
+				name: 'Checkbox 2',
+				checkbox: true,
+				checked: true,
+
+			},
+
+		],
+
+	},
+
+], {
+
+		decorations: 'Custom',
+
+	} );
+```
 
 ## Directory Contents
 
