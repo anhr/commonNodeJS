@@ -92,41 +92,6 @@ loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/Decora
  * Custom decoration:
  * 'Custom' please edit the [custom.css]{@link https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/Examples/html/custom.css} file from my example if you want a custom decoration of your menu.
  * <pre>
- *
- * @example
- * 
-	//button inside canvas
-	<div class="container" id="containerDSE">
-		<canvas id="canvas"></canvas>
-	</div>
-	<script>
-	var elContainer = document.getElementById( "containerDSE" ),
-	elCanvas = elContainer.querySelector( 'canvas' );
-
-	DropdownMenu.create( [
-
-		{
-
-			name: 'Button',
-			onclick: function ( event ) {
-
-				var message = 'Button onclick';
-				//console.log( message );
-				alert( message )
-
-			},
-
-		},
-
-	], {
-
-		elParent: elContainer,
-		canvas: elCanvas,
-		decorations: 'Transparent',
-
-	} );
-	</script>
- *
  */
 function create( arrayMenu, options ) {
 
