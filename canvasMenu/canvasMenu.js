@@ -17,7 +17,7 @@
 import { lang } from '../controllerPlay/index.js';
 
 //import { create as dropdownMenuCreate } from '../DropdownMenu/index.js';
-import DropdownMenu from '../DropdownMenu/DropdownMenu.js';
+import DropdownMenu from '../DropdownMenu/dropdownMenu.js';
 
 //Please download https://github.com/anhr/three.js to '../../DropdownMenu/master/' folder
 
