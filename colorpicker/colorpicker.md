@@ -35,7 +35,7 @@ In your `body` tag, include the following code:
 <div id="colorpicker"></div>
 ```
 
-Now you can use window.ColorPicker for select a color from picker.
+Now you can use <b>window.ColorPicker</b> for select a color from picker.
 
 Example of the simple ColorPicker
 ```
