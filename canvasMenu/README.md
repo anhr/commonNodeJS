@@ -6,26 +6,6 @@ Uses in my projects:
 
 See [CanvasMenu API](https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/jsdoc/index.html) for details.
 
-## Directory Contents
-
-```
-└── build - Compiled source code.
-```
-
-## Building your own DropdownMenu
-
-In the terminal, enter the following:
-
-```
-$ npm install
-$ npm run build
-```
-
-## npm scripts
-
-- npm run build - Build development and production version of scripts.
-
-
 ## On the following browsers have been successfully tested:
 
 Windows 10
