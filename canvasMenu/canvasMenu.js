@@ -1,6 +1,6 @@
 /**
  * @module CanvasMenu
- * @description My dropdown menu for canvas in my version of [dat.gui](https://github.com/anhr/dat.gui).
+ * @description My [dropdown menu]{@link https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu} for canvas in my [three.js]{@link https://threejs.org/} projects.
  * 
  * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
  *
@@ -16,7 +16,8 @@
 //import { lang } from '../index.js';
 import { lang } from '../controllerPlay/index.js';
 
-import { create as dropdownMenuCreate } from '../DropdownMenu/index.js';
+//import { create as dropdownMenuCreate } from '../DropdownMenu/index.js';
+import DropdownMenu from '../DropdownMenu/DropdownMenu.js';
 
 //Please download https://github.com/anhr/three.js to '../../DropdownMenu/master/' folder
 
@@ -28,25 +29,28 @@ import { create as dropdownMenuCreate } from '../DropdownMenu/index.js';
 
 /**
  * @callback onFullScreenToggle
+ * @param {boolean} fullScreen true - full screen mode of the canvas.
  */
 
 /**
- * dropdown menu for canvas for playing of 3D objects
- * @param {HTMLElement|String} elContainer if the HTMLElement, is a container element for canvas. If the String, is id of a container element for canvas.
- * @param {Object} [options] optional options.
- * @param {Object} [options.stereoEffect] new THREE.StereoEffect(...) https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js
- * @param {Object} [options.player] new Player(...) playing of 3D ojbects in my projects. Defauilt is undefined
- * See myThreejs\player.js for details.
- * @param {onFullScreen} [options.onFullScreen] fullscreen mode of the canvas. Defauilt is undefined
- * @param {onFullScreenToggle} [options.onFullScreenToggle] user toggled fullscreen mode of the canvas. Defauilt is undefined
- * @param {THREE} [options.THREE] THREE {@link https://github.com/anhr/three.js|THREE}. Defauilt is undefined
+ * Create [dropdown menu]{@link https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu} for canvas in my [three.js]{@link https://threejs.org/} projects.
+ * @param {HTMLElement|string} elContainer if the <b>HTMLElement</b>, is a container element for canvas. If the <b>string</b>, is id of a container element for canvas.
+ * @param {object} [options] followed options is available
+ * @param {Object} [options.stereoEffect] new [StereoEffect(...)]{@link https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md}.
+ * @param {Object} [options.player] new [Player(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}. Playing of 3D ojbects in my projects.
+ * @param {Object} [options.fullScreen] Add a "Full Screen" button
+ * @param {onFullScreen} [options.fullScreen.onFullScreen] fullscreen mode of the canvas.
+ * @param {onFullScreenToggle} [options.fullScreen.onFullScreenToggle] user toggled fullscreen mode of the canvas.
+ * @param {THREE} [options.THREE] THREE {@link https://github.com/anhr/three.js|THREE}.
  */
 function CanvasMenu( elContainer, options ) {
+	
 
-	var elCanvas = elContainer.querySelector( 'canvas' );
+	const elCanvas = elContainer.querySelector( 'canvas' );
 
 	options = options || {};
 
+/*
 	if ( options.THREE == undefined )
 		options.THREE = THREE;
 	if ( typeof options.THREE === "undefined" ) {
@@ -55,7 +59,7 @@ function CanvasMenu( elContainer, options ) {
 		return;
 
 	}
-
+*/
 	var stereoEffect, spatialMultiplexsIndexs;
 	if ( options.stereoEffect !== undefined ) {
 
@@ -64,7 +68,8 @@ function CanvasMenu( elContainer, options ) {
 
 	}
 
-	var menu = [], menuItemStereoEffect;
+	const menu = [];
+	var menuItemStereoEffect;
 
 	//stereoEffect
 	if ( options.stereoEffect ) {
@@ -100,8 +105,8 @@ function CanvasMenu( elContainer, options ) {
 							stereoEffect.setSpatialMultiplex( spatialMultiplexsIndexs.SbS );
 						else stereoEffect.options.spatialMultiplex = spatialMultiplexsIndexs.SbS;
 						//						setFullScreenButton( true );
-						if ( options.onFullScreen )
-							options.onFullScreen( true );
+						if ( options.fullScreen && options.fullScreen.onFullScreen )
+							options.fullScreen.onFullScreen( true );
 
 					}
 				},
@@ -187,111 +192,134 @@ function CanvasMenu( elContainer, options ) {
 		} );
 
 	}
+
 	//Full Screen button
-	function fullScreenSettings( canvasMenu ) {
+	var fullScreenSettings;
+	if ( options.fullScreen !== undefined ) {
 
-		var fullScreen = false, style;
-		this.isFullScreen = function () { return fullScreen; }
-		this.setFullScreen = function ( res, fs ) {
+		if ( !options.fullScreen.renderer ) {
 
-			var size = new options.THREE.Vector2();
-			res.renderer.getSize( size );
-			fullScreen = fs;
-			if ( fullScreen ) {
+			console.error( 'CanvasMenu: options.fullScreen.renderer = ' + options.fullScreen.renderer );
+			return;
+			
+		}
+		if ( !options.fullScreen.camera ) {
 
-				if ( style !== undefined ) {
+			console.error( 'CanvasMenu: options.fullScreen.camera = ' + options.fullScreen.camera );
+			return;
+			
+		}
 
-					//restore size of the canvas
-					res.renderer.setSize( style.sizeOriginal.x, style.sizeOriginal.y );
-					res.renderer.domElement.style.position = style.position;
-					res.renderer.domElement.style.left = style.left;
-					res.renderer.domElement.style.top = style.top;
-					res.renderer.domElement.style.width = style.width;
-					res.renderer.domElement.style.height = style.height;
+		function createFullScreenSettings( canvasMenu ) {
 
-				}
+			var fullScreen = false, style;
+			this.isFullScreen = function () { return fullScreen; }
+			this.setFullScreen = function ( fs ) {
 
-			} else {
+				const size = new options.THREE.Vector2();
+				options.fullScreen.renderer.getSize( size );
+				fullScreen = fs;
+				if ( fullScreen ) {
 
-				if ( style === undefined ) {
+					if ( style !== undefined ) {
 
-					style = {
-
-						sizeOriginal: new options.THREE.Vector2(),
-						position: res.renderer.domElement.style.position,
-						left: res.renderer.domElement.style.left,
-						top: res.renderer.domElement.style.top,
-						width: res.renderer.domElement.style.width,
-						height: res.renderer.domElement.style.height,
+						//restore size of the canvas
+						options.fullScreen.renderer.setSize( style.sizeOriginal.x, style.sizeOriginal.y );
+						options.fullScreen.renderer.domElement.style.position = style.position;
+						options.fullScreen.renderer.domElement.style.left = style.left;
+						options.fullScreen.renderer.domElement.style.top = style.top;
+						options.fullScreen.renderer.domElement.style.width = style.width;
+						options.fullScreen.renderer.domElement.style.height = style.height;
 
 					}
-					res.renderer.getSize( style.sizeOriginal );
-				}
 
-				//Full screen of the canvas
-				res.renderer.setSize( window.innerWidth, window.innerHeight );
-				res.renderer.domElement.style.position = 'fixed';
-				res.renderer.domElement.style.left = 0;
-				res.renderer.domElement.style.top = 0;
-				res.renderer.domElement.style.width = '100%';
-				res.renderer.domElement.style.height = '100%';
+				} else {
+
+					if ( style === undefined ) {
+
+						style = {
+
+							sizeOriginal: new options.THREE.Vector2(),
+							position: options.fullScreen.renderer.domElement.style.position,
+							left: options.fullScreen.renderer.domElement.style.left,
+							top: options.fullScreen.renderer.domElement.style.top,
+							width: options.fullScreen.renderer.domElement.style.width,
+							height: options.fullScreen.renderer.domElement.style.height,
+
+						}
+						options.fullScreen.renderer.getSize( style.sizeOriginal );
+					}
+
+					//Full screen of the canvas
+					options.fullScreen.renderer.setSize( window.innerWidth, window.innerHeight );
+					options.fullScreen.renderer.domElement.style.position = 'fixed';
+					options.fullScreen.renderer.domElement.style.left = 0;
+					options.fullScreen.renderer.domElement.style.top = 0;
+					options.fullScreen.renderer.domElement.style.width = '100%';
+					options.fullScreen.renderer.domElement.style.height = '100%';
+
+				}
+				options.fullScreen.camera.aspect = size.x / size.y;
+				options.fullScreen.camera.updateProjectionMatrix();
+				fullScreen = !fullScreen;
+				canvasMenu.setFullScreenButton( fullScreen );
 
 			}
-			res.camera.aspect = size.x / size.y;
-			res.camera.updateProjectionMatrix();
-			fullScreen = !fullScreen;
-			canvasMenu.setFullScreenButton( fullScreen );
+			this.onclick = function () {
+
+				if (
+					( options.stereoEffect !== undefined )
+					&& ( parseInt( stereoEffect.options.spatialMultiplex ) !== spatialMultiplexsIndexs.Mono )
+				) {
+
+					alert( 'You can not change the fullscreen mode of the canvas if stereo effect mode is stereo.' );
+					return false;//do not change the fullscreen mode of the canvas if stereo effect is stereo
+
+				}
+				if ( options.fullScreen.onFullScreenToggle !== undefined ) {
+
+					options.fullScreen.onFullScreenToggle( fullScreen );
+/*
+					var res = options.onFullScreenToggle( fullScreen );
+					if ( res === undefined ) {
+
+						console.error( 'onFullScreenToggle: please return an object' );
+						return false;
+
+					}
+					if ( res.renderer === undefined ) {
+
+						console.error( 'onFullScreenToggle: please return an object.renderer' );
+						return false;
+
+					}
+*/
+
+				}
+
+//				this.setFullScreen( res, fullScreen );
+				this.setFullScreen( fullScreen );
+				return fullScreen;
+
+			}
 
 		}
-		this.onclick = function () {
+		fullScreenSettings = new createFullScreenSettings( this );
+		this.isFullScreen = function () { return fullScreenSettings.isFullScreen(); }
+		this.setFullScreen = function ( fullScreen ) { return fullScreenSettings.setFullScreen( fullScreen ); }
+		menu.push( {
 
-			if (
-				( options.stereoEffect !== undefined )
-				&& ( parseInt( stereoEffect.options.spatialMultiplex ) !== spatialMultiplexsIndexs.Mono )
-			) {
+			style: 'float: right;',
+			id: "menuButtonFullScreen",
+			onclick: function ( event ) {
 
-				alert( 'You can not change the fullscreen mode of the canvas if stereo effect mode is stereo.' );
-				return false;//do not change the fullscreen mode of the canvas if stereo effect is stereo
-
-			}
-			if ( options.onFullScreenToggle !== undefined ) {
-
-				var res = options.onFullScreenToggle( fullScreen );
-				if ( res === undefined ) {
-
-					console.error( 'onFullScreenToggle: please return an object' );
-					return false;
-
-				}
-				if ( res.renderer === undefined ) {
-
-					console.error( 'onFullScreenToggle: please return an object.renderer' );
-					return false;
-
-				}
+				fullScreenSettings.onclick();
 
 			}
 
-			this.setFullScreen( res, fullScreen );
-			return fullScreen;
-
-		}
+		} );
 
 	}
-	var fullScreenSettings = new fullScreenSettings( this );
-	this.isFullScreen = function() { return fullScreenSettings.isFullScreen(); }
-	this.setFullScreen = function( fullScreen ) { return fullScreenSettings.setFullScreen( fullScreen ); }
-	menu.push( {
-
-		style: 'float: right;',
-		id: "menuButtonFullScreen",
-		onclick: function ( event ) {
-
-			fullScreenSettings.onclick();
-
-		}
-
-	} );
 
 	//Play slider
 	if ( options.player !== undefined ) {
@@ -306,7 +334,7 @@ function CanvasMenu( elContainer, options ) {
 
 	}
 
-	elMenu = dropdownMenuCreate( menu, {
+	elMenu = DropdownMenu.create( menu, {
 
 		elParent: typeof elContainer === "string" ? document.getElementById( elContainer) : elContainer,
 		canvas: typeof elCanvas === "string" ? document.getElementById( elCanvas ) : elCanvas,
@@ -337,7 +365,7 @@ function CanvasMenu( elContainer, options ) {
 
 	this.setFullScreenButton = function( fullScreen ) {
 
-		var elMenuButtonFullScreen = elContainer.querySelector( '#menuButtonFullScreen' );//document.getElementById( 'menuButtonFullScreen' );
+		const elMenuButtonFullScreen = elContainer.querySelector( '#menuButtonFullScreen' );//document.getElementById( 'menuButtonFullScreen' );
 		if ( elMenuButtonFullScreen === null )
 			return true;
 		if ( fullScreen ) {
@@ -420,7 +448,7 @@ function CanvasMenu( elContainer, options ) {
 			title = lang.playTitle;
 
 		}
-		var elMenuButtonPlay = elMenu.querySelector( '#menuButtonPlay' );
+		const elMenuButtonPlay = elMenu.querySelector( '#menuButtonPlay' );
 		elMenuButtonPlay.innerHTML = name;
 		elMenuButtonPlay.title = title;
 //		_renamePlayButtons( name, title, true );
@@ -428,7 +456,7 @@ function CanvasMenu( elContainer, options ) {
 	}
 	this.onChangeRepeat = function () {
 
-		var elMenuButtonRepeat = elMenu.querySelector( '#menuButtonRepeat' );
+		const elMenuButtonRepeat = elMenu.querySelector( '#menuButtonRepeat' );
 		elMenuButtonRepeat.title = options.player.getOptions().repeat ? lang.repeatOff : lang.repeatOn;
 
 	}
@@ -463,8 +491,8 @@ function CanvasMenu( elContainer, options ) {
 			}
 
 		} );
-		if( mode !== spatialMultiplexsIndexs.Mono )
-			fullScreenSettings.setFullScreen( res, false );
+		if( fullScreenSettings && ( mode !== spatialMultiplexsIndexs.Mono ) )
+			fullScreenSettings.setFullScreen( false );
 
 	}
 	this.setPlayer = function ( player ) {
