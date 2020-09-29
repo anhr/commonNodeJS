@@ -4,7 +4,8 @@ I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create
 
 ## Quick start
 
-Create your web page. [Example](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene).
+* Create a folder on your localhost named as [folderName].
+* Add your web page into [folderName]. [Example](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene).
 
 * First, import [three.js](https://github.com/anhr/three.js) in your JavaScript module.
 ```
@@ -24,8 +25,6 @@ The easiest way to use <b>MyPoints</b> in your code is import MyPoints from myPo
 import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
 ```
 or
-* Create a folder on your localhost named as [folderName].
-* Add your web page into [folderName].
 * Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
 import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
