@@ -1,396 +1,35 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="utf-8" />
-	<title>Menu</title>
+	<title>CanvasMenu</title>
 
 	<!--for mobile devices-->
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
 	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
 
-	<!--For mobile device debugging-->
-	<!--<script src="../../../nodejs/dropdownMenu/build/dropdownMenu.js"></script>-->
-	<!--For desktop debugging-->
-	<!--<script src="http://localhost/anhr/commonNodeJS/master/dropdownMenu/build/dropdownMenu.js"></script>-->
-	<!--<script src="../../build/dropdownMenu.min.js"></script>-->
-	<script src="../../build/dropdownMenu.js"></script>
-
-	<!--<script src="../../../menuPlay/build/menuPlay.js"></script>-->
-	<!--<script src="http://localhost/nodejs/menuPlay/build/menuPlay.min.js"></script>-->
-	<!--Three.js-->
-	<script src="../../../../../three.js/dev/build/three.js"></script>
-	<script src="../../../../../three.js/dev/examples/js/WebGL.js"></script>
-	<script src="../../../../../three.js/dev/examples/js/controls/OrbitControls.js"></script>
-	<script src="../../../../../three.js/dev/examples/js/math/ConvexHull.js"></script><!--for cube-->
-	<!--A lightweight graphical user interface for changing variables in JavaScript. https://github.com/dataarts/dat.gui -->
-	<script src="../../../dat.gui/CustomController/build/dat.gui.js"></script>
-	<script src="../../../dat.js"></script>
-
-	<!--<script src="/anhr/three.js/dev/examples/js/effects/StereoEffect.js"></script>-->
-	<!--<script src="../../../../commonNodeJS/master/StereoEffect/StereoEffect.js"></script>-->
-	<!--Cube-->
-	<script src="../../../../../three.js/dev/examples/js/geometries/ConvexGeometry.js"></script>
-	<!--<script src="/anhr/three.js/dev/examples/js/QuickHull.js"></script>-->
 	<!--Attention! Load controllerPlay.js file after StereoEffect.js if you want to localise controllerPlay buttons -->
-	<script src="../../../controllerPlay/build/controllerPlay.js"></script>
+	<!--<script src="../../../controllerPlay/build/controllerPlay.js"></script>-->
 	<!--<script src="/anhr/controllerPlay/build/controllerPlay.min.js"></script>-->
-	<!--Attention! Load custom.css file after dropdownMenu.js file for correctly priority of the styles-->
-	<link rel="stylesheet" href="custom.css" type="text/css">
-	<link rel="stylesheet" href="../../styles/gui.css" type="text/css">
+
+	<!-- move dat.gui into canvas-->
+	<link rel="stylesheet" href="../../../DropdownMenu/styles/gui.css" type="text/css">
+
+	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
+	<!--<link type="text/css" rel="stylesheet" href="../../../../../three.js/dev/examples/main.css">-->
 
 </head>
 	<body>
 		<p>
 			<a href='https://anhr.github.io/index.html' target="_blank">Home</a>
-			| <a href='https://github.com/anhr/DropdownMenu' target="_blank">GitHub</a>
+			| <a href='https://github.com/anhr/commonNodeJS/tree/master/canvasMenu' target="_blank">GitHub</a>
 		</p>
-		<h1>node.js version of the DropdownMenu.</h1>
-
-		<h2>Simple menu.</h2>
-		<script>
-			DropdownMenu.create( [
-
-				'Menu 1 ',
-				{
-
-					name: 'Menu 2 ',
-					items: [
-
-						'Item 2.1',
-						{
-							name: 'Item 2.2',
-							onclick: function ( event ) {
-
-								var message = 'Item 2.2 onclick';
-								//console.log( message );
-								alert( message )
-
-							}
-
-						},
-
-					],
-
-				},
-				{
-
-					name: 'Menu 3 ',
-					onclick: function ( event ) {
-
-						var message = 'Menu 3 onclick';
-						//console.log( message );
-						alert( message )
-
-					},
-
-				},
-				{
-
-					name: 'Selector ',
-					title: 'Please select menu items',
-					items: [
-
-						{
-
-							name: 'Checked',
-							checked: true,
-							onclick: function ( event ) {
-
-								var message = 'Checked onclick';
-								//console.log( message );
-								alert( message )
-
-							}
-
-						},
-						{
-
-							name: 'Radio 1',
-							radio: true,
-
-						},
-						{
-
-							name: 'Radio 2',
-							radio: true,
-							checked: true,
-
-						},
-						{
-
-							name: 'Checkbox 1',
-							checkbox: true,
-
-						},
-						{
-
-							name: 'Checkbox 2',
-							checkbox: true,
-							checked: true,
-
-						},
-						'Unselectable Item',
-
-					],
-
-				},
-
-			] );
-		</script>
-
-		<h2>Drop menu to the left or/and up.</h2>
-		<h3><a href="../../styles/Decorations/gradient.css" target="_blank">Gradient decoration</a>.</h3>
-		<script>
-			DropdownMenu.create( [
-
-				{
-
-					name: 'Drop up',
-					drop: 'up',
-					items: [
-
-						'up item 1',
-						{
-
-							name: 'up item 2',
-							onclick: function ( event ) {
-
-								var message = 'up item 2 onclick';
-								//console.log( message );
-								alert( message )
-
-							}
-
-						},
-
-					],
-
-				},
-				{
-
-					name: 'Left',
-					drop: 'left',
-					items: [
-
-						'left item 1',
-						{
-
-							name: 'left item 2',
-							onclick: function ( event ) {
-
-								var message = 'left item 2 onclick';
-								//console.log( message );
-								alert( message )
-
-							}
-
-						},
-
-					],
-
-				},
-				{
-
-					name: 'Up left',
-					drop:
-					{
-
-						left: true,
-						up: true,
-
-					},
-					items: [
-
-						'up left item 1',
-						{
-
-							name: 'up left item 2',
-							onclick: function ( event ) {
-
-								var message = 'up left item 2 onclick';
-								//console.log( message );
-								alert( message )
-
-							}
-
-						},
-
-					],
-
-				},
-				{
-
-					name: 'Radio ',
-					title: 'Please select menu items',
-					drop:
-					{
-
-						left: true,
-						up: true,
-
-					},
-					items: [
-
-						{
-
-							name: 'Radio 1',
-							radio: true,
-
-						},
-						{
-
-							name: 'Radio 2',
-							radio: true,
-							checked: true,
-
-						},
-
-					],
-
-				},
-				{
-
-					name: 'Checkbox ',
-					title: 'Please select menu items',
-					drop:
-					{
-
-						left: true,
-						up: true,
-
-					},
-					items: [
-
-						{
-
-							name: 'Checkbox 1',
-							checkbox: true,
-
-						},
-						{
-
-							name: 'Checkbox 2',
-							checkbox: true,
-							checked: true,
-
-						},
-
-					],
-
-				},
-
-			], {
-
-					decorations: 'Gradient',
-
-				} );
-		</script>
-
-	<h3><a href="custom.css" target="_blank">Custom decoration</a>.</h3>
-
-	<script>
-		DropdownMenu.create( [
-
-			{
-
-				name: 'Drop up',
-				drop: 'up',
-				items: [
-
-					'up item 1',
-					{
-
-						name: 'up item 2',
-						onclick: function ( event ) {
-
-							var message = 'up item 2 onclick';
-							//console.log( message );
-							alert( message )
-
-						}
-
-					},
-
-				],
-
-			},
-			{
-
-				name: 'Left',
-				drop: 'left',
-				items: [
-
-					'left item 1',
-					{
-
-						name: 'left item 2',
-						onclick: function ( event ) {
-
-							var message = 'left item 2 onclick';
-							//console.log( message );
-							alert( message )
-
-						}
-
-					},
-
-				],
-
-			},
-			{
-
-				name: 'Menu',
-				items: [
-
-					'Menu item 1',
-					'Menu item 2',
-
-				],
-
-			},
-			{
-
-				name: 'Up left',
-				drop:
-				{
-
-					left: true,
-					up: true,
-
-				},
-				items: [
-
-					'up left item 1',
-					{
-
-						name: 'up left item 2',
-						onclick: function ( event ) {
-
-							var message = 'up left item 2 onclick';
-							//console.log( message );
-							alert( message )
-
-						}
-
-					},
-
-				],
-
-			},
-
-		], {
-
-				decorations: 'Custom',
-
-			} );
-	</script>
-
-	<h2>
-		Dropdown menu inside <a href="https://threejs.org/" target="_blank">Three.js</a> canvas.
+	<h1>
+		<a href='https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu' target="_blank">Dropdown menu</a> inside <a href="https://threejs.org/" target="_blank">Three.js</a> canvas.
 		<a href="../../styles/Decorations/transparent.css" target="_blank"> Transparent decoration</a>.
-	</h2>
+	</h1>
 	<p>Please move mouse over canvas. Now you can see "⚭" and "⤢" buttons on the bottom of the canvas.</p>
 
 	<div class="container" id="containerDSE">
@@ -403,10 +42,19 @@
 	</div>
 	<script type="module">
 
-		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from '../../../../../three.js/dev/build/three.module.js';
-		//import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
-		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+
+		import { OrbitControls } from '../../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
+		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
+
+		//cube
+		import { ConvexBufferGeometry } from '../../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js';//https://github.com/anhr/three.js
+		//import { ConvexBufferGeometry } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/geometries/ConvexGeometry.js';
+		//import { ConvexBufferGeometry } from 'https://threejs.org/examples/jsm/geometries/ConvexGeometry.js';
+
+		import { dat } from '../../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
+		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
 		import StereoEffect from "../../../StereoEffect/StereoEffect.js";
 		import CanvasMenu from '../../../CanvasMenu/canvasMenu.js';
@@ -548,7 +196,7 @@
 			renderer.setSize( window.innerWidth / 2, window.innerHeight / 2 );
 
 			//
-			controls = new THREE.OrbitControls( camera, renderer.domElement );
+			controls = new OrbitControls( camera, renderer.domElement );
 			controls.target.set( 0, 0, 0 );
 			controls.update();
 
@@ -707,7 +355,7 @@
 
 			function addCube( cubePosition, color ) {
 
-				var cube = new THREE.Mesh( new THREE.ConvexBufferGeometry( new THREE.CubeGeometry( 0.4, 0.4, 0.4 ).vertices ),
+				var cube = new THREE.Mesh( new ConvexBufferGeometry( new THREE.CubeGeometry( 0.4, 0.4, 0.4 ).vertices ),
 					new THREE.MeshLambertMaterial( {
 						color: color,
 						/*
