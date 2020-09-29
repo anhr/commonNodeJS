@@ -4,55 +4,7 @@ My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu
 Uses in my projects:
  * [myThreejs](https://github.com/anhr/myThreejs)
 
-## Packaged Builds
-The easiest way to use CanvasMenu in your code is by using the built source at `build/canvasMenu.js`. These built JavaScript files bundle all the necessary dependencies.
-
-In your `head` tag, include the following code:
-```
-<script src="https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/build/canvasMenu.js"></script>
-```
-or
-```
-<script src="https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/build/canvasMenu.min.js"></script>
-```
-or you can import CanvasMenu from canvasMenu.js file in your JavaScript module. [Example.](https://raw.githack.com/anhr/myThreejs/master/Examples/html/)
-```
-import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
-```
-or
-* Create a folder on your localhost named as [folderName].
-* Add your web page into [folderName]. See [example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html) web page.
-* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
-```
-
-Now you can use CanvasMenu for append to the canvas.
-
-### CanvasMenu( elContainer, options );
-
-Creates new menu.
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| elContainer | <code>HTMLElement|String</code> |  | if the HTMLElement is a container element for canvas. If the String is id of a container element for canvas. |
-| [options] | <code>Object</code> |  | optional options. |
-| [options.stereoEffect] | <code>Object</code> |  | new THREE.StereoEffect(...) https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js |
-
-**Example.**  
-```
-<div id="canvasContainer"></div>
-<script>
-var stereoEffect = new THREE.StereoEffect(...);
-var playController = controllerPlay.create(...);
-var elContainer = document.getElementById( "canvasContainer" )
-new CanvasMenu( elContainer, {
-
-	stereoEffect: stereoEffect,
-
-} );
-</script>
-```
+See [CanvasMenu API](https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/jsdoc/index.html) for details.
 
 ## Directory Contents
 
