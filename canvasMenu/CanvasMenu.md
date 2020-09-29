@@ -2,7 +2,7 @@
 
 My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu) for canvas in my [three.js](https://threejs.org/) projects.
 
-[Example of using](https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/Examples/html/index.html).
+[Example of using](https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/Examples/html/index.html).
 
 ## Packaged Builds
 The easiest way to use DropdownMenu in your code is by using the built source at `build/dropdownMenu.js`.
