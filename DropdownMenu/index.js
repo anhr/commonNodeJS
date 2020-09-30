@@ -297,6 +297,10 @@ function create( arrayMenu, options ) {
 					elName.classList.add( 'radio' );
 				if ( itemItem.checkbox === true )
 					elName.classList.add( 'checkbox' );
+				if ( itemItem.id )
+					elName.id = itemItem.id;
+				if ( itemItem.title )
+					elName.title = itemItem.title;
 				elName.innerHTML = getItemName( itemItem );
 
 				if ( itemItem.checked === true )
