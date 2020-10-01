@@ -416,6 +416,8 @@ function StereoEffect( _THREE, renderer, options ) {
 				setObject( stereoEffect );
 				if ( guiParams.onChangeMode )
 					guiParams.onChangeMode( value );
+				if ( _canvasMenu )
+					_canvasMenu.setSpatialMultiplexs( value );
 
 			} );
 		dat.controllerNameAndTitle( _controllerSpatialMultiplex, _lang.spatialMultiplexName, _lang.spatialMultiplexTitle );
@@ -518,6 +520,7 @@ function StereoEffect( _THREE, renderer, options ) {
 
 	};
 
+	var _canvasMenu;
 	/**
 	 * Adds a StereoEffect's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
 	 * @function StereoEffect.
@@ -535,6 +538,7 @@ function StereoEffect( _THREE, renderer, options ) {
 	 */
 	this.createCanvasMenuItem = function ( canvasMenu, params ) {
 
+		_canvasMenu = canvasMenu;
 		params = params || {};
 		const _lang = getLang( { getLanguageCode: params.getLanguageCode, lang: params.lang } ),
 			spatialMultiplexs = Object.keys(_lang.spatialMultiplexs);
