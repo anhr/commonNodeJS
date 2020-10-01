@@ -73,6 +73,7 @@ import { dat } from '../dat/dat.module.js';
 function StereoEffect( _THREE, renderer, options ) {
 
 	setTHREE( _THREE );
+	const _this = this;
 
 	options = options || {};
 	this.options = options;
@@ -270,47 +271,10 @@ function StereoEffect( _THREE, renderer, options ) {
 
 	};
 
-	/**
-	 * Adds StereoEffects folder into dat.GUI.
-	 * @function this.
-	 * gui
-	 * @see {@link https://github.com/anhr/dat.gui|dat.gui}.
-	 * @param {GUI} gui dat.GUI object.
-	 * @param {Object} options See options of StereoEffect above for details.
-	 * @param {Object} [guiParams] the following params are available.
-	 * @param {Function} [guiParams.getLanguageCode] Your custom getLanguageCode() function.
-	 * returns the "primary language" subtag of the language version of the browser.
-	 * Examples: "en" - English language, "ru" Russian.
-	 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|Syntax} paragraph of RFC 4646 for details.
-	 * Default returns the 'en' is English language.
-	 * @param {Object} [guiParams.lang] Object with localized language values.
-	 * @param {number} [guiParams.scale] scale of allowed values. Default is 1.
-	 * @param {Object} [guiParams.cookie] Your custom cookie function for saving and loading of the StereoEffects settings. Default cookie is not saving settings.
-	 * @param {cookie} [guiParams.cookieName] Name of the cookie is "StereoEffect" + options.cookieName. Default is undefined.
-	 */
-	this.gui = function ( gui, guiParams ) {
+	//Localization
+	function getLang( params ) {
 
-		if ( gui === undefined )
-			return;
-		if ( guiParams === undefined ) guiParams = {};
-		guiParams.scale = guiParams.scale || 1;
-
-		const stereoEffect = 'StereoEffect' + ( guiParams.cookieName || '' );
-		guiParams.cookie = guiParams.cookie || new cookie.defaultCookie();
-		const optionsDefault = {
-
-			//spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.Mono,//SbS,
-			spatialMultiplex: options.spatialMultiplex,
-			eyeSep: ( new THREE.StereoCamera().eyeSep / 10 ) * options.far,
-			focus: options.focus,
-			zeroParallax: 0,
-
-		}
-		Object.freeze( optionsDefault );
-		guiParams.cookie.getObject( stereoEffect, options, optionsDefault );
-
-		//Localization
-
+		params = params || {};
 		const _lang = {
 			stereoEffects: 'Stereo effects',
 
@@ -337,8 +301,8 @@ function StereoEffect( _THREE, renderer, options ) {
 
 		};
 
-		const _languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
-			: guiParams.getLanguageCode();
+		const _languageCode = params.getLanguageCode === undefined ? 'en'//Default language is English
+			: params.getLanguageCode();
 		switch ( _languageCode ) {
 
 			case 'ru'://Russian language
@@ -366,18 +330,64 @@ function StereoEffect( _THREE, renderer, options ) {
 				_lang.defaultTitle = 'Восстановить настройки стерео эффектов по умолчанию.';
 				break;
 			default://Custom language
-				if ( ( guiParams.lang === undefined ) || ( guiParams.lang._languageCode != _languageCode ) )
+				if ( ( params.lang === undefined ) || ( params.lang._languageCode != _languageCode ) )
 					break;
 
-				Object.keys( guiParams.lang ).forEach( function ( key ) {
+				Object.keys( params.lang ).forEach( function ( key ) {
 
 					if ( _lang[key] === undefined )
 						return;
-					_lang[key] = guiParams.lang[key];
+					_lang[key] = params.lang[key];
 
 				} );
 
 		}
+		return _lang;
+
+	}
+
+	/**
+	 * Adds StereoEffects folder into dat.GUI.
+	 * @function this.
+	 * gui
+	 * @see {@link https://github.com/anhr/dat.gui|dat.gui}.
+	 * @param {GUI} gui dat.GUI object.
+	 * @param {Object} options See options of StereoEffect above for details.
+	 * @param {Object} [guiParams] the following params are available.
+	 * @param {Function} [guiParams.getLanguageCode] Your custom getLanguageCode() function.
+	 * <pre>
+ 	 * returns the "primary language" subtag of the language version of the browser.
+	 * Examples: "en" - English language, "ru" Russian.
+	 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|Syntax} paragraph of RFC 4646 for details.
+	 * Default returns the 'en' is English language.
+	 * </pre>
+ 	 * @param {Object} [guiParams.lang] Object with localized language values.
+	 * @param {number} [guiParams.scale] scale of allowed values. Default is 1.
+	 * @param {Object} [guiParams.cookie] Your custom cookie function for saving and loading of the StereoEffects settings. Default cookie is not saving settings.
+	 * @param {cookie} [guiParams.cookieName] Name of the cookie is "StereoEffect" + options.cookieName. Default is undefined.
+	 */
+	this.gui = function ( gui, guiParams ) {
+
+		if ( gui === undefined )
+			return;
+		if ( guiParams === undefined ) guiParams = {};
+		guiParams.scale = guiParams.scale || 1;
+
+		const _lang = getLang( { getLanguageCode: guiParams.getLanguageCode, lang: guiParams.lang } );
+
+		const stereoEffect = 'StereoEffect' + ( guiParams.cookieName || '' );
+		guiParams.cookie = guiParams.cookie || new cookie.defaultCookie();
+		const optionsDefault = {
+
+			//spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.Mono,//SbS,
+			spatialMultiplex: options.spatialMultiplex,
+			eyeSep: ( new THREE.StereoCamera().eyeSep / 10 ) * options.far,
+			focus: options.focus,
+			zeroParallax: 0,
+
+		}
+		Object.freeze( optionsDefault );
+		guiParams.cookie.getObject( stereoEffect, options, optionsDefault );
 
 		//
 		/*
@@ -507,6 +517,100 @@ function StereoEffect( _THREE, renderer, options ) {
 		};
 
 	};
+
+	/**
+	 * Adds a StereoEffect's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 * @function StereoEffect.
+	 * createCanvasMenuItem
+	 * @param {CanvasMenu} [canvasMenu] [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 * @param {Object} [params] the following params are available.
+	 * @param {Function} [params.getLanguageCode] Your custom getLanguageCode() function.
+	 * <pre>
+ 	 * returns the "primary language" subtag of the language version of the browser.
+	 * Examples: "en" - English language, "ru" Russian.
+	 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|Syntax} paragraph of RFC 4646 for details.
+	 * Default returns the 'en' is English language.
+	 * </pre>
+ 	 * @param {Object} [guiParams.lang] Object with localized language values.
+	 */
+	this.createCanvasMenuItem = function ( canvasMenu, params ) {
+
+		params = params || {};
+		const _lang = getLang( { getLanguageCode: params.getLanguageCode, lang: params.lang } ),
+			spatialMultiplexs = Object.keys(_lang.spatialMultiplexs);
+		return {
+
+			name: '⚭',
+			title: _lang.stereoEffects,//'Stereo effects',
+			id: 'menuButtonStereoEffects',
+			drop: 'up',
+			items: [
+
+				{
+					name: spatialMultiplexs[spatialMultiplexsIndexs.Mono],//'Mono',
+					id: 'menuButtonStereoEffectsMono',
+					radio: true,
+					checked: options.spatialMultiplex === spatialMultiplexsIndexs.Mono,
+					spatialMultiplex: spatialMultiplexsIndexs.Mono,
+					onclick: function ( event ) {
+
+						options.spatialMultiplex = spatialMultiplexsIndexs.Mono;
+/*
+						if ( stereoEffect.setSpatialMultiplex !== undefined )
+							stereoEffect.setSpatialMultiplex( spatialMultiplexsIndexs.Mono );
+						else stereoEffect.options.spatialMultiplex = spatialMultiplexsIndexs.Mono;
+*/
+
+					}
+				},
+				{
+					name: spatialMultiplexs[spatialMultiplexsIndexs.SbS],//'Side by side',
+					id: 'menuButtonStereoEffectsSbS',
+					radio: true,
+					checked: options.spatialMultiplex === spatialMultiplexsIndexs.SbS,
+					spatialMultiplex: spatialMultiplexsIndexs.SbS,
+					onclick: function ( event ) {
+
+						options.spatialMultiplex = spatialMultiplexsIndexs.SbS;
+						if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
+/*						
+						if ( stereoEffect.setSpatialMultiplex !== undefined )
+							stereoEffect.setSpatialMultiplex( spatialMultiplexsIndexs.SbS );
+						else stereoEffect.options.spatialMultiplex = spatialMultiplexsIndexs.SbS;
+						//						setFullScreenButton( true );
+						if ( options.fullScreen && options.fullScreen.onFullScreen )
+							options.fullScreen.onFullScreen( true );
+*/							
+
+					}
+				},
+				{
+					name: spatialMultiplexs[spatialMultiplexsIndexs.TaB],//'Top and bottom',
+					id: 'menuButtonStereoEffectsTaB',
+					radio: true,
+					checked: options.spatialMultiplex === spatialMultiplexsIndexs.TaB,
+					spatialMultiplex: spatialMultiplexsIndexs.TaB,
+					onclick: function ( event ) {
+
+						options.spatialMultiplex = spatialMultiplexsIndexs.TaB;
+						canvasMenu.setFullScreen( false );
+/*
+						if ( stereoEffect.setSpatialMultiplex !== undefined )
+							stereoEffect.setSpatialMultiplex( spatialMultiplexsIndexs.TaB );
+						else stereoEffect.options.spatialMultiplex = spatialMultiplexsIndexs.TaB;
+						//						setFullScreenButton( true );
+						if ( options.onFullScreen )
+							options.onFullScreen( true );
+*/
+
+					}
+				},
+
+			],
+
+		}
+
+	}
 
 };
 
