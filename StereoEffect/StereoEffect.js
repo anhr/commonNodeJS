@@ -555,11 +555,6 @@ function StereoEffect( _THREE, renderer, options ) {
 					onclick: function ( event ) {
 
 						options.spatialMultiplex = spatialMultiplexsIndexs.Mono;
-/*
-						if ( stereoEffect.setSpatialMultiplex !== undefined )
-							stereoEffect.setSpatialMultiplex( spatialMultiplexsIndexs.Mono );
-						else stereoEffect.options.spatialMultiplex = spatialMultiplexsIndexs.Mono;
-*/
 
 					}
 				},
@@ -573,14 +568,6 @@ function StereoEffect( _THREE, renderer, options ) {
 
 						options.spatialMultiplex = spatialMultiplexsIndexs.SbS;
 						if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
-/*						
-						if ( stereoEffect.setSpatialMultiplex !== undefined )
-							stereoEffect.setSpatialMultiplex( spatialMultiplexsIndexs.SbS );
-						else stereoEffect.options.spatialMultiplex = spatialMultiplexsIndexs.SbS;
-						//						setFullScreenButton( true );
-						if ( options.fullScreen && options.fullScreen.onFullScreen )
-							options.fullScreen.onFullScreen( true );
-*/							
 
 					}
 				},
@@ -593,15 +580,7 @@ function StereoEffect( _THREE, renderer, options ) {
 					onclick: function ( event ) {
 
 						options.spatialMultiplex = spatialMultiplexsIndexs.TaB;
-						canvasMenu.setFullScreen( false );
-/*
-						if ( stereoEffect.setSpatialMultiplex !== undefined )
-							stereoEffect.setSpatialMultiplex( spatialMultiplexsIndexs.TaB );
-						else stereoEffect.options.spatialMultiplex = spatialMultiplexsIndexs.TaB;
-						//						setFullScreenButton( true );
-						if ( options.onFullScreen )
-							options.onFullScreen( true );
-*/
+						if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
 
 					}
 				},

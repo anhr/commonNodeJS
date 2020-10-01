@@ -52,7 +52,8 @@ arrayPath = currentScriptPath.split( /(.*)(\/canvasMenu)/ );
 if ( arrayPath[2] === '/canvasMenu' ) currentScriptPath = arrayPath[1] + '/DropdownMenu';
 
 //Attention! Load menu.css file before other css files for correctly priority of the styles
-loadScript.sync( currentScriptPath + '/styles/menu.css', optionsStyle );
+loadScript.sync( currentScriptPath + '/styles/menu.css', optionsStyle );//move dat.gui into canvas
+loadScript.sync( currentScriptPath + '/styles/gui.css', optionsStyle );//move dat.gui into canvas
 loadScript.sync( currentScriptPath + '/styles/Decorations/transparent.css', optionsStyle );
 loadScript.sync( currentScriptPath + '/styles/Decorations/gradient.css', optionsStyle );
 /*
