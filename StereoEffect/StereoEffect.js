@@ -32,18 +32,15 @@ import cookie from '../cookieNodeJS/cookie.js';
 import { dat } from '../dat/dat.module.js';
 //import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
-//Attenttion!!! Save this file as UTF-8 for localization.
+import createFullScreenSettings from '../createFullScreenSettings.js';
 
-/**
- * @callback onFullScreen
- * @param {boolean} fullScreen true - go to full screen mode. false - restore from full screen mode.
- */
+//Attenttion!!! Save this file as UTF-8 for localization.
 
 /**
  * StereoEffect
  * Uses dual PerspectiveCameras for Parallax Barrier https://en.wikipedia.org/wiki/Parallax_barrier effects
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
- * @param {Object} renderer {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer}
+ * @param {THREE.WebGLRenderer} renderer {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer}
  * @param {Object} [options] the following options are available.
  * @param {Object} [options.spatialMultiplex=spatialMultiplexsIndexs.Mono] spatial multiplex
  * <pre>
@@ -60,12 +57,10 @@ import { dat } from '../dat/dat.module.js';
  *
  * 	Example - spatialMultiplex: spatialMultiplexsIndexs.Mono
  * </pre>
- * @param {Object} [options.camera] THREE.PerspectiveCamera. Use the camera key if you want control cameras focus.
+ * @param {THREE.PerspectiveCamera} [options.camera] Use the camera key if you want control cameras focus.
  * @param {Object} [options.far=10] Camera frustum far plane. The far key uses for correct calculation default values of Eye separation.
  * @param {Object} [options.stereoAspect=1] THREE.StereoCamera.aspect. Camera frustum aspect ratio.
- * @param {boolean} [options.rememberSize] true - remember default size of the canvas.
- * @param {onFullScreen} [options.onFullScreen] Full screen event.
- * See [onFullScreen(fullScreen)]{@link module-StereoEffect#~onFullScreen} in the Type Definitions below.
+ * @param {boolean} [options.rememberSize] true - remember default size of the canvas. Resize of the canvas to full screen for stereo mode and restore to default size if no stereo effacts.
  * @param {HTMLElement} [options.elParent] parent of the canvas.
  * Use only if you use {@link https://threejs.org/docs/index.html#api/en/core/Raycaster|THREE.Raycaster} (working out what objects in the 3d space the mouse is over)
  * and your canvas is not full screen.
@@ -115,12 +110,6 @@ function StereoEffect( _THREE, renderer, options ) {
 
 	this.setEyeSeparation( options.eyeSep );
 
-	this.setSize = function ( width, height ) {
-
-		renderer.setSize( width, height );
-
-	};
-
 	this.getRendererSize = function () {
 
 		const el = options.elParent || renderer.domElement,
@@ -139,7 +128,7 @@ function StereoEffect( _THREE, renderer, options ) {
 			size = new THREE.Vector2();
 		renderer.getSize( size );
 		return {
-
+/*
 			fullScreen: function () {
 
 				const size = new THREE.Vector2();
@@ -175,6 +164,7 @@ function StereoEffect( _THREE, renderer, options ) {
 				options.camera.updateProjectionMatrix();
 
 			},
+*/
 			getMousePosition: function ( mouse, event ) {
 
 				mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
@@ -183,6 +173,12 @@ function StereoEffect( _THREE, renderer, options ) {
 			},
 
 		};
+
+	};
+/*
+	this.setSize = function ( width, height ) {
+
+		renderer.setSize( width, height );
 
 	};
 
@@ -201,8 +197,29 @@ function StereoEffect( _THREE, renderer, options ) {
 		return fullScreen;
 
 	}
-
+*/
+	var fullScreenSettings;
+	/*
+						this.isFullScreen = function () { return fullScreenSettings.isFullScreen(); }
+						this.setFullScreen = function ( fullScreen ) { return fullScreenSettings.setFullScreen( fullScreen ); }
+	*/
+	var spatialMultiplexCur;
 	this.render = function ( scene, camera ) {
+
+		const spatialMultiplex = parseInt( options.spatialMultiplex );
+
+		if ( options.rememberSize && !fullScreenSettings ) { 
+
+			if ( _canvasMenu && _canvasMenu.getFullScreenSettings )
+				fullScreenSettings = _canvasMenu.getFullScreenSettings( this );
+			else fullScreenSettings = new createFullScreenSettings( THREE, renderer, camera,
+				{
+					canvasMenu: _canvasMenu,
+					stereoEffect: this,
+
+				} );
+
+		}
 
 		scene.updateMatrixWorld();
 
@@ -215,42 +232,62 @@ function StereoEffect( _THREE, renderer, options ) {
 		renderer.setScissorTest( true );
 
 		var xL, yL, widthL, heightL,
-			xR, yR, widthR, heightR,
-			parallax = options.zeroParallax,
-			spatialMultiplex = parseInt( options.spatialMultiplex );
+			xR, yR, widthR, heightR;
+		const parallax = options.zeroParallax;
+		function setFullScreen( fullScreen, stereoEffect ){
+
+			if ( !fullScreenSettings || ( spatialMultiplexCur === spatialMultiplex ) )
+				return;
+			fullScreenSettings.setFullScreen( fullScreen );
+			spatialMultiplexCur = spatialMultiplex;
+			if ( stereoEffect.setControllerSpatialMultiplex ) stereoEffect.setControllerSpatialMultiplex( spatialMultiplex );
+
+		}
 
 		switch ( spatialMultiplex ) {
 
 			case spatialMultiplexsIndexs.Mono://Mono
 
+/*
 				if ( !fullScreen && ( rendererSizeDefault !== undefined ) )
 					rendererSizeDefault.restore();
+*/
 
 				renderer.setScissor( 0, 0, size.width, size.height );
 				renderer.setViewport( 0, 0, size.width, size.height );
 				renderer.render( scene, camera );
 				renderer.setScissorTest( false );
+
+				setFullScreen( true, this );
+
 				return;
 
 			case spatialMultiplexsIndexs.SbS://'Side by side'
 
+/*
 				if ( rendererSizeDefault !== undefined )
 					rendererSizeDefault.fullScreen();
-
+*/
 				const _width = size.width / 2;
 
 				xL = 0 + parallax; yL = 0; widthL = _width; heightL = size.height;
 				xR = _width - parallax; yR = 0; widthR = _width; heightR = size.height;
 
+				setFullScreen( false, this );
+
 				break;
 
 			case spatialMultiplexsIndexs.TaB://'Top and bottom'
 
+/*
 				if ( rendererSizeDefault !== undefined )
 					rendererSizeDefault.fullScreen();
+*/
 
 				xL = 0 + parallax; yL = 0; widthL = size.width; heightL = size.height / 2;
 				xR = 0 - parallax; yR = size.height / 2; widthR = size.width; heightR = size.height / 2;
+
+				setFullScreen( false, this );
 
 				break;
 			default: console.error( 'THREE.StereoEffect.render: Invalid "Spatial  multiplex" parameter: ' + spatialMultiplex );
@@ -421,12 +458,15 @@ function StereoEffect( _THREE, renderer, options ) {
 
 			} );
 		dat.controllerNameAndTitle( _controllerSpatialMultiplex, _lang.spatialMultiplexName, _lang.spatialMultiplexTitle );
+		this.setControllerSpatialMultiplex = function( index ) { _controllerSpatialMultiplex.setValue( index ); }
+/*		
 		if ( guiParams.stereoEffect )
 			guiParams.stereoEffect.setSpatialMultiplex = function ( index ) {
 
 				_controllerSpatialMultiplex.setValue( index );
 
 			}
+*/			
 
 		//eyeSeparation
 		//http://paulbourke.net/papers/vsmm2007/stereoscopy_workshop.pdf
@@ -571,7 +611,8 @@ function StereoEffect( _THREE, renderer, options ) {
 					onclick: function ( event ) {
 
 						options.spatialMultiplex = spatialMultiplexsIndexs.SbS;
-						if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
+						//fullScreenSettings.setFullScreen( false );
+						//if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
 
 					}
 				},
