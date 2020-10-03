@@ -19,7 +19,10 @@ import { lang } from '../controllerPlay/index.js';
 //import { create as dropdownMenuCreate } from '../DropdownMenu/index.js';
 import DropdownMenu from '../DropdownMenu/dropdownMenu.js';
 
-//Please download https://github.com/anhr/three.js to '../../DropdownMenu/master/' folder
+//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+import StereoEffect from '../StereoEffect/StereoEffect.js';
+
+import createFullScreenSettings from '../createFullScreenSettings.js';
 
 /**
  * @callback onFullScreen
@@ -36,6 +39,7 @@ import DropdownMenu from '../DropdownMenu/dropdownMenu.js';
  * Create [dropdown menu]{@link https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu} for canvas in my [three.js]{@link https://threejs.org/} projects.
  * @param {HTMLElement|string} elContainer if the <b>HTMLElement</b>, is a container element for canvas. If the <b>string</b>, is id of a container element for canvas.
  * @param {object} [options] followed options is available
+ * @param {Array} [options.menu] menu array. See <b>arrayMenu</b> of the [DropdownMenu.create]{@link https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/jsdoc/module-DropdownMenu.html#~create}
  * @param {Object} [options.stereoEffect] new [StereoEffect(...)]{@link https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md}.
  * @param {Object} [options.player] new [Player(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}. Playing of 3D ojbects in my projects.
  * @param {Object} [options.fullScreen] Add a "Full Screen" button
@@ -44,6 +48,7 @@ import DropdownMenu from '../DropdownMenu/dropdownMenu.js';
  * @param {THREE} [options.THREE] THREE {@link https://github.com/anhr/three.js|THREE}.
  */
 function CanvasMenu( elContainer, options ) {
+	
 	
 
 	const elCanvas = elContainer.querySelector( 'canvas' );
@@ -60,19 +65,15 @@ function CanvasMenu( elContainer, options ) {
 
 	}
 */
+	options.menu = options.menu || [];
+	var menuItemStereoEffect;
 	var stereoEffect, spatialMultiplexsIndexs;
 	if ( options.stereoEffect !== undefined ) {
 
+		menuItemStereoEffect = options.stereoEffect.createCanvasMenuItem( this );
+/*
 		spatialMultiplexsIndexs = options.stereoEffect.spatialMultiplexsIndexs;
 		stereoEffect = options.stereoEffect.stereoEffect;
-
-	}
-
-	const menu = [];
-	var menuItemStereoEffect;
-
-	//stereoEffect
-	if ( options.stereoEffect ) {
 
 		menuItemStereoEffect = {
 
@@ -129,14 +130,15 @@ function CanvasMenu( elContainer, options ) {
 			],
 
 		}
-		menu.push( menuItemStereoEffect );
+*/
+		options.menu.push( menuItemStereoEffect );
 
 	}
 
 	if ( options.player !== undefined ) {
 
 		//Previous button
-		menu.push( {
+		options.menu.push( {
 
 			name: lang.prevSymbol,
 			title: lang.prevSymbolTitle,
@@ -149,7 +151,7 @@ function CanvasMenu( elContainer, options ) {
 		} );
 
 		//Play button
-		menu.push( {
+		options.menu.push( {
 
 			name: lang.playSymbol,
 			title: lang.playTitle,
@@ -164,7 +166,7 @@ function CanvasMenu( elContainer, options ) {
 		} );
 
 		//Repeat button
-		menu.push( {
+		options.menu.push( {
 
 			name: lang.repeat,
 			title: options.player.getOptions().repeat ? lang.repeatOff : lang.repeatOn,
@@ -179,7 +181,7 @@ function CanvasMenu( elContainer, options ) {
 		} );
 
 		//Next button
-		menu.push( {
+		options.menu.push( {
 
 			name: lang.nextSymbol,
 			title: lang.nextSymbolTitle,
@@ -209,7 +211,7 @@ function CanvasMenu( elContainer, options ) {
 			return;
 			
 		}
-
+/*
 		function createFullScreenSettings( canvasMenu ) {
 
 			var fullScreen = false, style;
@@ -269,31 +271,18 @@ function CanvasMenu( elContainer, options ) {
 
 				if (
 					( options.stereoEffect !== undefined )
-					&& ( parseInt( stereoEffect.options.spatialMultiplex ) !== spatialMultiplexsIndexs.Mono )
+					&& ( parseInt( options.stereoEffect.options.spatialMultiplex ) !== StereoEffect.spatialMultiplexsIndexs.Mono )
 				) {
 
-					alert( 'You can not change the fullscreen mode of the canvas if stereo effect mode is stereo.' );
-					return false;//do not change the fullscreen mode of the canvas if stereo effect is stereo
+//					options.stereoEffect.options.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
+					elMenu.querySelector( '#menuButtonStereoEffectsMono' ).click();
+//					elMenu.querySelector( '#menuButtonStereoEffectsMono' ).classList.add('checked');
+//					elMenu.querySelector( '#menuButtonStereoEffectsMono' ).checked = true;
 
 				}
 				if ( options.fullScreen.onFullScreenToggle !== undefined ) {
 
 					options.fullScreen.onFullScreenToggle( fullScreen );
-/*
-					var res = options.onFullScreenToggle( fullScreen );
-					if ( res === undefined ) {
-
-						console.error( 'onFullScreenToggle: please return an object' );
-						return false;
-
-					}
-					if ( res.renderer === undefined ) {
-
-						console.error( 'onFullScreenToggle: please return an object.renderer' );
-						return false;
-
-					}
-*/
 
 				}
 
@@ -304,10 +293,23 @@ function CanvasMenu( elContainer, options ) {
 			}
 
 		}
-		fullScreenSettings = new createFullScreenSettings( this );
+*/
+		fullScreenSettings = new createFullScreenSettings( options.THREE, options.fullScreen.renderer, options.fullScreen.camera,
+			{
+
+				canvasMenu: this,
+				fullScreen: options.fullScreen,
+
+			} );
+		this.getFullScreenSettings = function( stereoEffect ) {
+
+			fullScreenSettings.setStereoEffect( stereoEffect );
+			return fullScreenSettings;
+
+		}
 		this.isFullScreen = function () { return fullScreenSettings.isFullScreen(); }
 		this.setFullScreen = function ( fullScreen ) { return fullScreenSettings.setFullScreen( fullScreen ); }
-		menu.push( {
+		options.menu.push( {
 
 			style: 'float: right;',
 			id: "menuButtonFullScreen",
@@ -324,7 +326,7 @@ function CanvasMenu( elContainer, options ) {
 	//Play slider
 	if ( options.player !== undefined ) {
 
-		menu.push( {
+		options.menu.push( {
 
 			name: '<input type="range" min="0" max="' + ( options.player.getSettings().marks - 1 ) + '" value="0" class="slider" id="sliderPosition">',
 			style: 'float: right;',
@@ -334,7 +336,7 @@ function CanvasMenu( elContainer, options ) {
 
 	}
 
-	elMenu = DropdownMenu.create( menu, {
+	elMenu = DropdownMenu.create( options.menu, {
 
 		elParent: typeof elContainer === "string" ? document.getElementById( elContainer) : elContainer,
 		canvas: typeof elCanvas === "string" ? document.getElementById( elCanvas ) : elCanvas,
@@ -363,27 +365,33 @@ function CanvasMenu( elContainer, options ) {
 
 	}
 
-	this.setFullScreenButton = function( fullScreen ) {
+	if ( options.fullScreen ) {
 
-		const elMenuButtonFullScreen = elContainer.querySelector( '#menuButtonFullScreen' );//document.getElementById( 'menuButtonFullScreen' );
-		if ( elMenuButtonFullScreen === null )
+		this.setFullScreenButton = function ( fullScreen ) {
+
+			const elMenuButtonFullScreen = elContainer.querySelector( '#menuButtonFullScreen' );//document.getElementById( 'menuButtonFullScreen' );
+			if ( elMenuButtonFullScreen === null )
+				return true;
+			if ( fullScreen ) {
+
+				elMenuButtonFullScreen.innerHTML = '⤦';
+				elMenuButtonFullScreen.title = lang.nonFullScreen;
+
+			} else {
+
+				elMenuButtonFullScreen.innerHTML = '⤢';
+				elMenuButtonFullScreen.title = lang.fullScreen;
+
+			}
 			return true;
-		if ( fullScreen ) {
-
-			elMenuButtonFullScreen.innerHTML = '⤦';
-			elMenuButtonFullScreen.title = lang.nonFullScreen;
-
-		} else {
-
-			elMenuButtonFullScreen.innerHTML = '⤢';
-			elMenuButtonFullScreen.title = lang.fullScreen;
 
 		}
-		return true;
+		this.setFullScreenButton();
+
+		if ( options.stereoEffect && ( options.stereoEffect.options.spatialMultiplex !== StereoEffect.spatialMultiplexsIndexs.Mono ) )
+			this.setFullScreen( false );
 
 	}
-//	this.setFullScreenButton = setFullScreenButton;
-	this.setFullScreenButton();
 
 	/**
 	 * sets size of the slider element of the menu
@@ -476,7 +484,7 @@ function CanvasMenu( elContainer, options ) {
 //		this.setIndex( 0, scale.name + ': ' + scale.min );
 
 	}
-	this.setSpatialMultiplexs = function ( mode, res ) {
+	this.setSpatialMultiplexs = function ( mode ) {
 
 		menuItemStereoEffect.items.forEach( function ( item ) {
 
@@ -491,8 +499,17 @@ function CanvasMenu( elContainer, options ) {
 			}
 
 		} );
-		if( fullScreenSettings && ( mode !== spatialMultiplexsIndexs.Mono ) )
+/*
+//setFullScreen вызывается в 
+//if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
+//в
+//StereoEffect.createCanvasMenuItem
+
+if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );	
+//		if( fullScreenSettings && ( mode !== spatialMultiplexsIndexs.Mono ) )
+		if( fullScreenSettings && ( options.stereoEffect.options.spatialMultiplex !== StereoEffect.spatialMultiplexsIndexs.Mono ) )
 			fullScreenSettings.setFullScreen( false );
+*/			
 
 	}
 	this.setPlayer = function ( player ) {
