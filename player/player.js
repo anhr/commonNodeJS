@@ -25,6 +25,8 @@ import ColorPicker from '../colorpicker/colorpicker.js';
 //import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 //ColorPicker.palette.setTHREE( THREE );
 
+import { lang } from '../controllerPlay/index.js';
+
 var settings;
 
 /**
@@ -360,6 +362,62 @@ function Player( onSelectScene, options ) {
 
 	}
 
+	//Localization
+	function getLang( params ) {
+
+		params = params || {};
+		const lang = {
+
+			player: 'Player',
+			playerTitle: '3D objects animation.',
+
+			min: 'Min',
+			max: 'Max',
+
+			marks: 'Frames',
+			marksTitle: 'Player frames count',
+
+			defaultButton: 'Default',
+			defaultTitle: 'Restore default player settings.',
+
+		};
+
+		const _languageCode = params.getLanguageCode === undefined ? 'en'//Default language is English
+			: params.getLanguageCode();
+		switch ( _languageCode ) {
+
+			case 'ru'://Russian language
+
+				lang.player = 'Проигрыватель';
+				lang.playerTitle = 'Анимация 3D объектов.';
+
+				lang.min = 'Минимум';
+				lang.max = 'Максимум';
+
+				lang.marks = 'Кадры';
+				lang.marksTitle = 'Количество кадров проигрывателя';
+
+				lang.defaultButton = 'Восстановить';
+				lang.defaultTitle = 'Восстановить настройки проигрывателя по умолчанию.';
+
+				break;
+			default://Custom language
+				if ( ( params.lang === undefined ) || ( params.lang._languageCode != _languageCode ) )
+					break;
+
+				Object.keys( params.lang ).forEach( function ( key ) {
+
+					if ( _lang[key] === undefined )
+						return;
+					_lang[key] = params.lang[key];
+
+				} );
+
+		}
+		return lang;
+
+	}
+
 	/**
 	 * Adds a Player's controllers into [dat.gui]{@link https://github.com/anhr/dat.gui}.
 	 * @function Player.
@@ -375,8 +433,13 @@ function Player( onSelectScene, options ) {
 	 */
 	this.gui = function ( folder, getLanguageCode ) {
 
-//		settings.t = scalesT;
+		const lang = getLang( {
 
+			getLanguageCode: getLanguageCode,
+			//lang: guiParams.lang
+
+		} );
+/*
 		//Localization
 
 		var lang = {
@@ -429,7 +492,7 @@ function Player( onSelectScene, options ) {
 		}
 
 		//
-
+*/
 		var fPlayer = folder.addFolder( lang.player );
 		dat.folderNameAndTitle( fPlayer, lang.player, lang.playerTitle );
 
@@ -552,6 +615,76 @@ function Player( onSelectScene, options ) {
 
 		}
 		scale();
+
+	}
+
+	/**
+	 * Adds a Player's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 * @function Player.
+	 * createCanvasMenuItem
+	 * @param {CanvasMenu} CanvasMenu [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 */
+	this.createCanvasMenuItem = function ( menu/*, params*/ ) {
+
+/*
+		params = params || {};
+		const lang = getLang( { getLanguageCode: params.getLanguageCode, lang: params.lang } );
+*/		
+		//Previous button
+		menu.push( {
+
+			name: lang.prevSymbol,
+			title: lang.prevSymbolTitle,
+			onclick: function ( event ) {
+
+				options.player.prev();
+
+			}
+
+		} );
+
+		//Play button
+		menu.push( {
+
+			name: lang.playSymbol,
+			title: lang.playTitle,
+			id: "menuButtonPlay",
+			onclick: function ( event ) {
+
+				options.player.play3DObject();
+				//				playController.play();
+
+			}
+
+		} );
+
+		//Repeat button
+		menu.push( {
+
+			name: lang.repeat,
+			title: this.getOptions().repeat ? lang.repeatOff : lang.repeatOn,
+			id: "menuButtonRepeat",
+			onclick: function ( event ) {
+
+				//				playController.repeat();
+				options.player.repeat();
+
+			}
+
+		} );
+
+		//Next button
+		menu.push( {
+
+			name: lang.nextSymbol,
+			title: lang.nextSymbolTitle,
+			onclick: function ( event ) {
+
+				options.player.next();
+
+			}
+
+		} );
 
 	}
 
