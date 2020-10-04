@@ -46,12 +46,17 @@ import createFullScreenSettings from '../createFullScreenSettings.js';
  * @param {onFullScreen} [options.fullScreen.onFullScreen] fullscreen mode of the canvas.
  * @param {onFullScreenToggle} [options.fullScreen.onFullScreenToggle] user toggled fullscreen mode of the canvas.
  * @param {THREE} [options.THREE] THREE {@link https://github.com/anhr/three.js|THREE}.
+ * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
  */
 function CanvasMenu( elContainer, options ) {
 	
-	
-
 	const elCanvas = elContainer.querySelector( 'canvas' );
+	if ( !elCanvas ){
+
+		console.error( 'CanvasMenu: elCanvas = ' + elCanvas );
+		return;
+		
+	}
 
 	options = options || {};
 
@@ -70,7 +75,7 @@ function CanvasMenu( elContainer, options ) {
 	var stereoEffect, spatialMultiplexsIndexs;
 	if ( options.stereoEffect !== undefined ) {
 
-		menuItemStereoEffect = options.stereoEffect.createCanvasMenuItem( this );
+		menuItemStereoEffect = options.stereoEffect.createCanvasMenuItem( this, { getLanguageCode: options.getLanguageCode } );
 /*
 		spatialMultiplexsIndexs = options.stereoEffect.spatialMultiplexsIndexs;
 		stereoEffect = options.stereoEffect.stereoEffect;
@@ -137,6 +142,7 @@ function CanvasMenu( elContainer, options ) {
 
 	if ( options.player !== undefined ) {
 
+		//options.player.createCanvasMenuItem( options.menu );
 		//Previous button
 		options.menu.push( {
 
