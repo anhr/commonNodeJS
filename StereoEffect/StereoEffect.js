@@ -313,6 +313,7 @@ function StereoEffect( _THREE, renderer, options ) {
 
 		params = params || {};
 		const _lang = {
+
 			stereoEffects: 'Stereo effects',
 
 			spatialMultiplexName: 'Spatial  multiplex',
@@ -343,6 +344,7 @@ function StereoEffect( _THREE, renderer, options ) {
 		switch ( _languageCode ) {
 
 			case 'ru'://Russian language
+
 				_lang.stereoEffects = 'Стерео эффекты';//'Stereo effects'
 
 				_lang.spatialMultiplexName = 'Мультиплекс';//'Spatial  multiplex'
@@ -365,6 +367,7 @@ function StereoEffect( _THREE, renderer, options ) {
 
 				_lang.defaultButton = 'Восстановить';
 				_lang.defaultTitle = 'Восстановить настройки стерео эффектов по умолчанию.';
+
 				break;
 			default://Custom language
 				if ( ( params.lang === undefined ) || ( params.lang._languageCode != _languageCode ) )
