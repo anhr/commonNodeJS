@@ -26,10 +26,10 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * @param {array} arrayFuncs points.geometry.attributes.position array.
  * See arrayFuncs parametr of the [Player.getColors(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors} for details.
  * @param {THREE.Group} group Group for new points
- * @param {object} [settings] followed options is available
+ * @param {object} [settings] the following options are available
  * @param {Player} [settings.Player] [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}.
  * Define Player only if you want move or/and you want change color of the points during playing.
- * @param {object} [settings.options] followed options is available
+ * @param {object} [settings.options] the following options are available
  * @param {number} [settings.options.point.size=5.0] point size.
  * @param {object} [settings.options.scales.w] followed w axis scale params is available
  * @param {object} [settings.options.scales.w.min=0] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.

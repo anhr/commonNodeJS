@@ -83,7 +83,7 @@ loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/Decora
  * @param {boolean} [arrayMenu.checkbox] true - defines a checkbox menu item.
  * @param {boolean} [arrayMenu.checked] true - checked state of a checkbox or radio menu item.
  *
- * @param {Object} [options] followed options is available.
+ * @param {Object} [options] the following options are available.
  * @param {HTMLElement} [options.elParent="body" element] Parent element of new menu.
  * @param {HTMLElement} [options.canvas] canvas element. Use if you want put a menu inside a canvas. See "button inside canvas" example below for details.
  * @param {String} [options.decorations] You can decorate your menu by a built-in style or use your custom style. Currently two built-in styles is available:

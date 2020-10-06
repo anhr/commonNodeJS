@@ -221,7 +221,7 @@ function myRequest( options ) {
 /**
  * Synchronous load file
  * @param {string} url URL of an external file.
- * @param {Object} [options] followed options is available. Optional.
+ * @param {Object} [options] the following options are available.
  * @param {Function} [options.onload] function () The onload event occurs when a script has been loaded. Optional.
  * @param {onerror} [options.onerror] function ( str ) The onerror event occurs when an error has been occured. Optional.
  * @returns {string} file content

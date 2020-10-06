@@ -20,7 +20,7 @@ import { dat } from './dat/dat.module.js';
  * OrbitControls graphical user interface
  * @param {GUI} gui instance of the dat.GUI
  * @param {any} orbitControls
- * @param {object} [options] followed options is available:
+ * @param {object} [options] the following options are available:
  */
 var OrbitControlsGui = function ( gui, orbitControls, options ) {
 	

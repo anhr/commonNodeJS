@@ -24,7 +24,7 @@ class PositionController extends controllers.CustomController {
 	/**
 	 * dat.GUI graphical user interface for control of the position of threejs 3D object
 	 * @param {Event} onclickController
-	 * @param {object} [options] followed options is available:
+	 * @param {object} [options] the following options are available:
 	 * @param {number} [options.settings] time settings.
 	 * @param {number} [options.settings.offset] offset. Default is 0.1
 	 * @param {number} [options.min] Minimal offset. Default is 0.1

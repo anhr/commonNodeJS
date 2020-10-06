@@ -32,7 +32,7 @@ class ScaleController extends controllers.CustomController {
 	/**
 	 * @description dat.GUI graphical user interface controller for control of the scale of threejs 3D object
 	 * @param {onclick} onclick Called whenever user has clicked this controller.
-	 * @param {object} [options] followed options is available:
+	 * @param {object} [options] the following options are available:
 	 * @param {object} [options.settings] settings.
 	 * @param {number} [options.settings.zoomMultiplier] control value. Default is 1.1
 	 * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
@@ -177,7 +177,7 @@ export default ScaleController;
  * @param {Object} object The object to be manipulated
  * @param {String} property The name of the property to be manipulated
  * @param {function( value )} onChange Callback function that take the new  property of the object
- * @param {Object} [options] followed options is available
+ * @param {Object} [options] the following options are available
  * @param {object} [options.settings] settings.
  * @param {number} [options.settings.zoomMultiplier] control value. Default is 1.1
  * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English

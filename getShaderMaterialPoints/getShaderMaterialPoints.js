@@ -126,7 +126,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady,
 		 * @param {String} vertex_url URL to the vertex shader code.
 		 * @param {String} fragment_url URL to fragment shader code
 		 * @param {function(String, String)} onLoad Callback function(vertex, fragment) that take as input the loaded vertex and fragment contents.
-		 * @param {object} [options] followed options is available
+		 * @param {object} [options] the following options are available
 		 * @param {function(event)} [options.onProgress] Callback for the `onProgress` event.
 		 * @param {function(event)} [options.onError] Callback for the `onError` event.
 		 */

@@ -17,7 +17,7 @@ var UpDownController = {
 	/**
 	 * adds new button into controller
 	 * @param {string} innerHTML button name
-	 * @param {object} [options] followed options is available
+	 * @param {object} [options] the following options are available
 	 * @param {String} [options.title] title of the button
 	 * @param {Event} [options.onclick] onclick event
 	 * @param {Event} [options.onWheel] onWheel event

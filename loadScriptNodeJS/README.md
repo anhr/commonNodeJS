@@ -26,7 +26,7 @@ Asynchronous load JavaScript file.
 
 	src: URL of an external script file or array of the script file names.
 
-	options: followed options is available
+	options: the following options are available
 
 		[onload]: function () The onload event occurs when a script has been loaded. Default is undefined.
 
@@ -107,7 +107,7 @@ Synchronous load JavaScript file.
 
 	src: URL of an external script file or array of the script file names.
 
-	options: followed options is available
+	options: the following options are available
 
 		[onload]: function () The onload event occurs when a script has been loaded. Default is undefined.
 

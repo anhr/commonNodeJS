@@ -26,7 +26,7 @@ import { sync as loadFileSync, escapeHtml } from '../loadFileNodeJS/index.js';
 /**
  * Synchronous load JavaScript file
  * @param {string} src URL of an external script file.
- * @param {Object} [options] followed options is available. Optional.
+ * @param {Object} [options] the following options are available.
  * @param {Function} [options.onload] function () The onload event occurs when a script has been loaded. Optional.
  * @param {onerror} [options.onerror] function ( str ) The onerror event occurs when an error has been occured. Optional.
  * @param {string}[options.appendTo] The node to which the new script will be append. Optional. Default is head node
@@ -153,7 +153,7 @@ function sync( src, options ) {
 /**
  * Asynchronous load JavaScript file
  * @param {string|string[]} src URL of an external script file or array of the script file names.
- * @param {Object} [options] followed options is available. Optional.
+ * @param {Object} [options] the following options are available.
  * @param {Function} [options.onload] function () The onload event occurs when a script has been loaded. Optional.
  * @param {onerrorasync} [options.onerror] function ( str, e ) The onerror event occurs when an error has been occured. Optional.
  * @param {string}[options.appendTo] The node to which the new script will be append. Optional. Default is head node

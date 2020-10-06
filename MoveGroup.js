@@ -24,7 +24,7 @@ import Cookie from './cookieNodeJS/cookie.js';
 /**
  * Change group's position, scale and rotation.
  * @param {THREE.Group|THREE.Screen} group THREE group or scene
- * @param {object} [options] followed options is available
+ * @param {object} [options] the following options are available
  * @param {object} [options.scales] axes scales. See AxesHelper( ... ) for details. Default is {}
  * @param {Cookie} [options.cookie] Your custom cookie function for saving and loading of the MoveGroup settings. Default cookie is not saving settings.
  * @param {string} [options.cookieName] Name of the cookie is "MoveGroup" + options.cookieName. Default is undefined.

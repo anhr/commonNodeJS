@@ -520,7 +520,7 @@ function CreateSVGElement( el, attrs, children ) {
 
 /**
  * create palette
- * @param {object} [options] followed options is available
+ * @param {object} [options] the following options are available
  * @param {paletteIndexes|object[]} [options.palette] Palette index or palette array. The following indexes are available:
  * <pre>
  * paletteIndexes.BGRW: 0 - blue, green, red, white palette.
