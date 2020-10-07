@@ -64,7 +64,7 @@ loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/Decora
 
 /**
  * Creates new menu
- * @param {Object[]} arrayMenu array of menu and submenu items. If string then menu item name. If object then options of the new menu item:
+ * @param {Array} arrayMenu array of menu and submenu items. If array item is string then menu item name. If array item is object then options of the new menu item:
  * @param {String|HTMLElement} [arrayMenu.name] if string then menu item name. If HTMLElement then item element.
  * @param {String} [arrayMenu.title] menu item title.
  * @param {String} [arrayMenu.id] menu item identifier.
@@ -75,7 +75,7 @@ loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/Decora
  * <pre>
  * Following directions is available:
  * If string then "up" - drop submenu to up. "left" - shift submenu to left.
- * If object then following members is available: "up: true" and "left: true".
+ * If object then following members is available:
  * </pre>
  * @param {boolean} [arrayMenu.drop.up] true - drop submenu to up.
  * @param {boolean} [arrayMenu.drop.left] true - shift submenu to left.
