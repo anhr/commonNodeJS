@@ -1,5 +1,5 @@
 /**
- * @module createFullScreenSettings
+ * @module CreateFullScreenSettings
  * @description creates functions for resize of the canvas to fullscreen and restore to default size.
  *
  * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
@@ -26,23 +26,75 @@ import StereoEffect from './StereoEffect/StereoEffect.js';
  * @param {THREE} THREE [THREE]{@link https://threejs.org/}
  * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}
  * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
- * @param {object} options followed options is available:
+ * @param {object} options the following options are available:
  * @param {CanvasMenu} [options.canvasMenu] [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}
  * @param {CanvasMenu} [options.stereoEffect] [StereoEffect]{@link https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md}
  * @param {object} [options.fullScreen] followed fullScreen methods available:
  * @param {onFullScreenToggle} [options.fullScreen.onFullScreenToggle] user toggled fullscreen mode of the canvas.
  */
-export default function createFullScreenSettings( THREE, renderer, camera, options ) {
+export default function CreateFullScreenSettings( THREE, renderer, camera, options ) {
 
 	var fullScreen = false, canvasMenu, stereoEffect;
 
 	options.fullScreen = options.fullScreen || {};
 	if ( options.canvasMenu ) canvasMenu = options.canvasMenu;
 	if ( options.stereoEffect ) stereoEffect = options.stereoEffect;
+/*
+	//resize
+	renderer.setSizeOld = renderer.setSize;
+	renderer.setSize = function ( width, height, updateStyle ) {
 
-	var style;
+		renderer.setSizeOld( width, height, updateStyle );
+		const elCanvas = renderer.domElement, elContainer = elCanvas.parentElement;
+
+		setTimeout( function () {
+
+			elContainer.style.height = elCanvas.style.height;
+			elContainer.style.width = elCanvas.style.width;
+			elContainer.style.left = elCanvas.style.left;
+			elContainer.style.top = elCanvas.style.top;
+			elContainer.style.position = elCanvas.style.position;
+			
+			if ( options.canvasMenu !== undefined )
+				options.canvasMenu.setSize( width, height );
+
+		}, 0 );
+
+	};
+*/	
+	renderer.setSize( renderer.domElement.width, renderer.domElement.height );
+
+	var style;/* = {
+
+		sizeOriginal: new THREE.Vector2(),
+		position: renderer.domElement.style.position,
+		left: renderer.domElement.style.left,
+		top: renderer.domElement.style.top,
+		width: renderer.domElement.style.width,
+		height: renderer.domElement.style.height,
+
+	}
+	renderer.getSize( style.sizeOriginal );
+*/	
+
+	/**
+	 * @function CreateFullScreenSettings.
+	 * isFullScreen
+	 * @returns <b>true</b> if <b>canvas</b> is full screen.
+	 */
 	this.isFullScreen = function () { return fullScreen; }
+	/**
+	 * @function CreateFullScreenSettings.
+	 * setStereoEffect
+	 * @param {StereoEffect} _stereoEffect [StereoEffect]{@link https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md}.
+	 */
 	this.setStereoEffect = function ( _stereoEffect ) { stereoEffect = _stereoEffect; }
+	/**
+	 * Sets the full screen of the canvas.
+	 * @function CreateFullScreenSettings.
+	 * setFullScreen
+	 * @param {boolean} fullScreen false - full screen of the canvas.
+	 */
 	this.setFullScreen = function ( fs ) {
 
 		const size = new THREE.Vector2();
@@ -112,9 +164,15 @@ export default function createFullScreenSettings( THREE, renderer, camera, optio
 		camera.aspect = size.x / size.y;
 		camera.updateProjectionMatrix();
 		fullScreen = !fullScreen;
-		if ( canvasMenu ) canvasMenu.setFullScreenButton( fullScreen );
+		if ( canvasMenu && canvasMenu.setFullScreenButton ) canvasMenu.setFullScreenButton( fullScreen );
+		CreateFullScreenSettings.RendererSetSize( renderer, options.canvasMenu );
 
 	}
+	/**
+	 * User has clicked the "Full Screen" button on the <b>CanvasMenu</b>.
+	 * @function CreateFullScreenSettings.
+	 * onclick
+	 */
 	this.onclick = function () {
 
 		if (
@@ -138,5 +196,30 @@ export default function createFullScreenSettings( THREE, renderer, camera, optio
 		return fullScreen;
 
 	}
+
+}
+CreateFullScreenSettings.RendererSetSize = function ( renderer, canvasMenu ){
+
+	if ( renderer.setSizeOld )
+		return;
+		
+	renderer.setSizeOld = renderer.setSize;
+	renderer.setSize = function ( width, height, updateStyle ) {
+
+		renderer.setSizeOld( width, height, updateStyle );
+		const elCanvas = renderer.domElement, elContainer = elCanvas.parentElement;
+
+		setTimeout( function () {
+
+			elContainer.style.height = elCanvas.style.height;
+			elContainer.style.width = elCanvas.style.width;
+			elContainer.style.left = elCanvas.style.left;
+			elContainer.style.top = elCanvas.style.top;
+			elContainer.style.position = elCanvas.style.position;
+			if ( canvasMenu ) canvasMenu.setSize( width, height );
+
+		}, 0 );
+
+	};
 
 }
