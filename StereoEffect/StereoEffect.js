@@ -32,7 +32,7 @@ import cookie from '../cookieNodeJS/cookie.js';
 import { dat } from '../dat/dat.module.js';
 //import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
-import createFullScreenSettings from '../createFullScreenSettings.js';
+import CreateFullScreenSettings from '../createFullScreenSettings.js';
 
 //Attenttion!!! Save this file as UTF-8 for localization.
 
@@ -212,7 +212,7 @@ function StereoEffect( _THREE, renderer, options ) {
 
 			if ( _canvasMenu && _canvasMenu.getFullScreenSettings )
 				fullScreenSettings = _canvasMenu.getFullScreenSettings( this );
-			else fullScreenSettings = new createFullScreenSettings( THREE, renderer, camera,
+			else fullScreenSettings = new CreateFullScreenSettings( THREE, renderer, camera,
 				{
 					canvasMenu: _canvasMenu,
 					stereoEffect: this,
@@ -456,8 +456,27 @@ function StereoEffect( _THREE, renderer, options ) {
 				setObject( stereoEffect );
 				if ( guiParams.onChangeMode )
 					guiParams.onChangeMode( value );
+/*					
 				if ( _canvasMenu )
 					_canvasMenu.setSpatialMultiplexs( value );
+*/					
+				if ( menuItemStereoEffect ) {
+
+					menuItemStereoEffect.items.forEach( function ( item ) {
+
+						if ( item.spatialMultiplex === value ) {
+
+							if ( !item.checked ) {
+
+								item.elName.onclick( { target: item.elName });
+
+							}
+
+						}
+
+					} );
+
+				}
 
 			} );
 		dat.controllerNameAndTitle( _controllerSpatialMultiplex, _lang.spatialMultiplexName, _lang.spatialMultiplexTitle );
@@ -563,7 +582,7 @@ function StereoEffect( _THREE, renderer, options ) {
 
 	};
 
-	var _canvasMenu;
+	var _canvasMenu, menuItemStereoEffect;
 	/**
 	 * Adds a StereoEffect's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
 	 * @function StereoEffect.
@@ -585,7 +604,7 @@ function StereoEffect( _THREE, renderer, options ) {
 		params = params || {};
 		const _lang = getLang( { getLanguageCode: params.getLanguageCode, lang: params.lang } ),
 			spatialMultiplexs = Object.keys(_lang.spatialMultiplexs);
-		return {
+		menuItemStereoEffect = {
 
 			name: '⚭',
 			title: _lang.stereoEffects,//'Stereo effects',
@@ -636,6 +655,7 @@ function StereoEffect( _THREE, renderer, options ) {
 			],
 
 		}
+		canvasMenu.menu.push( menuItemStereoEffect );
 
 	}
 
