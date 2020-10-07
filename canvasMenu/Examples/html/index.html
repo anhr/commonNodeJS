@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -14,8 +14,9 @@
 	<!--<script src="../../../controllerPlay/build/controllerPlay.js"></script>-->
 	<!--<script src="/anhr/controllerPlay/build/controllerPlay.min.js"></script>-->
 
-	<!-- move dat.gui into canvas-->
+	<!-- move dat.gui into canvas. Use only if you do not import CanvasMenu -->
 	<link rel="stylesheet" href="../../../DropdownMenu/styles/gui.css" type="text/css">
+	<link rel="stylesheet" href="../../../DropdownMenu/styles/menu.css" type="text/css">
 
 	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
 	<!--<link type="text/css" rel="stylesheet" href="../../../../../three.js/dev/examples/main.css">-->
@@ -30,7 +31,7 @@
 		<a href='https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu' target="_blank">Dropdown menu</a> inside <a href="https://threejs.org/" target="_blank">Three.js</a> canvas.
 		<a href="../../../DropdownMenu/styles/Decorations/transparent.css" target="_blank"> Transparent decoration</a>.
 	</h1>
-	<p>Please move mouse over canvas. Now you can see "⚭" and "⤢" buttons on the bottom of the canvas.</p>
+	<p>Please move mouse over canvas. Now you can see "Button", "⚭" and "⤢" buttons on the bottom of the canvas.</p>
 
 	<div class="container" id="containerDSE">
 		<canvas id="canvas"></canvas>
@@ -56,10 +57,15 @@
 		import { dat } from '../../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
+		//import StereoEffect from "https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js";
 		import StereoEffect from "../../../StereoEffect/StereoEffect.js";
 
-		import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
-		//import CanvasMenu from '../../../canvasMenu/canvasMenu.js';
+		//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
+		import CanvasMenu from '../../../canvasMenu/canvasMenu.js';
+
+		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+		//import { getLanguageCode } from './commonNodeJS/master/lang.js';
+
 		/*
 		if ( WEBGL.isWebGLAvailable() === false ) {
 
@@ -71,85 +77,9 @@
 		var elContainer = document.getElementById( "containerDSE" ),
 			elCanvas = elContainer.querySelector( 'canvas' );
 
-
-		function createMenu() {
-
-			if ( typeof CanvasMenu === 'undefined' )
-				return;
-
-			new CanvasMenu( elContainer, {
-
-				fullScreen: {
-
-					renderer: renderer,
-					camera: camera,
-
-				},
-/*
-				stereoEffect: stereoEffect === undefined ? stereoEffect :
-					{ stereoEffect: stereoEffect, spatialMultiplexsIndexs: StereoEffect.spatialMultiplexsIndexs },
-				//player: player,
-				onFullScreenToggle: function ( fullScreen ) {
-
-					return rendererSizeDefault.onFullScreenToggle( fullScreen );
-
-				},
-				onFullScreen: function ( fullScreen, elContainer ) {
-
-					rendererSizeDefault.onFullScreenToggle( !fullScreen );
-
-				},
-				onOver: function ( _mouseenter ) {
-
-					mouseenter = _mouseenter;
-
-				},
-*/
-				THREE: THREE,
-
-			} );
-/*
-			if ( typeof menuPlay !== 'undefined' ) {
-
-				stereoEffect.options = { spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.Mono }
-				menuPlay.create( elContainer, {
-
-					stereoEffect: stereoEffect === undefined ? stereoEffect :
-						{
-							stereoEffect: stereoEffect,
-							spatialMultiplexsIndexs: StereoEffect.spatialMultiplexsIndexs
-						},
-					onFullScreenToggle: function () {
-
-						return { renderer: renderer, camera: camera };
-//						return rendererSizeDefault.onFullScreenToggle();
-
-					},
-
-				} );
-
-			}
-*/
-
-		}
-
 		var camera, scene, renderer, controls, stereoEffect/*, raycaster*/, cubeType = 'cube', group, playController;
-/*
-		try {
-
-			init();
-			animate();
-			createMenu();
-
-		} catch ( e ) {
-
-			alert( 'init failed! ' + e.message );
-
-		}
-*/
 		init();
 		animate();
-		createMenu();
 
 		function init() {
 
@@ -175,6 +105,7 @@
 			renderer.setPixelRatio( window.devicePixelRatio );
 
 			//resize
+/*			
 			renderer.setSizeOld = renderer.setSize;
 			renderer.setSize = function ( width, height, updateStyle ) {
 
@@ -187,14 +118,11 @@
 					elContainer.style.left = elCanvas.style.left;
 					elContainer.style.top = elCanvas.style.top;
 					elContainer.style.position = elCanvas.style.position;
-/*
-					if ( typeof menuPlay !== 'undefined' )
-						menuPlay.setSize( width, height );
-*/
 
 				}, 0 );
 
 			};
+*/			
 			renderer.setSize( window.innerWidth / 2, window.innerHeight / 2 );
 
 			//
@@ -203,25 +131,72 @@
 			controls.update();
 
 			//StereoEffect
-			stereoEffect = new StereoEffect( THREE, renderer, {
+			if ( typeof StereoEffect !== 'undefined' ) {
 
-				spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.Mono, //.SbS,
-				far: camera.far,
-				camera: camera,
-				stereoAspect: 1,
-				//rememberSize: true,
-				onFullScreen: function ( fullScreen ) {
+				stereoEffect = new StereoEffect( THREE, renderer, {
 
-					setFullScreenButton( fullScreen );
+					spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.Mono, //SbS
+					far: camera.far,
+					camera: camera,
+					stereoAspect: 1,
+					rememberSize: true,
+/*
+					onFullScreen: function ( fullScreen ) {
 
-				},
-				cookie: THREE.cookie,
+						setFullScreenButton( fullScreen );
 
-			} );
-/*			
-			stereoEffect.setSize( window.innerWidth, window.innerHeight );
-			stereoEffect.options.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
-*/			
+					},
+*/
+/*
+					fullScreen: {
+
+						renderer: renderer,
+						camera: camera,
+
+					},
+*/
+					cookie: THREE.cookie,
+
+				} );
+
+			}
+
+			var canvasMenu;
+			if ( typeof CanvasMenu !== 'undefined' ) {
+
+				canvasMenu = new CanvasMenu( renderer, {
+
+					getLanguageCode: getLanguageCode,
+					menu: [
+
+						{
+
+							name: 'Button',
+							onclick: function ( event ) {
+
+								var message = 'Button onclick';
+								//console.log( message );
+								alert( message )
+
+							},
+
+						},
+
+					],
+					fullScreen: {
+
+//						renderer: renderer,
+						camera: camera,
+
+					},
+					stereoEffect: stereoEffect,
+					//player: player,
+					THREE: THREE,
+
+				} );
+
+			}
+//			createMenu();
 
 			//Light
 
@@ -383,7 +358,7 @@
 
 				stereoEffect.gui( gui, {
 
-					//getLanguageCode: getLanguageCode,
+					getLanguageCode: getLanguageCode,
 
 				} );
 /*
