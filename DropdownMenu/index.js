@@ -70,7 +70,7 @@ loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/Decora
  * @param {String} [arrayMenu.id] menu item identifier.
  * @param {String} [arrayMenu.style] menu item style. Example: "float: right;".
  * @param {Array} [arrayMenu.items] array of submenu items. Same as menu item.
- * @param {Function} [arrayMenu.onclick] function(event) called when user has clicked a menu item. event - event details.
+ * @param {Function} [arrayMenu.onclick] <b>function(event)</b> called when user has clicked a menu item. event - event details.
  * @param {Object} [arrayMenu.drop] direction of drop of the submenu.
  * <pre>
  * Following directions is available:
@@ -85,7 +85,7 @@ loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/Decora
  *
  * @param {Object} [options] the following options are available.
  * @param {HTMLElement} [options.elParent="body" element] Parent element of new menu.
- * @param {HTMLElement} [options.canvas] canvas element. Use if you want put a menu inside a canvas. See "button inside canvas" example below for details.
+ * @param {HTMLElement} [options.canvas] <b>canvas</b> element. Use if you want put a menu inside a canvas. Use [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu} instead <b>DropdownMenu</b> for it.
  * @param {String} [options.decorations] You can decorate your menu by a built-in style or use your custom style. Currently two built-in styles is available:
  * <pre>
  * 'Gradient' - use [gradient.css]{@link https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/styles/Decorations/gradient.css} file for decoration.
