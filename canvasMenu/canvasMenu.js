@@ -22,13 +22,7 @@ import DropdownMenu from '../DropdownMenu/dropdownMenu.js';
 //import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 import StereoEffect from '../StereoEffect/StereoEffect.js';
 
-import createFullScreenSettings from '../createFullScreenSettings.js';
-
-/**
- * @callback onFullScreen
- * @param {boolean} fullScreen true - full screen mode of the canvas.
- * @param {HTMLElement} elContainer container of the canvas.
- */
+import CreateFullScreenSettings from '../createFullScreenSettings.js';
 
 /**
  * @callback onFullScreenToggle
@@ -37,19 +31,28 @@ import createFullScreenSettings from '../createFullScreenSettings.js';
 
 /**
  * Create [dropdown menu]{@link https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu} for canvas in my [three.js]{@link https://threejs.org/} projects.
- * @param {HTMLElement|string} elContainer if the <b>HTMLElement</b>, is a container element for canvas. If the <b>string</b>, is id of a container element for canvas.
- * @param {object} [options] followed options is available
+ * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
+ * @param {object} [options] the following options are available
  * @param {Array} [options.menu] menu array. See <b>arrayMenu</b> of the [DropdownMenu.create]{@link https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/jsdoc/module-DropdownMenu.html#~create}
  * @param {Object} [options.stereoEffect] new [StereoEffect(...)]{@link https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md}.
  * @param {Object} [options.player] new [Player(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}. Playing of 3D ojbects in my projects.
  * @param {Object} [options.fullScreen] Add a "Full Screen" button
- * @param {onFullScreen} [options.fullScreen.onFullScreen] fullscreen mode of the canvas.
+ * @param {onFullScreen} options.fullScreen.camera [THREE.PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
  * @param {onFullScreenToggle} [options.fullScreen.onFullScreenToggle] user toggled fullscreen mode of the canvas.
  * @param {THREE} [options.THREE] THREE {@link https://github.com/anhr/three.js|THREE}.
  * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
  */
-function CanvasMenu( elContainer, options ) {
+function CanvasMenu( renderer, options ) {
 	
+	if ( renderer instanceof options.THREE.WebGLRenderer !== true ){
+
+		console.error( 'CanvasMenu: renderer is not THREE.WebGLRenderer' );
+		return;
+		
+	}
+	const elCanvas = renderer.domElement, elContainer = elCanvas.parentElement;
+//		canvasMenu = this;
+/*	
 	const elCanvas = elContainer.querySelector( 'canvas' );
 	if ( !elCanvas ){
 
@@ -57,290 +60,120 @@ function CanvasMenu( elContainer, options ) {
 		return;
 		
 	}
-
-	options = options || {};
-
-/*
-	if ( options.THREE == undefined )
-		options.THREE = THREE;
-	if ( typeof options.THREE === "undefined" ) {
-
-		console.error( 'menuPlay.create: THREE = ' + THREE );
-		return;
-
-	}
 */
+	options = options || {};
 	options.menu = options.menu || [];
-	var menuItemStereoEffect;
-	var stereoEffect, spatialMultiplexsIndexs;
+
+	/**
+	 * Menu array
+	 * @array canvasMenu.
+	 * menu
+	 * @see <b>arrayMenu</b> of the [DropdownMenu.create]{@link https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/jsdoc/module-DropdownMenu.html#~create}
+	 */
+	this.menu = options.menu;
+
+//	var menuItemStereoEffect;
+//	var stereoEffect, spatialMultiplexsIndexs;
 	if ( options.stereoEffect !== undefined ) {
 
-		menuItemStereoEffect = options.stereoEffect.createCanvasMenuItem( this, { getLanguageCode: options.getLanguageCode } );
+		options.stereoEffect.createCanvasMenuItem( this, { getLanguageCode: options.getLanguageCode } );
 /*
-		spatialMultiplexsIndexs = options.stereoEffect.spatialMultiplexsIndexs;
-		stereoEffect = options.stereoEffect.stereoEffect;
-
-		menuItemStereoEffect = {
-
-			name: '⚭',
-			title: lang.stereoEffects,//'Stereo effects',
-			id: 'menuButtonStereoEffects',
-			drop: 'up',
-			items: [
-
-				{
-					name: lang.mono,//'Mono',
-					radio: true,
-					checked: true,
-					spatialMultiplex: spatialMultiplexsIndexs.Mono,
-					onclick: function ( event ) {
-
-						if ( stereoEffect.setSpatialMultiplex !== undefined )
-							stereoEffect.setSpatialMultiplex( spatialMultiplexsIndexs.Mono );
-						else stereoEffect.options.spatialMultiplex = spatialMultiplexsIndexs.Mono;
-
-					}
-				},
-				{
-					name: lang.sideBySide,//'Side by side',
-					radio: true,
-					spatialMultiplex: spatialMultiplexsIndexs.SbS,
-					onclick: function ( event ) {
-
-						if ( stereoEffect.setSpatialMultiplex !== undefined )
-							stereoEffect.setSpatialMultiplex( spatialMultiplexsIndexs.SbS );
-						else stereoEffect.options.spatialMultiplex = spatialMultiplexsIndexs.SbS;
-						//						setFullScreenButton( true );
-						if ( options.fullScreen && options.fullScreen.onFullScreen )
-							options.fullScreen.onFullScreen( true );
-
-					}
-				},
-				{
-					name: lang.topAndBottom,//'Top and bottom',
-					radio: true,
-					spatialMultiplex: spatialMultiplexsIndexs.TaB,
-					onclick: function ( event ) {
-
-						if ( stereoEffect.setSpatialMultiplex !== undefined )
-							stereoEffect.setSpatialMultiplex( spatialMultiplexsIndexs.TaB );
-						else stereoEffect.options.spatialMultiplex = spatialMultiplexsIndexs.TaB;
-						//						setFullScreenButton( true );
-						if ( options.onFullScreen )
-							options.onFullScreen( true );
-
-					}
-				},
-
-			],
-
-		}
-*/
+		menuItemStereoEffect = options.stereoEffect.createCanvasMenuItem( this, { getLanguageCode: options.getLanguageCode } );
 		options.menu.push( menuItemStereoEffect );
+*/		
 
 	}
+	
+	if ( options.player !== undefined ) { options.player.createCanvasMenuItem( this ); }
 
-	if ( options.player !== undefined ) {
+	CreateFullScreenSettings.RendererSetSize( renderer, this );
+/*	
+	//resize
+	renderer.setSizeOld = renderer.setSize;
+	renderer.setSize = function ( width, height, updateStyle ) {
 
-		//options.player.createCanvasMenuItem( options.menu );
-		//Previous button
-		options.menu.push( {
+		renderer.setSizeOld( width, height, updateStyle );
+		const elCanvas = renderer.domElement, elContainer = elCanvas.parentElement;
 
-			name: lang.prevSymbol,
-			title: lang.prevSymbolTitle,
-			onclick: function ( event ) {
+		setTimeout( function () {
 
-				options.player.prev();
+			elContainer.style.height = elCanvas.style.height;
+			elContainer.style.width = elCanvas.style.width;
+			elContainer.style.left = elCanvas.style.left;
+			elContainer.style.top = elCanvas.style.top;
+			elContainer.style.position = elCanvas.style.position;
+			canvasMenu.setSize( width, height );
 
-			}
+		}, 0 );
 
-		} );
-
-		//Play button
-		options.menu.push( {
-
-			name: lang.playSymbol,
-			title: lang.playTitle,
-			id: "menuButtonPlay",
-			onclick: function ( event ) {
-
-				options.player.play3DObject();
-//				playController.play();
-
-			}
-
-		} );
-
-		//Repeat button
-		options.menu.push( {
-
-			name: lang.repeat,
-			title: options.player.getOptions().repeat ? lang.repeatOff : lang.repeatOn,
-			id: "menuButtonRepeat",
-			onclick: function ( event ) {
-
-//				playController.repeat();
-				options.player.repeat();
-
-			}
-
-		} );
-
-		//Next button
-		options.menu.push( {
-
-			name: lang.nextSymbol,
-			title: lang.nextSymbolTitle,
-			onclick: function ( event ) {
-
-				options.player.next();
-
-			}
-
-		} );
-
-	}
+	};
+*/	
+//	renderer.setSize( renderer.domElement.width, renderer.domElement.height );
 
 	//Full Screen button
 	var fullScreenSettings;
 	if ( options.fullScreen !== undefined ) {
 
+/*
 		if ( !options.fullScreen.renderer ) {
 
 			console.error( 'CanvasMenu: options.fullScreen.renderer = ' + options.fullScreen.renderer );
 			return;
 			
 		}
+*/
 		if ( !options.fullScreen.camera ) {
 
 			console.error( 'CanvasMenu: options.fullScreen.camera = ' + options.fullScreen.camera );
 			return;
 			
 		}
-/*
-		function createFullScreenSettings( canvasMenu ) {
-
-			var fullScreen = false, style;
-			this.isFullScreen = function () { return fullScreen; }
-			this.setFullScreen = function ( fs ) {
-
-				const size = new options.THREE.Vector2();
-				options.fullScreen.renderer.getSize( size );
-				fullScreen = fs;
-				if ( fullScreen ) {
-
-					if ( style !== undefined ) {
-
-						//restore size of the canvas
-						options.fullScreen.renderer.setSize( style.sizeOriginal.x, style.sizeOriginal.y );
-						options.fullScreen.renderer.domElement.style.position = style.position;
-						options.fullScreen.renderer.domElement.style.left = style.left;
-						options.fullScreen.renderer.domElement.style.top = style.top;
-						options.fullScreen.renderer.domElement.style.width = style.width;
-						options.fullScreen.renderer.domElement.style.height = style.height;
-
-					}
-
-				} else {
-
-					if ( style === undefined ) {
-
-						style = {
-
-							sizeOriginal: new options.THREE.Vector2(),
-							position: options.fullScreen.renderer.domElement.style.position,
-							left: options.fullScreen.renderer.domElement.style.left,
-							top: options.fullScreen.renderer.domElement.style.top,
-							width: options.fullScreen.renderer.domElement.style.width,
-							height: options.fullScreen.renderer.domElement.style.height,
-
-						}
-						options.fullScreen.renderer.getSize( style.sizeOriginal );
-					}
-
-					//Full screen of the canvas
-					options.fullScreen.renderer.setSize( window.innerWidth, window.innerHeight );
-					options.fullScreen.renderer.domElement.style.position = 'fixed';
-					options.fullScreen.renderer.domElement.style.left = 0;
-					options.fullScreen.renderer.domElement.style.top = 0;
-					options.fullScreen.renderer.domElement.style.width = '100%';
-					options.fullScreen.renderer.domElement.style.height = '100%';
-
-				}
-				options.fullScreen.camera.aspect = size.x / size.y;
-				options.fullScreen.camera.updateProjectionMatrix();
-				fullScreen = !fullScreen;
-				canvasMenu.setFullScreenButton( fullScreen );
-
-			}
-			this.onclick = function () {
-
-				if (
-					( options.stereoEffect !== undefined )
-					&& ( parseInt( options.stereoEffect.options.spatialMultiplex ) !== StereoEffect.spatialMultiplexsIndexs.Mono )
-				) {
-
-//					options.stereoEffect.options.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
-					elMenu.querySelector( '#menuButtonStereoEffectsMono' ).click();
-//					elMenu.querySelector( '#menuButtonStereoEffectsMono' ).classList.add('checked');
-//					elMenu.querySelector( '#menuButtonStereoEffectsMono' ).checked = true;
-
-				}
-				if ( options.fullScreen.onFullScreenToggle !== undefined ) {
-
-					options.fullScreen.onFullScreenToggle( fullScreen );
-
-				}
-
-//				this.setFullScreen( res, fullScreen );
-				this.setFullScreen( fullScreen );
-				return fullScreen;
-
-			}
-
-		}
-*/
-		fullScreenSettings = new createFullScreenSettings( options.THREE, options.fullScreen.renderer, options.fullScreen.camera,
+		fullScreenSettings = new CreateFullScreenSettings( options.THREE, renderer, options.fullScreen.camera,
 			{
 
 				canvasMenu: this,
 				fullScreen: options.fullScreen,
 
 			} );
+//		fullScreenSettings.setFullScreen( true );
+
+		/**
+		 * @function canvasMenu.
+		 * getFullScreenSettings
+		 * @param {StereoEffect} stereoEffect [StereoEffect]{@link https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md}.
+		 * @returns Set <b>stereoEffect</b> to <b>fullScreenSettings</b> and returns <b>fullScreenSettings</b>.
+		 */
 		this.getFullScreenSettings = function( stereoEffect ) {
 
 			fullScreenSettings.setStereoEffect( stereoEffect );
 			return fullScreenSettings;
 
 		}
+		/**
+		 * @function canvasMenu.
+		 * isFullScreen
+		 * @returns <b>true</b> if <b>canvas</b> is full screen.
+		 */
 		this.isFullScreen = function () { return fullScreenSettings.isFullScreen(); }
+		/**
+		 * Sets the full screen of the canvas.
+		 * @function canvasMenu.
+		 * setFullScreen
+		 * @param {boolean} fullScreen false - full screen of the canvas.
+		 */
 		this.setFullScreen = function ( fullScreen ) { return fullScreenSettings.setFullScreen( fullScreen ); }
 		options.menu.push( {
 
 			style: 'float: right;',
 			id: "menuButtonFullScreen",
-			onclick: function ( event ) {
-
-				fullScreenSettings.onclick();
-
-			}
+			onclick: function ( event ) { fullScreenSettings.onclick(); }
 
 		} );
 
 	}
 
 	//Play slider
-	if ( options.player !== undefined ) {
-
-		options.menu.push( {
-
-			name: '<input type="range" min="0" max="' + ( options.player.getSettings().marks - 1 ) + '" value="0" class="slider" id="sliderPosition">',
-			style: 'float: right;',
-//			title: sliderTitle + 0,
-
-		} );
-
-	}
+	if ( options.player !== undefined ) options.player.addSlider();
 
 	elMenu = DropdownMenu.create( options.menu, {
 
@@ -349,30 +182,31 @@ function CanvasMenu( elContainer, options ) {
 		decorations: 'Transparent',
 
 	} );
+
+	/**
+	 * @function canvasMenu.
+	 * querySelector
+	 * @param {string} selectors See CSS selectors in [HTML DOM querySelector() Method]{@link https://www.w3schools.com/jsref/met_document_queryselector.asp} for details.
+	 * @returns returns the first element that matches a specified CSS selector(s) in the canvasMenu.
+	 */
+	this.querySelector = function( selectors ){ return elMenu.querySelector( selectors ); }
 	if ( options.onOver !== undefined ) {
 
-		elMenu.addEventListener( 'mouseenter', function(event) { options.onOver( true ); });
+		elMenu.addEventListener( 'mouseenter', function ( event ) { options.onOver( true ); });
 		elMenu.addEventListener( 'mouseleave', function ( event ) { options.onOver( false ); } );
 					
 	}
-	elSlider = elMenu.querySelector( '#sliderPosition' );
-	if ( elSlider !== null ) {
-
-		elSlider.onchange = function ( event ) {
-
-			options.player.selectScene( parseInt( elSlider.value ) );
-
-		};
-		elSlider.oninput = function ( event ) {
-
-			options.player.selectScene( parseInt( elSlider.value ) );
-
-		};
-
-	}
+	if ( options.player ) options.player.addSliderEvents();// options.THREE );
 
 	if ( options.fullScreen ) {
 
+		/**
+		 * Sets the "Full Screen" button. Available only if <b>options.fullScreen</b> is defined.
+		 * @function canvasMenu.
+		 * setFullScreenButton
+		 * @param {boolean} fullScreen true - non full screen.
+		 * <p>false - full screen of the canvas.</p>
+		 */
 		this.setFullScreenButton = function ( fullScreen ) {
 
 			const elMenuButtonFullScreen = elContainer.querySelector( '#menuButtonFullScreen' );//document.getElementById( 'menuButtonFullScreen' );
@@ -400,14 +234,15 @@ function CanvasMenu( elContainer, options ) {
 	}
 
 	/**
-	 * sets size of the slider element of the menu
+	 * Sets the size of the slider element of the player's menu.
+	 * @function canvasMenu.
+	 * setSize
 	 * @param {Number} width width of the canvas
-	 * @param {Number} height height of the canvas
 	 */
-	this.setSize = function ( width, height ) {
+	this.setSize = function ( width ) {
 		if ( elMenu === undefined )
 			return;
-		var itemWidth = 0;
+		var itemWidth = 0, elSlider;
 		//elMenu.childNodes.forEach( function ( menuItem )not compatible with IE 11
 		for ( var i = 0; i < elMenu.childNodes.length; i++ ) {
 
@@ -431,7 +266,7 @@ function CanvasMenu( elContainer, options ) {
 
 		}
 
-		if ( elSlider === null )
+		if ( !elSlider )
 			return;//no controllerPlay
 		var sliderWidth = width - itemWidth;
 		if ( sliderWidth > 0 ) {
@@ -441,55 +276,29 @@ function CanvasMenu( elContainer, options ) {
 		}
 
 	}
-	this.setIndex = function ( index, title ) {
-
-		elSlider.value = index;
-//		elSlider.title = sliderTitle + t;
-		elSlider.title = title;
-
-	}
-	this.onRenamePlayButtons = function ( playing ) {
-
-		var name, title;
-		if ( playing ) {
-
-			name = lang.pause;
-			title = lang.pauseTitle;
-
-		} else {
-
-			name = lang.playSymbol;
-			title = lang.playTitle;
-
-		}
-		const elMenuButtonPlay = elMenu.querySelector( '#menuButtonPlay' );
-		elMenuButtonPlay.innerHTML = name;
-		elMenuButtonPlay.title = title;
-//		_renamePlayButtons( name, title, true );
-
-	}
-	this.onChangeRepeat = function () {
-
-		const elMenuButtonRepeat = elMenu.querySelector( '#menuButtonRepeat' );
-		elMenuButtonRepeat.title = options.player.getOptions().repeat ? lang.repeatOff : lang.repeatOn;
-
-	}
+	/*Не выводится в jsdoc*
+	 * Changes the "max" value of the slider of the player's menu. Moves [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html} to the first scene.
+	 * @function canvasMenu.
+	 * onChangeScale
+	 * @param {Object} scale See <b>options.settings</b> of the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
+	 */
+/*	 
 	this.onChangeScale = function ( scale ) {
 
 		if ( options.player === undefined )
 			return;
-/*			
-		var optionsPlayer = options.player.getOptions();
-		optionsPlayer.marks = scale.marks;
-		optionsPlayer.min = scale.min;
-		optionsPlayer.max = scale.max;
-		elSlider.max = optionsPlayer.marks - 1;
-*/		
 		elSlider.max = scale.marks - 1;
 		options.player.selectScene( 0 );
-//		this.setIndex( 0, scale.name + ': ' + scale.min );
 
 	}
+*/	
+	/*не выводится в jsdoc*
+	 * Sets the [SteroEffect]{@link https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md} mode.
+	 * @function canvasMenu.
+	 * setSpatialMultiplexs
+	 * @param {number} mode Available modes see in [StereoEffect.spatialMultiplexsIndexs]{@link https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/module-StereoEffect.html#~spatialMultiplexsIndexs}.
+	 */
+/*	 
 	this.setSpatialMultiplexs = function ( mode ) {
 
 		menuItemStereoEffect.items.forEach( function ( item ) {
@@ -505,19 +314,16 @@ function CanvasMenu( elContainer, options ) {
 			}
 
 		} );
-/*
-//setFullScreen вызывается в 
-//if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
-//в
-//StereoEffect.createCanvasMenuItem
-
-if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );	
-//		if( fullScreenSettings && ( mode !== spatialMultiplexsIndexs.Mono ) )
-		if( fullScreenSettings && ( options.stereoEffect.options.spatialMultiplex !== StereoEffect.spatialMultiplexsIndexs.Mono ) )
-			fullScreenSettings.setFullScreen( false );
-*/			
 
 	}
+*/	
+	/*не выводится в jsdoc*
+	 * Sets the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
+	 * @function canvasMenu.
+	 * setPlayer
+	 * @param {Player} player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
+	 */
+	/*
 	this.setPlayer = function ( player ) {
 
 		options.player = player;
@@ -525,9 +331,21 @@ if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
 		elSlider.value = 0;
 
 	}
+	*/
 	if ( options.player !== undefined )
 		options.player.pushController( this );
-	var elMenu, elSlider;//, sliderTitle = lang.animateSceneId;//'Animate scene id ';
+	var elMenu;//, elSlider;//, sliderTitle = lang.animateSceneId;//'Animate scene id ';
+/*
+	if ( fullScreenSettings )
+		fullScreenSettings.setFullScreen( true );
+*/
+/*
+		fullScreenSettings.setSize( ( elCanvas !== undefined ) && ( elCanvas.width !== undefined ) ? elCanvas.width : elCanvas.clientWidth,
+			( elCanvas !== undefined ) && ( elCanvas.height !== undefined ) ? elCanvas.height : elCanvas.clientHeight );
+*/
+	const size = new options.THREE.Vector2();
+	renderer.getSize( size );
+	this.setSize( size.x, size.y );
 
 }
 export default CanvasMenu;
