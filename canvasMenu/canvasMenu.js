@@ -38,13 +38,15 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
  * @param {Object} [options.player] new [Player(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}. Playing of 3D ojbects in my projects.
  * @param {Object} [options.fullScreen] Add a "Full Screen" button
  * @param {onFullScreen} options.fullScreen.camera [THREE.PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
+ * @param {THREE} options.fullScreen.THREE THREE {@link https://github.com/anhr/three.js|THREE}.
  * @param {onFullScreenToggle} [options.fullScreen.onFullScreenToggle] user toggled fullscreen mode of the canvas.
- * @param {THREE} [options.THREE] THREE {@link https://github.com/anhr/three.js|THREE}.
  * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
  */
 function CanvasMenu( renderer, options ) {
 	
-	if ( renderer instanceof options.THREE.WebGLRenderer !== true ){
+	options = options || {};
+	
+	if ( options.THREE && ( renderer instanceof options.THREE.WebGLRenderer !== true ) ){
 
 		console.error( 'CanvasMenu: renderer is not THREE.WebGLRenderer' );
 		return;
@@ -61,7 +63,6 @@ function CanvasMenu( renderer, options ) {
 		
 	}
 */
-	options = options || {};
 	options.menu = options.menu || [];
 
 	/**
@@ -128,7 +129,7 @@ function CanvasMenu( renderer, options ) {
 			return;
 			
 		}
-		fullScreenSettings = new CreateFullScreenSettings( options.THREE, renderer, options.fullScreen.camera,
+		fullScreenSettings = new CreateFullScreenSettings( options.fullScreen.THREE, renderer, options.fullScreen.camera,
 			{
 
 				canvasMenu: this,
@@ -343,7 +344,7 @@ function CanvasMenu( renderer, options ) {
 		fullScreenSettings.setSize( ( elCanvas !== undefined ) && ( elCanvas.width !== undefined ) ? elCanvas.width : elCanvas.clientWidth,
 			( elCanvas !== undefined ) && ( elCanvas.height !== undefined ) ? elCanvas.height : elCanvas.clientHeight );
 */
-	const size = new options.THREE.Vector2();
+	const size = { set: function( width, height ) { this.x = width; this.y = height } };//new options.THREE.Vector2();
 	renderer.getSize( size );
 	this.setSize( size.x, size.y );
 
