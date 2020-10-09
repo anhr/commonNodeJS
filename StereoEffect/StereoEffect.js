@@ -633,7 +633,6 @@ function StereoEffect( _THREE, renderer, options ) {
 					onclick: function ( event ) {
 
 						options.spatialMultiplex = spatialMultiplexsIndexs.SbS;
-						//fullScreenSettings.setFullScreen( false );
 						//if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
 
 					}
@@ -647,7 +646,7 @@ function StereoEffect( _THREE, renderer, options ) {
 					onclick: function ( event ) {
 
 						options.spatialMultiplex = spatialMultiplexsIndexs.TaB;
-						if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
+//						if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
 
 					}
 				},
