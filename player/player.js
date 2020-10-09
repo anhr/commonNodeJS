@@ -27,6 +27,8 @@ import ColorPicker from '../colorpicker/colorpicker.js';
 
 import { lang } from '../controllerPlay/index.js';
 
+import { SpriteText } from '../../../SpriteText/master/SpriteText.js';//https://github.com/anhr/SpriteText
+
 var settings;
 
 /**
@@ -45,7 +47,7 @@ var settings;
 /**
  * 3D objects animation.
  * @param {onSelectScene} onSelectScene This function is called at each new step of the playing. See [onSelectScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene}.
- * @param {object} [options] followed options is available
+ * @param {object} [options] the following options are available
  * @param {number} [options.settings] time settings.
  * @param {number} [options.settings.marks] Ticks count of the playing. Number of scenes of 3D objects animation. Default is 10
  * @param {number} [options.settings.interval] Ticks per seconds. Default is 1.
@@ -95,6 +97,7 @@ function Player( onSelectScene, options ) {
 	 */
 	this.selectScene = function( index ) {
 
+		index = parseInt( index );
 		if ( index >= settings.marks )
 			index = 0;
 		else if ( index < 0 )
@@ -155,11 +158,7 @@ function Player( onSelectScene, options ) {
 
 	function RenamePlayButtons() {
 
-		controllers.forEach( function ( controller ) {
-
-			controller.onRenamePlayButtons( playing );
-
-		} );
+		controllers.forEach( function ( controller ) { if (controller.onRenamePlayButtons) controller.onRenamePlayButtons( playing ); } );
 
 	}
 
@@ -354,11 +353,7 @@ function Player( onSelectScene, options ) {
 	this.onChangeRepeat = function ( value ) {
 
 		settings.repeat = value;
-		this.controllers.forEach( function ( controller ) {
-
-			controller.onChangeRepeat();
-
-		} );
+		this.controllers.forEach( function ( controller ) { if ( controller.onChangeRepeat ) controller.onChangeRepeat(); } );
 
 	}
 
@@ -618,28 +613,27 @@ function Player( onSelectScene, options ) {
 
 	}
 
+	var _canvasMenu;
 	/**
 	 * Adds a Player's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
 	 * @function Player.
 	 * createCanvasMenuItem
-	 * @param {CanvasMenu} CanvasMenu [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 * @param {CanvasMenu} canvasMenu [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
 	 */
-	this.createCanvasMenuItem = function ( menu/*, params*/ ) {
+	this.createCanvasMenuItem = function ( canvasMenu ) {
 
+		_canvasMenu = canvasMenu;
 /*
 		params = params || {};
 		const lang = getLang( { getLanguageCode: params.getLanguageCode, lang: params.lang } );
 */		
+		const player = this, menu = canvasMenu.menu;
 		//Previous button
 		menu.push( {
 
 			name: lang.prevSymbol,
 			title: lang.prevSymbolTitle,
-			onclick: function ( event ) {
-
-				options.player.prev();
-
-			}
+			onclick: function ( event ) { player.prev(); }
 
 		} );
 
@@ -649,12 +643,7 @@ function Player( onSelectScene, options ) {
 			name: lang.playSymbol,
 			title: lang.playTitle,
 			id: "menuButtonPlay",
-			onclick: function ( event ) {
-
-				options.player.play3DObject();
-				//				playController.play();
-
-			}
+			onclick: function ( event ) { player.play3DObject(); }
 
 		} );
 
@@ -664,12 +653,7 @@ function Player( onSelectScene, options ) {
 			name: lang.repeat,
 			title: this.getOptions().repeat ? lang.repeatOff : lang.repeatOn,
 			id: "menuButtonRepeat",
-			onclick: function ( event ) {
-
-				//				playController.repeat();
-				options.player.repeat();
-
-			}
+			onclick: function ( event ) { player.repeat(); }
 
 		} );
 
@@ -678,13 +662,135 @@ function Player( onSelectScene, options ) {
 
 			name: lang.nextSymbol,
 			title: lang.nextSymbolTitle,
-			onclick: function ( event ) {
+			onclick: function ( event ) { player.next(); }
 
-				options.player.next();
+		} );
+
+		controllers.push( {
+
+			/**
+			 * Renames the "Play" button of the player's menu.
+			 * @function Player.
+			 * onRenamePlayButtons
+			 * @param {boolean} playing <b>true</b> - pause.
+			 * <p><b>false</b> - play</p>
+			 */
+			onRenamePlayButtons: function ( playing ) {
+
+				var name, title;
+				if ( playing ) {
+
+					name = lang.pause;
+					title = lang.pauseTitle;
+
+				} else {
+
+					name = lang.playSymbol;
+					title = lang.playTitle;
+
+				}
+				const elMenuButtonPlay = canvasMenu.querySelector( '#menuButtonPlay' );
+//				const elMenuButtonPlay = elMenu.querySelector( '#menuButtonPlay' );
+				elMenuButtonPlay.innerHTML = name;
+				elMenuButtonPlay.title = title;
+
+			},
+
+			/**
+			 * Changes "Repeat" button of the player's menu between <b>repeat Off</b> and <b>repeat On</b>.
+			 * @function Player.
+			 * onChangeRepeat
+			 */
+			onChangeRepeat: function () {
+
+				canvasMenu.querySelector( '#menuButtonRepeat' ).title = settings.repeat ? lang.repeatOff : lang.repeatOn;
 
 			}
 
 		} );
+
+	}
+
+	/**
+	 * Adds slider menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 * @function Player.
+	 * addSlider
+	 */
+	this.addSlider = function () {
+
+		_canvasMenu.menu.push( {
+
+			name: '<input type="range" min="0" max="' + ( this.getSettings().marks - 1 ) + '" value="0" class="slider" id="sliderPosition">',
+			style: 'float: right;',
+
+		} );
+
+	}
+
+	function getSliderElement() { return _canvasMenu.querySelector( '#sliderPosition' ); }
+
+	/**
+	 * Adds an events into slider menu item of the [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 * @function Player.
+	 * addSliderEvents
+	 * @returns slider element
+	 */
+	this.addSliderEvents = function ( /*THREE*/ ) {
+
+		const elSlider = getSliderElement(), player = this;
+		if ( elSlider ) {
+
+			elSlider.onchange = function ( event ) { player.selectScene( parseInt( elSlider.value ) ); };
+			elSlider.oninput = function ( event ) { player.selectScene( parseInt( elSlider.value ) ); };
+
+			var pointerdown, spriteText;
+			const player = this;
+			elSlider.addEventListener( 'pointerdown', e => { pointerdown = true; } );
+			elSlider.addEventListener( 'pointerup', e => { pointerdown = false; } );
+			elSlider.addEventListener( 'mousemove', e => {
+
+				if ( !pointerdown )
+					return;
+//				console.warn( 'elSlider: e.clientX = ' + e.clientX + ' e.offsetX = ' + e.offsetX + ' e.screenX = ' + e.screenX );
+//				player.selectScene( ( settings.max - settings.min ) * e.offsetX / elSlider.clientWidth + settings.min );
+				player.selectScene( ( settings.marks - 1 ) * e.offsetX / elSlider.clientWidth );
+/*непонятно как получить положение текста				
+				if ( THREE && !spriteText ) spriteText = new SpriteText(( settings.max - settings.min ) * e.offsetX / elSlider.clientWidth + settings.min,
+					new THREE.Vector3( e.clientX, e.clientY, 0 ) );
+*/					
+
+			} );
+
+		}
+		return elSlider;
+
+	}
+
+	/**
+	 * Sets <b>index</b> and <b>title</b> of the slider element of the player's menu.
+	 * @function Player.
+	 * setIndex
+	 * @param {string} index
+	 * @param {string} title
+	 */
+	this.setIndex = function ( index, title ) {
+
+		const elSlider = getSliderElement();
+		elSlider.value = index;
+		elSlider.title = title;
+
+	}
+
+	/**
+	 * Changes the "max" value of the slider of the player's menu. Moves [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html} to the first scene.
+	 * @function Player.
+	 * onChangeScale
+	 * @param {Object} scale See <b>options.settings</b> of the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
+	 */
+	this.onChangeScale = function ( scale ) {
+
+		getSliderElement().max = scale.marks - 1;
+		this.selectScene( 0 );
 
 	}
 
@@ -806,7 +912,7 @@ palette = new palette();
  * @param {THREE.Group} group [THREE.Group]{@link https://threejs.org/docs/index.html#api/en/objects/Group}
  * @param {number} t time
  * @param {number} index index of the time.
- * @param {object} [options] followed options is available
+ * @param {object} [options] the following options are available
  * @param {boolean} [options.boPlayer] true - is not select play scene for mesh.userData.boFrustumPoints = true. Default is false.
  * @param {number} [options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
  * @param {number} [options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
@@ -1101,7 +1207,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * Use only if you want trace lines during playing. See trace of the arrayFuncs param above.
  * Default is undefined.
  * @param {number} [optionsPoints.t] first parameter of the arrayFuncs item function. Start time of animation. Default is 0.
- * @param {object} [optionsPoints.options] followed options is available
+ * @param {object} [optionsPoints.options] the following options are available
  * @param {number} [optionsPoints.options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
  * @param {number} [optionsPoints.options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
  * @param {object} [optionsPoints.options.player] See Player method above.
@@ -1317,7 +1423,7 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
  *   3: w axis. Defauilt is 0.
  * ]
  * </pre>
- * @param {object} [optionsColor] followed options is available:
+ * @param {object} [optionsColor] the following options are available:
  * @param {object} [optionsColor.palette] [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * @param {object} [optionsColor.scale]
  * @param {object} [optionsColor.scale.min] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
@@ -1453,7 +1559,7 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
  * traceLine
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Group} group {@link https://threejs.org/docs/index.html#api/en/objects/Group|Group} or {@link https://threejs.org/docs/index.html#api/en/scenes/Scene|Scene}.
- * @param {object} options followed options is available
+ * @param {object} options the following options are available
  * @param {object} options.player See Player function above.
  */
 Player.traceLine = function ( THREE, group, options ) {
