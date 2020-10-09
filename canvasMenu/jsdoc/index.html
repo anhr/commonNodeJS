@@ -43,39 +43,202 @@
 
 
     <section>
-        <article><h1>CanvasMenu.</h1>
+        <article><p># CanvasMenu.</p>
 <p>My <a href="https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu">dropdown menu</a> for canvas in my <a href="https://threejs.org/">three.js</a> projects.</p>
 <p><a href="../Examples/html/index.html">Example of using</a>.</p>
 <h2>Quick start</h2>
 <ul>
-<li>
-<p>Create a folder on your localhost named as [folderName].</p>
-</li>
-<li>
-<p>Add your web page into [folderName]. <a href="https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene">Example</a>.</p>
-</li>
-<li>
-<p>First, import <a href="https://github.com/anhr/three.js">three.js</a> in your JavaScript module.</p>
-</li>
+<li>Create a folder on your localhost named as [folderName].</li>
+<li>Add your web page into [folderName]. Example:</li>
 </ul>
-<pre class="prettyprint source"><code>import * as THREE from 'https://threejs.org/build/three.module.js';
+<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+&lt;html>
+&lt;head>
+	&lt;title>CanvasMenu&lt;/title>
+&lt;/head>
+&lt;body>
+	&lt;h1>
+		&lt;a href='https://github.com/anhr/commonNodeJS/tree/master/canvasMenu' target=&quot;_blank&quot;>CanvasMenu&lt;/a> inside &lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot;>Three.js&lt;/a> canvas.
+	&lt;/h1>
+	&lt;div class=&quot;container&quot; id=&quot;containerDSE&quot;>
+		&lt;canvas id=&quot;canvas&quot;>&lt;/canvas>
+	&lt;/div>
+	&lt;script type=&quot;module&quot;>
+
+		import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+		//import * as THREE from './three.js/dev/build/three.module.js';
+
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+		var renderer = new THREE.WebGLRenderer( {
+
+			canvas: document.getElementById( &quot;canvas&quot; ),
+
+		} );
+		renderer.setSize( window.innerWidth / 2, window.innerHeight / 2 );
+
+		var geometry = new THREE.BoxGeometry();
+		var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+		var cube = new THREE.Mesh( geometry, material );
+		scene.add( cube );
+
+		camera.position.z = 5;
+
+		var animate = function () {
+
+			requestAnimationFrame( animate );
+
+			cube.rotation.x += 0.01;
+			cube.rotation.y += 0.01;
+
+			renderer.render( scene, camera );
+
+		};
+
+		animate();
+	&lt;/script>
+&lt;/body>
+&lt;/html>
 </code></pre>
-<p>or</p>
-<pre class="prettyprint source"><code>import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/three.js">three.js</a> repository into your &quot;[folderName]\three.js\dev&quot; folder.</p>
-<pre class="prettyprint source"><code>import * as THREE from './three.js/dev/build/three.module.js';
-</code></pre>
-<p>The easiest way to use <b>CanvasMenu</b> in your code is import CanvasMenu from CanvasMenu.js.</p>
+<ul>
+<li>The easiest way to use <b>CanvasMenu</b> in your code is import CanvasMenu from CanvasMenu.js.</li>
+</ul>
 <pre class="prettyprint source"><code>import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 </code></pre>
-<p>or</p>
-<ul>
-<li>Download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</li>
-</ul>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
 </code></pre>
-<p>Now you can use <b>CanvasMenu</b> in your javascript code. Example:</p></article>
+<ul>
+<li>Now you can use <b>CanvasMenu</b> in your javascript code. Example:</li>
+</ul>
+<pre class="prettyprint source"><code>new CanvasMenu( renderer );
+</code></pre>
+<p>Now your menu does nothing and you don't see it.</p>
+<ul>
+<li>Add some item into your menu:</li>
+</ul>
+<pre class="prettyprint source"><code>new CanvasMenu( renderer, {
+
+	menu: [
+
+		{
+
+			name: 'Button',
+			onclick: function ( event ) {
+
+				var message = 'Button onclick';
+				//console.log( message );
+				alert( message )
+
+			},
+
+		},
+
+	],
+
+} );
+</code></pre>
+<p>Please move mouse over canvas. Now you can see &quot;Button&quot; button on the bottom of the canvas. Click the &quot;Button&quot;. An alert will be displayed.</p>
+<ul>
+<li>Add a &quot;Full Screen&quot; button.</li>
+</ul>
+<p>Insert the <b>fullScreen</b> key into <b>options</b> parameter of the <b>CanvasMenu</b>.</p>
+<pre class="prettyprint source"><code>new CanvasMenu( renderer, {
+
+	menu: [
+
+		{
+
+			name: 'Button',
+			onclick: function ( event ) {
+
+				var message = 'Button onclick';
+				//console.log( message );
+				alert( message )
+
+			},
+
+		},
+
+	],
+	fullScreen: {
+
+		camera: camera,
+		THREE: THREE,
+
+	},
+
+} );
+</code></pre>
+<p>Please move mouse over canvas.
+Now you can see &quot;⤢&quot; button on the bottom right corner of the canvas.
+Please click the &quot;⤢&quot; button if you want to see your canvas on the full screen.</p>
+<ul>
+<li>Add a <a href="https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md">Stereo Effect</a> menu item.</li>
+</ul>
+<p>First, import <b>StereoEffect</b> into your code</p>
+<pre class="prettyprint source"><code>import StereoEffect from &quot;https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js&quot;;
+</code></pre>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import StereoEffect from &quot;./commonNodeJS/master/StereoEffect/StereoEffect.js&quot;;
+</code></pre>
+<p>Now you can use <b>StereoEffect</b> in your code.</p>
+<pre class="prettyprint source"><code>const stereoEffect = new StereoEffect( THREE, renderer );
+</code></pre>
+<p>Add code into animate function</p>
+<pre class="prettyprint source"><code>function animate() {
+
+	requestAnimationFrame( animate );
+
+	cube.rotation.x += 0.01;
+	cube.rotation.y += 0.01;
+
+	if ( stereoEffect === undefined )
+		renderer.render( scene, camera );
+	else stereoEffect.render( scene, camera );
+
+}
+</code></pre>
+<p>For including of the <b>StereoEffect</b> into <b>CanvasMenu</b>, add the <b>stereoEffect: stereoEffect</b> key into <b>options</b> parameter of the <b>CanvasMenu</b>.</p>
+<pre class="prettyprint source"><code>new CanvasMenu( renderer, {
+
+	menu: [
+
+		{
+
+			name: 'Button',
+			onclick: function ( event ) {
+
+				var message = 'Button onclick';
+				//console.log( message );
+				alert( message )
+
+			},
+
+		},
+
+	],
+	fullScreen: {
+
+		camera: camera,
+		THREE: THREE,
+
+	},
+	stereoEffect: stereoEffect,
+
+} );
+</code></pre>
+<p>Please move mouse over canvas.
+Now you can see &quot;⚭&quot; menu item on the bottom of the canvas.
+Please click the &quot;⚭&quot; if you want to change of stereo mode.</p>
+<p>Currently your canvas is not full screen in the stereo mode.
+I think is is bad, because your stereo device can not to display stereo correctly if your canvas is not full screen.
+For resolving of issue please add <b>rememberSize: true</b> key into <b>options</b> parameter of the <b>StereoEffect</b>.</p>
+<pre class="prettyprint source"><code>const stereoEffect = new StereoEffect( THREE, renderer, { rememberSize: true, } );
+</code></pre>
+<p>Now your canvas will be changing to full screen automatically if you choice a stereo mode.</p></article>
     </section>
 
 
@@ -92,7 +255,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Oct 08 2020 06:38:25 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat Oct 10 2020 01:27:06 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
