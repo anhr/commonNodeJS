@@ -18,7 +18,7 @@ My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu
 	<h1>
 		<a href='https://github.com/anhr/commonNodeJS/tree/master/canvasMenu' target="_blank">CanvasMenu</a> inside <a href="https://threejs.org/" target="_blank">Three.js</a> canvas.
 	</h1>
-	<div class="container" id="containerDSE">
+	<div>
 		<canvas id="canvas"></canvas>
 	</div>
 	<script type="module">
@@ -203,3 +203,44 @@ For resolving of issue please add <b>rememberSize: true</b> key into <b>options<
 const stereoEffect = new StereoEffect( THREE, renderer, { rememberSize: true, } );
 ```
 Now your canvas will be changing to full screen automatically if you choice a stereo mode.
+
+* If you want to localize menu, please import <b>getLanguageCode</b>
+```
+import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import { getLanguageCode } from './commonNodeJS/master/lang.js';
+```
+Add <b>getLanguageCode: getLanguageCode,</b> key into <b>options</b> parameter of the <b>CanvasMenu</b>.
+```
+new CanvasMenu( renderer, {
+
+	menu: [
+
+		{
+
+			name: 'Button',
+			onclick: function ( event ) {
+
+				var message = 'Button onclick';
+				//console.log( message );
+				alert( message )
+
+			},
+
+		},
+
+	],
+	fullScreen: {
+
+		camera: camera,
+		THREE: THREE,
+
+	},
+	stereoEffect: stereoEffect,
+	getLanguageCode: getLanguageCode,
+
+} );
+
+```

@@ -33,13 +33,8 @@
 	</h1>
 	<p>Please move mouse over canvas. Now you can see "Button", "⚭" and "⤢" buttons on the bottom of the canvas.</p>
 
-	<div class="container" id="containerDSE">
+	<div>
 		<canvas id="canvas"></canvas>
-		<!--Thanks to https://stackoverflow.com/questions/41404643/place-dat-gui-strictly-inside-three-js-scene-without-iframe-->
-		<div id="iframe-goes-in-here">
-			<div id="my-gui-container"></div>
-			<!--<iframe></iframe>-->
-		</div>
 	</div>
 	<script type="module">
 
@@ -66,18 +61,9 @@
 		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 		//import { getLanguageCode } from './commonNodeJS/master/lang.js';
 
-		/*
-		if ( WEBGL.isWebGLAvailable() === false ) {
 
-			document.body.appendChild( WEBGL.getWebGLErrorMessage() );
-			alert( WEBGL.getWebGLErrorMessage().innerHTML );
+		var camera, scene, renderer, controls, stereoEffect, cubeType = 'cube', group, canvasMenu;//playController;
 
-		}
-		*/
-		var elContainer = document.getElementById( "containerDSE" ),
-			elCanvas = elContainer.querySelector( 'canvas' );
-
-		var camera, scene, renderer, controls, stereoEffect/*, raycaster*/, cubeType = 'cube', group, playController;
 		init();
 		animate();
 
@@ -99,31 +85,13 @@
 			renderer = new THREE.WebGLRenderer( {
 
 				antialias: true,
-				canvas: elCanvas,
+				canvas: document.getElementById( "canvas" ),//elCanvas,
 
 			} );
-			renderer.setPixelRatio( window.devicePixelRatio );
+//			renderer.setPixelRatio( window.devicePixelRatio );
 
-			//resize
-/*			
-			renderer.setSizeOld = renderer.setSize;
-			renderer.setSize = function ( width, height, updateStyle ) {
-
-				renderer.setSizeOld( width, height, updateStyle );
-
-				timeoutControls = setTimeout( function () {
-
-					elContainer.style.height = elCanvas.style.height;//height + "px";
-					elContainer.style.width = elCanvas.style.width;//width + "px";
-					elContainer.style.left = elCanvas.style.left;
-					elContainer.style.top = elCanvas.style.top;
-					elContainer.style.position = elCanvas.style.position;
-
-				}, 0 );
-
-			};
-*/			
 			renderer.setSize( window.innerWidth / 2, window.innerHeight / 2 );
+//			renderer.setSize( window.innerWidth, window.innerHeight );
 
 			//
 			controls = new OrbitControls( camera, renderer.domElement );
@@ -140,28 +108,12 @@
 					camera: camera,
 					stereoAspect: 1,
 					rememberSize: true,
-/*
-					onFullScreen: function ( fullScreen ) {
-
-						setFullScreenButton( fullScreen );
-
-					},
-*/
-/*
-					fullScreen: {
-
-						renderer: renderer,
-						camera: camera,
-
-					},
-*/
 					cookie: THREE.cookie,
 
 				} );
 
 			}
 
-			var canvasMenu;
 			if ( typeof CanvasMenu !== 'undefined' ) {
 
 				canvasMenu = new CanvasMenu( renderer, {
@@ -250,63 +202,6 @@
 			if ( gui.__closeButton.click !== undefined )//for compatibility with Safari 5.1.7 for Windows
 				gui.__closeButton.click();
 
-			//Thanks to https://stackoverflow.com/questions/41404643/place-dat-gui-strictly-inside-three-js-scene-without-iframe
-			document.getElementById( 'my-gui-container' ).appendChild( gui.domElement );
-
-			/*
-			//PlayController
-			var colorRed = new THREE.Color( 0xff0000 );
-			playController = controllerPlay.create( group, {
-
-				onShowObject3D: function ( objects3DItem, index ) {
-
-					objects3DItem.visible = true;
-					if ( typeof menuPlay !== "undefined" )
-						menuPlay.setIndex( index );
-
-				},
-				onHideObject3D: function ( objects3DItem ) {
-
-					objects3DItem.visible = false;//hide object3D
-
-				},
-				onSelectedObject3D: function ( objects3DItem, index ) {
-
-					objects3DItem.material.color = colorRed;
-					objects3DItem.visible = true;
-					if ( typeof menuPlay !== "undefined" )
-						menuPlay.setIndex( index );
-
-				},
-				onRestoreObject3D: function ( objects3DItem ) {
-
-					objects3DItem.material.color = objects3DItem.userData.color;
-					objects3DItem.visible = true;
-
-				},
-				onRenamePlayButton: function ( name, title ) {
-
-					var elMenuButtonPlay = document.getElementById( 'menuButtonPlay' );
-					if ( elMenuButtonPlay === null )
-						return;
-					elMenuButtonPlay.innerHTML = name;
-					elMenuButtonPlay.title = title;
-
-				},
-				onRenameRepeatButton: function ( title, color ) {
-
-					var elMenuButtonRepeat = document.getElementById( 'menuButtonRepeat' );
-					if ( elMenuButtonRepeat === null )
-						return;
-//					elMenuButtonRepeat.innerHTML = name;
-					elMenuButtonRepeat.title = title;
-
-				},
-
-			} );
-			gui.add( playController );
-			*/
-
 			//Points
 
 			var points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [
@@ -360,33 +255,31 @@
 					getLanguageCode: getLanguageCode,
 
 				} );
-/*
-				THREE.gui.stereoEffect( gui, stereoEffect.options, {
-
-					gui: gui,
-					stereoEffect: stereoEffect,
-
-				} );
-*/
 
 			}
 
-			window.addEventListener( 'resize', onResize, false );
+//			window.addEventListener( 'resize', onResize, false );
 
 		}
+/*		
 		function onResize() {
 
-			var size = new THREE.Vector2();
-			renderer.getSize( size );
+			var size;
+			if ( canvasMenu && canvasMenu.isFullScreen() )
+				size = new THREE.Vector2( window.innerWidth, window.innerHeight );
+			else {
+
+				size = new THREE.Vector2();
+				renderer.getSize( size );
+
+			}
 			camera.aspect = size.x / size.y;
 			camera.updateProjectionMatrix();
 
-			if ( typeof se === 'undefined' )
-				renderer.setSize( size.x, size.y );
-			else
-				stereoEffect.setSize( size.x, size.y );
+			renderer.setSize( size.x, size.y );
 
 		}
+*/		
 		function onDocumentMouseMove( event ) {
 
 			/*if ( raycaster.stereo !== undefined )
