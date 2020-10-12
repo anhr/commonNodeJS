@@ -431,6 +431,8 @@ function StereoEffect( _THREE, renderer, options ) {
 		guiParams.cookie.getObject( stereoEffect, options, optionsDefault );
 		options.spatialMultiplex = parseInt( options.spatialMultiplex );
 
+		if ( this.setSpatialMultiplex ) this.setSpatialMultiplex( options.spatialMultiplex );
+
 		//
 		/*
 				if ( guiParams.gui !== undefined )
@@ -674,7 +676,11 @@ function StereoEffect( _THREE, renderer, options ) {
 			} );
 
 		}
-		this.setSpatialMultiplex = function ( index ) { menuItemStereoEffect.select( index ); }
+		this.setSpatialMultiplex = function ( index ) {
+
+				menuItemStereoEffect.select( index );
+
+		}
 		canvasMenu.menu.push( menuItemStereoEffect );
 
 	}
