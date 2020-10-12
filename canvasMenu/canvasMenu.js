@@ -53,6 +53,14 @@ function CanvasMenu( renderer, options ) {
 		
 	}
 	const elCanvas = renderer.domElement, elContainer = elCanvas.parentElement;
+	if ( elContainer.tagName !== "DIV" ) {
+
+		console.error( 'CanvasMenu: elContainer.tagName = ' + elContainer.tagName );
+		return;
+
+	}
+	const container = "container";
+	if ( !elContainer.classList.contains( "container" ) ) elContainer.classList.add( "container" );
 //		canvasMenu = this;
 /*	
 	const elCanvas = elContainer.querySelector( 'canvas' );
