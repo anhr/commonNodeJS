@@ -241,6 +241,7 @@ function StereoEffect( _THREE, renderer, options ) {
 			fullScreenSettings.setFullScreen( fullScreen );
 			spatialMultiplexCur = spatialMultiplex;
 			if ( stereoEffect.setControllerSpatialMultiplex ) stereoEffect.setControllerSpatialMultiplex( spatialMultiplex );
+			else if ( stereoEffect.setSpatialMultiplex ) stereoEffect.setSpatialMultiplex( spatialMultiplex );
 
 		}
 
@@ -428,6 +429,7 @@ function StereoEffect( _THREE, renderer, options ) {
 		}
 		Object.freeze( optionsDefault );
 		guiParams.cookie.getObject( stereoEffect, options, optionsDefault );
+		options.spatialMultiplex = parseInt( options.spatialMultiplex );
 
 		//
 		/*
@@ -460,7 +462,10 @@ function StereoEffect( _THREE, renderer, options ) {
 				if ( _canvasMenu )
 					_canvasMenu.setSpatialMultiplexs( value );
 */					
-				if ( menuItemStereoEffect ) {
+				if ( menuItemStereoEffect )
+					menuItemStereoEffect.select( value )
+/*					
+				{
 
 					menuItemStereoEffect.items.forEach( function ( item ) {
 
@@ -477,6 +482,7 @@ function StereoEffect( _THREE, renderer, options ) {
 					} );
 
 				}
+*/				
 
 			} );
 		dat.controllerNameAndTitle( _controllerSpatialMultiplex, _lang.spatialMultiplexName, _lang.spatialMultiplexTitle );
@@ -654,6 +660,21 @@ function StereoEffect( _THREE, renderer, options ) {
 			],
 
 		}
+		menuItemStereoEffect.select = function ( value ) {
+
+			menuItemStereoEffect.items.forEach( function ( item ) {
+
+				if ( item.spatialMultiplex === value ) {
+
+					if ( !item.checked )
+						item.elName.onclick( { target: item.elName } );
+
+				}
+
+			} );
+
+		}
+		this.setSpatialMultiplex = function ( index ) { menuItemStereoEffect.select( index ); }
 		canvasMenu.menu.push( menuItemStereoEffect );
 
 	}
