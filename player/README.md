@@ -4,7 +4,7 @@ I use Player in my [three.js](https://threejs.org/) projects for 3D objects anim
 Uses in my projects:
  * [myThreejs](https://github.com/anhr/myThreejs)
 
-See [Player API](https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/jsdoc/index.html) for details.
+See [Player API](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html) for details.
 
 ## On the following browsers have been successfully tested:
 
