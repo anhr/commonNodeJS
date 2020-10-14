@@ -27,7 +27,7 @@ import ColorPicker from '../colorpicker/colorpicker.js';
 
 import { lang } from '../controllerPlay/index.js';
 
-import { SpriteText } from '../../../SpriteText/master/SpriteText.js';//https://github.com/anhr/SpriteText
+//import { SpriteText } from '../../../SpriteText/master/SpriteText.js';//https://github.com/anhr/SpriteText
 
 var settings;
 
