@@ -27,19 +27,17 @@ My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 		//import * as THREE from './three.js/dev/build/three.module.js';
 
-		var scene = new THREE.Scene();
-		var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-		var renderer = new THREE.WebGLRenderer( {
+		const renderer = new THREE.WebGLRenderer( {
 
 			canvas: document.getElementById( "canvas" ),
 
 		} );
 		renderer.setSize( window.innerWidth / 2, window.innerHeight / 2 );
 
-		var geometry = new THREE.BoxGeometry();
-		var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-		var cube = new THREE.Mesh( geometry, material );
+		const cube = new THREE.Mesh( new THREE.BoxGeometry(), new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) );
 		scene.add( cube );
 
 		camera.position.z = 5;
