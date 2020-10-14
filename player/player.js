@@ -46,20 +46,26 @@ var settings;
 
 /**
  * 3D objects animation.
- * @param {onSelectScene} onSelectScene This function is called at each new step of the playing. See [onSelectScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene}.
+ * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
+ * @param {THREE.Group|THREE.Scene} group THREE group or scene of the meshes  for playing.
  * @param {object} [options] the following options are available
- * @param {number} [options.settings] time settings.
- * @param {number} [options.settings.marks] Ticks count of the playing. Number of scenes of 3D objects animation. Default is 10
- * @param {number} [options.settings.interval] Ticks per seconds. Default is 1.
- * @param {number} [options.settings.min] Animation start time. Default is 0.
- * @param {number} [options.settings.max] Animation end time. Default is 1.
- * @param {boolean} [options.settings.repeat] true - Infinitely repeating 3D objects animation. Default is false.
- * @param {number} [options.settings.zoomMultiplier] zoom multiplier of the time. Default is 1.1.
- * @param {number} [options.settings.offset] offset of the time. Default is 0.1.
+ * @param {object} [options.selectPlaySceneOptions] See [Player.selectPlayScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.selectPlayScene} options parameter.
+ * @param {onSelectScene} [options.onSelectScene] This function is called at each new step of the playing. See [onSelectScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene}.
+ * @param {object} [options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
  * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings. See [onChangeScaleT]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onChangeScaleT}.
  * @param {object} [options.cookie] Your custom cookie function for saving and loading of the Player settings. Default cookie is not saving settings.
+ * @param {number} [options.settings] time settings.
+ * @param {number} [options.settings.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
+ * @param {number} [options.settings.interval=1] Ticks per seconds.
+ * @param {number} [options.settings.min=0] Animation start time.
+ * @param {number} [options.settings.max=1] Animation end time.
+ * @param {boolean} [options.settings.repeat=false] true - Infinitely repeating 3D objects animation.
+ * @param {number} [options.settings.zoomMultiplier=1.1] zoom multiplier of the time.
+ * @param {number} [options.settings.offset=0.1] offset of the time.
+ * @param {string} [options.settings.name=""] name of the time.
  */
-function Player( onSelectScene, options ) {
+function Player( THREE, group,// onSelectScene,
+	options ) {
 
 	options = options || {};
 	settings = options.settings || {};
@@ -78,12 +84,25 @@ function Player( onSelectScene, options ) {
 	settings.interval = settings.interval || 1;//25;
 	settings.zoomMultiplier = settings.zoomMultiplier || 1.1;
 	settings.offset = settings.offset || 0.1;
+	settings.name = settings.name || '';
 /*
 	const axesDefault = JSON.parse( JSON.stringify( settings ) );
 	Object.freeze( axesDefault );
 
 	options.cookie = options.cookie || new cookie.defaultCookie();
 */
+	/**
+	 * @description This function is called at each new step of the playing.
+	 * @param {number} index current index of the scene of the animation
+	 * @param {number} t current time
+	 */
+	function onSelectScene( index, t ) {
+
+		Player.selectPlayScene( THREE, group, t, index, options.selectPlaySceneOptions );
+		_this.setIndex( index, ( settings.name === '' ? '' : settings.name + ': ' ) + t );
+		if ( options.onSelectScene ) options.onSelectScene( index, t );
+
+	}
 	var selectSceneIndex = 0,//-1;
 		_this = this;
 
@@ -105,10 +124,13 @@ function Player( onSelectScene, options ) {
 		if( selectSceneIndex > settings.marks )
 			selectSceneIndex = settings.marks;
 		while ( selectSceneIndex !== index ) {
+
 			if ( selectSceneIndex < index )
 				selectSceneIndex++;
 			else selectSceneIndex--;
-			onSelectScene( selectSceneIndex, getTime() );
+			const t = getTime();
+			onSelectScene( selectSceneIndex, t );
+			
 		}
 
 	}
@@ -315,7 +337,7 @@ function Player( onSelectScene, options ) {
 	 * getSettings
 	 * @returns Player options.settings.
 	 */
-	this.getSettings = function () { return options.settings; }
+	this.getSettings = function () { return settings; }//{ return options.settings; }
 	/**
 	 * @function Player.
 	 * getSelectSceneIndex
@@ -727,7 +749,7 @@ function Player( onSelectScene, options ) {
 
 	}
 
-	function getSliderElement() { return _canvasMenu.querySelector( '#sliderPosition' ); }
+	function getSliderElement() { if ( _canvasMenu ) return _canvasMenu.querySelector( '#sliderPosition' ); }
 
 	/**
 	 * Adds an events into slider menu item of the [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
@@ -743,7 +765,7 @@ function Player( onSelectScene, options ) {
 			elSlider.onchange = function ( event ) { player.selectScene( parseInt( elSlider.value ) ); };
 			elSlider.oninput = function ( event ) { player.selectScene( parseInt( elSlider.value ) ); };
 
-			var pointerdown, spriteText;
+			var pointerdown;//, spriteText;
 			const player = this;
 			elSlider.addEventListener( 'pointerdown', e => { pointerdown = true; } );
 			elSlider.addEventListener( 'pointerup', e => { pointerdown = false; } );
@@ -776,6 +798,8 @@ function Player( onSelectScene, options ) {
 	this.setIndex = function ( index, title ) {
 
 		const elSlider = getSliderElement();
+		if ( !elSlider )
+			return;
 		elSlider.value = index;
 		elSlider.title = title;
 
@@ -930,7 +954,7 @@ palette = new palette();
  */
 Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 
-	ColorPicker.palette.setTHREE(THREE);
+//	ColorPicker.palette.setTHREE(THREE);
 	
 	options = options || {};
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -20,7 +20,9 @@
 		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - Player - 3D objects animation.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
-	<canvas id="canvas" height="128" width="128"></canvas>
+	<div class="container">
+		<canvas id="canvas"></canvas>
+	</div>
 
 	<script type="module">
 
@@ -29,19 +31,19 @@
 		//import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
-		//import { dat } from '../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
+		import { dat } from '../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
-		//import cookie from '../../../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
+		import cookie from '../../cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
 		//import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 		//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
-		//import { getLanguageCode } from '../../lang.js';//https://github.com/anhr/commonNodeJS
+		import { getLanguageCode } from '../../lang.js';//https://github.com/anhr/commonNodeJS
 		//import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-/*
-		//import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
-		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
-*/		
+		/*
+				//import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
+				//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+		*/
 		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
@@ -62,6 +64,10 @@
 		//import MyPoints from 'http://localhost/anhr/commonNodeJS/master/myPoints/myPoints.js';
 		import MyPoints from '../../myPoints/myPoints.js';
 
+		//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
+		import CanvasMenu from '../../canvasMenu/canvasMenu.js';
+		//import CanvasMenu from 'http://localhost/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
+
 		var camera, scene, renderer, stereoEffect, controls, player;
 
 		init();
@@ -77,17 +83,13 @@
 
 			if ( typeof Player !== 'undefined' ) {
 
-				const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
-				player = new Player( function ( index, t ) {
+				player = new Player( THREE, scene, { palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ) } );
+/*				
+				player = new Player( THREE, scene, function ( index, t ) {
 
-//					var t = ( ( options.player.max - options.player.min ) / ( options.player.marks - 1 ) ) * index + options.player.min;
 					Player.selectPlayScene( THREE, scene, t, index, { palette: palette } );
 					if ( typeof canvasMenu !== 'undefined' )
 						canvasMenu.setIndex( index, options.player.name + ': ' + t );
-/*						
-					if ( typeof frustumPoints !== 'undefined' )
-						frustumPoints.updateCloudPoints();
-*/						
 
 				}, {
 
@@ -120,34 +122,35 @@
 					},
 
 				} );
-/*				
-				if ( ( gui !== undefined ) && ( typeof controllerPlay !== 'undefined' ) ) {
-
-					var playController = controllerPlay.create( player );
-					gui.add( playController );
-
-				}
 */				
+				/*
+								if ( ( gui !== undefined ) && ( typeof controllerPlay !== 'undefined' ) ) {
+
+									var playController = controllerPlay.create( player );
+									gui.add( playController );
+
+								}
+				*/
 				player.play3DObject();
 
 			}
 
 			const arrayFuncs = [
 				//new THREE.Vector3( 0.5, 0.5, 0.5 ),
-/*				
-				new THREE.Vector3(
-					new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-					0.5,
-					0.5 ),
-*/					
+				/*
+								new THREE.Vector3(
+									new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
+									0.5,
+									0.5 ),
+				*/
 				{
 
 					vector: new THREE.Vector4(
 						new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
 						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
 						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.1' ),//z
-						100,//w
-						//new Function( 't', 'return 100*t' ),//w
+						//100,//w
+						new Function( 't', 'return 100*t' ),//w
 						/*
 						{
 
@@ -191,21 +194,21 @@
 				MyPoints( THREE, arrayFuncs,
 					scene, {
 
-						Player: Player,
-						options: {
+					Player: Player,
+					options: {
 
-							point: { size: 15 },
-		//					player: { player: player },
+						point: { size: 15 },
+						//					player: { player: player },
 
-						},
-						pointsOptions: {
+					},
+					pointsOptions: {
 
-							position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
-							//shaderMaterial: {}
+						position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+						//shaderMaterial: {}
 
-						}
+					}
 
-					} );
+				} );
 
 			} else {
 
@@ -231,28 +234,8 @@
 					}
 
 				}
-				
+
 			}
-			/*
-			MyPoints( THREE, arrayFuncs,
-				scene, {
-
-				Player: Player,
-				options: {
-
-					point: { size: 15 },
-//					player: { player: player },
-
-				},
-				pointsOptions: {
-
-					position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
-					shaderMaterial: {}
-
-				}
-
-			} );
-			*/
 
 			renderer = new THREE.WebGLRenderer( {
 
@@ -260,9 +243,8 @@
 				canvas: document.getElementById( 'canvas' ),
 
 			} );
-			renderer.setPixelRatio( window.devicePixelRatio );
+//			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
-			document.body.appendChild( renderer.domElement );
 
 			//
 
@@ -283,7 +265,18 @@
 					//stereoAspect: 1,
 
 				} );
-				stereoEffect.setSize( window.innerWidth, window.innerHeight );
+				//				stereoEffect.setSize( window.innerWidth, window.innerHeight );
+
+			}
+			if ( typeof CanvasMenu !== "undefined" ) {
+
+				new CanvasMenu( renderer, {
+
+					player: player,
+					stereoEffect: stereoEffect,
+					getLanguageCode: typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode,
+
+				} );
 
 			}
 
@@ -296,11 +289,11 @@
 				if ( stereoEffect )
 					stereoEffect.gui( gui, {
 
-						getLanguageCode: getLanguageCode,
-						cookie: cookie,//Saves a custom StereoEffect settings in the cookie
+						getLanguageCode: typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode,
+						cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
 
 					} );
-					
+
 				if ( typeof controllerPlay !== 'undefined' ) {
 
 					var playController = controllerPlay.create( player );
