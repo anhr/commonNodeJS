@@ -39,6 +39,7 @@ My JavaScript library for NodeJS.
 * OrbitControlsGui.js [OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) graphical user interface.
 [Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
 * Player.js 3D objects animation.
+[README.md](https://github.com/anhr/commonNodeJS/tree/master/player).
 [Player API](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
 * PositionController.js PositionController is [dat.gui](https://github.com/dataarts/dat.gui) graphical user interface controller
