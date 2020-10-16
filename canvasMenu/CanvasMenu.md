@@ -242,3 +242,6 @@ new CanvasMenu( renderer, {
 } );
 
 ```
+* Add [Player](https://github.com/anhr/commonNodeJS/tree/master/player) menu item.
+
+See "Add player item into CanvasMenu." header in [Player API](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html).
