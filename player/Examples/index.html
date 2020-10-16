@@ -20,14 +20,14 @@
 		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - Player - 3D objects animation.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
-	<div class="container">
+	<div>
 		<canvas id="canvas"></canvas>
 	</div>
 
 	<script type="module">
 
-		//import * as THREE from 'https://threejs.org/build/three.module.js';
-		import * as THREE from '../../../../three.js/dev/build/three.module.js';
+		import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from '../../../../three.js/dev/build/three.module.js';
 		//import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
@@ -76,8 +76,7 @@
 		function init() {
 
 			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-			const defaultCameraPosition = new THREE.Vector3( 0.4, 0.4, 2 );
-			camera.position.copy( defaultCameraPosition );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
 
 			scene = new THREE.Scene();
 
@@ -131,7 +130,6 @@
 
 								}
 				*/
-				player.play3DObject();
 
 			}
 
@@ -203,7 +201,7 @@
 					},
 					pointsOptions: {
 
-						position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+						//position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
 						//shaderMaterial: {}
 
 					}
@@ -228,14 +226,15 @@
 					arrayFuncs: arrayFuncs,
 					selectPlayScene: function ( t ) {
 
-						points.position.x = t;
-						points.rotation.z = - Math.PI * 2 * t;
+						//points.position.x = t;
+						//points.rotation.z = - Math.PI * 2 * t;
 
 					}
 
 				}
 
 			}
+			player.play3DObject();
 
 			renderer = new THREE.WebGLRenderer( {
 
@@ -304,7 +303,6 @@
 			}
 
 			window.addEventListener( 'resize', onWindowResize, false );
-
 
 		}
 		function onWindowResize() {

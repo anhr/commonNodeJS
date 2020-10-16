@@ -85,12 +85,8 @@ function Player( THREE, group,// onSelectScene,
 	settings.zoomMultiplier = settings.zoomMultiplier || 1.1;
 	settings.offset = settings.offset || 0.1;
 	settings.name = settings.name || '';
-/*
-	const axesDefault = JSON.parse( JSON.stringify( settings ) );
-	Object.freeze( axesDefault );
 
-	options.cookie = options.cookie || new cookie.defaultCookie();
-*/
+	var boSelectFirstScene = true;
 	/**
 	 * @description This function is called at each new step of the playing.
 	 * @param {number} index current index of the scene of the animation
@@ -98,6 +94,17 @@ function Player( THREE, group,// onSelectScene,
 	 */
 	function onSelectScene( index, t ) {
 
+		//Когда установлен "trace: true" в arrayFuncs во время старта проигрывания нужно один разх вызвать "onSelectScene" с "selectSceneIndex = 0"
+		//Иначе линия трассировка будет начинаться со второй точки.
+		if ( boSelectFirstScene ) {
+
+			boSelectFirstScene = false;
+			const selectSceneIndexCur = selectSceneIndex;
+			selectSceneIndex = 0;
+			onSelectScene( selectSceneIndex, getTime() );
+			selectSceneIndex = selectSceneIndexCur;
+
+		}
 		Player.selectPlayScene( THREE, group, t, index, options.selectPlaySceneOptions );
 		_this.setIndex( index, ( settings.name === '' ? '' : settings.name + ': ' ) + t );
 		if ( options.onSelectScene ) options.onSelectScene( index, t );
@@ -954,7 +961,9 @@ palette = new palette();
  */
 Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 
-//	ColorPicker.palette.setTHREE(THREE);
+	//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
+	//Другими словами если не вызывается Player.getColors
+	ColorPicker.palette.setTHREE( THREE );
 	
 	options = options || {};
 
