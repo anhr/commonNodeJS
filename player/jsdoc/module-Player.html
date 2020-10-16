@@ -157,7 +157,7 @@
     
 
     
-    <h4 class="name" id="~Player"><span class="type-signature">(inner) </span>Player<span class="signature">(onSelectScene, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~Player"><span class="type-signature">(inner) </span>Player<span class="signature">(THREE, group, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -203,13 +203,13 @@
 
         <tr>
             
-                <td class="name"><code>onSelectScene</code></td>
+                <td class="name"><code>THREE</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">onSelectScene</span>
+<span class="param-type">THREE</span>
 
 
             
@@ -227,7 +227,41 @@
 
             
 
-            <td class="description last">This function is called at each new step of the playing. See <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene">onSelectScene</a>.</td>
+            <td class="description last"><a href="https://github.com/anhr/three.js">THREE</a></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>group</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.Group</span>
+|
+
+<span class="param-type">THREE.Scene</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">THREE group or scene of the meshes  for playing.</td>
         </tr>
 
     
@@ -260,7 +294,7 @@
 
             
 
-            <td class="description last">followed options is available
+            <td class="description last">the following options are available
                 <h6>Properties</h6>
                 
 
@@ -278,12 +312,201 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>selectPlaySceneOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">See <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.selectPlayScene">Player.selectPlayScene</a> options parameter.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onSelectScene</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">onSelectScene</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">This function is called at each new step of the playing. See <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene">onSelectScene</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>palette</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW
+                
+                </td>
+            
+
+            <td class="description last">See <a href="https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette">ColorPicker.palette</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onChangeScaleT</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">onChangeScaleT</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">event. User has updated the time settings. See <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onChangeScaleT">onChangeScaleT</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cookie</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Your custom cookie function for saving and loading of the Player settings. Default cookie is not saving settings.</td>
+        </tr>
+
     
 
         <tr>
@@ -313,6 +536,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">time settings.
                 <h6>Properties</h6>
@@ -331,6 +558,8 @@
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -367,8 +596,14 @@
             
 
             
+                <td class="default">
+                
+                    10
+                
+                </td>
+            
 
-            <td class="description last">Ticks count of the playing. Number of scenes of 3D objects animation. Default is 10</td>
+            <td class="description last">Ticks count of the playing. Number of scenes of 3D objects animation.</td>
         </tr>
 
     
@@ -400,8 +635,14 @@
             
 
             
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
 
-            <td class="description last">Ticks per seconds. Default is 1.</td>
+            <td class="description last">Ticks per seconds.</td>
         </tr>
 
     
@@ -433,8 +674,14 @@
             
 
             
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
 
-            <td class="description last">Animation start time. Default is 0.</td>
+            <td class="description last">Animation start time.</td>
         </tr>
 
     
@@ -466,8 +713,14 @@
             
 
             
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
 
-            <td class="description last">Animation end time. Default is 1.</td>
+            <td class="description last">Animation end time.</td>
         </tr>
 
     
@@ -499,8 +752,14 @@
             
 
             
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
 
-            <td class="description last">true - Infinitely repeating 3D objects animation. Default is false.</td>
+            <td class="description last">true - Infinitely repeating 3D objects animation.</td>
         </tr>
 
     
@@ -532,8 +791,14 @@
             
 
             
+                <td class="default">
+                
+                    1.1
+                
+                </td>
+            
 
-            <td class="description last">zoom multiplier of the time. Default is 1.1.</td>
+            <td class="description last">zoom multiplier of the time.</td>
         </tr>
 
     
@@ -565,8 +830,53 @@
             
 
             
+                <td class="default">
+                
+                    0.1
+                
+                </td>
+            
 
-            <td class="description last">offset of the time. Default is 0.1.</td>
+            <td class="description last">offset of the time.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ""
+                
+                </td>
+            
+
+            <td class="description last">name of the time.</td>
         </tr>
 
     
@@ -574,72 +884,6 @@
 </table>
 
             </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>onChangeScaleT</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">onChangeScaleT</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">event. User has updated the time settings. See <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onChangeScaleT">onChangeScaleT</a>.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cookie</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Your custom cookie function for saving and loading of the Player settings. Default cookie is not saving settings.</td>
         </tr>
 
     
@@ -687,7 +931,330 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line58">line 58</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line67">line 67</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~Player.addSlider"><span class="type-signature">(inner) </span>Player.addSlider<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Adds slider menu item into <a href="https://github.com/anhr/commonNodeJS/tree/master/canvasMenu">CanvasMenu</a>.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line743">line 743</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~Player.addSliderEvents"><span class="type-signature">(inner) </span>Player.addSliderEvents<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Adds an events into slider menu item of the <a href="https://github.com/anhr/commonNodeJS/tree/master/canvasMenu">CanvasMenu</a>.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line761">line 761</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    slider element
+</div>
+
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~Player.createCanvasMenuItem"><span class="type-signature">(inner) </span>Player.createCanvasMenuItem<span class="signature">(canvasMenu)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Adds a Player's menu item into <a href="https://github.com/anhr/commonNodeJS/tree/master/canvasMenu">CanvasMenu</a>.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>canvasMenu</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">CanvasMenu</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><a href="https://github.com/anhr/commonNodeJS/tree/master/canvasMenu">CanvasMenu</a>.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line646">line 646</a>
     </li></ul></dd>
     
 
@@ -916,7 +1483,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line559">line 559</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line829">line 829</a>
     </li></ul></dd>
     
 
@@ -1098,7 +1665,7 @@
 
             
 
-            <td class="description last">followed options is available:
+            <td class="description last">the following options are available:
                 <h6>Properties</h6>
                 
 
@@ -1426,7 +1993,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1133">line 1133</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1405">line 1405</a>
     </li></ul></dd>
     
 
@@ -1520,7 +2087,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line306">line 306</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line336">line 336</a>
     </li></ul></dd>
     
 
@@ -1832,7 +2399,7 @@
 
             
 
-            <td class="description last">followed options is available
+            <td class="description last">the following options are available
                 <h6>Properties</h6>
                 
 
@@ -2007,7 +2574,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line911">line 911</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1183">line 1183</a>
     </li></ul></dd>
     
 
@@ -2101,7 +2668,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line318">line 318</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line348">line 348</a>
     </li></ul></dd>
     
 
@@ -2195,7 +2762,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line312">line 312</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line342">line 342</a>
     </li></ul></dd>
     
 
@@ -2385,7 +2952,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line363">line 363</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line445">line 445</a>
     </li></ul></dd>
     
 
@@ -2473,7 +3040,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line111">line 111</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line145">line 145</a>
     </li></ul></dd>
     
 
@@ -2610,7 +3177,232 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line346">line 346</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line376">line 376</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~Player.onChangeRepeat"><span class="type-signature">(inner) </span>Player.onChangeRepeat<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Changes "Repeat" button of the player's menu between <b>repeat Off</b> and <b>repeat On</b>.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line728">line 728</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~Player.onChangeScale"><span class="type-signature">(inner) </span>Player.onChangeScale<span class="signature">(scale)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Changes the "max" value of the slider of the player's menu. Moves <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html">Player</a> to the first scene.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>scale</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">See <b>options.settings</b> of the <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html">Player</a>.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line815">line 815</a>
     </li></ul></dd>
     
 
@@ -2747,7 +3539,144 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line333">line 333</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line363">line 363</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~Player.onRenamePlayButtons"><span class="type-signature">(inner) </span>Player.onRenamePlayButtons<span class="signature">(playing)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Renames the "Play" button of the player's menu.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>playing</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><b>true</b> - pause.<p><b>false</b> - play</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line700">line 700</a>
     </li></ul></dd>
     
 
@@ -2835,7 +3764,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line227">line 227</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line257">line 257</a>
     </li></ul></dd>
     
 
@@ -2923,7 +3852,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line122">line 122</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line156">line 156</a>
     </li></ul></dd>
     
 
@@ -3060,7 +3989,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line132">line 132</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line166">line 166</a>
     </li></ul></dd>
     
 
@@ -3148,7 +4077,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line294">line 294</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line324">line 324</a>
     </li></ul></dd>
     
 
@@ -3380,7 +4309,7 @@
 
             
 
-            <td class="description last">followed options is available
+            <td class="description last">the following options are available
                 <h6>Properties</h6>
                 
 
@@ -3675,7 +4604,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line668">line 668</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line938">line 938</a>
     </li></ul></dd>
     
 
@@ -3812,7 +4741,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line88">line 88</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line118">line 118</a>
     </li></ul></dd>
     
 
@@ -3995,7 +4924,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line883">line 883</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1155">line 1155</a>
     </li></ul></dd>
     
 
@@ -4030,6 +4959,166 @@
 
 
     
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~Player.setIndex"><span class="type-signature">(inner) </span>Player.setIndex<span class="signature">(index, title)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Sets <b>index</b> and <b>title</b> of the slider element of the player's menu.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>index</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>title</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line798">line 798</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4147,7 +5236,7 @@
 
             
 
-            <td class="description last">followed options is available
+            <td class="description last">the following options are available
                 <h6>Properties</h6>
                 
 
@@ -4237,7 +5326,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1317">line 1317</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1589">line 1589</a>
     </li></ul></dd>
     
 
@@ -4325,7 +5414,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1410">line 1410</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1682">line 1682</a>
     </li></ul></dd>
     
 
@@ -4423,7 +5512,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1418">line 1418</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1690">line 1690</a>
     </li></ul></dd>
     
 
@@ -4560,7 +5649,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1402">line 1402</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1674">line 1674</a>
     </li></ul></dd>
     
 
@@ -4703,7 +5792,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line37">line 37</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line41">line 41</a>
     </li></ul></dd>
     
 
@@ -4863,7 +5952,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line30">line 30</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line34">line 34</a>
     </li></ul></dd>
     
 
@@ -4913,7 +6002,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Sep 20 2020 14:30:58 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Oct 16 2020 17:41:40 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

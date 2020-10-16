@@ -1,35 +1,82 @@
 # Player.
 
-I use Player in my [three.js](https://threejs.org/) projects for 3D objects animation.
+I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objects animation.
 
 ## Quick start
 
-### Player.
+* Create a folder on your localhost named as [folderName].
+* Add your web page into [folderName]. Example:
+```
+<!DOCTYPE html>
 
-Create your web page. [Example](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene).
+<html>
+<head>
+	<title>Player</title>
+	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+</head>
+<body>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - Player - 3D objects animation.
+	</div>
+	<div>
+		<canvas id="canvas"></canvas>
+	</div>
 
-* First, import [three.js](https://github.com/anhr/three.js) in your JavaScript module.
-```
-import * as THREE from 'https://threejs.org/build/three.module.js';
-```
-or
-```
-import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
-```
-or download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
-```
-import * as THREE from './three.js/dev/build/three.module.js';
-```
+	<script type="module">
 
+		import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+
+		var camera, scene, renderer;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	</script>
+</body>
+</html>
+```
 The easiest way to use Player in your code is import Player from Player.js file in your JavaScript module.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
 ```
 import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
 ```
-or
-* Create a folder on your localhost named as [folderName].
-* Add your web page into [folderName]. See [example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html) web page.
-* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
 import Player from './commonNodeJS/master/player/player.js';
 ```
@@ -38,13 +85,12 @@ Now you can use Player in your javascript code.
 
 Add Player.
 ```
-const player = new Player();
+const player = new Player( THREE, scene );
 ```
 Create a 3d object, for example Points:
-
 ```
 const arrayFuncs = [
-	new THREE.Vector3( 0.5, 0.5, 0.5 ),//First point
+	new THREE.Vector3( 0, 0.5, 0.5 ),//First point
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( arrayFuncs ),
@@ -56,15 +102,14 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( array
 	} ) );
 scene.add( points );
 ```
-
-Now your player does nothing. Suppose you want to move a point during playing. Change your code for this:
-* Edit arrayFuncs
+Currently your player does nothing. Suppose you want to move a point during playing. Change your code for this:
+* Edit <b>arrayFuncs</b>
 ```
 const arrayFuncs = [
 	new THREE.Vector3(
 		new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-		0.5,//y
-		new Function( 't', 'a', 'b', 'return 5*Math.cos(t*a*2*Math.PI)*0.5-b' ),//z
+		new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
+		0.5,//z
 	),//First point
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
@@ -77,12 +122,12 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Playe
 
 	} ) );
 ```
-You can see, the <b>X</b> and <b>Z</b> values of the first point of the <b>arrayFuncs</b> is function of the <b>t</b>. <b>X</b> is <b>sin(t)</b> and <b>Z</b> is <b>cos(t)</b>.
+You can see, the <b>X</b> and <b>Y</b> values of the first point of the <b>arrayFuncs</b> is function of the <b>t</b>. <b>X</b> is <b>sin(t)</b> and <b>Y</b> is <b>cos(t)</b>.
 <b>t</b> is current time of the playing. Default start time <b>t = 0</b>, <b>a = 1</b>, <b>b = 0</b>.
 Read about [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function).
 Currently [Player.getPoints(...)](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints) returns an array of the vectors for <b>t = 0</b>.
 
-* Define the <b>points.userData.player</b> object in your code for including of the points into Player.
+* Define the <b>points.userData.player</b> object in your code for including of the points into <b>Player</b>.
 Include <b>arrayFuncs</b> into <b>points.userData.player</b> object if you want to move points during playing.
 ```
 points.userData.player = {
@@ -91,51 +136,40 @@ points.userData.player = {
 
 }
 ```
-* Edit Player
-```
-const player = new Player( function ( index, t ) {
-
-		Player.selectPlayScene( THREE, scene, t, index );
-
-	});
-```
-<b>Player.selectPlayScene( THREE, scene, t, index );</b> function call during every new step of the playing.
-See [onSelectScene](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene) for details.
 * Start playing.
 ```
 player.play3DObject();
 ```
+Attention! Please start playing after creation of all 3D objects, in current example after creating of the points.
+
 Update your web page. Now you can see moving a point on the canvas.
 
 Default, the playing ticks count is 10. You can change it.
 Also you can set your ticks per seconds and other setting.
 See [Player](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html) for details.
-Please change your Player for it.
+Please change your <b>Player</b> for it.
 ```
-const player = new Player(function ( index, t ) {
+const player = new Player( THREE, scene, {
 
-		Player.selectPlayScene( THREE, scene, t, index );
+		settings: {
 
-}, {
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
 
-	settings: {
+		},
 
-		marks: 100,//Ticks count of the playing.
-		interval: 25,//Ticks per seconds.
-
-	}
 } );
 ```
 #### Add trace line of moving of the point during playing.
-* Edit arrayFuncs
+* Edit <b>arrayFuncs</b>
 ```
 const arrayFuncs = [
 	{
 
 		vector: new THREE.Vector3(
 			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-			0.5,//y
-			new Function( 't', 'a', 'b', 'return 5*Math.cos(t*a*2*Math.PI)*0.5-b' ),//z
+			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
+			0.5,//z
 		),//First point
 		trace: true,//Displays the trace of the first point movement.
 
@@ -170,13 +204,13 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Playe
 const arrayFuncs = [
 	{
 
-		vector: new THREE.Vector4( 
+		vector: new THREE.Vector4(
 			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-			0.5,//y
-			new Function( 't', 'a', 'b', 'return 5*Math.cos(t*a*2*Math.PI)*0.5-b' ),//z
+			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
+			0.5,//z
 			new THREE.Color( "rgb( 0, 255, 0)" )//w is green color
 		),//First point
-		trace: true,//Displays the trace of the point movement.
+		trace: true,//Displays the trace of the first point movement.
 
 	},
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
@@ -190,32 +224,33 @@ Change the <b>w</b> coordinate of the <b>THREE.Vector4</b> to <b>new Function( '
 const arrayFuncs = [
 	{
 
-		vector: new THREE.Vector4( 
+		vector: new THREE.Vector4(
 			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-			0.5,//y
-			new Function( 't', 'a', 'b', 'return 5*Math.cos(t*a*2*Math.PI)*0.5-b' ),//z
+			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
+			0.5,//z
 			new Function( 't', 'return 1-2*t' )//w
 		),//First point
-		trace: true,//Displays the trace of the point movement.
+		trace: true,//Displays the trace of the first point movement.
 
 	},
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 ```
+<b>w</b> coordinate of the point is index of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
 Now you can see the color of the first point as blue at the begin of playing and white at the end of playing
 because default range of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker) from 0 to 100.
 But current range of the <b>1-2 * t</b> function from 1 to -1 for default <b>t</b> range from 0 to 1.
 You can resolve this issue by change of the palette range.
-Replace <b>w</b> coordinate of the <b>THREE.Vector4</b> from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
+Replace <b>w</b> coordinate of the first point from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
 See arrayFuncs parameter of the [Player.getColors(...)](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors) for details.
 ```
 const arrayFuncs = [
 	{
 
-		vector: new THREE.Vector4( 
+		vector: new THREE.Vector4(
 			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-			0.5,//y
-			new Function( 't', 'a', 'b', 'return 5*Math.cos(t*a*2*Math.PI)*0.5-b' ),//z
+			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
+			0.5,//z
 			{
 
 				func: new Function( 't', 'return 1-2*t' ),
@@ -224,12 +259,11 @@ const arrayFuncs = [
 
 			},//w
 		),//First point
-		trace: true,//Displays the trace of the point movement.
+		trace: true,//Displays the trace of the first point movement.
 
 	},
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
-
 ```
 * Select a [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
 
@@ -247,26 +281,23 @@ Set THREE for palette.
 ColorPicker.palette.setTHREE(THREE);
 ```
 Create a palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
-And use your new palette in <b>Player.selectPlayScene</b>.
+And use your new palette in the <b>Player</b>.
 ```
-const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
-const player = new Player(function ( index, t ) {
+const player = new Player( THREE, scene, {
 
-		Player.selectPlayScene( THREE, scene, t, index, { palette: palette } );
-
-	}, {
-
+	palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
 	settings: {
 
 		marks: 100,//Ticks count of the playing.
 		interval: 25,//Ticks per seconds.
 
-	}
+	},
+
 } );
 ```
 Also you can create your own custom palette.
 ```
-const palette = new ColorPicker.palette( { palette: [
+new ColorPicker.palette( { palette: [
 
 	{ percent: 0, r: 0xff, g: 255, b: 0xff, },
 	{ percent: 10, r: 0, g: 0, b: 0, },
@@ -307,9 +338,21 @@ To do it, please remove your old <b>const points</b> and use <b>getShaderMateria
 #### Use MyPoints for create points.
 
 Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use [MyPoints](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html) for creating of new points.
+Import <b>MyPoints</b> into your web page for it.
+```
+import MyPoints from 'http://localhost/anhr/commonNodeJS/master/myPoints/myPoints.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
+```
 Example.
 ```
-MyPoints( THREE, arrayFuncs, scene );
+MyPoints( THREE, arrayFuncs, scene, {
+
+	Player: Player,
+
+} );
 ```
 Now you can see, first point is moving and changing color.
 
@@ -318,14 +361,15 @@ You can set your own setting for <b>MyPoints</b>. For example set points size to
 ```
 MyPoints( THREE, arrayFuncs, scene, {
 
+	Player: Player,
 	options: {
 
-		point: { size: 15 }
+		point: { size: 15 },
 
 	},
 	pointsOptions: {
 
-		position: new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0)
+		position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
 
 	}
 
@@ -336,20 +380,41 @@ please add <b>shaderMaterial: {}</b> into <b>pointsOptions</b> of the <b>MyPoint
 ```
 MyPoints( THREE, arrayFuncs, scene, {
 
+	Player: Player,
 	options: {
 
-		point: { size: 15 }
+		point: { size: 15 },
 
 	},
 	pointsOptions: {
 
-		position: new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0),
+		position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
 		shaderMaterial: {}
 
 	}
 
 } );
 ```
+#### Add <b>player</b> item into [CanvasMenu](https://github.com/anhr/commonNodeJS/tree/master/canvasMenu).
+Import <b>CanvasMenu</b> into your web page for it.
+```
+import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
+```
+Create CanvasMenu.
+```
+new CanvasMenu( renderer, {
+
+	player: player,
+
+} );
+```
+Please move mouse over canvas.
+Now you can see a player's menu items on the bottom of the canvas.
+
 ## Directory Contents
 
 ```

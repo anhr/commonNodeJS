@@ -53,6 +53,10 @@ import ColorPicker from '../colorpicker/colorpicker.js';
 //import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 //ColorPicker.palette.setTHREE( THREE );
 
+import { lang } from '../controllerPlay/index.js';
+
+//import { SpriteText } from '../../../SpriteText/master/SpriteText.js';//https://github.com/anhr/SpriteText
+
 var settings;
 
 /**
@@ -70,20 +74,26 @@ var settings;
 
 /**
  * 3D objects animation.
- * @param {onSelectScene} onSelectScene This function is called at each new step of the playing. See [onSelectScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene}.
- * @param {object} [options] followed options is available
- * @param {number} [options.settings] time settings.
- * @param {number} [options.settings.marks] Ticks count of the playing. Number of scenes of 3D objects animation. Default is 10
- * @param {number} [options.settings.interval] Ticks per seconds. Default is 1.
- * @param {number} [options.settings.min] Animation start time. Default is 0.
- * @param {number} [options.settings.max] Animation end time. Default is 1.
- * @param {boolean} [options.settings.repeat] true - Infinitely repeating 3D objects animation. Default is false.
- * @param {number} [options.settings.zoomMultiplier] zoom multiplier of the time. Default is 1.1.
- * @param {number} [options.settings.offset] offset of the time. Default is 0.1.
+ * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
+ * @param {THREE.Group|THREE.Scene} group THREE group or scene of the meshes  for playing.
+ * @param {object} [options] the following options are available
+ * @param {object} [options.selectPlaySceneOptions] See [Player.selectPlayScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.selectPlayScene} options parameter.
+ * @param {onSelectScene} [options.onSelectScene] This function is called at each new step of the playing. See [onSelectScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene}.
+ * @param {object} [options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
  * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings. See [onChangeScaleT]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onChangeScaleT}.
  * @param {object} [options.cookie] Your custom cookie function for saving and loading of the Player settings. Default cookie is not saving settings.
+ * @param {number} [options.settings] time settings.
+ * @param {number} [options.settings.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
+ * @param {number} [options.settings.interval=1] Ticks per seconds.
+ * @param {number} [options.settings.min=0] Animation start time.
+ * @param {number} [options.settings.max=1] Animation end time.
+ * @param {boolean} [options.settings.repeat=false] true - Infinitely repeating 3D objects animation.
+ * @param {number} [options.settings.zoomMultiplier=1.1] zoom multiplier of the time.
+ * @param {number} [options.settings.offset=0.1] offset of the time.
+ * @param {string} [options.settings.name=""] name of the time.
  */
-function Player( onSelectScene, options ) {
+function Player( THREE, group,// onSelectScene,
+	options ) {
 
 	options = options || {};
 	settings = options.settings || {};
@@ -102,12 +112,32 @@ function Player( onSelectScene, options ) {
 	settings.interval = settings.interval || 1;//25;
 	settings.zoomMultiplier = settings.zoomMultiplier || 1.1;
 	settings.offset = settings.offset || 0.1;
-/*
-	const axesDefault = JSON.parse( JSON.stringify( settings ) );
-	Object.freeze( axesDefault );
+	settings.name = settings.name || '';
 
-	options.cookie = options.cookie || new cookie.defaultCookie();
-*/
+	var boSelectFirstScene = true;
+	/**
+	 * @description This function is called at each new step of the playing.
+	 * @param {number} index current index of the scene of the animation
+	 * @param {number} t current time
+	 */
+	function onSelectScene( index, t ) {
+
+		//Когда установлен "trace: true" в arrayFuncs во время старта проигрывания нужно один разх вызвать "onSelectScene" с "selectSceneIndex = 0"
+		//Иначе линия трассировка будет начинаться со второй точки.
+		if ( boSelectFirstScene ) {
+
+			boSelectFirstScene = false;
+			const selectSceneIndexCur = selectSceneIndex;
+			selectSceneIndex = 0;
+			onSelectScene( selectSceneIndex, getTime() );
+			selectSceneIndex = selectSceneIndexCur;
+
+		}
+		Player.selectPlayScene( THREE, group, t, index, options.selectPlaySceneOptions );
+		_this.setIndex( index, ( settings.name === '' ? '' : settings.name + ': ' ) + t );
+		if ( options.onSelectScene ) options.onSelectScene( index, t );
+
+	}
 	var selectSceneIndex = 0,//-1;
 		_this = this;
 
@@ -121,6 +151,7 @@ function Player( onSelectScene, options ) {
 	 */
 	this.selectScene = function( index ) {
 
+		index = parseInt( index );
 		if ( index >= settings.marks )
 			index = 0;
 		else if ( index &lt; 0 )
@@ -128,10 +159,13 @@ function Player( onSelectScene, options ) {
 		if( selectSceneIndex > settings.marks )
 			selectSceneIndex = settings.marks;
 		while ( selectSceneIndex !== index ) {
+
 			if ( selectSceneIndex &lt; index )
 				selectSceneIndex++;
 			else selectSceneIndex--;
-			onSelectScene( selectSceneIndex, getTime() );
+			const t = getTime();
+			onSelectScene( selectSceneIndex, t );
+			
 		}
 
 	}
@@ -181,11 +215,7 @@ function Player( onSelectScene, options ) {
 
 	function RenamePlayButtons() {
 
-		controllers.forEach( function ( controller ) {
-
-			controller.onRenamePlayButtons( playing );
-
-		} );
+		controllers.forEach( function ( controller ) { if (controller.onRenamePlayButtons) controller.onRenamePlayButtons( playing ); } );
 
 	}
 
@@ -342,7 +372,7 @@ function Player( onSelectScene, options ) {
 	 * getSettings
 	 * @returns Player options.settings.
 	 */
-	this.getSettings = function () { return options.settings; }
+	this.getSettings = function () { return settings; }//{ return options.settings; }
 	/**
 	 * @function Player.
 	 * getSelectSceneIndex
@@ -380,11 +410,63 @@ function Player( onSelectScene, options ) {
 	this.onChangeRepeat = function ( value ) {
 
 		settings.repeat = value;
-		this.controllers.forEach( function ( controller ) {
+		this.controllers.forEach( function ( controller ) { if ( controller.onChangeRepeat ) controller.onChangeRepeat(); } );
 
-			controller.onChangeRepeat();
+	}
 
-		} );
+	//Localization
+	function getLang( params ) {
+
+		params = params || {};
+		const lang = {
+
+			player: 'Player',
+			playerTitle: '3D objects animation.',
+
+			min: 'Min',
+			max: 'Max',
+
+			marks: 'Frames',
+			marksTitle: 'Player frames count',
+
+			defaultButton: 'Default',
+			defaultTitle: 'Restore default player settings.',
+
+		};
+
+		const _languageCode = params.getLanguageCode === undefined ? 'en'//Default language is English
+			: params.getLanguageCode();
+		switch ( _languageCode ) {
+
+			case 'ru'://Russian language
+
+				lang.player = 'Проигрыватель';
+				lang.playerTitle = 'Анимация 3D объектов.';
+
+				lang.min = 'Минимум';
+				lang.max = 'Максимум';
+
+				lang.marks = 'Кадры';
+				lang.marksTitle = 'Количество кадров проигрывателя';
+
+				lang.defaultButton = 'Восстановить';
+				lang.defaultTitle = 'Восстановить настройки проигрывателя по умолчанию.';
+
+				break;
+			default://Custom language
+				if ( ( params.lang === undefined ) || ( params.lang._languageCode != _languageCode ) )
+					break;
+
+				Object.keys( params.lang ).forEach( function ( key ) {
+
+					if ( _lang[key] === undefined )
+						return;
+					_lang[key] = params.lang[key];
+
+				} );
+
+		}
+		return lang;
 
 	}
 
@@ -403,8 +485,13 @@ function Player( onSelectScene, options ) {
 	 */
 	this.gui = function ( folder, getLanguageCode ) {
 
-//		settings.t = scalesT;
+		const lang = getLang( {
 
+			getLanguageCode: getLanguageCode,
+			//lang: guiParams.lang
+
+		} );
+/*
 		//Localization
 
 		var lang = {
@@ -457,7 +544,7 @@ function Player( onSelectScene, options ) {
 		}
 
 		//
-
+*/
 		var fPlayer = folder.addFolder( lang.player );
 		dat.folderNameAndTitle( fPlayer, lang.player, lang.playerTitle );
 
@@ -583,6 +670,189 @@ function Player( onSelectScene, options ) {
 
 	}
 
+	var _canvasMenu;
+	/**
+	 * Adds a Player's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 * @function Player.
+	 * createCanvasMenuItem
+	 * @param {CanvasMenu} canvasMenu [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 */
+	this.createCanvasMenuItem = function ( canvasMenu ) {
+
+		_canvasMenu = canvasMenu;
+/*
+		params = params || {};
+		const lang = getLang( { getLanguageCode: params.getLanguageCode, lang: params.lang } );
+*/		
+		const player = this, menu = canvasMenu.menu;
+		//Previous button
+		menu.push( {
+
+			name: lang.prevSymbol,
+			title: lang.prevSymbolTitle,
+			onclick: function ( event ) { player.prev(); }
+
+		} );
+
+		//Play button
+		menu.push( {
+
+			name: lang.playSymbol,
+			title: lang.playTitle,
+			id: "menuButtonPlay",
+			onclick: function ( event ) { player.play3DObject(); }
+
+		} );
+
+		//Repeat button
+		menu.push( {
+
+			name: lang.repeat,
+			title: this.getOptions().repeat ? lang.repeatOff : lang.repeatOn,
+			id: "menuButtonRepeat",
+			onclick: function ( event ) { player.repeat(); }
+
+		} );
+
+		//Next button
+		menu.push( {
+
+			name: lang.nextSymbol,
+			title: lang.nextSymbolTitle,
+			onclick: function ( event ) { player.next(); }
+
+		} );
+
+		controllers.push( {
+
+			/**
+			 * Renames the "Play" button of the player's menu.
+			 * @function Player.
+			 * onRenamePlayButtons
+			 * @param {boolean} playing &lt;b>true&lt;/b> - pause.
+			 * &lt;p>&lt;b>false&lt;/b> - play&lt;/p>
+			 */
+			onRenamePlayButtons: function ( playing ) {
+
+				var name, title;
+				if ( playing ) {
+
+					name = lang.pause;
+					title = lang.pauseTitle;
+
+				} else {
+
+					name = lang.playSymbol;
+					title = lang.playTitle;
+
+				}
+				const elMenuButtonPlay = canvasMenu.querySelector( '#menuButtonPlay' );
+//				const elMenuButtonPlay = elMenu.querySelector( '#menuButtonPlay' );
+				elMenuButtonPlay.innerHTML = name;
+				elMenuButtonPlay.title = title;
+
+			},
+
+			/**
+			 * Changes "Repeat" button of the player's menu between &lt;b>repeat Off&lt;/b> and &lt;b>repeat On&lt;/b>.
+			 * @function Player.
+			 * onChangeRepeat
+			 */
+			onChangeRepeat: function () {
+
+				canvasMenu.querySelector( '#menuButtonRepeat' ).title = settings.repeat ? lang.repeatOff : lang.repeatOn;
+
+			}
+
+		} );
+
+	}
+
+	/**
+	 * Adds slider menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 * @function Player.
+	 * addSlider
+	 */
+	this.addSlider = function () {
+
+		_canvasMenu.menu.push( {
+
+			name: '&lt;input type="range" min="0" max="' + ( this.getSettings().marks - 1 ) + '" value="0" class="slider" id="sliderPosition">',
+			style: 'float: right;',
+
+		} );
+
+	}
+
+	function getSliderElement() { if ( _canvasMenu ) return _canvasMenu.querySelector( '#sliderPosition' ); }
+
+	/**
+	 * Adds an events into slider menu item of the [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 * @function Player.
+	 * addSliderEvents
+	 * @returns slider element
+	 */
+	this.addSliderEvents = function ( /*THREE*/ ) {
+
+		const elSlider = getSliderElement(), player = this;
+		if ( elSlider ) {
+
+			elSlider.onchange = function ( event ) { player.selectScene( parseInt( elSlider.value ) ); };
+			elSlider.oninput = function ( event ) { player.selectScene( parseInt( elSlider.value ) ); };
+
+			var pointerdown;//, spriteText;
+			const player = this;
+			elSlider.addEventListener( 'pointerdown', e => { pointerdown = true; } );
+			elSlider.addEventListener( 'pointerup', e => { pointerdown = false; } );
+			elSlider.addEventListener( 'mousemove', e => {
+
+				if ( !pointerdown )
+					return;
+//				console.warn( 'elSlider: e.clientX = ' + e.clientX + ' e.offsetX = ' + e.offsetX + ' e.screenX = ' + e.screenX );
+//				player.selectScene( ( settings.max - settings.min ) * e.offsetX / elSlider.clientWidth + settings.min );
+				player.selectScene( ( settings.marks - 1 ) * e.offsetX / elSlider.clientWidth );
+/*непонятно как получить положение текста				
+				if ( THREE &amp;&amp; !spriteText ) spriteText = new SpriteText(( settings.max - settings.min ) * e.offsetX / elSlider.clientWidth + settings.min,
+					new THREE.Vector3( e.clientX, e.clientY, 0 ) );
+*/					
+
+			} );
+
+		}
+		return elSlider;
+
+	}
+
+	/**
+	 * Sets &lt;b>index&lt;/b> and &lt;b>title&lt;/b> of the slider element of the player's menu.
+	 * @function Player.
+	 * setIndex
+	 * @param {string} index
+	 * @param {string} title
+	 */
+	this.setIndex = function ( index, title ) {
+
+		const elSlider = getSliderElement();
+		if ( !elSlider )
+			return;
+		elSlider.value = index;
+		elSlider.title = title;
+
+	}
+
+	/**
+	 * Changes the "max" value of the slider of the player's menu. Moves [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html} to the first scene.
+	 * @function Player.
+	 * onChangeScale
+	 * @param {Object} scale See &lt;b>options.settings&lt;/b> of the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
+	 */
+	this.onChangeScale = function ( scale ) {
+
+		getSliderElement().max = scale.marks - 1;
+		this.selectScene( 0 );
+
+	}
+
 }
 /**
  * execute function
@@ -701,7 +971,7 @@ palette = new palette();
  * @param {THREE.Group} group [THREE.Group]{@link https://threejs.org/docs/index.html#api/en/objects/Group}
  * @param {number} t time
  * @param {number} index index of the time.
- * @param {object} [options] followed options is available
+ * @param {object} [options] the following options are available
  * @param {boolean} [options.boPlayer] true - is not select play scene for mesh.userData.boFrustumPoints = true. Default is false.
  * @param {number} [options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
  * @param {number} [options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
@@ -719,7 +989,9 @@ palette = new palette();
  */
 Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 
-	ColorPicker.palette.setTHREE(THREE);
+	//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
+	//Другими словами если не вызывается Player.getColors
+	ColorPicker.palette.setTHREE( THREE );
 	
 	options = options || {};
 
@@ -996,7 +1268,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * Use only if you want trace lines during playing. See trace of the arrayFuncs param above.
  * Default is undefined.
  * @param {number} [optionsPoints.t] first parameter of the arrayFuncs item function. Start time of animation. Default is 0.
- * @param {object} [optionsPoints.options] followed options is available
+ * @param {object} [optionsPoints.options] the following options are available
  * @param {number} [optionsPoints.options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
  * @param {number} [optionsPoints.options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
  * @param {object} [optionsPoints.options.player] See Player method above.
@@ -1212,7 +1484,7 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
  *   3: w axis. Defauilt is 0.
  * ]
  * &lt;/pre>
- * @param {object} [optionsColor] followed options is available:
+ * @param {object} [optionsColor] the following options are available:
  * @param {object} [optionsColor.palette] [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * @param {object} [optionsColor.scale]
  * @param {object} [optionsColor.scale.min] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
@@ -1348,7 +1620,7 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
  * traceLine
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Group} group {@link https://threejs.org/docs/index.html#api/en/objects/Group|Group} or {@link https://threejs.org/docs/index.html#api/en/scenes/Scene|Scene}.
- * @param {object} options followed options is available
+ * @param {object} options the following options are available
  * @param {object} options.player See Player function above.
  */
 Player.traceLine = function ( THREE, group, options ) {
@@ -1477,7 +1749,7 @@ export default Player;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Sep 20 2020 14:30:58 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Oct 16 2020 17:41:40 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
