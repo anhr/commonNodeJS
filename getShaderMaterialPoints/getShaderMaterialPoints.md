@@ -42,21 +42,23 @@ const arrayFuncs = [
 	},
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),
 ];
-getShaderMaterialPoints( THREE, scene, arrayFuncs, function ( points ) {
+getShaderMaterialPoints( THREE, scene, arrayFuncs,
+	function ( points ) {
 
-	scene.add( points );
-	points.userData.player = {
+		scene.add( points );
+		points.userData.player = {
 
-		arrayFuncs: arrayFuncs,
-		selectPlayScene: function ( t ) {
+			arrayFuncs: arrayFuncs,
+			selectPlayScene: function ( t ) {
 
-			points.position.x = t;
-			points.rotation.z = - Math.PI * 2 * t;
+				points.position.x = t;
+				points.rotation.z = - Math.PI * 2 * t;
+
+			}
 
 		}
 
-	}
-
-} );
+	},
+	{ Player: Player, } );
 ```
 
