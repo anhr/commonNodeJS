@@ -95,7 +95,7 @@ export class PlayController extends controllers.CustomController {
 
 	/**
 	 * PlayController class for using in my version of dat.gui(https://github.com/anhr/dat.gui) for animate of 3D objects in my projects.
-	 * @param {object} player 3D objects animation. See nodejs\myThreejs\player.js
+	 * @param {object} player 3D objects animation. See [Player]{@link https://github.com/anhr/commonNodeJS/tree/master/player}
 	 */
 	constructor( player ) {
 
