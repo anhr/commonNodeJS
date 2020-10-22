@@ -621,6 +621,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		if ( ( cFrustumPoints !== undefined ) &&
 			cFrustumPoints.isDisplay() &&//FrustumPoints folder id not visible
+			options.arrayCloud.frustumPoints &&
 			options.arrayCloud.frustumPoints.isDisplay()//The cDisplay checkbox of the frustumPoints' is checked
 		) {
 
