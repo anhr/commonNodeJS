@@ -188,7 +188,7 @@ You can see, first value of the array is object with
 
 Now you can see a trace line of the moving of the first point.
 #### Point color.
-* In the <b>THREE.PointsMaterial</b> parameters of your points remove the <b>color</b> value and add <b>vertexColors: THREE.VertexColors</b>.
+* In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> value and add <b>vertexColors: THREE.VertexColors</b>.
 ```
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
 	{ group: scene } ) ),
@@ -198,6 +198,10 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Playe
 		size: 0.2,
 
 	} ) );
+```
+* Add color attribute to <b>points</b>.
+```
+points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( Player.getColors( THREE, arrayFuncs ), 3 ) );
 ```
 * In the first point of the arrayFuncs change vector from <b>THREE.Vector3</b> to <b>THREE.Vector4</b>.
 ```
@@ -281,11 +285,14 @@ Set THREE for palette.
 ColorPicker.palette.setTHREE(THREE);
 ```
 Create a palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
-And use your new palette in the <b>Player</b>.
+```
+const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
+```
+Add new palette in the <b>Player</b>.
 ```
 const player = new Player( THREE, scene, {
 
-	palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+	selectPlaySceneOptions: { palette: palette, },
 	settings: {
 
 		marks: 100,//Ticks count of the playing.
@@ -294,6 +301,10 @@ const player = new Player( THREE, scene, {
 	},
 
 } );
+```
+Add new palette in the color attribute of the <b>points</b>.
+```
+points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( Player.getColors( THREE, arrayFuncs, { palette: palette, } ), 3 ) );
 ```
 Also you can create your own custom palette.
 ```
@@ -309,8 +320,19 @@ new ColorPicker.palette( { palette: [
 
 ] } );
 ```
+Currently your player use same palette for all meshes.
+You can set individual palette for any mesh. Add <b>palette</b> key in the <b>mesh.userData.player</b> for it.
+For example [ColorPicker.paletteIndexes.rainbow](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#rainbow) palette.
+```
+points.userData.player = {
+
+	arrayFuncs: arrayFuncs,
+	palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.rainbow } ),
+
+}
+```
 #### Move points position.
-* Add <b>selectPlayScene</b> value to the <b>points.userData.player</b> object.
+* Add <b>selectPlayScene</b> key to the <b>points.userData.player</b> object.
 ```
 points.userData.player = {
 
@@ -340,7 +362,7 @@ To do it, please remove your old <b>const points</b> and use <b>getShaderMateria
 Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use [MyPoints](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html) for creating of new points.
 Import <b>MyPoints</b> into your web page for it.
 ```
-import MyPoints from 'http://localhost/anhr/commonNodeJS/master/myPoints/myPoints.js';
+import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
 ```
 or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
