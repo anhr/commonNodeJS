@@ -37,7 +37,7 @@ export var lang = {
 	repeat: '⥀',
 	repeatOn: 'Turn repeat on',
 	repeatOff: 'Turn repeat off',
-	controllerTitle: 'Rate of changing of animation scenes per second.',
+	controllerTitle: 'Current time.',
 	fullScreen: 'Full Screen',
 	nonFullScreen: 'Non Full Screen',
 	stereoEffects: 'Stereo effects',
@@ -58,7 +58,7 @@ export var lang = {
 			lang.pauseTitle = 'Пауза';//'Pause',
 			lang.repeatOn = 'Повторять проигрывание';
 			lang.repeatOff = 'Остановить повтор проигрывания';
-			lang.controllerTitle = 'Скорость смены кадров в секунду.';
+			lang.controllerTitle = 'Текущее время.';
 			lang.fullScreen = 'На весь экран';
 			lang.nonFullScreen = 'Восстановить размеры экрана';
 			lang.stereoEffects = 'Стерео эффекты';
@@ -96,8 +96,9 @@ export class PlayController extends controllers.CustomController {
 	/**
 	 * PlayController class for using in my version of dat.gui(https://github.com/anhr/dat.gui) for animate of 3D objects in my projects.
 	 * @param {object} player 3D objects animation. See [Player]{@link https://github.com/anhr/commonNodeJS/tree/master/player}
+	 * @param {GUI} [gui] [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}. Folder for controller
 	 */
-	constructor( player ) {
+	constructor( player, gui ) {
 
 		var _getGroup, _selectScene, _renamePlayButtons, _renameRepeatButtons, _repeat;//,_playNext, timerId, _prev, _play, _next;
 		var colorOff = 'rgb(255,255,255)', colorOn = 'rgb(128,128,128)';//'rgb(200,200,200)';
@@ -177,7 +178,7 @@ export class PlayController extends controllers.CustomController {
 
 			},
 
-		}, 'playRate', 1, 25, 1 );
+		}, 'playRate');//, 1, 25, 1 );
 		player.PlayController = this;
 		this.onRenamePlayButtons = function ( playing ) {
 
@@ -204,7 +205,8 @@ export class PlayController extends controllers.CustomController {
 		player.pushController( this );
 		this.onChange = function ( value ){
 
-			player.onChangeTimerId( value );
+//			player.onChangeTimerId( value );
+			player.setTime( value );
 
 		}
 		this.getGroup = function () {
@@ -219,9 +221,18 @@ export class PlayController extends controllers.CustomController {
 		}
 		this.setValue = function ( value ) {
 
+/*
+			if ( this._controller.getValue() === value )
+				return;//иначе переполнение стека
 			this._controller.setValue( value );
+*/			
+			this._controller.domElement.childNodes[0].value = value;
 
 		}
+
+		const controler = gui.add( this );
+		//что бы можно было вводить цифры после запятой
+		controler.__truncationSuspended = true;
 
 	}
 	set controller( newController ) {
@@ -243,8 +254,8 @@ export class PlayController extends controllers.CustomController {
 	}
 
 }
-export function create( player ) {
+export function create( player, gui ) {
 
-	return new PlayController( player );
+	return new PlayController( player, gui );
 
 }
