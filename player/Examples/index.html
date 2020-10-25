@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -58,7 +58,7 @@
 		ColorPicker.palette.setTHREE( THREE );
 
 		//import getShaderMaterialPoints from 'http://localhost/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
-		//import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
+		import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
 		//import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 
 		//import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
@@ -100,6 +100,8 @@
 
 						marks: 100,//Ticks count of the playing.
 						interval: 25,//Ticks per seconds.
+						//min: -1,
+						//max: 1,
 
 					},
 
@@ -107,7 +109,12 @@
 
 			}
 
-			const arrayFuncs = [
+			const arrayFuncs = typeof Player === 'undefined' ?
+			 [
+				new THREE.Vector4( 0.5, 0.5, 0.5, 0.5 ),
+				new THREE.Vector3( -0.5, -0.5, -0.5 ),
+			] :
+			 [
 				{
 
 					vector: new THREE.Vector4(
@@ -152,17 +159,24 @@
 						}
 
 					},
-					{ Player: Player, } );
+					{
+
+						Player: typeof Player === 'undefined' ? undefined : Player,
+						options: { palette: palette, }//нужно на случай если не создан плеер
+
+					}
+				);
 			} else if ( typeof MyPoints !== 'undefined' ) {
 
 				console.log( 'Using MyPoints method for creating of the points.' );
 				MyPoints( THREE, arrayFuncs,
 					scene, {
 
-					Player: Player,
+					Player: typeof Player === 'undefined' ? undefined : Player,
 					options: {
 
 						point: { size: 15 },
+						palette: palette,
 						//					player: { player: player },
 
 					},
@@ -178,8 +192,10 @@
 			} else {
 
 				console.log( 'Using THREE.Points method for creating of the points.' );
-				const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
-					{ group: scene, options: { player: { player: player } } } ) ),
+				const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
+					typeof Player === 'undefined' ? arrayFuncs:
+						Player.getPoints( THREE, arrayFuncs, { group: scene, options: { player: { player: player } } } )
+				),
 					new THREE.PointsMaterial( {
 
 						vertexColors: THREE.VertexColors,
@@ -187,13 +203,25 @@
 						sizeAttenuation: false,
 
 					} ) );
-				points.geometry.setAttribute( 'color',
-					new THREE.Float32BufferAttribute( Player.getColors( THREE, arrayFuncs, {
+				if ( typeof Player === 'undefined' ) {
 
-//						scale: options.scales.w,
-						palette: palette,
+/*
+					points.geometry.setAttribute( 'color',
+						new THREE.Float32BufferAttribute( Player.getColors( THREE, arrayFuncs, {
 
-					} ), 3 ) );
+		//						scale: options.scales.w,
+							palette: palette,
+
+						} ), 3 ) );
+*/
+					points.geometry.setAttribute( 'color',
+						new THREE.Float32BufferAttribute( [
+							1, 0, 0,//first point is red
+							1, 1, 1//second point is white
+						], 3 ) );
+
+				}
+					
 				scene.add( points );
 				points.userData.player = {
 
