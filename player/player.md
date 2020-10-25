@@ -188,7 +188,7 @@ You can see, first value of the array is object with
 
 Now you can see a trace line of the moving of the first point.
 #### Point color.
-* In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> value and add <b>vertexColors: THREE.VertexColors</b>.
+* In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> key and add <b>vertexColors: THREE.VertexColors</b>.
 ```
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
 	{ group: scene } ) ),
@@ -198,10 +198,6 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Playe
 		size: 0.2,
 
 	} ) );
-```
-* Add color attribute to <b>points</b>.
-```
-points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( Player.getColors( THREE, arrayFuncs ), 3 ) );
 ```
 * In the first point of the arrayFuncs change vector from <b>THREE.Vector3</b> to <b>THREE.Vector4</b>.
 ```
@@ -301,10 +297,6 @@ const player = new Player( THREE, scene, {
 	},
 
 } );
-```
-Add new palette in the color attribute of the <b>points</b>.
-```
-points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( Player.getColors( THREE, arrayFuncs, { palette: palette, } ), 3 ) );
 ```
 Also you can create your own custom palette.
 ```

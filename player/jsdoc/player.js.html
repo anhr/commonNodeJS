@@ -61,7 +61,15 @@ import Cookie from '../cookieNodeJS/cookie.js';//https://github.com/anhr/commonN
 //import Cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
-var settings;
+var settings,
+
+	//сделал общим для всех плееров потому что в getShaderMaterialPoints вызывается Player.selectMeshPlayScene
+	//что бы установить начальные точки. Т.е. установить цвет и положение точек.
+	//Начальные точки в getShaderMaterialPoints устанавливаются отдельно потому что в getShaderMaterialPoints точки создаются в отдельной нити
+	//потому что сначала загружаются Shader файлы. Поэтому когда вызывается setTimeout( function () { onSelectScene(); }, 0 );
+	//что бы цвет точек был верным еще до начала проигрывания, точки из getShaderMaterialPoints еще не добавлены в группу для проигрывания.
+	//Кроме того цвет точек в getShaderMaterialPoints задается аттрибутом 'ca' а не 'color'.
+	selectPlaySceneOptions;
 
 /**
  * @callback onSelectScene
@@ -99,6 +107,20 @@ function Player( THREE, group, options ) {
 
 	options = options || {};
 
+	selectPlaySceneOptions = options.selectPlaySceneOptions;
+	selectPlaySceneOptions = selectPlaySceneOptions || {};
+	selectPlaySceneOptions.boPlayer = selectPlaySceneOptions.boPlayer || false;
+
+	selectPlaySceneOptions.a = options.a || 1;
+	selectPlaySceneOptions.b = options.b || 0;
+	/*
+		palette = options.selectPlaySceneOptions.palette;
+		options.palette = options.palette || palette || paletteDefault.get();//paletteDefault;
+	*/
+	selectPlaySceneOptions.scales = selectPlaySceneOptions.scales || {};
+
+	palette = new palette();
+
 	settings = options.settings || {};
 	settings.min = settings.min || 0;
 	settings.max = settings.max || 1;
@@ -112,31 +134,45 @@ function Player( THREE, group, options ) {
 	var boSelectFirstScene = true;
 	/**
 	 * @description This function is called at each new step of the playing.
-	 * @param {number} index current index of the scene of the animation
-	 * @param {number} t current time
+	 * @param {number} [index=0] current index of the scene of the animation
 	 */
-	function onSelectScene( index, t ) {
+	function onSelectScene( index ) {
 
+		index = index || 0;
+		const t = getTime();
+/*сейчас это не нужно потому что я запускаю onSelectScene через setTimeout сразуже после создпния Player с selectSceneIndex = 0
 		//Когда установлен "trace: true" в arrayFuncs во время старта проигрывания нужно один раз вызвать "onSelectScene" с "selectSceneIndex = 0"
-		//Иначе линия трассировка будет начинаться со второй точки.
+		//Иначе линия трассировка будет начинаться со второй точки
 		if ( boSelectFirstScene ) {
 
 			boSelectFirstScene = false;
 			const selectSceneIndexCur = selectSceneIndex;
 			selectSceneIndex = 0;
-			onSelectScene( selectSceneIndex, getTime() );
+			onSelectScene( selectSceneIndex );//, getTime() );
 			selectSceneIndex = selectSceneIndexCur;
 
 		}
+*/
 		Player.selectPlayScene( THREE, group, t, index, options.selectPlaySceneOptions );
 		_this.setIndex( index, ( settings.name === '' ? '' : settings.name + ': ' ) + t );
 		if ( options.onSelectScene ) options.onSelectScene( index, t );
 
 	}
+
+	//Теперь не нужно создавать color attribute на веб странице что бы цвет точек был верным еще до начала проигрывания
+	//Кроме того трассировака начинается с нулевой точки
+	setTimeout( function () { onSelectScene(); }, 0 );
+
 	var selectSceneIndex = 0;
 	const _this = this;
 
-	function getTime() { return ( ( settings.max - settings.min ) / ( settings.marks - 1 ) ) * selectSceneIndex + settings.min; }
+	function getTime() {
+
+		const res = ( ( settings.max - settings.min ) / ( settings.marks - 1 ) ) * selectSceneIndex + settings.min;
+		if ( isNaN( res ) ) console.error( 'Player.getTime(): res = ' + res );
+		return res;
+
+	}
 	this.setTime = function( t ) {
 
 		selectSceneIndex = t*((settings.marks-1)/(settings.max-settings.min))-settings.min;
@@ -164,8 +200,11 @@ function Player( THREE, group, options ) {
 			if ( selectSceneIndex &lt; index )
 				selectSceneIndex++;
 			else selectSceneIndex--;
+/*
 			const t = getTime();
 			onSelectScene( selectSceneIndex, t );
+*/
+			onSelectScene( selectSceneIndex );
 			
 		}
 
@@ -226,7 +265,7 @@ function Player( THREE, group, options ) {
 			selectSceneIndex = 0;
 
 		}
-		onSelectScene( selectSceneIndex, getTime() );
+		onSelectScene( selectSceneIndex );//, getTime() );
 
 	}
 
@@ -884,6 +923,9 @@ function palette() {
 	var paletteDefault;
 	this.get = function() {
 
+		if ( selectPlaySceneOptions.palette )
+			return selectPlaySceneOptions.palette;
+			
 		if ( !paletteDefault )
 			paletteDefault = new ColorPicker.palette();
 		return paletteDefault;
@@ -891,10 +933,165 @@ function palette() {
 	}
 
 }
-palette = new palette();
+//palette = new palette();
 
 /**
- * select a scene for playing
+ * Select a scene for playing of the mesh
+ * @function Player.
+ * selectMeshPlayScene
+ * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
+ * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for playing.
+ * @param {number} [t=0] time
+ * @param {number} [index=0] index of the time.
+ */
+Player.selectMeshPlayScene = function ( THREE, mesh, t, index ) {
+
+	t = t || 0;
+	index = index || 0;
+	const options = selectPlaySceneOptions;
+	if (
+
+		!mesh.userData.player ||
+		( options.boPlayer &amp;&amp; mesh.userData.boFrustumPoints )
+
+	)
+		return;
+
+	//Эти строки нужны что бы появлялся текст возле точки, если на нее наведена мышка
+	//при условии, что до этого точка была передвинута с помошью проигрывателя.
+	delete mesh.geometry.boundingSphere;
+	mesh.geometry.boundingSphere = null;
+
+	if ( mesh.userData.player.selectPlayScene )
+		mesh.userData.player.selectPlayScene( t );
+
+	function setAttributes( a, b ) {
+
+		const attributes = mesh.geometry.attributes,
+			arrayFuncs = mesh.userData.player.arrayFuncs;
+		if ( arrayFuncs === undefined )
+			return;
+		if ( t === undefined )
+			console.error( 'setPosition: t = ' + t );
+
+		var min, max;
+		if ( options.scales.w !== undefined ) {
+
+			min = options.scales.w.min; max = options.scales.w.max;
+
+		} else {
+
+			max = value;
+			min = max - 1;
+
+		}
+
+		for ( var i = 0; i &lt; arrayFuncs.length; i++ ) {
+
+			var funcs = arrayFuncs[i], needsUpdate = false;
+			function setPosition( axisName, fnName ) {
+
+				var value = Player.execFunc( funcs, axisName, t, a, b );
+				if ( value !== undefined ) {
+
+					attributes.position[fnName]( i, value );
+					needsUpdate = true;
+
+				}
+
+			}
+			setPosition( 'x', 'setX' );
+			setPosition( 'y', 'setY' );
+			setPosition( 'z', 'setZ' );
+
+			//если тут поставить var то цвет точки, которая определена как THREE.Vector3 будет равет цвету предыдущей точки
+			//потому что перемнные типа var видны снаружи блока {}
+			let color;
+
+			if ( typeof funcs.w === "function" ) {
+
+				var value = funcs.w( t, a, b );
+				attributes.position.setW( i, value );
+				needsUpdate = true;
+
+				if ( mesh.userData.player.palette )
+					color = mesh.userData.player.palette.toColor( value, min, max );
+				else if ( options.palette )
+					color = options.palette.toColor( value, min, max );
+
+			} else if ( typeof funcs.w === "object" ) {
+
+				if ( funcs.w instanceof THREE.Color )
+					color = funcs.w;
+				else if ( options.palette ) {
+
+					if ( typeof funcs.w === 'object' ) {
+
+						if ( funcs.w.min ) min = funcs.w.min;
+						if ( funcs.w.max ) max = funcs.w.max;
+
+					}
+					color = options.palette.toColor( Player.execFunc( funcs, 'w', t, a, b ), min, max );
+
+				}
+
+			} else if ( ( typeof funcs.w === "number" ) &amp;&amp; options.palette )
+				color = options.palette.toColor( funcs.w, min, max );
+			if ( color ) {
+
+				if ( !mesh.material instanceof THREE.ShaderMaterial &amp;&amp; mesh.material.vertexColors !== THREE.VertexColors )
+					console.error( 'Player.selectPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors' );
+				if ( !Player.setColorAttribute( attributes, i, color ) &amp;&amp; funcs instanceof THREE.Vector4 ) {
+
+					mesh.geometry.setAttribute( 'color',
+						new THREE.Float32BufferAttribute( Player.getColors( THREE, arrayFuncs,
+							{
+								positions: mesh.geometry.attributes.position,
+								scale: { min: min, max: max },
+								palette: options.palette,
+
+							} ), 3 ) );
+					if ( !Player.setColorAttribute( attributes, i, color ) )
+						console.error( 'Player.selectPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute' );
+
+				}
+
+			}
+			if ( needsUpdate )
+				attributes.position.needsUpdate = true;
+
+			if ( funcs.line !== undefined )
+				funcs.line.addPoint( getObjectPosition( mesh, i ), index, color );
+
+		};
+
+	}
+	setAttributes( options.a, options.b );
+	const message = 'Player.selectPlayScene: invalid mesh.scale.';
+	if ( mesh.scale.x &lt;= 0 ) console.error( message + 'x = ' + mesh.scale.x );
+	if ( mesh.scale.y &lt;= 0 ) console.error( message + 'y = ' + mesh.scale.y );
+	if ( mesh.scale.z &lt;= 0 ) console.error( message + 'z = ' + mesh.scale.z );
+
+	if ( !options.guiSelectPoint )
+		return;
+
+	options.guiSelectPoint.setMesh();
+
+	var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
+	if ( ( selectedPointIndex !== -1 ) &amp;&amp; options.guiSelectPoint.isSelectedMesh( mesh ) ) {
+
+		options.guiSelectPoint.setPosition( getObjectPosition( mesh, selectedPointIndex ), {
+
+			object: mesh,
+			index: selectedPointIndex,
+
+		} );
+
+	}
+
+}
+/**
+ * Select a scene for playing
  * @function Player.
  * selectPlayScene
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
@@ -924,19 +1121,22 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 	ColorPicker.palette.setTHREE( THREE );
 	
 	options = options || {};
-
+/*
 	options.boPlayer = options.boPlayer || false;
 
 	options.a = options.a || 1;
 	options.b = options.b || 0;
 
-	options.palette = options.palette || palette.get();//paletteDefault;
+	options.palette = options.palette || palette || palette.get();//paletteDefault;
 
 	options.scales = options.scales || {};
+*/
 	
 	group.userData.t = t;
 	group.children.forEach( function ( mesh ) {
 
+		Player.selectMeshPlayScene( THREE, mesh, t, index );//, options );
+/*
 		if (
 
 			!mesh.userData.player ||
@@ -1076,7 +1276,7 @@ Player.selectPlayScene = function ( THREE, group, t, index, options ) {
 			} );
 
 		}
-
+*/
 	} );
 
 }
@@ -1374,6 +1574,7 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 
 	ColorPicker.palette.setTHREE(THREE);
 	optionsColor = optionsColor || {};
+//	optionsColor.palette = optionsColor.palette || palette || paletteDefault.get();
 	optionsColor.palette = optionsColor.palette || palette.get();
 	
 	if (
@@ -1634,7 +1835,7 @@ export default Player;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Oct 22 2020 04:05:10 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat Oct 24 2020 07:17:33 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
