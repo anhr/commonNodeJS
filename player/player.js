@@ -1586,7 +1586,8 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 			( optionsColor.positions && ( optionsColor.positions.itemSize === 4 ) )//w position of the positions is color of the point
 			) {
 
-			var min, max, w = funcs.w;
+			let min, max;
+			var w = funcs.w;
 			if ( funcs.w instanceof Object && funcs.w.func ) {
 
 				if ( funcs.w.max ) max = funcs.w.max;
@@ -1616,9 +1617,12 @@ console.warn( 'Кажется тут ошибка. Диапазон по умо�
 
 				} else {
 
+					//color is not defined. Set color to white
+/*					
 console.warn( 'Кажется тут ошибка. Диапазон по умолчанию должен быть от 0 до 100' )
 					max = 1;
 					min = max - 1;
+*/					
 
 				}
 /*
