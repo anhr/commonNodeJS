@@ -934,11 +934,12 @@ function setTHREE( _THREE ) {
 					}
 
 				},
+				isAddedToParticles: function ( particle ) { return particles.includes( particle ); },
 				addParticle: function ( particle ) {
 
 					if ( particles === undefined )
 						particles = [];
-					if ( particles.includes( particle ) ) {
+					if ( this.isAddedToParticles() ) {
 
 						console.error( 'Duplicate particle "' + particle.name + '"' );
 						return;
