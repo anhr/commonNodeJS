@@ -704,6 +704,12 @@ const spatialMultiplexsIndexs = {
 Object.freeze( spatialMultiplexsIndexs );
 StereoEffect.spatialMultiplexsIndexs = spatialMultiplexsIndexs;
 
+/**
+ * set THREE for StereoEffect. Assigh setStereoEffect to [THREE.Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster}
+ * @function StereoEffect.
+ * setTHREE
+ * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
+ */
 function setTHREE( _THREE ) {
 
 	if ( THREE ) {
@@ -1008,6 +1014,7 @@ function setTHREE( _THREE ) {
 	} );
 
 }
+StereoEffect.setTHREE = setTHREE;
 
 //export { StereoEffect, spatialMultiplexsIndexs };
 export default StereoEffect;
