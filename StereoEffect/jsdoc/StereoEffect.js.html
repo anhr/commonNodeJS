@@ -60,20 +60,17 @@ import cookie from '../cookieNodeJS/cookie.js';
 import { dat } from '../dat/dat.module.js';
 //import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
-//Attenttion!!! Save this file as UTF-8 for localization.
+import CreateFullScreenSettings from '../createFullScreenSettings.js';
 
-/**
- * @callback onFullScreen
- * @param {boolean} fullScreen true - go to full screen mode. false - restore from full screen mode.
- */
+//Attenttion!!! Save this file as UTF-8 for localization.
 
 /**
  * StereoEffect
  * Uses dual PerspectiveCameras for Parallax Barrier https://en.wikipedia.org/wiki/Parallax_barrier effects
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
- * @param {Object} renderer {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer}
+ * @param {THREE.WebGLRenderer} renderer {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer}
  * @param {Object} [options] the following options are available.
- * @param {Object} [options.spatialMultiplex] spatial multiplex
+ * @param {Object} [options.spatialMultiplex=spatialMultiplexsIndexs.Mono] spatial multiplex
  * &lt;pre>
  * See {@link https://en.wikipedia.org/wiki/DVB_3D-TV|DVB 3D-TV} for details
  * 	Available values
@@ -87,15 +84,11 @@ import { dat } from '../dat/dat.module.js';
  * 			See //https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom for details
  *
  * 	Example - spatialMultiplex: spatialMultiplexsIndexs.Mono
- * 	Default is spatialMultiplexsIndexs.Mono
  * &lt;/pre>
- * @param {Object} [options.camera] THREE.PerspectiveCamera. Use the camera key if you want control cameras focus.
- * @param {Object} [options.far] Camera frustum far plane. The far key uses for correct calculation default values of Eye separation. Default is 10.
- * @param {Object} [options.stereoAspect] THREE.StereoCamera.aspect. Camera frustum aspect ratio. Default is 1.
- * @param {boolean} [options.rememberSize] true - remember default size of the canvas. Default is undefined.
- * @param {onFullScreen} [options.onFullScreen] Full screen event.
- * See [onFullScreen(fullScreen)]{@link module-StereoEffect#~onFullScreen} in the Type Definitions below.
- * Default is undefined.
+ * @param {THREE.PerspectiveCamera} [options.camera] Use the camera key if you want control cameras focus.
+ * @param {Object} [options.far=10] Camera frustum far plane. The far key uses for correct calculation default values of Eye separation.
+ * @param {Object} [options.stereoAspect=1] THREE.StereoCamera.aspect. Camera frustum aspect ratio.
+ * @param {boolean} [options.rememberSize] true - remember default size of the canvas. Resize of the canvas to full screen for stereo mode and restore to default size if no stereo effacts.
  * @param {HTMLElement} [options.elParent] parent of the canvas.
  * Use only if you use {@link https://threejs.org/docs/index.html#api/en/core/Raycaster|THREE.Raycaster} (working out what objects in the 3d space the mouse is over)
  * and your canvas is not full screen.
@@ -103,6 +96,7 @@ import { dat } from '../dat/dat.module.js';
 function StereoEffect( _THREE, renderer, options ) {
 
 	setTHREE( _THREE );
+	const _this = this;
 
 	options = options || {};
 	this.options = options;
@@ -144,12 +138,6 @@ function StereoEffect( _THREE, renderer, options ) {
 
 	this.setEyeSeparation( options.eyeSep );
 
-	this.setSize = function ( width, height ) {
-
-		renderer.setSize( width, height );
-
-	};
-
 	this.getRendererSize = function () {
 
 		const el = options.elParent || renderer.domElement,
@@ -168,7 +156,7 @@ function StereoEffect( _THREE, renderer, options ) {
 			size = new THREE.Vector2();
 		renderer.getSize( size );
 		return {
-
+/*
 			fullScreen: function () {
 
 				const size = new THREE.Vector2();
@@ -204,6 +192,7 @@ function StereoEffect( _THREE, renderer, options ) {
 				options.camera.updateProjectionMatrix();
 
 			},
+*/
 			getMousePosition: function ( mouse, event ) {
 
 				mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
@@ -212,6 +201,12 @@ function StereoEffect( _THREE, renderer, options ) {
 			},
 
 		};
+
+	};
+/*
+	this.setSize = function ( width, height ) {
+
+		renderer.setSize( width, height );
 
 	};
 
@@ -230,8 +225,29 @@ function StereoEffect( _THREE, renderer, options ) {
 		return fullScreen;
 
 	}
-
+*/
+	var fullScreenSettings;
+	/*
+						this.isFullScreen = function () { return fullScreenSettings.isFullScreen(); }
+						this.setFullScreen = function ( fullScreen ) { return fullScreenSettings.setFullScreen( fullScreen ); }
+	*/
+	var spatialMultiplexCur;
 	this.render = function ( scene, camera ) {
+
+		const spatialMultiplex = parseInt( options.spatialMultiplex );
+
+		if ( options.rememberSize &amp;&amp; !fullScreenSettings ) { 
+
+			if ( _canvasMenu &amp;&amp; _canvasMenu.getFullScreenSettings )
+				fullScreenSettings = _canvasMenu.getFullScreenSettings( this );
+			else fullScreenSettings = new CreateFullScreenSettings( THREE, renderer, camera,
+				{
+					canvasMenu: _canvasMenu,
+					stereoEffect: this,
+
+				} );
+
+		}
 
 		scene.updateMatrixWorld();
 
@@ -244,42 +260,63 @@ function StereoEffect( _THREE, renderer, options ) {
 		renderer.setScissorTest( true );
 
 		var xL, yL, widthL, heightL,
-			xR, yR, widthR, heightR,
-			parallax = options.zeroParallax,
-			spatialMultiplex = parseInt( options.spatialMultiplex );
+			xR, yR, widthR, heightR;
+		const parallax = options.zeroParallax;
+		function setFullScreen( fullScreen, stereoEffect ){
+
+			if ( !fullScreenSettings || ( spatialMultiplexCur === spatialMultiplex ) )
+				return;
+			fullScreenSettings.setFullScreen( fullScreen );
+			spatialMultiplexCur = spatialMultiplex;
+			if ( stereoEffect.setControllerSpatialMultiplex ) stereoEffect.setControllerSpatialMultiplex( spatialMultiplex );
+			else if ( stereoEffect.setSpatialMultiplex ) stereoEffect.setSpatialMultiplex( spatialMultiplex );
+
+		}
 
 		switch ( spatialMultiplex ) {
 
 			case spatialMultiplexsIndexs.Mono://Mono
 
+/*
 				if ( !fullScreen &amp;&amp; ( rendererSizeDefault !== undefined ) )
 					rendererSizeDefault.restore();
+*/
 
 				renderer.setScissor( 0, 0, size.width, size.height );
 				renderer.setViewport( 0, 0, size.width, size.height );
 				renderer.render( scene, camera );
 				renderer.setScissorTest( false );
+
+				setFullScreen( true, this );
+
 				return;
 
 			case spatialMultiplexsIndexs.SbS://'Side by side'
 
+/*
 				if ( rendererSizeDefault !== undefined )
 					rendererSizeDefault.fullScreen();
-
+*/
 				const _width = size.width / 2;
 
 				xL = 0 + parallax; yL = 0; widthL = _width; heightL = size.height;
 				xR = _width - parallax; yR = 0; widthR = _width; heightR = size.height;
 
+				setFullScreen( false, this );
+
 				break;
 
 			case spatialMultiplexsIndexs.TaB://'Top and bottom'
 
+/*
 				if ( rendererSizeDefault !== undefined )
 					rendererSizeDefault.fullScreen();
+*/
 
 				xL = 0 + parallax; yL = 0; widthL = size.width; heightL = size.height / 2;
 				xR = 0 - parallax; yR = size.height / 2; widthR = size.width; heightR = size.height / 2;
+
+				setFullScreen( false, this );
 
 				break;
 			default: console.error( 'THREE.StereoEffect.render: Invalid "Spatial  multiplex" parameter: ' + spatialMultiplex );
@@ -300,48 +337,12 @@ function StereoEffect( _THREE, renderer, options ) {
 
 	};
 
-	/**
-	 * Adds StereoEffects folder into dat.GUI.
-	 * @function this.
-	 * gui
-	 * @see {@link https://github.com/anhr/dat.gui|dat.gui}.
-	 * @param {GUI} gui dat.GUI object.
-	 * @param {Object} options See options of StereoEffect above for details.
-	 * @param {Object} [guiParams] the following params are available.
-	 * @param {Function} [guiParams.getLanguageCode] Your custom getLanguageCode() function.
-	 * returns the "primary language" subtag of the language version of the browser.
-	 * Examples: "en" - English language, "ru" Russian.
-	 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|Syntax} paragraph of RFC 4646 for details.
-	 * Default returns the 'en' is English language.
-	 * @param {Object} [guiParams.lang] Object with localized language values.
-	 * @param {number} [guiParams.scale] scale of allowed values. Default is 1.
-	 * @param {Object} [guiParams.cookie] Your custom cookie function for saving and loading of the StereoEffects settings. Default cookie is not saving settings.
-	 * @param {cookie} [guiParams.cookieName] Name of the cookie is "StereoEffect" + options.cookieName. Default is undefined.
-	 */
-	this.gui = function ( gui, guiParams ) {
+	//Localization
+	function getLang( params ) {
 
-		if ( gui === undefined )
-			return;
-		if ( guiParams === undefined ) guiParams = {};
-		guiParams.scale = guiParams.scale || 1;
-
-		const stereoEffect = 'StereoEffect' + ( guiParams.cookieName || '' );
-		guiParams.cookie = guiParams.cookie || new cookie.defaultCookie();
-		const optionsDefault = {
-
-			//spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.Mono,//SbS,
-			spatialMultiplex: options.spatialMultiplex,
-			eyeSep: ( new THREE.StereoCamera().eyeSep / 10 ) * options.far,
-			focus: options.focus,
-			zeroParallax: 0,
-
-		}
-		Object.freeze( optionsDefault );
-		guiParams.cookie.getObject( stereoEffect, options, optionsDefault );
-
-		//Localization
-
+		params = params || {};
 		const _lang = {
+
 			stereoEffects: 'Stereo effects',
 
 			spatialMultiplexName: 'Spatial  multiplex',
@@ -367,11 +368,12 @@ function StereoEffect( _THREE, renderer, options ) {
 
 		};
 
-		const _languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
-			: guiParams.getLanguageCode();
+		const _languageCode = params.getLanguageCode === undefined ? 'en'//Default language is English
+			: params.getLanguageCode();
 		switch ( _languageCode ) {
 
 			case 'ru'://Russian language
+
 				_lang.stereoEffects = 'Стерео эффекты';//'Stereo effects'
 
 				_lang.spatialMultiplexName = 'Мультиплекс';//'Spatial  multiplex'
@@ -394,20 +396,70 @@ function StereoEffect( _THREE, renderer, options ) {
 
 				_lang.defaultButton = 'Восстановить';
 				_lang.defaultTitle = 'Восстановить настройки стерео эффектов по умолчанию.';
+
 				break;
 			default://Custom language
-				if ( ( guiParams.lang === undefined ) || ( guiParams.lang._languageCode != _languageCode ) )
+				if ( ( params.lang === undefined ) || ( params.lang._languageCode != _languageCode ) )
 					break;
 
-				Object.keys( guiParams.lang ).forEach( function ( key ) {
+				Object.keys( params.lang ).forEach( function ( key ) {
 
 					if ( _lang[key] === undefined )
 						return;
-					_lang[key] = guiParams.lang[key];
+					_lang[key] = params.lang[key];
 
 				} );
 
 		}
+		return _lang;
+
+	}
+
+	/**
+	 * Adds StereoEffects folder into dat.GUI.
+	 * @function this.
+	 * gui
+	 * @see {@link https://github.com/anhr/dat.gui|dat.gui}.
+	 * @param {GUI} gui dat.GUI object.
+	 * @param {Object} options See options of StereoEffect above for details.
+	 * @param {Object} [guiParams] the following params are available.
+	 * @param {Function} [guiParams.getLanguageCode] Your custom getLanguageCode() function.
+	 * &lt;pre>
+ 	 * returns the "primary language" subtag of the language version of the browser.
+	 * Examples: "en" - English language, "ru" Russian.
+	 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|Syntax} paragraph of RFC 4646 for details.
+	 * Default returns the 'en' is English language.
+	 * &lt;/pre>
+ 	 * @param {Object} [guiParams.lang] Object with localized language values.
+	 * @param {number} [guiParams.scale] scale of allowed values. Default is 1.
+	 * @param {Object} [guiParams.cookie] Your custom cookie function for saving and loading of the StereoEffects settings. Default cookie is not saving settings.
+	 * @param {cookie} [guiParams.cookieName] Name of the cookie is "StereoEffect" + options.cookieName. Default is undefined.
+	 */
+	this.gui = function ( gui, guiParams ) {
+
+		if ( gui === undefined )
+			return;
+		if ( guiParams === undefined ) guiParams = {};
+		guiParams.scale = guiParams.scale || 1;
+
+		const _lang = getLang( { getLanguageCode: guiParams.getLanguageCode, lang: guiParams.lang } );
+
+		const stereoEffect = 'StereoEffect' + ( guiParams.cookieName || '' );
+		guiParams.cookie = guiParams.cookie || new cookie.defaultCookie();
+		const optionsDefault = {
+
+			//spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.Mono,//SbS,
+			spatialMultiplex: options.spatialMultiplex,
+			eyeSep: ( new THREE.StereoCamera().eyeSep / 10 ) * options.far,
+			focus: options.focus,
+			zeroParallax: 0,
+
+		}
+		Object.freeze( optionsDefault );
+		guiParams.cookie.getObject( stereoEffect, options, optionsDefault );
+		options.spatialMultiplex = parseInt( options.spatialMultiplex );
+
+		if ( this.setSpatialMultiplex ) this.setSpatialMultiplex( options.spatialMultiplex );
 
 		//
 		/*
@@ -436,15 +488,43 @@ function StereoEffect( _THREE, renderer, options ) {
 				setObject( stereoEffect );
 				if ( guiParams.onChangeMode )
 					guiParams.onChangeMode( value );
+/*					
+				if ( _canvasMenu )
+					_canvasMenu.setSpatialMultiplexs( value );
+*/					
+				if ( menuItemStereoEffect )
+					menuItemStereoEffect.select( value )
+/*					
+				{
+
+					menuItemStereoEffect.items.forEach( function ( item ) {
+
+						if ( item.spatialMultiplex === value ) {
+
+							if ( !item.checked ) {
+
+								item.elName.onclick( { target: item.elName });
+
+							}
+
+						}
+
+					} );
+
+				}
+*/				
 
 			} );
 		dat.controllerNameAndTitle( _controllerSpatialMultiplex, _lang.spatialMultiplexName, _lang.spatialMultiplexTitle );
+		this.setControllerSpatialMultiplex = function( index ) { _controllerSpatialMultiplex.setValue( index ); }
+/*		
 		if ( guiParams.stereoEffect )
 			guiParams.stereoEffect.setSpatialMultiplex = function ( index ) {
 
 				_controllerSpatialMultiplex.setValue( index );
 
 			}
+*/			
 
 		//eyeSeparation
 		//http://paulbourke.net/papers/vsmm2007/stereoscopy_workshop.pdf
@@ -538,6 +618,101 @@ function StereoEffect( _THREE, renderer, options ) {
 
 	};
 
+	var _canvasMenu, menuItemStereoEffect;
+	/**
+	 * Adds a StereoEffect's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 * @function StereoEffect.
+	 * createCanvasMenuItem
+	 * @param {CanvasMenu} [canvasMenu] [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+	 * @param {Object} [params] the following params are available.
+	 * @param {Function} [params.getLanguageCode] Your custom getLanguageCode() function.
+	 * &lt;pre>
+ 	 * returns the "primary language" subtag of the language version of the browser.
+	 * Examples: "en" - English language, "ru" Russian.
+	 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|Syntax} paragraph of RFC 4646 for details.
+	 * Default returns the 'en' is English language.
+	 * &lt;/pre>
+ 	 * @param {Object} [guiParams.lang] Object with localized language values.
+	 */
+	this.createCanvasMenuItem = function ( canvasMenu, params ) {
+
+		_canvasMenu = canvasMenu;
+		params = params || {};
+		const _lang = getLang( { getLanguageCode: params.getLanguageCode, lang: params.lang } ),
+			spatialMultiplexs = Object.keys(_lang.spatialMultiplexs);
+		menuItemStereoEffect = {
+
+			name: '⚭',
+			title: _lang.stereoEffects,//'Stereo effects',
+			id: 'menuButtonStereoEffects',
+			drop: 'up',
+			items: [
+
+				{
+					name: spatialMultiplexs[spatialMultiplexsIndexs.Mono],//'Mono',
+					id: 'menuButtonStereoEffectsMono',
+					radio: true,
+					checked: options.spatialMultiplex === spatialMultiplexsIndexs.Mono,
+					spatialMultiplex: spatialMultiplexsIndexs.Mono,
+					onclick: function ( event ) {
+
+						options.spatialMultiplex = spatialMultiplexsIndexs.Mono;
+
+					}
+				},
+				{
+					name: spatialMultiplexs[spatialMultiplexsIndexs.SbS],//'Side by side',
+					id: 'menuButtonStereoEffectsSbS',
+					radio: true,
+					checked: options.spatialMultiplex === spatialMultiplexsIndexs.SbS,
+					spatialMultiplex: spatialMultiplexsIndexs.SbS,
+					onclick: function ( event ) {
+
+						options.spatialMultiplex = spatialMultiplexsIndexs.SbS;
+						//if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
+
+					}
+				},
+				{
+					name: spatialMultiplexs[spatialMultiplexsIndexs.TaB],//'Top and bottom',
+					id: 'menuButtonStereoEffectsTaB',
+					radio: true,
+					checked: options.spatialMultiplex === spatialMultiplexsIndexs.TaB,
+					spatialMultiplex: spatialMultiplexsIndexs.TaB,
+					onclick: function ( event ) {
+
+						options.spatialMultiplex = spatialMultiplexsIndexs.TaB;
+//						if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
+
+					}
+				},
+
+			],
+
+		}
+		menuItemStereoEffect.select = function ( value ) {
+
+			menuItemStereoEffect.items.forEach( function ( item ) {
+
+				if ( item.spatialMultiplex === value ) {
+
+					if ( !item.checked )
+						item.elName.onclick( { target: item.elName } );
+
+				}
+
+			} );
+
+		}
+		this.setSpatialMultiplex = function ( index ) {
+
+				menuItemStereoEffect.select( index );
+
+		}
+		canvasMenu.menu.push( menuItemStereoEffect );
+
+	}
+
 };
 
 /**
@@ -557,6 +732,12 @@ const spatialMultiplexsIndexs = {
 Object.freeze( spatialMultiplexsIndexs );
 StereoEffect.spatialMultiplexsIndexs = spatialMultiplexsIndexs;
 
+/**
+ * set THREE for StereoEffect. Assigh setStereoEffect to [THREE.Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster}
+ * @function StereoEffect.
+ * setTHREE
+ * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
+ */
 function setTHREE( _THREE ) {
 
 	if ( THREE ) {
@@ -787,11 +968,12 @@ function setTHREE( _THREE ) {
 					}
 
 				},
+				isAddedToParticles: function ( particle ) { return particles.includes( particle ); },
 				addParticle: function ( particle ) {
 
 					if ( particles === undefined )
 						particles = [];
-					if ( particles.includes( particle ) ) {
+					if ( this.isAddedToParticles() ) {
 
 						console.error( 'Duplicate particle "' + particle.name + '"' );
 						return;
@@ -860,6 +1042,7 @@ function setTHREE( _THREE ) {
 	} );
 
 }
+StereoEffect.setTHREE = setTHREE;
 
 //export { StereoEffect, spatialMultiplexsIndexs };
 export default StereoEffect;</code></pre>
@@ -878,7 +1061,7 @@ export default StereoEffect;</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat Sep 19 2020 13:02:09 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Oct 28 2020 06:17:57 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
