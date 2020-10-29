@@ -921,14 +921,7 @@ function setTHREE( _THREE ) {
 				},
 				onDocumentMouseDown: function ( event ) {
 
-/*
-					intersection( {
-
-						onIntersection: options.onMouseDown,
-
-					} );
-*/					
-					if ( intersects.length > 0 ) {
+					if ( intersects && intersects.length > 0 ) {
 
 						if ( intersects[0].object.userData.raycaster ) {
 
