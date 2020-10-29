@@ -262,7 +262,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady,
 		if ( points.material.uniforms.cloudPoints !== undefined )
 			points.material.uniforms.cloudPoints.value.needsUpdate = true;
 
-		if ( settings.Player ) settings.Player.selectMeshPlayScene( THREE, points, 0, 0, settings.options );
+		if ( settings.Player ) settings.Player.selectMeshPlayScene( THREE, points, undefined, 0, settings.options );
 
 	}, settings.pointsOptions === undefined ? undefined : settings.pointsOptions.path );
 
