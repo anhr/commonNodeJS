@@ -932,7 +932,8 @@ palette = new palette();
 */
 Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 
-	t = t || 0;
+	if ( t === undefined )
+		t = settings.min || 0;
 	index = index || 0;
 	options = options || selectPlaySceneOptions;
 	if (
