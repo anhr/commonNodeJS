@@ -22,6 +22,8 @@ import { GUI, controllers } from '../dat.gui/CustomController/build/dat.gui.modu
 import { getLanguageCode } from '../lang.js';
 //import { getLanguageCode } from 'http://localhost/anhr/commonNodeJS/master/lang.js';
 
+import Player from '../player/player.js';
+
 //Localization
 
 export var lang = {
@@ -199,7 +201,7 @@ export class PlayController extends controllers.CustomController {
 		}
 		this.onChangeRepeat = function () {
 
-			_renameRepeatButtons( player.getSettings().repeat );
+			_renameRepeatButtons( Player.getSettings().repeat );
 
 		}
 		player.pushController( this );
