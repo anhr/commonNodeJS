@@ -42,13 +42,13 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady,
 
 	settings = settings || {};
 	settings.Player = settings.Player || Player;
-/*
+
 	var geometry,
 		tMin = settings.pointsOptions === undefined ?
 			settings.tMin === undefined ? 0 : settings.tMin :
 			settings.pointsOptions.tMin,
 		arrayCloud = settings.pointsOptions === undefined ? settings.arrayCloud : settings.pointsOptions.arrayCloud;
-*/
+
 
 	settings.options = settings.options || {};
 	settings.options.a = settings.options.a || 1;
@@ -57,7 +57,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady,
 
 	settings.options.point = settings.options.point || {};
 	settings.options.point.size = settings.options.point.size || 5.0;
-/*
+
 	if ( typeof arrayFuncs === 'function' )
 		geometry = arrayFuncs();
 	else geometry = new THREE.BufferGeometry().setFromPoints
@@ -79,7 +79,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady,
 
 				} ),
 			4 ) );
-*/
+
 //	var texture = new THREE.TextureLoader().load( "/anhr/myThreejs/master/textures/point.png" );
 	var texture = new THREE.TextureLoader().load( "/anhr/commonNodeJS/master/getShaderMaterialPoints/textures/point.png" );
 	texture.wrapS = THREE.RepeatWrapping;
@@ -218,7 +218,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady,
 			cloud.editShaderText( shaderText );
 
 		}
-
+/*Если тут создавть geometry то не будут видны точки frustumPoints.js. Не разобрался почму это происходит
 		const arrayCloud = settings.pointsOptions === undefined ? settings.arrayCloud : settings.pointsOptions.arrayCloud;
 		var geometry;
 		if ( typeof arrayFuncs === 'function' )
@@ -242,6 +242,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady,
 
 					} ),
 				4 ) );
+*/
 
 		var points = new THREE.Points( geometry, new THREE.ShaderMaterial( {
 
