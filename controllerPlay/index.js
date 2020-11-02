@@ -121,12 +121,43 @@ export class PlayController extends controllers.CustomController {
 				buttons.buttonPrev = addButton( lang.prevSymbol, lang.prevSymbolTitle, player.prev );
 				buttons.buttonPlay = addButton( lang.playSymbol, lang.playTitle, player.play3DObject );
 
-				//Repeat button
+				if ( player.getOptions().settings.max !== null ) {
 
-				function RenameRepeatButtons( isRepeat ) {
+					//Repeat button
 
+					function RenameRepeatButtons( isRepeat ) {
+
+						var title, color;
+						if ( isRepeat ) {
+
+							title = lang.repeatOff;
+							color = colorOff;
+
+						} else {
+
+							title = lang.repeatOn;
+							color = colorOn;
+
+						}
+
+						if ( buttons.buttonRepeat.title === title )
+							return;//stop of infinite recursive call
+
+						buttons.buttonRepeat.title = title;
+						buttons.buttonRepeat.style.color = color;
+
+						player.onChangeRepeat( isRepeat );
+
+					}
+					_renameRepeatButtons = RenameRepeatButtons;
+					function repeat( value ) {
+
+						RenameRepeatButtons( buttons.buttonRepeat.title === lang.repeatOn );
+
+					}
+					_repeat = repeat;
 					var title, color;
-					if ( isRepeat ) {
+					if ( player.getOptions().repeat ) {
 
 						title = lang.repeatOff;
 						color = colorOff;
@@ -137,37 +168,10 @@ export class PlayController extends controllers.CustomController {
 						color = colorOn;
 
 					}
-
-					if ( buttons.buttonRepeat.title === title )
-						return;//stop of infinite recursive call
-
-					buttons.buttonRepeat.title = title;
+					buttons.buttonRepeat = addButton( lang.repeat, title, repeat );
 					buttons.buttonRepeat.style.color = color;
 
-					player.onChangeRepeat( isRepeat );
-
 				}
-				_renameRepeatButtons = RenameRepeatButtons;
-				function repeat( value ) {
-
-					RenameRepeatButtons( buttons.buttonRepeat.title === lang.repeatOn );
-
-				}
-				_repeat = repeat;
-				var title, color;
-				if ( player.getOptions().repeat ) {
-
-					title = lang.repeatOff;
-					color = colorOff;
-
-				} else {
-
-					title = lang.repeatOn;
-					color = colorOn;
-
-				}
-				buttons.buttonRepeat = addButton( lang.repeat, title, repeat );
-				buttons.buttonRepeat.style.color = color;
 				buttons.buttonNext = addButton( lang.nextSymbol, lang.nextSymbolTitle, player.next );
 				function getGroup() {
 
