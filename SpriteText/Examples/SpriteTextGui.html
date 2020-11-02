@@ -1,0 +1,368 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>sprite text gui. three.js webgl</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<!--<link type="text/css" rel="stylesheet" href="../../three.js/dev/examples/main.css">-->
+	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+</head>
+<body>
+
+	<div id="info">
+		<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> - SpriteText
+		by <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+
+	<!--<script src="http://threejs.org/examples/js/libs/dat.gui.min.js"></script>-->
+
+	<script type="module">
+
+		//import * as THREE from '../../../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+		//import { THREE } from '../../../commonNodeJS/master/three.js';//https://github.com/anhr/commonNodeJS
+		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+
+		import { dat } from '../../../commonNodeJS/master/dat/dat.module.js';//https://github.com/anhr/commonNodeJS
+		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+
+		import { SpriteText } from '../SpriteText.js';
+		//import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
+
+		import { SpriteTextGui } from '../SpriteTextGui.js';
+		//import { SpriteTextGui } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteTextGui.js';
+
+		//import { OrbitControls } from '../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
+		import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
+		//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+		
+
+		//import { ConvexBufferGeometry } from '../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js';//https://github.com/anhr/three.js
+		import { ConvexBufferGeometry } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/geometries/ConvexGeometry.js';
+		//import { ConvexBufferGeometry } from 'https://threejs.org/examples/jsm/geometries/ConvexGeometry.js';
+
+		import StereoEffect from '../../../commonNodeJS/master/StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
+		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+
+		//import { WEBGL } from '../../../three.js/dev/examples/jsm/WebGL.js';//https://github.com/anhr/three.js
+		import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
+		//import { WEBGL } from 'https://threejs.org/examples/jsm/WebGL.js';
+
+		import cookie from '../../../commonNodeJS/master/cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
+		//import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
+		//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
+
+		//import { getLanguageCode } from '../../../commonNodeJS/master/lang.js';//https://github.com/anhr/commonNodeJS
+		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+
+		if ( WEBGL.isWebGLAvailable() === false ) {
+
+			document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+
+		}
+		SpriteText.setTHREE( THREE );
+
+		var camera, scene, renderer, effect, scale = 0.1;
+
+		init();
+		animate();
+
+		function init() {
+
+			scene = new THREE.Scene();
+
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+//			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			// camera
+
+			camera = new THREE.PerspectiveCamera( 70 * scale, window.innerWidth / window.innerHeight, 1 * scale, 1000 * scale );
+//			camera = new THREE.PerspectiveCamera( 70 * scale, window.innerWidth / window.innerHeight, 1, 1000 );
+//			camera.position.set( 15 * scale, 20 * scale, 30 * scale );
+			camera.position.set( 15, 20, 30 );
+			scene.add( camera );
+
+			//Settings for all SpriteText added to scene and child groups
+			scene.userData.optionsSpriteText = {
+
+				//rotation: 0,
+				//textHeight: 0.1 * scale,//0.05,
+				textHeight: 0.1,
+
+				//Camera frustum vertical field of view, from bottom to top of view, in degrees. Default is 50.
+				//Вертикальное поле обзора камеры, снизу вверх, в градусах.
+				//Если добавить эту настройку, то видимый размер текста не будет зависить от изменения camera.fov.
+				//Тогда textHeight будет вычисляться как options.fov * textHeight / 50
+				//Если не определить поле textHeight (см. выше) то textHeight = 0.04,
+				fov: camera.fov,
+
+				//sizeAttenuation: false,//true,//Whether the size of the sprite is attenuated by the camera depth. (Perspective camera only.) Default is false.
+
+			}
+
+			// controls
+
+			const controls = new OrbitControls( camera, renderer.domElement );
+			controls.minDistance = 25;
+			controls.maxDistance = 75;
+			controls.maxPolarAngle = Math.PI / 2;
+			controls.update();
+
+			scene.add( new THREE.AmbientLight( 0x222222 ) );
+
+			// light
+
+			const light = new THREE.PointLight( 0xffffff, 1 );
+			camera.add( light );
+
+
+			// points
+
+			const vertices = new THREE.CubeGeometry( 20 * scale, 20 * scale, 20 * scale ).vertices;
+
+			// convex hull
+
+			const meshMaterial = new THREE.MeshLambertMaterial( {
+				color: 0xffffff,
+				opacity: 0.5,
+				transparent: true,
+			} );
+
+			const meshGeometry = new ConvexBufferGeometry( vertices );
+
+			const meshBack = new THREE.Mesh( meshGeometry, meshMaterial );
+			meshBack.material.side = THREE.BackSide; // back faces
+			meshBack.renderOrder = 0;
+			scene.add( meshBack );
+
+			const meshMaterialClone = meshMaterial.clone();
+			const meshFront = new THREE.Mesh( meshGeometry, meshMaterialClone );
+			meshFront.material.side = THREE.FrontSide; // front faces
+			meshFront.renderOrder = 1;
+			scene.add( meshFront );
+
+			scene.add( new SpriteText( 'Default SpriteText' ) );
+
+			const group = new THREE.Group();
+
+			//options for all SpriteText from this group and all child groups
+			group.userData.optionsSpriteText = {
+
+				fontColor: 'rgba(255, 255, 225, 0.5)'//white semi opacity color
+
+			}
+			scene.add( group );
+
+			const fontFaces = ['Arial', 'Verdana', 'Times'];
+
+			const arraySpriteText = [
+				new SpriteText( -1, new THREE.Vector3( - 10, 4, 2 ).multiplyScalar( scale ) ),
+				new SpriteText( 'Array item 2', new THREE.Vector3( - 10, 1, 2 ).multiplyScalar( scale ) ),
+			];
+
+			arraySpriteText.forEach( function ( item ) {
+
+				group.add( item );
+
+			} );
+
+			//
+			
+			if ( typeof StereoEffect !== "undefined" ) {
+
+				effect = new StereoEffect( THREE, renderer, {
+
+					spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.Mono,
+					far: camera.far,
+					camera: camera,
+					cookie: cookie,
+
+				} );
+//				effect.setSize( window.innerWidth, window.innerHeight );
+			
+			}
+
+			const groupLevel2 = new THREE.Group();
+			group.add( groupLevel2 );
+
+			//Settings for all SpriteText added to groupLevel2 and child groups
+			groupLevel2.userData.optionsSpriteText = {
+
+				rotation: 0,
+				rect: {
+
+					displayRect: true,
+					borderThickness: 10,
+					borderRadius: 10,
+					borderColor: 'rgb( 0, 255, 255 )', //'#FF0000',//'rgba(255, 0, 0, 1)',//red
+					backgroundColor: 'rgba( 255, 255, 0, 1)',
+
+				},
+				fontColor: 'rgba(0, 255, 0, 1)', //green
+				center: new THREE.Vector2( 0.5, 0.5 ),
+				bold: true,
+				italic: true,
+
+			}
+
+			groupLevel2.add( new SpriteText( 'groupLevel2\r\nSpriteText 1', new THREE.Vector3( -10, -15, 2 ).multiplyScalar( scale ) ) );
+			groupLevel2.add( new SpriteText( 'groupLevel2\r\nSpriteText 2', new THREE.Vector3(  10, -15, 2 ).multiplyScalar( scale ) ) );
+
+			//SpriteText with individual options
+			const optionsIndividual = {
+
+					fontColor: 'rgba(0, 255, 0, 1)', //green
+					textHeight: 30 * scale,
+					fontFace: fontFaces[2],
+					fontFaces: fontFaces,
+					center: new THREE.Vector2( 0.5, 0.5 ),
+					bold: false,
+					italic: false,
+					fontProperties: '',
+					rotation: Math.PI / 2,
+					rect: {
+
+						displayRect: true,
+						borderThickness: 3,
+						borderRadius: 10,
+						borderColor: 'rgb(255, 0, 0)', //'#FF0000',//'rgba(255, 0, 0, 1)',//red
+						backgroundColor: 'rgba(0, 0, 255, 1)', //blue
+
+					},
+					sizeAttenuation: true,
+//					group: scene,
+					
+				}
+			const spriteTextIndividualOptions = new SpriteText( 'Individual options', new THREE.Vector3( 10, 2, 2 ).multiplyScalar( scale ), optionsIndividual );
+			scene.add( spriteTextIndividualOptions );
+
+			var fSpriteTextAll, fSpriteTextGroupLevel2;
+			if ( typeof dat !== "undefined" ) {
+
+				//dat-gui JavaScript Controller Library
+				const gui = new dat.GUI();
+
+				if ( typeof SpriteTextGui !== "undefined" ) {
+
+					//Settings for all SpriteText added to scene and child groups
+					fSpriteTextAll = SpriteTextGui( SpriteText, gui, scene, {
+
+						getLanguageCode: getLanguageCode,
+						settings: { zoomMultiplier: 1.5, },
+						cookie: cookie,
+
+					} );
+
+					//Settings for all SpriteText added to groupLevel2 and child groups
+					fSpriteTextGroupLevel2 = SpriteTextGui( SpriteText, gui, groupLevel2, {
+
+						spriteFolder: 'groupLevel2 sprites',
+						getLanguageCode: getLanguageCode,
+						//settings: { zoomMultiplier: 1.5, },
+						cookie: cookie,
+	/*					
+						options: {
+
+							rotation: 0,
+							rect: {
+								displayRect: true,
+								borderThickness: 10,
+								borderRadius: 10,
+								borderColor: 'rgb( 0, 255, 255 )', //'#FF0000',//'rgba(255, 0, 0, 1)',//red
+								backgroundColor: 'rgba( 255, 255, 0, 1)',
+							},
+							fontColor: 'rgba(0, 255, 0, 1)', //green
+							center: new THREE.Vector2( 0.5, 0.5 ),
+							bold: true,
+							italic: true,
+
+						}
+	*/					
+
+					} );
+
+					SpriteTextGui( SpriteText, gui, spriteTextIndividualOptions, {
+
+						spriteFolder: 'Sprite with individual options',
+						getLanguageCode: getLanguageCode,
+						options: optionsIndividual,
+
+					} );
+
+				} else SpriteText.updateSpriteTextGroup( scene );
+
+				//cube settings
+				const fCube = gui.addFolder( 'cube' );
+				fCube.add( meshMaterial, 'transparent' );
+				fCube.add( meshMaterial, 'depthTest' );
+
+				//StereoEffect settings
+				if ( typeof effect !== "undefined" )
+					effect.gui( gui, {
+
+						getLanguageCode: getLanguageCode,
+						gui: gui,
+
+					} );
+
+				//default button
+				const defaultParams = {
+
+					defaultF: function ( value ) {
+
+						if ( typeof fSpriteTextAll !== "undefined" )
+							fSpriteTextAll.userData.restore();
+						if ( typeof fSpriteTextGroupLevel2 !== "undefined" )
+							fSpriteTextGroupLevel2.userData.restore();
+
+					},
+
+				};
+				dat.controllerNameAndTitle( gui.add( defaultParams, 'defaultF' ), 'Default' );
+
+			} else {
+
+				SpriteText.updateSpriteTextGroup( scene );
+//				SpriteText.updateSpriteTextGroup( groupLevel2 );
+				
+			}
+
+			//
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			render();
+
+		}
+
+		function render() {
+
+			if ( effect === undefined )
+				renderer.render( scene, camera );
+			else effect.render( scene, camera );
+
+		}
+
+	</script>
+
+</body>
+</html>
