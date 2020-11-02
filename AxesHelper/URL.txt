@@ -1,0 +1,20 @@
+--------------------------------
+isdoc https://github.com/jsdoc/jsdoc
+Getting Started with JSDoc 3 https://jsdoc.app/about-getting-started.html
+Generating a website:
+	Download https://github.com/jsdoc/jsdoc into D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc
+	Open "Node.js command prompt"
+
+	d:
+	cd "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc"
+	npm install -g jsdoc
+	/////////////////////////////////////////////////////////////
+	//AxesHelper doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\AxesHelper\master\jsdoc"
+
+	jsdoc -R "..\AxesHelper\master\AxesHelper.md" "..\AxesHelper\master\AxesHelper.js" "..\AxesHelper\master\AxesHelperGui.js" -d "..\AxesHelper\master\jsdoc"
+
+	//See results in "D:\My documents\MyProjects\webgl\three.js\GitHub\AxesHelper\master\jsdoc"
+
+	/////////////////////////////////////////////////////////////
