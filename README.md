@@ -49,6 +49,11 @@ for control of the position of [threejs](https://github.com/anhr/three.js) 3D ob
 for control of the scale of [threejs](https://github.com/anhr/three.js) 3D object.
 [ScaleController API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/ScaleController/index.html).
 [Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
+* SpriteText.js A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text component. SpriteText is a text that always faces towards the camera.
+[README.md](https://github.com/anhr/commonNodeJS/blob/master/SpriteText/README.md).
+[SpriteText API](https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/jsdoc/index.html).
+[Example 1](https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/Examples/SpriteText.html).
+[Example 2](https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/Examples/SpriteTextGui.html).
 * StereoEffect.js Uses dual PerspectiveCameras for [Parallax Barrier](https://en.wikipedia.org/wiki/Parallax_barrier) effects.
 [README.md](https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md).
 [StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/index.html).
