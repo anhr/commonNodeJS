@@ -69,8 +69,8 @@ var settings,
  * @param {number} [options.settings.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
  * @param {number} [options.settings.interval=1] Ticks per seconds.
  * @param {number} [options.settings.min=0] Animation start time.
- * @param {number} [options.settings.max=1] Animation end time.
- * @param {number} [options.settings.dt=0.1] Step of the animation. Reserved for future version
+ * @param {number} [options.settings.max=1] Animation end time. Set to null if you want to play to infinity.
+ * @param {number} [options.settings.dt=0.1] Step of the animation. Have effect only if options.settings.max is null.
  * @param {boolean} [options.settings.repeat=false] true - Infinitely repeating 3D objects animation.
  * @param {number} [options.settings.zoomMultiplier=1.1] zoom multiplier of the time.
  * @param {number} [options.settings.offset=0.1] offset of the time.
@@ -171,12 +171,16 @@ function Player( THREE, group, options ) {
 	this.selectScene = function( index ) {
 
 		index = parseInt( index );
-		if ( index >= settings.marks )
-			index = 0;
-		else if ( index < 0 )
-			index = settings.marks - 1;
-		if( selectSceneIndex > settings.marks )
-			selectSceneIndex = settings.marks;
+		if ( settings.max !== null ) {
+
+			if ( index >= settings.marks )
+				index = 0;
+			else if ( index < 0 )
+				index = settings.marks - 1;
+			if( selectSceneIndex > settings.marks )
+				selectSceneIndex = settings.marks;
+
+		}
 		while ( selectSceneIndex !== index ) {
 
 			if ( selectSceneIndex < index )
@@ -268,7 +272,7 @@ function Player( THREE, group, options ) {
 	function playNext() {
 
 		selectSceneIndex++;
-		if ( selectSceneIndex >= settings.marks ) {
+		if ( ( settings.max !== null ) && selectSceneIndex >= settings.marks ) {
 
 			if ( isRepeat() )
 				selectSceneIndex = 0;
@@ -299,7 +303,7 @@ function Player( THREE, group, options ) {
 		}
 
 		playing = true;
-		if ( selectSceneIndex >= settings.marks )
+		if ( ( settings.max !== null ) && ( selectSceneIndex >= settings.marks ) )
 			selectSceneIndex = -1;
 		playNext();
 		RenamePlayButtons();
@@ -522,9 +526,13 @@ function Player( THREE, group, options ) {
 				axes.dt = action( axes.dt, zoom );
 				scaleControllers.dt.setValue( axes.dt );
 */
-				axes.max = action( axes.max, zoom );
-				setDT();
-				scaleControllers.max.setValue( axes.max );
+				if ( axes.max ) {
+
+					axes.max = action( axes.max, zoom );
+					setDT();
+					scaleControllers.max.setValue( axes.max );
+					
+				}
 				
 				setSettings();
 				
@@ -570,28 +578,35 @@ function Player( THREE, group, options ) {
 			//axes.max сейчас используется исключитьельно для удобства пользовательского интерфейса
 			//Вместо axes.max используется axes.dt
 			setMax();
-			scaleControllers.max = dat.controllerZeroStep( scaleControllers.folder, axes, 'max', function ( value ) { setSettings(); } );
-			dat.controllerNameAndTitle( scaleControllers.max, lang.max );
-/*
-			//dt
-			scaleControllers.dt = dat.controllerZeroStep( scaleControllers.folder, axes, 'dt', function ( value ) { setSettings(); } );
-			dat.controllerNameAndTitle( scaleControllers.dt, lang.dt );
-*/
+			if ( axes.max !== null ) {
+
+				scaleControllers.max = dat.controllerZeroStep( scaleControllers.folder, axes, 'max', function ( value ) { setSettings(); } );
+				dat.controllerNameAndTitle( scaleControllers.max, lang.max );
+
+			} else {
+
+				//dt
+				scaleControllers.dt = dat.controllerZeroStep( scaleControllers.folder, axes, 'dt', function ( value ) { setSettings(); } );
+				dat.controllerNameAndTitle( scaleControllers.dt, lang.dt );
+
+			}
 
 			//marks
-			if ( axes.marks !== undefined ) {
+			if ( axes.marks ) {
 
 //				scaleControllers.marks = dat.controllerZeroStep( scaleControllers.folder, axes, 'marks', function ( value ) { setSettings(); } );
 				scaleControllers.marks = scaleControllers.folder.add( axes, 'marks' ).onChange( function ( value ) {
 
 					axes.marks = parseInt( axes.marks );
 					setSettings();
+/*					
 					if ( line ) {
 
 						group.remove( line );
 						line = undefined;
 						
 					}
+*/					
 					const elSlider = getSliderElement();
 					if ( elSlider ) elSlider.max = settings.marks - 1;
 
@@ -640,7 +655,7 @@ function Player( THREE, group, options ) {
 
 					}
 
-					if ( axesDefault.marks !== undefined ) {
+					if ( axesDefault.marks ) {
 
 						axes.marks = axesDefault.marks;
 						scaleControllers.marks.setValue( axes.marks );
@@ -692,15 +707,19 @@ function Player( THREE, group, options ) {
 
 		} );
 
-		//Repeat button
-		menu.push( {
+		if ( settings.max !== null ) {
 
-			name: lang.repeat,
-			title: this.getOptions().repeat ? lang.repeatOff : lang.repeatOn,
-			id: "menuButtonRepeat",
-			onclick: function ( event ) { player.repeat(); }
+			//Repeat button
+			menu.push( {
 
-		} );
+				name: lang.repeat,
+				title: this.getOptions().repeat ? lang.repeatOff : lang.repeatOn,
+				id: "menuButtonRepeat",
+				onclick: function ( event ) { player.repeat(); }
+
+			} );
+
+		}
 
 		//Next button
 		menu.push( {
@@ -762,6 +781,9 @@ function Player( THREE, group, options ) {
 	 */
 	this.addSlider = function () {
 
+		if ( settings.max === null )
+			return;
+			
 		_canvasMenu.menu.push( {
 
 //			name: '<input type="range" min="0" max="' + ( this.getSettings().marks - 1 ) + '" value="0" class="slider" id="sliderPosition">',
@@ -974,7 +996,7 @@ palette = new palette();
 */
 Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 
-	t = t || Player.getSettings().min;
+	if ( t === undefined ) t = Player.getSettings().min;
 	index = index || 0;
 	options = options || selectPlaySceneOptions;
 	if (
@@ -1733,7 +1755,6 @@ console.warn( 'Кажется тут ошибка. Диапазон по умо�
 
 }
 
-var line;
 /**
  * trace line of moving of the point during playing
  * @function Player.
@@ -1759,31 +1780,91 @@ Player.traceLine = function ( THREE, group, options ) {
 		return;
 		
 	}
+	var line;
+	const arrayLines = [];
 	this.addPoint = function ( point, index, color ) {
 
-		if ( line === undefined ) {
+		if ( settings.max === null ) {
 
+			index = Math.abs( index );
+			if ( index < ( arrayLines.length - 1 ) ){
 
-			// geometry
-			var geometry = new THREE.BufferGeometry();
+				while ( index < ( arrayLines.length - 1 ) ) {
 
-			//Thanks to https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
-			var MAX_POINTS;
-			if ( settings && settings.marks )
-				MAX_POINTS = settings.marks;
-			else if ( options.player && options.player.marks )
-				MAX_POINTS = options.player.marks;
-			else {
+					group.remove( arrayLines[arrayLines.length - 1] );
+					arrayLines.pop();
 
-				console.error( 'Player.traceLine: MAX_POINTS = ' + MAX_POINTS + '. Create Player first or remove all trace = true from all items of the arrayFuncs' );
+				}
 				return;
 
 			}
+			// geometry
+			const geometry = new THREE.BufferGeometry(), MAX_POINTS = 2;
 
 			// attributes
-			var positions = new Float32Array( MAX_POINTS * 3 ); // 3 vertices per point
+			const positions = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
 			geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-			var colors = new Float32Array( MAX_POINTS * 3 ); // 3 vertices per point
+			const colors = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
+			geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+
+			const line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
+			group.add( line );
+
+			//point position
+			point = new THREE.Vector3().copy( point );
+			const itemSize = line.geometry.attributes.position.itemSize;
+			point.toArray( line.geometry.attributes.position.array, 1 * itemSize );
+			const point0 = arrayLines.length === 0 ? point :
+				new THREE.Vector3().fromArray(arrayLines[arrayLines.length-1].geometry.attributes.position.array, 1 * itemSize);
+			point0.toArray( line.geometry.attributes.position.array, 0 * itemSize );
+			line.geometry.attributes.position.needsUpdate = true;
+
+			//point color
+			if ( color === undefined )
+				color = new THREE.Color( 1, 1, 1 );//White
+			Player.setColorAttribute( line.geometry.attributes, 0, arrayLines.length === 0 ? color :
+				 new THREE.Color().fromArray(arrayLines[arrayLines.length-1].geometry.attributes.color.array, 1 * itemSize));
+			Player.setColorAttribute( line.geometry.attributes, 1, color );
+
+			arrayLines.push( line );
+
+			return;
+
+		}
+/*
+		if ( line && ( settings.max === null ) ) {
+
+			group.remove( line );
+			line = undefined;
+			
+		}
+*/
+		if ( line === undefined ) {
+
+			// geometry
+			const geometry = new THREE.BufferGeometry();
+
+			//Thanks to https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
+			var MAX_POINTS;
+			if ( settings.max !== null ) {
+
+				if ( settings && settings.marks )
+					MAX_POINTS = settings.marks;
+				else if ( options.player && options.player.marks )
+					MAX_POINTS = options.player.marks;
+				else {
+
+					console.error( 'Player.traceLine: MAX_POINTS = ' + MAX_POINTS + '. Create Player first or remove all trace = true from all items of the arrayFuncs' );
+					return;
+
+				}
+
+			} else MAX_POINTS = index + 1;
+
+			// attributes
+			const positions = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
+			geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+			const colors = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
 			geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
 
 			// draw range
@@ -1849,15 +1930,24 @@ Player.traceLine = function ( THREE, group, options ) {
 	}
 
 }
-function setDT() { settings.dt = ( settings.max - settings.min ) / ( settings.marks - 1 ); }
-function setMax() { settings.max = settings.min + settings.dt * ( settings.marks - 1 ); }
+function setDT() {
+
+	if ( settings.max === null ) settings.dt = settings.dt || 0.1;
+	else settings.dt = ( settings.max - settings.min ) / ( settings.marks - 1 );
+
+}
+function setMax() { if ( settings.max !== null ) settings.max = settings.min + settings.dt * ( settings.marks - 1 ); }
 function assignSettings() {
 
 	settings = settings || {};
 	settings.min = settings.min || 0;
-	settings.max = settings.max || 1;
+	if ( settings.max !== null ) {
+
+		if ( settings.max === undefined ) settings.max =  1;
+		settings.marks = settings.marks || 10;//2;
+
+	} else settings.marks = null;
 	//	settings.dt = settings.dt || 0.1;
-	settings.marks = settings.marks || 10;//2;
 	setDT();
 	settings.repeat = settings.repeat || false;
 	settings.interval = settings.interval || 1;//25;

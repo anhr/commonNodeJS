@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -98,12 +98,12 @@
 					cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
 					settings: {
 
-						marks: 100,//Ticks count of the playing.
+						//marks: 100,//Ticks count of the playing.
 						interval: 25,//Ticks per seconds.
-						//min: -1,
-						//max: 1,
+						min: -1,
+						//max: 0,
+						max: null,//Infinity, первращается в null после чтения из cookie
 						//dt: 5,
-						//max: null,//Infinity, первращается в null после чтения из cookie
 
 					},
 
@@ -121,6 +121,27 @@
 
 					vector: new THREE.Vector4(
 						new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
+						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
+						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.1' ),//z
+						//100,//w
+						new Function( 't', 'return 100*t' ),//w
+						/*
+						{
+
+							func: new Function( 't', 'return 1-2*t' ),
+							min: -1,
+							max: 1,
+
+						},//w
+						*/
+					),//Animated 3D point
+					trace: true,//Displays the trace of the point movement.
+
+				},
+				{
+
+					vector: new THREE.Vector4(
+						0.5,//x
 						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
 						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.1' ),//z
 						//100,//w
