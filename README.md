@@ -1,7 +1,7 @@
 ﻿# commonNodeJS
 My JavaScript library for NodeJS.
 
-* AxesHelper An axis object to visualize the 1, 2 or 3 axes.
+* AxesHelper. An axis object to visualize the 1, 2 or 3 axes.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/AxesHelper).
 [AxesHelper API](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/jsdoc/index.html).
 [Example 1](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/AxesHelper.html).
