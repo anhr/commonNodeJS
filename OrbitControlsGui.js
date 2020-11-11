@@ -1,6 +1,6 @@
 /**
  * OrbitControls graphical user interface
- * @see {@link three.js\examples\js\controls\OrbitControls.js} about OrbitControls
+ * @see [OrbitControls]{@link three.js\examples\js\controls\OrbitControls.js}
  *
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
  *
@@ -19,8 +19,11 @@ import { dat } from './dat/dat.module.js';
 /**
  * OrbitControls graphical user interface
  * @param {GUI} gui instance of the dat.GUI
- * @param {any} orbitControls
- * @param {object} [options] the following options are available:
+ * @param {OrbitControls} orbitControls [OrbitControls]{@link three.js\examples\js\controls\OrbitControls.js}
+ * @param {object} [options={}] the following options are available:
+ * @param {object} [options.scales={}] axes scales.
+ * See [AxesHelper(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/jsdoc/module-AxesHelper.html} options.scales for details.
+ * @param {Function} [options.getLanguageCode="en"] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
  */
 var OrbitControlsGui = function ( gui, orbitControls, options ) {
 	
@@ -156,6 +159,14 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 		},
 
 	}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
+	if ( this )
+		this.setTarget = function( target ){
+
+			targetX.setValue( target.x );
+			targetY.setValue( target.y );
+			targetZ.setValue( target.z );
+
+		}
 
 }
 
