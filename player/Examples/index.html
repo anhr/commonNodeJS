@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -71,6 +71,12 @@
 		import controllerPlay from '../../controllerPlay/controllerPlay.js';//https://github.com/anhr/controllerPlay
 		//import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
 
+		//import { OrbitControls } from 'http://localhost/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
+		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
+		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
+		//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+
+//		import { getWorldPosition } from '../../guiSelectPoint/guiSelectPoint.js';
 
 		var camera, scene, renderer, stereoEffect, controls, player;
 
@@ -81,8 +87,62 @@
 
 			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+			camera.userData.cameraTarget = {
+
+				rotation: {
+
+					//angle: Math.PI,
+					//angle: new Function( 't', 'return 5*t' ),
+					//angle: [0, Math.PI / 2],
+					angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+					//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+				},
+				//distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) ),
+				distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
+
+			}
 
 			scene = new THREE.Scene();
+
+//const distanceToCamera = new THREE.Vector3().copy( camera.position );
+			scene.userData.player = {
+
+				selectPlayScene: function ( t ) {
+
+/*
+					const axis = new THREE.Vector3( 0, 1, 0 );
+					const angle = 0;//Math.PI / 2;
+					camera.position.copy( distanceToCamera );
+					camera.position.applyAxisAngle( axis, angle );
+*/					
+/*
+					scene.position.x = -t;
+//					camera.position.x = t;
+//					camera.quaternion._y = t;
+//					scene.rotation.y = t;
+					const quaternion = new THREE.Quaternion( 0, t );
+					camera.position.applyQuaternion( quaternion );
+*/
+/*					
+					const target = new THREE.Vector3();//.sub(scene.position);
+					camera.lookAt( target );
+					camera.position.x = t;
+*/					
+/*
+					if( controls ) {
+
+						controls.target.x = t;
+//						camera.quaternion._y += 0.01;
+						camera.lookAt( scene.position );
+//						controls.update();
+
+					}
+*/					
+
+				}
+
+			}
 
 			const palette = typeof ColorPicker === 'undefined' ? undefined : new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
 
@@ -98,12 +158,12 @@
 					cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
 					settings: {
 
-						//marks: 100,//Ticks count of the playing.
+						marks: 100,//Ticks count of the playing.
 						interval: 25,//Ticks per seconds.
-						min: -1,
+						//min: -1,
 						//max: 0,
-						max: null,//Infinity, первращается в null после чтения из cookie
-						//dt: 5,
+						max: Infinity,//первращается в null после чтения из cookie
+						dt: 0.01,
 
 					},
 
@@ -111,12 +171,12 @@
 
 			}
 
-			const arrayFuncs = typeof Player === 'undefined' ?
-			 [
+			var arrayFuncs = typeof Player === 'undefined' ?
+			[
 				new THREE.Vector4( 0.5, 0.5, 0.5, 0.5 ),
 				new THREE.Vector3( -0.5, -0.5, -0.5 ),
 			] :
-			 [
+			[
 				{
 
 					vector: new THREE.Vector4(
@@ -157,10 +217,79 @@
 						*/
 					),//Animated 3D point
 					trace: true,//Displays the trace of the point movement.
+					cameraTarget: {
+
+						camera: camera,
+
+					},
 
 				},
 				new THREE.Vector3( -0.5, -0.5, -0.5, 50 ),
+				{
+
+					vector: new THREE.Vector4( 0, 0, 0, new THREE.Color( "rgb( 0, 0, 255)" ) ),//Animated 3D point
+					trace: true,//Displays the trace of the point movement.
+					/*
+					cameraTarget: {
+
+						camera: camera,
+						rotation: {
+
+							//angle: Math.PI,
+							//angle: new Function( 't', 'return 5*t' ),
+							//angle: [0, Math.PI / 2],
+							angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+							//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+						},
+						//distanceToCamera: new THREE.Vector3( 0, 0, 10 ),
+
+					},
+					*/
+
+				},
 			];
+/*
+			arrayFuncs = [
+				new THREE.Vector4( 0.5, 0.5, 0.5, 100 ),//green
+				//new THREE.Vector4( 0.6, 0.5, 0.5 ),//red
+				//new THREE.Vector4( [0.6, -0.5], [0.5, -0.5], [0.5, -0.5] ),//red
+				//new THREE.Vector4( [0.6, -0.5], -0.5, -0.5 ),//red
+				//new THREE.Vector4( [{ t: 0, v: 0.6 }, { t: 1, v: -0.6 }], -0.5, -0.5 ),//red
+				{
+
+					//vector: new THREE.Vector4( [0.6, -0.5], [0.5, -0.5], [0.5, -0.5] ),//red
+					//vector: new THREE.Vector4( [0.6, -0.5], [0.5, -0.5], [0.5, -0.5] ),//red
+					//vector: new THREE.Vector4( 0.6, 0.5, 0.5 ),//red
+					//vector: new THREE.Vector4( new Function( 't', 'a', 'b', 'return -t*a + 0.6 + b' ), 0.5, 0.5 ),//red
+					vector: new THREE.Vector4(
+
+						[{ t: 0, v: 0.6 }, { t: 1, v: -0.5 }],
+						[{ t: 0, v: 0.5 }, { t: 1, v: -0.5 }],
+						[{ t: 0, v: 0.5 }, { t: 1, v: -0.5 }]
+
+					),//red
+					trace: true,//Displays the trace of the point movement.
+					cameraTarget: {
+
+						camera: camera,
+						rotation: {
+
+							//angle: Math.PI,
+							//angle: [0, Math.PI],
+							//angle: [0],
+							//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI }]
+							//angle: new Function( 't', 'return 5*t' ),
+							//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+						},
+
+					},
+
+				},
+				new THREE.Vector3( -0.5, -0.5, -0.5 ),
+			]
+*/
 
 			if ( typeof getShaderMaterialPoints !== 'undefined' ) {
 
@@ -262,6 +391,25 @@
 				}
 
 			}
+
+			const cube = new THREE.Mesh( new THREE.CubeGeometry( 0.3, 0.3, 0.3 ), new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) );
+//			cube.position.x = -1;
+			scene.add( cube );
+			cube.userData.player = {
+
+				selectPlayScene: function ( t ) {
+
+					cube.position.x = t - 1;
+					cube.rotation.z = - Math.PI * 2 * t;
+					/*https://stackoverflow.com/questions/40933735/three-js-cube-geometry-how-to-update-parameters
+					cube.geometry.parameters.width = 0.3 + Math.sin( t );
+					cube.geometry.needsUpdate = true;
+					*/
+
+				}
+
+			}
+
 			//player.play3DObject();
 
 			renderer = new THREE.WebGLRenderer( {
@@ -278,8 +426,9 @@
 			if ( typeof OrbitControls !== 'undefined' ) {
 
 				controls = new OrbitControls( camera, renderer.domElement );
-				controls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
+				//controls.target.set(  -0.5, -0.5, -0.5 );
 				controls.update();
+				if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.orbitControls = controls;
 
 			}
 
@@ -306,6 +455,16 @@
 				} );
 
 			}
+/*
+			if ( typeof OrbitControls !== 'undefined' ) {
+
+				controls = new OrbitControls( camera, renderer.domElement );
+				//controls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
+				//controls.target.set( 0, 0, 0 );
+				controls.update();
+
+			}
+*/
 
 			//Using [dat.gui](https://github.com/anhr/dat.gui) for change of the StereoEffect settings.
 
