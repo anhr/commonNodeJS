@@ -37,6 +37,21 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 	if ( options.scales.y ) options.scales.y.name = options.scales.y.name || 'Y';
 	if ( options.scales.z ) options.scales.z.name = options.scales.z.name || 'Z';
 
+	orbitControls.addEventListener( 'change', function () {
+
+		//console.log( 'orbitControls.target: ' + orbitControls.target.x + ' ' + orbitControls.target.y + ' ' + orbitControls.target.z )
+		targetX.setValue( orbitControls.target.x );
+		targetY.setValue( orbitControls.target.y );
+		targetZ.setValue( orbitControls.target.z );
+		/*
+		console.warn('camera.position = ' + camera.position.x + ' ' + camera.position.y + ' ' + camera.position.z
+			+ '\r\ncamera.quaternion = ' + camera.quaternion.x + ' ' + camera.quaternion.y + ' ' + camera.quaternion.z
+			+ '\r\ncamera.scale = ' + camera.scale.x + ' ' + camera.scale.y + ' ' + camera.scale.z
+			);
+		*/
+
+	} );
+
 	//Localization
 
 	var lang = {
