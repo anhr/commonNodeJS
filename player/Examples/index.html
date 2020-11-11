@@ -47,9 +47,6 @@
 		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
-		//import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
-		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-
 		import Player from '../player.js';
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
 
@@ -75,6 +72,10 @@
 		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
 		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 		//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+
+		//import OrbitControlsGui from 'http://localhost/anhr/commonNodeJS/master/OrbitControlsGui.js';
+		import OrbitControlsGui from '../../OrbitControlsGui.js';
+		//import OrbitControlsGui from 'https://raw.githack.com/anhr/commonNodeJS/master/OrbitControlsGui.js';
 
 //		import { getWorldPosition } from '../../guiSelectPoint/guiSelectPoint.js';
 
@@ -479,6 +480,16 @@
 						cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
 
 					} );
+				if ( typeof OrbitControlsGui !== 'undefined' ){
+
+					camera.userData.cameraTarget.orbitControlsGui = new OrbitControlsGui( gui, controls, {
+
+						getLanguageCode: getLanguageCode,
+						scales: { x: {}, y: {}, z: {}, },
+
+					} );
+					
+				}
 				if ( player !== undefined ) {
 
 					player.gui( gui, typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode );

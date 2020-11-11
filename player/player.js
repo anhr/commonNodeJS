@@ -1178,15 +1178,8 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 				if ( camera.userData.cameraTarget.orbitControls ) {
 
 					camera.userData.cameraTarget.orbitControls.target.copy( target );
-/*
-					camera.userData.cameraTarget.orbitControls.target.set( target.x, target.y, target.z );
-					camera.userData.cameraTarget.orbitControls.saveState();
-					camera.userData.cameraTarget.orbitControls.reset();
-*/					
-/*					
-					camera.userData.cameraTarget.orbitControls.target0.set( target.x, target.y, target.z );
-					camera.userData.cameraTarget.orbitControls.update();
-*/					
+					if ( camera.userData.cameraTarget.orbitControlsGui )
+						camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
 
 				}
 				
