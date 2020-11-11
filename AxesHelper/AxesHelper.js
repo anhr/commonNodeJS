@@ -29,7 +29,7 @@ import { GuiSelectPoint, getObjectPosition } from '../../commonNodeJS/master/gui
  * @param {object} [options] the following options are available
  * @param {object} [options.color] axes color. Available color names see THREE.Color.NAMES. Default is 'white'.
  * @param {THREE.Vector3} [options.posAxesIntersection] Position of the axes intersection.
- * @param {object} [options.scales] axes scales. Default is {}
+ * @param {object} [options.scales={}] axes scales.
  *
  * @param {number} [options.scales.axisName] x or y or z
  * @param {number} [options.scales.axisName.zoomMultiplier] zoom multiplier. Default is 1.1
