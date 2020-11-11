@@ -1329,6 +1329,13 @@ function getObjectLocalPosition( object, index ) {
 function getWorldPosition( object, pos ) {
 
 	var position = pos.clone();
+
+/*
+	//https://stackoverflow.com/questions/11495089/how-to-get-the-absolute-position-of-a-vertex-in-three-js
+	//Неудачная попытка вычислить абсолютную позицию точки
+	object.updateMatrixWorld();
+	position.applyMatrix4( object.matrixWorld );
+*/	
 	function getPosition( object, pos ) {
 
 		var position = new THREE.Vector3(),
@@ -1353,7 +1360,7 @@ function getWorldPosition( object, pos ) {
 		position = getPosition( object, position );
 		object = object.parent;
 		
-	} while ( object );
+	} while ( object.parent );
 	return position;
 
 }
