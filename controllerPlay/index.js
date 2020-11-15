@@ -22,7 +22,7 @@ import { GUI, controllers } from '../dat.gui/CustomController/build/dat.gui.modu
 import { getLanguageCode } from '../lang.js';
 //import { getLanguageCode } from 'http://localhost/anhr/commonNodeJS/master/lang.js';
 
-import Player from '../player/player.js';
+//import Player from '../player/player.js';
 
 //Localization
 
@@ -205,7 +205,8 @@ export class PlayController extends controllers.CustomController {
 		}
 		this.onChangeRepeat = function () {
 
-			_renameRepeatButtons( Player.getSettings().repeat );
+			//_renameRepeatButtons( Player.getSettings().repeat );не работает если из разных мест делать import Player
+			_renameRepeatButtons( player.getOptions().settings.repeat );
 
 		}
 		player.pushController( this );
