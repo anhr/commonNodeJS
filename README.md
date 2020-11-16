@@ -1,7 +1,4 @@
-﻿[![npm module downloads](https://badgen.net/npm/dt/jsdoc-to-markdown)](https://www.npmjs.org/package/jsdoc-to-markdown)
-[![NPM Downloads](https://img.shields.io/npm/dw/three)](https://www.npmtrends.com/three)
-
-# commonNodeJS
+﻿# commonNodeJS
 My JavaScript library for NodeJS.
 
 * AxesHelper. An axis object to visualize the 1, 2 or 3 axes.
