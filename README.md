@@ -1,4 +1,6 @@
 ﻿[![npm module downloads](https://badgen.net/npm/dt/jsdoc-to-markdown)](https://www.npmjs.org/package/jsdoc-to-markdown)
+[![NPM Downloads][npm-downloads]][https://www.npmtrends.com/three]
+
 # commonNodeJS
 My JavaScript library for NodeJS.
 
