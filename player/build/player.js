@@ -33,6 +33,64 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  */
+function isEnabled() {
+	return navigator.cookieEnabled;
+}
+function set(name, value, cookie_date) {
+	if (!isEnabled()) {
+		consoleCookieEnabled();
+		return;
+	}
+	value = value.toString();
+	if (cookie_date === undefined) {
+		cookie_date = new Date();
+		cookie_date.setTime(cookie_date.getTime() + 1000 * 60 * 60 * 24 * 365);
+	}
+	document.cookie = name + "=" + value + (typeof settings == 'undefined' ? '' : settings) + "; expires=" + cookie_date.toGMTString();
+	if (document.cookie === '') console.error('document.cookie is empty');
+}
+function setObject(name, object) {
+	set(name, JSON.stringify(object));
+}
+function get(name, defaultValue) {
+	if (!isEnabled()) {
+		consoleCookieEnabled();
+		return;
+	}
+	var results = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+	if (results) return unescape(results[2]);
+	if (typeof defaultValue == 'undefined') return '';
+	return defaultValue;
+}
+function getObject(name, options, optionsDefault) {
+	new defaultCookie().getObject(name, options, copyObject(name, optionsDefault));
+}
+function copyObject(name, objectDefault) {
+	return JSON.parse(get(name, JSON.stringify(objectDefault)));
+}
+function consoleCookieEnabled() {
+	console.error('navigator.cookieEnabled = ' + navigator.cookieEnabled);
+}
+function defaultCookie(name) {
+	this.get = function (defaultValue) {
+		return defaultValue;
+	};
+	this.set = function () {};
+	this.getObject = function (name, options, optionsDefault) {
+		if (!optionsDefault) return;
+		Object.keys(optionsDefault).forEach(function (key) {
+			var option = optionsDefault[key];
+			if (option !== undefined) options[key] = JSON.parse(JSON.stringify(option));
+		});
+	};
+	this.copyObject = function (name, objectDefault) {
+		return JSON.parse(JSON.stringify(objectDefault));
+	};
+	this.setObject = function () {};
+	this.isTrue = function (defaultValue) {
+		return defaultValue;
+	};
+}
 
 /**
 * node.js version of the cookie.
@@ -47,6 +105,14 @@
 *
 * http://www.apache.org/licenses/LICENSE-2.0
 */
+var cookie = {
+  set: set,
+  setObject: setObject,
+  get: get,
+  getObject: getObject,
+  copyObject: copyObject,
+  defaultCookie: defaultCookie
+};
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
@@ -70,7 +136,23 @@ var classCallCheck = function (instance, Constructor) {
   }
 };
 
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
 
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
 
 
 
@@ -3906,7 +3988,7 @@ function GuiSelectPoint(_THREE, guiParams) {
 	};
 	this.getSelectedPointIndex = function () {
 		if (cFrustumPoints !== undefined && cFrustumPoints.isDisplay() &&
-		options.arrayCloud.frustumPoints.isDisplay()
+		options.arrayCloud.frustumPoints && options.arrayCloud.frustumPoints.isDisplay()
 		) {
 				var selectedIndex = cFrustumPoints.getSelectedIndex();
 				return selectedIndex === null ? -1 : selectedIndex;
@@ -4311,7 +4393,7 @@ function getObjectLocalPosition(object, index) {
 	position.fromArray(attributesPosition.array, index * attributesPosition.itemSize);
 	return position;
 }
-function getWorldPosition$1(object, pos) {
+function getWorldPosition(object, pos) {
 	var position = pos.clone();
 	function getPosition(object, pos) {
 		var position = new THREE$2.Vector3(),
@@ -4329,13 +4411,13 @@ function getWorldPosition$1(object, pos) {
 	do {
 		position = getPosition(object, position);
 		object = object.parent;
-	} while (object);
+	} while (object.parent);
 	return position;
 }
 function getObjectPosition(object, index) {
 	if (index === -1) return undefined;
 	if (index === undefined) return object.position;
-	return getWorldPosition$1(object, getObjectLocalPosition(object, index));
+	return getWorldPosition(object, getObjectLocalPosition(object, index));
 }
 GuiSelectPoint.setTHREE = function (_THREE) {
 	if (THREE$2) {
@@ -4344,6 +4426,2658 @@ GuiSelectPoint.setTHREE = function (_THREE) {
 	}
 	THREE$2 = _THREE;
 };
+
+function ___$insertStyle$1(css) {
+  if (!css) {
+    return;
+  }
+  if (typeof window === 'undefined') {
+    return;
+  }
+  var style = document.createElement('style');
+  style.setAttribute('type', 'text/css');
+  style.innerHTML = css;
+  document.head.appendChild(style);
+  return css;
+}
+function colorToString$1(color, forceCSSHex) {
+  var colorFormat = color.__state.conversionName.toString();
+  var r = Math.round(color.r);
+  var g = Math.round(color.g);
+  var b = Math.round(color.b);
+  var a = color.a;
+  var h = Math.round(color.h);
+  var s = color.s.toFixed(1);
+  var v = color.v.toFixed(1);
+  if (forceCSSHex || colorFormat === 'THREE_CHAR_HEX' || colorFormat === 'SIX_CHAR_HEX') {
+    var str = color.hex.toString(16);
+    while (str.length < 6) {
+      str = '0' + str;
+    }
+    return '#' + str;
+  } else if (colorFormat === 'CSS_RGB') {
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  } else if (colorFormat === 'CSS_RGBA') {
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+  } else if (colorFormat === 'HEX') {
+    return '0x' + color.hex.toString(16);
+  } else if (colorFormat === 'RGB_ARRAY') {
+    return '[' + r + ',' + g + ',' + b + ']';
+  } else if (colorFormat === 'RGBA_ARRAY') {
+    return '[' + r + ',' + g + ',' + b + ',' + a + ']';
+  } else if (colorFormat === 'RGB_OBJ') {
+    return '{r:' + r + ',g:' + g + ',b:' + b + '}';
+  } else if (colorFormat === 'RGBA_OBJ') {
+    return '{r:' + r + ',g:' + g + ',b:' + b + ',a:' + a + '}';
+  } else if (colorFormat === 'HSV_OBJ') {
+    return '{h:' + h + ',s:' + s + ',v:' + v + '}';
+  } else if (colorFormat === 'HSVA_OBJ') {
+    return '{h:' + h + ',s:' + s + ',v:' + v + ',a:' + a + '}';
+  }
+  return 'unknown format';
+}
+var ARR_EACH$1 = Array.prototype.forEach;
+var ARR_SLICE$1 = Array.prototype.slice;
+var Common$1 = {
+  BREAK: {},
+  extend: function extend(target) {
+    this.each(ARR_SLICE$1.call(arguments, 1), function (obj) {
+      var keys = this.isObject(obj) ? Object.keys(obj) : [];
+      keys.forEach(function (key) {
+        if (!this.isUndefined(obj[key])) {
+          target[key] = obj[key];
+        }
+      }.bind(this));
+    }, this);
+    return target;
+  },
+  defaults: function defaults$$1(target) {
+    this.each(ARR_SLICE$1.call(arguments, 1), function (obj) {
+      var keys = this.isObject(obj) ? Object.keys(obj) : [];
+      keys.forEach(function (key) {
+        if (this.isUndefined(target[key])) {
+          target[key] = obj[key];
+        }
+      }.bind(this));
+    }, this);
+    return target;
+  },
+  compose: function compose() {
+    var toCall = ARR_SLICE$1.call(arguments);
+    return function () {
+      var args = ARR_SLICE$1.call(arguments);
+      for (var i = toCall.length - 1; i >= 0; i--) {
+        args = [toCall[i].apply(this, args)];
+      }
+      return args[0];
+    };
+  },
+  each: function each(obj, itr, scope) {
+    if (!obj) {
+      return;
+    }
+    if (ARR_EACH$1 && obj.forEach && obj.forEach === ARR_EACH$1) {
+      obj.forEach(itr, scope);
+    } else if (obj.length === obj.length + 0) {
+      var key = void 0;
+      var l = void 0;
+      for (key = 0, l = obj.length; key < l; key++) {
+        if (key in obj && itr.call(scope, obj[key], key) === this.BREAK) {
+          return;
+        }
+      }
+    } else {
+      for (var _key in obj) {
+        if (itr.call(scope, obj[_key], _key) === this.BREAK) {
+          return;
+        }
+      }
+    }
+  },
+  defer: function defer(fnc) {
+    setTimeout(fnc, 0);
+  },
+  debounce: function debounce(func, threshold, callImmediately) {
+    var timeout = void 0;
+    return function () {
+      var obj = this;
+      var args = arguments;
+      function delayed() {
+        timeout = null;
+        if (!callImmediately) func.apply(obj, args);
+      }
+      var callNow = callImmediately || !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(delayed, threshold);
+      if (callNow) {
+        func.apply(obj, args);
+      }
+    };
+  },
+  toArray: function toArray$$1(obj) {
+    if (obj.toArray) return obj.toArray();
+    return ARR_SLICE$1.call(obj);
+  },
+  isUndefined: function isUndefined(obj) {
+    return obj === undefined;
+  },
+  isNull: function isNull(obj) {
+    return obj === null;
+  },
+  isNaN: function (_isNaN) {
+    function isNaN(_x) {
+      return _isNaN.apply(this, arguments);
+    }
+    isNaN.toString = function () {
+      return _isNaN.toString();
+    };
+    return isNaN;
+  }(function (obj) {
+    return isNaN(obj);
+  }),
+  isArray: Array.isArray || function (obj) {
+    return obj.constructor === Array;
+  },
+  isObject: function isObject(obj) {
+    return obj === Object(obj);
+  },
+  isNumber: function isNumber(obj) {
+    return obj === obj + 0;
+  },
+  isString: function isString(obj) {
+    return obj === obj + '';
+  },
+  isBoolean: function isBoolean(obj) {
+    return obj === false || obj === true;
+  },
+  isFunction: function isFunction(obj) {
+    return Object.prototype.toString.call(obj) === '[object Function]';
+  }
+};
+var INTERPRETATIONS$1 = [{
+  litmus: Common$1.isString,
+  conversions: {
+    THREE_CHAR_HEX: {
+      read: function read(original) {
+        var test = original.match(/^#([A-F0-9])([A-F0-9])([A-F0-9])$/i);
+        if (test === null) {
+          return false;
+        }
+        return {
+          space: 'HEX',
+          hex: parseInt('0x' + test[1].toString() + test[1].toString() + test[2].toString() + test[2].toString() + test[3].toString() + test[3].toString(), 0)
+        };
+      },
+      write: colorToString$1
+    },
+    SIX_CHAR_HEX: {
+      read: function read(original) {
+        var test = original.match(/^#([A-F0-9]{6})$/i);
+        if (test === null) {
+          return false;
+        }
+        return {
+          space: 'HEX',
+          hex: parseInt('0x' + test[1].toString(), 0)
+        };
+      },
+      write: colorToString$1
+    },
+    CSS_RGB: {
+      read: function read(original) {
+        var test = original.match(/^rgb\(\s*(.+)\s*,\s*(.+)\s*,\s*(.+)\s*\)/);
+        if (test === null) {
+          return false;
+        }
+        return {
+          space: 'RGB',
+          r: parseFloat(test[1]),
+          g: parseFloat(test[2]),
+          b: parseFloat(test[3])
+        };
+      },
+      write: colorToString$1
+    },
+    CSS_RGBA: {
+      read: function read(original) {
+        var test = original.match(/^rgba\(\s*(.+)\s*,\s*(.+)\s*,\s*(.+)\s*,\s*(.+)\s*\)/);
+        if (test === null) {
+          return false;
+        }
+        return {
+          space: 'RGB',
+          r: parseFloat(test[1]),
+          g: parseFloat(test[2]),
+          b: parseFloat(test[3]),
+          a: parseFloat(test[4])
+        };
+      },
+      write: colorToString$1
+    }
+  }
+}, {
+  litmus: Common$1.isNumber,
+  conversions: {
+    HEX: {
+      read: function read(original) {
+        return {
+          space: 'HEX',
+          hex: original,
+          conversionName: 'HEX'
+        };
+      },
+      write: function write(color) {
+        return color.hex;
+      }
+    }
+  }
+}, {
+  litmus: Common$1.isArray,
+  conversions: {
+    RGB_ARRAY: {
+      read: function read(original) {
+        if (original.length !== 3) {
+          return false;
+        }
+        return {
+          space: 'RGB',
+          r: original[0],
+          g: original[1],
+          b: original[2]
+        };
+      },
+      write: function write(color) {
+        return [color.r, color.g, color.b];
+      }
+    },
+    RGBA_ARRAY: {
+      read: function read(original) {
+        if (original.length !== 4) return false;
+        return {
+          space: 'RGB',
+          r: original[0],
+          g: original[1],
+          b: original[2],
+          a: original[3]
+        };
+      },
+      write: function write(color) {
+        return [color.r, color.g, color.b, color.a];
+      }
+    }
+  }
+}, {
+  litmus: Common$1.isObject,
+  conversions: {
+    RGBA_OBJ: {
+      read: function read(original) {
+        if (Common$1.isNumber(original.r) && Common$1.isNumber(original.g) && Common$1.isNumber(original.b) && Common$1.isNumber(original.a)) {
+          return {
+            space: 'RGB',
+            r: original.r,
+            g: original.g,
+            b: original.b,
+            a: original.a
+          };
+        }
+        return false;
+      },
+      write: function write(color) {
+        return {
+          r: color.r,
+          g: color.g,
+          b: color.b,
+          a: color.a
+        };
+      }
+    },
+    RGB_OBJ: {
+      read: function read(original) {
+        if (Common$1.isNumber(original.r) && Common$1.isNumber(original.g) && Common$1.isNumber(original.b)) {
+          return {
+            space: 'RGB',
+            r: original.r,
+            g: original.g,
+            b: original.b
+          };
+        }
+        return false;
+      },
+      write: function write(color) {
+        return {
+          r: color.r,
+          g: color.g,
+          b: color.b
+        };
+      }
+    },
+    HSVA_OBJ: {
+      read: function read(original) {
+        if (Common$1.isNumber(original.h) && Common$1.isNumber(original.s) && Common$1.isNumber(original.v) && Common$1.isNumber(original.a)) {
+          return {
+            space: 'HSV',
+            h: original.h,
+            s: original.s,
+            v: original.v,
+            a: original.a
+          };
+        }
+        return false;
+      },
+      write: function write(color) {
+        return {
+          h: color.h,
+          s: color.s,
+          v: color.v,
+          a: color.a
+        };
+      }
+    },
+    HSV_OBJ: {
+      read: function read(original) {
+        if (Common$1.isNumber(original.h) && Common$1.isNumber(original.s) && Common$1.isNumber(original.v)) {
+          return {
+            space: 'HSV',
+            h: original.h,
+            s: original.s,
+            v: original.v
+          };
+        }
+        return false;
+      },
+      write: function write(color) {
+        return {
+          h: color.h,
+          s: color.s,
+          v: color.v
+        };
+      }
+    }
+  }
+}];
+var result$1 = void 0;
+var toReturn$1 = void 0;
+var interpret$1 = function interpret() {
+  toReturn$1 = false;
+  var original = arguments.length > 1 ? Common$1.toArray(arguments) : arguments[0];
+  Common$1.each(INTERPRETATIONS$1, function (family) {
+    if (family.litmus(original)) {
+      Common$1.each(family.conversions, function (conversion, conversionName) {
+        result$1 = conversion.read(original);
+        if (toReturn$1 === false && result$1 !== false) {
+          toReturn$1 = result$1;
+          result$1.conversionName = conversionName;
+          result$1.conversion = conversion;
+          return Common$1.BREAK;
+        }
+      });
+      return Common$1.BREAK;
+    }
+  });
+  return toReturn$1;
+};
+var tmpComponent$1 = void 0;
+var ColorMath$1 = {
+  hsv_to_rgb: function hsv_to_rgb(h, s, v) {
+    var hi = Math.floor(h / 60) % 6;
+    var f = h / 60 - Math.floor(h / 60);
+    var p = v * (1.0 - s);
+    var q = v * (1.0 - f * s);
+    var t = v * (1.0 - (1.0 - f) * s);
+    var c = [[v, t, p], [q, v, p], [p, v, t], [p, q, v], [t, p, v], [v, p, q]][hi];
+    return {
+      r: c[0] * 255,
+      g: c[1] * 255,
+      b: c[2] * 255
+    };
+  },
+  rgb_to_hsv: function rgb_to_hsv(r, g, b) {
+    var min = Math.min(r, g, b);
+    var max = Math.max(r, g, b);
+    var delta = max - min;
+    var h = void 0;
+    var s = void 0;
+    if (max !== 0) {
+      s = delta / max;
+    } else {
+      return {
+        h: NaN,
+        s: 0,
+        v: 0
+      };
+    }
+    if (r === max) {
+      h = (g - b) / delta;
+    } else if (g === max) {
+      h = 2 + (b - r) / delta;
+    } else {
+      h = 4 + (r - g) / delta;
+    }
+    h /= 6;
+    if (h < 0) {
+      h += 1;
+    }
+    return {
+      h: h * 360,
+      s: s,
+      v: max / 255
+    };
+  },
+  rgb_to_hex: function rgb_to_hex(r, g, b) {
+    var hex = this.hex_with_component(0, 2, r);
+    hex = this.hex_with_component(hex, 1, g);
+    hex = this.hex_with_component(hex, 0, b);
+    return hex;
+  },
+  component_from_hex: function component_from_hex(hex, componentIndex) {
+    return hex >> componentIndex * 8 & 0xFF;
+  },
+  hex_with_component: function hex_with_component(hex, componentIndex, value) {
+    return value << (tmpComponent$1 = componentIndex * 8) | hex & ~(0xFF << tmpComponent$1);
+  }
+};
+var _typeof$2 = typeof Symbol === "function" && _typeof(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === 'undefined' ? 'undefined' : _typeof(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === 'undefined' ? 'undefined' : _typeof(obj);
+};
+var classCallCheck$2 = function classCallCheck$$1(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+var createClass$2 = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+var get$3 = function get(object, property, receiver) {
+  if (object === null) object = Function.prototype;
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+    if (parent === null) {
+      return undefined;
+    } else {
+      return get(parent, property, receiver);
+    }
+  } else if ("value" in desc) {
+    return desc.value;
+  } else {
+    var getter = desc.get;
+    if (getter === undefined) {
+      return undefined;
+    }
+    return getter.call(receiver);
+  }
+};
+var inherits$2 = function inherits$$1(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === 'undefined' ? 'undefined' : _typeof(superClass)));
+  }
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+};
+var possibleConstructorReturn$2 = function possibleConstructorReturn$$1(self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+  return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+};
+var Color$1 = function () {
+  function Color() {
+    classCallCheck$2(this, Color);
+    this.__state = interpret$1.apply(this, arguments);
+    if (this.__state === false) {
+      throw new Error('Failed to interpret color arguments');
+    }
+    this.__state.a = this.__state.a || 1;
+  }
+  createClass$2(Color, [{
+    key: 'toString',
+    value: function toString() {
+      return colorToString$1(this);
+    }
+  }, {
+    key: 'toHexString',
+    value: function toHexString() {
+      return colorToString$1(this, true);
+    }
+  }, {
+    key: 'toOriginal',
+    value: function toOriginal() {
+      return this.__state.conversion.write(this);
+    }
+  }]);
+  return Color;
+}();
+function defineRGBComponent$1(target, component, componentHexIndex) {
+  Object.defineProperty(target, component, {
+    get: function get$$1() {
+      if (this.__state.space === 'RGB') {
+        return this.__state[component];
+      }
+      Color$1.recalculateRGB(this, component, componentHexIndex);
+      return this.__state[component];
+    },
+    set: function set$$1(v) {
+      if (this.__state.space !== 'RGB') {
+        Color$1.recalculateRGB(this, component, componentHexIndex);
+        this.__state.space = 'RGB';
+      }
+      this.__state[component] = v;
+    }
+  });
+}
+function defineHSVComponent$1(target, component) {
+  Object.defineProperty(target, component, {
+    get: function get$$1() {
+      if (this.__state.space === 'HSV') {
+        return this.__state[component];
+      }
+      Color$1.recalculateHSV(this);
+      return this.__state[component];
+    },
+    set: function set$$1(v) {
+      if (this.__state.space !== 'HSV') {
+        Color$1.recalculateHSV(this);
+        this.__state.space = 'HSV';
+      }
+      this.__state[component] = v;
+    }
+  });
+}
+Color$1.recalculateRGB = function (color, component, componentHexIndex) {
+  if (color.__state.space === 'HEX') {
+    color.__state[component] = ColorMath$1.component_from_hex(color.__state.hex, componentHexIndex);
+  } else if (color.__state.space === 'HSV') {
+    Common$1.extend(color.__state, ColorMath$1.hsv_to_rgb(color.__state.h, color.__state.s, color.__state.v));
+  } else {
+    throw new Error('Corrupted color state');
+  }
+};
+Color$1.recalculateHSV = function (color) {
+  var result = ColorMath$1.rgb_to_hsv(color.r, color.g, color.b);
+  Common$1.extend(color.__state, {
+    s: result.s,
+    v: result.v
+  });
+  if (!Common$1.isNaN(result.h)) {
+    color.__state.h = result.h;
+  } else if (Common$1.isUndefined(color.__state.h)) {
+    color.__state.h = 0;
+  }
+};
+Color$1.COMPONENTS = ['r', 'g', 'b', 'h', 's', 'v', 'hex', 'a'];
+defineRGBComponent$1(Color$1.prototype, 'r', 2);
+defineRGBComponent$1(Color$1.prototype, 'g', 1);
+defineRGBComponent$1(Color$1.prototype, 'b', 0);
+defineHSVComponent$1(Color$1.prototype, 'h');
+defineHSVComponent$1(Color$1.prototype, 's');
+defineHSVComponent$1(Color$1.prototype, 'v');
+Object.defineProperty(Color$1.prototype, 'a', {
+  get: function get$$1() {
+    return this.__state.a;
+  },
+  set: function set$$1(v) {
+    this.__state.a = v;
+  }
+});
+Object.defineProperty(Color$1.prototype, 'hex', {
+  get: function get$$1() {
+    if (!this.__state.space !== 'HEX') {
+      this.__state.hex = ColorMath$1.rgb_to_hex(this.r, this.g, this.b);
+    }
+    return this.__state.hex;
+  },
+  set: function set$$1(v) {
+    this.__state.space = 'HEX';
+    this.__state.hex = v;
+  }
+});
+var Controller$1 = function () {
+  function Controller(object, property) {
+    classCallCheck$2(this, Controller);
+    this.initialValue = object[property];
+    this.domElement = document.createElement('div');
+    this.object = object;
+    this.property = property;
+    this.__onChange = undefined;
+    this.__onFinishChange = undefined;
+  }
+  createClass$2(Controller, [{
+    key: 'onChange',
+    value: function onChange(fnc) {
+      this.__onChange = fnc;
+      return this;
+    }
+  }, {
+    key: 'onFinishChange',
+    value: function onFinishChange(fnc) {
+      this.__onFinishChange = fnc;
+      return this;
+    }
+  }, {
+    key: 'setValue',
+    value: function setValue(newValue) {
+      this.object[this.property] = newValue;
+      if (this.__onChange) {
+        this.__onChange.call(this, newValue);
+      }
+      this.updateDisplay();
+      return this;
+    }
+  }, {
+    key: 'getValue',
+    value: function getValue() {
+      return this.object[this.property];
+    }
+  }, {
+    key: 'updateDisplay',
+    value: function updateDisplay() {
+      return this;
+    }
+  }, {
+    key: 'isModified',
+    value: function isModified() {
+      return this.initialValue !== this.getValue();
+    }
+  }]);
+  return Controller;
+}();
+var EVENT_MAP$1 = {
+  HTMLEvents: ['change'],
+  MouseEvents: ['click', 'mousemove', 'mousedown', 'mouseup', 'mouseover'],
+  KeyboardEvents: ['keydown']
+};
+var EVENT_MAP_INV$1 = {};
+Common$1.each(EVENT_MAP$1, function (v, k) {
+  Common$1.each(v, function (e) {
+    EVENT_MAP_INV$1[e] = k;
+  });
+});
+var CSS_VALUE_PIXELS$1 = /(\d+(\.\d+)?)px/;
+function cssValueToPixels$1(val) {
+  if (val === '0' || Common$1.isUndefined(val)) {
+    return 0;
+  }
+  var match = val.match(CSS_VALUE_PIXELS$1);
+  if (!Common$1.isNull(match)) {
+    return parseFloat(match[1]);
+  }
+  return 0;
+}
+var dom$1$1 = {
+  makeSelectable: function makeSelectable(elem, selectable) {
+    if (elem === undefined || elem.style === undefined) return;
+    elem.onselectstart = selectable ? function () {
+      return false;
+    } : function () {};
+    elem.style.MozUserSelect = selectable ? 'auto' : 'none';
+    elem.style.KhtmlUserSelect = selectable ? 'auto' : 'none';
+    elem.unselectable = selectable ? 'on' : 'off';
+  },
+  makeFullscreen: function makeFullscreen(elem, hor, vert) {
+    var vertical = vert;
+    var horizontal = hor;
+    if (Common$1.isUndefined(horizontal)) {
+      horizontal = true;
+    }
+    if (Common$1.isUndefined(vertical)) {
+      vertical = true;
+    }
+    elem.style.position = 'absolute';
+    if (horizontal) {
+      elem.style.left = 0;
+      elem.style.right = 0;
+    }
+    if (vertical) {
+      elem.style.top = 0;
+      elem.style.bottom = 0;
+    }
+  },
+  fakeEvent: function fakeEvent(elem, eventType, pars, aux) {
+    var params = pars || {};
+    var className = EVENT_MAP_INV$1[eventType];
+    if (!className) {
+      throw new Error('Event type ' + eventType + ' not supported.');
+    }
+    var evt = document.createEvent(className);
+    switch (className) {
+      case 'MouseEvents':
+        {
+          var clientX = params.x || params.clientX || 0;
+          var clientY = params.y || params.clientY || 0;
+          evt.initMouseEvent(eventType, params.bubbles || false, params.cancelable || true, window, params.clickCount || 1, 0, 0, clientX, clientY, false, false, false, false, 0, null);
+          break;
+        }
+      case 'KeyboardEvents':
+        {
+          var init = evt.initKeyboardEvent || evt.initKeyEvent;
+          Common$1.defaults(params, {
+            cancelable: true,
+            ctrlKey: false,
+            altKey: false,
+            shiftKey: false,
+            metaKey: false,
+            keyCode: undefined,
+            charCode: undefined
+          });
+          init(eventType, params.bubbles || false, params.cancelable, window, params.ctrlKey, params.altKey, params.shiftKey, params.metaKey, params.keyCode, params.charCode);
+          break;
+        }
+      default:
+        {
+          evt.initEvent(eventType, params.bubbles || false, params.cancelable || true);
+          break;
+        }
+    }
+    Common$1.defaults(evt, aux);
+    elem.dispatchEvent(evt);
+  },
+  bind: function bind(elem, event, func, newBool) {
+    var bool = newBool || false;
+    if (elem.addEventListener) {
+      elem.addEventListener(event, func, bool);
+    } else if (elem.attachEvent) {
+      elem.attachEvent('on' + event, func);
+    }
+    return dom$1$1;
+  },
+  unbind: function unbind(elem, event, func, newBool) {
+    var bool = newBool || false;
+    if (elem.removeEventListener) {
+      elem.removeEventListener(event, func, bool);
+    } else if (elem.detachEvent) {
+      elem.detachEvent('on' + event, func);
+    }
+    return dom$1$1;
+  },
+  addClass: function addClass(elem, className) {
+    if (elem.className === undefined) {
+      elem.className = className;
+    } else if (elem.className !== className) {
+      var classes = elem.className.split(/ +/);
+      if (classes.indexOf(className) === -1) {
+        classes.push(className);
+        elem.className = classes.join(' ').replace(/^\s+/, '').replace(/\s+$/, '');
+      }
+    }
+    return dom$1$1;
+  },
+  removeClass: function removeClass(elem, className) {
+    if (className) {
+      if (elem.className === className) {
+        elem.removeAttribute('class');
+      } else {
+        var classes = elem.className.split(/ +/);
+        var index = classes.indexOf(className);
+        if (index !== -1) {
+          classes.splice(index, 1);
+          elem.className = classes.join(' ');
+        }
+      }
+    } else {
+      elem.className = undefined;
+    }
+    return dom$1$1;
+  },
+  hasClass: function hasClass(elem, className) {
+    return new RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)').test(elem.className) || false;
+  },
+  getWidth: function getWidth(elem) {
+    var style = getComputedStyle(elem);
+    return cssValueToPixels$1(style['border-left-width']) + cssValueToPixels$1(style['border-right-width']) + cssValueToPixels$1(style['padding-left']) + cssValueToPixels$1(style['padding-right']) + cssValueToPixels$1(style.width);
+  },
+  getHeight: function getHeight(elem) {
+    var style = getComputedStyle(elem);
+    return cssValueToPixels$1(style['border-top-width']) + cssValueToPixels$1(style['border-bottom-width']) + cssValueToPixels$1(style['padding-top']) + cssValueToPixels$1(style['padding-bottom']) + cssValueToPixels$1(style.height);
+  },
+  getOffset: function getOffset(el) {
+    var elem = el;
+    var offset = { left: 0, top: 0 };
+    if (elem.offsetParent) {
+      do {
+        offset.left += elem.offsetLeft;
+        offset.top += elem.offsetTop;
+        elem = elem.offsetParent;
+      } while (elem);
+    }
+    return offset;
+  },
+  isActive: function isActive(elem) {
+    return elem === document.activeElement && (elem.type || elem.href);
+  }
+};
+var BooleanController$1 = function (_Controller) {
+  inherits$2(BooleanController, _Controller);
+  function BooleanController(object, property) {
+    classCallCheck$2(this, BooleanController);
+    var _this2 = possibleConstructorReturn$2(this, (BooleanController.__proto__ || Object.getPrototypeOf(BooleanController)).call(this, object, property));
+    var _this = _this2;
+    _this2.__prev = _this2.getValue();
+    _this2.__checkbox = document.createElement('input');
+    _this2.__checkbox.setAttribute('type', 'checkbox');
+    function onChange() {
+      _this.setValue(!_this.__prev);
+    }
+    dom$1$1.bind(_this2.__checkbox, 'change', onChange, false);
+    _this2.domElement.appendChild(_this2.__checkbox);
+    _this2.updateDisplay();
+    return _this2;
+  }
+  createClass$2(BooleanController, [{
+    key: 'setValue',
+    value: function setValue(v) {
+      var toReturn = get$3(BooleanController.prototype.__proto__ || Object.getPrototypeOf(BooleanController.prototype), 'setValue', this).call(this, v);
+      if (this.__onFinishChange) {
+        this.__onFinishChange.call(this, this.getValue());
+      }
+      this.__prev = this.getValue();
+      return toReturn;
+    }
+  }, {
+    key: 'updateDisplay',
+    value: function updateDisplay() {
+      if (this.getValue() === true) {
+        this.__checkbox.setAttribute('checked', 'checked');
+        this.__checkbox.checked = true;
+        this.__prev = true;
+      } else {
+        this.__checkbox.checked = false;
+        this.__prev = false;
+      }
+      return get$3(BooleanController.prototype.__proto__ || Object.getPrototypeOf(BooleanController.prototype), 'updateDisplay', this).call(this);
+    }
+  }]);
+  return BooleanController;
+}(Controller$1);
+var OptionController$1 = function (_Controller) {
+  inherits$2(OptionController, _Controller);
+  function OptionController(object, property, opts) {
+    classCallCheck$2(this, OptionController);
+    var _this2 = possibleConstructorReturn$2(this, (OptionController.__proto__ || Object.getPrototypeOf(OptionController)).call(this, object, property));
+    var options = opts;
+    var _this = _this2;
+    _this2.__select = document.createElement('select');
+    if (Common$1.isArray(options)) {
+      var map = {};
+      Common$1.each(options, function (element) {
+        map[element] = element;
+      });
+      options = map;
+    }
+    Common$1.each(options, function (value, key) {
+      var opt = document.createElement('option');
+      opt.innerHTML = key;
+      opt.setAttribute('value', value);
+      _this.__select.appendChild(opt);
+    });
+    _this2.updateDisplay();
+    dom$1$1.bind(_this2.__select, 'change', function () {
+      var desiredValue = this.options[this.selectedIndex].value;
+      _this.setValue(desiredValue);
+    });
+    _this2.domElement.appendChild(_this2.__select);
+    return _this2;
+  }
+  createClass$2(OptionController, [{
+    key: 'setValue',
+    value: function setValue(v) {
+      var toReturn = get$3(OptionController.prototype.__proto__ || Object.getPrototypeOf(OptionController.prototype), 'setValue', this).call(this, v);
+      if (this.__onFinishChange) {
+        this.__onFinishChange.call(this, this.getValue());
+      }
+      return toReturn;
+    }
+  }, {
+    key: 'updateDisplay',
+    value: function updateDisplay() {
+      if (dom$1$1.isActive(this.__select)) return this;
+      this.__select.value = this.getValue();
+      return get$3(OptionController.prototype.__proto__ || Object.getPrototypeOf(OptionController.prototype), 'updateDisplay', this).call(this);
+    }
+  }]);
+  return OptionController;
+}(Controller$1);
+var StringController$1 = function (_Controller) {
+  inherits$2(StringController, _Controller);
+  function StringController(object, property) {
+    classCallCheck$2(this, StringController);
+    var _this2 = possibleConstructorReturn$2(this, (StringController.__proto__ || Object.getPrototypeOf(StringController)).call(this, object, property));
+    var _this = _this2;
+    function onChange() {
+      _this.setValue(_this.__input.value);
+    }
+    function onBlur() {
+      if (_this.__onFinishChange) {
+        _this.__onFinishChange.call(_this, _this.getValue());
+      }
+    }
+    _this2.__input = document.createElement('input');
+    _this2.__input.setAttribute('type', 'text');
+    dom$1$1.bind(_this2.__input, 'keyup', onChange);
+    dom$1$1.bind(_this2.__input, 'change', onChange);
+    dom$1$1.bind(_this2.__input, 'blur', onBlur);
+    dom$1$1.bind(_this2.__input, 'keydown', function (e) {
+      if (e.keyCode === 13) {
+        this.blur();
+      }
+    });
+    _this2.updateDisplay();
+    _this2.domElement.appendChild(_this2.__input);
+    return _this2;
+  }
+  createClass$2(StringController, [{
+    key: 'updateDisplay',
+    value: function updateDisplay() {
+      if (!dom$1$1.isActive(this.__input)) {
+        this.__input.value = this.getValue();
+      }
+      return get$3(StringController.prototype.__proto__ || Object.getPrototypeOf(StringController.prototype), 'updateDisplay', this).call(this);
+    }
+  }]);
+  return StringController;
+}(Controller$1);
+function numDecimals$1(x) {
+  var _x = x.toString();
+  if (_x.indexOf('.') > -1) {
+    return _x.length - _x.indexOf('.') - 1;
+  }
+  return 0;
+}
+var NumberController$1 = function (_Controller) {
+  inherits$2(NumberController, _Controller);
+  function NumberController(object, property, params) {
+    classCallCheck$2(this, NumberController);
+    var _this = possibleConstructorReturn$2(this, (NumberController.__proto__ || Object.getPrototypeOf(NumberController)).call(this, object, property));
+    var _params = params || {};
+    _this.__min = _params.min;
+    _this.__max = _params.max;
+    _this.__step = _params.step;
+    if (Common$1.isUndefined(_this.__step)) {
+      if (_this.initialValue === 0) {
+        _this.__impliedStep = 1;
+      } else {
+        _this.__impliedStep = Math.pow(10, Math.floor(Math.log(Math.abs(_this.initialValue)) / Math.LN10)) / 10;
+      }
+    } else {
+      _this.__impliedStep = _this.__step;
+    }
+    _this.__precision = numDecimals$1(_this.__impliedStep);
+    return _this;
+  }
+  createClass$2(NumberController, [{
+    key: 'setValue',
+    value: function setValue(v) {
+      var _v = v;
+      if (this.__min !== undefined && _v < this.__min) {
+        _v = this.__min;
+      } else if (this.__max !== undefined && _v > this.__max) {
+        _v = this.__max;
+      }
+      if (this.__step !== undefined && _v % this.__step !== 0) {
+        _v = Math.round(_v / this.__step) * this.__step;
+      }
+      return get$3(NumberController.prototype.__proto__ || Object.getPrototypeOf(NumberController.prototype), 'setValue', this).call(this, _v);
+    }
+  }, {
+    key: 'min',
+    value: function min(minValue) {
+      this.__min = minValue;
+      return this;
+    }
+  }, {
+    key: 'max',
+    value: function max(maxValue) {
+      this.__max = maxValue;
+      return this;
+    }
+  }, {
+    key: 'step',
+    value: function step(stepValue) {
+      this.__step = stepValue;
+      this.__impliedStep = stepValue;
+      this.__precision = numDecimals$1(stepValue);
+      return this;
+    }
+  }]);
+  return NumberController;
+}(Controller$1);
+function roundToDecimal$1(value, decimals) {
+  var tenTo = Math.pow(10, decimals);
+  return Math.round(value * tenTo) / tenTo;
+}
+var NumberControllerBox$1 = function (_NumberController) {
+  inherits$2(NumberControllerBox, _NumberController);
+  function NumberControllerBox(object, property, params) {
+    classCallCheck$2(this, NumberControllerBox);
+    var _this2 = possibleConstructorReturn$2(this, (NumberControllerBox.__proto__ || Object.getPrototypeOf(NumberControllerBox)).call(this, object, property, params));
+    _this2.__truncationSuspended = false;
+    var _this = _this2;
+    var prevY = void 0;
+    function onChange() {
+      var attempted = parseFloat(_this.__input.value);
+      if (!Common$1.isNaN(attempted)) {
+        _this.setValue(attempted);
+      }
+    }
+    function onFinish() {
+      if (_this.__onFinishChange) {
+        _this.__onFinishChange.call(_this, _this.getValue());
+      }
+    }
+    function onBlur() {
+      onFinish();
+    }
+    function onMouseDrag(e) {
+      var diff = prevY - e.clientY;
+      _this.setValue(_this.getValue() + diff * _this.__impliedStep);
+      prevY = e.clientY;
+    }
+    function onMouseUp() {
+      dom$1$1.unbind(window, 'mousemove', onMouseDrag);
+      dom$1$1.unbind(window, 'mouseup', onMouseUp);
+      onFinish();
+    }
+    function onMouseDown(e) {
+      dom$1$1.bind(window, 'mousemove', onMouseDrag);
+      dom$1$1.bind(window, 'mouseup', onMouseUp);
+      prevY = e.clientY;
+    }
+    _this2.__input = document.createElement('input');
+    _this2.__input.setAttribute('type', 'text');
+    dom$1$1.bind(_this2.__input, 'change', onChange);
+    dom$1$1.bind(_this2.__input, 'blur', onBlur);
+    dom$1$1.bind(_this2.__input, 'mousedown', onMouseDown);
+    dom$1$1.bind(_this2.__input, 'keydown', function (e) {
+      if (e.keyCode === 13) {
+        _this.__truncationSuspended = true;
+        this.blur();
+        _this.__truncationSuspended = false;
+        onFinish();
+      }
+    });
+    _this2.updateDisplay();
+    _this2.domElement.appendChild(_this2.__input);
+    return _this2;
+  }
+  createClass$2(NumberControllerBox, [{
+    key: 'updateDisplay',
+    value: function updateDisplay() {
+      this.__input.value = this.__truncationSuspended ? this.getValue() : roundToDecimal$1(this.getValue(), this.__precision);
+      return get$3(NumberControllerBox.prototype.__proto__ || Object.getPrototypeOf(NumberControllerBox.prototype), 'updateDisplay', this).call(this);
+    }
+  }]);
+  return NumberControllerBox;
+}(NumberController$1);
+function map$1(v, i1, i2, o1, o2) {
+  return o1 + (o2 - o1) * ((v - i1) / (i2 - i1));
+}
+var NumberControllerSlider$1 = function (_NumberController) {
+  inherits$2(NumberControllerSlider, _NumberController);
+  function NumberControllerSlider(object, property, min, max, step) {
+    classCallCheck$2(this, NumberControllerSlider);
+    var _this2 = possibleConstructorReturn$2(this, (NumberControllerSlider.__proto__ || Object.getPrototypeOf(NumberControllerSlider)).call(this, object, property, { min: min, max: max, step: step }));
+    var _this = _this2;
+    _this2.__background = document.createElement('div');
+    _this2.__foreground = document.createElement('div');
+    dom$1$1.bind(_this2.__background, 'mousedown', onMouseDown);
+    dom$1$1.bind(_this2.__background, 'touchstart', onTouchStart);
+    dom$1$1.addClass(_this2.__background, 'slider');
+    dom$1$1.addClass(_this2.__foreground, 'slider-fg');
+    function onMouseDown(e) {
+      document.activeElement.blur();
+      dom$1$1.bind(window, 'mousemove', onMouseDrag);
+      dom$1$1.bind(window, 'mouseup', onMouseUp);
+      onMouseDrag(e);
+    }
+    function onMouseDrag(e) {
+      e.preventDefault();
+      var bgRect = _this.__background.getBoundingClientRect();
+      _this.setValue(map$1(e.clientX, bgRect.left, bgRect.right, _this.__min, _this.__max));
+      return false;
+    }
+    function onMouseUp() {
+      dom$1$1.unbind(window, 'mousemove', onMouseDrag);
+      dom$1$1.unbind(window, 'mouseup', onMouseUp);
+      if (_this.__onFinishChange) {
+        _this.__onFinishChange.call(_this, _this.getValue());
+      }
+    }
+    function onTouchStart(e) {
+      if (e.touches.length !== 1) {
+        return;
+      }
+      dom$1$1.bind(window, 'touchmove', onTouchMove);
+      dom$1$1.bind(window, 'touchend', onTouchEnd);
+      onTouchMove(e);
+    }
+    function onTouchMove(e) {
+      var clientX = e.touches[0].clientX;
+      var bgRect = _this.__background.getBoundingClientRect();
+      _this.setValue(map$1(clientX, bgRect.left, bgRect.right, _this.__min, _this.__max));
+    }
+    function onTouchEnd() {
+      dom$1$1.unbind(window, 'touchmove', onTouchMove);
+      dom$1$1.unbind(window, 'touchend', onTouchEnd);
+      if (_this.__onFinishChange) {
+        _this.__onFinishChange.call(_this, _this.getValue());
+      }
+    }
+    _this2.updateDisplay();
+    _this2.__background.appendChild(_this2.__foreground);
+    _this2.domElement.appendChild(_this2.__background);
+    return _this2;
+  }
+  createClass$2(NumberControllerSlider, [{
+    key: 'updateDisplay',
+    value: function updateDisplay() {
+      var pct = (this.getValue() - this.__min) / (this.__max - this.__min);
+      this.__foreground.style.width = pct * 100 + '%';
+      return get$3(NumberControllerSlider.prototype.__proto__ || Object.getPrototypeOf(NumberControllerSlider.prototype), 'updateDisplay', this).call(this);
+    }
+  }]);
+  return NumberControllerSlider;
+}(NumberController$1);
+var FunctionController$1 = function (_Controller) {
+  inherits$2(FunctionController, _Controller);
+  function FunctionController(object, property, text) {
+    classCallCheck$2(this, FunctionController);
+    var _this2 = possibleConstructorReturn$2(this, (FunctionController.__proto__ || Object.getPrototypeOf(FunctionController)).call(this, object, property));
+    var _this = _this2;
+    _this2.__button = document.createElement('div');
+    _this2.__button.innerHTML = text === undefined ? 'Fire' : text;
+    dom$1$1.bind(_this2.__button, 'click', function (e) {
+      e.preventDefault();
+      _this.fire();
+      return false;
+    });
+    dom$1$1.addClass(_this2.__button, 'button');
+    _this2.domElement.appendChild(_this2.__button);
+    return _this2;
+  }
+  createClass$2(FunctionController, [{
+    key: 'fire',
+    value: function fire() {
+      if (this.__onChange) {
+        this.__onChange.call(this);
+      }
+      this.getValue().call(this.object);
+      if (this.__onFinishChange) {
+        this.__onFinishChange.call(this, this.getValue());
+      }
+    }
+  }]);
+  return FunctionController;
+}(Controller$1);
+var ColorController$1 = function (_Controller) {
+  inherits$2(ColorController, _Controller);
+  function ColorController(object, property) {
+    classCallCheck$2(this, ColorController);
+    var _this2 = possibleConstructorReturn$2(this, (ColorController.__proto__ || Object.getPrototypeOf(ColorController)).call(this, object, property));
+    _this2.__color = new Color$1(_this2.getValue());
+    _this2.__temp = new Color$1(0);
+    var _this = _this2;
+    _this2.domElement = document.createElement('div');
+    dom$1$1.makeSelectable(_this2.domElement, false);
+    _this2.__selector = document.createElement('div');
+    _this2.__selector.className = 'selector';
+    _this2.__saturation_field = document.createElement('div');
+    _this2.__saturation_field.className = 'saturation-field';
+    _this2.__field_knob = document.createElement('div');
+    _this2.__field_knob.className = 'field-knob';
+    _this2.__field_knob_border = '2px solid ';
+    _this2.__hue_knob = document.createElement('div');
+    _this2.__hue_knob.className = 'hue-knob';
+    _this2.__hue_field = document.createElement('div');
+    _this2.__hue_field.className = 'hue-field';
+    _this2.__input = document.createElement('input');
+    _this2.__input.type = 'text';
+    _this2.__input_textShadow = '0 1px 1px ';
+    dom$1$1.bind(_this2.__input, 'keydown', function (e) {
+      if (e.keyCode === 13) {
+        onBlur.call(this);
+      }
+    });
+    dom$1$1.bind(_this2.__input, 'blur', onBlur);
+    dom$1$1.bind(_this2.__selector, 'mousedown', function () {
+      dom$1$1.addClass(this, 'drag').bind(window, 'mouseup', function () {
+        dom$1$1.removeClass(_this.__selector, 'drag');
+      });
+    });
+    dom$1$1.bind(_this2.__selector, 'touchstart', function () {
+      dom$1$1.addClass(this, 'drag').bind(window, 'touchend', function () {
+        dom$1$1.removeClass(_this.__selector, 'drag');
+      });
+    });
+    var valueField = document.createElement('div');
+    Common$1.extend(_this2.__selector.style, {
+      width: '122px',
+      height: '102px',
+      padding: '3px',
+      backgroundColor: '#222',
+      boxShadow: '0px 1px 3px rgba(0,0,0,0.3)'
+    });
+    Common$1.extend(_this2.__field_knob.style, {
+      position: 'absolute',
+      width: '12px',
+      height: '12px',
+      border: _this2.__field_knob_border + (_this2.__color.v < 0.5 ? '#fff' : '#000'),
+      boxShadow: '0px 1px 3px rgba(0,0,0,0.5)',
+      borderRadius: '12px',
+      zIndex: 1
+    });
+    Common$1.extend(_this2.__hue_knob.style, {
+      position: 'absolute',
+      width: '15px',
+      height: '2px',
+      borderRight: '4px solid #fff',
+      zIndex: 1
+    });
+    Common$1.extend(_this2.__saturation_field.style, {
+      width: '100px',
+      height: '100px',
+      border: '1px solid #555',
+      marginRight: '3px',
+      display: 'inline-block',
+      cursor: 'pointer'
+    });
+    Common$1.extend(valueField.style, {
+      width: '100%',
+      height: '100%',
+      background: 'none'
+    });
+    linearGradient$1(valueField, 'top', 'rgba(0,0,0,0)', '#000');
+    Common$1.extend(_this2.__hue_field.style, {
+      width: '15px',
+      height: '100px',
+      border: '1px solid #555',
+      cursor: 'ns-resize',
+      position: 'absolute',
+      top: '3px',
+      right: '3px'
+    });
+    hueGradient$1(_this2.__hue_field);
+    Common$1.extend(_this2.__input.style, {
+      outline: 'none',
+      textAlign: 'center',
+      color: '#fff',
+      border: 0,
+      fontWeight: 'bold',
+      textShadow: _this2.__input_textShadow + 'rgba(0,0,0,0.7)'
+    });
+    dom$1$1.bind(_this2.__saturation_field, 'mousedown', fieldDown);
+    dom$1$1.bind(_this2.__saturation_field, 'touchstart', fieldDown);
+    dom$1$1.bind(_this2.__field_knob, 'mousedown', fieldDown);
+    dom$1$1.bind(_this2.__field_knob, 'touchstart', fieldDown);
+    dom$1$1.bind(_this2.__hue_field, 'mousedown', fieldDownH);
+    dom$1$1.bind(_this2.__hue_field, 'touchstart', fieldDownH);
+    function fieldDown(e) {
+      setSV(e);
+      dom$1$1.bind(window, 'mousemove', setSV);
+      dom$1$1.bind(window, 'touchmove', setSV);
+      dom$1$1.bind(window, 'mouseup', fieldUpSV);
+      dom$1$1.bind(window, 'touchend', fieldUpSV);
+    }
+    function fieldDownH(e) {
+      setH(e);
+      dom$1$1.bind(window, 'mousemove', setH);
+      dom$1$1.bind(window, 'touchmove', setH);
+      dom$1$1.bind(window, 'mouseup', fieldUpH);
+      dom$1$1.bind(window, 'touchend', fieldUpH);
+    }
+    function fieldUpSV() {
+      dom$1$1.unbind(window, 'mousemove', setSV);
+      dom$1$1.unbind(window, 'touchmove', setSV);
+      dom$1$1.unbind(window, 'mouseup', fieldUpSV);
+      dom$1$1.unbind(window, 'touchend', fieldUpSV);
+      onFinish();
+    }
+    function fieldUpH() {
+      dom$1$1.unbind(window, 'mousemove', setH);
+      dom$1$1.unbind(window, 'touchmove', setH);
+      dom$1$1.unbind(window, 'mouseup', fieldUpH);
+      dom$1$1.unbind(window, 'touchend', fieldUpH);
+      onFinish();
+    }
+    function onBlur() {
+      var i = interpret$1(this.value);
+      if (i !== false) {
+        _this.__color.__state = i;
+        _this.setValue(_this.__color.toOriginal());
+      } else {
+        this.value = _this.__color.toString();
+      }
+    }
+    function onFinish() {
+      if (_this.__onFinishChange) {
+        _this.__onFinishChange.call(_this, _this.__color.toOriginal());
+      }
+    }
+    _this2.__saturation_field.appendChild(valueField);
+    _this2.__selector.appendChild(_this2.__field_knob);
+    _this2.__selector.appendChild(_this2.__saturation_field);
+    _this2.__selector.appendChild(_this2.__hue_field);
+    _this2.__hue_field.appendChild(_this2.__hue_knob);
+    _this2.domElement.appendChild(_this2.__input);
+    _this2.domElement.appendChild(_this2.__selector);
+    _this2.updateDisplay();
+    function setSV(e) {
+      if (e.type.indexOf('touch') === -1) {
+        e.preventDefault();
+      }
+      var fieldRect = _this.__saturation_field.getBoundingClientRect();
+      var _ref = e.touches && e.touches[0] || e,
+          clientX = _ref.clientX,
+          clientY = _ref.clientY;
+      var s = (clientX - fieldRect.left) / (fieldRect.right - fieldRect.left);
+      var v = 1 - (clientY - fieldRect.top) / (fieldRect.bottom - fieldRect.top);
+      if (v > 1) {
+        v = 1;
+      } else if (v < 0) {
+        v = 0;
+      }
+      if (s > 1) {
+        s = 1;
+      } else if (s < 0) {
+        s = 0;
+      }
+      _this.__color.v = v;
+      _this.__color.s = s;
+      _this.setValue(_this.__color.toOriginal());
+      return false;
+    }
+    function setH(e) {
+      if (e.type.indexOf('touch') === -1) {
+        e.preventDefault();
+      }
+      var fieldRect = _this.__hue_field.getBoundingClientRect();
+      var _ref2 = e.touches && e.touches[0] || e,
+          clientY = _ref2.clientY;
+      var h = 1 - (clientY - fieldRect.top) / (fieldRect.bottom - fieldRect.top);
+      if (h > 1) {
+        h = 1;
+      } else if (h < 0) {
+        h = 0;
+      }
+      _this.__color.h = h * 360;
+      _this.setValue(_this.__color.toOriginal());
+      return false;
+    }
+    return _this2;
+  }
+  createClass$2(ColorController, [{
+    key: 'updateDisplay',
+    value: function updateDisplay() {
+      var i = interpret$1(this.getValue());
+      if (i !== false) {
+        var mismatch = false;
+        Common$1.each(Color$1.COMPONENTS, function (component) {
+          if (!Common$1.isUndefined(i[component]) && !Common$1.isUndefined(this.__color.__state[component]) && i[component] !== this.__color.__state[component]) {
+            mismatch = true;
+            return {};
+          }
+        }, this);
+        if (mismatch) {
+          Common$1.extend(this.__color.__state, i);
+        }
+      }
+      Common$1.extend(this.__temp.__state, this.__color.__state);
+      this.__temp.a = 1;
+      var flip = this.__color.v < 0.5 || this.__color.s > 0.5 ? 255 : 0;
+      var _flip = 255 - flip;
+      Common$1.extend(this.__field_knob.style, {
+        marginLeft: 100 * this.__color.s - 7 + 'px',
+        marginTop: 100 * (1 - this.__color.v) - 7 + 'px',
+        backgroundColor: this.__temp.toHexString(),
+        border: this.__field_knob_border + 'rgb(' + flip + ',' + flip + ',' + flip + ')'
+      });
+      this.__hue_knob.style.marginTop = (1 - this.__color.h / 360) * 100 + 'px';
+      this.__temp.s = 1;
+      this.__temp.v = 1;
+      linearGradient$1(this.__saturation_field, 'left', '#fff', this.__temp.toHexString());
+      this.__input.value = this.__color.toString();
+      Common$1.extend(this.__input.style, {
+        backgroundColor: this.__color.toHexString(),
+        color: 'rgb(' + flip + ',' + flip + ',' + flip + ')',
+        textShadow: this.__input_textShadow + 'rgba(' + _flip + ',' + _flip + ',' + _flip + ',.7)'
+      });
+    }
+  }]);
+  return ColorController;
+}(Controller$1);
+var vendors$1 = ['-moz-', '-o-', '-webkit-', '-ms-', ''];
+function linearGradient$1(elem, x, a, b) {
+  elem.style.background = '';
+  Common$1.each(vendors$1, function (vendor) {
+    elem.style.cssText += 'background: ' + vendor + 'linear-gradient(' + x + ', ' + a + ' 0%, ' + b + ' 100%); ';
+  });
+}
+function hueGradient$1(elem) {
+  elem.style.background = '';
+  elem.style.cssText += 'background: -moz-linear-gradient(top,  #ff0000 0%, #ff00ff 17%, #0000ff 34%, #00ffff 50%, #00ff00 67%, #ffff00 84%, #ff0000 100%);';
+  elem.style.cssText += 'background: -webkit-linear-gradient(top,  #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%);';
+  elem.style.cssText += 'background: -o-linear-gradient(top,  #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%);';
+  elem.style.cssText += 'background: -ms-linear-gradient(top,  #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%);';
+  elem.style.cssText += 'background: linear-gradient(top,  #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%);';
+}
+var ControllerFactory$1 = function ControllerFactory(object, property) {
+  var initialValue = object[property];
+  if (Common$1.isArray(arguments[2]) || Common$1.isObject(arguments[2])) {
+    return new OptionController$1(object, property, arguments[2]);
+  }
+  if (Common$1.isNumber(initialValue)) {
+    if (Common$1.isNumber(arguments[2]) && Common$1.isNumber(arguments[3])) {
+      if (Common$1.isNumber(arguments[4])) {
+        return new NumberControllerSlider$1(object, property, arguments[2], arguments[3], arguments[4]);
+      }
+      return new NumberControllerSlider$1(object, property, arguments[2], arguments[3]);
+    }
+    if (Common$1.isNumber(arguments[4])) {
+      return new NumberControllerBox$1(object, property, { min: arguments[2], max: arguments[3], step: arguments[4] });
+    }
+    return new NumberControllerBox$1(object, property, { min: arguments[2], max: arguments[3] });
+  }
+  if (Common$1.isString(initialValue)) {
+    return new StringController$1(object, property);
+  }
+  if (Common$1.isFunction(initialValue)) {
+    return new FunctionController$1(object, property, '');
+  }
+  if (Common$1.isBoolean(initialValue)) {
+    return new BooleanController$1(object, property);
+  }
+  return null;
+};
+var CustomController$1 = function (_Controller) {
+  inherits$2(CustomController, _Controller);
+  function CustomController(object, property) {
+    classCallCheck$2(this, CustomController);
+    var _this = possibleConstructorReturn$2(this, (CustomController.__proto__ || Object.getPrototypeOf(CustomController)).call(this, object, property));
+    _this.arguments = {
+      object: object, property: property, opts: Array.prototype.slice.call(arguments, 2)
+    };
+    if (object.property) _this.property = object.property(_this);
+    return _this;
+  }
+  createClass$2(CustomController, [{
+    key: 'controller',
+    set: function set$$1(newController) {
+      this._controller = newController;
+    },
+    get: function get$$1() {
+      return this._controller;
+    }
+  }]);
+  return CustomController;
+}(Controller$1);
+var css$1 = {
+  load: function load(url, indoc) {
+    var doc = indoc || document;
+    var link = doc.createElement('link');
+    link.type = 'text/css';
+    link.rel = 'stylesheet';
+    link.href = url;
+    doc.getElementsByTagName('head')[0].appendChild(link);
+  },
+  inject: function inject(cssContent, indoc) {
+    var doc = indoc || document;
+    var injected = document.createElement('style');
+    injected.type = 'text/css';
+    injected.innerHTML = cssContent;
+    var head = doc.getElementsByTagName('head')[0];
+    try {
+      head.appendChild(injected);
+    } catch (e) {}
+  }
+};
+var saveDialogContents$1 = "<div id=\"dg-save\" class=\"dg dialogue\">\n\n  Here's the new load parameter for your <code>GUI</code>'s constructor:\n\n  <textarea id=\"dg-new-constructor\"></textarea>\n\n  <div id=\"dg-save-locally\">\n\n    <input id=\"dg-local-storage\" type=\"checkbox\"/> Automatically save\n    values to <code>localStorage</code> on exit.\n\n    <div id=\"dg-local-explain\">The values saved to <code>localStorage</code> will\n      override those passed to <code>dat.GUI</code>'s constructor. This makes it\n      easier to work incrementally, but <code>localStorage</code> is fragile,\n      and your friends may not see the same values you do.\n\n    </div>\n\n  </div>\n\n</div>";
+function requestAnimationFrame$1$1(callback) {
+  setTimeout(callback, 1000 / 60);
+}
+var requestAnimationFrame$1$2 = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || requestAnimationFrame$1$1;
+var CenteredDiv$1 = function () {
+  function CenteredDiv() {
+    classCallCheck$2(this, CenteredDiv);
+    this.backgroundElement = document.createElement('div');
+    Common$1.extend(this.backgroundElement.style, {
+      backgroundColor: 'rgba(0,0,0,0.8)',
+      top: 0,
+      left: 0,
+      display: 'none',
+      zIndex: '1000',
+      opacity: 0,
+      WebkitTransition: 'opacity 0.2s linear',
+      transition: 'opacity 0.2s linear'
+    });
+    dom$1$1.makeFullscreen(this.backgroundElement);
+    this.backgroundElement.style.position = 'fixed';
+    this.domElement = document.createElement('div');
+    Common$1.extend(this.domElement.style, {
+      position: 'fixed',
+      display: 'none',
+      zIndex: '1001',
+      opacity: 0,
+      WebkitTransition: '-webkit-transform 0.2s ease-out, opacity 0.2s linear',
+      transition: 'transform 0.2s ease-out, opacity 0.2s linear'
+    });
+    document.body.appendChild(this.backgroundElement);
+    document.body.appendChild(this.domElement);
+    var _this = this;
+    dom$1$1.bind(this.backgroundElement, 'click', function () {
+      _this.hide();
+    });
+  }
+  createClass$2(CenteredDiv, [{
+    key: 'show',
+    value: function show() {
+      var _this = this;
+      this.backgroundElement.style.display = 'block';
+      this.domElement.style.display = 'block';
+      this.domElement.style.opacity = 0;
+      this.domElement.style.webkitTransform = 'scale(1.1)';
+      this.layout();
+      Common$1.defer(function () {
+        _this.backgroundElement.style.opacity = 1;
+        _this.domElement.style.opacity = 1;
+        _this.domElement.style.webkitTransform = 'scale(1)';
+      });
+    }
+  }, {
+    key: 'hide',
+    value: function hide() {
+      var _this = this;
+      var hide = function hide() {
+        _this.domElement.style.display = 'none';
+        _this.backgroundElement.style.display = 'none';
+        dom$1$1.unbind(_this.domElement, 'webkitTransitionEnd', hide);
+        dom$1$1.unbind(_this.domElement, 'transitionend', hide);
+        dom$1$1.unbind(_this.domElement, 'oTransitionEnd', hide);
+      };
+      dom$1$1.bind(this.domElement, 'webkitTransitionEnd', hide);
+      dom$1$1.bind(this.domElement, 'transitionend', hide);
+      dom$1$1.bind(this.domElement, 'oTransitionEnd', hide);
+      this.backgroundElement.style.opacity = 0;
+      this.domElement.style.opacity = 0;
+      this.domElement.style.webkitTransform = 'scale(1.1)';
+    }
+  }, {
+    key: 'layout',
+    value: function layout() {
+      this.domElement.style.left = window.innerWidth / 2 - dom$1$1.getWidth(this.domElement) / 2 + 'px';
+      this.domElement.style.top = window.innerHeight / 2 - dom$1$1.getHeight(this.domElement) / 2 + 'px';
+    }
+  }]);
+  return CenteredDiv;
+}();
+var styleSheet$1 = ___$insertStyle$1(".dg ul{list-style:none;margin:0;padding:0;width:100%;clear:both}.dg.ac{position:fixed;top:0;left:0;right:0;height:0;z-index:0}.dg:not(.ac) .main{overflow:hidden}.dg.main{-webkit-transition:opacity .1s linear;-o-transition:opacity .1s linear;-moz-transition:opacity .1s linear;transition:opacity .1s linear}.dg.main.taller-than-window{overflow-y:auto}.dg.main.taller-than-window .close-button{opacity:1;margin-top:-1px;border-top:1px solid #2c2c2c}.dg.main ul.closed .close-button{opacity:1 !important}.dg.main:hover .close-button,.dg.main .close-button.drag{opacity:1}.dg.main .close-button{-webkit-transition:opacity .1s linear;-o-transition:opacity .1s linear;-moz-transition:opacity .1s linear;transition:opacity .1s linear;border:0;line-height:19px;height:20px;cursor:pointer;text-align:center;background-color:#000}.dg.main .close-button.close-top{position:relative}.dg.main .close-button.close-bottom{position:absolute}.dg.main .close-button:hover{background-color:#111}.dg.a{float:right;margin-right:15px;overflow-y:visible}.dg.a.has-save>ul.close-top{margin-top:0}.dg.a.has-save>ul.close-bottom{margin-top:27px}.dg.a.has-save>ul.closed{margin-top:0}.dg.a .save-row{top:0;z-index:1002}.dg.a .save-row.close-top{position:relative}.dg.a .save-row.close-bottom{position:fixed}.dg li{-webkit-transition:height .1s ease-out;-o-transition:height .1s ease-out;-moz-transition:height .1s ease-out;transition:height .1s ease-out;-webkit-transition:overflow .1s linear;-o-transition:overflow .1s linear;-moz-transition:overflow .1s linear;transition:overflow .1s linear}.dg li:not(.folder){cursor:auto;height:27px;line-height:27px;padding:0 4px 0 5px}.dg li.folder{padding:0;border-left:4px solid rgba(0,0,0,0)}.dg li.title{cursor:pointer;margin-left:-4px}.dg .closed li:not(.title),.dg .closed ul li,.dg .closed ul li>*{height:0;overflow:hidden;border:0}.dg .cr{clear:both;padding-left:3px;height:27px;overflow:hidden}.dg .property-name{cursor:default;float:left;clear:left;width:40%;overflow:hidden;text-overflow:ellipsis}.dg .c{float:left;width:60%;position:relative}.dg .c input[type=text]{border:0;margin-top:4px;padding:3px;width:100%;float:right}.dg .has-slider input[type=text]{width:30%;margin-left:0}.dg .slider{float:left;width:66%;margin-left:-5px;margin-right:0;height:19px;margin-top:4px}.dg .slider-fg{height:100%}.dg .c input[type=checkbox]{margin-top:7px}.dg .c select{margin-top:5px}.dg .cr.function,.dg .cr.function .property-name,.dg .cr.function *,.dg .cr.boolean,.dg .cr.boolean *{cursor:pointer}.dg .cr.color{overflow:visible}.dg .selector{display:none;position:absolute;margin-left:-9px;margin-top:23px;z-index:10}.dg .c:hover .selector,.dg .selector.drag{display:block}.dg li.save-row{padding:0}.dg li.save-row .button{display:inline-block;padding:0px 6px}.dg.dialogue{background-color:#222;width:460px;padding:15px;font-size:13px;line-height:15px}#dg-new-constructor{padding:10px;color:#222;font-family:Monaco, monospace;font-size:10px;border:0;resize:none;box-shadow:inset 1px 1px 1px #888;word-wrap:break-word;margin:12px 0;display:block;width:440px;overflow-y:scroll;height:100px;position:relative}#dg-local-explain{display:none;font-size:11px;line-height:17px;border-radius:3px;background-color:#333;padding:8px;margin-top:10px}#dg-local-explain code{font-size:10px}#dat-gui-save-locally{display:none}.dg{color:#eee;font:11px 'Lucida Grande', sans-serif;text-shadow:0 -1px 0 #111}.dg.main::-webkit-scrollbar{width:5px;background:#1a1a1a}.dg.main::-webkit-scrollbar-corner{height:0;display:none}.dg.main::-webkit-scrollbar-thumb{border-radius:5px;background:#676767}.dg li:not(.folder){background:#1a1a1a;border-bottom:1px solid #2c2c2c}.dg li.save-row{line-height:25px;background:#dad5cb;border:0}.dg li.save-row select{margin-left:5px;width:108px}.dg li.save-row .button{margin-left:5px;margin-top:1px;border-radius:2px;font-size:9px;line-height:7px;padding:4px 4px 5px 4px;background:#c5bdad;color:#fff;text-shadow:0 1px 0 #b0a58f;box-shadow:0 -1px 0 #b0a58f;cursor:pointer}.dg li.save-row .button.gears{background:#c5bdad url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAANCAYAAAB/9ZQ7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQJJREFUeNpiYKAU/P//PwGIC/ApCABiBSAW+I8AClAcgKxQ4T9hoMAEUrxx2QSGN6+egDX+/vWT4e7N82AMYoPAx/evwWoYoSYbACX2s7KxCxzcsezDh3evFoDEBYTEEqycggWAzA9AuUSQQgeYPa9fPv6/YWm/Acx5IPb7ty/fw+QZblw67vDs8R0YHyQhgObx+yAJkBqmG5dPPDh1aPOGR/eugW0G4vlIoTIfyFcA+QekhhHJhPdQxbiAIguMBTQZrPD7108M6roWYDFQiIAAv6Aow/1bFwXgis+f2LUAynwoIaNcz8XNx3Dl7MEJUDGQpx9gtQ8YCueB+D26OECAAQDadt7e46D42QAAAABJRU5ErkJggg==) 2px 1px no-repeat;height:7px;width:8px}.dg li.save-row .button:hover{background-color:#bab19e;box-shadow:0 -1px 0 #b0a58f}.dg li.folder{border-bottom:0}.dg li.title{padding-left:16px;background:#000 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px 10px no-repeat;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.2)}.dg .closed li.title{background-image:url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlGIWqMCbWAEAOw==)}.dg .cr.boolean{border-left:3px solid #806787}.dg .cr.color{border-left:3px solid}.dg .cr.function{border-left:3px solid #e61d5f}.dg .cr.number{border-left:3px solid #2FA1D6}.dg .cr.number input[type=text]{color:#2FA1D6}.dg .cr.string{border-left:3px solid #1ed36f}.dg .cr.string input[type=text]{color:#1ed36f}.dg .cr.function:hover,.dg .cr.boolean:hover{background:#111}.dg .c input[type=text]{background:#303030;outline:none}.dg .c input[type=text]:hover{background:#3c3c3c}.dg .c input[type=text]:focus{background:#494949;color:#fff}.dg .c .slider{background:#303030;cursor:ew-resize}.dg .c .slider-fg{background:#2FA1D6;max-width:100%}.dg .c .slider:hover{background:#3c3c3c}.dg .c .slider:hover .slider-fg{background:#44abda}\n");
+css$1.inject(styleSheet$1);
+var CSS_NAMESPACE$1 = 'dg';
+var HIDE_KEY_CODE$1 = 72;
+var CLOSE_BUTTON_HEIGHT$1 = 20;
+var DEFAULT_DEFAULT_PRESET_NAME$1 = 'Default';
+var SUPPORTS_LOCAL_STORAGE$1 = function () {
+  try {
+    return !!window.localStorage;
+  } catch (e) {
+    return false;
+  }
+}();
+var SAVE_DIALOGUE$1 = void 0;
+var autoPlaceVirgin$1 = true;
+var autoPlaceContainer$1 = void 0;
+var hide$1 = false;
+var hideableGuis$1 = [];
+var GUI$1$1 = function GUI(pars) {
+  var _this = this;
+  var params = pars || {};
+  this.domElement = document.createElement('div');
+  this.__ul = document.createElement('ul');
+  this.domElement.appendChild(this.__ul);
+  dom$1$1.addClass(this.domElement, CSS_NAMESPACE$1);
+  this.__folders = {};
+  this.__controllers = [];
+  this.__rememberedObjects = [];
+  this.__rememberedObjectIndecesToControllers = [];
+  this.__listening = [];
+  params = Common$1.defaults(params, {
+    closeOnTop: false,
+    autoPlace: true,
+    width: GUI.DEFAULT_WIDTH
+  });
+  params = Common$1.defaults(params, {
+    resizable: params.autoPlace,
+    hideable: params.autoPlace
+  });
+  if (!Common$1.isUndefined(params.load)) {
+    if (params.preset) {
+      params.load.preset = params.preset;
+    }
+  } else {
+    params.load = { preset: DEFAULT_DEFAULT_PRESET_NAME$1 };
+  }
+  if (Common$1.isUndefined(params.parent) && params.hideable) {
+    hideableGuis$1.push(this);
+  }
+  params.resizable = Common$1.isUndefined(params.parent) && params.resizable;
+  if (params.autoPlace && Common$1.isUndefined(params.scrollable)) {
+    params.scrollable = true;
+  }
+  var useLocalStorage = SUPPORTS_LOCAL_STORAGE$1 && localStorage.getItem(getLocalStorageHash$1(this, 'isLocal')) === 'true';
+  var saveToLocalStorage = void 0;
+  var titleRow = void 0;
+  Object.defineProperties(this, {
+    parent: {
+      get: function get$$1() {
+        return params.parent;
+      }
+    },
+    scrollable: {
+      get: function get$$1() {
+        return params.scrollable;
+      }
+    },
+    autoPlace: {
+      get: function get$$1() {
+        return params.autoPlace;
+      }
+    },
+    closeOnTop: {
+      get: function get$$1() {
+        return params.closeOnTop;
+      }
+    },
+    preset: {
+      get: function get$$1() {
+        if (_this.parent) {
+          return _this.getRoot().preset;
+        }
+        return params.load.preset;
+      },
+      set: function set$$1(v) {
+        if (_this.parent) {
+          _this.getRoot().preset = v;
+        } else {
+          params.load.preset = v;
+        }
+        setPresetSelectIndex$1(this);
+        _this.revert();
+      }
+    },
+    width: {
+      get: function get$$1() {
+        return params.width;
+      },
+      set: function set$$1(v) {
+        params.width = v;
+        setWidth$1(_this, v);
+      }
+    },
+    name: {
+      get: function get$$1() {
+        return params.name;
+      },
+      set: function set$$1(v) {
+        params.name = v;
+        if (titleRow) {
+          titleRow.innerHTML = params.name;
+        }
+      }
+    },
+    closed: {
+      get: function get$$1() {
+        return params.closed;
+      },
+      set: function set$$1(v) {
+        params.closed = v;
+        if (params.closed) {
+          dom$1$1.addClass(_this.__ul, GUI.CLASS_CLOSED);
+        } else {
+          dom$1$1.removeClass(_this.__ul, GUI.CLASS_CLOSED);
+        }
+        this.onResize();
+        if (_this.__closeButton) {
+          _this.__closeButton.innerHTML = v ? GUI.TEXT_OPEN : GUI.TEXT_CLOSED;
+        }
+      }
+    },
+    load: {
+      get: function get$$1() {
+        return params.load;
+      }
+    },
+    useLocalStorage: {
+      get: function get$$1() {
+        return useLocalStorage;
+      },
+      set: function set$$1(bool) {
+        if (SUPPORTS_LOCAL_STORAGE$1) {
+          useLocalStorage = bool;
+          if (bool) {
+            dom$1$1.bind(window, 'unload', saveToLocalStorage);
+          } else {
+            dom$1$1.unbind(window, 'unload', saveToLocalStorage);
+          }
+          localStorage.setItem(getLocalStorageHash$1(_this, 'isLocal'), bool);
+        }
+      }
+    }
+  });
+  if (Common$1.isUndefined(params.parent)) {
+    this.closed = params.closed || false;
+    dom$1$1.addClass(this.domElement, GUI.CLASS_MAIN);
+    dom$1$1.makeSelectable(this.domElement, false);
+    if (SUPPORTS_LOCAL_STORAGE$1) {
+      if (useLocalStorage) {
+        _this.useLocalStorage = true;
+        var savedGui = localStorage.getItem(getLocalStorageHash$1(this, 'gui'));
+        if (savedGui) {
+          params.load = JSON.parse(savedGui);
+        }
+      }
+    }
+    this.__closeButton = document.createElement('div');
+    this.__closeButton.innerHTML = GUI.TEXT_CLOSED;
+    dom$1$1.addClass(this.__closeButton, GUI.CLASS_CLOSE_BUTTON);
+    if (params.closeOnTop) {
+      dom$1$1.addClass(this.__closeButton, GUI.CLASS_CLOSE_TOP);
+      this.domElement.insertBefore(this.__closeButton, this.domElement.childNodes[0]);
+    } else {
+      dom$1$1.addClass(this.__closeButton, GUI.CLASS_CLOSE_BOTTOM);
+      this.domElement.appendChild(this.__closeButton);
+    }
+    dom$1$1.bind(this.__closeButton, 'click', function () {
+      _this.closed = !_this.closed;
+    });
+  } else {
+    if (params.closed === undefined) {
+      params.closed = true;
+    }
+    var titleRowName = document.createTextNode(params.name);
+    dom$1$1.addClass(titleRowName, 'controller-name');
+    titleRow = addRow$1(_this, titleRowName);
+    var onClickTitle = function onClickTitle(e) {
+      e.preventDefault();
+      _this.closed = !_this.closed;
+      return false;
+    };
+    dom$1$1.addClass(this.__ul, GUI.CLASS_CLOSED);
+    dom$1$1.addClass(titleRow, 'title');
+    dom$1$1.bind(titleRow, 'click', onClickTitle);
+    if (!params.closed) {
+      this.closed = false;
+    }
+  }
+  if (params.autoPlace) {
+    if (Common$1.isUndefined(params.parent)) {
+      if (autoPlaceVirgin$1) {
+        autoPlaceContainer$1 = document.createElement('div');
+        dom$1$1.addClass(autoPlaceContainer$1, CSS_NAMESPACE$1);
+        dom$1$1.addClass(autoPlaceContainer$1, GUI.CLASS_AUTO_PLACE_CONTAINER);
+        document.body.appendChild(autoPlaceContainer$1);
+        autoPlaceVirgin$1 = false;
+      }
+      autoPlaceContainer$1.appendChild(this.domElement);
+      dom$1$1.addClass(this.domElement, GUI.CLASS_AUTO_PLACE);
+    }
+    if (!this.parent) {
+      setWidth$1(_this, params.width);
+    }
+  }
+  this.__resizeHandler = function () {
+    _this.onResizeDebounced();
+  };
+  dom$1$1.bind(window, 'resize', this.__resizeHandler);
+  dom$1$1.bind(this.__ul, 'webkitTransitionEnd', this.__resizeHandler);
+  dom$1$1.bind(this.__ul, 'transitionend', this.__resizeHandler);
+  dom$1$1.bind(this.__ul, 'oTransitionEnd', this.__resizeHandler);
+  this.onResize();
+  if (params.resizable) {
+    addResizeHandle$1(this);
+  }
+  saveToLocalStorage = function saveToLocalStorage() {
+    if (SUPPORTS_LOCAL_STORAGE$1 && localStorage.getItem(getLocalStorageHash$1(_this, 'isLocal')) === 'true') {
+      localStorage.setItem(getLocalStorageHash$1(_this, 'gui'), JSON.stringify(_this.getSaveObject()));
+    }
+  };
+  this.saveToLocalStorageIfPossible = saveToLocalStorage;
+  function resetWidth() {
+    var root = _this.getRoot();
+    root.width += 1;
+    Common$1.defer(function () {
+      root.width -= 1;
+    });
+  }
+  if (!params.parent) {
+    resetWidth();
+  }
+};
+GUI$1$1.toggleHide = function () {
+  hide$1 = !hide$1;
+  Common$1.each(hideableGuis$1, function (gui) {
+    gui.domElement.style.display = hide$1 ? 'none' : '';
+  });
+};
+GUI$1$1.CLASS_AUTO_PLACE = 'a';
+GUI$1$1.CLASS_AUTO_PLACE_CONTAINER = 'ac';
+GUI$1$1.CLASS_MAIN = 'main';
+GUI$1$1.CLASS_CONTROLLER_ROW = 'cr';
+GUI$1$1.CLASS_TOO_TALL = 'taller-than-window';
+GUI$1$1.CLASS_CLOSED = 'closed';
+GUI$1$1.CLASS_CLOSE_BUTTON = 'close-button';
+GUI$1$1.CLASS_CLOSE_TOP = 'close-top';
+GUI$1$1.CLASS_CLOSE_BOTTOM = 'close-bottom';
+GUI$1$1.CLASS_DRAG = 'drag';
+GUI$1$1.DEFAULT_WIDTH = 245;
+GUI$1$1.TEXT_CLOSED = 'Close Controls';
+GUI$1$1.TEXT_OPEN = 'Open Controls';
+GUI$1$1._keydownHandler = function (e) {
+  if (document.activeElement.type !== 'text' && (e.which === HIDE_KEY_CODE$1 || e.keyCode === HIDE_KEY_CODE$1)) {
+    GUI$1$1.toggleHide();
+  }
+};
+dom$1$1.bind(window, 'keydown', GUI$1$1._keydownHandler, false);
+Common$1.extend(GUI$1$1.prototype, {
+  add: function add(object, property) {
+    return _add$1(this, object, property, {
+      factoryArgs: Array.prototype.slice.call(arguments, 2)
+    });
+  },
+  addColor: function addColor(object, property) {
+    return _add$1(this, object, property, {
+      color: true
+    });
+  },
+  remove: function remove(controller) {
+    this.__ul.removeChild(controller.__li);
+    this.__controllers.splice(this.__controllers.indexOf(controller), 1);
+    var _this = this;
+    Common$1.defer(function () {
+      _this.onResize();
+    });
+  },
+  destroy: function destroy() {
+    if (this.parent) {
+      throw new Error('Only the root GUI should be removed with .destroy(). ' + 'For subfolders, use gui.removeFolder(folder) instead.');
+    }
+    if (this.autoPlace) {
+      autoPlaceContainer$1.removeChild(this.domElement);
+    }
+    var _this = this;
+    Common$1.each(this.__folders, function (subfolder) {
+      _this.removeFolder(subfolder);
+    });
+    dom$1$1.unbind(window, 'keydown', GUI$1$1._keydownHandler, false);
+    removeListeners$1(this);
+  },
+  addFolder: function addFolder(name) {
+    if (this.__folders[name] !== undefined) {
+      throw new Error('You already have a folder in this GUI by the' + ' name "' + name + '"');
+    }
+    var newGuiParams = { name: name, parent: this };
+    newGuiParams.autoPlace = this.autoPlace;
+    if (this.load && this.load.folders && this.load.folders[name]) {
+      newGuiParams.closed = this.load.folders[name].closed;
+      newGuiParams.load = this.load.folders[name];
+    }
+    var gui = new GUI$1$1(newGuiParams);
+    this.__folders[name] = gui;
+    var li = addRow$1(this, gui.domElement);
+    dom$1$1.addClass(li, 'folder');
+    return gui;
+  },
+  removeFolder: function removeFolder(folder) {
+    this.__ul.removeChild(folder.domElement.parentElement);
+    delete this.__folders[folder.name];
+    if (this.load && this.load.folders && this.load.folders[folder.name]) {
+      delete this.load.folders[folder.name];
+    }
+    removeListeners$1(folder);
+    var _this = this;
+    Common$1.each(folder.__folders, function (subfolder) {
+      folder.removeFolder(subfolder);
+    });
+    Common$1.defer(function () {
+      _this.onResize();
+    });
+  },
+  open: function open() {
+    this.closed = false;
+  },
+  close: function close() {
+    this.closed = true;
+  },
+  hide: function hide() {
+    this.domElement.style.display = 'none';
+  },
+  show: function show() {
+    this.domElement.style.display = '';
+  },
+  onResize: function onResize() {
+    var root = this.getRoot();
+    if (root.scrollable) {
+      var top = dom$1$1.getOffset(root.__ul).top;
+      var h = 0;
+      Common$1.each(root.__ul.childNodes, function (node) {
+        if (!(root.autoPlace && node === root.__save_row)) {
+          h += dom$1$1.getHeight(node);
+        }
+      });
+      if (window.innerHeight - top - CLOSE_BUTTON_HEIGHT$1 < h) {
+        dom$1$1.addClass(root.domElement, GUI$1$1.CLASS_TOO_TALL);
+        root.__ul.style.height = window.innerHeight - top - CLOSE_BUTTON_HEIGHT$1 + 'px';
+      } else {
+        dom$1$1.removeClass(root.domElement, GUI$1$1.CLASS_TOO_TALL);
+        root.__ul.style.height = 'auto';
+      }
+    }
+    if (root.__resize_handle) {
+      Common$1.defer(function () {
+        root.__resize_handle.style.height = root.__ul.offsetHeight + 'px';
+      });
+    }
+    if (root.__closeButton) {
+      root.__closeButton.style.width = root.width + 'px';
+    }
+  },
+  onResizeDebounced: Common$1.debounce(function () {
+    this.onResize();
+  }, 50),
+  remember: function remember() {
+    if (Common$1.isUndefined(SAVE_DIALOGUE$1)) {
+      SAVE_DIALOGUE$1 = new CenteredDiv$1();
+      SAVE_DIALOGUE$1.domElement.innerHTML = saveDialogContents$1;
+    }
+    if (this.parent) {
+      throw new Error('You can only call remember on a top level GUI.');
+    }
+    var _this = this;
+    Common$1.each(Array.prototype.slice.call(arguments), function (object) {
+      if (_this.__rememberedObjects.length === 0) {
+        addSaveMenu$1(_this);
+      }
+      if (_this.__rememberedObjects.indexOf(object) === -1) {
+        _this.__rememberedObjects.push(object);
+      }
+    });
+    if (this.autoPlace) {
+      setWidth$1(this, this.width);
+    }
+  },
+  getRoot: function getRoot() {
+    var gui = this;
+    while (gui.parent) {
+      gui = gui.parent;
+    }
+    return gui;
+  },
+  getSaveObject: function getSaveObject() {
+    var toReturn = this.load;
+    toReturn.closed = this.closed;
+    if (this.__rememberedObjects.length > 0) {
+      toReturn.preset = this.preset;
+      if (!toReturn.remembered) {
+        toReturn.remembered = {};
+      }
+      toReturn.remembered[this.preset] = getCurrentPreset$1(this);
+    }
+    toReturn.folders = {};
+    Common$1.each(this.__folders, function (element, key) {
+      toReturn.folders[key] = element.getSaveObject();
+    });
+    return toReturn;
+  },
+  save: function save() {
+    if (!this.load.remembered) {
+      this.load.remembered = {};
+    }
+    this.load.remembered[this.preset] = getCurrentPreset$1(this);
+    markPresetModified$1(this, false);
+    this.saveToLocalStorageIfPossible();
+  },
+  saveAs: function saveAs(presetName) {
+    if (!this.load.remembered) {
+      this.load.remembered = {};
+      this.load.remembered[DEFAULT_DEFAULT_PRESET_NAME$1] = getCurrentPreset$1(this, true);
+    }
+    this.load.remembered[presetName] = getCurrentPreset$1(this);
+    this.preset = presetName;
+    addPresetOption$1(this, presetName, true);
+    this.saveToLocalStorageIfPossible();
+  },
+  revert: function revert(gui) {
+    Common$1.each(this.__controllers, function (controller) {
+      if (!this.getRoot().load.remembered) {
+        controller.setValue(controller.initialValue);
+      } else {
+        recallSavedValue$1(gui || this.getRoot(), controller);
+      }
+      if (controller.__onFinishChange) {
+        controller.__onFinishChange.call(controller, controller.getValue());
+      }
+    }, this);
+    Common$1.each(this.__folders, function (folder) {
+      folder.revert(folder);
+    });
+    if (!gui) {
+      markPresetModified$1(this.getRoot(), false);
+    }
+  },
+  listen: function listen(controller) {
+    var init = this.__listening.length === 0;
+    this.__listening.push(controller);
+    if (init) {
+      updateDisplays$1(this.__listening);
+    }
+  },
+  updateDisplay: function updateDisplay() {
+    Common$1.each(this.__controllers, function (controller) {
+      controller.updateDisplay();
+    });
+    Common$1.each(this.__folders, function (folder) {
+      folder.updateDisplay();
+    });
+  }
+});
+function addRow$1(gui, newDom, liBefore) {
+  var li = document.createElement('li');
+  if (newDom) {
+    li.appendChild(newDom);
+  }
+  if (liBefore) {
+    gui.__ul.insertBefore(li, liBefore);
+  } else {
+    gui.__ul.appendChild(li);
+  }
+  gui.onResize();
+  return li;
+}
+function removeListeners$1(gui) {
+  dom$1$1.unbind(window, 'resize', gui.__resizeHandler);
+  if (gui.saveToLocalStorageIfPossible) {
+    dom$1$1.unbind(window, 'unload', gui.saveToLocalStorageIfPossible);
+  }
+}
+function markPresetModified$1(gui, modified) {
+  var opt = gui.__preset_select[gui.__preset_select.selectedIndex];
+  if (modified) {
+    opt.innerHTML = opt.value + '*';
+  } else {
+    opt.innerHTML = opt.value;
+  }
+}
+function augmentController$1(gui, li, controller) {
+  controller.__li = li;
+  controller.__gui = gui;
+  Common$1.extend(controller, {
+    options: function options(_options) {
+      if (arguments.length > 1) {
+        var nextSibling = controller.__li.nextElementSibling;
+        controller.remove();
+        return _add$1(gui, controller.object, controller.property, {
+          before: nextSibling,
+          factoryArgs: [Common$1.toArray(arguments)]
+        });
+      }
+      if (Common$1.isArray(_options) || Common$1.isObject(_options)) {
+        var _nextSibling = controller.__li.nextElementSibling;
+        controller.remove();
+        return _add$1(gui, controller.object, controller.property, {
+          before: _nextSibling,
+          factoryArgs: [_options]
+        });
+      }
+    },
+    name: function name(_name) {
+      controller.__li.firstElementChild.firstElementChild.innerHTML = _name;
+      return controller;
+    },
+    listen: function listen() {
+      controller.__gui.listen(controller);
+      return controller;
+    },
+    remove: function remove() {
+      controller.__gui.remove(controller);
+      return controller;
+    }
+  });
+  if (controller instanceof NumberControllerSlider$1) {
+    var box = new NumberControllerBox$1(controller.object, controller.property, { min: controller.__min, max: controller.__max, step: controller.__step });
+    Common$1.each(['updateDisplay', 'onChange', 'onFinishChange', 'step', 'min', 'max'], function (method) {
+      var pc = controller[method];
+      var pb = box[method];
+      controller[method] = box[method] = function () {
+        var args = Array.prototype.slice.call(arguments);
+        pb.apply(box, args);
+        return pc.apply(controller, args);
+      };
+    });
+    dom$1$1.addClass(li, 'has-slider');
+    controller.domElement.insertBefore(box.domElement, controller.domElement.firstElementChild);
+  } else if (controller instanceof NumberControllerBox$1) {
+    var r = function r(returned) {
+      if (Common$1.isNumber(controller.__min) && Common$1.isNumber(controller.__max)) {
+        var oldName = controller.__li.firstElementChild.firstElementChild.innerHTML;
+        var wasListening = controller.__gui.__listening.indexOf(controller) > -1;
+        controller.remove();
+        var newController = _add$1(gui, controller.object, controller.property, {
+          before: controller.__li.nextElementSibling,
+          factoryArgs: [controller.__min, controller.__max, controller.__step]
+        });
+        newController.name(oldName);
+        if (wasListening) newController.listen();
+        return newController;
+      }
+      return returned;
+    };
+    controller.min = Common$1.compose(r, controller.min);
+    controller.max = Common$1.compose(r, controller.max);
+  } else if (controller instanceof BooleanController$1) {
+    dom$1$1.bind(li, 'click', function () {
+      dom$1$1.fakeEvent(controller.__checkbox, 'click');
+    });
+    dom$1$1.bind(controller.__checkbox, 'click', function (e) {
+      e.stopPropagation();
+    });
+  } else if (controller instanceof FunctionController$1) {
+    dom$1$1.bind(li, 'click', function () {
+      dom$1$1.fakeEvent(controller.__button, 'click');
+    });
+    dom$1$1.bind(li, 'mouseover', function () {
+      dom$1$1.addClass(controller.__button, 'hover');
+    });
+    dom$1$1.bind(li, 'mouseout', function () {
+      dom$1$1.removeClass(controller.__button, 'hover');
+    });
+  } else if (controller instanceof ColorController$1) {
+    dom$1$1.addClass(li, 'color');
+    controller.updateDisplay = Common$1.compose(function (val) {
+      li.style.borderLeftColor = controller.__color.toString();
+      return val;
+    }, controller.updateDisplay);
+    controller.updateDisplay();
+  }
+  controller.setValue = Common$1.compose(function (val) {
+    if (gui.getRoot().__preset_select && controller.isModified()) {
+      markPresetModified$1(gui.getRoot(), true);
+    }
+    return val;
+  }, controller.setValue);
+}
+function recallSavedValue$1(gui, controller) {
+  var root = gui.getRoot();
+  var matchedIndex = root.__rememberedObjects.indexOf(controller.object);
+  if (matchedIndex !== -1) {
+    var controllerMap = root.__rememberedObjectIndecesToControllers[matchedIndex];
+    if (controllerMap === undefined) {
+      controllerMap = {};
+      root.__rememberedObjectIndecesToControllers[matchedIndex] = controllerMap;
+    }
+    controllerMap[controller.property] = controller;
+    if (root.load && root.load.remembered) {
+      var presetMap = root.load.remembered;
+      var preset = void 0;
+      if (presetMap[gui.preset]) {
+        preset = presetMap[gui.preset];
+      } else if (presetMap[DEFAULT_DEFAULT_PRESET_NAME$1]) {
+        preset = presetMap[DEFAULT_DEFAULT_PRESET_NAME$1];
+      } else {
+        return;
+      }
+      if (preset[matchedIndex] && preset[matchedIndex][controller.property] !== undefined) {
+        var value = preset[matchedIndex][controller.property];
+        controller.initialValue = value;
+        controller.setValue(value);
+      }
+    }
+  }
+}
+function _add$1(gui, object, property, params) {
+  var customObject;
+  if (object.arguments) {
+    customObject = object;
+    object = customObject.arguments.object;
+    property = customObject.arguments.property;
+    params = {
+      factoryArgs: customObject.arguments.opts
+    };
+  }
+  if (customObject === undefined && object[property] === undefined) {
+    throw new Error('Object "' + object + '" has no property "' + property + '"');
+  }
+  var controller = void 0;
+  if (params.color) {
+    controller = new ColorController$1(object, property);
+  } else if (customObject !== undefined && typeof customObject.property === "string") {
+    controller = customObject;
+  } else {
+    var factoryArgs = [object, property].concat(params.factoryArgs);
+    controller = ControllerFactory$1.apply(gui, factoryArgs);
+  }
+  if (controller === null) controller = customObject;else if (customObject !== undefined) customObject.controller = controller;
+  if (params.before instanceof Controller$1) {
+    params.before = params.before.__li;
+  }
+  recallSavedValue$1(gui, controller);
+  dom$1$1.addClass(controller.domElement, 'c');
+  var name = document.createElement('span');
+  dom$1$1.addClass(name, 'property-name');
+  if (customObject !== undefined && _typeof$2(customObject.property) === "object") {
+    for (var propertyName in customObject.property) {
+      name.appendChild(customObject.property[propertyName]);
+    }
+  } else name.innerHTML = controller.property;
+  var container = document.createElement('div');
+  container.appendChild(name);
+  container.appendChild(controller.domElement);
+  var li = addRow$1(gui, container, params.before);
+  dom$1$1.addClass(li, GUI$1$1.CLASS_CONTROLLER_ROW);
+  if (controller instanceof ColorController$1) {
+    dom$1$1.addClass(li, 'color');
+  } else {
+    dom$1$1.addClass(li, _typeof$2(controller.getValue()));
+  }
+  augmentController$1(gui, li, controller);
+  gui.__controllers.push(controller);
+  return controller;
+}
+function getLocalStorageHash$1(gui, key) {
+  return document.location.href + '.' + key;
+}
+function addPresetOption$1(gui, name, setSelected) {
+  var opt = document.createElement('option');
+  opt.innerHTML = name;
+  opt.value = name;
+  gui.__preset_select.appendChild(opt);
+  if (setSelected) {
+    gui.__preset_select.selectedIndex = gui.__preset_select.length - 1;
+  }
+}
+function showHideExplain$1(gui, explain) {
+  explain.style.display = gui.useLocalStorage ? 'block' : 'none';
+}
+function addSaveMenu$1(gui) {
+  var div = gui.__save_row = document.createElement('li');
+  dom$1$1.addClass(gui.domElement, 'has-save');
+  gui.__ul.insertBefore(div, gui.__ul.firstChild);
+  dom$1$1.addClass(div, 'save-row');
+  var gears = document.createElement('span');
+  gears.innerHTML = '&nbsp;';
+  dom$1$1.addClass(gears, 'button gears');
+  var button = document.createElement('span');
+  button.innerHTML = 'Save';
+  dom$1$1.addClass(button, 'button');
+  dom$1$1.addClass(button, 'save');
+  var button2 = document.createElement('span');
+  button2.innerHTML = 'New';
+  dom$1$1.addClass(button2, 'button');
+  dom$1$1.addClass(button2, 'save-as');
+  var button3 = document.createElement('span');
+  button3.innerHTML = 'Revert';
+  dom$1$1.addClass(button3, 'button');
+  dom$1$1.addClass(button3, 'revert');
+  var select = gui.__preset_select = document.createElement('select');
+  if (gui.load && gui.load.remembered) {
+    Common$1.each(gui.load.remembered, function (value, key) {
+      addPresetOption$1(gui, key, key === gui.preset);
+    });
+  } else {
+    addPresetOption$1(gui, DEFAULT_DEFAULT_PRESET_NAME$1, false);
+  }
+  dom$1$1.bind(select, 'change', function () {
+    for (var index = 0; index < gui.__preset_select.length; index++) {
+      gui.__preset_select[index].innerHTML = gui.__preset_select[index].value;
+    }
+    gui.preset = this.value;
+  });
+  div.appendChild(select);
+  div.appendChild(gears);
+  div.appendChild(button);
+  div.appendChild(button2);
+  div.appendChild(button3);
+  if (SUPPORTS_LOCAL_STORAGE$1) {
+    var explain = document.getElementById('dg-local-explain');
+    var localStorageCheckBox = document.getElementById('dg-local-storage');
+    var saveLocally = document.getElementById('dg-save-locally');
+    saveLocally.style.display = 'block';
+    if (localStorage.getItem(getLocalStorageHash$1(gui, 'isLocal')) === 'true') {
+      localStorageCheckBox.setAttribute('checked', 'checked');
+    }
+    showHideExplain$1(gui, explain);
+    dom$1$1.bind(localStorageCheckBox, 'change', function () {
+      gui.useLocalStorage = !gui.useLocalStorage;
+      showHideExplain$1(gui, explain);
+    });
+  }
+  var newConstructorTextArea = document.getElementById('dg-new-constructor');
+  dom$1$1.bind(newConstructorTextArea, 'keydown', function (e) {
+    if (e.metaKey && (e.which === 67 || e.keyCode === 67)) {
+      SAVE_DIALOGUE$1.hide();
+    }
+  });
+  dom$1$1.bind(gears, 'click', function () {
+    newConstructorTextArea.innerHTML = JSON.stringify(gui.getSaveObject(), undefined, 2);
+    SAVE_DIALOGUE$1.show();
+    newConstructorTextArea.focus();
+    newConstructorTextArea.select();
+  });
+  dom$1$1.bind(button, 'click', function () {
+    gui.save();
+  });
+  dom$1$1.bind(button2, 'click', function () {
+    var presetName = prompt('Enter a new preset name.');
+    if (presetName) {
+      gui.saveAs(presetName);
+    }
+  });
+  dom$1$1.bind(button3, 'click', function () {
+    gui.revert();
+  });
+}
+function addResizeHandle$1(gui) {
+  var pmouseX = void 0;
+  gui.__resize_handle = document.createElement('div');
+  Common$1.extend(gui.__resize_handle.style, {
+    width: '6px',
+    marginLeft: '-3px',
+    height: '200px',
+    cursor: 'ew-resize',
+    position: 'absolute'
+  });
+  function drag(e) {
+    e.preventDefault();
+    gui.width += pmouseX - e.clientX;
+    gui.onResize();
+    pmouseX = e.clientX;
+    return false;
+  }
+  function dragStop() {
+    dom$1$1.removeClass(gui.__closeButton, GUI$1$1.CLASS_DRAG);
+    dom$1$1.unbind(window, 'mousemove', drag);
+    dom$1$1.unbind(window, 'mouseup', dragStop);
+  }
+  function dragStart(e) {
+    e.preventDefault();
+    pmouseX = e.clientX;
+    dom$1$1.addClass(gui.__closeButton, GUI$1$1.CLASS_DRAG);
+    dom$1$1.bind(window, 'mousemove', drag);
+    dom$1$1.bind(window, 'mouseup', dragStop);
+    return false;
+  }
+  dom$1$1.bind(gui.__resize_handle, 'mousedown', dragStart);
+  dom$1$1.bind(gui.__closeButton, 'mousedown', dragStart);
+  gui.domElement.insertBefore(gui.__resize_handle, gui.domElement.firstElementChild);
+}
+function setWidth$1(gui, w) {
+  gui.domElement.style.width = w + 'px';
+  if (gui.__save_row && gui.autoPlace) {
+    gui.__save_row.style.width = w + 'px';
+  }
+  if (gui.__closeButton) {
+    gui.__closeButton.style.width = w + 'px';
+  }
+}
+function getCurrentPreset$1(gui, useInitialValues) {
+  var toReturn = {};
+  Common$1.each(gui.__rememberedObjects, function (val, index) {
+    var savedValues = {};
+    var controllerMap = gui.__rememberedObjectIndecesToControllers[index];
+    Common$1.each(controllerMap, function (controller, property) {
+      savedValues[property] = useInitialValues ? controller.initialValue : controller.getValue();
+    });
+    toReturn[index] = savedValues;
+  });
+  return toReturn;
+}
+function setPresetSelectIndex$1(gui) {
+  for (var index = 0; index < gui.__preset_select.length; index++) {
+    if (gui.__preset_select[index].value === gui.preset) {
+      gui.__preset_select.selectedIndex = index;
+    }
+  }
+}
+function updateDisplays$1(controllerArray) {
+  if (controllerArray.length !== 0) {
+    requestAnimationFrame$1$2.call(window, function () {
+      updateDisplays$1(controllerArray);
+    });
+  }
+  Common$1.each(controllerArray, function (c) {
+    c.updateDisplay();
+  });
+}
+var controllers$1 = {
+  Controller: Controller$1,
+  BooleanController: BooleanController$1,
+  OptionController: OptionController$1,
+  StringController: StringController$1,
+  NumberController: NumberController$1,
+  NumberControllerBox: NumberControllerBox$1,
+  NumberControllerSlider: NumberControllerSlider$1,
+  FunctionController: FunctionController$1,
+  ColorController: ColorController$1,
+  CustomController: CustomController$1
+};
+
+/**
+ * @module Localization.
+ *
+ * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+function getLanguageCode() {
+		function _getLocale() {
+				if (!navigator) {
+						console.error("getLocale() failed! !navigator");
+						return "";
+				}
+				if (navigator.languages !== undefined && typeof navigator.languages !== 'unknown'
+				&& navigator.languages.length > 0) return navigator.languages[0];
+				if (navigator.language) {
+						return navigator.language;
+				} else if (navigator.browserLanguage) {
+						return navigator.browserLanguage;
+				} else if (navigator.systemLanguage) {
+						return navigator.systemLanguage;
+				} else if (navigator.userLanguage) {
+						return navigator.userLanguage;
+				}
+				console.error("getLocale() failed!");
+				return "";
+		}
+		return _getLocale().toLowerCase().match(/([a-z]+)(?:-([a-z]+))?/)[1];
+}
+
+/**
+ * @module PlayController
+ * @description PlayController class for using in my version of dat.gui(https://github.com/anhr/dat.gui) for playing of 3D objects in my projects.
+ *
+ * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+var lang = {
+	prevSymbol: '←',
+	prevSymbolTitle: 'Go to previous animation scene',
+	nextSymbol: '→',
+	nextSymbolTitle: 'Go to next animation scene',
+	playSymbol: '►',
+	playTitle: 'Play',
+	pause: '❚❚',
+	pauseTitle: 'Pause',
+	repeat: '⥀',
+	repeatOn: 'Turn repeat on',
+	repeatOff: 'Turn repeat off',
+	controllerTitle: 'Current time.',
+	fullScreen: 'Full Screen',
+	nonFullScreen: 'Non Full Screen',
+	stereoEffects: 'Stereo effects',
+	mono: 'Mono',
+	sideBySide: 'Side by side',
+	topAndBottom: 'Top and bottom'
+};
+switch (getLanguageCode()) {
+	case 'ru':
+		lang.prevSymbolTitle = 'Кадр назад';
+		lang.playTitle = 'Проиграть';
+		lang.nextSymbolTitle = 'Кадр вперед';
+		lang.pauseTitle = 'Пауза';
+		lang.repeatOn = 'Повторять проигрывание';
+		lang.repeatOff = 'Остановить повтор проигрывания';
+		lang.controllerTitle = 'Текущее время.';
+		lang.fullScreen = 'На весь экран';
+		lang.nonFullScreen = 'Восстановить размеры экрана';
+		lang.stereoEffects = 'Стерео эффекты';
+		lang.mono = 'Моно';
+		lang.sideBySide = 'Слева направо';
+		lang.topAndBottom = 'Сверху вниз';
+		break;
+}
+function addButton(innerHTML, title, onclick) {
+	var button = document.createElement('span');
+	button.innerHTML = innerHTML;
+	button.title = title;
+	button.style.cursor = 'pointer';
+	button.style.margin = '0px 2px';
+	button.onclick = onclick;
+	return button;
+}
+var PlayController = function (_controllers$CustomCo) {
+	inherits(PlayController, _controllers$CustomCo);
+	function PlayController(player, gui) {
+		classCallCheck(this, PlayController);
+		var _getGroup, _selectScene, _renamePlayButtons, _renameRepeatButtons;
+		var colorOff = 'rgb(255,255,255)',
+		    colorOn = 'rgb(128,128,128)';
+		var _this2 = possibleConstructorReturn(this, (PlayController.__proto__ || Object.getPrototypeOf(PlayController)).call(this, {
+			playRate: 1,
+			property: function property(customController) {
+				var buttons = {};
+				function RenamePlayButtons(innerHTML, title) {
+					buttons.buttonPlay.innerHTML = innerHTML;
+					buttons.buttonPlay.title = title;
+				}
+				_renamePlayButtons = RenamePlayButtons;
+				buttons.buttonPrev = addButton(lang.prevSymbol, lang.prevSymbolTitle, player.prev);
+				buttons.buttonPlay = addButton(lang.playSymbol, lang.playTitle, player.play3DObject);
+				if (player.getOptions().settings.max !== null) {
+					var RenameRepeatButtons = function RenameRepeatButtons(isRepeat) {
+						var title, color;
+						if (isRepeat) {
+							title = lang.repeatOff;
+							color = colorOff;
+						} else {
+							title = lang.repeatOn;
+							color = colorOn;
+						}
+						if (buttons.buttonRepeat.title === title) return;
+						buttons.buttonRepeat.title = title;
+						buttons.buttonRepeat.style.color = color;
+						player.onChangeRepeat(isRepeat);
+					};
+					var repeat = function repeat(value) {
+						RenameRepeatButtons(buttons.buttonRepeat.title === lang.repeatOn);
+					};
+					_renameRepeatButtons = RenameRepeatButtons;
+					var title, color;
+					if (player.getOptions().repeat) {
+						title = lang.repeatOff;
+						color = colorOff;
+					} else {
+						title = lang.repeatOn;
+						color = colorOn;
+					}
+					buttons.buttonRepeat = addButton(lang.repeat, title, repeat);
+					buttons.buttonRepeat.style.color = color;
+				}
+				buttons.buttonNext = addButton(lang.nextSymbol, lang.nextSymbolTitle, player.next);
+				function getGroup() {
+					return group;
+				}
+				_getGroup = getGroup;
+				return buttons;
+			}
+		}, 'playRate'));
+		player.PlayController = _this2;
+		_this2.onRenamePlayButtons = function (playing) {
+			var name, title;
+			if (playing) {
+				name = lang.pause;
+				title = lang.pauseTitle;
+			} else {
+				name = lang.playSymbol;
+				title = lang.playTitle;
+			}
+			_renamePlayButtons(name, title, true);
+		};
+		_this2.onChangeRepeat = function () {
+			_renameRepeatButtons(player.getOptions().settings.repeat);
+		};
+		player.pushController(_this2);
+		_this2.onChange = function (value) {
+			player.setTime(value);
+		};
+		_this2.getGroup = function () {
+			return _getGroup();
+		};
+		_this2.selectScene = function (index) {
+			_selectScene(parseInt(index));
+		};
+		_this2.setValue = function (value) {
+			this._controller.domElement.childNodes[0].value = value;
+		};
+		var controler = gui.add(_this2);
+		controler.__truncationSuspended = true;
+		return _this2;
+	}
+	createClass(PlayController, [{
+		key: 'controller',
+		set: function set(newController) {
+			this._controller = newController;
+			var _this = this;
+			this._controller.onChange(function (value) {
+				_this.onChange(value);
+			});
+			this._controller.domElement.title = lang.controllerTitle;
+		},
+		get: function get() {
+			return this._controller;
+		}
+	}]);
+	return PlayController;
+}(controllers$1.CustomController);
 
 /**
  * @module Player
@@ -4358,27 +7092,47 @@ GuiSelectPoint.setTHREE = function (_THREE) {
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 var settings$1;
-function Player(onSelectScene, options) {
+var selectPlaySceneOptions;
+function Player(THREE, group, options) {
 	options = options || {};
+	selectPlaySceneOptions = options.selectPlaySceneOptions;
+	selectPlaySceneOptions = selectPlaySceneOptions || {};
+	selectPlaySceneOptions.boPlayer = selectPlaySceneOptions.boPlayer || false;
+	selectPlaySceneOptions.a = options.a || 1;
+	selectPlaySceneOptions.b = options.b || 0;
+	selectPlaySceneOptions.scales = selectPlaySceneOptions.scales || {};
 	settings$1 = options.settings || {};
-	settings$1.min = settings$1.min || 0;
-	settings$1.max = settings$1.max || 1;
-	settings$1.marks = settings$1.marks || 10;
-	settings$1.repeat = settings$1.repeat || false;
-	settings$1.interval = settings$1.interval || 1;
-	settings$1.zoomMultiplier = settings$1.zoomMultiplier || 1.1;
-	settings$1.offset = settings$1.offset || 0.1;
-	var selectSceneIndex = 0,
-	_this = this;
-	function getTime() {
-		return (settings$1.max - settings$1.min) / (settings$1.marks - 1) * selectSceneIndex + settings$1.min;
+	assignSettings();
+	function onSelectScene(index) {
+		index = index || 0;
+		var t = getTime();
+		Player.selectPlayScene(THREE, group, t, index, options.selectPlaySceneOptions);
+		_this.setIndex(index, (settings$1.name === '' ? '' : settings$1.name + ': ') + t);
+		if (options.onSelectScene) options.onSelectScene(index, t);
 	}
+	setTimeout(function () {
+		onSelectScene();
+	}, 0);
+	var selectSceneIndex = 0;
+	var _this = this;
+	function getTime() {
+		var res = settings$1.min + selectSceneIndex * settings$1.dt;
+		if (isNaN(res)) console.error('Player.getTime(): res = ' + res);
+		return res;
+	}
+	this.setTime = function (t) {
+		this.selectScene(parseInt((t - settings$1.min) / settings$1.dt));
+	};
 	this.selectScene = function (index) {
-		if (index >= settings$1.marks) index = 0;else if (index < 0) index = settings$1.marks - 1;
-		if (selectSceneIndex > settings$1.marks) selectSceneIndex = settings$1.marks;
+		index = parseInt(index);
+		if (settings$1.max !== null) {
+			if (index >= settings$1.marks) index = 0;else if (index < 0) index = settings$1.marks - 1;
+			if (selectSceneIndex > settings$1.marks) selectSceneIndex = settings$1.marks;
+		}
 		while (selectSceneIndex !== index) {
 			if (selectSceneIndex < index) selectSceneIndex++;else selectSceneIndex--;
-			onSelectScene(selectSceneIndex, getTime());
+			console.warn('selectSceneIndex = ' + selectSceneIndex);
+			onSelectScene(selectSceneIndex);
 		}
 	};
 	this.next = function () {
@@ -4388,26 +7142,24 @@ function Player(onSelectScene, options) {
 		_this.selectScene(selectSceneIndex - 1);
 	};
 	this.pushController = function (controller) {
-		if (controller.object !== undefined && controller.object.playRate !== undefined) controller.object.playRate = settings$1.interval;
+		if (controller.object !== undefined && controller.object.playRate !== undefined) controller.object.playRate = settings$1.min;
 		controllers.push(controller);
 	};
 	this.controllers = [];
 	var playing = false,
-	    controllers = this.controllers,
 	    time,
-	    timeNext,
-	    cookie$$1 = options.cookie,
-	    cookieName = 'Player' + (options.cookieName || '');
+	    timeNext;
+	var controllers = this.controllers;
 	function RenamePlayButtons() {
 		controllers.forEach(function (controller) {
-			controller.onRenamePlayButtons(playing);
+			if (controller.onRenamePlayButtons) controller.onRenamePlayButtons(playing);
 		});
 	}
 	function play() {
 		if (selectSceneIndex === -1 || selectSceneIndex === settings$1.marks) {
 			selectSceneIndex = 0;
 		}
-		onSelectScene(selectSceneIndex, getTime());
+		onSelectScene(selectSceneIndex);
 	}
 	function pause() {
 		playing = false;
@@ -4419,7 +7171,7 @@ function Player(onSelectScene, options) {
 	}
 	function playNext() {
 		selectSceneIndex++;
-		if (selectSceneIndex >= settings$1.marks) {
+		if (settings$1.max !== null && selectSceneIndex >= settings$1.marks) {
 			if (isRepeat()) selectSceneIndex = 0;else {
 				pause();
 				return;
@@ -4433,27 +7185,23 @@ function Player(onSelectScene, options) {
 			return;
 		}
 		playing = true;
-		if (selectSceneIndex >= settings$1.marks) selectSceneIndex = -1;
+		if (settings$1.max !== null && selectSceneIndex >= settings$1.marks) selectSceneIndex = -1;
 		playNext();
 		RenamePlayButtons();
-		controllers.forEach(function (controller) {
-			if (controller.controller !== undefined) {
-				settings$1.interval = controller.controller.getValue();
-				return;
-			}
-		});
 		function step(timestamp) {
 			if (playing) window.requestAnimationFrame(step);else time = undefined;
 			if (time === undefined) {
 				time = timestamp;
 				timeNext = time + 1000 / settings$1.interval;
 			}
-			if (isNaN(timeNext)) console.error('Player.animate: timeNext = ' + timeNext);
+			if (isNaN(timeNext) || timeNext === Infinity) {
+				console.error('Player.animate: timeNext = ' + timeNext);
+				playing = false;
+			}
 			if (timestamp < timeNext) return;
 			while (timestamp > timeNext) {
 				timeNext += 1000 / settings$1.interval;
-			}
-			playNext();
+			}playNext();
 		}
 		window.requestAnimationFrame(step);
 	};
@@ -4464,73 +7212,99 @@ function Player(onSelectScene, options) {
 	this.getOptions = function () {
 		return options;
 	};
-	this.getSettings = function () {
-		return options.settings;
-	};
 	this.getSelectSceneIndex = function () {
 		return selectSceneIndex;
-	};
-	function setSettings() {
-		cookie$$1.setObject(cookieName, options.settings);
-		options.onChangeScaleT(options.settings);
-	}
-	this.onChangeTimerId = function (value) {
-		settings$1.interval = value;
-		setSettings();
 	};
 	this.onChangeRepeat = function (value) {
 		settings$1.repeat = value;
 		this.controllers.forEach(function (controller) {
-			controller.onChangeRepeat();
+			if (controller.onChangeRepeat) controller.onChangeRepeat();
 		});
 	};
-	this.gui = function (folder, getLanguageCode) {
-		var lang = {
+	function getLang(params) {
+		params = params || {};
+		var lang$$1 = {
 			player: 'Player',
 			playerTitle: '3D objects animation.',
 			min: 'Min',
 			max: 'Max',
+			dt: 'Step',
 			marks: 'Frames',
 			marksTitle: 'Player frames count',
+			interval: 'Rate',
+			intervalTitle: 'Rate of changing of animation scenes per second.',
+			time: 'Time',
 			defaultButton: 'Default',
 			defaultTitle: 'Restore default player settings.'
 		};
-		var languageCode = getLanguageCode === undefined ? 'en'
-		: getLanguageCode();
-		switch (languageCode) {
+		var _languageCode = params.getLanguageCode === undefined ? 'en'
+		: params.getLanguageCode();
+		switch (_languageCode) {
 			case 'ru':
-				lang.player = 'Проигрыватель';
-				lang.playerTitle = 'Анимация 3D объектов.';
-				lang.min = 'Минимум';
-				lang.max = 'Максимум';
-				lang.marks = 'Кадры';
-				lang.marksTitle = 'Количество кадров проигрывателя';
-				lang.defaultButton = 'Восстановить';
-				lang.defaultTitle = 'Восстановить настройки проигрывателя по умолчанию.';
+				lang$$1.player = 'Проигрыватель';
+				lang$$1.playerTitle = 'Анимация 3D объектов.';
+				lang$$1.min = 'Минимум';
+				lang$$1.max = 'Максимум';
+				lang$$1.dt = 'Шаг';
+				lang$$1.marks = 'Кадры';
+				lang$$1.marksTitle = 'Количество кадров проигрывателя';
+				lang$$1.interval = 'Темп', lang$$1.intervalTitle = 'Скорость смены кадров в секунду.';
+				lang$$1.time = 'Время';
+				lang$$1.defaultButton = 'Восстановить';
+				lang$$1.defaultTitle = 'Восстановить настройки проигрывателя по умолчанию.';
 				break;
 			default:
-				if (options.lang === undefined || options.lang.languageCode != languageCode) break;
-				Object.keys(options.lang).forEach(function (key) {
-					if (lang[key] === undefined) return;
-					lang[key] = options.lang[key];
+				if (params.lang === undefined || params.lang._languageCode != _languageCode) break;
+				Object.keys(params.lang).forEach(function (key) {
+					if (_lang[key] === undefined) return;
+					_lang[key] = params.lang[key];
 				});
 		}
-		var fPlayer = folder.addFolder(lang.player);
-		dat.folderNameAndTitle(fPlayer, lang.player, lang.playerTitle);
-		var playController = this.PlayController;
+		return lang$$1;
+	}
+	this.gui = function (folder) {
+		var guiParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+		guiParams.getLanguageCode = guiParams.getLanguageCode || function () {
+			return "en";
+		};
+		guiParams.cookie = guiParams.cookie || new cookie.defaultCookie();
+		guiParams.cookieName = guiParams.cookieName || '';
+		var cookie$$1 = guiParams.cookie,
+		    cookieName = 'Player' + guiParams.cookieName;
+		function setSettings() {
+			setDT();
+			cookie$$1.setObject(cookieName, settings$1);
+			if (options.onChangeScaleT) options.onChangeScaleT(settings$1);
+		}
+		setMax();
+		var axesDefault = JSON.parse(JSON.stringify(settings$1)),
+		    lang$$1 = getLang({
+			getLanguageCode: guiParams.getLanguageCode
+		});
+		Object.freeze(axesDefault);
+		var max = settings$1.max;
+		cookie$$1.getObject(cookieName, settings$1, settings$1);
+		if (max === null || max === Infinity) {
+			settings$1.max = max;
+		}
+		var fPlayer = folder.addFolder(lang$$1.player);
+		dat.folderNameAndTitle(fPlayer, lang$$1.player, lang$$1.playerTitle);
 		function scale() {
-			var axes = options.settings,
-			    scaleControllers = {};
+			var axes = settings$1,
+			scaleControllers = {};
 			function onclick(customController, action) {
 				var zoom = customController.controller.getValue();
 				axes.min = action(axes.min, zoom);
 				scaleControllers.min.setValue(axes.min);
-				axes.max = action(axes.max, zoom);
-				scaleControllers.max.setValue(axes.max);
+				if (axes.max) {
+					axes.max = action(axes.max, zoom);
+					setDT();
+					scaleControllers.max.setValue(axes.max);
+				}
 				setSettings();
 			}
-			scaleControllers.folder = fPlayer.addFolder(axes.name);
-			scaleControllers.scaleController = scaleControllers.folder.add(new ScaleController(onclick, { settings: options.settings, getLanguageCode: getLanguageCode })).onChange(function (value) {
+			scaleControllers.folder = fPlayer.addFolder(axes.name !== '' ? axes.name : lang$$1.time);
+			scaleControllers.scaleController = scaleControllers.folder.add(new ScaleController(onclick, { settings: options.settings, getLanguageCode: guiParams.getLanguageCode })).onChange(function (value) {
 				axes.zoomMultiplier = value;
 				setSettings();
 			});
@@ -4539,7 +7313,7 @@ function Player(onSelectScene, options) {
 					value += shift;
 					return value;
 				});
-			}, { settings: options.settings, getLanguageCode: getLanguageCode });
+			}, { settings: options.settings, getLanguageCode: guiParams.getLanguageCode });
 			scaleControllers.positionController = scaleControllers.folder.add(positionController).onChange(function (value) {
 				axes.offset = value;
 				setSettings();
@@ -4547,42 +7321,167 @@ function Player(onSelectScene, options) {
 			scaleControllers.min = dat.controllerZeroStep(scaleControllers.folder, axes, 'min', function (value) {
 				setSettings();
 			});
-			dat.controllerNameAndTitle(scaleControllers.min, lang.min);
-			scaleControllers.max = dat.controllerZeroStep(scaleControllers.folder, axes, 'max', function (value) {
-				setSettings();
-			});
-			dat.controllerNameAndTitle(scaleControllers.max, lang.max);
-			if (axes.marks !== undefined) {
-				scaleControllers.marks = dat.controllerZeroStep(scaleControllers.folder, axes, 'marks', function (value) {
+			dat.controllerNameAndTitle(scaleControllers.min, lang$$1.min);
+			setMax();
+			if (axes.max !== null) {
+				scaleControllers.max = dat.controllerZeroStep(scaleControllers.folder, axes, 'max', function (value) {
 					setSettings();
 				});
-				dat.controllerNameAndTitle(scaleControllers.marks, axes.marksName === undefined ? lang.marks : axes.marksName, axes.marksTitle === undefined ? lang.marksTitle : axes.marksTitle);
+				dat.controllerNameAndTitle(scaleControllers.max, lang$$1.max);
+			} else {
+				scaleControllers.dt = dat.controllerZeroStep(scaleControllers.folder, axes, 'dt', function (value) {
+					setSettings();
+				});
+				dat.controllerNameAndTitle(scaleControllers.dt, lang$$1.dt);
 			}
+			if (axes.marks) {
+				scaleControllers.marks = scaleControllers.folder.add(axes, 'marks').onChange(function (value) {
+					axes.marks = parseInt(axes.marks);
+					setSettings();
+					var elSlider = getSliderElement();
+					if (elSlider) elSlider.max = settings$1.marks - 1;
+				});
+				dat.controllerNameAndTitle(scaleControllers.marks, axes.marksName === undefined ? lang$$1.marks : axes.marksName, axes.marksTitle === undefined ? lang$$1.marksTitle : axes.marksTitle);
+			}
+			scaleControllers.interval = scaleControllers.folder.add(options.settings, 'interval', 1, 25, 1).onChange(function (value) {
+				setSettings();
+			});
+			dat.controllerNameAndTitle(scaleControllers.interval, lang$$1.interval, lang$$1.intervalTitle);
 			dat.controllerNameAndTitle(scaleControllers.folder.add({
 				defaultF: function defaultF(value) {
-					playController.setValue(axesDefault.interval);
 					axes.zoomMultiplier = axesDefault.zoomMultiplier;
 					scaleControllers.scaleController.setValue(axes.zoomMultiplier);
 					axes.offset = axesDefault.offset;
 					scaleControllers.positionController.setValue(axes.offset);
 					axes.min = axesDefault.min;
 					scaleControllers.min.setValue(axes.min);
-					axes.max = axesDefault.max;
-					scaleControllers.max.setValue(axes.max);
-					if (axesDefault.marks !== undefined) {
+					if (scaleControllers.max) {
+						axes.max = axesDefault.max;
+						setDT();
+						scaleControllers.max.setValue(axes.max);
+					}
+					if (scaleControllers.dt) {
+						axes.dt = axesDefault.dt;
+						scaleControllers.dt.setValue(axes.dt);
+					}
+					if (axesDefault.marks) {
 						axes.marks = axesDefault.marks;
 						scaleControllers.marks.setValue(axes.marks);
 					}
+					axes.interval = axesDefault.interval;
+					scaleControllers.interval.setValue(axes.interval);
 					setSettings();
 				}
-			}, 'defaultF'), lang.defaultButton, lang.defaultTitle);
+			}, 'defaultF'), lang$$1.defaultButton, lang$$1.defaultTitle);
 		}
 		scale();
 	};
+	var _canvasMenu;
+	this.createCanvasMenuItem = function (canvasMenu) {
+		_canvasMenu = canvasMenu;
+		var player = this,
+		    menu = canvasMenu.menu;
+		menu.push({
+			name: lang.prevSymbol,
+			title: lang.prevSymbolTitle,
+			onclick: function onclick(event) {
+				player.prev();
+			}
+		});
+		menu.push({
+			name: lang.playSymbol,
+			title: lang.playTitle,
+			id: "menuButtonPlay",
+			onclick: function onclick(event) {
+				player.play3DObject();
+			}
+		});
+		if (settings$1.max !== null) {
+			menu.push({
+				name: lang.repeat,
+				title: this.getOptions().repeat ? lang.repeatOff : lang.repeatOn,
+				id: "menuButtonRepeat",
+				onclick: function onclick(event) {
+					player.repeat();
+				}
+			});
+		}
+		menu.push({
+			name: lang.nextSymbol,
+			title: lang.nextSymbolTitle,
+			onclick: function onclick(event) {
+				player.next();
+			}
+		});
+		controllers.push({
+			onRenamePlayButtons: function onRenamePlayButtons(playing) {
+				var name, title;
+				if (playing) {
+					name = lang.pause;
+					title = lang.pauseTitle;
+				} else {
+					name = lang.playSymbol;
+					title = lang.playTitle;
+				}
+				var elMenuButtonPlay = canvasMenu.querySelector('#menuButtonPlay');
+				elMenuButtonPlay.innerHTML = name;
+				elMenuButtonPlay.title = title;
+			},
+			onChangeRepeat: function onChangeRepeat() {
+				canvasMenu.querySelector('#menuButtonRepeat').title = settings$1.repeat ? lang.repeatOff : lang.repeatOn;
+			}
+		});
+	};
+	this.addSlider = function () {
+		if (settings$1.max === null) return;
+		_canvasMenu.menu.push({
+			name: '<input type="range" min="0" max="' + (Player.getSettings().marks - 1) + '" value="0" class="slider" id="sliderPosition">',
+			style: 'float: right;'
+		});
+	};
+	function getSliderElement() {
+		if (_canvasMenu) return _canvasMenu.querySelector('#sliderPosition');
+	}
+	this.addSliderEvents = function ()          {
+		var elSlider = getSliderElement();
+		if (elSlider) {
+			elSlider.onchange = function (event) {
+				_player.selectScene(parseInt(elSlider.value));
+			};
+			elSlider.oninput = function (event) {
+				_player.selectScene(parseInt(elSlider.value));
+			};
+			var pointerdown;
+			var _player = this;
+			elSlider.addEventListener('pointerdown', function (e) {
+				pointerdown = true;
+			});
+			elSlider.addEventListener('pointerup', function (e) {
+				pointerdown = false;
+			});
+			elSlider.addEventListener('mousemove', function (e) {
+				if (!pointerdown) return;
+				_player.selectScene((settings$1.marks - 1) * e.offsetX / elSlider.clientWidth);
+			});
+		}
+		return elSlider;
+	};
+	this.setIndex = function (index, title) {
+		if (this.PlayController) this.PlayController.setValue(getTime());
+		var elSlider = getSliderElement();
+		if (elSlider) {
+			elSlider.value = index;
+			elSlider.title = title;
+		}
+	};
+	this.onChangeScale = function (scale) {
+		getSliderElement().max = scale.marks - 1;
+		this.selectScene(0);
+	};
 }
-Player.execFunc = function (funcs, axisName, t, a, b) {
-	a = a || 1;
-	b = b || 0;
+Player.execFunc = function (funcs, axisName, t) {
+	var a = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1;
+	var b = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
 	var func = funcs[axisName],
 	    typeofFuncs = typeof func === 'undefined' ? 'undefined' : _typeof(func);
 	switch (typeofFuncs) {
@@ -4595,19 +7494,19 @@ Player.execFunc = function (funcs, axisName, t, a, b) {
 		case "object":
 			if (Array.isArray(func)) {
 				var execW = function execW(i) {
-					if (typeof a[i] === "function") return a[i](t, a, b);
-					if (a[i] instanceof THREE.Color) return a[i];
+					if (typeof _a[i] === "function") return _a[i](t, _a, b);
+					if (_a[i] instanceof THREE.Color) return _a[i];
 				};
 				if (func.length === 0) {
 					console.error('Player.execFunc: funcs["' + axisName + '"] array is empty');
 					return;
 				}
-				var a = func,
+				var _a = func,
 				    l = func.length - 1,
-				    max = options.player.max,
-				    min = options.player.min,
-				    tStep = (max - min) / l,
-				    tStart = min,
+				max = settings$1.max === null ? Infinity : settings$1.max,
+				    min = settings$1.min,
+				    tStep = (max - min) / l;
+				var tStart = min,
 				    tStop = max,
 				    iStart = 0,
 				    iStop = l;
@@ -4619,20 +7518,39 @@ Player.execFunc = function (funcs, axisName, t, a, b) {
 						tStop = tStep * iStop + min;
 					}
 				}
-				if (typeof a[iStart] !== "number") {
+				if (typeof _a[iStart] !== "number") {
 					if (axisName === 'w') {
 						return execW(iStart);
 					}
-					console.error('Player.execFunc: funcs["' + axisName + '"] array item ' + iStart + ' typeof = ' + _typeof(a[iStart]) + ' is not number');
-					return;
+					if (_typeof(_a[iStart]) === "object") {
+						for (var i = 0; i < func.length; i++) {
+							if (i === func.length - 1) return _a[i].v;
+							iStart = i;iStop = i + 1;
+							tStart = _a[iStart].t;tStop = _a[iStop].t;
+							if (tStart <= t && tStop > t) {
+								var x = (_a[iStop].v - _a[iStart].v) / (tStop - tStart),
+								    y = _a[iStart].v - x * tStart;
+								return x * t + y;
+							}
+						}
+						console.error('Player.execFunc: value is not detected');
+						return;
+					} else {
+						console.error('Player.execFunc: funcs["' + axisName + '"] array item ' + iStart + ' typeof = ' + _typeof(_a[iStart]) + ' is not number');
+						return;
+					}
 				}
-				if (typeof a[iStop] !== "number") {
+				if (iStop >= func.length) iStop = iStart;
+				if (typeof _a[iStop] !== "number") {
 					if (axisName === 'w') return execW(iStop);
-					console.error('Player.execFunc: funcs["' + axisName + '"] array item ' + iStop + ' typeof = ' + _typeof(a[iStop]) + ' is not number');
-					return;
+					if (_typeof(_a[iStop]) !== "object") {
+						console.error('Player.execFunc: funcs["' + axisName + '"] array item ' + iStop + ' typeof = ' + _typeof(_a[iStop]) + ' is not number');
+						return;
+					}
 				}
-				var x = (a[iStop] - a[iStart]) / (tStop - tStart),
-				    y = a[iStart] - x * tStart;
+				var x = (_a[iStop] - _a[iStart]) / (tStop - tStart),
+				    y = _a[iStart] - x * tStart;
+				if (isNaN(x) || isNaN(y)) console.error('Player.execFunc: invalid x = ' + x + ' or y = ' + y);
 				return x * t + y;
 			}
 			if (func.func) return func.func instanceof Function ? func.func(t, a, b) : func.func;
@@ -4646,96 +7564,121 @@ Player.execFunc = function (funcs, axisName, t, a, b) {
 function palette() {
 	var paletteDefault;
 	this.get = function () {
+		if (selectPlaySceneOptions && selectPlaySceneOptions.palette) return selectPlaySceneOptions.palette;
 		if (!paletteDefault) paletteDefault = new ColorPicker.palette();
 		return paletteDefault;
 	};
 }
 palette = new palette();
+Player.selectMeshPlayScene = function (THREE, mesh, t, index, options) {
+	if (t === undefined) t = Player.getSettings().min;
+	index = index || 0;
+	options = options || selectPlaySceneOptions;
+	if (!mesh.userData.player || options && options.boPlayer && mesh.userData.boFrustumPoints) return;
+	if (mesh.geometry) {
+		delete mesh.geometry.boundingSphere;
+		mesh.geometry.boundingSphere = null;
+	}
+	if (mesh.userData.player.selectPlayScene) mesh.userData.player.selectPlayScene(t);
+	function setAttributes(a, b) {
+		if (!mesh.geometry) return;
+		var attributes = mesh.geometry.attributes,
+		    arrayFuncs = mesh.userData.player.arrayFuncs;
+		if (arrayFuncs === undefined) return;
+		if (t === undefined) console.error('setPosition: t = ' + t);
+		var min, max;
+		if (options && options.scales.w !== undefined) {
+			min = options.scales.w.min;max = options.scales.w.max;
+		} else {
+			max = value;
+			min = max - 1;
+		}
+		for (var i = 0; i < arrayFuncs.length; i++) {
+			var setPosition = function setPosition(axisName, fnName) {
+				var value = Player.execFunc(funcs, axisName, t, a, b);
+				if (value !== undefined) {
+					attributes.position[fnName](i, value);
+					needsUpdate = true;
+				}
+			};
+			var funcs = arrayFuncs[i],
+			    needsUpdate = false;
+			setPosition('x', 'setX');
+			setPosition('y', 'setY');
+			setPosition('z', 'setZ');
+			var color = void 0;
+			if (typeof funcs.w === "function") {
+				var value = funcs.w(t, a, b);
+				attributes.position.setW(i, value);
+				needsUpdate = true;
+				if (mesh.userData.player.palette) color = mesh.userData.player.palette.toColor(value, min, max);else if (options.palette) color = options.palette.toColor(value, min, max);
+			} else if (_typeof(funcs.w) === "object") {
+				if (funcs.w instanceof THREE.Color) color = funcs.w;else if (options.palette) {
+					if (_typeof(funcs.w) === 'object') {
+						if (funcs.w.min) min = funcs.w.min;
+						if (funcs.w.max) max = funcs.w.max;
+					}
+					color = options.palette.toColor(Player.execFunc(funcs, 'w', t, a, b), min, max);
+				}
+			} else if (typeof funcs.w === "number" && options.palette) color = options.palette.toColor(funcs.w, min, max);
+			if (color) {
+				if (!mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors) console.error('Player.selectPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors');
+				if (!Player.setColorAttribute(attributes, i, color) && funcs instanceof THREE.Vector4) {
+					mesh.geometry.setAttribute('color', new THREE.Float32BufferAttribute(Player.getColors(THREE, arrayFuncs, {
+						positions: mesh.geometry.attributes.position,
+						scale: { min: min, max: max },
+						palette: options.palette
+					}), 3));
+					if (!Player.setColorAttribute(attributes, i, color)) console.error('Player.selectPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute');
+				}
+			}
+			if (needsUpdate) attributes.position.needsUpdate = true;
+			if (funcs.line !== undefined) funcs.line.addPoint(getObjectPosition(mesh, i), index, color);
+			if (funcs.cameraTarget) {
+				(function () {
+					var camera = funcs.cameraTarget.camera;
+					camera.userData.cameraTarget.setCameraPosition = function (target) {
+						camera.position.copy(camera.userData.cameraTarget.distanceToCameraCur);
+						if (camera.userData.cameraTarget.rotation) camera.position.applyAxisAngle(camera.userData.cameraTarget.rotation.axis, Player.execFunc(camera.userData.cameraTarget.rotation, 'angle', t));
+						camera.position.add(target);
+						camera.lookAt(target);
+						if (camera.userData.cameraTarget.orbitControls) {
+							camera.userData.cameraTarget.orbitControls.target.copy(target);
+							if (camera.userData.cameraTarget.orbitControlsGui) camera.userData.cameraTarget.orbitControlsGui.setTarget(target);
+						}
+					};
+					if (!camera.userData.cameraTarget.distanceToCameraCur) camera.userData.cameraTarget.distanceToCameraCur = new THREE.Vector3();
+					camera.userData.cameraTarget.distanceToCameraCur.set(Player.execFunc(camera.userData.cameraTarget.distanceToCamera, 'x', t), Player.execFunc(camera.userData.cameraTarget.distanceToCamera, 'y', t), Player.execFunc(camera.userData.cameraTarget.distanceToCamera, 'z', t));
+					var target = getWorldPosition(mesh, new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize));
+					camera.userData.cameraTarget.target = target;
+					camera.userData.cameraTarget.setCameraPosition(target);
+					if (camera.userData.cameraTarget.cameraGui) camera.userData.cameraTarget.cameraGui.update();
+				})();
+			}
+		}
+	}
+	setAttributes(options ? options.a : 1, options ? options.b : 0);
+	var message = 'Player.selectPlayScene: invalid mesh.scale.';
+	if (mesh.scale.x <= 0) console.error(message + 'x = ' + mesh.scale.x);
+	if (mesh.scale.y <= 0) console.error(message + 'y = ' + mesh.scale.y);
+	if (mesh.scale.z <= 0) console.error(message + 'z = ' + mesh.scale.z);
+	if (!options.guiSelectPoint) return;
+	options.guiSelectPoint.setMesh();
+	var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
+	if (selectedPointIndex !== -1 && options.guiSelectPoint.isSelectedMesh(mesh)) {
+		options.guiSelectPoint.setPosition(getObjectPosition(mesh, selectedPointIndex), {
+			object: mesh,
+			index: selectedPointIndex
+		});
+	}
+};
 Player.selectPlayScene = function (THREE, group, t, index, options) {
 	ColorPicker.palette.setTHREE(THREE);
 	options = options || {};
-	options.boPlayer = options.boPlayer || false;
-	options.a = options.a || 1;
-	options.b = options.b || 0;
-	options.palette = options.palette || palette.get();
-	options.scales = options.scales || {};
 	group.userData.t = t;
+	Player.selectMeshPlayScene(THREE, group, t, index);
 	group.children.forEach(function (mesh) {
-		if (
-		!mesh.userData.player || options.boPlayer && mesh.userData.boFrustumPoints) return;
-		delete mesh.geometry.boundingSphere;
-		mesh.geometry.boundingSphere = null;
-		if (mesh.userData.player.selectPlayScene) mesh.userData.player.selectPlayScene(t);
-		function setAttributes(a, b) {
-			var attributes = mesh.geometry.attributes,
-			    arrayFuncs = mesh.userData.player.arrayFuncs;
-			if (arrayFuncs === undefined) return;
-			if (t === undefined) console.error('setPosition: t = ' + t);
-			var min, max;
-			if (options.scales.w !== undefined) {
-				min = options.scales.w.min;max = options.scales.w.max;
-			} else {
-				max = value;
-				min = max - 1;
-			}
-			for (var i = 0; i < arrayFuncs.length; i++) {
-				var setPosition = function setPosition(axisName, fnName) {
-					var value = Player.execFunc(funcs, axisName, t, a, b);
-					if (value !== undefined) {
-						attributes.position[fnName](i, value);
-						needsUpdate = true;
-					}
-				};
-				var funcs = arrayFuncs[i],
-				    needsUpdate = false;
-				setPosition('x', 'setX');
-				setPosition('y', 'setY');
-				setPosition('z', 'setZ');
-				var color = void 0;
-				if (typeof funcs.w === "function") {
-					var value = funcs.w(t, a, b);
-					attributes.position.setW(i, value);
-					needsUpdate = true;
-					if (options.palette) color = options.palette.toColor(value, min, max);
-				} else if (_typeof(funcs.w) === "object") {
-					if (funcs.w instanceof THREE.Color) color = funcs.w;else if (options.palette) {
-						if (_typeof(funcs.w) === 'object') {
-							if (funcs.w.min) min = funcs.w.min;
-							if (funcs.w.max) max = funcs.w.max;
-						}
-						color = options.palette.toColor(Player.execFunc(funcs, 'w', t, a, b), min, max);
-					}
-				} else if (typeof funcs.w === "number" && options.palette) color = options.palette.toColor(funcs.w, min, max);
-				if (color) {
-					if (!mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors) console.error('Player.selectPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors');
-					if (!Player.setColorAttribute(attributes, i, color) && funcs instanceof THREE.Vector4) {
-						mesh.geometry.setAttribute('color', new THREE.Float32BufferAttribute(Player.getColors(THREE, arrayFuncs, {
-							positions: mesh.geometry.attributes.position,
-							scale: { min: min, max: max },
-							palette: options.palette
-						}), 3));
-						if (!Player.setColorAttribute(attributes, i, color)) console.error('Player.selectPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute');
-					}
-				}
-				if (needsUpdate) attributes.position.needsUpdate = true;
-				if (funcs.line !== undefined) funcs.line.addPoint(getObjectPosition(mesh, i), index, color);
-			}
-		}
-		setAttributes(options.a, options.b);
-		var message = 'Player.selectPlayScene: invalid mesh.scale.';
-		if (mesh.scale.x <= 0) console.error(message + 'x = ' + mesh.scale.x);
-		if (mesh.scale.y <= 0) console.error(message + 'y = ' + mesh.scale.y);
-		if (mesh.scale.z <= 0) console.error(message + 'z = ' + mesh.scale.z);
-		if (!options.guiSelectPoint) return;
-		options.guiSelectPoint.setMesh();
-		var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
-		if (selectedPointIndex !== -1 && options.guiSelectPoint.isSelectedMesh(mesh)) {
-			var position = getObjectPosition(mesh, selectedPointIndex);
-			options.guiSelectPoint.setPosition(position, {
-				object: mesh,
-				index: selectedPointIndex
-			});
-		}
+		Player.selectMeshPlayScene(THREE, mesh, t, index);
 	});
 };
 Player.setColorAttribute = function (attributes, i, color) {
@@ -4751,7 +7694,7 @@ Player.setColorAttribute = function (attributes, i, color) {
 Player.getPoints = function (THREE, arrayFuncs, optionsPoints) {
 	GuiSelectPoint.setTHREE(THREE);
 	optionsPoints = optionsPoints || {};
-	optionsPoints.t = optionsPoints.t || 0;
+	if (optionsPoints.t === undefined) optionsPoints.t = 0;
 	var options = optionsPoints.options || {},
 	    a = options.a || 1,
 	    b = options.b || 0;
@@ -4777,8 +7720,19 @@ Player.getPoints = function (THREE, arrayFuncs, optionsPoints) {
 				return;
 			}
 			if (funcs.name !== undefined) funcs.vector.name = funcs.name;
-			if (funcs.trace) {
-				funcs.vector.line = new Player.traceLine(THREE, optionsPoints.group, options);
+			if (funcs.trace) funcs.vector.line = new Player.traceLine(THREE, optionsPoints.group, options);
+			if (funcs.cameraTarget) {
+				funcs.vector.cameraTarget = funcs.cameraTarget;
+				var _camera = funcs.vector.cameraTarget.camera;
+				_camera.userData.cameraTarget = _camera.userData.cameraTarget || {};
+				if (_camera.userData.cameraTarget.ready) console.warn('Player.getPoints: duplicate cameraTarget');
+				_camera.userData.cameraTarget.ready = true;
+				_camera.userData.cameraTarget.distanceToCamera = funcs.vector.cameraTarget.distanceToCamera || _camera.userData.cameraTarget.distanceToCamera || new THREE.Vector3().copy(_camera.position);
+				_camera.userData.cameraTarget.rotation = funcs.cameraTarget.rotation || _camera.userData.cameraTarget.rotation;
+				if (_camera.userData.cameraTarget.rotation) {
+					if (_camera.userData.cameraTarget.rotation.angle === undefined) _camera.userData.cameraTarget.rotation.angle = new Function('t', 'return t');
+					_camera.userData.cameraTarget.rotation.axis = _camera.userData.cameraTarget.rotation.axis || new THREE.Vector3(0, 1, 0);
+				}
 			}
 			arrayFuncs[i] = funcs.vector;
 			funcs = funcs.vector;
@@ -4802,14 +7756,14 @@ Player.getColors = function (THREE, arrayFuncs, optionsColor) {
 	optionsColor.colors = optionsColor.colors || [];
 	var length = Array.isArray(arrayFuncs) ? arrayFuncs.length : optionsColor.positions.count;
 	for (var i = 0; i < length; i++) {
-		var funcs = Array.isArray(arrayFuncs) ? arrayFuncs[i] : undefined,
-		    vector;
+		var funcs = Array.isArray(arrayFuncs) ? arrayFuncs[i] : undefined;
+		var vector;
 		if (funcs instanceof THREE.Vector4 ||
-		optionsColor.positions.itemSize === 4
+		optionsColor.positions && optionsColor.positions.itemSize === 4
 		) {
-				var min,
-				    max,
-				    w = funcs.w;
+				var min = void 0,
+				    max = void 0;
+				var w = funcs.w;
 				if (funcs.w instanceof Object && funcs.w.func) {
 					if (funcs.w.max) max = funcs.w.max;
 					if (funcs.w.min) min = funcs.w.min;
@@ -4817,8 +7771,16 @@ Player.getColors = function (THREE, arrayFuncs, optionsColor) {
 				} else if (optionsColor.scale !== undefined) {
 					min = optionsColor.scale.min;max = optionsColor.scale.max;
 				} else {
-					max = funcs instanceof THREE.Vector4 ? funcs.w : 1;
-					min = max - 1;
+					if (funcs instanceof THREE.Vector4) {
+						if (typeof funcs.w === 'function') {
+							max = 100;
+							min = 0;
+						} else {
+							console.warn('Кажется тут ошибка. Диапазон по умолчанию должен быть от 0 до 100');
+							max = funcs.w;
+							min = max - 1;
+						}
+					} else {}
 				}
 				if (w instanceof Function && !settings$1) {
 					console.error('Player.getColors: remove all functions from all THREE.Vector4.w items of the arrayFuncs.');
@@ -4859,23 +7821,63 @@ Player.traceLine = function (THREE, group, options) {
 		console.error('	If you use getShaderMaterialPoints or MyPoints for create of the points, please add Player: Player into settings parameter of the getShaderMaterialPoints or MyPoints method after creating of the Player.');
 		return;
 	}
-	var MAX_POINTS,
-	line;
-	if (settings$1 && settings$1.marks) MAX_POINTS = settings$1.marks;else if (options.player && options.player.marks) MAX_POINTS = options.player.marks;else {
-		console.error('Player.traceLine: MAX_POINTS = ' + MAX_POINTS + '. Create Player first or remove all trace = true from all items of the arrayFuncs');
-		return;
-	}
+	var line;
+	var arrayLines = [];
 	this.addPoint = function (point, index, color) {
-		if (line === undefined) {
-			var geometry = new THREE.BufferGeometry();
-			var positions = new Float32Array(MAX_POINTS * 3);
+		if (settings$1.max === null) {
+			index = Math.abs(index);
+			if (index < arrayLines.length - 1) {
+				while (index < arrayLines.length - 1) {
+					group.remove(arrayLines[arrayLines.length - 1]);
+					arrayLines.pop();
+				}
+				return;
+			}
+			var geometry = new THREE.BufferGeometry(),
+			    _MAX_POINTS = 2;
+			var positions = new Float32Array(_MAX_POINTS * 3);
 			geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-			var colors = new Float32Array(MAX_POINTS * 3);
+			var colors = new Float32Array(_MAX_POINTS * 3);
 			geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-			geometry.setDrawRange(index, index);
-			line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ vertexColors: THREE.VertexColors }));
+			var _line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ vertexColors: THREE.VertexColors }));
+			group.add(_line);
+			point = new THREE.Vector3().copy(point);
+			var itemSize = _line.geometry.attributes.position.itemSize;
+			point.toArray(_line.geometry.attributes.position.array, 1 * itemSize);
+			var point0 = arrayLines.length === 0 ? point : new THREE.Vector3().fromArray(arrayLines[arrayLines.length - 1].geometry.attributes.position.array, 1 * itemSize);
+			point0.toArray(_line.geometry.attributes.position.array, 0 * itemSize);
+			_line.geometry.attributes.position.needsUpdate = true;
+			if (color === undefined) color = new THREE.Color(1, 1, 1);
+			Player.setColorAttribute(_line.geometry.attributes, 0, arrayLines.length === 0 ? color : new THREE.Color().fromArray(arrayLines[arrayLines.length - 1].geometry.attributes.color.array, 1 * itemSize));
+			Player.setColorAttribute(_line.geometry.attributes, 1, color);
+			arrayLines.push(_line);
+			return;
+		}
+		if (line === undefined) {
+			var _geometry = new THREE.BufferGeometry();
+			var MAX_POINTS;
+			if (settings$1.max !== null) {
+				if (settings$1 && settings$1.marks) MAX_POINTS = settings$1.marks;else if (options.player && options.player.marks) MAX_POINTS = options.player.marks;else {
+					console.error('Player.traceLine: MAX_POINTS = ' + MAX_POINTS + '. Create Player first or remove all trace = true from all items of the arrayFuncs');
+					return;
+				}
+			} else MAX_POINTS = index + 1;
+			var _positions = new Float32Array(MAX_POINTS * 3);
+			_geometry.setAttribute('position', new THREE.BufferAttribute(_positions, 3));
+			var _colors = new Float32Array(MAX_POINTS * 3);
+			_geometry.setAttribute('color', new THREE.Float32BufferAttribute(_colors, 3));
+			_geometry.setDrawRange(index, index);
+			line = new THREE.Line(_geometry, new THREE.LineBasicMaterial({ vertexColors: THREE.VertexColors }));
 			line.visible = true;
 			group.add(line);
+		}
+		if (line.geometry) {
+			delete line.geometry.boundingSphere;
+			line.geometry.boundingSphere = null;
+		}
+		if (line.geometry) {
+			delete line.geometry.boundingSphere;
+			line.geometry.boundingSphere = null;
 		}
 		point = new THREE.Vector3().copy(point);
 		point.toArray(line.geometry.attributes.position.array, index * line.geometry.attributes.position.itemSize);
@@ -4903,6 +7905,33 @@ Player.traceLine = function (THREE, group, options) {
 		line.material.dispose();
 		group.remove(line);
 	};
+};
+function setDT() {
+	if (settings$1.max === null) settings$1.dt = settings$1.dt || 0.1;else settings$1.dt = (settings$1.max - settings$1.min) / (settings$1.marks - 1);
+}
+function setMax() {
+	if (settings$1.max !== null) settings$1.max = settings$1.min + settings$1.dt * (settings$1.marks - 1);
+}
+function assignSettings() {
+	settings$1 = settings$1 || {};
+	settings$1.min = settings$1.min || 0;
+	if (settings$1.max === Infinity) settings$1.max = null;
+	if (settings$1.max !== null) {
+		if (settings$1.max === undefined) settings$1.max = 1;
+		settings$1.marks = settings$1.marks || 10;
+	} else settings$1.marks = null;
+	setDT();
+	settings$1.repeat = settings$1.repeat || false;
+	settings$1.interval = settings$1.interval || 1;
+	settings$1.zoomMultiplier = settings$1.zoomMultiplier || 1.1;
+	settings$1.offset = settings$1.offset || 0.1;
+	settings$1.name = settings$1.name || '';
+}
+Player.getSettings = function () {
+	if (!settings$1) {
+		assignSettings();
+	}
+	return settings$1;
 };
 
 exports['default'] = Player;

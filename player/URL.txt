@@ -1,4 +1,4 @@
-Building
+﻿Building
 
 Open "Node.js command prompt"
 
@@ -6,6 +6,17 @@ d:
 cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\player"
 npm install
 npm run build
+
+(babel plugin) Error: Couldn't find preset "env" relative to directory "D:\\My documents\\MyProjects\\webgl\\three.js\\GitHub\\commonNodeJS\\master\\cookieNodeJS"
+
+	Собрать D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\cookieNodeJS\build
+	как описано в D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\cookieNodeJS\URL.txt
+
+(babel plugin) Error: Couldn't find preset "env" relative to directory "D:\\My documents\\MyProjects\\webgl\\three.js\\GitHub\\commonNodeJS\\master"
+
+	Собрать D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\build
+	как описано в D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\URL.txt
+
 --------------------------------
 isdoc https://github.com/jsdoc/jsdoc
 Getting Started with JSDoc 3 https://jsdoc.app/about-getting-started.html
