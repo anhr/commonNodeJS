@@ -17,9 +17,9 @@
 }(this, (function (exports) { 'use strict';
 
 /**
- * Localization.
+ * @module Localization.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
