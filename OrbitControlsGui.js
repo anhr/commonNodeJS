@@ -1,8 +1,8 @@
 /**
- * OrbitControls graphical user interface
- * @see [OrbitControls]{@link three.js\examples\js\controls\OrbitControls.js}
+ * @module OrbitControlsGui
+ * @description [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls} graphical user interface
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -18,8 +18,8 @@ import { dat } from './dat/dat.module.js';
 
 /**
  * OrbitControls graphical user interface
- * @param {GUI} gui instance of the dat.GUI
- * @param {OrbitControls} orbitControls [OrbitControls]{@link three.js\examples\js\controls\OrbitControls.js}
+ * @param {GUI} gui is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}.
+ * @param {OrbitControls} orbitControls [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}
  * @param {object} [options={}] the following options are available:
  * @param {object} [options.scales={}] axes scales.
  * See [AxesHelper(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/jsdoc/module-AxesHelper.html} options.scales for details.
@@ -57,7 +57,7 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 	//Localization
 
-	var lang = {
+	const lang = {
 
 		orbitControls: 'Orbit controls',
 		defaultButton: 'Default',
@@ -66,7 +66,7 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 	};
 
-	var _languageCode = options.getLanguageCode === undefined ? 'en'//Default language is English
+	const _languageCode = options.getLanguageCode === undefined ? 'en'//Default language is English
 		: options.getLanguageCode();
 	switch ( _languageCode ) {
 
@@ -90,7 +90,7 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 	}
 
-	var fOrbitControls = gui.addFolder( lang.orbitControls ),
+	const fOrbitControls = gui.addFolder( lang.orbitControls ),
 		fX = !options.scales.x ? undefined : fOrbitControls.addFolder( options.scales.x.name ),
 		fY = !options.scales.y ? undefined : fOrbitControls.addFolder( options.scales.y.name ),
 		fZ = !options.scales.z ? undefined : fOrbitControls.addFolder( options.scales.z.name );
@@ -118,7 +118,7 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 		} ) );
 
 		//target
-		var target = dat.controllerZeroStep( folder, orbitControls.target, axisIndex, function ( value ) {
+		const target = dat.controllerZeroStep( folder, orbitControls.target, axisIndex, function ( value ) {
 
 			setTarget( value );
 
@@ -139,7 +139,7 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 		return target;
 
 	}
-	var targetX = addTarget( fX, 'x' ),
+	const targetX = addTarget( fX, 'x' ),
 		targetY = addTarget( fY, 'y' ),
 		targetZ = addTarget( fZ, 'z' );
 
@@ -160,6 +160,12 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 	}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
 	if ( this )
+		/**
+		 * Set camera [target]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls.target}.
+		 * @function OrbitControlsGui.
+		 * setTarget
+		 * @param {THREE.Vector3} target new camera [target]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls.target}
+		 */
 		this.setTarget = function( target ){
 
 			targetX.setValue( target.x );
