@@ -17,6 +17,10 @@ npm run build
 	Собрать D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\build
 	как описано в D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\URL.txt
 
+(uglify plugin) Error: Error transforming bundle with 'uglify' plugin: Unexpected token: keyword «default», expected: punc «;»
+	Врзможно устарела uglify
+	Попробовать установить новую версию https://github.com/mishoo/UglifyJS
+
 --------------------------------
 isdoc https://github.com/jsdoc/jsdoc
 Getting Started with JSDoc 3 https://jsdoc.app/about-getting-started.html

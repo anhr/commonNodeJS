@@ -26,9 +26,11 @@
 
 	<script type="module">
 
-		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.min.js';
 		//import * as THREE from '../../../../three.js/dev/build/three.module.js';
-		import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
+		//import * as THREE from '../../../../three.js/dev/build/three.min.js';
+		//import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
 		import { dat } from '../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
@@ -47,8 +49,11 @@
 		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
+		//import Player from '../build/player.module.js';
+		//import Player from '../build/player.module.min.js';
 		import Player from '../player.js';
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
+		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
 
 		import ColorPicker from '../../colorpicker/colorpicker.js';//https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 		//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
@@ -77,6 +82,10 @@
 		import OrbitControlsGui from '../../OrbitControlsGui.js';
 		//import OrbitControlsGui from 'https://raw.githack.com/anhr/commonNodeJS/master/OrbitControlsGui.js';
 
+		//import CameraGui from 'http://localhost/anhr/commonNodeJS/master/CameraGui.js';
+		import CameraGui from '../../CameraGui.js';
+		//import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
+
 //		import { getWorldPosition } from '../../guiSelectPoint/guiSelectPoint.js';
 
 		var camera, scene, renderer, stereoEffect, controls, player;
@@ -90,6 +99,7 @@
 			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
 			camera.userData.cameraTarget = {
 
+				Player: Player,
 				rotation: {
 
 					//angle: Math.PI,
@@ -99,6 +109,7 @@
 					//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
 
 				},
+				//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
 				//distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) ),
 				distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
 
@@ -163,7 +174,7 @@
 						interval: 25,//Ticks per seconds.
 						//min: -1,
 						//max: 0,
-						max: Infinity,//первращается в null после чтения из cookie
+						//max: Infinity,//первращается в null после чтения из cookie
 						dt: 0.01,
 
 					},
@@ -315,6 +326,7 @@
 					{
 
 						Player: typeof Player === 'undefined' ? undefined : Player,
+//						player: player,
 						options: { palette: palette, },//нужно на случай если не создан плеер
 //						tMin: player ? Player.getSettings().min : undefined,
 
@@ -467,7 +479,7 @@
 			}
 */
 
-			//Using [dat.gui](https://github.com/anhr/dat.gui) for change of the StereoEffect settings.
+			//Using [dat.gui](https://github.com/anhr/dat.gui) for change of the settings.
 
 			if ( typeof dat !== "undefined" ) {
 
@@ -480,28 +492,29 @@
 						cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
 
 					} );
-				if ( typeof OrbitControlsGui !== 'undefined' ){
-
+				if ( typeof OrbitControlsGui !== 'undefined' )
 					camera.userData.cameraTarget.orbitControlsGui = new OrbitControlsGui( gui, controls, {
 
 						getLanguageCode: getLanguageCode,
 						scales: { x: {}, y: {}, z: {}, },
 
 					} );
-					
-				}
+				if ( typeof CameraGui !== 'undefined' )
+					new CameraGui( gui, camera, {
+
+						getLanguageCode: getLanguageCode,
+						orbitControls: controls,
+
+					} );
 				if ( player !== undefined ) {
 
-					player.gui( gui, typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode );
-					if ( typeof controllerPlay !== 'undefined' ) {
+					player.gui( gui, {
 
+						getLanguageCode: typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode
+
+					} );
+					if ( typeof controllerPlay !== 'undefined' )
 						controllerPlay.create( player, gui );
-/*						
-						const controler = gui.add( controllerPlay.create( player ) );
-						controler.__truncationSuspended = true;
-*/						
-
-					}
 
 				}
 

@@ -58,6 +58,7 @@
     }
   },
   "dependencies": {
-    "error-js": "0.0.5"
+    "error-js": "0.0.5",
+    "uglify-es": "^3.3.9"
   }
 }

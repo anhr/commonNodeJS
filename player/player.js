@@ -66,13 +66,12 @@ var settings,
  * @param {object} [options.selectPlaySceneOptions] See [Player.selectPlayScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.selectPlayScene} options parameter.
  * @param {onSelectScene} [options.onSelectScene] This function is called at each new step of the playing. See [onSelectScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene}.
  * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings. See [onChangeScaleT]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onChangeScaleT}.
- * @param {object} [options.cookie] Your custom cookie function for saving and loading of the Player settings. Default cookie is not saving settings.
- * @param {number} [options.settings] time settings.
+ * @param {object} [options.settings] time settings.
  * @param {number} [options.settings.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
  * @param {number} [options.settings.interval=1] Ticks per seconds.
  * @param {number} [options.settings.min=0] Animation start time.
  * @param {number} [options.settings.max=1] Animation end time. Set to Infinity or null if you want to play to infinity.
- * @param {number} [options.settings.dt=0.1] Step of the animation. Have effect only if options.settings.max is null.
+ * @param {number} [options.settings.dt=0.1] Step of the animation. Have effect only if options.settings.max is infinity or null.
  * @param {boolean} [options.settings.repeat=false] true - Infinitely repeating 3D objects animation.
  * @param {number} [options.settings.zoomMultiplier=1.1] zoom multiplier of the time.
  * @param {number} [options.settings.offset=0.1] offset of the time.
@@ -114,6 +113,47 @@ function Player( THREE, group, options ) {
 	settings.name = settings.name || '';
 */
 
+	/**
+	 * Select a scene for playing
+	 * @function Player.
+	 * selectPlayScene
+	 * @param {THREE.Group} group [THREE.Group]{@link https://threejs.org/docs/index.html#api/en/objects/Group}
+	 * @param {number} t time
+	 * @param {number} index index of the time.
+	 * @param {object} [options] the following options are available
+	 * @param {boolean} [options.boPlayer] true - is not select play scene for mesh.userData.boFrustumPoints = true. Default is false.
+	 * @param {number} [options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
+	 * @param {number} [options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
+	 * @param {object} [options.scales] axes scales. See {@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html|AxesHelper}. Default is {}
+	 * @param {object} [options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
+	 * <pre>
+	 * Example:
+	 * new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
+	 * </pre>
+	 * @param {object} [options.guiSelectPoint] See [GuiSelectPoint]{@link https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/module-GuiSelectPoint.html#~GuiSelectPoint}.
+	 * <pre>
+	 * Example:
+	 * new GuiSelectPoint();
+	 * </pre>
+	 */
+	function selectPlayScene( group, t, index, options ) {
+
+		//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
+		//Другими словами если не вызывается Player.getColors
+		ColorPicker.palette.setTHREE( THREE );
+
+		options = options || {};
+
+		group.userData.t = t;
+		Player.selectMeshPlayScene( THREE, group, t, index );//, options );
+		group.children.forEach( function ( mesh ) {
+
+			Player.selectMeshPlayScene( THREE, mesh, t, index );//, options );
+
+		} );
+
+	}
+
 	var boSelectFirstScene = true;
 	/**
 	 * @description This function is called at each new step of the playing.
@@ -136,7 +176,7 @@ function Player( THREE, group, options ) {
 
 		}
 */
-		Player.selectPlayScene( THREE, group, t, index, options.selectPlaySceneOptions );
+		selectPlayScene( group, t, index, options.selectPlaySceneOptions );
 		_this.setIndex( index, ( settings.name === '' ? '' : settings.name + ': ' ) + t );
 		if ( options.onSelectScene ) options.onSelectScene( index, t );
 
@@ -188,10 +228,6 @@ function Player( THREE, group, options ) {
 			if ( selectSceneIndex < index )
 				selectSceneIndex++;
 			else selectSceneIndex--;
-/*
-			const t = getTime();
-			onSelectScene( selectSceneIndex, t );
-*/
 			onSelectScene( selectSceneIndex );
 			
 		}
@@ -237,8 +273,8 @@ function Player( THREE, group, options ) {
 
 	this.controllers = [];
 	var playing = false, time, timeNext;
-	const controllers = this.controllers,
-		cookie = options.cookie || new Cookie.defaultCookie(), cookieName = 'Player' + ( options.cookieName || '' );
+	const controllers = this.controllers;
+//		cookie = options.cookie || new Cookie.defaultCookie(), cookieName = 'Player' + ( options.cookieName || '' );
 
 	function RenamePlayButtons() {
 
@@ -382,28 +418,20 @@ function Player( THREE, group, options ) {
 	 */
 	this.getSelectSceneIndex = function () { return selectSceneIndex; }
 
-
-	function setSettings() {
-
-		setDT();
-		cookie.setObject( cookieName, options.settings );
-		if ( options.onChangeScaleT ) options.onChangeScaleT( options.settings );
-
-	}
-
-	/**
+	/* *
 	 * User has changed the rate of changing of animation scenes per second.
 	 * @function Player.
 	 * onChangeTimerId
 	 * @param {number} value new rate
 	 */
+/*
 	this.onChangeTimerId = function ( value ) {
 
 		settings.interval = value;
 		setSettings();
 
 	}
-
+*/
 	/**
 	 * Event of the changing of the rate of changing of animation scenes per second.
 	 * @function Player.
@@ -490,26 +518,63 @@ function Player( THREE, group, options ) {
 	 * @function Player.
 	 * gui
 	 * @param {GUI} folder Player's folder
-	 * @param {Function} [getLanguageCode="en"] Your custom getLanguageCode() function.
+	 * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
+	 * @param {Function} [guiParams.getLanguageCode="en"] Your custom getLanguageCode() function.
 	 * <pre>
 	 * returns the "primary language" subtag of the language version of the browser.
 	 * Examples: "en" - English language, "ru" Russian.
-	 * See the "Syntax" paragraph of RFC 4646 {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
+	 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
 	 * Default returns the 'en' is English language.
-	 * You can import { getLanguageCode } from 'commonNodeJS/master/lang.js';
+	 * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
+	 * </pre>
+	 * @param {object} [guiParams.lang] Object with localized language values
+	 * <pre>
+	 * Example Using of guiParams.lang:
+	 * guiParams = {
+	 *
+	 * 	getLanguageCode: function() { return 'az'; },
+	 * 	lang: { textHeight: 'mətn boyu', languageCode: 'az' },
+	 *
+	 * }
+	 * </pre>
+	 * @param {Cookie} [guiParams.cookie=new Cookie.defaultCookie()] Your custom cookie function for saving and loading of the SpriteText settings. Default cookie is not saving settings.
+	 * @param {string} [guiParams.cookieName=""] Name of the cookie is "Player" + guiParams.cookieName.
 	 */
-	this.gui = function ( folder, getLanguageCode ) {
+	this.gui = function ( folder, guiParams = {} ) {
 
+		guiParams.getLanguageCode = guiParams.getLanguageCode || function(){ return "en"; };
+		guiParams.cookie = guiParams.cookie || new Cookie.defaultCookie();
+		guiParams.cookieName = guiParams.cookieName || '';
+		
+		const cookie = guiParams.cookie, cookieName = 'Player' + guiParams.cookieName;
+		function setSettings() {
+
+			setDT();
+			cookie.setObject( cookieName, settings );
+			if ( options.onChangeScaleT ) options.onChangeScaleT( settings );
+
+		}
 		setMax();
 		const axesDefault = JSON.parse( JSON.stringify( settings ) ),
 			lang = getLang( {
 
-			getLanguageCode: getLanguageCode,
+			getLanguageCode: guiParams.getLanguageCode,
 			//lang: guiParams.lang
 
 		} );
 		Object.freeze( axesDefault );
+/*		
+		options.cookie = options.cookie || cookie;
 		options.cookie.getObject( cookieName, settings, settings );
+*/		
+		const max = settings.max;
+		cookie.getObject( cookieName, settings, settings );
+		if ( ( max === null ) || ( max === Infinity ) ) {
+
+			settings.max = max;
+//			settings.marks = null;
+
+		}
 
 		const fPlayer = folder.addFolder( lang.player );
 		dat.folderNameAndTitle( fPlayer, lang.player, lang.playerTitle );
@@ -543,7 +608,7 @@ function Player( THREE, group, options ) {
 			scaleControllers.folder = fPlayer.addFolder( axes.name !== '' ? axes.name : lang.time );
 
 			scaleControllers.scaleController = scaleControllers.folder.add( new ScaleController( onclick, 
-				{ settings: options.settings, getLanguageCode: getLanguageCode, } ) ).onChange( function ( value ) {
+				{ settings: options.settings, getLanguageCode: guiParams.getLanguageCode, } ) ).onChange( function ( value ) {
 
 				axes.zoomMultiplier = value;
 				setSettings();
@@ -559,7 +624,7 @@ function Player( THREE, group, options ) {
 
 				} );
 
-			}, { settings: options.settings, getLanguageCode: getLanguageCode, } );
+			}, { settings: options.settings, getLanguageCode: guiParams.getLanguageCode, } );
 			scaleControllers.positionController = scaleControllers.folder.add( positionController ).onChange( function ( value ) {
 
 				axes.offset = value;
@@ -899,10 +964,6 @@ Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 				}
 				const a = func,
 					l = func.length - 1,
-/*					
-					max = options.player.max,
-					min = options.player.min,
-*/					
 					max = settings.max === null ? Infinity : settings.max,
 					min = settings.min,
 					tStep = ( max - min ) / l;
@@ -1161,7 +1222,35 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 			if ( funcs.cameraTarget ) {
 
 				const camera = funcs.cameraTarget.camera;
-//				camera.position.copy( camera.userData.cameraTarget.distanceToCamera );
+
+				camera.userData.cameraTarget.setCameraPosition = function( target ) {
+
+					camera.position.copy( camera.userData.cameraTarget.distanceToCameraCur );
+					if ( camera.userData.cameraTarget.rotation )
+						camera.position.applyAxisAngle( camera.userData.cameraTarget.rotation.axis,
+							Player.execFunc( camera.userData.cameraTarget.rotation, 'angle', t ) );
+//					const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
+					camera.position.add( target );
+					camera.lookAt( target );
+					if ( camera.userData.cameraTarget.orbitControls ) {
+
+						camera.userData.cameraTarget.orbitControls.target.copy( target );
+						if ( camera.userData.cameraTarget.orbitControlsGui )
+							camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
+
+					}
+
+				}
+				if ( !camera.userData.cameraTarget.distanceToCameraCur )
+					camera.userData.cameraTarget.distanceToCameraCur = new THREE.Vector3();
+				camera.userData.cameraTarget.distanceToCameraCur.set(
+
+					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'x', t ),
+					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'y', t ),
+					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'z', t )
+
+				);
+/*				
 				camera.position.set(
 
 					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'x', t ),
@@ -1169,11 +1258,24 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'z', t )
 
 				);
+
+				if ( camera.userData.cameraTarget.distanceToCameraCur )
+					camera.userData.cameraTarget.distanceToCameraCur.copy( camera.position );
+				else camera.userData.cameraTarget.distanceToCameraCur = new THREE.Vector3( camera.position.x, camera.position.y, camera.position.z );
+*/				
+
+				const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
+				camera.userData.cameraTarget.target = target;
+				camera.userData.cameraTarget.setCameraPosition( target );
+				if ( camera.userData.cameraTarget.cameraGui )
+					camera.userData.cameraTarget.cameraGui.update();
+/*
 				if ( camera.userData.cameraTarget.rotation )
 					camera.position.applyAxisAngle( camera.userData.cameraTarget.rotation.axis,
 						Player.execFunc( camera.userData.cameraTarget.rotation, 'angle', t ) );
-				const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
 				camera.position.add( target );
+				if ( camera.userData.cameraTarget.cameraGui )
+					camera.userData.cameraTarget.cameraGui.update();
 				camera.lookAt( target );
 				if ( camera.userData.cameraTarget.orbitControls ) {
 
@@ -1182,6 +1284,7 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 						camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
 
 				}
+*/				
 				
 			}
 
@@ -1210,57 +1313,6 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 		} );
 
 	}
-
-}
-/**
- * Select a scene for playing
- * @function Player.
- * selectPlayScene
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
- * @param {THREE.Group} group [THREE.Group]{@link https://threejs.org/docs/index.html#api/en/objects/Group}
- * @param {number} t time
- * @param {number} index index of the time.
- * @param {object} [options] the following options are available
- * @param {boolean} [options.boPlayer] true - is not select play scene for mesh.userData.boFrustumPoints = true. Default is false.
- * @param {number} [options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
- * @param {number} [options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
- * @param {object} [options.scales] axes scales. See {@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html|AxesHelper}. Default is {}
- * @param {object} [options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
- * <pre>
- * Example:
- * new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
- * </pre>
- * @param {object} [options.guiSelectPoint] See [GuiSelectPoint]{@link https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/module-GuiSelectPoint.html#~GuiSelectPoint}.
- * <pre>
- * Example:
- * new GuiSelectPoint();
- * </pre>
- */
-Player.selectPlayScene = function ( THREE, group, t, index, options ) {
-
-	//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
-	//Другими словами если не вызывается Player.getColors
-	ColorPicker.palette.setTHREE( THREE );
-	
-	options = options || {};
-/*
-	options.boPlayer = options.boPlayer || false;
-
-	options.a = options.a || 1;
-	options.b = options.b || 0;
-
-	options.palette = options.palette || palette || palette.get();//paletteDefault;
-
-	options.scales = options.scales || {};
-*/
-	
-	group.userData.t = t;
-	Player.selectMeshPlayScene( THREE, group, t, index );//, options );
-	group.children.forEach( function ( mesh ) {
-
-		Player.selectMeshPlayScene( THREE, mesh, t, index );//, options );
-
-	} );
 
 }
 
@@ -1380,8 +1432,10 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  *         Example 2: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] )
  *         Default is camera.position.
  *      [orbitControls]: [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}. Change the OrbitControl setting during playing.
-
-},
+ *      [orbitControlsGui]: [OrbitControlsGui]{@link https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/OrbitControlsGui/index.html} instance;
+ *
+ *   },
+ *
  * }
  * or
  * object: {
@@ -1520,6 +1574,7 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
 				funcs.vector.cameraTarget = funcs.cameraTarget;
 				const camera = funcs.vector.cameraTarget.camera;
 				camera.userData.cameraTarget = camera.userData.cameraTarget || {};
+				camera.userData.cameraTarget.Player = camera.userData.cameraTarget.Player || Player;
 
 				if ( camera.userData.cameraTarget.ready ) console.warn( 'Player.getPoints: duplicate cameraTarget' );
 				camera.userData.cameraTarget.ready = true;
@@ -1530,7 +1585,8 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
 				camera.userData.cameraTarget.rotation = funcs.cameraTarget.rotation || camera.userData.cameraTarget.rotation;
 				if ( camera.userData.cameraTarget.rotation ) {
 
-					camera.userData.cameraTarget.rotation.angle = camera.userData.cameraTarget.rotation.angle || new Function( 't', 'return t' );
+					if ( camera.userData.cameraTarget.rotation.angle === undefined )
+						camera.userData.cameraTarget.rotation.angle = new Function( 't', 'return t' );
 					camera.userData.cameraTarget.rotation.axis = camera.userData.cameraTarget.rotation.axis || new THREE.Vector3( 0, 1, 0 );//Rotate around y axis
 						
 				}
@@ -1889,6 +1945,24 @@ Player.traceLine = function ( THREE, group, options ) {
 			line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
 			line.visible = true;
 			group.add( line );
+
+		}
+
+		if ( line.geometry ) {//scene do not have geometry
+
+			delete line.geometry.boundingSphere;
+			line.geometry.boundingSphere = null;
+
+		}
+
+		//Если не удалять boundingSphere
+		//и если двигается камера от проигрывания или ее перемещает пользователь
+		//то в некоторых случаях линию не будет видно даже если она не выходит из поля видимости
+		//потому что она выходит за рамки frustupoints
+		if ( line.geometry ) {//scene do not have geometry
+
+			delete line.geometry.boundingSphere;
+			line.geometry.boundingSphere = null;
 
 		}
 
