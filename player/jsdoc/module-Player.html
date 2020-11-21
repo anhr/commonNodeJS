@@ -421,46 +421,13 @@
 
         <tr>
             
-                <td class="name"><code>cookie</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Your custom cookie function for saving and loading of the Player settings. Default cookie is not saving settings.</td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>settings</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">object</span>
 
 
             
@@ -698,7 +665,7 @@
                 </td>
             
 
-            <td class="description last">Step of the animation. Have effect only if options.settings.max is null.</td>
+            <td class="description last">Step of the animation. Have effect only if options.settings.max is infinity or null.</td>
         </tr>
 
     
@@ -909,7 +876,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line81">line 81</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line80">line 80</a>
     </li></ul></dd>
     
 
@@ -997,7 +964,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line779">line 779</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line828">line 828</a>
     </li></ul></dd>
     
 
@@ -1085,7 +1052,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line801">line 801</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line850">line 850</a>
     </li></ul></dd>
     
 
@@ -1232,7 +1199,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line682">line 682</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line731">line 731</a>
     </li></ul></dd>
     
 
@@ -1533,7 +1500,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line866">line 866</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line915">line 915</a>
     </li></ul></dd>
     
 
@@ -2043,7 +2010,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1580">line 1580</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1612">line 1612</a>
     </li></ul></dd>
     
 
@@ -2137,7 +2104,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line366">line 366</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line386">line 386</a>
     </li></ul></dd>
     
 
@@ -2296,9 +2263,7 @@
 
             
 
-            <td class="description last">points.geometry.attributes.position array<pre>THREE.Vector4: 4D point.THREE.Vector3: 3D point. w = 1. Default is white colorTHREE.Vector2: 2D point. w = 1, z = 0. Default is white colorVector's x, y, z, w is position of the point.Can be as:<ul><li>float - position of the point.</li>Example: 0.5<li>[float] - array of positions of the point.</li>Example 1: [0.6, 0, -0.5]0.6 is positon for t = min is start time of the playing.0 is position for t = ( max - min ) / 2-0.5 is positon for t = max is stop time of the playing.If stop time of the playing is infinity, then position is equal to the first item of the array or 0.6 in the example 1.Example 2: [{ t: 0, v: 0.6 }, { t: 1, v: -0.6 }]Every item of array is object with:t is timev is position for current t.<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a> - position of the point is function of the t.Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )</li></ul>Vector.w is index of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">palette</a>.Default range of the Vector.w is from 0 to 100. You can change range by use an object:{  func: Vector.w  max: new max value of tne Vector.w  min: new min value of tne Vector.w}Example:{  func: new Function( 't', 'return 1-2*t' ),  min: -1,  max: 1,}Vector.w can be as THREE.Color. Example: new THREE.Color( "rgb(255, 127, 0)" )object: {  vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position  [name]: point name. Default is undefined.  [trace]: true - displays the trace of the point movement. Default is undefined.    //You can set the camera to look at a point. Use <b>cameraTarget</b> key for it.  //ATTENTION!!! Only one point can have <b>cameraTarget</b> key!  //   You will receive the     //      Player.getPoints: duplicate cameraTarget    //   console warning if two or more points have <b>cameraTarget</b> key.  //   Then only last point with <b>cameraTarget</b> key will be have an effect.  [cameraTarget]: {     camera: <a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">camera</a>,          //rotation camera around point specified by an axis and an angle. Default is undefined - no rotation     [rotation]: {             [angle]: number|function|array. Angle of rotation in radians.           number. Example: Math.PI / 2 rotate to 90 degrees.           function. Example: new Function( 't', 'return 5*t' ).           array. Example 1: [0, Math.PI]                 0 is angle for t = min is start time of the playing.                 Math.PI is rotate to 180 degrees for t = max is time of the stopping of the playing.                 If max time is infinity, then angle is for t = min.              Example 2: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }                 t is time,                 v is angle for current t.                      Default is new Function( 't', 'return t' )        [axis]: THREE.Vector3. Axis of rotattion. Example: new THREE.Vector3( 1, 0, 0 ) - rotate around x axis.           Default is new THREE.Vector3( 0, 1, 0 );//Rotate around y axis                },          [distanceToCamera]: THREE.Vector3. Distance from point to camera.        You can set the distance to the camera depending on the time.        Example 1: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) )        Example 2: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] )        Default is camera.position.     [orbitControls]: <a href="https://threejs.org/docs/index.html#examples/en/controls/OrbitControls">OrbitControls</a>. Change the OrbitControl setting during playing.
-
-},}orobject: {  x: x axis. Defauilt is 0.  y: y axis. Defauilt is 0.  z: z axis. Defauilt is 0.  w: w axis. Defauilt is 0.}array: [  0: x axis. Defauilt is 0.  1: y axis. Defauilt is 0.  2: z axis. Defauilt is 0.  3: w axis. Defauilt is 0.]</pre></td>
+            <td class="description last">points.geometry.attributes.position array<pre>THREE.Vector4: 4D point.THREE.Vector3: 3D point. w = 1. Default is white colorTHREE.Vector2: 2D point. w = 1, z = 0. Default is white colorVector's x, y, z, w is position of the point.Can be as:<ul><li>float - position of the point.</li>Example: 0.5<li>[float] - array of positions of the point.</li>Example 1: [0.6, 0, -0.5]0.6 is positon for t = min is start time of the playing.0 is position for t = ( max - min ) / 2-0.5 is positon for t = max is stop time of the playing.If stop time of the playing is infinity, then position is equal to the first item of the array or 0.6 in the example 1.Example 2: [{ t: 0, v: 0.6 }, { t: 1, v: -0.6 }]Every item of array is object with:t is timev is position for current t.<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a> - position of the point is function of the t.Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )</li></ul>Vector.w is index of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">palette</a>.Default range of the Vector.w is from 0 to 100. You can change range by use an object:{  func: Vector.w  max: new max value of tne Vector.w  min: new min value of tne Vector.w}Example:{  func: new Function( 't', 'return 1-2*t' ),  min: -1,  max: 1,}Vector.w can be as THREE.Color. Example: new THREE.Color( "rgb(255, 127, 0)" )object: {  vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position  [name]: point name. Default is undefined.  [trace]: true - displays the trace of the point movement. Default is undefined.    //You can set the camera to look at a point. Use <b>cameraTarget</b> key for it.  //ATTENTION!!! Only one point can have <b>cameraTarget</b> key!  //   You will receive the     //      Player.getPoints: duplicate cameraTarget    //   console warning if two or more points have <b>cameraTarget</b> key.  //   Then only last point with <b>cameraTarget</b> key will be have an effect.  [cameraTarget]: {     camera: <a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">camera</a>,          //rotation camera around point specified by an axis and an angle. Default is undefined - no rotation     [rotation]: {             [angle]: number|function|array. Angle of rotation in radians.           number. Example: Math.PI / 2 rotate to 90 degrees.           function. Example: new Function( 't', 'return 5*t' ).           array. Example 1: [0, Math.PI]                 0 is angle for t = min is start time of the playing.                 Math.PI is rotate to 180 degrees for t = max is time of the stopping of the playing.                 If max time is infinity, then angle is for t = min.              Example 2: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }                 t is time,                 v is angle for current t.                      Default is new Function( 't', 'return t' )        [axis]: THREE.Vector3. Axis of rotattion. Example: new THREE.Vector3( 1, 0, 0 ) - rotate around x axis.           Default is new THREE.Vector3( 0, 1, 0 );//Rotate around y axis                },          [distanceToCamera]: THREE.Vector3. Distance from point to camera.        You can set the distance to the camera depending on the time.        Example 1: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) )        Example 2: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] )        Default is camera.position.     [orbitControls]: <a href="https://threejs.org/docs/index.html#examples/en/controls/OrbitControls">OrbitControls</a>. Change the OrbitControl setting during playing.     [orbitControlsGui]: <a href="https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/OrbitControlsGui/index.html">OrbitControlsGui</a> instance;  },}orobject: {  x: x axis. Defauilt is 0.  y: y axis. Defauilt is 0.  z: z axis. Defauilt is 0.  w: w axis. Defauilt is 0.}array: [  0: x axis. Defauilt is 0.  1: y axis. Defauilt is 0.  2: z axis. Defauilt is 0.  3: w axis. Defauilt is 0.]</pre></td>
         </tr>
 
     
@@ -2626,7 +2591,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1299">line 1299</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1328">line 1328</a>
     </li></ul></dd>
     
 
@@ -2720,7 +2685,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line378">line 378</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line398">line 398</a>
     </li></ul></dd>
     
 
@@ -2814,7 +2779,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line372">line 372</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line392">line 392</a>
     </li></ul></dd>
     
 
@@ -2908,7 +2873,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1984">line 1984</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line2034">line 2034</a>
     </li></ul></dd>
     
 
@@ -2954,7 +2919,7 @@
     
 
     
-    <h4 class="name" id="~Player.gui"><span class="type-signature">(inner) </span>Player.gui<span class="signature">(folder, getLanguageCode<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~Player.gui"><span class="type-signature">(inner) </span>Player.gui<span class="signature">(folder, guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -3037,6 +3002,68 @@
 
         <tr>
             
+                <td class="name"><code>guiParams</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">Followed parameters is allowed. Default is no parameters
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
                 <td class="name"><code>getLanguageCode</code></td>
             
 
@@ -3069,7 +3096,129 @@
                 </td>
             
 
-            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the "Syntax" paragraph of RFC 4646 <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.Default returns the 'en' is English language.You can import { getLanguageCode } from 'commonNodeJS/master/lang.js';</td>
+            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.Default returns the 'en' is English language.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>lang</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Object with localized language values<pre>Example Using of guiParams.lang:guiParams = {	getLanguageCode: function() { return 'az'; },	lang: { textHeight: 'mətn boyu', languageCode: 'az' },}</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cookie</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Cookie</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    new Cookie.defaultCookie()
+                
+                </td>
+            
+
+            <td class="description last">Your custom cookie function for saving and loading of the SpriteText settings. Default cookie is not saving settings.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cookieName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ""
+                
+                </td>
+            
+
+            <td class="description last">Name of the cookie is "Player" + guiParams.cookieName.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -3110,7 +3259,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line488">line 488</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line500">line 500</a>
     </li></ul></dd>
     
 
@@ -3198,7 +3347,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line201">line 201</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line221">line 221</a>
     </li></ul></dd>
     
 
@@ -3335,7 +3484,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line407">line 407</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line419">line 419</a>
     </li></ul></dd>
     
 
@@ -3423,7 +3572,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line764">line 764</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line813">line 813</a>
     </li></ul></dd>
     
 
@@ -3560,144 +3709,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line852">line 852</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="~Player.onChangeTimerId"><span class="type-signature">(inner) </span>Player.onChangeTimerId<span class="signature">(value)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    User has changed the rate of changing of animation scenes per second.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">new rate</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line394">line 394</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line901">line 901</a>
     </li></ul></dd>
     
 
@@ -3834,7 +3846,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line737">line 737</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line786">line 786</a>
     </li></ul></dd>
     
 
@@ -3922,7 +3934,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line293">line 293</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line313">line 313</a>
     </li></ul></dd>
     
 
@@ -4010,7 +4022,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line212">line 212</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line232">line 232</a>
     </li></ul></dd>
     
 
@@ -4147,7 +4159,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line222">line 222</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line242">line 242</a>
     </li></ul></dd>
     
 
@@ -4235,7 +4247,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line354">line 354</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line374">line 374</a>
     </li></ul></dd>
     
 
@@ -4863,534 +4875,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1015">line 1015</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="~Player.selectPlayScene"><span class="type-signature">(inner) </span>Player.selectPlayScene<span class="signature">(THREE, group, t, index, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Select a scene for playing
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>THREE</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><a href="https://github.com/anhr/three.js">THREE</a></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>group</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE.Group</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/objects/Group">THREE.Group</a></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>t</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">time</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>index</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">index of the time.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">the following options are available
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>boPlayer</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">true - is not select play scene for mesh.userData.boFrustumPoints = true. Default is false.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>a</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">multiplier. Second parameter of the arrayFuncs item function. Default is 1.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>b</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">addendum. Third parameter of the arrayFuncs item function. Default is 0.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>scales</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">axes scales. See <a href="https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html">AxesHelper</a>. Default is {}</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>palette</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW
-                
-                </td>
-            
-
-            <td class="description last">See <a href="https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette">ColorPicker.palette</a>.<pre>Example:new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );</pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>guiSelectPoint</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">See <a href="https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/module-GuiSelectPoint.html#~GuiSelectPoint">GuiSelectPoint</a>.<pre>Example:new GuiSelectPoint();</pre></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1222">line 1222</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1060">line 1060</a>
     </li></ul></dd>
     
 
@@ -5527,7 +5012,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line167">line 167</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line191">line 191</a>
     </li></ul></dd>
     
 
@@ -5710,7 +5195,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1274">line 1274</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1303">line 1303</a>
     </li></ul></dd>
     
 
@@ -5880,7 +5365,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line832">line 832</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line881">line 881</a>
     </li></ul></dd>
     
 
@@ -6112,7 +5597,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1781">line 1781</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1813">line 1813</a>
     </li></ul></dd>
     
 
@@ -6200,7 +5685,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1932">line 1932</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1982">line 1982</a>
     </li></ul></dd>
     
 
@@ -6298,7 +5783,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1940">line 1940</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1990">line 1990</a>
     </li></ul></dd>
     
 
@@ -6435,7 +5920,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1924">line 1924</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1974">line 1974</a>
     </li></ul></dd>
     
 
@@ -6788,7 +6273,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Nov 11 2020 11:34:28 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Nov 20 2020 08:33:28 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

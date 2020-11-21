@@ -114,18 +114,18 @@
 &lt;/body>
 &lt;/html>
 </code></pre>
-<p>The easiest way to use Player in your code is import Player from Player.js file in your JavaScript module.
+<p>The easiest way to use <b>Player</b> in your code is import <b>Player</b> from <b>Player.js</b> file in your JavaScript module.
 <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html">Example</a>.</p>
 <pre class="prettyprint source"><code>import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import Player from './commonNodeJS/master/player/player.js';
 </code></pre>
-<p>Now you can use Player in your javascript code.</p>
-<p>Add Player.</p>
+<p>Now you can use <b>Player</b> in your javascript code.</p>
+<p>Add <b>Player</b>.</p>
 <pre class="prettyprint source"><code>const player = new Player( THREE, scene );
 </code></pre>
-<p>Create a 3d object, for example Points:</p>
+<p>Create a 3d object, for example <b>Points</b>:</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
 	new THREE.Vector3( 0, 0.5, 0.5 ),//First point
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
@@ -361,7 +361,7 @@ For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicke
 	arrayFuncs: arrayFuncs,
 	selectPlayScene: function ( t ) {
 
-		points.position.x = t;
+		points.position.x = 8*t;
 
 	}
 
@@ -445,6 +445,171 @@ please add <b>shaderMaterial: {}</b> into <b>pointsOptions</b> of the <b>MyPoint
 </code></pre>
 <p>Please move mouse over canvas.
 Now you can see a player's menu items on the bottom of the canvas.</p>
+<h4>Using <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change of the <b>Player</b> settings.</h4>
+<p>Import <b>dat.gui</b>.</p>
+<pre class="prettyprint source"><code>import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import { dat } from './commonNodeJS/master/dat/dat.module.js';
+</code></pre>
+<p>Add <b>Player</b> settings into gui</p>
+<pre class="prettyprint source"><code>const gui =  new dat.GUI();
+player.gui( gui );
+</code></pre>
+<p>If you want to localize the gui, please import <b>getLanguageCode</b>.</p>
+<pre class="prettyprint source"><code>import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import { getLanguageCode } from './commonNodeJS/master/lang.js';
+</code></pre>
+<p>and edit <b>player.gui(...)</b>.</p>
+<pre class="prettyprint source"><code>player.gui( gui, {
+
+	getLanguageCode: getLanguageCode
+
+} );
+</code></pre>
+<p>If you want save a custom <b>Player</b> settings to the cookie, please import <b>cookie</b></p>
+<pre class="prettyprint source"><code>import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
+</code></pre>
+<p>and edit <b>player.gui(...)</b>.</p>
+<pre class="prettyprint source"><code>player.gui( gui, {
+
+	getLanguageCode: getLanguageCode,
+	cookie: cookie,
+
+} );
+</code></pre>
+<h4>Add player control buttons to the <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</h4>
+<p>First, import <b>controllerPlay</b>.</p>
+<pre class="prettyprint source"><code>import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import controllerPlay from './commonNodeJS/master/controllerPlay/controllerPlay.js';
+</code></pre>
+<p>Add player control buttons.</p>
+<pre class="prettyprint source"><code>controllerPlay.create( player, gui );
+</code></pre>
+<h4>Set the camera to look at a point.</h4>
+<p>Now you can see, all points moves and hides on the right border of the canvas during playing.
+You can set the camera to look at a selected point during playing for resolving of issue.
+Please, add the <b>cameraTarget</b> key into <b>arrayFuncs</b> array for it.</p>
+<pre class="prettyprint source"><code>const arrayFuncs = [
+	{
+
+		vector: new THREE.Vector4(
+			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
+			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
+			0.5,//z
+			{
+
+				func: new Function( 't', 'return 1-2*t' ),
+				min: -1,
+				max: 1,
+
+			},//w
+		),//First point
+		trace: true,//Displays the trace of the first point movement.
+
+		//Set the camera to look at the first point.
+		cameraTarget: {
+
+			camera: camera,
+
+		},
+
+	},
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
+];
+</code></pre>
+<p>ATTENTION!!! Only one point can have <b>cameraTarget</b> key!
+You will receive the</p>
+<p><i>Player.getPoints: duplicate cameraTarget</i></p>
+<p>console warning if two or more points have <b>cameraTarget</b> key.
+Then only last point with <b>cameraTarget</b> key will be have an effect.</p>
+<p>Currently uses default value of the distance from camera to selected point.
+Also you can rotate camera around on the point. Please add <b>cameraTarget</b> object into <b>camera.userData</b> for it.</p>
+<pre class="prettyprint source"><code>camera.userData.cameraTarget = {
+
+	rotation: {
+
+		//rotate camera to 180 degrees
+		//angle: Math.PI,
+
+		//Camera rotation is function of the time.
+		angle: new Function( 't', 'return 2*t' ),
+
+		/*
+		angle: [
+			0,//rotation is 0 degrees for time is 0
+			Math.PI / 2//rotation is 90 degrees for time is max time
+		],
+		*/
+		/*
+		angle: [
+			{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+			{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+			{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+			{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+		],
+		*/
+		//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+	},
+	//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+	//distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) ),
+	/*
+	distanceToCamera: new THREE.Vector3( 0, 0, [
+		{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+		{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+		{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+		{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+	] ),
+	*/
+
+}
+</code></pre>
+<p>You can set individual setting for selected point. Please add <b>rotation</b>, <b>distanceToCamera</b> keys into <b>cameraTarget</b> object for selected point</p>
+<pre class="prettyprint source"><code>cameraTarget: {
+
+	camera: camera,
+	rotation: {
+
+		angle: 0,
+		//angle: new Function( 't', 'return 5*t' ),
+		//angle: [0, Math.PI / 2],
+		//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+		//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+	},
+	distanceToCamera: new THREE.Vector3( 0, 0, [
+		{ t: 0, v: 10 },//distance to camera is 5 for time is 0
+		{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+	] ),
+
+},
+</code></pre>
+<p>Individual setting for selected point is more priority before camera settings.</p>
+<h4>Time of the playing.</h4>
+<p>Default time of the playing limited between 0 and 1.
+You can set another time limit. Please add min and max keys into settings of the new Player for it</p>
+<pre class="prettyprint source"><code>const player = new Player( THREE, scene, {
+
+	selectPlaySceneOptions: { palette: palette, },
+	settings: {
+
+		marks: 100,//Ticks count of the playing.
+		interval: 25,//Ticks per seconds.
+		min: 0,
+		max: 2,
+
+	},
+
+} );
+</code></pre>
 <h2>Directory Contents</h2>
 <pre class="prettyprint source"><code>build - Compiled source code.
 </code></pre>
@@ -469,7 +634,7 @@ $ npm run build
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Nov 11 2020 11:34:28 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Nov 20 2020 08:33:28 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
