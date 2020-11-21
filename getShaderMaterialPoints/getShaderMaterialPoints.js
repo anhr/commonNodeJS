@@ -11,7 +11,10 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import Player from '../player/player.js';
+//если тут импортировать Player а где нибудь в дроугом месте делать import Player from '../build/player.module.js';
+//то будут несколько экземляров Player и тогда будет не определен settings в одном из экземляров Playerю
+//import Player from '../player/player.js';
+
 import MyPoints from '../myPoints/myPoints.js';
 
 // * @param {Player} Player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}
@@ -41,7 +44,7 @@ import MyPoints from '../myPoints/myPoints.js';
 function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady, settings ) {
 
 	settings = settings || {};
-	settings.Player = settings.Player || Player;
+//	settings.Player = settings.Player || Player;
 
 	var geometry,
 		tMin = settings.pointsOptions === undefined ?
