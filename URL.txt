@@ -27,7 +27,7 @@ Generating a website:
 	/////////////////////////////////////////////////////////////
 	//ScaleController doc
 
-	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc\out"
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\ScaleController"
 
 	jsdoc "..\commonNodeJS\master\ScaleController.js" -d "..\commonNodeJS\master\jsdoc\ScaleController"
 
@@ -37,5 +37,23 @@ Generating a website:
 	//StereoEffect doc
 
 	See D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\StereoEffect\URL.txt
+
+	/////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////
+	//OrbitControlsGui doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\OrbitControlsGui"
+
+	jsdoc "..\commonNodeJS\master\OrbitControlsGui.js" -d "..\commonNodeJS\master\jsdoc\OrbitControlsGui"
+
+	/////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////
+	//CameraGui doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\CameraGui"
+
+	jsdoc "..\commonNodeJS\master\CameraGui.js" -d "..\commonNodeJS\master\jsdoc\CameraGui"
 
 	/////////////////////////////////////////////////////////////
