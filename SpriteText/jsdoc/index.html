@@ -47,7 +47,7 @@
 <p>A <a href="https://threejs.org/docs/index.html#api/en/objects/Sprite">sprite</a> based text component. SpriteText is a text that always faces towards the camera.</p>
 <h2>Quick start</h2>
 <h3>SpriteText</h3>
-<p>The easiest way to use SpriteText in your code is import SpriteText from SpriteText.js file in your JavaScript module.
+<p>The easiest way to use <b>SpriteText</b> in your code is import <b>SpriteText</b> from <b>SpriteText.js</b> file in your JavaScript module.
 <a href="https://github.com/anhr/SpriteText/blob/master/Examples/SpriteText.html">Example</a>.</p>
 <pre class="prettyprint source"><code>import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
 </code></pre>
@@ -70,14 +70,14 @@
 </ul>
 <pre class="prettyprint source"><code>import { SpriteText } from './SpriteText/master/SpriteText.js';
 </code></pre>
-<p>First, set THREE for SpriteText.</p>
+<p>First, set <b>THREE</b> for <b>SpriteText</b>.</p>
 <pre class="prettyprint source"><code>SpriteText.setTHREE( THREE );
 </code></pre>
-<p>Now you can use SpriteText in your javascript code.</p>
-<p>Add SpriteText with default settings into center of the scene.</p>
+<p>Now you can use <b>SpriteText</b> in your javascript code.</p>
+<p>Add <b>SpriteText</b> with default settings into center of the scene.</p>
 <pre class="prettyprint source"><code>scene.add( new SpriteText( 'Default sprite') );
 </code></pre>
-<p>Add SpriteText with green font color , textHeight is 0.2, fontFace is 'Times' into ( -5, 0, 0 ) point of the scene.</p>
+<p>Add <b>SpriteText</b> with green font color , <b>textHeight</b> is 0.2, <b>fontFace</b> is 'Times' into ( -5, 0, 0 ) point of the scene.</p>
 <pre class="prettyprint source"><code>const spriteText = new SpriteText( 'Sprite text', new THREE.Vector3( -5, 0, 0 ), {
 
 	fontColor: 'rgba(0, 255, 0, 1)', //green
@@ -89,25 +89,25 @@
 scene.add( spriteText );
 </code></pre>
 <h3>SpriteTextGui</h3>
-<p>Add SpriteTextGui into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change settings of the SpriteText.
+<p>Add <b>SpriteTextGui</b> into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change settings of the </b>SpriteText</b>.
 <a href="https://raw.githack.com/anhr/SpriteText/master/Examples/SpriteTextGui.html">Example</a></p>
-<p>Import dat.gui.</p>
+<p>Import <b>dat.gui</b>.</p>
 <pre class="prettyprint source"><code>import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import { dat } from './commonNodeJS/master/dat/dat.module.js';
 </code></pre>
-<p>Import SpriteTextGui.</p>
+<p>Import <b>SpriteTextGui</b>.</p>
 <pre class="prettyprint source"><code>import { SpriteTextGui } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteTextGui.js';
 </code></pre>
 <p>or</p>
 <ul>
-<li>Use folder on your localhost named as [folderName]. See SpriteText above.</li>
+<li>Use folder on your localhost named as [folderName]. See <b>SpriteText</b> above.</li>
 <li>Download <a href="https://github.com/anhr/SpriteText">SpriteText</a> repository into your &quot;[folderName]\SpriteText\master&quot; folder.</li>
 </ul>
 <pre class="prettyprint source"><code>import { SpriteTextGui } from './SpriteText/master/SpriteTextGui.js';
 </code></pre>
-<p>Now you can use SpriteTextGui in your javascript code.</p>
+<p>Now you can use <b>SpriteTextGui</b> in your javascript code.</p>
 <pre class="prettyprint source"><code>const gui =  new dat.GUI();
 const folder = SpriteTextGui( SpriteText, gui, spriteText, {
 
@@ -119,23 +119,23 @@ const folder = SpriteTextGui( SpriteText, gui, spriteText, {
 <p>If you want to localize the gui, please uncomment</p>
 <pre class="prettyprint source"><code>getLanguageCode: getLanguageCode,
 </code></pre>
-<p>line above and import getLanguageCode.</p>
+<p>line above and import <b>getLanguageCode</b>.</p>
 <pre class="prettyprint source"><code>import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import { getLanguageCode } from './commonNodeJS/master/lang.js';
 </code></pre>
-<p>If you want save a custom SpriteText settings to the cookie, please uncomment</p>
+<p>If you want save a custom <b>SpriteText</b> settings to the cookie, please uncomment</p>
 <pre class="prettyprint source"><code>cookie: cookie,
 </code></pre>
-<p>line in the SpriteTextGui.gui(...) above and import cookie.</p>
+<p>line in the <b>SpriteTextGui.gui(...)</b> above and import cookie.</p>
 <pre class="prettyprint source"><code>import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
 </code></pre>
 <h3>group.userData.optionsSpriteText - common options for the group of the SpriteText</h3>
-<p>You can set options for all SpriteText from the <a href="https://threejs.org/docs/index.html#api/en/objects/Group">Group</a> or <a href="https://threejs.org/docs/index.html#api/en/scenes/Scene">Scene</a> and all child groups.
+<p>You can set options for all <b>SpriteText</b> from the <a href="https://threejs.org/docs/index.html#api/en/objects/Group">Group</a> or <a href="https://threejs.org/docs/index.html#api/en/scenes/Scene">Scene</a> and all child groups.
 Options of the child groups is more priority before parent group options.
 Example:</p>
 <pre class="prettyprint source"><code>//options for all SpriteText on the scene
@@ -200,7 +200,7 @@ fSpriteTextAll.userData.restore();
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon Nov 02 2020 10:12:15 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Nov 15 2020 14:40:37 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -6,7 +6,7 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 
 ### SpriteText
 
-The easiest way to use SpriteText in your code is import SpriteText from SpriteText.js file in your JavaScript module.
+The easiest way to use <b>SpriteText</b> in your code is import <b>SpriteText</b> from <b>SpriteText.js</b> file in your JavaScript module.
 [Example](https://github.com/anhr/SpriteText/blob/master/Examples/SpriteText.html).
 
 ```
@@ -33,18 +33,18 @@ import * as THREE from './three.js/dev/build/three.module.js';
 import { SpriteText } from './SpriteText/master/SpriteText.js';
 ```
 
-First, set THREE for SpriteText.
+First, set <b>THREE</b> for <b>SpriteText</b>.
 ```
 SpriteText.setTHREE( THREE );
 ```
 
-Now you can use SpriteText in your javascript code.
+Now you can use <b>SpriteText</b> in your javascript code.
 
-Add SpriteText with default settings into center of the scene.
+Add <b>SpriteText</b> with default settings into center of the scene.
 ```
 scene.add( new SpriteText( 'Default sprite') );
 ```
-Add SpriteText with green font color , textHeight is 0.2, fontFace is 'Times' into ( -5, 0, 0 ) point of the scene.
+Add <b>SpriteText</b> with green font color , <b>textHeight</b> is 0.2, <b>fontFace</b> is 'Times' into ( -5, 0, 0 ) point of the scene.
 ```
 const spriteText = new SpriteText( 'Sprite text', new THREE.Vector3( -5, 0, 0 ), {
 
@@ -59,10 +59,10 @@ scene.add( spriteText );
 
 ### SpriteTextGui
 
-Add SpriteTextGui into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the SpriteText.
+Add <b>SpriteTextGui</b> into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the </b>SpriteText</b>.
 [Example](https://raw.githack.com/anhr/SpriteText/master/Examples/SpriteTextGui.html)
 
-Import dat.gui.
+Import <b>dat.gui</b>.
 ```
 import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 ```
@@ -70,20 +70,20 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import { dat } from './commonNodeJS/master/dat/dat.module.js';
 ```
-Import SpriteTextGui.
+Import <b>SpriteTextGui</b>.
 ```
 import { SpriteTextGui } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteTextGui.js';
 ```
 or
 
-* Use folder on your localhost named as [folderName]. See SpriteText above.
+* Use folder on your localhost named as [folderName]. See <b>SpriteText</b> above.
 * Download [SpriteText](https://github.com/anhr/SpriteText) repository into your "[folderName]\SpriteText\master" folder.
 
 ```
 import { SpriteTextGui } from './SpriteText/master/SpriteTextGui.js';
 ```
 
-Now you can use SpriteTextGui in your javascript code.
+Now you can use <b>SpriteTextGui</b> in your javascript code.
 ```
 const gui =  new dat.GUI();
 const folder = SpriteTextGui( SpriteText, gui, spriteText, {
@@ -97,7 +97,7 @@ If you want to localize the gui, please uncomment
 ```
 getLanguageCode: getLanguageCode,
 ```
-line above and import getLanguageCode.
+line above and import <b>getLanguageCode</b>.
 ```
 import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 ```
@@ -105,11 +105,11 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import { getLanguageCode } from './commonNodeJS/master/lang.js';
 ```
-If you want save a custom SpriteText settings to the cookie, please uncomment
+If you want save a custom <b>SpriteText</b> settings to the cookie, please uncomment
 ```
 cookie: cookie,
 ```
-line in the SpriteTextGui.gui(...) above and import cookie.
+line in the <b>SpriteTextGui.gui(...)</b> above and import cookie.
 ```
 import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
@@ -119,7 +119,7 @@ import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
 
 ### group.userData.optionsSpriteText - common options for the group of the SpriteText
-You can set options for all SpriteText from the [Group](https://threejs.org/docs/index.html#api/en/objects/Group) or [Scene](https://threejs.org/docs/index.html#api/en/scenes/Scene) and all child groups.
+You can set options for all <b>SpriteText</b> from the [Group](https://threejs.org/docs/index.html#api/en/objects/Group) or [Scene](https://threejs.org/docs/index.html#api/en/scenes/Scene) and all child groups.
 Options of the child groups is more priority before parent group options.
 Example:
 ```
