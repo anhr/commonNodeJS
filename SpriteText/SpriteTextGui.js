@@ -37,8 +37,8 @@ import Cookie from '../../commonNodeJS/master/cookieNodeJS/cookie.js';//https://
  * @param {GUI} gui see {@link https://github.com/anhr/dat.gui|dat.gui} for details
  * @param {THREE.Group|THREE.Scene|THREE.Sprite} group group or scene of SpriteText and of all child groups of SpriteText for which these settings will have an effect.
  * Or Sprite returned from {@link https://raw.githack.com/anhr/SpriteText/master/jsdoc/module-SpriteText..html|new SpriteText(...)}.
- * @param {object} [guiParams] Followed parameters is allowed. Default is no parameters
- * @param {Function} [guiParams.getLanguageCode] Your custom getLanguageCode() function.
+ * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
+ * @param {Function} [guiParams.getLanguageCode="en"] Your custom getLanguageCode() function.
  * <pre>
  * returns the "primary language" subtag of the language version of the browser.
  * Examples: "en" - English language, "ru" Russian.
