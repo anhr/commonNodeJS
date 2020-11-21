@@ -71,23 +71,39 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 </body>
 </html>
 ```
-The easiest way to use Player in your code is import Player from Player.js file in your JavaScript module.
+The easiest way to use <b>Player</b> in your code is import <b>Player</b> from <b>Player.js</b> file in your JavaScript module.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
 ```
 import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
+```
+or
+```
+import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.js';
+```
+or
+```
+import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
 ```
 or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
 import Player from './commonNodeJS/master/player/player.js';
 ```
+or
+```
+import Player from './commonNodeJS/master/player/build/player.module.js';
+```
+or
+```
+import Player from './commonNodeJS/master/player/build/player.module.min.js';
+```
 
-Now you can use Player in your javascript code.
+Now you can use <b>Player</b> in your javascript code.
 
-Add Player.
+Add <b>Player</b>.
 ```
 const player = new Player( THREE, scene );
 ```
-Create a 3d object, for example Points:
+Create a 3d object, for example <b>Points</b>:
 ```
 const arrayFuncs = [
 	new THREE.Vector3( 0, 0.5, 0.5 ),//First point
@@ -331,7 +347,7 @@ points.userData.player = {
 	arrayFuncs: arrayFuncs,
 	selectPlayScene: function ( t ) {
 
-		points.position.x = t;
+		points.position.x = 8*t;
 
 	}
 
@@ -428,6 +444,199 @@ new CanvasMenu( renderer, {
 ```
 Please move mouse over canvas.
 Now you can see a player's menu items on the bottom of the canvas.
+
+#### Using [dat.gui](https://github.com/anhr/dat.gui) for manual change of the <b>Player</b> settings.
+
+Import <b>dat.gui</b>.
+```
+import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import { dat } from './commonNodeJS/master/dat/dat.module.js';
+```
+Add <b>Player</b> settings into gui
+```
+const gui =  new dat.GUI();
+player.gui( gui );
+```
+If you want to localize the gui, please import <b>getLanguageCode</b>.
+```
+import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import { getLanguageCode } from './commonNodeJS/master/lang.js';
+```
+and edit <b>player.gui(...)</b>.
+```
+player.gui( gui, {
+
+	getLanguageCode: getLanguageCode
+
+} );
+```
+If you want save a custom <b>Player</b> settings to the cookie, please import <b>cookie</b>
+```
+import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
+```
+and edit <b>player.gui(...)</b>.
+```
+player.gui( gui, {
+
+	getLanguageCode: getLanguageCode,
+	cookie: cookie,
+
+} );
+```
+
+#### Add player control buttons to the [dat.gui](https://github.com/anhr/dat.gui).
+
+First, import <b>controllerPlay</b>.
+```
+import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import controllerPlay from './commonNodeJS/master/controllerPlay/controllerPlay.js';
+```
+Add player control buttons.
+```
+controllerPlay.create( player, gui );
+```
+
+#### Set the camera to look at a point.
+
+Now you can see, all points moves and hides on the right border of the canvas during playing.
+You can set the camera to look at a selected point during playing for resolving of issue.
+Please, add the <b>cameraTarget</b> key into <b>arrayFuncs</b> array for it.
+```
+const arrayFuncs = [
+	{
+
+		vector: new THREE.Vector4(
+			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
+			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
+			0.5,//z
+			{
+
+				func: new Function( 't', 'return 1-2*t' ),
+				min: -1,
+				max: 1,
+
+			},//w
+		),//First point
+		trace: true,//Displays the trace of the first point movement.
+
+		//Set the camera to look at the first point.
+		cameraTarget: {
+
+			camera: camera,
+
+		},
+
+	},
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
+];
+```
+ATTENTION!!! Only one point can have <b>cameraTarget</b> key!
+You will receive the 
+ 
+<i>Player.getPoints: duplicate cameraTarget</i>
+
+console warning if two or more points have <b>cameraTarget</b> key.
+Then only last point with <b>cameraTarget</b> key will be have an effect.
+
+Currently uses default value of the distance from camera to selected point.
+Also you can rotate camera around on the point. Please add <b>cameraTarget</b> object into <b>camera.userData</b> for it.
+```
+camera.userData.cameraTarget = {
+
+	Player: Player,
+	rotation: {
+
+		//rotate camera to 180 degrees
+		//angle: Math.PI,
+
+		//Camera rotation is function of the time.
+		angle: new Function( 't', 'return 2*t' ),
+
+		/*
+		angle: [
+			0,//rotation is 0 degrees for time is 0
+			Math.PI / 2//rotation is 90 degrees for time is max time
+		],
+		*/
+		/*
+		angle: [
+			{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+			{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+			{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+			{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+		],
+		*/
+		//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+	},
+	//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+	//distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) ),
+	/*
+	distanceToCamera: new THREE.Vector3( 0, 0, [
+		{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+		{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+		{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+		{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+	] ),
+	*/
+
+}
+```
+You can set individual setting for selected point. Please add <b>rotation</b>, <b>distanceToCamera</b> keys into <b>cameraTarget</b> object for selected point
+```
+cameraTarget: {
+
+	camera: camera,
+	rotation: {
+
+		angle: 0,
+		//angle: new Function( 't', 'return 5*t' ),
+		//angle: [0, Math.PI / 2],
+		//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+		//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+	},
+	distanceToCamera: new THREE.Vector3( 0, 0, [
+		{ t: 0, v: 10 },//distance to camera is 5 for time is 0
+		{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+	] ),
+
+},
+```
+Individual setting for selected point is more priority before camera settings.
+
+#### Time of the playing.
+
+Default time of the playing limited between 0 and 1.
+You can set another time limit. Please add min and max keys into settings of the new Player for it
+```
+const player = new Player( THREE, scene, {
+
+	selectPlaySceneOptions: { palette: palette, },
+	settings: {
+
+		marks: 100,//Ticks count of the playing.
+		interval: 25,//Ticks per seconds.
+		min: 0,
+		max: 2,
+
+	},
+
+} );
+```
 
 ## Directory Contents
 
