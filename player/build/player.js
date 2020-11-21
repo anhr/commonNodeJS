@@ -7103,10 +7103,19 @@ function Player(THREE, group, options) {
 	selectPlaySceneOptions.scales = selectPlaySceneOptions.scales || {};
 	settings$1 = options.settings || {};
 	assignSettings();
+	function selectPlayScene(group, t, index, options) {
+		ColorPicker.palette.setTHREE(THREE);
+		options = options || {};
+		group.userData.t = t;
+		Player.selectMeshPlayScene(THREE, group, t, index);
+		group.children.forEach(function (mesh) {
+			Player.selectMeshPlayScene(THREE, mesh, t, index);
+		});
+	}
 	function onSelectScene(index) {
 		index = index || 0;
 		var t = getTime();
-		Player.selectPlayScene(THREE, group, t, index, options.selectPlaySceneOptions);
+		selectPlayScene(group, t, index, options.selectPlaySceneOptions);
 		_this.setIndex(index, (settings$1.name === '' ? '' : settings$1.name + ': ') + t);
 		if (options.onSelectScene) options.onSelectScene(index, t);
 	}
@@ -7131,7 +7140,6 @@ function Player(THREE, group, options) {
 		}
 		while (selectSceneIndex !== index) {
 			if (selectSceneIndex < index) selectSceneIndex++;else selectSceneIndex--;
-			console.warn('selectSceneIndex = ' + selectSceneIndex);
 			onSelectScene(selectSceneIndex);
 		}
 	};
@@ -7503,7 +7511,7 @@ Player.execFunc = function (funcs, axisName, t) {
 				}
 				var _a = func,
 				    l = func.length - 1,
-				max = settings$1.max === null ? Infinity : settings$1.max,
+				    max = settings$1.max === null ? Infinity : settings$1.max,
 				    min = settings$1.min,
 				    tStep = (max - min) / l;
 				var tStart = min,
@@ -7672,15 +7680,6 @@ Player.selectMeshPlayScene = function (THREE, mesh, t, index, options) {
 		});
 	}
 };
-Player.selectPlayScene = function (THREE, group, t, index, options) {
-	ColorPicker.palette.setTHREE(THREE);
-	options = options || {};
-	group.userData.t = t;
-	Player.selectMeshPlayScene(THREE, group, t, index);
-	group.children.forEach(function (mesh) {
-		Player.selectMeshPlayScene(THREE, mesh, t, index);
-	});
-};
 Player.setColorAttribute = function (attributes, i, color) {
 	if (typeof color === "string") color = new THREE.Color(color);
 	var colorAttribute = attributes.color || attributes.ca;
@@ -7725,6 +7724,7 @@ Player.getPoints = function (THREE, arrayFuncs, optionsPoints) {
 				funcs.vector.cameraTarget = funcs.cameraTarget;
 				var _camera = funcs.vector.cameraTarget.camera;
 				_camera.userData.cameraTarget = _camera.userData.cameraTarget || {};
+				_camera.userData.cameraTarget.Player = _camera.userData.cameraTarget.Player || Player;
 				if (_camera.userData.cameraTarget.ready) console.warn('Player.getPoints: duplicate cameraTarget');
 				_camera.userData.cameraTarget.ready = true;
 				_camera.userData.cameraTarget.distanceToCamera = funcs.vector.cameraTarget.distanceToCamera || _camera.userData.cameraTarget.distanceToCamera || new THREE.Vector3().copy(_camera.position);
