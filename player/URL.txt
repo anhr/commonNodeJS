@@ -5,6 +5,7 @@ Open "Node.js command prompt"
 d:
 cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\player"
 npm install
+npm install uglify-es //for build/player.module.min.js
 npm run build
 
 (babel plugin) Error: Couldn't find preset "env" relative to directory "D:\\My documents\\MyProjects\\webgl\\three.js\\GitHub\\commonNodeJS\\master\\cookieNodeJS"

@@ -87,10 +87,6 @@ function Player( THREE, group, options ) {
 
 	selectPlaySceneOptions.a = options.a || 1;
 	selectPlaySceneOptions.b = options.b || 0;
-	/*
-		palette = options.selectPlaySceneOptions.palette;
-		options.palette = options.palette || palette || paletteDefault.get();//paletteDefault;
-	*/
 	selectPlaySceneOptions.scales = selectPlaySceneOptions.scales || {};
 
 	//если тут создавать палитру то она не создастся если не создается плееер
@@ -98,20 +94,6 @@ function Player( THREE, group, options ) {
 
 	settings = options.settings || {};
 	assignSettings();
-/*
-	function setDT() { settings.dt = ( settings.max - settings.min ) / ( settings.marks - 1 ); }
-	function setMax() { settings.max = settings.min + settings.dt * ( settings.marks - 1 ); }
-	settings.min = settings.min || 0;
-	settings.max = settings.max || 1;
-//	settings.dt = settings.dt || 0.1;
-	settings.marks = settings.marks || 10;//2;
-	setDT();
-	settings.repeat = settings.repeat || false;
-	settings.interval = settings.interval || 1;//25;
-	settings.zoomMultiplier = settings.zoomMultiplier || 1.1;
-	settings.offset = settings.offset || 0.1;
-	settings.name = settings.name || '';
-*/
 
 	/**
 	 * Select a scene for playing
@@ -154,7 +136,7 @@ function Player( THREE, group, options ) {
 
 	}
 
-	var boSelectFirstScene = true;
+	//var boSelectFirstScene = true;
 	/**
 	 * @description This function is called at each new step of the playing.
 	 * @param {number} [index=0] current index of the scene of the animation
@@ -191,7 +173,6 @@ function Player( THREE, group, options ) {
 
 	function getTime() {
 
-//		const res = ( ( settings.max - settings.min ) / ( settings.marks - 1 ) ) * selectSceneIndex + settings.min;
 		const res = settings.min + selectSceneIndex * settings.dt;
 		if ( isNaN( res ) ) console.error( 'Player.getTime(): res = ' + res );
 		return res;
@@ -199,7 +180,6 @@ function Player( THREE, group, options ) {
 	}
 	this.setTime = function( t ) {
 
-//		this.selectScene( parseInt( ( t - settings.min ) * ( ( settings.marks - 1 ) / ( settings.max - settings.min ) ) ) );
 		this.selectScene( parseInt( ( t - settings.min ) / settings.dt ) );
 
 	}
@@ -274,7 +254,6 @@ function Player( THREE, group, options ) {
 	this.controllers = [];
 	var playing = false, time, timeNext;
 	const controllers = this.controllers;
-//		cookie = options.cookie || new Cookie.defaultCookie(), cookieName = 'Player' + ( options.cookieName || '' );
 
 	function RenamePlayButtons() {
 
@@ -407,31 +386,11 @@ function Player( THREE, group, options ) {
 	this.getOptions = function () { return options; }
 	/**
 	 * @function Player.
-	 * getSettings
-	 * @returns Player options.settings.
-	 */
-	//this.getSettings = function () { return settings; }
-	/**
-	 * @function Player.
 	 * getSelectSceneIndex
 	 * @returns selected scene index.
 	 */
 	this.getSelectSceneIndex = function () { return selectSceneIndex; }
 
-	/* *
-	 * User has changed the rate of changing of animation scenes per second.
-	 * @function Player.
-	 * onChangeTimerId
-	 * @param {number} value new rate
-	 */
-/*
-	this.onChangeTimerId = function ( value ) {
-
-		settings.interval = value;
-		setSettings();
-
-	}
-*/
 	/**
 	 * Event of the changing of the rate of changing of animation scenes per second.
 	 * @function Player.
@@ -563,16 +522,11 @@ function Player( THREE, group, options ) {
 
 		} );
 		Object.freeze( axesDefault );
-/*		
-		options.cookie = options.cookie || cookie;
-		options.cookie.getObject( cookieName, settings, settings );
-*/		
 		const max = settings.max;
 		cookie.getObject( cookieName, settings, settings );
 		if ( ( max === null ) || ( max === Infinity ) ) {
 
 			settings.max = max;
-//			settings.marks = null;
 
 		}
 
@@ -589,10 +543,6 @@ function Player( THREE, group, options ) {
 
 				axes.min = action( axes.min, zoom );
 				scaleControllers.min.setValue( axes.min );
-/*
-				axes.dt = action( axes.dt, zoom );
-				scaleControllers.dt.setValue( axes.dt );
-*/
 				if ( axes.max ) {
 
 					axes.max = action( axes.max, zoom );
@@ -636,11 +586,6 @@ function Player( THREE, group, options ) {
 			scaleControllers.min = dat.controllerZeroStep( scaleControllers.folder, axes, 'min', function ( value ) { setSettings(); } );
 			dat.controllerNameAndTitle( scaleControllers.min, lang.min );
 
-/*
-			//max
-			scaleControllers.max = dat.controllerZeroStep( scaleControllers.folder, axes, 'max', function ( value ) { setSettings(); } );
-			dat.controllerNameAndTitle( scaleControllers.max, lang.max );
-*/
 			//max
 			//axes.max сейчас используется исключитьельно для удобства пользовательского интерфейса
 			//Вместо axes.max используется axes.dt
@@ -661,19 +606,10 @@ function Player( THREE, group, options ) {
 			//marks
 			if ( axes.marks ) {
 
-//				scaleControllers.marks = dat.controllerZeroStep( scaleControllers.folder, axes, 'marks', function ( value ) { setSettings(); } );
 				scaleControllers.marks = scaleControllers.folder.add( axes, 'marks' ).onChange( function ( value ) {
 
 					axes.marks = parseInt( axes.marks );
 					setSettings();
-/*					
-					if ( line ) {
-
-						group.remove( line );
-						line = undefined;
-						
-					}
-*/					
 					const elSlider = getSliderElement();
 					if ( elSlider ) elSlider.max = settings.marks - 1;
 
@@ -696,8 +632,6 @@ function Player( THREE, group, options ) {
 
 				defaultF: function ( value ) {
 
-//					if ( _this.PlayController ) _this.PlayController.setValue( axesDefault.interval );
-					
 					axes.zoomMultiplier = axesDefault.zoomMultiplier;
 					scaleControllers.scaleController.setValue( axes.zoomMultiplier );
 
@@ -853,7 +787,6 @@ function Player( THREE, group, options ) {
 			
 		_canvasMenu.menu.push( {
 
-//			name: '<input type="range" min="0" max="' + ( this.getSettings().marks - 1 ) + '" value="0" class="slider" id="sliderPosition">',
 			name: '<input type="range" min="0" max="' + ( Player.getSettings().marks - 1 ) + '" value="0" class="slider" id="sliderPosition">',
 			style: 'float: right;',
 
@@ -940,10 +873,6 @@ function Player( THREE, group, options ) {
  */
 Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 
-/*
-	if ( a === undefined ) a = 1;
-	if ( b === undefined ) b = 0;
-*/	
 	const func = funcs[axisName], typeofFuncs = typeof func;
 	switch ( typeofFuncs ) {
 
@@ -1003,7 +932,6 @@ Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 							if ( i === ( func.length - 1 ) ) return a[i].v;
 
 							iStart = i; iStop = i + 1;
-//							tStart = a[iStart].t; tStop = a[iStop] !== undefined ? a[iStop].t : tStart;
 							tStart = a[iStart].t; tStop = a[iStop].t;
 							if ( ( tStart <= t ) && ( tStop > t ) ) {
 
@@ -1223,69 +1151,43 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 
 				const camera = funcs.cameraTarget.camera;
 
-				camera.userData.cameraTarget.setCameraPosition = function( target ) {
+				if ( camera.userData.cameraTarget.boLook ) {
 
-					camera.position.copy( camera.userData.cameraTarget.distanceToCameraCur );
-					if ( camera.userData.cameraTarget.rotation )
-						camera.position.applyAxisAngle( camera.userData.cameraTarget.rotation.axis,
-							Player.execFunc( camera.userData.cameraTarget.rotation, 'angle', t ) );
-//					const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
-					camera.position.add( target );
-					camera.lookAt( target );
-					if ( camera.userData.cameraTarget.orbitControls ) {
+					camera.userData.cameraTarget.setCameraPosition = function ( target ) {
 
-						camera.userData.cameraTarget.orbitControls.target.copy( target );
-						if ( camera.userData.cameraTarget.orbitControlsGui )
-							camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
+						camera.position.copy( camera.userData.cameraTarget.distanceToCameraCur );
+						if ( camera.userData.cameraTarget.rotation )
+							camera.position.applyAxisAngle( camera.userData.cameraTarget.rotation.axis,
+								Player.execFunc( camera.userData.cameraTarget.rotation, 'angle', t ) );
+						camera.position.add( target );
+						camera.lookAt( target );
+						if ( camera.userData.cameraTarget.orbitControls ) {
+
+							camera.userData.cameraTarget.orbitControls.target.copy( target );
+							if ( camera.userData.cameraTarget.orbitControlsGui )
+								camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
+
+						}
 
 					}
+					if ( !camera.userData.cameraTarget.distanceToCameraCur )
+						camera.userData.cameraTarget.distanceToCameraCur = new THREE.Vector3();
+					camera.userData.cameraTarget.distanceToCameraCur.set(
+
+						Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'x', t ),
+						Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'y', t ),
+						Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'z', t )
+
+					);
+
+					const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
+					camera.userData.cameraTarget.target = target;
+					camera.userData.cameraTarget.setCameraPosition( target );
+					if ( camera.userData.cameraTarget.cameraGui )
+						camera.userData.cameraTarget.cameraGui.update();
 
 				}
-				if ( !camera.userData.cameraTarget.distanceToCameraCur )
-					camera.userData.cameraTarget.distanceToCameraCur = new THREE.Vector3();
-				camera.userData.cameraTarget.distanceToCameraCur.set(
 
-					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'x', t ),
-					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'y', t ),
-					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'z', t )
-
-				);
-/*				
-				camera.position.set(
-
-					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'x', t ),
-					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'y', t ),
-					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'z', t )
-
-				);
-
-				if ( camera.userData.cameraTarget.distanceToCameraCur )
-					camera.userData.cameraTarget.distanceToCameraCur.copy( camera.position );
-				else camera.userData.cameraTarget.distanceToCameraCur = new THREE.Vector3( camera.position.x, camera.position.y, camera.position.z );
-*/				
-
-				const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
-				camera.userData.cameraTarget.target = target;
-				camera.userData.cameraTarget.setCameraPosition( target );
-				if ( camera.userData.cameraTarget.cameraGui )
-					camera.userData.cameraTarget.cameraGui.update();
-/*
-				if ( camera.userData.cameraTarget.rotation )
-					camera.position.applyAxisAngle( camera.userData.cameraTarget.rotation.axis,
-						Player.execFunc( camera.userData.cameraTarget.rotation, 'angle', t ) );
-				camera.position.add( target );
-				if ( camera.userData.cameraTarget.cameraGui )
-					camera.userData.cameraTarget.cameraGui.update();
-				camera.lookAt( target );
-				if ( camera.userData.cameraTarget.orbitControls ) {
-
-					camera.userData.cameraTarget.orbitControls.target.copy( target );
-					if ( camera.userData.cameraTarget.orbitControlsGui )
-						camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
-
-				}
-*/				
-				
 			}
 
 		};
@@ -1578,6 +1480,11 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
 
 				if ( camera.userData.cameraTarget.ready ) console.warn( 'Player.getPoints: duplicate cameraTarget' );
 				camera.userData.cameraTarget.ready = true;
+
+				if ( camera.userData.cameraTarget.boLook !== false )
+					camera.userData.cameraTarget.boLook = camera.userData.cameraTarget.boLook || true;
+				if ( funcs.cameraTarget.boLook !== undefined )
+					camera.userData.cameraTarget.boLook = funcs.cameraTarget.boLook;
 				
 				camera.userData.cameraTarget.distanceToCamera = funcs.vector.cameraTarget.distanceToCamera ||
 					camera.userData.cameraTarget.distanceToCamera ||
@@ -1590,17 +1497,6 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
 					camera.userData.cameraTarget.rotation.axis = camera.userData.cameraTarget.rotation.axis || new THREE.Vector3( 0, 1, 0 );//Rotate around y axis
 						
 				}
-/*				
-				if ( funcs.cameraTarget.rotation ) {
-
-					camera.userData.cameraTarget.rotation = {};
-					camera.userData.cameraTarget.rotation.angle =
-						funcs.cameraTarget.rotation.angle || camera.userData.cameraTarget.rotation.angle || new Function( 't', 'return t' )
-					camera.userData.cameraTarget.rotation.axis =
-						funcs.cameraTarget.rotation.axis || camera.userData.cameraTarget.rotation.axis || new THREE.Vector3( 0, 1, 0 );//Rotate around y axis
-
-				}
-*/				
 
 			}
 			arrayFuncs[i] = funcs.vector;
@@ -1696,7 +1592,6 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 
 	ColorPicker.palette.setTHREE(THREE);
 	optionsColor = optionsColor || {};
-//	optionsColor.palette = optionsColor.palette || palette || paletteDefault.get();
 	optionsColor.palette = optionsColor.palette || palette.get();
 	
 	if (
@@ -1745,26 +1640,17 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 
 					} else {
 
-console.warn( 'Кажется тут ошибка. Диапазон по умолчанию должен быть от 0 до 100' )
+/*
 						max = funcs.w;
 						min = max - 1;
-						
+*/						
 					}
 
 				} else {
 
 					//color is not defined. Set color to white
-/*					
-console.warn( 'Кажется тут ошибка. Диапазон по умолчанию должен быть от 0 до 100' )
-					max = 1;
-					min = max - 1;
-*/					
 
 				}
-/*
-				max = funcs instanceof THREE.Vector4 ? funcs.w : 1;
-				min = max - 1;
-*/				
 
 			}
 			if ( w instanceof Function && ! settings ) {
@@ -1903,14 +1789,6 @@ Player.traceLine = function ( THREE, group, options ) {
 			return;
 
 		}
-/*
-		if ( line && ( settings.max === null ) ) {
-
-			group.remove( line );
-			line = undefined;
-			
-		}
-*/
 		if ( line === undefined ) {
 
 			// geometry
@@ -2038,7 +1916,6 @@ function assignSettings() {
 		settings.marks = settings.marks || 10;//2;
 
 	} else settings.marks = null;
-	//	settings.dt = settings.dt || 0.1;
 	setDT();
 	settings.repeat = settings.repeat || false;
 	settings.interval = settings.interval || 1;//25;

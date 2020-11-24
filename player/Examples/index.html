@@ -26,12 +26,13 @@
 
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import * as THREE from 'https://threejs.org/build/three.min.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from '../../../../three.js/dev/build/three.module.min.js';
 		//import * as THREE from '../../../../three.js/dev/build/three.module.js';
-		//import * as THREE from '../../../../three.js/dev/build/three.min.js';
-		//import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
+		import { THREE } from '../../three.js';
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 
 		import { dat } from '../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
@@ -99,6 +100,7 @@
 			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
 			camera.userData.cameraTarget = {
 
+				//boLook: true,
 				Player: Player,
 				rotation: {
 
@@ -174,8 +176,8 @@
 						interval: 25,//Ticks per seconds.
 						//min: -1,
 						//max: 0,
-						//max: Infinity,//первращается в null после чтения из cookie
-						dt: 0.01,
+						max: Infinity,//первращается в null после чтения из cookie
+						dt: 0.01,//for max: Infinity
 
 					},
 
@@ -231,6 +233,7 @@
 					trace: true,//Displays the trace of the point movement.
 					cameraTarget: {
 
+						//boLook: false,
 						camera: camera,
 
 					},
