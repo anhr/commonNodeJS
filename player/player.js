@@ -1096,13 +1096,16 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 			if ( typeof funcs.w === "function" ) {
 
 				var value = funcs.w( t, a, b );
-				attributes.position.setW( i, value );
+				if ( attributes.position.itemSize >= 4 )
+					attributes.position.setW( i, value );
 				needsUpdate = true;
 
 				if ( mesh.userData.player.palette )
 					color = mesh.userData.player.palette.toColor( value, min, max );
 				else if ( options.palette )
 					color = options.palette.toColor( value, min, max );
+				else
+					color = palette.get().toColor( value, min, max );
 
 			} else if ( typeof funcs.w === "object" ) {
 
