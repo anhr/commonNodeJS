@@ -122,7 +122,7 @@ Add <b>Player</b>.
 ```
 const player = new Player( THREE, scene );
 ```
-Create a 3d object, for example <b>Points</b>:
+Currently your player is not doing anything. Please add a 3d object into canvas that you want to play with, for example <b>Points</b>:
 ```
 const arrayFuncs = [
 	new THREE.Vector3( 0, 0.5, 0.5 ),//First point
@@ -137,7 +137,7 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( array
 	} ) );
 scene.add( points );
 ```
-Currently your player does nothing. Suppose you want to move a point during playing. Change your code for this:
+Suppose you want to move a point during playing. Change your code for this:
 * Edit <b>arrayFuncs</b>
 ```
 const arrayFuncs = [
@@ -156,6 +156,7 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Playe
 		size: 0.2,
 
 	} ) );
+scene.add( points );
 ```
 You can see, the <b>X</b> and <b>Y</b> values of the first point of the <b>arrayFuncs</b> is function of the <b>t</b>. <b>X</b> is <b>sin(t)</b> and <b>Y</b> is <b>cos(t)</b>.
 <b>t</b> is current time of the playing. Default start time <b>t = 0</b>, <b>a = 1</b>, <b>b = 0</b>.
