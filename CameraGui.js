@@ -24,6 +24,7 @@ import { dat } from './dat/dat.module.js';
  * @param {GUI} gui is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}.
  * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
  * @param {object} [options] the following options are available:
+ * @param {OrbitControls} [options.orbitControls] [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}.
  * @param {object} [options.scales={}] axes scales.
  * See [AxesHelper(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/jsdoc/module-AxesHelper.html} options.scales for details.
  * @param {Function} [options.getLanguageCode="en"] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
@@ -71,6 +72,9 @@ var CameraGui = function ( gui, camera, options ) {
 		distanceToCamera: 'Distance',
 		distanceToCameraTitle: 'Distance from the camera to the point at which the camera is looking',
 
+		look: 'Look',
+		lookTitle: 'Camera is look at a selected point during playing.',
+
 		defaultButton: 'Default',
 		defaultTitle: 'Restore default camera settings.',
 
@@ -87,8 +91,11 @@ var CameraGui = function ( gui, camera, options ) {
 			lang.position = 'Позиция';
 			lang.positionTitle = 'Позиция камеры';
 
-			lang.distanceToCamera = 'Расстояние',
+			lang.distanceToCamera = 'Расстояние';
 			lang.distanceToCameraTitle = 'Расстояние между камерой и точкой, на которую она смотрит.',
+
+			lang.look = 'Следить';
+			lang.lookTitle = 'Камера следит за выбранной точкой во время проигрывания.';
 
 			lang.defaultButton = 'Восстановить';
 			lang.defaultTitle = 'Восстановить настройки камеры по умолчанию.';
@@ -139,6 +146,7 @@ var CameraGui = function ( gui, camera, options ) {
 	if ( camera.userData.cameraTarget ) {
 
 		const Player = camera.userData.cameraTarget.Player,
+			controllerLook = fCamera.add( camera.userData.cameraTarget, 'boLook' ).onChange( function ( value ) { } ),
 			fDistanceToCamera = fCamera.addFolder( lang.distanceToCamera ),
 			distance = {
 
@@ -147,35 +155,36 @@ var CameraGui = function ( gui, camera, options ) {
 				z: Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'z' ),
 				
 			};
-			function setDistance(){
+		dat.controllerNameAndTitle( controllerLook, lang.look, lang.lookTitle );
+		function setDistance(){
 
-				camera.userData.cameraTarget.setCameraPosition( camera.userData.cameraTarget.target );
-				update();
+			camera.userData.cameraTarget.setCameraPosition( camera.userData.cameraTarget.target );
+			update();
 				
-			}
-			controllersDistance = {
+		}
+		controllersDistance = {
 
-				x: dat.controllerZeroStep( fDistanceToCamera, distance, 'x', function ( value ) {
+			x: dat.controllerZeroStep( fDistanceToCamera, distance, 'x', function ( value ) {
 
-					camera.userData.cameraTarget.distanceToCameraCur.x = value;
-					setDistance();
+				camera.userData.cameraTarget.distanceToCameraCur.x = value;
+				setDistance();
 
-				} ),
-				y: dat.controllerZeroStep( fDistanceToCamera, distance, 'y', function ( value ) {
+			} ),
+			y: dat.controllerZeroStep( fDistanceToCamera, distance, 'y', function ( value ) {
 
-					camera.userData.cameraTarget.distanceToCameraCur.y = value;
-					setDistance();
+				camera.userData.cameraTarget.distanceToCameraCur.y = value;
+				setDistance();
 
-				} ),
+			} ),
 
-				z: dat.controllerZeroStep( fDistanceToCamera, distance, 'z', function ( value ) {
+			z: dat.controllerZeroStep( fDistanceToCamera, distance, 'z', function ( value ) {
 
-					camera.userData.cameraTarget.distanceToCameraCur.z = value;
-					setDistance();
+				camera.userData.cameraTarget.distanceToCameraCur.z = value;
+				setDistance();
 
-				} ),
+			} ),
 
-			};
+		};
 		defaultDistance = { x: distance.x, y: distance.y, z: distance.z };
 		dat.folderNameAndTitle( fDistanceToCamera, lang.distanceToCamera, lang.distanceToCameraTitle );
 		dat.controllerNameAndTitle( controllersDistance.x, options.scales.x.name );
