@@ -2,6 +2,23 @@
 
 I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objects animation.
 
+# Content
+* [Quick start.](#Quickstart)
+* [Add trace line of moving of the point during playing.](#AddTrace)
+* [Point color.](#PointColor)
+* [Move points position.](#MovePoints)
+* [Create <b>THREE.Points</b> with <b>THREE.ShaderMaterial</b>.](#ShaderMaterialPoints)
+* [Use <b>MyPoints</b> for create points.](#MyPoints)
+* [Add <b>player</b> item into <b>CanvasMenu</b>.](#CanvasMenu)
+* [Using <b>dat.gui</b> for manual change of the <b>Player</b> settings.](#datGuiPlayer)
+* [Using <b>dat.gui</b> for manual change of the <b>camera</b> settings.](#datGuiCamera)
+* [Add player control buttons to the <b>dat.gui</b>.](#datGuiPlayerControl)
+* [Set the camera to look at a point.](#cameraLook)
+* [Time of the playing.](#playingTime)
+* [Directory Contents.](#DirectoryContents)
+* [Building your own Player.](#Building)
+
+<a name="QuickStart"></a>
 ## Quick start
 
 * Create a folder on your localhost named as [folderName].
@@ -26,6 +43,8 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 
 		import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 
 		var camera, scene, renderer;
 
@@ -176,6 +195,7 @@ const player = new Player( THREE, scene, {
 
 } );
 ```
+<a name="AddTrace"></a>
 #### Add trace line of moving of the point during playing.
 * Edit <b>arrayFuncs</b>
 ```
@@ -203,6 +223,7 @@ You can see, first value of the array is object with
 }</b>
 
 Now you can see a trace line of the moving of the first point.
+<a name="PointColor"></a>
 #### Point color.
 * In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> key and add <b>vertexColors: THREE.VertexColors</b>.
 ```
@@ -339,6 +360,7 @@ points.userData.player = {
 
 }
 ```
+<a name="MovePoints"></a>
 #### Move points position.
 * Add <b>selectPlayScene</b> key to the <b>points.userData.player</b> object.
 ```
@@ -361,10 +383,12 @@ Also you can scale and rotate any mesh on your canvas. For example.
 ```
 points.rotation.z = - Math.PI * 2 * t;
 ```
+<a name="ShaderMaterialPoints"></a>
 #### Create THREE.Points with [THREE.ShaderMaterial](https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial) material.
 Currently, it seems to you that the size of the first point changes during of the the playing because point moves near or far from camera.
 Sometimes you want to see the sizes of the points is not depend from distance to camera.
 To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described in [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
+<a name="MyPoints"></a>
 #### Use MyPoints for create points.
 
 Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use [MyPoints](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html) for creating of new points.
@@ -425,6 +449,7 @@ MyPoints( THREE, arrayFuncs, scene, {
 
 } );
 ```
+<a name="CanvasMenu"></a>
 #### Add <b>player</b> item into [CanvasMenu](https://github.com/anhr/commonNodeJS/tree/master/canvasMenu).
 Import <b>CanvasMenu</b> into your web page for it.
 ```
@@ -445,6 +470,7 @@ new CanvasMenu( renderer, {
 Please move mouse over canvas.
 Now you can see a player's menu items on the bottom of the canvas.
 
+<a name="datGuiPlayer"></a>
 #### Using [dat.gui](https://github.com/anhr/dat.gui) for manual change of the <b>Player</b> settings.
 
 Import <b>dat.gui</b>.
@@ -494,6 +520,28 @@ player.gui( gui, {
 } );
 ```
 
+<a name="datGuiCamera"></a>
+##### Using [dat.gui](https://github.com/anhr/dat.gui) for manual change of the <b>camera</b> settings.
+
+First, import <b>CameraGui</b>
+```
+import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import CameraGui from './commonNodeJS/master/CameraGui.js';
+```
+Add <b>CameraGui</b> into gui 
+```
+new CameraGui( gui, camera, {
+
+	getLanguageCode: getLanguageCode,
+	orbitControls: controls,
+
+} );
+```
+
+<a name="datGuiPlayerControl"></a>
 #### Add player control buttons to the [dat.gui](https://github.com/anhr/dat.gui).
 
 First, import <b>controllerPlay</b>.
@@ -509,6 +557,7 @@ Add player control buttons.
 controllerPlay.create( player, gui );
 ```
 
+<a name="cameraLook"></a>
 #### Set the camera to look at a point.
 
 Now you can see, all points moves and hides on the right border of the canvas during playing.
@@ -556,6 +605,10 @@ Also you can rotate camera around on the point. Please add <b>cameraTarget</b> o
 ```
 camera.userData.cameraTarget = {
 
+	
+	//boLook: false,//camera do not look at a selected point during playing.
+		//User can change this key if you add the CameraGui into dat.gui
+
 	Player: Player,
 	rotation: {
 
@@ -595,7 +648,7 @@ camera.userData.cameraTarget = {
 
 }
 ```
-You can set individual setting for selected point. Please add <b>rotation</b>, <b>distanceToCamera</b> keys into <b>cameraTarget</b> object for selected point
+You can set individual setting for selected point. Please add <b>rotation</b>, <b>distanceToCamera</b>, <b>boLook</b> keys into <b>cameraTarget</b> object for selected point
 ```
 cameraTarget: {
 
@@ -618,6 +671,7 @@ cameraTarget: {
 ```
 Individual setting for selected point is more priority before camera settings.
 
+<a name="playingTime"></a>
 #### Time of the playing.
 
 Default time of the playing limited between 0 and 1.
@@ -638,17 +692,20 @@ const player = new Player( THREE, scene, {
 } );
 ```
 
+<a name="DirectoryContents"></a>
 ## Directory Contents
 
 ```
 build - Compiled source code.
 ```
 
+<a name="Building"></a>
 ## Building your own Player
 
 In the terminal, enter the following:
 
 ```
 $ npm install
+$ npm install uglify-es
 $ npm run build
 ```
