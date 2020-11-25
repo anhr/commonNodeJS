@@ -1123,12 +1123,16 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 
 			} else if ( typeof funcs.w === "object" ) {
 
-				var value = funcs.w.func( t, a, b );
-				if ( funcs.w.min ) min = funcs.w.min;
-				if ( funcs.w.max ) max = funcs.w.max;
 				if ( funcs.w instanceof THREE.Color )
 					color = funcs.w;
-				else getColor();
+				else {
+
+					var value = funcs.w.func( t, a, b );
+					if ( funcs.w.min ) min = funcs.w.min;
+					if ( funcs.w.max ) max = funcs.w.max;
+					getColor();
+
+				}
 /*
 				else if ( options.palette ) {
 
