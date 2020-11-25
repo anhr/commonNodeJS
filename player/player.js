@@ -1093,12 +1093,7 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 			//потому что перемнные типа var видны снаружи блока {}
 			let color;
 
-			if ( typeof funcs.w === "function" ) {
-
-				var value = funcs.w( t, a, b );
-				if ( attributes.position.itemSize >= 4 )
-					attributes.position.setW( i, value );
-				needsUpdate = true;
+			function getColor() {
 
 				if ( mesh.userData.player.palette )
 					color = mesh.userData.player.palette.toColor( value, min, max );
@@ -1107,10 +1102,34 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 				else
 					color = palette.get().toColor( value, min, max );
 
+			}
+
+			if ( typeof funcs.w === "function" ) {
+
+				var value = funcs.w( t, a, b );
+				if ( attributes.position.itemSize >= 4 )
+					attributes.position.setW( i, value );
+				needsUpdate = true;
+
+				getColor();
+/*
+				if ( mesh.userData.player.palette )
+					color = mesh.userData.player.palette.toColor( value, min, max );
+				else if ( options.palette )
+					color = options.palette.toColor( value, min, max );
+				else
+					color = palette.get().toColor( value, min, max );
+*/					
+
 			} else if ( typeof funcs.w === "object" ) {
 
+				var value = funcs.w.func( t, a, b );
+				if ( funcs.w.min ) min = funcs.w.min;
+				if ( funcs.w.max ) max = funcs.w.max;
 				if ( funcs.w instanceof THREE.Color )
 					color = funcs.w;
+				else getColor();
+/*
 				else if ( options.palette ) {
 
 					if ( typeof funcs.w === 'object' ) {
@@ -1122,6 +1141,7 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 					color = options.palette.toColor( Player.execFunc( funcs, 'w', t, a, b ), min, max );
 
 				}
+*/					
 
 			} else if ( ( typeof funcs.w === "number" ) && options.palette )
 				color = options.palette.toColor( funcs.w, min, max );
