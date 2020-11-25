@@ -280,7 +280,7 @@ because default range of the [color palette](https://github.com/anhr/commonNodeJ
 But current range of the <b>1-2 * t</b> function from 1 to -1 for default <b>t</b> range from 0 to 1.
 You can resolve this issue by change of the palette range.
 Replace <b>w</b> coordinate of the first point from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
-See arrayFuncs parameter of the [Player.getColors(...)](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors) for details.
+See <b>arrayFuncs</b> parameter of the [Player.getColors(...)](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors) for details.
 ```
 const arrayFuncs = [
 	{
