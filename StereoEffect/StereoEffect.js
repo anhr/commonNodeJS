@@ -175,13 +175,13 @@ function StereoEffect( _THREE, renderer, options ) {
 		};
 
 	};
+/*	
 	this.setSize = function ( width, height ) {
 
 		renderer.setSize( width, height );
 
 	};
 
-/*
 	const rendererSizeDefault = options.rememberSize ? this.getRendererSize() : undefined,
 		fullScreen = false;
 	this.setFullScreen = function () {
