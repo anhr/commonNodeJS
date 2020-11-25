@@ -338,7 +338,7 @@ const player = new Player( THREE, scene, {
 ```
 Also you can create your own custom palette.
 ```
-new ColorPicker.palette( { palette: [
+const palette = new ColorPicker.palette( { palette: [
 
 	{ percent: 0, r: 0xff, g: 255, b: 0xff, },
 	{ percent: 10, r: 0, g: 0, b: 0, },
