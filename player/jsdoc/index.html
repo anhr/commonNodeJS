@@ -55,8 +55,8 @@
 <li><a href="#MyPoints">Use <b>MyPoints</b> for create points.</a></li>
 <li><a href="#CanvasMenu">Add <b>player</b> item into <b>CanvasMenu</b>.</a></li>
 <li><a href="#datGuiPlayer">Using <b>dat.gui</b> for manual change of the <b>Player</b> settings.</a></li>
-<li><a href="#datGuiCamera">Using <b>dat.gui</b> for manual change of the <b>camera</b> settings.</a></li>
 <li><a href="#datGuiPlayerControl">Add player control buttons to the <b>dat.gui</b>.</a></li>
+<li><a href="#datGuiCamera">Using <b>dat.gui</b> for manual change of the <b>camera</b> settings.</a></li>
 <li><a href="#cameraLook">Set the camera to look at a point.</a></li>
 <li><a href="#playingTime">Time of the playing.</a></li>
 <li><a href="#DirectoryContents">Directory Contents.</a></li>
@@ -404,7 +404,7 @@ For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicke
 }
 </code></pre>
 <p><b>t</b> is current time.</p>
-<p>Now all points in your canvas moving to the left.</p>
+<p>Now all points in your canvas moving to the right.</p>
 <p>Also you can scale and rotate any mesh on your canvas. For example.</p>
 <pre class="prettyprint source"><code>points.rotation.z = - Math.PI * 2 * t;
 </code></pre>
@@ -413,7 +413,29 @@ For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicke
 <p>Currently, it seems to you that the size of the first point changes during of the the playing because point moves near or far from camera.
 Sometimes you want to see the sizes of the points is not depend from distance to camera.
 To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described in <a href="https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html">getShaderMaterialPoints API</a>.
-<a name="MyPoints"></a></p>
+ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
+For resolving of the problem please remove <b>player.play3DObject();</b> and include it inside of the <b>getShaderMaterialPoints</b>.</p>
+<pre class="prettyprint source"><code>getShaderMaterialPoints( THREE, scene, arrayFuncs,
+	function ( points ) {
+
+		scene.add( points );
+		points.userData.player = {
+
+			arrayFuncs: arrayFuncs,
+			selectPlayScene: function ( t ) {
+
+				points.position.x = t;
+				points.rotation.z = - Math.PI * 2 * t;
+
+			}
+
+		}
+		player.play3DObject();
+
+	},
+	{ Player: Player, } );
+</code></pre>
+<p><a name="MyPoints"></a></p>
 <h4>Use MyPoints for create points.</h4>
 <p>Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use <a href="https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html">MyPoints</a> for creating of new points.
 Import <b>MyPoints</b> into your web page for it.</p>
@@ -442,7 +464,8 @@ You can set your own setting for <b>MyPoints</b>. For example set points size to
 	},
 	pointsOptions: {
 
-		position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
+		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
 
 	}
 
@@ -460,8 +483,34 @@ please add <b>shaderMaterial: {}</b> into <b>pointsOptions</b> of the <b>MyPoint
 	},
 	pointsOptions: {
 
-		position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
+		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
 		shaderMaterial: {}
+
+	}
+
+} );
+</code></pre>
+<p>ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
+For resolving of the problem please remove <b>player.play3DObject();</b> and include it inside of the <b>MyPoints</b>.</p>
+<pre class="prettyprint source"><code>MyPoints( THREE, arrayFuncs, scene, {
+
+	Player: Player,
+	options: {
+
+		point: { size: 15 },
+
+	},
+	pointsOptions: {
+
+		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
+		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
+		shaderMaterial: {},
+		onReady: function () {
+
+			player.play3DObject();
+
+		}
 
 	}
 
@@ -523,22 +572,6 @@ player.gui( gui );
 
 } );
 </code></pre>
-<p><a name="datGuiCamera"></a></p>
-<h5>Using <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change of the <b>camera</b> settings.</h5>
-<p>First, import <b>CameraGui</b></p>
-<pre class="prettyprint source"><code>import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import CameraGui from './commonNodeJS/master/CameraGui.js';
-</code></pre>
-<p>Add <b>CameraGui</b> into gui</p>
-<pre class="prettyprint source"><code>new CameraGui( gui, camera, {
-
-	getLanguageCode: getLanguageCode,
-	orbitControls: controls,
-
-} );
-</code></pre>
 <p><a name="datGuiPlayerControl"></a></p>
 <h4>Add player control buttons to the <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</h4>
 <p>First, import <b>controllerPlay</b>.</p>
@@ -549,6 +582,22 @@ player.gui( gui );
 </code></pre>
 <p>Add player control buttons.</p>
 <pre class="prettyprint source"><code>controllerPlay.create( player, gui );
+</code></pre>
+<p><a name="datGuiCamera"></a></p>
+<h4>Using <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change of the <b>camera</b> settings.</h4>
+<p>First, import <b>CameraGui</b></p>
+<pre class="prettyprint source"><code>import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import CameraGui from './commonNodeJS/master/CameraGui.js';
+</code></pre>
+<p>Add <b>CameraGui</b> into gui</p>
+<pre class="prettyprint source"><code>new CameraGui( gui, camera, {
+
+	getLanguageCode: getLanguageCode,
+	//orbitControls: controls,
+
+} );
 </code></pre>
 <p><a name="cameraLook"></a></p>
 <h4>Set the camera to look at a point.</h4>
@@ -701,7 +750,7 @@ $ npm run build
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Nov 25 2020 08:27:25 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Nov 25 2020 09:58:05 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

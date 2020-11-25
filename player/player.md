@@ -11,8 +11,8 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 * [Use <b>MyPoints</b> for create points.](#MyPoints)
 * [Add <b>player</b> item into <b>CanvasMenu</b>.](#CanvasMenu)
 * [Using <b>dat.gui</b> for manual change of the <b>Player</b> settings.](#datGuiPlayer)
-* [Using <b>dat.gui</b> for manual change of the <b>camera</b> settings.](#datGuiCamera)
 * [Add player control buttons to the <b>dat.gui</b>.](#datGuiPlayerControl)
+* [Using <b>dat.gui</b> for manual change of the <b>camera</b> settings.](#datGuiCamera)
 * [Set the camera to look at a point.](#cameraLook)
 * [Time of the playing.](#playingTime)
 * [Directory Contents.](#DirectoryContents)
@@ -378,7 +378,7 @@ points.userData.player = {
 ```
 <b>t</b> is current time.
 
-Now all points in your canvas moving to the left.
+Now all points in your canvas moving to the right.
 
 Also you can scale and rotate any mesh on your canvas. For example.
 ```
@@ -389,6 +389,29 @@ points.rotation.z = - Math.PI * 2 * t;
 Currently, it seems to you that the size of the first point changes during of the the playing because point moves near or far from camera.
 Sometimes you want to see the sizes of the points is not depend from distance to camera.
 To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described in [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
+ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
+For resolving of the problem please remove <b>player.play3DObject();</b> and include it inside of the <b>getShaderMaterialPoints</b>.
+```
+getShaderMaterialPoints( THREE, scene, arrayFuncs,
+	function ( points ) {
+
+		scene.add( points );
+		points.userData.player = {
+
+			arrayFuncs: arrayFuncs,
+			selectPlayScene: function ( t ) {
+
+				points.position.x = t;
+				points.rotation.z = - Math.PI * 2 * t;
+
+			}
+
+		}
+		player.play3DObject();
+
+	},
+	{ Player: Player, } );
+```
 <a name="MyPoints"></a>
 #### Use MyPoints for create points.
 
@@ -424,7 +447,8 @@ MyPoints( THREE, arrayFuncs, scene, {
 	},
 	pointsOptions: {
 
-		position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
+		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
 
 	}
 
@@ -443,13 +467,41 @@ MyPoints( THREE, arrayFuncs, scene, {
 	},
 	pointsOptions: {
 
-		position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
+		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
 		shaderMaterial: {}
 
 	}
 
 } );
 ```
+ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
+For resolving of the problem please remove <b>player.play3DObject();</b> and include it inside of the <b>MyPoints</b>.
+```
+MyPoints( THREE, arrayFuncs, scene, {
+
+	Player: Player,
+	options: {
+
+		point: { size: 15 },
+
+	},
+	pointsOptions: {
+
+		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
+		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
+		shaderMaterial: {},
+		onReady: function () {
+
+			player.play3DObject();
+
+		}
+
+	}
+
+} );
+```
+
 <a name="CanvasMenu"></a>
 #### Add <b>player</b> item into [CanvasMenu](https://github.com/anhr/commonNodeJS/tree/master/canvasMenu).
 Import <b>CanvasMenu</b> into your web page for it.
@@ -521,27 +573,6 @@ player.gui( gui, {
 } );
 ```
 
-<a name="datGuiCamera"></a>
-##### Using [dat.gui](https://github.com/anhr/dat.gui) for manual change of the <b>camera</b> settings.
-
-First, import <b>CameraGui</b>
-```
-import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import CameraGui from './commonNodeJS/master/CameraGui.js';
-```
-Add <b>CameraGui</b> into gui 
-```
-new CameraGui( gui, camera, {
-
-	getLanguageCode: getLanguageCode,
-	orbitControls: controls,
-
-} );
-```
-
 <a name="datGuiPlayerControl"></a>
 #### Add player control buttons to the [dat.gui](https://github.com/anhr/dat.gui).
 
@@ -556,6 +587,27 @@ import controllerPlay from './commonNodeJS/master/controllerPlay/controllerPlay.
 Add player control buttons.
 ```
 controllerPlay.create( player, gui );
+```
+
+<a name="datGuiCamera"></a>
+#### Using [dat.gui](https://github.com/anhr/dat.gui) for manual change of the <b>camera</b> settings.
+
+First, import <b>CameraGui</b>
+```
+import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import CameraGui from './commonNodeJS/master/CameraGui.js';
+```
+Add <b>CameraGui</b> into gui 
+```
+new CameraGui( gui, camera, {
+
+	getLanguageCode: getLanguageCode,
+	//orbitControls: controls,
+
+} );
 ```
 
 <a name="cameraLook"></a>
