@@ -252,7 +252,7 @@ var CameraGui = function ( gui, camera, options ) {
 		 * update
 		 */
 		this.update = function () { update(); }
-		camera.userData.cameraTarget.cameraGui = this;
+		if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.cameraGui = this;
 
 	}
 
