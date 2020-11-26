@@ -861,6 +861,20 @@ function Player( THREE, group, options ) {
 	}
 
 }
+Player.setCameraTarget = function ( camera, funcs ) {
+
+	if ( camera.userData.cameraTarget.boLook !== false )
+		camera.userData.cameraTarget.boLook = camera.userData.cameraTarget.boLook || true;
+	if ( funcs && ( funcs.cameraTarget.boLook !== undefined ) )
+		camera.userData.cameraTarget.boLook = funcs.cameraTarget.boLook;
+
+	camera.userData.cameraTarget.distanceToCamera = funcs && funcs.vector.cameraTarget.distanceToCamera ?
+		funcs.vector.cameraTarget.distanceToCamera : 
+			camera.userData.cameraTarget.distanceToCamera ||
+			{ x: camera.position.x, y: camera.position.y, z: camera.position.z };
+//		new THREE.Vector3().copy( camera.position );
+
+}
 /**
  * execute function
  * @function Player.
@@ -1508,6 +1522,8 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
 				if ( camera.userData.cameraTarget.ready ) console.warn( 'Player.getPoints: duplicate cameraTarget' );
 				camera.userData.cameraTarget.ready = true;
 
+				Player.setCameraTarget( camera, funcs );
+/*				
 				if ( camera.userData.cameraTarget.boLook !== false )
 					camera.userData.cameraTarget.boLook = camera.userData.cameraTarget.boLook || true;
 				if ( funcs.cameraTarget.boLook !== undefined )
@@ -1516,6 +1532,7 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
 				camera.userData.cameraTarget.distanceToCamera = funcs.vector.cameraTarget.distanceToCamera ||
 					camera.userData.cameraTarget.distanceToCamera ||
 					new THREE.Vector3().copy( camera.position );
+*/					
 				camera.userData.cameraTarget.rotation = funcs.cameraTarget.rotation || camera.userData.cameraTarget.rotation;
 				if ( camera.userData.cameraTarget.rotation ) {
 

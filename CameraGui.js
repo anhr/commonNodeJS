@@ -145,8 +145,9 @@ var CameraGui = function ( gui, camera, options ) {
 	var controllersDistance, defaultDistance;
 	if ( camera.userData.cameraTarget ) {
 
-		const Player = camera.userData.cameraTarget.Player,
-			controllerLook = fCamera.add( camera.userData.cameraTarget, 'boLook' ).onChange( function ( value ) { } ),
+		const Player = camera.userData.cameraTarget.Player;
+		Player.setCameraTarget( camera );
+		const controllerLook = fCamera.add( camera.userData.cameraTarget, 'boLook' ).onChange( function ( value ) { } ),
 			fDistanceToCamera = fCamera.addFolder( lang.distanceToCamera ),
 			distance = {
 
