@@ -13,7 +13,7 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 * [Using <b>dat.gui</b> for manual change of the <b>Player</b> settings.](#datGuiPlayer)
 * [Add player control buttons to the <b>dat.gui</b>.](#datGuiPlayerControl)
 * [Using <b>dat.gui</b> for manual change of the <b>camera</b> settings.](#datGuiCamera)
-* [Set the camera to look at a point.](#cameraLook)
+* [Set the camera to look at the point.](#cameraLook)
 * [Time of the playing.](#playingTime)
 * [Directory Contents.](#DirectoryContents)
 * [Building your own Player.](#Building)
@@ -611,7 +611,7 @@ new CameraGui( gui, camera, {
 ```
 
 <a name="cameraLook"></a>
-#### Set the camera to look at a point.
+#### Set the camera to look at the point.
 
 Now you can see, all points moves and hides on the right border of the canvas during playing.
 You can set the camera to look at a selected point during playing for resolving of issue.
@@ -728,7 +728,7 @@ Individual setting for selected point is more priority before camera settings.
 #### Time of the playing.
 
 Default time of the playing limited between 0 and 1.
-You can set another time limit. Please add min and max keys into settings of the new Player for it
+You can set another time limit. Please add <b>min</b> and <b>max</b> keys into settings of the <b>new Player</b> for it
 ```
 const player = new Player( THREE, scene, {
 
