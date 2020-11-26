@@ -512,7 +512,7 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
 ```
-Create CanvasMenu.
+Create CanvasMenu. Attention!!! Please create <b>CanvasMenu</b> after creating of the render but before <b>renderer.setSize(...)</b>
 ```
 new CanvasMenu( renderer, {
 
@@ -744,6 +744,41 @@ const player = new Player( THREE, scene, {
 
 } );
 ```
+
+You can infinity play. Please set <b>max: Infinity</b> for it.
+```
+const player = new Player( THREE, scene, {
+
+	selectPlaySceneOptions: { palette: palette, },
+	settings: {
+
+		marks: 100,//Ticks count of the playing.
+		interval: 25,//Ticks per seconds.
+		min: 0,
+		max: Infinity,
+
+	},
+
+} );
+```
+Currently, the default playback step is 0.1. You can set another step. Please add <b>dt</b> key for it.
+```
+const player = new Player( THREE, scene, {
+
+	selectPlaySceneOptions: { palette: palette, },
+	settings: {
+
+		marks: 100,//Ticks count of the playing.
+		interval: 25,//Ticks per seconds.
+		min: 0,
+		max: Infinity,
+		dt: 0.01,//for max: Infinity
+
+	},
+
+} );
+```
+Note that the step only matters for <b>max: infinity</b>.
 
 <a name="DirectoryContents"></a>
 ## Directory Contents
