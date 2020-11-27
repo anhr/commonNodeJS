@@ -158,10 +158,20 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Playe
 	} ) );
 scene.add( points );
 ```
-You can see, the <b>X</b> and <b>Y</b> values of the first point of the <b>arrayFuncs</b> is function of the <b>t</b>. <b>X</b> is <b>sin(t)</b> and <b>Y</b> is <b>cos(t)</b>.
-<b>t</b> is current time of the playing. Default start time <b>t = 0</b>, <b>a = 1</b>, <b>b = 0</b>.
+You can see, the <b>X</b> and <b>Y</b> values of the first point of the <b>arrayFuncs</b> is function of the <b>t</b>.
+
+<b>X</b> is <b>sin(t)</b>
+
+<b>Y</b> is <b>cos(t)</b>.
+
+<b>t</b> is current time of the playing.
+
+Default start time <b>t = 0</b>, <b>a = 1</b>, <b>b = 0</b>.
+
 Read about [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function).
-Currently [Player.getPoints(...)](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints) returns an array of the vectors for <b>t = 0</b>.
+
+The [Player.getPoints(...)](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints) in code above
+returns an array of the vectors for <b>t = 0</b>.
 
 * Define the <b>points.userData.player</b> object in your code for including of the points into <b>Player</b>.
 Include <b>arrayFuncs</b> into <b>points.userData.player</b> object if you want to move points during playing.
