@@ -4,35 +4,86 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 
 ## Quick start
 
-### SpriteText
+* Create a folder on your localhost named as [folderName].
+* Add your web page into [folderName]. Example:
+```
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>SpriteText</title>
+	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+</head>
+<body>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - SpriteText is a text that always faces towards the camera.
+	</div>
+	<div>
+		<canvas id="canvas"></canvas>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
+
+		var camera, scene, renderer;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	</script>
+</body>
+</html>
+```
 
 The easiest way to use <b>SpriteText</b> in your code is import <b>SpriteText</b> from <b>SpriteText.js</b> file in your JavaScript module.
-[Example](https://github.com/anhr/SpriteText/blob/master/Examples/SpriteText.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/Examples/SpriteTextGui.html).
 
 ```
-import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
+import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
 ```
-or
-
-* Create a folder on your localhost named as [folderName].
-* Add your web page into [folderName]. See [example](https://raw.githack.com/anhr/SpriteText/master/Examples/SpriteText.html) web page.
-* import [three.js](https://github.com/anhr/three.js)
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import * as THREE from 'https://threejs.org/build/three.module.js';
+import { SpriteText } from './commonNodeJS/master/SpriteText/SpriteText.js';
 ```
-or
-```
-import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
-```
-or download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
-```
-import * as THREE from './three.js/dev/build/three.module.js';
-```
-* Download [SpriteText](https://github.com/anhr/SpriteText) repository into your "[folderName]\SpriteText\master" folder.
-```
-import { SpriteText } from './SpriteText/master/SpriteText.js';
-```
-
 First, set <b>THREE</b> for <b>SpriteText</b>.
 ```
 SpriteText.setTHREE( THREE );
@@ -44,9 +95,9 @@ Add <b>SpriteText</b> with default settings into center of the scene.
 ```
 scene.add( new SpriteText( 'Default sprite') );
 ```
-Add <b>SpriteText</b> with green font color , <b>textHeight</b> is 0.2, <b>fontFace</b> is 'Times' into ( -5, 0, 0 ) point of the scene.
+Add <b>SpriteText</b> with green font color , <b>textHeight</b> is 0.2, <b>fontFace</b> is 'Times' into ( -4, 0, 0 ) point of the scene.
 ```
-const spriteText = new SpriteText( 'Sprite text', new THREE.Vector3( -5, 0, 0 ), {
+const spriteText = new SpriteText( 'Sprite text', new THREE.Vector3( -4, 0, 0 ), {
 
 	fontColor: 'rgba(0, 255, 0, 1)', //green
 	textHeight: 0.2,
@@ -72,15 +123,11 @@ import { dat } from './commonNodeJS/master/dat/dat.module.js';
 ```
 Import <b>SpriteTextGui</b>.
 ```
-import { SpriteTextGui } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteTextGui.js';
+import { SpriteTextGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteTextGui.js';
 ```
-or
-
-* Use folder on your localhost named as [folderName]. See <b>SpriteText</b> above.
-* Download [SpriteText](https://github.com/anhr/SpriteText) repository into your "[folderName]\SpriteText\master" folder.
-
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import { SpriteTextGui } from './SpriteText/master/SpriteTextGui.js';
+import { SpriteTextGui } from './commonNodeJS/master/SpriteText/SpriteTextGui.js';
 ```
 
 Now you can use <b>SpriteTextGui</b> in your javascript code.

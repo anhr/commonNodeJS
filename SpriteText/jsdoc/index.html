@@ -46,29 +46,82 @@
         <article><h1>SpriteText.</h1>
 <p>A <a href="https://threejs.org/docs/index.html#api/en/objects/Sprite">sprite</a> based text component. SpriteText is a text that always faces towards the camera.</p>
 <h2>Quick start</h2>
-<h3>SpriteText</h3>
-<p>The easiest way to use <b>SpriteText</b> in your code is import <b>SpriteText</b> from <b>SpriteText.js</b> file in your JavaScript module.
-<a href="https://github.com/anhr/SpriteText/blob/master/Examples/SpriteText.html">Example</a>.</p>
-<pre class="prettyprint source"><code>import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
-</code></pre>
-<p>or</p>
 <ul>
 <li>Create a folder on your localhost named as [folderName].</li>
-<li>Add your web page into [folderName]. See <a href="https://raw.githack.com/anhr/SpriteText/master/Examples/SpriteText.html">example</a> web page.</li>
-<li>import <a href="https://github.com/anhr/three.js">three.js</a></li>
+<li>Add your web page into [folderName]. Example:</li>
 </ul>
-<pre class="prettyprint source"><code>import * as THREE from 'https://threejs.org/build/three.module.js';
+<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+
+&lt;html>
+&lt;head>
+	&lt;title>SpriteText&lt;/title>
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://threejs.org/examples/main.css&quot;>
+&lt;/head>
+&lt;body>
+	&lt;div id=&quot;info&quot;>
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a> - SpriteText is a text that always faces towards the camera.
+	&lt;/div>
+	&lt;div>
+		&lt;canvas id=&quot;canvas&quot;>&lt;/canvas>
+	&lt;/div>
+
+	&lt;script type=&quot;module&quot;>
+
+		import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
+
+		var camera, scene, renderer;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	&lt;/script>
+&lt;/body>
+&lt;/html>
 </code></pre>
-<p>or</p>
-<pre class="prettyprint source"><code>import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+<p>The easiest way to use <b>SpriteText</b> in your code is import <b>SpriteText</b> from <b>SpriteText.js</b> file in your JavaScript module.
+<a href="https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/Examples/SpriteTextGui.html">Example</a>.</p>
+<pre class="prettyprint source"><code>import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
 </code></pre>
-<p>or download <a href="https://github.com/anhr/three.js">three.js</a> repository into your &quot;[folderName]\three.js\dev&quot; folder.</p>
-<pre class="prettyprint source"><code>import * as THREE from './three.js/dev/build/three.module.js';
-</code></pre>
-<ul>
-<li>Download <a href="https://github.com/anhr/SpriteText">SpriteText</a> repository into your &quot;[folderName]\SpriteText\master&quot; folder.</li>
-</ul>
-<pre class="prettyprint source"><code>import { SpriteText } from './SpriteText/master/SpriteText.js';
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import { SpriteText } from './commonNodeJS/master/SpriteText/SpriteText.js';
 </code></pre>
 <p>First, set <b>THREE</b> for <b>SpriteText</b>.</p>
 <pre class="prettyprint source"><code>SpriteText.setTHREE( THREE );
@@ -77,8 +130,8 @@
 <p>Add <b>SpriteText</b> with default settings into center of the scene.</p>
 <pre class="prettyprint source"><code>scene.add( new SpriteText( 'Default sprite') );
 </code></pre>
-<p>Add <b>SpriteText</b> with green font color , <b>textHeight</b> is 0.2, <b>fontFace</b> is 'Times' into ( -5, 0, 0 ) point of the scene.</p>
-<pre class="prettyprint source"><code>const spriteText = new SpriteText( 'Sprite text', new THREE.Vector3( -5, 0, 0 ), {
+<p>Add <b>SpriteText</b> with green font color , <b>textHeight</b> is 0.2, <b>fontFace</b> is 'Times' into ( -4, 0, 0 ) point of the scene.</p>
+<pre class="prettyprint source"><code>const spriteText = new SpriteText( 'Sprite text', new THREE.Vector3( -4, 0, 0 ), {
 
 	fontColor: 'rgba(0, 255, 0, 1)', //green
 	textHeight: 0.2,
@@ -98,14 +151,10 @@ scene.add( spriteText );
 <pre class="prettyprint source"><code>import { dat } from './commonNodeJS/master/dat/dat.module.js';
 </code></pre>
 <p>Import <b>SpriteTextGui</b>.</p>
-<pre class="prettyprint source"><code>import { SpriteTextGui } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteTextGui.js';
+<pre class="prettyprint source"><code>import { SpriteTextGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteTextGui.js';
 </code></pre>
-<p>or</p>
-<ul>
-<li>Use folder on your localhost named as [folderName]. See <b>SpriteText</b> above.</li>
-<li>Download <a href="https://github.com/anhr/SpriteText">SpriteText</a> repository into your &quot;[folderName]\SpriteText\master&quot; folder.</li>
-</ul>
-<pre class="prettyprint source"><code>import { SpriteTextGui } from './SpriteText/master/SpriteTextGui.js';
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import { SpriteTextGui } from './commonNodeJS/master/SpriteText/SpriteTextGui.js';
 </code></pre>
 <p>Now you can use <b>SpriteTextGui</b> in your javascript code.</p>
 <pre class="prettyprint source"><code>const gui =  new dat.GUI();
@@ -200,7 +249,7 @@ fSpriteTextAll.userData.restore();
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Nov 15 2020 14:40:37 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat Nov 28 2020 09:27:29 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
