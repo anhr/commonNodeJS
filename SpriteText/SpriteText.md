@@ -186,8 +186,8 @@ group.userData.optionsSpriteText = {
 }
 scene.add( group );
 
-scene.add( new SpriteText( 'Scene' ) );//green color of the font
-group.add( new SpriteText( 'Group' ) );//white semi opacity color of the font
+scene.add( new SpriteText( 'Scene', new THREE.Vector3( 0, 0.5, 0 ), { group: scene } ) );//green color of the font
+group.add( new SpriteText( 'Group', new THREE.Vector3( 0,   1, 0 ), { group: group } ) );//white semi opacity color of the font
 ```
 
 ### folder.userData.restore() - Restore group.userData.optionsSpriteText to default values.
