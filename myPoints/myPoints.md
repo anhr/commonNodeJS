@@ -106,7 +106,6 @@ Create raycaster.
 //Raycaster.
 
 const stereoEffect = new StereoEffect( THREE, renderer );
-stereoEffect.setSize( window.innerWidth, window.innerHeight );
 
 const raycaster = new THREE.Raycaster();
 raycaster.setStereoEffect( {
