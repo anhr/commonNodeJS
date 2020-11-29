@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -19,7 +19,7 @@
 	<script src="../../../webgl-debug/webgl-debug/build/webgl-debug.js"></script>
 	-->
 	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
-	<link type="text/css" rel="stylesheet" href="../../../three.js/dev/examples/main.css">
+	<link type="text/css" rel="stylesheet" href="../../../../three.js/dev/examples/main.css">
 
 </head>
 <body>
@@ -33,47 +33,46 @@
 
 	<script type="module">
 
-		//import * as THREE from '../../../three.js/dev/build/three.module.js';//https://github.com/anhr/three.js
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';//https://github.com/anhr/three.js
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://threejs.org/build/three.module.js';
-		import { THREE } from '../../../commonNodeJS/master/three.js';//https://github.com/anhr/commonNodeJS
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+		//import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
-		import { AxesHelper } from '../AxesHelper.js';//https://github.com/anhr/AxesHelper
-		//import { AxesHelper } from 'https://raw.githack.com/anhr/AxesHelper/master/AxesHelper.js';
+		//import { AxesHelper } from '../AxesHelper.js';//https://github.com/anhr/AxesHelper
+		import { AxesHelper } from 'https://raw.githack.com/anhr/AxesHelper/master/AxesHelper.js';
 
 		import { AxesHelperGui } from '../AxesHelperGui.js';//https://github.com/anhr/AxesHelper
 		//import { AxesHelperGui } from 'https://raw.githack.com/anhr/AxesHelper/master/AxesHelperGui.js';
-		
+
 		//import { OrbitControls } from 'http://localhost/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-		import { OrbitControls } from '../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
+		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
 		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 		//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 
-		import { dat } from '../../../commonNodeJS/master/dat/dat.module.js';//https://github.com/anhr/commonNodeJS
+		import { dat } from '../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
-		import cookie from '../../../commonNodeJS/master/cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
-		//import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
+		import cookie from '../../cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
 		//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
-		import { getLanguageCode } from '../../../commonNodeJS/master/lang.js';//https://github.com/anhr/commonNodeJS
+		import { getLanguageCode } from '../../lang.js';
 		//import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 
-		import { SpriteText } from '../../../SpriteText/master/SpriteText.js';//https://github.com/anhr/SpriteText
-		//import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
+		import { SpriteText } from '../../SpriteText/SpriteText.js';
+		//import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
 		SpriteText.setTHREE( THREE );
 
-		//import { SpriteTextGui } from '../../../SpriteText/master/SpriteTextGui.js';//https://github.com/anhr/SpriteText
+		//import { SpriteTextGui } from '../../../SpriteText/master/SpriteTextGui.js';
 		//import { SpriteTextGui } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteTextGui.js';
 
-		import { GuiSelectPoint, getObjectPosition } from '../../../commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';//https://github.com/anhr/commonNodeJS
+		import { GuiSelectPoint, getObjectPosition } from '../../guiSelectPoint/guiSelectPoint.js';
 		//import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
-		import { MoveGroup } from '../../../commonNodeJS/master/MoveGroup.js';//https://github.com/anhr/commonNodeJS
+		import { MoveGroup } from '../../MoveGroup.js';//https://github.com/anhr/commonNodeJS
 		//import { MoveGroup } from 'https://raw.githack.com/anhr/commonNodeJS/master/MoveGroup.js';
 
-		import StereoEffect from '../../../commonNodeJS/master/StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
+		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 		
 		var camera, scene, renderer, stereoEffect, axesHelper, controls, intersects, guiSelectPoint, moveGroup, raycaster;
@@ -431,7 +430,9 @@
 					//stereoAspect: 1,
 
 				} );
-				stereoEffect.setSize( window.innerWidth, window.innerHeight );
+				
+				//Не помню зачем это
+				//stereoEffect.setSize( window.innerWidth, window.innerHeight );
 			
 			}
 
