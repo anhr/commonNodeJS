@@ -4,7 +4,75 @@ An axis object to visualize the 1, 2 or 3 axes. I use AxesHelper in my [three.js
 
 ## Quick start
 
-### AxesHelper.
+* Create a folder on your localhost named as [folderName].
+* Add your web page into [folderName]. Example:
+```
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>AxesHelper</title>
+	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+</head>
+<body>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - AxesHelper is an axis object to visualize the 1, 2 or 3 axes.
+	</div>
+	<div>
+		<canvas id="canvas"></canvas>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
+
+		var camera, scene, renderer;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	</script>
+</body>
+</html>
+```
 
 The easiest way to use AxesHelper in your code is import AxesHelper from AxesHelper.js file in your JavaScript module.
 [Example](https://github.com/anhr/AxesHelper/blob/master/Examples/AxesHelper.html).
@@ -137,7 +205,6 @@ const stereoEffect = new StereoEffect( THREE, renderer, {
 	camera: camera,
 
 } );
-stereoEffect.setSize( window.innerWidth, window.innerHeight );
 ```
 Add code into animate function
 ```
