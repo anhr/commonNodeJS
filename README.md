@@ -4,10 +4,7 @@ My JavaScript library for NodeJS.
 * AxesHelper. An axis object to visualize the 1, 2 or 3 axes.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/AxesHelper).
 [AxesHelper API](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/jsdoc/index.html).
-[Example 1](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/AxesHelper.html).
-[Example 2](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/AxesHelperGui.html).
-* AxesHelperGui.js [AxesHelper](https://github.com/anhr/three.js/blob/dev/src/helpers/ArrowHelper.js) graphical user interface.
-[Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/index.html).
 * CanvasMenu. My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu) for canvas in my [three.js](https://threejs.org/) projects.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/canvasMenu).
 * clearThree.js Remove all child objects of the object and call dispose on their geometry, material and texture.
