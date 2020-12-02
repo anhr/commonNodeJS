@@ -34,7 +34,7 @@ My JavaScript library for NodeJS.
 * menuPlay. My dropdown menu for canvas in my version of [dat.gui](https://github.com/anhr/dat.gui) for playing of 3D objects in my projects.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/menuPlay).
 * MoveGroup.js [MoveGroup](https://github.com/anhr/commonNodeJS/blob/master/MoveGroup.js) is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for change group's position, scale and rotation.
-[Example](https://raw.githack.com/anhr/AxesHelper/master/Examples/AxesHelperGui.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/index.html).
 * myPoints.js Array of my points.
 [myPoints API](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/Examples/index.html).
