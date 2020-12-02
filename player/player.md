@@ -42,9 +42,9 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 	<script type="module">
 
 		import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
+		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
 		var camera, scene, renderer;
 
