@@ -25,7 +25,7 @@ My JavaScript library for NodeJS.
 [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
 * guiSelectPoint.js GuiSelectPoint is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for select a point from the mesh.
 [GuiSelectPoint API](https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html).
-[Example](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/AxesHelperGui.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/index.html).
 * lang.js Web page localization.
 * [loadFileNodeJS](https://github.com/anhr/commonNodeJS/tree/master/loadFileNodeJS). Synchronous download of the file.
 [Example](https://raw.githack.com/anhr/loadFileNodeJS/master/).
