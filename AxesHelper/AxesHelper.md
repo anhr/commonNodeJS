@@ -1,6 +1,6 @@
 # AxesHelper.
 
-An axis object to visualize the 1, 2 or 3 axes. I use AxesHelper in my [three.js](https://threejs.org/) projects.
+An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [three.js](https://threejs.org/) projects.
 
 ## Quick start
 
@@ -74,7 +74,7 @@ An axis object to visualize the 1, 2 or 3 axes. I use AxesHelper in my [three.js
 </html>
 ```
 
-The easiest way to use AxesHelper in your code is import AxesHelper from AxesHelper.js file in your JavaScript module.
+The easiest way to use <b>AxesHelper</b> in your code is import <b>AxesHelper</b> from <b>AxesHelper.js</b> file in your JavaScript module.
 [Example](../Examples/index.html).
 ```
 import { AxesHelper } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelper.js';
@@ -84,18 +84,18 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 import { AxesHelper } from './commonNodeJS/master/AxesHelper/AxesHelper.js';
 ```
 
-Now you can use AxesHelper in your javascript code.
+Now you can use <b>AxesHelper</b> in your javascript code.
 
-The simplest AxesHelper has at least one axis.
+The simplest <b>AxesHelper</b> has at least one axis.
 ```
 new AxesHelper( THREE, scene, { scales: { x: {} } } );
 ```
 
-Now we want to create AxesHelper 3 dimensional axes.
+Now we want to create <b>AxesHelper</b> 3 dimensional axes.
 
-Name of the X is 'time'. Number of X scale marks is 5.
+Name of the <b>X</b> is 'time'. Number of <b>X</b> scale marks is 5.
 
-Minimum Y is 0.
+Minimum <b>Y</b> is 0.
 Please edit line above for it.
 ```
 const axesHelper = new AxesHelper( THREE, scene, {
@@ -133,14 +133,14 @@ const axesHelper = new AxesHelper( THREE, scene, {
 
 } );
 ```
-Currently the z axis is exists but not visible. Move camera for resolving of issue.
+Currently the <b>z</b> axis is exists but not visible. Move camera for resolving of issue.
 ```
 camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
 camera.rotation.set( -0.1973955598498808, 0.19365830044432672, 0.03847102740732835 );
 ```
 You can use the [THREE.OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) to rotate the camera.
 
-Import OrbitControls,
+Import <b>OrbitControls</b>,
 ```
 import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 ```
@@ -180,7 +180,7 @@ download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into yo
 import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
 
-* Create the StereoEffect instance.
+* Create the <b>StereoEffect</b> instance.
 ```
 const stereoEffect = new StereoEffect( THREE, renderer, {
 
@@ -233,7 +233,7 @@ points.userData.raycaster = {
 }
 ```
 
-Create the THREE.Raycaster instance.
+Create the <b>THREE.Raycaster</b> instance.
 ```
 const raycaster = new THREE.Raycaster();
 
@@ -279,7 +279,7 @@ You can see a dot lines from point to axes if you click over point.
 
 You can display a text if mouse is over to object in the 3d space.
 
-Import SpriteText for it.
+Import <b>SpriteText</b> for it.
 ```
 import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
 ```
@@ -288,11 +288,11 @@ download [SpriteText](https://github.com/anhr/SpriteText) repository into your "
 ```
 import { SpriteText } from './SpriteText/master/SpriteText.js';
 ```
-Set THREE to SpriteText.
+Set <b>THREE</b> to <b>SpriteText</b>.
 ```
 SpriteText.setTHREE( THREE );
 ```
-and edit points.userData.raycaster
+and edit <b>points.userData.raycaster</b>
 ```
 points.userData.raycaster = {
 
@@ -367,10 +367,10 @@ points.userData.raycaster = {
 ```
 ### AxesHelperGui
 
-Add AxesHelperGui into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the AxesHelper.
+Add <b>AxesHelperGui</b> into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the <b>AxesHelper</b>.
 [Example](../Examples/index.html)
 
-Import dat.gui.
+Import <b>dat.gui</b>.
 ```
 import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 ```
@@ -378,18 +378,16 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import { dat } from './commonNodeJS/master/dat/dat.module.js';
 ```
-Import AxesHelperGui.
+Import <b>AxesHelperGui</b>.
 ```
-import { AxesHelperGui } from 'https://raw.githack.com/anhr/AxesHelper/master/AxesHelperGui.js';
+import { AxesHelperGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelperGui.js';
 ```
-or
-
-* Download [AxesHelper](https://github.com/anhr/AxesHelper) repository into your "[folderName]\AxesHelper\master" folder.
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import { AxesHelperGui } from './AxesHelper/master/AxesHelperGui.js';
+import { AxesHelperGui } from './commonNodeJS/master/AxesHelper/AxesHelperGui.js';
 ```
 
-Now you can use AxesHelperGui in your javascript code.
+Now you can use <b>AxesHelperGui</b> in your javascript code.
 ```
 const gui =  new dat.GUI();
 AxesHelperGui( axesHelper, gui, {
@@ -405,7 +403,7 @@ If you want to localize the gui, please uncomment
 ```
 getLanguageCode: getLanguageCode,
 ```
-line above and import getLanguageCode.
+line above and import <b>getLanguageCode</b>.
 ```
 import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 ```
@@ -413,11 +411,11 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import { getLanguageCode } from './commonNodeJS/master/lang.js';
 ```
-If you want save a custom AxesHelper settings to the cookie, please uncomment
+If you want save a custom <b>AxesHelper</b> settings to the cookie, please uncomment
 ```
 cookie: cookie,
 ```
-line in the SpriteTextGui.gui(...) above and import cookie.
+line in the <b>SpriteTextGui.gui(...)</b> above and import cookie.
 ```
 import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
@@ -426,11 +424,12 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
 
-Add [guiSelectPoint](../../../commonNodeJS/master/guiSelectPoint/jsdoc/index.html) into [dat.gui](https://github.com/anhr/dat.gui) for select a point from the mesh.
+Add [guiSelectPoint](../../../commonNodeJS/master/guiSelectPoint/jsdoc/index.html) into [dat.gui](https://github.com/anhr/dat.gui)
+for select a point from the mesh.
 
 Sometimes you need to move a group of meshes for better visualization. Use [MoveGroup](../../../commonNodeJS/master/MoveGroup.js) for it.
 
-Import MoveGroup.
+Import <b>MoveGroup</b>.
 ```
 import { MoveGroup } from 'https://raw.githack.com/anhr/commonNodeJS/master/MoveGroup.js';
 ```
@@ -455,7 +454,7 @@ moveGroup.gui( gui, {
 ```
 Now you can see the 'Move points' folder in the dat.gui.
 You can move, scale and rotate the scene. Unfortunately, you also move the axes.
-For resolving of the issue, create groupMove and move all your meshs from scene to groupMove.
+For resolving of the issue, create <b>groupMove</b> and move all your meshs from scene to <b>groupMove</b>.
 ```
 const groupMove = new THREE.Group();
 scene.add( groupMove );
@@ -465,7 +464,7 @@ scene.add( groupMove );
 
 groupMove.add( points );
 ```
-Move groupMove instead of the scene. Replace scene to groupMove in the new MoveGroup
+Move <b>groupMove</b> instead of the <b>scene</b>. Replace <b>scene</b> to <b>groupMove</b> in the <b>new MoveGroup</b>
 ```
 const moveGroup = new MoveGroup( groupMove, {
 

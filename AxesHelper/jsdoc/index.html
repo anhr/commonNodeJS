@@ -44,7 +44,7 @@
 
     <section>
         <article><h1>AxesHelper.</h1>
-<p>An axis object to visualize the 1, 2 or 3 axes. I use AxesHelper in my <a href="https://threejs.org/">three.js</a> projects.</p>
+<p>An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my <a href="https://threejs.org/">three.js</a> projects.</p>
 <h2>Quick start</h2>
 <ul>
 <li>Create a folder on your localhost named as [folderName].</li>
@@ -116,20 +116,20 @@
 &lt;/body>
 &lt;/html>
 </code></pre>
-<p>The easiest way to use AxesHelper in your code is import AxesHelper from AxesHelper.js file in your JavaScript module.
+<p>The easiest way to use <b>AxesHelper</b> in your code is import <b>AxesHelper</b> from <b>AxesHelper.js</b> file in your JavaScript module.
 <a href="../Examples/index.html">Example</a>.</p>
 <pre class="prettyprint source"><code>import { AxesHelper } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelper.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import { AxesHelper } from './commonNodeJS/master/AxesHelper/AxesHelper.js';
 </code></pre>
-<p>Now you can use AxesHelper in your javascript code.</p>
-<p>The simplest AxesHelper has at least one axis.</p>
+<p>Now you can use <b>AxesHelper</b> in your javascript code.</p>
+<p>The simplest <b>AxesHelper</b> has at least one axis.</p>
 <pre class="prettyprint source"><code>new AxesHelper( THREE, scene, { scales: { x: {} } } );
 </code></pre>
-<p>Now we want to create AxesHelper 3 dimensional axes.</p>
-<p>Name of the X is 'time'. Number of X scale marks is 5.</p>
-<p>Minimum Y is 0.
+<p>Now we want to create <b>AxesHelper</b> 3 dimensional axes.</p>
+<p>Name of the <b>X</b> is 'time'. Number of <b>X</b> scale marks is 5.</p>
+<p>Minimum <b>Y</b> is 0.
 Please edit line above for it.</p>
 <pre class="prettyprint source"><code>const axesHelper = new AxesHelper( THREE, scene, {
 
@@ -166,12 +166,12 @@ Please edit line above for it.</p>
 
 } );
 </code></pre>
-<p>Currently the z axis is exists but not visible. Move camera for resolving of issue.</p>
+<p>Currently the <b>z</b> axis is exists but not visible. Move camera for resolving of issue.</p>
 <pre class="prettyprint source"><code>camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
 camera.rotation.set( -0.1973955598498808, 0.19365830044432672, 0.03847102740732835 );
 </code></pre>
 <p>You can use the <a href="https://threejs.org/docs/index.html#examples/en/controls/OrbitControls">THREE.OrbitControls</a> to rotate the camera.</p>
-<p>Import OrbitControls,</p>
+<p>Import <b>OrbitControls</b>,</p>
 <pre class="prettyprint source"><code>import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 </code></pre>
 <p>and edit your code</p>
@@ -204,7 +204,7 @@ download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> reposit
 <pre class="prettyprint source"><code>import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
 </code></pre>
 <ul>
-<li>Create the StereoEffect instance.</li>
+<li>Create the <b>StereoEffect</b> instance.</li>
 </ul>
 <pre class="prettyprint source"><code>const stereoEffect = new StereoEffect( THREE, renderer, {
 
@@ -252,7 +252,7 @@ download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> reposit
 
 }
 </code></pre>
-<p>Create the THREE.Raycaster instance.</p>
+<p>Create the <b>THREE.Raycaster</b> instance.</p>
 <pre class="prettyprint source"><code>const raycaster = new THREE.Raycaster();
 
 //the precision of the raycaster when intersecting objects, in world units.
@@ -293,17 +293,17 @@ window.addEventListener( 'pointerdown', function( event ) {
 <p>For testing please move cursor over point. Cursor will be changing to 'pointer'.</p>
 <p>You can see a dot lines from point to axes if you click over point.</p>
 <p>You can display a text if mouse is over to object in the 3d space.</p>
-<p>Import SpriteText for it.</p>
+<p>Import <b>SpriteText</b> for it.</p>
 <pre class="prettyprint source"><code>import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
 </code></pre>
 <p>or
 download <a href="https://github.com/anhr/SpriteText">SpriteText</a> repository into your &quot;[folderName]\SpriteText\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import { SpriteText } from './SpriteText/master/SpriteText.js';
 </code></pre>
-<p>Set THREE to SpriteText.</p>
+<p>Set <b>THREE</b> to <b>SpriteText</b>.</p>
 <pre class="prettyprint source"><code>SpriteText.setTHREE( THREE );
 </code></pre>
-<p>and edit points.userData.raycaster</p>
+<p>and edit <b>points.userData.raycaster</b></p>
 <pre class="prettyprint source"><code>points.userData.raycaster = {
 
 	onIntersection: function ( intersection ) {
@@ -376,24 +376,21 @@ download <a href="https://github.com/anhr/SpriteText">SpriteText</a> repository 
 }
 </code></pre>
 <h3>AxesHelperGui</h3>
-<p>Add AxesHelperGui into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change settings of the AxesHelper.
+<p>Add <b>AxesHelperGui</b> into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change settings of the <b>AxesHelper</b>.
 <a href="../Examples/index.html">Example</a></p>
-<p>Import dat.gui.</p>
+<p>Import <b>dat.gui</b>.</p>
 <pre class="prettyprint source"><code>import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import { dat } from './commonNodeJS/master/dat/dat.module.js';
 </code></pre>
-<p>Import AxesHelperGui.</p>
-<pre class="prettyprint source"><code>import { AxesHelperGui } from 'https://raw.githack.com/anhr/AxesHelper/master/AxesHelperGui.js';
+<p>Import <b>AxesHelperGui</b>.</p>
+<pre class="prettyprint source"><code>import { AxesHelperGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelperGui.js';
 </code></pre>
-<p>or</p>
-<ul>
-<li>Download <a href="https://github.com/anhr/AxesHelper">AxesHelper</a> repository into your &quot;[folderName]\AxesHelper\master&quot; folder.</li>
-</ul>
-<pre class="prettyprint source"><code>import { AxesHelperGui } from './AxesHelper/master/AxesHelperGui.js';
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import { AxesHelperGui } from './commonNodeJS/master/AxesHelper/AxesHelperGui.js';
 </code></pre>
-<p>Now you can use AxesHelperGui in your javascript code.</p>
+<p>Now you can use <b>AxesHelperGui</b> in your javascript code.</p>
 <pre class="prettyprint source"><code>const gui =  new dat.GUI();
 AxesHelperGui( axesHelper, gui, {
 
@@ -406,24 +403,25 @@ AxesHelperGui( axesHelper, gui, {
 <p>If you want to localize the gui, please uncomment</p>
 <pre class="prettyprint source"><code>getLanguageCode: getLanguageCode,
 </code></pre>
-<p>line above and import getLanguageCode.</p>
+<p>line above and import <b>getLanguageCode</b>.</p>
 <pre class="prettyprint source"><code>import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import { getLanguageCode } from './commonNodeJS/master/lang.js';
 </code></pre>
-<p>If you want save a custom AxesHelper settings to the cookie, please uncomment</p>
+<p>If you want save a custom <b>AxesHelper</b> settings to the cookie, please uncomment</p>
 <pre class="prettyprint source"><code>cookie: cookie,
 </code></pre>
-<p>line in the SpriteTextGui.gui(...) above and import cookie.</p>
+<p>line in the <b>SpriteTextGui.gui(...)</b> above and import cookie.</p>
 <pre class="prettyprint source"><code>import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
 </code></pre>
-<p>Add <a href="../../../commonNodeJS/master/guiSelectPoint/jsdoc/index.html">guiSelectPoint</a> into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for select a point from the mesh.</p>
+<p>Add <a href="../../../commonNodeJS/master/guiSelectPoint/jsdoc/index.html">guiSelectPoint</a> into <a href="https://github.com/anhr/dat.gui">dat.gui</a>
+for select a point from the mesh.</p>
 <p>Sometimes you need to move a group of meshes for better visualization. Use <a href="../../../commonNodeJS/master/MoveGroup.js">MoveGroup</a> for it.</p>
-<p>Import MoveGroup.</p>
+<p>Import <b>MoveGroup</b>.</p>
 <pre class="prettyprint source"><code>import { MoveGroup } from 'https://raw.githack.com/anhr/commonNodeJS/master/MoveGroup.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
@@ -445,7 +443,7 @@ moveGroup.gui( gui, {
 </code></pre>
 <p>Now you can see the 'Move points' folder in the dat.gui.
 You can move, scale and rotate the scene. Unfortunately, you also move the axes.
-For resolving of the issue, create groupMove and move all your meshs from scene to groupMove.</p>
+For resolving of the issue, create <b>groupMove</b> and move all your meshs from scene to <b>groupMove</b>.</p>
 <pre class="prettyprint source"><code>const groupMove = new THREE.Group();
 scene.add( groupMove );
 
@@ -454,7 +452,7 @@ scene.add( groupMove );
 
 groupMove.add( points );
 </code></pre>
-<p>Move groupMove instead of the scene. Replace scene to groupMove in the new MoveGroup</p>
+<p>Move <b>groupMove</b> instead of the <b>scene</b>. Replace <b>scene</b> to <b>groupMove</b> in the <b>new MoveGroup</b></p>
 <pre class="prettyprint source"><code>const moveGroup = new MoveGroup( groupMove, {
 
 	//cookie: cookie,
@@ -479,7 +477,7 @@ groupMove.add( points );
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Dec 02 2020 13:33:57 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Dec 02 2020 13:54:46 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
