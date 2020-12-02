@@ -1,7 +1,7 @@
 # GuiSelectPoint.
 
 Add guiSelectPoint into [dat.gui](https://github.com/anhr/dat.gui) for select a point from the mesh.
-[Example](https://raw.githack.com/anhr/AxesHelper/master/Examples/AxesHelperGui.html).
+[Example](../../AxesHelper/Examples/index.html).
 
 ## Quick start
 
@@ -11,7 +11,7 @@ import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/
 ```
 or 
 * Create a folder on your localhost named as [folderName].
-* Add your veb page into [folderName]. See [example](https://raw.githack.com/anhr/AxesHelper/master/Examples/AxesHelperGui.html) web page.
+* Add your veb page into [folderName]. See [example](../../AxesHelper/Examples/index.html) web page.
 
 * import [three.js](https://github.com/anhr/three.js)
 ```
