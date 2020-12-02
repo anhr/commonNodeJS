@@ -13,7 +13,7 @@ Generating a website:
 
 	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\AxesHelper\master\jsdoc"
 
-	jsdoc -R "..\AxesHelper\master\AxesHelper.md" "..\AxesHelper\master\AxesHelper.js" "..\AxesHelper\master\AxesHelperGui.js" -d "..\AxesHelper\master\jsdoc"
+	jsdoc -R "..\commonNodeJS\master\AxesHelper\AxesHelper.md" "..\commonNodeJS\master\AxesHelper\AxesHelper.js" "..\commonNodeJS\master\AxesHelper\AxesHelperGui.js" -d "..\commonNodeJS\master\AxesHelper\jsdoc"
 
 	//See results in "D:\My documents\MyProjects\webgl\three.js\GitHub\AxesHelper\master\jsdoc"
 

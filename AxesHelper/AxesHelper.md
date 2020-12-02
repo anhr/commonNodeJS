@@ -384,7 +384,7 @@ points.userData.raycaster = {
 ### AxesHelperGui
 
 Add AxesHelperGui into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the AxesHelper.
-[Example](https://raw.githack.com/anhr/AxesHelper/master/Examples/AxesHelperGui.html)
+[Example](../Examples/index.html)
 
 Import dat.gui.
 ```
