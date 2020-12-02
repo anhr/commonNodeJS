@@ -3,12 +3,12 @@
 An axis object to visualize the 1, 2 or 3 axes.
 
 I use AxesHelper in my [three.js](https://threejs.org/) projects for displaying of the axes in canvas.
-[Example](Examples/index.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/index.html).
 
 Uses in my projects:
  * [myThreejs](https://github.com/anhr/myThreejs)
 
-See [AxesHelper API](https://raw.githack.com/anhr/AxesHelper/master/jsdoc/index.html) for details.
+See [AxesHelper API](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/jsdoc/index.html) for details.
 
 ## On the following browsers have been successfully tested:
 
