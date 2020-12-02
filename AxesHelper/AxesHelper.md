@@ -75,29 +75,13 @@ An axis object to visualize the 1, 2 or 3 axes. I use AxesHelper in my [three.js
 ```
 
 The easiest way to use AxesHelper in your code is import AxesHelper from AxesHelper.js file in your JavaScript module.
-[Example](https://github.com/anhr/AxesHelper/blob/master/Examples/AxesHelper.html).
+[Example](../Examples/index.html).
 ```
-import { AxesHelper } from 'https://raw.githack.com/anhr/AxesHelper/master/AxesHelper.js';
+import { AxesHelper } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelper.js';
 ```
-or
-
-* Create a folder on your localhost named as [folderName].
-* Add your web page into [folderName]. See [example](https://github.com/anhr/AxesHelper/blob/master/Examples/AxesHelper.html) web page.
-* import [three.js](https://github.com/anhr/three.js)
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import * as THREE from 'https://threejs.org/build/three.module.js';
-```
-or
-```
-import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
-```
-or download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
-```
-import * as THREE from './three.js/dev/build/three.module.js';
-```
-* Download [AxesHelper](https://github.com/anhr/AxesHelper) repository into your "[folderName]\AxesHelper\master" folder.
-```
-import { AxesHelper } from './AxesHelper/master/AxesHelper.js';
+import { AxesHelper } from './commonNodeJS/master/AxesHelper/AxesHelper.js';
 ```
 
 Now you can use AxesHelper in your javascript code.
