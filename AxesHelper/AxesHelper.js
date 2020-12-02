@@ -12,13 +12,13 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import { SpriteText } from '../../SpriteText/master/SpriteText.js';//https://github.com/anhr/SpriteText
-//import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
+import { SpriteText } from '../SpriteText/SpriteText.js';
+//import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
 
-import clearThree from '../../commonNodeJS/master/clearThree.js';//https://github.com/anhr/commonNodeJS
+import clearThree from '../clearThree.js';
 //import clearThree from 'https://raw.githack.com/anhr/commonNodeJS/master/clearThree.js';
 
-import { GuiSelectPoint, getObjectPosition } from '../../commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';//https://github.com/anhr/commonNodeJS
+import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
 
