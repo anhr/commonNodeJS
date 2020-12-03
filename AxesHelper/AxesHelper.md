@@ -29,7 +29,7 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
-		var camera, scene, renderer;
+		var camera, scene, renderer, stereoEffect;
 
 		init();
 		animate();
@@ -133,11 +133,7 @@ const axesHelper = new AxesHelper( THREE, scene, {
 
 } );
 ```
-Currently the <b>z</b> axis is exists but not visible. Move camera for resolving of issue.
-```
-camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
-camera.rotation.set( -0.1973955598498808, 0.19365830044432672, 0.03847102740732835 );
-```
+
 You can use the [THREE.OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) to rotate the camera.
 
 Import <b>OrbitControls</b>,
@@ -146,7 +142,6 @@ import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/example
 ```
 and edit your code
 ```
-//camera.rotation.set( -0.1973955598498808, 0.19365830044432672, 0.03847102740732835 );
 const controls = new OrbitControls( camera, renderer.domElement );
 controls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
 controls.update();
@@ -182,7 +177,7 @@ import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
 
 * Create the <b>StereoEffect</b> instance.
 ```
-const stereoEffect = new StereoEffect( THREE, renderer, {
+stereoEffect = new StereoEffect( THREE, renderer, {
 
 	//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 	far: camera.far,
