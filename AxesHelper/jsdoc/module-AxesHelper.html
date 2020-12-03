@@ -193,6 +193,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -225,6 +227,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><a href="https://github.com/anhr/three.js">THREE</a></td>
@@ -260,6 +266,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">THREE group or scene</td>
         </tr>
@@ -292,6 +302,12 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
             
 
             <td class="description last">the following options are available
@@ -351,10 +367,12 @@
             
                 <td class="default">
                 
+                    'white'
+                
                 </td>
             
 
-            <td class="description last">axes color. Available color names see THREE.Color.NAMES. Default is 'white'.</td>
+            <td class="description last">axes color. Available color names see THREE.Color.NAMES.</td>
         </tr>
 
     
@@ -387,6 +405,8 @@
 
             
                 <td class="default">
+                
+                    new THREE.Vector3()
                 
                 </td>
             
@@ -448,6 +468,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -483,6 +505,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">x or y or z
                 <h6>Properties</h6>
@@ -501,6 +527,8 @@
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -537,8 +565,14 @@
             
 
             
+                <td class="default">
+                
+                    1.1
+                
+                </td>
+            
 
-            <td class="description last">zoom multiplier. Default is 1.1</td>
+            <td class="description last">zoom multiplier.</td>
         </tr>
 
     
@@ -570,8 +604,14 @@
             
 
             
+                <td class="default">
+                
+                    0.1
+                
+                </td>
+            
 
-            <td class="description last">position offset. Default is 0.1</td>
+            <td class="description last">position offset.</td>
         </tr>
 
     
@@ -603,8 +643,14 @@
             
 
             
+                <td class="default">
+                
+                    axisName
+                
+                </td>
+            
 
-            <td class="description last">axis name. Default is axisName.</td>
+            <td class="description last">axis name.</td>
         </tr>
 
     
@@ -636,8 +682,14 @@
             
 
             
+                <td class="default">
+                
+                    -1
+                
+                </td>
+            
 
-            <td class="description last">Minimum range of the y axis. Default is -1.</td>
+            <td class="description last">Minimum range of the y axis.</td>
         </tr>
 
     
@@ -669,8 +721,14 @@
             
 
             
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
 
-            <td class="description last">Maximum range of the y axis. Default is 1.</td>
+            <td class="description last">Maximum range of the y axis.</td>
         </tr>
 
     
@@ -702,8 +760,14 @@
             
 
             
+                <td class="default">
+                
+                    3
+                
+                </td>
+            
 
-            <td class="description last">Number of scale marks. Default is undefined no marks.</td>
+            <td class="description last">Number of scale marks.</td>
         </tr>
 
     
@@ -742,6 +806,12 @@
             
 
             
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
 
             <td class="description last">followed options of the text of the marks is available
                 <h6>Properties</h6>
@@ -760,6 +830,8 @@
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -796,6 +868,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">Formats a scale marks into a specified length. Default is 4</td>
         </tr>
@@ -828,6 +904,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">The height of the text. Default is 0.1.</td>
@@ -862,6 +942,12 @@
             
 
             
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
 
             <td class="description last">rectangle around the text.
                 <h6>Properties</h6>
@@ -880,6 +966,8 @@
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -916,8 +1004,53 @@
             
 
             
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
 
-            <td class="description last">true - the rectangle around the text is visible. Default is true.</td>
+            <td class="description last">true - the rectangle around the text is visible.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>borderRadius</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    15
+                
+                </td>
+            
+
+            <td class="description last"></td>
         </tr>
 
     
@@ -1023,7 +1156,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="AxesHelper.js.html">AxesHelper.js</a>, <a href="AxesHelper.js.html#line52">line 52</a>
+        <a href="AxesHelper.js.html">AxesHelper.js</a>, <a href="AxesHelper.js.html#line53">line 53</a>
     </li></ul></dd>
     
 
@@ -1160,7 +1293,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="AxesHelper.js.html">AxesHelper.js</a>, <a href="AxesHelper.js.html#line116">line 116</a>
+        <a href="AxesHelper.js.html">AxesHelper.js</a>, <a href="AxesHelper.js.html#line115">line 115</a>
     </li></ul></dd>
     
 
@@ -1300,7 +1433,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="AxesHelper.js.html">AxesHelper.js</a>, <a href="AxesHelper.js.html#line518">line 518</a>
+        <a href="AxesHelper.js.html">AxesHelper.js</a>, <a href="AxesHelper.js.html#line517">line 517</a>
     </li></ul></dd>
     
 
@@ -1388,7 +1521,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="AxesHelper.js.html">AxesHelper.js</a>, <a href="AxesHelper.js.html#line543">line 543</a>
+        <a href="AxesHelper.js.html">AxesHelper.js</a>, <a href="AxesHelper.js.html#line542">line 542</a>
     </li></ul></dd>
     
 
@@ -1486,7 +1619,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="AxesHelper.js.html">AxesHelper.js</a>, <a href="AxesHelper.js.html#line535">line 535</a>
+        <a href="AxesHelper.js.html">AxesHelper.js</a>, <a href="AxesHelper.js.html#line534">line 534</a>
     </li></ul></dd>
     
 
@@ -1584,7 +1717,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="AxesHelper.js.html">AxesHelper.js</a>, <a href="AxesHelper.js.html#line551">line 551</a>
+        <a href="AxesHelper.js.html">AxesHelper.js</a>, <a href="AxesHelper.js.html#line550">line 550</a>
     </li></ul></dd>
     
 
@@ -1636,7 +1769,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Dec 02 2020 13:54:46 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Dec 03 2020 07:06:10 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
