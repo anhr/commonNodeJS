@@ -26,24 +26,25 @@ import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPo
  * An axis object to visualize the 1, 2 or 3 axes.
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Group|THREE.Scene} group THREE group or scene
- * @param {object} [options] the following options are available
- * @param {object} [options.color] axes color. Available color names see THREE.Color.NAMES. Default is 'white'.
- * @param {THREE.Vector3} [options.posAxesIntersection] Position of the axes intersection.
+ * @param {object} [options={}] the following options are available
+ * @param {object} [options.color='white'] axes color. Available color names see THREE.Color.NAMES.
+ * @param {THREE.Vector3} [options.posAxesIntersection=new THREE.Vector3()] Position of the axes intersection.
  * @param {object} [options.scales={}] axes scales.
  *
  * @param {number} [options.scales.axisName] x or y or z
- * @param {number} [options.scales.axisName.zoomMultiplier] zoom multiplier. Default is 1.1
- * @param {number} [options.scales.axisName.offset] position offset. Default is 0.1
- * @param {string} [options.scales.axisName.name] axis name. Default is axisName.
- * @param {number} [options.scales.axisName.min] Minimum range of the y axis. Default is -1.
- * @param {number} [options.scales.axisName.max] Maximum range of the y axis. Default is 1.
- * @param {number} [options.scales.axisName.marks] Number of scale marks. Default is undefined no marks.
-*
- * @param {object} [options.scales.text] followed options of the text of the marks is available
+ * @param {number} [options.scales.axisName.zoomMultiplier=1.1] zoom multiplier.
+ * @param {number} [options.scales.axisName.offset=0.1] position offset.
+ * @param {string} [options.scales.axisName.name=axisName] axis name.
+ * @param {number} [options.scales.axisName.min=-1] Minimum range of the y axis.
+ * @param {number} [options.scales.axisName.max=1] Maximum range of the y axis.
+ * @param {number} [options.scales.axisName.marks=3] Number of scale marks.
+ *
+ * @param {object} [options.scales.text={}] followed options of the text of the marks is available
  * @param {boolean} [options.scales.text.precision] Formats a scale marks into a specified length. Default is 4
  * @param {number} [options.scales.text.textHeight] The height of the text. Default is 0.1.
- * @param {object} [options.scales.text.rect] rectangle around the text.
- * @param {boolean} [options.scales.text.rect.displayRect] true - the rectangle around the text is visible. Default is true.
+ * @param {object} [options.scales.text.rect={}] rectangle around the text.
+ * @param {boolean} [options.scales.text.rect.displayRect=true] true - the rectangle around the text is visible.
+ * @param {number} [options.scales.text.rect.borderRadius=15]
  * @param {THREE.PerspectiveCamera} [options.camera] camera.
  * Set the camera if you want to see text size is independent from camera.fov. The text height will be calculated as textHeight = camera.fov * textHeight / 50
  * See https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera.fov about camera.fov.
@@ -77,8 +78,6 @@ export function AxesHelper( THREE, group, options ) {
 	options.scales = options.scales || {};
 	options.scales.display = options.scales.display !== undefined ? options.scales.display : true;
 	options.scales.text = options.scales.text || {};
-//	options.scales.text.precision = options.scales.text.precision || 4;
-//	options.scales.text.textHeight = options.scales.text.textHeight || 0.1;
 	options.scales.text.rect = options.scales.text.rect || {};
 	options.scales.text.rect.displayRect = options.scales.text.rect.displayRect !== undefined ? options.scales.text.rect.displayRect : true;
 	options.scales.text.rect.borderRadius = options.scales.text.rect.borderRadius !== undefined ? options.scales.text.rect.borderRadius : 15;
@@ -111,7 +110,7 @@ export function AxesHelper( THREE, group, options ) {
 	}
 	group.add( groupAxesHelper );
 
-	options.posAxesIntersection = options.posAxesIntersection || new THREE.Vector3();//.copy( group.position ).divide( group.scale );//For moving of the axes intersection to the center of the canvas ( to the camera focus )
+	options.posAxesIntersection = options.posAxesIntersection || new THREE.Vector3();//For moving of the axes intersection to the center of the canvas ( to the camera focus )
 
 	/**
 	 * create axis
