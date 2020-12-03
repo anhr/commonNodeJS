@@ -67,6 +67,12 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
  */
 function StereoEffect( _THREE, renderer, options ) {
 
+	if( !renderer ) {
+
+		console.error( 'StereoEffect: renderer = ' + renderer );
+		return;
+		
+	}
 	setTHREE( _THREE );
 	const _this = this;
 
@@ -89,16 +95,6 @@ function StereoEffect( _THREE, renderer, options ) {
 		new THREE.Vector3().distanceTo( options.camera.position );
 	options.zeroParallax = 0;
 	options.eyeSep = options.eyeSep || ( new THREE.StereoCamera().eyeSep / 10 ) * options.far;
-	/*
-		options.cookie = options.cookie || new cookie.defaultCookie();
-		const optionsDefault = {
-			spatialMultiplex: options.spatialMultiplex !== undefined ? options.spatialMultiplex : spatialMultiplexsIndexs.SbS, //Use default as 'Side by side' for compability with previous version of THREE.StereoEffect
-			eyeSep: ( new THREE.StereoCamera().eyeSep / 10 ) * options.far,
-			focus: options.focus,
-			zeroParallax: 0,
-		}
-		options.cookie.getObject( stereoEffect, options, optionsDefault );
-	*/
 	if ( options.camera !== undefined )
 		options.camera.focus = options.focus;
 
@@ -128,43 +124,7 @@ function StereoEffect( _THREE, renderer, options ) {
 			size = new THREE.Vector2();
 		renderer.getSize( size );
 		return {
-/*
-			fullScreen: function () {
 
-				const size = new THREE.Vector2();
-				renderer.getSize( size );
-				if ( ( size.x === window.innerWidth ) && ( size.y === window.innerHeight ) )
-					return;
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.domElement.style.position = 'fixed';
-				renderer.domElement.style.left = 0;
-				renderer.domElement.style.top = 0;
-				renderer.domElement.style.width = '100%';
-				renderer.domElement.style.height = '100%';
-
-				const camera = options.camera;
-				camera.aspect = size.x / size.y;
-				camera.updateProjectionMatrix();
-
-			},
-			restore: function () {
-
-				const sizeCur = new THREE.Vector2();
-				renderer.getSize( sizeCur );
-				if ( ( sizeCur.x === size.x ) && ( sizeCur.y === size.y ) )
-					return;
-				renderer.setSize( size.x, size.y );
-				renderer.domElement.style.position = style.position;
-				renderer.domElement.style.left = style.left;
-				renderer.domElement.style.top = style.top;
-				renderer.domElement.style.width = style.width;
-				renderer.domElement.style.height = style.height;
-
-				options.camera.aspect = size.x / size.y;
-				options.camera.updateProjectionMatrix();
-
-			},
-*/
 			getMousePosition: function ( mouse, event ) {
 
 				mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
@@ -175,34 +135,7 @@ function StereoEffect( _THREE, renderer, options ) {
 		};
 
 	};
-/*	
-	this.setSize = function ( width, height ) {
-
-		renderer.setSize( width, height );
-
-	};
-
-	const rendererSizeDefault = options.rememberSize ? this.getRendererSize() : undefined,
-		fullScreen = false;
-	this.setFullScreen = function () {
-
-		fullScreen = !fullScreen;
-		if ( fullScreen )
-			rendererSizeDefault.fullScreen();
-		else rendererSizeDefault.restore();
-
-	}
-	this.isFullScreen = function () {
-
-		return fullScreen;
-
-	}
-*/
 	var fullScreenSettings;
-	/*
-						this.isFullScreen = function () { return fullScreenSettings.isFullScreen(); }
-						this.setFullScreen = function ( fullScreen ) { return fullScreenSettings.setFullScreen( fullScreen ); }
-	*/
 	var spatialMultiplexCur;
 	this.render = function ( scene, camera ) {
 
@@ -249,11 +182,6 @@ function StereoEffect( _THREE, renderer, options ) {
 
 			case spatialMultiplexsIndexs.Mono://Mono
 
-/*
-				if ( !fullScreen && ( rendererSizeDefault !== undefined ) )
-					rendererSizeDefault.restore();
-*/
-
 				renderer.setScissor( 0, 0, size.width, size.height );
 				renderer.setViewport( 0, 0, size.width, size.height );
 				renderer.render( scene, camera );
@@ -265,10 +193,6 @@ function StereoEffect( _THREE, renderer, options ) {
 
 			case spatialMultiplexsIndexs.SbS://'Side by side'
 
-/*
-				if ( rendererSizeDefault !== undefined )
-					rendererSizeDefault.fullScreen();
-*/
 				const _width = size.width / 2;
 
 				xL = 0 + parallax; yL = 0; widthL = _width; heightL = size.height;
@@ -279,11 +203,6 @@ function StereoEffect( _THREE, renderer, options ) {
 				break;
 
 			case spatialMultiplexsIndexs.TaB://'Top and bottom'
-
-/*
-				if ( rendererSizeDefault !== undefined )
-					rendererSizeDefault.fullScreen();
-*/
 
 				xL = 0 + parallax; yL = 0; widthL = size.width; heightL = size.height / 2;
 				xR = 0 - parallax; yR = size.height / 2; widthR = size.width; heightR = size.height / 2;
@@ -434,10 +353,7 @@ function StereoEffect( _THREE, renderer, options ) {
 		if ( this.setSpatialMultiplex ) this.setSpatialMultiplex( options.spatialMultiplex );
 
 		//
-		/*
-				if ( guiParams.gui !== undefined )
-					guiParams.gui.remember( options );
-		*/
+
 		function displayControllers( value ) {
 
 			const display = value == spatialMultiplexsIndexs.Mono ? 'none' : 'block';
@@ -460,49 +376,17 @@ function StereoEffect( _THREE, renderer, options ) {
 				setObject( stereoEffect );
 				if ( guiParams.onChangeMode )
 					guiParams.onChangeMode( value );
-/*					
-				if ( _canvasMenu )
-					_canvasMenu.setSpatialMultiplexs( value );
-*/					
 				if ( menuItemStereoEffect )
 					menuItemStereoEffect.select( value )
-/*					
-				{
-
-					menuItemStereoEffect.items.forEach( function ( item ) {
-
-						if ( item.spatialMultiplex === value ) {
-
-							if ( !item.checked ) {
-
-								item.elName.onclick( { target: item.elName });
-
-							}
-
-						}
-
-					} );
-
-				}
-*/				
 
 			} );
 		dat.controllerNameAndTitle( _controllerSpatialMultiplex, _lang.spatialMultiplexName, _lang.spatialMultiplexTitle );
 		this.setControllerSpatialMultiplex = function( index ) { _controllerSpatialMultiplex.setValue( index ); }
-/*		
-		if ( guiParams.stereoEffect )
-			guiParams.stereoEffect.setSpatialMultiplex = function ( index ) {
-
-				_controllerSpatialMultiplex.setValue( index );
-
-			}
-*/			
 
 		//eyeSeparation
 		//http://paulbourke.net/papers/vsmm2007/stereoscopy_workshop.pdf
 		const _fEyeSeparation = _fStereoEffects.addFolder( _lang.eyeSeparationName );//Eye Separation
 		dat.folderNameAndTitle( _fEyeSeparation, _lang.eyeSeparationName, _lang.eyeSeparationTitle );
-		//		const _controllerEyeSepOffset = _fEyeSeparation.add( new PositionController( function ( shift )
 		_fEyeSeparation.add( new PositionController( function ( shift ) {
 
 			options.eyeSep += shift;
@@ -654,7 +538,6 @@ function StereoEffect( _THREE, renderer, options ) {
 					onclick: function ( event ) {
 
 						options.spatialMultiplex = spatialMultiplexsIndexs.TaB;
-//						if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
 
 					}
 				},
@@ -777,7 +660,6 @@ function setTHREE( _THREE ) {
 				raycaster = this,
 				mouseL = new THREE.Vector2(),
 				mouseR = new THREE.Vector2();
-//				cursor = renderer.domElement.style.cursor;
 			var particles, //The object or array of objects to check for intersection with the ray. See THREE.Raycaster.intersectObject https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject for details.
 				intersects, //An array of intersections is returned by THREE.Raycaster.intersectObject or THREE.Raycaster.intersectObjects.
 				mouse; //Attention!!! Do not assign new THREE.Vector2() here
@@ -841,16 +723,6 @@ function setTHREE( _THREE ) {
 				function isIntersection() {
 
 					getIntersects();
-/*
-					if ( intersects.length <= 0 ) {
-
-						if ( optionsIntersection.onIntersectionOut !== undefined )
-							optionsIntersection.onIntersectionOut( intersects );
-						renderer.domElement.style.cursor = renderer.cursor === undefined ? cursor : renderer.cursor;
-						return false;
-
-					}
-*/							
 					if ( intersectedObject && ( intersects.length === 0 ) ) {
 
 						intersectedObject.userData.raycaster.onIntersectionOut();
@@ -858,13 +730,6 @@ function setTHREE( _THREE ) {
 
 					}
 					else if ( !intersectedObject ) {
-
-/*
-						//sometimes frustum point is not displayed any info
-						const userData = intersects[0].object.userData;
-						if ( userData.isInfo === undefined || userData.isInfo() )
-							renderer.domElement.style.cursor = renderer.cursor === undefined ? 'pointer' : renderer.cursor;
-*/
 
 						var intersection = intersects[0];
 						if (
@@ -877,12 +742,9 @@ function setTHREE( _THREE ) {
 							intersectedObject = intersection.object;
 
 						}
-	/*					
-						if ( optionsIntersection.onIntersection !== undefined )
-							optionsIntersection.onIntersection( intersects, mouse );
-	*/
+
 					}
-					return intersects.length > 0;//true;
+					return intersects.length > 0;
 
 				}
 				if ( parseInt( stereoEffect.options.spatialMultiplex ) !== spatialMultiplexsIndexs.Mono ) {
