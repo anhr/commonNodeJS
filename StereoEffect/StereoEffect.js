@@ -57,7 +57,7 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
  *
  * 	Example - spatialMultiplex: spatialMultiplexsIndexs.Mono
  * </pre>
- * @param {THREE.PerspectiveCamera} [options.camera] Use the camera key if you want control cameras focus.
+ * @param {THREE.PerspectiveCamera} [options.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}. Use the camera key if you want control cameras focus.
  * @param {Object} [options.far=10] Camera frustum far plane. The far key uses for correct calculation default values of Eye separation.
  * @param {Object} [options.stereoAspect=1] THREE.StereoCamera.aspect. Camera frustum aspect ratio.
  * @param {boolean} [options.rememberSize] true - remember default size of the canvas. Resize of the canvas to full screen for stereo mode and restore to default size if no stereo effacts.
