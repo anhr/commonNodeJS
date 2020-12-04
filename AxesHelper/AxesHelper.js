@@ -40,8 +40,8 @@ import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPo
  * @param {number} [options.scales.axisName.marks=3] Number of scale marks.
  *
  * @param {object} [options.scales.text={}] followed options of the text of the marks is available
- * @param {boolean} [options.scales.text.precision] Formats a scale marks into a specified length. Default is 4
- * @param {number} [options.scales.text.textHeight] The height of the text. Default is 0.1.
+ * @param {boolean} [options.scales.text.precision=4] Formats a scale marks into a specified length.
+ * @param {number} [options.scales.text.textHeight=0.1] The height of the text.
  * @param {object} [options.scales.text.rect={}] rectangle around the text.
  * @param {boolean} [options.scales.text.rect.displayRect=true] true - the rectangle around the text is visible.
  * @param {number} [options.scales.text.rect.borderRadius=15]
@@ -174,9 +174,9 @@ export function AxesHelper( THREE, group, options ) {
 			),
 		] ), new THREE.LineBasicMaterial( { color: color, opacity: opacity, transparent: true, } ) );
 		//moving of the axes intersection to the center of the canvas ( to the camera focus ) munus posAxesIntersection
-		if ( axisName !== 'x' ) lineAxis.position.x = - options.posAxesIntersection.x;
-		if ( axisName !== 'y' ) lineAxis.position.y = - options.posAxesIntersection.y;
-		if ( axisName !== 'z' ) lineAxis.position.z = - options.posAxesIntersection.z;
+		if ( axisName !== 'x' ) lineAxis.position.x = options.posAxesIntersection.x;
+		if ( axisName !== 'y' ) lineAxis.position.y = options.posAxesIntersection.y;
+		if ( axisName !== 'z' ) lineAxis.position.z = options.posAxesIntersection.z;
 		lineAxis.add( group );
 		lineAxis.userData.axisName = axisName;
 		groupAxesHelper.add( lineAxis );
