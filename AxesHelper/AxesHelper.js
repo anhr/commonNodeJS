@@ -45,7 +45,7 @@ import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPo
  * @param {object} [options.scales.text.rect={}] rectangle around the text.
  * @param {boolean} [options.scales.text.rect.displayRect=true] true - the rectangle around the text is visible.
  * @param {number} [options.scales.text.rect.borderRadius=15]
- * @param {THREE.PerspectiveCamera} [options.camera] camera.
+ * @param {THREE.PerspectiveCamera} [options.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}. Use the camera key if you want control cameras focus.
  * Set the camera if you want to see text size is independent from camera.fov. The text height will be calculated as textHeight = camera.fov * textHeight / 50
  * See https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera.fov about camera.fov.
  * Default is undefined. Default camera.fov is 50.
