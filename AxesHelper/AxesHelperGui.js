@@ -32,16 +32,13 @@ import { SpriteTextGui } from '../SpriteText/SpriteTextGui.js';
 import { dat } from '../dat/dat.module.js';
 //import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
-//import clearThree from '../../commonNodeJS/master/clearThree.js';
-//import clearThree from 'https://raw.githack.com/anhr/commonNodeJS/master/clearThree.js';
-
 
 /**
  * Adds AxesHelper settings folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
  * @param {AxesHelper} axesHelper is [new AxesHelper(...)]{@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html}.
  * An axis object to visualize axes.
  * @param {GUI} gui is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}.
- * @param {object} [guiParams] Followed parameters is allowed. Default is no parameters.
+ * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters.
  * @param {Function} [guiParams.getLanguageCode] Your custom getLanguageCode() function.
  * <pre>
  * returns the "primary language" subtag of the language version of the browser.
@@ -252,11 +249,6 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 			onChange( function ( value ) {
 
 				options.posAxesIntersection[axisName] = value;
-/*				
-				if ( axisName !== 'x' ) scalesControllers.x.updateAxis();
-				if ( axisName !== 'y' ) scalesControllers.y.updateAxis();
-				if ( axisName !== 'z' ) scalesControllers.z.updateAxis();
-*/				
 				axesHelper.updateAxes();
 				setSettings();
 
@@ -275,13 +267,6 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 			axesIntersectionControllers.x.controller.setValue( optionsDefault.posAxesIntersection.x );
 			axesIntersectionControllers.y.controller.setValue( optionsDefault.posAxesIntersection.y );
 			axesIntersectionControllers.z.controller.setValue( optionsDefault.posAxesIntersection.z );
-/*			
-			options.posAxesIntersection = JSON.parse( JSON.stringify( optionsDefault.posAxesIntersection ) ),
-			scalesControllers.x.updateAxis();
-			scalesControllers.y.updateAxis();
-			scalesControllers.z.updateAxis();
-			setSettings();
-*/			
 
 		},
 
@@ -469,7 +454,6 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 	scale('x');
 	scale('y');
 	scale('z');
-//	scale('w');
 
 	//default button
 	var defaultParams = {
