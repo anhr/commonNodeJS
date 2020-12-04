@@ -60,47 +60,6 @@ guiParams = {
  * @param {Cookie} [guiParams.cookie] Your custom cookie function for saving and loading of the SpriteText settings. Default cookie is not saving settings.
  * @param {string} [guiParams.cookieName] Name of the cookie. Default is guiParams.spriteFolder.
  * @returns {GUI} sprite folder
- * @example Using of the SpriteTextGui:
- *
-<script>
-
-	import * as THREE from 'https://threejs.org/build/three.module.js';
-	//import * as THREE from '../../three.js/dev/build/three.module.js';
-	//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-
-	import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
-	//import { dat } from '../../commonNodeJS/master/dat.module.js';
-
-	import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
-	//import { SpriteText } from '../SpriteText.js';
-
-	import { SpriteTextGui } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteTextGui.js';
-	//import { SpriteTextGui } from '../SpriteTextGui.js';
-
-	SpriteText.setTHREE( THREE );
-
-	// create scene etc
-	...
-
-	scene.add( new SpriteText( 'Default SpriteText' ) );
-	var gui = new dat.GUI();
-
-	//Settings for all SpriteText added to scene and child groups
-	SpriteTextGui( gui, scene, {
-
-		getLanguageCode: getLanguageCode,
-		settings: { zoomMultiplier: 1.5, },
-		options: {
-
-			textHeight: 0.1,
-			sizeAttenuation: false,
-
-		}
-
-	} );
-
-</script>
-*
  */
 export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 
