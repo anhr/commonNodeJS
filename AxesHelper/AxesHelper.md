@@ -220,7 +220,7 @@ points.userData.raycaster = {
 
 		if ( axesHelper )
 			axesHelper.exposePosition( intersect );
-		if ( guiSelectPoint )
+		if ( typeof guiSelectPoint !== 'undefined' )
 			guiSelectPoint.select( intersect );
 
 	}
@@ -276,12 +276,12 @@ You can display a text if mouse is over to object in the 3d space.
 
 Import <b>SpriteText</b> for it.
 ```
-import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
+import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
 ```
 or
 download [SpriteText](https://github.com/anhr/SpriteText) repository into your "[folderName]\SpriteText\master" folder.
 ```
-import { SpriteText } from './SpriteText/master/SpriteText.js';
+import { SpriteText } from './commonNodeJS/master/SpriteText/SpriteText.js';
 ```
 Set <b>THREE</b> to <b>SpriteText</b>.
 ```
@@ -353,7 +353,7 @@ points.userData.raycaster = {
 
 		if ( axesHelper )
 			axesHelper.exposePosition( intersect );
-		if ( guiSelectPoint )
+		if ( typeof guiSelectPoint !== 'undefined' )
 			guiSelectPoint.select( intersect );
 
 	}
