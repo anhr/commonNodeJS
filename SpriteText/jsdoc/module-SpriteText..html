@@ -200,6 +200,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -236,6 +238,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">The text to be displayed on the sprite. You can include a multiline text separated by "\r\n".</td>
         </tr>
@@ -269,8 +275,14 @@
             
 
             
+                <td class="default">
+                
+                    new THREE.Vector3()
+                
+                </td>
+            
 
-            <td class="description last">Position of the text. Default is new THREE.Vector3(0,0,0).</td>
+            <td class="description last">Position of the text.</td>
         </tr>
 
     
@@ -302,6 +314,12 @@
             
 
             
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
 
             <td class="description last">the following options are available
                 <h6>Properties</h6>
@@ -320,6 +338,8 @@
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -356,6 +376,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">Parent group of the SpriteText with common options.See <a href="https://github.com/anhr/SpriteText#groupuserdataoptionsspritetext---common-options-for-the-group-of-the-spritetext">common options for the group of the SpriteText</a>.Default is undefined.</td>
         </tr>
@@ -389,8 +413,14 @@
             
 
             
+                <td class="default">
+                
+                    0.04
+                
+                </td>
+            
 
-            <td class="description last">The height of the text. Default is 0.04.</td>
+            <td class="description last">The height of the text.</td>
         </tr>
 
     
@@ -421,6 +451,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">Camera frustum vertical field of view, from bottom to top of view, in degrees.<a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera.fov">PerspectiveCamera.fov</a>Set the fov option as camera.fov if you want to see text size is independent from camera.fov. The text height will be calculated as textHeight = fov * textHeight / 50Default is undefined.</td>
@@ -455,8 +489,14 @@
             
 
             
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
 
-            <td class="description last">Whether the size of the sprite is attenuated by the camera depth. (Perspective camera only.) Default is false.See <a href="https://threejs.org/docs/index.html#api/en/materials/SpriteMaterial.sizeAttenuation">SpriteMaterial.sizeAttenuation</a></td>
+            <td class="description last">Whether the size of the sprite is attenuated by the camera depth. (Perspective camera only.)See <a href="https://threejs.org/docs/index.html#api/en/materials/SpriteMaterial.sizeAttenuation">SpriteMaterial.sizeAttenuation</a></td>
         </tr>
 
     
@@ -488,8 +528,14 @@
             
 
             
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
 
-            <td class="description last">The rotation of the sprite in radians. Default is 0.See <a href="https://threejs.org/docs/index.html#api/en/materials/SpriteMaterial.rotation">SpriteMaterial.rotation</a></td>
+            <td class="description last">The rotation of the sprite in radians.See <a href="https://threejs.org/docs/index.html#api/en/materials/SpriteMaterial.rotation">SpriteMaterial.rotation</a></td>
         </tr>
 
     
@@ -521,8 +567,14 @@
             
 
             
+                <td class="default">
+                
+                    'Arial'
+                
+                </td>
+            
 
-            <td class="description last">CSS font-family - specifies the font of the text. Default is 'Arial'.</td>
+            <td class="description last">CSS font-family - specifies the font of the text.</td>
         </tr>
 
     
@@ -553,6 +605,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">array of fontFaces. Example ['Arial', 'Verdana', 'Times'].</td>
@@ -587,8 +643,14 @@
             
 
             
+                <td class="default">
+                
+                    'rgba(255, 255, 255, 1)'
+                
+                </td>
+            
 
-            <td class="description last">RGBA object or RGB object or HEX value. Default is 'rgba(255, 255, 255, 1)'.	Examples 'rgba(0, 0, 255, 0.5)', '#00FF00'.</td>
+            <td class="description last">RGBA object or RGB object or HEX value.	Examples 'rgba(0, 0, 255, 0.5)', '#00FF00'.</td>
         </tr>
 
     
@@ -620,8 +682,14 @@
             
 
             
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
 
-            <td class="description last">CSS font-weight. Equivalent of 700. Default is false.</td>
+            <td class="description last">CSS font-weight. Equivalent of 700.</td>
         </tr>
 
     
@@ -653,8 +721,14 @@
             
 
             
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
 
-            <td class="description last">CSS font-style. Default is false.</td>
+            <td class="description last">CSS font-style.</td>
         </tr>
 
     
@@ -685,6 +759,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">Other font properties. The font property uses the same syntax as the CSS font property.	Default is empty string. Example "900", "oblique lighter".</td>
@@ -719,8 +797,14 @@
             
 
             
+                <td class="default">
+                
+                    new THREE.Vector2(0, 1)
+                
+                </td>
+            
 
-            <td class="description last">The text's anchor point.<pre>See <a href="https://threejs.org/docs/index.html#api/en/objects/Sprite.center">Sprite.center</a>	A value of (0.5, 0.5) corresponds to the midpoint of the text.	A value of (0, 0) corresponds to the left lower corner of the text.	A value of (0, 1) corresponds to the left upper corner of the text.	Default is (0, 1).</pre></td>
+            <td class="description last">The text's anchor point.<pre>See <a href="https://threejs.org/docs/index.html#api/en/objects/Sprite.center">Sprite.center</a>	A value of (0.5, 0.5) corresponds to the midpoint of the text.	A value of (0, 0) corresponds to the left lower corner of the text.	A value of (0, 1) corresponds to the left upper corner of the text.</pre></td>
         </tr>
 
     
@@ -752,6 +836,12 @@
             
 
             
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
 
             <td class="description last">rectangle around the text.
                 <h6>Properties</h6>
@@ -770,6 +860,8 @@
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -806,8 +898,14 @@
             
 
             
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
 
-            <td class="description last">true - the rectangle around the text is visible. Default is false.</td>
+            <td class="description last">true - the rectangle around the text is visible.</td>
         </tr>
 
     
@@ -839,8 +937,14 @@
             
 
             
+                <td class="default">
+                
+                    'rgba(0, 0, 0, 0)' - black transparent
+                
+                </td>
+            
 
-            <td class="description last">background color. RGBA object or RGB object or HEX value<pre>	Default is 'rgba(0, 0, 0, 0)' - black transparent.	Examples 'rgba(0, 0, 255, 0.5)', '#00FF00'.</pre></td>
+            <td class="description last">background color. RGBA object or RGB object or HEX value<pre>	Examples 'rgba(0, 0, 255, 0.5)', '#00FF00'.</pre></td>
         </tr>
 
     
@@ -871,6 +975,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">border color. RGBA object or RGB object or HEX value. Default is same as options.fontColor 'rgba(255, 255, 255, 1)' - white.</td>
@@ -905,8 +1013,14 @@
             
 
             
+                <td class="default">
+                
+                    0 is invisible border
+                
+                </td>
+            
 
-            <td class="description last">border thickness. Default is 0 - invisible border.</td>
+            <td class="description last">border thickness.</td>
         </tr>
 
     
@@ -938,8 +1052,14 @@
             
 
             
+                <td class="default">
+                
+                    0 is no radius
+                
+                </td>
+            
 
-            <td class="description last">border corners radius. Default is 0 - no radius.</td>
+            <td class="description last">border corners radius.</td>
         </tr>
 
     
@@ -994,7 +1114,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpriteText.js.html">SpriteText.js</a>, <a href="SpriteText.js.html#line86">line 86</a>
+        <a href="SpriteText.js.html">SpriteText.js</a>, <a href="SpriteText.js.html#line66">line 66</a>
     </li></ul></dd>
     
 
@@ -1030,27 +1150,6 @@
 
 
 
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>&lt;script>
-
-	import * as THREE from 'https://threejs.org/build/three.module.js';
-	//import * as THREE from '../../three.js/dev/build/three.module.js';
-	//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-
-	import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
-	//import { SpriteText } from './SpriteText.js';
-
-	SpriteText.setTHREE( THREE );
-
-	// create scene etc
-	...
-
-	scene.add( new SpriteText( 'Sprite text', new THREE.Vector3( -10, -15, 2 ), { textHeight: 3 } ) );
-
-&lt;/script></code></pre>
-
-
 
         
             
@@ -1058,7 +1157,7 @@
     
 
     
-    <h4 class="name" id="~SpriteText.getCenter"><span class="type-signature">(inner) </span>SpriteText.getCenter<span class="signature">(center)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~SpriteText.getCenter"><span class="type-signature">(inner) </span>SpriteText.getCenter<span class="signature">(center, position<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1090,6 +1189,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -1109,16 +1210,154 @@
             
                 
 <span class="param-type">THREE.Vector2</span>
+|
+
+<span class="param-type">object</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last"></td>
+            <td class="description last">If <b>center.x</b> and <b>center.y</b> is defined, then it the text's anchor point.<pre>Otherwise, the center is calculated so that the text is always inside the canvas.Please define <b>center.camera</b> and <b>center.canvas</b> for it. See below for details.</pre>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>camera</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.PerspectiveCamera</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">PerspectiveCamera</a></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>canvas</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><b>canvas</b> element.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.Vector3</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Position of the text. Uses only if <b>center.camera</b> and <b>center.canvas</b> is defined</td>
         </tr>
 
     
@@ -1159,7 +1398,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpriteText.js.html">SpriteText.js</a>, <a href="SpriteText.js.html#line273">line 273</a>
+        <a href="SpriteText.js.html">SpriteText.js</a>, <a href="SpriteText.js.html#line253">line 253</a>
     </li></ul></dd>
     
 
@@ -1257,7 +1496,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpriteText.js.html">SpriteText.js</a>, <a href="SpriteText.js.html#line259">line 259</a>
+        <a href="SpriteText.js.html">SpriteText.js</a>, <a href="SpriteText.js.html#line239">line 239</a>
     </li></ul></dd>
     
 
@@ -1404,7 +1643,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpriteText.js.html">SpriteText.js</a>, <a href="SpriteText.js.html#line251">line 251</a>
+        <a href="SpriteText.js.html">SpriteText.js</a>, <a href="SpriteText.js.html#line231">line 231</a>
     </li></ul></dd>
     
 
@@ -1544,7 +1783,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpriteText.js.html">SpriteText.js</a>, <a href="SpriteText.js.html#line307">line 307</a>
+        <a href="SpriteText.js.html">SpriteText.js</a>, <a href="SpriteText.js.html#line312">line 312</a>
     </li></ul></dd>
     
 
@@ -1626,7 +1865,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat Nov 28 2020 10:19:17 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat Dec 05 2020 05:06:38 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
