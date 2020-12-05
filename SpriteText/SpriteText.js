@@ -53,7 +53,7 @@ var THREE;
  * 	A value of (0, 1) corresponds to the left upper corner of the text.
  * 	
  * Otherwise, the center is calculated so that the text is always inside the canvas.
- * Please define <b>center.camera</b> and <b>center.canvas</b> for it. See below for details .
+ * Please define <b>center.camera</b> and <b>center.canvas</b> for it. See below for details.
  * </pre>
  * @param {THREE.PerspectiveCamera} [center.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
  * @param {HTMLElement} [center.canvas] <b>canvas</b> element.
