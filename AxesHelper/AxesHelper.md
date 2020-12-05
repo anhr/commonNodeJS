@@ -2,6 +2,15 @@
 
 An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [three.js](https://threejs.org/) projects.
 
+# Content
+* [Quick start.](#Quickstart)
+	* [Use the THREE.OrbitControls to rotate the camera.](#OrbitControls)
+	* [Use Raycaster for mouse picking (working out what objects in the 3d space the mouse is over).](#Raycaster)
+* [AxesHelperGui](#AxesHelperGui)
+	* [Add guiSelectPoint into dat.gui for select a point from the mesh.](#guiSelectPoint)
+	* [Move group of meshes.](#MoveGroup)
+
+<a name="QuickStart"></a>
 ## Quick start
 
 * Create a folder on your localhost named as [folderName].
@@ -134,7 +143,8 @@ const axesHelper = new AxesHelper( THREE, scene, {
 } );
 ```
 
-You can use the [THREE.OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) to rotate the camera.
+<a name="OrbitControls"></a>
+### Use the [THREE.OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) to rotate the camera.
 
 Import <b>OrbitControls</b>,
 ```
@@ -147,7 +157,8 @@ controls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.
 controls.update();
 ```
 
-You can use [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster) for mouse picking (working out what objects in the 3d space the mouse is over).
+<a name="Raycaster"></a>
+### Use [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster) for mouse picking (working out what objects in the 3d space the mouse is over).
 
 Please create an 3D object, for example points.
 ```
@@ -272,7 +283,7 @@ For testing please move cursor over point. Cursor will be changing to 'pointer'.
 
 You can see a dot lines from point to axes if you click over point.
 
-You can display a text if mouse is over to object in the 3d space.
+* You can display a text if mouse is over to object in the 3d space.
 
 Import <b>SpriteText</b> for it.
 ```
@@ -369,7 +380,9 @@ points.userData.raycaster = {
 Note! If you want to see the text is always inside  the canvas,
 in another words if you want the text is not moves outside the canvas border,
 plase define a <b>camera</b> and <b>canvas</b> keys in the <b>center</b> object as you see above.
-### AxesHelperGui
+
+<a name="AxesHelperGui"></a>
+## AxesHelperGui
 
 Add <b>AxesHelperGui</b> into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the <b>AxesHelper</b>.
 [Example](../Examples/index.html)
@@ -403,7 +416,7 @@ AxesHelperGui( axesHelper, gui, {
 ```
 Now you can see the "Axes Helper" folder in the dat.gui.
 
-If you want to localize the gui, please uncomment
+* If you want to localize the gui, please uncomment
 ```
 getLanguageCode: getLanguageCode,
 ```
@@ -415,7 +428,7 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import { getLanguageCode } from './commonNodeJS/master/lang.js';
 ```
-If you want save a custom <b>AxesHelper</b> settings to the cookie, please uncomment
+* If you want save a custom <b>AxesHelper</b> settings to the cookie, please uncomment
 ```
 cookie: cookie,
 ```
@@ -428,10 +441,12 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
 
-Add [guiSelectPoint](../../../commonNodeJS/master/guiSelectPoint/jsdoc/index.html) into [dat.gui](https://github.com/anhr/dat.gui)
-for select a point from the mesh.
+<a name="guiSelectPoint"></a>
+### Add [guiSelectPoint](../../guiSelectPoint/jsdoc/index.html) into [dat.gui](https://github.com/anhr/dat.gui) for select a point from the mesh.
 
-Sometimes you need to move a group of meshes for better visualization. Use [MoveGroup](../../../commonNodeJS/master/MoveGroup.js) for it.
+<a name="MoveGroup"></a>
+### Move a group of meshes.
+Sometimes you need to move a group of meshes for better visualization. Use [MoveGroup](../../MoveGroup.js) for it.
 
 Import <b>MoveGroup</b>.
 ```
