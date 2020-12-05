@@ -328,7 +328,13 @@ points.userData.raycaster = {
 						borderRadius: 15,
 
 					},
-					center: new THREE.Vector2( 1, 0 ),
+					center: {
+
+						camera: camera,
+						canvas: canvas,
+
+					}
+					//center: new THREE.Vector2( 1, 0 ),
 					//sizeAttenuation: true,
 
 				}
@@ -360,6 +366,9 @@ points.userData.raycaster = {
 
 }
 ```
+Note! If you want to see the text is always inside  the canvas,
+in another words if you want the text is not moves outside the canvas border,
+plase define a <b>camera</b> and <b>canvas</b> keys in the <b>center</b> object as you see above.
 ### AxesHelperGui
 
 Add <b>AxesHelperGui</b> into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the <b>AxesHelper</b>.
