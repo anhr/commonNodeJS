@@ -90,6 +90,7 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 </body>
 </html>
 ```
+<a name="ImportPlayer"></a>
 The easiest way to use <b>Player</b> in your code is import <b>Player</b> from <b>Player.js</b> file in your JavaScript module.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
 ```
