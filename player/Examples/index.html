@@ -43,10 +43,7 @@
 
 		import { getLanguageCode } from '../../lang.js';//https://github.com/anhr/commonNodeJS
 		//import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-		/*
-				//import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
-				//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
-		*/
+
 		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
@@ -61,7 +58,7 @@
 		ColorPicker.palette.setTHREE( THREE );
 
 		//import getShaderMaterialPoints from 'http://localhost/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
-		import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
+		//import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
 		//import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 
 		//import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
@@ -119,7 +116,6 @@
 
 			scene = new THREE.Scene();
 
-//const distanceToCamera = new THREE.Vector3().copy( camera.position );
 			scene.userData.player = {
 
 				selectPlayScene: function ( t ) {
@@ -169,7 +165,7 @@
 						palette: palette,
 
 					},
-					cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
+//					cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
 					settings: {
 
 						marks: 100,//Ticks count of the playing.
@@ -514,7 +510,8 @@
 
 					player.gui( gui, {
 
-						getLanguageCode: typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode
+						getLanguageCode: typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode,
+						cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
 
 					} );
 					if ( typeof controllerPlay !== 'undefined' )
