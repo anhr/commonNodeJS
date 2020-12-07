@@ -6,6 +6,7 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 * [Quick start.](#Quickstart)
 	* [Use the THREE.OrbitControls to rotate the camera.](#OrbitControls)
 	* [Use Raycaster for mouse picking (working out what objects in the 3d space the mouse is over).](#Raycaster)
+	* [Choose a point at which the camera is looking.](#CameraTarget)
 * [AxesHelperGui](#AxesHelperGui)
 	* [Add guiSelectPoint into dat.gui for select a point from the mesh.](#guiSelectPoint)
 	* [Move group of meshes.](#MoveGroup)
@@ -162,10 +163,11 @@ controls.update();
 
 Please create an 3D object, for example points.
 ```
-const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [
-		new THREE.Vector3( 0.5, 0.5 ,0.5 ),
-		new THREE.Vector3( -0.4, -0.5 ,-0.5 )
-	] ),
+const arrayFuncs = [
+	new THREE.Vector3( 0.5, 0.5 ,0.5 ),
+	new THREE.Vector3( -0.4, -0.5 ,-0.5 )
+]
+const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( arrayFuncs ),
 	new THREE.PointsMaterial( {
 
 		color: 0xffffff,
@@ -381,6 +383,16 @@ Note! If you want to see the text is always inside  the canvas,
 in another words if you want the text is not moves outside the canvas border,
 plase define a <b>camera</b> and <b>canvas</b> keys in the <b>center</b> object as you see above.
 
+<a name="CameraTarget"></a>
+### Choose a point at which the camera is looking.
+
+First, import <b>Player</b>.
+```
+import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
+```
+See [Player API](../../player/jsdoc/index.html#ImportPlayer) for details.
+
+
 <a name="AxesHelperGui"></a>
 ## AxesHelperGui
 
@@ -456,6 +468,7 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import { MoveGroup } from './commonNodeJS/master/MoveGroup.js';
 ```
+Create the <b>MoveGroup</b> instance.
 ```
 const moveGroup = new MoveGroup( scene, {
 
@@ -492,4 +505,5 @@ const moveGroup = new MoveGroup( groupMove, {
 
 } );
 ```
+
 Enjoy my code :)
