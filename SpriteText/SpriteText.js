@@ -45,7 +45,7 @@ var THREE;
  * @param {boolean} [options.italic=false] CSS font-style.
  * @param {string} [options.fontProperties] Other font properties. The font property uses the same syntax as the CSS font property.
  * 	Default is empty string. Example "900", "oblique lighter".
- * @param {THREE.Vector2|object} center If <b>center.x</b> and <b>center.y</b> is defined, then it the text's anchor point.
+ * @param {THREE.Vector2|object} [options.center] If <b>center.x</b> and <b>center.y</b> is defined, then it the text's anchor point.
  * <pre>
  * See {@link https://threejs.org/docs/index.html#api/en/objects/Sprite.center|Sprite.center}
  * 	A value of (0.5, 0.5) corresponds to the midpoint of the text.
@@ -54,6 +54,8 @@ var THREE;
  * 	
  * Otherwise, the center is calculated so that the text is always inside the canvas.
  * Please define <b>center.camera</b> and <b>center.canvas</b> for it. See below for details.
+ * 
+ * If <b>options.center</b> is not defined, center is left upper corner: <b>new THREE.Vector2( 0, 1 )</b>
  * </pre>
  * @param {THREE.PerspectiveCamera} [center.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
  * @param {HTMLElement} [center.canvas] <b>canvas</b> element.
@@ -267,9 +269,9 @@ SpriteText.getTHREE = function () {
  * @param {THREE.PerspectiveCamera} [center.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
  * @param {HTMLElement} [center.canvas] <b>canvas</b> element.
  * @param {THREE.Vector3} [position] Position of the text. Uses only if <b>center.camera</b> and <b>center.canvas</b> is defined
- * @returns center
+ * @returns center. If <b>center</b> is not defined, returns the left upper corner: <b>new THREE.Vector2( 0, 1 )</b>;
  */
-SpriteText.getCenter = function ( center, position ) {
+SpriteText.getCenter = function ( center = {}, position ) {
 
 	const canvas = center.canvas ? center.canvas : undefined;
 	/**
