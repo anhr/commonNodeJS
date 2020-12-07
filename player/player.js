@@ -1240,7 +1240,7 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 	if ( mesh.scale.y <= 0 ) console.error( message + 'y = ' + mesh.scale.y );
 	if ( mesh.scale.z <= 0 ) console.error( message + 'z = ' + mesh.scale.z );
 
-	if ( !options.guiSelectPoint )
+	if ( !options || !options.guiSelectPoint )
 		return;
 
 	options.guiSelectPoint.setMesh();
