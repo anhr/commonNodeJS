@@ -871,5 +871,92 @@ function setTHREE( _THREE ) {
 }
 StereoEffect.setTHREE = setTHREE;
 
+//Localization
+
+import { getLanguageCode } from '../lang.js';
+//import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+
+const lang = {
+
+	mesh: 'Mesh',
+	pointName: 'Point Name',
+	color: 'Сolor',
+	opacity: 'Opacity',
+
+};
+
+switch ( getLanguageCode() ) {
+
+	case 'ru'://Russian language
+		lang.mesh = '3D объект';
+		lang.pointName = 'Имя точки';
+		lang.color = 'Цвет';
+		lang.opacity = 'Непрозрачность';
+		break;
+
+}
+
+import { SpriteText } from '../SpriteText/SpriteText.js';
+//import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
+SpriteText.setTHREE( THREE );
+
+import { getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
+//import { getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+
+StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
+
+	const position = getObjectPosition( intersection.object, intersection.index ),
+		scales = options.scales || {},
+		isArrayFuncs = (
+			( intersection.index !== undefined ) &&
+			( intersection.object.userData.player !== undefined ) &&
+			( intersection.object.userData.player.arrayFuncs !== undefined ) 
+		),
+		funcs = !isArrayFuncs ? undefined : intersection.object.userData.player.arrayFuncs,
+		func = ( funcs === undefined ) || ( typeof funcs === "function" ) ? undefined : funcs[intersection.index],
+		pointName = isArrayFuncs ? funcs[intersection.index].name : undefined,
+		color = !isArrayFuncs || ( func === undefined ) ?
+			undefined :
+			Array.isArray( func.w ) ?
+				Player.execFunc( func, 'w', group.userData.t, options.a, options.b ) :
+				func.w;
+
+	return new SpriteText(
+
+		//text
+		( intersection.object.name === '' ? '' : lang.mesh + ': ' + intersection.object.name + '\n' ) +
+		( pointName === undefined ? '' : lang.pointName + ': ' + pointName + '\n' ) +
+		( !scales.x ? '' : ( scales.x.name ? scales.x.name : 'X' ) + ': ' + position.x ) +
+		( !scales.y ? '' : '\n' + ( scales.y.name ? scales.y.name : 'Y' ) + ': ' + position.y ) +
+		( !scales.z ? '' : '\n' + ( scales.z.name ? scales.z.name : 'Z' ) + ': ' + position.z ) +
+		(//w
+			!isArrayFuncs ?
+				'' :
+				funcs[intersection.index] instanceof THREE.Vector4 ||
+					funcs[intersection.index] instanceof THREE.Vector3 ||
+					typeof funcs === "function" ?
+					color instanceof THREE.Color ?
+						'\n' + lang.color + ': ' + new THREE.Color( color.r, color.g, color.b ).getHexString() :
+						position.w ? '\n' + ( scales.w && scales.w.name ? scales.w.name : 'W' ) + ': ' + position.w : '' :
+					''
+
+		) +
+		(//opacity
+			( intersection.object.geometry.attributes.ca === undefined ) ||
+				( intersection.object.geometry.attributes.ca.itemSize < 4 ) ?
+				'' :
+				'\n' + lang.opacity + ': ' + new THREE.Vector4().fromArray(
+
+					intersection.object.geometry.attributes.ca.array,
+					intersection.index * intersection.object.geometry.attributes.ca.itemSize
+
+				).w
+		),
+
+		position, options.spriteOptions
+	);
+
+}
+
 //export { StereoEffect, spatialMultiplexsIndexs };
 export default StereoEffect;
