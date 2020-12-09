@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -66,6 +66,12 @@
 
 		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+
+		//import Player from '../../player/build/player.module.js';
+		//import Player from '../../player/build/player.module.min.js';
+		import Player from '../../player/player.js';
+		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
+		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
 		
 		var camera, scene, renderer, stereoEffect, axesHelper, controls, intersects, guiSelectPoint, moveGroup, raycaster;
 		const mouse = new THREE.Vector2(), arrayintersectObjects = [], threshold = 0.02;//0.08;
@@ -196,6 +202,53 @@
 
 			}
 
+			const arrayFuncs = [
+				new THREE.Vector3( 0.5, 0.5 ,0.5 ),
+				{
+
+					vector: new THREE.Vector3( -0.5, -0.5 ,-0.5 ),
+					//trace: true,//Displays the trace of the point movement.
+					cameraTarget: {
+
+						camera: camera,
+						/*
+						rotation: {
+
+							//angle: Math.PI,
+							//angle: [0, Math.PI],
+							//angle: [0],
+							//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI }]
+							//angle: new Function( 't', 'return 5*t' ),
+							//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+						},
+						*/
+
+					},
+					name: 'Second point'
+
+				}
+			]
+			const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
+					Player.getPoints( THREE, arrayFuncs, {
+
+						group: scene,
+						//options: { player: { player: player } }
+
+					} )
+				),
+				new THREE.PointsMaterial( {
+
+					color: 0xffffff,
+					//size: threshold * 2,//0.05,
+					size: 5,//0.05,
+					sizeAttenuation: false,
+					alphaTest: 0.5,
+//					vertexColors: THREE.VertexColors
+
+				} ) );
+			groupMove.add( points );
+			/*
 			const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [
 					new THREE.Vector3( 0.5, 0.5 ,0.5 ),
 					new THREE.Vector3( -0.5, -0.5 ,-0.5 )
@@ -210,7 +263,7 @@
 //					vertexColors: THREE.VertexColors
 
 				} ) );
-			groupMove.add( points );
+			*/
 			//points.position.copy( new THREE.Vector3( 0.1, 0, 0 ) );
 			points.name = 'no sizeAttenuation';
 			if ( typeof StereoEffect === "undefined" )
@@ -226,11 +279,31 @@
 
 				onIntersection: function ( intersection ) {
 
+					this.spriteText = StereoEffect.getTextIntersection( intersection, {
+
+						scales: axesHelper ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
+						spriteOptions: {
+
+							group: scene,
+							rect: {
+
+								displayRect: true,
+								borderRadius: 15,
+
+							},
+							center: {
+
+								camera: camera,
+								canvas: canvas,
+
+							}
+							//center: new THREE.Vector2( 1, 0 ),
+							//sizeAttenuation: true,
+
+						}
+
+					} );
 /*
-					if ( !this.bIntersectionOut )
-						return;
-					this.bIntersectionOut = false;
-*/
 					if ( typeof SpriteText !== 'undefined' ) {
 
 						const position = getIntersectionPosition( intersection );
@@ -276,6 +349,7 @@
 						);
 
 					}
+*/
 					renderer.domElement.style.cursor = 'pointer';
 
 				},
@@ -326,6 +400,31 @@
 
 					onIntersection: function ( intersection ) {
 
+						this.spriteText = StereoEffect.getTextIntersection( intersection, {
+
+							scales: axesHelper ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
+							spriteOptions: {
+
+								group: scene,
+								rect: {
+
+									displayRect: true,
+									borderRadius: 15,
+
+								},
+								center: {
+
+									camera: camera,
+									canvas: canvas,
+
+								}
+								//center: new THREE.Vector2( 1, 0 ),
+								//sizeAttenuation: true,
+
+							}
+
+						} );
+/*
 						if ( typeof SpriteText !== 'undefined' ) {
 
 							const position = getIntersectionPosition( intersection );
@@ -371,6 +470,7 @@
 							);
 
 						}
+*/
 						renderer.domElement.style.cursor = 'pointer';
 
 					},
@@ -420,8 +520,11 @@
 				controls = new OrbitControls( camera, renderer.domElement );
 				controls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
 				controls.update();
+				if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.orbitControls = controls;
 
 			}
+			points.userData.player = { arrayFuncs: arrayFuncs, }
+			Player.selectMeshPlayScene( THREE, points );
 
 			if ( typeof StereoEffect !== "undefined" ) {
 
