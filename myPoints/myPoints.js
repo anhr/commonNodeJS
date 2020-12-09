@@ -19,7 +19,7 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * Creating the new points and adding it into group
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {array} arrayFuncs points.geometry.attributes.position array.
- * See arrayFuncs parametr of the [Player.getColors(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors} for details.
+ * See arrayFuncs parametr of the [Player.getPoints(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints} for details.
  * @param {THREE.Group} group Group for new points
  * @param {object} [settings] the following options are available
  * @param {Player} [settings.Player] [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}.
