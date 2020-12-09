@@ -70,7 +70,7 @@ var THREE;
  * @param {number} [options.rect.borderRadius=0 is no radius] border corners radius.
  * @see Thanks to {@link https://github.com/vasturiano/three-spritetext|three-spritetext}
  */
-export function SpriteText( text, position, options ) {
+export function SpriteText( text, position = new THREE.Vector3( 0, 0, 0 ), options = {} ) {
 
 	if ( typeof THREE === "undefined" ) {
 
@@ -78,8 +78,8 @@ export function SpriteText( text, position, options ) {
 		return;
 		
 	}
-	position = position || new THREE.Vector3( 0, 0, 0 );
-	options = options || {};
+//	position = position || new THREE.Vector3( 0, 0, 0 );
+//	options = options || {};
 
 	const sprite = new THREE.Sprite( new THREE.SpriteMaterial( {
 
@@ -281,8 +281,9 @@ SpriteText.getCenter = function ( center = {}, position ) {
 	function worldToScreen() {
 
 		const width = canvas.width, height = canvas.height,
-			widthHalf = width / 2, heightHalf = height / 2,
-			pos = position.clone();
+			widthHalf = width / 2, heightHalf = height / 2;
+//			pos = position.clone();
+		const pos = new THREE.Vector3().copy( position );
 		pos.project( center.camera );
 		pos.x = ( pos.x * widthHalf ) + widthHalf;
 		pos.y = - ( pos.y * heightHalf ) + heightHalf;
