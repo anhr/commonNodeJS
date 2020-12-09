@@ -287,73 +287,36 @@ You can see a dot lines from point to axes if you click over point.
 
 * You can display a text if mouse is over to object in the 3d space.
 
-Import <b>SpriteText</b> for it.
-```
-import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
-```
-or
-download [SpriteText](https://github.com/anhr/SpriteText) repository into your "[folderName]\SpriteText\master" folder.
-```
-import { SpriteText } from './commonNodeJS/master/SpriteText/SpriteText.js';
-```
-Set <b>THREE</b> to <b>SpriteText</b>.
-```
-SpriteText.setTHREE( THREE );
-```
-and edit <b>points.userData.raycaster</b>
+Edit <b>points.userData.raycaster</b>.
 ```
 points.userData.raycaster = {
 
 	onIntersection: function ( intersection ) {
 
-		if ( ( typeof SpriteText !== 'undefined' ) && !this.spriteText ) {
+		this.spriteText = StereoEffect.getTextIntersection( intersection, {
 
-			function getIntersectionPosition( intersection )
-				{ return new THREE.Vector3().fromArray( points.geometry.attributes.position.array, intersection.index * points.geometry.attributes.position.itemSize ); }
+			scales: axesHelper ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
+			spriteOptions: {
 
-			const position = getIntersectionPosition( intersection );
-			//console.warn( 'onIntersection x = ' + position.x + ' y =  ' + position.y + ' z = ' +  position.z );
+				group: scene,
+				rect: {
 
-			var x, y, z;
-			if ( axesHelper ) {
+					displayRect: true,
+					borderRadius: 15,
 
-				const scales = axesHelper.options.scales;
-				x = scales.x.name;
-				y = scales.y.name;
-				z = scales.z.name;
+				},
+				center: {
 
-			} else {
-
-				x = 'x';
-				y = 'y';
-				z = 'z';
-
-			}
-			this.spriteText = new SpriteText(
-				( intersection.object.name === '' ? '' : intersection.object.name + '\n' ) +
-				'Point\n' + x + ' = ' + position.x + '\n' + y + ' =  ' + position.y + '\n' + z + ' = ' +  position.z,
-				position, {
-
-					group: scene,
-					rect: {
-
-						displayRect: true,
-						borderRadius: 15,
-
-					},
-					center: {
-
-						camera: camera,
-						canvas: canvas,
-
-					}
-					//center: new THREE.Vector2( 1, 0 ),
-					//sizeAttenuation: true,
+					camera: camera,
+					canvas: canvas,
 
 				}
-			);
+				//center: new THREE.Vector2( 1, 0 ),
+				//sizeAttenuation: true,
 
-		}
+			}
+
+		} );
 		renderer.domElement.style.cursor = 'pointer';
 
 	},
@@ -392,6 +355,42 @@ import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/play
 ```
 See [Player API](../../player/jsdoc/index.html#ImportPlayer) for details.
 
+Edit second point of the <b>arrayFuncs</b> as target of the camera
+and use <b>Player.getPoints</b> for get of the points array for creation of the <b>THREE.Points</b>.
+```
+const arrayFuncs = [
+	new THREE.Vector3( 0.5, 0.5 ,0.5 ),//First point
+	{
+
+		vector: new THREE.Vector3( -0.5, -0.5 ,-0.5 ),
+		cameraTarget: { camera: camera, },
+
+	}//Second point
+]
+const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
+		Player.getPoints( THREE, arrayFuncs, { group: scene, } )
+	),
+	new THREE.PointsMaterial( {
+
+		color: 0xffffff,
+		size: 5,//0.05,
+		sizeAttenuation: false,
+		alphaTest: 0.5,
+
+	} ) );
+```
+Plaese set <b>camera.userData.cameraTarget.orbitControls</b> if you use [THREE.OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls).
+```
+if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.orbitControls = controls;
+```
+Define <b>points.userData.player</b> and call <b>Player.selectMeshPlayScene(...)</b>.
+```
+points.userData.player = { arrayFuncs: arrayFuncs, }
+Player.selectMeshPlayScene( THREE, points );
+```
+ATTENTION!!! Call <b>Player.selectMeshPlayScene(...)</b> after creation of the <b>OrbitControls</b> instance.
+
+Now you can see the second point in the center of the canvas. In other words, camera look at the second point.
 
 <a name="AxesHelperGui"></a>
 ## AxesHelperGui
