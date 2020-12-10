@@ -47,16 +47,14 @@
 <p>An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my <a href="https://threejs.org/">three.js</a> projects.</p>
 <h1>Content</h1>
 <ul>
-<li><a href="#Quickstart">Quick start.</a>
-<ul>
+<li><a href="#Quickstart">Quick start.</a></li>
 <li><a href="#OrbitControls">Use the THREE.OrbitControls to rotate the camera.</a></li>
 <li><a href="#Raycaster">Use Raycaster for mouse picking (working out what objects in the 3d space the mouse is over).</a></li>
 <li><a href="#CameraTarget">Choose a point at which the camera is looking.</a></li>
-</ul>
-</li>
-<li><a href="#AxesHelperGui">AxesHelperGui</a>
+<li><a href="#Gui">Graphical user interface for changing settings.</a>
 <ul>
-<li><a href="#guiSelectPoint">Add guiSelectPoint into dat.gui for select a point from the mesh.</a></li>
+<li><a href="#AxesHelperGui">AxesHelper settings.</a></li>
+<li><a href="#guiSelectPoint">Select a point from the mesh.</a></li>
 <li><a href="#MoveGroup">Move group of meshes.</a></li>
 </ul>
 </li>
@@ -184,7 +182,7 @@ Please edit line above for it.</p>
 } );
 </code></pre>
 <p><a name="OrbitControls"></a></p>
-<h3>Use the <a href="https://threejs.org/docs/index.html#examples/en/controls/OrbitControls">THREE.OrbitControls</a> to rotate the camera.</h3>
+<h2>Use the <a href="https://threejs.org/docs/index.html#examples/en/controls/OrbitControls">THREE.OrbitControls</a> to rotate the camera.</h2>
 <p>Import <b>OrbitControls</b>,</p>
 <pre class="prettyprint source"><code>import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 </code></pre>
@@ -194,7 +192,7 @@ controls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.
 controls.update();
 </code></pre>
 <p><a name="Raycaster"></a></p>
-<h3>Use <a href="https://threejs.org/docs/index.html#api/en/core/Raycaster">Raycaster</a> for mouse picking (working out what objects in the 3d space the mouse is over).</h3>
+<h2>Use <a href="https://threejs.org/docs/index.html#api/en/core/Raycaster">Raycaster</a> for mouse picking (working out what objects in the 3d space the mouse is over).</h2>
 <p>Please create an 3D object, for example points.</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
 	new THREE.Vector3( 0.5, 0.5 ,0.5 ),
@@ -368,7 +366,7 @@ window.addEventListener( 'pointerdown', function( event ) {
 in another words if you want the text is not moves outside the canvas border,
 plase define a <b>camera</b> and <b>canvas</b> keys in the <b>center</b> object as you see above.</p>
 <p><a name="CameraTarget"></a></p>
-<h3>Choose a point at which the camera is looking.</h3>
+<h2>Choose a point at which the camera is looking.</h2>
 <p>First, import <b>Player</b>.</p>
 <pre class="prettyprint source"><code>import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
 </code></pre>
@@ -405,17 +403,19 @@ Player.selectMeshPlayScene( THREE, points );
 </code></pre>
 <p>ATTENTION!!! Call <b>Player.selectMeshPlayScene(...)</b> after creation of the <b>OrbitControls</b> instance.</p>
 <p>Now you can see the second point in the center of the canvas. In other words, camera look at the second point.</p>
-<p><a name="AxesHelperGui"></a></p>
-<h2>AxesHelperGui</h2>
-<p>Add <b>AxesHelperGui</b> into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change settings of the <b>AxesHelper</b>.
-<a href="../Examples/index.html">Example</a></p>
-<p>Import <b>dat.gui</b>.</p>
+<p><a name="Gui"></a></p>
+<h2>Graphical user interface for changing settings.</h2>
+<p>Import <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</p>
 <pre class="prettyprint source"><code>import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import { dat } from './commonNodeJS/master/dat/dat.module.js';
 </code></pre>
-<p>Import <b>AxesHelperGui</b>.</p>
+<p><a name="AxesHelperGui"></a></p>
+<h3>AxesHelper settings.</h3>
+<p>Add <b>AxesHelperGui</b> into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change settings of the <b>AxesHelper</b>.
+<a href="../Examples/index.html">Example</a>
+Import <b>AxesHelperGui</b>.</p>
 <pre class="prettyprint source"><code>import { AxesHelperGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelperGui.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
@@ -454,7 +454,8 @@ AxesHelperGui( axesHelper, gui, {
 <pre class="prettyprint source"><code>import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
 </code></pre>
 <p><a name="guiSelectPoint"></a></p>
-<h3>Add <a href="../../guiSelectPoint/jsdoc/index.html">guiSelectPoint</a> into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for select a point from the mesh.</h3>
+<h3>Select a point from the mesh.</h3>
+<p>Add <a href="../../guiSelectPoint/jsdoc/index.html">guiSelectPoint</a> into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for select a point from the mesh.</p>
 <p><a name="MoveGroup"></a></p>
 <h3>Move a group of meshes.</h3>
 <p>Sometimes you need to move a group of meshes for better visualization. Use <a href="../../MoveGroup.js">MoveGroup</a> for it.</p>
@@ -474,7 +475,7 @@ AxesHelperGui( axesHelper, gui, {
 moveGroup.gui( gui, {
 
 	//getLanguageCode: getLanguageCode,
-	lang: { moveGroup: 'Move points', },//name of the moveGroup folder. Default is 'Move Group'
+	//lang: { moveGroup: 'Move points', },//name of the moveGroup folder. Default is 'Move Group'
 	guiSelectPoint: guiSelectPoint,
 
 } );
@@ -515,7 +516,7 @@ groupMove.add( points );
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Dec 09 2020 13:05:25 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Dec 10 2020 08:34:28 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

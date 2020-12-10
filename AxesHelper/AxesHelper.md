@@ -4,11 +4,12 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 
 # Content
 * [Quick start.](#Quickstart)
-	* [Use the THREE.OrbitControls to rotate the camera.](#OrbitControls)
-	* [Use Raycaster for mouse picking (working out what objects in the 3d space the mouse is over).](#Raycaster)
-	* [Choose a point at which the camera is looking.](#CameraTarget)
-* [AxesHelperGui](#AxesHelperGui)
-	* [Add guiSelectPoint into dat.gui for select a point from the mesh.](#guiSelectPoint)
+* [Use the THREE.OrbitControls to rotate the camera.](#OrbitControls)
+* [Use Raycaster for mouse picking (working out what objects in the 3d space the mouse is over).](#Raycaster)
+* [Choose a point at which the camera is looking.](#CameraTarget)
+* [Graphical user interface for changing settings.](#Gui)
+	* [AxesHelper settings.](#AxesHelperGui)
+	* [Select a point from the mesh.](#guiSelectPoint)
 	* [Move group of meshes.](#MoveGroup)
 
 <a name="QuickStart"></a>
@@ -145,7 +146,7 @@ const axesHelper = new AxesHelper( THREE, scene, {
 ```
 
 <a name="OrbitControls"></a>
-### Use the [THREE.OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) to rotate the camera.
+## Use the [THREE.OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) to rotate the camera.
 
 Import <b>OrbitControls</b>,
 ```
@@ -159,7 +160,7 @@ controls.update();
 ```
 
 <a name="Raycaster"></a>
-### Use [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster) for mouse picking (working out what objects in the 3d space the mouse is over).
+## Use [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster) for mouse picking (working out what objects in the 3d space the mouse is over).
 
 Please create an 3D object, for example points.
 ```
@@ -347,7 +348,7 @@ in another words if you want the text is not moves outside the canvas border,
 plase define a <b>camera</b> and <b>canvas</b> keys in the <b>center</b> object as you see above.
 
 <a name="CameraTarget"></a>
-### Choose a point at which the camera is looking.
+## Choose a point at which the camera is looking.
 
 First, import <b>Player</b>.
 ```
@@ -392,13 +393,10 @@ ATTENTION!!! Call <b>Player.selectMeshPlayScene(...)</b> after creation of the <
 
 Now you can see the second point in the center of the canvas. In other words, camera look at the second point.
 
-<a name="AxesHelperGui"></a>
-## AxesHelperGui
+<a name="Gui"></a>
+## Graphical user interface for changing settings.
 
-Add <b>AxesHelperGui</b> into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the <b>AxesHelper</b>.
-[Example](../Examples/index.html)
-
-Import <b>dat.gui</b>.
+Import [dat.gui](https://github.com/anhr/dat.gui).
 ```
 import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 ```
@@ -406,6 +404,12 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import { dat } from './commonNodeJS/master/dat/dat.module.js';
 ```
+
+<a name="AxesHelperGui"></a>
+### AxesHelper settings.
+
+Add <b>AxesHelperGui</b> into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the <b>AxesHelper</b>.
+[Example](../Examples/index.html)
 Import <b>AxesHelperGui</b>.
 ```
 import { AxesHelperGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelperGui.js';
@@ -453,7 +457,9 @@ import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
 
 <a name="guiSelectPoint"></a>
-### Add [guiSelectPoint](../../guiSelectPoint/jsdoc/index.html) into [dat.gui](https://github.com/anhr/dat.gui) for select a point from the mesh.
+### Select a point from the mesh.
+
+Add [guiSelectPoint](../../guiSelectPoint/jsdoc/index.html) into [dat.gui](https://github.com/anhr/dat.gui) for select a point from the mesh.
 
 <a name="MoveGroup"></a>
 ### Move a group of meshes.
@@ -478,7 +484,7 @@ const moveGroup = new MoveGroup( scene, {
 moveGroup.gui( gui, {
 
 	//getLanguageCode: getLanguageCode,
-	lang: { moveGroup: 'Move points', },//name of the moveGroup folder. Default is 'Move Group'
+	//lang: { moveGroup: 'Move points', },//name of the moveGroup folder. Default is 'Move Group'
 	guiSelectPoint: guiSelectPoint,
 
 } );
