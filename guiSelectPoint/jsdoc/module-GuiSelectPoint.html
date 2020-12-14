@@ -288,7 +288,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1328">line 1328</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1431">line 1431</a>
     </li></ul></dd>
     
 
@@ -458,7 +458,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1394">line 1394</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1497">line 1497</a>
     </li></ul></dd>
     
 
@@ -628,7 +628,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1349">line 1349</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1452">line 1452</a>
     </li></ul></dd>
     
 
@@ -934,23 +934,16 @@
         </tr>
 
     
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
 
         <tr>
             
-                <td class="name"><code>options.camera</code></td>
+                <td class="name"><code>cameraTarget</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">THREE.PerspectiveCamera</span>
+<span class="param-type">object</span>
 
 
             
@@ -970,14 +963,106 @@
 
             
 
-            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">PerspectiveCamera</a>.Set the <b>camera</b> if you want to camera to look at selected point.</td>
+            <td class="description last">Set the <b>cameraTarget</b> if you want to camera to look at selected point.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>camera</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.PerspectiveCamera</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">PerspectiveCamera</a>.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>guiParams.pointControls</code></td>
+                <td class="name"><code>orbitControls</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">OrbitControls</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="https://threejs.org/docs/index.html#examples/en/controls/OrbitControls">OrbitControls</a>.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>pointControls</code></td>
             
 
             <td class="type">
@@ -1010,7 +1095,7 @@
 
         <tr>
             
-                <td class="name"><code>guiParams.pointsControls</code></td>
+                <td class="name"><code>pointsControls</code></td>
             
 
             <td class="type">
@@ -1043,7 +1128,7 @@
 
         <tr>
             
-                <td class="name"><code>guiParams.setIntersection</code></td>
+                <td class="name"><code>setIntersection</code></td>
             
 
             <td class="type">
@@ -1076,7 +1161,7 @@
 
         <tr>
             
-                <td class="name"><code>guiParams.getLanguageCode</code></td>
+                <td class="name"><code>getLanguageCode</code></td>
             
 
             <td class="type">
@@ -1109,7 +1194,7 @@
 
         <tr>
             
-                <td class="name"><code>guiParams.lang</code></td>
+                <td class="name"><code>lang</code></td>
             
 
             <td class="type">
@@ -1136,6 +1221,13 @@
             
 
             <td class="description last">Object with localized language values</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -1176,7 +1268,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line86">line 86</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line93">line 93</a>
     </li></ul></dd>
     
 
@@ -1330,7 +1422,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line695">line 695</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line717">line 717</a>
     </li></ul></dd>
     
 
@@ -1467,7 +1559,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line501">line 501</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line521">line 521</a>
     </li></ul></dd>
     
 
@@ -1604,7 +1696,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line444">line 444</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line464">line 464</a>
     </li></ul></dd>
     
 
@@ -1702,7 +1794,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line622">line 622</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line643">line 643</a>
     </li></ul></dd>
     
 
@@ -1849,7 +1941,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line614">line 614</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line635">line 635</a>
     </li></ul></dd>
     
 
@@ -1996,7 +2088,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line482">line 482</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line502">line 502</a>
     </li></ul></dd>
     
 
@@ -2084,7 +2176,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line388">line 388</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line408">line 408</a>
     </li></ul></dd>
     
 
@@ -2234,7 +2326,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line403">line 403</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line423">line 423</a>
     </li></ul></dd>
     
 
@@ -2371,7 +2463,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1404">line 1404</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1507">line 1507</a>
     </li></ul></dd>
     
 
@@ -2459,7 +2551,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line425">line 425</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line445">line 445</a>
     </li></ul></dd>
     
 
@@ -2511,7 +2603,7 @@ guiParams = {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Dec 11 2020 09:46:47 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon Dec 14 2020 18:08:19 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

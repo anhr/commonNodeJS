@@ -34,6 +34,12 @@ import PositionController from '../PositionController.js';
 import ColorPicker from '../colorpicker/colorpicker.js';//https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 //import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 
+//import Player from '../player/build/player.module.js';
+//import Player from '../player/build/player.module.min.js';
+import Player from '../player/player.js';
+//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
+//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
+
 /**
  * A dat.gui based graphical user interface for select a point from the mesh.
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
@@ -43,6 +49,9 @@ import ColorPicker from '../colorpicker/colorpicker.js';//https://github.com/anh
  * @param {string} [guiParams.options] See {@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/index.html|axesHelper.options} for details. Default is axesHelper.options if axesHelper is defined or { scales: {...} }
  * @param {string} [guiParams.cFrustumPoints]
  * @param {string} [guiParams.myThreejs] See {@link https://github.com/anhr/myThreejs|myThreejs}.
+ * @param {object} [guiParams.cameraTarget] Set the <b>cameraTarget</b> if you want to camera to look at selected point.
+ * @param {THREE.PerspectiveCamera} guiParams.cameraTarget.camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
+ * @param {OrbitControls} [guiParams.cameraTarget.orbitControls] [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}.
  * @param {Function} [guiParams.pointControls] pointControls( fPoint, dislayEl, getMesh ) Adds the trace "Display the trace of the point movement" control checkbox into gui.
  * <pre>
  * fPoint - parent folder for new control.
@@ -137,6 +146,9 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		rotation: 'Rotation',
 		points: 'Points',
 
+		cameraTarget: 'Look',
+		cameraTargetTitle: 'Choose this point the camera is looking at.',
+
 		point: 'Point Local Position',
 		pointTitle: 'The position attribute of the selected point',
 
@@ -178,6 +190,9 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			lang.rotation = 'Вращение';
 			lang.points = 'Точки';
 
+			lang.cameraTarget = 'Следить';
+			lang.cameraTargetTitle = 'Выберите эту точку, за которой следит камера.',
+
 			lang.point = 'Локальная позиция точки';
 			lang.pointTitle = 'Position attribute выбранной точки';
 
@@ -216,9 +231,17 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		intersection, _this = this,
 		cScaleX, cScaleY, cScaleZ, cPosition = new THREE.Vector3(), cRotations = new THREE.Vector3(),
 		cPoints, selectedPointIndex = -1,
-		controllerX, controllerY, controllerZ, controllerW, cTrace, cTraceAll, controllerColor, controllerOpacity,
+		controllerX, controllerY, controllerZ, controllerW, cTrace, cTraceAll, controllerColor, controllerOpacity, controllerCameraTarget,
 		controllerWorld = new THREE.Vector3(),
 		boSetMesh = false;//Для предотвращения лишних вызовов exposePosition если выбрать точку и передвинуть камеру с помошью OrbitControls,
+	function displayPointControllers( display ) {
+
+		fPointWorld.domElement.style.display = display;
+		fPoint.domElement.style.display = display;
+		if ( controllerCameraTarget )
+			controllerCameraTarget.domElement.parentElement.parentElement.style.display = display;
+
+	}
 	if ( options.arrayCloud )//Array of points with cloud
 		cFrustumPoints = new options.arrayCloud.cFrustumPointsF( _this );
 	//сейчас exposePosition вызывается только один раз из this.setMesh
@@ -276,6 +299,10 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	}
 	function setPosition( intersectionSelected ) {
+
+		const player = intersectionSelected.object.userData.player;
+		if ( controllerCameraTarget )
+			controllerCameraTarget.setValue( player && player.arrayFuncs[intersectionSelected.index].cameraTarget ? true : false );
 
 		const positionLocal = getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
 		setValue( controllerX, positionLocal.x );
@@ -367,6 +394,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		dislayEl( controllerW, displayControllerW );
 		dislayEl( controllerColor, displayControllerColor );
 		dislayEl( controllerOpacity, displayControllerOpacity );
+//		dislayEl( controllerCameraTarget, guiSelectPoint.getSelectedPointIndex() === 0 ? false : true );
 
 		var boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : false;
 		if ( controllerX ) controllerX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
@@ -582,8 +610,9 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 			}
 			const block = 'block';
-			fPoint.domElement.style.display = block;
-			fPointWorld.domElement.style.display = block;
+//			fPoint.domElement.style.display = block;
+//			fPointWorld.domElement.style.display = block;
+			displayPointControllers( block );
 			intersection = intersectionSelected;
 			if ( guiParams.setIntersection )
 				guiParams.setIntersection( intersectionSelected );
@@ -684,6 +713,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		if ( cRotations.z ) cRotations.z.setValue( mesh.rotation.z );
 
 	}
+
 	/**
 	 * Adds select point GUI into dat.gui folder
 	 * @function GuiSelectPoint.
@@ -734,7 +764,9 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					
 					for ( var iPosition = 0; iPosition < mesh.geometry.attributes.position.count; iPosition++ ) {
 
-						var opt = document.createElement( 'option' ),
+						const opt = document.createElement( 'option' ),
+							name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
+/*						
 							name = mesh.userData.arrayFuncs === undefined ?
 								undefined :
 								mesh.userData.pointName === undefined ?
@@ -742,6 +774,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 										undefined :
 										mesh.userData.arrayFuncs[iPosition].name :
 									mesh.userData.pointName( iPosition );
+*/									
 						opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
 						opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
 						cPoints.__select.appendChild( opt );
@@ -964,8 +997,9 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			}
 			if ( axesHelper !== undefined )
 				axesHelper.exposePosition( getObjectPosition( getMesh(), value ) );
-			fPoint.domElement.style.display = display;
-			fPointWorld.domElement.style.display = display;
+//			fPoint.domElement.style.display = display;
+//			fPointWorld.domElement.style.display = display;
+			displayPointControllers( display );
 
 		} );
 		cPoints.__select[0].selected = true;
@@ -976,17 +1010,106 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		if ( guiParams.myThreejs )
 			guiParams.myThreejs.cFrustumPoints = cFrustumPoints;
 
+		//Camera target
+		var orbitControlsOptions, 
+			cameraTarget;//здесь хранится cameraTarget когда ни одна точка не выбрана как camera target
+		if ( guiParams.cameraTarget ) {
+
+			controllerCameraTarget = fPoints.add( { value: false }, 'value' ).onChange( function ( value ) {
+
+				const mesh = getMesh();
+				if ( !mesh.userData.player ) {
+
+					mesh.userData.player = { arrayFuncs: [] }
+					for( var i = 0; i < mesh.geometry.attributes.position.count; i++ ) {
+
+						mesh.userData.player.arrayFuncs.push( new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array,
+							i * mesh.geometry.attributes.position.itemSize ) );
+
+					}
+
+				}
+				const point = mesh.userData.player.arrayFuncs[cPoints.__select.options.selectedIndex-1];
+
+				function getCameraTarget( del = false ){
+
+					for ( var i = 0; i < cMeshs.__select.options.length; i++ ) {
+
+						const mesh = cMeshs.__select.options[i].mesh;
+						if( !mesh || !mesh.userData.player )
+							continue;
+						const arrayFuncs = mesh.userData.player.arrayFuncs;
+						for ( var j = 0; j < arrayFuncs.length; j++ ) {
+
+							const CT = cameraTarget = arrayFuncs[j].cameraTarget;
+							if ( CT ) {
+
+								cameraTarget = CT;
+								if ( del )
+									arrayFuncs[j].cameraTarget = undefined;
+								return cameraTarget;
+
+							}
+
+						}
+
+					}
+
+				}
+				if ( value ) {
+
+					if ( !point.cameraTarget ) {
+
+						getCameraTarget( true );
+						if ( guiParams.cameraTarget.boLook === undefined ) guiParams.cameraTarget.boLook = true;
+						guiParams.cameraTarget.camera.userData.cameraTarget = guiParams.cameraTarget;
+						point.cameraTarget = { camera: guiParams.cameraTarget.camera, }
+
+						if ( !orbitControlsOptions ) orbitControlsOptions = {}
+						if ( !orbitControlsOptions.target )
+							orbitControlsOptions.target = new THREE.Vector3().copy( guiParams.cameraTarget.orbitControls.target );
+							
+						cameraTarget = undefined;
+						Player.selectMeshPlayScene( THREE, mesh );
+
+					}
+					return;
+
+				}
+				cameraTarget = point.cameraTarget;
+				point.cameraTarget = undefined;
+				if ( orbitControlsOptions ) {
+
+					if ( getCameraTarget() )
+						return;
+
+					guiParams.cameraTarget.orbitControls.target.copy( orbitControlsOptions.target );
+/*					
+					if ( camera.userData.cameraTarget.orbitControlsGui )
+						camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
+*/						
+					guiParams.cameraTarget.camera.lookAt( orbitControlsOptions.target );
+					point.cameraTarget = undefined;
+
+				}
+
+			} );
+			dat.controllerNameAndTitle( controllerCameraTarget, lang.cameraTarget, lang.cameraTargetTitle );
+
+		}
+
 		//Points attribute position
 		fPoint = fPoints.addFolder( lang.point );
 		dat.folderNameAndTitle( fPoint, lang.point, lang.pointTitle );
-		fPoint.domElement.style.display = 'none';
-		//					fPoint.open();
+//		fPoint.domElement.style.display = 'none';
 
 		//Points world position
 		fPointWorld = fPoints.addFolder( lang.pointWorld );
 		dat.folderNameAndTitle( fPointWorld, lang.pointWorld, lang.pointWorldTitle );
-		fPointWorld.domElement.style.display = 'none';
+//		fPointWorld.domElement.style.display = 'none';
 		fPointWorld.open();
+
+		displayPointControllers( 'none' );
 
 		if ( guiParams.pointsControls )
 			cTraceAll = guiParams.pointsControls( fPoints, dislayEl, getMesh );
