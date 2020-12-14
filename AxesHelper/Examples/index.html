@@ -208,11 +208,11 @@
 
 					vector: new THREE.Vector3( -0.5, -0.5 ,-0.5 ),
 					//trace: true,//Displays the trace of the point movement.
+					/*
 					cameraTarget: {
 
 						camera: camera,
-						/*
-						rotation: {
+						//rotation: {
 
 							//angle: Math.PI,
 							//angle: [0, Math.PI],
@@ -221,10 +221,10 @@
 							//angle: new Function( 't', 'return 5*t' ),
 							//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
 
-						},
-						*/
+						//},
 
 					},
+					*/
 					name: 'Second point'
 
 				}
@@ -572,7 +572,18 @@
 
 				if ( typeof GuiSelectPoint !== "undefined" ) {
 
-					guiSelectPoint = new GuiSelectPoint( THREE, { axesHelper: axesHelper, } );
+					guiSelectPoint = new GuiSelectPoint( THREE, {
+
+						axesHelper: axesHelper,
+						getLanguageCode: getLanguageCode,
+						cameraTarget: {
+
+							camera: camera,
+							orbitControls: controls,
+
+						},
+
+					} );
 					guiSelectPoint.add( gui );
 					guiSelectPoint.addMesh( points );
 					if ( typeof pointsSizeAttenuation !== 'undefined' )
@@ -594,9 +605,8 @@
 				if ( moveGroup )
 					moveGroup.gui( gui, {
 
-						cookie: cookie,
 						getLanguageCode: getLanguageCode,
-						lang: { moveGroup: 'Move Meshs', },
+						//lang: { moveGroup: 'Move Meshs', },
 						guiSelectPoint: guiSelectPoint,
 						axesHelper: axesHelper
 
