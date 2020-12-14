@@ -903,6 +903,18 @@ SpriteText.setTHREE( THREE );
 import { getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
+/**
+ * Creates the <b>new SpriteText</b> with information about point, intersected with mouse cursor.
+ * @function StereoEffect.
+ * getTextIntersection
+ * @param {THREE.Raycaster.intersectObject} intersection See [intersection]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
+ * @param {object} [options={}] The following options are available
+ * @param {object} [options.scales={}] axes scales.
+ * See [options.scales parameter of the AxesHelper( ... )]{@link https://raw.githack.com/anhr/commonNodeJS/master//AxesHelper/jsdoc/module-AxesHelper.html} for details.
+ * @param {object} [options.spriteOptions={}] Options of the <b>SpriteText</b>.
+ * See [SpriteText]{@link https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/jsdoc/module-SpriteText..html} for details.
+ * @returns <b>new SpriteText</b> with information about point, intersected with mouse cursor.
+ */
 StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 
 	const position = getObjectPosition( intersection.object, intersection.index ),
