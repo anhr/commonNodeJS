@@ -1192,27 +1192,40 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 
 				const camera = funcs.cameraTarget.camera;
 
+				//На случай когда не определена ни одна точка как cameraTarget и пользователь поставил птичку в controllerCameraTarget
+				//camera.userData.cameraTarget = camera.userData.cameraTarget || { boLook: true };
+
 				if ( camera.userData.cameraTarget.boLook ) {
 
-					camera.userData.cameraTarget.setCameraPosition = function ( target ) {
+					if ( !camera.userData.cameraTarget.setCameraPosition )
+						camera.userData.cameraTarget.setCameraPosition = function ( target ) {
 
-						camera.position.copy( camera.userData.cameraTarget.distanceToCameraCur );
-						if ( camera.userData.cameraTarget.rotation )
-							camera.position.applyAxisAngle( camera.userData.cameraTarget.rotation.axis,
-								Player.execFunc( camera.userData.cameraTarget.rotation, 'angle', t ) );
-						camera.position.add( target );
-						camera.lookAt( target );
-						if ( camera.userData.cameraTarget.orbitControls ) {
+							camera.position.copy( camera.userData.cameraTarget.distanceToCameraCur );
+							if ( camera.userData.cameraTarget.rotation )
+								camera.position.applyAxisAngle( camera.userData.cameraTarget.rotation.axis,
+									Player.execFunc( camera.userData.cameraTarget.rotation, 'angle', t ) );
+							camera.position.add( target );
+							camera.lookAt( target );
+							if ( camera.userData.cameraTarget.orbitControls ) {
 
-							camera.userData.cameraTarget.orbitControls.target.copy( target );
-							if ( camera.userData.cameraTarget.orbitControlsGui )
-								camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
+								camera.userData.cameraTarget.orbitControls.target.copy( target );
+								if ( camera.userData.cameraTarget.orbitControlsGui )
+									camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
+
+							}
 
 						}
-
-					}
 					if ( !camera.userData.cameraTarget.distanceToCameraCur )
 						camera.userData.cameraTarget.distanceToCameraCur = new THREE.Vector3();
+
+					//На случай когда не определена ни одна точка как cameraTarget и пользователь поставил птичку в controllerCameraTarget
+					if ( !camera.userData.cameraTarget.distanceToCamera ) {
+
+//						Player.setCameraTarget( camera, funcs );
+						camera.userData.cameraTarget.distanceToCamera = new THREE.Vector3().copy( camera.position );
+
+					}
+
 					camera.userData.cameraTarget.distanceToCameraCur.set(
 
 						Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'x', t ),
