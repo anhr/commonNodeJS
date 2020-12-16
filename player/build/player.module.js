@@ -3703,6 +3703,8 @@ function GuiSelectPoint(_THREE, guiParams) {
 		position: 'Position',
 		rotation: 'Rotation',
 		points: 'Points',
+		cameraTarget: 'Look',
+		cameraTargetTitle: 'Choose this point the camera is looking at.',
 		point: 'Point Local Position',
 		pointTitle: 'The position attribute of the selected point',
 		pointWorld: 'Point World Position',
@@ -3729,7 +3731,8 @@ function GuiSelectPoint(_THREE, guiParams) {
 			lang.position = 'Позиция';
 			lang.rotation = 'Вращение';
 			lang.points = 'Точки';
-			lang.point = 'Локальная позиция точки';
+			lang.cameraTarget = 'Следить';
+			lang.cameraTargetTitle = 'Выберите эту точку, за которой следит камера.', lang.point = 'Локальная позиция точки';
 			lang.pointTitle = 'Position attribute выбранной точки';
 			lang.pointWorld = 'Абсолютная позиция точки';
 			lang.pointWorldTitle = 'Позиция выбранной точки после масштабирования, перемещения и вращения 3D объекта';
@@ -3776,8 +3779,14 @@ function GuiSelectPoint(_THREE, guiParams) {
 	    cTraceAll,
 	    controllerColor,
 	    controllerOpacity,
+	    controllerCameraTarget,
 	    controllerWorld = new THREE$2.Vector3(),
 	    boSetMesh = false;
+	function displayPointControllers(display) {
+		fPointWorld.domElement.style.display = display;
+		fPoint.domElement.style.display = display;
+		if (controllerCameraTarget) controllerCameraTarget.domElement.parentElement.parentElement.style.display = display;
+	}
 	if (options.arrayCloud)
 		cFrustumPoints = new options.arrayCloud.cFrustumPointsF(_this);
 	function dislayEl(controller, displayController) {
@@ -3812,6 +3821,8 @@ function GuiSelectPoint(_THREE, guiParams) {
 		return controller;
 	}
 	function setPosition(intersectionSelected) {
+		var player = intersectionSelected.object.userData.player;
+		if (controllerCameraTarget) controllerCameraTarget.setValue(player && player.arrayFuncs[intersectionSelected.index].cameraTarget ? true : false);
 		var positionLocal = getObjectLocalPosition(intersectionSelected.object, intersectionSelected.index);
 		setValue(controllerX, positionLocal.x);
 		setValue(controllerY, positionLocal.y);
@@ -3926,7 +3937,12 @@ function GuiSelectPoint(_THREE, guiParams) {
 			_this.removePoints();
 		}
 	};
+	var arrayMeshs = [];
 	this.addMesh = function (mesh) {
+		if (!cMeshs) {
+			arrayMeshs.push(mesh);
+			return;
+		}
 		for (var i = 0; i < cMeshs.__select.options.length; i++) {
 			var option = cMeshs.__select.options[i];
 			if (mesh.userData.boFrustumPoints && option.mesh !== undefined && option.mesh.userData.boFrustumPoints) return;
@@ -3965,8 +3981,7 @@ function GuiSelectPoint(_THREE, guiParams) {
 				cFrustumPoints.pointIndexes(intersectionSelected.object.userData.pointIndexes(intersectionSelected.index));
 			}
 			var block = 'block';
-			fPoint.domElement.style.display = block;
-			fPointWorld.domElement.style.display = block;
+			displayPointControllers(block);
 			intersection = intersectionSelected;
 			if (guiParams.setIntersection) guiParams.setIntersection(intersectionSelected);
 			setPosition(intersectionSelected);
@@ -4051,7 +4066,7 @@ function GuiSelectPoint(_THREE, guiParams) {
 					displayFrustumPoints = 'none';
 					for (var iPosition = 0; iPosition < mesh.geometry.attributes.position.count; iPosition++) {
 						var opt = document.createElement('option'),
-						    name = mesh.userData.arrayFuncs === undefined ? undefined : mesh.userData.pointName === undefined ? typeof mesh.userData.arrayFuncs === "function" ? undefined : mesh.userData.arrayFuncs[iPosition].name : mesh.userData.pointName(iPosition);
+						    name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
 						opt.innerHTML = iPosition + (name === undefined ? '' : ' ' + name);
 						opt.setAttribute('value', iPosition);
 						cPoints.__select.appendChild(opt);
@@ -4193,30 +4208,80 @@ function GuiSelectPoint(_THREE, guiParams) {
 				_this.select({ object: getMesh(), index: value });
 			}
 			if (axesHelper !== undefined) axesHelper.exposePosition(getObjectPosition(getMesh(), value));
-			fPoint.domElement.style.display = display;
-			fPointWorld.domElement.style.display = display;
+			displayPointControllers(display);
 		});
 		cPoints.__select[0].selected = true;
 		dat.controllerNameAndTitle(cPoints, lang.select);
 		if (cFrustumPoints !== undefined) cFrustumPoints.create(fPoints, getLanguageCode());
 		if (guiParams.myThreejs) guiParams.myThreejs.cFrustumPoints = cFrustumPoints;
+		var orbitControlsOptions, cameraTarget;
+		if (guiParams.cameraTarget) {
+			controllerCameraTarget = fPoints.add({ value: false }, 'value').onChange(function (value) {
+				var mesh = getMesh();
+				if (!mesh.userData.player) {
+					mesh.userData.player = { arrayFuncs: [] };
+					for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
+						mesh.userData.player.arrayFuncs.push(new THREE$2.Vector3().fromArray(mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize));
+					}
+				}
+				var point = mesh.userData.player.arrayFuncs[cPoints.__select.options.selectedIndex - 1];
+				function getCameraTarget() {
+					var del = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+					for (var i = 0; i < cMeshs.__select.options.length; i++) {
+						var _mesh = cMeshs.__select.options[i].mesh;
+						if (!_mesh || !_mesh.userData.player) continue;
+						var arrayFuncs = _mesh.userData.player.arrayFuncs;
+						for (var j = 0; j < arrayFuncs.length; j++) {
+							var CT = cameraTarget = arrayFuncs[j].cameraTarget;
+							if (CT) {
+								cameraTarget = CT;
+								if (del) arrayFuncs[j].cameraTarget = undefined;
+								return cameraTarget;
+							}
+						}
+					}
+				}
+				if (value) {
+					if (!point.cameraTarget) {
+						getCameraTarget(true);
+						if (guiParams.cameraTarget.boLook === undefined) guiParams.cameraTarget.boLook = true;
+						guiParams.cameraTarget.camera.userData.cameraTarget = guiParams.cameraTarget;
+						point.cameraTarget = { camera: guiParams.cameraTarget.camera };
+						if (!orbitControlsOptions) orbitControlsOptions = {};
+						if (!orbitControlsOptions.target) orbitControlsOptions.target = new THREE$2.Vector3();
+						if (guiParams.cameraTarget.orbitControls) orbitControlsOptions.target.copy(guiParams.cameraTarget.orbitControls.target);
+						cameraTarget = undefined;
+						Player.selectMeshPlayScene(THREE$2, mesh);
+					}
+					return;
+				}
+				cameraTarget = point.cameraTarget;
+				point.cameraTarget = undefined;
+				if (orbitControlsOptions) {
+					if (getCameraTarget()) return;
+					if (guiParams.cameraTarget.orbitControls) guiParams.cameraTarget.orbitControls.target.copy(orbitControlsOptions.target);
+					guiParams.cameraTarget.camera.lookAt(orbitControlsOptions.target);
+					point.cameraTarget = undefined;
+				}
+			});
+			dat.controllerNameAndTitle(controllerCameraTarget, lang.cameraTarget, lang.cameraTargetTitle);
+		}
 		fPoint = fPoints.addFolder(lang.point);
 		dat.folderNameAndTitle(fPoint, lang.point, lang.pointTitle);
-		fPoint.domElement.style.display = 'none';
 		fPointWorld = fPoints.addFolder(lang.pointWorld);
 		dat.folderNameAndTitle(fPointWorld, lang.pointWorld, lang.pointWorldTitle);
-		fPointWorld.domElement.style.display = 'none';
 		fPointWorld.open();
+		displayPointControllers('none');
 		if (guiParams.pointsControls) cTraceAll = guiParams.pointsControls(fPoints, dislayEl, getMesh);
 		dat.controllerNameAndTitle(f3DObjects.add({
 			defaultF: function defaultF(value) {
 				for (var i = 0; i < cMeshs.__select.options.length; i++) {
-					var _mesh = cMeshs.__select.options[i].mesh;
-					if (!_mesh) continue;
-					_mesh.scale.copy(_mesh.userData.default.scale);
-					_mesh.position.copy(_mesh.userData.default.position);
-					_mesh.rotation.copy(_mesh.userData.default.rotation);
-					_mesh.needsUpdate = true;
+					var _mesh2 = cMeshs.__select.options[i].mesh;
+					if (!_mesh2) continue;
+					_mesh2.scale.copy(_mesh2.userData.default.scale);
+					_mesh2.position.copy(_mesh2.userData.default.position);
+					_mesh2.rotation.copy(_mesh2.userData.default.rotation);
+					_mesh2.needsUpdate = true;
 				}
 				setScaleControllers();
 				setPositionControllers();
@@ -4225,6 +4290,10 @@ function GuiSelectPoint(_THREE, guiParams) {
 			}
 		}, 'defaultF'), lang.defaultButton, lang.default3DObjectTitle);
 		addPointControllers();
+		while (arrayMeshs.length > 0) {
+			this.addMesh(arrayMeshs[arrayMeshs.length - 1]);
+			arrayMeshs.pop();
+		}
 	};
 	this.setColorAttribute = function (attributes, i, color) {
 		if (typeof color === "string") color = new THREE$2.Color(color);
@@ -4374,6 +4443,9 @@ function GuiSelectPoint(_THREE, guiParams) {
 			controllerW.max(options.scales.w.max);
 			controllerW.updateDisplay();
 		}
+	};
+	this.setOrbitControls = function (orbitControls) {
+		guiParams.cameraTarget.orbitControls = orbitControls;
 	};
 	return this;
 }
@@ -7481,6 +7553,11 @@ function Player(THREE, group, options) {
 		this.selectScene(0);
 	};
 }
+Player.setCameraTarget = function (camera, funcs) {
+	if (camera.userData.cameraTarget.boLook !== false) camera.userData.cameraTarget.boLook = camera.userData.cameraTarget.boLook || true;
+	if (funcs && funcs.cameraTarget.boLook !== undefined) camera.userData.cameraTarget.boLook = funcs.cameraTarget.boLook;
+	camera.userData.cameraTarget.distanceToCamera = funcs && funcs.vector.cameraTarget.distanceToCamera ? funcs.vector.cameraTarget.distanceToCamera : camera.userData.cameraTarget.distanceToCamera || { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+};
 Player.execFunc = function (funcs, axisName, t) {
 	var a = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1;
 	var b = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
@@ -7603,6 +7680,9 @@ Player.selectMeshPlayScene = function (THREE, mesh, t, index, options) {
 					needsUpdate = true;
 				}
 			};
+			var getColor = function getColor() {
+				if (mesh.userData.player.palette) color = mesh.userData.player.palette.toColor(value, min, max);else if (options.palette) color = options.palette.toColor(value, min, max);else color = palette.get().toColor(value, min, max);
+			};
 			var funcs = arrayFuncs[i],
 			    needsUpdate = false;
 			setPosition('x', 'setX');
@@ -7611,16 +7691,15 @@ Player.selectMeshPlayScene = function (THREE, mesh, t, index, options) {
 			var color = void 0;
 			if (typeof funcs.w === "function") {
 				var value = funcs.w(t, a, b);
-				attributes.position.setW(i, value);
+				if (attributes.position.itemSize >= 4) attributes.position.setW(i, value);
 				needsUpdate = true;
-				if (mesh.userData.player.palette) color = mesh.userData.player.palette.toColor(value, min, max);else if (options.palette) color = options.palette.toColor(value, min, max);
+				getColor();
 			} else if (_typeof(funcs.w) === "object") {
-				if (funcs.w instanceof THREE.Color) color = funcs.w;else if (options.palette) {
-					if (_typeof(funcs.w) === 'object') {
-						if (funcs.w.min) min = funcs.w.min;
-						if (funcs.w.max) max = funcs.w.max;
-					}
-					color = options.palette.toColor(Player.execFunc(funcs, 'w', t, a, b), min, max);
+				if (funcs.w instanceof THREE.Color) color = funcs.w;else {
+					var value = funcs.w.func(t, a, b);
+					if (funcs.w.min) min = funcs.w.min;
+					if (funcs.w.max) max = funcs.w.max;
+					getColor();
 				}
 			} else if (typeof funcs.w === "number" && options.palette) color = options.palette.toColor(funcs.w, min, max);
 			if (color) {
@@ -7639,22 +7718,27 @@ Player.selectMeshPlayScene = function (THREE, mesh, t, index, options) {
 			if (funcs.cameraTarget) {
 				(function () {
 					var camera = funcs.cameraTarget.camera;
-					camera.userData.cameraTarget.setCameraPosition = function (target) {
-						camera.position.copy(camera.userData.cameraTarget.distanceToCameraCur);
-						if (camera.userData.cameraTarget.rotation) camera.position.applyAxisAngle(camera.userData.cameraTarget.rotation.axis, Player.execFunc(camera.userData.cameraTarget.rotation, 'angle', t));
-						camera.position.add(target);
-						camera.lookAt(target);
-						if (camera.userData.cameraTarget.orbitControls) {
-							camera.userData.cameraTarget.orbitControls.target.copy(target);
-							if (camera.userData.cameraTarget.orbitControlsGui) camera.userData.cameraTarget.orbitControlsGui.setTarget(target);
+					if (camera.userData.cameraTarget.boLook) {
+						if (!camera.userData.cameraTarget.setCameraPosition) camera.userData.cameraTarget.setCameraPosition = function (target) {
+							camera.position.copy(camera.userData.cameraTarget.distanceToCameraCur);
+							if (camera.userData.cameraTarget.rotation) camera.position.applyAxisAngle(camera.userData.cameraTarget.rotation.axis, Player.execFunc(camera.userData.cameraTarget.rotation, 'angle', t));
+							camera.position.add(target);
+							camera.lookAt(target);
+							if (camera.userData.cameraTarget.orbitControls) {
+								camera.userData.cameraTarget.orbitControls.target.copy(target);
+								if (camera.userData.cameraTarget.orbitControlsGui) camera.userData.cameraTarget.orbitControlsGui.setTarget(target);
+							}
+						};
+						if (!camera.userData.cameraTarget.distanceToCameraCur) camera.userData.cameraTarget.distanceToCameraCur = new THREE.Vector3();
+						if (!camera.userData.cameraTarget.distanceToCamera) {
+							camera.userData.cameraTarget.distanceToCamera = new THREE.Vector3().copy(camera.position);
 						}
-					};
-					if (!camera.userData.cameraTarget.distanceToCameraCur) camera.userData.cameraTarget.distanceToCameraCur = new THREE.Vector3();
-					camera.userData.cameraTarget.distanceToCameraCur.set(Player.execFunc(camera.userData.cameraTarget.distanceToCamera, 'x', t), Player.execFunc(camera.userData.cameraTarget.distanceToCamera, 'y', t), Player.execFunc(camera.userData.cameraTarget.distanceToCamera, 'z', t));
-					var target = getWorldPosition(mesh, new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize));
-					camera.userData.cameraTarget.target = target;
-					camera.userData.cameraTarget.setCameraPosition(target);
-					if (camera.userData.cameraTarget.cameraGui) camera.userData.cameraTarget.cameraGui.update();
+						camera.userData.cameraTarget.distanceToCameraCur.set(Player.execFunc(camera.userData.cameraTarget.distanceToCamera, 'x', t), Player.execFunc(camera.userData.cameraTarget.distanceToCamera, 'y', t), Player.execFunc(camera.userData.cameraTarget.distanceToCamera, 'z', t));
+						var target = getWorldPosition(mesh, new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize));
+						camera.userData.cameraTarget.target = target;
+						camera.userData.cameraTarget.setCameraPosition(target);
+						if (camera.userData.cameraTarget.cameraGui) camera.userData.cameraTarget.cameraGui.update();
+					}
 				})();
 			}
 		}
@@ -7664,7 +7748,7 @@ Player.selectMeshPlayScene = function (THREE, mesh, t, index, options) {
 	if (mesh.scale.x <= 0) console.error(message + 'x = ' + mesh.scale.x);
 	if (mesh.scale.y <= 0) console.error(message + 'y = ' + mesh.scale.y);
 	if (mesh.scale.z <= 0) console.error(message + 'z = ' + mesh.scale.z);
-	if (!options.guiSelectPoint) return;
+	if (!options || !options.guiSelectPoint) return;
 	options.guiSelectPoint.setMesh();
 	var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
 	if (selectedPointIndex !== -1 && options.guiSelectPoint.isSelectedMesh(mesh)) {
@@ -7721,7 +7805,7 @@ Player.getPoints = function (THREE, arrayFuncs, optionsPoints) {
 				_camera.userData.cameraTarget.Player = _camera.userData.cameraTarget.Player || Player;
 				if (_camera.userData.cameraTarget.ready) console.warn('Player.getPoints: duplicate cameraTarget');
 				_camera.userData.cameraTarget.ready = true;
-				_camera.userData.cameraTarget.distanceToCamera = funcs.vector.cameraTarget.distanceToCamera || _camera.userData.cameraTarget.distanceToCamera || new THREE.Vector3().copy(_camera.position);
+				Player.setCameraTarget(_camera, funcs);
 				_camera.userData.cameraTarget.rotation = funcs.cameraTarget.rotation || _camera.userData.cameraTarget.rotation;
 				if (_camera.userData.cameraTarget.rotation) {
 					if (_camera.userData.cameraTarget.rotation.angle === undefined) _camera.userData.cameraTarget.rotation.angle = new Function('t', 'return t');
@@ -7770,11 +7854,9 @@ Player.getColors = function (THREE, arrayFuncs, optionsColor) {
 							max = 100;
 							min = 0;
 						} else {
-							console.warn('Кажется тут ошибка. Диапазон по умолчанию должен быть от 0 до 100');
-							max = funcs.w;
-							min = max - 1;
 						}
-					} else {}
+					} else {
+						}
 				}
 				if (w instanceof Function && !settings$1) {
 					console.error('Player.getColors: remove all functions from all THREE.Vector4.w items of the arrayFuncs.');
