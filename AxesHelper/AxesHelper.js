@@ -385,7 +385,7 @@ export function AxesHelper( THREE, group, options ) {
 			scene.add( groupDotLines );
 
 		}
-		function verticeAxis( axisName ) { return ( - options.posAxesIntersection[axisName] - group.position[axisName] ) / group.scale[axisName]; }
+		function verticeAxis( axisName ) { return ( options.posAxesIntersection[axisName] - group.position[axisName] ) / group.scale[axisName]; }
 		function getDashSize() { return 0.05 / ( Math.max( Math.max( group.scale.x, group.scale.y ), group.scale.z ) ); }
 		this.dottedLines = function ( _intersection ) {
 
