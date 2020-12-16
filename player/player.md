@@ -11,8 +11,9 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 * [Use <b>MyPoints</b> for create points.](#MyPoints)
 * [Add <b>player</b> item into <b>CanvasMenu</b>.](#CanvasMenu)
 * [Using <b>dat.gui</b> for manual change of the <b>Player</b> settings.](#datGuiPlayer)
-* [Add player control buttons to the <b>dat.gui</b>.](#datGuiPlayerControl)
-* [Using <b>dat.gui</b> for manual change of the <b>camera</b> settings.](#datGuiCamera)
+	* [Add player control buttons to the <b>dat.gui</b>.](#datGuiPlayerControl)
+	* [Using <b>dat.gui</b> for manual change of the <b>camera</b> settings.](#datGuiCamera)
+	* [A <b>dat.gui</b> based graphical user interface for select a point from the mesh.](#guiSelectPoint)
 * [Set the camera to look at the point.](#cameraLook)
 * [Time of the playing.](#playingTime)
 * [Directory Contents.](#DirectoryContents)
@@ -208,7 +209,7 @@ const player = new Player( THREE, scene, {
 } );
 ```
 <a name="AddTrace"></a>
-#### Add trace line of moving of the point during playing.
+## Add trace line of moving of the point during playing.
 * Edit <b>arrayFuncs</b>
 ```
 const arrayFuncs = [
@@ -236,7 +237,7 @@ You can see, first value of the array is object with
 
 Now you can see a trace line of the moving of the first point.
 <a name="PointColor"></a>
-#### Point color.
+## Point color.
 * In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> key and add <b>vertexColors: THREE.VertexColors</b>.
 ```
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
@@ -373,7 +374,7 @@ points.userData.player = {
 }
 ```
 <a name="MovePoints"></a>
-#### Move points position.
+## Move points position.
 * Add <b>selectPlayScene</b> key to the <b>points.userData.player</b> object.
 ```
 points.userData.player = {
@@ -396,7 +397,7 @@ Also you can scale and rotate any mesh on your canvas. For example.
 points.rotation.z = - Math.PI * 2 * t;
 ```
 <a name="ShaderMaterialPoints"></a>
-#### Create THREE.Points with [THREE.ShaderMaterial](https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial) material.
+## Create THREE.Points with [THREE.ShaderMaterial](https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial) material.
 Currently, it seems to you that the size of the first point changes during of the the playing because point moves near or far from camera.
 Sometimes you want to see the sizes of the points is not depend from distance to camera.
 To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described in [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
@@ -424,7 +425,7 @@ getShaderMaterialPoints( THREE, scene, arrayFuncs,
 	{ Player: Player, } );
 ```
 <a name="MyPoints"></a>
-#### Use MyPoints for create points.
+## Use MyPoints for create points.
 
 Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use [MyPoints](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html) for creating of new points.
 Import <b>MyPoints</b> into your web page for it.
@@ -514,7 +515,7 @@ MyPoints( THREE, arrayFuncs, scene, {
 ```
 
 <a name="CanvasMenu"></a>
-#### Add <b>player</b> item into [CanvasMenu](https://github.com/anhr/commonNodeJS/tree/master/canvasMenu).
+## Add <b>player</b> item into [CanvasMenu](https://github.com/anhr/commonNodeJS/tree/master/canvasMenu).
 Import <b>CanvasMenu</b> into your web page for it.
 ```
 import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
@@ -535,7 +536,7 @@ Please move mouse over canvas.
 Now you can see a player's menu items on the bottom of the canvas.
 
 <a name="datGuiPlayer"></a>
-#### Using [dat.gui](https://github.com/anhr/dat.gui) for manual change of the <b>Player</b> settings.
+## Using [dat.gui](https://github.com/anhr/dat.gui) for manual change of the <b>Player</b> settings.
 
 Import <b>dat.gui</b>.
 ```
@@ -585,7 +586,7 @@ player.gui( gui, {
 ```
 
 <a name="datGuiPlayerControl"></a>
-#### Add player control buttons to the [dat.gui](https://github.com/anhr/dat.gui).
+### Add player control buttons to the [dat.gui](https://github.com/anhr/dat.gui).
 
 First, import <b>controllerPlay</b>.
 ```
@@ -601,7 +602,7 @@ controllerPlay.create( player, gui );
 ```
 
 <a name="datGuiCamera"></a>
-#### Using [dat.gui](https://github.com/anhr/dat.gui) for manual change of the <b>camera</b> settings.
+### Using [dat.gui](https://github.com/anhr/dat.gui) for manual change of the <b>camera</b> settings.
 
 First, import <b>CameraGui</b>
 ```
@@ -621,8 +622,21 @@ new CameraGui( gui, camera, {
 } );
 ```
 
+<a name="guiSelectPoint"></a>
+### A [dat.gui](https://github.com/anhr/dat.gui) based graphical user interface for select a point from the mesh.
+
+See [GuiSelectPoint](../../guiSelectPoint/jsdoc/index.html) for details.
+Import <b>CameraGui</b>
+```
+import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import CameraGui from './commonNodeJS/master/CameraGui.js';
+```
+
 <a name="cameraLook"></a>
-#### Set the camera to look at the point.
+## Set the camera to look at the point.
 
 Now you can see, all points moves and hides on the right border of the canvas during playing.
 You can set the camera to look at a selected point during playing for resolving of issue.
@@ -736,7 +750,7 @@ cameraTarget: {
 Individual setting for selected point is more priority before camera settings.
 
 <a name="playingTime"></a>
-#### Time of the playing.
+## Time of the playing.
 
 Default time of the playing limited between 0 and 1.
 You can set another time limit. Please add <b>min</b> and <b>max</b> keys into settings of the <b>new Player</b> for it
