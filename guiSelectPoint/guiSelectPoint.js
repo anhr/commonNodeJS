@@ -518,6 +518,10 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		}
 
 	}
+
+	const arrayMeshs = [];//сюда попадают все mesh в случае, когда this.addMesh вызывается до вызова this.add
+							//тоесть когда GuiSelectPoint еще не добавлен в dat.gui
+
 	/**
 	 * Adds new mesh into select point GUI
 	 * @function GuiSelectPoint.
@@ -525,6 +529,13 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	 * @param {THREE.Mesh} mesh new mesh.
 	 */
 	this.addMesh = function ( mesh ) {
+
+		if ( !cMeshs ) {
+
+			arrayMeshs.push( mesh );
+			return;
+
+		}
 
 		//Test for duplicate item
 		for ( var i = 0; i < cMeshs.__select.options.length; i++ ) {
@@ -1067,7 +1078,9 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 						if ( !orbitControlsOptions ) orbitControlsOptions = {}
 						if ( !orbitControlsOptions.target )
-							orbitControlsOptions.target = new THREE.Vector3().copy( guiParams.cameraTarget.orbitControls.target );
+							orbitControlsOptions.target = new THREE.Vector3();
+						if ( guiParams.cameraTarget.orbitControls )
+							orbitControlsOptions.target.copy( guiParams.cameraTarget.orbitControls.target );
 							
 						cameraTarget = undefined;
 						Player.selectMeshPlayScene( THREE, mesh );
@@ -1083,7 +1096,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					if ( getCameraTarget() )
 						return;
 
-					guiParams.cameraTarget.orbitControls.target.copy( orbitControlsOptions.target );
+					if ( guiParams.cameraTarget.orbitControls )
+						guiParams.cameraTarget.orbitControls.target.copy( orbitControlsOptions.target );
 /*					
 					if ( camera.userData.cameraTarget.orbitControlsGui )
 						camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
@@ -1139,6 +1153,13 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		}, 'defaultF' ), lang.defaultButton, lang.default3DObjectTitle );
 		addPointControllers();
+
+		while ( arrayMeshs.length > 0 ) {
+
+			this.addMesh( arrayMeshs[arrayMeshs.length - 1] );
+			arrayMeshs.pop();
+
+		}
 
 	}
 	this.setColorAttribute = function( attributes, i, color ) {
@@ -1418,6 +1439,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		}
 
 	}
+	this.setOrbitControls = function ( orbitControls ) { guiParams.cameraTarget.orbitControls = orbitControls; }
 	return this;
 
 }
