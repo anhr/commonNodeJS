@@ -79,6 +79,8 @@ var settings,
  */
 function Player( THREE, group, options ) {
 
+	ColorPicker.palette.setTHREE( THREE );
+
 	options = options || {};
 
 	selectPlaySceneOptions = options.selectPlaySceneOptions;
@@ -1040,7 +1042,8 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 
 	if ( t === undefined ) t = Player.getSettings().min;
 	index = index || 0;
-	options = options || selectPlaySceneOptions;
+	options = options || selectPlaySceneOptions || {};
+	options.scales = options.scales || {};
 	if (
 
 		!mesh.userData.player ||

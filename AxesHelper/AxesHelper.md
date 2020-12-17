@@ -491,7 +491,7 @@ moveGroup.gui( gui, {
 ```
 Now you can see the 'Move points' folder in the dat.gui.
 You can move, scale and rotate the scene. Unfortunately, you also move the axes.
-For resolving of the issue, create <b>groupMove</b> and move all your meshs from scene to <b>groupMove</b>.
+For resolving of the issue, create <b>groupMove</b> and move all your meshes from scene to <b>groupMove</b>.
 ```
 const groupMove = new THREE.Group();
 scene.add( groupMove );

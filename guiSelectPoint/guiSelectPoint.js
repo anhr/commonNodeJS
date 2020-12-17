@@ -139,7 +139,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	const lang = {
 
-		meshs: 'Meshs',
+		meshs: 'Meshes',
 		notSelected: 'Not selected',
 		select: 'Select',
 		position: 'Position',
@@ -587,7 +587,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		//Set browser window height about 500 pixels.
 		//Click Full Screen button.
 		//Open Controls
-		//Click a point.The "Meshs" folder opens and you can see the scrolling of the dat.gui window.
+		//Click a point.The "Meshes" folder opens and you can see the scrolling of the dat.gui window.
 
 		//select mesh
 		const index = this.getMeshIndex( intersectionSelected.object );
@@ -608,7 +608,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			//сделал эту проверку потому что не могу придумать как удалить intersectionSelected.index когда пользователь врусную сменил mesh
 			if ( ( selectedMesh !== undefined ) && !Object.is( intersectionSelected.object, selectedMesh ) )
 				return;//Сначала пользователь выбрал точку с помошщью мыши
-			//Потом сменил Meshs/Select
+			//Потом сменил Meshes/Select
 
 			if ( !intersectionSelected.object.userData.boFrustumPoints ) {
 

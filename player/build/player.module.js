@@ -3697,7 +3697,7 @@ function GuiSelectPoint(_THREE, guiParams) {
 		return 'en';
 	};
 	var lang = {
-		meshs: 'Meshs',
+		meshs: 'Meshes',
 		notSelected: 'Not selected',
 		select: 'Select',
 		position: 'Position',
@@ -7160,6 +7160,7 @@ var PlayController = function (_controllers$CustomCo) {
 var settings$1;
 var selectPlaySceneOptions;
 function Player(THREE, group, options) {
+	ColorPicker.palette.setTHREE(THREE);
 	options = options || {};
 	selectPlaySceneOptions = options.selectPlaySceneOptions;
 	selectPlaySceneOptions = selectPlaySceneOptions || {};
@@ -7652,7 +7653,8 @@ palette = new palette();
 Player.selectMeshPlayScene = function (THREE, mesh, t, index, options) {
 	if (t === undefined) t = Player.getSettings().min;
 	index = index || 0;
-	options = options || selectPlaySceneOptions;
+	options = options || selectPlaySceneOptions || {};
+	options.scales = options.scales || {};
 	if (!mesh.userData.player || options && options.boPlayer && mesh.userData.boFrustumPoints) return;
 	if (mesh.geometry) {
 		delete mesh.geometry.boundingSphere;

@@ -49,7 +49,7 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * User has clicked over point.
  * @param {object} [settings.pointsOptions] followed points options is availablee:
  * @param {number} [settings.pointsOptions.tMin=0] start time. Uses for playing of the points..
- * @param {string} [settings.pointsOptions.name=""] Name of the points. Used for displaying of items of the Select drop down control of the Meshs folder of the dat.gui.
+ * @param {string} [settings.pointsOptions.name=""] Name of the points. Used for displaying of items of the Select drop down control of the Meshes folder of the dat.gui.
  * @param {object} [settings.pointsOptions.shaderMaterial] creates the THREE.Points with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} material.
  * The size of the each point of the THREE.Points seems the same on canvas
  * because I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.

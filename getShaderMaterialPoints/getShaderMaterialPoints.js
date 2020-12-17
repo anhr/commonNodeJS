@@ -41,7 +41,7 @@ import MyPoints from '../myPoints/myPoints.js';
  * @param {object} [settings.options.scales.w.max] Maximal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
   * <p>Default is undefined. Maximal palette range is 100</p>
 */
-function getShaderMaterialPoints( THREE, group, arrayFuncs, /*Player, */onReady, settings ) {
+function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) {
 
 	settings = settings || {};
 //	settings.Player = settings.Player || Player;

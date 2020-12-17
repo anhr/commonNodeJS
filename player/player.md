@@ -47,7 +47,7 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
-		var camera, scene, renderer;
+		var camera, scene, renderer, guiSelectPoint;
 
 		init();
 		animate();
@@ -625,15 +625,73 @@ new CameraGui( gui, camera, {
 <a name="guiSelectPoint"></a>
 ### A [dat.gui](https://github.com/anhr/dat.gui) based graphical user interface for select a point from the mesh.
 
-See [GuiSelectPoint](../../guiSelectPoint/jsdoc/index.html) for details.
-Import <b>CameraGui</b>
+User can select a point, camera will be look at. Use [GuiSelectPoint](../../guiSelectPoint/jsdoc/index.html) for it.
+
+* Import <b>GuiSelectPoint</b>
 ```
-import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
+import { GuiSelectPoint } from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 ```
 or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import CameraGui from './commonNodeJS/master/CameraGui.js';
+import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 ```
+* Create instance of the <b>GuiSelectPoint</b>.
+```
+guiSelectPoint = new GuiSelectPoint( THREE, {
+
+	getLanguageCode: getLanguageCode,
+	cameraTarget: { camera: camera, },
+
+} );
+```
+Note! Set the <b>cameraTarget</b> above if you want to camera can to look at selected by user point.
+
+Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point.
+
+* Add mesh into <b>guiSelectPoint</b> if you allow to user to select a point of this mesh.
+```
+guiSelectPoint.addMesh( points );
+```
+<b>points</b> is instance of the mesh.
+* If you use <b>MyPoints</b> for create mesh, please add <b>guiSelectPoint.addMesh( points );</b> into <b>onReady</b> of the <b>MyPoints</b>.
+```
+MyPoints( THREE, arrayFuncs, scene, {
+
+	Player: Player,
+	options: {
+
+		point: { size: 15 },
+
+	},
+	pointsOptions: {
+
+		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
+		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
+		shaderMaterial: {},
+		onReady: function ( points ) {
+
+			player.play3DObject();
+			guiSelectPoint.addMesh( points );
+
+		}
+
+	}
+
+} );
+```
+
+* Add <b>guiSelectPoint</b> into [dat.gui](https://github.com/anhr/dat.gui).
+```
+guiSelectPoint.add( gui );
+```
+Now you can see the "Meshes" folder in the [dat.gui](https://github.com/anhr/dat.gui).
+
+Please open the "Meshes" folder and select a mesh. Now you can see the "Points" folder.
+
+Please open the "Points" folder and select a point of the mesh. Now you can see the "Look" checkbox.
+
+Selected point will be moves to the center of the canvas if you checked the "Look" checkbox.
+In  another words, camera will be look at selected point.
 
 <a name="cameraLook"></a>
 ## Set the camera to look at the point.
