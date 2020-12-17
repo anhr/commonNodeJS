@@ -126,12 +126,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			}
 
 		},
-//		cFrustumPoints = guiParams.cFrustumPoints,
-//		gui = undefined,
 		guiSelectPoint = this;
-//		frustumPoints = undefined;
 	var cFrustumPoints;
-//	options.scales = options.scales || {};
 
 	//Localization
 
@@ -173,10 +169,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	};
 
-/*
-	const _languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
-		: guiParams.getLanguageCode();
-*/
 	const _languageCode = getLanguageCode();
 
 	switch ( _languageCode ) {
@@ -394,7 +386,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		dislayEl( controllerW, displayControllerW );
 		dislayEl( controllerColor, displayControllerColor );
 		dislayEl( controllerOpacity, displayControllerOpacity );
-//		dislayEl( controllerCameraTarget, guiSelectPoint.getSelectedPointIndex() === 0 ? false : true );
 
 		var boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : false;
 		if ( controllerX ) controllerX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
@@ -621,8 +612,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 			}
 			const block = 'block';
-//			fPoint.domElement.style.display = block;
-//			fPointWorld.domElement.style.display = block;
 			displayPointControllers( block );
 			intersection = intersectionSelected;
 			if ( guiParams.setIntersection )
@@ -690,9 +679,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	}
 	function isNotSetControllers() {
 
-		return ( getMesh() === undefined )
-//			|| ( gui === undefined )
-			;
+		return ( getMesh() === undefined );
+
 	}
 	function setScaleControllers() {
 
@@ -777,15 +765,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 						const opt = document.createElement( 'option' ),
 							name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
-/*						
-							name = mesh.userData.arrayFuncs === undefined ?
-								undefined :
-								mesh.userData.pointName === undefined ?
-									typeof mesh.userData.arrayFuncs === "function" ?
-										undefined :
-										mesh.userData.arrayFuncs[iPosition].name :
-									mesh.userData.pointName( iPosition );
-*/									
 						opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
 						opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
 						cPoints.__select.appendChild( opt );
@@ -1008,8 +987,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			}
 			if ( axesHelper !== undefined )
 				axesHelper.exposePosition( getObjectPosition( getMesh(), value ) );
-//			fPoint.domElement.style.display = display;
-//			fPointWorld.domElement.style.display = display;
 			displayPointControllers( display );
 
 		} );
@@ -1084,7 +1061,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 							
 						cameraTarget = undefined;
 						Player.cameraTarget( THREE, mesh );
-//						Player.selectMeshPlayScene( THREE, mesh );
 
 					}
 					return;
@@ -1099,10 +1075,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 					if ( guiParams.cameraTarget.orbitControls )
 						guiParams.cameraTarget.orbitControls.target.copy( orbitControlsOptions.target );
-/*					
-					if ( camera.userData.cameraTarget.orbitControlsGui )
-						camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
-*/						
 					guiParams.cameraTarget.camera.lookAt( orbitControlsOptions.target );
 					point.cameraTarget = undefined;
 
@@ -1116,12 +1088,10 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		//Points attribute position
 		fPoint = fPoints.addFolder( lang.point );
 		dat.folderNameAndTitle( fPoint, lang.point, lang.pointTitle );
-//		fPoint.domElement.style.display = 'none';
 
 		//Points world position
 		fPointWorld = fPoints.addFolder( lang.pointWorld );
 		dat.folderNameAndTitle( fPointWorld, lang.pointWorld, lang.pointWorldTitle );
-//		fPointWorld.domElement.style.display = 'none';
 		fPointWorld.open();
 
 		displayPointControllers( 'none' );
@@ -1398,21 +1368,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		dat.controllerNameAndTitle( cRestoreDefaultLocalPosition, lang.defaultButton, lang.defaultLocalPositionTitle );
 
 	}
-	/*Пока что не требуется
-	this.addControllers = function ( group ) {
-
-		for ( var i = 0; i < group.children.length; i++ ) {
-
-			var mesh = group.children[i];
-			if ( mesh instanceof THREE.Group )
-				continue;
-			this.addMesh( mesh );
-
-		}
-		this.addPointControllers();
-
-	}
-	*/
 	this.getFrustumPoints = function () { return cFrustumPoints; }
 	this.windowRange = function ( options ) {
 
@@ -1487,7 +1442,6 @@ function getWorldPosition( object, pos ) {
 		var position = new THREE.Vector3(),
 			positionAngle = new THREE.Vector3();
 		position = pos.clone();
-		//position.multiply( new THREE.Vector4(0,0,0,0) );
 		position.multiply( object.scale );
 
 		//rotation
