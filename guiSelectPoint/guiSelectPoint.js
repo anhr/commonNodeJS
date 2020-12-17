@@ -1083,7 +1083,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 							orbitControlsOptions.target.copy( guiParams.cameraTarget.orbitControls.target );
 							
 						cameraTarget = undefined;
-						Player.selectMeshPlayScene( THREE, mesh );
+						Player.cameraTarget( THREE, mesh );
+//						Player.selectMeshPlayScene( THREE, mesh );
 
 					}
 					return;

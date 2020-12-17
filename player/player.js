@@ -1017,6 +1017,160 @@ function palette() {
 }
 palette = new palette();
 
+function cameraTarget( THREE, mesh, funcs, t, i ) {
+
+	if ( !funcs.cameraTarget )
+		return
+
+	const camera = funcs.cameraTarget.camera;
+
+	//На случай когда не определена ни одна точка как cameraTarget и пользователь поставил птичку в controllerCameraTarget
+	//camera.userData.cameraTarget = camera.userData.cameraTarget || { boLook: true };
+
+	if ( camera.userData.cameraTarget.boLook ) {
+
+		if ( !camera.userData.cameraTarget.setCameraPosition )
+			camera.userData.cameraTarget.setCameraPosition = function ( target ) {
+
+				camera.position.copy( camera.userData.cameraTarget.distanceToCameraCur );
+				if ( camera.userData.cameraTarget.rotation )
+					camera.position.applyAxisAngle( camera.userData.cameraTarget.rotation.axis,
+						Player.execFunc( camera.userData.cameraTarget.rotation, 'angle', t ) );
+				camera.position.add( target );
+				camera.lookAt( target );
+				if ( camera.userData.cameraTarget.orbitControls ) {
+
+					camera.userData.cameraTarget.orbitControls.target.copy( target );
+					if ( camera.userData.cameraTarget.orbitControlsGui )
+						camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
+
+				}
+
+			}
+		if ( !camera.userData.cameraTarget.distanceToCameraCur )
+			camera.userData.cameraTarget.distanceToCameraCur = new THREE.Vector3();
+
+		//На случай когда не определена ни одна точка как cameraTarget и пользователь поставил птичку в controllerCameraTarget
+		if ( !camera.userData.cameraTarget.distanceToCamera ) {
+
+			//						Player.setCameraTarget( camera, funcs );
+			camera.userData.cameraTarget.distanceToCamera = new THREE.Vector3().copy( camera.position );
+
+		}
+
+		camera.userData.cameraTarget.distanceToCameraCur.set(
+
+			Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'x', t ),
+			Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'y', t ),
+			Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'z', t )
+
+		);
+
+		const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
+		camera.userData.cameraTarget.target = target;
+		camera.userData.cameraTarget.setCameraPosition( target );
+		if ( camera.userData.cameraTarget.cameraGui )
+			camera.userData.cameraTarget.cameraGui.update();
+
+	}
+
+}
+
+/**
+ * Camera is look at selected point.
+ * @function Player.
+ * cameraTarget
+ * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
+ * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for playing.
+*/
+Player.cameraTarget = function ( THREE, mesh ) {
+
+	if ( !mesh.geometry )
+		return;
+
+	const arrayFuncs = mesh.userData.player.arrayFuncs;
+	if ( arrayFuncs === undefined )
+		return;
+	for ( var i = 0; i < arrayFuncs.length; i++ ) {
+
+		var funcs = arrayFuncs[i];
+		function getT() {
+
+			var parent = mesh.parent;
+			do {
+
+				if ( parent.userData.t )
+					return parent.userData.t;
+				parent = parent.parent;
+
+			} while (parent);
+			console.error( 'Player.cameraTarget().setAttributes().getT(): t is not detected!' );
+
+		}
+		cameraTarget( THREE, mesh, funcs, getT(), i );
+/*
+		const t = getT();
+		if ( funcs.cameraTarget ) {
+
+			const camera = funcs.cameraTarget.camera;
+
+			//На случай когда не определена ни одна точка как cameraTarget и пользователь поставил птичку в controllerCameraTarget
+			//camera.userData.cameraTarget = camera.userData.cameraTarget || { boLook: true };
+
+			if ( camera.userData.cameraTarget.boLook ) {
+
+				if ( !camera.userData.cameraTarget.setCameraPosition )
+					camera.userData.cameraTarget.setCameraPosition = function ( target ) {
+
+						camera.position.copy( camera.userData.cameraTarget.distanceToCameraCur );
+						if ( camera.userData.cameraTarget.rotation )
+							camera.position.applyAxisAngle( camera.userData.cameraTarget.rotation.axis,
+								Player.execFunc( camera.userData.cameraTarget.rotation, 'angle', t ) );
+						camera.position.add( target );
+						camera.lookAt( target );
+						if ( camera.userData.cameraTarget.orbitControls ) {
+
+							camera.userData.cameraTarget.orbitControls.target.copy( target );
+							if ( camera.userData.cameraTarget.orbitControlsGui )
+								camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
+
+						}
+
+					}
+				if ( !camera.userData.cameraTarget.distanceToCameraCur )
+					camera.userData.cameraTarget.distanceToCameraCur = new THREE.Vector3();
+
+				//На случай когда не определена ни одна точка как cameraTarget и пользователь поставил птичку в controllerCameraTarget
+				if ( !camera.userData.cameraTarget.distanceToCamera ) {
+
+					//						Player.setCameraTarget( camera, funcs );
+					camera.userData.cameraTarget.distanceToCamera = new THREE.Vector3().copy( camera.position );
+
+				}
+
+				camera.userData.cameraTarget.distanceToCameraCur.set(
+
+					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'x', t ),
+					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'y', t ),
+					Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'z', t )
+
+				);
+
+				const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
+				camera.userData.cameraTarget.target = target;
+				camera.userData.cameraTarget.setCameraPosition( target );
+				if ( camera.userData.cameraTarget.cameraGui )
+					camera.userData.cameraTarget.cameraGui.update();
+
+			}
+
+		}
+*/
+
+	}
+
+}
+
 /**
  * Select a scene for playing of the mesh
  * @function Player.
@@ -1112,6 +1266,7 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 
 			function getColor() {
 
+//				ColorPicker.palette.setTHREE(THREE);
 				if ( mesh.userData.player.palette )
 					color = mesh.userData.player.palette.toColor( value, min, max );
 				else if ( options.palette )
@@ -1191,6 +1346,8 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 
 			if ( funcs.line !== undefined )
 				funcs.line.addPoint( getObjectPosition( mesh, i ), index, color );
+			cameraTarget( THREE, mesh, funcs, t, i );
+/*
 			if ( funcs.cameraTarget ) {
 
 				const camera = funcs.cameraTarget.camera;
@@ -1246,6 +1403,7 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 				}
 
 			}
+*/
 
 		};
 
