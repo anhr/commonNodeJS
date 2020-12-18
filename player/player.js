@@ -1078,7 +1078,8 @@ Player.cameraTarget = function ( THREE, mesh ) {
 				parent = parent.parent;
 
 			} while (parent);
-			console.error( 'Player.cameraTarget().setAttributes().getT(): t is not detected!' );
+			//Сюда попадает когда не создан плеер
+			return Player.getSettings().min;
 
 		}
 		cameraTarget( THREE, mesh, funcs, getT(), i );
