@@ -154,12 +154,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			}
 
 		},
-//		cFrustumPoints = guiParams.cFrustumPoints,
-//		gui = undefined,
 		guiSelectPoint = this;
-//		frustumPoints = undefined;
 	var cFrustumPoints;
-//	options.scales = options.scales || {};
 
 	//Localization
 
@@ -167,7 +163,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	const lang = {
 
-		meshs: 'Meshs',
+		meshs: 'Meshes',
 		notSelected: 'Not selected',
 		select: 'Select',
 		position: 'Position',
@@ -201,10 +197,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	};
 
-/*
-	const _languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
-		: guiParams.getLanguageCode();
-*/
 	const _languageCode = getLanguageCode();
 
 	switch ( _languageCode ) {
@@ -422,7 +414,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		dislayEl( controllerW, displayControllerW );
 		dislayEl( controllerColor, displayControllerColor );
 		dislayEl( controllerOpacity, displayControllerOpacity );
-//		dislayEl( controllerCameraTarget, guiSelectPoint.getSelectedPointIndex() === 0 ? false : true );
 
 		var boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : false;
 		if ( controllerX ) controllerX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
@@ -615,7 +606,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		//Set browser window height about 500 pixels.
 		//Click Full Screen button.
 		//Open Controls
-		//Click a point.The "Meshs" folder opens and you can see the scrolling of the dat.gui window.
+		//Click a point.The "Meshes" folder opens and you can see the scrolling of the dat.gui window.
 
 		//select mesh
 		const index = this.getMeshIndex( intersectionSelected.object );
@@ -636,7 +627,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			//сделал эту проверку потому что не могу придумать как удалить intersectionSelected.index когда пользователь врусную сменил mesh
 			if ( ( selectedMesh !== undefined ) &amp;&amp; !Object.is( intersectionSelected.object, selectedMesh ) )
 				return;//Сначала пользователь выбрал точку с помошщью мыши
-			//Потом сменил Meshs/Select
+			//Потом сменил Meshes/Select
 
 			if ( !intersectionSelected.object.userData.boFrustumPoints ) {
 
@@ -649,8 +640,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 			}
 			const block = 'block';
-//			fPoint.domElement.style.display = block;
-//			fPointWorld.domElement.style.display = block;
 			displayPointControllers( block );
 			intersection = intersectionSelected;
 			if ( guiParams.setIntersection )
@@ -718,9 +707,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	}
 	function isNotSetControllers() {
 
-		return ( getMesh() === undefined )
-//			|| ( gui === undefined )
-			;
+		return ( getMesh() === undefined );
+
 	}
 	function setScaleControllers() {
 
@@ -805,15 +793,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 						const opt = document.createElement( 'option' ),
 							name = mesh.userData.player &amp;&amp; mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
-/*						
-							name = mesh.userData.arrayFuncs === undefined ?
-								undefined :
-								mesh.userData.pointName === undefined ?
-									typeof mesh.userData.arrayFuncs === "function" ?
-										undefined :
-										mesh.userData.arrayFuncs[iPosition].name :
-									mesh.userData.pointName( iPosition );
-*/									
 						opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
 						opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
 						cPoints.__select.appendChild( opt );
@@ -1036,8 +1015,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			}
 			if ( axesHelper !== undefined )
 				axesHelper.exposePosition( getObjectPosition( getMesh(), value ) );
-//			fPoint.domElement.style.display = display;
-//			fPointWorld.domElement.style.display = display;
 			displayPointControllers( display );
 
 		} );
@@ -1111,7 +1088,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 							orbitControlsOptions.target.copy( guiParams.cameraTarget.orbitControls.target );
 							
 						cameraTarget = undefined;
-						Player.selectMeshPlayScene( THREE, mesh );
+						Player.cameraTarget( THREE, mesh );
 
 					}
 					return;
@@ -1126,10 +1103,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 					if ( guiParams.cameraTarget.orbitControls )
 						guiParams.cameraTarget.orbitControls.target.copy( orbitControlsOptions.target );
-/*					
-					if ( camera.userData.cameraTarget.orbitControlsGui )
-						camera.userData.cameraTarget.orbitControlsGui.setTarget( target );
-*/						
 					guiParams.cameraTarget.camera.lookAt( orbitControlsOptions.target );
 					point.cameraTarget = undefined;
 
@@ -1143,12 +1116,10 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		//Points attribute position
 		fPoint = fPoints.addFolder( lang.point );
 		dat.folderNameAndTitle( fPoint, lang.point, lang.pointTitle );
-//		fPoint.domElement.style.display = 'none';
 
 		//Points world position
 		fPointWorld = fPoints.addFolder( lang.pointWorld );
 		dat.folderNameAndTitle( fPointWorld, lang.pointWorld, lang.pointWorldTitle );
-//		fPointWorld.domElement.style.display = 'none';
 		fPointWorld.open();
 
 		displayPointControllers( 'none' );
@@ -1425,21 +1396,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		dat.controllerNameAndTitle( cRestoreDefaultLocalPosition, lang.defaultButton, lang.defaultLocalPositionTitle );
 
 	}
-	/*Пока что не требуется
-	this.addControllers = function ( group ) {
-
-		for ( var i = 0; i &lt; group.children.length; i++ ) {
-
-			var mesh = group.children[i];
-			if ( mesh instanceof THREE.Group )
-				continue;
-			this.addMesh( mesh );
-
-		}
-		this.addPointControllers();
-
-	}
-	*/
 	this.getFrustumPoints = function () { return cFrustumPoints; }
 	this.windowRange = function ( options ) {
 
@@ -1514,7 +1470,6 @@ function getWorldPosition( object, pos ) {
 		var position = new THREE.Vector3(),
 			positionAngle = new THREE.Vector3();
 		position = pos.clone();
-		//position.multiply( new THREE.Vector4(0,0,0,0) );
 		position.multiply( object.scale );
 
 		//rotation
@@ -1589,7 +1544,7 @@ export { GuiSelectPoint, getWorldPosition, getObjectLocalPosition, getObjectPosi
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Dec 16 2020 08:54:29 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Dec 18 2020 12:10:55 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
