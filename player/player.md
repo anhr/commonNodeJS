@@ -236,6 +236,7 @@ You can see, first value of the array is object with
 }</b>
 
 Now you can see a trace line of the moving of the first point.
+
 <a name="PointColor"></a>
 ## Point color.
 * In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> key and add <b>vertexColors: THREE.VertexColors</b>.
@@ -679,6 +680,30 @@ MyPoints( THREE, arrayFuncs, scene, {
 
 } );
 ```
+* If you use [getShaderMaterialPoints](../../getShaderMaterialPoints/jsdoc/index.html) for create of the <b>THREE.Points</b> with [THREE.ShaderMaterial](https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial) material,
+please add <b>guiSelectPoint.addMesh( points );</b> into <b>onReady</b> parameter of the <b>getShaderMaterialPoints</b>.
+```
+getShaderMaterialPoints( THREE, scene, arrayFuncs,
+	function ( points ) {
+
+		scene.add( points );
+		points.userData.player = {
+
+			arrayFuncs: arrayFuncs,
+			selectPlayScene: function ( t ) {
+
+				points.position.x = t;
+				points.rotation.z = - Math.PI * 2 * t;
+
+			}
+
+		}
+		//player.play3DObject();
+		guiSelectPoint.addMesh( points );
+
+	},
+	{ Player: Player, } );
+```
 
 * Add <b>guiSelectPoint</b> into [dat.gui](https://github.com/anhr/dat.gui).
 ```
@@ -861,7 +886,7 @@ const player = new Player( THREE, scene, {
 
 } );
 ```
-Note that the step only matters for <b>max: infinity</b>.
+Note that the step only matters for <b>max: Infinity</b>.
 
 <a name="DirectoryContents"></a>
 ## Directory Contents
