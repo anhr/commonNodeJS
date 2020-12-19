@@ -252,7 +252,7 @@ function Player( THREE, group, options ) {
 
 	function play() {
 
-		if ( ( selectSceneIndex === -1 ) || ( selectSceneIndex === settings.marks ) ) {
+		if ( ( selectSceneIndex === -1 ) || ( ( selectSceneIndex === settings.marks ) && ( settings.max !== null ) ) ) {
 
 			selectSceneIndex = 0;
 
@@ -1003,7 +1003,8 @@ function cameraTarget( THREE, mesh, funcs, t, i ) {
 
 	if ( camera.userData.cameraTarget.boLook ) {
 
-		if ( !camera.userData.cameraTarget.setCameraPosition )
+		//Если делать эту проверку то при вызове camera.userData.cameraTarget.setCameraPosition t всега равен нулю
+		//if ( !camera.userData.cameraTarget.setCameraPosition )
 			camera.userData.cameraTarget.setCameraPosition = function ( target ) {
 
 				camera.position.copy( camera.userData.cameraTarget.distanceToCameraCur );
@@ -1021,7 +1022,7 @@ function cameraTarget( THREE, mesh, funcs, t, i ) {
 				}
 
 			}
-		if ( !camera.userData.cameraTarget.distanceToCameraCur )
+//		if ( !camera.userData.cameraTarget.distanceToCameraCur )
 			camera.userData.cameraTarget.distanceToCameraCur = new THREE.Vector3();
 
 		//На случай когда не определена ни одна точка как cameraTarget и пользователь поставил птичку в controllerCameraTarget
