@@ -864,6 +864,7 @@ Player.setCameraTarget = function ( camera, funcs ) {
 Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 
 	const func = funcs[axisName], typeofFuncs = typeof func;
+	if ( typeof t === "undefined" ) t = settings.min;
 	switch ( typeofFuncs ) {
 
 		case "undefined":
@@ -873,7 +874,6 @@ Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 		case "number":
 			return func;
 		case "object":
-			if ( typeof t === "undefined" ) t = settings.min;
 			if ( Array.isArray( func ) ) {
 
 				if ( func.length === 0 ) {
