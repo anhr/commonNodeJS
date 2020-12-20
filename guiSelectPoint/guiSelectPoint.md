@@ -57,3 +57,8 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import { getLanguageCode } from './commonNodeJS/master/lang.js';
 ```
+If you want to allow user to select a point from points, created by [MyPoints](../../myPoints/jsdoc/index.html),
+please remove <b>guiSelectPoint.addMesh( points );</b> line above and follow the [Player](../../player/jsdoc/index.html#selectMyPoints) manual.
+
+If you want to allow user to select a point from points, created by [getShaderMaterialPoints](../../getShaderMaterialPoints/jsdoc/index.html),
+please remove <b>guiSelectPoint.addMesh( points );</b> line above and follow the [Player](../../player/jsdoc/index.html#getShaderMaterialPoints) manual.
