@@ -1050,7 +1050,10 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 						getCameraTarget( true );
 						if ( guiParams.cameraTarget.boLook === undefined ) guiParams.cameraTarget.boLook = true;
-						guiParams.cameraTarget.camera.userData.cameraTarget = guiParams.cameraTarget;
+						
+//не помню зачем вставил эту строку
+//						guiParams.cameraTarget.camera.userData.cameraTarget = guiParams.cameraTarget;
+
 						point.cameraTarget = { camera: guiParams.cameraTarget.camera, }
 
 						if ( !orbitControlsOptions ) orbitControlsOptions = {}
