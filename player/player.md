@@ -194,7 +194,7 @@ Update your web page. Now you can see moving a point on the canvas.
 
 Default, the playing ticks count is 10. You can change it.
 Also you can set your ticks per seconds and other setting.
-See [Player](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html) for details.
+See [Player](module-Player.html) for details.
 Please change your <b>Player</b> for it.
 ```
 const player = new Player( THREE, scene, {
@@ -293,7 +293,7 @@ because default range of the [color palette](https://github.com/anhr/commonNodeJ
 But current range of the <b>1-2 * t</b> function from 1 to -1 for default <b>t</b> range from 0 to 1.
 You can resolve this issue by change of the palette range.
 Replace <b>w</b> coordinate of the first point from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
-See <b>arrayFuncs</b> parameter of the [Player.getColors(...)](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors) for details.
+See <b>arrayFuncs</b> parameter of the [Player.getColors(...)](module-Player.html#~Player.getColors) for details.
 ```
 const arrayFuncs = [
 	{
@@ -402,6 +402,16 @@ points.rotation.z = - Math.PI * 2 * t;
 Currently, it seems to you that the size of the first point changes during of the the playing because point moves near or far from camera.
 Sometimes you want to see the sizes of the points is not depend from distance to camera.
 To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described in [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
+
+First, import <b>getShaderMaterialPoints</b> into your web page.
+```
+import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
+```
+
 ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
 For resolving of the problem please remove <b>player.play3DObject();</b> and include it inside of the <b>getShaderMaterialPoints</b>.
 ```
@@ -428,7 +438,7 @@ getShaderMaterialPoints( THREE, scene, arrayFuncs,
 <a name="MyPoints"></a>
 ## Use MyPoints for create points.
 
-Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use [MyPoints](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html) for creating of new points.
+Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use [MyPoints](../../myPoints/jsdoc/index.html) for creating of new points.
 Import <b>MyPoints</b> into your web page for it.
 ```
 import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
@@ -444,6 +454,7 @@ MyPoints( THREE, arrayFuncs, scene, {
 	Player: Player,
 
 } );
+player.play3DObject();
 ```
 Now you can see, first point is moving and changing color.
 
@@ -630,11 +641,11 @@ User can select a point, camera will be look at. Use [GuiSelectPoint](../../guiS
 
 * Import <b>GuiSelectPoint</b>
 ```
-import { GuiSelectPoint } from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 ```
 or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+import { GuiSelectPoint } from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 ```
 * Create instance of the <b>GuiSelectPoint</b>.
 ```
@@ -654,7 +665,9 @@ Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which
 guiSelectPoint.addMesh( points );
 ```
 <b>points</b> is instance of the mesh.
-* If you use <b>MyPoints</b> for create mesh, please add <b>guiSelectPoint.addMesh( points );</b> into <b>onReady</b> of the <b>MyPoints</b>.
+
+<a name="selectMyPoints"></a>
+* If you use [MyPoints](../../myPoints/jsdoc/index.html) for create mesh, please add <b>guiSelectPoint.addMesh( points );</b> into <b>onReady</b> of the <b>MyPoints</b>.
 ```
 MyPoints( THREE, arrayFuncs, scene, {
 
@@ -680,6 +693,7 @@ MyPoints( THREE, arrayFuncs, scene, {
 
 } );
 ```
+<a name="getShaderMaterialPoints"></a>
 * If you use [getShaderMaterialPoints](../../getShaderMaterialPoints/jsdoc/index.html) for create of the <b>THREE.Points</b> with [THREE.ShaderMaterial](https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial) material,
 please add <b>guiSelectPoint.addMesh( points );</b> into <b>onReady</b> parameter of the <b>getShaderMaterialPoints</b>.
 ```
@@ -692,13 +706,13 @@ getShaderMaterialPoints( THREE, scene, arrayFuncs,
 			arrayFuncs: arrayFuncs,
 			selectPlayScene: function ( t ) {
 
-				points.position.x = t;
+				points.position.x = 8 * t;
 				points.rotation.z = - Math.PI * 2 * t;
 
 			}
 
 		}
-		//player.play3DObject();
+		player.play3DObject();
 		guiSelectPoint.addMesh( points );
 
 	},
@@ -797,7 +811,7 @@ camera.userData.cameraTarget = {
 
 	},
 	//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
-	//distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) ),
+	distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) ),
 	/*
 	distanceToCamera: new THREE.Vector3( 0, 0, [
 		{ t: 0, v: 5 },//distance to camera is 5 for time is 0
@@ -811,24 +825,46 @@ camera.userData.cameraTarget = {
 ```
 You can set individual setting for selected point. Please add <b>rotation</b>, <b>distanceToCamera</b>, <b>boLook</b> keys into <b>cameraTarget</b> object for selected point
 ```
-cameraTarget: {
+const arrayFuncs = [
+	{
 
-	camera: camera,
-	rotation: {
+		vector: new THREE.Vector4(
+			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
+			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
+			0.5,//z
+			{
 
-		angle: 0,
-		//angle: new Function( 't', 'return 5*t' ),
-		//angle: [0, Math.PI / 2],
-		//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
-		//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+				func: new Function( 't', 'return 1-2*t' ),
+				min: -1,
+				max: 1,
+
+			},//w
+		),//First point
+		trace: true,//Displays the trace of the first point movement.
+
+		//Set the camera to look at the first point.
+		cameraTarget: {
+
+			camera: camera,
+			rotation: {
+
+				angle: 0,
+				//angle: new Function( 't', 'return 5*t' ),
+				//angle: [0, Math.PI / 2],
+				//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+			},
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 10 },//distance to camera is 10 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+			] ),
+
+		},
 
 	},
-	distanceToCamera: new THREE.Vector3( 0, 0, [
-		{ t: 0, v: 10 },//distance to camera is 5 for time is 0
-		{ t: 1, v: 2 },//distance to camera is 2 for time is 1
-	] ),
-
-},
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
+];
 ```
 Individual setting for selected point is more priority before camera settings.
 
@@ -852,6 +888,8 @@ const player = new Player( THREE, scene, {
 
 } );
 ```
+Attention!!! Please press the <b>Default</b> button in the <b>Player/Time</b> foder
+if you have set the <b>cookie</b> key in the  <b>player.gui(...)</b> function and want your new <b>Player</b> settings to have an effect.
 
 You can infinity play. Please set <b>max: Infinity</b> for it.
 ```
@@ -869,6 +907,8 @@ const player = new Player( THREE, scene, {
 
 } );
 ```
+Press the <b>Default</b> button again.
+
 Currently, the default playback step is 0.1. You can set another step. Please add <b>dt</b> key for it.
 ```
 const player = new Player( THREE, scene, {
@@ -886,6 +926,8 @@ const player = new Player( THREE, scene, {
 
 } );
 ```
+Press the <b>Default</b> button again.
+
 Note that the step only matters for <b>max: Infinity</b>.
 
 <a name="DirectoryContents"></a>

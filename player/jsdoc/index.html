@@ -225,7 +225,7 @@ Include <b>arrayFuncs</b> into <b>points.userData.player</b> object if you want 
 <p>Update your web page. Now you can see moving a point on the canvas.</p>
 <p>Default, the playing ticks count is 10. You can change it.
 Also you can set your ticks per seconds and other setting.
-See <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html">Player</a> for details.
+See <a href="module-Player.html">Player</a> for details.
 Please change your <b>Player</b> for it.</p>
 <pre class="prettyprint source"><code>const player = new Player( THREE, scene, {
 
@@ -322,7 +322,7 @@ because default range of the <a href="https://github.com/anhr/commonNodeJS/tree/
 But current range of the <b>1-2 * t</b> function from 1 to -1 for default <b>t</b> range from 0 to 1.
 You can resolve this issue by change of the palette range.
 Replace <b>w</b> coordinate of the first point from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
-See <b>arrayFuncs</b> parameter of the <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors">Player.getColors(...)</a> for details.</p>
+See <b>arrayFuncs</b> parameter of the <a href="module-Player.html#~Player.getColors">Player.getColors(...)</a> for details.</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
 	{
 
@@ -421,8 +421,14 @@ For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicke
 <h2>Create THREE.Points with <a href="https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial">THREE.ShaderMaterial</a> material.</h2>
 <p>Currently, it seems to you that the size of the first point changes during of the the playing because point moves near or far from camera.
 Sometimes you want to see the sizes of the points is not depend from distance to camera.
-To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described in <a href="https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html">getShaderMaterialPoints API</a>.
-ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
+To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described in <a href="https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html">getShaderMaterialPoints API</a>.</p>
+<p>First, import <b>getShaderMaterialPoints</b> into your web page.</p>
+<pre class="prettyprint source"><code>import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
+</code></pre>
+<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<pre class="prettyprint source"><code>import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
+</code></pre>
+<p>ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
 For resolving of the problem please remove <b>player.play3DObject();</b> and include it inside of the <b>getShaderMaterialPoints</b>.</p>
 <pre class="prettyprint source"><code>getShaderMaterialPoints( THREE, scene, arrayFuncs,
 	function ( points ) {
@@ -446,7 +452,7 @@ For resolving of the problem please remove <b>player.play3DObject();</b> and inc
 </code></pre>
 <p><a name="MyPoints"></a></p>
 <h2>Use MyPoints for create points.</h2>
-<p>Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use <a href="https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html">MyPoints</a> for creating of new points.
+<p>Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use <a href="../../myPoints/jsdoc/index.html">MyPoints</a> for creating of new points.
 Import <b>MyPoints</b> into your web page for it.</p>
 <pre class="prettyprint source"><code>import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
 </code></pre>
@@ -459,6 +465,7 @@ Import <b>MyPoints</b> into your web page for it.</p>
 	Player: Player,
 
 } );
+player.play3DObject();
 </code></pre>
 <p>Now you can see, first point is moving and changing color.</p>
 <p>Currently all <b>MyPoints</b> settings is default.
@@ -614,10 +621,10 @@ player.gui( gui );
 <ul>
 <li>Import <b>GuiSelectPoint</b></li>
 </ul>
-<pre class="prettyprint source"><code>import { GuiSelectPoint } from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+<pre class="prettyprint source"><code>import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+<pre class="prettyprint source"><code>import { GuiSelectPoint } from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 </code></pre>
 <ul>
 <li>Create instance of the <b>GuiSelectPoint</b>.</li>
@@ -637,8 +644,9 @@ player.gui( gui );
 <pre class="prettyprint source"><code>guiSelectPoint.addMesh( points );
 </code></pre>
 <p><b>points</b> is instance of the mesh.</p>
+<p><a name="selectMyPoints"></a></p>
 <ul>
-<li>If you use <b>MyPoints</b> for create mesh, please add <b>guiSelectPoint.addMesh( points );</b> into <b>onReady</b> of the <b>MyPoints</b>.</li>
+<li>If you use <a href="../../myPoints/jsdoc/index.html">MyPoints</a> for create mesh, please add <b>guiSelectPoint.addMesh( points );</b> into <b>onReady</b> of the <b>MyPoints</b>.</li>
 </ul>
 <pre class="prettyprint source"><code>MyPoints( THREE, arrayFuncs, scene, {
 
@@ -664,6 +672,7 @@ player.gui( gui );
 
 } );
 </code></pre>
+<p><a name="getShaderMaterialPoints"></a></p>
 <ul>
 <li>If you use <a href="../../getShaderMaterialPoints/jsdoc/index.html">getShaderMaterialPoints</a> for create of the <b>THREE.Points</b> with <a href="https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial">THREE.ShaderMaterial</a> material,
 please add <b>guiSelectPoint.addMesh( points );</b> into <b>onReady</b> parameter of the <b>getShaderMaterialPoints</b>.</li>
@@ -677,13 +686,13 @@ please add <b>guiSelectPoint.addMesh( points );</b> into <b>onReady</b> paramete
 			arrayFuncs: arrayFuncs,
 			selectPlayScene: function ( t ) {
 
-				points.position.x = t;
+				points.position.x = 8 * t;
 				points.rotation.z = - Math.PI * 2 * t;
 
 			}
 
 		}
-		//player.play3DObject();
+		player.play3DObject();
 		guiSelectPoint.addMesh( points );
 
 	},
@@ -772,7 +781,7 @@ Also you can rotate camera around on the point. Please add <b>cameraTarget</b> o
 
 	},
 	//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
-	//distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) ),
+	distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) ),
 	/*
 	distanceToCamera: new THREE.Vector3( 0, 0, [
 		{ t: 0, v: 5 },//distance to camera is 5 for time is 0
@@ -785,24 +794,46 @@ Also you can rotate camera around on the point. Please add <b>cameraTarget</b> o
 }
 </code></pre>
 <p>You can set individual setting for selected point. Please add <b>rotation</b>, <b>distanceToCamera</b>, <b>boLook</b> keys into <b>cameraTarget</b> object for selected point</p>
-<pre class="prettyprint source"><code>cameraTarget: {
+<pre class="prettyprint source"><code>const arrayFuncs = [
+	{
 
-	camera: camera,
-	rotation: {
+		vector: new THREE.Vector4(
+			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
+			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
+			0.5,//z
+			{
 
-		angle: 0,
-		//angle: new Function( 't', 'return 5*t' ),
-		//angle: [0, Math.PI / 2],
-		//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
-		//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+				func: new Function( 't', 'return 1-2*t' ),
+				min: -1,
+				max: 1,
+
+			},//w
+		),//First point
+		trace: true,//Displays the trace of the first point movement.
+
+		//Set the camera to look at the first point.
+		cameraTarget: {
+
+			camera: camera,
+			rotation: {
+
+				angle: 0,
+				//angle: new Function( 't', 'return 5*t' ),
+				//angle: [0, Math.PI / 2],
+				//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+			},
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 10 },//distance to camera is 10 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+			] ),
+
+		},
 
 	},
-	distanceToCamera: new THREE.Vector3( 0, 0, [
-		{ t: 0, v: 10 },//distance to camera is 5 for time is 0
-		{ t: 1, v: 2 },//distance to camera is 2 for time is 1
-	] ),
-
-},
+	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
+];
 </code></pre>
 <p>Individual setting for selected point is more priority before camera settings.</p>
 <p><a name="playingTime"></a></p>
@@ -823,6 +854,8 @@ You can set another time limit. Please add <b>min</b> and <b>max</b> keys into s
 
 } );
 </code></pre>
+<p>Attention!!! Please press the <b>Default</b> button in the <b>Player/Time</b> foder
+if you have set the <b>cookie</b> key in the  <b>player.gui(...)</b> function and want your new <b>Player</b> settings to have an effect.</p>
 <p>You can infinity play. Please set <b>max: Infinity</b> for it.</p>
 <pre class="prettyprint source"><code>const player = new Player( THREE, scene, {
 
@@ -838,6 +871,7 @@ You can set another time limit. Please add <b>min</b> and <b>max</b> keys into s
 
 } );
 </code></pre>
+<p>Press the <b>Default</b> button again.</p>
 <p>Currently, the default playback step is 0.1. You can set another step. Please add <b>dt</b> key for it.</p>
 <pre class="prettyprint source"><code>const player = new Player( THREE, scene, {
 
@@ -854,6 +888,7 @@ You can set another time limit. Please add <b>min</b> and <b>max</b> keys into s
 
 } );
 </code></pre>
+<p>Press the <b>Default</b> button again.</p>
 <p>Note that the step only matters for <b>max: Infinity</b>.</p>
 <p><a name="DirectoryContents"></a></p>
 <h2>Directory Contents</h2>
@@ -882,7 +917,7 @@ $ npm run build
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Dec 18 2020 12:11:39 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Dec 20 2020 14:25:43 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
