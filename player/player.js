@@ -501,7 +501,9 @@ function Player( THREE, group, options ) {
 		Object.freeze( axesDefault );
 		const max = settings.max;
 		cookie.getObject( cookieName, settings, settings );
-		if ( ( max === null ) || ( max === Infinity ) ) {
+		if ( ( max === null ) || ( max === Infinity ) ||
+			( settings.max === null )//раньше на веб странице плеер был настроен на бесконечное проигрыванияе а сейчас проигрывание ограничено по времени
+		) {
 
 			settings.max = max;
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -96,6 +96,7 @@
 
 			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+			/*
 			camera.userData.cameraTarget = {
 
 				boLook: true,
@@ -114,6 +115,7 @@
 				distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
 
 			}
+			*/
 
 			scene = new THREE.Scene();
 
@@ -173,7 +175,7 @@
 						interval: 25,//Ticks per seconds.
 						//min: -1,
 						//max: 0,
-						max: Infinity,//первращается в null после чтения из cookie
+						//max: Infinity,//первращается в null после чтения из cookie
 						dt: 0.01,//for max: Infinity
 
 					},
@@ -250,7 +252,19 @@
 
 						//boLook: false,
 						camera: camera,
-						//distanceToCamera: new THREE.Vector3( 0, 0, 1 ),
+						Player: Player,
+						rotation: {
+
+							//angle: Math.PI,
+							//angle: new Function( 't', 'return 5*t' ),
+							//angle: [0, Math.PI / 2],
+							angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+							//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+						},
+						//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
+						//distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) ),
+						distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
 
 					},
 
