@@ -337,9 +337,10 @@ const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.b
 ```
 Add new palette in the <b>Player</b>.
 ```
+const selectPlaySceneOptions = { palette: palette, }
 const player = new Player( THREE, scene, {
 
-	selectPlaySceneOptions: { palette: palette, },
+	selectPlaySceneOptions: selectPlaySceneOptions,
 	settings: {
 
 		marks: 100,//Ticks count of the playing.
@@ -655,6 +656,9 @@ guiSelectPoint = new GuiSelectPoint( THREE, {
 	cameraTarget: { camera: camera, },
 
 } );
+
+//Player changes the guiSelectPoint control's values during playing
+selectPlaySceneOptions.guiSelectPoint = guiSelectPoint;
 ```
 Note! Set the <b>cameraTarget</b> above if you want to camera can to look at selected by user point.
 
