@@ -7,10 +7,12 @@ import StereoEffect from './StereoEffect/StereoEffect.js';
 import { SpriteTextGui, SpriteText } from '../../SpriteText/master/SpriteText.js';
 import { AxesHelper, AxesHelperOptions } from '../../AxesHelper/master/AxesHelper.js';
 */
+/*'Depreacated. Use Player.setTHREE'
 Object.assign( THREE.BufferGeometry.prototype, {
 
 	setFromPoints: function ( points, itemSize ) {
 
+		console.warn( 'Depreacated. Use Player.setTHREE' )
 		itemSize = itemSize || 3;
 		var position = [];
 
@@ -36,6 +38,7 @@ Object.assign( THREE.Vector4.prototype, {
 
 	multiply: function ( v ) {
 
+		console.warn( 'Depreacated. Use Player.setTHREE' )
 		this.x *= v.x;
 		this.y *= v.y;
 		this.z *= v.z;
@@ -53,6 +56,7 @@ Object.assign( THREE.Vector4.prototype, {
 
 	add: function ( v, w ) {
 
+		console.warn( 'Depreacated. Use Player.setTHREE' )
 		if ( w !== undefined ) {
 
 			console.warn( 'THREE.Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
@@ -76,6 +80,7 @@ Object.assign( THREE.Points.prototype, {
 
 	raycast: function ( raycaster, intersects ) {
 
+		console.warn( 'Depreacated. Use Player.setTHREE' )
 		const _inverseMatrix = new THREE.Matrix4();
 		const _ray = new THREE.Ray();
 		const _sphere = new THREE.Sphere();
@@ -180,6 +185,7 @@ Object.assign( THREE.Points.prototype, {
 	},
 
 } );
+*/
 export {
 
 	THREE,
