@@ -160,7 +160,7 @@ The easiest way to use <b>Player</b> in your code is import <b>Player</b> from <
 </code></pre>
 <p>Now you can use <b>Player</b> in your javascript code.</p>
 <p>Add <b>Player</b>.</p>
-<pre class="prettyprint source"><code>const player = new Player( THREE, scene );
+<pre class="prettyprint source"><code>const player = new Player( scene );
 </code></pre>
 <p>Currently your player is not doing anything. Please add a 3d object into canvas that you want to play with, for example <b>Points</b>:</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
@@ -188,8 +188,9 @@ scene.add( points );
 	),//First point
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
-const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
-	{ group: scene } ) ),
+const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
+		Player.getPoints( arrayFuncs,{ group: scene } ),
+		Player.getItemSize( arrayFuncs ) ),
 	new THREE.PointsMaterial( {
 
 		color: 0xffffff,
@@ -227,7 +228,7 @@ Include <b>arrayFuncs</b> into <b>points.userData.player</b> object if you want 
 Also you can set your ticks per seconds and other setting.
 See <a href="module-Player.html">Player</a> for details.
 Please change your <b>Player</b> for it.</p>
-<pre class="prettyprint source"><code>const player = new Player( THREE, scene, {
+<pre class="prettyprint source"><code>const player = new Player( scene, {
 
 		settings: {
 
@@ -269,8 +270,9 @@ trace: true - displays the trace of the point movement.
 <ul>
 <li>In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> key and add <b>vertexColors: THREE.VertexColors</b>.</li>
 </ul>
-<pre class="prettyprint source"><code>const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
-	{ group: scene } ) ),
+<pre class="prettyprint source"><code>const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
+		Player.getPoints( arrayFuncs, { group: scene } ),
+		Player.getItemSize( arrayFuncs ) ),
 	new THREE.PointsMaterial( {
 
 		vertexColors: THREE.VertexColors,
@@ -361,10 +363,10 @@ You can select another palette. Please import <b>ColorPicker</b> into your web p
 <pre class="prettyprint source"><code>const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
 </code></pre>
 <p>Add new palette in the <b>Player</b>.</p>
-<pre class="prettyprint source"><code>const selectPlaySceneOptions = { palette: palette, }
-const player = new Player( THREE, scene, {
+<pre class="prettyprint source"><code>const options = { palette: palette, }
+const player = new Player( scene, {
 
-	selectPlaySceneOptions: selectPlaySceneOptions,
+	selectPlaySceneOptions: options,
 	settings: {
 
 		marks: 100,//Ticks count of the playing.
@@ -449,7 +451,12 @@ For resolving of the problem please remove <b>player.play3DObject();</b> and inc
 		player.play3DObject();
 
 	},
-	{ Player: Player, } );
+	{
+	
+		Player: Player,
+		options: options,
+
+	} );
 </code></pre>
 <p><a name="MyPoints"></a></p>
 <h2>Use MyPoints for create points.</h2>
@@ -471,14 +478,19 @@ player.play3DObject();
 <p>Now you can see, first point is moving and changing color.</p>
 <p>Currently all <b>MyPoints</b> settings is default.
 You can set your own setting for <b>MyPoints</b>. For example set points size to 15 and move all points to right during playing.</p>
+<p>Add <b>point</b> key into <b>options</b> above.</p>
+<pre class="prettyprint source"><code>const options = {
+
+	palette: palette,
+	point: { size: 15 },
+
+}
+</code></pre>
+<p>Edit <b>MyPoints</b>.</p>
 <pre class="prettyprint source"><code>MyPoints( THREE, arrayFuncs, scene, {
 
 	Player: Player,
-	options: {
-
-		point: { size: 15 },
-
-	},
+	options: options,
 	pointsOptions: {
 
 		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
@@ -634,6 +646,7 @@ player.gui( gui );
 
 	getLanguageCode: getLanguageCode,
 	cameraTarget: { camera: camera, },
+	options: options,
 
 } );
 
@@ -700,7 +713,11 @@ please add <b>guiSelectPoint.addMesh( points );</b> into <b>onReady</b> paramete
 		guiSelectPoint.addMesh( points );
 
 	},
-	{ Player: Player, } );
+	{
+		Player: Player,
+		options: options,
+
+	} );
 </code></pre>
 <ul>
 <li>Add <b>guiSelectPoint</b> into <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</li>
@@ -844,7 +861,7 @@ Also you can rotate camera around on the point. Please add <b>cameraTarget</b> o
 <h2>Time of the playing.</h2>
 <p>Default time of the playing limited between 0 and 1.
 You can set another time limit. Please add <b>min</b> and <b>max</b> keys into settings of the <b>new Player</b> for it</p>
-<pre class="prettyprint source"><code>const player = new Player( THREE, scene, {
+<pre class="prettyprint source"><code>const player = new Player( scene, {
 
 	selectPlaySceneOptions: { palette: palette, },
 	settings: {
@@ -861,7 +878,7 @@ You can set another time limit. Please add <b>min</b> and <b>max</b> keys into s
 <p>Attention!!! Please press the <b>Default</b> button in the <b>Player/Time</b> foder
 if you have set the <b>cookie</b> key in the  <b>player.gui(...)</b> function and want your new <b>Player</b> settings to have an effect.</p>
 <p>You can infinity play. Please set <b>max: Infinity</b> for it.</p>
-<pre class="prettyprint source"><code>const player = new Player( THREE, scene, {
+<pre class="prettyprint source"><code>const player = new Player( scene, {
 
 	selectPlaySceneOptions: { palette: palette, },
 	settings: {
@@ -877,7 +894,7 @@ if you have set the <b>cookie</b> key in the  <b>player.gui(...)</b> function an
 </code></pre>
 <p>Press the <b>Default</b> button again.</p>
 <p>Currently, the default playback step is 0.1. You can set another step. Please add <b>dt</b> key for it.</p>
-<pre class="prettyprint source"><code>const player = new Player( THREE, scene, {
+<pre class="prettyprint source"><code>const player = new Player( scene, {
 
 	selectPlaySceneOptions: { palette: palette, },
 	settings: {
@@ -921,7 +938,7 @@ $ npm run build
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Dec 30 2020 20:47:30 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Jan 08 2021 10:32:09 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

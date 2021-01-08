@@ -122,7 +122,7 @@ Now you can use <b>Player</b> in your javascript code.
 
 Add <b>Player</b>.
 ```
-const player = new Player( THREE, scene );
+const player = new Player( scene );
 ```
 Currently your player is not doing anything. Please add a 3d object into canvas that you want to play with, for example <b>Points</b>:
 ```
@@ -150,8 +150,9 @@ const arrayFuncs = [
 	),//First point
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
-const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
-	{ group: scene } ) ),
+const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
+		Player.getPoints( arrayFuncs,{ group: scene } ),
+		Player.getItemSize( arrayFuncs ) ),
 	new THREE.PointsMaterial( {
 
 		color: 0xffffff,
@@ -197,7 +198,7 @@ Also you can set your ticks per seconds and other setting.
 See [Player](module-Player.html) for details.
 Please change your <b>Player</b> for it.
 ```
-const player = new Player( THREE, scene, {
+const player = new Player( scene, {
 
 		settings: {
 
@@ -241,8 +242,9 @@ Now you can see a trace line of the moving of the first point.
 ## Point color.
 * In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> key and add <b>vertexColors: THREE.VertexColors</b>.
 ```
-const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( Player.getPoints( THREE, arrayFuncs,
-	{ group: scene } ) ),
+const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
+		Player.getPoints( arrayFuncs, { group: scene } ),
+		Player.getItemSize( arrayFuncs ) ),
 	new THREE.PointsMaterial( {
 
 		vertexColors: THREE.VertexColors,
@@ -337,10 +339,10 @@ const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.b
 ```
 Add new palette in the <b>Player</b>.
 ```
-const selectPlaySceneOptions = { palette: palette, }
-const player = new Player( THREE, scene, {
+const options = { palette: palette, }
+const player = new Player( scene, {
 
-	selectPlaySceneOptions: selectPlaySceneOptions,
+	selectPlaySceneOptions: options,
 	settings: {
 
 		marks: 100,//Ticks count of the playing.
@@ -434,7 +436,12 @@ getShaderMaterialPoints( THREE, scene, arrayFuncs,
 		player.play3DObject();
 
 	},
-	{ Player: Player, } );
+	{
+	
+		Player: Player,
+		options: options,
+
+	} );
 ```
 <a name="MyPoints"></a>
 ## Use MyPoints for create points.
@@ -461,15 +468,22 @@ Now you can see, first point is moving and changing color.
 
 Currently all <b>MyPoints</b> settings is default.
 You can set your own setting for <b>MyPoints</b>. For example set points size to 15 and move all points to right during playing.
+
+Add <b>point</b> key into <b>options</b> above.
+```
+const options = {
+
+	palette: palette,
+	point: { size: 15 },
+
+}
+```
+Edit <b>MyPoints</b>.
 ```
 MyPoints( THREE, arrayFuncs, scene, {
 
 	Player: Player,
-	options: {
-
-		point: { size: 15 },
-
-	},
+	options: options,
 	pointsOptions: {
 
 		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
@@ -654,6 +668,7 @@ guiSelectPoint = new GuiSelectPoint( THREE, {
 
 	getLanguageCode: getLanguageCode,
 	cameraTarget: { camera: camera, },
+	options: options,
 
 } );
 
@@ -720,7 +735,11 @@ getShaderMaterialPoints( THREE, scene, arrayFuncs,
 		guiSelectPoint.addMesh( points );
 
 	},
-	{ Player: Player, } );
+	{
+		Player: Player,
+		options: options,
+
+	} );
 ```
 
 * Add <b>guiSelectPoint</b> into [dat.gui](https://github.com/anhr/dat.gui).
@@ -878,7 +897,7 @@ Individual setting for selected point is more priority before camera settings.
 Default time of the playing limited between 0 and 1.
 You can set another time limit. Please add <b>min</b> and <b>max</b> keys into settings of the <b>new Player</b> for it
 ```
-const player = new Player( THREE, scene, {
+const player = new Player( scene, {
 
 	selectPlaySceneOptions: { palette: palette, },
 	settings: {
@@ -897,7 +916,7 @@ if you have set the <b>cookie</b> key in the  <b>player.gui(...)</b> function an
 
 You can infinity play. Please set <b>max: Infinity</b> for it.
 ```
-const player = new Player( THREE, scene, {
+const player = new Player( scene, {
 
 	selectPlaySceneOptions: { palette: palette, },
 	settings: {
@@ -915,7 +934,7 @@ Press the <b>Default</b> button again.
 
 Currently, the default playback step is 0.1. You can set another step. Please add <b>dt</b> key for it.
 ```
-const player = new Player( THREE, scene, {
+const player = new Player( scene, {
 
 	selectPlaySceneOptions: { palette: palette, },
 	settings: {

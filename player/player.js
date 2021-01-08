@@ -43,7 +43,10 @@ var settings,
 	//потому что сначала загружаются Shader файлы. Поэтому когда вызывается setTimeout( function () { onSelectScene(); }, 0 );
 	//что бы цвет точек был верным еще до начала проигрывания, точки из getShaderMaterialPoints еще не добавлены в группу для проигрывания.
 	//Кроме того цвет точек в getShaderMaterialPoints задается аттрибутом 'ca' а не 'color'.
-	selectPlaySceneOptions;
+	selectPlaySceneOptions,
+	THREE,
+	boPlayer = false;//true - player is created
+//	selectSceneIndex = 0;//for guiSelectPoint
 
 /**
  * @callback onSelectScene
@@ -60,7 +63,6 @@ var settings,
 
 /**
  * 3D objects animation.
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Group|THREE.Scene} group THREE group or scene of the meshes  for playing.
  * @param {object} [options] the following options are available
  * @param {object} [options.selectPlaySceneOptions] See [Player.selectPlayScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.selectPlayScene} options parameter.
@@ -77,9 +79,24 @@ var settings,
  * @param {number} [options.settings.offset=0.1] offset of the time.
  * @param {string} [options.settings.name=""] name of the time.
  */
-function Player( THREE, group, options ) {
+function Player( /*THREE, */group, options ) {
 
+	if ( typeof THREE === 'undefined' ) {
+
+		console.error( 'Call Player.setTHREE(THREE) first.' );
+		return;
+
+	}
 	ColorPicker.palette.setTHREE( THREE );
+
+	if ( Player.isCreated() ) {
+
+		console.error( 'Player: duplicate player.' );
+		return;
+
+	}
+
+	Player.player = this;
 
 	options = options || {};
 
@@ -89,7 +106,7 @@ function Player( THREE, group, options ) {
 
 	selectPlaySceneOptions.a = options.a || 1;
 	selectPlaySceneOptions.b = options.b || 0;
-	selectPlaySceneOptions.scales = selectPlaySceneOptions.scales || {};
+//	selectPlaySceneOptions.scales = selectPlaySceneOptions.scales || {};не помню зачем эта строка
 
 	//если тут создавать палитру то она не создастся если не создается плееер
 	//palette = new palette();
@@ -129,10 +146,10 @@ function Player( THREE, group, options ) {
 		options = options || {};
 
 		group.userData.t = t;
-		Player.selectMeshPlayScene( THREE, group, t, index );//, options );
+		Player.selectMeshPlayScene( /*THREE, */group, t, index );//, options );
 		group.children.forEach( function ( mesh ) {
 
-			Player.selectMeshPlayScene( THREE, mesh, t, index );//, options );
+			Player.selectMeshPlayScene( /*THREE, */mesh, t, index );//, options );
 
 		} );
 
@@ -146,7 +163,7 @@ function Player( THREE, group, options ) {
 	function onSelectScene( index ) {
 
 		index = index || 0;
-		const t = getTime();
+		const t = _this.getTime();
 		selectPlayScene( group, t, index, options.selectPlaySceneOptions );
 		_this.setIndex( index, ( settings.name === '' ? '' : settings.name + ': ' ) + t );
 		if ( options.onSelectScene ) options.onSelectScene( index, t );
@@ -160,13 +177,25 @@ function Player( THREE, group, options ) {
 	var selectSceneIndex = 0;
 	const _this = this;
 
-	function getTime() {
+	/**
+	 * get time
+	 * @function player.
+	 * getTime
+	 */
+	this.getTime = function() {
 
 		const res = settings.min + selectSceneIndex * settings.dt;
 		if ( isNaN( res ) ) console.error( 'Player.getTime(): res = ' + res );
 		return res;
 
 	}
+
+	/**
+	 * set time
+	 * @function player.
+	 * setTime
+	 * @param {number} t time
+	 */
 	this.setTime = function( t ) {
 
 		this.selectScene( parseInt( ( t - settings.min ) / settings.dt ) );
@@ -175,7 +204,7 @@ function Player( THREE, group, options ) {
 
 	/**
 	 * select scene for playing
-	 * @function Player.
+	 * @function player.
 	 * selectScene
 	 * @param {number} index Index of the scene. Range from 0 to settings.marks - 1
 	 */
@@ -257,7 +286,7 @@ function Player( THREE, group, options ) {
 			selectSceneIndex = 0;
 
 		}
-		onSelectScene( selectSceneIndex );//, getTime() );
+		onSelectScene( selectSceneIndex );
 
 	}
 
@@ -296,7 +325,7 @@ function Player( THREE, group, options ) {
 
 	/**
 	 * User has clicked the Play ► / Pause ❚❚ button
-	 * @function Player.
+	 * @function player.
 	 * play3DObject
 	 */
 	this.play3DObject = function() {
@@ -345,7 +374,7 @@ function Player( THREE, group, options ) {
 
 	/**
 	 * User has clicked the repeat ⥀ button
-	 * @function Player.
+	 * @function player.
 	 * repeat
 	 */
 	this.repeat = function () {
@@ -356,13 +385,13 @@ function Player( THREE, group, options ) {
 	}
 
 	/**
-	 * @function Player.
+	 * @function player.
 	 * getOptions
 	 * @returns Player options.
 	 */
 	this.getOptions = function () { return options; }
 	/**
-	 * @function Player.
+	 * @function player.
 	 * getSelectSceneIndex
 	 * @returns selected scene index.
 	 */
@@ -370,7 +399,7 @@ function Player( THREE, group, options ) {
 
 	/**
 	 * Event of the changing of the rate of changing of animation scenes per second.
-	 * @function Player.
+	 * @function player.
 	 * onChangeRepeat
 	 * @param {number} value new rate
 	 */
@@ -781,7 +810,7 @@ function Player( THREE, group, options ) {
 	 * addSliderEvents
 	 * @returns slider element
 	 */
-	this.addSliderEvents = function ( /*THREE*/ ) {
+	this.addSliderEvents = function () {
 
 		const elSlider = getSliderElement(), player = this;
 		if ( elSlider ) {
@@ -815,7 +844,7 @@ function Player( THREE, group, options ) {
 	 */
 	this.setIndex = function ( index, title ) {
 
-		if ( this.PlayController ) this.PlayController.setValue( getTime() );
+		if ( this.PlayController ) this.PlayController.setValue( this.getTime() );
 		const elSlider = getSliderElement();
 		if ( elSlider ) {
 
@@ -839,7 +868,22 @@ function Player( THREE, group, options ) {
 
 	}
 
+	boPlayer = true;
+
 }
+/**
+ * Is player created?
+ * @function Player.
+ * isCreated
+ */
+Player.isCreated = function () { return boPlayer; }
+/**
+ * set camera target
+ * @function Player.
+ * setCameraTarget
+ * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
+ * @param {object} funcs item of the arrayFuncs. See Player.getPoints(...) for details.
+ */
 Player.setCameraTarget = function ( camera, funcs ) {
 
 	if ( camera.userData.cameraTarget.boLook !== false )
@@ -994,17 +1038,23 @@ function palette() {
 }
 palette = new palette();
 
-function cameraTarget( THREE, mesh, funcs, t, i ) {
+function cameraTarget( /*THREE, */mesh, funcs, t, i ) {
 
 	if ( !funcs.cameraTarget )
 		return
 
+	if ( typeof THREE === 'undefined' ) {
+
+		console.error( 'Call Player.setTHREE(THREE) first.' );
+		return;
+
+	}
 	const camera = funcs.cameraTarget.camera;
 
 	//На случай когда не определена ни одна точка как cameraTarget и пользователь поставил птичку в controllerCameraTarget
 	//camera.userData.cameraTarget = camera.userData.cameraTarget || { boLook: true };
 
-	if ( camera.userData.cameraTarget.boLook ) {
+	if ( camera.userData.cameraTarget && camera.userData.cameraTarget.boLook ) {
 
 		//Если делать эту проверку то при вызове camera.userData.cameraTarget.setCameraPosition t всега равен нулю
 		//if ( !camera.userData.cameraTarget.setCameraPosition )
@@ -1058,14 +1108,19 @@ function cameraTarget( THREE, mesh, funcs, t, i ) {
  * Camera is look at selected point.
  * @function Player.
  * cameraTarget
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for playing.
 */
-Player.cameraTarget = function ( THREE, mesh ) {
+Player.cameraTarget = function ( /*THREE, */mesh ) {
 
 	if ( !mesh.geometry )
 		return;
 
+	if ( typeof THREE === 'undefined' ) {
+
+		console.error( 'Call Player.setTHREE(THREE) first.' );
+		return;
+
+	}
 	const arrayFuncs = mesh.userData.player.arrayFuncs;
 	if ( arrayFuncs === undefined )
 		return;
@@ -1086,7 +1141,7 @@ Player.cameraTarget = function ( THREE, mesh ) {
 			return Player.getSettings().min;
 
 		}
-		cameraTarget( THREE, mesh, funcs, getT(), i );
+		cameraTarget( /*THREE, */mesh, funcs, getT(), i );
 
 	}
 
@@ -1096,7 +1151,6 @@ Player.cameraTarget = function ( THREE, mesh ) {
  * Select a scene for playing of the mesh
  * @function Player.
  * selectMeshPlayScene
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for playing.
  * @param {number} [t=0] time
  * @param {number} [index=0] index of the time.
@@ -1113,8 +1167,14 @@ Player.cameraTarget = function ( THREE, mesh ) {
  * </pre>
  * @param {number} [options.point.size=0.02] The apparent angular size of a point in radians.
 */
-Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
+Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 
+	if ( typeof THREE === 'undefined' ) {
+
+		console.error( 'Call Player.setTHREE(THREE) first.' );
+		return;
+
+	}
 	if ( t === undefined ) t = Player.getSettings().min;
 	index = index || 0;
 	options = options || selectPlaySceneOptions || {};
@@ -1191,8 +1251,16 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 					color = mesh.userData.player.palette.toColor( value, min, max );
 				else if ( options.palette )
 					color = options.palette.toColor( value, min, max );
-				else
+				else {
+
+					const c = { r: 255, g: 255, b: 255 }
+					return new THREE.Color( "rgb(" + c.r + ", " + c.g + ", " + c.b + ")" );
+/*				
+					ColorPicker.palette.setTHREE( THREE );
 					color = palette.get().toColor( value, min, max );
+*/					
+
+				}
 
 			}
 
@@ -1227,13 +1295,14 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 				if ( !Player.setColorAttribute( attributes, i, color ) && funcs instanceof THREE.Vector4 ) {
 
 					mesh.geometry.setAttribute( 'color',
-						new THREE.Float32BufferAttribute( Player.getColors( THREE, arrayFuncs,
+						new THREE.Float32BufferAttribute( Player.getColors( /*THREE, */arrayFuncs,
 							{
 								positions: mesh.geometry.attributes.position,
 								scale: { min: min, max: max },
 								palette: options.palette,
 
-							} ), 3 ) );
+							} ), 4 ) );
+//							} ), 3 ) );//кажется тут ошибочно поставил itemSize = 3
 					if ( !Player.setColorAttribute( attributes, i, color ) )
 						console.error( 'Player.selectPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute' );
 
@@ -1244,8 +1313,8 @@ Player.selectMeshPlayScene = function ( THREE, mesh, t, index, options ) {
 				attributes.position.needsUpdate = true;
 
 			if ( funcs.line !== undefined )
-				funcs.line.addPoint( getObjectPosition( mesh, i ), index, color );
-			cameraTarget( THREE, mesh, funcs, t, i );
+				funcs.line.addPoint( mesh, i/*getObjectPosition( mesh, i ), index*/, color );
+			cameraTarget( /*THREE, */mesh, funcs, t, i );
 
 		};
 
@@ -1304,7 +1373,6 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * Get array of THREE.Vector4 points.
  * @function Player.
  * getPoints
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs points.geometry.attributes.position array
  * <pre>
  * THREE.Vector4: 4D point.
@@ -1423,12 +1491,18 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * @param {object} [optionsPoints.options.player] See Player method above.
  * @returns array of THREE.Vector4 points.
  */
-Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
+Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 
+	if ( typeof THREE === 'undefined' ) {
+
+		console.error( 'Call Player.setTHREE(THREE) first.' );
+		return;
+
+	}
 	GuiSelectPoint.setTHREE( THREE );
 	
 	optionsPoints = optionsPoints || {};
-	if ( optionsPoints.t === undefined ) optionsPoints.t = 0;
+	if ( optionsPoints.t === undefined ) optionsPoints.t = optionsPoints.options ? optionsPoints.options.player.player.getOptions().settings.min : 0;
 	const options = optionsPoints.options || {},
 		a = options.a || 1,
 		b = options.b || 0;
@@ -1527,7 +1601,7 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
 			}
 			if ( funcs.name !== undefined )
 				funcs.vector.name = funcs.name;
-			if ( funcs.trace ) funcs.vector.line = new Player.traceLine( THREE, optionsPoints.group, options );
+			if ( funcs.trace ) funcs.vector.line = new Player.traceLine( /*THREE, optionsPoints.group, */options );
 			if ( funcs.cameraTarget ) {
 
 				funcs.vector.cameraTarget = funcs.cameraTarget;
@@ -1576,7 +1650,6 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
  * Get array of mesh colors.
  * @function Player.
  * getColors
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs points.geometry.attributes.position array
  * <pre>
  * THREE.Vector4: 4D point.
@@ -1638,11 +1711,25 @@ Player.getPoints = function ( THREE, arrayFuncs, optionsPoints ) {
  * @param {boolean} [optionsColor.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. Default is undefined.
  * @returns array of mesh colors.
  */
-Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
+Player.getColors = function ( /*THREE, */arrayFuncs, optionsColor ) {
 
+	if ( typeof THREE === 'undefined' ) {
+
+		console.error( 'Call Player.setTHREE(THREE) first.' );
+		return;
+
+	}
 	ColorPicker.palette.setTHREE(THREE);
 	optionsColor = optionsColor || {};
-	optionsColor.palette = optionsColor.palette || palette.get();
+/*	
+	if ( !optionsColor.palette ) {
+
+		console.error( 'Player.getColors: Define palette first.' );
+		return;
+
+	}
+*/	
+//	optionsColor.palette = optionsColor.palette || palette.get();
 	
 	if (
 		( optionsColor.positions !== undefined ) &&
@@ -1654,10 +1741,19 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
 		return optionsColor.colors;
 
 	}
-	optionsColor.colors = optionsColor.colors || [];
 
 	//не надо убирать const length. Иначе переполнится память
 	const length = Array.isArray( arrayFuncs ) ? arrayFuncs.length : optionsColor.positions.count;
+
+	optionsColor.colors = optionsColor.colors || [];
+	if ( !optionsColor.palette ) {
+
+		//Все точки белые и непрозрачные
+		for ( var i = 0; i < length; i++ ) optionsColor.colors.push( 1, 1, 1, 1 );
+		return optionsColor.colors;
+
+	}
+
 	for ( var i = 0; i < length; i++ ) {
 
 		const funcs = Array.isArray( arrayFuncs ) ? arrayFuncs[i] : undefined;
@@ -1759,19 +1855,25 @@ Player.getColors = function ( THREE, arrayFuncs, optionsColor ) {
  * trace line of moving of the point during playing
  * @function Player.
  * traceLine
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
- * @param {THREE.Group} group {@link https://threejs.org/docs/index.html#api/en/objects/Group|Group} or {@link https://threejs.org/docs/index.html#api/en/scenes/Scene|Scene}.
  * @param {object} options the following options are available
  * @param {object} options.player See Player function above.
  */
-Player.traceLine = function ( THREE, group, options ) {
+Player.traceLine = function ( /*THREE, group, */options ) {
 
+	if ( typeof THREE === 'undefined' ) {
+
+		console.error( 'Call Player.setTHREE(THREE) first.' );
+		return;
+
+	}
+/*
 	if ( !group ) {
 
 		console.error( 'Player.traceLine: Define optionsPoints.group of the Player.getPoints first.' );
 		return;
 		
 	}
+*/
 	if ( !settings ) {
 
 		console.error( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
@@ -1782,16 +1884,22 @@ Player.traceLine = function ( THREE, group, options ) {
 	}
 	var line;
 	const arrayLines = [];
-	this.addPoint = function ( point, index, color ) {
+	this.addPoint = function ( mesh/*point*/, index, color ) {
 
+		const attributesPosition = mesh.geometry.attributes.position;
+		var point = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
+		point.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
+//		var point = getObjectPosition( mesh, index ),
+		var sceneIndex = Player.getSelectSceneIndex();
 		if ( settings.max === null ) {
 
-			index = Math.abs( index );
-			if ( index < ( arrayLines.length - 1 ) ){
+			sceneIndex = Math.abs( sceneIndex );
+			if ( sceneIndex < ( arrayLines.length - 1 ) ){
 
-				while ( index < ( arrayLines.length - 1 ) ) {
+				while ( sceneIndex < ( arrayLines.length - 1 ) ) {
 
-					group.remove( arrayLines[arrayLines.length - 1] );
+//					group.remove( arrayLines[arrayLines.length - 1] );
+					mesh.remove( arrayLines[arrayLines.length - 1] );
 					arrayLines.pop();
 
 				}
@@ -1808,7 +1916,8 @@ Player.traceLine = function ( THREE, group, options ) {
 			geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
 
 			const line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
-			group.add( line );
+//			group.add( line );
+			mesh.add( line );
 
 			//point position
 			point = new THREE.Vector3().copy( point );
@@ -1851,7 +1960,7 @@ Player.traceLine = function ( THREE, group, options ) {
 
 				}
 
-			} else MAX_POINTS = index + 1;
+			} else MAX_POINTS = sceneIndex + 1;
 
 			// attributes
 			const positions = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
@@ -1860,21 +1969,22 @@ Player.traceLine = function ( THREE, group, options ) {
 			geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
 
 			// draw range
-			geometry.setDrawRange( index, index );
+			geometry.setDrawRange( sceneIndex, sceneIndex );
 
 			line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
 			line.visible = true;
-			group.add( line );
+//			group.add( line );
+			mesh.add( line );
 
 		}
-
+/*
 		if ( line.geometry ) {//scene do not have geometry
 
 			delete line.geometry.boundingSphere;
 			line.geometry.boundingSphere = null;
 
 		}
-
+*/
 		//Если не удалять boundingSphere
 		//и если двигается камера от проигрывания или ее перемещает пользователь
 		//то в некоторых случаях линию не будет видно даже если она не выходит из поля видимости
@@ -1888,20 +1998,20 @@ Player.traceLine = function ( THREE, group, options ) {
 
 		//point position
 		point = new THREE.Vector3().copy( point );
-		point.toArray( line.geometry.attributes.position.array, index * line.geometry.attributes.position.itemSize );
+		point.toArray( line.geometry.attributes.position.array, sceneIndex * line.geometry.attributes.position.itemSize );
 		line.geometry.attributes.position.needsUpdate = true;
 
 		//point color
 		if ( color === undefined )
 			color = new THREE.Color( 1, 1, 1 );//White
-		Player.setColorAttribute( line.geometry.attributes, index, color );
+		Player.setColorAttribute( line.geometry.attributes, sceneIndex, color );
 
 		//set draw range
-		var start = line.geometry.drawRange.start, count = index + 1 - start;
-		if ( start > index ) {
+		var start = line.geometry.drawRange.start, count = sceneIndex + 1 - start;
+		if ( start > sceneIndex ) {
 
 			var stop = start + line.geometry.drawRange.count;
-			start = index;
+			start = sceneIndex;
 			count = stop - start;
 
 		}
@@ -1980,6 +2090,251 @@ Player.getSettings = function () {
 
 	}
 	return settings;
+
+}
+/**
+ * @function Player.
+ * getSelectSceneIndex
+ * @returns selected scene index.
+ */
+Player.getSelectSceneIndex = function () {
+
+	if ( Player.player )
+		return Player.player.getSelectSceneIndex();
+	return 0;
+
+}
+/**
+ * get time
+ * @function Player.
+ * getTime
+ */
+Player.getTime = function () {
+
+	if ( Player.player )
+		return Player.player.getTime();
+	return 0;
+
+}
+
+/**
+ * get item size of the attribute of the mesh geometry
+ * @function Player.
+ * getItemSize
+ * @param {array} arrayFuncs points.geometry.attributes.position array.
+ * See arrayFuncs parametr of the [Player.getPoints(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints} for details.
+ */
+Player.getItemSize = function ( arrayFuncs ) {
+
+	if ( typeof THREE === 'undefined' ){
+
+		console.error( 'Call Player.setTHREE(THREE) first.' );
+		return;
+
+	}
+	for ( var i = 0; i < arrayFuncs.length; i++ ) {
+
+		var func = arrayFuncs[i];
+		if ( func instanceof THREE.Vector4 )
+			return 4;
+
+	}
+	return 3;
+
+}
+/**
+ * set THREE
+ * @function Player.
+ * setTHREE
+ * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
+ */
+Player.setTHREE = function ( _THREE ) {
+
+	if ( THREE ) {
+
+		if ( !Object.is( THREE, _THREE ) )
+			console.error( 'Player.setTHREE: duplicate THREE. Please use one instance of the THREE library.' )
+		return;
+
+	}
+	if ( !THREE ) {
+
+		THREE = _THREE;
+		Object.assign( THREE.BufferGeometry.prototype, {
+
+			setFromPoints: function ( points, itemSize ) {
+
+				itemSize = itemSize || 3;
+				var position = [];
+
+				for ( var i = 0, l = points.length; i < l; i++ ) {
+
+					var point = points[i];
+					position.push( point.x, point.y, point.z || 0 );
+					if ( itemSize >= 4 )
+						position.push( point.w || 0 );
+
+				}
+
+				this.setAttribute( 'position', new THREE.Float32BufferAttribute( position, itemSize ) );
+
+				return this;
+
+			},
+
+		} );
+
+		//three.js\dev\src\math\Vector4.js
+		Object.assign( THREE.Vector4.prototype, {
+
+			multiply: function ( v ) {
+
+				this.x *= v.x;
+				this.y *= v.y;
+				this.z *= v.z;
+				//		this.w *= v.w || 1;
+				if ( v.w !== undefined )
+					this.w *= v.w;
+
+				return this;
+
+			},
+
+		} );
+		//three.js\dev\src\math\Vector4.js
+		Object.assign( THREE.Vector4.prototype, {
+
+			add: function ( v, w ) {
+
+				if ( w !== undefined ) {
+
+					console.warn( 'THREE.Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+					return this.addVectors( v, w );
+
+				}
+
+				this.x += v.x;
+				this.y += v.y;
+				this.z += v.z;
+				if ( v.w !== undefined )
+					this.w += v.w;
+
+				return this;
+
+			},
+
+		} );
+
+	}
+	//three.js\dev\src\objects\Points.js
+	Object.assign( THREE.Points.prototype, {
+
+		raycast: function ( raycaster, intersects ) {
+
+			const _inverseMatrix = new THREE.Matrix4();
+			const _ray = new THREE.Ray();
+			const _sphere = new THREE.Sphere();
+			const _position = new THREE.Vector3();
+			function testPoint( point, index, localThresholdSq, matrixWorld, raycaster, intersects, object ) {
+
+				const rayPointDistanceSq = _ray.distanceSqToPoint( point );
+
+				if ( rayPointDistanceSq < localThresholdSq ) {
+
+					const intersectPoint = new THREE.Vector3();
+
+					_ray.closestPointToPoint( point, intersectPoint );
+					intersectPoint.applyMatrix4( matrixWorld );
+
+					const distance = raycaster.ray.origin.distanceTo( intersectPoint );
+
+					if ( distance < raycaster.near || distance > raycaster.far ) return;
+
+					intersects.push( {
+
+						distance: distance,
+						distanceToRay: Math.sqrt( rayPointDistanceSq ),
+						point: intersectPoint,
+						index: index,
+						face: null,
+						object: object
+
+					} );
+
+				}
+
+			}
+
+			const geometry = this.geometry;
+			const matrixWorld = this.matrixWorld;
+			const threshold = raycaster.params.Points.threshold;
+
+			// Checking boundingSphere distance to ray
+
+			if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();
+
+			_sphere.copy( geometry.boundingSphere );
+			_sphere.applyMatrix4( matrixWorld );
+			_sphere.radius += threshold;
+
+			if ( raycaster.ray.intersectsSphere( _sphere ) === false ) return;
+
+			//
+
+			_inverseMatrix.getInverse( matrixWorld );
+			_ray.copy( raycaster.ray ).applyMatrix4( _inverseMatrix );
+
+			const localThreshold = threshold / ( ( this.scale.x + this.scale.y + this.scale.z ) / 3 );
+			const localThresholdSq = localThreshold * localThreshold;
+
+			if ( geometry.isBufferGeometry ) {
+
+				const index = geometry.index;
+				const attributes = geometry.attributes;
+				const positions = attributes.position.array;
+				const itemSize = attributes.position.itemSize;
+
+				if ( index !== null ) {
+
+					const indices = index.array;
+
+					for ( let i = 0, il = indices.length; i < il; i++ ) {
+
+						const a = indices[i];
+
+						_position.fromArray( positions, a * itemSize );
+
+						testPoint( _position, a, localThresholdSq, matrixWorld, raycaster, intersects, this );
+
+					}
+
+				} else {
+
+					for ( let i = 0, l = positions.length / itemSize; i < l; i++ ) {
+
+						_position.fromArray( positions, i * itemSize );
+
+						testPoint( _position, i, localThresholdSq, matrixWorld, raycaster, intersects, this );
+
+					}
+
+				}
+
+			} else {
+
+				const vertices = geometry.vertices;
+
+				for ( let i = 0, l = vertices.length; i < l; i++ ) {
+
+					testPoint( vertices[i], i, localThresholdSq, matrixWorld, raycaster, intersects, this );
+
+				}
+
+			}
+
+		},
+
+	} );
 
 }
 

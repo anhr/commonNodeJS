@@ -23,7 +23,7 @@ npm run build
 	Попробовать установить новую версию https://github.com/mishoo/UglifyJS
 
 --------------------------------
-isdoc https://github.com/jsdoc/jsdoc
+jsdoc https://github.com/jsdoc/jsdoc
 Getting Started with JSDoc 3 https://jsdoc.app/about-getting-started.html
 Generating a website:
 	Download https://github.com/jsdoc/jsdoc into D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc
@@ -40,7 +40,7 @@ Generating a website:
 
 	jsdoc -R "..\commonNodeJS\master\player\player.md" "..\commonNodeJS\master\player\player.js" -d "..\commonNodeJS\master\player\jsdoc"
 
-	//Open "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\player\jsdoc"
+	//Open "http://localhost/anhr/commonNodeJS/master/player/jsdoc/index.html"
 
 	/////////////////////////////////////////////////////////////
 

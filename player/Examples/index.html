@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -52,13 +52,14 @@
 		import Player from '../player.js';
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
+		Player.setTHREE(THREE);
 
 		import ColorPicker from '../../colorpicker/colorpicker.js';//https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 		//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 		ColorPicker.palette.setTHREE( THREE );
 
 		//import getShaderMaterialPoints from 'http://localhost/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
-		import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
+		//import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
 		//import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 
 		//import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
@@ -156,24 +157,36 @@
 				}
 
 			}
-
+/*
 			const palette = typeof ColorPicker === 'undefined' ? undefined : new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
 
+			var selectPlaySceneOptions;
+*/
+			const options = {
+
+				scales: { w: { name: 'color', min: -100, max: 100, } },
+				palette: typeof ColorPicker === 'undefined' ? undefined : new ColorPicker.palette(),// { palette: ColorPicker.paletteIndexes.bidirectional } ),
+				point: { size: 15 },
+						
+			}
 			if ( typeof Player !== 'undefined' ) {
 
-				player = new Player( THREE, scene, {
+/*
+				selectPlaySceneOptions = {
 
-					selectPlaySceneOptions: {
+					palette: palette,
 
-						palette: palette,
+				}
+*/
+				player = new Player( /*THREE, */scene, {
 
-					},
+					selectPlaySceneOptions: options,//selectPlaySceneOptions,
 //					cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
 					settings: {
 
 						marks: 100,//Ticks count of the playing.
 						interval: 25,//Ticks per seconds.
-						//min: -1,
+						min: -1,
 						//max: 0,
 						//max: Infinity,//первращается в null после чтения из cookie
 						dt: 0.01,//for max: Infinity
@@ -195,11 +208,22 @@
 //						orbitControls: controls,
 
 					},
+					options: options,
+/*
+					options: {
+
+						scales: { w: { name: 'color', min: -100, max: 100, } },
+						palette: new ColorPicker.palette(),// { palette: ColorPicker.paletteIndexes.bidirectional } );
+						
+					}
+*/
 
 				} );
-//				guiSelectPoint.add( gui );
-//				guiSelectPoint.addMesh( points );
-
+				
+				//Player changes the guiSelectPoint control's values during playing
+				//options.guiSelectPoint = guiSelectPoint;
+				//if ( selectPlaySceneOptions ) selectPlaySceneOptions.guiSelectPoint = guiSelectPoint;
+				
 			}
 
 			var arrayFuncs = typeof Player === 'undefined' ?
@@ -226,6 +250,7 @@
 						},//w
 						*/
 					),//Animated 3D point
+					name: 'w is function',
 					trace: true,//Displays the trace of the point movement.
 
 				},
@@ -235,8 +260,8 @@
 						0.5,//x
 						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
 						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.1' ),//z
-						//100,//w
-						new Function( 't', 'return 100*t' ),//w
+						100,//w
+						//new Function( 't', 'return 100*t' ),//w
 						/*
 						{
 
@@ -247,7 +272,8 @@
 						},//w
 						*/
 					),//Animated 3D point
-					trace: true,//Displays the trace of the point movement.
+					name: 'w is number',
+					//trace: true,//Displays the trace of the point movement.
 					cameraTarget: {
 
 						//boLook: false,
@@ -263,8 +289,8 @@
 
 						},
 						//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
-						//distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) ),
-						distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
+						distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) ),
+						//distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
 
 					},
 
@@ -273,6 +299,7 @@
 				{
 
 					vector: new THREE.Vector4( 0, 0, 0, new THREE.Color( "rgb( 0, 0, 255)" ) ),//Animated 3D point
+					name: 'color',
 					trace: true,//Displays the trace of the point movement.
 					/*
 					cameraTarget: {
@@ -361,7 +388,8 @@
 
 						Player: typeof Player === 'undefined' ? undefined : Player,
 //						player: player,
-						options: { palette: palette, },//нужно на случай если не создан плеер
+						options: options,
+//						options: { palette: palette, },//нужно на случай если не создан плеер
 //						tMin: player ? Player.getSettings().min : undefined,
 
 					}
@@ -372,20 +400,24 @@
 				MyPoints( THREE, arrayFuncs,
 					scene, {
 
-					Player: typeof Player === 'undefined' ? undefined : Player,
-					options: {
 
-						point: { size: 15 },
-						palette: palette,
+						Player: typeof Player === 'undefined' ? undefined : Player,
+						options: options,
+/*
+						options: {
 
-					},
-					pointsOptions: {
+							point: { size: 15 },
+							palette: palette,
 
-						position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
-						//shaderMaterial: {}
-						onReady: function( points ) { if ( guiSelectPoint ) guiSelectPoint.addMesh( points ); }
+						},
+*/
+						pointsOptions: {
 
-					}
+							position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+							//shaderMaterial: {},
+							onReady: function( points ) { if ( guiSelectPoint ) guiSelectPoint.addMesh( points ); }
+
+						}
 
 				} );
 
@@ -394,7 +426,9 @@
 				console.log( 'Using THREE.Points method for creating of the points.' );
 				const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
 					typeof Player === 'undefined' ? arrayFuncs:
-						Player.getPoints( THREE, arrayFuncs, { group: scene, options: { player: { player: player } } } )
+						Player.getPoints( /*THREE, */arrayFuncs, { group: scene, options: { player: { player: player } } } ),
+					typeof Player === 'undefined' ? 3:
+						Player.getItemSize( arrayFuncs )
 				),
 					new THREE.PointsMaterial( {
 
@@ -408,7 +442,7 @@
 
 /*
 					points.geometry.setAttribute( 'color',
-						new THREE.Float32BufferAttribute( Player.getColors( THREE, arrayFuncs, {
+						new THREE.Float32BufferAttribute( Player.getColors( arrayFuncs, {
 
 		//						scale: options.scales.w,
 							palette: palette,
@@ -457,6 +491,7 @@
 				}
 
 			}
+			if ( guiSelectPoint ) guiSelectPoint.addMesh( cube );
 
 			//player.play3DObject();
 
