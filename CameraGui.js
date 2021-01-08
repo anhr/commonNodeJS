@@ -16,6 +16,8 @@
 //import PositionController from './PositionController.js';
 import { dat } from './dat/dat.module.js';
 
+import functionsFolder from './functionsFolder.js';
+
 //import Player from './player/player.js';
 //import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
 
@@ -191,6 +193,17 @@ var CameraGui = function ( gui, camera, options ) {
 		dat.controllerNameAndTitle( controllersDistance.x, options.scales.x.name );
 		dat.controllerNameAndTitle( controllersDistance.y, options.scales.y.name );
 		dat.controllerNameAndTitle( controllersDistance.z, options.scales.z.name );
+
+		const funcFolder = new functionsFolder( fCamera, options.scales, function( func, axisName ) {
+
+			camera.userData.cameraTarget.distanceToCamera[axisName] = func;
+
+		}, {
+
+			getLanguageCode: options.getLanguageCode,
+			vector: camera.userData.cameraTarget.distanceToCamera,
+
+		} );
 	
 	}
 
