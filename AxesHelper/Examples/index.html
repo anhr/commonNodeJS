@@ -72,6 +72,7 @@
 		import Player from '../../player/player.js';
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
+		Player.setTHREE( THREE );
 		
 		var camera, scene, renderer, stereoEffect, axesHelper, controls, intersects, guiSelectPoint, moveGroup, raycaster;
 		const mouse = new THREE.Vector2(), arrayintersectObjects = [], threshold = 0.02;//0.08;
@@ -203,10 +204,10 @@
 			}
 
 			const arrayFuncs = [
-				new THREE.Vector3( 0.5, 0.5 ,0.5 ),
+				new THREE.Vector4( -0.5, -0.5 ,-0.5, new Function( 't', 'return 50 - 50*t' ) ),
 				{
 
-					vector: new THREE.Vector3( -0.5, -0.5 ,-0.5 ),
+					vector: new THREE.Vector3( new Function( 't', 'a', 'b', 'return t*a+0.5+b' ), 0.5, 0.5 ),
 					//trace: true,//Displays the trace of the point movement.
 					/*
 					cameraTarget: {
@@ -229,45 +230,48 @@
 
 				}
 			]
-			const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
-					Player.getPoints( THREE, arrayFuncs, {
 
-						group: scene,
-						//options: { player: { player: player } }
+			var points;
+			if ( typeof Player !== "undefined" )
+				points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
+						Player.getPoints( /*THREE, */arrayFuncs, {
 
-					} )
-				),
-				new THREE.PointsMaterial( {
+							group: scene,
+							//options: { player: { player: player } }
 
-					color: 0xffffff,
-					//size: threshold * 2,//0.05,
-					size: 5,//0.05,
-					sizeAttenuation: false,
-					alphaTest: 0.5,
-//					vertexColors: THREE.VertexColors
+						} )
+					, Player.getItemSize( arrayFuncs ) ),
+					new THREE.PointsMaterial( {
 
-				} ) );
-			groupMove.add( points );
-			/*
-			const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [
-					new THREE.Vector3( 0.5, 0.5 ,0.5 ),
-					new THREE.Vector3( -0.5, -0.5 ,-0.5 )
-				] ),
-				new THREE.PointsMaterial( {
+						color: 0xffffff,
+						//size: threshold * 2,//0.05,
+						size: 5,//0.05,
+						sizeAttenuation: false,
+						alphaTest: 0.5,
+	//					vertexColors: THREE.VertexColors
 
-					color: 0xffffff,
-					//size: threshold * 2,//0.05,
-					size: 5,//0.05,
-					sizeAttenuation: false,
-					alphaTest: 0.5,
-//					vertexColors: THREE.VertexColors
+					} ) );
+			else
+				points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [
+						new THREE.Vector3( 0.5, 0.5 ,0.5 ),
+						new THREE.Vector3( -0.5, -0.5 ,-0.5 )
+					] ),
+					new THREE.PointsMaterial( {
 
-				} ) );
-			*/
+						color: 0xffffff,
+						//size: threshold * 2,//0.05,
+						size: 5,//0.05,
+						sizeAttenuation: false,
+						alphaTest: 0.5,
+	//					vertexColors: THREE.VertexColors
+
+					} ) );
 			//points.position.copy( new THREE.Vector3( 0.1, 0, 0 ) );
+			groupMove.add( points );
 			points.name = 'no sizeAttenuation';
 			if ( typeof StereoEffect === "undefined" )
 				arrayintersectObjects.push( points );
+/*
 			function getIntersectionPosition( intersection ) {
 				
 				if ( typeof getObjectPosition !== 'undefined' )
@@ -275,6 +279,7 @@
 				return new THREE.Vector3().fromArray( intersection.object.geometry.attributes.position.array, intersection.index * points.geometry.attributes.position.itemSize );
 			
 			}
+*/
 			points.userData.raycaster = {
 
 				onIntersection: function ( intersection ) {
@@ -523,8 +528,13 @@
 				if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.orbitControls = controls;
 
 			}
-			points.userData.player = { arrayFuncs: arrayFuncs, }
-			Player.selectMeshPlayScene( THREE, points );
+
+			if ( typeof Player !== "undefined" ) {
+
+				points.userData.player = { arrayFuncs: arrayFuncs, }
+				Player.selectMeshPlayScene( /*THREE, */points );
+
+			}
 
 			if ( typeof StereoEffect !== "undefined" ) {
 

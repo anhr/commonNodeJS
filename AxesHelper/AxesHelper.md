@@ -369,8 +369,8 @@ const arrayFuncs = [
 	}//Second point
 ]
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
-		Player.getPoints( THREE, arrayFuncs, { group: scene, } )
-	),
+		Player.getPoints( arrayFuncs, { group: scene, } ),
+		Player.getItemSize( arrayFuncs ) ),
 	new THREE.PointsMaterial( {
 
 		color: 0xffffff,
@@ -387,7 +387,7 @@ if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.orbitControls =
 Define <b>points.userData.player</b> and call <b>Player.selectMeshPlayScene(...)</b>.
 ```
 points.userData.player = { arrayFuncs: arrayFuncs, }
-Player.selectMeshPlayScene( THREE, points );
+Player.selectMeshPlayScene( points );
 ```
 ATTENTION!!! Call <b>Player.selectMeshPlayScene(...)</b> after creation of the <b>OrbitControls</b> instance.
 
