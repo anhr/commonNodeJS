@@ -149,7 +149,7 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 		const points = new THREE.Points(
 
 			typeof arrayFuncs === 'function' ? arrayFuncs() :
-				new THREE.BufferGeometry().setFromPoints( settings.Player.getPoints( THREE, arrayFuncs,
+				new THREE.BufferGeometry().setFromPoints( settings.Player.getPoints( /*THREE, */arrayFuncs,
 					{ options: options, group: group, t: pointsOptions.tMin } ), 4 ),
 			new THREE.PointsMaterial( { size: options.point.size / options.point.sizePointsMaterial, vertexColors: THREE.VertexColors } )
 
@@ -161,7 +161,7 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 
 			}
 		points.geometry.setAttribute( 'color',
-			new THREE.Float32BufferAttribute( settings.Player.getColors( THREE, arrayFuncs,
+			new THREE.Float32BufferAttribute( settings.Player.getColors( /*THREE, */arrayFuncs,
 				{
 
 					positions: points.geometry.attributes.position,
