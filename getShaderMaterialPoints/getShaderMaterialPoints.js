@@ -24,7 +24,7 @@ import MyPoints from '../myPoints/myPoints.js';
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Group|THREE.Scene} group THREE group or scene
  * @param {array} arrayFuncs points.geometry.attributes.position array.
- * See arrayFuncs parametr of the [Player.getColors(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getColors} for details.
+ * See arrayFuncs parametr of the [Player.getPoints(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints} for details.
  * @param {function(THREE.Points)} onReady Callback function that take as input the new THREE.Points.
  * @param {object} [settings]
  * @param {number} [settings.tMin] start time. Uses for playing of the points. Default is 0.
@@ -64,14 +64,14 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 	if ( typeof arrayFuncs === 'function' )
 		geometry = arrayFuncs();
 	else geometry = new THREE.BufferGeometry().setFromPoints
-		( settings.Player.getPoints( THREE, arrayFuncs,
+		( settings.Player.getPoints( /*THREE, */arrayFuncs,
 //			{ options: { a: settings.options.a, b: settings.options.b, player: settings.options.player }, group: group, t: tMin, } ),
 			{ options: { a: settings.options.a, b: settings.options.b }, group: group, t: tMin, } ),
 			arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
 	var indexArrayCloud = arrayCloud === undefined ? undefined : MyPoints.pushArrayCloud( THREE, arrayCloud, geometry );//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
 	if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints )
 		geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( settings.Player.getColors
-			( THREE, arrayFuncs,
+			( /*THREE, */arrayFuncs,
 				{
 
 					opacity: settings.pointsOptions === undefined ? undefined : settings.pointsOptions.opacity,
@@ -227,14 +227,14 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 		if ( typeof arrayFuncs === 'function' )
 			geometry = arrayFuncs();
 		else geometry = new THREE.BufferGeometry().setFromPoints
-			( settings.Player.getPoints( THREE, arrayFuncs,
+			( settings.Player.getPoints( arrayFuncs,
 				//			{ options: { a: settings.options.a, b: settings.options.b, player: settings.options.player }, group: group, t: tMin, } ),
 				{ options: { a: settings.options.a, b: settings.options.b }, group: group, t: Player.getSettings().min, } ),
 				arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
 		var indexArrayCloud = arrayCloud === undefined ? undefined : MyPoints.pushArrayCloud( THREE, arrayCloud, geometry );//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
 		if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints )
 			geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( settings.Player.getColors
-				( THREE, arrayFuncs,
+				( arrayFuncs,
 					{
 
 						opacity: settings.pointsOptions === undefined ? undefined : settings.pointsOptions.opacity,
@@ -291,7 +291,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 		if ( points.material.uniforms.cloudPoints !== undefined )
 			points.material.uniforms.cloudPoints.value.needsUpdate = true;
 
-		if ( settings.Player ) settings.Player.selectMeshPlayScene( THREE, points, undefined, 0, settings.options );
+		if ( settings.Player ) settings.Player.selectMeshPlayScene( /*THREE, */points, undefined, 0, settings.options );
 
 	}, settings.pointsOptions === undefined ? undefined : settings.pointsOptions.path );
 
