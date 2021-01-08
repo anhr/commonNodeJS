@@ -131,7 +131,8 @@ const paletteIndexes = {
  * Default is undefuned
  * @param {callback} [options.sliderIndicator.callback] Called whenever the color is changed provided chosen color in RGB HEX format.
  * @param {number} [options.sliderIndicator.value] Initial position of the slider indicator in percent. Default is 0.
- * @param {onError} [options.onError] Called whenever an error has occurred. Default is undefined.
+ * @param {onError} [options.onError] Called whenever an error has occurred.
+ * @param {boolean} [options.duplicate] true - allow to create two or more palettes on your web page.
  */
 function create( elSliderWrapper, options ) {
 
@@ -518,6 +519,8 @@ function CreateSVGElement( el, attrs, children ) {
 	return el;
 }
 
+var boCreated = false;
+
 /**
  * create palette
  * @param {object} [options] the following options are available
@@ -538,6 +541,7 @@ function CreateSVGElement( el, attrs, children ) {
 */
 function Palette( options ) {
 
+
 	function paletteitem( percent, r, g, b ) {
 
 		return {
@@ -552,6 +556,13 @@ function Palette( options ) {
 	}
 
 	options = options || {};
+
+	if ( !options.duplicate && boCreated ) {
+
+		console.warn( 'Palette: duplicate palette' );
+		return;
+
+	}
 	if ( options.palette === undefined )
 		options.palette = paletteIndexes.BGRW;
 
@@ -736,6 +747,8 @@ function Palette( options ) {
 		return new THREE.Color( "rgb(" + c.r + ", " + c.g + ", " + c.b + ")" );
 
 	}
+
+	boCreated = true;
 
 }
 

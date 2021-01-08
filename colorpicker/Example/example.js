@@ -22,6 +22,7 @@ function example( ColorPicker ) {
 	var colorpickerHI = ColorPicker.create( document.getElementById( "colorpickerHI" ), {
 
 		//direction: false,
+		duplicate: true,
 		sliderIndicator: {
 			callback: function ( c ) {
 
@@ -57,6 +58,7 @@ function example( ColorPicker ) {
 	ColorPicker.create( "colorpicker3", {
 
 		orientation: 'vertical',
+		duplicate: true,
 
 	} );
 
@@ -64,6 +66,7 @@ function example( ColorPicker ) {
 	var elValue4 = document.getElementById( 'value4' );
 	var colorpicker4 = ColorPicker.create( "colorpicker4", {
 
+		duplicate: true,
 		orientation: 'vertical',
 		//direction: false,
 		sliderIndicator: {
@@ -102,6 +105,7 @@ function example( ColorPicker ) {
 	var elValue5 = document.getElementById( 'value5' );
 	var colorpicker5 = ColorPicker.create( document.getElementById( "colorpicker5" ), {
 
+		duplicate: true,
 		direction: false,
 		sliderIndicator: {
 			callback: function ( c ) {
@@ -136,6 +140,7 @@ function example( ColorPicker ) {
 	var elValueVUD = document.getElementById( 'valueVUD' );
 	var colorpickerVUD = ColorPicker.create( "colorpickerVUD", {
 
+		duplicate: true,
 		orientation: 'vertical',
 		direction: false,
 		sliderIndicator: {
@@ -171,6 +176,7 @@ function example( ColorPicker ) {
 	var elValueBGRW = document.getElementById( 'valueBGRW' );
 	var colorpickerBGRW = ColorPicker.create( "colorpickerBGRW", {
 
+		duplicate: true,
 		palette: ColorPicker.paletteIndexes.BGRW,
 		sliderIndicator: {
 			callback: function ( c ) {
@@ -204,6 +210,7 @@ function example( ColorPicker ) {
 	var elValueMH = document.getElementById( 'valueMH' );
 	var colorpickerMH = ColorPicker.create( "colorpickerMH", {
 
+		duplicate: true,
 		palette: ColorPicker.paletteIndexes.monochrome,
 		sliderIndicator: {
 			callback: function ( c ) {
@@ -237,6 +244,7 @@ function example( ColorPicker ) {
 	var elValueBH = document.getElementById( 'valueBH' );
 	var colorpickerBH = ColorPicker.create( "colorpickerBH", {
 
+		duplicate: true,
 		palette: ColorPicker.paletteIndexes.bidirectional,
 		sliderIndicator: {
 			callback: function ( c ) {
@@ -270,6 +278,7 @@ function example( ColorPicker ) {
 	var elValueRH = document.getElementById( 'valueRH' );
 	var colorpickerRH = ColorPicker.create( "colorpickerRH", {
 
+		duplicate: true,
 		palette: ColorPicker.paletteIndexes.rainbow,
 		sliderIndicator: {
 			callback: function ( c ) {
@@ -303,6 +312,7 @@ function example( ColorPicker ) {
 	var elValueCPH = document.getElementById( 'valueCPH' );
 	var colorpickerCPH = ColorPicker.create( "colorpickerCPH", {
 
+		duplicate: true,
 		palette: [
 
 			{ percent: 0, r: 0, g: 0, b: 0, },

@@ -369,7 +369,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  */
 var optionsStyle = {
 	tag: 'style'
-};loadScript.sync('/anhr/colorpicker/master/colorpicker.css', optionsStyle);
+};var getCurrentScript = function getCurrentScript() {
+	if (document.currentScript && document.currentScript.src !== '') return document.currentScript.src;
+	var scripts = document.getElementsByTagName('script'),
+	    str = scripts[scripts.length - 1].src;
+	if (str !== '') return src;
+	return new Error().stack.match(/(https?:[^:]*)/)[0];
+};
+var getCurrentScriptPath = function getCurrentScriptPath() {
+	var script = getCurrentScript(),
+	    path = script.substring(0, script.lastIndexOf('/'));
+	return path;
+};
+var currentScriptPath = getCurrentScriptPath();
+loadScript.sync(currentScriptPath + '/colorpicker.css', optionsStyle);
 var type = window.SVGAngle || document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") ? "SVG" : "VML";
 var svgNS = 'http://www.w3.org/2000/svg';
 var uniqID = 0;
@@ -596,6 +609,7 @@ function CreateSVGElement(el, attrs, children) {
 		el.appendChild(children[i]);
 	}return el;
 }
+var boCreated = false;
 function Palette(options) {
 	function paletteitem(percent, r, g, b) {
 		return {
@@ -606,6 +620,10 @@ function Palette(options) {
 		};
 	}
 	options = options || {};
+	if (!options.duplicate && boCreated) {
+		console.warn('Palette: duplicate palette');
+		return;
+	}
 	if (options.palette === undefined) options.palette = paletteIndexes.BGRW;
 	var arrayPalette = [new paletteitem(0, 0x00, 0x00, 0xFF),
 	new paletteitem(33, 0x00, 0xFF, 0x00),
@@ -700,6 +718,7 @@ function Palette(options) {
 		if (c === undefined) c = { r: 255, g: 255, b: 255 };
 		return new THREE.Color("rgb(" + c.r + ", " + c.g + ", " + c.b + ")");
 	};
+	boCreated = true;
 }
 var THREE;
 Palette.setTHREE = function (_THREE) {

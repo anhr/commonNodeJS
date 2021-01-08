@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -118,11 +118,11 @@
 			]
 //			var points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( options.getPoints( tMin, arrayFuncs, a, b ), 4 ),
 			var points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
-				options.getPoints( THREE, arrayFuncs, { options: { a: a, b: b } } ), 4 ),
+				options.getPoints( /*THREE, */arrayFuncs, { options: { a: a, b: b } } ), options.getItemSize( arrayFuncs ) ),
 				new THREE.PointsMaterial( { size: 0.05, vertexColors: THREE.VertexColors } ) );
 			points.name = 'Wave';
 //			points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( options.getColors( tMin, arrayFuncs, options.scales.w ), 3 ) );
-			points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( options.getColors( THREE, arrayFuncs,
+			points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( options.getColors( /*THREE, */arrayFuncs,
 				{
 
 					scale: options.scales.w,
@@ -175,10 +175,10 @@
 			]
 //			points = new THREE.Points( new BufferGeometry().setFromPoints( options.getPoints( tMin, arrayFuncs, a, b ), 4 ),
 			points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
-				options.getPoints( THREE, arrayFuncs, { options: { a: a, b: b } } ), 4 ),
+				options.getPoints( /*THREE, */arrayFuncs, { options: { a: a, b: b } } ), options.getItemSize( arrayFuncs ) ),
 				new THREE.PointsMaterial( { size: 0.05, vertexColors: THREE.VertexColors } ) );
 //			points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( options.getColors( tMin, arrayFuncs, options.scales.w ), 3 ) );
-			points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( options.getColors( THREE, arrayFuncs,
+			points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( options.getColors( /*THREE, */arrayFuncs,
 				{
 
 					scale: options.scales.w,
