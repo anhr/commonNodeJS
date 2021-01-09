@@ -554,7 +554,7 @@ function Palette( options ) {
 		}
 
 	}
-
+*/	
 	options = options || {};
 
 	if ( !options.duplicate && boCreated ) {
