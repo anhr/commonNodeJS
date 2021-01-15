@@ -217,7 +217,7 @@ var CameraGui = function ( gui, camera, options ) {
 			z: options.orbitControls.target.z,
 
 		} :
-		undefined;
+		{ x: 0, y: 0, z: 0 };//default camera look at zero coordinate
 	dat.controllerNameAndTitle( fCamera.add( {
 
 		defaultF: function ( value ) {
@@ -235,9 +235,13 @@ var CameraGui = function ( gui, camera, options ) {
 
 			}
 
-			controllersDistance.x.setValue( defaultDistance.x );
-			controllersDistance.y.setValue( defaultDistance.y );
-			controllersDistance.z.setValue( defaultDistance.z );
+			if ( controllersDistance ) {
+
+				controllersDistance.x.setValue( defaultDistance.x );
+				controllersDistance.y.setValue( defaultDistance.y );
+				controllersDistance.z.setValue( defaultDistance.z );
+
+			}
 
 		},
 
