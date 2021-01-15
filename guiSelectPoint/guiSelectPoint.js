@@ -624,6 +624,16 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				return;//duplicate FrustumPoints. Сюда попадает когда пользователь меняет количество слоев или Y точек в FrustumPoints.
 			if (
 				( option.mesh !== undefined ) &&
+				( option.mesh.uuid === mesh.uuid )
+			) {
+
+				console.error( 'guiSelectPoint.addMesh(...): Duplicate mesh.' );
+				return;
+				
+			}
+/*				
+			if (
+				( option.mesh !== undefined ) &&
 				( mesh.name !== '' ) && //если не делать эту проверку то невозможно вставить два mesh без имени
 				( option.mesh.name === mesh.name )
 			) {
@@ -634,6 +644,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				//Потом из guiSelectPointF.addControllers
 
 			}
+*/			
 
 		}
 		const opt = document.createElement( 'option' );
