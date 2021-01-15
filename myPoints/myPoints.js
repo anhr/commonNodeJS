@@ -263,8 +263,8 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 				points.rotation[axisName] = typeof pointsOptions.rotation[axisName] === "function" ?
 					pointsOptions.rotation[axisName]( t, options.a, options.b ) :
 					pointsOptions.rotation[axisName];
-				while ( points.rotation[axisName] > Math.PI * 2 )
-					points.rotation[axisName] -= Math.PI * 2
+				while ( points.rotation[axisName] < 0 ) points.rotation[axisName] += Math.PI * 2;
+				while ( points.rotation[axisName] > Math.PI * 2 ) points.rotation[axisName] -= Math.PI * 2
 
 			}
 			setRotation( 'x' );

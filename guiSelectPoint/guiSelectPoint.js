@@ -233,7 +233,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			lang.color = 'Цвет';
 
 			lang.opacity = 'Непрозрачность';
-			lang.opacityTitle = 'Число в диапазоне 0,0 - 1,0, указывающий, насколько прозрачен материал. Значение 0.0 означает полностью прозрачный, 1.0 - полностью непрозрачный.';
+			lang.opacityTitle = 'Число в диапазоне 0,0 - 1,0, указывающее, насколько прозрачен материал. Значение 0.0 означает полностью прозрачный, 1.0 - полностью непрозрачный.';
 
 			lang.defaultButton = 'Восстановить';
 			lang.defaultScaleTitle = 'Восстановить масштаб 3D объекта по умолчанию.';
@@ -329,6 +329,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		return controller;
 
 	}
+	var wLimitsDefault;
 	function setPosition( intersectionSelected ) {
 
 		const player = intersectionSelected.object.userData.player;
@@ -358,16 +359,18 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		var displayControllerW, displayControllerColor, displayControllerOpacity;
 		const none = 'none', block = 'block';
-		if ( typeof intersection.object.userData.arrayFuncs === "function" )
+		if ( typeof intersection.object.userData.player.arrayFuncs === "function" )
 			console.error( 'arrayFuncs === "function" under constraction' );
 		var opasity;
-		const func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined,
-			color = func === undefined ?
+		const func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined;
+		function isWObject() { return ( typeof func.w === 'object' ) && ( func.w instanceof THREE.Color === false ); }
+		var color = func === undefined ?
 				undefined :
 				Array.isArray( func.w ) || ( typeof func.w === "function" ) ?
-//					execFunc( func, 'w', group.userData.t, options.a, options.b ) :
 					Player.execFunc( func, 'w', Player.getTime(), options.a, options.b ) :
-					func.w;
+					isWObject() ? 
+						Player.execFunc( func.w, 'func', Player.getTime(), options.a, options.b ) :
+						func.w;
 
 		if ( color === undefined ) {
 
@@ -427,6 +430,29 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					displayControllerW = none;
 				else {
 
+					if ( !wLimitsDefault ) {
+
+						wLimitsDefault = {
+
+							min: controllerW.__min,
+							max: controllerW.__max,
+
+						}
+
+					}
+					if ( isWObject() ) {
+
+						controllerW.min( func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min );
+						controllerW.max( func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max );
+						if ( ( controllerW.__min !== 'undefined' ) && ( controllerW.__max !== 'undefined' ) )
+							controllerW.step( ( controllerW.__max - controllerW.__min ) / 100 )
+
+					} else {
+
+						controllerW.min( wLimitsDefault.min );
+						controllerW.max( wLimitsDefault.max );
+
+					}
 					setValue( controllerW, color );
 					displayControllerW = block;
 
@@ -683,7 +709,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			const mesh = getMesh();
 			const line = ( mesh.userData.player.arrayFuncs === undefined ) || ( typeof intersection.object.userData.player.arrayFuncs === "function" ) ?
 				undefined :
-				mesh.userData.player.arrayFuncs[intersectionSelected.index].line;//You can not trace points if you do not defined the mesh.userData.arrayFuncs
+				mesh.userData.player.arrayFuncs[intersectionSelected.index].line;//You can not trace points if you do not defined the mesh.userData.player.arrayFuncs
 			if ( cTrace )
 				cTrace.setValue( line === undefined ? false : line.isVisible() )
 
@@ -733,6 +759,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	}
 	function getMesh() {
 
+		if ( !cMeshs ) {
+
+			console.error( 'GuiSelectPoint().getSelectedPointIndex().getMesh(): call GuiSelectPoint.add( gui ); first.' );
+			return undefined;
+			
+		}
 		const selectedIndex = cMeshs.__select.options.selectedIndex;
 		if ( selectedIndex !== -1 )
 			return cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh;
@@ -1200,8 +1232,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
 							if ( CT ) {
 
 								cameraTarget = CT;
-								if ( del )
+								if ( del ) {
+
 									arrayFuncs[j].cameraTarget = undefined;
+									delete arrayFuncs[j].cameraTarget;
+
+								}
 								return cameraTarget;
 
 							}
@@ -1238,7 +1274,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 				}
 				cameraTarget = point.cameraTarget;
-				point.cameraTarget = undefined;
+				if ( point.cameraTarget ) point.cameraTarget = undefined;
 				if ( orbitControlsOptions ) {
 
 					if ( getCameraTarget() )

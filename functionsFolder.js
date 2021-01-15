@@ -120,7 +120,25 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 		}
 		setVectorAxis( 'x' );
 		setVectorAxis( 'y' );
-		setVectorAxis( 'z' );
+		var dislay = false;
+		if ( _vector.z ) {
+
+			setVectorAxis( 'z' );
+			dislay = true;
+
+		}
+		function dislayEl( controller, displayController ) {
+
+			if ( controller === undefined )
+				return;
+			if ( typeof displayController === "boolean" )
+				displayController = displayController ? 'block' : 'none';
+			var el = controller.domElement;
+			while ( el.tagName.toUpperCase() !== "LI" ) el = el.parentElement;
+			el.style.display = displayController;
+
+		}
+		dislayEl( cFunctions.z, dislay );
 
 	}
 	/**

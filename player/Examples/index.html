@@ -63,7 +63,7 @@
 		//import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 
 		//import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
-		//import MyPoints from '../../myPoints/myPoints.js';
+		import MyPoints from '../../myPoints/myPoints.js';
 
 		//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 		import CanvasMenu from '../../canvasMenu/canvasMenu.js';
@@ -274,6 +274,7 @@
 					),//Animated 3D point
 					name: 'w is number',
 					//trace: true,//Displays the trace of the point movement.
+					/*
 					cameraTarget: {
 
 						//boLook: false,
@@ -293,6 +294,7 @@
 						//distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
 
 					},
+					*/
 
 				},
 				new THREE.Vector3( -0.5, -0.5, -0.5, 50 ),
@@ -301,7 +303,6 @@
 					vector: new THREE.Vector4( 0, 0, 0, new THREE.Color( "rgb( 0, 0, 255)" ) ),//Animated 3D point
 					name: 'color',
 					trace: true,//Displays the trace of the point movement.
-					/*
 					cameraTarget: {
 
 						camera: camera,
@@ -317,7 +318,6 @@
 						//distanceToCamera: new THREE.Vector3( 0, 0, 10 ),
 
 					},
-					*/
 
 				},
 			];
@@ -414,6 +414,7 @@
 						pointsOptions: {
 
 							position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+							rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
 							//shaderMaterial: {},
 							onReady: function( points ) { if ( guiSelectPoint ) guiSelectPoint.addMesh( points ); }
 

@@ -554,15 +554,16 @@ function Palette( options ) {
 		}
 
 	}
-*/	
-	options = options || {};
 
+	options = options || {};
+/*есть случай когда для каждой точки создается своя палитра
 	if ( !options.duplicate && boCreated ) {
 
 		console.warn( 'Palette: duplicate palette' );
 		return;
 
 	}
+*/	
 	if ( options.palette === undefined )
 		options.palette = paletteIndexes.BGRW;
 

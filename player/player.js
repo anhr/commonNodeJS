@@ -184,9 +184,13 @@ function Player( /*THREE, */group, options ) {
 	 */
 	this.getTime = function() {
 
-		const res = settings.min + selectSceneIndex * settings.dt;
-		if ( isNaN( res ) ) console.error( 'Player.getTime(): res = ' + res );
-		return res;
+		const t = settings.min + selectSceneIndex * settings.dt;
+		if ( isNaN( t ) ) console.error( 'Player.getTime(): t = ' + t );
+		if ( ( settings.max !== null ) && ( t > settings.max ) )
+			console.error( 'Player.getTime(): t = ' + t + ' settings.max = ' + settings.max );
+		if ( t < settings.min )
+			console.error( 'Player.getTime(): t = ' + t + ' settings.min = ' + settings.min );
+		return t;
 
 	}
 
@@ -313,6 +317,13 @@ function Player( /*THREE, */group, options ) {
 				selectSceneIndex = 0;
 			else {
 
+				//Для вычисления текущего времени в случае:
+				//1. Запустить плеер и дождаться когда проигрывание остановится после достижения максимального времени
+				//2. В guiSelectPoint выбрать точку, цвет которой зависит от времени
+				//Тогда если убрать эту строку, то selectSceneIndex и время окажется за диапазоном допустимых значений
+				//и цвет точки окажется неверным
+				selectSceneIndex = settings.marks - 1;
+
 				pause();
 				return;
 
@@ -338,8 +349,8 @@ function Player( /*THREE, */group, options ) {
 		}
 
 		playing = true;
-		if ( ( settings.max !== null ) && ( selectSceneIndex >= settings.marks ) )
-			selectSceneIndex = -1;
+		if ( ( settings.max !== null ) && ( selectSceneIndex >= ( settings.marks - 1 ) ) )
+			selectSceneIndex = 0;//-1;
 		playNext();
 		RenamePlayButtons();
 
@@ -712,7 +723,12 @@ function Player( /*THREE, */group, options ) {
 			name: lang.playSymbol,
 			title: lang.playTitle,
 			id: "menuButtonPlay",
-			onclick: function ( event ) { player.play3DObject(); }
+			onclick: function ( event ) {
+
+//				if ( selectSceneIndex >= ( settings.marks - 1 ) ) selectSceneIndex =  0;
+				player.play3DObject();
+
+			}
 
 		} );
 
@@ -1064,6 +1080,7 @@ function cameraTarget( /*THREE, */mesh, funcs, t, i ) {
 				if ( camera.userData.cameraTarget.rotation )
 					camera.position.applyAxisAngle( camera.userData.cameraTarget.rotation.axis,
 						Player.execFunc( camera.userData.cameraTarget.rotation, 'angle', t ) );
+console.log('camera.position(' + camera.position.x + ',' + camera.position.y + ',' + camera.position.z + ') target(' + target.x + ',' + target.y + ',' + target.z + ')');
 				camera.position.add( target );
 				camera.lookAt( target );
 				if ( camera.userData.cameraTarget.orbitControls ) {
@@ -1132,7 +1149,7 @@ Player.cameraTarget = function ( /*THREE, */mesh ) {
 			var parent = mesh.parent;
 			do {
 
-				if ( parent.userData.t )
+				if ( parent.userData.t !== undefined )
 					return parent.userData.t;
 				parent = parent.parent;
 
@@ -1196,8 +1213,28 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 
 	}
 
-	if ( mesh.userData.player.selectPlayScene )
+	if ( mesh.userData.player.selectPlayScene ) {
+
 		mesh.userData.player.selectPlayScene( t );
+
+		//если не приводить угол поворота в диапазон 0 - 360 градусов,
+		//то угол поворота будет равен нулю или Math.PI * 2
+		//когда пользователь выберет mesh в guiSelectPoint.js
+		//потому что в органе управления угла поворота угол поворота ограничен 0 - 360 градусов,
+		//смотри строку
+		//cRotations[name] = fRotation.add( new THREE.Vector3(), name, 0, Math.PI * 2, 1 / 360 ).
+		//в guiSelectPoint
+		function setRotation( axisName ) {
+
+			while ( mesh.rotation[axisName] < 0 ) mesh.rotation[axisName] += Math.PI * 2;
+			while ( mesh.rotation[axisName] > Math.PI * 2 ) mesh.rotation[axisName] -= Math.PI * 2;
+
+		}
+		setRotation( 'x' );
+		setRotation( 'y' );
+		setRotation( 'z' );
+		
+	}
 
 	function setAttributes( a, b ) {
 
@@ -1253,8 +1290,9 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 					color = options.palette.toColor( value, min, max );
 				else {
 
-					const c = { r: 255, g: 255, b: 255 }
-					return new THREE.Color( "rgb(" + c.r + ", " + c.g + ", " + c.b + ")" );
+					const c = { r: 255, g: 255, b: 255 };
+					color = new THREE.Color( "rgb(" + c.r + ", " + c.g + ", " + c.b + ")" );
+					return color;
 /*				
 					ColorPicker.palette.setTHREE( THREE );
 					color = palette.get().toColor( value, min, max );
@@ -1267,6 +1305,8 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 			if ( typeof funcs.w === "function" ) {
 
 				var value = funcs.w( t, a, b );
+				min = 0;
+				max = 100;
 				if ( attributes.position.itemSize >= 4 )
 					attributes.position.setW( i, value );
 				needsUpdate = true;
@@ -1280,8 +1320,8 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 				else {
 
 					var value = funcs.w.func( t, a, b );
-					if ( funcs.w.min ) min = funcs.w.min;
-					if ( funcs.w.max ) max = funcs.w.max;
+					if ( funcs.w.min !== 'undefined' ) min = funcs.w.min;
+					if ( funcs.w.max !== 'undefined' ) max = funcs.w.max;
 					getColor();
 
 				}
@@ -1590,7 +1630,17 @@ Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 				funcs = new THREE.Vector4( funcs, 0, 0, 0 );
 			if ( ( funcs instanceof THREE.Vector2 ) || ( funcs instanceof THREE.Vector3 ) || ( funcs instanceof THREE.Vector4 ) ) {
 
-				return Player.execFunc( funcs, axisName, optionsPoints.t, a, b );
+				const value = Player.execFunc( funcs, axisName, optionsPoints.t, a, b );
+/*				
+				if ( value === undefined ) {
+
+					if ( axisName === 'w' )
+						return 1;//white color
+					else console.error( 'Player.getPoints.getAxis(' + axisName + '): value = ' + value );
+
+				}
+*/				
+				return value;
 
 			}
 			if ( funcs.vector === undefined ) {
@@ -1633,11 +1683,19 @@ Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 			new THREE.Vector3( getAxis( 'x' ), getAxis( 'y' ), getAxis( 'z' ) ) :
 			new THREE.Vector4( getAxis( 'x' ), getAxis( 'y' ), getAxis( 'z' ), getAxis( 'w' ) );
 
-		if ( funcs.w === undefined )
+		if ( funcs.w === undefined ) {
+
+/*
 			point.w = {};//Если тут поставить NaN то в points.geometry.attributes.position.array он преобразуется в 0.
-		//Тогда в gui появится ненужный орган управления controllerW
-		//от балды поставил пустой объект что бы при создании points.geometry.attributes.position.array
-		//это зачение преобразвалось в NaN.
+			//Тогда в gui появится ненужный орган управления controllerW
+			//от балды поставил пустой объект что бы при создании points.geometry.attributes.position.array
+			//это зачение преобразвалось в NaN.
+*/
+//Цвет этой точки не определен и по умолчанию должен быть белым.
+//если я определю w то цвет точки будет зависеть от выбранной палитры
+//			funcs.w = 1;//white color
+
+		}
 
 		points.push( point );
 
