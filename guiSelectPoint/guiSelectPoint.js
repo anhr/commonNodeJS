@@ -629,7 +629,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 				console.error( 'guiSelectPoint.addMesh(...): Duplicate mesh.' );
 				return;
-				
+
 			}
 /*				
 			if (
@@ -1256,6 +1256,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 						}
 
 					}
+					guiParams.cameraTarget.camera.userData.cameraTarget = guiParams.cameraTarget;
+//					cameraTarget = guiParams.cameraTarget;
 
 				}
 				if ( value ) {
