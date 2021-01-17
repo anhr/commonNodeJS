@@ -13,6 +13,16 @@
 	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
 	<link type="text/css" rel="stylesheet" href="../../../../three.js/dev/examples/main.css">
 
+	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	<link type="text/css" rel="stylesheet" href="../../css/main.css">
+	<!--
+	<style>
+		body {
+			overflow: hidden;
+		}
+	</style>
+	-->
+
 </head>
 <body>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
@@ -34,17 +44,17 @@
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 
-		import { dat } from '../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
+		import { dat } from '../../dat/dat.module.js';
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
-		import cookie from '../../cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
+		import cookie from '../../cookieNodeJS/cookie.js';
 		//import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 		//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
-		import { getLanguageCode } from '../../lang.js';//https://github.com/anhr/commonNodeJS
+		import { getLanguageCode } from '../../lang.js';
 		//import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 
-		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
+		import StereoEffect from '../../StereoEffect/StereoEffect.js';
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
 		//import Player from '../build/player.module.js';
@@ -54,7 +64,7 @@
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
 		Player.setTHREE(THREE);
 
-		import ColorPicker from '../../colorpicker/colorpicker.js';//https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+		import ColorPicker from '../../colorpicker/colorpicker.js';
 		//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 		ColorPicker.palette.setTHREE( THREE );
 
@@ -69,11 +79,11 @@
 		import CanvasMenu from '../../canvasMenu/canvasMenu.js';
 		//import CanvasMenu from 'http://localhost/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 
-		import controllerPlay from '../../controllerPlay/controllerPlay.js';//https://github.com/anhr/controllerPlay
+		import controllerPlay from '../../controllerPlay/controllerPlay.js';
 		//import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
 
 		//import { OrbitControls } from 'http://localhost/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
+		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
 		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 		//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 
@@ -197,7 +207,7 @@
 
 			}
 
-			if ( typeof GuiSelectPoint !== "undefined" ) {
+			if ( ( typeof GuiSelectPoint !== "undefined" ) && ( typeof dat !== "undefined" ) ) {
 
 				guiSelectPoint = new GuiSelectPoint( THREE, {
 
@@ -502,8 +512,14 @@
 				canvas: document.getElementById( 'canvas' ),
 
 			} );
-//			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
+			//renderer.domElement.style.position = 'fixed';
+			/*
+			renderer.domElement.style.left = 0;
+			renderer.domElement.style.top = 0;
+			renderer.domElement.style.width = '100%';
+			renderer.domElement.style.height = '100%';
+			*/
 
 			//
 
@@ -540,16 +556,6 @@
 				} );
 
 			}
-/*
-			if ( typeof OrbitControls !== 'undefined' ) {
-
-				controls = new OrbitControls( camera, renderer.domElement );
-				//controls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
-				//controls.target.set( 0, 0, 0 );
-				controls.update();
-
-			}
-*/
 
 			//Using [dat.gui](https://github.com/anhr/dat.gui) for change of the settings.
 
