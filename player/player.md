@@ -118,9 +118,14 @@ or
 import Player from './commonNodeJS/master/player/build/player.module.min.js';
 ```
 
+Set <b>THREE</b> to <b>Player</b>.
+```
+Player.setTHREE(THREE);
+```
+
 Now you can use <b>Player</b> in your javascript code.
 
-Add <b>Player</b>.
+Add <b>Player</b> after creating of the <b>scene</b> and before creation of the <b>renderer</b>.
 ```
 const player = new Player( scene );
 ```
@@ -289,13 +294,45 @@ const arrayFuncs = [
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 ```
-<b>w</b> coordinate of the point is index of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
+Now you can see the color of the first point as white because white color is default color of the point
+and currently don't depend from the <b>w</b> coordinate value,
+because you do not defined a [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker) in your web page.
+<b>w</b> value is index of the palette. Please define palette.
+```
+import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
+```
+Set <b>THREE</b> for palette.
+```
+ColorPicker.palette.setTHREE(THREE);
+```
+Create the <b>options</b> object and define the <b>palette</b> key.
+```
+const options = { palette: new ColorPicker.palette(), }
+```
+Add <b>selectPlaySceneOptions</b> key for your instance of the <b>player</b>.
+```
+const player = new Player( scene, {
+
+		selectPlaySceneOptions: options,
+		settings: {
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+
+} );
+```
 Now you can see the color of the first point as blue at the begin of playing and white at the end of playing
 because default range of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker) from 0 to 100.
 But current range of the <b>1-2 * t</b> function from 1 to -1 for default <b>t</b> range from 0 to 1.
 You can resolve this issue by change of the palette range.
 Replace <b>w</b> coordinate of the first point from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
-See <b>arrayFuncs</b> parameter of the [Player.getColors(...)](module-Player.html#~Player.getColors) for details.
+See <b>arrayFuncs</b> parameter of the [Player.getPoints(...)](module-Player.html#~Player.getPoints) for details.
 ```
 const arrayFuncs = [
 	{
@@ -321,40 +358,14 @@ const arrayFuncs = [
 * Select a [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
 
 Default color palette index is [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGRW).
-You can select another palette. Please import <b>ColorPicker</b> into your web page for it.
+You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
+Edit the <b>palette</b> key of the <b>options</b> for it.
 ```
-import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
-```
-Set THREE for palette.
-```
-ColorPicker.palette.setTHREE(THREE);
-```
-Create a palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
-```
-const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
-```
-Add new palette in the <b>Player</b>.
-```
-const options = { palette: palette, }
-const player = new Player( scene, {
-
-	selectPlaySceneOptions: options,
-	settings: {
-
-		marks: 100,//Ticks count of the playing.
-		interval: 25,//Ticks per seconds.
-
-	},
-
-} );
+const options = { palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ), }
 ```
 Also you can create your own custom palette.
 ```
-const palette = new ColorPicker.palette( { palette: [
+const options = { palette: new ColorPicker.palette( { palette: [
 
 	{ percent: 0, r: 0xff, g: 255, b: 0xff, },
 	{ percent: 10, r: 0, g: 0, b: 0, },
@@ -364,7 +375,7 @@ const palette = new ColorPicker.palette( { palette: [
 	{ percent: 80, r: 0x0, g: 0, b: 0xff, },
 	{ percent: 90, r: 0xff, g: 255, b: 0xff, },
 
-] } );
+] } ), }
 ```
 Currently your player use same palette for all meshes.
 You can set individual palette for any mesh. Add <b>palette</b> key in the <b>mesh.userData.player</b> for it.
@@ -414,9 +425,7 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 ```
-
-ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
-For resolving of the problem please remove <b>player.play3DObject();</b> and include it inside of the <b>getShaderMaterialPoints</b>.
+Please remove <b>player.play3DObject();</b> line and include it into <b>getShaderMaterialPoints</b> parameters.
 ```
 getShaderMaterialPoints( THREE, scene, arrayFuncs,
 	function ( points ) {
@@ -427,7 +436,7 @@ getShaderMaterialPoints( THREE, scene, arrayFuncs,
 			arrayFuncs: arrayFuncs,
 			selectPlayScene: function ( t ) {
 
-				points.position.x = t;
+				points.position.x = 8 * t;
 				points.rotation.z = - Math.PI * 2 * t;
 
 			}
@@ -446,6 +455,7 @@ getShaderMaterialPoints( THREE, scene, arrayFuncs,
 <a name="MyPoints"></a>
 ## Use MyPoints for create points.
 
+Simplest way of creations of the points is using of the <b>MyPoints</b>.
 Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use [MyPoints](../../myPoints/jsdoc/index.html) for creating of new points.
 Import <b>MyPoints</b> into your web page for it.
 ```
@@ -460,6 +470,7 @@ Example.
 MyPoints( THREE, arrayFuncs, scene, {
 
 	Player: Player,
+	options: options,
 
 } );
 player.play3DObject();
@@ -473,7 +484,7 @@ Add <b>point</b> key into <b>options</b> above.
 ```
 const options = {
 
-	palette: palette,
+	palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
 	point: { size: 15 },
 
 }
@@ -499,11 +510,7 @@ please add <b>shaderMaterial: {}</b> into <b>pointsOptions</b> of the <b>MyPoint
 MyPoints( THREE, arrayFuncs, scene, {
 
 	Player: Player,
-	options: {
-
-		point: { size: 15 },
-
-	},
+	options: options,
 	pointsOptions: {
 
 		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
@@ -520,11 +527,7 @@ For resolving of the problem please remove <b>player.play3DObject();</b> and inc
 MyPoints( THREE, arrayFuncs, scene, {
 
 	Player: Player,
-	options: {
-
-		point: { size: 15 },
-
-	},
+	options: options,
 	pointsOptions: {
 
 		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
@@ -652,8 +655,6 @@ new CameraGui( gui, camera, {
 <a name="guiSelectPoint"></a>
 ### A [dat.gui](https://github.com/anhr/dat.gui) based graphical user interface for select a point from the mesh.
 
-User can select a point, camera will be look at. Use [GuiSelectPoint](../../guiSelectPoint/jsdoc/index.html) for it.
-
 * Import <b>GuiSelectPoint</b>
 ```
 import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
@@ -667,17 +668,25 @@ import { GuiSelectPoint } from './commonNodeJS/master/guiSelectPoint/guiSelectPo
 guiSelectPoint = new GuiSelectPoint( THREE, {
 
 	getLanguageCode: getLanguageCode,
+	options: options,
+
+} );
+```
+
+Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point.
+
+User can select a point, camera will be look at.
+```
+guiSelectPoint = new GuiSelectPoint( THREE, {
+
+	getLanguageCode: getLanguageCode,
 	cameraTarget: { camera: camera, },
 	options: options,
 
 } );
-
-//Player changes the guiSelectPoint control's values during playing
-selectPlaySceneOptions.guiSelectPoint = guiSelectPoint;
 ```
-Note! Set the <b>cameraTarget</b> above if you want to camera can to look at selected by user point.
 
-Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point.
+Note! Set the <b>cameraTarget</b> above if you want to camera can to look at selected by user point.
 
 * Add mesh into <b>guiSelectPoint</b> if you allow to user to select a point of this mesh.
 ```
@@ -685,67 +694,12 @@ guiSelectPoint.addMesh( points );
 ```
 <b>points</b> is instance of the mesh.
 
-<a name="selectMyPoints"></a>
-* If you use [MyPoints](../../myPoints/jsdoc/index.html) for create mesh, please add <b>guiSelectPoint.addMesh( points );</b> into <b>onReady</b> of the <b>MyPoints</b>.
-```
-MyPoints( THREE, arrayFuncs, scene, {
-
-	Player: Player,
-	options: {
-
-		point: { size: 15 },
-
-	},
-	pointsOptions: {
-
-		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
-		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-		shaderMaterial: {},
-		onReady: function ( points ) {
-
-			player.play3DObject();
-			guiSelectPoint.addMesh( points );
-
-		}
-
-	}
-
-} );
-```
-<a name="getShaderMaterialPoints"></a>
-* If you use [getShaderMaterialPoints](../../getShaderMaterialPoints/jsdoc/index.html) for create of the <b>THREE.Points</b> with [THREE.ShaderMaterial](https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial) material,
-please add <b>guiSelectPoint.addMesh( points );</b> into <b>onReady</b> parameter of the <b>getShaderMaterialPoints</b>.
-```
-getShaderMaterialPoints( THREE, scene, arrayFuncs,
-	function ( points ) {
-
-		scene.add( points );
-		points.userData.player = {
-
-			arrayFuncs: arrayFuncs,
-			selectPlayScene: function ( t ) {
-
-				points.position.x = 8 * t;
-				points.rotation.z = - Math.PI * 2 * t;
-
-			}
-
-		}
-		player.play3DObject();
-		guiSelectPoint.addMesh( points );
-
-	},
-	{
-		Player: Player,
-		options: options,
-
-	} );
-```
-
 * Add <b>guiSelectPoint</b> into [dat.gui](https://github.com/anhr/dat.gui).
 ```
 guiSelectPoint.add( gui );
 ```
+Note! Call <b>guiSelectPoint.add( gui );</b> before <b>player.play3DObject();</b>
+
 Now you can see the "Meshes" folder in the [dat.gui](https://github.com/anhr/dat.gui).
 
 Please open the "Meshes" folder and select a mesh. Now you can see the "Points" folder.
