@@ -1622,6 +1622,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 				if ( isReadOnlyController( controllerOpacity ) )
 					return;
+				if ( controllerColor.userData === undefined )
+					return;
 				const intersection = controllerColor.userData.intersection;
 				const points = intersection.object;
 				if ( points.geometry.attributes.ca === undefined )

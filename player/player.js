@@ -1080,7 +1080,6 @@ function cameraTarget( /*THREE, */mesh, funcs, t, i ) {
 				if ( camera.userData.cameraTarget.rotation )
 					camera.position.applyAxisAngle( camera.userData.cameraTarget.rotation.axis,
 						Player.execFunc( camera.userData.cameraTarget.rotation, 'angle', t ) );
-console.log('camera.position(' + camera.position.x + ',' + camera.position.y + ',' + camera.position.z + ') target(' + target.x + ',' + target.y + ',' + target.z + ')');
 				camera.position.add( target );
 				camera.lookAt( target );
 				if ( camera.userData.cameraTarget.orbitControls ) {
