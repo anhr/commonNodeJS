@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -69,11 +69,11 @@
 		ColorPicker.palette.setTHREE( THREE );
 
 		//import getShaderMaterialPoints from 'http://localhost/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
-		//import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
+		import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
 		//import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 
 		//import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
-		import MyPoints from '../../myPoints/myPoints.js';
+		//import MyPoints from '../../myPoints/myPoints.js';
 
 		//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 		import CanvasMenu from '../../canvasMenu/canvasMenu.js';
@@ -413,20 +413,16 @@
 
 						Player: typeof Player === 'undefined' ? undefined : Player,
 						options: options,
-/*
-						options: {
-
-							point: { size: 15 },
-							palette: palette,
-
-						},
-*/
 						pointsOptions: {
 
 							position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
 							rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-							//shaderMaterial: {},
-							onReady: function( points ) { if ( guiSelectPoint ) guiSelectPoint.addMesh( points ); }
+							shaderMaterial: {},
+							onReady: function( points ) {
+
+								if ( guiSelectPoint ) guiSelectPoint.addMesh( points );
+
+							}
 
 						}
 
@@ -513,13 +509,6 @@
 
 			} );
 			renderer.setSize( window.innerWidth, window.innerHeight );
-			//renderer.domElement.style.position = 'fixed';
-			/*
-			renderer.domElement.style.left = 0;
-			renderer.domElement.style.top = 0;
-			renderer.domElement.style.width = '100%';
-			renderer.domElement.style.height = '100%';
-			*/
 
 			//
 

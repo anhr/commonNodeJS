@@ -277,8 +277,10 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 		if ( pointsOptions.onReady !== undefined )
 			pointsOptions.onReady( points );
 
+/*если оставить эти строки то в guiSelectPoint будут добавляться точки даже если этого не хочет программист			
 		if ( options.guiSelectPoint )
 			options.guiSelectPoint.addMesh( points );
+*/			
 		if ( !points.userData.boFrustumPoints && options.raycaster && options.raycaster.addParticle )
 			options.raycaster.addParticle( points );
 

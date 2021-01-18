@@ -271,10 +271,10 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 		points.userData.shaderMaterial = settings.pointsOptions === undefined ? settings.shaderMaterial : settings.pointsOptions.shaderMaterial;
 //		if ( onReady !== undefined )
 			onReady( points );
-			
+/*если оставить эти строки то в guiSelectPoint будут добавляться точки даже если этого не хочет программист			
 		if ( settings.options.guiSelectPoint )
 			settings.options.guiSelectPoint.addMesh( points );
-
+*/
 		//Convert all points with cloud and shaderMaterial from local to world positions
 		// i.e. calculate scales, positions and rotation of the points.
 		//Converting of all points with cloud, but not shaderMaterial see updateCloudPoint in the frustumPoints.create function
