@@ -1,4 +1,12 @@
-﻿/*Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 */
-body {
+﻿body {
+    /*Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516
+    Непонятно почему, но с некоторого времени холст стал выходить за рамки окна браузера
+        если браузер не развернут на все окно Windows.
+        Думаю это произошло после обновления системы потому что
+        Эта фигня повилась даже в примерах на сайте https://threejs.org/examples/webgl_animation_cloth.html
+        в браузерах Chrime Firefox edge.
+        На мобильнике все работает хорошо.
+        для решения проблемы не стал создавать полосы прокрутки в главном окне браузера.
+    */
     overflow: hidden;
 }
