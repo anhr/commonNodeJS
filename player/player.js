@@ -69,11 +69,12 @@ var settings,
  * @param {onSelectScene} [options.onSelectScene] This function is called at each new step of the playing. See [onSelectScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene}.
  * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings. See [onChangeScaleT]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onChangeScaleT}.
  * @param {object} [options.settings] time settings.
- * @param {number} [options.settings.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
  * @param {number} [options.settings.interval=1] Ticks per seconds.
  * @param {number} [options.settings.min=0] Animation start time.
- * @param {number} [options.settings.max=1] Animation end time. Set to Infinity or null if you want to play to infinity.
- * @param {number} [options.settings.dt=0.1] Step of the animation. Have effect only if options.settings.max is infinity or null.
+ * @param {number} [options.settings.max=1] Animation end time. Set to Infinity if you want to play to infinity.
+ * @param {number} [options.settings.dt=0.1] Step of the animation. Have effect only if <b>max</b> is infinity.
+ * @param {number} [options.settings.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
+ * Have effect for <b>max</b> is not Infinity.
  * @param {boolean} [options.settings.repeat=false] true - Infinitely repeating 3D objects animation.
  * @param {number} [options.settings.zoomMultiplier=1.1] zoom multiplier of the time.
  * @param {number} [options.settings.offset=0.1] offset of the time.
@@ -433,6 +434,7 @@ function Player( /*THREE, */group, options ) {
 			min: 'Min',
 			max: 'Max',
 			dt: 'Step',
+			dtTitle: 'Time between frames',
 
 			marks: 'Frames',
 			marksTitle: 'Player frames count',
@@ -459,6 +461,7 @@ function Player( /*THREE, */group, options ) {
 				lang.min = 'Минимум';
 				lang.max = 'Максимум';
 				lang.dt = 'Шаг';
+				lang.dtTitle = 'Веремя между кадрами';
 
 				lang.marks = 'Кадры';
 				lang.marksTitle = 'Количество кадров проигрывателя';
@@ -539,13 +542,14 @@ function Player( /*THREE, */group, options ) {
 
 		} );
 		Object.freeze( axesDefault );
-		const max = settings.max;
+		const max = settings.max, marks = settings.marks;
 		cookie.getObject( cookieName, settings, settings );
 		if ( ( max === null ) || ( max === Infinity ) ||
 			( settings.max === null )//раньше на веб странице плеер был настроен на бесконечное проигрыванияе а сейчас проигрывание ограничено по времени
 		) {
 
 			settings.max = max;
+			settings.marks = marks;
 
 		}
 
@@ -618,7 +622,7 @@ function Player( /*THREE, */group, options ) {
 
 				//dt
 				scaleControllers.dt = dat.controllerZeroStep( scaleControllers.folder, axes, 'dt', function ( value ) { setSettings(); } );
-				dat.controllerNameAndTitle( scaleControllers.dt, lang.dt );
+				dat.controllerNameAndTitle( scaleControllers.dt, lang.dt, lang.dtTitle );
 
 			}
 
@@ -678,7 +682,13 @@ function Player( /*THREE, */group, options ) {
 					if ( axesDefault.marks ) {
 
 						axes.marks = axesDefault.marks;
-						scaleControllers.marks.setValue( axes.marks );
+
+						//scaleControllers.marks is undefined если программист сначала установил max: Infinity,
+						//соханил Player in cookie, например изменил marks
+						//удалил max: Infinity,
+						//Нажал кнопку Default для проигрывателя
+						if ( scaleControllers.marks )
+							scaleControllers.marks.setValue( axes.marks );
 
 					}
 
