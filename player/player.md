@@ -31,6 +31,10 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 <head>
 	<title>Player</title>
 	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+
+	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
+
 </head>
 <body>
 	<div id="info">
@@ -533,7 +537,7 @@ MyPoints( THREE, arrayFuncs, scene, {
 		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
 		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
 		shaderMaterial: {},
-		onReady: function () {
+		onReady: function ( points ) {
 
 			player.play3DObject();
 
@@ -675,7 +679,85 @@ guiSelectPoint = new GuiSelectPoint( THREE, {
 
 Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point.
 
-User can select a point, camera will be look at.
+* Add mesh into <b>guiSelectPoint</b> if you allow to user to select a point of this mesh.
+```
+guiSelectPoint.addMesh( points );
+```
+<b>points</b> is instance of the mesh.
+* Add <b>guiSelectPoint</b> into [dat.gui](https://github.com/anhr/dat.gui).
+```
+guiSelectPoint.add( gui );
+```
+Note! Call <b>guiSelectPoint.add( gui );</b> before <b>player.play3DObject();</b>
+
+
+* If you use <b>getShaderMaterialPoints</b> for create points, please remove <b>guiSelectPoint.add( gui );</b> line above
+and add <b>guiSelectPoint.addMesh( points );</b> and <b>guiSelectPoint.add( gui );</b>
+lines into <b>function ( points )</b> function of <b>getShaderMaterialPoints</b>.
+```
+getShaderMaterialPoints( THREE, scene, arrayFuncs,
+	function ( points ) {
+
+		scene.add( points );
+		points.userData.player = {
+
+			arrayFuncs: arrayFuncs,
+			selectPlayScene: function ( t ) {
+
+				points.position.x = 8 * t;
+				points.rotation.z = - Math.PI * 2 * t;
+
+			}
+
+		}
+		guiSelectPoint.addMesh( points );
+		guiSelectPoint.add( gui );
+		player.play3DObject();
+
+	},
+	{
+	
+		Player: Player,
+		options: options,
+
+	} );
+```
+
+* If you use <b>MyPoints</b> for create points, please remove <b>guiSelectPoint.add( gui );</b> line above
+and add <b>guiSelectPoint.addMesh( points );</b> and <b>guiSelectPoint.add( gui );</b>
+lines into <b>onReady</b> function of <b>MyPoints</b>.
+```
+MyPoints( THREE, arrayFuncs, scene, {
+
+	Player: Player,
+	options: options,
+	pointsOptions: {
+
+		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
+		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
+		shaderMaterial: {},
+		onReady: function ( points ) {
+
+			guiSelectPoint.addMesh( points );
+			guiSelectPoint.add( gui );
+			player.play3DObject();
+
+		}
+
+	}
+
+} );
+```
+
+Now you can see the "Meshes" folder in the [dat.gui](https://github.com/anhr/dat.gui).
+
+<a name="cameraLook"></a>
+## Set the camera to look at the point.
+
+Now you can see, all points moves and hides on the right border of the canvas during playing.
+The user can select the point at which the camera is looking during playing for resolving of issue.
+
+* Please add <b>cameraTarget</b> key for creating of <b>guiSelectPoint</b> instance.
 ```
 guiSelectPoint = new GuiSelectPoint( THREE, {
 
@@ -686,22 +768,6 @@ guiSelectPoint = new GuiSelectPoint( THREE, {
 } );
 ```
 
-Note! Set the <b>cameraTarget</b> above if you want to camera can to look at selected by user point.
-
-* Add mesh into <b>guiSelectPoint</b> if you allow to user to select a point of this mesh.
-```
-guiSelectPoint.addMesh( points );
-```
-<b>points</b> is instance of the mesh.
-
-* Add <b>guiSelectPoint</b> into [dat.gui](https://github.com/anhr/dat.gui).
-```
-guiSelectPoint.add( gui );
-```
-Note! Call <b>guiSelectPoint.add( gui );</b> before <b>player.play3DObject();</b>
-
-Now you can see the "Meshes" folder in the [dat.gui](https://github.com/anhr/dat.gui).
-
 Please open the "Meshes" folder and select a mesh. Now you can see the "Points" folder.
 
 Please open the "Points" folder and select a point of the mesh. Now you can see the "Look" checkbox.
@@ -709,11 +775,7 @@ Please open the "Points" folder and select a point of the mesh. Now you can see 
 Selected point will be moves to the center of the canvas if you checked the "Look" checkbox.
 In  another words, camera will be look at selected point.
 
-<a name="cameraLook"></a>
-## Set the camera to look at the point.
-
-Now you can see, all points moves and hides on the right border of the canvas during playing.
-You can set the camera to look at a selected point during playing for resolving of issue.
+* You can select the point at which the camera is looking during playing from your program code.
 Please, add the <b>cameraTarget</b> key into <b>arrayFuncs</b> array for it.
 ```
 const arrayFuncs = [
@@ -734,11 +796,7 @@ const arrayFuncs = [
 		trace: true,//Displays the trace of the first point movement.
 
 		//Set the camera to look at the first point.
-		cameraTarget: {
-
-			camera: camera,
-
-		},
+		cameraTarget: { camera: camera, },
 
 	},
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
@@ -753,7 +811,8 @@ console warning if two or more points have <b>cameraTarget</b> key.
 Then only last point with <b>cameraTarget</b> key will be have an effect.
 
 Currently uses default value of the distance from camera to selected point.
-Also you can rotate camera around on the point. Please add <b>cameraTarget</b> object into <b>camera.userData</b> for it.
+You can change distance from camera to selected point from your program code.
+Also you can rotate camera around the point. Please add <b>cameraTarget</b> object into <b>camera.userData</b> for it.
 ```
 camera.userData.cameraTarget = {
 
@@ -788,7 +847,7 @@ camera.userData.cameraTarget = {
 
 	},
 	//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
-	distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) ),
+	distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
 	/*
 	distanceToCamera: new THREE.Vector3( 0, 0, [
 		{ t: 0, v: 5 },//distance to camera is 5 for time is 0
@@ -833,7 +892,7 @@ const arrayFuncs = [
 
 			},
 			distanceToCamera: new THREE.Vector3( 0, 0, [
-				{ t: 0, v: 10 },//distance to camera is 10 for time is 0
+				{ t: 0, v: 9 },//distance to camera is 9 for time is 0
 				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
 			] ),
 
@@ -853,13 +912,13 @@ You can set another time limit. Please add <b>min</b> and <b>max</b> keys into s
 ```
 const player = new Player( scene, {
 
-	selectPlaySceneOptions: { palette: palette, },
+	selectPlaySceneOptions: options,
 	settings: {
 
-		marks: 100,//Ticks count of the playing.
-		interval: 25,//Ticks per seconds.
 		min: 0,
 		max: 2,
+		marks: 100,//Ticks count of the playing.
+		interval: 25,//Ticks per seconds.
 
 	},
 
@@ -872,13 +931,13 @@ You can infinity play. Please set <b>max: Infinity</b> for it.
 ```
 const player = new Player( scene, {
 
-	selectPlaySceneOptions: { palette: palette, },
+	selectPlaySceneOptions: options,
 	settings: {
 
-		marks: 100,//Ticks count of the playing.
-		interval: 25,//Ticks per seconds.
 		min: 0,
 		max: Infinity,
+		marks: 100,//Ticks count of the playing.
+		interval: 25,//Ticks per seconds.
 
 	},
 
@@ -890,14 +949,14 @@ Currently, the default playback step is 0.1. You can set another step. Please ad
 ```
 const player = new Player( scene, {
 
-	selectPlaySceneOptions: { palette: palette, },
+	selectPlaySceneOptions: options,
 	settings: {
 
-		marks: 100,//Ticks count of the playing.
-		interval: 25,//Ticks per seconds.
 		min: 0,
 		max: Infinity,
-		dt: 0.01,//for max: Infinity
+		dt: 0.01,//Have effect for max: Infinity
+		marks: 100,//Ticks count of the playing. Have effect for max key is not Infinity.
+		interval: 25,//Ticks per seconds.
 
 	},
 
