@@ -32,6 +32,7 @@ import { dat } from './dat/dat.module.js';
 */
 const functionsFolder = function ( fParent, scales, onFinishChange, options = {} ) {
 
+//	const _this = this;
 
 	//Localization
 
@@ -40,6 +41,9 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 	const lang = {
 
 		functions: 'Functions',
+
+		defaultButton: 'Default',
+		defaultTitle: 'Restore default functions.',
 
 	};
 
@@ -50,6 +54,9 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 		case 'ru'://Russian language
 
 			lang.functions = 'Функции';
+
+			lang.defaultButton = 'Восстановить';
+			lang.defaultTitle = 'Восстановить функции.';
 
 			break;
 		default://Custom language
@@ -72,6 +79,7 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 			x: options.vector ? getFuncText( options.vector.x ) : '',
 			y: options.vector ? getFuncText( options.vector.y ) : '',
 			z: options.vector ? getFuncText( options.vector.z ) : '',
+			w: options.vector ? getFuncText( options.vector.w ) : '',
 
 		},
 		//onFinishChange вызывается даже если vector не изменился. Поэтому такой onFinishChange пропускается
@@ -80,6 +88,15 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 			x: vector.x,
 			y: vector.y,
 			z: vector.z,
+			w: vector.w,
+
+		},
+		vectorDefault = {
+
+			x: vector.x,
+			y: vector.y,
+			z: vector.z,
+			w: vector.w,
 
 		},
 		cFunctions = { };
@@ -90,16 +107,84 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 			if ( vectorCur[axisName] === value )
 				return;
 			vectorCur[axisName] = value;
-			onFinishChange( new Function( 't', 'a', 'b', 'return ' + value ), axisName );
+			var float = parseFloat( value );
+			if ( float.toString() !== value ) float = NaN;
+			var func;
+			if ( isNaN(float) ) {
+
+//				const color = value.replace(/\s/g, "").toLowerCase().split( /rgb\((\d+),(\d+),(\d+)\)/ );
+				const color = value.replace(/\s/g, "").split( /rgb\((\d+),(\d+),(\d+)\)/ );
+				if ( color.length === 5 ) func = new options.THREE.Color( value );
+				else func = new Function( 't', 'a', 'b', 'return ' + value );
+
+			} else func = float;
+			onFinishChange( func, axisName );
+//			onFinishChange( isNaN(float) ? new Function( 't', 'a', 'b', 'return ' + value ) : float, axisName );
 
 		} );
-		dat.controllerNameAndTitle( cFunctions[axisName], scales[axisName] ? scales[axisName].name : axisName );
+		dat.controllerNameAndTitle( cFunctions[axisName], scales[axisName] && scales[axisName].name ? scales[axisName].name : axisName );
 
 	}
 	createControl( 'x' );
 	createControl( 'y' );
 	createControl( 'z' );
-	function getFuncText ( func ) { return func.toString().split( /return (.*)/ )[1] || ''; }
+	createControl( 'w' );
+
+	//Default scale button
+	const buttonDefault = fFunctions.add( {
+
+		defaultF: function ( value ) {
+
+/*
+			cFunctions.x.setValue( vectorDefault.x );
+			cFunctions.y.setValue( vectorDefault.y );
+			cFunctions.z.setValue( vectorDefault.z );
+*/
+			function setValue( axisName ) {
+
+				cFunctions[axisName].setValue( vectorDefault[axisName] );
+				cFunctions[axisName].__onFinishChange( vectorDefault[axisName] );
+
+			}
+			setValue( 'x' );
+			setValue( 'y' );
+			setValue( 'z' );
+			setValue( 'w' );
+/*
+			_this.setFunction(vectorDefault);
+			onFinishChange( vectorDefault.x, 'x' );
+			onFinishChange( vectorDefault.y, 'y' );
+			onFinishChange( vectorDefault.z, 'z' );
+*/			
+
+		},
+
+	}, 'defaultF' );
+	dat.controllerNameAndTitle( buttonDefault, lang.defaultButton, lang.defaultTitle );
+
+	function getFuncText ( func ) {
+
+		if ( func instanceof options.THREE.Color ) return func.getStyle();
+		if ( typeof func === 'object' ) func = func.func ? func.func : func;
+		const typeofFunc = typeof func;
+		switch ( typeofFunc ) {
+
+			case 'number':
+			case 'string':
+				return func;
+			case 'function':
+				return func.toString().split( /return (.*)/ )[1];
+			default: console.error( 'functionsFolder.getFuncText(...): typeof func = ' + typeofFunc );
+				return;
+		}
+/*		
+		const res = func.toString().split( /return (.*)/ )[1] || '';
+		if ( res === '' )
+			return func;
+		return res;
+*/		
+
+	}
 	/**
 	 * set the function text
 	 * @function functionsFolder.
@@ -108,14 +193,17 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 	 * @param {object} _vector.x x axis function.
 	 * @param {object} _vector.y y axis function.
 	 * @param {object} _vector.z z axis function.
+	 * @param {boolean} boDefault true - copy from _vector to vectorDefault
 	 */
-	this.setFunction = function ( _vector ) {
+	this.setFunction = function ( _vector, boDefault ) {
 
 		function setVectorAxis( axisName ) {
 
 			vector[axisName] = getFuncText( _vector[axisName] );
 			cFunctions[axisName].setValue( vector[axisName] );
 			vectorCur[axisName] = vector[axisName];
+			if ( boDefault )
+				vectorDefault[axisName] = vector[axisName];
 
 		}
 		setVectorAxis( 'x' );
@@ -139,6 +227,7 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 
 		}
 		dislayEl( cFunctions.z, dislay );
+		setVectorAxis( 'w' );
 
 	}
 	/**

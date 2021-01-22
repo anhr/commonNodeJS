@@ -330,13 +330,13 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	}
 	var wLimitsDefault;
-	function setPosition( intersectionSelected ) {
+	function setPosition( intersectionSelected, boDefault ) {
 
 		const player = intersectionSelected.object.userData.player;
 
 		if ( player ) {
 
-			funcFolder.setFunction( player.arrayFuncs[intersectionSelected.index] );
+			funcFolder.setFunction( player.arrayFuncs[intersectionSelected.index], boDefault );
 /*			
 			const funcText = player.arrayFuncs[intersectionSelected.index].x.toString().split( /return (.*)/ )[1];
 			cFunctions.x.setValue( funcText ? funcText : '' );
@@ -690,7 +690,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		}
 
-		this.selectPoint2 = function ( selectedMesh ) {
+		this.selectPoint2 = function ( selectedMesh, boDefault ) {
 
 			if ( ( intersectionSelected.index === undefined ) || isNaN( intersectionSelected.index ) )
 				return;
@@ -715,7 +715,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			intersection = intersectionSelected;
 			if ( guiParams.setIntersection )
 				guiParams.setIntersection( intersectionSelected );
-			setPosition( intersectionSelected );
+			setPosition( intersectionSelected, boDefault );
 
 			const mesh = getMesh();
 			const line = ( mesh.userData.player.arrayFuncs === undefined ) || ( typeof intersection.object.userData.player.arrayFuncs === "function" ) ?
@@ -728,7 +728,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				intersection.object.userData.player.arrayFuncs === undefined ? 'none' : block;
 
 		}
-		this.selectPoint2();
+		this.selectPoint2( undefined, true );
 
 	}
 	/**
@@ -1183,6 +1183,15 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				case 'z':
 					controller = controllerZ;
 					break;
+				case 'w':
+					if ( func instanceof THREE.Color ) {
+
+						controllerColor.setValue( '#' + func.getHexString() );
+						return;
+
+					}
+					controller = controllerW;
+					break;
 				default: console.error( 'GuiSelectPoint new functionsFolder onFinishChange: axisName = ' + axisName );
 					return;
 
@@ -1206,7 +1215,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			position.needsUpdate = true;
 */			
 
-		}, { getLanguageCode: getLanguageCode, } );
+		}, {
+
+			getLanguageCode: getLanguageCode,
+			THREE: THREE,
+
+		} );
 
 		//Camera target
 		var orbitControlsOptions, 
@@ -1612,7 +1626,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				_this.setColorAttribute( intersection.object.geometry.attributes, intersection.index, value );
 
 			} );
-		dat.controllerNameAndTitle( controllerColor, lang.color );
+		dat.controllerNameAndTitle( controllerColor, options.scales.w ? options.scales.w.name : lang.color );
+//		dat.controllerNameAndTitle( controllerColor, lang.color );
 		controllerOpacity = fPoint.add( {
 
 			opasity: 1,
