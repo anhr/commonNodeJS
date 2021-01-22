@@ -935,12 +935,14 @@ Player.setCameraTarget = function ( camera, funcs ) {
  */
 Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 
-	const func = funcs[axisName], typeofFuncs = typeof func;
+	var func = funcs[axisName], typeofFuncs = typeof func;
 	if ( typeof t === "undefined" ) t = settings.min;
 	switch ( typeofFuncs ) {
 
 		case "undefined":
 			return undefined;
+		case "string":
+			func = new Function( 't', 'a', 'b', 'return ' + func );
 		case "function":
 			return func( t, a, b );
 		case "number":
@@ -1039,7 +1041,7 @@ Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 				return func.func instanceof Function ? func.func( t, a, b ) : func.func;
 			if ( axisName !== 'w' )
 				console.error( 'Player.execFunc: funcs["' + axisName + '"] object is not array' );
-			return;
+			return func;
 		default:
 			console.error( 'Player.execFunc: Invalud typeof funcs["' + axisName + '"]: ' + typeofFuncs );
 	}
@@ -1445,8 +1447,9 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * v is position for current t.
  * <li>[Function]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} - position of the point is function of the t.
  * Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )</li>
+ * <li>string - text of the function.
+ * Example: 'Math.sin(t*a*2*Math.PI)*0.5+b' )</li>
  * </ul>
- * 
  * Vector.w is index of the [palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * Default range of the Vector.w is from 0 to 100. You can change range by use an object:
  * {
