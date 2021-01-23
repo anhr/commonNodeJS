@@ -788,7 +788,8 @@ function setTHREE( _THREE ) {
 						if ( intersects[0].object.userData.raycaster ) {
 
 							const intersect = intersects[0];
-							intersect.object.userData.raycaster.onMouseDown( intersect );
+							if ( intersect.object.userData.raycaster.onMouseDown )
+								intersect.object.userData.raycaster.onMouseDown( intersect );
 
 						}
 
