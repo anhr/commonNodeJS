@@ -16,6 +16,7 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 	* [A <b>dat.gui</b> based graphical user interface for select a point from the mesh.](#guiSelectPoint)
 * [Set the camera to look at the point.](#cameraLook)
 * [Time of the playing.](#playingTime)
+* [Use Raycaster for mouse picking (working out what objects in the 3d space the mouse is over).](#Raycaster)
 * [Directory Contents.](#DirectoryContents)
 * [Building your own Player.](#Building)
 
@@ -648,7 +649,7 @@ import CameraGui from './commonNodeJS/master/CameraGui.js';
 ```
 Add <b>CameraGui</b> into gui 
 ```
-new CameraGui( gui, camera, {
+new CameraGui( gui, camera, THREE, {
 
 	getLanguageCode: getLanguageCode,
 	//orbitControls: controls,
@@ -965,6 +966,11 @@ const player = new Player( scene, {
 Press the <b>Default</b> button again.
 
 Note that the step only matters for <b>max: Infinity</b>.
+
+<a name="Raycaster"></a>
+## Use [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster) for mouse picking (working out what objects in the 3d space the mouse is over).
+
+Go to [Raycaster](../../AxesHelper/jsdoc/index.html#Raycaster) for details.
 
 <a name="DirectoryContents"></a>
 ## Directory Contents

@@ -232,7 +232,7 @@ points.userData.raycaster = {
 	},
 	onMouseDown: function ( intersect ) {
 
-		if ( axesHelper )
+		if ( typeof axesHelper !== 'undefined' )
 			axesHelper.exposePosition( intersect );
 		if ( typeof guiSelectPoint !== 'undefined' )
 			guiSelectPoint.select( intersect );
@@ -296,7 +296,7 @@ points.userData.raycaster = {
 
 		this.spriteText = StereoEffect.getTextIntersection( intersection, {
 
-			scales: axesHelper ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
+			scales: typeof axesHelper !== 'undefined' ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
 			spriteOptions: {
 
 				group: scene,
@@ -334,7 +334,7 @@ points.userData.raycaster = {
 	},
 	onMouseDown: function ( intersect ) {
 
-		if ( axesHelper )
+		if ( typeof axesHelper !== 'undefined' )
 			axesHelper.exposePosition( intersect );
 		if ( typeof guiSelectPoint !== 'undefined' )
 			guiSelectPoint.select( intersect );

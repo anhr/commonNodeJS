@@ -61,7 +61,7 @@
 		//import { SpriteTextGui } from '../../../SpriteText/master/SpriteTextGui.js';
 		//import { SpriteTextGui } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteTextGui.js';
 
-		import { GuiSelectPoint, getObjectPosition } from '../../guiSelectPoint/guiSelectPoint.js';
+		//import { GuiSelectPoint, getObjectPosition } from '../../guiSelectPoint/guiSelectPoint.js';
 		//import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
 		import { MoveGroup } from '../../MoveGroup.js';//https://github.com/anhr/commonNodeJS
@@ -274,22 +274,13 @@
 			points.name = 'no sizeAttenuation';
 			if ( typeof StereoEffect === "undefined" )
 				arrayintersectObjects.push( points );
-/*
-			function getIntersectionPosition( intersection ) {
-				
-				if ( typeof getObjectPosition !== 'undefined' )
-					return getObjectPosition( intersection.object, intersection.index );
-				return new THREE.Vector3().fromArray( intersection.object.geometry.attributes.position.array, intersection.index * points.geometry.attributes.position.itemSize );
-			
-			}
-*/
 			points.userData.raycaster = {
 
 				onIntersection: function ( intersection ) {
 
 					this.spriteText = StereoEffect.getTextIntersection( intersection, {
 
-						scales: axesHelper ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
+						scales: typeof axesHelper !== 'undefined' ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
 						spriteOptions: {
 
 							group: scene,
@@ -311,72 +302,19 @@
 						}
 
 					} );
-/*
-					if ( typeof SpriteText !== 'undefined' ) {
-
-						const position = getIntersectionPosition( intersection );
-						//console.warn( 'onIntersection x = ' + position.x + ' y =  ' + position.y + ' z = ' +  position.z );
-
-						var x, y, z;
-						if ( axesHelper ) {
-
-							const scales = axesHelper.options.scales;
-							x = scales.x.name;
-							y = scales.y.name;
-							z = scales.z.name;
-
-						} else {
-
-							x = 'x';
-							y = 'y';
-							z = 'z';
-
-						}
-						this.spriteText = new SpriteText(
-							( intersection.object.name === '' ? '' : intersection.object.name + '\n' ) +
-							'Point\n' + x + ' = ' + position.x + '\n' + y + ' =  ' + position.y + '\n' + z + ' = ' +  position.z,
-							position, {
-
-								group: scene,
-								rect: {
-
-									displayRect: true,
-									borderRadius: 15,
-
-								},
-								center: {
-
-									camera: camera,
-									canvas: canvas,
-
-								}
-								//center: new THREE.Vector2( 1, 0 ),
-								//sizeAttenuation: true,
-
-							}
-						);
-
-					}
-*/
 					renderer.domElement.style.cursor = 'pointer';
 
 				},
 				onIntersectionOut: function ( ) {
 
-/*
-					if ( this.bIntersectionOut )
-						return;
-					this.bIntersectionOut = true;
-*/
 					//console.warn( 'onIntersectionOut' );
 					scene.remove( this.spriteText );
 					renderer.domElement.style.cursor = cursor;
 
 				},
-//				bIntersectionOut: true,
 				onMouseDown: function ( intersect ) {
 
-					if ( axesHelper )
+					if ( typeof axesHelper !== 'undefined' )
 						axesHelper.exposePosition( intersect );
 					if ( guiSelectPoint )
 						guiSelectPoint.select( intersect );

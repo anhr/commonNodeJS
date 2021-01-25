@@ -603,6 +603,7 @@ function setTHREE( _THREE ) {
 
 	}
 	THREE = _THREE;
+	SpriteText.setTHREE( THREE );
 
 	//Modifying of THREE.Raycaster for StereoEffect
 	Object.assign( THREE.Raycaster.prototype, {

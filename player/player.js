@@ -1989,6 +1989,11 @@ Player.traceLine = function ( /*THREE, group, */options ) {
 //			group.add( line );
 			mesh.add( line );
 
+			//на случай когда пользователь изменил флажок трассировки
+			//первая линия arrayLines[0] всегда имеет visible = true потому что сюда попадат только если установлена трассировка по умолчанию
+			//или пользователь установил флаг трассировки
+			if ( arrayLines[0] ) line.visible = arrayLines[0].visible;
+
 			//point position
 			point = new THREE.Vector3().copy( point );
 			const itemSize = line.geometry.attributes.position.itemSize;
@@ -2095,7 +2100,22 @@ Player.traceLine = function ( /*THREE, group, */options ) {
 	 * @param {boolean} visible true - show trace line.
 	 * <p>false - hide trace line.</p>
 	 */
-	this.visible = function ( visible ) { line.visible = visible; }
+	this.visible = function ( visible ) {
+
+		if ( line ) {
+
+			line.visible = visible;
+			return;
+
+		}
+		//сюда попадает когда t max is Infinity (settings.max === null) и когда пользователь в выбранной в guiSelectPoint  точке изменил галочку трассировки
+		arrayLines.forEach( function ( line ) {
+
+			line.visible = visible;
+
+		} );
+
+	}
 	/**
 	 * Is trace line visible?
 	 * @function Player.traceLine.
@@ -2103,7 +2123,13 @@ Player.traceLine = function ( /*THREE, group, */options ) {
 	 * @returns true - trace line is visible.
 	 * <p>false - trace line is not visible.</p>
 	 */
-	this.isVisible = function () { return line.visible; }
+	this.isVisible = function () {
+
+		if ( line ) return line.visible;
+		//сюда попадает когда t max is Infinity ( settings.max === null ) и когда пользователь выбрал точку в guiSelectPoint у которой установлена трассировка
+		return arrayLines[0].visible;
+
+	}
 	/**
 	 * Remove trace line.
 	 * @function Player.traceLine.
