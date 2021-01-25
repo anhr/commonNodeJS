@@ -25,13 +25,14 @@ import functionsFolder from './functionsFolder.js';
  * Camera graphical user interface
  * @param {GUI} gui is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}.
  * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
+ * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {object} [options] the following options are available:
  * @param {OrbitControls} [options.orbitControls] [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}.
  * @param {object} [options.scales={}] axes scales.
  * See [AxesHelper(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/jsdoc/module-AxesHelper.html} options.scales for details.
  * @param {Function} [options.getLanguageCode="en"] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
 */
-var CameraGui = function ( gui, camera, options ) {
+var CameraGui = function ( gui, camera, THREE, options ) {
 
 /*
 	if ( camera === undefined )
@@ -194,7 +195,7 @@ var CameraGui = function ( gui, camera, options ) {
 		dat.controllerNameAndTitle( controllersDistance.y, options.scales.y.name );
 		dat.controllerNameAndTitle( controllersDistance.z, options.scales.z.name );
 
-		const funcFolder = new functionsFolder( fCamera, options.scales, function( func, axisName ) {
+		const funcFolder = new functionsFolder( fDistanceToCamera, options.scales, function( func, axisName ) {
 
 			camera.userData.cameraTarget.distanceToCamera[axisName] = func;
 
@@ -202,6 +203,7 @@ var CameraGui = function ( gui, camera, options ) {
 
 			getLanguageCode: options.getLanguageCode,
 			vector: camera.userData.cameraTarget.distanceToCamera,
+			THREE: THREE,
 
 		} );
 	
