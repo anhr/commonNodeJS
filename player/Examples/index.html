@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -91,7 +91,7 @@
 		import { GuiSelectPoint } from '../../guiSelectPoint/guiSelectPoint.js';
 		//import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
-		var camera, scene, renderer, stereoEffect, controls, player, guiSelectPoint;
+		var camera, scene, renderer, stereoEffect, controls, player, guiSelectPoint, raycaster, points;
 
 		init();
 		animate();
@@ -409,7 +409,8 @@
 
 					}
 				);
-			} else if ( typeof MyPoints !== 'undefined' ) {
+			} else
+				if ( typeof MyPoints !== 'undefined' ) {
 
 				console.log( 'Using MyPoints method for creating of the points.' );
 				MyPoints( THREE, arrayFuncs,
@@ -436,7 +437,7 @@
 			} else {
 
 				console.log( 'Using THREE.Points method for creating of the points.' );
-				const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
+				points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
 					typeof Player === 'undefined' ? arrayFuncs:
 						Player.getPoints( /*THREE, */arrayFuncs, { group: scene, options: { player: { player: player } } } ),
 					typeof Player === 'undefined' ? 3:
@@ -479,6 +480,58 @@
 
 						//points.position.x = t;
 						//points.rotation.z = - Math.PI * 2 * t;
+
+					}
+
+				}
+				points.userData.raycaster = {
+
+					onIntersection: function ( intersection ) {
+
+						this.spriteText = StereoEffect.getTextIntersection( intersection, {
+
+							scales: typeof axesHelper !== 'undefined' ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
+							spriteOptions: {
+
+								group: scene,
+								rect: {
+
+									displayRect: true,
+									borderRadius: 15,
+
+								},
+								center: {
+
+									camera: camera,
+									canvas: canvas,
+
+								}
+								//center: new THREE.Vector2( 1, 0 ),
+								//sizeAttenuation: true,
+
+							}
+
+						} );
+						renderer.domElement.style.cursor = 'pointer';
+
+					},
+					onIntersectionOut: function ( ) {
+
+						if ( this.spriteText ) {
+
+							scene.remove( this.spriteText );
+							delete this.spriteText;
+
+						}
+						renderer.domElement.style.cursor = cursor;
+
+					},
+					onMouseDown: function ( intersect ) {
+
+						if ( typeof axesHelper !== 'undefined' )
+							axesHelper.exposePosition( intersect );
+						if ( typeof guiSelectPoint !== 'undefined' )
+							guiSelectPoint.select( intersect );
 
 					}
 
@@ -527,6 +580,8 @@
 
 			}
 
+			const cursor = renderer.domElement.style.cursor;
+
 			if ( typeof StereoEffect !== "undefined" ) {
 				stereoEffect = new StereoEffect( THREE, renderer, {
 
@@ -538,7 +593,23 @@
 				} );
 				//				stereoEffect.setSize( window.innerWidth, window.innerHeight );
 
+				raycaster = new THREE.Raycaster();
+
+				//the precision of the raycaster when intersecting objects, in world units.
+				//See https://threejs.org/docs/#api/en/core/Raycaster.params.
+				raycaster.params.Points.threshold = 0.03;
+
+				raycaster.setStereoEffect( {
+
+					renderer: renderer,
+					camera: camera,
+					stereoEffect: stereoEffect,
+
+				} );
+				raycaster.stereo.addParticle( points );
+
 			}
+
 			if ( typeof CanvasMenu !== "undefined" ) {
 
 				new CanvasMenu( renderer, {
@@ -576,7 +647,7 @@
 
 				}
 				if ( typeof CameraGui !== 'undefined' )
-					new CameraGui( gui, camera, {
+					new CameraGui( gui, camera, THREE, {
 
 						getLanguageCode: getLanguageCode,
 						orbitControls: controls,
@@ -600,6 +671,31 @@
 					guiSelectPoint.add( gui );
 
 				}
+
+			}
+
+			if ( raycaster ) {
+
+				const mouse = new THREE.Vector2();
+				window.addEventListener( 'mousemove', function ( event ) {
+
+					// calculate mouse position in normalized device coordinates
+					// (-1 to +1) for both components
+
+					mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+					mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+					// update the picking ray with the camera and mouse position
+					raycaster.setFromCamera( mouse, camera );
+
+					raycaster.stereo.onDocumentMouseMove( event );
+
+				}, false );
+				window.addEventListener( 'pointerdown', function ( event ) {
+
+					raycaster.stereo.onDocumentMouseDown( event );
+
+				}, false );
 
 			}
 
