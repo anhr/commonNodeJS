@@ -102,6 +102,8 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 		cFunctions = { };
 	function createControl( axisName ) {
 
+		if ( vector[axisName] === undefined )
+			return;
 		cFunctions[axisName] = fFunctions.add( vector, axisName ).onFinishChange( function ( value ) {
 
 			if ( vectorCur[axisName] === value )
@@ -164,8 +166,14 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 
 	function getFuncText ( func ) {
 
-		if ( func instanceof options.THREE.Color ) return func.getStyle();
-		if ( typeof func === 'object' ) func = func.func ? func.func : func;
+		if ( func === undefined )
+			return;
+		if ( typeof func === 'object' ) {
+
+			if ( func instanceof options.THREE.Color ) return func.getStyle();
+			func = func.func ? func.func : func;
+
+		}
 		const typeofFunc = typeof func;
 		switch ( typeofFunc ) {
 
@@ -199,6 +207,8 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 
 		function setVectorAxis( axisName ) {
 
+			if ( !_vector[axisName] )
+				return;
 			vector[axisName] = getFuncText( _vector[axisName] );
 			cFunctions[axisName].setValue( vector[axisName] );
 			vectorCur[axisName] = vector[axisName];
