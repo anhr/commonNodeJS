@@ -189,7 +189,7 @@ function Player( /*THREE, */group, options ) {
 		if ( isNaN( t ) ) console.error( 'Player.getTime(): t = ' + t );
 		if ( ( settings.max !== null ) && ( t > settings.max ) )
 			console.error( 'Player.getTime(): t = ' + t + ' settings.max = ' + settings.max );
-		if ( t < settings.min )
+		if ( ( t < settings.min ) && ( settings.max !== null ) )
 			console.error( 'Player.getTime(): t = ' + t + ' settings.min = ' + settings.min );
 		return t;
 
