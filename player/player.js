@@ -1815,8 +1815,17 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 			if ( typeof funcs.w === "function" ) {
 
 				var value = funcs.w( t, a, b );
-				min = options.scales.w.min;
-				max = options.scales.w.max;
+				if ( options.scales.w ) {
+
+					min = options.scales.w.min;
+					max = options.scales.w.max;
+
+				} else {
+
+					min = 0;
+					max = 100;
+
+				}
 				if ( attributes.position.itemSize >= 4 )
 					attributes.position.setW( i, value );
 				needsUpdate = true;
