@@ -52,9 +52,7 @@ import functionsFolder from '../functionsFolder.js';
  * @param {string} [guiParams.options] See {@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/index.html|axesHelper.options} for details. Default is axesHelper.options if axesHelper is defined or { scales: {...} }
  * @param {string} [guiParams.cFrustumPoints]
  * @param {string} [guiParams.myThreejs] See {@link https://github.com/anhr/myThreejs|myThreejs}.
- * @param {object} [guiParams.cameraTarget] Set the <b>cameraTarget</b> if you want to camera to look at selected point.
  * @param {THREE.PerspectiveCamera} guiParams.cameraTarget.camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
- * @param {OrbitControls} [guiParams.cameraTarget.orbitControls] [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}.
  * @param {Function} [guiParams.pointControls] pointControls( fPoint, dislayEl, getMesh ) Adds the trace "Display the trace of the point movement" control checkbox into gui.
  * <pre>
  * fPoint - parent folder for new control.
@@ -101,41 +99,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	const axesHelper = guiParams.axesHelper,
 		options = guiParams.options || ( axesHelper ? axesHelper.options : undefined ) || {
-/*
-			scales: {
-
-				x: {
-
-					name: 'x',
-					min: -1,
-					max: 1,
-
-				},
-				y: {
-
-					name: 'y',
-					min: -1,
-					max: 1,
-
-				},
-				z: {
-
-					name: 'z',
-					min: -1,
-					max: 1,
-
-				},
-				w: {
-
-					name: 'color',
-					min: 0,
-					max: 100,
-
-				},
-
-			},
-//			palette: new ColorPicker.palette(),
-*/
 		},
 		guiSelectPoint = this;
 
@@ -260,17 +223,17 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		intersection, _this = this,
 		cScaleX, cScaleY, cScaleZ, cPosition = new THREE.Vector3(), cRotations = new THREE.Vector3(),
 		cPoints, selectedPointIndex = -1,
-		controllerX, controllerY, controllerZ, controllerW, cTrace, cTraceAll, controllerColor, controllerOpacity, controllerCameraTarget,
+		cX, cY, cZ, cW, cTrace, cTraceAll, cColor, cOpacity, cCameraTarget,
 		funcFolder,//cFunctions = new THREE.Vector3(),
-		controllerWorld = new THREE.Vector3(),
+		cWorld = new THREE.Vector3(),
 		boSetMesh = false;//Для предотвращения лишних вызовов exposePosition если выбрать точку и передвинуть камеру с помошью OrbitControls,
 	function displayPointControllers( display ) {
 
 		fPointWorld.domElement.style.display = display;
 		fPoint.domElement.style.display = display;
-		if ( controllerCameraTarget )
-			controllerCameraTarget.domElement.parentElement.parentElement.style.display = display;
-		funcFolder.displayFolder( display );
+		if ( cCameraTarget )
+			cCameraTarget.domElement.parentElement.parentElement.style.display = display;
+//		funcFolder.displayFolder( display );
 
 	}
 	if ( options.arrayCloud )//Array of points with cloud
@@ -308,9 +271,9 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 			axesHelper.exposePosition( { object: mesh, index: selectedPointIndex } );
 
-		if ( controllerWorld.x ) controllerWorld.x.setValue( position.x );
-		if ( controllerWorld.y ) controllerWorld.y.setValue( position.y );
-		if ( controllerWorld.z ) controllerWorld.z.setValue( position.z );
+		if ( cWorld.x ) cWorld.x.setValue( position.x );
+		if ( cWorld.y ) cWorld.y.setValue( position.y );
+		if ( cWorld.z ) cWorld.z.setValue( position.z );
 
 	}
 	function setValue( controller, v ) {
@@ -330,32 +293,49 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	}
 	var wLimitsDefault;
-	function setPosition( intersectionSelected, boDefault ) {
+	function setPosition( intersectionSelected/*, boDefault*/ ) {
 
 		const player = intersectionSelected.object.userData.player;
 
 		if ( player ) {
 
-			funcFolder.setFunction( player.arrayFuncs[intersectionSelected.index], boDefault );
-/*			
-			const funcText = player.arrayFuncs[intersectionSelected.index].x.toString().split( /return (.*)/ )[1];
-			cFunctions.x.setValue( funcText ? funcText : '' );
-*/			
+			funcFolder.setFunction( player.arrayFuncs[intersectionSelected.index]/*, boDefault*/ );
+
+		}
+/*Для установки cCameraTarget после выбора точки. Если это оставить то неправильно учтанавливается галочка cCameraTarget если:
+1 устанвить cCameraTarget для выбранной точки
+2 запустить плеер
+3 уброать cCameraTarget
+4 запустить плеер. Снова установиться cCameraTarget
+*/
+		if ( cCameraTarget ) {
+
+/*
+			const value = player && player.arrayFuncs[intersectionSelected.index].cameraTarget ? true : false;
+			if ( cCameraTarget.getValue() !== value )//Если не делать эту проверку то будет бесконечный вызов cCameraTarget.onChange при выборе точки в guiSelectPoint
+				cCameraTarget.setValue( value );
+*/
+//			Player.cameraTarget.get();//Обновить cameraTarget
+			Player.cameraTarget.changeTarget( intersectionSelected.object, intersectionSelected.index );
+			cCameraTarget.updateDisplay();
+/*
+			const boLook = player && player.arrayFuncs[intersectionSelected.index].cameraTarget ? 
+				player.arrayFuncs[intersectionSelected.index].cameraTarget.boLook : false;
+			if ( cCameraTarget.getValue() !== boLook )//Если не делать эту проверку то будет бесконечный вызов cCameraTarget.onChange при выборе точки в guiSelectPoint
+				cCameraTarget.setValue( boLook );
+*/				
 
 		}
 
-		if ( controllerCameraTarget )
-			controllerCameraTarget.setValue( player && player.arrayFuncs[intersectionSelected.index].cameraTarget ? true : false );
-
 		const positionLocal = getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
-		setValue( controllerX, positionLocal.x );
-		setValue( controllerY, positionLocal.y );
-		setValue( controllerZ, positionLocal.z );
+		setValue( cX, positionLocal.x );
+		setValue( cY, positionLocal.y );
+		setValue( cZ, positionLocal.z );
 
 		const position = getObjectPosition( intersectionSelected.object, intersectionSelected.index );
-		setValue( controllerWorld.x, position.x );
-		setValue( controllerWorld.y, position.y );
-		setValue( controllerWorld.z, position.z );
+		setValue( cWorld.x, position.x );
+		setValue( cWorld.y, position.y );
+		setValue( cWorld.z, position.z );
 
 		var displayControllerW, displayControllerColor, displayControllerOpacity;
 		const none = 'none', block = 'block';
@@ -405,24 +385,24 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			} else {
 
 				const strColor = '#' + color.getHexString();
-				//Сначала надо установить initialValue потому что для FrustumPoints я устанвил readOnly для controllerColor.
+				//Сначала надо установить initialValue потому что для FrustumPoints я устанвил readOnly для cColor.
 				//В этом случае я не могу отобразить цвет следующей точки FrustumPoints потому что в режиме readOnly
 				//при изменении цвета восстанвливается старый цвет из initialValue.
-				controllerColor.initialValue = strColor;
-				controllerColor.setValue( strColor );
-				controllerColor.userData = { intersection: intersectionSelected, };
+				cColor.initialValue = strColor;
+				cColor.setValue( strColor );
+				cColor.userData = { intersection: intersectionSelected, };
 				if ( opasity !== undefined ) {
 
-					setValue( controllerOpacity, opasity );
+					setValue( cOpacity, opasity );
 
 				} else displayControllerOpacity = none;
-				controllerOpacity.userData = { intersection: intersectionSelected, };
+				cOpacity.userData = { intersection: intersectionSelected, };
 
 			}
 
 		} else {
 
-			if ( controllerW === undefined )
+			if ( cW === undefined )
 				displayControllerW = none;
 			else {
 
@@ -434,26 +414,26 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 						wLimitsDefault = {
 
-							min: controllerW.__min,
-							max: controllerW.__max,
+							min: cW.__min,
+							max: cW.__max,
 
 						}
 
 					}
 					if ( isWObject() ) {
 
-						controllerW.min( func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min );
-						controllerW.max( func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max );
-						if ( ( controllerW.__min !== 'undefined' ) && ( controllerW.__max !== 'undefined' ) )
-							controllerW.step( ( controllerW.__max - controllerW.__min ) / 100 )
+						cW.min( func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min );
+						cW.max( func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max );
+						if ( ( cW.__min !== 'undefined' ) && ( cW.__max !== 'undefined' ) )
+							cW.step( ( cW.__max - cW.__min ) / 100 )
 
 					} else {
 
-						controllerW.min( wLimitsDefault.min );
-						controllerW.max( wLimitsDefault.max );
+						cW.min( wLimitsDefault.min );
+						cW.max( wLimitsDefault.max );
 
 					}
-					setValue( controllerW, color );
+					setValue( cW, color );
 					displayControllerW = block;
 
 				}
@@ -463,17 +443,17 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			displayControllerOpacity = none;
 
 		}
-		dislayEl( controllerW, displayControllerW );
-		dislayEl( controllerColor, displayControllerColor );
-		dislayEl( controllerOpacity, displayControllerOpacity );
+		dislayEl( cW, displayControllerW );
+		dislayEl( cColor, displayControllerColor );
+		dislayEl( cOpacity, displayControllerOpacity );
 
 		var boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : false;
-		if ( controllerX ) controllerX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-		if ( controllerY ) controllerY.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-		if ( controllerZ ) controllerZ.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-		if ( controllerW ) controllerW.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-		controllerColor.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-		controllerOpacity.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+		if ( cX ) cX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+		if ( cY ) cY.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+		if ( cZ ) cZ.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+		if ( cW ) cW.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+		cColor.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+		cOpacity.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 
 	}
 	/**
@@ -527,9 +507,9 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		if ( index === -1 )
 			return;
 		const position = getObjectPosition( mesh, index );
-		controllerWorld.x.setValue( position.x );
-		controllerWorld.y.setValue( position.y );
-		controllerWorld.z.setValue( position.z );
+		cWorld.x.setValue( position.x );
+		cWorld.y.setValue( position.y );
+		cWorld.z.setValue( position.z );
 
 	}
 	/**
@@ -690,7 +670,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		}
 
-		this.selectPoint2 = function ( selectedMesh, boDefault ) {
+		this.selectPoint2 = function ( selectedMesh/*, boDefault*/ ) {
 
 			if ( ( intersectionSelected.index === undefined ) || isNaN( intersectionSelected.index ) )
 				return;
@@ -715,7 +695,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			intersection = intersectionSelected;
 			if ( guiParams.setIntersection )
 				guiParams.setIntersection( intersectionSelected );
-			setPosition( intersectionSelected, boDefault );
+			setPosition( intersectionSelected/*, boDefault*/ );
 
 			const mesh = getMesh();
 			const line = ( mesh.userData.player.arrayFuncs === undefined ) || ( typeof intersection.object.userData.player.arrayFuncs === "function" ) ?
@@ -728,7 +708,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				intersection.object.userData.player.arrayFuncs === undefined ? 'none' : block;
 
 		}
-		this.selectPoint2( undefined, true );
+		this.selectPoint2( undefined/*, true*/ );
 
 	}
 	/**
@@ -1150,84 +1130,15 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		if ( guiParams.myThreejs )
 			guiParams.myThreejs.cFrustumPoints = cFrustumPoints;
 
-		funcFolder = new functionsFolder( fPoints, options.scales, function( func, axisName ) {
-
-			const mesh = getMesh(),
-				index = cPoints.__select.options.selectedIndex - 1,
-				funcs = mesh.userData.player.arrayFuncs[index];
-			funcs[axisName] =  func;
-
-			var parent = mesh.parent, t = 0;
-			while (parent) {
-
-				if ( parent.userData.t ) {
-
-					t = parent.userData.t;
-					break;
-
-				}
-				parent = parent.parent;
-
-			}
-			const position = mesh.geometry.attributes.position,
-				itemSize = position.itemSize;
-			var controller;
-			switch ( axisName ){
-
-				case 'x':
-					controller = controllerX;
-					break;
-				case 'y':
-					controller = controllerY;
-					break;
-				case 'z':
-					controller = controllerZ;
-					break;
-				case 'w':
-					if ( func instanceof THREE.Color ) {
-
-						controllerColor.setValue( '#' + func.getHexString() );
-						return;
-
-					}
-					controller = controllerW;
-					break;
-				default: console.error( 'GuiSelectPoint new functionsFolder onFinishChange: axisName = ' + axisName );
-					return;
-
-			}
-			try {
-
-				setValue( controller, Player.execFunc( funcs, axisName, t ) );
-
-			} catch ( e ) {
-
-				alert( e.message );
-				funcFolder.setFocus( axisName );
-
-			}
-//			controller.setValue( Player.execFunc( funcs, axisName, t ) );
-/*				
-				vector = itemSize === 3 ? new THREE.Vector3() : itemSize === 4 ? new THREE.Vector4() : undefined;
-			vector.fromArray( position.array, index * itemSize );
-			vector[axisName] = Player.execFunc( funcs, axisName, t );
-			vector.toArray( position.array, index * itemSize );
-			position.needsUpdate = true;
-*/			
-
-		}, {
-
-			getLanguageCode: getLanguageCode,
-			THREE: THREE,
-
-		} );
-
 		//Camera target
-		var orbitControlsOptions, 
+		var orbitControlsOptions,
 			cameraTarget;//здесь хранится cameraTarget когда ни одна точка не выбрана как camera target
-		if ( guiParams.cameraTarget ) {
+		const playerCameraTarget = Player.cameraTarget.get();
+//		if ( guiParams.cameraTarget )
+//		if ( Player.cameraTarget2
+		if ( playerCameraTarget ) {
 
-			controllerCameraTarget = fPoints.add( { value: false }, 'value' ).onChange( function ( value ) {
+			cCameraTarget = fPoints.add( playerCameraTarget, 'boLook' ).onChange( function ( boLook ) {
 
 				const mesh = getMesh();
 				if ( !mesh.userData.player ) {
@@ -1241,9 +1152,10 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					}
 
 				}
-				const point = mesh.userData.player.arrayFuncs[cPoints.__select.options.selectedIndex-1];
-
-				function getCameraTarget( del = false ){
+				const index = cPoints.__select.options.selectedIndex-1,
+					point = mesh.userData.player.arrayFuncs[index];
+/*
+				function getCameraTarget(){
 
 					for ( var i = 0; i < cMeshs.__select.options.length; i++ ) {
 
@@ -1257,12 +1169,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 							if ( CT ) {
 
 								cameraTarget = CT;
-								if ( del ) {
-
-									arrayFuncs[j].cameraTarget = undefined;
-									delete arrayFuncs[j].cameraTarget;
-
-								}
 								return cameraTarget;
 
 							}
@@ -1270,52 +1176,84 @@ function GuiSelectPoint( _THREE, guiParams ) {
 						}
 
 					}
-					guiParams.cameraTarget.camera.userData.cameraTarget = guiParams.cameraTarget;
-//					cameraTarget = guiParams.cameraTarget;
 
 				}
-				if ( value ) {
+*/				
+				//remove boLook from all points
+				for ( var i = 0; i < cMeshs.__select.options.length; i++ ) {
 
+					const mesh = cMeshs.__select.options[i].mesh;
+					if( !mesh || !mesh.userData.player || !mesh.userData.player.arrayFuncs )
+						continue;
+					const arrayFuncs = mesh.userData.player.arrayFuncs;
+					for ( var j = 0; j < arrayFuncs.length; j++ )
+						if ( arrayFuncs[j].cameraTarget ) arrayFuncs[j].cameraTarget.boLook = false;
+
+				}
+				point.cameraTarget.boLook = boLook;
+				if ( Player.player ) Player.player.selectScene();
+				if ( boLook ) {
+
+					if ( Player.cameraGui ) Player.cameraGui.look();
 					if ( !point.cameraTarget ) {
 
-						getCameraTarget( true );
-						if ( guiParams.cameraTarget.boLook === undefined ) guiParams.cameraTarget.boLook = true;
+						getCameraTarget();// true );
+//						if ( guiParams.cameraTarget.boLook === undefined ) guiParams.cameraTarget.boLook = true;
+//						if ( Player.cameraTarget2.boLook === undefined ) Player.cameraTarget2.boLook = false;
+						if ( playerCameraTarget.boLook === undefined ) Player.cameraTarget2.boLook = false;
 						
 //не помню зачем вставил эту строку
 //Но если оставить эту строку то неверно будет устанавливаться дистанция и угол камеры когда порльзователь меняет точку, за которой наблюдает камера
 //						guiParams.cameraTarget.camera.userData.cameraTarget = guiParams.cameraTarget;
 
-						point.cameraTarget = { camera: guiParams.cameraTarget.camera, }
+//						point.cameraTarget = { camera: guiParams.cameraTarget.camera, }
+//						point.cameraTarget = { camera: Player.cameraTarget2.camera, }
+//						point.cameraTarget = { camera: playerCameraTarget.camera, }
+//						Player.cameraTarget.init(  );
 
 						if ( !orbitControlsOptions ) orbitControlsOptions = {}
 						if ( !orbitControlsOptions.target )
 							orbitControlsOptions.target = new THREE.Vector3();
-						if ( guiParams.cameraTarget.orbitControls )
-							orbitControlsOptions.target.copy( guiParams.cameraTarget.orbitControls.target );
+						if ( Player.orbitControls )
+							orbitControlsOptions.target.copy( Player.orbitControls.target );
 							
 						cameraTarget = undefined;
-						Player.cameraTarget( /*THREE, */mesh );
+//						Player.setCameraTarget( mesh );
+//						Player.setMeshCameraTarget( mesh );
+//						Player.cameraTarget.setTarget( mesh );
+						Player.cameraTarget.changeTarget( mesh, index );
 
 					}
 					return;
 
 				}
+/*				
 				cameraTarget = point.cameraTarget;
 				if ( point.cameraTarget ) point.cameraTarget = undefined;
+*/
+				//Если точка имеет индивидуальную cameraTarget, то камера будет следить по этим настройкам
+				if ( guiParams.cameraTarget ) guiParams.cameraTarget.camera.userData.cameraTargetPoint = point.cameraTarget;
+
+				if ( Player.orbitControls ) Player.orbitControls.reset();
+
 				if ( orbitControlsOptions ) {
 
 					if ( getCameraTarget() )
 						return;
 
+/*
 					if ( guiParams.cameraTarget.orbitControls )
 						guiParams.cameraTarget.orbitControls.target.copy( orbitControlsOptions.target );
+*/						
+					if ( Player.orbitControls )
+						Player.orbitControls.target.copy( orbitControlsOptions.target );
 					guiParams.cameraTarget.camera.lookAt( orbitControlsOptions.target );
 					point.cameraTarget = undefined;
 
 				}
 
 			} );
-			dat.controllerNameAndTitle( controllerCameraTarget, lang.cameraTarget, lang.cameraTargetTitle );
+			dat.controllerNameAndTitle( cCameraTarget, lang.cameraTarget, lang.cameraTargetTitle );
 
 		}
 
@@ -1607,39 +1545,39 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			return controller;
 
 		}
-		controllerX = axesGui( 'x' );
-		controllerY = axesGui( 'y' );
-		controllerZ = axesGui( 'z' );
-		controllerW = axesGui( 'w' );
-		controllerColor = fPoint.addColor( {
+		cX = axesGui( 'x' );
+		cY = axesGui( 'y' );
+		cZ = axesGui( 'z' );
+		cW = axesGui( 'w' );
+		cColor = fPoint.addColor( {
 
 			color: '#FFFFFF',
 
 		}, 'color' ).
 			onChange( function ( value ) {
 
-				if ( isReadOnlyController( controllerColor ) )
+				if ( isReadOnlyController( cColor ) )
 					return;
-				if ( controllerColor.userData === undefined )
+				if ( cColor.userData === undefined )
 					return;
-				var intersection = controllerColor.userData.intersection;
+				var intersection = cColor.userData.intersection;
 				_this.setColorAttribute( intersection.object.geometry.attributes, intersection.index, value );
 
 			} );
-		dat.controllerNameAndTitle( controllerColor, options.scales.w ? options.scales.w.name : lang.color );
-//		dat.controllerNameAndTitle( controllerColor, lang.color );
-		controllerOpacity = fPoint.add( {
+		dat.controllerNameAndTitle( cColor, options.scales.w ? options.scales.w.name : lang.color );
+//		dat.controllerNameAndTitle( cColor, lang.color );
+		cOpacity = fPoint.add( {
 
 			opasity: 1,
 
 		}, 'opasity', 0, 1, 0.01 ).
 			onChange( function ( opasity ) {
 
-				if ( isReadOnlyController( controllerOpacity ) )
+				if ( isReadOnlyController( cOpacity ) )
 					return;
-				if ( controllerColor.userData === undefined )
+				if ( cColor.userData === undefined )
 					return;
-				const intersection = controllerColor.userData.intersection;
+				const intersection = cColor.userData.intersection;
 				const points = intersection.object;
 				if ( points.geometry.attributes.ca === undefined )
 					return;//no opasity
@@ -1648,7 +1586,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				points.geometry.attributes.ca.needsUpdate = true;
 
 			} );
-		dat.controllerNameAndTitle( controllerOpacity, lang.opacity, lang.opacityTitle );
+		dat.controllerNameAndTitle( cOpacity, lang.opacity, lang.opacityTitle );
 		
 		cTrace = fPoint.add( { trace: false }, 'trace' ).onChange( function ( value ) {
 
@@ -1679,9 +1617,9 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			return controller;
 
 		}
-		controllerWorld.x = axesWorldGui( 'x' );
-		controllerWorld.y = axesWorldGui( 'y' );
-		controllerWorld.z = axesWorldGui( 'z' );
+		cWorld.x = axesWorldGui( 'x' );
+		cWorld.y = axesWorldGui( 'y' );
+		cWorld.z = axesWorldGui( 'z' );
 
 		//Restore default local position.
 		cRestoreDefaultLocalPosition = fPoint.add( {
@@ -1690,11 +1628,11 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 				const positionDefault = intersection.object.userData.player.arrayFuncs[intersection.index],
 					t = Player.getTime();
-				controllerX.setValue( typeof positionDefault.x === "function" ?
+				cX.setValue( typeof positionDefault.x === "function" ?
 					positionDefault.x( t, options.a, options.b ) : positionDefault.x );
-				controllerY.setValue( typeof positionDefault.y === "function" ?
+				cY.setValue( typeof positionDefault.y === "function" ?
 					positionDefault.y( t, options.a, options.b ) : positionDefault.y );
-				controllerZ.setValue( typeof positionDefault.z === "function" ?
+				cZ.setValue( typeof positionDefault.z === "function" ?
 					positionDefault.z( t, options.a, options.b ) :
 					positionDefault.z === undefined ? 0 ://default Z axis of 2D point is 0
 						positionDefault.z );
@@ -1702,16 +1640,25 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				if ( positionDefault.w !== undefined ) {
 
 					if ( positionDefault.w.r !== undefined )
-						controllerColor.setValue( '#' +
+						cColor.setValue( '#' +
 							new THREE.Color( positionDefault.w.r, positionDefault.w.g, positionDefault.w.b ).getHexString() );
 					else if ( typeof positionDefault.w === "function" )
-						setValue( controllerW, positionDefault.w( t ) );
+						setValue( cW, positionDefault.w( t ) );
+					else if ( positionDefault.w.func ) {
+
+						setValue( cW, positionDefault.w.func( t ) );
+						return;
+
+					}
+					const float = parseFloat( positionDefault.w );
+					if ( float === positionDefault.w )
+						setValue( cW, positionDefault.w );
 					else console.error( 'Restore default local position: Invalid W axis.' );
 
 				} else {
 
-					controllerColor.setValue( controllerColor.initialValue );
-					controllerOpacity.setValue( controllerOpacity.initialValue );
+					cColor.setValue( cColor.initialValue );
+					cOpacity.setValue( cOpacity.initialValue );
 
 				}
 
@@ -1720,6 +1667,73 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		}, 'defaultF' );
 		dat.controllerNameAndTitle( cRestoreDefaultLocalPosition, lang.defaultButton, lang.defaultLocalPositionTitle );
+
+		funcFolder = new functionsFolder( fPoint, options.scales, THREE, function ( func, axisName ) {
+
+			const mesh = getMesh(),
+				index = cPoints.__select.options.selectedIndex - 1,
+				funcs = mesh.userData.player.arrayFuncs[index];
+			funcs[axisName] = func;
+
+			var parent = mesh.parent, t = 0;
+			while ( parent ) {
+
+				if ( parent.userData.t ) {
+
+					t = parent.userData.t;
+					break;
+
+				}
+				parent = parent.parent;
+
+			}
+			const position = mesh.geometry.attributes.position,
+				itemSize = position.itemSize;
+			var controller;
+			switch ( axisName ) {
+
+				case 'x':
+					controller = cX;
+					break;
+				case 'y':
+					controller = cY;
+					break;
+				case 'z':
+					controller = cZ;
+					break;
+				case 'w':
+					if ( func instanceof THREE.Color ) {
+
+						cColor.setValue( '#' + func.getHexString() );
+						return;
+
+					}
+					controller = cW;
+					break;
+				default: console.error( 'GuiSelectPoint new functionsFolder onFinishChange: axisName = ' + axisName );
+					return;
+
+			}
+			setValue( controller, Player.execFunc( funcs, axisName, t ) );
+/*			
+			try {
+			
+				setValue( controller, Player.execFunc( funcs, axisName, t ) );
+			
+			} catch ( e ) {
+			
+				alert( e.message );
+				funcFolder.setFocus( axisName );
+			
+			}
+*/
+
+		}, {
+
+			getLanguageCode: getLanguageCode,
+			THREE: THREE,
+
+		} );
 
 	}
 	/**
@@ -1733,28 +1747,28 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		pointLight1.windowRange( options.scales );
 		pointLight2.windowRange( options.scales );
 
-		controllerX.min( options.scales.x.min );
-		controllerX.max( options.scales.x.max );
-		controllerX.updateDisplay();
+		cX.min( options.scales.x.min );
+		cX.max( options.scales.x.max );
+		cX.updateDisplay();
 
-		controllerY.min( options.scales.y.min );
-		controllerY.max( options.scales.y.max );
-		controllerY.updateDisplay();
+		cY.min( options.scales.y.min );
+		cY.max( options.scales.y.max );
+		cY.updateDisplay();
 
-		controllerZ.min( options.scales.z.min );
-		controllerZ.max( options.scales.z.max );
-		controllerZ.updateDisplay();
+		cZ.min( options.scales.z.min );
+		cZ.max( options.scales.z.max );
+		cZ.updateDisplay();
 
-		if ( controllerW !== undefined ) {
+		if ( cW !== undefined ) {
 
-			controllerW.min( options.scales.w.min );
-			controllerW.max( options.scales.w.max );
-			controllerW.updateDisplay();
+			cW.min( options.scales.w.min );
+			cW.max( options.scales.w.max );
+			cW.updateDisplay();
 
 		}
 
 	}
-	this.setOrbitControls = function ( orbitControls ) { guiParams.cameraTarget.orbitControls = orbitControls; }
+//	this.setOrbitControls = function ( orbitControls ) { guiParams.cameraTarget.orbitControls = orbitControls; }
 	return this;
 
 }
