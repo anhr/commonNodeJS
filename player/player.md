@@ -758,6 +758,17 @@ Now you can see the "Meshes" folder in the [dat.gui](https://github.com/anhr/dat
 Now you can see, all points moves and hides on the right border of the canvas during playing.
 The user can select the point at which the camera is looking during playing for resolving of issue.
 
+* Please add <b>cameraTarget</b> for the <b>Player</b>.
+```
+guiSelectPoint = new GuiSelectPoint( THREE, {
+
+	getLanguageCode: getLanguageCode,
+	cameraTarget: { camera: camera, },
+	options: options,
+
+} );
+```
+
 * Please add <b>cameraTarget</b> key for creating of <b>guiSelectPoint</b> instance.
 ```
 guiSelectPoint = new GuiSelectPoint( THREE, {

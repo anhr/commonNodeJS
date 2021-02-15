@@ -19,6 +19,7 @@ import { dat } from './dat/dat.module.js';
  * Adds the [Functions]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} folder into [dat.gui]{@link https://github.com/anhr/dat.gui}.
  * @param {GUI} fParent parent folder for functions folder.
  * @param {Object} scales [AxesHelper]{@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html} options.scales for details.
+ * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {Function} onFinishChange callback function is called every time, when user have entered new value of the function and the function controller is lost of the focus.
  * <pre>
  * parameter value is new value of the function.
@@ -30,9 +31,10 @@ import { dat } from './dat/dat.module.js';
  * @param {object} [options.vector.y] text of the y axis function
  * @param {object} [options.vector.z] text of the z axis function
 */
-const functionsFolder = function ( fParent, scales, onFinishChange, options = {} ) {
+const functionsFolder = function ( fParent, scales, THREE, onFinishChange, options = {} ) {
 
-//	const _this = this;
+	const _this = this;
+	var boError = false;
 
 	//Localization
 
@@ -91,6 +93,7 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 			w: vector.w,
 
 		},
+/*
 		vectorDefault = {
 
 			x: vector.x,
@@ -99,6 +102,7 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 			w: vector.w,
 
 		},
+*/
 		cFunctions = { };
 	function createControl( axisName ) {
 
@@ -106,27 +110,72 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 			return;
 		cFunctions[axisName] = fFunctions.add( vector, axisName ).onFinishChange( function ( value ) {
 
-			if ( vectorCur[axisName] === value )
+			__onFinishChange( value, axisName, vectorCur );
+/*
+			if ( ( vectorCur[axisName] === value ) && !boError )
 				return;
+			boError = false;
 			vectorCur[axisName] = value;
-			var float = parseFloat( value );
-			if ( float.toString() !== value ) float = NaN;
 			var func;
-			if ( isNaN(float) ) {
+			const typeofValue = typeof value;
+			switch ( typeofValue ) {
 
-//				const color = value.replace(/\s/g, "").toLowerCase().split( /rgb\((\d+),(\d+),(\d+)\)/ );
-				const color = value.replace(/\s/g, "").split( /rgb\((\d+),(\d+),(\d+)\)/ );
-				if ( color.length === 5 ) func = new options.THREE.Color( value );
-				else func = new Function( 't', 'a', 'b', 'return ' + value );
+				case 'string':
 
-			} else func = float;
+					var float = parseFloat( value );
+					if ( float.toString() !== value ) {
+
+//						const color = value.replace(/\s/g, "").toLowerCase().split( /rgb\((\d+),(\d+),(\d+)\)/ );
+						const color = value.replace(/\s/g, "").split( /rgb\((\d+),(\d+),(\d+)\)/ );
+						if ( color.length === 5 ) func = new THREE.Color( value );
+						else {
+
+							var array;
+							try {
+
+								array = JSON.parse(value);
+								
+							} catch ( e ){}
+							if ( Array.isArray( array ) ) func = array;
+							else {
+
+								try {
+
+									func = new Function( 't', 'a', 'b', 'return ' + value );
+
+								} catch ( e ){
+
+									alert( e );
+									_this.setFocus( axisName );
+									return;
+									
+								}
+
+							}
+
+						}
+
+					} else func = float;
+					break;
+
+				case 'number':
+
+					func = value;
+					break;
+					
+				default:
+					console.error( 'onFinishChange( ' + value + ' ): invalid type = ' + typeofValue );
+					return;
+
+			}
 			onFinishChange( func, axisName );
-//			onFinishChange( isNaN(float) ? new Function( 't', 'a', 'b', 'return ' + value ) : float, axisName );
+*/
 
 		} );
-		dat.controllerNameAndTitle( cFunctions[axisName], scales[axisName] && scales[axisName].name ? scales[axisName].name : axisName );
+		dat.controllerNameAndTitle( cFunctions[axisName], getAxisName( axisName ) );
 
 	}
+	function getAxisName( axisName ) { return scales[axisName] && scales[axisName].name ? scales[axisName].name : axisName; }
 	createControl( 'x' );
 	createControl( 'y' );
 	createControl( 'z' );
@@ -136,14 +185,11 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 	const buttonDefault = fFunctions.add( {
 
 		defaultF: function ( value ) {
-
 /*
-			cFunctions.x.setValue( vectorDefault.x );
-			cFunctions.y.setValue( vectorDefault.y );
-			cFunctions.z.setValue( vectorDefault.z );
-*/
 			function setValue( axisName ) {
 
+				if ( !cFunctions[axisName] )
+					return;
 				cFunctions[axisName].setValue( vectorDefault[axisName] );
 				cFunctions[axisName].__onFinishChange( vectorDefault[axisName] );
 
@@ -152,13 +198,7 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 			setValue( 'y' );
 			setValue( 'z' );
 			setValue( 'w' );
-/*
-			_this.setFunction(vectorDefault);
-			onFinishChange( vectorDefault.x, 'x' );
-			onFinishChange( vectorDefault.y, 'y' );
-			onFinishChange( vectorDefault.z, 'z' );
-*/			
-
+*/
 		},
 
 	}, 'defaultF' );
@@ -170,7 +210,8 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 			return;
 		if ( typeof func === 'object' ) {
 
-			if ( func instanceof options.THREE.Color ) return func.getStyle();
+			if ( func instanceof THREE.Color ) return func.getStyle();
+			if ( Array.isArray( func ) ) return JSON.stringify(func)
 			func = func.func ? func.func : func;
 
 		}
@@ -178,6 +219,7 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 		switch ( typeofFunc ) {
 
 			case 'number':
+				func = func.toString();//если это не делать будет создан NumberControllerBox, ктороый не позволяет вводить float
 			case 'string':
 				return func;
 			case 'function':
@@ -193,6 +235,80 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 */		
 
 	}
+	function __onFinishChange( value, axisName, vectorCur ) {
+
+		if ( ( vectorCur[axisName] === value ) && !boError )
+			return;
+		try {
+
+			boError = false;
+			vectorCur[axisName] = value;
+			var func;
+			const typeofValue = typeof value;
+			switch ( typeofValue ) {
+
+				case 'string':
+
+					var float = parseFloat( value );
+					if ( float.toString() !== value ) {
+
+						//						const color = value.replace(/\s/g, "").toLowerCase().split( /rgb\((\d+),(\d+),(\d+)\)/ );
+						const color = value.replace( /\s/g, "" ).split( /rgb\((\d+),(\d+),(\d+)\)/ );
+						if ( color.length === 5 ) func = new THREE.Color( value );
+						else {
+
+							var array;
+							try {
+
+								array = JSON.parse( value );
+
+							} catch ( e ) { }
+							if ( Array.isArray( array ) ) func = array;
+							else {
+
+								func = new Function( 't', 'a', 'b', 'return ' + value );
+/*
+								try {
+								
+									func = new Function( 't', 'a', 'b', 'return ' + value );
+								
+								} catch ( e ) {
+								
+									alert( e );
+									_this.setFocus( axisName );
+									return;
+								
+								}
+*/
+
+							}
+
+						}
+
+					} else func = float;
+					break;
+
+				case 'number':
+
+					func = value;
+					break;
+
+				default:
+					console.error( 'onFinishChange( ' + value + ' ): invalid type = ' + typeofValue );
+					return;
+
+			}
+			onFinishChange( func, axisName );
+
+		} catch ( e ) {
+
+			alert( 'Axis: ' + getAxisName( axisName ) + '. Function: "' + value + '". ' + e );
+			_this.setFocus( axisName );
+
+		}
+
+	}
+
 	/**
 	 * set the function text
 	 * @function functionsFolder.
@@ -201,19 +317,106 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 	 * @param {object} _vector.x x axis function.
 	 * @param {object} _vector.y y axis function.
 	 * @param {object} _vector.z z axis function.
-	 * @param {boolean} boDefault true - copy from _vector to vectorDefault
 	 */
-	this.setFunction = function ( _vector, boDefault ) {
+	this.setFunction = function ( _vector/*, boDefault*/ ) {
 
+		const vector = {
+
+			x: _vector ? getFuncText( _vector.x ) : '',
+			y: _vector ? getFuncText( _vector.y ) : '',
+			z: _vector ? getFuncText( _vector.z ) : '',
+			w: _vector ? getFuncText( _vector.w ) : '',
+
+		},
+		//onFinishChange вызывается даже если vector не изменился. Поэтому такой onFinishChange пропускается
+		vectorCur = {
+
+			x: vector.x,
+			y: vector.y,
+			z: vector.z,
+			w: vector.w,
+
+		};
+		if ( !_vector.vectorDefault )
+			_vector.vectorDefault = {
+
+				x: vector.x,
+				y: vector.y,
+				z: vector.z,
+				w: vector.w,
+
+			};
 		function setVectorAxis( axisName ) {
 
-			if ( !_vector[axisName] )
+			if ( _vector[axisName] === undefined )
 				return;
+			cFunctions[axisName].__onFinishChange = function( value ){
+
+				__onFinishChange( value, axisName, vectorCur );
+/*
+				if ( ( vectorCur[axisName] === value ) && !boError )
+					return;
+				try {
+
+					boError = false;
+					vectorCur[axisName] = value;
+					var func;
+					const typeofValue = typeof value;
+					switch ( typeofValue ) {
+
+						case 'string':
+
+							var float = parseFloat( value );
+							if ( float.toString() !== value ) {
+
+								const color = value.replace( /\s/g, "" ).split( /rgb\((\d+),(\d+),(\d+)\)/ );
+								if ( color.length === 5 ) func = new THREE.Color( value );
+								else {
+
+									var array;
+									try {
+
+										array = JSON.parse( value );
+
+									} catch ( e ) { }
+									if ( Array.isArray( array ) ) func = array;
+									else {
+
+										func = new Function( 't', 'a', 'b', 'return ' + value );
+
+									}
+
+								}
+
+							} else func = float;
+							break;
+
+						case 'number':
+
+							func = value;
+							break;
+
+						default:
+							console.error( 'onFinishChange( ' + value + ' ): invalid type = ' + typeofValue );
+							return;
+
+					}
+					onFinishChange( func, axisName );
+
+				} catch( e ) {
+
+					alert( 'axis: ' + getAxisName( axisName ) + '. function: "' + value + '". ' + e );
+					_this.setFocus( axisName );
+
+				}
+*/
+
+			}
 			vector[axisName] = getFuncText( _vector[axisName] );
 			cFunctions[axisName].setValue( vector[axisName] );
 			vectorCur[axisName] = vector[axisName];
-			if ( boDefault )
-				vectorDefault[axisName] = vector[axisName];
+//			if ( boDefault )
+//				vectorDefault[axisName] = vector[axisName];
 
 		}
 		setVectorAxis( 'x' );
@@ -223,6 +426,33 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 
 			setVectorAxis( 'z' );
 			dislay = true;
+
+		}
+		buttonDefault.object.defaultF = function( value ) {
+
+/*
+			cFunctions.x.setValue( vectorDefault.x );
+			cFunctions.y.setValue( vectorDefault.y );
+			cFunctions.z.setValue( vectorDefault.z );
+*/
+			function setValue( axisName ) {
+
+				if ( !cFunctions[axisName] )
+					return;
+				cFunctions[axisName].setValue( _vector.vectorDefault[axisName] );
+				cFunctions[axisName].__onFinishChange( _vector.vectorDefault[axisName] );
+
+			}
+			setValue( 'x' );
+			setValue( 'y' );
+			setValue( 'z' );
+			setValue( 'w' );
+/*
+			_this.setFunction(vectorDefault);
+			onFinishChange( vectorDefault.x, 'x' );
+			onFinishChange( vectorDefault.y, 'y' );
+			onFinishChange( vectorDefault.z, 'z' );
+*/			
 
 		}
 		function dislayEl( controller, displayController ) {
@@ -256,7 +486,12 @@ const functionsFolder = function ( fParent, scales, onFinishChange, options = {}
 	 * setFocus
 	 * @param {string} axisName Name of the axis of the controller
 	 */
-	this.setFocus = function ( axisName ) { cFunctions[axisName].domElement.childNodes[0].focus(); }
+	this.setFocus = function ( axisName ) {
+
+		cFunctions[axisName].domElement.childNodes[0].focus();
+		boError = true;
+
+	}
 
 }
 

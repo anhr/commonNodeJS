@@ -294,7 +294,13 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 		if ( points.material.uniforms.cloudPoints !== undefined )
 			points.material.uniforms.cloudPoints.value.needsUpdate = true;
 
-		if ( settings.Player ) settings.Player.selectMeshPlayScene( /*THREE, */points, undefined, 0, settings.options );
+		if ( settings.Player ) {
+
+			settings.Player.selectMeshPlayScene( points, undefined, 0, settings.options );
+			//Что бы камера смотрела на выбранную точку сразу после запуска приложения
+			settings.Player.cameraTarget.get().setCameraPosition();
+
+		}
 
 	}, settings.pointsOptions === undefined ? undefined : settings.pointsOptions.path );
 

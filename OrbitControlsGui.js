@@ -148,13 +148,16 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 
 		defaultF: function ( value ) {
 
+			orbitControls.reset();
+/*
 			orbitControls.target.x = 0;
 			orbitControls.target.y = 0;
 			orbitControls.target.z = 0;
 			orbitControls.update();
-			targetX.setValue( 0 );
-			targetY.setValue( 0 );
-			targetZ.setValue( 0 );
+*/			
+			targetX.setValue( orbitControls.target.x );
+			targetY.setValue( orbitControls.target.y );
+			targetZ.setValue( orbitControls.target.z );
 
 		},
 

@@ -26,18 +26,20 @@ import functionsFolder from './functionsFolder.js';
  * @param {GUI} gui is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}.
  * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
+ * @param {Player} Player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
  * @param {object} [options] the following options are available:
  * @param {OrbitControls} [options.orbitControls] [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}.
  * @param {object} [options.scales={}] axes scales.
  * See [AxesHelper(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/jsdoc/module-AxesHelper.html} options.scales for details.
  * @param {Function} [options.getLanguageCode="en"] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
 */
-var CameraGui = function ( gui, camera, THREE, options ) {
+var CameraGui = function ( gui, camera, THREE, Player, options ) {
 
 /*
 	if ( camera === undefined )
 		return;
 */
+	Player.cameraGui = this;
 
 	options = options || {};
 
@@ -55,14 +57,14 @@ var CameraGui = function ( gui, camera, THREE, options ) {
 	options.scales.z.name = options.scales.z.name || 'Z';
 
 	//
-
+/*Не помню зачем засунул эту хрень. Если оставить то не могу двигать камеру если поставлена птичка в controllerLook
 	if ( options.orbitControls )
 		options.orbitControls.addEventListener( 'change', function () {
 
 			update();
 
 		} );
-
+*/
 	//Localization
 
 	const lang = {
@@ -146,68 +148,112 @@ var CameraGui = function ( gui, camera, THREE, options ) {
 	dat.controllerNameAndTitle( controllersPosition.z, options.scales.z.name );
 
 	var controllersDistance, defaultDistance;
-	if ( camera.userData.cameraTarget ) {
+//	if ( camera.userData.cameraTarget ) {
 
-		const Player = camera.userData.cameraTarget.Player;
-		Player.setCameraTarget( camera );
-		const controllerLook = fCamera.add( camera.userData.cameraTarget, 'boLook' ).onChange( function ( value ) { } ),
-			fDistanceToCamera = fCamera.addFolder( lang.distanceToCamera ),
-			distance = {
+//		const Player = camera.userData.cameraTarget.Player;
+//	Player.setCameraTarget2( camera );
+	Player.cameraTarget.init( { camera: camera } );
+//	Player.cameraTarget.init( { cameraTarget: { camera: camera } } );
+//	Player.setPlayerCameraTarget( { camera: camera } );
+	const cameraTarget = Player.cameraTarget.get(),
+//		controllerLook = fCamera.add( cameraTarget, 'boLook' ).onChange( function ( value )
+		controllerLook = fCamera.add( { boLook: cameraTarget.boLook }, 'boLook' ).onChange( function ( boLook ) {
 
-				x: Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'x' ),
-				y: Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'y' ),
-				z: Player.execFunc( camera.userData.cameraTarget.distanceToCamera, 'z' ),
-				
-			};
-		dat.controllerNameAndTitle( controllerLook, lang.look, lang.lookTitle );
-		function setDistance(){
+			if ( Player.player ) Player.player.selectScene();
+			if ( boLook ) {
 
-			camera.userData.cameraTarget.setCameraPosition( camera.userData.cameraTarget.target );
-			update();
-				
-		}
-		controllersDistance = {
+				return;
 
-			x: dat.controllerZeroStep( fDistanceToCamera, distance, 'x', function ( value ) {
+			}
+			if ( Player.orbitControls ) {
 
-				camera.userData.cameraTarget.distanceToCameraCur.x = value;
-				setDistance();
+				//обязательно вызвать controls.saveState();
+				Player.orbitControls.reset();
+	/*
+				Player.orbitControls.target.copy( camera.userData.cameraTarget.targetDefault );
+				Player.orbitControls.update();
+	*/
 
-			} ),
-			y: dat.controllerZeroStep( fDistanceToCamera, distance, 'y', function ( value ) {
-
-				camera.userData.cameraTarget.distanceToCameraCur.y = value;
-				setDistance();
-
-			} ),
-
-			z: dat.controllerZeroStep( fDistanceToCamera, distance, 'z', function ( value ) {
-
-				camera.userData.cameraTarget.distanceToCameraCur.z = value;
-				setDistance();
-
-			} ),
+			}
+		
+		} ),
+		fDistanceToCamera = fCamera.addFolder( lang.distanceToCamera ),
+		distance = {
+/*			
+			x: Player.execFunc( Player.cameraTarget2.distanceToCamera, 'x' ).toString(),
+			y: Player.execFunc( Player.cameraTarget2.distanceToCamera, 'y' ).toString(),
+			z: Player.execFunc( Player.cameraTarget2.distanceToCamera, 'z' ).toString(),
+*/			
+			x: Player.execFunc( cameraTarget.distanceToCamera, 'x' ).toString(),
+			y: Player.execFunc( cameraTarget.distanceToCamera, 'y' ).toString(),
+			z: Player.execFunc( cameraTarget.distanceToCamera, 'z' ).toString(),
 
 		};
-		defaultDistance = { x: distance.x, y: distance.y, z: distance.z };
-		dat.folderNameAndTitle( fDistanceToCamera, lang.distanceToCamera, lang.distanceToCameraTitle );
-		dat.controllerNameAndTitle( controllersDistance.x, options.scales.x.name );
-		dat.controllerNameAndTitle( controllersDistance.y, options.scales.y.name );
-		dat.controllerNameAndTitle( controllersDistance.z, options.scales.z.name );
+	dat.controllerNameAndTitle( controllerLook, lang.look, lang.lookTitle );
+	function setDistance(){
 
-		const funcFolder = new functionsFolder( fDistanceToCamera, options.scales, function( func, axisName ) {
+//		camera.userData.cameraTarget.setCameraPosition( camera.userData.cameraTarget.target );
+//		Player.cameraTarget2.setCameraPosition();
+		Player.cameraTarget.get().setCameraPosition();
+		update();
 
-			camera.userData.cameraTarget.distanceToCamera[axisName] = func;
-
-		}, {
-
-			getLanguageCode: options.getLanguageCode,
-			vector: camera.userData.cameraTarget.distanceToCamera,
-			THREE: THREE,
-
-		} );
-	
 	}
+	controllersDistance = {
+
+		x: dat.controllerZeroStep( fDistanceToCamera, distance, 'x', function ( value ) {
+
+			camera.userData.cameraTarget.distanceToCameraCur.x = value;
+			setDistance();
+
+		} ),
+		y: dat.controllerZeroStep( fDistanceToCamera, distance, 'y', function ( value ) {
+
+//			camera.userData.cameraTarget.distanceToCameraCur.y = value;
+			Player.cameraTarget.get().distanceToCameraCur.y = value;
+			setDistance();
+
+		} ),
+
+		z: dat.controllerZeroStep( fDistanceToCamera, distance, 'z', function ( value ) {
+
+			camera.userData.cameraTarget.distanceToCameraCur.z = value;
+			setDistance();
+
+		} ),
+
+	};
+	defaultDistance = { x: distance.x, y: distance.y, z: distance.z };
+	dat.folderNameAndTitle( fDistanceToCamera, lang.distanceToCamera, lang.distanceToCameraTitle );
+	dat.controllerNameAndTitle( controllersDistance.x, options.scales.x.name );
+	dat.controllerNameAndTitle( controllersDistance.y, options.scales.y.name );
+	dat.controllerNameAndTitle( controllersDistance.z, options.scales.z.name );
+
+	const funcFolder = new functionsFolder( fDistanceToCamera, options.scales, THREE, function ( func, axisName ) {
+
+/*
+		camera.userData.cameraTarget.distanceToCamera[axisName] = func;
+		const value = Player.execFunc(camera.userData.cameraTarget.distanceToCamera,axisName,Player.getTime());
+*/		
+		const cameraTarget = Player.cameraTarget.get();
+		cameraTarget.distanceToCamera[axisName] = func;
+		const value = Player.execFunc( cameraTarget.distanceToCamera, axisName, Player.getTime() );
+		controllersDistance[axisName].setValue( value );
+//		Player.setCameraTarget( camera );
+		Player.cameraTarget.init( { camera: camera } );
+//		Player.setPlayerCameraTarget( camera );
+
+		cameraTarget.distanceToCameraCur[axisName] = value;
+		setDistance();
+
+	}, {
+
+		getLanguageCode: options.getLanguageCode,
+//		vector: Player.cameraTarget2.distanceToCamera,
+		vector: cameraTarget.distanceToCamera,
+
+	} );
+
+//	}
 
 	//Default button
 	const defaultPosition = { x: camera.position.x, y: camera.position.y, z: camera.position.z },
@@ -251,17 +297,29 @@ var CameraGui = function ( gui, camera, THREE, options ) {
 
 	function update(){
 
+		const cameraTarget = Player.cameraTarget.get();
+//		if ( cameraTarget.boLook && !controllerLook.getValue() ) controllerLook.setValue( cameraTarget.boLook );
+//		if ( !Player.cameraTarget2.boLook || !Player.cameraTarget2.target )
+		if ( !cameraTarget.boLook || !cameraTarget.target )
+			return;
 		controllersPosition.x.setValue( camera.position.x );
 		controllersPosition.y.setValue( camera.position.y );
 		controllersPosition.z.setValue( camera.position.z );
 
 		if ( controllersDistance ) {
 
-			controllersDistance.x.setValue( camera.userData.cameraTarget.distanceToCameraCur.x );
-			controllersDistance.y.setValue( camera.userData.cameraTarget.distanceToCameraCur.y );
-			controllersDistance.z.setValue( camera.userData.cameraTarget.distanceToCameraCur.z );
+/*
+			controllersDistance.x.setValue( Player.cameraTarget2.distanceToCameraCur.x );
+			controllersDistance.y.setValue( Player.cameraTarget2.distanceToCameraCur.y );
+			controllersDistance.z.setValue( Player.cameraTarget2.distanceToCameraCur.z );
+*/
+			controllersDistance.x.setValue( cameraTarget.distanceToCameraCur.x );
+			controllersDistance.y.setValue( cameraTarget.distanceToCameraCur.y );
+			controllersDistance.z.setValue( cameraTarget.distanceToCameraCur.z );
 
 		}
+//		funcFolder.setFunction( Player.cameraTargetPoint.distanceToCamera || Player.cameraTarget2.distanceToCamera );
+		funcFolder.setFunction( cameraTarget.distanceToCamera );
 
 	}
 	if ( this ) {
@@ -272,7 +330,20 @@ var CameraGui = function ( gui, camera, THREE, options ) {
 		 * update
 		 */
 		this.update = function () { update(); }
-		if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.cameraGui = this;
+		//if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.cameraGui = this;Use Player.cameraGui
+		/**
+		 * Is camera look at selected point?
+		 * @function CameraGui.
+		 * isLook
+		 */
+		this.isLook = function () { return controllerLook.getValue(); }
+		/**
+		 * Look at selected point
+		 * @function CameraGui.
+		 * look
+		 * @param {boolean=true} boLook true - lool at selected point
+		 */
+		this.look = function ( boLook = true ) { if ( controllerLook.getValue() !== boLook ) controllerLook.setValue( boLook ); }
 
 	}
 

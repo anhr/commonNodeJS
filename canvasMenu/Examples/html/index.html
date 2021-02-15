@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -96,6 +96,7 @@
 			//
 			controls = new OrbitControls( camera, renderer.domElement );
 			controls.target.set( 0, 0, 0 );
+			controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 			controls.update();
 
 			//StereoEffect

@@ -156,6 +156,7 @@ and edit your code
 ```
 const controls = new OrbitControls( camera, renderer.domElement );
 controls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
+controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 controls.update();
 ```
 
@@ -356,8 +357,7 @@ import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/play
 ```
 See [Player API](../../player/jsdoc/index.html#ImportPlayer) for details.
 
-Edit second point of the <b>arrayFuncs</b> as target of the camera
-and use <b>Player.getPoints</b> for get of the points array for creation of the <b>THREE.Points</b>.
+Please, add the <b>cameraTarget</b> key into <b>arrayFuncs</b> array and use <b>Player.getPoints</b> for get of the points array for creation of the <b>THREE.Points</b>.
 ```
 const arrayFuncs = [
 	new THREE.Vector3( 0.5, 0.5 ,0.5 ),//First point
@@ -380,9 +380,9 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
 
 	} ) );
 ```
-Plaese set <b>camera.userData.cameraTarget.orbitControls</b> if you use [THREE.OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls).
+Plaese set <b>Player.orbitControls</b> if you use [THREE.OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls).
 ```
-if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.orbitControls = controls;
+if ( typeof Player !== 'undefined' ) Player.orbitControls = controls;
 ```
 Define <b>points.userData.player</b> and call <b>Player.selectMeshPlayScene(...)</b>.
 ```
