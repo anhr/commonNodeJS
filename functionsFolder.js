@@ -93,16 +93,6 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 			w: vector.w,
 
 		},
-/*
-		vectorDefault = {
-
-			x: vector.x,
-			y: vector.y,
-			z: vector.z,
-			w: vector.w,
-
-		},
-*/
 		cFunctions = { };
 	function createControl( axisName ) {
 
@@ -111,65 +101,6 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 		cFunctions[axisName] = fFunctions.add( vector, axisName ).onFinishChange( function ( value ) {
 
 			__onFinishChange( value, axisName, vectorCur );
-/*
-			if ( ( vectorCur[axisName] === value ) && !boError )
-				return;
-			boError = false;
-			vectorCur[axisName] = value;
-			var func;
-			const typeofValue = typeof value;
-			switch ( typeofValue ) {
-
-				case 'string':
-
-					var float = parseFloat( value );
-					if ( float.toString() !== value ) {
-
-//						const color = value.replace(/\s/g, "").toLowerCase().split( /rgb\((\d+),(\d+),(\d+)\)/ );
-						const color = value.replace(/\s/g, "").split( /rgb\((\d+),(\d+),(\d+)\)/ );
-						if ( color.length === 5 ) func = new THREE.Color( value );
-						else {
-
-							var array;
-							try {
-
-								array = JSON.parse(value);
-								
-							} catch ( e ){}
-							if ( Array.isArray( array ) ) func = array;
-							else {
-
-								try {
-
-									func = new Function( 't', 'a', 'b', 'return ' + value );
-
-								} catch ( e ){
-
-									alert( e );
-									_this.setFocus( axisName );
-									return;
-									
-								}
-
-							}
-
-						}
-
-					} else func = float;
-					break;
-
-				case 'number':
-
-					func = value;
-					break;
-					
-				default:
-					console.error( 'onFinishChange( ' + value + ' ): invalid type = ' + typeofValue );
-					return;
-
-			}
-			onFinishChange( func, axisName );
-*/
 
 		} );
 		dat.controllerNameAndTitle( cFunctions[axisName], getAxisName( axisName ) );
@@ -185,20 +116,7 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 	const buttonDefault = fFunctions.add( {
 
 		defaultF: function ( value ) {
-/*
-			function setValue( axisName ) {
 
-				if ( !cFunctions[axisName] )
-					return;
-				cFunctions[axisName].setValue( vectorDefault[axisName] );
-				cFunctions[axisName].__onFinishChange( vectorDefault[axisName] );
-
-			}
-			setValue( 'x' );
-			setValue( 'y' );
-			setValue( 'z' );
-			setValue( 'w' );
-*/
 		},
 
 	}, 'defaultF' );
@@ -227,12 +145,6 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 			default: console.error( 'functionsFolder.getFuncText(...): typeof func = ' + typeofFunc );
 				return;
 		}
-/*		
-		const res = func.toString().split( /return (.*)/ )[1] || '';
-		if ( res === '' )
-			return func;
-		return res;
-*/		
 
 	}
 	function __onFinishChange( value, axisName, vectorCur ) {
@@ -267,19 +179,6 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 							else {
 
 								func = new Function( 't', 'a', 'b', 'return ' + value );
-/*
-								try {
-								
-									func = new Function( 't', 'a', 'b', 'return ' + value );
-								
-								} catch ( e ) {
-								
-									alert( e );
-									_this.setFocus( axisName );
-									return;
-								
-								}
-*/
 
 							}
 
@@ -353,70 +252,11 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 			cFunctions[axisName].__onFinishChange = function( value ){
 
 				__onFinishChange( value, axisName, vectorCur );
-/*
-				if ( ( vectorCur[axisName] === value ) && !boError )
-					return;
-				try {
-
-					boError = false;
-					vectorCur[axisName] = value;
-					var func;
-					const typeofValue = typeof value;
-					switch ( typeofValue ) {
-
-						case 'string':
-
-							var float = parseFloat( value );
-							if ( float.toString() !== value ) {
-
-								const color = value.replace( /\s/g, "" ).split( /rgb\((\d+),(\d+),(\d+)\)/ );
-								if ( color.length === 5 ) func = new THREE.Color( value );
-								else {
-
-									var array;
-									try {
-
-										array = JSON.parse( value );
-
-									} catch ( e ) { }
-									if ( Array.isArray( array ) ) func = array;
-									else {
-
-										func = new Function( 't', 'a', 'b', 'return ' + value );
-
-									}
-
-								}
-
-							} else func = float;
-							break;
-
-						case 'number':
-
-							func = value;
-							break;
-
-						default:
-							console.error( 'onFinishChange( ' + value + ' ): invalid type = ' + typeofValue );
-							return;
-
-					}
-					onFinishChange( func, axisName );
-
-				} catch( e ) {
-
-					alert( 'axis: ' + getAxisName( axisName ) + '. function: "' + value + '". ' + e );
-					_this.setFocus( axisName );
-
-				}
-*/
 
 			}
 			vector[axisName] = getFuncText( _vector[axisName] );
 			cFunctions[axisName].setValue( vector[axisName] );
 			vectorCur[axisName] = vector[axisName];
-//			if ( boDefault )
-//				vectorDefault[axisName] = vector[axisName];
 
 		}
 		setVectorAxis( 'x' );
@@ -430,11 +270,6 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 		}
 		buttonDefault.object.defaultF = function( value ) {
 
-/*
-			cFunctions.x.setValue( vectorDefault.x );
-			cFunctions.y.setValue( vectorDefault.y );
-			cFunctions.z.setValue( vectorDefault.z );
-*/
 			function setValue( axisName ) {
 
 				if ( !cFunctions[axisName] )
@@ -447,12 +282,6 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 			setValue( 'y' );
 			setValue( 'z' );
 			setValue( 'w' );
-/*
-			_this.setFunction(vectorDefault);
-			onFinishChange( vectorDefault.x, 'x' );
-			onFinishChange( vectorDefault.y, 'y' );
-			onFinishChange( vectorDefault.z, 'z' );
-*/			
 
 		}
 		function dislayEl( controller, displayController ) {
