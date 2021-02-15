@@ -107,6 +107,8 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
 function MyPoints( THREE, arrayFuncs, group,// Player,
 	settings ) {
 
+	Player.setTHREE(THREE);
+	
 	if ( ( typeof arrayFuncs !== 'function' ) && ( arrayFuncs.length === 0 ) )
 		arrayFuncs.push( new THREE.Vector3() );
 
