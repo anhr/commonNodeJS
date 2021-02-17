@@ -84,7 +84,7 @@ var settings,
  * @param {string} [options.settings.name=""] name of the time.
  * @param {THREE.PerspectiveCamera} options.cameraTarget.camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
  */
-function Player( /*THREE, */group, options ) {
+function Player( group, options ) {
 
 	if ( typeof THREE === 'undefined' ) {
 
@@ -118,6 +118,8 @@ function Player( /*THREE, */group, options ) {
 
 	settings = options.settings || {};
 	assignSettings();
+
+	options.cameraTarget = options.cameraTarget || {};
 
 	/**
 	 * Select a scene for playing
@@ -171,7 +173,10 @@ function Player( /*THREE, */group, options ) {
 		}
 */		
 		Player.cameraTarget.setCameraTarget();
-		Player.cameraTarget.get().setCameraPosition();
+
+		const cameraTarget = Player.cameraTarget.get();
+		if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition();
+
 		if ( Player.cameraGui ) Player.cameraGui.update();
 
 	}
@@ -932,18 +937,24 @@ Player.isCreated = function () { return boPlayer; }
 
 function playerCameraTarget() {
 
-	const cameraTargetDefault = {},
-		_cameraTarget = {};
-	cameraTargetDefault.boLook = false;
+	const cameraTargetDefault = { boLook: false, },//По умолчанию не слежу за точкой
+		_cameraTarget = {
+
+			boLook: cameraTargetDefault.boLook,
+//			setCameraPosition: function(){},если это оставить то не будет обновляться setCameraPosition, когда выбрана точка, на которую смотрит камера
+
+		};
+//	cameraTargetDefault.boLook = false;
 	cameraTargetDefault.rotation = {};
 	_cameraTarget.rotation = {};
-	var boTarget = false;//true - target point was detected. For displaying of the console warning if duplicate target point was detected
+	var boTarget = false,//true - target point was detected. For displaying of the console warning if duplicate target point was detected
+		boPlayer = false;//true - была попытка получить camera из Player.player. Добавил что бы не выполнялась лишняя работа
 
-	//Если определен ( cameraTargetLook !== undefined ) , то явно было задано следить или не следить за точкой.
+	//Если определен ( boCameraTargetLook !== undefined ) , то явно было задано следить или не следить за точкой.
 	//Тогда если есть точка, за которой надо следить ( cameraTarget.bodefault === false )
-	//и явно не было задано следить или не следить заточкой  ( cameraTargetLook === undefined ),
+	//и явно не было задано следить или не следить заточкой  ( boCameraTargetLook === undefined ),
 	//то надо следить за точкой ( cameraTargetDefault.boLook = true )
-	var cameraTargetLook;
+	var boCameraTargetLook;
 	
 	/**
 	 * get camera target
@@ -952,7 +963,15 @@ function playerCameraTarget() {
 	 */
 	this.get = function () {
 
-		return _cameraTarget;
+		if ( !_cameraTarget.camera && !boPlayer && Player.player ) {
+
+			cameraTargetDefault.camera = Player.player.getOptions().cameraTarget.camera;
+			if ( cameraTargetDefault.camera ) setCameraTarget();
+			boPlayer = true;
+
+		}
+		if ( _cameraTarget.camera )
+			return _cameraTarget;
 
 	}
 
@@ -994,9 +1013,6 @@ function playerCameraTarget() {
 	 */
 	this.init = function ( cameraTarget ) {
 
-		//cameraTarget.bodefault | cameraTarget.boLook | cameraTargetDefault.boLook
-		//!== false			   | undefined			 | 
-
 		//cameraTargetDefault.boLook = false по умолчанию камера не смотритт на выбранную точку если:
 		// 1 ни разу не вызывается init. Тоесть нет настроек cameraTargetDefault и нет ни однойточки, на которую смотрит камера
 		// 2 cameraTarget.bodefault !== false и cameraTarget.boLook = false - программист явно запретил смотреть на точку
@@ -1015,7 +1031,7 @@ function playerCameraTarget() {
 			if ( cameraTarget.boLook !== undefined ) {
 
 				cameraTargetDefault.boLook = cameraTarget.boLook;
-				cameraTargetLook = cameraTarget.boLook;
+				boCameraTargetLook = cameraTarget.boLook;
 
 			}
 
@@ -1026,7 +1042,7 @@ function playerCameraTarget() {
 			if ( boTarget ) console.warn( 'playerCameraTarget().init(...): duplicate target point' );
 			boTarget = true;
 			
-			if ( cameraTargetLook === undefined )
+			if ( boCameraTargetLook === undefined )
 				cameraTargetDefault.boLook = true;//запрета на слежение камерой за точкой не было и есть точка, за которой надо следить
 
 		} else return;
@@ -1044,101 +1060,6 @@ function playerCameraTarget() {
 		setCameraTarget( cameraTarget );
 
 	}
-	/* *
-	 * Create default camera target
-	 * @function Player.cameraTarget.
-	 * init
-	 * @param {object} options the following options are available:
-	 * @param {object} [options.funcs] item of the arrayFuncs. See Player.getPoints(...) for details.
-	 * @param {object} [options.cameraTarget] Common for all points cameraTarget options. The following options.cameraTarget are available:
-	 * @param {THREE.PerspectiveCamera} [options.cameraTarget.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
-	 * @param {boolean} [options.cameraTarget.boLook=true] true - camera look at the target.
-	 * @param {THREE.Vector3} [options.cameraTarget.distanceToCamera] Distance from target point to camera.
-	   * You can set the distance to the camera depending on the time.
-	 * <pre>
-	 *	Example 1: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) )
-	 *	Example 2: new THREE.Vector3( 0, 0,
-	 *		[ { t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 } ] )
-	 *	Default is camera.position.
-	 * </pre>
-	 * @param {object} [options.cameraTarget.rotation] rotation camera around point specified by an axis and an angle. Default is undefined - no rotation
-	 * @param {number|function|array} [options.cameraTarget.rotation.angle=0] Angle of rotation in radians.
-	 * <pre>
-	 *   number. Example: Math.PI / 2 rotate to 90 degrees.
-	 *   function. Example: new Function( 't', 'return 5*t' ).
-	 *   array.
-	 *     Example 1: [0, Math.PI]
-	 *       0 is angle for t = min is start time of the playing.
-	 *       Math.PI is rotate to 180 degrees
-	 *         for t = max is time of the stopping of the playing.
-	 *       If max time is infinity, then angle is for t = min.
-	 *     Example 2: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }
-	 *       t is time,
-	 *       v is angle for current t.
-	 * </pre>
-	 * @param {THREE.Vector3} [options.cameraTarget.rotation.axis=new THREE.Vector3( 0, 1, 0 )] Axis of rotattion.
-	 * <pre>
-	 *   Example: new THREE.Vector3( 1, 0, 0 ) - rotate around x axis.
-	 *   Default is rotate around y axis
-	 * </pre>
-	 */
-/*	 
-	this.init = function ( options ) {
-
-		const cameraTarget = options.cameraTarget || options.funcs.vector.cameraTarget;
-		//cameraTarget.bodefault | cameraTarget.boLook | cameraTargetDefault.boLook
-		//!== false			   | undefined			 | 
-
-		//cameraTargetDefault.boLook = false по умолчанию камера не смотритт на выбранную точку если:
-		// 1 ни разу не вызывается init. Тоесть нет настроек cameraTargetDefault и нет ни однойточки, на которую смотрит камера
-		// 2 cameraTarget.bodefault !== false и cameraTarget.boLook = false - программист явно запретил смотреть на точку
-
-		//Если есть хоть одна точка, на которую должна смотреть камера cameraTarget.bodefault === false,
-		//то для этой точки не устанавливаем playerCameraTarget.cameraTargetDefault
-		//Другими словами если есть точка, на которую должна смотреть камера,
-		//то камера будет на нее смотреть если нет запрета смотеть на точку - playerCameraTarget.cameraTargetDefault = false
-		//if ( cameraTarget.bodefault !== false )
-
-		//Если есть хоть одна точка, на которую должна смотреть камера cameraTarget.bodefault === false,
-		//то для этой точки не устанавливаем playerCameraTarget.cameraTargetDefault
-		//Другими словами если есть точка, на которую должна смотреть камера,
-		//то камера будет на нее смотреть если нет запрета смотеть на точку - playerCameraTarget.cameraTargetDefault = false
-		if ( options.cameraTarget ) {
-
-			//Common for all points cameraTarget options
-			if ( cameraTarget.boLook !== undefined ) {
-
-				cameraTargetDefault.boLook = cameraTarget.boLook;
-				cameraTargetLook = cameraTarget.boLook;
-
-			}
-
-		} else if ( cameraTarget.boLook === true ) {
-
-			//Есть точка, за которой надо следить
-
-			if ( boTarget ) console.warn( 'playerCameraTarget().init(...): duplicate target point' );
-			boTarget = true;
-
-			if ( cameraTargetLook === undefined )
-				cameraTargetDefault.boLook = true;//запрета на слежение камерой за точкой не было и есть точка, за которой надо следить
-
-		} else return;
-		cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera;
-		if ( !cameraTargetDefault.camera ) {
-
-			console.error( 'playerCameraTarget().init(...): cameraTargetDefault.camera = ' + cameraTargetDefault.camera );
-			return;
-
-		}
-		cameraTargetDefault.distanceToCamera = cameraTargetDefault.distanceToCamera || cameraTarget.distanceToCamera;
-		cameraTarget.rotation = cameraTarget.rotation || {};
-		cameraTargetDefault.rotation.angle = cameraTargetDefault.rotation.angle || cameraTarget.rotation.angle;
-		cameraTargetDefault.rotation.axis = cameraTargetDefault.rotation.axis || cameraTarget.rotation.axis;
-		setCameraTarget( cameraTarget );
-
-	}
-*/	
 	function setCameraTarget( cameraTarget ) {
 
 		if ( !cameraTarget )
@@ -1148,7 +1069,19 @@ function playerCameraTarget() {
 		else _cameraTarget.boLook = cameraTargetDefault.boLook;
 
 		_cameraTarget.camera = cameraTarget.camera || cameraTargetDefault.camera;
-		_cameraTarget.distanceToCamera = cameraTarget.distanceToCamera || cameraTargetDefault.distanceToCamera || new THREE.Vector3().copy( cameraTargetDefault.camera.position );
+
+//Если в программе не определены функции distanceToCamera (тоесть cameraTarget.distanceToCamera === undefined и cameraTargetDefault.distanceToCamera === undefined),
+//то при проигрывании каждый раз distanceToCamera будет равна camera.position
+//		_cameraTarget.distanceToCamera = cameraTarget.distanceToCamera || cameraTargetDefault.distanceToCamera || new THREE.Vector3().copy( cameraTargetDefault.camera.position );
+
+		//Если в программе не определены функции distanceToCamera (тоесть cameraTarget.distanceToCamera === undefined и cameraTargetDefault.distanceToCamera === undefined),
+		//То сначала _cameraTarget.distanceToCamera будет равна camera.position, а потом при проигрывании не будет меняться
+		_cameraTarget.distanceToCamera =
+			cameraTarget.distanceToCamera ||
+			cameraTargetDefault.distanceToCamera ||
+			_cameraTarget.distanceToCamera ||
+			new THREE.Vector3().copy( cameraTargetDefault.camera.position );
+
 		if ( !cameraTarget.rotation ) cameraTarget.rotation = {};
 		_cameraTarget.rotation.angle = cameraTarget.rotation.angle || cameraTargetDefault.rotation.angle || 0;
 		_cameraTarget.rotation.axis = cameraTarget.rotation.axis || cameraTargetDefault.rotation.axis || new THREE.Vector3( 0, 1, 0 );//Rotate around y axis
@@ -1263,11 +1196,28 @@ function playerCameraTarget() {
 
 		}
 
-		const cameraTarget = Player.cameraTarget.get();
-		camera = camera || cameraTarget.camera;
+		var cameraTarget = Player.cameraTarget.get();
+		if ( !cameraTarget ) {
+/*
+			//До сих пор не известна cameraTarget.camera. Попробуем ее определить из options
+			const options = Player.player.getOptions();
+			if ( options.cameraTarget.camera ) {
+
+				Player.cameraTarget.init( { camera: options.cameraTarget.camera } );
+				cameraTarget = Player.cameraTarget.get();
+
+			}
+*/			
+			cameraTarget = cameraTarget || {};
+
+		}
+		camera = camera || cameraTarget.camera;// || Player.player.getOptions().cameraTarget.camera;
+
+		if ( !camera )
+			return;//В этом приложении невозможно следить за точкой, потому что ни разу не была вызывана Player.cameraTarget.init()
 
 		//По умолчанию не слежу за точкой
-		if ( cameraTarget.boLook === undefined ) cameraTarget.boLook = false;
+//		if ( cameraTarget.boLook === undefined ) cameraTarget.boLook = false;
 
 		//На случай когда не определена ни одна точка как cameraTarget и пользователь поставил птичку в controllerCameraTarget
 		if ( !cameraTarget.distanceToCamera )

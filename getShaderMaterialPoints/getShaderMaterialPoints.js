@@ -297,8 +297,10 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 		if ( settings.Player ) {
 
 			settings.Player.selectMeshPlayScene( points, undefined, 0, settings.options );
+			
 			//Что бы камера смотрела на выбранную точку сразу после запуска приложения
-			settings.Player.cameraTarget.get().setCameraPosition();
+			const cameraTarget = settings.Player.cameraTarget.get();
+			if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition();
 
 		}
 

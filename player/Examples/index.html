@@ -100,6 +100,7 @@
 
 			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+/*
 			if ( typeof Player !== 'undefined' )
 				Player.cameraTarget.init( {
 
@@ -119,6 +120,7 @@
 					distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+3*t' ) ),
 
 				} );
+*/
 
 			scene = new THREE.Scene();
 
@@ -246,7 +248,7 @@
 
 				}
 */
-				player = new Player( /*THREE, */scene, {
+				player = new Player( scene, {
 
 					selectPlaySceneOptions: options,//selectPlaySceneOptions,
 //					cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
@@ -260,7 +262,7 @@
 						dt: 0.01,//for max: Infinity
 
 					},
-//					cameraTarget: { camera: camera, },
+					cameraTarget: { camera: camera, },
 
 				} );
 
@@ -323,6 +325,7 @@
 					),//Animated 3D point
 					name: 'w is function',
 					trace: true,//Displays the trace of the point movement.
+					/*
 					cameraTarget: {
 
 						//boLook: false,
@@ -339,6 +342,7 @@
 						},
 
 					},
+					*/
 
 				},
 				{
@@ -363,6 +367,7 @@
 					),//Animated 3D point
 					name: 'w is number',
 					//trace: true,//Displays the trace of the point movement.
+					/*
 					cameraTarget: {
 
 						boLook: false,
@@ -382,6 +387,7 @@
 						//distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
 
 					},
+					*/
 
 				},
 				new THREE.Vector3( -0.5, -0.5, -0.5, 50 ),
