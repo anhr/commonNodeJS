@@ -227,7 +227,7 @@
 
 			function addCube( cubePosition, color ) {
 
-				var cube = new THREE.Mesh( new ConvexBufferGeometry( new THREE.CubeGeometry( 0.4, 0.4, 0.4 ).vertices ),
+				var cube = new THREE.Mesh( new ConvexBufferGeometry( new THREE.BoxGeometry( 0.4, 0.4, 0.4 ).vertices ),
 					new THREE.MeshLambertMaterial( {
 						color: color,
 						/*
