@@ -100,7 +100,6 @@
 
 			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
-/*
 			if ( typeof Player !== 'undefined' )
 				Player.cameraTarget.init( {
 
@@ -120,7 +119,6 @@
 					distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+3*t' ) ),
 
 				} );
-*/
 
 			scene = new THREE.Scene();
 
@@ -370,7 +368,7 @@
 					/*
 					cameraTarget: {
 
-						boLook: false,
+						//boLook: false,
 						camera: camera,
 						Player: Player,
 						rotation: {
@@ -509,8 +507,8 @@
 						options: options,
 						pointsOptions: {
 
-							position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
-							rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
+							//position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+							//rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
 							shaderMaterial: {},
 							onReady: function( points ) {
 
@@ -699,10 +697,7 @@
 				controls.target.set(  -0.2, -0.2, -0.2 );
 				controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 				controls.update();
-//				if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.orbitControls = controls;
-//				if ( typeof Player !== 'undefined' )  Player.setOrbitControls( camera, controls );
 				if ( typeof Player !== 'undefined' ) Player.orbitControls = controls;
-//				if ( guiSelectPoint ) guiSelectPoint.setOrbitControls( controls );
 
 			}
 
