@@ -886,6 +886,8 @@ const arrayFuncs = [
 ```
 Individual setting for selected point is more priority before camera settings.
 
+### User can manually select the point at which the camera is looking.
+
 * Please add <b>cameraTarget</b> for the <b>Player</b>.
 ```
 const player = new Player( scene, {
