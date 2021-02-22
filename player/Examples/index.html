@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -29,10 +29,9 @@
 
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from '../../../../three.js/dev/build/three.module.min.js';
-		//import * as THREE from '../../../../three.js/dev/build/three.module.js';
-		//import { THREE } from '../../three.js';
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
@@ -660,7 +659,8 @@
 
 			}
 
-//			const cube = new THREE.Mesh( new THREE.CubeGeometry( 0.3, 0.3, 0.3 ), new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) );
+			//(index):663 Uncaught TypeError: THREE.CubeGeometry is not a constructor
+			//const cube = new THREE.Mesh( new THREE.CubeGeometry( 0.3, 0.3, 0.3 ), new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) );
 			const cube = new THREE.Mesh( new THREE.BoxGeometry( 0.3, 0.3, 0.3 ), new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) );
 //			cube.position.x = -1;
 			scene.add( cube );

@@ -2654,8 +2654,8 @@ Player.setTHREE = function ( _THREE ) {
 
 			//
 
-			//three.module.js:47508 THREE.Matrix4: .getInverse() has been removed. Use matrixInv.copy( matrix ).invert(); instead.
-			//_inverseMatrix.getInverse( matrixWorld );
+//three.module.js:47508 THREE.Matrix4: .getInverse() has been removed. Use matrixInv.copy( matrix ).invert(); instead.
+//			_inverseMatrix.getInverse( matrixWorld );
 			_inverseMatrix.copy( matrixWorld ).invert();
 			
 			_ray.copy( raycaster.ray ).applyMatrix4( _inverseMatrix );
