@@ -1133,6 +1133,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		//Camera target
 		var orbitControlsOptions,
 			cameraTarget;//здесь хранится cameraTarget когда ни одна точка не выбрана как camera target
+		if ( guiParams.cameraTarget ) Player.cameraTarget.init( guiParams.cameraTarget );
 		const playerCameraTarget = Player.cameraTarget.get();
 //		if ( guiParams.cameraTarget )
 //		if ( Player.cameraTarget2
