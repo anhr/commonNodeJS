@@ -754,9 +754,9 @@ Now you can see the "Meshes" folder in the [dat.gui](https://github.com/anhr/dat
 <a name="cameraLook"></a>
 ## Set the camera to look at the point.
 
-Now you can see, all points moves and hides on the right border of the canvas during playing.
+Now you can see, all points moves and hides on the right border of the canvas during playing. For resolving of issue you can:
 
-* You can select the point at which the camera is looking during playing from your program code.
+* Select the point at which the camera is looking during playing from your program code.
 Please, add the <b>cameraTarget</b> key into <b>arrayFuncs</b> array for it.
 ```
 const arrayFuncs = [
@@ -885,7 +885,7 @@ const arrayFuncs = [
 ```
 Individual setting for selected point is more priority before camera settings.
 
-### The user can select the point at which the camera is looking during playing for resolving of issue.
+### The user can select the point at which the camera is looking during playing.
 
 * If you do not setted the <b>cameraTarget</b> key into <b>arrayFuncs</b> and did not create a <b>CameraGui</b> instance, please add <b>cameraTarget</b> for the <b>Player</b>.
 ```
