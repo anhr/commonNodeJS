@@ -22,7 +22,7 @@ import functionsFolder from './functionsFolder.js';
 //import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
 
 /**
- * Camera graphical user interface
+ * Camera settings graphical user interface
  * @param {GUI} gui is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}.
  * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
@@ -341,7 +341,7 @@ var CameraGui = function ( gui, camera, THREE, Player, options ) {
 		 * Look at selected point
 		 * @function CameraGui.
 		 * look
-		 * @param {boolean=true} boLook true - lool at selected point
+		 * @param {boolean} [boLook=true] true - look at selected point
 		 */
 		this.look = function ( boLook = true ) { if ( controllerLook.getValue() !== boLook ) controllerLook.setValue( boLook ); }
 

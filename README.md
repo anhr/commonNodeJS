@@ -5,7 +5,7 @@ My JavaScript library for NodeJS.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/AxesHelper).
 [AxesHelper API](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/index.html).
-* CameraGui Camera settings graphical user interface.
+* CameraGui. Camera settings graphical user interface.
 [CameraGui API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/CameraGui/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
 * CanvasMenu. My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu) for canvas in my [three.js](https://threejs.org/) projects.
