@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>sprite text. three.js webgl</title>
@@ -33,9 +33,11 @@
 		//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 		
 
+/*Uncaught SyntaxError: The requested module '../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js' does not provide an export named 'ConvexBufferGeometry'
 		import { ConvexBufferGeometry } from '../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js';//https://github.com/anhr/three.js
 		//import { ConvexBufferGeometry } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/geometries/ConvexGeometry.js';
 		//import { ConvexBufferGeometry } from 'https://threejs.org/examples/jsm/geometries/ConvexGeometry.js';
+*/		
 
 		//import StereoEffect from '../../../commonNodeJS/master/StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
@@ -108,7 +110,7 @@
 
 
 			// points
-
+/*
 			const vertices = new THREE.CubeGeometry( 20 * scale, 20 * scale, 20 * scale ).vertices;
 
 			// convex hull
@@ -122,12 +124,27 @@
 			const meshGeometry = new ConvexBufferGeometry( vertices );
 
 			const meshBack = new THREE.Mesh( meshGeometry, meshMaterial );
+*/			
+
+			// convex hull
+
+			const meshMaterial = new THREE.MeshLambertMaterial( {
+				color: 0xffffff,
+				opacity: 0.5,
+				transparent: true,
+			} );
+			
+			const boxGeometry = new THREE.BoxGeometry( 20 * scale, 20 * scale, 20 * scale );
+
+			const meshBack = new THREE.Mesh( boxGeometry, meshMaterial );
+
 			meshBack.material.side = THREE.BackSide; // back faces
 			meshBack.renderOrder = 0;
 			scene.add( meshBack );
 
 			const meshMaterialClone = meshMaterial.clone();
-			const meshFront = new THREE.Mesh( meshGeometry, meshMaterialClone );
+//			const meshFront = new THREE.Mesh( meshGeometry, meshMaterialClone );
+			const meshFront = new THREE.Mesh( boxGeometry, meshMaterialClone );
 			meshFront.material.side = THREE.FrontSide; // front faces
 			meshFront.renderOrder = 1;
 			scene.add( meshFront );
