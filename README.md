@@ -39,6 +39,7 @@ My JavaScript library for NodeJS.
 [myPoints API](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/Examples/index.html).
 * OrbitControlsGui.js [OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) graphical user interface.
+[OrbitControlsGui API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/OrbitControlsGui/index.html)
 [Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
 * Player.js 3D objects animation.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/player).
