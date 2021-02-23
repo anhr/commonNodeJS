@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -345,10 +345,14 @@
 				{
 
 					vector: new THREE.Vector4(
-						0.5,//x
+						//0.5,//x
+						//[0.5, 1, -0.5],//x
+						[{ t: -0.85, v: 0.6 }, { t: 0, v: -0.6 }, { t: 1, v: 1 }],//x
 						//new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
-						'Math.cos(t*a*2*Math.PI)*0.5-b',//y
-						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.1' ),//z
+						//'Math.cos(t*a*2*Math.PI)*0.5-b',//y
+						0.5,//y
+						//new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.1' ),//z
+						0.5,//z
 						//new THREE.Color( "rgb(255, 127, 0)" ),//w
 						100,//w
 						//new Function( 't', 'return 100*t' ),//w
