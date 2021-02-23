@@ -5,6 +5,9 @@ My JavaScript library for NodeJS.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/AxesHelper).
 [AxesHelper API](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/index.html).
+* CameraGui Camera settings graphical user interface.
+[CameraGui API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/CameraGui/index.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
 * CanvasMenu. My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu) for canvas in my [three.js](https://threejs.org/) projects.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/canvasMenu).
 * clearThree.js Remove all child objects of the object and call dispose on their geometry, material and texture.
@@ -39,7 +42,7 @@ My JavaScript library for NodeJS.
 [myPoints API](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/Examples/index.html).
 * OrbitControlsGui.js [OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) graphical user interface.
-[OrbitControlsGui API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/OrbitControlsGui/index.html)
+[OrbitControlsGui API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/OrbitControlsGui/index.html).
 [Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
 * Player.js 3D objects animation.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/player).
