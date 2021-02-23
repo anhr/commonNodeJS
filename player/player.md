@@ -648,7 +648,7 @@ import CameraGui from './commonNodeJS/master/CameraGui.js';
 ```
 Add <b>CameraGui</b> into gui 
 ```
-new CameraGui( gui, camera, THREE, {
+new CameraGui( gui, camera, THREE, Player, {
 
 	getLanguageCode: getLanguageCode,
 	//orbitControls: controls,
@@ -755,41 +755,6 @@ Now you can see the "Meshes" folder in the [dat.gui](https://github.com/anhr/dat
 ## Set the camera to look at the point.
 
 Now you can see, all points moves and hides on the right border of the canvas during playing.
-The user can select the point at which the camera is looking during playing for resolving of issue.
-
-* Please add <b>cameraTarget</b> for the <b>Player</b>.
-```
-const player = new Player( scene, {
-
-		selectPlaySceneOptions: options,
-		settings: {
-
-			marks: 100,//Ticks count of the playing.
-			interval: 25,//Ticks per seconds.
-
-		},
-		cameraTarget: { camera: camera, },
-
-} );
-```
-
-* Or add <b>cameraTarget</b> key for creating of <b>guiSelectPoint</b> instance.
-```
-guiSelectPoint = new GuiSelectPoint( THREE, {
-
-	getLanguageCode: getLanguageCode,
-	cameraTarget: { camera: camera, },
-	options: options,
-
-} );
-```
-
-Please open the "Meshes" folder and select a mesh. Now you can see the "Points" folder.
-
-Please open the "Points" folder and select a point of the mesh. Now you can see the "Look" checkbox.
-
-Selected point will be moves to the center of the canvas if you checked the "Look" checkbox.
-In  another words, camera will be look at selected point.
 
 * You can select the point at which the camera is looking during playing from your program code.
 Please, add the <b>cameraTarget</b> key into <b>arrayFuncs</b> array for it.
@@ -919,6 +884,42 @@ const arrayFuncs = [
 ];
 ```
 Individual setting for selected point is more priority before camera settings.
+
+### The user can select the point at which the camera is looking during playing for resolving of issue.
+
+* If you do not setted the <b>cameraTarget</b> key into <b>arrayFuncs</b> and did not create a <b>CameraGui</b> instance, please add <b>cameraTarget</b> for the <b>Player</b>.
+```
+const player = new Player( scene, {
+
+		selectPlaySceneOptions: options,
+		settings: {
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+		cameraTarget: { camera: camera, },
+
+} );
+```
+
+* Or add <b>cameraTarget</b> key for creating of <b>guiSelectPoint</b> instance.
+```
+guiSelectPoint = new GuiSelectPoint( THREE, {
+
+	getLanguageCode: getLanguageCode,
+	cameraTarget: { camera: camera, },
+	options: options,
+
+} );
+```
+
+Please open the "Meshes" folder and select a mesh. Now you can see the "Points" folder.
+
+Please open the "Points" folder and select a point of the mesh. Now you can see the "Look" checkbox.
+
+Selected point will be moves to the center of the canvas if you checked the "Look" checkbox.
+In  another words, camera will be look at selected point.
 
 <a name="playingTime"></a>
 ## Time of the playing.
