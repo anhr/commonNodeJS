@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>sprite text gui. three.js webgl</title>
@@ -134,6 +134,8 @@
 			} );
 
 			const meshGeometry = new ConvexBufferGeometry( vertices );
+
+			const meshBack = new THREE.Mesh( meshGeometry, meshMaterial );
 */
 			const boxGeometry = new THREE.BoxGeometry( 20 * scale, 20 * scale, 20 * scale );
 
