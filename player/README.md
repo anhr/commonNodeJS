@@ -1,5 +1,5 @@
 # Player
-I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objects animation.
+I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objects animation. [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
 
 Uses in my projects:
  * [myThreejs](https://github.com/anhr/myThreejs)
