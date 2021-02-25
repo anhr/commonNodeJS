@@ -99,6 +99,30 @@ palette.toColor = function ( value, min, max ) {
 
 }
 */
+
+//Thanks to https://stackoverflow.com/a/27369985/5175935
+//Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
+const getCurrentScript = function () {
+
+	if ( document.currentScript && ( document.currentScript.src !== '' ) )
+		return document.currentScript.src;
+	const scripts = document.getElementsByTagName( 'script' ),
+		str = scripts[scripts.length - 1].src;
+	if ( str !== '' )
+		return src;
+	//Thanks to https://stackoverflow.com/a/42594856/5175935
+	return new Error().stack.match( /(https?:[^:]*)/ )[0];
+
+};
+//Thanks to https://stackoverflow.com/a/27369985/5175935
+const getCurrentScriptPath = function () {
+	const script = getCurrentScript(),
+		path = script.substring( 0, script.lastIndexOf( '/' ) );
+	return path;
+};
+//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
+const currentScriptPath = getCurrentScriptPath();
+
 function arrayContainersF(){
 
 	var array = [];
@@ -386,7 +410,8 @@ export function create( createXDobjects, options ) {
 		}
 		arrayContainers.push( elContainer );
 //		elContainer.innerHTML = loadFile.sync( '/anhr/myThreejs/master/canvasContainer.html' );
-		elContainer.innerHTML = loadFile.sync( '/anhr/commonNodeJS/master/myThreejs/canvasContainer.html' );
+//		elContainer.innerHTML = loadFile.sync( '/anhr/commonNodeJS/master/myThreejs/canvasContainer.html' );
+		elContainer.innerHTML = loadFile.sync( currentScriptPath + '/canvasContainer.html' );
 		elContainer = elContainer.querySelector( '.container' );
 
 
@@ -1618,30 +1643,6 @@ export function create( createXDobjects, options ) {
 	}
 
 	if ( options.dat !== undefined ) {
-
-
-		//Thanks to https://stackoverflow.com/a/27369985/5175935
-		//Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
-		const getCurrentScript = function () {
-
-			if ( document.currentScript && ( document.currentScript.src !== '' ) )
-				return document.currentScript.src;
-			const scripts = document.getElementsByTagName( 'script' ),
-				str = scripts[scripts.length - 1].src;
-			if ( str !== '' )
-				return src;
-			//Thanks to https://stackoverflow.com/a/42594856/5175935
-			return new Error().stack.match( /(https?:[^:]*)/ )[0];
-
-		};
-		//Thanks to https://stackoverflow.com/a/27369985/5175935
-		const getCurrentScriptPath = function () {
-			const script = getCurrentScript(),
-				path = script.substring( 0, script.lastIndexOf( '/' ) );
-			return path;
-		};
-		//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
-		const currentScriptPath = getCurrentScriptPath();
 
 		loadScript.sync( currentScriptPath + '/../DropdownMenu/styles/gui.css', optionsStyle );
 
