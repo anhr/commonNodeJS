@@ -1,4 +1,4 @@
-/**
+п»ї/**
  * node.js version of the synchronous download of the file.
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
  *
@@ -73,7 +73,7 @@ function myRequest( options ) {
 				async = true;
 			this.req.open( "GET", this.getUrl(), async );
 			if ( async ) {
-				var timeout = ( 60 + 30 ) * 1000;//Внимание!!! Задержка должна быть больше CSocketWaitEvent::WaitResponse
+				var timeout = ( 60 + 30 ) * 1000;//Р’РЅРёРјР°РЅРёРµ!!! Р—Р°РґРµСЂР¶РєР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Р±РѕР»СЊС€Рµ CSocketWaitEvent::WaitResponse
 				if ( "timeout" in this.req )//for IE6
 					this.req.timeout = timeout;
 				if ( "ontimeout" in this.req )
@@ -117,7 +117,7 @@ function myRequest( options ) {
 						consoleError( 'typeof XMLHttpRequest status == "unknown"' );
 						return true;
 					}
-					//Я не могу вставлять switch один в другой
+					//РЇ РЅРµ РјРѕРіСѓ РІСЃС‚Р°РІР»СЏС‚СЊ switch РѕРґРёРЅ РІ РґСЂСѓРіРѕР№
 					if ( req.status == 200 )//OK)
 					{
 						clearTimeout( this.timeout_id_SendReq );
