@@ -1,0 +1,1 @@
+{"version":3,"file":"myThree.module.js","sources":["../myThree.js"],"sourcesContent":["class MyThree {\r\n\r\n\tconstructor() { }\r\n\r\n}\r\n\r\nexport default MyThree;\r\n"],"names":["MyThree"],"mappings":";;;;;;;;;;;;;;;;;;;;IAAMA,UAEL,mBAAc;;;;;;"}

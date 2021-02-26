@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>myThreejs</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
+
+	<!--<script src="/anhr/commonNodeJS/master/loadScriptNodeJS/build/loadScript.js"></script>-->
+
+	<!--for debugging
+	https://github.com/vorg/webgl-debug
+	https://searchcode.com/codesearch/view/85060658/
+	<script src="../../../webgl-debug/webgl-debug/build/webgl-debug.js"></script>
+	-->
+
+</head>
+<body>
+	<p>
+		<a href='https://anhr.github.io/index.html' target="_blank">Home</a>
+		| <a href='https://github.com/anhr/myThreejs' target="_blank">GitHub</a>
+	</p>
+	<h1>myThreejs.</h1>
+
+	<h2>Canvas.</h2>
+	<div id="canvasContainer1"><img src="/anhr/TreeElementNodeJS/master/img/wait.gif"></div>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<script type="module">
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from '../../../three.js/dev/build/three.module.min.js';
+		import * as THREE from '../../../../../three.js/dev/build/three.module.js';
+		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
+		import MyThree from '../../myThree.js';
+
+		MyThree.aaa();
+		const myThree = new MyThree( THREE );
+		MyThree.aaa();
+		//const THREE = MyThree.THREE;
+		const vector = new THREE.Vector3();
+
+	</script>
+	<h2>Simple canvas.</h2>
+	<div id="canvasContainer2"></div>
+	<script type="module">
+
+	</script>
+</body>
+</html>
