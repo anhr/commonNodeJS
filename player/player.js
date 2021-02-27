@@ -35,7 +35,7 @@ import Cookie from '../cookieNodeJS/cookie.js';//https://github.com/anhr/commonN
 
 import { getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
 
-import CameraGui from '../CameraGui.js';
+//import CameraGui from '../CameraGui.js';
 //import CameraGui from 'http://localhost/anhr/commonNodeJS/master/CameraGui.js';
 
 var settings,
@@ -2140,10 +2140,12 @@ Player.getColors = function ( /*THREE, */arrayFuncs, optionsColor ) {
 			}
 			if ( w instanceof Function && ! settings ) {
 
-				console.error( 'Player.getColors: remove all functions from all THREE.Vector4.w items of the arrayFuncs.' );
-				console.error( ' 	Or create Player.' );
-				console.error( '	If you use MyPoints for create of the points, please add Player: Player into settings parameter of the MyPoints function after creating of the Player.' );
-				return;
+				console.warn( 'Player.getColors: remove all functions from all THREE.Vector4.w items of the arrayFuncs.' );
+				console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
+				console.warn( '	If you use MyPoints for create of the points, please add Player: Player into settings parameter of the MyPoints function after creating of the Player.' );
+				console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
+//				return;
+				settings = { min: 0 };
 				
 			}
 			var color = optionsColor.palette.toColor(
@@ -2205,7 +2207,7 @@ Player.getColors = function ( /*THREE, */arrayFuncs, optionsColor ) {
  * @param {object} options the following options are available
  * @param {object} options.player See Player function above.
  */
-Player.traceLine = function ( /*THREE, group, */options ) {
+Player.traceLine = function ( options ) {
 
 	if ( typeof THREE === 'undefined' ) {
 
@@ -2213,19 +2215,12 @@ Player.traceLine = function ( /*THREE, group, */options ) {
 		return;
 
 	}
-/*
-	if ( !group ) {
-
-		console.error( 'Player.traceLine: Define optionsPoints.group of the Player.getPoints first.' );
-		return;
-		
-	}
-*/
 	if ( !settings ) {
 
-		console.error( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
-		console.error( '	Or call Player(...).' );
-		console.error( '	If you use getShaderMaterialPoints or MyPoints for create of the points, please add Player: Player into settings parameter of the getShaderMaterialPoints or MyPoints method after creating of the Player.' );
+		console.warn( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
+		console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
+		console.warn( '	If you use getShaderMaterialPoints or MyPoints for create of the points, please add Player: Player into settings parameter of the getShaderMaterialPoints or MyPoints method after creating of the Player.' );
+		console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
 		return;
 		
 	}
