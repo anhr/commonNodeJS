@@ -56,7 +56,7 @@ Building menu
 Open "Node.js command prompt"
 
 d:
-cd "D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master"
+cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\myThreejs"
 npm install
 npm run build
 
