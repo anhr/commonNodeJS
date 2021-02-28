@@ -81,8 +81,10 @@ export function AxesHelper( THREE, group, options ) {
 	options.scales.text.rect = options.scales.text.rect || {};
 	options.scales.text.rect.displayRect = options.scales.text.rect.displayRect !== undefined ? options.scales.text.rect.displayRect : true;
 	options.scales.text.rect.borderRadius = options.scales.text.rect.borderRadius !== undefined ? options.scales.text.rect.borderRadius : 15;
+	const boAllAxis = !options.scales.x && !options.scales.y && !options.scales.z;//Если не определена ни одна ось, то рисовать все оси.
 	function scaleOptions( axisName ) {
 
+		if ( !options.scales[axisName] && boAllAxis ) options.scales[axisName] = {};
 		const scale = options.scales[axisName];
 		if ( !scale )
 			return;
