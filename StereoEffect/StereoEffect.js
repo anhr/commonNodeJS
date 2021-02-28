@@ -939,8 +939,8 @@ StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 	return new SpriteText(
 
 		//text
-		( intersection.object.name === '' ? '' : lang.mesh + ': ' + intersection.object.name + '\n' ) +
-		( pointName === undefined ? '' : lang.pointName + ': ' + pointName ) +
+		( intersection.object.name === '' ? '' : lang.mesh + ': ' + intersection.object.name ) +
+		( pointName === undefined ? '' : '\n'+ lang.pointName + ': ' + pointName ) +
 		( !boXYZ && !scales.x ? '' : '\n' + ( scales.x && scales.x.name ? scales.x.name : 'X' ) + ': ' + position.x ) +
 		( !boXYZ && !scales.y ? '' : '\n' + ( scales.y && scales.y.name ? scales.y.name : 'Y' ) + ': ' + position.y ) +
 		( !boXYZ && !scales.z ? '' : '\n' + ( scales.z && scales.z.name ? scales.z.name : 'Z' ) + ': ' + position.x ) + 
