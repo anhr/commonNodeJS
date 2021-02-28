@@ -1992,7 +1992,7 @@ Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 	return points;
 
 }
-
+var boColorWarning = true;
 /**
  * Get array of mesh colors.
  * @function Player.
@@ -2138,21 +2138,22 @@ Player.getColors = function ( /*THREE, */arrayFuncs, optionsColor ) {
 				} else { }
 
 			}
-			if ( w instanceof Function && ! settings ) {
+			if ( w instanceof Function && ! settings && boColorWarning ) {
 
 				console.warn( 'Player.getColors: remove all functions from all THREE.Vector4.w items of the arrayFuncs.' );
 				console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
 				console.warn( '	If you use MyPoints for create of the points, please add Player: Player into settings parameter of the MyPoints function after creating of the Player.' );
 				console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
 //				return;
-				settings = { min: 0 };
+//				settings = { min: 0 };
+				boColorWarning = false;
 				
 			}
 			var color = optionsColor.palette.toColor(
 				funcs === undefined ?
 					new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
 					w instanceof Function ?
-						w( settings.min ) :
+						w( settings ? settings.min : 0 ) :
 						w,
 				min, max );
 			optionsColor.colors.push( color.r, color.g, color.b );
