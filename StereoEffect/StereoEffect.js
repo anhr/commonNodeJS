@@ -935,14 +935,15 @@ StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 				Player.execFunc( func, 'w', group.userData.t, options.a, options.b ) :
 				func.w;
 
+	const boXYZ = !scales.x &&  !scales.y &&  !scales.z;
 	return new SpriteText(
 
 		//text
 		( intersection.object.name === '' ? '' : lang.mesh + ': ' + intersection.object.name + '\n' ) +
-		( pointName === undefined ? '' : lang.pointName + ': ' + pointName + '\n' ) +
-		( !scales.x ? '' : ( scales.x.name ? scales.x.name : 'X' ) + ': ' + position.x ) +
-		( !scales.y ? '' : '\n' + ( scales.y.name ? scales.y.name : 'Y' ) + ': ' + position.y ) +
-		( !scales.z ? '' : '\n' + ( scales.z.name ? scales.z.name : 'Z' ) + ': ' + position.z ) +
+		( pointName === undefined ? '' : lang.pointName + ': ' + pointName ) +
+		( !boXYZ && !scales.x ? '' : '\n' + ( scales.x && scales.x.name ? scales.x.name : 'X' ) + ': ' + position.x ) +
+		( !boXYZ && !scales.y ? '' : '\n' + ( scales.y && scales.y.name ? scales.y.name : 'Y' ) + ': ' + position.y ) +
+		( !boXYZ && !scales.z ? '' : '\n' + ( scales.z && scales.z.name ? scales.z.name : 'Z' ) + ': ' + position.x ) + 
 		(//w
 			!isArrayFuncs ?
 				'' :
