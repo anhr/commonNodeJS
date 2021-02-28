@@ -93,9 +93,9 @@ export default function CreateFullScreenSettings( THREE, renderer, camera, optio
 	 * Sets the full screen of the canvas.
 	 * @function CreateFullScreenSettings.
 	 * setFullScreen
-	 * @param {boolean} fullScreen false - full screen of the canvas.
+	 * @param {boolean} [fullScreen=false] false - full screen of the canvas.
 	 */
-	this.setFullScreen = function ( fs ) {
+	this.setFullScreen = function ( fs=false ) {
 
 		const size = new THREE.Vector2();
 		renderer.getSize( size );
