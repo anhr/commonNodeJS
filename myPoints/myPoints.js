@@ -119,11 +119,16 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 	options.point = options.point || {};
 	options.point.size = options.point.size || 5.0;
 	options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
-
+/*Убрал потому что когда нет AxesHelper и не запущен Player и пользователь навел мышку на точку
+то в текстовой строке не отобрахаются x, y, z.
+Это сделано на тот случай, когда в AxesHelper отображаются не все координаты
+Для решения проблемы решил вообще не создавть options.scales без AxesHelper,
+что будет означать что надо выводить все x, y, z для точки, на которую наведена мышка
 	options.scales = options.scales || {};
 	options.scales.w = options.scales.w || {};
 	if ( options.scales.w.min === undefined ) options.scales.w.min = 0;
 	if ( options.scales.w.max === undefined ) options.scales.w.max = 100;
+*/	
 
 	const pointsOptions = settings.pointsOptions || {};
 	pointsOptions.tMin = pointsOptions.tMin || 0;
@@ -167,7 +172,7 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 				{
 
 					positions: points.geometry.attributes.position,
-					scale: options.scales.w,
+					scale: options.scales ? options.scales.w : { min: 0, max: 100 },
 					palette: options.palette,
 
 				} ), 4 ) );
