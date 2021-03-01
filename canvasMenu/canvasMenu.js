@@ -40,6 +40,7 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
  * @param {onFullScreen} options.fullScreen.camera [THREE.PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
  * @param {THREE} options.fullScreen.THREE THREE {@link https://github.com/anhr/three.js|THREE}.
  * @param {onFullScreenToggle} [options.fullScreen.onFullScreenToggle] user toggled fullscreen mode of the canvas.
+ * @param {boolean} [options.fullScreen.fullScreen] true - default canvas size is full screen.
  * @param {Function} [options.getLanguageCode="en"] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
  */
 function CanvasMenu( renderer, options ) {
