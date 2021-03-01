@@ -952,7 +952,7 @@ StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 					typeof funcs === "function" ?
 					color instanceof THREE.Color ?
 						'\n' + lang.color + ': ' + new THREE.Color( color.r, color.g, color.b ).getHexString() :
-						position.w ? '\n' + ( scales.w && scales.w.name ? scales.w.name : 'W' ) + ': ' + position.w : '' :
+						position.w !== undefined ? '\n' + ( scales.w && scales.w.name ? scales.w.name : 'W' ) + ': ' + position.w : '' :
 					''
 
 		) +
