@@ -61,16 +61,6 @@ function CanvasMenu( renderer, options ) {
 	}
 	const container = "container";
 	if ( !elContainer.classList.contains( "container" ) ) elContainer.classList.add( "container" );
-//		canvasMenu = this;
-/*	
-	const elCanvas = elContainer.querySelector( 'canvas' );
-	if ( !elCanvas ){
-
-		console.error( 'CanvasMenu: elCanvas = ' + elCanvas );
-		return;
-		
-	}
-*/
 	options.menu = options.menu || [];
 
 	/**
@@ -81,56 +71,20 @@ function CanvasMenu( renderer, options ) {
 	 */
 	this.menu = options.menu;
 
-//	var menuItemStereoEffect;
-//	var stereoEffect, spatialMultiplexsIndexs;
 	if ( options.stereoEffect !== undefined ) {
 
 		options.stereoEffect.createCanvasMenuItem( this, { getLanguageCode: options.getLanguageCode } );
-/*
-		menuItemStereoEffect = options.stereoEffect.createCanvasMenuItem( this, { getLanguageCode: options.getLanguageCode } );
-		options.menu.push( menuItemStereoEffect );
-*/		
 
 	}
 	
 	if ( options.player !== undefined ) { options.player.createCanvasMenuItem( this ); }
 
 	CreateFullScreenSettings.RendererSetSize( renderer, this );
-/*	
-	//resize
-	renderer.setSizeOld = renderer.setSize;
-	renderer.setSize = function ( width, height, updateStyle ) {
-
-		renderer.setSizeOld( width, height, updateStyle );
-		const elCanvas = renderer.domElement, elContainer = elCanvas.parentElement;
-
-		setTimeout( function () {
-
-			elContainer.style.height = elCanvas.style.height;
-			elContainer.style.width = elCanvas.style.width;
-			elContainer.style.left = elCanvas.style.left;
-			elContainer.style.top = elCanvas.style.top;
-			elContainer.style.position = elCanvas.style.position;
-			canvasMenu.setSize( width, height );
-
-		}, 0 );
-
-	};
-*/	
-//	renderer.setSize( renderer.domElement.width, renderer.domElement.height );
 
 	//Full Screen button
 	var fullScreenSettings;
 	if ( options.fullScreen !== undefined ) {
 
-/*
-		if ( !options.fullScreen.renderer ) {
-
-			console.error( 'CanvasMenu: options.fullScreen.renderer = ' + options.fullScreen.renderer );
-			return;
-			
-		}
-*/
 		if ( !options.fullScreen.camera ) {
 
 			console.error( 'CanvasMenu: options.fullScreen.camera = ' + options.fullScreen.camera );
@@ -144,7 +98,7 @@ function CanvasMenu( renderer, options ) {
 				fullScreen: options.fullScreen,
 
 			} );
-//		fullScreenSettings.setFullScreen( true );
+		if ( options.fullScreen.fullScreen ) fullScreenSettings.setFullScreen();
 
 		/**
 		 * @function canvasMenu.
@@ -218,6 +172,7 @@ function CanvasMenu( renderer, options ) {
 		 */
 		this.setFullScreenButton = function ( fullScreen ) {
 
+			if ( fullScreen === undefined ) fullScreen = options.fullScreen.fullScreen;
 			const elMenuButtonFullScreen = elContainer.querySelector( '#menuButtonFullScreen' );//document.getElementById( 'menuButtonFullScreen' );
 			if ( elMenuButtonFullScreen === null )
 				return true;
