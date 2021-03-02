@@ -167,6 +167,7 @@ function StereoEffect( _THREE, renderer, options ) {
 		var xL, yL, widthL, heightL,
 			xR, yR, widthR, heightR;
 		const parallax = options.zeroParallax;
+/*		
 		function setFullScreen( fullScreen, stereoEffect ){
 
 			if ( !fullScreenSettings || ( spatialMultiplexCur === spatialMultiplex ) )
@@ -175,6 +176,23 @@ function StereoEffect( _THREE, renderer, options ) {
 			spatialMultiplexCur = spatialMultiplex;
 			if ( stereoEffect.setControllerSpatialMultiplex ) stereoEffect.setControllerSpatialMultiplex( spatialMultiplex );
 			else if ( stereoEffect.setSpatialMultiplex ) stereoEffect.setSpatialMultiplex( spatialMultiplex );
+
+		}
+*/		
+		function setMultiplex( stereoEffect ){
+
+			if ( !fullScreenSettings || ( spatialMultiplexCur === spatialMultiplex ) )
+				return false;
+			spatialMultiplexCur = spatialMultiplex;
+			if ( stereoEffect.setControllerSpatialMultiplex ) stereoEffect.setControllerSpatialMultiplex( spatialMultiplex );
+			else if ( stereoEffect.setSpatialMultiplex ) stereoEffect.setSpatialMultiplex( spatialMultiplex );
+			return true;
+
+		}
+		function setFullScreen( fullScreen, stereoEffect ){
+
+			if ( setMultiplex( stereoEffect ) )
+				fullScreenSettings.setFullScreen( fullScreen );
 
 		}
 
@@ -187,7 +205,33 @@ function StereoEffect( _THREE, renderer, options ) {
 				renderer.render( scene, camera );
 				renderer.setScissorTest( false );
 
-				setFullScreen( true, this );
+				//если оствить setFullScreen то canvas не перейдет в full screen
+				//если в программе по умолчанию был задан full screen и используется canvasMenu
+				//Для провероки
+				//в файле "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\myThree\Examples\html\index.html"
+				//	для new MyThree(...)
+				//		установить canvasMenu: true,
+				//		убрать canvas: { fullScreen: false, }. Тоесть по умолчанию canvas перейдет в full screen
+				//открыть http://localhost/anhr/commonNodeJS/master/myThree/Examples/html/
+
+				//setFullScreen( true, this );
+
+				//если оствить setFullScreen то canvas не перейдет в full screen
+				//если убрать setFullScreen то canvas перейдет в full screen
+				//но тогда будет неправильно выбираться пункт меню stereo Effects в canvasMenu в случае, если 
+				//Выбрать пункт "слева направо" меню stereo Effects в canvasMenu.
+				//	включится стерео режим.
+				//	canvas перейдет в full screen.
+				//Выбрать пункт "Восстановить размеры экрана" меню stereo Effects в canvasMenu.
+				//	canvas выйдет из full screen.
+				//	стерео режим отключится
+				//	НО! ОСТАНЕТСЯ ВЫБРАННЫМ пункт "слева направо" меню stereo Effects в canvasMenu.
+				//Для решения проблемы вставил строку ниже
+
+				setMultiplex( this );
+
+				//Теперь в режиме full screen при выборе пункта "Моно" меню stereo Effects в canvasMenu
+				//canvas не выходит из full screen. Ну и фиг с ним.
 
 				return;
 
