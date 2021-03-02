@@ -2414,7 +2414,8 @@ Player.traceLine = function ( options ) {
 			return;
 		line.geometry.dispose();
 		line.material.dispose();
-		group.remove( line );
+		line.parent.remove( line );
+//		group.remove( line );
 
 	}
 
