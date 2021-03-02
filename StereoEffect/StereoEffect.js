@@ -216,7 +216,7 @@ function StereoEffect( _THREE, renderer, options ) {
 
 				//setFullScreen( true, this );
 
-				//если оствить setFullScreen то canvas не перейдет в full screen
+				//если оставить setFullScreen то canvas не перейдет в full screen
 				//если убрать setFullScreen то canvas перейдет в full screen
 				//но тогда будет неправильно выбираться пункт меню stereo Effects в canvasMenu в случае, если 
 				//Выбрать пункт "слева направо" меню stereo Effects в canvasMenu.
