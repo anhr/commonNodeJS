@@ -425,7 +425,25 @@ function StereoEffect( _THREE, renderer, options ) {
 
 			} );
 		dat.controllerNameAndTitle( _controllerSpatialMultiplex, _lang.spatialMultiplexName, _lang.spatialMultiplexTitle );
-		this.setControllerSpatialMultiplex = function( index ) { _controllerSpatialMultiplex.setValue( index ); }
+		this.setControllerSpatialMultiplex = function( index ) {
+
+			//если не делать эту провероку, то в cookie будет записна запись, даже если пользователь ничего не менял
+			//Не помню зачем это
+//			if ( _controllerSpatialMultiplex.getValue() !== index )
+			saveToCookie = false;
+			_controllerSpatialMultiplex.setValue( index );
+			saveToCookie = true;
+/*			
+			const value = index;
+			displayControllers( value );
+			setObject( stereoEffect );
+			if ( guiParams.onChangeMode )
+				guiParams.onChangeMode( value );
+			if ( menuItemStereoEffect )
+				menuItemStereoEffect.select( value );
+*/				
+
+		}
 
 		//eyeSeparation
 		//http://paulbourke.net/papers/vsmm2007/stereoscopy_workshop.pdf
@@ -500,12 +518,15 @@ function StereoEffect( _THREE, renderer, options ) {
 
 		displayControllers( options.spatialMultiplex );
 
+		var saveToCookie = true;
 		/**
 		 * sets an object into cookie.
 		 * @param {string} name cookie name.
 		 */
 		function setObject( name ) {
 
+			if ( !saveToCookie )
+				return;
 			const object = {};
 			Object.keys( optionsDefault ).forEach( function ( key ) {
 
