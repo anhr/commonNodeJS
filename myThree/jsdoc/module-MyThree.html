@@ -85,7 +85,9 @@
 
     
     <dt class="tag-license">License:</dt>
-    <dd class="tag-license"><ul class="dummy"><li>under the Apache License, Version 2.0 (the "License");you may not use this file except in compliance with the License.You may obtain a copy of the License at</li></ul></dd>
+    <dd class="tag-license"><ul class="dummy"><li>under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</li></ul></dd>
     
 
     
@@ -157,7 +159,8 @@
     
 
     
-    <h4 class="name" id="~MyThree.points"><span class="type-signature">(inner) </span>MyThree.points<span class="signature">(arrayFuncs, options, pointsOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~MyThree.points"><span class="type-signature">(inner) </span>MyThree.
+points<span class="signature">(arrayFuncs, options, pointsOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -239,7 +242,39 @@
 
             
 
-            <td class="description last">points.geometry.attributes.position array<pre>THREE.Vector4: 4D point.THREE.Vector3: 3D point. w = 1. Default is white colorTHREE.Vector2: 2D point. w = 1, z = 0. Default is white colorVector's x, y, z, w is position of the point.Can be as:float - position of the point.[float] - array of positions of the point.Function - position of the point is function of the t. Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )Vector.w can be as THREE.Color. Example: new THREE.Color( "rgb(255, 127, 0)" )if arrayFuncs.length === 0 then push new THREE.Vector3().object: {  vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position  name: point name  trace: true - Displays the trace of the point movement. Default is false}orobject: {  x: x axis. Defauilt is 0.  y: y axis. Defauilt is 0.  z: z axis. Defauilt is 0.  w: w axis. Defauilt is 0.}array: [  0: x axis. Defauilt is 0.  1: y axis. Defauilt is 0.  2: z axis. Defauilt is 0.  3: w axis. Defauilt is 0.]</pre></td>
+            <td class="description last">points.geometry.attributes.position array
+<pre>
+THREE.Vector4: 4D point.
+THREE.Vector3: 3D point. w = 1. Default is white color
+THREE.Vector2: 2D point. w = 1, z = 0. Default is white color
+Vector's x, y, z, w is position of the point.
+Can be as:
+float - position of the point.
+[float] - array of positions of the point.
+Function - position of the point is function of the t. Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )
+Vector.w can be as THREE.Color. Example: new THREE.Color( "rgb(255, 127, 0)" )
+if arrayFuncs.length === 0 then push new THREE.Vector3().
+
+object: {
+  vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position
+  name: point name
+  trace: true - Displays the trace of the point movement. Default is false
+}
+or
+object: {
+  x: x axis. Defauilt is 0.
+  y: y axis. Defauilt is 0.
+  z: z axis. Defauilt is 0.
+  w: w axis. Defauilt is 0.
+}
+
+array: [
+  0: x axis. Defauilt is 0.
+  1: y axis. Defauilt is 0.
+  2: z axis. Defauilt is 0.
+  3: w axis. Defauilt is 0.
+]
+</pre></td>
         </tr>
 
     
@@ -423,7 +458,12 @@
 
             
 
-            <td class="description last">creates the THREE.Points with THREE.ShaderMaterial material.<pre>The size of the each point of the THREE.Points seems the same on canvasbecause I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.See var shaderMaterialDefault of the frustumPoints for details.</pre></td>
+            <td class="description last">creates the THREE.Points with THREE.ShaderMaterial material.
+<pre>
+The size of the each point of the THREE.Points seems the same on canvas
+because I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.
+See var shaderMaterialDefault of the frustumPoints for details.
+</pre></td>
         </tr>
 
     
@@ -456,7 +496,14 @@
 
             
 
-            <td class="description last">position of the points. Default is new THREE.Vector3( 0, 0, 0 ).<pre>Vector's x, y, z is position of the points.Can be as:float - position of the points.[float] - array of positions of the points.Function - position of the points is function of the t. Example: new Function( 't', 'return 0.1 + t' )</pre></td>
+            <td class="description last">position of the points. Default is new THREE.Vector3( 0, 0, 0 ).
+<pre>
+Vector's x, y, z is position of the points.
+Can be as:
+float - position of the points.
+[float] - array of positions of the points.
+Function - position of the points is function of the t. Example: new Function( 't', 'return 0.1 + t' )
+</pre></td>
         </tr>
 
     
@@ -489,7 +536,14 @@
 
             
 
-            <td class="description last">scale of the points. Default is new THREE.Vector3( 1, 1, 1 ).<pre>Vector's x, y, z is scale of the points.Can be as:float - scale of the points.[float] - array of scales of the points.Function - scale of the points is function of the t. Example: new Function( 't', 'return 1.1 + t' )</pre></td>
+            <td class="description last">scale of the points. Default is new THREE.Vector3( 1, 1, 1 ).
+<pre>
+Vector's x, y, z is scale of the points.
+Can be as:
+float - scale of the points.
+[float] - array of scales of the points.
+Function - scale of the points is function of the t. Example: new Function( 't', 'return 1.1 + t' )
+</pre></td>
         </tr>
 
     
@@ -522,7 +576,14 @@
 
             
 
-            <td class="description last">rotation of the points. Default is new THREE.Vector3( 0, 0, 0 ).<pre>Vector's x, y, z is rotation of the points.Can be as:float - rotation of the points.[float] - array of rotations of the points.Function - rotation of the points is function of the t. Example: new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )</pre></td>
+            <td class="description last">rotation of the points. Default is new THREE.Vector3( 0, 0, 0 ).
+<pre>
+Vector's x, y, z is rotation of the points.
+Can be as:
+float - rotation of the points.
+[float] - array of rotations of the points.
+Function - rotation of the points is function of the t. Example: new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )
+</pre></td>
         </tr>
 
     
@@ -555,7 +616,17 @@
 
             
 
-            <td class="description last">Array of points with cloud.<pre>If you define the array of points with cloud, then you can define a points with cloud.For example you can definearrayCloud: options.arrayCloudon the params of the getShaderMaterialPoints( params, onReady ) function.OrarrayCloud: options.arrayCloudon the pointsOptions of the myThreejs.points function.Default is undefined</pre></td>
+            <td class="description last">Array of points with cloud.
+<pre>
+If you define the array of points with cloud, then you can define a points with cloud.
+For example you can define
+arrayCloud: options.arrayCloud
+on the params of the getShaderMaterialPoints( params, onReady ) function.
+Or
+arrayCloud: options.arrayCloud
+on the pointsOptions of the myThreejs.points function.
+Default is undefined
+</pre></td>
         </tr>
 
     
@@ -636,7 +707,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myThree.js.html">myThree.js</a>, <a href="myThree.js.html#line1547">line 1547</a>
+        <a href="myThree.js.html">myThree.js</a>, <a href="myThree.js.html#line1733">line 1733</a>
     </li></ul></dd>
     
 
@@ -682,13 +753,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat Feb 27 2021 06:38:28 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Mar 03 2021 07:35:26 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
