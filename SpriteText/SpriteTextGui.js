@@ -193,7 +193,8 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 	}
 
 	guiParams.spriteFolder = guiParams.spriteFolder || lang.spriteText;
-	const cookieName = guiParams.cookieName || 'SpriteText',//guiParams.spriteFolder,
+//	const cookieName = guiParams.cookieName || 'SpriteText',//guiParams.spriteFolder,
+	const cookieName = 'SpriteText' + ( guiParams.cookieName ? '_' + guiParams.cookieName : '' ),
 		cookie = guiParams.cookie || new Cookie.defaultCookie(),
 		optionsGroup = options.group;
 	cookie.getObject( cookieName, options, options );

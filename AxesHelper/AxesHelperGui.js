@@ -157,7 +157,8 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 	}
 
 	guiParams.axesHelperFolder = guiParams.axesHelperFolder || lang.axesHelper;
-	const cookieName = guiParams.cookieName || guiParams.axesHelperFolder,
+//	const cookieName = guiParams.cookieName || guiParams.axesHelperFolder,
+	const cookieName = 'AxesHelper' + ( guiParams.cookieName ? '_' + guiParams.cookieName : '' ),
 		cookie = guiParams.cookie || new Cookie.defaultCookie();
 	cookie.getObject( cookieName, options, options );
 
@@ -221,7 +222,7 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 
 		getLanguageCode: guiParams.getLanguageCode,
 		cookie: cookie,
-		cookieName: 'SpriteText_' + cookieName,
+		cookieName: cookieName,
 		parentFolder: fScales,
 
 	} );
