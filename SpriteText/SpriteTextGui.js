@@ -1,5 +1,5 @@
 /**
- * @module SpriteTextGui.
+ * @module SpriteTextGui
  * @description Adds SpriteText settings folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
  * @see {@link https://github.com/anhr/SpriteText|SpriteText}
  *
