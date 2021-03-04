@@ -2,8 +2,8 @@
 
 Pure JavaScript color picker.
 
-[Example of using](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html).
-[Module version](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/modular.html).
+[Example of using](../Example/index.html).
+[Module version](../Example/modular.html).
 
 ## Packaged Builds
 The easiest way to use ColorPicker in your code is by using the built source at `build/colorpicker.js`.

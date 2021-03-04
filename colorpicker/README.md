@@ -1,8 +1,8 @@
 ﻿# ColorPicker
  ColorPicker - pure JavaScript color picker.
 
-[Example of using](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html).
-[Module version](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/modular.html).
+[Example of using](../Example/index.html).
+[Module version](../Example/modular.html).
 
 I use ColorPicker in my [three.js](https://threejs.org/) projects.
 
