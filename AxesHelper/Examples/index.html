@@ -10,11 +10,10 @@
 
 	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
 
+	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
 	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
 	<link type="text/css" rel="stylesheet" href="../../../../three.js/dev/examples/main.css">
-
-	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
-	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">-->
 
 </head>
 <body>
@@ -64,8 +63,8 @@
 		//import { GuiSelectPoint, getObjectPosition } from '../../guiSelectPoint/guiSelectPoint.js';
 		//import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
-		import { MoveGroup } from '../../MoveGroup.js';//https://github.com/anhr/commonNodeJS
-		//import { MoveGroup } from 'https://raw.githack.com/anhr/commonNodeJS/master/MoveGroup.js';
+		import MoveGroupGui from '../../MoveGroupGui.js';
+		//import MoveGroupGui from 'https://raw.githack.com/anhr/commonNodeJS/master/MoveGroupGui.js';
 
 		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
@@ -80,7 +79,7 @@
 		import CameraGui from '../../CameraGui.js';
 		//import CameraGui from 'http://localhost/anhr/commonNodeJS/master/CameraGui.js';
 		
-		var camera, scene, renderer, stereoEffect, axesHelper, controls, intersects, guiSelectPoint, moveGroup, raycaster;
+		var camera, scene, renderer, stereoEffect, axesHelper, controls, intersects, guiSelectPoint, raycaster;//, moveGroup;
 		const mouse = new THREE.Vector2(), arrayintersectObjects = [], threshold = 0.02;//0.08;
 
 		init();
@@ -192,7 +191,7 @@
 	//			scene.add( axesHelper );
 	
 			}
-
+/*
 			//MoveGroup
 
 			if ( typeof MoveGroup !== "undefined" ) {
@@ -200,7 +199,7 @@
 				moveGroup = new MoveGroup( groupMove, {
 
 					//scales: scales,
-					cookie: cookie,
+//					cookie: cookie,
 //				cookieName: getCanvasName(),
 					axesHelper: axesHelper,
 //					guiSelectPoint: guiSelectPoint,
@@ -208,7 +207,7 @@
 				} );
 
 			}
-
+*/
 			const arrayFuncs = [
 				new THREE.Vector4( -0.5, -0.5 ,-0.5, new Function( 't', 'return 50 - 50*t' ) ),
 				{
@@ -571,6 +570,18 @@
 						//options: groupAxesHelper.userData.optionsSpriteText,
 
 					} );
+				if ( typeof MoveGroupGui !== "undefined" )
+					new MoveGroupGui( groupMove, gui, {
+
+						//scales: scales,
+						cookie: cookie,
+						cookieName: 'AxesHelper',
+						axesHelper: axesHelper,
+						getLanguageCode: getLanguageCode,
+	//					guiSelectPoint: guiSelectPoint,
+
+					} );
+/*				
 				if ( moveGroup )
 					moveGroup.gui( gui, {
 
@@ -580,6 +591,7 @@
 						axesHelper: axesHelper
 
 					} );
+*/					
 				if ( axesHelper )
 					AxesHelperGui( axesHelper, gui, {
 
