@@ -56,6 +56,8 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
 
 import { AxesHelper } from '../AxesHelper/AxesHelper.js';
 //import { AxesHelper } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelper.js';
+import { AxesHelperGui } from '../AxesHelper/AxesHelperGui.js';
+//import { AxesHelperGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelperGui.js';
 
 //import { OrbitControls } from 'http://localhost/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 import { OrbitControls } from '../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
@@ -91,6 +93,8 @@ import { SpriteTextGui } from '../SpriteText/SpriteTextGui.js';
 
 import ColorPicker from '../colorpicker/colorpicker.js';
 //import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
+
+import MoveGroupGui from '../MoveGroupGui.js';
 
 var THREE;
 
@@ -172,18 +176,20 @@ class MyThree {
 	 * @param {THREE.Vector3} [options.scene.position=new THREE.Vector3( 0, 0, 0 )] scene position.
 	 * @param {object} [options.orbitControls] use orbit controls allow the camera to orbit around a target. [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}
 	 * @param {boolean} [options.orbitControls.gui=false] true - displays the orbit controls gui.
-	 * @param {object} [options.axesHelper] add the AxesHelper. Default the axes is not visible.
+	 * @param {object} [options.axesHelper] add the AxesHelper>. Default the axes is not visible.
 	 * @param {number} [options.axesHelper.dimensions=3] 1 - visualize the X axes
 	 * &lt;pre>
 	 * 2 - visualize the X and Y axes
 	 * 3 - visualize the X, Y and Z axes
 	 * &lt;/pre>
 	 * @param {number} [options.axesHelper.position] axesHelper position. Default is new THREE.Vector3( 0, 0, 0 )
-	 * @param {boolean} [options.axesHelperGui=false] true - displays the AxesHelper gui.
-	 * @param {object} [options.spriteText] spriteText options. See SpriteText options for details. Default undefined.
+	 * @param {object} [options.spriteText] spriteText options. See &lt;a href="../../SpriteText/jsdoc/index.html" target="_blank">SpriteText&lt;/a> options for details. Default undefined.
 	 * @param {object} [options.stereoEffect] use &lt;a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect&lt;/a>.
 	 * @param {number} [options.stereoEffect.spatialMultiplex] &lt;a href="../../StereoEffect/jsdoc/module-StereoEffect.html#~spatialMultiplexsIndexs" target="_blank">Enumeration of available stereo modes&lt;/a>.
-	 * @param {boolean} [options.dat=false] true - use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {object} [options.dat] {} - use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {boolean} [options.dat.cookie] true - save to cookie all user settings
+	 * @param {boolean} [options.dat.axesHelperGui] true - displays the AxesHelper gui.
+	 * @param {object} [options.dat.moveScene] true - displays the move group gui.
 	 * @param {boolean} [options.canvasMenu=false] true - use my dropdown menu for canvas in my version of [dat.gui]{@link https://github.com/anhr/dat.gui} for playing of 3D objects in my projects.
 	 * See ..\..\commonNodeJS\master\canvasMenu\canvasMenu.js
 	 * @param {array} [options.arrayCloud] Array of points with cloud.
@@ -327,9 +333,11 @@ class MyThree {
 		options.camera.position = options.camera.position || new THREE.Vector3( 0.4, 0.4, 2 );
 		options.camera.scale = options.camera.scale || new THREE.Vector3( 1, 1, 1 );
 
+/*сейчас использую options.dat.cookie
 		if ( options.cookie === undefined )
 			options.cookie = new cookie.defaultCookie();
 		else options.cookie = cookie;
+*/
 
 		if ( options.palette !== undefined ) {
 
@@ -566,7 +574,7 @@ class MyThree {
 							far: camera.far,
 							camera: camera,
 							//stereoAspect: 1,
-//							cookie: options.cookie,
+//							cookie: options.dat.cookie,
 //							cookieName: cookieName === '' ? '' : '_' + cookieName,
 							elParent: canvas.parentElement,
 							rememberSize: true,
@@ -750,6 +758,9 @@ class MyThree {
 				//https://github.com/dataarts/dat.gui
 				if ( ( options.dat !== undefined ) ) {
 
+					if ( options.dat.cookie === true ) options.dat.cookie = cookie;
+					else options.dat.cookie = new cookie.defaultCookie(); 
+
 					if ( gui !== undefined ) {
 
 						for ( var i = gui.__controllers.length - 1; i >= 0; i-- )
@@ -846,7 +857,7 @@ class MyThree {
 						player.gui( fOptions, {
 
 							getLanguageCode: getLanguageCode,
-							cookie: options.cookie,
+							cookie: options.dat.cookie,
 							cookieName: '_' + getCanvasName(),
 
 						} );
@@ -860,7 +871,8 @@ class MyThree {
 
 						getLanguageCode: getLanguageCode,
 						//settings: { zoomMultiplier: 1.5, },
-						cookie: cookie,
+						cookie: options.dat.cookie,
+						cookieName: getCanvasName(),
 						options: {
 
 							//rotation: 0,
@@ -885,7 +897,7 @@ class MyThree {
 					stereoEffect.gui( fOptions, {
 
 						getLanguageCode: getLanguageCode,
-						cookie: cookie,
+						cookie: options.dat.cookie,
 						gui: gui,
 						stereoEffect: stereoEffect,
 						onChangeMode: function ( mode ) {
@@ -1030,16 +1042,17 @@ class MyThree {
 					} );
 
 				}
-
+/*
 				var moveGroup;
 				if ( options.moveScene )
 					moveGroup = new MoveGroup( scene, {
 
 						scales: options.scales,
-						cookie: options.cookie,
+						cookie: options.dat.cookie,
 						cookieName: getCanvasName(),
 
 					} );
+*/
 
 				// helper
 
@@ -1097,7 +1110,8 @@ class MyThree {
 				defaultPoint.size = options.point.size;
 
 				var pointName = 'Point_' + getCanvasName();
-				options.cookie.getObject( pointName, options.point, options.point );
+				options.dat.cookie.getObject( pointName, options.point, options.point );
+//				options.cookie.getObject( pointName, options.point, options.point );
 
 				options.spriteText = options.spriteText || {};
 
@@ -1167,12 +1181,12 @@ class MyThree {
 					//THREE.AxesHelper gui
 					if ( ( options.scene === undefined ) &amp;&amp; ( typeof scene !== 'undefined' ) )
 						options.scene = scene;
-					if ( options.axesHelperGui === true ) {
+					if ( options.dat.axesHelperGui === true ) {
 
 						AxesHelperGui( axesHelper, fOptions, {
 
-							cookie: options.cookie,
-							//cookieName: 'mySettings',
+							cookie: options.dat.cookie,
+							cookieName: getCanvasName(),
 							getLanguageCode: getLanguageCode,
 
 						} );
@@ -1189,6 +1203,16 @@ class MyThree {
 						} );
 
 					}
+					if ( options.dat.moveScene )
+						new MoveGroupGui( group, fOptions, {
+
+							cookie: options.dat.cookie,
+							cookieName: getCanvasName(),
+							getLanguageCode: getLanguageCode,
+							lang: { moveGroup: lang.moveGroup, }
+
+						} );
+/*
 					if ( moveGroup )
 						moveGroup.gui( fOptions, {
 
@@ -1197,6 +1221,7 @@ class MyThree {
 							lang: { moveGroup: lang.moveGroup, }
 
 						} );
+*/
 
 					//OrbitControls gui
 
@@ -1877,7 +1902,7 @@ export default MyThree;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Mar 03 2021 07:53:37 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Mar 04 2021 10:42:33 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
