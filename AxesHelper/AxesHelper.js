@@ -30,6 +30,7 @@ import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPo
  * @param {object} [options.color='white'] axes color. Available color names see THREE.Color.NAMES.
  * @param {THREE.Vector3} [options.posAxesIntersection=new THREE.Vector3()] Position of the axes intersection.
  * @param {object} [options.scales={}] axes scales.
+ * @param {boolean} [options.scales.display=true] true - displays the label and scale of the axes.
  *
  * @param {number} [options.scales.axisName] x or y or z
  * @param {number} [options.scales.axisName.zoomMultiplier=1.1] zoom multiplier.
