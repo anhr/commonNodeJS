@@ -57,3 +57,12 @@ Generating a website:
 	jsdoc "..\commonNodeJS\master\CameraGui.js" -d "..\commonNodeJS\master\jsdoc\CameraGui"
 
 	/////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////
+	//MoveGroupGui doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\MoveGroupGui"
+
+	jsdoc "..\commonNodeJS\master\MoveGroupGui.js" -d "..\commonNodeJS\master\jsdoc\MoveGroupGui"
+
+	/////////////////////////////////////////////////////////////
