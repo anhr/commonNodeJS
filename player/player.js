@@ -2216,6 +2216,47 @@ Player.traceLine = function ( options ) {
 		return;
 
 	}
+	/**
+	 * Is trace line visible?
+	 * @function Player.traceLine.
+	 * isVisible
+	 * @returns true - trace line is visible.
+	 * <p>false - trace line is not visible.</p>
+	 */
+	this.isVisible = function () {
+
+		if ( !settings ) return false;//не запущен Player(...)
+		
+		if ( line ) return line.visible;
+		//сюда попадает когда t max is Infinity ( settings.max === null ) и когда пользователь выбрал точку в guiSelectPoint у которой установлена трассировка
+		return arrayLines[0].visible;
+
+	}
+	/**
+	 * Show or hide trace line.
+	 * @function Player.traceLine.
+	 * visible
+	 * @param {boolean} visible true - show trace line.
+	 * <p>false - hide trace line.</p>
+	 */
+	this.visible = function ( visible ) {
+
+		if ( !settings ) return false;//не запущен Player(...)
+		
+		if ( line ) {
+
+			line.visible = visible;
+			return;
+
+		}
+		//сюда попадает когда t max is Infinity (settings.max === null) и когда пользователь в выбранной в guiSelectPoint  точке изменил галочку трассировки
+		arrayLines.forEach( function ( line ) {
+
+			line.visible = visible;
+
+		} );
+
+	}
 	if ( !settings ) {
 
 		console.warn( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
@@ -2364,43 +2405,6 @@ Player.traceLine = function ( options ) {
 
 		}
 		line.geometry.setDrawRange( start, count );
-
-	}
-	/**
-	 * Show or hide trace line.
-	 * @function Player.traceLine.
-	 * visible
-	 * @param {boolean} visible true - show trace line.
-	 * <p>false - hide trace line.</p>
-	 */
-	this.visible = function ( visible ) {
-
-		if ( line ) {
-
-			line.visible = visible;
-			return;
-
-		}
-		//сюда попадает когда t max is Infinity (settings.max === null) и когда пользователь в выбранной в guiSelectPoint  точке изменил галочку трассировки
-		arrayLines.forEach( function ( line ) {
-
-			line.visible = visible;
-
-		} );
-
-	}
-	/**
-	 * Is trace line visible?
-	 * @function Player.traceLine.
-	 * isVisible
-	 * @returns true - trace line is visible.
-	 * <p>false - trace line is not visible.</p>
-	 */
-	this.isVisible = function () {
-
-		if ( line ) return line.visible;
-		//сюда попадает когда t max is Infinity ( settings.max === null ) и когда пользователь выбрал точку в guiSelectPoint у которой установлена трассировка
-		return arrayLines[0].visible;
 
 	}
 	/**
