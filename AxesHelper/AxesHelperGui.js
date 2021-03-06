@@ -69,6 +69,12 @@ AxesHelperGui( axesHelper, gui, {
 */
 export function AxesHelperGui( axesHelper, gui, guiParams ) {
 
+	if ( !axesHelper ) {
+
+		console.warn( 'Create AxesHelper first.' );
+		return;
+		
+	}
 	const THREE = axesHelper.getTHREE();
 	if ( !THREE ) {
 
