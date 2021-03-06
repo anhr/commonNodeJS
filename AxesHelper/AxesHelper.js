@@ -429,8 +429,12 @@ export function AxesHelper( THREE, group, options ) {
 					lineVertices[5] = pointVertice.z;
 
 					var size = getDashSize();//axesId );
+/*по моему зевок
 					lineX.material.dashSize = size;
 					lineX.material.gapSize = size;
+*/					
+					line.material.dashSize = size;
+					line.material.gapSize = size;
 
 					line.geometry.attributes.position.needsUpdate = true;
 
