@@ -43,9 +43,9 @@ var OrbitControlsGui = function ( gui, orbitControls, options ) {
 	orbitControls.addEventListener( 'change', function () {
 
 		//console.log( 'orbitControls.target: ' + orbitControls.target.x + ' ' + orbitControls.target.y + ' ' + orbitControls.target.z )
-		targetX.setValue( orbitControls.target.x );
-		targetY.setValue( orbitControls.target.y );
-		targetZ.setValue( orbitControls.target.z );
+		if ( targetX ) targetX.setValue( orbitControls.target.x );
+		if ( targetY ) targetY.setValue( orbitControls.target.y );
+		if ( targetZ ) targetZ.setValue( orbitControls.target.z );
 		/*
 		console.warn('camera.position = ' + camera.position.x + ' ' + camera.position.y + ' ' + camera.position.z
 			+ '\r\ncamera.quaternion = ' + camera.quaternion.x + ' ' + camera.quaternion.y + ' ' + camera.quaternion.z
