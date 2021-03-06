@@ -212,6 +212,8 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 					return;//No display information about frustum point
 				if ( options.guiSelectPoint )
 					options.guiSelectPoint.select( intersection );
+				else if ( options.axesHelper )
+					options.axesHelper.exposePosition( intersection );
 				if ( options.raycaster.onMouseDown )
 					options.raycaster.onMouseDown( intersection );
 
