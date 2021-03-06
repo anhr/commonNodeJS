@@ -106,9 +106,16 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	options.guiSelectPoint = guiSelectPoint;
 				
 	options.scales = options.scales || {};
+	const boCreateScale = !options.scales.x && !options.scales.y && !options.scales.z;
 	function setScale( axisName ) {
 
-		options.scales[axisName] = options.scales[axisName] || {};
+		//Не надо создавать ось потому что иначе будут создавться контролы для осей, которые не хочет видеть пользователь и будет рмсоватся пунктирная линия к не существующей оси если пользователь нажал на точку
+		if ( boCreateScale )
+			options.scales[axisName] = options.scales[axisName] || {};
+
+		if ( !options.scales[axisName] )
+			return;
+
 		options.scales[axisName].name = options.scales[axisName].name || axisName;
 		options.scales[axisName].min = options.scales[axisName].min === undefined ? -1 : options.scales[axisName].min;
 		options.scales[axisName].max = options.scales[axisName].max === undefined ?  1 : options.scales[axisName].max;
