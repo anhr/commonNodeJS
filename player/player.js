@@ -121,7 +121,7 @@ function Player( group, options ) {
 
 	options.cameraTarget = options.cameraTarget || {};
 
-	/**
+	/* *
 	 * Select a scene for playing
 	 * @function Player.
 	 * selectPlayScene
@@ -144,6 +144,7 @@ function Player( group, options ) {
 	 * new GuiSelectPoint();
 	 * </pre>
 	 */
+/*
 	function selectPlayScene( group, t, index, selectPlaySceneOptions ) {
 
 		//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
@@ -153,25 +154,12 @@ function Player( group, options ) {
 		selectPlaySceneOptions = selectPlaySceneOptions || {};
 
 		group.userData.t = t;
-		Player.selectMeshPlayScene( /*THREE, */group, t, index );//, options );
+		Player.selectMeshPlayScene( group, t, index );
 		group.children.forEach( function ( mesh ) {
 
-			Player.selectMeshPlayScene( /*THREE, */mesh, t, index );//, options );
+			Player.selectMeshPlayScene( mesh, t, index );
 
 		} );
-/*		
-//		if ( options.cameraTarget )
-//		if ( Player.cameraTarget2 )
-		if ( Player.cameraTargetPoint ){
-
-//			Player.setCameraTarget();
-			Player.cameraTarget.setCameraTarget();
-//			Player.setPlayerCameraTarget();
-//			Player.cameraTarget2.setCameraPosition();
-			Player.cameraTarget.get().setCameraPosition();
-
-		}
-*/		
 		Player.cameraTarget.setCameraTarget();
 
 		const cameraTarget = Player.cameraTarget.get();
@@ -180,8 +168,7 @@ function Player( group, options ) {
 		if ( Player.cameraGui ) Player.cameraGui.update();
 
 	}
-
-	//var boSelectFirstScene = true;
+*/
 	/**
 	 * @description This function is called at each new step of the playing.
 	 * @param {number} [index=0] current index of the scene of the animation
@@ -190,7 +177,7 @@ function Player( group, options ) {
 
 		index = index || 0;
 		const t = _this.getTime();
-		selectPlayScene( group, t, index, options.selectPlaySceneOptions );
+		Player.selectPlayScene( group, t, index );//, options.selectPlaySceneOptions );
 		_this.setIndex( index, ( settings.name === '' ? '' : settings.name + ': ' ) + t );
 		if ( options.onSelectScene ) options.onSelectScene( index, t );
 
@@ -1046,7 +1033,7 @@ function playerCameraTarget() {
 				cameraTargetDefault.boLook = true;//запрета на слежение камерой за точкой не было и есть точка, за которой надо следить
 
 		} else return;
-		cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera;
+		cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera || ( Player.player ? Player.player.getOptions().cameraTarget.camera : undefined );
 		if ( !cameraTargetDefault.camera ) {
 
 			console.error( 'playerCameraTarget().init(...): cameraTargetDefault.camera = ' + cameraTargetDefault.camera );
@@ -1592,7 +1579,7 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 			if ( color ) {
 
 				if ( !mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors )
-					console.error( 'Player.selectPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors' );
+					console.error( 'Player.selectMeshPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors' );
 				if ( !Player.setColorAttribute( attributes, i, color ) && funcs instanceof THREE.Vector4 ) {
 
 					mesh.geometry.setAttribute( 'color',
@@ -1603,9 +1590,8 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 								palette: options.palette,
 
 							} ), 4 ) );
-//							} ), 3 ) );//кажется тут ошибочно поставил itemSize = 3
 					if ( !Player.setColorAttribute( attributes, i, color ) )
-						console.error( 'Player.selectPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute' );
+						console.error( 'Player.selectMeshPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute' );
 
 				}
 
@@ -1613,10 +1599,8 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 			if ( needsUpdate )
 				attributes.position.needsUpdate = true;
 
-			if ( funcs.line !== undefined )
-				funcs.line.addPoint( mesh, i/*getObjectPosition( mesh, i ), index*/, color );
-//			cameraTarget( /*THREE, */mesh, funcs, t, i );
-//			Player.cameraTarget.changeTarget( mesh, funcs, t, i );
+			if ( funcs.line && funcs.line.addPoint )
+				funcs.line.addPoint( mesh, i, color );
 			if ( funcs.cameraTarget && ( funcs.cameraTarget.boLook === true ) )
 				Player.cameraTarget.changeTarget( mesh, i );
 
@@ -1624,7 +1608,7 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 
 	}
 	setAttributes( options ? options.a : 1, options ? options.b : 0 );
-	const message = 'Player.selectPlayScene: invalid mesh.scale.';
+	const message = 'Player.selectMeshPlayScene: invalid mesh.scale.';
 	if ( mesh.scale.x <= 0 ) console.error( message + 'x = ' + mesh.scale.x );
 	if ( mesh.scale.y <= 0 ) console.error( message + 'y = ' + mesh.scale.y );
 	if ( mesh.scale.z <= 0 ) console.error( message + 'z = ' + mesh.scale.z );
@@ -1920,48 +1904,22 @@ Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 			if ( funcs.cameraTarget ) {
 
 				funcs.vector.cameraTarget = funcs.cameraTarget;
-//				funcs.cameraTarget = undefined;
 				delete funcs.cameraTarget;
-//				Player.cameraTargetPoint = funcs.vector.cameraTarget;
-//				Player.cameraTarget.init( { funcs: funcs, } );
+
+			}
+/*			
+			if ( funcs.cameraTarget ) {
+
+				funcs.vector.cameraTarget = funcs.cameraTarget;
+				delete funcs.cameraTarget;
 
 				funcs.vector.cameraTarget.bodefault = false;
 				if ( funcs.vector.cameraTarget.boLook === undefined ) funcs.vector.cameraTarget.boLook = true;
 
 				Player.cameraTarget.init( funcs.vector.cameraTarget );
-//				Player.cameraTarget.init( { funcs : funcs } );
-//				Player.setPlayerCameraTarget( { funcs: funcs, } );
-/*				
-//				const boLook = Player.cameraTarget2 && ( Player.cameraTarget2.boLook !== undefined ) ? Player.cameraTarget2.boLook : true;//по умолчанию камера следит за точкой если для нее определен cameraTarget
-				Player.cameraTarget2 = Player.cameraTarget2 || funcs.vector.cameraTarget;
-				Player.cameraTarget2.boLook = Player.cameraTarget2.boLook !== undefined ? Player.cameraTarget2.boLook : true;//по умолчанию камера следит за точкой если для нее определен cameraTarget
-				Player.cameraTarget2.camera = Player.cameraTarget2.camera || funcs.vector.cameraTarget.camera;
-				if ( !Player.cameraTarget2.camera ) {
-
-					console.error( 'Player.getPoints: Player.cameraTarget2.camera = ' + Player.cameraTarget2.camera );
-					return;
-					
-				}
-//				Player.cameraTarget2.boLook = boLook;
-				if ( Player.cameraTarget2.ready ) console.warn( 'Player.getPoints: duplicate cameraTarget' );
-				Player.cameraTarget2.ready = true;
-
-				Player.cameraTarget2.distanceToCamera = Player.cameraTarget2.distanceToCamera || ( funcs.vector.cameraTarget.distanceToCamera ?
-					funcs.vector.cameraTarget.distanceToCamera : new THREE.Vector3().copy( Player.cameraTarget2.camera.position ) );
-//				Player.setPlayerCameraTarget( undefined, funcs );
-//				Player.cameraTarget2.rotation = funcs.vector.cameraTarget.rotation || Player.cameraTarget2.rotation;
-				Player.cameraTarget2.rotation = Player.cameraTarget2.rotation || funcs.vector.cameraTarget.rotation;
-				if ( Player.cameraTarget2.rotation ) {
-
-					if ( Player.cameraTarget2.rotation.angle === undefined )
-						Player.cameraTarget2.rotation.angle = 0;
-//						Player.cameraTarget2.rotation.angle = new Function( 't', 'return t' );
-					Player.cameraTarget2.rotation.axis = Player.cameraTarget2.rotation.axis || new THREE.Vector3( 0, 1, 0 );//Rotate around y axis
-
-				}
-*/				
 
 			}
+*/			
 			arrayFuncs[i] = funcs.vector;
 			funcs = funcs.vector;
 			return Player.execFunc( funcs, axisName, optionsPoints.t, a, b );
@@ -1971,6 +1929,17 @@ Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 		const point = funcs.vector instanceof THREE.Vector3 === true ?
 			new THREE.Vector3( getAxis( 'x' ), getAxis( 'y' ), getAxis( 'z' ) ) :
 			new THREE.Vector4( getAxis( 'x' ), getAxis( 'y' ), getAxis( 'z' ), getAxis( 'w' ) );
+
+		if ( funcs.cameraTarget ) {
+
+			funcs.cameraTarget.bodefault = false;
+			if ( funcs.cameraTarget.boLook === undefined ) funcs.cameraTarget.boLook = true;
+
+			Player.cameraTarget.init( funcs.cameraTarget );
+
+//			Player.cameraTarget.get().target = point;
+
+		}
 
 		if ( funcs.w === undefined ) {
 
@@ -2514,6 +2483,50 @@ Player.getItemSize = function ( arrayFuncs ) {
 
 	}
 	return 3;
+
+}
+/**
+ * Select a scene for playing
+ * @function Player.
+ * selectPlayScene
+ * @param {THREE.Group} group [THREE.Group]{@link https://threejs.org/docs/index.html#api/en/objects/Group}
+ * @param {number} [t=0] time
+ * @param {number} [index=0] index of the time.
+ */
+Player.selectPlayScene = function( group, t = 0, index = 0/*, selectPlaySceneOptions = {}*/ ) {
+
+	//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
+	//Другими словами если не вызывается Player.getColors
+	ColorPicker.palette.setTHREE( THREE );
+
+//	selectPlaySceneOptions = selectPlaySceneOptions || {};
+
+	group.userData.t = t;
+	Player.selectMeshPlayScene( /*THREE, */group, t, index );//, options );
+	group.children.forEach( function ( mesh ) {
+
+		Player.selectMeshPlayScene( /*THREE, */mesh, t, index );//, options );
+
+	} );
+/*		
+//		if ( options.cameraTarget )
+//		if ( Player.cameraTarget2 )
+	if ( Player.cameraTargetPoint ){
+
+//			Player.setCameraTarget();
+		Player.cameraTarget.setCameraTarget();
+//			Player.setPlayerCameraTarget();
+//			Player.cameraTarget2.setCameraPosition();
+		Player.cameraTarget.get().setCameraPosition();
+
+	}
+*/		
+	Player.cameraTarget.setCameraTarget();
+
+	const cameraTarget = Player.cameraTarget.get();
+	if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition();
+
+	if ( Player.cameraGui ) Player.cameraGui.update();
 
 }
 /**
