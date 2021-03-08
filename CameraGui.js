@@ -41,14 +41,15 @@ class CameraGui {
 
 		options.scales = options.scales || {};
 
-		options.scales.x = options.scales.x || {};
-		options.scales.x.name = options.scales.x.name || 'X';
+		const boAllAxis = !options.scales.x && !options.scales.y && !options.scales.z;//Если не определена ни одна ось, то рисовать все оси.
+		if ( boAllAxis ) options.scales.x = options.scales.x || {};
+		if (options.scales.x) options.scales.x.name = options.scales.x.name || 'X';
 
-		options.scales.y = options.scales.y || {};
-		options.scales.y.name = options.scales.y.name || 'Y';
+		if ( boAllAxis ) options.scales.y = options.scales.y || {};
+		if (options.scales.y) options.scales.y.name = options.scales.y.name || 'Y';
 
-		options.scales.z = options.scales.z || {};
-		options.scales.z.name = options.scales.z.name || 'Z';
+		if ( boAllAxis ) options.scales.z = options.scales.z || {};
+		if (options.scales.z) options.scales.z.name = options.scales.z.name || 'Z';
 
 		//
 		/*Не помню зачем засунул эту хрень. Если оставить то не могу двигать камеру если поставлена птичка в controllerLook
@@ -118,28 +119,28 @@ class CameraGui {
 			fPosition = fCamera.addFolder( lang.position ),
 			controllersPosition = {
 
-				x: dat.controllerZeroStep( fPosition, camera.position, 'x', function ( value ) {
+				x: options.scales.x ? dat.controllerZeroStep( fPosition, camera.position, 'x', function ( value ) {
 
 					camera.position.x = value;
 
-				} ),
-				y: dat.controllerZeroStep( fPosition, camera.position, 'y', function ( value ) {
+				} ) : undefined,
+				y: options.scales.y ? dat.controllerZeroStep( fPosition, camera.position, 'y', function ( value ) {
 
 					camera.position.y = value;
 
-				} ),
+				} ) : undefined,
 
-				z: dat.controllerZeroStep( fPosition, camera.position, 'z', function ( value ) {
+				z: options.scales.z ? dat.controllerZeroStep( fPosition, camera.position, 'z', function ( value ) {
 
 					camera.position.z = value;
 
-				} ),
+				} ) : undefined,
 
 			};
 		dat.folderNameAndTitle( fPosition, lang.position, lang.positionTitle );
-		dat.controllerNameAndTitle( controllersPosition.x, options.scales.x.name );
-		dat.controllerNameAndTitle( controllersPosition.y, options.scales.y.name );
-		dat.controllerNameAndTitle( controllersPosition.z, options.scales.z.name );
+		if ( controllersPosition.x ) dat.controllerNameAndTitle( controllersPosition.x, options.scales.x.name );
+		if ( controllersPosition.y ) dat.controllerNameAndTitle( controllersPosition.y, options.scales.y.name );
+		if ( controllersPosition.z ) dat.controllerNameAndTitle( controllersPosition.z, options.scales.z.name );
 
 		var controllersDistance, defaultDistance;
 		Player.cameraTarget.init( { camera: camera } );
@@ -200,9 +201,9 @@ class CameraGui {
 		};
 		defaultDistance = { x: distance.x, y: distance.y, z: distance.z };
 		dat.folderNameAndTitle( fDistanceToCamera, lang.distanceToCamera, lang.distanceToCameraTitle );
-		dat.controllerNameAndTitle( controllersDistance.x, options.scales.x.name );
-		dat.controllerNameAndTitle( controllersDistance.y, options.scales.y.name );
-		dat.controllerNameAndTitle( controllersDistance.z, options.scales.z.name );
+		if (options.scales.x) dat.controllerNameAndTitle( controllersDistance.x, options.scales.x.name );
+		if (options.scales.y) dat.controllerNameAndTitle( controllersDistance.y, options.scales.y.name );
+		if (options.scales.z) dat.controllerNameAndTitle( controllersDistance.z, options.scales.z.name );
 
 		const funcFolder = new functionsFolder( fDistanceToCamera, options.scales, THREE, function ( func, axisName ) {
 
@@ -267,15 +268,15 @@ class CameraGui {
 			const cameraTarget = Player.cameraTarget.get();
 			if ( !cameraTarget.boLook || !cameraTarget.target )
 				return;
-			controllersPosition.x.setValue( camera.position.x );
-			controllersPosition.y.setValue( camera.position.y );
-			controllersPosition.z.setValue( camera.position.z );
+			if ( controllersPosition.x ) controllersPosition.x.setValue( camera.position.x );
+			if ( controllersPosition.y ) controllersPosition.y.setValue( camera.position.y );
+			if ( controllersPosition.z ) controllersPosition.z.setValue( camera.position.z );
 
 			if ( controllersDistance ) {
 
-				controllersDistance.x.setValue( cameraTarget.distanceToCameraCur.x );
-				controllersDistance.y.setValue( cameraTarget.distanceToCameraCur.y );
-				controllersDistance.z.setValue( cameraTarget.distanceToCameraCur.z );
+				if ( controllersDistance.x ) controllersDistance.x.setValue( cameraTarget.distanceToCameraCur.x );
+				if ( controllersDistance.y ) controllersDistance.y.setValue( cameraTarget.distanceToCameraCur.y );
+				if ( controllersDistance.z ) controllersDistance.z.setValue( cameraTarget.distanceToCameraCur.z );
 
 			}
 			funcFolder.setFunction( cameraTarget.distanceToCamera );
