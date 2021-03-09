@@ -996,7 +996,7 @@ StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 		( pointName === undefined ? '' : '\n'+ lang.pointName + ': ' + pointName ) +
 		( !boXYZ && !scales.x ? '' : '\n' + ( scales.x && scales.x.name ? scales.x.name : 'X' ) + ': ' + position.x ) +
 		( !boXYZ && !scales.y ? '' : '\n' + ( scales.y && scales.y.name ? scales.y.name : 'Y' ) + ': ' + position.y ) +
-		( !boXYZ && !scales.z ? '' : '\n' + ( scales.z && scales.z.name ? scales.z.name : 'Z' ) + ': ' + position.x ) + 
+		( !boXYZ && !scales.z ? '' : '\n' + ( scales.z && scales.z.name ? scales.z.name : 'Z' ) + ': ' + position.z ) + 
 		(//w
 			!isArrayFuncs ?
 				'' :
