@@ -1122,17 +1122,21 @@ function playerCameraTarget() {
 //			camera = cameraTarget.camera;
 
 		//Update cameraTarget
-		const func = mesh.userData.player.arrayFuncs[i];
-		if ( !func.cameraTarget )
-			func.cameraTarget = { boLook: false };
-		setCameraTarget( func.cameraTarget );
+		if ( mesh.userData.player.arrayFuncs ) {
 
-		if ( cameraTarget && cameraTarget.boLook ) {
+			const func = mesh.userData.player.arrayFuncs[i];
+			if ( !func.cameraTarget )
+				func.cameraTarget = { boLook: false };
+			setCameraTarget( func.cameraTarget );
 
-			const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
-			cameraTarget.target = target;
+			if ( cameraTarget && cameraTarget.boLook ) {
 
-		} else delete cameraTarget.target;
+				const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
+				cameraTarget.target = target;
+
+			} else delete cameraTarget.target;
+
+		}
 
 	}
 	/**

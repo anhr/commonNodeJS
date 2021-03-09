@@ -304,11 +304,14 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		const player = intersectionSelected.object.userData.player;
 
-		if ( player ) {
+		var boDisplayFuncFolder = 'none';
+		if ( player && player.arrayFuncs ) {
 
 			funcFolder.setFunction( player.arrayFuncs[intersectionSelected.index]/*, boDefault*/ );
+			boDisplayFuncFolder = 'block';
 
 		}
+		funcFolder.displayFolder( boDisplayFuncFolder );
 /*Для установки cCameraTarget после выбора точки. Если это оставить то неправильно учтанавливается галочка cCameraTarget если:
 1 устанвить cCameraTarget для выбранной точки
 2 запустить плеер
