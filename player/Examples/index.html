@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -417,47 +417,6 @@
 
 				},
 			];
-/*
-			arrayFuncs = [
-				new THREE.Vector4( 0.5, 0.5, 0.5, 100 ),//green
-				//new THREE.Vector4( 0.6, 0.5, 0.5 ),//red
-				//new THREE.Vector4( [0.6, -0.5], [0.5, -0.5], [0.5, -0.5] ),//red
-				//new THREE.Vector4( [0.6, -0.5], -0.5, -0.5 ),//red
-				//new THREE.Vector4( [{ t: 0, v: 0.6 }, { t: 1, v: -0.6 }], -0.5, -0.5 ),//red
-				{
-
-					//vector: new THREE.Vector4( [0.6, -0.5], [0.5, -0.5], [0.5, -0.5] ),//red
-					//vector: new THREE.Vector4( [0.6, -0.5], [0.5, -0.5], [0.5, -0.5] ),//red
-					//vector: new THREE.Vector4( 0.6, 0.5, 0.5 ),//red
-					//vector: new THREE.Vector4( new Function( 't', 'a', 'b', 'return -t*a + 0.6 + b' ), 0.5, 0.5 ),//red
-					vector: new THREE.Vector4(
-
-						[{ t: 0, v: 0.6 }, { t: 1, v: -0.5 }],
-						[{ t: 0, v: 0.5 }, { t: 1, v: -0.5 }],
-						[{ t: 0, v: 0.5 }, { t: 1, v: -0.5 }]
-
-					),//red
-					trace: true,//Displays the trace of the point movement.
-					cameraTarget: {
-
-						camera: camera,
-						rotation: {
-
-							//angle: Math.PI,
-							//angle: [0, Math.PI],
-							//angle: [0],
-							//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI }]
-							//angle: new Function( 't', 'return 5*t' ),
-							//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
-
-						},
-
-					},
-
-				},
-				new THREE.Vector3( -0.5, -0.5, -0.5 ),
-			]
-*/
 			const arrayParticles = [];
 			if ( typeof getShaderMaterialPoints !== 'undefined' ) {
 
@@ -494,10 +453,7 @@
 					{
 
 						Player: typeof Player === 'undefined' ? undefined : Player,
-//						player: player,
 						options: options,
-//						options: { palette: palette, },//нужно на случай если не создан плеер
-//						tMin: player ? Player.getSettings().min : undefined,
 
 					}
 				);
@@ -609,56 +565,6 @@
 					onIntersection: options.raycaster.onIntersection,
 					onIntersectionOut: options.raycaster.onIntersectionOut,
 					onMouseDown: options.raycaster.onMouseDown,
-/*
-					onIntersection: function ( intersection ) {
-
-						this.spriteText = StereoEffect.getTextIntersection( intersection, {
-
-							scales: typeof axesHelper !== 'undefined' ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
-							spriteOptions: {
-
-								group: scene,
-								rect: {
-
-									displayRect: true,
-									borderRadius: 15,
-
-								},
-								center: {
-
-									camera: camera,
-									canvas: canvas,
-
-								}
-								//center: new THREE.Vector2( 1, 0 ),
-								//sizeAttenuation: true,
-
-							}
-
-						} );
-						renderer.domElement.style.cursor = 'pointer';
-
-					},
-					onIntersectionOut: function ( ) {
-
-						if ( this.spriteText ) {
-
-							scene.remove( this.spriteText );
-							delete this.spriteText;
-
-						}
-						renderer.domElement.style.cursor = cursor;
-
-					},
-					onMouseDown: function ( intersect ) {
-
-						if ( typeof axesHelper !== 'undefined' )
-							axesHelper.exposePosition( intersect );
-						if ( typeof guiSelectPoint !== 'undefined' )
-							guiSelectPoint.select( intersect );
-
-					}
-*/
 				}
 
 			}
@@ -733,11 +639,6 @@
 
 				} );
 				raycaster.stereo.addParticles( arrayParticles );
-//				arrayParticles.forEach( function ( particle ) { raycaster.stereo.addParticle( particle ); } );
-/*
-				if ( points )
-					raycaster.stereo.addParticle( points );
-*/
 
 			}
 
@@ -774,7 +675,6 @@
 						scales: { x: {}, y: {}, z: {}, },
 
 					} );
-//					if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.orbitControlsGui = orbitControlsGui;
 					if ( typeof Player !== 'undefined' ) Player.orbitControlsGui = orbitControlsGui;
 
 				}
