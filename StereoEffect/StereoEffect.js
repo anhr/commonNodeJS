@@ -850,7 +850,13 @@ function setTHREE( _THREE ) {
 					}
 
 				},
-				isAddedToParticles: function ( particle ) { return particles.includes( particle ); },
+				isAddedToParticles: function ( particle ) {
+
+					if ( !particles )
+						return false;
+					return particles.includes( particle );
+
+				},
 				addParticle: function ( particle ) {
 
 					if ( particles === undefined )
