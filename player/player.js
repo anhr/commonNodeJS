@@ -109,8 +109,8 @@ function Player( group, options ) {
 	selectPlaySceneOptions = selectPlaySceneOptions || {};
 	selectPlaySceneOptions.boPlayer = selectPlaySceneOptions.boPlayer || false;
 
-	selectPlaySceneOptions.a = options.a || 1;
-	selectPlaySceneOptions.b = options.b || 0;
+	selectPlaySceneOptions.a = selectPlaySceneOptions.a || 1;
+	selectPlaySceneOptions.b = selectPlaySceneOptions.b || 0;
 //	selectPlaySceneOptions.scales = selectPlaySceneOptions.scales || {};не помню зачем эта строка
 
 	//если тут создавать палитру то она не создастся если не создается плееер
