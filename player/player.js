@@ -38,7 +38,7 @@ import { getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import CameraGui from '../CameraGui.js';
 //import CameraGui from 'http://localhost/anhr/commonNodeJS/master/CameraGui.js';
 
-var settings,
+var g_settings,
 
 	//сделал общим для всех плееров потому что в getShaderMaterialPoints вызывается Player.selectMeshPlayScene
 	//что бы установить начальные точки. Т.е. установить цвет и положение точек.
@@ -46,9 +46,9 @@ var settings,
 	//потому что сначала загружаются Shader файлы. Поэтому когда вызывается setTimeout( function () { onSelectScene(); }, 0 );
 	//что бы цвет точек был верным еще до начала проигрывания, точки из getShaderMaterialPoints еще не добавлены в группу для проигрывания.
 	//Кроме того цвет точек в getShaderMaterialPoints задается аттрибутом 'ca' а не 'color'.
-	selectPlaySceneOptions,
+	g_selectPlaySceneOptions,
 	THREE,
-	boPlayer = false;//true - player is created
+	g_boPlayer = false;//true - player is created
 //	selectSceneIndex = 0;//for guiSelectPoint
 
 /**
@@ -105,18 +105,18 @@ function Player( group, options ) {
 
 	options = options || {};
 
-	selectPlaySceneOptions = options.selectPlaySceneOptions;
-	selectPlaySceneOptions = selectPlaySceneOptions || {};
-	selectPlaySceneOptions.boPlayer = selectPlaySceneOptions.boPlayer || false;
+	g_selectPlaySceneOptions = options.selectPlaySceneOptions;
+	g_selectPlaySceneOptions = g_selectPlaySceneOptions || {};
+	g_selectPlaySceneOptions.boPlayer = g_selectPlaySceneOptions.boPlayer || false;
 
-	selectPlaySceneOptions.a = options.a || 1;
-	selectPlaySceneOptions.b = options.b || 0;
-//	selectPlaySceneOptions.scales = selectPlaySceneOptions.scales || {};не помню зачем эта строка
+	g_selectPlaySceneOptions.a = options.a || 1;
+	g_selectPlaySceneOptions.b = options.b || 0;
+//	g_selectPlaySceneOptions.scales = g_selectPlaySceneOptions.scales || {};не помню зачем эта строка
 
 	//если тут создавать палитру то она не создастся если не создается плееер
 	//palette = new palette();
 
-	settings = options.settings || {};
+	g_settings = options.settings || {};
 	assignSettings();
 
 	options.cameraTarget = options.cameraTarget || {};
@@ -178,7 +178,7 @@ function Player( group, options ) {
 		index = index || 0;
 		const t = _this.getTime();
 		Player.selectPlayScene( group, t, index );//, options.selectPlaySceneOptions );
-		_this.setIndex( index, ( settings.name === '' ? '' : settings.name + ': ' ) + t );
+		_this.setIndex( index, ( g_settings.name === '' ? '' : g_settings.name + ': ' ) + t );
 		if ( options.onSelectScene ) options.onSelectScene( index, t );
 
 	}
@@ -197,12 +197,12 @@ function Player( group, options ) {
 	 */
 	this.getTime = function() {
 
-		const t = settings.min + selectSceneIndex * settings.dt;
+		const t = g_settings.min + selectSceneIndex * g_settings.dt;
 		if ( isNaN( t ) ) console.error( 'Player.getTime(): t = ' + t );
-		if ( ( settings.max !== null ) && ( t > settings.max ) )
-			console.error( 'Player.getTime(): t = ' + t + ' settings.max = ' + settings.max );
-		if ( ( t < settings.min ) && ( settings.max !== null ) )
-			console.error( 'Player.getTime(): t = ' + t + ' settings.min = ' + settings.min );
+		if ( ( g_settings.max !== null ) && ( t > g_settings.max ) )
+			console.error( 'Player.getTime(): t = ' + t + ' g_settings.max = ' + g_settings.max );
+		if ( ( t < g_settings.min ) && ( g_settings.max !== null ) )
+			console.error( 'Player.getTime(): t = ' + t + ' g_settings.min = ' + g_settings.min );
 		return t;
 
 	}
@@ -215,7 +215,7 @@ function Player( group, options ) {
 	 */
 	this.setTime = function( t ) {
 
-		this.selectScene( parseInt( ( t - settings.min ) / settings.dt ) );
+		this.selectScene( parseInt( ( t - g_settings.min ) / g_settings.dt ) );
 
 	}
 
@@ -223,7 +223,7 @@ function Player( group, options ) {
 	 * select scene for playing
 	 * @function player.
 	 * selectScene
-	 * @param {number} index Index of the scene. Range from 0 to settings.marks - 1
+	 * @param {number} index Index of the scene. Range from 0 to g_settings.marks - 1
 	 */
 	this.selectScene = function( index ) {
 
@@ -234,14 +234,14 @@ function Player( group, options ) {
 
 		}
 		index = parseInt( index );
-		if ( settings.max !== null ) {
+		if ( g_settings.max !== null ) {
 
-			if ( index >= settings.marks )
+			if ( index >= g_settings.marks )
 				index = 0;
 			else if ( index < 0 )
-				index = settings.marks - 1;
-			if( selectSceneIndex > settings.marks )
-				selectSceneIndex = settings.marks;
+				index = g_settings.marks - 1;
+			if( selectSceneIndex > g_settings.marks )
+				selectSceneIndex = g_settings.marks;
 
 		}
 		while ( selectSceneIndex !== index ) {
@@ -285,7 +285,7 @@ function Player( group, options ) {
 	this.pushController = function ( controller ) {
 
 		if ( ( controller.object !== undefined ) && ( controller.object.playRate !== undefined ) )
-			controller.object.playRate = settings.min;
+			controller.object.playRate = g_settings.min;
 		controllers.push( controller );
 
 	}
@@ -304,7 +304,7 @@ function Player( group, options ) {
 
 	function play() {
 
-		if ( ( selectSceneIndex === -1 ) || ( ( selectSceneIndex === settings.marks ) && ( settings.max !== null ) ) ) {
+		if ( ( selectSceneIndex === -1 ) || ( ( selectSceneIndex === g_settings.marks ) && ( g_settings.max !== null ) ) ) {
 
 			selectSceneIndex = 0;
 
@@ -323,14 +323,14 @@ function Player( group, options ) {
 	}
 	function isRepeat() {
 
-		return settings.repeat;
+		return g_settings.repeat;
 
 	}
 
 	function playNext() {
 
 		selectSceneIndex++;
-		if ( ( settings.max !== null ) && selectSceneIndex >= settings.marks ) {
+		if ( ( g_settings.max !== null ) && selectSceneIndex >= g_settings.marks ) {
 
 			if ( isRepeat() )
 				selectSceneIndex = 0;
@@ -341,7 +341,7 @@ function Player( group, options ) {
 				//2. В guiSelectPoint выбрать точку, цвет которой зависит от времени
 				//Тогда если убрать эту строку, то selectSceneIndex и время окажется за диапазоном допустимых значений
 				//и цвет точки окажется неверным
-				selectSceneIndex = settings.marks - 1;
+				selectSceneIndex = g_settings.marks - 1;
 
 				pause();
 				return;
@@ -368,7 +368,7 @@ function Player( group, options ) {
 		}
 
 		playing = true;
-		if ( ( settings.max !== null ) && ( selectSceneIndex >= ( settings.marks - 1 ) ) )
+		if ( ( g_settings.max !== null ) && ( selectSceneIndex >= ( g_settings.marks - 1 ) ) )
 			selectSceneIndex = 0;//-1;
 		playNext();
 		RenamePlayButtons();
@@ -382,7 +382,7 @@ function Player( group, options ) {
 			if ( time === undefined ) {
 
 				time = timestamp;
-				timeNext = time + 1000 / settings.interval;
+				timeNext = time + 1000 / g_settings.interval;
 
 			}
 			if ( isNaN( timeNext ) || ( timeNext === Infinity ) ) {
@@ -394,7 +394,7 @@ function Player( group, options ) {
 
 			if ( timestamp < timeNext )
 				return;
-			while ( timestamp > timeNext ) timeNext += 1000 / settings.interval;
+			while ( timestamp > timeNext ) timeNext += 1000 / g_settings.interval;
 			playNext();
 
 		}
@@ -409,8 +409,8 @@ function Player( group, options ) {
 	 */
 	this.repeat = function () {
 
-		settings.repeat = !settings.repeat;
-		this.onChangeRepeat( settings.repeat );
+		g_settings.repeat = !g_settings.repeat;
+		this.onChangeRepeat( g_settings.repeat );
 
 	}
 
@@ -435,7 +435,7 @@ function Player( group, options ) {
 	 */
 	this.onChangeRepeat = function ( value ) {
 
-		settings.repeat = value;
+		g_settings.repeat = value;
 		this.controllers.forEach( function ( controller ) { if ( controller.onChangeRepeat ) controller.onChangeRepeat(); } );
 
 	}
@@ -547,12 +547,12 @@ function Player( group, options ) {
 		function setSettings() {
 
 			setDT();
-			cookie.setObject( cookieName, settings );
-			if ( options.onChangeScaleT ) options.onChangeScaleT( settings );
+			cookie.setObject( cookieName, g_settings );
+			if ( options.onChangeScaleT ) options.onChangeScaleT( g_settings );
 
 		}
 		setMax();
-		const axesDefault = JSON.parse( JSON.stringify( settings ) ),
+		const axesDefault = JSON.parse( JSON.stringify( g_settings ) ),
 			lang = getLang( {
 
 			getLanguageCode: guiParams.getLanguageCode,
@@ -560,14 +560,14 @@ function Player( group, options ) {
 
 		} );
 		Object.freeze( axesDefault );
-		const max = settings.max, marks = settings.marks;
-		cookie.getObject( cookieName, settings, settings );
+		const max = g_settings.max, marks = g_settings.marks;
+		cookie.getObject( cookieName, g_settings, g_settings );
 		if ( ( max === null ) || ( max === Infinity ) ||
-			( settings.max === null )//раньше на веб странице плеер был настроен на бесконечное проигрыванияе а сейчас проигрывание ограничено по времени
+			( g_settings.max === null )//раньше на веб странице плеер был настроен на бесконечное проигрыванияе а сейчас проигрывание ограничено по времени
 		) {
 
-			settings.max = max;
-			settings.marks = marks;
+			g_settings.max = max;
+			g_settings.marks = marks;
 
 		}
 
@@ -576,7 +576,7 @@ function Player( group, options ) {
 
 		function scale() {
 
-			const axes = settings,//options.settings,
+			const axes = g_settings,//options.settings,
 				scaleControllers = {};
 			function onclick( customController, action ) {
 
@@ -652,7 +652,7 @@ function Player( group, options ) {
 					axes.marks = parseInt( axes.marks );
 					setSettings();
 					const elSlider = getSliderElement();
-					if ( elSlider ) elSlider.max = settings.marks - 1;
+					if ( elSlider ) elSlider.max = g_settings.marks - 1;
 
 				} );
 				dat.controllerNameAndTitle( scaleControllers.marks, axes.marksName === undefined ? lang.marks : axes.marksName,
@@ -753,14 +753,14 @@ function Player( group, options ) {
 			id: "menuButtonPlay",
 			onclick: function ( event ) {
 
-//				if ( selectSceneIndex >= ( settings.marks - 1 ) ) selectSceneIndex =  0;
+//				if ( selectSceneIndex >= ( g_settings.marks - 1 ) ) selectSceneIndex =  0;
 				player.play3DObject();
 
 			}
 
 		} );
 
-		if ( settings.max !== null ) {
+		if ( g_settings.max !== null ) {
 
 			//Repeat button
 			menu.push( {
@@ -819,7 +819,7 @@ function Player( group, options ) {
 			 */
 			onChangeRepeat: function () {
 
-				canvasMenu.querySelector( '#menuButtonRepeat' ).title = settings.repeat ? lang.repeatOff : lang.repeatOn;
+				canvasMenu.querySelector( '#menuButtonRepeat' ).title = g_settings.repeat ? lang.repeatOff : lang.repeatOn;
 
 			}
 
@@ -834,7 +834,7 @@ function Player( group, options ) {
 	 */
 	this.addSlider = function () {
 
-		if ( settings.max === null )
+		if ( g_settings.max === null )
 			return;
 			
 		_canvasMenu.menu.push( {
@@ -870,7 +870,7 @@ function Player( group, options ) {
 
 				if ( !pointerdown )
 					return;
-				player.selectScene( ( settings.marks - 1 ) * e.offsetX / elSlider.clientWidth );
+				player.selectScene( ( g_settings.marks - 1 ) * e.offsetX / elSlider.clientWidth );
 
 			} );
 
@@ -912,7 +912,7 @@ function Player( group, options ) {
 
 	}
 
-	boPlayer = true;
+	g_boPlayer = true;
 
 }
 /**
@@ -920,7 +920,7 @@ function Player( group, options ) {
  * @function Player.
  * isCreated
  */
-Player.isCreated = function () { return boPlayer; }
+Player.isCreated = function () { return g_boPlayer; }
 
 function playerCameraTarget() {
 
@@ -1260,7 +1260,7 @@ Player.setPlayerCameraTarget = function ( options ) {
 Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 
 	var func = funcs[axisName], typeofFuncs = typeof func;
-	if ( typeof t === "undefined" ) t = settings.min;
+	if ( typeof t === "undefined" ) t = g_settings.min;
 	switch ( typeofFuncs ) {
 
 		case "undefined":
@@ -1296,8 +1296,8 @@ Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 				}
 				const a = func,
 					l = func.length - 1,
-					max = settings.max === null ? Infinity : settings.max,
-					min = settings.min,
+					max = g_settings.max === null ? Infinity : g_settings.max,
+					min = g_settings.min,
 					tStep = ( max - min ) / l;
 				var tStart = min, tStop = max,
 					iStart = 0, iStop = l;
@@ -1392,8 +1392,8 @@ function palette() {
 	var paletteDefault;
 	this.get = function() {
 
-		if ( selectPlaySceneOptions && selectPlaySceneOptions.palette )
-			return selectPlaySceneOptions.palette;
+		if ( g_selectPlaySceneOptions && g_selectPlaySceneOptions.palette )
+			return g_selectPlaySceneOptions.palette;
 			
 		if ( !paletteDefault )
 			paletteDefault = new ColorPicker.palette();
@@ -1433,7 +1433,7 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 	}
 	if ( t === undefined ) t = Player.getSettings().min;
 	index = index || 0;
-	options = options || selectPlaySceneOptions || {};
+	options = options || g_selectPlaySceneOptions || {};
 	options.scales = options.scales || {};
 	if (
 
@@ -2103,14 +2103,15 @@ Player.getColors = function ( /*THREE, */arrayFuncs, optionsColor ) {
 				} else { }
 
 			}
-			if ( w instanceof Function && ! settings && boColorWarning ) {
+//			if ( w instanceof Function && !g_settings && boColorWarning )
+			if ( w instanceof Function && !g_boPlayer && boColorWarning ) {
 
 				console.warn( 'Player.getColors: remove all functions from all THREE.Vector4.w items of the arrayFuncs.' );
 				console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
 				console.warn( '	If you use MyPoints for create of the points, please add Player: Player into settings parameter of the MyPoints function after creating of the Player.' );
 				console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
 //				return;
-//				settings = { min: 0 };
+				g_settings = { min: 0 };
 				boColorWarning = false;
 				
 			}
@@ -2118,7 +2119,7 @@ Player.getColors = function ( /*THREE, */arrayFuncs, optionsColor ) {
 				funcs === undefined ?
 					new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
 					w instanceof Function ?
-						w( settings ? settings.min : 0 ) :
+						w( g_settings ? g_settings.min : 0 ) :
 						w,
 				min, max );
 			optionsColor.colors.push( color.r, color.g, color.b );
@@ -2189,11 +2190,12 @@ Player.traceLine = function ( options ) {
 	 * <p>false - trace line is not visible.</p>
 	 */
 	this.isVisible = function () {
-
-		if ( !settings ) return false;//не запущен Player(...)
+		
+//		if ( !g_settings ) return false;//не запущен Player(...)
+		if ( !g_boPlayer ) return false;//не запущен Player(...)
 		
 		if ( line ) return line.visible;
-		//сюда попадает когда t max is Infinity ( settings.max === null ) и когда пользователь выбрал точку в guiSelectPoint у которой установлена трассировка
+		//сюда попадает когда t max is Infinity ( g_settings.max === null ) и когда пользователь выбрал точку в guiSelectPoint у которой установлена трассировка
 		return arrayLines[0].visible;
 
 	}
@@ -2205,8 +2207,9 @@ Player.traceLine = function ( options ) {
 	 * <p>false - hide trace line.</p>
 	 */
 	this.visible = function ( visible ) {
-
-		if ( !settings ) return false;//не запущен Player(...)
+		
+//		if ( !g_settings ) return false;//не запущен Player(...)
+		if ( !g_boPlayer ) return false;//не запущен Player(...)
 		
 		if ( line ) {
 
@@ -2214,7 +2217,7 @@ Player.traceLine = function ( options ) {
 			return;
 
 		}
-		//сюда попадает когда t max is Infinity (settings.max === null) и когда пользователь в выбранной в guiSelectPoint  точке изменил галочку трассировки
+		//сюда попадает когда t max is Infinity (g_settings.max === null) и когда пользователь в выбранной в guiSelectPoint  точке изменил галочку трассировки
 		arrayLines.forEach( function ( line ) {
 
 			line.visible = visible;
@@ -2222,7 +2225,8 @@ Player.traceLine = function ( options ) {
 		} );
 
 	}
-	if ( !settings ) {
+//	if ( !g_settings )
+	if ( !g_boPlayer ) {
 
 		console.warn( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
 		console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
@@ -2240,7 +2244,7 @@ Player.traceLine = function ( options ) {
 		point.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
 //		var point = getObjectPosition( mesh, index ),
 		var sceneIndex = Player.getSelectSceneIndex();
-		if ( settings.max === null ) {
+		if ( g_settings.max === null ) {
 
 			sceneIndex = Math.abs( sceneIndex );
 			if ( sceneIndex < ( arrayLines.length - 1 ) ){
@@ -2301,10 +2305,10 @@ Player.traceLine = function ( options ) {
 
 			//Thanks to https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
 			var MAX_POINTS;
-			if ( settings.max !== null ) {
+			if ( g_settings.max !== null ) {
 
-				if ( settings && settings.marks )
-					MAX_POINTS = settings.marks;
+				if ( g_settings && g_settings.marks )
+					MAX_POINTS = g_settings.marks;
 				else if ( options.player && options.player.marks )
 					MAX_POINTS = options.player.marks;
 				else {
@@ -2391,28 +2395,28 @@ Player.traceLine = function ( options ) {
 }
 function setDT() {
 
-	if ( settings.max === null ) settings.dt = settings.dt || 0.1;
-	else settings.dt = ( settings.max - settings.min ) / ( settings.marks - 1 );
+	if ( g_settings.max === null ) g_settings.dt = g_settings.dt || 0.1;
+	else g_settings.dt = ( g_settings.max - g_settings.min ) / ( g_settings.marks - 1 );
 
 }
-function setMax() { if ( settings.max !== null ) settings.max = settings.min + settings.dt * ( settings.marks - 1 ); }
+function setMax() { if ( g_settings.max !== null ) g_settings.max = g_settings.min + g_settings.dt * ( g_settings.marks - 1 ); }
 function assignSettings() {
 
-	settings = settings || {};
-	settings.min = settings.min || 0;
-	if ( settings.max === Infinity ) settings.max = null;//Заменяю Infinity на null потому что из cockie Infinity читается как null
-	if ( settings.max !== null ) {
+	g_settings = g_settings || {};
+	g_settings.min = g_settings.min || 0;
+	if ( g_settings.max === Infinity ) g_settings.max = null;//Заменяю Infinity на null потому что из cockie Infinity читается как null
+	if ( g_settings.max !== null ) {
 
-		if ( settings.max === undefined ) settings.max =  1;
-		settings.marks = settings.marks || 10;//2;
+		if ( g_settings.max === undefined ) g_settings.max =  1;
+		g_settings.marks = g_settings.marks || 10;//2;
 
-	} else settings.marks = null;
+	} else g_settings.marks = null;
 	setDT();
-	settings.repeat = settings.repeat || false;
-	settings.interval = settings.interval || 1;//25;
-	settings.zoomMultiplier = settings.zoomMultiplier || 1.1;
-	settings.offset = settings.offset || 0.1;
-	settings.name = settings.name || '';
+	g_settings.repeat = g_settings.repeat || false;
+	g_settings.interval = g_settings.interval || 1;//25;
+	g_settings.zoomMultiplier = g_settings.zoomMultiplier || 1.1;
+	g_settings.offset = g_settings.offset || 0.1;
+	g_settings.name = g_settings.name || '';
 
 }
 
@@ -2423,12 +2427,12 @@ function assignSettings() {
  */
 Player.getSettings = function () {
 
-	if ( !settings ) {
+	if ( !g_settings ) {
 
 		assignSettings();
 
 	}
-	return settings;
+	return g_settings;
 
 }
 /** @namespace
@@ -2487,7 +2491,7 @@ Player.selectPlayScene = function( group, t = 0, index = 0 ) {
 	//Другими словами если не вызывается Player.getColors
 	ColorPicker.palette.setTHREE( THREE );
 
-//	selectPlaySceneOptions = selectPlaySceneOptions || {};
+//	g_selectPlaySceneOptions = g_selectPlaySceneOptions || {};
 
 	group.userData.t = t;
 	Player.selectMeshPlayScene( /*THREE, */group, t, index );//, options );
