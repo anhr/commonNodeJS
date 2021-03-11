@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Namespace: getPoints</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Namespace: getPoints</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>
+            <span class="ancestors"><a href="module-Player.html">Player</a><a href="module-Player.html#~Player">~Player</a>.</span>getPoints<span class="signature">(arrayFuncs, optionsPoints<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    
+
+    
+
+
+
+<div class="description">
+    Get array of THREE.Vector4 points.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>arrayFuncs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.Vector4</span>
+|
+
+<span class="param-type">THREE.Vector3</span>
+|
+
+<span class="param-type">THREE.Vector2</span>
+|
+
+<span class="param-type">object</span>
+|
+
+<span class="param-type">array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">points.geometry.attributes.position array<pre>THREE.Vector4: 4D point.THREE.Vector3: 3D point. w = 1. Default is white colorTHREE.Vector2: 2D point. w = 1, z = 0. Default is white colorVector's x, y, z, w is position of the point.Can be as:<ul><li>float - position of the point.</li>Example: 0.5<li>[float] - array of positions of the point.</li>Example 1: [0.6, 0, -0.5]0.6 is positon for t = min is start time of the playing.0 is position for t = ( max - min ) / 2-0.5 is positon for t = max is stop time of the playing.If stop time of the playing is infinity, then position is equal to the first item of the array or 0.6 in the example 1.Example 2: [{ t: 0, v: 0.6 }, { t: 1, v: -0.6 }]Every item of array is object with:t is timev is position for current t.<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a> - position of the point is function of the t.Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )</li><li>string - text of the function.Example: 'Math.sin(t*a*2*Math.PI)*0.5+b' )</li></ul>Vector.w is index of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">palette</a>.Default range of the Vector.w is from 0 to 100. You can change range by use an object:{  func: Vector.w  max: new max value of tne Vector.w  min: new min value of tne Vector.w}Example:{  func: new Function( 't', 'return 1-2*t' ),  min: -1,  max: 1,}Vector.w can be as THREE.Color. Example: new THREE.Color( "rgb(255, 127, 0)" )object: {  vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position  [name]: point name. Default is undefined.  [trace]: true - displays the trace of the point movement. Default is undefined.    //You can set the camera to look at a point. Use <b>cameraTarget</b> key for it.  //ATTENTION!!! Only one point can have <b>cameraTarget</b> key!  //   You will receive the     //      Player.getPoints: duplicate cameraTarget    //   console warning if two or more points have <b>cameraTarget</b> key.  //   Then only last point with <b>cameraTarget</b> key will be have an effect.  [cameraTarget]: {     camera: <a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">camera</a>,          //rotation camera around point specified by an axis and an angle. Default is undefined - no rotation     [rotation]: {             [angle]: number|function|array. Angle of rotation in radians.           number. Example: Math.PI / 2 rotate to 90 degrees.           function. Example: new Function( 't', 'return 5*t' ).           array. Example 1: [0, Math.PI]                 0 is angle for t = min is start time of the playing.                 Math.PI is rotate to 180 degrees for t = max is time of the stopping of the playing.                 If max time is infinity, then angle is for t = min.              Example 2: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }                 t is time,                 v is angle for current t.                      Default is 0        [axis]: THREE.Vector3. Axis of rotattion. Example: new THREE.Vector3( 1, 0, 0 ) - rotate around x axis.           Default is new THREE.Vector3( 0, 1, 0 );//Rotate around y axis                },          [distanceToCamera]: THREE.Vector3. Distance from point to camera.        You can set the distance to the camera depending on the time.        Example 1: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) )        Example 2: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] )        Default is camera.position.     [orbitControls]: <a href="https://threejs.org/docs/index.html#examples/en/controls/OrbitControls">OrbitControls</a>. Change the OrbitControl setting during playing.     [orbitControlsGui]: <a href="https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/OrbitControlsGui/index.html">OrbitControlsGui</a> instance;  },}orobject: {  x: x axis. Defauilt is 0.  y: y axis. Defauilt is 0.  z: z axis. Defauilt is 0.  w: w axis. Defauilt is 0.}array: [  0: x axis. Defauilt is 0.  1: y axis. Defauilt is 0.  2: z axis. Defauilt is 0.  3: w axis. Defauilt is 0.]</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>optionsPoints</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">followed optionsPoints is available
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>group</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.Group</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/objects/Group">Group</a>or <a href="https://threejs.org/docs/index.html#api/en/scenes/Scene">Scene</a>.Use only if you want trace lines during playing. See trace of the arrayFuncs param above.Default is undefined.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>t</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">first parameter of the arrayFuncs item function. Start time of animation. Default is 0.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">the following options are available
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">multiplier. Second parameter of the arrayFuncs item function. Default is 1.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">addendum. Third parameter of the arrayFuncs item function. Default is 0.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>player</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">See Player method above.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1781">line 1781</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    array of THREE.Vector4 points.
+</div>
+
+
+
+    
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Player-Player.getColors.html">getColors</a></li><li><a href="module-Player-Player.getItemSize.html">getItemSize</a></li><li><a href="module-Player-Player.getPoints.html">getPoints</a></li><li><a href="module-Player-Player.getSelectSceneIndex.html">getSelectSceneIndex</a></li><li><a href="module-Player-Player.getTime.html">getTime</a></li><li><a href="module-Player-Player.selectPlayScene.html">selectPlayScene</a></li><li><a href="module-Player-Player.setTHREE.html">setTHREE</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Mar 11 2021 09:36:55 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

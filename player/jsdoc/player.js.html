@@ -205,7 +205,7 @@ function Player( group, options ) {
 
 		index = index || 0;
 		const t = _this.getTime();
-		Player.selectPlayScene( group, t, index );//, options.selectPlaySceneOptions );
+		Player.selectPlayScene( group, t, index, options.selectPlaySceneOptions );
 		_this.setIndex( index, ( settings.name === '' ? '' : settings.name + ': ' ) + t );
 		if ( options.onSelectScene ) options.onSelectScene( index, t );
 
@@ -1685,10 +1685,8 @@ Player.setColorAttribute = function ( attributes, i, color ) {
 
 }
 
-/**
- * Get array of THREE.Vector4 points.
- * @function Player.
- * getPoints
+/** @namespace
+ * @description Get array of THREE.Vector4 points.
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs points.geometry.attributes.position array
  * &lt;pre>
  * THREE.Vector4: 4D point.
@@ -1990,10 +1988,8 @@ Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 
 }
 var boColorWarning = true;
-/**
- * Get array of mesh colors.
- * @function Player.
- * getColors
+/** @namespace
+ * @description Get array of mesh colors.
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs points.geometry.attributes.position array
  * &lt;pre>
  * THREE.Vector4: 4D point.
@@ -2463,9 +2459,7 @@ Player.getSettings = function () {
 	return settings;
 
 }
-/**
- * @function Player.
- * getSelectSceneIndex
+/** @namespace
  * @returns selected scene index.
  */
 Player.getSelectSceneIndex = function () {
@@ -2475,10 +2469,8 @@ Player.getSelectSceneIndex = function () {
 	return 0;
 
 }
-/**
- * get time
- * @function Player.
- * getTime
+/** @namespace
+ * @returns current time of the player.
  */
 Player.getTime = function () {
 
@@ -2488,12 +2480,10 @@ Player.getTime = function () {
 
 }
 
-/**
- * get item size of the attribute of the mesh geometry
- * @function Player.
- * getItemSize
+/** @namespace
+ * @description get item size of the attribute of the mesh geometry
  * @param {array} arrayFuncs points.geometry.attributes.position array.
- * See arrayFuncs parametr of the [Player.getPoints(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints} for details.
+ * See arrayFuncs parametr of the &lt;a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)&lt;/a> for details.
  */
 Player.getItemSize = function ( arrayFuncs ) {
 
@@ -2513,15 +2503,28 @@ Player.getItemSize = function ( arrayFuncs ) {
 	return 3;
 
 }
-/**
- * Select a scene for playing
- * @function Player.
- * selectPlayScene
+/** @namespace
+ * @description Select a scene for playing
  * @param {THREE.Group} group [THREE.Group]{@link https://threejs.org/docs/index.html#api/en/objects/Group}
  * @param {number} [t=0] time
  * @param {number} [index=0] index of the time.
+ * @param {object} [selectPlaySceneOptions={}] the following options are available
+ * @param {boolean} [selectPlaySceneOptions.boPlayer] true - is not select play scene for mesh.userData.boFrustumPoints = true. Default is false.
+ * @param {number} [selectPlaySceneOptions.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
+ * @param {number} [selectPlaySceneOptions.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
+ * @param {object} [selectPlaySceneOptions.scales] axes scales. See {@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html|AxesHelper}. Default is {}
+ * @param {object} [selectPlaySceneOptions.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
+ * &lt;pre>
+ * Example:
+ * new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
+ * &lt;/pre>
+ * @param {object} [selectPlaySceneOptions.guiSelectPoint] See [GuiSelectPoint]{@link https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/module-GuiSelectPoint.html#~GuiSelectPoint}.
+ * &lt;pre>
+ * Example:
+ * new GuiSelectPoint();
+ * &lt;/pre>
  */
-Player.selectPlayScene = function( group, t = 0, index = 0/*, selectPlaySceneOptions = {}*/ ) {
+Player.selectPlayScene = function( group, t = 0, index = 0, selectPlaySceneOptions = {} ) {
 
 	//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
 	//Другими словами если не вызывается Player.getColors
@@ -2536,19 +2539,6 @@ Player.selectPlayScene = function( group, t = 0, index = 0/*, selectPlaySceneOpt
 		Player.selectMeshPlayScene( /*THREE, */mesh, t, index );//, options );
 
 	} );
-/*		
-//		if ( options.cameraTarget )
-//		if ( Player.cameraTarget2 )
-	if ( Player.cameraTargetPoint ){
-
-//			Player.setCameraTarget();
-		Player.cameraTarget.setCameraTarget();
-//			Player.setPlayerCameraTarget();
-//			Player.cameraTarget2.setCameraPosition();
-		Player.cameraTarget.get().setCameraPosition();
-
-	}
-*/		
 	Player.cameraTarget.setCameraTarget();
 
 	const cameraTarget = Player.cameraTarget.get();
@@ -2557,10 +2547,8 @@ Player.selectPlayScene = function( group, t = 0, index = 0/*, selectPlaySceneOpt
 	if ( Player.cameraGui ) Player.cameraGui.update();
 
 }
-/**
- * set THREE
- * @function Player.
- * setTHREE
+/** @namespace
+ * @description set THREE
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  */
 Player.setTHREE = function ( _THREE ) {
@@ -2767,13 +2755,13 @@ export default Player;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Player-Player.getColors.html">getColors</a></li><li><a href="module-Player-Player.getItemSize.html">getItemSize</a></li><li><a href="module-Player-Player.getPoints.html">getPoints</a></li><li><a href="module-Player-Player.getSelectSceneIndex.html">getSelectSceneIndex</a></li><li><a href="module-Player-Player.getTime.html">getTime</a></li><li><a href="module-Player-Player.selectPlayScene.html">selectPlayScene</a></li><li><a href="module-Player-Player.setTHREE.html">setTHREE</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon Mar 08 2021 10:26:47 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Mar 11 2021 09:36:55 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

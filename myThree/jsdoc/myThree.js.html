@@ -100,6 +100,9 @@ import MoveGroupGui from '../MoveGroupGui.js';
 import CameraGui from '../CameraGui.js';
 //import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
 
+//https://github.com/mrdoob/stats.js/
+//import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';
+
 var THREE;
 
 var debug = {
@@ -202,11 +205,12 @@ class MyThree {
 	 * on the pointsOptions of the myThreejs.points function.
 	 * Default is undefined
 	 * &lt;/pre>
-	 * @param {ColorPicker.palette|object} [options.palette=White color of all points] Color of points.
+	 * @param {MyThree.ColorPicker.palette|boolean|number} [options.palette=White color of all points] Color of points.
 	 * &lt;pre>
-	 * ColorPicker.palette - custom palette
-	 * object - palette is new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } )
+	 * &lt;b>MyThree.ColorPicker.palette&lt;/b> - is &lt;b>new ColorPicker.palette( ... )&lt;/b>
 	 * See &lt;a href="../../colorpicker/jsdoc/index.html" target="_blank">ColorPicker&lt;/a> for details.
+	 * &lt;b>boolean&lt;/b>: true - &lt;b>new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.BGRW } )&lt;/b>;
+	 * &lt;b>number&lt;/b>: is &lt;b>MyThree.ColorPicker.paletteIndexes&lt;/b>. See &lt;a href="../../colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes" target="_blank">ColorPicker.paletteIndexes&lt;/a> for details.
 	 * &lt;/pre>
 	 * @param {object} [options.player] 3D objects animation. See &lt;b>options.settings&lt;/b> param of the &lt;a href="../../player/jsdoc/module-Player.html" target="_blank">Player&lt;/a>
 	 * @param {object} [options.canvas] canvas properties
@@ -223,8 +227,8 @@ class MyThree {
 	 * The size of the point seems constant and does not depend on the distance to the camera.
 	 * &lt;/pre>
 	 * @param {number} [options.point.size=0.02] The apparent angular size of a point in radians.
-	 * @param {object} [options.stats] Use JavaScript Performance Monitor. [stats]{@link https://github.com/mrdoob/stats.js/} . Dafault is not defined.
-	 * @param {object} [options.scales] axes scales. See &lt;a href="../../AxesHelper/jsdoc/module-AxesHelper.html" target="_blank">AxesHelper&lt;/a> &lt;b>options.scales&lt;/b> for details. Default is {}
+	 * @param {object} [options.stats] Use JavaScript Performance Monitor. [stats]{@link https://github.com/mrdoob/stats.js/} .
+	 * @param {object} [options.scales] axes scales. See &lt;a href="../../AxesHelper/jsdoc/module-AxesHelper.html" target="_blank">AxesHelper&lt;/a> &lt;b>options.scales&lt;/b> for details.
 	 * @param {boolean} [options.scales.display=true] true - displays the label and scale of the axes.
 	 * @param {number} [options.scales.text] options of the text of the marks. See &lt;a href="../../AxesHelper/jsdoc/module-AxesHelper.html" target="_blank">AxesHelper&lt;/a> &lt;b>options.scales.text&lt;/b> for details.
 	 *
@@ -331,6 +335,28 @@ class MyThree {
 
 		if ( options.palette !== undefined ) {
 
+			switch( typeof options.palette ){
+
+				case 'number':
+					options.palette = new ColorPicker.palette( { palette: options.palette } );
+					break;
+				case 'boolean':
+					if ( options.palette )
+						options.palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.BGRW } );
+					break;
+				default: {
+					
+					if ( options.palette instanceof ColorPicker.palette === false )
+						console.error( 'MyThree: invalid typeof options.palette: ' + typeof options.palette );
+
+				}
+			}
+			ColorPicker.palette.setTHREE( THREE );
+
+		}
+/*		
+		if ( options.palette !== undefined ) {
+
 			if ( options.palette instanceof ColorPicker.palette === false ) {
 
 				options.palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
@@ -339,6 +365,7 @@ class MyThree {
 			}
 
 		} else options.palette = { toColor: function () { return new THREE.Color( 0xffffff ) } }//white
+*/		
 
 		if ( options.arrayCloud !== undefined ) {
 
@@ -1366,34 +1393,6 @@ class MyThree {
 					}
 
 				} );
-/*				
-				function getRendererSize() {
-
-					var style = {
-
-						position: renderer.domElement.style.position,
-						left: renderer.domElement.style.left,
-						top: renderer.domElement.style.top,
-						width: renderer.domElement.style.width,
-						height: renderer.domElement.style.height,
-
-					},
-						sizeOriginal = new THREE.Vector2();
-					renderer.getSize( sizeOriginal );
-					return {
-
-						onFullScreenToggle: function ( fs ) {
-
-							arrayContainers.display( elContainer.parentElement, !fs );//fullScreen );
-							//return { renderer: renderer, camera: camera };
-
-						},
-
-					};
-
-				};
-				rendererSizeDefault = getRendererSize();
-*/				
 
 				//https://github.com/mrdoob/stats.js/
 				if ( options.stats !== undefined ) {
@@ -1405,6 +1404,7 @@ class MyThree {
 
 					} catch ( e ) {
 
+						console.error( e + ". Please import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';" );
 
 					}
 
@@ -1791,10 +1791,8 @@ function findSpriteTextIntersection( scene ) {
 
 }
 
-/**
- * Displaying points
- * @function MyThree.
- * points
+/** @namespace
+ * @description Displaying points
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs points.geometry.attributes.position array
  * &lt;pre>
  * THREE.Vector4: 4D point.
@@ -1812,6 +1810,7 @@ function findSpriteTextIntersection( scene ) {
  *   vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position
  *   name: point name
  *   trace: true - Displays the trace of the point movement. Default is false
+ *   cameraTarget: {} Camera look at selected point. See &lt;a href="../../player/jsdoc/module-Player.html#~Player.cameraTarget.init" target="_blank">Player.cameraTarget.init&lt;/a>.
  * }
  * or
  * object: {
@@ -1891,10 +1890,14 @@ MyThree.StereoEffect = {
 	spatialMultiplexsIndexs: StereoEffect.spatialMultiplexsIndexs,
 
 }
-/**
- * Limits angles of rotations of the mesh between 0 and 360 degrees.
- * @function MyThree.
- * limitAngles
+/** @namespace
+ * @description Pure JavaScript color picker.
+ * @see &lt;a href="../../colorpicker/jsdoc/index.html" target="_blank">ColorPicker&lt;/a> for details.
+ */
+MyThree.ColorPicker = ColorPicker;
+
+/** @namespace
+ * @description Limits angles of rotations of the mesh between 0 and 360 degrees.
  * @param {THREE.Euler} rotation angles for limitation
  */
 MyThree.limitAngles = function ( rotation ) {
@@ -1922,13 +1925,13 @@ export default MyThree;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.points.html">points</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Mar 10 2021 07:11:22 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Mar 11 2021 09:36:16 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
