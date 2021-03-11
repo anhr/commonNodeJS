@@ -109,8 +109,8 @@ function Player( group, options ) {
 	selectPlaySceneOptions = selectPlaySceneOptions || {};
 	selectPlaySceneOptions.boPlayer = selectPlaySceneOptions.boPlayer || false;
 
-	selectPlaySceneOptions.a = selectPlaySceneOptions.a || 1;
-	selectPlaySceneOptions.b = selectPlaySceneOptions.b || 0;
+	selectPlaySceneOptions.a = options.a || 1;
+	selectPlaySceneOptions.b = options.b || 0;
 //	selectPlaySceneOptions.scales = selectPlaySceneOptions.scales || {};не помню зачем эта строка
 
 	//если тут создавать палитру то она не создастся если не создается плееер
@@ -1122,21 +1122,17 @@ function playerCameraTarget() {
 //			camera = cameraTarget.camera;
 
 		//Update cameraTarget
-		if ( mesh.userData.player.arrayFuncs ) {
+		const func = mesh.userData.player.arrayFuncs[i];
+		if ( !func.cameraTarget )
+			func.cameraTarget = { boLook: false };
+		setCameraTarget( func.cameraTarget );
 
-			const func = mesh.userData.player.arrayFuncs[i];
-			if ( !func.cameraTarget )
-				func.cameraTarget = { boLook: false };
-			setCameraTarget( func.cameraTarget );
+		if ( cameraTarget && cameraTarget.boLook ) {
 
-			if ( cameraTarget && cameraTarget.boLook ) {
+			const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
+			cameraTarget.target = target;
 
-				const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
-				cameraTarget.target = target;
-
-			} else delete cameraTarget.target;
-
-		}
+		} else delete cameraTarget.target;
 
 	}
 	/**
@@ -1661,10 +1657,8 @@ Player.setColorAttribute = function ( attributes, i, color ) {
 
 }
 
-/**
- * Get array of THREE.Vector4 points.
- * @function Player.
- * getPoints
+/** @namespace
+ * @description Get array of THREE.Vector4 points.
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs points.geometry.attributes.position array
  * <pre>
  * THREE.Vector4: 4D point.
@@ -1966,10 +1960,8 @@ Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 
 }
 var boColorWarning = true;
-/**
- * Get array of mesh colors.
- * @function Player.
- * getColors
+/** @namespace
+ * @description Get array of mesh colors.
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs points.geometry.attributes.position array
  * <pre>
  * THREE.Vector4: 4D point.
@@ -2439,9 +2431,7 @@ Player.getSettings = function () {
 	return settings;
 
 }
-/**
- * @function Player.
- * getSelectSceneIndex
+/** @namespace
  * @returns selected scene index.
  */
 Player.getSelectSceneIndex = function () {
@@ -2451,10 +2441,8 @@ Player.getSelectSceneIndex = function () {
 	return 0;
 
 }
-/**
- * get time
- * @function Player.
- * getTime
+/** @namespace
+ * @returns current time of the player.
  */
 Player.getTime = function () {
 
@@ -2464,12 +2452,10 @@ Player.getTime = function () {
 
 }
 
-/**
- * get item size of the attribute of the mesh geometry
- * @function Player.
- * getItemSize
+/** @namespace
+ * @description get item size of the attribute of the mesh geometry
  * @param {array} arrayFuncs points.geometry.attributes.position array.
- * See arrayFuncs parametr of the [Player.getPoints(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints} for details.
+ * See arrayFuncs parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
  */
 Player.getItemSize = function ( arrayFuncs ) {
 
@@ -2489,15 +2475,13 @@ Player.getItemSize = function ( arrayFuncs ) {
 	return 3;
 
 }
-/**
- * Select a scene for playing
- * @function Player.
- * selectPlayScene
+/** @namespace
+ * @description Select a scene for playing
  * @param {THREE.Group} group [THREE.Group]{@link https://threejs.org/docs/index.html#api/en/objects/Group}
  * @param {number} [t=0] time
  * @param {number} [index=0] index of the time.
  */
-Player.selectPlayScene = function( group, t = 0, index = 0/*, selectPlaySceneOptions = {}*/ ) {
+Player.selectPlayScene = function( group, t = 0, index = 0 ) {
 
 	//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
 	//Другими словами если не вызывается Player.getColors
@@ -2512,19 +2496,6 @@ Player.selectPlayScene = function( group, t = 0, index = 0/*, selectPlaySceneOpt
 		Player.selectMeshPlayScene( /*THREE, */mesh, t, index );//, options );
 
 	} );
-/*		
-//		if ( options.cameraTarget )
-//		if ( Player.cameraTarget2 )
-	if ( Player.cameraTargetPoint ){
-
-//			Player.setCameraTarget();
-		Player.cameraTarget.setCameraTarget();
-//			Player.setPlayerCameraTarget();
-//			Player.cameraTarget2.setCameraPosition();
-		Player.cameraTarget.get().setCameraPosition();
-
-	}
-*/		
 	Player.cameraTarget.setCameraTarget();
 
 	const cameraTarget = Player.cameraTarget.get();
@@ -2533,10 +2504,8 @@ Player.selectPlayScene = function( group, t = 0, index = 0/*, selectPlaySceneOpt
 	if ( Player.cameraGui ) Player.cameraGui.update();
 
 }
-/**
- * set THREE
- * @function Player.
- * setTHREE
+/** @namespace
+ * @description set THREE
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  */
 Player.setTHREE = function ( _THREE ) {
