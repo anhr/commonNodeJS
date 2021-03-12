@@ -7,7 +7,7 @@ I use SpriteText in my [three.js](https://threejs.org/) projects for displaying 
 
 Uses in my projects:
  * [AxesHelper](https://github.com/anhr/AxesHelper)
- * [myThreejs](https://github.com/anhr/myThreejs)
+ * [myThree](../myThree)
 
 See [SpriteText API](https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/jsdoc/index.html) for details.
 
