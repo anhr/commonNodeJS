@@ -26,7 +26,7 @@ My JavaScript library for NodeJS.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/Examples/html/index.html).
 * FrustumPoints. Array of points, statically fixed in front of the camera.
 I use <b>FrustumPoints</b> for displaying of the clouds around points.
-[README.md](../tree/master/frustumPoints).
+[README.md](../../tree/master/frustumPoints).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/Examples/html/index.html).
 * getShaderMaterialPoints.js Get THREE.Points with THREE.ShaderMaterial material.
 [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
