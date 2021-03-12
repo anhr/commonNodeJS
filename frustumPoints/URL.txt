@@ -1,0 +1,21 @@
+﻿jsdoc https://github.com/jsdoc/jsdoc
+Getting Started with JSDoc 3 https://jsdoc.app/about-getting-started.html
+Generating a website:
+	Download https://github.com/jsdoc/jsdoc into D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc
+	Open "Node.js command prompt"
+
+	d:
+	cd "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc"
+	npm install -g jsdoc
+
+	/////////////////////////////////////////////////////////////
+	//guiSelectPoint doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\frustumPoints\jsdoc"
+
+	jsdoc -R "..\commonNodeJS\master\frustumPoints\frustumPoints.md" "..\commonNodeJS\master\frustumPoints\frustumPoints.js" -d "..\commonNodeJS\master\frustumPoints\jsdoc"
+
+	//Open "http://localhost/anhr/commonNodeJS/master/frustumPoints/jsdoc/index.html"
+
+	/////////////////////////////////////////////////////////////
+
