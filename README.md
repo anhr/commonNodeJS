@@ -24,6 +24,10 @@ My JavaScript library for NodeJS.
 * DropdownMenu. node.js version of DropdownMenu
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/Examples/html/index.html).
+* FrustumPoints. Array of points, statically fixed in front of the camera.
+I use <b>FrustumPoints</b> for displaying of the clouds around points.
+[README.md](/FrustumPoints).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/Examples/html/index.html).
 * getShaderMaterialPoints.js Get THREE.Points with THREE.ShaderMaterial material.
 [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
 * guiSelectPoint.js GuiSelectPoint is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for select a point from the mesh.
