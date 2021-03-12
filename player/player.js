@@ -47,8 +47,11 @@ var g_settings,
 	//что бы цвет точек был верным еще до начала проигрывания, точки из getShaderMaterialPoints еще не добавлены в группу для проигрывания.
 	//Кроме того цвет точек в getShaderMaterialPoints задается аттрибутом 'ca' а не 'color'.
 	g_selectPlaySceneOptions,
-	THREE,
-	g_boPlayer = false;//true - player is created
+	THREE;
+
+//use Player.isCreated()
+//	g_boPlayer = false;//true - player is created
+
 //	selectSceneIndex = 0;//for guiSelectPoint
 
 /**
@@ -66,6 +69,7 @@ var g_settings,
 
 /**
  * 3D objects animation.
+ * @class
  * @param {THREE.Group|THREE.Scene} group THREE group or scene of the meshes  for playing.
  * @param {object} [options] the following options are available
  * @param {object} [options.selectPlaySceneOptions] See [Player.selectPlayScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.selectPlayScene} options parameter.
@@ -192,8 +196,6 @@ function Player( group, options ) {
 
 	/**
 	 * get time
-	 * @function player.
-	 * getTime
 	 */
 	this.getTime = function() {
 
@@ -209,8 +211,6 @@ function Player( group, options ) {
 
 	/**
 	 * set time
-	 * @function player.
-	 * setTime
 	 * @param {number} t time
 	 */
 	this.setTime = function( t ) {
@@ -221,8 +221,6 @@ function Player( group, options ) {
 
 	/**
 	 * select scene for playing
-	 * @function player.
-	 * selectScene
 	 * @param {number} index Index of the scene. Range from 0 to g_settings.marks - 1
 	 */
 	this.selectScene = function( index ) {
@@ -257,8 +255,6 @@ function Player( group, options ) {
 
 	/**
 	 * Go to next object 3D
-	 * @function Player.
-	 * next
 	 */
 	this.next = function() {
 
@@ -268,8 +264,6 @@ function Player( group, options ) {
 
 	/**
 	 * Go to previous object 3D
-	 * @function Player.
-	 * prev
 	 */
 	this.prev = function () {
 
@@ -278,8 +272,6 @@ function Player( group, options ) {
 	}
 	/**
 	 * Add controller into controllers array
-	 * @function Player.
-	 * pushController
 	 * @param {controller} controller
 	 */
 	this.pushController = function ( controller ) {
@@ -355,8 +347,6 @@ function Player( group, options ) {
 
 	/**
 	 * User has clicked the Play ► / Pause ❚❚ button
-	 * @function player.
-	 * play3DObject
 	 */
 	this.play3DObject = function() {
 
@@ -404,8 +394,6 @@ function Player( group, options ) {
 
 	/**
 	 * User has clicked the repeat ⥀ button
-	 * @function player.
-	 * repeat
 	 */
 	this.repeat = function () {
 
@@ -415,22 +403,16 @@ function Player( group, options ) {
 	}
 
 	/**
-	 * @function player.
-	 * getOptions
 	 * @returns Player options.
 	 */
 	this.getOptions = function () { return options; }
 	/**
-	 * @function player.
-	 * getSelectSceneIndex
 	 * @returns selected scene index.
 	 */
 	this.getSelectSceneIndex = function () { return selectSceneIndex; }
 
 	/**
 	 * Event of the changing of the rate of changing of animation scenes per second.
-	 * @function player.
-	 * onChangeRepeat
 	 * @param {number} value new rate
 	 */
 	this.onChangeRepeat = function ( value ) {
@@ -512,8 +494,6 @@ function Player( group, options ) {
 
 	/**
 	 * Adds a Player's controllers into [dat.gui]{@link https://github.com/anhr/dat.gui}.
-	 * @function Player.
-	 * gui
 	 * @param {GUI} folder Player's folder
 	 * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
 	 * @param {Function} [guiParams.getLanguageCode="en"] Your custom getLanguageCode() function.
@@ -727,8 +707,6 @@ function Player( group, options ) {
 	var _canvasMenu;
 	/**
 	 * Adds a Player's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
-	 * @function Player.
-	 * createCanvasMenuItem
 	 * @param {CanvasMenu} canvasMenu [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
 	 */
 	this.createCanvasMenuItem = function ( canvasMenu ) {
@@ -785,10 +763,8 @@ function Player( group, options ) {
 
 		controllers.push( {
 
-			/**
+			/* *
 			 * Renames the "Play" button of the player's menu.
-			 * @function Player.
-			 * onRenamePlayButtons
 			 * @param {boolean} playing <b>true</b> - pause.
 			 * <p><b>false</b> - play</p>
 			 */
@@ -812,10 +788,8 @@ function Player( group, options ) {
 
 			},
 
-			/**
+			/* *
 			 * Changes "Repeat" button of the player's menu between <b>repeat Off</b> and <b>repeat On</b>.
-			 * @function Player.
-			 * onChangeRepeat
 			 */
 			onChangeRepeat: function () {
 
@@ -829,8 +803,6 @@ function Player( group, options ) {
 
 	/**
 	 * Adds slider menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
-	 * @function Player.
-	 * addSlider
 	 */
 	this.addSlider = function () {
 
@@ -850,8 +822,6 @@ function Player( group, options ) {
 
 	/**
 	 * Adds an events into slider menu item of the [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
-	 * @function Player.
-	 * addSliderEvents
 	 * @returns slider element
 	 */
 	this.addSliderEvents = function () {
@@ -881,8 +851,6 @@ function Player( group, options ) {
 
 	/**
 	 * Sets <b>index</b> and <b>title</b> of the slider element of the player's menu.
-	 * @function Player.
-	 * setIndex
 	 * @param {string} index
 	 * @param {string} title
 	 */
@@ -901,8 +869,6 @@ function Player( group, options ) {
 
 	/**
 	 * Changes the "max" value of the slider of the player's menu. Moves [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html} to the first scene.
-	 * @function Player.
-	 * onChangeScale
 	 * @param {Object} scale See <b>options.settings</b> of the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
 	 */
 	this.onChangeScale = function ( scale ) {
@@ -912,16 +878,19 @@ function Player( group, options ) {
 
 	}
 
-	g_boPlayer = true;
+//	g_boPlayer = true;
 
 }
-/**
- * Is player created?
- * @function Player.
- * isCreated
+/** @namespace
+ * @description Is player created?
+ * @returns true if Player is created
  */
-Player.isCreated = function () { return g_boPlayer; }
+Player.isCreated = function () { return Player.player ? true : false; }
+//Player.isCreated = function () { return g_boPlayer; }
 
+/**
+ * @class
+ */
 function playerCameraTarget() {
 
 	const cameraTargetDefault = { boLook: false, },//По умолчанию не слежу за точкой
@@ -945,8 +914,6 @@ function playerCameraTarget() {
 	
 	/**
 	 * get camera target
-	 * @function Player.cameraTarget.
-	 * get
 	 */
 	this.get = function () {
 
@@ -964,8 +931,6 @@ function playerCameraTarget() {
 
 	/**
 	 * Create default camera target
-	 * @function Player.cameraTarget.
-	 * init
 	 * @param {object} cameraTarget the following cameraTarget are available:
 	 * @param {THREE.PerspectiveCamera} [cameraTarget.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
 	 * @param {boolean} [cameraTarget.boLook] true - camera look at the target.
@@ -1077,8 +1042,6 @@ function playerCameraTarget() {
 
 	/**
 	 * Set a target point, what camera is look at.
-	 * @function Player.cameraTarget.
-	 * setTarget
 	 * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
 	*/
 	this.setTarget = function ( mesh ) {
@@ -1105,8 +1068,6 @@ function playerCameraTarget() {
 	}
 	/**
 	 * Change target.
-	 * @function Player.cameraTarget.
-	 * changeTarget
 	 * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
 	 * @param {number} i index of the point.
 	 */
@@ -1137,8 +1098,6 @@ function playerCameraTarget() {
 	}
 	/**
 	 * Update camera settings.
-	 * @function Player.cameraTarget.
-	 * setCameraTarget
 	 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
 	 * @param {boolean} [update=false] true - camera look at the target.
 	 */
@@ -1199,63 +1158,19 @@ function playerCameraTarget() {
 	}
 
 }
-/**
- * Camera look at selected point
- * @function Player.
- * cameraTarget
+/** @namespace
+ * @description Functions for camera for looking at selected point.
  */
 Player.cameraTarget = new playerCameraTarget();
-/* *
- * set camera target
- * @function Player.
- * setPlayerCameraTarget
- * @param {object} options the following options are available:
- * @param {THREE.PerspectiveCamera} [options.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
- * @param {object} [options.funcs] item of the arrayFuncs. See Player.getPoints(...) for details.
- */
-/*
-Player.setPlayerCameraTarget = function ( options ) {
 
-	const funcs = options.funcs;
-//	const boLook = Player.cameraTarget2 && ( Player.cameraTarget2.boLook !== undefined ) ? Player.cameraTarget2.boLook : true;//по умолчанию камера следит за точкой если для нее определен cameraTarget
-	Player.cameraTarget2 = Player.cameraTarget2 || funcs.vector.cameraTarget;
-	Player.cameraTarget2.boLook = Player.cameraTarget2.boLook !== undefined ? Player.cameraTarget2.boLook : true;//по умолчанию камера следит за точкой если для нее определен cameraTarget
-	Player.cameraTarget2.camera = Player.cameraTarget2.camera || funcs.vector.cameraTarget.camera;
-	if ( !Player.cameraTarget2.camera ) {
-
-		console.error( 'Player.getPoints: Player.cameraTarget2.camera = ' + Player.cameraTarget2.camera );
-		return;
-
-	}
-	//				Player.cameraTarget2.boLook = boLook;
-	if ( Player.cameraTarget2.ready ) console.warn( 'Player.getPoints: duplicate cameraTarget' );
-	Player.cameraTarget2.ready = true;
-
-	Player.cameraTarget2.distanceToCamera = Player.cameraTarget2.distanceToCamera || ( funcs.vector.cameraTarget.distanceToCamera ?
-		funcs.vector.cameraTarget.distanceToCamera : new THREE.Vector3().copy( Player.cameraTarget2.camera.position ) );
-	//				Player.setPlayerCameraTarget( undefined, funcs );
-	//				Player.cameraTarget2.rotation = funcs.vector.cameraTarget.rotation || Player.cameraTarget2.rotation;
-	Player.cameraTarget2.rotation = Player.cameraTarget2.rotation || funcs.vector.cameraTarget.rotation;
-	if ( Player.cameraTarget2.rotation ) {
-
-		if ( Player.cameraTarget2.rotation.angle === undefined )
-			Player.cameraTarget2.rotation.angle = 0;
-		//						Player.cameraTarget2.rotation.angle = new Function( 't', 'return t' );
-		Player.cameraTarget2.rotation.axis = Player.cameraTarget2.rotation.axis || new THREE.Vector3( 0, 1, 0 );//Rotate around y axis
-
-	}
-
-}
-*/
-/**
- * execute function
- * @function Player.
- * execFunc
- * @param {THREE.Vector4} funcs
- * @param {string} axisName axis name
- * @param {number} t time
- * @param {number} [a=1] multiplier. Second parameter of the arrayFuncs item function.
- * @param {number} [b=0] addendum. Third parameter of the arrayFuncs item function.
+/** @namespace
+ * @description execute function
+ * @param {THREE.Vector4} funcs vector of the functions for executing.
+ * @param {string} axisName axis name of the function for executing. Can be as "x", "y", "z", "w".
+ * @param {number} t time. First parameter of the function for executing.
+ * @param {number} [a=1] multiplier. Second parameter of the function for executing.
+ * @param {number} [b=0] addendum. Third parameter of the function for executing.
+ * @returns function execution value.
  */
 Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 
@@ -1403,19 +1318,18 @@ function palette() {
 
 }
 palette = new palette();
-/**
- * Select a scene for playing of the mesh
- * @function Player.
- * selectMeshPlayScene
+
+/** @namespace
+ * @description Select a scene for playing of the mesh
  * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for playing.
  * @param {number} [t=0] time
  * @param {number} [index=0] index of the time.
- * @param {object} [options] the following options are available:
+ * @param {object} [options={}] the following options are available:
  * @param {boolean} [options.boPlayer] true - is not select play scene for mesh.userData.boFrustumPoints = true. Default is false.
  * @param {number} [options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
  * @param {number} [options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
- * @param {object} [options.scales] axes scales. See {@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html|AxesHelper}. Default is {}
- * @param {object} [options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
+ * @param {object} [options.scales={}] axes scales. See <b>options.scales</b> of the <a href="../../AxesHelper/jsdoc/module-AxesHelper.html" target="_blank">AxesHelper</a> for details.
+ * @param {object} [options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See <a href="../../colorPicker/jsdoc/module-ColorPicker.html#~Palette" target="_blank">ColorPicker.palette</a>.
  * @param {object} [options.point={}] point settings. Applies to points with ShaderMaterial.
  * <pre>
  * See [ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} for details.
@@ -1632,12 +1546,10 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 
 }
 
-/**
- * set color attribute 
- * @function Player.
- * setColorAttribute
+/** @namespace
+ * @description set color attribute
  * @param {Object} attributes geometry.attributes of the mesh
- * @param {number} i index of the arrayFuncs.
+ * @param {number} i index of the color in the color attribute array.
  * @param {THREE.Color} color color.
  * @returns true - success
  * <p>false - colorAttribute was not detected.</p>
@@ -2104,7 +2016,7 @@ Player.getColors = function ( /*THREE, */arrayFuncs, optionsColor ) {
 
 			}
 //			if ( w instanceof Function && !g_settings && boColorWarning )
-			if ( w instanceof Function && !g_boPlayer && boColorWarning ) {
+			if ( w instanceof Function && !Player.isCreated() && boColorWarning ) {
 
 				console.warn( 'Player.getColors: remove all functions from all THREE.Vector4.w items of the arrayFuncs.' );
 				console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
@@ -2167,93 +2079,111 @@ Player.getColors = function ( /*THREE, */arrayFuncs, optionsColor ) {
 
 }
 
-/**
- * trace line of moving of the point during playing
- * @function Player.
- * traceLine
- * @param {object} options the following options are available
- * @param {object} options.player See Player function above.
- */
-Player.traceLine = function ( options ) {
+/** @class */
+Player.traceLine = class traceLine
+{
 
-	if ( typeof THREE === 'undefined' ) {
+	//Private class fields https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields
+	#line;
+	#arrayLines = [];//сюда добавляются линии когда max: Infinity,
 
-		console.error( 'Call Player.setTHREE(THREE) first.' );
-		return;
+	/**
+	 * trace line of moving of the point during playing
+	 * @param {object} options the following options are available
+	 * @param {object} options.player See <a href="../../player/jsdoc/module-Player.html" target="_blank">Player</a>.
+	 */
+	constructor( options ) {
+
+		if ( typeof THREE === 'undefined' ) {
+
+			console.error( 'Call Player.setTHREE(THREE) first.' );
+			return;
+
+		}
+		//	if ( !g_settings )
+		if ( !Player.isCreated() ) {
+
+			console.warn( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
+			console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
+			console.warn( '	If you use getShaderMaterialPoints or MyPoints for create of the points, please add Player: Player into settings parameter of the getShaderMaterialPoints or MyPoints method after creating of the Player.' );
+			console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
+			return;
+
+		}
+		//var line;
+		//const arrayLines = [];
+		//this.arrayLines = [];
 
 	}
 	/**
 	 * Is trace line visible?
-	 * @function Player.traceLine.
-	 * isVisible
-	 * @returns true - trace line is visible.
-	 * <p>false - trace line is not visible.</p>
+	 * <pre>
+	 * returns true - trace line is visible.
+	 * false - trace line is not visible.
+	 * </pre>
 	 */
-	this.isVisible = function () {
-		
-//		if ( !g_settings ) return false;//не запущен Player(...)
-		if ( !g_boPlayer ) return false;//не запущен Player(...)
-		
-		if ( line ) return line.visible;
+	isVisible = function () {
+
+		//		if ( !g_settings ) return false;//не запущен Player(...)
+		if ( !Player.isCreated() ) return false;//не запущен Player(...)
+
+		if ( this.#line ) return this.#line.visible;
 		//сюда попадает когда t max is Infinity ( g_settings.max === null ) и когда пользователь выбрал точку в guiSelectPoint у которой установлена трассировка
-		return arrayLines[0].visible;
+		return this.#arrayLines[0].visible;
 
 	}
 	/**
 	 * Show or hide trace line.
-	 * @function Player.traceLine.
-	 * visible
-	 * @param {boolean} visible true - show trace line.
-	 * <p>false - hide trace line.</p>
+	 * <pre>
+	 * param {boolean} visible true - show trace line.
+	 *	false - hide trace line.
+	 * </pre>
 	 */
-	this.visible = function ( visible ) {
-		
-//		if ( !g_settings ) return false;//не запущен Player(...)
-		if ( !g_boPlayer ) return false;//не запущен Player(...)
-		
-		if ( line ) {
+	visible = function ( visible ) {
 
-			line.visible = visible;
+		//		if ( !g_settings ) return false;//не запущен Player(...)
+		if ( !Player.isCreated() ) return false;//не запущен Player(...)
+
+		if ( this.#line ) {
+
+			this.#line.visible = visible;
 			return;
 
 		}
 		//сюда попадает когда t max is Infinity (g_settings.max === null) и когда пользователь в выбранной в guiSelectPoint  точке изменил галочку трассировки
-		arrayLines.forEach( function ( line ) {
+		this.#arrayLines.forEach( function ( line ) {
 
 			line.visible = visible;
 
 		} );
 
 	}
-//	if ( !g_settings )
-	if ( !g_boPlayer ) {
 
-		console.warn( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
-		console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
-		console.warn( '	If you use getShaderMaterialPoints or MyPoints for create of the points, please add Player: Player into settings parameter of the getShaderMaterialPoints or MyPoints method after creating of the Player.' );
-		console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
-		return;
-		
-	}
-	var line;
-	const arrayLines = [];
-	this.addPoint = function ( mesh/*point*/, index, color ) {
+	/**
+	 * add point into trace line.
+	 * <pre>
+	 * param {THREE.Mesh} mesh. See [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for tracing.
+	 * param {number} index of the point for tracing.
+	 * param {THREE.Color} color. Line color. See [Color]{@link https://threejs.org/docs/index.html#api/en/math/Color}.
+	 * </pre>
+	 */
+	addPoint = function ( mesh, index, color ) {
 
 		const attributesPosition = mesh.geometry.attributes.position;
 		var point = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
 		point.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
-//		var point = getObjectPosition( mesh, index ),
+		//		var point = getObjectPosition( mesh, index ),
 		var sceneIndex = Player.getSelectSceneIndex();
 		if ( g_settings.max === null ) {
 
 			sceneIndex = Math.abs( sceneIndex );
-			if ( sceneIndex < ( arrayLines.length - 1 ) ){
+			if ( sceneIndex < ( this.#arrayLines.length - 1 ) ) {
 
-				while ( sceneIndex < ( arrayLines.length - 1 ) ) {
+				while ( sceneIndex < ( this.#arrayLines.length - 1 ) ) {
 
-//					group.remove( arrayLines[arrayLines.length - 1] );
-					mesh.remove( arrayLines[arrayLines.length - 1] );
-					arrayLines.pop();
+					//					group.remove( this.#arrayLines[this.#arrayLines.length - 1] );
+					mesh.remove( this.#arrayLines[this.#arrayLines.length - 1] );
+					this.#arrayLines.pop();
 
 				}
 				return;
@@ -2269,36 +2199,36 @@ Player.traceLine = function ( options ) {
 			geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
 
 			const line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
-//			group.add( line );
+			//			group.add( line );
 			mesh.add( line );
 
 			//на случай когда пользователь изменил флажок трассировки
-			//первая линия arrayLines[0] всегда имеет visible = true потому что сюда попадат только если установлена трассировка по умолчанию
+			//первая линия this.#arrayLines[0] всегда имеет visible = true потому что сюда попадат только если установлена трассировка по умолчанию
 			//или пользователь установил флаг трассировки
-			if ( arrayLines[0] ) line.visible = arrayLines[0].visible;
+			if ( this.#arrayLines[0] ) line.visible = this.#arrayLines[0].visible;
 
 			//point position
 			point = new THREE.Vector3().copy( point );
 			const itemSize = line.geometry.attributes.position.itemSize;
 			point.toArray( line.geometry.attributes.position.array, 1 * itemSize );
-			const point0 = arrayLines.length === 0 ? point :
-				new THREE.Vector3().fromArray(arrayLines[arrayLines.length-1].geometry.attributes.position.array, 1 * itemSize);
+			const point0 = this.#arrayLines.length === 0 ? point :
+				new THREE.Vector3().fromArray( this.#arrayLines[this.#arrayLines.length - 1].geometry.attributes.position.array, 1 * itemSize );
 			point0.toArray( line.geometry.attributes.position.array, 0 * itemSize );
 			line.geometry.attributes.position.needsUpdate = true;
 
 			//point color
 			if ( color === undefined )
 				color = new THREE.Color( 1, 1, 1 );//White
-			Player.setColorAttribute( line.geometry.attributes, 0, arrayLines.length === 0 ? color :
-				 new THREE.Color().fromArray(arrayLines[arrayLines.length-1].geometry.attributes.color.array, 1 * itemSize));
+			Player.setColorAttribute( line.geometry.attributes, 0, this.#arrayLines.length === 0 ? color :
+				new THREE.Color().fromArray( this.#arrayLines[this.#arrayLines.length - 1].geometry.attributes.color.array, 1 * itemSize ) );
 			Player.setColorAttribute( line.geometry.attributes, 1, color );
 
-			arrayLines.push( line );
+			this.#arrayLines.push( line );
 
 			return;
 
 		}
-		if ( line === undefined ) {
+		if ( this.#line === undefined ) {
 
 			// geometry
 			const geometry = new THREE.BufferGeometry();
@@ -2329,70 +2259,69 @@ Player.traceLine = function ( options ) {
 			// draw range
 			geometry.setDrawRange( sceneIndex, sceneIndex );
 
-			line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
-			line.visible = true;
-//			group.add( line );
-			mesh.add( line );
+			this.#line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
+			this.#line.visible = true;
+			//			group.add( this.#line );
+			mesh.add( this.#line );
 
 		}
-/*
-		if ( line.geometry ) {//scene do not have geometry
-
-			delete line.geometry.boundingSphere;
-			line.geometry.boundingSphere = null;
-
-		}
-*/
+		/*
+				if ( this.#line.geometry ) {//scene do not have geometry
+	
+					delete this.#line.geometry.boundingSphere;
+					this.#line.geometry.boundingSphere = null;
+	
+				}
+		*/
 		//Если не удалять boundingSphere
 		//и если двигается камера от проигрывания или ее перемещает пользователь
 		//то в некоторых случаях линию не будет видно даже если она не выходит из поля видимости
 		//потому что она выходит за рамки frustupoints
-		if ( line.geometry ) {//scene do not have geometry
+		if ( this.#line.geometry ) {//scene do not have geometry
 
-			delete line.geometry.boundingSphere;
-			line.geometry.boundingSphere = null;
+			delete this.#line.geometry.boundingSphere;
+			this.#line.geometry.boundingSphere = null;
 
 		}
 
 		//point position
 		point = new THREE.Vector3().copy( point );
-		point.toArray( line.geometry.attributes.position.array, sceneIndex * line.geometry.attributes.position.itemSize );
-		line.geometry.attributes.position.needsUpdate = true;
+		point.toArray( this.#line.geometry.attributes.position.array, sceneIndex * this.#line.geometry.attributes.position.itemSize );
+		this.#line.geometry.attributes.position.needsUpdate = true;
 
 		//point color
 		if ( color === undefined )
 			color = new THREE.Color( 1, 1, 1 );//White
-		Player.setColorAttribute( line.geometry.attributes, sceneIndex, color );
+		Player.setColorAttribute( this.#line.geometry.attributes, sceneIndex, color );
 
 		//set draw range
-		var start = line.geometry.drawRange.start, count = sceneIndex + 1 - start;
+		var start = this.#line.geometry.drawRange.start, count = sceneIndex + 1 - start;
 		if ( start > sceneIndex ) {
 
-			var stop = start + line.geometry.drawRange.count;
+			var stop = start + this.#line.geometry.drawRange.count;
 			start = sceneIndex;
 			count = stop - start;
 
 		}
-		line.geometry.setDrawRange( start, count );
+		this.#line.geometry.setDrawRange( start, count );
 
 	}
 	/**
 	 * Remove trace line.
-	 * @function Player.traceLine.
-	 * remove
 	 */
-	this.remove = function () {
+	remove = function () {
 
-		if ( line === undefined )
+		if ( this.#line === undefined )
 			return;
-		line.geometry.dispose();
-		line.material.dispose();
-		line.parent.remove( line );
-//		group.remove( line );
+		this.#line.geometry.dispose();
+		this.#line.material.dispose();
+		this.#line.parent.remove( this.#line );
+		//		group.remove( this.#line );
 
 	}
 
 }
+
 function setDT() {
 
 	if ( g_settings.max === null ) g_settings.dt = g_settings.dt || 0.1;
@@ -2420,10 +2349,8 @@ function assignSettings() {
 
 }
 
-/**
- * @function Player.
- * getSettings
- * @returns Player ettings.
+/** @namespace
+ * @returns Player settings.
  */
 Player.getSettings = function () {
 
