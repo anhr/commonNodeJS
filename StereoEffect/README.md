@@ -8,7 +8,7 @@ I use StereoEffect in my [three.js](https://threejs.org/) projects.
 
 
 Uses in my projects:
- * [AxesHelper](https://github.com/anhr/AxesHelper)
+ * [AxesHelper](../AxesHelper)
  * [myThree](../myThree)
 
 See [StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/index.html) for details.
