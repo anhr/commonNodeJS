@@ -308,7 +308,7 @@ function create( camera, controls, group, cookieName, spatialMultiplex, renderer
 						y = vector.y;
 						z = vector.z;
 						if ( isNaN( vector.w ) )
-							console.error( 'frustumPoints.create.cloud.addUniforms.updateItem: vector.w = ' + vector.w );
+							console.error( 'frustumPoints.create.cloud.addUniforms.updateItem: vector.w = ' + vector.w + '. Probably you use THREE.Color for w coordinate of the point with cloud.' );
 						w = vector.w;
 
 					}
