@@ -7,7 +7,7 @@
 I use ColorPicker in my [three.js](https://threejs.org/) projects.
 
 Uses in my projects:
- * [myThreejs](https://github.com/anhr/myThreejs)
+ * [myThree](../myThree)
 
 See [ColorPicker API](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/jsdoc/index.html) for details.
 
