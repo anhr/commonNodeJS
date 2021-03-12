@@ -3,7 +3,7 @@ My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu
 
 Uses in my projects:
  * [myThree](../myThree)
- * [player](https://github.com/anhr/commonNodeJS/tree/master/player)
+ * [player](../player)
 
 See [CanvasMenu API](https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/jsdoc/index.html) for details.
 
