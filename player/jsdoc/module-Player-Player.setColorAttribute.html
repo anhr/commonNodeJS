@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: getItemSize</title>
+    <title>JSDoc: Namespace: setColorAttribute</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: getItemSize</h1>
+    <h1 class="page-title">Namespace: setColorAttribute</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-Player.html">Player</a><a href="module-Player-Player.html">~Player</a>.</span>getItemSize<span class="signature">(arrayFuncs)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-Player.html">Player</a><a href="module-Player-Player.html">~Player</a>.</span>setColorAttribute<span class="signature">(attributes, i, color)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -48,7 +48,7 @@
 
 
 <div class="description">
-    get item size of the attribute of the mesh geometry
+    set color attribute
 </div>
 
 
@@ -84,13 +84,13 @@
 
         <tr>
             
-                <td class="name"><code>arrayFuncs</code></td>
+                <td class="name"><code>attributes</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">array</span>
+<span class="param-type">Object</span>
 
 
             
@@ -100,7 +100,53 @@
 
             
 
-            <td class="description last">points.geometry.attributes.position array.See arrayFuncs parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.</td>
+            <td class="description last">geometry.attributes of the mesh</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>i</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">index of the color in the color attribute array.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>color</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.Color</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">color.</td>
         </tr>
 
     
@@ -141,7 +187,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line2391">line 2391</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1557">line 1557</a>
     </li></ul></dd>
     
 
@@ -166,6 +212,16 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    true - success<p>false - colorAttribute was not detected.</p>
+</div>
+
+
+
+    
 
 
 

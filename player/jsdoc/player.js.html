@@ -66,7 +66,7 @@ import { getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import CameraGui from '../CameraGui.js';
 //import CameraGui from 'http://localhost/anhr/commonNodeJS/master/CameraGui.js';
 
-var settings,
+var g_settings,
 
 	//сделал общим для всех плееров потому что в getShaderMaterialPoints вызывается Player.selectMeshPlayScene
 	//что бы установить начальные точки. Т.е. установить цвет и положение точек.
@@ -74,9 +74,12 @@ var settings,
 	//потому что сначала загружаются Shader файлы. Поэтому когда вызывается setTimeout( function () { onSelectScene(); }, 0 );
 	//что бы цвет точек был верным еще до начала проигрывания, точки из getShaderMaterialPoints еще не добавлены в группу для проигрывания.
 	//Кроме того цвет точек в getShaderMaterialPoints задается аттрибутом 'ca' а не 'color'.
-	selectPlaySceneOptions,
-	THREE,
-	boPlayer = false;//true - player is created
+	g_selectPlaySceneOptions,
+	THREE;
+
+//use Player.isCreated()
+//	g_boPlayer = false;//true - player is created
+
 //	selectSceneIndex = 0;//for guiSelectPoint
 
 /**
@@ -94,6 +97,7 @@ var settings,
 
 /**
  * 3D objects animation.
+ * @class
  * @param {THREE.Group|THREE.Scene} group THREE group or scene of the meshes  for playing.
  * @param {object} [options] the following options are available
  * @param {object} [options.selectPlaySceneOptions] See [Player.selectPlayScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.selectPlayScene} options parameter.
@@ -133,18 +137,18 @@ function Player( group, options ) {
 
 	options = options || {};
 
-	selectPlaySceneOptions = options.selectPlaySceneOptions;
-	selectPlaySceneOptions = selectPlaySceneOptions || {};
-	selectPlaySceneOptions.boPlayer = selectPlaySceneOptions.boPlayer || false;
+	g_selectPlaySceneOptions = options.selectPlaySceneOptions;
+	g_selectPlaySceneOptions = g_selectPlaySceneOptions || {};
+	g_selectPlaySceneOptions.boPlayer = g_selectPlaySceneOptions.boPlayer || false;
 
-	selectPlaySceneOptions.a = options.a || 1;
-	selectPlaySceneOptions.b = options.b || 0;
-//	selectPlaySceneOptions.scales = selectPlaySceneOptions.scales || {};не помню зачем эта строка
+	g_selectPlaySceneOptions.a = options.a || 1;
+	g_selectPlaySceneOptions.b = options.b || 0;
+//	g_selectPlaySceneOptions.scales = g_selectPlaySceneOptions.scales || {};не помню зачем эта строка
 
 	//если тут создавать палитру то она не создастся если не создается плееер
 	//palette = new palette();
 
-	settings = options.settings || {};
+	g_settings = options.settings || {};
 	assignSettings();
 
 	options.cameraTarget = options.cameraTarget || {};
@@ -205,8 +209,8 @@ function Player( group, options ) {
 
 		index = index || 0;
 		const t = _this.getTime();
-		Player.selectPlayScene( group, t, index, options.selectPlaySceneOptions );
-		_this.setIndex( index, ( settings.name === '' ? '' : settings.name + ': ' ) + t );
+		Player.selectPlayScene( group, t, index );//, options.selectPlaySceneOptions );
+		_this.setIndex( index, ( g_settings.name === '' ? '' : g_settings.name + ': ' ) + t );
 		if ( options.onSelectScene ) options.onSelectScene( index, t );
 
 	}
@@ -220,38 +224,32 @@ function Player( group, options ) {
 
 	/**
 	 * get time
-	 * @function player.
-	 * getTime
 	 */
 	this.getTime = function() {
 
-		const t = settings.min + selectSceneIndex * settings.dt;
+		const t = g_settings.min + selectSceneIndex * g_settings.dt;
 		if ( isNaN( t ) ) console.error( 'Player.getTime(): t = ' + t );
-		if ( ( settings.max !== null ) &amp;&amp; ( t > settings.max ) )
-			console.error( 'Player.getTime(): t = ' + t + ' settings.max = ' + settings.max );
-		if ( ( t &lt; settings.min ) &amp;&amp; ( settings.max !== null ) )
-			console.error( 'Player.getTime(): t = ' + t + ' settings.min = ' + settings.min );
+		if ( ( g_settings.max !== null ) &amp;&amp; ( t > g_settings.max ) )
+			console.error( 'Player.getTime(): t = ' + t + ' g_settings.max = ' + g_settings.max );
+		if ( ( t &lt; g_settings.min ) &amp;&amp; ( g_settings.max !== null ) )
+			console.error( 'Player.getTime(): t = ' + t + ' g_settings.min = ' + g_settings.min );
 		return t;
 
 	}
 
 	/**
 	 * set time
-	 * @function player.
-	 * setTime
 	 * @param {number} t time
 	 */
 	this.setTime = function( t ) {
 
-		this.selectScene( parseInt( ( t - settings.min ) / settings.dt ) );
+		this.selectScene( parseInt( ( t - g_settings.min ) / g_settings.dt ) );
 
 	}
 
 	/**
 	 * select scene for playing
-	 * @function player.
-	 * selectScene
-	 * @param {number} index Index of the scene. Range from 0 to settings.marks - 1
+	 * @param {number} index Index of the scene. Range from 0 to g_settings.marks - 1
 	 */
 	this.selectScene = function( index ) {
 
@@ -262,14 +260,14 @@ function Player( group, options ) {
 
 		}
 		index = parseInt( index );
-		if ( settings.max !== null ) {
+		if ( g_settings.max !== null ) {
 
-			if ( index >= settings.marks )
+			if ( index >= g_settings.marks )
 				index = 0;
 			else if ( index &lt; 0 )
-				index = settings.marks - 1;
-			if( selectSceneIndex > settings.marks )
-				selectSceneIndex = settings.marks;
+				index = g_settings.marks - 1;
+			if( selectSceneIndex > g_settings.marks )
+				selectSceneIndex = g_settings.marks;
 
 		}
 		while ( selectSceneIndex !== index ) {
@@ -285,8 +283,6 @@ function Player( group, options ) {
 
 	/**
 	 * Go to next object 3D
-	 * @function Player.
-	 * next
 	 */
 	this.next = function() {
 
@@ -296,8 +292,6 @@ function Player( group, options ) {
 
 	/**
 	 * Go to previous object 3D
-	 * @function Player.
-	 * prev
 	 */
 	this.prev = function () {
 
@@ -306,14 +300,12 @@ function Player( group, options ) {
 	}
 	/**
 	 * Add controller into controllers array
-	 * @function Player.
-	 * pushController
 	 * @param {controller} controller
 	 */
 	this.pushController = function ( controller ) {
 
 		if ( ( controller.object !== undefined ) &amp;&amp; ( controller.object.playRate !== undefined ) )
-			controller.object.playRate = settings.min;
+			controller.object.playRate = g_settings.min;
 		controllers.push( controller );
 
 	}
@@ -332,7 +324,7 @@ function Player( group, options ) {
 
 	function play() {
 
-		if ( ( selectSceneIndex === -1 ) || ( ( selectSceneIndex === settings.marks ) &amp;&amp; ( settings.max !== null ) ) ) {
+		if ( ( selectSceneIndex === -1 ) || ( ( selectSceneIndex === g_settings.marks ) &amp;&amp; ( g_settings.max !== null ) ) ) {
 
 			selectSceneIndex = 0;
 
@@ -351,14 +343,14 @@ function Player( group, options ) {
 	}
 	function isRepeat() {
 
-		return settings.repeat;
+		return g_settings.repeat;
 
 	}
 
 	function playNext() {
 
 		selectSceneIndex++;
-		if ( ( settings.max !== null ) &amp;&amp; selectSceneIndex >= settings.marks ) {
+		if ( ( g_settings.max !== null ) &amp;&amp; selectSceneIndex >= g_settings.marks ) {
 
 			if ( isRepeat() )
 				selectSceneIndex = 0;
@@ -369,7 +361,7 @@ function Player( group, options ) {
 				//2. В guiSelectPoint выбрать точку, цвет которой зависит от времени
 				//Тогда если убрать эту строку, то selectSceneIndex и время окажется за диапазоном допустимых значений
 				//и цвет точки окажется неверным
-				selectSceneIndex = settings.marks - 1;
+				selectSceneIndex = g_settings.marks - 1;
 
 				pause();
 				return;
@@ -383,8 +375,6 @@ function Player( group, options ) {
 
 	/**
 	 * User has clicked the Play ► / Pause ❚❚ button
-	 * @function player.
-	 * play3DObject
 	 */
 	this.play3DObject = function() {
 
@@ -396,7 +386,7 @@ function Player( group, options ) {
 		}
 
 		playing = true;
-		if ( ( settings.max !== null ) &amp;&amp; ( selectSceneIndex >= ( settings.marks - 1 ) ) )
+		if ( ( g_settings.max !== null ) &amp;&amp; ( selectSceneIndex >= ( g_settings.marks - 1 ) ) )
 			selectSceneIndex = 0;//-1;
 		playNext();
 		RenamePlayButtons();
@@ -410,7 +400,7 @@ function Player( group, options ) {
 			if ( time === undefined ) {
 
 				time = timestamp;
-				timeNext = time + 1000 / settings.interval;
+				timeNext = time + 1000 / g_settings.interval;
 
 			}
 			if ( isNaN( timeNext ) || ( timeNext === Infinity ) ) {
@@ -422,7 +412,7 @@ function Player( group, options ) {
 
 			if ( timestamp &lt; timeNext )
 				return;
-			while ( timestamp > timeNext ) timeNext += 1000 / settings.interval;
+			while ( timestamp > timeNext ) timeNext += 1000 / g_settings.interval;
 			playNext();
 
 		}
@@ -432,38 +422,30 @@ function Player( group, options ) {
 
 	/**
 	 * User has clicked the repeat ⥀ button
-	 * @function player.
-	 * repeat
 	 */
 	this.repeat = function () {
 
-		settings.repeat = !settings.repeat;
-		this.onChangeRepeat( settings.repeat );
+		g_settings.repeat = !g_settings.repeat;
+		this.onChangeRepeat( g_settings.repeat );
 
 	}
 
 	/**
-	 * @function player.
-	 * getOptions
 	 * @returns Player options.
 	 */
 	this.getOptions = function () { return options; }
 	/**
-	 * @function player.
-	 * getSelectSceneIndex
 	 * @returns selected scene index.
 	 */
 	this.getSelectSceneIndex = function () { return selectSceneIndex; }
 
 	/**
 	 * Event of the changing of the rate of changing of animation scenes per second.
-	 * @function player.
-	 * onChangeRepeat
 	 * @param {number} value new rate
 	 */
 	this.onChangeRepeat = function ( value ) {
 
-		settings.repeat = value;
+		g_settings.repeat = value;
 		this.controllers.forEach( function ( controller ) { if ( controller.onChangeRepeat ) controller.onChangeRepeat(); } );
 
 	}
@@ -540,8 +522,6 @@ function Player( group, options ) {
 
 	/**
 	 * Adds a Player's controllers into [dat.gui]{@link https://github.com/anhr/dat.gui}.
-	 * @function Player.
-	 * gui
 	 * @param {GUI} folder Player's folder
 	 * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
 	 * @param {Function} [guiParams.getLanguageCode="en"] Your custom getLanguageCode() function.
@@ -575,12 +555,12 @@ function Player( group, options ) {
 		function setSettings() {
 
 			setDT();
-			cookie.setObject( cookieName, settings );
-			if ( options.onChangeScaleT ) options.onChangeScaleT( settings );
+			cookie.setObject( cookieName, g_settings );
+			if ( options.onChangeScaleT ) options.onChangeScaleT( g_settings );
 
 		}
 		setMax();
-		const axesDefault = JSON.parse( JSON.stringify( settings ) ),
+		const axesDefault = JSON.parse( JSON.stringify( g_settings ) ),
 			lang = getLang( {
 
 			getLanguageCode: guiParams.getLanguageCode,
@@ -588,14 +568,14 @@ function Player( group, options ) {
 
 		} );
 		Object.freeze( axesDefault );
-		const max = settings.max, marks = settings.marks;
-		cookie.getObject( cookieName, settings, settings );
+		const max = g_settings.max, marks = g_settings.marks;
+		cookie.getObject( cookieName, g_settings, g_settings );
 		if ( ( max === null ) || ( max === Infinity ) ||
-			( settings.max === null )//раньше на веб странице плеер был настроен на бесконечное проигрыванияе а сейчас проигрывание ограничено по времени
+			( g_settings.max === null )//раньше на веб странице плеер был настроен на бесконечное проигрыванияе а сейчас проигрывание ограничено по времени
 		) {
 
-			settings.max = max;
-			settings.marks = marks;
+			g_settings.max = max;
+			g_settings.marks = marks;
 
 		}
 
@@ -604,7 +584,7 @@ function Player( group, options ) {
 
 		function scale() {
 
-			const axes = settings,//options.settings,
+			const axes = g_settings,//options.settings,
 				scaleControllers = {};
 			function onclick( customController, action ) {
 
@@ -680,7 +660,7 @@ function Player( group, options ) {
 					axes.marks = parseInt( axes.marks );
 					setSettings();
 					const elSlider = getSliderElement();
-					if ( elSlider ) elSlider.max = settings.marks - 1;
+					if ( elSlider ) elSlider.max = g_settings.marks - 1;
 
 				} );
 				dat.controllerNameAndTitle( scaleControllers.marks, axes.marksName === undefined ? lang.marks : axes.marksName,
@@ -755,8 +735,6 @@ function Player( group, options ) {
 	var _canvasMenu;
 	/**
 	 * Adds a Player's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
-	 * @function Player.
-	 * createCanvasMenuItem
 	 * @param {CanvasMenu} canvasMenu [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
 	 */
 	this.createCanvasMenuItem = function ( canvasMenu ) {
@@ -781,14 +759,14 @@ function Player( group, options ) {
 			id: "menuButtonPlay",
 			onclick: function ( event ) {
 
-//				if ( selectSceneIndex >= ( settings.marks - 1 ) ) selectSceneIndex =  0;
+//				if ( selectSceneIndex >= ( g_settings.marks - 1 ) ) selectSceneIndex =  0;
 				player.play3DObject();
 
 			}
 
 		} );
 
-		if ( settings.max !== null ) {
+		if ( g_settings.max !== null ) {
 
 			//Repeat button
 			menu.push( {
@@ -813,10 +791,8 @@ function Player( group, options ) {
 
 		controllers.push( {
 
-			/**
+			/* *
 			 * Renames the "Play" button of the player's menu.
-			 * @function Player.
-			 * onRenamePlayButtons
 			 * @param {boolean} playing &lt;b>true&lt;/b> - pause.
 			 * &lt;p>&lt;b>false&lt;/b> - play&lt;/p>
 			 */
@@ -840,14 +816,12 @@ function Player( group, options ) {
 
 			},
 
-			/**
+			/* *
 			 * Changes "Repeat" button of the player's menu between &lt;b>repeat Off&lt;/b> and &lt;b>repeat On&lt;/b>.
-			 * @function Player.
-			 * onChangeRepeat
 			 */
 			onChangeRepeat: function () {
 
-				canvasMenu.querySelector( '#menuButtonRepeat' ).title = settings.repeat ? lang.repeatOff : lang.repeatOn;
+				canvasMenu.querySelector( '#menuButtonRepeat' ).title = g_settings.repeat ? lang.repeatOff : lang.repeatOn;
 
 			}
 
@@ -857,12 +831,10 @@ function Player( group, options ) {
 
 	/**
 	 * Adds slider menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
-	 * @function Player.
-	 * addSlider
 	 */
 	this.addSlider = function () {
 
-		if ( settings.max === null )
+		if ( g_settings.max === null )
 			return;
 			
 		_canvasMenu.menu.push( {
@@ -878,8 +850,6 @@ function Player( group, options ) {
 
 	/**
 	 * Adds an events into slider menu item of the [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
-	 * @function Player.
-	 * addSliderEvents
 	 * @returns slider element
 	 */
 	this.addSliderEvents = function () {
@@ -898,7 +868,7 @@ function Player( group, options ) {
 
 				if ( !pointerdown )
 					return;
-				player.selectScene( ( settings.marks - 1 ) * e.offsetX / elSlider.clientWidth );
+				player.selectScene( ( g_settings.marks - 1 ) * e.offsetX / elSlider.clientWidth );
 
 			} );
 
@@ -909,8 +879,6 @@ function Player( group, options ) {
 
 	/**
 	 * Sets &lt;b>index&lt;/b> and &lt;b>title&lt;/b> of the slider element of the player's menu.
-	 * @function Player.
-	 * setIndex
 	 * @param {string} index
 	 * @param {string} title
 	 */
@@ -929,8 +897,6 @@ function Player( group, options ) {
 
 	/**
 	 * Changes the "max" value of the slider of the player's menu. Moves [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html} to the first scene.
-	 * @function Player.
-	 * onChangeScale
 	 * @param {Object} scale See &lt;b>options.settings&lt;/b> of the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
 	 */
 	this.onChangeScale = function ( scale ) {
@@ -940,16 +906,19 @@ function Player( group, options ) {
 
 	}
 
-	boPlayer = true;
+//	g_boPlayer = true;
 
 }
-/**
- * Is player created?
- * @function Player.
- * isCreated
+/** @namespace
+ * @description Is player created?
+ * @returns true if Player is created
  */
-Player.isCreated = function () { return boPlayer; }
+Player.isCreated = function () { return Player.player ? true : false; }
+//Player.isCreated = function () { return g_boPlayer; }
 
+/**
+ * @class
+ */
 function playerCameraTarget() {
 
 	const cameraTargetDefault = { boLook: false, },//По умолчанию не слежу за точкой
@@ -973,8 +942,6 @@ function playerCameraTarget() {
 	
 	/**
 	 * get camera target
-	 * @function Player.cameraTarget.
-	 * get
 	 */
 	this.get = function () {
 
@@ -992,8 +959,6 @@ function playerCameraTarget() {
 
 	/**
 	 * Create default camera target
-	 * @function Player.cameraTarget.
-	 * init
 	 * @param {object} cameraTarget the following cameraTarget are available:
 	 * @param {THREE.PerspectiveCamera} [cameraTarget.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
 	 * @param {boolean} [cameraTarget.boLook] true - camera look at the target.
@@ -1105,8 +1070,6 @@ function playerCameraTarget() {
 
 	/**
 	 * Set a target point, what camera is look at.
-	 * @function Player.cameraTarget.
-	 * setTarget
 	 * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
 	*/
 	this.setTarget = function ( mesh ) {
@@ -1133,8 +1096,6 @@ function playerCameraTarget() {
 	}
 	/**
 	 * Change target.
-	 * @function Player.cameraTarget.
-	 * changeTarget
 	 * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
 	 * @param {number} i index of the point.
 	 */
@@ -1165,8 +1126,6 @@ function playerCameraTarget() {
 	}
 	/**
 	 * Update camera settings.
-	 * @function Player.cameraTarget.
-	 * setCameraTarget
 	 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
 	 * @param {boolean} [update=false] true - camera look at the target.
 	 */
@@ -1227,68 +1186,24 @@ function playerCameraTarget() {
 	}
 
 }
-/**
- * Camera look at selected point
- * @function Player.
- * cameraTarget
+/** @namespace
+ * @description Functions for camera for looking at selected point.
  */
 Player.cameraTarget = new playerCameraTarget();
-/* *
- * set camera target
- * @function Player.
- * setPlayerCameraTarget
- * @param {object} options the following options are available:
- * @param {THREE.PerspectiveCamera} [options.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
- * @param {object} [options.funcs] item of the arrayFuncs. See Player.getPoints(...) for details.
- */
-/*
-Player.setPlayerCameraTarget = function ( options ) {
 
-	const funcs = options.funcs;
-//	const boLook = Player.cameraTarget2 &amp;&amp; ( Player.cameraTarget2.boLook !== undefined ) ? Player.cameraTarget2.boLook : true;//по умолчанию камера следит за точкой если для нее определен cameraTarget
-	Player.cameraTarget2 = Player.cameraTarget2 || funcs.vector.cameraTarget;
-	Player.cameraTarget2.boLook = Player.cameraTarget2.boLook !== undefined ? Player.cameraTarget2.boLook : true;//по умолчанию камера следит за точкой если для нее определен cameraTarget
-	Player.cameraTarget2.camera = Player.cameraTarget2.camera || funcs.vector.cameraTarget.camera;
-	if ( !Player.cameraTarget2.camera ) {
-
-		console.error( 'Player.getPoints: Player.cameraTarget2.camera = ' + Player.cameraTarget2.camera );
-		return;
-
-	}
-	//				Player.cameraTarget2.boLook = boLook;
-	if ( Player.cameraTarget2.ready ) console.warn( 'Player.getPoints: duplicate cameraTarget' );
-	Player.cameraTarget2.ready = true;
-
-	Player.cameraTarget2.distanceToCamera = Player.cameraTarget2.distanceToCamera || ( funcs.vector.cameraTarget.distanceToCamera ?
-		funcs.vector.cameraTarget.distanceToCamera : new THREE.Vector3().copy( Player.cameraTarget2.camera.position ) );
-	//				Player.setPlayerCameraTarget( undefined, funcs );
-	//				Player.cameraTarget2.rotation = funcs.vector.cameraTarget.rotation || Player.cameraTarget2.rotation;
-	Player.cameraTarget2.rotation = Player.cameraTarget2.rotation || funcs.vector.cameraTarget.rotation;
-	if ( Player.cameraTarget2.rotation ) {
-
-		if ( Player.cameraTarget2.rotation.angle === undefined )
-			Player.cameraTarget2.rotation.angle = 0;
-		//						Player.cameraTarget2.rotation.angle = new Function( 't', 'return t' );
-		Player.cameraTarget2.rotation.axis = Player.cameraTarget2.rotation.axis || new THREE.Vector3( 0, 1, 0 );//Rotate around y axis
-
-	}
-
-}
-*/
-/**
- * execute function
- * @function Player.
- * execFunc
- * @param {THREE.Vector4} funcs
- * @param {string} axisName axis name
- * @param {number} t time
- * @param {number} [a=1] multiplier. Second parameter of the arrayFuncs item function.
- * @param {number} [b=0] addendum. Third parameter of the arrayFuncs item function.
+/** @namespace
+ * @description execute function
+ * @param {THREE.Vector4} funcs vector of the functions for executing.
+ * @param {string} axisName axis name of the function for executing. Can be as "x", "y", "z", "w".
+ * @param {number} t time. First parameter of the function for executing.
+ * @param {number} [a=1] multiplier. Second parameter of the function for executing.
+ * @param {number} [b=0] addendum. Third parameter of the function for executing.
+ * @returns function execution value.
  */
 Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 
 	var func = funcs[axisName], typeofFuncs = typeof func;
-	if ( typeof t === "undefined" ) t = settings.min;
+	if ( typeof t === "undefined" ) t = g_settings.min;
 	switch ( typeofFuncs ) {
 
 		case "undefined":
@@ -1324,8 +1239,8 @@ Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 				}
 				const a = func,
 					l = func.length - 1,
-					max = settings.max === null ? Infinity : settings.max,
-					min = settings.min,
+					max = g_settings.max === null ? Infinity : g_settings.max,
+					min = g_settings.min,
 					tStep = ( max - min ) / l;
 				var tStart = min, tStop = max,
 					iStart = 0, iStop = l;
@@ -1420,8 +1335,8 @@ function palette() {
 	var paletteDefault;
 	this.get = function() {
 
-		if ( selectPlaySceneOptions &amp;&amp; selectPlaySceneOptions.palette )
-			return selectPlaySceneOptions.palette;
+		if ( g_selectPlaySceneOptions &amp;&amp; g_selectPlaySceneOptions.palette )
+			return g_selectPlaySceneOptions.palette;
 			
 		if ( !paletteDefault )
 			paletteDefault = new ColorPicker.palette();
@@ -1431,19 +1346,18 @@ function palette() {
 
 }
 palette = new palette();
-/**
- * Select a scene for playing of the mesh
- * @function Player.
- * selectMeshPlayScene
+
+/** @namespace
+ * @description Select a scene for playing of the mesh
  * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for playing.
  * @param {number} [t=0] time
  * @param {number} [index=0] index of the time.
- * @param {object} [options] the following options are available:
+ * @param {object} [options={}] the following options are available:
  * @param {boolean} [options.boPlayer] true - is not select play scene for mesh.userData.boFrustumPoints = true. Default is false.
  * @param {number} [options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
  * @param {number} [options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
- * @param {object} [options.scales] axes scales. See {@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html|AxesHelper}. Default is {}
- * @param {object} [options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
+ * @param {object} [options.scales={}] axes scales. See &lt;b>options.scales&lt;/b> of the &lt;a href="../../AxesHelper/jsdoc/module-AxesHelper.html" target="_blank">AxesHelper&lt;/a> for details.
+ * @param {object} [options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See &lt;a href="../../colorPicker/jsdoc/module-ColorPicker.html#~Palette" target="_blank">ColorPicker.palette&lt;/a>.
  * @param {object} [options.point={}] point settings. Applies to points with ShaderMaterial.
  * &lt;pre>
  * See [ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} for details.
@@ -1461,7 +1375,7 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 	}
 	if ( t === undefined ) t = Player.getSettings().min;
 	index = index || 0;
-	options = options || selectPlaySceneOptions || {};
+	options = options || g_selectPlaySceneOptions || {};
 	options.scales = options.scales || {};
 	if (
 
@@ -1660,12 +1574,10 @@ Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
 
 }
 
-/**
- * set color attribute 
- * @function Player.
- * setColorAttribute
+/** @namespace
+ * @description set color attribute
  * @param {Object} attributes geometry.attributes of the mesh
- * @param {number} i index of the arrayFuncs.
+ * @param {number} i index of the color in the color attribute array.
  * @param {THREE.Color} color color.
  * @returns true - success
  * &lt;p>false - colorAttribute was not detected.&lt;/p>
@@ -2131,14 +2043,15 @@ Player.getColors = function ( /*THREE, */arrayFuncs, optionsColor ) {
 				} else { }
 
 			}
-			if ( w instanceof Function &amp;&amp; ! settings &amp;&amp; boColorWarning ) {
+//			if ( w instanceof Function &amp;&amp; !g_settings &amp;&amp; boColorWarning )
+			if ( w instanceof Function &amp;&amp; !Player.isCreated() &amp;&amp; boColorWarning ) {
 
 				console.warn( 'Player.getColors: remove all functions from all THREE.Vector4.w items of the arrayFuncs.' );
 				console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
 				console.warn( '	If you use MyPoints for create of the points, please add Player: Player into settings parameter of the MyPoints function after creating of the Player.' );
 				console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
 //				return;
-//				settings = { min: 0 };
+				g_settings = { min: 0 };
 				boColorWarning = false;
 				
 			}
@@ -2146,7 +2059,7 @@ Player.getColors = function ( /*THREE, */arrayFuncs, optionsColor ) {
 				funcs === undefined ?
 					new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
 					w instanceof Function ?
-						w( settings ? settings.min : 0 ) :
+						w( g_settings ? g_settings.min : 0 ) :
 						w,
 				min, max );
 			optionsColor.colors.push( color.r, color.g, color.b );
@@ -2194,90 +2107,111 @@ Player.getColors = function ( /*THREE, */arrayFuncs, optionsColor ) {
 
 }
 
-/**
- * trace line of moving of the point during playing
- * @function Player.
- * traceLine
- * @param {object} options the following options are available
- * @param {object} options.player See Player function above.
- */
-Player.traceLine = function ( options ) {
+/** @class */
+Player.traceLine = class traceLine
+{
 
-	if ( typeof THREE === 'undefined' ) {
+	//Private class fields https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields
+	#line;
+	#arrayLines = [];//сюда добавляются линии когда max: Infinity,
 
-		console.error( 'Call Player.setTHREE(THREE) first.' );
-		return;
+	/**
+	 * trace line of moving of the point during playing
+	 * @param {object} options the following options are available
+	 * @param {object} options.player See &lt;a href="../../player/jsdoc/module-Player.html" target="_blank">Player&lt;/a>.
+	 */
+	constructor( options ) {
+
+		if ( typeof THREE === 'undefined' ) {
+
+			console.error( 'Call Player.setTHREE(THREE) first.' );
+			return;
+
+		}
+		//	if ( !g_settings )
+		if ( !Player.isCreated() ) {
+
+			console.warn( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
+			console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
+			console.warn( '	If you use getShaderMaterialPoints or MyPoints for create of the points, please add Player: Player into settings parameter of the getShaderMaterialPoints or MyPoints method after creating of the Player.' );
+			console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
+			return;
+
+		}
+		//var line;
+		//const arrayLines = [];
+		//this.arrayLines = [];
 
 	}
 	/**
 	 * Is trace line visible?
-	 * @function Player.traceLine.
-	 * isVisible
-	 * @returns true - trace line is visible.
-	 * &lt;p>false - trace line is not visible.&lt;/p>
+	 * &lt;pre>
+	 * returns true - trace line is visible.
+	 * false - trace line is not visible.
+	 * &lt;/pre>
 	 */
-	this.isVisible = function () {
+	isVisible = function () {
 
-		if ( !settings ) return false;//не запущен Player(...)
-		
+		//		if ( !g_settings ) return false;//не запущен Player(...)
+		if ( !Player.isCreated() ) return false;//не запущен Player(...)
+
 		if ( line ) return line.visible;
-		//сюда попадает когда t max is Infinity ( settings.max === null ) и когда пользователь выбрал точку в guiSelectPoint у которой установлена трассировка
-		return arrayLines[0].visible;
+		//сюда попадает когда t max is Infinity ( g_settings.max === null ) и когда пользователь выбрал точку в guiSelectPoint у которой установлена трассировка
+		return this.#arrayLines[0].visible;
 
 	}
 	/**
 	 * Show or hide trace line.
-	 * @function Player.traceLine.
-	 * visible
-	 * @param {boolean} visible true - show trace line.
-	 * &lt;p>false - hide trace line.&lt;/p>
+	 * &lt;pre>
+	 * param {boolean} visible true - show trace line.
+	 *	false - hide trace line.
+	 * &lt;/pre>
 	 */
-	this.visible = function ( visible ) {
+	visible = function ( visible ) {
 
-		if ( !settings ) return false;//не запущен Player(...)
-		
-		if ( line ) {
+		//		if ( !g_settings ) return false;//не запущен Player(...)
+		if ( !Player.isCreated() ) return false;//не запущен Player(...)
 
-			line.visible = visible;
+		if ( this.#line ) {
+
+			this.#line.visible = visible;
 			return;
 
 		}
-		//сюда попадает когда t max is Infinity (settings.max === null) и когда пользователь в выбранной в guiSelectPoint  точке изменил галочку трассировки
-		arrayLines.forEach( function ( line ) {
+		//сюда попадает когда t max is Infinity (g_settings.max === null) и когда пользователь в выбранной в guiSelectPoint  точке изменил галочку трассировки
+		this.#arrayLines.forEach( function ( line ) {
 
 			line.visible = visible;
 
 		} );
 
 	}
-	if ( !settings ) {
 
-		console.warn( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
-		console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
-		console.warn( '	If you use getShaderMaterialPoints or MyPoints for create of the points, please add Player: Player into settings parameter of the getShaderMaterialPoints or MyPoints method after creating of the Player.' );
-		console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
-		return;
-		
-	}
-	var line;
-	const arrayLines = [];
-	this.addPoint = function ( mesh/*point*/, index, color ) {
+	/**
+	 * add point into trace line.
+	 * &lt;pre>
+	 * param {THREE.Mesh} mesh. See [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for tracing.
+	 * param {number} index of the point for tracing.
+	 * param {THREE.Color} color. Line color. See [Color]{@link https://threejs.org/docs/index.html#api/en/math/Color}.
+	 * &lt;/pre>
+	 */
+	addPoint = function ( mesh, index, color ) {
 
 		const attributesPosition = mesh.geometry.attributes.position;
 		var point = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
 		point.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
-//		var point = getObjectPosition( mesh, index ),
+		//		var point = getObjectPosition( mesh, index ),
 		var sceneIndex = Player.getSelectSceneIndex();
-		if ( settings.max === null ) {
+		if ( g_settings.max === null ) {
 
 			sceneIndex = Math.abs( sceneIndex );
-			if ( sceneIndex &lt; ( arrayLines.length - 1 ) ){
+			if ( sceneIndex &lt; ( this.#arrayLines.length - 1 ) ) {
 
-				while ( sceneIndex &lt; ( arrayLines.length - 1 ) ) {
+				while ( sceneIndex &lt; ( this.#arrayLines.length - 1 ) ) {
 
-//					group.remove( arrayLines[arrayLines.length - 1] );
-					mesh.remove( arrayLines[arrayLines.length - 1] );
-					arrayLines.pop();
+					//					group.remove( this.#arrayLines[this.#arrayLines.length - 1] );
+					mesh.remove( this.#arrayLines[this.#arrayLines.length - 1] );
+					this.#arrayLines.pop();
 
 				}
 				return;
@@ -2293,46 +2227,46 @@ Player.traceLine = function ( options ) {
 			geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
 
 			const line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
-//			group.add( line );
+			//			group.add( line );
 			mesh.add( line );
 
 			//на случай когда пользователь изменил флажок трассировки
-			//первая линия arrayLines[0] всегда имеет visible = true потому что сюда попадат только если установлена трассировка по умолчанию
+			//первая линия this.#arrayLines[0] всегда имеет visible = true потому что сюда попадат только если установлена трассировка по умолчанию
 			//или пользователь установил флаг трассировки
-			if ( arrayLines[0] ) line.visible = arrayLines[0].visible;
+			if ( this.#arrayLines[0] ) line.visible = this.#arrayLines[0].visible;
 
 			//point position
 			point = new THREE.Vector3().copy( point );
 			const itemSize = line.geometry.attributes.position.itemSize;
 			point.toArray( line.geometry.attributes.position.array, 1 * itemSize );
-			const point0 = arrayLines.length === 0 ? point :
-				new THREE.Vector3().fromArray(arrayLines[arrayLines.length-1].geometry.attributes.position.array, 1 * itemSize);
+			const point0 = this.#arrayLines.length === 0 ? point :
+				new THREE.Vector3().fromArray( this.#arrayLines[this.#arrayLines.length - 1].geometry.attributes.position.array, 1 * itemSize );
 			point0.toArray( line.geometry.attributes.position.array, 0 * itemSize );
 			line.geometry.attributes.position.needsUpdate = true;
 
 			//point color
 			if ( color === undefined )
 				color = new THREE.Color( 1, 1, 1 );//White
-			Player.setColorAttribute( line.geometry.attributes, 0, arrayLines.length === 0 ? color :
-				 new THREE.Color().fromArray(arrayLines[arrayLines.length-1].geometry.attributes.color.array, 1 * itemSize));
+			Player.setColorAttribute( line.geometry.attributes, 0, this.#arrayLines.length === 0 ? color :
+				new THREE.Color().fromArray( this.#arrayLines[this.#arrayLines.length - 1].geometry.attributes.color.array, 1 * itemSize ) );
 			Player.setColorAttribute( line.geometry.attributes, 1, color );
 
-			arrayLines.push( line );
+			this.#arrayLines.push( line );
 
 			return;
 
 		}
-		if ( line === undefined ) {
+		if ( this.#line === undefined ) {
 
 			// geometry
 			const geometry = new THREE.BufferGeometry();
 
 			//Thanks to https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
 			var MAX_POINTS;
-			if ( settings.max !== null ) {
+			if ( g_settings.max !== null ) {
 
-				if ( settings &amp;&amp; settings.marks )
-					MAX_POINTS = settings.marks;
+				if ( g_settings &amp;&amp; g_settings.marks )
+					MAX_POINTS = g_settings.marks;
 				else if ( options.player &amp;&amp; options.player.marks )
 					MAX_POINTS = options.player.marks;
 				else {
@@ -2353,110 +2287,107 @@ Player.traceLine = function ( options ) {
 			// draw range
 			geometry.setDrawRange( sceneIndex, sceneIndex );
 
-			line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
-			line.visible = true;
-//			group.add( line );
-			mesh.add( line );
+			this.#line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
+			this.#line.visible = true;
+			//			group.add( this.#line );
+			mesh.add( this.#line );
 
 		}
-/*
-		if ( line.geometry ) {//scene do not have geometry
-
-			delete line.geometry.boundingSphere;
-			line.geometry.boundingSphere = null;
-
-		}
-*/
+		/*
+				if ( this.#line.geometry ) {//scene do not have geometry
+	
+					delete this.#line.geometry.boundingSphere;
+					this.#line.geometry.boundingSphere = null;
+	
+				}
+		*/
 		//Если не удалять boundingSphere
 		//и если двигается камера от проигрывания или ее перемещает пользователь
 		//то в некоторых случаях линию не будет видно даже если она не выходит из поля видимости
 		//потому что она выходит за рамки frustupoints
-		if ( line.geometry ) {//scene do not have geometry
+		if ( this.#line.geometry ) {//scene do not have geometry
 
-			delete line.geometry.boundingSphere;
-			line.geometry.boundingSphere = null;
+			delete this.#line.geometry.boundingSphere;
+			this.#line.geometry.boundingSphere = null;
 
 		}
 
 		//point position
 		point = new THREE.Vector3().copy( point );
-		point.toArray( line.geometry.attributes.position.array, sceneIndex * line.geometry.attributes.position.itemSize );
-		line.geometry.attributes.position.needsUpdate = true;
+		point.toArray( this.#line.geometry.attributes.position.array, sceneIndex * this.#line.geometry.attributes.position.itemSize );
+		this.#line.geometry.attributes.position.needsUpdate = true;
 
 		//point color
 		if ( color === undefined )
 			color = new THREE.Color( 1, 1, 1 );//White
-		Player.setColorAttribute( line.geometry.attributes, sceneIndex, color );
+		Player.setColorAttribute( this.#line.geometry.attributes, sceneIndex, color );
 
 		//set draw range
-		var start = line.geometry.drawRange.start, count = sceneIndex + 1 - start;
+		var start = this.#line.geometry.drawRange.start, count = sceneIndex + 1 - start;
 		if ( start > sceneIndex ) {
 
-			var stop = start + line.geometry.drawRange.count;
+			var stop = start + this.#line.geometry.drawRange.count;
 			start = sceneIndex;
 			count = stop - start;
 
 		}
-		line.geometry.setDrawRange( start, count );
+		this.#line.geometry.setDrawRange( start, count );
 
 	}
 	/**
 	 * Remove trace line.
-	 * @function Player.traceLine.
-	 * remove
 	 */
-	this.remove = function () {
+	remove = function () {
 
-		if ( line === undefined )
+		if ( this.#line === undefined )
 			return;
-		line.geometry.dispose();
-		line.material.dispose();
-		line.parent.remove( line );
-//		group.remove( line );
+		this.#line.geometry.dispose();
+		this.#line.material.dispose();
+		this.#line.parent.remove( this.#line );
+		//		group.remove( this.#line );
 
 	}
 
 }
+
 function setDT() {
 
-	if ( settings.max === null ) settings.dt = settings.dt || 0.1;
-	else settings.dt = ( settings.max - settings.min ) / ( settings.marks - 1 );
+	if ( g_settings.max === null ) g_settings.dt = g_settings.dt || 0.1;
+	else g_settings.dt = ( g_settings.max - g_settings.min ) / ( g_settings.marks - 1 );
 
 }
-function setMax() { if ( settings.max !== null ) settings.max = settings.min + settings.dt * ( settings.marks - 1 ); }
+function setMax() { if ( g_settings.max !== null ) g_settings.max = g_settings.min + g_settings.dt * ( g_settings.marks - 1 ); }
 function assignSettings() {
 
-	settings = settings || {};
-	settings.min = settings.min || 0;
-	if ( settings.max === Infinity ) settings.max = null;//Заменяю Infinity на null потому что из cockie Infinity читается как null
-	if ( settings.max !== null ) {
+	g_settings = g_settings || {};
+	g_settings.min = g_settings.min || 0;
+	if ( g_settings.max === Infinity ) g_settings.max = null;//Заменяю Infinity на null потому что из cockie Infinity читается как null
+	if ( g_settings.max !== null ) {
 
-		if ( settings.max === undefined ) settings.max =  1;
-		settings.marks = settings.marks || 10;//2;
+		if ( g_settings.max === undefined ) g_settings.max =  1;
+		g_settings.marks = g_settings.marks || 10;//2;
 
-	} else settings.marks = null;
+	} else g_settings.marks = null;
 	setDT();
-	settings.repeat = settings.repeat || false;
-	settings.interval = settings.interval || 1;//25;
-	settings.zoomMultiplier = settings.zoomMultiplier || 1.1;
-	settings.offset = settings.offset || 0.1;
-	settings.name = settings.name || '';
+	g_settings.repeat = g_settings.repeat || false;
+	g_settings.interval = g_settings.interval || 1;//25;
+	g_settings.zoomMultiplier = g_settings.zoomMultiplier || 1.1;
+	g_settings.offset = g_settings.offset || 0.1;
+	g_settings.name = g_settings.name || '';
 
 }
 
-/**
- * @function Player.
- * getSettings
- * @returns Player ettings.
+/** @namespace
+ * @returns Player settings.
  */
 Player.getSettings = function () {
 
-	if ( !settings ) {
+	if ( !g_settings ) {
 
 		assignSettings();
 
 	}
-	return settings;
+	return g_settings;
 
 }
 /** @namespace
@@ -2508,29 +2439,14 @@ Player.getItemSize = function ( arrayFuncs ) {
  * @param {THREE.Group} group [THREE.Group]{@link https://threejs.org/docs/index.html#api/en/objects/Group}
  * @param {number} [t=0] time
  * @param {number} [index=0] index of the time.
- * @param {object} [selectPlaySceneOptions={}] the following options are available
- * @param {boolean} [selectPlaySceneOptions.boPlayer] true - is not select play scene for mesh.userData.boFrustumPoints = true. Default is false.
- * @param {number} [selectPlaySceneOptions.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
- * @param {number} [selectPlaySceneOptions.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
- * @param {object} [selectPlaySceneOptions.scales] axes scales. See {@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html|AxesHelper}. Default is {}
- * @param {object} [selectPlaySceneOptions.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
- * &lt;pre>
- * Example:
- * new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
- * &lt;/pre>
- * @param {object} [selectPlaySceneOptions.guiSelectPoint] See [GuiSelectPoint]{@link https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/module-GuiSelectPoint.html#~GuiSelectPoint}.
- * &lt;pre>
- * Example:
- * new GuiSelectPoint();
- * &lt;/pre>
  */
-Player.selectPlayScene = function( group, t = 0, index = 0, selectPlaySceneOptions = {} ) {
+Player.selectPlayScene = function( group, t = 0, index = 0 ) {
 
 	//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
 	//Другими словами если не вызывается Player.getColors
 	ColorPicker.palette.setTHREE( THREE );
 
-//	selectPlaySceneOptions = selectPlaySceneOptions || {};
+//	g_selectPlaySceneOptions = g_selectPlaySceneOptions || {};
 
 	group.userData.t = t;
 	Player.selectMeshPlayScene( /*THREE, */group, t, index );//, options );
@@ -2755,13 +2671,13 @@ export default Player;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Player-Player.getColors.html">getColors</a></li><li><a href="module-Player-Player.getItemSize.html">getItemSize</a></li><li><a href="module-Player-Player.getPoints.html">getPoints</a></li><li><a href="module-Player-Player.getSelectSceneIndex.html">getSelectSceneIndex</a></li><li><a href="module-Player-Player.getTime.html">getTime</a></li><li><a href="module-Player-Player.selectPlayScene.html">selectPlayScene</a></li><li><a href="module-Player-Player.setTHREE.html">setTHREE</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Player-Player.cameraTarget.html">cameraTarget</a></li><li><a href="module-Player-Player.execFunc.html">execFunc</a></li><li><a href="module-Player-Player.getColors.html">getColors</a></li><li><a href="module-Player-Player.getItemSize.html">getItemSize</a></li><li><a href="module-Player-Player.getPoints.html">getPoints</a></li><li><a href="module-Player-Player.getSelectSceneIndex.html">getSelectSceneIndex</a></li><li><a href="module-Player-Player.getSettings.html">getSettings</a></li><li><a href="module-Player-Player.getTime.html">getTime</a></li><li><a href="module-Player-Player.isCreated.html">isCreated</a></li><li><a href="module-Player-Player.selectMeshPlayScene.html">selectMeshPlayScene</a></li><li><a href="module-Player-Player.selectPlayScene.html">selectPlayScene</a></li><li><a href="module-Player-Player.setColorAttribute.html">setColorAttribute</a></li><li><a href="module-Player-Player.setTHREE.html">setTHREE</a></li></ul><h3>Classes</h3><ul><li><a href="module-Player-Player.html">Player</a></li><li><a href="module-Player-Player.traceLine.html">traceLine</a></li><li><a href="module-Player-playerCameraTarget.html">playerCameraTarget</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Mar 11 2021 09:36:55 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Mar 12 2021 09:55:54 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
