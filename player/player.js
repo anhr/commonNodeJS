@@ -888,280 +888,286 @@ function Player( group, options ) {
 Player.isCreated = function () { return Player.player ? true : false; }
 //Player.isCreated = function () { return g_boPlayer; }
 
+
 /**
  * @class
  */
-function playerCameraTarget() {
-
-	const cameraTargetDefault = { boLook: false, },//По умолчанию не слежу за точкой
-		_cameraTarget = {
-
-			boLook: cameraTargetDefault.boLook,
-//			setCameraPosition: function(){},если это оставить то не будет обновляться setCameraPosition, когда выбрана точка, на которую смотрит камера
-
-		};
-//	cameraTargetDefault.boLook = false;
-	cameraTargetDefault.rotation = {};
-	_cameraTarget.rotation = {};
-	var boTarget = false,//true - target point was detected. For displaying of the console warning if duplicate target point was detected
-		boPlayer = false;//true - была попытка получить camera из Player.player. Добавил что бы не выполнялась лишняя работа
-
-	//Если определен ( boCameraTargetLook !== undefined ) , то явно было задано следить или не следить за точкой.
-	//Тогда если есть точка, за которой надо следить ( cameraTarget.bodefault === false )
-	//и явно не было задано следить или не следить заточкой  ( boCameraTargetLook === undefined ),
-	//то надо следить за точкой ( cameraTargetDefault.boLook = true )
-	var boCameraTargetLook;
-	
-	/**
-	 * get camera target
-	 */
-	this.get = function () {
-
-		if ( !_cameraTarget.camera && !boPlayer && Player.player ) {
-
-			cameraTargetDefault.camera = Player.player.getOptions().cameraTarget.camera;
-			if ( cameraTargetDefault.camera ) setCameraTarget();
-			boPlayer = true;
-
-		}
-		if ( _cameraTarget.camera )
-			return _cameraTarget;
-
-	}
+Player.cameraTarget = class {
 
 	/**
-	 * Create default camera target
-	 * @param {object} cameraTarget the following cameraTarget are available:
-	 * @param {THREE.PerspectiveCamera} [cameraTarget.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
-	 * @param {boolean} [cameraTarget.boLook] true - camera look at the target.
-	 * @param {THREE.Vector3} [cameraTarget.distanceToCamera] Distance from target point to camera.
-	   * You can set the distance to the camera depending on the time.
-	 * <pre>
-	 *	Example 1: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) )
-	 *	Example 2: new THREE.Vector3( 0, 0,
-	 *		[ { t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 } ] )
-	 *	Default is camera.position.
-	 * </pre>
-	 * @param {object} [cameraTarget.rotation] rotation camera around point specified by an axis and an angle. Default is undefined - no rotation
-	 * @param {number|function|array} [cameraTarget.rotation.angle=0] Angle of rotation in radians.
-	 * <pre>
-	 *   number. Example: Math.PI / 2 rotate to 90 degrees.
-	 *   function. Example: new Function( 't', 'return 5*t' ).
-	 *   array.
-	 *     Example 1: [0, Math.PI]
-	 *       0 is angle for t = min is start time of the playing.
-	 *       Math.PI is rotate to 180 degrees
-	 *         for t = max is time of the stopping of the playing.
-	 *       If max time is infinity, then angle is for t = min.
-	 *     Example 2: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }
-	 *       t is time,
-	 *       v is angle for current t.
-	 * </pre>
-	 * @param {THREE.Vector3} [cameraTarget.rotation.axis] Axis of rotattion.
-	 * <pre>
-	 *   Example: new THREE.Vector3( 1, 0, 0 ) - rotate around x axis.
-	 *   Default is rotate around y axis
-	 * </pre>
+	 * Functions for camera for looking at selected point.
 	 */
-	this.init = function ( cameraTarget ) {
+	constructor() {
 
-		//cameraTargetDefault.boLook = false по умолчанию камера не смотритт на выбранную точку если:
-		// 1 ни разу не вызывается init. Тоесть нет настроек cameraTargetDefault и нет ни однойточки, на которую смотрит камера
-		// 2 cameraTarget.bodefault !== false и cameraTarget.boLook = false - программист явно запретил смотреть на точку
+		const cameraTargetDefault = { boLook: false, },//По умолчанию не слежу за точкой
+			_cameraTarget = {
 
-		//Если есть хоть одна точка, на которую должна смотреть камера cameraTarget.bodefault === false,
-		//то для этой точки не устанавливаем playerCameraTarget.cameraTargetDefault
-		//Другими словами если есть точка, на которую должна смотреть камера,
-		//то камера будет на нее смотреть если нет запрета смотеть на точку - playerCameraTarget.cameraTargetDefault = false
-		if ( cameraTarget.bodefault !== false ) {
+				boLook: cameraTargetDefault.boLook,
+				//			setCameraPosition: function(){},если это оставить то не будет обновляться setCameraPosition, когда выбрана точка, на которую смотрит камера
 
-			if ( boTarget )
-				return;//Не надо устанавливать cameraTargetDefault после того,
-					//как были устанвлены настройки cameraTargetDefault из точек
-					//Иначе натройки точки не будут приоритетными
+			};
+		//	cameraTargetDefault.boLook = false;
+		cameraTargetDefault.rotation = {};
+		_cameraTarget.rotation = {};
+		var boTarget = false,//true - target point was detected. For displaying of the console warning if duplicate target point was detected
+			boPlayer = false;//true - была попытка получить camera из Player.player. Добавил что бы не выполнялась лишняя работа
 
-			if ( cameraTarget.boLook !== undefined ) {
+		//Если определен ( boCameraTargetLook !== undefined ) , то явно было задано следить или не следить за точкой.
+		//Тогда если есть точка, за которой надо следить ( cameraTarget.bodefault === false )
+		//и явно не было задано следить или не следить заточкой  ( boCameraTargetLook === undefined ),
+		//то надо следить за точкой ( cameraTargetDefault.boLook = true )
+		var boCameraTargetLook;
 
-				cameraTargetDefault.boLook = cameraTarget.boLook;
-				boCameraTargetLook = cameraTarget.boLook;
+		/**
+		 * get camera target
+		 */
+		this.get = function () {
+
+			if ( !_cameraTarget.camera && !boPlayer && Player.player ) {
+
+				cameraTargetDefault.camera = Player.player.getOptions().cameraTarget.camera;
+				if ( cameraTargetDefault.camera ) setCameraTarget();
+				boPlayer = true;
 
 			}
-
-		} else if ( cameraTarget.boLook === true ){
-
-			//Есть точка, за которой надо следить
-
-			if ( boTarget ) console.warn( 'playerCameraTarget().init(...): duplicate target point' );
-			boTarget = true;
-			
-			if ( boCameraTargetLook === undefined )
-				cameraTargetDefault.boLook = true;//запрета на слежение камерой за точкой не было и есть точка, за которой надо следить
-
-		} else return;
-		cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera || ( Player.player ? Player.player.getOptions().cameraTarget.camera : undefined );
-		if ( !cameraTargetDefault.camera ) {
-
-			console.error( 'playerCameraTarget().init(...): cameraTargetDefault.camera = ' + cameraTargetDefault.camera );
-			return;
-
-		}
-		cameraTargetDefault.distanceToCamera = cameraTargetDefault.distanceToCamera || cameraTarget.distanceToCamera;
-		cameraTarget.rotation = cameraTarget.rotation || {};
-		cameraTargetDefault.rotation.angle = cameraTargetDefault.rotation.angle || cameraTarget.rotation.angle;
-		cameraTargetDefault.rotation.axis = cameraTargetDefault.rotation.axis || cameraTarget.rotation.axis;
-		setCameraTarget( cameraTarget );
-
-	}
-	function setCameraTarget( cameraTarget ) {
-
-		if ( !cameraTarget )
-			cameraTarget = cameraTargetDefault;//У выбранной для слежения точки нет cameraTarget
-		if ( cameraTarget.boLook !== undefined )
-			_cameraTarget.boLook = cameraTarget.boLook;
-		else _cameraTarget.boLook = cameraTargetDefault.boLook;
-
-		_cameraTarget.camera = cameraTarget.camera || cameraTargetDefault.camera;
-
-//Если в программе не определены функции distanceToCamera (тоесть cameraTarget.distanceToCamera === undefined и cameraTargetDefault.distanceToCamera === undefined),
-//то при проигрывании каждый раз distanceToCamera будет равна camera.position
-//		_cameraTarget.distanceToCamera = cameraTarget.distanceToCamera || cameraTargetDefault.distanceToCamera || new THREE.Vector3().copy( cameraTargetDefault.camera.position );
-
-		//Если в программе не определены функции distanceToCamera (тоесть cameraTarget.distanceToCamera === undefined и cameraTargetDefault.distanceToCamera === undefined),
-		//То сначала _cameraTarget.distanceToCamera будет равна camera.position, а потом при проигрывании не будет меняться
-		_cameraTarget.distanceToCamera =
-			cameraTarget.distanceToCamera ||
-			cameraTargetDefault.distanceToCamera ||
-			_cameraTarget.distanceToCamera ||
-			new THREE.Vector3().copy( cameraTargetDefault.camera.position );
-
-		if ( !cameraTarget.rotation ) cameraTarget.rotation = {};
-		_cameraTarget.rotation.angle = cameraTarget.rotation.angle || cameraTargetDefault.rotation.angle || 0;
-		_cameraTarget.rotation.axis = cameraTarget.rotation.axis || cameraTargetDefault.rotation.axis || new THREE.Vector3( 0, 1, 0 );//Rotate around y axis
-
-	}
-
-	/**
-	 * Set a target point, what camera is look at.
-	 * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
-	*/
-	this.setTarget = function ( mesh ) {
-
-		if ( !mesh.geometry )
-			return;
-
-		if ( typeof THREE === 'undefined' ) {
-
-			console.error( 'Call Player.setTHREE(THREE) first.' );
-			return;
-
-		}
-		const arrayFuncs = mesh.userData.player.arrayFuncs;
-		if ( arrayFuncs === undefined )
-			return;
-		for ( var i = 0; i < arrayFuncs.length; i++ ) {
-
-			var funcs = arrayFuncs[i];
-			Player.cameraTarget.changeTarget( mesh, i );
+			if ( _cameraTarget.camera )
+				return _cameraTarget;
 
 		}
 
-	}
-	/**
-	 * Change target.
-	 * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
-	 * @param {number} i index of the point.
-	 */
-	this.changeTarget = function ( mesh, i ) {
+		/**
+		 * Create default camera target
+		 * @param {object} cameraTarget the following cameraTarget are available:
+		 * @param {THREE.PerspectiveCamera} [cameraTarget.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
+		 * @param {boolean} [cameraTarget.boLook] true - camera look at the target.
+		 * @param {THREE.Vector3} [cameraTarget.distanceToCamera] Distance from target point to camera.
+		   * You can set the distance to the camera depending on the time.
+		 * <pre>
+		 *	Example 1: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+t' ) )
+		 *	Example 2: new THREE.Vector3( 0, 0,
+		 *		[ { t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 } ] )
+		 *	Default is camera.position.
+		 * </pre>
+		 * @param {object} [cameraTarget.rotation] rotation camera around point specified by an axis and an angle. Default is undefined - no rotation
+		 * @param {number|function|array} [cameraTarget.rotation.angle=0] Angle of rotation in radians.
+		 * <pre>
+		 *   number. Example: Math.PI / 2 rotate to 90 degrees.
+		 *   function. Example: new Function( 't', 'return 5*t' ).
+		 *   array.
+		 *     Example 1: [0, Math.PI]
+		 *       0 is angle for t = min is start time of the playing.
+		 *       Math.PI is rotate to 180 degrees
+		 *         for t = max is time of the stopping of the playing.
+		 *       If max time is infinity, then angle is for t = min.
+		 *     Example 2: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }
+		 *       t is time,
+		 *       v is angle for current t.
+		 * </pre>
+		 * @param {THREE.Vector3} [cameraTarget.rotation.axis] Axis of rotattion.
+		 * <pre>
+		 *   Example: new THREE.Vector3( 1, 0, 0 ) - rotate around x axis.
+		 *   Default is rotate around y axis
+		 * </pre>
+		 */
+		this.init = function ( cameraTarget ) {
 
-		if ( typeof THREE === 'undefined' ) {
+			//cameraTargetDefault.boLook = false по умолчанию камера не смотритт на выбранную точку если:
+			// 1 ни разу не вызывается init. Тоесть нет настроек cameraTargetDefault и нет ни однойточки, на которую смотрит камера
+			// 2 cameraTarget.bodefault !== false и cameraTarget.boLook = false - программист явно запретил смотреть на точку
 
-			console.error( 'Call Player.setTHREE(THREE) first.' );
-			return;
+			//Если есть хоть одна точка, на которую должна смотреть камера cameraTarget.bodefault === false,
+			//то для этой точки не устанавливаем playerCameraTarget.cameraTargetDefault
+			//Другими словами если есть точка, на которую должна смотреть камера,
+			//то камера будет на нее смотреть если нет запрета смотеть на точку - playerCameraTarget.cameraTargetDefault = false
+			if ( cameraTarget.bodefault !== false ) {
 
-		}
-		const cameraTarget = Player.cameraTarget.get();
-//			camera = cameraTarget.camera;
+				if ( boTarget )
+					return;//Не надо устанавливать cameraTargetDefault после того,
+				//как были устанвлены настройки cameraTargetDefault из точек
+				//Иначе натройки точки не будут приоритетными
 
-		//Update cameraTarget
-		const func = mesh.userData.player.arrayFuncs[i];
-		if ( !func.cameraTarget )
-			func.cameraTarget = { boLook: false };
-		setCameraTarget( func.cameraTarget );
+				if ( cameraTarget.boLook !== undefined ) {
 
-		if ( cameraTarget && cameraTarget.boLook ) {
-
-			const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
-			cameraTarget.target = target;
-
-		} else delete cameraTarget.target;
-
-	}
-	/**
-	 * Update camera settings.
-	 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
-	 * @param {boolean} [update=false] true - camera look at the target.
-	 */
-	this.setCameraTarget = function ( camera, update = false ) {
-
-		if ( typeof THREE === 'undefined' ) {
-
-			console.error( 'Call Player.setTHREE(THREE) first.' );
-			return;
-
-		}
-
-		var cameraTarget = Player.cameraTarget.get();
-		if ( !cameraTarget ) cameraTarget = cameraTarget || {};
-		camera = camera || cameraTarget.camera;// || Player.player.getOptions().cameraTarget.camera;
-
-		if ( !camera )
-			return;//В этом приложении невозможно следить за точкой, потому что ни разу не была вызывана Player.cameraTarget.init()
-
-		//На случай когда не определена ни одна точка как cameraTarget и пользователь поставил птичку в controllerCameraTarget
-		if ( !cameraTarget.distanceToCamera )
-			cameraTarget.distanceToCamera = new THREE.Vector3().copy( camera.position );
-
-		if ( !cameraTarget.distanceToCameraCur )
-			cameraTarget.distanceToCameraCur = new THREE.Vector3();
-
-		const t = Player.getTime(),
-			distanceToCamera = cameraTarget.distanceToCamera;
-		cameraTarget.distanceToCameraCur.set(
-
-			Player.execFunc( distanceToCamera, 'x', t ),
-			Player.execFunc( distanceToCamera, 'y', t ),
-			Player.execFunc( distanceToCamera, 'z', t )
-
-		);
-
-		if ( !cameraTarget.setCameraPosition || update )
-			cameraTarget.setCameraPosition = function () {
-
-				const target = cameraTarget.target;
-				if ( ( Player.cameraGui && !Player.cameraGui.isLook() ) || !target )
-					return;//Камере не нужно следить за выбранной точкой или ни одна точка не определена как target
-
-				const t = Player.getTime();
-				camera.position.copy( cameraTarget.distanceToCameraCur );
-				camera.position.applyAxisAngle( cameraTarget.rotation.axis, Player.execFunc( cameraTarget.rotation, 'angle', t ) );
-				camera.position.add( target );
-				camera.lookAt( target );
-				if ( Player.orbitControls ) {
-
-					Player.orbitControls.target.copy( target );
-					if ( Player.orbitControlsGui )
-						Player.orbitControlsGui.setTarget( target );
+					cameraTargetDefault.boLook = cameraTarget.boLook;
+					boCameraTargetLook = cameraTarget.boLook;
 
 				}
 
+			} else if ( cameraTarget.boLook === true ) {
+
+				//Есть точка, за которой надо следить
+
+				if ( boTarget ) console.warn( 'playerCameraTarget().init(...): duplicate target point' );
+				boTarget = true;
+
+				if ( boCameraTargetLook === undefined )
+					cameraTargetDefault.boLook = true;//запрета на слежение камерой за точкой не было и есть точка, за которой надо следить
+
+			} else return;
+			cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera || ( Player.player ? Player.player.getOptions().cameraTarget.camera : undefined );
+			if ( !cameraTargetDefault.camera ) {
+
+				console.error( 'playerCameraTarget().init(...): cameraTargetDefault.camera = ' + cameraTargetDefault.camera );
+				return;
+
 			}
+			cameraTargetDefault.distanceToCamera = cameraTargetDefault.distanceToCamera || cameraTarget.distanceToCamera;
+			cameraTarget.rotation = cameraTarget.rotation || {};
+			cameraTargetDefault.rotation.angle = cameraTargetDefault.rotation.angle || cameraTarget.rotation.angle;
+			cameraTargetDefault.rotation.axis = cameraTargetDefault.rotation.axis || cameraTarget.rotation.axis;
+			setCameraTarget( cameraTarget );
+
+		}
+		function setCameraTarget( cameraTarget ) {
+
+			if ( !cameraTarget )
+				cameraTarget = cameraTargetDefault;//У выбранной для слежения точки нет cameraTarget
+			if ( cameraTarget.boLook !== undefined )
+				_cameraTarget.boLook = cameraTarget.boLook;
+			else _cameraTarget.boLook = cameraTargetDefault.boLook;
+
+			_cameraTarget.camera = cameraTarget.camera || cameraTargetDefault.camera;
+
+			//Если в программе не определены функции distanceToCamera (тоесть cameraTarget.distanceToCamera === undefined и cameraTargetDefault.distanceToCamera === undefined),
+			//то при проигрывании каждый раз distanceToCamera будет равна camera.position
+			//		_cameraTarget.distanceToCamera = cameraTarget.distanceToCamera || cameraTargetDefault.distanceToCamera || new THREE.Vector3().copy( cameraTargetDefault.camera.position );
+
+			//Если в программе не определены функции distanceToCamera (тоесть cameraTarget.distanceToCamera === undefined и cameraTargetDefault.distanceToCamera === undefined),
+			//То сначала _cameraTarget.distanceToCamera будет равна camera.position, а потом при проигрывании не будет меняться
+			_cameraTarget.distanceToCamera =
+				cameraTarget.distanceToCamera ||
+				cameraTargetDefault.distanceToCamera ||
+				_cameraTarget.distanceToCamera ||
+				new THREE.Vector3().copy( cameraTargetDefault.camera.position );
+
+			if ( !cameraTarget.rotation ) cameraTarget.rotation = {};
+			_cameraTarget.rotation.angle = cameraTarget.rotation.angle || cameraTargetDefault.rotation.angle || 0;
+			_cameraTarget.rotation.axis = cameraTarget.rotation.axis || cameraTargetDefault.rotation.axis || new THREE.Vector3( 0, 1, 0 );//Rotate around y axis
+
+		}
+
+		/**
+		 * Set a target point, what camera is look at.
+		 * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
+		*/
+		this.setTarget = function ( mesh ) {
+
+			if ( !mesh.geometry )
+				return;
+
+			if ( typeof THREE === 'undefined' ) {
+
+				console.error( 'Call Player.setTHREE(THREE) first.' );
+				return;
+
+			}
+			const arrayFuncs = mesh.userData.player.arrayFuncs;
+			if ( arrayFuncs === undefined )
+				return;
+			for ( var i = 0; i < arrayFuncs.length; i++ ) {
+
+				var funcs = arrayFuncs[i];
+				Player.cameraTarget.changeTarget( mesh, i );
+
+			}
+
+		}
+		/**
+		 * Change target.
+		 * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
+		 * @param {number} i index of the point.
+		 */
+		this.changeTarget = function ( mesh, i ) {
+
+			if ( typeof THREE === 'undefined' ) {
+
+				console.error( 'Call Player.setTHREE(THREE) first.' );
+				return;
+
+			}
+			const cameraTarget = Player.cameraTarget.get();
+			//			camera = cameraTarget.camera;
+
+			//Update cameraTarget
+			const func = mesh.userData.player.arrayFuncs[i];
+			if ( !func.cameraTarget )
+				func.cameraTarget = { boLook: false };
+			setCameraTarget( func.cameraTarget );
+
+			if ( cameraTarget && cameraTarget.boLook ) {
+
+				const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
+				cameraTarget.target = target;
+
+			} else delete cameraTarget.target;
+
+		}
+		/**
+		 * Update camera settings.
+		 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
+		 * @param {boolean} [update=false] true - camera look at the target.
+		 */
+		this.setCameraTarget = function ( camera, update = false ) {
+
+			if ( typeof THREE === 'undefined' ) {
+
+				console.error( 'Call Player.setTHREE(THREE) first.' );
+				return;
+
+			}
+
+			var cameraTarget = Player.cameraTarget.get();
+			if ( !cameraTarget ) cameraTarget = cameraTarget || {};
+			camera = camera || cameraTarget.camera;// || Player.player.getOptions().cameraTarget.camera;
+
+			if ( !camera )
+				return;//В этом приложении невозможно следить за точкой, потому что ни разу не была вызывана Player.cameraTarget.init()
+
+			//На случай когда не определена ни одна точка как cameraTarget и пользователь поставил птичку в controllerCameraTarget
+			if ( !cameraTarget.distanceToCamera )
+				cameraTarget.distanceToCamera = new THREE.Vector3().copy( camera.position );
+
+			if ( !cameraTarget.distanceToCameraCur )
+				cameraTarget.distanceToCameraCur = new THREE.Vector3();
+
+			const t = Player.getTime(),
+				distanceToCamera = cameraTarget.distanceToCamera;
+			cameraTarget.distanceToCameraCur.set(
+
+				Player.execFunc( distanceToCamera, 'x', t ),
+				Player.execFunc( distanceToCamera, 'y', t ),
+				Player.execFunc( distanceToCamera, 'z', t )
+
+			);
+
+			if ( !cameraTarget.setCameraPosition || update )
+				cameraTarget.setCameraPosition = function () {
+
+					const target = cameraTarget.target;
+					if ( ( Player.cameraGui && !Player.cameraGui.isLook() ) || !target )
+						return;//Камере не нужно следить за выбранной точкой или ни одна точка не определена как target
+
+					const t = Player.getTime();
+					camera.position.copy( cameraTarget.distanceToCameraCur );
+					camera.position.applyAxisAngle( cameraTarget.rotation.axis, Player.execFunc( cameraTarget.rotation, 'angle', t ) );
+					camera.position.add( target );
+					camera.lookAt( target );
+					if ( Player.orbitControls ) {
+
+						Player.orbitControls.target.copy( target );
+						if ( Player.orbitControlsGui )
+							Player.orbitControlsGui.setTarget( target );
+
+					}
+
+				}
+
+		}
+
 	}
 
 }
-/** @namespace
- * @description Functions for camera for looking at selected point.
- */
-Player.cameraTarget = new playerCameraTarget();
+Player.cameraTarget = new Player.cameraTarget();
 
 /** @namespace
  * @description execute function
@@ -2084,8 +2090,8 @@ Player.traceLine = class traceLine
 {
 
 	//Private class fields https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields
-	#line;
-	#arrayLines = [];//сюда добавляются линии когда max: Infinity,
+//	#line;
+//	#arrayLines = [];//сюда добавляются линии когда max: Infinity,
 
 	/**
 	 * trace line of moving of the point during playing
@@ -2093,6 +2099,9 @@ Player.traceLine = class traceLine
 	 * @param {object} options.player See <a href="../../player/jsdoc/module-Player.html" target="_blank">Player</a>.
 	 */
 	constructor( options ) {
+
+		var line;
+		const arrayLines = [];//сюда добавляются линии когда max: Infinity,
 
 		if ( typeof THREE === 'undefined' ) {
 
@@ -2110,213 +2119,204 @@ Player.traceLine = class traceLine
 			return;
 
 		}
-		//var line;
-		//const arrayLines = [];
-		//this.arrayLines = [];
+		/**
+		 * Is trace line visible?
+		 * @returns true - trace line is visible.
+		 * <p>false - trace line is not visible.</p>
+		 */
+		this.isVisible = function () {
 
-	}
-	/**
-	 * Is trace line visible?
-	 * <pre>
-	 * returns true - trace line is visible.
-	 * false - trace line is not visible.
-	 * </pre>
-	 */
-	isVisible = function () {
+			//		if ( !g_settings ) return false;//не запущен Player(...)
+			if ( !Player.isCreated() ) return false;//не запущен Player(...)
 
-		//		if ( !g_settings ) return false;//не запущен Player(...)
-		if ( !Player.isCreated() ) return false;//не запущен Player(...)
-
-		if ( this.#line ) return this.#line.visible;
-		//сюда попадает когда t max is Infinity ( g_settings.max === null ) и когда пользователь выбрал точку в guiSelectPoint у которой установлена трассировка
-		return this.#arrayLines[0].visible;
-
-	}
-	/**
-	 * Show or hide trace line.
-	 * <pre>
-	 * param {boolean} visible true - show trace line.
-	 *	false - hide trace line.
-	 * </pre>
-	 */
-	visible = function ( visible ) {
-
-		//		if ( !g_settings ) return false;//не запущен Player(...)
-		if ( !Player.isCreated() ) return false;//не запущен Player(...)
-
-		if ( this.#line ) {
-
-			this.#line.visible = visible;
-			return;
+			if ( line ) return line.visible;
+			//сюда попадает когда t max is Infinity ( g_settings.max === null ) и когда пользователь выбрал точку в guiSelectPoint у которой установлена трассировка
+			return arrayLines[0].visible;
 
 		}
-		//сюда попадает когда t max is Infinity (g_settings.max === null) и когда пользователь в выбранной в guiSelectPoint  точке изменил галочку трассировки
-		this.#arrayLines.forEach( function ( line ) {
+		/**
+		 * Show or hide trace line.
+		 * @param {boolean} visible true - show trace line.
+		 * <p>false - hide trace line.</p>
+		 */
+		this.visible = function ( visible ) {
 
-			line.visible = visible;
+			//		if ( !g_settings ) return false;//не запущен Player(...)
+			if ( !Player.isCreated() ) return false;//не запущен Player(...)
 
-		} );
+			if ( line ) {
 
-	}
-
-	/**
-	 * add point into trace line.
-	 * <pre>
-	 * param {THREE.Mesh} mesh. See [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for tracing.
-	 * param {number} index of the point for tracing.
-	 * param {THREE.Color} color. Line color. See [Color]{@link https://threejs.org/docs/index.html#api/en/math/Color}.
-	 * </pre>
-	 */
-	addPoint = function ( mesh, index, color ) {
-
-		const attributesPosition = mesh.geometry.attributes.position;
-		var point = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
-		point.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
-		//		var point = getObjectPosition( mesh, index ),
-		var sceneIndex = Player.getSelectSceneIndex();
-		if ( g_settings.max === null ) {
-
-			sceneIndex = Math.abs( sceneIndex );
-			if ( sceneIndex < ( this.#arrayLines.length - 1 ) ) {
-
-				while ( sceneIndex < ( this.#arrayLines.length - 1 ) ) {
-
-					//					group.remove( this.#arrayLines[this.#arrayLines.length - 1] );
-					mesh.remove( this.#arrayLines[this.#arrayLines.length - 1] );
-					this.#arrayLines.pop();
-
-				}
+				line.visible = visible;
 				return;
 
 			}
-			// geometry
-			const geometry = new THREE.BufferGeometry(), MAX_POINTS = 2;
+			//сюда попадает когда t max is Infinity (g_settings.max === null) и когда пользователь в выбранной в guiSelectPoint  точке изменил галочку трассировки
+			arrayLines.forEach( function ( line ) {
 
-			// attributes
-			const positions = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
-			geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-			const colors = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
-			geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+				line.visible = visible;
 
-			const line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
-			//			group.add( line );
-			mesh.add( line );
+			} );
 
-			//на случай когда пользователь изменил флажок трассировки
-			//первая линия this.#arrayLines[0] всегда имеет visible = true потому что сюда попадат только если установлена трассировка по умолчанию
-			//или пользователь установил флаг трассировки
-			if ( this.#arrayLines[0] ) line.visible = this.#arrayLines[0].visible;
+		}
+
+		/**
+		 * add point into trace line.
+		 * @param {THREE.Mesh} mesh. See [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for tracing.
+		 * @param {number} index of the point for tracing.
+		 * @param {THREE.Color} color. Line color. See [Color]{@link https://threejs.org/docs/index.html#api/en/math/Color}.
+		 */
+		this.addPoint = function ( mesh, index, color ) {
+
+			const attributesPosition = mesh.geometry.attributes.position;
+			var point = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
+			point.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
+			//		var point = getObjectPosition( mesh, index ),
+			var sceneIndex = Player.getSelectSceneIndex();
+			if ( g_settings.max === null ) {
+
+				sceneIndex = Math.abs( sceneIndex );
+				if ( sceneIndex < ( arrayLines.length - 1 ) ) {
+
+					while ( sceneIndex < ( arrayLines.length - 1 ) ) {
+
+	//					group.remove( arrayLines[arrayLines.length - 1] );
+						mesh.remove( arrayLines[arrayLines.length - 1] );
+						arrayLines.pop();
+
+					}
+					return;
+
+				}
+				// geometry
+				const geometry = new THREE.BufferGeometry(), MAX_POINTS = 2;
+
+				// attributes
+				const positions = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
+				geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+				const colors = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
+				geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+
+				const line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
+				//			group.add( line );
+				mesh.add( line );
+
+				//на случай когда пользователь изменил флажок трассировки
+				//первая линия arrayLines[0] всегда имеет visible = true потому что сюда попадат только если установлена трассировка по умолчанию
+				//или пользователь установил флаг трассировки
+				if ( arrayLines[0] ) line.visible = arrayLines[0].visible;
+
+				//point position
+				point = new THREE.Vector3().copy( point );
+				const itemSize = line.geometry.attributes.position.itemSize;
+				point.toArray( line.geometry.attributes.position.array, 1 * itemSize );
+				const point0 = arrayLines.length === 0 ? point :
+					new THREE.Vector3().fromArray( arrayLines[arrayLines.length - 1].geometry.attributes.position.array, 1 * itemSize );
+				point0.toArray( line.geometry.attributes.position.array, 0 * itemSize );
+				line.geometry.attributes.position.needsUpdate = true;
+
+				//point color
+				if ( color === undefined )
+					color = new THREE.Color( 1, 1, 1 );//White
+				Player.setColorAttribute( line.geometry.attributes, 0, arrayLines.length === 0 ? color :
+					new THREE.Color().fromArray( arrayLines[arrayLines.length - 1].geometry.attributes.color.array, 1 * itemSize ) );
+				Player.setColorAttribute( line.geometry.attributes, 1, color );
+
+				arrayLines.push( line );
+
+				return;
+
+			}
+			if ( line === undefined ) {
+
+				// geometry
+				const geometry = new THREE.BufferGeometry();
+
+				//Thanks to https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
+				var MAX_POINTS;
+				if ( g_settings.max !== null ) {
+
+					if ( g_settings && g_settings.marks )
+						MAX_POINTS = g_settings.marks;
+					else if ( options.player && options.player.marks )
+						MAX_POINTS = options.player.marks;
+					else {
+
+						console.error( 'Player.traceLine: MAX_POINTS = ' + MAX_POINTS + '. Create Player first or remove all trace = true from all items of the arrayFuncs' );
+						return;
+
+					}
+
+				} else MAX_POINTS = sceneIndex + 1;
+
+				// attributes
+				const positions = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
+				geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+				const colors = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
+				geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+
+				// draw range
+				geometry.setDrawRange( sceneIndex, sceneIndex );
+
+				line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
+				line.visible = true;
+//				group.add( line );
+				mesh.add( line );
+
+			}
+	/*
+			if ( line.geometry ) {//scene do not have geometry
+		
+				delete line.geometry.boundingSphere;
+				line.geometry.boundingSphere = null;
+		
+			}
+	*/
+			//Если не удалять boundingSphere
+			//и если двигается камера от проигрывания или ее перемещает пользователь
+			//то в некоторых случаях линию не будет видно даже если она не выходит из поля видимости
+			//потому что она выходит за рамки frustupoints
+			if ( line.geometry ) {//scene do not have geometry
+
+				delete line.geometry.boundingSphere;
+				line.geometry.boundingSphere = null;
+
+			}
 
 			//point position
 			point = new THREE.Vector3().copy( point );
-			const itemSize = line.geometry.attributes.position.itemSize;
-			point.toArray( line.geometry.attributes.position.array, 1 * itemSize );
-			const point0 = this.#arrayLines.length === 0 ? point :
-				new THREE.Vector3().fromArray( this.#arrayLines[this.#arrayLines.length - 1].geometry.attributes.position.array, 1 * itemSize );
-			point0.toArray( line.geometry.attributes.position.array, 0 * itemSize );
+			point.toArray( line.geometry.attributes.position.array, sceneIndex * line.geometry.attributes.position.itemSize );
 			line.geometry.attributes.position.needsUpdate = true;
 
 			//point color
 			if ( color === undefined )
 				color = new THREE.Color( 1, 1, 1 );//White
-			Player.setColorAttribute( line.geometry.attributes, 0, this.#arrayLines.length === 0 ? color :
-				new THREE.Color().fromArray( this.#arrayLines[this.#arrayLines.length - 1].geometry.attributes.color.array, 1 * itemSize ) );
-			Player.setColorAttribute( line.geometry.attributes, 1, color );
+			Player.setColorAttribute( line.geometry.attributes, sceneIndex, color );
 
-			this.#arrayLines.push( line );
+			//set draw range
+			var start = line.geometry.drawRange.start, count = sceneIndex + 1 - start;
+			if ( start > sceneIndex ) {
 
+				var stop = start + line.geometry.drawRange.count;
+				start = sceneIndex;
+				count = stop - start;
+
+			}
+			line.geometry.setDrawRange( start, count );
+
+		}
+		/**
+		 * Remove trace line.
+		 */
+		this.remove = function () {
+
+			if ( line === undefined )
 			return;
+			line.geometry.dispose();
+			line.material.dispose();
+			line.parent.remove( line );
+			//		group.remove( line );
 
 		}
-		if ( this.#line === undefined ) {
-
-			// geometry
-			const geometry = new THREE.BufferGeometry();
-
-			//Thanks to https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
-			var MAX_POINTS;
-			if ( g_settings.max !== null ) {
-
-				if ( g_settings && g_settings.marks )
-					MAX_POINTS = g_settings.marks;
-				else if ( options.player && options.player.marks )
-					MAX_POINTS = options.player.marks;
-				else {
-
-					console.error( 'Player.traceLine: MAX_POINTS = ' + MAX_POINTS + '. Create Player first or remove all trace = true from all items of the arrayFuncs' );
-					return;
-
-				}
-
-			} else MAX_POINTS = sceneIndex + 1;
-
-			// attributes
-			const positions = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
-			geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-			const colors = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
-			geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
-
-			// draw range
-			geometry.setDrawRange( sceneIndex, sceneIndex );
-
-			this.#line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
-			this.#line.visible = true;
-			//			group.add( this.#line );
-			mesh.add( this.#line );
-
-		}
-		/*
-				if ( this.#line.geometry ) {//scene do not have geometry
-	
-					delete this.#line.geometry.boundingSphere;
-					this.#line.geometry.boundingSphere = null;
-	
-				}
-		*/
-		//Если не удалять boundingSphere
-		//и если двигается камера от проигрывания или ее перемещает пользователь
-		//то в некоторых случаях линию не будет видно даже если она не выходит из поля видимости
-		//потому что она выходит за рамки frustupoints
-		if ( this.#line.geometry ) {//scene do not have geometry
-
-			delete this.#line.geometry.boundingSphere;
-			this.#line.geometry.boundingSphere = null;
-
-		}
-
-		//point position
-		point = new THREE.Vector3().copy( point );
-		point.toArray( this.#line.geometry.attributes.position.array, sceneIndex * this.#line.geometry.attributes.position.itemSize );
-		this.#line.geometry.attributes.position.needsUpdate = true;
-
-		//point color
-		if ( color === undefined )
-			color = new THREE.Color( 1, 1, 1 );//White
-		Player.setColorAttribute( this.#line.geometry.attributes, sceneIndex, color );
-
-		//set draw range
-		var start = this.#line.geometry.drawRange.start, count = sceneIndex + 1 - start;
-		if ( start > sceneIndex ) {
-
-			var stop = start + this.#line.geometry.drawRange.count;
-			start = sceneIndex;
-			count = stop - start;
-
-		}
-		this.#line.geometry.setDrawRange( start, count );
-
-	}
-	/**
-	 * Remove trace line.
-	 */
-	remove = function () {
-
-		if ( this.#line === undefined )
-			return;
-		this.#line.geometry.dispose();
-		this.#line.material.dispose();
-		this.#line.parent.remove( this.#line );
-		//		group.remove( this.#line );
 
 	}
 
