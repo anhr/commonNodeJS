@@ -35,12 +35,12 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
-		var camera, scene, renderer, stereoEffect;
+		var camera, scene, renderer, stereoEffect, raycaster;
 
 		init();
 		animate();
@@ -245,20 +245,24 @@ points.userData.raycaster = {
 
 Create the <b>THREE.Raycaster</b> instance.
 ```
-const raycaster = new THREE.Raycaster();
+raycaster = new THREE.Raycaster();
 
 //the precision of the raycaster when intersecting objects, in world units.
 //See https://threejs.org/docs/#api/en/core/Raycaster.params.
 raycaster.params.Points.threshold = 0.1;
 
-raycaster.setStereoEffect( {
+if ( raycaster.setStereoEffect ) {
 
-	renderer: renderer,
-	camera: camera,
-	stereoEffect: stereoEffect,
+	raycaster.setStereoEffect( {
 
-} );
-raycaster.stereo.addParticle( points );
+		renderer: renderer,
+		camera: camera,
+		stereoEffect: stereoEffect,
+
+	} );
+	raycaster.stereo.addParticle( points );
+
+} else console.error( 'Create StereoEffect instance first.' );
 ```
 Add event listeners.
 ```
@@ -387,9 +391,9 @@ if ( typeof Player !== 'undefined' ) Player.orbitControls = controls;
 Define <b>points.userData.player</b> and call <b>Player.selectMeshPlayScene(...)</b>.
 ```
 points.userData.player = { arrayFuncs: arrayFuncs, }
-Player.selectMeshPlayScene( points );
+Player.selectPlayScene( scene );
 ```
-ATTENTION!!! Call <b>Player.selectMeshPlayScene(...)</b> after creation of the <b>OrbitControls</b> instance.
+ATTENTION!!! Call <b>Player.selectPlayScene( scene );</b> after creation of the <b>OrbitControls</b> instance.
 
 Now you can see the second point in the center of the canvas. In other words, camera look at the second point.
 
@@ -463,29 +467,26 @@ Add [guiSelectPoint](../../guiSelectPoint/jsdoc/index.html) into [dat.gui](https
 
 <a name="MoveGroup"></a>
 ### Move a group of meshes.
-Sometimes you need to move a group of meshes for better visualization. Use [MoveGroup](../../MoveGroup.js) for it.
+Sometimes you need to move a group of meshes for better visualization. Use [MoveGroupGui](../../jsdoc/MoveGroupGui) for it.
 
-Import <b>MoveGroup</b>.
+Import <b>MoveGroupGui</b>.
 ```
-import { MoveGroup } from 'https://raw.githack.com/anhr/commonNodeJS/master/MoveGroup.js';
+import MoveGroupGui from 'https://raw.githack.com/anhr/commonNodeJS/master/MoveGroupGui.js';
 ```
 or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import { MoveGroup } from './commonNodeJS/master/MoveGroup.js';
+import MoveGroupGui from './commonNodeJS/master/MoveGroupGui.js';
 ```
-Create the <b>MoveGroup</b> instance.
+Create the <b>MoveGroupGui</b> instance.
 ```
-const moveGroup = new MoveGroup( scene, {
+new MoveGroupGui( scene, gui, {
 
 	//cookie: cookie,
-	axesHelper: axesHelper,
-
-} );
-moveGroup.gui( gui, {
-
+	//cookieName: 'AxesHelper',
 	//getLanguageCode: getLanguageCode,
 	//lang: { moveGroup: 'Move points', },//name of the moveGroup folder. Default is 'Move Group'
 	guiSelectPoint: guiSelectPoint,
+	axesHelper: axesHelper,
 
 } );
 ```
@@ -503,9 +504,13 @@ groupMove.add( points );
 ```
 Move <b>groupMove</b> instead of the <b>scene</b>. Replace <b>scene</b> to <b>groupMove</b> in the <b>new MoveGroup</b>
 ```
-const moveGroup = new MoveGroup( groupMove, {
+new MoveGroupGui( groupMove, gui, {
 
 	//cookie: cookie,
+	//cookieName: 'AxesHelper',
+	//getLanguageCode: getLanguageCode,
+	//lang: { moveGroup: 'Move points', },//name of the moveGroup folder. Default is 'Move Group'
+	guiSelectPoint: guiSelectPoint,
 	axesHelper: axesHelper,
 
 } );

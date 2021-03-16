@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="utf-8" />
-	<title>myThreejs</title>
+	<title>myThree</title>
 
 	<!--for mobile devices-->
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
@@ -22,33 +22,546 @@
 <body>
 	<p>
 		<a href='https://anhr.github.io/index.html' target="_blank">Home</a>
-		| <a href='https://github.com/anhr/myThreejs' target="_blank">GitHub</a>
+		| <a href='https://github.com/anhr/commonNodeJS/tree/master/myThree' target="_blank">GitHub</a>
 	</p>
-	<h1>myThreejs.</h1>
+	<h1>myThree.</h1>
 
 	<h2>Canvas.</h2>
 	<div id="canvasContainer1"><img src="/anhr/TreeElementNodeJS/master/img/wait.gif"></div>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<script type="module">
+
 		//import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import * as THREE from '../../../three.js/dev/build/three.module.min.js';
+		//import * as THREE from '../../../../../three.js/dev/build/three.module.min.js';
 		import * as THREE from '../../../../../three.js/dev/build/three.module.js';
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
+
 		import MyThree from '../../myThree.js';
 
-		MyThree.aaa();
-		const myThree = new MyThree( THREE );
-		MyThree.aaa();
-		//const THREE = MyThree.THREE;
-		const vector = new THREE.Vector3();
+		import { WEBGL } from '../../../../../three.js/dev/examples/jsm/WebGL.js';
+		//import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
+
+		if ( WEBGL.isWebGLAvailable() === false ) {
+
+			document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+			alert( WEBGL.getWebGLErrorMessage().innerHTML );
+
+		}
+
+		var tMin = -1;
+/*
+		var playerOptions = {
+
+			marks: 110,//Number of scenes of 3D objects animation.
+			name: 'Time (sec.)',
+			interval: 25,//Ticks per seconds.
+			min: -1,
+
+		};
+*/
+
+		new MyThree( THREE, function ( group, options ) {
+
+			var arrayFuncs;//, sizes;
+
+			//Points
+
+			arrayFuncs = [ //arrayFuncs. See https://github.com/anhr/myThreejs#arrayfuncs-item for details
+				/*
+				new THREE.Vector3( -0.5, 0.5, -1 ),//3D point. White color
+				{
+
+					vector: new THREE.Vector4(
+						new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
+						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
+						//new Function( 't', 'a', 'b', 'return 0.2' ),//z
+						//new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.1' ),//z
+						new Function( 't', 'a', 'b', 'return t' ),//z
+						new Function( 't', 'return 1-2*t' )//w
+						//new THREE.Color( "rgb(255, 255, 0)" )//w
+					),//Animated 4D point
+					name: 'First',
+					//trace: true,//Displays the trace of the point movement.
+
+				},
+				new THREE.Vector2( 0, 0 ),//2D point. White color
+				{
+
+					vector: new THREE.Vector4( 0.5,//new Function( 't', 'a', 'b', 'return 0.5-t' ),//0.5
+						0.5,
+						0.5,
+						new THREE.Color( "rgb(255, 0, 0)" ) ),//3D point
+					name: 'Red point',
+					//trace: true,//Displays the trace of the point movement.
+
+				}
+				/*
+				{
+
+					//vector: new THREE.Vector3( [-1, 1, 0], [1, -1, 0.5, 0], [-1, 0] ),
+					//vector: new THREE.Vector4( [-1, 1, 0], [1, -1, 0.5, 0], [-1, 0], new THREE.Color( "rgb(225, 0, 0)" ) ),
+					/*
+					vector: new THREE.Vector4(
+
+						[1, 1, 0],//x
+						[1, -1, 0.5, 0],//y
+						//[new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ), -1, 0.5, 0],//y
+						[1, 0],//z
+
+						// ВНИМАНИЕ!!! Эта строка почемуто работает некоррктно
+						// Вместо красного цвета появляется цвет e1
+						// Ошибка происходит в строке this.r = Math.min( 255, parseInt( color[ 1 ], 10 ) ) / 255;
+						// в функции THREE.Color.setStyle
+						// Непонятно почему this.r = 0.8823529411764706 вместо 1
+						//new THREE.Color( "rgb(225, 0, 0)" ),//w
+
+						//new THREE.Color( 1, 0, 0 ),//w
+						[
+							//color palette between form -1 to 1
+							//3,//white
+							0.3,
+							-1.5,//White
+							0,
+
+							new THREE.Color( 1, 0, 0 ),
+							new Function( 't', 'return 1-2*t' ),
+							new THREE.Color( 0, 1, 0 ),
+							new THREE.Color( 0, 0, 1 ),
+							0//last value is not using
+						]//w 
+						//new Function( 't', 'return 1-2*t' ),//w
+						//[
+						//	new THREE.Color( "rgb(225, 0, 0)" ),
+						//	//new THREE.Color( "rgb(0, 225, 0)" ),
+						//	new Function( 't', 'return 1-2*t' ),
+						//	new THREE.Color( "rgb(0, 0, 225)" ),
+						//	0
+						//]//w
+
+					),
+					trace: true,//Displays the trace of the point movement.
+
+				},
+				*/
+				/*
+				new THREE.Vector4( 0.5, 0.5 ,0.5 ,0.5 ),
+				new THREE.Vector4( -0.5, -0.5, -0.5, 0.5 ),
+				*/
+				new THREE.Vector4( 0, 0, 0, 1 ),//4D point.
+				[ new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.25' ),0.5, 0, 1 ],//4D point.
+				[ -0.5, 0.5, 0.0, -1 ],//4D point.
+				//[ 0.25, 0, 0.75, -1 ],//4D point.
+//				[0, 0, 0, -1],//4D point.
+
+				{
+
+					vector: new THREE.Vector4(
+						new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
+						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5+b' ),//y
+						//new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5+b' ),//z
+						new Function( 't', 'a', 'b', 'return t*a+b' ),//z
+						//new Function( 't', 'return t' ),//z
+						//new Function( 't', 'return 1-2*t' ),//w
+						new Function( 't', 'return 50+50*t' ),//w
+						//new THREE.Color( "rgb( 0, 0, 255)" ),//w
+						//1,//w
+					),//Animated 3D point
+					trace: true,//Displays the trace of the point movement.
+					name: 'point 4',
+					cameraTarget: {
+
+						//boLook: false,
+						camera: options.camera,
+						//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
+						rotation: {
+
+							//angle: Math.PI,
+							//angle: new Function( 't', 'return 5*t' ),
+							//angle: [0, Math.PI / 2],
+							//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+							//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+						},
+
+					},
+
+				},
+/*
+				{
+
+					vector: new THREE.Vector4( 0,0,0,
+						new Function( 't', 'return 1-2*t' ),//w
+					),
+					//trace: true,//Displays the trace of the point movement.
+					name: 'point 5',
+
+				},
+*/
+/*
+//				[  3,  1,  1, 1 ],
+				[  -1.9607199430465698,  -0.49455657601356506,  -1.0089999437332153, 1 ],
+				[ -3,  1,  1, 1 ],
+				[  3, -1,  1, 1 ],
+				[ -3, -1,  1, 1 ],
+				[  3,  1, -1, 1 ],
+				[ -3,  1, -1, 1 ],
+				[  3, -1, -1, 1 ],
+				[ -3, -1, -1, 1 ],
+*/
+
+			];
+			MyThree.points( arrayFuncs, group, options, {
+
+				name: 'MyThree.points',
+				tMin: tMin,
+//				pointSize: 5.0,
+				//position: new THREE.Vector3( 0.4, 0.4, 2 ),//same as camera position
+				//position: new THREE.Vector3( 0.1, 0, 0 ),
+				//position: new THREE.Vector3( new Function( 't', 'return -1.5 + t' ), 0.2, 0 ),
+				//scale: new THREE.Vector3( new Function( 't', 'return 1.1 + t' ), 1.2, 1 ),
+				//scale: new THREE.Vector3( 2, 2, 2 ),
+				//rotation: new THREE.Vector3( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), Math.PI / 4 ),
+				//rotation: new THREE.Vector3( Math.PI / 2, 0 ),
+				//shaderMaterial: {},
+				arrayCloud: options.arrayCloud,//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
+//deprecated				cloud: {},//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
+				onReady: function( points ){
+
+					if ( options.guiSelectPoint )  options.guiSelectPoint.addMesh( points );
+
+				},
+
+			} );
+
+			//See https://github.com/anhr/myThreejs#arrayfuncs-item for details
+			arrayFuncs = [
+				//new THREE.Vector2( 1, 1 ),//2D point
+				//new THREE.Vector2( 1, [{t:0,v:1}] ),//2D point. Array
+				//new THREE.Vector2( new Function( 't', 'a', 'b', 'return 1' ), 1 ),//2D point
+				//new THREE.Vector3( -0.5, 0.5, -1 ),//3D point
+				new THREE.Vector4( 0, 0, 0, 0 ),//zero
+//				new THREE.Vector4( 0, 0, 0, new THREE.Color( "rgb(0, 0, 255)" ) ),//zero blue point
+				{
+
+					vector: new THREE.Vector4(
+						new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
+						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5+b' ),//y
+						//new Function( 't', 'a', 'b', 'return 0' ),
+						//new Function( 't', 'a', 'b', 'return 0.2' ),
+						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5+b' ),//z
+						//new Function( 't', 'return 1-2*t' ),//w
+						new Function( 't', 'return 50-50*t' ),//w
+						//new THREE.Color( "rgb( 0, 0, 255)" ),//w
+						//1,//w
+					),//Animated 3D point
+					trace: true,//Displays the trace of the point movement.
+
+				},
+
+				//new THREE.Vector4( -1.5, 0.5, 1, 25 ),//4D point. white color
+				//new THREE.Vector4( 0, 0, 0, new Function( 't', 'return 1-2*t' ) ),//color is f(t)
+				//new THREE.Vector4( -0.25, 0.3, 0.3, new THREE.Color( "rgb(255, 255, 0)" ) ),//yellow point
+				//new THREE.Vector4( 0.25, 0, 0, new THREE.Color( "rgb(255, 0, 0)" ) ),//red point
+			]
+/*
+			var points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( options.getPoints( group, tMin, arrayFuncs, options ), 4 ),
+				new THREE.PointsMaterial( { size: options.point.size, vertexColors: THREE.VertexColors } ) );
+*/
+			var points = new THREE.Points(
+				new THREE.BufferGeometry().setFromPoints( options.getPoints( /*THREE, */arrayFuncs,
+					{ options: options, group: group, t: tMin } ), 4 ),
+				new THREE.PointsMaterial( { size: options.point.size, vertexColors: THREE.VertexColors } ) );
+
+			if ( !options.player )
+				points.geometry.setAttribute( 'color',
+					new THREE.Float32BufferAttribute( options.getColors( arrayFuncs, {
+
+						scale: options.scales.w,
+						palette: options.palette,
+
+					} ), 3 ) );
+					
+			points.name = 'Points1';
+
+			//непонятно зачем эта строка
+			//points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( options.getColors( /*THREE, */arrayFuncs, { scale: options.scales.w } ), 3 ) );
+			
+			points.userData.raycaster = {
+
+				onIntersection: function ( intersection, mouse ) {
+
+					options.raycaster.onIntersection( intersection, mouse );
+
+				},
+				onIntersectionOut: function ( scene ) {
+
+					options.raycaster.onIntersectionOut( scene );
+
+				},
+				onMouseDown: function ( intersect ) {
+
+					if ( options.guiSelectPoint )
+						options.guiSelectPoint.select( intersect );
+					else if ( options.axesHelper )
+						options.axesHelper.exposePosition( intersect );
+
+				}
+
+			}
+			points.userData.player = {
+
+				arrayFuncs: arrayFuncs,
+				selectPlayScene: function ( t ) {
+
+					/*
+					var angle = t * Math.PI * 2 * 1.2;// + Math.PI / 4;//45 degree
+					points.rotation.set( angle, 0, 0 );
+					myThreejs.limitAngles( points.rotation );
+					*/
+					//				setAttributes( a, b );
+
+				}
+
+			}
+			group.add( points );
+			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
+
+			//ATTENTION!!! You can adding of the cloud into points only if you want add points into group "group.add( points );"
+			// if you do not want to see a cloud without appropriate point. 
+
+			//points.position.copy( new THREE.Vector3( 0.1, 0.2, 0.3 ) );
+			//points.scale.copy( new THREE.Vector3( 1.1, 1.2, 1.3 ) );
+			if ( group.add( points ) === group ) {//I’m doing this tricky check so that it would not be possible to add a cloud to the points if they are not added to the group
+
+				//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
+				if ( options.arrayCloud )
+					points.userData.cloud = {
+
+						indexArray: MyThree.MyPoints.pushArrayCloud( THREE, options.arrayCloud, points.geometry ),//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
+
+					}
+				
+			}
+
+//			sizes = new Float32Array( arrayFuncs.length );
+
+			//cubes
+			var cubeType = 'cube';
+			function addCube( cubePosition, color, selectPlayScene, name ) {
+
+				var cube = new THREE.Mesh( new THREE.BoxGeometry( 0.4, 0.4, 0.4 ),
+					new THREE.MeshLambertMaterial( {
+
+						color: color,
+						opacity: 0.8,
+						transparent: true,
+
+					} ) );
+				cube.position.copy( cubePosition );
+				cube.type = cubeType;
+				if ( name !== undefined )
+					cube.name = name;
+				cube.userData.color = cube.material.color;
+//				myThreejs.setArrayFuncs( cube );//Display the "Restore default local position" button.
+				cube.userData.raycaster = {
+
+					onIntersection: function ( intersection, mouse ) {
+
+						if ( cube.userData.currentHex === undefined )
+							cube.userData.currentHex = cube.material.emissive.getHex();
+						cube.material.emissive.setHex( 0xff0000 );
+						options.raycaster.onIntersection( intersection, mouse );
+
+					},
+					onIntersectionOut: function ( scene, INTERSECTED ) {
+
+						if ( cube.userData.currentHex !== undefined ) cube.material.emissive.setHex( cube.userData.currentHex );
+						cube.userData.currentHex = undefined;
+						options.raycaster.onIntersectionOut( scene );
+
+					},
+					onMouseDown: function ( raycaster, intersection, scene ) {
+
+
+					},
+
+				}
+				if ( selectPlayScene ) {
+
+/*
+					cube.userData.selectPlayScene = selectPlayScene;
+					cube.userData.cube = cube;
+*/					
+					cube.userData.player = {
+
+						selectPlayScene: function ( t ) { selectPlayScene( t, cube ) },
+
+					}
+
+				}
+				group.add( cube );
+				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( cube );
+
+			}
+			addCube( new THREE.Vector3( -1, 0, 0 ), 0xffffff, function ( t, cube ) {
+
+				var angle = t * Math.PI * 2 + Math.PI / 4;//45 degree
+				cube.rotation.set( angle, angle / 2, angle / 4 );
+				MyThree.limitAngles( cube.rotation );
+				//this.cube.position.x = t;
+				//this.cube.position.y = t;
+				//this.cube.position.z = t;
+
+			} );
+			var position = new THREE.Vector3( -0.5, 0.5, -0.5 );
+			addCube( position, 'green', function ( t, cube ) {
+
+				cube.scale.x = 1.4 + t;
+				cube.scale.y = 1.5 + t;
+				cube.scale.z = 1.6 + t;
+
+				cube.position.x = position.x + t * 1.1;
+				cube.position.y = position.y + t * 1.2;
+				cube.position.z = position.z + t * 1.3;
+
+				var angle = t * Math.PI * 2 + Math.PI / 4;//45 degree
+				cube.rotation.set( angle / 2, angle / 4, angle );
+				MyThree.limitAngles( cube.rotation );
+
+			}, 'Green cube' );
+
+		
+		}, {
+
+				elContainer: "canvasContainer1",//document.getElementById("canvasContainer1"),//id of the HTMLElement for canvas and HTMLElement with id="iframe-goes-in-here" for gui.
+//				player: playerOptions,//3D objects animation.
+				player: {//3D objects animation.
+
+					marks: 110,//Number of scenes of 3D objects animation.
+					name: 'Time (sec.)',
+					interval: 25,//Ticks per seconds.
+					min: tMin,
+					max: 1,
+					/*
+					max: Infinity,
+					repeat: true,
+					zoomMultiplier: 1.1,
+					offset: 0.1,
+					max: 10,
+					*/
+
+				},
+				canvasMenu: true,
+				canvas: {
+
+					fullScreen: false,
+					width: window.innerWidth / 2,
+					height: window.innerHeight / 2,
+
+				},
+				//stats: {},//JavaScript Performance Monitor. https://github.com/mrdoob/stats.js/ .
+				orbitControls: { gui: true, },//OrbitControls,//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+				point: { size: 15 },
+
+				//Array of points with cloud.
+				//If you define the array of points with cloud, then you can define a points with cloud.
+				//For example you can define
+				//arrayCloud: options.arrayCloud
+				//on the params of the getShaderMaterialPoints( params, onReady ) function.
+				//Or
+				//arrayCloud: options.arrayCloud
+				//on the pointsOptions of the myThreejs.points function.
+				//
+				//Or
+				//if points is new THREE.Points(...) then:
+				//
+				//if ( options.arrayCloud !== undefined )
+				//	points.userData.cloud = {
+				//
+				//		indexArray: MyPoints.pushArrayCloud( THREE, options.arrayCloud, points.geometry ),//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
+				//
+				//	}
+				arrayCloud: [],
+
+				dat: {//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
+
+					cookie: true,
+					//playerGui: false,
+					//guiSelectPoint: false,
+					//moveScene: false,
+					//axesHelperGui: false,
+					//cameraGui: false,
+
+				},
+				axesHelper: true,
+				palette: MyThree.ColorPicker.paletteIndexes.bidirectional,//true,//See https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes
+				//palette: new MyThree.ColorPicker.palette( { palette: MyThree.ColorPicker.paletteIndexes.bidirectional } ),
+				stereoEffect: {
+
+					//spatialMultiplex: MyThree.StereoEffect.spatialMultiplexsIndexs.SbS, //.Mono,
+
+				},
+				//a: 2,
+				//b: 0.3,
+				scales: {
+
+					display: true,
+					text: {
+
+						//textHeight: 0.03,
+						//fov: camera.fov,
+						precision: 4,
+//						rect: { displayRect: true },
+
+					},
+					x: {
+
+						//zoomMultiplier: 2,
+						//offset: 1,
+						name: 'latitude(km.)',
+						//min: -10,
+						//max: 10,
+						//marks: 11,
+
+					},
+					y: {
+
+						//name: 'Temperature(degrees Celsius)',
+						//min: -4,
+						//max: 2,
+
+					},
+					z: {
+
+						//name: 'Radius(m.)',
+						//min: -110,
+						//max: -100,
+						//marks: 11,
+
+					},
+					w: {
+						name: 'energy',
+						min: -1,
+						max: 1,
+						//min: 0,//-1,
+						//max: 100,//1,
+					},
+
+				},
+
+		} );
 
 	</script>
 	<h2>Simple canvas.</h2>
 	<div id="canvasContainer2"></div>
 	<script type="module">
-
+/*	
+		import * as THREE from '../../../../../three.js/dev/build/three.module.js';
+		import MyThree from '../../myThree.js';
+		new MyThree( THREE, function ( group, options ) { } );
+*/		
 	</script>
 </body>
 </html>
