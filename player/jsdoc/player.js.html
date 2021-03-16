@@ -2112,8 +2112,8 @@ Player.traceLine = class traceLine
 {
 
 	//Private class fields https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields
-	#line;
-	#arrayLines = [];//сюда добавляются линии когда max: Infinity,
+//	#line;
+//	#arrayLines = [];//сюда добавляются линии когда max: Infinity,
 
 	/**
 	 * trace line of moving of the point during playing
@@ -2121,6 +2121,9 @@ Player.traceLine = class traceLine
 	 * @param {object} options.player See &lt;a href="../../player/jsdoc/module-Player.html" target="_blank">Player&lt;/a>.
 	 */
 	constructor( options ) {
+
+		var line;
+		const arrayLines = [];//сюда добавляются линии когда max: Infinity,
 
 		if ( typeof THREE === 'undefined' ) {
 
@@ -2138,213 +2141,204 @@ Player.traceLine = class traceLine
 			return;
 
 		}
-		//var line;
-		//const arrayLines = [];
-		//this.arrayLines = [];
+		/**
+		 * Is trace line visible?
+		 * @returns true - trace line is visible.
+		 * &lt;p>false - trace line is not visible.&lt;/p>
+		 */
+		this.isVisible = function () {
 
-	}
-	/**
-	 * Is trace line visible?
-	 * &lt;pre>
-	 * returns true - trace line is visible.
-	 * false - trace line is not visible.
-	 * &lt;/pre>
-	 */
-	isVisible = function () {
+			//		if ( !g_settings ) return false;//не запущен Player(...)
+			if ( !Player.isCreated() ) return false;//не запущен Player(...)
 
-		//		if ( !g_settings ) return false;//не запущен Player(...)
-		if ( !Player.isCreated() ) return false;//не запущен Player(...)
-
-		if ( this.#line ) return this.#line.visible;
-		//сюда попадает когда t max is Infinity ( g_settings.max === null ) и когда пользователь выбрал точку в guiSelectPoint у которой установлена трассировка
-		return this.#arrayLines[0].visible;
-
-	}
-	/**
-	 * Show or hide trace line.
-	 * &lt;pre>
-	 * param {boolean} visible true - show trace line.
-	 *	false - hide trace line.
-	 * &lt;/pre>
-	 */
-	visible = function ( visible ) {
-
-		//		if ( !g_settings ) return false;//не запущен Player(...)
-		if ( !Player.isCreated() ) return false;//не запущен Player(...)
-
-		if ( this.#line ) {
-
-			this.#line.visible = visible;
-			return;
+			if ( line ) return line.visible;
+			//сюда попадает когда t max is Infinity ( g_settings.max === null ) и когда пользователь выбрал точку в guiSelectPoint у которой установлена трассировка
+			return arrayLines[0].visible;
 
 		}
-		//сюда попадает когда t max is Infinity (g_settings.max === null) и когда пользователь в выбранной в guiSelectPoint  точке изменил галочку трассировки
-		this.#arrayLines.forEach( function ( line ) {
+		/**
+		 * Show or hide trace line.
+		 * @param {boolean} visible true - show trace line.
+		 * &lt;p>false - hide trace line.&lt;/p>
+		 */
+		this.visible = function ( visible ) {
 
-			line.visible = visible;
+			//		if ( !g_settings ) return false;//не запущен Player(...)
+			if ( !Player.isCreated() ) return false;//не запущен Player(...)
 
-		} );
+			if ( line ) {
 
-	}
-
-	/**
-	 * add point into trace line.
-	 * &lt;pre>
-	 * param {THREE.Mesh} mesh. See [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for tracing.
-	 * param {number} index of the point for tracing.
-	 * param {THREE.Color} color. Line color. See [Color]{@link https://threejs.org/docs/index.html#api/en/math/Color}.
-	 * &lt;/pre>
-	 */
-	addPoint = function ( mesh, index, color ) {
-
-		const attributesPosition = mesh.geometry.attributes.position;
-		var point = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
-		point.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
-		//		var point = getObjectPosition( mesh, index ),
-		var sceneIndex = Player.getSelectSceneIndex();
-		if ( g_settings.max === null ) {
-
-			sceneIndex = Math.abs( sceneIndex );
-			if ( sceneIndex &lt; ( this.#arrayLines.length - 1 ) ) {
-
-				while ( sceneIndex &lt; ( this.#arrayLines.length - 1 ) ) {
-
-					//					group.remove( this.#arrayLines[this.#arrayLines.length - 1] );
-					mesh.remove( this.#arrayLines[this.#arrayLines.length - 1] );
-					this.#arrayLines.pop();
-
-				}
+				line.visible = visible;
 				return;
 
 			}
-			// geometry
-			const geometry = new THREE.BufferGeometry(), MAX_POINTS = 2;
+			//сюда попадает когда t max is Infinity (g_settings.max === null) и когда пользователь в выбранной в guiSelectPoint  точке изменил галочку трассировки
+			arrayLines.forEach( function ( line ) {
 
-			// attributes
-			const positions = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
-			geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-			const colors = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
-			geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+				line.visible = visible;
 
-			const line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
-			//			group.add( line );
-			mesh.add( line );
+			} );
 
-			//на случай когда пользователь изменил флажок трассировки
-			//первая линия this.#arrayLines[0] всегда имеет visible = true потому что сюда попадат только если установлена трассировка по умолчанию
-			//или пользователь установил флаг трассировки
-			if ( this.#arrayLines[0] ) line.visible = this.#arrayLines[0].visible;
+		}
+
+		/**
+		 * add point into trace line.
+		 * @param {THREE.Mesh} mesh. See [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for tracing.
+		 * @param {number} index of the point for tracing.
+		 * @param {THREE.Color} color. Line color. See [Color]{@link https://threejs.org/docs/index.html#api/en/math/Color}.
+		 */
+		this.addPoint = function ( mesh, index, color ) {
+
+			const attributesPosition = mesh.geometry.attributes.position;
+			var point = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
+			point.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
+			//		var point = getObjectPosition( mesh, index ),
+			var sceneIndex = Player.getSelectSceneIndex();
+			if ( g_settings.max === null ) {
+
+				sceneIndex = Math.abs( sceneIndex );
+				if ( sceneIndex &lt; ( arrayLines.length - 1 ) ) {
+
+					while ( sceneIndex &lt; ( arrayLines.length - 1 ) ) {
+
+	//					group.remove( arrayLines[arrayLines.length - 1] );
+						mesh.remove( arrayLines[arrayLines.length - 1] );
+						arrayLines.pop();
+
+					}
+					return;
+
+				}
+				// geometry
+				const geometry = new THREE.BufferGeometry(), MAX_POINTS = 2;
+
+				// attributes
+				const positions = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
+				geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+				const colors = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
+				geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+
+				const line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
+				//			group.add( line );
+				mesh.add( line );
+
+				//на случай когда пользователь изменил флажок трассировки
+				//первая линия arrayLines[0] всегда имеет visible = true потому что сюда попадат только если установлена трассировка по умолчанию
+				//или пользователь установил флаг трассировки
+				if ( arrayLines[0] ) line.visible = arrayLines[0].visible;
+
+				//point position
+				point = new THREE.Vector3().copy( point );
+				const itemSize = line.geometry.attributes.position.itemSize;
+				point.toArray( line.geometry.attributes.position.array, 1 * itemSize );
+				const point0 = arrayLines.length === 0 ? point :
+					new THREE.Vector3().fromArray( arrayLines[arrayLines.length - 1].geometry.attributes.position.array, 1 * itemSize );
+				point0.toArray( line.geometry.attributes.position.array, 0 * itemSize );
+				line.geometry.attributes.position.needsUpdate = true;
+
+				//point color
+				if ( color === undefined )
+					color = new THREE.Color( 1, 1, 1 );//White
+				Player.setColorAttribute( line.geometry.attributes, 0, arrayLines.length === 0 ? color :
+					new THREE.Color().fromArray( arrayLines[arrayLines.length - 1].geometry.attributes.color.array, 1 * itemSize ) );
+				Player.setColorAttribute( line.geometry.attributes, 1, color );
+
+				arrayLines.push( line );
+
+				return;
+
+			}
+			if ( line === undefined ) {
+
+				// geometry
+				const geometry = new THREE.BufferGeometry();
+
+				//Thanks to https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
+				var MAX_POINTS;
+				if ( g_settings.max !== null ) {
+
+					if ( g_settings &amp;&amp; g_settings.marks )
+						MAX_POINTS = g_settings.marks;
+					else if ( options.player &amp;&amp; options.player.marks )
+						MAX_POINTS = options.player.marks;
+					else {
+
+						console.error( 'Player.traceLine: MAX_POINTS = ' + MAX_POINTS + '. Create Player first or remove all trace = true from all items of the arrayFuncs' );
+						return;
+
+					}
+
+				} else MAX_POINTS = sceneIndex + 1;
+
+				// attributes
+				const positions = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
+				geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+				const colors = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
+				geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+
+				// draw range
+				geometry.setDrawRange( sceneIndex, sceneIndex );
+
+				line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
+				line.visible = true;
+//				group.add( line );
+				mesh.add( line );
+
+			}
+	/*
+			if ( line.geometry ) {//scene do not have geometry
+		
+				delete line.geometry.boundingSphere;
+				line.geometry.boundingSphere = null;
+		
+			}
+	*/
+			//Если не удалять boundingSphere
+			//и если двигается камера от проигрывания или ее перемещает пользователь
+			//то в некоторых случаях линию не будет видно даже если она не выходит из поля видимости
+			//потому что она выходит за рамки frustupoints
+			if ( line.geometry ) {//scene do not have geometry
+
+				delete line.geometry.boundingSphere;
+				line.geometry.boundingSphere = null;
+
+			}
 
 			//point position
 			point = new THREE.Vector3().copy( point );
-			const itemSize = line.geometry.attributes.position.itemSize;
-			point.toArray( line.geometry.attributes.position.array, 1 * itemSize );
-			const point0 = this.#arrayLines.length === 0 ? point :
-				new THREE.Vector3().fromArray( this.#arrayLines[this.#arrayLines.length - 1].geometry.attributes.position.array, 1 * itemSize );
-			point0.toArray( line.geometry.attributes.position.array, 0 * itemSize );
+			point.toArray( line.geometry.attributes.position.array, sceneIndex * line.geometry.attributes.position.itemSize );
 			line.geometry.attributes.position.needsUpdate = true;
 
 			//point color
 			if ( color === undefined )
 				color = new THREE.Color( 1, 1, 1 );//White
-			Player.setColorAttribute( line.geometry.attributes, 0, this.#arrayLines.length === 0 ? color :
-				new THREE.Color().fromArray( this.#arrayLines[this.#arrayLines.length - 1].geometry.attributes.color.array, 1 * itemSize ) );
-			Player.setColorAttribute( line.geometry.attributes, 1, color );
+			Player.setColorAttribute( line.geometry.attributes, sceneIndex, color );
 
-			this.#arrayLines.push( line );
+			//set draw range
+			var start = line.geometry.drawRange.start, count = sceneIndex + 1 - start;
+			if ( start > sceneIndex ) {
 
+				var stop = start + line.geometry.drawRange.count;
+				start = sceneIndex;
+				count = stop - start;
+
+			}
+			line.geometry.setDrawRange( start, count );
+
+		}
+		/**
+		 * Remove trace line.
+		 */
+		this.remove = function () {
+
+			if ( line === undefined )
 			return;
+			line.geometry.dispose();
+			line.material.dispose();
+			line.parent.remove( line );
+			//		group.remove( line );
 
 		}
-		if ( this.#line === undefined ) {
-
-			// geometry
-			const geometry = new THREE.BufferGeometry();
-
-			//Thanks to https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
-			var MAX_POINTS;
-			if ( g_settings.max !== null ) {
-
-				if ( g_settings &amp;&amp; g_settings.marks )
-					MAX_POINTS = g_settings.marks;
-				else if ( options.player &amp;&amp; options.player.marks )
-					MAX_POINTS = options.player.marks;
-				else {
-
-					console.error( 'Player.traceLine: MAX_POINTS = ' + MAX_POINTS + '. Create Player first or remove all trace = true from all items of the arrayFuncs' );
-					return;
-
-				}
-
-			} else MAX_POINTS = sceneIndex + 1;
-
-			// attributes
-			const positions = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
-			geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-			const colors = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
-			geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
-
-			// draw range
-			geometry.setDrawRange( sceneIndex, sceneIndex );
-
-			this.#line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
-			this.#line.visible = true;
-			//			group.add( this.#line );
-			mesh.add( this.#line );
-
-		}
-		/*
-				if ( this.#line.geometry ) {//scene do not have geometry
-	
-					delete this.#line.geometry.boundingSphere;
-					this.#line.geometry.boundingSphere = null;
-	
-				}
-		*/
-		//Если не удалять boundingSphere
-		//и если двигается камера от проигрывания или ее перемещает пользователь
-		//то в некоторых случаях линию не будет видно даже если она не выходит из поля видимости
-		//потому что она выходит за рамки frustupoints
-		if ( this.#line.geometry ) {//scene do not have geometry
-
-			delete this.#line.geometry.boundingSphere;
-			this.#line.geometry.boundingSphere = null;
-
-		}
-
-		//point position
-		point = new THREE.Vector3().copy( point );
-		point.toArray( this.#line.geometry.attributes.position.array, sceneIndex * this.#line.geometry.attributes.position.itemSize );
-		this.#line.geometry.attributes.position.needsUpdate = true;
-
-		//point color
-		if ( color === undefined )
-			color = new THREE.Color( 1, 1, 1 );//White
-		Player.setColorAttribute( this.#line.geometry.attributes, sceneIndex, color );
-
-		//set draw range
-		var start = this.#line.geometry.drawRange.start, count = sceneIndex + 1 - start;
-		if ( start > sceneIndex ) {
-
-			var stop = start + this.#line.geometry.drawRange.count;
-			start = sceneIndex;
-			count = stop - start;
-
-		}
-		this.#line.geometry.setDrawRange( start, count );
-
-	}
-	/**
-	 * Remove trace line.
-	 */
-	remove = function () {
-
-		if ( this.#line === undefined )
-			return;
-		this.#line.geometry.dispose();
-		this.#line.material.dispose();
-		this.#line.parent.remove( this.#line );
-		//		group.remove( this.#line );
 
 	}
 
@@ -2677,7 +2671,7 @@ export default Player;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Mar 13 2021 11:18:52 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Mar 16 2021 10:11:35 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
