@@ -67,820 +67,777 @@ var g_settings,
  * @param {object} scale the updated time settings
  */
 
-/**
- * 3D objects animation.
- * @class
- * @param {THREE.Group|THREE.Scene} group THREE group or scene of the meshes  for playing.
- * @param {object} [options] the following options are available
- * @param {object} [options.selectPlaySceneOptions] See [Player.selectPlayScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.selectPlayScene} options parameter.
- * @param {onSelectScene} [options.onSelectScene] This function is called at each new step of the playing. See [onSelectScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene}.
- * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings. See [onChangeScaleT]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onChangeScaleT}.
- * @param {object} [options.settings] time settings.
- * @param {number} [options.settings.interval=1] Ticks per seconds.
- * @param {number} [options.settings.min=0] Animation start time.
- * @param {number} [options.settings.max=1] Animation end time. Set to Infinity if you want to play to infinity.
- * @param {number} [options.settings.dt=0.1] Step of the animation. Have effect only if <b>max</b> is infinity.
- * @param {number} [options.settings.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
- * Have effect for <b>max</b> is not Infinity.
- * @param {boolean} [options.settings.repeat=false] true - Infinitely repeating 3D objects animation.
- * @param {number} [options.settings.zoomMultiplier=1.1] zoom multiplier of the time.
- * @param {number} [options.settings.offset=0.1] offset of the time.
- * @param {string} [options.settings.name=""] name of the time.
- * @param {THREE.PerspectiveCamera} options.cameraTarget.camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
- */
-function Player( group, options ) {
-
-	if ( typeof THREE === 'undefined' ) {
-
-		console.error( 'Call Player.setTHREE(THREE) first.' );
-		return;
-
-	}
-	ColorPicker.palette.setTHREE( THREE );
-
-	if ( Player.isCreated() ) {
-
-		console.error( 'Player: duplicate player.' );
-		return;
-
-	}
-
-	Player.player = this;
-
-	options = options || {};
-
-	g_selectPlaySceneOptions = options.selectPlaySceneOptions;
-	g_selectPlaySceneOptions = g_selectPlaySceneOptions || {};
-	g_selectPlaySceneOptions.boPlayer = g_selectPlaySceneOptions.boPlayer || false;
-
-	g_selectPlaySceneOptions.a = options.a || 1;
-	g_selectPlaySceneOptions.b = options.b || 0;
-//	g_selectPlaySceneOptions.scales = g_selectPlaySceneOptions.scales || {};не помню зачем эта строка
-
-	//если тут создавать палитру то она не создастся если не создается плееер
-	//palette = new palette();
-
-	g_settings = options.settings || {};
-	assignSettings();
-
-	options.cameraTarget = options.cameraTarget || {};
-
-	/* *
-	 * Select a scene for playing
-	 * @function Player.
-	 * selectPlayScene
-	 * @param {THREE.Group} group [THREE.Group]{@link https://threejs.org/docs/index.html#api/en/objects/Group}
-	 * @param {number} t time
-	 * @param {number} index index of the time.
-	 * @param {object} [selectPlaySceneOptions] the following options are available
-	 * @param {boolean} [selectPlaySceneOptions.boPlayer] true - is not select play scene for mesh.userData.boFrustumPoints = true. Default is false.
-	 * @param {number} [selectPlaySceneOptions.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
-	 * @param {number} [selectPlaySceneOptions.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
-	 * @param {object} [selectPlaySceneOptions.scales] axes scales. See {@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html|AxesHelper}. Default is {}
-	 * @param {object} [selectPlaySceneOptions.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
-	 * <pre>
-	 * Example:
-	 * new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
-	 * </pre>
-	 * @param {object} [selectPlaySceneOptions.guiSelectPoint] See [GuiSelectPoint]{@link https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/module-GuiSelectPoint.html#~GuiSelectPoint}.
-	 * <pre>
-	 * Example:
-	 * new GuiSelectPoint();
-	 * </pre>
-	 */
-/*
-	function selectPlayScene( group, t, index, selectPlaySceneOptions ) {
-
-		//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
-		//Другими словами если не вызывается Player.getColors
-		ColorPicker.palette.setTHREE( THREE );
-
-		selectPlaySceneOptions = selectPlaySceneOptions || {};
-
-		group.userData.t = t;
-		Player.selectMeshPlayScene( group, t, index );
-		group.children.forEach( function ( mesh ) {
-
-			Player.selectMeshPlayScene( mesh, t, index );
-
-		} );
-		Player.cameraTarget.setCameraTarget();
-
-		const cameraTarget = Player.cameraTarget.get();
-		if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition();
-
-		if ( Player.cameraGui ) Player.cameraGui.update();
-
-	}
-*/
-	/**
-	 * @description This function is called at each new step of the playing.
-	 * @param {number} [index=0] current index of the scene of the animation
-	 */
-	function onSelectScene( index ) {
-
-		index = index || 0;
-		const t = _this.getTime();
-		Player.selectPlayScene( group, t, index );//, options.selectPlaySceneOptions );
-		_this.setIndex( index, ( g_settings.name === '' ? '' : g_settings.name + ': ' ) + t );
-		if ( options.onSelectScene ) options.onSelectScene( index, t );
-
-	}
-
-	//Теперь не нужно создавать color attribute на веб странице что бы цвет точек был верным еще до начала проигрывания
-	//Кроме того трассировака начинается с нулевой точки
-	setTimeout( function () { onSelectScene(); }, 0 );
-
-	var selectSceneIndex = 0;
-	const _this = this;
+class Player {
 
 	/**
-	 * get time
+	 * 3D objects animation.
+	 * @class
+	 * @param {THREE.Group|THREE.Scene} group THREE group or scene of the meshes  for playing.
+	 * @param {object} [options] the following options are available
+	 * @param {object} [options.selectPlaySceneOptions] See [Player.selectPlayScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.selectPlayScene} options parameter.
+	 * @param {onSelectScene} [options.onSelectScene] This function is called at each new step of the playing. See [onSelectScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene}.
+	 * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings. See [onChangeScaleT]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onChangeScaleT}.
+	 * @param {object} [options.settings] time settings.
+	 * @param {number} [options.settings.interval=1] Ticks per seconds.
+	 * @param {number} [options.settings.min=0] Animation start time.
+	 * @param {number} [options.settings.max=1] Animation end time. Set to Infinity if you want to play to infinity.
+	 * @param {number} [options.settings.dt=0.1] Step of the animation. Have effect only if <b>max</b> is infinity.
+	 * @param {number} [options.settings.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
+	 * Have effect for <b>max</b> is not Infinity.
+	 * @param {boolean} [options.settings.repeat=false] true - Infinitely repeating 3D objects animation.
+	 * @param {number} [options.settings.zoomMultiplier=1.1] zoom multiplier of the time.
+	 * @param {number} [options.settings.offset=0.1] offset of the time.
+	 * @param {string} [options.settings.name=""] name of the time.
+	 * @param {THREE.PerspectiveCamera} options.cameraTarget.camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
 	 */
-	this.getTime = function() {
+	constructor( group, options ) {
 
-		const t = g_settings.min + selectSceneIndex * g_settings.dt;
-		if ( isNaN( t ) ) console.error( 'Player.getTime(): t = ' + t );
-		if ( ( g_settings.max !== null ) && ( t > g_settings.max ) )
-			console.error( 'Player.getTime(): t = ' + t + ' g_settings.max = ' + g_settings.max );
-		if ( ( t < g_settings.min ) && ( g_settings.max !== null ) )
-			console.error( 'Player.getTime(): t = ' + t + ' g_settings.min = ' + g_settings.min );
-		return t;
+		if ( typeof THREE === 'undefined' ) {
 
-	}
-
-	/**
-	 * set time
-	 * @param {number} t time
-	 */
-	this.setTime = function( t ) {
-
-		this.selectScene( parseInt( ( t - g_settings.min ) / g_settings.dt ) );
-
-	}
-
-	/**
-	 * select scene for playing
-	 * @param {number} index Index of the scene. Range from 0 to g_settings.marks - 1
-	 */
-	this.selectScene = function( index ) {
-
-		if ( index === undefined ) {
-
-			onSelectScene( selectSceneIndex );
+			console.error( 'Call Player.setTHREE(THREE) first.' );
 			return;
 
 		}
-		index = parseInt( index );
-		if ( g_settings.max !== null ) {
+		ColorPicker.palette.setTHREE( THREE );
 
-			if ( index >= g_settings.marks )
-				index = 0;
-			else if ( index < 0 )
-				index = g_settings.marks - 1;
-			if( selectSceneIndex > g_settings.marks )
-				selectSceneIndex = g_settings.marks;
+		if ( Player.isCreated() ) {
+
+			console.error( 'Player: duplicate player.' );
+			return;
 
 		}
-		while ( selectSceneIndex !== index ) {
 
-			if ( selectSceneIndex < index )
-				selectSceneIndex++;
-			else selectSceneIndex--;
-			onSelectScene( selectSceneIndex );
-			
-		}
+		Player.player = this;
 
-	}
+		options = options || {};
 
-	/**
-	 * Go to next object 3D
-	 */
-	this.next = function() {
+		g_selectPlaySceneOptions = options.selectPlaySceneOptions;
+		g_selectPlaySceneOptions = g_selectPlaySceneOptions || {};
+		g_selectPlaySceneOptions.boPlayer = g_selectPlaySceneOptions.boPlayer || false;
 
-		_this.selectScene( selectSceneIndex + 1 );
+		g_selectPlaySceneOptions.a = options.a || 1;
+		g_selectPlaySceneOptions.b = options.b || 0;
+		//	g_selectPlaySceneOptions.scales = g_selectPlaySceneOptions.scales || {};не помню зачем эта строка
 
-	}
+		//если тут создавать палитру то она не создастся если не создается плееер
+		//palette = new palette();
 
-	/**
-	 * Go to previous object 3D
-	 */
-	this.prev = function () {
+		g_settings = options.settings || {};
+		assignSettings();
 
-		_this.selectScene( selectSceneIndex - 1 );
+		options.cameraTarget = options.cameraTarget || {};
 
-	}
-	/**
-	 * Add controller into controllers array
-	 * @param {controller} controller
-	 */
-	this.pushController = function ( controller ) {
+		/**
+		 * @description This function is called at each new step of the playing.
+		 * @param {number} [index=0] current index of the scene of the animation
+		 */
+		function onSelectScene( index ) {
 
-		if ( ( controller.object !== undefined ) && ( controller.object.playRate !== undefined ) )
-			controller.object.playRate = g_settings.min;
-		controllers.push( controller );
-
-	}
-
-	//Play/Pause
-
-	this.controllers = [];
-	var playing = false, time, timeNext;
-	const controllers = this.controllers;
-
-	function RenamePlayButtons() {
-
-		controllers.forEach( function ( controller ) { if (controller.onRenamePlayButtons) controller.onRenamePlayButtons( playing ); } );
-
-	}
-
-	function play() {
-
-		if ( ( selectSceneIndex === -1 ) || ( ( selectSceneIndex === g_settings.marks ) && ( g_settings.max !== null ) ) ) {
-
-			selectSceneIndex = 0;
+			index = index || 0;
+			const t = _this.getTime();
+			Player.selectPlayScene( group, t, index );//, options.selectPlaySceneOptions );
+			_this.setIndex( index, ( g_settings.name === '' ? '' : g_settings.name + ': ' ) + t );
+			if ( options.onSelectScene ) options.onSelectScene( index, t );
 
 		}
-		onSelectScene( selectSceneIndex );
 
-	}
+		//Теперь не нужно создавать color attribute на веб странице что бы цвет точек был верным еще до начала проигрывания
+		//Кроме того трассировака начинается с нулевой точки
+		setTimeout( function () { onSelectScene(); }, 0 );
 
-	function pause() {
+		var selectSceneIndex = 0;
+		const _this = this;
 
-		playing = false;
-		RenamePlayButtons();
+		/**
+		 * get time
+		 */
+		this.getTime = function () {
 
-		time = undefined;
+			const t = g_settings.min + selectSceneIndex * g_settings.dt;
+			if ( isNaN( t ) ) console.error( 'Player.getTime(): t = ' + t );
+			if ( ( g_settings.max !== null ) && ( t > g_settings.max ) )
+				console.error( 'Player.getTime(): t = ' + t + ' g_settings.max = ' + g_settings.max );
+			if ( ( t < g_settings.min ) && ( g_settings.max !== null ) )
+				console.error( 'Player.getTime(): t = ' + t + ' g_settings.min = ' + g_settings.min );
+			return t;
 
-	}
-	function isRepeat() {
+		}
 
-		return g_settings.repeat;
+		/**
+		 * set time
+		 * @param {number} t time
+		 */
+		this.setTime = function ( t ) {
 
-	}
+			this.selectScene( parseInt( ( t - g_settings.min ) / g_settings.dt ) );
 
-	function playNext() {
+		}
 
-		selectSceneIndex++;
-		if ( ( g_settings.max !== null ) && selectSceneIndex >= g_settings.marks ) {
+		/**
+		 * select scene for playing
+		 * @param {number} index Index of the scene. Range from 0 to g_settings.marks - 1
+		 */
+		this.selectScene = function ( index ) {
 
-			if ( isRepeat() )
+			if ( index === undefined ) {
+
+				onSelectScene( selectSceneIndex );
+				return;
+
+			}
+			index = parseInt( index );
+			if ( g_settings.max !== null ) {
+
+				if ( index >= g_settings.marks )
+					index = 0;
+				else if ( index < 0 )
+					index = g_settings.marks - 1;
+				if ( selectSceneIndex > g_settings.marks )
+					selectSceneIndex = g_settings.marks;
+
+			}
+			while ( selectSceneIndex !== index ) {
+
+				if ( selectSceneIndex < index )
+					selectSceneIndex++;
+				else selectSceneIndex--;
+				onSelectScene( selectSceneIndex );
+
+			}
+
+		}
+
+		/**
+		 * Go to next object 3D
+		 */
+		this.next = function () {
+
+			_this.selectScene( selectSceneIndex + 1 );
+
+		}
+
+		/**
+		 * Go to previous object 3D
+		 */
+		this.prev = function () {
+
+			_this.selectScene( selectSceneIndex - 1 );
+
+		}
+		/**
+		 * Add controller into controllers array
+		 * @param {controller} controller
+		 */
+		this.pushController = function ( controller ) {
+
+			if ( ( controller.object !== undefined ) && ( controller.object.playRate !== undefined ) )
+				controller.object.playRate = g_settings.min;
+			controllers.push( controller );
+
+		}
+
+		//Play/Pause
+
+		this.controllers = [];
+		var playing = false, time, timeNext;
+		const controllers = this.controllers;
+
+		function RenamePlayButtons() {
+
+			controllers.forEach( function ( controller ) { if ( controller.onRenamePlayButtons ) controller.onRenamePlayButtons( playing ); } );
+
+		}
+
+		function play() {
+
+			if ( ( selectSceneIndex === -1 ) || ( ( selectSceneIndex === g_settings.marks ) && ( g_settings.max !== null ) ) ) {
+
 				selectSceneIndex = 0;
-			else {
 
-				//Для вычисления текущего времени в случае:
-				//1. Запустить плеер и дождаться когда проигрывание остановится после достижения максимального времени
-				//2. В guiSelectPoint выбрать точку, цвет которой зависит от времени
-				//Тогда если убрать эту строку, то selectSceneIndex и время окажется за диапазоном допустимых значений
-				//и цвет точки окажется неверным
-				selectSceneIndex = g_settings.marks - 1;
+			}
+			onSelectScene( selectSceneIndex );
+
+		}
+
+		function pause() {
+
+			playing = false;
+			RenamePlayButtons();
+
+			time = undefined;
+
+		}
+		function isRepeat() {
+
+			return g_settings.repeat;
+
+		}
+
+		function playNext() {
+
+			selectSceneIndex++;
+			if ( ( g_settings.max !== null ) && selectSceneIndex >= g_settings.marks ) {
+
+				if ( isRepeat() )
+					selectSceneIndex = 0;
+				else {
+
+					//Для вычисления текущего времени в случае:
+					//1. Запустить плеер и дождаться когда проигрывание остановится после достижения максимального времени
+					//2. В guiSelectPoint выбрать точку, цвет которой зависит от времени
+					//Тогда если убрать эту строку, то selectSceneIndex и время окажется за диапазоном допустимых значений
+					//и цвет точки окажется неверным
+					selectSceneIndex = g_settings.marks - 1;
+
+					pause();
+					return;
+
+				}
+
+			}
+			play();
+
+		}
+
+		/**
+		 * User has clicked the Play ► / Pause ❚❚ button
+		 */
+		this.play3DObject = function () {
+
+			if ( playing ) {
 
 				pause();
 				return;
 
 			}
 
-		}
-		play();
-
-	}
-
-	/**
-	 * User has clicked the Play ► / Pause ❚❚ button
-	 */
-	this.play3DObject = function() {
-
-		if ( playing ) {
-
-			pause();
-			return;
-
-		}
-
-		playing = true;
-		if ( ( g_settings.max !== null ) && ( selectSceneIndex >= ( g_settings.marks - 1 ) ) )
-			selectSceneIndex = 0;//-1;
-		playNext();
-		RenamePlayButtons();
-
-		function step( timestamp ) {
-
-			if ( playing )
-				window.requestAnimationFrame( step );
-			else time = undefined;
-
-			if ( time === undefined ) {
-
-				time = timestamp;
-				timeNext = time + 1000 / g_settings.interval;
-
-			}
-			if ( isNaN( timeNext ) || ( timeNext === Infinity ) ) {
-
-				console.error( 'Player.animate: timeNext = ' + timeNext );
-				playing = false;
-
-			}
-
-			if ( timestamp < timeNext )
-				return;
-			while ( timestamp > timeNext ) timeNext += 1000 / g_settings.interval;
+			playing = true;
+			if ( ( g_settings.max !== null ) && ( selectSceneIndex >= ( g_settings.marks - 1 ) ) )
+				selectSceneIndex = 0;//-1;
 			playNext();
+			RenamePlayButtons();
 
-		}
-		window.requestAnimationFrame( step );
+			function step( timestamp ) {
 
-	}
+				if ( playing )
+					window.requestAnimationFrame( step );
+				else time = undefined;
 
-	/**
-	 * User has clicked the repeat ⥀ button
-	 */
-	this.repeat = function () {
+				if ( time === undefined ) {
 
-		g_settings.repeat = !g_settings.repeat;
-		this.onChangeRepeat( g_settings.repeat );
+					time = timestamp;
+					timeNext = time + 1000 / g_settings.interval;
 
-	}
-
-	/**
-	 * @returns Player options.
-	 */
-	this.getOptions = function () { return options; }
-	/**
-	 * @returns selected scene index.
-	 */
-	this.getSelectSceneIndex = function () { return selectSceneIndex; }
-
-	/**
-	 * Event of the changing of the rate of changing of animation scenes per second.
-	 * @param {number} value new rate
-	 */
-	this.onChangeRepeat = function ( value ) {
-
-		g_settings.repeat = value;
-		this.controllers.forEach( function ( controller ) { if ( controller.onChangeRepeat ) controller.onChangeRepeat(); } );
-
-	}
-
-	//Localization
-	function getLang( params ) {
-
-		params = params || {};
-		const lang = {
-
-			player: 'Player',
-			playerTitle: '3D objects animation.',
-
-			min: 'Min',
-			max: 'Max',
-			dt: 'Step',
-			dtTitle: 'Time between frames',
-
-			marks: 'Frames',
-			marksTitle: 'Player frames count',
-
-			interval: 'Rate',
-			intervalTitle: 'Rate of changing of animation scenes per second.',
-
-			time: 'Time',
-
-			defaultButton: 'Default',
-			defaultTitle: 'Restore default player settings.',
-
-		};
-
-		const _languageCode = params.getLanguageCode === undefined ? 'en'//Default language is English
-			: params.getLanguageCode();
-		switch ( _languageCode ) {
-
-			case 'ru'://Russian language
-
-				lang.player = 'Проигрыватель';
-				lang.playerTitle = 'Анимация 3D объектов.';
-
-				lang.min = 'Минимум';
-				lang.max = 'Максимум';
-				lang.dt = 'Шаг';
-				lang.dtTitle = 'Веремя между кадрами';
-
-				lang.marks = 'Кадры';
-				lang.marksTitle = 'Количество кадров проигрывателя';
-
-				lang.interval = 'Темп',
-				lang.intervalTitle = 'Скорость смены кадров в секунду.';
-
-				lang.time = 'Время';
-
-				lang.defaultButton = 'Восстановить';
-				lang.defaultTitle = 'Восстановить настройки проигрывателя по умолчанию.';
-
-				break;
-			default://Custom language
-				if ( ( params.lang === undefined ) || ( params.lang._languageCode != _languageCode ) )
-					break;
-
-				Object.keys( params.lang ).forEach( function ( key ) {
-
-					if ( _lang[key] === undefined )
-						return;
-					_lang[key] = params.lang[key];
-
-				} );
-
-		}
-		return lang;
-
-	}
-
-	/**
-	 * Adds a Player's controllers into [dat.gui]{@link https://github.com/anhr/dat.gui}.
-	 * @param {GUI} folder Player's folder
-	 * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
-	 * @param {Function} [guiParams.getLanguageCode="en"] Your custom getLanguageCode() function.
-	 * <pre>
-	 * returns the "primary language" subtag of the language version of the browser.
-	 * Examples: "en" - English language, "ru" Russian.
-	 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
-	 * Default returns the 'en' is English language.
-	 * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
-	 * </pre>
-	 * @param {object} [guiParams.lang] Object with localized language values
-	 * <pre>
-	 * Example Using of guiParams.lang:
-	 * guiParams = {
-	 *
-	 * 	getLanguageCode: function() { return 'az'; },
-	 * 	lang: { textHeight: 'mətn boyu', languageCode: 'az' },
-	 *
-	 * }
-	 * </pre>
-	 * @param {Cookie} [guiParams.cookie=new Cookie.defaultCookie()] Your custom cookie function for saving and loading of the SpriteText settings. Default cookie is not saving settings.
-	 * @param {string} [guiParams.cookieName=""] Name of the cookie is "Player" + guiParams.cookieName.
-	 */
-	this.gui = function ( folder, guiParams = {} ) {
-
-		guiParams.getLanguageCode = guiParams.getLanguageCode || function(){ return "en"; };
-		guiParams.cookie = guiParams.cookie || new Cookie.defaultCookie();
-		guiParams.cookieName = guiParams.cookieName || '';
-		
-		const cookie = guiParams.cookie, cookieName = 'Player' + guiParams.cookieName;
-		function setSettings() {
-
-			setDT();
-			cookie.setObject( cookieName, g_settings );
-			if ( options.onChangeScaleT ) options.onChangeScaleT( g_settings );
-
-		}
-		setMax();
-		const axesDefault = JSON.parse( JSON.stringify( g_settings ) ),
-			lang = getLang( {
-
-			getLanguageCode: guiParams.getLanguageCode,
-			//lang: guiParams.lang
-
-		} );
-		Object.freeze( axesDefault );
-		const max = g_settings.max, marks = g_settings.marks;
-		cookie.getObject( cookieName, g_settings, g_settings );
-		if ( ( max === null ) || ( max === Infinity ) ||
-			( g_settings.max === null )//раньше на веб странице плеер был настроен на бесконечное проигрыванияе а сейчас проигрывание ограничено по времени
-		) {
-
-			g_settings.max = max;
-			g_settings.marks = marks;
-
-		}
-
-		const fPlayer = folder.addFolder( lang.player );
-		dat.folderNameAndTitle( fPlayer, lang.player, lang.playerTitle );
-
-		function scale() {
-
-			const axes = g_settings,//options.settings,
-				scaleControllers = {};
-			function onclick( customController, action ) {
-
-				var zoom = customController.controller.getValue();
-
-				axes.min = action( axes.min, zoom );
-				scaleControllers.min.setValue( axes.min );
-				if ( axes.max ) {
-
-					axes.max = action( axes.max, zoom );
-					setDT();
-					scaleControllers.max.setValue( axes.max );
-					
 				}
-				
-				setSettings();
-				
+				if ( isNaN( timeNext ) || ( timeNext === Infinity ) ) {
+
+					console.error( 'Player.animate: timeNext = ' + timeNext );
+					playing = false;
+
+				}
+
+				if ( timestamp < timeNext )
+					return;
+				while ( timestamp > timeNext ) timeNext += 1000 / g_settings.interval;
+				playNext();
+
 			}
+			window.requestAnimationFrame( step );
 
-			scaleControllers.folder = fPlayer.addFolder( axes.name !== '' ? axes.name : lang.time );
+		}
 
-			scaleControllers.scaleController = scaleControllers.folder.add( new ScaleController( onclick, 
-				{ settings: options.settings, getLanguageCode: guiParams.getLanguageCode, } ) ).onChange( function ( value ) {
+		/**
+		 * User has clicked the repeat ⥀ button
+		 */
+		this.repeat = function () {
 
-				axes.zoomMultiplier = value;
-				setSettings();
+			g_settings.repeat = !g_settings.repeat;
+			this.onChangeRepeat( g_settings.repeat );
 
-			} );
+		}
 
-			const positionController = new PositionController( function ( shift ) {
+		/**
+		 * @returns Player options.
+		 */
+		this.getOptions = function () { return options; }
+		/**
+		 * @returns selected scene index.
+		 */
+		this.getSelectSceneIndex = function () { return selectSceneIndex; }
 
-				onclick( positionController, function ( value, zoom ) {
+		/**
+		 * Event of the changing of the rate of changing of animation scenes per second.
+		 * @param {number} value new rate
+		 */
+		this.onChangeRepeat = function ( value ) {
 
-					value += shift;//zoom;
-					return value;
+			g_settings.repeat = value;
+			this.controllers.forEach( function ( controller ) { if ( controller.onChangeRepeat ) controller.onChangeRepeat(); } );
 
-				} );
+		}
 
-			}, { settings: options.settings, getLanguageCode: guiParams.getLanguageCode, } );
-			scaleControllers.positionController = scaleControllers.folder.add( positionController ).onChange( function ( value ) {
+		//Localization
+		function getLang( params ) {
 
-				axes.offset = value;
-				setSettings();
+			params = params || {};
+			const lang = {
 
-			} );
+				player: 'Player',
+				playerTitle: '3D objects animation.',
 
-			//min
-			scaleControllers.min = dat.controllerZeroStep( scaleControllers.folder, axes, 'min', function ( value ) { setSettings(); } );
-			dat.controllerNameAndTitle( scaleControllers.min, lang.min );
+				min: 'Min',
+				max: 'Max',
+				dt: 'Step',
+				dtTitle: 'Time between frames',
 
-			//max
-			//axes.max сейчас используется исключитьельно для удобства пользовательского интерфейса
-			//Вместо axes.max используется axes.dt
+				marks: 'Frames',
+				marksTitle: 'Player frames count',
+
+				interval: 'Rate',
+				intervalTitle: 'Rate of changing of animation scenes per second.',
+
+				time: 'Time',
+
+				defaultButton: 'Default',
+				defaultTitle: 'Restore default player settings.',
+
+			};
+
+			const _languageCode = params.getLanguageCode === undefined ? 'en'//Default language is English
+				: params.getLanguageCode();
+			switch ( _languageCode ) {
+
+				case 'ru'://Russian language
+
+					lang.player = 'Проигрыватель';
+					lang.playerTitle = 'Анимация 3D объектов.';
+
+					lang.min = 'Минимум';
+					lang.max = 'Максимум';
+					lang.dt = 'Шаг';
+					lang.dtTitle = 'Веремя между кадрами';
+
+					lang.marks = 'Кадры';
+					lang.marksTitle = 'Количество кадров проигрывателя';
+
+					lang.interval = 'Темп',
+						lang.intervalTitle = 'Скорость смены кадров в секунду.';
+
+					lang.time = 'Время';
+
+					lang.defaultButton = 'Восстановить';
+					lang.defaultTitle = 'Восстановить настройки проигрывателя по умолчанию.';
+
+					break;
+				default://Custom language
+					if ( ( params.lang === undefined ) || ( params.lang._languageCode != _languageCode ) )
+						break;
+
+					Object.keys( params.lang ).forEach( function ( key ) {
+
+						if ( _lang[key] === undefined )
+							return;
+						_lang[key] = params.lang[key];
+
+					} );
+
+			}
+			return lang;
+
+		}
+
+		/**
+		 * Adds a Player's controllers into [dat.gui]{@link https://github.com/anhr/dat.gui}.
+		 * @param {GUI} folder Player's folder
+		 * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
+		 * @param {Function} [guiParams.getLanguageCode="en"] Your custom getLanguageCode() function.
+		 * <pre>
+		 * returns the "primary language" subtag of the language version of the browser.
+		 * Examples: "en" - English language, "ru" Russian.
+		 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
+		 * Default returns the 'en' is English language.
+		 * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
+		 * </pre>
+		 * @param {object} [guiParams.lang] Object with localized language values
+		 * <pre>
+		 * Example Using of guiParams.lang:
+		 * guiParams = {
+		 *
+		 * 	getLanguageCode: function() { return 'az'; },
+		 * 	lang: { textHeight: 'mətn boyu', languageCode: 'az' },
+		 *
+		 * }
+		 * </pre>
+		 * @param {Cookie} [guiParams.cookie=new Cookie.defaultCookie()] Your custom cookie function for saving and loading of the SpriteText settings. Default cookie is not saving settings.
+		 * @param {string} [guiParams.cookieName=""] Name of the cookie is "Player" + guiParams.cookieName.
+		 */
+		this.gui = function ( folder, guiParams = {} ) {
+
+			guiParams.getLanguageCode = guiParams.getLanguageCode || function () { return "en"; };
+			guiParams.cookie = guiParams.cookie || new Cookie.defaultCookie();
+			guiParams.cookieName = guiParams.cookieName || '';
+
+			const cookie = guiParams.cookie, cookieName = 'Player' + guiParams.cookieName;
+			function setSettings() {
+
+				setDT();
+				cookie.setObject( cookieName, g_settings );
+				if ( options.onChangeScaleT ) options.onChangeScaleT( g_settings );
+
+			}
 			setMax();
-			if ( axes.max !== null ) {
+			const axesDefault = JSON.parse( JSON.stringify( g_settings ) ),
+				lang = getLang( {
 
-				scaleControllers.max = dat.controllerZeroStep( scaleControllers.folder, axes, 'max', function ( value ) { setSettings(); } );
-				dat.controllerNameAndTitle( scaleControllers.max, lang.max );
-
-			} else {
-
-				//dt
-				scaleControllers.dt = dat.controllerZeroStep( scaleControllers.folder, axes, 'dt', function ( value ) { setSettings(); } );
-				dat.controllerNameAndTitle( scaleControllers.dt, lang.dt, lang.dtTitle );
-
-			}
-
-			//marks
-			if ( axes.marks ) {
-
-				scaleControllers.marks = scaleControllers.folder.add( axes, 'marks' ).onChange( function ( value ) {
-
-					axes.marks = parseInt( axes.marks );
-					setSettings();
-					const elSlider = getSliderElement();
-					if ( elSlider ) elSlider.max = g_settings.marks - 1;
+					getLanguageCode: guiParams.getLanguageCode,
+					//lang: guiParams.lang
 
 				} );
-				dat.controllerNameAndTitle( scaleControllers.marks, axes.marksName === undefined ? lang.marks : axes.marksName,
-					axes.marksTitle === undefined ? lang.marksTitle : axes.marksTitle );
+			Object.freeze( axesDefault );
+			const max = g_settings.max, marks = g_settings.marks;
+			cookie.getObject( cookieName, g_settings, g_settings );
+			if ( ( max === null ) || ( max === Infinity ) ||
+				( g_settings.max === null )//раньше на веб странице плеер был настроен на бесконечное проигрыванияе а сейчас проигрывание ограничено по времени
+			) {
+
+				g_settings.max = max;
+				g_settings.marks = marks;
 
 			}
 
-			//Ticks per seconds.
-			scaleControllers.interval = scaleControllers.folder.add( options.settings, 'interval', 1, 25, 1 ).onChange( function ( value ) {
+			const fPlayer = folder.addFolder( lang.player );
+			dat.folderNameAndTitle( fPlayer, lang.player, lang.playerTitle );
 
-				setSettings();
+			function scale() {
 
-			} );
-			dat.controllerNameAndTitle( scaleControllers.interval, lang.interval, lang.intervalTitle );
+				const axes = g_settings,//options.settings,
+					scaleControllers = {};
+				function onclick( customController, action ) {
 
-			//Default button
-			dat.controllerNameAndTitle( scaleControllers.folder.add( {
+					var zoom = customController.controller.getValue();
 
-				defaultF: function ( value ) {
-
-					axes.zoomMultiplier = axesDefault.zoomMultiplier;
-					scaleControllers.scaleController.setValue( axes.zoomMultiplier );
-
-					axes.offset = axesDefault.offset;
-					scaleControllers.positionController.setValue( axes.offset );
-
-					axes.min = axesDefault.min;
+					axes.min = action( axes.min, zoom );
 					scaleControllers.min.setValue( axes.min );
+					if ( axes.max ) {
 
-					if ( scaleControllers.max ) {
-
-						axes.max = axesDefault.max;
+						axes.max = action( axes.max, zoom );
 						setDT();
 						scaleControllers.max.setValue( axes.max );
 
 					}
 
-					if ( scaleControllers.dt ) {
-
-						axes.dt = axesDefault.dt;
-						scaleControllers.dt.setValue( axes.dt );
-
-					}
-
-					if ( axesDefault.marks ) {
-
-						axes.marks = axesDefault.marks;
-
-						//scaleControllers.marks is undefined если программист сначала установил max: Infinity,
-						//соханил Player in cookie, например изменил marks
-						//удалил max: Infinity,
-						//Нажал кнопку Default для проигрывателя
-						if ( scaleControllers.marks )
-							scaleControllers.marks.setValue( axes.marks );
-
-					}
-
-					axes.interval = axesDefault.interval;
-					scaleControllers.interval.setValue( axes.interval );
-
 					setSettings();
 
-				},
+				}
 
-			}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
+				scaleControllers.folder = fPlayer.addFolder( axes.name !== '' ? axes.name : lang.time );
 
-		}
-		scale();
+				scaleControllers.scaleController = scaleControllers.folder.add( new ScaleController( onclick,
+					{ settings: options.settings, getLanguageCode: guiParams.getLanguageCode, } ) ).onChange( function ( value ) {
 
-	}
+						axes.zoomMultiplier = value;
+						setSettings();
 
-	var _canvasMenu;
-	/**
-	 * Adds a Player's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
-	 * @param {CanvasMenu} canvasMenu [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
-	 */
-	this.createCanvasMenuItem = function ( canvasMenu ) {
+					} );
 
-		_canvasMenu = canvasMenu;
-		const player = this, menu = canvasMenu.menu;
+				const positionController = new PositionController( function ( shift ) {
 
-		//Previous button
-		menu.push( {
+					onclick( positionController, function ( value, zoom ) {
 
-			name: lang.prevSymbol,
-			title: lang.prevSymbolTitle,
-			onclick: function ( event ) { player.prev(); }
+						value += shift;//zoom;
+						return value;
 
-		} );
+					} );
 
-		//Play button
-		menu.push( {
+				}, { settings: options.settings, getLanguageCode: guiParams.getLanguageCode, } );
+				scaleControllers.positionController = scaleControllers.folder.add( positionController ).onChange( function ( value ) {
 
-			name: lang.playSymbol,
-			title: lang.playTitle,
-			id: "menuButtonPlay",
-			onclick: function ( event ) {
+					axes.offset = value;
+					setSettings();
 
-//				if ( selectSceneIndex >= ( g_settings.marks - 1 ) ) selectSceneIndex =  0;
-				player.play3DObject();
+				} );
 
-			}
+				//min
+				scaleControllers.min = dat.controllerZeroStep( scaleControllers.folder, axes, 'min', function ( value ) { setSettings(); } );
+				dat.controllerNameAndTitle( scaleControllers.min, lang.min );
 
-		} );
+				//max
+				//axes.max сейчас используется исключитьельно для удобства пользовательского интерфейса
+				//Вместо axes.max используется axes.dt
+				setMax();
+				if ( axes.max !== null ) {
 
-		if ( g_settings.max !== null ) {
-
-			//Repeat button
-			menu.push( {
-
-				name: lang.repeat,
-				title: this.getOptions().repeat ? lang.repeatOff : lang.repeatOn,
-				id: "menuButtonRepeat",
-				onclick: function ( event ) { player.repeat(); }
-
-			} );
-
-		}
-
-		//Next button
-		menu.push( {
-
-			name: lang.nextSymbol,
-			title: lang.nextSymbolTitle,
-			onclick: function ( event ) { player.next(); }
-
-		} );
-
-		controllers.push( {
-
-			/* *
-			 * Renames the "Play" button of the player's menu.
-			 * @param {boolean} playing <b>true</b> - pause.
-			 * <p><b>false</b> - play</p>
-			 */
-			onRenamePlayButtons: function ( playing ) {
-
-				var name, title;
-				if ( playing ) {
-
-					name = lang.pause;
-					title = lang.pauseTitle;
+					scaleControllers.max = dat.controllerZeroStep( scaleControllers.folder, axes, 'max', function ( value ) { setSettings(); } );
+					dat.controllerNameAndTitle( scaleControllers.max, lang.max );
 
 				} else {
 
-					name = lang.playSymbol;
-					title = lang.playTitle;
+					//dt
+					scaleControllers.dt = dat.controllerZeroStep( scaleControllers.folder, axes, 'dt', function ( value ) { setSettings(); } );
+					dat.controllerNameAndTitle( scaleControllers.dt, lang.dt, lang.dtTitle );
 
 				}
-				const elMenuButtonPlay = canvasMenu.querySelector( '#menuButtonPlay' );
-				elMenuButtonPlay.innerHTML = name;
-				elMenuButtonPlay.title = title;
 
-			},
+				//marks
+				if ( axes.marks ) {
 
-			/* *
-			 * Changes "Repeat" button of the player's menu between <b>repeat Off</b> and <b>repeat On</b>.
-			 */
-			onChangeRepeat: function () {
+					scaleControllers.marks = scaleControllers.folder.add( axes, 'marks' ).onChange( function ( value ) {
 
-				canvasMenu.querySelector( '#menuButtonRepeat' ).title = g_settings.repeat ? lang.repeatOff : lang.repeatOn;
+						axes.marks = parseInt( axes.marks );
+						setSettings();
+						const elSlider = getSliderElement();
+						if ( elSlider ) elSlider.max = g_settings.marks - 1;
+
+					} );
+					dat.controllerNameAndTitle( scaleControllers.marks, axes.marksName === undefined ? lang.marks : axes.marksName,
+						axes.marksTitle === undefined ? lang.marksTitle : axes.marksTitle );
+
+				}
+
+				//Ticks per seconds.
+				scaleControllers.interval = scaleControllers.folder.add( options.settings, 'interval', 1, 25, 1 ).onChange( function ( value ) {
+
+					setSettings();
+
+				} );
+				dat.controllerNameAndTitle( scaleControllers.interval, lang.interval, lang.intervalTitle );
+
+				//Default button
+				dat.controllerNameAndTitle( scaleControllers.folder.add( {
+
+					defaultF: function ( value ) {
+
+						axes.zoomMultiplier = axesDefault.zoomMultiplier;
+						scaleControllers.scaleController.setValue( axes.zoomMultiplier );
+
+						axes.offset = axesDefault.offset;
+						scaleControllers.positionController.setValue( axes.offset );
+
+						axes.min = axesDefault.min;
+						scaleControllers.min.setValue( axes.min );
+
+						if ( scaleControllers.max ) {
+
+							axes.max = axesDefault.max;
+							setDT();
+							scaleControllers.max.setValue( axes.max );
+
+						}
+
+						if ( scaleControllers.dt ) {
+
+							axes.dt = axesDefault.dt;
+							scaleControllers.dt.setValue( axes.dt );
+
+						}
+
+						if ( axesDefault.marks ) {
+
+							axes.marks = axesDefault.marks;
+
+							//scaleControllers.marks is undefined если программист сначала установил max: Infinity,
+							//соханил Player in cookie, например изменил marks
+							//удалил max: Infinity,
+							//Нажал кнопку Default для проигрывателя
+							if ( scaleControllers.marks )
+								scaleControllers.marks.setValue( axes.marks );
+
+						}
+
+						axes.interval = axesDefault.interval;
+						scaleControllers.interval.setValue( axes.interval );
+
+						setSettings();
+
+					},
+
+				}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
+
+			}
+			scale();
+
+		}
+
+		var _canvasMenu;
+		/**
+		 * Adds a Player's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+		 * @param {CanvasMenu} canvasMenu [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+		 */
+		this.createCanvasMenuItem = function ( canvasMenu ) {
+
+			_canvasMenu = canvasMenu;
+			const player = this, menu = canvasMenu.menu;
+
+			//Previous button
+			menu.push( {
+
+				name: lang.prevSymbol,
+				title: lang.prevSymbolTitle,
+				onclick: function ( event ) { player.prev(); }
+
+			} );
+
+			//Play button
+			menu.push( {
+
+				name: lang.playSymbol,
+				title: lang.playTitle,
+				id: "menuButtonPlay",
+				onclick: function ( event ) {
+
+					//				if ( selectSceneIndex >= ( g_settings.marks - 1 ) ) selectSceneIndex =  0;
+					player.play3DObject();
+
+				}
+
+			} );
+
+			if ( g_settings.max !== null ) {
+
+				//Repeat button
+				menu.push( {
+
+					name: lang.repeat,
+					title: this.getOptions().repeat ? lang.repeatOff : lang.repeatOn,
+					id: "menuButtonRepeat",
+					onclick: function ( event ) { player.repeat(); }
+
+				} );
 
 			}
 
-		} );
+			//Next button
+			menu.push( {
 
-	}
+				name: lang.nextSymbol,
+				title: lang.nextSymbolTitle,
+				onclick: function ( event ) { player.next(); }
 
-	/**
-	 * Adds slider menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
-	 */
-	this.addSlider = function () {
+			} );
 
-		if ( g_settings.max === null )
-			return;
-			
-		_canvasMenu.menu.push( {
+			controllers.push( {
 
-			name: '<input type="range" min="0" max="' + ( Player.getSettings().marks - 1 ) + '" value="0" class="slider" id="sliderPosition">',
-			style: 'float: right;',
+				/* *
+				 * Renames the "Play" button of the player's menu.
+				 * @param {boolean} playing <b>true</b> - pause.
+				 * <p><b>false</b> - play</p>
+				 */
+				onRenamePlayButtons: function ( playing ) {
 
-		} );
+					var name, title;
+					if ( playing ) {
 
-	}
+						name = lang.pause;
+						title = lang.pauseTitle;
 
-	function getSliderElement() { if ( _canvasMenu ) return _canvasMenu.querySelector( '#sliderPosition' ); }
+					} else {
 
-	/**
-	 * Adds an events into slider menu item of the [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
-	 * @returns slider element
-	 */
-	this.addSliderEvents = function () {
+						name = lang.playSymbol;
+						title = lang.playTitle;
 
-		const elSlider = getSliderElement(), player = this;
-		if ( elSlider ) {
+					}
+					const elMenuButtonPlay = canvasMenu.querySelector( '#menuButtonPlay' );
+					elMenuButtonPlay.innerHTML = name;
+					elMenuButtonPlay.title = title;
 
-			elSlider.onchange = function ( event ) { player.selectScene( parseInt( elSlider.value ) ); };
-			elSlider.oninput = function ( event ) { player.selectScene( parseInt( elSlider.value ) ); };
+				},
 
-			var pointerdown;//, spriteText;
-			const player = this;
-			elSlider.addEventListener( 'pointerdown', e => { pointerdown = true; } );
-			elSlider.addEventListener( 'pointerup', e => { pointerdown = false; } );
-			elSlider.addEventListener( 'mousemove', e => {
+				/* *
+				 * Changes "Repeat" button of the player's menu between <b>repeat Off</b> and <b>repeat On</b>.
+				 */
+				onChangeRepeat: function () {
 
-				if ( !pointerdown )
-					return;
-				player.selectScene( ( g_settings.marks - 1 ) * e.offsetX / elSlider.clientWidth );
+					canvasMenu.querySelector( '#menuButtonRepeat' ).title = g_settings.repeat ? lang.repeatOff : lang.repeatOn;
+
+				}
 
 			} );
 
 		}
-		return elSlider;
 
-	}
+		/**
+		 * Adds slider menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+		 */
+		this.addSlider = function () {
 
-	/**
-	 * Sets <b>index</b> and <b>title</b> of the slider element of the player's menu.
-	 * @param {string} index
-	 * @param {string} title
-	 */
-	this.setIndex = function ( index, title ) {
+			if ( g_settings.max === null )
+				return;
 
-		if ( this.PlayController ) this.PlayController.setValue( this.getTime() );
-		const elSlider = getSliderElement();
-		if ( elSlider ) {
+			_canvasMenu.menu.push( {
 
-			elSlider.value = index;
-			elSlider.title = title;
+				name: '<input type="range" min="0" max="' + ( Player.getSettings().marks - 1 ) + '" value="0" class="slider" id="sliderPosition">',
+				style: 'float: right;',
+
+			} );
 
 		}
 
+		function getSliderElement() { if ( _canvasMenu ) return _canvasMenu.querySelector( '#sliderPosition' ); }
+
+		/**
+		 * Adds an events into slider menu item of the [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+		 * @returns slider element
+		 */
+		this.addSliderEvents = function () {
+
+			const elSlider = getSliderElement(), player = this;
+			if ( elSlider ) {
+
+				elSlider.onchange = function ( event ) { player.selectScene( parseInt( elSlider.value ) ); };
+				elSlider.oninput = function ( event ) { player.selectScene( parseInt( elSlider.value ) ); };
+
+				var pointerdown;//, spriteText;
+				const player = this;
+				elSlider.addEventListener( 'pointerdown', e => { pointerdown = true; } );
+				elSlider.addEventListener( 'pointerup', e => { pointerdown = false; } );
+				elSlider.addEventListener( 'mousemove', e => {
+
+					if ( !pointerdown )
+						return;
+					player.selectScene( ( g_settings.marks - 1 ) * e.offsetX / elSlider.clientWidth );
+
+				} );
+
+			}
+			return elSlider;
+
+		}
+
+		/**
+		 * Sets <b>index</b> and <b>title</b> of the slider element of the player's menu.
+		 * @param {string} index
+		 * @param {string} title
+		 */
+		this.setIndex = function ( index, title ) {
+
+			if ( this.PlayController ) this.PlayController.setValue( this.getTime() );
+			const elSlider = getSliderElement();
+			if ( elSlider ) {
+
+				elSlider.value = index;
+				elSlider.title = title;
+
+			}
+
+		}
+
+		/**
+		 * Changes the "max" value of the slider of the player's menu. Moves [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html} to the first scene.
+		 * @param {Object} scale See <b>options.settings</b> of the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
+		 */
+		this.onChangeScale = function ( scale ) {
+
+			getSliderElement().max = scale.marks - 1;
+			this.selectScene( 0 );
+
+		}
+
+		//	g_boPlayer = true;
+
 	}
-
-	/**
-	 * Changes the "max" value of the slider of the player's menu. Moves [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html} to the first scene.
-	 * @param {Object} scale See <b>options.settings</b> of the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
-	 */
-	this.onChangeScale = function ( scale ) {
-
-		getSliderElement().max = scale.marks - 1;
-		this.selectScene( 0 );
-
-	}
-
-//	g_boPlayer = true;
 
 }
+
 /** @namespace
  * @description Is player created?
  * @returns true if Player is created
