@@ -70,10 +70,10 @@
 */
 //import { myThreejs, THREE } from '../myThreejs/myThreejs.js';
 import MyThree from '../myThree/myThree.js';
-import cookie from '../../../commonNodeJS/master/cookieNodeJS/cookie.js';
-import clearThree from '../../../commonNodeJS/master/clearThree.js';
-import { dat } from '../../../commonNodeJS/master/dat/dat.module.js';
-
+import cookie from '../cookieNodeJS/cookie.js';
+import clearThree from '../clearThree.js';
+import { dat } from '../dat/dat.module.js';
+//import { GuiSelectPoint } from '../guiSelectPoint/guiSelectPoint.js';
 
 //memory limit
 //import roughSizeOfObject from '../../commonNodeJS/master/SizeOfObject.js';
@@ -95,8 +95,11 @@ function getStandardNormalDistribution( x ) {
 	return res;
 
 }
+
+//const shaderMaterial = {};
+//var shaderMaterialDefault;
+
 class FrustumPoints
-	/** @lends FrustumPoints.prototype */
 {
 	/**
 	 * Create a `FrustumPoints` instance.
@@ -140,6 +143,9 @@ class FrustumPoints
 	 */
 	constructor( THREE, camera, controls, group, cookieName, spatialMultiplex, renderer, options, shaderMaterialDefault, cFrustumPoints, palette ) {
 
+		this.shaderMaterialDefault = shaderMaterialDefault;
+		this.options = options;
+
 		if ( ( options.arrayCloud === undefined ) || ( options.arrayCloud.length === 0 ) )
 			return undefined;//нет точек с облаком. Поэтому нет смысла создавать frustumPoints
 		shaderMaterialDefault = shaderMaterialDefault || {};
@@ -170,8 +176,9 @@ class FrustumPoints
 		//0 base is null
 		//100 no scale
 		shaderMaterialDefault.square = shaderMaterialDefault.square !== undefined ? shaderMaterialDefault.square : false; //true - Square base of the frustum points.
-		var shaderMaterial = {};
 		Object.freeze( shaderMaterialDefault );
+		const shaderMaterial = {};
+		this.shaderMaterial = shaderMaterial;
 		cookie.getObject( cookieName, shaderMaterial, shaderMaterialDefault );
 		function saveSettings() { cookie.setObject( cookieName, shaderMaterial ); }
 
@@ -181,10 +188,11 @@ class FrustumPoints
 		shaderMaterial.stereo.hide = shaderMaterialDefault.stereo.hide;
 		shaderMaterial.stereo.opacity = shaderMaterialDefault.stereo.opacity;
 
-		var points, zeroPoint = new THREE.Vector3(), cameraDistanceDefault = camera.position.distanceTo( zeroPoint ), _this = this,
-			lines = [], groupFrustumPoints = new THREE.Group(), names,
-			//		cloudPoints,
-			cloud = function () {
+		var points, names;
+		const zeroPoint = new THREE.Vector3(), cameraDistanceDefault = camera.position.distanceTo( zeroPoint ), _this = this,
+			lines = [], groupFrustumPoints = new THREE.Group();
+		this.lines = lines;
+		var cloud = function () {
 
 				var uniforms;
 				var distanceTableWidth;//distanceTable points count
@@ -390,7 +398,7 @@ class FrustumPoints
 					for ( var i = 0; i &lt; mesh.geometry.attributes.position.count; i++ ) {
 
 						this.cloudPoints.updateItem( mesh.userData.cloud.indexArray + i,
-							myThreejs.getWorldPosition( mesh,
+							MyThree.getWorldPosition( mesh,
 								new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) ) );
 
 					}
@@ -423,41 +431,6 @@ class FrustumPoints
 			' points.rotation: ' + points.rotation.x + ' ' + points.rotation.y + ' ' + points.rotation.z );
 			*/
 			options.guiSelectPoint.setMesh();
-
-		}
-		function removePoints( notRemoveMesh ) {
-
-			lines.forEach( function ( item ) {
-
-				clearThree( item );
-				if ( groupFrustumPoints.children.indexOf( item ) === -1 )
-					console.error( 'FrustumPoints.Create.removePoints() failed! Line is not in the group.' )
-				groupFrustumPoints.remove( item );
-
-			} );
-			lines.length = 0;
-
-			if ( points === undefined )
-				return;
-			if ( !notRemoveMesh )
-				options.guiSelectPoint.removeMesh( points );//не удаляю frustumPoints из списка Meshes потому что сюда попадает только если пользователь изменил число точек frustumPoints.
-			//В этом случае создается новый frustumPoints, который надо присоеденить к старому frustumPoints из списка Meshes.
-			//Если я удалю frustumPoints из списка Meshes а потом добавлю туда новый frustumPoints,
-			//то изменится индекс frustumPoints в списке Meshes
-			//и тогда неверно будет выполняться function update() в frustumPoints и как результат буде неверный список Ponts списке Meshes
-			//for testing
-			//Select in the canvas any point, but not frustum point.
-			//Now you can see your selected point in the in the Meshes/Points/Select list in the gui.
-			//Change Settings/Frustum Points/Z count in the gui.
-			//Now your selected point is deselected.
-			//Select in the canvas your point again.
-			//Now yiou can see "Cannot read property 'selected' of undefined" error message in the console.
-			//Try to select your point in the gui. You can not to do it because your point is not exists in the Meshes/Points/Select list. Instead you see all Frustum Points in the Meshs/Points/Select list.
-
-			group.remove( points );
-			renderer.renderLists.dispose();
-			clearThree( points );
-			points = undefined;
 
 		}
 		function isLines() {
@@ -912,6 +885,7 @@ class FrustumPoints
 				onReady: function ( newPoints ) {
 
 					points = newPoints;
+					_this.points = points;
 					points.userData.boFrustumPoints = true;
 					points.userData.isInfo = function () { return shaderMaterial.info; }
 
@@ -1073,7 +1047,7 @@ class FrustumPoints
 				console.error( 'points.geometry.attributes.position.itemSize = ' + points.geometry.attributes.position.itemSize );
 			//		cloud.updateItem( points.userData.cloud.indexArray + '_' + i,
 			cloud.cloudPoints.updateItem( points.userData.cloud.indexArray + i,
-				myThreejs.getWorldPosition( points,
+				MyThree.getWorldPosition( points,
 					new THREE.Vector4().fromArray( points.geometry.attributes.position.array, i * points.geometry.attributes.position.itemSize ) ),
 				true );
 			needsUpdate();
@@ -1084,326 +1058,373 @@ class FrustumPoints
 		// i.e. calculate scales, positions and rotation of the points.
 		//Converting of all points with cloud and shaderMaterial see getShaderMaterialPoints function in the myPoints.js file
 		this.updateCloudPoints();
-		return this;
 
-	}
-
-	/**
-	* @callback FolderPoint
-	* @param {object} folder parent folder
-	* @param {function} setSettings save points setting to the cookie
-	*/
-
-	/**
-	 * Adds FrustumPoints folder into dat.GUI.
-	 * See [dat.GUI API]{@link https://github.com/dataarts/dat.gui/blob/master/API.md}.
-	 * @param {object} folder parent folder
-	 * @param {function} getLanguageCode returns the "primary language" subtag of the version of the browser. Default returns "en" is English
-	 * @param {FolderPoint} FolderPoint creates the folder of the point's settings
-	 */
-	gui ( folder, getLanguageCode, FolderPoint ) {
-
-		//Localization
-
-		var lang = {
-
-			frustumPoints: 'Frustum Points',
-			frustumPointsTitle: 'A cloud of the fixed points in front of the camera for describe the properties of space.',
-
-			display: 'Display',
-			displayTitle: 'Display or hide Frustum Points.',
-
-			info: 'Information',
-			infoTitle: 'Display information about frustum point if user move mouse over or click this point.',
-
-			stereo: 'Stereo',
-			stereoTitle: 'Frustum Points setting for stereo mode of the canvas',
-
-			displayLines: 'Display Lines',
-			displayLinesTitle: 'Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.',
-
-			hide: 'Hide Nearby Points',
-			hideTitle: 'Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.',
-
-			opacity: 'Opacity',
-			opacityTitle: 'Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.',
-
-			near: 'Near Layer',
-			nearTitle: 'Shift of the frustum layer near to the camera in percents.',
-
-			far: 'Far Layer',
-			farTitle: 'Shift of the frustum layer far to the camera in percents.',
-
-			base: 'Scale',
-			baseTitle: 'Scale of the base of the frustum points in percents.',
-
-			square: 'Square Base',
-			squareTitle: 'Square base of the frustum points.',
-
-			defaultButton: 'Default',
-			defaultTitle: 'Restore default Frustum Points settings.',
-
-			zCount: 'Z Count',
-			zCountTitle: "The count of layers of the frustum of the camera's field of view.",
-
-			yCount: 'Y Count',
-			yCountTitle: "The count of vertical points for each z level of the  frustum of the camera's field of view.",
-
-		};
-
-		var languageCode = getLanguageCode === undefined ? 'en'//Default language is English
-			: getLanguageCode();
-		switch ( languageCode ) {
-
-			case 'ru'://Russian language
-
-				lang.frustumPoints = 'Неподвижные точки';
-				lang.frustumPointsTitle = 'Облако точек перед камерой для описания свойств пространства';
-
-				lang.display = 'Показать';
-				lang.displayTitle = 'Показать или скрыть неподвижные точки.';
-
-				lang.info = 'Информация';
-				lang.infoTitle = 'Отображать информацию о неподвижной точке, если пользователь наведет курсор мыши или щелкнет эту точку.';
-
-				lang.stereo = 'Стерео';
-				lang.stereoTitle = 'Настройки неподвижных точек для стерео режима холста';
-
-				lang.displayLines = 'Показать линии';
-				lang.displayLinesTitle = 'Показать или скрыть линии между неподвижными точками.';
-
-				lang.hide = 'Близкие точки';
-				lang.hideTitle = 'Скрыть близкие к камере точки в процентах ко всем точкам для более удобной визуализации.';
-
-				lang.opacity = 'Непрозрачность';
-				lang.opacityTitle = 'Число в диапазоне 0.0 - 1.0, указывающее, насколько прозрачены линии. Значение 0.0 означает полностью прозрачный, 1.0 - полностью непрозрачный.';
-
-				lang.near = 'Ближний слой';
-				lang.nearTitle = 'Смещение ближайшего к камере слоя точек в процентах.';
-
-				lang.far = 'Дальний слой';
-				lang.nearTitle = 'Смещение дальнего от камеры слоя точек в процентах.';
-
-				lang.base = 'Масштаб';
-				lang.baseTitle = 'Масштаб неподвижных точек в процентах.';
-
-				lang.square = 'Квадратное основание';
-				lang.squareTitle = 'Неподвиждые точки образуют пирамиду с квадратным основанием.';
-
-				lang.defaultButton = 'Восстановить';
-				lang.defaultTitle = 'Восстановить настройки неподвижных точек.';
-
-				lang.zCount = 'Z cлои';
-				lang.zCountTitle = 'Количество слоев усеченной пирамиды, образующей поле зрения камеры';
-
-				lang.yCount = 'Y точки';
-				lang.yCountTitle = "Количество вертикальных точек в каждом слое усеченной пирамиды, образующей поле зрения камеры.";
-
-				break;
-			default://Custom language
-				if ( ( options.lang === undefined ) || ( options.lang.languageCode != languageCode ) )
-					break;
-
-				Object.keys( options.lang ).forEach( function ( key ) {
-
-					if ( lang[key] === undefined )
-						return;
-					lang[key] = options.lang[key];
-
-				} );
-
-		}
-
-		var fFrustumPoints = folder.addFolder( lang.frustumPoints );
-		dat.folderNameAndTitle( fFrustumPoints, lang.frustumPoints, lang.frustumPointsTitle );
-
-		function displayControllers( value ) {
-
-			var display = value ? 'block' : 'none';
-			folderPoint.display( display );
-			cZCount.__li.style.display = display;
-			cYCount.__li.style.display = display;
-			//fStereo.domElement.style.display = display;
-
-		}
-		//Display frustumPoints
-		var cDisplay = fFrustumPoints.add( shaderMaterial, 'display' ).onChange( function ( value ) {
-
-			if ( shaderMaterial.display ) {
-
-				update();
-
-			} else {
-
-				options.raycaster.removeParticle( points );
-				removePoints();
-
-			}
-			displayControllers( shaderMaterial.display );
-			saveSettings();
-
-		} );
-		dat.controllerNameAndTitle( cDisplay, lang.display, lang.displayTitle );
-
-		//FrustumPoints info.
-		//Display information about frustum point if user move mouse over or click this point.
-		var cInfo = fFrustumPoints.add( shaderMaterial, 'info' ).onChange( function ( value ) {
-
-			if ( points === undefined ) {
-
-				//				console.error( 'points = ' + points );
-				return;//shaderMaterial.display = false
-
-			}
-			if ( shaderMaterial.info )
-				options.raycaster.addParticle( points );
-			else {
-
-				options.guiSelectPoint.selectPoint( -1 );
-				options.raycaster.removeParticle( points );
-
-			}
-			saveSettings();
-
-		} );
-		dat.controllerNameAndTitle( cInfo, lang.info, lang.infoTitle );
-
-		/*сейчас lines не использую
-		/////////////////////////////////
-		//Stereo
-	
-		var fStereo = fFrustumPoints.addFolder( lang.stereo );
-		dat.folderNameAndTitle( fStereo, lang.stereo, lang.stereoTitle );
-	
-		//Display lines
-		var cDisplayLines = fStereo.add( shaderMaterial.stereo, 'lines' ).onChange( function ( value ) { update(); } );
-		dat.controllerNameAndTitle( cDisplayLines, lang.displayLines, lang.displayLinesTitle );
-	
-		//Hide Nearby Points
-		var cHide = fStereo.add( shaderMaterial.stereo, 'hide', 0, 50, 1 ).onChange( function ( value ) { update(); } )
-		dat.controllerNameAndTitle( cHide, lang.hide, lang.hideTitle );
-	
-		var cOpacity = fStereo.add( shaderMaterial.stereo, 'opacity', 0.0, 1.0, 0.01 ).onChange( function ( value ) { update(); } );
-		dat.controllerNameAndTitle( cOpacity, lang.opacity, lang.opacityTitle );
-	
-		/////////////////////////////////
+		/**
+		* @callback FolderPoint
+		* @param {object} folder parent folder
+		* @param {function} setSettings save points setting to the cookie
 		*/
 
-		//Shift of the frustum layer near to the camera in percents
-		var cNear = fFrustumPoints.add( shaderMaterial, 'near', 0, 100, 1 ).onChange( function ( value ) { update(); } );
-		dat.controllerNameAndTitle( cNear, lang.near, lang.nearTitle );
+		/**
+		 * Adds FrustumPoints folder into dat.GUI.
+		 * See [dat.GUI API]{@link https://github.com/dataarts/dat.gui/blob/master/API.md}.
+		 * @param {object} folder parent folder
+		 * @param {function} getLanguageCode returns the "primary language" subtag of the version of the browser. Default returns "en" is English
+		 * @param {FolderPoint} FolderPoint creates the folder of the point's settings
+		 */
+		this.gui = function  ( folder, getLanguageCode, FolderPoint ) {
 
-		//Shift of the frustum layer far to the camera in percents
-		var cFar = fFrustumPoints.add( shaderMaterial, 'far', 0, 100, 1 ).onChange( function ( value ) { update(); } );
-		dat.controllerNameAndTitle( cFar, lang.far, lang.farTitle );
+			const shaderMaterialDefault = this.shaderMaterialDefault,
+				options = this.options,
+				shaderMaterial = this.shaderMaterial,
+				lines = this.lines;
+			//			points = this.points;
 
-		//Scale of the base of the frustum points in percents.
-		var cBase = fFrustumPoints.add( shaderMaterial, 'base', 0, 100, 1 ).onChange( function ( value ) { update(); } );
-		dat.controllerNameAndTitle( cBase, lang.base, lang.baseTitle );
+			//Localization
 
-		//Square base of the frustum points.
-		var cSquare = fFrustumPoints.add( shaderMaterial, 'square' ).onChange( function ( value ) { update(); } );
-		dat.controllerNameAndTitle( cSquare, lang.square, lang.squareTitle );
+			var lang = {
 
-		var folderPoint = new FolderPoint( fFrustumPoints, shaderMaterial.point, shaderMaterialDefault.point, function ( value ) {
+				frustumPoints: 'Frustum Points',
+				frustumPointsTitle: 'A cloud of the fixed points in front of the camera for describe the properties of space.',
 
-			//Не помню зачем это написал
-			if ( value === undefined ) {
+				display: 'Display',
+				displayTitle: 'Display or hide Frustum Points.',
 
-				console.warn( 'under constraction' );
-				//				value = points.userData.shaderMaterial.point.size;
+				info: 'Information',
+				infoTitle: 'Display information about frustum point if user move mouse over or click this point.',
+
+				stereo: 'Stereo',
+				stereoTitle: 'Frustum Points setting for stereo mode of the canvas',
+
+				displayLines: 'Display Lines',
+				displayLinesTitle: 'Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.',
+
+				hide: 'Hide Nearby Points',
+				hideTitle: 'Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.',
+
+				opacity: 'Opacity',
+				opacityTitle: 'Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.',
+
+				near: 'Near Layer',
+				nearTitle: 'Shift of the frustum layer near to the camera in percents.',
+
+				far: 'Far Layer',
+				farTitle: 'Shift of the frustum layer far to the camera in percents.',
+
+				base: 'Scale',
+				baseTitle: 'Scale of the base of the frustum points in percents.',
+
+				square: 'Square Base',
+				squareTitle: 'Square base of the frustum points.',
+
+				defaultButton: 'Default',
+				defaultTitle: 'Restore default Frustum Points settings.',
+
+				zCount: 'Z Count',
+				zCountTitle: "The count of layers of the frustum of the camera's field of view.",
+
+				yCount: 'Y Count',
+				yCountTitle: "The count of vertical points for each z level of the  frustum of the camera's field of view.",
+
+			};
+
+			var languageCode = getLanguageCode === undefined ? 'en'//Default language is English
+				: getLanguageCode();
+			switch ( languageCode ) {
+
+				case 'ru'://Russian language
+
+					lang.frustumPoints = 'Неподвижные точки';
+					lang.frustumPointsTitle = 'Облако точек перед камерой для описания свойств пространства';
+
+					lang.display = 'Показать';
+					lang.displayTitle = 'Показать или скрыть неподвижные точки.';
+
+					lang.info = 'Информация';
+					lang.infoTitle = 'Отображать информацию о неподвижной точке, если пользователь наведет курсор мыши или щелкнет эту точку.';
+
+					lang.stereo = 'Стерео';
+					lang.stereoTitle = 'Настройки неподвижных точек для стерео режима холста';
+
+					lang.displayLines = 'Показать линии';
+					lang.displayLinesTitle = 'Показать или скрыть линии между неподвижными точками.';
+
+					lang.hide = 'Близкие точки';
+					lang.hideTitle = 'Скрыть близкие к камере точки в процентах ко всем точкам для более удобной визуализации.';
+
+					lang.opacity = 'Непрозрачность';
+					lang.opacityTitle = 'Число в диапазоне 0.0 - 1.0, указывающее, насколько прозрачены линии. Значение 0.0 означает полностью прозрачный, 1.0 - полностью непрозрачный.';
+
+					lang.near = 'Ближний слой';
+					lang.nearTitle = 'Смещение ближайшего к камере слоя точек в процентах.';
+
+					lang.far = 'Дальний слой';
+					lang.farTitle = 'Смещение дальнего от камеры слоя точек в процентах.';
+
+					lang.base = 'Масштаб';
+					lang.baseTitle = 'Масштаб неподвижных точек в процентах.';
+
+					lang.square = 'Квадратное основание';
+					lang.squareTitle = 'Неподвиждые точки образуют пирамиду с квадратным основанием.';
+
+					lang.defaultButton = 'Восстановить';
+					lang.defaultTitle = 'Восстановить настройки неподвижных точек.';
+
+					lang.zCount = 'Z cлои';
+					lang.zCountTitle = 'Количество слоев усеченной пирамиды, образующей поле зрения камеры';
+
+					lang.yCount = 'Y точки';
+					lang.yCountTitle = "Количество вертикальных точек в каждом слое усеченной пирамиды, образующей поле зрения камеры.";
+
+					break;
+				default://Custom language
+					if ( ( options.lang === undefined ) || ( options.lang.languageCode != languageCode ) )
+						break;
+
+					Object.keys( options.lang ).forEach( function ( key ) {
+
+						if ( lang[key] === undefined )
+							return;
+						lang[key] = options.lang[key];
+
+					} );
 
 			}
-			if ( value &lt; 0 )
-				value = 0;
 
-			//See this.animate = function() for details about size of the points
-			//points.userData.shaderMaterial.point.size = value;
+			var fFrustumPoints = folder.addFolder( lang.frustumPoints );
+			dat.folderNameAndTitle( fFrustumPoints, lang.frustumPoints, lang.frustumPointsTitle );
 
-			points.material.uniforms.pointSize.value = value;
+			function displayControllers( value ) {
 
-			folderPoint.size.setValue( value );
-			saveSettings();
+				var display = value ? 'block' : 'none';
+				folderPoint.display( display );
+				cZCount.__li.style.display = display;
+				cYCount.__li.style.display = display;
+				//fStereo.domElement.style.display = display;
 
-		}, {
+			}
+			//Display frustumPoints
+			var cDisplay = fFrustumPoints.add( shaderMaterial, 'display' ).onChange( function ( value ) {
 
-			settings: { offset: 0.1 },
+				if ( shaderMaterial.display ) {
 
-		} );
+					update();
 
-		var toUpdate = true,//Когда пользователь нажимает кнопку Default надо установить toUpdate = false
-			//что бы несколько раз не вызывался _this.update(); чтобы быстрее работало
-			canUpdate = true;
-		function update() {
+				} else {
 
-			if ( !toUpdate || !canUpdate )
-				return;
-			canUpdate = false;
+					options.raycaster.removeParticle( points );
+					removePoints();
 
-			//Не помню почему не удаляю старый points из списка cMeshs, но если так делать, то будут какие то запутанные косяки.
-			//Поэтому не удаляю points из списка cMeshs а только получаю индекс points в этом списке.
-			var index = options.guiSelectPoint.getMeshIndex( points );
-
-			options.raycaster.removeParticle( points );
-			removePoints( true );
-
-			_this.update( function () {
-
-				//затем заменяю указатель на старый points в списке cMeshs на новый.
-				options.guiSelectPoint.setIndexMesh( index, points );
-
+				}
+				displayControllers( shaderMaterial.display );
 				saveSettings();
-				canUpdate = true;
 
-				points.userData.controllers();
+			} );
+			dat.controllerNameAndTitle( cDisplay, lang.display, lang.displayTitle );
+
+			//FrustumPoints info.
+			//Display information about frustum point if user move mouse over or click this point.
+			var cInfo = fFrustumPoints.add( shaderMaterial, 'info' ).onChange( function ( value ) {
+
+				if ( points === undefined ) {
+
+					//				console.error( 'points = ' + points );
+					return;//shaderMaterial.display = false
+
+				}
+				if ( shaderMaterial.info )
+					options.raycaster.addParticle( points );
+				else {
+
+					options.guiSelectPoint.selectPoint( -1 );
+					options.raycaster.removeParticle( points );
+
+				}
+				saveSettings();
+
+			} );
+			dat.controllerNameAndTitle( cInfo, lang.info, lang.infoTitle );
+
+			/*сейчас lines не использую
+			/////////////////////////////////
+			//Stereo
+		
+			var fStereo = fFrustumPoints.addFolder( lang.stereo );
+			dat.folderNameAndTitle( fStereo, lang.stereo, lang.stereoTitle );
+		
+			//Display lines
+			var cDisplayLines = fStereo.add( shaderMaterial.stereo, 'lines' ).onChange( function ( value ) { update(); } );
+			dat.controllerNameAndTitle( cDisplayLines, lang.displayLines, lang.displayLinesTitle );
+		
+			//Hide Nearby Points
+			var cHide = fStereo.add( shaderMaterial.stereo, 'hide', 0, 50, 1 ).onChange( function ( value ) { update(); } )
+			dat.controllerNameAndTitle( cHide, lang.hide, lang.hideTitle );
+		
+			var cOpacity = fStereo.add( shaderMaterial.stereo, 'opacity', 0.0, 1.0, 0.01 ).onChange( function ( value ) { update(); } );
+			dat.controllerNameAndTitle( cOpacity, lang.opacity, lang.opacityTitle );
+		
+			/////////////////////////////////
+			*/
+
+			//Shift of the frustum layer near to the camera in percents
+			var cNear = fFrustumPoints.add( shaderMaterial, 'near', 0, 100, 1 ).onChange( function ( value ) { update(); } );
+			dat.controllerNameAndTitle( cNear, lang.near, lang.nearTitle );
+
+			//Shift of the frustum layer far to the camera in percents
+			var cFar = fFrustumPoints.add( shaderMaterial, 'far', 0, 100, 1 ).onChange( function ( value ) { update(); } );
+			dat.controllerNameAndTitle( cFar, lang.far, lang.farTitle );
+
+			//Scale of the base of the frustum points in percents.
+			var cBase = fFrustumPoints.add( shaderMaterial, 'base', 0, 100, 1 ).onChange( function ( value ) { update(); } );
+			dat.controllerNameAndTitle( cBase, lang.base, lang.baseTitle );
+
+			//Square base of the frustum points.
+			var cSquare = fFrustumPoints.add( shaderMaterial, 'square' ).onChange( function ( value ) { update(); } );
+			dat.controllerNameAndTitle( cSquare, lang.square, lang.squareTitle );
+
+			var folderPoint = new FolderPoint( fFrustumPoints, shaderMaterial.point, shaderMaterialDefault.point, function ( value ) {
+
+				//Не помню зачем это написал
+				if ( value === undefined ) {
+
+					console.warn( 'under constraction' );
+					//				value = points.userData.shaderMaterial.point.size;
+
+				}
+				if ( value &lt; 0 )
+					value = 0;
+
+				//See this.animate = function() for details about size of the points
+				//points.userData.shaderMaterial.point.size = value;
+
+				points.material.uniforms.pointSize.value = value;
+
+				folderPoint.size.setValue( value );
+				saveSettings();
+
+			}, {
+
+				settings: { offset: 0.1 },
 
 			} );
 
+			var toUpdate = true,//Когда пользователь нажимает кнопку Default надо установить toUpdate = false
+				//что бы несколько раз не вызывался _this.update(); чтобы быстрее работало
+				canUpdate = true,
+				_this = this;
+
+			function update() {
+
+				if ( !toUpdate || !canUpdate )
+					return;
+				canUpdate = false;
+
+				const points = _this.points;
+
+				//Не помню почему не удаляю старый points из списка cMeshs, но если так делать, то будут какие то запутанные косяки.
+				//Поэтому не удаляю points из списка cMeshs а только получаю индекс points в этом списке.
+				var index = options.guiSelectPoint.getMeshIndex( points );
+
+				options.raycaster.removeParticle( points );
+				removePoints( true );
+
+				_this.update( function () {
+
+					//затем заменяю указатель на старый points в списке cMeshs на новый.
+					options.guiSelectPoint.setIndexMesh( index, points );
+
+					saveSettings();
+					canUpdate = true;
+
+					points.userData.controllers();
+
+				} );
+
+			}
+
+			//zCount
+			var cZCount = fFrustumPoints.add( shaderMaterial, 'zCount' ).min( 3 ).step( 1 ).onChange( function ( value ) { update(); } );
+			dat.controllerNameAndTitle( cZCount, lang.zCount, lang.zCountTitle );
+
+			//yCount
+			var cYCount = fFrustumPoints.add( shaderMaterial, 'yCount' ).min( 3 ).step( 1 ).onChange( function ( value ) { update(); } );
+			dat.controllerNameAndTitle( cYCount, lang.yCount, lang.yCountTitle );
+
+			//Default button
+			dat.controllerNameAndTitle( fFrustumPoints.add( {
+
+				defaultF: function ( value ) {
+
+					toUpdate = false;
+
+					cDisplay.setValue( shaderMaterialDefault.display );
+					cInfo.setValue( shaderMaterialDefault.info );
+
+					/*сейчас lines не использую
+					//Stereo
+					cDisplayLines.setValue( shaderMaterialDefault.stereo.lines );
+					cHide.setValue( shaderMaterialDefault.stereo.hide );
+					cOpacity.setValue( shaderMaterialDefault.stereo.opacity );
+					*/
+
+					cNear.setValue( shaderMaterialDefault.near );
+					cFar.setValue( shaderMaterialDefault.far );
+					cBase.setValue( shaderMaterialDefault.base );
+					cSquare.setValue( shaderMaterialDefault.square );
+
+					folderPoint.size.setValue( shaderMaterialDefault.point.size );
+
+					cZCount.setValue( shaderMaterialDefault.zCount );
+					cYCount.setValue( shaderMaterialDefault.yCount );
+
+					toUpdate = true;
+					update();
+					saveSettings();
+
+				},
+
+			}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
+			displayControllers( shaderMaterial.display );
+
 		}
 
-		//zCount
-		var cZCount = fFrustumPoints.add( shaderMaterial, 'zCount' ).min( 3 ).step( 1 ).onChange( function ( value ) { update(); } );
-		dat.controllerNameAndTitle( cZCount, lang.zCount, lang.zCountTitle );
+		function removePoints( notRemoveMesh ) {
 
-		//yCount
-		var cYCount = fFrustumPoints.add( shaderMaterial, 'yCount' ).min( 3 ).step( 1 ).onChange( function ( value ) { update(); } );
-		dat.controllerNameAndTitle( cYCount, lang.yCount, lang.yCountTitle );
+			lines.forEach( function ( item ) {
 
-		//Default button
-		dat.controllerNameAndTitle( fFrustumPoints.add( {
+				clearThree( item );
+				if ( groupFrustumPoints.children.indexOf( item ) === -1 )
+					console.error( 'FrustumPoints.Create.removePoints() failed! Line is not in the group.' )
+				groupFrustumPoints.remove( item );
 
-			defaultF: function ( value ) {
+			} );
+			lines.length = 0;
 
-				toUpdate = false;
+			if ( points === undefined )
+				return;
+			if ( !notRemoveMesh )
+				options.guiSelectPoint.removeMesh( points );//не удаляю frustumPoints из списка Meshes потому что сюда попадает только если пользователь изменил число точек frustumPoints.
+			//В этом случае создается новый frustumPoints, который надо присоеденить к старому frustumPoints из списка Meshes.
+			//Если я удалю frustumPoints из списка Meshes а потом добавлю туда новый frustumPoints,
+			//то изменится индекс frustumPoints в списке Meshes
+			//и тогда неверно будет выполняться function update() в frustumPoints и как результат буде неверный список Ponts списке Meshes
+			//for testing
+			//Select in the canvas any point, but not frustum point.
+			//Now you can see your selected point in the in the Meshes/Points/Select list in the gui.
+			//Change Settings/Frustum Points/Z count in the gui.
+			//Now your selected point is deselected.
+			//Select in the canvas your point again.
+			//Now yiou can see "Cannot read property 'selected' of undefined" error message in the console.
+			//Try to select your point in the gui. You can not to do it because your point is not exists in the Meshes/Points/Select list. Instead you see all Frustum Points in the Meshs/Points/Select list.
 
-				cDisplay.setValue( shaderMaterialDefault.display );
-				cInfo.setValue( shaderMaterialDefault.info );
+			group.remove( points );
+			renderer.renderLists.dispose();
+			clearThree( points );
+			points = undefined;
 
-				/*сейчас lines не использую
-				//Stereo
-				cDisplayLines.setValue( shaderMaterialDefault.stereo.lines );
-				cHide.setValue( shaderMaterialDefault.stereo.hide );
-				cOpacity.setValue( shaderMaterialDefault.stereo.opacity );
-				*/
+		}
 
-				cNear.setValue( shaderMaterialDefault.near );
-				cFar.setValue( shaderMaterialDefault.far );
-				cBase.setValue( shaderMaterialDefault.base );
-				cSquare.setValue( shaderMaterialDefault.square );
-
-				folderPoint.size.setValue( shaderMaterialDefault.point.size );
-
-				cZCount.setValue( shaderMaterialDefault.zCount );
-				cYCount.setValue( shaderMaterialDefault.yCount );
-
-				toUpdate = true;
-				update();
-				saveSettings();
-
-			},
-
-		}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
-		displayControllers( shaderMaterial.display );
+		return this;
 
 	}
 
@@ -1583,7 +1604,7 @@ export default FrustumPoints;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Mar 13 2021 11:01:52 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 17 2021 07:42:48 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
