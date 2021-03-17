@@ -1,4 +1,4 @@
-//ATTENTION! currently is not using!. Use D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master\myPoints\fragment.c
+//ATTENTION! currently is not using!. Use D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\myPoints\fragment.c
 //frustumPoints
 //uniform vec4 color;
 uniform sampler2D pointTexture;
