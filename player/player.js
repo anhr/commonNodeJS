@@ -1101,9 +1101,13 @@ Player.cameraTarget = class {
 				cameraTarget.setCameraPosition = function () {
 
 					const target = cameraTarget.target;
-					if ( ( Player.cameraGui && !Player.cameraGui.isLook() ) || !target )
+					if ( ( Player.cameraGui && !Player.cameraGui.isLook() ) || !target ) {
+
+						camera.userData.default.setDefault();
 						return;//Камере не нужно следить за выбранной точкой или ни одна точка не определена как target
 
+					}
+						
 					const t = Player.getTime();
 					camera.position.copy( cameraTarget.distanceToCameraCur );
 					camera.position.applyAxisAngle( cameraTarget.rotation.axis, Player.execFunc( cameraTarget.rotation, 'angle', t ) );
