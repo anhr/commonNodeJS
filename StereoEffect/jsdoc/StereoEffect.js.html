@@ -65,8 +65,8 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
 //Attenttion!!! Save this file as UTF-8 for localization.
 
 /**
- * StereoEffect
- * Uses dual PerspectiveCameras for Parallax Barrier https://en.wikipedia.org/wiki/Parallax_barrier effects
+ * @class
+ * Uses dual PerspectiveCameras for [Parallax Barrier]{@link https://en.wikipedia.org/wiki/Parallax_barrier} effects
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.WebGLRenderer} renderer {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer}
  * @param {Object} [options] the following options are available.
@@ -165,6 +165,12 @@ function StereoEffect( _THREE, renderer, options ) {
 	};
 	var fullScreenSettings;
 	var spatialMultiplexCur;
+	/**
+	 * Render a scene or another type of object using a camera.
+	 * @see [WebGLRenderer.render]{@link https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer.render}
+	 * @param {THREE.Scene} scene [Scene]{@link https://threejs.org/docs/index.html#api/en/scenes/Scene}.
+	 * @param {THREE.Camera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera}.
+	 */
 	this.render = function ( scene, camera ) {
 
 		const spatialMultiplex = parseInt( options.spatialMultiplex );
@@ -195,6 +201,7 @@ function StereoEffect( _THREE, renderer, options ) {
 		var xL, yL, widthL, heightL,
 			xR, yR, widthR, heightR;
 		const parallax = options.zeroParallax;
+/*		
 		function setFullScreen( fullScreen, stereoEffect ){
 
 			if ( !fullScreenSettings || ( spatialMultiplexCur === spatialMultiplex ) )
@@ -203,6 +210,23 @@ function StereoEffect( _THREE, renderer, options ) {
 			spatialMultiplexCur = spatialMultiplex;
 			if ( stereoEffect.setControllerSpatialMultiplex ) stereoEffect.setControllerSpatialMultiplex( spatialMultiplex );
 			else if ( stereoEffect.setSpatialMultiplex ) stereoEffect.setSpatialMultiplex( spatialMultiplex );
+
+		}
+*/		
+		function setMultiplex( stereoEffect ){
+
+			if ( !fullScreenSettings || ( spatialMultiplexCur === spatialMultiplex ) )
+				return false;
+			spatialMultiplexCur = spatialMultiplex;
+			if ( stereoEffect.setControllerSpatialMultiplex ) stereoEffect.setControllerSpatialMultiplex( spatialMultiplex );
+			else if ( stereoEffect.setSpatialMultiplex ) stereoEffect.setSpatialMultiplex( spatialMultiplex );
+			return true;
+
+		}
+		function setFullScreen( fullScreen, stereoEffect ){
+
+			if ( setMultiplex( stereoEffect ) )
+				fullScreenSettings.setFullScreen( fullScreen );
 
 		}
 
@@ -215,7 +239,33 @@ function StereoEffect( _THREE, renderer, options ) {
 				renderer.render( scene, camera );
 				renderer.setScissorTest( false );
 
-				setFullScreen( true, this );
+				//если оствить setFullScreen то canvas не перейдет в full screen
+				//если в программе по умолчанию был задан full screen и используется canvasMenu
+				//Для провероки
+				//в файле "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\myThree\Examples\html\index.html"
+				//	для new MyThree(...)
+				//		установить canvasMenu: true,
+				//		убрать canvas: { fullScreen: false, }. Тоесть по умолчанию canvas перейдет в full screen
+				//открыть http://localhost/anhr/commonNodeJS/master/myThree/Examples/html/
+
+				//setFullScreen( true, this );
+
+				//если оставить setFullScreen то canvas не перейдет в full screen
+				//если убрать setFullScreen то canvas перейдет в full screen
+				//но тогда будет неправильно выбираться пункт меню stereo Effects в canvasMenu в случае, если 
+				//Выбрать пункт "слева направо" меню stereo Effects в canvasMenu.
+				//	включится стерео режим.
+				//	canvas перейдет в full screen.
+				//Выбрать пункт "Восстановить размеры экрана" меню stereo Effects в canvasMenu.
+				//	canvas выйдет из full screen.
+				//	стерео режим отключится
+				//	НО! ОСТАНЕТСЯ ВЫБРАННЫМ пункт "слева направо" меню stereo Effects в canvasMenu.
+				//Для решения проблемы вставил строку ниже
+
+				setMultiplex( this );
+
+				//Теперь в режиме full screen при выборе пункта "Моно" меню stereo Effects в canvasMenu
+				//canvas не выходит из full screen. Ну и фиг с ним.
 
 				return;
 
@@ -336,8 +386,6 @@ function StereoEffect( _THREE, renderer, options ) {
 
 	/**
 	 * Adds StereoEffects folder into dat.GUI.
-	 * @function this.
-	 * gui
 	 * @see {@link https://github.com/anhr/dat.gui|dat.gui}.
 	 * @param {GUI} gui dat.GUI object.
 	 * @param {Object} options See options of StereoEffect above for details.
@@ -409,7 +457,13 @@ function StereoEffect( _THREE, renderer, options ) {
 
 			} );
 		dat.controllerNameAndTitle( _controllerSpatialMultiplex, _lang.spatialMultiplexName, _lang.spatialMultiplexTitle );
-		this.setControllerSpatialMultiplex = function( index ) { _controllerSpatialMultiplex.setValue( index ); }
+		this.setControllerSpatialMultiplex = function( index ) {
+
+			saveToCookie = false;
+			_controllerSpatialMultiplex.setValue( index );
+			saveToCookie = true;
+
+		}
 
 		//eyeSeparation
 		//http://paulbourke.net/papers/vsmm2007/stereoscopy_workshop.pdf
@@ -484,12 +538,15 @@ function StereoEffect( _THREE, renderer, options ) {
 
 		displayControllers( options.spatialMultiplex );
 
+		var saveToCookie = true;
 		/**
 		 * sets an object into cookie.
 		 * @param {string} name cookie name.
 		 */
 		function setObject( name ) {
 
+			if ( !saveToCookie )
+				return;
 			const object = {};
 			Object.keys( optionsDefault ).forEach( function ( key ) {
 
@@ -505,8 +562,6 @@ function StereoEffect( _THREE, renderer, options ) {
 	var _canvasMenu, menuItemStereoEffect;
 	/**
 	 * Adds a StereoEffect's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
-	 * @function StereoEffect.
-	 * createCanvasMenuItem
 	 * @param {CanvasMenu} [canvasMenu] [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
 	 * @param {Object} [params] the following params are available.
 	 * @param {Function} [params.getLanguageCode] Your custom getLanguageCode() function.
@@ -615,10 +670,8 @@ const spatialMultiplexsIndexs = {
 Object.freeze( spatialMultiplexsIndexs );
 StereoEffect.spatialMultiplexsIndexs = spatialMultiplexsIndexs;
 
-/**
- * set THREE for StereoEffect. Assigh setStereoEffect to [THREE.Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster}
- * @function StereoEffect.
- * setTHREE
+/** @namespace
+ * @description set THREE for StereoEffect. Assigh setStereoEffect to [THREE.Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster}
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  */
 function setTHREE( _THREE ) {
@@ -631,6 +684,7 @@ function setTHREE( _THREE ) {
 
 	}
 	THREE = _THREE;
+	SpriteText.setTHREE( THREE );
 
 	//Modifying of THREE.Raycaster for StereoEffect
 	Object.assign( THREE.Raycaster.prototype, {
@@ -816,14 +870,21 @@ function setTHREE( _THREE ) {
 						if ( intersects[0].object.userData.raycaster ) {
 
 							const intersect = intersects[0];
-							intersect.object.userData.raycaster.onMouseDown( intersect );
+							if ( intersect.object.userData.raycaster.onMouseDown )
+								intersect.object.userData.raycaster.onMouseDown( intersect );
 
 						}
 
 					}
 
 				},
-				isAddedToParticles: function ( particle ) { return particles.includes( particle ); },
+				isAddedToParticles: function ( particle ) {
+
+					if ( !particles )
+						return false;
+					return particles.includes( particle );
+
+				},
 				addParticle: function ( particle ) {
 
 					if ( particles === undefined )
@@ -931,10 +992,8 @@ SpriteText.setTHREE( THREE );
 import { getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
-/**
- * Creates the &lt;b>new SpriteText&lt;/b> with information about point, intersected with mouse cursor.
- * @function StereoEffect.
- * getTextIntersection
+/** @namespace
+ * @description Creates the &lt;b>new SpriteText&lt;/b> with information about point, intersected with mouse cursor.
  * @param {THREE.Raycaster.intersectObject} intersection See [intersection]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
  * @param {object} [options={}] The following options are available
  * @param {object} [options.scales={}] axes scales.
@@ -961,14 +1020,15 @@ StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 				Player.execFunc( func, 'w', group.userData.t, options.a, options.b ) :
 				func.w;
 
+	const boXYZ = !scales.x &amp;&amp;  !scales.y &amp;&amp;  !scales.z;
 	return new SpriteText(
 
 		//text
-		( intersection.object.name === '' ? '' : lang.mesh + ': ' + intersection.object.name + '\n' ) +
-		( pointName === undefined ? '' : lang.pointName + ': ' + pointName + '\n' ) +
-		( !scales.x ? '' : ( scales.x.name ? scales.x.name : 'X' ) + ': ' + position.x ) +
-		( !scales.y ? '' : '\n' + ( scales.y.name ? scales.y.name : 'Y' ) + ': ' + position.y ) +
-		( !scales.z ? '' : '\n' + ( scales.z.name ? scales.z.name : 'Z' ) + ': ' + position.z ) +
+		( intersection.object.name === '' ? '' : lang.mesh + ': ' + intersection.object.name ) +
+		( pointName === undefined ? '' : '\n'+ lang.pointName + ': ' + pointName ) +
+		( !boXYZ &amp;&amp; !scales.x ? '' : '\n' + ( scales.x &amp;&amp; scales.x.name ? scales.x.name : 'X' ) + ': ' + position.x ) +
+		( !boXYZ &amp;&amp; !scales.y ? '' : '\n' + ( scales.y &amp;&amp; scales.y.name ? scales.y.name : 'Y' ) + ': ' + position.y ) +
+		( !boXYZ &amp;&amp; !scales.z ? '' : '\n' + ( scales.z &amp;&amp; scales.z.name ? scales.z.name : 'Z' ) + ': ' + position.z ) + 
 		(//w
 			!isArrayFuncs ?
 				'' :
@@ -977,7 +1037,7 @@ StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 					typeof funcs === "function" ?
 					color instanceof THREE.Color ?
 						'\n' + lang.color + ': ' + new THREE.Color( color.r, color.g, color.b ).getHexString() :
-						position.w ? '\n' + ( scales.w &amp;&amp; scales.w.name ? scales.w.name : 'W' ) + ': ' + position.w : '' :
+						position.w !== undefined ? '\n' + ( scales.w &amp;&amp; scales.w.name ? scales.w.name : 'W' ) + ': ' + position.w : '' :
 					''
 
 		) +
@@ -1009,13 +1069,13 @@ export default StereoEffect;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-StereoEffect.html">StereoEffect</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-StereoEffect.html">StereoEffect</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-StereoEffect-setTHREE.html">setTHREE</a></li><li><a href="module-StereoEffect-StereoEffect.getTextIntersection.html">getTextIntersection</a></li></ul><h3>Classes</h3><ul><li><a href="module-StereoEffect-StereoEffect.html">StereoEffect</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Dec 10 2020 13:06:29 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Mar 20 2021 22:33:36 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -37,8 +37,8 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
 //Attenttion!!! Save this file as UTF-8 for localization.
 
 /**
- * StereoEffect
- * Uses dual PerspectiveCameras for Parallax Barrier https://en.wikipedia.org/wiki/Parallax_barrier effects
+ * @class
+ * Uses dual PerspectiveCameras for [Parallax Barrier]{@link https://en.wikipedia.org/wiki/Parallax_barrier} effects
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.WebGLRenderer} renderer {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer}
  * @param {Object} [options] the following options are available.
@@ -137,6 +137,12 @@ function StereoEffect( _THREE, renderer, options ) {
 	};
 	var fullScreenSettings;
 	var spatialMultiplexCur;
+	/**
+	 * Render a scene or another type of object using a camera.
+	 * @see [WebGLRenderer.render]{@link https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer.render}
+	 * @param {THREE.Scene} scene [Scene]{@link https://threejs.org/docs/index.html#api/en/scenes/Scene}.
+	 * @param {THREE.Camera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera}.
+	 */
 	this.render = function ( scene, camera ) {
 
 		const spatialMultiplex = parseInt( options.spatialMultiplex );
@@ -352,8 +358,6 @@ function StereoEffect( _THREE, renderer, options ) {
 
 	/**
 	 * Adds StereoEffects folder into dat.GUI.
-	 * @function this.
-	 * gui
 	 * @see {@link https://github.com/anhr/dat.gui|dat.gui}.
 	 * @param {GUI} gui dat.GUI object.
 	 * @param {Object} options See options of StereoEffect above for details.
@@ -530,8 +534,6 @@ function StereoEffect( _THREE, renderer, options ) {
 	var _canvasMenu, menuItemStereoEffect;
 	/**
 	 * Adds a StereoEffect's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
-	 * @function StereoEffect.
-	 * createCanvasMenuItem
 	 * @param {CanvasMenu} [canvasMenu] [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
 	 * @param {Object} [params] the following params are available.
 	 * @param {Function} [params.getLanguageCode] Your custom getLanguageCode() function.
@@ -640,10 +642,8 @@ const spatialMultiplexsIndexs = {
 Object.freeze( spatialMultiplexsIndexs );
 StereoEffect.spatialMultiplexsIndexs = spatialMultiplexsIndexs;
 
-/**
- * set THREE for StereoEffect. Assigh setStereoEffect to [THREE.Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster}
- * @function StereoEffect.
- * setTHREE
+/** @namespace
+ * @description set THREE for StereoEffect. Assigh setStereoEffect to [THREE.Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster}
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  */
 function setTHREE( _THREE ) {
@@ -964,10 +964,8 @@ SpriteText.setTHREE( THREE );
 import { getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
-/**
- * Creates the <b>new SpriteText</b> with information about point, intersected with mouse cursor.
- * @function StereoEffect.
- * getTextIntersection
+/** @namespace
+ * @description Creates the <b>new SpriteText</b> with information about point, intersected with mouse cursor.
  * @param {THREE.Raycaster.intersectObject} intersection See [intersection]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
  * @param {object} [options={}] The following options are available
  * @param {object} [options.scales={}] axes scales.
