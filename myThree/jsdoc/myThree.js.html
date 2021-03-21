@@ -77,13 +77,13 @@ import controllerPlay from '../controllerPlay/controllerPlay.js';
 import {
 
 	GuiSelectPoint,
-	//getWorldPosition,
+	getWorldPosition,
 	//getObjectLocalPosition,
 	//getObjectPosition
 
 } from '../guiSelectPoint/guiSelectPoint.js';
 //import { GuiSelectPoint, getWorldPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
-import { getWorldPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+GuiSelectPoint.setTHREE( THREE );
 
 import PositionController from '../PositionController.js';
 
@@ -193,9 +193,10 @@ class MyThree {
 	 * @param {number} [options.stereoEffect.spatialMultiplex] &lt;a href="../../StereoEffect/jsdoc/module-StereoEffect.html#~spatialMultiplexsIndexs" target="_blank">Enumeration of available stereo modes&lt;/a>.
 	 * @param {object} [options.dat] {} - use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {boolean} [options.dat.cookie] true - save to cookie all user settings
-	 * @param {boolean} [options.dat.playerGui=true] true - Adds a &lt;a href="../../player/jsdoc/module-Player.html#~Player.gui" target="_blank">Player controllers&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {boolean} [options.dat.playerGui=true] true - adds a &lt;a href="../../player/jsdoc/module-Player.html#~Player.gui" target="_blank">Player controllers&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {boolean} [options.dat.axesHelperGui=true] true - displays the &lt;a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelper gui&lt;/a>.
 	 * @param {boolean} [options.dat.guiSelectPoint=true] true - displays the &lt;a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">guiSelectPoint&lt;/a>. dat.gui based graphical user interface for select a point from the mesh.
+	 * @param {boolean} [options.dat.guiStereoEffect=true] true - Adds &lt;a href="../../StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#gui" target="_blank">StereoEffects folder&lt;/a> into dat.gui based graphical user interface.
 	 * @param {object} [options.dat.moveScene={}] true - displays the &lt;a href="../../jsdoc/MoveGroupGui/index.html" target="_blank">move group gui&lt;/a>.
 	 * @param {boolean} [options.canvasMenu=false] true - use my &lt;a href="../../canvasMenu/jsdoc/index.html" target="_blank">dropdown menu for canvas&lt;/a> in my version of [dat.gui]{@link https://github.com/anhr/dat.gui}.
 	 * @param {array} [options.arrayCloud] Array of points with cloud.
@@ -562,7 +563,13 @@ class MyThree {
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 				camera.position.copy( options.camera.position );
 				camera.scale.copy( options.camera.scale );
+				camera.userData.default = { options: JSON.parse( JSON.stringify( options.camera ) ), }
+//				options.cameraDefault = JSON.parse( JSON.stringify( options.camera ) );
+
+				//для возврата созданной камеры обратно в код, который вызвал new MyThree
+				//В частности это используется для создания точки, за которой будет следить камера
 				options.camera = camera;
+
 				options.point.sizePointsMaterial = 100;//size of points with material is not ShaderMaterial is options.point.size / options.point.sizePointsMaterial
 
 				// SCENE
@@ -919,7 +926,7 @@ class MyThree {
 
 					} );
 
-				if ( stereoEffect &amp;&amp; gui ) {
+				if ( stereoEffect &amp;&amp; gui &amp;&amp; options.dat.guiStereoEffect ) {
 
 					stereoEffect.gui( fOptions, {
 
@@ -1364,17 +1371,32 @@ class MyThree {
 						frustumPoints.gui( fOptions, getLanguageCode, FolderPoint );
 
 					//default button
+					camera.userData.default.setDefault = function(){
+
+						controls.target = new THREE.Vector3();
+						camera.position.copy( camera.userData.default.options.position );
+						scene.position.copy( optionsScene.position );
+						//scene.position.add( options.axesHelper.position );
+						scene.position.add( options.scene.position );
+						//scene.position.copy( options.scene.position );
+						controls.object.position.copy( camera.position );
+						controls.update();
+						
+					}
 					dat.controllerNameAndTitle( gui.add( {
 						defaultF: function ( value ) {
 
+							Player.selectPlayScene( group );
+/*							
 							controls.target = new THREE.Vector3();
-							camera.position.copy( options.camera.position );
+							camera.position.copy( options.cameraDefault.position );
 							scene.position.copy( optionsScene.position );
 							//scene.position.add( options.axesHelper.position );
 							scene.position.add( options.scene.position );
 							//scene.position.copy( options.scene.position );
 							controls.object.position.copy( camera.position );
 							controls.update();
+*/							
 
 						},
 
@@ -1951,7 +1973,7 @@ export default MyThree;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Mar 13 2021 11:33:03 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sun Mar 21 2021 13:49:44 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
