@@ -28,6 +28,7 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 <body>
 	<div id="info">
 		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - AxesHelper is an axis object to visualize the 1, 2 or 3 axes.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
 	<div>
 		<canvas id="canvas"></canvas>
