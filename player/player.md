@@ -40,6 +40,7 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 <body>
 	<div id="info">
 		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - Player - 3D objects animation.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
 	<div>
 		<canvas id="canvas"></canvas>
