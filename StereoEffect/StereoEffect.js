@@ -985,7 +985,7 @@ StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 		),
 		funcs = !isArrayFuncs ? undefined : intersection.object.userData.player.arrayFuncs,
 		func = ( funcs === undefined ) || ( typeof funcs === "function" ) ? undefined : funcs[intersection.index],
-		pointName = isArrayFuncs ? funcs[intersection.index].name : undefined,
+		pointName = isArrayFuncs && func ? func.name : undefined,
 		color = !isArrayFuncs || ( func === undefined ) ?
 			undefined :
 			Array.isArray( func.w ) ?
