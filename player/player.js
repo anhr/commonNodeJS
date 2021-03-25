@@ -1098,12 +1098,12 @@ Player.cameraTarget = class {
 			);
 
 			if ( !cameraTarget.setCameraPosition || update )
-				cameraTarget.setCameraPosition = function () {
+				cameraTarget.setCameraPosition = function ( setCameraDefault ) {
 
 					const target = cameraTarget.target;
 					if ( ( Player.cameraGui && !Player.cameraGui.isLook() ) || !target ) {
 
-						camera.userData.default.setDefault();
+						if ( camera.userData.default && setCameraDefault ) camera.userData.default.setDefault();
 						return;//Камере не нужно следить за выбранной точкой или ни одна точка не определена как target
 
 					}
@@ -1304,7 +1304,7 @@ palette = new palette();
  * </pre>
  * @param {number} [options.point.size=0.02] The apparent angular size of a point in radians.
 */
-Player.selectMeshPlayScene = function ( /*THREE, */mesh, t, index, options ) {
+Player.selectMeshPlayScene = function ( mesh, t, index, options ) {
 
 	if ( typeof THREE === 'undefined' ) {
 
@@ -2371,9 +2371,9 @@ Player.getItemSize = function ( arrayFuncs ) {
  * @description Select a scene for playing
  * @param {THREE.Group} group [THREE.Group]{@link https://threejs.org/docs/index.html#api/en/objects/Group}
  * @param {number} [t=0] time
- * @param {number} [index=0] index of the time.
+ * @param {number} [index] index of the time.
  */
-Player.selectPlayScene = function( group, t = 0, index = 0 ) {
+Player.selectPlayScene = function( group, t = 0, index ) {
 
 	//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
 	//Другими словами если не вызывается Player.getColors
@@ -2382,16 +2382,22 @@ Player.selectPlayScene = function( group, t = 0, index = 0 ) {
 //	g_selectPlaySceneOptions = g_selectPlaySceneOptions || {};
 
 	group.userData.t = t;
-	Player.selectMeshPlayScene( /*THREE, */group, t, index );//, options );
+	Player.selectMeshPlayScene( group, t, index );//, options );
 	group.children.forEach( function ( mesh ) {
 
-		Player.selectMeshPlayScene( /*THREE, */mesh, t, index );//, options );
+		Player.selectMeshPlayScene( mesh, t, index );//, options );
 
 	} );
 	Player.cameraTarget.setCameraTarget();
 
 	const cameraTarget = Player.cameraTarget.get();
-	if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition();
+
+	//если index === undefined значит пользователь нажал кнопку 'Default' для восстановления положения камеры.
+	//Значит надо вызвать camera.userData.default.setDefault()
+	//
+	//если index !== undefined значит проигрыватель вызывает очередной кадр и не нужно перемещать камеру в исходное положение
+	//приуслвии что не выбрана ни одна точка как cameraTarget
+	if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition( index === undefined );
 
 	if ( Player.cameraGui ) Player.cameraGui.update();
 
