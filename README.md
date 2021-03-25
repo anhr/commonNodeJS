@@ -29,7 +29,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 [README.md](../../tree/master/frustumPoints).
 [FrustumPoints API](https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/Examples/index.html).
-* functionsFolder. Adds the [Functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function) folder into [dat.gui]{@link https://github.com/anhr/dat.gui}.
+* functionsFolder. Adds the [Functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function) folder into [dat.gui](https://github.com/anhr/dat.gui).
 [README.md](../../tree/master/functionsFolder).
 [functionsFolder API](https://raw.githack.com/anhr/commonNodeJS/master/functionsFolder/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
