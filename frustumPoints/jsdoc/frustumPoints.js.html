@@ -70,7 +70,11 @@
 */
 //import { myThreejs, THREE } from '../myThreejs/myThreejs.js';
 import MyThree from '../myThree/myThree.js';
-import cookie from '../cookieNodeJS/cookie.js';
+//import cookie from '../cookieNodeJS/cookie.js';
+
+import Cookie from '../cookieNodeJS/cookie.js';
+//import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
+
 import clearThree from '../clearThree.js';
 import { dat } from '../dat/dat.module.js';
 //import { GuiSelectPoint } from '../guiSelectPoint/guiSelectPoint.js';
@@ -97,7 +101,7 @@ function getStandardNormalDistribution( x ) {
 }
 
 //const shaderMaterial = {};
-//var shaderMaterialDefault;
+//var optionsShaderMaterial;
 
 class FrustumPoints
 {
@@ -105,93 +109,107 @@ class FrustumPoints
 	 * Create a `FrustumPoints` instance.
 	 * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
 	 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
-	 * @param {THREE.OrbitControls} controls
 	 * @param {THREE.Group} group group of objects to which a new FrustumPoints will be added
-	 * @param {string} cookieName cookie name
-	 * @param {number} spatialMultiplex stereo effect mode. See spatialMultiplexsIndexs in the StereoEffect.js file for details
-	 * @param {object} options see myThreejs.create options for details
-	 * @param {object} [shaderMaterialDefault={}] points and lines options.
-	 * @param {object} [shaderMaterialDefault.point={}] points options.
-	 * @param {number} [shaderMaterialDefault.point.size=0] Size of each frustum point.
-	 * @param {boolean} [shaderMaterialDefault.display=true] true - display frustum points.
-	 * @param {boolean} [shaderMaterialDefault.info=false] true - display information about frustum point if user move mouse over or click this point.
+	 * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
+	 * @param {object} options see &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">myThree&lt;/a> &lt;b>options&lt;/b> parameter for details
+	 * @param {object} [optionsShaderMaterial={}] &lt;b>FrustumPoints&lt;/b> options.
+	 * @param {object} [optionsShaderMaterial.point={}] points options.
+	 * @param {number} [optionsShaderMaterial.point.size=0] Size of each frustum point.
+	 * @param {boolean} [optionsShaderMaterial.display=true] true - display frustum points.
+	 * @param {boolean} [optionsShaderMaterial.info=false] true - display information about frustum point if user move mouse over or click this point.
 	 *
-	 * @param {object} [shaderMaterialDefault.stereo] stereo mode options
-	 * @param {boolean} [shaderMaterialDefault.stereo.lines=true] Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.
-	 * @param {number} [shaderMaterialDefault.stereo.hide=0] Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.
-	 * @param {number} [shaderMaterialDefault.stereo.opacity=0.3] Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
+	 * @param {object} [optionsShaderMaterial.stereo] stereo mode options
+	 * @param {number} [optionsShaderMaterial.stereo.hide=0] Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.
+	 * @param {number} [optionsShaderMaterial.stereo.opacity=0.3] Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
 	 *
-	 * @param {number} [shaderMaterialDefault.zCount=50] The count of layers of the frustum of the camera's field of view.
-	 * @param {number} [shaderMaterialDefault.yCount=30] The count of vertical points for each z level of the  frustum of the camera's field of view.
+	 * @param {number} [optionsShaderMaterial.zCount=50] The count of layers of the frustum of the camera's field of view.
+	 * @param {number} [optionsShaderMaterial.yCount=30] The count of vertical points for each z level of the  frustum of the camera's field of view.
 	 *
-	 * @param {number} [shaderMaterialDefault.near=0] Shift of the frustum layer near to the camera in percents.
+	 * @param {number} [optionsShaderMaterial.near=0] Shift of the frustum layer near to the camera in percents.
 	 * &lt;pre>
 	 * 0 percents - no shift.
 	 * 100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
 	 * &lt;/pre>
-	 * @param {number} [shaderMaterialDefault.far=0] Shift of the frustum layer far to the camera in percents.
+	 * @param {number} [optionsShaderMaterial.far=0] Shift of the frustum layer far to the camera in percents.
 	 * &lt;pre>
 	 * 0 percents - no shift.
 	 * 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
 	 * &lt;/pre>
-	 * @param {number} [shaderMaterialDefault.base=100] Scale of the base of the frustum points in percents.
+	 * @param {number} [optionsShaderMaterial.base=100] Scale of the base of the frustum points in percents.
 	 * &lt;pre>
 	 * 0 base is null
 	 * 100 no scale
 	 * &lt;/pre>
-	 * @param {boolean} [shaderMaterialDefault.square=false] true - Square base of the frustum points.
+	 * @param {boolean} [optionsShaderMaterial.square=false] true - Square base of the frustum points.
+	 * @param {cookie} [optionsShaderMaterial.cookie] Your custom cookie function for saving and loading of the FrustumPoints settings.
+	 * &lt;pre>
+	 * See [cookieNodeJS]{@link https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS}.
+	 * Default cookie is not saving settings.
+	 * Has effect only if you called the &lt;a href="#gui">frustumPoints.gui(...)&lt;/a> function.
+	 * &lt;/pre>
+	 * @param {string} [optionsShaderMaterial.cookieName="FrustumPoints"] Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.
+	 * @param {FrustumPoints.cFrustumPointsF} [optionsShaderMaterial.cFrustumPoints] Adds a &lt;b>FrustumPoints's&lt;/b> controllers into &lt;a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">Select Point&lt;/a> folder.
 	 */
-	constructor( THREE, camera, controls, group, cookieName, spatialMultiplex, renderer, options, shaderMaterialDefault, cFrustumPoints, palette ) {
+	constructor( THREE, camera, group, renderer, options, optionsShaderMaterial = {} ) {
 
-		this.shaderMaterialDefault = shaderMaterialDefault;
-		this.options = options;
+		const cFrustumPoints = optionsShaderMaterial.cFrustumPoints;
+		delete optionsShaderMaterial.cFrustumPoints;
+//		this.optionsShaderMaterial = optionsShaderMaterial;
+//		this.options = options;
 
 		if ( ( options.arrayCloud === undefined ) || ( options.arrayCloud.length === 0 ) )
 			return undefined;//нет точек с облаком. Поэтому нет смысла создавать frustumPoints
-		shaderMaterialDefault = shaderMaterialDefault || {};
-		shaderMaterialDefault.point = shaderMaterialDefault.point || {};
-		shaderMaterialDefault.point.size = shaderMaterialDefault.point.size || 0;//0.01;//Size of each frustum point
+//		optionsShaderMaterial = optionsShaderMaterial || {};
+		optionsShaderMaterial.point = optionsShaderMaterial.point || {};
+		optionsShaderMaterial.point.size = optionsShaderMaterial.point.size || 0;//0.01;//Size of each frustum point
 
-		shaderMaterialDefault.display = shaderMaterialDefault.display === undefined ? true : shaderMaterialDefault.display;//true - display frustum points
-		shaderMaterialDefault.info = shaderMaterialDefault.info !== undefined ? shaderMaterialDefault.info : false;//true - display information about frustum point if user move mouse over or click this point.
+		optionsShaderMaterial.display = optionsShaderMaterial.display === undefined ? true : optionsShaderMaterial.display;//true - display frustum points
+		optionsShaderMaterial.info = optionsShaderMaterial.info !== undefined ? optionsShaderMaterial.info : false;//true - display information about frustum point if user move mouse over or click this point.
 
 		//Stereo
-		shaderMaterialDefault.stereo = shaderMaterialDefault.stereo || {};
-		shaderMaterialDefault.stereo.lines = false;//сейчас lines не использую shaderMaterialDefault.stereo.lines === undefined ? true : shaderMaterialDefault.stereo.lines;//Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.
-		shaderMaterialDefault.stereo.hide = shaderMaterialDefault.stereo.hide || 0;//Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.
-		shaderMaterialDefault.stereo.opacity = shaderMaterialDefault.stereo.opacity || 0.3;//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.'
+		optionsShaderMaterial.stereo = optionsShaderMaterial.stereo || {};
+//		optionsShaderMaterial.stereo.lines = false;//сейчас lines не использую optionsShaderMaterial.stereo.lines === undefined ? true : optionsShaderMaterial.stereo.lines;//Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.
+		optionsShaderMaterial.stereo.hide = optionsShaderMaterial.stereo.hide || 0;//Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.
+		optionsShaderMaterial.stereo.opacity = optionsShaderMaterial.stereo.opacity || 0.3;//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.'
 
-		shaderMaterialDefault.zCount = shaderMaterialDefault.zCount || 50;//The count of layers of the frustum of the camera's field of view.
-		shaderMaterialDefault.yCount = shaderMaterialDefault.yCount || 30;//The count of vertical points for each z level of the  frustum of the camera's field of view.
+		optionsShaderMaterial.zCount = optionsShaderMaterial.zCount || 50;//The count of layers of the frustum of the camera's field of view.
+		optionsShaderMaterial.yCount = optionsShaderMaterial.yCount || 30;//The count of vertical points for each z level of the  frustum of the camera's field of view.
 
 		//изменение размеров усеченной пирамиды FrustumPoints
 
-		shaderMaterialDefault.near = shaderMaterialDefault.near || 0;//Shift of the frustum layer near to the camera in percents.
+		optionsShaderMaterial.near = optionsShaderMaterial.near || 0;//Shift of the frustum layer near to the camera in percents.
 		//0 percents - no shift.
 		//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды
-		shaderMaterialDefault.far = shaderMaterialDefault.far || 0;//Shift of the frustum layer far to the camera in percents.
+		optionsShaderMaterial.far = optionsShaderMaterial.far || 0;//Shift of the frustum layer far to the camera in percents.
 		//0 percents - no shift.
 		//100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды
-		shaderMaterialDefault.base = shaderMaterialDefault.base || 100;//Scale of the base of the frustum points in percents.
+		optionsShaderMaterial.base = optionsShaderMaterial.base || 100;//Scale of the base of the frustum points in percents.
 		//0 base is null
 		//100 no scale
-		shaderMaterialDefault.square = shaderMaterialDefault.square !== undefined ? shaderMaterialDefault.square : false; //true - Square base of the frustum points.
-		Object.freeze( shaderMaterialDefault );
-		const shaderMaterial = {};
-		this.shaderMaterial = shaderMaterial;
-		cookie.getObject( cookieName, shaderMaterial, shaderMaterialDefault );
-		function saveSettings() { cookie.setObject( cookieName, shaderMaterial ); }
+		optionsShaderMaterial.square = optionsShaderMaterial.square !== undefined ? optionsShaderMaterial.square : false; //true - Square base of the frustum points.
+
+		const shaderMaterial = {},
+			cookie = optionsShaderMaterial.cookie || new Cookie.defaultCookie(),
+			cookieName = 'FrustumPoints' + ( optionsShaderMaterial.cookieName ? '_' + optionsShaderMaterial.cookieName : '' );
+
+		delete optionsShaderMaterial.cookie;
+		delete optionsShaderMaterial.cookieName;
+		
+		Object.freeze( optionsShaderMaterial );
+//		const shaderMaterial = JSON.parse( JSON.stringify( optionsShaderMaterial ) );
+		cookie.getObject( cookieName, shaderMaterial, optionsShaderMaterial );
+//		function saveSettings() { Cookie.setObject( cookieName, shaderMaterial ); }
 
 		//оставить shaderMaterial.stereo по умолчанию потому что сейчас lines не использую
 		//и возможно в cookie сохранились зачения shaderMaterial.stereo от старых версий этой программы
-		shaderMaterial.stereo.lines = shaderMaterialDefault.stereo.lines;
-		shaderMaterial.stereo.hide = shaderMaterialDefault.stereo.hide;
-		shaderMaterial.stereo.opacity = shaderMaterialDefault.stereo.opacity;
+//		shaderMaterial.stereo.lines = optionsShaderMaterial.stereo.lines;
+		shaderMaterial.stereo.hide = optionsShaderMaterial.stereo.hide;
+		shaderMaterial.stereo.opacity = optionsShaderMaterial.stereo.opacity;
 
 		var points, names;
 		const zeroPoint = new THREE.Vector3(), cameraDistanceDefault = camera.position.distanceTo( zeroPoint ), _this = this,
 			lines = [], groupFrustumPoints = new THREE.Group();
-		this.lines = lines;
+//		this.lines = lines;
 		var cloud = function () {
 
 				var uniforms;
@@ -393,7 +411,10 @@ class FrustumPoints
 				}
 				this.updateMesh = function ( mesh ) {
 
-					if ( mesh.userData.cloud === undefined )
+					if (
+						( mesh.userData.cloud === undefined )
+						|| !this.cloudPoints//Пользователь убрал галочку в 'Display' - 'Display or hide Frustum Points.'
+					)
 						return;
 					for ( var i = 0; i &lt; mesh.geometry.attributes.position.count; i++ ) {
 
@@ -413,7 +434,8 @@ class FrustumPoints
 
 			function set( points ) {
 
-				if ( points === undefined )
+//				if ( points === undefined )
+				if ( !points )
 					return;
 				points.position.copy( camera.position );
 				points.rotation.set( camera.rotation.x, camera.rotation.y, camera.rotation.z );
@@ -430,15 +452,17 @@ class FrustumPoints
 			' points.scale: ' + points.scale.x + ' ' + points.scale.y + ' ' + points.scale.z +
 			' points.rotation: ' + points.rotation.x + ' ' + points.rotation.y + ' ' + points.rotation.z );
 			*/
-			options.guiSelectPoint.setMesh();
+			if ( options.guiSelectPoint ) options.guiSelectPoint.setMesh();
 
 		}
+/*
 		function isLines() {
 
 			return shaderMaterial.stereo.lines
 				&amp;&amp; ( debug.linesiInMono || ( spatialMultiplex !== spatialMultiplexsIndexs.Mono ) );
 
 		}
+*/
 		function update( onReady ) {
 
 			if ( points === undefined ) {
@@ -567,8 +591,10 @@ class FrustumPoints
 			function sqrtInt( value ) {
 
 				var a = parseInt( Math.sqrt( zCount - 1 ) );
+/*
 				if ( isLines() )
 					return value / a;
+*/
 				return parseInt( value / a ) * a;
 
 			}
@@ -585,9 +611,9 @@ class FrustumPoints
 			//Unfortunately you cannot to catch memory crash. https://stackoverflow.com/questions/44531357/how-to-catch-and-handle-chrome-memory-crash
 			//Instead I temporary set shaderMaterial.zCount to default value and restore it after creating of all z levels.
 			//Now you can see default shaderMaterial.zCount after memory crash and reloading of the wab page.
-			shaderMaterial.zCount = shaderMaterialDefault.zCount;
-			shaderMaterial.yCount = shaderMaterialDefault.yCount;
-			saveSettings();
+			shaderMaterial.zCount = optionsShaderMaterial.zCount;
+			shaderMaterial.yCount = optionsShaderMaterial.yCount;
+//			saveSettings();
 
 			var zStart = parseInt( ( zCount * shaderMaterial.stereo.hide ) / 100 ),
 				zEnd = zStart + zCount - 1;
@@ -598,9 +624,8 @@ class FrustumPoints
 					yfStep = ( point_f3.y - point_f1.y ) / ( yCount - 1 ),
 					yStep = ( ( yfStep - ynStep ) / ( ( zCount - 1 ) * ( zCount - 1 ) ) ) * z * z + ynStep,
 					sqrtZCount = parseInt( Math.sqrt( zCount ) ),
-					//				yzStep = isLines() ? ( yStep / zCount ) * parseInt( Math.sqrt( zCount ) ) : yStep / ( zCount + 1 ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
-					//				yzStep = isLines() ? ( yStep / zCount ) * sqrtZCount : yStep / ( sqrtZCount + ( sqrtZCount * sqrtZCount > zCount ? 1 : 0 ) ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
-					yzStep = isLines() ? ( yStep / zCount ) * sqrtZCount : yStep / ( sqrtZCount + parseInt( Math.sqrt( zCount - ( sqrtZCount * sqrtZCount ) ) ) ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
+//					yzStep = isLines() ? ( yStep / zCount ) * sqrtZCount : yStep / ( sqrtZCount + parseInt( Math.sqrt( zCount - ( sqrtZCount * sqrtZCount ) ) ) ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
+					yzStep = yStep / ( sqrtZCount + parseInt( Math.sqrt( zCount - ( sqrtZCount * sqrtZCount ) ) ) ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
 
 					xnStep = ( point_n2.x - point_n1.x ) / ( xCount - 1 ),
 					xfStep = ( point_f2.x - point_f1.x ) / ( xCount - 1 ),
@@ -609,10 +634,10 @@ class FrustumPoints
 					xzStep = xStep / parseInt( Math.sqrt( zCount ) );//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
 				pointStart.y = - yStep * ( yCount - 1 ) / 2;
 				pointStart.x = - xStep * ( xCount - 1 ) / 2;
-
+/*
 				if ( isLines() )
 					zx = z;
-
+*/
 				for ( var y = 0; y &lt; yCount; y++ ) {
 
 					for ( var x = 0; x &lt; xCount; x++ )
@@ -647,7 +672,8 @@ class FrustumPoints
 
 				}
 				zx++;
-				if ( !isLines() &amp;&amp; ( zx >= parseInt( Math.sqrt( zCount ) ) ) ) {
+//				if ( !isLines() &amp;&amp; ( zx >= parseInt( Math.sqrt( zCount ) ) ) )
+				if ( zx >= parseInt( Math.sqrt( zCount ) ) ) {
 
 					zx = 0;
 					zy++;
@@ -751,6 +777,14 @@ class FrustumPoints
 			var path = getCurrentScriptPath();
 			var cameraPositionDefault = new THREE.Vector3( camera.position.x, camera.position.y, camera.position.z );
 			var cameraQuaternionDefault = new THREE.Vector4( camera.quaternion.x, camera.quaternion.y, camera.quaternion.z, camera.quaternion.w );
+
+			//сделал это приравниванеие что бы избежать двойного создания массива точек frustumPoints MyThree.points(...)
+			//Если это произойдет, то непонятно почему для каждой точки будет создано два облака
+			//Одно облако верное
+			//Второе находится строго между точкой и камерой
+			//Второе облако можно увидеть если повернуть камеру с помощью orbitControl
+			//Сюда попадает по второму разу если вызвать stereoEffect.gui(...)
+			points = false;
 
 			MyThree.points( //array
 				function () {
@@ -889,7 +923,7 @@ class FrustumPoints
 					points.userData.boFrustumPoints = true;
 					points.userData.isInfo = function () { return shaderMaterial.info; }
 
-					saveSettings();
+//					saveSettings();
 					if ( shaderMaterial.info )
 						options.raycaster.addParticle( points );
 
@@ -905,6 +939,7 @@ class FrustumPoints
 
 			} );
 
+/*
 			if ( isLines() ) {
 
 				for ( var x = 0; x &lt; xCount; x++ )
@@ -936,28 +971,30 @@ class FrustumPoints
 					}
 
 			}
+*/
 
 		}
 		update();
 		var pointOpacity;
-		this.setSpatialMultiplexs = function ( spatialMultiplexNew ) {
+		this.setSpatialMultiplexs = function ( /*spatialMultiplexNew*/ ) {
 
-			spatialMultiplex = spatialMultiplexNew;
+//			spatialMultiplex = spatialMultiplexNew;
 
 			//Не помню почему не удаляю старый points из списка cMeshs, но если так делать, то будут какие то запутанные косяки.
 			//Поэтому не удаляю points из списка cMeshs а только получаю индекс points в этом списке.
-			var index = options.guiSelectPoint.getMeshIndex( points );
+			const index = options.guiSelectPoint ? options.guiSelectPoint.getMeshIndex( points ) : undefined;
 
 			update();
 
 			//затем заменяю указатель на старый points в списке cMeshs на новый.
-			options.guiSelectPoint.setIndexMesh( index, points );
+			if ( index ) options.guiSelectPoint.setIndexMesh( index, points );
 
 		}
 		this.animate = function () {
 
 			if (
-				( points === undefined ) ||
+//				( points === undefined ) ||
+				!points ||
 				( points.userData.shaderMaterial === undefined ) ||
 				( //( pointSize === points.userData.shaderMaterial.point.size ) &amp;&amp;
 					( pointOpacity === points.userData.shaderMaterial.point.opacity ) )
@@ -977,7 +1014,8 @@ class FrustumPoints
 
 			var cameraQuaternionDefault = new THREE.Vector4( camera.quaternion.x, camera.quaternion.y, camera.quaternion.z, camera.quaternion.w );
 
-			if ( points === undefined )
+//			if ( points === undefined )
+			if ( !points )
 				return;//User has changed 'Z Count' of the frustumPoints
 
 			points.material.uniforms.cameraPositionDefault.value.copy( camera.position );
@@ -1029,7 +1067,8 @@ class FrustumPoints
 		}
 		function needsUpdate() {
 
-			if ( points !== undefined )
+//			if ( points !== undefined )
+			if ( points )
 				points.material.uniforms.cloudPoints.value.needsUpdate = true;
 
 		}
@@ -1069,16 +1108,36 @@ class FrustumPoints
 		 * Adds FrustumPoints folder into dat.GUI.
 		 * See [dat.GUI API]{@link https://github.com/dataarts/dat.gui/blob/master/API.md}.
 		 * @param {object} folder parent folder
-		 * @param {function} getLanguageCode returns the "primary language" subtag of the version of the browser. Default returns "en" is English
 		 * @param {FolderPoint} FolderPoint creates the folder of the point's settings
+		 * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
+		 * @param {Function} [guiParams.getLanguageCode="en"] Your custom getLanguageCode() function.
+		 * &lt;pre>
+		 * returns the "primary language" subtag of the language version of the browser.
+		 * Examples: "en" - English language, "ru" Russian.
+		 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
+		 * Default returns the 'en' is English language.
+		 * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
+		 * &lt;/pre>
+		 * @param {object} [guiParams.lang] Object with localized language values
+		 * &lt;pre>
+		 * Example Using of guiParams.lang:
+		 * guiParams = {
+		 *
+		 * 	getLanguageCode: function() { return 'az'; },
+		 * 	lang: { textHeight: 'mətn boyu', languageCode: 'az' },
+		 *
+		 * }
+		 * &lt;/pre>
+		 * @param {Cookie} [guiParams.cookie=new Cookie.defaultCookie()] Your custom cookie function for saving and loading of the SpriteText settings. Default cookie is not saving settings.
+		 * @param {string} [guiParams.cookieName=""] Name of the cookie is "Player" + guiParams.cookieName.
 		 */
-		this.gui = function  ( folder, getLanguageCode, FolderPoint ) {
+		this.gui = function ( folder, FolderPoint, guiParams = {} ) {
 
-			const shaderMaterialDefault = this.shaderMaterialDefault,
-				options = this.options,
-				shaderMaterial = this.shaderMaterial,
-				lines = this.lines;
-			//			points = this.points;
+			guiParams.getLanguageCode = guiParams.getLanguageCode || function () { return "en"; };
+/*			
+			guiParams.cookie = guiParams.cookie || new Cookie.defaultCookie();
+			guiParams.cookieName = 'FrustumPoints' + ( guiParams.cookieName ? guiParams.cookieName : '' );
+*/			
 
 			//Localization
 
@@ -1128,8 +1187,8 @@ class FrustumPoints
 
 			};
 
-			var languageCode = getLanguageCode === undefined ? 'en'//Default language is English
-				: getLanguageCode();
+			var languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
+				: guiParams.getLanguageCode();
 			switch ( languageCode ) {
 
 				case 'ru'://Russian language
@@ -1191,7 +1250,8 @@ class FrustumPoints
 
 			}
 
-			var fFrustumPoints = folder.addFolder( lang.frustumPoints );
+			function saveSettings() { cookie.setObject( cookieName, shaderMaterial ); }
+			const fFrustumPoints = folder.addFolder( lang.frustumPoints );
 			dat.folderNameAndTitle( fFrustumPoints, lang.frustumPoints, lang.frustumPointsTitle );
 
 			function displayControllers( value ) {
@@ -1282,7 +1342,7 @@ class FrustumPoints
 			var cSquare = fFrustumPoints.add( shaderMaterial, 'square' ).onChange( function ( value ) { update(); } );
 			dat.controllerNameAndTitle( cSquare, lang.square, lang.squareTitle );
 
-			var folderPoint = new FolderPoint( fFrustumPoints, shaderMaterial.point, shaderMaterialDefault.point, function ( value ) {
+			var folderPoint = new FolderPoint( fFrustumPoints, shaderMaterial.point, optionsShaderMaterial.point, function ( value ) {
 
 				//Не помню зачем это написал
 				if ( value === undefined ) {
@@ -1319,24 +1379,22 @@ class FrustumPoints
 					return;
 				canUpdate = false;
 
-				const points = _this.points;
-
 				//Не помню почему не удаляю старый points из списка cMeshs, но если так делать, то будут какие то запутанные косяки.
 				//Поэтому не удаляю points из списка cMeshs а только получаю индекс points в этом списке.
-				var index = options.guiSelectPoint.getMeshIndex( points );
+				const index = options.guiSelectPoint ? options.guiSelectPoint.getMeshIndex( _this.points ) : undefined;
 
-				options.raycaster.removeParticle( points );
+				options.raycaster.removeParticle( _this.points );
 				removePoints( true );
 
 				_this.update( function () {
 
 					//затем заменяю указатель на старый points в списке cMeshs на новый.
-					options.guiSelectPoint.setIndexMesh( index, points );
+					if ( options.guiSelectPoint ) options.guiSelectPoint.setIndexMesh( index, _this.points );
 
 					saveSettings();
 					canUpdate = true;
 
-					points.userData.controllers();
+					_this.points.userData.controllers();
 
 				} );
 
@@ -1357,25 +1415,25 @@ class FrustumPoints
 
 					toUpdate = false;
 
-					cDisplay.setValue( shaderMaterialDefault.display );
-					cInfo.setValue( shaderMaterialDefault.info );
+					cDisplay.setValue( optionsShaderMaterial.display );
+					cInfo.setValue( optionsShaderMaterial.info );
 
 					/*сейчас lines не использую
 					//Stereo
-					cDisplayLines.setValue( shaderMaterialDefault.stereo.lines );
-					cHide.setValue( shaderMaterialDefault.stereo.hide );
-					cOpacity.setValue( shaderMaterialDefault.stereo.opacity );
+					cDisplayLines.setValue( optionsShaderMaterial.stereo.lines );
+					cHide.setValue( optionsShaderMaterial.stereo.hide );
+					cOpacity.setValue( optionsShaderMaterial.stereo.opacity );
 					*/
 
-					cNear.setValue( shaderMaterialDefault.near );
-					cFar.setValue( shaderMaterialDefault.far );
-					cBase.setValue( shaderMaterialDefault.base );
-					cSquare.setValue( shaderMaterialDefault.square );
+					cNear.setValue( optionsShaderMaterial.near );
+					cFar.setValue( optionsShaderMaterial.far );
+					cBase.setValue( optionsShaderMaterial.base );
+					cSquare.setValue( optionsShaderMaterial.square );
 
-					folderPoint.size.setValue( shaderMaterialDefault.point.size );
+					folderPoint.size.setValue( optionsShaderMaterial.point.size );
 
-					cZCount.setValue( shaderMaterialDefault.zCount );
-					cYCount.setValue( shaderMaterialDefault.yCount );
+					cZCount.setValue( optionsShaderMaterial.zCount );
+					cYCount.setValue( optionsShaderMaterial.yCount );
 
 					toUpdate = true;
 					update();
@@ -1402,7 +1460,7 @@ class FrustumPoints
 
 			if ( points === undefined )
 				return;
-			if ( !notRemoveMesh )
+			if ( !notRemoveMesh &amp;&amp; options.guiSelectPoint )
 				options.guiSelectPoint.removeMesh( points );//не удаляю frustumPoints из списка Meshes потому что сюда попадает только если пользователь изменил число точек frustumPoints.
 			//В этом случае создается новый frustumPoints, который надо присоеденить к старому frustumPoints из списка Meshes.
 			//Если я удалю frustumPoints из списка Meshes а потом добавлю туда новый frustumPoints,
@@ -1604,7 +1662,7 @@ export default FrustumPoints;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 17 2021 07:42:48 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 24 2021 11:46:49 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

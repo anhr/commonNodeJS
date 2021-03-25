@@ -104,7 +104,6 @@ import CameraGui from '../CameraGui.js';
 //https://github.com/mrdoob/stats.js/
 //import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';
 
-//import { FrustumPoints, cFrustumPointsF } from '../frustumPoints/frustumPoints.js';
 import FrustumPoints from '../frustumPoints/frustumPoints.js';
 
 var THREE;
@@ -192,11 +191,12 @@ class MyThree {
 	 * @param {object} [options.stereoEffect] use &lt;a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect&lt;/a>.
 	 * @param {number} [options.stereoEffect.spatialMultiplex] &lt;a href="../../StereoEffect/jsdoc/module-StereoEffect.html#~spatialMultiplexsIndexs" target="_blank">Enumeration of available stereo modes&lt;/a>.
 	 * @param {object} [options.dat] {} - use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
-	 * @param {boolean} [options.dat.cookie] true - save to cookie all user settings
+	 * @param {boolean} [options.dat.cookie=true] true - save to cookie all user settings
 	 * @param {boolean} [options.dat.playerGui=true] true - adds a &lt;a href="../../player/jsdoc/module-Player.html#~Player.gui" target="_blank">Player controllers&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {boolean} [options.dat.axesHelperGui=true] true - displays the &lt;a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelper gui&lt;/a>.
-	 * @param {boolean} [options.dat.guiSelectPoint=true] true - displays the &lt;a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">guiSelectPoint&lt;/a>. dat.gui based graphical user interface for select a point from the mesh.
-	 * @param {boolean} [options.dat.guiStereoEffect=true] true - Adds &lt;a href="../../StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#gui" target="_blank">StereoEffects folder&lt;/a> into dat.gui based graphical user interface.
+	 * @param {boolean} [options.dat.guiSelectPoint=true] true - displays the &lt;a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">Select Point&lt;/a>. [dat.gui]{@link https://github.com/dataarts/dat.gui} based graphical user interface for select a point from the mesh.
+	 * @param {boolean} [options.dat.guiStereoEffect=true] true - Adds &lt;a href="../../StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#gui" target="_blank">Stereo Effects folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {boolean} [options.dat.guiFrustumPoints=true] true - Adds &lt;a href="../../FrustumPoints/jsdoc/FrustumPoints.html#gui" target="_blank">Frustum Points folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {object} [options.dat.moveScene={}] true - displays the &lt;a href="../../jsdoc/MoveGroupGui/index.html" target="_blank">move group gui&lt;/a>.
 	 * @param {boolean} [options.canvasMenu=false] true - use my &lt;a href="../../canvasMenu/jsdoc/index.html" target="_blank">dropdown menu for canvas&lt;/a> in my version of [dat.gui]{@link https://github.com/anhr/dat.gui}.
 	 * @param {array} [options.arrayCloud] Array of points with cloud.
@@ -787,13 +787,16 @@ class MyThree {
 				//https://github.com/dataarts/dat.gui
 				if ( ( options.dat !== undefined ) ) {
 
-					if ( options.dat.cookie === true ) options.dat.cookie = cookie;
-					else options.dat.cookie = new cookie.defaultCookie();
-
-					if (options.dat.guiSelectPoint !== false ) options.dat.guiSelectPoint = true;
-					if (options.dat.moveScene !== false ) options.dat.moveScene = {};
+					if ( options.dat.guiSelectPoint !== false ) options.dat.guiSelectPoint = true;
+					if ( options.dat.guiStereoEffect !== false ) options.dat.guiStereoEffect = true;
+					if ( options.dat.moveScene !== false ) options.dat.moveScene = {}; 
 					if ( options.dat.axesHelperGui !== false ) options.dat.axesHelperGui = true;
 					if ( options.dat.cameraGui !== false ) options.dat.cameraGui = true;
+					if ( options.dat.guiFrustumPoints !== false ) options.dat.guiFrustumPoints = true;
+					if ( options.dat.cookie !== false ) options.dat.cookie = true;
+
+					if ( options.dat.cookie === true ) options.dat.cookie = cookie;
+					else options.dat.cookie = new cookie.defaultCookie();
 
 					if ( gui !== undefined ) {
 
@@ -936,11 +939,11 @@ class MyThree {
 						stereoEffect: stereoEffect,
 						onChangeMode: function ( mode ) {
 
-							var fullScreen = true;
+//							var fullScreen = true;
 							switch ( mode ) {
 
 								case StereoEffect.spatialMultiplexsIndexs.Mono:
-									fullScreen = false;
+//									fullScreen = false;
 									break;
 								case StereoEffect.spatialMultiplexsIndexs.SbS:
 								case StereoEffect.spatialMultiplexsIndexs.TaB:
@@ -949,11 +952,8 @@ class MyThree {
 									return;
 
 							}
-							//rendererSizeDefault.onFullScreenToggle( !fullScreen );
-
-							//						canvasMenu.setSpatialMultiplexs( mode );
 							if ( frustumPoints !== undefined )
-								frustumPoints.setSpatialMultiplexs( mode );
+								frustumPoints.setSpatialMultiplexs();// mode );
 
 						},
 
@@ -1166,9 +1166,8 @@ class MyThree {
 				
 				if ( options.arrayCloud ) {//Array of points with cloud
 
-//					frustumPoints = FrustumPoints.create
-					frustumPoints = new FrustumPoints( THREE, camera, controls,
-						group, 'FrustumPoints_' + getCanvasName(), stereoEffect ? stereoEffect.options.spatialMultiplex : undefined,
+					frustumPoints = new FrustumPoints( THREE, camera,
+						group,// stereoEffect ? stereoEffect.options.spatialMultiplex : undefined,
 						renderer, options,
 						{//points and lines options.Default is { }
 
@@ -1207,9 +1206,12 @@ class MyThree {
 							// 100 no scale
 							// Default is 100
 							square: true,// true - Square base of the frustum points.Default is false
+							cookie: cookie,
+							cookieName: getCanvasName(),
+							
 						},
 						options.guiSelectPoint.getFrustumPoints(),
-						options.palette
+//						options.palette
 					);
 					options.guiSelectPoint.getFrustumPoints().setFrustumPoints( frustumPoints );
 					options.arrayCloud.frustumPoints = frustumPoints;
@@ -1367,8 +1369,13 @@ class MyThree {
 					} )
 
 					//Frustum points
-					if ( frustumPoints )
-						frustumPoints.gui( fOptions, getLanguageCode, FolderPoint );
+					if ( frustumPoints &amp;&amp; options.dat.guiFrustumPoints )
+						frustumPoints.gui( fOptions, FolderPoint, {
+
+							getLanguageCode: getLanguageCode,
+							cookie: cookie,
+
+						} );
 
 					//default button
 					camera.userData.default.setDefault = function(){
@@ -1973,7 +1980,7 @@ export default MyThree;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sun Mar 21 2021 13:49:44 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 24 2021 10:16:18 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

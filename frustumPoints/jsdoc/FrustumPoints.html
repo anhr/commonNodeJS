@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>FrustumPoints<span class="signature">(THREE, camera, controls, group, cookieName, spatialMultiplex, options, shaderMaterialDefault<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>FrustumPoints<span class="signature">(THREE, camera, group, renderer, options, optionsShaderMaterial<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="FrustumPoints"><span class="type-signature"></span>new FrustumPoints<span class="signature">(THREE, camera, controls, group, cookieName, spatialMultiplex, options, shaderMaterialDefault<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="FrustumPoints"><span class="type-signature"></span>new FrustumPoints<span class="signature">(THREE, camera, group, renderer, options, optionsShaderMaterial<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -159,41 +159,6 @@
 
         <tr>
             
-                <td class="name"><code>controls</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE.OrbitControls</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>group</code></td>
             
 
@@ -229,13 +194,13 @@
 
         <tr>
             
-                <td class="name"><code>cookieName</code></td>
+                <td class="name"><code>renderer</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">THREE.WebGLRenderer</span>
 
 
             
@@ -257,42 +222,7 @@
                 </td>
             
 
-            <td class="description last">cookie name</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>spatialMultiplex</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">stereo effect mode. See spatialMultiplexsIndexs in the StereoEffect.js file for details</td>
+            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer">THREE.WebGLRenderer</a>.</td>
         </tr>
 
     
@@ -327,14 +257,14 @@
                 </td>
             
 
-            <td class="description last">see myThreejs.create options for details</td>
+            <td class="description last">see <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">myThree</a> <b>options</b> parameter for details</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>shaderMaterialDefault</code></td>
+                <td class="name"><code>optionsShaderMaterial</code></td>
             
 
             <td class="type">
@@ -366,7 +296,7 @@
                 </td>
             
 
-            <td class="description last">points and lines options.
+            <td class="description last"><b>FrustumPoints</b> options.
                 <h6>Properties</h6>
                 
 
@@ -638,45 +568,6 @@
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>lines</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    true
-                
-                </td>
-            
-
-            <td class="description last">Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.</td>
-        </tr>
-
     
 
         <tr>
@@ -997,6 +888,119 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>cookie</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">cookie</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Your custom cookie function for saving and loading of the FrustumPoints settings.<pre>See <a href="https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS">cookieNodeJS</a>.Default cookie is not saving settings.Has effect only if you called the <a href="#gui">frustumPoints.gui(...)</a> function.</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cookieName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    "FrustumPoints"
+                
+                </td>
+            
+
+            <td class="description last">Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cFrustumPoints</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="FrustumPoints.cFrustumPointsF.html">FrustumPoints.cFrustumPointsF</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Adds a <b>FrustumPoints's</b> controllers into <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">Select Point</a> folder.</td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -1041,7 +1045,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line116">line 116</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line125">line 125</a>
     </li></ul></dd>
     
 
@@ -1104,7 +1108,7 @@
     
 
     
-    <h4 class="name" id="gui"><span class="type-signature"></span>gui<span class="signature">(folder, getLanguageCode, FolderPoint)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="gui"><span class="type-signature"></span>gui<span class="signature">(folder, FolderPoint, guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1136,7 +1140,11 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1161,33 +1169,22 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">parent folder</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>getLanguageCode</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">returns the "primary language" subtag of the version of the browser. Default returns "en" is English</td>
         </tr>
 
     
@@ -1207,10 +1204,245 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">creates the folder of the point's settings</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>guiParams</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">Followed parameters is allowed. Default is no parameters
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>getLanguageCode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    "en"
+                
+                </td>
+            
+
+            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.Default returns the 'en' is English language.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>lang</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Object with localized language values<pre>Example Using of guiParams.lang:guiParams = {	getLanguageCode: function() { return 'az'; },	lang: { textHeight: 'mətn boyu', languageCode: 'az' },}</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cookie</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Cookie</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    new Cookie.defaultCookie()
+                
+                </td>
+            
+
+            <td class="description last">Your custom cookie function for saving and loading of the SpriteText settings. Default cookie is not saving settings.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cookieName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ""
+                
+                </td>
+            
+
+            <td class="description last">Name of the cookie is "Player" + guiParams.cookieName.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -1251,7 +1483,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line1047">line 1047</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line1106">line 1106</a>
     </li></ul></dd>
     
 
@@ -1303,7 +1535,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 17 2021 07:42:48 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 24 2021 11:46:49 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
