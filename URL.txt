@@ -66,3 +66,12 @@ Generating a website:
 	jsdoc "..\commonNodeJS\master\MoveGroupGui.js" -d "..\commonNodeJS\master\jsdoc\MoveGroupGui"
 
 	/////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////
+	//functionsFolder doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\functionsFolder"
+
+	jsdoc "..\commonNodeJS\master\functionsFolder.js" -d "..\commonNodeJS\master\jsdoc\functionsFolder"
+
+	/////////////////////////////////////////////////////////////
