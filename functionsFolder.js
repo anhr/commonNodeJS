@@ -224,7 +224,7 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 	 * @param {object} _vector.y y axis function.
 	 * @param {object} _vector.z z axis function.
 	 */
-	this.setFunction = function ( _vector/*, boDefault*/ ) {
+	this.setFunction = function ( _vector ) {
 
 		const vector = {
 

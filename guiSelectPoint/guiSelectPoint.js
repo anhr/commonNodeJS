@@ -300,14 +300,14 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	}
 	var wLimitsDefault;
-	function setPosition( intersectionSelected/*, boDefault*/ ) {
+	function setPosition( intersectionSelected ) {
 
 		const player = intersectionSelected.object.userData.player;
 
 		var boDisplayFuncFolder = 'none';
 		if ( player && player.arrayFuncs ) {
 
-			funcFolder.setFunction( player.arrayFuncs[intersectionSelected.index]/*, boDefault*/ );
+			funcFolder.setFunction( player.arrayFuncs[intersectionSelected.index] );
 			boDisplayFuncFolder = 'block';
 
 		}
@@ -680,7 +680,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		}
 
-		this.selectPoint2 = function ( selectedMesh/*, boDefault*/ ) {
+		this.selectPoint2 = function ( selectedMesh ) {
 
 			if ( ( intersectionSelected.index === undefined ) || isNaN( intersectionSelected.index ) )
 				return;
@@ -705,7 +705,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			intersection = intersectionSelected;
 			if ( guiParams.setIntersection )
 				guiParams.setIntersection( intersectionSelected );
-			setPosition( intersectionSelected/*, boDefault*/ );
+			setPosition( intersectionSelected );
 
 			const mesh = getMesh();
 			const line = ( mesh.userData.player.arrayFuncs === undefined ) || ( typeof intersection.object.userData.player.arrayFuncs === "function" ) ?
@@ -718,7 +718,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				intersection.object.userData.player.arrayFuncs === undefined ? 'none' : block;
 
 		}
-		this.selectPoint2( undefined/*, true*/ );
+		this.selectPoint2( undefined );
 
 	}
 	/**
