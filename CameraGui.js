@@ -94,7 +94,7 @@ class CameraGui {
 				lang.distanceToCamera = 'Расстояние';
 				lang.distanceToCameraTitle = 'Расстояние между камерой и точкой, на которую она смотрит.',
 
-					lang.look = 'Следить';
+				lang.look = 'Следить';
 				lang.lookTitle = 'Камера следит за выбранной точкой во время проигрывания.';
 
 				lang.defaultButton = 'Восстановить';
@@ -145,20 +145,13 @@ class CameraGui {
 		var controllersDistance, defaultDistance;
 		Player.cameraTarget.init( { camera: camera } );
 		const cameraTarget = Player.cameraTarget.get(),
-			controllerLook = fCamera.add( { boLook: cameraTarget.boLook }, 'boLook' ).onChange( function ( boLook ) {
+			controllerLook = fCamera.add( cameraTarget, 'boLook' ).onChange( function ( boLook ) {
 
 				if ( Player.player ) Player.player.selectScene();
-				if ( boLook ) {
-
+				if ( boLook )
 					return;
-
-				}
-				if ( Player.orbitControls ) {
-
-					//обязательно вызвать controls.saveState();
-					Player.orbitControls.reset();
-
-				}
+				if ( Player.orbitControls )
+					Player.orbitControls.reset();//обязательно вызвать controls.saveState();
 
 			} ),
 			fDistanceToCamera = fCamera.addFolder( lang.distanceToCamera ),
@@ -170,8 +163,9 @@ class CameraGui {
 
 			};
 		dat.controllerNameAndTitle( controllerLook, lang.look, lang.lookTitle );
-		function setDistance() {
+		function setDistance( axisName, value ) {
 
+			if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.distanceToCameraCur[axisName] = value;
 			Player.cameraTarget.get().setCameraPosition();
 			update();
 
@@ -180,21 +174,21 @@ class CameraGui {
 
 			x: dat.controllerZeroStep( fDistanceToCamera, distance, 'x', function ( value ) {
 
-				camera.userData.cameraTarget.distanceToCameraCur.x = value;
-				setDistance();
+//				camera.userData.cameraTarget.distanceToCameraCur.x = value;
+				setDistance( 'x', value );
 
 			} ),
 			y: dat.controllerZeroStep( fDistanceToCamera, distance, 'y', function ( value ) {
 
-				Player.cameraTarget.get().distanceToCameraCur.y = value;
-				setDistance();
+//				Player.cameraTarget.get().distanceToCameraCur.y = value;
+				setDistance( 'y', value );
 
 			} ),
 
 			z: dat.controllerZeroStep( fDistanceToCamera, distance, 'z', function ( value ) {
 
-				camera.userData.cameraTarget.distanceToCameraCur.z = value;
-				setDistance();
+//				camera.userData.cameraTarget.distanceToCameraCur.z = value;
+				setDistance( 'z', value );
 
 			} ),
 
@@ -266,8 +260,10 @@ class CameraGui {
 		function update() {
 
 			const cameraTarget = Player.cameraTarget.get();
+			
 			if ( !cameraTarget.boLook || !cameraTarget.target )
 				return;
+
 			if ( controllersPosition.x ) controllersPosition.x.setValue( camera.position.x );
 			if ( controllersPosition.y ) controllersPosition.y.setValue( camera.position.y );
 			if ( controllersPosition.z ) controllersPosition.z.setValue( camera.position.z );
@@ -290,13 +286,12 @@ class CameraGui {
 			 * update
 			 */
 			this.update = function () { update(); }
-			//if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.cameraGui = this;Use Player.cameraGui
-			/**
+			/* *
 			 * Is camera look at selected point?
 			 * @function CameraGui.
 			 * isLook
 			 */
-			this.isLook = function () { return controllerLook.getValue(); }
+//			this.isLook = function () { return controllerLook.getValue(); }
 			/**
 			 * Look at selected point
 			 * @function CameraGui.
