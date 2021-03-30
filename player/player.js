@@ -896,7 +896,7 @@ Player.cameraTarget = class {
 		 * Create default camera target
 		 * @param {object} cameraTarget the following cameraTarget are available:
 		 * @param {THREE.PerspectiveCamera} [cameraTarget.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
-		 * @param {boolean} [cameraTarget.boLook] true - camera look at the target.
+		 * @param {boolean} [cameraTarget.boLook=false] true - camera look at the target.
 		 * @param {THREE.Vector3} [cameraTarget.distanceToCamera] Distance from target point to camera.
 		   * You can set the distance to the camera depending on the time.
 		 * <pre>
@@ -927,6 +927,10 @@ Player.cameraTarget = class {
 		 * </pre>
 		 */
 		this.init = function ( cameraTarget ) {
+
+			//если вызывается эта функция значит надо следить за точкой
+			//если нет точки, за которой надо следить, и создан OrbitControls, то следить за OrbitControls.target https://threejs.org/docs/index.html?q=orbit#examples/en/controls/OrbitControls.target
+//			if ( cameraTarget.boLook === undefined ) cameraTarget.boLook = true;
 
 			//cameraTargetDefault.boLook = false по умолчанию камера не смотритт на выбранную точку если:
 			// 1 ни разу не вызывается init. Тоесть нет настроек cameraTargetDefault и нет ни однойточки, на которую смотрит камера
@@ -1088,7 +1092,8 @@ Player.cameraTarget = class {
 				cameraTarget.distanceToCameraCur = new THREE.Vector3();
 
 			const t = Player.getTime(),
-				distanceToCamera = cameraTarget.distanceToCamera;
+				distanceToCamera = cameraTarget.distanceToCamera,
+				distanceToCameraCur = new THREE.Vector3().copy( cameraTarget.distanceToCameraCur );
 			cameraTarget.distanceToCameraCur.set(
 
 				Player.execFunc( distanceToCamera, 'x', t ),
@@ -1100,8 +1105,17 @@ Player.cameraTarget = class {
 			if ( !cameraTarget.setCameraPosition || update )
 				cameraTarget.setCameraPosition = function ( setCameraDefault ) {
 
-					const target = cameraTarget.target;
-					if ( ( Player.cameraGui && !Player.cameraGui.isLook() ) || !target ) {
+					var target = cameraTarget.target;
+
+					//не менять позицию камеры если
+					if (
+//						( Player.cameraGui && !Player.cameraGui.isLook() ) ||//есть cameraGui в которой снят флаг следить за точкой
+						!cameraTarget.boLook ||//не следить за точкой
+						(//или
+							!target &&//нет точки, за которой надо следить
+							cameraTarget.distanceToCameraCur.equals( distanceToCameraCur )//и не изменилось расстояние камеры до target
+						)
+					) {
 
 						if ( camera.userData.default && setCameraDefault ) camera.userData.default.setDefault();
 						return;//Камере не нужно следить за выбранной точкой или ни одна точка не определена как target
@@ -1111,13 +1125,30 @@ Player.cameraTarget = class {
 					const t = Player.getTime();
 					camera.position.copy( cameraTarget.distanceToCameraCur );
 					camera.position.applyAxisAngle( cameraTarget.rotation.axis, Player.execFunc( cameraTarget.rotation, 'angle', t ) );
+					if ( !target ) {
+
+						if ( Player.orbitControls ) target = Player.orbitControls.target;
+						else {
+
+							console.warn( 'Under constaction' );
+							return;
+
+						}
+
+					}
 					camera.position.add( target );
 					camera.lookAt( target );
+//					if ( Player.orbitControls && !Player.orbitControls.target.equals( target ) )
 					if ( Player.orbitControls ) {
 
-						Player.orbitControls.target.copy( target );
-						if ( Player.orbitControlsGui )
-							Player.orbitControlsGui.setTarget( target );
+						if ( !Player.orbitControls.target.equals( target ) ) {
+
+							Player.orbitControls.target.copy( target );
+							if ( Player.orbitControlsGui )
+								Player.orbitControlsGui.setTarget( target );
+
+						}
+						Player.orbitControls._listeners.change[0]();//move frustumpoints
 
 					}
 
