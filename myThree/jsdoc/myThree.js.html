@@ -78,11 +78,9 @@ import {
 
 	GuiSelectPoint,
 	getWorldPosition,
-	//getObjectLocalPosition,
-	//getObjectPosition
 
 } from '../guiSelectPoint/guiSelectPoint.js';
-//import { GuiSelectPoint, getWorldPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+
 GuiSelectPoint.setTHREE( THREE );
 
 import PositionController from '../PositionController.js';
@@ -199,6 +197,7 @@ class MyThree {
 	 * @param {boolean} [options.dat.guiFrustumPoints=true] true - Adds &lt;a href="../../FrustumPoints/jsdoc/FrustumPoints.html#gui" target="_blank">Frustum Points folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {object} [options.dat.moveScene={}] true - displays the &lt;a href="../../jsdoc/MoveGroupGui/index.html" target="_blank">move group gui&lt;/a>.
 	 * @param {boolean} [options.canvasMenu=false] true - use my &lt;a href="../../canvasMenu/jsdoc/index.html" target="_blank">dropdown menu for canvas&lt;/a> in my version of [dat.gui]{@link https://github.com/anhr/dat.gui}.
+	 * @param {object} [options.cameraTarget] camera looking at selected point during playing. See the &lt;b>cameraTarget&lt;/b> parameter of the &lt;a href="../../player/jsdoc/module-Player-Player.cameraTarget.html#init" target="_blank">Player.cameraTarget.init(...)&lt;/a> function for details.
 	 * @param {array} [options.arrayCloud] Array of points with cloud.
 	 * &lt;pre>
 	 * If you define the array of points with cloud, then you can define a points with cloud.
@@ -359,18 +358,6 @@ class MyThree {
 			ColorPicker.palette.setTHREE( THREE );
 
 		}
-/*		
-		if ( options.palette !== undefined ) {
-
-			if ( options.palette instanceof ColorPicker.palette === false ) {
-
-				options.palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
-				ColorPicker.palette.setTHREE( THREE );
-
-			}
-
-		} else options.palette = { toColor: function () { return new THREE.Color( 0xffffff ) } }//white
-*/		
 
 		if ( options.arrayCloud !== undefined ) {
 
@@ -396,30 +383,6 @@ class MyThree {
 
 		options.point = options.point || {};
 		options.point.size = options.point.size || 5.0;
-/*
-		options.scales = options.scales || {};
-		function getAxis( axix, name, min, max ) {
-
-			//axix = axix || {};
-			if ( axix ) {
-
-				axix.name = axix.name || name;
-				axix.min = axix.min !== undefined ? axix.min : min === undefined ? - 1 : min;
-				axix.max = axix.max !== undefined ? axix.max : max === undefined ? 1 : max;
-
-			}
-			return axix;
-
-		}
-		options.scales.x = getAxis( options.scales.x, 'X' );
-		options.scales.y = getAxis( options.scales.y, 'Y' );
-		options.scales.z = getAxis( options.scales.z, 'Z' );
-		if ( !options.scales.x &amp;&amp; !options.scales.y &amp;&amp; !options.scales.z )
-			console.warn( 'MyThreej: scales is undefined.' );
-		if ( options.scales.w === undefined )
-			options.scales.w = { name: 'W', min: -1, max: 1 };
-		options.scales.w = getAxis( options.scales.w, 'W', options.scales.w.min, options.scales.w.max );
-*/		
 		function getCanvasName() {
 			return typeof options.elContainer === "object" ?
 				options.elContainer.id :
@@ -500,8 +463,6 @@ class MyThree {
 				//https://www.khronos.org/webgl/wiki/HandlingContextLost
 				requestId;
 
-//				cFrustumPoints;
-
 			canvas = elContainer.querySelector( 'canvas' );
 			//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
 			const gl = canvas.getContext( 'webgl' );
@@ -564,7 +525,6 @@ class MyThree {
 				camera.position.copy( options.camera.position );
 				camera.scale.copy( options.camera.scale );
 				camera.userData.default = { options: JSON.parse( JSON.stringify( options.camera ) ), }
-//				options.cameraDefault = JSON.parse( JSON.stringify( options.camera ) );
 
 				//для возврата созданной камеры обратно в код, который вызвал new MyThree
 				//В частности это используется для создания точки, за которой будет следить камера
@@ -572,6 +532,34 @@ class MyThree {
 
 				options.point.sizePointsMaterial = 100;//size of points with material is not ShaderMaterial is options.point.size / options.point.sizePointsMaterial
 
+				//добавляю camera.userData.default что бы изменять положение камеры во время проигрывания
+				if ( options.cameraTarget ) {
+	
+					options.cameraTarget.camera = camera;
+					Player.cameraTarget.init( options.cameraTarget );
+									
+				}
+/*				
+if ( typeof Player !== 'undefined' )
+	Player.cameraTarget.init( {
+
+		boLook: true,
+		camera: camera,
+		rotation: {
+
+			//angle: Math.PI,
+			//angle: new Function( 't', 'return 5*t' ),
+			//angle: [0, Math.PI / 2],
+			//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+			//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+		},
+		//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
+		//distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
+		distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+3*t' ) ),
+
+	} );
+*/	
 				// SCENE
 
 				scene = new THREE.Scene();
@@ -596,15 +584,12 @@ class MyThree {
 						options.stereoEffect.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
 					if ( StereoEffect !== undefined ) {
 
-//						var cookieName = getCanvasName();
 						stereoEffect = new StereoEffect( THREE, renderer, {
 
 							spatialMultiplex: options.stereoEffect.spatialMultiplex,//StereoEffect.spatialMultiplexsIndexs.Mono, //.SbS,
 							far: camera.far,
 							camera: camera,
 							//stereoAspect: 1,
-//							cookie: options.dat.cookie,
-//							cookieName: cookieName === '' ? '' : '_' + cookieName,
 							elParent: canvas.parentElement,
 							rememberSize: true,
 
@@ -902,7 +887,6 @@ class MyThree {
 				}
 
 				//Settings for all SpriteText added to scene and child groups
-//				if ( ( typeof SpriteTextGui !== "undefined" ) &amp;&amp; ( fOptions ) )
 				if ( fOptions )
 					SpriteTextGui( SpriteText, fOptions, scene, {
 
@@ -939,11 +923,9 @@ class MyThree {
 						stereoEffect: stereoEffect,
 						onChangeMode: function ( mode ) {
 
-//							var fullScreen = true;
 							switch ( mode ) {
 
 								case StereoEffect.spatialMultiplexsIndexs.Mono:
-//									fullScreen = false;
 									break;
 								case StereoEffect.spatialMultiplexsIndexs.SbS:
 								case StereoEffect.spatialMultiplexsIndexs.TaB:
@@ -978,8 +960,7 @@ class MyThree {
 
 						onFullScreenToggle: function ( fs ) {
 
-							arrayContainers.display( elContainer.parentElement, !fs );//fullScreen );
-							//return { renderer: renderer, camera: camera };
+							arrayContainers.display( elContainer.parentElement, !fs );
 
 						},
 
@@ -1030,8 +1011,6 @@ class MyThree {
 					new CreateFullScreenSettings( THREE, renderer, camera,
 						{
 
-	//						canvasMenu: this,
-	//						fullScreen: options.fullScreen,
 
 						} ).setFullScreen();
 		
@@ -1076,17 +1055,6 @@ class MyThree {
 					} );
 
 				}
-/*
-				var moveGroup;
-				if ( options.moveScene )
-					moveGroup = new MoveGroup( scene, {
-
-						scales: options.scales,
-						cookie: options.dat.cookie,
-						cookieName: getCanvasName(),
-
-					} );
-*/
 
 				// helper
 
@@ -1095,14 +1063,10 @@ class MyThree {
 					var cookieName = getCanvasName();
 					axesHelper = new AxesHelper( THREE, scene, {
 
-//						cookie: options.cookie,
-//						cookieName: cookieName === '' ? '' : '_' + cookieName,
 						scene: { position: scene.position, },
-//						position: options.axesHelper.position,
 						scale: options.axesHelper.scale,
 						color: 'rgba(255, 255, 255, 0.5)',
 						scales: options.scales,
-//						dimensions: options.axesHelper.dimensions,
 
 					} );
 					options.axesHelper = axesHelper;
@@ -1114,7 +1078,6 @@ class MyThree {
 				}
 				if ( gui &amp;&amp; options.dat.guiSelectPoint ) {
 
-					//var cTrace, intersection;
 					var intersection;
 					options.guiSelectPoint = new GuiSelectPoint( THREE, {
 
@@ -1146,7 +1109,6 @@ class MyThree {
 
 				var pointName = 'Point_' + getCanvasName();
 				if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
-//				options.cookie.getObject( pointName, options.point, options.point );
 
 				options.spriteText = options.spriteText || {};
 
@@ -1156,16 +1118,12 @@ class MyThree {
 				if ( !options.player ) {
 
 					Player.selectPlayScene( group );//, Player.getTime(), 0 );
-/*					
-					Player.cameraTarget.setCameraTarget( options.camera );
-					const cameraTarget = Player.cameraTarget.get();
-					if ( cameraTarget &amp;&amp; cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition();
-*/					
 
 				}
 				
 				if ( options.arrayCloud ) {//Array of points with cloud
 
+					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
 					frustumPoints = new FrustumPoints( THREE, camera,
 						group,// stereoEffect ? stereoEffect.options.spatialMultiplex : undefined,
 						renderer, options,
@@ -1206,19 +1164,18 @@ class MyThree {
 							// 100 no scale
 							// Default is 100
 							square: true,// true - Square base of the frustum points.Default is false
-							cookie: cookie,
+							cookie: options.dat.cookie,
 							cookieName: getCanvasName(),
+							cFrustumPoints: cFrustumPoints,
 							
 						},
-						options.guiSelectPoint.getFrustumPoints(),
-//						options.palette
+
 					);
-					options.guiSelectPoint.getFrustumPoints().setFrustumPoints( frustumPoints );
+					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( frustumPoints );
 					options.arrayCloud.frustumPoints = frustumPoints;
 
 				}
 				options.boPlayer = false;
-				//			player.selectPlayScene( THREE, group, options.player === undefined ? 0 : options.player.min, 0, options );
 
 				//default setting for each 3D object
 				group.children.forEach( function ( mesh ) {
@@ -1265,16 +1222,6 @@ class MyThree {
 							axesHelper: axesHelper,
 
 						} );
-/*
-					if ( moveGroup )
-						moveGroup.gui( fOptions, {
-
-							//cookie: options.cookie,
-							getLanguageCode: getLanguageCode,
-							lang: { moveGroup: lang.moveGroup, }
-
-						} );
-*/
 
 					//OrbitControls gui
 
@@ -1362,7 +1309,6 @@ class MyThree {
 							else mesh.material.uniforms.pointSize.value = value;//shaderMaterial
 
 						} );
-						//					options.point.size = value;
 						folderPoint.size.setValue( value );
 						options.dat.cookie.setObject( pointName, options.point );
 
@@ -1394,16 +1340,6 @@ class MyThree {
 						defaultF: function ( value ) {
 
 							Player.selectPlayScene( group );
-/*							
-							controls.target = new THREE.Vector3();
-							camera.position.copy( options.cameraDefault.position );
-							scene.position.copy( optionsScene.position );
-							//scene.position.add( options.axesHelper.position );
-							scene.position.add( options.scene.position );
-							//scene.position.copy( options.scene.position );
-							controls.object.position.copy( camera.position );
-							controls.update();
-*/							
 
 						},
 
@@ -1462,12 +1398,6 @@ class MyThree {
 				camera.updateProjectionMatrix();
 
 				renderer.setSize( size.x, size.y );
-				/*
-							if ( typeof se === 'undefined' )
-								renderer.setSize( size.x, size.y );
-							else
-								stereoEffect.setSize( size.x, size.y );
-				*/
 				if ( frustumPoints !== undefined )
 					frustumPoints.update();
 
@@ -1753,8 +1683,6 @@ const lang = {
 	defaultButton: 'Default',
 	defaultTitle: 'Restore Orbit controls settings.',
 
-	//	mesh: 'Mesh',
-	//	pointName: 'Point Name',
 	settings: 'Settings',
 	webglcontextlost: 'The user agent has detected that the drawing buffer associated with a WebGLRenderingContext object has been lost.',
 
@@ -1767,11 +1695,6 @@ const lang = {
 	size: 'Size',
 	sizeTitle: 'Size of the point with "ShaderMaterial" material',
 	defaultPointTitle: 'Restore point.',
-	/*	
-		trace: 'Trace',
-		traceTitle: 'Display the trace of the point movement.',
-		traceAllTitle: 'Display the trace of the movement of all points of the mesh.',
-	*/
 	opacity: 'Opacity',
 
 };
@@ -1782,8 +1705,6 @@ switch ( getLanguageCode() ) {
 		lang.defaultButton = 'Восстановить';
 		lang.defaultTitle = 'Восстановить положение осей координат по умолчанию.';
 
-		//		lang.mesh = '3D объект';
-		//		lang.pointName = 'Имя точки';
 		lang.name = 'Имя';
 		lang.settings = 'Настройки';
 		lang.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
@@ -1797,11 +1718,6 @@ switch ( getLanguageCode() ) {
 		lang.size = 'Размер';
 		lang.sizeTitle = 'Размер точки с материалом типа "ShaderMaterial"';
 		lang.defaultPointTitle = 'Восстановить точку';
-		/*
-				lang.trace = 'Трек';
-				lang.traceTitle = 'Показать трек перемещения точки.';
-				lang.traceAllTitle = 'Показать трек перемещения всех точек выбранного 3D объекта.';
-		*/
 		lang.opacity = 'Непрозрачность';
 		break;
 
@@ -1980,7 +1896,7 @@ export default MyThree;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 24 2021 10:16:18 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Mar 27 2021 10:17:31 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
