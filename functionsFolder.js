@@ -226,6 +226,10 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 	 */
 	this.setFunction = function ( _vector ) {
 
+		_vector = _vector || options.vector;
+		if ( !_vector )
+			return;
+			
 		const vector = {
 
 			x: _vector ? getFuncText( _vector.x ) : '',
@@ -306,6 +310,8 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 		setVectorAxis( 'w' );
 
 	}
+	this.setFunction();
+
 	/**
 	 * Display functions folder
 	 * @param {string} display display is 'block' - functions folder is visible.
