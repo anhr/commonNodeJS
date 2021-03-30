@@ -34,7 +34,8 @@ import { dat } from './dat/dat.module.js';
 const functionsFolder = function ( fParent, scales, THREE, onFinishChange, options = {} ) {
 
 	const _this = this;
-	var boError = false;
+	var boError = false,//true - обнаружена ошибка ввода. Нужно вывести сообщение об ошибке и вернуть фокус на поле управления
+		boAlert = false;//предотвращает бесконечный вывод сообщения об ошибке
 
 	//Localization
 
@@ -197,11 +198,19 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 					return;
 
 			}
+			
+			//Новое значение введено правильно
 			onFinishChange( func, axisName );
+			boAlert = false;
 
 		} catch ( e ) {
 
-			alert( 'Axis: ' + getAxisName( axisName ) + '. Function: "' + value + '". ' + e );
+			if ( !boAlert ) {
+
+				alert( 'Axis: ' + getAxisName( axisName ) + '. Function: "' + value + '". ' + e );
+				boAlert = true;
+
+			}
 			_this.setFocus( axisName );
 
 		}
