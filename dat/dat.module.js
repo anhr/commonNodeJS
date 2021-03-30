@@ -74,6 +74,7 @@ if ( typeof dat !== 'undefined' ) {
 		*/
 		dat.controllerZeroStep = function ( folder, object, property, onchange ) {
 
+			if ( typeof object[property] !== "number" ) console.warn( 'typeof object[property] = ' + typeof object[property] );
 			var controller = folder.add( object, property ),
 				input = controller.__input;
 			controller.__input = document.createElement( 'input' );
