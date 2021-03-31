@@ -87,9 +87,13 @@ if ( typeof dat !== 'undefined' ) {
 					onchange( object[property] );
 
 			};
-			controller.setValue = function ( value ) {
+			controller.setValue = function ( value, boOnChange ) {
 
 				input.value = object[property] = value;
+
+				//нужно в CameraGui когда пользователь редактирует функцию расстояния от камеры до цели
+				if ( boOnChange && onchange )
+					onchange( object[property] );
 
 			};
 			return controller;
