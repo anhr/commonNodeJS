@@ -157,16 +157,20 @@ class CameraGui {
 			fDistanceToCamera = fCamera.addFolder( lang.distanceToCamera ),
 			distance = {
 
-				x: Player.execFunc( cameraTarget.distanceToCamera, 'x' ).toString(),
-				y: Player.execFunc( cameraTarget.distanceToCamera, 'y' ).toString(),
-				z: Player.execFunc( cameraTarget.distanceToCamera, 'z' ).toString(),
+				//не помню зачем вызывал toString(), но если это оставить и пользователь изменит расстояние, то оно заменяется на пустое поле
+				x: Player.execFunc( cameraTarget.distanceToCamera, 'x' ),//.toString(),
+				y: Player.execFunc( cameraTarget.distanceToCamera, 'y' ),//.toString(),
+				z: Player.execFunc( cameraTarget.distanceToCamera, 'z' ),//.toString(),
 
 			};
 		dat.controllerNameAndTitle( controllerLook, lang.look, lang.lookTitle );
 		function setDistance( axisName, value ) {
 
+			if ( isNaN( value ) ) return;
 			if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.distanceToCameraCur[axisName] = value;
-			Player.cameraTarget.get().setCameraPosition();
+			const cameraTarget = Player.cameraTarget.get();
+			cameraTarget.distanceToCameraCur[axisName] = value;
+			cameraTarget.setCameraPosition();
 			update();
 
 		}
@@ -204,11 +208,13 @@ class CameraGui {
 			const cameraTarget = Player.cameraTarget.get();
 			cameraTarget.distanceToCamera[axisName] = func;
 			const value = Player.execFunc( cameraTarget.distanceToCamera, axisName, Player.getTime() );
-			controllersDistance[axisName].setValue( value );
+			controllersDistance[axisName].setValue( value, true );
+//			controllersDistance[axisName].__onchange( value );
 			Player.cameraTarget.init( { camera: camera } );
-
+/*
 			cameraTarget.distanceToCameraCur[axisName] = value;
 			setDistance();
+*/			
 
 		}, {
 
