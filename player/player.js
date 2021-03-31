@@ -1121,7 +1121,8 @@ Player.cameraTarget = class {
 						return;//Камере не нужно следить за выбранной точкой или ни одна точка не определена как target
 
 					}
-						
+					
+					distanceToCameraCur.copy( cameraTarget.distanceToCameraCur );
 					const t = Player.getTime();
 					camera.position.copy( cameraTarget.distanceToCameraCur );
 					camera.position.applyAxisAngle( cameraTarget.rotation.axis, Player.execFunc( cameraTarget.rotation, 'angle', t ) );
