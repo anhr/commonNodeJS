@@ -170,6 +170,7 @@
 					),//Animated 3D point
 					trace: true,//Displays the trace of the point movement.
 					name: 'point 4',
+					/*
 					cameraTarget: {
 
 						//boLook: false,
@@ -186,6 +187,7 @@
 						},
 
 					},
+					*/
 
 				},
 /*
@@ -224,9 +226,8 @@
 				//scale: new THREE.Vector3( 2, 2, 2 ),
 				//rotation: new THREE.Vector3( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), Math.PI / 4 ),
 				//rotation: new THREE.Vector3( Math.PI / 2, 0 ),
-				//shaderMaterial: {},
+				shaderMaterial: {},
 				arrayCloud: options.arrayCloud,//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
-//deprecated				cloud: {},//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
 				onReady: function( points ){
 
 					if ( options.guiSelectPoint )  options.guiSelectPoint.addMesh( points );
@@ -241,8 +242,8 @@
 				//new THREE.Vector2( 1, [{t:0,v:1}] ),//2D point. Array
 				//new THREE.Vector2( new Function( 't', 'a', 'b', 'return 1' ), 1 ),//2D point
 				//new THREE.Vector3( -0.5, 0.5, -1 ),//3D point
-				new THREE.Vector4( 0, 0, 0, 0 ),//zero
-//				new THREE.Vector4( 0, 0, 0, new THREE.Color( "rgb(0, 0, 255)" ) ),//zero blue point
+				//new THREE.Vector4( 0, 0, 0, 0 ),//zero
+				//new THREE.Vector4( 0, 0, 0, new THREE.Color( "rgb(0, 0, 255)" ) ),//zero blue point
 				{
 
 					vector: new THREE.Vector4(
@@ -257,10 +258,10 @@
 						//1,//w
 					),//Animated 3D point
 					trace: true,//Displays the trace of the point movement.
+					//cameraTarget: { camera: options.camera, },
 
 				},
-
-				//new THREE.Vector4( -1.5, 0.5, 1, 25 ),//4D point. white color
+				//new THREE.Vector4( -0.25, 0.3, 0.3, 25 ),//4D point
 				//new THREE.Vector4( 0, 0, 0, new Function( 't', 'return 1-2*t' ) ),//color is f(t)
 				//new THREE.Vector4( -0.25, 0.3, 0.3, new THREE.Color( "rgb(255, 255, 0)" ) ),//yellow point
 				//new THREE.Vector4( 0.25, 0, 0, new THREE.Color( "rgb(255, 0, 0)" ) ),//red point
@@ -270,7 +271,7 @@
 				new THREE.PointsMaterial( { size: options.point.size, vertexColors: THREE.VertexColors } ) );
 */
 			var points = new THREE.Points(
-				new THREE.BufferGeometry().setFromPoints( options.getPoints( /*THREE, */arrayFuncs,
+				new THREE.BufferGeometry().setFromPoints( options.getPoints( arrayFuncs,
 					{ options: options, group: group, t: tMin } ), 4 ),
 				new THREE.PointsMaterial( { size: options.point.size, vertexColors: THREE.VertexColors } ) );
 
@@ -325,7 +326,7 @@
 				}
 
 			}
-			group.add( points );
+			//group.add( points );
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 			//ATTENTION!!! You can adding of the cloud into points only if you want add points into group "group.add( points );"
@@ -390,10 +391,6 @@
 				}
 				if ( selectPlayScene ) {
 
-/*
-					cube.userData.selectPlayScene = selectPlayScene;
-					cube.userData.cube = cube;
-*/					
 					cube.userData.player = {
 
 						selectPlayScene: function ( t ) { selectPlayScene( t, cube ) },
@@ -436,7 +433,6 @@
 		}, {
 
 				elContainer: "canvasContainer1",//document.getElementById("canvasContainer1"),//id of the HTMLElement for canvas and HTMLElement with id="iframe-goes-in-here" for gui.
-//				player: playerOptions,//3D objects animation.
 				player: {//3D objects animation.
 
 					marks: 110,//Number of scenes of 3D objects animation.
@@ -463,7 +459,7 @@
 				},
 				//stats: {},//JavaScript Performance Monitor. https://github.com/mrdoob/stats.js/ .
 				orbitControls: { gui: true, },//OrbitControls,//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
-				point: { size: 15 },
+				//point: { size: 15 },
 
 				//Array of points with cloud.
 				//If you define the array of points with cloud, then you can define a points with cloud.
@@ -485,14 +481,34 @@
 				//	}
 				arrayCloud: [],
 
+				cameraTarget: {
+
+					boLook: true,
+//					camera: options.camera,
+					rotation: {
+
+						//angle: Math.PI,
+						//angle: new Function( 't', 'return 5*t' ),
+						//angle: [0, Math.PI / 2],
+						//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+						//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+					},
+					//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
+					//distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
+					distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+3*t' ) ),
+
+				},
+
 				dat: {//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
 
-					cookie: true,
+					//cookie: false,
 					//playerGui: false,
 					//guiSelectPoint: false,
 					//moveScene: false,
 					//axesHelperGui: false,
 					//cameraGui: false,
+					//guiStereoEffect: false,
 
 				},
 				axesHelper: true,
@@ -543,10 +559,10 @@
 					},
 					w: {
 						name: 'energy',
-						min: -1,
-						max: 1,
-						//min: 0,//-1,
-						//max: 100,//1,
+						//min: -1,
+						//max: 1,
+						min: 0,//-1,
+						max: 100,//1,
 					},
 
 				},
