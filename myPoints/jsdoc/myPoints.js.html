@@ -46,24 +46,25 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
 /**
  * Creating the new points and adding it into group
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
- * @param {array} arrayFuncs points.geometry.attributes.position array.
- * See arrayFuncs parametr of the [Player.getPoints(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints} for details.
- * @param {THREE.Group} group Group for new points
+ * @param {array} arrayFuncs &lt;b>points.geometry.attributes.position&lt;/b> array.
+ * See &lt;b>arrayFuncs&lt;/b> parametr of the &lt;a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)&lt;/a> for details.
+ * @param {THREE.Group} group [Group]{@link https://threejs.org/docs/index.html?q=grou#api/en/objects/Group} for new points.
  * @param {object} [settings] the following options are available
- * @param {Player} [settings.Player] [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}.
- * Define Player only if you want move or/and you want change color of the points during playing.
+ * @param {Player} [settings.Player] &lt;a href="../../player/jsdoc/index.html" target="_blank">Player&lt;/a>.
+ * Define &lt;b>Player only&lt;/b> if you want move or/and you want change color of the points during playing.
  * @param {object} [settings.options] the following options are available
  * @param {number} [settings.options.point.size=5.0] point size.
  * @param {object} [settings.options.scales.w] followed w axis scale params is available
  * @param {object} [settings.options.scales.w.min=0] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * @param {object} [settings.options.scales.w.max=100] Maximal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
- * @param {object} [settings.options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See [ColorPicker.palette]{@link https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette}.
+ * @param {object} [settings.options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See &lt;a href="../../colorPicker/jsdoc/module-ColorPicker.html#~Palette" target="_blank">ColorPicker.palette&lt;/a>.
  * &lt;pre>
  * Example:
- * new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
+ * &lt;b>new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );&lt;/b>
  * &lt;/pre>
- * @param {GuiSelectPoint} [settings.options.guiSelectPoint] A dat.gui based graphical user interface for select a point from the mesh.
- * See [GuiSelectPoint]{@link https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html} for details.
+ * @param {GuiSelectPoint} [settings.options.guiSelectPoint] A [dat.gui]{@link https://github.com/anhr/dat.gui} based graphical user interface for select a point from the mesh.
+ * See &lt;a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint&lt;/a> for details.
+ * @param {object} [settings.options.frustumPoints] Creates a &lt;a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints&lt;/a> instance.
  * @param {object} [settings.options.raycaster] followed [raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} options is available
  * @param {Function(particle)} [settings.options.raycaster.addParticle] Callback function that take as input the &lt;b>new THREE.Points&lt;/b>.
  * Add new particle into array of objects to check for intersection with the ray. See [THREE.Raycaster.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
@@ -77,11 +78,10 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * User has clicked over point.
  * @param {object} [settings.pointsOptions] followed points options is availablee:
  * @param {number} [settings.pointsOptions.tMin=0] start time. Uses for playing of the points..
- * @param {string} [settings.pointsOptions.name=""] Name of the points. Used for displaying of items of the Select drop down control of the Meshs folder of the dat.gui.
- * @param {object} [settings.pointsOptions.shaderMaterial] creates the THREE.Points with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} material.
- * The size of the each point of the THREE.Points seems the same on canvas
+ * @param {string} [settings.pointsOptions.name=""] Name of the points. Used for displaying of items of the &lt;b>Select&lt;/b> drop down control of the &lt;b>Meshes&lt;/b> folder of the [dat.gui]{@link https://github.com/anhr/dat.gui}.
+ * @param {object} [settings.pointsOptions.shaderMaterial] creates the [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} material.
+ * The size of the each point of the &lt;b>THREE.Points&lt;/b> seems the same on canvas
  * because I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.
- * See var shaderMaterialDefault of the frustumPoints for details.
  * @param {THREE.Vector3} [settings.pointsOptions.position=new THREE.Vector3( 0, 0, 0 )] position of the points.
  * &lt;pre>
  * Vector's x, y, z is position of the points.
@@ -115,26 +115,16 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * &lt;/pre>
  * Example:
  * &lt;b>new THREE.Vector3 ( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), 0, 0)&lt;/b>
- * @param {array} [settings.pointsOptions.arrayCloud] Array of points with cloud.
- * &lt;pre>
- * If you define the array of points with cloud,
- * then you can define a points with cloud.
- * For example you can define
- * &lt;b>arrayCloud: options.arrayCloud&lt;/b>
- * on the params of the
- * &lt;b>getShaderMaterialPoints( params, onReady )&lt;/b>
- * function.
- * Or
- * &lt;b>arrayCloud: options.arrayCloud&lt;/b>
- * on the &lt;b>pointsOptions&lt;/b> of the &lt;b>myThreejs.points&lt;/b> function.
- * &lt;/pre>
- * @param {boolean} [settings.pointsOptions.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details.
+ * @param {boolean} [settings.pointsOptions.opacity] if true then opacity of the point is depend from distance to all meshes points from the group with defined &lt;b>mesh.userData.cloud&lt;/b>.
+ * See &lt;b>optionsColor.opacity&lt;/b> parameter of the &lt;a href="../../player/jsdoc/module-Player-Player.getColors.html" target="_blank">Player.getColors(...)&lt;/a> for details.
  * @param {function(THREE.Points)} [settings.pointsOptions.onReady] Callback function that take as input the &lt;b>new THREE.Points&lt;/b>.
  * Fires after creating of the points.
  */
 function MyPoints( THREE, arrayFuncs, group,// Player,
 	settings ) {
 
+	Player.setTHREE(THREE);
+	
 	if ( ( typeof arrayFuncs !== 'function' ) &amp;&amp; ( arrayFuncs.length === 0 ) )
 		arrayFuncs.push( new THREE.Vector3() );
 
@@ -145,11 +135,16 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 	options.point = options.point || {};
 	options.point.size = options.point.size || 5.0;
 	options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
-
+/*Убрал потому что когда нет AxesHelper и не запущен Player и пользователь навел мышку на точку
+то в текстовой строке не отобрахаются x, y, z.
+Это сделано на тот случай, когда в AxesHelper отображаются не все координаты
+Для решения проблемы решил вообще не создавть options.scales без AxesHelper,
+что будет означать что надо выводить все x, y, z для точки, на которую наведена мышка
 	options.scales = options.scales || {};
 	options.scales.w = options.scales.w || {};
 	if ( options.scales.w.min === undefined ) options.scales.w.min = 0;
 	if ( options.scales.w.max === undefined ) options.scales.w.max = 100;
+*/	
 
 	const pointsOptions = settings.pointsOptions || {};
 	pointsOptions.tMin = pointsOptions.tMin || 0;
@@ -177,7 +172,7 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 		const points = new THREE.Points(
 
 			typeof arrayFuncs === 'function' ? arrayFuncs() :
-				new THREE.BufferGeometry().setFromPoints( settings.Player.getPoints( THREE, arrayFuncs,
+				new THREE.BufferGeometry().setFromPoints( settings.Player.getPoints( /*THREE, */arrayFuncs,
 					{ options: options, group: group, t: pointsOptions.tMin } ), 4 ),
 			new THREE.PointsMaterial( { size: options.point.size / options.point.sizePointsMaterial, vertexColors: THREE.VertexColors } )
 
@@ -189,11 +184,11 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 
 			}
 		points.geometry.setAttribute( 'color',
-			new THREE.Float32BufferAttribute( settings.Player.getColors( THREE, arrayFuncs,
+			new THREE.Float32BufferAttribute( settings.Player.getColors( /*THREE, */arrayFuncs,
 				{
 
 					positions: points.geometry.attributes.position,
-					scale: options.scales.w,
+					scale: options.scales ? options.scales.w : { min: 0, max: 100 },
 					palette: options.palette,
 
 				} ), 4 ) );
@@ -233,6 +228,8 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 					return;//No display information about frustum point
 				if ( options.guiSelectPoint )
 					options.guiSelectPoint.select( intersection );
+				else if ( options.axesHelper )
+					options.axesHelper.exposePosition( intersection );
 				if ( options.raycaster.onMouseDown )
 					options.raycaster.onMouseDown( intersection );
 
@@ -291,8 +288,8 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 				points.rotation[axisName] = typeof pointsOptions.rotation[axisName] === "function" ?
 					pointsOptions.rotation[axisName]( t, options.a, options.b ) :
 					pointsOptions.rotation[axisName];
-				while ( points.rotation[axisName] > Math.PI * 2 )
-					points.rotation[axisName] -= Math.PI * 2
+				while ( points.rotation[axisName] &lt; 0 ) points.rotation[axisName] += Math.PI * 2;
+				while ( points.rotation[axisName] > Math.PI * 2 ) points.rotation[axisName] -= Math.PI * 2
 
 			}
 			setRotation( 'x' );
@@ -305,15 +302,17 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 		if ( pointsOptions.onReady !== undefined )
 			pointsOptions.onReady( points );
 
+/*если оставить эти строки то в guiSelectPoint будут добавляться точки даже если этого не хочет программист			
 		if ( options.guiSelectPoint )
 			options.guiSelectPoint.addMesh( points );
+*/			
 		if ( !points.userData.boFrustumPoints &amp;&amp; options.raycaster &amp;&amp; options.raycaster.addParticle )
 			options.raycaster.addParticle( points );
 
 	}
 
 }
-/**
+/* *
  * Pushes to clouds array all points from geometry
  * @function MyPoints.
  * pushArrayCloud
@@ -322,6 +321,7 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
  * @param {THREE.BufferGeometry} geometry
  * @returns index of the new array item
  */
+/*See FrustumPoints.pushArrayCloud
 MyPoints.pushArrayCloud = function( THREE, arrayCloud, geometry ) {
 
 	if ( arrayCloud === undefined ) {
@@ -346,7 +346,7 @@ MyPoints.pushArrayCloud = function( THREE, arrayCloud, geometry ) {
 	return index;
 
 }
-
+*/
 export default MyPoints;
 </code></pre>
         </article>
@@ -364,7 +364,7 @@ export default MyPoints;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue Dec 08 2020 08:44:05 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Apr 03 2021 09:17:45 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

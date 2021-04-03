@@ -198,17 +198,7 @@ class MyThree {
 	 * @param {object} [options.dat.moveScene={}] true - displays the &lt;a href="../../jsdoc/MoveGroupGui/index.html" target="_blank">move group gui&lt;/a>.
 	 * @param {boolean} [options.canvasMenu=false] true - use my &lt;a href="../../canvasMenu/jsdoc/index.html" target="_blank">dropdown menu for canvas&lt;/a> in my version of [dat.gui]{@link https://github.com/anhr/dat.gui}.
 	 * @param {object} [options.cameraTarget] camera looking at selected point during playing. See the &lt;b>cameraTarget&lt;/b> parameter of the &lt;a href="../../player/jsdoc/module-Player-Player.cameraTarget.html#init" target="_blank">Player.cameraTarget.init(...)&lt;/a> function for details.
-	 * @param {array} [options.arrayCloud] Array of points with cloud.
-	 * &lt;pre>
-	 * If you define the array of points with cloud, then you can define a points with cloud.
-	 * For example you can define
-	 * arrayCloud: options.arrayCloud
-	 * on the params of the getShaderMaterialPoints( params, onReady ) function.
-	 * Or
-	 * arrayCloud: options.arrayCloud
-	 * on the pointsOptions of the myThreejs.points function.
-	 * Default is undefined
-	 * &lt;/pre>
+	 * @param {object} [options.frustumPoints] Creates a &lt;a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints&lt;/a> instance.
 	 * @param {MyThree.ColorPicker.palette|boolean|number} [options.palette=White color of all points] Color of points.
 	 * &lt;pre>
 	 * &lt;b>MyThree.ColorPicker.palette&lt;/b> - is &lt;b>new ColorPicker.palette( ... )&lt;/b>
@@ -358,7 +348,7 @@ class MyThree {
 			ColorPicker.palette.setTHREE( THREE );
 
 		}
-
+/*
 		if ( options.arrayCloud !== undefined ) {
 
 			options.arrayCloud.getCloudsCount = function () {
@@ -376,6 +366,7 @@ class MyThree {
 			options.arrayCloud.cFrustumPointsF = FrustumPoints.cFrustumPointsF;
 
 		}
+*/
 		options.a = options.a || 1;
 		options.b = options.b || 0;
 
@@ -440,7 +431,7 @@ class MyThree {
 
 //				cursor,//default
 
-				controls, stereoEffect, player, frustumPoints,
+				controls, stereoEffect, player,// frustumPoints,
 
 				mouseenter = false,//true - мышка находится над gui или canvasMenu
 				//В этом случае не надо обрабатывать событие elContainer 'pointerdown'
@@ -836,8 +827,8 @@ if ( typeof Player !== 'undefined' )
 						onSelectScene: function ( index, t ) {
 
 							options.boPlayer = true;
-							if ( frustumPoints !== undefined )
-								frustumPoints.updateCloudPoints();
+							if ( options.frustumPoints !== undefined )
+								options.frustumPoints.updateCloudPoints();
 
 						},
 						selectPlaySceneOptions: options,
@@ -934,8 +925,8 @@ if ( typeof Player !== 'undefined' )
 									return;
 
 							}
-							if ( frustumPoints !== undefined )
-								frustumPoints.setSpatialMultiplexs();// mode );
+							if ( options.frustumPoints !== undefined )
+								options.frustumPoints.setSpatialMultiplexs();// mode );
 
 						},
 
@@ -1049,8 +1040,8 @@ if ( typeof Player !== 'undefined' )
 
 						} );
 
-						if ( frustumPoints !== undefined )
-							frustumPoints.onChangeControls();
+						if ( options.frustumPoints !== undefined )
+							options.frustumPoints.onChangeControls();
 
 					} );
 
@@ -1112,19 +1103,11 @@ if ( typeof Player !== 'undefined' )
 
 				options.spriteText = options.spriteText || {};
 
-				createXDobjects( group, options );
-
-				//На случай когда указана точка, за которой следит камера и когда Player не создан
-				if ( !options.player ) {
-
-					Player.selectPlayScene( group );//, Player.getTime(), 0 );
-
-				}
-				
-				if ( options.arrayCloud ) {//Array of points with cloud
+//				if ( options.arrayCloud )//Array of points with cloud
+				if ( options.frustumPoints ) {
 
 					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
-					frustumPoints = new FrustumPoints( THREE, camera,
+					options.frustumPoints = new FrustumPoints( THREE, camera,
 						group,// stereoEffect ? stereoEffect.options.spatialMultiplex : undefined,
 						renderer, options,
 						{//points and lines options.Default is { }
@@ -1167,12 +1150,21 @@ if ( typeof Player !== 'undefined' )
 							cookie: options.dat.cookie,
 							cookieName: getCanvasName(),
 							cFrustumPoints: cFrustumPoints,
-							
+
 						},
 
 					);
-					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( frustumPoints );
-					options.arrayCloud.frustumPoints = frustumPoints;
+					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( options.frustumPoints );
+//					options.arrayCloud.frustumPoints = frustumPoints;
+
+				}
+
+				createXDobjects( group, options );
+
+				//На случай когда указана точка, за которой следит камера и когда Player не создан
+				if ( !options.player ) {
+
+					Player.selectPlayScene( group );//, Player.getTime(), 0 );
 
 				}
 				options.boPlayer = false;
@@ -1225,13 +1217,16 @@ if ( typeof Player !== 'undefined' )
 
 					//OrbitControls gui
 
-					if ( ( options.orbitControls !== undefined ) &amp;&amp; ( options.orbitControls.gui ) )
-						OrbitControlsGui( fOptions, controls, {
+					if ( ( options.orbitControls !== undefined ) &amp;&amp; ( options.orbitControls.gui ) ) {
+
+						Player.orbitControlsGui = new OrbitControlsGui( fOptions, controls, {
 
 							getLanguageCode: getLanguageCode,
 							scales: options.scales,
 
 						} );
+
+					}
 
 					//camera gui
 
@@ -1315,8 +1310,8 @@ if ( typeof Player !== 'undefined' )
 					} )
 
 					//Frustum points
-					if ( frustumPoints &amp;&amp; options.dat.guiFrustumPoints )
-						frustumPoints.gui( fOptions, FolderPoint, {
+					if ( options.frustumPoints &amp;&amp; options.dat.guiFrustumPoints )
+						options.frustumPoints.gui( fOptions, FolderPoint, {
 
 							getLanguageCode: getLanguageCode,
 							cookie: cookie,
@@ -1398,8 +1393,8 @@ if ( typeof Player !== 'undefined' )
 				camera.updateProjectionMatrix();
 
 				renderer.setSize( size.x, size.y );
-				if ( frustumPoints !== undefined )
-					frustumPoints.update();
+				if ( options.frustumPoints !== undefined )
+					options.frustumPoints.update();
 
 			}
 			function onDocumentMouseMove( event ) {
@@ -1490,7 +1485,7 @@ if ( typeof Player !== 'undefined' )
 				if (
 					!cameraPosition.equals( camera.position ) ||
 					( pointSize != options.point.size ) ||
-					( ( frustumPoints !== undefined ) &amp;&amp; frustumPoints.animate() )
+					( ( options.frustumPoints !== undefined ) &amp;&amp; options.frustumPoints.animate() )
 				) {
 
 					cameraPosition.copy( camera.position );
@@ -1785,7 +1780,6 @@ function findSpriteTextIntersection( scene ) {
  * &lt;pre>
  * The size of the each point of the THREE.Points seems the same on canvas
  * because I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.
- * See var shaderMaterialDefault of the frustumPoints for details.
  * &lt;/pre>
  * @param {THREE.Vector3} [pointsOptions.position] position of the points. Default is new THREE.Vector3( 0, 0, 0 ).
  * &lt;pre>
@@ -1810,17 +1804,6 @@ function findSpriteTextIntersection( scene ) {
  * float - rotation of the points.
  * [float] - array of rotations of the points.
  * Function - rotation of the points is function of the t. Example: new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )
- * &lt;/pre>
- * @param {array} [pointsOptions.arrayCloud] Array of points with cloud.
- * &lt;pre>
- * If you define the array of points with cloud, then you can define a points with cloud.
- * For example you can define
- * arrayCloud: options.arrayCloud
- * on the params of the getShaderMaterialPoints( params, onReady ) function.
- * Or
- * arrayCloud: options.arrayCloud
- * on the pointsOptions of the myThreejs.points function.
- * Default is undefined
  * &lt;/pre>
  * @param {boolean} [pointsOptions.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details. Default is undefined.
  */
@@ -1896,7 +1879,7 @@ export default MyThree;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Mar 27 2021 10:17:31 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Apr 03 2021 09:29:54 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

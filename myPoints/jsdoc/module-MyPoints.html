@@ -258,7 +258,7 @@
 
             
 
-            <td class="description last">points.geometry.attributes.position array.See arrayFuncs parametr of the <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints">Player.getPoints(...)</a> for details.</td>
+            <td class="description last"><b>points.geometry.attributes.position</b> array.See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.</td>
         </tr>
 
     
@@ -289,7 +289,7 @@
 
             
 
-            <td class="description last">Group for new points</td>
+            <td class="description last"><a href="https://threejs.org/docs/index.html?q=grou#api/en/objects/Group">Group</a> for new points.</td>
         </tr>
 
     
@@ -376,7 +376,7 @@
 
             
 
-            <td class="description last"><a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html">Player</a>.Define Player only if you want move or/and you want change color of the points during playing.</td>
+            <td class="description last"><a href="../../player/jsdoc/index.html" target="_blank">Player</a>.Define <b>Player only</b> if you want move or/and you want change color of the points during playing.</td>
         </tr>
 
     
@@ -655,7 +655,7 @@
                 </td>
             
 
-            <td class="description last">See <a href="https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~Palette">ColorPicker.palette</a>.<pre>Example:new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );</pre></td>
+            <td class="description last">See <a href="../../colorPicker/jsdoc/module-ColorPicker.html#~Palette" target="_blank">ColorPicker.palette</a>.<pre>Example:<b>new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );</b></pre></td>
         </tr>
 
     
@@ -692,7 +692,44 @@
                 </td>
             
 
-            <td class="description last">A dat.gui based graphical user interface for select a point from the mesh.See <a href="https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html">GuiSelectPoint</a> for details.</td>
+            <td class="description last">A <a href="https://github.com/anhr/dat.gui">dat.gui</a> based graphical user interface for select a point from the mesh.See <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a> for details.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>frustumPoints</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Creates a <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a> instance.</td>
         </tr>
 
     
@@ -1063,7 +1100,7 @@
                 </td>
             
 
-            <td class="description last">Name of the points. Used for displaying of items of the Select drop down control of the Meshs folder of the dat.gui.</td>
+            <td class="description last">Name of the points. Used for displaying of items of the <b>Select</b> drop down control of the <b>Meshes</b> folder of the <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</td>
         </tr>
 
     
@@ -1100,7 +1137,7 @@
                 </td>
             
 
-            <td class="description last">creates the THREE.Points with <a href="https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial">THREE.ShaderMaterial</a> material.The size of the each point of the THREE.Points seems the same on canvasbecause I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.See var shaderMaterialDefault of the frustumPoints for details.</td>
+            <td class="description last">creates the <a href="https://threejs.org/docs/index.html?q=poi#api/en/objects/Points">THREE.Points</a> with <a href="https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial">THREE.ShaderMaterial</a> material.The size of the each point of the <b>THREE.Points</b> seems the same on canvasbecause I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.</td>
         </tr>
 
     
@@ -1224,43 +1261,6 @@
 
         <tr>
             
-                <td class="name"><code>arrayCloud</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Array of points with cloud.<pre>If you define the array of points with cloud,then you can define a points with cloud.For example you can define<b>arrayCloud: options.arrayCloud</b>on the params of the<b>getShaderMaterialPoints( params, onReady )</b>function.Or<b>arrayCloud: options.arrayCloud</b>on the <b>pointsOptions</b> of the <b>myThreejs.points</b> function.</pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>opacity</code></td>
             
 
@@ -1291,7 +1291,7 @@
                 </td>
             
 
-            <td class="description last">if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details.</td>
+            <td class="description last">if true then opacity of the point is depend from distance to all meshes points from the group with defined <b>mesh.userData.cloud</b>.See <b>optionsColor.opacity</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.getColors.html" target="_blank">Player.getColors(...)</a> for details.</td>
         </tr>
 
     
@@ -1383,7 +1383,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line107">line 107</a>
+        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line95">line 95</a>
     </li></ul></dd>
     
 
@@ -1408,199 +1408,6 @@
 
 
 
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="~MyPoints.pushArrayCloud"><span class="type-signature">(inner) </span>MyPoints.pushArrayCloud<span class="signature">(THREE, arrayCloud, geometry)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Pushes to clouds array all points from geometry
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>THREE</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><a href="https://github.com/anhr/three.js">THREE</a></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>arrayCloud</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>geometry</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE.BufferGeometry</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line288">line 288</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    index of the new array item
-</div>
-
-
-
-    
 
 
 
@@ -1628,7 +1435,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue Dec 08 2020 08:44:05 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Apr 03 2021 09:17:45 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
