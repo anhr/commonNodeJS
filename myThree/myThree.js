@@ -170,17 +170,7 @@ class MyThree {
 	 * @param {object} [options.dat.moveScene={}] true - displays the <a href="../../jsdoc/MoveGroupGui/index.html" target="_blank">move group gui</a>.
 	 * @param {boolean} [options.canvasMenu=false] true - use my <a href="../../canvasMenu/jsdoc/index.html" target="_blank">dropdown menu for canvas</a> in my version of [dat.gui]{@link https://github.com/anhr/dat.gui}.
 	 * @param {object} [options.cameraTarget] camera looking at selected point during playing. See the <b>cameraTarget</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.cameraTarget.html#init" target="_blank">Player.cameraTarget.init(...)</a> function for details.
-	 * @param {array} [options.arrayCloud] Array of points with cloud.
-	 * <pre>
-	 * If you define the array of points with cloud, then you can define a points with cloud.
-	 * For example you can define
-	 * arrayCloud: options.arrayCloud
-	 * on the params of the getShaderMaterialPoints( params, onReady ) function.
-	 * Or
-	 * arrayCloud: options.arrayCloud
-	 * on the pointsOptions of the myThreejs.points function.
-	 * Default is undefined
-	 * </pre>
+	 * @param {object} [options.frustumPoints] Creates a <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a> instance.
 	 * @param {MyThree.ColorPicker.palette|boolean|number} [options.palette=White color of all points] Color of points.
 	 * <pre>
 	 * <b>MyThree.ColorPicker.palette</b> - is <b>new ColorPicker.palette( ... )</b>
@@ -330,7 +320,7 @@ class MyThree {
 			ColorPicker.palette.setTHREE( THREE );
 
 		}
-
+/*
 		if ( options.arrayCloud !== undefined ) {
 
 			options.arrayCloud.getCloudsCount = function () {
@@ -348,6 +338,7 @@ class MyThree {
 			options.arrayCloud.cFrustumPointsF = FrustumPoints.cFrustumPointsF;
 
 		}
+*/
 		options.a = options.a || 1;
 		options.b = options.b || 0;
 
@@ -412,7 +403,7 @@ class MyThree {
 
 //				cursor,//default
 
-				controls, stereoEffect, player, frustumPoints,
+				controls, stereoEffect, player,// frustumPoints,
 
 				mouseenter = false,//true - мышка находится над gui или canvasMenu
 				//В этом случае не надо обрабатывать событие elContainer 'pointerdown'
@@ -808,8 +799,8 @@ if ( typeof Player !== 'undefined' )
 						onSelectScene: function ( index, t ) {
 
 							options.boPlayer = true;
-							if ( frustumPoints !== undefined )
-								frustumPoints.updateCloudPoints();
+							if ( options.frustumPoints !== undefined )
+								options.frustumPoints.updateCloudPoints();
 
 						},
 						selectPlaySceneOptions: options,
@@ -906,8 +897,8 @@ if ( typeof Player !== 'undefined' )
 									return;
 
 							}
-							if ( frustumPoints !== undefined )
-								frustumPoints.setSpatialMultiplexs();// mode );
+							if ( options.frustumPoints !== undefined )
+								options.frustumPoints.updateGuiSelectPoint();
 
 						},
 
@@ -1021,8 +1012,8 @@ if ( typeof Player !== 'undefined' )
 
 						} );
 
-						if ( frustumPoints !== undefined )
-							frustumPoints.onChangeControls();
+						if ( options.frustumPoints !== undefined )
+							options.frustumPoints.onChangeControls();
 
 					} );
 
@@ -1048,55 +1039,12 @@ if ( typeof Player !== 'undefined' )
 					if ( controls !== undefined )
 						controls.update();//if scale != 1 and position != 0 of the screen, то после открытия canvas положение картинки смещено. Положение восстанавливается только если подвигать мышью
 				}
-				if ( gui && options.dat.guiSelectPoint ) {
 
-					var intersection;
-					options.guiSelectPoint = new GuiSelectPoint( THREE, {
-
-						axesHelper: axesHelper,
-						options: options,
-						getLanguageCode: getLanguageCode,
-						cameraTarget: {
-
-							camera: camera,
-							orbitControls: controls,
-
-						},
-						setIntersection: function ( _intersection ) {
-
-							intersection = _intersection;
-
-						},
-						//displays the trace of the movement of all points of the mesh
-						pointsControls: function ( fPoints, dislayEl, getMesh ) { },
-						//displays the trace of the point movement
-						pointControls: function ( fPoint, dislayEl, getMesh ) { },
-
-					} );
-					options.guiSelectPoint.add( gui );
-
-				}
-
-				defaultPoint.size = options.point.size;
-
-				var pointName = 'Point_' + getCanvasName();
-				if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
-
-				options.spriteText = options.spriteText || {};
-
-				createXDobjects( group, options );
-
-				//На случай когда указана точка, за которой следит камера и когда Player не создан
-				if ( !options.player ) {
-
-					Player.selectPlayScene( group );//, Player.getTime(), 0 );
-
-				}
-				
-				if ( options.arrayCloud ) {//Array of points with cloud
+//				if ( options.arrayCloud )//Array of points with cloud
+				if ( options.frustumPoints ) {
 
 					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
-					frustumPoints = new FrustumPoints( THREE, camera,
+					options.frustumPoints = new FrustumPoints( THREE, camera,
 						group,// stereoEffect ? stereoEffect.options.spatialMultiplex : undefined,
 						renderer, options,
 						{//points and lines options.Default is { }
@@ -1138,13 +1086,59 @@ if ( typeof Player !== 'undefined' )
 							square: true,// true - Square base of the frustum points.Default is false
 							cookie: options.dat.cookie,
 							cookieName: getCanvasName(),
-							cFrustumPoints: cFrustumPoints,
-							
+//							cFrustumPoints: cFrustumPoints,
+
 						},
 
 					);
-					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( frustumPoints );
-					options.arrayCloud.frustumPoints = frustumPoints;
+//					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( options.frustumPoints );
+
+				}
+
+				if ( gui && options.dat.guiSelectPoint ) {
+
+					var intersection;
+					options.guiSelectPoint = new GuiSelectPoint( THREE, {
+
+						axesHelper: axesHelper,
+						options: options,
+						getLanguageCode: getLanguageCode,
+						cameraTarget: {
+
+							camera: camera,
+							orbitControls: controls,
+
+						},
+						setIntersection: function ( _intersection ) {
+
+							intersection = _intersection;
+
+						},
+						//displays the trace of the movement of all points of the mesh
+						pointsControls: function ( fPoints, dislayEl, getMesh ) { },
+						//displays the trace of the point movement
+						pointControls: function ( fPoint, dislayEl, getMesh ) { },
+
+					} );
+					options.guiSelectPoint.add( gui );
+
+				}
+
+				defaultPoint.size = options.point.size;
+
+				var pointName = 'Point_' + getCanvasName();
+				if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
+
+				options.spriteText = options.spriteText || {};
+
+				createXDobjects( group, options );
+
+				if ( options.frustumPoints ) options.frustumPoints.create();
+
+				//На случай когда указана точка, за которой следит камера и когда Player не создан
+				if ( !options.player ) {
+
+					Player.selectPlayScene( group );//, Player.getTime(), 0 );
 
 				}
 				options.boPlayer = false;
@@ -1290,11 +1284,11 @@ if ( typeof Player !== 'undefined' )
 					} )
 
 					//Frustum points
-					if ( frustumPoints && options.dat.guiFrustumPoints )
-						frustumPoints.gui( fOptions, FolderPoint, {
+					if ( options.frustumPoints && options.dat.guiFrustumPoints )
+						options.frustumPoints.gui( fOptions, FolderPoint, {
 
 							getLanguageCode: getLanguageCode,
-							cookie: cookie,
+//							cookie: cookie,
 
 						} );
 
@@ -1373,8 +1367,8 @@ if ( typeof Player !== 'undefined' )
 				camera.updateProjectionMatrix();
 
 				renderer.setSize( size.x, size.y );
-				if ( frustumPoints !== undefined )
-					frustumPoints.update();
+				if ( options.frustumPoints !== undefined )
+					options.frustumPoints.update();
 
 			}
 			function onDocumentMouseMove( event ) {
@@ -1465,7 +1459,7 @@ if ( typeof Player !== 'undefined' )
 				if (
 					!cameraPosition.equals( camera.position ) ||
 					( pointSize != options.point.size ) ||
-					( ( frustumPoints !== undefined ) && frustumPoints.animate() )
+					( ( options.frustumPoints !== undefined ) && options.frustumPoints.animate() )
 				) {
 
 					cameraPosition.copy( camera.position );
@@ -1760,7 +1754,6 @@ function findSpriteTextIntersection( scene ) {
  * <pre>
  * The size of the each point of the THREE.Points seems the same on canvas
  * because I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.
- * See var shaderMaterialDefault of the frustumPoints for details.
  * </pre>
  * @param {THREE.Vector3} [pointsOptions.position] position of the points. Default is new THREE.Vector3( 0, 0, 0 ).
  * <pre>
@@ -1785,17 +1778,6 @@ function findSpriteTextIntersection( scene ) {
  * float - rotation of the points.
  * [float] - array of rotations of the points.
  * Function - rotation of the points is function of the t. Example: new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )
- * </pre>
- * @param {array} [pointsOptions.arrayCloud] Array of points with cloud.
- * <pre>
- * If you define the array of points with cloud, then you can define a points with cloud.
- * For example you can define
- * arrayCloud: options.arrayCloud
- * on the params of the getShaderMaterialPoints( params, onReady ) function.
- * Or
- * arrayCloud: options.arrayCloud
- * on the pointsOptions of the myThreejs.points function.
- * Default is undefined
  * </pre>
  * @param {boolean} [pointsOptions.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details. Default is undefined.
  */
@@ -1848,10 +1830,16 @@ MyThree.limitAngles = function ( rotation ) {
 
 }
 
-/** @namespace
- * @description Array of my points..
+/* * @namespace
+ * @description Array of my points.
  * @see <a href="../../MyPoints/jsdoc/index.html" target="_blank">MyPoints</a>.
  */
-MyThree.MyPoints = MyPoints;
+//MyThree.MyPoints = MyPoints;
+
+/** @namespace
+ * @description Array of points, statically fixed in front of the camera.
+ * @see <a href="../../FrustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a>.
+ */
+MyThree.FrustumPoints = FrustumPoints;
 
 export default MyThree;

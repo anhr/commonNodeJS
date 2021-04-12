@@ -42,6 +42,7 @@ import Player from '../player/player.js';
 
 import functionsFolder from '../functionsFolder.js';
 
+import FrustumPoints from '../frustumPoints/frustumPoints.js';
 
 /**
  * A dat.gui based graphical user interface for select a point from the mesh.
@@ -243,8 +244,13 @@ function GuiSelectPoint( _THREE, guiParams ) {
 //		funcFolder.displayFolder( display );
 
 	}
+/*	
 	if ( options.arrayCloud )//Array of points with cloud
 		cFrustumPoints = new options.arrayCloud.cFrustumPointsF( _this );
+*/		
+	if ( options.frustumPoints )
+		cFrustumPoints = new options.frustumPoints.guiSelectPoint();
+//		cFrustumPoints = new FrustumPoints.cFrustumPointsF();// options.scales );
 	//сейчас exposePosition вызывается только один раз из this.setMesh
 	function dislayEl( controller, displayController ) {
 
@@ -349,8 +355,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		var displayControllerW, displayControllerColor, displayControllerOpacity;
 		const none = 'none', block = 'block';
-		if ( typeof intersection.object.userData.player.arrayFuncs === "function" )
-			console.error( 'arrayFuncs === "function" under constraction' );
+		if ( typeof intersection.object.userData.player.arrayFuncs === "function" ) {
+
+			//Сюда попадает когда пользователь выбироает точку в frustumPoints
+			//console.error( 'arrayFuncs === "function" under constraction' );
+
+		}
 		var opasity;
 		const func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined;
 		function isWObject() { return ( typeof func.w === 'object' ) && ( func.w instanceof THREE.Color === false ); }
@@ -457,13 +467,14 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		dislayEl( cColor, displayControllerColor );
 		dislayEl( cOpacity, displayControllerOpacity );
 
-		var boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : false;
+		const boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : false;
 		if ( cX ) cX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 		if ( cY ) cY.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 		if ( cZ ) cZ.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 		if ( cW ) cW.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 		cColor.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 		cOpacity.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+		funcFolder.displayFolder( !boReadOnly );
 
 	}
 	/**
@@ -526,8 +537,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	 * get index of the mesh in the cMeshs controller
 	 * @function GuiSelectPoint.
 	 *getMeshIndex
-	 * @param {THREE.Mesh} mesh
-	 * See {@link https://threejs.org/docs/index.html#api/en/objects/Mesh|THREE.Mesh}.
+	 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}
 	 * @returns index of selectred mesh.
 	 */
 	this.getMeshIndex = function ( mesh ) {
@@ -564,7 +574,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	 * Removes a mesh from the select point GUI
 	 * @function GuiSelectPoint.
 	 *removeMesh
-	 * @param {THREE.Mesh} mesh mesh for removing.
+	 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for removing.
 	 */
 	this.removeMesh = function ( mesh ) {
 
@@ -587,7 +597,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	 * Adds new mesh into select point GUI
 	 * @function GuiSelectPoint.
 	 *addMesh
-	 * @param {THREE.Mesh} mesh new mesh.
+	 * @param {THREE.Mesh} mesh new [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}.
 	 */
 	this.addMesh = function ( mesh ) {
 
@@ -738,9 +748,13 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	this.getSelectedPointIndex = function () {
 
 		if ( ( cFrustumPoints !== undefined ) &&
-			cFrustumPoints.isDisplay() &&//FrustumPoints folder id not visible
+			cFrustumPoints.isDisplay() &&//FrustumPoints folder is visible
+			options.frustumPoints &&
+			options.frustumPoints.isDisplay()//The cDisplay checkbox of the frustumPoints' is checked
+/*			
 			options.arrayCloud.frustumPoints &&
 			options.arrayCloud.frustumPoints.isDisplay()//The cDisplay checkbox of the frustumPoints' is checked
+*/			
 		) {
 
 			var selectedIndex = cFrustumPoints.getSelectedIndex();
@@ -908,8 +922,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					}
 
 				}
-				fPoints.domElement.parentElement.style.display = displayfPoints;
-//				cPoints.domElement.parentElement.parentElement.style.display = displayPoints;
+//				fPoints.domElement.parentElement.style.display = displayfPoints;
 				dislayEl( cPoints, displayPoints );
 				if ( cTraceAll ) {
 
@@ -950,8 +963,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 			setScaleControllers();
 			exposePosition();
+			if ( options.frustumPoints )
+				options.frustumPoints.updateCloudPoint( mesh );
+/*			
 			if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
 				options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
+*/				
 
 		},
 			{
@@ -966,8 +983,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			mesh.scale[axesName] = value;
 			mesh.needsUpdate = true;
 			exposePosition();
+			if ( options.frustumPoints )
+				options.frustumPoints.updateCloudPoint( mesh );
+/*			
 			if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
 				options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
+*/				
 
 		}
 		if ( options.scales.x ) {
@@ -1023,8 +1044,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 				setPositionControllers();
 				exposePosition();
+				if ( options.frustumPoints )
+					options.frustumPoints.updateCloudPoint( mesh );
+/*				
 				if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
 					options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
+*/					
 
 			}, { getLanguageCode: getLanguageCode, } ) );
 
@@ -1082,8 +1107,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 					if ( !boSetMesh )
 						exposePosition();
+					if ( options.frustumPoints !== undefined )
+						options.frustumPoints.updateCloudPoint( mesh );
+/*						
 					if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
 						options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
+*/						
 
 				} );
 			dat.controllerNameAndTitle( cRotations[name], scale.name );
@@ -1317,6 +1346,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				setPositionControllers();
 				setRotationControllers();
 				exposePosition();
+				if ( options.frustumPoints )
+					options.frustumPoints.onChangeControls();
 
 			},
 
@@ -1354,22 +1385,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		cPoints.__select.appendChild( opt );
 
 	}
-/*
-	function movePoint( axisName, value ) {
-
-		const points = intersection.object,
-			axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error( 'axisName:' + axisName );
-		points.geometry.attributes.position.array
-		[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
-		points.geometry.attributes.position.needsUpdate = true;
-
-		exposePosition( intersection.index );
-
-		if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
-			options.arrayCloud.frustumPoints.updateCloudPointItem( points, intersection.index );
-
-	}
-*/
 	function addPointControllers() {
 
 		function isReadOnlyController( controller ) {
@@ -1438,9 +1453,13 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 					}
 					attributes.position.setW( i, value );
-
+					
+					if ( options.frustumPoints )
+						options.frustumPoints.updateCloudPointItem( intersection.object, intersection.index );
+/*
 					if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
 						options.arrayCloud.frustumPoints.updateCloudPointItem( intersection.object, intersection.index );
+*/						
 
 				}
 				if ( ( scale.min !== undefined ) &&  ( scale.max !== undefined ) ) {
@@ -1456,21 +1475,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					).onChange( function ( value ) {
 
 						onChange( value );
-/*
-//						options.palette = options.palette || new ColorPicker.palette();
-						const attributes = intersection.object.geometry.attributes,
-							i = intersection.index;
-						if ( options.palette ) {
-
-							const color = options.palette.toColor( value, controller.__min, controller.__max );
-							_this.setColorAttribute( attributes, i, color );
-
-						}
-						attributes.position.setW( i, value );
-
-						if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
-							options.arrayCloud.frustumPoints.updateCloudPointItem( intersection.object, intersection.index );
-*/
 
 					} );
 					if ( options.palette instanceof ColorPicker.palette ) {
@@ -1502,20 +1506,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					).onChange( function ( value ) {
 
 						onChange( value );
-/*
-						const attributes = intersection.object.geometry.attributes,
-							i = intersection.index;
-						if ( attributes.position.itemSize < 4 ) {
-
-							console.error( 'guiSelectPoint.addPointControllers().axesGui().controller.onChange(): attributes.position.itemSize = ' + attributes.position.itemSize )
-							return;
-							
-						}
-						attributes.position.setW( i, value );
-
-						if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
-							options.arrayCloud.frustumPoints.updateCloudPointItem( intersection.object, intersection.index );
-*/
 
 					} );
 
@@ -1545,8 +1535,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 							exposePosition( intersection.index );
 
+							if ( options.frustumPoints )
+								options.frustumPoints.updateCloudPointItem( points, intersection.index );
+/*								
 							if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
 								options.arrayCloud.frustumPoints.updateCloudPointItem( points, intersection.index );
+*/								
 
 						} );
 

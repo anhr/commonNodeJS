@@ -227,7 +227,8 @@
 				//rotation: new THREE.Vector3( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), Math.PI / 4 ),
 				//rotation: new THREE.Vector3( Math.PI / 2, 0 ),
 				shaderMaterial: {},
-				arrayCloud: options.arrayCloud,//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
+//				arrayCloud: options.arrayCloud,//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
+				frustumPoints: options.frustumPoints,//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
 				onReady: function( points ){
 
 					if ( options.guiSelectPoint )  options.guiSelectPoint.addMesh( points );
@@ -261,7 +262,7 @@
 					//cameraTarget: { camera: options.camera, },
 
 				},
-				//new THREE.Vector4( -0.25, 0.3, 0.3, 25 ),//4D point
+				new THREE.Vector4( -0.25, 0.3, 0.3, 25 ),//4D point
 				//new THREE.Vector4( 0, 0, 0, new Function( 't', 'return 1-2*t' ) ),//color is f(t)
 				//new THREE.Vector4( -0.25, 0.3, 0.3, new THREE.Color( "rgb(255, 255, 0)" ) ),//yellow point
 				//new THREE.Vector4( 0.25, 0, 0, new THREE.Color( "rgb(255, 0, 0)" ) ),//red point
@@ -337,12 +338,18 @@
 			if ( group.add( points ) === group ) {//I’m doing this tricky check so that it would not be possible to add a cloud to the points if they are not added to the group
 
 				//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
-				if ( options.arrayCloud )
+//				if ( options.arrayCloud )
+				if ( options.frustumPoints ) {
+/*
 					points.userData.cloud = {
 
-						indexArray: MyThree.MyPoints.pushArrayCloud( THREE, options.arrayCloud, points.geometry ),//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
+//						indexArray: MyThree.MyPoints.pushArrayCloud( THREE, options.arrayCloud, points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
+//						indexArray: MyThree.FrustumPoints.pushArrayCloud( THREE, points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
+						indexArray: options.frustumPoints.pushArrayCloud( points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 
 					}
+*/
+				}
 				
 			}
 
@@ -476,10 +483,11 @@
 				//if ( options.arrayCloud !== undefined )
 				//	points.userData.cloud = {
 				//
-				//		indexArray: MyPoints.pushArrayCloud( THREE, options.arrayCloud, points.geometry ),//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
+				//		indexArray: MyPoints.pushArrayCloud( THREE, options.arrayCloud, points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 				//
 				//	}
-				arrayCloud: [],
+//				arrayCloud: [],
+				frustumPoints: {},//Creates a FrustumPoints instance
 
 				cameraTarget: {
 

@@ -31,32 +31,6 @@
  * 
  * Array of points, statically fixed in front of the camera.
  * I use frustumPoints for displaying of the clouds around points.
- * 
- * For using please define an array of the points with cloud:
- * 
- * var arrayCloud = [];
- *
- * Then you can define:
- * 
- * arrayCloud: options.arrayCloud
- * 
- * on the params of the getShaderMaterialPoints( params, onReady ) function.
- * Or
- * 
- * arrayCloud: options.arrayCloud
- * 
- * on the pointsOptions of the myThreejs.points function.
- *
- * Or
- * if points is new THREE.Points(...) then:
- *
- * if ( options.arrayCloud !== undefined )
- * 	points.userData.cloud = {
- *
- * 		indexArray: myThreejs.pushArrayCloud( options.arrayCloud, points.geometry ),//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
- *
- * 	}
- *
  *
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
  *
@@ -148,17 +122,19 @@ class FrustumPoints
 	 * Has effect only if you called the &lt;a href="#gui">frustumPoints.gui(...)&lt;/a> function.
 	 * &lt;/pre>
 	 * @param {string} [optionsShaderMaterial.cookieName="FrustumPoints"] Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.
-	 * @param {FrustumPoints.cFrustumPointsF} [optionsShaderMaterial.cFrustumPoints] Adds a &lt;b>FrustumPoints's&lt;/b> controllers into &lt;a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">Select Point&lt;/a> folder.
 	 */
 	constructor( THREE, camera, group, renderer, options, optionsShaderMaterial = {} ) {
 
-		const arrayCloud = [];
-		arrayCloud.getCloudsCount = function () {
+		const _arrayCloud = []//Массив координат точек, имеющих облако вокруг себя
+							//координаты точек сгруппированы в группы отдельно для каждого THREE.Points
+//			_frustumPoints = this;
+		var _guiSelectPoint, _names, _points;
+		_arrayCloud.getCloudsCount = function () {
 
 			var count = 0;
-			for ( var i = 0; i &lt; arrayCloud.length; i++ ) {
+			for ( var i = 0; i &lt; _arrayCloud.length; i++ ) {
 
-				var arrayVectors = arrayCloud[i];
+				var arrayVectors = _arrayCloud[i];
 				count += arrayVectors.length;
 
 			}
@@ -166,63 +142,94 @@ class FrustumPoints
 
 		}
 
-		const cFrustumPoints = optionsShaderMaterial.cFrustumPoints;
-		delete optionsShaderMaterial.cFrustumPoints;
-/*
-		if ( ( options.arrayCloud === undefined ) || ( options.arrayCloud.length === 0 ) )
-			return undefined;//нет точек с облаком. Поэтому нет смысла создавать frustumPoints
+		/**
+		 * Pushes to clouds array all points from geometry
+		 * @param {THREE.BufferGeometry} geometry
+		 * @returns index of the new array item
+		 */
+		this.pushArrayCloud = function ( geometry ) {
+
+			/*
+						if ( _arrayCloud === undefined ) {
+			
+							console.error( 'pushArrayCloud function failed! _arrayCloud = ' + _arrayCloud );
+							return;
+			
+						}
+			*/
+
+			//Массив точек, имеющих облако _arrayCloud, разбил на группы points
+			//В каждой группе points содержатся все точки, из одного mesh
+			//Это сделал потому что если одновременно имеются точки с 
+			// shaderMaterial и без shaderMaterial, то порядок добавления точек в _arrayCloud
+			// Не совпадает с порядком расположения mesh в group
+			// потому что точки без shaderMaterial добавляются сразу после создания
+			// а точки с shaderMaterial добаляются только после вызова loadShaderText в function getShaderMaterialPoints
+			const index = _arrayCloud.getCloudsCount(),
+				points = [];
+			_arrayCloud.push( points );
+			for ( var i = 0; i &lt; geometry.attributes.position.count; i++ )
+				points.push( new THREE.Vector4().fromArray( geometry.attributes.position.array, i * geometry.attributes.position.itemSize ) );
+			return index;
+
+		}
+
+		/** create points */
+		this.create = function () {
+
+/*если нет точек с облвком, то облако нужно создавать что бы его было видно в guiSelectPoint
+			if ( _arrayCloud.length === 0 )
+				return undefined;//нет точек с облаком. Поэтому нет смысла создавать frustumPoints
 */
-//		optionsShaderMaterial = optionsShaderMaterial || {};
-		optionsShaderMaterial.point = optionsShaderMaterial.point || {};
-		optionsShaderMaterial.point.size = optionsShaderMaterial.point.size || 0;//0.01;//Size of each frustum point
+			const shaderMaterial = {}, zeroPoint = new THREE.Vector3(), cameraDistanceDefault = camera.position.distanceTo( zeroPoint ), _this = this,// lines = []
+				groupFrustumPoints = new THREE.Group();
 
-		optionsShaderMaterial.display = optionsShaderMaterial.display === undefined ? true : optionsShaderMaterial.display;//true - display frustum points
-		optionsShaderMaterial.info = optionsShaderMaterial.info !== undefined ? optionsShaderMaterial.info : false;//true - display information about frustum point if user move mouse over or click this point.
+			//		optionsShaderMaterial = optionsShaderMaterial || {};
+			optionsShaderMaterial.point = optionsShaderMaterial.point || {};
+			optionsShaderMaterial.point.size = optionsShaderMaterial.point.size || 0;//0.01;//Size of each frustum point
 
-		//Stereo
-		optionsShaderMaterial.stereo = optionsShaderMaterial.stereo || {};
-		optionsShaderMaterial.stereo.hide = optionsShaderMaterial.stereo.hide || 0;//Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.
-		optionsShaderMaterial.stereo.opacity = optionsShaderMaterial.stereo.opacity || 0.3;//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.'
+			optionsShaderMaterial.display = optionsShaderMaterial.display === undefined ? true : optionsShaderMaterial.display;//true - display frustum points
+			optionsShaderMaterial.info = optionsShaderMaterial.info !== undefined ? optionsShaderMaterial.info : false;//true - display information about frustum point if user move mouse over or click this point.
 
-		optionsShaderMaterial.zCount = optionsShaderMaterial.zCount || 50;//The count of layers of the frustum of the camera's field of view.
-		optionsShaderMaterial.yCount = optionsShaderMaterial.yCount || 30;//The count of vertical points for each z level of the  frustum of the camera's field of view.
+			//Stereo
+			optionsShaderMaterial.stereo = optionsShaderMaterial.stereo || {};
+			optionsShaderMaterial.stereo.hide = optionsShaderMaterial.stereo.hide || 0;//Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.
+			optionsShaderMaterial.stereo.opacity = optionsShaderMaterial.stereo.opacity || 0.3;//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.'
 
-		//изменение размеров усеченной пирамиды FrustumPoints
+			optionsShaderMaterial.zCount = optionsShaderMaterial.zCount || 50;//The count of layers of the frustum of the camera's field of view.
+			optionsShaderMaterial.yCount = optionsShaderMaterial.yCount || 30;//The count of vertical points for each z level of the  frustum of the camera's field of view.
 
-		optionsShaderMaterial.near = optionsShaderMaterial.near || 0;//Shift of the frustum layer near to the camera in percents.
-		//0 percents - no shift.
-		//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды
-		optionsShaderMaterial.far = optionsShaderMaterial.far || 0;//Shift of the frustum layer far to the camera in percents.
-		//0 percents - no shift.
-		//100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды
-		optionsShaderMaterial.base = optionsShaderMaterial.base || 100;//Scale of the base of the frustum points in percents.
-		//0 base is null
-		//100 no scale
-		optionsShaderMaterial.square = optionsShaderMaterial.square !== undefined ? optionsShaderMaterial.square : false; //true - Square base of the frustum points.
+			//изменение размеров усеченной пирамиды FrustumPoints
 
-		const shaderMaterial = {},
-			cookie = optionsShaderMaterial.cookie || new Cookie.defaultCookie(),
-			cookieName = 'FrustumPoints' + ( optionsShaderMaterial.cookieName ? '_' + optionsShaderMaterial.cookieName : '' );
+			optionsShaderMaterial.near = optionsShaderMaterial.near || 0;//Shift of the frustum layer near to the camera in percents.
+			//0 percents - no shift.
+			//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды
+			optionsShaderMaterial.far = optionsShaderMaterial.far || 0;//Shift of the frustum layer far to the camera in percents.
+			//0 percents - no shift.
+			//100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды
+			optionsShaderMaterial.base = optionsShaderMaterial.base || 100;//Scale of the base of the frustum points in percents.
+			//0 base is null
+			//100 no scale
+			optionsShaderMaterial.square = optionsShaderMaterial.square !== undefined ? optionsShaderMaterial.square : false; //true - Square base of the frustum points.
 
-		delete optionsShaderMaterial.cookie;
-		delete optionsShaderMaterial.cookieName;
-		
-		Object.freeze( optionsShaderMaterial );
-//		const shaderMaterial = JSON.parse( JSON.stringify( optionsShaderMaterial ) );
-		cookie.getObject( cookieName, shaderMaterial, optionsShaderMaterial );
-//		function saveSettings() { Cookie.setObject( cookieName, shaderMaterial ); }
+			const cookie = optionsShaderMaterial.cookie || new Cookie.defaultCookie(),
+				cookieName = 'FrustumPoints' + ( optionsShaderMaterial.cookieName ? '_' + optionsShaderMaterial.cookieName : '' );
 
-		//оставить shaderMaterial.stereo по умолчанию потому что сейчас lines не использую
-		//и возможно в cookie сохранились зачения shaderMaterial.stereo от старых версий этой программы
-//		shaderMaterial.stereo.lines = optionsShaderMaterial.stereo.lines;
-		shaderMaterial.stereo.hide = optionsShaderMaterial.stereo.hide;
-		shaderMaterial.stereo.opacity = optionsShaderMaterial.stereo.opacity;
+			delete optionsShaderMaterial.cookie;
+			delete optionsShaderMaterial.cookieName;
 
-		var points, names;
-		const zeroPoint = new THREE.Vector3(), cameraDistanceDefault = camera.position.distanceTo( zeroPoint ), _this = this,
-			lines = [], groupFrustumPoints = new THREE.Group();
-//		this.lines = lines;
-		var cloud = function () {
+			Object.freeze( optionsShaderMaterial );
+			//		const shaderMaterial = JSON.parse( JSON.stringify( optionsShaderMaterial ) );
+			cookie.getObject( cookieName, shaderMaterial, optionsShaderMaterial );
+			//		function saveSettings() { Cookie.setObject( cookieName, shaderMaterial ); }
+
+			//оставить shaderMaterial.stereo по умолчанию потому что сейчас lines не использую
+			//и возможно в cookie сохранились зачения shaderMaterial.stereo от старых версий этой программы
+			//		shaderMaterial.stereo.lines = optionsShaderMaterial.stereo.lines;
+			shaderMaterial.stereo.hide = optionsShaderMaterial.stereo.hide;
+			shaderMaterial.stereo.opacity = optionsShaderMaterial.stereo.opacity;
+
+			var cloud = function () {
 
 				var uniforms;
 				var distanceTableWidth;//distanceTable points count
@@ -231,7 +238,7 @@ class FrustumPoints
 					uniforms = _uniforms;
 
 					//array of all points with cloud
-					this.cloudPoints = new this.addUniforms( THREE.RGBAFormat, arrayCloud.getCloudsCount(), 'cloudPoints' );
+					this.cloudPoints = new this.addUniforms( THREE.RGBAFormat, _arrayCloud.getCloudsCount(), 'cloudPoints' );
 
 					//function of distance between points. Use for creating of the cloud around point
 					//distanceTable is THREE.DataTexture
@@ -374,10 +381,10 @@ class FrustumPoints
 							w = vector.w;
 
 						}
-						var vectorSize = y === undefined ? 1 : z === undefined ? 2 : w === undefined ? 3 : 4;
+						const vectorSize = y === undefined ? 1 : z === undefined ? 2 : w === undefined ? 3 : 4,
+							stride = i * itemSize;
 						if ( vectorSize !== itemSize )
 							console.error( 'frustumPoints.create.cloud.addUniforms.updateItem: vectorSize = ' + vectorSize + ' !== itemSize = ' + itemSize );
-						var stride = i * itemSize;
 						data[stride] = x;
 						if ( itemSize > 1 ) {
 
@@ -411,9 +418,9 @@ class FrustumPoints
 				this.editShaderText = function ( shaderText ) {
 
 					var scloudPointsWidth = 0;
-					for ( var i = 0; i &lt; arrayCloud.length; i++ ) {
+					for ( var i = 0; i &lt; _arrayCloud.length; i++ ) {
 
-						var arrayVectors = arrayCloud[i];
+						var arrayVectors = _arrayCloud[i];
 						scloudPointsWidth += arrayVectors.length;
 
 					}
@@ -439,1258 +446,1208 @@ class FrustumPoints
 				}
 
 			};
-		cloud = new cloud();
-		group.add( groupFrustumPoints );
+			cloud = new cloud();
+			group.add( groupFrustumPoints );
 
-		function setPointsParams() {
+			function setPointsParams() {
 
-			function set( points ) {
+				function set() {
 
-//				if ( points === undefined )
-				if ( !points )
-					return;
-				points.position.copy( camera.position );
-				points.rotation.set( camera.rotation.x, camera.rotation.y, camera.rotation.z );
-				var scale = camera.position.distanceTo( zeroPoint ) / cameraDistanceDefault;
-				points.scale.x = scale;
-				points.scale.y = scale;
-				points.scale.z = scale;
-
-			}
-			set( points );
-			lines.forEach( function ( item ) { set( item ); } );
-			/*
-			console.warn( 'points.position: ' + points.position.x + ' ' + points.position.y + ' ' + points.position.z +
-			' points.scale: ' + points.scale.x + ' ' + points.scale.y + ' ' + points.scale.z +
-			' points.rotation: ' + points.rotation.x + ' ' + points.rotation.y + ' ' + points.rotation.z );
-			*/
-			if ( options.guiSelectPoint ) options.guiSelectPoint.setMesh();
-
-		}
-/*
-		function isLines() {
-
-			return shaderMaterial.stereo.lines
-				&amp;&amp; ( debug.linesiInMono || ( spatialMultiplex !== spatialMultiplexsIndexs.Mono ) );
-
-		}
-*/
-		function update( onReady ) {
-
-			if ( points === undefined ) {
-
-				progress( onReady );
-
-			}
-
-		}
-		this.onChangeControls = function () {
-
-			if ( !debug.notHiddingFrustumPoints ) {
-
-				//Updating of the canvas is too slow if FrustumPoints count is very big (about 'Z Count' = 50 and 'Y Count' = 30).
-				//I am hidding all points during  changing of the contdrol and show it again after 500 msec for resolving of the problem.
-				if ( timeoutControls === undefined ) {
-
-					group.remove( points );
-					group.remove( groupFrustumPoints );
-					options.raycaster.removeParticle( points );
+					//				if ( _points === undefined )
+					if ( !_points )
+						return;
+					_points.position.copy( camera.position );
+					_points.rotation.set( camera.rotation.x, camera.rotation.y, camera.rotation.z );
+					var scale = camera.position.distanceTo( zeroPoint ) / cameraDistanceDefault;
+					_points.scale.x = scale;
+					_points.scale.y = scale;
+					_points.scale.z = scale;
 
 				}
-				clearTimeout( timeoutControls );
-				timeoutControls = setTimeout( function () {
+				set();
+//				lines.forEach( function ( item ) { set( item ); } );
+				/*
+				console.warn( '_points.position: ' + _points.position.x + ' ' + _points.position.y + ' ' + _points.position.z +
+				' _points.scale: ' + _points.scale.x + ' ' + _points.scale.y + ' ' + _points.scale.z +
+				' _points.rotation: ' + _points.rotation.x + ' ' + _points.rotation.y + ' ' + _points.rotation.z );
+				*/
+				if ( options.guiSelectPoint ) options.guiSelectPoint.setMesh();
 
-					group.add( groupFrustumPoints );
-					if ( shaderMaterial.info )
-						options.raycaster.addParticle( points );
+			}
+			function update( onReady ) {
 
-					clearTimeout( timeoutControls );
-					timeoutControls = undefined;
+				if ( _points === undefined ) {
 
-					if ( !debug.notMoveFrustumPoints ) {
+					progress( onReady );
 
-						_this.update();
+				}
+
+			}
+			/**
+			 * The user has moved the camera
+			 * @event
+			 * */
+			this.onChangeControls = function () {
+
+				if ( !debug.notHiddingFrustumPoints ) {
+
+					//Updating of the canvas is too slow if FrustumPoints count is very big (about 'Z Count' = 50 and 'Y Count' = 30).
+					//I am hidding all points during  changing of the contdrol and show it again after 500 msec for resolving of the problem.
+					if ( timeoutControls === undefined ) {
+
+						group.remove( _points );
+						group.remove( groupFrustumPoints );
+						options.raycaster.removeParticle( _points );
 
 					}
+					clearTimeout( timeoutControls );
+					timeoutControls = setTimeout( function () {
 
-				}, 500 );
+						group.add( groupFrustumPoints );
+						if ( shaderMaterial.info )
+							options.raycaster.addParticle( _points );
 
-			} else if ( !debug.notMoveFrustumPoints ) {
+						clearTimeout( timeoutControls );
+						timeoutControls = undefined;
 
-				_this.update();
+						if ( !debug.notMoveFrustumPoints ) {
 
-			}
-
-		}
-		function progress( onReady ) {
-
-			if ( !shaderMaterial.display )
-				return;
-
-			var cameraPerspectiveHelper = new THREE.CameraHelper( camera );
-
-			var array, indexArray = 0;//, names;// = [];
-
-			function getPoint( pointName ) {
-
-				var points = cameraPerspectiveHelper.pointMap[pointName],
-					position = cameraPerspectiveHelper.geometry.attributes.position;
-				return new THREE.Vector3().fromArray( position.array, points[0] * position.itemSize )
-
-			}
-
-			//near точки ближней к камере плоскости усеченной пирамиды
-			var point_n1 = getPoint( 'n1' ),
-				point_n2 = getPoint( 'n2' ),
-				point_n3 = getPoint( 'n3' );
-
-			//far точки основания пирамиды
-
-			var point_f1 = getPoint( 'f1' ),
-				point_f2 = getPoint( 'f2' ),
-				point_f3 = getPoint( 'f3' );
-
-			//изменение размеров усеченной пирамиды FrustumPoints
-
-			//Scale of the base of the frustum points.
-			point_n1.x = ( point_n1.x * shaderMaterial.base ) / 100;
-			point_n2.x = ( point_n2.x * shaderMaterial.base ) / 100;
-			point_n3.x = ( point_n3.x * shaderMaterial.base ) / 100;
-			point_n1.y = ( point_n1.y * shaderMaterial.base ) / 100;
-			point_n2.y = ( point_n2.y * shaderMaterial.base ) / 100;
-			point_n3.y = ( point_n3.y * shaderMaterial.base ) / 100;
-			point_f1.x = ( point_f1.x * shaderMaterial.base ) / 100;
-			point_f2.x = ( point_f2.x * shaderMaterial.base ) / 100;
-			point_f3.x = ( point_f3.x * shaderMaterial.base ) / 100;
-			point_f1.y = ( point_f1.y * shaderMaterial.base ) / 100;
-			point_f2.y = ( point_f2.y * shaderMaterial.base ) / 100;
-			point_f3.y = ( point_f3.y * shaderMaterial.base ) / 100;
-
-			//Square base of the frustum points.
-			if ( shaderMaterial.square ) {
-
-				point_n1.x /= camera.aspect;
-				point_n2.x /= camera.aspect;
-				point_n3.x /= camera.aspect;
-				point_f1.x /= camera.aspect;
-				point_f2.x /= camera.aspect;
-				point_f3.x /= camera.aspect;
-
-			}
-
-			var pointn1x = point_n1.x, pointn2x = point_n2.x, pointn3x = point_n3.x,
-				pointn1y = point_n1.y, pointn2y = point_n2.y, pointn3y = point_n3.y,
-				pointn1z = point_n1.z;
-			//Shift of the frustum layer near to the camera
-			point_n1.x = point_n1.x + ( ( point_f1.x - point_n1.x ) * shaderMaterial.near ) / 100;
-			point_n2.x = point_n2.x + ( ( point_f2.x - point_n2.x ) * shaderMaterial.near ) / 100;
-			point_n3.x = point_n3.x + ( ( point_f3.x - point_n3.x ) * shaderMaterial.near ) / 100;
-			point_n1.y = point_n1.y + ( ( point_f1.y - point_n1.y ) * shaderMaterial.near ) / 100;
-			point_n2.y = point_n2.y + ( ( point_f2.y - point_n2.y ) * shaderMaterial.near ) / 100;
-			point_n3.y = point_n3.y + ( ( point_f3.y - point_n3.y ) * shaderMaterial.near ) / 100;
-			point_n1.z = point_n2.z = point_n3.z = point_n1.z + ( ( point_f1.z - point_n1.z ) * shaderMaterial.near ) / 100;
-			//Shift of the frustum layer far to the camera
-			point_f1.x = point_f1.x + ( ( pointn1x - point_f1.x ) * shaderMaterial.far ) / 100;
-			point_f2.x = point_f2.x + ( ( pointn2x - point_f2.x ) * shaderMaterial.far ) / 100;
-			point_f3.x = point_f3.x + ( ( pointn3x - point_f3.x ) * shaderMaterial.far ) / 100;
-			point_f1.y = point_f1.y + ( ( pointn1y - point_f1.y ) * shaderMaterial.far ) / 100;
-			point_f2.y = point_f2.y + ( ( pointn2y - point_f2.y ) * shaderMaterial.far ) / 100;
-			point_f3.y = point_f3.y + ( ( pointn3y - point_f3.y ) * shaderMaterial.far ) / 100;
-			point_f1.z = point_f2.z = point_f3.z = point_f1.z + ( ( pointn1z - point_f1.z ) * shaderMaterial.far ) / 100;
-
-			var pointStart = new THREE.Vector3().copy( point_n1 );
-
-			function sqrtInt( value ) {
-
-				var a = parseInt( Math.sqrt( zCount - 1 ) );
-/*
-				if ( isLines() )
-					return value / a;
-*/
-				return parseInt( value / a ) * a;
-
-			}
-			var zCount = shaderMaterial.zCount,
-				zStep = ( point_f1.z - point_n1.z ) / ( ( zCount - 1 ) * ( zCount - 1 ) ),
-
-				//смещение по оси x
-				zx = 0;
-			var yCount = shaderMaterial.yCount,
-				xCount = yCount * ( shaderMaterial.square ? 1 : parseInt( camera.aspect ) ),
-				zy = 0;//смещение по оси y
-
-			//You can see the Chrome memory crash if you has set very big shaderMaterial.zCount or  shaderMaterial.yCount. (about 900000).
-			//Unfortunately you cannot to catch memory crash. https://stackoverflow.com/questions/44531357/how-to-catch-and-handle-chrome-memory-crash
-			//Instead I temporary set shaderMaterial.zCount to default value and restore it after creating of all z levels.
-			//Now you can see default shaderMaterial.zCount after memory crash and reloading of the wab page.
-			shaderMaterial.zCount = optionsShaderMaterial.zCount;
-			shaderMaterial.yCount = optionsShaderMaterial.yCount;
-//			saveSettings();
-
-			var zStart = parseInt( ( zCount * shaderMaterial.stereo.hide ) / 100 ),
-				zEnd = zStart + zCount - 1;
-			function Z( z ) {
-
-				//console.warn( 'z ' + z );
-				var ynStep = ( point_n3.y - point_n1.y ) / ( yCount - 1 ),
-					yfStep = ( point_f3.y - point_f1.y ) / ( yCount - 1 ),
-					yStep = ( ( yfStep - ynStep ) / ( ( zCount - 1 ) * ( zCount - 1 ) ) ) * z * z + ynStep,
-					sqrtZCount = parseInt( Math.sqrt( zCount ) ),
-//					yzStep = isLines() ? ( yStep / zCount ) * sqrtZCount : yStep / ( sqrtZCount + parseInt( Math.sqrt( zCount - ( sqrtZCount * sqrtZCount ) ) ) ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
-					yzStep = yStep / ( sqrtZCount + parseInt( Math.sqrt( zCount - ( sqrtZCount * sqrtZCount ) ) ) ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
-
-					xnStep = ( point_n2.x - point_n1.x ) / ( xCount - 1 ),
-					xfStep = ( point_f2.x - point_f1.x ) / ( xCount - 1 ),
-					xStep = ( ( xfStep - xnStep ) / ( ( zCount - 1 ) * ( zCount - 1 ) ) ) * z * z + xnStep,
-					//				xzStep = xStep / zxCount;//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
-					xzStep = xStep / parseInt( Math.sqrt( zCount ) );//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
-				pointStart.y = - yStep * ( yCount - 1 ) / 2;
-				pointStart.x = - xStep * ( xCount - 1 ) / 2;
-/*
-				if ( isLines() )
-					zx = z;
-*/
-				for ( var y = 0; y &lt; yCount; y++ ) {
-
-					for ( var x = 0; x &lt; xCount; x++ )
-						if ( z >= zStart ) {
-
-							function addPoint( point/*, pointName*/ ) {
-
-								names.push(
-
-									x === 0 ?
-										y === 0 ? { y: y, z: z } : { y: y } :
-										x
-
-								);
-								array[indexArray] = point.x;
-								indexArray++;
-								array[indexArray] = point.y;
-								indexArray++;
-								array[indexArray] = point.z;
-								indexArray++;
-
-							}
-							addPoint( new THREE.Vector3(
-
-								pointStart.x + xStep * x + xzStep * zx,
-								pointStart.y + yStep * y + yzStep * zy,
-								pointStart.z + zStep * z * z
-
-							) );
+							_this.update();
 
 						}
 
-				}
-				zx++;
-//				if ( !isLines() &amp;&amp; ( zx >= parseInt( Math.sqrt( zCount ) ) ) )
-				if ( zx >= parseInt( Math.sqrt( zCount ) ) ) {
+					}, 500 );
 
-					zx = 0;
-					zy++;
+				} else if ( !debug.notMoveFrustumPoints ) {
 
-				}
-
-			}
-			function eachZ( zStart, zEnd ) {
-
-				if ( zStart > zEnd )
-					return;
-				Z( zStart );
-				if ( zStart >= zEnd )
-					return;
-				Z( zEnd );
-				var zMid = parseInt( ( zStart + zEnd ) / 2 );
-				if ( zMid === zStart )
-					return;//for testing set 'Z Count' = 6
-				Z( zMid );
-				eachZ( zStart + 1, zMid - 1 );
-				eachZ( zMid + 1, zEnd - 1 );
-
-			}
-
-			//For Chrome memory crash see above.
-			shaderMaterial.zCount = zCount;
-			shaderMaterial.yCount = yCount;
-
-			//если оставить эту строку то когда произойдет переполнение памяти, веб страница вечно будет не открываться
-			//for testing set 'Z Count' = 100 and 'Y count' = 1000
-			//saveSettings();
-
-			removePoints( true );
-
-			var itemSize = 3;
-			_this.pointIndexes = function ( pointIndex ) {
-
-				if ( names === undefined ) {
-
-					console.error( 'names = ' + names );//сюда попадает в отладочной версии
-					return undefined;
-
-				}
-				var name = names[pointIndex], x, y, z,
-					index = pointIndex;
-				function getObject() {
-
-					index--;
-					while ( ( index >= 0 ) &amp;&amp; ( typeof names[index] !== "object" ) )
-						index--;
-					name = names[index];
-
-				}
-				function getZ() {
-
-					while ( ( index >= 0 ) &amp;&amp; ( name.z === undefined ) )
-						getObject();
-
-				}
-				if ( typeof name === "object" ) {
-
-					x = 0;
-					y = name.y;
-					getZ();
-					z = name.z;
-
-				} else {
-
-					x = name;
-					getObject();
-					y = name.y;
-					getZ();
-					z = name.z;
-
-				}
-				return { x: x, y: y, z: z };
-
-			}
-
-			//Thanks to https://stackoverflow.com/a/27369985/5175935
-			//Такая же функция есть в myPoints.js но если ее использовать то она будет возвращать путь на myPoints.js
-			const getCurrentScript = function () {
-
-				if ( document.currentScript &amp;&amp; ( document.currentScript.src !== '' ) )
-					return document.currentScript.src;
-				const scripts = document.getElementsByTagName( 'script' ),
-					str = scripts[scripts.length - 1].src;
-				if ( str !== '' )
-					return src;
-				//Thanks to https://stackoverflow.com/a/42594856/5175935
-				return new Error().stack.match( /(https?:[^:]*)/ )[0];
-
-			};
-			//Thanks to https://stackoverflow.com/a/27369985/5175935
-			const getCurrentScriptPath = function () {
-				const script = getCurrentScript(),
-					path = script.substring( 0, script.lastIndexOf( '/' ) );
-				return path;
-			};
-			//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
-			var path = getCurrentScriptPath();
-			var cameraPositionDefault = new THREE.Vector3( camera.position.x, camera.position.y, camera.position.z );
-			var cameraQuaternionDefault = new THREE.Vector4( camera.quaternion.x, camera.quaternion.y, camera.quaternion.z, camera.quaternion.w );
-
-			//сделал это приравниванеие что бы избежать двойного создания массива точек frustumPoints MyThree.points(...)
-			//Если это произойдет, то непонятно почему для каждой точки будет создано два облака
-			//Одно облако верное
-			//Второе находится строго между точкой и камерой
-			//Второе облако можно увидеть если повернуть камеру с помощью orbitControl
-			//Сюда попадает по второму разу если вызвать stereoEffect.gui(...)
-			points = false;
-
-			MyThree.points( //array
-				function () {
-
-					var geometry = new THREE.BufferGeometry(),
-						geometryLength = ( zEnd - zStart + 1 ) * xCount * yCount;
-
-					array = new Float32Array( geometryLength * itemSize );
-					indexArray = 0;
-					names = null;
-					names = [];
-
-					eachZ( zStart, zEnd );
-
-					geometry.setAttribute( 'position', new THREE.BufferAttribute( array, itemSize ) );
-
-					return geometry;
-
-				}, group, options, {
-
-				name: 'frustum points',
-				shaderMaterial: shaderMaterial,
-				boFrustumPoints: true,
-				position: camera.position,
-				scale: camera.scale,
-				rotation: camera.rotation,
-				opacity: true,
-				pointIndexes: function ( pointIndex ) { return _this.pointIndexes( pointIndex ); },
-				path: {
-
-					vertex: path + '/vertex.c',
-
-				},
-				pointName: function ( pointIndex ) {
-
-					var indexes = _this.pointIndexes( pointIndex );
-					if ( indexes === undefined )
-						return indexes;
-					return 'x = ' + indexes.x + ', y = ' + indexes.y + ', z = ' + ( indexes.z + zStart ) + ', i = ' + pointIndex;
-
-				},
-				controllers: function ( /*cFrustumPoints*/ ) {
-
-					cFrustumPoints.appendChild( { xCount: xCount, yCount: yCount, zCount: zCount, } );
-
-				},
-				uniforms: function ( uniforms ) {
-
-					cloud.create( uniforms );
-
-					//rotate the quaternion vector to 180 degrees
-					cameraQuaternionDefault.x = - cameraQuaternionDefault.x;
-					cameraQuaternionDefault.y = - cameraQuaternionDefault.y;
-					cameraQuaternionDefault.z = - cameraQuaternionDefault.z;
-
-					cameraPositionDefault.applyQuaternion( cameraQuaternionDefault );
-
-					uniforms.cameraPositionDefault = { value: cameraPositionDefault };
-					uniforms.cameraQuaternion = { value: camera.quaternion };
-
-					//palette
-					//ВНИМАНИЕ!!! Для того, что бы палитра передалась в vertex надо добавить 
-					//points.material.uniforms.palette.value.needsUpdate = true;
-					//в getShaderMaterialPoints.loadShaderText
-					/*					
-										var format = RGBFormat,//THREE.LuminanceFormat,//RGBAFormat,//Available formats https://threejs.org/docs/index.html#api/en/constants/Textures
-											//D:\My documents\MyProjects\webgl\three.js\GitHub\three.js\dev\src\constants.js
-											itemSize = format === RGBAFormat ? 4 : format === RGBFormat ? 3 : format === LuminanceFormat ? 1 : NaN;
-										var width = 256,
-											height = 1,//format === THREE.LuminanceFormat ? 1 : 2,
-											size = width * height,
-											type = FloatType;//IntType;
-					//					var arrayPalette = type === FloatType ? new Float32Array( itemSize * size ) : type === IntType ? new Int8Array( itemSize * size ) : NaN;//new Uint8Array( itemSize * size )
-										uniforms.palette = { value: new DataTexture( type === FloatType ? new Float32Array( itemSize * size ) : type === IntType ? new Int8Array( itemSize * size ) : NaN,//arrayPalette,
-											width, height, format, type ) }
-					*/
-					/*
-										var uniformKey = 'palette'//, size = 256,
-											itemSize = cloud.addUniforms( RGBFormat, 256, uniformKey, function ( data, itemSize, updateItem )
-					*/
-					new cloud.addUniforms( THREE.RGBFormat, 256, 'palette', {
-
-						onReady: function ( data, itemSize, updateItem ) {
-
-							var min, max;
-							if ( options.scales.w !== undefined ) {
-
-								min = options.scales.w.min; max = options.scales.w.max;
-
-							} else {
-
-								console.error( 'params.pointsOptions.uniforms: params.options.scales.w = ' + params.options.scales.w );
-								return;
-
-							}
-
-							var size = data.length / itemSize;
-							for ( var i = 0; i &lt; size; i++ )
-								updateItem( i, options.palette.toColor( ( max - min ) * i / ( size - 1 ) + min, min, max ) );
-
-						}
-
-					} );
-					/*
-										function updateItem ( i, vector, data ) {
-					
-											var stride = i * itemSize;
-					
-											data[stride] = vector.r;
-											if ( itemSize > 1 ) {
-					
-												data[stride + 1] = vector.g;
-												if ( itemSize > 2 ) {
-					
-													data[stride + 2] = vector.b;
-													if ( itemSize > 3 )
-														data[stride + 3] = 1;//vector.w;
-					
-												}
-					
-											}
-					
-										}
-										var size = uniforms.palette.value.image.width;
-										for ( var i = 0; i &lt; size; i++ )
-											updateItem ( i, options.palette.toColor( ( max - min ) * i / ( size - 1 ) + min, min, max ),
-											uniforms[uniformKey].value.image.data );
-					*/
-					return cloud;
-
-				},
-				onReady: function ( newPoints ) {
-
-					points = newPoints;
-					_this.points = points;
-					points.userData.boFrustumPoints = true;
-					points.userData.isInfo = function () { return shaderMaterial.info; }
-
-//					saveSettings();
-					if ( shaderMaterial.info )
-						options.raycaster.addParticle( points );
-
-					if ( !shaderMaterial.display )
-						removePoints();
-					pointOpacity = points === undefined ?
-						1.0 :
-						points.userData.shaderMaterial === undefined ? shaderMaterial.point.opacity : points.userData.shaderMaterial.point.opacity;
-					if ( onReady !== undefined )
-						onReady();
-
-					//когда задан параметр cameraTarget у MyThree то нужно передвинуть frustumPoints после того как созданы points
 					_this.update();
 
-				},
+				}
 
-			} );
+			}
+			function progress( onReady ) {
 
-/*
-			if ( isLines() ) {
+				if ( !shaderMaterial.display )
+					return;
 
-				for ( var x = 0; x &lt; xCount; x++ )
+				const cameraPerspectiveHelper = new THREE.CameraHelper( camera );
+
+				var array, indexArray = 0;//, _names;// = [];
+
+				function getPoint( pointName ) {
+
+					var points = cameraPerspectiveHelper.pointMap[pointName],
+						position = cameraPerspectiveHelper.geometry.attributes.position;
+					return new THREE.Vector3().fromArray( position.array, points[0] * position.itemSize )
+
+				}
+
+				//near точки ближней к камере плоскости усеченной пирамиды
+				const point_n1 = getPoint( 'n1' ),
+					point_n2 = getPoint( 'n2' ),
+					point_n3 = getPoint( 'n3' );
+
+				//far точки основания пирамиды
+
+				const point_f1 = getPoint( 'f1' ),
+					point_f2 = getPoint( 'f2' ),
+					point_f3 = getPoint( 'f3' );
+
+				//изменение размеров усеченной пирамиды FrustumPoints
+
+				//Scale of the base of the frustum points.
+				point_n1.x = ( point_n1.x * shaderMaterial.base ) / 100;
+				point_n2.x = ( point_n2.x * shaderMaterial.base ) / 100;
+				point_n3.x = ( point_n3.x * shaderMaterial.base ) / 100;
+				point_n1.y = ( point_n1.y * shaderMaterial.base ) / 100;
+				point_n2.y = ( point_n2.y * shaderMaterial.base ) / 100;
+				point_n3.y = ( point_n3.y * shaderMaterial.base ) / 100;
+				point_f1.x = ( point_f1.x * shaderMaterial.base ) / 100;
+				point_f2.x = ( point_f2.x * shaderMaterial.base ) / 100;
+				point_f3.x = ( point_f3.x * shaderMaterial.base ) / 100;
+				point_f1.y = ( point_f1.y * shaderMaterial.base ) / 100;
+				point_f2.y = ( point_f2.y * shaderMaterial.base ) / 100;
+				point_f3.y = ( point_f3.y * shaderMaterial.base ) / 100;
+
+				//Square base of the frustum points.
+				if ( shaderMaterial.square ) {
+
+					point_n1.x /= camera.aspect;
+					point_n2.x /= camera.aspect;
+					point_n3.x /= camera.aspect;
+					point_f1.x /= camera.aspect;
+					point_f2.x /= camera.aspect;
+					point_f3.x /= camera.aspect;
+
+				}
+
+				const pointn1x = point_n1.x, pointn2x = point_n2.x, pointn3x = point_n3.x,
+					pointn1y = point_n1.y, pointn2y = point_n2.y, pointn3y = point_n3.y,
+					pointn1z = point_n1.z;
+				//Shift of the frustum layer near to the camera
+				point_n1.x = point_n1.x + ( ( point_f1.x - point_n1.x ) * shaderMaterial.near ) / 100;
+				point_n2.x = point_n2.x + ( ( point_f2.x - point_n2.x ) * shaderMaterial.near ) / 100;
+				point_n3.x = point_n3.x + ( ( point_f3.x - point_n3.x ) * shaderMaterial.near ) / 100;
+				point_n1.y = point_n1.y + ( ( point_f1.y - point_n1.y ) * shaderMaterial.near ) / 100;
+				point_n2.y = point_n2.y + ( ( point_f2.y - point_n2.y ) * shaderMaterial.near ) / 100;
+				point_n3.y = point_n3.y + ( ( point_f3.y - point_n3.y ) * shaderMaterial.near ) / 100;
+				point_n1.z = point_n2.z = point_n3.z = point_n1.z + ( ( point_f1.z - point_n1.z ) * shaderMaterial.near ) / 100;
+				//Shift of the frustum layer far to the camera
+				point_f1.x = point_f1.x + ( ( pointn1x - point_f1.x ) * shaderMaterial.far ) / 100;
+				point_f2.x = point_f2.x + ( ( pointn2x - point_f2.x ) * shaderMaterial.far ) / 100;
+				point_f3.x = point_f3.x + ( ( pointn3x - point_f3.x ) * shaderMaterial.far ) / 100;
+				point_f1.y = point_f1.y + ( ( pointn1y - point_f1.y ) * shaderMaterial.far ) / 100;
+				point_f2.y = point_f2.y + ( ( pointn2y - point_f2.y ) * shaderMaterial.far ) / 100;
+				point_f3.y = point_f3.y + ( ( pointn3y - point_f3.y ) * shaderMaterial.far ) / 100;
+				point_f1.z = point_f2.z = point_f3.z = point_f1.z + ( ( pointn1z - point_f1.z ) * shaderMaterial.far ) / 100;
+
+				const pointStart = new THREE.Vector3().copy( point_n1 );
+
+				function sqrtInt( value ) {
+
+					const a = parseInt( Math.sqrt( zCount - 1 ) );
+					/*
+									if ( isLines() )
+										return value / a;
+					*/
+					return parseInt( value / a ) * a;
+
+				}
+				const zCount = shaderMaterial.zCount,
+					zStep = ( point_f1.z - point_n1.z ) / ( ( zCount - 1 ) * ( zCount - 1 ) );
+
+				//смещение по оси x
+				var zx = 0;
+				const yCount = shaderMaterial.yCount,
+					xCount = yCount * ( shaderMaterial.square ? 1 : parseInt( camera.aspect ) );
+				var zy = 0;//смещение по оси y
+
+				//You can see the Chrome memory crash if you has set very big shaderMaterial.zCount or  shaderMaterial.yCount. (about 900000).
+				//Unfortunately you cannot to catch memory crash. https://stackoverflow.com/questions/44531357/how-to-catch-and-handle-chrome-memory-crash
+				//Instead I temporary set shaderMaterial.zCount to default value and restore it after creating of all z levels.
+				//Now you can see default shaderMaterial.zCount after memory crash and reloading of the wab page.
+				shaderMaterial.zCount = optionsShaderMaterial.zCount;
+				shaderMaterial.yCount = optionsShaderMaterial.yCount;
+				//			saveSettings();
+
+				const zStart = parseInt( ( zCount * shaderMaterial.stereo.hide ) / 100 ),
+					zEnd = zStart + zCount - 1;
+				function Z( z ) {
+
+					//console.warn( 'z ' + z );
+					const ynStep = ( point_n3.y - point_n1.y ) / ( yCount - 1 ),
+						yfStep = ( point_f3.y - point_f1.y ) / ( yCount - 1 ),
+						yStep = ( ( yfStep - ynStep ) / ( ( zCount - 1 ) * ( zCount - 1 ) ) ) * z * z + ynStep,
+						sqrtZCount = parseInt( Math.sqrt( zCount ) ),
+						//					yzStep = isLines() ? ( yStep / zCount ) * sqrtZCount : yStep / ( sqrtZCount + parseInt( Math.sqrt( zCount - ( sqrtZCount * sqrtZCount ) ) ) ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
+						yzStep = yStep / ( sqrtZCount + parseInt( Math.sqrt( zCount - ( sqrtZCount * sqrtZCount ) ) ) ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
+
+						xnStep = ( point_n2.x - point_n1.x ) / ( xCount - 1 ),
+						xfStep = ( point_f2.x - point_f1.x ) / ( xCount - 1 ),
+						xStep = ( ( xfStep - xnStep ) / ( ( zCount - 1 ) * ( zCount - 1 ) ) ) * z * z + xnStep,
+						//				xzStep = xStep / zxCount;//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
+						xzStep = xStep / parseInt( Math.sqrt( zCount ) );//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
+					pointStart.y = - yStep * ( yCount - 1 ) / 2;
+					pointStart.x = - xStep * ( xCount - 1 ) / 2;
+					/*
+									if ( isLines() )
+										zx = z;
+					*/
 					for ( var y = 0; y &lt; yCount; y++ ) {
 
-						var material = new LineBasicMaterial( {
+						for ( var x = 0; x &lt; xCount; x++ )
+							if ( z >= zStart ) {
 
-							color: 0xffffff,
-							opacity: shaderMaterial.stereo.opacity,
-							transparent: true,
+								function addPoint( point/*, pointName*/ ) {
 
-						} );
+									_names.push(
 
-						var geometry = new Geometry();
-						for ( var z = zStart; z &lt; zCount; z++ ) {
+										x === 0 ?
+											y === 0 ? { y: y, z: z } : { y: y } :
+											x
 
-							var vector = array[x + xCount * y + xCount * yCount * ( z - zStart )];
-							geometry.vertices.push( new THREE.Vector3( vector.x, vector.y, vector.z ) );
+									);
+									array[indexArray] = point.x;
+									indexArray++;
+									array[indexArray] = point.y;
+									indexArray++;
+									array[indexArray] = point.z;
+									indexArray++;
 
-						}
-						var line = new Line( geometry, material );
-						line.position.copy( camera.position );
-						line.scale.copy( camera.scale );
-						line.rotation.copy( camera.rotation );
-						groupFrustumPoints.add( line );
+								}
+								addPoint( new THREE.Vector3(
 
-						lines.push( line );
+									pointStart.x + xStep * x + xzStep * zx,
+									pointStart.y + yStep * y + yzStep * zy,
+									pointStart.z + zStep * z * z
+
+								) );
+
+							}
+
+					}
+					zx++;
+					//				if ( !isLines() &amp;&amp; ( zx >= parseInt( Math.sqrt( zCount ) ) ) )
+					if ( zx >= parseInt( Math.sqrt( zCount ) ) ) {
+
+						zx = 0;
+						zy++;
 
 					}
 
-			}
-*/
+				}
+				function eachZ( zStart, zEnd ) {
 
-		}
-		update();
-		var pointOpacity;
-		this.setSpatialMultiplexs = function ( /*spatialMultiplexNew*/ ) {
-
-//			spatialMultiplex = spatialMultiplexNew;
-
-			//Не помню почему не удаляю старый points из списка cMeshs, но если так делать, то будут какие то запутанные косяки.
-			//Поэтому не удаляю points из списка cMeshs а только получаю индекс points в этом списке.
-			const index = options.guiSelectPoint ? options.guiSelectPoint.getMeshIndex( points ) : undefined;
-
-			update();
-
-			//затем заменяю указатель на старый points в списке cMeshs на новый.
-			if ( index ) options.guiSelectPoint.setIndexMesh( index, points );
-
-		}
-		this.animate = function () {
-
-			if (
-//				( points === undefined ) ||
-				!points ||
-				( points.userData.shaderMaterial === undefined ) ||
-				( //( pointSize === points.userData.shaderMaterial.point.size ) &amp;&amp;
-					( pointOpacity === points.userData.shaderMaterial.point.opacity ) )
-			)
-				return false;
-			pointOpacity = points.userData.shaderMaterial.point.opacity;
-			points.material.uniforms.opacity.value = points.userData.shaderMaterial.point.opacity;
-			return true;
-
-		}
-		this.update = function ( onReady ) {
-
-			update( onReady );
-
-			//Эта команда нужна в случае изменения размера окна браузера когда canvas на весь экран
-			setPointsParams();
-
-			var cameraQuaternionDefault = new THREE.Vector4( camera.quaternion.x, camera.quaternion.y, camera.quaternion.z, camera.quaternion.w );
-
-//			if ( points === undefined )
-			if ( !points )
-				return;//User has changed 'Z Count' of the frustumPoints
-
-			points.material.uniforms.cameraPositionDefault.value.copy( camera.position );
-
-			//rotate the quaternion vector to 180 degrees
-			cameraQuaternionDefault.x = - cameraQuaternionDefault.x;
-			cameraQuaternionDefault.y = - cameraQuaternionDefault.y;
-			cameraQuaternionDefault.z = - cameraQuaternionDefault.z;
-
-			points.material.uniforms.cameraPositionDefault.value.applyQuaternion( cameraQuaternionDefault );
-
-		}
-		this.isDisplay = function () { return shaderMaterial.display; }
-		this.getSelectedIndex = function ( cFrustumPoints ) { return cFrustumPoints.selectPoint( names ); }
-		this.selectPoint = function ( cFrustumPoints ) {
-
-			var index = this.getSelectedIndex( cFrustumPoints );
-			if ( index === null )
-				return;
-			options.guiSelectPoint.select( { object: points, index: index } );
-
-		}
-		this.updateCloudPoints = function () {
-
-			group.children.forEach( function ( mesh ) {
-
-				if ( !mesh.userData.cloud )
-					return;
-				if ( mesh.geometry.attributes.position.itemSize !== 4 ) {
-
-					console.error( 'mesh.geometry.attributes.position.itemSize = ' + mesh.geometry.attributes.position.itemSize );
-					return;
+					if ( zStart > zEnd )
+						return;
+					Z( zStart );
+					if ( zStart >= zEnd )
+						return;
+					Z( zEnd );
+					var zMid = parseInt( ( zStart + zEnd ) / 2 );
+					if ( zMid === zStart )
+						return;//for testing set 'Z Count' = 6
+					Z( zMid );
+					eachZ( zStart + 1, zMid - 1 );
+					eachZ( zMid + 1, zEnd - 1 );
 
 				}
-				cloud.updateMesh( mesh );
-				/*
-							for ( var i = 0; i &lt; mesh.geometry.attributes.position.count; i++ ) {
-				
-								cloud.updateItem( mesh.userData.cloud.indexArray + '_' + i,
-									new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ),
-									true );
-				
-							}
-				*/
 
-			} );
-			needsUpdate();
+				//For Chrome memory crash see above.
+				shaderMaterial.zCount = zCount;
+				shaderMaterial.yCount = yCount;
 
-		}
-		function needsUpdate() {
+				//если оставить эту строку то когда произойдет переполнение памяти, веб страница вечно будет не открываться
+				//for testing set 'Z Count' = 100 and 'Y count' = 1000
+				//saveSettings();
 
-//			if ( points !== undefined )
-			if ( points )
-				points.material.uniforms.cloudPoints.value.needsUpdate = true;
-
-		}
-		this.updateCloudPoint = function ( mesh ) {
-
-			cloud.updateMesh( mesh );
-			needsUpdate();
-
-		}
-		this.updateCloudPointItem = function ( points, i ) {
-
-			if ( points.userData.cloud === undefined )
-				return;
-			if ( points.geometry.attributes.position.itemSize !== 4 )
-				console.error( 'points.geometry.attributes.position.itemSize = ' + points.geometry.attributes.position.itemSize );
-			//		cloud.updateItem( points.userData.cloud.indexArray + '_' + i,
-			cloud.cloudPoints.updateItem( points.userData.cloud.indexArray + i,
-				MyThree.getWorldPosition( points,
-					new THREE.Vector4().fromArray( points.geometry.attributes.position.array, i * points.geometry.attributes.position.itemSize ) ),
-				true );
-			needsUpdate();
-
-		}
-
-		//Convert all points with cloud, but not shaderMaterial from local to world positions
-		// i.e. calculate scales, positions and rotation of the points.
-		//Converting of all points with cloud and shaderMaterial see getShaderMaterialPoints function in the myPoints.js file
-		this.updateCloudPoints();
-
-		/**
-		 * Pushes to clouds array all points from geometry
-		 * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
-		 * @param {THREE.BufferGeometry} geometry
-		 * @returns index of the new array item
-		 */
-		this.pushArrayCloud = function ( THREE, geometry ) {
-
-/*
-			if ( arrayCloud === undefined ) {
-
-				console.error( 'pushArrayCloud function failed! arrayCloud = ' + arrayCloud );
-				return;
-
-			}
-*/
-
-			//Массив точек, имеющих облако params.arrayCloud, разбил на группы points
-			//В каждой группе points содержатся все точки, из одного mesh
-			//Это сделал потому что если одновременно имеются точки с 
-			// shaderMaterial и без shaderMaterial, то порядок добавления точек в params.arrayCloud
-			// Не совпадает с порядком расположения mesh в group
-			// потому что точки без shaderMaterial добавляются сразу после создания
-			// а точки с shaderMaterial добаляются только после вызова loadShaderText в function getShaderMaterialPoints
-			var index = arrayCloud.getCloudsCount(),
-				points = [];
-			arrayCloud.push( points );
-			for ( var i = 0; i &lt; geometry.attributes.position.count; i++ )
-				points.push( new THREE.Vector4().fromArray( geometry.attributes.position.array, i * geometry.attributes.position.itemSize ) );
-			return index;
-
-		}
-
-		/**
-		* @callback FolderPoint
-		* @param {object} folder parent folder
-		* @param {function} setSettings save points setting to the cookie
-		*/
-
-		/**
-		 * Adds FrustumPoints folder into dat.GUI.
-		 * See [dat.GUI API]{@link https://github.com/dataarts/dat.gui/blob/master/API.md}.
-		 * @param {object} folder parent folder
-		 * @param {FolderPoint} FolderPoint creates the folder of the point's settings
-		 * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
-		 * @param {Function} [guiParams.getLanguageCode="en"] Your custom getLanguageCode() function.
-		 * &lt;pre>
-		 * returns the "primary language" subtag of the language version of the browser.
-		 * Examples: "en" - English language, "ru" Russian.
-		 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
-		 * Default returns the 'en' is English language.
-		 * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
-		 * &lt;/pre>
-		 * @param {object} [guiParams.lang] Object with localized language values
-		 * &lt;pre>
-		 * Example Using of guiParams.lang:
-		 * guiParams = {
-		 *
-		 * 	getLanguageCode: function() { return 'az'; },
-		 * 	lang: { textHeight: 'mətn boyu', languageCode: 'az' },
-		 *
-		 * }
-		 * &lt;/pre>
-		 * @param {Cookie} [guiParams.cookie=new Cookie.defaultCookie()] Your custom cookie function for saving and loading of the SpriteText settings. Default cookie is not saving settings.
-		 * @param {string} [guiParams.cookieName=""] Name of the cookie is "Player" + guiParams.cookieName.
-		 */
-		this.gui = function ( folder, FolderPoint, guiParams = {} ) {
-
-			guiParams.getLanguageCode = guiParams.getLanguageCode || function () { return "en"; };
-/*			
-			guiParams.cookie = guiParams.cookie || new Cookie.defaultCookie();
-			guiParams.cookieName = 'FrustumPoints' + ( guiParams.cookieName ? guiParams.cookieName : '' );
-*/			
-
-			//Localization
-
-			var lang = {
-
-				frustumPoints: 'Frustum Points',
-				frustumPointsTitle: 'A cloud of the fixed points in front of the camera for describe the properties of space.',
-
-				display: 'Display',
-				displayTitle: 'Display or hide Frustum Points.',
-
-				info: 'Information',
-				infoTitle: 'Display information about frustum point if user move mouse over or click this point.',
-
-				stereo: 'Stereo',
-				stereoTitle: 'Frustum Points setting for stereo mode of the canvas',
-
-				displayLines: 'Display Lines',
-				displayLinesTitle: 'Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.',
-
-				hide: 'Hide Nearby Points',
-				hideTitle: 'Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.',
-
-				opacity: 'Opacity',
-				opacityTitle: 'Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.',
-
-				near: 'Near Layer',
-				nearTitle: 'Shift of the frustum layer near to the camera in percents.',
-
-				far: 'Far Layer',
-				farTitle: 'Shift of the frustum layer far to the camera in percents.',
-
-				base: 'Scale',
-				baseTitle: 'Scale of the base of the frustum points in percents.',
-
-				square: 'Square Base',
-				squareTitle: 'Square base of the frustum points.',
-
-				defaultButton: 'Default',
-				defaultTitle: 'Restore default Frustum Points settings.',
-
-				zCount: 'Z Count',
-				zCountTitle: "The count of layers of the frustum of the camera's field of view.",
-
-				yCount: 'Y Count',
-				yCountTitle: "The count of vertical points for each z level of the  frustum of the camera's field of view.",
-
-			};
-
-			var languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
-				: guiParams.getLanguageCode();
-			switch ( languageCode ) {
-
-				case 'ru'://Russian language
-
-					lang.frustumPoints = 'Неподвижные точки';
-					lang.frustumPointsTitle = 'Облако точек перед камерой для описания свойств пространства';
-
-					lang.display = 'Показать';
-					lang.displayTitle = 'Показать или скрыть неподвижные точки.';
-
-					lang.info = 'Информация';
-					lang.infoTitle = 'Отображать информацию о неподвижной точке, если пользователь наведет курсор мыши или щелкнет эту точку.';
-
-					lang.stereo = 'Стерео';
-					lang.stereoTitle = 'Настройки неподвижных точек для стерео режима холста';
-
-					lang.displayLines = 'Показать линии';
-					lang.displayLinesTitle = 'Показать или скрыть линии между неподвижными точками.';
-
-					lang.hide = 'Близкие точки';
-					lang.hideTitle = 'Скрыть близкие к камере точки в процентах ко всем точкам для более удобной визуализации.';
-
-					lang.opacity = 'Непрозрачность';
-					lang.opacityTitle = 'Число в диапазоне 0.0 - 1.0, указывающее, насколько прозрачены линии. Значение 0.0 означает полностью прозрачный, 1.0 - полностью непрозрачный.';
-
-					lang.near = 'Ближний слой';
-					lang.nearTitle = 'Смещение ближайшего к камере слоя точек в процентах.';
-
-					lang.far = 'Дальний слой';
-					lang.farTitle = 'Смещение дальнего от камеры слоя точек в процентах.';
-
-					lang.base = 'Масштаб';
-					lang.baseTitle = 'Масштаб неподвижных точек в процентах.';
-
-					lang.square = 'Квадратное основание';
-					lang.squareTitle = 'Неподвиждые точки образуют пирамиду с квадратным основанием.';
-
-					lang.defaultButton = 'Восстановить';
-					lang.defaultTitle = 'Восстановить настройки неподвижных точек.';
-
-					lang.zCount = 'Z cлои';
-					lang.zCountTitle = 'Количество слоев усеченной пирамиды, образующей поле зрения камеры';
-
-					lang.yCount = 'Y точки';
-					lang.yCountTitle = "Количество вертикальных точек в каждом слое усеченной пирамиды, образующей поле зрения камеры.";
-
-					break;
-				default://Custom language
-					if ( ( options.lang === undefined ) || ( options.lang.languageCode != languageCode ) )
-						break;
-
-					Object.keys( options.lang ).forEach( function ( key ) {
-
-						if ( lang[key] === undefined )
-							return;
-						lang[key] = options.lang[key];
-
-					} );
-
-			}
-
-			function saveSettings() { cookie.setObject( cookieName, shaderMaterial ); }
-			const fFrustumPoints = folder.addFolder( lang.frustumPoints );
-			dat.folderNameAndTitle( fFrustumPoints, lang.frustumPoints, lang.frustumPointsTitle );
-
-			function displayControllers( value ) {
-
-				var display = value ? 'block' : 'none';
-				folderPoint.display( display );
-				cZCount.__li.style.display = display;
-				cYCount.__li.style.display = display;
-				//fStereo.domElement.style.display = display;
-
-			}
-			//Display frustumPoints
-			var cDisplay = fFrustumPoints.add( shaderMaterial, 'display' ).onChange( function ( value ) {
-
-				if ( shaderMaterial.display ) {
-
-					update();
-
-				} else {
-
-					options.raycaster.removeParticle( points );
-					removePoints();
-
-				}
-				displayControllers( shaderMaterial.display );
-				saveSettings();
-
-			} );
-			dat.controllerNameAndTitle( cDisplay, lang.display, lang.displayTitle );
-
-			//FrustumPoints info.
-			//Display information about frustum point if user move mouse over or click this point.
-			var cInfo = fFrustumPoints.add( shaderMaterial, 'info' ).onChange( function ( value ) {
-
-				if ( points === undefined ) {
-
-					//				console.error( 'points = ' + points );
-					return;//shaderMaterial.display = false
-
-				}
-				if ( shaderMaterial.info )
-					options.raycaster.addParticle( points );
-				else {
-
-					options.guiSelectPoint.selectPoint( -1 );
-					options.raycaster.removeParticle( points );
-
-				}
-				saveSettings();
-
-			} );
-			dat.controllerNameAndTitle( cInfo, lang.info, lang.infoTitle );
-
-			/*сейчас lines не использую
-			/////////////////////////////////
-			//Stereo
-		
-			var fStereo = fFrustumPoints.addFolder( lang.stereo );
-			dat.folderNameAndTitle( fStereo, lang.stereo, lang.stereoTitle );
-		
-			//Display lines
-			var cDisplayLines = fStereo.add( shaderMaterial.stereo, 'lines' ).onChange( function ( value ) { update(); } );
-			dat.controllerNameAndTitle( cDisplayLines, lang.displayLines, lang.displayLinesTitle );
-		
-			//Hide Nearby Points
-			var cHide = fStereo.add( shaderMaterial.stereo, 'hide', 0, 50, 1 ).onChange( function ( value ) { update(); } )
-			dat.controllerNameAndTitle( cHide, lang.hide, lang.hideTitle );
-		
-			var cOpacity = fStereo.add( shaderMaterial.stereo, 'opacity', 0.0, 1.0, 0.01 ).onChange( function ( value ) { update(); } );
-			dat.controllerNameAndTitle( cOpacity, lang.opacity, lang.opacityTitle );
-		
-			/////////////////////////////////
-			*/
-
-			//Shift of the frustum layer near to the camera in percents
-			var cNear = fFrustumPoints.add( shaderMaterial, 'near', 0, 100, 1 ).onChange( function ( value ) { update(); } );
-			dat.controllerNameAndTitle( cNear, lang.near, lang.nearTitle );
-
-			//Shift of the frustum layer far to the camera in percents
-			var cFar = fFrustumPoints.add( shaderMaterial, 'far', 0, 100, 1 ).onChange( function ( value ) { update(); } );
-			dat.controllerNameAndTitle( cFar, lang.far, lang.farTitle );
-
-			//Scale of the base of the frustum points in percents.
-			var cBase = fFrustumPoints.add( shaderMaterial, 'base', 0, 100, 1 ).onChange( function ( value ) { update(); } );
-			dat.controllerNameAndTitle( cBase, lang.base, lang.baseTitle );
-
-			//Square base of the frustum points.
-			var cSquare = fFrustumPoints.add( shaderMaterial, 'square' ).onChange( function ( value ) { update(); } );
-			dat.controllerNameAndTitle( cSquare, lang.square, lang.squareTitle );
-
-			var folderPoint = new FolderPoint( fFrustumPoints, shaderMaterial.point, optionsShaderMaterial.point, function ( value ) {
-
-				//Не помню зачем это написал
-				if ( value === undefined ) {
-
-					console.warn( 'under constraction' );
-					//				value = points.userData.shaderMaterial.point.size;
-
-				}
-				if ( value &lt; 0 )
-					value = 0;
-
-				//See this.animate = function() for details about size of the points
-				//points.userData.shaderMaterial.point.size = value;
-
-				points.material.uniforms.pointSize.value = value;
-
-				folderPoint.size.setValue( value );
-				saveSettings();
-
-			}, {
-
-				settings: { offset: 0.1 },
-
-			} );
-
-			var toUpdate = true,//Когда пользователь нажимает кнопку Default надо установить toUpdate = false
-				//что бы несколько раз не вызывался _this.update(); чтобы быстрее работало
-				canUpdate = true,
-				_this = this;
-
-			function update() {
-
-				if ( !toUpdate || !canUpdate )
-					return;
-				canUpdate = false;
-
-				//Не помню почему не удаляю старый points из списка cMeshs, но если так делать, то будут какие то запутанные косяки.
-				//Поэтому не удаляю points из списка cMeshs а только получаю индекс points в этом списке.
-				const index = options.guiSelectPoint ? options.guiSelectPoint.getMeshIndex( _this.points ) : undefined;
-
-				options.raycaster.removeParticle( _this.points );
 				removePoints( true );
 
-				_this.update( function () {
+				const itemSize = 3;
+				_this.pointIndexes = function ( pointIndex ) {
 
-					//затем заменяю указатель на старый points в списке cMeshs на новый.
-					if ( options.guiSelectPoint ) options.guiSelectPoint.setIndexMesh( index, _this.points );
+					if ( _names === undefined ) {
 
-					saveSettings();
-					canUpdate = true;
+						console.error( '_names = ' + _names );//сюда попадает в отладочной версии
+						return undefined;
 
-					_this.points.userData.controllers();
+					}
+					var name = _names[pointIndex], x, y, z, index = pointIndex;
+					function getObject() {
+
+						index--;
+						while ( ( index >= 0 ) &amp;&amp; ( typeof _names[index] !== "object" ) )
+							index--;
+						name = _names[index];
+
+					}
+					function getZ() {
+
+						while ( ( index >= 0 ) &amp;&amp; ( name.z === undefined ) )
+							getObject();
+
+					}
+					if ( typeof name === "object" ) {
+
+						x = 0;
+						y = name.y;
+						getZ();
+						z = name.z;
+
+					} else {
+
+						x = name;
+						getObject();
+						y = name.y;
+						getZ();
+						z = name.z;
+
+					}
+					return { x: x, y: y, z: z };
+
+				}
+
+				//Thanks to https://stackoverflow.com/a/27369985/5175935
+				//Такая же функция есть в myPoints.js но если ее использовать то она будет возвращать путь на myPoints.js
+				const getCurrentScript = function () {
+
+					if ( document.currentScript &amp;&amp; ( document.currentScript.src !== '' ) )
+						return document.currentScript.src;
+					const scripts = document.getElementsByTagName( 'script' ),
+						str = scripts[scripts.length - 1].src;
+					if ( str !== '' )
+						return src;
+					//Thanks to https://stackoverflow.com/a/42594856/5175935
+					return new Error().stack.match( /(https?:[^:]*)/ )[0];
+
+				};
+				//Thanks to https://stackoverflow.com/a/27369985/5175935
+				const getCurrentScriptPath = function () {
+					const script = getCurrentScript(),
+						path = script.substring( 0, script.lastIndexOf( '/' ) );
+					return path;
+				};
+				//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
+				var path = getCurrentScriptPath();
+				var cameraPositionDefault = new THREE.Vector3( camera.position.x, camera.position.y, camera.position.z );
+				var cameraQuaternionDefault = new THREE.Vector4( camera.quaternion.x, camera.quaternion.y, camera.quaternion.z, camera.quaternion.w );
+
+				//сделал это приравниванеие что бы избежать двойного создания массива точек frustumPoints MyThree.points(...)
+				//Если это произойдет, то непонятно почему для каждой точки будет создано два облака
+				//Одно облако верное
+				//Второе находится строго между точкой и камерой
+				//Второе облако можно увидеть если повернуть камеру с помощью orbitControl
+				//Сюда попадает по второму разу если вызвать stereoEffect.gui(...)
+				_points = false;
+
+				MyThree.points( //array
+					function () {
+
+						var geometry = new THREE.BufferGeometry(),
+							geometryLength = ( zEnd - zStart + 1 ) * xCount * yCount;
+
+						array = new Float32Array( geometryLength * itemSize );
+						indexArray = 0;
+						_names = null;
+						_names = [];
+
+						eachZ( zStart, zEnd );
+
+						geometry.setAttribute( 'position', new THREE.BufferAttribute( array, itemSize ) );
+
+						return geometry;
+
+					}, group, options, {
+
+					name: 'frustum points',
+					shaderMaterial: shaderMaterial,
+					boFrustumPoints: true,
+					position: camera.position,
+					scale: camera.scale,
+					rotation: camera.rotation,
+					opacity: true,
+					pointIndexes: function ( pointIndex ) { return _this.pointIndexes( pointIndex ); },
+					path: {
+
+						vertex: path + '/vertex.c',
+
+					},
+					pointName: function ( pointIndex ) {
+
+						var indexes = _this.pointIndexes( pointIndex );
+						if ( indexes === undefined )
+							return indexes;
+						return 'x = ' + indexes.x + ', y = ' + indexes.y + ', z = ' + ( indexes.z + zStart ) + ', i = ' + pointIndex;
+
+					},
+					controllers: function () {
+
+						_guiSelectPoint.appendChild( { xCount: xCount, yCount: yCount, zCount: zCount, } );
+
+					},
+					uniforms: function ( uniforms ) {
+
+						cloud.create( uniforms );
+
+						//rotate the quaternion vector to 180 degrees
+						cameraQuaternionDefault.x = - cameraQuaternionDefault.x;
+						cameraQuaternionDefault.y = - cameraQuaternionDefault.y;
+						cameraQuaternionDefault.z = - cameraQuaternionDefault.z;
+
+						cameraPositionDefault.applyQuaternion( cameraQuaternionDefault );
+
+						uniforms.cameraPositionDefault = { value: cameraPositionDefault };
+						uniforms.cameraQuaternion = { value: camera.quaternion };
+
+						//palette
+						//ВНИМАНИЕ!!! Для того, что бы палитра передалась в vertex надо добавить 
+						//points.material.uniforms.palette.value.needsUpdate = true;
+						//в getShaderMaterialPoints.loadShaderText
+
+						new cloud.addUniforms( THREE.RGBFormat, 256, 'palette', {
+
+							onReady: function ( data, itemSize, updateItem ) {
+
+								var min, max;
+								if ( options.scales.w !== undefined ) {
+
+									min = options.scales.w.min; max = options.scales.w.max;
+
+								} else {
+
+									console.error( 'params.pointsOptions.uniforms: params.options.scales.w = ' + params.options.scales.w );
+									return;
+
+								}
+
+								const size = data.length / itemSize;
+								for ( var i = 0; i &lt; size; i++ )
+									updateItem( i, options.palette.toColor( ( max - min ) * i / ( size - 1 ) + min, min, max ) );
+
+							}
+
+						} );
+						return cloud;
+
+					},
+					onReady: function ( points ) {
+
+						_points = points;
+//						_this._points = points;
+						_points.userData.boFrustumPoints = true;
+						_points.userData.isInfo = function () { return shaderMaterial.info; }
+
+						//					saveSettings();
+						if ( shaderMaterial.info )
+							options.raycaster.addParticle( _points );
+
+						if ( !shaderMaterial.display )
+							removePoints();
+						pointOpacity = _points === undefined ?
+							1.0 :
+							_points.userData.shaderMaterial === undefined ? shaderMaterial.point.opacity : _points.userData.shaderMaterial.point.opacity;
+							
+						if ( onReady !== undefined )
+							onReady();//Пользователь изменил настройки frustumPoints
+
+						//когда задан параметр cameraTarget у MyThree то нужно передвинуть frustumPoints после того как созданы points
+						_this.update();
+
+						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( _points );
+
+					},
 
 				} );
 
+
 			}
+			update();
+/*duplicate function name. See this.create above
+			this.create = function () {
 
-			//zCount
-			var cZCount = fFrustumPoints.add( shaderMaterial, 'zCount' ).min( 3 ).step( 1 ).onChange( function ( value ) { update(); } );
-			dat.controllerNameAndTitle( cZCount, lang.zCount, lang.zCountTitle );
+				update();
 
-			//yCount
-			var cYCount = fFrustumPoints.add( shaderMaterial, 'yCount' ).min( 3 ).step( 1 ).onChange( function ( value ) { update(); } );
-			dat.controllerNameAndTitle( cYCount, lang.yCount, lang.yCountTitle );
+				//Convert all points with cloud, but not shaderMaterial from local to world positions
+				// i.e. calculate scales, positions and rotation of the points.
+				//Converting of all points with cloud and shaderMaterial see getShaderMaterialPoints function in the myPoints.js file
+				this.updateCloudPoints();
 
-			//Default button
-			dat.controllerNameAndTitle( fFrustumPoints.add( {
+			}
+*/
+			var pointOpacity;
+			/** Moves frustum points in front of the camera. */
+			this.update = function ( onReady ) {
 
-				defaultF: function ( value ) {
+				update( onReady );
 
-					toUpdate = false;
+				//Эта команда нужна в случае изменения размера окна браузера когда canvas на весь экран
+				setPointsParams();
 
-					cDisplay.setValue( optionsShaderMaterial.display );
-					cInfo.setValue( optionsShaderMaterial.info );
+				var cameraQuaternionDefault = new THREE.Vector4( camera.quaternion.x, camera.quaternion.y, camera.quaternion.z, camera.quaternion.w );
 
-					/*сейчас lines не использую
-					//Stereo
-					cDisplayLines.setValue( optionsShaderMaterial.stereo.lines );
-					cHide.setValue( optionsShaderMaterial.stereo.hide );
-					cOpacity.setValue( optionsShaderMaterial.stereo.opacity );
+				//			if ( _points === undefined )
+				if ( !_points )
+					return;//User has changed 'Z Count' of the frustumPoints
+
+				_points.material.uniforms.cameraPositionDefault.value.copy( camera.position );
+
+				//rotate the quaternion vector to 180 degrees
+				cameraQuaternionDefault.x = - cameraQuaternionDefault.x;
+				cameraQuaternionDefault.y = - cameraQuaternionDefault.y;
+				cameraQuaternionDefault.z = - cameraQuaternionDefault.z;
+
+				_points.material.uniforms.cameraPositionDefault.value.applyQuaternion( cameraQuaternionDefault );
+
+			}
+			/** 
+			 *  @returns true - frustum points is created and visible.
+			 *  &lt;p>false - frustum points have been removed.&lt;/p>
+			 * */
+			this.isDisplay = function () { return shaderMaterial.display; }
+			/*
+			 * @param {FrustumPoints.cFrustumPointsF} cFrustumPoints FrustumPoints's controllers
+			 * @returns frustum point index selected by user from controls.
+			 * &lt;p>null if user have not selected any point.&lt;/p>
+			 */
+//			this.getSelectedIndex = function ( cFrustumPoints ) { return cFrustumPoints.selectPoint( _names ); }
+			/*
+			 * The user has selected a point from control.
+			 * @event 
+			 * @param {FrustumPoints.cFrustumPointsF} cFrustumPoints FrustumPoints's controllers
+			 */
+/*			 
+			this.selectPoint = function ( cFrustumPoints ) {
+
+//				var index = this.getSelectedIndex( cFrustumPoints );
+				var index = cFrustumPoints.getSelectedIndex();
+				if ( index === null )
+					return;
+				options.guiSelectPoint.select( { object: _points, index: index } );
+
+			}
+*/			
+			/** Updates the cloud's points according new position of the all points of the all meshes
+			 * of the group of objects to which a new FrustumPoints has been added. */
+			this.updateCloudPoints = function () {
+
+				group.children.forEach( function ( mesh ) {
+
+					if ( !mesh.userData.cloud )
+						return;
+					if ( mesh.geometry.attributes.position.itemSize !== 4 ) {
+
+						console.error( 'mesh.geometry.attributes.position.itemSize = ' + mesh.geometry.attributes.position.itemSize );
+						return;
+
+					}
+					cloud.updateMesh( mesh );
+					/*
+								for ( var i = 0; i &lt; mesh.geometry.attributes.position.count; i++ ) {
+					
+									cloud.updateItem( mesh.userData.cloud.indexArray + '_' + i,
+										new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ),
+										true );
+					
+								}
 					*/
 
-					cNear.setValue( optionsShaderMaterial.near );
-					cFar.setValue( optionsShaderMaterial.far );
-					cBase.setValue( optionsShaderMaterial.base );
-					cSquare.setValue( optionsShaderMaterial.square );
+				} );
+				needsUpdate();
 
-					folderPoint.size.setValue( optionsShaderMaterial.point.size );
+			}
+			function needsUpdate() {
 
-					cZCount.setValue( optionsShaderMaterial.zCount );
-					cYCount.setValue( optionsShaderMaterial.yCount );
+				//			if ( _points !== undefined )
+				if ( _points )
+					_points.material.uniforms.cloudPoints.value.needsUpdate = true;
 
-					toUpdate = true;
-					update();
+			}
+			/**
+			 * 
+			 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}
+			 */
+			this.updateCloudPoint = function ( mesh ) {
+
+				cloud.updateMesh( mesh );
+				needsUpdate();
+
+			}
+			/**
+			 * The user has changed selected point.
+			 * @event
+			 * @param {THREE.Points} points [Points]{@link https://threejs.org/docs/index.html?q=Poin#api/en/objects/Points}
+			 * @param {number} i index of the point from &lt;b>points&lt;/b> for udating
+			 */
+			this.updateCloudPointItem = function ( points, i ) {
+
+				if ( points.userData.cloud === undefined )
+					return;
+				if ( points.geometry.attributes.position.itemSize !== 4 )
+					console.error( 'points.geometry.attributes.position.itemSize = ' + points.geometry.attributes.position.itemSize );
+				//		cloud.updateItem( points.userData.cloud.indexArray + '_' + i,
+				cloud.cloudPoints.updateItem( points.userData.cloud.indexArray + i,
+					MyThree.getWorldPosition( points,
+						new THREE.Vector4().fromArray( points.geometry.attributes.position.array, i * points.geometry.attributes.position.itemSize ) ),
+					true );
+				needsUpdate();
+
+			}
+
+			//Convert all points with cloud, but not shaderMaterial from local to world positions
+			// i.e. calculate scales, positions and rotation of the points.
+			//Converting of all points with cloud and shaderMaterial see getShaderMaterialPoints function in the myPoints.js file
+			//		this.updateCloudPoints();
+
+			function removePoints( notRemoveMesh ) {
+
+				if ( _points === undefined )
+					return;
+				if ( !notRemoveMesh &amp;&amp; options.guiSelectPoint )
+					options.guiSelectPoint.removeMesh( _points );//не удаляю frustumPoints из списка Meshes потому что сюда попадает только если пользователь изменил число точек frustumPoints.
+				//В этом случае создается новый frustumPoints, который надо присоеденить к старому frustumPoints из списка Meshes.
+				//Если я удалю frustumPoints из списка Meshes а потом добавлю туда новый frustumPoints,
+				//то изменится индекс frustumPoints в списке Meshes
+				//и тогда неверно будет выполняться function update() в frustumPoints и как результат буде неверный список Ponts списке Meshes
+				//for testing
+				//Select in the canvas any point, but not frustum point.
+				//Now you can see your selected point in the in the Meshes/Points/Select list in the gui.
+				//Change Settings/Frustum Points/Z count in the gui.
+				//Now your selected point is deselected.
+				//Select in the canvas your point again.
+				//Now yiou can see "Cannot read property 'selected' of undefined" error message in the console.
+				//Try to select your point in the gui. You can not to do it because your point is not exists in the Meshes/Points/Select list. Instead you see all Frustum Points in the Meshs/Points/Select list.
+
+				group.remove( _points );
+				renderer.renderLists.dispose();
+				clearThree( _points );
+				_points = undefined;
+
+			}
+			/** Called from animate loop for rendering.
+			 * @see {@link https://threejs.org/docs/index.html?q=animate#manual/en/introduction/Creating-a-scene|Rendering the scene}*/
+			this.animate = function () {
+
+				if (
+					//				( _points === undefined ) ||
+					!_points ||
+					( _points.userData.shaderMaterial === undefined ) ||
+					( //( pointSize === _points.userData.shaderMaterial.point.size ) &amp;&amp;
+						( pointOpacity === _points.userData.shaderMaterial.point.opacity ) )
+				)
+					return false;
+				pointOpacity = _points.userData.shaderMaterial.point.opacity;
+				_points.material.uniforms.opacity.value = _points.userData.shaderMaterial.point.opacity;
+				return true;
+
+			}
+			/** update "frustum points" item in the &lt;a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint&lt;/a>.*/
+			this.updateGuiSelectPoint = function () {
+
+
+				//Не помню почему не удаляю старый points из списка cMeshs, но если так делать, то будут какие то запутанные косяки.
+				//Поэтому не удаляю points из списка cMeshs а только получаю индекс points в этом списке.
+				const index = options.guiSelectPoint ? options.guiSelectPoint.getMeshIndex( _points ) : undefined;
+
+				update();
+
+				//затем заменяю указатель на старый points в списке cMeshs на новый.
+				if ( index ) options.guiSelectPoint.setIndexMesh( index, _points );
+
+			}
+
+			/**
+			* @callback FolderPoint
+			* @param {object} folder parent folder
+			* @param {function} setSettings save points setting to the cookie
+			*/
+
+			/**
+			 * Adds FrustumPoints folder into dat.GUI.
+			 * See [dat.GUI API]{@link https://github.com/dataarts/dat.gui/blob/master/API.md}.
+			 * @param {object} folder parent folder
+			 * @param {FolderPoint} FolderPoint creates the folder of the point's settings
+			 * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
+			 * @param {Function} [guiParams.getLanguageCode="en"] Your custom getLanguageCode() function.
+			 * &lt;pre>
+			 * returns the "primary language" subtag of the language version of the browser.
+			 * Examples: "en" - English language, "ru" Russian.
+			 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
+			 * Default returns the 'en' is English language.
+			 * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
+			 * &lt;/pre>
+			 * @param {object} [guiParams.lang] Object with localized language values
+			 * &lt;pre>
+			 * Example Using of guiParams.lang:
+			 * guiParams = {
+			 *
+			 * 	getLanguageCode: function() { return 'az'; },
+			 * 	lang: { textHeight: 'mətn boyu', languageCode: 'az' },
+			 *
+			 * }
+			 * &lt;/pre>
+			 */
+			this.gui = function ( folder, FolderPoint, guiParams = {} ) {
+
+				guiParams.getLanguageCode = guiParams.getLanguageCode || function () { return "en"; };
+
+				//Localization
+
+				const lang = {
+
+					frustumPoints: 'Frustum Points',
+					frustumPointsTitle: 'A cloud of the fixed points in front of the camera for describe the properties of space.',
+
+					display: 'Display',
+					displayTitle: 'Display or hide Frustum Points.',
+
+					info: 'Information',
+					infoTitle: 'Display information about frustum point if user move mouse over or click this point.',
+
+					stereo: 'Stereo',
+					stereoTitle: 'Frustum Points setting for stereo mode of the canvas',
+
+					hide: 'Hide Nearby Points',
+					hideTitle: 'Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.',
+
+					opacity: 'Opacity',
+					opacityTitle: 'Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.',
+
+					near: 'Near Layer',
+					nearTitle: 'Shift of the frustum layer near to the camera in percents.',
+
+					far: 'Far Layer',
+					farTitle: 'Shift of the frustum layer far to the camera in percents.',
+
+					base: 'Scale',
+					baseTitle: 'Scale of the base of the frustum points in percents.',
+
+					square: 'Square Base',
+					squareTitle: 'Square base of the frustum points.',
+
+					defaultButton: 'Default',
+					defaultTitle: 'Restore default Frustum Points settings.',
+
+					zCount: 'Z Count',
+					zCountTitle: "The count of layers of the frustum of the camera's field of view.",
+
+					yCount: 'Y Count',
+					yCountTitle: "The count of vertical points for each z level of the  frustum of the camera's field of view.",
+
+				};
+
+				var languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
+					: guiParams.getLanguageCode();
+				switch ( languageCode ) {
+
+					case 'ru'://Russian language
+
+						lang.frustumPoints = 'Неподвижные точки';
+						lang.frustumPointsTitle = 'Облако точек перед камерой для описания свойств пространства';
+
+						lang.display = 'Показать';
+						lang.displayTitle = 'Показать или скрыть неподвижные точки.';
+
+						lang.info = 'Информация';
+						lang.infoTitle = 'Отображать информацию о неподвижной точке, если пользователь наведет курсор мыши или щелкнет эту точку.';
+
+						lang.stereo = 'Стерео';
+						lang.stereoTitle = 'Настройки неподвижных точек для стерео режима холста';
+
+						lang.hide = 'Близкие точки';
+						lang.hideTitle = 'Скрыть близкие к камере точки в процентах ко всем точкам для более удобной визуализации.';
+
+						lang.opacity = 'Непрозрачность';
+						lang.opacityTitle = 'Число в диапазоне 0.0 - 1.0, указывающее, насколько прозрачены линии. Значение 0.0 означает полностью прозрачный, 1.0 - полностью непрозрачный.';
+
+						lang.near = 'Ближний слой';
+						lang.nearTitle = 'Смещение ближайшего к камере слоя точек в процентах.';
+
+						lang.far = 'Дальний слой';
+						lang.farTitle = 'Смещение дальнего от камеры слоя точек в процентах.';
+
+						lang.base = 'Масштаб';
+						lang.baseTitle = 'Масштаб неподвижных точек в процентах.';
+
+						lang.square = 'Квадратное основание';
+						lang.squareTitle = 'Неподвиждые точки образуют пирамиду с квадратным основанием.';
+
+						lang.defaultButton = 'Восстановить';
+						lang.defaultTitle = 'Восстановить настройки неподвижных точек.';
+
+						lang.zCount = 'Z cлои';
+						lang.zCountTitle = 'Количество слоев усеченной пирамиды, образующей поле зрения камеры';
+
+						lang.yCount = 'Y точки';
+						lang.yCountTitle = "Количество вертикальных точек в каждом слое усеченной пирамиды, образующей поле зрения камеры.";
+
+						break;
+					default://Custom language
+						if ( ( options.lang === undefined ) || ( options.lang.languageCode != languageCode ) )
+							break;
+
+						Object.keys( options.lang ).forEach( function ( key ) {
+
+							if ( lang[key] === undefined )
+								return;
+							lang[key] = options.lang[key];
+
+						} );
+
+				}
+
+				function saveSettings() {
+
+					cookie.setObject( cookieName, shaderMaterial );
+
+				}
+				const fFrustumPoints = folder.addFolder( lang.frustumPoints );
+				dat.folderNameAndTitle( fFrustumPoints, lang.frustumPoints, lang.frustumPointsTitle );
+
+				function displayControllers( value ) {
+
+					var display = value ? 'block' : 'none';
+					folderPoint.display( display );
+					cZCount.__li.style.display = display;
+					cYCount.__li.style.display = display;
+					//fStereo.domElement.style.display = display;
+
+				}
+				//Display frustumPoints
+				const cDisplay = fFrustumPoints.add( shaderMaterial, 'display' ).onChange( function ( value ) {
+
+					if ( shaderMaterial.display ) {
+
+						update();
+
+					} else {
+
+						options.raycaster.removeParticle( _points );
+						removePoints();
+
+					}
+					displayControllers( shaderMaterial.display );
 					saveSettings();
 
-				},
+				} );
+				dat.controllerNameAndTitle( cDisplay, lang.display, lang.displayTitle );
 
-			}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
-			displayControllers( shaderMaterial.display );
+				//FrustumPoints info.
+				//Display information about frustum point if user move mouse over or click this point.
+				const cInfo = fFrustumPoints.add( shaderMaterial, 'info' ).onChange( function ( value ) {
+
+					if ( _points === undefined ) {
+
+						saveSettings();
+						return;//shaderMaterial.display = false
+
+					}
+					if ( shaderMaterial.info )
+						options.raycaster.addParticle( _points );
+					else {
+
+						options.guiSelectPoint.selectPoint( -1 );
+						options.raycaster.removeParticle( _points );
+
+					}
+					saveSettings();
+
+				} );
+				dat.controllerNameAndTitle( cInfo, lang.info, lang.infoTitle );
+
+				//Shift of the frustum layer near to the camera in percents
+				const cNear = fFrustumPoints.add( shaderMaterial, 'near', 0, 100, 1 ).onChange( function ( value ) { update(); } );
+				dat.controllerNameAndTitle( cNear, lang.near, lang.nearTitle );
+
+				//Shift of the frustum layer far to the camera in percents
+				const cFar = fFrustumPoints.add( shaderMaterial, 'far', 0, 100, 1 ).onChange( function ( value ) { update(); } );
+				dat.controllerNameAndTitle( cFar, lang.far, lang.farTitle );
+
+				//Scale of the base of the frustum points in percents.
+				const cBase = fFrustumPoints.add( shaderMaterial, 'base', 0, 100, 1 ).onChange( function ( value ) { update(); } );
+				dat.controllerNameAndTitle( cBase, lang.base, lang.baseTitle );
+
+				//Square base of the frustum points.
+				const cSquare = fFrustumPoints.add( shaderMaterial, 'square' ).onChange( function ( value ) { update(); } );
+				dat.controllerNameAndTitle( cSquare, lang.square, lang.squareTitle );
+
+				const folderPoint = new FolderPoint( fFrustumPoints, shaderMaterial.point, optionsShaderMaterial.point, function ( value ) {
+
+					//Не помню зачем это написал
+					if ( value === undefined ) {
+
+						console.warn( 'under constraction' );
+						//				value = _points.userData.shaderMaterial.point.size;
+
+					}
+					if ( value &lt; 0 )
+						value = 0;
+
+					//See this.animate = function() for details about size of the points
+					//_points.userData.shaderMaterial.point.size = value;
+
+					_points.material.uniforms.pointSize.value = value;
+
+					folderPoint.size.setValue( value );
+					saveSettings();
+
+				}, {
+
+					settings: { offset: 0.1 },
+
+				} );
+
+				var toUpdate = true,//Когда пользователь нажимает кнопку Default надо установить toUpdate = false
+					//что бы несколько раз не вызывался _this.update(); чтобы быстрее работало
+					canUpdate = true,
+					_this = this;
+
+				function update() {
+
+					if ( !toUpdate || !canUpdate )
+						return;
+					canUpdate = false;
+
+					//Не помню почему не удаляю старый points из списка cMeshs, но если так делать, то будут какие то запутанные косяки.
+					//Поэтому не удаляю points из списка cMeshs а только получаю индекс points в этом списке.
+//					const index = options.guiSelectPoint ? options.guiSelectPoint.getMeshIndex( _this.points ) : undefined;
+					const index = options.guiSelectPoint ? options.guiSelectPoint.getMeshIndex( _points ) : undefined;
+
+//					options.raycaster.removeParticle( _this.points );
+					options.raycaster.removeParticle( _points );
+					removePoints( true );
+
+					_this.update( function () {
+
+						//затем заменяю указатель на старый points в списке cMeshs на новый.
+//						if ( options.guiSelectPoint ) options.guiSelectPoint.setIndexMesh( index, _this.points );
+						if ( options.guiSelectPoint ) options.guiSelectPoint.setIndexMesh( index, _points );
+
+						saveSettings();
+						canUpdate = true;
+
+//						_this.points.userData.controllers();
+						_points.userData.controllers();
+
+					} );
+
+				}
+
+				//zCount
+				const cZCount = fFrustumPoints.add( shaderMaterial, 'zCount' ).min( 3 ).step( 1 ).onChange( function ( value ) { update(); } );
+				dat.controllerNameAndTitle( cZCount, lang.zCount, lang.zCountTitle );
+
+				//yCount
+				const cYCount = fFrustumPoints.add( shaderMaterial, 'yCount' ).min( 3 ).step( 1 ).onChange( function ( value ) { update(); } );
+				dat.controllerNameAndTitle( cYCount, lang.yCount, lang.yCountTitle );
+
+				//Default button
+				dat.controllerNameAndTitle( fFrustumPoints.add( {
+
+					defaultF: function ( value ) {
+
+						toUpdate = false;
+
+						cDisplay.setValue( optionsShaderMaterial.display );
+						cInfo.setValue( optionsShaderMaterial.info );
+
+						/*сейчас lines не использую
+						//Stereo
+						cDisplayLines.setValue( optionsShaderMaterial.stereo.lines );
+						cHide.setValue( optionsShaderMaterial.stereo.hide );
+						cOpacity.setValue( optionsShaderMaterial.stereo.opacity );
+						*/
+
+						cNear.setValue( optionsShaderMaterial.near );
+						cFar.setValue( optionsShaderMaterial.far );
+						cBase.setValue( optionsShaderMaterial.base );
+						cSquare.setValue( optionsShaderMaterial.square );
+
+						folderPoint.size.setValue( optionsShaderMaterial.point.size );
+
+						cZCount.setValue( optionsShaderMaterial.zCount );
+						cYCount.setValue( optionsShaderMaterial.yCount );
+
+						toUpdate = true;
+						update();
+						saveSettings();
+
+					},
+
+				}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
+				displayControllers( shaderMaterial.display );
+
+			}
+
+			return this;
 
 		}
 
-		function removePoints( notRemoveMesh ) {
+		/** @class [GUI]{@link https://github.com/anhr/dat.gui} for select a frustum point.
+		 *  Uses in the &lt;a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">guiSelectPoint&lt;/a>.
+		 */
+		this.guiSelectPoint = function () {
 
-			lines.forEach( function ( item ) {
+			var cFrustumPointsX = null, cFrustumPointsY = null, cFrustumPointsZ = null;
+//				_this = this;
+			_guiSelectPoint = this;
+			/**
+			 * create controls
+			 * @param {GUI} fPoints parent folder. See [GUI]{@link https://github.com/anhr/dat.gui}.
+			 * @param {string} languageCode Localization. The "primary language" subtag of the language version of the browser.
+			 * &lt;pre>
+			 * Examples: "en" - English language, "ru" Russian.
+			 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
+			 * &lt;/pre>
+			 */
+			this.create = function ( fPoints, languageCode ) {
 
-				clearThree( item );
-				if ( groupFrustumPoints.children.indexOf( item ) === -1 )
-					console.error( 'FrustumPoints.Create.removePoints() failed! Line is not in the group.' )
-				groupFrustumPoints.remove( item );
+				function frustumPointsControl( name ) {
 
-			} );
-			lines.length = 0;
 
-			if ( points === undefined )
-				return;
-			if ( !notRemoveMesh &amp;&amp; options.guiSelectPoint )
-				options.guiSelectPoint.removeMesh( points );//не удаляю frustumPoints из списка Meshes потому что сюда попадает только если пользователь изменил число точек frustumPoints.
-			//В этом случае создается новый frustumPoints, который надо присоеденить к старому frustumPoints из списка Meshes.
-			//Если я удалю frustumPoints из списка Meshes а потом добавлю туда новый frustumPoints,
-			//то изменится индекс frustumPoints в списке Meshes
-			//и тогда неверно будет выполняться function update() в frustumPoints и как результат буде неверный список Ponts списке Meshes
-			//for testing
-			//Select in the canvas any point, but not frustum point.
-			//Now you can see your selected point in the in the Meshes/Points/Select list in the gui.
-			//Change Settings/Frustum Points/Z count in the gui.
-			//Now your selected point is deselected.
-			//Select in the canvas your point again.
-			//Now yiou can see "Cannot read property 'selected' of undefined" error message in the console.
-			//Try to select your point in the gui. You can not to do it because your point is not exists in the Meshes/Points/Select list. Instead you see all Frustum Points in the Meshs/Points/Select list.
+					//Localization
 
-			group.remove( points );
-			renderer.renderLists.dispose();
-			clearThree( points );
-			points = undefined;
+					const lang = {
+
+						notSelected: 'Not selected',
+
+					};
+
+					switch ( languageCode ) {
+
+						case 'ru'://Russian language
+							lang.notSelected = 'Не выбран';
+
+							break;
+
+					}
+
+					const controller = fPoints.add( { Points: lang.notSelected }, 'Points', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
+
+//						_frustumPoints.selectPoint( _guiSelectPoint );
+						const index = _guiSelectPoint.getSelectedIndex();
+						if ( index === null )
+							return;
+						options.guiSelectPoint.select( { object: _points, index: index } );
+
+					} );
+					controller.__select[0].selected = true;
+					//Не стоит переименовывать шкалы потому что шкала frustumPoints не совпадает со общей шкалой
+					//			dat.controllerNameAndTitle( controller, scales[name].name ? scales[name].name : name );
+					dat.controllerNameAndTitle( controller, name );
+					return controller;
+
+				}
+
+				cFrustumPointsX = frustumPointsControl( 'x' );
+				cFrustumPointsY = frustumPointsControl( 'y' );
+				cFrustumPointsZ = frustumPointsControl( 'z' );
+
+			}
+
+			/* *
+			 * Set FrustumPoints
+			 * @param {FrustumPoints} frustumPoints
+			 */
+//			this.setFrustumPoints = function ( frustumPoints ) { _frustumPoints = frustumPoints; }
+
+			/**
+			 * Append new item into controller
+			 * @param {object} count Count of points in the FrustumPoints
+			 * @param {number} count.xCount Count of rows of the points in the x axis
+			 * @param {number} count.yCount Count of rows of the points in the y axis
+			 * @param {number} count.zCount Count of layers of the points in the z axis
+			 */
+			this.appendChild = function ( count ) {
+
+				function appendChild( cFrustumPoint, count ) {
+
+					//thanks to https://stackoverflow.com/a/48780352/5175935
+					cFrustumPoint.domElement.querySelectorAll( 'select option' ).forEach( option => { if ( option.value != '-1' ) option.remove() } );
+
+					for ( var i = 0; i &lt; count; i++ ) {
+
+						var opt = document.createElement( 'option' );
+						opt.innerHTML = i;
+						//					opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
+						cFrustumPoint.__select.appendChild( opt );
+
+					}
+
+				}
+				appendChild( cFrustumPointsX, count.xCount );
+				appendChild( cFrustumPointsY, count.yCount );
+				appendChild( cFrustumPointsZ, count.zCount );
+
+			}
+			/**
+			 * Sets to the controls the indexes of the selected frustum point.
+			 * @param {object} index
+			 * @param {object} index.x index of the x row of selected frustum point
+			 * @param {object} index.y index of the y row of selected frustum point
+			 * @param {object} index.z index of the z layer of selected frustum point
+			 */
+			this.pointIndexes = function ( index ) {
+
+				if ( index === undefined )
+					return;//Сюда попадает в отладочной версии когда не заданы имена точек
+				if ( parseInt( cFrustumPointsX.getValue() ) !== index.x )
+					cFrustumPointsX.setValue( index.x );
+				if ( parseInt( cFrustumPointsY.getValue() ) !== index.y )
+					cFrustumPointsY.setValue( index.y );
+				if ( parseInt( cFrustumPointsZ.getValue() ) !== index.z )
+					cFrustumPointsZ.setValue( index.z );
+
+			};
+			/**
+			 * @returns frustum point index selected by user from controls.
+			 * &lt;p>null if user have not selected any point.&lt;/p>
+			 */
+			this.getSelectedIndex = function () {
+
+//				return _frustumPoints.getSelectedIndex( this );
+				if ( _names === undefined ) {
+
+					console.warn( 'Сюда попадает во время отладки когда не задаю имени каждой точки или когда the cDisplay checkbox of the frustumPoints is not checked' );
+					return null;
+
+				}
+				const x = parseInt( cFrustumPointsX.getValue() ),
+					y = parseInt( cFrustumPointsY.getValue() ),
+					z = parseInt( cFrustumPointsZ.getValue() );
+				if ( isNaN( x ) || isNaN( y ) || isNaN( z ) )
+					return null;
+				for ( var i = 0; i &lt; _names.length; i++ ) {
+
+					var name = _names[i];
+					if ( ( typeof name !== "object" ) || ( name.z === undefined ) || ( name.z !== z ) )
+						continue;
+					for ( ; i &lt; _names.length; i++ ) {
+
+						name = _names[i];
+						if ( ( typeof name !== "object" ) || ( name.y !== y ) )
+							continue;
+						for ( ; i &lt; _names.length; i++ ) {
+
+							name = _names[i];
+							if ( typeof name === "object" ) {
+
+								if ( ( x === 0 ) &amp;&amp; ( name.y === y ) ) {
+
+									//Сюда попадает когда в guiSelectPoint пользователь выбрал frustum Point с коодинатами 0,0,0,
+									//							console.warn( 'x = ' + x + ', y = ' + y + ', z = ' + z + ', i = ' + i );
+									return i;
+
+								}
+
+							}
+							if ( name === x ) {
+
+								//console.warn( 'x = ' + x + ', y = ' + y + ', z = ' + z + ', i = ' + i );
+								return i;
+
+							}
+
+						}
+
+					}
+
+				}
+				console.error( 'FrustumPoints.selectPoint: not selected' );
+				return null;
+
+			}
+			/**
+			 * Display or hide the &lt;b>FrustumPoints&lt;/b> controls.
+			 * @param {string} display 'block' - display
+			 * &lt;p>'none' - hide&lt;/p>
+			 */
+			this.display = function ( display ) {
+
+				cFrustumPointsX.domElement.parentElement.parentElement.style.display = display;
+				cFrustumPointsY.domElement.parentElement.parentElement.style.display = display;
+				cFrustumPointsZ.domElement.parentElement.parentElement.style.display = display;
+
+			}
+			/**
+			 * Is FrustumPoints controls visible?
+			 * @returns true - FrustumPoints controls is visible.
+			 * */
+			this.isDisplay = function () {
+
+				if (
+					( cFrustumPointsX.domElement.parentElement.parentElement.style.display !== cFrustumPointsY.domElement.parentElement.parentElement.style.display )
+					|| ( cFrustumPointsX.domElement.parentElement.parentElement.style.display !== cFrustumPointsZ.domElement.parentElement.parentElement.style.display )
+				)
+					console.error( 'cFrustumPointsF.isDisplay failed!' );
+				return cFrustumPointsX.domElement.parentElement.parentElement.style.display !== 'none';
+
+			}
 
 		}
-
-		return this;
 
 	}
 
  }
-
-/** @namespace
- * @description Adds a FrustumPoints's controllers into [dat.gui]{@link https://github.com/anhr/dat.gui}.
- */
-FrustumPoints.cFrustumPointsF = function() {
-
-	var cFrustumPointsX = null, cFrustumPointsY = null, cFrustumPointsZ = null,
-		_this = this;
-	this.create = function ( fPoints, languageCode ) {
-
-		function frustumPointsControl( name ) {
-
-
-			//Localization
-
-			var lang = {
-
-				notSelected: 'Not selected',
-
-			};
-
-			switch ( languageCode ) {
-
-				case 'ru'://Russian language
-					lang.notSelected = 'Не выбран';
-
-					break;
-
-			}
-
-			var controller = fPoints.add( { Points: lang.notSelected }, 'Points', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
-
-				frustumPoints.selectPoint( _this );
-
-			} );
-			controller.__select[0].selected = true;
-			dat.controllerNameAndTitle( controller, name );
-			return controller;
-
-		}
-
-		cFrustumPointsX = frustumPointsControl( 'x' );
-		cFrustumPointsY = frustumPointsControl( 'y' );
-		cFrustumPointsZ = frustumPointsControl( 'z' );
-
-	}
-
-	var frustumPoints;
-	this.setFrustumPoints = function ( _frustumPoints ) { frustumPoints = _frustumPoints; }
-
-	this.appendChild = function ( count ) {
-
-		function appendChild( cFrustumPoints, count ) {
-
-			//thanks to https://stackoverflow.com/a/48780352/5175935
-			cFrustumPoints.domElement.querySelectorAll( 'select option' ).forEach( option => { if ( option.value != '-1' ) option.remove() } );
-
-			for ( var i = 0; i &lt; count; i++ ) {
-
-				var opt = document.createElement( 'option' );
-				opt.innerHTML = i;
-				//					opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
-				cFrustumPoints.__select.appendChild( opt );
-
-			}
-
-		}
-		appendChild( cFrustumPointsX, count.xCount );
-		appendChild( cFrustumPointsY, count.yCount );
-		appendChild( cFrustumPointsZ, count.zCount );
-
-	}
-	this.pointIndexes = function ( index ) {
-
-		if ( index === undefined )
-			return;//Сюда попадает в отладочной версии когда не заданы имена точек
-		if ( parseInt( cFrustumPointsX.getValue() ) !== index.x )
-			cFrustumPointsX.setValue( index.x );
-		if ( parseInt( cFrustumPointsY.getValue() ) !== index.y )
-			cFrustumPointsY.setValue( index.y );
-		if ( parseInt( cFrustumPointsZ.getValue() ) !== index.z )
-			cFrustumPointsZ.setValue( index.z );
-
-	};
-	this.getSelectedIndex = function () { return frustumPoints.getSelectedIndex( this ); }
-	this.selectPoint = function ( names ) {
-
-		if ( names === undefined ) {
-
-			console.warn( 'Сюда попадает во время отладки когда не задаю имени каждой точки или когда the cDisplay checkbox of the frustumPoints is not checked' );
-			return null;
-
-		}
-		var x = parseInt( cFrustumPointsX.getValue() ),
-			y = parseInt( cFrustumPointsY.getValue() ),
-			z = parseInt( cFrustumPointsZ.getValue() );
-		if ( isNaN( x ) || isNaN( y ) || isNaN( z ) )
-			return null;
-		for ( var i = 0; i &lt; names.length; i++ ) {
-
-			var name = names[i];
-			if ( ( typeof name !== "object" ) || ( name.z === undefined ) || ( name.z !== z ) )
-				continue;
-			for ( ; i &lt; names.length; i++ ) {
-
-				name = names[i];
-				if ( ( typeof name !== "object" ) || ( name.y !== y ) )
-					continue;
-				for ( ; i &lt; names.length; i++ ) {
-
-					name = names[i];
-					if ( typeof name === "object" ) {
-
-						if ( ( x === 0 ) &amp;&amp; ( name.y === y ) ) {
-
-							console.warn( 'x = ' + x + ', y = ' + y + ', z = ' + z + ', i = ' + i );
-							return i;
-
-						}
-
-					}
-					if ( name === x ) {
-
-						//console.warn( 'x = ' + x + ', y = ' + y + ', z = ' + z + ', i = ' + i );
-						return i;
-
-					}
-
-				}
-
-			}
-
-		}
-		console.error( 'FrustumPoints.selectPoint: not selected' );
-		return null;
-
-	}
-	this.display = function ( display ) {
-
-		cFrustumPointsX.domElement.parentElement.parentElement.style.display = display;
-		cFrustumPointsY.domElement.parentElement.parentElement.style.display = display;
-		cFrustumPointsZ.domElement.parentElement.parentElement.style.display = display;
-
-	}
-	this.isDisplay = function () {
-
-		if (
-			( cFrustumPointsX.domElement.parentElement.parentElement.style.display !== cFrustumPointsY.domElement.parentElement.parentElement.style.display )
-			|| ( cFrustumPointsX.domElement.parentElement.parentElement.style.display !== cFrustumPointsZ.domElement.parentElement.parentElement.style.display )
-		)
-			console.error( 'cFrustumPointsF.isDisplay failed!' );
-		return cFrustumPointsX.domElement.parentElement.parentElement.style.display !== 'none';
-
-	}
-
-}
 
 export default FrustumPoints;
 
@@ -1704,13 +1661,13 @@ export default FrustumPoints;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="FrustumPoints.cFrustumPointsF.html">cFrustumPointsF</a></li></ul><h3>Classes</h3><ul><li><a href="FrustumPoints.html">FrustumPoints</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FrustumPoints.html">FrustumPoints</a></li><li><a href="FrustumPoints_guiSelectPoint.html">guiSelectPoint</a></li></ul><h3>Events</h3><ul><li><a href="FrustumPoints.html#event:onChangeControls">onChangeControls</a></li><li><a href="FrustumPoints.html#event:updateCloudPointItem">updateCloudPointItem</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Apr 02 2021 09:27:41 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 12 2021 11:35:52 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

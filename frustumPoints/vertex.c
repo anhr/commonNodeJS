@@ -5,7 +5,7 @@ attribute float size;
 varying vec4 vColor;
 uniform float pointSize;
 uniform sampler2D palette;
-uniform sampler2D cloudPoints;
+uniform sampler2D cloudPoints;//array of all points with cloud. Все точки у которых есть облако. Тоесть есть ключ frustumPoints в параметре 
 //uniform float cloudPointsSize;
 
 //function of distance between points in range [0,1]

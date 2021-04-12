@@ -1009,7 +1009,7 @@ Player.cameraTarget = class {
 
 		/**
 		 * Set a target point, what camera is look at.
-		 * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
+		 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
 		*/
 		this.setTarget = function ( mesh ) {
 
@@ -1035,7 +1035,7 @@ Player.cameraTarget = class {
 		}
 		/**
 		 * Change target.
-		 * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
+		 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
 		 * @param {number} i index of the point.
 		 */
 		this.changeTarget = function ( mesh, i ) {
@@ -1050,7 +1050,7 @@ Player.cameraTarget = class {
 			//			camera = cameraTarget.camera;
 
 			//Update cameraTarget
-			const func = mesh.userData.player.arrayFuncs[i];
+			const func = typeof mesh.userData.player.arrayFuncs === "function" ? {} : mesh.userData.player.arrayFuncs[i];
 			if ( !func.cameraTarget )
 				func.cameraTarget = { boLook: false };
 			setCameraTarget( func.cameraTarget );
@@ -1320,7 +1320,7 @@ palette = new palette();
 
 /** @namespace
  * @description Select a scene for playing of the mesh
- * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for playing.
+ * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for playing.
  * @param {number} [t=0] time
  * @param {number} [index=0] index of the time.
  * @param {object} [options={}] the following options are available:
@@ -2154,7 +2154,7 @@ Player.traceLine = class traceLine
 
 		/**
 		 * add point into trace line.
-		 * @param {THREE.Mesh} mesh. See [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for tracing.
+		 * @param {THREE.Mesh} mesh. See [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for tracing.
 		 * @param {number} index of the point for tracing.
 		 * @param {THREE.Color} color. Line color. See [Color]{@link https://threejs.org/docs/index.html#api/en/math/Color}.
 		 */

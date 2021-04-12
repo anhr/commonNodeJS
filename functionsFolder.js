@@ -314,12 +314,16 @@ const functionsFolder = function ( fParent, scales, THREE, onFinishChange, optio
 
 	/**
 	 * Display functions folder
-	 * @param {string} display display is 'block' - functions folder is visible.
-	 * <pre>
-	 * 'none' - functions folder is hide.
-	 * </pre>
+	 * @param {string|boolean} display 'block' or true - functions folder is visible.
+	 * <p>'none' or false - functions folder is hide.</p>
 	 */
-	this.displayFolder = function ( display ) { fFunctions.domElement.style.display = display; }
+	this.displayFolder = function ( display ) {
+
+		fFunctions.domElement.style.display = typeof display === "boolean" ?
+			display ? 'block' : 'none' :
+			display;
+
+	}
 	 /**
 	 * set focus to controller
 	 * @param {string} axisName Name of the axis of the controller

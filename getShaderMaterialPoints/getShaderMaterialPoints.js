@@ -15,7 +15,8 @@
 //то будут несколько экземляров Player и тогда будет не определен settings в одном из экземляров Playerю
 //import Player from '../player/player.js';
 
-import MyPoints from '../myPoints/myPoints.js';
+//import MyPoints from '../myPoints/myPoints.js';
+//import MyPoints from '../myPoints/myPoints.js';
 
 // * @param {Player} Player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}
 
@@ -23,18 +24,18 @@ import MyPoints from '../myPoints/myPoints.js';
  * get THREE.Points with THREE.ShaderMaterial material
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Group|THREE.Scene} group THREE group or scene
- * @param {array} arrayFuncs points.geometry.attributes.position array.
- * See arrayFuncs parametr of the [Player.getPoints(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints} for details.
+ * @param {array} arrayFuncs <b>points.geometry.attributes.position</b> array.
+ * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
  * @param {function(THREE.Points)} onReady Callback function that take as input the new THREE.Points.
- * @param {object} [settings]
- * @param {number} [settings.tMin] start time. Uses for playing of the points. Default is 0.
- * @param {Player} [settings.Player] [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}.
- * Define Player only if you want trace of the moving of the points during playing.
- * @param {object} [settings.pointsOptions] see myPoints pointsOptions for details
- * @param {object} [settings.options] see myThreejs.create options for details
- * @param {number} [settings.options.a] multiplier. Second parameter of the arrayFuncs item function. Default is 1.
- * @param {number} [settings.options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
- * @param {number} [settings.options.point.size] point size. Default is 5.0.
+ * @param {object} [settings={}]
+ * @param {number} [settings.tMin=0] start time. Uses for playing of the points.
+ * @param {Player} [settings.Player] <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
+ * Define <b>Player</b> only if you want trace of the moving of the points during playing.
+ * @param {object} [settings.pointsOptions] see <a href="../../myPoints/jsdoc/module-MyPoints.html" target="_blank">myPoints</a> <b>settings.pointsOptions</b> parameter for details
+ * @param {object} [settings.options={}] see <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> <b>options</b> parameter for details
+ * @param {number} [settings.options.a=1] multiplier. Second parameter of the arrayFuncs item function.
+ * @param {number} [settings.options.b=0] addendum. Third parameter of the arrayFuncs item function.
+ * @param {number} [settings.options.point.size=5.0] point size.
  * @param {object} [settings.options.scales.w] followed w axis scale params is available
  * @param {object} [settings.options.scales.w.min] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * <p>Default is undefined. Minimal palette range is 0.</p>
@@ -44,13 +45,12 @@ import MyPoints from '../myPoints/myPoints.js';
 function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) {
 
 	settings = settings || {};
-//	settings.Player = settings.Player || Player;
 
 	var geometry,
 		tMin = settings.pointsOptions === undefined ?
 			settings.tMin === undefined ? 0 : settings.tMin :
-			settings.pointsOptions.tMin,
-		arrayCloud = settings.pointsOptions === undefined ? settings.arrayCloud : settings.pointsOptions.arrayCloud;
+			settings.pointsOptions.tMin;
+//		arrayCloud = settings.pointsOptions === undefined ? settings.arrayCloud : settings.pointsOptions.arrayCloud;
 
 
 	settings.options = settings.options || {};
@@ -65,10 +65,11 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 		geometry = arrayFuncs();
 	else geometry = new THREE.BufferGeometry().setFromPoints
 		( settings.Player.getPoints( /*THREE, */arrayFuncs,
-//			{ options: { a: settings.options.a, b: settings.options.b, player: settings.options.player }, group: group, t: tMin, } ),
 			{ options: { a: settings.options.a, b: settings.options.b }, group: group, t: tMin, } ),
 			arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
-	var indexArrayCloud = arrayCloud === undefined ? undefined : MyPoints.pushArrayCloud( THREE, arrayCloud, geometry );//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
+//	var indexArrayCloud = arrayCloud === undefined ? undefined : MyPoints.pushArrayCloud( THREE, arrayCloud, geometry );//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
+//	const indexArrayCloud = FrustumPoints.pushArrayCloud ? settings.options.frustumPoints.pushArrayCloud( THREE, geometry ) :  undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
+	const indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud( geometry ) :  undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 	if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints )
 		geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( settings.Player.getColors
 			( /*THREE, */arrayFuncs,
@@ -266,7 +267,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 		points.userData.shaderMaterial = settings.pointsOptions === undefined ? settings.shaderMaterial : settings.pointsOptions.shaderMaterial;
 		if ( settings.options.saveMeshDefault !== undefined )
 			settings.options.saveMeshDefault( points );
-		if ( ( settings.pointsOptions !== undefined ) && ( settings.pointsOptions.arrayCloud !== undefined ) )
+		if ( ( settings.pointsOptions ) && ( settings.pointsOptions.frustumPoints ) )
 			points.userData.cloud = { indexArray: indexArrayCloud, }
 		points.userData.shaderMaterial = settings.pointsOptions === undefined ? settings.shaderMaterial : settings.pointsOptions.shaderMaterial;
 //		if ( onReady !== undefined )
@@ -282,7 +283,8 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 
 			settings.pointsOptions.group.children.forEach( function ( mesh ) {
 
-				settings.options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
+//				settings.options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
+				settings.options.frustumPoints.updateCloudPoint( mesh );
 
 			} );
 

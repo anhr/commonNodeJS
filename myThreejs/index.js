@@ -2044,7 +2044,7 @@ export function points( arrayFuncs, group, options, pointsOptions ) {
 /*кажктся не используется*
  * Converts the mesh.geometry.attributes.position to mesh.userData.player.arrayFuncs.
  * Used to restore the default point position.
- * @param {THREE.Mesh} mesh
+ * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}
  */
 /*
 export function setArrayFuncs( mesh ) {

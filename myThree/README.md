@@ -1,11 +1,7 @@
 # myThree
 
 I use myThreejs into my projects for displaying of my 3D objects in the canvas.
-[Example](https://raw.githack.com/anhr/myThree/master/Examples/html/).
-
-Uses in my projects:
- * [DropdownMenu](https://github.com/anhr/DropdownMenu)
- * [controllerPlay](https://github.com/anhr/controllerPlay)
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/index.html).
 
 ## Packaged Builds
 The easiest way to use myThreejs in your code is by using the built source at `build/myThreejs.js`. These built JavaScript files bundle all the necessary dependencies to run controllerPlay.
