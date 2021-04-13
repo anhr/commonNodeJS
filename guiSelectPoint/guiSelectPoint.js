@@ -239,18 +239,18 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		fPointWorld.domElement.style.display = display;
 		fPoint.domElement.style.display = display;
-		if ( cCameraTarget )
-			cCameraTarget.domElement.parentElement.parentElement.style.display = display;
-//		funcFolder.displayFolder( display );
+		if ( cCameraTarget ) {
+
+			const mesh = getMesh();
+			cCameraTarget.domElement.parentElement.parentElement.style.display = mesh && mesh.userData.boFrustumPoints ?
+				'none' ://Камера не может следить за frustumPoints
+				display;
+
+		}
 
 	}
-/*	
-	if ( options.arrayCloud )//Array of points with cloud
-		cFrustumPoints = new options.arrayCloud.cFrustumPointsF( _this );
-*/		
 	if ( options.frustumPoints )
 		cFrustumPoints = new options.frustumPoints.guiSelectPoint();
-//		cFrustumPoints = new FrustumPoints.cFrustumPointsF();// options.scales );
 	//сейчас exposePosition вызывается только один раз из this.setMesh
 	function dislayEl( controller, displayController ) {
 
@@ -932,7 +932,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				}
 				if ( cFrustumPoints !== undefined )
 					cFrustumPoints.display( displayFrustumPoints );
-
 				setScaleControllers();
 				setPositionControllers();
 				setRotationControllers();
@@ -1181,6 +1180,17 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			cCameraTarget = fPoints.add( playerCameraTarget, 'boLook' ).onChange( function ( boLook ) {
 
 				const mesh = getMesh();
+				if ( mesh.userData.boFrustumPoints ) {
+
+					if ( boLook ) { 
+
+						console.warn( 'guiSelectPoint.cCameraTarget.onChange(...). The camera can not look at the frustum point.' );
+						cCameraTarget.setValue( false );
+
+					}
+					return;
+					
+				}
 				if ( !mesh.userData.player ) {
 
 					mesh.userData.player = { arrayFuncs: [] }
@@ -1192,33 +1202,11 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					}
 
 				}
-				const index = cPoints.__select.options.selectedIndex-1,
-					point = mesh.userData.player.arrayFuncs[index];
-/*
-				function getCameraTarget(){
+				const index = mesh.userData.boFrustumPoints ? cFrustumPoints.getSelectedIndex() : cPoints.__select.options.selectedIndex-1,
+					point = typeof mesh.userData.player.arrayFuncs === "function" ?
+						new THREE.Vector3().fromArray( mesh.userData.player.arrayFuncs().attributes.position.array, index * 3 ) :
+						mesh.userData.player.arrayFuncs[index];
 
-					for ( var i = 0; i < cMeshs.__select.options.length; i++ ) {
-
-						const mesh = cMeshs.__select.options[i].mesh;
-						if( !mesh || !mesh.userData.player || !mesh.userData.player.arrayFuncs )
-							continue;
-						const arrayFuncs = mesh.userData.player.arrayFuncs;
-						for ( var j = 0; j < arrayFuncs.length; j++ ) {
-
-							const CT = cameraTarget = arrayFuncs[j].cameraTarget;
-							if ( CT ) {
-
-								cameraTarget = CT;
-								return cameraTarget;
-
-							}
-
-						}
-
-					}
-
-				}
-*/				
 				//remove boLook from all points
 				for ( var i = 0; i < cMeshs.__select.options.length; i++ ) {
 
@@ -1238,19 +1226,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					if ( !point.cameraTarget ) {
 
 						getCameraTarget();// true );
-//						if ( guiParams.cameraTarget.boLook === undefined ) guiParams.cameraTarget.boLook = true;
-//						if ( Player.cameraTarget2.boLook === undefined ) Player.cameraTarget2.boLook = false;
 						if ( playerCameraTarget.boLook === undefined ) Player.cameraTarget2.boLook = false;
 						
-//не помню зачем вставил эту строку
-//Но если оставить эту строку то неверно будет устанавливаться дистанция и угол камеры когда порльзователь меняет точку, за которой наблюдает камера
-//						guiParams.cameraTarget.camera.userData.cameraTarget = guiParams.cameraTarget;
-
-//						point.cameraTarget = { camera: guiParams.cameraTarget.camera, }
-//						point.cameraTarget = { camera: Player.cameraTarget2.camera, }
-//						point.cameraTarget = { camera: playerCameraTarget.camera, }
-//						Player.cameraTarget.init(  );
-
 						if ( !orbitControlsOptions ) orbitControlsOptions = {}
 						if ( !orbitControlsOptions.target )
 							orbitControlsOptions.target = new THREE.Vector3();
@@ -1258,19 +1235,13 @@ function GuiSelectPoint( _THREE, guiParams ) {
 							orbitControlsOptions.target.copy( Player.orbitControls.target );
 							
 						cameraTarget = undefined;
-//						Player.setCameraTarget( mesh );
-//						Player.setMeshCameraTarget( mesh );
-//						Player.cameraTarget.setTarget( mesh );
 						Player.cameraTarget.changeTarget( mesh, index );
 
 					}
 					return;
 
 				}
-/*				
-				cameraTarget = point.cameraTarget;
-				if ( point.cameraTarget ) point.cameraTarget = undefined;
-*/
+
 				//Если точка имеет индивидуальную cameraTarget, то камера будет следить по этим настройкам
 				if ( guiParams.cameraTarget ) guiParams.cameraTarget.camera.userData.cameraTargetPoint = point.cameraTarget;
 
@@ -1281,10 +1252,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					if ( getCameraTarget() )
 						return;
 
-/*
-					if ( guiParams.cameraTarget.orbitControls )
-						guiParams.cameraTarget.orbitControls.target.copy( orbitControlsOptions.target );
-*/						
 					if ( Player.orbitControls )
 						Player.orbitControls.target.copy( orbitControlsOptions.target );
 					guiParams.cameraTarget.camera.lookAt( orbitControlsOptions.target );
