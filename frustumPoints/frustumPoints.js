@@ -1393,10 +1393,16 @@ class FrustumPoints
 
 						var opt = document.createElement( 'option' );
 						opt.innerHTML = i;
-						//					opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
 						cFrustumPoint.__select.appendChild( opt );
 
 					}
+					cFrustumPoint.setValue( -1 );//если не выбрать ни одной точки,
+						//то при повторном выборе frustumPoints в списке cMeshs выберется точка, которая была выбрана прошлый раз.
+						//Но индекс этой выбранной точки почему то не будет выбран в cFrustumPoints
+						//Для проверки
+						//выбрать точку frustumPoints в guiSelectPoint. Если есть оси кооддинат, то от выбранной точки появятся пунктирные линии.
+						//Выбрать точку не frustumPoints в guiSelectPoint.
+						//Опять выбрать точку frustumPoints в guiSelectPoint. Раньше появлялись пунктирные линии, но в огранах управления почемуто это точка не выбиралась.
 
 				}
 				appendChild( cFrustumPointsX, count.xCount );
