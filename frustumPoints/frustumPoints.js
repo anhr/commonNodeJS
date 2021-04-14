@@ -1366,8 +1366,12 @@ class FrustumPoints
 
 //						_frustumPoints.selectPoint( _guiSelectPoint );
 						const index = _guiSelectPoint.getSelectedIndex();
-						if ( index === null )
+						if ( index === null ) {
+
+							if ( options.axesHelper ) options.axesHelper.exposePosition();
 							return;
+
+						}
 						options.guiSelectPoint.select( { object: _points, index: index } );
 
 					} );
@@ -1455,7 +1459,7 @@ class FrustumPoints
 				const x = parseInt( cFrustumPointsX.getValue() ),
 					y = parseInt( cFrustumPointsY.getValue() ),
 					z = parseInt( cFrustumPointsZ.getValue() );
-				if ( isNaN( x ) || isNaN( y ) || isNaN( z ) )
+				if ( isNaN( x ) || ( x === -1 ) || isNaN( y ) || ( y === -1 ) || isNaN( z ) || ( z === -1 ) )
 					return null;
 				for ( var i = 0; i < _names.length; i++ ) {
 
