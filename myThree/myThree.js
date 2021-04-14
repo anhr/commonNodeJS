@@ -1068,25 +1068,28 @@ if ( typeof Player !== 'undefined' )
 
 							//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
 							//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
+							
+							cookie: options.dat.cookie,
+							cookieName: getCanvasName(),
 
 							//изменение размеров усеченной пирамиды FrustumPoints
 
-							near: 10,// Shift of the frustum layer near to the camera in percents.
+							//near: 10,// Shift of the frustum layer near to the camera in percents.
 							//0 percents - no shift.
 							//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
 							//Default is 0
-							far: 70,// Shift of the frustum layer far to the camera in percents.
+
+							//far: 70,// Shift of the frustum layer far to the camera in percents.
 							// 0 percents - no shift.
 							// 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
 							// Default is 0
-							base: 70,// Scale of the base of the frustum points in percents.
+
+							//base: 70,// Scale of the base of the frustum points in percents.
 							// 0 base is null
 							// 100 no scale
 							// Default is 100
-							square: true,// true - Square base of the frustum points.Default is false
-							cookie: options.dat.cookie,
-							cookieName: getCanvasName(),
-//							cFrustumPoints: cFrustumPoints,
+
+							//square: true,// true - Square base of the frustum points.Default is false
 
 						},
 
@@ -1097,7 +1100,7 @@ if ( typeof Player !== 'undefined' )
 
 				if ( gui && options.dat.guiSelectPoint ) {
 
-					var intersection;
+//					var intersection;
 					options.guiSelectPoint = new GuiSelectPoint( THREE, {
 
 						axesHelper: axesHelper,
@@ -1109,11 +1112,13 @@ if ( typeof Player !== 'undefined' )
 							orbitControls: controls,
 
 						},
+/*						
 						setIntersection: function ( _intersection ) {
 
 							intersection = _intersection;
 
 						},
+*/						
 						//displays the trace of the movement of all points of the mesh
 						pointsControls: function ( fPoints, dislayEl, getMesh ) { },
 						//displays the trace of the point movement
