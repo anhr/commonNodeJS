@@ -135,10 +135,20 @@ class FrustumPoints
 		/** create points */
 		this.create = function () {
 
-/*если нет точек с облвком, то облако нужно создавать что бы его было видно в guiSelectPoint
+			//если нет точек с облаком, то облако нужно создавать что бы его было видно в guiSelectPoint
+			//однако в этом случае в консоли появятся сообщения:
+			//
+			//warning X3557: loop only executes for 0 iteration(s), consider removing [loop]
+			//warning X3557: loop doesn't seem to do anything, consider removing [loop]
+			//WebGL: INVALID_OPERATION: texImage2D: ArrayBufferView not big enough for request
+			//
+			//Это означает что из D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\frustumPoints\vertex.c
+			//нужно удалить цикл
+			//for ( float i = 0.; i < cloudPointsWidth; i++ )
+			//
 			if ( _arrayCloud.length === 0 )
 				return undefined;//нет точек с облаком. Поэтому нет смысла создавать frustumPoints
-*/
+
 			const shaderMaterial = {}, zeroPoint = new THREE.Vector3(), cameraDistanceDefault = camera.position.distanceTo( zeroPoint ), _this = this,// lines = []
 				groupFrustumPoints = new THREE.Group();
 
@@ -1514,6 +1524,18 @@ class FrustumPoints
 			}
 
 		}
+
+		//делаю затычки на случай пустого _arrayCloud = [] массива координат точек, имеющих облако вокруг себя.
+		//Другими словми если в программе нет ни одной точки с облаком вокруг себя.
+		//В этом случае точки FrustumPoints не создаются
+		this.gui = function () { }
+		this.animate = function () { }
+		this.updateGuiSelectPoint = function () { }
+		this.isDisplay = function () { }
+		this.onChangeControls = function () { }
+		this.updateCloudPoints = function () { }
+		this.updateCloudPoint = function () { }
+		this.updateCloudPointItem = function () { }
 
 	}
 
