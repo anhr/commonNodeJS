@@ -156,7 +156,7 @@ class MyThree {
 	 * @param {THREE.Vector3} [options.scene.position=new THREE.Vector3( 0, 0, 0 )] scene position.
 	 * @param {object} [options.orbitControls] use orbit controls allow the camera to orbit around a target. [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}
 	 * @param {boolean} [options.orbitControls.gui=false] true - displays the orbit controls gui.
-	 * @param {boolean} [options.axesHelper] true - add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>. Default the axes is not visible.
+	 * @param {Object} [options.axesHelper] {} - add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>. Default the axes is not visible.
 	 * @param {object} [options.spriteText] spriteText options. See <a href="../../SpriteText/jsdoc/index.html" target="_blank">SpriteText</a> options for details. Default undefined.
 	 * @param {object} [options.stereoEffect] use <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
 	 * @param {number} [options.stereoEffect.spatialMultiplex] <a href="../../StereoEffect/jsdoc/module-StereoEffect.html#~spatialMultiplexsIndexs" target="_blank">Enumeration of available stereo modes</a>.
@@ -412,7 +412,7 @@ class MyThree {
 				//Тогда открывается папка Meshes и все органы управления сдвигаются вниз. Это неудобно.
 				//И вообще нехорошо когда выбирается точка когда пользователь не хочет это делать.
 
-				canvasMenu, fOptions, axesHelper,// INTERSECTED = [], scale = options.scale, colorsHelper = 0x80,
+				canvasMenu, fOptions,// axesHelper,// INTERSECTED = [], scale = options.scale, colorsHelper = 0x80,
 				gui, rendererSizeDefault, cameraPosition,// fullScreen,
 
 				//point size
@@ -1023,16 +1023,16 @@ if ( typeof Player !== 'undefined' )
 
 				if ( options.axesHelper ) {
 
-					var cookieName = getCanvasName();
-					axesHelper = new AxesHelper( THREE, scene, {
+//					var cookieName = getCanvasName();
+					options.axesHelper = new AxesHelper( THREE, scene, {
 
 						scene: { position: scene.position, },
-						scale: options.axesHelper.scale,
+//						scale: options.axesHelper.scale,
 						color: 'rgba(255, 255, 255, 0.5)',
 						scales: options.scales,
 
 					} );
-					options.axesHelper = axesHelper;
+//					options.axesHelper = axesHelper;
 
 					optionsScene.position = scene.position;
 
@@ -1103,7 +1103,7 @@ if ( typeof Player !== 'undefined' )
 //					var intersection;
 					options.guiSelectPoint = new GuiSelectPoint( THREE, {
 
-						axesHelper: axesHelper,
+						axesHelper: options.axesHelper,
 						options: options,
 						getLanguageCode: getLanguageCode,
 						cameraTarget: {
@@ -1161,7 +1161,7 @@ if ( typeof Player !== 'undefined' )
 						options.scene = scene;
 					if ( options.dat.axesHelperGui === true ) {
 
-						AxesHelperGui( axesHelper, fOptions, {
+						AxesHelperGui( options.axesHelper, fOptions, {
 
 							cookie: options.dat.cookie,
 							cookieName: getCanvasName(),
@@ -1190,7 +1190,7 @@ if ( typeof Player !== 'undefined' )
 							lang: { moveGroup: lang.moveGroup, },
 							guiSelectPoint: options.guiSelectPoint,
 							scales: options.scales,
-							axesHelper: axesHelper,
+							axesHelper: options.axesHelper,
 
 						} );
 
@@ -1220,7 +1220,7 @@ if ( typeof Player !== 'undefined' )
 
 					// light
 
-					var scales = axesHelper === undefined ? options.scales : axesHelper.options.scales;
+					const scales = options.axesHelper === undefined ? options.scales : options.axesHelper.options.scales;
 					pointLight1.controls( group, fOptions, scales, lang.light + ' 1' );
 					pointLight2.controls( group, fOptions, scales, lang.light + ' 2' );
 
@@ -1404,8 +1404,8 @@ if ( typeof Player !== 'undefined' )
 			}
 			function onObjectMouseDown( position, intersection ) {
 
-				if ( ( axesHelper !== undefined ) && ( intersection.object.type === "Points" ) )
-					axesHelper.exposePosition( position );
+				if ( ( options.axesHelper !== undefined ) && ( intersection.object.type === "Points" ) )
+					options.axesHelper.exposePosition( position );
 				else alert( 'You are clicked the "' + intersection.object.type + '" type object.'
 					+ ( intersection.index === undefined ? '' : ' Index = ' + intersection.index + '.' )
 					+ ' Position( x: ' + position.x + ', y: ' + position.y + ', z: ' + position.z + ' )' );
