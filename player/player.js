@@ -1534,7 +1534,7 @@ Player.selectMeshPlayScene = function ( mesh, t, index, options ) {
 	var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
 	if ( ( selectedPointIndex !== -1 ) && options.guiSelectPoint.isSelectedMesh( mesh ) ) {
 
-		options.guiSelectPoint.setPosition( getObjectPosition( mesh, selectedPointIndex ), {
+		options.guiSelectPoint.setPosition( /*getObjectPosition( mesh, selectedPointIndex ), */{
 
 			object: mesh,
 			index: selectedPointIndex,
@@ -1547,7 +1547,7 @@ Player.selectMeshPlayScene = function ( mesh, t, index, options ) {
 
 /** @namespace
  * @description set color attribute
- * @param {Object} attributes geometry.attributes of the mesh
+ * @param {Object} attributes [geometry.attributes]{@link https://threejs.org/docs/index.html?q=geometry#api/en/core/BufferGeometry.attributes} of the mesh
  * @param {number} i index of the color in the color attribute array.
  * @param {THREE.Color} color color.
  * @returns true - success
