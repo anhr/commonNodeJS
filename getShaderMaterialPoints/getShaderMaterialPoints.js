@@ -11,15 +11,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-//если тут импортировать Player а где нибудь в дроугом месте делать import Player from '../build/player.module.js';
-//то будут несколько экземляров Player и тогда будет не определен settings в одном из экземляров Playerю
-//import Player from '../player/player.js';
-
-//import MyPoints from '../myPoints/myPoints.js';
-//import MyPoints from '../myPoints/myPoints.js';
-
-// * @param {Player} Player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html}
-
 /**
  * get THREE.Points with THREE.ShaderMaterial material
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
@@ -46,11 +37,10 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 
 	settings = settings || {};
 
-	var geometry,
-		tMin = settings.pointsOptions === undefined ?
+	var geometry;
+	const tMin = settings.pointsOptions === undefined ?
 			settings.tMin === undefined ? 0 : settings.tMin :
 			settings.pointsOptions.tMin;
-//		arrayCloud = settings.pointsOptions === undefined ? settings.arrayCloud : settings.pointsOptions.arrayCloud;
 
 
 	settings.options = settings.options || {};
@@ -64,15 +54,13 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 	if ( typeof arrayFuncs === 'function' )
 		geometry = arrayFuncs();
 	else geometry = new THREE.BufferGeometry().setFromPoints
-		( settings.Player.getPoints( /*THREE, */arrayFuncs,
+		( settings.Player.getPoints( arrayFuncs,
 			{ options: { a: settings.options.a, b: settings.options.b }, group: group, t: tMin, } ),
 			arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
-//	var indexArrayCloud = arrayCloud === undefined ? undefined : MyPoints.pushArrayCloud( THREE, arrayCloud, geometry );//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
-//	const indexArrayCloud = FrustumPoints.pushArrayCloud ? settings.options.frustumPoints.pushArrayCloud( THREE, geometry ) :  undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 	const indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud( geometry ) :  undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 	if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints )
 		geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( settings.Player.getColors
-			( /*THREE, */arrayFuncs,
+			( arrayFuncs,
 				{
 
 					opacity: settings.pointsOptions === undefined ? undefined : settings.pointsOptions.opacity,
@@ -84,12 +72,11 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 				} ),
 			4 ) );
 
-//	var texture = new THREE.TextureLoader().load( "/anhr/myThreejs/master/textures/point.png" );
-	var texture = new THREE.TextureLoader().load( "/anhr/commonNodeJS/master/getShaderMaterialPoints/textures/point.png" );
+	const texture = new THREE.TextureLoader().load( "/anhr/commonNodeJS/master/getShaderMaterialPoints/textures/point.png" );
 	texture.wrapS = THREE.RepeatWrapping;
 	texture.wrapT = THREE.RepeatWrapping;
 
-	var uniforms = {
+	const uniforms = {
 
 		pointTexture: { value: texture },
 
@@ -98,7 +85,6 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 			value: ( settings.pointsOptions !== undefined ) && ( settings.pointsOptions.shaderMaterial !== undefined ) && ( settings.pointsOptions.shaderMaterial.point !== undefined ) ?
 				settings.pointsOptions.shaderMaterial.point.size :
 					settings.options.point.size
-//					( ( settings.options.point === undefined ) || ( settings.options.point.size === undefined ) ) ? 0.0 : settings.options.point.size
 
 		},
 
@@ -106,7 +92,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 
 	var cloud;
 	if ( ( settings.pointsOptions !== undefined ) && ( settings.pointsOptions.uniforms !== undefined ) )
-		cloud = settings.pointsOptions.uniforms( uniforms );//frustumPoints
+		cloud = settings.pointsOptions.uniforms( uniforms );
 
 
 	/**
@@ -116,7 +102,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 	 * */
 	function loadShaderText( onload, path ) {
 
-		var shaderText = {};
+		const shaderText = {};
 
 		/**
 		 * This is a basic asyncronous shader loader for THREE.js.
@@ -140,15 +126,12 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 			options = options || {};
 
 			//load vertex.c file
-			var vertex_loader = new THREE.FileLoader( THREE.DefaultLoadingManager );
+			const vertex_loader = new THREE.FileLoader( THREE.DefaultLoadingManager );
 			vertex_loader.setResponseType( 'text' );
 			vertex_loader.load( vertex_url, function ( vertex_text ) {
-				/*
-							vertex_text = _vertex_text;
-							loaded();
-				*/
+				
 				//load fragment.c file
-				var fragment_loader = new THREE.FileLoader( THREE.DefaultLoadingManager );
+				const fragment_loader = new THREE.FileLoader( THREE.DefaultLoadingManager );
 				fragment_loader.setResponseType( 'text' );
 				fragment_loader.load( fragment_url, function ( fragment_text ) {
 
@@ -184,10 +167,6 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 		const currentScriptPath = getCurrentScriptPath();
 
 		path = path || {};
-		/*	
-		currentScriptPath = "https://raw.githack.com/anhr/myThreejs/master/myPoints";
-		console.warn( 'currentScriptPath = ' + currentScriptPath );
-		*/
 		path.vertex = path.vertex || currentScriptPath + "/vertex.c";
 		path.fragment = path.fragment || currentScriptPath + "/fragment.c";
 		ShaderLoader( path.vertex, path.fragment,
@@ -248,7 +227,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 				4 ) );
 */
 
-		var points = new THREE.Points( geometry, new THREE.ShaderMaterial( {
+		const points = new THREE.Points( geometry, new THREE.ShaderMaterial( {
 
 			//See https://threejs.org/examples/webgl_custom_attributes_points2.html
 			//D: \My documents\MyProjects\webgl\three.js\GitHub\three.js\dev\examples\webgl_custom_attributes_points2.html
@@ -261,7 +240,6 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 			vertexShader: shaderText.vertex,
 			fragmentShader: shaderText.fragment,
 			transparent: true,
-			//		opacity: 0.1,
 
 		} ) );
 		points.userData.shaderMaterial = settings.pointsOptions === undefined ? settings.shaderMaterial : settings.pointsOptions.shaderMaterial;
@@ -270,8 +248,7 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 		if ( ( settings.pointsOptions ) && ( settings.pointsOptions.frustumPoints ) )
 			points.userData.cloud = { indexArray: indexArrayCloud, }
 		points.userData.shaderMaterial = settings.pointsOptions === undefined ? settings.shaderMaterial : settings.pointsOptions.shaderMaterial;
-//		if ( onReady !== undefined )
-			onReady( points );
+		onReady( points );
 /*если оставить эти строки то в guiSelectPoint будут добавляться точки даже если этого не хочет программист			
 		if ( settings.options.guiSelectPoint )
 			settings.options.guiSelectPoint.addMesh( points );
@@ -283,7 +260,6 @@ function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) 
 
 			settings.pointsOptions.group.children.forEach( function ( mesh ) {
 
-//				settings.options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
 				settings.options.frustumPoints.updateCloudPoint( mesh );
 
 			} );
