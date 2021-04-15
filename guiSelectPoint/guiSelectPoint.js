@@ -16,10 +16,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import * as THREE from 'https://threejs.org/build/three.module.js';
-//import * as THREE from '../../three.js/dev/build/three.module.js';//https://github.com/anhr/three.js;
-//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-//import { THREE } from './three.js';
 var THREE;
 
 import { dat } from '../dat/dat.module.js';
@@ -42,10 +38,10 @@ import Player from '../player/player.js';
 
 import functionsFolder from '../functionsFolder.js';
 
-import FrustumPoints from '../frustumPoints/frustumPoints.js';
+//import FrustumPoints from '../frustumPoints/frustumPoints.js';
 
 /**
- * A dat.gui based graphical user interface for select a point from the mesh.
+ * @class A dat.gui based graphical user interface for select a point from the mesh.
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {object} [guiParams] Followed parameters is allowed. Default is no parameters
  * @param {AxesHelper} [guiParams.axesHelper] An axis object to visualize axes. Default is undefined.
@@ -232,7 +228,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		cScaleX, cScaleY, cScaleZ, cPosition = new THREE.Vector3(), cRotations = new THREE.Vector3(),
 		cPoints, selectedPointIndex = -1,
 		cX, cY, cZ, cW, cTrace, cTraceAll, cColor, cOpacity, cCameraTarget,
-		funcFolder,//cFunctions = new THREE.Vector3(),
+		funcFolder,
 		cWorld = new THREE.Vector3(),
 		boSetMesh = false;//Для предотвращения лишних вызовов exposePosition если выбрать точку и передвинуть камеру с помошью OrbitControls,
 	function displayPointControllers( display ) {
@@ -326,20 +322,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 */
 		if ( cCameraTarget ) {
 
-/*
-			const value = player && player.arrayFuncs[intersectionSelected.index].cameraTarget ? true : false;
-			if ( cCameraTarget.getValue() !== value )//Если не делать эту проверку то будет бесконечный вызов cCameraTarget.onChange при выборе точки в guiSelectPoint
-				cCameraTarget.setValue( value );
-*/
-//			Player.cameraTarget.get();//Обновить cameraTarget
 			Player.cameraTarget.changeTarget( intersectionSelected.object, intersectionSelected.index );
 			cCameraTarget.updateDisplay();
-/*
-			const boLook = player && player.arrayFuncs[intersectionSelected.index].cameraTarget ? 
-				player.arrayFuncs[intersectionSelected.index].cameraTarget.boLook : false;
-			if ( cCameraTarget.getValue() !== boLook )//Если не делать эту проверку то будет бесконечный вызов cCameraTarget.onChange при выборе точки в guiSelectPoint
-				cCameraTarget.setValue( boLook );
-*/				
 
 		}
 
@@ -477,11 +461,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		funcFolder.displayFolder( !boReadOnly );
 
 	}
-	/**
-	 * Sets controllers to position, scale and rotation of the mesh.  If AxesHelper is exist, expose the mesh to the axes.
-	 * @function GuiSelectPoint.
-	 *setMesh
-	 */
+	/**Sets controllers to position, scale and rotation of the mesh.  If AxesHelper is exist, expose the mesh to the axes. */
 	this.setMesh = function () {
 
 		boSetMesh = true;
@@ -494,17 +474,13 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	}
 	/**
 	 * Sets controllers to position, scale and rotation of the mesh.  If AxesHelper is exist, expose the mesh to the axes.
-	 * @function GuiSelectPoint.
-	 *setPosition
-	 * @param position deprecated
 	 * @param intersectionSelected [THREE.Raycaster.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}
 	 */
-	this.setPosition = function ( position, intersectionSelected ) {
+	this.setPosition = function ( intersectionSelected ) {
 
 		for ( var i = 0; i < cMeshs.__select.length; i++ ) {
 
 			var option = cMeshs.__select[i];
-			//						if ( option.selected && ( parseInt( option.getAttribute( 'value' ) ) === intersectionSelected.object.userData.index - 1 ) )
 			if ( option.selected && Object.is( option.mesh, intersectionSelected.object ) ) {
 
 				setPosition( intersectionSelected );
@@ -516,8 +492,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	}
 	/**
 	 * update the values of the controllers of the world position
-	 * @function GuiSelectPoint.
-	 *update 
 	 */
 	this.update = function () {
 
@@ -535,8 +509,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	}
 	/**
 	 * get index of the mesh in the cMeshs controller
-	 * @function GuiSelectPoint.
-	 *getMeshIndex
 	 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}
 	 * @returns index of selectred mesh.
 	 */
@@ -556,6 +528,11 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		//Сюда попадает когда Mesh проверяется с помощью THREE.Raycaster находится ли он под мышью, но этот Mesh не внесен в список GuiSelectPoint
 
 	}
+	/**
+	 * Set a mesh in the mesh's list control
+	 * @param {number} index index of the mesh in the mesh's list control
+	 * @param {THREE.Mesh} mesh new [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}
+	 */
 	this.setIndexMesh = function ( index, mesh ) {
 
 		if ( index === undefined )
@@ -564,6 +541,10 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		this.selectPoint( -1 );
 
 	}
+	/**
+	 * Selects a point in the points list control
+	 * @param {number} index index of the point in the points list control
+	 */
 	this.selectPoint = function ( index ) {
 
 		cPoints.__onChange( index );
@@ -572,8 +553,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	}
 	/**
 	 * Removes a mesh from the select point GUI
-	 * @function GuiSelectPoint.
-	 *removeMesh
 	 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for removing.
 	 */
 	this.removeMesh = function ( mesh ) {
@@ -595,8 +574,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	/**
 	 * Adds new mesh into select point GUI
-	 * @function GuiSelectPoint.
-	 *addMesh
 	 * @param {THREE.Mesh} mesh new [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}.
 	 */
 	this.addMesh = function ( mesh ) {
@@ -662,6 +639,10 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		cMeshs.__select.appendChild( opt );
 
 	}
+	/**
+	 * User has selected a point
+	 * @param {Object} intersectionSelected See [intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}
+	 */
 	this.select = function ( intersectionSelected ) {
 
 		const position = getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
@@ -732,17 +713,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	}
 	/**
-	 * Is mesh selected in the GuiSelectPoint.
-	 * @function GuiSelectPoint.
-	 *isSelectedMesh
-	 * @param {THREE.Mesh} meshCur mesh to be tested
-	 * @returns true if meshCur is selected.
+	 * Is mesh selected in the GuiSelectPoint?
+	 * @param {THREE.Mesh} meshCur [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} to be tested
+	 * @returns true if <b>meshCur</b> is selected.
 	 */
 	this.isSelectedMesh = function ( meshCur ) { return getMesh() === meshCur }
 	/**
-	 * Returns the index of the selected point.
-	 * @function GuiSelectPoint.
-	 *getSelectedPointIndex
 	 * @returns index of the selected point.
 	 */
 	this.getSelectedPointIndex = function () {
@@ -751,10 +727,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			cFrustumPoints.isDisplay() &&//FrustumPoints folder is visible
 			options.frustumPoints &&
 			options.frustumPoints.isDisplay()//The cDisplay checkbox of the frustumPoints' is checked
-/*			
-			options.arrayCloud.frustumPoints &&
-			options.arrayCloud.frustumPoints.isDisplay()//The cDisplay checkbox of the frustumPoints' is checked
-*/			
 		) {
 
 			var selectedIndex = cFrustumPoints.getSelectedIndex();
@@ -860,9 +832,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	/**
 	 * Adds select point GUI into dat.gui folder
-	 * @function GuiSelectPoint.
-	 *add
-	 * @param {GUI} folder dat.gui folder.
+	 * @param {GUI} folder [dat.gui]{@link https://github.com/anhr/dat.gui} folder.
 	 */
 	this.add = function ( folder ) {
 
@@ -1329,6 +1299,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		}
 
 	}
+	/**
+	 * Sets a color attribute.
+	 * @param {Object} attributes [geometry.attributes]{@link https://threejs.org/docs/index.html?q=geometry#api/en/core/BufferGeometry.attributes} of the mesh
+	 * @param {number} i index of the color
+	 * @param {THREE.Color} color new [color]{@link https://threejs.org/docs/index.html?q=Colo#api/en/math/Color}
+	 */
 	this.setColorAttribute = function( attributes, i, color ) {
 
 		if ( typeof color === "string" )
@@ -1342,6 +1318,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		colorAttribute.needsUpdate = true;
 
 	}
+	/**Removes all points from points list control. */
 	this.removePoints = function () {
 
 		//thanks to https://stackoverflow.com/a/48780352/5175935
@@ -1709,11 +1686,10 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	}
 	/**
-	 * get frustum points
-	 * @function GuiSelectPoint.
-	 * getFrustumPoints
+	 * get frustum points.
 	 */
 	this.getFrustumPoints = function () { return cFrustumPoints; }
+/*
 	this.windowRange = function ( options ) {
 
 		pointLight1.windowRange( options.scales );
@@ -1740,7 +1716,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 		}
 
 	}
-//	this.setOrbitControls = function ( orbitControls ) { guiParams.cameraTarget.orbitControls = orbitControls; }
+*/
 	return this;
 
 }
@@ -1828,8 +1804,6 @@ function getObjectPosition( object, index ) {
 
 /**
  * set THREE
- * @function GuiSelectPoint.
- * setTHREE
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  */
 GuiSelectPoint.setTHREE = function ( _THREE ) {
