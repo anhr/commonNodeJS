@@ -275,6 +275,9 @@ function MyPoints( THREE, arrayFuncs, group,// Player,
 		}
 		setRotations();
 		group.add( points );
+
+		if ( pointsOptions.boFrustumPoints ) points.userData.boFrustumPoints = pointsOptions.boFrustumPoints;
+		
 		if ( pointsOptions.onReady !== undefined )
 			pointsOptions.onReady( points );
 

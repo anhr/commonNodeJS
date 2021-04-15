@@ -110,7 +110,7 @@ class FrustumPoints
 		}
 
 		/**
-		 * Pushes to clouds array all points from geometry
+		 * Pushes to clouds array all points from geometry.attributes.position
 		 * @param {THREE.BufferGeometry} geometry
 		 * @returns index of the new array item
 		 */
@@ -585,13 +585,11 @@ class FrustumPoints
 						yfStep = ( point_f3.y - point_f1.y ) / ( yCount - 1 ),
 						yStep = ( ( yfStep - ynStep ) / ( ( zCount - 1 ) * ( zCount - 1 ) ) ) * z * z + ynStep,
 						sqrtZCount = parseInt( Math.sqrt( zCount ) ),
-						//					yzStep = isLines() ? ( yStep / zCount ) * sqrtZCount : yStep / ( sqrtZCount + parseInt( Math.sqrt( zCount - ( sqrtZCount * sqrtZCount ) ) ) ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
 						yzStep = yStep / ( sqrtZCount + parseInt( Math.sqrt( zCount - ( sqrtZCount * sqrtZCount ) ) ) ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
 
 						xnStep = ( point_n2.x - point_n1.x ) / ( xCount - 1 ),
 						xfStep = ( point_f2.x - point_f1.x ) / ( xCount - 1 ),
 						xStep = ( ( xfStep - xnStep ) / ( ( zCount - 1 ) * ( zCount - 1 ) ) ) * z * z + xnStep,
-						//				xzStep = xStep / zxCount;//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
 						xzStep = xStep / parseInt( Math.sqrt( zCount ) );//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
 					pointStart.y = - yStep * ( yCount - 1 ) / 2;
 					pointStart.x = - xStep * ( xCount - 1 ) / 2;
@@ -629,7 +627,6 @@ class FrustumPoints
 
 					}
 					zx++;
-					//				if ( !isLines() && ( zx >= parseInt( Math.sqrt( zCount ) ) ) )
 					if ( zx >= parseInt( Math.sqrt( zCount ) ) ) {
 
 						zx = 0;
@@ -835,8 +832,7 @@ class FrustumPoints
 					onReady: function ( points ) {
 
 						_points = points;
-//						_this._points = points;
-						_points.userData.boFrustumPoints = true;
+//						_points.userData.boFrustumPoints = true;
 						_points.userData.isInfo = function () { return shaderMaterial.info; }
 
 						if ( shaderMaterial.info )
