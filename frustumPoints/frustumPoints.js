@@ -126,8 +126,16 @@ class FrustumPoints
 			const index = _arrayCloud.getCloudsCount(),
 				points = [];
 			_arrayCloud.push( points );
-			for ( var i = 0; i < geometry.attributes.position.count; i++ )
-				points.push( new THREE.Vector4().fromArray( geometry.attributes.position.array, i * geometry.attributes.position.itemSize ) );
+			for ( var i = 0; i < geometry.attributes.position.count; i++ ) {
+
+				const point = new THREE.Vector4().fromArray( geometry.attributes.position.array, i * geometry.attributes.position.itemSize );
+
+				//Здесь коррекитровка point.w не имеет эффекта. Она коррекитруется в FrustumPoints.cloud.updateMesh
+//				point.w *= options.scales.w.max;
+
+				points.push( point );
+
+			}
 			return index;
 
 		}
@@ -297,13 +305,13 @@ class FrustumPoints
 					} );
 
 				}
-				this.addUniforms = function ( format, width, key, options ) {
+				this.addUniforms = function ( format, width, key, optionsAddUniforms ) {
 
-					options = options || {};
+					optionsAddUniforms = optionsAddUniforms || {};
 					//format = RGBAFormat,//LuminanceFormat,//Available formats https://threejs.org/docs/index.html#api/en/constants/Textures
 					//D:\My documents\MyProjects\webgl\three.js\GitHub\three.js\dev\src\constants.js
 					const itemSize = format === THREE.RGBAFormat ? 4 : format === THREE.RGBFormat ? 3 : format === THREE.LuminanceFormat ? 1 : NaN;
-					const height = options.height || 1,//format === THREE.LuminanceFormat ? 1 : 2,
+					const height = optionsAddUniforms.height || 1,//format === THREE.LuminanceFormat ? 1 : 2,
 						size = width * height,
 						type = THREE.FloatType,
 						data = type === THREE.FloatType ? new Float32Array( itemSize * size ) : new Uint8Array( itemSize * size );
@@ -331,7 +339,16 @@ class FrustumPoints
 							z = vector.z;
 							if ( isNaN( vector.w ) )
 								console.error( 'frustumPoints.create.cloud.addUniforms.updateItem: vector.w = ' + vector.w + '. Probably you use THREE.Color for w coordinate of the point with cloud.' );
-							w = vector.w;
+
+							//w это координата x в палитре palette в D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\frustumPoints\vertex.c
+							//которая имеет тип sampler2D https://www.khronos.org/opengl/wiki/Sampler_(GLSL)#Sampler_types
+							//которая имеет текстуру 2D texture.
+							//Диапазон w должен быть в предплах от 0 до 1 https://www.khronos.org/opengl/wiki/Sampler_(GLSL)#Texture_coordinates
+							//Получаем пропорции:
+							//Если vector.w = options.scales.w.min то w = 0.
+							//Если vector.w = options.scales.w.max то w = 1.
+							const max = options.scales.w.max, min = options.scales.w.min;
+							w = ( vector.w - min ) / ( max - min );
 
 						}
 						const vectorSize = y === undefined ? 1 : z === undefined ? 2 : w === undefined ? 3 : 4,
@@ -354,8 +371,8 @@ class FrustumPoints
 
 					}
 
-					if ( options.onReady !== undefined )
-						options.onReady( data, itemSize, this.updateItem );
+					if ( optionsAddUniforms.onReady !== undefined )
+						optionsAddUniforms.onReady( data, itemSize, this.updateItem );
 
 					uniforms[key] = {
 
@@ -390,9 +407,9 @@ class FrustumPoints
 						return;
 					for ( var i = 0; i < mesh.geometry.attributes.position.count; i++ ) {
 
-						this.cloudPoints.updateItem( mesh.userData.cloud.indexArray + i,
-							MyThree.getWorldPosition( mesh,
-								new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) ) );
+						const point = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize );
+//						point.w /= options.scales.w.max;
+						this.cloudPoints.updateItem( mesh.userData.cloud.indexArray + i, MyThree.getWorldPosition( mesh, point ) );
 
 					}
 
