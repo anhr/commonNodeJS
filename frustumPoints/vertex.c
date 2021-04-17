@@ -4,7 +4,8 @@
 attribute float size;
 varying vec4 vColor;
 uniform float pointSize;
-uniform sampler2D palette;
+uniform sampler2D palette;//палитра состит из 256 точек. Каждая точка состоит из 3 цветоа. Итого размер palette data.length = 768
+						//смотри new cloud.addUniforms( THREE.RGBFormat, 256, 'palette' в frustumPoints.js
 uniform sampler2D cloudPoints;//array of all points with cloud. Все точки у которых есть облако. Тоесть есть ключ frustumPoints в параметре 
 //uniform float cloudPointsSize;
 
@@ -303,7 +304,7 @@ void main() {
 	}
 #ifndef debug_version
 	//Convert paletteIndex range [-1, 1] to range [0, 1]
-	float paletteIndex = ( paletteIndex / 2.) + 0.5;
+	//float paletteIndex = ( paletteIndex / 2.) + 0.5;
 
 	//paletteIndex is x coordinate of the palette texture in normalized range from 0.0 to 1.0. https://www.khronos.org/opengl/wiki/Sampler_(GLSL)#Texture_coordinates
 	//0.0  is red color,
