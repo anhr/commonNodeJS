@@ -1363,13 +1363,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			if ( axisName === 'w' ){
 
 				//W axis
-/*				
-				if ( options.scales.w === undefined ) {
 
-					return;
-
-				}
-*/				
 				scale = options.scales.w;
 				scale = scale || {};
 				scale.name = scale.name || axisName;
@@ -1381,7 +1375,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				}
 				function onChange( value ) {
 
-//						options.palette = options.palette || new ColorPicker.palette();
 					const attributes = intersection.object.geometry.attributes,
 						i = intersection.index;
 					if ( attributes.position.itemSize < 4 ) {
@@ -1400,10 +1393,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					
 					if ( options.frustumPoints )
 						options.frustumPoints.updateCloudPointItem( intersection.object, intersection.index );
-/*
-					if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
-						options.arrayCloud.frustumPoints.updateCloudPointItem( intersection.object, intersection.index );
-*/						
 
 				}
 				if ( ( scale.min !== undefined ) &&  ( scale.max !== undefined ) ) {
