@@ -156,14 +156,17 @@ class MyThree {
 	 * @param {THREE.Vector3} [options.scene.position=new THREE.Vector3( 0, 0, 0 )] scene position.
 	 * @param {object} [options.orbitControls] use orbit controls allow the camera to orbit around a target. [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}
 	 * @param {boolean} [options.orbitControls.gui=false] true - displays the orbit controls gui.
-	 * @param {Object} [options.axesHelper] {} - add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>. Default the axes is not visible.
+	 * @param {Object|boolean} [options.axesHelper={}] {} - add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
+	 * <pre>
+	 * false - axes is not visible.
+	 * </pre>
+	 * @param {boolean} [options.axesHelper.gui=true] true - displays the <a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelper gui</a>.
 	 * @param {object} [options.spriteText] spriteText options. See <a href="../../SpriteText/jsdoc/index.html" target="_blank">SpriteText</a> options for details. Default undefined.
 	 * @param {object} [options.stereoEffect] use <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
 	 * @param {number} [options.stereoEffect.spatialMultiplex] <a href="../../StereoEffect/jsdoc/module-StereoEffect.html#~spatialMultiplexsIndexs" target="_blank">Enumeration of available stereo modes</a>.
 	 * @param {object} [options.dat] {} - use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {boolean} [options.dat.cookie=true] true - save to cookie all user settings
 	 * @param {boolean} [options.dat.playerGui=true] true - adds a <a href="../../player/jsdoc/module-Player.html#~Player.gui" target="_blank">Player controllers</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
-	 * @param {boolean} [options.dat.axesHelperGui=true] true - displays the <a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelper gui</a>.
 	 * @param {boolean} [options.dat.guiSelectPoint=true] true - displays the <a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">Select Point</a>. [dat.gui]{@link https://github.com/dataarts/dat.gui} based graphical user interface for select a point from the mesh.
 	 * @param {boolean} [options.dat.guiStereoEffect=true] true - Adds <a href="../../StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#gui" target="_blank">Stereo Effects folder</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {boolean} [options.dat.guiFrustumPoints=true] true - Adds <a href="../../FrustumPoints/jsdoc/FrustumPoints.html#gui" target="_blank">Frustum Points folder</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
@@ -738,7 +741,7 @@ if ( typeof Player !== 'undefined' )
 					if ( options.dat.guiSelectPoint !== false ) options.dat.guiSelectPoint = true;
 					if ( options.dat.guiStereoEffect !== false ) options.dat.guiStereoEffect = true;
 					if ( options.dat.moveScene !== false ) options.dat.moveScene = {}; 
-					if ( options.dat.axesHelperGui !== false ) options.dat.axesHelperGui = true;
+//					if ( options.dat.axesHelperGui !== false ) options.dat.axesHelperGui = true;
 					if ( options.dat.cameraGui !== false ) options.dat.cameraGui = true;
 					if ( options.dat.guiFrustumPoints !== false ) options.dat.guiFrustumPoints = true;
 					if ( options.dat.cookie !== false ) options.dat.cookie = true;
@@ -1021,9 +1024,11 @@ if ( typeof Player !== 'undefined' )
 
 				// helper
 
+				if ( options.axesHelper !== false )  options.axesHelper = options.axesHelper || {};
 				if ( options.axesHelper ) {
 
 //					var cookieName = getCanvasName();
+					const gui = options.axesHelper.gui
 					options.axesHelper = new AxesHelper( THREE, scene, {
 
 						scene: { position: scene.position, },
@@ -1033,6 +1038,7 @@ if ( typeof Player !== 'undefined' )
 
 					} );
 //					options.axesHelper = axesHelper;
+					options.axesHelper.options.gui = gui;
 
 					optionsScene.position = scene.position;
 
@@ -1159,7 +1165,8 @@ if ( typeof Player !== 'undefined' )
 					//THREE.AxesHelper gui
 					if ( ( options.scene === undefined ) && ( typeof scene !== 'undefined' ) )
 						options.scene = scene;
-					if ( options.dat.axesHelperGui === true ) {
+//					if ( options.dat.axesHelperGui === true )
+					if ( ( options.axesHelper !== false ) && ( options.axesHelper.options.gui !== false ) ) {
 
 						AxesHelperGui( options.axesHelper, fOptions, {
 
@@ -1220,7 +1227,8 @@ if ( typeof Player !== 'undefined' )
 
 					// light
 
-					const scales = options.axesHelper === undefined ? options.scales : options.axesHelper.options.scales;
+//					const scales = options.axesHelper === undefined ? options.scales : options.axesHelper.options.scales;
+					const scales = options.axesHelper === false ? options.scales : options.axesHelper.options.scales;
 					pointLight1.controls( group, fOptions, scales, lang.light + ' 1' );
 					pointLight2.controls( group, fOptions, scales, lang.light + ' 2' );
 
