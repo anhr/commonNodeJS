@@ -184,14 +184,17 @@ class MyThree {
 	 * @param {THREE.Vector3} [options.scene.position=new THREE.Vector3( 0, 0, 0 )] scene position.
 	 * @param {object} [options.orbitControls] use orbit controls allow the camera to orbit around a target. [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}
 	 * @param {boolean} [options.orbitControls.gui=false] true - displays the orbit controls gui.
-	 * @param {boolean} [options.axesHelper] true - add the &lt;a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper&lt;/a>. Default the axes is not visible.
+	 * @param {Object|boolean} [options.axesHelper={}] {} - add the &lt;a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper&lt;/a>.
+	 * &lt;pre>
+	 * false - axes is not visible.
+	 * &lt;/pre>
+	 * @param {boolean} [options.axesHelper.gui=true] true - displays the &lt;a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelper gui&lt;/a>.
 	 * @param {object} [options.spriteText] spriteText options. See &lt;a href="../../SpriteText/jsdoc/index.html" target="_blank">SpriteText&lt;/a> options for details. Default undefined.
 	 * @param {object} [options.stereoEffect] use &lt;a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect&lt;/a>.
 	 * @param {number} [options.stereoEffect.spatialMultiplex] &lt;a href="../../StereoEffect/jsdoc/module-StereoEffect.html#~spatialMultiplexsIndexs" target="_blank">Enumeration of available stereo modes&lt;/a>.
 	 * @param {object} [options.dat] {} - use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {boolean} [options.dat.cookie=true] true - save to cookie all user settings
 	 * @param {boolean} [options.dat.playerGui=true] true - adds a &lt;a href="../../player/jsdoc/module-Player.html#~Player.gui" target="_blank">Player controllers&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
-	 * @param {boolean} [options.dat.axesHelperGui=true] true - displays the &lt;a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelper gui&lt;/a>.
 	 * @param {boolean} [options.dat.guiSelectPoint=true] true - displays the &lt;a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">Select Point&lt;/a>. [dat.gui]{@link https://github.com/dataarts/dat.gui} based graphical user interface for select a point from the mesh.
 	 * @param {boolean} [options.dat.guiStereoEffect=true] true - Adds &lt;a href="../../StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#gui" target="_blank">Stereo Effects folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {boolean} [options.dat.guiFrustumPoints=true] true - Adds &lt;a href="../../FrustumPoints/jsdoc/FrustumPoints.html#gui" target="_blank">Frustum Points folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
@@ -440,7 +443,7 @@ class MyThree {
 				//Тогда открывается папка Meshes и все органы управления сдвигаются вниз. Это неудобно.
 				//И вообще нехорошо когда выбирается точка когда пользователь не хочет это делать.
 
-				canvasMenu, fOptions, axesHelper,// INTERSECTED = [], scale = options.scale, colorsHelper = 0x80,
+				canvasMenu, fOptions,// axesHelper,// INTERSECTED = [], scale = options.scale, colorsHelper = 0x80,
 				gui, rendererSizeDefault, cameraPosition,// fullScreen,
 
 				//point size
@@ -766,7 +769,7 @@ if ( typeof Player !== 'undefined' )
 					if ( options.dat.guiSelectPoint !== false ) options.dat.guiSelectPoint = true;
 					if ( options.dat.guiStereoEffect !== false ) options.dat.guiStereoEffect = true;
 					if ( options.dat.moveScene !== false ) options.dat.moveScene = {}; 
-					if ( options.dat.axesHelperGui !== false ) options.dat.axesHelperGui = true;
+//					if ( options.dat.axesHelperGui !== false ) options.dat.axesHelperGui = true;
 					if ( options.dat.cameraGui !== false ) options.dat.cameraGui = true;
 					if ( options.dat.guiFrustumPoints !== false ) options.dat.guiFrustumPoints = true;
 					if ( options.dat.cookie !== false ) options.dat.cookie = true;
@@ -926,7 +929,7 @@ if ( typeof Player !== 'undefined' )
 
 							}
 							if ( options.frustumPoints !== undefined )
-								options.frustumPoints.setSpatialMultiplexs();// mode );
+								options.frustumPoints.updateGuiSelectPoint();
 
 						},
 
@@ -1049,59 +1052,27 @@ if ( typeof Player !== 'undefined' )
 
 				// helper
 
+				if ( options.axesHelper !== false )  options.axesHelper = options.axesHelper || {};
 				if ( options.axesHelper ) {
 
-					var cookieName = getCanvasName();
-					axesHelper = new AxesHelper( THREE, scene, {
+//					var cookieName = getCanvasName();
+					const gui = options.axesHelper.gui
+					options.axesHelper = new AxesHelper( THREE, scene, {
 
 						scene: { position: scene.position, },
-						scale: options.axesHelper.scale,
+//						scale: options.axesHelper.scale,
 						color: 'rgba(255, 255, 255, 0.5)',
 						scales: options.scales,
 
 					} );
-					options.axesHelper = axesHelper;
+//					options.axesHelper = axesHelper;
+					options.axesHelper.options.gui = gui;
 
 					optionsScene.position = scene.position;
 
 					if ( controls !== undefined )
 						controls.update();//if scale != 1 and position != 0 of the screen, то после открытия canvas положение картинки смещено. Положение восстанавливается только если подвигать мышью
 				}
-				if ( gui &amp;&amp; options.dat.guiSelectPoint ) {
-
-					var intersection;
-					options.guiSelectPoint = new GuiSelectPoint( THREE, {
-
-						axesHelper: axesHelper,
-						options: options,
-						getLanguageCode: getLanguageCode,
-						cameraTarget: {
-
-							camera: camera,
-							orbitControls: controls,
-
-						},
-						setIntersection: function ( _intersection ) {
-
-							intersection = _intersection;
-
-						},
-						//displays the trace of the movement of all points of the mesh
-						pointsControls: function ( fPoints, dislayEl, getMesh ) { },
-						//displays the trace of the point movement
-						pointControls: function ( fPoint, dislayEl, getMesh ) { },
-
-					} );
-					options.guiSelectPoint.add( gui );
-
-				}
-
-				defaultPoint.size = options.point.size;
-
-				var pointName = 'Point_' + getCanvasName();
-				if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
-
-				options.spriteText = options.spriteText || {};
 
 //				if ( options.arrayCloud )//Array of points with cloud
 				if ( options.frustumPoints ) {
@@ -1131,35 +1102,77 @@ if ( typeof Player !== 'undefined' )
 
 							//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
 							//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
+							
+							cookie: options.dat.cookie,
+							cookieName: getCanvasName(),
 
 							//изменение размеров усеченной пирамиды FrustumPoints
 
-							near: 10,// Shift of the frustum layer near to the camera in percents.
+							//near: 10,// Shift of the frustum layer near to the camera in percents.
 							//0 percents - no shift.
 							//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
 							//Default is 0
-							far: 70,// Shift of the frustum layer far to the camera in percents.
+
+							//far: 70,// Shift of the frustum layer far to the camera in percents.
 							// 0 percents - no shift.
 							// 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
 							// Default is 0
-							base: 70,// Scale of the base of the frustum points in percents.
+
+							//base: 70,// Scale of the base of the frustum points in percents.
 							// 0 base is null
 							// 100 no scale
 							// Default is 100
-							square: true,// true - Square base of the frustum points.Default is false
-							cookie: options.dat.cookie,
-							cookieName: getCanvasName(),
-							cFrustumPoints: cFrustumPoints,
+
+							//square: true,// true - Square base of the frustum points.Default is false
 
 						},
 
 					);
-					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( options.frustumPoints );
-//					options.arrayCloud.frustumPoints = frustumPoints;
+//					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( options.frustumPoints );
 
 				}
 
+				if ( gui &amp;&amp; options.dat.guiSelectPoint ) {
+
+//					var intersection;
+					options.guiSelectPoint = new GuiSelectPoint( THREE, {
+
+						axesHelper: options.axesHelper,
+						options: options,
+						getLanguageCode: getLanguageCode,
+						cameraTarget: {
+
+							camera: camera,
+							orbitControls: controls,
+
+						},
+/*						
+						setIntersection: function ( _intersection ) {
+
+							intersection = _intersection;
+
+						},
+*/						
+						//displays the trace of the movement of all points of the mesh
+						pointsControls: function ( fPoints, dislayEl, getMesh ) { },
+						//displays the trace of the point movement
+						pointControls: function ( fPoint, dislayEl, getMesh ) { },
+
+					} );
+					options.guiSelectPoint.add( gui );
+
+				}
+
+				defaultPoint.size = options.point.size;
+
+				var pointName = 'Point_' + getCanvasName();
+				if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
+
+				options.spriteText = options.spriteText || {};
+
 				createXDobjects( group, options );
+
+				if ( options.frustumPoints ) options.frustumPoints.create();
 
 				//На случай когда указана точка, за которой следит камера и когда Player не создан
 				if ( !options.player ) {
@@ -1180,9 +1193,11 @@ if ( typeof Player !== 'undefined' )
 					//THREE.AxesHelper gui
 					if ( ( options.scene === undefined ) &amp;&amp; ( typeof scene !== 'undefined' ) )
 						options.scene = scene;
-					if ( options.dat.axesHelperGui === true ) {
+//					if ( options.dat.axesHelperGui === true )
+					if ( options.axesHelper.options.gui !== false ) options.axesHelper.options.gui = options.axesHelper.options.gui || true;
+					if ( options.axesHelper.options.gui ) {
 
-						AxesHelperGui( axesHelper, fOptions, {
+						AxesHelperGui( options.axesHelper, fOptions, {
 
 							cookie: options.dat.cookie,
 							cookieName: getCanvasName(),
@@ -1211,7 +1226,7 @@ if ( typeof Player !== 'undefined' )
 							lang: { moveGroup: lang.moveGroup, },
 							guiSelectPoint: options.guiSelectPoint,
 							scales: options.scales,
-							axesHelper: axesHelper,
+							axesHelper: options.axesHelper,
 
 						} );
 
@@ -1241,7 +1256,8 @@ if ( typeof Player !== 'undefined' )
 
 					// light
 
-					var scales = axesHelper === undefined ? options.scales : axesHelper.options.scales;
+//					const scales = options.axesHelper === undefined ? options.scales : options.axesHelper.options.scales;
+					const scales = options.axesHelper === false ? options.scales : options.axesHelper.options.scales;
 					pointLight1.controls( group, fOptions, scales, lang.light + ' 1' );
 					pointLight2.controls( group, fOptions, scales, lang.light + ' 2' );
 
@@ -1314,7 +1330,7 @@ if ( typeof Player !== 'undefined' )
 						options.frustumPoints.gui( fOptions, FolderPoint, {
 
 							getLanguageCode: getLanguageCode,
-							cookie: cookie,
+//							cookie: cookie,
 
 						} );
 
@@ -1425,8 +1441,8 @@ if ( typeof Player !== 'undefined' )
 			}
 			function onObjectMouseDown( position, intersection ) {
 
-				if ( ( axesHelper !== undefined ) &amp;&amp; ( intersection.object.type === "Points" ) )
-					axesHelper.exposePosition( position );
+				if ( ( options.axesHelper !== undefined ) &amp;&amp; ( intersection.object.type === "Points" ) )
+					options.axesHelper.exposePosition( position );
 				else alert( 'You are clicked the "' + intersection.object.type + '" type object.'
 					+ ( intersection.index === undefined ? '' : ' Index = ' + intersection.index + '.' )
 					+ ' Position( x: ' + position.x + ', y: ' + position.y + ', z: ' + position.z + ' )' );
@@ -1856,11 +1872,17 @@ MyThree.limitAngles = function ( rotation ) {
 
 }
 
-/** @namespace
- * @description Array of my points..
+/* * @namespace
+ * @description Array of my points.
  * @see &lt;a href="../../MyPoints/jsdoc/index.html" target="_blank">MyPoints&lt;/a>.
  */
-MyThree.MyPoints = MyPoints;
+//MyThree.MyPoints = MyPoints;
+
+/** @namespace
+ * @description Array of points, statically fixed in front of the camera.
+ * @see &lt;a href="../../FrustumPoints/jsdoc/index.html" target="_blank">FrustumPoints&lt;/a>.
+ */
+MyThree.FrustumPoints = FrustumPoints;
 
 export default MyThree;
 </code></pre>
@@ -1873,13 +1895,13 @@ export default MyThree;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.MyPoints.html">MyPoints</a></li><li><a href="module-MyThree-MyThree.points.html">points</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.FrustumPoints.html">FrustumPoints</a></li><li><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.points.html">points</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Apr 03 2021 09:29:54 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sun Apr 18 2021 14:17:45 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
