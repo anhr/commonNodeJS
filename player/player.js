@@ -49,21 +49,16 @@ var g_settings,
 	g_selectPlaySceneOptions,
 	THREE;
 
-//use Player.isCreated()
-//	g_boPlayer = false;//true - player is created
-
-//	selectSceneIndex = 0;//for guiSelectPoint
-
 /**
  * @callback onSelectScene
- * @description This function is called at each new step of the playing. See [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player} method.
+ * @description This function is called at each new step of the playing. See <b>options.onSelectScene</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> class.
  * @param {number} index current index of the scene of the animation
  * @param {number} t current time
  */
 
 /**
  * @callback onChangeScaleT
- * @description User has updated the time settings. See [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player} method.
+ * @description User has updated the time settings. See <b>options.onChangeScaleT</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> class.
  * @param {object} scale the updated time settings
  */
 
@@ -74,9 +69,9 @@ class Player {
 	 * @class
 	 * @param {THREE.Group|THREE.Scene} group THREE group or scene of the meshes  for playing.
 	 * @param {object} [options] the following options are available
-	 * @param {object} [options.selectPlaySceneOptions] See [Player.selectPlayScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.selectPlayScene} options parameter.
-	 * @param {onSelectScene} [options.onSelectScene] This function is called at each new step of the playing. See [onSelectScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene}.
-	 * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings. See [onChangeScaleT]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onChangeScaleT}.
+	 * @param {object} [options.selectPlaySceneOptions] See <a href="../../player/jsdoc/module-Player-Player.selectPlayScene.html" target="_blank">Player.selectPlayScene</a>.
+	 * @param {onSelectScene} [options.onSelectScene] This function is called at each new step of the playing. See <a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">onSelectScene</a>.
+	 * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings. See <a href="../../player/jsdoc/module-Player.html#~onChangeScaleT" target="_blank">onChangeScaleT</a>.
 	 * @param {object} [options.settings] time settings.
 	 * @param {number} [options.settings.interval=1] Ticks per seconds.
 	 * @param {number} [options.settings.min=0] Animation start time.

@@ -77,21 +77,16 @@ var g_settings,
 	g_selectPlaySceneOptions,
 	THREE;
 
-//use Player.isCreated()
-//	g_boPlayer = false;//true - player is created
-
-//	selectSceneIndex = 0;//for guiSelectPoint
-
 /**
  * @callback onSelectScene
- * @description This function is called at each new step of the playing. See [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player} method.
+ * @description This function is called at each new step of the playing. See &lt;b>options.onSelectScene&lt;/b> parameter of the &lt;a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player&lt;/a> class.
  * @param {number} index current index of the scene of the animation
  * @param {number} t current time
  */
 
 /**
  * @callback onChangeScaleT
- * @description User has updated the time settings. See [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player} method.
+ * @description User has updated the time settings. See &lt;b>options.onChangeScaleT&lt;/b> parameter of the &lt;a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player&lt;/a> class.
  * @param {object} scale the updated time settings
  */
 
@@ -102,9 +97,9 @@ class Player {
 	 * @class
 	 * @param {THREE.Group|THREE.Scene} group THREE group or scene of the meshes  for playing.
 	 * @param {object} [options] the following options are available
-	 * @param {object} [options.selectPlaySceneOptions] See [Player.selectPlayScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.selectPlayScene} options parameter.
-	 * @param {onSelectScene} [options.onSelectScene] This function is called at each new step of the playing. See [onSelectScene]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onSelectScene}.
-	 * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings. See [onChangeScaleT]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~onChangeScaleT}.
+	 * @param {object} [options.selectPlaySceneOptions] See &lt;a href="../../player/jsdoc/module-Player-Player.selectPlayScene.html" target="_blank">Player.selectPlayScene&lt;/a>.
+	 * @param {onSelectScene} [options.onSelectScene] This function is called at each new step of the playing. See &lt;a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">onSelectScene&lt;/a>.
+	 * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings. See &lt;a href="../../player/jsdoc/module-Player.html#~onChangeScaleT" target="_blank">onChangeScaleT&lt;/a>.
 	 * @param {object} [options.settings] time settings.
 	 * @param {number} [options.settings.interval=1] Ticks per seconds.
 	 * @param {number} [options.settings.min=0] Animation start time.
@@ -1037,7 +1032,7 @@ Player.cameraTarget = class {
 
 		/**
 		 * Set a target point, what camera is look at.
-		 * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
+		 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
 		*/
 		this.setTarget = function ( mesh ) {
 
@@ -1063,7 +1058,7 @@ Player.cameraTarget = class {
 		}
 		/**
 		 * Change target.
-		 * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
+		 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
 		 * @param {number} i index of the point.
 		 */
 		this.changeTarget = function ( mesh, i ) {
@@ -1078,7 +1073,7 @@ Player.cameraTarget = class {
 			//			camera = cameraTarget.camera;
 
 			//Update cameraTarget
-			const func = mesh.userData.player.arrayFuncs[i];
+			const func = typeof mesh.userData.player.arrayFuncs === "function" ? {} : mesh.userData.player.arrayFuncs[i];
 			if ( !func.cameraTarget )
 				func.cameraTarget = { boLook: false };
 			setCameraTarget( func.cameraTarget );
@@ -1149,7 +1144,8 @@ Player.cameraTarget = class {
 						return;//Камере не нужно следить за выбранной точкой или ни одна точка не определена как target
 
 					}
-						
+					
+					distanceToCameraCur.copy( cameraTarget.distanceToCameraCur );
 					const t = Player.getTime();
 					camera.position.copy( cameraTarget.distanceToCameraCur );
 					camera.position.applyAxisAngle( cameraTarget.rotation.axis, Player.execFunc( cameraTarget.rotation, 'angle', t ) );
@@ -1158,7 +1154,7 @@ Player.cameraTarget = class {
 						if ( Player.orbitControls ) target = Player.orbitControls.target;
 						else {
 
-							console.warn( 'Under constaction' );
+							//console.warn( 'Under constaction' );
 							return;
 
 						}
@@ -1169,12 +1165,17 @@ Player.cameraTarget = class {
 //					if ( Player.orbitControls &amp;&amp; !Player.orbitControls.target.equals( target ) )
 					if ( Player.orbitControls ) {
 
-						Player.orbitControls.target.copy( target );
+						if ( !Player.orbitControls.target.equals( target ) ) {
+
+							Player.orbitControls.target.copy( target );
+							if ( Player.orbitControlsGui )
+								Player.orbitControlsGui.setTarget( target );
+
+						}
 						Player.orbitControls._listeners.change[0]();//move frustumpoints
-						if ( Player.orbitControlsGui )
-							Player.orbitControlsGui.setTarget( target );
 
 					}
+					if ( Player.cameraGui ) Player.cameraGui.update();
 
 				}
 
@@ -1343,7 +1344,7 @@ palette = new palette();
 
 /** @namespace
  * @description Select a scene for playing of the mesh
- * @param {THREE.Mesh} mesh [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for playing.
+ * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for playing.
  * @param {number} [t=0] time
  * @param {number} [index=0] index of the time.
  * @param {object} [options={}] the following options are available:
@@ -1557,7 +1558,7 @@ Player.selectMeshPlayScene = function ( mesh, t, index, options ) {
 	var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
 	if ( ( selectedPointIndex !== -1 ) &amp;&amp; options.guiSelectPoint.isSelectedMesh( mesh ) ) {
 
-		options.guiSelectPoint.setPosition( getObjectPosition( mesh, selectedPointIndex ), {
+		options.guiSelectPoint.setPosition( /*getObjectPosition( mesh, selectedPointIndex ), */{
 
 			object: mesh,
 			index: selectedPointIndex,
@@ -1570,7 +1571,7 @@ Player.selectMeshPlayScene = function ( mesh, t, index, options ) {
 
 /** @namespace
  * @description set color attribute
- * @param {Object} attributes geometry.attributes of the mesh
+ * @param {Object} attributes [geometry.attributes]{@link https://threejs.org/docs/index.html?q=geometry#api/en/core/BufferGeometry.attributes} of the mesh
  * @param {number} i index of the color in the color attribute array.
  * @param {THREE.Color} color color.
  * @returns true - success
@@ -2177,7 +2178,7 @@ Player.traceLine = class traceLine
 
 		/**
 		 * add point into trace line.
-		 * @param {THREE.Mesh} mesh. See [mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for tracing.
+		 * @param {THREE.Mesh} mesh. See [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for tracing.
 		 * @param {number} index of the point for tracing.
 		 * @param {THREE.Color} color. Line color. See [Color]{@link https://threejs.org/docs/index.html#api/en/math/Color}.
 		 */
@@ -2454,7 +2455,7 @@ Player.selectPlayScene = function( group, t = 0, index ) {
 	//приуслвии что не выбрана ни одна точка как cameraTarget
 	if ( cameraTarget &amp;&amp; cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition( index === undefined );
 
-	if ( Player.cameraGui ) Player.cameraGui.update();
+//	if ( Player.cameraGui ) Player.cameraGui.update();
 
 }
 /** @namespace
@@ -2671,7 +2672,7 @@ export default Player;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Mar 27 2021 10:21:59 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 19 2021 13:47:29 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
