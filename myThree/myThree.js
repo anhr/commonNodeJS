@@ -154,8 +154,11 @@ class MyThree {
 	 * @param {THREE.Vector3} [options.camera.scale=new THREE.Vector3( 1, 1, 1 )] camera scale.
 	 * @param {THREE.Scene} [options.scene] [Scene]{@link https://threejs.org/docs/index.html#api/en/scenes/Scene}.
 	 * @param {THREE.Vector3} [options.scene.position=new THREE.Vector3( 0, 0, 0 )] scene position.
-	 * @param {object} [options.orbitControls] use orbit controls allow the camera to orbit around a target. [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}
-	 * @param {boolean} [options.orbitControls.gui=false] true - displays the orbit controls gui.
+	 * @param {Object|boolean} [options.orbitControls={}] {} - use [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls} allow the camera to orbit around a target.
+	 * <pre>
+	 * false - no orbit controls.
+	 * </pre>
+	 * @param {boolean} [options.orbitControls.gui=true] true - displays the <a href="../../jsdoc/OrbitControlsGui/index.html" target="_blank">orbit controls gui</a>.
 	 * @param {Object|boolean} [options.axesHelper={}] {} - add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
 	 * <pre>
 	 * false - axes is not visible.
