@@ -1152,6 +1152,7 @@ Player.cameraTarget = class {
 						Player.orbitControls._listeners.change[0]();//move frustumpoints
 
 					}
+					if ( Player.cameraGui ) Player.cameraGui.update();
 
 				}
 
@@ -2431,7 +2432,7 @@ Player.selectPlayScene = function( group, t = 0, index ) {
 	//приуслвии что не выбрана ни одна точка как cameraTarget
 	if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition( index === undefined );
 
-	if ( Player.cameraGui ) Player.cameraGui.update();
+//	if ( Player.cameraGui ) Player.cameraGui.update();
 
 }
 /** @namespace
