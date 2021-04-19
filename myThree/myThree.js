@@ -985,6 +985,7 @@ if ( typeof Player !== 'undefined' )
 					( options.canvas !== undefined ) && ( options.canvas.height !== undefined ) ? options.canvas.height : canvas.clientHeight );
 
 				//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+				if ( options.orbitControls !== false )  options.orbitControls = options.orbitControls || {};
 				if ( options.orbitControls ) {
 
 					controls = new OrbitControls( camera, renderer.domElement );
@@ -1203,14 +1204,17 @@ if ( typeof Player !== 'undefined' )
 
 					//OrbitControls gui
 
-					if ( ( options.orbitControls !== undefined ) && ( options.orbitControls.gui ) ) {
+//					if ( ( options.orbitControls !== undefined ) && ( options.orbitControls.gui ) )
+					if ( options.orbitControls !== false ) {
 
-						Player.orbitControlsGui = new OrbitControlsGui( fOptions, controls, {
+						if ( options.orbitControls.gui !== false ) options.orbitControls.gui = options.orbitControls.gui || true;
+						if ( options.orbitControls.gui )
+							Player.orbitControlsGui = new OrbitControlsGui( fOptions, controls, {
 
-							getLanguageCode: getLanguageCode,
-							scales: options.scales,
+								getLanguageCode: getLanguageCode,
+								scales: options.scales,
 
-						} );
+							} );
 
 					}
 
