@@ -1131,7 +1131,7 @@ Player.cameraTarget = class {
 						if ( Player.orbitControls ) target = Player.orbitControls.target;
 						else {
 
-							console.warn( 'Under constaction' );
+							//console.warn( 'Under constaction' );
 							return;
 
 						}
