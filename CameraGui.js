@@ -168,7 +168,7 @@ class CameraGui {
 
 			if ( isNaN( value ) ) return;
 			if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.distanceToCameraCur[axisName] = value;
-			const cameraTarget = Player.cameraTarget.get();
+//			const cameraTarget = Player.cameraTarget.get();
 			cameraTarget.distanceToCameraCur[axisName] = value;
 			cameraTarget.setCameraPosition();
 			update();
@@ -267,8 +267,10 @@ class CameraGui {
 
 			const cameraTarget = Player.cameraTarget.get();
 			
+/*не помню зачем это поставил
 			if ( !cameraTarget.boLook || !cameraTarget.target )
 				return;
+*/				
 
 			if ( controllersPosition.x ) controllersPosition.x.setValue( camera.position.x );
 			if ( controllersPosition.y ) controllersPosition.y.setValue( camera.position.y );
@@ -284,29 +286,19 @@ class CameraGui {
 			funcFolder.setFunction( cameraTarget.distanceToCamera );
 
 		}
-		if ( this ) {
+//		if ( this ) {
 
 			/**
 			 * Update camera controls.
-			 * @function CameraGui.
-			 * update
 			 */
 			this.update = function () { update(); }
-			/* *
-			 * Is camera look at selected point?
-			 * @function CameraGui.
-			 * isLook
-			 */
-//			this.isLook = function () { return controllerLook.getValue(); }
 			/**
 			 * Look at selected point
-			 * @function CameraGui.
-			 * look
 			 * @param {boolean} [boLook=true] true - look at selected point
 			 */
 			this.look = function ( boLook = true ) { if ( controllerLook.getValue() !== boLook ) controllerLook.setValue( boLook ); }
 
-		}
+//		}
 
 	}
 
