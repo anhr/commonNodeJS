@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: execFunc</title>
+    <title>JSDoc: Class: PlayController</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: execFunc</h1>
+    <h1 class="page-title">Class: PlayController</h1>
 
     
 
@@ -28,8 +28,9 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-Player.html">Player</a><a href="module-Player-Player.html">~Player</a>.</span>execFunc<span class="signature">(funcs, axisName, t, a<span class="signature-attributes">opt</span>, b<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>PlayController<span class="signature">(gui, getLanguageCode<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description">playController class for using in my version of <a href="https://github.com/anhr/dat.gui">dat.gui</a> for animate of 3D objects in my projects.</div>
         
     
 </header>
@@ -40,16 +41,16 @@
         
 
     
+    <h2>Constructor</h2>
+    
 
+    
+    <h4 class="name" id="PlayController"><span class="type-signature"></span>new PlayController<span class="signature">(gui, getLanguageCode<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
 
 
-
-<div class="description">
-    execute function
-</div>
 
 
 
@@ -88,13 +89,13 @@
 
         <tr>
             
-                <td class="name"><code>funcs</code></td>
+                <td class="name"><code>gui</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">THREE.Vector4</span>
+<span class="param-type">GUI</span>
 
 
             
@@ -116,90 +117,20 @@
                 </td>
             
 
-            <td class="description last">vector of the functions for executing.</td>
+            <td class="description last"><a href="https://github.com/anhr/dat.gui">new dat.GUI(...)</a>. Folder for controller</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>axisName</code></td>
+                <td class="name"><code>getLanguageCode</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">axis name of the function for executing. Can be as "x", "y", "z", "w".</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>t</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">time. First parameter of the function for executing.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>a</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
+<span class="param-type">function</span>
 
 
             
@@ -220,51 +151,12 @@
             
                 <td class="default">
                 
-                    1
+                    "en"
                 
                 </td>
             
 
-            <td class="description last">multiplier. Second parameter of the function for executing.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>b</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last">addendum. Third parameter of the function for executing.</td>
+            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.Default returns the 'en' is English language.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
         </tr>
 
     
@@ -305,7 +197,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1426">line 1426</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line462">line 462</a>
     </li></ul></dd>
     
 
@@ -330,16 +222,6 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    function execution value.
-</div>
-
-
-
-    
 
 
 
@@ -347,6 +229,17 @@
 
     
     </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li>dat.controllers.CustomController.</li>
+    </ul>
+
 
     
 
