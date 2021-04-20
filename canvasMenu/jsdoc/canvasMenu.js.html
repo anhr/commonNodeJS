@@ -41,8 +41,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-//import { lang } from '../index.js';
-import { lang } from '../controllerPlay/index.js';
+//import { lang } from '../controllerPlay/index.js';
 
 //import { create as dropdownMenuCreate } from '../DropdownMenu/index.js';
 import DropdownMenu from '../DropdownMenu/dropdownMenu.js';
@@ -58,7 +57,7 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
  */
 
 /**
- * Create [dropdown menu]{@link https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu} for canvas in my [three.js]{@link https://threejs.org/} projects.
+ * @class Create [dropdown menu]{@link https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu} for canvas in my [three.js]{@link https://threejs.org/} projects.
  * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
  * @param {object} [options] the following options are available
  * @param {Array} [options.menu] menu array. See &lt;b>arrayMenu&lt;/b> of the [DropdownMenu.create]{@link https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/jsdoc/module-DropdownMenu.html#~create}
@@ -68,7 +67,8 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
  * @param {onFullScreen} options.fullScreen.camera [THREE.PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
  * @param {THREE} options.fullScreen.THREE THREE {@link https://github.com/anhr/three.js|THREE}.
  * @param {onFullScreenToggle} [options.fullScreen.onFullScreenToggle] user toggled fullscreen mode of the canvas.
- * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
+ * @param {boolean} [options.fullScreen.fullScreen] true - default canvas size is full screen.
+ * @param {Function} [options.getLanguageCode="en"] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
  */
 function CanvasMenu( renderer, options ) {
 	
@@ -89,16 +89,6 @@ function CanvasMenu( renderer, options ) {
 	}
 	const container = "container";
 	if ( !elContainer.classList.contains( "container" ) ) elContainer.classList.add( "container" );
-//		canvasMenu = this;
-/*	
-	const elCanvas = elContainer.querySelector( 'canvas' );
-	if ( !elCanvas ){
-
-		console.error( 'CanvasMenu: elCanvas = ' + elCanvas );
-		return;
-		
-	}
-*/
 	options.menu = options.menu || [];
 
 	/**
@@ -109,56 +99,20 @@ function CanvasMenu( renderer, options ) {
 	 */
 	this.menu = options.menu;
 
-//	var menuItemStereoEffect;
-//	var stereoEffect, spatialMultiplexsIndexs;
 	if ( options.stereoEffect !== undefined ) {
 
 		options.stereoEffect.createCanvasMenuItem( this, { getLanguageCode: options.getLanguageCode } );
-/*
-		menuItemStereoEffect = options.stereoEffect.createCanvasMenuItem( this, { getLanguageCode: options.getLanguageCode } );
-		options.menu.push( menuItemStereoEffect );
-*/		
 
 	}
 	
 	if ( options.player !== undefined ) { options.player.createCanvasMenuItem( this ); }
 
 	CreateFullScreenSettings.RendererSetSize( renderer, this );
-/*	
-	//resize
-	renderer.setSizeOld = renderer.setSize;
-	renderer.setSize = function ( width, height, updateStyle ) {
-
-		renderer.setSizeOld( width, height, updateStyle );
-		const elCanvas = renderer.domElement, elContainer = elCanvas.parentElement;
-
-		setTimeout( function () {
-
-			elContainer.style.height = elCanvas.style.height;
-			elContainer.style.width = elCanvas.style.width;
-			elContainer.style.left = elCanvas.style.left;
-			elContainer.style.top = elCanvas.style.top;
-			elContainer.style.position = elCanvas.style.position;
-			canvasMenu.setSize( width, height );
-
-		}, 0 );
-
-	};
-*/	
-//	renderer.setSize( renderer.domElement.width, renderer.domElement.height );
 
 	//Full Screen button
 	var fullScreenSettings;
 	if ( options.fullScreen !== undefined ) {
 
-/*
-		if ( !options.fullScreen.renderer ) {
-
-			console.error( 'CanvasMenu: options.fullScreen.renderer = ' + options.fullScreen.renderer );
-			return;
-			
-		}
-*/
 		if ( !options.fullScreen.camera ) {
 
 			console.error( 'CanvasMenu: options.fullScreen.camera = ' + options.fullScreen.camera );
@@ -172,11 +126,9 @@ function CanvasMenu( renderer, options ) {
 				fullScreen: options.fullScreen,
 
 			} );
-//		fullScreenSettings.setFullScreen( true );
+		if ( options.fullScreen.fullScreen ) fullScreenSettings.setFullScreen();
 
 		/**
-		 * @function canvasMenu.
-		 * getFullScreenSettings
 		 * @param {StereoEffect} stereoEffect [StereoEffect]{@link https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md}.
 		 * @returns Set &lt;b>stereoEffect&lt;/b> to &lt;b>fullScreenSettings&lt;/b> and returns &lt;b>fullScreenSettings&lt;/b>.
 		 */
@@ -246,6 +198,7 @@ function CanvasMenu( renderer, options ) {
 		 */
 		this.setFullScreenButton = function ( fullScreen ) {
 
+			if ( fullScreen === undefined ) fullScreen = options.fullScreen.fullScreen;
 			const elMenuButtonFullScreen = elContainer.querySelector( '#menuButtonFullScreen' );//document.getElementById( 'menuButtonFullScreen' );
 			if ( elMenuButtonFullScreen === null )
 				return true;
@@ -313,73 +266,6 @@ function CanvasMenu( renderer, options ) {
 		}
 
 	}
-	/*Не выводится в jsdoc*
-	 * Changes the "max" value of the slider of the player's menu. Moves [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html} to the first scene.
-	 * @function canvasMenu.
-	 * onChangeScale
-	 * @param {Object} scale See &lt;b>options.settings&lt;/b> of the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
-	 */
-/*	 
-	this.onChangeScale = function ( scale ) {
-
-		if ( options.player === undefined )
-			return;
-		elSlider.max = scale.marks - 1;
-		options.player.selectScene( 0 );
-
-	}
-*/	
-	/*не выводится в jsdoc*
-	 * Sets the [SteroEffect]{@link https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md} mode.
-	 * @function canvasMenu.
-	 * setSpatialMultiplexs
-	 * @param {number} mode Available modes see in [StereoEffect.spatialMultiplexsIndexs]{@link https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/module-StereoEffect.html#~spatialMultiplexsIndexs}.
-	 */
-/*	 
-	this.setSpatialMultiplexs = function ( mode ) {
-
-		menuItemStereoEffect.items.forEach( function ( item ) {
-
-			if ( item.spatialMultiplex === mode ) {
-
-				if ( !item.checked ) {
-
-					item.elName.onclick( { target: item.elName });
-
-				}
-
-			}
-
-		} );
-
-	}
-*/	
-	/*не выводится в jsdoc*
-	 * Sets the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
-	 * @function canvasMenu.
-	 * setPlayer
-	 * @param {Player} player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
-	 */
-	/*
-	this.setPlayer = function ( player ) {
-
-		options.player = player;
-		player.controllers.push( this );
-		elSlider.value = 0;
-
-	}
-	*/
-	if ( options.player !== undefined )
-		options.player.pushController( this );
-	var elMenu;//, elSlider;//, sliderTitle = lang.animateSceneId;//'Animate scene id ';
-/*
-	if ( fullScreenSettings )
-		fullScreenSettings.setFullScreen( true );
-*/
-/*
-		fullScreenSettings.setSize( ( elCanvas !== undefined ) &amp;&amp; ( elCanvas.width !== undefined ) ? elCanvas.width : elCanvas.clientWidth,
-			( elCanvas !== undefined ) &amp;&amp; ( elCanvas.height !== undefined ) ? elCanvas.height : elCanvas.clientHeight );
-*/
 	const size = { set: function( width, height ) { this.x = width; this.y = height } };//new options.THREE.Vector2();
 	renderer.getSize( size );
 	this.setSize( size.x, size.y );
@@ -396,13 +282,13 @@ export default CanvasMenu;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-CanvasMenu.html">CanvasMenu</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-CanvasMenu.html">CanvasMenu</a></li></ul><h3>Classes</h3><ul><li><a href="module-CanvasMenu-CanvasMenu.html">CanvasMenu</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Oct 16 2020 17:50:57 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Apr 21 2021 05:54:59 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

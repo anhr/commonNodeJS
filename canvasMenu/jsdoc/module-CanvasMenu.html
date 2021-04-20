@@ -139,6 +139,13 @@
     
 
     
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="module-CanvasMenu-CanvasMenu.html">CanvasMenu</a></dt>
+            <dd></dd>
+        </dl>
+    
 
     
 
@@ -150,645 +157,6 @@
 
     
         <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="~CanvasMenu"><span class="type-signature">(inner) </span>CanvasMenu<span class="signature">(renderer, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Create <a href="https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu">dropdown menu</a> for canvas in my <a href="https://threejs.org/">three.js</a> projects.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>renderer</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE.WebGLRenderer</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer">THREE.WebGLRenderer</a>.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">the following options are available
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>menu</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">menu array. See <b>arrayMenu</b> of the <a href="https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/jsdoc/module-DropdownMenu.html#~create">DropdownMenu.create</a></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>stereoEffect</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">new <a href="https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md">StereoEffect(...)</a>.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>player</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">new <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html">Player(...)</a>. Playing of 3D ojbects in my projects.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>fullScreen</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Add a "Full Screen" button
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>camera</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">onFullScreen</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">THREE.PerspectiveCamera</a>.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>THREE</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">THREE <a href="https://github.com/anhr/three.js">THREE</a>.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>onFullScreenToggle</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">onFullScreenToggle</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">user toggled fullscreen mode of the canvas.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>getLanguageCode</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">returns the "primary language" subtag of the version of the browser. Default returns "en" is English</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line45">line 45</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="~canvasMenu.getFullScreenSettings"><span class="type-signature">(inner) </span>canvasMenu.getFullScreenSettings<span class="signature">(stereoEffect)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>stereoEffect</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">StereoEffect</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><a href="https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md">StereoEffect</a>.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line149">line 149</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Set <b>stereoEffect</b> to <b>fullScreenSettings</b> and returns <b>fullScreenSettings</b>.
-</div>
-
-
-
-    
-
-
-
-
 
         
             
@@ -844,7 +212,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line161">line 161</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line113">line 113</a>
     </li></ul></dd>
     
 
@@ -987,7 +355,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line195">line 195</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line147">line 147</a>
     </li></ul></dd>
     
 
@@ -1134,7 +502,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line167">line 167</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line119">line 119</a>
     </li></ul></dd>
     
 
@@ -1271,7 +639,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line212">line 212</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line164">line 164</a>
     </li></ul></dd>
     
 
@@ -1408,7 +776,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line245">line 245</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line198">line 198</a>
     </li></ul></dd>
     
 
@@ -1547,7 +915,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line27">line 27</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line26">line 26</a>
     </li></ul></dd>
     
 
@@ -1591,13 +959,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-CanvasMenu.html">CanvasMenu</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-CanvasMenu.html">CanvasMenu</a></li></ul><h3>Classes</h3><ul><li><a href="module-CanvasMenu-CanvasMenu.html">CanvasMenu</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Oct 16 2020 17:50:57 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Apr 21 2021 05:54:59 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

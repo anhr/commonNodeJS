@@ -13,8 +13,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-//import { lang } from '../index.js';
-import { lang } from '../controllerPlay/index.js';
+//import { lang } from '../controllerPlay/index.js';
 
 //import { create as dropdownMenuCreate } from '../DropdownMenu/index.js';
 import DropdownMenu from '../DropdownMenu/dropdownMenu.js';
@@ -30,7 +29,7 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
  */
 
 /**
- * Create [dropdown menu]{@link https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu} for canvas in my [three.js]{@link https://threejs.org/} projects.
+ * @class Create [dropdown menu]{@link https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu} for canvas in my [three.js]{@link https://threejs.org/} projects.
  * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
  * @param {object} [options] the following options are available
  * @param {Array} [options.menu] menu array. See <b>arrayMenu</b> of the [DropdownMenu.create]{@link https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/jsdoc/module-DropdownMenu.html#~create}
@@ -102,8 +101,6 @@ function CanvasMenu( renderer, options ) {
 		if ( options.fullScreen.fullScreen ) fullScreenSettings.setFullScreen();
 
 		/**
-		 * @function canvasMenu.
-		 * getFullScreenSettings
 		 * @param {StereoEffect} stereoEffect [StereoEffect]{@link https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md}.
 		 * @returns Set <b>stereoEffect</b> to <b>fullScreenSettings</b> and returns <b>fullScreenSettings</b>.
 		 */
@@ -241,73 +238,6 @@ function CanvasMenu( renderer, options ) {
 		}
 
 	}
-	/*Не выводится в jsdoc*
-	 * Changes the "max" value of the slider of the player's menu. Moves [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html} to the first scene.
-	 * @function canvasMenu.
-	 * onChangeScale
-	 * @param {Object} scale See <b>options.settings</b> of the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
-	 */
-/*	 
-	this.onChangeScale = function ( scale ) {
-
-		if ( options.player === undefined )
-			return;
-		elSlider.max = scale.marks - 1;
-		options.player.selectScene( 0 );
-
-	}
-*/	
-	/*не выводится в jsdoc*
-	 * Sets the [SteroEffect]{@link https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md} mode.
-	 * @function canvasMenu.
-	 * setSpatialMultiplexs
-	 * @param {number} mode Available modes see in [StereoEffect.spatialMultiplexsIndexs]{@link https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/module-StereoEffect.html#~spatialMultiplexsIndexs}.
-	 */
-/*	 
-	this.setSpatialMultiplexs = function ( mode ) {
-
-		menuItemStereoEffect.items.forEach( function ( item ) {
-
-			if ( item.spatialMultiplex === mode ) {
-
-				if ( !item.checked ) {
-
-					item.elName.onclick( { target: item.elName });
-
-				}
-
-			}
-
-		} );
-
-	}
-*/	
-	/*не выводится в jsdoc*
-	 * Sets the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
-	 * @function canvasMenu.
-	 * setPlayer
-	 * @param {Player} player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
-	 */
-	/*
-	this.setPlayer = function ( player ) {
-
-		options.player = player;
-		player.controllers.push( this );
-		elSlider.value = 0;
-
-	}
-	*/
-	if ( options.player !== undefined )
-		options.player.pushController( this );
-	var elMenu;//, elSlider;//, sliderTitle = lang.animateSceneId;//'Animate scene id ';
-/*
-	if ( fullScreenSettings )
-		fullScreenSettings.setFullScreen( true );
-*/
-/*
-		fullScreenSettings.setSize( ( elCanvas !== undefined ) && ( elCanvas.width !== undefined ) ? elCanvas.width : elCanvas.clientWidth,
-			( elCanvas !== undefined ) && ( elCanvas.height !== undefined ) ? elCanvas.height : elCanvas.clientHeight );
-*/
 	const size = { set: function( width, height ) { this.x = width; this.y = height } };//new options.THREE.Vector2();
 	renderer.getSize( size );
 	this.setSize( size.x, size.y );
