@@ -623,18 +623,7 @@ player.gui( gui, {
 <a name="datGuiPlayerControl"></a>
 ### Add player control buttons to the [dat.gui](https://github.com/anhr/dat.gui).
 
-First, import <b>controllerPlay</b>.
-```
-import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import controllerPlay from './commonNodeJS/master/controllerPlay/controllerPlay.js';
-```
-Add player control buttons.
-```
-controllerPlay.create( player, gui );
-```
+new player.PlayController( gui, getLanguageCode );
 
 <a name="datGuiCamera"></a>
 ### Using [dat.gui](https://github.com/anhr/dat.gui) for manual change of the <b>camera</b> settings.
