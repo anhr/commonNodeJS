@@ -71,8 +71,8 @@
 		import CanvasMenu from '../../canvasMenu/canvasMenu.js';
 		//import CanvasMenu from 'http://localhost/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 
-		import controllerPlay from '../../controllerPlay/controllerPlay.js';
-		//import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
+//		import controllerPlay from '../../controllerPlay/controllerPlay.js';
+//		import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
 
 		//import { OrbitControls } from 'http://localhost/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
@@ -693,8 +693,11 @@
 						cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
 
 					} );
+					new player.PlayController( gui, getLanguageCode );
+/*
 					if ( typeof controllerPlay !== 'undefined' )
 						controllerPlay.create( player, gui );
+*/
 
 				}
 

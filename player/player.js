@@ -17,26 +17,24 @@ import cookie from '../cookieNodeJS/cookie.js';
 import ScaleController from '../ScaleController.js';
 import PositionController from '../PositionController.js';
 import { dat } from '../dat/dat.module.js';
+import { controllers } from '../dat.gui/CustomController/build/dat.gui.module.js';
 
-import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
+import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
+//import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
 import ColorPicker from '../colorpicker/colorpicker.js';
 //import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
-//ColorPicker.palette.setTHREE( THREE );
 
-import { lang } from '../controllerPlay/index.js';
-
-//import { SpriteText } from '../../../SpriteText/master/SpriteText.js';//https://github.com/anhr/SpriteText
+//import { lang } from '../controllerPlay/index.js';
 
 import Cookie from '../cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
 //import Cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
-import { getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
-
-//import CameraGui from '../CameraGui.js';
-//import CameraGui from 'http://localhost/anhr/commonNodeJS/master/CameraGui.js';
+//import { getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
+import { getWorldPosition, getPositionSetTHREE } from '../getPosition.js';
+getPositionSetTHREE( THREE );
 
 var g_settings,
 
@@ -227,7 +225,7 @@ class Player {
 
 			if ( ( controller.object !== undefined ) && ( controller.object.playRate !== undefined ) )
 				controller.object.playRate = g_settings.min;
-			controllers.push( controller );
+			this.controllers.push( controller );
 
 		}
 
@@ -235,11 +233,11 @@ class Player {
 
 		this.controllers = [];
 		var playing = false, time, timeNext;
-		const controllers = this.controllers;
+//		const controllers = this.controllers;
 
 		function RenamePlayButtons() {
 
-			controllers.forEach( function ( controller ) { if ( controller.onRenamePlayButtons ) controller.onRenamePlayButtons( playing ); } );
+			Player.player.controllers.forEach( function ( controller ) { if ( controller.onRenamePlayButtons ) controller.onRenamePlayButtons( playing ); } );
 
 		}
 
@@ -361,8 +359,10 @@ class Player {
 		this.getSelectSceneIndex = function () { return selectSceneIndex; }
 
 		/**
-		 * Event of the changing of the rate of changing of animation scenes per second.
-		 * @param {number} value new rate
+		 * User has pressed the <b>Repeat</b> button of the <a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html" target="_blank">Player.PlayController</a>.
+		 * @event
+		 * @param {boolean} value true - repeat is off
+		 * <p>false - repeat is on</p>
 		 */
 		this.onChangeRepeat = function ( value ) {
 
@@ -438,6 +438,276 @@ class Player {
 
 			}
 			return lang;
+
+		}
+
+		//PlayController localization
+
+		const lang = {
+
+			prevSymbol: '←',
+			prevSymbolTitle: 'Go to previous animation scene',
+			nextSymbol: '→',
+			nextSymbolTitle: 'Go to next animation scene',
+			playSymbol: '►',
+			playTitle: 'Play',
+			pause: '❚❚',
+			pauseTitle: 'Pause',
+			repeat: '⥀',
+			repeatOn: 'Turn repeat on',
+			repeatOff: 'Turn repeat off',
+			controllerTitle: 'Current time.',
+/*
+					fullScreen: 'Full Screen',
+					nonFullScreen: 'Non Full Screen',
+*/
+			stereoEffects: 'Stereo effects',
+			mono: 'Mono',
+			sideBySide: 'Side by side',
+			topAndBottom: 'Top and bottom',
+
+		};
+		function localization( getLanguageCode ) {
+			switch ( getLanguageCode() ) {
+
+				case 'ru'://Russian language
+					lang.prevSymbolTitle = 'Кадр назад';//'Go to previous animation scene',
+					lang.playTitle = 'Проиграть';//'Play'
+					lang.nextSymbolTitle = 'Кадр вперед';//'Go to next animation scene';
+					lang.pauseTitle = 'Пауза';//'Pause',
+					lang.repeatOn = 'Повторять проигрывание';
+					lang.repeatOff = 'Остановить повтор проигрывания';
+					lang.controllerTitle = 'Текущее время.';
+					/*
+											lang.fullScreen = 'На весь экран';
+											lang.nonFullScreen = 'Восстановить размеры экрана';
+					*/
+					lang.stereoEffects = 'Стерео эффекты';
+					lang.mono = 'Моно';
+					lang.sideBySide = 'Слева направо';
+					lang.topAndBottom = 'Сверху вниз';
+
+					break;
+
+			}
+
+		}
+		/** <a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html" target="_blank">PlayController</a> localization
+		* @param {Function} [getLanguageCode="en"] Your custom getLanguageCode() function.
+		* <pre>
+		* returns the "primary language" subtag of the language version of the browser.
+		* Examples: "en" - English language, "ru" Russian.
+		* See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
+		* Default returns the 'en' is English language.
+		* You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
+		* </pre>
+	    * @returns Names and titles of the <b>PlayController</b> controls
+		*/
+		this.localization = function ( getLanguageCode = function() { return 'en' } ) {
+
+			localization( getLanguageCode );
+			return lang;
+
+		}
+
+		this.PlayController = class extends controllers.CustomController {
+
+			/**
+			 * @class playController class for using in my version of [dat.gui]{@link https://github.com/anhr/dat.gui} for animate of 3D objects in my projects.
+			 * @extends dat.controllers.CustomController. See [CustomController.js]{@link https://github.com/anhr/commonNodeJS/blob/master/dat.gui/CustomController/src/dat/controllers/CustomController.js}
+			 * @param {GUI} gui [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}. Folder for controller
+			 * @param {Function} [getLanguageCode="en"] Your custom getLanguageCode() function.
+			 * <pre>
+			 * returns the "primary language" subtag of the language version of the browser.
+			 * Examples: "en" - English language, "ru" Russian.
+			 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
+			 * Default returns the 'en' is English language.
+			 * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
+			 * </pre>
+			 */
+			constructor( gui, getLanguageCode = function () { return "en"; } ) {
+
+				const player = Player.player;
+
+				localization( getLanguageCode );
+
+				function addButton( innerHTML, title, onclick ) {
+
+					const button = document.createElement( 'span' );
+					button.innerHTML = innerHTML;
+					button.title = title;
+					button.style.cursor = 'pointer';
+					button.style.margin = '0px 2px';
+					button.onclick = onclick;
+					return button;
+
+				}
+
+				var _getGroup, _selectScene, _renamePlayButtons, _renameRepeatButtons, _repeat;//,_playNext, timerId, _prev, _play, _next;
+				const colorOff = 'rgb(255,255,255)', colorOn = 'rgb(128,128,128)';//'rgb(200,200,200)';
+
+				super( {
+
+					playRate: 1,//Default play rate is 1 changes per second
+					property: function ( customController ) {
+
+						var buttons = {};
+						function RenamePlayButtons( innerHTML, title ) {
+
+							buttons.buttonPlay.innerHTML = innerHTML;
+							buttons.buttonPlay.title = title;
+
+						}
+						_renamePlayButtons = RenamePlayButtons;
+
+						buttons.buttonPrev = addButton( lang.prevSymbol, lang.prevSymbolTitle, player.prev );
+						buttons.buttonPlay = addButton( lang.playSymbol, lang.playTitle, player.play3DObject );
+
+						if ( player.getOptions().settings.max !== null ) {
+
+							//Repeat button
+
+							function RenameRepeatButtons( isRepeat ) {
+
+								var title, color;
+								if ( isRepeat ) {
+
+									title = lang.repeatOff;
+									color = colorOff;
+
+								} else {
+
+									title = lang.repeatOn;
+									color = colorOn;
+
+								}
+
+								if ( buttons.buttonRepeat.title === title )
+									return;//stop of infinite recursive call
+
+								buttons.buttonRepeat.title = title;
+								buttons.buttonRepeat.style.color = color;
+
+								player.onChangeRepeat( isRepeat );
+
+							}
+							_renameRepeatButtons = RenameRepeatButtons;
+							function repeat( value ) {
+
+								RenameRepeatButtons( buttons.buttonRepeat.title === lang.repeatOn );
+
+							}
+							_repeat = repeat;
+							var title, color;
+							if ( player.getOptions().repeat ) {
+
+								title = lang.repeatOff;
+								color = colorOff;
+
+							} else {
+
+								title = lang.repeatOn;
+								color = colorOn;
+
+							}
+							buttons.buttonRepeat = addButton( lang.repeat, title, repeat );
+							buttons.buttonRepeat.style.color = color;
+
+						}
+						buttons.buttonNext = addButton( lang.nextSymbol, lang.nextSymbolTitle, player.next );
+						function getGroup() {
+
+							return group;
+
+						}
+						_getGroup = getGroup;
+
+						return buttons;
+
+					},
+
+				}, 'playRate' );//, 1, 25, 1 );
+				player.PlayController = this;
+				this.lang = lang;
+				
+				/**
+				 * User has pressed the <b>Play</b> button. Rename the <b>Play</b> putton.
+				 * @event
+				 * @param {boolean} playing true - name is "❚❚"
+				 * <p>false = name is "►"
+				 */
+				this.onRenamePlayButtons = function ( playing ) {
+
+					var name, title;
+					if ( playing ) {
+
+						name = lang.pause;
+						title = lang.pauseTitle;
+
+					} else {
+
+						name = lang.playSymbol;
+						title = lang.playTitle;
+
+					}
+					_renamePlayButtons( name, title, true );
+
+				}
+				/**
+				 * User has pressed the <b>Repeat</b> button.
+				 * @event
+				 */
+				this.onChangeRepeat = function () {
+
+					_renameRepeatButtons( player.getOptions().settings.repeat );
+
+				}
+				player.pushController( this );
+/*				
+				this.onChange = function ( value ) {
+
+					player.setTime( value );
+
+				}
+*/
+/*
+				this.getGroup = function () {
+
+					return _getGroup();
+
+				}
+*/
+/*
+				this.selectScene = function ( index ) {
+
+					_selectScene( parseInt( index ) );
+
+				}
+*/				
+				/**
+				 * @param {number} value current time of the playing
+				 */
+				this.setValue = function ( value ) {
+
+					this._controller.domElement.childNodes[0].value = value;
+
+				}
+
+				const controler = gui.add( this );
+				//что бы можно было вводить цифры после запятой
+				controler.__truncationSuspended = true;
+
+			}
+			set controller( newController ) {
+
+				this._controller = newController;
+				var _this = this;
+				this._controller.onChange( function ( value ) { _this.onChange( value ); } );
+				this._controller.domElement.title = this.lang.controllerTitle;
+
+			}
+			get controller() { return this._controller; }
+//			get lang() { return this.lang; }
 
 		}
 
@@ -657,11 +927,20 @@ class Player {
 		/**
 		 * Adds a Player's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
 		 * @param {CanvasMenu} canvasMenu [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
+		* @param {Function} [getLanguageCode="en"] Your custom getLanguageCode() function.
+		* <pre>
+		* returns the "primary language" subtag of the language version of the browser.
+		* Examples: "en" - English language, "ru" Russian.
+		* See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
+		* Default returns the 'en' is English language.
+		* You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
+		* </pre>
 		 */
-		this.createCanvasMenuItem = function ( canvasMenu ) {
+		this.createCanvasMenuItem = function ( canvasMenu, getLanguageCode = function() { return 'en' } ) {
 
 			_canvasMenu = canvasMenu;
-			const player = this, menu = canvasMenu.menu;
+
+			const player = this, menu = canvasMenu.menu, lang = Player.player.localization( getLanguageCode );//Player.player.PlayController.lang;
 
 			//Previous button
 			menu.push( {
@@ -710,7 +989,7 @@ class Player {
 
 			} );
 
-			controllers.push( {
+			this.controllers.push( {
 
 				/* *
 				 * Renames the "Play" button of the player's menu.
@@ -805,7 +1084,7 @@ class Player {
 		 */
 		this.setIndex = function ( index, title ) {
 
-			if ( this.PlayController ) this.PlayController.setValue( this.getTime() );
+			if ( typeof this.PlayController === "object" ) this.PlayController.setValue( this.getTime() );
 			const elSlider = getSliderElement();
 			if ( elSlider ) {
 

@@ -23,6 +23,8 @@ import Cookie from '../cookieNodeJS/cookie.js';
 import clearThree from '../clearThree.js';
 import { dat } from '../dat/dat.module.js';
 
+import { getWorldPosition, getPositionSetTHREE } from '../getPosition.js';
+
 //memory limit
 //import roughSizeOfObject from '../../commonNodeJS/master/SizeOfObject.js';
 
@@ -91,6 +93,8 @@ class FrustumPoints
 	 * @param {string} [optionsShaderMaterial.cookieName="FrustumPoints"] Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.
 	 */
 	constructor( THREE, camera, group, renderer, options, optionsShaderMaterial = {} ) {
+
+		getPositionSetTHREE( THREE );
 
 		const _arrayCloud = []//Массив координат точек, имеющих облако вокруг себя
 							//координаты точек сгруппированы в группы отдельно для каждого THREE.Points
@@ -408,8 +412,7 @@ class FrustumPoints
 					for ( var i = 0; i < mesh.geometry.attributes.position.count; i++ ) {
 
 						const point = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize );
-//						point.w /= options.scales.w.max;
-						this.cloudPoints.updateItem( mesh.userData.cloud.indexArray + i, MyThree.getWorldPosition( mesh, point ) );
+						this.cloudPoints.updateItem( mesh.userData.cloud.indexArray + i, getWorldPosition( mesh, point ) );
 
 					}
 

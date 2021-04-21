@@ -961,7 +961,9 @@ import { SpriteText } from '../SpriteText/SpriteText.js';
 //import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
 SpriteText.setTHREE( THREE );
 
-import { getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
+import { getObjectPosition, getPositionSetTHREE } from '../getPosition.js';
+getPositionSetTHREE( THREE );
+//import { getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
 /** @namespace

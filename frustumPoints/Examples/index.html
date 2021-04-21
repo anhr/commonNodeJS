@@ -20,12 +20,14 @@
 
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
 
-		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+		//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
+		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
 
 		//import FrustumPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/frustumPoints.js';
 		import FrustumPoints from '../frustumPoints.js';
@@ -50,12 +52,17 @@
 			} );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
-			controls = new OrbitControls( camera, renderer.domElement );
-			controls.target.set( 0, 0, 0 );
-			controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-			controls.update();
+			if ( typeof OrbitControls !== 'undefined' ) {
 
-			new FrustumPoints( THREE, camera, scene, renderer );
+				controls = new OrbitControls( camera, renderer.domElement );
+				controls.target.set( 0, 0, 0 );
+				controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
+				controls.update();
+
+			}
+
+			if ( typeof FrustumPoints !== 'undefined' )
+				new FrustumPoints( THREE, camera, scene, renderer );
 
 			window.addEventListener( 'resize', onWindowResize, false );
 

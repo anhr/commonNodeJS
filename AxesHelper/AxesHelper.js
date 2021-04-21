@@ -18,8 +18,12 @@ import { SpriteText } from '../SpriteText/SpriteText.js';
 import clearThree from '../clearThree.js';
 //import clearThree from 'https://raw.githack.com/anhr/commonNodeJS/master/clearThree.js';
 
-import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
+import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
+//import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+
+import { getObjectPosition, getPositionSetTHREE } from '../getPosition.js';
+//getPositionSetTHREE( THREE );
 
 
 /**

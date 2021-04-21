@@ -43,17 +43,15 @@ import OrbitControlsGui from '../OrbitControlsGui.js';
 import loadScript from '../loadScriptNodeJS/loadScript.js';
 import { dat } from '../dat/dat.module.js';
 
-import controllerPlay from '../controllerPlay/controllerPlay.js';
+//import controllerPlay from '../controllerPlay/controllerPlay.js';
 //import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
 
-import {
-
-	GuiSelectPoint,
-	getWorldPosition,
-
-} from '../guiSelectPoint/guiSelectPoint.js';
-
+//import { GuiSelectPoint, getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
+import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
 GuiSelectPoint.setTHREE( THREE );
+
+import { getWorldPosition, getPositionSetTHREE } from '../getPosition.js';
+getPositionSetTHREE( THREE );
 
 import PositionController from '../PositionController.js';
 
@@ -796,9 +794,9 @@ if ( typeof Player !== 'undefined' )
 
 				}
 
-				//PlayController https://github.com/anhr/controllerPlay. My custom controller in my version of dat.gui https://github.com/anhr/dat.gui for playing of 3D objects in my projects.
-
-				if ( options.player !== undefined ) {
+				//My custom controller for playing of 3D objects.
+				if ( options.player !== false )  options.player = options.player || {};
+				if ( options.player ) {
 
 					player = new Player( group, {
 
@@ -836,7 +834,8 @@ if ( typeof Player !== 'undefined' )
 					} );
 					if ( gui !== undefined ) {
 
-						controllerPlay.create( player, gui );
+						new player.PlayController( gui, getLanguageCode );
+//						controllerPlay.create( player, gui );
 
 					}
 
