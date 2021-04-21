@@ -75,3 +75,13 @@ Generating a website:
 	jsdoc "..\commonNodeJS\master\functionsFolder.js" -d "..\commonNodeJS\master\jsdoc\functionsFolder"
 
 	/////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////
+	//CreateFullScreenSettings doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\CreateFullScreenSettings"
+
+	jsdoc "..\commonNodeJS\master\createFullScreenSettings.js" -d "..\commonNodeJS\master\jsdoc\CreateFullScreenSettings"
+
+	/////////////////////////////////////////////////////////////
+	
