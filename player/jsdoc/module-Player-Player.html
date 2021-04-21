@@ -761,7 +761,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line89">line 89</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line83">line 83</a>
     </li></ul></dd>
     
 
@@ -919,7 +919,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1012">line 1012</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1032">line 1032</a>
     </li></ul></dd>
     
 
@@ -1007,7 +1007,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1032">line 1032</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1052">line 1052</a>
     </li></ul></dd>
     
 
@@ -1053,7 +1053,7 @@
     
 
     
-    <h4 class="name" id="createCanvasMenuItem"><span class="type-signature"></span>createCanvasMenuItem<span class="signature">(canvasMenu)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="createCanvasMenuItem"><span class="type-signature"></span>createCanvasMenuItem<span class="signature">(canvasMenu, getLanguageCode<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1085,7 +1085,11 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1110,10 +1114,61 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><a href="https://github.com/anhr/commonNodeJS/tree/master/canvasMenu">CanvasMenu</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>getLanguageCode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    "en"
+                
+                </td>
+            
+
+            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.Default returns the 'en' is English language.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
         </tr>
 
     
@@ -1154,7 +1209,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line917">line 917</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line936">line 936</a>
     </li></ul></dd>
     
 
@@ -1238,7 +1293,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line358">line 358</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line352">line 352</a>
     </li></ul></dd>
     
 
@@ -1332,7 +1387,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line362">line 362</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line356">line 356</a>
     </li></ul></dd>
     
 
@@ -1430,7 +1485,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line150">line 150</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line144">line 144</a>
     </li></ul></dd>
     
 
@@ -1806,7 +1861,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line725">line 725</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line736">line 736</a>
     </li></ul></dd>
     
 
@@ -1831,6 +1886,173 @@
 
 
 
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="localization"><span class="type-signature"></span>localization<span class="signature">(getLanguageCode<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html" target="_blank">PlayController</a> localization
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>getLanguageCode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    "en"
+                
+                </td>
+            
+
+            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.Default returns the 'en' is English language.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line503">line 503</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Names and titles of the <b>PlayController</b> controls
+</div>
+
+
+
+    
 
 
 
@@ -1894,7 +2116,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line209">line 209</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line203">line 203</a>
     </li></ul></dd>
     
 
@@ -2031,7 +2253,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1079">line 1079</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1099">line 1099</a>
     </li></ul></dd>
     
 
@@ -2119,7 +2341,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line301">line 301</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line295">line 295</a>
     </li></ul></dd>
     
 
@@ -2207,7 +2429,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line218">line 218</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line212">line 212</a>
     </li></ul></dd>
     
 
@@ -2344,7 +2566,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line227">line 227</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line221">line 221</a>
     </li></ul></dd>
     
 
@@ -2432,7 +2654,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line348">line 348</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line342">line 342</a>
     </li></ul></dd>
     
 
@@ -2569,7 +2791,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line176">line 176</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line170">line 170</a>
     </li></ul></dd>
     
 
@@ -2729,7 +2951,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1062">line 1062</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1082">line 1082</a>
     </li></ul></dd>
     
 
@@ -2866,7 +3088,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line166">line 166</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line160">line 160</a>
     </li></ul></dd>
     
 
@@ -3011,7 +3233,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line370">line 370</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line364">line 364</a>
     </li></ul></dd>
     
 
@@ -3059,7 +3281,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Apr 20 2021 09:54:51 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Apr 21 2021 08:36:26 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
