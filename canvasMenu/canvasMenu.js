@@ -108,7 +108,7 @@ function CanvasMenu( renderer, options ) {
 
 	}
 	
-	if ( options.player !== undefined ) { options.player.createCanvasMenuItem( this ); }
+	if ( options.player !== undefined ) { options.player.createCanvasMenuItem( this, getLanguageCode ); }
 
 	CreateFullScreenSettings.RendererSetSize( renderer, this );
 
