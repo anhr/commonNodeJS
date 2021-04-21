@@ -150,7 +150,6 @@
 				} );
 
 			}
-//			createMenu();
 
 			//Light
 
@@ -193,7 +192,6 @@
 
 			//dat-gui JavaScript Controller Library
 			//https://github.com/dataarts/dat.gui
-	//			var gui = new dat.GUI();
 			var gui = new dat.GUI( {
 
 				autoPlace: false,
@@ -222,14 +220,12 @@
 			points.position.copy( new THREE.Vector3( 0.1, 0.2, 0 ) );
 			points.scale.copy( new THREE.Vector3( 2, 2, 1 ) );
 			points.userData.color = points.material.color;
-			//			scene.add( points );
 			group.add( points );
 
 			//cubes
 
 			function addCube( cubePosition, color ) {
 
-//				var cube = new THREE.Mesh( new ConvexBufferGeometry( new THREE.BoxGeometry( 0.4, 0.4, 0.4 ).vertices ),
 				var cube = new THREE.Mesh( new THREE.BoxGeometry( 0.4, 0.4, 0.4 ),
 					new THREE.MeshLambertMaterial( {
 						color: color,
