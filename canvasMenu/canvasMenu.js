@@ -45,6 +45,37 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
 function CanvasMenu( renderer, options ) {
 	
 	options = options || {};
+
+	//Localization
+
+	const lang = {
+		fullScreen: 'Full Screen',
+		nonFullScreen: 'Non Full Screen',
+	}
+
+	const getLanguageCode = options.getLanguageCode || function () { return "en"; };
+	switch ( getLanguageCode() ) {
+
+		case 'ru'://Russian language
+			lang.prevSymbolTitle = 'Кадр назад';//'Go to previous animation scene',
+			lang.playTitle = 'Проиграть';//'Play'
+			lang.nextSymbolTitle = 'Кадр вперед';//'Go to next animation scene';
+			lang.pauseTitle = 'Пауза';//'Pause',
+			lang.repeatOn = 'Повторять проигрывание';
+			lang.repeatOff = 'Остановить повтор проигрывания';
+			lang.controllerTitle = 'Текущее время.';
+			/*
+									lang.fullScreen = 'На весь экран';
+									lang.nonFullScreen = 'Восстановить размеры экрана';
+			*/
+			lang.stereoEffects = 'Стерео эффекты';
+			lang.mono = 'Моно';
+			lang.sideBySide = 'Слева направо';
+			lang.topAndBottom = 'Сверху вниз';
+
+			break;
+
+	}
 	
 	if ( options.THREE && ( renderer instanceof options.THREE.WebGLRenderer !== true ) ){
 
@@ -101,8 +132,8 @@ function CanvasMenu( renderer, options ) {
 		if ( options.fullScreen.fullScreen ) fullScreenSettings.setFullScreen();
 
 		/**
-		 * @param {StereoEffect} stereoEffect [StereoEffect]{@link https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md}.
-		 * @returns Set <b>stereoEffect</b> to <b>fullScreenSettings</b> and returns <b>fullScreenSettings</b>.
+		 * @param {StereoEffect} stereoEffect <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
+		 * @returns Set <b>stereoEffect</b> to <b>fullScreenSettings</b> and returns <a href="../../jsdoc/CreateFullScreenSettings/index.html" target="_blank">fullScreenSettings</a>.
 		 */
 		this.getFullScreenSettings = function( stereoEffect ) {
 
@@ -111,15 +142,11 @@ function CanvasMenu( renderer, options ) {
 
 		}
 		/**
-		 * @function canvasMenu.
-		 * isFullScreen
 		 * @returns <b>true</b> if <b>canvas</b> is full screen.
 		 */
 		this.isFullScreen = function () { return fullScreenSettings.isFullScreen(); }
 		/**
 		 * Sets the full screen of the canvas.
-		 * @function canvasMenu.
-		 * setFullScreen
 		 * @param {boolean} fullScreen false - full screen of the canvas.
 		 */
 		this.setFullScreen = function ( fullScreen ) { return fullScreenSettings.setFullScreen( fullScreen ); }
@@ -136,7 +163,7 @@ function CanvasMenu( renderer, options ) {
 	//Play slider
 	if ( options.player !== undefined ) options.player.addSlider();
 
-	elMenu = DropdownMenu.create( options.menu, {
+	const elMenu = DropdownMenu.create( options.menu, {
 
 		elParent: typeof elContainer === "string" ? document.getElementById( elContainer) : elContainer,
 		canvas: typeof elCanvas === "string" ? document.getElementById( elCanvas ) : elCanvas,
@@ -145,10 +172,8 @@ function CanvasMenu( renderer, options ) {
 	} );
 
 	/**
-	 * @function canvasMenu.
-	 * querySelector
 	 * @param {string} selectors See CSS selectors in [HTML DOM querySelector() Method]{@link https://www.w3schools.com/jsref/met_document_queryselector.asp} for details.
-	 * @returns returns the first element that matches a specified CSS selector(s) in the canvasMenu.
+	 * @returns First element that matches a specified CSS selector(s) in the <b>canvasMenu</b>.
 	 */
 	this.querySelector = function( selectors ){ return elMenu.querySelector( selectors ); }
 	if ( options.onOver !== undefined ) {
@@ -163,8 +188,6 @@ function CanvasMenu( renderer, options ) {
 
 		/**
 		 * Sets the "Full Screen" button. Available only if <b>options.fullScreen</b> is defined.
-		 * @function canvasMenu.
-		 * setFullScreenButton
 		 * @param {boolean} fullScreen true - non full screen.
 		 * <p>false - full screen of the canvas.</p>
 		 */
@@ -197,8 +220,6 @@ function CanvasMenu( renderer, options ) {
 
 	/**
 	 * Sets the size of the slider element of the player's menu.
-	 * @function canvasMenu.
-	 * setSize
 	 * @param {Number} width width of the canvas
 	 */
 	this.setSize = function ( width ) {
