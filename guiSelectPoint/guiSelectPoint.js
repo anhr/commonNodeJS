@@ -821,9 +821,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		point.line.addPoint(
 
-//			getObjectPosition( getMesh(), index ),
 			getMesh(), index,
-//			Player.getSelectSceneIndex(),
 			color
 
 		);
@@ -892,11 +890,9 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					}
 
 				}
-//				fPoints.domElement.parentElement.style.display = displayfPoints;
 				dislayEl( cPoints, displayPoints );
 				if ( cTraceAll ) {
 
-//					cTraceAll.domElement.parentElement.parentElement.style.display = displayPoints;
 					dislayEl( cTraceAll, Player.isCreated() ? displayPoints : false );
 
 				}
@@ -934,10 +930,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			exposePosition();
 			if ( options.frustumPoints )
 				options.frustumPoints.updateCloudPoint( mesh );
-/*			
-			if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
-				options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
-*/				
 
 		},
 			{
@@ -954,10 +946,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			exposePosition();
 			if ( options.frustumPoints )
 				options.frustumPoints.updateCloudPoint( mesh );
-/*			
-			if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
-				options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
-*/				
 
 		}
 		if ( options.scales.x ) {
@@ -1015,10 +1003,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				exposePosition();
 				if ( options.frustumPoints )
 					options.frustumPoints.updateCloudPoint( mesh );
-/*				
-				if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
-					options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
-*/					
 
 			}, { getLanguageCode: getLanguageCode, } ) );
 
@@ -1078,10 +1062,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 						exposePosition();
 					if ( options.frustumPoints !== undefined )
 						options.frustumPoints.updateCloudPoint( mesh );
-/*						
-					if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
-						options.arrayCloud.frustumPoints.updateCloudPoint( mesh );
-*/						
 
 				} );
 			dat.controllerNameAndTitle( cRotations[name], scale.name );
@@ -1143,8 +1123,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			cameraTarget;//здесь хранится cameraTarget когда ни одна точка не выбрана как camera target
 		if ( guiParams.cameraTarget ) Player.cameraTarget.init( guiParams.cameraTarget );
 		const playerCameraTarget = Player.cameraTarget.get();
-//		if ( guiParams.cameraTarget )
-//		if ( Player.cameraTarget2
 		if ( playerCameraTarget ) {
 
 			cCameraTarget = fPoints.add( playerCameraTarget, 'boLook' ).onChange( function ( boLook ) {
@@ -1247,7 +1225,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		if ( guiParams.pointsControls ) {
 
-//			cTraceAll = guiParams.pointsControls( fPoints, dislayEl, getMesh );
 			guiParams.pointsControls( fPoints, dislayEl, getMesh );
 
 		}
@@ -1470,10 +1447,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 							if ( options.frustumPoints )
 								options.frustumPoints.updateCloudPointItem( points, intersection.index );
-/*								
-							if ( ( options.arrayCloud !== undefined ) && ( options.arrayCloud.frustumPoints !== undefined ) )
-								options.arrayCloud.frustumPoints.updateCloudPointItem( points, intersection.index );
-*/								
 
 						} );
 
@@ -1503,7 +1476,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 			} );
 		dat.controllerNameAndTitle( cColor, options.scales.w ? options.scales.w.name : lang.color );
-//		dat.controllerNameAndTitle( cColor, lang.color );
 		cOpacity = fPoint.add( {
 
 			opasity: 1,
@@ -1536,7 +1508,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		if ( guiParams.pointControls ) {
 
-//			cTrace = guiParams.pointControls( fPoint, dislayEl, getMesh, intersection );
 			guiParams.pointControls( fPoint, dislayEl, getMesh, intersection );
 
 		}
@@ -1653,18 +1624,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 			}
 			setValue( controller, Player.execFunc( funcs, axisName, t ) );
-/*			
-			try {
-			
-				setValue( controller, Player.execFunc( funcs, axisName, t ) );
-			
-			} catch ( e ) {
-			
-				alert( e.message );
-				funcFolder.setFocus( axisName );
-			
-			}
-*/
 
 		}, {
 
@@ -1678,34 +1637,6 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	 * get frustum points.
 	 */
 	this.getFrustumPoints = function () { return cFrustumPoints; }
-/*
-	this.windowRange = function ( options ) {
-
-		pointLight1.windowRange( options.scales );
-		pointLight2.windowRange( options.scales );
-
-		cX.min( options.scales.x.min );
-		cX.max( options.scales.x.max );
-		cX.updateDisplay();
-
-		cY.min( options.scales.y.min );
-		cY.max( options.scales.y.max );
-		cY.updateDisplay();
-
-		cZ.min( options.scales.z.min );
-		cZ.max( options.scales.z.max );
-		cZ.updateDisplay();
-
-		if ( cW !== undefined ) {
-
-			cW.min( options.scales.w.min );
-			cW.max( options.scales.w.max );
-			cW.updateDisplay();
-
-		}
-
-	}
-*/
 	return this;
 
 }
