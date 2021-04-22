@@ -54,7 +54,6 @@ class FrustumPoints
 	 * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
 	 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
 	 * @param {THREE.Group} group group of objects to which a new FrustumPoints will be added
-	 * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
 	 * @param {object} options see <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">myThree</a> <b>options</b> parameter for details
 	 * @param {object} [optionsShaderMaterial={}] <b>FrustumPoints</b> options.
 	 * @param {object} [optionsShaderMaterial.point={}] points options.
@@ -93,7 +92,7 @@ class FrustumPoints
 	 * </pre>
 	 * @param {string} [optionsShaderMaterial.cookieName="FrustumPoints"] Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.
 	 */
-	constructor( THREE, camera, group, renderer, options, optionsShaderMaterial = {} ) {
+	constructor( THREE, camera, group, options, optionsShaderMaterial = {} ) {
 
 		getPositionSetTHREE( THREE );
 
@@ -145,8 +144,10 @@ class FrustumPoints
 
 		}
 
-		/** create points */
-		this.create = function () {
+		/** create points
+		 * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
+		 */
+		this.create = function ( renderer ) {
 
 			//если нет точек с облаком, то облако нужно создавать что бы его было видно в guiSelectPoint
 			//однако в этом случае в консоли появятся сообщения:

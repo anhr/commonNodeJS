@@ -1053,12 +1053,10 @@ if ( typeof Player !== 'undefined' )
 				if ( options.frustumPoints ) {
 
 					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
-					options.frustumPoints = new FrustumPoints( THREE, camera,
-						group,// stereoEffect ? stereoEffect.options.spatialMultiplex : undefined,
-						renderer, options,
-						{//points and lines options.Default is { }
+					options.frustumPoints = new FrustumPoints( THREE, camera, group, options,
+						{//points and lines options. Default is { }
 
-							point: {//points options.Default is {}
+							point: {//points options. Default is {}
 
 								size: 0.01,//Size of each frustum point.Default is 0;
 
@@ -1147,7 +1145,7 @@ if ( typeof Player !== 'undefined' )
 
 				createXDobjects( group, options );
 
-				if ( options.frustumPoints ) options.frustumPoints.create();
+				if ( options.frustumPoints ) options.frustumPoints.create( renderer );
 
 				//На случай когда указана точка, за которой следит камера и когда Player не создан
 				if ( !options.player ) {
