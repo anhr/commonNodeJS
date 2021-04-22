@@ -84,7 +84,7 @@ import {
  * </pre>
  * @param {object} [guiParams.lang] Object with localized language values
  * @example
-import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+import GuiSelectPoint from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
 const guiSelectPoint = new GuiSelectPoint( { axesHelper: axesHelper, } );
 guiSelectPoint.add( gui, { getLanguageCode: getLanguageCode, } );
