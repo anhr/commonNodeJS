@@ -12,7 +12,10 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 <html>
 <head>
 	<title>SpriteText</title>
+
 	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
+
 </head>
 <body>
 	<div id="info">
@@ -28,6 +31,7 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
+		//import * as THREE from './three.js/dev/build/three.module.js';
 
 		var camera, scene, renderer;
 

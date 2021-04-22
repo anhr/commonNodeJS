@@ -31,10 +31,13 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 <html>
 <head>
 	<title>Player</title>
+
 	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
 
 	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
 	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">-->
 
 </head>
 <body>
@@ -50,6 +53,7 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 		import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
+		//import * as THREE from './three.js/dev/build/three.module.js';
 
 		var camera, scene, renderer, guiSelectPoint;
 
@@ -650,11 +654,11 @@ new CameraGui( gui, camera, THREE, Player, {
 
 * Import <b>GuiSelectPoint</b>
 ```
-import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+import GuiSelectPoint from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 ```
 or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import { GuiSelectPoint } from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+import GuiSelectPoint from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 ```
 * Create instance of the <b>GuiSelectPoint</b>.
 ```

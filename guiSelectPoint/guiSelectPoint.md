@@ -7,7 +7,7 @@ Add guiSelectPoint into [dat.gui](https://github.com/anhr/dat.gui) for select a 
 
 The easiest way to use GuiSelectPoint in your code is import guiSelectPoint from guiSelectPoint.js file in your JavaScript module.
 ```
-import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+import GuiSelectPoint from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 ```
 or 
 * Create a folder on your localhost named as [folderName].
@@ -27,7 +27,7 @@ import * as THREE from './three.js/dev/build/three.module.js';
 ```
 download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import { GuiSelectPoint, getObjectPosition } from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+import GuiSelectPoint from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 ```
 
 Now you can use GuiSelectPoint in your javascript code.

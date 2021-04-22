@@ -18,10 +18,13 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 <html>
 <head>
 	<title>FrustumPoints</title>
+
 	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
 
 	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
 	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">-->
 
 </head>
 <body>
@@ -37,6 +40,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 		import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
+		//import * as THREE from './three.js/dev/build/three.module.js';
 
 		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
@@ -102,40 +106,3 @@ import FrustumPoints from '../frustumPoints/frustumPoints.js';
 ```
 
 Now you can use <b>FrustumPoints</b> in your javascript code.
-
-
-
-For using please define an array of the points with cloud:
- 
-```
-var arrayCloud = [];
-```
-
-Then you can define:
-
-```
-arrayCloud: options.arrayCloud
-```
-
-on the params of the <b>getShaderMaterialPoints( params, onReady )</b> function.
-
-Or
-
-```
-arrayCloud: options.arrayCloud
-```
-
-on the <b>pointsOptions</b> of the <b>myThreejs.points</b> function.
-
-Or
-
-if <b>points</b> is <b>new THREE.Points(...)</b> then:
-
-```
-if ( options.arrayCloud !== undefined )
-	points.userData.cloud = {
-
-		indexArray: myThreejs.pushArrayCloud( options.arrayCloud, points.geometry ),
-
-	}
-```

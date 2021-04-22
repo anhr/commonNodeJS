@@ -23,7 +23,10 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 <html>
 <head>
 	<title>AxesHelper</title>
+
 	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
+
 </head>
 <body>
 	<div id="info">
@@ -40,6 +43,7 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 		import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+		//import * as THREE from './three.js/dev/build/three.module.js';
 
 		var camera, scene, renderer, stereoEffect, raycaster;
 
