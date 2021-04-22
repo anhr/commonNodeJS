@@ -15,7 +15,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import MyThree from '../myThree/myThree.js';
+//import MyThree from '../myThree/myThree.js';
+import MyPoints from '../myPoints/myPoints.js';
 
 import Cookie from '../cookieNodeJS/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
@@ -759,6 +760,129 @@ class FrustumPoints
 				//Сюда попадает по второму разу если вызвать stereoEffect.gui(...)
 				_points = false;
 
+				//Не могу использвать MyThree.points потому что если import MyThree,
+				//то появляются непонятные косяки в http://localhost/anhr/commonNodeJS/master/frustumPoints/Examples/
+				MyPoints( THREE, function () {
+
+					var geometry = new THREE.BufferGeometry(),
+						geometryLength = ( zEnd - zStart + 1 ) * xCount * yCount;
+
+					array = new Float32Array( geometryLength * itemSize );
+					indexArray = 0;
+					_names = null;
+					_names = [];
+
+					eachZ( zStart, zEnd );
+
+					geometry.setAttribute( 'position', new THREE.BufferAttribute( array, itemSize ) );
+
+					return geometry;
+
+				}, group, {
+
+					options: options,
+					pointsOptions: {
+
+						name: 'frustum points',
+						shaderMaterial: shaderMaterial,
+						boFrustumPoints: true,
+						position: camera.position,
+						scale: camera.scale,
+						rotation: camera.rotation,
+						opacity: true,
+						pointIndexes: function ( pointIndex ) { return _this.pointIndexes( pointIndex ); },
+						path: {
+
+							vertex: path + '/vertex.c',
+
+						},
+						pointName: function ( pointIndex ) {
+
+							var indexes = _this.pointIndexes( pointIndex );
+							if ( indexes === undefined )
+								return indexes;
+							return 'x = ' + indexes.x + ', y = ' + indexes.y + ', z = ' + ( indexes.z + zStart ) + ', i = ' + pointIndex;
+
+						},
+						controllers: function () {
+
+							_guiSelectPoint.appendChild( { xCount: xCount, yCount: yCount, zCount: zCount, } );
+
+						},
+						uniforms: function ( uniforms ) {
+
+							cloud.create( uniforms );
+
+							//rotate the quaternion vector to 180 degrees
+							cameraQuaternionDefault.x = - cameraQuaternionDefault.x;
+							cameraQuaternionDefault.y = - cameraQuaternionDefault.y;
+							cameraQuaternionDefault.z = - cameraQuaternionDefault.z;
+
+							cameraPositionDefault.applyQuaternion( cameraQuaternionDefault );
+
+							uniforms.cameraPositionDefault = { value: cameraPositionDefault };
+							uniforms.cameraQuaternion = { value: camera.quaternion };
+
+							//palette
+							//ВНИМАНИЕ!!! Для того, что бы палитра передалась в vertex надо добавить 
+							//points.material.uniforms.palette.value.needsUpdate = true;
+							//в getShaderMaterialPoints.loadShaderText
+
+							new cloud.addUniforms( THREE.RGBFormat, 256, 'palette', {
+
+								onReady: function ( data, itemSize, updateItem ) {
+
+									var min, max;
+									if ( options.scales.w !== undefined ) {
+
+										min = options.scales.w.min; max = options.scales.w.max;
+
+									} else {
+
+										console.error( 'params.pointsOptions.uniforms: params.options.scales.w = ' + params.options.scales.w );
+										return;
+
+									}
+
+									const size = data.length / itemSize;
+									for ( var i = 0; i < size; i++ )
+										updateItem( i, options.palette.toColor( ( max - min ) * i / ( size - 1 ) + min, min, max ) );
+
+								}
+
+							} );
+							return cloud;
+
+						},
+						onReady: function ( points ) {
+
+							_points = points;
+							//						_points.userData.boFrustumPoints = true;
+							_points.userData.isInfo = function () { return shaderMaterial.info; }
+
+							if ( shaderMaterial.info )
+								options.raycaster.addParticle( _points );
+
+							if ( !shaderMaterial.display )
+								removePoints();
+							pointOpacity = _points === undefined ?
+								1.0 :
+								_points.userData.shaderMaterial === undefined ? shaderMaterial.point.opacity : _points.userData.shaderMaterial.point.opacity;
+
+							if ( onReady !== undefined )
+								onReady();//Пользователь изменил настройки frustumPoints
+
+							//когда задан параметр cameraTarget у MyThree то нужно передвинуть frustumPoints после того как созданы points
+							_this.update();
+
+							if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( _points );
+
+						},
+
+					}
+
+				} );
+/*
 				MyThree.points( //array
 					function () {
 
@@ -875,7 +999,7 @@ class FrustumPoints
 					},
 
 				} );
-
+*/
 
 			}
 			update();
@@ -959,7 +1083,7 @@ class FrustumPoints
 					console.error( 'points.geometry.attributes.position.itemSize = ' + points.geometry.attributes.position.itemSize );
 				//		cloud.updateItem( points.userData.cloud.indexArray + '_' + i,
 				cloud.cloudPoints.updateItem( points.userData.cloud.indexArray + i,
-					MyThree.getWorldPosition( points,
+					getWorldPosition( points,
 						new THREE.Vector4().fromArray( points.geometry.attributes.position.array, i * points.geometry.attributes.position.itemSize ) ),
 					true );
 				needsUpdate();

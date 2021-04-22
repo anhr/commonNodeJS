@@ -40,6 +40,15 @@ import functionsFolder from '../functionsFolder.js';
 
 //import FrustumPoints from '../frustumPoints/frustumPoints.js';
 
+import {
+
+//	getWorldPosition,
+	getObjectPosition,
+	getObjectLocalPosition,
+	getPositionSetTHREE
+
+} from '../getPosition.js';
+
 /**
  * @class A dat.gui based graphical user interface for select a point from the mesh.
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
@@ -91,6 +100,7 @@ guiParams = {
 function GuiSelectPoint( _THREE, guiParams ) {
 
 	GuiSelectPoint.setTHREE( _THREE );
+	getPositionSetTHREE( _THREE );
 
 	guiParams = guiParams || {};
 

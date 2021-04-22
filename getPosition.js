@@ -36,7 +36,7 @@ export function getPositionSetTHREE ( _THREE ) {
  * @param {number} index index of position in the object.geometry.attributes.position
  * @returns position
  */
-function getObjectLocalPosition( object, index ) {
+export function getObjectLocalPosition( object, index ) {
 
 	if ( !THREE ) {
 
