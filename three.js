@@ -66,8 +66,8 @@ class three {
 }
 three = new three();
 
-window.myThree = window.myThree || {};
-window.myThree.three = three;
+window.__myThree__ = window.__myThree__ || {};
+window.__myThree__.three = three;
 
 //появляется сообщение об ошибке если вызвать three.isThree и если _THREE === undefined 
 //потому что непонятно почему вызывается three.get
