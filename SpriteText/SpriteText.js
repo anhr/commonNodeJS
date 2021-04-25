@@ -67,10 +67,12 @@ import three from '../three.js'
  * @param {number} [options.rect.borderRadius=0 is no radius] border corners radius.
  * @see Thanks to {@link https://github.com/vasturiano/three-spritetext|three-spritetext}
  */
-export function SpriteText( text, position = { x: 0, y: 0, z: 0 },//new THREE.Vector3( 0, 0, 0 ),//THREE is not available in example http://localhost/anhr/commonNodeJS/master/SpriteText/Examples/SpriteText.html
+export function SpriteText( text, position,// = new THREE.Vector3( 0, 0, 0 ),//THREE is not defined in example http://localhost/anhr/commonNodeJS/master/SpriteText/Examples/SpriteText.html
 	options = {} ) {
 
 	const THREE = three.THREE;
+
+	position = position || new THREE.Vector3( 0, 0, 0 );
 /*
 	if ( typeof THREE === "undefined" ) {
 
