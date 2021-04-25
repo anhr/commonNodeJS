@@ -67,7 +67,9 @@ class three {
 three = new three();
 
 window.__myThree__ = window.__myThree__ || {};
-window.__myThree__.three = three;
+if ( window.__myThree__.boThree )
+	console.error( 'three: duplicate three. Please use one instance of the three class.' )
+window.__myThree__.boThree = true;
 
 //появляется сообщение об ошибке если вызвать three.isThree и если _THREE === undefined 
 //потому что непонятно почему вызывается three.get
