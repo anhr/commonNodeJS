@@ -13,6 +13,12 @@
  */
 
 import { getLanguageCode } from './lang.js';
+import three from './three.js';
+const common = {
 
-export { getLanguageCode }
+    getLanguageCode: getLanguageCode,
+    three: three,
 
+}
+
+export default common;

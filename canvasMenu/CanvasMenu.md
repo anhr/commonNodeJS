@@ -143,7 +143,7 @@ import StereoEffect from "./commonNodeJS/master/StereoEffect/StereoEffect.js";
 ```
 Now you can use <b>StereoEffect</b> in your code.
 ```
-const stereoEffect = new StereoEffect( THREE, renderer );
+const stereoEffect = new StereoEffect( renderer );
 ```
 Add code into animate function
 ```
@@ -198,7 +198,7 @@ Currently your canvas is not full screen in the stereo mode.
 I think is is bad, because your stereo device can not to display stereo correctly if your canvas is not full screen.
 For resolving of issue please add <b>rememberSize: true</b> key into <b>options</b> parameter of the <b>StereoEffect</b>.
 ```
-const stereoEffect = new StereoEffect( THREE, renderer, { rememberSize: true, } );
+const stereoEffect = new StereoEffect( renderer, { rememberSize: true, } );
 ```
 Now your canvas will be changing to full screen automatically if you choice a stereo mode.
 

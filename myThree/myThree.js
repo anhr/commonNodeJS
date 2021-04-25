@@ -48,15 +48,15 @@ import { dat } from '../dat/dat.module.js';
 
 //import { GuiSelectPoint, getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
 import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
-GuiSelectPoint.setTHREE( THREE );
+//GuiSelectPoint.setTHREE( THREE );
 
-import { getWorldPosition, getPositionSetTHREE } from '../getPosition.js';
-getPositionSetTHREE( THREE );
+import { getWorldPosition } from '../getPosition.js';
+//getPositionSetTHREE( THREE );
 
 import PositionController from '../PositionController.js';
 
 import { SpriteText } from '../SpriteText/SpriteText.js';
-SpriteText.setTHREE( THREE );
+//SpriteText.setTHREE( THREE );
 
 import { SpriteTextGui } from '../SpriteText/SpriteTextGui.js';
 
@@ -74,7 +74,15 @@ import CameraGui from '../CameraGui.js';
 
 import FrustumPoints from '../frustumPoints/frustumPoints.js';
 
-var THREE;
+import three from '../three.js'
+
+/*проверка duplicate THREE
+//import * as THREE2 from 'https://threejs.org/build/three.module.js';
+import * as THREE2 from '../../../three.js/dev/build/three.module.js';
+three.THREE = THREE2;
+*/
+
+//var THREE;
 
 var debug = {
 
@@ -274,11 +282,15 @@ class MyThree {
 	 * </pre>
 	 * <a href="../Examples/html/" target="_blank">Example</a>.
 	 */
-	constructor( _THREE, createXDobjects, options ) {
+	constructor( createXDobjects, options ) {
 
+/*
 		THREE = _THREE;
-
-		Player.setTHREE( THREE );
+		three.THREE = THREE;
+*/		
+		const THREE = three.THREE;
+//		Player.setTHREE( THREE );
+//		Player.assign();
 
 		var myThreejs = this;
 
@@ -321,7 +333,7 @@ class MyThree {
 
 				}
 			}
-			ColorPicker.palette.setTHREE( THREE );
+//			ColorPicker.palette.setTHREE( THREE );
 
 		}
 /*
@@ -551,7 +563,7 @@ if ( typeof Player !== 'undefined' )
 						options.stereoEffect.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
 					if ( StereoEffect !== undefined ) {
 
-						stereoEffect = new StereoEffect( THREE, renderer, {
+						stereoEffect = new StereoEffect( renderer, {
 
 							spatialMultiplex: options.stereoEffect.spatialMultiplex,//StereoEffect.spatialMultiplexsIndexs.Mono, //.SbS,
 							far: camera.far,
@@ -561,11 +573,11 @@ if ( typeof Player !== 'undefined' )
 							rememberSize: true,
 
 						} );
-//						stereoEffect.options.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
+						//						stereoEffect.options.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
 
 					} else console.warn( 'stereoEffect = ' + stereoEffect );
 
-				} else StereoEffect.setTHREE( THREE );
+				} else StereoEffect.assign();//.setTHREE( THREE );
 
 				//Light
 
@@ -1032,7 +1044,7 @@ if ( typeof Player !== 'undefined' )
 
 //					var cookieName = getCanvasName();
 					const gui = options.axesHelper.gui
-					options.axesHelper = new AxesHelper( THREE, scene, {
+					options.axesHelper = new AxesHelper( scene, {
 
 						scene: { position: scene.position, },
 //						scale: options.axesHelper.scale,
@@ -1053,7 +1065,7 @@ if ( typeof Player !== 'undefined' )
 				if ( options.frustumPoints ) {
 
 					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
-					options.frustumPoints = new FrustumPoints( THREE, camera, group, options,
+					options.frustumPoints = new FrustumPoints( camera, group, options,
 						{//points and lines options. Default is { }
 
 							point: {//points options. Default is {}
@@ -1800,7 +1812,7 @@ function findSpriteTextIntersection( scene ) {
  */
 MyThree.points = function ( arrayFuncs, group, options, pointsOptions ) {
 
-	MyPoints( THREE, arrayFuncs, group, { options: options, pointsOptions: pointsOptions } );
+	MyPoints( arrayFuncs, group, { options: options, pointsOptions: pointsOptions } );
 
 }
 /** @namespace */

@@ -14,11 +14,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import * as THREE from 'https://threejs.org/build/three.module.js';
-//import * as THREE from '../../three.js/dev/build/three.module.js';//https://github.com/anhr/three.js;
-//import { THREE } from '../../commonNodeJS/master/three.js';//https://github.com/anhr/commonNodeJS
-//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-var THREE;
+//var THREE;
+import three from '../three.js'
 
 /**
  * A sprite based text component.
@@ -70,16 +67,18 @@ var THREE;
  * @param {number} [options.rect.borderRadius=0 is no radius] border corners radius.
  * @see Thanks to {@link https://github.com/vasturiano/three-spritetext|three-spritetext}
  */
-export function SpriteText( text, position = new THREE.Vector3( 0, 0, 0 ), options = {} ) {
+export function SpriteText( text, position = { x: 0, y: 0, z: 0 },//new THREE.Vector3( 0, 0, 0 ),//THREE is not available in example http://localhost/anhr/commonNodeJS/master/SpriteText/Examples/SpriteText.html
+	options = {} ) {
 
+	const THREE = three.THREE;
+/*
 	if ( typeof THREE === "undefined" ) {
 
 		console.error( 'SpriteText: Please call SpriteText.setTHREE( THREE ) first.' );
 		return;
 		
 	}
-//	position = position || new THREE.Vector3( 0, 0, 0 );
-//	options = options || {};
+*/
 
 	const sprite = new THREE.Sprite( new THREE.SpriteMaterial( {
 
@@ -235,20 +234,21 @@ export function SpriteText( text, position = new THREE.Vector3( 0, 0, 0 ), optio
 
 };
 
-/**
+/* *
  * set THREE
  * @function SpriteText.
  * setTHREE
  * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  */
-SpriteText.setTHREE = function ( _THREE ) { THREE = _THREE; }
+//SpriteText.setTHREE = function ( _THREE ) { THREE = _THREE; }
 
-/**
+/* *
  * get THREE
  * @function SpriteText.
  * getTHREE
  * @returns {@link https://github.com/anhr/three.js|THREE}
  */
+/*
 SpriteText.getTHREE = function () {
 
 	if ( !THREE )
@@ -256,7 +256,7 @@ SpriteText.getTHREE = function () {
 	return THREE;
 
 }
-
+*/
 /**
  * Returns {@link https://threejs.org/docs/index.html#api/en/objects/Sprite.center|center}
  * @function SpriteText.
@@ -273,6 +273,7 @@ SpriteText.getTHREE = function () {
  */
 SpriteText.getCenter = function ( center = {}, position ) {
 
+	const THREE = three.THREE;
 	const canvas = center.canvas ? center.canvas : undefined;
 	/**
 	 * Converting World coordinates to Screen coordinates
@@ -352,6 +353,7 @@ function updateOptions( group, options ) {
 */
 SpriteText.updateSpriteTextGroup = function( group ) {
 
+	const THREE = three.THREE;
 	group.children.forEach( function ( spriteItem ) {
 
 		if ( spriteItem instanceof THREE.Sprite ) {
@@ -365,5 +367,3 @@ SpriteText.updateSpriteTextGroup = function( group ) {
 	} );
 
 }
-
-//export { SpriteText };

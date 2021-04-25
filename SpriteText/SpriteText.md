@@ -88,10 +88,6 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import { SpriteText } from './commonNodeJS/master/SpriteText/SpriteText.js';
 ```
-First, set <b>THREE</b> for <b>SpriteText</b>.
-```
-SpriteText.setTHREE( THREE );
-```
 
 Now you can use <b>SpriteText</b> in your javascript code.
 

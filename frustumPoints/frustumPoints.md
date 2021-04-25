@@ -106,3 +106,7 @@ import FrustumPoints from '../frustumPoints/frustumPoints.js';
 ```
 
 Now you can use <b>FrustumPoints</b> in your javascript code.
+
+```
+const frustumPoints = new FrustumPoints( camera, scene );
+```

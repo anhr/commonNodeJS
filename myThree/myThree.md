@@ -126,11 +126,6 @@ or
 import Player from './commonNodeJS/master/player/build/player.module.min.js';
 ```
 
-Set <b>THREE</b> to <b>Player</b>.
-```
-Player.setTHREE(THREE);
-```
-
 Now you can use <b>Player</b> in your javascript code.
 
 Add <b>Player</b> after creating of the <b>scene</b> and before creation of the <b>renderer</b>.
@@ -313,10 +308,6 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 ```
-Set <b>THREE</b> for palette.
-```
-ColorPicker.palette.setTHREE(THREE);
-```
 Create the <b>options</b> object and define the <b>palette</b> key.
 ```
 const options = { palette: new ColorPicker.palette(), }
@@ -475,7 +466,7 @@ import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 ```
 Example.
 ```
-MyPoints( THREE, arrayFuncs, scene, {
+MyPoints( arrayFuncs, scene, {
 
 	Player: Player,
 	options: options,
@@ -499,7 +490,7 @@ const options = {
 ```
 Edit <b>MyPoints</b>.
 ```
-MyPoints( THREE, arrayFuncs, scene, {
+MyPoints( arrayFuncs, scene, {
 
 	Player: Player,
 	options: options,
@@ -515,7 +506,7 @@ MyPoints( THREE, arrayFuncs, scene, {
 If you want to see the sizes of the points is not depend from distance to camera,
 please add <b>shaderMaterial: {}</b> into <b>pointsOptions</b> of the <b>MyPoints</b> for it.
 ```
-MyPoints( THREE, arrayFuncs, scene, {
+MyPoints( arrayFuncs, scene, {
 
 	Player: Player,
 	options: options,
@@ -532,7 +523,7 @@ MyPoints( THREE, arrayFuncs, scene, {
 ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
 For resolving of the problem please remove <b>player.play3DObject();</b> and include it inside of the <b>MyPoints</b>.
 ```
-MyPoints( THREE, arrayFuncs, scene, {
+MyPoints( arrayFuncs, scene, {
 
 	Player: Player,
 	options: options,
@@ -720,7 +711,7 @@ getShaderMaterialPoints( THREE, scene, arrayFuncs,
 and add <b>guiSelectPoint.addMesh( points );</b> and <b>guiSelectPoint.add( gui );</b>
 lines into <b>onReady</b> function of <b>MyPoints</b>.
 ```
-MyPoints( THREE, arrayFuncs, scene, {
+MyPoints( arrayFuncs, scene, {
 
 	Player: Player,
 	options: options,

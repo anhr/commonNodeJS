@@ -24,7 +24,9 @@ import Cookie from '../cookieNodeJS/cookie.js';
 import clearThree from '../clearThree.js';
 import { dat } from '../dat/dat.module.js';
 
-import { getWorldPosition, getPositionSetTHREE } from '../getPosition.js';
+import { getWorldPosition } from '../getPosition.js';
+
+import three from '../three.js'
 
 //memory limit
 //import roughSizeOfObject from '../../commonNodeJS/master/SizeOfObject.js';
@@ -51,7 +53,6 @@ class FrustumPoints
 {
 	/**
 	 * Create a `FrustumPoints` instance.
-	 * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
 	 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
 	 * @param {THREE.Group} group group of objects to which a new FrustumPoints will be added
 	 * @param {object} options see <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">myThree</a> <b>options</b> parameter for details
@@ -92,9 +93,10 @@ class FrustumPoints
 	 * </pre>
 	 * @param {string} [optionsShaderMaterial.cookieName="FrustumPoints"] Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.
 	 */
-	constructor( THREE, camera, group, options, optionsShaderMaterial = {} ) {
+	constructor( camera, group, options, optionsShaderMaterial = {} ) {
 
-		getPositionSetTHREE( THREE );
+		const THREE = three.THREE;
+//		getPositionSetTHREE( THREE );
 
 		const _arrayCloud = []//Массив координат точек, имеющих облако вокруг себя
 							//координаты точек сгруппированы в группы отдельно для каждого THREE.Points
@@ -763,7 +765,7 @@ class FrustumPoints
 
 				//Не могу использвать MyThree.points потому что если import MyThree,
 				//то появляются непонятные косяки в http://localhost/anhr/commonNodeJS/master/frustumPoints/Examples/
-				MyPoints( THREE, function () {
+				MyPoints( function () {
 
 					var geometry = new THREE.BufferGeometry(),
 						geometryLength = ( zEnd - zStart + 1 ) * xCount * yCount;

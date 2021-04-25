@@ -21,7 +21,8 @@
 //import * as THREE from '../../three.js/dev/build/three.module.js';
 //import { THREE } from './three.js';
 //import * as THREE from 'https://threejs.org/build/three.module.js';
-var THREE;
+//var THREE;
+import three from '../three.js'
 
 import PositionController from '../PositionController.js';
 //import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
@@ -39,7 +40,6 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
 /**
  * @class
  * Uses dual PerspectiveCameras for [Parallax Barrier]{@link https://en.wikipedia.org/wiki/Parallax_barrier} effects
- * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.WebGLRenderer} renderer {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer}
  * @param {Object} [options] the following options are available.
  * @param {Object} [options.spatialMultiplex=spatialMultiplexsIndexs.Mono] spatial multiplex
@@ -65,7 +65,7 @@ import CreateFullScreenSettings from '../createFullScreenSettings.js';
  * Use only if you use {@link https://threejs.org/docs/index.html#api/en/core/Raycaster|THREE.Raycaster} (working out what objects in the 3d space the mouse is over)
  * and your canvas is not full screen.
  */
-function StereoEffect( _THREE, renderer, options ) {
+function StereoEffect( renderer, options ) {
 
 	if( !renderer ) {
 
@@ -73,7 +73,9 @@ function StereoEffect( _THREE, renderer, options ) {
 		return;
 		
 	}
-	setTHREE( _THREE );
+	const THREE = three.THREE;
+//	setTHREE( _THREE );
+	assign();
 	const _this = this;
 
 	options = options || {};
@@ -642,12 +644,13 @@ const spatialMultiplexsIndexs = {
 Object.freeze( spatialMultiplexsIndexs );
 StereoEffect.spatialMultiplexsIndexs = spatialMultiplexsIndexs;
 
-/** @namespace
- * @description set THREE for StereoEffect. Assigh setStereoEffect to [THREE.Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster}
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
+/* * @namespace
+ * @description Assigh setStereoEffect to [THREE.Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster}
  */
-function setTHREE( _THREE ) {
+function assign() {
 
+	const THREE = three.THREE;
+/*
 	if ( THREE ) {
 
 		if ( !Object.is( THREE, _THREE ) )
@@ -657,7 +660,10 @@ function setTHREE( _THREE ) {
 	}
 	THREE = _THREE;
 	SpriteText.setTHREE( THREE );
-
+*/
+	if ( new THREE.Raycaster().setStereoEffect )
+		return;
+		
 	//Modifying of THREE.Raycaster for StereoEffect
 	Object.assign( THREE.Raycaster.prototype, {
 
@@ -703,7 +709,7 @@ function setTHREE( _THREE ) {
 			}
 
 			const stereoEffect = options.stereoEffect !== undefined ? options.stereoEffect : typeof effect !== 'undefined' ? effect :
-				new StereoEffect( THREE, renderer, {
+				new StereoEffect( renderer, {
 
 					spatialMultiplex: spatialMultiplexsIndexs.Mono, //.SbS,
 					far: camera ? camera.far : undefined,
@@ -930,7 +936,8 @@ function setTHREE( _THREE ) {
 	} );
 
 }
-StereoEffect.setTHREE = setTHREE;
+StereoEffect.assign = assign;
+//StereoEffect.setTHREE = setTHREE;
 
 //Localization
 
@@ -959,10 +966,10 @@ switch ( getLanguageCode() ) {
 
 import { SpriteText } from '../SpriteText/SpriteText.js';
 //import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
-SpriteText.setTHREE( THREE );
+//SpriteText.setTHREE( THREE );
 
-import { getObjectPosition, getPositionSetTHREE } from '../getPosition.js';
-getPositionSetTHREE( THREE );
+import { getObjectPosition } from '../getPosition.js';
+//getPositionSetTHREE( THREE );
 //import { getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
@@ -978,6 +985,7 @@ getPositionSetTHREE( THREE );
  */
 StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 
+	const THREE = three.THREE;
 	const position = getObjectPosition( intersection.object, intersection.index ),
 		scales = options.scales || {},
 		isArrayFuncs = (

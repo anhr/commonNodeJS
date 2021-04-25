@@ -35,7 +35,7 @@ const arrayFuncs = [
 	new THREE.Vector3( 0.5, 0.5, 0.5 ),//first point
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//second point
 ];
-MyPoints( THREE, arrayFuncs, scene );
+MyPoints( arrayFuncs, scene );
 ```
 You can see two small white points on your canvas.
 
@@ -50,7 +50,7 @@ const arrayFuncs = [
 	),//first point
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//second point
 ];
-MyPoints( THREE, arrayFuncs, scene, {
+MyPoints( arrayFuncs, scene, {
 
 	options: {
 
@@ -72,14 +72,10 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 ```
-Set <b>THREE</b> for palette.
-```
-ColorPicker.palette.setTHREE(THREE);
-```
 Create a palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette
 and add new <b>palette</b> into <b>options</b> of the <b>MyPoints</b>
 ```
-MyPoints( THREE, arrayFuncs, scene, {
+MyPoints( arrayFuncs, scene, {
 
 	options: {
 
@@ -105,7 +101,7 @@ Create raycaster.
 ```
 //Raycaster.
 
-const stereoEffect = new StereoEffect( THREE, renderer );
+const stereoEffect = new StereoEffect( renderer );
 
 const raycaster = new THREE.Raycaster();
 raycaster.setStereoEffect( {
@@ -122,7 +118,7 @@ raycaster.params.Points.threshold = 0.1;
 Add new <b>raycaster</b> into <b>options</b> of the <b>MyPoints</b>.
 ```
 const cursor = renderer.domElement.style.cursor;
-MyPoints( THREE, arrayFuncs, scene, {
+MyPoints( arrayFuncs, scene, {
 
 	options: {
 		point: { size: 25 },

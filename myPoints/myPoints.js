@@ -14,10 +14,10 @@
 
 import Player from '../player/player.js';
 import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMaterialPoints.js';
+import three from '../three.js'
 
 /**
  * Creating the new points and adding it into group
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {array} arrayFuncs <b>points.geometry.attributes.position</b> array.
  * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
  * @param {THREE.Group} group [Group]{@link https://threejs.org/docs/index.html?q=grou#api/en/objects/Group} for new points.
@@ -93,10 +93,10 @@ import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMateria
  * @param {function(THREE.Points)} [settings.pointsOptions.onReady] Callback function that take as input the <b>new THREE.Points</b>.
  * Fires after creating of the points.
  */
-function MyPoints( THREE, arrayFuncs, group,// Player,
-	settings ) {
+function MyPoints( arrayFuncs, group, settings ) {
 
-	Player.setTHREE(THREE);
+	//	Player.setTHREE( THREE );
+	const THREE = three.THREE;
 	
 	if ( ( typeof arrayFuncs !== 'function' ) && ( arrayFuncs.length === 0 ) )
 		arrayFuncs.push( new THREE.Vector3() );

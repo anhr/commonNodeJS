@@ -36,7 +36,7 @@ Now you can use StereoEffect in your javascript code.
 
 * Create the StereoEffect instance.
 ```
-const stereoEffect = new StereoEffect( THREE, renderer, {
+const stereoEffect = new StereoEffect( renderer, {
 
 	spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 	far: camera.far,

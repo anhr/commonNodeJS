@@ -16,7 +16,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-var THREE;
+//var THREE;
 
 import { dat } from '../dat/dat.module.js';
 //import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
@@ -45,9 +45,10 @@ import {
 //	getWorldPosition,
 	getObjectPosition,
 	getObjectLocalPosition,
-	getPositionSetTHREE
 
 } from '../getPosition.js';
+
+import three from '../three.js'
 
 /**
  * @class A dat.gui based graphical user interface for select a point from the mesh.
@@ -99,8 +100,8 @@ guiParams = {
  */
 function GuiSelectPoint( _THREE, guiParams ) {
 
-	GuiSelectPoint.setTHREE( _THREE );
-	getPositionSetTHREE( _THREE );
+	const THREE = three.THREE;
+//	GuiSelectPoint.setTHREE( _THREE );
 
 	guiParams = guiParams || {};
 
@@ -1651,10 +1652,11 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 }
 
-/**
+/* *
  * set THREE
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  */
+/*
 GuiSelectPoint.setTHREE = function ( _THREE ) {
 
 	if ( THREE ) {
@@ -1667,5 +1669,5 @@ GuiSelectPoint.setTHREE = function ( _THREE ) {
 	THREE = _THREE;
 
 }
-//export { GuiSelectPoint, getWorldPosition, getObjectLocalPosition, getObjectPosition };
+*/
 export default GuiSelectPoint;

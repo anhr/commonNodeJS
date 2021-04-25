@@ -36,6 +36,9 @@
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 
+		import three from '../../three.js'
+		three.THREE = THREE;
+
 		import { dat } from '../../dat/dat.module.js';
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
@@ -54,11 +57,12 @@
 		import Player from '../player.js';
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
-		if ( typeof Player !== 'undefined' )  Player.setTHREE(THREE);
+//		if ( typeof Player !== 'undefined' )  Player.assign();
+//		if ( typeof Player !== 'undefined' )  Player.setTHREE(THREE);
 
 		import ColorPicker from '../../colorpicker/colorpicker.js';
 		//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
-		ColorPicker.palette.setTHREE( THREE );
+//		ColorPicker.palette.setTHREE( THREE );
 
 		//import getShaderMaterialPoints from 'http://localhost/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 		//import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
@@ -460,7 +464,7 @@
 			} else if ( typeof MyPoints !== 'undefined' ) {
 
 				console.log( 'Using MyPoints method for creating of the points.' );
-				MyPoints( THREE, arrayFuncs, scene, {
+				MyPoints( arrayFuncs, scene, {
 
 						Player: typeof Player === 'undefined' ? undefined : Player,
 						options: options,
@@ -479,7 +483,7 @@
 						}
 
 				} );
-				MyPoints( THREE, [
+				MyPoints( [
 						//new THREE.Vector4( 0.3, 0.3, 0.3, 0.3 ),
 						{
 
@@ -615,7 +619,7 @@
 			const cursor = renderer.domElement.style.cursor;
 
 			if ( typeof StereoEffect !== "undefined" ) {
-				stereoEffect = new StereoEffect( THREE, renderer, {
+				stereoEffect = new StereoEffect( renderer, {
 
 					//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 					far: camera.far,

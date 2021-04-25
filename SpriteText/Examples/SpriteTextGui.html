@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>sprite text gui. three.js webgl</title>
@@ -25,14 +25,17 @@
 		//import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
+		import three from '../../three.js'
+		three.THREE = THREE;
+
 		import { dat } from '../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
 		import { SpriteText } from '../SpriteText.js';
 		//import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
 
-		//import { SpriteTextGui } from '../SpriteTextGui.js';
-		import { SpriteTextGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteTextGui.js';
+		import { SpriteTextGui } from '../SpriteTextGui.js';
+		//import { SpriteTextGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteTextGui.js';
 
 		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
 		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
@@ -63,7 +66,7 @@
 			document.body.appendChild( WEBGL.getWebGLErrorMessage() );
 
 		}
-		SpriteText.setTHREE( THREE );
+//		SpriteText.setTHREE( THREE );
 
 		var camera, scene, renderer, effect, scale = 0.1;
 
@@ -189,7 +192,7 @@
 			
 			if ( typeof StereoEffect !== "undefined" ) {
 
-				effect = new StereoEffect( THREE, renderer, {
+				effect = new StereoEffect( renderer, {
 
 					spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.Mono,
 					far: camera.far,

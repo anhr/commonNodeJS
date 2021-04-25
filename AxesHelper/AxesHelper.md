@@ -197,7 +197,7 @@ import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
 
 * Create the <b>StereoEffect</b> instance.
 ```
-stereoEffect = new StereoEffect( THREE, renderer, {
+stereoEffect = new StereoEffect( renderer, {
 
 	//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 	far: camera.far,

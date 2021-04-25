@@ -31,6 +31,8 @@ import Cookie from '../cookieNodeJS/cookie.js';//https://github.com/anhr/commonN
 //import { SpriteText } from './SpriteText.js';
 //import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
 
+import three from '../three.js'
+
 /**
  * Adds SpriteText settings folder into dat.gui.
  * @param {SpriteText} SpriteText A sprite based text component module.
@@ -63,7 +65,8 @@ guiParams = {
  */
 export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 
-	const THREE = SpriteText.getTHREE();
+//	const THREE = SpriteText.getTHREE();
+	const THREE = three.THREE;
 
 	guiParams = guiParams || {};
 	const options = guiParams.options || group.userData.optionsSpriteText || {};

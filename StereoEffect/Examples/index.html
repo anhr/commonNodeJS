@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -27,6 +27,9 @@
 		//import * as THREE from '../../../../three.js/dev/build/three.module.js';
 		//import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+
+		import three from '../../three.js'
+		three.THREE = THREE;
 
 		import { dat } from '../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
@@ -101,7 +104,7 @@
 			const cursor = renderer.domElement.style.cursor;
 			document.body.appendChild( renderer.domElement );
 
-			stereoEffect = new StereoEffect( THREE, renderer, {
+			stereoEffect = new StereoEffect( renderer, {
 
 				spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 				far: camera.far,

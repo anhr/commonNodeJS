@@ -3,10 +3,12 @@
 <html>
 <head>
 	<title>FrustumPoints</title>
-	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
+	<link type="text/css" rel="stylesheet" href="../../../../three.js/dev/examples/main.css">
 
 	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
-	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">-->
+	<link type="text/css" rel="stylesheet" href="../../css/main.css">
 
 </head>
 <body>
@@ -24,6 +26,9 @@
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 		import * as THREE from '../../../../three.js/dev/build/three.module.js';
+
+		import three from '../../three.js'
+		three.THREE = THREE;
 
 		//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
@@ -44,6 +49,8 @@
 
 			scene = new THREE.Scene();
 
+			const frustumPoints = new FrustumPoints( camera, scene );
+
 			renderer = new THREE.WebGLRenderer( {
 
 				antialias: true,
@@ -51,6 +58,7 @@
 
 			} );
 			renderer.setSize( window.innerWidth, window.innerHeight );
+
 
 			if ( typeof OrbitControls !== 'undefined' ) {
 

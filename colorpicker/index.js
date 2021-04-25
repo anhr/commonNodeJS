@@ -19,6 +19,8 @@ import loadScript from '../loadScriptNodeJS/loadScript.js';
 //import loadScript from 'https://raw.githack.com/anhr/commonNodeJS/master/loadScriptNodeJS/loadScript.js';
 //import loadScript from 'http://localhost/anhr/commonNodeJS/master/loadScriptNodeJS/loadScript.js';
 
+import three from '../three.js'
+
 const optionsStyle = {
 
 	//style rel="stylesheet"
@@ -734,12 +736,15 @@ function Palette( options ) {
 	*/
 	this.toColor = function ( value, min, max ) {
 
-		if ( typeof THREE === 'undefined' ){
+		const THREE = three.THREE;
+/*
+		if ( typeof THREE === 'undefined' ) {
 
 			console.error( 'Call ColorPicker.palette.setTHREE(THREE) first.' );
 			return;
 			
 		}
+*/
 		if ( value instanceof THREE.Color )
 			return value;
 		var c = this.hsv2rgb( value, min, max );
@@ -753,13 +758,14 @@ function Palette( options ) {
 
 }
 
-var THREE;
-/**
+//var THREE;
+/* *
  * set THREE
  * @function Palette.
  * setTHREE
  * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
  */
+/*
 Palette.setTHREE = function ( _THREE ) {
 
 	if ( THREE ) {
@@ -772,4 +778,5 @@ Palette.setTHREE = function ( _THREE ) {
 	THREE = _THREE;
 
 }
+*/
 export { paletteIndexes, create, Palette };

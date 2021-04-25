@@ -32,6 +32,7 @@ import { SpriteTextGui } from '../SpriteText/SpriteTextGui.js';
 import { dat } from '../dat/dat.module.js';
 //import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
+import three from '../three.js'
 
 /**
  * Adds AxesHelper settings folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
@@ -75,6 +76,9 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 		return;
 		
 	}
+
+	const THREE = three.THREE;
+/*
 	const THREE = axesHelper.getTHREE();
 	if ( !THREE ) {
 
@@ -83,6 +87,7 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 
 	}
 	SpriteText.setTHREE( THREE );
+*/
 
 	const options = axesHelper.options,
 		optionsDefault = JSON.parse( JSON.stringify( options ) ),

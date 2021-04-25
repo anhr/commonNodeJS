@@ -33,8 +33,10 @@ import Cookie from '../cookieNodeJS/cookie.js';//https://github.com/anhr/commonN
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 //import { getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
-import { getWorldPosition, getPositionSetTHREE } from '../getPosition.js';
-getPositionSetTHREE( THREE );
+import { getWorldPosition } from '../getPosition.js';
+//getPositionSetTHREE( THREE );
+
+import three from '../three.js'
 
 var g_settings,
 
@@ -44,8 +46,8 @@ var g_settings,
 	//потому что сначала загружаются Shader файлы. Поэтому когда вызывается setTimeout( function () { onSelectScene(); }, 0 );
 	//что бы цвет точек был верным еще до начала проигрывания, точки из getShaderMaterialPoints еще не добавлены в группу для проигрывания.
 	//Кроме того цвет точек в getShaderMaterialPoints задается аттрибутом 'ca' а не 'color'.
-	g_selectPlaySceneOptions,
-	THREE;
+	g_selectPlaySceneOptions;
+//	THREE;
 
 /**
  * @callback onSelectScene
@@ -85,13 +87,17 @@ class Player {
 	 */
 	constructor( group, options ) {
 
+//		const THREE = three.THREE;
+		assign();
+/*
 		if ( typeof THREE === 'undefined' ) {
 
-			console.error( 'Call Player.setTHREE(THREE) first.' );
+			console.error( 'Call Player.assign() first.' );
 			return;
 
 		}
-		ColorPicker.palette.setTHREE( THREE );
+*/
+//		ColorPicker.palette.setTHREE( THREE );
 
 		if ( Player.isCreated() ) {
 
@@ -1255,6 +1261,16 @@ Player.cameraTarget = class {
 		}
 		function setCameraTarget( cameraTarget ) {
 
+//			const THREE = three.THREE;
+			assign();
+/*
+			if ( typeof THREE === 'undefined' ) {
+
+				console.error( 'Call Player.assign() first.' );
+				return;
+
+			}
+*/
 			if ( !cameraTarget )
 				cameraTarget = cameraTargetDefault;//У выбранной для слежения точки нет cameraTarget
 			if ( cameraTarget.boLook !== undefined )
@@ -1289,13 +1305,15 @@ Player.cameraTarget = class {
 
 			if ( !mesh.geometry )
 				return;
-
+//			const THREE = three.THREE;
+/*
 			if ( typeof THREE === 'undefined' ) {
 
-				console.error( 'Call Player.setTHREE(THREE) first.' );
+				console.error( 'Call Player.assign() first.' );
 				return;
 
 			}
+*/
 			const arrayFuncs = mesh.userData.player.arrayFuncs;
 			if ( arrayFuncs === undefined )
 				return;
@@ -1314,12 +1332,16 @@ Player.cameraTarget = class {
 		 */
 		this.changeTarget = function ( mesh, i ) {
 
+//			const THREE = three.THREE;
+			assign();
+/*
 			if ( typeof THREE === 'undefined' ) {
 
-				console.error( 'Call Player.setTHREE(THREE) first.' );
+				console.error( 'Call Player.assign() first.' );
 				return;
 
 			}
+*/
 			const cameraTarget = Player.cameraTarget.get();
 			//			camera = cameraTarget.camera;
 
@@ -1344,12 +1366,16 @@ Player.cameraTarget = class {
 		 */
 		this.setCameraTarget = function ( camera, update = false ) {
 
+//			const THREE = three.THREE;
+			assign();
+/*
 			if ( typeof THREE === 'undefined' ) {
 
-				console.error( 'Call Player.setTHREE(THREE) first.' );
+				console.error( 'Call Player.assign() first.' );
 				return;
 
 			}
+*/
 
 			var cameraTarget = Player.cameraTarget.get();
 			if ( !cameraTarget ) cameraTarget = cameraTarget || {};
@@ -1613,12 +1639,17 @@ palette = new palette();
 */
 Player.selectMeshPlayScene = function ( mesh, t, index, options ) {
 
+//	const THREE = three.THREE;
+	assign();
+/*
 	if ( typeof THREE === 'undefined' ) {
 
-		console.error( 'Call Player.setTHREE(THREE) first.' );
+		console.error( 'Call Player.assign() first.' );
 		return;
 
 	}
+*/
+
 	if ( t === undefined ) t = Player.getSettings().min;
 	index = index || 0;
 	options = options || g_selectPlaySceneOptions || {};
@@ -1966,13 +1997,18 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  */
 Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 
+//	const THREE = three.THREE;
+	assign();
+/*
 	if ( typeof THREE === 'undefined' ) {
 
-		console.error( 'Call Player.setTHREE(THREE) first.' );
+		console.error( 'Call Player.assign() first.' );
 		return;
 
 	}
-	GuiSelectPoint.setTHREE( THREE );
+*/
+
+//	GuiSelectPoint.setTHREE( THREE );
 	
 	optionsPoints = optionsPoints || {};
 	if ( optionsPoints.t === undefined ) optionsPoints.t = optionsPoints.options ? optionsPoints.options.player.player.getOptions().settings.min : 0;
@@ -2209,25 +2245,20 @@ var boColorWarning = true;
  * @param {boolean} [optionsColor.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. Default is undefined.
  * @returns array of mesh colors.
  */
-Player.getColors = function ( /*THREE, */arrayFuncs, optionsColor ) {
+Player.getColors = function ( arrayFuncs, optionsColor ) {
 
+//	const THREE = three.THREE;
+	assign();
+/*
 	if ( typeof THREE === 'undefined' ) {
 
-		console.error( 'Call Player.setTHREE(THREE) first.' );
+		console.error( 'Call Player.assign() first.' );
 		return;
 
 	}
-	ColorPicker.palette.setTHREE(THREE);
+*/
+//	ColorPicker.palette.setTHREE(THREE);
 	optionsColor = optionsColor || {};
-/*	
-	if ( !optionsColor.palette ) {
-
-		console.error( 'Player.getColors: Define palette first.' );
-		return;
-
-	}
-*/	
-//	optionsColor.palette = optionsColor.palette || palette.get();
 	
 	if (
 		( optionsColor.positions !== undefined ) &&
@@ -2370,14 +2401,16 @@ Player.traceLine = class traceLine
 
 		var line;
 		const arrayLines = [];//сюда добавляются линии когда max: Infinity,
-
+//		const THREE = three.THREE;
+		assign();
+/*
 		if ( typeof THREE === 'undefined' ) {
 
-			console.error( 'Call Player.setTHREE(THREE) first.' );
+			console.error( 'Call Player.assign() first.' );
 			return;
 
 		}
-		//	if ( !g_settings )
+*/
 		if ( !Player.isCreated() ) {
 
 			console.warn( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
@@ -2658,12 +2691,17 @@ Player.getTime = function () {
  */
 Player.getItemSize = function ( arrayFuncs ) {
 
+//	const THREE = three.THREE;
+	assign();
+/*
 	if ( typeof THREE === 'undefined' ){
 
-		console.error( 'Call Player.setTHREE(THREE) first.' );
+		console.error( 'Call Player.assign() first.' );
 		return;
 
 	}
+*/
+
 	for ( var i = 0; i < arrayFuncs.length; i++ ) {
 
 		var func = arrayFuncs[i];
@@ -2684,9 +2722,7 @@ Player.selectPlayScene = function( group, t = 0, index ) {
 
 	//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
 	//Другими словами если не вызывается Player.getColors
-	ColorPicker.palette.setTHREE( THREE );
-
-//	g_selectPlaySceneOptions = g_selectPlaySceneOptions || {};
+//	ColorPicker.palette.setTHREE( THREE );
 
 	group.userData.t = t;
 	Player.selectMeshPlayScene( group, t, index );//, options );
@@ -2709,12 +2745,13 @@ Player.selectPlayScene = function( group, t = 0, index ) {
 //	if ( Player.cameraGui ) Player.cameraGui.update();
 
 }
-/** @namespace
- * @description set THREE
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
+var THREE;
+/* * @namespace
+ * @description assign some THREE methods
  */
-Player.setTHREE = function ( _THREE ) {
+function assign( ) {
 
+/*
 	if ( THREE ) {
 
 		if ( !Object.is( THREE, _THREE ) )
@@ -2722,75 +2759,85 @@ Player.setTHREE = function ( _THREE ) {
 		return;
 
 	}
-	if ( !THREE ) {
+*/
+	if ( THREE )
+		return;
+/*
+	if ( !three.isThree() )
+		return;
+*/		
+/*
+	try {
 
-		THREE = _THREE;
-		Object.assign( THREE.BufferGeometry.prototype, {
+		THREE = three.THREE;
 
-			setFromPoints: function ( points, itemSize ) {
+	} catch( e ){ return }
+*/
+	THREE = three.THREE;
+	Object.assign( THREE.BufferGeometry.prototype, {
 
-				itemSize = itemSize || 3;
-				var position = [];
+		setFromPoints: function ( points, itemSize ) {
 
-				for ( var i = 0, l = points.length; i < l; i++ ) {
+			itemSize = itemSize || 3;
+			var position = [];
 
-					var point = points[i];
-					position.push( point.x, point.y, point.z || 0 );
-					if ( itemSize >= 4 )
-						position.push( point.w || 0 );
+			for ( var i = 0, l = points.length; i < l; i++ ) {
 
-				}
+				var point = points[i];
+				position.push( point.x, point.y, point.z || 0 );
+				if ( itemSize >= 4 )
+					position.push( point.w || 0 );
 
-				this.setAttribute( 'position', new THREE.Float32BufferAttribute( position, itemSize ) );
+			}
 
-				return this;
+			this.setAttribute( 'position', new THREE.Float32BufferAttribute( position, itemSize ) );
 
-			},
+			return this;
 
-		} );
+		},
 
-		//three.js\dev\src\math\Vector4.js
-		Object.assign( THREE.Vector4.prototype, {
+	} );
 
-			multiply: function ( v ) {
+	//three.js\dev\src\math\Vector4.js
+	Object.assign( THREE.Vector4.prototype, {
 
-				this.x *= v.x;
-				this.y *= v.y;
-				this.z *= v.z;
-				//		this.w *= v.w || 1;
-				if ( v.w !== undefined )
-					this.w *= v.w;
+		multiply: function ( v ) {
 
-				return this;
+			this.x *= v.x;
+			this.y *= v.y;
+			this.z *= v.z;
+			//		this.w *= v.w || 1;
+			if ( v.w !== undefined )
+				this.w *= v.w;
 
-			},
+			return this;
 
-		} );
-		//three.js\dev\src\math\Vector4.js
-		Object.assign( THREE.Vector4.prototype, {
+		},
 
-			add: function ( v, w ) {
+	} );
+	//three.js\dev\src\math\Vector4.js
+	Object.assign( THREE.Vector4.prototype, {
 
-				if ( w !== undefined ) {
+		add: function ( v, w ) {
 
-					console.warn( 'THREE.Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
-					return this.addVectors( v, w );
+			if ( w !== undefined ) {
 
-				}
+				console.warn( 'THREE.Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				return this.addVectors( v, w );
 
-				this.x += v.x;
-				this.y += v.y;
-				this.z += v.z;
-				if ( v.w !== undefined )
-					this.w += v.w;
+			}
 
-				return this;
+			this.x += v.x;
+			this.y += v.y;
+			this.z += v.z;
+			if ( v.w !== undefined )
+				this.w += v.w;
 
-			},
+			return this;
 
-		} );
+		},
 
-	}
+	} );
 	//three.js\dev\src\objects\Points.js
 	Object.assign( THREE.Points.prototype, {
 
@@ -2905,5 +2952,6 @@ Player.setTHREE = function ( _THREE ) {
 	} );
 
 }
+//Player.assign();
 
 export default Player;

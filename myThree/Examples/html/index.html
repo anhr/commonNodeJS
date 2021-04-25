@@ -38,6 +38,9 @@
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 
+		import three from '../../../three.js'
+		three.THREE = THREE;
+
 		import MyThree from '../../myThree.js';
 
 		import { WEBGL } from '../../../../../three.js/dev/examples/jsm/WebGL.js';
@@ -52,7 +55,7 @@
 
 		const tMin = 0;
 
-		new MyThree( THREE, function ( group, options ) {
+		new MyThree( function ( group, options ) {
 
 			var arrayFuncs;//, sizes;
 
