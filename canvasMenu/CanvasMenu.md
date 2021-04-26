@@ -27,6 +27,12 @@ My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 		//import * as THREE from './three.js/dev/build/three.module.js';
 
+		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
+		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
+		//Uncomment line below if you want use local commonNodeJS library in your project.
+		//import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
 		const scene = new THREE.Scene();
 		const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
@@ -58,6 +64,8 @@ My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu
 </body>
 </html>
 ```
+NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
+
 * The easiest way to use <b>CanvasMenu</b> in your code is import CanvasMenu from CanvasMenu.js.
 ```
 import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
