@@ -78,10 +78,13 @@
 &lt;html>
 &lt;head>
 	&lt;title>Player&lt;/title>
+
 	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://threejs.org/examples/main.css&quot;>
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;three.js/dev/examples/main.css&quot;>-->
 
 	&lt;!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
 	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>-->
 
 &lt;/head>
 &lt;body>
@@ -97,6 +100,13 @@
 		import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
+		//import * as THREE from './three.js/dev/build/three.module.js';
+
+		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
+		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
+		//Uncomment line below if you want use local commonNodeJS library in your project.
+		//import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
 
 		var camera, scene, renderer, guiSelectPoint;
 
@@ -142,6 +152,7 @@
 &lt;/body>
 &lt;/html>
 </code></pre>
+<p>NOTE. Please include <code>three.THREE = THREE;</code> line into your project before use my <a href="https://github.com/anhr/commonNodeJS">library</a>. See example above.</p>
 <p><a name="ImportPlayer"></a>
 The easiest way to use <b>Player</b> in your code is import <b>Player</b> from <b>Player.js</b> file in your JavaScript module.
 <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html">Example</a>.</p>
@@ -161,9 +172,6 @@ The easiest way to use <b>Player</b> in your code is import <b>Player</b> from <
 </code></pre>
 <p>or</p>
 <pre class="prettyprint source"><code>import Player from './commonNodeJS/master/player/build/player.module.min.js';
-</code></pre>
-<p>Set <b>THREE</b> to <b>Player</b>.</p>
-<pre class="prettyprint source"><code>Player.setTHREE(THREE);
 </code></pre>
 <p>Now you can use <b>Player</b> in your javascript code.</p>
 <p>Add <b>Player</b> after creating of the <b>scene</b> and before creation of the <b>renderer</b>.</p>
@@ -334,9 +342,6 @@ because you do not defined a <a href="https://github.com/anhr/commonNodeJS/tree/
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 </code></pre>
-<p>Set <b>THREE</b> for palette.</p>
-<pre class="prettyprint source"><code>ColorPicker.palette.setTHREE(THREE);
-</code></pre>
 <p>Create the <b>options</b> object and define the <b>palette</b> key.</p>
 <pre class="prettyprint source"><code>const options = { palette: new ColorPicker.palette(), }
 </code></pre>
@@ -480,7 +485,7 @@ Import <b>MyPoints</b> into your web page for it.</p>
 <pre class="prettyprint source"><code>import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 </code></pre>
 <p>Example.</p>
-<pre class="prettyprint source"><code>MyPoints( THREE, arrayFuncs, scene, {
+<pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
 
 	Player: Player,
 	options: options,
@@ -500,7 +505,7 @@ You can set your own setting for <b>MyPoints</b>. For example set points size to
 }
 </code></pre>
 <p>Edit <b>MyPoints</b>.</p>
-<pre class="prettyprint source"><code>MyPoints( THREE, arrayFuncs, scene, {
+<pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
 
 	Player: Player,
 	options: options,
@@ -515,7 +520,7 @@ You can set your own setting for <b>MyPoints</b>. For example set points size to
 </code></pre>
 <p>If you want to see the sizes of the points is not depend from distance to camera,
 please add <b>shaderMaterial: {}</b> into <b>pointsOptions</b> of the <b>MyPoints</b> for it.</p>
-<pre class="prettyprint source"><code>MyPoints( THREE, arrayFuncs, scene, {
+<pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
 
 	Player: Player,
 	options: options,
@@ -531,7 +536,7 @@ please add <b>shaderMaterial: {}</b> into <b>pointsOptions</b> of the <b>MyPoint
 </code></pre>
 <p>ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
 For resolving of the problem please remove <b>player.play3DObject();</b> and include it inside of the <b>MyPoints</b>.</p>
-<pre class="prettyprint source"><code>MyPoints( THREE, arrayFuncs, scene, {
+<pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
 
 	Player: Player,
 	options: options,
@@ -608,15 +613,7 @@ player.gui( gui );
 </code></pre>
 <p><a name="datGuiPlayerControl"></a></p>
 <h3>Add player control buttons to the <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</h3>
-<p>First, import <b>controllerPlay</b>.</p>
-<pre class="prettyprint source"><code>import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import controllerPlay from './commonNodeJS/master/controllerPlay/controllerPlay.js';
-</code></pre>
-<p>Add player control buttons.</p>
-<pre class="prettyprint source"><code>controllerPlay.create( player, gui );
-</code></pre>
+<p>new player.PlayController( gui, getLanguageCode );</p>
 <p><a name="datGuiCamera"></a></p>
 <h3>Using <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change of the <b>camera</b> settings.</h3>
 <p>First, import <b>CameraGui</b></p>
@@ -638,10 +635,10 @@ player.gui( gui );
 <ul>
 <li>Import <b>GuiSelectPoint</b></li>
 </ul>
-<pre class="prettyprint source"><code>import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+<pre class="prettyprint source"><code>import GuiSelectPoint from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import { GuiSelectPoint } from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+<pre class="prettyprint source"><code>import GuiSelectPoint from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 </code></pre>
 <ul>
 <li>Create instance of the <b>GuiSelectPoint</b>.</li>
@@ -703,7 +700,7 @@ lines into <b>function ( points )</b> function of <b>getShaderMaterialPoints</b>
 and add <b>guiSelectPoint.addMesh( points );</b> and <b>guiSelectPoint.add( gui );</b>
 lines into <b>onReady</b> function of <b>MyPoints</b>.</li>
 </ul>
-<pre class="prettyprint source"><code>MyPoints( THREE, arrayFuncs, scene, {
+<pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
 
 	Player: Player,
 	options: options,
@@ -968,7 +965,7 @@ $ npm run build
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 19 2021 10:28:22 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 26 2021 09:53:15 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

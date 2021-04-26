@@ -71,22 +71,20 @@ import OrbitControlsGui from '../OrbitControlsGui.js';
 import loadScript from '../loadScriptNodeJS/loadScript.js';
 import { dat } from '../dat/dat.module.js';
 
-import controllerPlay from '../controllerPlay/controllerPlay.js';
+//import controllerPlay from '../controllerPlay/controllerPlay.js';
 //import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
 
-import {
+//import { GuiSelectPoint, getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
+import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
+//GuiSelectPoint.setTHREE( THREE );
 
-	GuiSelectPoint,
-	getWorldPosition,
-
-} from '../guiSelectPoint/guiSelectPoint.js';
-
-GuiSelectPoint.setTHREE( THREE );
+import { getWorldPosition } from '../getPosition.js';
+//getPositionSetTHREE( THREE );
 
 import PositionController from '../PositionController.js';
 
 import { SpriteText } from '../SpriteText/SpriteText.js';
-SpriteText.setTHREE( THREE );
+//SpriteText.setTHREE( THREE );
 
 import { SpriteTextGui } from '../SpriteText/SpriteTextGui.js';
 
@@ -104,7 +102,15 @@ import CameraGui from '../CameraGui.js';
 
 import FrustumPoints from '../frustumPoints/frustumPoints.js';
 
-var THREE;
+import three from '../three.js'
+
+/*проверка duplicate THREE
+//import * as THREE2 from 'https://threejs.org/build/three.module.js';
+import * as THREE2 from '../../../three.js/dev/build/three.module.js';
+three.THREE = THREE2;
+*/
+
+//var THREE;
 
 var debug = {
 
@@ -304,11 +310,15 @@ class MyThree {
 	 * &lt;/pre>
 	 * &lt;a href="../Examples/html/" target="_blank">Example&lt;/a>.
 	 */
-	constructor( _THREE, createXDobjects, options ) {
+	constructor( createXDobjects, options ) {
 
+/*
 		THREE = _THREE;
-
-		Player.setTHREE( THREE );
+		three.THREE = THREE;
+*/		
+		const THREE = three.THREE;
+//		Player.setTHREE( THREE );
+//		Player.assign();
 
 		var myThreejs = this;
 
@@ -351,7 +361,7 @@ class MyThree {
 
 				}
 			}
-			ColorPicker.palette.setTHREE( THREE );
+//			ColorPicker.palette.setTHREE( THREE );
 
 		}
 /*
@@ -581,7 +591,7 @@ if ( typeof Player !== 'undefined' )
 						options.stereoEffect.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
 					if ( StereoEffect !== undefined ) {
 
-						stereoEffect = new StereoEffect( THREE, renderer, {
+						stereoEffect = new StereoEffect( renderer, {
 
 							spatialMultiplex: options.stereoEffect.spatialMultiplex,//StereoEffect.spatialMultiplexsIndexs.Mono, //.SbS,
 							far: camera.far,
@@ -591,11 +601,11 @@ if ( typeof Player !== 'undefined' )
 							rememberSize: true,
 
 						} );
-//						stereoEffect.options.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
+						//						stereoEffect.options.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
 
 					} else console.warn( 'stereoEffect = ' + stereoEffect );
 
-				} else StereoEffect.setTHREE( THREE );
+				} else StereoEffect.assign();//.setTHREE( THREE );
 
 				//Light
 
@@ -824,9 +834,9 @@ if ( typeof Player !== 'undefined' )
 
 				}
 
-				//PlayController https://github.com/anhr/controllerPlay. My custom controller in my version of dat.gui https://github.com/anhr/dat.gui for playing of 3D objects in my projects.
-
-				if ( options.player !== undefined ) {
+				//My custom controller for playing of 3D objects.
+				if ( options.player !== false )  options.player = options.player || {};
+				if ( options.player ) {
 
 					player = new Player( group, {
 
@@ -864,7 +874,8 @@ if ( typeof Player !== 'undefined' )
 					} );
 					if ( gui !== undefined ) {
 
-						controllerPlay.create( player, gui );
+						new player.PlayController( gui, getLanguageCode );
+//						controllerPlay.create( player, gui );
 
 					}
 
@@ -1061,7 +1072,7 @@ if ( typeof Player !== 'undefined' )
 
 //					var cookieName = getCanvasName();
 					const gui = options.axesHelper.gui
-					options.axesHelper = new AxesHelper( THREE, scene, {
+					options.axesHelper = new AxesHelper( scene, {
 
 						scene: { position: scene.position, },
 //						scale: options.axesHelper.scale,
@@ -1082,12 +1093,10 @@ if ( typeof Player !== 'undefined' )
 				if ( options.frustumPoints ) {
 
 					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
-					options.frustumPoints = new FrustumPoints( THREE, camera,
-						group,// stereoEffect ? stereoEffect.options.spatialMultiplex : undefined,
-						renderer, options,
-						{//points and lines options.Default is { }
+					options.frustumPoints = new FrustumPoints( camera, group, options,
+						{//points and lines options. Default is { }
 
-							point: {//points options.Default is {}
+							point: {//points options. Default is {}
 
 								size: 0.01,//Size of each frustum point.Default is 0;
 
@@ -1176,7 +1185,7 @@ if ( typeof Player !== 'undefined' )
 
 				createXDobjects( group, options );
 
-				if ( options.frustumPoints ) options.frustumPoints.create();
+				if ( options.frustumPoints ) options.frustumPoints.create( renderer );
 
 				//На случай когда указана точка, за которой следит камера и когда Player не создан
 				if ( !options.player ) {
@@ -1831,7 +1840,7 @@ function findSpriteTextIntersection( scene ) {
  */
 MyThree.points = function ( arrayFuncs, group, options, pointsOptions ) {
 
-	MyPoints( THREE, arrayFuncs, group, { options: options, pointsOptions: pointsOptions } );
+	MyPoints( arrayFuncs, group, { options: options, pointsOptions: pointsOptions } );
 
 }
 /** @namespace */
@@ -1907,7 +1916,7 @@ export default MyThree;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 19 2021 10:28:22 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 26 2021 09:53:15 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
