@@ -42,6 +42,12 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 		//import * as THREE from './three.js/dev/build/three.module.js';
 
+		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
+		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
+		//Uncomment line below if you want use local commonNodeJS library in your project.
+		//import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
 		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 
@@ -94,6 +100,8 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 </body>
 </html>
 ```
+NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
+
 <a name="ImportFrustumPoints"></a>
 The easiest way to use <b>FrustumPoints</b> in your code is import <b>FrustumPoints</b> from <b>FrustumPoints.js</b> file in your JavaScript module.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/Examples/index.html).

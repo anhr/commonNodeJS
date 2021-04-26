@@ -42,16 +42,19 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
-//import { myThreejs, THREE } from '../myThreejs/myThreejs.js';
-import MyThree from '../myThree/myThree.js';
-//import cookie from '../cookieNodeJS/cookie.js';
+
+//import MyThree from '../myThree/myThree.js';
+import MyPoints from '../myPoints/myPoints.js';
 
 import Cookie from '../cookieNodeJS/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 import clearThree from '../clearThree.js';
 import { dat } from '../dat/dat.module.js';
-//import { GuiSelectPoint } from '../guiSelectPoint/guiSelectPoint.js';
+
+import { getWorldPosition } from '../getPosition.js';
+
+import three from '../three.js'
 
 //memory limit
 //import roughSizeOfObject from '../../commonNodeJS/master/SizeOfObject.js';
@@ -67,24 +70,19 @@ var debug = {
 //https://en.wikipedia.org/wiki/Normal_distribution
 function getStandardNormalDistribution( x ) {
 
-	var standardDeviation = 0.1;//чем больше среднеквадратическое отклонение, тем шире пик нормального распределения
-	var res = Math.exp( -0.5 * x * x / ( standardDeviation * standardDeviation ) );// / Math.sqrt( 2 * Math.PI );
+	const standardDeviation = 0.1;//чем больше среднеквадратическое отклонение, тем шире пик нормального распределения
+	const res = Math.exp( -0.5 * x * x / ( standardDeviation * standardDeviation ) );// / Math.sqrt( 2 * Math.PI );
 	//console.warn( 'x = ' + x + ' y = ' + res );
 	return res;
 
 }
 
-//const shaderMaterial = {};
-//var optionsShaderMaterial;
-
 class FrustumPoints
 {
 	/**
 	 * Create a `FrustumPoints` instance.
-	 * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
 	 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
 	 * @param {THREE.Group} group group of objects to which a new FrustumPoints will be added
-	 * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
 	 * @param {object} options see &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">myThree&lt;/a> &lt;b>options&lt;/b> parameter for details
 	 * @param {object} [optionsShaderMaterial={}] &lt;b>FrustumPoints&lt;/b> options.
 	 * @param {object} [optionsShaderMaterial.point={}] points options.
@@ -123,7 +121,10 @@ class FrustumPoints
 	 * &lt;/pre>
 	 * @param {string} [optionsShaderMaterial.cookieName="FrustumPoints"] Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.
 	 */
-	constructor( THREE, camera, group, renderer, options, optionsShaderMaterial = {} ) {
+	constructor( camera, group, options, optionsShaderMaterial = {} ) {
+
+		const THREE = three.THREE;
+//		getPositionSetTHREE( THREE );
 
 		const _arrayCloud = []//Массив координат точек, имеющих облако вокруг себя
 							//координаты точек сгруппированы в группы отдельно для каждого THREE.Points
@@ -143,20 +144,11 @@ class FrustumPoints
 		}
 
 		/**
-		 * Pushes to clouds array all points from geometry
+		 * Pushes to clouds array all points from geometry.attributes.position
 		 * @param {THREE.BufferGeometry} geometry
 		 * @returns index of the new array item
 		 */
 		this.pushArrayCloud = function ( geometry ) {
-
-			/*
-						if ( _arrayCloud === undefined ) {
-			
-							console.error( 'pushArrayCloud function failed! _arrayCloud = ' + _arrayCloud );
-							return;
-			
-						}
-			*/
 
 			//Массив точек, имеющих облако _arrayCloud, разбил на группы points
 			//В каждой группе points содержатся все точки, из одного mesh
@@ -168,23 +160,42 @@ class FrustumPoints
 			const index = _arrayCloud.getCloudsCount(),
 				points = [];
 			_arrayCloud.push( points );
-			for ( var i = 0; i &lt; geometry.attributes.position.count; i++ )
-				points.push( new THREE.Vector4().fromArray( geometry.attributes.position.array, i * geometry.attributes.position.itemSize ) );
+			for ( var i = 0; i &lt; geometry.attributes.position.count; i++ ) {
+
+				const point = new THREE.Vector4().fromArray( geometry.attributes.position.array, i * geometry.attributes.position.itemSize );
+
+				//Здесь коррекитровка point.w не имеет эффекта. Она коррекитруется в FrustumPoints.cloud.updateMesh
+//				point.w *= options.scales.w.max;
+
+				points.push( point );
+
+			}
 			return index;
 
 		}
 
-		/** create points */
-		this.create = function () {
+		/** create points
+		 * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
+		 */
+		this.create = function ( renderer ) {
 
-/*если нет точек с облвком, то облако нужно создавать что бы его было видно в guiSelectPoint
+			//если нет точек с облаком, то облако нужно создавать что бы его было видно в guiSelectPoint
+			//однако в этом случае в консоли появятся сообщения:
+			//
+			//warning X3557: loop only executes for 0 iteration(s), consider removing [loop]
+			//warning X3557: loop doesn't seem to do anything, consider removing [loop]
+			//WebGL: INVALID_OPERATION: texImage2D: ArrayBufferView not big enough for request
+			//
+			//Это означает что из D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\frustumPoints\vertex.c
+			//нужно удалить цикл
+			//for ( float i = 0.; i &lt; cloudPointsWidth; i++ )
+			//
 			if ( _arrayCloud.length === 0 )
 				return undefined;//нет точек с облаком. Поэтому нет смысла создавать frustumPoints
-*/
+
 			const shaderMaterial = {}, zeroPoint = new THREE.Vector3(), cameraDistanceDefault = camera.position.distanceTo( zeroPoint ), _this = this,// lines = []
 				groupFrustumPoints = new THREE.Group();
 
-			//		optionsShaderMaterial = optionsShaderMaterial || {};
 			optionsShaderMaterial.point = optionsShaderMaterial.point || {};
 			optionsShaderMaterial.point.size = optionsShaderMaterial.point.size || 0;//0.01;//Size of each frustum point
 
@@ -219,9 +230,7 @@ class FrustumPoints
 			delete optionsShaderMaterial.cookieName;
 
 			Object.freeze( optionsShaderMaterial );
-			//		const shaderMaterial = JSON.parse( JSON.stringify( optionsShaderMaterial ) );
 			cookie.getObject( cookieName, shaderMaterial, optionsShaderMaterial );
-			//		function saveSettings() { Cookie.setObject( cookieName, shaderMaterial ); }
 
 			//оставить shaderMaterial.stereo по умолчанию потому что сейчас lines не использую
 			//и возможно в cookie сохранились зачения shaderMaterial.stereo от старых версий этой программы
@@ -304,13 +313,6 @@ class FrustumPoints
 								fDistancePrev = fDistance;
 
 								updateItem( i, fDistance );//function of distance
-								/*
-																x = ( i / ( distanceTableWidth - 1 ) ) * 0.5;
-																var fDistance = - i / ( distanceTableWidth - 1 ) + 1;
-																updateItem( i, itemSize === 3 ?
-																	new THREE.Vector3( i, 0, 0 ) : itemSize === 2 ?
-																		new THREE.Vector2( i, 0 ) : fDistance );//function of distance
-								*/
 								updateItem( i + distanceTableWidth, x );//distance from cloud point to frustum point
 
 								//debug
@@ -339,13 +341,13 @@ class FrustumPoints
 					} );
 
 				}
-				this.addUniforms = function ( format, width, key, options ) {
+				this.addUniforms = function ( format, width, key, optionsAddUniforms ) {
 
-					options = options || {};
+					optionsAddUniforms = optionsAddUniforms || {};
 					//format = RGBAFormat,//LuminanceFormat,//Available formats https://threejs.org/docs/index.html#api/en/constants/Textures
 					//D:\My documents\MyProjects\webgl\three.js\GitHub\three.js\dev\src\constants.js
-					var itemSize = format === THREE.RGBAFormat ? 4 : format === THREE.RGBFormat ? 3 : format === THREE.LuminanceFormat ? 1 : NaN;
-					var height = options.height || 1,//format === THREE.LuminanceFormat ? 1 : 2,
+					const itemSize = format === THREE.RGBAFormat ? 4 : format === THREE.RGBFormat ? 3 : format === THREE.LuminanceFormat ? 1 : NaN;
+					const height = optionsAddUniforms.height || 1,//format === THREE.LuminanceFormat ? 1 : 2,
 						size = width * height,
 						type = THREE.FloatType,
 						data = type === THREE.FloatType ? new Float32Array( itemSize * size ) : new Uint8Array( itemSize * size );
@@ -365,11 +367,6 @@ class FrustumPoints
 							x = vector.r;
 							y = vector.g;
 							z = vector.b;
-							/*
-													vector.x = vector.r;
-													vector.y = vector.g;
-													vector.z = vector.b;
-							*/
 
 						} else {
 
@@ -378,7 +375,16 @@ class FrustumPoints
 							z = vector.z;
 							if ( isNaN( vector.w ) )
 								console.error( 'frustumPoints.create.cloud.addUniforms.updateItem: vector.w = ' + vector.w + '. Probably you use THREE.Color for w coordinate of the point with cloud.' );
-							w = vector.w;
+
+							//w это координата x в палитре palette в D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\frustumPoints\vertex.c
+							//которая имеет тип sampler2D https://www.khronos.org/opengl/wiki/Sampler_(GLSL)#Sampler_types
+							//которая имеет текстуру 2D texture.
+							//Диапазон w должен быть в предплах от 0 до 1 https://www.khronos.org/opengl/wiki/Sampler_(GLSL)#Texture_coordinates
+							//Получаем пропорции:
+							//Если vector.w = options.scales.w.min то w = 0.
+							//Если vector.w = options.scales.w.max то w = 1.
+							const max = options.scales.w.max, min = options.scales.w.min;
+							w = ( vector.w - min ) / ( max - min );
 
 						}
 						const vectorSize = y === undefined ? 1 : z === undefined ? 2 : w === undefined ? 3 : 4,
@@ -401,8 +407,8 @@ class FrustumPoints
 
 					}
 
-					if ( options.onReady !== undefined )
-						options.onReady( data, itemSize, this.updateItem );
+					if ( optionsAddUniforms.onReady !== undefined )
+						optionsAddUniforms.onReady( data, itemSize, this.updateItem );
 
 					uniforms[key] = {
 
@@ -437,9 +443,8 @@ class FrustumPoints
 						return;
 					for ( var i = 0; i &lt; mesh.geometry.attributes.position.count; i++ ) {
 
-						this.cloudPoints.updateItem( mesh.userData.cloud.indexArray + i,
-							MyThree.getWorldPosition( mesh,
-								new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) ) );
+						const point = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize );
+						this.cloudPoints.updateItem( mesh.userData.cloud.indexArray + i, getWorldPosition( mesh, point ) );
 
 					}
 
@@ -453,7 +458,6 @@ class FrustumPoints
 
 				function set() {
 
-					//				if ( _points === undefined )
 					if ( !_points )
 						return;
 					_points.position.copy( camera.position );
@@ -465,7 +469,6 @@ class FrustumPoints
 
 				}
 				set();
-//				lines.forEach( function ( item ) { set( item ); } );
 				/*
 				console.warn( '_points.position: ' + _points.position.x + ' ' + _points.position.y + ' ' + _points.position.z +
 				' _points.scale: ' + _points.scale.x + ' ' + _points.scale.y + ' ' + _points.scale.z +
@@ -606,10 +609,6 @@ class FrustumPoints
 				function sqrtInt( value ) {
 
 					const a = parseInt( Math.sqrt( zCount - 1 ) );
-					/*
-									if ( isLines() )
-										return value / a;
-					*/
 					return parseInt( value / a ) * a;
 
 				}
@@ -628,7 +627,6 @@ class FrustumPoints
 				//Now you can see default shaderMaterial.zCount after memory crash and reloading of the wab page.
 				shaderMaterial.zCount = optionsShaderMaterial.zCount;
 				shaderMaterial.yCount = optionsShaderMaterial.yCount;
-				//			saveSettings();
 
 				const zStart = parseInt( ( zCount * shaderMaterial.stereo.hide ) / 100 ),
 					zEnd = zStart + zCount - 1;
@@ -639,26 +637,20 @@ class FrustumPoints
 						yfStep = ( point_f3.y - point_f1.y ) / ( yCount - 1 ),
 						yStep = ( ( yfStep - ynStep ) / ( ( zCount - 1 ) * ( zCount - 1 ) ) ) * z * z + ynStep,
 						sqrtZCount = parseInt( Math.sqrt( zCount ) ),
-						//					yzStep = isLines() ? ( yStep / zCount ) * sqrtZCount : yStep / ( sqrtZCount + parseInt( Math.sqrt( zCount - ( sqrtZCount * sqrtZCount ) ) ) ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
 						yzStep = yStep / ( sqrtZCount + parseInt( Math.sqrt( zCount - ( sqrtZCount * sqrtZCount ) ) ) ),//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
 
 						xnStep = ( point_n2.x - point_n1.x ) / ( xCount - 1 ),
 						xfStep = ( point_f2.x - point_f1.x ) / ( xCount - 1 ),
 						xStep = ( ( xfStep - xnStep ) / ( ( zCount - 1 ) * ( zCount - 1 ) ) ) * z * z + xnStep,
-						//				xzStep = xStep / zxCount;//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
 						xzStep = xStep / parseInt( Math.sqrt( zCount ) );//координату точки надо немного сдвинуть в зависимости от z что бы точки не накладывались друг на друга
 					pointStart.y = - yStep * ( yCount - 1 ) / 2;
 					pointStart.x = - xStep * ( xCount - 1 ) / 2;
-					/*
-									if ( isLines() )
-										zx = z;
-					*/
 					for ( var y = 0; y &lt; yCount; y++ ) {
 
 						for ( var x = 0; x &lt; xCount; x++ )
 							if ( z >= zStart ) {
 
-								function addPoint( point/*, pointName*/ ) {
+								function addPoint( point ) {
 
 									_names.push(
 
@@ -687,7 +679,6 @@ class FrustumPoints
 
 					}
 					zx++;
-					//				if ( !isLines() &amp;&amp; ( zx >= parseInt( Math.sqrt( zCount ) ) ) )
 					if ( zx >= parseInt( Math.sqrt( zCount ) ) ) {
 
 						zx = 0;
@@ -800,6 +791,129 @@ class FrustumPoints
 				//Сюда попадает по второму разу если вызвать stereoEffect.gui(...)
 				_points = false;
 
+				//Не могу использвать MyThree.points потому что если import MyThree,
+				//то появляются непонятные косяки в http://localhost/anhr/commonNodeJS/master/frustumPoints/Examples/
+				MyPoints( function () {
+
+					var geometry = new THREE.BufferGeometry(),
+						geometryLength = ( zEnd - zStart + 1 ) * xCount * yCount;
+
+					array = new Float32Array( geometryLength * itemSize );
+					indexArray = 0;
+					_names = null;
+					_names = [];
+
+					eachZ( zStart, zEnd );
+
+					geometry.setAttribute( 'position', new THREE.BufferAttribute( array, itemSize ) );
+
+					return geometry;
+
+				}, group, {
+
+					options: options,
+					pointsOptions: {
+
+						name: 'frustum points',
+						shaderMaterial: shaderMaterial,
+						boFrustumPoints: true,
+						position: camera.position,
+						scale: camera.scale,
+						rotation: camera.rotation,
+						opacity: true,
+						pointIndexes: function ( pointIndex ) { return _this.pointIndexes( pointIndex ); },
+						path: {
+
+							vertex: path + '/vertex.c',
+
+						},
+						pointName: function ( pointIndex ) {
+
+							var indexes = _this.pointIndexes( pointIndex );
+							if ( indexes === undefined )
+								return indexes;
+							return 'x = ' + indexes.x + ', y = ' + indexes.y + ', z = ' + ( indexes.z + zStart ) + ', i = ' + pointIndex;
+
+						},
+						controllers: function () {
+
+							_guiSelectPoint.appendChild( { xCount: xCount, yCount: yCount, zCount: zCount, } );
+
+						},
+						uniforms: function ( uniforms ) {
+
+							cloud.create( uniforms );
+
+							//rotate the quaternion vector to 180 degrees
+							cameraQuaternionDefault.x = - cameraQuaternionDefault.x;
+							cameraQuaternionDefault.y = - cameraQuaternionDefault.y;
+							cameraQuaternionDefault.z = - cameraQuaternionDefault.z;
+
+							cameraPositionDefault.applyQuaternion( cameraQuaternionDefault );
+
+							uniforms.cameraPositionDefault = { value: cameraPositionDefault };
+							uniforms.cameraQuaternion = { value: camera.quaternion };
+
+							//palette
+							//ВНИМАНИЕ!!! Для того, что бы палитра передалась в vertex надо добавить 
+							//points.material.uniforms.palette.value.needsUpdate = true;
+							//в getShaderMaterialPoints.loadShaderText
+
+							new cloud.addUniforms( THREE.RGBFormat, 256, 'palette', {
+
+								onReady: function ( data, itemSize, updateItem ) {
+
+									var min, max;
+									if ( options.scales.w !== undefined ) {
+
+										min = options.scales.w.min; max = options.scales.w.max;
+
+									} else {
+
+										console.error( 'params.pointsOptions.uniforms: params.options.scales.w = ' + params.options.scales.w );
+										return;
+
+									}
+
+									const size = data.length / itemSize;
+									for ( var i = 0; i &lt; size; i++ )
+										updateItem( i, options.palette.toColor( ( max - min ) * i / ( size - 1 ) + min, min, max ) );
+
+								}
+
+							} );
+							return cloud;
+
+						},
+						onReady: function ( points ) {
+
+							_points = points;
+							//						_points.userData.boFrustumPoints = true;
+							_points.userData.isInfo = function () { return shaderMaterial.info; }
+
+							if ( shaderMaterial.info )
+								options.raycaster.addParticle( _points );
+
+							if ( !shaderMaterial.display )
+								removePoints();
+							pointOpacity = _points === undefined ?
+								1.0 :
+								_points.userData.shaderMaterial === undefined ? shaderMaterial.point.opacity : _points.userData.shaderMaterial.point.opacity;
+
+							if ( onReady !== undefined )
+								onReady();//Пользователь изменил настройки frustumPoints
+
+							//когда задан параметр cameraTarget у MyThree то нужно передвинуть frustumPoints после того как созданы points
+							_this.update();
+
+							if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( _points );
+
+						},
+
+					}
+
+				} );
+/*
 				MyThree.points( //array
 					function () {
 
@@ -893,11 +1007,9 @@ class FrustumPoints
 					onReady: function ( points ) {
 
 						_points = points;
-//						_this._points = points;
-						_points.userData.boFrustumPoints = true;
+//						_points.userData.boFrustumPoints = true;
 						_points.userData.isInfo = function () { return shaderMaterial.info; }
 
-						//					saveSettings();
 						if ( shaderMaterial.info )
 							options.raycaster.addParticle( _points );
 
@@ -918,22 +1030,10 @@ class FrustumPoints
 					},
 
 				} );
-
+*/
 
 			}
 			update();
-/*duplicate function name. See this.create above
-			this.create = function () {
-
-				update();
-
-				//Convert all points with cloud, but not shaderMaterial from local to world positions
-				// i.e. calculate scales, positions and rotation of the points.
-				//Converting of all points with cloud and shaderMaterial see getShaderMaterialPoints function in the myPoints.js file
-				this.updateCloudPoints();
-
-			}
-*/
 			var pointOpacity;
 			/** Moves frustum points in front of the camera. */
 			this.update = function ( onReady ) {
@@ -964,28 +1064,6 @@ class FrustumPoints
 			 *  &lt;p>false - frustum points have been removed.&lt;/p>
 			 * */
 			this.isDisplay = function () { return shaderMaterial.display; }
-			/*
-			 * @param {FrustumPoints.cFrustumPointsF} cFrustumPoints FrustumPoints's controllers
-			 * @returns frustum point index selected by user from controls.
-			 * &lt;p>null if user have not selected any point.&lt;/p>
-			 */
-//			this.getSelectedIndex = function ( cFrustumPoints ) { return cFrustumPoints.selectPoint( _names ); }
-			/*
-			 * The user has selected a point from control.
-			 * @event 
-			 * @param {FrustumPoints.cFrustumPointsF} cFrustumPoints FrustumPoints's controllers
-			 */
-/*			 
-			this.selectPoint = function ( cFrustumPoints ) {
-
-//				var index = this.getSelectedIndex( cFrustumPoints );
-				var index = cFrustumPoints.getSelectedIndex();
-				if ( index === null )
-					return;
-				options.guiSelectPoint.select( { object: _points, index: index } );
-
-			}
-*/			
 			/** Updates the cloud's points according new position of the all points of the all meshes
 			 * of the group of objects to which a new FrustumPoints has been added. */
 			this.updateCloudPoints = function () {
@@ -1001,15 +1079,6 @@ class FrustumPoints
 
 					}
 					cloud.updateMesh( mesh );
-					/*
-								for ( var i = 0; i &lt; mesh.geometry.attributes.position.count; i++ ) {
-					
-									cloud.updateItem( mesh.userData.cloud.indexArray + '_' + i,
-										new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ),
-										true );
-					
-								}
-					*/
 
 				} );
 				needsUpdate();
@@ -1017,7 +1086,6 @@ class FrustumPoints
 			}
 			function needsUpdate() {
 
-				//			if ( _points !== undefined )
 				if ( _points )
 					_points.material.uniforms.cloudPoints.value.needsUpdate = true;
 
@@ -1046,7 +1114,7 @@ class FrustumPoints
 					console.error( 'points.geometry.attributes.position.itemSize = ' + points.geometry.attributes.position.itemSize );
 				//		cloud.updateItem( points.userData.cloud.indexArray + '_' + i,
 				cloud.cloudPoints.updateItem( points.userData.cloud.indexArray + i,
-					MyThree.getWorldPosition( points,
+					getWorldPosition( points,
 						new THREE.Vector4().fromArray( points.geometry.attributes.position.array, i * points.geometry.attributes.position.itemSize ) ),
 					true );
 				needsUpdate();
@@ -1088,10 +1156,9 @@ class FrustumPoints
 			this.animate = function () {
 
 				if (
-					//				( _points === undefined ) ||
 					!_points ||
 					( _points.userData.shaderMaterial === undefined ) ||
-					( //( pointSize === _points.userData.shaderMaterial.point.size ) &amp;&amp;
+					(
 						( pointOpacity === _points.userData.shaderMaterial.point.opacity ) )
 				)
 					return false;
@@ -1269,7 +1336,6 @@ class FrustumPoints
 					folderPoint.display( display );
 					cZCount.__li.style.display = display;
 					cYCount.__li.style.display = display;
-					//fStereo.domElement.style.display = display;
 
 				}
 				//Display frustumPoints
@@ -1342,9 +1408,6 @@ class FrustumPoints
 					if ( value &lt; 0 )
 						value = 0;
 
-					//See this.animate = function() for details about size of the points
-					//_points.userData.shaderMaterial.point.size = value;
-
 					_points.material.uniforms.pointSize.value = value;
 
 					folderPoint.size.setValue( value );
@@ -1369,23 +1432,19 @@ class FrustumPoints
 
 					//Не помню почему не удаляю старый points из списка cMeshs, но если так делать, то будут какие то запутанные косяки.
 					//Поэтому не удаляю points из списка cMeshs а только получаю индекс points в этом списке.
-//					const index = options.guiSelectPoint ? options.guiSelectPoint.getMeshIndex( _this.points ) : undefined;
 					const index = options.guiSelectPoint ? options.guiSelectPoint.getMeshIndex( _points ) : undefined;
 
-//					options.raycaster.removeParticle( _this.points );
 					options.raycaster.removeParticle( _points );
 					removePoints( true );
 
 					_this.update( function () {
 
 						//затем заменяю указатель на старый points в списке cMeshs на новый.
-//						if ( options.guiSelectPoint ) options.guiSelectPoint.setIndexMesh( index, _this.points );
 						if ( options.guiSelectPoint ) options.guiSelectPoint.setIndexMesh( index, _points );
 
 						saveSettings();
 						canUpdate = true;
 
-//						_this.points.userData.controllers();
 						_points.userData.controllers();
 
 					} );
@@ -1409,13 +1468,6 @@ class FrustumPoints
 
 						cDisplay.setValue( optionsShaderMaterial.display );
 						cInfo.setValue( optionsShaderMaterial.info );
-
-						/*сейчас lines не использую
-						//Stereo
-						cDisplayLines.setValue( optionsShaderMaterial.stereo.lines );
-						cHide.setValue( optionsShaderMaterial.stereo.hide );
-						cOpacity.setValue( optionsShaderMaterial.stereo.opacity );
-						*/
 
 						cNear.setValue( optionsShaderMaterial.near );
 						cFar.setValue( optionsShaderMaterial.far );
@@ -1485,8 +1537,12 @@ class FrustumPoints
 
 //						_frustumPoints.selectPoint( _guiSelectPoint );
 						const index = _guiSelectPoint.getSelectedIndex();
-						if ( index === null )
+						if ( index === null ) {
+
+							if ( options.axesHelper ) options.axesHelper.exposePosition();
 							return;
+
+						}
 						options.guiSelectPoint.select( { object: _points, index: index } );
 
 					} );
@@ -1503,12 +1559,6 @@ class FrustumPoints
 				cFrustumPointsZ = frustumPointsControl( 'z' );
 
 			}
-
-			/* *
-			 * Set FrustumPoints
-			 * @param {FrustumPoints} frustumPoints
-			 */
-//			this.setFrustumPoints = function ( frustumPoints ) { _frustumPoints = frustumPoints; }
 
 			/**
 			 * Append new item into controller
@@ -1528,10 +1578,16 @@ class FrustumPoints
 
 						var opt = document.createElement( 'option' );
 						opt.innerHTML = i;
-						//					opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
 						cFrustumPoint.__select.appendChild( opt );
 
 					}
+					cFrustumPoint.setValue( -1 );//если не выбрать ни одной точки,
+						//то при повторном выборе frustumPoints в списке cMeshs выберется точка, которая была выбрана прошлый раз.
+						//Но индекс этой выбранной точки почему то не будет выбран в cFrustumPoints
+						//Для проверки
+						//выбрать точку frustumPoints в guiSelectPoint. Если есть оси кооддинат, то от выбранной точки появятся пунктирные линии.
+						//Выбрать точку не frustumPoints в guiSelectPoint.
+						//Опять выбрать точку frustumPoints в guiSelectPoint. Раньше появлялись пунктирные линии, но в огранах управления почемуто это точка не выбиралась.
 
 				}
 				appendChild( cFrustumPointsX, count.xCount );
@@ -1574,7 +1630,7 @@ class FrustumPoints
 				const x = parseInt( cFrustumPointsX.getValue() ),
 					y = parseInt( cFrustumPointsY.getValue() ),
 					z = parseInt( cFrustumPointsZ.getValue() );
-				if ( isNaN( x ) || isNaN( y ) || isNaN( z ) )
+				if ( isNaN( x ) || ( x === -1 ) || isNaN( y ) || ( y === -1 ) || isNaN( z ) || ( z === -1 ) )
 					return null;
 				for ( var i = 0; i &lt; _names.length; i++ ) {
 
@@ -1594,7 +1650,6 @@ class FrustumPoints
 								if ( ( x === 0 ) &amp;&amp; ( name.y === y ) ) {
 
 									//Сюда попадает когда в guiSelectPoint пользователь выбрал frustum Point с коодинатами 0,0,0,
-									//							console.warn( 'x = ' + x + ', y = ' + y + ', z = ' + z + ', i = ' + i );
 									return i;
 
 								}
@@ -1645,6 +1700,18 @@ class FrustumPoints
 
 		}
 
+		//делаю затычки на случай пустого _arrayCloud = [] массива координат точек, имеющих облако вокруг себя.
+		//Другими словми если в программе нет ни одной точки с облаком вокруг себя.
+		//В этом случае точки FrustumPoints не создаются
+		this.gui = function () { }
+		this.animate = function () { }
+		this.updateGuiSelectPoint = function () { }
+		this.isDisplay = function () { }
+		this.onChangeControls = function () { }
+		this.updateCloudPoints = function () { }
+		this.updateCloudPoint = function () { }
+		this.updateCloudPointItem = function () { }
+
 	}
 
  }
@@ -1667,7 +1734,7 @@ export default FrustumPoints;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 12 2021 11:35:52 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 26 2021 09:47:44 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
