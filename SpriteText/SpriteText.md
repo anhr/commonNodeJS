@@ -33,6 +33,12 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 		//import * as THREE from './three.js/dev/build/three.module.js';
 
+		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
+		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
+		//Uncomment line below if you want use local commonNodeJS library in your project.
+		//import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
 		var camera, scene, renderer;
 
 		init();
@@ -77,6 +83,7 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 </body>
 </html>
 ```
+NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
 The easiest way to use <b>SpriteText</b> in your code is import <b>SpriteText</b> from <b>SpriteText.js</b> file in your JavaScript module.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/Examples/SpriteTextGui.html).
