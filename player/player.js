@@ -2760,12 +2760,16 @@ function assign( ) {
 
 	}
 */
+	if ( !three.isThree() ) {
+
+		console.warn( 'Player: can not assign. Set THREE first.' )
+		return;
+
+	}
+/*
 	if ( THREE )
 		return;
-/*
-	if ( !three.isThree() )
-		return;
-*/		
+*/
 /*
 	try {
 
@@ -2952,6 +2956,6 @@ function assign( ) {
 	} );
 
 }
-//Player.assign();
+//assign();
 
 export default Player;

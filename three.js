@@ -71,8 +71,14 @@ if ( window.__myThree__.boThree )
 	console.error( 'three: duplicate three. Please use one instance of the three class.' )
 window.__myThree__.boThree = true;
 
-//появляется сообщение об ошибке если вызвать three.isThree и если _THREE === undefined 
-//потому что непонятно почему вызывается three.get
-//three.isThree = function(){ return _boThree; }
+three.isThree = function(){
+
+	//ATTENTION! Появляется сообщение об ошибке если вызвать return _THREE; и если _THREE === undefined 
+	//потому что непонятно почему вызывается three.get
+	
+	const THREE = _THREE;
+	return THREE;
+
+}
 
 export default three;
