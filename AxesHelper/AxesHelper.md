@@ -45,6 +45,12 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 		//import * as THREE from './three.js/dev/build/three.module.js';
 
+		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
+		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
+		//Uncomment line below if you want use local commonNodeJS library in your project.
+		//import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
 		var camera, scene, renderer, stereoEffect, raycaster;
 
 		init();
@@ -89,6 +95,7 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 </body>
 </html>
 ```
+NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
 The easiest way to use <b>AxesHelper</b> in your code is import <b>AxesHelper</b> from <b>AxesHelper.js</b> file in your JavaScript module.
 [Example](../Examples/index.html).
