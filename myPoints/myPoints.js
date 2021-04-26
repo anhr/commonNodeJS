@@ -156,7 +156,7 @@ function MyPoints( arrayFuncs, group, settings ) {
 			points.userData.cloud = {
 
 //				indexArray: MyPoints.pushArrayCloud( THREE, pointsOptions.arrayCloud, points.geometry ),//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
-				indexArray: options.frustumPoints.pushArrayCloud( points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
+				indexArray: pointsOptions.frustumPoints.pushArrayCloud( points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 
 			}
 		points.geometry.setAttribute( 'color',
