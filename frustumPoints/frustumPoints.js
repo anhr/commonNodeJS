@@ -842,7 +842,7 @@ class FrustumPoints
 
 									} else {
 
-										console.error( 'params.pointsOptions.uniforms: params.options.scales.w = ' + params.options.scales.w );
+										console.error( 'cloud.addUniforms onReady: options.scales.w = ' + options.scales.w );
 										return;
 
 									}
