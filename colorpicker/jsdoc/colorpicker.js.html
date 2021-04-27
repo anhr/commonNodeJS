@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: colorpicker.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: colorpicker.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @module ColorPicker
  * @description Pure JavaScript color picker.
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
@@ -33,7 +61,7 @@ const optionsStyle = {
 //Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
 const getCurrentScript = function () {
 
-	if ( document.currentScript && ( document.currentScript.src !== '' ) )
+	if ( document.currentScript &amp;&amp; ( document.currentScript.src !== '' ) )
 		return document.currentScript.src;
 	const scripts = document.getElementsByTagName( 'script' ),
 		str = scripts[scripts.length - 1].src;
@@ -93,8 +121,8 @@ class ColorPicker {
 			for ( var key in attrs )
 				el.setAttribute( key, attrs[key] );
 			if ( Object.prototype.toString.call( children ) != '[object Array]' ) children = [children];
-			var i = 0, len = ( children[0] && children.length ) || 0;
-			for ( ; i < len; i++ )
+			var i = 0, len = ( children[0] &amp;&amp; children.length ) || 0;
+			for ( ; i &lt; len; i++ )
 				el.appendChild( children[i] );
 			return el;
 		}
@@ -105,10 +133,10 @@ class ColorPicker {
 		 * @description Called whenever the color is changed provided chosen color in RGB HEX format. See options.sliderIndicator.callback param of the create method.
 		 * @param {object} c color
 		 * @param {string} c.hex A hexadecimal color is specified with: #RRGGBB, where the RR (red), GG (green) and BB (blue)
-		 * <pre>
+		 * &lt;pre>
 		 * hexadecimal integers specify the components of the color. All values must be between 00 and FF.
 		 * Example #00ff00
-		 * </pre>
+		 * &lt;/pre>
 		 * @param {number} c.r red of RGB color value. Must be between 0 and 255.
 		 * @param {number} c.g green of RGB color value. Must be between 0 and 255.
 		 * @param {number} c.b blue of RGB color value. Must be between 0 and 255.
@@ -125,7 +153,7 @@ class ColorPicker {
 		 * @param {string|HTMLElement} elSliderWrapper id of the ColorPicker element or ColorPicker element
 		 * @param {object} [options] followed options is availablee
 		 * @param {paletteIndexes|object[]|Palette} [options.palette] Palette index or palette array or Palette. The following indexes are available:
-		 * <pre>
+		 * &lt;pre>
 		 * paletteIndexes.BGRW: 0 - blue, green, red, white palette.
 		 * paletteIndexes.monochrome: 1,
 		 * paletteIndexes.bidirectional: 2,//red, black, green
@@ -138,14 +166,14 @@ class ColorPicker {
 			{ percent: 100, r: 0xff, g: 255, b: 0xff, },
 		]
 		 * Palette see function Palette( options ) for details
-		 * </pre>
+		 * &lt;/pre>
 		 * @param {object} [options.orientation] orientation of the element. Available "horizontal" or "vertical" orientation
 		 * @param {object} [options.direction] true - position of the mouse pointer relative left side for 'horizontal' slider
 		 * or bottom side for 'vertical' slider in the percents.
-		 * <p>
+		 * &lt;p>
 		 * false - position of the mouse pointer relative right side for 'horizontal' slider
 		 * or relative top side for 'vertical' slider in the percents.
-		 * </p>
+		 * &lt;/p>
 		 * Default is true.
 		 * @param {object} [options.style] style statements
 		 * @param {object} [options.style.width] width of the element. Default is 200px for options.orientation = "horizontal"
@@ -271,7 +299,7 @@ class ColorPicker {
 
 				if ( isHorizontal() ) {
 
-					if ( ( position < 0 ) || ( position > getSlideWidth() ) ) {
+					if ( ( position &lt; 0 ) || ( position > getSlideWidth() ) ) {
 
 						console.error( 'ColorPicker.positionIndicators: Invalid position = ' + position );
 						return;
@@ -282,7 +310,7 @@ class ColorPicker {
 
 				} else {
 
-					if ( ( position < 0 ) || ( position > getSlideHeight() ) ) {
+					if ( ( position &lt; 0 ) || ( position > getSlideHeight() ) ) {
 
 						console.error( 'ColorPicker.positionIndicators: Invalid position = ' + position );
 						return;
@@ -311,10 +339,10 @@ class ColorPicker {
 								CreateSVGElement( linearGradient, {
 
 									id: 'gradient-hsv-' + uniqID,
-									x1: isHorizontal() && options.direction ? '100%' : '0%',
-									y1: !isHorizontal() && !options.direction ? '100%' : '0%',
-									x2: isHorizontal() && !options.direction ? '100%' : '0%',
-									y2: !isHorizontal() && options.direction ? '100%' : '0%',
+									x1: isHorizontal() &amp;&amp; options.direction ? '100%' : '0%',
+									y1: !isHorizontal() &amp;&amp; !options.direction ? '100%' : '0%',
+									x2: isHorizontal() &amp;&amp; !options.direction ? '100%' : '0%',
+									y2: !isHorizontal() &amp;&amp; options.direction ? '100%' : '0%',
 
 								},
 									palette.getPalette()
@@ -423,11 +451,11 @@ class ColorPicker {
 						 */
 						function mousePosition( evt ) {
 							// IE:
-							if ( window.event && window.event.contentOverflow !== undefined ) {
+							if ( window.event &amp;&amp; window.event.contentOverflow !== undefined ) {
 								return { x: window.event.offsetX, y: window.event.offsetY };
 							}
 							// Webkit:
-							if ( evt.offsetX !== undefined && evt.offsetY !== undefined ) {
+							if ( evt.offsetX !== undefined &amp;&amp; evt.offsetY !== undefined ) {
 								return { x: evt.offsetX, y: evt.offsetY };
 							}
 							// Firefox:
@@ -462,7 +490,7 @@ class ColorPicker {
 				*/
 
 				/**
-				 * Enable drag&drop color selection.
+				 * Enable drag&amp;drop color selection.
 				 * @param {object} ctx ColorPicker instance.
 				 * @param {listener} listener Function that will be called whenever mouse is dragged over the element with event object as argument.
 				 */
@@ -480,8 +508,8 @@ class ColorPicker {
 						var rect = evt.srcElement.getBoundingClientRect(),
 							x = ( evt.touches[0].clientX - rect.left ),
 							y = ( evt.touches[0].clientY - rect.top );
-						if ( x < 0 ) x = 0;
-						if ( y < 0 ) y = 0;
+						if ( x &lt; 0 ) x = 0;
+						if ( y &lt; 0 ) y = 0;
 						mouseMove( { x: x, y: y } );
 
 					} );
@@ -537,7 +565,7 @@ class ColorPicker {
 		 * create palette
 		 * @param {object} [options] the following options are available
 		 * @param {paletteIndexes|object[]} [options.palette] Palette index or palette array. The following indexes are available:
-		 * <pre>
+		 * &lt;pre>
 		 * paletteIndexes.BGRW: 0 - blue, green, red, white palette.
 		 * paletteIndexes.monochrome: 1,
 		 * paletteIndexes.bidirectional: 2,//red, black, green
@@ -549,7 +577,7 @@ class ColorPicker {
 			{ percent: 10, r: 0xff, g: 255, b: 0xff, },
 			{ percent: 100, r: 0xff, g: 255, b: 0xff, },
 		]
-		* </pre>
+		* &lt;/pre>
 		*/
 		this.palette = function( options ) {
 
@@ -569,7 +597,7 @@ class ColorPicker {
 
 			options = options || {};
 			/*есть случай когда для каждой точки создается своя палитра
-				if ( !options.duplicate && boCreated ) {
+				if ( !options.duplicate &amp;&amp; boCreated ) {
 			
 					console.warn( 'Palette: duplicate palette' );
 					return;
@@ -674,7 +702,7 @@ class ColorPicker {
 			this.hsv2rgb = function ( stringPercent, min, max ) {
 
 				var percent = parseFloat( stringPercent );
-				if ( min !== undefined && max !== undefined )
+				if ( min !== undefined &amp;&amp; max !== undefined )
 					percent = ( 100 / ( max - min ) ) * ( percent - min );
 				var lastPalette = arrayPalette[arrayPalette.length - 1];
 				if ( lastPalette.percent !== 100 ) {
@@ -693,12 +721,12 @@ class ColorPicker {
 
 				}
 				var itemPrev;
-				for ( var i = 0; i < arrayPalette.length; i++ ) {
+				for ( var i = 0; i &lt; arrayPalette.length; i++ ) {
 
 					const item = arrayPalette[i];
 					if ( itemPrev === undefined )
 						itemPrev = item;
-					if ( ( ( percent >= itemPrev.percent ) && ( percent <= item.percent ) ) ) {
+					if ( ( ( percent >= itemPrev.percent ) &amp;&amp; ( percent &lt;= item.percent ) ) ) {
 
 						function color( percentPrev, prev, percentItem, item ) {
 
@@ -716,7 +744,7 @@ class ColorPicker {
 							r: r,
 							g: g,
 							b: b,
-							hex: "#" + ( 16777216 | b | ( g << 8 ) | ( r << 16 ) ).toString( 16 ).slice( 1 ),
+							hex: "#" + ( 16777216 | b | ( g &lt;&lt; 8 ) | ( r &lt;&lt; 16 ) ).toString( 16 ).slice( 1 ),
 							percent: percent
 
 						};
@@ -764,3 +792,26 @@ class ColorPicker {
 }
 ColorPicker = new ColorPicker();
 export default ColorPicker;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ColorPicker.html">ColorPicker</a></li></ul><h3>Classes</h3><ul><li><a href="module-ColorPicker-ColorPicker.html">ColorPicker</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Apr 27 2021 12:28:23 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
