@@ -128,7 +128,7 @@ function MyPoints( arrayFuncs, group, settings ) {
 	pointsOptions.group = group;
 
 	if ( pointsOptions.shaderMaterial )
-		getShaderMaterialPoints( THREE, group, arrayFuncs,// Player,
+		getShaderMaterialPoints( group, arrayFuncs,// Player,
 			function ( points ) {
 
 				Points( points );

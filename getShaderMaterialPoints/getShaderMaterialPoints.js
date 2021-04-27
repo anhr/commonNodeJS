@@ -11,9 +11,10 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import three from '../three.js'
+
 /**
  * get THREE.Points with THREE.ShaderMaterial material
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
  * @param {THREE.Group|THREE.Scene} group THREE group or scene
  * @param {array} arrayFuncs <b>points.geometry.attributes.position</b> array.
  * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
@@ -33,12 +34,12 @@
  * @param {object} [settings.options.scales.w.max] Maximal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
   * <p>Default is undefined. Maximal palette range is 100</p>
 */
-function getShaderMaterialPoints( THREE, group, arrayFuncs, onReady, settings ) {
+function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 
 	settings = settings || {};
 
 	var geometry;
-	const tMin = settings.pointsOptions === undefined ?
+	const THREE = three.THREE, tMin = settings.pointsOptions === undefined ?
 			settings.tMin === undefined ? 0 : settings.tMin :
 			settings.pointsOptions.tMin;
 

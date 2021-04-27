@@ -688,7 +688,7 @@ Note! Call <b>guiSelectPoint.add( gui );</b> before <b>player.play3DObject();</b
 and add <b>guiSelectPoint.addMesh( points );</b> and <b>guiSelectPoint.add( gui );</b>
 lines into <b>function ( points )</b> function of <b>getShaderMaterialPoints</b>.
 ```
-getShaderMaterialPoints( THREE, scene, arrayFuncs,
+getShaderMaterialPoints( scene, arrayFuncs,
 	function ( points ) {
 
 		scene.add( points );

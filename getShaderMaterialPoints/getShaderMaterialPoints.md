@@ -42,7 +42,7 @@ const arrayFuncs = [
 	},
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),
 ];
-getShaderMaterialPoints( THREE, scene, arrayFuncs,
+getShaderMaterialPoints( scene, arrayFuncs,
 	function ( points ) {
 
 		scene.add( points );
