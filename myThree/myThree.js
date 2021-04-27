@@ -73,8 +73,8 @@ import CameraGui from '../CameraGui.js';
 //import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';
 
 import FrustumPoints from '../frustumPoints/frustumPoints.js';
-
 import three from '../three.js'
+import setOptions from '../setOptions.js'
 
 /*проверка duplicate THREE
 //import * as THREE2 from 'https://threejs.org/build/three.module.js';
@@ -324,7 +324,7 @@ class MyThree {
 					break;
 				case 'boolean':
 					if ( options.palette )
-						options.palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.BGRW } );
+						options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGRW } );
 					break;
 				default: {
 					
@@ -1065,7 +1065,8 @@ if ( typeof Player !== 'undefined' )
 				if ( options.frustumPoints ) {
 
 					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
-					options.frustumPoints = new FrustumPoints( camera, group, options,
+//					options.frustumPoints = new FrustumPoints( camera, group, options,
+					new FrustumPoints( camera, group, options,
 						{//points and lines options. Default is { }
 
 							point: {//points options. Default is {}

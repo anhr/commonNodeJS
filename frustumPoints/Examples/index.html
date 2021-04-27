@@ -37,6 +37,9 @@
 		//import FrustumPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/frustumPoints.js';
 		import FrustumPoints from '../frustumPoints.js';
 
+		import MyPoints from '../../myPoints/myPoints.js';
+		//import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
+
 		var camera, scene, renderer, controls;
 
 		init();
@@ -51,6 +54,30 @@
 
 			const frustumPoints = new FrustumPoints( camera, scene );
 
+			MyPoints( [ [], [0.5, 0.5, 0.5,] ], scene, {
+
+					pointsOptions: {
+
+						frustumPoints: frustumPoints,
+						//position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+						//rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
+						//shaderMaterial: {},
+						/*
+						onReady: function( points ) {
+
+							if ( guiSelectPoint ) guiSelectPoint.addMesh( points );
+
+						}
+						*/
+
+					}
+/*
+					Player: typeof Player === 'undefined' ? undefined : Player,
+					options: options,
+*/
+
+			} );
+
 			renderer = new THREE.WebGLRenderer( {
 
 				antialias: true,
@@ -59,6 +86,7 @@
 			} );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
+			frustumPoints.create( renderer );
 
 			if ( typeof OrbitControls !== 'undefined' ) {
 

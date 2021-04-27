@@ -28,6 +28,8 @@ import { getWorldPosition } from '../getPosition.js';
 
 import three from '../three.js'
 
+import setOptions from '../setOptions.js'
+
 //memory limit
 //import roughSizeOfObject from '../../commonNodeJS/master/SizeOfObject.js';
 
@@ -93,8 +95,10 @@ class FrustumPoints
 	 * </pre>
 	 * @param {string} [optionsShaderMaterial.cookieName="FrustumPoints"] Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.
 	 */
-	constructor( camera, group, options, optionsShaderMaterial = {} ) {
+	constructor( camera, group, options = {}, optionsShaderMaterial = {} ) {
 
+		options.frustumPoints = this;
+		setOptions.setScales( options );
 		const THREE = three.THREE;
 //		getPositionSetTHREE( THREE );
 
@@ -835,18 +839,9 @@ class FrustumPoints
 
 								onReady: function ( data, itemSize, updateItem ) {
 
-									var min, max;
-									if ( options.scales.w !== undefined ) {
-
-										min = options.scales.w.min; max = options.scales.w.max;
-
-									} else {
-
-										console.error( 'cloud.addUniforms onReady: options.scales.w = ' + options.scales.w );
-										return;
-
-									}
-
+									setOptions.setPalette( options );
+									options.scales.setW();
+									const min = options.scales.w.min, max = options.scales.w.max;
 									const size = data.length / itemSize;
 									for ( var i = 0; i < size; i++ )
 										updateItem( i, options.palette.toColor( ( max - min ) * i / ( size - 1 ) + min, min, max ) );

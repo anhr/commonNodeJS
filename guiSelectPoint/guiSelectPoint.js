@@ -27,7 +27,7 @@ import ScaleController from '../ScaleController.js';
 import PositionController from '../PositionController.js';
 //import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
 
-import ColorPicker from '../colorpicker/colorpicker.js';//https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+import ColorPicker from '../colorpicker/colorpicker.js';
 //import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 
 //import Player from '../player/build/player.module.js';
@@ -49,6 +49,8 @@ import {
 } from '../getPosition.js';
 
 import three from '../three.js'
+
+import setOptions from '../setOptions.js'
 
 /**
  * @class A dat.gui based graphical user interface for select a point from the mesh.
@@ -112,7 +114,9 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 	//Player changes the guiSelectPoint control's values during playing
 	options.guiSelectPoint = guiSelectPoint;
-				
+		
+	setOptions.setScales( options );
+/*	
 	options.scales = options.scales || {};
 	const boCreateScale = !options.scales.x && !options.scales.y && !options.scales.z;
 	function setScale( axisName ) {
@@ -132,6 +136,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 	setScale( 'x' );
 	setScale( 'y' );
 	setScale( 'z' );
+*/	
 	if ( options.a === undefined ) options.a = 1;
 	if ( options.b === undefined ) options.b = 0;
 	var cFrustumPoints;
@@ -1352,8 +1357,12 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 				//W axis
 
+				options.scales.setW();
 				scale = options.scales.w;
-				scale = scale || {};
+/*				
+				options.scales.w = options.scales.w || {};
+				scale = options.scales.w;
+//				scale = scale || {};
 				scale.name = scale.name || axisName;
 				if ( options.palette instanceof ColorPicker.palette ) {
 
@@ -1361,6 +1370,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 					scale.max = scale.max === undefined ? 100 : scale.max;
 
 				}
+*/				
 				function onChange( value ) {
 
 					const attributes = intersection.object.geometry.attributes,
