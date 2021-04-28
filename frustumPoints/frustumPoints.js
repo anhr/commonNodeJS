@@ -27,7 +27,6 @@ import { dat } from '../dat/dat.module.js';
 import { getWorldPosition } from '../getPosition.js';
 
 import three from '../three.js'
-
 import setOptions from '../setOptions.js'
 
 //memory limit
@@ -97,6 +96,7 @@ class FrustumPoints
 	 */
 	constructor( camera, group, options = {}, optionsShaderMaterial = {} ) {
 
+		setOptions.setPalette( options );
 		options.frustumPoints = this;
 		setOptions.setScales( options );
 		const THREE = three.THREE;
@@ -839,7 +839,7 @@ class FrustumPoints
 
 								onReady: function ( data, itemSize, updateItem ) {
 
-									setOptions.setPalette( options );
+//									setOptions.setPalette( options );
 									options.scales.setW();
 									const min = options.scales.w.min, max = options.scales.w.max;
 									const size = data.length / itemSize;

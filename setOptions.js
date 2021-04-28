@@ -20,6 +20,26 @@ class SetOptions {
 	/**set options */
 	constructor() {
 
+		const _this = this;
+		/**
+		 * set the scales.w key of the options
+		 * @param {Object} options
+		 */
+		this.setW = function ( options ) {
+
+			const axisName = 'w';
+			options.scales = options.scales || {};
+			options.scales.w = options.scales.w || {};
+			const scale = options.scales.w;
+			scale.name = scale.name || axisName;
+			if ( options.palette instanceof ColorPicker.palette ) {
+
+				scale.min = scale.min === undefined ? 0 : scale.min;
+				scale.max = scale.max === undefined ? 1 : scale.max;
+
+			}
+
+		}
 		/**
 		 * set the scales key of the options
 		 * @param {Object} options
@@ -45,27 +65,10 @@ class SetOptions {
 			setScale( 'x' );
 			setScale( 'y' );
 			setScale( 'z' );
-			options.scales.setW = function () {
-
-				const axisName = 'w';
-				options.scales.w = options.scales.w || {};
-				const scale = options.scales.w;
-				scale.name = scale.name || axisName;
-				if ( options.palette instanceof ColorPicker.palette ) {
-
-					scale.min = scale.min === undefined ? 0 : scale.min;
-					scale.max = scale.max === undefined ? 1 : scale.max;
-
-				}
-				/*				
-						const axisName = 'w';
-						options.scales[axisName] = {};
-						setScale( axisName );
-				*/
-
-			}
-
+			options.scales.setW = function() { _this.setW( options ); }
+			
 		}
+
 		/**
 		 * set the palette key of the options
 		 * @param {Object} options

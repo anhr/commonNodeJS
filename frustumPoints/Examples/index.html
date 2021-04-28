@@ -52,31 +52,39 @@
 
 			scene = new THREE.Scene();
 
-			const frustumPoints = new FrustumPoints( camera, scene );
+			const options = {}, frustumPoints = new FrustumPoints( camera, scene, options );
 
-			MyPoints( [ [], [0.5, 0.5, 0.5,] ], scene, {
+			MyPoints( [
+				//[],
+				//new THREE.Vector4( 0, 0, 0, 0 ),//Blue color
+				//new THREE.Vector2(),
+				{ vector: new THREE.Vector4( 0, 0, 0, 0 )},//Blue color
+				[
+					0.5,//x
+					0.5,//y
+					0.5,//z
+					0.5//w. Palette index. Default range from 0 to 1. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+				]
+				], scene, {
 
+					options: options,
 					pointsOptions: {
 
 						frustumPoints: frustumPoints,
-						//position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
-						//rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-						//shaderMaterial: {},
-						/*
-						onReady: function( points ) {
-
-							if ( guiSelectPoint ) guiSelectPoint.addMesh( points );
-
-						}
-						*/
 
 					}
-/*
-					Player: typeof Player === 'undefined' ? undefined : Player,
-					options: options,
-*/
 
 			} );
+
+			const cube = new THREE.Mesh( new THREE.BoxGeometry(), new THREE.MeshBasicMaterial( {
+
+				color: 0x00ff00,
+				opacity: 0.8,
+				transparent: true,
+
+			} ) );
+			cube.position.x = 1.5;
+			scene.add( cube );
 
 			renderer = new THREE.WebGLRenderer( {
 

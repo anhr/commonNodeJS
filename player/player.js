@@ -37,6 +37,7 @@ import { getWorldPosition } from '../getPosition.js';
 //getPositionSetTHREE( THREE );
 
 import three from '../three.js'
+import setOptions from '../setOptions.js'
 
 var g_settings,
 
@@ -1995,7 +1996,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * @param {object} [optionsPoints.options.player] See Player method above.
  * @returns array of THREE.Vector4 points.
  */
-Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
+Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 
 //	const THREE = three.THREE;
 	assign();
@@ -2013,8 +2014,11 @@ Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 	optionsPoints = optionsPoints || {};
 	if ( optionsPoints.t === undefined ) optionsPoints.t = optionsPoints.options ? optionsPoints.options.player.player.getOptions().settings.min : 0;
 	const options = optionsPoints.options || {},
-		a = options.a || 1,
-		b = options.b || 0;
+		a = options.a || 1, b = options.b || 0,
+		wDefault = new THREE.Vector4().w;//1;//цвет точки по умолчанию равен цвету палитры для максимального значения value,
+						//которе по умолчанияю равно 1 и определяется в setOptions.setScales(...).
+						//Палитра по умолчанию ColorPicker.paletteIndexes.BGRW
+						//у которой цвет максимального значения value белый.
 	for ( var i = 0; i < arrayFuncs.length; i++ ) {
 
 		var item = arrayFuncs[i];
@@ -2024,7 +2028,7 @@ Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 				item[0] === undefined ? 0 : item[0],
 				item[1] === undefined ? 0 : item[1],
 				item[2] === undefined ? 0 : item[2],
-				item[3] === undefined ? 0 : item[3]
+				item[3] === undefined ? wDefault : item[3]
 
 			);
 		else if (
@@ -2300,7 +2304,14 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 				if ( funcs.w.min ) min = funcs.w.min;
 				w = funcs.w.func;
 
-			} else if ( optionsColor.scale !== undefined ) {
+			} else {
+
+				setOptions.setW( optionsColor );
+				min = optionsColor.scales.w.min; max = optionsColor.scales.w.max;
+
+			}
+/*
+				if ( optionsColor.scale !== undefined ) {
 
 				min = optionsColor.scale.min; max = optionsColor.scale.max;
 
@@ -2320,6 +2331,7 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 				} else { }
 
 			}
+*/
 //			if ( w instanceof Function && !g_settings && boColorWarning )
 			if ( w instanceof Function && !Player.isCreated() && boColorWarning ) {
 

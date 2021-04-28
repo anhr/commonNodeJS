@@ -145,22 +145,19 @@ function MyPoints( arrayFuncs, group, settings ) {
 		const points = new THREE.Points(
 
 			typeof arrayFuncs === 'function' ? arrayFuncs() :
-				new THREE.BufferGeometry().setFromPoints( settings.Player.getPoints( /*THREE, */arrayFuncs,
+				new THREE.BufferGeometry().setFromPoints( settings.Player.getPoints( arrayFuncs,
 					{ options: options, group: group, t: pointsOptions.tMin } ), 4 ),
 			new THREE.PointsMaterial( { size: options.point.size / options.point.sizePointsMaterial, vertexColors: THREE.VertexColors } )
 
 		);
-//		if ( pointsOptions.arrayCloud !== undefined )
-//		if ( options.frustumPoints )
 		if ( pointsOptions.frustumPoints )
 			points.userData.cloud = {
 
-//				indexArray: MyPoints.pushArrayCloud( THREE, pointsOptions.arrayCloud, points.geometry ),//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
 				indexArray: pointsOptions.frustumPoints.pushArrayCloud( points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 
 			}
 		points.geometry.setAttribute( 'color',
-			new THREE.Float32BufferAttribute( settings.Player.getColors( /*THREE, */arrayFuncs,
+			new THREE.Float32BufferAttribute( settings.Player.getColors( arrayFuncs,
 				{
 
 					positions: points.geometry.attributes.position,
