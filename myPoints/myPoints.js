@@ -51,9 +51,10 @@ import three from '../three.js'
  * @param {object} [settings.pointsOptions] followed points options is availablee:
  * @param {number} [settings.pointsOptions.tMin=0] start time. Uses for playing of the points..
  * @param {string} [settings.pointsOptions.name=""] Name of the points. Used for displaying of items of the <b>Select</b> drop down control of the <b>Meshes</b> folder of the [dat.gui]{@link https://github.com/anhr/dat.gui}.
- * @param {object} [settings.pointsOptions.shaderMaterial] creates the [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} material.
+ * @param {object|boolean} [settings.pointsOptions.shaderMaterial] creates the [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} material.
  * The size of the each point of the <b>THREE.Points</b> seems the same on canvas
  * because I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.
+ * <p>false - no shaderMaterial.
  * @param {FrustumPoints} [settings.pointsOptions.frustumPoints] Include this points into array of points with cloud. See <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a>.
  * @param {THREE.Vector3} [settings.pointsOptions.position=new THREE.Vector3( 0, 0, 0 )] position of the points.
  * <pre>
@@ -126,8 +127,7 @@ function MyPoints( arrayFuncs, group, settings ) {
 	pointsOptions.scale = pointsOptions.scale || new THREE.Vector3( 1, 1, 1 );
 	pointsOptions.rotation = pointsOptions.rotation || new THREE.Vector3();
 	pointsOptions.group = group;
-
-	if ( pointsOptions.shaderMaterial )
+	if ( pointsOptions.shaderMaterial !== false )
 		getShaderMaterialPoints( group, arrayFuncs,// Player,
 			function ( points ) {
 
