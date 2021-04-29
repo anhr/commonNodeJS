@@ -105,7 +105,9 @@ function MyPoints( arrayFuncs, group, settings ) {
 	settings = settings || {};
 	settings.Player = settings.Player || Player;
 
-	const options = settings.options || {};
+	const pointsOptions = settings.pointsOptions || {};
+	settings.options = settings.options || ( pointsOptions.frustumPoints ? pointsOptions.frustumPoints.getOptions() : {} );
+	const options = settings.options;// || {};
 	options.point = options.point || {};
 	options.point.size = options.point.size || 5.0;
 	options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
@@ -120,7 +122,10 @@ function MyPoints( arrayFuncs, group, settings ) {
 	if ( options.scales.w.max === undefined ) options.scales.w.max = 100;
 */	
 
-	const pointsOptions = settings.pointsOptions || {};
+/*
+	if ( !options.palette && pointsOptions.frustumPoints )
+		options.palette = pointsOptions.frustumPoints.getOptions().palette;
+*/
 	pointsOptions.tMin = pointsOptions.tMin || 0;
 	pointsOptions.name = pointsOptions.name || '';
 	pointsOptions.position = pointsOptions.position || new THREE.Vector3( 0, 0, 0 );

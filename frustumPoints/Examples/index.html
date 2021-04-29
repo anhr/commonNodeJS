@@ -13,7 +13,7 @@
 </head>
 <body>
 	<div id="info">
-		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - FrustumPoints - Array of points, statically fixed in front of the camera.
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - <a href="https://github.com/anhr/commonNodeJS/tree/master/frustumPoints" target="_blank" rel="noopener">FrustumPoints</a> - Array of points, statically fixed in front of the camera.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
 	<div>
@@ -52,13 +52,14 @@
 
 			scene = new THREE.Scene();
 
-			const options = {}, frustumPoints = new FrustumPoints( camera, scene, options );
+//			const options = {}, frustumPoints = new FrustumPoints( camera, scene, options );
+			const frustumPoints = new FrustumPoints( camera, scene );
 
 			MyPoints( [
-				//[],
-				//new THREE.Vector4( 0, 0, 0, 0 ),//Blue color
+				[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGRW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+				//new THREE.Vector4( 0, 0, 0, 0 ),//Blue color for ColorPicker.paletteIndexes.BGRW
 				//new THREE.Vector2(),
-				{ vector: new THREE.Vector4( 0, 0, 0, 0 )},//Blue color
+				//{ vector: new THREE.Vector4()},//palette index = 1 is white color for ColorPicker.paletteIndexes.BGRW
 				[
 					0.5,//x
 					0.5,//y
@@ -67,10 +68,10 @@
 				]
 				], scene, {
 
-					options: options,
+//					options: options,
 					pointsOptions: {
 
-						frustumPoints: frustumPoints,
+						frustumPoints: typeof frustumPoints !== 'undefined' ? frustumPoints : undefined,
 						//shaderMaterial: false,
 
 					}
@@ -95,7 +96,7 @@
 			} );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
-			frustumPoints.create( renderer );
+			if ( typeof frustumPoints !== 'undefined' ) frustumPoints.create( renderer );
 
 			if ( typeof OrbitControls !== 'undefined' ) {
 

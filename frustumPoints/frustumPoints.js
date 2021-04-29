@@ -96,6 +96,7 @@ class FrustumPoints
 	 */
 	constructor( camera, group, options = {}, optionsShaderMaterial = {} ) {
 
+		this.getOptions = function () { return options; }
 		setOptions.setPalette( options );
 		options.frustumPoints = this;
 		setOptions.setScales( options );
