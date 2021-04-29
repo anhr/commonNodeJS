@@ -75,14 +75,13 @@ class ColorPicker {
 		 */
 		this.paletteIndexes = {
 
-
-			/** [blue, green, red, white]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW} palette. This is the default palette*/
+			/** <a href="../Example/index.html#BGRW" target="_blank">blue, green, red, white</a> palette. This is the default palette*/
 			BGRW: 0,
-			/** [monochrome]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Monochrome} palette */
+			/** <a href="../Example/index.html#Monochrome" target="_blank">monochrome</a> palette */
 			monochrome: 1,
-			/** [red, black, green]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional} palette */
+			/** <a href="../Example/index.html#Bidirectional" target="_blank">red, black, green</a> palette */
 			bidirectional: 2,//
-			/** [rainbow]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#rainbow} palette */
+			/** <a href="../Example/index.html#rainbow" target="_blank">rainbow</a> palette */
 			rainbow: 3,
 
 		}
@@ -580,12 +579,12 @@ class ColorPicker {
 				options.palette = _this.paletteIndexes.BGRW;
 			
 			/**
-			 * @returns index of palette
+			 * @returns Index of palette.
 			 * <pre>
-			 * 0 - [BGRW]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW}
-			 * 1 - [monochrome]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Monochrome}
-			 * 2 - [bidirectional]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional}
-			 * 3 - [rainbow]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#rainbow}
+			 * 0 - <a href="../Example/index.html#BGRW" target="_blank">BGRW</a>
+			 * 1 - <a href="../Example/index.html#Monochrome" target="_blank">monochrome</a>
+			 * 2 - <a href="../Example/index.html#Bidirectional" target="_blank">bidirectional</a>
+			 * 3 - <a href="../Example/index.html#rainbow" target="_blank">rainbow</a>
 			 * </pre>
 			 * */
 			this.getPaletteIndex = function () { return options.palette; }
