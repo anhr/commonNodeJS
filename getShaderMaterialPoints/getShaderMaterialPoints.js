@@ -12,6 +12,7 @@
  */
 
 import three from '../three.js'
+import setOptions from '../setOptions.js'
 
 /**
  * get THREE.Points with THREE.ShaderMaterial material
@@ -59,7 +60,11 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 			{ options: { a: settings.options.a, b: settings.options.b }, group: group, t: tMin, } ),
 			arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
 	const indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud( geometry ) :  undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
-	if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints )
+	if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints ) {
+
+		//если не делать эту проверку, то будет неправильный цвет точки, если не задана палитра и шкала w
+		if ( !settings.options.scales.w ) settings.options.scales.setW();
+		
 		geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( settings.Player.getColors
 			( arrayFuncs,
 				{
@@ -72,6 +77,8 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 
 				} ),
 			4 ) );
+
+	}
 
 	const texture = new THREE.TextureLoader().load( "/anhr/commonNodeJS/master/getShaderMaterialPoints/textures/point.png" );
 	texture.wrapS = THREE.RepeatWrapping;
