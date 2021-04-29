@@ -578,6 +578,17 @@ class ColorPicker {
 			*/
 			if ( options.palette === undefined )
 				options.palette = _this.paletteIndexes.BGRW;
+			
+			/**
+			 * @returns index of palette
+			 * <pre>
+			 * 0 - [BGRW]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW}
+			 * 1 - [monochrome]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Monochrome}
+			 * 2 - [bidirectional]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional}
+			 * 3 - [rainbow]{@link https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#rainbow}
+			 * </pre>
+			 * */
+			this.getPaletteIndex = function () { return options.palette; }
 
 			var arrayPalette = [
 
