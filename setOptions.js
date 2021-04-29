@@ -15,6 +15,8 @@
 import ColorPicker from './colorpicker/colorpicker.js';
 //import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 
+import three from './three.js'
+
 class SetOptions {
 
 	/**set options */
@@ -35,7 +37,10 @@ class SetOptions {
 			if ( options.palette instanceof ColorPicker.palette ) {
 
 				scale.min = scale.min === undefined ? 0 : scale.min;
-				scale.max = scale.max === undefined ? 1 : scale.max;
+
+				//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
+				//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
+				scale.max = scale.max === undefined ? new three.THREE.Vector4().w : scale.max;
 
 			}
 

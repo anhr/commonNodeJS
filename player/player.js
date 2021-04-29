@@ -2015,7 +2015,9 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 	if ( optionsPoints.t === undefined ) optionsPoints.t = optionsPoints.options ? optionsPoints.options.player.player.getOptions().settings.min : 0;
 	const options = optionsPoints.options || {},
 		a = options.a || 1, b = options.b || 0,
-		wDefault = new THREE.Vector4().w;//1;//цвет точки по умолчанию равен цвету палитры для максимального значения value,
+		optionsDefault = { palette: optionsPoints.options.palette };
+	setOptions.setW( optionsDefault );
+	const wDefault = optionsDefault.scales.w.max;//new THREE.Vector4().w;//1;//цвет точки по умолчанию равен цвету палитры для максимального значения value,
 						//которе по умолчанияю равно 1 и определяется в setOptions.setScales(...).
 						//Палитра по умолчанию ColorPicker.paletteIndexes.BGRW
 						//у которой цвет максимального значения value белый.
