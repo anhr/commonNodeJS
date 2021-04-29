@@ -2281,9 +2281,12 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 	optionsColor.colors = optionsColor.colors || [];
 	if ( !optionsColor.palette ) {
 
+		setOptions.setPalette( optionsColor );
+/*		
 		//Все точки белые и непрозрачные
 		for ( var i = 0; i < length; i++ ) optionsColor.colors.push( 1, 1, 1, 1 );
 		return optionsColor.colors;
+*/
 
 	}
 
