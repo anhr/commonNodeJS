@@ -2974,5 +2974,10 @@ function assign( ) {
 
 }
 //assign();
+/**
+ * @namespace
+ * @description assign some THREE methods
+ * */
+Player.assign = function () { assign(); }
 
 export default Player;

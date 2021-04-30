@@ -65,6 +65,7 @@ import { getWorldPosition } from '../getPosition.js';
 //getPositionSetTHREE( THREE );
 
 import three from '../three.js'
+import setOptions from '../setOptions.js'
 
 var g_settings,
 
@@ -2023,7 +2024,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * @param {object} [optionsPoints.options.player] See Player method above.
  * @returns array of THREE.Vector4 points.
  */
-Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
+Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 
 //	const THREE = three.THREE;
 	assign();
@@ -2041,8 +2042,13 @@ Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 	optionsPoints = optionsPoints || {};
 	if ( optionsPoints.t === undefined ) optionsPoints.t = optionsPoints.options ? optionsPoints.options.player.player.getOptions().settings.min : 0;
 	const options = optionsPoints.options || {},
-		a = options.a || 1,
-		b = options.b || 0;
+		a = options.a || 1, b = options.b || 0,
+		optionsDefault = { palette: optionsPoints.options.palette };
+	setOptions.setW( optionsDefault );
+	const wDefault = optionsDefault.scales.w.max;//new THREE.Vector4().w;//1;//цвет точки по умолчанию равен цвету палитры для максимального значения value,
+						//которе по умолчанияю равно 1 и определяется в setOptions.setScales(...).
+						//Палитра по умолчанию ColorPicker.paletteIndexes.BGRW
+						//у которой цвет максимального значения value белый.
 	for ( var i = 0; i &lt; arrayFuncs.length; i++ ) {
 
 		var item = arrayFuncs[i];
@@ -2052,7 +2058,7 @@ Player.getPoints = function ( /*THREE, */arrayFuncs, optionsPoints ) {
 				item[0] === undefined ? 0 : item[0],
 				item[1] === undefined ? 0 : item[1],
 				item[2] === undefined ? 0 : item[2],
-				item[3] === undefined ? 0 : item[3]
+				item[3] === undefined ? wDefault : item[3]
 
 			);
 		else if (
@@ -2305,9 +2311,12 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 	optionsColor.colors = optionsColor.colors || [];
 	if ( !optionsColor.palette ) {
 
+		setOptions.setPalette( optionsColor );
+/*		
 		//Все точки белые и непрозрачные
 		for ( var i = 0; i &lt; length; i++ ) optionsColor.colors.push( 1, 1, 1, 1 );
 		return optionsColor.colors;
+*/
 
 	}
 
@@ -2328,7 +2337,14 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 				if ( funcs.w.min ) min = funcs.w.min;
 				w = funcs.w.func;
 
-			} else if ( optionsColor.scale !== undefined ) {
+			} else {
+
+				setOptions.setW( optionsColor );
+				min = optionsColor.scales.w.min; max = optionsColor.scales.w.max;
+
+			}
+/*
+				if ( optionsColor.scale !== undefined ) {
 
 				min = optionsColor.scale.min; max = optionsColor.scale.max;
 
@@ -2348,6 +2364,7 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 				} else { }
 
 			}
+*/
 //			if ( w instanceof Function &amp;&amp; !g_settings &amp;&amp; boColorWarning )
 			if ( w instanceof Function &amp;&amp; !Player.isCreated() &amp;&amp; boColorWarning ) {
 
@@ -2985,6 +3002,11 @@ function assign( ) {
 
 }
 //assign();
+/**
+ * @namespace
+ * @description assign some THREE methods
+ * */
+Player.assign = function () { assign(); }
 
 export default Player;
 </code></pre>
@@ -2997,13 +3019,13 @@ export default Player;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Player-Player.execFunc.html">execFunc</a></li><li><a href="module-Player-Player.getColors.html">getColors</a></li><li><a href="module-Player-Player.getItemSize.html">getItemSize</a></li><li><a href="module-Player-Player.getPoints.html">getPoints</a></li><li><a href="module-Player-Player.getSelectSceneIndex.html">getSelectSceneIndex</a></li><li><a href="module-Player-Player.getSettings.html">getSettings</a></li><li><a href="module-Player-Player.getTime.html">getTime</a></li><li><a href="module-Player-Player.isCreated.html">isCreated</a></li><li><a href="module-Player-Player.selectMeshPlayScene.html">selectMeshPlayScene</a></li><li><a href="module-Player-Player.selectPlayScene.html">selectPlayScene</a></li><li><a href="module-Player-Player.setColorAttribute.html">setColorAttribute</a></li></ul><h3>Classes</h3><ul><li><a href="module-Player-Player.html">Player</a></li><li><a href="module-Player-Player.cameraTarget.html">cameraTarget</a></li><li><a href="module-Player-Player.traceLine.html">traceLine</a></li><li><a href="module-Player-Player_PlayController_PlayController.html">PlayController</a></li></ul><h3>Events</h3><ul><li><a href="module-Player-Player.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onRenamePlayButtons">onRenamePlayButtons</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Player-Player.assign.html">assign</a></li><li><a href="module-Player-Player.execFunc.html">execFunc</a></li><li><a href="module-Player-Player.getColors.html">getColors</a></li><li><a href="module-Player-Player.getItemSize.html">getItemSize</a></li><li><a href="module-Player-Player.getPoints.html">getPoints</a></li><li><a href="module-Player-Player.getSelectSceneIndex.html">getSelectSceneIndex</a></li><li><a href="module-Player-Player.getSettings.html">getSettings</a></li><li><a href="module-Player-Player.getTime.html">getTime</a></li><li><a href="module-Player-Player.isCreated.html">isCreated</a></li><li><a href="module-Player-Player.selectMeshPlayScene.html">selectMeshPlayScene</a></li><li><a href="module-Player-Player.selectPlayScene.html">selectPlayScene</a></li><li><a href="module-Player-Player.setColorAttribute.html">setColorAttribute</a></li></ul><h3>Classes</h3><ul><li><a href="module-Player-Player.html">Player</a></li><li><a href="module-Player-Player.cameraTarget.html">cameraTarget</a></li><li><a href="module-Player-Player.traceLine.html">traceLine</a></li><li><a href="module-Player-Player_PlayController_PlayController.html">PlayController</a></li></ul><h3>Events</h3><ul><li><a href="module-Player-Player.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onRenamePlayButtons">onRenamePlayButtons</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 26 2021 09:34:26 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Apr 30 2021 11:05:02 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -132,6 +132,12 @@ function MyPoints( arrayFuncs, group, settings ) {
 	pointsOptions.scale = pointsOptions.scale || new THREE.Vector3( 1, 1, 1 );
 	pointsOptions.rotation = pointsOptions.rotation || new THREE.Vector3();
 	pointsOptions.group = group;
+
+	//Эту строку нужно вызывать до создания точек THREE.Points
+	//что бы вызывалась моя версия THREE.BufferGeometry().setFromPoints для создания geometry c itemSize = 4
+	//потому что в противном случае при добавлени этих точек в FrustumPoints.pushArrayCloud() координата w будет undefined
+	settings.Player.assign();
+
 	if ( pointsOptions.shaderMaterial !== false )
 		getShaderMaterialPoints( group, arrayFuncs,// Player,
 			function ( points ) {
