@@ -14,6 +14,29 @@
 import three from '../three.js'
 import setOptions from '../setOptions.js'
 
+//Thanks to https://stackoverflow.com/a/27369985/5175935
+//Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
+const getCurrentScript = function () {
+
+	if ( document.currentScript && ( document.currentScript.src !== '' ) )
+		return document.currentScript.src;
+	const scripts = document.getElementsByTagName( 'script' ),
+		str = scripts[scripts.length - 1].src;
+	if ( str !== '' )
+		return src;
+	//Thanks to https://stackoverflow.com/a/42594856/5175935
+	return new Error().stack.match( /(https?:[^:]*)/ )[0];
+
+};
+//Thanks to https://stackoverflow.com/a/27369985/5175935
+const getCurrentScriptPath = function () {
+	const script = getCurrentScript(),
+		path = script.substring( 0, script.lastIndexOf( '/' ) );
+	return path;
+};
+//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
+const currentScriptPath = getCurrentScriptPath();
+
 /**
  * get THREE.Points with THREE.ShaderMaterial material
  * @param {THREE.Group|THREE.Scene} group THREE group or scene
@@ -80,7 +103,9 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 
 	}
 
-	const texture = new THREE.TextureLoader().load( "/anhr/commonNodeJS/master/getShaderMaterialPoints/textures/point.png" );
+//	const texture = new THREE.TextureLoader().load( "/anhr/commonNodeJS/master/getShaderMaterialPoints/textures/point.png",
+	const texture = new THREE.TextureLoader().load( currentScriptPath + "/textures/point.png",
+		function( texture ){}, function(){}, function(){ console.error('THREE.TextureLoader: error'); } );
 	texture.wrapS = THREE.RepeatWrapping;
 	texture.wrapT = THREE.RepeatWrapping;
 
@@ -150,29 +175,6 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 			}, options.onProgress, options.onError );
 
 		}
-
-		//Thanks to https://stackoverflow.com/a/27369985/5175935
-		//Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
-		const getCurrentScript = function () {
-
-			if ( document.currentScript && ( document.currentScript.src !== '' ) )
-				return document.currentScript.src;
-			const scripts = document.getElementsByTagName( 'script' ),
-				str = scripts[scripts.length - 1].src;
-			if ( str !== '' )
-				return src;
-			//Thanks to https://stackoverflow.com/a/42594856/5175935
-			return new Error().stack.match( /(https?:[^:]*)/ )[0];
-
-		};
-		//Thanks to https://stackoverflow.com/a/27369985/5175935
-		const getCurrentScriptPath = function () {
-			const script = getCurrentScript(),
-				path = script.substring( 0, script.lastIndexOf( '/' ) );
-			return path;
-		};
-		//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
-		const currentScriptPath = getCurrentScriptPath();
 
 		path = path || {};
 		path.vertex = path.vertex || currentScriptPath + "/vertex.c";
