@@ -127,6 +127,13 @@ class FrustumPoints
 		 */
 		this.pushArrayCloud = function ( geometry ) {
 
+			if ( geometry.attributes.position.itemSize !== 4 ) {
+
+				console.error( 'FrustumPoints.pushArrayCloud: Invalid geometry.attributes.position.itemSize = ' + geometry.attributes.position.itemSize );
+				return;
+				
+			}
+
 			//Массив точек, имеющих облако _arrayCloud, разбил на группы points
 			//В каждой группе points содержатся все точки, из одного mesh
 			//Это сделал потому что если одновременно имеются точки с 
@@ -174,7 +181,7 @@ class FrustumPoints
 				groupFrustumPoints = new THREE.Group();
 
 			optionsShaderMaterial.point = optionsShaderMaterial.point || {};
-			optionsShaderMaterial.point.size = optionsShaderMaterial.point.size || 0;//0.01;//Size of each frustum point
+			optionsShaderMaterial.point.size = optionsShaderMaterial.point.size || 0.01;//Size of each frustum point
 
 			optionsShaderMaterial.display = optionsShaderMaterial.display === undefined ? true : optionsShaderMaterial.display;//true - display frustum points
 			optionsShaderMaterial.info = optionsShaderMaterial.info !== undefined ? optionsShaderMaterial.info : false;//true - display information about frustum point if user move mouse over or click this point.
