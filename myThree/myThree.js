@@ -444,7 +444,7 @@ class MyThree {
 
 			canvas = elContainer.querySelector( 'canvas' );
 			//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
-			const gl = canvas.getContext( 'webgl' );
+//			const gl = canvas.getContext( 'webgl' );
 
 			//raycaster
 
@@ -544,6 +544,65 @@ if ( typeof Player !== 'undefined' )
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0x000000 );
 				scene.fog = new THREE.Fog( 0x000000, 250, 1400 );
+
+				group = new THREE.Group();
+				scene.add( group );
+
+				if ( options.frustumPoints ) {
+
+//					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
+//					options.frustumPoints = new FrustumPoints( camera, group, options,
+					new FrustumPoints( camera, group, canvas, options,
+						{//points and lines options. Default is { }
+
+							point: {//points options. Default is {}
+
+								size: 0.01,//Size of each frustum point.Default is 0;
+
+							},
+
+							//Stereo options. Available only if user has selected a stereo mode (spatialMultiplex !== spatialMultiplex.Mono)
+							stereo: {
+
+								//lines: false, // Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.Default is true
+								//hide: 10, // Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.Default is 0
+								//opacity: 1,//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque. Default is 0.3
+
+							},
+
+							//
+
+							//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
+							//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
+
+							cookie: options.dat ? options.dat.cookie : undefined,
+							cookieName: getCanvasName(),
+
+							//изменение размеров усеченной пирамиды FrustumPoints
+
+							//near: 10,// Shift of the frustum layer near to the camera in percents.
+							//0 percents - no shift.
+							//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
+							//Default is 0
+
+							//far: 70,// Shift of the frustum layer far to the camera in percents.
+							// 0 percents - no shift.
+							// 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
+							// Default is 0
+
+							//base: 70,// Scale of the base of the frustum points in percents.
+							// 0 base is null
+							// 100 no scale
+							// Default is 100
+
+							//square: true,// true - Square base of the frustum points.Default is false
+
+						},
+
+					);
+//					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( options.frustumPoints );
+
+				}
 
 				//
 
@@ -743,9 +802,10 @@ if ( typeof Player !== 'undefined' )
 				}
 
 				//
-
+/*
 				group = new THREE.Group();
 				scene.add( group );
+*/
 
 				//dat-gui JavaScript Controller Library
 				//https://github.com/dataarts/dat.gui
@@ -1061,62 +1121,7 @@ if ( typeof Player !== 'undefined' )
 						controls.update();//if scale != 1 and position != 0 of the screen, то после открытия canvas положение картинки смещено. Положение восстанавливается только если подвигать мышью
 				}
 
-//				if ( options.arrayCloud )//Array of points with cloud
-				if ( options.frustumPoints ) {
-
-					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
-//					options.frustumPoints = new FrustumPoints( camera, group, options,
-					new FrustumPoints( camera, group, options,
-						{//points and lines options. Default is { }
-
-							point: {//points options. Default is {}
-
-								size: 0.01,//Size of each frustum point.Default is 0;
-
-							},
-
-							//Stereo options. Available only if user has selected a stereo mode (spatialMultiplex !== spatialMultiplex.Mono)
-							stereo: {
-
-								//lines: false, // Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.Default is true
-								//hide: 10, // Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.Default is 0
-								//opacity: 1,//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque. Default is 0.3
-
-							},
-
-							//
-
-							//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
-							//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
-							
-							cookie: options.dat.cookie,
-							cookieName: getCanvasName(),
-
-							//изменение размеров усеченной пирамиды FrustumPoints
-
-							//near: 10,// Shift of the frustum layer near to the camera in percents.
-							//0 percents - no shift.
-							//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
-							//Default is 0
-
-							//far: 70,// Shift of the frustum layer far to the camera in percents.
-							// 0 percents - no shift.
-							// 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
-							// Default is 0
-
-							//base: 70,// Scale of the base of the frustum points in percents.
-							// 0 base is null
-							// 100 no scale
-							// Default is 100
-
-							//square: true,// true - Square base of the frustum points.Default is false
-
-						},
-
-					);
-//					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( options.frustumPoints );
-
-				}
+//frustumPoints				if ( options.arrayCloud )//Array of points with cloud
 
 				if ( gui && options.dat.guiSelectPoint ) {
 
@@ -1403,7 +1408,7 @@ if ( typeof Player !== 'undefined' )
 			}
 			function onDocumentMouseMove( event ) {
 
-				if ( raycaster !== undefined ) {
+				if ( typeof raycaster !== 'undefined' ) {
 
 					if ( raycaster.stereo !== undefined )
 						raycaster.stereo.onDocumentMouseMove( event );
@@ -1441,7 +1446,7 @@ if ( typeof Player !== 'undefined' )
 			}
 			function onDocumentMouseDown( event ) {
 
-				if ( raycaster === undefined )
+				if ( typeof raycaster === 'undefined' )
 					return;
 
 				if ( mouseenter )

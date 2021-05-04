@@ -55,7 +55,8 @@ class FrustumPoints
 	/**
 	 * Create a `FrustumPoints` instance.
 	 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
-	 * @param {THREE.Group} group group of objects to which a new FrustumPoints will be added
+	 * @param {THREE.Group} group [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new FrustumPoints will be added
+	 * @param {DOM} canvas The Graphics [Canvas]{@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas} element to draw graphics and animations.
 	 * @param {object} options see <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">myThree</a> <b>options</b> parameter for details
 	 * @param {object} [optionsShaderMaterial={}] <b>FrustumPoints</b> options.
 	 * @param {object} [optionsShaderMaterial.point={}] points options.
@@ -94,7 +95,11 @@ class FrustumPoints
 	 * </pre>
 	 * @param {string} [optionsShaderMaterial.cookieName="FrustumPoints"] Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.
 	 */
-	constructor( camera, group, options = {}, optionsShaderMaterial = {} ) {
+	constructor( camera, group, canvas, options = {}, optionsShaderMaterial = {} ) {
+
+		//Непонятно почему frustumPoints не видны если убрать эту команду
+		//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
+		canvas.getContext( 'webgl' );
 
 		this.getOptions = function () { return options; }
 		setOptions.setPalette( options );
@@ -888,124 +893,6 @@ class FrustumPoints
 					}
 
 				} );
-/*
-				MyThree.points( //array
-					function () {
-
-						var geometry = new THREE.BufferGeometry(),
-							geometryLength = ( zEnd - zStart + 1 ) * xCount * yCount;
-
-						array = new Float32Array( geometryLength * itemSize );
-						indexArray = 0;
-						_names = null;
-						_names = [];
-
-						eachZ( zStart, zEnd );
-
-						geometry.setAttribute( 'position', new THREE.BufferAttribute( array, itemSize ) );
-
-						return geometry;
-
-					}, group, options, {
-
-					name: 'frustum points',
-					shaderMaterial: shaderMaterial,
-					boFrustumPoints: true,
-					position: camera.position,
-					scale: camera.scale,
-					rotation: camera.rotation,
-					opacity: true,
-					pointIndexes: function ( pointIndex ) { return _this.pointIndexes( pointIndex ); },
-					path: {
-
-						vertex: path + '/vertex.c',
-
-					},
-					pointName: function ( pointIndex ) {
-
-						var indexes = _this.pointIndexes( pointIndex );
-						if ( indexes === undefined )
-							return indexes;
-						return 'x = ' + indexes.x + ', y = ' + indexes.y + ', z = ' + ( indexes.z + zStart ) + ', i = ' + pointIndex;
-
-					},
-					controllers: function () {
-
-						_guiSelectPoint.appendChild( { xCount: xCount, yCount: yCount, zCount: zCount, } );
-
-					},
-					uniforms: function ( uniforms ) {
-
-						cloud.create( uniforms );
-
-						//rotate the quaternion vector to 180 degrees
-						cameraQuaternionDefault.x = - cameraQuaternionDefault.x;
-						cameraQuaternionDefault.y = - cameraQuaternionDefault.y;
-						cameraQuaternionDefault.z = - cameraQuaternionDefault.z;
-
-						cameraPositionDefault.applyQuaternion( cameraQuaternionDefault );
-
-						uniforms.cameraPositionDefault = { value: cameraPositionDefault };
-						uniforms.cameraQuaternion = { value: camera.quaternion };
-
-						//palette
-						//ВНИМАНИЕ!!! Для того, что бы палитра передалась в vertex надо добавить 
-						//points.material.uniforms.palette.value.needsUpdate = true;
-						//в getShaderMaterialPoints.loadShaderText
-
-						new cloud.addUniforms( THREE.RGBFormat, 256, 'palette', {
-
-							onReady: function ( data, itemSize, updateItem ) {
-
-								var min, max;
-								if ( options.scales.w !== undefined ) {
-
-									min = options.scales.w.min; max = options.scales.w.max;
-
-								} else {
-
-									console.error( 'params.pointsOptions.uniforms: params.options.scales.w = ' + params.options.scales.w );
-									return;
-
-								}
-
-								const size = data.length / itemSize;
-								for ( var i = 0; i < size; i++ )
-									updateItem( i, options.palette.toColor( ( max - min ) * i / ( size - 1 ) + min, min, max ) );
-
-							}
-
-						} );
-						return cloud;
-
-					},
-					onReady: function ( points ) {
-
-						_points = points;
-//						_points.userData.boFrustumPoints = true;
-						_points.userData.isInfo = function () { return shaderMaterial.info; }
-
-						if ( shaderMaterial.info )
-							options.raycaster.addParticle( _points );
-
-						if ( !shaderMaterial.display )
-							removePoints();
-						pointOpacity = _points === undefined ?
-							1.0 :
-							_points.userData.shaderMaterial === undefined ? shaderMaterial.point.opacity : _points.userData.shaderMaterial.point.opacity;
-							
-						if ( onReady !== undefined )
-							onReady();//Пользователь изменил настройки frustumPoints
-
-						//когда задан параметр cameraTarget у MyThree то нужно передвинуть frustumPoints после того как созданы points
-						_this.update();
-
-						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( _points );
-
-					},
-
-				} );
-*/
 
 			}
 			update();
@@ -1135,8 +1022,12 @@ class FrustumPoints
 					( _points.userData.shaderMaterial === undefined ) ||
 					(
 						( pointOpacity === _points.userData.shaderMaterial.point.opacity ) )
-				)
+				) {
+
+//					needsUpdate();
 					return false;
+
+				}
 				pointOpacity = _points.userData.shaderMaterial.point.opacity;
 				_points.material.uniforms.opacity.value = _points.userData.shaderMaterial.point.opacity;
 				return true;
