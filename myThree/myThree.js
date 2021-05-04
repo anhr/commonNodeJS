@@ -1067,33 +1067,14 @@ if ( typeof Player !== 'undefined' )
 					controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 					controls.update();
 					if ( typeof Player !== 'undefined' ) Player.orbitControls = controls;//for cameraTarget
+/*
 					controls.addEventListener( 'change', function () {
-
-						//console.log( 'controls.target: ' + controls.target.x + ' ' + controls.target.y + ' ' + controls.target.z )
-						/*
-						console.warn('camera.position = ' + camera.position.x + ' ' + camera.position.y + ' ' + camera.position.z
-							+ '\r\ncamera.quaternion = ' + camera.quaternion.x + ' ' + camera.quaternion.y + ' ' + camera.quaternion.z
-							+ '\r\ncamera.scale = ' + camera.scale.x + ' ' + camera.scale.y + ' ' + camera.scale.z
-							);
-						*/
-
-						//change of size of the points if points is not shaderMaterial and if camera is moving
-						var vector = new THREE.Vector3();
-						vector.copy( camera.position );
-						var quaternion = new THREE.Quaternion( -camera.quaternion.x, -camera.quaternion.y, -camera.quaternion.z, camera.quaternion.w );
-						vector.applyQuaternion( quaternion );
-						options.point.sizePointsMaterial = 200 / vector.z;
-						group.children.forEach( function ( mesh ) {
-
-							if ( ( mesh.material !== undefined ) && ( mesh.material.uniforms === undefined ) )
-								mesh.material.size = options.point.size / options.point.sizePointsMaterial;
-
-						} );
 
 						if ( options.frustumPoints !== undefined )
 							options.frustumPoints.onChangeControls();
 
 					} );
+*/
 
 				}
 
@@ -1163,7 +1144,7 @@ if ( typeof Player !== 'undefined' )
 
 				createXDobjects( group, options );
 
-				if ( options.frustumPoints ) options.frustumPoints.create( renderer );
+				if ( options.frustumPoints ) options.frustumPoints.create( renderer, { orbitControls: controls } );
 
 				//На случай когда указана точка, за которой следит камера и когда Player не создан
 				if ( !options.player ) {

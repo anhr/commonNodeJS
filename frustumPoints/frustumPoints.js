@@ -165,8 +165,10 @@ class FrustumPoints
 
 		/** create points
 		 * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
+		 * @param {object} [optionsCreate={}] the following options are available
+		 * @param {OrbitControls} [optionsCreate.orbitControls] [OrbitControls]{@link https://threejs.org/docs/index.html?q=orbi#examples/en/controls/OrbitControls}
 		 */
-		this.create = function ( renderer ) {
+		this.create = function ( renderer, optionsCreate = {} ) {
 
 			//если нет точек с облаком, то облако нужно создавать что бы его было видно в guiSelectPoint
 			//однако в этом случае в консоли появятся сообщения:
@@ -181,6 +183,9 @@ class FrustumPoints
 			//
 			if ( _arrayCloud.length === 0 )
 				return undefined;//нет точек с облаком. Поэтому нет смысла создавать frustumPoints
+
+			if ( optionsCreate.orbitControls )
+				optionsCreate.orbitControls.addEventListener( 'change', function () { _this.onChangeControls(); } );
 
 			const shaderMaterial = {}, zeroPoint = new THREE.Vector3(), cameraDistanceDefault = camera.position.distanceTo( zeroPoint ), _this = this,// lines = []
 				groupFrustumPoints = new THREE.Group();
