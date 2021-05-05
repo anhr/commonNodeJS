@@ -13,6 +13,7 @@
 
 import three from '../three.js'
 import setOptions from '../setOptions.js'
+import Player from '../player/player.js';
 
 //Thanks to https://stackoverflow.com/a/27369985/5175935
 //Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
@@ -65,21 +66,30 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 	var geometry;
 	const THREE = three.THREE, tMin = settings.pointsOptions === undefined ?
 			settings.tMin === undefined ? 0 : settings.tMin :
-			settings.pointsOptions.tMin;
+			settings.pointsOptions.tMin === undefined ? 0 : settings.pointsOptions.tMin;
 
 
 	settings.options = settings.options || {};
 	settings.options.a = settings.options.a || 1;
 	settings.options.b = settings.options.b || 0;
-	settings.options.scales = settings.options.scales || {};
+//	settings.options.scales = settings.options.scales || {};
+	setOptions.setScales( settings.options );
 
 	settings.options.point = settings.options.point || {};
 	settings.options.point.size = settings.options.point.size || 5.0;
 
+	settings.pointsOptions = settings.pointsOptions || {};
+	
+
+	//Эту строку нужно вызывать до создания точек THREE.Points
+	//что бы вызывалась моя версия THREE.BufferGeometry().setFromPoints для создания geometry c itemSize = 4
+	//потому что в противном случае при добавлени этих точек в FrustumPoints.pushArrayCloud() координата w будет undefined
+	Player.assign();
+	
 	if ( typeof arrayFuncs === 'function' )
 		geometry = arrayFuncs();
 	else geometry = new THREE.BufferGeometry().setFromPoints
-		( settings.Player.getPoints( arrayFuncs,
+		( Player.getPoints( arrayFuncs,
 			{ options: { a: settings.options.a, b: settings.options.b }, group: group, t: tMin, } ),
 			arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
 	const indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud( geometry ) :  undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
@@ -88,7 +98,7 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 		//если не делать эту проверку, то будет неправильный цвет точки, если не задана палитра и шкала w
 		if ( !settings.options.scales.w ) settings.options.scales.setW();
 		
-		geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( settings.Player.getColors
+		geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( Player.getColors
 			( arrayFuncs,
 				{
 

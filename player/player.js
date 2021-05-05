@@ -2012,7 +2012,7 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 //	GuiSelectPoint.setTHREE( THREE );
 	
 	optionsPoints = optionsPoints || {};
-	if ( optionsPoints.t === undefined ) optionsPoints.t = optionsPoints.options ? optionsPoints.options.player.player.getOptions().settings.min : 0;
+	if ( optionsPoints.t === undefined ) optionsPoints.t = optionsPoints.options && optionsPoints.options.player && optionsPoints.options.player.player ? optionsPoints.options.player.player.getOptions().settings.min : 0;
 	const options = optionsPoints.options || {},
 		a = options.a || 1, b = options.b || 0,
 		optionsDefault = { palette: optionsPoints.options.palette };
