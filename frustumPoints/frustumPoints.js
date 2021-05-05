@@ -165,8 +165,8 @@ class FrustumPoints
 
 		/** create points
 		 * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
-		 * @param {object} [optionsCreate={}] the following options are available
-		 * @param {OrbitControls} [optionsCreate.orbitControls] [OrbitControls]{@link https://threejs.org/docs/index.html?q=orbi#examples/en/controls/OrbitControls}
+		 * @param {object} [optionsCreate={}] The following options are available
+		 * @param {OrbitControls} [optionsCreate.orbitControls] Moves <b>frustumPoints</b> to the front of the camera if the user has moved the camera. See [OrbitControls]{@link https://threejs.org/docs/index.html?q=orbi#examples/en/controls/OrbitControls}
 		 */
 		this.create = function ( renderer, optionsCreate = {} ) {
 

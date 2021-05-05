@@ -51,7 +51,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 
-		var camera, scene, renderer, controls;
+		var camera, scene, renderer, controls, frustumPoints;
 
 		init();
 		animate();
