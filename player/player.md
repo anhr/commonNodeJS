@@ -435,7 +435,7 @@ import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoin
 ```
 Please remove <b>player.play3DObject();</b> line and include it into <b>getShaderMaterialPoints</b> parameters.
 ```
-getShaderMaterialPoints( THREE, scene, arrayFuncs,
+getShaderMaterialPoints( scene, arrayFuncs,
 	function ( points ) {
 
 		scene.add( points );
