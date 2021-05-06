@@ -6,7 +6,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 
 # Content
 * [Quick start.](#Quickstart)
-* [Import FrustumPoints.](#ImportFrustumPoints)
+* [CreateFrustumPoints.](#CreateFrustumPoints)
  
 <a name="QuickStart"></a>
 ## Quick start
@@ -101,23 +101,23 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 ```
 NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
-<a name="ImportFrustumPoints"></a>
-## Import FrustumPoints
+<a name="CreateFrustumPoints"></a>
+## Create FrustumPoints
 
-The easiest way to use <b>FrustumPoints</b> in your code is import <b>FrustumPoints</b> from <b>FrustumPoints.js</b> file in your JavaScript module.
+* The easiest way to use <b>FrustumPoints</b> in your code is import <b>FrustumPoints</b> from <b>FrustumPoints.js</b> file in your JavaScript module.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/Examples/index.html).
 ```
 import FrustumPoints from './commonNodeJS/master/frustumPoints/frustumPoints.js';
 ```
 
-Now you can use <b>FrustumPoints</b> in your javascript code.
+* Now you can use <b>FrustumPoints</b> in your javascript code.
 
 ```
 const canvas = document.getElementById( 'canvas' );
 
 frustumPoints = new FrustumPoints( camera, scene, canvas );
 ```
-Currently your <b>FrustumPoints</b> is not visible. Please add points to highlight the <b>FrustumPoints</b> for visualisation.
+* Currently your <b>FrustumPoints</b> is not visible. Please add points to highlight the <b>FrustumPoints</b> for visualisation.
 A <b>FrustumPoints</b> cloud will be visible around each new point.
 
 First, include [MyPoints](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html).
@@ -144,4 +144,21 @@ MyPoints( arrayFuncs, scene, {
 		}
 
 } );
+```
+* Next, create </b>frustumPoints</b> after creating of <b>MyPoints</b>, <b>renderer</b> and <b>OrbitControls</b>.
+```
+frustumPoints.create( renderer, { orbitControls: controls } );
+```
+* And last, please edit the </b>animate()</b> funtion.
+```
+function animate() {
+
+	requestAnimationFrame( animate );
+
+	renderer.render( scene, camera );
+
+	if ( frustumPoints !== undefined )
+		frustumPoints.animate();
+
+}
 ```
