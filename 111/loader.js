@@ -30,7 +30,8 @@ export default class load {
 		//load a text file and output the result to the console
 		loader.load(
 			// resource URL
-			currentScriptPath + '/example.txt',
+//			currentScriptPath + '/example.txt',
+			'example.txt',
 
 			// onLoad callback
 			function ( data ) {
