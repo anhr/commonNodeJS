@@ -6,6 +6,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 
 # Content
 * [Quick start.](#Quickstart)
+* [Import FrustumPoints.](#ImportFrustumPoints)
  
 <a name="QuickStart"></a>
 ## Quick start
@@ -101,11 +102,10 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
 <a name="ImportFrustumPoints"></a>
+## Import FrustumPoints
+
 The easiest way to use <b>FrustumPoints</b> in your code is import <b>FrustumPoints</b> from <b>FrustumPoints.js</b> file in your JavaScript module.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/Examples/index.html).
-```
-import FrustumPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/frustumPoints.js';
-```
 ```
 import FrustumPoints from './commonNodeJS/master/frustumPoints/frustumPoints.js';
 ```
@@ -122,10 +122,6 @@ A <b>FrustumPoints</b> cloud will be visible around each new point.
 
 First, include [MyPoints](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html).
 ```
-import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
 import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 ```
 Now you can use <b>MyPoints</b> for create points. For example:
@@ -139,8 +135,7 @@ const arrayFuncs = [
 		0.5//w. Palette index. Default range from 0 to 1. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 	]
 ];
-MyPoints( arrayFuncs,
-	scene, {
+MyPoints( arrayFuncs, scene, {
 
 		pointsOptions: {
 
