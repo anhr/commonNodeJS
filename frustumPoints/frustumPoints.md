@@ -7,6 +7,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 # Content
 * [Quick start.](#Quickstart)
 * [CreateFrustumPoints.](#CreateFrustumPoints)
+* [Points Settings](#PointsSettings)
  
 <a name="QuickStart"></a>
 ## Quick start
@@ -162,3 +163,13 @@ function animate() {
 
 }
 ```
+Now you can see a cloud of the small dots around two points, you have created by <b>MyPoints</b>.
+Please move by mouse your points to near of the camera. You can see the cloud around points more details.
+
+<a name="PointsSettings"></a>
+## Points Settings
+
+Currently you use default settings of the <b>frustumPoints</b>. You can set you own settings. Plase edit you <b>frustumPoints</b> instance for it.
+```
+```
+See [FrustumPoints](FrustumPoints.html) class for details.

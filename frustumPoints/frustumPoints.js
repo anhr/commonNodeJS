@@ -57,49 +57,53 @@ class FrustumPoints
 	 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
 	 * @param {THREE.Group} group [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new FrustumPoints will be added
 	 * @param {DOM} canvas The Graphics [Canvas]{@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas} element to draw graphics and animations.
-	 * @param {object} options see <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">myThree</a> <b>options</b> parameter for details
-	 * @param {object} [optionsShaderMaterial={}] <b>FrustumPoints</b> options.
-	 * @param {object} [optionsShaderMaterial.point={}] points options.
-	 * @param {number} [optionsShaderMaterial.point.size=0] Size of each frustum point.
-	 * @param {boolean} [optionsShaderMaterial.display=true] true - display frustum points.
-	 * @param {boolean} [optionsShaderMaterial.info=false] true - display information about frustum point if user move mouse over or click this point.
+	 * @param {object} [settings={}] the following settings are available
+	 * @param {object} [settings.options={}] see <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">myThree</a> <b>options</b> parameter for details
+	 * @param {object} [settings.optionsShaderMaterial={}] <b>FrustumPoints</b> options.
+	 * @param {object} [settings.optionsShaderMaterial.point={}] points options.
+	 * @param {number} [settings.optionsShaderMaterial.point.size=0] Size of each frustum point.
+	 * @param {boolean} [settings.optionsShaderMaterial.display=true] true - display frustum points.
+	 * @param {boolean} [settings.optionsShaderMaterial.info=false] true - display information about frustum point if user move mouse over or click this point.
 	 *
-	 * @param {object} [optionsShaderMaterial.stereo] stereo mode options
-	 * @param {number} [optionsShaderMaterial.stereo.hide=0] Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.
-	 * @param {number} [optionsShaderMaterial.stereo.opacity=0.3] Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
+	 * @param {object} [settings.optionsShaderMaterial.stereo] stereo mode options
+	 * @param {number} [settings.optionsShaderMaterial.stereo.hide=0] Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.
+	 * @param {number} [settings.optionsShaderMaterial.stereo.opacity=0.3] Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
 	 *
-	 * @param {number} [optionsShaderMaterial.zCount=50] The count of layers of the frustum of the camera's field of view.
-	 * @param {number} [optionsShaderMaterial.yCount=30] The count of vertical points for each z level of the  frustum of the camera's field of view.
+	 * @param {number} [settings.optionsShaderMaterial.zCount=50] The count of layers of the frustum of the camera's field of view.
+	 * @param {number} [settings.optionsShaderMaterial.yCount=30] The count of vertical points for each z level of the  frustum of the camera's field of view.
 	 *
-	 * @param {number} [optionsShaderMaterial.near=0] Shift of the frustum layer near to the camera in percents.
+	 * @param {number} [settings.optionsShaderMaterial.near=0] Shift of the frustum layer near to the camera in percents.
 	 * <pre>
 	 * 0 percents - no shift.
 	 * 100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
 	 * </pre>
-	 * @param {number} [optionsShaderMaterial.far=0] Shift of the frustum layer far to the camera in percents.
+	 * @param {number} [settings.optionsShaderMaterial.far=0] Shift of the frustum layer far to the camera in percents.
 	 * <pre>
 	 * 0 percents - no shift.
 	 * 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
 	 * </pre>
-	 * @param {number} [optionsShaderMaterial.base=100] Scale of the base of the frustum points in percents.
+	 * @param {number} [settings.optionsShaderMaterial.base=100] Scale of the base of the frustum points in percents.
 	 * <pre>
 	 * 0 base is null
 	 * 100 no scale
 	 * </pre>
-	 * @param {boolean} [optionsShaderMaterial.square=false] true - Square base of the frustum points.
-	 * @param {cookie} [optionsShaderMaterial.cookie] Your custom cookie function for saving and loading of the FrustumPoints settings.
+	 * @param {boolean} [settings.optionsShaderMaterial.square=false] true - Square base of the frustum points.
+	 * @param {cookie} [settings.optionsShaderMaterial.cookie] Your custom cookie function for saving and loading of the FrustumPoints settings.
 	 * <pre>
 	 * See [cookieNodeJS]{@link https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS}.
 	 * Default cookie is not saving settings.
 	 * Has effect only if you called the <a href="#gui">frustumPoints.gui(...)</a> function.
 	 * </pre>
-	 * @param {string} [optionsShaderMaterial.cookieName="FrustumPoints"] Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.
+	 * @param {string} [settings.optionsShaderMaterial.cookieName="FrustumPoints"] Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.
 	 */
-	constructor( camera, group, canvas, options = {}, optionsShaderMaterial = {} ) {
+	constructor( camera, group, canvas, settings = {} ) {
 
 		//Непонятно почему frustumPoints не видны если убрать эту команду
 		//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
 		canvas.getContext( 'webgl' );
+
+		settings.options = settings.options || {};
+		const options = settings.options;
 
 		this.getOptions = function () { return options; }
 		setOptions.setPalette( options );
@@ -189,6 +193,9 @@ class FrustumPoints
 
 			const shaderMaterial = {}, zeroPoint = new THREE.Vector3(), cameraDistanceDefault = camera.position.distanceTo( zeroPoint ), _this = this,// lines = []
 				groupFrustumPoints = new THREE.Group();
+
+			settings.optionsShaderMaterial = settings.optionsShaderMaterial || {};
+			const optionsShaderMaterial = settings.optionsShaderMaterial;
 
 			optionsShaderMaterial.point = optionsShaderMaterial.point || {};
 			optionsShaderMaterial.point.size = optionsShaderMaterial.point.size || 0.01;//Size of each frustum point

@@ -552,8 +552,10 @@ if ( typeof Player !== 'undefined' )
 
 //					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
 //					options.frustumPoints = new FrustumPoints( camera, group, options,
-					new FrustumPoints( camera, group, canvas, options,
-						{//points and lines options. Default is { }
+					new FrustumPoints( camera, group, canvas, {
+
+						options: options,
+						optionsShaderMaterial: {//points options. Default is { }
 
 							point: {//points options. Default is {}
 
@@ -599,7 +601,7 @@ if ( typeof Player !== 'undefined' )
 
 						},
 
-					);
+					} );
 //					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( options.frustumPoints );
 
 				}
