@@ -11,6 +11,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 ## Quick start
 
 * Create a folder on your localhost named as [folderName].
+* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 * Add your web page into [folderName]. Example:
 ```
 <!DOCTYPE html>
@@ -19,12 +20,13 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 <head>
 	<title>FrustumPoints</title>
 
-	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/three.js/dev/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
 	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
 
 	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
-	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
-	<!--<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">-->
+	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">-->
+	<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">
 
 </head>
 <body>
@@ -37,19 +39,15 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 		//import * as THREE from './three.js/dev/build/three.module.js';
 
-		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
-		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
-		//Uncomment line below if you want use local commonNodeJS library in your project.
-		//import three from './commonNodeJS/master/three.js'
+		import three from './commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
 		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
-		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 
 		var camera, scene, renderer, controls, frustumPoints;
 
@@ -108,13 +106,47 @@ The easiest way to use <b>FrustumPoints</b> in your code is import <b>FrustumPoi
 ```
 import FrustumPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/frustumPoints.js';
 ```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import FrustumPoints from '../frustumPoints/frustumPoints.js';
+import FrustumPoints from './commonNodeJS/master/frustumPoints/frustumPoints.js';
 ```
 
 Now you can use <b>FrustumPoints</b> in your javascript code.
 
 ```
-const frustumPoints = new FrustumPoints( camera, scene );
+const canvas = document.getElementById( 'canvas' );
+
+frustumPoints = new FrustumPoints( camera, scene, canvas );
+```
+Currently your <b>FrustumPoints</b> is not visible. Please add points to highlight the <b>FrustumPoints</b> for visualisation.
+A <b>FrustumPoints</b> cloud will be visible around each new point.
+
+First, include [MyPoints](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html).
+```
+import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
+```
+Now you can use <b>MyPoints</b> for create points. For example:
+```
+const arrayFuncs = [
+	[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGRW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+	[
+		0.5,//x
+		0.5,//y
+		0.5,//z
+		0.5//w. Palette index. Default range from 0 to 1. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+	]
+];
+MyPoints( arrayFuncs,
+	scene, {
+
+		pointsOptions: {
+
+			frustumPoints: frustumPoints,
+
+		}
+
+} );
 ```
