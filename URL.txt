@@ -84,4 +84,13 @@ Generating a website:
 	jsdoc "..\commonNodeJS\master\createFullScreenSettings.js" -d "..\commonNodeJS\master\jsdoc\CreateFullScreenSettings"
 
 	/////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////
+	//PositionController doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\PositionController"
+
+	jsdoc "..\commonNodeJS\master\PositionController.js" -d "..\commonNodeJS\master\jsdoc\PositionController"
+
+	/////////////////////////////////////////////////////////////
 	
