@@ -586,7 +586,7 @@ import { dat } from './commonNodeJS/master/dat/dat.module.js';
 ```
 Add <b>Player</b> settings into gui
 ```
-const gui =  new dat.GUI();
+const gui = new dat.GUI();
 player.gui( gui );
 ```
 If you want to localize the gui, please import <b>getLanguageCode</b>.
