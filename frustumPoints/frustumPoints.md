@@ -8,6 +8,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 * [Quick start.](#Quickstart)
 * [CreateFrustumPoints.](#CreateFrustumPoints)
 * [Points Settings](#PointsSettings)
+* [Using <b>dat.gui</b> for manual change of the <b>FrustumPoints</b> settings.](#datGui)
  
 <a name="QuickStart"></a>
 ## Quick start
@@ -170,6 +171,62 @@ Please move by mouse your points to near of the camera. You can see the cloud ar
 ## Points Settings
 
 Currently you use default settings of the <b>frustumPoints</b>. You can set you own settings. Plase edit you <b>frustumPoints</b> instance for it.
+For example you can to display clouds around each point more details. Please change the following settings:
+
+<b>zCount</b> - the count of layers of the frustum of the camera's field of view.
+
+<b>yCount</b> - The count of vertical points for each z level of the frustum of the camera's field of view.
 ```
+frustumPoints = new FrustumPoints( camera, scene, canvas, {
+
+	optionsShaderMaterial: {
+
+		zCount: 100,
+		yCount: 100,
+
+	}
+				
+} );
 ```
 See [FrustumPoints](FrustumPoints.html) class for details.
+
+NOTE! More details clouds takes huge resources of your GPU. You can see delays of visualization in this case.
+
+<a name="datGui"></a>
+## Using <b>dat.gui</b> for manual change of the <b>FrustumPoints</b> settings.
+
+* First, import <b>dat.gui</b>.
+```
+import { dat } from './commonNodeJS/master/dat/dat.module.js';
+```
+Add <b>FrustumPoints</b> settings into gui
+```
+const gui =  new dat.GUI();
+player.gui( gui );
+```
+If you want to localize the gui, please import <b>getLanguageCode</b>.
+```
+import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import { getLanguageCode } from './commonNodeJS/master/lang.js';
+```
+and edit <b>player.gui(...)</b>.
+```
+player.gui( gui, {
+
+	getLanguageCode: getLanguageCode
+
+} );
+```
+If you want save a custom <b>Player</b> settings to the cookie, please import <b>cookie</b>
+```
+import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
+```
+or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+```
+import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
+```
+and edit <b>player.gui(...)</b>.
+
