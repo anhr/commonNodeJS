@@ -22,15 +22,17 @@ import UpDownController from './UpDownController.js';
 class PositionController extends controllers.CustomController {
 
 	/**
-	 * dat.GUI graphical user interface for control of the position of threejs 3D object
+	 * dat.GUI graphical user interface for control of the position of threejs 3D object.
+	 * Base class <a href="../../dat.gui/CustomController/src/dat/controllers/CustomController.js" target="_blank">CustomController</a>
+	 * @extends controllers.CustomController.
 	 * @param {Event} onclickController
-	 * @param {object} [options] the following options are available:
-	 * @param {number} [options.settings] time settings.
-	 * @param {number} [options.settings.offset] offset. Default is 0.1
-	 * @param {number} [options.min] Minimal offset. Default is 0.1
-	 * @param {number} [options.max] Maximal offset. Default is 10
-	 * @param {number} [options.step] step of offset. Default is 0.1
-	 * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
+	 * @param {object} [options={}] the following options are available:
+	 * @param {number} [options.settings={}] time settings.
+	 * @param {number} [options.settings.offset=0.1] offset.
+	 * @param {number} [options.min=0.1] Minimal offset.
+	 * @param {number} [options.max=10] Maximal offset.
+	 * @param {number} [options.step=0.1] step of offset.
+	 * @param {Function} [options.getLanguageCode="en"] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
 	 */
 	constructor( onclickController, options ) {
 
