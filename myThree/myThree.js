@@ -198,7 +198,6 @@ class MyThree {
 	 * @param {boolean} [options.canvas.fullScreen] default is full screen. false - no full screen
 	 * @param {number} [options.a=1] Can be use as 'a' parameter of the Function. See arrayFuncs for details.
 	 * @param {number} [options.b=0] Can be use as 'b' parameter of the Function. See arrayFuncs for details.
-	 * @param {boolean} [options.cookie] true - save settings to cookie
 	 *
 	 * @param {object} [options.point] point settings. Applies to points with ShaderMaterial.
 	 * <pre>
@@ -315,6 +314,13 @@ class MyThree {
 			options.cookie = new cookie.defaultCookie();
 		else options.cookie = cookie;
 */
+		if ( options.dat ) {
+
+			if ( options.dat.cookie !== false ) options.dat.cookie = true;
+			if ( options.dat.cookie === true ) options.dat.cookie = cookie;
+			else options.dat.cookie = new cookie.defaultCookie();
+
+		}
 
 		if ( options.palette !== undefined ) {
 
@@ -805,10 +811,6 @@ if ( typeof Player !== 'undefined' )
 				}
 
 				//
-/*
-				group = new THREE.Group();
-				scene.add( group );
-*/
 
 				//dat-gui JavaScript Controller Library
 				//https://github.com/dataarts/dat.gui
@@ -817,13 +819,14 @@ if ( typeof Player !== 'undefined' )
 					if ( options.dat.guiSelectPoint !== false ) options.dat.guiSelectPoint = true;
 					if ( options.dat.guiStereoEffect !== false ) options.dat.guiStereoEffect = true;
 					if ( options.dat.moveScene !== false ) options.dat.moveScene = {}; 
-//					if ( options.dat.axesHelperGui !== false ) options.dat.axesHelperGui = true;
 					if ( options.dat.cameraGui !== false ) options.dat.cameraGui = true;
 					if ( options.dat.guiFrustumPoints !== false ) options.dat.guiFrustumPoints = true;
+/*
 					if ( options.dat.cookie !== false ) options.dat.cookie = true;
 
 					if ( options.dat.cookie === true ) options.dat.cookie = cookie;
 					else options.dat.cookie = new cookie.defaultCookie();
+*/
 
 					if ( gui !== undefined ) {
 
