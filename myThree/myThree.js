@@ -1286,7 +1286,7 @@ if ( typeof Player !== 'undefined' )
 
 					}
 */
-					var folderPoint = new FolderPoint( fOptions, function ( value ) {
+					var folderPoint = new FolderPoint( fOptions, options.point, function ( value ) {
 
 						if ( value === undefined )
 							value = options.point.size;
@@ -1302,13 +1302,14 @@ if ( typeof Player !== 'undefined' )
 
 						} );
 						folderPoint.size.setValue( value );
+						options.point.size = value;
 						options.dat.cookie.setObject( pointName, options.point );
 
 					}, {
 
+							defaultPoint: defaultPoint,
 /*
 							point: options.point,
-							defaultPoint: defaultPoint,
 							PCOptions: {
 
 								settings: { offset: 1 }

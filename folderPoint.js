@@ -26,10 +26,10 @@ import PositionController from './PositionController.js';
 /**
  * GUI for changing point settings.
  * @param {GUI} folder parent folder. See [GUI]{@link https://github.com/anhr/dat.gui}.
+ * @param {Object} point point options.
+ * @param {number} point.size point size.
  * @param {setSize} setSize Set size of the point
  * @param {Object} [settings={}] the following settings are available
- * @param {Object} [settings.point={}] point options.
- * @param {number} [settings.point.size=0.01] point size.
  * @param {Object} [settings.defaultPoint={}] default point options. Restore point options if user has clicked "Default" button
  * @param {number} [settings.defaultPoint.size=settings.point.size] point size.
  * @param {number} [settings.PCOptions={}] See options parameter of the <a href="../../jsdoc/PositionController/PositionController.html" target="_blank">PositionController</a>
@@ -37,7 +37,7 @@ import PositionController from './PositionController.js';
  * @param {Object} [settings.PCOptions.max=1] Maximal offset.
  * @param {Object} [settings.PCOptions.step=0.01] step of offset.
  * @param {Object} [settings.PCOptions.settings={}] time settings.
- * @param {Object} [settings.PCOptions.settings.offset=0.1]
+ * @param {Object} [settings.PCOptions.settings.offset=1]
  * @param {Function} [settings.getLanguageCode="en"] Your custom getLanguageCode() function.
  * <pre>
  * returns the "primary language" subtag of the language version of the browser.
@@ -49,7 +49,7 @@ import PositionController from './PositionController.js';
  */
 class FolderPoint {
 
-	constructor( folder, setSize, settings = {} ) {
+	constructor( folder, point, setSize, settings = {} ) {
 
 		//Localization
 
@@ -79,10 +79,10 @@ class FolderPoint {
 				break;
 
 		}
-
+/*
 		const point = settings.point || {};
 		if ( point.size === undefined ) point.size = 5;//0.01;
-
+*/
 		const defaultPoint = settings.defaultPoint || {};
 		if ( defaultPoint.size === undefined ) defaultPoint.size = point.size;
 

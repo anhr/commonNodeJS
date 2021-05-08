@@ -1275,7 +1275,7 @@ class FrustumPoints
 				dat.controllerNameAndTitle( cSquare, lang.square, lang.squareTitle );
 
 				//const folderPoint = new FolderPoint( fFrustumPoints, shaderMaterial.point, optionsShaderMaterial.point, function ( value )
-				const folderPoint = new FolderPoint( fFrustumPoints, function ( value ) {
+				const folderPoint = new FolderPoint( fFrustumPoints, { size: shaderMaterial.point.size }, function ( value ) {
 
 					//Не помню зачем это написал
 					if ( value === undefined ) {
@@ -1290,11 +1290,13 @@ class FrustumPoints
 					_points.material.uniforms.pointSize.value = value;
 
 					folderPoint.size.setValue( value );
+					shaderMaterial.point.size = value;
 					saveSettings();
 
 				}, {
 
 					point: { size: 0.01 },
+					defaultPoint: { size: 0.01 },
 					PCOptions: {
 
 						settings: { offset: 0.1 },
