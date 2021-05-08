@@ -93,4 +93,13 @@ Generating a website:
 	jsdoc "..\commonNodeJS\master\PositionController.js" -d "..\commonNodeJS\master\jsdoc\PositionController"
 
 	/////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////
+	//FolderPoint doc в настоящее время не создаю потому что нет на него ссылок
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\folderPoint"
+
+	jsdoc "..\commonNodeJS\master\folderPoint.js" -d "..\commonNodeJS\master\jsdoc\folderPoint"
+
+	/////////////////////////////////////////////////////////////
 	
