@@ -75,6 +75,7 @@ import CameraGui from '../CameraGui.js';
 import FrustumPoints from '../frustumPoints/frustumPoints.js';
 import three from '../three.js'
 import setOptions from '../setOptions.js'
+import FolderPoint from '../folderPoint.js'
 
 /*проверка duplicate THREE
 //import * as THREE2 from 'https://threejs.org/build/three.module.js';
@@ -1238,7 +1239,7 @@ if ( typeof Player !== 'undefined' )
 					pointLight2.controls( group, fOptions, scales, lang.light + ' 2' );
 
 					//point
-
+/*
 					function FolderPoint( folder, point, defaultPoint, setSize, PCOptions ) {
 
 						PCOptions = PCOptions || {};
@@ -1281,7 +1282,8 @@ if ( typeof Player !== 'undefined' )
 						}, 'defaultF' ), lang.defaultButton, lang.defaultPointTitle );
 
 					}
-					var folderPoint = new FolderPoint( fOptions, options.point, defaultPoint, function ( value ) {
+*/
+					var folderPoint = new FolderPoint( fOptions, function ( value ) {
 
 						if ( value === undefined )
 							value = options.point.size;
@@ -1299,14 +1301,27 @@ if ( typeof Player !== 'undefined' )
 						folderPoint.size.setValue( value );
 						options.dat.cookie.setObject( pointName, options.point );
 
+					}, {
+
+/*
+							point: options.point,
+							defaultPoint: defaultPoint,
+							PCOptions: {
+
+								settings: { offset: 1 }
+
+							},
+*/							
+							getLanguageCode: getLanguageCode,
+
 					} )
 
 					//Frustum points
 					if ( options.frustumPoints && options.dat.guiFrustumPoints )
-						options.frustumPoints.gui( fOptions, FolderPoint, {
+						options.frustumPoints.gui( fOptions, {
 
 							getLanguageCode: getLanguageCode,
-//							cookie: cookie,
+							cookie: cookie,
 
 						} );
 
@@ -1678,10 +1693,13 @@ const lang = {
 	displayLightTitle: 'Display or hide the light source.',
 	restoreLightTitle: 'Restore position of the light source',
 
-	pointSettings: 'Point',
+//	pointSettings: 'Point',
+/*
 	size: 'Size',
 	sizeTitle: 'Size of the point with "ShaderMaterial" material',
+
 	defaultPointTitle: 'Restore point.',
+*/
 	opacity: 'Opacity',
 
 };
@@ -1701,10 +1719,13 @@ switch ( getLanguageCode() ) {
 		lang.displayLightTitle = 'Показать или скрыть источник света.';
 		lang.restoreLightTitle = 'Восстановить положение источника света';
 
-		lang.pointSettings = 'Точка';
+//		lang.pointSettings = 'Точка';
+/*
 		lang.size = 'Размер';
 		lang.sizeTitle = 'Размер точки с материалом типа "ShaderMaterial"';
+
 		lang.defaultPointTitle = 'Восстановить точку';
+*/
 		lang.opacity = 'Непрозрачность';
 		break;
 
