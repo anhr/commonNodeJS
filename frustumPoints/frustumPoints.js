@@ -28,6 +28,7 @@ import { getWorldPosition } from '../getPosition.js';
 
 import three from '../three.js'
 import setOptions from '../setOptions.js'
+import FolderPoint from '../folderPoint.js'
 
 //memory limit
 //import roughSizeOfObject from '../../commonNodeJS/master/SizeOfObject.js';
@@ -1070,7 +1071,6 @@ class FrustumPoints
 			 * Adds FrustumPoints folder into dat.GUI.
 			 * See [dat.GUI API]{@link https://github.com/dataarts/dat.gui/blob/master/API.md}.
 			 * @param {object} folder parent folder
-			 * @param {FolderPoint} FolderPoint creates the folder of the point's settings
 			 * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
 			 * @param {Function} [guiParams.getLanguageCode="en"] Your custom getLanguageCode() function.
 			 * <pre>
@@ -1091,7 +1091,7 @@ class FrustumPoints
 			 * }
 			 * </pre>
 			 */
-			this.gui = function ( folder, FolderPoint, guiParams = {} ) {
+			this.gui = function ( folder, guiParams = {} ) {
 
 				guiParams.getLanguageCode = guiParams.getLanguageCode || function () { return "en"; };
 
@@ -1274,7 +1274,8 @@ class FrustumPoints
 				const cSquare = fFrustumPoints.add( shaderMaterial, 'square' ).onChange( function ( value ) { update(); } );
 				dat.controllerNameAndTitle( cSquare, lang.square, lang.squareTitle );
 
-				const folderPoint = new FolderPoint( fFrustumPoints, shaderMaterial.point, optionsShaderMaterial.point, function ( value ) {
+				//const folderPoint = new FolderPoint( fFrustumPoints, shaderMaterial.point, optionsShaderMaterial.point, function ( value )
+				const folderPoint = new FolderPoint( fFrustumPoints, function ( value ) {
 
 					//Не помню зачем это написал
 					if ( value === undefined ) {
@@ -1293,7 +1294,14 @@ class FrustumPoints
 
 				}, {
 
-					settings: { offset: 0.1 },
+					point: { size: 0.01 },
+					PCOptions: {
+
+						settings: { offset: 0.1 },
+						max: 0.1,
+
+					},
+					getLanguageCode: guiParams.getLanguageCode,
 
 				} );
 
@@ -1581,7 +1589,7 @@ class FrustumPoints
 		//делаю затычки на случай пустого _arrayCloud = [] массива координат точек, имеющих облако вокруг себя.
 		//Другими словми если в программе нет ни одной точки с облаком вокруг себя.
 		//В этом случае точки FrustumPoints не создаются
-		this.gui = function () { }
+		this.gui = function () { console.warn( 'FrustumPoints.gui(): call FrustumPoints.pushArrayCloud(...) for push a points to the clouds array and call FrustumPoints.create(...) first.' ); }
 		this.animate = function () { }
 		this.updateGuiSelectPoint = function () { }
 		this.isDisplay = function () { }
