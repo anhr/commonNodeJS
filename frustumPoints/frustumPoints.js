@@ -839,7 +839,7 @@ class FrustumPoints
 						},
 						controllers: function () {
 
-							_guiSelectPoint.appendChild( { xCount: xCount, yCount: yCount, zCount: zCount, } );
+							if ( _guiSelectPoint ) _guiSelectPoint.appendChild( { xCount: xCount, yCount: yCount, zCount: zCount, } );
 
 						},
 						uniforms: function ( uniforms ) {
@@ -884,7 +884,7 @@ class FrustumPoints
 							//						_points.userData.boFrustumPoints = true;
 							_points.userData.isInfo = function () { return shaderMaterial.info; }
 
-							if ( shaderMaterial.info )
+							if ( shaderMaterial.info && options.raycaster )
 								options.raycaster.addParticle( _points );
 
 							if ( !shaderMaterial.display )
@@ -1225,7 +1225,7 @@ class FrustumPoints
 
 					} else {
 
-						options.raycaster.removeParticle( _points );
+						if ( options.raycaster ) options.raycaster.removeParticle( _points );
 						removePoints();
 
 					}
@@ -1237,7 +1237,7 @@ class FrustumPoints
 
 				//FrustumPoints info.
 				//Display information about frustum point if user move mouse over or click this point.
-				const cInfo = fFrustumPoints.add( shaderMaterial, 'info' ).onChange( function ( value ) {
+				const cInfo = !options.raycaster ? undefined : fFrustumPoints.add( shaderMaterial, 'info' ).onChange( function ( value ) {
 
 					if ( _points === undefined ) {
 
@@ -1245,18 +1245,20 @@ class FrustumPoints
 						return;//shaderMaterial.display = false
 
 					}
-					if ( shaderMaterial.info )
-						options.raycaster.addParticle( _points );
-					else {
+					if ( shaderMaterial.info ) {
 
-						options.guiSelectPoint.selectPoint( -1 );
-						options.raycaster.removeParticle( _points );
+						if ( options.raycaster ) options.raycaster.addParticle( _points );
+						
+					} else {
+
+						if ( options.guiSelectPoint ) options.guiSelectPoint.selectPoint( -1 );
+						if ( options.raycaster ) options.raycaster.removeParticle( _points );
 
 					}
 					saveSettings();
 
 				} );
-				dat.controllerNameAndTitle( cInfo, lang.info, lang.infoTitle );
+				if ( cInfo ) dat.controllerNameAndTitle( cInfo, lang.info, lang.infoTitle );
 
 				//Shift of the frustum layer near to the camera in percents
 				const cNear = fFrustumPoints.add( shaderMaterial, 'near', 0, 100, 1 ).onChange( function ( value ) { update(); } );
@@ -1322,7 +1324,7 @@ class FrustumPoints
 					//Поэтому не удаляю points из списка cMeshs а только получаю индекс points в этом списке.
 					const index = options.guiSelectPoint ? options.guiSelectPoint.getMeshIndex( _points ) : undefined;
 
-					options.raycaster.removeParticle( _points );
+					if ( options.raycaster ) options.raycaster.removeParticle( _points );
 					removePoints( true );
 
 					_this.update( function () {
@@ -1355,7 +1357,7 @@ class FrustumPoints
 						toUpdate = false;
 
 						cDisplay.setValue( optionsShaderMaterial.display );
-						cInfo.setValue( optionsShaderMaterial.info );
+						if ( cInfo ) cInfo.setValue( optionsShaderMaterial.info );
 
 						cNear.setValue( optionsShaderMaterial.near );
 						cFar.setValue( optionsShaderMaterial.far );
@@ -1591,7 +1593,7 @@ class FrustumPoints
 		//делаю затычки на случай пустого _arrayCloud = [] массива координат точек, имеющих облако вокруг себя.
 		//Другими словми если в программе нет ни одной точки с облаком вокруг себя.
 		//В этом случае точки FrustumPoints не создаются
-		this.gui = function () { console.warn( 'FrustumPoints.gui(): call FrustumPoints.pushArrayCloud(...) for push a points to the clouds array and call FrustumPoints.create(...) first.' ); }
+		this.gui = function () { console.warn( 'FrustumPoints.gui(): First, call FrustumPoints.pushArrayCloud(...) for push a points to the clouds array and call FrustumPoints.create(...).' ); }
 		this.animate = function () { }
 		this.updateGuiSelectPoint = function () { }
 		this.isDisplay = function () { }
@@ -1605,4 +1607,3 @@ class FrustumPoints
  }
 
 export default FrustumPoints;
-
