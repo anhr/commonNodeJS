@@ -621,8 +621,9 @@ if ( typeof Player !== 'undefined' )
 					canvas: canvas,
 
 				} );
-				//			renderer.setPixelRatio( window.devicePixelRatio );
 				options.renderer = renderer;
+
+				options.cursor = renderer.domElement.style.cursor;
 
 				//StereoEffect. https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js
 				if ( options.stereoEffect ) {
@@ -1648,6 +1649,8 @@ if ( typeof Player !== 'undefined' )
 					scene.add( spriteTextIntersection );
 
 				} else spriteTextIntersection.position.copy( pos );
+				
+				options.renderer.domElement.style.cursor = 'pointer';
 
 			},
 
@@ -1672,6 +1675,8 @@ if ( typeof Player !== 'undefined' )
 					}
 
 				} while ( spriteTextIntersection !== undefined )
+
+				options.renderer.domElement.style.cursor = options.cursor;
 
 			}
 
