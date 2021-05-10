@@ -131,12 +131,20 @@ class FrustumPoints
 		}
 
 		/**
-		 * Pushes to clouds array all points from geometry.attributes.position
-		 * @param {THREE.BufferGeometry} geometry
+		 * Pushes to clouds array all points from <b>geometry.attributes.position</b>
+		 * @param {THREE.BufferGeometry|THREE.Points} geometry [THREE.BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry}
+		 * or [THREE.Points]{@link https://threejs.org/docs/index.html?q=Poin#api/en/objects/Points}
 		 * @returns index of the new array item
 		 */
 		this.pushArrayCloud = function ( geometry ) {
 
+			var points;
+			if ( geometry.geometry ) {
+
+				points = geometry;
+				geometry = geometry.geometry;
+
+			}
 			if ( geometry.attributes.position.itemSize !== 4 ) {
 
 				console.error( 'FrustumPoints.pushArrayCloud: Invalid geometry.attributes.position.itemSize = ' + geometry.attributes.position.itemSize );
@@ -152,8 +160,8 @@ class FrustumPoints
 			// потому что точки без shaderMaterial добавляются сразу после создания
 			// а точки с shaderMaterial добаляются только после вызова loadShaderText в function getShaderMaterialPoints
 			const index = _arrayCloud.getCloudsCount(),
-				points = [];
-			_arrayCloud.push( points );
+				arrayPoints = [];
+			_arrayCloud.push( arrayPoints );
 			for ( var i = 0; i < geometry.attributes.position.count; i++ ) {
 
 				const point = new THREE.Vector4().fromArray( geometry.attributes.position.array, i * geometry.attributes.position.itemSize );
@@ -161,9 +169,10 @@ class FrustumPoints
 				//Здесь коррекитровка point.w не имеет эффекта. Она коррекитруется в FrustumPoints.cloud.updateMesh
 //				point.w *= options.scales.w.max;
 
-				points.push( point );
+				arrayPoints.push( point );
 
 			}
+			if ( points ) points.userData.cloud = { indexArray: index, }
 			return index;
 
 		}
