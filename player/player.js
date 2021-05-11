@@ -73,6 +73,7 @@ class Player {
 	 * @param {object} [options.selectPlaySceneOptions] See <a href="../../player/jsdoc/module-Player-Player.selectPlayScene.html" target="_blank">Player.selectPlayScene</a>.
 	 * @param {onSelectScene} [options.onSelectScene] This function is called at each new step of the playing. See <a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">onSelectScene</a>.
 	 * @param {onChangeScaleT} [options.onChangeScaleT] event. User has updated the time settings. See <a href="../../player/jsdoc/module-Player.html#~onChangeScaleT" target="_blank">onChangeScaleT</a>.
+	 * @param {FrustumPoints} [options.frustumPoints] See <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a>.
 	 * @param {object} [options.settings] time settings.
 	 * @param {number} [options.settings.interval=1] Ticks per seconds.
 	 * @param {number} [options.settings.min=0] Animation start time.
@@ -112,6 +113,7 @@ class Player {
 		options = options || {};
 
 		g_selectPlaySceneOptions = options.selectPlaySceneOptions;
+		if ( !g_selectPlaySceneOptions && options.frustumPoints ) g_selectPlaySceneOptions = options.frustumPoints.getOptions();
 		g_selectPlaySceneOptions = g_selectPlaySceneOptions || {};
 		g_selectPlaySceneOptions.boPlayer = g_selectPlaySceneOptions.boPlayer || false;
 
@@ -138,6 +140,7 @@ class Player {
 			Player.selectPlayScene( group, t, index );//, options.selectPlaySceneOptions );
 			_this.setIndex( index, ( g_settings.name === '' ? '' : g_settings.name + ': ' ) + t );
 			if ( options.onSelectScene ) options.onSelectScene( index, t );
+			if ( options.frustumPoints ) options.frustumPoints.updateCloudPoints();
 
 		}
 
