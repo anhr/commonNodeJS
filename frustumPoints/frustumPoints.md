@@ -6,9 +6,11 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 
 # Content
 * [Quick start.](#Quickstart)
-* [CreateFrustumPoints.](#CreateFrustumPoints)
-* [Points Settings](#PointsSettings)
+* [Create FrustumPoints.](#CreateFrustumPoints)
+* [<b>FrustumPoints</b> Settings](#FrustumPointsSettings)
 * [Using <b>dat.gui</b> for manual change of the <b>FrustumPoints</b> settings.](#datGui)
+* [Add <b>Player</b>.](#Player)
+* [Points color.](#PointsColor)
  
 <a name="QuickStart"></a>
 ## Quick start
@@ -23,8 +25,8 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 <head>
 	<title>FrustumPoints</title>
 
-	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/three.js/dev/examples/main.css">
-	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
+	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/three.js/dev/examples/main.css">-->
+	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
 	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
 
 	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
@@ -42,14 +44,15 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 
 	<script type="module">
 
-		//import * as THREE from 'https://threejs.org/build/three.module.js';
-		import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+		import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 		//import * as THREE from './three.js/dev/build/three.module.js';
 
 		import three from './commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
+		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 
 		var camera, scene, renderer, controls, frustumPoints;
@@ -60,7 +63,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 		function init() {
 
 			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 0.4 ) );
 
 			scene = new THREE.Scene();
 
@@ -107,7 +110,7 @@ NOTE. Please include `three.THREE = THREE;` line into your project before use my
 ## Create FrustumPoints
 
 * The easiest way to use <b>FrustumPoints</b> in your code is import <b>FrustumPoints</b> from <b>FrustumPoints.js</b> file in your JavaScript module.
-[Example](https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/Examples/index.html).
+[Example](../Examples/index.html).
 ```
 import FrustumPoints from './commonNodeJS/master/frustumPoints/frustumPoints.js';
 ```
@@ -131,10 +134,10 @@ Now you can use <b>MyPoints</b> for create points. For example:
 const arrayFuncs = [
 	[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGRW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 	[
-		0.5,//x
-		0.5,//y
-		0.5,//z
-		0.5//w. Palette index. Default range from 0 to 1. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+		-0.5,//x
+		0,//y
+		0,//z
+		0//w. Palette index. Default range from 0 to 1. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 	]
 ];
 MyPoints( arrayFuncs, scene, {
@@ -147,6 +150,11 @@ MyPoints( arrayFuncs, scene, {
 
 } );
 ```
+If you use [THREE.Points]{@link https://threejs.org/docs/index.html?q=Poin#api/en/objects/Points} for creating of the points, plase call
+```
+frustumPoints.pushArrayCloud( points );
+```
+<b>points</b> is instance of the THREE.Points.
 * Next, create <b>frustumPoints</b> after creating of <b>MyPoints</b>, <b>renderer</b> and <b>OrbitControls</b>.
 ```
 frustumPoints.create( renderer, { orbitControls: controls } );
@@ -159,7 +167,7 @@ function animate() {
 
 	renderer.render( scene, camera );
 
-	if ( frustumPoints !== undefined )
+	if ( frustumPoints )
 		frustumPoints.animate();
 
 }
@@ -167,8 +175,8 @@ function animate() {
 Now you can see a cloud of the small dots around two points, you have created by <b>MyPoints</b>.
 Please move by mouse your points to near of the camera. You can see the cloud around points more details.
 
-<a name="PointsSettings"></a>
-## Points Settings
+<a name="FrustumPointsSettings"></a>
+## FrustumPoints Settings
 
 Currently you use default settings of the <b>frustumPoints</b>. You can set you own settings. Plase edit you <b>frustumPoints</b> instance for it.
 For example you can to display clouds around each point more details. Please change the following settings:
@@ -193,40 +201,126 @@ See [FrustumPoints](FrustumPoints.html) class for details.
 NOTE! More details clouds takes huge resources of your GPU. You can see delays of visualization in this case.
 
 <a name="datGui"></a>
-## Using <b>dat.gui</b> for manual change of the <b>FrustumPoints</b> settings.
+## Using dat.gui for manual change of the FrustumPoints settings.
 
-* First, import <b>dat.gui</b>.
+* First, import [dat.gui](https://github.com/dataarts/dat.gui).
 ```
 import { dat } from './commonNodeJS/master/dat/dat.module.js';
 ```
 Add <b>FrustumPoints</b> settings into gui
 ```
 const gui =  new dat.GUI();
-player.gui( gui );
+frustumPoints.gui( gui );
 ```
 If you want to localize the gui, please import <b>getLanguageCode</b>.
 ```
-import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
 import { getLanguageCode } from './commonNodeJS/master/lang.js';
 ```
-and edit <b>player.gui(...)</b>.
+and edit <b>frustumPoints.gui(...)</b>.
 ```
-player.gui( gui, {
+frustumPoints.gui( gui, {
 
-	getLanguageCode: getLanguageCode
+	getLanguageCode: getLanguageCode,
 
 } );
 ```
-If you want save a custom <b>Player</b> settings to the cookie, please import <b>cookie</b>
-```
-import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+If you want to save a custom <b>FrustumPoints</b> settings to the cookie, please import <b>cookie</b>
 ```
 import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
-and edit <b>player.gui(...)</b>.
+and edit the new <b>FrustumPoints(...)</b> instance.
+```
+frustumPoints = new FrustumPoints( camera, scene, canvas, {
 
+	optionsShaderMaterial: {
+
+		zCount: 100,
+		yCount: 100,
+		cookie: cookie,
+
+	}
+
+} );
+```
+
+<a name="Player"></a>
+## Add [Player](../../player/jsdoc/index.html).
+
+First, import <b>Player</b>.
+```
+import Player from './commonNodeJS/master/player/player.js';
+```
+Add <b>Player</b> after creating of the <b>scene</b> and <b>frustumPoints</b> and before creation of the points and <b>renderer</b>.
+```
+const player = new Player( scene, {
+
+		frustumPoints: frustumPoints,
+		settings: {
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+
+} );
+```
+Currently your player is not doing anything. Suppose you want to move point during playback. Plase edit <b>arrayFuncs</b> and <b>MyPoints</b> for it.
+```
+const arrayFuncs = [
+	[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGRW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+	{
+
+		//move second point from [-0.5, -0.5, -0.5, ] for t = 0 to [0.5, 0.5, 0.5, ] for t = 1
+		vector: new THREE.Vector4(
+			new Function( 't', 'return t-0.5' ),//x
+			0,//new Function( 't', 'return t-0.5' ),//y
+			0,//new Function( 't', 'return t-0.5' ),//z
+			new Function( 't', 'return t' ),//w palette index from 0 for t = 0 to 1 for t = 1
+		),
+		trace: true,
+
+	}
+];
+MyPoints( arrayFuncs, scene, {
+
+		pointsOptions: {
+
+			frustumPoints: frustumPoints,
+			//shaderMaterial: false,
+			onReady: function ( points ) {
+
+				player.play3DObject();
+
+			}
+		},
+
+} );
+```
+You can see above, the second point is moving from [-0.5, -0.5, -0.5, ] for t = 0 to [0.5, 0.5, 0.5, ] for t = 1
+and player is start playing after creation of the points: `player.play3DObject();`
+
+<a name="PointsColor"></a>
+## Points color.
+
+Current palette of the points colors is default. You can choose another palette.
+Default color palette index is [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGRW).
+You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
+Please import ColorPicker
+```
+import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
+```
+and edit the new <b>FrustumPoints(...)</b> instance.
+```
+frustumPoints = new FrustumPoints( camera, scene, canvas, {
+
+	options: { palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } },
+	optionsShaderMaterial: {
+
+		zCount: 100,
+		yCount: 100,
+		cookie: cookie,
+
+	}
+
+} );
+```
