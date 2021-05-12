@@ -5,7 +5,7 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 # Content
 * [Quick start.](#Quickstart)
 * [Add trace line of moving of the point during playing.](#AddTrace)
-* [Point color.](#PointColor)
+* [Points color.](#PointsColor)
 * [Move points position.](#MovePoints)
 * [Create <b>THREE.Points</b> with <b>THREE.ShaderMaterial</b>.](#ShaderMaterialPoints)
 * [Use <b>MyPoints</b> for create points.](#MyPoints)
@@ -255,8 +255,8 @@ You can see, first value of the array is object with
 
 Now you can see a trace line of the moving of the first point.
 
-<a name="PointColor"></a>
-## Point color.
+<a name="PointsColor"></a>
+## Points color.
 * In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> key and add <b>vertexColors: THREE.VertexColors</b>.
 ```
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
