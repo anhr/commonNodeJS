@@ -1121,7 +1121,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				_this.select( { object: getMesh(), index: value } );
 
 			}
-			if ( axesHelper !== undefined )
+			if ( axesHelper !== false )
 				axesHelper.exposePosition( getObjectPosition( getMesh(), value ) );
 			displayPointControllers( display );
 
