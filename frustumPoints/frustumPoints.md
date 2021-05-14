@@ -52,8 +52,8 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 		import three from './commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
-		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 
 		var camera, scene, renderer, controls, frustumPoints;
 
@@ -158,19 +158,6 @@ frustumPoints.pushArrayCloud( points );
 * Next, create <b>frustumPoints</b> after creating of <b>MyPoints</b>, <b>renderer</b> and <b>OrbitControls</b>.
 ```
 frustumPoints.create( renderer, { orbitControls: controls } );
-```
-* And last, please edit the </b>animate()</b> funtion.
-```
-function animate() {
-
-	requestAnimationFrame( animate );
-
-	renderer.render( scene, camera );
-
-	if ( frustumPoints )
-		frustumPoints.animate();
-
-}
 ```
 Now you can see a cloud of the small dots around two points, you have created by <b>MyPoints</b>.
 Please move by mouse your points to near of the camera. You can see the cloud around points more details.
