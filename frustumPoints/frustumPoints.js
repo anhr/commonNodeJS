@@ -257,6 +257,24 @@ class FrustumPoints
 
 					uniforms = _uniforms;
 
+					//индекс палитры надо пересчитывать в зависимости от min and max key of the options.scales.w
+					//В D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\frustumPoints\vertex.c
+					//сначала вычисляется paletteIndex,
+					//который равен сумме индексов цветов всех точек cloudPoint.w 
+					//помноженное на растояние fDistance от точки имеющей облако до текущей точки frustumPoint.
+					//Индексы cloudPoint.w находятся в диапазоне min and max key of the options.scales.w
+					//paletteIndex это координата x в палитре palette в D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\frustumPoints\vertex.c
+					//которая имеет тип sampler2D https://www.khronos.org/opengl/wiki/Sampler_(GLSL)#Sampler_types
+					//которая имеет текстуру 2D texture.
+					//Диапазон paletteIndex должен быть в предплах от 0 до 1 https://www.khronos.org/opengl/wiki/Sampler_(GLSL)#Texture_coordinates
+					//Получаем пропорции:
+					//Если w = options.scales.w.min то paletteIndex = 0.
+					//Если w = options.scales.w.max то paletteIndex = 1.
+					const max = options.scales.w.max, min = options.scales.w.min;
+					//w = ( w - min ) / ( max - min ) = w / ( max - min ) - min / ( max - min ) = w / (1+1) + 1 / (1+1) = w * 0.5 + 0.5 ;
+					uniforms.paletteA = { value: 1 / ( max - min ) };//0.5 };
+					uniforms.paletteB = { value: - min / ( max - min ) };//0.5 };
+
 					//array of all points with cloud
 					this.cloudPoints = new this.addUniforms( THREE.RGBAFormat, _arrayCloud.getCloudsCount(), 'cloudPoints' );
 
@@ -387,6 +405,7 @@ class FrustumPoints
 							if ( isNaN( vector.w ) )
 								console.error( 'frustumPoints.create.cloud.addUniforms.updateItem: vector.w = ' + vector.w + '. Probably you use THREE.Color for w coordinate of the point with cloud.' );
 
+							/*
 							//w это координата x в палитре palette в D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\frustumPoints\vertex.c
 							//которая имеет тип sampler2D https://www.khronos.org/opengl/wiki/Sampler_(GLSL)#Sampler_types
 							//которая имеет текстуру 2D texture.
@@ -396,6 +415,8 @@ class FrustumPoints
 							//Если vector.w = options.scales.w.max то w = 1.
 							const max = options.scales.w.max, min = options.scales.w.min;
 							w = ( vector.w - min ) / ( max - min );
+							*/
+							w = vector.w;
 
 						}
 						const vectorSize = y === undefined ? 1 : z === undefined ? 2 : w === undefined ? 3 : 4,
@@ -1055,6 +1076,7 @@ class FrustumPoints
 				return true;
 
 			}
+
 			/** update "frustum points" item in the <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a>.*/
 			this.updateGuiSelectPoint = function () {
 
@@ -1388,7 +1410,23 @@ class FrustumPoints
 				displayControllers( shaderMaterial.display );
 
 			}
+/*
+			function animate() {
 
+				requestAnimationFrame( animate );
+				if (
+					!_points ||
+					( _points.userData.shaderMaterial === undefined ) ||
+					(
+						( pointOpacity === _points.userData.shaderMaterial.point.opacity ) )
+				)
+					return;
+				pointOpacity = _points.userData.shaderMaterial.point.opacity;
+				_points.material.uniforms.opacity.value = _points.userData.shaderMaterial.point.opacity;
+
+			}
+			window.requestAnimationFrame( animate );
+*/
 			return this;
 
 		}
