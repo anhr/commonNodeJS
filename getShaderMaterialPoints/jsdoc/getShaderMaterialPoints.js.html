@@ -40,6 +40,31 @@
  */
 
 import three from '../three.js'
+import setOptions from '../setOptions.js'
+import Player from '../player/player.js';
+
+//Thanks to https://stackoverflow.com/a/27369985/5175935
+//Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
+const getCurrentScript = function () {
+
+	if ( document.currentScript &amp;&amp; ( document.currentScript.src !== '' ) )
+		return document.currentScript.src;
+	const scripts = document.getElementsByTagName( 'script' ),
+		str = scripts[scripts.length - 1].src;
+	if ( str !== '' )
+		return src;
+	//Thanks to https://stackoverflow.com/a/42594856/5175935
+	return new Error().stack.match( /(https?:[^:]*)/ )[0];
+
+};
+//Thanks to https://stackoverflow.com/a/27369985/5175935
+const getCurrentScriptPath = function () {
+	const script = getCurrentScript(),
+		path = script.substring( 0, script.lastIndexOf( '/' ) );
+	return path;
+};
+//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
+const currentScriptPath = getCurrentScriptPath();
 
 /**
  * get THREE.Points with THREE.ShaderMaterial material
@@ -69,39 +94,57 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 	var geometry;
 	const THREE = three.THREE, tMin = settings.pointsOptions === undefined ?
 			settings.tMin === undefined ? 0 : settings.tMin :
-			settings.pointsOptions.tMin;
+			settings.pointsOptions.tMin === undefined ? 0 : settings.pointsOptions.tMin;
 
 
 	settings.options = settings.options || {};
 	settings.options.a = settings.options.a || 1;
 	settings.options.b = settings.options.b || 0;
-	settings.options.scales = settings.options.scales || {};
+//	settings.options.scales = settings.options.scales || {};
+	setOptions.setScales( settings.options );
 
 	settings.options.point = settings.options.point || {};
 	settings.options.point.size = settings.options.point.size || 5.0;
 
+	settings.pointsOptions = settings.pointsOptions || {};
+	
+
+	//Эту строку нужно вызывать до создания точек THREE.Points
+	//что бы вызывалась моя версия THREE.BufferGeometry().setFromPoints для создания geometry c itemSize = 4
+	//потому что в противном случае при добавлени этих точек в FrustumPoints.pushArrayCloud() координата w будет undefined
+	Player.assign();
+	
 	if ( typeof arrayFuncs === 'function' )
 		geometry = arrayFuncs();
 	else geometry = new THREE.BufferGeometry().setFromPoints
-		( settings.Player.getPoints( arrayFuncs,
+		( Player.getPoints( arrayFuncs,
 			{ options: { a: settings.options.a, b: settings.options.b }, group: group, t: tMin, } ),
 			arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
 	const indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud( geometry ) :  undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
-	if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints )
-		geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( settings.Player.getColors
+	if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints ) {
+
+		//если не делать эту проверку, то будет неправильный цвет точки, если не задана палитра и шкала w
+		if ( !settings.options.scales.w ) settings.options.scales.setW();
+		
+		geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( Player.getColors
 			( arrayFuncs,
 				{
 
 					opacity: settings.pointsOptions === undefined ? undefined : settings.pointsOptions.opacity,
 					positions: geometry.attributes.position,
-					scale: settings.options.scales.w,
+//					scale: settings.options.scales.w,
+					scales: settings.options.scales,
 					palette: settings.options.palette,
 					tMin: tMin,
 
 				} ),
 			4 ) );
 
-	const texture = new THREE.TextureLoader().load( "/anhr/commonNodeJS/master/getShaderMaterialPoints/textures/point.png" );
+	}
+
+//	const texture = new THREE.TextureLoader().load( "/anhr/commonNodeJS/master/getShaderMaterialPoints/textures/point.png",
+	const texture = new THREE.TextureLoader().load( currentScriptPath + "/textures/point.png",
+		function( texture ){}, function(){}, function(){ console.error('THREE.TextureLoader: error'); } );
 	texture.wrapS = THREE.RepeatWrapping;
 	texture.wrapT = THREE.RepeatWrapping;
 
@@ -171,29 +214,6 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 			}, options.onProgress, options.onError );
 
 		}
-
-		//Thanks to https://stackoverflow.com/a/27369985/5175935
-		//Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
-		const getCurrentScript = function () {
-
-			if ( document.currentScript &amp;&amp; ( document.currentScript.src !== '' ) )
-				return document.currentScript.src;
-			const scripts = document.getElementsByTagName( 'script' ),
-				str = scripts[scripts.length - 1].src;
-			if ( str !== '' )
-				return src;
-			//Thanks to https://stackoverflow.com/a/42594856/5175935
-			return new Error().stack.match( /(https?:[^:]*)/ )[0];
-
-		};
-		//Thanks to https://stackoverflow.com/a/27369985/5175935
-		const getCurrentScriptPath = function () {
-			const script = getCurrentScript(),
-				path = script.substring( 0, script.lastIndexOf( '/' ) );
-			return path;
-		};
-		//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
-		const currentScriptPath = getCurrentScriptPath();
 
 		path = path || {};
 		path.vertex = path.vertex || currentScriptPath + "/vertex.c";
@@ -331,7 +351,7 @@ export default getShaderMaterialPoints;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Apr 27 2021 18:21:38 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat May 15 2021 10:03:55 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
