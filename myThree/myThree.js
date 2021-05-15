@@ -1151,7 +1151,11 @@ if ( typeof Player !== 'undefined' )
 
 				createXDobjects( group, options );
 
-				if ( options.frustumPoints ) options.frustumPoints.create( renderer, { orbitControls: controls } );
+				if ( options.frustumPoints ) options.frustumPoints.create( renderer, {
+
+					orbitControls: controls
+
+				} );
 
 				//На случай когда указана точка, за которой следит камера и когда Player не создан
 				if ( !options.player ) {

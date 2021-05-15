@@ -1,4 +1,6 @@
-﻿jsdoc https://github.com/jsdoc/jsdoc
+﻿Учебник https://webglfundamentals.org/
+------------------------------------------------------
+jsdoc https://github.com/jsdoc/jsdoc
 Getting Started with JSDoc 3 https://jsdoc.app/about-getting-started.html
 Generating a website:
 	Download https://github.com/jsdoc/jsdoc into D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc
