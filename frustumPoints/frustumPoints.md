@@ -237,7 +237,7 @@ frustumPoints = new FrustumPoints( camera, scene, canvas, {
 ```
 
 <a name="Player"></a>
-## Add [Player](../../player/jsdoc/index.html).
+## Add [Player](https://github.com/anhr/commonNodeJS/tree/master/player).
 
 First, import <b>Player</b>.
 ```
