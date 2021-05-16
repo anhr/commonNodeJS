@@ -296,7 +296,7 @@ Player is start playing after creation of the points: <b><i>player.play3DObject(
 <a name="PointsColor"></a>
 ## Points color.
 
-* Current palette of the points colors is default.
+* Current [palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker) of the points colors is default.
 Default color palette index is [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGRW).
 You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
 Please import <b>ColorPicker</b>.
