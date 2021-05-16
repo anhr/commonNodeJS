@@ -150,6 +150,12 @@ MyPoints( arrayFuncs, scene, {
 
 } );
 ```
+Now you can see two points on your canvas.
+
+First point have palette index is 1 and white color.
+
+Second point have palette index is 0 and blue color.
+
 If you use [THREE.Points]{@link https://threejs.org/docs/index.html?q=Poin#api/en/objects/Points} for creating of the points, plase call
 ```
 frustumPoints.pushArrayCloud( points );
@@ -194,7 +200,7 @@ NOTE! More details clouds takes huge resources of your GPU. You can see delays o
 ```
 import { dat } from './commonNodeJS/master/dat/dat.module.js';
 ```
-Add <b>FrustumPoints</b> settings into gui
+Add <b>FrustumPoints</b> settings into gui after <b><i>frustumPoints.create( renderer, { orbitControls: controls } );</i></b> line.
 ```
 const gui =  new dat.GUI();
 frustumPoints.gui( gui );
@@ -283,16 +289,17 @@ MyPoints( arrayFuncs, scene, {
 
 } );
 ```
-You can see above, the second point is moving from [-0.5, -0.5, -0.5, ] for t = 0 to [0.5, 0.5, 0.5, ] for t = 1
-and player is start playing after creation of the points: `player.play3DObject();`
+You can see above, the second point is moving from [-0.5, 0, 0] for t = 0 to [0.5, 0, 0] for t = 1. Color of the second point is changing from blue to white.
+
+Player is start playing after creation of the points: <b><i>player.play3DObject();</i></b>
 
 <a name="PointsColor"></a>
 ## Points color.
 
-Current palette of the points colors is default. You can choose another palette.
+* Current palette of the points colors is default.
 Default color palette index is [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGRW).
 You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
-Please import ColorPicker
+Please import <b>ColorPicker</b>.
 ```
 import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 ```
@@ -300,7 +307,7 @@ and edit the new <b>FrustumPoints(...)</b> instance.
 ```
 frustumPoints = new FrustumPoints( camera, scene, canvas, {
 
-	options: { palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } },
+	options: { palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ) },
 	optionsShaderMaterial: {
 
 		zCount: 100,
@@ -311,3 +318,58 @@ frustumPoints = new FrustumPoints( camera, scene, canvas, {
 
 } );
 ```
+Color of the first point is green.
+
+Color of the second point is changing from red to green.
+
+* Currently you use default range of the palette indexes from 0 to 1. You can set another range. For example from -1 to 1.
+Please add a <b>scales</b> key into <b>options</b> parameter of the <b>new FrustumPoints</b> for it.
+```
+frustumPoints = new FrustumPoints( camera, scene, canvas, {
+
+	options: {
+
+		palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+		scales: {
+
+			w: {
+
+				min: -1,
+				max: 1,
+
+			},
+
+		}
+
+	},
+	optionsShaderMaterial: {
+
+		zCount: 100,
+		yCount: 100,
+		cookie: cookie,
+
+	}
+
+} );
+```
+and change palette index of the second point to -1 is red color.
+```
+const arrayFuncs = [
+	[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGRW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+	{
+
+		//move second point from [-0.5, -0.5, -0.5, ] for t = 0 to [0.5, 0.5, 0.5, ] for t = 1
+		vector: new THREE.Vector4(
+			new Function( 't', 'return t-0.5' ),//x
+			0,//new Function( 't', 'return t-0.5' ),//y
+			0,//new Function( 't', 'return t-0.5' ),//z
+			-1,//new Function( 't', 'return t' ),//w red color for ColorPicker.paletteIndexes.bidirectional and palette index min = -1
+		),
+		trace: true,
+
+	}
+];
+```
+Now you can see the interference of the clouds color of the first and second points.
+Green color of the cloud of the first point is interferencing with red color of  the cloud of the second point.
+As result you can see the dark color of the cloud if the second point is come near the first point.
