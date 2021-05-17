@@ -48,7 +48,6 @@ var g_settings,
 	//что бы цвет точек был верным еще до начала проигрывания, точки из getShaderMaterialPoints еще не добавлены в группу для проигрывания.
 	//Кроме того цвет точек в getShaderMaterialPoints задается аттрибутом 'ca' а не 'color'.
 	g_selectPlaySceneOptions;
-//	THREE;
 
 /**
  * @callback onSelectScene
@@ -89,17 +88,7 @@ class Player {
 	 */
 	constructor( group, options ) {
 
-//		const THREE = three.THREE;
 		assign();
-/*
-		if ( typeof THREE === 'undefined' ) {
-
-			console.error( 'Call Player.assign() first.' );
-			return;
-
-		}
-*/
-//		ColorPicker.palette.setTHREE( THREE );
 
 		if ( Player.isCreated() ) {
 
@@ -243,7 +232,6 @@ class Player {
 
 		this.controllers = [];
 		var playing = false, time, timeNext;
-//		const controllers = this.controllers;
 
 		function RenamePlayButtons() {
 
@@ -467,10 +455,6 @@ class Player {
 			repeatOn: 'Turn repeat on',
 			repeatOff: 'Turn repeat off',
 			controllerTitle: 'Current time.',
-/*
-					fullScreen: 'Full Screen',
-					nonFullScreen: 'Non Full Screen',
-*/
 			stereoEffects: 'Stereo effects',
 			mono: 'Mono',
 			sideBySide: 'Side by side',
@@ -488,10 +472,6 @@ class Player {
 					lang.repeatOn = 'Повторять проигрывание';
 					lang.repeatOff = 'Остановить повтор проигрывания';
 					lang.controllerTitle = 'Текущее время.';
-					/*
-											lang.fullScreen = 'На весь экран';
-											lang.nonFullScreen = 'Восстановить размеры экрана';
-					*/
 					lang.stereoEffects = 'Стерео эффекты';
 					lang.mono = 'Моно';
 					lang.sideBySide = 'Слева направо';
@@ -673,27 +653,6 @@ class Player {
 
 				}
 				player.pushController( this );
-/*				
-				this.onChange = function ( value ) {
-
-					player.setTime( value );
-
-				}
-*/
-/*
-				this.getGroup = function () {
-
-					return _getGroup();
-
-				}
-*/
-/*
-				this.selectScene = function ( index ) {
-
-					_selectScene( parseInt( index ) );
-
-				}
-*/				
 				/**
 				 * @param {number} value current time of the playing
 				 */
@@ -717,7 +676,6 @@ class Player {
 
 			}
 			get controller() { return this._controller; }
-//			get lang() { return this.lang; }
 
 		}
 
@@ -765,7 +723,6 @@ class Player {
 				lang = getLang( {
 
 					getLanguageCode: guiParams.getLanguageCode,
-					//lang: guiParams.lang
 
 				} );
 			Object.freeze( axesDefault );
@@ -785,7 +742,7 @@ class Player {
 
 			function scale() {
 
-				const axes = g_settings,//options.settings,
+				const axes = g_settings,
 					scaleControllers = {};
 				function onclick( customController, action ) {
 
@@ -1116,8 +1073,6 @@ class Player {
 
 		}
 
-		//	g_boPlayer = true;
-
 	}
 
 }
@@ -1127,7 +1082,6 @@ class Player {
  * @returns true if Player is created
  */
 Player.isCreated = function () { return Player.player ? true : false; }
-//Player.isCreated = function () { return g_boPlayer; }
 
 
 /**
@@ -1265,16 +1219,8 @@ Player.cameraTarget = class {
 		}
 		function setCameraTarget( cameraTarget ) {
 
-//			const THREE = three.THREE;
 			assign();
-/*
-			if ( typeof THREE === 'undefined' ) {
 
-				console.error( 'Call Player.assign() first.' );
-				return;
-
-			}
-*/
 			if ( !cameraTarget )
 				cameraTarget = cameraTargetDefault;//У выбранной для слежения точки нет cameraTarget
 			if ( cameraTarget.boLook !== undefined )
@@ -1309,15 +1255,7 @@ Player.cameraTarget = class {
 
 			if ( !mesh.geometry )
 				return;
-//			const THREE = three.THREE;
-/*
-			if ( typeof THREE === 'undefined' ) {
 
-				console.error( 'Call Player.assign() first.' );
-				return;
-
-			}
-*/
 			const arrayFuncs = mesh.userData.player.arrayFuncs;
 			if ( arrayFuncs === undefined )
 				return;
@@ -1336,18 +1274,9 @@ Player.cameraTarget = class {
 		 */
 		this.changeTarget = function ( mesh, i ) {
 
-//			const THREE = three.THREE;
 			assign();
-/*
-			if ( typeof THREE === 'undefined' ) {
 
-				console.error( 'Call Player.assign() first.' );
-				return;
-
-			}
-*/
 			const cameraTarget = Player.cameraTarget.get();
-			//			camera = cameraTarget.camera;
 
 			//Update cameraTarget
 			const func = typeof mesh.userData.player.arrayFuncs === "function" ? {} : mesh.userData.player.arrayFuncs[i];
@@ -1370,16 +1299,7 @@ Player.cameraTarget = class {
 		 */
 		this.setCameraTarget = function ( camera, update = false ) {
 
-//			const THREE = three.THREE;
 			assign();
-/*
-			if ( typeof THREE === 'undefined' ) {
-
-				console.error( 'Call Player.assign() first.' );
-				return;
-
-			}
-*/
 
 			var cameraTarget = Player.cameraTarget.get();
 			if ( !cameraTarget ) cameraTarget = cameraTarget || {};
@@ -1413,7 +1333,6 @@ Player.cameraTarget = class {
 
 					//не менять позицию камеры если
 					if (
-//						( Player.cameraGui && !Player.cameraGui.isLook() ) ||//есть cameraGui в которой снят флаг следить за точкой
 						!cameraTarget.boLook ||//не следить за точкой
 						(//или
 							!target &&//нет точки, за которой надо следить
@@ -1498,7 +1417,6 @@ Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 
 				console.error( e );
 				throw e;
-//				alert( 'Player.execFunc(): axis: ' + axisName + '. ' + e );
 				return;
 
 			}
@@ -1643,16 +1561,7 @@ palette = new palette();
 */
 Player.selectMeshPlayScene = function ( mesh, t, index, options ) {
 
-//	const THREE = three.THREE;
 	assign();
-/*
-	if ( typeof THREE === 'undefined' ) {
-
-		console.error( 'Call Player.assign() first.' );
-		return;
-
-	}
-*/
 
 	if ( t === undefined ) t = Player.getSettings().min;
 	index = index || 0;
@@ -1755,10 +1664,6 @@ Player.selectMeshPlayScene = function ( mesh, t, index, options ) {
 					const c = { r: 255, g: 255, b: 255 };
 					color = new THREE.Color( "rgb(" + c.r + ", " + c.g + ", " + c.b + ")" );
 					return color;
-/*				
-					ColorPicker.palette.setTHREE( THREE );
-					color = palette.get().toColor( value, min, max );
-*/					
 
 				}
 
@@ -2001,18 +1906,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  */
 Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 
-//	const THREE = three.THREE;
 	assign();
-/*
-	if ( typeof THREE === 'undefined' ) {
-
-		console.error( 'Call Player.assign() first.' );
-		return;
-
-	}
-*/
-
-//	GuiSelectPoint.setTHREE( THREE );
 	
 	optionsPoints = optionsPoints || {};
 	if ( optionsPoints.t === undefined ) optionsPoints.t = optionsPoints.options && optionsPoints.options.player && optionsPoints.options.player.player ? optionsPoints.options.player.player.getOptions().settings.min : 0;
@@ -2109,15 +2003,6 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 			if ( ( funcs instanceof THREE.Vector2 ) || ( funcs instanceof THREE.Vector3 ) || ( funcs instanceof THREE.Vector4 ) ) {
 
 				const value = Player.execFunc( funcs, axisName, optionsPoints.t, a, b );
-/*				
-				if ( value === undefined ) {
-
-					if ( axisName === 'w' )
-						return 1;//white color
-					else console.error( 'Player.getPoints.getAxis(' + axisName + '): value = ' + value );
-
-				}
-*/				
 				return value;
 
 			}
@@ -2136,19 +2021,6 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 				delete funcs.cameraTarget;
 
 			}
-/*			
-			if ( funcs.cameraTarget ) {
-
-				funcs.vector.cameraTarget = funcs.cameraTarget;
-				delete funcs.cameraTarget;
-
-				funcs.vector.cameraTarget.bodefault = false;
-				if ( funcs.vector.cameraTarget.boLook === undefined ) funcs.vector.cameraTarget.boLook = true;
-
-				Player.cameraTarget.init( funcs.vector.cameraTarget );
-
-			}
-*/			
 			arrayFuncs[i] = funcs.vector;
 			funcs = funcs.vector;
 			return Player.execFunc( funcs, axisName, optionsPoints.t, a, b );
@@ -2166,24 +2038,13 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 
 			Player.cameraTarget.init( funcs.cameraTarget );
 
-//			Player.cameraTarget.get().target = point;
-
 		}
-
+/*
 		if ( funcs.w === undefined ) {
 
-/*
-			point.w = {};//Если тут поставить NaN то в points.geometry.attributes.position.array он преобразуется в 0.
-			//Тогда в gui появится ненужный орган управления controllerW
-			//от балды поставил пустой объект что бы при создании points.geometry.attributes.position.array
-			//это зачение преобразвалось в NaN.
-*/
-//Цвет этой точки не определен и по умолчанию должен быть белым.
-//если я определю w то цвет точки будет зависеть от выбранной палитры
-//			funcs.w = 1;//white color
 
 		}
-
+*/
 		points.push( point );
 
 	}
@@ -2256,17 +2117,8 @@ var boColorWarning = true;
  */
 Player.getColors = function ( arrayFuncs, optionsColor ) {
 
-//	const THREE = three.THREE;
 	assign();
-/*
-	if ( typeof THREE === 'undefined' ) {
 
-		console.error( 'Call Player.assign() first.' );
-		return;
-
-	}
-*/
-//	ColorPicker.palette.setTHREE(THREE);
 	optionsColor = optionsColor || {};
 	
 	if (
@@ -2287,11 +2139,6 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 	if ( !optionsColor.palette ) {
 
 		setOptions.setPalette( optionsColor );
-/*		
-		//Все точки белые и непрозрачные
-		for ( var i = 0; i < length; i++ ) optionsColor.colors.push( 1, 1, 1, 1 );
-		return optionsColor.colors;
-*/
 
 	}
 
@@ -2318,29 +2165,6 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 				min = optionsColor.scales.w.min; max = optionsColor.scales.w.max;
 
 			}
-/*
-				if ( optionsColor.scale !== undefined ) {
-
-				min = optionsColor.scale.min; max = optionsColor.scale.max;
-
-			} else {
-
-				if ( funcs instanceof THREE.Vector4 ) {
-
-					if ( typeof funcs.w === 'function' ) {
-
-						max = 100;
-						min = 0;
-
-					} else {
-
-					}
-
-				} else { }
-
-			}
-*/
-//			if ( w instanceof Function && !g_settings && boColorWarning )
 			if ( w instanceof Function && !Player.isCreated() && boColorWarning ) {
 /*
 				console.warn( 'Player.getColors: remove all functions from all THREE.Vector4.w items of the arrayFuncs.' );
@@ -2348,7 +2172,6 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 				console.warn( '	If you use MyPoints for create of the points, please add Player: Player into settings parameter of the MyPoints function after creating of the Player.' );
 				console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
 */				
-//				return;
 				g_settings = { min: 0 };
 				boColorWarning = false;
 				
@@ -2379,7 +2202,7 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 
 					var position = getObjectPosition( mesh, iMesh );
 					opacity += getStandardNormalDistribution(
-						getWorldPosition(//myThreejs.getWorldPosition(
+						getWorldPosition(
 							camera, new THREE.Vector3().fromBufferAttribute( optionsColor.positions, i )
 						).distanceTo( position ) * 5
 					) / standardNormalDistributionZero;
@@ -2409,9 +2232,6 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 Player.traceLine = class traceLine
 {
 
-	//Private class fields https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields
-//	#line;
-//	#arrayLines = [];//сюда добавляются линии когда max: Infinity,
 
 	/**
 	 * trace line of moving of the point during playing
@@ -2422,16 +2242,9 @@ Player.traceLine = class traceLine
 
 		var line;
 		const arrayLines = [];//сюда добавляются линии когда max: Infinity,
-//		const THREE = three.THREE;
+
 		assign();
-/*
-		if ( typeof THREE === 'undefined' ) {
 
-			console.error( 'Call Player.assign() first.' );
-			return;
-
-		}
-*/
 		if ( !Player.isCreated() ) {
 
 			console.warn( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
@@ -2448,7 +2261,6 @@ Player.traceLine = class traceLine
 		 */
 		this.isVisible = function () {
 
-			//		if ( !g_settings ) return false;//не запущен Player(...)
 			if ( !Player.isCreated() ) return false;//не запущен Player(...)
 
 			if ( line ) return line.visible;
@@ -2463,7 +2275,6 @@ Player.traceLine = class traceLine
 		 */
 		this.visible = function ( visible ) {
 
-			//		if ( !g_settings ) return false;//не запущен Player(...)
 			if ( !Player.isCreated() ) return false;//не запущен Player(...)
 
 			if ( line ) {
@@ -2492,7 +2303,6 @@ Player.traceLine = class traceLine
 			const attributesPosition = mesh.geometry.attributes.position;
 			var point = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
 			point.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
-			//		var point = getObjectPosition( mesh, index ),
 			var sceneIndex = Player.getSelectSceneIndex();
 			if ( g_settings.max === null ) {
 
@@ -2501,7 +2311,6 @@ Player.traceLine = class traceLine
 
 					while ( sceneIndex < ( arrayLines.length - 1 ) ) {
 
-	//					group.remove( arrayLines[arrayLines.length - 1] );
 						mesh.remove( arrayLines[arrayLines.length - 1] );
 						arrayLines.pop();
 
@@ -2581,18 +2390,9 @@ Player.traceLine = class traceLine
 
 				line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
 				line.visible = true;
-//				group.add( line );
 				mesh.add( line );
 
 			}
-	/*
-			if ( line.geometry ) {//scene do not have geometry
-		
-				delete line.geometry.boundingSphere;
-				line.geometry.boundingSphere = null;
-		
-			}
-	*/
 			//Если не удалять boundingSphere
 			//и если двигается камера от проигрывания или ее перемещает пользователь
 			//то в некоторых случаях линию не будет видно даже если она не выходит из поля видимости
@@ -2712,16 +2512,7 @@ Player.getTime = function () {
  */
 Player.getItemSize = function ( arrayFuncs ) {
 
-//	const THREE = three.THREE;
 	assign();
-/*
-	if ( typeof THREE === 'undefined' ){
-
-		console.error( 'Call Player.assign() first.' );
-		return;
-
-	}
-*/
 
 	for ( var i = 0; i < arrayFuncs.length; i++ ) {
 
@@ -2763,8 +2554,6 @@ Player.selectPlayScene = function( group, t = 0, index ) {
 	//приуслвии что не выбрана ни одна точка как cameraTarget
 	if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition( index === undefined );
 
-//	if ( Player.cameraGui ) Player.cameraGui.update();
-
 }
 var THREE;
 /* * @namespace
@@ -2772,32 +2561,12 @@ var THREE;
  */
 function assign( ) {
 
-/*
-	if ( THREE ) {
-
-		if ( !Object.is( THREE, _THREE ) )
-			console.error( 'Player.setTHREE: duplicate THREE. Please use one instance of the THREE library.' )
-		return;
-
-	}
-*/
 	if ( !three.isThree() ) {
 
 		console.warn( 'Player: can not assign. Set THREE first.' )
 		return;
 
 	}
-/*
-	if ( THREE )
-		return;
-*/
-/*
-	try {
-
-		THREE = three.THREE;
-
-	} catch( e ){ return }
-*/
 	THREE = three.THREE;
 	Object.assign( THREE.BufferGeometry.prototype, {
 
@@ -2918,8 +2687,6 @@ function assign( ) {
 
 			//
 
-//three.module.js:47508 THREE.Matrix4: .getInverse() has been removed. Use matrixInv.copy( matrix ).invert(); instead.
-//			_inverseMatrix.getInverse( matrixWorld );
 			_inverseMatrix.copy( matrixWorld ).invert();
 			
 			_ray.copy( raycaster.ray ).applyMatrix4( _inverseMatrix );
