@@ -93,16 +93,9 @@
 			const player = typeof Player === 'undefined' ? undefined : new Player( scene, {
 
 				frustumPoints: frustumPoints,
-/*
-				onSelectScene: function ( index, t ) {
-
-					if ( frustumPoints )
-						frustumPoints.updateCloudPoints();
-
-				},
-*/
-				selectPlaySceneOptions: typeof options !== 'undefined' ? options : undefined,
-				settings: {
+//				selectPlaySceneOptions: typeof options !== 'undefined' ? options : undefined,
+				options: typeof options !== 'undefined' ? options : undefined,
+				timeSettings: {
 
 					marks: 100,//Ticks count of the playing.
 					interval: 25,//Ticks per seconds.

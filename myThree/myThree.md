@@ -216,7 +216,7 @@ Please change your <b>Player</b> for it.
 ```
 const player = new Player( scene, {
 
-		settings: {
+		timeSettings: {
 
 			marks: 100,//Ticks count of the playing.
 			interval: 25,//Ticks per seconds.
@@ -324,8 +324,8 @@ Add <b>selectPlaySceneOptions</b> key for your instance of the <b>player</b>.
 ```
 const player = new Player( scene, {
 
-		selectPlaySceneOptions: options,
-		settings: {
+		options: options,
+		timeSettings: {
 
 			marks: 100,//Ticks count of the playing.
 			interval: 25,//Ticks per seconds.
@@ -883,8 +883,8 @@ Individual setting for selected point is more priority before camera settings.
 ```
 const player = new Player( scene, {
 
-		selectPlaySceneOptions: options,
-		settings: {
+		options: options,
+		timeSettings: {
 
 			marks: 100,//Ticks count of the playing.
 			interval: 25,//Ticks per seconds.
@@ -921,8 +921,8 @@ You can set another time limit. Please add <b>min</b> and <b>max</b> keys into s
 ```
 const player = new Player( scene, {
 
-	selectPlaySceneOptions: options,
-	settings: {
+	options: options,
+	timeSettings: {
 
 		min: 0,
 		max: 2,
@@ -940,8 +940,8 @@ You can infinity play. Please set <b>max: Infinity</b> for it.
 ```
 const player = new Player( scene, {
 
-	selectPlaySceneOptions: options,
-	settings: {
+	options: options,
+	timeSettings: {
 
 		min: 0,
 		max: Infinity,
@@ -958,8 +958,8 @@ Currently, the default playback step is 0.1. You can set another step. Please ad
 ```
 const player = new Player( scene, {
 
-	selectPlaySceneOptions: options,
-	settings: {
+	options: options,
+	timeSettings: {
 
 		min: 0,
 		max: Infinity,

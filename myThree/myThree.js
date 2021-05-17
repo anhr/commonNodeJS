@@ -888,8 +888,9 @@ if ( typeof Player !== 'undefined' )
 								options.frustumPoints.updateCloudPoints();
 
 						},
-						selectPlaySceneOptions: options,
-						settings: options.player,
+//						selectPlaySceneOptions: options,
+						options: options,
+						timeSettings: options.player,
 						cameraTarget: { camera: camera, },
 						onChangeScaleT: function ( scale ) {
 

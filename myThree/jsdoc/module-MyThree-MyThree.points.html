@@ -122,40 +122,7 @@
 
             
 
-            <td class="description last">points.geometry.attributes.position array
-<pre>
-THREE.Vector4: 4D point.
-THREE.Vector3: 3D point. w = 1. Default is white color
-THREE.Vector2: 2D point. w = 1, z = 0. Default is white color
-Vector's x, y, z, w is position of the point.
-Can be as:
-float - position of the point.
-[float] - array of positions of the point.
-Function - position of the point is function of the t. Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )
-Vector.w can be as THREE.Color. Example: new THREE.Color( "rgb(255, 127, 0)" )
-if arrayFuncs.length === 0 then push new THREE.Vector3().
-
-object: {
-  vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position
-  name: point name
-  trace: true - Displays the trace of the point movement. Default is false
-  cameraTarget: {} Camera look at selected point. See <a href="../../player/jsdoc/module-Player.html#~Player.cameraTarget.init" target="_blank">Player.cameraTarget.init</a>.
-}
-or
-object: {
-  x: x axis. Defauilt is 0.
-  y: y axis. Defauilt is 0.
-  z: z axis. Defauilt is 0.
-  w: w axis. Defauilt is 0.
-}
-
-array: [
-  0: x axis. Defauilt is 0.
-  1: y axis. Defauilt is 0.
-  2: z axis. Defauilt is 0.
-  3: w axis. Defauilt is 0.
-]
-</pre></td>
+            <td class="description last">points.geometry.attributes.position array<pre>THREE.Vector4: 4D point.THREE.Vector3: 3D point. w = 1. Default is white colorTHREE.Vector2: 2D point. w = 1, z = 0. Default is white colorVector's x, y, z, w is position of the point.Can be as:float - position of the point.[float] - array of positions of the point.Function - position of the point is function of the t. Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )Vector.w can be as THREE.Color. Example: new THREE.Color( "rgb(255, 127, 0)" )if arrayFuncs.length === 0 then push new THREE.Vector3().object: {  vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position  name: point name  trace: true - Displays the trace of the point movement. Default is false  cameraTarget: {} Camera look at selected point. See <a href="../../player/jsdoc/module-Player.html#~Player.cameraTarget.init" target="_blank">Player.cameraTarget.init</a>.}orobject: {  x: x axis. Defauilt is 0.  y: y axis. Defauilt is 0.  z: z axis. Defauilt is 0.  w: w axis. Defauilt is 0.}array: [  0: x axis. Defauilt is 0.  1: y axis. Defauilt is 0.  2: z axis. Defauilt is 0.  3: w axis. Defauilt is 0.]</pre></td>
         </tr>
 
     
@@ -339,11 +306,7 @@ array: [
 
             
 
-            <td class="description last">{} - creates the THREE.Points with THREE.ShaderMaterial material.
-<pre>
-The size of the each point of the THREE.Points seems the same on canvas
-because I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.
-</pre></td>
+            <td class="description last">{} - creates the THREE.Points with THREE.ShaderMaterial material.<pre>The size of the each point of the THREE.Points seems the same on canvasbecause I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.</pre></td>
         </tr>
 
     
@@ -376,14 +339,7 @@ because I reduce the size of the points closest to the camera and increase the s
 
             
 
-            <td class="description last">position of the points. Default is new THREE.Vector3( 0, 0, 0 ).
-<pre>
-Vector's x, y, z is position of the points.
-Can be as:
-float - position of the points.
-[float] - array of positions of the points.
-Function - position of the points is function of the t. Example: new Function( 't', 'return 0.1 + t' )
-</pre></td>
+            <td class="description last">position of the points. Default is new THREE.Vector3( 0, 0, 0 ).<pre>Vector's x, y, z is position of the points.Can be as:float - position of the points.[float] - array of positions of the points.Function - position of the points is function of the t. Example: new Function( 't', 'return 0.1 + t' )</pre></td>
         </tr>
 
     
@@ -416,14 +372,7 @@ Function - position of the points is function of the t. Example: new Function( '
 
             
 
-            <td class="description last">scale of the points. Default is new THREE.Vector3( 1, 1, 1 ).
-<pre>
-Vector's x, y, z is scale of the points.
-Can be as:
-float - scale of the points.
-[float] - array of scales of the points.
-Function - scale of the points is function of the t. Example: new Function( 't', 'return 1.1 + t' )
-</pre></td>
+            <td class="description last">scale of the points. Default is new THREE.Vector3( 1, 1, 1 ).<pre>Vector's x, y, z is scale of the points.Can be as:float - scale of the points.[float] - array of scales of the points.Function - scale of the points is function of the t. Example: new Function( 't', 'return 1.1 + t' )</pre></td>
         </tr>
 
     
@@ -456,14 +405,7 @@ Function - scale of the points is function of the t. Example: new Function( 't',
 
             
 
-            <td class="description last">rotation of the points. Default is new THREE.Vector3( 0, 0, 0 ).
-<pre>
-Vector's x, y, z is rotation of the points.
-Can be as:
-float - rotation of the points.
-[float] - array of rotations of the points.
-Function - rotation of the points is function of the t. Example: new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )
-</pre></td>
+            <td class="description last">rotation of the points. Default is new THREE.Vector3( 0, 0, 0 ).<pre>Vector's x, y, z is rotation of the points.Can be as:float - rotation of the points.[float] - array of rotations of the points.Function - rotation of the points is function of the t. Example: new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )</pre></td>
         </tr>
 
     
@@ -544,7 +486,7 @@ Function - rotation of the points is function of the t. Example: new Function( '
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myThree.js.html">myThree.js</a>, <a href="myThree.js.html#line1813">line 1813</a>
+        <a href="myThree.js.html">myThree.js</a>, <a href="myThree.js.html#line1841">line 1841</a>
     </li></ul></dd>
     
 
@@ -612,7 +554,7 @@ Function - rotation of the points is function of the t. Example: new Function( '
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 26 2021 09:53:15 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue May 18 2021 06:31:38 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

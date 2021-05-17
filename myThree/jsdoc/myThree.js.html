@@ -101,8 +101,9 @@ import CameraGui from '../CameraGui.js';
 //import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';
 
 import FrustumPoints from '../frustumPoints/frustumPoints.js';
-
 import three from '../three.js'
+import setOptions from '../setOptions.js'
+import FolderPoint from '../folderPoint.js'
 
 /*проверка duplicate THREE
 //import * as THREE2 from 'https://threejs.org/build/three.module.js';
@@ -225,7 +226,6 @@ class MyThree {
 	 * @param {boolean} [options.canvas.fullScreen] default is full screen. false - no full screen
 	 * @param {number} [options.a=1] Can be use as 'a' parameter of the Function. See arrayFuncs for details.
 	 * @param {number} [options.b=0] Can be use as 'b' parameter of the Function. See arrayFuncs for details.
-	 * @param {boolean} [options.cookie] true - save settings to cookie
 	 *
 	 * @param {object} [options.point] point settings. Applies to points with ShaderMaterial.
 	 * &lt;pre>
@@ -333,6 +333,8 @@ class MyThree {
 
 		options = options || {};
 
+		options.getLanguageCode = options.getLanguageCode || getLanguageCode;
+		
 		options.camera = options.camera || {};
 		options.camera.position = options.camera.position || new THREE.Vector3( 0.4, 0.4, 2 );
 		options.camera.scale = options.camera.scale || new THREE.Vector3( 1, 1, 1 );
@@ -342,6 +344,13 @@ class MyThree {
 			options.cookie = new cookie.defaultCookie();
 		else options.cookie = cookie;
 */
+		if ( options.dat ) {
+
+			if ( options.dat.cookie !== false ) options.dat.cookie = true;
+			if ( options.dat.cookie === true ) options.dat.cookie = cookie;
+			else options.dat.cookie = new cookie.defaultCookie();
+
+		}
 
 		if ( options.palette !== undefined ) {
 
@@ -352,7 +361,7 @@ class MyThree {
 					break;
 				case 'boolean':
 					if ( options.palette )
-						options.palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.BGRW } );
+						options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGRW } );
 					break;
 				default: {
 					
@@ -472,7 +481,7 @@ class MyThree {
 
 			canvas = elContainer.querySelector( 'canvas' );
 			//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
-			const gl = canvas.getContext( 'webgl' );
+//			const gl = canvas.getContext( 'webgl' );
 
 			//raycaster
 
@@ -573,6 +582,67 @@ if ( typeof Player !== 'undefined' )
 				scene.background = new THREE.Color( 0x000000 );
 				scene.fog = new THREE.Fog( 0x000000, 250, 1400 );
 
+				group = new THREE.Group();
+				scene.add( group );
+
+				if ( options.frustumPoints ) {
+
+//					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
+//					options.frustumPoints = new FrustumPoints( camera, group, options,
+					new FrustumPoints( camera, group, canvas, {
+
+						options: options,
+						optionsShaderMaterial: {//points options. Default is { }
+
+							point: {//points options. Default is {}
+
+								size: 0.01,//Size of each frustum point.Default is 0;
+
+							},
+
+							//Stereo options. Available only if user has selected a stereo mode (spatialMultiplex !== spatialMultiplex.Mono)
+							stereo: {
+
+								//lines: false, // Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.Default is true
+								//hide: 10, // Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.Default is 0
+								//opacity: 1,//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque. Default is 0.3
+
+							},
+
+							//
+
+							//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
+							//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
+
+							cookie: options.dat ? options.dat.cookie : undefined,
+							cookieName: getCanvasName(),
+
+							//изменение размеров усеченной пирамиды FrustumPoints
+
+							//near: 10,// Shift of the frustum layer near to the camera in percents.
+							//0 percents - no shift.
+							//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
+							//Default is 0
+
+							//far: 70,// Shift of the frustum layer far to the camera in percents.
+							// 0 percents - no shift.
+							// 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
+							// Default is 0
+
+							//base: 70,// Scale of the base of the frustum points in percents.
+							// 0 base is null
+							// 100 no scale
+							// Default is 100
+
+							//square: true,// true - Square base of the frustum points.Default is false
+
+						},
+
+					} );
+//					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( options.frustumPoints );
+
+				}
+
 				//
 
 				renderer = new THREE.WebGLRenderer( {
@@ -581,8 +651,9 @@ if ( typeof Player !== 'undefined' )
 					canvas: canvas,
 
 				} );
-				//			renderer.setPixelRatio( window.devicePixelRatio );
 				options.renderer = renderer;
+
+				options.cursor = renderer.domElement.style.cursor;
 
 				//StereoEffect. https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js
 				if ( options.stereoEffect ) {
@@ -772,9 +843,6 @@ if ( typeof Player !== 'undefined' )
 
 				//
 
-				group = new THREE.Group();
-				scene.add( group );
-
 				//dat-gui JavaScript Controller Library
 				//https://github.com/dataarts/dat.gui
 				if ( ( options.dat !== undefined ) ) {
@@ -782,13 +850,14 @@ if ( typeof Player !== 'undefined' )
 					if ( options.dat.guiSelectPoint !== false ) options.dat.guiSelectPoint = true;
 					if ( options.dat.guiStereoEffect !== false ) options.dat.guiStereoEffect = true;
 					if ( options.dat.moveScene !== false ) options.dat.moveScene = {}; 
-//					if ( options.dat.axesHelperGui !== false ) options.dat.axesHelperGui = true;
 					if ( options.dat.cameraGui !== false ) options.dat.cameraGui = true;
 					if ( options.dat.guiFrustumPoints !== false ) options.dat.guiFrustumPoints = true;
+/*
 					if ( options.dat.cookie !== false ) options.dat.cookie = true;
 
 					if ( options.dat.cookie === true ) options.dat.cookie = cookie;
 					else options.dat.cookie = new cookie.defaultCookie();
+*/
 
 					if ( gui !== undefined ) {
 
@@ -847,8 +916,9 @@ if ( typeof Player !== 'undefined' )
 								options.frustumPoints.updateCloudPoints();
 
 						},
-						selectPlaySceneOptions: options,
-						settings: options.player,
+//						selectPlaySceneOptions: options,
+						options: options,
+						timeSettings: options.player,
 						cameraTarget: { camera: camera, },
 						onChangeScaleT: function ( scale ) {
 
@@ -1035,33 +1105,14 @@ if ( typeof Player !== 'undefined' )
 					controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 					controls.update();
 					if ( typeof Player !== 'undefined' ) Player.orbitControls = controls;//for cameraTarget
+/*
 					controls.addEventListener( 'change', function () {
-
-						//console.log( 'controls.target: ' + controls.target.x + ' ' + controls.target.y + ' ' + controls.target.z )
-						/*
-						console.warn('camera.position = ' + camera.position.x + ' ' + camera.position.y + ' ' + camera.position.z
-							+ '\r\ncamera.quaternion = ' + camera.quaternion.x + ' ' + camera.quaternion.y + ' ' + camera.quaternion.z
-							+ '\r\ncamera.scale = ' + camera.scale.x + ' ' + camera.scale.y + ' ' + camera.scale.z
-							);
-						*/
-
-						//change of size of the points if points is not shaderMaterial and if camera is moving
-						var vector = new THREE.Vector3();
-						vector.copy( camera.position );
-						var quaternion = new THREE.Quaternion( -camera.quaternion.x, -camera.quaternion.y, -camera.quaternion.z, camera.quaternion.w );
-						vector.applyQuaternion( quaternion );
-						options.point.sizePointsMaterial = 200 / vector.z;
-						group.children.forEach( function ( mesh ) {
-
-							if ( ( mesh.material !== undefined ) &amp;&amp; ( mesh.material.uniforms === undefined ) )
-								mesh.material.size = options.point.size / options.point.sizePointsMaterial;
-
-						} );
 
 						if ( options.frustumPoints !== undefined )
 							options.frustumPoints.onChangeControls();
 
 					} );
+*/
 
 				}
 
@@ -1089,61 +1140,7 @@ if ( typeof Player !== 'undefined' )
 						controls.update();//if scale != 1 and position != 0 of the screen, то после открытия canvas положение картинки смещено. Положение восстанавливается только если подвигать мышью
 				}
 
-//				if ( options.arrayCloud )//Array of points with cloud
-				if ( options.frustumPoints ) {
-
-					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
-					options.frustumPoints = new FrustumPoints( camera, group, options,
-						{//points and lines options. Default is { }
-
-							point: {//points options. Default is {}
-
-								size: 0.01,//Size of each frustum point.Default is 0;
-
-							},
-
-							//Stereo options. Available only if user has selected a stereo mode (spatialMultiplex !== spatialMultiplex.Mono)
-							stereo: {
-
-								//lines: false, // Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.Default is true
-								//hide: 10, // Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.Default is 0
-								//opacity: 1,//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque. Default is 0.3
-
-							},
-
-							//
-
-							//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
-							//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
-							
-							cookie: options.dat.cookie,
-							cookieName: getCanvasName(),
-
-							//изменение размеров усеченной пирамиды FrustumPoints
-
-							//near: 10,// Shift of the frustum layer near to the camera in percents.
-							//0 percents - no shift.
-							//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
-							//Default is 0
-
-							//far: 70,// Shift of the frustum layer far to the camera in percents.
-							// 0 percents - no shift.
-							// 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
-							// Default is 0
-
-							//base: 70,// Scale of the base of the frustum points in percents.
-							// 0 base is null
-							// 100 no scale
-							// Default is 100
-
-							//square: true,// true - Square base of the frustum points.Default is false
-
-						},
-
-					);
-//					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( options.frustumPoints );
-
-				}
+//frustumPoints				if ( options.arrayCloud )//Array of points with cloud
 
 				if ( gui &amp;&amp; options.dat.guiSelectPoint ) {
 
@@ -1185,7 +1182,11 @@ if ( typeof Player !== 'undefined' )
 
 				createXDobjects( group, options );
 
-				if ( options.frustumPoints ) options.frustumPoints.create( renderer );
+				if ( options.frustumPoints ) options.frustumPoints.create( renderer, {
+
+					orbitControls: controls
+
+				} );
 
 				//На случай когда указана точка, за которой следит камера и когда Player не создан
 				if ( !options.player ) {
@@ -1255,19 +1256,21 @@ if ( typeof Player !== 'undefined' )
 								scales: options.scales,
 
 							} );
+						options.orbitControls = controls;
 
 					}
 
 					//camera gui
 
 					if ( options.dat.cameraGui )
-						new CameraGui( fOptions, camera, THREE, Player, {
+						new CameraGui( fOptions, camera, THREE, Player, options );/*{
 
 							getLanguageCode: getLanguageCode,
-							scales: options.scales,
-							orbitControls: controls,
+//							scales: options.scales,
+							options: options,
+//							orbitControls: controls,
 
-						} );
+						} );*/
 
 					// light
 
@@ -1277,7 +1280,7 @@ if ( typeof Player !== 'undefined' )
 					pointLight2.controls( group, fOptions, scales, lang.light + ' 2' );
 
 					//point
-
+/*
 					function FolderPoint( folder, point, defaultPoint, setSize, PCOptions ) {
 
 						PCOptions = PCOptions || {};
@@ -1320,7 +1323,8 @@ if ( typeof Player !== 'undefined' )
 						}, 'defaultF' ), lang.defaultButton, lang.defaultPointTitle );
 
 					}
-					var folderPoint = new FolderPoint( fOptions, options.point, defaultPoint, function ( value ) {
+*/
+					var folderPoint = new FolderPoint( fOptions, options.point, function ( value ) {
 
 						if ( value === undefined )
 							value = options.point.size;
@@ -1336,16 +1340,30 @@ if ( typeof Player !== 'undefined' )
 
 						} );
 						folderPoint.size.setValue( value );
+						options.point.size = value;
 						options.dat.cookie.setObject( pointName, options.point );
+
+					}, {
+
+							defaultPoint: defaultPoint,
+/*
+							point: options.point,
+							PCOptions: {
+
+								settings: { offset: 1 }
+
+							},
+*/							
+							getLanguageCode: getLanguageCode,
 
 					} )
 
 					//Frustum points
 					if ( options.frustumPoints &amp;&amp; options.dat.guiFrustumPoints )
-						options.frustumPoints.gui( fOptions, FolderPoint, {
+						options.frustumPoints.gui( fOptions, {
 
 							getLanguageCode: getLanguageCode,
-//							cookie: cookie,
+							cookie: cookie,
 
 						} );
 
@@ -1430,7 +1448,7 @@ if ( typeof Player !== 'undefined' )
 			}
 			function onDocumentMouseMove( event ) {
 
-				if ( raycaster !== undefined ) {
+				if ( typeof raycaster !== 'undefined' ) {
 
 					if ( raycaster.stereo !== undefined )
 						raycaster.stereo.onDocumentMouseMove( event );
@@ -1468,7 +1486,7 @@ if ( typeof Player !== 'undefined' )
 			}
 			function onDocumentMouseDown( event ) {
 
-				if ( raycaster === undefined )
+				if ( typeof raycaster === 'undefined' )
 					return;
 
 				if ( mouseenter )
@@ -1668,6 +1686,8 @@ if ( typeof Player !== 'undefined' )
 					scene.add( spriteTextIntersection );
 
 				} else spriteTextIntersection.position.copy( pos );
+				
+				options.renderer.domElement.style.cursor = 'pointer';
 
 			},
 
@@ -1693,6 +1713,8 @@ if ( typeof Player !== 'undefined' )
 
 				} while ( spriteTextIntersection !== undefined )
 
+				options.renderer.domElement.style.cursor = options.cursor;
+
 			}
 
 		}
@@ -1717,10 +1739,13 @@ const lang = {
 	displayLightTitle: 'Display or hide the light source.',
 	restoreLightTitle: 'Restore position of the light source',
 
-	pointSettings: 'Point',
+//	pointSettings: 'Point',
+/*
 	size: 'Size',
 	sizeTitle: 'Size of the point with "ShaderMaterial" material',
+
 	defaultPointTitle: 'Restore point.',
+*/
 	opacity: 'Opacity',
 
 };
@@ -1740,10 +1765,13 @@ switch ( getLanguageCode() ) {
 		lang.displayLightTitle = 'Показать или скрыть источник света.';
 		lang.restoreLightTitle = 'Восстановить положение источника света';
 
-		lang.pointSettings = 'Точка';
+//		lang.pointSettings = 'Точка';
+/*
 		lang.size = 'Размер';
 		lang.sizeTitle = 'Размер точки с материалом типа "ShaderMaterial"';
+
 		lang.defaultPointTitle = 'Восстановить точку';
+*/
 		lang.opacity = 'Непрозрачность';
 		break;
 
@@ -1916,7 +1944,7 @@ export default MyThree;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 26 2021 09:53:15 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue May 18 2021 06:31:38 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
