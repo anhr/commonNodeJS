@@ -19,7 +19,7 @@ import PositionController from '../PositionController.js';
 import { dat } from '../dat/dat.module.js';
 import { controllers } from '../dat.gui/CustomController/build/dat.gui.module.js';
 
-import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
+//import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
 //import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
