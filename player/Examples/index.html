@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -170,6 +170,13 @@
 			const options = {
 
 				scales: {
+
+					x: { name: 'distance', },
+
+					//эти координаты добавляю что бы они отображались в OrbitControlsGui
+					y: {},
+					z: {},
+
 					w: {
 
 						name: 'color',
@@ -177,6 +184,7 @@
 						max: 100,
 
 					}
+
 				},
 				palette: typeof ColorPicker === 'undefined' ? undefined : new ColorPicker.palette(),// { palette: ColorPicker.paletteIndexes.bidirectional } ),
 				point: { size: 15 },
@@ -676,7 +684,7 @@
 					const orbitControlsGui = new OrbitControlsGui( gui, controls, {
 
 						getLanguageCode: getLanguageCode,
-						scales: { x: {}, y: {}, z: {}, },
+						scales: options.scales,
 
 					} );
 					if ( typeof Player !== 'undefined' ) Player.orbitControlsGui = orbitControlsGui;
@@ -686,6 +694,7 @@
 					new CameraGui( gui, camera, THREE, Player, {
 
 						getLanguageCode: getLanguageCode,
+						scales: options.scales,
 						orbitControls: controls,
 
 					} );
