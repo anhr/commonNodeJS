@@ -11,7 +11,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import cookie from '../cookieNodeJS/cookie.js';
+//import cookie from '../cookieNodeJS/cookie.js';
 //import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 import ScaleController from '../ScaleController.js';
@@ -28,7 +28,7 @@ import ColorPicker from '../colorpicker/colorpicker.js';
 
 //import { lang } from '../controllerPlay/index.js';
 
-import Cookie from '../cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
+import Cookie from '../cookieNodeJS/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
