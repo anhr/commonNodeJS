@@ -21,7 +21,7 @@ import three from '../three.js'
  * @param {array} arrayFuncs <b>points.geometry.attributes.position</b> array.
  * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
  * @param {THREE.Group} group [Group]{@link https://threejs.org/docs/index.html?q=grou#api/en/objects/Group} for new points.
- * @param {object} [settings] the following options are available
+ * @param {object} [settings] the following settings are available
  * @param {Player} [settings.Player] <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
  * Define <b>Player only</b> if you want move or/and you want change color of the points during playing.
  * @param {object} [settings.options] the following options are available
