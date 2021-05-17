@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -91,21 +91,12 @@
 
 		function init() {
 
-/*
-			camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 2000 );
-			var defaultCameraPosition = new THREE.Vector3( 40, 40, 500 );
-*/	
-/*		
-			camera = new THREE.PerspectiveCamera( 10, window.innerWidth / window.innerHeight, 1, 2000 );
-			var defaultCameraPosition = new THREE.Vector3( 40, 40, 1500 );
-*/
 			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 			const defaultCameraPosition = new THREE.Vector3( 0.4, 0.4, 2 );
 			camera.position.copy( defaultCameraPosition );
 			//			camera.position.z = 500;
 
 			scene = new THREE.Scene();
-//scene.position.x = -1;
 			scene.userData.optionsSpriteText = {
 
 				textHeight: 0.04,
@@ -121,51 +112,57 @@
 
 			}
 
-			const scales = {
+			const options = {
 
-				display: true,
-				text: {
+				getLanguageCode: getLanguageCode,
+				scales: {
 
-					//Please specify the textHeight if you want the changing of the text height is available in gui.
-					//Default textHeight is 0.04
-					textHeight: 0.04,
-					//fov: camera.fov,
-					precision: 4,
-					rect: { displayRect: true },
+					display: true,
+					text: {
 
-				},
-				x: {
+						//Please specify the textHeight if you want the changing of the text height is available in gui.
+						//Default textHeight is 0.04
+						textHeight: 0.04,
+						//fov: camera.fov,
+						precision: 4,
+						rect: { displayRect: true },
 
-					//zoomMultiplier: 2,
-					//offset: 1,
-					name: 'Wave',
-					/*
-					min: 0,
-					max: 1,
-					marks: 11,
-					*/
+					},
+					x: {
 
-				},
-				y: {
+						//zoomMultiplier: 2,
+						//offset: 1,
+						name: 'Wave',
+						/*
+						min: 0,
+						max: 1,
+						marks: 11,
+						*/
 
-					name: 'Y',
-					min: -1,
-					max: 1,
-					marks: 3,
+					},
+					y: {
 
-				},
-				z: {
+						name: 'Y',
+						min: -1,
+						max: 1,
+						marks: 3,
 
-					//name: 'Z',
-					/*
-					min: -3,
-					max: -1,
-					marks: 7,
-					*/
+					},
+					z: {
 
-				},
+						//name: 'Z',
+						/*
+						min: -3,
+						max: -1,
+						marks: 7,
+						*/
+
+					},
+				}
 
 			}
+
+
 
 			const groupMove = new THREE.Group();
 			scene.add( groupMove );
@@ -186,7 +183,7 @@
 
 						camera: camera,
 
-						scales: scales,
+						scales: options.scales,
 //						groupMove: groupMove,
 	//					dimensions: 3,
 						posAxesIntersection: new THREE.Vector3( -1, -1, -1, ),
@@ -195,23 +192,7 @@
 	//			scene.add( axesHelper );
 	
 			}
-/*
-			//MoveGroup
 
-			if ( typeof MoveGroup !== "undefined" ) {
-
-				moveGroup = new MoveGroup( groupMove, {
-
-					//scales: scales,
-//					cookie: cookie,
-//				cookieName: getCanvasName(),
-					axesHelper: axesHelper,
-//					guiSelectPoint: guiSelectPoint,
-
-				} );
-
-			}
-*/
 			const arrayFuncs = [
 				new THREE.Vector4( -0.5, -0.5 ,-0.5, new Function( 't', 'return 50 - 50*t' ) ),
 				{
@@ -284,7 +265,7 @@
 
 					this.spriteText = StereoEffect.getTextIntersection( intersection, {
 
-						scales: typeof axesHelper !== 'undefined' ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
+						scales: typeof axesHelper !== 'undefined' ? axesHelper.options.scales : options.scales,//{ x: {}, y: {}, z: {} },
 						spriteOptions: {
 
 							group: scene,
@@ -352,7 +333,7 @@
 
 						this.spriteText = StereoEffect.getTextIntersection( intersection, {
 
-							scales: axesHelper ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
+							scales: axesHelper ? axesHelper.options.scales : options.scales,//{ x: {}, y: {}, z: {} },
 							spriteOptions: {
 
 								group: scene,
@@ -374,53 +355,6 @@
 							}
 
 						} );
-/*
-						if ( typeof SpriteText !== 'undefined' ) {
-
-							const position = getIntersectionPosition( intersection );
-							//console.warn( 'onIntersection x = ' + position.x + ' y =  ' + position.y + ' z = ' +  position.z );
-
-							var x, y, z;
-							if ( axesHelper ) {
-
-								const scales = axesHelper.options.scales;
-								x = scales.x.name;
-								y = scales.y.name;
-								z = scales.z.name;
-
-							} else {
-
-								x = 'x';
-								y = 'y';
-								z = 'z';
-
-							}
-							this.spriteText = new SpriteText(
-								( intersection.object.name === '' ? '' : intersection.object.name + '\n' ) +
-								'Point\n' + x + ' = ' + position.x + '\n' + y + ' =  ' + position.y + '\n' + z + ' = ' + position.z,
-								position, {
-
-								group: scene,
-								rect: {
-
-									displayRect: true,
-									borderRadius: 15,
-
-								},
-								center: {
-
-									camera: camera,
-									canvas: canvas,
-
-								}
-								//center: new THREE.Vector2( 1, 0 ),
-								//sizeAttenuation: true,
-
-							}
-							);
-
-						}
-*/
 						renderer.domElement.style.cursor = 'pointer';
 
 					},
@@ -530,13 +464,13 @@
 
 				if ( typeof CameraGui !== "undefined" ) {
 
-					new CameraGui( gui, camera, THREE, Player, {
+					new CameraGui( gui, camera, THREE, Player, options );/*{
 
 						getLanguageCode: getLanguageCode,
 						//orbitControls: controls,
 						scales: { x: { name: 'distance' } }
 
-					} );
+					} );*/
 
 				}
 
@@ -575,25 +509,14 @@
 				if ( typeof MoveGroupGui !== "undefined" )
 					new MoveGroupGui( groupMove, gui, {
 
-						//scales: scales,
+						//scales: options.scales,
 						cookie: cookie,
 						cookieName: 'AxesHelper',
 						axesHelper: axesHelper,
-						getLanguageCode: getLanguageCode,
-	//					guiSelectPoint: guiSelectPoint,
+						getLanguageCode: options.getLanguageCode,
 
 					} );
-/*				
-				if ( moveGroup )
-					moveGroup.gui( gui, {
 
-						getLanguageCode: getLanguageCode,
-						//lang: { moveGroup: 'Move Meshes', },
-						guiSelectPoint: guiSelectPoint,
-						axesHelper: axesHelper
-
-					} );
-*/					
 				if ( axesHelper )
 					AxesHelperGui( axesHelper, gui, {
 

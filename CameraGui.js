@@ -24,12 +24,12 @@ class CameraGui {
 	 * @param {GUI} gui is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}.
 	 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
 	 * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
-	 * @param {Player} Player [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
-	 * @param {object} [options] the following options are available:
+	 * @param {Player} Player <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
+	 * @param {object} [options={}] the following options are available.
 	 * @param {OrbitControls} [options.orbitControls] [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}.
-	 * @param {object} [options.scales={}] axes scales.
-	 * See [AxesHelper(...)]{@link https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/jsdoc/module-AxesHelper.html} options.scales for details.
 	 * @param {Function} [options.getLanguageCode="en"] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
+	 * @param {object} [options.options.scales={}] axes scales.
+	 * See <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
 	*/
 	constructor( gui, camera, THREE, Player, options ) {
 

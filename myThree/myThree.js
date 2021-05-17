@@ -305,6 +305,8 @@ class MyThree {
 
 		options = options || {};
 
+		options.getLanguageCode = options.getLanguageCode || getLanguageCode;
+		
 		options.camera = options.camera || {};
 		options.camera.position = options.camera.position || new THREE.Vector3( 0.4, 0.4, 2 );
 		options.camera.scale = options.camera.scale || new THREE.Vector3( 1, 1, 1 );
@@ -1225,19 +1227,21 @@ if ( typeof Player !== 'undefined' )
 								scales: options.scales,
 
 							} );
+						options.orbitControls = controls;
 
 					}
 
 					//camera gui
 
 					if ( options.dat.cameraGui )
-						new CameraGui( fOptions, camera, THREE, Player, {
+						new CameraGui( fOptions, camera, THREE, Player, options );/*{
 
 							getLanguageCode: getLanguageCode,
-							scales: options.scales,
-							orbitControls: controls,
+//							scales: options.scales,
+							options: options,
+//							orbitControls: controls,
 
-						} );
+						} );*/
 
 					// light
 
