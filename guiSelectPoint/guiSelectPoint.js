@@ -294,7 +294,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			//когда в gui пользователь выбрал точку frustumPoints из списка '3D objects'(этот пункт будет недоступен когда я уберу frustumPoints из списка '3D objects' когда в настройках frustumPoints не стоит галочка info)
 			//и когда пользователь передвигает камеру с помощью orbitControls
 
-			axesHelper.exposePosition( { object: mesh, index: selectedPointIndex } );
+			if ( ( axesHelper !== false ) && ( axesHelper !== undefined ) )
+				axesHelper.exposePosition( { object: mesh, index: selectedPointIndex } );
 
 		if ( cWorld.x ) cWorld.x.setValue( position.x );
 		if ( cWorld.y ) cWorld.y.setValue( position.y );
@@ -1121,7 +1122,7 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				_this.select( { object: getMesh(), index: value } );
 
 			}
-			if ( axesHelper !== false )
+			if ( ( axesHelper !== false ) && ( axesHelper !== undefined ) )
 				axesHelper.exposePosition( getObjectPosition( getMesh(), value ) );
 			displayPointControllers( display );
 
