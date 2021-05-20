@@ -70,20 +70,21 @@ class Player {
 	 * @param {THREE.Group|THREE.Scene} group THREE group or scene of the meshes  for playing.
 	 * @param {object} [settings] the following settings are available
 	 * @param {object} [settings.options] See <a href="../../player/jsdoc/module-Player-Player.selectPlayScene.html" target="_blank">Player.selectPlayScene</a>.
+	 * @param {object|boolean} [settings.options.player] Player settings. false - do not create a Player instance.
+	 * See  <b>options.player</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+	 * @param {number} [settings.options.player.interval=1] Ticks per seconds.
+	 * @param {number} [settings.options.player.min=0] Animation start time.
+	 * @param {number} [settings.options.player.max=1] Animation end time. Set to Infinity if you want to play to infinity.
+	 * @param {number} [settings.options.player.dt=0.1] Step of the animation. Have effect only if <b>max</b> is infinity.
+	 * @param {number} [settings.options.player.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
+	 * Have effect for <b>max</b> is not Infinity.
+	 * @param {boolean} [settings.options.player.repeat=false] true - Infinitely repeating 3D objects animation.
+	 * @param {number} [settings.options.player.zoomMultiplier=1.1] zoom multiplier of the time.
+	 * @param {number} [settings.options.player.offset=0.1] offset of the time.
+	 * @param {string} [settings.options.player.name=""] name of the time.
 	 * @param {onSelectScene} [settings.onSelectScene] This function is called at each new step of the playing. See <a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">onSelectScene</a>.
 	 * @param {onChangeScaleT} [settings.onChangeScaleT] event. User has updated the time settings. See <a href="../../player/jsdoc/module-Player.html#~onChangeScaleT" target="_blank">onChangeScaleT</a>.
 	 * @param {FrustumPoints} [settings.frustumPoints] See <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a>.
-	 * @param {object} [settings.timeSettings] time settings.
-	 * @param {number} [settings.timeSettings.interval=1] Ticks per seconds.
-	 * @param {number} [settings.timeSettings.min=0] Animation start time.
-	 * @param {number} [settings.timeSettings.max=1] Animation end time. Set to Infinity if you want to play to infinity.
-	 * @param {number} [settings.timeSettings.dt=0.1] Step of the animation. Have effect only if <b>max</b> is infinity.
-	 * @param {number} [settings.timeSettings.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
-	 * Have effect for <b>max</b> is not Infinity.
-	 * @param {boolean} [settings.timeSettings.repeat=false] true - Infinitely repeating 3D objects animation.
-	 * @param {number} [settings.timeSettings.zoomMultiplier=1.1] zoom multiplier of the time.
-	 * @param {number} [settings.timeSettings.offset=0.1] offset of the time.
-	 * @param {string} [settings.timeSettings.name=""] name of the time.
 	 * @param {THREE.PerspectiveCamera} settings.cameraTarget.camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
 	 */
 	constructor( group, settings ) {
@@ -102,9 +103,17 @@ Player.player = this;
 
 		settings = settings || {};
 
+
 //		settings.player = this;
 
 		_options = settings.options;
+
+		if ( _options.player === false ) return;
+
+		settings.timeSettings = _options.player;
+		_timeSettings = settings.timeSettings || {};
+		_options.player = this;
+
 		if ( !_options && settings.frustumPoints ) _options = settings.frustumPoints.getSettings();
 		_options = _options || {};
 		_options.boPlayer = _options.boPlayer || false;
@@ -116,7 +125,6 @@ Player.player = this;
 		//если тут создавать палитру то она не создастся если не создается плееер
 		//palette = new palette();
 
-		_timeSettings = settings.timeSettings || {};
 		assignSettings();
 
 		_options.player = this;
@@ -1068,8 +1076,8 @@ Player.player = this;
 		}
 
 		/**
-		 * Changes the "max" value of the slider of the player's menu. Moves [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html} to the first scene.
-		 * @param {Object} scale See <b>settings.timeSettings</b> of the [Player]{@link https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html}.
+		 * Changes the "max" value of the slider of the player's menu. Moves <b>Player</b> to the first scene.
+		 * @param {Object} scale See  <b>options.player</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 		 */
 		this.onChangeScale = function ( scale ) {
 
@@ -1345,7 +1353,8 @@ Player.cameraTarget = class {
 						)
 					) {
 
-						if ( camera.userData.default && setCameraDefault ) camera.userData.default.setDefault();
+						if ( camera.userData.default && camera.userData.default.setDefault && setCameraDefault )
+							camera.userData.default.setDefault();
 						return;//Камере не нужно следить за выбранной точкой или ни одна точка не определена как target
 
 					}
@@ -1403,7 +1412,7 @@ Player.cameraTarget = new Player.cameraTarget();
 Player.execFunc = function ( funcs, axisName, t, a = 1, b = 0 ) {
 
 	var func = funcs[axisName], typeofFuncs = typeof func;
-	if ( typeof t === "undefined" ) t = _timeSettings.min;
+	if ( typeof t === "undefined" ) t = _timeSettings ? _timeSettings.min : 0;
 	switch ( typeofFuncs ) {
 
 		case "undefined":
@@ -2250,12 +2259,15 @@ Player.traceLine = class traceLine
 
 		assign();
 
-		if ( !Player.isCreated() ) {
+//		if ( !Player.isCreated() )
+		if ( !options.player ) {
 
+/*
 			console.warn( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
-			console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
+			console.warn( '	Or call ne Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
 			console.warn( '	If you use getShaderMaterialPoints or MyPoints for create of the points, please add Player: Player into settings parameter of the getShaderMaterialPoints or MyPoints method after creating of the Player.' );
 			console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
+*/			
 			return;
 
 		}

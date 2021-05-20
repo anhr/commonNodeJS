@@ -248,7 +248,7 @@ Add <b>Player</b> after creating of the <b>scene</b> and <b>frustumPoints</b> an
 const player = new Player( scene, {
 
 		frustumPoints: frustumPoints,
-		timeSettings: {
+		player: {
 
 			marks: 100,//Ticks count of the playing.
 			interval: 25,//Ticks per seconds.

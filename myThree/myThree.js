@@ -191,7 +191,6 @@ class MyThree {
 	 * <b>boolean</b>: true - <b>new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.BGRW } )</b>;
 	 * <b>number</b>: is <b>MyThree.ColorPicker.paletteIndexes</b>. See <a href="../../colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes" target="_blank">ColorPicker.paletteIndexes</a> for details.
 	 * </pre>
-	 * @param {object} [options.player] 3D objects animation. See <b>options.settings</b> param of the <a href="../../player/jsdoc/module-Player.html" target="_blank">Player</a>
 	 * @param {object} [options.canvas] canvas properties
 	 * @param {number} [options.canvas.width] width of the canvas
 	 * @param {number} [options.canvas.height] height of the canvas
@@ -199,6 +198,18 @@ class MyThree {
 	 * @param {number} [options.a=1] Can be use as 'a' parameter of the Function. See arrayFuncs for details.
 	 * @param {number} [options.b=0] Can be use as 'b' parameter of the Function. See arrayFuncs for details.
 	 *
+	 * @param {object|boolean} [options.player] <a href="../../player/jsdoc/index.html" target="_blank">Player</a> settings. false - do not create a Player instance.
+	 * @param {number} [options.player.interval=1] Ticks per seconds.
+	 * @param {number} [options.player.min=0] Animation start time.
+	 * @param {number} [options.player.max=1] Animation end time. Set to Infinity if you want to play to infinity.
+	 * @param {number} [options.player.dt=0.1] Step of the animation. Have effect only if <b>max</b> is infinity.
+	 * @param {number} [options.player.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
+	 * Have effect for <b>max</b> is not Infinity.
+	 * @param {boolean} [options.player.repeat=false] true - Infinitely repeating 3D objects animation.
+	 * @param {number} [options.player.zoomMultiplier=1.1] zoom multiplier of the time.
+	 * @param {number} [options.player.offset=0.1] offset of the time.
+	 * @param {string} [options.player.name=""] name of the time.
+	 * 
 	 * @param {object} [options.point] point settings. Applies to points with ShaderMaterial.
 	 * <pre>
 	 * See [ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} for details.
@@ -306,7 +317,7 @@ class MyThree {
 		options = options || {};
 
 		options.getLanguageCode = options.getLanguageCode || getLanguageCode;
-		
+
 		options.camera = options.camera || {};
 		options.camera.position = options.camera.position || new THREE.Vector3( 0.4, 0.4, 2 );
 		options.camera.scale = options.camera.scale || new THREE.Vector3( 1, 1, 1 );
@@ -876,9 +887,9 @@ if ( typeof Player !== 'undefined' )
 				}
 
 				//My custom controller for playing of 3D objects.
-				if ( options.player !== false )  options.player = options.player || {};
+				if ( options.player !== false ) options.player = options.player || {};
 				if ( options.player ) {
-
+/*
 					player = new Player( group, {
 
 						onSelectScene: function ( index, t ) {
@@ -890,7 +901,7 @@ if ( typeof Player !== 'undefined' )
 						},
 //						selectPlaySceneOptions: options,
 						options: options,
-						timeSettings: options.player,
+//						player: options.player,
 						cameraTarget: { camera: camera, },
 						onChangeScaleT: function ( scale ) {
 
@@ -905,7 +916,7 @@ if ( typeof Player !== 'undefined' )
 									if ( vector.line === undefined )
 										return;
 									vector.line.remove();
-									vector.line = new Player.traceLine( /*THREE, scene, */options );
+									vector.line = new Player.traceLine( options );
 
 								} );
 
@@ -914,10 +925,11 @@ if ( typeof Player !== 'undefined' )
 						},
 
 					} );
+					*/
+//new Player( group );					
 					if ( gui !== undefined ) {
 
-						new player.PlayController( gui, getLanguageCode );
-//						controllerPlay.create( player, gui );
+						if ( player ) new player.PlayController( gui, getLanguageCode );
 
 					}
 

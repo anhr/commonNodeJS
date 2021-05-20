@@ -270,6 +270,10 @@ function GuiSelectPoint( _THREE, guiParams ) {
 			return;
 		if ( typeof displayController === "boolean" )
 			displayController = displayController ? 'block' : 'none';
+		else if ( displayController === undefined )
+			displayController = 'none';
+		else if ( typeof displayController !== "string" )
+			displayController = 'block';
 		var el = controller.domElement;
 		while ( el.tagName.toUpperCase() !== "LI" ) el = el.parentElement;
 		el.style.display = displayController;
@@ -910,7 +914,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 				dislayEl( cPoints, displayPoints );
 				if ( cTraceAll ) {
 
-					dislayEl( cTraceAll, Player.isCreated() ? displayPoints : false );
+//					dislayEl( cTraceAll, Player.isCreated() ? displayPoints : false );
+					dislayEl( cTraceAll, options.player ? displayPoints : false );
 
 				}
 				if ( cFrustumPoints !== undefined )
@@ -1255,7 +1260,8 @@ function GuiSelectPoint( _THREE, guiParams ) {
 
 		} );
 		dat.controllerNameAndTitle( cTraceAll, lang.trace, lang.traceAllTitle );
-		dislayEl( cTraceAll, Player.isCreated() );
+//		dislayEl( cTraceAll, Player.isCreated() );
+		dislayEl( cTraceAll, options.player );
 
 		//Restore default settings of all 3d objects button.
 		dat.controllerNameAndTitle( f3DObjects.add( {

@@ -33,14 +33,9 @@ Generating a website:
 	cd "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc"
 	npm install -g jsdoc
 
-	/////////////////////////////////////////////////////////////
-	//guiSelectPoint doc
-
 	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\player\jsdoc"
 
 	jsdoc -R "..\commonNodeJS\master\player\player.md" "..\commonNodeJS\master\player\player.js" -d "..\commonNodeJS\master\player\jsdoc"
 
 	//Open "http://localhost/anhr/commonNodeJS/master/player/jsdoc/index.html"
-
-	/////////////////////////////////////////////////////////////
 

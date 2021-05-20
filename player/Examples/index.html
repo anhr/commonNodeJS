@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -188,6 +188,16 @@
 				},
 				palette: typeof ColorPicker === 'undefined' ? undefined : new ColorPicker.palette(),// { palette: ColorPicker.paletteIndexes.bidirectional } ),
 				point: { size: 15 },
+				player: {
+
+					marks: 100,//Ticks count of the playing.
+					interval: 25,//Ticks per seconds.
+					min: -1,
+					//max: 0,
+					//max: Infinity,//первращается в null после чтения из cookie
+					dt: 0.01,//for max: Infinity
+
+				},
 				raycaster: {
 
 					addParticle: function ( particle ) {
@@ -262,6 +272,7 @@
 					options: options,
 //					selectPlaySceneOptions: options,
 //					cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
+/*
 					timeSettings: {
 
 						marks: 100,//Ticks count of the playing.
@@ -272,6 +283,7 @@
 						dt: 0.01,//for max: Infinity
 
 					},
+*/
 					cameraTarget: { camera: camera, },
 
 				} );
