@@ -164,7 +164,7 @@
     
 
     
-    <h4 class="name" id=".SpriteTextGui"><span class="type-signature">(static) </span>SpriteTextGui<span class="signature">(SpriteText, gui, group, guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {GUI}</span></h4>
+    <h4 class="name" id=".SpriteTextGui"><span class="type-signature">(static) </span>SpriteTextGui<span class="signature">(group, options, guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {GUI}</span></h4>
     
 
     
@@ -212,76 +212,6 @@
 
         <tr>
             
-                <td class="name"><code>SpriteText</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">SpriteText</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">A sprite based text component module.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>gui</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">GUI</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">see <a href="https://github.com/anhr/dat.gui">dat.gui</a> for details</td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>group</code></td>
             
 
@@ -316,7 +246,308 @@
                 </td>
             
 
-            <td class="description last">group or scene of SpriteText and of all child groups of SpriteText for which these settings will have an effect.Or Sprite returned from <a href="https://raw.githack.com/anhr/SpriteText/master/jsdoc/module-SpriteText..html">new SpriteText(...)</a>.</td>
+            <td class="description last"><a href="https://threejs.org/docs/index.html?q=group#api/en/objects/Group">THREE.Group</a> or <a href="https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene">THREE.Scene</a> of the <b>SpriteText</b> and of all child groups of the <b>SpriteText</b> for which these settings will have an effect.Or Sprite returned from <a href="../../AxesHelper/jsdoc/index.html" target="_blank">new SpriteText(...)</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Options</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>dat</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">use dat-gui JavaScript Controller Library. <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>dat</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">GUI</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="https://github.com/dataarts/dat.gui">dat.GUI()</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cookie</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">false - do not save to cookie all user settings</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cookieName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Name of the cookie.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>guiSelectPoint</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">false - do not displays <b>GuiSelectPoint</b>.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>getLanguageCode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    language code of your browser
+                
+                </td>
+            
+
+            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the "Syntax" paragraph of RFC 4646 <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -373,8 +604,6 @@
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
@@ -385,13 +614,13 @@
 
         <tr>
             
-                <td class="name"><code>getLanguageCode</code></td>
+                <td class="name"><code>folder</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">function</span>
+<span class="param-type">GUI</span>
 
 
             
@@ -410,51 +639,8 @@
             
 
             
-                <td class="default">
-                
-                    "en"
-                
-                </td>
-            
 
-            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.Default returns the 'en' is English language.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>lang</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Object with localized language values</td>
+            <td class="description last"><b>SpriteTextGui</b> folder. See <a href="https://github.com/anhr/dat.gui">dat.gui</a> for details</td>
         </tr>
 
     
@@ -486,10 +672,6 @@
             
 
             
-                <td class="default">
-                
-                </td>
-            
 
             <td class="description last">parent folder, returned by <a href="https://github.com/dataarts/dat.gui/blob/master/API.md#GUI+addFolder">gui.addFolder(name)</a></td>
         </tr>
@@ -498,7 +680,7 @@
 
         <tr>
             
-                <td class="name"><code>options</code></td>
+                <td class="name"><code>optionsSpriteText</code></td>
             
 
             <td class="type">
@@ -523,12 +705,8 @@
             
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">See SpriteText options. Default is group.userData.optionsSpriteText or no options</td>
+            <td class="description last">See <b>options</b> of <a href="module-SpriteText.html" target="_blank">SpriteText</a>. Default is <b>group.userData.optionsSpriteText</b> or no options</td>
         </tr>
 
     
@@ -560,10 +738,6 @@
             
 
             
-                <td class="default">
-                
-                </td>
-            
 
             <td class="description last">sprite folder name. Default is lang.spriteText</td>
         </tr>
@@ -572,44 +746,7 @@
 
         <tr>
             
-                <td class="name"><code>cookie</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Cookie</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Your custom cookie function for saving and loading of the SpriteText settings. Default cookie is not saving settings.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cookieName</code></td>
+                <td class="name"><code>settings</code></td>
             
 
             <td class="type">
@@ -634,12 +771,8 @@
             
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">Name of the cookie. Default is guiParams.spriteFolder.</td>
+            <td class="description last">See <b>options.settings</b> of <a href="../../jsdoc/ScaleController/module-ScaleController-ScaleController.html" target="_blank">ScaleControllers</a> settings</td>
         </tr>
 
     
@@ -687,7 +820,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpriteTextGui.js.html">SpriteTextGui.js</a>, <a href="SpriteTextGui.js.html#line66">line 66</a>
+        <a href="SpriteTextGui.js.html">SpriteTextGui.js</a>, <a href="SpriteTextGui.js.html#line58">line 58</a>
     </li></ul></dd>
     
 
@@ -738,17 +871,6 @@
 
 
 
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>Using of guiParams.lang:
-guiParams = {
-
-	getLanguageCode: function() { return 'az'; },
-	lang: { textHeight: 'mətn boyu', languageCode: 'az' },
-
-}</code></pre>
-
-
 
         
     
@@ -766,13 +888,13 @@ guiParams = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-SpriteText.html">SpriteText</a></li><li><a href="module-SpriteTextGui.html">SpriteTextGui</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-SpriteText.html">SpriteText</a></li><li><a href="module-SpriteTextGui.html">SpriteTextGui</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-SpriteText.SpriteText.getCenter.html">getCenter</a></li><li><a href="module-SpriteText.SpriteText.updateSpriteTextGroup.html">updateSpriteTextGroup</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 26 2021 09:57:08 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Jul 09 2021 07:02:28 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

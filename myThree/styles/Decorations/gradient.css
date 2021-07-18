@@ -1,0 +1,44 @@
+﻿/*Plase use options.decorations: 'Gradient' for including of this style into your dropdownMenu.create(...)*/
+.menuButtonGradient {
+    margin: 2px;
+    padding: 2px;
+    transition: color 0.5s, background-color 0.5s;
+    border: 0;
+    color: white;
+    background: linear-gradient(to top, black, #EEEEEE);
+    border-radius: 5px;
+    font-family: Arial;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+}
+    .menuButtonGradient:hover {
+        color: black;
+        background: linear-gradient(to top, #CCCCCC, white);
+    }
+.dropdown-childGradient {
+    background-color: rgba(255,255,255, 0);
+    transition: opacity 0.5s;
+}
+    .dropdown-childGradient nobr {
+        padding: 2px;
+        margin: 4px;
+        background: linear-gradient(to top, black, #EEEEEE);
+        transition: color 0.5s, background-color 0.5s;
+        border-radius: 5px;
+        box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+    }
+        .dropdown-childGradient nobr:hover {
+            background: linear-gradient(to top, #CCCCCC, white);
+        }
+        .dropdown-childGradient nobr.radio {
+            background: linear-gradient(to top, #CCCCCC, white);
+        }
+            .dropdown-childGradient nobr.radio:hover {
+                background: linear-gradient(to top, #CCCCCC, white);
+            }
+        .dropdown-childGradient nobr.checkbox {
+            background: linear-gradient(to top, #CCCCCC, white);
+        }
+
+            .dropdown-childGradient nobr.checkbox:hover {
+                background: linear-gradient(to top, #CCCCCC, white);
+            }

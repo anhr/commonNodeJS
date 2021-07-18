@@ -88,6 +88,7 @@
 
 &lt;/head>
 &lt;body>
+	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
 	&lt;div id=&quot;info&quot;>
 		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a> - Player - 3D objects animation.
 	&lt;/div>
@@ -469,7 +470,6 @@ To do it, please remove your old <b>const points</b> and use <b>getShaderMateria
 	},
 	{
 	
-		Player: Player,
 		options: options,
 
 	} );
@@ -580,40 +580,19 @@ Now you can see a player's menu items on the bottom of the canvas.</p>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import { dat } from './commonNodeJS/master/dat/dat.module.js';
 </code></pre>
-<p>Add <b>Player</b> settings into gui</p>
-<pre class="prettyprint source"><code>const gui =  new dat.GUI();
-player.gui( gui );
-</code></pre>
-<p>If you want to localize the gui, please import <b>getLanguageCode</b>.</p>
-<pre class="prettyprint source"><code>import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import { getLanguageCode } from './commonNodeJS/master/lang.js';
-</code></pre>
-<p>and edit <b>player.gui(...)</b>.</p>
-<pre class="prettyprint source"><code>player.gui( gui, {
+<p>Add <b>dat.dat</b> key into <b>options</b> parameter of the <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> class;</p>
+<pre class="prettyprint source"><code>dat: {
 
-	getLanguageCode: getLanguageCode
+	dat: dat,
 
-} );
+}
 </code></pre>
-<p>If you want save a custom <b>Player</b> settings to the cookie, please import <b>cookie</b></p>
-<pre class="prettyprint source"><code>import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
-</code></pre>
-<p>and edit <b>player.gui(...)</b>.</p>
-<pre class="prettyprint source"><code>player.gui( gui, {
-
-	getLanguageCode: getLanguageCode,
-	cookie: cookie,
-
-} );
+<p>and call <b>player.gui()</b></p>
+<pre class="prettyprint source"><code>player.gui();
 </code></pre>
 <p><a name="datGuiPlayerControl"></a></p>
 <h3>Add player control buttons to the <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</h3>
-<p>new player.PlayController( gui, getLanguageCode );</p>
+<p>new player.PlayController( gui );</p>
 <p><a name="datGuiCamera"></a></p>
 <h3>Using <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change of the <b>camera</b> settings.</h3>
 <p>First, import <b>CameraGui</b></p>
@@ -623,12 +602,7 @@ player.gui( gui );
 <pre class="prettyprint source"><code>import CameraGui from './commonNodeJS/master/CameraGui.js';
 </code></pre>
 <p>Add <b>CameraGui</b> into gui</p>
-<pre class="prettyprint source"><code>new CameraGui( gui, camera, THREE, Player, {
-
-	getLanguageCode: getLanguageCode,
-	//orbitControls: controls,
-
-} );
+<pre class="prettyprint source"><code>new CameraGui( camera, options, gui );
 </code></pre>
 <p><a name="guiSelectPoint"></a></p>
 <h3>A <a href="https://github.com/anhr/dat.gui">dat.gui</a> based graphical user interface for select a point from the mesh.</h3>
@@ -643,12 +617,7 @@ player.gui( gui );
 <ul>
 <li>Create instance of the <b>GuiSelectPoint</b>.</li>
 </ul>
-<pre class="prettyprint source"><code>guiSelectPoint = new GuiSelectPoint( THREE, {
-
-	getLanguageCode: getLanguageCode,
-	options: options,
-
-} );
+<pre class="prettyprint source"><code>guiSelectPoint = new GuiSelectPoint( options );
 </code></pre>
 <p>Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point.</p>
 <ul>
@@ -690,7 +659,6 @@ lines into <b>function ( points )</b> function of <b>getShaderMaterialPoints</b>
 	},
 	{
 	
-		Player: Player,
 		options: options,
 
 	} );
@@ -869,11 +837,9 @@ Also you can rotate camera around the point. Please add <b>cameraTarget</b> obje
 <ul>
 <li>Or add <b>cameraTarget</b> key for creating of <b>guiSelectPoint</b> instance.</li>
 </ul>
-<pre class="prettyprint source"><code>guiSelectPoint = new GuiSelectPoint( THREE, {
+<pre class="prettyprint source"><code>guiSelectPoint = new GuiSelectPoint( options, {
 
-	getLanguageCode: getLanguageCode,
 	cameraTarget: { camera: camera, },
-	options: options,
 
 } );
 </code></pre>
@@ -959,13 +925,13 @@ $ npm run build
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.FrustumPoints.html">FrustumPoints</a></li><li><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.points.html">points</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.Player.html">Player</a></li><li><a href="module-MyThree-MyThree.points.html">points</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed May 19 2021 08:46:08 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sun Jul 18 2021 09:25:02 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

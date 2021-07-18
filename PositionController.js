@@ -32,7 +32,7 @@ class PositionController extends controllers.CustomController {
 	 * @param {number} [options.min=0.1] Minimal offset.
 	 * @param {number} [options.max=10] Maximal offset.
 	 * @param {number} [options.step=0.1] step of offset.
-	 * @param {Function} [options.getLanguageCode="en"] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
+	 * @param {Function} [options.getLanguageCode=language code of your browser] returns the "primary language" subtag of the version of the browser.
 	 */
 	constructor( onclickController, options ) {
 

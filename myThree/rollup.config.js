@@ -19,7 +19,45 @@ import resolve from 'rollup-plugin-node-resolve';
 import cleanup from 'rollup-plugin-cleanup';
 import babel from 'rollup-plugin-babel';
 
-const banner = fs.readFileSync(path.join(__dirname, 'licenseBanner.txt'));
+const banner = fs.readFileSync( path.join( __dirname, 'licenseBanner.txt' ) );
+function callback( err ) {
+    if ( err ) throw err;
+//    console.log( 'colorpicker.css was copied' );
+}
+//fs.rmdirSync( path.join( __dirname, 'build' ), { recursive: true, force: true } );
+fs.mkdirSync( path.join( __dirname, 'build' ), { recursive: true, force: true } );
+fs.copyFile( path.join( __dirname, '..\\colorpicker\\colorpicker.css' ), 'build\\colorpicker.css', callback );
+const styles = 'styles';
+//fs.rmdirSync( path.join( __dirname, styles ), { recursive: true, force: true } );
+fs.mkdirSync( path.join( __dirname, styles ), { recursive: true, force: true } );
+const DropdownMenu = 'DropdownMenu';
+fs.copyFile( path.join( __dirname, '..\\' + DropdownMenu + '\\' + styles + '\\menu.css' ), styles + '\\menu.css', callback );
+fs.copyFile( path.join( __dirname, '..\\' + DropdownMenu + '\\' + styles + '\\gui.css' ), styles + '\\gui.css', callback );
+const Decorations = 'Decorations';
+fs.mkdirSync( path.join( __dirname, styles + '\\' + Decorations ), { recursive: true, force: true } );
+fs.copyFile( path.join( __dirname, '..\\' + DropdownMenu + '\\' + styles + '\\' + Decorations + '\\transparent.css' ), styles + '\\' + Decorations + '\\transparent.css', callback );
+fs.copyFile( path.join( __dirname, '..\\' + DropdownMenu + '\\' + styles + '\\' + Decorations + '\\gradient.css' ), styles + '\\' + Decorations + '\\gradient.css', callback );
+//fs.rmdirSync( path.join( __dirname, DropdownMenu ), { recursive: true, force: true } );
+fs.mkdirSync( path.join( __dirname, DropdownMenu ), { recursive: true, force: true } );
+fs.mkdirSync( path.join( __dirname, DropdownMenu + '\\' + styles ), { recursive: true, force: true } );
+fs.copyFile( path.join( __dirname, '..\\' + DropdownMenu + '\\' + styles + '\\gui.css' ), DropdownMenu + '\\' + styles + '\\gui.css', callback );
+fs.copyFile( path.join( __dirname, '..\\' + DropdownMenu + '\\' + styles + '\\menu.css' ), DropdownMenu + '\\' + styles + '\\menu.css', callback );
+fs.copyFile( path.join( __dirname, '\\canvasContainer.html' ), 'build\\canvasContainer.html', callback );
+/*
+fs.copyFile( path.join( __dirname, '..\\getShaderMaterialPoints\\vertex.c' ), 'build\\vertex.c', callback );
+fs.copyFile( path.join( __dirname, '..\\getShaderMaterialPoints\\fragment.c' ), 'build\\fragment.c', callback );
+*/
+fs.mkdirSync( path.join( __dirname, 'build\\frustumPoints' ), { recursive: true, force: true } );
+fs.copyFile( path.join( __dirname, '..\\frustumPoints\\frustumPoints\\vertex.c' ), 'build\\frustumPoints\\vertex.c', callback );
+fs.copyFile( path.join( __dirname, '..\\frustumPoints\\frustumPoints\\fragment.c' ), 'build\\frustumPoints\\fragment.c', callback );
+
+fs.mkdirSync( path.join( __dirname, 'build\\getShaderMaterialPoints' ), { recursive: true, force: true } );
+fs.copyFile( path.join( __dirname, '..\\getShaderMaterialPoints\\getShaderMaterialPoints\\vertex.c' ), 'build\\getShaderMaterialPoints\\vertex.c', callback );
+fs.copyFile( path.join( __dirname, '..\\getShaderMaterialPoints\\getShaderMaterialPoints\\fragment.c' ), 'build\\getShaderMaterialPoints\\fragment.c', callback );
+const textures = 'textures';
+//fs.rmdirSync( path.join( __dirname, 'build\\' + textures ), { recursive: true, force: true } );
+fs.mkdirSync( path.join( __dirname, 'build\\' + textures ), { recursive: true, force: true } );
+fs.copyFile( path.join( __dirname, '..\\getShaderMaterialPoints\\' + textures + '\\point.png' ), 'build\\' + textures + '\\point.png', callback );
 
 export default {
 

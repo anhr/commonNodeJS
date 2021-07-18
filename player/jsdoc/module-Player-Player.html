@@ -78,6 +78,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -114,8 +116,12 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
-            <td class="description last">THREE group or scene of the meshes  for playing.</td>
+            <td class="description last"><a href="https://threejs.org/docs/index.html?q=group#api/en/objects/Group">THREE.Group</a> or <a href="https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene">THREE.Scene</a> of the meshes for playing.</td>
         </tr>
 
     
@@ -128,7 +134,7 @@
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">Object</span>
 
 
             
@@ -146,120 +152,15 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
             
 
             <td class="description last">the following settings are available
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">See <a href="../../player/jsdoc/module-Player-Player.selectPlayScene.html" target="_blank">Player.selectPlayScene</a>.
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>player</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-|
-
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Player settings. false - do not create a Player instance.See  <b>options.player</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
                 <h6>Properties</h6>
                 
 
@@ -289,13 +190,13 @@
 
         <tr>
             
-                <td class="name"><code>interval</code></td>
+                <td class="name"><code>options</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Options</span>
 
 
             
@@ -316,14 +217,157 @@
             
                 <td class="default">
                 
-                    1
+                    new Options()
                 
                 </td>
             
 
-            <td class="description last">Ticks per seconds.</td>
+            <td class="description last"><a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> instance. The following options are available.See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>dat.playerGui</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">false - do not adds a <a href="../../player/jsdoc/module-Player-Player.html#gui" target="_blank">Player controllers</a> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
         </tr>
 
+    
+
+        <tr>
+            
+                <td class="name"><code>dat.playController</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">false - do not adds a <a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html" target="_blank">PlayController</a> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>playerOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Player settings.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
     
 
         <tr>
@@ -360,7 +404,7 @@
                 </td>
             
 
-            <td class="description last">Animation start time.</td>
+            <td class="description last">Minimum range of the axis.</td>
         </tr>
 
     
@@ -399,46 +443,7 @@
                 </td>
             
 
-            <td class="description last">Animation end time. Set to Infinity if you want to play to infinity.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>dt</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0.1
-                
-                </td>
-            
-
-            <td class="description last">Step of the animation. Have effect only if <b>max</b> is infinity.</td>
+            <td class="description last">Maximum range of the axis.</td>
         </tr>
 
     
@@ -484,6 +489,45 @@
 
         <tr>
             
+                <td class="name"><code>dt</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0.1
+                
+                </td>
+            
+
+            <td class="description last">Step of the animation. Have effect only if <b>max</b> is infinity.</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>repeat</code></td>
             
 
@@ -517,6 +561,45 @@
             
 
             <td class="description last">true - Infinitely repeating 3D objects animation.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>interval</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+
+            <td class="description last">Ticks per seconds.</td>
         </tr>
 
     
@@ -607,7 +690,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">number</span>
 
 
             
@@ -641,6 +724,39 @@
 </table>
 
             </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>player</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">false - do not create a <b>Player</b> instance.</td>
         </tr>
 
     
@@ -679,6 +795,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">This function is called at each new step of the playing. See <a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">onSelectScene</a>.</td>
         </tr>
@@ -711,6 +831,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">event. User has updated the time settings. See <a href="../../player/jsdoc/module-Player.html#~onChangeScaleT" target="_blank">onChangeScaleT</a>.</td>
@@ -745,8 +869,12 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
-            <td class="description last">See <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a>.</td>
+            <td class="description last">See <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a>.Have effect only if <b>settings.options</b> is not defined.</td>
         </tr>
 
     
@@ -775,6 +903,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">PerspectiveCamera</a>.</td>
@@ -825,7 +957,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line90">line 90</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line97">line 97</a>
     </li></ul></dd>
     
 
@@ -897,16 +1029,7 @@
             <dt><a href="module-Player-Player.getPoints.html">getPoints</a></dt>
             <dd></dd>
         
-            <dt><a href="module-Player-Player.getSelectSceneIndex.html">getSelectSceneIndex</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-Player-Player.getSettings.html">getSettings</a></dt>
-            <dd></dd>
-        
             <dt><a href="module-Player-Player.getTime.html">getTime</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-Player-Player.isCreated.html">isCreated</a></dt>
             <dd></dd>
         
             <dt><a href="module-Player-Player.selectMeshPlayScene.html">selectMeshPlayScene</a></dt>
@@ -983,7 +1106,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1015">line 1015</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1107">line 1107</a>
     </li></ul></dd>
     
 
@@ -1071,7 +1194,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1035">line 1035</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1129">line 1129</a>
     </li></ul></dd>
     
 
@@ -1273,7 +1396,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line919">line 919</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1009">line 1009</a>
     </li></ul></dd>
     
 
@@ -1357,7 +1480,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line370">line 370</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line433">line 433</a>
     </li></ul></dd>
     
 
@@ -1451,7 +1574,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line366">line 366</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line429">line 429</a>
     </li></ul></dd>
     
 
@@ -1549,7 +1672,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line159">line 159</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line186">line 186</a>
     </li></ul></dd>
     
 
@@ -1585,7 +1708,7 @@
     
 
     
-    <h4 class="name" id="gui"><span class="type-signature"></span>gui<span class="signature">(folder, guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="gui"><span class="type-signature"></span>gui<span class="signature">(folder<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1621,8 +1744,6 @@
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
@@ -1648,6 +1769,8 @@
             
                 <td class="attributes">
                 
+                    &lt;optional><br>
+                
 
                 
 
@@ -1655,236 +1778,9 @@
                 </td>
             
 
-            
-                <td class="default">
-                
-                </td>
             
 
             <td class="description last">Player's folder</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>guiParams</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    {}
-                
-                </td>
-            
-
-            <td class="description last">Followed parameters is allowed. Default is no parameters
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>getLanguageCode</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    "en"
-                
-                </td>
-            
-
-            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.Default returns the 'en' is English language.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>lang</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Object with localized language values<pre>Example Using of guiParams.lang:guiParams = {	getLanguageCode: function() { return 'az'; },	lang: { textHeight: 'mətn boyu', languageCode: 'az' },}</pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cookie</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Cookie</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    new Cookie.defaultCookie()
-                
-                </td>
-            
-
-            <td class="description last">Your custom cookie function for saving and loading of the SpriteText settings. Default cookie is not saving settings.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cookieName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    ""
-                
-                </td>
-            
-
-            <td class="description last">Name of the cookie is "Player" + guiParams.cookieName.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
         </tr>
 
     
@@ -1925,7 +1821,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line720">line 720</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line765">line 765</a>
     </li></ul></dd>
     
 
@@ -2082,7 +1978,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line509">line 509</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line573">line 573</a>
     </li></ul></dd>
     
 
@@ -2180,7 +2076,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line218">line 218</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line261">line 261</a>
     </li></ul></dd>
     
 
@@ -2276,7 +2172,7 @@
 
             
 
-            <td class="description last">See  <b>options.player</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.</td>
+            <td class="description last">See  <b>options.playerOptions</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.</td>
         </tr>
 
     
@@ -2317,7 +2213,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1082">line 1082</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1177">line 1177</a>
     </li></ul></dd>
     
 
@@ -2405,7 +2301,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line309">line 309</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line364">line 364</a>
     </li></ul></dd>
     
 
@@ -2493,7 +2389,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line227">line 227</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line270">line 270</a>
     </li></ul></dd>
     
 
@@ -2630,7 +2526,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line236">line 236</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line279">line 279</a>
     </li></ul></dd>
     
 
@@ -2718,7 +2614,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line356">line 356</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line415">line 415</a>
     </li></ul></dd>
     
 
@@ -2814,7 +2710,7 @@
 
             
 
-            <td class="description last">Index of the scene. Range from 0 to _timeSettings.marks - 1</td>
+            <td class="description last">Index of the scene. Range from 0 to options.playerOptions.marks - 1</td>
         </tr>
 
     
@@ -2855,7 +2751,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line185">line 185</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line221">line 221</a>
     </li></ul></dd>
     
 
@@ -3015,7 +2911,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1065">line 1065</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1160">line 1160</a>
     </li></ul></dd>
     
 
@@ -3152,7 +3048,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line175">line 175</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line210">line 210</a>
     </li></ul></dd>
     
 
@@ -3297,7 +3193,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line378">line 378</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line441">line 441</a>
     </li></ul></dd>
     
 
@@ -3339,13 +3235,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Player-Player.assign.html">assign</a></li><li><a href="module-Player-Player.execFunc.html">execFunc</a></li><li><a href="module-Player-Player.getColors.html">getColors</a></li><li><a href="module-Player-Player.getItemSize.html">getItemSize</a></li><li><a href="module-Player-Player.getPoints.html">getPoints</a></li><li><a href="module-Player-Player.getSelectSceneIndex.html">getSelectSceneIndex</a></li><li><a href="module-Player-Player.getSettings.html">getSettings</a></li><li><a href="module-Player-Player.getTime.html">getTime</a></li><li><a href="module-Player-Player.isCreated.html">isCreated</a></li><li><a href="module-Player-Player.selectMeshPlayScene.html">selectMeshPlayScene</a></li><li><a href="module-Player-Player.selectPlayScene.html">selectPlayScene</a></li><li><a href="module-Player-Player.setColorAttribute.html">setColorAttribute</a></li></ul><h3>Classes</h3><ul><li><a href="module-Player-Player.html">Player</a></li><li><a href="module-Player-Player.cameraTarget.html">cameraTarget</a></li><li><a href="module-Player-Player.traceLine.html">traceLine</a></li><li><a href="module-Player-Player_PlayController_PlayController.html">PlayController</a></li></ul><h3>Events</h3><ul><li><a href="module-Player-Player.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onRenamePlayButtons">onRenamePlayButtons</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Player-Player.assign.html">assign</a></li><li><a href="module-Player-Player.execFunc.html">execFunc</a></li><li><a href="module-Player-Player.getColors.html">getColors</a></li><li><a href="module-Player-Player.getItemSize.html">getItemSize</a></li><li><a href="module-Player-Player.getPoints.html">getPoints</a></li><li><a href="module-Player-Player.getTime.html">getTime</a></li><li><a href="module-Player-Player.selectMeshPlayScene.html">selectMeshPlayScene</a></li><li><a href="module-Player-Player.selectPlayScene.html">selectPlayScene</a></li><li><a href="module-Player-Player.setColorAttribute.html">setColorAttribute</a></li></ul><h3>Classes</h3><ul><li><a href="module-Player-Player.html">Player</a></li><li><a href="module-Player-Player.cameraTarget.html">cameraTarget</a></li><li><a href="module-Player-Player.traceLine.html">traceLine</a></li><li><a href="module-Player-Player_PlayController_PlayController.html">PlayController</a></li></ul><h3>Events</h3><ul><li><a href="module-Player-Player.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onRenamePlayButtons">onRenamePlayButtons</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed May 19 2021 09:38:06 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jul 17 2021 12:35:30 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

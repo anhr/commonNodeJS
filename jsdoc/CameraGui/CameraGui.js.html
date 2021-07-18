@@ -41,53 +41,57 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { dat } from './dat/dat.module.js';
-
+//import { dat } from './dat/dat.module.js';
 import functionsFolder from './functionsFolder.js';
+//import setOptions from './setOptions.js'
+//import Options from './Options.js'
+import Player from './player/player.js';
+import three from './three.js'
 
 class CameraGui {
 
 	/**
 	 * Camera settings graphical user interface
-	 * @param {GUI} gui is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}.
 	 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
-	 * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
-	 * @param {Player} Player &lt;a href="../../player/jsdoc/index.html" target="_blank">Player&lt;/a>.
-	 * @param {object} [options={}] the following options are available.
+	 * @param {object} options See the &lt;b>options&lt;/b> parameter of the &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree&lt;/a> class.
+	 * The following options are available.
 	 * @param {OrbitControls} [options.orbitControls] [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}.
-	 * @param {Function} [options.getLanguageCode="en"] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
-	 * @param {object} [options.options.scales={}] axes scales.
-	 * See &lt;a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper&lt;/a>.
+	 * @param {Function} [options.getLanguageCode=language code of your browser] returns the "primary language" subtag of the version of the browser.
+	 * @param {object} [options.scales={}] axes scales.
+	 * See the &lt;b>options.scales&lt;/b> parameter of the &lt;a href="../../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree&lt;/a> class.
+	 * @param {GUI} [gui] is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui} parent folder.
 	*/
-	constructor( gui, camera, THREE, Player, options ) {
+	constructor( camera, options, gui ) {
 
-		Player.cameraGui = this;
+//Deprecated. Use options.cameraGui = this;
+//Player.cameraGui = this;
 
-		options = options || {};
+//		options = options || new Options();
+		if ( !options.boOptions ) {
+
+			console.error( 'OrbitControlsGui: call options = new Options( options ) first' );
+			return;
+
+		}
+		gui = gui || options.dat.gui;
+		if ( !gui || options.dat.cameraGui === false )
+			return;
+		const dat = options.dat.dat,
+			THREE = three.THREE;
+		options.cameraGui = this;
 
 		//scales
+//		setOptions.setScales( options );
+//		options.setScales();
 
-		options.scales = options.scales || {};
+		//Обновить значения органов управления когда пользователь с помощью мыши передвинул камеру
+		if ( options.orbitControls )
+			options.orbitControls.addEventListener( 'change', function () {
 
-		const boAllAxis = !options.scales.x &amp;&amp; !options.scales.y &amp;&amp; !options.scales.z;//Если не определена ни одна ось, то рисовать все оси.
-		if ( boAllAxis ) options.scales.x = options.scales.x || {};
-		if (options.scales.x) options.scales.x.name = options.scales.x.name || 'X';
+				update();
 
-		if ( boAllAxis ) options.scales.y = options.scales.y || {};
-		if (options.scales.y) options.scales.y.name = options.scales.y.name || 'Y';
+			} );
 
-		if ( boAllAxis ) options.scales.z = options.scales.z || {};
-		if (options.scales.z) options.scales.z.name = options.scales.z.name || 'Z';
-
-		//
-		/*Не помню зачем засунул эту хрень. Если оставить то не могу двигать камеру если поставлена птичка в controllerLook
-			if ( options.orbitControls )
-				options.orbitControls.addEventListener( 'change', function () {
-		
-					update();
-		
-				} );
-		*/
 		//Localization
 
 		const lang = {
@@ -107,10 +111,11 @@ class CameraGui {
 			defaultTitle: 'Restore default camera settings.',
 
 		};
-
+/*/
 		const _languageCode = options.getLanguageCode === undefined ? 'en'//Default language is English
 			: options.getLanguageCode();
-		switch ( _languageCode ) {
+*/
+		switch ( options.getLanguageCode() ) {
 
 			case 'ru'://Russian language
 
@@ -170,86 +175,106 @@ class CameraGui {
 		if ( controllersPosition.y ) dat.controllerNameAndTitle( controllersPosition.y, options.scales.y.name );
 		if ( controllersPosition.z ) dat.controllerNameAndTitle( controllersPosition.z, options.scales.z.name );
 
-		var controllersDistance, defaultDistance;
-		Player.cameraTarget.init( { camera: camera } );
-		const cameraTarget = Player.cameraTarget.get(),
+		var controllersDistance, defaultDistance, funcFolder, controllerLook;
+
+		//Camera target
+		// Может устанвливаться только если создан проигрыватель options.player,
+		//потому что при установке птички 'Look' - Следить в guiSelectPoint, вызывается options.player.selectScene()
+		if ( options.player ) {
+
+			Player.cameraTarget.init( { camera: camera }, options );
+			const cameraTarget = Player.cameraTarget.get();
 			controllerLook = fCamera.add( cameraTarget, 'boLook' ).onChange( function ( boLook ) {
 
-				if ( Player.player ) Player.player.selectScene();
+				//				if ( Player.player ) Player.player.selectScene();
+				if ( options.player ) {
+
+					cameraTarget.boMaual = true;
+					options.player.selectScene();
+					cameraTarget.boMaual = false;
+
+				}
 				if ( boLook )
 					return;
-				if ( Player.orbitControls )
-					Player.orbitControls.reset();//обязательно вызвать controls.saveState();
+				/*					
+									if ( Player.orbitControls )
+										Player.orbitControls.reset();//обязательно вызвать controls.saveState();
+				*/
+				if ( options.orbitControls )
+					options.orbitControls.reset();//обязательно вызвать controls.saveState();
 
-			} ),
-			fDistanceToCamera = fCamera.addFolder( lang.distanceToCamera ),
-			distance = {
+			} );
+			dat.controllerNameAndTitle( controllerLook, lang.look, lang.lookTitle );
 
-				//не помню зачем вызывал toString(), но если это оставить и пользователь изменит расстояние, то оно заменяется на пустое поле
-				x: Player.execFunc( cameraTarget.distanceToCamera, 'x' ),//.toString(),
-				y: Player.execFunc( cameraTarget.distanceToCamera, 'y' ),//.toString(),
-				z: Player.execFunc( cameraTarget.distanceToCamera, 'z' ),//.toString(),
+			const fDistanceToCamera = fCamera.addFolder( lang.distanceToCamera ),
+				distance = {
+
+					x: Player.execFunc( cameraTarget.distanceToCamera, 'x', undefined, options ),
+					y: Player.execFunc( cameraTarget.distanceToCamera, 'y', undefined, options ),
+					z: Player.execFunc( cameraTarget.distanceToCamera, 'z', undefined, options ),
+
+				};
+
+			function setDistance( axisName, value ) {
+
+				if ( isNaN( value ) ) return;
+				if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.distanceToCameraCur[axisName] = value;
+				//			const cameraTarget = Player.cameraTarget.get();
+				cameraTarget.distanceToCameraCur[axisName] = value;
+				cameraTarget.setCameraPosition();
+				update();
+
+			}
+			controllersDistance = {
+
+				x: dat.controllerZeroStep( fDistanceToCamera, distance, 'x', function ( value ) {
+
+					//				camera.userData.cameraTarget.distanceToCameraCur.x = value;
+					setDistance( 'x', value );
+
+				} ),
+				y: dat.controllerZeroStep( fDistanceToCamera, distance, 'y', function ( value ) {
+
+					//				Player.cameraTarget.get().distanceToCameraCur.y = value;
+					setDistance( 'y', value );
+
+				} ),
+
+				z: dat.controllerZeroStep( fDistanceToCamera, distance, 'z', function ( value ) {
+
+					//				camera.userData.cameraTarget.distanceToCameraCur.z = value;
+					setDistance( 'z', value );
+
+				} ),
 
 			};
-		dat.controllerNameAndTitle( controllerLook, lang.look, lang.lookTitle );
-		function setDistance( axisName, value ) {
+			defaultDistance = { x: distance.x, y: distance.y, z: distance.z };
+			dat.folderNameAndTitle( fDistanceToCamera, lang.distanceToCamera, lang.distanceToCameraTitle );
+			if ( options.scales.x ) dat.controllerNameAndTitle( controllersDistance.x, options.scales.x.name );
+			if ( options.scales.y ) dat.controllerNameAndTitle( controllersDistance.y, options.scales.y.name );
+			if ( options.scales.z ) dat.controllerNameAndTitle( controllersDistance.z, options.scales.z.name );
 
-			if ( isNaN( value ) ) return;
-			if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.distanceToCameraCur[axisName] = value;
-//			const cameraTarget = Player.cameraTarget.get();
-			cameraTarget.distanceToCameraCur[axisName] = value;
-			cameraTarget.setCameraPosition();
-			update();
+			funcFolder = new functionsFolder( fDistanceToCamera, options.scales, THREE, function ( func, axisName ) {
+
+				const cameraTarget = Player.cameraTarget.get();
+				cameraTarget.distanceToCamera[axisName] = func;
+				const value = Player.execFunc( cameraTarget.distanceToCamera, axisName, Player.getTime() );
+				controllersDistance[axisName].setValue( value, true );
+				//			controllersDistance[axisName].__onchange( value );
+				Player.cameraTarget.init( { camera: camera }, options );
+				/*
+							cameraTarget.distanceToCameraCur[axisName] = value;
+							setDistance();
+				*/
+
+			}, {
+
+				getLanguageCode: options.getLanguageCode,
+				vector: cameraTarget.distanceToCamera,
+
+			} );
 
 		}
-		controllersDistance = {
-
-			x: dat.controllerZeroStep( fDistanceToCamera, distance, 'x', function ( value ) {
-
-//				camera.userData.cameraTarget.distanceToCameraCur.x = value;
-				setDistance( 'x', value );
-
-			} ),
-			y: dat.controllerZeroStep( fDistanceToCamera, distance, 'y', function ( value ) {
-
-//				Player.cameraTarget.get().distanceToCameraCur.y = value;
-				setDistance( 'y', value );
-
-			} ),
-
-			z: dat.controllerZeroStep( fDistanceToCamera, distance, 'z', function ( value ) {
-
-//				camera.userData.cameraTarget.distanceToCameraCur.z = value;
-				setDistance( 'z', value );
-
-			} ),
-
-		};
-		defaultDistance = { x: distance.x, y: distance.y, z: distance.z };
-		dat.folderNameAndTitle( fDistanceToCamera, lang.distanceToCamera, lang.distanceToCameraTitle );
-		if (options.scales.x) dat.controllerNameAndTitle( controllersDistance.x, options.scales.x.name );
-		if (options.scales.y) dat.controllerNameAndTitle( controllersDistance.y, options.scales.y.name );
-		if (options.scales.z) dat.controllerNameAndTitle( controllersDistance.z, options.scales.z.name );
-
-		const funcFolder = new functionsFolder( fDistanceToCamera, options.scales, THREE, function ( func, axisName ) {
-
-			const cameraTarget = Player.cameraTarget.get();
-			cameraTarget.distanceToCamera[axisName] = func;
-			const value = Player.execFunc( cameraTarget.distanceToCamera, axisName, Player.getTime() );
-			controllersDistance[axisName].setValue( value, true );
-//			controllersDistance[axisName].__onchange( value );
-			Player.cameraTarget.init( { camera: camera } );
-/*
-			cameraTarget.distanceToCameraCur[axisName] = value;
-			setDistance();
-*/			
-
-		}, {
-
-			getLanguageCode: options.getLanguageCode,
-			vector: cameraTarget.distanceToCamera,
-
-		} );
 
 		//Default button
 		const defaultPosition = { x: camera.position.x, y: camera.position.y, z: camera.position.z },
@@ -306,12 +331,13 @@ class CameraGui {
 
 			if ( controllersDistance ) {
 
-				if ( controllersDistance.x ) controllersDistance.x.setValue( cameraTarget.distanceToCameraCur.x );
-				if ( controllersDistance.y ) controllersDistance.y.setValue( cameraTarget.distanceToCameraCur.y );
-				if ( controllersDistance.z ) controllersDistance.z.setValue( cameraTarget.distanceToCameraCur.z );
+				const distanceToCamera = cameraTarget.getDistanceToCamera()
+				if ( controllersDistance.x ) controllersDistance.x.setValue( distanceToCamera.x );
+				if ( controllersDistance.y ) controllersDistance.y.setValue( distanceToCamera.y );
+				if ( controllersDistance.z ) controllersDistance.z.setValue( distanceToCamera.z );
 
 			}
-			funcFolder.setFunction( cameraTarget.distanceToCamera );
+			if ( funcFolder ) funcFolder.setFunction( cameraTarget.distanceToCamera );
 
 		}
 //		if ( this ) {
@@ -348,7 +374,7 @@ export default CameraGui;</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon May 17 2021 11:34:14 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Jul 07 2021 10:43:59 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -1,0 +1,10 @@
+	Download https://github.com/jsdoc/jsdoc into D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc
+	Open "Node.js command prompt"
+
+	d:
+	cd "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc"
+	npm install -g jsdoc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\OrbitControlsGui"
+
+	jsdoc "..\commonNodeJS\master\OrbitControlsGui.js" -d "..\commonNodeJS\master\jsdoc\OrbitControlsGui"

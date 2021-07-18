@@ -14,9 +14,11 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
+import three from './three.js'
 import ScaleController from './ScaleController.js';
 import PositionController from './PositionController.js';
-import { dat } from './dat/dat.module.js';
+//import { dat } from './dat/dat.module.js';
+//import Options from './Options.js'
 
 import Cookie from './cookieNodeJS/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
@@ -25,45 +27,52 @@ class MoveGroupGui {
 
 	/**
 	 * Add MoveGroup folder into {@link https://github.com/anhr/dat.gui|dat.gui} for changing group's position, scale and rotation.
-	 * @param {THREE.Group|THREE.Screen} group THREE group or scene for moving.
-	 * @param {GUI} gui is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}.
-	 * @param {object} [options] the following options are available
+	 * @param {THREE.Group|THREE.Scene} group [THREE.Group]{@link https://threejs.org/docs/index.html?q=group#api/en/objects/Group} or [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene} for moving.
+	 * @param {object} options the following options are available.
+	 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 * @param {object} [options.axesHelper] <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
-	 * @param {object} [options.scales] axes scales. See <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper( ... )</a> for details.
+	 * @param {object} [options.scales] axes scales.
+	 * See <b>options.scales</b> of the <a href="../../jsdoc/setOptions/SetOptions.html#setScales" target="_blank">setOptions.setScales( ... )</a> for details.
 	 * @param {Cookie} [options.cookie] Your custom cookie function for saving and loading of the MoveGroup settings. Default cookie is not saving settings.
-	 * @param {string} [options.cookieName] Name of the cookie is "MoveGroup" + options.cookieName. Default is undefined.
-	 * @param {Function} [guiParams.getLanguageCode] Your custom getLanguageCode() function.
-	 * returns the "primary language" subtag of the language version of the browser.
-	 * Examples: "en" - English language, "ru" Russian.
-	 * See the "Syntax" paragraph of RFC 4646 {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
-	 * Default returns the 'en' is English language.
-	 * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
+	 * @param {string} [options.cookieName] Name of the cookie is "MoveGroup" + options.cookieName.
+	 * @param {GuiSelectPoint} [options.guiSelectPoint] A dat.gui based graphical user interface for select a point from the mesh.
+	 * See <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a> for details.
+	 * @param {GUI} [guiParams.folder] is [dat.GUI]{@link https://github.com/anhr/dat.gui} parent folder.
+	 * @param {object} [guiParams={}] Followed parameters is allowed.
 	 * @param {object} [guiParams.lang] Object with localized language values
 	 * @param {object} [guiParams.lang.moveGroup] use for rename of the MoveGroup folder. Default is 'Move Group'.
-	 * @param {GuiSelectPoint} [guiParams.guiSelectPoint] A dat.gui based graphical user interface for select a point from the mesh.
-	 * See <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a> for details.
 	 */
-	constructor( group, gui, options ) {
+	constructor( group, options, guiParams = {} ) {
 
-		options = options || {};
+//		options = options || new Options();
+		if ( !options.boOptions ) {
+
+			console.error( 'MoveGroupGui: call options = new Options( options ) first' );
+			return;
+
+		}
+		const gui = guiParams.folder || options.dat.gui;
+		if ( !gui || options.dat.moveScene === false )
+			return;
 		if ( options.axesHelper && options.axesHelper.options )
 			options.scales = options.axesHelper.options.scales;
 		else options.scales = options.scales || { x: {}, y: {}, z: {}, };
 
 
-		const cookie = options.cookie || new Cookie.defaultCookie();
-		const cookieName = 'MoveGroup' + ( options.cookieName ? '_' + options.cookieName : '' );
-		const optionsGroup = {
+		const cookie = options.cookie || new Cookie.defaultCookie(),
+			dat = three.dat,//options.dat.dat,
+			cookieName = 'MoveGroup' + ( options.cookieName ? '_' + options.cookieName : '' ),
+			optionsGroup = {
 
-			scale: group.scale,
-			position: group.position,
-			rotation: group.rotation,
-			x: { zoomMultiplier: 1.2, offset: 0.1, },
-			y: { zoomMultiplier: 1.2, offset: 0.1, },
-			z: { zoomMultiplier: 1.2, offset: 0.1, },
+				scale: group.scale,
+				position: group.position,
+				rotation: group.rotation,
+				x: { zoomMultiplier: 1.2, offset: 0.1, },
+				y: { zoomMultiplier: 1.2, offset: 0.1, },
+				z: { zoomMultiplier: 1.2, offset: 0.1, },
 
-		};
-		const groupOptionsDefault = JSON.parse( JSON.stringify( optionsGroup ) );
+			},
+			groupOptionsDefault = JSON.parse( JSON.stringify( optionsGroup ) );
 		Object.freeze( groupOptionsDefault );
 		cookie.getObject( cookieName, optionsGroup, groupOptionsDefault );
 
@@ -97,7 +106,7 @@ class MoveGroupGui {
 		setDefault( 'y' );
 		setDefault( 'z' );
 
-		const guiParams = options;
+//		const guiParams = options;
 //		this.gui = function ( gui, guiParams )
 //		guiParams = guiParams || {};
 
@@ -114,10 +123,11 @@ class MoveGroupGui {
 			defaultTitle: 'Move group to default position.',
 
 		};
-
+/*
 		var languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
 			: guiParams.getLanguageCode();
-		switch ( languageCode ) {
+*/
+		switch ( options.getLanguageCode() ) {
 
 			case 'ru'://Russian language
 
@@ -182,8 +192,8 @@ class MoveGroupGui {
 
 			if ( options.axesHelper )
 				options.axesHelper.updateAxes();
-			if ( guiParams.guiSelectPoint )
-				guiParams.guiSelectPoint.update();
+			if ( options.guiSelectPoint )
+				options.guiSelectPoint.update();
 			cookie.setObject( cookieName, optionsGroup );
 
 		}

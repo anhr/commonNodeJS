@@ -1,6 +1,6 @@
 /**
  * @module AxesHelperGui
- * @description Adds AxesHelper settings folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
+ * @description Adds <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> settings folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
  * @see {@link https://github.com/anhr/AxesHelper|AxesHelper}
  *
  * @author {@link https://anhr.github.io/AboutMe/|Andrej Hristoliubov}
@@ -20,7 +20,7 @@ import ScaleController from '../ScaleController.js';
 import PositionController from '../PositionController.js';
 //import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
 
-import Cookie from '../cookieNodeJS/cookie.js';
+//import Cookie from '../cookieNodeJS/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 import { SpriteText } from '../SpriteText/SpriteText.js';
@@ -29,72 +29,59 @@ import { SpriteText } from '../SpriteText/SpriteText.js';
 import { SpriteTextGui } from '../SpriteText/SpriteTextGui.js';
 //import { SpriteTextGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteTextGui.js';
 
-import { dat } from '../dat/dat.module.js';
+//import { dat } from '../dat/dat.module.js';
 //import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
 import three from '../three.js'
+//import setOptions from '../setOptions.js'
+import Options from '../Options.js'
 
 /**
- * Adds AxesHelper settings folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
- * @param {AxesHelper} axesHelper is [new AxesHelper(...)]{@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html}.
+ * Adds <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> settings folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
  * An axis object to visualize axes.
- * @param {GUI} gui is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}.
- * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters.
- * @param {Function} [guiParams.getLanguageCode] Your custom getLanguageCode() function.
+ * @param {object} options Followed parameters is allowed.
+ * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+ * @param {boolean} [options.dat.axesHelperGui] false - do not adds <b>AxesHelperGui</b> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+ * @param {AxesHelper} [options.axesHelper is <a href="./module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> instance.
+ * @param {Function} [options.getLanguageCode=language code of your browser] Your custom getLanguageCode() function.
  * <pre>
  * returns the "primary language" subtag of the language version of the browser.
  * Examples: "en" - English language, "ru" Russian.
  * See the "Syntax" paragraph of RFC 4646 {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
- * Default returns the 'en' is English language.
  * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
  * </pre>
- * @param {object} [guiParams.lang] Object with localized language values
- * @param {string} [guiParams.axesHelperFolder=lang.axesHelper] AxesHelper folder name.
- * @param {cookie} [guiParams.cookie] Your custom cookie function for saving and loading of the AxesHelper settings.
+ * @param {cookie} [options.cookie] Your custom cookie function for saving and loading of the AxesHelper settings.
  * <pre>
  * See [cookieNodeJS]{@link https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS}.
  * Default cookie is not saving settings.
  * </pre>
- * @param {string} [guiParams.cookieName] Name of the cookie is "AxesHelper" + guiParams.cookieName.
- * @example
-AxesHelperGui( axesHelper, gui, {
-
-	cookie: cookie,
-	cookieName: 'mySettings',
-
-	//Localize of the scales folder to Azerbaijani language
-	getLanguageCode: function() { return 'az'; },
-	lang: { scales: 'tərəzi', languageCode: 'az' },
-
-} );
+ * @param {string} [options.cookieName] Name of the cookie is "AxesHelper" + options.cookieName.
+ * @param {GUI} [gui] is [new dat.GUI(...)]{@link https://github.com/anhr/dat.gui}.
 */
-export function AxesHelperGui( axesHelper, gui, guiParams ) {
+export default function AxesHelperGui( options, gui ) {
 
-	if ( !axesHelper ) {
+//	options = options || new Options();
+	if ( !options.boOptions ) {
 
-		console.warn( 'Create AxesHelper first.' );
-		return;
-		
-	}
-
-	const THREE = three.THREE;
-/*
-	const THREE = axesHelper.getTHREE();
-	if ( !THREE ) {
-
-		console.error( 'AxesHelperGui: THREE = ' + THREE );
+		console.error( 'MoveGroupGui: call options = new Options( options ) first' );
 		return;
 
 	}
-	SpriteText.setTHREE( THREE );
-*/
+	gui = gui || options.dat.gui;
+/*	
+	if ( !gui || options.dat.moveScene === false )
+		return;
+*/		
+	if ( !gui || !options.axesHelper || ( options.dat === false ) || ( options.dat.axesHelperGui === false ) )
+		return;
+	
+	const THREE = three.THREE, dat = three.dat;//options.dat.dat;
 
-	const options = axesHelper.options,
-		optionsDefault = JSON.parse( JSON.stringify( options ) ),
-		groupAxesHelper = axesHelper.getGroup();
-	Object.freeze( optionsDefault );
+	const scalesDefault = JSON.parse( JSON.stringify( options.scales ) ),
+		groupAxesHelper = options.axesHelper.getGroup();
+	Object.freeze( scalesDefault );
 
-	guiParams = guiParams || {};
+	options = options || {};
 
 	//Localization
 
@@ -123,10 +110,12 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 		defaultAxesIntersectionTitle: 'Restore default axes intersection.',
 
 	};
-
-	const languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
-		: guiParams.getLanguageCode();
-	switch ( languageCode ) {
+/*	
+	const languageCode = options.getLanguageCode === undefined ? 'en'//Default language is English
+		: options.getLanguageCode();
+	switch ( languageCode )
+*/	
+	switch ( options.getLanguageCode() ){
 
 		case 'ru'://Russian language
 
@@ -167,13 +156,20 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 
 	}
 
-	guiParams.axesHelperFolder = guiParams.axesHelperFolder || lang.axesHelper;
-//	const cookieName = guiParams.cookieName || guiParams.axesHelperFolder,
-	const cookieName = 'AxesHelper' + ( guiParams.cookieName ? '_' + guiParams.cookieName : '' ),
-		cookie = guiParams.cookie || new Cookie.defaultCookie();
-	cookie.getObject( cookieName, options, options );
+	const cookie = options.dat.cookie,
+//		cookieName = options.dat.cookieName;
+		cookieName = options.dat.getCookieName( 'AxesHelper' );
+/*	
+	const cookieName = 'AxesHelper' + ( options.cookieName ? '_' + options.cookieName : '' ),
+		cookie = options.cookie || new Cookie.defaultCookie();
+*/		
+	cookie.getObject( cookieName, options.scales, options.scales );
 
-	function setSettings() { cookie.setObject( cookieName, options ); }
+	function setSettings() {
+
+		cookie.setObject( cookieName, options.scales );
+
+	}
 
 	//AxesHelper folder
 	const fAxesHelper = gui.addFolder( lang.axesHelper );
@@ -229,11 +225,24 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 
 	}
 
-	const fSpriteText = typeof SpriteTextGui === "undefined" ? undefined : SpriteTextGui( SpriteText, gui, groupAxesHelper, {
+	const fSpriteText = typeof SpriteTextGui === "undefined" ? undefined : SpriteTextGui( groupAxesHelper, {
 
-		getLanguageCode: guiParams.getLanguageCode,
+		dat: {
+
+			gui: options.dat.gui,
+//			dat: options.dat.dat,
+			cookieName: 'AxesHelper_' + options.dat.getCookieName(),
+
+		},
+
+	}, {
+
+		//options: options,
+/*
+		getLanguageCode: options.getLanguageCode,
 		cookie: cookie,
 		cookieName: cookieName,
+*/		
 		parentFolder: fScales,
 
 	} );
@@ -252,7 +261,7 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 
 		scaleControllers.controller = fAxesIntersection.add( {
 
-			value: options.posAxesIntersection[axisName],
+			value: options.scales.posAxesIntersection[axisName],
 
 		}, 'value',
 			scale.min,
@@ -260,8 +269,8 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 			( scale.max - scale.min ) / 100 ).
 			onChange( function ( value ) {
 
-				options.posAxesIntersection[axisName] = value;
-				axesHelper.updateAxes();
+				options.scales.posAxesIntersection[axisName] = value;
+				options.axesHelper.updateAxes();
 				setSettings();
 
 			} );
@@ -275,10 +284,15 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 	var defaultParams = {
 
 		defaultF: function ( value ) {
-
-			axesIntersectionControllers.x.controller.setValue( optionsDefault.posAxesIntersection.x );
-			axesIntersectionControllers.y.controller.setValue( optionsDefault.posAxesIntersection.y );
-			axesIntersectionControllers.z.controller.setValue( optionsDefault.posAxesIntersection.z );
+			
+/*
+			axesIntersectionControllers.x.controller.setValue( optionsDefault.scales.posAxesIntersection.x );
+			axesIntersectionControllers.y.controller.setValue( optionsDefault.scales.posAxesIntersection.y );
+			axesIntersectionControllers.z.controller.setValue( optionsDefault.scales.posAxesIntersection.z );
+*/
+			axesIntersectionControllers.x.controller.setValue( scalesDefault.posAxesIntersection.x );
+			axesIntersectionControllers.y.controller.setValue( scalesDefault.posAxesIntersection.y );
+			axesIntersectionControllers.z.controller.setValue( scalesDefault.posAxesIntersection.z );
 
 		},
 
@@ -314,7 +328,7 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 		}, {
 
 		settings: { zoomMultiplier: 1.1, },
-		getLanguageCode: guiParams.getLanguageCode,
+		getLanguageCode: options.getLanguageCode,
 
 	} ) ).onChange( function ( value ) {
 
@@ -329,7 +343,7 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 			return;
 
 		const scaleControllers = scalesControllers[axisName],
-			axesDefault = optionsDefault.scales[axisName];
+			axesDefault = scalesDefault[axisName];
 
 		Object.freeze( axesDefault );
 
@@ -340,7 +354,7 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 				if ( group.userData.axisName !== axisName )
 					return;
 				groupAxesHelper.remove( group );
-				axesHelper.createAxis( axisName );
+				options.axesHelper.createAxis( axisName );
 
 			} );
 
@@ -372,7 +386,7 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 		scaleControllers.folder = fAxesHelper.addFolder( axes.name );
 
 		scaleControllers.scaleController = scaleControllers.folder.add( new ScaleController( onclick,
-			{ settings: axes, getLanguageCode: guiParams.getLanguageCode, } ) ).onChange( function ( value ) {
+			{ settings: axes, getLanguageCode: options.getLanguageCode, } ) ).onChange( function ( value ) {
 
 				axes.zoomMultiplier = value;
 				setSettings();
@@ -388,7 +402,7 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 
 			} );
 
-		}, { settings: axes, getLanguageCode: guiParams.getLanguageCode, } );
+		}, { settings: axes, getLanguageCode: options.getLanguageCode, } );
 		scaleControllers.positionController = scaleControllers.folder.add( positionController ).onChange( function ( value ) {
 
 			axes.offset = value;
@@ -472,9 +486,9 @@ export function AxesHelperGui( axesHelper, gui, guiParams ) {
 
 		defaultF: function ( value ) {
 
-			controllerDisplayScales.setValue( optionsDefault.scales.display );
+			controllerDisplayScales.setValue( scalesDefault.display );
 			if ( controllerPrecision !== undefined )
-				controllerPrecision.setValue( optionsDefault.scales.text.precision );
+				controllerPrecision.setValue( scalesDefault.text.precision );
 			fSpriteText.userData.restore();
 			function defaulAxis( axisName ) {
 

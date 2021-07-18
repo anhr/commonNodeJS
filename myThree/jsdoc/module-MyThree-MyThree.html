@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-MyThree.html">MyThree</a>~</span>MyThree<span class="signature">(_THREE, createXDobjects, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-MyThree.html">MyThree</a>~</span>MyThree<span class="signature">(THREE, createXDobjects, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -42,7 +42,7 @@
     
 
     
-    <h4 class="name" id="MyThree"><span class="type-signature"></span>new MyThree<span class="signature">(_THREE, createXDobjects, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="MyThree"><span class="type-signature"></span>new MyThree<span class="signature">(THREE, createXDobjects, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -88,13 +88,13 @@
 
         <tr>
             
-                <td class="name"><code>_THREE</code></td>
+                <td class="name"><code>THREE</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">any</span>
+<span class="param-type">THREE</span>
 
 
             
@@ -156,7 +156,7 @@
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">Options</span>
 
 
             
@@ -176,7 +176,7 @@
 
             
 
-            <td class="description last">the following options are available:
+            <td class="description last">See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.The following options are available:
                 <h6>Properties</h6>
                 
 
@@ -505,9 +505,6 @@
             <td class="type">
             
                 
-<span class="param-type">Object</span>
-|
-
 <span class="param-type">boolean</span>
 
 
@@ -529,81 +526,10 @@
             
                 <td class="default">
                 
-                    {}
-                
                 </td>
             
 
-            <td class="description last">{} - use <a href="https://threejs.org/docs/index.html#examples/en/controls/OrbitControls">OrbitControls</a> allow the camera to orbit around a target.<pre>false - no orbit controls.</pre>
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>gui</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    true
-                
-                </td>
-            
-
-            <td class="description last">true - displays the <a href="../../jsdoc/OrbitControlsGui/index.html" target="_blank">orbit controls gui</a>.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last">false - do not add the <a href="https://threejs.org/docs/index.html#examples/en/controls/OrbitControls">OrbitControls</a>. Allow the camera to orbit around a target.</td>
         </tr>
 
     
@@ -616,9 +542,6 @@
             <td class="type">
             
                 
-<span class="param-type">Object</span>
-|
-
 <span class="param-type">boolean</span>
 
 
@@ -640,42 +563,17 @@
             
                 <td class="default">
                 
-                    {}
-                
                 </td>
             
 
-            <td class="description last">{} - add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.<pre>false - axes is not visible.</pre>
-                <h6>Properties</h6>
-                
+            <td class="description last">false - do not add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.</td>
+        </tr>
 
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
         <tr>
             
-                <td class="name"><code>gui</code></td>
+                <td class="name"><code>canvasMenu</code></td>
             
 
             <td class="type">
@@ -702,19 +600,84 @@
             
                 <td class="default">
                 
-                    true
+                </td>
+            
+
+            <td class="description last">false - do not create a <a href="../../canvasMenu/jsdoc/index.html" target="_blank">canvasMenu</a> instance.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>stereoEffect</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
                 
                 </td>
             
 
-            <td class="description last">true - displays the <a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelper gui</a>.</td>
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">false - do not use <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.</td>
         </tr>
 
     
-    </tbody>
-</table>
 
+        <tr>
+            
+                <td class="name"><code>pointLight</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
             </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">false - do not use <a href="../../jsdoc/pointLight/index.html" target="_blank">pointLight</a>.</td>
         </tr>
 
     
@@ -758,7 +721,44 @@
 
         <tr>
             
-                <td class="name"><code>stereoEffect</code></td>
+                <td class="name"><code>player</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">false - do not create a <a href="../../player/jsdoc/index.html" target="_blank">Player</a> instance.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>playerOptions</code></td>
             
 
             <td class="type">
@@ -788,41 +788,23 @@
                 </td>
             
 
-            <td class="description last">use <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
-                <h6>Properties</h6>
-                
+            <td class="description last">See <b>settings.options.playerOptions</b> of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a>.</td>
+        </tr>
 
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
         <tr>
             
-                <td class="name"><code>spatialMultiplex</code></td>
+                <td class="name"><code>getLanguageCode</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">function</span>
+|
+
+<span class="param-type">string</span>
 
 
             
@@ -841,15 +823,14 @@
             
 
             
+                <td class="default">
+                
+                    language code of your browser
+                
+                </td>
+            
 
-            <td class="description last"><a href="../../StereoEffect/jsdoc/module-StereoEffect.html#~spatialMultiplexsIndexs" target="_blank">Enumeration of available stereo modes</a>.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last">Your custom <b>getLanguageCode()</b> function or language code string.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';Currently available follow language code strings:	"en" - English language,	"ru" - Russian.</pre></td>
         </tr>
 
     
@@ -886,7 +867,7 @@
                 </td>
             
 
-            <td class="description last">{} - use dat-gui JavaScript Controller Library. <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.
+            <td class="description last">use dat-gui JavaScript Controller Library. <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.
                 <h6>Properties</h6>
                 
 
@@ -904,14 +885,76 @@
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>dat</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">GUI</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="https://github.com/dataarts/dat.gui">dat.GUI()</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gui</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">GUI</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">new <a href="https://github.com/dataarts/dat.gui">dat.GUI()</a> instance.<p>undefined - do not use <b>dat-gui JavaScript Controller Library<b>. <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</p></td>
+        </tr>
+
     
 
         <tr>
@@ -941,14 +984,107 @@
             
 
             
-                <td class="default">
+
+            <td class="description last">false - do not save to cookie all user settings</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cookieName</code></td>
+            
+
+            <td class="type">
+            
                 
-                    true
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
                 
                 </td>
             
 
-            <td class="description last">true - save to cookie all user settings</td>
+            
+
+            <td class="description last">Name of the cookie.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>orbitControlsGui</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">false - do not adds a <a href="../../OrbitControls/jsdoc/" target="_blank">OrbitControlsGui</a> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>axesHelperGui</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">false - do not adds a <a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelperGui</a> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
         </tr>
 
     
@@ -980,14 +1116,74 @@
             
 
             
-                <td class="default">
+
+            <td class="description last">false - do not adds a <a href="../../player/jsdoc/module-Player-Player.html#gui" target="_blank">Player controllers</a> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>playController</code></td>
+            
+
+            <td class="type">
+            
                 
-                    true
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
                 
                 </td>
             
 
-            <td class="description last">true - adds a <a href="../../player/jsdoc/module-Player.html#~Player.gui" target="_blank">Player controllers</a> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
+            
+
+            <td class="description last">false - do not adds a <a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html" target="_blank">PlayController</a> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>stereoEffectsGui</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">false - do not adds <a href="../../StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#gui" target="_blank">Stereo Effects folder</a> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
         </tr>
 
     
@@ -1019,53 +1215,8 @@
             
 
             
-                <td class="default">
-                
-                    true
-                
-                </td>
-            
 
-            <td class="description last">true - displays the <a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">Select Point</a>. <a href="https://github.com/dataarts/dat.gui">dat.gui</a> based graphical user interface for select a point from the mesh.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>guiStereoEffect</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    true
-                
-                </td>
-            
-
-            <td class="description last">true - Adds <a href="../../StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#gui" target="_blank">Stereo Effects folder</a> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
+            <td class="description last">false - do not displays the <a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">Select Point</a>. <a href="https://github.com/dataarts/dat.gui">dat.gui</a> based graphical user interface for select a point from the mesh.</td>
         </tr>
 
     
@@ -1097,14 +1248,41 @@
             
 
             
-                <td class="default">
+
+            <td class="description last">false - do not adds <a href="../../FrustumPoints/jsdoc/FrustumPoints.html#gui" target="_blank">Frustum Points folder</a> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cameraGui</code></td>
+            
+
+            <td class="type">
+            
                 
-                    true
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
                 
                 </td>
             
 
-            <td class="description last">true - Adds <a href="../../FrustumPoints/jsdoc/FrustumPoints.html#gui" target="_blank">Frustum Points folder</a> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
+            
+
+            <td class="description last">false - do not adds <a href="../../jsdoc/CameraGui/module-CameraGui-CameraGui.html" target="_blank">Camera folder</a> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
         </tr>
 
     
@@ -1136,34 +1314,21 @@
             
 
             
-                <td class="default">
-                
-                    {}
-                
-                </td>
-            
 
-            <td class="description last">true - displays the <a href="../../jsdoc/MoveGroupGui/index.html" target="_blank">move group gui</a>.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last">false - do not displays the <a href="../../jsdoc/MoveGroupGui/index.html" target="_blank">move group gui</a>.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>canvasMenu</code></td>
+                <td class="name"><code>spriteTextGui</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">object</span>
 
 
             
@@ -1182,14 +1347,81 @@
             
 
             
-                <td class="default">
+
+            <td class="description last">false - do not displays the <a href="../../SpriteText/jsdoc/module-SpriteTextGui.html" target="_blank">SpriteTextGui</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>folderPoint</code></td>
+            
+
+            <td class="type">
+            
                 
-                    false
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
                 
                 </td>
             
 
-            <td class="description last">true - use my <a href="../../canvasMenu/jsdoc/index.html" target="_blank">dropdown menu for canvas</a> in my version of <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</td>
+            
+
+            <td class="description last">false - do not adds a <a href="../../jsdoc/folderPoint" target="_blank">Point settings</a> folder.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>pointLightGui</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">false - do not adds a <a href="https://threejs.org/docs/index.html?q=PointLight#api/en/lights/PointLight">PointLight</a> folder.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -1308,7 +1540,7 @@
                 </td>
             
 
-            <td class="description last">Color of points.<pre><b>MyThree.ColorPicker.palette</b> - is <b>new ColorPicker.palette( ... )</b>See <a href="../../colorpicker/jsdoc/index.html" target="_blank">ColorPicker</a> for details.<b>boolean</b>: true - <b>new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.BGRW } )</b>;<b>number</b>: is <b>MyThree.ColorPicker.paletteIndexes</b>. See <a href="../../colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes" target="_blank">ColorPicker.paletteIndexes</a> for details.</pre></td>
+            <td class="description last">Points сolor.<pre><b>MyThree.ColorPicker.palette</b> - is <b>new ColorPicker.palette( ... )</b>See <a href="../../colorpicker/jsdoc/index.html" target="_blank">ColorPicker</a> for details.<b>boolean</b>: true - <b>new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.BGRW } )</b>;<b>number</b>: is <b>MyThree.ColorPicker.paletteIndexes</b>. See <a href="../../colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes" target="_blank">ColorPicker.paletteIndexes</a> for details.See <a href="../../jsdoc/Options/Options.html#setPalette" target="_blank">Options.setPalette</a>.</pre></td>
         </tr>
 
     
@@ -1345,7 +1577,7 @@
                 </td>
             
 
-            <td class="description last">canvas properties
+            <td class="description last"><b>canvas</b> properties
                 <h6>Properties</h6>
                 
 
@@ -1511,7 +1743,7 @@
                 </td>
             
 
-            <td class="description last">Can be use as 'a' parameter of the Function. See arrayFuncs for details.</td>
+            <td class="description last">Can be use as 'a' parameter of the <b>Function</b>. See <b>options.a</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.execFunc.html" target="_blank">Player.execFunc</a>.</td>
         </tr>
 
     
@@ -1550,428 +1782,7 @@
                 </td>
             
 
-            <td class="description last">Can be use as 'b' parameter of the Function. See arrayFuncs for details.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>player</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-|
-
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><a href="../../player/jsdoc/index.html" target="_blank">Player</a> settings. false - do not create a Player instance.
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>interval</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    1
-                
-                </td>
-            
-
-            <td class="description last">Ticks per seconds.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>min</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last">Animation start time.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>max</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    1
-                
-                </td>
-            
-
-            <td class="description last">Animation end time. Set to Infinity if you want to play to infinity.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>dt</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0.1
-                
-                </td>
-            
-
-            <td class="description last">Step of the animation. Have effect only if <b>max</b> is infinity.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>marks</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    10
-                
-                </td>
-            
-
-            <td class="description last">Ticks count of the playing. Number of scenes of 3D objects animation.Have effect for <b>max</b> is not Infinity.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>repeat</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">true - Infinitely repeating 3D objects animation.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>zoomMultiplier</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    1.1
-                
-                </td>
-            
-
-            <td class="description last">zoom multiplier of the time.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0.1
-                
-                </td>
-            
-
-            <td class="description last">offset of the time.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    ""
-                
-                </td>
-            
-
-            <td class="description last">name of the time.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last">Can be use as 'b' parameter of the <b>Function</b>. See <b>options.b</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.execFunc.html" target="_blank">Player.execFunc</a>.</td>
         </tr>
 
     
@@ -2008,76 +1819,7 @@
                 </td>
             
 
-            <td class="description last">point settings. Applies to points with ShaderMaterial.<pre>See <a href="https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial">ShaderMaterial</a> for details.The size of the point seems constant and does not depend on the distance to the camera.</pre>
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>size</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0.02
-                
-                </td>
-            
-
-            <td class="description last">The apparent angular size of a point in radians.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last">point settings. Applies to points with ShaderMaterial.<pre>See <a href="https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial">ShaderMaterial</a> for details.The size of the point seems constant and does not depend on the distance to the camera.</pre>See <a href="../../jsdoc/Options/Options.html#setPoint" target="_blank">Options.setPoint(options)</a> for details.</td>
         </tr>
 
     
@@ -2151,7 +1893,7 @@
                 </td>
             
 
-            <td class="description last">axes scales. See <a href="../../AxesHelper/jsdoc/module-AxesHelper.html" target="_blank">AxesHelper</a> <b>options.scales</b> for details.
+            <td class="description last">axes scales.See <b>options.scales</b> of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a>.
                 <h6>Properties</h6>
                 
 
@@ -2169,993 +1911,12 @@
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>display</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    true
-                
-                </td>
-            
-
-            <td class="description last">true - displays the label and scale of the axes.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>text</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">options of the text of the marks. See <a href="../../AxesHelper/jsdoc/module-AxesHelper.html" target="_blank">AxesHelper</a> <b>options.scales.text</b> for details.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>x</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">X axis options.
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>zoomMultiplier</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    1.1
-                
-                </td>
-            
-
-            <td class="description last">zoom multiplier.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0.1
-                
-                </td>
-            
-
-            <td class="description last">position offset. Default</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    "X"
-                
-                </td>
-            
-
-            <td class="description last">axis name.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>min</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    -1
-                
-                </td>
-            
-
-            <td class="description last">Minimum range of the x axis.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>max</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    1
-                
-                </td>
-            
-
-            <td class="description last">Maximum range of the x axis.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>marks</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    5
-                
-                </td>
-            
-
-            <td class="description last">Number of x scale marks.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>y</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Y axis options.
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>zoomMultiplier</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    1.1
-                
-                </td>
-            
-
-            <td class="description last">zoom multiplier.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0.1
-                
-                </td>
-            
-
-            <td class="description last">position offset.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    "Y"
-                
-                </td>
-            
-
-            <td class="description last">axis name.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>min</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    -1
-                
-                </td>
-            
-
-            <td class="description last">Minimum range of the y axis.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>max</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    1
-                
-                </td>
-            
-
-            <td class="description last">Maximum range of the y axis.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>marks</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    5
-                
-                </td>
-            
-
-            <td class="description last">Number of y scale marks.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>z</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Z axis options.
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>zoomMultiplier</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    1.1
-                
-                </td>
-            
-
-            <td class="description last">zoom multiplier.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0.1
-                
-                </td>
-            
-
-            <td class="description last">position offset.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    "Z"
-                
-                </td>
-            
-
-            <td class="description last">axis name.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>min</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    -1
-                
-                </td>
-            
-
-            <td class="description last">Minimum range of the z axis.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>max</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    1
-                
-                </td>
-            
-
-            <td class="description last">Maximum range of the z axis.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>marks</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    5
-                
-                </td>
-            
-
-            <td class="description last">Number of z scale marks.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
     
 
         <tr>
@@ -3185,237 +1946,8 @@
             
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">w axis options.
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>zoomMultiplier</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    1.1
-                
-                </td>
-            
-
-            <td class="description last">zoom multiplier.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0.1
-                
-                </td>
-            
-
-            <td class="description last">position offset.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    "W"
-                
-                </td>
-            
-
-            <td class="description last">axis name.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>min</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    -1
-                
-                </td>
-            
-
-            <td class="description last">Minimum range of the w axis.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>max</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    1
-                
-                </td>
-            
-
-            <td class="description last">Maximum range of the w axis.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last"><b>w</b> axis options. See <a href="../../jsdoc/Options/Options.html#setW" target="_blank">Options.setW(options)</a> <b>options.scales.w</b> for details.</td>
         </tr>
 
     
@@ -3470,7 +2002,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myThree.js.html">myThree.js</a>, <a href="myThree.js.html#line296">line 296</a>
+        <a href="myThree.js.html">myThree.js</a>, <a href="myThree.js.html#line280">line 280</a>
     </li></ul></dd>
     
 
@@ -3561,13 +2093,13 @@
             <dt><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></dt>
             <dd></dd>
         
-            <dt><a href="module-MyThree-MyThree.FrustumPoints.html">FrustumPoints</a></dt>
-            <dd></dd>
-        
             <dt><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></dt>
             <dd></dd>
         
             <dt><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-MyThree-MyThree.Player.html">Player</a></dt>
             <dd></dd>
         
             <dt><a href="module-MyThree-MyThree.points.html">points</a></dt>
@@ -3595,13 +2127,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.FrustumPoints.html">FrustumPoints</a></li><li><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.points.html">points</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.Player.html">Player</a></li><li><a href="module-MyThree-MyThree.points.html">points</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed May 19 2021 08:46:08 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sun Jul 18 2021 09:25:02 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

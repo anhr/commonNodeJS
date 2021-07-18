@@ -14,12 +14,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import * as THREE from 'https://threejs.org/build/three.module.js';
-//import * as THREE from '../../three.js/dev/build/three.module.js';//https://github.com/anhr/three.js;
-//import { THREE } from '../../commonNodeJS/master/three.js';//https://github.com/anhr/commonNodeJS
-//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-
-import { dat } from '../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
+//import { dat } from '../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
 //import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
 import { ScaleControllers } from '../ScaleController.js';//https://github.com/anhr/commonNodeJS
@@ -28,55 +23,68 @@ import { ScaleControllers } from '../ScaleController.js';//https://github.com/an
 import Cookie from '../cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
-//import { SpriteText } from './SpriteText.js';
-//import { SpriteText } from 'https://raw.githack.com/anhr/SpriteText/master/SpriteText.js';
-
 import three from '../three.js'
+import Options from '../Options.js'
+
+import { SpriteText } from './SpriteText.js';
+//import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
 
 /**
  * Adds SpriteText settings folder into dat.gui.
- * @param {SpriteText} SpriteText A sprite based text component module.
- * @param {GUI} gui see {@link https://github.com/anhr/dat.gui|dat.gui} for details
- * @param {THREE.Group|THREE.Scene|THREE.Sprite} group group or scene of SpriteText and of all child groups of SpriteText for which these settings will have an effect.
- * Or Sprite returned from {@link https://raw.githack.com/anhr/SpriteText/master/jsdoc/module-SpriteText..html|new SpriteText(...)}.
- * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
- * @param {Function} [guiParams.getLanguageCode="en"] Your custom getLanguageCode() function.
+ * @param {THREE.Group|THREE.Scene|THREE.Sprite} group [THREE.Group]{@link https://threejs.org/docs/index.html?q=group#api/en/objects/Group} or [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene} of the <b>SpriteText</b> and of all child groups of the <b>SpriteText</b> for which these settings will have an effect.
+ * Or Sprite returned from <a href="../../AxesHelper/jsdoc/index.html" target="_blank">new SpriteText(...)</a>.
+ *
+ * @param {Options} options See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+ * @param {object} [options.dat] use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+ * @param {GUI} [options.dat.dat] [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
+ * @param {boolean} [options.dat.cookie] false - do not save to cookie all user settings
+ * @param {string} [options.dat.cookieName] Name of the cookie.
+ * @param {boolean} [options.dat.guiSelectPoint] false - do not displays <b>GuiSelectPoint</b>.
+ * @param {Function} [options.getLanguageCode=language code of your browser] Your custom getLanguageCode() function.
  * <pre>
  * returns the "primary language" subtag of the language version of the browser.
  * Examples: "en" - English language, "ru" Russian.
- * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
- * Default returns the 'en' is English language.
+ * See the "Syntax" paragraph of RFC 4646 {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
  * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
  * </pre>
- * @param {object} [guiParams.lang] Object with localized language values
- * @example Using of guiParams.lang:
-guiParams = {
-
-	getLanguageCode: function() { return 'az'; },
-	lang: { textHeight: 'mətn boyu', languageCode: 'az' },
-
-}
+ * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
+ * @param {GUI} [guiParams.folder] <b>SpriteTextGui</b> folder. See {@link https://github.com/anhr/dat.gui|dat.gui} for details
  * @param {GUI} [guiParams.parentFolder] parent folder, returned by {@link https://github.com/dataarts/dat.gui/blob/master/API.md#GUI+addFolder|gui.addFolder(name)}
- * @param {string} [guiParams.options] See SpriteText options. Default is group.userData.optionsSpriteText or no options
+ * @param {string} [guiParams.optionsSpriteText] See <b>options</b> of <a href="module-SpriteText.html" target="_blank">SpriteText</a>. Default is <b>group.userData.optionsSpriteText</b> or no options
  * @param {string} [guiParams.spriteFolder] sprite folder name. Default is lang.spriteText
- * @param {Cookie} [guiParams.cookie] Your custom cookie function for saving and loading of the SpriteText settings. Default cookie is not saving settings.
- * @param {string} [guiParams.cookieName] Name of the cookie. Default is guiParams.spriteFolder.
+ * @param {string} [guiParams.settings] See <b>options.settings</b> of <a href="../../jsdoc/ScaleController/module-ScaleController-ScaleController.html" target="_blank">ScaleControllers</a> settings
  * @returns {GUI} sprite folder
  */
-export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
+export function SpriteTextGui( group, options, guiParams = {} ) {
 
-//	const THREE = SpriteText.getTHREE();
-	const THREE = three.THREE;
+//	guiParams = guiParams || {};
+	if ( !options.boOptions ) {
 
-	guiParams = guiParams || {};
-	const options = guiParams.options || group.userData.optionsSpriteText || {};
-	if ( THREE.Color.NAMES[options.fontColor] ) {
+/*
+		console.error( 'SpriteTextGui: call options = new Options( options ) first' );
+		return;
+*/		
 
-		const color = new THREE.Color( options.fontColor );
-		options.fontColor = 'rgba(' + color.r * 255 + ',' + color.g * 255 + ',' + color.b * 255 + ',1)'
+		options = new Options( options );
 
 	}
-	const optionsDefault = JSON.parse( JSON.stringify( options ) );
+	const gui = guiParams.folder || options.dat.gui;
+	if ( !gui || options.dat.spriteTextGui === false )
+		return;
+	const optionsSpriteText = guiParams.optionsSpriteText || group.userData.optionsSpriteText || {},
+		THREE = three.THREE,
+		dat = three.dat;//options.dat.dat;
+//		options = guiParams.options || new Options();
+
+	if ( Object.keys(optionsSpriteText).length === 0 ) console.warn( 'SpriteTextGui: optionsSpriteText is empty.' );
+		
+	if ( THREE.Color.NAMES[optionsSpriteText.fontColor] ) {
+
+		const color = new THREE.Color( optionsSpriteText.fontColor );
+		optionsSpriteText.fontColor = 'rgba(' + color.r * 255 + ',' + color.g * 255 + ',' + color.b * 255 + ',1)'
+
+	}
+	const optionsDefault = JSON.parse( JSON.stringify( optionsSpriteText ) );
 	Object.freeze( optionsDefault );
 
 	//Localization
@@ -129,10 +137,11 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 		defaultTitle: 'Restore default Sprite Text settings.',
 
 	};
-
+/*
 	const _languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
 		: guiParams.getLanguageCode();
-	switch ( _languageCode ) {
+*/		
+	switch ( options.getLanguageCode() ) {
 
 		case 'ru'://Russian language
 
@@ -196,17 +205,20 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 	}
 
 	guiParams.spriteFolder = guiParams.spriteFolder || lang.spriteText;
-//	const cookieName = guiParams.cookieName || 'SpriteText',//guiParams.spriteFolder,
+/*	
 	const cookieName = 'SpriteText' + ( guiParams.cookieName ? '_' + guiParams.cookieName : '' ),
 		cookie = guiParams.cookie || new Cookie.defaultCookie(),
-		optionsGroup = options.group;
-	cookie.getObject( cookieName, options, options );
-	options.group = optionsGroup;
+*/		
+	const cookieName = options.dat.getCookieName( 'SpriteText' ),
+		cookie = options.dat.cookie,
+		optionsGroup = optionsSpriteText.group;
+	cookie.getObject( cookieName, optionsSpriteText, optionsSpriteText );
+	optionsSpriteText.group = optionsGroup;
 	if ( group instanceof THREE.Sprite !== true ) {
 
 		if ( group.userData.optionsSpriteText === undefined )
-			group.userData.optionsSpriteText = options;
-		else if ( guiParams.options !== undefined ) console.warn( 'SpriteTextGui: duplicate group.userData.optionsSpriteText' );
+			group.userData.optionsSpriteText = optionsSpriteText;
+		else if ( guiParams.optionsSpriteText !== undefined ) console.warn( 'SpriteTextGui: duplicate group.userData.optionsSpriteText' );
 
 	}
 
@@ -220,13 +232,13 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 			return;
 		SpriteText.updateSpriteTextGroup( group );
 		if ( group.userData.update )
-			group.userData.update();// options );
+			group.userData.update();// optionsSpriteText );
 
 		if ( controllerFont !== undefined )
-			controllerFont.setValue( options.font );
+			controllerFont.setValue( optionsSpriteText.font );
 
 		if ( !noSave )
-			cookie.setObject( cookieName, options );
+			cookie.setObject( cookieName, optionsSpriteText );
 
 	}
 
@@ -239,9 +251,9 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 
 	//Sprite text height
 	const textHeight = 'textHeight';
-	if ( options.hasOwnProperty( textHeight ) && ( options[textHeight] !== undefined ) ) {
+	if ( optionsSpriteText.hasOwnProperty( textHeight ) && ( optionsSpriteText[textHeight] !== undefined ) ) {
 
-		ScaleControllers( fSpriteText, options, textHeight, function () { updateSpriteText(); }, {
+		ScaleControllers( fSpriteText, optionsSpriteText, textHeight, function () { updateSpriteText(); }, {
 
 			text: lang.textHeight, textTitle: lang.textHeightTitle,
 			getLanguageCode: guiParams.getLanguageCode,
@@ -252,10 +264,10 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 	}
 
 	//font  face
-	if ( options.fontFace !== undefined ) {
+	if ( optionsSpriteText.fontFace !== undefined ) {
 
 		dat.controllerNameAndTitle(
-			fSpriteText.add( options, 'fontFace' ).onChange( function ( value ) {
+			fSpriteText.add( optionsSpriteText, 'fontFace' ).onChange( function ( value ) {
 
 				updateSpriteText();
 
@@ -264,10 +276,10 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 	}
 
 	//font faces
-	if ( options.fontFaces !== undefined ) {
+	if ( optionsSpriteText.fontFaces !== undefined ) {
 
 		dat.controllerNameAndTitle(
-			fSpriteText.add( options, 'fontFace', options.fontFaces ).onChange( function ( value ) {
+			fSpriteText.add( optionsSpriteText, 'fontFace', optionsSpriteText.fontFaces ).onChange( function ( value ) {
 
 				updateSpriteText();
 
@@ -276,10 +288,10 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 	}
 
 	//bold
-	if ( options.hasOwnProperty( 'bold' ) ) {
+	if ( optionsSpriteText.hasOwnProperty( 'bold' ) ) {
 
 		dat.controllerNameAndTitle(
-			fSpriteText.add( options, 'bold' ).onChange( function ( value ) {
+			fSpriteText.add( optionsSpriteText, 'bold' ).onChange( function ( value ) {
 
 				updateSpriteText();
 
@@ -288,10 +300,10 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 	}
 
 	//italic
-	if ( options.hasOwnProperty( 'italic' ) ) {
+	if ( optionsSpriteText.hasOwnProperty( 'italic' ) ) {
 
 		dat.controllerNameAndTitle(
-			fSpriteText.add( options, 'italic' ).onChange( function ( value ) {
+			fSpriteText.add( optionsSpriteText, 'italic' ).onChange( function ( value ) {
 
 				updateSpriteText();
 
@@ -301,12 +313,12 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 
 	//rotation
 	const rotation = 'rotation';
-	if ( options.hasOwnProperty( rotation ) ) {
+	if ( optionsSpriteText.hasOwnProperty( rotation ) ) {
 
 		var min = 0,
 			max = Math.PI * 2;
 		dat.controllerNameAndTitle(
-			fSpriteText.add( options, rotation, min, max, ( max - min ) / 360 ).onChange( function ( value ) {
+			fSpriteText.add( optionsSpriteText, rotation, min, max, ( max - min ) / 360 ).onChange( function ( value ) {
 
 				updateSpriteText();
 
@@ -315,10 +327,10 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 	}
 
 	//font properties
-	if ( options.hasOwnProperty( 'fontProperties' ) ) {
+	if ( optionsSpriteText.hasOwnProperty( 'fontProperties' ) ) {
 
 		dat.controllerNameAndTitle(
-			fSpriteText.add( options, 'fontProperties' ).onChange( function ( value ) {
+			fSpriteText.add( optionsSpriteText, 'fontProperties' ).onChange( function ( value ) {
 
 				updateSpriteText();
 
@@ -327,33 +339,33 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 	}
 
 	//font style
-	if ( options.hasOwnProperty( 'font' ) ) {
+	if ( optionsSpriteText.hasOwnProperty( 'font' ) ) {
 
-		var controllerFont = fSpriteText.add( options, 'font' );
+		var controllerFont = fSpriteText.add( optionsSpriteText, 'font' );
 		controllerFont.__input.readOnly = true;
 		dat.controllerNameAndTitle( controllerFont, lang.fontStyle, lang.fontStyleTitle );
 
 	}
 
 	//text rectangle
-	if ( options.hasOwnProperty( 'rect' ) ) {
+	if ( optionsSpriteText.hasOwnProperty( 'rect' ) ) {
 
-		if ( options.rect.displayRect === undefined ) options.rect.displayRect = false;
-		dat.controllerNameAndTitle( fSpriteText.add( options.rect, 'displayRect' ).onChange( function ( value ) {
+		if ( optionsSpriteText.rect.displayRect === undefined ) optionsSpriteText.rect.displayRect = false;
+		dat.controllerNameAndTitle( fSpriteText.add( optionsSpriteText.rect, 'displayRect' ).onChange( function ( value ) {
 
 			updateSpriteText();
-			fRect.domElement.style.display = options.rect.displayRect ? 'block' : 'none';
+			fRect.domElement.style.display = optionsSpriteText.rect.displayRect ? 'block' : 'none';
 
 		} ), lang.displayRect, lang.displayRectTitle );
 		const fRect = fSpriteText.addFolder( lang.displayRect );//'Border'
-		fRect.domElement.style.display = options.rect.displayRect ? 'block' : 'none';
+		fRect.domElement.style.display = optionsSpriteText.rect.displayRect ? 'block' : 'none';
 
 		//border thickness
 		const borderThickness = 'borderThickness';
-		if ( options.rect.hasOwnProperty( borderThickness ) ) {
+		if ( optionsSpriteText.rect.hasOwnProperty( borderThickness ) ) {
 
 			dat.controllerNameAndTitle(
-				fRect.add( options.rect, borderThickness, 1, options.rect.borderThickness * 30, 1 ).onChange( function ( value ) {
+				fRect.add( optionsSpriteText.rect, borderThickness, 1, optionsSpriteText.rect.borderThickness * 30, 1 ).onChange( function ( value ) {
 
 					updateSpriteText();
 
@@ -363,9 +375,9 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 
 		//border сolor
 		const borderColor = 'borderColor';
-		if ( options.rect.hasOwnProperty( borderColor ) ) {
+		if ( optionsSpriteText.rect.hasOwnProperty( borderColor ) ) {
 
-			dat.controllerNameAndTitle( fRect.addColor( options.rect, borderColor ).onChange( function ( value ) {
+			dat.controllerNameAndTitle( fRect.addColor( optionsSpriteText.rect, borderColor ).onChange( function ( value ) {
 
 				updateSpriteText();
 
@@ -375,9 +387,9 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 
 		//background color
 		const backgroundColor = 'backgroundColor';
-		if ( options.rect.hasOwnProperty( backgroundColor ) ) {
+		if ( optionsSpriteText.rect.hasOwnProperty( backgroundColor ) ) {
 
-			dat.controllerNameAndTitle( fRect.addColor( options.rect, backgroundColor ).onChange( function ( value ) {
+			dat.controllerNameAndTitle( fRect.addColor( optionsSpriteText.rect, backgroundColor ).onChange( function ( value ) {
 
 				updateSpriteText();
 
@@ -387,10 +399,10 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 
 		//border radius
 		const borderRadius = 'borderRadius';
-		if ( options.rect.hasOwnProperty( borderRadius ) ) {
+		if ( optionsSpriteText.rect.hasOwnProperty( borderRadius ) ) {
 
 			dat.controllerNameAndTitle(
-				fRect.add( options.rect, borderRadius, 0, 100, 1 ).onChange( function ( value ) {
+				fRect.add( optionsSpriteText.rect, borderRadius, 0, 100, 1 ).onChange( function ( value ) {
 
 					updateSpriteText();
 
@@ -401,9 +413,9 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 	}
 
 	//font сolor
-	if ( options.hasOwnProperty( 'fontColor' ) ) {
+	if ( optionsSpriteText.hasOwnProperty( 'fontColor' ) ) {
 
-		dat.controllerNameAndTitle( fSpriteText.addColor( options, 'fontColor' ).onChange( function ( value ) {
+		dat.controllerNameAndTitle( fSpriteText.addColor( optionsSpriteText, 'fontColor' ).onChange( function ( value ) {
 
 			updateSpriteText();
 
@@ -412,23 +424,23 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 	}
 
 	//anchor. https://threejs.org/docs/index.html#api/en/objects/Sprite.center
-	if ( options.hasOwnProperty( 'center' ) ) {
+	if ( optionsSpriteText.hasOwnProperty( 'center' ) ) {
 
-		options.center = SpriteText.getCenter( options.center );
+		optionsSpriteText.center = SpriteText.getCenter( optionsSpriteText.center );
 
 		//anchor folder
 		const fAnchor = fSpriteText.addFolder( 'center' );
 		dat.folderNameAndTitle( fAnchor, lang.anchor, lang.anchorTitle );
 
 		//anchor x
-		fAnchor.add( options.center, 'x', 0, 1, 0.1 ).onChange( function ( value ) {
+		fAnchor.add( optionsSpriteText.center, 'x', 0, 1, 0.1 ).onChange( function ( value ) {
 
 			updateSpriteText();
 
 		} );
 
 		//anchor y
-		fAnchor.add( options.center, 'y', 0, 1, 0.1 ).onChange( function ( value ) {
+		fAnchor.add( optionsSpriteText.center, 'y', 0, 1, 0.1 ).onChange( function ( value ) {
 
 			updateSpriteText();
 
@@ -439,9 +451,9 @@ export function SpriteTextGui( SpriteText, gui, group, guiParams ) {
 	//size attenuation. Whether the size of the sprite is attenuated by the camera depth. (Perspective camera only.) Default is false.
 	//See https://threejs.org/docs/index.html#api/en/materials/SpriteMaterial.sizeAttenuation
 	const sizeAttenuation = 'sizeAttenuation';
-	if ( options.hasOwnProperty( sizeAttenuation ) && ( options[sizeAttenuation] !== undefined ) ) {
+	if ( optionsSpriteText.hasOwnProperty( sizeAttenuation ) && ( optionsSpriteText[sizeAttenuation] !== undefined ) ) {
 
-		dat.controllerNameAndTitle( fSpriteText.add( options, sizeAttenuation ).onChange( function ( value ) {
+		dat.controllerNameAndTitle( fSpriteText.add( optionsSpriteText, sizeAttenuation ).onChange( function ( value ) {
 
 			updateSpriteText();
 

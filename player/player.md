@@ -41,6 +41,7 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 
 </head>
 <body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
 		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - Player - 3D objects animation.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
@@ -217,12 +218,16 @@ Please change your <b>Player</b> for it.
 ```
 const player = new Player( scene, {
 
-		timeSettings: {
+	options : { 
+	
+		playerOptions: {
 
 			marks: 100,//Ticks count of the playing.
 			interval: 25,//Ticks per seconds.
 
 		},
+
+	}
 
 } );
 ```
@@ -584,43 +589,17 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import { dat } from './commonNodeJS/master/dat/dat.module.js';
 ```
-Add <b>Player</b> settings into gui
+Add <b>dat.dat</b> key into <b>options</b> parameter of the <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> class;
 ```
-const gui = new dat.GUI();
-player.gui( gui );
-```
-If you want to localize the gui, please import <b>getLanguageCode</b>.
-```
-import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import { getLanguageCode } from './commonNodeJS/master/lang.js';
-```
-and edit <b>player.gui(...)</b>.
-```
-player.gui( gui, {
+dat: {
 
-	getLanguageCode: getLanguageCode
+	dat: dat,
 
-} );
+}
 ```
-If you want save a custom <b>Player</b> settings to the cookie, please import <b>cookie</b>
+and call <b>player.gui()</b>
 ```
-import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
-```
-and edit <b>player.gui(...)</b>.
-```
-player.gui( gui, {
-
-	getLanguageCode: getLanguageCode,
-	cookie: cookie,
-
-} );
+player.gui();
 ```
 
 <a name="datGuiPlayerControl"></a>
@@ -641,12 +620,7 @@ import CameraGui from './commonNodeJS/master/CameraGui.js';
 ```
 Add <b>CameraGui</b> into gui 
 ```
-new CameraGui( gui, camera, THREE, Player, {
-
-	getLanguageCode: getLanguageCode,
-	//orbitControls: controls,
-
-} );
+new CameraGui( camera, options, gui );
 ```
 
 <a name="guiSelectPoint"></a>
@@ -662,12 +636,7 @@ import GuiSelectPoint from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.
 ```
 * Create instance of the <b>GuiSelectPoint</b>.
 ```
-guiSelectPoint = new GuiSelectPoint( THREE, {
-
-	getLanguageCode: getLanguageCode,
-	options: options,
-
-} );
+guiSelectPoint = new GuiSelectPoint( options );
 ```
 
 Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point.
@@ -898,11 +867,9 @@ const player = new Player( scene, {
 
 * Or add <b>cameraTarget</b> key for creating of <b>guiSelectPoint</b> instance.
 ```
-guiSelectPoint = new GuiSelectPoint( THREE, {
+guiSelectPoint = new GuiSelectPoint( options, {
 
-	getLanguageCode: getLanguageCode,
 	cameraTarget: { camera: camera, },
-	options: options,
 
 } );
 ```

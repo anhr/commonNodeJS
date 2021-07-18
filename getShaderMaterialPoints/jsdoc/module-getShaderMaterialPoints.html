@@ -236,7 +236,7 @@
                 </td>
             
 
-            <td class="description last">THREE group or scene</td>
+            <td class="description last"><a href="https://threejs.org/docs/index.html?q=group#api/en/objects/Group">THREE.Group</a> or <a href="https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene">THREE.Scene</a>.</td>
         </tr>
 
     
@@ -414,43 +414,6 @@
 
         <tr>
             
-                <td class="name"><code>Player</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Player</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><a href="../../player/jsdoc/index.html" target="_blank">Player</a>.Define <b>Player</b> only if you want trace of the moving of the points during playing.</td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>pointsOptions</code></td>
             
 
@@ -481,7 +444,7 @@
                 </td>
             
 
-            <td class="description last">see <a href="../../myPoints/jsdoc/module-MyPoints.html" target="_blank">myPoints</a> <b>settings.pointsOptions</b> parameter for details</td>
+            <td class="description last">points options.See <b>settings.pointsOptions</b> of <a href="../../MyPoints/jsdoc/module-MyPoints.html" target="_blank">MyPoints</a> for details.</td>
         </tr>
 
     
@@ -538,8 +501,6 @@
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
@@ -550,7 +511,40 @@
 
         <tr>
             
-                <td class="name"><code>a</code></td>
+                <td class="name"><code>point</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">point options.See <a href="../../jsdoc/Options/Options.html#point" target="_blank">Options get point</a> member for details.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>scales</code></td>
             
 
             <td class="type">
@@ -575,129 +569,8 @@
             
 
             
-                <td class="default">
-                
-                    1
-                
-                </td>
-            
 
-            <td class="description last">multiplier. Second parameter of the arrayFuncs item function.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>b</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last">addendum. Third parameter of the arrayFuncs item function.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>point.size</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    5.0
-                
-                </td>
-            
-
-            <td class="description last">point size.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>scales.w</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">followed w axis scale params is available
+            <td class="description last">Axis scales.See  <b>options.scales</b> of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> for details.
                 <h6>Properties</h6>
                 
 
@@ -725,7 +598,7 @@
 
         <tr>
             
-                <td class="name"><code>min</code></td>
+                <td class="name"><code>w</code></td>
             
 
             <td class="type">
@@ -751,40 +624,7 @@
 
             
 
-            <td class="description last">Minimal range of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.<p>Default is undefined. Minimal palette range is 0.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>max</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Maximal range of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.<p>Default is undefined. Maximal palette range is 100</p></td>
+            <td class="description last">w axis scale.See <a href="../../jsdoc/Options/Options.html#setW" target="_blank">Options.setW(options)</a> for details.</td>
         </tr>
 
     
@@ -846,7 +686,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="getShaderMaterialPoints.js.html">getShaderMaterialPoints.js</a>, <a href="getShaderMaterialPoints.js.html#line62">line 62</a>
+        <a href="getShaderMaterialPoints.js.html">getShaderMaterialPoints.js</a>, <a href="getShaderMaterialPoints.js.html#line59">line 59</a>
     </li></ul></dd>
     
 
@@ -898,7 +738,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat May 15 2021 10:06:47 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Jul 09 2021 06:56:07 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

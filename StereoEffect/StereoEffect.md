@@ -51,7 +51,7 @@ function animate() {
 
 	requestAnimationFrame( animate );
 
-	if ( stereoEffect === undefined )
+	if ( !stereoEffect )
 		renderer.render( scene, camera );
 	else stereoEffect.render( scene, camera );
 

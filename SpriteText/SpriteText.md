@@ -18,6 +18,7 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 
 </head>
 <body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
 		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - SpriteText is a text that always faces towards the camera.
 	</div>
@@ -140,12 +141,7 @@ import { SpriteTextGui } from './commonNodeJS/master/SpriteText/SpriteTextGui.js
 Now you can use <b>SpriteTextGui</b> in your javascript code.
 ```
 const gui =  new dat.GUI();
-const folder = SpriteTextGui( SpriteText, gui, spriteText, {
-
-	//getLanguageCode: getLanguageCode,
-	//cookie: cookie,
-
-} );
+const folder = SpriteTextGui( spriteText, options );
 ```
 If you want to localize the gui, please uncomment
 ```
@@ -200,22 +196,21 @@ group.add( new SpriteText( 'Group', new THREE.Vector3( 0,   1, 0 ), { group: gro
 ### folder.userData.restore() - Restore group.userData.optionsSpriteText to default values.
 Example:
 ```
-options = {
+optionsSpriteText = {
 
 	textHeight: 0.1,
 	sizeAttenuation: false,
 
 }
-const fSpriteTextAll = SpriteTextGui( gui, scene, {
+const fSpriteTextAll = SpriteTextGui( scene, options, {
 
-	getLanguageCode: getLanguageCode,
 	settings: { zoomMultiplier: 1.5, },
-	options: options
+	options: optionsSpriteText
 
 } );
 
 //Change of the text height
-options.textHeight = 0.2;
+optionsSpriteText.textHeight = 0.2;
 
 //update of the options of all SpriteText, added in to group and all child groups
 SpriteText.updateSpriteTextGroup( group );

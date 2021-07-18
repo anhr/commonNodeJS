@@ -18,13 +18,6 @@ Generating a website:
 	npm install -g jsdoc
 
 	/////////////////////////////////////////////////////////////
-	//guiSelectPoint doc
-
-	See D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\guiSelectPoint\URL.txt
-
-	/////////////////////////////////////////////////////////////
-
-	/////////////////////////////////////////////////////////////
 	//ScaleController doc
 
 	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\ScaleController"
@@ -37,17 +30,6 @@ Generating a website:
 	//StereoEffect doc
 
 	See D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\StereoEffect\URL.txt
-
-	/////////////////////////////////////////////////////////////
-
-	/////////////////////////////////////////////////////////////
-	//OrbitControlsGui doc
-
-	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\OrbitControlsGui"
-
-	jsdoc "..\commonNodeJS\master\OrbitControlsGui.js" -d "..\commonNodeJS\master\jsdoc\OrbitControlsGui"
-
-	/////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////
 	//CameraGui doc
@@ -102,4 +84,35 @@ Generating a website:
 	jsdoc "..\commonNodeJS\master\folderPoint.js" -d "..\commonNodeJS\master\jsdoc\folderPoint"
 
 	/////////////////////////////////////////////////////////////
-	
+/*	
+	/////////////////////////////////////////////////////////////
+	//setOptions doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\setOptions"
+
+	jsdoc "..\commonNodeJS\master\setOptions.js" -d "..\commonNodeJS\master\jsdoc\setOptions"
+
+	/////////////////////////////////////////////////////////////
+*/
+	/////////////////////////////////////////////////////////////
+	//Options doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\Options"
+
+	jsdoc "..\commonNodeJS\master\Options.js" -d "..\commonNodeJS\master\jsdoc\Options"
+
+	/////////////////////////////////////////////////////////////
+	//Light doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\pointLight"
+
+	jsdoc "..\commonNodeJS\master\pointLight.js" -d "..\commonNodeJS\master\jsdoc\pointLight"
+
+	/////////////////////////////////////////////////////////////
+	//three doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\three"
+
+	jsdoc "..\commonNodeJS\master\three.js" -d "..\commonNodeJS\master\jsdoc\three"
+
+	/////////////////////////////////////////////////////////////

@@ -28,7 +28,7 @@ import StereoEffect from './StereoEffect/StereoEffect.js';
  * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
  * @param {object} options the following options are available:
  * @param {CanvasMenu} [options.canvasMenu] <a href="../../canvasMenu/jsdoc/index.html" target="_blank">CanvasMenu</a>
- * @param {CanvasMenu} [options.stereoEffect] <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>
+ * @param {StereoEffect} [options.stereoEffect] <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a> instance.
  * @param {object} [options.fullScreen] followed fullScreen methods available:
  * @param {onFullScreenToggle} [options.fullScreen.onFullScreenToggle] user toggled fullscreen mode of the canvas.
  */
@@ -98,14 +98,11 @@ function CreateFullScreenSettings( THREE, renderer, camera, options ) {
 			renderer.domElement.style.top = 0;
 			renderer.domElement.style.width = '100%';
 			renderer.domElement.style.height = '100%';
-			
-			if ( options.fullScreen.onFullScreenToggle !== undefined ) {
-
-				options.fullScreen.onFullScreenToggle( fullScreen );
-
-			}
 
 		}
+			
+		if ( options.fullScreen.onFullScreenToggle !== undefined ) options.fullScreen.onFullScreenToggle( fullScreen );
+		
 		camera.aspect = size.x / size.y;
 		camera.updateProjectionMatrix();
 		fullScreen = !fullScreen;
@@ -121,10 +118,10 @@ function CreateFullScreenSettings( THREE, renderer, camera, options ) {
 
 		if (
 			( stereoEffect !== undefined )
-			&& ( parseInt( stereoEffect.options.spatialMultiplex ) !== StereoEffect.spatialMultiplexsIndexs.Mono )
+			&& ( parseInt( stereoEffect.settings.spatialMultiplex ) !== StereoEffect.spatialMultiplexsIndexs.Mono )
 		) {
 
-			stereoEffect.options.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
+			stereoEffect.settings.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
 
 		}
 

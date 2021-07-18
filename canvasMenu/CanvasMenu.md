@@ -15,6 +15,7 @@ My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu
 	<title>CanvasMenu</title>
 </head>
 <body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<h1>
 		<a href='https://github.com/anhr/commonNodeJS/tree/master/canvasMenu' target="_blank">CanvasMenu</a> inside <a href="https://threejs.org/" target="_blank">Three.js</a> canvas.
 	</h1>
@@ -162,7 +163,7 @@ function animate() {
 	cube.rotation.x += 0.01;
 	cube.rotation.y += 0.01;
 
-	if ( stereoEffect === undefined )
+	if ( !stereoEffect )
 		renderer.render( scene, camera );
 	else stereoEffect.render( scene, camera );
 
@@ -206,7 +207,11 @@ Currently your canvas is not full screen in the stereo mode.
 I think is is bad, because your stereo device can not to display stereo correctly if your canvas is not full screen.
 For resolving of issue please add <b>rememberSize: true</b> key into <b>options</b> parameter of the <b>StereoEffect</b>.
 ```
-const stereoEffect = new StereoEffect( renderer, { rememberSize: true, } );
+const stereoEffect = new StereoEffect( renderer, {
+
+	stereoEffect: { rememberSize: true, }
+
+} );
 ```
 Now your canvas will be changing to full screen automatically if you choice a stereo mode.
 

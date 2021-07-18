@@ -20,6 +20,10 @@
 
 </head>
 <body>
+	<!--<script src="../../../../../three.js/dev/build/three.js"></script>-->
+	<script src="../../../../../three.js/dev/build/three.min.js"></script>
+	<!--<script src="../../build/myThree.js"></script>-->
+	<!--<script src="../../build/myThree.min.js"></script>-->
 	<p>
 		<a href='https://anhr.github.io/index.html' target="_blank">Home</a>
 		| <a href='https://github.com/anhr/commonNodeJS/tree/master/myThree' target="_blank">GitHub</a>
@@ -32,31 +36,40 @@
 	<script type="module">
 
 		//import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import * as THREE from '../../../../../three.js/dev/build/three.module.min.js';
-		import * as THREE from '../../../../../three.js/dev/build/three.module.js';
+		//		import * as THREE from '../../../../../three.js/dev/build/three.module.min.js';
+		//import * as THREE from '../../../../../three.js/dev/build/three.module.js';
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 
-		//import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
-		import three from '../../../three.js'
-		three.THREE = THREE;
+		//получаю ошибку
+		//three: duplicate three. Please use one instance of the three class.
+		//Если исползую библиотеку build/myThree.module.js
+		//		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
+		//		import three from '../../../three.js'
+		//		three.THREE = THREE;
 
-		import MyThree from '../../myThree.js';
+		//test for duplicate dat library
+		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+		//three.dat = dat;
 
-		import { WEBGL } from '../../../../../three.js/dev/examples/jsm/WebGL.js';
-		//import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
+		//import MyThree from '../../myThree.js';
+		import MyThree from '../../build/myThree.module.js';
+		//import MyThree from '../../build/myThree.module.min.js';
+		/*
+				import { WEBGL } from '../../../../../three.js/dev/examples/jsm/WebGL.js';
+				//import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
 
-		if ( WEBGL.isWebGLAvailable() === false ) {
+				if ( WEBGL.isWebGLAvailable() === false ) {
 
-			document.body.appendChild( WEBGL.getWebGLErrorMessage() );
-			alert( WEBGL.getWebGLErrorMessage().innerHTML );
+					document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+					alert( WEBGL.getWebGLErrorMessage().innerHTML );
 
-		}
-
+				}
+		*/
 		const tMin = 0;
 
-		new MyThree( function ( group, options ) {
+		new MyThree( THREE, function ( group, options ) {
 
 			var arrayFuncs;//, sizes;
 
@@ -124,7 +137,7 @@
 							new THREE.Color( 0, 1, 0 ),
 							new THREE.Color( 0, 0, 1 ),
 							0//last value is not using
-						]//w 
+						]//w
 						//new Function( 't', 'return 1-2*t' ),//w
 						//[
 						//	new THREE.Color( "rgb(225, 0, 0)" ),
@@ -144,10 +157,10 @@
 				new THREE.Vector4( -0.5, -0.5, -0.5, 0.5 ),
 				*/
 				new THREE.Vector4( 0, 0, 0, 1 ),//4D point.
-				[ new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.25' ),0.5, 0, 1 ],//4D point.
-				[ -0.5, 0.5, 0.0, -1 ],//4D point.
+				[new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.25' ), 0.5, 0, 1],//4D point.
+				[-0.5, 0.5, 0.0, -1],//4D point.
 				//[ 0.25, 0, 0.75, -1 ],//4D point.
-//				[0, 0, 0, -1],//4D point.
+				//				[0, 0, 0, -1],//4D point.
 
 				{
 
@@ -155,7 +168,7 @@
 						new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
 						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5+b' ),//y
 						//new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5+b' ),//z
-						new Function( 't', 'a', 'b', 'return t*a+b' ),//z
+						new Function( 't', 'a', 'b', 'return t*a+b-1' ),//z
 						//new Function( 't', 'return t' ),//z
 						new Function( 't', 'return 1-2*t' ),//w
 						//new Function( 't', 'return 50+50*t' ),//w
@@ -164,12 +177,11 @@
 					),//Animated 3D point
 					trace: true,//Displays the trace of the point movement.
 					name: 'point 4',
-					/*
 					cameraTarget: {
 
 						//boLook: false,
 						camera: options.camera,
-						//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
+						//distanceToCamera: new THREE.Vector3( 0, 0, 0.2 ),
 						rotation: {
 
 							//angle: Math.PI,
@@ -181,33 +193,49 @@
 						},
 
 					},
-					*/
 
 				},
-/*
-				{
+				/*
+								{
 
-					vector: new THREE.Vector4( 0,0,0,
-						new Function( 't', 'return 1-2*t' ),//w
-					),
-					//trace: true,//Displays the trace of the point movement.
-					name: 'point 5',
+									vector: new THREE.Vector4( 0,0,0,
+										new Function( 't', 'return 1-2*t' ),//w
+									),
+									//trace: true,//Displays the trace of the point movement.
+									name: 'point 5',
 
-				},
-*/
-/*
-//				[  3,  1,  1, 1 ],
-				[  -1.9607199430465698,  -0.49455657601356506,  -1.0089999437332153, 1 ],
-				[ -3,  1,  1, 1 ],
-				[  3, -1,  1, 1 ],
-				[ -3, -1,  1, 1 ],
-				[  3,  1, -1, 1 ],
-				[ -3,  1, -1, 1 ],
-				[  3, -1, -1, 1 ],
-				[ -3, -1, -1, 1 ],
-*/
+								},
+				*/
+				/*
+				//				[  3,  1,  1, 1 ],
+								[  -1.9607199430465698,  -0.49455657601356506,  -1.0089999437332153, 1 ],
+								[ -3,  1,  1, 1 ],
+								[  3, -1,  1, 1 ],
+								[ -3, -1,  1, 1 ],
+								[  3,  1, -1, 1 ],
+								[ -3,  1, -1, 1 ],
+								[  3, -1, -1, 1 ],
+								[ -3, -1, -1, 1 ],
+				*/
 
 			];
+			/*
+						arrayFuncs = [
+							[0,0,0,0.5],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGRW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+							{
+
+								//move secind point from [-0.5, -0.5, -0.5, ] for t = 0 to [0.5, 0.5, 0.5, ] for t = 1
+								vector: new THREE.Vector4(
+									new Function( 't', 'return t-0.5' ),//x
+									0,//new Function( 't', 'return t-0.5' ),//y
+									0,//new Function( 't', 'return t-0.5' ),//z
+									0.5,//new Function( 't', 'return 1-2*t' ),//w palette index from 1 for t = 0 to -1 for t = 1
+								),
+								trace: true,
+
+							},
+						];
+			*/
 			MyThree.points( arrayFuncs, group, options, {
 
 				name: 'MyThree.points',
@@ -219,11 +247,11 @@
 				//scale: new THREE.Vector3( 2, 2, 2 ),
 				//rotation: new THREE.Vector3( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), Math.PI / 4 ),
 				//rotation: new THREE.Vector3( Math.PI / 2, 0 ),
-				shaderMaterial: {},
 				frustumPoints: options.frustumPoints,//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
-				onReady: function( points ){
+				//shaderMaterial: false,
+				onReady: function ( points ) {
 
-					if ( options.guiSelectPoint )  options.guiSelectPoint.addMesh( points );
+					if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 				},
 
@@ -254,34 +282,30 @@
 					//cameraTarget: { camera: options.camera, },
 
 				},
-				new THREE.Vector4( -0.25, 0.3, 0.3, 25 ),//4D point
+				new THREE.Vector4( -0.25, 0.3, 0.3, -10 ),//4D point
 				//new THREE.Vector4( 0, 0, 0, new Function( 't', 'return 1-2*t' ) ),//color is f(t)
 				//new THREE.Vector4( -0.25, 0.3, 0.3, new THREE.Color( "rgb(255, 255, 0)" ) ),//yellow point
 				//new THREE.Vector4( 0.25, 0, 0, new THREE.Color( "rgb(255, 0, 0)" ) ),//red point
 			]
-/*
-			var points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( options.getPoints( group, tMin, arrayFuncs, options ), 4 ),
-				new THREE.PointsMaterial( { size: options.point.size, vertexColors: THREE.VertexColors } ) );
-*/
 			var points = new THREE.Points(
-				new THREE.BufferGeometry().setFromPoints( options.getPoints( arrayFuncs,
-					{ options: options, group: group, t: tMin } ), 4 ),
+				new THREE.BufferGeometry().setFromPoints( MyThree.Player.getPoints//options.getPoints
+					( arrayFuncs, { options: options, group: group, t: tMin } ), 4 ),
 				new THREE.PointsMaterial( { size: options.point.size, vertexColors: THREE.VertexColors } ) );
 
 			if ( !options.player )
 				points.geometry.setAttribute( 'color',
-					new THREE.Float32BufferAttribute( options.getColors( arrayFuncs, {
+					new THREE.Float32BufferAttribute( MyThree.Player.getColors( arrayFuncs, {
 
-						scale: options.scales.w,
-						palette: options.palette,
+						options: options,
+						/*
+												scale: options.scales.w,
+												palette: options.palette,
+						*/
 
 					} ), 3 ) );
-					
+
 			points.name = 'THREE.Points';
 
-			//непонятно зачем эта строка
-			//points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( options.getColors( /*THREE, */arrayFuncs, { scale: options.scales.w } ), 3 ) );
-			
 			points.userData.raycaster = {
 
 				onIntersection: function ( intersection, mouse ) {
@@ -323,29 +347,24 @@
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 			//ATTENTION!!! You can adding of the cloud into points only if you want add points into group "group.add( points );"
-			// if you do not want to see a cloud without appropriate point. 
+			// if you do not want to see a cloud without appropriate point.
 
 			//points.position.copy( new THREE.Vector3( 0.1, 0.2, 0.3 ) );
 			//points.scale.copy( new THREE.Vector3( 1.1, 1.2, 1.3 ) );
+			/*
 			if ( group.add( points ) === group ) {//I’m doing this tricky check so that it would not be possible to add a cloud to the points if they are not added to the group
 
 				//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
 //				if ( options.arrayCloud )
 				if ( options.frustumPoints ) {
-/*
-					points.userData.cloud = {
 
-//						indexArray: MyThree.MyPoints.pushArrayCloud( THREE, options.arrayCloud, points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
-//						indexArray: MyThree.FrustumPoints.pushArrayCloud( THREE, points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
-						indexArray: options.frustumPoints.pushArrayCloud( points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
-
-					}
-*/
+					options.frustumPoints.pushArrayCloud( points );//возврашает индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 				}
-				
-			}
 
-//			sizes = new Float32Array( arrayFuncs.length );
+			}
+			*/
+
+			//			sizes = new Float32Array( arrayFuncs.length );
 
 			//cubes
 			var cubeType = 'cube';
@@ -364,7 +383,7 @@
 				if ( name !== undefined )
 					cube.name = name;
 				cube.userData.color = cube.material.color;
-//				myThreejs.setArrayFuncs( cube );//Display the "Restore default local position" button.
+				//				myThreejs.setArrayFuncs( cube );//Display the "Restore default local position" button.
 				cube.userData.raycaster = {
 
 					onIntersection: function ( intersection, mouse ) {
@@ -428,155 +447,166 @@
 
 			}, 'Green cube' );
 
-		
+
 		}, {
 
-				elContainer: "canvasContainer1",//document.getElementById("canvasContainer1"),//id of the HTMLElement for canvas and HTMLElement with id="iframe-goes-in-here" for gui.
-				player: {//3D objects animation.
+			elContainer: "canvasContainer1",//document.getElementById("canvasContainer1"),//id of the HTMLElement for canvas and HTMLElement with id="iframe-goes-in-here" for gui.
+			playerOptions: {//create a Player instance. 3D objects animation.
 
-					marks: 110,//Number of scenes of 3D objects animation.
-					name: 'Time (sec.)',
-					interval: 25,//Ticks per seconds.
-					min: tMin,
-					max: 1,
-					/*
-					max: Infinity,
-					repeat: true,
-					zoomMultiplier: 1.1,
-					offset: 0.1,
-					max: 10,
-					*/
-
-				},
-				canvasMenu: true,
-				canvas: {
-
-					fullScreen: false,
-					width: window.innerWidth / 2,
-					height: window.innerHeight / 2,
-
-				},
-				//stats: {},//JavaScript Performance Monitor. https://github.com/mrdoob/stats.js/ .
-
-				//OrbitControls,//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+				marks: 110,//Number of scenes of 3D objects animation.
+				name: 'Time (sec.)',
+				interval: 25,//Ticks per seconds.
+				min: tMin,
+				max: 1,
 				/*
-				orbitControls: {
-
-					//gui: false,
-
-				},
+				max: Infinity,
+				repeat: true,
+				zoomMultiplier: 1.1,
+				offset: 0.1,
+				max: 10,
 				*/
-				//orbitControls: false,
 
-				/*
-				axesHelper: {
+			},
+			/*
+							orbitControls: {
 
-					gui: false
+								//gui: false,
 
-				},
-				*/
-				//axesHelper: false,
+							},
+			*/
+			//player: false,//Do not create a Player instance
+			//canvasMenu: false,
+			//axesHelper: false,
+			//orbitControls: false,
+			//pointLight: false,
+			canvas: {
 
-				//point: { size: 15 },
+				fullScreen: false,
+				width: window.innerWidth / 2,
+				height: window.innerHeight / 2,
 
-				frustumPoints: {},//Creates a FrustumPoints instance
+			},
+			//stats: {},//JavaScript Performance Monitor. https://github.com/mrdoob/stats.js/ .
 
-				cameraTarget: {
+			//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
 
-					boLook: true,
-					rotation: {
+			//point: { size: 15 },
 
-						//angle: Math.PI,
-						//angle: new Function( 't', 'return 5*t' ),
-						//angle: [0, Math.PI / 2],
-						//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
-						//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+			frustumPoints: {},//Creates a FrustumPoints instance
+			cameraTarget: {
 
-					},
-					//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
-					//distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
-					distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+3*t' ) ),
+				//boLook: false,
+				rotation: {
 
-				},
-
-				dat: {//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
-
-					//cookie: false,
-					//playerGui: false,
-					//guiSelectPoint: false,
-					//moveScene: false,
-					//cameraGui: false,
-					//guiStereoEffect: false,
-
-					},
-				palette: MyThree.ColorPicker.paletteIndexes.bidirectional,//true,//See https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes
-				//palette: new MyThree.ColorPicker.palette( { palette: MyThree.ColorPicker.paletteIndexes.bidirectional } ),
-				stereoEffect: {
-
-					//spatialMultiplex: MyThree.StereoEffect.spatialMultiplexsIndexs.SbS, //.Mono,
+					//angle: Math.PI,
+					//angle: new Function( 't', 'return 5*t' ),
+					//angle: [0, Math.PI / 2],
+					//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+					//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
 
 				},
-				//a: 2,
-				//b: 0.3,
-				scales: {
+				//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
+				//distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
+				distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+3*t' ) ),
 
-					display: true,
-					text: {
+			},
+			dat: {//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
 
-						//textHeight: 0.03,
-						//fov: camera.fov,
-						precision: 4,
-	//						rect: { displayRect: true },
+				//				dat: typeof dat !== 'undefined' ? dat : undefined,
+				//cookie: false,
+				cookieName: 'myThree',
+				//orbitControlsGui: false,
+				//axesHelperGui: false,
+				//playerGui: false,
+				//playController: false,
+				//stereoEffectsGui: false,
+				//guiSelectPoint: false,
+				//guiFrustumPoints:false,
+				//cameraGui: false,
+				//moveScene: false,
+				//spriteTextGui: false,
+				//folderPoint: false,
+				//pointLightGui: false,
 
-					},
-					x: {
+			},
+			//dat: false,
+			//palette: true,//ColorPicker.paletteIndexes.BGRW See https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes
+			//palette: MyThree.ColorPicker.paletteIndexes.bidirectional,//See https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes
+			palette: MyThree.ColorPicker.paletteIndexes.rainbow,//See https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes
+			//palette: new MyThree.ColorPicker.palette( { palette: MyThree.ColorPicker.paletteIndexes.bidirectional } ),
+			//stereoEffect: {},//false,
+			//a: 2,
+			//b: 0.3,
+			/*
+			camera: {
 
-						//zoomMultiplier: 2,
-						//offset: 1,
-						name: 'latitude(km.)',
-						//min: -10,
-						//max: 10,
-						//marks: 11,
+				//position: new THREE.Vector3( 0, 0, 0.48 ),
+				//scale: new THREE.Vector3( 1, 1, 1 )
 
-					},
-					y: {
+			},
+			*/
+			scales: {
 
-						//name: 'Temperature(degrees Celsius)',
-						//min: -4,
-						//max: 2,
+				display: true,
+				text: {
 
-					},
-					z: {
-
-						//name: 'Radius(m.)',
-						//min: -110,
-						//max: -100,
-						//marks: 11,
-
-					},
-					w: {
-						name: 'energy',
-						//min: 0,
-						//max: 10,
-						min: -1,
-						max: 1,
-						//min: 0,//default
-						//max: 100,//defaukt
-					},
+					//textHeight: 0.03,
+					//fov: camera.fov,
+					precision: 4,
+					//						rect: { displayRect: true },
 
 				},
+				x: {
+
+					//zoomMultiplier: 2,
+					//offset: 1,
+					name: 'latitude(km.)',
+					//min: -10,
+					//max: 10,
+					//marks: 11,
+
+				},
+				y: {
+
+					//name: 'Temperature(degrees Celsius)',
+					//min: -4,
+					//max: 2,
+
+				},
+				z: {
+
+					//name: 'Radius(m.)',
+					//min: -110,
+					//max: -100,
+					//marks: 11,
+
+				},
+				w: {
+					name: 'energy',
+					//min: 0,
+					//max: 10,
+					//min: -1,
+					//max: 1,
+					//min: 0,//default
+					//max: 1,//defaukt
+				},
+
+			},
 
 		} );
+		new MyThree( THREE, function ( group, options ) { } );
 
 	</script>
 	<h2>Simple canvas.</h2>
-	<div id="canvasContainer2"></div>
+	<!--<div id="canvasContainer2"></div>-->
 	<script type="module">
-/*	
-		import * as THREE from '../../../../../three.js/dev/build/three.module.js';
-		import MyThree from '../../myThree.js';
-		new MyThree( THREE, function ( group, options ) { } );
-*/		
+			//import * as THREE from '../../../../../three.js/dev/build/three.module.js';
+
+			//import MyThree from '../../myThree.js';
+			//import MyThree from '../../build/myThree.module.js';
+			//import MyThree from '../../build/myThree.module.min.js';
+
+			//new MyThree( THREE, function ( group, options ) { } );
 	</script>
 </body>
 </html>

@@ -191,7 +191,7 @@ function defaultCookie( name ) {
 			//options[key] = optionsDefault[key];
 			//copy key
 			var option = optionsDefault[key];
-			if ( option !== undefined )
+			if ( ( option !== undefined ) && ( typeof option !== 'function' ) )
 				options[key] = JSON.parse( JSON.stringify( option ) );
 
 		} );

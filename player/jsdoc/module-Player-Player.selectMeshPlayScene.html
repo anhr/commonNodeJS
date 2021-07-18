@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-Player.html">Player</a><a href="module-Player-Player.html">~Player</a>.</span>selectMeshPlayScene<span class="signature">(mesh, t<span class="signature-attributes">opt</span>, index<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-Player.html">Player</a><a href="module-Player-Player.html">~Player</a>.</span>selectMeshPlayScene<span class="signature">(mesh, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -123,6 +123,68 @@
 
         <tr>
             
+                <td class="name"><code>settings</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">the following settings are available
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
                 <td class="name"><code>t</code></td>
             
 
@@ -162,52 +224,13 @@
 
         <tr>
             
-                <td class="name"><code>index</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last">index of the time.</td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>options</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">Object</span>
 
 
             
@@ -228,12 +251,12 @@
             
                 <td class="default">
                 
-                    {}
+                    { dat: false }
                 
                 </td>
             
 
-            <td class="description last">the following options are available:
+            <td class="description last">See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
                 <h6>Properties</h6>
                 
 
@@ -294,6 +317,43 @@
             
 
             <td class="description last">true - is not select play scene for mesh.userData.boFrustumPoints = true. Default is false.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>playerOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The <b>settings.options.playerOptions</b> parameter of the <a href="./module-Player-Player.html" target="_blank">Player</a> .</td>
         </tr>
 
     
@@ -401,12 +461,10 @@
             
                 <td class="default">
                 
-                    {}
-                
                 </td>
             
 
-            <td class="description last">axes scales. See <b>options.scales</b> of the <a href="../../AxesHelper/jsdoc/module-AxesHelper.html" target="_blank">AxesHelper</a> for details.</td>
+            <td class="description last">axes scales.See <b>options.scales</b> of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> for details.</td>
         </tr>
 
     
@@ -567,6 +625,13 @@
     </tbody>
 </table>
 
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
 
 
 
@@ -601,7 +666,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1576">line 1576</a>
+        <a href="player.js.html">player.js</a>, <a href="player.js.html#line1740">line 1740</a>
     </li></ul></dd>
     
 
@@ -663,13 +728,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Player-Player.assign.html">assign</a></li><li><a href="module-Player-Player.execFunc.html">execFunc</a></li><li><a href="module-Player-Player.getColors.html">getColors</a></li><li><a href="module-Player-Player.getItemSize.html">getItemSize</a></li><li><a href="module-Player-Player.getPoints.html">getPoints</a></li><li><a href="module-Player-Player.getSelectSceneIndex.html">getSelectSceneIndex</a></li><li><a href="module-Player-Player.getSettings.html">getSettings</a></li><li><a href="module-Player-Player.getTime.html">getTime</a></li><li><a href="module-Player-Player.isCreated.html">isCreated</a></li><li><a href="module-Player-Player.selectMeshPlayScene.html">selectMeshPlayScene</a></li><li><a href="module-Player-Player.selectPlayScene.html">selectPlayScene</a></li><li><a href="module-Player-Player.setColorAttribute.html">setColorAttribute</a></li></ul><h3>Classes</h3><ul><li><a href="module-Player-Player.html">Player</a></li><li><a href="module-Player-Player.cameraTarget.html">cameraTarget</a></li><li><a href="module-Player-Player.traceLine.html">traceLine</a></li><li><a href="module-Player-Player_PlayController_PlayController.html">PlayController</a></li></ul><h3>Events</h3><ul><li><a href="module-Player-Player.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onRenamePlayButtons">onRenamePlayButtons</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Player-Player.assign.html">assign</a></li><li><a href="module-Player-Player.execFunc.html">execFunc</a></li><li><a href="module-Player-Player.getColors.html">getColors</a></li><li><a href="module-Player-Player.getItemSize.html">getItemSize</a></li><li><a href="module-Player-Player.getPoints.html">getPoints</a></li><li><a href="module-Player-Player.getTime.html">getTime</a></li><li><a href="module-Player-Player.selectMeshPlayScene.html">selectMeshPlayScene</a></li><li><a href="module-Player-Player.selectPlayScene.html">selectPlayScene</a></li><li><a href="module-Player-Player.setColorAttribute.html">setColorAttribute</a></li></ul><h3>Classes</h3><ul><li><a href="module-Player-Player.html">Player</a></li><li><a href="module-Player-Player.cameraTarget.html">cameraTarget</a></li><li><a href="module-Player-Player.traceLine.html">traceLine</a></li><li><a href="module-Player-Player_PlayController_PlayController.html">PlayController</a></li></ul><h3>Events</h3><ul><li><a href="module-Player-Player.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onRenamePlayButtons">onRenamePlayButtons</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed May 19 2021 09:38:06 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jul 17 2021 12:35:30 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

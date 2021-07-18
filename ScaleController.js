@@ -18,8 +18,10 @@
 
 //import { controllers } from '../../dat.gui/CustomController/build/dat.gui.module.js';
 import { controllers } from './dat/dat.gui.module.js';
-import { dat } from './dat/dat.module.js';
 import UpDownController from './UpDownController.js';
+
+//import { dat } from './dat/dat.module.js';
+import three from './three.js'
 
 class ScaleController extends controllers.CustomController {
 
@@ -35,7 +37,7 @@ class ScaleController extends controllers.CustomController {
 	 * @param {object} [options] the following options are available:
 	 * @param {object} [options.settings] settings.
 	 * @param {number} [options.settings.zoomMultiplier] control value. Default is 1.1
-	 * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
+	 * @param {Function} [options.getLanguageCode=language code of your browser] returns the "primary language" subtag of the version of the browser.
 	 * @example 
 //Add new ScaleController to the dat.GUI folder
 folder.add( new ScaleController( function ( customController, action ) {
@@ -180,13 +182,14 @@ export default ScaleController;
  * @param {Object} [options] the following options are available
  * @param {object} [options.settings] settings.
  * @param {number} [options.settings.zoomMultiplier] control value. Default is 1.1
- * @param {Function} [options.getLanguageCode] returns the "primary language" subtag of the version of the browser. Default returns "en" is English
+ * @param {Function} [options.getLanguageCode=language code of your browser] returns the "primary language" subtag of the version of the browser.
  * @param {String} [options.text] object's property name. Default is property name.
  * @param {String} [options.textTitle] object's property title. Default is not title,
  */
 function ScaleControllers( folder, object, property, onChange, options ) {
 
 	options = options || {};
+	const dat = three.dat;
 	var scaleController = folder.add( new ScaleController( function ( customController, action ) {
 
 		var value = action( controller.getValue(), scaleController.getValue() );

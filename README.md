@@ -58,6 +58,8 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/player).
 [Player API](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
+* pointLight.js pointLight class is a light that gets emitted from a single point in all directions. see [PointLight]{@link https://threejs.org/docs/index.html?q=pointLight#api/en/lights/PointLight}
+[pointLight API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/pointLight/index.html).
 * PositionController.js PositionController is [dat.gui](https://github.com/dataarts/dat.gui) graphical user interface controller
 for control of the position of [threejs](https://github.com/anhr/three.js) 3D object.
 [PositionController API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/PositionController/index.html).

@@ -37,7 +37,7 @@
  */
 
 //import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-import cookie from '../cookieNodeJS/cookie.js';
+//import cookie from '../cookieNodeJS/cookie.js';
 
 import Player from '../player/player.js';
 import loadFile from '../loadFileNodeJS/loadFile.js';
@@ -46,27 +46,28 @@ import MyPoints from '../myPoints/myPoints.js';
 import StereoEffect from '../StereoEffect/StereoEffect.js';
 //import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
-//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 import CanvasMenu from '../canvasMenu/canvasMenu.js';
+//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 
 import { getLanguageCode } from '../lang.js';
 //import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 
-import CreateFullScreenSettings from '../createFullScreenSettings.js';
+//import CreateFullScreenSettings from '../createFullScreenSettings.js';
 
-import { AxesHelper } from '../AxesHelper/AxesHelper.js';
-//import { AxesHelper } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelper.js';
-import { AxesHelperGui } from '../AxesHelper/AxesHelperGui.js';
-//import { AxesHelperGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelperGui.js';
+import AxesHelper from '../AxesHelper/AxesHelper.js';
+//import AxesHelper from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelper.js';
+import AxesHelperGui from '../AxesHelper/AxesHelperGui.js';
+//import AxesHelperGui from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelperGui.js';
 
+//WARNING: Multiple instances of Three.js being imported. Use Options.createOrbitControls(...) http://localhost/anhr/commonNodeJS/master/jsdoc/Options/Options.html#createOrbitControls
 //import { OrbitControls } from 'http://localhost/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-import { OrbitControls } from '../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
+//import { OrbitControls } from '../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
 //import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 //import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 
-//import OrbitControlsGui from 'http://localhost/anhr/commonNodeJS/master/OrbitControlsGui.js';
-import OrbitControlsGui from '../OrbitControlsGui.js';
-//import OrbitControlsGui from 'https://raw.githack.com/anhr/commonNodeJS/master/OrbitControlsGui.js';
+import OrbitControlsGui from '../OrbitControls/OrbitControlsGui.js';
+//import OrbitControlsGui from 'http://localhost/anhr/commonNodeJS/master/OrbitControls/OrbitControlsGui.js';
+//import OrbitControlsGui from 'https://raw.githack.com/anhr/commonNodeJS/master/OrbitControls/OrbitControlsGui.js';
 
 import loadScript from '../loadScriptNodeJS/loadScript.js';
 import { dat } from '../dat/dat.module.js';
@@ -74,16 +75,16 @@ import { dat } from '../dat/dat.module.js';
 //import controllerPlay from '../controllerPlay/controllerPlay.js';
 //import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
 
-//import { GuiSelectPoint, getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
 import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
+//import { GuiSelectPoint, getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
 //GuiSelectPoint.setTHREE( THREE );
 
 import { getWorldPosition } from '../getPosition.js';
 //getPositionSetTHREE( THREE );
 
-import PositionController from '../PositionController.js';
+//import PositionController from '../PositionController.js';
 
-import { SpriteText } from '../SpriteText/SpriteText.js';
+//import { SpriteText } from '../SpriteText/SpriteText.js';
 //SpriteText.setTHREE( THREE );
 
 import { SpriteTextGui } from '../SpriteText/SpriteTextGui.js';
@@ -102,7 +103,10 @@ import CameraGui from '../CameraGui.js';
 
 import FrustumPoints from '../frustumPoints/frustumPoints.js';
 import three from '../three.js'
-import setOptions from '../setOptions.js'
+if ( typeof dat !== 'undefined' )
+	three.dat =  dat;
+
+//import setOptions from '../setOptions.js'
 import FolderPoint from '../folderPoint.js'
 
 /*проверка duplicate THREE
@@ -111,7 +115,9 @@ import * as THREE2 from '../../../three.js/dev/build/three.module.js';
 three.THREE = THREE2;
 */
 
-//var THREE;
+import Options from '../Options.js'
+
+import pointLight from '../pointLight.js'
 
 var debug = {
 
@@ -177,9 +183,10 @@ class MyThree {
 
 	/**
 	 * @description I use MyThree in my projects for displaying of my 3D objects in the canvas.
-	 * @param {any} _THREE [THREE]{@link https://github.com/anhr/three.js|THREE}
+	 * @param {THREE} THREE [THREE]{@link https://github.com/anhr/three.js|THREE}
 	 * @param {createXDobjects} createXDobjects callback creates my 3D objects.
-	 * @param {object} [options] the following options are available:
+	 * @param {Options} [options] See &lt;a href="../../jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
+	 * The following options are available:
 	 * @param {HTMLElement|string} [options.elContainer=document.getElementById( "containerDSE" ) or a div element, child of body] If an HTMLElement, then a HTMLElement, contains a canvas and HTMLElement with id="iframe-goes-in-here" for gui.
 	 * &lt;pre>
 	 * If a string, then is id of the HTMLElement.
@@ -189,96 +196,73 @@ class MyThree {
 	 * @param {THREE.Vector3} [options.camera.scale=new THREE.Vector3( 1, 1, 1 )] camera scale.
 	 * @param {THREE.Scene} [options.scene] [Scene]{@link https://threejs.org/docs/index.html#api/en/scenes/Scene}.
 	 * @param {THREE.Vector3} [options.scene.position=new THREE.Vector3( 0, 0, 0 )] scene position.
-	 * @param {Object|boolean} [options.orbitControls={}] {} - use [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls} allow the camera to orbit around a target.
-	 * &lt;pre>
-	 * false - no orbit controls.
-	 * &lt;/pre>
-	 * @param {boolean} [options.orbitControls.gui=true] true - displays the &lt;a href="../../jsdoc/OrbitControlsGui/index.html" target="_blank">orbit controls gui&lt;/a>.
-	 * @param {Object|boolean} [options.axesHelper={}] {} - add the &lt;a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper&lt;/a>.
-	 * &lt;pre>
-	 * false - axes is not visible.
-	 * &lt;/pre>
-	 * @param {boolean} [options.axesHelper.gui=true] true - displays the &lt;a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelper gui&lt;/a>.
+	 * @param {boolean} [options.orbitControls] false - do not add the [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}. Allow the camera to orbit around a target.
+	 * @param {boolean} [options.axesHelper] false - do not add the &lt;a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper&lt;/a>.
+	 * @param {boolean} [options.canvasMenu] false - do not create a &lt;a href="../../canvasMenu/jsdoc/index.html" target="_blank">canvasMenu&lt;/a> instance.
+	 * @param {boolean} [options.stereoEffect] false - do not use &lt;a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect&lt;/a>.
+	 * @param {boolean} [options.pointLight] false - do not use &lt;a href="../../jsdoc/pointLight/index.html" target="_blank">pointLight&lt;/a>.
 	 * @param {object} [options.spriteText] spriteText options. See &lt;a href="../../SpriteText/jsdoc/index.html" target="_blank">SpriteText&lt;/a> options for details. Default undefined.
-	 * @param {object} [options.stereoEffect] use &lt;a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect&lt;/a>.
-	 * @param {number} [options.stereoEffect.spatialMultiplex] &lt;a href="../../StereoEffect/jsdoc/module-StereoEffect.html#~spatialMultiplexsIndexs" target="_blank">Enumeration of available stereo modes&lt;/a>.
-	 * @param {object} [options.dat] {} - use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
-	 * @param {boolean} [options.dat.cookie=true] true - save to cookie all user settings
-	 * @param {boolean} [options.dat.playerGui=true] true - adds a &lt;a href="../../player/jsdoc/module-Player.html#~Player.gui" target="_blank">Player controllers&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
-	 * @param {boolean} [options.dat.guiSelectPoint=true] true - displays the &lt;a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">Select Point&lt;/a>. [dat.gui]{@link https://github.com/dataarts/dat.gui} based graphical user interface for select a point from the mesh.
-	 * @param {boolean} [options.dat.guiStereoEffect=true] true - Adds &lt;a href="../../StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#gui" target="_blank">Stereo Effects folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
-	 * @param {boolean} [options.dat.guiFrustumPoints=true] true - Adds &lt;a href="../../FrustumPoints/jsdoc/FrustumPoints.html#gui" target="_blank">Frustum Points folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
-	 * @param {object} [options.dat.moveScene={}] true - displays the &lt;a href="../../jsdoc/MoveGroupGui/index.html" target="_blank">move group gui&lt;/a>.
-	 * @param {boolean} [options.canvasMenu=false] true - use my &lt;a href="../../canvasMenu/jsdoc/index.html" target="_blank">dropdown menu for canvas&lt;/a> in my version of [dat.gui]{@link https://github.com/anhr/dat.gui}.
+	 *
+	 * @param {boolean} [options.player] false - do not create a &lt;a href="../../player/jsdoc/index.html" target="_blank">Player&lt;/a> instance.
+	 * @param {object} [options.playerOptions] See &lt;b>settings.options.playerOptions&lt;/b> of the &lt;a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player&lt;/a>.
+	 *
+	 * @param {Function|string} [options.getLanguageCode=language code of your browser] Your custom &lt;b>getLanguageCode()&lt;/b> function or language code string.
+	 * &lt;pre>
+	 * returns the "primary language" subtag of the language version of the browser.
+	 * Examples: "en" - English language, "ru" Russian.
+	 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
+	 * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
+	 * Currently available follow language code strings:
+	 *	"en" - English language,
+	 *	"ru" - Russian.
+	 * &lt;/pre>
+	 * @param {object} [options.dat] use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {GUI} options.dat.dat [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {GUI} [options.dat.gui] new [dat.GUI()]{@link https://github.com/dataarts/dat.gui} instance.
+	 * &lt;p>
+	 * undefined - do not use &lt;b>dat-gui JavaScript Controller Library&lt;b>. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * &lt;/p>
+	 * @param {boolean} [options.dat.cookie] false - do not save to cookie all user settings
+	 * @param {string} [options.dat.cookieName] Name of the cookie.
+	 * @param {boolean} [options.dat.orbitControlsGui] false - do not adds a &lt;a href="../../OrbitControls/jsdoc/" target="_blank">OrbitControlsGui&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {boolean} [options.dat.axesHelperGui] false - do not adds a &lt;a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelperGui&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {boolean} [options.dat.playerGui] false - do not adds a &lt;a href="../../player/jsdoc/module-Player-Player.html#gui" target="_blank">Player controllers&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {boolean} [options.dat.playController] false - do not adds a &lt;a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html" target="_blank">PlayController&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {boolean} [options.dat.stereoEffectsGui] false - do not adds &lt;a href="../../StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#gui" target="_blank">Stereo Effects folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {boolean} [options.dat.guiSelectPoint] false - do not displays the &lt;a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">Select Point&lt;/a>. [dat.gui]{@link https://github.com/dataarts/dat.gui} based graphical user interface for select a point from the mesh.
+	 * @param {boolean} [options.dat.guiFrustumPoints] false - do not adds &lt;a href="../../FrustumPoints/jsdoc/FrustumPoints.html#gui" target="_blank">Frustum Points folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {boolean} [options.dat.cameraGui] false - do not adds &lt;a href="../../jsdoc/CameraGui/module-CameraGui-CameraGui.html" target="_blank">Camera folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {object} [options.dat.moveScene] false - do not displays the &lt;a href="../../jsdoc/MoveGroupGui/index.html" target="_blank">move group gui&lt;/a>.
+	 * @param {object} [options.dat.spriteTextGui] false - do not displays the &lt;a href="../../SpriteText/jsdoc/module-SpriteTextGui.html" target="_blank">SpriteTextGui&lt;/a>.
+	 * @param {object} [options.dat.folderPoint] false - do not adds a &lt;a href="../../jsdoc/folderPoint" target="_blank">Point settings&lt;/a> folder.
+	 * @param {object} [options.dat.pointLightGui] false - do not adds a [PointLight]{@link https://threejs.org/docs/index.html?q=PointLight#api/en/lights/PointLight} folder.
 	 * @param {object} [options.cameraTarget] camera looking at selected point during playing. See the &lt;b>cameraTarget&lt;/b> parameter of the &lt;a href="../../player/jsdoc/module-Player-Player.cameraTarget.html#init" target="_blank">Player.cameraTarget.init(...)&lt;/a> function for details.
 	 * @param {object} [options.frustumPoints] Creates a &lt;a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints&lt;/a> instance.
-	 * @param {MyThree.ColorPicker.palette|boolean|number} [options.palette=White color of all points] Color of points.
+	 * @param {MyThree.ColorPicker.palette|boolean|number} [options.palette=White color of all points] Points сolor.
 	 * &lt;pre>
 	 * &lt;b>MyThree.ColorPicker.palette&lt;/b> - is &lt;b>new ColorPicker.palette( ... )&lt;/b>
 	 * See &lt;a href="../../colorpicker/jsdoc/index.html" target="_blank">ColorPicker&lt;/a> for details.
 	 * &lt;b>boolean&lt;/b>: true - &lt;b>new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.BGRW } )&lt;/b>;
 	 * &lt;b>number&lt;/b>: is &lt;b>MyThree.ColorPicker.paletteIndexes&lt;/b>. See &lt;a href="../../colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes" target="_blank">ColorPicker.paletteIndexes&lt;/a> for details.
+	 * See &lt;a href="../../jsdoc/Options/Options.html#setPalette" target="_blank">Options.setPalette&lt;/a>.
 	 * &lt;/pre>
-	 * @param {object} [options.canvas] canvas properties
+	 * @param {object} [options.canvas] &lt;b>canvas&lt;/b> properties
 	 * @param {number} [options.canvas.width] width of the canvas
 	 * @param {number} [options.canvas.height] height of the canvas
 	 * @param {boolean} [options.canvas.fullScreen] default is full screen. false - no full screen
-	 * @param {number} [options.a=1] Can be use as 'a' parameter of the Function. See arrayFuncs for details.
-	 * @param {number} [options.b=0] Can be use as 'b' parameter of the Function. See arrayFuncs for details.
-	 *
-	 * @param {object|boolean} [options.player] &lt;a href="../../player/jsdoc/index.html" target="_blank">Player&lt;/a> settings. false - do not create a Player instance.
-	 * @param {number} [options.player.interval=1] Ticks per seconds.
-	 * @param {number} [options.player.min=0] Animation start time.
-	 * @param {number} [options.player.max=1] Animation end time. Set to Infinity if you want to play to infinity.
-	 * @param {number} [options.player.dt=0.1] Step of the animation. Have effect only if &lt;b>max&lt;/b> is infinity.
-	 * @param {number} [options.player.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
-	 * Have effect for &lt;b>max&lt;/b> is not Infinity.
-	 * @param {boolean} [options.player.repeat=false] true - Infinitely repeating 3D objects animation.
-	 * @param {number} [options.player.zoomMultiplier=1.1] zoom multiplier of the time.
-	 * @param {number} [options.player.offset=0.1] offset of the time.
-	 * @param {string} [options.player.name=""] name of the time.
-	 * 
+	 * @param {number} [options.a=1] Can be use as 'a' parameter of the &lt;b>Function&lt;/b>. See &lt;b>options.a&lt;/b> parameter of the &lt;a href="../../player/jsdoc/module-Player-Player.execFunc.html" target="_blank">Player.execFunc&lt;/a>.
+	 * @param {number} [options.b=0] Can be use as 'b' parameter of the &lt;b>Function&lt;/b>. See &lt;b>options.b&lt;/b> parameter of the &lt;a href="../../player/jsdoc/module-Player-Player.execFunc.html" target="_blank">Player.execFunc&lt;/a>.
 	 * @param {object} [options.point] point settings. Applies to points with ShaderMaterial.
 	 * &lt;pre>
 	 * See [ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} for details.
 	 * The size of the point seems constant and does not depend on the distance to the camera.
 	 * &lt;/pre>
-	 * @param {number} [options.point.size=0.02] The apparent angular size of a point in radians.
+	 * See &lt;a href="../../jsdoc/Options/Options.html#setPoint" target="_blank">Options.setPoint(options)&lt;/a> for details.
 	 * @param {object} [options.stats] Use JavaScript Performance Monitor. [stats]{@link https://github.com/mrdoob/stats.js/} .
-	 * @param {object} [options.scales] axes scales. See &lt;a href="../../AxesHelper/jsdoc/module-AxesHelper.html" target="_blank">AxesHelper&lt;/a> &lt;b>options.scales&lt;/b> for details.
-	 * @param {boolean} [options.scales.display=true] true - displays the label and scale of the axes.
-	 * @param {number} [options.scales.text] options of the text of the marks. See &lt;a href="../../AxesHelper/jsdoc/module-AxesHelper.html" target="_blank">AxesHelper&lt;/a> &lt;b>options.scales.text&lt;/b> for details.
+	 * @param {object} [options.scales] axes scales.
+	 * See &lt;b>options.scales&lt;/b> of the &lt;a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper&lt;/a>.
 	 *
-	 * @param {object} [options.scales.x] X axis options.
-	 * @param {number} [options.scales.x.zoomMultiplier=1.1] zoom multiplier.
-	 * @param {number} [options.scales.x.offset=0.1] position offset. Default
-	 * @param {string} [options.scales.x.name="X"] axis name.
-	 * @param {number} [options.scales.x.min=-1] Minimum range of the x axis.
-	 * @param {number} [options.scales.x.max=1] Maximum range of the x axis.
-	 * @param {number} [options.scales.x.marks=5] Number of x scale marks.
-	 *
-	 * @param {object} [options.scales.y] Y axis options.
-	 * @param {number} [options.scales.y.zoomMultiplier=1.1] zoom multiplier.
-	 * @param {number} [options.scales.y.offset=0.1] position offset.
-	 * @param {string} [options.scales.y.name="Y"] axis name.
-	 * @param {number} [options.scales.y.min=-1] Minimum range of the y axis.
-	 * @param {number} [options.scales.y.max=1] Maximum range of the y axis.
-	 * @param {number} [options.scales.y.marks=5] Number of y scale marks.
-	 *
-	 * @param {object} [options.scales.z] Z axis options.
-	 * @param {number} [options.scales.z.zoomMultiplier=1.1] zoom multiplier.
-	 * @param {number} [options.scales.z.offset=0.1] position offset.
-	 * @param {string} [options.scales.z.name="Z"] axis name.
-	 * @param {number} [options.scales.z.min=-1] Minimum range of the z axis.
-	 * @param {number} [options.scales.z.max=1] Maximum range of the z axis.
-	 * @param {number} [options.scales.z.marks=5] Number of z scale marks.
-	 *
-	 * @param {object} [options.scales.w] w axis options.
-	 * @param {number} [options.scales.w.zoomMultiplier=1.1] zoom multiplier.
-	 * @param {number} [options.scales.w.offset=0.1] position offset.
-	 * @param {string} [options.scales.w.name="W"] axis name.
-	 * @param {number} [options.scales.w.min=-1] Minimum range of the w axis.
-	 * @param {number} [options.scales.w.max=1] Maximum range of the w axis.
+	 * @param {object} [options.scales.w] &lt;b>w&lt;/b> axis options. See &lt;a href="../../jsdoc/Options/Options.html#setW" target="_blank">Options.setW(options)&lt;/a> &lt;b>options.scales.w&lt;/b> for details.
 	 *
 	 * @todo If you want to use raycaster (working out what objects in the 3d space the mouse is over) [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster},
 	 * &lt;pre>
@@ -321,15 +305,10 @@ class MyThree {
 	 * &lt;/pre>
 	 * &lt;a href="../Examples/html/" target="_blank">Example&lt;/a>.
 	 */
-	constructor( createXDobjects, options ) {
+	constructor( THREE, createXDobjects, options ) {
 
-/*
-		THREE = _THREE;
+//		const THREE = three.THREE;
 		three.THREE = THREE;
-*/		
-		const THREE = three.THREE;
-//		Player.setTHREE( THREE );
-//		Player.assign();
 
 		var myThreejs = this;
 
@@ -344,17 +323,92 @@ class MyThree {
 
 		options = options || {};
 
-		options.getLanguageCode = options.getLanguageCode || getLanguageCode;
+		//for Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
+		options.raycaster = {
 
+			/**
+			 * Displays a sprite text if you move mouse over an 3D object
+			 * @param {object} intersection. See https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject for details.
+			 * @param {THREE.Scene} scene.
+			 * @param {THREE.Vector2} mouse mouse position.
+			*/
+			onIntersection: function ( intersection, mouse ) {
+
+				if ( intersection.object.userData.isInfo !== undefined &amp;&amp; !intersection.object.userData.isInfo() )
+					return;
+				var spriteTextIntersection = findSpriteTextIntersection( scene );
+				if ( spriteTextIntersection === undefined ) {
+
+
+					const rect = options.spriteText.rect ? JSON.parse( JSON.stringify( options.spriteText.rect ) ) : {};
+					rect.displayRect = true;
+					rect.backgroundColor = 'rgba(0, 0, 0, 1)';
+					spriteTextIntersection = StereoEffect.getTextIntersection( intersection, {
+
+						scales: options.scales,
+						spriteOptions: {
+
+							textHeight: options.spriteText.textHeight,
+							fontColor: options.spriteText.fontColor,
+							rect: rect,
+							group: scene,
+							center: {
+
+								camera: camera,
+								canvas: canvas,
+
+							}
+
+						}
+
+					} );
+					spriteTextIntersection.name = spriteTextIntersectionName;
+					spriteTextIntersection.scale.divide( scene.scale );
+					scene.add( spriteTextIntersection );
+
+				} else spriteTextIntersection.position.copy( pos );
+				
+				options.renderer.domElement.style.cursor = 'pointer';
+
+			},
+
+			/**
+			 * Hides a sprite text if you move mouse out an object
+			 * @param {THREE.Scene} scene.
+			 */
+			//options.removeSpriteTextIntersection = function () 
+			onIntersectionOut: function () {
+
+				var detected = false;
+				do {
+
+					var spriteTextIntersection = findSpriteTextIntersection( scene );
+					if ( spriteTextIntersection !== undefined ) {
+
+						scene.remove( spriteTextIntersection );
+						if ( detected )
+							console.error( 'Duplicate spriteTextIntersection' );
+						detected = true;
+
+					}
+
+				} while ( spriteTextIntersection !== undefined )
+
+				options.renderer.domElement.style.cursor = options.cursor;
+
+			}
+
+		}
+		
+		options = new Options( options );
+//		options.dat.dat = dat;
+
+//		options.getLanguageCode = options.getLanguageCode || getLanguageCode;
+/*
 		options.camera = options.camera || {};
 		options.camera.position = options.camera.position || new THREE.Vector3( 0.4, 0.4, 2 );
 		options.camera.scale = options.camera.scale || new THREE.Vector3( 1, 1, 1 );
 
-/*сейчас использую options.dat.cookie
-		if ( options.cookie === undefined )
-			options.cookie = new cookie.defaultCookie();
-		else options.cookie = cookie;
-*/
 		if ( options.dat ) {
 
 			if ( options.dat.cookie !== false ) options.dat.cookie = true;
@@ -381,35 +435,19 @@ class MyThree {
 
 				}
 			}
-//			ColorPicker.palette.setTHREE( THREE );
 
 		}
-/*
-		if ( options.arrayCloud !== undefined ) {
 
-			options.arrayCloud.getCloudsCount = function () {
-
-				var count = 0;
-				for ( var i = 0; i &lt; options.arrayCloud.length; i++ ) {
-
-					var arrayVectors = options.arrayCloud[i];
-					count += arrayVectors.length;
-
-				}
-				return count;
-
-			}
-			options.arrayCloud.cFrustumPointsF = FrustumPoints.cFrustumPointsF;
-
-		}
-*/
 		options.a = options.a || 1;
 		options.b = options.b || 0;
+*/
+//		options.scale = 1;
 
-		options.scale = 1;
-
+//		setOptions.setPoint( options );
+/*		
 		options.point = options.point || {};
 		options.point.size = options.point.size || 5.0;
+*/		
 		function getCanvasName() {
 			return typeof options.elContainer === "object" ?
 				options.elContainer.id :
@@ -455,7 +493,9 @@ class MyThree {
 			//camera.position.z = 0;
 			//		options.camera.position = new THREE.Vector3( 2, 0, 0 );
 
-			const raycaster = new THREE.Raycaster(),
+			//Если опредедить как const, то при выполнении npm run build появится ошибка
+			//(babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/myThree/myThree.js: "raycaster" is read-only
+			var raycaster = new THREE.Raycaster(),
 
 				//point size
 				defaultPoint = {},
@@ -467,17 +507,18 @@ class MyThree {
 
 //				cursor,//default
 
-				controls, stereoEffect, player,// frustumPoints,
+				controls,// stereoEffect, player,
 
-				mouseenter = false,//true - мышка находится над gui или canvasMenu
+				//перенес в options.dat
+				//mouseenter = false,//true - мышка находится над gui или canvasMenu
 				//В этом случае не надо обрабатывать событие elContainer 'pointerdown'
 				//по которому выбирается точка на canvas.
 				//В противном случае если пользователь щелкнет на gui, то он может случайно выбрать точку на canvas.
 				//Тогда открывается папка Meshes и все органы управления сдвигаются вниз. Это неудобно.
 				//И вообще нехорошо когда выбирается точка когда пользователь не хочет это делать.
 
-				canvasMenu, fOptions,// axesHelper,// INTERSECTED = [], scale = options.scale, colorsHelper = 0x80,
-				gui, rendererSizeDefault, cameraPosition,// fullScreen,
+				fOptions,//canvasMenu,  axesHelper,// INTERSECTED = [], scale = options.scale, colorsHelper = 0x80,
+				rendererSizeDefault, cameraPosition,//gui, fullScreen,
 
 				//point size
 				pointSize, 
@@ -505,7 +546,7 @@ class MyThree {
 
 			function isFullScreen() {
 
-				if ( canvasMenu ) return canvasMenu.isFullScreen();
+				if ( options.canvasMenu ) return options.canvasMenu.isFullScreen();
 				if ( options.canvas ) return options.canvas.fullScreen !== false;
 				return true;
 
@@ -524,7 +565,11 @@ class MyThree {
 					window.cancelAnimationFrame( requestId );
 				else console.error( 'myThreejs.create.onloadScripts: requestId = ' + requestId );
 				clearThree( scene );
+
+				//Не могу выполнить npm run build Получаю ошибку
+				//(babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/myThree/myThree.js: "raycaster" is read-only
 				raycaster = undefined;
+
 				rendererSizeDefault.onFullScreenToggle( true );
 				alert( lang.webglcontextlost );
 
@@ -544,14 +589,14 @@ class MyThree {
 
 			function init() {
 
-				var optionsScene = { position: new THREE.Vector3() }
+//				var optionsScene = { position: new THREE.Vector3() }
 
 				// CAMERA
 
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 				camera.position.copy( options.camera.position );
 				camera.scale.copy( options.camera.scale );
-				camera.userData.default = { options: JSON.parse( JSON.stringify( options.camera ) ), }
+//				camera.userData.default = { options: JSON.parse( JSON.stringify( options.camera ) ), }
 
 				//для возврата созданной камеры обратно в код, который вызвал new MyThree
 				//В частности это используется для создания точки, за которой будет следить камера
@@ -563,35 +608,30 @@ class MyThree {
 				if ( options.cameraTarget ) {
 	
 					options.cameraTarget.camera = camera;
-					Player.cameraTarget.init( options.cameraTarget );
+//					Player.cameraTarget.init( options.cameraTarget, options );
+					options.playerOptions.cameraTarget.init( options.cameraTarget, options );
 									
 				}
-/*				
-if ( typeof Player !== 'undefined' )
-	Player.cameraTarget.init( {
 
-		boLook: true,
-		camera: camera,
-		rotation: {
-
-			//angle: Math.PI,
-			//angle: new Function( 't', 'return 5*t' ),
-			//angle: [0, Math.PI / 2],
-			//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
-			//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
-
-		},
-		//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
-		//distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
-		distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+3*t' ) ),
-
-	} );
-*/	
 				// SCENE
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0x000000 );
 				scene.fog = new THREE.Fog( 0x000000, 250, 1400 );
+				scene.userData.optionsSpriteText = {
+
+					textHeight: 0.04,
+					//fov: camera.fov,
+					/*
+					rect: {
+	
+						displayRect: true,
+						borderRadius: 15,
+	
+					},
+					*/
+
+				}
 
 				group = new THREE.Group();
 				scene.add( group );
@@ -625,8 +665,8 @@ if ( typeof Player !== 'undefined' )
 							//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
 							//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
 
-							cookie: options.dat ? options.dat.cookie : undefined,
-							cookieName: getCanvasName(),
+//							cookie: options.dat ? options.dat.cookie : undefined,
+//							cookieName: getCanvasName(),
 
 							//изменение размеров усеченной пирамиды FrustumPoints
 
@@ -667,6 +707,16 @@ if ( typeof Player !== 'undefined' )
 				options.cursor = renderer.domElement.style.cursor;
 
 				//StereoEffect. https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js
+				options.stereoEffect = options.stereoEffect = {};
+				if ( options.stereoEffect.spatialMultiplex === undefined )
+					options.stereoEffect.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
+				if ( options.stereoEffect.far === undefined ) options.stereoEffect.far = camera.far;
+				options.stereoEffect.camera = options.stereoEffect.camera || camera;
+				//if ( options.stereoEffect.stereoAspect === undefined ) options.stereoEffect.stereoAspect = 1;
+				options.stereoEffect.elParent = options.stereoEffect.elParent || canvas.parentElement;
+				if ( options.stereoEffect.rememberSize === undefined ) options.stereoEffect.rememberSize = true;
+				new StereoEffect( renderer, options );
+/*				
 				if ( options.stereoEffect ) {
 
 					if ( options.stereoEffect.spatialMultiplex === undefined )
@@ -683,21 +733,45 @@ if ( typeof Player !== 'undefined' )
 							rememberSize: true,
 
 						} );
-						//						stereoEffect.options.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
+//						stereoEffect.settings.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
 
 					} else console.warn( 'stereoEffect = ' + stereoEffect );
 
 				} else StereoEffect.assign();//.setTHREE( THREE );
+*/
+
+				function removeTraceLines() {
+
+					group.children.forEach( function ( mesh ) {
+
+						if ( ( mesh.userData.player === undefined ) || ( mesh.userData.player.arrayFuncs === undefined ) || ( typeof mesh.userData.player.arrayFuncs === "function" ) )
+							return;
+						mesh.userData.player.arrayFuncs.forEach( function ( vector ) {
+
+							if ( vector.line === undefined )
+								return;
+							vector.line.remove();
+							vector.line = new Player.traceLine( options );
+
+						} );
+
+					} );
+
+				}
 
 				//Light
 
+/*
 				//A light that gets emitted from a single point in all directions.
 				function pointLight() {
 
-					var strLight = 'mathBoxLight',
-						light,// = scene.getObjectByName( strLight ),
-						position = new THREE.Vector3( 0.5 * options.scale, 0.5 * options.scale, 0.5 * options.scale ), controllers = {},
+					if ( options.dat.pointLightGui === false ) return;
+
+					const strLight = 'mathBoxLight',
+						controllers = {},
 						multiplier = 2 * options.scale;
+					var light,// = scene.getObjectByName( strLight ),
+						position = new THREE.Vector3( 0.5 * options.scale, 0.5 * options.scale, 0.5 * options.scale );
 
 					function isLight() {
 
@@ -732,8 +806,8 @@ if ( typeof Player !== 'undefined' )
 						if ( folder === undefined )
 							return;
 
-						var fLight = folder.addFolder( folderName || lang.light ),
-							lightSource;
+						const fLight = folder.addFolder( folderName || lang.light );
+						var lightSource;
 
 						//displayLight
 						dat.controllerNameAndTitle( fLight.add( { display: false }, 'display' ).onChange( function ( value ) {
@@ -782,7 +856,12 @@ if ( typeof Player !== 'undefined' )
 										if ( lightSource === undefined )
 											return;
 
-										lightSource.geometry.attributes.position.array[axesId] = value;
+										const i = 0,
+											itemSize = lightSource.geometry.attributes.position.itemSize,
+											point = new THREE.Vector3().fromArray( lightSource.geometry.attributes.position.array, i * itemSize );
+										point[axesName] = value;
+										point.toArray( lightSource.geometry.attributes.position.array, i * itemSize );
+//										lightSource.geometry.attributes.position.array[axesId] = value;
 										lightSource.geometry.attributes.position.needsUpdate = true;
 
 									} );
@@ -797,35 +876,34 @@ if ( typeof Player !== 'undefined' )
 
 							restore: function () {
 
-								controllers[axesEnum.x].setValue( position.x );
-								controllers[axesEnum.y].setValue( position.y );
-								controllers[axesEnum.z].setValue( position.z );
+								controllers.x.setValue( position.x );
+								controllers.y.setValue( position.y );
+								controllers.z.setValue( position.z );
 
 							}
 						};
 						dat.controllerNameAndTitle( fLight.add( restore, 'restore' ), lang.defaultButton, lang.restoreLightTitle );
 
 					};
-					this.windowRange = function ( scales ) {
-
-						function setLimits( axisId ) {
-
-							var axisName = axesEnum.getName( axisId );
-							controllers[axisId].max( scales[axisName].max * multiplier );
-							controllers[axisId].min( scales[axisName].min * multiplier );
-
-						}
-						setLimits( axesEnum.x );
-						setLimits( axesEnum.y );
-						setLimits( axesEnum.z );
-					}
 					return this;
 
 				};
-				var pointLight1 = new pointLight();
-				pointLight1.add( new THREE.Vector3( 2 * options.scale, 2 * options.scale, 2 * options.scale ) );
-				var pointLight2 = new pointLight();
-				pointLight2.add( new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ) );
+*/
+				const pointLight1 = new pointLight( scene, {
+
+					options: options, 
+					position: new THREE.Vector3( 2 * options.scale, 2 * options.scale, 2 * options.scale ),
+
+				} );
+//				pointLight1.add( new THREE.Vector3( 2 * options.scale, 2 * options.scale, 2 * options.scale ) );
+//				const pointLight2 = new pointLight( options, scene, new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ) );
+				const pointLight2 = new pointLight( scene, {
+
+					options: options, 
+					position: new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ),
+
+				} );
+//				pointLight2.add( new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ) );
 
 				//item.material.size is NaN if item.material is ShaderMaterial
 				//Влияет только на точки без ShaderMaterial
@@ -835,7 +913,7 @@ if ( typeof Player !== 'undefined' )
 
 						renderer: renderer,
 						camera: camera,
-						stereoEffect: stereoEffect,
+						stereoEffect: options.stereoEffect,
 						raycasterEvents: false,
 
 					} );
@@ -856,44 +934,11 @@ if ( typeof Player !== 'undefined' )
 
 				//dat-gui JavaScript Controller Library
 				//https://github.com/dataarts/dat.gui
-				if ( ( options.dat !== undefined ) ) {
-
-					if ( options.dat.guiSelectPoint !== false ) options.dat.guiSelectPoint = true;
-					if ( options.dat.guiStereoEffect !== false ) options.dat.guiStereoEffect = true;
-					if ( options.dat.moveScene !== false ) options.dat.moveScene = {}; 
-					if ( options.dat.cameraGui !== false ) options.dat.cameraGui = true;
-					if ( options.dat.guiFrustumPoints !== false ) options.dat.guiFrustumPoints = true;
-/*
-					if ( options.dat.cookie !== false ) options.dat.cookie = true;
-
-					if ( options.dat.cookie === true ) options.dat.cookie = cookie;
-					else options.dat.cookie = new cookie.defaultCookie();
-*/
-
-					if ( gui !== undefined ) {
-
-						for ( var i = gui.__controllers.length - 1; i >= 0; i-- )
-							gui.remove( gui.__controllers[i] );
-						var folders = Object.keys( gui.__folders );
-						for ( var i = folders.length - 1; i >= 0; i-- )
-							gui.removeFolder( gui.__folders[folders[i]] );
-
-					} else {
-
-						gui = new dat.GUI( {
-
-							//autoPlace: false,//Убрать скроллинг когда окно gui не влазит в окно браузера
-							//closed: true,//Icorrect "Open Controls" button name
-
-						} );
-						gui.domElement.addEventListener( 'mouseenter', function ( event ) { mouseenter = true; } );
-						gui.domElement.addEventListener( 'mouseleave', function ( event ) { mouseenter = false; } );
-
-					}
+				if ( ( options.dat.gui ) ) {
 
 					//for debugging
 					if ( typeof WebGLDebugUtils !== "undefined" )
-						gui.add( {
+						options.dat.gui.add( {
 
 							loseContext: function ( value ) {
 
@@ -906,83 +951,69 @@ if ( typeof Player !== 'undefined' )
 						}, 'loseContext' );
 
 					//Close gui window
-					if ( gui.__closeButton.click !== undefined )//for compatibility with Safari 5.1.7 for Windows
-						gui.__closeButton.click();
+					if ( options.dat.gui.__closeButton.click !== undefined )//for compatibility with Safari 5.1.7 for Windows
+						options.dat.gui.__closeButton.click();
 
 					//Thanks to https://stackoverflow.com/questions/41404643/place-dat-gui-strictly-inside-three-js-scene-without-iframe
-					elContainer.querySelector( '#my-gui-container' ).appendChild( gui.domElement );
+					elContainer.querySelector( '#my-gui-container' ).appendChild( options.dat.gui.domElement );
 
 				}
 
 				//My custom controller for playing of 3D objects.
-				if ( options.player !== false ) options.player = options.player || {};
-				if ( options.player ) {
+//				if ( options.playerOptions !== false ) options.playerOptions = options.playerOptions || {};
+//				if ( options.player !== false ) {
 
-					player = new Player( group, {
+//				player =
+				new Player( group, {
 
-						onSelectScene: function ( index, t ) {
+					onSelectScene: function ( index, t ) {
 
-							options.boPlayer = true;
-							if ( options.frustumPoints !== undefined )
-								options.frustumPoints.updateCloudPoints();
+						options.boPlayer = true;
+						if ( options.frustumPoints !== undefined )
+							options.frustumPoints.updateCloudPoints();
 
-						},
-//						selectPlaySceneOptions: options,
-						options: options,
-//						player: options.player,
-						cameraTarget: { camera: camera, },
-						onChangeScaleT: function ( scale ) {
+					},
+					options: options,
+//						player: options.playerOptions,
+					cameraTarget: { camera: camera, },
+					onChangeScaleT: function ( scale ) {
 
-							if ( player !== undefined )
-								player.onChangeScale( scale );
-							group.children.forEach( function ( mesh ) {
+						if ( options.player !== undefined )
+							options.player.onChangeScale( scale );
+						removeTraceLines();
 
-								if ( ( mesh.userData.player === undefined ) || ( mesh.userData.player.arrayFuncs === undefined ) || ( typeof mesh.userData.player.arrayFuncs === "function" ) )
-									return;
-								mesh.userData.player.arrayFuncs.forEach( function ( vector ) {
+					},
 
-									if ( vector.line === undefined )
-										return;
-									vector.line.remove();
-									vector.line = new Player.traceLine( options );
+				} );
+//				if ( gui !== undefined )
+				if ( options.player ) new options.player.PlayController();// gui );//, getLanguageCode );
 
-								} );
+//				} 
+				if ( options.dat.gui ) {
 
-							} );
-
-						},
-
-					} );
-//new Player( group );					
-					if ( gui !== undefined ) {
-
-						if ( player ) new player.PlayController( gui, getLanguageCode );
-
-					}
-
-				} 
-				if ( gui !== undefined ) {
-
-					fOptions = gui.addFolder( lang.settings );
-					if ( player &amp;&amp; ( options.dat.playerGui !== false ) )
-						player.gui( fOptions, {
+					fOptions = options.dat.gui.addFolder( lang.settings );
+					if ( options.player )
+						options.player.gui( fOptions );/*, {
 
 							getLanguageCode: getLanguageCode,
 							cookie: options.dat.cookie,
 							cookieName: '_' + getCanvasName(),
 
-						} );
+						} );*/
 
 				}
 
 				//Settings for all SpriteText added to scene and child groups
 				if ( fOptions )
-					SpriteTextGui( SpriteText, fOptions, scene, {
+					SpriteTextGui( scene, options, {
 
+/*
 						getLanguageCode: getLanguageCode,
-						//settings: { zoomMultiplier: 1.5, },
 						cookie: options.dat.cookie,
 						cookieName: getCanvasName(),
+*/
+						//settings: { zoomMultiplier: 1.5, },
+						folder: fOptions,
 						options: {
 
 							//rotation: 0,
@@ -1002,14 +1033,45 @@ if ( typeof Player !== 'undefined' )
 
 					} );
 
-				if ( stereoEffect &amp;&amp; gui &amp;&amp; options.dat.guiStereoEffect ) {
+//				if ( stereoEffect &amp;&amp; gui &amp;&amp; options.dat.guiStereoEffect )
+				if ( options.stereoEffect ) {
 
+/*
 					stereoEffect.gui( fOptions, {
 
 						getLanguageCode: getLanguageCode,
 						cookie: options.dat.cookie,
 						gui: gui,
 						stereoEffect: stereoEffect,
+						onChangeMode: function ( mode ) {
+
+							switch ( mode ) {
+
+								case StereoEffect.spatialMultiplexsIndexs.Mono:
+									break;
+								case StereoEffect.spatialMultiplexsIndexs.SbS:
+								case StereoEffect.spatialMultiplexsIndexs.TaB:
+									break;
+								default: console.error( 'myThreejs: Invalid spatialMultiplexIndex = ' + mode );
+									return;
+
+							}
+							if ( options.frustumPoints !== undefined )
+								options.frustumPoints.updateGuiSelectPoint();
+
+						},
+
+					} );
+*/
+					options.stereoEffect.gui( {
+
+/*
+						getLanguageCode: getLanguageCode,
+						cookie: options.dat.cookie,
+						gui: gui,
+*/
+//						stereoEffect: stereoEffect,
+						folder: fOptions,
 						onChangeMode: function ( mode ) {
 
 							switch ( mode ) {
@@ -1057,16 +1119,35 @@ if ( typeof Player !== 'undefined' )
 
 				};
 				rendererSizeDefault = getRendererSize();
-				
+
+				new CanvasMenu( renderer, {
+
+					fullScreen: {
+
+						camera: camera,
+						onFullScreenToggle: function ( fullScreen ) {
+
+							rendererSizeDefault.onFullScreenToggle( fullScreen );
+
+						},
+
+					},
+//					stereoEffect: stereoEffect,
+					options: options,
+//					player: player,
+
+				} );
+/*
 				if ( options.canvasMenu ) {
 
 					if ( ( canvasMenu === undefined ) ) {
 
 						canvasMenu = new CanvasMenu( renderer, {
 
-							getLanguageCode: getLanguageCode,
-							stereoEffect: stereoEffect,
-							player: player,
+//							getLanguageCode: getLanguageCode,
+//							stereoEffect: stereoEffect,
+//							player: options.player,
+							options: options,
 							fullScreen: {
 
 								camera: camera,
@@ -1084,16 +1165,11 @@ if ( typeof Player !== 'undefined' )
 								},
 
 							},
-							onOver: function ( _mouseenter ) {
-
-								mouseenter = _mouseenter;
-
-							},
 
 						} );
-						options.canvasMenu = canvasMenu;
+//						options.canvasMenu = canvasMenu;
 
-					} else canvasMenu.setPlayer( player );
+					} else canvasMenu.setPlayer( options.player );
 
 				} else if ( !options.canvas || ( options.canvas.fullScreen !== false ) ) {
 
@@ -1104,41 +1180,44 @@ if ( typeof Player !== 'undefined' )
 						} ).setFullScreen();
 		
 				}
+*/
 				renderer.setSize( ( options.canvas !== undefined ) &amp;&amp; ( options.canvas.width !== undefined ) ? options.canvas.width : canvas.clientWidth,
 					( options.canvas !== undefined ) &amp;&amp; ( options.canvas.height !== undefined ) ? options.canvas.height : canvas.clientHeight );
 
 				//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+				options.createOrbitControls( camera, renderer, scene );
+//				setOptions.orbitControls( camera, renderer, scene, options );
+/*
 				if ( options.orbitControls !== false )  options.orbitControls = options.orbitControls || {};
 				if ( options.orbitControls ) {
 
+					const settings = options.orbitControls;
 					controls = new OrbitControls( camera, renderer.domElement );
+					if ( controls.settings ) console.error( 'OrbitControls.settings = ' + controls.settings );
+					controls.settings = settings;
 					controls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
 					controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 					controls.update();
-					if ( typeof Player !== 'undefined' ) Player.orbitControls = controls;//for cameraTarget
-/*
-					controls.addEventListener( 'change', function () {
-
-						if ( options.frustumPoints !== undefined )
-							options.frustumPoints.onChangeControls();
-
-					} );
-*/
+					options.orbitControls = controls;//for cameraTarget
+//					if ( typeof Player !== 'undefined' ) Player.orbitControls = controls;//for cameraTarget
 
 				}
+*/				
 
 				// helper
 
+				new AxesHelper( scene, options );
+/*
 				if ( options.axesHelper !== false )  options.axesHelper = options.axesHelper || {};
 				if ( options.axesHelper ) {
 
 //					var cookieName = getCanvasName();
 					const gui = options.axesHelper.gui
+					//options.scales.color = 'rgba(255, 255, 255, 0.5)'
 					options.axesHelper = new AxesHelper( scene, {
 
 						scene: { position: scene.position, },
-//						scale: options.axesHelper.scale,
-						color: 'rgba(255, 255, 255, 0.5)',
+//						color: 'rgba(255, 255, 255, 0.5)',
 						scales: options.scales,
 
 					} );
@@ -1150,21 +1229,23 @@ if ( typeof Player !== 'undefined' )
 					if ( controls !== undefined )
 						controls.update();//if scale != 1 and position != 0 of the screen, то после открытия canvas положение картинки смещено. Положение восстанавливается только если подвигать мышью
 				}
+*/
 
 //frustumPoints				if ( options.arrayCloud )//Array of points with cloud
 
-				if ( gui &amp;&amp; options.dat.guiSelectPoint ) {
+				if ( fOptions ) {
 
-//					var intersection;
-					options.guiSelectPoint = new GuiSelectPoint( THREE, {
+					new GuiSelectPoint( options, {
 
+/*
 						axesHelper: options.axesHelper,
 						options: options,
 						getLanguageCode: getLanguageCode,
+*/
 						cameraTarget: {
 
 							camera: camera,
-							orbitControls: controls,
+							orbitControls: options.orbitControls,//controls,
 
 						},
 /*						
@@ -1180,29 +1261,27 @@ if ( typeof Player !== 'undefined' )
 						pointControls: function ( fPoint, dislayEl, getMesh ) { },
 
 					} );
-					options.guiSelectPoint.add( gui );
+					if ( options.guiSelectPoint ) options.guiSelectPoint.add();//fOptions );
 
 				}
 
 				defaultPoint.size = options.point.size;
 
-				var pointName = 'Point_' + getCanvasName();
+//				var pointName = 'Point_' + getCanvasName();
+				const pointName = options.dat.getCookieName('Point');
 				if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
 
 				options.spriteText = options.spriteText || {};
 
 				createXDobjects( group, options );
 
-				if ( options.frustumPoints ) options.frustumPoints.create( renderer, {
-
-					orbitControls: controls
-
-				} );
+//				options.createOrbitControls( camera, renderer, scene );
+				if ( options.frustumPoints ) options.frustumPoints.create( renderer );
 
 				//На случай когда указана точка, за которой следит камера и когда Player не создан
 				if ( !options.player ) {
 
-					Player.selectPlayScene( group );//, Player.getTime(), 0 );
+					Player.selectPlayScene( group, { options: options } );//, Player.getTime(), 0 );
 
 				}
 				options.boPlayer = false;
@@ -1213,12 +1292,14 @@ if ( typeof Player !== 'undefined' )
 					options.saveMeshDefault( mesh );
 
 				} );
-				if ( gui !== undefined ) {
+				if ( options.dat.gui ) {
 
+/*
 					//THREE.AxesHelper gui
 					if ( ( options.scene === undefined ) &amp;&amp; ( typeof scene !== 'undefined' ) )
 						options.scene = scene;
-//					if ( options.dat.axesHelperGui === true )
+*/
+/*						
 					if ( ( options.axesHelper !== false ) &amp;&amp; ( options.axesHelper.options.gui !== false ) ) {
 
 						AxesHelperGui( options.axesHelper, fOptions, {
@@ -1229,66 +1310,67 @@ if ( typeof Player !== 'undefined' )
 
 						} );
 					}
+*/					
+					AxesHelperGui( options, fOptions );
+/*Непонятно зачем это
+					console.warn( 'Проверить SpriteTextGui' );
 					if ( options.spriteText &amp;&amp; options.spriteText.gui ) {
 
-						SpriteTextGui( gui, group, {
+						SpriteTextGui( group, options, {
 
 							parentFolder: fOptions,
-							getLanguageCode: getLanguageCode,
-							cookie: options.cookie,
 							options: options.spriteText,
 
 						} );
 
 					}
-					if ( options.dat.moveScene )
-						new MoveGroupGui( group, fOptions, {
+*/
+					new MoveGroupGui( group, options, {
 
-							cookie: options.dat.cookie,
-							cookieName: getCanvasName(),
-							getLanguageCode: getLanguageCode,
-							lang: { moveGroup: lang.moveGroup, },
-							guiSelectPoint: options.guiSelectPoint,
-							scales: options.scales,
-							axesHelper: options.axesHelper,
+						folder: fOptions,
+						//lang: { moveGroup: 'ddddddd' },
 
-						} );
+						}/*, {
+
+						cookie: options.dat.cookie,
+						cookieName: getCanvasName(),
+						getLanguageCode: getLanguageCode,
+						lang: { moveGroup: lang.moveGroup, },
+						guiSelectPoint: options.guiSelectPoint,
+						scales: options.scales,
+						axesHelper: options.axesHelper,
+
+					}*/ );
 
 					//OrbitControls gui
 
 //					if ( ( options.orbitControls !== undefined ) &amp;&amp; ( options.orbitControls.gui ) )
 					if ( options.orbitControls !== false ) {
 
+/*
 						if ( options.orbitControls.gui !== false ) options.orbitControls.gui = options.orbitControls.gui || true;
 						if ( options.orbitControls.gui )
 							Player.orbitControlsGui = new OrbitControlsGui( fOptions, controls, {
-
+						
 								getLanguageCode: getLanguageCode,
 								scales: options.scales,
-
+						
 							} );
 						options.orbitControls = controls;
+*/
+						new OrbitControlsGui( options, fOptions );
 
 					}
 
 					//camera gui
 
-					if ( options.dat.cameraGui )
-						new CameraGui( fOptions, camera, THREE, Player, options );/*{
-
-							getLanguageCode: getLanguageCode,
-//							scales: options.scales,
-							options: options,
-//							orbitControls: controls,
-
-						} );*/
+					new CameraGui( camera, options, fOptions );
 
 					// light
 
-//					const scales = options.axesHelper === undefined ? options.scales : options.axesHelper.options.scales;
 					const scales = options.axesHelper === false ? options.scales : options.axesHelper.options.scales;
-					pointLight1.controls( group, fOptions, scales, lang.light + ' 1' );
-					pointLight2.controls( group, fOptions, scales, lang.light + ' 2' );
+					pointLight1.controls( { group: group, folder: fOptions, folderName: lang.light + ' 1' } );
+					pointLight2.controls( { group: group, folder: fOptions, folderName: lang.light + ' 2' } );
 
 					//point
 /*
@@ -1335,7 +1417,8 @@ if ( typeof Player !== 'undefined' )
 
 					}
 */
-					var folderPoint = new FolderPoint( fOptions, options.point, function ( value ) {
+//					var folderPoint = new FolderPoint( fOptions, options.point, function ( value )
+					const folderPoint = new FolderPoint( options.point, function ( value ) {
 
 						if ( value === undefined )
 							value = options.point.size;
@@ -1354,8 +1437,9 @@ if ( typeof Player !== 'undefined' )
 						options.point.size = value;
 						options.dat.cookie.setObject( pointName, options.point );
 
-					}, {
+					}, options, {
 
+							folder: fOptions,
 							defaultPoint: defaultPoint,
 /*
 							point: options.point,
@@ -1365,40 +1449,59 @@ if ( typeof Player !== 'undefined' )
 
 							},
 */							
-							getLanguageCode: getLanguageCode,
+//							getLanguageCode: getLanguageCode,
 
 					} )
 
 					//Frustum points
-					if ( options.frustumPoints &amp;&amp; options.dat.guiFrustumPoints )
-						options.frustumPoints.gui( fOptions, {
+					if ( options.frustumPoints )// &amp;&amp; options.dat.guiFrustumPoints )
+						options.frustumPoints.gui( fOptions );/*, {
 
 							getLanguageCode: getLanguageCode,
 							cookie: cookie,
 
-						} );
-
+						} );*/
+/*
 					//default button
 					camera.userData.default.setDefault = function(){
 
-						controls.target = new THREE.Vector3();
 						camera.position.copy( camera.userData.default.options.position );
 						scene.position.copy( optionsScene.position );
 						//scene.position.add( options.axesHelper.position );
-						scene.position.add( options.scene.position );
+//						scene.position.add( options.scene.position );
 						//scene.position.copy( options.scene.position );
-						controls.object.position.copy( camera.position );
-						controls.update();
+						if( options.orbitControls !== false ) {
+
+							options.orbitControls.target = new THREE.Vector3();
+							options.orbitControls.object.position.copy( camera.position );
+							options.orbitControls.update();
+
+						}
 						
 					}
-					dat.controllerNameAndTitle( gui.add( {
+					dat.controllerNameAndTitle( options.dat.gui.add( {
 						defaultF: function ( value ) {
 
-							Player.selectPlayScene( group );
+							options.player.setTime( options.playerOptions.min );
+
+							camera.position.copy( camera.userData.default.options.position );
+							scene.position.copy( optionsScene.position );
+							//scene.position.add( options.axesHelper.position );
+	//						scene.position.add( options.scene.position );
+							//scene.position.copy( options.scene.position );
+							if( options.orbitControls !== false ) {
+
+								options.orbitControls.target = new THREE.Vector3();
+								options.orbitControls.object.position.copy( camera.position );
+								options.orbitControls.update();
+
+							}
 
 						},
 
 					}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
+*/					
+					options.restoreSceneController( camera, scene );
 
 				}
 
@@ -1491,18 +1594,15 @@ if ( typeof Player !== 'undefined' )
 					+ ( intersection.index === undefined ? '' : ' Index = ' + intersection.index + '.' )
 					+ ' Position( x: ' + position.x + ', y: ' + position.y + ', z: ' + position.z + ' )' );
 
-				if ( typeof gui !== 'undefined' )
-					console.warn( 'qqq' );
-
 			}
 			function onDocumentMouseDown( event ) {
 
 				if ( typeof raycaster === 'undefined' )
 					return;
-
+/*
 				if ( mouseenter )
 					return;
-
+*/
 				if ( raycaster.stereo !== undefined ) {
 
 					raycaster.stereo.onDocumentMouseDown( event );
@@ -1535,9 +1635,9 @@ if ( typeof Player !== 'undefined' )
 			}
 			function render() {
 
-				if ( typeof stereoEffect === 'undefined' )
+				if ( !options.stereoEffect || !options.stereoEffect.render )
 					renderer.render( scene, camera );
-				else stereoEffect.render( scene, camera );
+				else options.stereoEffect.render( scene, camera );
 				if ( cameraPosition === undefined )
 					cameraPosition = new THREE.Vector3();
 				if ( pointSize === undefined )
@@ -1649,86 +1749,9 @@ if ( typeof Player !== 'undefined' )
 			mesh.userData.default.rotation.copy( mesh.rotation );
 
 		}
-		options.getPoints = Player.getPoints;
-		options.getColors = Player.getColors;
-		options.getItemSize = Player.getItemSize;
-
-		//for Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
-		options.raycaster = {
-
-			/**
-			 * Displays a sprite text if you move mouse over an 3D object
-			 * @param {object} intersection. See https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject for details.
-			 * @param {THREE.Scene} scene.
-			 * @param {THREE.Vector2} mouse mouse position.
-			*/
-			onIntersection: function ( intersection, mouse ) {
-
-				if ( intersection.object.userData.isInfo !== undefined &amp;&amp; !intersection.object.userData.isInfo() )
-					return;
-				var spriteTextIntersection = findSpriteTextIntersection( scene );
-				if ( spriteTextIntersection === undefined ) {
-
-
-					const rect = options.spriteText.rect ? JSON.parse( JSON.stringify( options.spriteText.rect ) ) : {};
-					rect.displayRect = true;
-					rect.backgroundColor = 'rgba(0, 0, 0, 1)';
-					spriteTextIntersection = StereoEffect.getTextIntersection( intersection, {
-
-						scales: options.scales,
-						spriteOptions: {
-
-							textHeight: options.spriteText.textHeight,
-							fontColor: options.spriteText.fontColor,
-							rect: rect,
-							group: scene,
-							center: {
-
-								camera: camera,
-								canvas: canvas,
-
-							}
-
-						}
-
-					} );
-					spriteTextIntersection.name = spriteTextIntersectionName;
-					spriteTextIntersection.scale.divide( scene.scale );
-					scene.add( spriteTextIntersection );
-
-				} else spriteTextIntersection.position.copy( pos );
-				
-				options.renderer.domElement.style.cursor = 'pointer';
-
-			},
-
-			/**
-			 * Hides a sprite text if you move mouse out an object
-			 * @param {THREE.Scene} scene.
-			 */
-			//options.removeSpriteTextIntersection = function () 
-			onIntersectionOut: function () {
-
-				var detected = false;
-				do {
-
-					var spriteTextIntersection = findSpriteTextIntersection( scene );
-					if ( spriteTextIntersection !== undefined ) {
-
-						scene.remove( spriteTextIntersection );
-						if ( detected )
-							console.error( 'Duplicate spriteTextIntersection' );
-						detected = true;
-
-					}
-
-				} while ( spriteTextIntersection !== undefined )
-
-				options.renderer.domElement.style.cursor = options.cursor;
-
-			}
-
-		}
+//		options.getPoints = Player.getPoints;
+//		options.getColors = Player.getColors;
+//		options.getItemSize = Player.getItemSize;
 		onloadScripts();
 
 	}
@@ -1740,23 +1763,18 @@ if ( typeof Player !== 'undefined' )
 const lang = {
 
 	defaultButton: 'Default',
-	defaultTitle: 'Restore Orbit controls settings.',
+//	defaultTitle: 'Restore Orbit controls settings.',
 
 	settings: 'Settings',
 	webglcontextlost: 'The user agent has detected that the drawing buffer associated with a WebGLRenderingContext object has been lost.',
 
 	light: 'Light',
+/*
 	displayLight: 'Display',
 	displayLightTitle: 'Display or hide the light source.',
 	restoreLightTitle: 'Restore position of the light source',
-
-//	pointSettings: 'Point',
-/*
-	size: 'Size',
-	sizeTitle: 'Size of the point with "ShaderMaterial" material',
-
-	defaultPointTitle: 'Restore point.',
 */
+
 	opacity: 'Opacity',
 
 };
@@ -1764,25 +1782,20 @@ const lang = {
 switch ( getLanguageCode() ) {
 
 	case 'ru'://Russian language
-		lang.defaultButton = 'Восстановить';
-		lang.defaultTitle = 'Восстановить положение осей координат по умолчанию.';
 
+		lang.defaultButton = 'Восстановить';
+//		lang.defaultTitle = 'Восстановить положение осей координат по умолчанию.';
 		lang.name = 'Имя';
 		lang.settings = 'Настройки';
 		lang.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
 
 		lang.light = 'Свет';
+/*
 		lang.displayLight = 'Показать';
 		lang.displayLightTitle = 'Показать или скрыть источник света.';
 		lang.restoreLightTitle = 'Восстановить положение источника света';
-
-//		lang.pointSettings = 'Точка';
-/*
-		lang.size = 'Размер';
-		lang.sizeTitle = 'Размер точки с материалом типа "ShaderMaterial"';
-
-		lang.defaultPointTitle = 'Восстановить точку';
 */
+
 		lang.opacity = 'Непрозрачность';
 		break;
 
@@ -1927,16 +1940,16 @@ MyThree.limitAngles = function ( rotation ) {
 }
 
 /* * @namespace
- * @description Array of my points.
- * @see &lt;a href="../../MyPoints/jsdoc/index.html" target="_blank">MyPoints&lt;/a>.
+ * @description Array of points, statically fixed in front of the camera.
+ * @see &lt;a href="../../FrustumPoints/jsdoc/index.html" target="_blank">FrustumPoints&lt;/a> class.
  */
-//MyThree.MyPoints = MyPoints;
+//MyThree.FrustumPoints = FrustumPoints;
 
 /** @namespace
- * @description Array of points, statically fixed in front of the camera.
- * @see &lt;a href="../../FrustumPoints/jsdoc/index.html" target="_blank">FrustumPoints&lt;/a>.
+ * @description 3D objects animation.
+ * @see &lt;a href="../../Player/jsdoc/index.html" target="_blank">Player&lt;/a> class.
  */
-MyThree.FrustumPoints = FrustumPoints;
+MyThree.Player = Player;
 
 export default MyThree;
 </code></pre>
@@ -1949,13 +1962,13 @@ export default MyThree;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.FrustumPoints.html">FrustumPoints</a></li><li><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.points.html">points</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.Player.html">Player</a></li><li><a href="module-MyThree-MyThree.points.html">points</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed May 19 2021 08:46:08 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sun Jul 18 2021 09:25:02 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

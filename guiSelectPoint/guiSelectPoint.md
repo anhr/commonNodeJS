@@ -33,12 +33,7 @@ import GuiSelectPoint from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.
 Now you can use GuiSelectPoint in your javascript code.
 
 ```
-const guiSelectPoint = new GuiSelectPoint( THREE, {
-
-	axesHelper: axesHelper,
-	//getLanguageCode: getLanguageCode,
-
-} );
+const guiSelectPoint = new GuiSelectPoint( options );
 guiSelectPoint.add( gui );
 
 guiSelectPoint.addMesh( points );

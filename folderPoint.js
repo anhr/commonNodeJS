@@ -14,7 +14,10 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import { dat } from './dat/dat.module.js';
+
+//import { dat } from './dat/dat.module.js';
+import three from './three.js'
+
 import PositionController from './PositionController.js';
 
 /**
@@ -25,31 +28,40 @@ import PositionController from './PositionController.js';
 
 /**
  * GUI for changing point settings.
- * @param {GUI} folder parent folder. See [GUI]{@link https://github.com/anhr/dat.gui}.
  * @param {Object} point point options.
  * @param {number} point.size point size.
  * @param {setSize} setSize Set size of the point
+ * @param {Options} options See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
  * @param {Object} [settings={}] the following settings are available
+ * @param {GUI} [settings.folder] parent folder. See [GUI]{@link https://github.com/anhr/dat.gui}.
  * @param {Object} [settings.defaultPoint={}] default point options. Restore point options if user has clicked "Default" button
- * @param {number} [settings.defaultPoint.size=settings.point.size] point size.
+ * @param {number} [settings.defaultPoint.size=point.size] point size.
  * @param {number} [settings.PCOptions={}] See options parameter of the <a href="../../jsdoc/PositionController/PositionController.html" target="_blank">PositionController</a>
  * @param {Object} [settings.PCOptions.min=0.01] Minimal offset.
  * @param {Object} [settings.PCOptions.max=1] Maximal offset.
  * @param {Object} [settings.PCOptions.step=0.01] step of offset.
  * @param {Object} [settings.PCOptions.settings={}] time settings.
  * @param {Object} [settings.PCOptions.settings.offset=1]
- * @param {Function} [settings.getLanguageCode="en"] Your custom getLanguageCode() function.
- * <pre>
- * returns the "primary language" subtag of the language version of the browser.
- * Examples: "en" - English language, "ru" Russian.
- * See the "Syntax" paragraph of RFC 4646 {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
- * Default returns the 'en' is English language.
- * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
- * </pre>
  */
 class FolderPoint {
 
-	constructor( folder, point, setSize, settings = {} ) {
+	constructor( point, setSize, options, settings = {} ) {
+
+		const dat = three.dat;
+		if ( !options.boOptions ) {
+
+			console.error( 'FolderPoint: call options = new Options( options ) first' );
+			return;
+
+//			options = new Options( options );
+
+		}
+		const gui = settings.folder || options.dat.gui;
+		if ( !gui || options.dat.folderPoint === false )
+			return;
+
+//Пока что не требуется			
+//		options.folderPoint = this;
 
 		//Localization
 
@@ -65,7 +77,7 @@ class FolderPoint {
 
 		};
 
-		switch ( settings.getLanguageCode ? settings.getLanguageCode() : 'en' ) {
+		switch ( options.getLanguageCode() ) {
 
 			case 'ru'://Russian language
 				lang.pointSettings = 'Точка';
@@ -95,7 +107,7 @@ class FolderPoint {
 		if ( PCOptions.step === undefined ) PCOptions.step = 0.01;
 		PCOptions.getLanguageCode = PCOptions.getLanguageCode || settings.getLanguageCode;
 
-		var fPoint = folder.addFolder( lang.pointSettings ),
+		var fPoint = gui.addFolder( lang.pointSettings ),
 			fSize = fPoint.addFolder( lang.size );
 		dat.folderNameAndTitle( fSize, lang.size, lang.sizeTitle );
 		this.display = function ( display ) { fPoint.domElement.style.display = display; }

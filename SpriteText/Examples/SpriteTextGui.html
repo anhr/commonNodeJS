@@ -8,7 +8,7 @@
 	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
 </head>
 <body>
-
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
 		<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> - SpriteText
 		by <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
@@ -30,6 +30,7 @@
 
 		import { dat } from '../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+		three.dat = dat;
 
 		import { SpriteText } from '../SpriteText.js';
 		//import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
@@ -37,38 +38,43 @@
 		import { SpriteTextGui } from '../SpriteTextGui.js';
 		//import { SpriteTextGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteTextGui.js';
 
-		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
-		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-		//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
-		
+//WARNING: Multiple instances of Three.js being imported. Use Options.createOrbitControls(...) http://localhost/anhr/commonNodeJS/master/jsdoc/Options/Options.html#createOrbitControls
+//		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+//		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
+//		import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
+//		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 
-/*Uncaught SyntaxError: The requested module '../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js' does not provide an export named 'ConvexBufferGeometry'
-		//import { ConvexBufferGeometry } from '../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js';//https://github.com/anhr/three.js
-		//import { ConvexBufferGeometry } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/geometries/ConvexGeometry.js';
-		//import { ConvexBufferGeometry } from 'https://threejs.org/examples/jsm/geometries/ConvexGeometry.js';
-*/
+
+		/*Uncaught SyntaxError: The requested module '../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js' does not provide an export named 'ConvexBufferGeometry'
+				//import { ConvexBufferGeometry } from '../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js';//https://github.com/anhr/three.js
+				//import { ConvexBufferGeometry } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/geometries/ConvexGeometry.js';
+				//import { ConvexBufferGeometry } from 'https://threejs.org/examples/jsm/geometries/ConvexGeometry.js';
+		*/
 
 		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
-
+/*
 		import { WEBGL } from '../../../../three.js/dev/examples/jsm/WebGL.js';//https://github.com/anhr/three.js
 		//import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
 		//import { WEBGL } from 'https://threejs.org/examples/jsm/WebGL.js';
-
-		import cookie from '../../cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
-		//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
-		import { getLanguageCode } from '../../lang.js';//https://github.com/anhr/commonNodeJS
-		//import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 
 		if ( WEBGL.isWebGLAvailable() === false ) {
 
 			document.body.appendChild( WEBGL.getWebGLErrorMessage() );
 
 		}
-//		SpriteText.setTHREE( THREE );
+*/
 
-		var camera, scene, renderer, effect, scale = 0.1;
+//		import cookie from '../../cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
+//		import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
+
+//		import { getLanguageCode } from '../../lang.js';//https://github.com/anhr/commonNodeJS
+//		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+
+		import Options from '../../Options.js'
+		//		SpriteText.setTHREE( THREE );
+
+		var camera, scene, renderer, stereoEffect, scale = 0.1;
 
 		init();
 		animate();
@@ -78,16 +84,17 @@
 			scene = new THREE.Scene();
 
 			renderer = new THREE.WebGLRenderer( { antialias: true } );
-//			renderer.setPixelRatio( window.devicePixelRatio );
+			//			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
 
 			// camera
-
 			camera = new THREE.PerspectiveCamera( 70 * scale, window.innerWidth / window.innerHeight, 1 * scale, 1000 * scale );
-//			camera = new THREE.PerspectiveCamera( 70 * scale, window.innerWidth / window.innerHeight, 1, 1000 );
-//			camera.position.set( 15 * scale, 20 * scale, 30 * scale );
 			camera.position.set( 15, 20, 30 );
+			/*
+						camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+						camera.position.set( 0.4, 0.4, 2 );
+			*/
 			scene.add( camera );
 
 			//Settings for all SpriteText added to scene and child groups
@@ -110,11 +117,18 @@
 
 			// controls
 
-			const controls = new OrbitControls( camera, renderer.domElement );
-			controls.minDistance = 25;
-			controls.maxDistance = 75;
-			controls.maxPolarAngle = Math.PI / 2;
-			controls.update();
+			new Options().createOrbitControls( camera, renderer, scene );
+/*
+			if ( typeof OrbitControls !== 'undefined' ) {
+
+				const controls = new OrbitControls( camera, renderer.domElement );
+				controls.minDistance = 25;
+				controls.maxDistance = 75;
+				controls.maxPolarAngle = Math.PI / 2;
+				controls.update();
+
+			}
+*/
 
 			scene.add( new THREE.AmbientLight( 0x222222 ) );
 
@@ -125,21 +139,21 @@
 
 
 			// points
-/*
-			const vertices = new THREE.BoxGeometry( 20 * scale, 20 * scale, 20 * scale ).vertices;
+			/*
+						const vertices = new THREE.BoxGeometry( 20 * scale, 20 * scale, 20 * scale ).vertices;
 
-			// convex hull
+						// convex hull
 
-			const meshMaterial = new THREE.MeshLambertMaterial( {
-				color: 0xffffff,
-				opacity: 0.5,
-				transparent: true,
-			} );
+						const meshMaterial = new THREE.MeshLambertMaterial( {
+							color: 0xffffff,
+							opacity: 0.5,
+							transparent: true,
+						} );
 
-			const meshGeometry = new ConvexBufferGeometry( vertices );
+						const meshGeometry = new ConvexBufferGeometry( vertices );
 
-			const meshBack = new THREE.Mesh( meshGeometry, meshMaterial );
-*/
+						const meshBack = new THREE.Mesh( meshGeometry, meshMaterial );
+			*/
 			const boxGeometry = new THREE.BoxGeometry( 20 * scale, 20 * scale, 20 * scale );
 
 			// convex hull
@@ -156,7 +170,7 @@
 			scene.add( meshBack );
 
 			const meshMaterialClone = meshMaterial.clone();
-//			const meshFront = new THREE.Mesh( meshGeometry, meshMaterialClone );
+			//			const meshFront = new THREE.Mesh( meshGeometry, meshMaterialClone );
 			const meshFront = new THREE.Mesh( boxGeometry, meshMaterialClone );
 			meshFront.material.side = THREE.FrontSide; // front faces
 			meshFront.renderOrder = 1;
@@ -189,19 +203,23 @@
 			} );
 
 			//
-			
+
 			if ( typeof StereoEffect !== "undefined" ) {
 
-				effect = new StereoEffect( renderer, {
+				stereoEffect = new StereoEffect( renderer, {
 
-					spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.Mono,
-					far: camera.far,
-					camera: camera,
-					cookie: cookie,
+					stereoEffect: {
+
+						spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.Mono,
+						far: camera.far,
+						camera: camera,
+
+					},
+					//					cookie: cookie,
 
 				} );
-//				effect.setSize( window.innerWidth, window.innerHeight );
-			
+				//				stereoEffect.setSize( window.innerWidth, window.innerHeight );
+
 			}
 
 			const groupLevel2 = new THREE.Group();
@@ -228,33 +246,33 @@
 			}
 
 			groupLevel2.add( new SpriteText( 'groupLevel2\r\nSpriteText 1', new THREE.Vector3( -10, -15, 2 ).multiplyScalar( scale ) ) );
-			groupLevel2.add( new SpriteText( 'groupLevel2\r\nSpriteText 2', new THREE.Vector3(  10, -15, 2 ).multiplyScalar( scale ) ) );
+			groupLevel2.add( new SpriteText( 'groupLevel2\r\nSpriteText 2', new THREE.Vector3( 10, -15, 2 ).multiplyScalar( scale ) ) );
 
 			//SpriteText with individual options
 			const optionsIndividual = {
 
-					fontColor: 'rgba(0, 255, 0, 1)', //green
-					textHeight: 30 * scale,
-					fontFace: fontFaces[2],
-					fontFaces: fontFaces,
-					center: new THREE.Vector2( 0.5, 0.5 ),
-					bold: false,
-					italic: false,
-					fontProperties: '',
-					rotation: Math.PI / 2,
-					rect: {
+				fontColor: 'rgba(0, 255, 0, 1)', //green
+				textHeight: 30 * scale,
+				fontFace: fontFaces[2],
+				fontFaces: fontFaces,
+				center: new THREE.Vector2( 0.5, 0.5 ),
+				bold: false,
+				italic: false,
+				fontProperties: '',
+				rotation: Math.PI / 2,
+				rect: {
 
-						displayRect: true,
-						borderThickness: 3,
-						borderRadius: 10,
-						borderColor: 'rgb(255, 0, 0)', //'#FF0000',//'rgba(255, 0, 0, 1)',//red
-						backgroundColor: 'rgba(0, 0, 255, 1)', //blue
+					displayRect: true,
+					borderThickness: 3,
+					borderRadius: 10,
+					borderColor: 'rgb(255, 0, 0)', //'#FF0000',//'rgba(255, 0, 0, 1)',//red
+					backgroundColor: 'rgba(0, 0, 255, 1)', //blue
 
-					},
-					sizeAttenuation: true,
-//					group: scene,
-					
-				}
+				},
+				sizeAttenuation: true,
+				//					group: scene,
+
+			}
 			const spriteTextIndividualOptions = new SpriteText( 'Individual options', new THREE.Vector3( 10, 2, 2 ).multiplyScalar( scale ), optionsIndividual );
 			scene.add( spriteTextIndividualOptions );
 
@@ -262,51 +280,76 @@
 			if ( typeof dat !== "undefined" ) {
 
 				//dat-gui JavaScript Controller Library
-				const gui = new dat.GUI();
+				const gui = stereoEffect.options.dat.gui;//new dat.GUI();
+//				const options = ;
+
+				//dat-gui JavaScript Controller Library
+//				const gui = options.dat.gui;
 
 				if ( typeof SpriteTextGui !== "undefined" ) {
 
 					//Settings for all SpriteText added to scene and child groups
-					fSpriteTextAll = SpriteTextGui( SpriteText, gui, scene, {
+					fSpriteTextAll = SpriteTextGui( scene, {
 
-						getLanguageCode: getLanguageCode,
+							dat: {
+
+								//gui: typeof dat !== 'undefined' ? new dat.GUI() : undefined,
+//								dat: typeof dat !== 'undefined' ? dat : undefined,
+								//cookie: false,
+								cookieName: 'All',
+								gui: gui,
+
+							},
+							//dat: false,
+
+						}, {
+
+						//						getLanguageCode: getLanguageCode,
 						settings: { zoomMultiplier: 1.5, },
-						cookie: cookie,
+						//						cookie: cookie,
 
 					} );
 
 					//Settings for all SpriteText added to groupLevel2 and child groups
-					fSpriteTextGroupLevel2 = SpriteTextGui( SpriteText, gui, groupLevel2, {
+					fSpriteTextGroupLevel2 = SpriteTextGui( groupLevel2, {
+
+							dat: {
+
+								//gui: typeof dat !== 'undefined' ? new dat.GUI() : undefined,
+//								dat: typeof dat !== 'undefined' ? dat : undefined,
+								//cookie: false,
+								cookieName: 'groupLevel2',
+								gui: gui,
+
+							},
+							//dat: false,
+
+						}, {
 
 						spriteFolder: 'groupLevel2 sprites',
-						getLanguageCode: getLanguageCode,
+						//						getLanguageCode: getLanguageCode,
+						//						cookie: cookie,
 						//settings: { zoomMultiplier: 1.5, },
-						cookie: cookie,
-	/*					
-						options: {
-
-							rotation: 0,
-							rect: {
-								displayRect: true,
-								borderThickness: 10,
-								borderRadius: 10,
-								borderColor: 'rgb( 0, 255, 255 )', //'#FF0000',//'rgba(255, 0, 0, 1)',//red
-								backgroundColor: 'rgba( 255, 255, 0, 1)',
-							},
-							fontColor: 'rgba(0, 255, 0, 1)', //green
-							center: new THREE.Vector2( 0.5, 0.5 ),
-							bold: true,
-							italic: true,
-
-						}
-	*/					
 
 					} );
 
-					SpriteTextGui( SpriteText, gui, spriteTextIndividualOptions, {
+					SpriteTextGui( spriteTextIndividualOptions, {
+
+							dat: {
+
+								//gui: typeof dat !== 'undefined' ? new dat.GUI() : undefined,
+//								dat: typeof dat !== 'undefined' ? dat : undefined,
+								//cookie: false,
+								cookieName: 'individual',
+								gui: gui,
+
+							},
+							//dat: false,
+
+						}, {
 
 						spriteFolder: 'Sprite with individual options',
-						getLanguageCode: getLanguageCode,
+//						getLanguageCode: getLanguageCode,
 						options: optionsIndividual,
 
 					} );
@@ -319,13 +362,18 @@
 				fCube.add( meshMaterial, 'depthTest' );
 
 				//StereoEffect settings
-				if ( typeof effect !== "undefined" )
-					effect.gui( gui, {
+				if ( typeof stereoEffect !== "undefined" )
+					stereoEffect.gui( {
 
-						getLanguageCode: getLanguageCode,
-						gui: gui,
+							folder: gui,
+							dat: dat,
 
-					} );
+						}/*options, {
+
+							getLanguageCode: getLanguageCode,
+							gui: gui,
+
+						}*/ );
 
 				//default button
 				const defaultParams = {
@@ -345,8 +393,8 @@
 			} else {
 
 				SpriteText.updateSpriteTextGroup( scene );
-//				SpriteText.updateSpriteTextGroup( groupLevel2 );
-				
+				//				SpriteText.updateSpriteTextGroup( groupLevel2 );
+
 			}
 
 			//
@@ -374,9 +422,9 @@
 
 		function render() {
 
-			if ( effect === undefined )
+			if ( stereoEffect === undefined )
 				renderer.render( scene, camera );
-			else effect.render( scene, camera );
+			else stereoEffect.render( scene, camera );
 
 		}
 

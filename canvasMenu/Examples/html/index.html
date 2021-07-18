@@ -22,11 +22,12 @@
 	<!--<link type="text/css" rel="stylesheet" href="../../../../../three.js/dev/examples/main.css">-->
 
 </head>
-	<body>
-		<p>
-			<a href='https://anhr.github.io/index.html' target="_blank">Home</a>
-			| <a href='https://github.com/anhr/commonNodeJS/tree/master/canvasMenu' target="_blank">GitHub</a>
-		</p>
+<body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<p>
+		<a href='https://anhr.github.io/index.html' target="_blank">Home</a>
+		| <a href='https://github.com/anhr/commonNodeJS/tree/master/canvasMenu' target="_blank">GitHub</a>
+	</p>
 	<h1>
 		<a href='https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu' target="_blank">Dropdown menu</a> inside <a href="https://threejs.org/" target="_blank">Three.js</a> canvas.
 		<a href="../../../DropdownMenu/styles/Decorations/transparent.css" target="_blank"> Transparent decoration</a>.
@@ -44,30 +45,34 @@
 		import three from '../../../three.js'
 		three.THREE = THREE;
 
-		import { OrbitControls } from '../../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
-		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
+//WARNING: Multiple instances of Three.js being imported. Use Options.createOrbitControls(...) http://localhost/anhr/commonNodeJS/master/jsdoc/Options/Options.html#createOrbitControls
+//		import { OrbitControls } from '../../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
+//		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+//		import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 
 		//cube
 /*Uncaught SyntaxError: The requested module '../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js' does not provide an export named 'ConvexBufferGeometry'
 		import { ConvexBufferGeometry } from '../../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js';
 		//import { ConvexBufferGeometry } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/geometries/ConvexGeometry.js';
 		//import { ConvexBufferGeometry } from 'https://threejs.org/examples/jsm/geometries/ConvexGeometry.js';
-*/		
+*/
 
 		import { dat } from '../../../dat/dat.module.js';
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+		three.dat = dat;
 
-		//import StereoEffect from "https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js";
 		import StereoEffect from "../../../StereoEffect/StereoEffect.js";
+		//import StereoEffect from "https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js";
 
-		//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 		import CanvasMenu from '../../../canvasMenu/canvasMenu.js';
+		//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 
-		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-		//import { getLanguageCode } from './commonNodeJS/master/lang.js';
+//		import { getLanguageCode } from './commonNodeJS/master/lang.js';
+//		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 
+		import Options from '../../../Options.js'
 
-		var camera, scene, renderer, controls, stereoEffect, cubeType = 'cube', group, canvasMenu;//playController;
+		var camera, scene, renderer, cubeType = 'cube', group, stereoEffect;//playController, canvasMenu, stereoEffect, controls;
 
 		init();
 		animate();
@@ -93,38 +98,70 @@
 				canvas: document.getElementById( "canvas" ),//elCanvas,
 
 			} );
-//			renderer.setPixelRatio( window.devicePixelRatio );
+			//			renderer.setPixelRatio( window.devicePixelRatio );
 
 			renderer.setSize( window.innerWidth / 2, window.innerHeight / 2 );
-//			renderer.setSize( window.innerWidth, window.innerHeight );
+			//			renderer.setSize( window.innerWidth, window.innerHeight );
 
-			//
-			controls = new OrbitControls( camera, renderer.domElement );
-			controls.target.set( 0, 0, 0 );
-			controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-			controls.update();
+			const options = new Options( {
 
-			//StereoEffect
-			if ( typeof StereoEffect !== 'undefined' ) {
+				//a: 2,
+				//b: 3,
+				//getLanguageCode: 'en',//getLanguageCode,
+				//orbitControls: false,
+				dat: {
 
-				stereoEffect = new StereoEffect( renderer, {
+					//gui: typeof dat !== 'undefined' ? new dat.GUI() : undefined,
+//					dat: typeof dat !== 'undefined' ? dat : undefined,
+					//cookie: false,
+					//cookieName: 'AxesHelper',
+					//orbitControlsGui: false,
+					//axesHelperGui: false,
+					//playerGui: false,
+					//playController: false,
+					//guiSelectPoint: false,
+					//moveScene: false,
+					//cameraGui: false,
+					//spriteTextGui: false,
+					//stereoEffectsGui: false,
+					//folderPoint: false,
 
-					spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.Mono, //SbS
+				},
+				stereoEffect: {
+
+					spatialMultiplex: typeof StereoEffect !== 'undefined' ? StereoEffect.spatialMultiplexsIndexs.Mono : undefined,//SbS
 					far: camera.far,
 					camera: camera,
 					stereoAspect: 1,
 					rememberSize: true,
-					cookie: THREE.cookie,
 
-				} );
+				},
+				//stereoEffect: false,
+
+			} );
+
+			//
+			options.createOrbitControls( camera, renderer, scene );
+/*
+			controls = new OrbitControls( camera, renderer.domElement );
+			controls.target.set( 0, 0, 0 );
+			controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
+			controls.update();
+*/
+
+			//StereoEffect
+			if ( typeof StereoEffect !== 'undefined' ) {
+
+				new StereoEffect( renderer, options );
+				stereoEffect = options.stereoEffect;
 
 			}
 
 			if ( typeof CanvasMenu !== 'undefined' ) {
 
-				canvasMenu = new CanvasMenu( renderer, {
+				new CanvasMenu( renderer, {
 
-					getLanguageCode: getLanguageCode,
+					//					getLanguageCode: getLanguageCode,
 					menu: [
 
 						{
@@ -144,13 +181,16 @@
 					fullScreen: {
 
 						camera: camera,
-						THREE: THREE,
 
 					},
-					stereoEffect: stereoEffect,
-					//player: player,
+					//					stereoEffect: stereoEffect,
+					options: options,
+					//					player: player,
 
 				} );
+
+				//Test for duplicate CanvasMenu
+				//new CanvasMenu( renderer, { options: options, } );
 
 			}
 
@@ -163,36 +203,10 @@
 			light = new THREE.PointLight( 0xffffff, 1 );
 			light.position.copy( new THREE.Vector3( -2, -2, -2 ) );
 			scene.add( light );
-/*
-			//raycaster
 
-			raycaster = new THREE.Raycaster();
-			raycaster.params.Points.threshold = 0.03;
-			raycaster.setStereoEffect( {
-
-				renderer: renderer,
-				stereoEffect: stereoEffect,
-				onIntersection: function ( intersects ) {
-
-					onIntersection( intersects );
-
-				},
-				onIntersectionOut: function ( intersects ) {
-
-					onIntersectionOut( intersects );
-
-				},
-				onMouseDown: function ( intersects ) {
-
-					onMouseDown( intersects );
-
-				}
-
-			} );
-*/
 			group = new THREE.Group();
 			scene.add( group );
-
+/*
 			//dat-gui JavaScript Controller Library
 			//https://github.com/dataarts/dat.gui
 			var gui = new dat.GUI( {
@@ -205,7 +219,7 @@
 			//Close gui window
 			if ( gui.__closeButton.click !== undefined )//for compatibility with Safari 5.1.7 for Windows
 				gui.__closeButton.click();
-
+*/
 			//Points
 
 			var points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [
@@ -242,52 +256,44 @@
 				cube.userData.color = cube.material.color;
 				group.add( cube );
 
-/*
-				if ( raycaster.stereo !== undefined )
-					raycaster.stereo.addParticles( cube );
-*/
+				/*
+								if ( raycaster.stereo !== undefined )
+									raycaster.stereo.addParticles( cube );
+				*/
 
 			}
 			addCube( new THREE.Vector3( -1, 0, 0 ), 0xffffff );
 			addCube( new THREE.Vector3( -0.5, 0.5, -0.5 ), 'green' );
 
-			if ( ( stereoEffect !== undefined ) && ( typeof gui !== 'undefined' ) ) {
+			if ( options.stereoEffect ) options.stereoEffect.gui();
 
-				stereoEffect.gui( gui, {
-
-					getLanguageCode: getLanguageCode,
-
-				} );
-
-			}
-
-//			window.addEventListener( 'resize', onResize, false );
+			//			window.addEventListener( 'resize', onResize, false );
 
 		}
-/*		
-		function onResize() {
+		/*
+				function onResize() {
 
-			var size;
-			if ( canvasMenu && canvasMenu.isFullScreen() )
-				size = new THREE.Vector2( window.innerWidth, window.innerHeight );
-			else {
+					var size;
+					if ( options.ocanvasMenu && options.canvasMenu.isFullScreen() )
+						size = new THREE.Vector2( window.innerWidth, window.innerHeight );
+					else {
 
-				size = new THREE.Vector2();
-				renderer.getSize( size );
+						size = new THREE.Vector2();
+						renderer.getSize( size );
 
-			}
-			camera.aspect = size.x / size.y;
-			camera.updateProjectionMatrix();
+					}
+					camera.aspect = size.x / size.y;
+					camera.updateProjectionMatrix();
 
-			renderer.setSize( size.x, size.y );
+					renderer.setSize( size.x, size.y );
 
-		}
-*/		
+				}
+		*/
 		function onDocumentMouseMove( event ) {
 
-			/*if ( raycaster.stereo !== undefined )
-				raycaster.stereo.onDocumentMouseMove( event );
-			else */{
+				/*if ( raycaster.stereo !== undefined )
+					raycaster.stereo.onDocumentMouseMove( event );
+				else */{
 
 				// Test of the old version of THREE.Raycaster
 				event.preventDefault();
@@ -307,10 +313,10 @@
 		}
 		function onDocumentMouseDown( event ) {
 
-/*
-			if ( raycaster.stereo !== undefined )
-				raycaster.stereo.onDocumentMouseDown( event );
-*/
+			/*
+						if ( raycaster.stereo !== undefined )
+							raycaster.stereo.onDocumentMouseDown( event );
+			*/
 
 		}
 		function animate() {
@@ -323,7 +329,7 @@
 
 		function render() {
 
-			if ( typeof stereoEffect === 'undefined' )
+			if ( !stereoEffect )
 				renderer.render( scene, camera );
 			else stereoEffect.render( scene, camera );
 
@@ -331,5 +337,5 @@
 
 		var timeoutControls;
 	</script>
-	</body>
+</body>
 </html>

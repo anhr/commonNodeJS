@@ -1,0 +1,32 @@
+﻿/*Plase use options.decorations: 'Transparent' for including of this style into your dropdownMenu.create(...)*/
+.menuButtonTransparent {
+    margin: 3px;
+    padding: 2px;
+    transition: color 0.5s, background-color 0.5s;
+    border: 0;
+    color: white;
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 5px;
+    font-size: large;
+    font-family: Arial;
+}
+    .menuButtonTransparent:hover {
+        color: black;
+        background-color: white;
+        transition: color 0.5s, background-color 0.5s;
+        opacity: 1;
+    }
+.dropdown-childTransparent {
+    background-color: rgba(0,0,0,0);
+}
+    .dropdown-childTransparent nobr {
+        padding: 2px;
+        margin: 2px;
+        background-color: rgba(0,0,0,0.5); /*black;*/
+        transition: color 0.5s, background-color 0.5s;
+        border-radius: 5px;
+        font-size: smaller;
+    }
+        .dropdown-childTransparent nobr:hover {
+            background-color: white;
+        }

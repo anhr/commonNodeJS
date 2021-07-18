@@ -88,6 +88,7 @@
 
 &lt;/head>
 &lt;body>
+	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
 	&lt;div id=&quot;info&quot;>
 		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a> - Player - 3D objects animation.
 		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
@@ -246,12 +247,16 @@ See <a href="module-Player.html">Player</a> for details.
 Please change your <b>Player</b> for it.</p>
 <pre class="prettyprint source"><code>const player = new Player( scene, {
 
-		timeSettings: {
+	options : { 
+	
+		playerOptions: {
 
 			marks: 100,//Ticks count of the playing.
 			interval: 25,//Ticks per seconds.
 
 		},
+
+	}
 
 } );
 </code></pre>
@@ -581,36 +586,15 @@ Now you can see a player's menu items on the bottom of the canvas.</p>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import { dat } from './commonNodeJS/master/dat/dat.module.js';
 </code></pre>
-<p>Add <b>Player</b> settings into gui</p>
-<pre class="prettyprint source"><code>const gui = new dat.GUI();
-player.gui( gui );
-</code></pre>
-<p>If you want to localize the gui, please import <b>getLanguageCode</b>.</p>
-<pre class="prettyprint source"><code>import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import { getLanguageCode } from './commonNodeJS/master/lang.js';
-</code></pre>
-<p>and edit <b>player.gui(...)</b>.</p>
-<pre class="prettyprint source"><code>player.gui( gui, {
+<p>Add <b>dat.dat</b> key into <b>options</b> parameter of the <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> class;</p>
+<pre class="prettyprint source"><code>dat: {
 
-	getLanguageCode: getLanguageCode
+	dat: dat,
 
-} );
+}
 </code></pre>
-<p>If you want save a custom <b>Player</b> settings to the cookie, please import <b>cookie</b></p>
-<pre class="prettyprint source"><code>import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
-</code></pre>
-<p>and edit <b>player.gui(...)</b>.</p>
-<pre class="prettyprint source"><code>player.gui( gui, {
-
-	getLanguageCode: getLanguageCode,
-	cookie: cookie,
-
-} );
+<p>and call <b>player.gui()</b></p>
+<pre class="prettyprint source"><code>player.gui();
 </code></pre>
 <p><a name="datGuiPlayerControl"></a></p>
 <h3>Add player control buttons to the <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</h3>
@@ -624,12 +608,7 @@ player.gui( gui );
 <pre class="prettyprint source"><code>import CameraGui from './commonNodeJS/master/CameraGui.js';
 </code></pre>
 <p>Add <b>CameraGui</b> into gui</p>
-<pre class="prettyprint source"><code>new CameraGui( gui, camera, THREE, Player, {
-
-	getLanguageCode: getLanguageCode,
-	//orbitControls: controls,
-
-} );
+<pre class="prettyprint source"><code>new CameraGui( camera, options, gui );
 </code></pre>
 <p><a name="guiSelectPoint"></a></p>
 <h3>A <a href="https://github.com/anhr/dat.gui">dat.gui</a> based graphical user interface for select a point from the mesh.</h3>
@@ -644,12 +623,7 @@ player.gui( gui );
 <ul>
 <li>Create instance of the <b>GuiSelectPoint</b>.</li>
 </ul>
-<pre class="prettyprint source"><code>guiSelectPoint = new GuiSelectPoint( THREE, {
-
-	getLanguageCode: getLanguageCode,
-	options: options,
-
-} );
+<pre class="prettyprint source"><code>guiSelectPoint = new GuiSelectPoint( options );
 </code></pre>
 <p>Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point.</p>
 <ul>
@@ -870,11 +844,9 @@ Also you can rotate camera around the point. Please add <b>cameraTarget</b> obje
 <ul>
 <li>Or add <b>cameraTarget</b> key for creating of <b>guiSelectPoint</b> instance.</li>
 </ul>
-<pre class="prettyprint source"><code>guiSelectPoint = new GuiSelectPoint( THREE, {
+<pre class="prettyprint source"><code>guiSelectPoint = new GuiSelectPoint( options, {
 
-	getLanguageCode: getLanguageCode,
 	cameraTarget: { camera: camera, },
-	options: options,
 
 } );
 </code></pre>
@@ -960,13 +932,13 @@ $ npm run build
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Player-Player.assign.html">assign</a></li><li><a href="module-Player-Player.execFunc.html">execFunc</a></li><li><a href="module-Player-Player.getColors.html">getColors</a></li><li><a href="module-Player-Player.getItemSize.html">getItemSize</a></li><li><a href="module-Player-Player.getPoints.html">getPoints</a></li><li><a href="module-Player-Player.getSelectSceneIndex.html">getSelectSceneIndex</a></li><li><a href="module-Player-Player.getSettings.html">getSettings</a></li><li><a href="module-Player-Player.getTime.html">getTime</a></li><li><a href="module-Player-Player.isCreated.html">isCreated</a></li><li><a href="module-Player-Player.selectMeshPlayScene.html">selectMeshPlayScene</a></li><li><a href="module-Player-Player.selectPlayScene.html">selectPlayScene</a></li><li><a href="module-Player-Player.setColorAttribute.html">setColorAttribute</a></li></ul><h3>Classes</h3><ul><li><a href="module-Player-Player.html">Player</a></li><li><a href="module-Player-Player.cameraTarget.html">cameraTarget</a></li><li><a href="module-Player-Player.traceLine.html">traceLine</a></li><li><a href="module-Player-Player_PlayController_PlayController.html">PlayController</a></li></ul><h3>Events</h3><ul><li><a href="module-Player-Player.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onRenamePlayButtons">onRenamePlayButtons</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Player.html">Player</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Player-Player.assign.html">assign</a></li><li><a href="module-Player-Player.execFunc.html">execFunc</a></li><li><a href="module-Player-Player.getColors.html">getColors</a></li><li><a href="module-Player-Player.getItemSize.html">getItemSize</a></li><li><a href="module-Player-Player.getPoints.html">getPoints</a></li><li><a href="module-Player-Player.getTime.html">getTime</a></li><li><a href="module-Player-Player.selectMeshPlayScene.html">selectMeshPlayScene</a></li><li><a href="module-Player-Player.selectPlayScene.html">selectPlayScene</a></li><li><a href="module-Player-Player.setColorAttribute.html">setColorAttribute</a></li></ul><h3>Classes</h3><ul><li><a href="module-Player-Player.html">Player</a></li><li><a href="module-Player-Player.cameraTarget.html">cameraTarget</a></li><li><a href="module-Player-Player.traceLine.html">traceLine</a></li><li><a href="module-Player-Player_PlayController_PlayController.html">PlayController</a></li></ul><h3>Events</h3><ul><li><a href="module-Player-Player.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onChangeRepeat">onChangeRepeat</a></li><li><a href="module-Player-Player_PlayController.html#event:onRenamePlayButtons">onRenamePlayButtons</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed May 19 2021 09:38:06 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jul 17 2021 12:35:30 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

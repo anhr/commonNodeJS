@@ -15,6 +15,8 @@
 import Player from '../player/player.js';
 import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMaterialPoints.js';
 import three from '../three.js'
+//import setOptions from '../setOptions.js'
+import Options from '../Options.js'
 
 /**
  * Creating the new points and adding it into group
@@ -22,10 +24,10 @@ import three from '../three.js'
  * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
  * @param {THREE.Group} group [Group]{@link https://threejs.org/docs/index.html?q=grou#api/en/objects/Group} for new points.
  * @param {object} [settings] the following settings are available
- * @param {Player} [settings.Player] <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
- * Define <b>Player only</b> if you want move or/and you want change color of the points during playing.
- * @param {object} [settings.options] the following options are available
- * @param {number} [settings.options.point.size=5.0] point size.
+ * @param {object} [settings.options=new Options()] the following options are available.
+ * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+ * @param {Object} [settings.options.point] point options.
+ * See <a href="../../jsdoc/setOptions/SetOptions.html#setPoint" target="_blank">setOptions.setPoint(options)</a> for details.
  * @param {object} [settings.options.scales.w] followed w axis scale params is available
  * @param {object} [settings.options.scales.w.min=0] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * @param {object} [settings.options.scales.w.max=100] Maximal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
@@ -36,8 +38,7 @@ import three from '../three.js'
  * </pre>
  * @param {GuiSelectPoint} [settings.options.guiSelectPoint] A [dat.gui]{@link https://github.com/anhr/dat.gui} based graphical user interface for select a point from the mesh.
  * See <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a> for details.
- * @param {FrustumPoints} [settings.options.frustumPoints] Creates a <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a> instance.
- * @param {object} [settings.options.raycaster] followed [raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} options is available
+ * @param {object} [settings.options.raycaster] Followed [raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} options is available.
  * @param {Function(particle)} [settings.options.raycaster.addParticle] Callback function that take as input the <b>new THREE.Points</b>.
  * Add new particle into array of objects to check for intersection with the ray. See [THREE.Raycaster.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
  * @param {Function(particle)} [settings.options.raycaster.removeParticle] Callback function that take as input the <b>new THREE.Points</b>.
@@ -48,14 +49,16 @@ import three from '../three.js'
  * Fires if mouse pointer leaves of intersection with the point.
  * @param {Function(intersection)} [settings.options.raycaster.onMouseDown] Callback function that take as input the <b>[intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}</b>.
  * User has clicked over point.
- * @param {object} [settings.pointsOptions] followed points options is availablee:
+ * @param {object} [settings.pointsOptions={}] followed points options is availablee:
+ * @param {FrustumPoints} [settings.pointsOptions.frustumPoints] Include this points into array of points with cloud. See <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a>.
  * @param {number} [settings.pointsOptions.tMin=0] start time. Uses for playing of the points..
  * @param {string} [settings.pointsOptions.name=""] Name of the points. Used for displaying of items of the <b>Select</b> drop down control of the <b>Meshes</b> folder of the [dat.gui]{@link https://github.com/anhr/dat.gui}.
  * @param {object|boolean} [settings.pointsOptions.shaderMaterial] creates the [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} material.
  * The size of the each point of the <b>THREE.Points</b> seems the same on canvas
  * because I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.
  * <p>false - no shaderMaterial.
- * @param {FrustumPoints} [settings.pointsOptions.frustumPoints] Include this points into array of points with cloud. See <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a>.
+ * @param {object} [settings.pointsOptions.shaderMaterial.point]
+ * @param {number} [settings.pointsOptions.shaderMaterial.point.size] point size.
  * @param {THREE.Vector3} [settings.pointsOptions.position=new THREE.Vector3( 0, 0, 0 )] position of the points.
  * <pre>
  * Vector's x, y, z is position of the points.
@@ -103,14 +106,22 @@ function MyPoints( arrayFuncs, group, settings ) {
 		arrayFuncs.push( new THREE.Vector3() );
 
 	settings = settings || {};
-	settings.Player = settings.Player || Player;
+//	settings.Player = settings.Player || Player;
 
 	const pointsOptions = settings.pointsOptions || {};
-	settings.options = settings.options || ( pointsOptions.frustumPoints ? pointsOptions.frustumPoints.getOptions() : {} );
-	const options = settings.options;// || {};
-	options.point = options.point || {};
-	options.point.size = options.point.size || 5.0;
-	options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
+//	settings.options = settings.options || ( pointsOptions.frustumPoints ? pointsOptions.frustumPoints.getOptions() : new Options() );
+	settings.options = settings.options || new Options();
+	var options = settings.options;// || {};
+	if ( !options.boOptions ) {
+
+		options = new Options( options );
+/*
+		console.error( 'MyPoints: call options = new Options( options ) first' );
+		return;
+*/		
+
+	}
+//	setOptions.setPoint( options );
 /*Убрал потому что когда нет AxesHelper и не запущен Player и пользователь навел мышку на точку
 то в текстовой строке не отобрахаются x, y, z.
 Это сделано на тот случай, когда в AxesHelper отображаются не все координаты
@@ -136,7 +147,8 @@ function MyPoints( arrayFuncs, group, settings ) {
 	//Эту строку нужно вызывать до создания точек THREE.Points
 	//что бы вызывалась моя версия THREE.BufferGeometry().setFromPoints для создания geometry c itemSize = 4
 	//потому что в противном случае при добавлени этих точек в FrustumPoints.pushArrayCloud() координата w будет undefined
-	settings.Player.assign();
+	Player.assign();
+//	settings.Player.assign();
 
 	if ( pointsOptions.shaderMaterial !== false )
 		getShaderMaterialPoints( group, arrayFuncs,// Player,
@@ -146,7 +158,8 @@ function MyPoints( arrayFuncs, group, settings ) {
 
 			}, {
 
-			Player: settings.Player,
+//			Player: settings.Player,
+//			Player: Player,
 			options: options,
 			pointsOptions: pointsOptions,
 
@@ -156,7 +169,8 @@ function MyPoints( arrayFuncs, group, settings ) {
 		const points = new THREE.Points(
 
 			typeof arrayFuncs === 'function' ? arrayFuncs() :
-				new THREE.BufferGeometry().setFromPoints( settings.Player.getPoints( arrayFuncs,
+//				new THREE.BufferGeometry().setFromPoints( settings.Player.getPoints( arrayFuncs,
+				new THREE.BufferGeometry().setFromPoints( Player.getPoints( arrayFuncs,
 					{ options: options, group: group, t: pointsOptions.tMin } ), 4 ),
 			new THREE.PointsMaterial( { size: options.point.size / options.point.sizePointsMaterial, vertexColors: THREE.VertexColors } )
 
@@ -167,13 +181,25 @@ function MyPoints( arrayFuncs, group, settings ) {
 				indexArray: pointsOptions.frustumPoints.pushArrayCloud( points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 
 			}
+/*
+		if ( pointsOptions.frustumPoints )
+			points.userData.cloud = {
+
+				indexArray: pointsOptions.frustumPoints.pushArrayCloud( points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
+
+			}
+*/
 		points.geometry.setAttribute( 'color',
-			new THREE.Float32BufferAttribute( settings.Player.getColors( arrayFuncs,
+//			new THREE.Float32BufferAttribute( settings.Player.getColors( arrayFuncs,
+			new THREE.Float32BufferAttribute( Player.getColors( arrayFuncs,
 				{
 
 					positions: points.geometry.attributes.position,
+					options: options,
+/*
 					scale: options.scales ? options.scales.w : { min: 0, max: 100 },
 					palette: options.palette,
+*/					
 
 				} ), 4 ) );
 		Points( points );

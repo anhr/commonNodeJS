@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-CameraGui.html">CameraGui</a>~</span>CameraGui<span class="signature">(gui, camera, THREE, Player, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-CameraGui.html">CameraGui</a>~</span>CameraGui<span class="signature">(camera, options, gui<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -42,7 +42,7 @@
     
 
     
-    <h4 class="name" id="CameraGui"><span class="type-signature"></span>new CameraGui<span class="signature">(gui, camera, THREE, Player, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="CameraGui"><span class="type-signature"></span>new CameraGui<span class="signature">(camera, options, gui<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -78,49 +78,12 @@
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>gui</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">GUI</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">is <a href="https://github.com/anhr/dat.gui">new dat.GUI(...)</a>.</td>
-        </tr>
-
     
 
         <tr>
@@ -148,82 +111,8 @@
             
 
             
-                <td class="default">
-                
-                </td>
-            
 
             <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">PerspectiveCamera</a></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>THREE</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><a href="https://github.com/anhr/three.js">THREE</a></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>Player</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Player</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><a href="../../player/jsdoc/index.html" target="_blank">Player</a>.</td>
         </tr>
 
     
@@ -245,8 +134,6 @@
             
                 <td class="attributes">
                 
-                    &lt;optional><br>
-                
 
                 
 
@@ -255,14 +142,8 @@
             
 
             
-                <td class="default">
-                
-                    {}
-                
-                </td>
-            
 
-            <td class="description last">the following options are available.
+            <td class="description last">See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.The following options are available.
                 <h6>Properties</h6>
                 
 
@@ -356,19 +237,19 @@
             
                 <td class="default">
                 
-                    "en"
+                    language code of your browser
                 
                 </td>
             
 
-            <td class="description last">returns the "primary language" subtag of the version of the browser. Default returns "en" is English</td>
+            <td class="description last">returns the "primary language" subtag of the version of the browser.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>options.scales</code></td>
+                <td class="name"><code>scales</code></td>
             
 
             <td class="type">
@@ -400,7 +281,7 @@
                 </td>
             
 
-            <td class="description last">axes scales.See <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.</td>
+            <td class="description last">axes scales.See the <b>options.scales</b> parameter of the <a href="../../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.</td>
         </tr>
 
     
@@ -408,6 +289,39 @@
 </table>
 
             </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gui</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">GUI</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">is <a href="https://github.com/anhr/dat.gui">new dat.GUI(...)</a> parent folder.</td>
         </tr>
 
     
@@ -448,7 +362,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="CameraGui.js.html">CameraGui.js</a>, <a href="CameraGui.js.html#line34">line 34</a>
+        <a href="CameraGui.js.html">CameraGui.js</a>, <a href="CameraGui.js.html#line36">line 36</a>
     </li></ul></dd>
     
 
@@ -625,7 +539,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="CameraGui.js.html">CameraGui.js</a>, <a href="CameraGui.js.html#line299">line 299</a>
+        <a href="CameraGui.js.html">CameraGui.js</a>, <a href="CameraGui.js.html#line325">line 325</a>
     </li></ul></dd>
     
 
@@ -713,7 +627,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="CameraGui.js.html">CameraGui.js</a>, <a href="CameraGui.js.html#line294">line 294</a>
+        <a href="CameraGui.js.html">CameraGui.js</a>, <a href="CameraGui.js.html#line320">line 320</a>
     </li></ul></dd>
     
 
@@ -765,7 +679,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon May 17 2021 11:34:14 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Jul 07 2021 10:43:59 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

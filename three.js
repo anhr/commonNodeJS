@@ -23,17 +23,16 @@
 //import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 */
 
-var _THREE;
-//var _boThree = false;
+var _THREE, _dat;
+
 class three {
 
 	/**
-	 * class for [THREE]{@link https://github.com/anhr/three.js} variable
+	 * class for [THREE]{@link https://github.com/anhr/three.js} and [dat]{@link https://github.com/dataarts/dat.gui} instances.
 	 * */
-	constructor() { }
+	constructor() {}
 	/**
-	 * set three
-	 * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
+	 * set [THREE]{@link https://github.com/anhr/three.js}
 	 */
 	set THREE( THREE ) {
 
@@ -45,21 +44,43 @@ class three {
 
 		}
 		_THREE = THREE;
-//		_boThree = true;
 
 	}
 	/**
-	 * @returns [THREE]{@link https://github.com/anhr/three.js}
+	 * get [THREE]{@link https://github.com/anhr/three.js}
 	 */
 	get THREE() {
 
-		if ( _THREE === undefined ) {
-
+		if ( _THREE === undefined )
 			console.error( 'three: invalid _THREE = ' + _THREE + '. Call three.THREE = THREE first.' );
-//			throw( 'three: invalid _THREE = ' + _THREE + '. Call three.THREE = THREE first.' );
+		return _THREE;
+
+	}
+	/**
+	 * set [dat]{@link https://github.com/dataarts/dat.gui}
+	 */
+	set dat( dat ) {
+
+		if ( _dat ) {
+
+			if ( !Object.is( dat, _dat ) )
+				console.error( 'three: duplicate dat. Please use one instance of the dat library.' )
+			return;
 
 		}
-		return _THREE;
+		_dat = dat;
+
+	}
+	/**
+	 * get [dat]{@link https://github.com/dataarts/dat.gui}
+	 */
+	get dat() {
+
+/*Неверно срабатывает когда dat не импортирован
+		if ( _dat === undefined && !boSetDat )
+			console.error( 'three: invalid _dat = ' + _dat + '. Call three.dat = dat first.' );
+*/			
+		return _dat;
 
 	}
 

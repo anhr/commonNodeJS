@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -30,31 +30,32 @@
 	<script type="module">
 
 		//import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import * as THREE from '../../../../three.js/dev/build/three.module.min.js';
 		import * as THREE from '../../../../three.js/dev/build/three.module.js';
-		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
+//		import * as THREE from '../../../../three.js/dev/build/three.module.min.js';
+//		import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+//		import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 
 		import three from '../../three.js'
 		three.THREE = THREE;
 
 		import { dat } from '../../dat/dat.module.js';
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+		three.dat = dat;
 
-		import cookie from '../../cookieNodeJS/cookie.js';
-		//import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
-		//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
+//		import cookie from '../../cookieNodeJS/cookie.js';
+//		import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
+//		import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
-		import { getLanguageCode } from '../../lang.js';
-		//import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+//		import { getLanguageCode } from '../../lang.js';
+//		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 
 		import StereoEffect from '../../StereoEffect/StereoEffect.js';
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
+		import Player from '../player.js';
 		//import Player from '../build/player.module.js';
 		//import Player from '../build/player.module.min.js';
-		import Player from '../player.js';
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
 //		if ( typeof Player !== 'undefined' )  Player.assign();
@@ -64,37 +65,41 @@
 		//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 //		ColorPicker.palette.setTHREE( THREE );
 
-		//import getShaderMaterialPoints from 'http://localhost/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 		//import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
+		//import getShaderMaterialPoints from 'http://localhost/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 		//import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 
 		import MyPoints from '../../myPoints/myPoints.js';
 		//import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
 
-		//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 		import CanvasMenu from '../../canvasMenu/canvasMenu.js';
+		//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 		//import CanvasMenu from 'http://localhost/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 
 //		import controllerPlay from '../../controllerPlay/controllerPlay.js';
 //		import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
 
-		//import { OrbitControls } from 'http://localhost/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
-		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-		//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+//WARNING: Multiple instances of Three.js being imported. Use Options.createOrbitControls(...) http://localhost/anhr/commonNodeJS/master/jsdoc/Options/Options.html#createOrbitControls
+//		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
+//		import { OrbitControls } from 'http://localhost/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
+//		import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
+//		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 
-		//import OrbitControlsGui from 'http://localhost/anhr/commonNodeJS/master/OrbitControlsGui.js';
-		import OrbitControlsGui from '../../OrbitControlsGui.js';
-		//import OrbitControlsGui from 'https://raw.githack.com/anhr/commonNodeJS/master/OrbitControlsGui.js';
+		import OrbitControlsGui from '../../OrbitControls/OrbitControlsGui.js';
+//		import OrbitControlsGui from '../../OrbitControlsGui.js';
+//		import OrbitControlsGui from 'http://localhost/anhr/commonNodeJS/master/OrbitControlsGui.js';
+//		import OrbitControlsGui from 'https://raw.githack.com/anhr/commonNodeJS/master/OrbitControlsGui.js';
 
-		//import CameraGui from 'http://localhost/anhr/commonNodeJS/master/CameraGui.js';
 		import CameraGui from '../../CameraGui.js';
+		//import CameraGui from 'http://localhost/anhr/commonNodeJS/master/CameraGui.js';
 		//import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
 
 		import GuiSelectPoint from '../../guiSelectPoint/guiSelectPoint.js';
 		//import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
-		var camera, scene, renderer, stereoEffect, controls, player, guiSelectPoint, raycaster;//, points;
+		import Options from '../../Options.js'
+
+		var camera, scene, renderer, raycaster, stereoEffect;//, points, controls, guiSelectPoint, player;
 
 		init();
 		animate();
@@ -103,25 +108,6 @@
 
 			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
-			if ( typeof Player !== 'undefined' )
-				Player.cameraTarget.init( {
-
-					//boLook: false,
-					camera: camera,
-					rotation: {
-
-						//angle: Math.PI,
-						//angle: new Function( 't', 'return 5*t' ),
-						//angle: [0, Math.PI / 2],
-						//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
-						//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
-
-					},
-					//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
-					//distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
-					distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+3*t' ) ),
-
-				} );
 
 			scene = new THREE.Scene();
 
@@ -162,13 +148,11 @@
 				}
 
 			}
-/*
-			const palette = typeof ColorPicker === 'undefined' ? undefined : new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
+			
+//			const options = 
+			const options = new Options( {
 
-			var selectPlaySceneOptions;
-*/
-			const options = {
-
+				//getLanguageCode: getLanguageCode,
 				scales: {
 
 					x: { name: 'distance', },
@@ -188,7 +172,7 @@
 				},
 				palette: typeof ColorPicker === 'undefined' ? undefined : new ColorPicker.palette(),// { palette: ColorPicker.paletteIndexes.bidirectional } ),
 				point: { size: 15 },
-				player: {
+				playerOptions: {
 
 					marks: 100,//Ticks count of the playing.
 					interval: 25,//Ticks per seconds.
@@ -198,6 +182,35 @@
 					dt: 0.01,//for max: Infinity
 
 				},
+				//player: false,
+				dat: {//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
+
+//					dat: typeof dat !== 'undefined' ? dat : undefined,
+					//gui: typeof dat !== 'undefined' ? new dat.GUI() : undefined,
+					//cookie: false,
+					cookieName: 'mySettings',
+					//orbitControlsGui: false,
+					//axesHelperGui: false,
+					//playerGui: false,
+					//playController: false,
+					//guiSelectPoint: false,
+					//moveScene: false,
+					//cameraGui: false,
+					//spriteTextGui: false,
+					//stereoEffectsGui: false,
+					//folderPoint: false,
+
+				},
+				//dat: false,
+				stereoEffect: {
+
+					//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+					far: camera.far,
+					camera: camera,
+					//stereoAspect: 1,
+
+				},
+				//stereoEffect: false,
 				raycaster: {
 
 					addParticle: function ( particle ) {
@@ -235,7 +248,7 @@
 						renderer.domElement.style.cursor = 'pointer';
 
 					},
-					onIntersectionOut: function ( ) {
+					onIntersectionOut: function () {
 
 						if ( this.spriteText ) {
 
@@ -248,32 +261,24 @@
 					},
 					onMouseDown: function ( intersect ) {
 
-						if ( typeof axesHelper !== 'undefined' )
-							axesHelper.exposePosition( intersect );
-						if ( typeof guiSelectPoint !== 'undefined' )
-							guiSelectPoint.select( intersect );
+						if ( options.axesHelper )
+							options.axesHelper.exposePosition( intersect );
+						if ( options.guiSelectPoint )
+							options.guiSelectPoint.select( intersect );
 
 					}
 
 				}
-						
-			}
+
+			} );
 			if ( typeof Player !== 'undefined' ) {
 
-/*
-				selectPlaySceneOptions = {
-
-					palette: palette,
-
-				}
-*/
-				player = new Player( scene, {
+//				player = new Player( scene, 
+				new Player( scene, {
 
 					options: options,
-//					selectPlaySceneOptions: options,
-//					cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
 /*
-					timeSettings: {
+					playerOptions: {
 
 						marks: 100,//Ticks count of the playing.
 						interval: 25,//Ticks per seconds.
@@ -288,35 +293,51 @@
 
 				} );
 
+				//Test for duplicate player
+				//new Player( scene, { options: options, } );
+
+
+//				Player.cameraTarget.init
+				options.playerOptions.cameraTarget.init( {
+
+					//boLook: false,
+					camera: camera,
+					rotation: {
+
+						//angle: Math.PI,
+						//angle: new Function( 't', 'return 5*t' ),
+						//angle: [0, Math.PI / 2],
+						//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+						//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+					},
+					//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
+					//distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
+					distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+3*t' ) ),
+
+				}, options );
+
 			}
 
 			if ( ( typeof GuiSelectPoint !== "undefined" ) && ( typeof dat !== "undefined" ) ) {
 
-				guiSelectPoint = new GuiSelectPoint( THREE, {
+//				guiSelectPoint = new GuiSelectPoint
+				new GuiSelectPoint( options, {
 
-					getLanguageCode: getLanguageCode,
+//					getLanguageCode: getLanguageCode,
 					/*
 					cameraTarget: {
 
 						camera: camera,
-//						orbitControls: controls,
 
 					},
 					*/
-					options: options,
-/*
-					options: {
-
-						scales: { w: { name: 'color', min: -100, max: 100, } },
-						palette: new ColorPicker.palette(),// { palette: ColorPicker.paletteIndexes.bidirectional } );
-						
-					}
-*/
+//					options: options,
 
 				} );
 				
 				//Player changes the guiSelectPoint control's values during playing
-				//options.guiSelectPoint = guiSelectPoint;
+//				options.guiSelectPoint = guiSelectPoint;
 				//if ( selectPlaySceneOptions ) selectPlaySceneOptions.guiSelectPoint = guiSelectPoint;
 				
 			}
@@ -347,7 +368,6 @@
 					),//Animated 3D point
 					name: 'w is function',
 					trace: true,//Displays the trace of the point movement.
-					/*
 					cameraTarget: {
 
 						//boLook: false,
@@ -364,7 +384,6 @@
 						},
 
 					},
-					*/
 
 				},
 				{
@@ -472,7 +491,7 @@
 
 						}
 
-						if ( guiSelectPoint ) guiSelectPoint.addMesh( points );
+						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 					},
 					{
@@ -487,17 +506,17 @@
 				console.log( 'Using MyPoints method for creating of the points.' );
 				MyPoints( arrayFuncs, scene, {
 
-						Player: typeof Player === 'undefined' ? undefined : Player,
 						options: options,
 						pointsOptions: {
 
 							//position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
 							//rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-							shaderMaterial: {},
+							//shaderMaterial: { point: { size: 100 } },
+							shaderMaterial: false,
 							onReady: function( points ) {
 
 								arrayParticles.push( points );
-								if ( guiSelectPoint ) guiSelectPoint.addMesh( points );
+								if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 							}
 
@@ -524,7 +543,9 @@
 
 					], scene, {
 
-						Player: typeof Player === 'undefined' ? undefined : Player,
+//Не помню зачем всунул эту строку
+//						Player: typeof Player === 'undefined' ? undefined : Player,
+
 						options: options,
 						pointsOptions: {
 
@@ -535,7 +556,7 @@
 							onReady: function( points ) {
 
 								arrayParticles.push( points );
-								if ( guiSelectPoint ) guiSelectPoint.addMesh( points );
+								if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 							}
 
@@ -548,7 +569,8 @@
 				console.log( 'Using THREE.Points method for creating of the points.' );
 				const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
 					typeof Player === 'undefined' ? arrayFuncs:
-						Player.getPoints( arrayFuncs, { group: scene, options: { player: { player: player } } } ),
+						Player.getPoints( arrayFuncs, { group: scene, options: options } ),
+//						Player.getPoints( arrayFuncs, { group: scene, options: { player: { player: player } } } ),
 					typeof Player === 'undefined' ? 3:
 						Player.getItemSize( arrayFuncs )
 				),
@@ -559,7 +581,7 @@
 						sizeAttenuation: false,
 
 					} ) );
-				if ( guiSelectPoint ) guiSelectPoint.addMesh( points );
+				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 				if ( typeof Player === 'undefined' ) {
 
 					points.geometry.setAttribute( 'color',
@@ -613,9 +635,9 @@
 				}
 
 			}
-			if ( guiSelectPoint ) guiSelectPoint.addMesh( cube );
+			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( cube );
 
-			//player.play3DObject();
+			//options.player.play3DObject();
 
 			renderer = new THREE.WebGLRenderer( {
 
@@ -627,111 +649,105 @@
 
 			//
 
+			options.createOrbitControls( camera, renderer, scene );
+/*			
 			if ( typeof OrbitControls !== 'undefined' ) {
 
-				controls = new OrbitControls( camera, renderer.domElement );
-				controls.target.set(  -0.2, -0.2, -0.2 );
-				controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-				controls.update();
-				if ( typeof Player !== 'undefined' ) Player.orbitControls = controls;
+				options.orbitControls = new OrbitControls( camera, renderer.domElement );
+				options.orbitControls.target.set(  -0.2, -0.2, -0.2 );
+				options.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
+				options.orbitControls.update();
+//				if ( typeof Player !== 'undefined' ) Player.orbitControls = options.orbitControls;
 
 			}
+*/			
 
 			const cursor = renderer.domElement.style.cursor;
 
 			if ( typeof StereoEffect !== "undefined" ) {
-				stereoEffect = new StereoEffect( renderer, {
+				new StereoEffect( renderer, options );/*{
 
 					//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
 					far: camera.far,
 					camera: camera,
 					//stereoAspect: 1,
+//					options: options,//Among other things, it adds the "Stereo Effects" button into canvasMenu
 
-				} );
-				//				stereoEffect.setSize( window.innerWidth, window.innerHeight );
+				} );*/
+				stereoEffect = options.stereoEffect;
+//				stereoEffect.setSize( window.innerWidth, window.innerHeight );
 
 				raycaster = new THREE.Raycaster();
 
-				//the precision of the raycaster when intersecting objects, in world units.
-				//See https://threejs.org/docs/#api/en/core/Raycaster.params.
-				raycaster.params.Points.threshold = 0.03;
+				if ( raycaster.setStereoEffect ) {
 
-				raycaster.setStereoEffect( {
+					//the precision of the raycaster when intersecting objects, in world units.
+					//See https://threejs.org/docs/#api/en/core/Raycaster.params.
+					raycaster.params.Points.threshold = 0.03;
 
-					renderer: renderer,
-					camera: camera,
-					stereoEffect: stereoEffect,
+					raycaster.setStereoEffect( {
 
-				} );
-				raycaster.stereo.addParticles( arrayParticles );
+						renderer: renderer,
+						camera: camera,
+						stereoEffect: stereoEffect,
+
+					} );
+					raycaster.stereo.addParticles( arrayParticles );
+
+				}
 
 			}
 
 			if ( typeof CanvasMenu !== "undefined" ) {
 
-				new CanvasMenu( renderer, {
+				new CanvasMenu( renderer, { options: options } );/*{
 
-					player: player,
+					player: options.player,
 					stereoEffect: stereoEffect,
 					getLanguageCode: typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode,
 
-				} );
+				} );*/
 
 			}
 
 			//Using [dat.gui](https://github.com/anhr/dat.gui) for change of the settings.
 
-			if ( typeof dat !== "undefined" ) {
+//			if ( typeof dat !== "undefined" )
+			if ( options.dat ) {
 
-				const gui = new dat.GUI();
+//				const gui = new dat.GUI();
+				const gui = options.dat.gui;
 
 				if ( stereoEffect )
+					stereoEffect.gui();
+/*
 					stereoEffect.gui( gui, {
 
 						getLanguageCode: typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode,
 						cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
 
 					} );
+*/
 				if ( typeof OrbitControlsGui !== 'undefined' ) {
 
-					const orbitControlsGui = new OrbitControlsGui( gui, controls, {
-
-						getLanguageCode: getLanguageCode,
-						scales: options.scales,
-
-					} );
-					if ( typeof Player !== 'undefined' ) Player.orbitControlsGui = orbitControlsGui;
+					new OrbitControlsGui( options );//, gui );
 
 				}
 				if ( ( typeof CameraGui !== 'undefined' ) && ( typeof Player !== 'undefined' ) )
-					new CameraGui( gui, camera, THREE, Player, {
+					new CameraGui( camera, options );
+				if ( options.player !== false ) {
 
-						getLanguageCode: getLanguageCode,
-						scales: options.scales,
-						orbitControls: controls,
-
-					} );
-				if ( player !== undefined ) {
-
-					player.gui( gui, {
+					options.player.gui(); /*gui, {
 
 						getLanguageCode: typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode,
 						cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
 
-					} );
-					new player.PlayController( gui, getLanguageCode );
-/*
-					if ( typeof controllerPlay !== 'undefined' )
-						controllerPlay.create( player, gui );
-*/
+					} );*/
+					new options.player.PlayController();// gui, getLanguageCode );
 
 				}
 
-				if ( guiSelectPoint ) {
-
-					guiSelectPoint.add( gui );
-
-				}
+				if ( options.guiSelectPoint ) options.guiSelectPoint.add( gui );
 
 			}
 
@@ -749,12 +765,12 @@
 					// update the picking ray with the camera and mouse position
 					raycaster.setFromCamera( mouse, camera );
 
-					raycaster.stereo.onDocumentMouseMove( event );
+					if ( raycaster.stereo ) raycaster.stereo.onDocumentMouseMove( event );
 
 				}, false );
 				window.addEventListener( 'pointerdown', function ( event ) {
 
-					raycaster.stereo.onDocumentMouseDown( event );
+					if ( raycaster.stereo ) raycaster.stereo.onDocumentMouseDown( event );
 
 				}, false );
 
@@ -776,7 +792,7 @@
 
 			requestAnimationFrame( animate );
 
-			if ( stereoEffect === undefined )
+			if ( !stereoEffect )
 				renderer.render( scene, camera );
 			else stereoEffect.render( scene, camera );
 

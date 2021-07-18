@@ -29,9 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-functionsFolder.html">functionsFolder</a>~</span>functionsFolder<span class="signature">(fParent, scales, THREE, onFinishChange, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
-        
-            <div class="class-description">Adds the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Functions</a> folder into <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</div>
+            <span class="ancestors"><a href="module-functionsFolder.html">functionsFolder</a>~</span>functionsFolder<span class="signature">(fParent, scales, onFinishChange, options, vector<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -42,16 +40,18 @@
         
 
     
-    <h2>Constructor</h2>
-    
 
     
-    <h4 class="name" id="functionsFolder"><span class="type-signature"></span>new functionsFolder<span class="signature">(fParent, scales, THREE, onFinishChange, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="functionsFolder"><span class="type-signature"></span>new functionsFolder<span class="signature">(fParent, scales, onFinishChange, options, vector<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
 
 
+
+<div class="description">
+    Adds the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Functions</a> folder into <a href="https://github.com/anhr/dat.gui">dat.gui</a>.
+</div>
 
 
 
@@ -150,37 +150,6 @@
 
         <tr>
             
-                <td class="name"><code>THREE</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><a href="https://github.com/anhr/three.js">THREE</a></td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>onFinishChange</code></td>
             
 
@@ -218,7 +187,7 @@
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">Options</span>
 
 
             
@@ -226,8 +195,6 @@
 
             
                 <td class="attributes">
-                
-                    &lt;optional><br>
                 
 
                 
@@ -238,7 +205,7 @@
 
             
 
-            <td class="description last">the following options are available:
+            <td class="description last"><a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> instance. The following options are available.See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
                 <h6>Properties</h6>
                 
 
@@ -295,12 +262,19 @@
             
                 <td class="default">
                 
-                    "en"
+                    language code of your browser
                 
                 </td>
             
 
-            <td class="description last">returns the "primary language" subtag of the version of the browser. Default returns "en" is English</td>
+            <td class="description last">returns the "primary language" subtag of the version of the browser.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -331,10 +305,6 @@
                 </td>
             
 
-            
-                <td class="default">
-                
-                </td>
             
 
             <td class="description last">Vector with initial text of the function
@@ -371,7 +341,7 @@
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">string</span>
 
 
             
@@ -404,7 +374,7 @@
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">string</span>
 
 
             
@@ -437,7 +407,7 @@
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">string</span>
 
 
             
@@ -458,13 +428,6 @@
             
 
             <td class="description last">text of the z axis function</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
         </tr>
 
     
@@ -512,7 +475,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="functionsFolder.js.html">functionsFolder.js</a>, <a href="functionsFolder.js.html#line34">line 34</a>
+        <a href="functionsFolder.js.html">functionsFolder.js</a>, <a href="functionsFolder.js.html#line38">line 38</a>
     </li></ul></dd>
     
 
@@ -672,7 +635,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="functionsFolder.js.html">functionsFolder.js</a>, <a href="functionsFolder.js.html#line320">line 320</a>
+        <a href="functionsFolder.js.html">functionsFolder.js</a>, <a href="functionsFolder.js.html#line352">line 352</a>
     </li></ul></dd>
     
 
@@ -809,7 +772,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="functionsFolder.js.html">functionsFolder.js</a>, <a href="functionsFolder.js.html#line331">line 331</a>
+        <a href="functionsFolder.js.html">functionsFolder.js</a>, <a href="functionsFolder.js.html#line363">line 363</a>
     </li></ul></dd>
     
 
@@ -1041,7 +1004,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="functionsFolder.js.html">functionsFolder.js</a>, <a href="functionsFolder.js.html#line227">line 227</a>
+        <a href="functionsFolder.js.html">functionsFolder.js</a>, <a href="functionsFolder.js.html#line259">line 259</a>
     </li></ul></dd>
     
 
@@ -1093,7 +1056,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Apr 09 2021 07:19:04 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Jul 12 2021 08:00:52 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

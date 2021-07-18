@@ -262,6 +262,108 @@
             <td class="type">
             
                 
+<span class="param-type">Options</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    new Options()
+                
+                </td>
+            
+
+            <td class="description last"><a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> instance. The following options are available.See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>orbitControls</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type">OrbitControls</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><pre>false - do not add the <a href="https://threejs.org/docs/index.html#examples/en/controls/OrbitControls">OrbitControls</a>. Allow the camera to orbit around a target.Or <b>OrbitControls</b> instance.</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dat</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">object</span>
 
 
@@ -283,12 +385,256 @@
             
                 <td class="default">
                 
-                    {}
+                </td>
+            
+
+            <td class="description last">use dat-gui JavaScript Controller Library. <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.See <b>options.dat</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>scales</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
                 
                 </td>
             
 
-            <td class="description last">see <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">myThree</a> <b>options</b> parameter for details</td>
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">axes scales.See <b>options.scales</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>guiSelectPoint</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type">GuiSelectPoint</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><pre>false - do not displays the <a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">Select Point</a>. <a href="https://github.com/dataarts/dat.gui">dat.gui</a> based graphical user interface for select a point from the mesh.Or <b>GuiSelectPoint</b> instance.</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>raycaster</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">for <a href="https://threejs.org/docs/index.html#api/en/core/Raycaster">Raycaster</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>palette</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">MyThree.ColorPicker.palette</span>
+|
+
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Points сolor.See <b>options.palette</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>getLanguageCode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+|
+
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    language code of your browser
+                
+                </td>
+            
+
+            <td class="description last">Your custom <b>getLanguageCode()</b> function or language code string.See <b>options.getLanguageCode</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>axesHelper</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type">AxesHelper</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><pre>false - do not add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.Or <b>AxesHelper</b> instance.</pre></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -919,82 +1265,6 @@
         </tr>
 
     
-
-        <tr>
-            
-                <td class="name"><code>cookie</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">cookie</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Your custom cookie function for saving and loading of the FrustumPoints settings.<pre>See <a href="https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS">cookieNodeJS</a>.Default cookie is not saving settings.Has effect only if you called the <a href="#gui">frustumPoints.gui(...)</a> function.</pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cookieName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    "FrustumPoints"
-                
-                </td>
-            
-
-            <td class="description last">Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.</td>
-        </tr>
-
-    
     </tbody>
 </table>
 
@@ -1046,7 +1316,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line100">line 100</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line114">line 114</a>
     </li></ul></dd>
     
 
@@ -1161,7 +1431,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line1061">line 1061</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line1082">line 1082</a>
     </li></ul></dd>
     
 
@@ -1204,7 +1474,7 @@
     
 
     
-    <h4 class="name" id="create"><span class="type-signature"></span>create<span class="signature">(renderer, optionsCreate<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="create"><span class="type-signature"></span>create<span class="signature">(renderer)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1236,11 +1506,7 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1265,122 +1531,10 @@
             </td>
 
             
-                <td class="attributes">
-                
 
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
             
 
             <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer">THREE.WebGLRenderer</a>.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>optionsCreate</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    {}
-                
-                </td>
-            
-
-            <td class="description last">The following options are available
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>orbitControls</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">OrbitControls</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Moves <b>frustumPoints</b> to the front of the camera if the user has moved the camera. See <a href="https://threejs.org/docs/index.html?q=orbi#examples/en/controls/OrbitControls">OrbitControls</a></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
         </tr>
 
     
@@ -1421,7 +1575,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line185">line 185</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line202">line 202</a>
     </li></ul></dd>
     
 
@@ -1457,7 +1611,7 @@
     
 
     
-    <h4 class="name" id="gui"><span class="type-signature"></span>gui<span class="signature">(folder, guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="gui"><span class="type-signature"></span>gui<span class="signature">(folder<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1493,8 +1647,6 @@
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
@@ -1520,6 +1672,8 @@
             
                 <td class="attributes">
                 
+                    &lt;optional><br>
+                
 
                 
 
@@ -1527,158 +1681,9 @@
                 </td>
             
 
-            
-                <td class="default">
-                
-                </td>
             
 
             <td class="description last">parent folder</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>guiParams</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    {}
-                
-                </td>
-            
-
-            <td class="description last">Followed parameters is allowed. Default is no parameters
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>getLanguageCode</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    "en"
-                
-                </td>
-            
-
-            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.Default returns the 'en' is English language.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>lang</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Object with localized language values<pre>Example Using of guiParams.lang:guiParams = {	getLanguageCode: function() { return 'az'; },	lang: { textHeight: 'mətn boyu', languageCode: 'az' },}</pre></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
         </tr>
 
     
@@ -1719,7 +1724,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line1125">line 1125</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line1127">line 1127</a>
     </li></ul></dd>
     
 
@@ -1803,7 +1808,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line971">line 971</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line992">line 992</a>
     </li></ul></dd>
     
 
@@ -1953,7 +1958,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line139">line 139</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line158">line 158</a>
     </li></ul></dd>
     
 
@@ -2051,7 +2056,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line944">line 944</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line965">line 965</a>
     </li></ul></dd>
     
 
@@ -2184,7 +2189,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line1002">line 1002</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line1023">line 1023</a>
     </li></ul></dd>
     
 
@@ -2272,7 +2277,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line974">line 974</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line995">line 995</a>
     </li></ul></dd>
     
 
@@ -2360,7 +2365,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line1081">line 1081</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line1102">line 1102</a>
     </li></ul></dd>
     
 
@@ -2456,7 +2461,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line525">line 525</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line546">line 546</a>
     </li></ul></dd>
     
 
@@ -2616,7 +2621,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line1014">line 1014</a>
+        <a href="frustumPoints.js.html">frustumPoints.js</a>, <a href="frustumPoints.js.html#line1035">line 1035</a>
     </li></ul></dd>
     
 
@@ -2664,7 +2669,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue May 18 2021 06:27:27 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Jul 12 2021 08:26:13 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

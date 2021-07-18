@@ -67,20 +67,11 @@ import three from '../three.js'
  * @param {number} [options.rect.borderRadius=0 is no radius] border corners radius.
  * @see Thanks to {@link https://github.com/vasturiano/three-spritetext|three-spritetext}
  */
-export function SpriteText( text, position,// = new THREE.Vector3( 0, 0, 0 ),//THREE is not defined in example http://localhost/anhr/commonNodeJS/master/SpriteText/Examples/SpriteText.html
-	options = {} ) {
+export function SpriteText( text, position,	options = {} ) {
 
 	const THREE = three.THREE;
 
 	position = position || new THREE.Vector3( 0, 0, 0 );
-/*
-	if ( typeof THREE === "undefined" ) {
-
-		console.error( 'SpriteText: Please call SpriteText.setTHREE( THREE ) first.' );
-		return;
-		
-	}
-*/
 
 	const sprite = new THREE.Sprite( new THREE.SpriteMaterial( {
 
@@ -236,33 +227,9 @@ export function SpriteText( text, position,// = new THREE.Vector3( 0, 0, 0 ),//T
 
 };
 
-/* *
- * set THREE
- * @function SpriteText.
- * setTHREE
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
- */
-//SpriteText.setTHREE = function ( _THREE ) { THREE = _THREE; }
-
-/* *
- * get THREE
- * @function SpriteText.
- * getTHREE
- * @returns {@link https://github.com/anhr/three.js|THREE}
- */
-/*
-SpriteText.getTHREE = function () {
-
-	if ( !THREE )
-		console.error( 'Call SpriteText.setTHREE( THREE ) first.');
-	return THREE;
-
-}
-*/
 /**
- * Returns {@link https://threejs.org/docs/index.html#api/en/objects/Sprite.center|center}
- * @function SpriteText.
- * getCenter
+ * @namespace
+ * @description Returns {@link https://threejs.org/docs/index.html#api/en/objects/Sprite.center|center}
  * @param {THREE.Vector2|object} center If <b>center.x</b> and <b>center.y</b> is defined, then it the text's anchor point.
  * <pre>
  * Otherwise, the center is calculated so that the text is always inside the canvas.
@@ -321,28 +288,26 @@ function updateOptions( group, options ) {
 }
 
 /**
- * Call SpriteText.updateSpriteTextGroup if you want to update of the options of all SpriteText, added in to group and all child groups
- * @function SpriteText.
- * updateSpriteTextGroup
- * @param {THREE.Group|THREE.Scene} group group or scene of SpriteText and of all child groups of SpriteText for which these settings will have an effect.
+ * @namespace
+ * @description Call <b>SpriteText.updateSpriteTextGroup</b> if you want to update of the <b>options</b> of all <a href="module-SpriteText.html" target="_blank">SpriteText</a>, added in to <b>group</b> and all <b>child groups</b>.
+ * @param {THREE.Group|THREE.Scene} group [group]{@link https://threejs.org/docs/index.html?q=gr#api/en/objects/Group} or [scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene} of the <b>SpriteText</b> and of all <b>child groups</b> of the <b>SpriteText</b> for which these settings will have an effect.
  * @example
 <script>
-	options = {
+	optionsSpriteText = {
 
 		textHeight: 0.1,
 		sizeAttenuation: false,
 
 	}
-	const fSpriteTextAll = SpriteTextGui( gui, scene, {
+	const fSpriteTextAll = SpriteTextGui( scene, options, {
 
-		getLanguageCode: getLanguageCode,
 		settings: { zoomMultiplier: 1.5, },
-		options: options
+		options: optionsSpriteText
 
 	} );
 
 	//Change of the text height
-	options.textHeight = 0.2;
+	optionsSpriteText.textHeight = 0.2;
 
 	//update of the options of all SpriteText, added in to group and all child groups
 	SpriteText.updateSpriteTextGroup( group );

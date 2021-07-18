@@ -12,7 +12,7 @@
  */
 
 import three from '../three.js'
-import setOptions from '../setOptions.js'
+//import setOptions from '../setOptions.js'
 import Player from '../player/player.js';
 
 //Thanks to https://stackoverflow.com/a/27369985/5175935
@@ -40,24 +40,21 @@ const currentScriptPath = getCurrentScriptPath();
 
 /**
  * get THREE.Points with THREE.ShaderMaterial material
- * @param {THREE.Group|THREE.Scene} group THREE group or scene
+ * @param {THREE.Group|THREE.Scene} group [THREE.Group]{@link https://threejs.org/docs/index.html?q=group#api/en/objects/Group} or [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
  * @param {array} arrayFuncs <b>points.geometry.attributes.position</b> array.
  * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
  * @param {function(THREE.Points)} onReady Callback function that take as input the new THREE.Points.
  * @param {object} [settings={}]
  * @param {number} [settings.tMin=0] start time. Uses for playing of the points.
- * @param {Player} [settings.Player] <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
- * Define <b>Player</b> only if you want trace of the moving of the points during playing.
- * @param {object} [settings.pointsOptions] see <a href="../../myPoints/jsdoc/module-MyPoints.html" target="_blank">myPoints</a> <b>settings.pointsOptions</b> parameter for details
+ * @param {object} [settings.pointsOptions] points options.
+ * See <b>settings.pointsOptions</b> of <a href="../../MyPoints/jsdoc/module-MyPoints.html" target="_blank">MyPoints</a> for details.
  * @param {object} [settings.options={}] see <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> <b>options</b> parameter for details
- * @param {number} [settings.options.a=1] multiplier. Second parameter of the arrayFuncs item function.
- * @param {number} [settings.options.b=0] addendum. Third parameter of the arrayFuncs item function.
- * @param {number} [settings.options.point.size=5.0] point size.
- * @param {object} [settings.options.scales.w] followed w axis scale params is available
- * @param {object} [settings.options.scales.w.min] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
- * <p>Default is undefined. Minimal palette range is 0.</p>
- * @param {object} [settings.options.scales.w.max] Maximal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
-  * <p>Default is undefined. Maximal palette range is 100</p>
+ * @param {Object} [settings.options.point] point options.
+ * See <a href="../../jsdoc/Options/Options.html#point" target="_blank">Options get point</a> member for details.
+ * @param {number} [settings.options.scales] Axis scales.
+ * See  <b>options.scales</b> of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> for details.
+ * @param {object} [settings.options.scales.w] w axis scale.
+ * See <a href="../../jsdoc/Options/Options.html#setW" target="_blank">Options.setW(options)</a> for details.
 */
 function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 
@@ -68,18 +65,15 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 			settings.tMin === undefined ? 0 : settings.tMin :
 			settings.pointsOptions.tMin === undefined ? 0 : settings.pointsOptions.tMin;
 
-
+/*
 	settings.options = settings.options || {};
 	settings.options.a = settings.options.a || 1;
 	settings.options.b = settings.options.b || 0;
-//	settings.options.scales = settings.options.scales || {};
 	setOptions.setScales( settings.options );
-
-	settings.options.point = settings.options.point || {};
-	settings.options.point.size = settings.options.point.size || 5.0;
+	setOptions.setPoint( settings.options );
+*/	
 
 	settings.pointsOptions = settings.pointsOptions || {};
-	
 
 	//Эту строку нужно вызывать до создания точек THREE.Points
 	//что бы вызывалась моя версия THREE.BufferGeometry().setFromPoints для создания geometry c itemSize = 4
@@ -90,7 +84,8 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 		geometry = arrayFuncs();
 	else geometry = new THREE.BufferGeometry().setFromPoints
 		( Player.getPoints( arrayFuncs,
-			{ options: { a: settings.options.a, b: settings.options.b }, group: group, t: tMin, } ),
+			{ options: settings.options, group: group, t: tMin, } ),
+//			{ options: { a: settings.options.a, b: settings.options.b }, group: group, t: tMin, } ),
 			arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
 	const indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud( geometry ) :  undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 	if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints ) {
@@ -104,10 +99,13 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 
 					opacity: settings.pointsOptions === undefined ? undefined : settings.pointsOptions.opacity,
 					positions: geometry.attributes.position,
+					options: settings.options,
+/*					
 //					scale: settings.options.scales.w,
 					scales: settings.options.scales,
 					palette: settings.options.palette,
 					tMin: tMin,
+*/					
 
 				} ),
 			4 ) );
@@ -188,8 +186,8 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 		}
 
 		path = path || {};
-		path.vertex = path.vertex || currentScriptPath + "/vertex.c";
-		path.fragment = path.fragment || currentScriptPath + "/fragment.c";
+		path.vertex = path.vertex || currentScriptPath + "/getShaderMaterialPoints/vertex.c";
+		path.fragment = path.fragment || currentScriptPath + "/getShaderMaterialPoints/fragment.c";
 		ShaderLoader( path.vertex, path.fragment,
 			function ( vertex, fragment ) {
 
@@ -292,16 +290,12 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 			points.material.uniforms.palette.value.needsUpdate = true;
 		if ( points.material.uniforms.cloudPoints !== undefined )
 			points.material.uniforms.cloudPoints.value.needsUpdate = true;
-
-		if ( settings.Player ) {
-
-			settings.Player.selectMeshPlayScene( points, undefined, 0, settings.options );
-			
-			//Что бы камера смотрела на выбранную точку сразу после запуска приложения
-			const cameraTarget = settings.Player.cameraTarget.get();
-			if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition();
-
-		}
+//		Player.selectMeshPlayScene( points, undefined, 0, settings.options );
+		Player.selectMeshPlayScene( points, { options: settings.options } );
+		//Что бы камера смотрела на выбранную точку сразу после запуска приложения
+//		const cameraTarget = Player.cameraTarget.get( settings.options );
+		const cameraTarget = settings.options.playerOptions.cameraTarget.get( settings.options );
+		if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition();
 
 	}, settings.pointsOptions === undefined ? undefined : settings.pointsOptions.path );
 

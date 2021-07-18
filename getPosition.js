@@ -1,4 +1,4 @@
-﻿/**
+/**
  * get position functions library
  *
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
@@ -14,25 +14,6 @@
 
 import three from './three.js'
 
-//var THREE;
-/* *
- * set THREE
- * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
- */
-/*
-export function getPositionSetTHREE ( _THREE ) {
-
-	if ( THREE ) {
-
-		if ( !Object.is( THREE, _THREE ) )
-			console.error( 'getPositionSetTHREE: duplicate THREE. Please use one instance of the THREE library.' )
-		return;
-
-	}
-	THREE = _THREE;
-
-}
-*/
 /**
  * gets the position from the geometry.attributes.position of the object.
  * @param {THREE.Mesh} object
@@ -42,14 +23,6 @@ export function getPositionSetTHREE ( _THREE ) {
 export function getObjectLocalPosition( object, index ) {
 
 	const THREE = three.THREE;
-/*
-	if ( !THREE ) {
-
-		console.error( 'getObjectLocalPosition: call getPositionSetTHREE( THREE ); first' );
-		return;
-
-	}
-*/
 	const attributesPosition = object.geometry.attributes.position,
 		position = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
 	position.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
@@ -97,7 +70,7 @@ export function getWorldPosition( object, pos ) {
 		position = getPosition( object, position );
 		object = object.parent;
 
-	} while ( object.parent );
+	} while ( object && object.parent );
 	return position;
 
 }

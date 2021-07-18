@@ -36,6 +36,9 @@
 		//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 //		ColorPicker.palette.setTHREE( THREE );
 
+//		import Options from '../../Options.js'
+		//import { OrbitControls, createEventDispatcher } from '../../OrbitControls/OrbitControls.js';
+
 		const scene = new THREE.Scene();
 		const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
@@ -66,33 +69,21 @@
 
 		} );
 
+		if ( typeof OrbitControls !== 'undefined' ) {
+
+			createEventDispatcher();
+			const controls = new OrbitControls( camera, renderer.domElement );
+			controls.target.set( 0, 0, 0 );
+			controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
+			controls.update();
+
+		}
+
 		//the precision of the raycaster when intersecting objects, in world units.
 		//See https://threejs.org/docs/#api/en/core/Raycaster.params.
 		raycaster.params.Points.threshold = 0.1;
 
 		const cursor = renderer.domElement.style.cursor;
-/*
-		const mouse = new THREE.Vector2();
-		window.addEventListener( 'mousemove', function( event ) {
-
-			// calculate mouse position in normalized device coordinates
-			// (-1 to +1) for both components
-
-			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-			// update the picking ray with the camera and mouse position
-			raycaster.setFromCamera( mouse, camera );
-
-			raycaster.stereo.onDocumentMouseMove( event );
-
-		}, false );
-		window.addEventListener( 'pointerdown', function( event ) {
-
-			raycaster.stereo.onDocumentMouseDown( event );
-
-		}, false );
-*/
 
 		//
 
@@ -114,6 +105,24 @@
 					}
 
 				),
+				/*
+				cameraTarget: {
+
+					//boLook: false,
+					camera: camera,
+					//distanceToCamera: new THREE.Vector3( 0, 0, 0.2 ),
+					rotation: {
+
+						//angle: Math.PI,
+						//angle: new Function( 't', 'return 5*t' ),
+						//angle: [0, Math.PI / 2],
+						//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+						//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+					},
+
+				},
+				*/
 				//trace: true,//Displays the trace of the point movement.
 
 			},
@@ -154,7 +163,7 @@
 			pointsOptions: {
 
 				position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
-				//shaderMaterial: {}
+				//shaderMaterial: false,
 
 			}
 
@@ -164,7 +173,7 @@
 
 			requestAnimationFrame( animate );
 
-			if ( stereoEffect === undefined )
+			if ( !stereoEffect )
 				renderer.render( scene, camera );
 			else stereoEffect.render( scene, camera );
 

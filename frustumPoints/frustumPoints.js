@@ -18,20 +18,22 @@
 //import MyThree from '../myThree/myThree.js';
 import MyPoints from '../myPoints/myPoints.js';
 
-import Cookie from '../cookieNodeJS/cookie.js';
+//import Cookie from '../cookieNodeJS/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 import clearThree from '../clearThree.js';
-import { dat } from '../dat/dat.module.js';
+//import { dat } from '../dat/dat.module.js';
 
 import { getWorldPosition } from '../getPosition.js';
 
 import three from '../three.js'
-import setOptions from '../setOptions.js'
+//import setOptions from '../setOptions.js'
 import FolderPoint from '../folderPoint.js'
 
 //memory limit
 //import roughSizeOfObject from '../../commonNodeJS/master/SizeOfObject.js';
+
+import Options from '../Options.js'
 
 var debug = {
 
@@ -59,7 +61,26 @@ class FrustumPoints
 	 * @param {THREE.Group} group [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new FrustumPoints will be added
 	 * @param {DOM} canvas The Graphics [Canvas]{@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas} element to draw graphics and animations.
 	 * @param {object} [settings={}] the following settings are available
-	 * @param {object} [settings.options={}] see <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">myThree</a> <b>options</b> parameter for details
+	 * @param {Options} [settings.options=new Options()] <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> instance. The following options are available.
+	 * See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+	 * @param {boolean|OrbitControls} [settings.options.orbitControls] <pre>false - do not add the [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}. Allow the camera to orbit around a target.
+	 * Or <b>OrbitControls</b> instance.
+	 * </pre>
+	 * @param {object} [settings.options.dat] use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * See <b>options.dat</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+	 * @param {object} [settings.options.scales] axes scales.
+	 * See <b>options.scales</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+	 * @param {boolean|GuiSelectPoint} [settings.options.guiSelectPoint] <pre>false - do not displays the <a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">Select Point</a>. [dat.gui]{@link https://github.com/dataarts/dat.gui} based graphical user interface for select a point from the mesh.
+	 * Or <b>GuiSelectPoint</b> instance.
+	 * </pre>
+	 * @param {object} [settings.options.raycaster] for [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster}.
+	 * @param {MyThree.ColorPicker.palette|boolean|number} [settings.options.palette] Points сolor.
+	 * See <b>options.palette</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+	 * @param {Function|string} [settings.options.getLanguageCode=language code of your browser] Your custom <b>getLanguageCode()</b> function or language code string.
+	 * See <b>options.getLanguageCode</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+	 * @param {boolean|AxesHelper} [settings.options.axesHelper] <pre>false - do not add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
+	 * Or <b>AxesHelper</b> instance.
+	 * </pre>
 	 * @param {object} [settings.optionsShaderMaterial={}] <b>FrustumPoints</b> options.
 	 * @param {object} [settings.optionsShaderMaterial.point={}] points options.
 	 * @param {number} [settings.optionsShaderMaterial.point.size=0] Size of each frustum point.
@@ -89,13 +110,6 @@ class FrustumPoints
 	 * 100 no scale
 	 * </pre>
 	 * @param {boolean} [settings.optionsShaderMaterial.square=false] true - Square base of the frustum points.
-	 * @param {cookie} [settings.optionsShaderMaterial.cookie] Your custom cookie function for saving and loading of the FrustumPoints settings.
-	 * <pre>
-	 * See [cookieNodeJS]{@link https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS}.
-	 * Default cookie is not saving settings.
-	 * Has effect only if you called the <a href="#gui">frustumPoints.gui(...)</a> function.
-	 * </pre>
-	 * @param {string} [settings.optionsShaderMaterial.cookieName="FrustumPoints"] Name of the cookie is "FrustumPoints" + optionsShaderMaterial.cookieName.
 	 */
 	constructor( camera, group, canvas, settings = {} ) {
 
@@ -103,15 +117,20 @@ class FrustumPoints
 		//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
 		canvas.getContext( 'webgl' );
 
-		settings.options = settings.options || {};
+		settings.options = settings.options || new Options();
 		const options = settings.options;
+		if ( !options.boOptions ) {
+
+			console.error( 'FrustumPoints: call options = new Options( options ) first' );
+			return;
+
+		}
 
 		this.getOptions = function () { return options; }
-		setOptions.setPalette( options );
+//		setOptions.setPalette( options );
 		options.frustumPoints = this;
-		setOptions.setScales( options );
+//		setOptions.setScales( options );
 		const THREE = three.THREE;
-//		getPositionSetTHREE( THREE );
 
 		const _arrayCloud = []//Массив координат точек, имеющих облако вокруг себя
 							//координаты точек сгруппированы в группы отдельно для каждого THREE.Points
@@ -179,10 +198,8 @@ class FrustumPoints
 
 		/** create points
 		 * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
-		 * @param {object} [optionsCreate={}] The following options are available
-		 * @param {OrbitControls} [optionsCreate.orbitControls] Moves <b>frustumPoints</b> to the front of the camera if the user has moved the camera. See [OrbitControls]{@link https://threejs.org/docs/index.html?q=orbi#examples/en/controls/OrbitControls}
 		 */
-		this.create = function ( renderer, optionsCreate = {} ) {
+		this.create = function ( renderer ) {
 
 			//если нет точек с облаком, то облако нужно создавать что бы его было видно в guiSelectPoint
 			//однако в этом случае в консоли появятся сообщения:
@@ -198,8 +215,8 @@ class FrustumPoints
 			if ( _arrayCloud.length === 0 )
 				return undefined;//нет точек с облаком. Поэтому нет смысла создавать frustumPoints
 
-			if ( optionsCreate.orbitControls )
-				optionsCreate.orbitControls.addEventListener( 'change', function () { _this.onChangeControls(); } );
+			if ( options.orbitControls )
+				options.orbitControls.addEventListener( 'change', function () { _this.onChangeControls(); } );
 
 			const shaderMaterial = {}, zeroPoint = new THREE.Vector3(), cameraDistanceDefault = camera.position.distanceTo( zeroPoint ), _this = this,// lines = []
 				groupFrustumPoints = new THREE.Group();
@@ -234,11 +251,15 @@ class FrustumPoints
 			//100 no scale
 			optionsShaderMaterial.square = optionsShaderMaterial.square !== undefined ? optionsShaderMaterial.square : false; //true - Square base of the frustum points.
 
+			const cookie = options.dat.cookie,
+				cookieName = options.dat.getCookieName( 'FrustumPoints' );
+/*
 			const cookie = optionsShaderMaterial.cookie || new Cookie.defaultCookie(),
 				cookieName = 'FrustumPoints' + ( optionsShaderMaterial.cookieName ? '_' + optionsShaderMaterial.cookieName : '' );
 
 			delete optionsShaderMaterial.cookie;
 			delete optionsShaderMaterial.cookieName;
+*/
 
 			Object.freeze( optionsShaderMaterial );
 			cookie.getObject( cookieName, shaderMaterial, optionsShaderMaterial );
@@ -856,7 +877,7 @@ class FrustumPoints
 						pointIndexes: function ( pointIndex ) { return _this.pointIndexes( pointIndex ); },
 						path: {
 
-							vertex: path + '/vertex.c',
+							vertex: path + '/frustumPoints/vertex.c',
 
 						},
 						pointName: function ( pointIndex ) {
@@ -1101,30 +1122,15 @@ class FrustumPoints
 			/**
 			 * Adds FrustumPoints folder into dat.GUI.
 			 * See [dat.GUI API]{@link https://github.com/dataarts/dat.gui/blob/master/API.md}.
-			 * @param {object} folder parent folder
-			 * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
-			 * @param {Function} [guiParams.getLanguageCode="en"] Your custom getLanguageCode() function.
-			 * <pre>
-			 * returns the "primary language" subtag of the language version of the browser.
-			 * Examples: "en" - English language, "ru" Russian.
-			 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|rfc4646 2.1 Syntax} for details.
-			 * Default returns the 'en' is English language.
-			 * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
-			 * </pre>
-			 * @param {object} [guiParams.lang] Object with localized language values
-			 * <pre>
-			 * Example Using of guiParams.lang:
-			 * guiParams = {
-			 *
-			 * 	getLanguageCode: function() { return 'az'; },
-			 * 	lang: { textHeight: 'mətn boyu', languageCode: 'az' },
-			 *
-			 * }
-			 * </pre>
+			 * @param {object} [folder] parent folder
 			 */
-			this.gui = function ( folder, guiParams = {} ) {
+			this.gui = function ( folder ) {
 
-				guiParams.getLanguageCode = guiParams.getLanguageCode || function () { return "en"; };
+				const dat = three.dat;//options.dat.dat;
+
+				folder = folder || options.dat.gui;
+				if ( !folder || options.dat.guiFrustumPoints === false )
+					return;
 
 				//Localization
 
@@ -1170,10 +1176,11 @@ class FrustumPoints
 					yCountTitle: "The count of vertical points for each z level of the  frustum of the camera's field of view.",
 
 				};
-
+/*
 				var languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
 					: guiParams.getLanguageCode();
-				switch ( languageCode ) {
+*/
+				switch ( options.getLanguageCode() ) {
 
 					case 'ru'://Russian language
 
@@ -1307,8 +1314,8 @@ class FrustumPoints
 				const cSquare = fFrustumPoints.add( shaderMaterial, 'square' ).onChange( function ( value ) { update(); } );
 				dat.controllerNameAndTitle( cSquare, lang.square, lang.squareTitle );
 
-				//const folderPoint = new FolderPoint( fFrustumPoints, shaderMaterial.point, optionsShaderMaterial.point, function ( value )
-				const folderPoint = new FolderPoint( fFrustumPoints, { size: shaderMaterial.point.size }, function ( value ) {
+//				const folderPoint = new FolderPoint( fFrustumPoints, { size: shaderMaterial.point.size }, function ( value )
+				const folderPoint = new FolderPoint( shaderMaterial.point, function ( value ) {
 
 					//Не помню зачем это написал
 					if ( value === undefined ) {
@@ -1326,9 +1333,10 @@ class FrustumPoints
 					shaderMaterial.point.size = value;
 					saveSettings();
 
-				}, {
+				}, new Options( { dat: {gui: options.dat.gui } } ), {
 
-					point: { size: 0.01 },
+					folder: fFrustumPoints,
+//					point: { size: 0.01 },
 					defaultPoint: { size: 0.01 },
 					PCOptions: {
 
@@ -1336,7 +1344,7 @@ class FrustumPoints
 						max: 0.1,
 
 					},
-					getLanguageCode: guiParams.getLanguageCode,
+//					getLanguageCode: options.getLanguageCode,
 
 				} );
 
@@ -1450,6 +1458,7 @@ class FrustumPoints
 			 */
 			this.create = function ( fPoints, languageCode ) {
 
+				const dat = three.dat;//options.dat.dat;
 				function frustumPointsControl( name ) {
 
 

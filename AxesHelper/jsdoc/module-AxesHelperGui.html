@@ -31,6 +31,8 @@
         
             
         
+            
+        
     
 </header>
 
@@ -38,7 +40,7 @@
     <div class="container-overview">
     
         
-            <div class="description">Adds AxesHelper settings folder into <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</div>
+            <div class="description">Adds <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> settings folder into <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</div>
         
 
         
@@ -138,33 +140,12 @@
 
 
         
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
             
 
     
 
     
-    <h4 class="name" id=".AxesHelperGui"><span class="type-signature">(static) </span>AxesHelperGui<span class="signature">(axesHelper, gui, guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="module:AxesHelperGui"><span class="type-signature"></span>(require("AxesHelperGui"))<span class="signature">(options, gui<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -172,7 +153,7 @@
 
 
 <div class="description">
-    Adds AxesHelper settings folder into <a href="https://github.com/anhr/dat.gui">dat.gui</a>.
+    Adds <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> settings folder into <a href="https://github.com/anhr/dat.gui">dat.gui</a>.An axis object to visualize axes.
 </div>
 
 
@@ -200,6 +181,58 @@
         
 
         
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Followed parameters is allowed.See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
         <th>Default</th>
         
 
@@ -208,6 +241,43 @@
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>dat.axesHelperGui</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">false - do not adds <b>AxesHelperGui</b> into <a href="https://github.com/dataarts/dat.gui">dat.gui</a>.</td>
+        </tr>
+
     
 
         <tr>
@@ -240,106 +310,9 @@
                 </td>
             
 
-            <td class="description last">is <a href="https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html">new AxesHelper(...)</a>.An axis object to visualize axes.</td>
+            <td class="description last">is <a href="./module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> instance.</td>
         </tr>
 
-    
-
-        <tr>
-            
-                <td class="name"><code>gui</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">GUI</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">is <a href="https://github.com/anhr/dat.gui">new dat.GUI(...)</a>.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>guiParams</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    {}
-                
-                </td>
-            
-
-            <td class="description last">Followed parameters is allowed. Default is no parameters.
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
         <tr>
@@ -371,86 +344,12 @@
             
                 <td class="default">
                 
-                </td>
-            
-
-            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the "Syntax" paragraph of RFC 4646 <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.Default returns the 'en' is English language.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>lang</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
+                    language code of your browser
                 
                 </td>
             
 
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Object with localized language values</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>axesHelperFolder</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    lang.axesHelper
-                
-                </td>
-            
-
-            <td class="description last">AxesHelper folder name.</td>
+            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the "Syntax" paragraph of RFC 4646 <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
         </tr>
 
     
@@ -524,7 +423,7 @@
                 </td>
             
 
-            <td class="description last">Name of the cookie is "AxesHelper" + guiParams.cookieName.</td>
+            <td class="description last">Name of the cookie is "AxesHelper" + options.cookieName.</td>
         </tr>
 
     
@@ -532,6 +431,39 @@
 </table>
 
             </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gui</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">GUI</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">is <a href="https://github.com/anhr/dat.gui">new dat.GUI(...)</a>.</td>
         </tr>
 
     
@@ -572,7 +504,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="AxesHelperGui.js.html">AxesHelperGui.js</a>, <a href="AxesHelperGui.js.html#line71">line 71</a>
+        <a href="AxesHelperGui.js.html">AxesHelperGui.js</a>, <a href="AxesHelperGui.js.html#line61">line 61</a>
     </li></ul></dd>
     
 
@@ -601,22 +533,25 @@
 
 
 
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>AxesHelperGui( axesHelper, gui, {
-
-	cookie: cookie,
-	cookieName: 'mySettings',
-
-	//Localize of the scales folder to Azerbaijani language
-	getLanguageCode: function() { return 'az'; },
-	lang: { scales: 'tərəzi', languageCode: 'az' },
-
-} );</code></pre>
-
-
 
         
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     
 
     
@@ -632,13 +567,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-AxesHelper.html">AxesHelper</a></li><li><a href="module-AxesHelperGui.html">AxesHelperGui</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-AxesHelper.html">AxesHelper</a></li><li><a href="module-AxesHelperGui.html">AxesHelperGui</a></li></ul><h3>Classes</h3><ul><li><a href="module-AxesHelper-AxesHelper.html">AxesHelper</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 26 2021 09:37:25 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Jul 09 2021 06:55:17 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

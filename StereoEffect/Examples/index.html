@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -10,7 +10,12 @@
 
 	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
 
-	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
+	<link type="text/css" rel="stylesheet" href="../../../../three.js/dev/examples/main.css">
+
+	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">-->
+	<link type="text/css" rel="stylesheet" href="../../css/main.css">
 
 </head>
 <body>
@@ -23,28 +28,29 @@
 
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import * as THREE from '../../../../three.js/dev/build/three.module.js';
-		//import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
-		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
 
 		import three from '../../three.js'
 		three.THREE = THREE;
 
-		import { dat } from '../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
-		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+		import { dat } from '../../dat/dat.module.js';
+//		import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+		three.dat = dat;
 
-		//import cookie from '../../../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
-		//import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
-		import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
+//		import cookie from '../../../../cookieNodeJS/master/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
+//		import cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
+//		import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
-		//import { getLanguageCode } from '../../lang.js';//https://github.com/anhr/commonNodeJS
-		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+//		import { getLanguageCode } from '../../lang.js';//https://github.com/anhr/commonNodeJS
+//		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 
 		import StereoEffect from '../StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+		
+		import Options from '../../Options.js'
 
-		var camera, scene, renderer, stereoEffect, raycaster;//, axesHelper, controls, intersects, guiSelectPoint;
+		var camera, scene, renderer, raycaster, stereoEffect;//, axesHelper, controls, intersects, guiSelectPoint;
 
 		init();
 		animate();
@@ -56,6 +62,28 @@
 			camera.position.copy( defaultCameraPosition );
 
 			scene = new THREE.Scene();
+
+			const options = new Options( {
+
+/*
+				dat: {
+
+					dat: dat
+
+				},
+*/				
+				stereoEffect: {
+
+					spatialMultiplex: typeof StereoEffect !== 'undefined' ? StereoEffect.spatialMultiplexsIndexs.SbS : undefined,//Side by side stereo effect
+					far: camera.far,
+					camera: camera,
+					//stereoAspect: 1,
+//					options: options,
+
+				},
+				//stereoEffect: false,
+
+			} );
 
 			const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [
 					new THREE.Vector3( 0.5, 0.5 ,0.5 ),
@@ -103,65 +131,73 @@
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			const cursor = renderer.domElement.style.cursor;
 			document.body.appendChild( renderer.domElement );
+			if ( typeof StereoEffect !== 'undefined' ) {
 
-			stereoEffect = new StereoEffect( renderer, {
+				new StereoEffect( renderer, options );/*, {
 
-				spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
-				far: camera.far,
-				camera: camera,
-				//stereoAspect: 1,
+					spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+					far: camera.far,
+					camera: camera,
+					//stereoAspect: 1,
+					options: options,
 
-			} );
-//			stereoEffect.setSize( window.innerWidth, window.innerHeight );
+				} );*/
+				stereoEffect = options.stereoEffect;
+
+				//test for duplicate StereoEffect
+				//new StereoEffect( renderer, options );
+				
+//				if ( options.stereoEffect ) options.stereoEffect.setSize( window.innerWidth, window.innerHeight );
+
+			}
 
 			//Using [dat.gui](https://github.com/anhr/dat.gui) for change of the StereoEffect settings.
 
-			const gui =  new dat.GUI();
-			stereoEffect.gui( gui, {
-
-				getLanguageCode: getLanguageCode,
-				cookie: cookie,//Saves a custom StereoEffect settings in the cookie
-
-			} );
+			if ( options.stereoEffect && options.stereoEffect.gui )
+				options.stereoEffect.gui();
 
 			//[Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
 
 			raycaster = new THREE.Raycaster();
-			raycaster.params.Points.threshold = 0.02;//threshold is the precision of the raycaster when intersecting objects, in world units. See [params](https://threejs.org/docs/#api/en/core/Raycaster.params)
-			raycaster.setStereoEffect( {
+			if ( raycaster.setStereoEffect ) {
 
-				renderer: renderer,
-				camera: camera,
-				stereoEffect: stereoEffect,
-				onIntersection: function ( intersects, mouse ) {
+				raycaster.params.Points.threshold = 0.02;//threshold is the precision of the raycaster when intersecting objects, in world units. See [params](https://threejs.org/docs/#api/en/core/Raycaster.params)
+				raycaster.setStereoEffect( {
 
-//					points.userData.raycaster.onIntersection( intersects[0] );
-					var intersection = intersects[0];
-					if (
-						( intersection.object.userData.raycaster !== undefined )
-						&& ( intersection.object.userData.raycaster.onIntersection !== undefined ) ) {
+					renderer: renderer,
+					camera: camera,
+					stereoEffect: options.stereoEffect,
+					onIntersection: function ( intersects, mouse ) {
 
-						intersection.object.userData.raycaster.onIntersection( intersection );
+	//					points.userData.raycaster.onIntersection( intersects[0] );
+						var intersection = intersects[0];
+						if (
+							( intersection.object.userData.raycaster !== undefined )
+							&& ( intersection.object.userData.raycaster.onIntersection !== undefined ) ) {
+
+							intersection.object.userData.raycaster.onIntersection( intersection );
+
+						}
+
+					},
+					onIntersectionOut: function ( intersects ) { points.userData.raycaster.onIntersectionOut() },
+					onMouseDown: function ( intersects ) {
+
+						var intersection = intersects[0];
+						if (
+							( intersection.object.userData.raycaster !== undefined )
+							&& ( intersection.object.userData.raycaster.onMouseDown !== undefined ) ) {
+
+							intersection.object.userData.raycaster.onMouseDown( intersection );
+
+						}
 
 					}
 
-				},
-				onIntersectionOut: function ( intersects ) { points.userData.raycaster.onIntersectionOut() },
-				onMouseDown: function ( intersects ) {
+				} );
+				raycaster.stereo.addParticle( points );
 
-					var intersection = intersects[0];
-					if (
-						( intersection.object.userData.raycaster !== undefined )
-						&& ( intersection.object.userData.raycaster.onMouseDown !== undefined ) ) {
-
-						intersection.object.userData.raycaster.onMouseDown( intersection );
-
-					}
-
-				}
-
-			} );
-			raycaster.stereo.addParticle( points );
+			}
 
 			window.addEventListener( 'resize', onWindowResize, false );
 
@@ -207,7 +243,7 @@
 
 			requestAnimationFrame( animate );
 
-			if ( stereoEffect === undefined )
+			if ( !stereoEffect )
 				renderer.render( scene, camera );
 			else stereoEffect.render( scene, camera );
 

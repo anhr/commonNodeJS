@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-CanvasMenu.html">CanvasMenu</a>~</span>CanvasMenu<span class="signature">(renderer, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-CanvasMenu.html">CanvasMenu</a>~</span>CanvasMenu<span class="signature">(renderer, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
             <div class="class-description">Create <a href="https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu">dropdown menu</a> for canvas in my <a href="https://threejs.org/">three.js</a> projects.</div>
         
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="CanvasMenu"><span class="type-signature"></span>new CanvasMenu<span class="signature">(renderer, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="CanvasMenu"><span class="type-signature"></span>new CanvasMenu<span class="signature">(renderer, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -77,6 +77,8 @@
         <th>Attributes</th>
         
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -111,6 +113,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer">THREE.WebGLRenderer</a>.</td>
         </tr>
@@ -119,13 +125,13 @@
 
         <tr>
             
-                <td class="name"><code>options</code></td>
+                <td class="name"><code>settings</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">Object</span>
 
 
             
@@ -144,8 +150,14 @@
             
 
             
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
 
-            <td class="description last">the following options are available
+            <td class="description last">the following settings are available
                 <h6>Properties</h6>
                 
 
@@ -212,13 +224,13 @@
 
         <tr>
             
-                <td class="name"><code>stereoEffect</code></td>
+                <td class="name"><code>onOver</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">function</span>
 
 
             
@@ -242,44 +254,7 @@
                 </td>
             
 
-            <td class="description last">new <a href="https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md">StereoEffect(...)</a>.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>player</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">new <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html">Player(...)</a>. Playing of 3D ojbects in my projects.</td>
+            <td class="description last">The event is fired at an Element when a pointing device (such as a mouse or trackpad) is used to move the cursor onto the element or one of its child elements.<pre>true - mouseenter event.false - mouseleave event.<pre></td>
         </tr>
 
     
@@ -375,37 +350,6 @@
 
         <tr>
             
-                <td class="name"><code>THREE</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">THREE <a href="https://github.com/anhr/three.js">THREE</a>.</td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>onFullScreenToggle</code></td>
             
 
@@ -479,6 +423,142 @@
 
         <tr>
             
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Options</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    new Options()
+                
+                </td>
+            
+
+            <td class="description last"><a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> instance. The following options are available.See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>player</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Player</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><a href="../../Player/jsdoc/index.html" target="_blank">Player</a> instance. Playing of 3D ojbects in my projects.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>stereoEffect</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">StereoEffect</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a> instance.</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>getLanguageCode</code></td>
             
 
@@ -506,12 +586,19 @@
             
                 <td class="default">
                 
-                    "en"
+                    language code of your browser
                 
                 </td>
             
 
-            <td class="description last">returns the "primary language" subtag of the version of the browser. Default returns "en" is English</td>
+            <td class="description last">returns the "primary language" subtag of the version of the browser.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -559,7 +646,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line45">line 45</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line57">line 57</a>
     </li></ul></dd>
     
 
@@ -653,7 +740,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line103">line 103</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line134">line 134</a>
     </li></ul></dd>
     
 
@@ -785,7 +872,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line138">line 138</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line169">line 169</a>
     </li></ul></dd>
     
 
@@ -879,7 +966,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line147">line 147</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line178">line 178</a>
     </li></ul></dd>
     
 
@@ -1022,7 +1109,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line178">line 178</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line209">line 209</a>
     </li></ul></dd>
     
 
@@ -1169,7 +1256,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line152">line 152</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line183">line 183</a>
     </li></ul></dd>
     
 
@@ -1213,7 +1300,7 @@
 
 
 <div class="description">
-    Sets the "Full Screen" button. Available only if <b>options.fullScreen</b> is defined.
+    Sets the "Full Screen" button. Available only if <b>settings.fullScreen</b> is defined.
 </div>
 
 
@@ -1306,7 +1393,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line194">line 194</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line225">line 225</a>
     </li></ul></dd>
     
 
@@ -1443,7 +1530,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line225">line 225</a>
+        <a href="canvasMenu.js.html">canvasMenu.js</a>, <a href="canvasMenu.js.html#line256">line 256</a>
     </li></ul></dd>
     
 
@@ -1495,7 +1582,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Apr 26 2021 09:41:42 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Jun 28 2021 10:52:23 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

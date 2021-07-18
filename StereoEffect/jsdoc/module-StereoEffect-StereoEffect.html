@@ -29,9 +29,9 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-StereoEffect.html">StereoEffect</a>~</span>StereoEffect<span class="signature">(_THREE, renderer, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-StereoEffect.html">StereoEffect</a>~</span>StereoEffect<span class="signature">(renderer, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Uses dual PerspectiveCameras for <a href="https://en.wikipedia.org/wiki/Parallax_barrier">Parallax Barrier</a> effects</div>
+            <div class="class-description">Uses dual PerspectiveCameras for <a href="https://en.wikipedia.org/wiki/Parallax_barrier">Parallax Barrier</a> effects.</div>
         
     
 </header>
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="StereoEffect"><span class="type-signature"></span>new StereoEffect<span class="signature">(_THREE, renderer, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="StereoEffect"><span class="type-signature"></span>new StereoEffect<span class="signature">(renderer, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -78,43 +78,14 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>_THREE</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><a href="https://github.com/anhr/three.js">THREE</a></td>
-        </tr>
-
     
 
         <tr>
@@ -142,6 +113,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last"><a href="https://threejs.org/docs/#api/en/renderers/WebGLRenderer">WebGL renderer</a></td>
         </tr>
@@ -151,6 +126,107 @@
         <tr>
             
                 <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Options</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    new Options()
+                
+                </td>
+            
+
+            <td class="description last"><a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> instance.See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>getLanguageCode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    language code of your browser
+                
+                </td>
+            
+
+            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">Syntax</a> paragraph of RFC 4646 for details.</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>lang</code></td>
             
 
             <td class="type">
@@ -175,8 +251,126 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
-            <td class="description last">the following options are available.
+            <td class="description last">Object with localized language values.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dat.cookie</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">false - do not save to cookie the StereoEffects  settings</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dat.cookieName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Name of the cookie is "StereoEffect" + options.dat.cookieName.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>stereoEffect</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">false - do not create a <b>StereoEffect</b> instance.<p>Or:</p>
                 <h6>Properties</h6>
                 
 
@@ -212,7 +406,7 @@
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">number</span>
 
 
             
@@ -238,7 +432,7 @@
                 </td>
             
 
-            <td class="description last">spatial multiplex<pre>See <a href="https://en.wikipedia.org/wiki/DVB_3D-TV">DVB 3D-TV</a> for details	Available values		spatialMultiplexsIndexs.Mono - no stereo effacts		spatialMultiplexsIndexs.SbS - 'Side by side' format just put the left and right images one next to the other.			See https://en.wikipedia.org/wiki/DVB_3D-TV#Side_by_side for dretails		spatialMultiplexsIndexs.TaB - 'Top and bottom' format put left and right images one above the other.			See //https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom for details	Example - spatialMultiplex: spatialMultiplexsIndexs.Mono</pre></td>
+            <td class="description last">spatial multiplex<pre>See <a href="https://en.wikipedia.org/wiki/DVB_3D-TV">DVB 3D-TV</a> for details	Available values		spatialMultiplexsIndexs.Mono - no stereo effacts		spatialMultiplexsIndexs.SbS - 'Side by side' format just put the left and right images one next to the other.			See https://en.wikipedia.org/wiki/DVB_3D-TV#Side_by_side for dretails		spatialMultiplexsIndexs.TaB - 'Top and bottom' format put left and right images one above the other.			See //https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom for details	Example - options.stereoEffect.spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.Mono</pre></td>
         </tr>
 
     
@@ -275,7 +469,7 @@
                 </td>
             
 
-            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">PerspectiveCamera</a>. Use the camera key if you want control cameras focus.</td>
+            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">PerspectiveCamera</a>. Use the <b>camera</b> key if you want control cameras focus.</td>
         </tr>
 
     
@@ -288,7 +482,7 @@
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">Float</span>
 
 
             
@@ -314,7 +508,46 @@
                 </td>
             
 
-            <td class="description last">Camera frustum far plane. The far key uses for correct calculation default values of Eye separation.</td>
+            <td class="description last">Camera frustum far plane. The <b>far</b> key uses for correct calculation default values of Eye separation.See <b>far</b> parameter of the <a href="https://threejs.org/docs/index.html?q=PerspectiveCamera#api/en/cameras/PerspectiveCamera.far">PerspectiveCamera</a></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>eyeSep</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Float</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ( new THREE.StereoCamera().eyeSep / 10 ) * options.stereoEffect.far
+                
+                </td>
+            
+
+            <td class="description last">Eye separation.See <a href="https://threejs.org/docs/index.html?q=StereoCamera#api/en/cameras/StereoCamera.eyeSep">StereoCamera.eyeSep</a>.</td>
         </tr>
 
     
@@ -327,7 +560,7 @@
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">Float</span>
 
 
             
@@ -353,7 +586,7 @@
                 </td>
             
 
-            <td class="description last">THREE.StereoCamera.aspect. Camera frustum aspect ratio.</td>
+            <td class="description last"><a href="https://threejs.org/docs/index.html?q=StereoCamera#api/en/cameras/StereoCamera.aspect">THREE.StereoCamera.aspect</a>. Camera frustum aspect ratio.</td>
         </tr>
 
     
@@ -441,6 +674,13 @@
     </tbody>
 </table>
 
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
 
 
 
@@ -475,7 +715,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line68">line 68</a>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line80">line 80</a>
     </li></ul></dd>
     
 
@@ -527,6 +767,311 @@
         </dl>
     
 
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id=".spatialMultiplexsIndexs"><span class="type-signature">(static, readonly) </span>spatialMultiplexsIndexs<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    Enumeration of available stereo modes. Available as <b>StereoEffect.spatialMultiplexsIndexs</b>.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>Mono</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">No stereo effect</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>SbS</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><a href="https://en.wikipedia.org/wiki/DVB_3D-TV#Side_by_side">Side by side</a></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>TaB</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><a href="https://en.wikipedia.org/wiki/DVB_3D-TV#Top_and_bottom">Top and bottom</a></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line719">line 719</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://en.wikipedia.org/wiki/DVB_3D-TV">DVB 3D-TV</a> for details</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="options"><span class="type-signature"></span>options<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    See <b>options</b> parameter of the <b>StereoEffect</b> class above.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line124">line 124</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="settings"><span class="type-signature"></span>settings<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    See <b>options.stereoEffect</b> parameter of the <b>StereoEffect</b> class above.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line120">line 120</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
     
 
     
@@ -661,6 +1206,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -696,8 +1243,14 @@
             
 
             
+                <td class="default">
+                
+                    language code of your browser
+                
+                </td>
+            
 
-            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">Syntax</a> paragraph of RFC 4646 for details.Default returns the 'en' is English language.</pre></td>
+            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">Syntax</a> paragraph of RFC 4646 for details.</pre></td>
         </tr>
 
     
@@ -778,7 +1331,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line548">line 548</a>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line624">line 624</a>
     </li></ul></dd>
     
 
@@ -814,7 +1367,113 @@
     
 
     
-    <h4 class="name" id="gui"><span class="type-signature"></span>gui<span class="signature">(gui, options, guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getRendererSize"><span class="type-signature"></span>getRendererSize<span class="signature">()</span><span class="type-signature"> &rarr; {getMousePosition:function}</span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line175">line 175</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <pre></pre>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">getMousePosition:function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="gui"><span class="type-signature"></span>gui<span class="signature">(guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -850,74 +1509,14 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>gui</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">GUI</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">dat.GUI object.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">See options of StereoEffect above for details.</td>
-        </tr>
-
     
 
         <tr>
@@ -947,6 +1546,12 @@
             
 
             
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
 
             <td class="description last">the following params are available.
                 <h6>Properties</h6>
@@ -966,6 +1571,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -976,7 +1583,81 @@
 
         <tr>
             
-                <td class="name"><code>getLanguageCode</code></td>
+                <td class="name"><code>dat</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">GUI</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><a href="https://github.com/dataarts/dat.gui">dat.GUI()</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>folder</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">GUI</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><b>StereoEffects</b> folder. See <a href="https://github.com/anhr/dat.gui">dat.gui</a> for details</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onChangeMode</code></td>
             
 
             <td class="type">
@@ -1001,41 +1682,12 @@
             
 
             
-
-            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the <a href="https://tools.ietf.org/html/rfc4646#section-2.1">Syntax</a> paragraph of RFC 4646 for details.Default returns the 'en' is English language.</pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>lang</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
+                <td class="default">
                 
                 </td>
             
 
-            
-
-            <td class="description last">Object with localized language values.</td>
+            <td class="description last">The event is fired if user has changed the stereo mode.<pre>parameter is new stereo mode.See the <b>settings.spatialMultiplex</b> parameter of the <b>StereoEffect</b> class for details.<pre></td>
         </tr>
 
     
@@ -1067,74 +1719,14 @@
             
 
             
-
-            <td class="description last">scale of allowed values. Default is 1.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cookie</code></td>
-            
-
-            <td class="type">
-            
+                <td class="default">
                 
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
+                    1
                 
                 </td>
             
 
-            
-
-            <td class="description last">Your custom cookie function for saving and loading of the StereoEffects settings. Default cookie is not saving settings.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cookieName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">cookie</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Name of the cookie is "StereoEffect" + options.cookieName. Default is undefined.</td>
+            <td class="description last">scale of allowed values.</td>
         </tr>
 
     
@@ -1182,7 +1774,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line377">line 377</a>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line438">line 438</a>
     </li></ul></dd>
     
 
@@ -1349,7 +1941,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line146">line 146</a>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line212">line 212</a>
     </li></ul></dd>
     
 
@@ -1362,6 +1954,143 @@
             <li><a href="https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer.render">WebGLRenderer.render</a></li>
         </ul>
     </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="setEyeSeparation"><span class="type-signature"></span>setEyeSeparation<span class="signature">(eyeSep)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Sets eye separation.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>eyeSep</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">See <b>options.stereoEffect.eyeSep</b> parameter of the <b>StereoEffect</b> class above.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="StereoEffect.js.html">StereoEffect.js</a>, <a href="StereoEffect.js.html#line158">line 158</a>
+    </li></ul></dd>
+    
+
+    
+
     
 
     
@@ -1402,13 +2131,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-StereoEffect.html">StereoEffect</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-StereoEffect-setTHREE.html">setTHREE</a></li><li><a href="module-StereoEffect-StereoEffect.getTextIntersection.html">getTextIntersection</a></li></ul><h3>Classes</h3><ul><li><a href="module-StereoEffect-StereoEffect.html">StereoEffect</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-StereoEffect.html">StereoEffect</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-StereoEffect-setStereoEffect.html">setStereoEffect</a></li><li><a href="module-StereoEffect-StereoEffect.getTextIntersection.html">getTextIntersection</a></li></ul><h3>Classes</h3><ul><li><a href="module-StereoEffect-StereoEffect.html">StereoEffect</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Mar 20 2021 22:33:36 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jul 03 2021 10:13:06 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

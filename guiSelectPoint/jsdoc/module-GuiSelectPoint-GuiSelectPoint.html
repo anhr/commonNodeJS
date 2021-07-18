@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-GuiSelectPoint.html">GuiSelectPoint</a>~</span>GuiSelectPoint<span class="signature">(_THREE, guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-GuiSelectPoint.html">GuiSelectPoint</a>~</span>GuiSelectPoint<span class="signature">(options, guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
             <div class="class-description">A dat.gui based graphical user interface for select a point from the mesh.</div>
         
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="GuiSelectPoint"><span class="type-signature"></span>new GuiSelectPoint<span class="signature">(_THREE, guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="GuiSelectPoint"><span class="type-signature"></span>new GuiSelectPoint<span class="signature">(options, guiParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -78,6 +78,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -88,13 +90,13 @@
 
         <tr>
             
-                <td class="name"><code>_THREE</code></td>
+                <td class="name"><code>options</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">THREE</span>
+<span class="param-type">Options</span>
 
 
             
@@ -111,8 +113,229 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
-            <td class="description last"><a href="https://github.com/anhr/three.js">THREE</a></td>
+            <td class="description last">See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>dat.dat</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">GUI</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><a href="https://github.com/dataarts/dat.gui">dat.GUI()</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dat.guiSelectPoint</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">false - do not displays <b>GuiSelectPoint</b>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>axesHelper</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">AxesHelper</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">An axis object to visualize axes.See <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>getLanguageCode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    language code of your browser
+                
+                </td>
+            
+
+            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the "Syntax" paragraph of RFC 4646 <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>lang</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Object with localized language values</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -144,6 +367,12 @@
             
 
             
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
 
             <td class="description last">Followed parameters is allowed. Default is no parameters
                 <h6>Properties</h6>
@@ -173,13 +402,13 @@
 
         <tr>
             
-                <td class="name"><code>axesHelper</code></td>
+                <td class="name"><code>cameraTarget</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">AxesHelper</span>
+<span class="param-type">object</span>
 
 
             
@@ -199,113 +428,33 @@
 
             
 
-            <td class="description last">An axis object to visualize axes. Default is undefined.See <a href="https://github.com/anhr/AxesHelper">AxesHelper</a>.</td>
-        </tr>
+            <td class="description last">camera looking at selected point during playing. See the <b>cameraTarget</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.cameraTarget.html#init" target="_blank">Player.cameraTarget.init(...)</a> function for details.
+                <h6>Properties</h6>
+                
 
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
     
 
         <tr>
             
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">See <a href="https://raw.githack.com/anhr/AxesHelper/master/jsdoc/index.html">axesHelper.options</a> for details. Default is axesHelper.options if axesHelper is defined or { scales: {...} }</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cFrustumPoints</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>myThreejs</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">See <a href="https://github.com/anhr/myThreejs">myThreejs</a>.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cameraTarget.camera</code></td>
+                <td class="name"><code>camera</code></td>
             
 
             <td class="type">
@@ -318,18 +467,17 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
 
             <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">PerspectiveCamera</a>.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -432,72 +580,6 @@
         </tr>
 
     
-
-        <tr>
-            
-                <td class="name"><code>getLanguageCode</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Your custom getLanguageCode() function.<pre>returns the "primary language" subtag of the language version of the browser.Examples: "en" - English language, "ru" Russian.See the "Syntax" paragraph of RFC 4646 <a href="https://tools.ietf.org/html/rfc4646#section-2.1">rfc4646 2.1 Syntax</a> for details.Default returns the 'en' is English language.You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';</pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>lang</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Object with localized language values</td>
-        </tr>
-
-    
     </tbody>
 </table>
 
@@ -542,7 +624,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line91">line 91</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line98">line 98</a>
     </li></ul></dd>
     
 
@@ -571,21 +653,13 @@
 
 
 
-    <h5>Examples</h5>
+    <h5>Example</h5>
     
-    <pre class="prettyprint"><code>import { GuiSelectPoint } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+    <pre class="prettyprint"><code>import GuiSelectPoint from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
-const guiSelectPoint = new GuiSelectPoint( { axesHelper: axesHelper, } );
-guiSelectPoint.add( gui, { getLanguageCode: getLanguageCode, } );
-guiSelectPoint.addMesh( points );</code></pre>
-
-    <pre class="prettyprint"><code>//Using of guiParams.lang:
-guiParams = {
-
-	getLanguageCode: function() { return 'az'; },//Azerbaijani language
-	lang: { textHeight: 'mətn boyu', languageCode: 'az' },
-
-}</code></pre>
+	const guiSelectPoint = new GuiSelectPoint( options );
+	guiSelectPoint.add();
+	guiSelectPoint.addMesh( points );</code></pre>
 
 
 
@@ -615,144 +689,7 @@ guiParams = {
     
 
     
-    <h4 class="name" id=".setTHREE"><span class="type-signature">(static) </span>setTHREE<span class="signature">(_THREE)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    set THREE
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>_THREE</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><a href="https://github.com/anhr/three.js">THREE</a></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1809">line 1809</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(folder)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(folder<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -784,6 +721,8 @@ guiParams = {
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -808,6 +747,16 @@ guiParams = {
             
             </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -853,7 +802,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line837">line 837</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line862">line 862</a>
     </li></ul></dd>
     
 
@@ -990,7 +939,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line579">line 579</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line596">line 596</a>
     </li></ul></dd>
     
 
@@ -1078,7 +1027,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1691">line 1691</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1693">line 1693</a>
     </li></ul></dd>
     
 
@@ -1215,7 +1164,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line515">line 515</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line532">line 532</a>
     </li></ul></dd>
     
 
@@ -1309,7 +1258,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line724">line 724</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line748">line 748</a>
     </li></ul></dd>
     
 
@@ -1456,7 +1405,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line720">line 720</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line744">line 744</a>
     </li></ul></dd>
     
 
@@ -1603,7 +1552,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line558">line 558</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line575">line 575</a>
     </li></ul></dd>
     
 
@@ -1691,7 +1640,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1322">line 1322</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1344">line 1344</a>
     </li></ul></dd>
     
 
@@ -1828,7 +1777,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line646">line 646</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line663">line 663</a>
     </li></ul></dd>
     
 
@@ -1965,7 +1914,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line548">line 548</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line565">line 565</a>
     </li></ul></dd>
     
 
@@ -2148,7 +2097,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1308">line 1308</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line1330">line 1330</a>
     </li></ul></dd>
     
 
@@ -2308,7 +2257,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line536">line 536</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line553">line 553</a>
     </li></ul></dd>
     
 
@@ -2396,7 +2345,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line465">line 465</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line482">line 482</a>
     </li></ul></dd>
     
 
@@ -2528,7 +2477,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line479">line 479</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line496">line 496</a>
     </li></ul></dd>
     
 
@@ -2616,7 +2565,7 @@ guiParams = {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line496">line 496</a>
+        <a href="guiSelectPoint.js.html">guiSelectPoint.js</a>, <a href="guiSelectPoint.js.html#line513">line 513</a>
     </li></ul></dd>
     
 
@@ -2668,7 +2617,7 @@ guiParams = {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Apr 15 2021 10:20:19 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Jul 05 2021 11:45:16 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

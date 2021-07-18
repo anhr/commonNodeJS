@@ -35,6 +35,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 
 </head>
 <body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
 		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - FrustumPoints - Array of points, statically fixed in front of the camera.
 	</div>
@@ -52,10 +53,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 		import three from './commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
-		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
-		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-
-		var camera, scene, renderer, controls, frustumPoints;
+		var camera, scene, renderer, frustumPoints;
 
 		init();
 		animate();
@@ -163,7 +161,7 @@ frustumPoints.pushArrayCloud( points );
 <b>points</b> is instance of the THREE.Points.
 * Next, create <b>frustumPoints</b> after creating of <b>MyPoints</b>, <b>renderer</b> and <b>OrbitControls</b>.
 ```
-frustumPoints.create( renderer, { orbitControls: controls } );
+frustumPoints.create( renderer );
 ```
 Now you can see a cloud of the small dots around two points, you have created by <b>MyPoints</b>.
 Please move by mouse your points to near of the camera. You can see the cloud around points more details.
@@ -196,11 +194,7 @@ NOTE! More details clouds takes huge resources of your GPU. You can see delays o
 <a name="datGui"></a>
 ## Using dat.gui for manual change of the FrustumPoints settings.
 
-* First, import [dat.gui](https://github.com/dataarts/dat.gui).
-```
-import { dat } from './commonNodeJS/master/dat/dat.module.js';
-```
-Add <b>FrustumPoints</b> settings into gui after <b><i>frustumPoints.create( renderer, { orbitControls: controls } );</i></b> line.
+Add <b>FrustumPoints</b> settings into gui after <b><i>frustumPoints.create( renderer );</i></b> line.
 ```
 const gui =  new dat.GUI();
 frustumPoints.gui( gui );
@@ -217,24 +211,6 @@ frustumPoints.gui( gui, {
 
 } );
 ```
-If you want to save a custom <b>FrustumPoints</b> settings to the cookie, please import <b>cookie</b>
-```
-import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
-```
-and edit the new <b>FrustumPoints(...)</b> instance.
-```
-frustumPoints = new FrustumPoints( camera, scene, canvas, {
-
-	optionsShaderMaterial: {
-
-		zCount: 100,
-		yCount: 100,
-		cookie: cookie,
-
-	}
-
-} );
-```
 
 <a name="Player"></a>
 ## Add [Player](https://github.com/anhr/commonNodeJS/tree/master/player).
@@ -248,7 +224,7 @@ Add <b>Player</b> after creating of the <b>scene</b> and <b>frustumPoints</b> an
 const player = new Player( scene, {
 
 		frustumPoints: frustumPoints,
-		player: {
+		playerOptions: {
 
 			marks: 100,//Ticks count of the playing.
 			interval: 25,//Ticks per seconds.
@@ -312,7 +288,6 @@ frustumPoints = new FrustumPoints( camera, scene, canvas, {
 
 		zCount: 100,
 		yCount: 100,
-		cookie: cookie,
 
 	}
 
@@ -346,7 +321,6 @@ frustumPoints = new FrustumPoints( camera, scene, canvas, {
 
 		zCount: 100,
 		yCount: 100,
-		cookie: cookie,
 
 	}
 

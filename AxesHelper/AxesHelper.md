@@ -27,8 +27,13 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
 	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
 
+	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">-->
+
 </head>
 <body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
 		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - AxesHelper is an axis object to visualize the 1, 2 or 3 axes.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
@@ -100,11 +105,11 @@ NOTE. Please include `three.THREE = THREE;` line into your project before use my
 The easiest way to use <b>AxesHelper</b> in your code is import <b>AxesHelper</b> from <b>AxesHelper.js</b> file in your JavaScript module.
 [Example](../Examples/index.html).
 ```
-import { AxesHelper } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelper.js';
+import AxesHelper from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelper.js';
 ```
 or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import { AxesHelper } from './commonNodeJS/master/AxesHelper/AxesHelper.js';
+import AxesHelper from './commonNodeJS/master/AxesHelper/AxesHelper.js';
 ```
 
 Now you can use <b>AxesHelper</b> in your javascript code.
@@ -160,16 +165,9 @@ const axesHelper = new AxesHelper( THREE, scene, {
 <a name="OrbitControls"></a>
 ## Use the [THREE.OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) to rotate the camera.
 
-Import <b>OrbitControls</b>,
+edit your code
 ```
-import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-```
-and edit your code
-```
-const controls = new OrbitControls( camera, renderer.domElement );
-controls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
-controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-controls.update();
+options.createOrbitControls( camera, renderer, scene );
 ```
 
 <a name="Raycaster"></a>
@@ -206,9 +204,13 @@ import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
 stereoEffect = new StereoEffect( renderer, {
 
-	//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
-	far: camera.far,
-	camera: camera,
+	stereoEffect: {
+
+		//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+		far: camera.far,
+		camera: camera,
+
+	},
 
 } );
 ```
@@ -218,7 +220,7 @@ function animate() {
 
 	requestAnimationFrame( animate );
 
-	if ( stereoEffect === undefined )
+	if ( !stereoEffect )
 		renderer.render( scene, camera );
 	else stereoEffect.render( scene, camera );
 
@@ -396,10 +398,6 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
 
 	} ) );
 ```
-Plaese set <b>Player.orbitControls</b> if you use [THREE.OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls).
-```
-if ( typeof Player !== 'undefined' ) Player.orbitControls = controls;
-```
 Define <b>points.userData.player</b> and call <b>Player.selectMeshPlayScene(...)</b>.
 ```
 points.userData.player = { arrayFuncs: arrayFuncs, }
@@ -412,7 +410,10 @@ Now you can see the second point in the center of the canvas. In other words, ca
 <a name="Gui"></a>
 ## Graphical user interface for changing settings.
 
-Import [dat.gui](https://github.com/anhr/dat.gui).
+<a name="AxesHelperGui"></a>
+### AxesHelper settings.
+
+Import <b>dat.gui</b>.
 ```
 import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 ```
@@ -420,30 +421,30 @@ or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into
 ```
 import { dat } from './commonNodeJS/master/dat/dat.module.js';
 ```
+Add <b>dat.dat</b> key into <b>options</b> parameter of the <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> class;
+```
+dat: {
 
-<a name="AxesHelperGui"></a>
-### AxesHelper settings.
+	dat: dat,
+
+}
+```
 
 Add <b>AxesHelperGui</b> into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the <b>AxesHelper</b>.
 [Example](../Examples/index.html)
 Import <b>AxesHelperGui</b>.
 ```
-import { AxesHelperGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelperGui.js';
+import AxesHelperGui from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelperGui.js';
 ```
 or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
-import { AxesHelperGui } from './commonNodeJS/master/AxesHelper/AxesHelperGui.js';
+import AxesHelperGui from './commonNodeJS/master/AxesHelper/AxesHelperGui.js';
 ```
 
 Now you can use <b>AxesHelperGui</b> in your javascript code.
 ```
 const gui =  new dat.GUI();
-AxesHelperGui( axesHelper, gui, {
-
-	//cookie: cookie,
-	//getLanguageCode: getLanguageCode,
-
-} );
+AxesHelperGui( axesHelper.options, gui );
 ```
 Now you can see the "Axes Helper" folder in the dat.gui.
 
@@ -491,16 +492,7 @@ import MoveGroupGui from './commonNodeJS/master/MoveGroupGui.js';
 ```
 Create the <b>MoveGroupGui</b> instance.
 ```
-new MoveGroupGui( scene, gui, {
-
-	//cookie: cookie,
-	//cookieName: 'AxesHelper',
-	//getLanguageCode: getLanguageCode,
-	//lang: { moveGroup: 'Move points', },//name of the moveGroup folder. Default is 'Move Group'
-	guiSelectPoint: guiSelectPoint,
-	axesHelper: axesHelper,
-
-} );
+new MoveGroupGui( scene, axesHelper.options, { folder: gui, } );
 ```
 Now you can see the 'Move points' folder in the dat.gui.
 You can move, scale and rotate the scene. Unfortunately, you also move the axes.
@@ -516,16 +508,7 @@ groupMove.add( points );
 ```
 Move <b>groupMove</b> instead of the <b>scene</b>. Replace <b>scene</b> to <b>groupMove</b> in the <b>new MoveGroup</b>
 ```
-new MoveGroupGui( groupMove, gui, {
-
-	//cookie: cookie,
-	//cookieName: 'AxesHelper',
-	//getLanguageCode: getLanguageCode,
-	//lang: { moveGroup: 'Move points', },//name of the moveGroup folder. Default is 'Move Group'
-	guiSelectPoint: guiSelectPoint,
-	axesHelper: axesHelper,
-
-} );
+new MoveGroupGui( groupMove, axesHelper.options, { folder: gui, } );
 ```
 
 Enjoy my code :)

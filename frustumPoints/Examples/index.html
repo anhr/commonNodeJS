@@ -12,6 +12,7 @@
 
 </head>
 <body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
 		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - <a href="https://github.com/anhr/commonNodeJS/tree/master/frustumPoints" target="_blank" rel="noopener">FrustumPoints</a> - Array of points, statically fixed in front of the camera.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
@@ -22,20 +23,21 @@
 
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
-		//import * as THREE from '../../../../three.js/dev/build/three.module.js';
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
 
 		import three from '../../three.js'
 		three.THREE = THREE;
 
-		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
-		//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-		//import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
+		//WARNING: Multiple instances of Three.js being imported. Use Options.createOrbitControls(...) http://localhost/anhr/commonNodeJS/master/jsdoc/Options/Options.html#createOrbitControls
+//		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+//		import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
+//		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
 
-		//import FrustumPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/frustumPoints.js';
 		import FrustumPoints from '../frustumPoints.js';
+		//import FrustumPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/frustumPoints.js';
 
 		import MyPoints from '../../myPoints/myPoints.js';
 		//import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
@@ -45,12 +47,13 @@
 
 		import Player from '../../player/player.js';
 		import { dat } from '../../dat/dat.module.js';
-		import { getLanguageCode } from '../../lang.js';
-		import cookie from '../../cookieNodeJS/cookie.js';
+		three.dat = dat;
 		import ColorPicker from '../../colorpicker/colorpicker.js';
 		import CanvasMenu from '../../canvasMenu/canvasMenu.js';
+		import Options from '../../Options.js'
+		import pointLight from '../../pointLight.js'
 
-		var camera, scene, renderer, controls, frustumPoints;
+		var camera, scene, renderer;//, frustumPoints, controls;
 
 		init();
 		animate();
@@ -58,13 +61,20 @@
 		function init() {
 
 			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-//			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 0.4 ) );
+			//			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 0.4 ) );
 			camera.position.copy( new THREE.Vector3( 0, 0, 0.4 ) );
 
 			scene = new THREE.Scene();
-			const options = {
+			const options = new Options( {
 
 				palette: typeof ColorPicker !== 'undefined' ? new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ) : undefined,
+				playerOptions: {
+
+					marks: 100,//Ticks count of the playing.
+					interval: 25,//Ticks per seconds.
+
+				},
+//				dat: { dat: typeof dat === 'undefined' ? undefined : dat, },
 				scales: {
 
 					w: {
@@ -79,28 +89,30 @@
 
 				}
 
-			};
+			} );
 			const canvas = document.getElementById( 'canvas' );
+			/*
+						frustumPoints = typeof FrustumPoints !== 'undefined' ? new FrustumPoints( camera, scene, canvas, {
 
-			frustumPoints = typeof FrustumPoints !== 'undefined' ? new FrustumPoints( camera, scene, canvas, {
+							options: typeof options !== 'undefined' ? options : undefined,
+							//optionsShaderMaterial: {},
+
+						} ) : undefined;
+			*/
+			if ( typeof FrustumPoints !== 'undefined' ) new FrustumPoints( camera, scene, canvas, {
 
 				options: typeof options !== 'undefined' ? options : undefined,
-				optionsShaderMaterial: { cookie: cookie },
+				//optionsShaderMaterial: {},
 
-			} ) : undefined;
-//			const frustumPoints = typeof FrustumPoints !== 'undefined' ? new FrustumPoints( camera, scene ) : undefined;
+			} );
 
-			const player = typeof Player === 'undefined' ? undefined : new Player( scene, {
+			//test for duplicate FrustumPoints
+			//new FrustumPoints( camera, scene, canvas, { options: options} );
+			
+			//			const player = typeof Player === 'undefined' ? undefined : new Player( scene, {
+			if ( typeof Player !== 'undefined' ) new Player( scene, {
 
-				frustumPoints: frustumPoints,
-//				selectPlaySceneOptions: typeof options !== 'undefined' ? options : undefined,
 				options: typeof options !== 'undefined' ? options : undefined,
-				player: {
-
-					marks: 100,//Ticks count of the playing.
-					interval: 25,//Ticks per seconds.
-
-				},
 				//cameraTarget: { camera: camera, },
 				/*
 				onChangeScaleT: function ( scale ) {
@@ -126,46 +138,49 @@
 				*/
 
 			} );
-
 			const arrayFuncs = [
-				[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGRW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+				[],//point with zero position and palette index = max = 1 is green color for ColorPicker.paletteIndexes.bidirectional. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 				typeof Player !== 'undefined' ? {
 
 					//move secind point from [-0.5, -0.5, -0.5, ] for t = 0 to [0.5, 0.5, 0.5, ] for t = 1
 					vector: new THREE.Vector4(
 						new Function( 't', 'return t-0.5' ),//x
 						0,//new Function( 't', 'return t-0.5' ),//y
+						//[0,0.5],//y
 						0,//new Function( 't', 'return t-0.5' ),//z
-						-1,//new Function( 't', 'return 1-2*t' ),//w palette index from 1 for t = 0 to -1 for t = 1
+						-1,//w
+						//new Function( 't', 'return 1-2*t' ),//w palette index from 1 for t = 0 to -1 for t = 1
+						//[1,-1],//w ���� frustumPoints �������� 
 					),
 					trace: true,
 
 				} : [
-					0.5,//x
-					0.5,//y
-					0.5,//z
-					0,//.5//w. Palette index. Default range from 0 to 1. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
-				],
+						0.5,//x
+						0.5,//y
+						0.5,//z
+						0,//.5//w. Palette index. Default range from 0 to 1. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+					],
 			];
 
 			if ( typeof MyPoints !== 'undefined' )
 				MyPoints( arrayFuncs,
 					scene, {
 
-//						options: typeof options !== 'undefined' ? options : undefined,
-						pointsOptions: {
+					options: typeof options !== 'undefined' ? options : undefined,
+					pointsOptions: {
 
-							frustumPoints: typeof frustumPoints !== 'undefined' ? frustumPoints : undefined,
-							//shaderMaterial: false,
-							onReady: function ( points ) {
+						frustumPoints: typeof options.frustumPoints !== 'undefined' ? options.frustumPoints : undefined,
+						//shaderMaterial: false,
+						onReady: function ( points ) {
 
-								if ( typeof player === 'object' ) player.play3DObject();
+							if ( typeof player === 'object' ) player.play3DObject();
 
-							}
-						},
+						}
+					},
 
 				} );
-			else if ( typeof getShaderMaterialPoints !== 'undefined' )
+			else if ( typeof getShaderMaterialPoints !== 'undefined' ) {
+
 				getShaderMaterialPoints( scene, arrayFuncs,
 					function ( points ) {
 
@@ -190,24 +205,26 @@
 
 						pointsOptions: {
 
-							frustumPoints: typeof frustumPoints !== 'undefined' ? frustumPoints : undefined,
-/*
-							onReady: function ( points ) {
+							frustumPoints: typeof options.frustumPoints !== 'undefined' ? options.frustumPoints : undefined,
+							/*
+														onReady: function ( points ) {
 
-								if ( typeof player === 'object' ) player.play3DObject();
+															if ( typeof player === 'object' ) player.play3DObject();
 
-							}
-*/
+														}
+							*/
 						},
 						//Player: Player,
-//						options: { frustumPoints: frustumPoints },
+						//						options: { frustumPoints: options.frustumPoints },
 						options: typeof options !== 'undefined' ? options : undefined,
 
 					} );
+
+			}
 			else console.error( 'Please add points' )
 
 
-			const cube = new THREE.Mesh( new THREE.BoxGeometry(), new THREE.MeshBasicMaterial( {
+			const cube = new THREE.Mesh( new THREE.BoxGeometry(), new THREE.MeshLambertMaterial( {
 
 				color: 0x00ff00,
 				opacity: 0.8,
@@ -215,7 +232,14 @@
 
 			} ) );
 			cube.position.x = 1.5;
-			//scene.add( cube );
+			scene.add( cube );
+
+			new pointLight( scene, {
+
+				options: options,
+				position: new THREE.Vector3( 0.5 * options.scale, 0.5 * options.scale, 0.5 * options.scale ),
+
+			} ).controls();
 
 			renderer = new THREE.WebGLRenderer( {
 
@@ -223,13 +247,11 @@
 				canvas: canvas,
 
 			} );
-new CanvasMenu( renderer, {
-
-	player: player,
-
-} );
+			new CanvasMenu( renderer, { options: options } );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
+			options.createOrbitControls( camera, renderer, scene );
+/*
 			if ( typeof OrbitControls !== 'undefined' ) {
 
 				controls = new OrbitControls( camera, renderer.domElement );
@@ -238,24 +260,23 @@ new CanvasMenu( renderer, {
 				controls.update();
 
 			}
+*/
 
-			if ( frustumPoints ) frustumPoints.create( renderer, {
+			if ( options.frustumPoints ) options.frustumPoints.create( renderer );
+			/*
+						const gui = typeof dat !== 'undefined' ? new dat.GUI() : undefined;
+						if ( gui ) {
 
-				orbitControls: controls
+							if ( frustumPoints )
+								frustumPoints.gui( gui, {
 
-			} );
+										getLanguageCode: getLanguageCode,
 
-			const gui = typeof dat !== 'undefined' ? new dat.GUI() : undefined;
-			if ( gui ) {
+									} );
 
-				if ( frustumPoints )
-					frustumPoints.gui( gui, {
-
-							getLanguageCode: getLanguageCode,
-
-						} );
-
-			}
+						}
+			*/
+			if ( options.frustumPoints ) options.frustumPoints.gui();
 
 			window.addEventListener( 'resize', onWindowResize, false );
 
@@ -274,10 +295,10 @@ new CanvasMenu( renderer, {
 			requestAnimationFrame( animate );
 
 			renderer.render( scene, camera );
-/*
-			if ( frustumPoints !== undefined )
-				frustumPoints.animate();
-*/
+			/*
+						if ( options.frustumPoints !== undefined )
+							options.frustumPoints.animate();
+			*/
 		}
 
 	</script>
