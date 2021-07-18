@@ -19,7 +19,7 @@ import three from '../three.js'
 import Options from '../Options.js'
 
 /**
- * Creating the new points and adding it into group
+ * Creating the new [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} and adding it into group.
  * @param {array} arrayFuncs <b>points.geometry.attributes.position</b> array.
  * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
  * @param {THREE.Group} group [Group]{@link https://threejs.org/docs/index.html?q=grou#api/en/objects/Group} for new points.
