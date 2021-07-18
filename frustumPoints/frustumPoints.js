@@ -836,7 +836,7 @@ class FrustumPoints
 				var cameraPositionDefault = new THREE.Vector3( camera.position.x, camera.position.y, camera.position.z );
 				var cameraQuaternionDefault = new THREE.Vector4( camera.quaternion.x, camera.quaternion.y, camera.quaternion.z, camera.quaternion.w );
 
-				//сделал это приравниванеие что бы избежать двойного создания массива точек frustumPoints MyThree.points(...)
+				//сделал это приравниванеие что бы избежать двойного создания массива точек frustumPoints MyThree.MyPoints(...)
 				//Если это произойдет, то непонятно почему для каждой точки будет создано два облака
 				//Одно облако верное
 				//Второе находится строго между точкой и камерой
@@ -844,8 +844,6 @@ class FrustumPoints
 				//Сюда попадает по второму разу если вызвать stereoEffect.gui(...)
 				_points = false;
 
-				//Не могу использвать MyThree.points потому что если import MyThree,
-				//то появляются непонятные косяки в http://localhost/anhr/commonNodeJS/master/frustumPoints/Examples/
 				MyPoints( function () {
 
 					var geometry = new THREE.BufferGeometry(),
