@@ -679,6 +679,7 @@ class MyThree {
 				options.cursor = renderer.domElement.style.cursor;
 
 				//StereoEffect. https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js
+/*				
 				options.stereoEffect = options.stereoEffect = {};
 				if ( options.stereoEffect.spatialMultiplex === undefined )
 					options.stereoEffect.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
@@ -687,6 +688,7 @@ class MyThree {
 				//if ( options.stereoEffect.stereoAspect === undefined ) options.stereoEffect.stereoAspect = 1;
 				options.stereoEffect.elParent = options.stereoEffect.elParent || canvas.parentElement;
 				if ( options.stereoEffect.rememberSize === undefined ) options.stereoEffect.rememberSize = true;
+*/				
 				new StereoEffect( renderer, options );
 /*				
 				if ( options.stereoEffect ) {
@@ -1791,7 +1793,7 @@ function findSpriteTextIntersection( scene ) {
 
 }
 
-/** @namespace
+/* * @namespace
  * @description Displaying points
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs points.geometry.attributes.position array
  * <pre>
@@ -1862,11 +1864,19 @@ function findSpriteTextIntersection( scene ) {
  * </pre>
  * @param {boolean} [pointsOptions.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details. Default is undefined.
  */
+/*
 MyThree.points = function ( arrayFuncs, group, options, pointsOptions ) {
 
 	MyPoints( arrayFuncs, group, { options: options, pointsOptions: pointsOptions } );
 
 }
+*/
+/** @namespace
+ * @description Creating the new [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} and adding it into group.
+ * @see <a href="../../myPoints/jsdoc/index.html" target="_blank">MyPoints</a>.
+ */
+MyThree.MyPoints = MyPoints;
+
 /** @namespace */
 MyThree.StereoEffect = {
 
