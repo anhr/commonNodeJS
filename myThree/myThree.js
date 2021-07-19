@@ -155,8 +155,7 @@ class MyThree {
 
 	/**
 	 * @description I use MyThree in my projects for displaying of my 3D objects in the canvas.
-	 * @param {THREE} THREE [THREE]{@link https://github.com/anhr/three.js|THREE}
-	 * @param {createXDobjects} createXDobjects callback creates my 3D objects.
+	 * @param {createXDobjects} [createXDobjects] callback creates my 3D objects.
 	 * @param {Options} [options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * The following options are available:
 	 * @param {HTMLElement|string} [options.elContainer=document.getElementById( "containerDSE" ) or a div element, child of body] If an HTMLElement, then a HTMLElement, contains a canvas and HTMLElement with id="iframe-goes-in-here" for gui.
@@ -277,10 +276,10 @@ class MyThree {
 	 * </pre>
 	 * <a href="../Examples/html/" target="_blank">Example</a>.
 	 */
-	constructor( THREE, createXDobjects, options ) {
+	constructor( createXDobjects, options ) {
 
-//		const THREE = three.THREE;
-		three.THREE = THREE;
+		const THREE = three.THREE;
+//		three.THREE = THREE;
 
 		var myThreejs = this;
 
@@ -1247,7 +1246,7 @@ class MyThree {
 
 				options.spriteText = options.spriteText || {};
 
-				createXDobjects( group, options );
+				if ( createXDobjects ) createXDobjects( group, options );
 
 //				options.createOrbitControls( camera, renderer, scene );
 				if ( options.frustumPoints ) options.frustumPoints.create( renderer );
@@ -1932,6 +1931,12 @@ MyThree.limitAngles = function ( rotation ) {
  * @see <a href="../../Player/jsdoc/index.html" target="_blank">Player</a> class.
  */
 MyThree.Player = Player;
+
+/** @namespace
+ * @description class for [THREE]{@link https://github.com/anhr/three.js} and [dat.GUI(...)]{@link https://github.com/anhr/dat.gui} variables.
+ * @see <a href="../../jsdoc/three/index.html" target="_blank">three</a> class.
+ */
+MyThree.three = three;
 
 window.__myThree__ = window.__myThree__ || {};
 if ( window.__myThree__.boMyThree )

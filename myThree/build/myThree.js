@@ -2613,7 +2613,7 @@ var UpDownController = {
 };
 
 /**
- * three class for [THREE]{@link https://github.com/anhr/three.js} variable.
+ * three class for [THREE]{@link https://github.com/anhr/three.js} and [dat.GUI(...)]{@link https://github.com/anhr/dat.gui} variables.
  *
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
  *
@@ -11474,6 +11474,7 @@ function GuiSelectPoint(options) {
 			};
 			var arrayMeshs = [];
 			this.addMesh = function (mesh) {
+						if (!mesh.parent) return;
 						if (!cMeshs) {
 									for (var i = 0; i < arrayMeshs.length; i++) {
 												if (arrayMeshs[i].uuid === mesh.uuid) return;
@@ -11607,6 +11608,15 @@ function GuiSelectPoint(options) {
 						cMeshs = f3DObjects.add({ Meshs: lang.notSelected }, 'Meshs', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
 									value = parseInt(value);
 									mesh = getMesh();
+									if (!mesh.userData.boFrustumPoints && !mesh.userData.player.arrayFuncs) {
+												var position = mesh.geometry.attributes.position;
+												mesh.userData.player.arrayFuncs = [];
+												for (var i = 0; i < position.count; i++) {
+															var vector = new THREE.Vector4().fromArray(mesh.geometry.attributes.position.array, i * position.itemSize);
+															vector.w = 1;
+															mesh.userData.player.arrayFuncs.push(vector);
+												}
+									}
 									var none = 'none',
 									    block = 'block';
 									var display;
@@ -11648,6 +11658,7 @@ function GuiSelectPoint(options) {
 												setScaleControllers();
 												setPositionControllers();
 												setRotationControllers();
+												orbitControlsOptions = undefined;
 									}
 									fMesh.domElement.style.display = display;
 									if (mesh !== undefined && mesh.userData.traceAll !== undefined) cTraceAll.setValue(mesh.userData.traceAll);
@@ -11805,7 +11816,7 @@ function GuiSelectPoint(options) {
 																		}
 															}
 															var index = mesh.userData.boFrustumPoints ? cFrustumPoints.getSelectedIndex() : cPoints.__select.options.selectedIndex - 1,
-															    point = typeof mesh.userData.player.arrayFuncs === "function" ? new THREE.Vector3().fromArray(mesh.userData.player.arrayFuncs().attributes.position.array, index * 3) : mesh.userData.player.arrayFuncs[index];
+															    point = typeof mesh.userData.player.arrayFuncs === "function" ? new THREE.Vector3().fromArray(mesh.userData.player.arrayFuncs().attributes.position.array, index * 3) : mesh.userData.player.arrayFuncs !== undefined ? mesh.userData.player.arrayFuncs[index] : new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, index * 3);
 															for (var i = 0; i < cMeshs.__select.options.length; i++) {
 																		var _mesh = cMeshs.__select.options[i].mesh;
 																		if (!_mesh || !_mesh.userData.player || !_mesh.userData.player.arrayFuncs) continue;
@@ -11920,7 +11931,6 @@ function GuiSelectPoint(options) {
 															var attributes = intersection.object.geometry.attributes,
 															    i = intersection.index;
 															if (attributes.position.itemSize < 4) {
-																		console.error('guiSelectPoint.addPointControllers().axesGui().controller.onChange(): attributes.position.itemSize = ' + attributes.position.itemSize);
 																		return;
 															}
 															if (options.palette) {
@@ -12412,7 +12422,7 @@ function CameraGui(camera, options, gui) {
 								}
 				}, 'defaultF'), lang.defaultButton, lang.defaultTitle);
 				function update() {
-								var cameraTarget = options.playerOptions.cameraTarget.get();
+								var cameraTarget = options.playerOptions.cameraTarget.get(options);
 								if (controllersPosition.x) controllersPosition.x.setValue(camera.position.x);
 								if (controllersPosition.y) controllersPosition.y.setValue(camera.position.y);
 								if (controllersPosition.z) controllersPosition.z.setValue(camera.position.z);
@@ -13469,9 +13479,9 @@ function arrayContainersF() {
 var arrayContainers = new arrayContainersF();
 var arrayCreates = [];
 var MyThree =
-function MyThree(THREE, createXDobjects, options) {
+function MyThree(createXDobjects, options) {
 				classCallCheck(this, MyThree);
-				three$1.THREE = THREE;
+				var THREE = three$1.THREE;
 				var myThreejs = this;
 				arrayCreates.push({
 								createXDobjects: createXDobjects,
@@ -13601,12 +13611,6 @@ function MyThree(THREE, createXDobjects, options) {
 												});
 												options.renderer = renderer;
 												options.cursor = renderer.domElement.style.cursor;
-												options.stereoEffect = options.stereoEffect = {};
-												if (options.stereoEffect.spatialMultiplex === undefined) options.stereoEffect.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
-												if (options.stereoEffect.far === undefined) options.stereoEffect.far = camera.far;
-												options.stereoEffect.camera = options.stereoEffect.camera || camera;
-												options.stereoEffect.elParent = options.stereoEffect.elParent || canvas.parentElement;
-												if (options.stereoEffect.rememberSize === undefined) options.stereoEffect.rememberSize = true;
 												new StereoEffect(renderer, options);
 												function removeTraceLines() {
 																group.children.forEach(function (mesh) {
@@ -13735,7 +13739,7 @@ function MyThree(THREE, createXDobjects, options) {
 												var pointName = options.dat.getCookieName('Point');
 												if (options.dat) options.dat.cookie.getObject(pointName, options.point, options.point);
 												options.spriteText = options.spriteText || {};
-												createXDobjects(group, options);
+												if (createXDobjects) createXDobjects(group, options);
 												if (options.frustumPoints) options.frustumPoints.create(renderer);
 												if (!options.player) {
 																Player$1.selectPlayScene(group, { options: options });
@@ -13922,9 +13926,7 @@ function findSpriteTextIntersection(scene) {
 				});
 				return spriteTextIntersection;
 }
-MyThree.points = function (arrayFuncs, group, options, pointsOptions) {
-				MyPoints(arrayFuncs, group, { options: options, pointsOptions: pointsOptions });
-};
+MyThree.MyPoints = MyPoints;
 MyThree.StereoEffect = {
 				spatialMultiplexsIndexs: StereoEffect.spatialMultiplexsIndexs
 };MyThree.ColorPicker = ColorPicker$1;
@@ -13940,6 +13942,7 @@ MyThree.limitAngles = function (rotation) {
 				limitAngle('z');
 };
 MyThree.Player = Player$1;
+MyThree.three = three$1;
 window.__myThree__ = window.__myThree__ || {};
 if (window.__myThree__.boMyThree) console.error('myThree: duplicate myThree. Please use one instance of the myThree class.');
 window.__myThree__.boMyThree = true;
