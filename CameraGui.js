@@ -292,7 +292,7 @@ class CameraGui {
 		function update() {
 
 //			const cameraTarget = Player.cameraTarget.get();
-			const cameraTarget = options.playerOptions.cameraTarget.get();
+			const cameraTarget = options.playerOptions.cameraTarget.get( options );
 			
 /*не помню зачем это поставил
 			if ( !cameraTarget.boLook || !cameraTarget.target )
