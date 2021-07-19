@@ -596,6 +596,8 @@ class GuiSelectPoint {
 		 */
 		this.addMesh = function ( mesh ) {
 
+			if ( !mesh.parent ) return;
+			
 			if ( !cMeshs ) {
 
 				//Test for duplicate item
@@ -1192,7 +1194,8 @@ class GuiSelectPoint {
 						const index = mesh.userData.boFrustumPoints ? cFrustumPoints.getSelectedIndex() : cPoints.__select.options.selectedIndex - 1,
 							point = typeof mesh.userData.player.arrayFuncs === "function" ?
 								new THREE.Vector3().fromArray( mesh.userData.player.arrayFuncs().attributes.position.array, index * 3 ) :
-								mesh.userData.player.arrayFuncs[index];
+								mesh.userData.player.arrayFuncs !== undefined ? mesh.userData.player.arrayFuncs[index] :
+									new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, index * 3 );
 
 						//remove boLook from all points
 						for ( var i = 0; i < cMeshs.__select.options.length; i++ ) {
