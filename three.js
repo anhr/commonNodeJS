@@ -1,5 +1,5 @@
 /**
- * three class for [THREE]{@link https://github.com/anhr/three.js} variable.
+ * three class for [THREE]{@link https://github.com/anhr/three.js} and [dat.GUI(...)]{@link https://github.com/anhr/dat.gui} variables.
  *
  * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
  *
