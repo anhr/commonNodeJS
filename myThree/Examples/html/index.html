@@ -20,8 +20,8 @@
 
 </head>
 <body>
-	<!--<script src="../../../../../three.js/dev/build/three.js"></script>-->
-	<script src="../../../../../three.js/dev/build/three.min.js"></script>
+	<script src="../../../../../three.js/dev/build/three.js"></script>
+	<!--<script src="../../../../../three.js/dev/build/three.min.js"></script>-->
 	<!--<script src="../../build/myThree.js"></script>-->
 	<!--<script src="../../build/myThree.min.js"></script>-->
 	<p>
@@ -45,9 +45,9 @@
 		//получаю ошибку
 		//three: duplicate three. Please use one instance of the three class.
 		//Если исползую библиотеку build/myThree.module.js
-//		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
-//		import three from '../../../three.js'
-//		three.THREE = THREE;
+		//		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
+		//		import three from '../../../three.js'
+		//		three.THREE = THREE;
 
 		//test for duplicate dat library
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
@@ -56,17 +56,17 @@
 		import MyThree from '../../myThree.js';
 		//import MyThree from '../../build/myThree.module.js';
 		//import MyThree from '../../build/myThree.module.min.js';
-/*Сейчас эту проверку делаю в Options.js
-		import { WEBGL } from '../../../../../three.js/dev/examples/jsm/WebGL.js';
-		//import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
+		/*Сейчас эту проверку делаю в Options.js
+				import { WEBGL } from '../../../../../three.js/dev/examples/jsm/WebGL.js';
+				//import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
 
-		if ( WEBGL.isWebGLAvailable() === false ) {
+				if ( WEBGL.isWebGLAvailable() === false ) {
 
-			document.body.appendChild( WEBGL.getWebGLErrorMessage() );
-			alert( WEBGL.getWebGLErrorMessage().innerHTML );
+					document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+					alert( WEBGL.getWebGLErrorMessage().innerHTML );
 
-		}
-*/
+				}
+		*/
 		const tMin = 0;
 
 		new MyThree( THREE, function ( group, options ) {
@@ -220,7 +220,7 @@
 				}
 
 			}
-			//group.add( points );
+			group.add( points );
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 			//ATTENTION!!! You can adding of the cloud into points only if you want add points into group "group.add( points );"
@@ -292,7 +292,7 @@
 				//this.cube.position.y = t;
 				//this.cube.position.z = t;
 
-			} );
+			}, 'Cube' );
 			var position = new THREE.Vector3( -0.5, 0.5, -0.5 );
 			addCube( position, 'green', function ( t, cube ) {
 
@@ -456,13 +456,13 @@
 	<h2>Simple canvas.</h2>
 	<!--<div id="canvasContainer2"></div>-->
 	<script type="module">
-			//import * as THREE from '../../../../../three.js/dev/build/three.module.js';
+					//import * as THREE from '../../../../../three.js/dev/build/three.module.js';
 
-			//import MyThree from '../../myThree.js';
-			//import MyThree from '../../build/myThree.module.js';
-			//import MyThree from '../../build/myThree.module.min.js';
+					//import MyThree from '../../myThree.js';
+					//import MyThree from '../../build/myThree.module.js';
+					//import MyThree from '../../build/myThree.module.min.js';
 
-			//new MyThree( THREE, function ( group, options ) { } );
+					//new MyThree( THREE, function ( group, options ) { } );
 	</script>
 </body>
 </html>

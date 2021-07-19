@@ -597,7 +597,7 @@ class GuiSelectPoint {
 		this.addMesh = function ( mesh ) {
 
 			if ( !mesh.parent ) return;
-			
+
 			if ( !cMeshs ) {
 
 				//Test for duplicate item
@@ -875,6 +875,20 @@ class GuiSelectPoint {
 				value = parseInt( value );
 				mesh = getMesh();
 
+				if ( !mesh.userData.boFrustumPoints && !mesh.userData.player.arrayFuncs ) {
+
+					const position = mesh.geometry.attributes.position;
+					mesh.userData.player.arrayFuncs = [];
+					for ( var i = 0; i < position.count; i++ ) {
+						
+						const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
+						vector.w = 1;
+						mesh.userData.player.arrayFuncs.push( vector );
+
+					}
+
+				}
+
 				const none = 'none', block = 'block';
 				var display;
 				if ( mesh === undefined ) {
@@ -935,6 +949,7 @@ class GuiSelectPoint {
 					setScaleControllers();
 					setPositionControllers();
 					setRotationControllers();
+					orbitControlsOptions = undefined;
 
 				}
 				fMesh.domElement.style.display = display;
@@ -1407,8 +1422,8 @@ class GuiSelectPoint {
 							i = intersection.index;
 						if ( attributes.position.itemSize < 4 ) {
 
-							console.error( 'guiSelectPoint.addPointControllers().axesGui().controller.onChange(): attributes.position.itemSize = ' + attributes.position.itemSize )
-							return;
+//							console.error( 'guiSelectPoint.addPointControllers().axesGui().controller.onChange(): attributes.position.itemSize = ' + attributes.position.itemSize )
+							return;//Точка не имеет цвета. Например это вершина куба
 
 						}
 						if ( options.palette ) {
