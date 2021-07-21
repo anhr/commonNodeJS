@@ -979,118 +979,125 @@ Options.findSpriteTextIntersection = function ( scene ) {
  * @returns "spriteTextIntersection"
  * */
 Options.findSpriteTextIntersection.spriteTextIntersectionName = 'spriteTextIntersection';
-/**
- * [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} methods:
- * <pre>
- * <a href="./Options.raycaster.onIntersection.html" target="_blank">onIntersection(...)</a>.
- * <a href="./Options.raycaster.onIntersectionOut.html" target="_blank">onIntersectionOut(...)</a>.
- * <a href="./Options.raycaster.onMouseDown.html" target="_blank">onMouseDown(...)</a>.
- * </pre>
- * */
-Options.raycaster = {
 
-	cursor: undefined,
-	/** @namespace
-	 * @description Displays a sprite text if you move mouse over an 3D object
-	 * @param {Object} intersection See [.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
-	 * @param {Options} options the following options are available.
-	 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
-	 * @param {object} [options.spriteText] spriteText options. See <a href="../../SpriteText/jsdoc/module-SpriteText.html" target="_blank">SpriteText</a> <b>options</b> parameter for details.
-	 * @param {object} [options.scales] axes scales.
-	 * See <b>options.scales</b> parameter of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> class for details.
-	 * @param {THREE.Scene} scene [Scene]{@link https://threejs.org/docs/index.html?q=sc#api/en/scenes/Scene}.
-	 * @param {THREE.Camera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera}.
-	 * @param {canvas} canvas [canvas]{@link https://www.w3schools.com/tags/tag_canvas.asp} tag.
-	 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer} instance.
-	 */
-	onIntersection: function ( intersection, options, scene, camera, canvas, renderer ) {
+class Raycaster {
 
-		if ( intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo() )
-			return;
-		var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
-		if ( spriteTextIntersection === undefined ) {
+	/**
+	 * [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} methods:
+	 * <pre>
+	 * <a href="./Options.raycaster.onIntersection.html" target="_blank">onIntersection(...)</a>.
+	 * <a href="./Options.raycaster.onIntersectionOut.html" target="_blank">onIntersectionOut(...)</a>.
+	 * <a href="./Options.raycaster.onMouseDown.html" target="_blank">onMouseDown(...)</a>.
+	 * </pre>
+	 * */
+	constructor() {
+
+		var cursor;
+		/** @namespace
+		 * @description Displays a sprite text if you move mouse over an 3D object
+		 * @param {Object} intersection See [.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
+		 * @param {Options} options the following options are available.
+		 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+		 * @param {object} [options.spriteText] spriteText options. See <a href="../../SpriteText/jsdoc/module-SpriteText.html" target="_blank">SpriteText</a> <b>options</b> parameter for details.
+		 * @param {object} [options.scales] axes scales.
+		 * See <b>options.scales</b> parameter of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> class for details.
+		 * @param {THREE.Scene} scene [Scene]{@link https://threejs.org/docs/index.html?q=sc#api/en/scenes/Scene}.
+		 * @param {THREE.Camera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera}.
+		 * @param {canvas} canvas [canvas]{@link https://www.w3schools.com/tags/tag_canvas.asp} tag.
+		 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer} instance.
+		 */
+		this.onIntersection = function ( intersection, options, scene, camera, canvas, renderer ) {
+
+			if ( intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo() )
+				return;
+			var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
+			if ( spriteTextIntersection === undefined ) {
 
 
-			const rect = options.spriteText.rect ? JSON.parse( JSON.stringify( options.spriteText.rect ) ) : {};
-			rect.displayRect = true;
-			rect.backgroundColor = 'rgba(0, 0, 0, 1)';
-			spriteTextIntersection = StereoEffect.getTextIntersection( intersection, {
+				const rect = options.spriteText.rect ? JSON.parse( JSON.stringify( options.spriteText.rect ) ) : {};
+				rect.displayRect = true;
+				rect.backgroundColor = 'rgba(0, 0, 0, 1)';
+				spriteTextIntersection = StereoEffect.getTextIntersection( intersection, {
 
-				scales: options.scales,
-				spriteOptions: {
+					scales: options.scales,
+					spriteOptions: {
 
-					textHeight: options.spriteText.textHeight,
-					fontColor: options.spriteText.fontColor,
-					rect: rect,
-					group: scene,
-					center: {
+						textHeight: options.spriteText.textHeight,
+						fontColor: options.spriteText.fontColor,
+						rect: rect,
+						group: scene,
+						center: {
 
-						camera: camera,
-						canvas: canvas,
+							camera: camera,
+							canvas: canvas,
+
+						}
 
 					}
 
+				} );
+				spriteTextIntersection.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
+				spriteTextIntersection.scale.divide( scene.scale );
+				scene.add( spriteTextIntersection );
+
+			} else spriteTextIntersection.position.copy( intersection.point );
+
+			cursor = renderer.domElement.style.cursor;
+			renderer.domElement.style.cursor = 'pointer';
+
+		}
+
+		/** @namespace
+		 * @description Hides a sprite text if you move mouse out an object.
+		 * @param {THREE.Scene} scene [Scene]{@link https://threejs.org/docs/index.html?q=sc#api/en/scenes/Scene}.
+		 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer} instance.
+		 */
+		this.onIntersectionOut = function ( scene, renderer ) {
+
+			var detected = false;
+			do {
+
+				var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
+				if ( spriteTextIntersection !== undefined ) {
+
+					scene.remove( spriteTextIntersection );
+					if ( detected )
+						console.error( 'Duplicate spriteTextIntersection' );
+					detected = true;
+
 				}
 
-			} );
-			spriteTextIntersection.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
-			spriteTextIntersection.scale.divide( scene.scale );
-			scene.add( spriteTextIntersection );
+			} while ( spriteTextIntersection !== undefined )
 
-		} else spriteTextIntersection.position.copy( intersection.point );
+			renderer.domElement.style.cursor = cursor;
 
-		this.cursor = renderer.domElement.style.cursor;
-		renderer.domElement.style.cursor = 'pointer';
+		}
+		/** @namespace
+		 * @description The [pointerdown]{@link https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event}
+		 * event is fired when a pointer becomes active. For mouse, it is fired when the device transitions from no buttons depressed to at least one button depressed. For touch, it is fired when physical contact is made with the digitizer. For pen, it is fired when the stylus makes physical contact with the digitizer.
+		 * @param {Object} intersection See [.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
+		 * @param {Options} options the following options are available.
+		 * @param {GuiSelectPoint} [options.guiSelectPoint] <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a> instance was created.
+		 * @param {AxesHelper} [options.axesHelper] <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a> instance was created.
+		 */
+		this.onMouseDown = function ( intersection, options ) {
 
-	},
+			if ( ( intersection.object.userData.isInfo !== undefined ) && !intersection.object.userData.isInfo() )
+				return;//No display information about frustum point
+			if ( options.guiSelectPoint )
+				options.guiSelectPoint.select( intersection );
+			else if ( options.axesHelper )
+				options.axesHelper.exposePosition( intersection );
+			/*infinity loop
+					if ( options.raycaster.onMouseDown )
+						options.raycaster.onMouseDown( intersection );
+			*/
 
-	/** @namespace
-	 * @description Hides a sprite text if you move mouse out an object.
-	 * @param {THREE.Scene} scene [Scene]{@link https://threejs.org/docs/index.html?q=sc#api/en/scenes/Scene}.
-	 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer} instance.
-	 */
-	onIntersectionOut: function ( scene, renderer ) {
+		}
 
-		var detected = false;
-		do {
-
-			var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
-			if ( spriteTextIntersection !== undefined ) {
-
-				scene.remove( spriteTextIntersection );
-				if ( detected )
-					console.error( 'Duplicate spriteTextIntersection' );
-				detected = true;
-
-			}
-
-		} while ( spriteTextIntersection !== undefined )
-
-		renderer.domElement.style.cursor = this.cursor;
-
-	},
-	/** @namespace
-	 * @description The [pointerdown]{@link https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event}
-	 * event is fired when a pointer becomes active. For mouse, it is fired when the device transitions from no buttons depressed to at least one button depressed. For touch, it is fired when physical contact is made with the digitizer. For pen, it is fired when the stylus makes physical contact with the digitizer.
-	 * @param {Object} intersection See [.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
-	 * @param {Options} options the following options are available.
-	 * @param {GuiSelectPoint} [options.guiSelectPoint] <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a> instance was created.
-	 * @param {AxesHelper} [options.axesHelper] <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a> instance was created.
-	 */
-	onMouseDown: function ( intersection, options ) {
-
-		if ( ( intersection.object.userData.isInfo !== undefined ) && !intersection.object.userData.isInfo() )
-			return;//No display information about frustum point
-		if ( options.guiSelectPoint )
-			options.guiSelectPoint.select( intersection );
-		else if ( options.axesHelper )
-			options.axesHelper.exposePosition( intersection );
-/*infinity loop
-		if ( options.raycaster.onMouseDown )
-			options.raycaster.onMouseDown( intersection );
-*/			
-
-	},
+	}
 
 }
+Options.raycaster = new Raycaster();
+
 export default Options;
