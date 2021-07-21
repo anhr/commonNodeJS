@@ -42,6 +42,15 @@ import three from '../three.js'
  * @param {boolean} [options.italic=false] CSS font-style.
  * @param {string} [options.fontProperties] Other font properties. The font property uses the same syntax as the CSS font property.
  * 	Default is empty string. Example "900", "oblique lighter".
+ * @param {object} [options.rect={}] rectangle around the text.
+ * @param {boolean} [options.rect.displayRect=false] true - the rectangle around the text is visible.
+ * @param {string} [options.rect.backgroundColor='rgba(0, 0, 0, 0)' - black transparent] background color. RGBA object or RGB object or HEX value
+ * <pre>
+ * 	Examples 'rgba(0, 0, 255, 0.5)', '#00FF00'.
+ * </pre>
+ * @param {string} [options.rect.borderColor] border color. RGBA object or RGB object or HEX value. Default is same as options.fontColor 'rgba(255, 255, 255, 1)' - white.
+ * @param {number} [options.rect.borderThickness=0 is invisible border] border thickness.
+ * @param {number} [options.rect.borderRadius=0 is no radius] border corners radius.
  * @param {THREE.Vector2|object} [options.center] If <b>center.x</b> and <b>center.y</b> is defined, then it the text's anchor point.
  * <pre>
  * See {@link https://threejs.org/docs/index.html#api/en/objects/Sprite.center|Sprite.center}
@@ -56,15 +65,6 @@ import three from '../three.js'
  * </pre>
  * @param {THREE.PerspectiveCamera} [center.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
  * @param {HTMLElement} [center.canvas] <b>canvas</b> element.
- * @param {object} [options.rect={}] rectangle around the text.
- * @param {boolean} [options.rect.displayRect=false] true - the rectangle around the text is visible.
- * @param {string} [options.rect.backgroundColor='rgba(0, 0, 0, 0)' - black transparent] background color. RGBA object or RGB object or HEX value
- * <pre>
- * 	Examples 'rgba(0, 0, 255, 0.5)', '#00FF00'.
- * </pre>
- * @param {string} [options.rect.borderColor] border color. RGBA object or RGB object or HEX value. Default is same as options.fontColor 'rgba(255, 255, 255, 1)' - white.
- * @param {number} [options.rect.borderThickness=0 is invisible border] border thickness.
- * @param {number} [options.rect.borderRadius=0 is no radius] border corners radius.
  * @see Thanks to {@link https://github.com/vasturiano/three-spritetext|three-spritetext}
  */
 export function SpriteText( text, position,	options = {} ) {

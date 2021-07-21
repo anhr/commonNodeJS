@@ -172,7 +172,7 @@ class MyThree {
 	 * @param {boolean} [options.canvasMenu] false - do not create a <a href="../../canvasMenu/jsdoc/index.html" target="_blank">canvasMenu</a> instance.
 	 * @param {boolean} [options.stereoEffect] false - do not use <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
 	 * @param {boolean} [options.pointLight] false - do not use <a href="../../jsdoc/pointLight/index.html" target="_blank">pointLight</a>.
-	 * @param {object} [options.spriteText] spriteText options. See <a href="../../SpriteText/jsdoc/index.html" target="_blank">SpriteText</a> options for details. Default undefined.
+	 * @param {object} [options.spriteText] spriteText options. See <a href="../../SpriteText/jsdoc/module-SpriteText.html" target="_blank">SpriteText</a> <b>options</b> parameter for details.
 	 *
 	 * @param {boolean} [options.player] false - do not create a <a href="../../player/jsdoc/index.html" target="_blank">Player</a> instance.
 	 * @param {object} [options.playerOptions] See <b>settings.options.playerOptions</b> of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a>.
@@ -292,7 +292,8 @@ class MyThree {
 		if ( arrayCreates.length > 1 )
 			return;
 
-		options = options || {};
+//		options = options || {};
+		options = new Options( options );
 
 		//for Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
 		options.raycaster = {
@@ -305,9 +306,11 @@ class MyThree {
 			*/
 			onIntersection: function ( intersection, mouse ) {
 
+				Options.raycaster.onIntersection( intersection, options, scene, camera, canvas, options.renderer );
+/*				
 				if ( intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo() )
 					return;
-				var spriteTextIntersection = findSpriteTextIntersection( scene );
+				var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
 				if ( spriteTextIntersection === undefined ) {
 
 
@@ -333,14 +336,14 @@ class MyThree {
 						}
 
 					} );
-					spriteTextIntersection.name = spriteTextIntersectionName;
+					spriteTextIntersection.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
 					spriteTextIntersection.scale.divide( scene.scale );
 					scene.add( spriteTextIntersection );
 
 				} else spriteTextIntersection.position.copy( pos );
 				
 				options.renderer.domElement.style.cursor = 'pointer';
-
+*/
 			},
 
 			/**
@@ -350,10 +353,12 @@ class MyThree {
 			//options.removeSpriteTextIntersection = function () 
 			onIntersectionOut: function () {
 
+				Options.raycaster.onIntersectionOut( scene, options.renderer );
+/*				
 				var detected = false;
 				do {
 
-					var spriteTextIntersection = findSpriteTextIntersection( scene );
+					var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
 					if ( spriteTextIntersection !== undefined ) {
 
 						scene.remove( spriteTextIntersection );
@@ -366,12 +371,17 @@ class MyThree {
 				} while ( spriteTextIntersection !== undefined )
 
 				options.renderer.domElement.style.cursor = options.cursor;
+*/				
 
-			}
+			},
+			onMouseDown: function ( intersection, options ) {
+
+				Options.raycaster.onMouseDown( intersection, options );
+
+			},
 
 		}
 		
-		options = new Options( options );
 //		options.dat.dat = dat;
 
 //		options.getLanguageCode = options.getLanguageCode || getLanguageCode;
@@ -1244,7 +1254,7 @@ class MyThree {
 				const pointName = options.dat.getCookieName('Point');
 				if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
 
-				options.spriteText = options.spriteText || {};
+//				options.spriteText = options.spriteText || {};
 
 				if ( createXDobjects ) createXDobjects( group, options );
 
@@ -1773,7 +1783,7 @@ switch ( getLanguageCode() ) {
 		break;
 
 }
-
+/*
 var spriteTextIntersectionName = 'spriteTextIntersection';
 function findSpriteTextIntersection( scene ) {
 
@@ -1791,7 +1801,7 @@ function findSpriteTextIntersection( scene ) {
 	return spriteTextIntersection;
 
 }
-
+*/
 /* * @namespace
  * @description Displaying points
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs points.geometry.attributes.position array

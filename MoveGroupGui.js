@@ -32,7 +32,7 @@ class MoveGroupGui {
 	 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 * @param {object} [options.axesHelper] <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
 	 * @param {object} [options.scales] axes scales.
-	 * See <b>options.scales</b> of the <a href="../../jsdoc/setOptions/SetOptions.html#setScales" target="_blank">setOptions.setScales( ... )</a> for details.
+	 * See <b>options.scales</b> parameter of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> class for details.
 	 * @param {Cookie} [options.cookie] Your custom cookie function for saving and loading of the MoveGroup settings. Default cookie is not saving settings.
 	 * @param {string} [options.cookieName] Name of the cookie is "MoveGroup" + options.cookieName.
 	 * @param {GuiSelectPoint} [options.guiSelectPoint] A dat.gui based graphical user interface for select a point from the mesh.

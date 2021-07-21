@@ -40,7 +40,11 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { WEBGL } from '../../three.js/dev/examples/jsm/WebGL.js';
+//При выполнении npm run build получаю ошибку
+//(babel plugin) ReferenceError: Unknown plugin "external-helpers" specified in "base" at 1, attempted to resolve relative to "D:\\My documents\\MyProjects\\webgl\\three.js\\GitHub\\three.js\\dev\\examples\\jsm"
+//import { WEBGL } from '../../three.js/dev/examples/jsm/WebGL.js';
+
+import { WEBGL } from './WebGL.js';
 //import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
 
 //for testing open FireFox and read https://support.biodigital.com/hc/en-us/articles/218322977-How-to-turn-on-WebGL-in-my-browser#h_01EJW3MGDF7KH3PH6TG2DE13H6
@@ -74,6 +78,9 @@ import cookie from './cookieNodeJS/cookie.js';
 
 import { getLanguageCode } from './lang.js';
 //import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
+
+import Player from './player/player.js';
+import StereoEffect from './StereoEffect/StereoEffect.js';
 
 class Options {
 
@@ -306,6 +313,24 @@ class Options {
 					playerOptions.zoomMultiplier = playerOptions.zoomMultiplier || 1.1;
 					playerOptions.offset = playerOptions.offset || 0.1;
 					playerOptions.name = playerOptions.name || '';
+					if ( !playerOptions.cameraTarget ) {
+
+						const cameraTarget = new Player.cameraTarget();
+						Object.defineProperties( playerOptions, {
+
+							cameraTarget: {
+
+								get: function () {
+
+									return cameraTarget;
+
+								},
+
+							}
+
+						} );
+
+					}
 					return options.playerOptions;
 
 				},
@@ -662,13 +687,33 @@ class Options {
 			/**
 			 * getter
 			 * &lt;pre>
-			 * Followed [raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} options is available.
-			 * See &lt;b>settings.options.raycaster&lt;/b> parameter of the &lt;a href="../../MyPoints/jsdoc/module-MyPoints.html" target="_blank">MyPoints&lt;/a>.
+			 * &lt;b>SpriteText&lt;/b> options
+			 * See &lt;b>options&lt;/b> parameter of the &lt;a href="../../SpriteText/jsdoc/module-SpriteText.html" target="_blank">SpriteText&lt;/a>.
 			 * &lt;/pre>
+			 **/
+			spriteText: {
+
+				get: function () {
+
+					if ( options.spriteText ) return options.spriteText;
+					return {};
+
+				},
+
+			},
+
+			/**
+			 * getter and setter
+			 * [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster}.
 			 **/
 			raycaster: {
 
-				get: function () { return options.raycaster; }
+				get: function () {
+
+					if ( options.raycaster ) return options.raycaster;
+
+				},
+				set: function ( raycaster ) { options.raycaster = raycaster; }
 
 			},
 
@@ -936,6 +981,146 @@ class Options {
 	}
 
 } 
+
+/**
+ * Finds on the [Scene]{@link https://threejs.org/docs/index.html?q=Scene#api/en/scenes/Scene} a child item of the "Sprite" type and "spriteTextIntersection" name.
+ * @param {THREE.Scene} scene [Scene]{@link https://threejs.org/docs/index.html?q=Scene#api/en/scenes/Scene} instance.
+ * @returns item of the "Sprite" type and "spriteTextIntersection" name or undefined.
+ */
+Options.findSpriteTextIntersection = function ( scene ) {
+
+	var spriteTextIntersection;
+	scene.children.forEach( function ( item ) {
+
+		if ( ( item.type === "Sprite" ) &amp;&amp; ( item.name === Options.findSpriteTextIntersection.spriteTextIntersectionName ) ) {
+
+			spriteTextIntersection = item;
+			return;
+
+		}
+
+	} );
+	return spriteTextIntersection;
+
+}
+/**
+ * @returns "spriteTextIntersection"
+ * */
+Options.findSpriteTextIntersection.spriteTextIntersectionName = 'spriteTextIntersection';
+/**
+ * [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} methods:
+ * &lt;pre>
+ * &lt;a href="./Options.raycaster.onIntersection.html" target="_blank">onIntersection(...)&lt;/a>.
+ * &lt;a href="./Options.raycaster.onIntersectionOut.html" target="_blank">onIntersectionOut(...)&lt;/a>.
+ * &lt;a href="./Options.raycaster.onMouseDown.html" target="_blank">onMouseDown(...)&lt;/a>.
+ * &lt;/pre>
+ * */
+Options.raycaster = {
+
+	cursor: undefined,
+	/** @namespace
+	 * @description Displays a sprite text if you move mouse over an 3D object
+	 * @param {Object} intersection See [.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
+	 * @param {Options} options the following options are available.
+	 * See the &lt;b>options&lt;/b> parameter of the &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree&lt;/a> class.
+	 * @param {object} [options.spriteText] spriteText options. See &lt;a href="../../SpriteText/jsdoc/module-SpriteText.html" target="_blank">SpriteText&lt;/a> &lt;b>options&lt;/b> parameter for details.
+	 * @param {object} [options.scales] axes scales.
+	 * See &lt;b>options.scales&lt;/b> parameter of the &lt;a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper&lt;/a> class for details.
+	 * @param {THREE.Scene} scene [Scene]{@link https://threejs.org/docs/index.html?q=sc#api/en/scenes/Scene}.
+	 * @param {THREE.Camera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera}.
+	 * @param {canvas} canvas [canvas]{@link https://www.w3schools.com/tags/tag_canvas.asp} tag.
+	 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer} instance.
+	 */
+	onIntersection: function ( intersection, options, scene, camera, canvas, renderer ) {
+
+		if ( intersection.object.userData.isInfo !== undefined &amp;&amp; !intersection.object.userData.isInfo() )
+			return;
+		var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
+		if ( spriteTextIntersection === undefined ) {
+
+
+			const rect = options.spriteText.rect ? JSON.parse( JSON.stringify( options.spriteText.rect ) ) : {};
+			rect.displayRect = true;
+			rect.backgroundColor = 'rgba(0, 0, 0, 1)';
+			spriteTextIntersection = StereoEffect.getTextIntersection( intersection, {
+
+				scales: options.scales,
+				spriteOptions: {
+
+					textHeight: options.spriteText.textHeight,
+					fontColor: options.spriteText.fontColor,
+					rect: rect,
+					group: scene,
+					center: {
+
+						camera: camera,
+						canvas: canvas,
+
+					}
+
+				}
+
+			} );
+			spriteTextIntersection.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
+			spriteTextIntersection.scale.divide( scene.scale );
+			scene.add( spriteTextIntersection );
+
+		} else spriteTextIntersection.position.copy( pos );
+
+		this.cursor = renderer.domElement.style.cursor;
+		renderer.domElement.style.cursor = 'pointer';
+
+	},
+
+	/** @namespace
+	 * @description Hides a sprite text if you move mouse out an object.
+	 * @param {THREE.Scene} scene [Scene]{@link https://threejs.org/docs/index.html?q=sc#api/en/scenes/Scene}.
+	 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer} instance.
+	 */
+	onIntersectionOut: function ( scene, renderer ) {
+
+		var detected = false;
+		do {
+
+			var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
+			if ( spriteTextIntersection !== undefined ) {
+
+				scene.remove( spriteTextIntersection );
+				if ( detected )
+					console.error( 'Duplicate spriteTextIntersection' );
+				detected = true;
+
+			}
+
+		} while ( spriteTextIntersection !== undefined )
+
+		renderer.domElement.style.cursor = this.cursor;
+
+	},
+	/** @namespace
+	 * @description The [pointerdown]{@link https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event}
+	 * event is fired when a pointer becomes active. For mouse, it is fired when the device transitions from no buttons depressed to at least one button depressed. For touch, it is fired when physical contact is made with the digitizer. For pen, it is fired when the stylus makes physical contact with the digitizer.
+	 * @param {Object} intersection See [.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
+	 * @param {Options} options the following options are available.
+	 * @param {GuiSelectPoint} [options.guiSelectPoint] &lt;a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint&lt;/a> instance was created.
+	 * @param {AxesHelper} [options.axesHelper] &lt;a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper&lt;/a> instance was created.
+	 */
+	onMouseDown: function ( intersection, options ) {
+
+		if ( ( intersection.object.userData.isInfo !== undefined ) &amp;&amp; !intersection.object.userData.isInfo() )
+			return;//No display information about frustum point
+		if ( options.guiSelectPoint )
+			options.guiSelectPoint.select( intersection );
+		else if ( options.axesHelper )
+			options.axesHelper.exposePosition( intersection );
+/*бесконечный цикл вызова
+		if ( options.raycaster.onMouseDown )
+			options.raycaster.onMouseDown( intersection );
+*/			
+
+	},
+
+}
 export default Options;</code></pre>
         </article>
     </section>
@@ -946,13 +1131,13 @@ export default Options;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Options.html">Options</a></li></ul><h3>Global</h3><ul><li><a href="global.html#a">a</a></li><li><a href="global.html#axesHelper">axesHelper</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#boOptions">boOptions</a></li><li><a href="global.html#camera">camera</a></li><li><a href="global.html#cameraTarget">cameraTarget</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#canvasMenu">canvasMenu</a></li><li><a href="global.html#dat">dat</a></li><li><a href="global.html#elContainer">elContainer</a></li><li><a href="global.html#frustumPoints">frustumPoints</a></li><li><a href="global.html#getLanguageCode">getLanguageCode</a></li><li><a href="global.html#orbitControls">orbitControls</a></li><li><a href="global.html#palette">palette</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#playerOptions">playerOptions</a></li><li><a href="global.html#point">point</a></li><li><a href="global.html#pointLight">pointLight</a></li><li><a href="global.html#raycaster">raycaster</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scales">scales</a></li><li><a href="global.html#stereoEffect">stereoEffect</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Options.raycaster.onIntersection.html">onIntersection</a></li><li><a href="Options.raycaster.onIntersectionOut.html">onIntersectionOut</a></li><li><a href="Options.raycaster.onMouseDown.html">onMouseDown</a></li></ul><h3>Classes</h3><ul><li><a href="Options.html">Options</a></li></ul><h3>Global</h3><ul><li><a href="global.html#a">a</a></li><li><a href="global.html#axesHelper">axesHelper</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#boOptions">boOptions</a></li><li><a href="global.html#camera">camera</a></li><li><a href="global.html#cameraTarget">cameraTarget</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#canvasMenu">canvasMenu</a></li><li><a href="global.html#dat">dat</a></li><li><a href="global.html#elContainer">elContainer</a></li><li><a href="global.html#frustumPoints">frustumPoints</a></li><li><a href="global.html#getLanguageCode">getLanguageCode</a></li><li><a href="global.html#orbitControls">orbitControls</a></li><li><a href="global.html#palette">palette</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#playerOptions">playerOptions</a></li><li><a href="global.html#point">point</a></li><li><a href="global.html#pointLight">pointLight</a></li><li><a href="global.html#raycaster">raycaster</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scales">scales</a></li><li><a href="global.html#spriteText">spriteText</a></li><li><a href="global.html#stereoEffect">stereoEffect</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Jul 16 2021 10:37:47 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Jul 21 2021 08:30:30 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

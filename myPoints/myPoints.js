@@ -24,7 +24,7 @@ import Options from '../Options.js'
  * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
  * @param {THREE.Group} group [Group]{@link https://threejs.org/docs/index.html?q=grou#api/en/objects/Group} for new points.
  * @param {object} [settings] the following settings are available
- * @param {object} [settings.options=new Options()] the following options are available.
+ * @param {object|Options} [settings.options=new Options()] the following options are available.
  * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
  * @param {Object} [settings.options.point] point options.
  * See <a href="../../jsdoc/setOptions/SetOptions.html#setPoint" target="_blank">setOptions.setPoint(options)</a> for details.
@@ -223,7 +223,7 @@ function MyPoints( arrayFuncs, group, settings ) {
 			onIntersection: function ( intersection, mouse ) {
 
 				if ( options.raycaster && options.raycaster.onIntersection )
-					options.raycaster.onIntersection( intersection, mouse );
+					options.raycaster.onIntersection( intersection, mouse, points.parent );
 
 			},
 			onIntersectionOut: function () {
@@ -234,6 +234,10 @@ function MyPoints( arrayFuncs, group, settings ) {
 			},
 			onMouseDown: function ( intersection ) {
 
+				if ( options.raycaster && options.raycaster.onMouseDown )
+					options.raycaster.onMouseDown( intersection, options );
+				else Options.raycaster.onMouseDown( intersection, options );
+/*				
 				if ( ( intersection.object.userData.isInfo !== undefined ) && !intersection.object.userData.isInfo() )
 					return;//No display information about frustum point
 				if ( options.guiSelectPoint )
@@ -242,7 +246,7 @@ function MyPoints( arrayFuncs, group, settings ) {
 					options.axesHelper.exposePosition( intersection );
 				if ( options.raycaster.onMouseDown )
 					options.raycaster.onMouseDown( intersection );
-
+*/
 			}
 
 		}

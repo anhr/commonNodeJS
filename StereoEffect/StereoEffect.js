@@ -1081,7 +1081,7 @@ import { getObjectPosition } from '../getPosition.js';
  * @param {THREE.Raycaster.intersectObject} intersection See [intersection]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
  * @param {object} [options={}] The following options are available
  * @param {object} [options.scales] axes scales.
- * See <b>options.scales</b> of the <a href="../../jsdoc/setOptions/SetOptions.html#setScales" target="_blank">setOptions.setScales( ... )</a> for details.
+ * See <b>options.scales</b> parameter of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> class for details.
  * @param {object} [options.spriteOptions={}] Options of the <b>SpriteText</b>.
  * See [SpriteText]{@link https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/jsdoc/module-SpriteText..html} for details.
  * @returns <b>new SpriteText</b> with information about point, intersected with mouse cursor.

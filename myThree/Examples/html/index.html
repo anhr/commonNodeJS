@@ -53,8 +53,8 @@
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 		//three.dat = dat;
 
-		//import MyThree from '../../myThree.js';
-		import MyThree from '../../build/myThree.module.js';
+		import MyThree from '../../myThree.js';
+		//import MyThree from '../../build/myThree.module.js';
 		//import MyThree from '../../build/myThree.module.min.js';
 		MyThree.three.THREE = THREE;
 /*Сейчас эту проверку делаю в Options.js
@@ -198,10 +198,13 @@
 				},
 				onMouseDown: function ( intersect ) {
 
+					options.raycaster.onMouseDown( intersect, options );
+/*
 					if ( options.guiSelectPoint )
 						options.guiSelectPoint.select( intersect );
 					else if ( options.axesHelper )
 						options.axesHelper.exposePosition( intersect );
+*/
 
 				}
 

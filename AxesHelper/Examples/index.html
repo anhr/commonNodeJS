@@ -78,7 +78,7 @@
 		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
 
-		import Player from '../../player/player.js';
+		//import Player from '../../player/player.js';
 		//import Player from '../../player/build/player.module.js';
 		//import Player from '../../player/build/player.module.min.js';
 		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
@@ -95,7 +95,9 @@
 		//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 		//import CanvasMenu from 'http://localhost/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 
-		var camera, scene, renderer, intersects, guiSelectPoint, raycaster;//, controls, moveGroup, axesHelper, stereoEffect;
+		import MyPoints from '../../myPoints/myPoints.js';
+
+		var camera, scene, renderer, intersects, raycaster;//, guiSelectPoint, controls, moveGroup, axesHelper, stereoEffect;
 		const mouse = new THREE.Vector2(), arrayintersectObjects = [], threshold = 0.02,//0.08;
 			options = new Options( {
 
@@ -179,7 +181,25 @@
 						*/
 
 					},
+				},
+				
+				//for Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
+				raycaster: {
+
+					onIntersection: function ( intersection, mouse ) {
+
+						Options.raycaster.onIntersection( intersection, options, scene, camera, canvas, renderer );
+
+					},
+
+					onIntersectionOut: function () {
+
+						Options.raycaster.onIntersectionOut( scene, renderer );
+
+					}
+
 				}
+
 			} );
 
 		init();
@@ -225,6 +245,7 @@
 
 			}
 
+/*
 			const arrayFuncs = [
 				new THREE.Vector4( -0.5, -0.5, -0.5, new Function( 't', 'return 50 - 50*t' ) ),
 				{
@@ -250,7 +271,6 @@
 
 				}
 			]
-
 			var points;
 			if ( typeof Player !== "undefined" ) {
 
@@ -416,7 +436,7 @@
 				}
 
 			}
-
+*/
 			scene.add( new THREE.AmbientLight( 0x222222 ) );
 
 			// light
@@ -482,10 +502,52 @@
 					stereoEffect: options.stereoEffect,
 
 				} );
-				raycaster.stereo.addParticle( points );
-				raycaster.stereo.addParticle( pointsSizeAttenuation );
+				if ( typeof points !== 'undefined' ) raycaster.stereo.addParticle( points );
+				if ( typeof pointsSizeAttenuation !== 'undefined' ) raycaster.stereo.addParticle( pointsSizeAttenuation );
 
 			}
+			MyPoints( [
+				new THREE.Vector4( -0.5, -0.5, -0.5, new Function( 't', 'return 50 - 50*t' ) ),
+				{
+
+					vector: new THREE.Vector3( new Function( 't', 'a', 'b', 'return t*a+0.5+b' ), 0.5, 0.5 ),
+					//trace: true,//Displays the trace of the point movement.
+					cameraTarget: {
+
+						camera: camera,
+						//rotation: {
+
+						//angle: Math.PI,
+						//angle: [0, Math.PI],
+						//angle: [0],
+						//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI }]
+						//angle: new Function( 't', 'return 5*t' ),
+						//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+						//},
+
+					},
+					name: 'Second point'
+
+				}
+			], scene, {
+
+				options: options,
+
+				pointsOptions: {
+
+					//name: 'MyPoints',
+					//shaderMaterial: false,
+					onReady: function ( points ) {
+
+						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
+						raycaster.stereo.addParticle( points );
+
+					},
+
+				}
+
+			} );
 
 			if ( typeof CanvasMenu !== "undefined" )
 				new CanvasMenu( renderer, {
@@ -506,7 +568,7 @@
 			
 			if ( typeof GuiSelectPoint !== "undefined" ) {
 
-				guiSelectPoint = new GuiSelectPoint( options, {
+				new GuiSelectPoint( options, {
 
 //						axesHelper: options.axesHelper,
 //						getLanguageCode: options.getLanguageCode,
@@ -518,10 +580,12 @@
 					},
 
 				} );
-				guiSelectPoint.add();// gui;
+				if ( options.guiSelectPoint ) options.guiSelectPoint.add();// gui;
+/*
 				guiSelectPoint.addMesh( points );
 				if ( typeof pointsSizeAttenuation !== 'undefined' )
 					guiSelectPoint.addMesh( pointsSizeAttenuation );
+*/
 
 			}
 
