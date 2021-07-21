@@ -983,17 +983,12 @@ Options.findSpriteTextIntersection.spriteTextIntersectionName = 'spriteTextInter
 class Raycaster {
 
 	/**
-	 * [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} methods:
-	 * <pre>
-	 * <a href="./Options.raycaster.onIntersection.html" target="_blank">onIntersection(...)</a>.
-	 * <a href="./Options.raycaster.onIntersectionOut.html" target="_blank">onIntersectionOut(...)</a>.
-	 * <a href="./Options.raycaster.onMouseDown.html" target="_blank">onMouseDown(...)</a>.
-	 * </pre>
+	 * [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} methods.
 	 * */
 	constructor() {
 
 		var cursor;
-		/** @namespace
+		/**
 		 * @description Displays a sprite text if you move mouse over an 3D object
 		 * @param {Object} intersection See [.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
 		 * @param {Options} options the following options are available.
@@ -1047,7 +1042,7 @@ class Raycaster {
 
 		}
 
-		/** @namespace
+		/**
 		 * @description Hides a sprite text if you move mouse out an object.
 		 * @param {THREE.Scene} scene [Scene]{@link https://threejs.org/docs/index.html?q=sc#api/en/scenes/Scene}.
 		 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer} instance.
@@ -1072,7 +1067,7 @@ class Raycaster {
 			renderer.domElement.style.cursor = cursor;
 
 		}
-		/** @namespace
+		/**
 		 * @description The [pointerdown]{@link https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event}
 		 * event is fired when a pointer becomes active. For mouse, it is fired when the device transitions from no buttons depressed to at least one button depressed. For touch, it is fired when physical contact is made with the digitizer. For pen, it is fired when the stylus makes physical contact with the digitizer.
 		 * @param {Object} intersection See [.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
@@ -1098,6 +1093,10 @@ class Raycaster {
 	}
 
 }
+/**@namespace
+ * @description [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} methods.
+ * @See <a href="./Raycaster.html" target="_blank">Raycaster</a> for details.
+ * */
 Options.raycaster = new Raycaster();
 
 export default Options;
