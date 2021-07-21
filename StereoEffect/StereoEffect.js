@@ -880,6 +880,27 @@ function assign() {
 				function isIntersection() {
 
 					getIntersects();
+					if ( intersects.length > 0 ) {
+
+						const intersection = intersects[0];
+						if (
+							intersection &&
+							intersection.object.userData.raycaster &&
+							intersection.object.userData.raycaster.onIntersection
+						) {
+
+							intersection.object.userData.raycaster.onIntersection( intersection, mouse );
+							intersectedObject = intersection.object;
+
+						}
+
+					} else if ( intersectedObject ){
+
+						intersectedObject.userData.raycaster.onIntersectionOut();
+						intersectedObject = undefined;
+
+					}
+/*					
 					if ( intersectedObject && ( intersects.length === 0 ) ) {
 
 						intersectedObject.userData.raycaster.onIntersectionOut();
@@ -901,6 +922,7 @@ function assign() {
 						}
 
 					}
+*/					
 					return intersects.length > 0;
 
 				}

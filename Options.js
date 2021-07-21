@@ -1037,7 +1037,7 @@ Options.raycaster = {
 			spriteTextIntersection.scale.divide( scene.scale );
 			scene.add( spriteTextIntersection );
 
-		} else spriteTextIntersection.position.copy( pos );
+		} else spriteTextIntersection.position.copy( intersection.point );
 
 		this.cursor = renderer.domElement.style.cursor;
 		renderer.domElement.style.cursor = 'pointer';

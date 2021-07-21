@@ -70,6 +70,8 @@ import MoveGroupGui from '../MoveGroupGui.js';
 import CameraGui from '../CameraGui.js';
 //import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
 
+import { getObjectPosition } from '../getPosition.js';
+
 //https://github.com/mrdoob/stats.js/
 //import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';
 
@@ -1543,6 +1545,7 @@ class MyThree {
 					options.frustumPoints.update();
 
 			}
+			var intersectedObject;
 			function onDocumentMouseMove( event ) {
 
 				if ( typeof raycaster !== 'undefined' ) {
@@ -1559,6 +1562,29 @@ class MyThree {
 						renderer.getSize( size );
 						mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
 						mouse.y = -( event.clientY / size.y ) * 2 + 1 + ( top / size.y ) * 2;
+
+						raycaster.setFromCamera( mouse, camera );
+						intersects = raycaster.intersectObjects( group.children );
+						if ( intersects.length > 0 ) {
+
+							const intersection = intersects[0];
+							if (
+								intersection &&
+								intersection.object.userData.raycaster &&
+								intersection.object.userData.raycaster.onIntersection
+							) {
+
+								intersection.object.userData.raycaster.onIntersection( intersection, mouse );
+								intersectedObject = intersection.object;
+
+							}
+
+						} else if ( intersectedObject ){
+
+							intersectedObject.userData.raycaster.onIntersectionOut();
+							intersectedObject = undefined;
+							
+						}
 
 					}
 
@@ -1596,9 +1622,12 @@ class MyThree {
 				intersects = raycaster.intersectObjects( group.children );
 				if ( intersects.length > 0 ) {
 
-					var intersection = intersects[0],
+/*
+					const intersection = intersects[0],
 						position = getPosition( intersection );
 					onObjectMouseDown( position, intersection );
+*/					
+					Options.raycaster.onMouseDown( intersects[0], options );
 
 				}
 
