@@ -431,8 +431,7 @@
 
 						if ( typeof options.axesHelper !== 'undefined' )
 							options.axesHelper.exposePosition( intersect );
-						if ( guiSelectPoint )
-							guiSelectPoint.select( intersect );
+						if ( options.guiSelectPoint ) options.guiSelectPoint.select( intersect );
 
 					}
 
@@ -546,7 +545,7 @@
 					//shaderMaterial: false,
 					onReady: function ( points ) {
 
-						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
+//						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 /*						
 						if ( raycaster.stereo ) raycaster.stereo.addParticle( points );
