@@ -315,9 +315,10 @@ function MyPoints( arrayFuncs, group, settings ) {
 		group.add( points );
 
 		if ( pointsOptions.boFrustumPoints ) points.userData.boFrustumPoints = pointsOptions.boFrustumPoints;
-		
-		if ( pointsOptions.onReady !== undefined )
-			pointsOptions.onReady( points );
+		if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
+//		if ( options.eventListeners ) options.eventListeners.addParticle( points );
+		options.eventListeners.addParticle( points );
+		if ( pointsOptions.onReady !== undefined ) pointsOptions.onReady( points );
 
 /*если оставить эти строки то в guiSelectPoint будут добавляться точки даже если этого не хочет программист			
 		if ( options.guiSelectPoint )

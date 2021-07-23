@@ -164,6 +164,7 @@ class StereoEffect {
 		this.setEyeSeparation( settings.eyeSep );
 
 		/**
+		 * Convert mouse position to renderer coordinates.
 		 * @returns <pre>
 		 * {
 		 *
@@ -174,6 +175,8 @@ class StereoEffect {
 		 */
 		this.getRendererSize = function () {
 
+			return Options.EventListeners.getRendererSize( renderer, settings.elParent );
+/*
 			const el = settings.elParent || renderer.domElement,
 				style = {
 
@@ -199,6 +202,7 @@ class StereoEffect {
 				},
 
 			};
+*/
 
 		};
 		var fullScreenSettings;
@@ -947,8 +951,22 @@ function assign() {
 
 			}
 
+			/**
+			 * @namespace
+			 * @description
+			 * <pre>
+			 * [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} helper.
+			 * Available as <b>raycaster.stereo</b>.
+			 * <b>raycaster</b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+			 * </pre>
+			 * */
 			this.stereo = {
 
+				/**
+				 * [mousemove]{@link https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event} event.
+				 * User is moving of mouse over canvas.
+				 * @param {object} event
+				 */
 				onDocumentMouseMove: function ( event ) {
 
 					if ( particles === undefined )
@@ -960,6 +978,11 @@ function assign() {
 					intersection();
 
 				},
+				/**
+				 * [pointerdown]{@link https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event} event.
+				 * User has clicked over an object from the <b>particles</b> array.
+				 * @param {object} event
+				 */
 				onDocumentMouseDown: function ( event ) {
 
 					if ( stereoEffect.options.dat.mouseenter )
@@ -977,6 +1000,14 @@ function assign() {
 					}
 
 				},
+				/**
+				 * <pre>
+				 * Available as <b>raycaster.stereo.isAddedToParticles( particle )</b>.
+				 * <b>raycaster</b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+				 * </pre>
+				 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or derived class instance for check is added to <b>particles</b>.
+				 * @returns true if <b>particle</b> is added to <b>particles</b>.
+				 */
 				isAddedToParticles: function ( particle ) {
 
 					if ( !particles )
@@ -984,6 +1015,15 @@ function assign() {
 					return particles.includes( particle );
 
 				},
+				/**
+				 * <pre>
+				 * Adds new particle into array of objects to check for intersection with the ray.
+				 * Available as <b>raycaster.stereo.addParticle( particle )</b>.
+				 * <b>raycaster</b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+				 * </pre>
+				 * @see <b>objects</b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+				 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or derived class instance for check for intersection with the ray.
+				 */
 				addParticle: function ( particle ) {
 
 					if ( particles === undefined )
@@ -997,6 +1037,15 @@ function assign() {
 					particles.push( particle );
 
 				},
+				/**
+				 * <pre>
+				 * New array of objects to check for intersection with the ray.
+				 * Available as <b>raycaster.stereo.addParticles( particles )</b>.
+				 * <b>raycaster</b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+				 * </pre>
+				 * @see <b>objects</b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+				 * @param {array} newParticles New array of objects to check for intersection with the ray.
+				 */
 				addParticles: function ( newParticles ) {
 
 					if ( particles !== undefined ) {
@@ -1015,6 +1064,15 @@ function assign() {
 					particles = newParticles;
 
 				},
+				/**
+				 * <pre>
+				 * Remove particle from array of objects to check for intersection with the ray.
+				 * Available as <b>raycaster.stereo.removeParticle( particle )</b>.
+				 * <b>raycaster</b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+				 * </pre>
+				 * @see <b>objects</b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+				 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or derived class instance for removing from array of objects for check for intersection with the ray.
+				 */
 				removeParticle: function ( particle ) {
 
 					for ( var i = 0; i < particles.length; i++ ) {
@@ -1029,10 +1087,25 @@ function assign() {
 					}
 
 				},
+				/**
+				 * <pre>
+				 * remove array of objects to check for intersection with the ray.
+				 * Available as <b>raycaster.stereo.removeParticles()</b>.
+				 * <b>raycaster</b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+				 * </pre>
+				 * @see <b>objects</b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+				 */
 				removeParticles: function () { particles = undefined; },
-				//get position of intersected object
-				//intersection: fi(rst item of array of intersections. See THREE.Raycaster.intersectObject for details
-				getPosition: function ( intersection/*, noscale*/ ) {
+				/**
+				 * <pre>
+				 * get position of intersected object
+				 * Available as <b>raycaster.stereo.getPosition( intersection )</b>.
+				 * <b>raycaster</b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+				 * </pre>
+				 * @param {object} intersection first item of array of intersections.
+				 * @See [Raycaster.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details
+				 */
+				getPosition: function ( intersection ) {
 
 					const attributesPosition = intersection.object.geometry.attributes.position;
 
@@ -1110,6 +1183,10 @@ import { getObjectPosition } from '../getPosition.js';
  */
 StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 
+	const spriteText = Options.findSpriteTextIntersection( options.spriteOptions.group );
+	if ( spriteText )
+		return spriteText;
+		
 	const THREE = three.THREE;
 	const position = getObjectPosition( intersection.object, intersection.index ),
 		scales = options.scales || {},
@@ -1128,6 +1205,7 @@ StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 				func.w;
 
 	const boXYZ = !scales.x &&  !scales.y &&  !scales.z;
+	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
 	return new SpriteText(
 
 		//text

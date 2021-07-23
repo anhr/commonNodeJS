@@ -192,6 +192,7 @@ class StereoEffect {
 		this.setEyeSeparation( settings.eyeSep );
 
 		/**
+		 * Convert mouse position to renderer coordinates.
 		 * @returns &lt;pre>
 		 * {
 		 *
@@ -908,6 +909,27 @@ function assign() {
 				function isIntersection() {
 
 					getIntersects();
+					if ( intersects.length > 0 ) {
+
+						const intersection = intersects[0];
+						if (
+							intersection &amp;&amp;
+							intersection.object.userData.raycaster &amp;&amp;
+							intersection.object.userData.raycaster.onIntersection
+						) {
+
+							intersection.object.userData.raycaster.onIntersection( intersection, mouse );
+							intersectedObject = intersection.object;
+
+						}
+
+					} else if ( intersectedObject ){
+
+						intersectedObject.userData.raycaster.onIntersectionOut();
+						intersectedObject = undefined;
+
+					}
+/*					
 					if ( intersectedObject &amp;&amp; ( intersects.length === 0 ) ) {
 
 						intersectedObject.userData.raycaster.onIntersectionOut();
@@ -929,6 +951,7 @@ function assign() {
 						}
 
 					}
+*/					
 					return intersects.length > 0;
 
 				}
@@ -953,8 +976,22 @@ function assign() {
 
 			}
 
+			/**
+			 * @namespace
+			 * @description
+			 * &lt;pre>
+			 * [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} helper.
+			 * Available as &lt;b>raycaster.stereo&lt;/b>.
+			 * &lt;b>raycaster&lt;/b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+			 * &lt;/pre>
+			 * */
 			this.stereo = {
 
+				/**
+				 * [mousemove]{@link https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event} event.
+				 * User is moving of mouse over canvas.
+				 * @param {object} event
+				 */
 				onDocumentMouseMove: function ( event ) {
 
 					if ( particles === undefined )
@@ -966,6 +1003,11 @@ function assign() {
 					intersection();
 
 				},
+				/**
+				 * [pointerdown]{@link https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event} event.
+				 * User has clicked over an object from the &lt;b>particles&lt;/b> array.
+				 * @param {object} event
+				 */
 				onDocumentMouseDown: function ( event ) {
 
 					if ( stereoEffect.options.dat.mouseenter )
@@ -983,6 +1025,14 @@ function assign() {
 					}
 
 				},
+				/**
+				 * &lt;pre>
+				 * Available as &lt;b>raycaster.stereo.isAddedToParticles( particle )&lt;/b>.
+				 * &lt;b>raycaster&lt;/b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+				 * &lt;/pre>
+				 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or derived class instance for check is added to &lt;b>particles&lt;/b>.
+				 * @returns true if &lt;b>particle&lt;/b> is added to &lt;b>particles&lt;/b>.
+				 */
 				isAddedToParticles: function ( particle ) {
 
 					if ( !particles )
@@ -990,6 +1040,15 @@ function assign() {
 					return particles.includes( particle );
 
 				},
+				/**
+				 * &lt;pre>
+				 * Adds new particle into array of objects to check for intersection with the ray.
+				 * Available as &lt;b>raycaster.stereo.addParticle( particle )&lt;/b>.
+				 * &lt;b>raycaster&lt;/b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+				 * &lt;/pre>
+				 * @see &lt;b>objects&lt;/b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+				 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or derived class instance for check for intersection with the ray.
+				 */
 				addParticle: function ( particle ) {
 
 					if ( particles === undefined )
@@ -1003,6 +1062,15 @@ function assign() {
 					particles.push( particle );
 
 				},
+				/**
+				 * &lt;pre>
+				 * New array of objects to check for intersection with the ray.
+				 * Available as &lt;b>raycaster.stereo.addParticles( particles )&lt;/b>.
+				 * &lt;b>raycaster&lt;/b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+				 * &lt;/pre>
+				 * @see &lt;b>objects&lt;/b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+				 * @param {array} newParticles New array of objects to check for intersection with the ray.
+				 */
 				addParticles: function ( newParticles ) {
 
 					if ( particles !== undefined ) {
@@ -1021,6 +1089,15 @@ function assign() {
 					particles = newParticles;
 
 				},
+				/**
+				 * &lt;pre>
+				 * Remove particle from array of objects to check for intersection with the ray.
+				 * Available as &lt;b>raycaster.stereo.removeParticle( particle )&lt;/b>.
+				 * &lt;b>raycaster&lt;/b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+				 * &lt;/pre>
+				 * @see &lt;b>objects&lt;/b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+				 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or derived class instance for removing from array of objects for check for intersection with the ray.
+				 */
 				removeParticle: function ( particle ) {
 
 					for ( var i = 0; i &lt; particles.length; i++ ) {
@@ -1035,10 +1112,25 @@ function assign() {
 					}
 
 				},
+				/**
+				 * &lt;pre>
+				 * remove array of objects to check for intersection with the ray.
+				 * Available as &lt;b>raycaster.stereo.removeParticles()&lt;/b>.
+				 * &lt;b>raycaster&lt;/b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+				 * &lt;/pre>
+				 * @see &lt;b>objects&lt;/b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+				 */
 				removeParticles: function () { particles = undefined; },
-				//get position of intersected object
-				//intersection: fi(rst item of array of intersections. See THREE.Raycaster.intersectObject for details
-				getPosition: function ( intersection/*, noscale*/ ) {
+				/**
+				 * &lt;pre>
+				 * get position of intersected object
+				 * Available as &lt;b>raycaster.stereo.getPosition( intersection )&lt;/b>.
+				 * &lt;b>raycaster&lt;/b> is [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+				 * &lt;/pre>
+				 * @param {object} intersection first item of array of intersections.
+				 * @See [Raycaster.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details
+				 */
+				getPosition: function ( intersection ) {
 
 					const attributesPosition = intersection.object.geometry.attributes.position;
 
@@ -1116,6 +1208,10 @@ import { getObjectPosition } from '../getPosition.js';
  */
 StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 
+	const spriteText = Options.findSpriteTextIntersection( options.spriteOptions.group );
+	if ( spriteText )
+		return spriteText;
+		
 	const THREE = three.THREE;
 	const position = getObjectPosition( intersection.object, intersection.index ),
 		scales = options.scales || {},
@@ -1134,6 +1230,7 @@ StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
 				func.w;
 
 	const boXYZ = !scales.x &amp;&amp;  !scales.y &amp;&amp;  !scales.z;
+	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
 	return new SpriteText(
 
 		//text
@@ -1182,13 +1279,13 @@ export default StereoEffect;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-StereoEffect.html">StereoEffect</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-StereoEffect-setStereoEffect.html">setStereoEffect</a></li><li><a href="module-StereoEffect-StereoEffect.getTextIntersection.html">getTextIntersection</a></li></ul><h3>Classes</h3><ul><li><a href="module-StereoEffect-StereoEffect.html">StereoEffect</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-StereoEffect.html">StereoEffect</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-StereoEffect-assign_stereo.html">stereo</a></li><li><a href="module-StereoEffect-setStereoEffect.html">setStereoEffect</a></li><li><a href="module-StereoEffect-StereoEffect.getTextIntersection.html">getTextIntersection</a></li></ul><h3>Classes</h3><ul><li><a href="module-StereoEffect-StereoEffect.html">StereoEffect</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jul 20 2021 11:25:50 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Jul 23 2021 07:25:48 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

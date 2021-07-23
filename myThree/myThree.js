@@ -902,6 +902,8 @@ class MyThree {
 						raycasterEvents: false,
 
 					} );
+				options.eventListeners = new Options.EventListeners( raycaster, camera, renderer, options );
+/*				
 				options.raycaster.addParticle = function ( item ) {
 
 					if ( raycaster.stereo !== undefined )
@@ -914,7 +916,7 @@ class MyThree {
 						raycaster.stereo.removeParticle( item );
 
 				}
-
+*/
 				//
 
 				//dat-gui JavaScript Controller Library
@@ -1246,7 +1248,7 @@ class MyThree {
 						pointControls: function ( fPoint, dislayEl, getMesh ) { },
 
 					} );
-					if ( options.guiSelectPoint ) options.guiSelectPoint.add();//fOptions );
+					if ( options.guiSelectPoint ) options.guiSelectPoint.add();
 
 				}
 
@@ -1491,7 +1493,7 @@ class MyThree {
 				}
 
 				//raycaster
-
+/*Сейчас использую Options.EventListeners.addParticle
 				group.children.forEach( function ( item ) {
 
 					if ( item.userData.raycaster !== undefined ) {
@@ -1506,6 +1508,7 @@ class MyThree {
 					}
 
 				} );
+*/				
 
 				//https://github.com/mrdoob/stats.js/
 				if ( options.stats !== undefined ) {
@@ -1545,7 +1548,6 @@ class MyThree {
 					options.frustumPoints.update();
 
 			}
-			var intersectedObject;
 			function onDocumentMouseMove( event ) {
 
 				if ( typeof raycaster !== 'undefined' ) {
@@ -1553,15 +1555,6 @@ class MyThree {
 					if ( raycaster.stereo !== undefined )
 						raycaster.stereo.onDocumentMouseMove( event );
 					else {
-
-						// Test of the old version of THREE.Raycaster
-						event.preventDefault();
-						var left = renderer.domElement.offsetLeft,
-							top = renderer.domElement.offsetTop,
-							size = new THREE.Vector2;
-						renderer.getSize( size );
-						mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
-						mouse.y = -( event.clientY / size.y ) * 2 + 1 + ( top / size.y ) * 2;
 
 						raycaster.setFromCamera( mouse, camera );
 						intersects = raycaster.intersectObjects( group.children );
@@ -1575,16 +1568,21 @@ class MyThree {
 							) {
 
 								intersection.object.userData.raycaster.onIntersection( intersection, mouse );
-								intersectedObject = intersection.object;
+		//						intersectedObject = intersection.object;
 
 							}
 
-						} else if ( intersectedObject ){
-
-							intersectedObject.userData.raycaster.onIntersectionOut();
-							intersectedObject = undefined;
-							
 						}
+/*
+						// Test of the old version of THREE.Raycaster
+						event.preventDefault();
+						var left = renderer.domElement.offsetLeft,
+							top = renderer.domElement.offsetTop,
+							size = new THREE.Vector2;
+						renderer.getSize( size );
+						mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
+						mouse.y = -( event.clientY / size.y ) * 2 + 1 + ( top / size.y ) * 2;
+*/						
 
 					}
 

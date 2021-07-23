@@ -34,7 +34,7 @@ class CanvasMenu {
 
 	/**
 	 * @class Create [dropdown menu]{@link https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu} for canvas in my [three.js]{@link https://threejs.org/} projects.
-	 * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
+	 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}
 	 * @param {Object} [settings={}] the following settings are available
 	 * @param {Array} [settings.menu] menu array. See <b>arrayMenu</b> of the [DropdownMenu.create]{@link https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/jsdoc/module-DropdownMenu.html#~create}
 	 * @param {Function} [settings.onOver] The event is fired at an Element when a pointing device (such as a mouse or trackpad) is used to move the cursor onto the element or one of its child elements.

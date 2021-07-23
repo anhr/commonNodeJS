@@ -135,11 +135,13 @@
 					//rotation: new THREE.Vector3( Math.PI / 2, 0 ),
 					frustumPoints: options.frustumPoints,//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
 					//shaderMaterial: false,
+/*					
 					onReady: function ( points ) {
 
 						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 					},
+*/					
 
 				}
 
@@ -226,6 +228,8 @@
 			}
 			group.add( points );
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
+//			if ( options.eventListeners ) options.eventListeners.addParticle( points );
+			options.eventListeners.addParticle( points );
 
 			//ATTENTION!!! You can adding of the cloud into points only if you want add points into group "group.add( points );"
 			// if you do not want to see a cloud without appropriate point.
@@ -268,10 +272,7 @@
 						options.raycaster.onIntersectionOut( scene );
 
 					},
-					onMouseDown: function ( raycaster, intersection, scene ) {
-
-
-					},
+					onMouseDown: function ( raycaster, intersection, scene ) {},
 
 				}
 				if ( selectPlayScene ) {
@@ -285,6 +286,7 @@
 				}
 				group.add( cube );
 				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( cube );
+				options.eventListeners.addParticle( cube );
 
 			}
 			addCube( new THREE.Vector3( -1, 0, 0 ), 0xffffff, function ( t, cube ) {
@@ -339,7 +341,7 @@
 			//axesHelper: false,
 			//orbitControls: false,
 			//pointLight: false,
-			//stereoEffect: false,
+			stereoEffect: false,
 			frustumPoints: {},//Creates a FrustumPoints instance
 			canvas: {
 

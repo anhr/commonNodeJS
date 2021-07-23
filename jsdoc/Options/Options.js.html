@@ -969,7 +969,68 @@ class Options {
 
 			},
 
-		} );
+			/**
+			 * getter and setter
+			 * &lt;pre>
+			 * Use [OrbitControls]{@link https://threejs.org/docs/index.html?q=orb#examples/en/controls/OrbitControls}.
+			 * See &lt;b>options.orbitControls&lt;/b> parameter of the &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree&lt;/a> class.
+			 * &lt;/pre>
+			 **/
+			eventListeners: {
+
+				get: function () {
+
+					if ( options.eventListeners ) return options.eventListeners;
+					return { addParticle: function(){}, }
+
+				},
+				set: function ( eventListeners ) {
+
+					if ( options.eventListeners )
+						console.error( 'duplicate eventListeners.' );
+					options.eventListeners = eventListeners;
+
+				}
+
+			},
+
+			/* *
+			 * getter and setter
+			 * &lt;pre>
+			 * Use [OrbitControls]{@link https://threejs.org/docs/index.html?q=orb#examples/en/controls/OrbitControls}.
+			 * See &lt;b>options.orbitControls&lt;/b> parameter of the &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree&lt;/a> class.
+			 * &lt;/pre>
+			 **/
+/*Не отбражаются пунктирные линии до осей координат если полльзовател щелкнул на точку и если нет guiSelectPoint
+			guiSelectPoint: {
+
+				get: function () {
+
+					if ( options.guiSelectPoint ) return options.guiSelectPoint;
+					return {
+
+						add: function () { },
+						addMesh: function () { },
+						setMesh: function () { },
+						getSelectedPointIndex: function () { },
+						isSelectedMesh: function () { },
+						select: function () { },
+
+					}
+
+				},
+				set: function ( guiSelectPoint ) {
+
+					if ( options.guiSelectPoint )
+						console.error( 'duplicate guiSelectPoint.' );
+					options.guiSelectPoint = guiSelectPoint;
+
+				}
+
+			},
+*/			
+
+		} ); 
 
 		//For debugging. Find a hidden keys
 		for( var propertyName in options ) {
@@ -1059,14 +1120,14 @@ class Raycaster {
 					}
 
 				} );
-				spriteTextIntersection.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
+//				spriteTextIntersection.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
 				spriteTextIntersection.scale.divide( scene.scale );
 				scene.add( spriteTextIntersection );
+				
+				if ( cursor === undefined ) cursor = renderer.domElement.style.cursor;
+				renderer.domElement.style.cursor = 'pointer';
 
 			} else spriteTextIntersection.position.copy( intersection.point );
-
-			cursor = renderer.domElement.style.cursor;
-			renderer.domElement.style.cursor = 'pointer';
 
 		}
 
@@ -1127,6 +1188,197 @@ class Raycaster {
  * */
 Options.raycaster = new Raycaster();
 
+/**
+ * @class
+ */
+Options.EventListeners = class {
+
+	/**
+	 * Create a mouse events listeners for [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance
+	 * @param {THREE.Raycaster} raycaster [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance
+	 * @param {THREE.Camera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera} instance
+	 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer} instance
+	 * @param {Options} [options] &lt;b>Options&lt;/b> instance
+	 */
+	constructor( raycaster, camera, renderer, options ) {
+
+		var intersects, intersectedObject;
+		const THREE = three.THREE, mouse = new THREE.Vector2(), particles = [];
+		window.addEventListener( 'mousemove', function ( event ) {
+
+			Options.EventListeners.getRendererSize(renderer).getMousePosition( mouse, event );
+/*			
+			// calculate mouse position in normalized device coordinates
+			// (-1 to +1) for both components
+
+			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+			//			console.warn( 'mouse.x = ' + mouse.x + ' mouse.y = ' + mouse.y );
+*/			
+
+			//Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
+
+			// update the picking ray with the camera and mouse position
+			raycaster.setFromCamera( mouse, camera );
+
+/*
+			if ( raycaster.stereo !== undefined ) {
+
+				raycaster.stereo.onDocumentMouseMove( event );
+				return;
+
+			}
+*/
+			// calculate objects intersecting the picking ray
+			intersects = raycaster.intersectObjects( particles );
+			if ( !intersects )
+				return;
+
+			if ( intersects.length === 0 ) {
+
+				if ( intersectedObject ) {
+
+					intersectedObject.userData.raycaster.onIntersectionOut();
+					intersectedObject = undefined;
+
+				}
+
+			} else {
+
+				const intersect = intersects[0], object = intersect.object;
+				object.userData.raycaster.onIntersection( intersect );
+				intersectedObject = object;
+
+			}
+/*			
+			arrayintersectObjects.forEach( function ( object ) {
+
+				//				var bIntersected = false;
+				if ( intersectedObject &amp;&amp; ( intersects.length === 0 ) ) {
+
+					intersectedObject.userData.raycaster.onIntersectionOut();
+					intersectedObject = undefined;
+
+				}
+				else if ( !intersectedObject )
+					for ( var i = 0; i &lt; intersects.length; i++ ) {
+
+						const intersect = intersects[i];
+						if ( Object.is( object, intersect.object ) ) {
+
+							object.userData.raycaster.onIntersection( intersect );
+							intersectedObject = object;
+							//						bIntersected = true;
+							//						bIntersectedOut = true;
+
+						}
+
+					}
+
+			} );
+*/			
+
+		}, false );
+
+		//ATTENTION!!! The 'mousedown' event is not fired you use new version of the OrbitControls.
+		//See "OrbitControls: Implement Pointer events." commit https://github.com/mrdoob/three.js/commit/1422e36e9facbdc5f9d86cf6b97b005a2723a24a#diff-3285de3826a51619836a5c9adc6bee74
+		//window.addEventListener( 'mousedown', function( event )
+		window.addEventListener( 'pointerdown', function ( event ) {
+
+			if ( raycaster === undefined )
+				return;
+
+			if ( raycaster.stereo !== undefined ) {
+
+				raycaster.stereo.onDocumentMouseDown( event );
+				return;
+
+			}
+			if ( intersects &amp;&amp; ( intersects.length > 0 ) ) {
+
+				const intersect = intersects[0];
+				if ( intersect.object.userData.raycaster ) {
+
+					intersect.object.userData.raycaster.onMouseDown( intersect );
+					if ( options &amp;&amp; options.guiSelectPoint ) options.guiSelectPoint.select( intersect );
+
+				}
+
+			}
+
+		}, false );
+		function isAddedToParticles ( particle ) { return particles.includes( particle ); };
+		/**
+		 * Adds new particle into array of objects to check for intersection with the ray.
+		 * @see &lt;b>objects&lt;/b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+		 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or derived class instance for check for intersection with the ray.
+		 */
+		this.addParticle = function ( particle ) {
+
+			if ( particle.userData.boFrustumPoints )
+				return;
+			if ( raycaster.stereo ) {
+
+				raycaster.stereo.addParticle( particle );
+				return;
+
+			}
+			if ( isAddedToParticles( particle ) ) {
+
+				console.error( 'Duplicate particle "' + particle.name + '"' );
+				return;
+
+			}
+			particles.push( particle );
+
+		};
+
+	}
+
+	/**
+	 * Convert mouse position to renderer coordinates.
+	 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}
+	 * @param {HTMLElement} [el] parent of the &lt;b>canvas&lt;/b>.
+	 * @returns &lt;pre>
+	 * {
+	 *
+	 *	getMousePosition:function
+	 *
+	 * }
+	 * &lt;/pre>
+	 */
+	static getRendererSize( renderer, el ) {
+
+		el = el || renderer.domElement;
+		const style = {
+
+				position: el.style.position,
+				left: el.style.left,
+				top: el.style.top,
+				width: el.style.width,
+				height: el.style.height,
+
+			},
+			rect = el.getBoundingClientRect(),
+			left = Math.round( rect.left ),
+			top = Math.round( rect.top ),
+			size = new three.THREE.Vector2();
+		renderer.getSize( size );
+		return {
+
+			getMousePosition: function ( mouse, event ) {
+
+				mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
+				mouse.y = - ( event.clientY / size.y ) * 2 + 1 + ( top / size.y ) * 2;
+
+			},
+
+		};
+
+	}
+
+}
+
 export default Options;</code></pre>
         </article>
     </section>
@@ -1137,13 +1389,13 @@ export default Options;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Options.raycaster.html">raycaster</a></li></ul><h3>Classes</h3><ul><li><a href="Options.html">Options</a></li><li><a href="Raycaster.html">Raycaster</a></li></ul><h3>Global</h3><ul><li><a href="global.html#a">a</a></li><li><a href="global.html#axesHelper">axesHelper</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#boOptions">boOptions</a></li><li><a href="global.html#camera">camera</a></li><li><a href="global.html#cameraTarget">cameraTarget</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#canvasMenu">canvasMenu</a></li><li><a href="global.html#dat">dat</a></li><li><a href="global.html#elContainer">elContainer</a></li><li><a href="global.html#frustumPoints">frustumPoints</a></li><li><a href="global.html#getLanguageCode">getLanguageCode</a></li><li><a href="global.html#orbitControls">orbitControls</a></li><li><a href="global.html#palette">palette</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#playerOptions">playerOptions</a></li><li><a href="global.html#point">point</a></li><li><a href="global.html#pointLight">pointLight</a></li><li><a href="global.html#raycaster">raycaster</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scales">scales</a></li><li><a href="global.html#spriteText">spriteText</a></li><li><a href="global.html#stereoEffect">stereoEffect</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Options.raycaster.html">raycaster</a></li></ul><h3>Classes</h3><ul><li><a href="Options.html">Options</a></li><li><a href="Options.EventListeners.html">EventListeners</a></li><li><a href="Raycaster.html">Raycaster</a></li></ul><h3>Global</h3><ul><li><a href="global.html#a">a</a></li><li><a href="global.html#axesHelper">axesHelper</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#boOptions">boOptions</a></li><li><a href="global.html#camera">camera</a></li><li><a href="global.html#cameraTarget">cameraTarget</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#canvasMenu">canvasMenu</a></li><li><a href="global.html#dat">dat</a></li><li><a href="global.html#elContainer">elContainer</a></li><li><a href="global.html#eventListeners">eventListeners</a></li><li><a href="global.html#frustumPoints">frustumPoints</a></li><li><a href="global.html#getLanguageCode">getLanguageCode</a></li><li><a href="global.html#orbitControls">orbitControls</a></li><li><a href="global.html#palette">palette</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#playerOptions">playerOptions</a></li><li><a href="global.html#point">point</a></li><li><a href="global.html#pointLight">pointLight</a></li><li><a href="global.html#raycaster">raycaster</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scales">scales</a></li><li><a href="global.html#spriteText">spriteText</a></li><li><a href="global.html#stereoEffect">stereoEffect</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Jul 22 2021 01:53:31 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Jul 23 2021 10:52:15 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
