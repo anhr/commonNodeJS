@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -183,6 +183,15 @@
 
 				},
 				//player: false,
+				stereoEffect: {
+
+					//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+					far: camera.far,
+					camera: camera,
+					//stereoAspect: 1,
+
+				},
+				stereoEffect: false,
 				dat: {//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
 
 //					dat: typeof dat !== 'undefined' ? dat : undefined,
@@ -202,15 +211,6 @@
 
 				},
 				//dat: false,
-				stereoEffect: {
-
-					//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
-					far: camera.far,
-					camera: camera,
-					//stereoAspect: 1,
-
-				},
-				//stereoEffect: false,
 				raycaster: {
 
 					addParticle: function ( particle ) {
@@ -221,6 +221,8 @@
 					},
 					onIntersection: function ( intersection ) {
 
+						Options.raycaster.onIntersection( intersection, options, scene, camera, canvas, renderer );
+/*
 						this.spriteText = StereoEffect.getTextIntersection( intersection, {
 
 							scales: typeof axesHelper !== 'undefined' ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
@@ -246,10 +248,13 @@
 
 						} );
 						renderer.domElement.style.cursor = 'pointer';
+*/
 
 					},
 					onIntersectionOut: function () {
 
+						Options.raycaster.onIntersectionOut( scene, renderer );
+/*
 						if ( this.spriteText ) {
 
 							scene.remove( this.spriteText );
@@ -257,6 +262,7 @@
 
 						}
 						renderer.domElement.style.cursor = cursor;
+*/
 
 					},
 					onMouseDown: function ( intersect ) {
@@ -341,6 +347,69 @@
 				//if ( selectPlaySceneOptions ) selectPlaySceneOptions.guiSelectPoint = guiSelectPoint;
 				
 			}
+
+			//options.player.play3DObject();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			//
+
+			options.createOrbitControls( camera, renderer, scene );
+/*			
+			if ( typeof OrbitControls !== 'undefined' ) {
+
+				options.orbitControls = new OrbitControls( camera, renderer.domElement );
+				options.orbitControls.target.set(  -0.2, -0.2, -0.2 );
+				options.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
+				options.orbitControls.update();
+//				if ( typeof Player !== 'undefined' ) Player.orbitControls = options.orbitControls;
+
+			}
+*/			
+
+			const cursor = renderer.domElement.style.cursor;
+
+			if ( typeof StereoEffect !== "undefined" ) {
+				new StereoEffect( renderer, options );/*{
+
+					//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+					far: camera.far,
+					camera: camera,
+					//stereoAspect: 1,
+//					options: options,//Among other things, it adds the "Stereo Effects" button into canvasMenu
+
+				} );*/
+				stereoEffect = options.stereoEffect;
+//				stereoEffect.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			raycaster = new THREE.Raycaster();
+			raycaster.params.Points.threshold = 0.03;
+
+			if ( raycaster.setStereoEffect ) {
+
+				//the precision of the raycaster when intersecting objects, in world units.
+				//See https://threejs.org/docs/#api/en/core/Raycaster.params.
+
+				raycaster.setStereoEffect( {
+
+					renderer: renderer,
+					camera: camera,
+					stereoEffect: stereoEffect,
+
+				} );
+//				raycaster.stereo.addParticles( arrayParticles );
+
+			}
+
+			const eventListeners = new Options.EventListeners( raycaster, camera, renderer, options );
 
 			var arrayFuncs = typeof Player === 'undefined' ?
 			[
@@ -461,7 +530,7 @@
 
 				},
 			];
-			const arrayParticles = [];
+//			const arrayParticles = [];
 			if ( typeof getShaderMaterialPoints !== 'undefined' ) {
 
 				console.log( 'Using getShaderMaterialPoints method for creating of the points.' );
@@ -515,7 +584,8 @@
 							shaderMaterial: false,
 							onReady: function( points ) {
 
-								arrayParticles.push( points );
+//								arrayParticles.push( points );
+								eventListeners.addParticle( points );
 								if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 							}
@@ -555,8 +625,9 @@
 							//shaderMaterial: {},
 							onReady: function( points ) {
 
-								arrayParticles.push( points );
-								if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
+//								arrayParticles.push( points );
+								eventListeners.addParticle( points );
+//								if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 							}
 
@@ -636,67 +707,6 @@
 
 			}
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( cube );
-
-			//options.player.play3DObject();
-
-			renderer = new THREE.WebGLRenderer( {
-
-				antialias: true,
-				canvas: document.getElementById( 'canvas' ),
-
-			} );
-			renderer.setSize( window.innerWidth, window.innerHeight );
-
-			//
-
-			options.createOrbitControls( camera, renderer, scene );
-/*			
-			if ( typeof OrbitControls !== 'undefined' ) {
-
-				options.orbitControls = new OrbitControls( camera, renderer.domElement );
-				options.orbitControls.target.set(  -0.2, -0.2, -0.2 );
-				options.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-				options.orbitControls.update();
-//				if ( typeof Player !== 'undefined' ) Player.orbitControls = options.orbitControls;
-
-			}
-*/			
-
-			const cursor = renderer.domElement.style.cursor;
-
-			if ( typeof StereoEffect !== "undefined" ) {
-				new StereoEffect( renderer, options );/*{
-
-					//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
-					far: camera.far,
-					camera: camera,
-					//stereoAspect: 1,
-//					options: options,//Among other things, it adds the "Stereo Effects" button into canvasMenu
-
-				} );*/
-				stereoEffect = options.stereoEffect;
-//				stereoEffect.setSize( window.innerWidth, window.innerHeight );
-
-				raycaster = new THREE.Raycaster();
-
-				if ( raycaster.setStereoEffect ) {
-
-					//the precision of the raycaster when intersecting objects, in world units.
-					//See https://threejs.org/docs/#api/en/core/Raycaster.params.
-					raycaster.params.Points.threshold = 0.03;
-
-					raycaster.setStereoEffect( {
-
-						renderer: renderer,
-						camera: camera,
-						stereoEffect: stereoEffect,
-
-					} );
-					raycaster.stereo.addParticles( arrayParticles );
-
-				}
-
-			}
 
 			if ( typeof CanvasMenu !== "undefined" ) {
 
