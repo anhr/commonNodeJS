@@ -875,15 +875,20 @@ class GuiSelectPoint {
 				value = parseInt( value );
 				mesh = getMesh();
 
-				if ( !mesh.userData.boFrustumPoints && !mesh.userData.player.arrayFuncs ) {
+				if ( !mesh.userData.boFrustumPoints ) {
 
-					const position = mesh.geometry.attributes.position;
-					mesh.userData.player.arrayFuncs = [];
-					for ( var i = 0; i < position.count; i++ ) {
-						
-						const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
-						vector.w = 1;
-						mesh.userData.player.arrayFuncs.push( vector );
+					if ( !mesh.userData.player ) mesh.userData.player = {};
+					if ( !mesh.userData.player.arrayFuncs ) {
+
+						const position = mesh.geometry.attributes.position;
+						mesh.userData.player.arrayFuncs = [];
+						for ( var i = 0; i < position.count; i++ ) {
+
+							const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
+							vector.w = 1;
+							mesh.userData.player.arrayFuncs.push( vector );
+
+						}
 
 					}
 
