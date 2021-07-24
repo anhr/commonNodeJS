@@ -603,8 +603,12 @@ class GuiSelectPoint {
 				//Test for duplicate item
 				for ( var i = 0; i < arrayMeshs.length; i++ ) {
 
-					if ( arrayMeshs[i].uuid === mesh.uuid )
+					if ( arrayMeshs[i].uuid === mesh.uuid ) {
+
+						console.error( 'guiSelectPoint.addMesh: Duplicate mesh: ' + mesh.name );
 						return;
+
+					}
 
 				}
 
