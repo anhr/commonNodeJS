@@ -268,7 +268,7 @@
 
 			//			setOptions.orbitControls( camera, renderer, scene, options );
 			options.createOrbitControls( camera, renderer, scene );
-
+/*
 			if ( typeof Player !== "undefined" ) {
 
 				if ( points ) {
@@ -279,7 +279,7 @@
 				}
 
 			}
-
+*/
 			if ( typeof StereoEffect !== "undefined" ) {
 
 				new StereoEffect( renderer, options );/*{
@@ -314,7 +314,30 @@
 
 			}
 
-			const eventListeners = new Options.EventListeners( raycaster, camera, renderer, options );
+			options.eventListeners = new Options.EventListeners( raycaster, camera, renderer, options );
+			
+			if ( typeof GuiSelectPoint !== "undefined" ) {
+
+				new GuiSelectPoint( options, {
+
+//						axesHelper: options.axesHelper,
+//						getLanguageCode: options.getLanguageCode,
+					cameraTarget: {
+
+						camera: camera,
+						orbitControls: options.orbitControls,
+
+					},
+
+				} );
+				if ( options.guiSelectPoint ) options.guiSelectPoint.add();// gui;
+/*
+				guiSelectPoint.addMesh( points );
+				if ( typeof pointsSizeAttenuation !== 'undefined' )
+					guiSelectPoint.addMesh( pointsSizeAttenuation );
+*/
+
+			}
 
 			const arrayFuncs = [
 				new THREE.Vector4( -0.5, -0.5, -0.5, new Function( 't', 'return 50 - 50*t' ) ),
@@ -383,7 +406,8 @@
 				//points.position.copy( new THREE.Vector3( 0.1, 0, 0 ) );
 				groupMove.add( points );
 				points.name = 'no sizeAttenuation';
-				eventListeners.addParticle( points );
+				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
+				options.eventListeners.addParticle( points );
 /*
 				if ( typeof StereoEffect === "undefined" )
 					arrayintersectObjects.push( points );
@@ -540,19 +564,17 @@
 
 				pointsOptions: {
 
-					//name: 'MyPoints',
-					//shaderMaterial: false,
+					name: 'MyPoints',
+					shaderMaterial: false,
+/*					
 					onReady: function ( points ) {
 
 //						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
-/*						
-						if ( raycaster.stereo ) raycaster.stereo.addParticle( points );
-						else arrayintersectObjects.push( points );
-*/
-						eventListeners.addParticle( points );
+						options.eventListeners.addParticle( points );
 
 					},
+*/					
 
 				}
 
@@ -574,29 +596,6 @@
 				} );
 
 			if ( typeof CameraGui !== "undefined" ) new CameraGui( camera, options );//, gui );
-			
-			if ( typeof GuiSelectPoint !== "undefined" ) {
-
-				new GuiSelectPoint( options, {
-
-//						axesHelper: options.axesHelper,
-//						getLanguageCode: options.getLanguageCode,
-					cameraTarget: {
-
-						camera: camera,
-						orbitControls: options.orbitControls,
-
-					},
-
-				} );
-				if ( options.guiSelectPoint ) options.guiSelectPoint.add();// gui;
-/*
-				guiSelectPoint.addMesh( points );
-				if ( typeof pointsSizeAttenuation !== 'undefined' )
-					guiSelectPoint.addMesh( pointsSizeAttenuation );
-*/
-
-			}
 
 			if ( typeof SpriteTextGui !== "undefined" )
 				SpriteTextGui( scene, options, {
