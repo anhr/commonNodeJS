@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="Options.html">Options</a>.</span>EventListeners<span class="signature">(raycaster, camera, renderer, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="Options.html">Options</a>.</span>EventListeners<span class="signature">(camera, renderer, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -42,7 +42,7 @@
     
 
     
-    <h4 class="name" id="EventListeners"><span class="type-signature"></span>new EventListeners<span class="signature">(raycaster, camera, renderer, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="EventListeners"><span class="type-signature"></span>new EventListeners<span class="signature">(camera, renderer, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -78,43 +78,14 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>raycaster</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">THREE.Raycaster</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/core/Raycaster">Raycaster</a> instance</td>
-        </tr>
-
     
 
         <tr>
@@ -141,6 +112,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><a href="https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera">PerspectiveCamera</a> instance</td>
@@ -173,10 +148,76 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer">WebGLRenderer</a> instance</td>
         </tr>
 
+    
+
+        <tr>
+            
+                <td class="name"><code>settings</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">the following settings are available
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
     
 
         <tr>
@@ -206,8 +247,60 @@
             
 
             
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
 
             <td class="description last"><b>Options</b> instance</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>threshold</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0.03
+                
+                </td>
+            
+
+            <td class="description last">Precision of the raycaster when intersecting objects, in world units.See <a href="https://threejs.org/docs/#api/en/core/Raycaster.params">Raycaster.params</a>.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -448,7 +541,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Options.js.html">Options.js</a>, <a href="Options.js.html#line1322">line 1322</a>
+        <a href="Options.js.html">Options.js</a>, <a href="Options.js.html#line1343">line 1343</a>
     </li></ul></dd>
     
 
@@ -607,7 +700,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Options.js.html">Options.js</a>, <a href="Options.js.html#line1288">line 1288</a>
+        <a href="Options.js.html">Options.js</a>, <a href="Options.js.html#line1309">line 1309</a>
     </li></ul></dd>
     
 
@@ -666,7 +759,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Jul 23 2021 10:52:15 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jul 24 2021 10:39:20 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -297,7 +297,7 @@
 				//options.stereoEffect.setSize( window.innerWidth, window.innerHeight );
 
 			}
-
+/*
 			raycaster = new THREE.Raycaster();
 			raycaster.params.Points.threshold = threshold;
 			if ( raycaster.setStereoEffect !== undefined ) {
@@ -313,8 +313,8 @@
 //				if ( typeof pointsSizeAttenuation !== 'undefined' ) raycaster.stereo.addParticle( pointsSizeAttenuation );
 
 			}
-
-			options.eventListeners = new Options.EventListeners( raycaster, camera, renderer, options );
+*/
+			options.eventListeners = new Options.EventListeners( camera, renderer, { options: options } );
 			
 			if ( typeof GuiSelectPoint !== "undefined" ) {
 

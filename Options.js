@@ -1167,17 +1167,46 @@ Options.EventListeners = class {
 
 	/**
 	 * Create a mouse events listeners for [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance
-	 * @param {THREE.Raycaster} raycaster [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance
 	 * @param {THREE.Camera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera} instance
 	 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer} instance
-	 * @param {Options} [options] <b>Options</b> instance
+	 * @param {Object} [settings={}] the following settings are available
+	 * @param {Options} [settings.options={}] <b>Options</b> instance
+	 * @param {number} [settings.threshold=0.03] Precision of the raycaster when intersecting objects, in world units.
+	 * See [Raycaster.params]{@link https://threejs.org/docs/#api/en/core/Raycaster.params}.
 	 */
-	constructor( raycaster, camera, renderer, options ) {
+	constructor( camera, renderer, settings = {} ) {
 
 		var intersects, intersectedObject;
-		const THREE = three.THREE, mouse = new THREE.Vector2(), particles = [];
+		const THREE = three.THREE, mouse = new THREE.Vector2(), particles = [],
+			raycaster = new THREE.Raycaster(), options = settings.options || {};
+		raycaster.params.Points.threshold = settings.threshold !== undefined ? settings.threshold : 0.03;
+
+		if ( raycaster.setStereoEffect ) {
+
+			//the precision of the raycaster when intersecting objects, in world units.
+			//See https://threejs.org/docs/#api/en/core/Raycaster.params.
+
+			raycaster.setStereoEffect( {
+
+				renderer: renderer,
+				camera: camera,
+				stereoEffect: options.stereoEffect,
+				raycasterEvents: false,
+
+			} );
+			//				raycaster.stereo.addParticles( arrayParticles );
+
+		}
+
 		window.addEventListener( 'mousemove', function ( event ) {
 
+			if ( raycaster.stereo !== undefined ) {
+
+				raycaster.stereo.onDocumentMouseMove( event );
+				return;
+
+			}
+			
 			Options.EventListeners.getRendererSize(renderer).getMousePosition( mouse, event );
 /*			
 			// calculate mouse position in normalized device coordinates
@@ -1192,15 +1221,6 @@ Options.EventListeners = class {
 
 			// update the picking ray with the camera and mouse position
 			raycaster.setFromCamera( mouse, camera );
-
-/*
-			if ( raycaster.stereo !== undefined ) {
-
-				raycaster.stereo.onDocumentMouseMove( event );
-				return;
-
-			}
-*/
 			// calculate objects intersecting the picking ray
 			intersects = raycaster.intersectObjects( particles );
 			if ( !intersects )

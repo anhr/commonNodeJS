@@ -53,7 +53,7 @@
 
 		var stereoEffect;
 		if ( typeof StereoEffect !== 'undefined' ) stereoEffect = new StereoEffect( renderer );
-
+/*
 		const raycaster = new THREE.Raycaster();
 
 		//the precision of the raycaster when intersecting objects, in world units.
@@ -68,8 +68,8 @@
 	//			stereoEffect: stereoEffect,
 
 			} );
-		
-		const eventListeners = new Options.EventListeners( raycaster, camera, renderer );
+*/		
+		const eventListeners = new Options.EventListeners( camera, renderer, { threshold: 0.1 } );
 
 		if ( typeof OrbitControls !== 'undefined' ) {
 

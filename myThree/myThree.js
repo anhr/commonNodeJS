@@ -457,31 +457,8 @@ class MyThree {
 			elContainer.innerHTML = loadFile.sync( currentScriptPath + '/canvasContainer.html' );
 			elContainer = elContainer.querySelector( '.container' );
 
-
-			//ось z смотрит точно на камеру
-			//camera.rotation = 0
-			//Камера не повернута
-			//camera.position.x = 0;
-			//camera.position.y = 0;
-			//camera.position.z = 2;
-			//options.camera.position = new THREE.Vector3( 0, 0, 2 );
-
-			//ось x смотрит точно на камеру
-			//camera.rotation.x = 0
-			//camera.rotation.y = 1.5707963267948966 = PI / 2 = 90 degrees
-			//camera.rotation.z = 0
-			//Поворот камеры по оси y на 90 градусов
-			//camera.position.x = 2;
-			//camera.position.y = 0;
-			//camera.position.z = 0;
-			//		options.camera.position = new THREE.Vector3( 2, 0, 0 );
-
-			//Если опредедить как const, то при выполнении npm run build появится ошибка
-			//(babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/myThree/myThree.js: "raycaster" is read-only
-			var raycaster = new THREE.Raycaster(),
-
-				//point size
-				defaultPoint = {},
+			//point size
+			const defaultPoint = {},
 
 				//uses only if stereo effects does not exists
 				mouse = new THREE.Vector2();
@@ -517,7 +494,7 @@ class MyThree {
 			canvas = elContainer.querySelector( 'canvas' );
 			//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
 //			const gl = canvas.getContext( 'webgl' );
-
+/*
 			//raycaster
 
 			elContainer.addEventListener( 'mousemove', onDocumentMouseMove, false );
@@ -526,7 +503,7 @@ class MyThree {
 			//See "OrbitControls: Implement Pointer events." commit https://github.com/mrdoob/three.js/commit/1422e36e9facbdc5f9d86cf6b97b005a2723a24a#diff-3285de3826a51619836a5c9adc6bee74
 			//elContainer.addEventListener( 'mousedown', onDocumentMouseDown, { capture: true } );
 			elContainer.addEventListener( 'pointerdown', onDocumentMouseDown, { capture: true } );
-
+*/
 			function isFullScreen() {
 
 				if ( options.canvasMenu ) return options.canvasMenu.isFullScreen();
@@ -551,7 +528,7 @@ class MyThree {
 
 				//Не могу выполнить npm run build Получаю ошибку
 				//(babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/myThree/myThree.js: "raycaster" is read-only
-				raycaster = undefined;
+//				raycaster = undefined;
 
 				rendererSizeDefault.onFullScreenToggle( true );
 				alert( lang.webglcontextlost );
@@ -688,6 +665,23 @@ class MyThree {
 				options.renderer = renderer;
 
 				options.cursor = renderer.domElement.style.cursor;
+
+				const raycaster = new THREE.Raycaster();
+
+				//item.material.size is NaN if item.material is ShaderMaterial
+				//Влияет только на точки без ShaderMaterial
+				raycaster.params.Points.threshold = 0.02;//0.01;
+
+				if ( raycaster.setStereoEffect !== undefined )
+					raycaster.setStereoEffect( {
+
+						renderer: renderer,
+						camera: camera,
+						stereoEffect: options.stereoEffect,
+						raycasterEvents: false,
+
+					} );
+				options.eventListeners = new Options.EventListeners( camera, renderer, { options: options } );
 
 				//StereoEffect. https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js
 /*				
@@ -889,20 +883,6 @@ class MyThree {
 
 				} );
 //				pointLight2.add( new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ) );
-
-				//item.material.size is NaN if item.material is ShaderMaterial
-				//Влияет только на точки без ShaderMaterial
-				raycaster.params.Points.threshold = 0.02;//0.01;
-				if ( raycaster.setStereoEffect !== undefined )
-					raycaster.setStereoEffect( {
-
-						renderer: renderer,
-						camera: camera,
-						stereoEffect: options.stereoEffect,
-						raycasterEvents: false,
-
-					} );
-				options.eventListeners = new Options.EventListeners( raycaster, camera, renderer, options );
 /*				
 				options.raycaster.addParticle = function ( item ) {
 
@@ -1548,6 +1528,7 @@ class MyThree {
 					options.frustumPoints.update();
 
 			}
+/*
 			function onDocumentMouseMove( event ) {
 
 				if ( typeof raycaster !== 'undefined' ) {
@@ -1573,16 +1554,6 @@ class MyThree {
 							}
 
 						}
-/*
-						// Test of the old version of THREE.Raycaster
-						event.preventDefault();
-						var left = renderer.domElement.offsetLeft,
-							top = renderer.domElement.offsetTop,
-							size = new THREE.Vector2;
-						renderer.getSize( size );
-						mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
-						mouse.y = -( event.clientY / size.y ) * 2 + 1 + ( top / size.y ) * 2;
-*/						
 
 					}
 
@@ -1593,23 +1564,10 @@ class MyThree {
 				render();
 
 			}
-			function onObjectMouseDown( position, intersection ) {
-
-				if ( ( options.axesHelper !== undefined ) && ( intersection.object.type === "Points" ) )
-					options.axesHelper.exposePosition( position );
-				else alert( 'You are clicked the "' + intersection.object.type + '" type object.'
-					+ ( intersection.index === undefined ? '' : ' Index = ' + intersection.index + '.' )
-					+ ' Position( x: ' + position.x + ', y: ' + position.y + ', z: ' + position.z + ' )' );
-
-			}
 			function onDocumentMouseDown( event ) {
 
 				if ( typeof raycaster === 'undefined' )
 					return;
-/*
-				if ( mouseenter )
-					return;
-*/
 				if ( raycaster.stereo !== undefined ) {
 
 					raycaster.stereo.onDocumentMouseDown( event );
@@ -1620,14 +1578,19 @@ class MyThree {
 				intersects = raycaster.intersectObjects( group.children );
 				if ( intersects.length > 0 ) {
 
-/*
-					const intersection = intersects[0],
-						position = getPosition( intersection );
-					onObjectMouseDown( position, intersection );
-*/					
 					Options.raycaster.onMouseDown( intersects[0], options );
 
 				}
+
+			}
+*/
+			function onObjectMouseDown( position, intersection ) {
+
+				if ( ( options.axesHelper !== undefined ) && ( intersection.object.type === "Points" ) )
+					options.axesHelper.exposePosition( position );
+				else alert( 'You are clicked the "' + intersection.object.type + '" type object.'
+					+ ( intersection.index === undefined ? '' : ' Index = ' + intersection.index + '.' )
+					+ ' Position( x: ' + position.x + ', y: ' + position.y + ', z: ' + position.z + ' )' );
 
 			}
 			function animate() {

@@ -159,9 +159,9 @@
 			//[Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
 
 			raycaster = new THREE.Raycaster();
+			raycaster.params.Points.threshold = 0.02;//threshold is the precision of the raycaster when intersecting objects, in world units. See [params](https://threejs.org/docs/#api/en/core/Raycaster.params)
 			if ( raycaster.setStereoEffect ) {
 
-				raycaster.params.Points.threshold = 0.02;//threshold is the precision of the raycaster when intersecting objects, in world units. See [params](https://threejs.org/docs/#api/en/core/Raycaster.params)
 				raycaster.setStereoEffect( {
 
 					renderer: renderer,
