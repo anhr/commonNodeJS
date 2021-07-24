@@ -5,6 +5,7 @@ I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create
 ## Quick start
 
 * Create a folder on your localhost named as [folderName].
+	Download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
 * Add your web page into [folderName]. [Example](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene).
 
 * First, import [three.js](https://github.com/anhr/three.js) in your JavaScript module.
@@ -15,7 +16,6 @@ or
 ```
 import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 ```
-or download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
 ```
 import * as THREE from './three.js/dev/build/three.module.js';
 ```
