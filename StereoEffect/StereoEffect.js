@@ -1028,7 +1028,7 @@ function assign() {
 
 					if ( particles === undefined )
 						particles = [];
-					if ( this.isAddedToParticles() ) {
+					if ( this.isAddedToParticles( particle ) ) {
 
 						console.error( 'Duplicate particle "' + particle.name + '"' );
 						return;
