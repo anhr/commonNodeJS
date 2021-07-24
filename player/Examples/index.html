@@ -213,12 +213,14 @@
 				//dat: false,
 				raycaster: {
 
+/*
 					addParticle: function ( particle ) {
 
 						if ( raycaster && raycaster.stereo )
 							raycaster.stereo.addParticle( particle );
 
 					},
+*/
 					onIntersection: function ( intersection ) {
 
 						Options.raycaster.onIntersection( intersection, options, scene, camera, canvas, renderer );
@@ -764,7 +766,7 @@
 				if ( options.guiSelectPoint ) options.guiSelectPoint.add( gui );
 
 			}
-
+/*
 			if ( raycaster ) {
 
 				const mouse = new THREE.Vector2();
@@ -789,6 +791,7 @@
 				}, false );
 
 			}
+*/
 
 			window.addEventListener( 'resize', onWindowResize, false );
 
