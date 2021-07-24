@@ -97,8 +97,8 @@
 
 		import MyPoints from '../../myPoints/myPoints.js';
 
-		var camera, scene, renderer, intersects, raycaster;//, guiSelectPoint, controls, moveGroup, axesHelper, stereoEffect;
-		const mouse = new THREE.Vector2(), threshold = 0.02,//0.08, arrayintersectObjects = [];
+		var camera, scene, renderer, raycaster;//, guiSelectPoint, controls, moveGroup, axesHelper, stereoEffect, intersects;
+		const threshold = 0.02,//mouse = new THREE.Vector2(), 0.08, arrayintersectObjects = [];
 			options = new Options( {
 
 				//a: 2,
@@ -309,8 +309,8 @@
 					stereoEffect: options.stereoEffect,
 
 				} );
-				if ( typeof points !== 'undefined' ) raycaster.stereo.addParticle( points );
-				if ( typeof pointsSizeAttenuation !== 'undefined' ) raycaster.stereo.addParticle( pointsSizeAttenuation );
+//				if ( typeof points !== 'undefined' ) raycaster.stereo.addParticle( points );
+//				if ( typeof pointsSizeAttenuation !== 'undefined' ) raycaster.stereo.addParticle( pointsSizeAttenuation );
 
 			}
 
