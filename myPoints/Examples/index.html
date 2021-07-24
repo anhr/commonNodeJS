@@ -55,6 +55,11 @@
 		if ( typeof StereoEffect !== 'undefined' ) stereoEffect = new StereoEffect( renderer );
 
 		const raycaster = new THREE.Raycaster();
+
+		//the precision of the raycaster when intersecting objects, in world units.
+		//See https://threejs.org/docs/#api/en/core/Raycaster.params.
+		raycaster.params.Points.threshold = 0.1;
+
 		if ( raycaster.setStereoEffect )
 			raycaster.setStereoEffect( {
 
@@ -75,10 +80,6 @@
 			controls.update();
 
 		}
-
-		//the precision of the raycaster when intersecting objects, in world units.
-		//See https://threejs.org/docs/#api/en/core/Raycaster.params.
-		raycaster.params.Points.threshold = 0.1;
 
 		const cursor = renderer.domElement.style.cursor;
 
