@@ -373,7 +373,7 @@
 			}
 */			
 
-			const cursor = renderer.domElement.style.cursor;
+//			const cursor = renderer.domElement.style.cursor;
 
 			if ( typeof StereoEffect !== "undefined" ) {
 				new StereoEffect( renderer, options );/*{
@@ -409,7 +409,7 @@
 
 			}
 
-			const eventListeners = new Options.EventListeners( raycaster, camera, renderer, options );
+			options.eventListeners = new Options.EventListeners( raycaster, camera, renderer, options );
 
 			var arrayFuncs = typeof Player === 'undefined' ?
 			[
@@ -576,21 +576,23 @@
 				MyPoints( arrayFuncs, scene, {
 
 						options: options,
-						pointsOptions: {
+//						pointsOptions: {
 
 							//position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
 							//rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
 							//shaderMaterial: { point: { size: 100 } },
-							shaderMaterial: false,
+							//shaderMaterial: false,
+/*							
 							onReady: function( points ) {
 
 //								arrayParticles.push( points );
-								eventListeners.addParticle( points );
+//								options.eventListeners.addParticle( points );
 								if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 							}
+*/							
 
-						}
+//						}
 
 				} );
 				MyPoints( [
@@ -622,14 +624,16 @@
 							name: 'MyPoints',
 							//position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
 							//rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-							//shaderMaterial: {},
+							shaderMaterial: false,
+/*							
 							onReady: function( points ) {
 
 //								arrayParticles.push( points );
-								eventListeners.addParticle( points );
+//								options.eventListeners.addParticle( points );
 //								if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
 							}
+*/							
 
 						}
 
