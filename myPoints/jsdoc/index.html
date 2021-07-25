@@ -86,10 +86,9 @@
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 
 		import three from './commonNodeJS/master/three.js'
-		//import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
-		var camera, scene, renderer, guiSelectPoint;
+		var camera, scene, renderer;
 
 		init();
 		animate();
@@ -138,21 +137,21 @@
 </code></pre>
 <p>Now you can use <b>MyPoints</b> in your javascript code. Please call <b>MyPoints</b> after creating of <b>renderer</b> for your future code. Example:</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
-	[],//first point. Zero position
-	[ 0.5, 0.5, 0.5 ],//second point
+	[],//first point. Zero position. White color.
+	[ 0.5, 0.5, 0.5 ],//second point. White color.
 ];
 MyPoints( arrayFuncs, scene );
 </code></pre>
 <p>You can see two small white points on your canvas.</p>
-<h3>Change points size to 25 and point color of the first point to green.</h3>
+<h3>Change points size to 25 and point color of the second point to green.</h3>
 <pre class="prettyprint source"><code>const arrayFuncs = [
-	new THREE.Vector4(
+	[],//first point. Zero position. White color.
+	[
 		0.5,//x
 		0.5,//y
 		0.5,//z
-		33//w - color of the point is green
-	),//first point
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),//second point
+		0.5//w - color of the point is green
+	]//second point
 ];
 MyPoints( arrayFuncs, scene, {
 
@@ -164,18 +163,14 @@ MyPoints( arrayFuncs, scene, {
 
 } );
 </code></pre>
-<p>Attention please: I have changed first point from <b>THREE.Vector3</b> to <b>THREE.Vector4</b>.
-<b>w</b> coordinate of the first point is index of the color of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.
+<p><b>w</b> coordinate of the second point is index of the color of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.
 Currently I use default <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW">ColorPicker.paletteIndexes.BGRW</a> (blue, green, red, white) palette.
-33 value of <b>w</b> coordinate of the first point is index of the green color for default color palette.
+0.5 value of <b>w</b> coordinate of the second point is index of the green color for default color palette.
 You can select another palette. Please import <b>ColorPicker</b> into your web page for it.</p>
-<pre class="prettyprint source"><code>import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 </code></pre>
 <p>Create a palette. For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional">ColorPicker.paletteIndexes.bidirectional</a> palette
-and add new <b>palette</b> into <b>options</b> of the <b>MyPoints</b></p>
+and add new <b>palette</b> into <b>settings.options</b> parameter of <b>MyPoints</b></p>
 <pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
 
 	options: {
@@ -187,32 +182,17 @@ and add new <b>palette</b> into <b>options</b> of the <b>MyPoints</b></p>
 
 } );
 </code></pre>
-<p>33 value of <b>w</b> coordinate of the first point is index of the dark color for <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional">ColorPicker.paletteIndexes.bidirectional</a> palette.</p>
+<p>Default 1 value of <b>w</b> coordinate of the first point is index of the green color for <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional">ColorPicker.paletteIndexes.bidirectional</a> palette.</p>
+<p>0.5 value of <b>w</b> coordinate of the second point is index of the dark color for <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional">ColorPicker.paletteIndexes.bidirectional</a> palette.</p>
 <h3><a href="https://threejs.org/docs/index.html#api/en/core/Raycaster">Raycaster</a>.</h3>
-<p>First, import <b>StereoEffect</b>.</p>
-<pre class="prettyprint source"><code>import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
+<p>First, import <a href="https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/Options/index.html">Options</a>.</p>
+<pre class="prettyprint source"><code>import Options from './commonNodeJS/master/Options.js'
 </code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
+<p>Add event listener for </b>raycaster</b>.</p>
+<p>Note. Please create event listener after creating of <b>camera</b> and <b>renderer</b> and before creating of <b>myPoints</b>.</p>
+<pre class="prettyprint source"><code>const eventListeners = new Options.raycaster.EventListeners( camera, renderer );
 </code></pre>
-<p>Create raycaster.</p>
-<pre class="prettyprint source"><code>//Raycaster.
-
-const stereoEffect = new StereoEffect( renderer );
-
-const raycaster = new THREE.Raycaster();
-raycaster.setStereoEffect( {
-
-	renderer: renderer,
-	camera: camera,
-
-} );
-
-//the precision of the raycaster when intersecting objects, in world units.
-//See https://threejs.org/docs/#api/en/core/Raycaster.params.
-raycaster.params.Points.threshold = 0.1;
-</code></pre>
-<p>Add new <b>raycaster</b> into <b>options</b> of the <b>MyPoints</b>.</p>
+<p>Add new <b>raycaster</b> key into <b>settings.options</b> parameter of <b>MyPoints</b>.</p>
 <pre class="prettyprint source"><code>const cursor = renderer.domElement.style.cursor;
 MyPoints( arrayFuncs, scene, {
 
@@ -223,8 +203,7 @@ MyPoints( arrayFuncs, scene, {
 
 			addParticle: function ( item ) {
 
-				if ( raycaster.stereo !== undefined )
-					raycaster.stereo.addParticle( item );
+				eventListeners.addParticle( item );
 
 			},
 			onIntersection: function ( intersection, mouse ) {
@@ -249,8 +228,12 @@ MyPoints( arrayFuncs, scene, {
 
 } );
 </code></pre>
-<p>Please move mouse over any point. Mouse cursor will change to &quot;pointer&quot;.
-You can see an alert if you click a point.</p></article>
+<p>Please move mouse over center of any point. Mouse cursor will change to &quot;pointer&quot;.
+You can see an alert if you click a point.</p>
+<p>Currently you see alert only if user click in the center of the point. You can icrease the click area.
+Please add new <a href="https://threejs.org/docs/#api/en/core/Raycaster.params">threshold</a> key into <b>new Options.raycaster.EventListeners</b> for it.</p>
+<pre class="prettyprint source"><code>const eventListeners = new Options.raycaster.EventListeners( camera, renderer, { threshold: 0.1 } );
+</code></pre></article>
     </section>
 
 
@@ -267,7 +250,7 @@ You can see an alert if you click a point.</p></article>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sun Jul 25 2021 16:55:50 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sun Jul 25 2021 22:28:19 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
