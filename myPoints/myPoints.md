@@ -42,7 +42,7 @@ I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create
 		import three from './commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
-		var camera, scene, renderer, guiSelectPoint;
+		var camera, scene, renderer;
 
 		init();
 		animate();
