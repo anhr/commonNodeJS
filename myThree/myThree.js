@@ -681,7 +681,7 @@ class MyThree {
 						raycasterEvents: false,
 
 					} );
-				options.eventListeners = new Options.EventListeners( camera, renderer, { options: options } );
+				options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options } );
 
 				//StereoEffect. https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js
 /*				
@@ -1473,7 +1473,7 @@ class MyThree {
 				}
 
 				//raycaster
-/*Сейчас использую Options.EventListeners.addParticle
+/*Сейчас использую Options.raycaster.EventListeners.addParticle
 				group.children.forEach( function ( item ) {
 
 					if ( item.userData.raycaster !== undefined ) {

@@ -1151,6 +1151,217 @@ class Raycaster {
 
 		}
 
+		/**
+		 * @class
+		 */
+		this.EventListeners = class {
+
+			/**
+			 * Create a mouse events listeners for [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance
+			 * @param {THREE.Camera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera} instance
+			 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer} instance
+			 * @param {Object} [settings={}] the following settings are available
+			 * @param {Options} [settings.options={}] <b>Options</b> instance
+			 * @param {number} [settings.threshold=0.03] Precision of the raycaster when intersecting objects, in world units.
+			 * See [Raycaster.params]{@link https://threejs.org/docs/#api/en/core/Raycaster.params}.
+			 */
+			constructor( camera, renderer, settings = {} ) {
+
+				var intersects, intersectedObject;
+				const THREE = three.THREE, mouse = new THREE.Vector2(), particles = [],
+					raycaster = new THREE.Raycaster(), options = settings.options || {};
+				raycaster.params.Points.threshold = settings.threshold !== undefined ? settings.threshold : 0.03;
+
+				if ( raycaster.setStereoEffect ) {
+
+					//the precision of the raycaster when intersecting objects, in world units.
+					//See https://threejs.org/docs/#api/en/core/Raycaster.params.
+
+					raycaster.setStereoEffect( {
+
+						renderer: renderer,
+						camera: camera,
+						stereoEffect: options.stereoEffect,
+						raycasterEvents: false,
+
+					} );
+					//				raycaster.stereo.addParticles( arrayParticles );
+
+				}
+
+				window.addEventListener( 'mousemove', function ( event ) {
+
+					if ( raycaster.stereo !== undefined ) {
+
+						raycaster.stereo.onDocumentMouseMove( event );
+						return;
+
+					}
+
+					Options.raycaster.EventListeners.getRendererSize( renderer ).getMousePosition( mouse, event );
+					/*			
+								// calculate mouse position in normalized device coordinates
+								// (-1 to +1) for both components
+					
+								mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+								mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+								//			console.warn( 'mouse.x = ' + mouse.x + ' mouse.y = ' + mouse.y );
+					*/
+
+					//Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
+
+					// update the picking ray with the camera and mouse position
+					raycaster.setFromCamera( mouse, camera );
+					// calculate objects intersecting the picking ray
+					intersects = raycaster.intersectObjects( particles );
+					if ( !intersects )
+						return;
+
+					if ( intersects.length === 0 ) {
+
+						if ( intersectedObject ) {
+
+							intersectedObject.userData.raycaster.onIntersectionOut();
+							intersectedObject = undefined;
+
+						}
+
+					} else {
+
+						const intersect = intersects[0], object = intersect.object;
+						object.userData.raycaster.onIntersection( intersect );
+						intersectedObject = object;
+
+					}
+					/*			
+								arrayintersectObjects.forEach( function ( object ) {
+					
+									//				var bIntersected = false;
+									if ( intersectedObject && ( intersects.length === 0 ) ) {
+					
+										intersectedObject.userData.raycaster.onIntersectionOut();
+										intersectedObject = undefined;
+					
+									}
+									else if ( !intersectedObject )
+										for ( var i = 0; i < intersects.length; i++ ) {
+					
+											const intersect = intersects[i];
+											if ( Object.is( object, intersect.object ) ) {
+					
+												object.userData.raycaster.onIntersection( intersect );
+												intersectedObject = object;
+												//						bIntersected = true;
+												//						bIntersectedOut = true;
+					
+											}
+					
+										}
+					
+								} );
+					*/
+
+				}, false );
+
+				//ATTENTION!!! The 'mousedown' event is not fired you use new version of the OrbitControls.
+				//See "OrbitControls: Implement Pointer events." commit https://github.com/mrdoob/three.js/commit/1422e36e9facbdc5f9d86cf6b97b005a2723a24a#diff-3285de3826a51619836a5c9adc6bee74
+				//window.addEventListener( 'mousedown', function( event )
+				window.addEventListener( 'pointerdown', function ( event ) {
+
+					if ( raycaster === undefined )
+						return;
+
+					if ( raycaster.stereo !== undefined ) {
+
+						raycaster.stereo.onDocumentMouseDown( event );
+						return;
+
+					}
+					if ( intersects && ( intersects.length > 0 ) ) {
+
+						const intersect = intersects[0];
+						if ( intersect.object.userData.raycaster ) {
+
+							intersect.object.userData.raycaster.onMouseDown( intersect );
+							if ( options && options.guiSelectPoint ) options.guiSelectPoint.select( intersect );
+
+						}
+
+					}
+
+				}, false );
+				function isAddedToParticles( particle ) { return particles.includes( particle ); };
+				/**
+				 * Adds new particle into array of objects to check for intersection with the ray.
+				 * @see <b>objects</b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+				 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or derived class instance for check for intersection with the ray.
+				 */
+				this.addParticle = function ( particle ) {
+
+					if ( particle.userData.boFrustumPoints )
+						return;
+					if ( raycaster.stereo ) {
+
+						raycaster.stereo.addParticle( particle );
+						return;
+
+					}
+					if ( isAddedToParticles( particle ) ) {
+
+						console.error( 'Duplicate particle "' + particle.name + '"' );
+						return;
+
+					}
+					particles.push( particle );
+
+				};
+
+			}
+
+			/**
+			 * Convert mouse position to renderer coordinates.
+			 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}
+			 * @param {HTMLElement} [el] parent of the <b>canvas</b>.
+			 * @returns <pre>
+			 * {
+			 *
+			 *	getMousePosition:function
+			 *
+			 * }
+			 * </pre>
+			 */
+			static getRendererSize( renderer, el ) {
+
+				el = el || renderer.domElement;
+				const style = {
+
+					position: el.style.position,
+					left: el.style.left,
+					top: el.style.top,
+					width: el.style.width,
+					height: el.style.height,
+
+				},
+					rect = el.getBoundingClientRect(),
+					left = Math.round( rect.left ),
+					top = Math.round( rect.top ),
+					size = new three.THREE.Vector2();
+				renderer.getSize( size );
+				return {
+
+					getMousePosition: function ( mouse, event ) {
+
+						mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
+						mouse.y = - ( event.clientY / size.y ) * 2 + 1 + ( top / size.y ) * 2;
+
+					},
+
+				};
+
+			}
+
+		}
+
 	}
 
 }
@@ -1159,216 +1370,5 @@ class Raycaster {
  * @See <a href="./Raycaster.html" target="_blank">Raycaster</a> for details.
  * */
 Options.raycaster = new Raycaster();
-
-/**
- * @class
- */
-Options.EventListeners = class {
-
-	/**
-	 * Create a mouse events listeners for [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance
-	 * @param {THREE.Camera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera} instance
-	 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer} instance
-	 * @param {Object} [settings={}] the following settings are available
-	 * @param {Options} [settings.options={}] <b>Options</b> instance
-	 * @param {number} [settings.threshold=0.03] Precision of the raycaster when intersecting objects, in world units.
-	 * See [Raycaster.params]{@link https://threejs.org/docs/#api/en/core/Raycaster.params}.
-	 */
-	constructor( camera, renderer, settings = {} ) {
-
-		var intersects, intersectedObject;
-		const THREE = three.THREE, mouse = new THREE.Vector2(), particles = [],
-			raycaster = new THREE.Raycaster(), options = settings.options || {};
-		raycaster.params.Points.threshold = settings.threshold !== undefined ? settings.threshold : 0.03;
-
-		if ( raycaster.setStereoEffect ) {
-
-			//the precision of the raycaster when intersecting objects, in world units.
-			//See https://threejs.org/docs/#api/en/core/Raycaster.params.
-
-			raycaster.setStereoEffect( {
-
-				renderer: renderer,
-				camera: camera,
-				stereoEffect: options.stereoEffect,
-				raycasterEvents: false,
-
-			} );
-			//				raycaster.stereo.addParticles( arrayParticles );
-
-		}
-
-		window.addEventListener( 'mousemove', function ( event ) {
-
-			if ( raycaster.stereo !== undefined ) {
-
-				raycaster.stereo.onDocumentMouseMove( event );
-				return;
-
-			}
-			
-			Options.EventListeners.getRendererSize(renderer).getMousePosition( mouse, event );
-/*			
-			// calculate mouse position in normalized device coordinates
-			// (-1 to +1) for both components
-
-			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-			//			console.warn( 'mouse.x = ' + mouse.x + ' mouse.y = ' + mouse.y );
-*/			
-
-			//Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
-
-			// update the picking ray with the camera and mouse position
-			raycaster.setFromCamera( mouse, camera );
-			// calculate objects intersecting the picking ray
-			intersects = raycaster.intersectObjects( particles );
-			if ( !intersects )
-				return;
-
-			if ( intersects.length === 0 ) {
-
-				if ( intersectedObject ) {
-
-					intersectedObject.userData.raycaster.onIntersectionOut();
-					intersectedObject = undefined;
-
-				}
-
-			} else {
-
-				const intersect = intersects[0], object = intersect.object;
-				object.userData.raycaster.onIntersection( intersect );
-				intersectedObject = object;
-
-			}
-/*			
-			arrayintersectObjects.forEach( function ( object ) {
-
-				//				var bIntersected = false;
-				if ( intersectedObject && ( intersects.length === 0 ) ) {
-
-					intersectedObject.userData.raycaster.onIntersectionOut();
-					intersectedObject = undefined;
-
-				}
-				else if ( !intersectedObject )
-					for ( var i = 0; i < intersects.length; i++ ) {
-
-						const intersect = intersects[i];
-						if ( Object.is( object, intersect.object ) ) {
-
-							object.userData.raycaster.onIntersection( intersect );
-							intersectedObject = object;
-							//						bIntersected = true;
-							//						bIntersectedOut = true;
-
-						}
-
-					}
-
-			} );
-*/			
-
-		}, false );
-
-		//ATTENTION!!! The 'mousedown' event is not fired you use new version of the OrbitControls.
-		//See "OrbitControls: Implement Pointer events." commit https://github.com/mrdoob/three.js/commit/1422e36e9facbdc5f9d86cf6b97b005a2723a24a#diff-3285de3826a51619836a5c9adc6bee74
-		//window.addEventListener( 'mousedown', function( event )
-		window.addEventListener( 'pointerdown', function ( event ) {
-
-			if ( raycaster === undefined )
-				return;
-
-			if ( raycaster.stereo !== undefined ) {
-
-				raycaster.stereo.onDocumentMouseDown( event );
-				return;
-
-			}
-			if ( intersects && ( intersects.length > 0 ) ) {
-
-				const intersect = intersects[0];
-				if ( intersect.object.userData.raycaster ) {
-
-					intersect.object.userData.raycaster.onMouseDown( intersect );
-					if ( options && options.guiSelectPoint ) options.guiSelectPoint.select( intersect );
-
-				}
-
-			}
-
-		}, false );
-		function isAddedToParticles ( particle ) { return particles.includes( particle ); };
-		/**
-		 * Adds new particle into array of objects to check for intersection with the ray.
-		 * @see <b>objects</b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
-		 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or derived class instance for check for intersection with the ray.
-		 */
-		this.addParticle = function ( particle ) {
-
-			if ( particle.userData.boFrustumPoints )
-				return;
-			if ( raycaster.stereo ) {
-
-				raycaster.stereo.addParticle( particle );
-				return;
-
-			}
-			if ( isAddedToParticles( particle ) ) {
-
-				console.error( 'Duplicate particle "' + particle.name + '"' );
-				return;
-
-			}
-			particles.push( particle );
-
-		};
-
-	}
-
-	/**
-	 * Convert mouse position to renderer coordinates.
-	 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}
-	 * @param {HTMLElement} [el] parent of the <b>canvas</b>.
-	 * @returns <pre>
-	 * {
-	 *
-	 *	getMousePosition:function
-	 *
-	 * }
-	 * </pre>
-	 */
-	static getRendererSize( renderer, el ) {
-
-		el = el || renderer.domElement;
-		const style = {
-
-				position: el.style.position,
-				left: el.style.left,
-				top: el.style.top,
-				width: el.style.width,
-				height: el.style.height,
-
-			},
-			rect = el.getBoundingClientRect(),
-			left = Math.round( rect.left ),
-			top = Math.round( rect.top ),
-			size = new three.THREE.Vector2();
-		renderer.getSize( size );
-		return {
-
-			getMousePosition: function ( mouse, event ) {
-
-				mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
-				mouse.y = - ( event.clientY / size.y ) * 2 + 1 + ( top / size.y ) * 2;
-
-			},
-
-		};
-
-	}
-
-}
 
 export default Options;

@@ -18,10 +18,8 @@
 	</div>
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import * as THREE from '../../../../three.js/dev/build/three.module.js';
-		//import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
-		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
 
 		import three from '../../three.js'
 		three.THREE = THREE;
@@ -69,7 +67,7 @@
 
 			} );
 */		
-		const eventListeners = new Options.EventListeners( camera, renderer, { threshold: 0.1 } );
+		const eventListeners = new Options.raycaster.EventListeners( camera, renderer, { threshold: 0.1 } );
 
 		if ( typeof OrbitControls !== 'undefined' ) {
 
@@ -124,7 +122,7 @@
 				//trace: true,//Displays the trace of the point movement.
 
 			},
-			new THREE.Vector3( -0.5, -0.5, -0.5 ),
+			new THREE.Vector4( -0.5, -0.5, -0.5, -1 ),
 		];
 		MyPoints( arrayFuncs, scene, {
 

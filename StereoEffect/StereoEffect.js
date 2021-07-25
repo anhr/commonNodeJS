@@ -175,7 +175,7 @@ class StereoEffect {
 		 */
 		this.getRendererSize = function () {
 
-			return Options.EventListeners.getRendererSize( renderer, settings.elParent );
+			return Options.raycaster.EventListeners.getRendererSize( renderer, settings.elParent );
 /*
 			const el = settings.elParent || renderer.domElement,
 				style = {
