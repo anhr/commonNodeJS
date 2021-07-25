@@ -150,27 +150,15 @@ Default 1 value of <b>w</b> coordinate of the first point is index of the green 
 
 First, import [Options](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/Options/index.html).
 ```
-import Options from '../../Options.js'
+import Options from './commonNodeJS/master/Options.js'
 ```
-Create raycaster.
+Add event listener for </b>raycaster</b>.
+
+Note. Please create event listener after creating of <b>camera</b> and <b>renderer</b> and before creating of <b>myPoints</b>.
 ```
-//Raycaster.
-
-const stereoEffect = new StereoEffect( renderer );
-
-const raycaster = new THREE.Raycaster();
-raycaster.setStereoEffect( {
-
-	renderer: renderer,
-	camera: camera,
-
-} );
-
-//the precision of the raycaster when intersecting objects, in world units.
-//See https://threejs.org/docs/#api/en/core/Raycaster.params.
-raycaster.params.Points.threshold = 0.1;
+const eventListeners = new Options.raycaster.EventListeners( camera, renderer );
 ```
-Add new <b>raycaster</b> into <b>options</b> of the <b>MyPoints</b>.
+Add new <b>raycaster</b> into <b>settings.options</b> parameter of <b>MyPoints</b>.
 ```
 const cursor = renderer.domElement.style.cursor;
 MyPoints( arrayFuncs, scene, {
@@ -182,8 +170,7 @@ MyPoints( arrayFuncs, scene, {
 
 			addParticle: function ( item ) {
 
-				if ( raycaster.stereo !== undefined )
-					raycaster.stereo.addParticle( item );
+				eventListeners.addParticle( item );
 
 			},
 			onIntersection: function ( intersection, mouse ) {
@@ -208,5 +195,11 @@ MyPoints( arrayFuncs, scene, {
 
 } );
 ```
-Please move mouse over any point. Mouse cursor will change to "pointer".
+Please move mouse over center of any point. Mouse cursor will change to "pointer".
 You can see an alert if you click a point.
+
+Currently you see alert only if user click in the center of the point. You can icrease the click area.
+Please add new [threshold](https://threejs.org/docs/#api/en/core/Raycaster.params) key into <b>new Options.raycaster.EventListeners</b> for it.
+```
+const eventListeners = new Options.raycaster.EventListeners( camera, renderer, { threshold: 0.1 } );
+```
