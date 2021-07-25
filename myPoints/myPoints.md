@@ -144,10 +144,11 @@ MyPoints( arrayFuncs, scene, {
 } );
 ```
 Default 1 value of <b>w</b> coordinate of the first point is index of the green color for [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
+
 0.5 value of <b>w</b> coordinate of the second point is index of the dark color for [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
 ### [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster).
 
-First, import <a href="../../jsdoc/Options/index.html" target="_blank">>Options</a>.
+First, import [Options](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/Options/index.html).
 ```
 import Options from '../../Options.js'
 ```
