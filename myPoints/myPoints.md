@@ -6,49 +6,111 @@ I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create
 
 * Create a folder on your localhost named as [folderName].
 	* Download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
-* Add your web page into [folderName]. [Example](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene).
+	* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+* Add your web page into [folderName]. Example:
+```
+<!DOCTYPE html>
 
-* First, import [three.js](https://github.com/anhr/three.js) in your JavaScript module.
-```
-import * as THREE from 'https://threejs.org/build/three.module.js';
-```
-or
-```
-import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
-```
-```
-import * as THREE from './three.js/dev/build/three.module.js';
-```
+<html>
+<head>
+	<title>MyPoints</title>
 
+	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
+
+	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">-->
+
+</head>
+<body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> MyPoints.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+	<div>
+		<canvas id="canvas"></canvas>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import three from './commonNodeJS/master/three.js'
+		//import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
+		var camera, scene, renderer, guiSelectPoint;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	</script>
+</body>
+</html>
+```
 The easiest way to use <b>MyPoints</b> in your code is import MyPoints from myPoints.js file in your JavaScript module.
-```
-import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
-```
-or
-* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
 import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 ```
-Now you can use <b>MyPoints</b> in your javascript code. Example:
+Now you can use <b>MyPoints</b> in your javascript code. Please call <b>MyPoints</b> after creating of <b>renderer</b> for your future code. Example:
 ```
 const arrayFuncs = [
-	new THREE.Vector3( 0.5, 0.5, 0.5 ),//first point
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),//second point
+	[],//first point. Zero position. White color.
+	[ 0.5, 0.5, 0.5 ],//second point. White color.
 ];
 MyPoints( arrayFuncs, scene );
 ```
 You can see two small white points on your canvas.
 
-### Change points size to 25 and point color of the first point to green.
+### Change points size to 25 and point color of the second point to green.
 ```
 const arrayFuncs = [
-	new THREE.Vector4(
+	[],//first point. Zero position. White color.
+	[
 		0.5,//x
 		0.5,//y
 		0.5,//z
-		33//w - color of the point is green
-	),//first point
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),//second point
+		0.5//w - color of the point is green
+	]//second point
 ];
 MyPoints( arrayFuncs, scene, {
 
@@ -60,15 +122,10 @@ MyPoints( arrayFuncs, scene, {
 
 } );
 ```
-Attention please: I have changed first point from <b>THREE.Vector3</b> to <b>THREE.Vector4</b>. 
-<b>w</b> coordinate of the first point is index of the color of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
+<b>w</b> coordinate of the second point is index of the color of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
 Currently I use default [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW) (blue, green, red, white) palette.
-33 value of <b>w</b> coordinate of the first point is index of the green color for default color palette.
+0.5 value of <b>w</b> coordinate of the second point is index of the green color for default color palette.
 You can select another palette. Please import <b>ColorPicker</b> into your web page for it.
-```
-import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
 import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 ```
@@ -86,16 +143,13 @@ MyPoints( arrayFuncs, scene, {
 
 } );
 ```
-33 value of <b>w</b> coordinate of the first point is index of the dark color for [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
+Default 1 value of <b>w</b> coordinate of the first point is index of the green color for [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
+0.5 value of <b>w</b> coordinate of the second point is index of the dark color for [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
 ### [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster).
 
-First, import <b>StereoEffect</b>.
+First, import <a href="../../jsdoc/Options/index.html" target="_blank">>Options</a>.
 ```
-import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
+import Options from '../../Options.js'
 ```
 Create raycaster.
 ```
