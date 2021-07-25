@@ -52,15 +52,12 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
-		//import * as THREE from './three.js/dev/build/three.module.js';
 
-		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
-		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
-		//Uncomment line below if you want use local commonNodeJS library in your project.
-		//import three from './commonNodeJS/master/three.js'
+		import three from './commonNodeJS/master/three.js'
+		//import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
 		var camera, scene, renderer, guiSelectPoint;
