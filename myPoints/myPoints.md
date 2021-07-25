@@ -40,7 +40,6 @@ I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 
 		import three from './commonNodeJS/master/three.js'
-		//import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
 		var camera, scene, renderer, guiSelectPoint;
@@ -130,7 +129,7 @@ You can select another palette. Please import <b>ColorPicker</b> into your web p
 import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 ```
 Create a palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette
-and add new <b>palette</b> into <b>options</b> of the <b>MyPoints</b>
+and add new <b>palette</b> into <b>settings.options</b> parameter of <b>MyPoints</b>
 ```
 MyPoints( arrayFuncs, scene, {
 
@@ -158,7 +157,7 @@ Note. Please create event listener after creating of <b>camera</b> and <b>render
 ```
 const eventListeners = new Options.raycaster.EventListeners( camera, renderer );
 ```
-Add new <b>raycaster</b> into <b>settings.options</b> parameter of <b>MyPoints</b>.
+Add new <b>raycaster</b> key into <b>settings.options</b> parameter of <b>MyPoints</b>.
 ```
 const cursor = renderer.domElement.style.cursor;
 MyPoints( arrayFuncs, scene, {
