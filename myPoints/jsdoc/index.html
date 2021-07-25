@@ -47,37 +47,99 @@
 <p>I use <b>MyPoints</b> in my <a href="https://threejs.org/">three.js</a> projects for create THREE.Points.</p>
 <h2>Quick start</h2>
 <ul>
-<li>
-<p>Create a folder on your localhost named as [folderName].</p>
-</li>
-<li>
-<p>Add your web page into [folderName]. <a href="https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene">Example</a>.</p>
-</li>
-<li>
-<p>First, import <a href="https://github.com/anhr/three.js">three.js</a> in your JavaScript module.</p>
-</li>
-</ul>
-<pre class="prettyprint source"><code>import * as THREE from 'https://threejs.org/build/three.module.js';
-</code></pre>
-<p>or</p>
-<pre class="prettyprint source"><code>import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/three.js">three.js</a> repository into your &quot;[folderName]\three.js\dev&quot; folder.</p>
-<pre class="prettyprint source"><code>import * as THREE from './three.js/dev/build/three.module.js';
-</code></pre>
-<p>The easiest way to use <b>MyPoints</b> in your code is import MyPoints from myPoints.js file in your JavaScript module.</p>
-<pre class="prettyprint source"><code>import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
-</code></pre>
-<p>or</p>
+<li>Create a folder on your localhost named as [folderName].
 <ul>
+<li>Download <a href="https://github.com/anhr/three.js">three.js</a> repository into your &quot;[folderName]\three.js\dev&quot; folder.</li>
 <li>Download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</li>
 </ul>
+</li>
+<li>Add your web page into [folderName]. Example:</li>
+</ul>
+<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+
+&lt;html>
+&lt;head>
+	&lt;title>MyPoints&lt;/title>
+
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://threejs.org/examples/main.css&quot;>
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;three.js/dev/examples/main.css&quot;>-->
+
+	&lt;!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>-->
+
+&lt;/head>
+&lt;body>
+	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
+	&lt;div id=&quot;info&quot;>
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a> MyPoints.
+		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
+	&lt;/div>
+	&lt;div>
+		&lt;canvas id=&quot;canvas&quot;>&lt;/canvas>
+	&lt;/div>
+
+	&lt;script type=&quot;module&quot;>
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import three from './commonNodeJS/master/three.js'
+		//import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
+		var camera, scene, renderer, guiSelectPoint;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	&lt;/script>
+&lt;/body>
+&lt;/html>
+</code></pre>
+<p>The easiest way to use <b>MyPoints</b> in your code is import MyPoints from myPoints.js file in your JavaScript module.</p>
 <pre class="prettyprint source"><code>import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 </code></pre>
-<p>Now you can use <b>MyPoints</b> in your javascript code. Example:</p>
+<p>Now you can use <b>MyPoints</b> in your javascript code. Please call <b>MyPoints</b> after creating of <b>renderer</b> for your future code. Example:</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
-	new THREE.Vector3( 0.5, 0.5, 0.5 ),//first point
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),//second point
+	[],//first point. Zero position
+	[ 0.5, 0.5, 0.5 ],//second point
 ];
 MyPoints( arrayFuncs, scene );
 </code></pre>
@@ -205,7 +267,7 @@ You can see an alert if you click a point.</p></article>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Jul 19 2021 05:42:11 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sun Jul 25 2021 16:55:50 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

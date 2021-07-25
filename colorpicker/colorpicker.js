@@ -677,8 +677,8 @@ class ColorPicker {
 			/**
 			* converts a percent or value from min to max  to object with r, g, b, hex and percent.
 			* @param {number} stringPercent coordinate of color from palette in percent or value from min to max
-			* @param {number} [min] min stringPercent. Default is undefined.
-			* @param {number} [max] max stringPercent. Default is undefined.
+			* @param {number} [min] min stringPercent.
+			* @param {number} [max] max stringPercent.
 			* @returns {object} object with r, g, b, hex and percent
 			*/
 			this.hsv2rgb = function ( stringPercent, min, max ) {
@@ -743,8 +743,8 @@ class ColorPicker {
 			/**
 			* converts a value in percentages to color.
 			* @param {number} value coordinate of color from palette in percent. Default value range from 0 to 100.
-			* @param {number} min minimal value
-			* @param {number} max maximal value
+			* @param {number} [min] minimal value
+			* @param {number} [max] maximal value
 			* @returns {THREE.Color} [color]{@link https://threejs.org/docs/index.html?q=Colo#api/en/math/Color}
 			*/
 			this.toColor = function ( value, min, max ) {
