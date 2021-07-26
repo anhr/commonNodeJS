@@ -1,6 +1,6 @@
 # MyPoints.
 
-I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create THREE.Points.
+I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create [THREE.Points](https://threejs.org/docs/index.html?q=Poi#api/en/objects/Points).
 
 ## Quick start
 
@@ -27,7 +27,7 @@ I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
 		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> MyPoints.
-		- <a href="./commonNodeJS/master/myPoints/jsdoc/index.html" target="_blank" rel="noopener">myPoints</a>.
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/myPoints" target="_blank" rel="noopener">MyPoints</a>.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
 	<div>
