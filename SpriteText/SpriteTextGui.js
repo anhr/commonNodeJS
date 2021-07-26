@@ -29,12 +29,17 @@ import Options from '../Options.js'
 import { SpriteText } from './SpriteText.js';
 //import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
 
+//Каждый экземляр SpriteTextGui должен иметь униканое cookieName.
+//Иначе если пользователь сделает какое то изменеие в SpriteTextGui, то это изменеие отразится 
+//в других экземлярах SpriteTextGui после перезанрузки веб страницы. В частности могут появиться ненужные органы управления
+var _spriteTextGuiCount = 0;
+
 /**
  * Adds SpriteText settings folder into dat.gui.
  * @param {THREE.Group|THREE.Scene|THREE.Sprite} group [THREE.Group]{@link https://threejs.org/docs/index.html?q=group#api/en/objects/Group} or [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene} of the <b>SpriteText</b> and of all child groups of the <b>SpriteText</b> for which these settings will have an effect.
  * Or Sprite returned from <a href="../../AxesHelper/jsdoc/index.html" target="_blank">new SpriteText(...)</a>.
  *
- * @param {Options} options See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+ * @param {Options} [options] See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
  * @param {object} [options.dat] use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
  * @param {GUI} [options.dat.dat] [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
  * @param {boolean} [options.dat.cookie] false - do not save to cookie all user settings
@@ -58,16 +63,14 @@ import { SpriteText } from './SpriteText.js';
 export function SpriteTextGui( group, options, guiParams = {} ) {
 
 //	guiParams = guiParams || {};
-	if ( !options.boOptions ) {
-
+	options = new Options( options );
 /*
-		console.error( 'SpriteTextGui: call options = new Options( options ) first' );
-		return;
-*/		
+	if ( !options.boOptions ) {
 
 		options = new Options( options );
 
 	}
+*/
 	const gui = guiParams.folder || options.dat.gui;
 	if ( !gui || options.dat.spriteTextGui === false )
 		return;
@@ -209,7 +212,8 @@ export function SpriteTextGui( group, options, guiParams = {} ) {
 	const cookieName = 'SpriteText' + ( guiParams.cookieName ? '_' + guiParams.cookieName : '' ),
 		cookie = guiParams.cookie || new Cookie.defaultCookie(),
 */		
-	const cookieName = options.dat.getCookieName( 'SpriteText' ),
+	_spriteTextGuiCount++;
+	const cookieName = options.dat.getCookieName( 'SpriteText' + _spriteTextGuiCount ),
 		cookie = options.dat.cookie,
 		optionsGroup = optionsSpriteText.group;
 	cookie.getObject( cookieName, optionsSpriteText, optionsSpriteText );
@@ -463,6 +467,8 @@ export function SpriteTextGui( group, options, guiParams = {} ) {
 
 	//default button
 	fSpriteText.userData = {
+
+		options: options,
 		restore: function ( value ) {
 
 			boUpdateSpriteText = false;
@@ -525,6 +531,7 @@ export function SpriteTextGui( group, options, guiParams = {} ) {
 			updateSpriteText();
 
 		}
+
 	}
 	const defaultParams = { defaultF: fSpriteText.userData.restore, };
 	if ( optionsDefault === undefined ) console.error( 'SpriteTextGui: optionsDefault = ' + optionsDefault );
