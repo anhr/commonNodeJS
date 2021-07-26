@@ -39,7 +39,7 @@ import Options from '../Options.js'
 /**
  * Adds <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> settings folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
  * An axis object to visualize axes.
- * @param {object} options Followed parameters is allowed.
+ * @param {Options} options Followed parameters is allowed.
  * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
  * @param {boolean} [options.dat.axesHelperGui] false - do not adds <b>AxesHelperGui</b> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
  * @param {AxesHelper} [options.axesHelper is <a href="./module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> instance.
