@@ -4,12 +4,14 @@ Uses dual PerspectiveCameras for [Parallax Barrier](https://en.wikipedia.org/wik
 
 I use StereoEffect in my [three.js](https://threejs.org/) projects.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/).
-.
 
 
 Uses in my projects:
  * [AxesHelper](../AxesHelper)
  * [myThree](../myThree)
+ * [CanvasMenu](../canvasMenu)
+ * [Player](../player)
+ * [SpriteText](../SpriteText)
 
 See [StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/index.html) for details.
 
