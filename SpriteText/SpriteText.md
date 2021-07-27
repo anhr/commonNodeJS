@@ -95,7 +95,7 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 </body>
 </html>
 ```
-NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
+NOTE. Please include <b>three.THREE = THREE;</b> line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
 The easiest way to use <b>SpriteText</b> in your code is import <b>SpriteText</b> from <b>SpriteText.js</b> file in your JavaScript module.
 
