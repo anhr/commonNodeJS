@@ -89,6 +89,8 @@
 		import three from './commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
+		import Options from './commonNodeJS/master/Options.js'
+
 		var camera, scene, renderer;
 
 		init();
@@ -101,6 +103,8 @@
 
 			scene = new THREE.Scene();
 
+			const options = new Options();
+
 			renderer = new THREE.WebGLRenderer( {
 
 				antialias: true,
@@ -110,6 +114,10 @@
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
 			window.addEventListener( 'resize', onWindowResize, false );
+
+			//Orbit controls allow the camera to orbit around a target.
+			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+			options.createOrbitControls( camera, renderer, scene );
 
 		}
 		function onWindowResize() {
@@ -138,10 +146,11 @@
 <pre class="prettyprint source"><code>import { SpriteText } from './commonNodeJS/master/SpriteText/SpriteText.js';
 </code></pre>
 <p>Now you can use <b>SpriteText</b> in your javascript code.</p>
-<p>Add <b>SpriteText</b> with default settings into center of the scene.</p>
-<pre class="prettyprint source"><code>scene.add( new SpriteText( 'Default sprite') );
+<p>Add to <b>scene</b> a <b>SpriteText</b> with default settings.</p>
+<pre class="prettyprint source"><code>scene.add( new SpriteText( 'Scene', new THREE.Vector3( 1, 0, 0 ) ) );
 </code></pre>
-<p>Define the <b>SpriteText</b> parameters for all sprite texts you add to the <b>scene</b>. For example:</p>
+<p>Please click and drag your mouse over canvas. You can see the &quot;Scene&quot; text that always faces towards the camera.</p>
+<p>Define the <b>SpriteText</b> options for all sprite texts you add to the <b>scene</b>. For example:</p>
 <pre class="prettyprint source"><code>scene.userData.optionsSpriteText = {
 
 	fontColor: 'rgba(0, 255, 0, 1)', //green
@@ -151,15 +160,23 @@
 };
 </code></pre>
 <p>See <b>options</b> parameter of <a href="./module-SpriteText.html">SpriteText</a> for details.</p>
-<p>Add new <b>SpriteText</b>.</p>
-<pre class="prettyprint source"><code>const group = new THREE.Group();
-scene.add( group );
-group.add( new SpriteText( 'Sprite text', new THREE.Vector3( -4, 0, 0 ), {
-
-	fontColor: 'rgba(255, 0, 0, 1)',//red
-
-} ) );
+<p>Plase call</p>
+<pre class="prettyprint source"><code>SpriteText.updateSpriteTextGroup( scene );
 </code></pre>
+<p>after creating of all <b>SpriteText</b> instances for new <b>scene.userData.optionsSpriteText</b> have effect.
+Now you can see, your &quot;Scene&quot; text is green, text height is 0.2 and font name is &quot;Times&quot;.</p>
+<p>Add new <b>SpriteText</b> before <b>SpriteText.updateSpriteTextGroup( scene );</b>.</p>
+<pre class="prettyprint source"><code>const group = new THREE.Group();
+group.userData.optionsSpriteText = {
+
+	textHeight: 0.1,
+
+};
+scene.add( group );
+const spriteTextGroup = new SpriteText( 'group', new THREE.Vector3( -4, 0, 0 ) );
+group.add( spriteTextGroup );
+</code></pre>
+<p>All <b>SpriteText</b> instances, added into group, have text height is 0.1.</p>
 <h3>SpriteTextGui</h3>
 <p>Add <b>SpriteTextGui</b> into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change settings of the </b>SpriteText</b>.
 <a href="https://raw.githack.com/anhr/SpriteText/master/Examples/SpriteTextGui.html">Example</a></p>
@@ -171,47 +188,32 @@ three.dat = dat;
 <pre class="prettyprint source"><code>import { SpriteTextGui } from './commonNodeJS/master/SpriteText/SpriteTextGui.js';
 </code></pre>
 <p>Now you can use <b>SpriteTextGui</b> in your javascript code.</p>
-<pre class="prettyprint source"><code>const spriteTextGui = SpriteTextGui( scene );
+<pre class="prettyprint source"><code>SpriteTextGui( scene, options );
 </code></pre>
-<p>Note. User can change text height, font face of all texts,
-but cannot change font color of second &quot;Sprite text&quot; because font color of second text is defined separatelly.</p>
-<h4>SpriteTextGui for group</h4>
-<p>User can change settings of the <b>SpriteText</b> for <b>group</b> separatelly. For example define another text height for second &quot;Sprite text&quot;</p>
-<pre class="prettyprint source"><code>group.userData.optionsSpriteText = {
-
-	textHeight: 0.1,
-
-};
+<p>Now you can see new &quot;Sprite Text&quot; folder in upper right corner of the canvas.
+User can change <b>Height</b>, <b>Font Face</b> and <b>Font Color</b> of the text.</p>
+<p>Note. User can change <b>Height</b> of the &quot;Scene&quot; text, but not &quot;Group&quot; because <b>group</b> have another sprite text height.
+If you want the user can to change the height of the &quot;Group&quot; text, please add another <b>SpriteTextGui</b>.</p>
+<pre class="prettyprint source"><code>SpriteTextGui( group, options, { spriteFolder: 'Sprite Text Setting for group' } );
 </code></pre>
-<p>And add <b>SpriteTextGui</b> for <b>group</b>.</p>
-<pre class="prettyprint source"><code>SpriteTextGui( group, spriteTextGui.userData.options, { spriteFolder: 'Sprite Text Setting for group' } );
-</code></pre>
-<h3>folder.userData.restore() - Restore group.userData.optionsSpriteText to default values.</h3>
-<p>Example:</p>
-<pre class="prettyprint source"><code>optionsSpriteText = {
+<p>You can add <b>SpriteTextGui</b> for changing options of each sprite test separately. For example edit the &quot;Group&quot; </b>SpriteText</b> for it.</p>
+<pre class="prettyprint source"><code>const optionsIndividual = {
 
-	textHeight: 0.1,
-	sizeAttenuation: false,
+	fontColor: 'rgba(255, 0, 0, 1)',//red
 
 }
-const fSpriteTextAll = SpriteTextGui( scene, options, {
+const spriteTextGroup = new SpriteText( 'group', new THREE.Vector3( -4, 0, 0 ), optionsIndividual );
+</code></pre>
+<p>Now the &quot;Group&quot; text is red.</p>
+<p>Add new <b>SpriteTextGui</b>.</p>
+<pre class="prettyprint source"><code>SpriteTextGui( spriteTextGroup, options, {
 
-	settings: { zoomMultiplier: 1.5, },
-	options: optionsSpriteText
+	spriteFolder: 'Sprite with individual options',
+	options: optionsIndividual,
 
 } );
-
-//Change of the text height
-optionsSpriteText.textHeight = 0.2;
-
-//update of the options of all SpriteText, added in to group and all child groups
-SpriteText.updateSpriteTextGroup( group );
-
-//To do something...
-
-//Restore options.textHeight to 0.1
-fSpriteTextAll.userData.restore();
-</code></pre></article>
+</code></pre>
+<p>Now user can select another color of the &quot;Group&quot; text in the &quot;Sprite with individual options&quot; folder.</p></article>
     </section>
 
 
@@ -228,7 +230,7 @@ fSpriteTextAll.userData.restore();
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Jul 26 2021 22:08:29 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jul 27 2021 09:26:06 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -5,6 +5,8 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 ## Quick start
 
 * Create a folder on your localhost named as [folderName].
+	* Download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
+	* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 * Add your web page into [folderName]. Example:
 ```
 <!DOCTYPE html>
@@ -16,11 +18,17 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
 	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
 
+	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">-->
+
 </head>
 <body>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
-		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - SpriteText is a text that always faces towards the camera.
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/SpriteText" target="_blank" rel="noopener">SpriteText</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
 	<div>
 		<canvas id="canvas"></canvas>
@@ -28,17 +36,14 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
-		//import * as THREE from './three.js/dev/build/three.module.js';
 
-		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
-		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
-		//Uncomment line below if you want use local commonNodeJS library in your project.
-		//import three from './commonNodeJS/master/three.js'
+		import three from './commonNodeJS/master/three.js'
 		three.THREE = THREE;
+
+		import Options from './commonNodeJS/master/Options.js'
 
 		var camera, scene, renderer;
 
@@ -52,6 +57,8 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 
 			scene = new THREE.Scene();
 
+			const options = new Options();
+
 			renderer = new THREE.WebGLRenderer( {
 
 				antialias: true,
@@ -61,6 +68,10 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
 			window.addEventListener( 'resize', onWindowResize, false );
+
+			//Orbit controls allow the camera to orbit around a target.
+			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+			options.createOrbitControls( camera, renderer, scene );
 
 		}
 		function onWindowResize() {
@@ -87,136 +98,96 @@ A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text
 NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
 The easiest way to use <b>SpriteText</b> in your code is import <b>SpriteText</b> from <b>SpriteText.js</b> file in your JavaScript module.
-[Example](https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/Examples/SpriteTextGui.html).
 
-```
-import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
 import { SpriteText } from './commonNodeJS/master/SpriteText/SpriteText.js';
 ```
 
 Now you can use <b>SpriteText</b> in your javascript code.
 
-Add <b>SpriteText</b> with default settings into center of the scene.
+Add to <b>scene</b> a <b>SpriteText</b> with default settings.
 ```
-scene.add( new SpriteText( 'Default sprite') );
+scene.add( new SpriteText( 'Scene', new THREE.Vector3( 1, 0, 0 ) ) );
 ```
-Add <b>SpriteText</b> with green font color , <b>textHeight</b> is 0.2, <b>fontFace</b> is 'Times' into ( -4, 0, 0 ) point of the scene.
+Please click and drag your mouse over canvas. You can see the "Scene" text that always faces towards the camera.
+
+Define the <b>SpriteText</b> options for all sprite texts you add to the <b>scene</b>. For example:
 ```
-const spriteText = new SpriteText( 'Sprite text', new THREE.Vector3( -4, 0, 0 ), {
+scene.userData.optionsSpriteText = {
 
 	fontColor: 'rgba(0, 255, 0, 1)', //green
 	textHeight: 0.2,
-	fov: camera.fov,
 	fontFace: 'Times',
 
-} );
-scene.add( spriteText );
+};
 ```
+See <b>options</b> parameter of [SpriteText](./module-SpriteText.html) for details.
+
+Plase call
+```
+SpriteText.updateSpriteTextGroup( scene );
+```
+after creating of all <b>SpriteText</b> instances for new <b>scene.userData.optionsSpriteText</b> have effect.
+Now you can see, your "Scene" text is green, text height is 0.2 and font name is "Times".
+
+Add new <b>SpriteText</b> before <b>SpriteText.updateSpriteTextGroup( scene );</b>.
+```
+const group = new THREE.Group();
+group.userData.optionsSpriteText = {
+
+	textHeight: 0.1,
+
+};
+scene.add( group );
+const spriteTextGroup = new SpriteText( 'group', new THREE.Vector3( -4, 0, 0 ) );
+group.add( spriteTextGroup );
+```
+All <b>SpriteText</b> instances, added into group, have text height is 0.1.
 
 ### SpriteTextGui
 
 Add <b>SpriteTextGui</b> into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the </b>SpriteText</b>.
 [Example](https://raw.githack.com/anhr/SpriteText/master/Examples/SpriteTextGui.html)
 
-Import <b>dat.gui</b>.
-```
-import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+Import <b>dat.gui</b> and add <b>dat</b> into <b>three</b>.
 ```
 import { dat } from './commonNodeJS/master/dat/dat.module.js';
+three.dat = dat;
 ```
 Import <b>SpriteTextGui</b>.
 ```
-import { SpriteTextGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteTextGui.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
 import { SpriteTextGui } from './commonNodeJS/master/SpriteText/SpriteTextGui.js';
 ```
-
 Now you can use <b>SpriteTextGui</b> in your javascript code.
 ```
-const gui =  new dat.GUI();
-const folder = SpriteTextGui( spriteText, options );
+SpriteTextGui( scene, options );
 ```
-If you want to localize the gui, please uncomment
-```
-getLanguageCode: getLanguageCode,
-```
-line above and import <b>getLanguageCode</b>.
-```
-import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import { getLanguageCode } from './commonNodeJS/master/lang.js';
-```
-If you want save a custom <b>SpriteText</b> settings to the cookie, please uncomment
-```
-cookie: cookie,
-```
-line in the <b>SpriteTextGui.gui(...)</b> above and import cookie.
-```
-import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
-```
+Now you can see new "Sprite Text" folder in upper right corner of the canvas.
+User can change <b>Height</b>, <b>Font Face</b> and <b>Font Color</b> of the text.
 
-### group.userData.optionsSpriteText - common options for the group of the SpriteText
-You can set options for all <b>SpriteText</b> from the [Group](https://threejs.org/docs/index.html#api/en/objects/Group) or [Scene](https://threejs.org/docs/index.html#api/en/scenes/Scene) and all child groups.
-Options of the child groups is more priority before parent group options.
-Example:
+Note. User can change <b>Height</b> of the "Scene" text, but not "Group" because <b>group</b> have another sprite text height.
+If you want the user can to change the height of the "Group" text, please add another <b>SpriteTextGui</b>.
 ```
-//options for all SpriteText on the scene
-scene.userData.optionsSpriteText = {
+SpriteTextGui( group, options, { spriteFolder: 'Sprite Text Setting for group' } );
+```
+You can add <b>SpriteTextGui</b> for changing options of each sprite test separately. For example edit the "Group" </b>SpriteText</b> for it.
+```
+const optionsIndividual = {
 
-	fontColor: 'rgb(0, 255, 0)'//green color
+	fontColor: 'rgba(255, 0, 0, 1)',//red
 
 }
-var group = new THREE.Group();
-
-//options of the group and all child group
-group.userData.optionsSpriteText = {
-
-	fontColor: 'rgba(255, 255, 225, 0.5)'//white semi opacity color
-
-}
-scene.add( group );
-
-scene.add( new SpriteText( 'Scene', new THREE.Vector3( 0, 0.5, 0 ), { group: scene } ) );//green color of the font
-group.add( new SpriteText( 'Group', new THREE.Vector3( 0,   1, 0 ), { group: group } ) );//white semi opacity color of the font
+const spriteTextGroup = new SpriteText( 'group', new THREE.Vector3( -4, 0, 0 ), optionsIndividual );
 ```
+Now the "Group" text is red.
 
-### folder.userData.restore() - Restore group.userData.optionsSpriteText to default values.
-Example:
+Add new <b>SpriteTextGui</b>.
 ```
-optionsSpriteText = {
+SpriteTextGui( spriteTextGroup, options, {
 
-	textHeight: 0.1,
-	sizeAttenuation: false,
-
-}
-const fSpriteTextAll = SpriteTextGui( scene, options, {
-
-	settings: { zoomMultiplier: 1.5, },
-	options: optionsSpriteText
+	spriteFolder: 'Sprite with individual options',
+	options: optionsIndividual,
 
 } );
-
-//Change of the text height
-optionsSpriteText.textHeight = 0.2;
-
-//update of the options of all SpriteText, added in to group and all child groups
-SpriteText.updateSpriteTextGroup( group );
-
-//To do something...
-
-//Restore options.textHeight to 0.1
-fSpriteTextAll.userData.restore();
 ```
+Now user can select another color of the "Group" text in the "Sprite with individual options" folder.
