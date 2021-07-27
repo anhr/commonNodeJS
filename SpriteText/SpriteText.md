@@ -142,7 +142,7 @@ scene.add( group );
 const spriteTextGroup = new SpriteText( 'group', new THREE.Vector3( -4, 0, 0 ) );
 group.add( spriteTextGroup );
 ```
-All <b>SpriteText</b> instances, added into group, have text height is 0.1.
+All <b>SpriteText</b> instances, added into <b>group</b>, have text height is 0.1.
 
 ### SpriteTextGui
 
