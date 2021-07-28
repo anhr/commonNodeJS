@@ -2,6 +2,13 @@
 
 I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create [THREE.Points](https://threejs.org/docs/index.html?q=Poi#api/en/objects/Points).
 
+
+# Content
+* [Quick start.](#Quickstart)
+* [Points settings.](#PointsSettings)
+* [Raycaster.](#Raycaster)
+
+<a name="Quickstart"></a>
 ## Quick start
 
 * Create a folder on your localhost named as [folderName].
@@ -107,7 +114,9 @@ MyPoints( arrayFuncs, scene );
 ```
 You can see two small white points on your canvas.
 
-### Change points size to 25 and point color of the second point to green.
+<a name="PointsSettings"></a>
+### Points settings
+Change points size to 25 and point color of the second point to green.
 ```
 const arrayFuncs = [
 	[],//first point. Zero position. White color.
@@ -152,6 +161,8 @@ MyPoints( arrayFuncs, scene, {
 Default 1 value of <b>w</b> coordinate of the first point is index of the green color for [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
 
 0.5 value of <b>w</b> coordinate of the second point is index of the dark color for [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
+
+<a name="Raycaster"></a>
 ### [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster).
 
 First, import [Options](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/Options/index.html).
