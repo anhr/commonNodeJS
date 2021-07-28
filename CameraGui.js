@@ -41,7 +41,7 @@ class CameraGui {
 //		options = options || new Options();
 		if ( !options.boOptions ) {
 
-			console.error( 'OrbitControlsGui: call options = new Options( options ) first' );
+			console.error( 'CameraGui: call options = new Options( options ) first' );
 			return;
 
 		}
