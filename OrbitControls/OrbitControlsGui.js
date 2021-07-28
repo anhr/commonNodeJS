@@ -21,7 +21,8 @@ class OrbitControlsGui {
 
 	/**
 	 * OrbitControls graphical user interface
-	 * @param {object} options the following options are available.
+	 * @param {Options} options See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
+	 * The following options are available.
 	 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 * @param {boolean} [options.dat.orbitControlsGui] false - do not adds <b>OrbitControlsGui</b> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {OrbitControls} [options.orbitControls] [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}.
