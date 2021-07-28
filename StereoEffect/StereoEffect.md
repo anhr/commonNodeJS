@@ -2,6 +2,12 @@
 
 Uses dual PerspectiveCameras for [Parallax Barrier](https://en.wikipedia.org/wiki/Parallax_barrier) effects.
 
+# Content
+* [Quick start.](#Quickstart)
+* [Using dat.gui for change of <b>StereoEffect</b> settings.](#gui)
+* [Raycaster.](#Raycaster)
+
+<a name="Quickstart"></a>
 ## Quick start
 
 * Create a folder on your localhost named as [folderName].
@@ -51,7 +57,7 @@ Uses dual PerspectiveCameras for [Parallax Barrier](https://en.wikipedia.org/wik
 
 		import Options from './commonNodeJS/master/Options.js'
 
-		var camera, scene, renderer;
+		var camera, scene, renderer, stereoEffect;
 
 		init();
 		animate();
@@ -103,33 +109,45 @@ Uses dual PerspectiveCameras for [Parallax Barrier](https://en.wikipedia.org/wik
 ```
 NOTE. Please include <b>three.THREE = THREE;</b> line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
-The easiest way to use StereoEffect in your code is import StereoEffect from StereoEffect.js file in your JavaScript module. [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/).
-```
-import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
-```
-or 
-* Create a folder on your localhost named as [folderName].
-* Add your veb page into [folderName]. See [example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/) web page.
+First, add an object into your scene. For example add two points.
 
-Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+Import [MyPoints](../../../../commonNodeJS/master/myPoints/jsdoc/index.html).
+```
+import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
+```
+Now you can use <b>MyPoints</b> in your javascript code. Please add <b>MyPoints</b> after creating of <b>renderer</b>.
+```
+MyPoints( [
+	[],//first point. Zero position. White color.
+	[ 0.5, 0.5, 0.5 ],//second point. White color.
+], scene );
+```
+You can see two white points on your scene.
+
+The easiest way to use <b>StereoEffect</b> in your code is import <b>StereoEffect</b> from <b>StereoEffect.js</b> file in your JavaScript module.
+[Example](../../../../commonNodeJS/master/StereoEffect/Examples/).
 ```
 import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
 ```
+Now you can use <b>StereoEffect</b> in your javascript code.
+* Add <b>stereoEffect</b> key into <b>options</b> parameter of the [Options](../../../../commonNodeJS/master/jsdoc/Options/index.html).
+```
+const options = new Options( {
 
-Now you can use StereoEffect in your javascript code.
+	stereoEffect: {
+
+		spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
+
+} } );
+```
+Note. You have selected [Side by side](../../../../commonNodeJS/master/StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#.spatialMultiplexsIndexs) stereo effect mode.
 
 * Create the StereoEffect instance.
 ```
-const stereoEffect = new StereoEffect( renderer, {
-
-	spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
-	far: camera.far,
-	camera: camera,
-
-} );
-stereoEffect.setSize( window.innerWidth, window.innerHeight );
+new StereoEffect( renderer, options );
+stereoEffect = options.stereoEffect;
 ```
-Add code into animate function
+* Add code into <b>animate</b> function
 ```
 function animate() {
 
@@ -142,127 +160,67 @@ function animate() {
 }
 ```
 Now you can see, canvas was divided to left and right scenes.
-* Using [dat.gui](https://github.com/anhr/dat.gui) for change of the StereoEffect settings.
 
-Import dat.gui.
-```
-import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+<a name="gui"></a>
+### Using [dat.gui](https://github.com/anhr/dat.gui) for change of <b>StereoEffect</b> settings.
+
+Import <b>dat.gui</b>.
 ```
 import { dat } from './commonNodeJS/master/dat/dat.module.js';
+three.dat = dat;
 ```
-Add StereoEffect setting into gui.
+Add <b>StereoEffect</b> setting into gui after ctrating of <b>StereoEffect</b> instance.
 ```
-const gui =  new dat.GUI();
-stereoEffect.gui( gui, {
+options.stereoEffect.gui();
+```
+Now you can see new "Stereo effects" folder in upper right corner of the canvas.
 
-	//getLanguageCode: getLanguageCode,
-	//cookie: cookie,//Saves a custom Stereo Effects settings in the cookie
-
-} );
-```
-If you want to localize the gui, please uncomment
-```
-getLanguageCode: getLanguageCode,
-```
-line above and import getLanguageCode.
-```
-import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import { getLanguageCode } from './commonNodeJS/master/lang.js';
-```
-If you want save a custom StereoEffect settings to the cookie, please uncomment
-```
-cookie: cookie,
-```
-line in the stereoEffect.gui(...) above and import cookie.
-```
-import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-```
-or
-* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
-```
-
-* [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster).
+<a name="Raycaster"></a>
+### [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster).
 
 Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over).
-
-Get default cursor
+* Create [EventListeners](../../../../commonNodeJS/master/jsdoc/Options/Raycaster_EventListeners.html) instance and get default cursor after creating of <b>StereoEffect</b> instance.
 ```
+const eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options } );
 const cursor = renderer.domElement.style.cursor;
 ```
-Define of the actions for objects in the 3d space the mouse is over.
+* Define of the actions for objects in the 3d space the mouse is over.
+For example edit the <b>MyPoints</b> so that the cursor is changing to "pointer" of mouse is over point and displays an alert if user click over point.
 ```
-points.userData.raycaster = {
+MyPoints( [
+	[],//first point. Zero position. White color.
+	[ 0.5, 0.5, 0.5 ],//second point. White color.
+], scene, {
 
-	onIntersection: function ( intersection ) {
+	options: {
+		raycaster: {
 
-		renderer.domElement.style.cursor = 'pointer';
+			addParticle: function ( item ) {
 
-	},
-	onIntersectionOut: function ( ) {
+				eventListeners.addParticle( item );
 
-		renderer.domElement.style.cursor = cursor;
+			},
+			onIntersection: function ( intersection, mouse ) {
 
-	},
-	onMouseDown: function ( intersect ) {
+				renderer.domElement.style.cursor = 'pointer';
 
-		alert( 'You have clicked over point' );
+			},
+			onIntersectionOut: function () {
 
-	}
+				renderer.domElement.style.cursor = cursor;
 
-}
-```
-points - The [Object3D](https://threejs.org/docs/index.html#api/en/core/Object3D) to check for intersection with the ray.
+			},
+			onMouseDown: function ( intersection ) {
 
-Create the THREE.Raycaster instance.
-```
-const raycaster = new THREE.Raycaster();
+				alert( 'You have clicked over point' );
 
-//the precision of the raycaster when intersecting objects, in world units.
-//See https://threejs.org/docs/#api/en/core/Raycaster.params.
-raycaster.params.Points.threshold = 0.1;
-
-raycaster.setStereoEffect( {
-
-	renderer: renderer,
-	camera: camera,
-	stereoEffect: stereoEffect,
-	onIntersection: function ( intersects, mouse ) {
-
-		var intersection = intersects[0];
-		if (
-			( intersection.object.userData.raycaster !== undefined )
-			&& ( intersection.object.userData.raycaster.onIntersection !== undefined ) ) {
-
-			intersection.object.userData.raycaster.onIntersection( intersection );
+			},
 
 		}
 
 	},
-	onIntersectionOut: function ( intersects ) { points.userData.raycaster.onIntersectionOut() },
-	onMouseDown: function ( intersects ) {
-
-		var intersection = intersects[0];
-		if (
-			( intersection.object.userData.raycaster !== undefined )
-			&& ( intersection.object.userData.raycaster.onMouseDown !== undefined ) ) {
-
-			intersection.object.userData.raycaster.onMouseDown( intersection );
-
-		}
-
-	}
 
 } );
-raycaster.stereo.addParticle( points );
 ```
 For testing please move cursor over point. Cursor will be changing to 'pointer'.
 You can see an alert if you click over point.
-
-You can use [MyPoints](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html) for [raycasting](https://threejs.org/docs/index.html#api/en/core/Raycaster).
