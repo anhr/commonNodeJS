@@ -12,8 +12,8 @@
  */
 
 import three from '../three.js'
-//import setOptions from '../setOptions.js'
 import Player from '../player/player.js';
+import Options from '../Options.js'
 
 //Thanks to https://stackoverflow.com/a/27369985/5175935
 //Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
@@ -65,6 +65,7 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 			settings.tMin === undefined ? 0 : settings.tMin :
 			settings.pointsOptions.tMin === undefined ? 0 : settings.pointsOptions.tMin;
 
+	settings.options = settings.options || new Options();
 /*
 	settings.options = settings.options || {};
 	settings.options.a = settings.options.a || 1;
