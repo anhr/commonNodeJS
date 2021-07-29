@@ -177,7 +177,7 @@ class MyThree {
 	 * @param {object} [options.spriteText] spriteText options. See <a href="../../SpriteText/jsdoc/module-SpriteText.html" target="_blank">SpriteText</a> <b>options</b> parameter for details.
 	 *
 	 * @param {boolean} [options.player] false - do not create a <a href="../../player/jsdoc/index.html" target="_blank">Player</a> instance.
-	 * @param {object} [options.playerOptions] See <b>settings.options.playerOptions</b> of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a>.
+	 * @param {object} [options.playerOptions] See <b>settings.options.playerOptions</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a>.
 	 *
 	 * @param {Function|string} [options.getLanguageCode=language code of your browser] Your custom <b>getLanguageCode()</b> function or language code string.
 	 * <pre>
