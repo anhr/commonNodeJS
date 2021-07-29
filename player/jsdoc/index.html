@@ -70,7 +70,12 @@
 <p><a name="QuickStart"></a></p>
 <h2>Quick start</h2>
 <ul>
-<li>Create a folder on your localhost named as [folderName].</li>
+<li>Create a folder on your localhost named as [folderName].
+<ul>
+<li>Download <a href="https://github.com/anhr/three.js">three.js</a> repository into your &quot;[folderName]\three.js\dev&quot; folder.</li>
+<li>Download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</li>
+</ul>
+</li>
 <li>Add your web page into [folderName]. Example:</li>
 </ul>
 <pre class="prettyprint source"><code>&lt;!DOCTYPE html>
@@ -86,11 +91,18 @@
 	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>
 	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>-->
 
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
 &lt;/head>
 &lt;body>
 	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
 	&lt;div id=&quot;info&quot;>
-		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a> - Player - 3D objects animation.
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a>
+		- &lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/player&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>Player&lt;/a>.
 		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
 	&lt;/div>
 	&lt;div>
@@ -99,18 +111,16 @@
 
 	&lt;script type=&quot;module&quot;>
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
-		//import * as THREE from './three.js/dev/build/three.module.js';
 
-		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
-		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
-		//Uncomment line below if you want use local commonNodeJS library in your project.
-		//import three from './commonNodeJS/master/three.js'
+		import three from './commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
-		var camera, scene, renderer, guiSelectPoint;
+		import Options from './commonNodeJS/master/Options.js'
+
+		var camera, scene, renderer, stereoEffect;
 
 		init();
 		animate();
@@ -122,6 +132,8 @@
 
 			scene = new THREE.Scene();
 
+			const options = new Options();
+
 			renderer = new THREE.WebGLRenderer( {
 
 				antialias: true,
@@ -131,6 +143,10 @@
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
 			window.addEventListener( 'resize', onWindowResize, false );
+
+			//Orbit controls allow the camera to orbit around a target.
+			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+			options.createOrbitControls( camera, renderer, scene );
 
 		}
 		function onWindowResize() {
@@ -154,19 +170,9 @@
 &lt;/body>
 &lt;/html>
 </code></pre>
-<p>NOTE. Please include <code>three.THREE = THREE;</code> line into your project before use my <a href="https://github.com/anhr/commonNodeJS">library</a>. See example above.</p>
-<p><a name="ImportPlayer"></a>
-The easiest way to use <b>Player</b> in your code is import <b>Player</b> from <b>Player.js</b> file in your JavaScript module.
-<a href="https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html">Example</a>.</p>
-<pre class="prettyprint source"><code>import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
-</code></pre>
-<p>or</p>
-<pre class="prettyprint source"><code>import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.js';
-</code></pre>
-<p>or</p>
-<pre class="prettyprint source"><code>import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<p>NOTE. Please include <b>three.THREE = THREE;</b> line into your project before use my <a href="https://github.com/anhr/commonNodeJS">library</a>. See example above.</p>
+<p>The easiest way to use <b>Player</b> in your codeis import <b>Player</b> from <b>Player.js</b> file in your JavaScript module.
+<a href="../../../../commonNodeJS/master/player/Examples/index.html">Example</a>.</p>
 <pre class="prettyprint source"><code>import Player from './commonNodeJS/master/player/player.js';
 </code></pre>
 <p>or</p>
@@ -177,26 +183,10 @@ The easiest way to use <b>Player</b> in your code is import <b>Player</b> from <
 </code></pre>
 <p>Now you can use <b>Player</b> in your javascript code.</p>
 <p>Add <b>Player</b> after creating of the <b>scene</b> and before creation of the <b>renderer</b>.</p>
-<pre class="prettyprint source"><code>const player = new Player( scene );
+<pre class="prettyprint source"><code>new Player( scene, { options: options, } );
 </code></pre>
-<p>Currently your player is not doing anything. Please add a 3d object into canvas that you want to play with, for example <b>Points</b>:</p>
-<pre class="prettyprint source"><code>const arrayFuncs = [
-	new THREE.Vector3( 0, 0.5, 0.5 ),//First point
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
-];
-const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( arrayFuncs ),
-	new THREE.PointsMaterial( {
-
-		color: 0xffffff,
-		size: 0.2,
-
-	} ) );
-scene.add( points );
-</code></pre>
-<p>Suppose you want to move a point during playing. Change your code for this:</p>
-<ul>
-<li>Edit <b>arrayFuncs</b></li>
-</ul>
+<p>Currently your player is not doing anything. Please add a 3d object into canvas that you want to play with, for example <b>Points</b>.
+Suppose you want to move a point during playing.</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
 	new THREE.Vector3(
 		new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
@@ -222,7 +212,7 @@ scene.add( points );
 <p><b>t</b> is current time of the playing.</p>
 <p>Default start time <b>t = 0</b>, <b>a = 1</b>, <b>b = 0</b>.</p>
 <p>Read about <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a>.</p>
-<p>The <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints">Player.getPoints(...)</a> in code above
+<p>The <a href="../../../../commonNodeJS/master/player/jsdoc/module-Player-Player.getPoints.html">Player.getPoints(...)</a> in code above
 returns an array of the vectors for <b>t = 0</b>.</p>
 <ul>
 <li>Define the <b>points.userData.player</b> object in your code for including of the points into <b>Player</b>.
@@ -237,19 +227,19 @@ Include <b>arrayFuncs</b> into <b>points.userData.player</b> object if you want 
 <ul>
 <li>Start playing.</li>
 </ul>
-<pre class="prettyprint source"><code>player.play3DObject();
+<pre class="prettyprint source"><code>options.player.play3DObject();
 </code></pre>
 <p>Attention! Please start playing after creation of all 3D objects, in current example after creating of the points.</p>
 <p>Update your web page. Now you can see moving a point on the canvas.</p>
 <p>Default, the playing ticks count is 10. You can change it.
 Also you can set your ticks per seconds and other setting.
-See <a href="module-Player.html">Player</a> for details.
-Please change your <b>Player</b> for it.</p>
-<pre class="prettyprint source"><code>const player = new Player( scene, {
+See <b>settings.options.playerOptions</b> of the <a href="module-Player-Player.html">Player</a> for details.
+Please edit <b>options</b> for it.</p>
+<pre class="prettyprint source"><code>const options = new Options(
 
-	options : { 
-	
-		playerOptions: {
+	{
+
+		playerOptions: {//create a Player instance. 3D objects animation.
 
 			marks: 100,//Ticks count of the playing.
 			interval: 25,//Ticks per seconds.
@@ -258,7 +248,7 @@ Please change your <b>Player</b> for it.</p>
 
 	}
 
-} );
+);
 </code></pre>
 <p><a name="AddTrace"></a></p>
 <h2>Add trace line of moving of the point during playing.</h2>
@@ -938,7 +928,7 @@ $ npm run build
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jul 17 2021 12:35:30 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Jul 30 2021 04:57:56 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -24,6 +24,8 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 ## Quick start
 
 * Create a folder on your localhost named as [folderName].
+	* Download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
+	* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 * Add your web page into [folderName]. Example:
 ```
 <!DOCTYPE html>
@@ -39,11 +41,18 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
 	<!--<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">-->
 
+	<!--<script src="./three.js/dev/build/three.js"></script>-->
+	<!--<script src="./three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
 </head>
 <body>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
-		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - Player - 3D objects animation.
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/player" target="_blank" rel="noopener">Player</a>.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
 	<div>
@@ -57,10 +66,11 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 
 		import three from './commonNodeJS/master/three.js'
-		//import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
-		var camera, scene, renderer, guiSelectPoint;
+		import Options from './commonNodeJS/master/Options.js'
+
+		var camera, scene, renderer, stereoEffect;
 
 		init();
 		animate();
@@ -72,6 +82,8 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 
 			scene = new THREE.Scene();
 
+			const options = new Options();
+
 			renderer = new THREE.WebGLRenderer( {
 
 				antialias: true,
@@ -81,6 +93,10 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
 			window.addEventListener( 'resize', onWindowResize, false );
+
+			//Orbit controls allow the camera to orbit around a target.
+			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+			options.createOrbitControls( camera, renderer, scene );
 
 		}
 		function onWindowResize() {
@@ -104,23 +120,10 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 </body>
 </html>
 ```
-NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
+NOTE. Please include <b>three.THREE = THREE;</b> line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
-<a name="ImportPlayer"></a>
-The easiest way to use <b>Player</b> in your code is import <b>Player</b> from <b>Player.js</b> file in your JavaScript module.
-[Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
-```
-import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
-```
-or
-```
-import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.js';
-```
-or
-```
-import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+The easiest way to use <b>Player</b> in your codeis import <b>Player</b> from <b>Player.js</b> file in your JavaScript module.
+[Example](../../../../commonNodeJS/master/player/Examples/index.html).
 ```
 import Player from './commonNodeJS/master/player/player.js';
 ```
@@ -137,25 +140,10 @@ Now you can use <b>Player</b> in your javascript code.
 
 Add <b>Player</b> after creating of the <b>scene</b> and before creation of the <b>renderer</b>.
 ```
-const player = new Player( scene );
+new Player( scene, { options: options, } );
 ```
-Currently your player is not doing anything. Please add a 3d object into canvas that you want to play with, for example <b>Points</b>:
-```
-const arrayFuncs = [
-	new THREE.Vector3( 0, 0.5, 0.5 ),//First point
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
-];
-const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( arrayFuncs ),
-	new THREE.PointsMaterial( {
-
-		color: 0xffffff,
-		size: 0.2,
-
-	} ) );
-scene.add( points );
-```
-Suppose you want to move a point during playing. Change your code for this:
-* Edit <b>arrayFuncs</b>
+Currently your player is not doing anything. Please add a 3d object into canvas that you want to play with, for example <b>Points</b>.
+Suppose you want to move a point during playing.
 ```
 const arrayFuncs = [
 	new THREE.Vector3(
@@ -188,7 +176,7 @@ Default start time <b>t = 0</b>, <b>a = 1</b>, <b>b = 0</b>.
 
 Read about [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function).
 
-The [Player.getPoints(...)](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints) in code above
+The [Player.getPoints(...)](../../../../commonNodeJS/master/player/jsdoc/module-Player-Player.getPoints.html) in code above
 returns an array of the vectors for <b>t = 0</b>.
 
 * Define the <b>points.userData.player</b> object in your code for including of the points into <b>Player</b>.
@@ -202,7 +190,7 @@ points.userData.player = {
 ```
 * Start playing.
 ```
-player.play3DObject();
+options.player.play3DObject();
 ```
 Attention! Please start playing after creation of all 3D objects, in current example after creating of the points.
 
@@ -210,14 +198,14 @@ Update your web page. Now you can see moving a point on the canvas.
 
 Default, the playing ticks count is 10. You can change it.
 Also you can set your ticks per seconds and other setting.
-See [Player](module-Player.html) for details.
-Please change your <b>Player</b> for it.
+See <b>settings.options.playerOptions</b> parameter of the [Player](module-Player-Player.html) for details.
+Please edit <b>options</b> for it.
 ```
-const player = new Player( scene, {
+const options = new Options(
 
-	options : { 
-	
-		playerOptions: {
+	{
+
+		playerOptions: {//create a Player instance. 3D objects animation.
 
 			marks: 100,//Ticks count of the playing.
 			interval: 25,//Ticks per seconds.
@@ -226,7 +214,7 @@ const player = new Player( scene, {
 
 	}
 
-} );
+);
 ```
 <a name="AddTrace"></a>
 ## Add trace line of moving of the point during playing.
