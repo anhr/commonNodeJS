@@ -91,9 +91,9 @@ class GuiSelectPoint {
 	 * @example
 	import GuiSelectPoint from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
-	const guiSelectPoint = new GuiSelectPoint( options );
-	guiSelectPoint.add();
-	guiSelectPoint.addMesh( points );
+	new GuiSelectPoint( options );
+	options.guiSelectPoint.add();
+	options.guiSelectPoint.addMesh( points );
 	 */
 	constructor( options, guiParams = {} ) {
 
@@ -364,9 +364,10 @@ class GuiSelectPoint {
 
 			}
 			var opasity;
-			const func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined;
+			const func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined,
+				attributes = intersectionSelected.object.geometry.attributes;
 			function isWObject() { return ( typeof func.w === 'object' ) && ( func.w instanceof THREE.Color === false ); }
-			var color = func === undefined ?
+			var color = ( func === undefined ) || ( !attributes.color && !attributes.ca ) ?
 				undefined :
 				Array.isArray( func.w ) || ( typeof func.w === "function" ) ?
 					Player.execFunc( func, 'w', Player.getTime(), options ) ://.a, options.b ) :
@@ -376,15 +377,15 @@ class GuiSelectPoint {
 
 			if ( color === undefined ) {
 
-				if ( intersectionSelected.object.geometry.attributes.ca === undefined ) {
+				if ( attributes.ca === undefined ) {
 
 					//				console.warn( 'Under constraction. цвет frustumPoints не известен потому что он вычисляется в шейдере D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master\frustumPoints\vertex.c' )
 
 				} else {
 
 					const vColor = new THREE.Vector4().fromArray(
-						intersectionSelected.object.geometry.attributes.ca.array,
-						intersectionSelected.index * intersectionSelected.object.geometry.attributes.ca.itemSize );
+						attributes.ca.array,
+						intersectionSelected.index * attributes.ca.itemSize );
 					color = new THREE.Color( vColor.x, vColor.y, vColor.z );
 					opasity = vColor.w;
 
@@ -1431,8 +1432,8 @@ class GuiSelectPoint {
 							i = intersection.index;
 						if ( attributes.position.itemSize < 4 ) {
 
-//							console.error( 'guiSelectPoint.addPointControllers().axesGui().controller.onChange(): attributes.position.itemSize = ' + attributes.position.itemSize )
-							return;//Точка не имеет цвета. Например это вершина куба
+							console.error( 'guiSelectPoint.addPointControllers().axesGui().controller.onChange(): attributes.position.itemSize = ' + attributes.position.itemSize )
+							return;//Точка не имеет цвета. Например это вершина куба. Надо скрыть оган управления координатой w
 
 						}
 						if ( options.palette ) {
