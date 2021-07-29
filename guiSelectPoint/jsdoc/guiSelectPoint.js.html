@@ -98,7 +98,7 @@ class GuiSelectPoint {
 	 * You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
 	 * &lt;/pre>
 	 * @param {object} [options.lang] Object with localized language values
-	 * @param {object} [guiParams={}] Followed parameters is allowed. Default is no parameters
+	 * @param {object} [guiParams={}] Followed parameters is allowed.
 	 * @param {object} [guiParams.cameraTarget] camera looking at selected point during playing. See the &lt;b>cameraTarget&lt;/b> parameter of the &lt;a href="../../player/jsdoc/module-Player-Player.cameraTarget.html#init" target="_blank">Player.cameraTarget.init(...)&lt;/a> function for details.
 	 * @param {THREE.PerspectiveCamera} guiParams.cameraTarget.camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
 	 * @param {Function} [guiParams.pointControls] pointControls( fPoint, dislayEl, getMesh ) Adds the trace "Display the trace of the point movement" control checkbox into gui.
@@ -119,9 +119,9 @@ class GuiSelectPoint {
 	 * @example
 	import GuiSelectPoint from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
-	const guiSelectPoint = new GuiSelectPoint( options );
-	guiSelectPoint.add();
-	guiSelectPoint.addMesh( points );
+	new GuiSelectPoint( options );
+	options.guiSelectPoint.add();
+	options.guiSelectPoint.addMesh( points );
 	 */
 	constructor( options, guiParams = {} ) {
 
@@ -141,7 +141,7 @@ class GuiSelectPoint {
 			return;
 
 		}
-		if ( options.dat.guiSelectPoint === false ) {
+		if ( ( options.dat.guiSelectPoint === false ) || !options.dat.gui ) {
 
 			//заменяем все функции на пустышки
 			this.add = function ( gui ) { };
@@ -151,7 +151,7 @@ class GuiSelectPoint {
 
 		}
 
-		const dat = options.dat.dat;
+		const dat = three.dat;//options.dat.dat;
 
 		//Player changes the guiSelectPoint control's values during playing
 		options.guiSelectPoint = guiSelectPoint;
@@ -367,7 +367,8 @@ class GuiSelectPoint {
 			*/
 			if ( cCameraTarget ) {
 
-				Player.cameraTarget.changeTarget( intersectionSelected.object, intersectionSelected.index );
+//				Player.cameraTarget.changeTarget( intersectionSelected.object, intersectionSelected.index );
+				options.playerOptions.cameraTarget.changeTarget( intersectionSelected.object, intersectionSelected.index );
 				cCameraTarget.updateDisplay();
 
 			}
@@ -623,13 +624,19 @@ class GuiSelectPoint {
 		 */
 		this.addMesh = function ( mesh ) {
 
+			if ( !mesh.parent ) return;
+
 			if ( !cMeshs ) {
 
 				//Test for duplicate item
 				for ( var i = 0; i &lt; arrayMeshs.length; i++ ) {
 
-					if ( arrayMeshs[i].uuid === mesh.uuid )
+					if ( arrayMeshs[i].uuid === mesh.uuid ) {
+
+						console.error( 'guiSelectPoint.addMesh: Duplicate mesh: ' + mesh.name );
 						return;
+
+					}
 
 				}
 
@@ -900,6 +907,25 @@ class GuiSelectPoint {
 				value = parseInt( value );
 				mesh = getMesh();
 
+				if ( !mesh.userData.boFrustumPoints ) {
+
+					if ( !mesh.userData.player ) mesh.userData.player = {};
+					if ( !mesh.userData.player.arrayFuncs ) {
+
+						const position = mesh.geometry.attributes.position;
+						mesh.userData.player.arrayFuncs = [];
+						for ( var i = 0; i &lt; position.count; i++ ) {
+
+							const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
+							vector.w = 1;
+							mesh.userData.player.arrayFuncs.push( vector );
+
+						}
+
+					}
+
+				}
+
 				const none = 'none', block = 'block';
 				var display;
 				if ( mesh === undefined ) {
@@ -960,6 +986,7 @@ class GuiSelectPoint {
 					setScaleControllers();
 					setPositionControllers();
 					setRotationControllers();
+					orbitControlsOptions = undefined;
 
 				}
 				fMesh.domElement.style.display = display;
@@ -1183,9 +1210,12 @@ class GuiSelectPoint {
 			if ( options.player ) {
 
 				var orbitControlsOptions;
-//					cameraTarget;//здесь хранится cameraTarget когда ни одна точка не выбрана как camera target
+/*				
 				if ( guiParams.cameraTarget ) Player.cameraTarget.init( guiParams.cameraTarget, options );
 				const playerCameraTarget = Player.cameraTarget.get();
+*/				
+				if ( guiParams.cameraTarget ) options.playerOptions.cameraTarget.init( guiParams.cameraTarget, options );
+				const playerCameraTarget = options.playerOptions.cameraTarget.get();
 				if ( playerCameraTarget ) {
 
 					cCameraTarget = fPoints.add( playerCameraTarget, 'boLook' ).onChange( function ( boLook ) {
@@ -1216,7 +1246,8 @@ class GuiSelectPoint {
 						const index = mesh.userData.boFrustumPoints ? cFrustumPoints.getSelectedIndex() : cPoints.__select.options.selectedIndex - 1,
 							point = typeof mesh.userData.player.arrayFuncs === "function" ?
 								new THREE.Vector3().fromArray( mesh.userData.player.arrayFuncs().attributes.position.array, index * 3 ) :
-								mesh.userData.player.arrayFuncs[index];
+								mesh.userData.player.arrayFuncs !== undefined ? mesh.userData.player.arrayFuncs[index] :
+									new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, index * 3 );
 
 						//remove boLook from all points
 						for ( var i = 0; i &lt; cMeshs.__select.options.length; i++ ) {
@@ -1234,25 +1265,19 @@ class GuiSelectPoint {
 						if ( options.player ) options.player.selectScene();
 						if ( boLook ) {
 
-//							if ( Player.cameraGui ) Player.cameraGui.look();
 							if ( options.cameraGui ) options.cameraGui.look();
 							if ( !point.cameraTarget ) {
 
-								//							getCameraTarget();// true );
 								if ( playerCameraTarget.boLook === undefined ) Player.cameraTarget2.boLook = false;
 
 								if ( !orbitControlsOptions ) orbitControlsOptions = {}
 								if ( !orbitControlsOptions.target )
 									orbitControlsOptions.target = new THREE.Vector3();
-/*								
-								if ( Player.orbitControls )
-									orbitControlsOptions.target.copy( Player.orbitControls.target );
-*/
 								if ( options.orbitControls )
 									orbitControlsOptions.target.copy( options.orbitControls.target );
 
-//								cameraTarget = undefined;
-								Player.cameraTarget.changeTarget( mesh, index );
+//								Player.cameraTarget.changeTarget( mesh, index );
+								options.playerOptions.cameraTarget.changeTarget( mesh, index );
 
 							}
 							return;
@@ -1434,8 +1459,8 @@ class GuiSelectPoint {
 							i = intersection.index;
 						if ( attributes.position.itemSize &lt; 4 ) {
 
-							console.error( 'guiSelectPoint.addPointControllers().axesGui().controller.onChange(): attributes.position.itemSize = ' + attributes.position.itemSize )
-							return;
+//							console.error( 'guiSelectPoint.addPointControllers().axesGui().controller.onChange(): attributes.position.itemSize = ' + attributes.position.itemSize )
+							return;//Точка не имеет цвета. Например это вершина куба
 
 						}
 						if ( options.palette ) {
@@ -1659,7 +1684,7 @@ class GuiSelectPoint {
 			}, 'defaultF' );
 			dat.controllerNameAndTitle( cRestoreDefaultLocalPosition, lang.defaultButton, lang.defaultLocalPositionTitle );
 
-			funcFolder = new functionsFolder( fPoint, options.scales, THREE, function ( func, axisName ) {
+			funcFolder = new functionsFolder( fPoint, function ( func, axisName ) {
 
 				const mesh = getMesh(),
 					index = cPoints.__select.options.selectedIndex - 1,
@@ -1707,12 +1732,12 @@ class GuiSelectPoint {
 				}
 				setValue( controller, Player.execFunc( funcs, axisName, t, options ) );
 
-			}, {
+			}, options, { x: '', y: '', z: '', w: '' } );/* {
 
 				getLanguageCode: getLanguageCode,
 				THREE: THREE,
 
-			} );
+			} );*/
 
 		}
 		/**
@@ -1760,7 +1785,7 @@ export default GuiSelectPoint;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Jul 05 2021 11:45:16 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Jul 29 2021 06:45:44 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
