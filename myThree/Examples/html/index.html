@@ -156,8 +156,8 @@
 						//new Function( 't', 'a', 'b', 'return 0' ),
 						//new Function( 't', 'a', 'b', 'return 0.2' ),
 						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5+b' ),//z
-						//new Function( 't', 'return 1-2*t' ),//w
-						new Function( 't', 'return 50-50*t' ),//w
+						new Function( 't', 'return 1-2*t' ),//w
+						//new Function( 't', 'return 50-50*t' ),//w
 						//new THREE.Color( "rgb( 0, 0, 255)" ),//w
 						//1,//w
 					),//Animated 3D point
@@ -165,7 +165,7 @@
 					//cameraTarget: { camera: options.camera, },
 
 				},
-				new THREE.Vector4( -0.25, 0.3, 0.3, -10 ),//4D point
+				new THREE.Vector4( -0.25, 0.3, 0.3, 0.5 ),//4D point
 				//new THREE.Vector4( 0, 0, 0, new Function( 't', 'return 1-2*t' ) ),//color is f(t)
 				//new THREE.Vector4( -0.25, 0.3, 0.3, new THREE.Color( "rgb(255, 255, 0)" ) ),//yellow point
 				//new THREE.Vector4( 0.25, 0, 0, new THREE.Color( "rgb(255, 0, 0)" ) ),//red point
