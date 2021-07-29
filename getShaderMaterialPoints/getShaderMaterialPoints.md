@@ -4,61 +4,112 @@ I use <b>getShaderMaterialPoints</b> in my [three.js](https://threejs.org/) proj
 
 ## Quick start
 
-Create your web page. [Example](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene).
-
-The easiest way to use <b>getShaderMaterialPoints</b> in your code is import getShaderMaterialPoints from getShaderMaterialPoints.js file in your JavaScript module.
-```
-import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
-import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
-```
-or
 * Create a folder on your localhost named as [folderName].
-* Add your web page into [folderName].
-* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+	* Download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
+	* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+* Add your web page into [folderName]. Example:
 ```
-import Player from './commonNodeJS/master/player/player.js';
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>getShaderMaterialPoints</title>
+
+	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
+
+	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">-->
+
+	<!--<script src="./three.js/dev/build/three.js"></script>-->
+	<!--<script src="./three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
+</head>
+<body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="./commonNodeJS/master/getShaderMaterialPoints/jsdoc/" target="_blank" rel="noopener">getShaderMaterialPoints</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+	<div>
+		<canvas id="canvas"></canvas>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
+		import Options from './commonNodeJS/master/Options.js'
+
+		var camera, scene, renderer, stereoEffect;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			const options = new Options();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			//Orbit controls allow the camera to orbit around a target.
+			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+			options.createOrbitControls( camera, renderer, scene );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	</script>
+</body>
+</html>
+```
+The easiest way to use <b>getShaderMaterialPoints</b> in your code is import <b>getShaderMaterialPoints</b> from <b>getShaderMaterialPoints.js</b> file in your JavaScript module.
+```
 import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 ```
 Now you can use <b>getShaderMaterialPoints</b> in your javascript code. Example:
 ```
-const arrayFuncs = [
-	{
-
-		vector: new THREE.Vector4( 
-			new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-			new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
-			0.5,//z
-			{
-
-					func: new Function( 't', 'return 1-2*t' ),
-					min: -1,
-					max: 1,
-
-			}
-
-		),
-		trace: true,//Displays the trace of the point movement.
-
-	},
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),
-];
-getShaderMaterialPoints( scene, arrayFuncs,
-	function ( points ) {
-
-		scene.add( points );
-		points.userData.player = {
-
-			arrayFuncs: arrayFuncs,
-			selectPlayScene: function ( t ) {
-
-				points.position.x = t;
-				points.rotation.z = - Math.PI * 2 * t;
-
-			}
-
-		}
-
-	},
-	{ Player: Player, } );
+getShaderMaterialPoints( scene, [
+	[],//first point. Zero position. White color.
+	[0.5, 0.5, 0.5],//second point. White color.
+], function ( points ) { scene.add( points ); } );
 ```
 
