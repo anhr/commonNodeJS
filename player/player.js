@@ -133,7 +133,7 @@ class Player {
 		if ( options.player === false ) return;
 
 //Deprecated
-Player.player = this;
+//Player.player = this;
 
 		options.boPlayer = options.boPlayer || false;
 
@@ -1461,7 +1461,8 @@ Player.cameraTarget = class {
 			if ( !cameraTarget.distanceToCameraCur )
 				cameraTarget.distanceToCameraCur = new THREE.Vector3();
 
-			const t = Player.getTime(),
+//			const t = Player.getTime(),
+			const t = options.time,
 				distanceToCamera = cameraTarget.distanceToCamera,
 				distanceToCameraCur = new THREE.Vector3().copy( cameraTarget.distanceToCameraCur );
 			cameraTarget.distanceToCameraCur.set(
@@ -1496,7 +1497,8 @@ Player.cameraTarget = class {
 					}
 					
 					distanceToCameraCur.copy( cameraTarget.distanceToCameraCur );
-					const t = Player.getTime();
+//					const t = Player.getTime();
+					const t = options.time;
 					camera.position.copy( cameraTarget.distanceToCameraCur );
 					camera.position.applyAxisAngle( cameraTarget.rotation.axis, Player.execFunc( cameraTarget.rotation, 'angle', t, options ) );
 					if ( !target ) {
@@ -2671,9 +2673,10 @@ Player.getSelectSceneIndex = function () {
 
 }
 */
-/** @namespace
+/* * @namespace
  * @returns current time of the player.
  */
+/*
 Player.getTime = function () {
 
 	if ( Player.player )
@@ -2681,6 +2684,7 @@ Player.getTime = function () {
 	return 0;
 
 }
+*/
 
 /** @namespace
  * @description get item size of the attribute of the mesh geometry

@@ -235,7 +235,7 @@ class CameraGui {
 //				const cameraTarget = Player.cameraTarget.get();
 				const cameraTarget = options.playerOptions.cameraTarget.get();
 				cameraTarget.distanceToCamera[axisName] = func;
-				const value = Player.execFunc( cameraTarget.distanceToCamera, axisName, Player.getTime() );
+				const value = Player.execFunc( cameraTarget.distanceToCamera, axisName, options.time );//Player.getTime() );
 				controllersDistance[axisName].setValue( value, true );
 //				Player.cameraTarget.init( { camera: camera }, options );
 				options.playerOptions.cameraTarget.init( { camera: camera }, options );

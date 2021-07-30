@@ -370,9 +370,11 @@ class GuiSelectPoint {
 			var color = ( func === undefined ) || ( !attributes.color && !attributes.ca ) ?
 				undefined :
 				Array.isArray( func.w ) || ( typeof func.w === "function" ) ?
-					Player.execFunc( func, 'w', Player.getTime(), options ) ://.a, options.b ) :
+//					Player.execFunc( func, 'w', Player.getTime(), options ) ://.a, options.b ) :
+					Player.execFunc( func, 'w', options.time, options ) :
 					isWObject() ?
-						Player.execFunc( func.w, 'func', Player.getTime(), options ) ://.a, options.b ) :
+//						Player.execFunc( func.w, 'func', Player.getTime(), options ) ://.a, options.b ) :
+						Player.execFunc( func.w, 'func', options.time, options ) :
 						func.w;
 
 			if ( color === undefined ) {
@@ -1613,7 +1615,8 @@ class GuiSelectPoint {
 				defaultF: function () {
 
 					const positionDefault = intersection.object.userData.player.arrayFuncs[intersection.index],
-						t = Player.getTime();
+						t = options.time;
+//						t = Player.getTime();
 					cX.setValue( typeof positionDefault.x === "function" ?
 						positionDefault.x( t, options.a, options.b ) : positionDefault.x );
 					cY.setValue( typeof positionDefault.y === "function" ?
