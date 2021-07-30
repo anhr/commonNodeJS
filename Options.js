@@ -844,6 +844,24 @@ class Options {
 			},
 
 			/**
+			 * getter
+			 * <pre>
+			 * current time of the <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
+			 * </pre>
+			 **/
+			time: {
+
+				get: function () {
+
+					if ( options.player )
+						return options.player.getTime();
+					return 0;
+
+				},
+
+			},
+
+			/**
 			 * getter and setter
 			 * <pre>
 			 * Use <a href="../../axesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
