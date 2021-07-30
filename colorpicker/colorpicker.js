@@ -593,7 +593,8 @@ class ColorPicker {
 
 				new paletteitem( 0, 0x00, 0x00, 0xFF ),//blue
 				new paletteitem( 33, 0x00, 0xFF, 0x00 ),//green
-				new paletteitem( 66, 0xFF, 0xFF, 0x00 ),//red
+//				new paletteitem( 66, 0xFF, 0xFF, 0x00 ),//red
+				new paletteitem( 66, 0xFF, 0x00, 0x00 ),//red
 				new paletteitem( 100, 0xFF, 0xFF, 0xFF ),//white
 
 			];
