@@ -154,7 +154,7 @@ const arrayFuncs = [
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
-		Player.getPoints( arrayFuncs,{ group: scene } ),
+		Player.getPoints( arrayFuncs,{ group: scene, options: options } ),
 		Player.getItemSize( arrayFuncs ) ),
 	new THREE.PointsMaterial( {
 
@@ -234,6 +234,9 @@ const arrayFuncs = [
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 ```
+Note. Please add <b>options: options</b> key in the <b>settings</b> parameter
+of the new [Player](../../../../commonNodeJS/master/player/jsdoc/module-Player-Player.html) for <b>trace</b> have effect. See above.
+
 You can see, first value of the array is object with
 
 <b>{
@@ -250,7 +253,7 @@ Now you can see a trace line of the moving of the first point.
 * In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> key and add <b>vertexColors: THREE.VertexColors</b>.
 ```
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
-		Player.getPoints( arrayFuncs, { group: scene } ),
+		Player.getPoints( arrayFuncs,{ group: scene, options: options } ),
 		Player.getItemSize( arrayFuncs ) ),
 	new THREE.PointsMaterial( {
 
@@ -279,7 +282,7 @@ const arrayFuncs = [
 You can see the <b>w</b> coordinate of the <b>THREE.Vector4</b> is green color.
 * Make the point color is function of the time.
 
-Change the <b>w</b> coordinate of the <b>THREE.Vector4</b> to <b>new Function( 't', 'return 1-2*t' )</b>.
+Change the <b>w</b> coordinate of the first point to <b>new Function( 't', 'return 1-2*t' )</b>.
 ```
 const arrayFuncs = [
 	{
