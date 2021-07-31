@@ -215,7 +215,7 @@ class MyThree {
 	 * <pre>
 	 * <b>MyThree.ColorPicker.palette</b> - is <b>new ColorPicker.palette( ... )</b>
 	 * See <a href="../../colorpicker/jsdoc/index.html" target="_blank">ColorPicker</a> for details.
-	 * <b>boolean</b>: true - <b>new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.BGRW } )</b>;
+	 * <b>boolean</b>: true - <b>new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.BGYW } )</b>;
 	 * <b>number</b>: is <b>MyThree.ColorPicker.paletteIndexes</b>. See <a href="../../colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes" target="_blank">ColorPicker.paletteIndexes</a> for details.
 	 * See <a href="../../jsdoc/Options/Options.html#setPalette" target="_blank">Options.setPalette</a>.
 	 * </pre>
@@ -409,7 +409,7 @@ class MyThree {
 					break;
 				case 'boolean':
 					if ( options.palette )
-						options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGRW } );
+						options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGYW } );
 					break;
 				default: {
 					

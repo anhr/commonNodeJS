@@ -365,7 +365,7 @@ const arrayFuncs = [
 ```
 * Select a [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
 
-Default color palette index is [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGRW).
+Default color palette index is [ColorPicker.paletteIndexes.BGYW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGYW).
 You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
 Edit the <b>palette</b> key of the <b>options</b> for it.
 ```
