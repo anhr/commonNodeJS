@@ -311,7 +311,7 @@ Last half of the trace is white because default range of the [color palette](htt
 But current range of the <b>1-2 * t</b> function from 1 to -1 for default <b>t</b> range from 0 to 1.
 You can resolve this issue by change of the palette range.
 Replace <b>w</b> coordinate of the first point from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
-See <b>arrayFuncs</b> parameter of the [Player.getPoints(...)](module-Player.html#~Player.getPoints) for details.
+See <b>arrayFuncs</b> parameter of the [Player.getColors(...)](module-Player-Player.getColors.html) for details.
 ```
 const arrayFuncs = [
 	{
@@ -334,34 +334,69 @@ const arrayFuncs = [
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 ```
-* Select a [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
+* Select a [color palette](../../../../commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker-ColorPicker.html#palette).
 
-Default color palette index is [ColorPicker.paletteIndexes.BGYW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGYW).
-You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
-Edit the <b>palette</b> key of the <b>options</b> for it.
+Default color palette index is [ColorPicker.paletteIndexes.BGYW](../../../../commonNodeJS/master/colorpicker/Example/index.html#BGYW).
+You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](../../../../commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
+Add the <b>palette</b> key of the <b>options</b> for it.
+
+First, import <b>ColorPicker</b>.
 ```
 import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 ```
+Then edit <b>options</b>.
 ```
-const options = { palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ), }
+const options = new Options(
+
+	{
+
+		playerOptions: {//create a Player instance. 3D objects animation.
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+		palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+
+	}
+
+);
 ```
+Now the color of the first point is changing from green to dark and red during playing.
+
 Also you can create your own custom palette.
 ```
-const options = { palette: new ColorPicker.palette( { palette: [
+const options = new Options(
 
-	{ percent: 0, r: 0xff, g: 255, b: 0xff, },
-	{ percent: 10, r: 0, g: 0, b: 0, },
-	{ percent: 20, r: 0xff, g: 0, b: 0x0, },
-	{ percent: 30, r: 0x0, g: 255, b: 0x0, },
-	{ percent: 40, r: 0x0, g: 0, b: 0xff, },
-	{ percent: 80, r: 0x0, g: 0, b: 0xff, },
-	{ percent: 90, r: 0xff, g: 255, b: 0xff, },
+	{
 
-] } ), }
+		playerOptions: {//create a Player instance. 3D objects animation.
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+		palette: new ColorPicker.palette( { palette: [
+
+				{ percent: 0, r: 0xff, g: 255, b: 0xff, },
+				{ percent: 10, r: 0, g: 0, b: 0, },
+				{ percent: 20, r: 0xff, g: 0, b: 0x0, },
+				{ percent: 30, r: 0x0, g: 255, b: 0x0, },
+				{ percent: 40, r: 0x0, g: 0, b: 0xff, },
+				{ percent: 80, r: 0x0, g: 0, b: 0xff, },
+				{ percent: 90, r: 0xff, g: 255, b: 0xff, },
+
+			]
+			
+		} ),
+
+	}
+
+);
 ```
-Currently your player use same palette for all meshes.
+* Currently your player use same palette for all meshes.
 You can set individual palette for any mesh. Add <b>palette</b> key in the <b>mesh.userData.player</b> for it.
-For example [ColorPicker.paletteIndexes.rainbow](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#rainbow) palette.
+For example [ColorPicker.paletteIndexes.rainbow](../../../../commonNodeJS/master/colorpicker/Example/index.html#rainbow) palette.
 ```
 points.userData.player = {
 
@@ -397,17 +432,14 @@ points.rotation.z = - Math.PI * 2 * t;
 ## Create THREE.Points with [THREE.ShaderMaterial](https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial) material.
 Currently, it seems to you that the size of the first point changes during of the the playing because point moves near or far from camera.
 Sometimes you want to see the sizes of the points is not depend from distance to camera.
-To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described in [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
+To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described
+in [getShaderMaterialPoints API](../../../../commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
 
 First, import <b>getShaderMaterialPoints</b> into your web page.
 ```
-import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
 import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 ```
-Please remove <b>player.play3DObject();</b> line and include it into <b>getShaderMaterialPoints</b> parameters.
+Please remove <b>options.player.play3DObject();</b> line and include it into <b>getShaderMaterialPoints</b> parameters.
 ```
 getShaderMaterialPoints( scene, arrayFuncs,
 	function ( points ) {
@@ -424,12 +456,11 @@ getShaderMaterialPoints( scene, arrayFuncs,
 			}
 
 		}
-		player.play3DObject();
+		options.player.play3DObject();
 
 	},
 	{
 	
-		Player: Player,
 		options: options,
 
 	} );
@@ -441,10 +472,6 @@ Simplest way of creations of the points is using of the <b>MyPoints</b>.
 Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use [MyPoints](../../myPoints/jsdoc/index.html) for creating of new points.
 Import <b>MyPoints</b> into your web page for it.
 ```
-import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
 import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 ```
 Example.
@@ -455,7 +482,7 @@ MyPoints( arrayFuncs, scene, {
 	options: options,
 
 } );
-player.play3DObject();
+options.player.play3DObject();
 ```
 Now you can see, first point is moving and changing color.
 
@@ -464,18 +491,26 @@ You can set your own setting for <b>MyPoints</b>. For example set points size to
 
 Add <b>point</b> key into <b>options</b> above.
 ```
-const options = {
+const options = new Options(
 
-	palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
-	point: { size: 15 },
+	{
 
-}
+		playerOptions: {//create a Player instance. 3D objects animation.
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+		point: { size: 15 },
+
+	}
+
+);
 ```
 Edit <b>MyPoints</b>.
 ```
 MyPoints( arrayFuncs, scene, {
 
-	Player: Player,
 	options: options,
 	pointsOptions: {
 
@@ -486,38 +521,36 @@ MyPoints( arrayFuncs, scene, {
 
 } );
 ```
-If you want to see the sizes of the points is not depend from distance to camera,
-please add <b>shaderMaterial: {}</b> into <b>pointsOptions</b> of the <b>MyPoints</b> for it.
+If you want to see the sizes of the points is depend from distance to camera,
+please add <b>shaderMaterial: false</b> into <b>pointsOptions</b> of the <b>MyPoints</b> for it.
 ```
 MyPoints( arrayFuncs, scene, {
 
-	Player: Player,
 	options: options,
 	pointsOptions: {
 
 		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
 		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-		shaderMaterial: {}
+		shaderMaterial: false,
 
 	}
 
 } );
 ```
 ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
-For resolving of the problem please remove <b>player.play3DObject();</b> and include it inside of the <b>MyPoints</b>.
+For resolving of the problem please remove <b>options.player.play3DObject();</b> and include it inside of the <b>MyPoints</b>.
 ```
 MyPoints( arrayFuncs, scene, {
 
-	Player: Player,
 	options: options,
 	pointsOptions: {
 
 		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
 		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-		shaderMaterial: {},
+		shaderMaterial: false,
 		onReady: function ( points ) {
 
-			player.play3DObject();
+			options.player.play3DObject();
 
 		}
 
@@ -528,11 +561,6 @@ MyPoints( arrayFuncs, scene, {
 
 <a name="CanvasMenu"></a>
 ## Add <b>player</b> item into [CanvasMenu](https://github.com/anhr/commonNodeJS/tree/master/canvasMenu).
-Import <b>CanvasMenu</b> into your web page for it.
-```
-import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
 import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
 ```
@@ -540,7 +568,7 @@ Create CanvasMenu. Attention!!! Please create <b>CanvasMenu</b> after creating o
 ```
 new CanvasMenu( renderer, {
 
-	player: player,
+	options: options,
 
 } );
 ```
@@ -552,38 +580,27 @@ Now you can see a player's menu items on the bottom of the canvas.
 
 Import <b>dat.gui</b>.
 ```
-import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
 import { dat } from './commonNodeJS/master/dat/dat.module.js';
+three.dat = dat;
 ```
-Add <b>dat.dat</b> key into <b>options</b> parameter of the <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> class;
+And call <b>player.gui()</b>
 ```
-dat: {
-
-	dat: dat,
-
-}
+options.player.gui();
 ```
-and call <b>player.gui()</b>
-```
-player.gui();
-```
+You can see the "Player" folder in the upper right corner of the canvas.
 
 <a name="datGuiPlayerControl"></a>
-### Add player control buttons to the [dat.gui](https://github.com/anhr/dat.gui).
+### Add [player control](../../player/jsdoc/module-Player-Player_PlayController_PlayController.html) buttons to the [dat.gui](https://github.com/anhr/dat.gui).
 
-new player.PlayController( gui, getLanguageCode );
+```
+new options.player.PlayController();
+```
+You can see the player control in the upper right corner of the canvas.
 
 <a name="datGuiCamera"></a>
 ### Using [dat.gui](https://github.com/anhr/dat.gui) for manual change of the <b>camera</b> settings.
 
-First, import <b>CameraGui</b>
-```
-import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+First, import [CameraGui](../../jsdoc/CameraGui/).
 ```
 import CameraGui from './commonNodeJS/master/CameraGui.js';
 ```

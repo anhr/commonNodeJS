@@ -341,7 +341,7 @@ because default palette is default <a href="../../../../commonNodeJS/master/colo
 But current range of the <b>1-2 * t</b> function from 1 to -1 for default <b>t</b> range from 0 to 1.
 You can resolve this issue by change of the palette range.
 Replace <b>w</b> coordinate of the first point from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
-See <b>arrayFuncs</b> parameter of the <a href="module-Player.html#~Player.getPoints">Player.getPoints(...)</a> for details.</p>
+See <b>arrayFuncs</b> parameter of the <a href="module-Player-Player.getColors.html">Player.getColors(...)</a> for details.</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
 	{
 
@@ -364,31 +364,66 @@ See <b>arrayFuncs</b> parameter of the <a href="module-Player.html#~Player.getPo
 ];
 </code></pre>
 <ul>
-<li>Select a <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.</li>
+<li>Select a <a href="../../../../commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker-ColorPicker.html#palette">color palette</a>.</li>
 </ul>
-<p>Default color palette index is <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGYW">ColorPicker.paletteIndexes.BGYW</a>.
-You can select another palette. For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional">ColorPicker.paletteIndexes.bidirectional</a> palette.
-Edit the <b>palette</b> key of the <b>options</b> for it.</p>
+<p>Default color palette index is <a href="../../../../commonNodeJS/master/colorpicker/Example/index.html#BGYW">ColorPicker.paletteIndexes.BGYW</a>.
+You can select another palette. For example <a href="../../../../commonNodeJS/master/colorpicker/Example/index.html#Bidirectional">ColorPicker.paletteIndexes.bidirectional</a> palette.
+Add the <b>palette</b> key of the <b>options</b> for it.</p>
+<p>First, import <b>ColorPicker</b>.</p>
 <pre class="prettyprint source"><code>import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 </code></pre>
-<pre class="prettyprint source"><code>const options = { palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ), }
+<p>Then edit <b>options</b>.</p>
+<pre class="prettyprint source"><code>const options = new Options(
+
+	{
+
+		playerOptions: {//create a Player instance. 3D objects animation.
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+		palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+
+	}
+
+);
 </code></pre>
+<p>Now the color of the first point is changing from green to dark and red during playing.</p>
 <p>Also you can create your own custom palette.</p>
-<pre class="prettyprint source"><code>const options = { palette: new ColorPicker.palette( { palette: [
+<pre class="prettyprint source"><code>const options = new Options(
 
-	{ percent: 0, r: 0xff, g: 255, b: 0xff, },
-	{ percent: 10, r: 0, g: 0, b: 0, },
-	{ percent: 20, r: 0xff, g: 0, b: 0x0, },
-	{ percent: 30, r: 0x0, g: 255, b: 0x0, },
-	{ percent: 40, r: 0x0, g: 0, b: 0xff, },
-	{ percent: 80, r: 0x0, g: 0, b: 0xff, },
-	{ percent: 90, r: 0xff, g: 255, b: 0xff, },
+	{
 
-] } ), }
+		playerOptions: {//create a Player instance. 3D objects animation.
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+		palette: new ColorPicker.palette( { palette: [
+
+				{ percent: 0, r: 0xff, g: 255, b: 0xff, },
+				{ percent: 10, r: 0, g: 0, b: 0, },
+				{ percent: 20, r: 0xff, g: 0, b: 0x0, },
+				{ percent: 30, r: 0x0, g: 255, b: 0x0, },
+				{ percent: 40, r: 0x0, g: 0, b: 0xff, },
+				{ percent: 80, r: 0x0, g: 0, b: 0xff, },
+				{ percent: 90, r: 0xff, g: 255, b: 0xff, },
+
+			]
+			
+		} ),
+
+	}
+
+);
 </code></pre>
-<p>Currently your player use same palette for all meshes.
+<ul>
+<li>Currently your player use same palette for all meshes.
 You can set individual palette for any mesh. Add <b>palette</b> key in the <b>mesh.userData.player</b> for it.
-For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#rainbow">ColorPicker.paletteIndexes.rainbow</a> palette.</p>
+For example <a href="../../../../commonNodeJS/master/colorpicker/Example/index.html#rainbow">ColorPicker.paletteIndexes.rainbow</a> palette.</li>
+</ul>
 <pre class="prettyprint source"><code>points.userData.player = {
 
 	arrayFuncs: arrayFuncs,
@@ -421,14 +456,12 @@ For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicke
 <h2>Create THREE.Points with <a href="https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial">THREE.ShaderMaterial</a> material.</h2>
 <p>Currently, it seems to you that the size of the first point changes during of the the playing because point moves near or far from camera.
 Sometimes you want to see the sizes of the points is not depend from distance to camera.
-To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described in <a href="https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html">getShaderMaterialPoints API</a>.</p>
+To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described
+in <a href="../../../../commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html">getShaderMaterialPoints API</a>.</p>
 <p>First, import <b>getShaderMaterialPoints</b> into your web page.</p>
-<pre class="prettyprint source"><code>import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 </code></pre>
-<p>Please remove <b>player.play3DObject();</b> line and include it into <b>getShaderMaterialPoints</b> parameters.</p>
+<p>Please remove <b>options.player.play3DObject();</b> line and include it into <b>getShaderMaterialPoints</b> parameters.</p>
 <pre class="prettyprint source"><code>getShaderMaterialPoints( scene, arrayFuncs,
 	function ( points ) {
 
@@ -444,12 +477,11 @@ To do it, please remove your old <b>const points</b> and use <b>getShaderMateria
 			}
 
 		}
-		player.play3DObject();
+		options.player.play3DObject();
 
 	},
 	{
 	
-		Player: Player,
 		options: options,
 
 	} );
@@ -459,9 +491,6 @@ To do it, please remove your old <b>const points</b> and use <b>getShaderMateria
 <p>Simplest way of creations of the points is using of the <b>MyPoints</b>.
 Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use <a href="../../myPoints/jsdoc/index.html">MyPoints</a> for creating of new points.
 Import <b>MyPoints</b> into your web page for it.</p>
-<pre class="prettyprint source"><code>import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 </code></pre>
 <p>Example.</p>
@@ -471,23 +500,31 @@ Import <b>MyPoints</b> into your web page for it.</p>
 	options: options,
 
 } );
-player.play3DObject();
+options.player.play3DObject();
 </code></pre>
 <p>Now you can see, first point is moving and changing color.</p>
 <p>Currently all <b>MyPoints</b> settings is default.
 You can set your own setting for <b>MyPoints</b>. For example set points size to 15 and move all points to right during playing.</p>
 <p>Add <b>point</b> key into <b>options</b> above.</p>
-<pre class="prettyprint source"><code>const options = {
+<pre class="prettyprint source"><code>const options = new Options(
 
-	palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
-	point: { size: 15 },
+	{
 
-}
+		playerOptions: {//create a Player instance. 3D objects animation.
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+		point: { size: 15 },
+
+	}
+
+);
 </code></pre>
 <p>Edit <b>MyPoints</b>.</p>
 <pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
 
-	Player: Player,
 	options: options,
 	pointsOptions: {
 
@@ -498,36 +535,34 @@ You can set your own setting for <b>MyPoints</b>. For example set points size to
 
 } );
 </code></pre>
-<p>If you want to see the sizes of the points is not depend from distance to camera,
-please add <b>shaderMaterial: {}</b> into <b>pointsOptions</b> of the <b>MyPoints</b> for it.</p>
+<p>If you want to see the sizes of the points is depend from distance to camera,
+please add <b>shaderMaterial: false</b> into <b>pointsOptions</b> of the <b>MyPoints</b> for it.</p>
 <pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
 
-	Player: Player,
 	options: options,
 	pointsOptions: {
 
 		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
 		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-		shaderMaterial: {}
+		shaderMaterial: false,
 
 	}
 
 } );
 </code></pre>
 <p>ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
-For resolving of the problem please remove <b>player.play3DObject();</b> and include it inside of the <b>MyPoints</b>.</p>
+For resolving of the problem please remove <b>options.player.play3DObject();</b> and include it inside of the <b>MyPoints</b>.</p>
 <pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
 
-	Player: Player,
 	options: options,
 	pointsOptions: {
 
 		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
 		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-		shaderMaterial: {},
+		shaderMaterial: false,
 		onReady: function ( points ) {
 
-			player.play3DObject();
+			options.player.play3DObject();
 
 		}
 
@@ -537,16 +572,12 @@ For resolving of the problem please remove <b>player.play3DObject();</b> and inc
 </code></pre>
 <p><a name="CanvasMenu"></a></p>
 <h2>Add <b>player</b> item into <a href="https://github.com/anhr/commonNodeJS/tree/master/canvasMenu">CanvasMenu</a>.</h2>
-<p>Import <b>CanvasMenu</b> into your web page for it.</p>
-<pre class="prettyprint source"><code>import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
 </code></pre>
 <p>Create CanvasMenu. Attention!!! Please create <b>CanvasMenu</b> after creating of the render but before <b>renderer.setSize(...)</b></p>
 <pre class="prettyprint source"><code>new CanvasMenu( renderer, {
 
-	player: player,
+	options: options,
 
 } );
 </code></pre>
@@ -555,30 +586,21 @@ Now you can see a player's menu items on the bottom of the canvas.</p>
 <p><a name="datGuiPlayer"></a></p>
 <h2>Using <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change of the <b>Player</b> settings.</h2>
 <p>Import <b>dat.gui</b>.</p>
-<pre class="prettyprint source"><code>import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import { dat } from './commonNodeJS/master/dat/dat.module.js';
+three.dat = dat;
 </code></pre>
-<p>Add <b>dat.dat</b> key into <b>options</b> parameter of the <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> class;</p>
-<pre class="prettyprint source"><code>dat: {
-
-	dat: dat,
-
-}
+<p>And call <b>player.gui()</b></p>
+<pre class="prettyprint source"><code>options.player.gui();
 </code></pre>
-<p>and call <b>player.gui()</b></p>
-<pre class="prettyprint source"><code>player.gui();
-</code></pre>
+<p>You can see the &quot;Player&quot; folder in the upper right corner of the canvas.</p>
 <p><a name="datGuiPlayerControl"></a></p>
-<h3>Add player control buttons to the <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</h3>
-<p>new player.PlayController( gui, getLanguageCode );</p>
+<h3>Add <a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html">player control</a> buttons to the <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</h3>
+<pre class="prettyprint source"><code>new options.player.PlayController();
+</code></pre>
+<p>You can see the player control in the upper right corner of the canvas.</p>
 <p><a name="datGuiCamera"></a></p>
 <h3>Using <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change of the <b>camera</b> settings.</h3>
-<p>First, import <b>CameraGui</b></p>
-<pre class="prettyprint source"><code>import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<p>First, import <a href="../../jsdoc/CameraGui/">CameraGui</a></p>
 <pre class="prettyprint source"><code>import CameraGui from './commonNodeJS/master/CameraGui.js';
 </code></pre>
 <p>Add <b>CameraGui</b> into gui</p>
@@ -912,7 +934,7 @@ $ npm run build
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jul 31 2021 08:12:59 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jul 31 2021 10:01:40 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
