@@ -75,8 +75,8 @@ class ColorPicker {
 		 */
 		this.paletteIndexes = {
 
-			/** <a href="../Example/index.html#BGRW" target="_blank">blue, green, red, white</a> palette. This is the default palette*/
-			BGRW: 0,
+			/** <a href="../Example/index.html#BGYW" target="_blank">blue, green, yellow, white</a> palette. This is the default palette*/
+			BGYW: 0,
 			/** <a href="../Example/index.html#Monochrome" target="_blank">monochrome</a> palette */
 			monochrome: 1,
 			/** <a href="../Example/index.html#Bidirectional" target="_blank">red, black, green</a> palette */
@@ -125,11 +125,11 @@ class ColorPicker {
 		 * @param {object} [options] followed options is availablee
 		 * @param {paletteIndexes|object[]|Palette} [options.palette] Palette index or palette array or Palette. The following indexes are available:
 		 * <pre>
-		 * paletteIndexes.BGRW: 0 - blue, green, red, white palette.
+		 * paletteIndexes.BGYW: 0 - blue, green, red, white palette.
 		 * paletteIndexes.monochrome: 1,
 		 * paletteIndexes.bidirectional: 2,//red, black, green
 		 * paletteIndexes.rainbow: 3,
-		 * Default is paletteIndexes.BGRW index.
+		 * Default is paletteIndexes.BGYW index.
 		 * Example of palette array:
 		[
 			{ percent: 0, r: 0, g: 0, b: 0, },
@@ -537,11 +537,11 @@ class ColorPicker {
 		 * @param {object} [options] the following options are available
 		 * @param {paletteIndexes|object[]} [options.palette] Palette index or palette array. The following indexes are available:
 		 * <pre>
-		 * paletteIndexes.BGRW: 0 - blue, green, red, white palette.
+		 * paletteIndexes.BGYW: 0 - blue, green, red, white palette.
 		 * paletteIndexes.monochrome: 1,
 		 * paletteIndexes.bidirectional: 2,//red, black, green
 		 * paletteIndexes.rainbow: 3,
-		 * Default is paletteIndexes.BGRW index.
+		 * Default is paletteIndexes.BGYW index.
 		 * Example of palette array:
 		[
 			{ percent: 0, r: 0, g: 0, b: 0, },
@@ -576,12 +576,12 @@ class ColorPicker {
 				}
 			*/
 			if ( options.palette === undefined )
-				options.palette = _this.paletteIndexes.BGRW;
+				options.palette = _this.paletteIndexes.BGYW;
 			
 			/**
 			 * @returns Index of palette.
 			 * <pre>
-			 * 0 - <a href="../Example/index.html#BGRW" target="_blank">BGRW</a>
+			 * 0 - <a href="../Example/index.html#BGYW" target="_blank">BGYW</a>
 			 * 1 - <a href="../Example/index.html#Monochrome" target="_blank">monochrome</a>
 			 * 2 - <a href="../Example/index.html#Bidirectional" target="_blank">bidirectional</a>
 			 * 3 - <a href="../Example/index.html#rainbow" target="_blank">rainbow</a>
@@ -593,8 +593,7 @@ class ColorPicker {
 
 				new paletteitem( 0, 0x00, 0x00, 0xFF ),//blue
 				new paletteitem( 33, 0x00, 0xFF, 0x00 ),//green
-//				new paletteitem( 66, 0xFF, 0xFF, 0x00 ),//red
-				new paletteitem( 66, 0xFF, 0x00, 0x00 ),//red
+				new paletteitem( 66, 0xFF, 0xFF, 0x00 ),//yellow
 				new paletteitem( 100, 0xFF, 0xFF, 0xFF ),//white
 
 			];
@@ -603,7 +602,7 @@ class ColorPicker {
 				case 'number':
 					switch ( options.palette ) {
 
-						case _this.paletteIndexes.BGRW:
+						case _this.paletteIndexes.BGYW:
 							break;//default palette
 						case _this.paletteIndexes.monochrome:
 							var arrayPalette = [

@@ -61,7 +61,7 @@ Create palette.
 ```
 const palette = new ColorPicker.palette();
 ```
-Now you have created a default [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW) (blue, green, red, white) palette.
+Now you have created a default [ColorPicker.paletteIndexes.BGYW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGYW) (blue, green, yellow, white) palette.
 You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
 ```
 const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );

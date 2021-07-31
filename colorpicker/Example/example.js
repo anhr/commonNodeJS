@@ -173,20 +173,20 @@ function example( ColorPicker ) {
 	}
 
 	//Blue, green, red, white horizontal Colorpicker with slider indicator.
-	var elValueBGRW = document.getElementById( 'valueBGRW' );
-	var colorpickerBGRW = ColorPicker.create( "colorpickerBGRW", {
+	var elValueBGYW = document.getElementById( 'valueBGYW' );
+	var colorpickerBGYW = ColorPicker.create( "colorpickerBGYW", {
 
 		duplicate: true,
-		palette: ColorPicker.paletteIndexes.BGRW,
+		palette: ColorPicker.paletteIndexes.BGYW,
 		sliderIndicator: {
 			callback: function ( c ) {
 
 				//console.warn( 'callback: ' + c.percent + ' percent c.hex = ' + c.hex );
 				var color = 'RGB(' + c.r + ', ' + c.g + ', ' + c.b + ')';
-				var elColorBGRW = document.getElementById( 'colorBGRW' );
-				elColorBGRW.style.backgroundColor = color;
-				document.getElementById( 'colorBGRWtext' ).innerHTML = color;
-				elValueBGRW.value = c.percent;
+				var elColorBGYW = document.getElementById( 'colorBGYW' );
+				elColorBGYW.style.backgroundColor = color;
+				document.getElementById( 'colorBGYWtext' ).innerHTML = color;
+				elValueBGYW.value = c.percent;
 
 			},
 		},
@@ -197,12 +197,12 @@ function example( ColorPicker ) {
 			//height: '100px',
 
 		},
-		onError: function ( message ) { 'BGRW palette error: ' + alert( message ); }
+		onError: function ( message ) { 'BGYW palette error: ' + alert( message ); }
 
 	} );
-	document.getElementById( 'enterValueBGRW' ).onclick = function () {
+	document.getElementById( 'enterValueBGYW' ).onclick = function () {
 
-		colorpickerBH.setValue( elValueBGRW.value );
+		colorpickerBH.setValue( elValueBGYW.value );
 
 	}
 
