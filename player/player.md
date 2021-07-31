@@ -299,35 +299,12 @@ const arrayFuncs = [
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 ```
-Now you can see the color of the first point as white because white color is default color of the point
-and currently don't depend from the <b>w</b> coordinate value,
-because you do not defined a [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker) in your web page.
-<b>w</b> value is index of the palette. Please define palette.
-```
-import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
-```
-Create the <b>options</b> object and define the <b>palette</b> key.
-```
-const options = { palette: new ColorPicker.palette(), }
-```
-Add <b>options</b> key for your instance of the <b>player</b>.
-```
-const player = new Player( scene, {
+<b>w</b> patameter of the <b>new THREE.Vector4</b> of the <b>vector</b> key of the first point of the <b>arrayFuncs</b>
+is index of the [color palette](../../../../commonNodeJS/master/colorpicker/jsdoc/).
+Trace of the first point is circle. First half of the trace is alternation of colors from white to red then green and blue
+because default palette is default [ColorPicker.paletteIndexes.BGYW](../../../../commonNodeJS/master/colorpicker/Example/index.html#BGYW) (blue, green, yellow, white) palette.
 
-		options: options,
-		timeSettings: {
 
-			marks: 100,//Ticks count of the playing.
-			interval: 25,//Ticks per seconds.
-
-		},
-
-} );
-```
 Now you can see the color of the first point as blue at the begin of playing and white at the end of playing
 because default range of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker) from 0 to 100.
 But current range of the <b>1-2 * t</b> function from 1 to -1 for default <b>t</b> range from 0 to 1.
@@ -361,6 +338,9 @@ const arrayFuncs = [
 Default color palette index is [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGRW).
 You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
 Edit the <b>palette</b> key of the <b>options</b> for it.
+```
+import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
+```
 ```
 const options = { palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ), }
 ```
