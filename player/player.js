@@ -1731,7 +1731,7 @@ palette = new palette();
  * @param {number} [settings.options.b] addendum. Third parameter of the arrayFuncs item function. Default is 0.
  * @param {object} [settings.options.scales] axes scales.
  * See <b>options.scales</b> of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> for details.
- * @param {object} [settings.options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGRW] See <a href="../../colorPicker/jsdoc/module-ColorPicker.html#~Palette" target="_blank">ColorPicker.palette</a>.
+ * @param {object} [settings.options.palette=new ColorPicker.palette();//palette: ColorPicker.paletteIndexes.BGYW] See <a href="../../colorPicker/jsdoc/module-ColorPicker.html#~Palette" target="_blank">ColorPicker.palette</a>.
  * @param {object} [settings.options.point={}] point settings. Applies to points with ShaderMaterial.
  * <pre>
  * See [ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} for details.
@@ -2120,7 +2120,7 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 //	setOptions.setW( optionsDefault );
 	const wDefault = optionsDefault.scales.w.max;//new THREE.Vector4().w;//1;//цвет точки по умолчанию равен цвету палитры для максимального значения value,
 						//которе по умолчанияю равно 1 и определяется в Options class.
-						//Палитра по умолчанию ColorPicker.paletteIndexes.BGRW
+						//Палитра по умолчанию ColorPicker.paletteIndexes.BGYW
 						//у которой цвет максимального значения value белый.
 	for ( var i = 0; i < arrayFuncs.length; i++ ) {
 
