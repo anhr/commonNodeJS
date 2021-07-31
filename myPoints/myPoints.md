@@ -138,7 +138,7 @@ MyPoints( arrayFuncs, scene, {
 } );
 ```
 <b>w</b> coordinate of the second point is index of the color of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
-Currently I use default [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGRW) (blue, green, red, white) palette.
+Currently I use default [ColorPicker.paletteIndexes.BGYW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGYW) (blue, green, yellow, white) palette.
 0.5 value of <b>w</b> coordinate of the second point is index of the green color for default color palette.
 You can select another palette. Please import <b>ColorPicker</b> into your web page for it.
 ```
