@@ -23,7 +23,7 @@ import three from './three.js'
 class CameraGui {
 
 	/**
-	 * Camera settings graphical user interface
+	 * [Camera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera} settings graphical user interface
 	 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}
 	 * @param {Options} options See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 * The following options are available.
