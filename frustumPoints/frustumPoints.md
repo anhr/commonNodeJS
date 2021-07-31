@@ -130,7 +130,7 @@ import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 Now you can use <b>MyPoints</b> for create points. For example:
 ```
 const arrayFuncs = [
-	[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGRW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+	[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGYW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 	[
 		-0.5,//x
 		0,//y
@@ -236,7 +236,7 @@ const player = new Player( scene, {
 Currently your player is not doing anything. Suppose you want to move point during playback. Plase edit <b>arrayFuncs</b> and <b>MyPoints</b> for it.
 ```
 const arrayFuncs = [
-	[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGRW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+	[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGYW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 	{
 
 		//move second point from [-0.5, -0.5, -0.5, ] for t = 0 to [0.5, 0.5, 0.5, ] for t = 1
@@ -273,7 +273,7 @@ Player is start playing after creation of the points: <b><i>player.play3DObject(
 ## Points color.
 
 * Current [palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker) of the points colors is default.
-Default color palette index is [ColorPicker.paletteIndexes.BGRW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGRW).
+Default color palette index is [ColorPicker.paletteIndexes.BGYW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGYW).
 You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
 Please import <b>ColorPicker</b>.
 ```
@@ -329,7 +329,7 @@ frustumPoints = new FrustumPoints( camera, scene, canvas, {
 and change palette index of the second point to -1 is red color.
 ```
 const arrayFuncs = [
-	[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGRW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+	[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGYW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 	{
 
 		//move second point from [-0.5, -0.5, -0.5, ] for t = 0 to [0.5, 0.5, 0.5, ] for t = 1
