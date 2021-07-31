@@ -2007,7 +2007,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  * Example: 'Math.sin(t*a*2*Math.PI)*0.5+b' )</li>
  * </ul>
  * <b>Vector.w</b> is index of the [palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
- * Default range of the <b>Vector.w</b> is from 0 to 100. You can change range by use an object:
+ * Default range of the <b>Vector.w</b> is from 0 to 1. You can change range by use an object:
  * {
  *   func: Vector.w
  *   max: new max value of tne Vector.w
@@ -2270,7 +2270,7 @@ var boColorWarning = true;
  * Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )
  *
  * Vector.w is index of the [palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
- * Default range of the Vector.w is from 0 to 100. You can change range by use an object:
+ * Default range of the Vector.w is from 0 to 1. You can change range by use an object:
  * {
  *   func: Vector.w
  *   max: new max value of tne Vector.w

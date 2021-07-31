@@ -301,12 +301,13 @@ const arrayFuncs = [
 ```
 <b>w</b> patameter of the <b>new THREE.Vector4</b> of the <b>vector</b> key of the first point of the <b>arrayFuncs</b>
 is index of the [color palette](../../../../commonNodeJS/master/colorpicker/jsdoc/).
-Trace of the first point is circle. First half of the trace is alternation of colors from white to red then green and blue
+Trace of the first point is circle.
+
+First half of the trace is alternation of colors from white to red, then green and blue
 because default palette is default [ColorPicker.paletteIndexes.BGYW](../../../../commonNodeJS/master/colorpicker/Example/index.html#BGYW) (blue, green, yellow, white) palette.
 
-
-Now you can see the color of the first point as blue at the begin of playing and white at the end of playing
-because default range of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker) from 0 to 100.
+Last half of the trace is white because default range of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker) from 0 to 1
+(See [Options.setW(options)](../../../../commonNodeJS/master/jsdoc/Options/Options.html#setW) method for details).
 But current range of the <b>1-2 * t</b> function from 1 to -1 for default <b>t</b> range from 0 to 1.
 You can resolve this issue by change of the palette range.
 Replace <b>w</b> coordinate of the first point from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
