@@ -133,7 +133,7 @@ class Options {
 
 			if ( options.palette )
 				return;
-			options.palette = new ColorPicker.palette();//ColorPicker.paletteIndexes.BGRW 
+			options.palette = new ColorPicker.palette();//ColorPicker.paletteIndexes.BGYW 
 
 		}
 
@@ -609,7 +609,7 @@ class Options {
 								break;
 							case 'boolean':
 								if ( options.palette )
-									options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGRW } );
+									options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGYW } );
 								break;
 							default: {
 
