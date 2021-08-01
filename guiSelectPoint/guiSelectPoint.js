@@ -599,7 +599,12 @@ class GuiSelectPoint {
 		 */
 		this.addMesh = function ( mesh ) {
 
-			if ( !mesh.parent ) return;
+			if ( !mesh.parent ) {
+
+				console.error( 'GuiSelectPoint.addMesh: Add mesh into scene first.' );
+				return;
+
+			}
 
 			if ( !cMeshs ) {
 
