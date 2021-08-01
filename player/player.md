@@ -606,42 +606,30 @@ import CameraGui from './commonNodeJS/master/CameraGui.js';
 ```
 Add <b>CameraGui</b> into gui 
 ```
-new CameraGui( camera, options, gui );
+new CameraGui( camera, options );
 ```
+You can see the "Camera" folder in the upper right corner of the canvas.
 
 <a name="guiSelectPoint"></a>
 ### A [dat.gui](https://github.com/anhr/dat.gui) based graphical user interface for select a point from the mesh.
 
-* Import <b>GuiSelectPoint</b>
-```
-import GuiSelectPoint from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+* Import [GuiSelectPoint](../../guiSelectPoint/jsdoc/).
 ```
 import GuiSelectPoint from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 ```
 * Create instance of the <b>GuiSelectPoint</b>.
 ```
-guiSelectPoint = new GuiSelectPoint( options );
+new GuiSelectPoint( options );
+if ( options.guiSelectPoint ) options.guiSelectPoint.add();
 ```
 
 Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point.
 
-* Add mesh into <b>guiSelectPoint</b> if you allow to user to select a point of this mesh.
-```
-guiSelectPoint.addMesh( points );
-```
-<b>points</b> is instance of the mesh.
-* Add <b>guiSelectPoint</b> into [dat.gui](https://github.com/anhr/dat.gui).
-```
-guiSelectPoint.add( gui );
-```
-Note! Call <b>guiSelectPoint.add( gui );</b> before <b>player.play3DObject();</b>
+You can see the "Meshes" folder in the upper right corner of the canvas.
 
-
-* If you use <b>getShaderMaterialPoints</b> for create points, please remove <b>guiSelectPoint.add( gui );</b> line above
-and add <b>guiSelectPoint.addMesh( points );</b> and <b>guiSelectPoint.add( gui );</b>
-lines into <b>function ( points )</b> function of <b>getShaderMaterialPoints</b>.
+* If you use [getShaderMaterialPoints](../../getShaderMaterialPoints/jsdoc/module-getShaderMaterialPoints.html) for create points, please 
+add <b>options.guiSelectPoint.addMesh( points );</b>
+line into <b>onReady</b> callback function of <b>getShaderMaterialPoints</b>.
 ```
 getShaderMaterialPoints( scene, arrayFuncs,
 	function ( points ) {
@@ -658,14 +646,12 @@ getShaderMaterialPoints( scene, arrayFuncs,
 			}
 
 		}
-		guiSelectPoint.addMesh( points );
-		guiSelectPoint.add( gui );
-		player.play3DObject();
+		options.player.play3DObject();
+		options.guiSelectPoint.addMesh( points );
 
 	},
 	{
 	
-		Player: Player,
 		options: options,
 
 	} );
