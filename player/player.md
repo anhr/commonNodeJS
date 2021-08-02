@@ -122,7 +122,7 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 ```
 NOTE. Please include <b>three.THREE = THREE;</b> line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
-The easiest way to use <b>Player</b> in your codeis import <b>Player</b> from <b>Player.js</b> file in your JavaScript module.
+The easiest way to use <b>Player</b> in your code is import <b>Player</b> from <b>Player.js</b> file in your JavaScript module.
 [Example](../../../../commonNodeJS/master/player/Examples/index.html).
 ```
 import Player from './commonNodeJS/master/player/player.js';
@@ -138,7 +138,7 @@ import Player from './commonNodeJS/master/player/build/player.module.min.js';
 
 Now you can use <b>Player</b> in your javascript code.
 
-Add <b>Player</b> after creating of the <b>scene</b> and before creation of the <b>renderer</b>.
+Add <b>Player</b> after creating of the <b>options</b> and before creation of the <b>renderer</b>.
 ```
 new Player( scene, { options: options, } );
 ```
