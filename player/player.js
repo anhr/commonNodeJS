@@ -1388,7 +1388,9 @@ Player.cameraTarget = class {
 				new THREE.Vector3().copy( cameraTargetDefault.camera.position );
 
 			if ( !cameraTarget.rotation ) cameraTarget.rotation = {};
-			_cameraTarget.rotation.angle = cameraTarget.rotation.angle || cameraTargetDefault.rotation.angle || 0;
+			if ( cameraTarget.rotation.angle !== undefined )
+				_cameraTarget.rotation.angle = cameraTarget.rotation.angle;
+			else _cameraTarget.rotation.angle = cameraTargetDefault.rotation.angle || 0;
 			_cameraTarget.rotation.axis = cameraTarget.rotation.axis || cameraTargetDefault.rotation.axis || new THREE.Vector3( 0, 1, 0 );//Rotate around y axis
 
 		}
