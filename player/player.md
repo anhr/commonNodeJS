@@ -707,52 +707,66 @@ Then only last point with <b>cameraTarget</b> key will be have an effect.
 
 Currently uses default value of the distance from camera to selected point.
 You can change distance from camera to selected point from your program code.
-Also you can rotate camera around the point. Please add <b>cameraTarget</b> object into <b>camera.userData</b> for it.
+Also you can rotate camera around the point. Please add <b>cameraTarget</b> key into <b>options</b> for it.
 ```
-camera.userData.cameraTarget = {
+const options = new Options(
+
+	{
+
+		playerOptions: {//create a Player instance. 3D objects animation.
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+		point: { size: 15 },
+		cameraTarget: {
 
 	
-	//boLook: false,//camera do not look at a selected point during playing.
-		//User can change this key if you add the CameraGui into dat.gui
+			//boLook: false,//camera do not look at a selected point during playing.
+				//User can change this key if you add the CameraGui into dat.gui
+			camera: camera,
+			rotation: {
 
-	Player: Player,
-	rotation: {
+				//rotate camera to 180 degrees
+				//angle: Math.PI,
 
-		//rotate camera to 180 degrees
-		//angle: Math.PI,
+				//Camera rotation is function of the time.
+				angle: new Function( 't', 'return 2*t' ),
 
-		//Camera rotation is function of the time.
-		angle: new Function( 't', 'return 2*t' ),
+				/*
+				angle: [
+					0,//rotation is 0 degrees for time is 0
+					Math.PI / 2//rotation is 90 degrees for time is max time
+				],
+				*/
+				/*
+				angle: [
+					{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+					{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+					{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+					{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+				],
+				*/
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
 
-		/*
-		angle: [
-			0,//rotation is 0 degrees for time is 0
-			Math.PI / 2//rotation is 90 degrees for time is max time
-		],
-		*/
-		/*
-		angle: [
-			{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
-			{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
-			{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
-			{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
-		],
-		*/
-		//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+			},
+			//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+			distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
+			/*
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+				{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+				{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+			] ),
+			*/
 
-	},
-	//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
-	distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
-	/*
-	distanceToCamera: new THREE.Vector3( 0, 0, [
-		{ t: 0, v: 5 },//distance to camera is 5 for time is 0
-		{ t: 1, v: 2 },//distance to camera is 2 for time is 1
-		{ t: 10, v: 2 },//distance to camera is 2 for time is 10
-		{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
-	] ),
-	*/
+		}
 
-}
+	}
+
+);
 ```
 You can set individual setting for selected point. Please add <b>rotation</b>, <b>distanceToCamera</b>, <b>boLook</b> keys into <b>cameraTarget</b> object for selected point
 ```
