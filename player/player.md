@@ -627,6 +627,12 @@ Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which
 
 You can see the "Meshes" folder in the upper right corner of the canvas.
 
+* If you use <b>const points = new [THREE.Points](https://threejs.org/docs/index.html?q=poin#api/en/objects/Points)</b> for create points,
+please add
+```
+options.guiSelectPoint.addMesh( points );
+```
+line after <b>scene.add( points );</b>.
 * If you use [getShaderMaterialPoints](../../getShaderMaterialPoints/jsdoc/module-getShaderMaterialPoints.html) for create points, please 
 add <b>options.guiSelectPoint.addMesh( points );</b>
 line into <b>onReady</b> callback function of <b>getShaderMaterialPoints</b>.
@@ -657,33 +663,7 @@ getShaderMaterialPoints( scene, arrayFuncs,
 	} );
 ```
 
-* If you use <b>MyPoints</b> for create points, please remove <b>guiSelectPoint.add( gui );</b> line above
-and add <b>guiSelectPoint.addMesh( points );</b> and <b>guiSelectPoint.add( gui );</b>
-lines into <b>onReady</b> function of <b>MyPoints</b>.
-```
-MyPoints( arrayFuncs, scene, {
-
-	Player: Player,
-	options: options,
-	pointsOptions: {
-
-		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
-		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-		shaderMaterial: {},
-		onReady: function ( points ) {
-
-			guiSelectPoint.addMesh( points );
-			guiSelectPoint.add( gui );
-			player.play3DObject();
-
-		}
-
-	}
-
-} );
-```
-
-Now you can see the "Meshes" folder in the [dat.gui](https://github.com/anhr/dat.gui).
+* If you are using <b>MyPoints</b>, do nothing to add points to <b>guiSelectPoint</b>.
 
 <a name="cameraLook"></a>
 ## Set the camera to look at the point.

@@ -1028,6 +1028,7 @@ class Options {
 		   if ( this[propertyName] === undefined ) console.error( 'Options: options.' + propertyName + ' key is hidden' );
 
 		}
+		this.playerOptions.cameraTarget.init( this.cameraTarget, this, false );
 
 	}
 

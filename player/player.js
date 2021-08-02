@@ -1293,9 +1293,12 @@ Player.cameraTarget = class {
 		 *   Default is rotate around y axis
 		 * </pre>
 		 * @param {Object} options See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+		 * @param {boolean} [boErrorMessage=true] false - Do not send an error message to the console if <b>cameraTarget.camera</b> is not defined.
 		 */
-		this.init = function ( cameraTarget, options ) {
+		this.init = function ( cameraTarget, options, boErrorMessage = true ) {
 
+			if ( !cameraTarget ) return;
+			
 			if ( !options && !_options )
 				console.error( 'Player.cameraTarget.init: options = ' + options );
 			else if ( _options && options && !Object.is( _options, options ) )
@@ -1343,7 +1346,7 @@ Player.cameraTarget = class {
 			cameraTargetDefault.camera = cameraTargetDefault.camera ||
 				cameraTarget.camera ||
 				( _options.player ? _options.player.getSettings().cameraTarget.camera : undefined );
-			if ( !cameraTargetDefault.camera ) {
+			if ( !cameraTargetDefault.camera && boErrorMessage ) {
 
 				console.error( 'playerCameraTarget().init(...): cameraTargetDefault.camera = ' + cameraTargetDefault.camera );
 				return;
