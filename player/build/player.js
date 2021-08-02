@@ -2661,14 +2661,13 @@ var _three = function () {
 }();
 var three;
 window.__myThree__ = window.__myThree__ || {};
-if (window.__myThree__.boThree) {
+if (window.__myThree__.three) {
 	three = window.__myThree__.three;
 } else {
 	three = new _three();
 	three.isThree = function () {
 		return _THREE;
 	};
-	window.__myThree__.boThree = true;
 	window.__myThree__.three = three;
 }
 var three$1 = three;

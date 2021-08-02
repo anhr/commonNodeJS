@@ -88,7 +88,7 @@ class _three {
 
 var three;
 window.__myThree__ = window.__myThree__ || {};
-if ( window.__myThree__.boThree ) {
+if ( window.__myThree__.three ) {
 
 	//сюда попадает если использовать './commonNodeJS/master/player/build/player.module.js'
 //	console.error( 'three: duplicate three. Please use one instance of the three class.' );
@@ -98,7 +98,6 @@ if ( window.__myThree__.boThree ) {
 
 	three = new _three();
 	three.isThree = function(){ return _THREE; }
-	window.__myThree__.boThree = true;
 	window.__myThree__.three = three;
 
 }
