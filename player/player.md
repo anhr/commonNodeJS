@@ -817,23 +817,17 @@ Individual setting for selected point is more priority before camera settings.
 
 * If you do not setted the <b>cameraTarget</b> key into <b>arrayFuncs</b> and did not create a <b>CameraGui</b> instance, please add <b>cameraTarget</b> for the <b>Player</b>.
 ```
-const player = new Player( scene, {
+new Player( scene, {
 
-		options: options,
-		timeSettings: {
-
-			marks: 100,//Ticks count of the playing.
-			interval: 25,//Ticks per seconds.
-
-		},
-		cameraTarget: { camera: camera, },
+	options: options,
+	cameraTarget: { camera: camera, },
 
 } );
 ```
 
 * Or add <b>cameraTarget</b> key for creating of <b>guiSelectPoint</b> instance.
 ```
-guiSelectPoint = new GuiSelectPoint( options, {
+new GuiSelectPoint( options, {
 
 	cameraTarget: { camera: camera, },
 
@@ -851,59 +845,202 @@ In  another words, camera will be look at selected point.
 ## Time of the playing.
 
 Default time of the playing limited between 0 and 1.
-You can set another time limit. Please add <b>min</b> and <b>max</b> keys into settings of the <b>new Player</b> for it
+You can set another time limit. Please add <b>min</b> and <b>max</b> keys into <b>playerOptions</b> key of the <b>new Options</b> for it
 ```
-const player = new Player( scene, {
+const options = new Options(
 
-	options: options,
-	timeSettings: {
+	{
 
-		min: 0,
-		max: 2,
-		marks: 100,//Ticks count of the playing.
-		interval: 25,//Ticks per seconds.
+		playerOptions: {//create a Player instance. 3D objects animation.
 
-	},
+			min: 0,
+			max: 2,
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
 
-} );
+		},
+		point: { size: 15 },
+		cameraTarget: {
+
+	
+			//boLook: false,//camera do not look at a selected point during playing.
+				//User can change this key if you add the CameraGui into dat.gui
+			camera: camera,
+			rotation: {
+
+				//rotate camera to 180 degrees
+				//angle: Math.PI,
+
+				//Camera rotation is function of the time.
+				angle: new Function( 't', 'return 2*t' ),
+
+				/*
+				angle: [
+					0,//rotation is 0 degrees for time is 0
+					Math.PI / 2//rotation is 90 degrees for time is max time
+				],
+				*/
+				/*
+				angle: [
+					{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+					{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+					{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+					{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+				],
+				*/
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+			},
+			//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+			distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
+			/*
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+				{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+				{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+			] ),
+			*/
+
+		}
+
+	}
+
+);
 ```
-Attention!!! Please press the <b>Default</b> button in the <b>Player/Time</b> foder
-if you have set the <b>cookie</b> key in the  <b>player.gui(...)</b> function and want your new <b>Player</b> settings to have an effect.
+Attention!!! Please press the <b>Default</b> button in the <b>Player/Time</b> folder
+if you have set the <b>dat.cookie</b> key is not false in the  <b>options</b> parameter of the new <b>Options(...)</b> and want your new <b>Options</b> settings to have an effect.
 
-You can infinity play. Please set <b>max: Infinity</b> for it.
+You can infinity play.
+Please edit <b>max: Infinity</b> key in <b>playerOptions</b> key of the <b>new Options</b> for it.
 ```
-const player = new Player( scene, {
+const options = new Options(
 
-	options: options,
-	timeSettings: {
+	{
 
-		min: 0,
-		max: Infinity,
-		marks: 100,//Ticks count of the playing.
-		interval: 25,//Ticks per seconds.
+		playerOptions: {//create a Player instance. 3D objects animation.
 
-	},
+			min: 0,
+			max: Infinity,
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
 
-} );
+		},
+		point: { size: 15 },
+		cameraTarget: {
+
+	
+			//boLook: false,//camera do not look at a selected point during playing.
+				//User can change this key if you add the CameraGui into dat.gui
+			camera: camera,
+			rotation: {
+
+				//rotate camera to 180 degrees
+				//angle: Math.PI,
+
+				//Camera rotation is function of the time.
+				angle: new Function( 't', 'return 2*t' ),
+
+				/*
+				angle: [
+					0,//rotation is 0 degrees for time is 0
+					Math.PI / 2//rotation is 90 degrees for time is max time
+				],
+				*/
+				/*
+				angle: [
+					{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+					{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+					{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+					{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+				],
+				*/
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+			},
+			//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+			distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
+			/*
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+				{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+				{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+			] ),
+			*/
+
+		}
+
+	}
+
+);
 ```
 Press the <b>Default</b> button again.
 
-Currently, the default playback step is 0.1. You can set another step. Please add <b>dt</b> key for it.
+Currently, the default playback step is 0.1. You can set another step.
+Please add <b>dt</b> key into <b>playerOptions</b> key of the <b>new Options</b> for it.
 ```
-const player = new Player( scene, {
+const options = new Options(
 
-	options: options,
-	timeSettings: {
+	{
 
-		min: 0,
-		max: Infinity,
-		dt: 0.01,//Have effect for max: Infinity
-		marks: 100,//Ticks count of the playing. Have effect for max key is not Infinity.
-		interval: 25,//Ticks per seconds.
+		playerOptions: {//create a Player instance. 3D objects animation.
 
-	},
+			min: 0,
+			max: Infinity,
+			dt: 0.01,//Have effect for max: Infinity
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
 
-} );
+		},
+		point: { size: 15 },
+		cameraTarget: {
+
+	
+			//boLook: false,//camera do not look at a selected point during playing.
+				//User can change this key if you add the CameraGui into dat.gui
+			camera: camera,
+			rotation: {
+
+				//rotate camera to 180 degrees
+				//angle: Math.PI,
+
+				//Camera rotation is function of the time.
+				angle: new Function( 't', 'return 2*t' ),
+
+				/*
+				angle: [
+					0,//rotation is 0 degrees for time is 0
+					Math.PI / 2//rotation is 90 degrees for time is max time
+				],
+				*/
+				/*
+				angle: [
+					{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+					{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+					{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+					{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+				],
+				*/
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+			},
+			//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+			distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
+			/*
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+				{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+				{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+			] ),
+			*/
+
+		}
+
+	}
+
+);
 ```
 Press the <b>Default</b> button again.
 

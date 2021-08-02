@@ -807,23 +807,17 @@ Also you can rotate camera around the point. Please add <b>cameraTarget</b> key 
 <ul>
 <li>If you do not setted the <b>cameraTarget</b> key into <b>arrayFuncs</b> and did not create a <b>CameraGui</b> instance, please add <b>cameraTarget</b> for the <b>Player</b>.</li>
 </ul>
-<pre class="prettyprint source"><code>const player = new Player( scene, {
+<pre class="prettyprint source"><code>new Player( scene, {
 
-		options: options,
-		timeSettings: {
-
-			marks: 100,//Ticks count of the playing.
-			interval: 25,//Ticks per seconds.
-
-		},
-		cameraTarget: { camera: camera, },
+	options: options,
+	cameraTarget: { camera: camera, },
 
 } );
 </code></pre>
 <ul>
 <li>Or add <b>cameraTarget</b> key for creating of <b>guiSelectPoint</b> instance.</li>
 </ul>
-<pre class="prettyprint source"><code>guiSelectPoint = new GuiSelectPoint( options, {
+<pre class="prettyprint source"><code>new GuiSelectPoint( options, {
 
 	cameraTarget: { camera: camera, },
 
@@ -836,54 +830,197 @@ In  another words, camera will be look at selected point.</p>
 <p><a name="playingTime"></a></p>
 <h2>Time of the playing.</h2>
 <p>Default time of the playing limited between 0 and 1.
-You can set another time limit. Please add <b>min</b> and <b>max</b> keys into settings of the <b>new Player</b> for it</p>
-<pre class="prettyprint source"><code>const player = new Player( scene, {
+You can set another time limit. Please add <b>min</b> and <b>max</b> keys into <b>playerOptions</b> key of the <b>new Options</b> for it</p>
+<pre class="prettyprint source"><code>const options = new Options(
 
-	options: options,
-	timeSettings: {
+	{
 
-		min: 0,
-		max: 2,
-		marks: 100,//Ticks count of the playing.
-		interval: 25,//Ticks per seconds.
+		playerOptions: {//create a Player instance. 3D objects animation.
 
-	},
+			min: 0,
+			max: 2,
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
 
-} );
+		},
+		point: { size: 15 },
+		cameraTarget: {
+
+	
+			//boLook: false,//camera do not look at a selected point during playing.
+				//User can change this key if you add the CameraGui into dat.gui
+			camera: camera,
+			rotation: {
+
+				//rotate camera to 180 degrees
+				//angle: Math.PI,
+
+				//Camera rotation is function of the time.
+				angle: new Function( 't', 'return 2*t' ),
+
+				/*
+				angle: [
+					0,//rotation is 0 degrees for time is 0
+					Math.PI / 2//rotation is 90 degrees for time is max time
+				],
+				*/
+				/*
+				angle: [
+					{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+					{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+					{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+					{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+				],
+				*/
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+			},
+			//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+			distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
+			/*
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+				{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+				{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+			] ),
+			*/
+
+		}
+
+	}
+
+);
 </code></pre>
-<p>Attention!!! Please press the <b>Default</b> button in the <b>Player/Time</b> foder
-if you have set the <b>cookie</b> key in the  <b>player.gui(...)</b> function and want your new <b>Player</b> settings to have an effect.</p>
-<p>You can infinity play. Please set <b>max: Infinity</b> for it.</p>
-<pre class="prettyprint source"><code>const player = new Player( scene, {
+<p>Attention!!! Please press the <b>Default</b> button in the <b>Player/Time</b> folder
+if you have set the <b>dat.cookie</b> key is not false in the  <b>options</b> parameter of the new <b>Options(...)</b> and want your new <b>Options</b> settings to have an effect.</p>
+<p>You can infinity play.
+Please edit <b>max: Infinity</b> key in <b>playerOptions</b> key of the <b>new Options</b> for it.</p>
+<pre class="prettyprint source"><code>const options = new Options(
 
-	options: options,
-	timeSettings: {
+	{
 
-		min: 0,
-		max: Infinity,
-		marks: 100,//Ticks count of the playing.
-		interval: 25,//Ticks per seconds.
+		playerOptions: {//create a Player instance. 3D objects animation.
 
-	},
+			min: 0,
+			max: Infinity,
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
 
-} );
+		},
+		point: { size: 15 },
+		cameraTarget: {
+
+	
+			//boLook: false,//camera do not look at a selected point during playing.
+				//User can change this key if you add the CameraGui into dat.gui
+			camera: camera,
+			rotation: {
+
+				//rotate camera to 180 degrees
+				//angle: Math.PI,
+
+				//Camera rotation is function of the time.
+				angle: new Function( 't', 'return 2*t' ),
+
+				/*
+				angle: [
+					0,//rotation is 0 degrees for time is 0
+					Math.PI / 2//rotation is 90 degrees for time is max time
+				],
+				*/
+				/*
+				angle: [
+					{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+					{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+					{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+					{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+				],
+				*/
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+			},
+			//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+			distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
+			/*
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+				{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+				{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+			] ),
+			*/
+
+		}
+
+	}
+
+);
 </code></pre>
 <p>Press the <b>Default</b> button again.</p>
-<p>Currently, the default playback step is 0.1. You can set another step. Please add <b>dt</b> key for it.</p>
-<pre class="prettyprint source"><code>const player = new Player( scene, {
+<p>Currently, the default playback step is 0.1. You can set another step.
+Please add <b>dt</b> key into <b>playerOptions</b> key of the <b>new Options</b> for it.</p>
+<pre class="prettyprint source"><code>const options = new Options(
 
-	options: options,
-	timeSettings: {
+	{
 
-		min: 0,
-		max: Infinity,
-		dt: 0.01,//Have effect for max: Infinity
-		marks: 100,//Ticks count of the playing. Have effect for max key is not Infinity.
-		interval: 25,//Ticks per seconds.
+		playerOptions: {//create a Player instance. 3D objects animation.
 
-	},
+			min: 0,
+			max: Infinity,
+			dt: 0.01,//Have effect for max: Infinity
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
 
-} );
+		},
+		point: { size: 15 },
+		cameraTarget: {
+
+	
+			//boLook: false,//camera do not look at a selected point during playing.
+				//User can change this key if you add the CameraGui into dat.gui
+			camera: camera,
+			rotation: {
+
+				//rotate camera to 180 degrees
+				//angle: Math.PI,
+
+				//Camera rotation is function of the time.
+				angle: new Function( 't', 'return 2*t' ),
+
+				/*
+				angle: [
+					0,//rotation is 0 degrees for time is 0
+					Math.PI / 2//rotation is 90 degrees for time is max time
+				],
+				*/
+				/*
+				angle: [
+					{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+					{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+					{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+					{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+				],
+				*/
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+			},
+			//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+			distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
+			/*
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+				{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+				{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+			] ),
+			*/
+
+		}
+
+	}
+
+);
 </code></pre>
 <p>Press the <b>Default</b> button again.</p>
 <p>Note that the step only matters for <b>max: Infinity</b>.</p>
@@ -917,7 +1054,7 @@ $ npm run build
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Aug 02 2021 12:00:41 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Aug 02 2021 12:42:39 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
