@@ -21,6 +21,13 @@ import babel from 'rollup-plugin-babel';
 
 const banner = fs.readFileSync(path.join(__dirname, 'licenseBanner.txt'));
 
+function callback( err ) {
+    if ( err ) throw err;
+    //    console.log( 'colorpicker.css was copied' );
+}
+fs.mkdirSync( path.join( __dirname, 'build' ), { recursive: true, force: true } );
+fs.copyFile( path.join( __dirname, '..\\colorpicker\\colorpicker.css' ), 'build\\colorpicker.css', callback );
+
 export default {
 
   input: 'player.js',

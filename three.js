@@ -25,7 +25,7 @@
 
 var _THREE, _dat;
 
-class three {
+class _three {
 
 	/**
 	 * class for [THREE]{@link https://github.com/anhr/three.js} and [dat]{@link https://github.com/dataarts/dat.gui} instances.
@@ -85,13 +85,22 @@ class three {
 	}
 
 }
-three = new three();
 
+var three;
 window.__myThree__ = window.__myThree__ || {};
-if ( window.__myThree__.boThree )
-	console.error( 'three: duplicate three. Please use one instance of the three class.' )
-window.__myThree__.boThree = true;
+if ( window.__myThree__.boThree ) {
 
-three.isThree = function(){ return _THREE; }
+	//сюда попадает если использовать './commonNodeJS/master/player/build/player.module.js'
+//	console.error( 'three: duplicate three. Please use one instance of the three class.' );
+	three = window.__myThree__.three;
+
+} else {
+
+	three = new _three();
+	three.isThree = function(){ return _THREE; }
+	window.__myThree__.boThree = true;
+	window.__myThree__.three = three;
+
+}
 
 export default three;
