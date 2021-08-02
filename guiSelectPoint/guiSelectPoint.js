@@ -1195,7 +1195,7 @@ class GuiSelectPoint {
 				const playerCameraTarget = Player.cameraTarget.get();
 */				
 				if ( guiParams.cameraTarget ) options.playerOptions.cameraTarget.init( guiParams.cameraTarget, options );
-				const playerCameraTarget = options.playerOptions.cameraTarget.get();
+				const playerCameraTarget = options.playerOptions.cameraTarget.get( options );
 				if ( playerCameraTarget ) {
 
 					cCameraTarget = fPoints.add( playerCameraTarget, 'boLook' ).onChange( function ( boLook ) {
