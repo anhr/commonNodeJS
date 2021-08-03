@@ -2619,11 +2619,11 @@ var UpDownController = {
  */
 var _THREE;
 var _dat;
-var _three = function () {
-	function _three() {
-		classCallCheck(this, _three);
+var Three = function () {
+	function Three() {
+		classCallCheck(this, Three);
 	}
-	createClass(_three, [{
+	createClass(Three, [{
 		key: 'THREE',
 		set: function set$$1(THREE) {
 			if (_THREE) {
@@ -2651,14 +2651,14 @@ var _three = function () {
 			return _dat;
 		}
 	}]);
-	return _three;
+	return Three;
 }();
 var three;
 window.__myThree__ = window.__myThree__ || {};
 if (window.__myThree__.three) {
 	three = window.__myThree__.three;
 } else {
-	three = new _three();
+	three = new Three();
 	three.isThree = function () {
 		return _THREE;
 	};

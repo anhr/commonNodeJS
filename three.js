@@ -25,7 +25,7 @@
 
 var _THREE, _dat;
 
-class _three {
+class Three {
 
 	/**
 	 * class for [THREE]{@link https://github.com/anhr/three.js} and [dat]{@link https://github.com/dataarts/dat.gui} instances.
@@ -96,7 +96,7 @@ if ( window.__myThree__.three ) {
 
 } else {
 
-	three = new _three();
+	three = new Three();
 	three.isThree = function(){ return _THREE; }
 	window.__myThree__.three = three;
 
