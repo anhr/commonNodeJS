@@ -628,7 +628,8 @@ class Player {
 						_renamePlayButtons = RenamePlayButtons;
 
 						buttons.buttonPrev = addButton( lang.prevSymbol, lang.prevSymbolTitle, player.prev );
-						buttons.buttonPlay = addButton( lang.playSymbol, lang.playTitle, player.play3DObject );
+						buttons.buttonPlay = addButton( playing ? lang.pause : lang.playSymbol,
+							playing ? lang.pauseTitle : lang.playTitle, player.play3DObject );
 
 						if ( player.getSettings().options.playerOptions.max !== null ) {
 
