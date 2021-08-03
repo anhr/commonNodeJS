@@ -432,9 +432,8 @@ class Player {
 		 */
 		this.getSelectSceneIndex = function () { return selectSceneIndex; }
 
-		/**
-		 * User has pressed the <b>Repeat</b> button of the <a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html" target="_blank">Player.PlayController</a>.
-		 * @event
+		/**@namespace
+		 * @descriptionUser has pressed the <b>Repeat</b> button of the <a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html" target="_blank">Player.PlayController</a>.
 		 * @param {boolean} value true - repeat is off
 		 * <p>false - repeat is on</p>
 		 */
@@ -698,9 +697,8 @@ class Player {
 				player.PlayController = this;
 				this.lang = lang;
 				
-				/**
-				 * User has pressed the <b>Play</b> button. Rename the <b>Play</b> putton.
-				 * @event
+				/** @namespace
+				 * @description Get array of THREE.Vector4 points. User has pressed the <b>Play</b> button. Rename the <b>Play</b> putton.
 				 * @param {boolean} playing true - name is "❚❚"
 				 * <p>false = name is "►"
 				 */
@@ -721,9 +719,8 @@ class Player {
 					_renamePlayButtons( name, title, true );
 
 				}
-				/**
-				 * User has pressed the <b>Repeat</b> button.
-				 * @event
+				/** @namespace
+				 * @description User has pressed the <b>Repeat</b> button.
 				 */
 				this.onChangeRepeat = function () {
 
