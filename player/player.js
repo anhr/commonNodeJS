@@ -1022,8 +1022,8 @@ class Player {
 			//Play button
 			menu.push( {
 
-				name: lang.playSymbol,
-				title: lang.playTitle,
+				name: playing ? lang.pause : lang.playSymbol,
+				title: playing ? lang.pauseTitle : lang.playTitle,
 				id: "menuButtonPlay",
 				onclick: function ( event ) {
 
