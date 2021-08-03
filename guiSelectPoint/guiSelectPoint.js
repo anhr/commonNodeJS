@@ -787,7 +787,7 @@ class GuiSelectPoint {
 
 			if ( !cMeshs ) {
 
-				console.error( 'GuiSelectPoint().getSelectedPointIndex().getMesh(): call GuiSelectPoint.add( gui ); first.' );
+				console.error( 'GuiSelectPoint().getSelectedPointIndex().getMesh(): call GuiSelectPoint.add(); first.' );
 				return undefined;
 
 			}
