@@ -142,7 +142,7 @@ Add <b>Player</b> after creating of the <b>options</b> and before creation of th
 ```
 new Player( scene, { options: options, } );
 ```
-Currently your player is not doing anything. Please add a 3d object into canvas that you want to play with, for example <b>Points</b>.
+Currently your player is not doing anything. Please add a 3d object into canvas that you want to play with, for example [Points](https://threejs.org/docs/index.html?q=Points#api/en/objects/Points).
 Suppose you want to move a point during playing.
 ```
 const arrayFuncs = [
@@ -304,7 +304,7 @@ is index of the [color palette](../../../../commonNodeJS/master/colorpicker/jsdo
 Trace of the first point is circle.
 
 First half of the trace is alternation of colors from white to red, then green and blue
-because default palette is default [ColorPicker.paletteIndexes.BGYW](../../../../commonNodeJS/master/colorpicker/Example/index.html#BGYW) (blue, green, yellow, white) palette.
+because default palette is [ColorPicker.paletteIndexes.BGYW](../../../../commonNodeJS/master/colorpicker/Example/index.html#BGYW) (blue, green, yellow, white) palette.
 
 Last half of the trace is white because default range of the [color palette](https://github.com/anhr/commonNodeJS/tree/master/colorpicker) from 0 to 1
 (See [Options.setW(options)](../../../../commonNodeJS/master/jsdoc/Options/Options.html#setW) method for details).
