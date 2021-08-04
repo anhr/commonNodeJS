@@ -324,7 +324,19 @@ class CameraGui {
 			 * Look at selected point
 			 * @param {boolean} [boLook=true] true - look at selected point
 			 */
-			this.look = function ( boLook = true ) { if ( controllerLook.getValue() !== boLook ) controllerLook.setValue( boLook ); }
+			this.look = function ( boLook = true ) {
+
+//				if ( controllerLook && ( controllerLook.getValue() !== boLook ) )
+				if ( controllerLook ) {
+
+//					controllerLook.setValue( boLook );
+					controllerLook.object[controllerLook.property] = boLook;
+					controllerLook.updateDisplay();
+
+
+				}
+
+			}
 
 //		}
 

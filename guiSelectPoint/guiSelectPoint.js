@@ -1243,9 +1243,9 @@ class GuiSelectPoint {
 						if ( point.cameraTarget ) point.cameraTarget.boLook = boLook;
 						//					if ( Player.player ) Player.player.selectScene();
 						if ( options.player ) options.player.selectScene();
+						if ( options.cameraGui ) options.cameraGui.look( boLook );
 						if ( boLook ) {
 
-							if ( options.cameraGui ) options.cameraGui.look();
 							if ( !point.cameraTarget ) {
 
 								if ( playerCameraTarget.boLook === undefined ) Player.cameraTarget2.boLook = false;
