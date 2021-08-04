@@ -8890,20 +8890,20 @@ Player$1.execFunc = function (funcs, axisName, t) {
 			switch (typeofFuncs) {
 						case "undefined":
 									return undefined;
+						case "number":
+									return func;
 						case "string":
 									func = new Function('t', 'a', 'b', 'return ' + func);
 						case "function":
 									try {
 												var res = func(t, a, b);
 												if (res === undefined) throw 'function returns ' + res;
-												return res;
+												if (!Array.isArray(res)) return res;else func = res;
 									} catch (e) {
 												console.error(e);
 												throw e;
 												return;
 									}
-						case "number":
-									return func;
 						case "object":
 									if (Array.isArray(func)) {
 												var execW = function execW(i) {
