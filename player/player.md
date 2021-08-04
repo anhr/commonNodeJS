@@ -623,7 +623,7 @@ new GuiSelectPoint( options );
 if ( options.guiSelectPoint ) options.guiSelectPoint.add();
 ```
 
-Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point.
+Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point and after creating of <b>new Player</b>.
 
 You can see the "Meshes" folder in the upper right corner of the canvas.
 
