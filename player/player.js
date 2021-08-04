@@ -1583,6 +1583,8 @@ Player.execFunc = function ( funcs, axisName, t, options={} ) {
 
 		case "undefined":
 			return undefined;
+		case "number":
+			return func;
 		case "string":
 			func = new Function( 't', 'a', 'b', 'return ' + func );
 		case "function":
@@ -1591,7 +1593,8 @@ Player.execFunc = function ( funcs, axisName, t, options={} ) {
 				const res = func( t, a, b );
 				if ( res === undefined )
 					throw 'function returns ' + res;
-				return res;
+				if ( !Array.isArray( res ) ) return res;
+				else func = res;
 
 			} catch( e ) {
 
@@ -1600,8 +1603,6 @@ Player.execFunc = function ( funcs, axisName, t, options={} ) {
 				return;
 
 			}
-		case "number":
-			return func;
 		case "object":
 			if ( Array.isArray( func ) ) {
 
