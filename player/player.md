@@ -604,10 +604,11 @@ First, import [CameraGui](../../jsdoc/CameraGui/).
 ```
 import CameraGui from './commonNodeJS/master/CameraGui.js';
 ```
-Add <b>CameraGui</b> into gui 
+Add <b>CameraGui</b> after <b>new Player</b>.
 ```
 new CameraGui( camera, options );
 ```
+
 You can see the "Camera" folder in the upper right corner of the canvas.
 
 <a name="guiSelectPoint"></a>
