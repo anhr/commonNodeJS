@@ -1174,14 +1174,14 @@ import { getObjectPosition } from '../getPosition.js';
 /** @namespace
  * @description Creates the <a href="../../SpriteText/jsdoc" target="_blank">SpriteText</a> instance with information about point, intersected with mouse cursor.
  * @param {THREE.Raycaster.intersectObject} intersection See [intersection]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
- * @param {object} [options={}] The following options are available
+ * @param {object} options The following options are available
  * @param {object} [options.scales] axes scales.
  * See <b>options.scales</b> parameter of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> class for details.
- * @param {object} [options.spriteOptions={}] Options of the <b>SpriteText</b>.
+ * @param {object} options.spriteOptions Options of the <b>SpriteText</b>.
  * See [SpriteText]{@link https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/jsdoc/module-SpriteText..html} for details.
  * @returns <b>new SpriteText</b> with information about point, intersected with mouse cursor.
  */
-StereoEffect.getTextIntersection = function ( intersection, options = {} ) {
+StereoEffect.getTextIntersection = function ( intersection, options ) {
 
 	const spriteText = Options.findSpriteTextIntersection( options.spriteOptions.group );
 	if ( spriteText )
