@@ -70,7 +70,7 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 
 		import Options from './commonNodeJS/master/Options.js'
 
-		var camera, scene, renderer, stereoEffect;
+		var camera, scene, renderer;
 
 		init();
 		animate();
