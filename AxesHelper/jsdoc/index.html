@@ -62,7 +62,12 @@
 <p><a name="QuickStart"></a></p>
 <h2>Quick start</h2>
 <ul>
-<li>Create a folder on your localhost named as [folderName].</li>
+<li>Create a folder on your localhost named as [folderName].
+<ul>
+<li>Download <a href="https://github.com/anhr/three.js">three.js</a> repository into your &quot;[folderName]\three.js\dev&quot; folder.</li>
+<li>Download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</li>
+</ul>
+</li>
 <li>Add your web page into [folderName]. Example:</li>
 </ul>
 <pre class="prettyprint source"><code>&lt;!DOCTYPE html>
@@ -78,11 +83,18 @@
 	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>
 	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>-->
 
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
 &lt;/head>
 &lt;body>
 	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
 	&lt;div id=&quot;info&quot;>
-		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a> - AxesHelper is an axis object to visualize the 1, 2 or 3 axes.
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a>
+		- &lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/AxesHelper&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>AxesHelper&lt;/a>.
 		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
 	&lt;/div>
 	&lt;div>
@@ -91,19 +103,16 @@
 
 	&lt;script type=&quot;module&quot;>
 
+		import * as THREE from './three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://threejs.org/build/three.module.js';
-		import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
-		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
-		//import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 
-		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
-		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
-		//Uncomment line below if you want use local commonNodeJS library in your project.
-		//import three from './commonNodeJS/master/three.js'
+		import three from './commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
-		var camera, scene, renderer, stereoEffect, raycaster;
+		import Options from './commonNodeJS/master/Options.js'
+
+		var camera, scene, renderer, stereoEffect;
 
 		init();
 		animate();
@@ -115,6 +124,8 @@
 
 			scene = new THREE.Scene();
 
+			const options = new Options();
+
 			renderer = new THREE.WebGLRenderer( {
 
 				antialias: true,
@@ -124,6 +135,10 @@
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
 			window.addEventListener( 'resize', onWindowResize, false );
+
+			//Orbit controls allow the camera to orbit around a target.
+			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+			options.createOrbitControls( camera, renderer, scene );
 
 		}
 		function onWindowResize() {
@@ -421,14 +436,21 @@ Player.selectPlayScene( scene );
 <p>Now you can see the second point in the center of the canvas. In other words, camera look at the second point.</p>
 <p><a name="Gui"></a></p>
 <h2>Graphical user interface for changing settings.</h2>
-<p>Import <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</p>
+<p><a name="AxesHelperGui"></a></p>
+<h3>AxesHelper settings.</h3>
+<p>Import <b>dat.gui</b>.</p>
 <pre class="prettyprint source"><code>import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 </code></pre>
 <p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import { dat } from './commonNodeJS/master/dat/dat.module.js';
 </code></pre>
-<p><a name="AxesHelperGui"></a></p>
-<h3>AxesHelper settings.</h3>
+<p>Add <b>dat.dat</b> key into <b>options</b> parameter of the <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> class;</p>
+<pre class="prettyprint source"><code>dat: {
+
+	dat: dat,
+
+}
+</code></pre>
 <p>Add <b>AxesHelperGui</b> into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change settings of the <b>AxesHelper</b>.
 <a href="../Examples/index.html">Example</a>
 Import <b>AxesHelperGui</b>.</p>
@@ -510,7 +532,7 @@ groupMove.add( points );
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Jul 09 2021 06:55:17 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Aug 05 2021 07:12:16 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
