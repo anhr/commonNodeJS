@@ -136,10 +136,6 @@
 
 			window.addEventListener( 'resize', onWindowResize, false );
 
-			//Orbit controls allow the camera to orbit around a target.
-			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
-			options.createOrbitControls( camera, renderer, scene );
-
 		}
 		function onWindowResize() {
 
@@ -165,20 +161,18 @@
 <p>NOTE. Please include <code>three.THREE = THREE;</code> line into your project before use my <a href="https://github.com/anhr/commonNodeJS">library</a>. See example above.</p>
 <p>The easiest way to use <b>AxesHelper</b> in your code is import <b>AxesHelper</b> from <b>AxesHelper.js</b> file in your JavaScript module.
 <a href="../Examples/index.html">Example</a>.</p>
-<pre class="prettyprint source"><code>import AxesHelper from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelper.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import AxesHelper from './commonNodeJS/master/AxesHelper/AxesHelper.js';
 </code></pre>
 <p>Now you can use <b>AxesHelper</b> in your javascript code.</p>
 <p>The simplest <b>AxesHelper</b> has at least one axis.</p>
-<pre class="prettyprint source"><code>new AxesHelper( THREE, scene, { scales: { x: {} } } );
+<pre class="prettyprint source"><code>new AxesHelper( scene, options );
 </code></pre>
 <p>Now we want to create <b>AxesHelper</b> 3 dimensional axes.</p>
 <p>Name of the <b>X</b> is 'time'. Number of <b>X</b> scale marks is 5.</p>
-<p>Minimum <b>Y</b> is 0.
-Please edit line above for it.</p>
-<pre class="prettyprint source"><code>const axesHelper = new AxesHelper( THREE, scene, {
+<p>Minimum <b>Y</b> is 0.</p>
+<p>See <b>options.scales</b> of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html">AxesHelper</a> for details.</p>
+<p>Please edit <b>options</b> above for it.</p>
+<pre class="prettyprint source"><code>const options = new Options({
 
 	scales: {
 
@@ -211,11 +205,11 @@ Please edit line above for it.</p>
 
 	}
 
-} );
+});
 </code></pre>
 <p><a name="OrbitControls"></a></p>
 <h2>Use the <a href="https://threejs.org/docs/index.html#examples/en/controls/OrbitControls">THREE.OrbitControls</a> to rotate the camera.</h2>
-<p>edit your code</p>
+<p>Add line after creating of the <b>renderer</b> in your code.</p>
 <pre class="prettyprint source"><code>options.createOrbitControls( camera, renderer, scene );
 </code></pre>
 <p><a name="Raycaster"></a></p>
@@ -236,39 +230,6 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( array
 	} ) );
 scene.add( points );
 </code></pre>
-<p>Import <a href="https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md">StereoEffect</a>.</p>
-<pre class="prettyprint source"><code>import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
-</code></pre>
-<p>or
-download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
-</code></pre>
-<ul>
-<li>Create the <b>StereoEffect</b> instance.</li>
-</ul>
-<pre class="prettyprint source"><code>stereoEffect = new StereoEffect( renderer, {
-
-	stereoEffect: {
-
-		//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
-		far: camera.far,
-		camera: camera,
-
-	},
-
-} );
-</code></pre>
-<p>Add code into animate function</p>
-<pre class="prettyprint source"><code>function animate() {
-
-	requestAnimationFrame( animate );
-
-	if ( !stereoEffect )
-		renderer.render( scene, camera );
-	else stereoEffect.render( scene, camera );
-
-}
-</code></pre>
 <p>Get default cursor</p>
 <pre class="prettyprint source"><code>const cursor = renderer.domElement.style.cursor;
 </code></pre>
@@ -287,56 +248,18 @@ download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> reposit
 	},
 	onMouseDown: function ( intersect ) {
 
-		if ( typeof axesHelper !== 'undefined' )
-			axesHelper.exposePosition( intersect );
-		if ( typeof guiSelectPoint !== 'undefined' )
-			guiSelectPoint.select( intersect );
+		if ( typeof options.axesHelper !== 'undefined' )
+			options.axesHelper.exposePosition( intersect );
+		if ( typeof options.guiSelectPoint !== 'undefined' )
+			options.guiSelectPoint.select( intersect );
 
 	}
 
 }
 </code></pre>
-<p>Create the <b>THREE.Raycaster</b> instance.</p>
-<pre class="prettyprint source"><code>raycaster = new THREE.Raycaster();
-
-//the precision of the raycaster when intersecting objects, in world units.
-//See https://threejs.org/docs/#api/en/core/Raycaster.params.
-raycaster.params.Points.threshold = 0.1;
-
-if ( raycaster.setStereoEffect ) {
-
-	raycaster.setStereoEffect( {
-
-		renderer: renderer,
-		camera: camera,
-		stereoEffect: stereoEffect,
-
-	} );
-	raycaster.stereo.addParticle( points );
-
-} else console.error( 'Create StereoEffect instance first.' );
-</code></pre>
-<p>Add event listeners.</p>
-<pre class="prettyprint source"><code>const mouse = new THREE.Vector2();
-window.addEventListener( 'mousemove', function( event ) {
-
-	// calculate mouse position in normalized device coordinates
-	// (-1 to +1) for both components
-
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-	// update the picking ray with the camera and mouse position
-	raycaster.setFromCamera( mouse, camera );
-
-	raycaster.stereo.onDocumentMouseMove( event );
-
-}, false );
-window.addEventListener( 'pointerdown', function( event ) {
-
-	raycaster.stereo.onDocumentMouseDown( event );
-
-}, false );
+<p>Add <a href="../../jsdoc/Options/Raycaster_EventListeners.html">event listeners</a> and <a href="../../jsdoc/Options/Raycaster_EventListeners.html#addParticle">add points to particles</a>.</p>
+<pre class="prettyprint source"><code>options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options } );
+options.eventListeners.addParticle( points );
 </code></pre>
 <p>For testing please move cursor over point. Cursor will be changing to 'pointer'.</p>
 <p>You can see a dot lines from point to axes if you click over point.</p>
@@ -532,7 +455,7 @@ groupMove.add( points );
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Aug 05 2021 07:12:16 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Aug 05 2021 09:39:03 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

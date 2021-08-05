@@ -86,10 +86,6 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 
 			window.addEventListener( 'resize', onWindowResize, false );
 
-			//Orbit controls allow the camera to orbit around a target.
-			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
-			options.createOrbitControls( camera, renderer, scene );
-
 		}
 		function onWindowResize() {
 
@@ -117,10 +113,6 @@ NOTE. Please include `three.THREE = THREE;` line into your project before use my
 The easiest way to use <b>AxesHelper</b> in your code is import <b>AxesHelper</b> from <b>AxesHelper.js</b> file in your JavaScript module.
 [Example](../Examples/index.html).
 ```
-import AxesHelper from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelper.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
 import AxesHelper from './commonNodeJS/master/AxesHelper/AxesHelper.js';
 ```
 
@@ -128,7 +120,7 @@ Now you can use <b>AxesHelper</b> in your javascript code.
 
 The simplest <b>AxesHelper</b> has at least one axis.
 ```
-new AxesHelper( THREE, scene, { scales: { x: {} } } );
+new AxesHelper( scene, options );
 ```
 
 Now we want to create <b>AxesHelper</b> 3 dimensional axes.
@@ -136,9 +128,12 @@ Now we want to create <b>AxesHelper</b> 3 dimensional axes.
 Name of the <b>X</b> is 'time'. Number of <b>X</b> scale marks is 5.
 
 Minimum <b>Y</b> is 0.
-Please edit line above for it.
+
+See <b>options.scales</b> of the [AxesHelper](../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html) for details.
+
+Please edit <b>options</b> above for it.
 ```
-const axesHelper = new AxesHelper( THREE, scene, {
+const options = new Options({
 
 	scales: {
 
@@ -171,13 +166,13 @@ const axesHelper = new AxesHelper( THREE, scene, {
 
 	}
 
-} );
+});
 ```
 
 <a name="OrbitControls"></a>
 ## Use the [THREE.OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) to rotate the camera.
 
-edit your code
+Add line after creating of the <b>renderer</b> in your code.
 ```
 options.createOrbitControls( camera, renderer, scene );
 ```
@@ -202,43 +197,6 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( array
 	} ) );
 scene.add( points );
 ```
-Import [StereoEffect](https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md).
-```
-import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
-```
-or 
-download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import StereoEffect from './commonNodeJS/master/StereoEffect/StereoEffect.js';
-```
-
-* Create the <b>StereoEffect</b> instance.
-```
-stereoEffect = new StereoEffect( renderer, {
-
-	stereoEffect: {
-
-		//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
-		far: camera.far,
-		camera: camera,
-
-	},
-
-} );
-```
-Add code into animate function
-```
-function animate() {
-
-	requestAnimationFrame( animate );
-
-	if ( !stereoEffect )
-		renderer.render( scene, camera );
-	else stereoEffect.render( scene, camera );
-
-}
-```
-
 Get default cursor
 ```
 const cursor = renderer.domElement.style.cursor;
@@ -259,59 +217,19 @@ points.userData.raycaster = {
 	},
 	onMouseDown: function ( intersect ) {
 
-		if ( typeof axesHelper !== 'undefined' )
-			axesHelper.exposePosition( intersect );
-		if ( typeof guiSelectPoint !== 'undefined' )
-			guiSelectPoint.select( intersect );
+		if ( typeof options.axesHelper !== 'undefined' )
+			options.axesHelper.exposePosition( intersect );
+		if ( typeof options.guiSelectPoint !== 'undefined' )
+			options.guiSelectPoint.select( intersect );
 
 	}
 
 }
 ```
-
-Create the <b>THREE.Raycaster</b> instance.
+Add [event listeners](../../jsdoc/Options/Raycaster_EventListeners.html) and [add points to particles](../../jsdoc/Options/Raycaster_EventListeners.html#addParticle).
 ```
-raycaster = new THREE.Raycaster();
-
-//the precision of the raycaster when intersecting objects, in world units.
-//See https://threejs.org/docs/#api/en/core/Raycaster.params.
-raycaster.params.Points.threshold = 0.1;
-
-if ( raycaster.setStereoEffect ) {
-
-	raycaster.setStereoEffect( {
-
-		renderer: renderer,
-		camera: camera,
-		stereoEffect: stereoEffect,
-
-	} );
-	raycaster.stereo.addParticle( points );
-
-} else console.error( 'Create StereoEffect instance first.' );
-```
-Add event listeners.
-```
-const mouse = new THREE.Vector2();
-window.addEventListener( 'mousemove', function( event ) {
-
-	// calculate mouse position in normalized device coordinates
-	// (-1 to +1) for both components
-
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-	// update the picking ray with the camera and mouse position
-	raycaster.setFromCamera( mouse, camera );
-
-	raycaster.stereo.onDocumentMouseMove( event );
-
-}, false );
-window.addEventListener( 'pointerdown', function( event ) {
-
-	raycaster.stereo.onDocumentMouseDown( event );
-
-}, false );
+options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options } );
+options.eventListeners.addParticle( points );
 ```
 For testing please move cursor over point. Cursor will be changing to 'pointer'.
 
