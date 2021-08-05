@@ -971,7 +971,11 @@ class Options {
 				get: function () {
 
 					if ( options.eventListeners ) return options.eventListeners;
-					return { addParticle: function(){}, }
+					return { addParticle: function(){
+
+						console.error( 'Options.eventListeners.addParticle: call new Options.raycaster.EventListeners(...) first.' );
+						
+					}, }
 
 				},
 				set: function ( eventListeners ) {
