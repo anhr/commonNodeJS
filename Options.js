@@ -1078,11 +1078,11 @@ class Raycaster {
 		 * See <b>options.scales</b> parameter of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> class for details.
 		 * @param {THREE.Scene} scene [Scene]{@link https://threejs.org/docs/index.html?q=sc#api/en/scenes/Scene}.
 		 * @param {THREE.Camera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera}.
-		 * @param {canvas} canvas [canvas]{@link https://www.w3schools.com/tags/tag_canvas.asp} tag.
 		 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer} instance.
 		 */
-		this.onIntersection = function ( intersection, options, scene, camera, canvas, renderer ) {
+		this.onIntersection = function ( intersection, options, scene, camera, renderer ) {
 
+			const canvas = renderer.domElement;
 			if ( intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo() )
 				return;
 			var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
@@ -1240,7 +1240,9 @@ class Raycaster {
 
 						if ( intersectedObject ) {
 
-							intersectedObject.userData.raycaster.onIntersectionOut();
+							if ( intersectedObject.userData.raycaster && intersectedObject.userData.raycaster.onIntersectionOut )
+								intersectedObject.userData.raycaster.onIntersectionOut();
+							else Options.raycaster.onIntersectionOut( settings.scene, renderer );
 							intersectedObject = undefined;
 
 						}
@@ -1248,7 +1250,9 @@ class Raycaster {
 					} else {
 
 						const intersect = intersects[0], object = intersect.object;
-						object.userData.raycaster.onIntersection( intersect );
+						if ( object.userData.raycaster && object.userData.raycaster.onIntersection )
+							object.userData.raycaster.onIntersection( intersect );
+						else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
 						intersectedObject = object;
 
 					}
@@ -1299,12 +1303,12 @@ class Raycaster {
 					if ( intersects && ( intersects.length > 0 ) ) {
 
 						const intersect = intersects[0];
-						if ( intersect.object.userData.raycaster ) {
+						if ( intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown ) {
 
 							intersect.object.userData.raycaster.onMouseDown( intersect );
 							if ( options && options.guiSelectPoint ) options.guiSelectPoint.select( intersect );
 
-						}
+						} else Options.raycaster.onMouseDown( intersect, options );
 
 					}
 
