@@ -197,105 +197,28 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( array
 	} ) );
 scene.add( points );
 ```
-Get default cursor
-```
-const cursor = renderer.domElement.style.cursor;
-```
-Define of the actions for objects in the 3d space the mouse is over.
-```
-points.userData.raycaster = {
-
-	onIntersection: function ( intersection ) {
-
-		renderer.domElement.style.cursor = 'pointer';
-
-	},
-	onIntersectionOut: function ( ) {
-
-		renderer.domElement.style.cursor = cursor;
-
-	},
-	onMouseDown: function ( intersect ) {
-
-		if ( typeof options.axesHelper !== 'undefined' )
-			options.axesHelper.exposePosition( intersect );
-		if ( typeof options.guiSelectPoint !== 'undefined' )
-			options.guiSelectPoint.select( intersect );
-
-	}
-
-}
-```
 Add [event listeners](../../jsdoc/Options/Raycaster_EventListeners.html) and [add points to particles](../../jsdoc/Options/Raycaster_EventListeners.html#addParticle).
 ```
-options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options } );
+options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene } );
 options.eventListeners.addParticle( points );
 ```
 For testing please move cursor over point. Cursor will be changing to 'pointer'.
 
 You can see a dot lines from point to axes if you click over point.
-
-* You can display a text if mouse is over to object in the 3d space.
-
-Edit <b>points.userData.raycaster</b>.
+* You can customize the <b>raycaster</b> events. For example you can display an alert message if user has click over point.
 ```
 points.userData.raycaster = {
 
-	onIntersection: function ( intersection ) {
+	onMouseDown: function ( intersection ) {
 
-		this.spriteText = StereoEffect.getTextIntersection( intersection, {
-
-			scales: typeof axesHelper !== 'undefined' ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
-			spriteOptions: {
-
-				group: scene,
-				rect: {
-
-					displayRect: true,
-					borderRadius: 15,
-
-				},
-				center: {
-
-					camera: camera,
-					canvas: canvas,
-
-				}
-				//center: new THREE.Vector2( 1, 0 ),
-				//sizeAttenuation: true,
-
-			}
-
-		} );
-		renderer.domElement.style.cursor = 'pointer';
-
-	},
-	onIntersectionOut: function ( ) {
-
-		if ( this.spriteText ) {
-
-			scene.remove( this.spriteText );
-			delete this.spriteText;
-
-		}
-		renderer.domElement.style.cursor = cursor;
-
-	},
-	onMouseDown: function ( intersect ) {
-
-		if ( typeof axesHelper !== 'undefined' )
-			axesHelper.exposePosition( intersect );
-		if ( typeof guiSelectPoint !== 'undefined' )
-			guiSelectPoint.select( intersect );
+		alert( 'You have clicked over point.' );
+		Options.raycaster.onMouseDown( intersection, options );
 
 	}
 
 }
 ```
-Note! If you want to see the text is always inside  the canvas,
-in another words if you want the text is not moves outside the canvas border,
-plase define a <b>camera</b> and <b>canvas</b> keys in the <b>center</b> object as you see above.
-
+See more details 
 <a name="CameraTarget"></a>
 ## Choose a point at which the camera is looking.
 
