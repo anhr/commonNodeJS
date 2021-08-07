@@ -153,11 +153,25 @@ var arrayContainers = new arrayContainersF();
  */
 var arrayCreates = [];
 
+/**
+ * @callback createXDobjects
+ * @param {THREE.Group} group [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new XD object will be added
+ * @param {Options} options See <a href="../../jsdoc/Options/index.html" target="_blank">Options</a>. Followed parameters is allowed.
+ * @param {THREE.PerspectiveCamera} [options.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
+ * @param {object} [options.frustumPoints] <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a> instance.
+ * @param {object} [options.point] point settings. See <b>options.point</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> for details.
+ * @param {Player} [options.player] <a href="../../Player/jsdoc/index.html" target="_blank">Player</a> instance. Playing of 3D ojbects in my projects.
+ * @param {GuiSelectPoint} [options.guiSelectPoint] <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a> instance.
+ * @param {Options.raycaster.EventListeners} [options.eventListeners] <a href="../../jsdoc/Options/Raycaster_EventListeners.html" target="_blank">Options.raycaster.EventListeners</a> instance.
+ * Mouse events listeners for [Raycaster]{@link https://threejs.org/docs/index.html?q=Raycaster#api/en/core/Raycaster} instance.
+ * @param {THREE.WebGLRenderer} [options.renderer] [WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}
+*/
+
 class MyThree {
 
 	/**
 	 * @description I use MyThree in my projects for displaying of my 3D objects in the canvas.
-	 * @param {createXDobjects} [createXDobjects] callback creates my 3D objects.
+	 * @param {createXDobjects} [createXDobjects] <a href="../../myThree/jsdoc/module-MyThree.html#~createXDobjects" target="_blank">callback</a> creates my 3D objects.
 	 * @param {Options} [options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * The following options are available:
 	 * @param {HTMLElement|string} [options.elContainer=document.getElementById( "containerDSE" ) or a div element, child of body] If an HTMLElement, then a HTMLElement, contains a canvas and HTMLElement with id="iframe-goes-in-here" for gui.
@@ -1802,6 +1816,12 @@ MyThree.Player = Player;
  * @see <a href="../../jsdoc/three/index.html" target="_blank">three</a> class.
  */
 MyThree.three = three;
+
+/** @namespace
+ * @description Options.
+ * @see <a href="../../jsdoc/Options/index.html" target="_blank">Options</a> class.
+ */
+MyThree.Options = Options;
 
 window.__myThree__ = window.__myThree__ || {};
 if ( window.__myThree__.boMyThree )

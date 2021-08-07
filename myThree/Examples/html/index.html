@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -257,17 +257,23 @@
 						if ( cube.userData.currentHex === undefined )
 							cube.userData.currentHex = cube.material.emissive.getHex();
 						cube.material.emissive.setHex( 0xff0000 );
-						options.raycaster.onIntersection( intersection, mouse );
+//						options.raycaster.onIntersection( intersection, mouse );
+						MyThree.Options.raycaster.onIntersection( intersection, options, group, options.camera, options.renderer );
 
 					},
-					onIntersectionOut: function ( scene, INTERSECTED ) {
+					onIntersectionOut: function () {
 
 						if ( cube.userData.currentHex !== undefined ) cube.material.emissive.setHex( cube.userData.currentHex );
 						cube.userData.currentHex = undefined;
-						options.raycaster.onIntersectionOut( scene );
+//						options.raycaster.onIntersectionOut( scene );
+						MyThree.Options.raycaster.onIntersectionOut( group, options.renderer );
 
 					},
-					onMouseDown: function ( raycaster, intersection, scene ) { },
+					onMouseDown: function ( intersection ) {
+
+						//alert( 'Clicked over cube.' );
+						
+					},
 
 				}
 				if ( selectPlayScene ) {
@@ -332,7 +338,7 @@
 
 			},
 			//player: false,//Do not create a Player instance
-			canvasMenu: false,
+			//canvasMenu: false,
 			//axesHelper: false,
 			//orbitControls: false,
 			//pointLight: false,

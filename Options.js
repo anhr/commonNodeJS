@@ -1008,8 +1008,8 @@ class Options {
 			/**
 			 * getter and setter
 			 * <pre>
-			 * Use [OrbitControls]{@link https://threejs.org/docs/index.html?q=orb#examples/en/controls/OrbitControls}.
-			 * See <b>options.orbitControls</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+			 * Mouse events listeners for [Raycaster]{@link https://threejs.org/docs/index.html?q=Raycaster#api/en/core/Raycaster} instance.
+			 * See <a href="../../jsdoc/Options/Raycaster_EventListeners.html" target="_blank">EventListeners</a> class.
 			 * </pre>
 			 **/
 			eventListeners: {

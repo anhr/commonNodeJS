@@ -181,11 +181,25 @@ var arrayContainers = new arrayContainersF();
  */
 var arrayCreates = [];
 
+/**
+ * @callback createXDobjects
+ * @param {THREE.Group} group [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new XD object will be added
+ * @param {Options} options See &lt;a href="../../jsdoc/Options/index.html" target="_blank">Options&lt;/a>. Followed parameters is allowed.
+ * @param {THREE.PerspectiveCamera} [options.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
+ * @param {object} [options.frustumPoints] &lt;a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints&lt;/a> instance.
+ * @param {object} [options.point] point settings. See &lt;b>options.point&lt;/b> parameter of &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree&lt;/a> for details.
+ * @param {Player} [options.player] &lt;a href="../../Player/jsdoc/index.html" target="_blank">Player&lt;/a> instance. Playing of 3D ojbects in my projects.
+ * @param {GuiSelectPoint} [options.guiSelectPoint] &lt;a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint&lt;/a> instance.
+ * @param {Options.raycaster.EventListeners} [options.eventListeners] &lt;a href="../../jsdoc/Options/Raycaster_EventListeners.html" target="_blank">Options.raycaster.EventListeners&lt;/a> instance.
+ * Mouse events listeners for [Raycaster]{@link https://threejs.org/docs/index.html?q=Raycaster#api/en/core/Raycaster} instance.
+ * @param {THREE.WebGLRenderer} [options.renderer] [WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}
+*/
+
 class MyThree {
 
 	/**
 	 * @description I use MyThree in my projects for displaying of my 3D objects in the canvas.
-	 * @param {createXDobjects} [createXDobjects] callback creates my 3D objects.
+	 * @param {createXDobjects} [createXDobjects] &lt;a href="../../myThree/jsdoc/module-MyThree.html#~createXDobjects" target="_blank">callback&lt;/a> creates my 3D objects.
 	 * @param {Options} [options] See &lt;a href="../../jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
 	 * The following options are available:
 	 * @param {HTMLElement|string} [options.elContainer=document.getElementById( "containerDSE" ) or a div element, child of body] If an HTMLElement, then a HTMLElement, contains a canvas and HTMLElement with id="iframe-goes-in-here" for gui.
@@ -284,83 +298,18 @@ class MyThree {
 //		options = options || {};
 		options = new Options( options );
 
+/*
 		//for Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
 		options.raycaster = {
 
-			/**
-			 * Displays a sprite text if you move mouse over an 3D object
-			 * @param {object} intersection. See https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject for details.
-			 * @param {THREE.Scene} scene.
-			 * @param {THREE.Vector2} mouse mouse position.
-			*/
 			onIntersection: function ( intersection, mouse ) {
 
 				Options.raycaster.onIntersection( intersection, options, scene, camera, options.renderer );
-/*				
-				if ( intersection.object.userData.isInfo !== undefined &amp;&amp; !intersection.object.userData.isInfo() )
-					return;
-				var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
-				if ( spriteTextIntersection === undefined ) {
-
-
-					const rect = options.spriteText.rect ? JSON.parse( JSON.stringify( options.spriteText.rect ) ) : {};
-					rect.displayRect = true;
-					rect.backgroundColor = 'rgba(0, 0, 0, 1)';
-					spriteTextIntersection = StereoEffect.getTextIntersection( intersection, {
-
-						scales: options.scales,
-						spriteOptions: {
-
-							textHeight: options.spriteText.textHeight,
-							fontColor: options.spriteText.fontColor,
-							rect: rect,
-							group: scene,
-							center: {
-
-								camera: camera,
-								canvas: canvas,
-
-							}
-
-						}
-
-					} );
-					spriteTextIntersection.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
-					spriteTextIntersection.scale.divide( scene.scale );
-					scene.add( spriteTextIntersection );
-
-				} else spriteTextIntersection.position.copy( pos );
-				
-				options.renderer.domElement.style.cursor = 'pointer';
-*/
 			},
 
-			/**
-			 * Hides a sprite text if you move mouse out an object
-			 * @param {THREE.Scene} scene.
-			 */
-			//options.removeSpriteTextIntersection = function () 
 			onIntersectionOut: function () {
 
 				Options.raycaster.onIntersectionOut( scene, options.renderer );
-/*				
-				var detected = false;
-				do {
-
-					var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
-					if ( spriteTextIntersection !== undefined ) {
-
-						scene.remove( spriteTextIntersection );
-						if ( detected )
-							console.error( 'Duplicate spriteTextIntersection' );
-						detected = true;
-
-					}
-
-				} while ( spriteTextIntersection !== undefined )
-
-				options.renderer.domElement.style.cursor = options.cursor;
-*/				
 
 			},
 			onMouseDown: function ( intersection, options ) {
@@ -370,6 +319,7 @@ class MyThree {
 			},
 
 		}
+*/
 		
 //		options.dat.dat = dat;
 
@@ -653,6 +603,10 @@ class MyThree {
 
 				options.cursor = renderer.domElement.style.cursor;
 
+				options.stereoEffect = options.stereoEffect || {};
+				options.stereoEffect.rememberSize = true;//remember default size of the canvas. Resize of the canvas to full screen for stereo mode and restore to default size if no stereo effacts.
+				new StereoEffect( renderer, options );
+
 				const raycaster = new THREE.Raycaster();
 
 				//item.material.size is NaN if item.material is ShaderMaterial
@@ -662,13 +616,14 @@ class MyThree {
 				if ( raycaster.setStereoEffect !== undefined )
 					raycaster.setStereoEffect( {
 
+						options: options,
 						renderer: renderer,
 						camera: camera,
 						stereoEffect: options.stereoEffect,
 						raycasterEvents: false,
 
 					} );
-				options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options } );
+				options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
 
 				//StereoEffect. https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js
 /*				
@@ -681,7 +636,6 @@ class MyThree {
 				options.stereoEffect.elParent = options.stereoEffect.elParent || canvas.parentElement;
 				if ( options.stereoEffect.rememberSize === undefined ) options.stereoEffect.rememberSize = true;
 */				
-				new StereoEffect( renderer, options );
 /*				
 				if ( options.stereoEffect ) {
 
@@ -987,44 +941,10 @@ class MyThree {
 
 					} );
 
-//				if ( stereoEffect &amp;&amp; gui &amp;&amp; options.dat.guiStereoEffect )
 				if ( options.stereoEffect ) {
 
-/*
-					stereoEffect.gui( fOptions, {
-
-						getLanguageCode: getLanguageCode,
-						cookie: options.dat.cookie,
-						gui: gui,
-						stereoEffect: stereoEffect,
-						onChangeMode: function ( mode ) {
-
-							switch ( mode ) {
-
-								case StereoEffect.spatialMultiplexsIndexs.Mono:
-									break;
-								case StereoEffect.spatialMultiplexsIndexs.SbS:
-								case StereoEffect.spatialMultiplexsIndexs.TaB:
-									break;
-								default: console.error( 'myThreejs: Invalid spatialMultiplexIndex = ' + mode );
-									return;
-
-							}
-							if ( options.frustumPoints !== undefined )
-								options.frustumPoints.updateGuiSelectPoint();
-
-						},
-
-					} );
-*/
 					options.stereoEffect.gui( {
 
-/*
-						getLanguageCode: getLanguageCode,
-						cookie: options.dat.cookie,
-						gui: gui,
-*/
-//						stereoEffect: stereoEffect,
 						folder: fOptions,
 						onChangeMode: function ( mode ) {
 
@@ -1188,7 +1108,7 @@ class MyThree {
 //frustumPoints				if ( options.arrayCloud )//Array of points with cloud
 
 				if ( fOptions ) {
-
+				
 					new GuiSelectPoint( options, {
 
 /*
@@ -1925,6 +1845,12 @@ MyThree.Player = Player;
  */
 MyThree.three = three;
 
+/** @namespace
+ * @description Options.
+ * @see &lt;a href="../../jsdoc/Options/index.html" target="_blank">Options&lt;/a> class.
+ */
+MyThree.Options = Options;
+
 window.__myThree__ = window.__myThree__ || {};
 if ( window.__myThree__.boMyThree )
 	console.error( 'myThree: duplicate myThree. Please use one instance of the myThree class.' )
@@ -1941,13 +1867,13 @@ export default MyThree;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.MyPoints.html">MyPoints</a></li><li><a href="module-MyThree-MyThree.Player.html">Player</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li><li><a href="module-MyThree-MyThree.three.html">three</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.MyPoints.html">MyPoints</a></li><li><a href="module-MyThree-MyThree.Options.html">Options</a></li><li><a href="module-MyThree-MyThree.Player.html">Player</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li><li><a href="module-MyThree-MyThree.three.html">three</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Aug 06 2021 06:41:23 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Aug 07 2021 11:28:15 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

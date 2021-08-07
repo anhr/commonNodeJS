@@ -151,6 +151,425 @@
     
 
     
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+
+    
+
+    
+    <h4 class="name" id="~createXDobjects"><span class="type-signature"></span>createXDobjects<span class="signature">(group, options)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>group</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.Group</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><a href="https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group">group</a> of objects to which a new XD object will be added</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Options</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">See <a href="../../jsdoc/Options/index.html" target="_blank">Options</a>. Followed parameters is allowed.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>camera</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.PerspectiveCamera</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera">PerspectiveCamera</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>frustumPoints</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a> instance.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>point</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">point settings. See <b>options.point</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> for details.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>player</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Player</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="../../Player/jsdoc/index.html" target="_blank">Player</a> instance. Playing of 3D ojbects in my projects.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>guiSelectPoint</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">GuiSelectPoint</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a> instance.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>eventListeners</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Options.raycaster.EventListeners</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="../../jsdoc/Options/Raycaster_EventListeners.html" target="_blank">Options.raycaster.EventListeners</a> instance.Mouse events listeners for <a href="https://threejs.org/docs/index.html?q=Raycaster#api/en/core/Raycaster">Raycaster</a> instance.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>renderer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.WebGLRenderer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><a href="https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer">WebGLRenderer</a></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="myThree.js.html">myThree.js</a>, <a href="myThree.js.html#line156">line 156</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+    
 
     
 </article>
@@ -163,13 +582,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.MyPoints.html">MyPoints</a></li><li><a href="module-MyThree-MyThree.Player.html">Player</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li><li><a href="module-MyThree-MyThree.three.html">three</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-MyThree.html">MyThree</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-MyThree-MyThree.ColorPicker.html">ColorPicker</a></li><li><a href="module-MyThree-MyThree.getWorldPosition.html">getWorldPosition</a></li><li><a href="module-MyThree-MyThree.limitAngles.html">limitAngles</a></li><li><a href="module-MyThree-MyThree.MyPoints.html">MyPoints</a></li><li><a href="module-MyThree-MyThree.Options.html">Options</a></li><li><a href="module-MyThree-MyThree.Player.html">Player</a></li><li><a href="module-MyThree-MyThree.StereoEffect.html">StereoEffect</a></li><li><a href="module-MyThree-MyThree.three.html">three</a></li></ul><h3>Classes</h3><ul><li><a href="module-MyThree-MyThree.html">MyThree</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Aug 06 2021 06:41:23 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Aug 07 2021 11:28:15 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
