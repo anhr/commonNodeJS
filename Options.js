@@ -464,6 +464,52 @@ class Options {
 									set: function ( cameraGui ) { dat.cameraGui = cameraGui; },
 
 								},
+								playerGui: {
+
+									get: function () { return dat.playerGui; },
+									//									set: function ( cameraGui ) { dat.cameraGui = cameraGui; },
+
+								},
+								orbitControlsGui: {
+
+									get: function () { return dat.orbitControlsGui; },
+
+								},
+								axesHelperGui: {
+
+									get: function () { return dat.axesHelperGui; },
+
+								},
+								playController: {
+
+									get: function () { return dat.playController; },
+
+								},
+								stereoEffectsGui: {
+
+									get: function () { return dat.playController; },
+
+								},
+								moveScene: {
+
+									get: function () { return dat.moveScene; },
+
+								},
+								spriteTextGui: {
+
+									get: function () { return dat.spriteTextGui; },
+
+								},
+								folderPoint: {
+
+									get: function () { return dat.folderPoint; },
+
+								},
+								pointLightGui: {
+
+									get: function () { return dat.pointLightGui; },
+
+								},
 
 							} );
 
@@ -1202,6 +1248,7 @@ class Raycaster {
 
 					raycaster.setStereoEffect( {
 
+						options: settings.options,
 						renderer: renderer,
 						camera: camera,
 						stereoEffect: options.stereoEffect,

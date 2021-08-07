@@ -305,7 +305,8 @@ class StereoEffect {
 					//	НО! ОСТАНЕТСЯ ВЫБРАННЫМ пункт "слева направо" меню stereo Effects в canvasMenu.
 					//Для решения проблемы вставил строку ниже
 
-					setMultiplex( this );
+					if ( options.canvasMenu ) setMultiplex( this );
+					else setFullScreen( true, this );
 
 					//Теперь в режиме full screen при выборе пункта "Моно" меню stereo Effects в canvasMenu
 					//canvas не выходит из full screen. Ну и фиг с ним.
