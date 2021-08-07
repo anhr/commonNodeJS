@@ -553,8 +553,8 @@
 
 						}
 
-//						arrayParticles.push( points );
 						options.raycaster.addParticle( points );
+/*
 						points.userData.raycaster = {
 
 							onIntersection: options.raycaster.onIntersection,
@@ -562,6 +562,7 @@
 							onMouseDown: options.raycaster.onMouseDown,
 
 						}
+*/
 
 						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
@@ -685,12 +686,14 @@
 
 				}
 				arrayParticles.push( points );
+/*
 				points.userData.raycaster = {
 
 					onIntersection: options.raycaster.onIntersection,
 					onIntersectionOut: options.raycaster.onIntersectionOut,
 					onMouseDown: options.raycaster.onMouseDown,
 				}
+*/
 
 			}
 

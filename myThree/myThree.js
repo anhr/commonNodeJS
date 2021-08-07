@@ -236,47 +236,6 @@ class MyThree {
 	 * See <b>options.scales</b> of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a>.
 	 *
 	 * @param {object} [options.scales.w] <b>w</b> axis options. See <a href="../../jsdoc/Options/Options.html#setW" target="_blank">Options.setW(options)</a> <b>options.scales.w</b> for details.
-	 *
-	 * @todo If you want to use raycaster (working out what objects in the 3d space the mouse is over) [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster},
-	 * <pre>
-	 * please add following object into your 3D Object userdata:
-	 * your3dObject.userData.raycaster = {
-
-			onIntersection: function ( raycaster, intersection, scene, INTERSECTED ) {
-
-				//Mouse is over of your 3D object event
-				//TO DO something
-				//For example you can use
-				options.raycaster.onIntersection( intersection, scene );
-				//for displaying of the position of your 3D object
-				//ATTENTION!!! Use onIntersection and onIntersectionOut togethe!
-
-			},
-			onIntersectionOut: function ( scene, INTERSECTED ) {
-
-				//Mouse is out of your 3D object event
-				//TO DO something
-				//For example you can use
-				options.raycaster.onIntersectionOut( scene );
-				//for hide of the position of your 3D object that was displayed in onIntersection
-				//ATTENTION!!! Use onIntersection and onIntersectionOut togethe!
-
-			},
-			onMouseDown: function ( raycaster, intersection, scene ) {
-
-				//User has clicked over your 3D object
-				//TO DO something
-				//For example:
-				var position = raycaster.stereo.getPosition( intersection );
-				alert( 'You are clicked the "' + intersection.object.type + '" type object.'
-					+ ( intersection.index === undefined ? '' : ' Index = ' + intersection.index + '.' )
-					+ ' Position( x: ' + position.x + ', y: ' + position.y + ', z: ' + position.z + ' )' );
-
-			},
-
-		}
-	 * </pre>
-	 * <a href="../Examples/html/" target="_blank">Example</a>.
 	 */
 	constructor( createXDobjects, options ) {
 
@@ -297,83 +256,18 @@ class MyThree {
 //		options = options || {};
 		options = new Options( options );
 
+/*
 		//for Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
 		options.raycaster = {
 
-			/**
-			 * Displays a sprite text if you move mouse over an 3D object
-			 * @param {object} intersection. See https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject for details.
-			 * @param {THREE.Scene} scene.
-			 * @param {THREE.Vector2} mouse mouse position.
-			*/
 			onIntersection: function ( intersection, mouse ) {
 
-				Options.raycaster.onIntersection( intersection, options, scene, camera, canvas, options.renderer );
-/*				
-				if ( intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo() )
-					return;
-				var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
-				if ( spriteTextIntersection === undefined ) {
-
-
-					const rect = options.spriteText.rect ? JSON.parse( JSON.stringify( options.spriteText.rect ) ) : {};
-					rect.displayRect = true;
-					rect.backgroundColor = 'rgba(0, 0, 0, 1)';
-					spriteTextIntersection = StereoEffect.getTextIntersection( intersection, {
-
-						scales: options.scales,
-						spriteOptions: {
-
-							textHeight: options.spriteText.textHeight,
-							fontColor: options.spriteText.fontColor,
-							rect: rect,
-							group: scene,
-							center: {
-
-								camera: camera,
-								canvas: canvas,
-
-							}
-
-						}
-
-					} );
-					spriteTextIntersection.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
-					spriteTextIntersection.scale.divide( scene.scale );
-					scene.add( spriteTextIntersection );
-
-				} else spriteTextIntersection.position.copy( pos );
-				
-				options.renderer.domElement.style.cursor = 'pointer';
-*/
+				Options.raycaster.onIntersection( intersection, options, scene, camera, options.renderer );
 			},
 
-			/**
-			 * Hides a sprite text if you move mouse out an object
-			 * @param {THREE.Scene} scene.
-			 */
-			//options.removeSpriteTextIntersection = function () 
 			onIntersectionOut: function () {
 
 				Options.raycaster.onIntersectionOut( scene, options.renderer );
-/*				
-				var detected = false;
-				do {
-
-					var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
-					if ( spriteTextIntersection !== undefined ) {
-
-						scene.remove( spriteTextIntersection );
-						if ( detected )
-							console.error( 'Duplicate spriteTextIntersection' );
-						detected = true;
-
-					}
-
-				} while ( spriteTextIntersection !== undefined )
-
-				options.renderer.domElement.style.cursor = options.cursor;
-*/				
 
 			},
 			onMouseDown: function ( intersection, options ) {
@@ -383,6 +277,7 @@ class MyThree {
 			},
 
 		}
+*/
 		
 //		options.dat.dat = dat;
 
@@ -665,6 +560,8 @@ class MyThree {
 				options.renderer = renderer;
 
 				options.cursor = renderer.domElement.style.cursor;
+				
+				new StereoEffect( renderer, options );
 
 				const raycaster = new THREE.Raycaster();
 
@@ -675,13 +572,14 @@ class MyThree {
 				if ( raycaster.setStereoEffect !== undefined )
 					raycaster.setStereoEffect( {
 
+						options: options,
 						renderer: renderer,
 						camera: camera,
 						stereoEffect: options.stereoEffect,
 						raycasterEvents: false,
 
 					} );
-				options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options } );
+				options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
 
 				//StereoEffect. https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js
 /*				
@@ -694,7 +592,6 @@ class MyThree {
 				options.stereoEffect.elParent = options.stereoEffect.elParent || canvas.parentElement;
 				if ( options.stereoEffect.rememberSize === undefined ) options.stereoEffect.rememberSize = true;
 */				
-				new StereoEffect( renderer, options );
 /*				
 				if ( options.stereoEffect ) {
 
@@ -1000,44 +897,10 @@ class MyThree {
 
 					} );
 
-//				if ( stereoEffect && gui && options.dat.guiStereoEffect )
 				if ( options.stereoEffect ) {
 
-/*
-					stereoEffect.gui( fOptions, {
-
-						getLanguageCode: getLanguageCode,
-						cookie: options.dat.cookie,
-						gui: gui,
-						stereoEffect: stereoEffect,
-						onChangeMode: function ( mode ) {
-
-							switch ( mode ) {
-
-								case StereoEffect.spatialMultiplexsIndexs.Mono:
-									break;
-								case StereoEffect.spatialMultiplexsIndexs.SbS:
-								case StereoEffect.spatialMultiplexsIndexs.TaB:
-									break;
-								default: console.error( 'myThreejs: Invalid spatialMultiplexIndex = ' + mode );
-									return;
-
-							}
-							if ( options.frustumPoints !== undefined )
-								options.frustumPoints.updateGuiSelectPoint();
-
-						},
-
-					} );
-*/
 					options.stereoEffect.gui( {
 
-/*
-						getLanguageCode: getLanguageCode,
-						cookie: options.dat.cookie,
-						gui: gui,
-*/
-//						stereoEffect: stereoEffect,
 						folder: fOptions,
 						onChangeMode: function ( mode ) {
 
@@ -1201,7 +1064,7 @@ class MyThree {
 //frustumPoints				if ( options.arrayCloud )//Array of points with cloud
 
 				if ( fOptions ) {
-
+				
 					new GuiSelectPoint( options, {
 
 /*

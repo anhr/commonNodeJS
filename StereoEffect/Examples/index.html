@@ -52,7 +52,7 @@
 		
 		import Options from '../../Options.js'
 
-		var camera, scene, renderer, raycaster, stereoEffect;//, axesHelper, controls, intersects, guiSelectPoint;
+		var camera, scene, renderer, stereoEffect;//, raycaster, axesHelper, controls, intersects, guiSelectPoint;
 
 		init();
 		animate();
@@ -159,7 +159,9 @@
 				options.stereoEffect.gui();
 
 			//[Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
-
+			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene } );
+			options.eventListeners.addParticle( points );
+/*
 			raycaster = new THREE.Raycaster();
 			raycaster.params.Points.threshold = 0.02;//threshold is the precision of the raycaster when intersecting objects, in world units. See [params](https://threejs.org/docs/#api/en/core/Raycaster.params)
 			if ( raycaster.setStereoEffect ) {
@@ -169,37 +171,12 @@
 					renderer: renderer,
 					camera: camera,
 					stereoEffect: options.stereoEffect,
-					onIntersection: function ( intersects, mouse ) {
-
-	//					points.userData.raycaster.onIntersection( intersects[0] );
-						var intersection = intersects[0];
-						if (
-							( intersection.object.userData.raycaster !== undefined )
-							&& ( intersection.object.userData.raycaster.onIntersection !== undefined ) ) {
-
-							intersection.object.userData.raycaster.onIntersection( intersection );
-
-						}
-
-					},
-					onIntersectionOut: function ( intersects ) { points.userData.raycaster.onIntersectionOut() },
-					onMouseDown: function ( intersects ) {
-
-						var intersection = intersects[0];
-						if (
-							( intersection.object.userData.raycaster !== undefined )
-							&& ( intersection.object.userData.raycaster.onMouseDown !== undefined ) ) {
-
-							intersection.object.userData.raycaster.onMouseDown( intersection );
-
-						}
-
-					}
 
 				} );
 				raycaster.stereo.addParticle( points );
 
 			}
+*/
 
 			window.addEventListener( 'resize', onWindowResize, false );
 

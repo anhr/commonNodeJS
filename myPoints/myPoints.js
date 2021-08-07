@@ -218,6 +218,8 @@ function MyPoints( arrayFuncs, group, settings ) {
 			points.userData.controllers = function ( /*cFrustumPoints*/ ) { return pointsOptions.controllers( /*cFrustumPoints*/ ); }
 
 		}
+		if ( settings.pointsOptions.raycaster ) points.userData.raycaster = settings.pointsOptions.raycaster;
+/*		
 		points.userData.raycaster = {
 
 			onIntersection: function ( intersection, mouse ) {
@@ -237,19 +239,11 @@ function MyPoints( arrayFuncs, group, settings ) {
 				if ( options.raycaster && options.raycaster.onMouseDown )
 					options.raycaster.onMouseDown( intersection, options );
 				else Options.raycaster.onMouseDown( intersection, options );
-/*				
-				if ( ( intersection.object.userData.isInfo !== undefined ) && !intersection.object.userData.isInfo() )
-					return;//No display information about frustum point
-				if ( options.guiSelectPoint )
-					options.guiSelectPoint.select( intersection );
-				else if ( options.axesHelper )
-					options.axesHelper.exposePosition( intersection );
-				if ( options.raycaster.onMouseDown )
-					options.raycaster.onMouseDown( intersection );
-*/
+
 			}
 
 		}
+*/		
 		points.userData.player = {
 
 			arrayFuncs: arrayFuncs,

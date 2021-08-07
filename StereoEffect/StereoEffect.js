@@ -111,7 +111,8 @@ class StereoEffect {
 		assign();
 //		const _this = this;
 
-		options.stereoEffect = options.stereoEffect || {};
+		if ( !options.stereoEffect ) options.stereoEffect = {};
+//		options.stereoEffect = options.stereoEffect || {};
 
 		const settings = options.stereoEffect;
 		/**
@@ -759,6 +760,7 @@ function assign() {
 		 * @description Sets the <b>StereoEffect</b> settings to the {@link https://threejs.org/docs/#api/en/core/Raycaster|THREE.Raycaster}.
 		 * Available as <b>THREE.Raycaster.setStereoEffect(...)</b>.
 		 * @param {Object} [settings]
+		 * @param {Options} [settings.options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 		 * @param {THREE.PerspectiveCamera} settings.camera {@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera|PerspectiveCamera}
 		 * @param {StereoEffect} [settings.stereoEffect=no stereo effects] stereoEffect.
 		 * @param {THREE.WebGLRenderer} [settings.renderer=renderer parameter of THREE.StereoEffect] renderer. The {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer} displays your beautifully crafted scenes using WebGL.
@@ -806,18 +808,7 @@ function assign() {
 
 				} ),
 */				
-				new StereoEffect( renderer, {
-
-					stereoEffect : {
-
-						spatialMultiplex: spatialMultiplexsIndexs.Mono, //.SbS,
-						far: camera ? camera.far : undefined,
-						camera: camera,
-						stereoAspect: 1,
-
-					}
-
-				} ),
+				new StereoEffect( renderer, settings.options ),
 				raycaster = this,
 				mouseL = new THREE.Vector2(),
 				mouseR = new THREE.Vector2();

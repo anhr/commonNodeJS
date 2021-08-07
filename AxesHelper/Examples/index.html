@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -99,8 +99,8 @@
 		import MyPoints from '../../myPoints/myPoints.js';
 
 		var camera, scene, renderer, raycaster;//, guiSelectPoint, controls, moveGroup, axesHelper, stereoEffect, intersects;
-		const threshold = 0.02,//mouse = new THREE.Vector2(), 0.08, arrayintersectObjects = [];
-			options = new Options( {
+//		const threshold = 0.02;//mouse = new THREE.Vector2(), 0.08, arrayintersectObjects = [];
+		const options = new Options( {
 
 				//a: 2,
 				//b: 3,
@@ -183,13 +183,13 @@
 
 					},
 				},
-				
+/*				
 				//for Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
 				raycaster: {
 
 					onIntersection: function ( intersection, mouse ) {
 
-						Options.raycaster.onIntersection( intersection, options, scene, camera, canvas, renderer );
+						Options.raycaster.onIntersection( intersection, options, scene, camera, renderer );
 
 					},
 
@@ -200,6 +200,7 @@
 					}
 
 				}
+*/				
 
 			} );
 
@@ -315,7 +316,7 @@
 
 			}
 */
-			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options } );
+			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
 			
 			if ( typeof GuiSelectPoint !== "undefined" ) {
 
@@ -413,6 +414,7 @@
 				if ( typeof StereoEffect === "undefined" )
 					arrayintersectObjects.push( points );
 */
+/*
 				points.userData.raycaster = {
 
 					onIntersection: function ( intersection ) {
@@ -461,6 +463,7 @@
 
 
 				}
+*/				
 
 			}
 /*
@@ -567,6 +570,16 @@
 
 					name: 'MyPoints',
 					shaderMaterial: false,
+					raycaster: {
+
+						onMouseDown: function ( intersection ) {
+
+							alert( 'You have clicked over "' + intersection.object.name + '" point.' );
+							Options.raycaster.onMouseDown( intersection, options );
+
+						}
+
+					},
 /*					
 					onReady: function ( points ) {
 

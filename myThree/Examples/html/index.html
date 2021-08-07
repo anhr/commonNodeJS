@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -185,31 +185,27 @@
 
 			points.name = 'THREE.Points';
 
-			points.userData.raycaster = {
+			/*
+						points.userData.raycaster = {
 
-				onIntersection: function ( intersection, mouse ) {
+							onIntersection: function ( intersection, mouse ) {
 
-					options.raycaster.onIntersection( intersection, mouse );
+								options.raycaster.onIntersection( intersection, mouse );
 
-				},
-				onIntersectionOut: function ( scene ) {
+							},
+							onIntersectionOut: function ( scene ) {
 
-					options.raycaster.onIntersectionOut( scene );
+								options.raycaster.onIntersectionOut( scene );
 
-				},
-				onMouseDown: function ( intersect ) {
+							},
+							onMouseDown: function ( intersect ) {
 
-					options.raycaster.onMouseDown( intersect, options );
-					/*
-										if ( options.guiSelectPoint )
-											options.guiSelectPoint.select( intersect );
-										else if ( options.axesHelper )
-											options.axesHelper.exposePosition( intersect );
-					*/
+								options.raycaster.onMouseDown( intersect, options );
 
-				}
+							}
 
-			}
+						}
+			*/
 			points.userData.player = {
 
 				arrayFuncs: arrayFuncs,
@@ -340,7 +336,7 @@
 			//axesHelper: false,
 			//orbitControls: false,
 			//pointLight: false,
-			stereoEffect: false,
+			//stereoEffect: false,
 			frustumPoints: {},//Creates a FrustumPoints instance
 			canvas: {
 
@@ -455,19 +451,20 @@
 			},
 
 		} );
-		new MyThree();// function ( group, options ) { } );
+
+		//new MyThree();// function ( group, options ) { }, { elContainer: canvasContainer2 } );
 
 	</script>
 	<h2>Simple canvas.</h2>
-	<!--<div id="canvasContainer2"></div>-->
+	<!--<div id="canvasContainer2"><img src="/anhr/TreeElementNodeJS/master/img/wait.gif"></div>-->
 	<script type="module">
-																//import * as THREE from '../../../../../three.js/dev/build/three.module.js';
+		//import * as THREE from '../../../../../three.js/dev/build/three.module.js';
 
-																//import MyThree from '../../myThree.js';
-																//import MyThree from '../../build/myThree.module.js';
-																//import MyThree from '../../build/myThree.module.min.js';
+		//import MyThree from '../../myThree.js';
+		//import MyThree from '../../build/myThree.module.js';
+		//import MyThree from '../../build/myThree.module.min.js';
 
-																//new MyThree( function ( group, options ) { } );
+		//new MyThree( function ( group, options ) { } );
 	</script>
 </body>
 </html>
