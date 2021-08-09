@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -17,14 +17,14 @@
 	<script src="../../../webgl-debug/webgl-debug/build/webgl-debug.js"></script>
 	-->
 	<!--<script src="../../../../../three.js/dev/build/three.js"></script>-->
-	<script src="../../../../../three.js/dev/build/three.min.js"></script>
+	<!--<script src="../../../../../three.js/dev/build/three.min.js"></script>-->
 	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
 	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
 	<!--<script src="https://threejs.org/build/three.js"></script>-->
 	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
 
 	<!--<script src="../../build/myThree.js"></script>-->
-	<script src="../../build/myThree.min.js"></script>
+	<!--<script src="../../build/myThree.min.js"></script>-->
 </head>
 <body>
 	<p>
@@ -38,7 +38,7 @@
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<script type="module">
 
-		//import * as THREE from '../../../../../three.js/dev/build/three.module.js';
+		import * as THREE from '../../../../../three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
@@ -53,7 +53,7 @@
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 		//three.dat = dat;
 
-		//import MyThree from '../../myThree.js';
+		import MyThree from '../../myThree.js';
 		//import MyThree from '../../build/myThree.module.js';
 		//import MyThree from '../../build/myThree.module.min.js';
 		if ( MyThree.default ) MyThree = MyThree.default;
