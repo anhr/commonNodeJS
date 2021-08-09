@@ -8,9 +8,6 @@
  * You may obtain a copy of the License at
  */
 
-//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-//import cookie from '../cookieNodeJS/cookie.js';
-
 import Player from '../player/player.js';
 import loadFile from '../loadFileNodeJS/loadFile.js';
 import MyPoints from '../myPoints/myPoints.js';
@@ -24,18 +21,10 @@ import CanvasMenu from '../canvasMenu/canvasMenu.js';
 import { getLanguageCode } from '../lang.js';
 //import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 
-//import CreateFullScreenSettings from '../createFullScreenSettings.js';
-
 import AxesHelper from '../AxesHelper/AxesHelper.js';
 //import AxesHelper from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelper.js';
 import AxesHelperGui from '../AxesHelper/AxesHelperGui.js';
 //import AxesHelperGui from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelperGui.js';
-
-//WARNING: Multiple instances of Three.js being imported. Use Options.createOrbitControls(...) http://localhost/anhr/commonNodeJS/master/jsdoc/Options/Options.html#createOrbitControls
-//import { OrbitControls } from 'http://localhost/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-//import { OrbitControls } from '../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
-//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 
 import OrbitControlsGui from '../OrbitControls/OrbitControlsGui.js';
 //import OrbitControlsGui from 'http://localhost/anhr/commonNodeJS/master/OrbitControls/OrbitControlsGui.js';
@@ -44,20 +33,9 @@ import OrbitControlsGui from '../OrbitControls/OrbitControlsGui.js';
 import loadScript from '../loadScriptNodeJS/loadScript.js';
 import { dat } from '../dat/dat.module.js';
 
-//import controllerPlay from '../controllerPlay/controllerPlay.js';
-//import controllerPlay from 'https://raw.githack.com/anhr/commonNodeJS/master/controllerPlay/controllerPlay.js';
-
 import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
-//import { GuiSelectPoint, getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
-//GuiSelectPoint.setTHREE( THREE );
 
 import { getWorldPosition } from '../getPosition.js';
-//getPositionSetTHREE( THREE );
-
-//import PositionController from '../PositionController.js';
-
-//import { SpriteText } from '../SpriteText/SpriteText.js';
-//SpriteText.setTHREE( THREE );
 
 import { SpriteTextGui } from '../SpriteText/SpriteTextGui.js';
 
@@ -80,7 +58,6 @@ import three from '../three.js'
 if ( typeof dat !== 'undefined' )
 	three.dat =  dat;
 
-//import setOptions from '../setOptions.js'
 import FolderPoint from '../folderPoint.js'
 
 /*проверка duplicate THREE
@@ -119,7 +96,6 @@ const getCurrentScriptPath = function () {
 		path = script.substring( 0, script.lastIndexOf( '/' ) );
 	return path;
 };
-//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
 const currentScriptPath = getCurrentScriptPath();
 
 function arrayContainersF() {
@@ -254,7 +230,6 @@ class MyThree {
 	constructor( createXDobjects, options ) {
 
 		const THREE = three.THREE;
-//		three.THREE = THREE;
 
 		var myThreejs = this;
 
@@ -267,79 +242,8 @@ class MyThree {
 		if ( arrayCreates.length > 1 )
 			return;
 
-//		options = options || {};
 		options = new Options( options );
-
 /*
-		//for Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
-		options.raycaster = {
-
-			onIntersection: function ( intersection, mouse ) {
-
-				Options.raycaster.onIntersection( intersection, options, scene, camera, options.renderer );
-			},
-
-			onIntersectionOut: function () {
-
-				Options.raycaster.onIntersectionOut( scene, options.renderer );
-
-			},
-			onMouseDown: function ( intersection, options ) {
-
-				Options.raycaster.onMouseDown( intersection, options );
-
-			},
-
-		}
-*/
-		
-//		options.dat.dat = dat;
-
-//		options.getLanguageCode = options.getLanguageCode || getLanguageCode;
-/*
-		options.camera = options.camera || {};
-		options.camera.position = options.camera.position || new THREE.Vector3( 0.4, 0.4, 2 );
-		options.camera.scale = options.camera.scale || new THREE.Vector3( 1, 1, 1 );
-
-		if ( options.dat ) {
-
-			if ( options.dat.cookie !== false ) options.dat.cookie = true;
-			if ( options.dat.cookie === true ) options.dat.cookie = cookie;
-			else options.dat.cookie = new cookie.defaultCookie();
-
-		}
-
-		if ( options.palette !== undefined ) {
-
-			switch( typeof options.palette ){
-
-				case 'number':
-					options.palette = new ColorPicker.palette( { palette: options.palette } );
-					break;
-				case 'boolean':
-					if ( options.palette )
-						options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGYW } );
-					break;
-				default: {
-					
-					if ( options.palette instanceof ColorPicker.palette === false )
-						console.error( 'MyThree: invalid typeof options.palette: ' + typeof options.palette );
-
-				}
-			}
-
-		}
-
-		options.a = options.a || 1;
-		options.b = options.b || 0;
-*/
-//		options.scale = 1;
-
-//		setOptions.setPoint( options );
-/*		
-		options.point = options.point || {};
-		options.point.size = options.point.size || 5.0;
-*/		
 		function getCanvasName() {
 			return typeof options.elContainer === "object" ?
 				options.elContainer.id :
@@ -347,7 +251,7 @@ class MyThree {
 					options.elContainer :
 					'';
 		}
-
+*/
 		var camera, group, scene, canvas;
 
 		function onloadScripts() {
@@ -374,9 +278,7 @@ class MyThree {
 
 			var renderer,
 
-//				cursor,//default
-
-				controls,// stereoEffect, player,
+//				controls,
 
 				//перенес в options.dat
 				//mouseenter = false,//true - мышка находится над gui или canvasMenu
@@ -395,7 +297,7 @@ class MyThree {
 				stats,
 
 				//uses only if stereo effects does not exists
-				intersects,// mouse = new THREE.Vector2(), 
+//				intersects,// mouse = new THREE.Vector2(), 
 
 				//https://www.khronos.org/webgl/wiki/HandlingContextLost
 				requestId;
@@ -403,16 +305,7 @@ class MyThree {
 			canvas = elContainer.querySelector( 'canvas' );
 			//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
 //			const gl = canvas.getContext( 'webgl' );
-/*
-			//raycaster
 
-			elContainer.addEventListener( 'mousemove', onDocumentMouseMove, false );
-
-			//ATTENTION!!! The 'mousedown' event is not fired if you use new version of the OrbitControls.
-			//See "OrbitControls: Implement Pointer events." commit https://github.com/mrdoob/three.js/commit/1422e36e9facbdc5f9d86cf6b97b005a2723a24a#diff-3285de3826a51619836a5c9adc6bee74
-			//elContainer.addEventListener( 'mousedown', onDocumentMouseDown, { capture: true } );
-			elContainer.addEventListener( 'pointerdown', onDocumentMouseDown, { capture: true } );
-*/
 			function isFullScreen() {
 
 				if ( options.canvasMenu ) return options.canvasMenu.isFullScreen();
@@ -458,14 +351,11 @@ class MyThree {
 
 			function init() {
 
-//				var optionsScene = { position: new THREE.Vector3() }
-
 				// CAMERA
 
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 				camera.position.copy( options.camera.position );
 				camera.scale.copy( options.camera.scale );
-//				camera.userData.default = { options: JSON.parse( JSON.stringify( options.camera ) ), }
 
 				//для возврата созданной камеры обратно в код, который вызвал new MyThree
 				//В частности это используется для создания точки, за которой будет следить камера
@@ -477,7 +367,6 @@ class MyThree {
 				if ( options.cameraTarget ) {
 	
 					options.cameraTarget.camera = camera;
-//					Player.cameraTarget.init( options.cameraTarget, options );
 					options.playerOptions.cameraTarget.init( options.cameraTarget, options );
 									
 				}
@@ -507,8 +396,6 @@ class MyThree {
 
 				if ( options.frustumPoints ) {
 
-//					const cFrustumPoints = options.guiSelectPoint ? options.guiSelectPoint.getFrustumPoints() : undefined;
-//					options.frustumPoints = new FrustumPoints( camera, group, options,
 					new FrustumPoints( camera, group, canvas, {
 
 						options: options,
@@ -534,9 +421,6 @@ class MyThree {
 							//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
 							//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
 
-//							cookie: options.dat ? options.dat.cookie : undefined,
-//							cookieName: getCanvasName(),
-
 							//изменение размеров усеченной пирамиды FrustumPoints
 
 							//near: 10,// Shift of the frustum layer near to the camera in percents.
@@ -559,7 +443,6 @@ class MyThree {
 						},
 
 					} );
-//					if ( cFrustumPoints ) cFrustumPoints.setFrustumPoints( options.frustumPoints );
 
 				}
 
@@ -597,41 +480,6 @@ class MyThree {
 					} );
 				options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
 
-				//StereoEffect. https://github.com/anhr/three.js/blob/dev/examples/js/effects/StereoEffect.js
-/*				
-				options.stereoEffect = options.stereoEffect = {};
-				if ( options.stereoEffect.spatialMultiplex === undefined )
-					options.stereoEffect.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
-				if ( options.stereoEffect.far === undefined ) options.stereoEffect.far = camera.far;
-				options.stereoEffect.camera = options.stereoEffect.camera || camera;
-				//if ( options.stereoEffect.stereoAspect === undefined ) options.stereoEffect.stereoAspect = 1;
-				options.stereoEffect.elParent = options.stereoEffect.elParent || canvas.parentElement;
-				if ( options.stereoEffect.rememberSize === undefined ) options.stereoEffect.rememberSize = true;
-*/				
-/*				
-				if ( options.stereoEffect ) {
-
-					if ( options.stereoEffect.spatialMultiplex === undefined )
-						options.stereoEffect.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
-					if ( StereoEffect !== undefined ) {
-
-						stereoEffect = new StereoEffect( renderer, {
-
-							spatialMultiplex: options.stereoEffect.spatialMultiplex,//StereoEffect.spatialMultiplexsIndexs.Mono, //.SbS,
-							far: camera.far,
-							camera: camera,
-							//stereoAspect: 1,
-							elParent: canvas.parentElement,
-							rememberSize: true,
-
-						} );
-//						stereoEffect.settings.spatialMultiplex = StereoEffect.spatialMultiplexsIndexs.Mono;
-
-					} else console.warn( 'stereoEffect = ' + stereoEffect );
-
-				} else StereoEffect.assign();//.setTHREE( THREE );
-*/
-
 				function removeTraceLines() {
 
 					group.children.forEach( function ( mesh ) {
@@ -653,163 +501,19 @@ class MyThree {
 
 				//Light
 
-/*
-				//A light that gets emitted from a single point in all directions.
-				function pointLight() {
-
-					if ( options.dat.pointLightGui === false ) return;
-
-					const strLight = 'mathBoxLight',
-						controllers = {},
-						multiplier = 2 * options.scale;
-					var light,// = scene.getObjectByName( strLight ),
-						position = new THREE.Vector3( 0.5 * options.scale, 0.5 * options.scale, 0.5 * options.scale );
-
-					function isLight() {
-
-						return light !== undefined;
-
-					}
-					this.add = function ( positionCur ) {
-
-						position = positionCur || position;
-						if ( !isLight() ) {
-
-							light = new THREE.PointLight( 0xffffff, 1 );
-							light.position.copy( position );
-							light.name = strLight;
-							scene.add( light );
-
-						}// else console.error( 'duplicate ' + strLight );
-						return light;
-
-					};
-					this.remove = function () {
-
-						if ( light == undefined )
-							return;
-						scene.remove( light );
-						//delete light;//Parsing error: Deleting local variable in strict mode
-						light = undefined;
-
-					};
-					this.controls = function ( group, folder, scales, folderName ) {
-
-						if ( folder === undefined )
-							return;
-
-						const fLight = folder.addFolder( folderName || lang.light );
-						var lightSource;
-
-						//displayLight
-						dat.controllerNameAndTitle( fLight.add( { display: false }, 'display' ).onChange( function ( value ) {
-
-							if ( value ) {
-
-								function getPoints( pointVerticesSrc, color ) {
-
-									var geometry = Array.isArray( pointVerticesSrc ) ?
-										new THREE.BufferGeometry().setFromPoints( pointVerticesSrc ) : pointVerticesSrc;
-									var threshold = 0.05 * options.scale;
-									return new THREE.Points( geometry,
-										new THREE.PointsMaterial( {
-
-											color: color === undefined ? 0xffffff : color,
-											//map: texture,
-											size: threshold,
-											alphaTest: 0.5
-
-										} ) );
-
-								}
-								lightSource = getPoints( [light.position] );
-								group.add( lightSource );
-
-							} else {
-
-								group.remove( lightSource );
-								//delete lightSource;//Parsing error: Deleting local variable in strict mode
-								lightSource = undefined;
-
-							}
-
-						} ), lang.displayLight, lang.displayLightTitle );
-
-						//move light
-						function guiLightAxis( axesName ) {
-
-							const scale = scales[axesName];
-							if ( !scale )
-								return;
-							controllers[axesName] =
-								fLight.add( light.position, axesName, scale.min * multiplier, scale.max * multiplier )
-									.onChange( function ( value ) {
-
-										if ( lightSource === undefined )
-											return;
-
-										const i = 0,
-											itemSize = lightSource.geometry.attributes.position.itemSize,
-											point = new THREE.Vector3().fromArray( lightSource.geometry.attributes.position.array, i * itemSize );
-										point[axesName] = value;
-										point.toArray( lightSource.geometry.attributes.position.array, i * itemSize );
-//										lightSource.geometry.attributes.position.array[axesId] = value;
-										lightSource.geometry.attributes.position.needsUpdate = true;
-
-									} );
-							dat.controllerNameAndTitle( controllers[axesName], scale.name );
-
-						}
-						guiLightAxis( 'x' );
-						guiLightAxis( 'y' );
-						guiLightAxis( 'z' );
-
-						var restore = {
-
-							restore: function () {
-
-								controllers.x.setValue( position.x );
-								controllers.y.setValue( position.y );
-								controllers.z.setValue( position.z );
-
-							}
-						};
-						dat.controllerNameAndTitle( fLight.add( restore, 'restore' ), lang.defaultButton, lang.restoreLightTitle );
-
-					};
-					return this;
-
-				};
-*/
 				const pointLight1 = new pointLight( scene, {
 
 					options: options, 
 					position: new THREE.Vector3( 2 * options.scale, 2 * options.scale, 2 * options.scale ),
 
 				} );
-//				pointLight1.add( new THREE.Vector3( 2 * options.scale, 2 * options.scale, 2 * options.scale ) );
-//				const pointLight2 = new pointLight( options, scene, new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ) );
 				const pointLight2 = new pointLight( scene, {
 
 					options: options, 
 					position: new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ),
 
 				} );
-//				pointLight2.add( new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ) );
-/*				
-				options.raycaster.addParticle = function ( item ) {
 
-					if ( raycaster.stereo !== undefined )
-						raycaster.stereo.addParticle( item );
-
-				}
-				options.raycaster.removeParticle = function ( item ) {
-
-					if ( raycaster.stereo !== undefined )
-						raycaster.stereo.removeParticle( item );
-
-				}
-*/
 				//
 
 				//dat-gui JavaScript Controller Library
@@ -839,11 +543,6 @@ class MyThree {
 
 				}
 
-				//My custom controller for playing of 3D objects.
-//				if ( options.playerOptions !== false ) options.playerOptions = options.playerOptions || {};
-//				if ( options.player !== false ) {
-
-//				player =
 				new Player( group, {
 
 					onSelectScene: function ( index, t ) {
@@ -854,7 +553,6 @@ class MyThree {
 
 					},
 					options: options,
-//						player: options.playerOptions,
 					cameraTarget: { camera: camera, },
 					onChangeScaleT: function ( scale ) {
 
@@ -865,21 +563,13 @@ class MyThree {
 					},
 
 				} );
-//				if ( gui !== undefined )
 				if ( options.player ) new options.player.PlayController();// gui );//, getLanguageCode );
 
-//				} 
 				if ( options.dat.gui ) {
 
 					fOptions = options.dat.gui.addFolder( lang.settings );
 					if ( options.player )
-						options.player.gui( fOptions );/*, {
-
-							getLanguageCode: getLanguageCode,
-							cookie: options.dat.cookie,
-							cookieName: '_' + getCanvasName(),
-
-						} );*/
+						options.player.gui( fOptions );
 
 				}
 
@@ -887,11 +577,6 @@ class MyThree {
 				if ( fOptions )
 					SpriteTextGui( scene, options, {
 
-/*
-						getLanguageCode: getLanguageCode,
-						cookie: options.dat.cookie,
-						cookieName: getCanvasName(),
-*/
 						//settings: { zoomMultiplier: 1.5, },
 						folder: fOptions,
 						options: {
@@ -978,129 +663,29 @@ class MyThree {
 						},
 
 					},
-//					stereoEffect: stereoEffect,
 					options: options,
-//					player: player,
 
 				} );
-/*
-				if ( options.canvasMenu ) {
-
-					if ( ( canvasMenu === undefined ) ) {
-
-						canvasMenu = new CanvasMenu( renderer, {
-
-//							getLanguageCode: getLanguageCode,
-//							stereoEffect: stereoEffect,
-//							player: options.player,
-							options: options,
-							fullScreen: {
-
-								camera: camera,
-								fullScreen: !options.canvas || ( options.canvas.fullScreen !== false ),
-								THREE: THREE,
-								onFullScreenToggle: function ( fullScreen ) {
-
-									rendererSizeDefault.onFullScreenToggle( fullScreen );
-
-								},
-								onFullScreen: function ( fullScreen, elContainer ) {
-
-									rendererSizeDefault.onFullScreenToggle( !fullScreen );
-
-								},
-
-							},
-
-						} );
-//						options.canvasMenu = canvasMenu;
-
-					} else canvasMenu.setPlayer( options.player );
-
-				} else if ( !options.canvas || ( options.canvas.fullScreen !== false ) ) {
-
-					new CreateFullScreenSettings( THREE, renderer, camera,
-						{
-
-
-						} ).setFullScreen();
-		
-				}
-*/
 				renderer.setSize( ( options.canvas !== undefined ) && ( options.canvas.width !== undefined ) ? options.canvas.width : canvas.clientWidth,
 					( options.canvas !== undefined ) && ( options.canvas.height !== undefined ) ? options.canvas.height : canvas.clientHeight );
 
 				//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
 				options.createOrbitControls( camera, renderer, scene );
-//				setOptions.orbitControls( camera, renderer, scene, options );
-/*
-				if ( options.orbitControls !== false )  options.orbitControls = options.orbitControls || {};
-				if ( options.orbitControls ) {
-
-					const settings = options.orbitControls;
-					controls = new OrbitControls( camera, renderer.domElement );
-					if ( controls.settings ) console.error( 'OrbitControls.settings = ' + controls.settings );
-					controls.settings = settings;
-					controls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
-					controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-					controls.update();
-					options.orbitControls = controls;//for cameraTarget
-//					if ( typeof Player !== 'undefined' ) Player.orbitControls = controls;//for cameraTarget
-
-				}
-*/				
 
 				// helper
 
 				new AxesHelper( scene, options );
-/*
-				if ( options.axesHelper !== false )  options.axesHelper = options.axesHelper || {};
-				if ( options.axesHelper ) {
-
-//					var cookieName = getCanvasName();
-					const gui = options.axesHelper.gui
-					//options.scales.color = 'rgba(255, 255, 255, 0.5)'
-					options.axesHelper = new AxesHelper( scene, {
-
-						scene: { position: scene.position, },
-//						color: 'rgba(255, 255, 255, 0.5)',
-						scales: options.scales,
-
-					} );
-//					options.axesHelper = axesHelper;
-					options.axesHelper.options.gui = gui;
-
-					optionsScene.position = scene.position;
-
-					if ( controls !== undefined )
-						controls.update();//if scale != 1 and position != 0 of the screen, то после открытия canvas положение картинки смещено. Положение восстанавливается только если подвигать мышью
-				}
-*/
-
-//frustumPoints				if ( options.arrayCloud )//Array of points with cloud
 
 				if ( fOptions ) {
 				
 					new GuiSelectPoint( options, {
 
-/*
-						axesHelper: options.axesHelper,
-						options: options,
-						getLanguageCode: getLanguageCode,
-*/
 						cameraTarget: {
 
 							camera: camera,
 							orbitControls: options.orbitControls,//controls,
 
 						},
-/*						
-						setIntersection: function ( _intersection ) {
-
-							intersection = _intersection;
-
-						},
-*/						
 						//displays the trace of the movement of all points of the mesh
 						pointsControls: function ( fPoints, dislayEl, getMesh ) { },
 						//displays the trace of the point movement
@@ -1113,15 +698,11 @@ class MyThree {
 
 				defaultPoint.size = options.point.size;
 
-//				var pointName = 'Point_' + getCanvasName();
 				const pointName = options.dat.getCookieName('Point');
 				if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
 
-//				options.spriteText = options.spriteText || {};
-
 				if ( createXDobjects ) createXDobjects( group, options );
 
-//				options.createOrbitControls( camera, renderer, scene );
 				if ( options.frustumPoints ) options.frustumPoints.create( renderer );
 
 				//На случай когда указана точка, за которой следит камера и когда Player не создан
@@ -1140,70 +721,18 @@ class MyThree {
 				} );
 				if ( options.dat.gui ) {
 
-/*
-					//THREE.AxesHelper gui
-					if ( ( options.scene === undefined ) && ( typeof scene !== 'undefined' ) )
-						options.scene = scene;
-*/
-/*						
-					if ( ( options.axesHelper !== false ) && ( options.axesHelper.options.gui !== false ) ) {
-
-						AxesHelperGui( options.axesHelper, fOptions, {
-
-							cookie: options.dat.cookie,
-							cookieName: getCanvasName(),
-							getLanguageCode: getLanguageCode,
-
-						} );
-					}
-*/					
 					AxesHelperGui( options, fOptions );
-/*Непонятно зачем это
-					console.warn( 'Проверить SpriteTextGui' );
-					if ( options.spriteText && options.spriteText.gui ) {
 
-						SpriteTextGui( group, options, {
-
-							parentFolder: fOptions,
-							options: options.spriteText,
-
-						} );
-
-					}
-*/
 					new MoveGroupGui( group, options, {
 
 						folder: fOptions,
-						//lang: { moveGroup: 'ddddddd' },
 
-						}/*, {
-
-						cookie: options.dat.cookie,
-						cookieName: getCanvasName(),
-						getLanguageCode: getLanguageCode,
-						lang: { moveGroup: lang.moveGroup, },
-						guiSelectPoint: options.guiSelectPoint,
-						scales: options.scales,
-						axesHelper: options.axesHelper,
-
-					}*/ );
+						} );
 
 					//OrbitControls gui
 
-//					if ( ( options.orbitControls !== undefined ) && ( options.orbitControls.gui ) )
 					if ( options.orbitControls !== false ) {
 
-/*
-						if ( options.orbitControls.gui !== false ) options.orbitControls.gui = options.orbitControls.gui || true;
-						if ( options.orbitControls.gui )
-							Player.orbitControlsGui = new OrbitControlsGui( fOptions, controls, {
-						
-								getLanguageCode: getLanguageCode,
-								scales: options.scales,
-						
-							} );
-						options.orbitControls = controls;
-*/
 						new OrbitControlsGui( options, fOptions );
 
 					}
@@ -1219,51 +748,7 @@ class MyThree {
 					pointLight2.controls( { group: group, folder: fOptions, folderName: lang.light + ' 2' } );
 
 					//point
-/*
-					function FolderPoint( folder, point, defaultPoint, setSize, PCOptions ) {
 
-						PCOptions = PCOptions || {};
-
-						PCOptions.min = PCOptions.min || 0.01;
-						PCOptions.max = PCOptions.max || 1;
-						PCOptions.settings = PCOptions.settings || {};
-						PCOptions.settings.offset = PCOptions.settings.offset || 1;
-						PCOptions.step = PCOptions.step || 0.01;
-
-						var fPoint = folder.addFolder( lang.pointSettings ),
-							fSize = fPoint.addFolder( lang.size );
-						dat.folderNameAndTitle( fSize, lang.size, lang.sizeTitle );
-						this.display = function ( display ) { fPoint.domElement.style.display = display; }
-
-						fSize.add( new PositionController( function ( shift ) {
-
-							setSize( point.size + shift );
-
-						}, PCOptions//{ offset: 0.01, min: 0.01, max: 0.1, step: 0.01 }
-						) );
-
-						//size
-						this.size = dat.controllerZeroStep( fSize, point, 'size', function ( value ) {
-
-							setSize( value );
-
-						} );
-						dat.controllerNameAndTitle( this.size, lang.size, lang.sizeTitle );
-
-						//point default button
-						dat.controllerNameAndTitle( fPoint.add( {
-
-							defaultF: function ( value ) {
-
-								setSize( defaultPoint.size );
-
-							},
-
-						}, 'defaultF' ), lang.defaultButton, lang.defaultPointTitle );
-
-					}
-*/
-//					var folderPoint = new FolderPoint( fOptions, options.point, function ( value )
 					const folderPoint = new FolderPoint( options.point, function ( value ) {
 
 						if ( value === undefined )
@@ -1287,87 +772,16 @@ class MyThree {
 
 							folder: fOptions,
 							defaultPoint: defaultPoint,
-/*
-							point: options.point,
-							PCOptions: {
-
-								settings: { offset: 1 }
-
-							},
-*/							
-//							getLanguageCode: getLanguageCode,
 
 					} )
 
 					//Frustum points
 					if ( options.frustumPoints )// && options.dat.guiFrustumPoints )
-						options.frustumPoints.gui( fOptions );/*, {
+						options.frustumPoints.gui( fOptions );
 
-							getLanguageCode: getLanguageCode,
-							cookie: cookie,
-
-						} );*/
-/*
-					//default button
-					camera.userData.default.setDefault = function(){
-
-						camera.position.copy( camera.userData.default.options.position );
-						scene.position.copy( optionsScene.position );
-						//scene.position.add( options.axesHelper.position );
-//						scene.position.add( options.scene.position );
-						//scene.position.copy( options.scene.position );
-						if( options.orbitControls !== false ) {
-
-							options.orbitControls.target = new THREE.Vector3();
-							options.orbitControls.object.position.copy( camera.position );
-							options.orbitControls.update();
-
-						}
-						
-					}
-					dat.controllerNameAndTitle( options.dat.gui.add( {
-						defaultF: function ( value ) {
-
-							options.player.setTime( options.playerOptions.min );
-
-							camera.position.copy( camera.userData.default.options.position );
-							scene.position.copy( optionsScene.position );
-							//scene.position.add( options.axesHelper.position );
-	//						scene.position.add( options.scene.position );
-							//scene.position.copy( options.scene.position );
-							if( options.orbitControls !== false ) {
-
-								options.orbitControls.target = new THREE.Vector3();
-								options.orbitControls.object.position.copy( camera.position );
-								options.orbitControls.update();
-
-							}
-
-						},
-
-					}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
-*/					
 					options.restoreSceneController( camera, scene );
 
 				}
-
-				//raycaster
-/*Сейчас использую Options.raycaster.EventListeners.addParticle
-				group.children.forEach( function ( item ) {
-
-					if ( item.userData.raycaster !== undefined ) {
-
-						if ( raycaster.stereo !== undefined ) {
-
-							if ( !raycaster.stereo.isAddedToParticles( item ) )//Если добавляются точки myPoints то в них particle уже добавлен
-								raycaster.stereo.addParticle( item );
-
-						}
-
-					}
-
-				} );
-*/				
 
 				//https://github.com/mrdoob/stats.js/
 				if ( options.stats !== undefined ) {
@@ -1407,62 +821,6 @@ class MyThree {
 					options.frustumPoints.update();
 
 			}
-/*
-			function onDocumentMouseMove( event ) {
-
-				if ( typeof raycaster !== 'undefined' ) {
-
-					if ( raycaster.stereo !== undefined )
-						raycaster.stereo.onDocumentMouseMove( event );
-					else {
-
-						raycaster.setFromCamera( mouse, camera );
-						intersects = raycaster.intersectObjects( group.children );
-						if ( intersects.length > 0 ) {
-
-							const intersection = intersects[0];
-							if (
-								intersection &&
-								intersection.object.userData.raycaster &&
-								intersection.object.userData.raycaster.onIntersection
-							) {
-
-								intersection.object.userData.raycaster.onIntersection( intersection, mouse );
-		//						intersectedObject = intersection.object;
-
-							}
-
-						}
-
-					}
-
-				}
-				if ( event.buttons != 1 )
-					return;
-
-				render();
-
-			}
-			function onDocumentMouseDown( event ) {
-
-				if ( typeof raycaster === 'undefined' )
-					return;
-				if ( raycaster.stereo !== undefined ) {
-
-					raycaster.stereo.onDocumentMouseDown( event );
-					return;
-
-				}
-				raycaster.setFromCamera( mouse, camera );
-				intersects = raycaster.intersectObjects( group.children );
-				if ( intersects.length > 0 ) {
-
-					Options.raycaster.onMouseDown( intersects[0], options );
-
-				}
-
-			}
-*/
 			function onObjectMouseDown( position, intersection ) {
 
 				if ( ( options.axesHelper !== undefined ) && ( intersection.object.type === "Points" ) )
@@ -1558,8 +916,6 @@ class MyThree {
 
 			}
 
-			//		var timeoutControls;
-
 			arrayCreates.shift();
 			var params = arrayCreates.shift();
 			if ( params === undefined )
@@ -1601,9 +957,6 @@ class MyThree {
 			mesh.userData.default.rotation.copy( mesh.rotation );
 
 		}
-//		options.getPoints = Player.getPoints;
-//		options.getColors = Player.getColors;
-//		options.getItemSize = Player.getItemSize;
 		onloadScripts();
 
 	}
@@ -1615,17 +968,11 @@ class MyThree {
 const lang = {
 
 	defaultButton: 'Default',
-//	defaultTitle: 'Restore Orbit controls settings.',
 
 	settings: 'Settings',
 	webglcontextlost: 'The user agent has detected that the drawing buffer associated with a WebGLRenderingContext object has been lost.',
 
 	light: 'Light',
-/*
-	displayLight: 'Display',
-	displayLightTitle: 'Display or hide the light source.',
-	restoreLightTitle: 'Restore position of the light source',
-*/
 
 	opacity: 'Opacity',
 
@@ -1636,119 +983,17 @@ switch ( getLanguageCode() ) {
 	case 'ru'://Russian language
 
 		lang.defaultButton = 'Восстановить';
-//		lang.defaultTitle = 'Восстановить положение осей координат по умолчанию.';
 		lang.name = 'Имя';
 		lang.settings = 'Настройки';
 		lang.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
 
 		lang.light = 'Свет';
-/*
-		lang.displayLight = 'Показать';
-		lang.displayLightTitle = 'Показать или скрыть источник света.';
-		lang.restoreLightTitle = 'Восстановить положение источника света';
-*/
 
 		lang.opacity = 'Непрозрачность';
 		break;
 
 }
-/*
-var spriteTextIntersectionName = 'spriteTextIntersection';
-function findSpriteTextIntersection( scene ) {
 
-	var spriteTextIntersection;
-	scene.children.forEach( function ( item ) {
-
-		if ( ( item.type === "Sprite" ) && ( item.name === spriteTextIntersectionName ) ) {
-
-			spriteTextIntersection = item;
-			return;
-
-		}
-
-	} );
-	return spriteTextIntersection;
-
-}
-*/
-/* * @namespace
- * @description Displaying points
- * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs points.geometry.attributes.position array
- * <pre>
- * THREE.Vector4: 4D point.
- * THREE.Vector3: 3D point. w = 1. Default is white color
- * THREE.Vector2: 2D point. w = 1, z = 0. Default is white color
- * Vector's x, y, z, w is position of the point.
- * Can be as:
- * float - position of the point.
- * [float] - array of positions of the point.
- * Function - position of the point is function of the t. Example: new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' )
- * Vector.w can be as THREE.Color. Example: new THREE.Color( "rgb(255, 127, 0)" )
- * if arrayFuncs.length === 0 then push new THREE.Vector3().
- * 
- * object: {
- *   vector: THREE.Vector4|THREE.Vector3|THREE.Vector2 - point position
- *   name: point name
- *   trace: true - Displays the trace of the point movement. Default is false
- *   cameraTarget: {} Camera look at selected point. See <a href="../../player/jsdoc/module-Player.html#~Player.cameraTarget.init" target="_blank">Player.cameraTarget.init</a>.
- * }
- * or
- * object: {
- *   x: x axis. Defauilt is 0.
- *   y: y axis. Defauilt is 0.
- *   z: z axis. Defauilt is 0.
- *   w: w axis. Defauilt is 0.
- * }
- * 
- * array: [
- *   0: x axis. Defauilt is 0.
- *   1: y axis. Defauilt is 0.
- *   2: z axis. Defauilt is 0.
- *   3: w axis. Defauilt is 0.
- * ]
- * </pre>
- * @param {object} options see <a href="module-MyThree-MyThree.html#MyThree" target="_blank">MyThree</a> <b>options</b> for details
- * @param {object} [pointsOptions] followed points options is availablee:
- * @param {number} [pointsOptions.tMin] start time. Uses for playing of the points. Default is 0.
- * @param {string} [pointsOptions.name] Name of the points. Used for displaying of items of the Select drop down control of the Meshes folder of the dat.gui. Default is "".
- * @param {object} [pointsOptions.shaderMaterial] {} - creates the THREE.Points with THREE.ShaderMaterial material.
- * <pre>
- * The size of the each point of the THREE.Points seems the same on canvas
- * because I reduce the size of the points closest to the camera and increase the size of the points farthest to the camera.
- * </pre>
- * @param {THREE.Vector3} [pointsOptions.position] position of the points. Default is new THREE.Vector3( 0, 0, 0 ).
- * <pre>
- * Vector's x, y, z is position of the points.
- * Can be as:
- * float - position of the points.
- * [float] - array of positions of the points.
- * Function - position of the points is function of the t. Example: new Function( 't', 'return 0.1 + t' )
- * </pre>
- * @param {THREE.Vector3} [pointsOptions.scale] scale of the points. Default is new THREE.Vector3( 1, 1, 1 ).
- * <pre>
- * Vector's x, y, z is scale of the points.
- * Can be as:
- * float - scale of the points.
- * [float] - array of scales of the points.
- * Function - scale of the points is function of the t. Example: new Function( 't', 'return 1.1 + t' )
- * </pre>
- * @param {THREE.Vector3} [pointsOptions.rotation] rotation of the points. Default is new THREE.Vector3( 0, 0, 0 ).
- * <pre>
- * Vector's x, y, z is rotation of the points.
- * Can be as:
- * float - rotation of the points.
- * [float] - array of rotations of the points.
- * Function - rotation of the points is function of the t. Example: new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )
- * </pre>
- * @param {boolean} [pointsOptions.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud. See options.getColors for details. Default is undefined.
- */
-/*
-MyThree.points = function ( arrayFuncs, group, options, pointsOptions ) {
-
-	MyPoints( arrayFuncs, group, { options: options, pointsOptions: pointsOptions } );
-
-}
-*/
 /** @namespace
  * @description Creating the new [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} and adding it into group.
  * @see <a href="../../myPoints/jsdoc/index.html" target="_blank">MyPoints</a>.
@@ -1798,12 +1043,6 @@ MyThree.limitAngles = function ( rotation ) {
 	limitAngle( 'z' );
 
 }
-
-/* * @namespace
- * @description Array of points, statically fixed in front of the camera.
- * @see <a href="../../FrustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a> class.
- */
-//MyThree.FrustumPoints = FrustumPoints;
 
 /** @namespace
  * @description 3D objects animation.

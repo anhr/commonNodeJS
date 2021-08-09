@@ -1226,7 +1226,55 @@ class Raycaster {
 		this.EventListeners = class {
 
 			/**
-			 * Create a mouse events listeners for [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance
+			 * Create a mouse events listeners for [Raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} instance.
+			 * <p>
+			 * The following events are listening.
+			 *	<ul>
+			 *		<li><b>mousemove</b>. Is fired at an element when a pointing device (usually a mouse) is moved while the cursor's hotspot is inside it.
+			 *			See [Element: mousemove event]{@link https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event}. </li>
+			 *		<li><b>pointerdown</b>. Is fired when a pointer becomes active. For mouse, it is fired when the device transitions from no buttons depressed to at least one button depressed. For touch, it is fired when physical contact is made with the digitizer. For pen, it is fired when the stylus makes physical contact with the digitizer.
+			 *			See [Document: pointerdown event]{@link https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event}. </li>
+			 *	</ul>
+			 * </p>
+			 * <p>
+			 * You can customize your 3D object for following events by add <b>raycaster</b> property into [Object3D.userData]{@link https://threejs.org/docs/index.html?q=mes#api/en/core/Object3D.userData}.
+			 *	<ul>
+			 *		<li><b>onIntersection</b>. Callback function that take as input the [intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}, and <b>mouse position</b>.
+			 *			Fires after intersection of the mouse pointer with a 3D object. </li>
+			 *		<li><b>onIntersectionOut</b>. Callback function.
+			 *			Fires if mouse pointer leaves of intersection with the 3D object.</li>
+			 *		<li><b>onMouseDown</b>. Callback function that take as input the [intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}.
+			 *			User has clicked over 3D object.</li>
+			 *	</ul>
+			 * </p>
+			 * <pre>
+			 * Example:<b>
+cube.userData.raycaster = {
+
+	onIntersection: function ( intersection, mouse ) {
+
+		if ( cube.userData.currentHex === undefined )
+			cube.userData.currentHex = cube.material.emissive.getHex();
+		cube.material.emissive.setHex( 0xff0000 );
+		Options.raycaster.onIntersection( intersection, options, group, camera, renderer );
+
+	},
+	onIntersectionOut: function () {
+
+		if ( cube.userData.currentHex !== undefined )
+			cube.material.emissive.setHex( cube.userData.currentHex );
+		cube.userData.currentHex = undefined;
+		Options.raycaster.onIntersectionOut( group, renderer );
+
+	},
+	onMouseDown: function ( intersection ) {
+
+		alert( 'Clicked over cube.' );
+
+	},
+
+}
+			 * </b></pre>
 			 * @param {THREE.Camera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera} instance
 			 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer} instance
 			 * @param {Object} [settings={}] the following settings are available
@@ -1259,6 +1307,8 @@ class Raycaster {
 
 				}
 
+				//Is fired at an element when a pointing device (usually a mouse) is moved while the cursor's hotspot is inside it.
+				//See https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event
 				window.addEventListener( 'mousemove', function ( event ) {
 
 					if ( raycaster.stereo !== undefined ) {
@@ -1340,6 +1390,8 @@ class Raycaster {
 				//ATTENTION!!! The 'mousedown' event is not fired you use new version of the OrbitControls.
 				//See "OrbitControls: Implement Pointer events." commit https://github.com/mrdoob/three.js/commit/1422e36e9facbdc5f9d86cf6b97b005a2723a24a#diff-3285de3826a51619836a5c9adc6bee74
 				//window.addEventListener( 'mousedown', function( event )
+				//is fired when a pointer becomes active. For mouse, it is fired when the device transitions from no buttons depressed to at least one button depressed. For touch, it is fired when physical contact is made with the digitizer. For pen, it is fired when the stylus makes physical contact with the digitizer.
+				//See https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event
 				window.addEventListener( 'pointerdown', function ( event ) {
 
 					if ( raycaster === undefined )

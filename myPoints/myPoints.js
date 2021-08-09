@@ -43,11 +43,11 @@ import Options from '../Options.js'
  * Add new particle into array of objects to check for intersection with the ray. See [THREE.Raycaster.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
  * @param {Function(particle)} [settings.options.raycaster.removeParticle] Callback function that take as input the <b>new THREE.Points</b>.
  * Remove particle from array of objects to check for intersection with the ray. See [THREE.Raycaster.intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} for details.
- * @param {Function(intersection, mouse)} [settings.options.raycaster.onIntersection] Callback function that take as input the <b>[intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}</b>, and <b>mouse position</b>.
+ * @param {Function(intersection, mouse)} [settings.options.raycaster.onIntersection] Callback function that take as input the <b>[intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} </b>, and <b>mouse position</b>.
  * Fires after intersection of the mouse pointer with a point.
  * @param {Function()} [settings.options.raycaster.onIntersectionOut] Callback function.
  * Fires if mouse pointer leaves of intersection with the point.
- * @param {Function(intersection)} [settings.options.raycaster.onMouseDown] Callback function that take as input the <b>[intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}</b>.
+ * @param {Function(intersection)} [settings.options.raycaster.onMouseDown] Callback function that take as input the <b>[intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} </b>.
  * User has clicked over point.
  * @param {object} [settings.pointsOptions={}] followed points options is availablee:
  * @param {FrustumPoints} [settings.pointsOptions.frustumPoints] Include this points into array of points with cloud. See <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a>.
