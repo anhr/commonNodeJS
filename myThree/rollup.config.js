@@ -68,7 +68,7 @@ export default {
     exports: 'named',
     file: './build/myThree.js',
     format: 'umd',
-    name: 'myThree',
+    name: 'MyThree',
     sourcemap: true,
     banner: banner
   }, {
