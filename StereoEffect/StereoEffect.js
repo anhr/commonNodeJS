@@ -763,6 +763,7 @@ function assign() {
 		 * @param {Object} [settings]
 		 * @param {Options} [settings.options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 		 * @param {THREE.PerspectiveCamera} settings.camera {@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera|PerspectiveCamera}
+		 * @param {THREE.Scene} [settings.scene] [Scene]{@link https://threejs.org/docs/index.html?q=Scene#api/en/scenes/Scene}
 		 * @param {StereoEffect} [settings.stereoEffect=no stereo effects] stereoEffect.
 		 * @param {THREE.WebGLRenderer} [settings.renderer=renderer parameter of THREE.StereoEffect] renderer. The {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer} displays your beautifully crafted scenes using WebGL.
 		 * @param {boolean} [settings.raycasterEvents=true] true - add raycaster events: mousemove and pointerdown.
@@ -886,39 +887,29 @@ function assign() {
 						) {
 
 							intersection.object.userData.raycaster.onIntersection( intersection, mouse );
-							intersectedObject = intersection.object;
+
+						} else {
+
+							if ( !settings.scene )
+								console.error( 'THREE.Raycaster.setStereoEffect(): settings.scene = ' + settings.scene );
+							else Options.raycaster.onIntersection( intersection, settings.options, settings.scene, settings.camera, renderer );
 
 						}
+						if ( intersectedObject && ( intersectedObject !== intersection.object ) )
+							console.log( 'intersectedObject' );
+						intersectedObject = intersection.object;
 
 					} else if ( intersectedObject ){
 
-						intersectedObject.userData.raycaster.onIntersectionOut();
-						intersectedObject = undefined;
-
-					}
-/*					
-					if ( intersectedObject && ( intersects.length === 0 ) ) {
-
-						intersectedObject.userData.raycaster.onIntersectionOut();
-						intersectedObject = undefined;
-
-					}
-					else if ( !intersectedObject ) {
-
-						var intersection = intersects[0];
 						if (
-							intersection &&
-							intersection.object.userData.raycaster &&
-							intersection.object.userData.raycaster.onIntersection
-						) {
-
-							intersection.object.userData.raycaster.onIntersection( intersection, mouse );
-							intersectedObject = intersection.object;
-
-						}
+							intersectedObject.userData.raycaster &&
+							intersectedObject.userData.raycaster.onIntersectionOut
+						) 
+							intersectedObject.userData.raycaster.onIntersectionOut();
+						else if ( settings.scene ) Options.raycaster.onIntersectionOut( settings.scene, renderer );
+						intersectedObject = undefined;
 
 					}
-*/					
 					return intersects.length > 0;
 
 				}

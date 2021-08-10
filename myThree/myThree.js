@@ -461,7 +461,7 @@ class MyThree {
 				options.stereoEffect = options.stereoEffect || {};
 				options.stereoEffect.rememberSize = true;//remember default size of the canvas. Resize of the canvas to full screen for stereo mode and restore to default size if no stereo effacts.
 				new StereoEffect( renderer, options );
-
+/*
 				const raycaster = new THREE.Raycaster();
 
 				//item.material.size is NaN if item.material is ShaderMaterial
@@ -474,10 +474,12 @@ class MyThree {
 						options: options,
 						renderer: renderer,
 						camera: camera,
+						scene: scene,
 						stereoEffect: options.stereoEffect,
 						raycasterEvents: false,
 
 					} );
+*/					
 				options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
 
 				function removeTraceLines() {

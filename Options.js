@@ -1299,6 +1299,7 @@ cube.userData.raycaster = {
 						options: settings.options,
 						renderer: renderer,
 						camera: camera,
+						scene: settings.scene,
 						stereoEffect: options.stereoEffect,
 						raycasterEvents: false,
 
