@@ -1448,7 +1448,7 @@ cube.userData.raycaster = {
 
 						const intersect = intersects[0], object = intersect.object;
 						if ( object.userData.raycaster && object.userData.raycaster.onIntersection )
-							object.userData.raycaster.onIntersection( intersect );
+							object.userData.raycaster.onIntersection( intersect, mouse );
 						else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
 						intersectedObject = object;
 
