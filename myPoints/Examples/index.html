@@ -68,7 +68,12 @@
 
 			} );
 */		
-		const eventListeners = new Options.raycaster.EventListeners( camera, renderer, { threshold: 0.1 } );
+		const eventListeners = new Options.raycaster.EventListeners( camera, renderer, {
+
+			threshold: 0.1,
+			scene: scene,
+
+		} );
 
 		if ( typeof OrbitControls !== 'undefined' ) {
 

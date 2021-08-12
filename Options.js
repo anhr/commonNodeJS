@@ -1017,11 +1017,14 @@ class Options {
 				get: function () {
 
 					if ( options.eventListeners ) return options.eventListeners;
+/*если я это оставлю, то не смогу определить, используется ли raycaster на этом canvas и нужно ли вызывать addParticle
+для проверки создать MyPoints на пустом canvas
 					return { addParticle: function(){
 
 						console.error( 'Options.eventListeners.addParticle: call new Options.raycaster.EventListeners(...) first.' );
 						
 					}, }
+*/					
 
 				},
 				set: function ( eventListeners ) {
@@ -1138,7 +1141,7 @@ class Raycaster {
 			var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
 			if ( spriteTextIntersection === undefined ) {
 
-
+				options = new Options( options );
 				const rect = options.spriteText.rect ? JSON.parse( JSON.stringify( options.spriteText.rect ) ) : {};
 				rect.displayRect = true;
 				rect.backgroundColor = 'rgba(0, 0, 0, 1)';
