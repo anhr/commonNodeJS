@@ -187,27 +187,26 @@
 
 			points.name = 'THREE.Points';
 
-			/*
-						points.userData.raycaster = {
+			points.userData.raycaster = {
 
-							onIntersection: function ( intersection, mouse ) {
+				onIntersection: function ( intersection, mouse ) {
 
-								options.raycaster.onIntersection( intersection, mouse );
+//					options.raycaster.onIntersection( intersection, mouse );
+					MyThree.Options.raycaster.onIntersection( intersection, options, group, options.camera, options.renderer );
 
-							},
-							onIntersectionOut: function ( scene ) {
+				},
+				onIntersectionOut: function ( scene ) {
 
-								options.raycaster.onIntersectionOut( scene );
+					MyThree.Options.raycaster.onIntersectionOut( group, options.renderer );
 
-							},
-							onMouseDown: function ( intersect ) {
+				},
+				onMouseDown: function ( intersect ) {
 
-								options.raycaster.onMouseDown( intersect, options );
+					MyThree.Options.raycaster.onMouseDown( intersect, options );
 
-							}
+				}
 
-						}
-			*/
+			}
 			points.userData.player = {
 
 				arrayFuncs: arrayFuncs,

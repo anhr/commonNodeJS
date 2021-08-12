@@ -458,8 +458,12 @@ class MyThree {
 
 				options.cursor = renderer.domElement.style.cursor;
 
-				options.stereoEffect = options.stereoEffect || {};
-				options.stereoEffect.rememberSize = true;//remember default size of the canvas. Resize of the canvas to full screen for stereo mode and restore to default size if no stereo effacts.
+				if ( options.stereoEffect !== false ) {
+
+					options.stereoEffect = options.stereoEffect || {};
+					options.stereoEffect.rememberSize = true;//remember default size of the canvas. Resize of the canvas to full screen for stereo mode and restore to default size if no stereo effacts.
+
+				}
 				new StereoEffect( renderer, options );
 /*
 				const raycaster = new THREE.Raycaster();

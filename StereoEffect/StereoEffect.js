@@ -860,20 +860,93 @@ function assign() {
 				}
 
 			}
-			function getIntersects() {
-
-				if ( particles === undefined )
-					return;
-				intersects = Array.isArray( particles ) ? raycaster.intersectObjects( particles ) : raycaster.intersectObject( particles );
-
-			}
-			var intersectedObject = undefined;
+//			var intersectedObject = undefined;
+//			const intersectedObjects = [];
 			function intersection( optionsIntersection ) {
 
 				if ( mouse === undefined )
 					return;//User has not moved mouse
 
 				optionsIntersection = optionsIntersection || settings;
+				function isIntersection() {
+
+					intersects = Options.raycaster.intersectionsInOut( particles, raycaster, renderer, mouse, settings );
+/*
+					function getIntersects() {
+
+						if ( particles === undefined )
+							return;
+						intersects = Array.isArray( particles ) ? raycaster.intersectObjects( particles ) : raycaster.intersectObject( particles );
+
+					}
+					getIntersects();
+					//console.log( 'intersects.length ' + intersects.length );
+					intersects.forEach( function ( intersection ) {
+
+						var boDetected = false;
+						intersectedObjects.forEach( function ( intersectedObject ) {
+
+							if ( intersectedObject.object === intersection.object ) {
+
+								boDetected = true;
+								return;
+
+							}
+
+						} );
+						if ( !boDetected ) {
+
+							//console.log( 'add ' + intersection.object.name );
+							intersectedObjects.push( intersection );
+
+						}
+						if (
+							intersection &&
+							intersection.object.userData.raycaster &&
+							intersection.object.userData.raycaster.onIntersection
+						) {
+
+							intersection.object.userData.raycaster.onIntersection( intersection, mouse );
+
+						} else {
+
+							if ( !settings.scene )
+								console.error( 'THREE.Raycaster.setStereoEffect(): settings.scene = ' + settings.scene );
+							else Options.raycaster.onIntersection( intersection, settings.options, settings.scene, settings.camera, renderer );
+
+						}
+
+					} );
+					intersectedObjects.forEach( function ( intersectedObject ) {
+
+						var boDetected = false;
+						intersects.forEach( function ( intersection ) {
+
+							if ( intersectedObject.object === intersection.object )
+								boDetected = true;
+								
+						} );
+						if ( !boDetected ) {
+
+							if (
+								intersectedObject.object.userData.raycaster &&
+								intersectedObject.object.userData.raycaster.onIntersectionOut
+							)
+								intersectedObject.object.userData.raycaster.onIntersectionOut();
+							else if ( settings.scene ) Options.raycaster.onIntersectionOut( settings.scene, renderer );
+							
+							//console.log( 'remove ' + intersectedObject.object.name );
+							intersectedObjects.splice( intersectedObjects.findIndex(v => v === intersectedObject), 1 );
+
+						}
+
+					} );
+					//console.log( 'intersectedObjects.length ' + intersectedObjects.length );
+					return intersects.length > 0;
+*/					
+
+				}
+/*
 				function isIntersection() {
 
 					getIntersects();
@@ -913,6 +986,7 @@ function assign() {
 					return intersects.length > 0;
 
 				}
+*/
 				if ( parseInt( stereoEffect.settings.spatialMultiplex ) !== spatialMultiplexsIndexs.Mono ) {
 
 					const mouseCur = mouse;
@@ -961,28 +1035,29 @@ function assign() {
 					intersection();
 
 				},
-				/**
+				/* *
 				 * [pointerdown]{@link https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event} event.
 				 * User has clicked over an object from the <b>particles</b> array.
 				 * @param {object} event
 				 */
+/*				 
 				onDocumentMouseDown: function ( event ) {
 
 					if ( stereoEffect.options.dat.mouseenter )
 						return;
 					if ( intersects && intersects.length > 0 ) {
 
-						if ( intersects[0].object.userData.raycaster ) {
+						const intersect = intersects[0];
+						if ( intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown ) {
 
-							const intersect = intersects[0];
-							if ( intersect.object.userData.raycaster.onMouseDown )
-								intersect.object.userData.raycaster.onMouseDown( intersect );
+							intersect.object.userData.raycaster.onMouseDown( intersect );
 
-						}
+						} else Options.raycaster.onMouseDown( intersect, settings.options );
 
 					}
 
 				},
+*/				
 				/**
 				 * <pre>
 				 * Available as <b>raycaster.stereo.isAddedToParticles( particle )</b>.

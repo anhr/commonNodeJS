@@ -1219,6 +1219,98 @@ class Raycaster {
 			*/
 
 		}
+		const intersectedObjects = [];
+		var intersects;
+		/**
+		 * @description Intersection of the mouse pointer in or out of a 3D object.
+		 * @param {Array} particles array of [Mechs]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or derived class objects to check for intersection with the ray.
+		 * See <a href="../../jsdoc/Options/Raycaster_EventListeners.html#addParticle" target="_blank">addParticle</a>.
+		 * @param {THREE.Raycaster} raycaster [Raycaster]{@link https://threejs.org/docs/index.html?q=Ray#api/en/core/Raycaster}
+		 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html?q=Renderer#api/en/renderers/WebGLRenderer}
+		 * @param {THREE.Vector2} mouse mouse position.
+		 * @param {Object} [settings={}] the following settings are available
+		 * @param {Options} [settings.options={}] <b>Options</b> instance
+		 * @param {THREE.Camera} settings.camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera} instance
+		 * @param {THREE.Scene} settings.scene [Scene]{@link https://threejs.org/docs/index.html?q=scene#api/en/scenes/Scene} instance.
+		 * @returns Array of interseted with ray 3D objects. 
+		 * See [intersectObjects]{@link https://threejs.org/docs/index.html?q=raycaster#api/en/core/Raycaster.intersectObjects}
+		 * and [intersectObject]{@link https://threejs.org/docs/index.html?q=raycaster#api/en/core/Raycaster.intersectObject}.
+		 */
+		this.intersectionsInOut = function ( particles, raycaster, renderer, mouse, settings = {} ) {
+
+			function getIntersects() {
+
+				if ( particles === undefined )
+					return;
+				intersects = Array.isArray( particles ) ? raycaster.intersectObjects( particles ) : raycaster.intersectObject( particles );
+
+			}
+			getIntersects();
+			//console.log( 'intersects.length ' + intersects.length );
+			intersects.forEach( function ( intersection ) {
+
+				var boDetected = false;
+				intersectedObjects.forEach( function ( intersectedObject ) {
+
+					if ( intersectedObject.object === intersection.object ) {
+
+						boDetected = true;
+						return;
+
+					}
+
+				} );
+				if ( !boDetected ) {
+
+					//console.log( 'add ' + intersection.object.name );
+					intersectedObjects.push( intersection );
+
+				}
+				if (
+					intersection &&
+					intersection.object.userData.raycaster &&
+					intersection.object.userData.raycaster.onIntersection
+				) {
+
+					intersection.object.userData.raycaster.onIntersection( intersection, mouse );
+
+				} else {
+
+					if ( !settings.scene )
+						console.error( 'THREE.Raycaster.setStereoEffect(): settings.scene = ' + settings.scene );
+					else Options.raycaster.onIntersection( intersection, settings.options, settings.scene, settings.camera, renderer );
+
+				}
+
+			} );
+			intersectedObjects.forEach( function ( intersectedObject ) {
+
+				var boDetected = false;
+				intersects.forEach( function ( intersection ) {
+
+					if ( intersectedObject.object === intersection.object )
+						boDetected = true;
+
+				} );
+				if ( !boDetected ) {
+
+					if (
+						intersectedObject.object.userData.raycaster &&
+						intersectedObject.object.userData.raycaster.onIntersectionOut
+					)
+						intersectedObject.object.userData.raycaster.onIntersectionOut();
+					else if ( settings.scene ) Options.raycaster.onIntersectionOut( settings.scene, renderer );
+
+					//console.log( 'remove ' + intersectedObject.object.name );
+					intersectedObjects.splice( intersectedObjects.findIndex( v => v === intersectedObject ), 1 );
+
+				}
+
+			} );
+			//console.log( 'intersectedObjects.length ' + intersectedObjects.length );
+			return intersects;
+
+		}
 
 		/**
 		 * @class
@@ -1284,7 +1376,7 @@ cube.userData.raycaster = {
 			 */
 			constructor( camera, renderer, settings = {} ) {
 
-				var intersects, intersectedObject;
+				var intersectedObject;//, intersects;
 				const THREE = three.THREE, mouse = new THREE.Vector2(), particles = [],
 					raycaster = new THREE.Raycaster(), options = settings.options || {};
 				raycaster.params.Points.threshold = settings.threshold !== undefined ? settings.threshold : 0.03;
@@ -1397,20 +1489,21 @@ cube.userData.raycaster = {
 
 					if ( raycaster === undefined )
 						return;
-
+/*
 					if ( raycaster.stereo !== undefined ) {
 
 						raycaster.stereo.onDocumentMouseDown( event );
 						return;
 
 					}
+*/					
 					if ( intersects && ( intersects.length > 0 ) ) {
 
 						const intersect = intersects[0];
 						if ( intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown ) {
 
 							intersect.object.userData.raycaster.onMouseDown( intersect );
-							if ( options && options.guiSelectPoint ) options.guiSelectPoint.select( intersect );
+//							if ( options && options.guiSelectPoint ) options.guiSelectPoint.select( intersect );
 
 						} else Options.raycaster.onMouseDown( intersect, options );
 
