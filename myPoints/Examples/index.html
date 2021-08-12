@@ -140,25 +140,6 @@
 					addParticle: function ( item ) {
 
 						eventListeners.addParticle( item );
-/*						
-						if ( raycaster.stereo !== undefined )
-							raycaster.stereo.addParticle( item );
-*/							
-
-					},
-					onIntersection: function ( intersection, mouse ) {
-
-						renderer.domElement.style.cursor = 'pointer';
-
-					},
-					onIntersectionOut: function () {
-
-						renderer.domElement.style.cursor = cursor;
-
-					},
-					onMouseDown: function ( intersection ) {
-
-						alert( 'You have clicked over point' );
 
 					},
 
@@ -169,6 +150,27 @@
 
 				position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
 				//shaderMaterial: false,
+				raycaster: {
+
+					/*
+					onIntersection: function ( intersection, mouse ) {
+
+						renderer.domElement.style.cursor = 'pointer';
+
+					},
+					onIntersectionOut: function () {
+
+						renderer.domElement.style.cursor = cursor;
+
+					},
+					*/
+					onMouseDown: function ( intersection ) {
+
+						alert( 'You have clicked over point' );
+
+					},
+
+				}
 
 			}
 

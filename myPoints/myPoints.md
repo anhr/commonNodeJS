@@ -179,9 +179,9 @@ const eventListeners = new Options.raycaster.EventListeners( camera, renderer, {
 
 } );
 ```
-Add new <b>raycaster</b> key into <b>settings.options</b> parameter of <b>MyPoints</b>.
+Add new <b>raycaster</b> key into <b>settings.options</b> and  <b>settings.pointsOptions</b> parameters of <b>MyPoints</b>.
 ```
-const cursor = renderer.domElement.style.cursor;
+//const cursor = renderer.domElement.style.cursor;
 MyPoints( arrayFuncs, scene, {
 
 	options: {
@@ -194,6 +194,16 @@ MyPoints( arrayFuncs, scene, {
 				eventListeners.addParticle( item );
 
 			},
+
+		}
+
+	},
+	pointsOptions: {
+
+		//shaderMaterial: false,
+		raycaster: {
+			
+			/*
 			onIntersection: function ( intersection, mouse ) {
 
 				renderer.domElement.style.cursor = 'pointer';
@@ -204,6 +214,7 @@ MyPoints( arrayFuncs, scene, {
 				renderer.domElement.style.cursor = cursor;
 
 			},
+			*/
 			onMouseDown: function ( intersection ) {
 
 				alert( 'You have clicked over point' );
@@ -212,7 +223,7 @@ MyPoints( arrayFuncs, scene, {
 
 		}
 
-	},
+	}
 
 } );
 ```

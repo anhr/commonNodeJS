@@ -411,7 +411,7 @@
 				groupMove.add( points );
 				points.name = 'no sizeAttenuation';
 				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
-				options.eventListeners.addParticle( points );
+				if ( options.eventListeners ) options.eventListeners.addParticle( points );
 /*
 				if ( typeof StereoEffect === "undefined" )
 					arrayintersectObjects.push( points );
@@ -587,7 +587,7 @@
 
 //						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
-						options.eventListeners.addParticle( points );
+						if ( options.eventListeners ) options.eventListeners.addParticle( points );
 
 					},
 */					
