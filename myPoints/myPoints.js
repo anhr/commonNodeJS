@@ -108,7 +108,8 @@ function MyPoints( arrayFuncs, group, settings ) {
 	settings = settings || {};
 //	settings.Player = settings.Player || Player;
 
-	const pointsOptions = settings.pointsOptions || {};
+	settings.pointsOptions = settings.pointsOptions || {};
+	const pointsOptions = settings.pointsOptions;
 //	settings.options = settings.options || ( pointsOptions.frustumPoints ? pointsOptions.frustumPoints.getOptions() : new Options() );
 	settings.options = settings.options || new Options();
 	var options = settings.options;// || {};
