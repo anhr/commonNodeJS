@@ -71,9 +71,15 @@ export default function AxesHelperGui( options, gui ) {
 /*	
 	if ( !gui || options.dat.moveScene === false )
 		return;
-*/		
-	if ( !gui || !options.axesHelper || ( options.dat === false ) || ( options.dat.axesHelperGui === false ) )
+*/
+	if ( !gui || ( options.dat === false ) || ( options.dat.axesHelperGui === false ) )
 		return;
+	if ( !options.axesHelper ) {
+
+		console.error( 'AxesHelperGui: create AxesHelper instance first' );
+		return;
+
+	}
 	
 	const THREE = three.THREE, dat = three.dat;//options.dat.dat;
 
