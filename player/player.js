@@ -1368,9 +1368,9 @@ Player.cameraTarget = class {
 				if ( cameraTarget.boLook !== undefined )
 					_cameraTarget.boLook = cameraTarget.boLook;
 				else _cameraTarget.boLook = cameraTargetDefault.boLook;
-			cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera;
-			}
 
+			}
+			cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera;
 			_cameraTarget.camera = cameraTarget.camera || cameraTargetDefault.camera;
 
 			//Если в программе не определены функции distanceToCamera (тоесть cameraTarget.distanceToCamera === undefined и cameraTargetDefault.distanceToCamera === undefined),
