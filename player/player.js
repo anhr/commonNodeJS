@@ -1368,7 +1368,7 @@ Player.cameraTarget = class {
 				if ( cameraTarget.boLook !== undefined )
 					_cameraTarget.boLook = cameraTarget.boLook;
 				else _cameraTarget.boLook = cameraTargetDefault.boLook;
-
+			cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera;
 			}
 
 			_cameraTarget.camera = cameraTarget.camera || cameraTargetDefault.camera;
@@ -1419,13 +1419,11 @@ Player.cameraTarget = class {
 		 * Change target.
 		 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
 		 * @param {number} i index of the point.
+		 * @param {Options} [options] See <a href="../../jsdoc/Options/index.html" target="_blank">Options</a>.
 		 */
-		this.changeTarget = function ( mesh, i ) {
+		this.changeTarget = function ( mesh, i, options ) {
 
 			assign();
-
-//			const cameraTarget = Player.cameraTarget.get();
-			const cameraTarget = _options.playerOptions.cameraTarget.get();
 
 			//Update cameraTarget
 			const func = !mesh.userData.player || ( typeof mesh.userData.player.arrayFuncs === "function" ) ? {} : mesh.userData.player.arrayFuncs[i];
@@ -1433,12 +1431,20 @@ Player.cameraTarget = class {
 				func.cameraTarget = { boLook: false };
 			setCameraTarget( func.cameraTarget );
 
-			if ( cameraTarget && cameraTarget.boLook ) {
+			_options = _options || options;
+//			const cameraTarget = Player.cameraTarget.get();
+			const cameraTarget = _options.playerOptions.cameraTarget.get( _options );
 
-				const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
-				cameraTarget.target = target;
+			if ( cameraTarget ) {
 
-			} else delete cameraTarget.target;
+				if ( cameraTarget && cameraTarget.boLook ) {
+
+					const target = getWorldPosition( mesh, new THREE.Vector3().fromArray( mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize ) );
+					cameraTarget.target = target;
+
+				} else delete cameraTarget.target;
+
+			}
 
 		}
 		/**
@@ -1751,7 +1757,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 //	options = options || {};
 //	if ( !options ) options = { dat: false };//не надо создавать еще одну версию new dat.GUI();
-//	options = new Options( options );
+	options = new Options( options );
 //	setOptions.setPlayerOptions( options );
 //	options.setPlayerOptions();
 	if ( t === undefined ) t = options.playerOptions.min;
@@ -1928,7 +1934,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 			if ( funcs.line && funcs.line.addPoint )
 				funcs.line.addPoint( mesh, i, color );
 			if ( funcs.cameraTarget && ( funcs.cameraTarget.boLook === true ) )
-				options.playerOptions.cameraTarget.changeTarget( mesh, i );
+				options.playerOptions.cameraTarget.changeTarget( mesh, i, options );
 //				Player.cameraTarget.changeTarget( mesh, i );
 
 		};
