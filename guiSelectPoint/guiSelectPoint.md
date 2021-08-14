@@ -114,8 +114,6 @@ Now you can use <b>GuiSelectPoint</b> in your javascript code.
 new GuiSelectPoint( options );
 options.guiSelectPoint.add();
 ```
-Note. Please create <b>GuiSelectPoint</b> instance after creating of the [AxesHelper](../../AxesHelper/jsdoc) instance if you use <b>AxesHelper</b>.
-
 Now you can see new "Meshes" folder in upper right corner of the canvas.
 
 Currently the "Select" dropdown menu is empty. Please create an object on your canvas after creating of <b>GuiSelectPoint</b>
