@@ -317,8 +317,6 @@ MyPoints( [
 	}//second point. White color.
 ], scene, { options: options } );
 ```
-Note! Create <b>MyPoints</b> before <b>Player.selectPlayScene( scene, { options: options } );</b>.
-
 Please create <b>MyPoints</b> before <b>Player.selectPlayScene( scene, { options: options } );</b> line
 if you want to use the <b>pointsOptions.shaderMaterial = false</b> key.
 ```
