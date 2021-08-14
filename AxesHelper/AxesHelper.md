@@ -386,16 +386,16 @@ For resolving of the issue, create <b>groupMove</b> and move all your meshes fro
 const groupMove = new THREE.Group();
 scene.add( groupMove );
 ```
-Move <b>groupMove</b> instead of the <b>scene</b>. Replace <b>scene</b> to <b>groupMove</b> in the <b>new MoveGroupGui</b>
+Move <b>groupMove</b> instead of the <b>scene</b>. Replace <b>scene</b> to <b>groupMove</b> in the <b>new MoveGroupGui</b>.
 ```
 new MoveGroupGui( groupMove, options );
 ```
-Remove points from scene and add it into groupMove.
+Remove points from scene and add it into <b>groupMove</b>.
 ```
 //scene.add( points );
 groupMove.add( points );
 ```
-Remove <b>MyPoints</b> from scene and add it into groupMove.
+Remove <b>MyPoints</b> from scene and add it into <b>groupMove</b>.
 ```
 MyPoints( [
 	[],//first point. Zero position. White color.
