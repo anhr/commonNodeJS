@@ -369,7 +369,7 @@ Add [guiSelectPoint](../../guiSelectPoint/jsdoc/index.html) into [dat.gui](https
 
 <a name="MoveGroup"></a>
 ### Move a group of meshes.
-Sometimes you need to move a group of meshes for better visualization. Use [MoveGroupGui](../../jsdoc/MoveGroupGui) for it.
+Sometimes you need to move a group of meshes for better visualization. Use [MoveGroupGui](../../jsdoc/MoveGroupGui/index.html) for it.
 
 Import <b>MoveGroupGui</b>.
 ```
