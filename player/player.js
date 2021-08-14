@@ -2735,12 +2735,18 @@ Player.selectPlayScene = function ( group, settings = {} ) {
 	group.userData.t = t;
 //	Player.selectMeshPlayScene( group, t, index, options );
 	Player.selectMeshPlayScene( group, { t: t, options: options } );
-	group.children.forEach( function ( mesh ) {
+	function selectMeshPlayScene( group ) {
 
-//		Player.selectMeshPlayScene( mesh, t, index, options );
-		Player.selectMeshPlayScene( mesh, { t: t, options: options } );
+		group.children.forEach( function ( mesh ) {
 
-	} );
+	//		Player.selectMeshPlayScene( mesh, t, index, options );
+			if ( mesh instanceof THREE.Group ) selectMeshPlayScene( mesh );
+			else Player.selectMeshPlayScene( mesh, { t: t, options: options } );
+
+		} );
+
+	}
+	selectMeshPlayScene( group );
 /*	
 	Player.cameraTarget.setCameraTarget( options );
 	const cameraTarget = Player.cameraTarget.get();
