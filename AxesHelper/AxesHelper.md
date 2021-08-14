@@ -123,7 +123,7 @@ The simplest <b>AxesHelper</b> has at least one axis.
 new AxesHelper( scene, options );
 ```
 
-Now we want to create <b>AxesHelper</b> 3 dimensional axes.
+Now we want to customize <b>AxesHelper</b>.
 
 Name of the <b>X</b> is 'time'. Number of <b>X</b> scale marks is 5.
 
@@ -131,7 +131,7 @@ Minimum <b>Y</b> is 0.
 
 See <b>options.scales</b> of the [AxesHelper](../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html) for details.
 
-Please edit <b>options</b> above for it.
+Please edit <b>options</b> for it.
 ```
 const options = new Options({
 
@@ -181,10 +181,11 @@ options.createOrbitControls( camera, renderer, scene );
 ## Use [Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster) for mouse picking (working out what objects in the 3d space the mouse is over).
 
 Please create an 3D object, for example points.
+* Use [THREE.Points](https://threejs.org/docs/index.html?q=Points#api/en/objects/Points).
 ```
 const arrayFuncs = [
 	new THREE.Vector3( 0.5, 0.5 ,0.5 ),
-	new THREE.Vector3( -0.4, -0.5 ,-0.5 )
+	new THREE.Vector3( -0.5, -0.5 ,-0.5 )
 ]
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( arrayFuncs ),
 	new THREE.PointsMaterial( {
@@ -197,7 +198,8 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( array
 	} ) );
 scene.add( points );
 ```
-Add [event listeners](../../jsdoc/Options/Raycaster_EventListeners.html) and [add points to particles](../../jsdoc/Options/Raycaster_EventListeners.html#addParticle).
+Add [event listeners](../../jsdoc/Options/Raycaster_EventListeners.html) and [add points to particles](../../jsdoc/Options/Raycaster_EventListeners.html#addParticle)
+after creating of <b>renderer</b>.
 ```
 options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene } );
 options.eventListeners.addParticle( points );
@@ -205,7 +207,8 @@ options.eventListeners.addParticle( points );
 For testing please move cursor over point. Cursor will be changing to 'pointer'.
 
 You can see a dot lines from point to axes if you click over point.
-* You can customize the <b>raycaster</b> events. For example you can display an alert message if user has click over point.
+
+You can customize the <b>raycaster</b> events. For example you can display an alert message if user has click over point.
 ```
 points.userData.raycaster = {
 
@@ -218,15 +221,43 @@ points.userData.raycaster = {
 
 }
 ```
-See more details 
+See <a href="../../jsdoc/Options/Raycaster_EventListeners.html" target="_blank">Raycaster#EventListeners</a> for more details.
+* Easier way for displaying points is using of <a href="../../myPoints/jsdoc/" target="_blank">MyPoints</a>.
+
+First, import <b>MyPoints</b>.
+```
+import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
+```
+Now you can use <b>MyPoints</b> in your javascript code.
+```
+MyPoints( [
+	[],//first point. Zero position. White color.
+	[ -0.5, 0.5, 0.5 ],//second point. White color.
+], scene, { options: options } );
+```
+Please call <b>MyPoints</b> after creating of <b>renderer</b> and <b>options.eventListeners</b>
+if you want to use the <b>pointsOptions.shaderMaterial = false</b> key.
+```
+MyPoints( [
+	[],//first point. Zero position. White color.
+	[ -0.5, 0.5, 0.5 ],//second point. White color.
+], scene, {
+	
+	options: options,
+	pointsOptions: { shaderMaterial: false, },
+	
+} );
+```
 <a name="CameraTarget"></a>
 ## Choose a point at which the camera is looking.
 
 First, import <b>Player</b>.
 ```
-import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
+import Player from './commonNodeJS/master/player/player.js';
 ```
 See [Player API](../../player/jsdoc/index.html#ImportPlayer) for details.
+
+* Point of <b>THREE.Points</b> is camers target.
 
 Please, add the <b>cameraTarget</b> key into <b>arrayFuncs</b> array and use <b>Player.getPoints</b> for get of the points array for creation of the <b>THREE.Points</b>.
 ```
@@ -251,14 +282,63 @@ const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
 
 	} ) );
 ```
-Define <b>points.userData.player</b> and call <b>Player.selectMeshPlayScene(...)</b>.
+Define <b>points.userData.player</b> and call <b>Player.selectPlayScene(...)</b>.
 ```
 points.userData.player = { arrayFuncs: arrayFuncs, }
-Player.selectPlayScene( scene );
+Player.selectPlayScene( scene, { options: options } );
 ```
-ATTENTION!!! Call <b>Player.selectPlayScene( scene );</b> after creation of the <b>OrbitControls</b> instance.
+ATTENTION!!! Call <b>Player.selectPlayScene( scene, { options: options } );</b> after creation of the <b>OrbitControls</b> instance in the <b>options.createOrbitControls( camera, renderer, scene );</b> line.
 
-Now you can see the second point in the center of the canvas. In other words, camera look at the second point.
+Now you can see the second point ( position is -0.5, -0.5 ,-0.5 ) in the center of the canvas. In other words, camera look at the second point.
+
+* Point of <b>MyPoints</b> is camera target.
+
+Please remove <b>cameraTarget</b> key from second point of <b>arrayFuncs</b>
+```
+const arrayFuncs = [
+	new THREE.Vector3( 0.5, 0.5 ,0.5 ),//First point
+	{
+
+		vector: new THREE.Vector3( -0.5, -0.5 ,-0.5 ),
+		//cameraTarget: { camera: camera, },
+
+	}//Second point
+]
+```
+and add <b>cameraTarget</b> to second point of <b>MyPoints</b>
+```
+MyPoints( [
+	[],//first point. Zero position. White color.
+	{
+
+		vector: new THREE.Vector3( -0.5, 0.5, 0.5 ),
+		cameraTarget: { camera: camera, },
+
+	}//second point. White color.
+], scene, { options: options } );
+```
+Note! Create <b>MyPoints</b> before <b>Player.selectPlayScene( scene, { options: options } );</b>.
+
+Please create <b>MyPoints</b> before <b>Player.selectPlayScene( scene, { options: options } );</b> line
+if you want to use the <b>pointsOptions.shaderMaterial = false</b> key.
+```
+MyPoints( [
+	[],//first point. Zero position. White color.
+	{
+
+		vector: new THREE.Vector3( -0.5, 0.5, 0.5 ),
+		cameraTarget: { camera: camera, },
+
+	}//second point. White color.
+], scene, {
+	
+	options: options,
+	pointsOptions: { shaderMaterial: false, },
+	
+} );
+```
+
+Now you can see the second point ( position is -0.5, 0.5, 0.5 ) of <b>MyPoints</b> in the center of the canvas. In other words, camera look at the second point.
 
 <a name="Gui"></a>
 ## Graphical user interface for changing settings.
@@ -266,65 +346,23 @@ Now you can see the second point in the center of the canvas. In other words, ca
 <a name="AxesHelperGui"></a>
 ### AxesHelper settings.
 
-Import <b>dat.gui</b>.
-```
-import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+Import [dat.gui](https://github.com/anhr/dat.gui).
 ```
 import { dat } from './commonNodeJS/master/dat/dat.module.js';
+three.dat = dat;
 ```
-Add <b>dat.dat</b> key into <b>options</b> parameter of the <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> class;
-```
-dat: {
+Add <a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelperGui</a> into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the <b>AxesHelper</b>.
 
-	dat: dat,
-
-}
-```
-
-Add <b>AxesHelperGui</b> into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the <b>AxesHelper</b>.
-[Example](../Examples/index.html)
 Import <b>AxesHelperGui</b>.
-```
-import AxesHelperGui from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelperGui.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 ```
 import AxesHelperGui from './commonNodeJS/master/AxesHelper/AxesHelperGui.js';
 ```
 
-Now you can use <b>AxesHelperGui</b> in your javascript code.
+Create <b>AxesHelperGui</b> instance after creating of <b>AxesHelper</b> instance.
 ```
-const gui =  new dat.GUI();
-AxesHelperGui( axesHelper.options, gui );
+AxesHelperGui( options );
 ```
 Now you can see the "Axes Helper" folder in the dat.gui.
-
-* If you want to localize the gui, please uncomment
-```
-getLanguageCode: getLanguageCode,
-```
-line above and import <b>getLanguageCode</b>.
-```
-import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import { getLanguageCode } from './commonNodeJS/master/lang.js';
-```
-* If you want save a custom <b>AxesHelper</b> settings to the cookie, please uncomment
-```
-cookie: cookie,
-```
-line in the <b>SpriteTextGui.gui(...)</b> above and import cookie.
-```
-import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
-import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
-```
 
 <a name="guiSelectPoint"></a>
 ### Select a point from the mesh.
@@ -337,31 +375,40 @@ Sometimes you need to move a group of meshes for better visualization. Use [Move
 
 Import <b>MoveGroupGui</b>.
 ```
-import MoveGroupGui from 'https://raw.githack.com/anhr/commonNodeJS/master/MoveGroupGui.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
-```
 import MoveGroupGui from './commonNodeJS/master/MoveGroupGui.js';
 ```
 Create the <b>MoveGroupGui</b> instance.
 ```
-new MoveGroupGui( scene, axesHelper.options, { folder: gui, } );
+new MoveGroupGui( scene, options );
 ```
-Now you can see the 'Move points' folder in the dat.gui.
+Now you can see the 'Move Group' folder in the dat.gui.
 You can move, scale and rotate the scene. Unfortunately, you also move the axes.
 For resolving of the issue, create <b>groupMove</b> and move all your meshes from scene to <b>groupMove</b>.
 ```
 const groupMove = new THREE.Group();
 scene.add( groupMove );
-
-//Remove points from scene
+```
+Remove points from scene and add it into groupMove.
+```
 //scene.add( points );
-
 groupMove.add( points );
 ```
+Remove <b>MyPoints</b> from scene and add it into groupMove.
+```
+MyPoints( [
+	[],//first point. Zero position. White color.
+	{
+
+		vector: new THREE.Vector3( -0.5, 0.5, 0.5 ),
+		cameraTarget: { camera: camera, },
+
+	}//second point. White color.
+], groupMove, { options: options } );
+```
+
 Move <b>groupMove</b> instead of the <b>scene</b>. Replace <b>scene</b> to <b>groupMove</b> in the <b>new MoveGroup</b>
 ```
-new MoveGroupGui( groupMove, axesHelper.options, { folder: gui, } );
+new MoveGroupGui( groupMove, options );
 ```
 
 Enjoy my code :)
