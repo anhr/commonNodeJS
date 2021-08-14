@@ -1047,7 +1047,7 @@ class Options {
 
 				get: function () {
 
-					if ( !options.guiSelectPoint ) console.error( 'Options.guiSelectPoint: Create new GuiSelectPoint( options ) first.' );
+//					if ( !options.guiSelectPoint ) console.error( 'Options.guiSelectPoint: Create new GuiSelectPoint( options ) first.' );
 					return options.guiSelectPoint;
 /*
 					if ( options.guiSelectPoint ) return options.guiSelectPoint;
