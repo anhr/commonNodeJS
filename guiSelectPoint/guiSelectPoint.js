@@ -99,12 +99,10 @@ class GuiSelectPoint {
 
 		//	GuiSelectPoint.setTHREE( _THREE );
 
-//		guiParams = guiParams || {};
-
-//		const axesHelper = guiParams.axesHelper,
-		const axesHelper = options.axesHelper,
-//			options = guiParams.options || ( axesHelper ? axesHelper.options : undefined ),// || new Options(),
-			guiSelectPoint = this,
+//если я создам крнстанту axesHelper то не будет вызываться функции axesHelper если экземляр AxesHelper будет создан позже GuiSelectPoint
+//Теперь new AxesHelper и new GuiSelectPoint можно вызывать в любом порядке.
+//		const axesHelper = options.axesHelper,
+		const guiSelectPoint = this,
 			THREE = three.THREE;
 
 		if ( !options.boOptions ) {
@@ -286,7 +284,7 @@ class GuiSelectPoint {
 			const mesh = cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh,
 				position = getObjectPosition( mesh, selectedPointIndex );
 
-			if ( ( axesHelper !== undefined ) )
+			if ( ( options.axesHelper !== undefined ) )
 
 				// && ( ( mesh.userData.isInfo === undefined ) || ( mesh.userData.isInfo() ) ) )
 				//если делать эту проверку, то будут неправильно отображаться пунктирные линии для frustumPoints точки
@@ -294,8 +292,8 @@ class GuiSelectPoint {
 				//когда в gui пользователь выбрал точку frustumPoints из списка '3D objects'(этот пункт будет недоступен когда я уберу frustumPoints из списка '3D objects' когда в настройках frustumPoints не стоит галочка info)
 				//и когда пользователь передвигает камеру с помощью orbitControls
 
-				if ( ( axesHelper !== false ) && ( axesHelper !== undefined ) )
-					axesHelper.exposePosition( { object: mesh, index: selectedPointIndex } );
+				if ( ( options.axesHelper !== false ) && ( options.axesHelper !== undefined ) )
+					options.axesHelper.exposePosition( { object: mesh, index: selectedPointIndex } );
 
 			if ( cWorld.x ) cWorld.x.setValue( position.x );
 			if ( cWorld.y ) cWorld.y.setValue( position.y );
@@ -912,8 +910,8 @@ class GuiSelectPoint {
 
 					display = none;
 					mesh = undefined;
-					if ( axesHelper !== undefined )
-						axesHelper.exposePosition( getObjectPosition( getMesh(), value ) );
+					if ( options.axesHelper !== undefined )
+						options.axesHelper.exposePosition( getObjectPosition( getMesh(), value ) );
 
 				} else {
 
@@ -1171,8 +1169,8 @@ class GuiSelectPoint {
 					_this.select( { object: getMesh(), index: value } );
 
 				}
-				if ( ( axesHelper !== false ) && ( axesHelper !== undefined ) )
-					axesHelper.exposePosition( getObjectPosition( getMesh(), value ) );
+				if ( ( options.axesHelper !== false ) && ( options.axesHelper !== undefined ) )
+					options.axesHelper.exposePosition( getObjectPosition( getMesh(), value ) );
 				displayPointControllers( display );
 
 			} );
@@ -1504,8 +1502,8 @@ class GuiSelectPoint {
 
 				} else {
 
-					scale = axesHelper === undefined ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
-						axesHelper.options ? axesHelper.options.scales[axisName] : undefined;
+					scale = options.axesHelper === undefined ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
+						options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
 					if ( scale )
 						controller = fPoint.add( {
 
@@ -1600,8 +1598,8 @@ class GuiSelectPoint {
 
 			function axesWorldGui( axisName ) {
 
-				const scale = axesHelper === undefined ? options.scales[axisName] :
-					axesHelper.options ? axesHelper.options.scales[axisName] : undefined;
+				const scale = options.axesHelper === undefined ? options.scales[axisName] :
+					options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
 				if ( !scale )
 					return;
 				const controller = dat.controllerZeroStep( fPointWorld, { value: scale.min, }, 'value' );
