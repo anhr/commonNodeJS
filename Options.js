@@ -1037,18 +1037,19 @@ class Options {
 
 			},
 
-			/* *
+			/**
 			 * getter and setter
 			 * <pre>
-			 * Use [OrbitControls]{@link https://threejs.org/docs/index.html?q=orb#examples/en/controls/OrbitControls}.
-			 * See <b>options.orbitControls</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+			 * Use <a href="../../guiSelectPoint/jsdoc/" target="_blank">GuiSelectPoint</a>.
 			 * </pre>
 			 **/
-/*Не отбражаются пунктирные линии до осей координат если полльзовател щелкнул на точку и если нет guiSelectPoint
 			guiSelectPoint: {
 
 				get: function () {
 
+					if ( !options.guiSelectPoint ) console.error( 'Options.guiSelectPoint: Create new GuiSelectPoint( options ) first.' );
+					return options.guiSelectPoint;
+/*
 					if ( options.guiSelectPoint ) return options.guiSelectPoint;
 					return {
 
@@ -1060,6 +1061,7 @@ class Options {
 						select: function () { },
 
 					}
+*/
 
 				},
 				set: function ( guiSelectPoint ) {
@@ -1071,7 +1073,6 @@ class Options {
 				}
 
 			},
-*/			
 
 		} ); 
 
