@@ -18,7 +18,7 @@ My JavaScript library for NodeJS.
 * colorpicker. Pure JavaScript color picker.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html). [Module version](https://raw.githack.com/anhr/ColorPicker/master/Example/modular.html).
-* dat.js Modify of the [dat.gui](https://github.com/dataarts/dat.gui) object. [Example](https://github.com/anhr/DropdownMenu).
+* dat.js Modify of the [dat.gui](https://github.com/dataarts/dat.gui) object.
 * DropdownMenu. node.js version of DropdownMenu
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/Examples/html/index.html).
