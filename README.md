@@ -18,7 +18,7 @@ My JavaScript library for NodeJS.
 * colorpicker. Pure JavaScript color picker.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html). [Module version](https://raw.githack.com/anhr/ColorPicker/master/Example/modular.html).
-* controllerPlay. PlayController class for using in my version of dat.gui(https://github.com/anhr/dat.gui) for playing of 3D objects in my projects.
+* controllerPlay. PlayController class for using in my version of [dat.gui](https://github.com/anhr/dat.gui) for playing of 3D objects in my projects.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/controllerPlay).
 * dat.js Modify of the [dat.gui](https://github.com/dataarts/dat.gui) object. [Example](https://github.com/anhr/DropdownMenu).
 * DropdownMenu. node.js version of DropdownMenu
