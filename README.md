@@ -39,7 +39,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 [Example](https://raw.githack.com/anhr/loadFileNodeJS/master/).
 * [loadScriptNodeJS](https://github.com/anhr/commonNodeJS/tree/master/loadScriptNodeJS). Load a JavaScript file.
 [Example](https://raw.githack.com/anhr/loadScriptNodeJS/master/index.html).
-* MoveGroup.js [MoveGroup](https://github.com/anhr/commonNodeJS/blob/master/MoveGroup.js) is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for change group's position, scale and rotation.
+* MoveGroup.js [MoveGroup](https://github.com/anhr/commonNodeJS/blob/master/MoveGroupGui.js) is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for change group's position, scale and rotation.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/index.html).
 * myPoints.js Array of my points.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/myPoints).
