@@ -188,9 +188,9 @@ class OrbitControlsGui {
 		*/
 		this.setTarget = function ( target ) {
 
-			targetX.setValue( target.x );
-			targetY.setValue( target.y );
-			targetZ.setValue( target.z );
+			if ( targetX ) targetX.setValue( target.x );
+			if ( targetY ) targetY.setValue( target.y );
+			if ( targetZ ) targetZ.setValue( target.z );
 
 		}
 
