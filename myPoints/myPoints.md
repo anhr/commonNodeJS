@@ -39,7 +39,7 @@ I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create
 <body>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
-		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> MyPoints.
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
 		- <a href="https://github.com/anhr/commonNodeJS/tree/master/myPoints" target="_blank" rel="noopener">MyPoints</a>.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
