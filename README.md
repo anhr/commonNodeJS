@@ -50,7 +50,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 [MyThree API](https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/index.html).
 * OrbitControlsGui.js [OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) graphical user interface.
-[OrbitControlsGui API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/OrbitControlsGui/index.html).
+[OrbitControlsGui API](https://raw.githack.com/anhr/commonNodeJS/master/OrbitControls/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
 * Player.js 3D objects animation.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/player).
