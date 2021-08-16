@@ -136,7 +136,7 @@ A <b>FrustumPoints</b> cloud will be visible around each new point.
 ```
 import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 ```
-Now you can use <b>MyPoints</b> for create points. For example:
+Add <b>MyPoints</b> after creating of <b>FrustumPoints</b> instance for create of points. For example:
 ```
 const arrayFuncs = [
 	[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGYW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
@@ -196,6 +196,11 @@ NOTE! More details clouds takes huge resources of your GPU. You can see delays o
 <a name="datGui"></a>
 ## Using dat.gui for manual change of the FrustumPoints settings.
 
+First, import [dat.gui](https://github.com/anhr/dat.gui).
+```
+import { dat } from './commonNodeJS/master/dat/dat.module.js';
+three.dat = dat;
+```
 Add <b>FrustumPoints</b> settings into gui after <b><i>options.frustumPoints.create( renderer );</i></b> line.
 ```
 options.frustumPoints.gui();
