@@ -30,7 +30,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 * functionsFolder. Adds the [Functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function) folder into [dat.gui](https://github.com/anhr/dat.gui).
 [functionsFolder API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/functionsFolder/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
-* getShaderMaterialPoints.js Get THREE.Points with THREE.ShaderMaterial material.
+* getShaderMaterialPoints.js Get [THREE.Points](https://threejs.org/docs/index.html?q=Poin#api/en/objects/Points) with [THREE.ShaderMaterial](https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial) material.
 [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
 * guiSelectPoint.js GuiSelectPoint is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for select a point from the mesh.
 [GuiSelectPoint API](https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html).
