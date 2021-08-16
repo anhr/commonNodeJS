@@ -291,6 +291,7 @@ class FrustumPoints
 					//Получаем пропорции:
 					//Если w = options.scales.w.min то paletteIndex = 0.
 					//Если w = options.scales.w.max то paletteIndex = 1.
+					if ( !options.scales.w ) options.scales.setW();
 					const max = options.scales.w.max, min = options.scales.w.min;
 					//w = ( w - min ) / ( max - min ) = w / ( max - min ) - min / ( max - min ) = w / (1+1) + 1 / (1+1) = w * 0.5 + 0.5 ;
 					uniforms.paletteA = { value: 1 / ( max - min ) };//0.5 };
