@@ -91,14 +91,6 @@
 
 			} );
 			const canvas = document.getElementById( 'canvas' );
-			/*
-						frustumPoints = typeof FrustumPoints !== 'undefined' ? new FrustumPoints( camera, scene, canvas, {
-
-							options: typeof options !== 'undefined' ? options : undefined,
-							//optionsShaderMaterial: {},
-
-						} ) : undefined;
-			*/
 			if ( typeof FrustumPoints !== 'undefined' ) new FrustumPoints( camera, scene, canvas, {
 
 				options: typeof options !== 'undefined' ? options : undefined,
@@ -114,28 +106,6 @@
 
 				options: typeof options !== 'undefined' ? options : undefined,
 				//cameraTarget: { camera: camera, },
-				/*
-				onChangeScaleT: function ( scale ) {
-
-					if ( player !== undefined )
-						player.onChangeScale( scale );
-					scene.children.forEach( function ( mesh ) {
-
-						if ( ( mesh.userData.player === undefined ) || ( mesh.userData.player.arrayFuncs === undefined ) || ( typeof mesh.userData.player.arrayFuncs === "function" ) )
-							return;
-						mesh.userData.player.arrayFuncs.forEach( function ( vector ) {
-
-							if ( vector.line === undefined )
-								return;
-							vector.line.remove();
-							vector.line = new Player.traceLine( options );
-
-						} );
-
-					} );
-
-				},
-				*/
 
 			} );
 			const arrayFuncs = [
@@ -206,13 +176,13 @@
 						pointsOptions: {
 
 							frustumPoints: typeof options.frustumPoints !== 'undefined' ? options.frustumPoints : undefined,
-							/*
-														onReady: function ( points ) {
+/*
+							onReady: function ( points ) {
 
-															if ( typeof player === 'object' ) player.play3DObject();
+								if ( typeof player === 'object' ) player.play3DObject();
 
-														}
-							*/
+							}
+*/
 						},
 						//Player: Player,
 						//						options: { frustumPoints: options.frustumPoints },
@@ -251,31 +221,8 @@
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
 			options.createOrbitControls( camera, renderer, scene );
-/*
-			if ( typeof OrbitControls !== 'undefined' ) {
-
-				controls = new OrbitControls( camera, renderer.domElement );
-				controls.target.set( 0, 0, 0 );
-				controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-				controls.update();
-
-			}
-*/
 
 			if ( options.frustumPoints ) options.frustumPoints.create( renderer );
-			/*
-						const gui = typeof dat !== 'undefined' ? new dat.GUI() : undefined;
-						if ( gui ) {
-
-							if ( frustumPoints )
-								frustumPoints.gui( gui, {
-
-										getLanguageCode: getLanguageCode,
-
-									} );
-
-						}
-			*/
 			if ( options.frustumPoints ) options.frustumPoints.gui();
 
 			window.addEventListener( 'resize', onWindowResize, false );

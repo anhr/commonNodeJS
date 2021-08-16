@@ -16,7 +16,8 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 ## Quick start
 
 * Create a folder on your localhost named as [folderName].
-* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+	* Download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
+	* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 * Add your web page into [folderName]. Example:
 ```
 <!DOCTYPE html>
@@ -25,19 +26,26 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 <head>
 	<title>FrustumPoints</title>
 
-	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/three.js/dev/examples/main.css">-->
 	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
 	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
 
 	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
-	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">-->
-	<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">
+	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">-->
 
+	<!--<script src="./three.js/dev/build/three.js"></script>-->
+	<!--<script src="./three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
 </head>
 <body>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
-		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> - FrustumPoints - Array of points, statically fixed in front of the camera.
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="./commonNodeJS/master/frustumPoints/jsdoc/index.html" target="_blank" rel="noopener">FrustumPoints</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
 	<div>
 		<canvas id="canvas"></canvas>
@@ -45,15 +53,16 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
-		//import * as THREE from './three.js/dev/build/three.module.js';
 
 		import three from './commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
-		var camera, scene, renderer, frustumPoints;
+		import Options from './commonNodeJS/master/Options.js'
+
+		var camera, scene, renderer, stereoEffect;
 
 		init();
 		animate();
@@ -61,9 +70,11 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 		function init() {
 
 			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 0.4 ) );
+			camera.position.copy( new THREE.Vector3( 0, 0, 0.4 ) );
 
 			scene = new THREE.Scene();
+
+			const options = new Options();
 
 			renderer = new THREE.WebGLRenderer( {
 
@@ -73,12 +84,11 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 			} );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
-			controls = new OrbitControls( camera, renderer.domElement );
-			controls.target.set( 0, 0, 0 );
-			controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-			controls.update();
-
 			window.addEventListener( 'resize', onWindowResize, false );
+
+			//Orbit controls allow the camera to orbit around a target.
+			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+			options.createOrbitControls( camera, renderer, scene );
 
 		}
 		function onWindowResize() {
@@ -117,8 +127,7 @@ import FrustumPoints from './commonNodeJS/master/frustumPoints/frustumPoints.js'
 
 ```
 const canvas = document.getElementById( 'canvas' );
-
-frustumPoints = new FrustumPoints( camera, scene, canvas );
+new FrustumPoints( camera, scene, canvas, { options: options, } );
 ```
 Currently your <b>FrustumPoints</b> is not visible. Please add points to highlight the <b>FrustumPoints</b> for visualisation.
 A <b>FrustumPoints</b> cloud will be visible around each new point.
@@ -138,15 +147,7 @@ const arrayFuncs = [
 		0//w. Palette index. Default range from 0 to 1. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 	]
 ];
-MyPoints( arrayFuncs, scene, {
-
-		pointsOptions: {
-
-			frustumPoints: frustumPoints,
-
-		}
-
-} );
+MyPoints( arrayFuncs, scene, { pointsOptions: { frustumPoints: options.frustumPoints, } } );
 ```
 Now you can see two points on your canvas.
 
@@ -156,12 +157,12 @@ Second point have palette index is 0 and blue color.
 
 If you use [THREE.Points]{@link https://threejs.org/docs/index.html?q=Poin#api/en/objects/Points} for creating of the points, plase call
 ```
-frustumPoints.pushArrayCloud( points );
+options.frustumPoints.pushArrayCloud( points );
 ```
 <b>points</b> is instance of the THREE.Points.
-* Next, create <b>frustumPoints</b> after creating of <b>MyPoints</b>, <b>renderer</b> and <b>OrbitControls</b>.
+* Next, create <b>frustumPoints</b> after creating of <b>MyPoints</b>, <b>renderer</b> and <b>options.createOrbitControls( camera, renderer, scene );</b>.
 ```
-frustumPoints.create( renderer );
+options.frustumPoints.create( renderer );
 ```
 Now you can see a cloud of the small dots around two points, you have created by <b>MyPoints</b>.
 Please move by mouse your points to near of the camera. You can see the cloud around points more details.
@@ -176,8 +177,9 @@ For example you can to display clouds around each point more details. Please cha
 
 <b>yCount</b> - The count of vertical points for each z level of the frustum of the camera's field of view.
 ```
-frustumPoints = new FrustumPoints( camera, scene, canvas, {
+new FrustumPoints( camera, scene, canvas, {
 
+	options: options,
 	optionsShaderMaterial: {
 
 		zCount: 100,
@@ -194,24 +196,10 @@ NOTE! More details clouds takes huge resources of your GPU. You can see delays o
 <a name="datGui"></a>
 ## Using dat.gui for manual change of the FrustumPoints settings.
 
-Add <b>FrustumPoints</b> settings into gui after <b><i>frustumPoints.create( renderer );</i></b> line.
+Add <b>FrustumPoints</b> settings into gui after <b><i>options.frustumPoints.create( renderer );</i></b> line.
 ```
-const gui =  new dat.GUI();
-frustumPoints.gui( gui );
+options.frustumPoints.gui();
 ```
-If you want to localize the gui, please import <b>getLanguageCode</b>.
-```
-import { getLanguageCode } from './commonNodeJS/master/lang.js';
-```
-and edit <b>frustumPoints.gui(...)</b>.
-```
-frustumPoints.gui( gui, {
-
-	getLanguageCode: getLanguageCode,
-
-} );
-```
-
 <a name="Player"></a>
 ## Add [Player](https://github.com/anhr/commonNodeJS/tree/master/player).
 
@@ -219,19 +207,22 @@ First, import <b>Player</b>.
 ```
 import Player from './commonNodeJS/master/player/player.js';
 ```
-Add <b>Player</b> after creating of the <b>scene</b> and <b>frustumPoints</b> and before creation of the points and <b>renderer</b>.
+Add <b>playerOptions</b> key to the <b>Options</b> parameter. See <b>settings.options.playerOptions</b> of the [Player](../../player/jsdoc/module-Player-Player.html) for details.
 ```
-const player = new Player( scene, {
+const options = new Options( {
 
-		frustumPoints: frustumPoints,
-		playerOptions: {
+	playerOptions: {
 
-			marks: 100,//Ticks count of the playing.
-			interval: 25,//Ticks per seconds.
+		marks: 100,//Ticks count of the playing.
+		interval: 25,//Ticks per seconds.
 
-		},
+	},
 
 } );
+```
+Add <b>Player</b> after creating of the <b>scene</b> and <b>frustumPoints</b> and before creation of the points and <b>renderer</b>.
+```
+new Player( scene, { options: options, } );
 ```
 Currently your player is not doing anything. Suppose you want to move point during playback. Plase edit <b>arrayFuncs</b> and <b>MyPoints</b> for it.
 ```
@@ -254,11 +245,11 @@ MyPoints( arrayFuncs, scene, {
 
 		pointsOptions: {
 
-			frustumPoints: frustumPoints,
+			frustumPoints: options.frustumPoints,
 			//shaderMaterial: false,
 			onReady: function ( points ) {
 
-				player.play3DObject();
+				options.player.play3DObject();
 
 			}
 		},
@@ -267,7 +258,7 @@ MyPoints( arrayFuncs, scene, {
 ```
 You can see above, the second point is moving from [-0.5, 0, 0] for t = 0 to [0.5, 0, 0] for t = 1. Color of the second point is changing from blue to white.
 
-Player is start playing after creation of the points: <b><i>player.play3DObject();</i></b>
+Player is start playing after creation of the points: <b><i>options.player.play3DObject();</i></b>. See <b>onReady</b> callback above.
 
 <a name="PointsColor"></a>
 ## Points color.
@@ -279,48 +270,44 @@ Please import <b>ColorPicker</b>.
 ```
 import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 ```
-and edit the new <b>FrustumPoints(...)</b> instance.
+and add <b>palette</b> key to <b>Options</b>.
 ```
-frustumPoints = new FrustumPoints( camera, scene, canvas, {
+const options = new Options( {
 
-	options: { palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ) },
-	optionsShaderMaterial: {
+	palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+	playerOptions: {
 
-		zCount: 100,
-		yCount: 100,
+		marks: 100,//Ticks count of the playing.
+		interval: 25,//Ticks per seconds.
 
-	}
+	},
 
 } );
 ```
 Color of the first point is green.
 
-Color of the second point is changing from red to green.
+Color of the second point is changing from red to green during playing.
 
 * Currently you use default range of the palette indexes from 0 to 1. You can set another range. For example from -1 to 1.
-Please add a <b>scales</b> key into <b>options</b> parameter of the <b>new FrustumPoints</b> for it.
+Please add a <b>scales</b> key into <b>Options</b> parameter for it.
 ```
-frustumPoints = new FrustumPoints( camera, scene, canvas, {
+const options = new Options( {
 
-	options: {
+	palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+	playerOptions: {
 
-		palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
-		scales: {
-
-			w: {
-
-				min: -1,
-				max: 1,
-
-			},
-
-		}
+		marks: 100,//Ticks count of the playing.
+		interval: 25,//Ticks per seconds.
 
 	},
-	optionsShaderMaterial: {
+	scales: {
 
-		zCount: 100,
-		yCount: 100,
+		w: {
+
+			min: -1,
+			max: 1,
+
+		},
 
 	}
 
