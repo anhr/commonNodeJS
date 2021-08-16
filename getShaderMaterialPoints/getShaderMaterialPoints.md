@@ -1,6 +1,6 @@
 # getShaderMaterialPoints.
 
-I use <b>getShaderMaterialPoints</b> in my [three.js](https://threejs.org/) projects for create THREE.Points with [THREE.ShaderMaterial](https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial) material.
+I use <b>getShaderMaterialPoints</b> in my [three.js](https://threejs.org/) projects for create [THREE.Points](https://threejs.org/docs/index.html?q=Poin#api/en/objects/Points) with [THREE.ShaderMaterial](https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial) material.
 
 ## Quick start
 
