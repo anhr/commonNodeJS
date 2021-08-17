@@ -44,12 +44,12 @@
 
     <section>
         <article><h1>Player.</h1>
-<p>I use <b>Player</b> in my <a href="https://threejs.org/">three.js</a> projects for 3D objects animation.</p>
+<p>I use <b>MyThree</b> in my <a href="https://threejs.org/">three.js</a> projects for displaying of my 3D objects in the canvas.</p>
 <h1>Content</h1>
 <ul>
 <li><a href="#Quickstart">Quick start.</a></li>
 <li><a href="#AddTrace">Add trace line of moving of the point during playing.</a></li>
-<li><a href="#PointColor">Point color.</a></li>
+<li><a href="#PointsColor">Points color.</a></li>
 <li><a href="#MovePoints">Move points position.</a></li>
 <li><a href="#ShaderMaterialPoints">Create <b>THREE.Points</b> with <b>THREE.ShaderMaterial</b>.</a></li>
 <li><a href="#MyPoints">Use <b>MyPoints</b> for create points.</a></li>
@@ -70,131 +70,63 @@
 <p><a name="QuickStart"></a></p>
 <h2>Quick start</h2>
 <ul>
-<li>Create a folder on your localhost named as [folderName].</li>
+<li>Create a folder on your localhost named as [folderName].
+<ul>
+<li>Download <a href="https://github.com/anhr/three.js">three.js</a> repository into your &quot;[folderName]\three.js\dev&quot; folder.</li>
+<li>Download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</li>
+</ul>
+</li>
 <li>Add your web page into [folderName]. Example:</li>
 </ul>
 <pre class="prettyprint source"><code>&lt;!DOCTYPE html>
 
 &lt;html>
 &lt;head>
-	&lt;title>Player&lt;/title>
+	&lt;title>MyThree&lt;/title>
 
-	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://threejs.org/examples/main.css&quot;>
-	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;three.js/dev/examples/main.css&quot;>-->
+	&lt;!--for mobile devices-->
+	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0&quot;>
 
-	&lt;!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
-	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>
-	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>-->
-
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
 &lt;/head>
 &lt;body>
 	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
 	&lt;div id=&quot;info&quot;>
-		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a> - Player - 3D objects animation.
-	&lt;/div>
-	&lt;div>
-		&lt;canvas id=&quot;canvas&quot;>&lt;/canvas>
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a>
+		- &lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/myThree&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>MyThree&lt;/a>.
+		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
 	&lt;/div>
 
 	&lt;script type=&quot;module&quot;>
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
-		//import * as THREE from './three.js/dev/build/three.module.js';
-
-		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
-		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
-		//Uncomment line below if you want use local commonNodeJS library in your project.
-		//import three from './commonNodeJS/master/three.js'
-		three.THREE = THREE;
-
-		var camera, scene, renderer, guiSelectPoint;
-
-		init();
-		animate();
-
-		function init() {
-
-			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
-
-			scene = new THREE.Scene();
-
-			renderer = new THREE.WebGLRenderer( {
-
-				antialias: true,
-				canvas: document.getElementById( 'canvas' ),
-
-			} );
-			renderer.setSize( window.innerWidth, window.innerHeight );
-
-			window.addEventListener( 'resize', onWindowResize, false );
-
-		}
-		function onWindowResize() {
-
-			camera.aspect = window.innerWidth / window.innerHeight;
-			camera.updateProjectionMatrix();
-
-			renderer.setSize( window.innerWidth, window.innerHeight );
-
-		}
-
-		function animate() {
-
-			requestAnimationFrame( animate );
-
-			renderer.render( scene, camera );
-
-		}
 
 	&lt;/script>
 &lt;/body>
 &lt;/html>
 </code></pre>
-<p>NOTE. Please include <code>three.THREE = THREE;</code> line into your project before use my <a href="https://github.com/anhr/commonNodeJS">library</a>. See example above.</p>
-<p><a name="ImportPlayer"></a>
-The easiest way to use <b>Player</b> in your code is import <b>Player</b> from <b>Player.js</b> file in your JavaScript module.
-<a href="https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html">Example</a>.</p>
-<pre class="prettyprint source"><code>import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
+<p>The easiest way to use <b>MyThree</b> in your code is import <b>MyThree</b> from <b>myThree.js</b> file in your JavaScript module.
+<a href="../../../../commonNodeJS/master/myThree/Examples/html/index.html">Example</a>.</p>
+<pre class="prettyprint source"><code>import MyThree from './commonNodeJS/master/myThree/myThree.js';
+//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.js';
+//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.min.js';
+MyThree.three.THREE = THREE;
 </code></pre>
-<p>or</p>
-<pre class="prettyprint source"><code>import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.js';
+<p>Now you can use <b>MyThree</b> in your javascript code.</p>
+<pre class="prettyprint source"><code>new MyThree();
 </code></pre>
-<p>or</p>
-<pre class="prettyprint source"><code>import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import Player from './commonNodeJS/master/player/player.js';
-</code></pre>
-<p>or</p>
-<pre class="prettyprint source"><code>import Player from './commonNodeJS/master/player/build/player.module.js';
-</code></pre>
-<p>or</p>
-<pre class="prettyprint source"><code>import Player from './commonNodeJS/master/player/build/player.module.min.js';
-</code></pre>
-<p>Now you can use <b>Player</b> in your javascript code.</p>
-<p>Add <b>Player</b> after creating of the <b>scene</b> and before creation of the <b>renderer</b>.</p>
-<pre class="prettyprint source"><code>const player = new Player( scene );
-</code></pre>
-<p>Currently your player is not doing anything. Please add a 3d object into canvas that you want to play with, for example <b>Points</b>:</p>
-<pre class="prettyprint source"><code>const arrayFuncs = [
-	new THREE.Vector3( 0, 0.5, 0.5 ),//First point
-	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
-];
-const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( arrayFuncs ),
-	new THREE.PointsMaterial( {
-
-		color: 0xffffff,
-		size: 0.2,
-
-	} ) );
-scene.add( points );
-</code></pre>
-<p>Suppose you want to move a point during playing. Change your code for this:</p>
+<p>Now you can see a small canvas. Inside of the canvas you can see:</p>
 <ul>
-<li>Edit <b>arrayFuncs</b></li>
+<li><a href="../../AxesHelper/jsdoc/index.html">AxesHelper</a> in the canvas center.</li>
+<li><a href="https://github.com/anhr/dat.gui">dat.gui</a> controllers in the upper left corner of the canvas.</li>
+<li><a href="../../canvasMenu/jsdoc/index.html">CanvasMenu</a> in the bottom of the canvas.</li>
 </ul>
 <pre class="prettyprint source"><code>const arrayFuncs = [
 	new THREE.Vector3(
@@ -205,7 +137,7 @@ scene.add( points );
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
-		Player.getPoints( arrayFuncs,{ group: scene } ),
+		Player.getPoints( arrayFuncs,{ group: scene, options: options } ),
 		Player.getItemSize( arrayFuncs ) ),
 	new THREE.PointsMaterial( {
 
@@ -221,7 +153,7 @@ scene.add( points );
 <p><b>t</b> is current time of the playing.</p>
 <p>Default start time <b>t = 0</b>, <b>a = 1</b>, <b>b = 0</b>.</p>
 <p>Read about <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a>.</p>
-<p>The <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html#~Player.getPoints">Player.getPoints(...)</a> in code above
+<p>The <a href="../../../../commonNodeJS/master/player/jsdoc/module-Player-Player.getPoints.html">Player.getPoints(...)</a> in code above
 returns an array of the vectors for <b>t = 0</b>.</p>
 <ul>
 <li>Define the <b>points.userData.player</b> object in your code for including of the points into <b>Player</b>.
@@ -236,24 +168,28 @@ Include <b>arrayFuncs</b> into <b>points.userData.player</b> object if you want 
 <ul>
 <li>Start playing.</li>
 </ul>
-<pre class="prettyprint source"><code>player.play3DObject();
+<pre class="prettyprint source"><code>options.player.play3DObject();
 </code></pre>
 <p>Attention! Please start playing after creation of all 3D objects, in current example after creating of the points.</p>
 <p>Update your web page. Now you can see moving a point on the canvas.</p>
 <p>Default, the playing ticks count is 10. You can change it.
 Also you can set your ticks per seconds and other setting.
-See <a href="module-Player.html">Player</a> for details.
-Please change your <b>Player</b> for it.</p>
-<pre class="prettyprint source"><code>const player = new Player( scene, {
+See <b>settings.options.playerOptions</b> parameter of the <a href="module-Player-Player.html">Player</a> for details.
+Please edit <b>options</b> for it.</p>
+<pre class="prettyprint source"><code>const options = new Options(
 
-		timeSettings: {
+	{
+
+		playerOptions: {//create a Player instance. 3D objects animation.
 
 			marks: 100,//Ticks count of the playing.
 			interval: 25,//Ticks per seconds.
 
 		},
 
-} );
+	}
+
+);
 </code></pre>
 <p><a name="AddTrace"></a></p>
 <h2>Add trace line of moving of the point during playing.</h2>
@@ -274,6 +210,8 @@ Please change your <b>Player</b> for it.</p>
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 </code></pre>
+<p>Note. Please add <b>options: options</b> key in the <b>settings</b> parameter
+of the new <a href="../../../../commonNodeJS/master/player/jsdoc/module-Player-Player.html">Player</a> for <b>trace</b> have effect. See above.</p>
 <p>You can see, first value of the array is object with</p>
 <p><b>{</p>
 <pre><code>vector: position of the point
@@ -281,13 +219,13 @@ trace: true - displays the trace of the point movement.
 </code></pre>
 <p>}</b></p>
 <p>Now you can see a trace line of the moving of the first point.</p>
-<p><a name="PointColor"></a></p>
-<h2>Point color.</h2>
+<p><a name="PointsColor"></a></p>
+<h2>Points color.</h2>
 <ul>
 <li>In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> key and add <b>vertexColors: THREE.VertexColors</b>.</li>
 </ul>
 <pre class="prettyprint source"><code>const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
-		Player.getPoints( arrayFuncs, { group: scene } ),
+		Player.getPoints( arrayFuncs,{ group: scene, options: options } ),
 		Player.getItemSize( arrayFuncs ) ),
 	new THREE.PointsMaterial( {
 
@@ -318,7 +256,7 @@ trace: true - displays the trace of the point movement.
 <ul>
 <li>Make the point color is function of the time.</li>
 </ul>
-<p>Change the <b>w</b> coordinate of the <b>THREE.Vector4</b> to <b>new Function( 't', 'return 1-2*t' )</b>.</p>
+<p>Change the <b>w</b> coordinate of the first point to <b>new Function( 't', 'return 1-2*t' )</b>.</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
 	{
 
@@ -334,37 +272,17 @@ trace: true - displays the trace of the point movement.
 	new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
 ];
 </code></pre>
-<p>Now you can see the color of the first point as white because white color is default color of the point
-and currently don't depend from the <b>w</b> coordinate value,
-because you do not defined a <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a> in your web page.
-<b>w</b> value is index of the palette. Please define palette.</p>
-<pre class="prettyprint source"><code>import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
-</code></pre>
-<p>Create the <b>options</b> object and define the <b>palette</b> key.</p>
-<pre class="prettyprint source"><code>const options = { palette: new ColorPicker.palette(), }
-</code></pre>
-<p>Add <b>selectPlaySceneOptions</b> key for your instance of the <b>player</b>.</p>
-<pre class="prettyprint source"><code>const player = new Player( scene, {
-
-		options: options,
-		timeSettings: {
-
-			marks: 100,//Ticks count of the playing.
-			interval: 25,//Ticks per seconds.
-
-		},
-
-} );
-</code></pre>
-<p>Now you can see the color of the first point as blue at the begin of playing and white at the end of playing
-because default range of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a> from 0 to 100.
+<p><b>w</b> patameter of the <b>new THREE.Vector4</b> of the <b>vector</b> key of the first point of the <b>arrayFuncs</b>
+is index of the <a href="../../../../commonNodeJS/master/colorpicker/jsdoc/">color palette</a>.
+Trace of the first point is circle.</p>
+<p>First half of the trace is alternation of colors from white to red, then green and blue
+because default palette is <a href="../../../../commonNodeJS/master/colorpicker/Example/index.html#BGYW">ColorPicker.paletteIndexes.BGYW</a> (blue, green, yellow, white) palette.</p>
+<p>Last half of the trace is white because default range of the <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a> from 0 to 1
+(See <a href="../../../../commonNodeJS/master/jsdoc/Options/Options.html#setW">Options.setW(options)</a> method for details).
 But current range of the <b>1-2 * t</b> function from 1 to -1 for default <b>t</b> range from 0 to 1.
 You can resolve this issue by change of the palette range.
 Replace <b>w</b> coordinate of the first point from <b>new Function( 't', 'return 1-2*t' )</b> to an object as wrote below.
-See <b>arrayFuncs</b> parameter of the <a href="module-Player.html#~Player.getPoints">Player.getPoints(...)</a> for details.</p>
+See <b>arrayFuncs</b> parameter of the <a href="module-Player-Player.getColors.html">Player.getColors(...)</a> for details.</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
 	{
 
@@ -387,29 +305,66 @@ See <b>arrayFuncs</b> parameter of the <a href="module-Player.html#~Player.getPo
 ];
 </code></pre>
 <ul>
-<li>Select a <a href="https://github.com/anhr/commonNodeJS/tree/master/colorpicker">color palette</a>.</li>
+<li>Select a <a href="../../../../commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker-ColorPicker.html#palette">color palette</a>.</li>
 </ul>
-<p>Default color palette index is <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional#BGYW">ColorPicker.paletteIndexes.BGYW</a>.
-You can select another palette. For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional">ColorPicker.paletteIndexes.bidirectional</a> palette.
-Edit the <b>palette</b> key of the <b>options</b> for it.</p>
-<pre class="prettyprint source"><code>const options = { palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ), }
+<p>Default color palette index is <a href="../../../../commonNodeJS/master/colorpicker/Example/index.html#BGYW">ColorPicker.paletteIndexes.BGYW</a>.
+You can select another palette. For example <a href="../../../../commonNodeJS/master/colorpicker/Example/index.html#Bidirectional">ColorPicker.paletteIndexes.bidirectional</a> palette.
+Add the <b>palette</b> key of the <b>options</b> for it.</p>
+<p>First, import <b>ColorPicker</b>.</p>
+<pre class="prettyprint source"><code>import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 </code></pre>
+<p>Then edit <b>options</b>.</p>
+<pre class="prettyprint source"><code>const options = new Options(
+
+	{
+
+		playerOptions: {//create a Player instance. 3D objects animation.
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+		palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+
+	}
+
+);
+</code></pre>
+<p>Now the color of the first point is changing from green to dark and red during playing.</p>
 <p>Also you can create your own custom palette.</p>
-<pre class="prettyprint source"><code>const options = { palette: new ColorPicker.palette( { palette: [
+<pre class="prettyprint source"><code>const options = new Options(
 
-	{ percent: 0, r: 0xff, g: 255, b: 0xff, },
-	{ percent: 10, r: 0, g: 0, b: 0, },
-	{ percent: 20, r: 0xff, g: 0, b: 0x0, },
-	{ percent: 30, r: 0x0, g: 255, b: 0x0, },
-	{ percent: 40, r: 0x0, g: 0, b: 0xff, },
-	{ percent: 80, r: 0x0, g: 0, b: 0xff, },
-	{ percent: 90, r: 0xff, g: 255, b: 0xff, },
+	{
 
-] } ), }
+		playerOptions: {//create a Player instance. 3D objects animation.
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+		palette: new ColorPicker.palette( { palette: [
+
+				{ percent: 0, r: 0xff, g: 255, b: 0xff, },
+				{ percent: 10, r: 0, g: 0, b: 0, },
+				{ percent: 20, r: 0xff, g: 0, b: 0x0, },
+				{ percent: 30, r: 0x0, g: 255, b: 0x0, },
+				{ percent: 40, r: 0x0, g: 0, b: 0xff, },
+				{ percent: 80, r: 0x0, g: 0, b: 0xff, },
+				{ percent: 90, r: 0xff, g: 255, b: 0xff, },
+
+			]
+			
+		} ),
+
+	}
+
+);
 </code></pre>
-<p>Currently your player use same palette for all meshes.
+<ul>
+<li>Currently your player use same palette for all meshes.
 You can set individual palette for any mesh. Add <b>palette</b> key in the <b>mesh.userData.player</b> for it.
-For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#rainbow">ColorPicker.paletteIndexes.rainbow</a> palette.</p>
+For example <a href="../../../../commonNodeJS/master/colorpicker/Example/index.html#rainbow">ColorPicker.paletteIndexes.rainbow</a> palette.</li>
+</ul>
 <pre class="prettyprint source"><code>points.userData.player = {
 
 	arrayFuncs: arrayFuncs,
@@ -442,14 +397,12 @@ For example <a href="https://raw.githack.com/anhr/commonNodeJS/master/colorpicke
 <h2>Create THREE.Points with <a href="https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial">THREE.ShaderMaterial</a> material.</h2>
 <p>Currently, it seems to you that the size of the first point changes during of the the playing because point moves near or far from camera.
 Sometimes you want to see the sizes of the points is not depend from distance to camera.
-To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described in <a href="https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html">getShaderMaterialPoints API</a>.</p>
+To do it, please remove your old <b>const points</b> and use <b>getShaderMaterialPoints</b> for creating of new points as described
+in <a href="../../../../commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html">getShaderMaterialPoints API</a>.</p>
 <p>First, import <b>getShaderMaterialPoints</b> into your web page.</p>
-<pre class="prettyprint source"><code>import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 </code></pre>
-<p>Please remove <b>player.play3DObject();</b> line and include it into <b>getShaderMaterialPoints</b> parameters.</p>
+<p>Please remove <b>options.player.play3DObject();</b> line and include it into <b>getShaderMaterialPoints</b> parameters.</p>
 <pre class="prettyprint source"><code>getShaderMaterialPoints( scene, arrayFuncs,
 	function ( points ) {
 
@@ -465,7 +418,7 @@ To do it, please remove your old <b>const points</b> and use <b>getShaderMateria
 			}
 
 		}
-		player.play3DObject();
+		options.player.play3DObject();
 
 	},
 	{
@@ -479,9 +432,6 @@ To do it, please remove your old <b>const points</b> and use <b>getShaderMateria
 <p>Simplest way of creations of the points is using of the <b>MyPoints</b>.
 Please remove your old <b>const points</b> and <b>getShaderMaterialPoints</b> and use <a href="../../myPoints/jsdoc/index.html">MyPoints</a> for creating of new points.
 Import <b>MyPoints</b> into your web page for it.</p>
-<pre class="prettyprint source"><code>import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 </code></pre>
 <p>Example.</p>
@@ -491,23 +441,31 @@ Import <b>MyPoints</b> into your web page for it.</p>
 	options: options,
 
 } );
-player.play3DObject();
+options.player.play3DObject();
 </code></pre>
 <p>Now you can see, first point is moving and changing color.</p>
 <p>Currently all <b>MyPoints</b> settings is default.
 You can set your own setting for <b>MyPoints</b>. For example set points size to 15 and move all points to right during playing.</p>
 <p>Add <b>point</b> key into <b>options</b> above.</p>
-<pre class="prettyprint source"><code>const options = {
+<pre class="prettyprint source"><code>const options = new Options(
 
-	palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
-	point: { size: 15 },
+	{
 
-}
+		playerOptions: {//create a Player instance. 3D objects animation.
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+		point: { size: 15 },
+
+	}
+
+);
 </code></pre>
 <p>Edit <b>MyPoints</b>.</p>
 <pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
 
-	Player: Player,
 	options: options,
 	pointsOptions: {
 
@@ -518,36 +476,34 @@ You can set your own setting for <b>MyPoints</b>. For example set points size to
 
 } );
 </code></pre>
-<p>If you want to see the sizes of the points is not depend from distance to camera,
-please add <b>shaderMaterial: {}</b> into <b>pointsOptions</b> of the <b>MyPoints</b> for it.</p>
+<p>If you want to see the sizes of the points is depend from distance to camera,
+please add <b>shaderMaterial: false</b> into <b>pointsOptions</b> of the <b>MyPoints</b> for it.</p>
 <pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
 
-	Player: Player,
 	options: options,
 	pointsOptions: {
 
 		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
 		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-		shaderMaterial: {}
+		shaderMaterial: false,
 
 	}
 
 } );
 </code></pre>
 <p>ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
-For resolving of the problem please remove <b>player.play3DObject();</b> and include it inside of the <b>MyPoints</b>.</p>
+For resolving of the problem please remove <b>options.player.play3DObject();</b> and include it inside of the <b>MyPoints</b>.</p>
 <pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
 
-	Player: Player,
 	options: options,
 	pointsOptions: {
 
 		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
 		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-		shaderMaterial: {},
+		shaderMaterial: false,
 		onReady: function ( points ) {
 
-			player.play3DObject();
+			options.player.play3DObject();
 
 		}
 
@@ -557,16 +513,12 @@ For resolving of the problem please remove <b>player.play3DObject();</b> and inc
 </code></pre>
 <p><a name="CanvasMenu"></a></p>
 <h2>Add <b>player</b> item into <a href="https://github.com/anhr/commonNodeJS/tree/master/canvasMenu">CanvasMenu</a>.</h2>
-<p>Import <b>CanvasMenu</b> into your web page for it.</p>
-<pre class="prettyprint source"><code>import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
 </code></pre>
 <p>Create CanvasMenu. Attention!!! Please create <b>CanvasMenu</b> after creating of the render but before <b>renderer.setSize(...)</b></p>
 <pre class="prettyprint source"><code>new CanvasMenu( renderer, {
 
-	player: player,
+	options: options,
 
 } );
 </code></pre>
@@ -575,67 +527,53 @@ Now you can see a player's menu items on the bottom of the canvas.</p>
 <p><a name="datGuiPlayer"></a></p>
 <h2>Using <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change of the <b>Player</b> settings.</h2>
 <p>Import <b>dat.gui</b>.</p>
-<pre class="prettyprint source"><code>import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import { dat } from './commonNodeJS/master/dat/dat.module.js';
+three.dat = dat;
 </code></pre>
-<p>Add <b>dat.dat</b> key into <b>options</b> parameter of the <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> class;</p>
-<pre class="prettyprint source"><code>dat: {
-
-	dat: dat,
-
-}
+<p>And call <b>player.gui()</b></p>
+<pre class="prettyprint source"><code>options.player.gui();
 </code></pre>
-<p>and call <b>player.gui()</b></p>
-<pre class="prettyprint source"><code>player.gui();
-</code></pre>
+<p>You can see the &quot;Player&quot; folder in the upper right corner of the canvas.</p>
 <p><a name="datGuiPlayerControl"></a></p>
-<h3>Add player control buttons to the <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</h3>
-<p>new player.PlayController( gui );</p>
+<h3>Add <a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html">player control</a> buttons to the <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</h3>
+<pre class="prettyprint source"><code>new options.player.PlayController();
+</code></pre>
+<p>You can see the player control in the upper right corner of the canvas.</p>
 <p><a name="datGuiCamera"></a></p>
 <h3>Using <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change of the <b>camera</b> settings.</h3>
-<p>First, import <b>CameraGui</b></p>
-<pre class="prettyprint source"><code>import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<p>First, import <a href="../../jsdoc/CameraGui/">CameraGui</a>.</p>
 <pre class="prettyprint source"><code>import CameraGui from './commonNodeJS/master/CameraGui.js';
 </code></pre>
-<p>Add <b>CameraGui</b> into gui</p>
-<pre class="prettyprint source"><code>new CameraGui( camera, options, gui );
+<p>Add <b>CameraGui</b> after <b>new Player</b>.</p>
+<pre class="prettyprint source"><code>new CameraGui( camera, options );
 </code></pre>
+<p>You can see the &quot;Camera&quot; folder in the upper right corner of the canvas.</p>
 <p><a name="guiSelectPoint"></a></p>
 <h3>A <a href="https://github.com/anhr/dat.gui">dat.gui</a> based graphical user interface for select a point from the mesh.</h3>
 <ul>
-<li>Import <b>GuiSelectPoint</b></li>
+<li>Import <a href="../../guiSelectPoint/jsdoc/">GuiSelectPoint</a>.</li>
 </ul>
-<pre class="prettyprint source"><code>import GuiSelectPoint from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import GuiSelectPoint from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 </code></pre>
 <ul>
 <li>Create instance of the <b>GuiSelectPoint</b>.</li>
 </ul>
-<pre class="prettyprint source"><code>guiSelectPoint = new GuiSelectPoint( options );
+<pre class="prettyprint source"><code>new GuiSelectPoint( options );
+if ( options.guiSelectPoint ) options.guiSelectPoint.add();
 </code></pre>
-<p>Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point.</p>
+<p>Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point and after creating of <b>new Player</b>.</p>
+<p>You can see the &quot;Meshes&quot; folder in the upper right corner of the canvas.</p>
 <ul>
-<li>Add mesh into <b>guiSelectPoint</b> if you allow to user to select a point of this mesh.</li>
+<li>If you use <b>const points = new <a href="https://threejs.org/docs/index.html?q=poin#api/en/objects/Points">THREE.Points</a></b> for create points,
+please add</li>
 </ul>
-<pre class="prettyprint source"><code>guiSelectPoint.addMesh( points );
+<pre class="prettyprint source"><code>options.guiSelectPoint.addMesh( points );
 </code></pre>
-<p><b>points</b> is instance of the mesh.</p>
+<p>line after <b>scene.add( points );</b>.</p>
 <ul>
-<li>Add <b>guiSelectPoint</b> into <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</li>
-</ul>
-<pre class="prettyprint source"><code>guiSelectPoint.add( gui );
-</code></pre>
-<p>Note! Call <b>guiSelectPoint.add( gui );</b> before <b>player.play3DObject();</b></p>
-<ul>
-<li>If you use <b>getShaderMaterialPoints</b> for create points, please remove <b>guiSelectPoint.add( gui );</b> line above
-and add <b>guiSelectPoint.addMesh( points );</b> and <b>guiSelectPoint.add( gui );</b>
-lines into <b>function ( points )</b> function of <b>getShaderMaterialPoints</b>.</li>
+<li>If you use <a href="../../getShaderMaterialPoints/jsdoc/module-getShaderMaterialPoints.html">getShaderMaterialPoints</a> for create points, please
+add <b>options.guiSelectPoint.addMesh( points );</b>
+line into <b>onReady</b> callback function of <b>getShaderMaterialPoints</b>.</li>
 </ul>
 <pre class="prettyprint source"><code>getShaderMaterialPoints( scene, arrayFuncs,
 	function ( points ) {
@@ -652,9 +590,8 @@ lines into <b>function ( points )</b> function of <b>getShaderMaterialPoints</b>
 			}
 
 		}
-		guiSelectPoint.addMesh( points );
-		guiSelectPoint.add( gui );
-		player.play3DObject();
+		options.player.play3DObject();
+		options.guiSelectPoint.addMesh( points );
 
 	},
 	{
@@ -664,32 +601,8 @@ lines into <b>function ( points )</b> function of <b>getShaderMaterialPoints</b>
 	} );
 </code></pre>
 <ul>
-<li>If you use <b>MyPoints</b> for create points, please remove <b>guiSelectPoint.add( gui );</b> line above
-and add <b>guiSelectPoint.addMesh( points );</b> and <b>guiSelectPoint.add( gui );</b>
-lines into <b>onReady</b> function of <b>MyPoints</b>.</li>
+<li>If you are using <b>MyPoints</b>, do nothing to add points to <b>guiSelectPoint</b>.</li>
 </ul>
-<pre class="prettyprint source"><code>MyPoints( arrayFuncs, scene, {
-
-	Player: Player,
-	options: options,
-	pointsOptions: {
-
-		position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
-		rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-		shaderMaterial: {},
-		onReady: function ( points ) {
-
-			guiSelectPoint.addMesh( points );
-			guiSelectPoint.add( gui );
-			player.play3DObject();
-
-		}
-
-	}
-
-} );
-</code></pre>
-<p>Now you can see the &quot;Meshes&quot; folder in the <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</p>
 <p><a name="cameraLook"></a></p>
 <h2>Set the camera to look at the point.</h2>
 <p>Now you can see, all points moves and hides on the right border of the canvas during playing. For resolving of issue you can:</p>
@@ -728,51 +641,65 @@ You will receive the</p>
 Then only last point with <b>cameraTarget</b> key will be have an effect.</p>
 <p>Currently uses default value of the distance from camera to selected point.
 You can change distance from camera to selected point from your program code.
-Also you can rotate camera around the point. Please add <b>cameraTarget</b> object into <b>camera.userData</b> for it.</p>
-<pre class="prettyprint source"><code>camera.userData.cameraTarget = {
+Also you can rotate camera around the point. Please add <b>cameraTarget</b> key into <b>options</b> for it.</p>
+<pre class="prettyprint source"><code>const options = new Options(
+
+	{
+
+		playerOptions: {//create a Player instance. 3D objects animation.
+
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
+
+		},
+		point: { size: 15 },
+		cameraTarget: {
 
 	
-	//boLook: false,//camera do not look at a selected point during playing.
-		//User can change this key if you add the CameraGui into dat.gui
+			//boLook: false,//camera do not look at a selected point during playing.
+				//User can change this key if you add the CameraGui into dat.gui
+			camera: camera,
+			rotation: {
 
-	Player: Player,
-	rotation: {
+				//rotate camera to 180 degrees
+				//angle: Math.PI,
 
-		//rotate camera to 180 degrees
-		//angle: Math.PI,
+				//Camera rotation is function of the time.
+				angle: new Function( 't', 'return 2*t' ),
 
-		//Camera rotation is function of the time.
-		angle: new Function( 't', 'return 2*t' ),
+				/*
+				angle: [
+					0,//rotation is 0 degrees for time is 0
+					Math.PI / 2//rotation is 90 degrees for time is max time
+				],
+				*/
+				/*
+				angle: [
+					{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+					{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+					{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+					{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+				],
+				*/
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
 
-		/*
-		angle: [
-			0,//rotation is 0 degrees for time is 0
-			Math.PI / 2//rotation is 90 degrees for time is max time
-		],
-		*/
-		/*
-		angle: [
-			{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
-			{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
-			{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
-			{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
-		],
-		*/
-		//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+			},
+			//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+			distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
+			/*
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+				{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+				{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+			] ),
+			*/
 
-	},
-	//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
-	distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
-	/*
-	distanceToCamera: new THREE.Vector3( 0, 0, [
-		{ t: 0, v: 5 },//distance to camera is 5 for time is 0
-		{ t: 1, v: 2 },//distance to camera is 2 for time is 1
-		{ t: 10, v: 2 },//distance to camera is 2 for time is 10
-		{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
-	] ),
-	*/
+		}
 
-}
+	}
+
+);
 </code></pre>
 <p>You can set individual setting for selected point. Please add <b>rotation</b>, <b>distanceToCamera</b>, <b>boLook</b> keys into <b>cameraTarget</b> object for selected point</p>
 <pre class="prettyprint source"><code>const arrayFuncs = [
@@ -821,23 +748,17 @@ Also you can rotate camera around the point. Please add <b>cameraTarget</b> obje
 <ul>
 <li>If you do not setted the <b>cameraTarget</b> key into <b>arrayFuncs</b> and did not create a <b>CameraGui</b> instance, please add <b>cameraTarget</b> for the <b>Player</b>.</li>
 </ul>
-<pre class="prettyprint source"><code>const player = new Player( scene, {
+<pre class="prettyprint source"><code>new Player( scene, {
 
-		options: options,
-		timeSettings: {
-
-			marks: 100,//Ticks count of the playing.
-			interval: 25,//Ticks per seconds.
-
-		},
-		cameraTarget: { camera: camera, },
+	options: options,
+	cameraTarget: { camera: camera, },
 
 } );
 </code></pre>
 <ul>
 <li>Or add <b>cameraTarget</b> key for creating of <b>guiSelectPoint</b> instance.</li>
 </ul>
-<pre class="prettyprint source"><code>guiSelectPoint = new GuiSelectPoint( options, {
+<pre class="prettyprint source"><code>new GuiSelectPoint( options, {
 
 	cameraTarget: { camera: camera, },
 
@@ -850,54 +771,197 @@ In  another words, camera will be look at selected point.</p>
 <p><a name="playingTime"></a></p>
 <h2>Time of the playing.</h2>
 <p>Default time of the playing limited between 0 and 1.
-You can set another time limit. Please add <b>min</b> and <b>max</b> keys into settings of the <b>new Player</b> for it</p>
-<pre class="prettyprint source"><code>const player = new Player( scene, {
+You can set another time limit. Please add <b>min</b> and <b>max</b> keys into <b>playerOptions</b> key of the <b>new Options</b> for it</p>
+<pre class="prettyprint source"><code>const options = new Options(
 
-	options: options,
-	timeSettings: {
+	{
 
-		min: 0,
-		max: 2,
-		marks: 100,//Ticks count of the playing.
-		interval: 25,//Ticks per seconds.
+		playerOptions: {//create a Player instance. 3D objects animation.
 
-	},
+			min: 0,
+			max: 2,
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
 
-} );
+		},
+		point: { size: 15 },
+		cameraTarget: {
+
+	
+			//boLook: false,//camera do not look at a selected point during playing.
+				//User can change this key if you add the CameraGui into dat.gui
+			camera: camera,
+			rotation: {
+
+				//rotate camera to 180 degrees
+				//angle: Math.PI,
+
+				//Camera rotation is function of the time.
+				angle: new Function( 't', 'return 2*t' ),
+
+				/*
+				angle: [
+					0,//rotation is 0 degrees for time is 0
+					Math.PI / 2//rotation is 90 degrees for time is max time
+				],
+				*/
+				/*
+				angle: [
+					{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+					{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+					{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+					{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+				],
+				*/
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+			},
+			//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+			distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
+			/*
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+				{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+				{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+			] ),
+			*/
+
+		}
+
+	}
+
+);
 </code></pre>
-<p>Attention!!! Please press the <b>Default</b> button in the <b>Player/Time</b> foder
-if you have set the <b>cookie</b> key in the  <b>player.gui(...)</b> function and want your new <b>Player</b> settings to have an effect.</p>
-<p>You can infinity play. Please set <b>max: Infinity</b> for it.</p>
-<pre class="prettyprint source"><code>const player = new Player( scene, {
+<p>Attention!!! Please press the <b>Default</b> button in the <b>Player/Time</b> folder
+if you have set the <b>dat.cookie</b> key is not false in the  <b>options</b> parameter of the new <b>Options(...)</b> and want your new <b>Options</b> settings to have an effect.</p>
+<p>You can infinity play.
+Please edit <b>max: Infinity</b> key in <b>playerOptions</b> key of the <b>new Options</b> for it.</p>
+<pre class="prettyprint source"><code>const options = new Options(
 
-	options: options,
-	timeSettings: {
+	{
 
-		min: 0,
-		max: Infinity,
-		marks: 100,//Ticks count of the playing.
-		interval: 25,//Ticks per seconds.
+		playerOptions: {//create a Player instance. 3D objects animation.
 
-	},
+			min: 0,
+			max: Infinity,
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
 
-} );
+		},
+		point: { size: 15 },
+		cameraTarget: {
+
+	
+			//boLook: false,//camera do not look at a selected point during playing.
+				//User can change this key if you add the CameraGui into dat.gui
+			camera: camera,
+			rotation: {
+
+				//rotate camera to 180 degrees
+				//angle: Math.PI,
+
+				//Camera rotation is function of the time.
+				angle: new Function( 't', 'return 2*t' ),
+
+				/*
+				angle: [
+					0,//rotation is 0 degrees for time is 0
+					Math.PI / 2//rotation is 90 degrees for time is max time
+				],
+				*/
+				/*
+				angle: [
+					{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+					{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+					{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+					{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+				],
+				*/
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+			},
+			//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+			distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
+			/*
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+				{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+				{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+			] ),
+			*/
+
+		}
+
+	}
+
+);
 </code></pre>
 <p>Press the <b>Default</b> button again.</p>
-<p>Currently, the default playback step is 0.1. You can set another step. Please add <b>dt</b> key for it.</p>
-<pre class="prettyprint source"><code>const player = new Player( scene, {
+<p>Currently, the default playback step is 0.1. You can set another step.
+Please add <b>dt</b> key into <b>playerOptions</b> key of the <b>new Options</b> for it.</p>
+<pre class="prettyprint source"><code>const options = new Options(
 
-	options: options,
-	timeSettings: {
+	{
 
-		min: 0,
-		max: Infinity,
-		dt: 0.01,//Have effect for max: Infinity
-		marks: 100,//Ticks count of the playing. Have effect for max key is not Infinity.
-		interval: 25,//Ticks per seconds.
+		playerOptions: {//create a Player instance. 3D objects animation.
 
-	},
+			min: 0,
+			max: Infinity,
+			dt: 0.01,//Have effect for max: Infinity
+			marks: 100,//Ticks count of the playing.
+			interval: 25,//Ticks per seconds.
 
-} );
+		},
+		point: { size: 15 },
+		cameraTarget: {
+
+	
+			//boLook: false,//camera do not look at a selected point during playing.
+				//User can change this key if you add the CameraGui into dat.gui
+			camera: camera,
+			rotation: {
+
+				//rotate camera to 180 degrees
+				//angle: Math.PI,
+
+				//Camera rotation is function of the time.
+				angle: new Function( 't', 'return 2*t' ),
+
+				/*
+				angle: [
+					0,//rotation is 0 degrees for time is 0
+					Math.PI / 2//rotation is 90 degrees for time is max time
+				],
+				*/
+				/*
+				angle: [
+					{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+					{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+					{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+					{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+				],
+				*/
+				//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+			},
+			//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+			distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
+			/*
+			distanceToCamera: new THREE.Vector3( 0, 0, [
+				{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+				{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+				{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+				{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+			] ),
+			*/
+
+		}
+
+	}
+
+);
 </code></pre>
 <p>Press the <b>Default</b> button again.</p>
 <p>Note that the step only matters for <b>max: Infinity</b>.</p>
@@ -931,7 +995,7 @@ $ npm run build
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Aug 09 2021 05:05:44 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Aug 17 2021 10:10:31 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

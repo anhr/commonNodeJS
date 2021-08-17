@@ -7132,493 +7132,468 @@ SpriteText.updateSpriteTextGroup = function (group) {
 */
 var StereoEffect =
 function StereoEffect(renderer) {
-					var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Options();
-					classCallCheck(this, StereoEffect);
-					if (!renderer) {
-										console.error('StereoEffect: renderer = ' + renderer);
-										return;
-					}
-					if (!options.boOptions) {
-										options = new Options(options);
-					}
-					if (options.stereoEffect === false) return;
-					if (options.dat.gui) options.dat.mouseenter = false;
-					var THREE = three$1.THREE;
-					assign();
-					if (!options.stereoEffect) options.stereoEffect = {};
-					var settings = options.stereoEffect;
-					this.settings = settings;
-					this.options = options;
-					options.stereoEffect = this;
-					if (settings.spatialMultiplex === undefined) settings.spatialMultiplex = spatialMultiplexsIndexs.Mono;
-					settings.stereo = new THREE.StereoCamera();
-					settings.stereo.aspect = settings.stereoAspect || 1;
-					if (settings.far === undefined) settings.far = new THREE.PerspectiveCamera().focus;
-					settings.focus = settings.camera === undefined ? new THREE.PerspectiveCamera().focus : new THREE.Vector3().distanceTo(settings.camera.position);
-					settings.zeroParallax = 0;
-					settings.eyeSep = settings.eyeSep || new THREE.StereoCamera().eyeSep / 10 * settings.far;
-					if (settings.camera !== undefined) settings.camera.focus = settings.focus;
-					this.setEyeSeparation = function (eyeSep) {
-										settings.stereo.eyeSep = eyeSep;
-					};
-					this.setEyeSeparation(settings.eyeSep);
-					this.getRendererSize = function () {
-										return Options.raycaster.EventListeners.getRendererSize(renderer, settings.elParent);
-					};
-					var fullScreenSettings;
-					var spatialMultiplexCur;
-					this.render = function (scene, camera) {
-										var spatialMultiplex = parseInt(settings.spatialMultiplex);
-										if (settings.rememberSize && !fullScreenSettings) {
-															if (_canvasMenu && _canvasMenu.getFullScreenSettings) fullScreenSettings = _canvasMenu.getFullScreenSettings(this);else fullScreenSettings = new CreateFullScreenSettings(THREE, renderer, camera, {
-																				canvasMenu: _canvasMenu,
-																				stereoEffect: this
-															});
-										}
-										scene.updateMatrixWorld();
-										if (camera.parent === null) camera.updateMatrixWorld();
-										var size = new THREE.Vector2();
-										renderer.getSize(size);
-										if (renderer.autoClear) renderer.clear();
-										renderer.setScissorTest(true);
-										var xL, yL, widthL, heightL, xR, yR, widthR, heightR;
-										var parallax = settings.zeroParallax;
-										function setMultiplex(stereoEffect) {
-															if (!fullScreenSettings || spatialMultiplexCur === spatialMultiplex) return false;
-															spatialMultiplexCur = spatialMultiplex;
-															if (stereoEffect.setControllerSpatialMultiplex) stereoEffect.setControllerSpatialMultiplex(spatialMultiplex);else if (stereoEffect.setSpatialMultiplex) stereoEffect.setSpatialMultiplex(spatialMultiplex);
-															return true;
-										}
-										function setFullScreen(fullScreen, stereoEffect) {
-															if (setMultiplex(stereoEffect)) fullScreenSettings.setFullScreen(fullScreen);
-										}
-										switch (spatialMultiplex) {
-															case spatialMultiplexsIndexs.Mono:
-																				renderer.setScissor(0, 0, size.width, size.height);
-																				renderer.setViewport(0, 0, size.width, size.height);
-																				renderer.render(scene, camera);
-																				renderer.setScissorTest(false);
-																				if (options.canvasMenu) setMultiplex(this);else setFullScreen(true, this);
-																				return;
-															case spatialMultiplexsIndexs.SbS:
-																				var _width = size.width / 2;
-																				xL = 0 + parallax;yL = 0;widthL = _width;heightL = size.height;
-																				xR = _width - parallax;yR = 0;widthR = _width;heightR = size.height;
-																				setFullScreen(false, this);
-																				break;
-															case spatialMultiplexsIndexs.TaB:
-																				xL = 0 + parallax;yL = 0;widthL = size.width;heightL = size.height / 2;
-																				xR = 0 - parallax;yR = size.height / 2;widthR = size.width;heightR = size.height / 2;
-																				setFullScreen(false, this);
-																				break;
-															default:
-																				console.error('THREE.StereoEffect.render: Invalid "Spatial  multiplex" parameter: ' + spatialMultiplex);
-										}
-										settings.stereo.update(camera);
-										renderer.setScissor(xL, yL, widthL, heightL);
-										renderer.setViewport(xL, yL, widthL, heightL);
-										renderer.render(scene, settings.stereo.cameraL);
-										renderer.setScissor(xR, yR, widthR, heightR);
-										renderer.setViewport(xR, yR, widthR, heightR);
-										renderer.render(scene, settings.stereo.cameraR);
-										renderer.setScissorTest(false);
-					};
-					function getLang(params) {
-										params = params || {};
-										var _lang = {
-															stereoEffects: 'Stereo effects',
-															spatialMultiplexName: 'Spatial  multiplex',
-															spatialMultiplexTitle: 'Choose a way to do spatial multiplex.',
-															spatialMultiplexs: {
-																				'Mono': spatialMultiplexsIndexs.Mono,
-																				'Side by side': spatialMultiplexsIndexs.SbS,
-																				'Top and bottom': spatialMultiplexsIndexs.TaB
-															},
-															eyeSeparationName: 'Eye separation',
-															eyeSeparationTitle: 'The distance between left and right cameras.',
-															focus: 'Focus',
-															focusTitle: 'Object distance.',
-															zeroParallaxName: 'Zero parallax',
-															zeroParallaxTitle: 'Distance to objects with zero parallax.',
-															defaultButton: 'Default',
-															defaultTitle: 'Restore default stereo effects settings.'
-										};
-										var _languageCode = params.getLanguageCode === undefined ? 'en'
-										: params.getLanguageCode();
-										switch (_languageCode) {
-															case 'ru':
-																				_lang.stereoEffects = 'Стерео эффекты';
-																				_lang.spatialMultiplexName = 'Мультиплекс';
-																				_lang.spatialMultiplexTitle = 'Выберите способ создания пространственного мультиплексирования.';
-																				_lang.spatialMultiplexs = {
-																									'Моно': spatialMultiplexsIndexs.Mono,
-																									'Слева направо': spatialMultiplexsIndexs.SbS,
-																									'Сверху вниз': spatialMultiplexsIndexs.TaB
-																				};
-																				_lang.eyeSeparationName = 'Развод камер';
-																				_lang.eyeSeparationTitle = 'Расстояние между левой и правой камерами.';
-																				_lang.focus = 'Фокус';
-																				_lang.focusTitle = 'Расстояние до объекта.';
-																				_lang.zeroParallaxName = 'Параллакс 0';
-																				_lang.zeroParallaxTitle = 'Расстояние до объектов с нулевым параллаксом.';
-																				_lang.defaultButton = 'Восстановить';
-																				_lang.defaultTitle = 'Восстановить настройки стерео эффектов по умолчанию.';
-																				break;
-															default:
-																				if (params.lang === undefined || params.lang._languageCode != _languageCode) break;
-																				Object.keys(params.lang).forEach(function (key) {
-																									if (_lang[key] === undefined) return;
-																									_lang[key] = params.lang[key];
-																				});
-										}
-										return _lang;
-					}
-					this.gui = function () {
-										var guiParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-										var gui = guiParams.folder || options.dat.gui;
-										if (!gui || options.dat.stereoEffectsGui === false) return;
-										var dat = guiParams.dat || three$1.dat;
-										if (guiParams === undefined) guiParams = {};
-										guiParams.scale = guiParams.scale || 1;
-										var stereoEffect = options.dat.getCookieName('StereoEffect'),
-										    _lang = getLang({ getLanguageCode: options.getLanguageCode, lang: options.lang });
-										var optionsDefault = {
-															spatialMultiplex: settings.spatialMultiplex,
-															eyeSep: new THREE.StereoCamera().eyeSep / 10 * settings.far,
-															focus: settings.focus,
-															zeroParallax: 0
-										};
-										Object.freeze(optionsDefault);
-										options.dat.cookie.getObject(stereoEffect, settings, optionsDefault);
-										settings.spatialMultiplex = parseInt(settings.spatialMultiplex);
-										if (this.setSpatialMultiplex) this.setSpatialMultiplex(settings.spatialMultiplex);
-										function displayControllers(value) {
-															var display = value == spatialMultiplexsIndexs.Mono ? 'none' : 'block';
-															_fEyeSeparation.domElement.style.display = display;
-															if (_controllerCameraFocus !== undefined) _controllerCameraFocus.__li.style.display = display;
-															_controllerDefaultF.__li.style.display = display;
-															_controllerZeroParallax.__li.style.display = display;
-										}
-										var _fStereoEffects = gui.addFolder(_lang.stereoEffects);
-										var _controllerSpatialMultiplex = _fStereoEffects.add(settings, 'spatialMultiplex', _lang.spatialMultiplexs).onChange(function (value) {
-															value = parseInt(value);
-															displayControllers(value);
-															setObject(stereoEffect);
-															if (guiParams.onChangeMode) guiParams.onChangeMode(value);
-															if (menuItemStereoEffect) menuItemStereoEffect.select(value);
-										});
-										dat.controllerNameAndTitle(_controllerSpatialMultiplex, _lang.spatialMultiplexName, _lang.spatialMultiplexTitle);
-										this.setControllerSpatialMultiplex = function (index) {
-															saveToCookie = false;
-															_controllerSpatialMultiplex.setValue(index);
-															saveToCookie = true;
-										};
-										var _fEyeSeparation = _fStereoEffects.addFolder(_lang.eyeSeparationName);
-										dat.folderNameAndTitle(_fEyeSeparation, _lang.eyeSeparationName, _lang.eyeSeparationTitle);
-										_fEyeSeparation.add(new PositionController(function (shift) {
-															settings.eyeSep += shift;
-															_controllerEyeSep.setValue(settings.eyeSep);
-										}, { settings: { offset: 0.01 }, min: 0.0001, max: 0.01, step: 0.0001 }));
-										var _controllerEyeSep = dat.controllerZeroStep(_fEyeSeparation, settings.stereo, 'eyeSep', function (value) {
-															settings.eyeSep = value;
-															setObject(stereoEffect);
-										});
-										dat.controllerNameAndTitle(_controllerEyeSep, _lang.eyeSeparationName, _lang.eyeSeparationTitle);
-										if (settings.camera !== undefined) settings.camera.focus = settings.focus;
-										var _controllerCameraFocus;
-										if (settings.camera) {
-															_controllerCameraFocus = _fStereoEffects.add(settings.camera, 'focus', optionsDefault.focus / 10, optionsDefault.focus * 2, optionsDefault.focus / 1000).onChange(function (value) {
-																				settings.focus = value;
-																				setObject(stereoEffect);
-															});
-															dat.controllerNameAndTitle(_controllerCameraFocus, _lang.focus, _lang.focusTitle);
-										}
-										var _minMax = (60 - 400 / 9) * guiParams.scale + 400 / 9;
-										var _controllerZeroParallax = _fStereoEffects.add(settings, 'zeroParallax', -_minMax, _minMax).onChange(function (value) {
-															settings.zeroParallax = value;
-															setObject(stereoEffect);
-										});
-										dat.controllerNameAndTitle(_controllerZeroParallax, _lang.zeroParallaxName, _lang.zeroParallaxTitle);
-										var _controllerDefaultF = _fStereoEffects.add({
-															defaultF: function defaultF(value) {
-																				settings.stereo.eyeSep = optionsDefault.eyeSep;
-																				_controllerEyeSep.setValue(settings.stereo.eyeSep);
-																				if (settings.camera) {
-																									settings.camera.focus = optionsDefault.focus;
-																									_controllerCameraFocus.setValue(settings.camera.focus);
-																				}
-																				settings.zeroParallax = optionsDefault.zeroParallax;
-																				_controllerZeroParallax.setValue(settings.zeroParallax);
-															}
-										}, 'defaultF');
-										dat.controllerNameAndTitle(_controllerDefaultF, _lang.defaultButton, _lang.defaultTitle);
-										displayControllers(settings.spatialMultiplex);
-										var saveToCookie = true;
-										function setObject(name) {
-															if (!saveToCookie) return;
-															var object = {};
-															Object.keys(optionsDefault).forEach(function (key) {
-																				object[key] = settings[key];
-															});
-															options.dat.cookie.setObject(name, object);
-										}
-					};
-					var _canvasMenu, menuItemStereoEffect;
-					this.createCanvasMenuItem = function (canvasMenu, params) {
-										_canvasMenu = canvasMenu;
-										params = params || {};
-										var _lang = getLang({ getLanguageCode: params.getLanguageCode, lang: params.lang }),
-										    spatialMultiplexs = Object.keys(_lang.spatialMultiplexs);
-										menuItemStereoEffect = {
-															name: '⚭',
-															title: _lang.stereoEffects,
-															id: 'menuButtonStereoEffects',
-															drop: 'up',
-															items: [{
-																				name: spatialMultiplexs[spatialMultiplexsIndexs.Mono],
-																				id: 'menuButtonStereoEffectsMono',
-																				radio: true,
-																				checked: settings.spatialMultiplex === spatialMultiplexsIndexs.Mono,
-																				spatialMultiplex: spatialMultiplexsIndexs.Mono,
-																				onclick: function onclick(event) {
-																									settings.spatialMultiplex = spatialMultiplexsIndexs.Mono;
-																				}
-															}, {
-																				name: spatialMultiplexs[spatialMultiplexsIndexs.SbS],
-																				id: 'menuButtonStereoEffectsSbS',
-																				radio: true,
-																				checked: settings.spatialMultiplex === spatialMultiplexsIndexs.SbS,
-																				spatialMultiplex: spatialMultiplexsIndexs.SbS,
-																				onclick: function onclick(event) {
-																									settings.spatialMultiplex = spatialMultiplexsIndexs.SbS;
-																				}
-															}, {
-																				name: spatialMultiplexs[spatialMultiplexsIndexs.TaB],
-																				id: 'menuButtonStereoEffectsTaB',
-																				radio: true,
-																				checked: settings.spatialMultiplex === spatialMultiplexsIndexs.TaB,
-																				spatialMultiplex: spatialMultiplexsIndexs.TaB,
-																				onclick: function onclick(event) {
-																									settings.spatialMultiplex = spatialMultiplexsIndexs.TaB;
-																				}
-															}]
-										};
-										menuItemStereoEffect.select = function (value) {
-															menuItemStereoEffect.items.forEach(function (item) {
-																				if (item.spatialMultiplex === value) {
-																									if (!item.checked) item.elName.onclick({ target: item.elName });
-																				}
-															});
-										};
-										this.setSpatialMultiplex = function (index) {
-															menuItemStereoEffect.select(index);
-										};
-										canvasMenu.menu.push(menuItemStereoEffect);
-					};
+	var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Options();
+	classCallCheck(this, StereoEffect);
+	if (!renderer) {
+		console.error('StereoEffect: renderer = ' + renderer);
+		return;
+	}
+	if (!options.boOptions) {
+		options = new Options(options);
+	}
+	if (options.stereoEffect === false) return;
+	if (options.dat.gui) options.dat.mouseenter = false;
+	var THREE = three$1.THREE;
+	assign();
+	if (!options.stereoEffect) options.stereoEffect = {};
+	var settings = options.stereoEffect;
+	this.settings = settings;
+	this.options = options;
+	options.stereoEffect = this;
+	if (settings.spatialMultiplex === undefined) settings.spatialMultiplex = spatialMultiplexsIndexs.Mono;
+	settings.stereo = new THREE.StereoCamera();
+	settings.stereo.aspect = settings.stereoAspect || 1;
+	if (settings.far === undefined) settings.far = new THREE.PerspectiveCamera().focus;
+	settings.focus = settings.camera === undefined ? new THREE.PerspectiveCamera().focus : new THREE.Vector3().distanceTo(settings.camera.position);
+	settings.zeroParallax = 0;
+	settings.eyeSep = settings.eyeSep || new THREE.StereoCamera().eyeSep / 10 * settings.far;
+	if (settings.camera !== undefined) settings.camera.focus = settings.focus;
+	this.setEyeSeparation = function (eyeSep) {
+		settings.stereo.eyeSep = eyeSep;
+	};
+	this.setEyeSeparation(settings.eyeSep);
+	this.getRendererSize = function () {
+		return Options.raycaster.EventListeners.getRendererSize(renderer, settings.elParent);
+	};
+	var fullScreenSettings;
+	var spatialMultiplexCur;
+	this.render = function (scene, camera) {
+		var spatialMultiplex = parseInt(settings.spatialMultiplex);
+		if (settings.rememberSize && !fullScreenSettings) {
+			if (_canvasMenu && _canvasMenu.getFullScreenSettings) fullScreenSettings = _canvasMenu.getFullScreenSettings(this);else fullScreenSettings = new CreateFullScreenSettings(THREE, renderer, camera, {
+				canvasMenu: _canvasMenu,
+				stereoEffect: this
+			});
+		}
+		scene.updateMatrixWorld();
+		if (camera.parent === null) camera.updateMatrixWorld();
+		var size = new THREE.Vector2();
+		renderer.getSize(size);
+		if (renderer.autoClear) renderer.clear();
+		renderer.setScissorTest(true);
+		var xL, yL, widthL, heightL, xR, yR, widthR, heightR;
+		var parallax = settings.zeroParallax;
+		function setMultiplex(stereoEffect) {
+			if (!fullScreenSettings || spatialMultiplexCur === spatialMultiplex) return false;
+			spatialMultiplexCur = spatialMultiplex;
+			if (stereoEffect.setControllerSpatialMultiplex) stereoEffect.setControllerSpatialMultiplex(spatialMultiplex);else if (stereoEffect.setSpatialMultiplex) stereoEffect.setSpatialMultiplex(spatialMultiplex);
+			return true;
+		}
+		function setFullScreen(fullScreen, stereoEffect) {
+			if (setMultiplex(stereoEffect)) fullScreenSettings.setFullScreen(fullScreen);
+		}
+		switch (spatialMultiplex) {
+			case spatialMultiplexsIndexs.Mono:
+				renderer.setScissor(0, 0, size.width, size.height);
+				renderer.setViewport(0, 0, size.width, size.height);
+				renderer.render(scene, camera);
+				renderer.setScissorTest(false);
+				if (options.canvasMenu) setMultiplex(this);else setFullScreen(true, this);
+				return;
+			case spatialMultiplexsIndexs.SbS:
+				var _width = size.width / 2;
+				xL = 0 + parallax;yL = 0;widthL = _width;heightL = size.height;
+				xR = _width - parallax;yR = 0;widthR = _width;heightR = size.height;
+				setFullScreen(false, this);
+				break;
+			case spatialMultiplexsIndexs.TaB:
+				xL = 0 + parallax;yL = 0;widthL = size.width;heightL = size.height / 2;
+				xR = 0 - parallax;yR = size.height / 2;widthR = size.width;heightR = size.height / 2;
+				setFullScreen(false, this);
+				break;
+			default:
+				console.error('THREE.StereoEffect.render: Invalid "Spatial  multiplex" parameter: ' + spatialMultiplex);
+		}
+		settings.stereo.update(camera);
+		renderer.setScissor(xL, yL, widthL, heightL);
+		renderer.setViewport(xL, yL, widthL, heightL);
+		renderer.render(scene, settings.stereo.cameraL);
+		renderer.setScissor(xR, yR, widthR, heightR);
+		renderer.setViewport(xR, yR, widthR, heightR);
+		renderer.render(scene, settings.stereo.cameraR);
+		renderer.setScissorTest(false);
+	};
+	function getLang(params) {
+		params = params || {};
+		var _lang = {
+			stereoEffects: 'Stereo effects',
+			spatialMultiplexName: 'Spatial  multiplex',
+			spatialMultiplexTitle: 'Choose a way to do spatial multiplex.',
+			spatialMultiplexs: {
+				'Mono': spatialMultiplexsIndexs.Mono,
+				'Side by side': spatialMultiplexsIndexs.SbS,
+				'Top and bottom': spatialMultiplexsIndexs.TaB
+			},
+			eyeSeparationName: 'Eye separation',
+			eyeSeparationTitle: 'The distance between left and right cameras.',
+			focus: 'Focus',
+			focusTitle: 'Object distance.',
+			zeroParallaxName: 'Zero parallax',
+			zeroParallaxTitle: 'Distance to objects with zero parallax.',
+			defaultButton: 'Default',
+			defaultTitle: 'Restore default stereo effects settings.'
+		};
+		var _languageCode = params.getLanguageCode === undefined ? 'en'
+		: params.getLanguageCode();
+		switch (_languageCode) {
+			case 'ru':
+				_lang.stereoEffects = 'Стерео эффекты';
+				_lang.spatialMultiplexName = 'Мультиплекс';
+				_lang.spatialMultiplexTitle = 'Выберите способ создания пространственного мультиплексирования.';
+				_lang.spatialMultiplexs = {
+					'Моно': spatialMultiplexsIndexs.Mono,
+					'Слева направо': spatialMultiplexsIndexs.SbS,
+					'Сверху вниз': spatialMultiplexsIndexs.TaB
+				};
+				_lang.eyeSeparationName = 'Развод камер';
+				_lang.eyeSeparationTitle = 'Расстояние между левой и правой камерами.';
+				_lang.focus = 'Фокус';
+				_lang.focusTitle = 'Расстояние до объекта.';
+				_lang.zeroParallaxName = 'Параллакс 0';
+				_lang.zeroParallaxTitle = 'Расстояние до объектов с нулевым параллаксом.';
+				_lang.defaultButton = 'Восстановить';
+				_lang.defaultTitle = 'Восстановить настройки стерео эффектов по умолчанию.';
+				break;
+			default:
+				if (params.lang === undefined || params.lang._languageCode != _languageCode) break;
+				Object.keys(params.lang).forEach(function (key) {
+					if (_lang[key] === undefined) return;
+					_lang[key] = params.lang[key];
+				});
+		}
+		return _lang;
+	}
+	this.gui = function () {
+		var guiParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+		var gui = guiParams.folder || options.dat.gui;
+		if (!gui || options.dat.stereoEffectsGui === false) return;
+		var dat = guiParams.dat || three$1.dat;
+		if (guiParams === undefined) guiParams = {};
+		guiParams.scale = guiParams.scale || 1;
+		var stereoEffect = options.dat.getCookieName('StereoEffect'),
+		    _lang = getLang({ getLanguageCode: options.getLanguageCode, lang: options.lang });
+		var optionsDefault = {
+			spatialMultiplex: settings.spatialMultiplex,
+			eyeSep: new THREE.StereoCamera().eyeSep / 10 * settings.far,
+			focus: settings.focus,
+			zeroParallax: 0
+		};
+		Object.freeze(optionsDefault);
+		options.dat.cookie.getObject(stereoEffect, settings, optionsDefault);
+		settings.spatialMultiplex = parseInt(settings.spatialMultiplex);
+		if (this.setSpatialMultiplex) this.setSpatialMultiplex(settings.spatialMultiplex);
+		function displayControllers(value) {
+			var display = value == spatialMultiplexsIndexs.Mono ? 'none' : 'block';
+			_fEyeSeparation.domElement.style.display = display;
+			if (_controllerCameraFocus !== undefined) _controllerCameraFocus.__li.style.display = display;
+			_controllerDefaultF.__li.style.display = display;
+			_controllerZeroParallax.__li.style.display = display;
+		}
+		var _fStereoEffects = gui.addFolder(_lang.stereoEffects);
+		var _controllerSpatialMultiplex = _fStereoEffects.add(settings, 'spatialMultiplex', _lang.spatialMultiplexs).onChange(function (value) {
+			value = parseInt(value);
+			displayControllers(value);
+			setObject(stereoEffect);
+			if (guiParams.onChangeMode) guiParams.onChangeMode(value);
+			if (menuItemStereoEffect) menuItemStereoEffect.select(value);
+		});
+		dat.controllerNameAndTitle(_controllerSpatialMultiplex, _lang.spatialMultiplexName, _lang.spatialMultiplexTitle);
+		this.setControllerSpatialMultiplex = function (index) {
+			saveToCookie = false;
+			_controllerSpatialMultiplex.setValue(index);
+			saveToCookie = true;
+		};
+		var _fEyeSeparation = _fStereoEffects.addFolder(_lang.eyeSeparationName);
+		dat.folderNameAndTitle(_fEyeSeparation, _lang.eyeSeparationName, _lang.eyeSeparationTitle);
+		_fEyeSeparation.add(new PositionController(function (shift) {
+			settings.eyeSep += shift;
+			_controllerEyeSep.setValue(settings.eyeSep);
+		}, { settings: { offset: 0.01 }, min: 0.0001, max: 0.01, step: 0.0001 }));
+		var _controllerEyeSep = dat.controllerZeroStep(_fEyeSeparation, settings.stereo, 'eyeSep', function (value) {
+			settings.eyeSep = value;
+			setObject(stereoEffect);
+		});
+		dat.controllerNameAndTitle(_controllerEyeSep, _lang.eyeSeparationName, _lang.eyeSeparationTitle);
+		if (settings.camera !== undefined) settings.camera.focus = settings.focus;
+		var _controllerCameraFocus;
+		if (settings.camera) {
+			_controllerCameraFocus = _fStereoEffects.add(settings.camera, 'focus', optionsDefault.focus / 10, optionsDefault.focus * 2, optionsDefault.focus / 1000).onChange(function (value) {
+				settings.focus = value;
+				setObject(stereoEffect);
+			});
+			dat.controllerNameAndTitle(_controllerCameraFocus, _lang.focus, _lang.focusTitle);
+		}
+		var _minMax = (60 - 400 / 9) * guiParams.scale + 400 / 9;
+		var _controllerZeroParallax = _fStereoEffects.add(settings, 'zeroParallax', -_minMax, _minMax).onChange(function (value) {
+			settings.zeroParallax = value;
+			setObject(stereoEffect);
+		});
+		dat.controllerNameAndTitle(_controllerZeroParallax, _lang.zeroParallaxName, _lang.zeroParallaxTitle);
+		var _controllerDefaultF = _fStereoEffects.add({
+			defaultF: function defaultF(value) {
+				settings.stereo.eyeSep = optionsDefault.eyeSep;
+				_controllerEyeSep.setValue(settings.stereo.eyeSep);
+				if (settings.camera) {
+					settings.camera.focus = optionsDefault.focus;
+					_controllerCameraFocus.setValue(settings.camera.focus);
+				}
+				settings.zeroParallax = optionsDefault.zeroParallax;
+				_controllerZeroParallax.setValue(settings.zeroParallax);
+			}
+		}, 'defaultF');
+		dat.controllerNameAndTitle(_controllerDefaultF, _lang.defaultButton, _lang.defaultTitle);
+		displayControllers(settings.spatialMultiplex);
+		var saveToCookie = true;
+		function setObject(name) {
+			if (!saveToCookie) return;
+			var object = {};
+			Object.keys(optionsDefault).forEach(function (key) {
+				object[key] = settings[key];
+			});
+			options.dat.cookie.setObject(name, object);
+		}
+	};
+	var _canvasMenu, menuItemStereoEffect;
+	this.createCanvasMenuItem = function (canvasMenu, params) {
+		_canvasMenu = canvasMenu;
+		params = params || {};
+		var _lang = getLang({ getLanguageCode: params.getLanguageCode, lang: params.lang }),
+		    spatialMultiplexs = Object.keys(_lang.spatialMultiplexs);
+		menuItemStereoEffect = {
+			name: '⚭',
+			title: _lang.stereoEffects,
+			id: 'menuButtonStereoEffects',
+			drop: 'up',
+			items: [{
+				name: spatialMultiplexs[spatialMultiplexsIndexs.Mono],
+				id: 'menuButtonStereoEffectsMono',
+				radio: true,
+				checked: settings.spatialMultiplex === spatialMultiplexsIndexs.Mono,
+				spatialMultiplex: spatialMultiplexsIndexs.Mono,
+				onclick: function onclick(event) {
+					settings.spatialMultiplex = spatialMultiplexsIndexs.Mono;
+				}
+			}, {
+				name: spatialMultiplexs[spatialMultiplexsIndexs.SbS],
+				id: 'menuButtonStereoEffectsSbS',
+				radio: true,
+				checked: settings.spatialMultiplex === spatialMultiplexsIndexs.SbS,
+				spatialMultiplex: spatialMultiplexsIndexs.SbS,
+				onclick: function onclick(event) {
+					settings.spatialMultiplex = spatialMultiplexsIndexs.SbS;
+				}
+			}, {
+				name: spatialMultiplexs[spatialMultiplexsIndexs.TaB],
+				id: 'menuButtonStereoEffectsTaB',
+				radio: true,
+				checked: settings.spatialMultiplex === spatialMultiplexsIndexs.TaB,
+				spatialMultiplex: spatialMultiplexsIndexs.TaB,
+				onclick: function onclick(event) {
+					settings.spatialMultiplex = spatialMultiplexsIndexs.TaB;
+				}
+			}]
+		};
+		menuItemStereoEffect.select = function (value) {
+			menuItemStereoEffect.items.forEach(function (item) {
+				if (item.spatialMultiplex === value) {
+					if (!item.checked) item.elName.onclick({ target: item.elName });
+				}
+			});
+		};
+		this.setSpatialMultiplex = function (index) {
+			menuItemStereoEffect.select(index);
+		};
+		canvasMenu.menu.push(menuItemStereoEffect);
+	};
 };
 
 StereoEffect.spatialMultiplexsIndexs = {
-					Mono: 0,
-					SbS: 1,
-					TaB: 2
+	Mono: 0,
+	SbS: 1,
+	TaB: 2
 };
 Object.freeze(StereoEffect.spatialMultiplexsIndexs);
 var spatialMultiplexsIndexs = StereoEffect.spatialMultiplexsIndexs;
 function assign() {
-					var THREE = three$1.THREE;
-					if (new THREE.Raycaster().setStereoEffect) return;
-					Object.assign(THREE.Raycaster.prototype, {
-										setStereoEffect: function setStereoEffect(settings) {
-															settings = settings || {};
-															settings.raycasterEvents = settings.raycasterEvents === undefined ? true : settings.raycasterEvents;
-															var camera = settings.camera,
-															    renderer = settings.renderer;
-															if (settings.raycasterEvents) {
-																				var _mouse = new THREE.Vector2();
-																				window.addEventListener('mousemove', function (event) {
-																									_mouse.x = event.clientX / window.innerWidth * 2 - 1;
-																									_mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-																									raycaster.setFromCamera(_mouse, camera);
-																									raycaster.stereo.onDocumentMouseMove(event);
-																				}, false);
-																				window.addEventListener('pointerdown', function (event) {
-																									raycaster.stereo.onDocumentMouseDown(event);
-																				}, false);
-															}
-															var stereoEffect = settings.stereoEffect !== undefined ? settings.stereoEffect : typeof effect !== 'undefined' ? effect :
-															new StereoEffect(renderer, settings.options),
-															    raycaster = this,
-															    mouseL = new THREE.Vector2(),
-															    mouseR = new THREE.Vector2();
-															var particles,
-															intersects,
-															mouse;
-															function getMousePosition() {
-																				stereoEffect.getRendererSize().getMousePosition(mouse, event);
-																				function mousePosition(vectorName, b) {
-																									mouseL.copy(mouse);
-																									mouseR.copy(mouse);
-																									var a = 0.5;
-																									mouseL[vectorName] += a;
-																									mouseL[vectorName] *= 2;
-																									mouseR[vectorName] -= a;
-																									mouseR[vectorName] *= 2;
-																									var size = new THREE.Vector2();
-																									renderer.getSize(size);
-																									var zeroParallax = stereoEffect.settings.zeroParallax / size.x * b;
-																									mouseL.x -= zeroParallax;
-																									mouseR.x += zeroParallax;
-																				}
-																				switch (parseInt(stereoEffect.settings.spatialMultiplex)) {
-																									case spatialMultiplexsIndexs.Mono:
-																														return;
-																									case spatialMultiplexsIndexs.SbS:
-																														mousePosition('x', 4);
-																														break;
-																									case spatialMultiplexsIndexs.TaB:
-																														mousePosition('y', 2);
-																														break;
-																									default:
-																														console.error('THREE.Raycaster.setStereoEffect.getMousePosition: Invalid effect.settings.spatialMultiplex = ' + effect.settings.spatialMultiplex);
-																														return;
-																				}
-															}
-															function getIntersects() {
-																				if (particles === undefined) return;
-																				intersects = Array.isArray(particles) ? raycaster.intersectObjects(particles) : raycaster.intersectObject(particles);
-															}
-															var intersectedObject = undefined;
-															function intersection(optionsIntersection) {
-																				if (mouse === undefined) return;
-																				optionsIntersection = optionsIntersection || settings;
-																				function isIntersection() {
-																									getIntersects();
-																									if (intersects.length > 0) {
-																														var _intersection = intersects[0];
-																														if (_intersection && _intersection.object.userData.raycaster && _intersection.object.userData.raycaster.onIntersection) {
-																																			_intersection.object.userData.raycaster.onIntersection(_intersection, mouse);
-																																			intersectedObject = _intersection.object;
-																														}
-																									} else if (intersectedObject) {
-																														intersectedObject.userData.raycaster.onIntersectionOut();
-																														intersectedObject = undefined;
-																									}
-																									return intersects.length > 0;
-																				}
-																				if (parseInt(stereoEffect.settings.spatialMultiplex) !== spatialMultiplexsIndexs.Mono) {
-																									var mouseCur = mouse;
-																									mouse = mouseL;
-																									raycaster.setFromCamera(mouseL, camera);
-																									if (!isIntersection()) {
-																														mouse = mouseR;
-																														raycaster.setFromCamera(mouseR, camera);
-																														isIntersection();
-																									}
-																									mouse = mouseCur;
-																									return;
-																				}
-																				raycaster.setFromCamera(mouse, camera);
-																				isIntersection();
-															}
-															this.stereo = {
-																				onDocumentMouseMove: function onDocumentMouseMove(event) {
-																									if (particles === undefined) return;
-																									event.preventDefault();
-																									if (mouse === undefined) mouse = new THREE.Vector2();
-																									getMousePosition();
-																									intersection();
-																				},
-																				onDocumentMouseDown: function onDocumentMouseDown(event) {
-																									if (stereoEffect.options.dat.mouseenter) return;
-																									if (intersects && intersects.length > 0) {
-																														if (intersects[0].object.userData.raycaster) {
-																																			var intersect = intersects[0];
-																																			if (intersect.object.userData.raycaster.onMouseDown) intersect.object.userData.raycaster.onMouseDown(intersect);
-																														}
-																									}
-																				},
-																				isAddedToParticles: function isAddedToParticles(particle) {
-																									if (!particles) return false;
-																									return particles.includes(particle);
-																				},
-																				addParticle: function addParticle(particle) {
-																									if (particles === undefined) particles = [];
-																									if (this.isAddedToParticles(particle)) {
-																														console.error('Duplicate particle "' + particle.name + '"');
-																														return;
-																									}
-																									particles.push(particle);
-																				},
-																				addParticles: function addParticles(newParticles) {
-																									if (particles !== undefined) {
-																														if (!Array.isArray(particles)) {
-																																			var particlesCur = particles;
-																																			particles = [];
-																																			particles.push(particlesCur);
-																														}
-																														particles.push(newParticles);
-																														return;
-																									}
-																									particles = newParticles;
-																				},
-																				removeParticle: function removeParticle(particle) {
-																									for (var i = 0; i < particles.length; i++) {
-																														if (Object.is(particle, particles[i])) {
-																																			particles.splice(i, 1);
-																																			break;
-																														}
-																									}
-																				},
-																				removeParticles: function removeParticles() {
-																									particles = undefined;
-																				},
-																				getPosition: function getPosition(intersection) {
-																									var attributesPosition = intersection.object.geometry.attributes.position;
-																									var position = attributesPosition.itemSize >= 4 ? new THREE.Vector4(0, 0, 0, 0) : new THREE.Vector3();
-																									if (intersection.index !== undefined) {
-																														position.fromArray(attributesPosition.array, intersection.index * attributesPosition.itemSize);
-																														position.multiply(intersection.object.scale);
-																														position.add(intersection.object.position);
-																									} else position = intersection.object.position;
-																									return position;
-																				}
-															};
-										}
-					});
+	var THREE = three$1.THREE;
+	if (new THREE.Raycaster().setStereoEffect) return;
+	Object.assign(THREE.Raycaster.prototype, {
+		setStereoEffect: function setStereoEffect(settings) {
+			settings = settings || {};
+			settings.raycasterEvents = settings.raycasterEvents === undefined ? true : settings.raycasterEvents;
+			var camera = settings.camera,
+			    renderer = settings.renderer;
+			if (settings.raycasterEvents) {
+				var _mouse = new THREE.Vector2();
+				window.addEventListener('mousemove', function (event) {
+					_mouse.x = event.clientX / window.innerWidth * 2 - 1;
+					_mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+					raycaster.setFromCamera(_mouse, camera);
+					raycaster.stereo.onDocumentMouseMove(event);
+				}, false);
+				window.addEventListener('pointerdown', function (event) {
+					raycaster.stereo.onDocumentMouseDown(event);
+				}, false);
+			}
+			var stereoEffect = settings.stereoEffect !== undefined ? settings.stereoEffect : typeof effect !== 'undefined' ? effect :
+			new StereoEffect(renderer, settings.options),
+			    raycaster = this,
+			    mouseL = new THREE.Vector2(),
+			    mouseR = new THREE.Vector2();
+			var particles,
+			intersects,
+			mouse;
+			function getMousePosition() {
+				stereoEffect.getRendererSize().getMousePosition(mouse, event);
+				function mousePosition(vectorName, b) {
+					mouseL.copy(mouse);
+					mouseR.copy(mouse);
+					var a = 0.5;
+					mouseL[vectorName] += a;
+					mouseL[vectorName] *= 2;
+					mouseR[vectorName] -= a;
+					mouseR[vectorName] *= 2;
+					var size = new THREE.Vector2();
+					renderer.getSize(size);
+					var zeroParallax = stereoEffect.settings.zeroParallax / size.x * b;
+					mouseL.x -= zeroParallax;
+					mouseR.x += zeroParallax;
+				}
+				switch (parseInt(stereoEffect.settings.spatialMultiplex)) {
+					case spatialMultiplexsIndexs.Mono:
+						return;
+					case spatialMultiplexsIndexs.SbS:
+						mousePosition('x', 4);
+						break;
+					case spatialMultiplexsIndexs.TaB:
+						mousePosition('y', 2);
+						break;
+					default:
+						console.error('THREE.Raycaster.setStereoEffect.getMousePosition: Invalid effect.settings.spatialMultiplex = ' + effect.settings.spatialMultiplex);
+						return;
+				}
+			}
+			function intersection(optionsIntersection) {
+				if (mouse === undefined) return;
+				optionsIntersection = optionsIntersection || settings;
+				function isIntersection() {
+					intersects = Options.raycaster.intersectionsInOut(particles, raycaster, renderer, mouse, settings);
+				}
+				if (parseInt(stereoEffect.settings.spatialMultiplex) !== spatialMultiplexsIndexs.Mono) {
+					var mouseCur = mouse;
+					mouse = mouseL;
+					raycaster.setFromCamera(mouseL, camera);
+					if (!isIntersection()) {
+						mouse = mouseR;
+						raycaster.setFromCamera(mouseR, camera);
+						isIntersection();
+					}
+					mouse = mouseCur;
+					return;
+				}
+				raycaster.setFromCamera(mouse, camera);
+				isIntersection();
+			}
+			this.stereo = {
+				onDocumentMouseMove: function onDocumentMouseMove(event) {
+					if (particles === undefined) return;
+					event.preventDefault();
+					if (mouse === undefined) mouse = new THREE.Vector2();
+					getMousePosition();
+					intersection();
+				},
+				isAddedToParticles: function isAddedToParticles(particle) {
+					if (!particles) return false;
+					return particles.includes(particle);
+				},
+				addParticle: function addParticle(particle) {
+					if (particles === undefined) particles = [];
+					if (this.isAddedToParticles(particle)) {
+						console.error('Duplicate particle "' + particle.name + '"');
+						return;
+					}
+					particles.push(particle);
+				},
+				addParticles: function addParticles(newParticles) {
+					if (particles !== undefined) {
+						if (!Array.isArray(particles)) {
+							var particlesCur = particles;
+							particles = [];
+							particles.push(particlesCur);
+						}
+						particles.push(newParticles);
+						return;
+					}
+					particles = newParticles;
+				},
+				removeParticle: function removeParticle(particle) {
+					for (var i = 0; i < particles.length; i++) {
+						if (Object.is(particle, particles[i])) {
+							particles.splice(i, 1);
+							break;
+						}
+					}
+				},
+				removeParticles: function removeParticles() {
+					particles = undefined;
+				},
+				getPosition: function getPosition(intersection) {
+					var attributesPosition = intersection.object.geometry.attributes.position;
+					var position = attributesPosition.itemSize >= 4 ? new THREE.Vector4(0, 0, 0, 0) : new THREE.Vector3();
+					if (intersection.index !== undefined) {
+						position.fromArray(attributesPosition.array, intersection.index * attributesPosition.itemSize);
+						position.multiply(intersection.object.scale);
+						position.add(intersection.object.position);
+					} else position = intersection.object.position;
+					return position;
+				}
+			};
+		}
+	});
 }
 StereoEffect.assign = assign;
 var lang = {
-					mesh: 'Mesh',
-					pointName: 'Point Name',
-					color: 'Сolor',
-					opacity: 'Opacity'
+	mesh: 'Mesh',
+	pointName: 'Point Name',
+	color: 'Сolor',
+	opacity: 'Opacity'
 };
 switch (getLanguageCode()) {
-					case 'ru':
-										lang.mesh = '3D объект';
-										lang.pointName = 'Имя точки';
-										lang.color = 'Цвет';
-										lang.opacity = 'Непрозрачность';
-										break;
+	case 'ru':
+		lang.mesh = '3D объект';
+		lang.pointName = 'Имя точки';
+		lang.color = 'Цвет';
+		lang.opacity = 'Непрозрачность';
+		break;
 }
 StereoEffect.getTextIntersection = function (intersection, options) {
-					var spriteText = Options.findSpriteTextIntersection(options.spriteOptions.group);
-					if (spriteText) return spriteText;
-					var THREE = three$1.THREE;
-					var position = getObjectPosition$1(intersection.object, intersection.index),
-					    scales = options.scales || {},
-					    isArrayFuncs = intersection.index !== undefined && intersection.object.userData.player !== undefined && intersection.object.userData.player.arrayFuncs !== undefined,
-					    funcs = !isArrayFuncs ? undefined : intersection.object.userData.player.arrayFuncs,
-					    func = funcs === undefined || typeof funcs === "function" ? undefined : funcs[intersection.index],
-					    pointName = isArrayFuncs && func ? func.name : undefined,
-					    color = !isArrayFuncs || func === undefined ? undefined : Array.isArray(func.w) ? Player.execFunc(func, 'w', group.userData.t, options) :
-					func.w;
-					var boXYZ = !scales.x && !scales.y && !scales.z;
-					options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
-					return new SpriteText(
-					(intersection.object.name === '' ? '' : lang.mesh + ': ' + intersection.object.name) + (pointName === undefined ? '' : '\n' + lang.pointName + ': ' + pointName) + (!boXYZ && !scales.x ? '' : '\n' + (scales.x && scales.x.name ? scales.x.name : 'X') + ': ' + position.x) + (!boXYZ && !scales.y ? '' : '\n' + (scales.y && scales.y.name ? scales.y.name : 'Y') + ': ' + position.y) + (!boXYZ && !scales.z ? '' : '\n' + (scales.z && scales.z.name ? scales.z.name : 'Z') + ': ' + position.z) + (
-					!isArrayFuncs ? '' : funcs[intersection.index] instanceof THREE.Vector4 || funcs[intersection.index] instanceof THREE.Vector3 || typeof funcs === "function" ? color instanceof THREE.Color ? '\n' + lang.color + ': ' + new THREE.Color(color.r, color.g, color.b).getHexString() : position.w !== undefined ? '\n' + (scales.w && scales.w.name ? scales.w.name : 'W') + ': ' + position.w : '' : '') + (
-					intersection.object.geometry.attributes.ca === undefined || intersection.object.geometry.attributes.ca.itemSize < 4 ? '' : '\n' + lang.opacity + ': ' + new THREE.Vector4().fromArray(intersection.object.geometry.attributes.ca.array, intersection.index * intersection.object.geometry.attributes.ca.itemSize).w), position, options.spriteOptions);
+	var spriteText = Options.findSpriteTextIntersection(options.spriteOptions.group);
+	if (spriteText) return spriteText;
+	var THREE = three$1.THREE;
+	var position = getObjectPosition$1(intersection.object, intersection.index),
+	    scales = options.scales || {},
+	    isArrayFuncs = intersection.index !== undefined && intersection.object.userData.player !== undefined && intersection.object.userData.player.arrayFuncs !== undefined,
+	    funcs = !isArrayFuncs ? undefined : intersection.object.userData.player.arrayFuncs,
+	    func = funcs === undefined || typeof funcs === "function" ? undefined : funcs[intersection.index],
+	    pointName = isArrayFuncs && func ? func.name : undefined,
+	    color = !isArrayFuncs || func === undefined ? undefined : Array.isArray(func.w) ? Player.execFunc(func, 'w', group.userData.t, options) :
+	func.w;
+	var boXYZ = !scales.x && !scales.y && !scales.z;
+	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
+	return new SpriteText(
+	(intersection.object.name === '' ? '' : lang.mesh + ': ' + intersection.object.name) + (pointName === undefined ? '' : '\n' + lang.pointName + ': ' + pointName) + (!boXYZ && !scales.x ? '' : '\n' + (scales.x && scales.x.name ? scales.x.name : 'X') + ': ' + position.x) + (!boXYZ && !scales.y ? '' : '\n' + (scales.y && scales.y.name ? scales.y.name : 'Y') + ': ' + position.y) + (!boXYZ && !scales.z ? '' : '\n' + (scales.z && scales.z.name ? scales.z.name : 'Z') + ': ' + position.z) + (
+	!isArrayFuncs ? '' : funcs[intersection.index] instanceof THREE.Vector4 || funcs[intersection.index] instanceof THREE.Vector3 || typeof funcs === "function" ? color instanceof THREE.Color ? '\n' + lang.color + ': ' + new THREE.Color(color.r, color.g, color.b).getHexString() : position.w !== undefined ? '\n' + (scales.w && scales.w.name ? scales.w.name : 'W') + ': ' + position.w : '' : '') + (
+	intersection.object.geometry.attributes.ca === undefined || intersection.object.geometry.attributes.ca.itemSize < 4 ? '' : '\n' + lang.opacity + ': ' + new THREE.Vector4().fromArray(intersection.object.geometry.attributes.ca.array, intersection.index * intersection.object.geometry.attributes.ca.itemSize).w), position, options.spriteOptions);
 };
 
 /**
@@ -8062,13 +8037,18 @@ function Options(options) {
 			}), defineProperty(_Object$definePropert, 'eventListeners', {
 						get: function get$$1() {
 									if (options.eventListeners) return options.eventListeners;
-									return { addParticle: function addParticle() {
-															console.error('Options.eventListeners.addParticle: call new Options.raycaster.EventListeners(...) first.');
-												} };
 						},
 						set: function set$$1(eventListeners) {
 									if (options.eventListeners) console.error('duplicate eventListeners.');
 									options.eventListeners = eventListeners;
+						}
+			}), defineProperty(_Object$definePropert, 'guiSelectPoint', {
+						get: function get$$1() {
+									return options.guiSelectPoint;
+						},
+						set: function set$$1(guiSelectPoint) {
+									if (options.guiSelectPoint) console.error('duplicate guiSelectPoint.');
+									options.guiSelectPoint = guiSelectPoint;
 						}
 			}), _Object$definePropert));
 			for (var propertyName in options) {
@@ -8096,6 +8076,7 @@ function Raycaster() {
 						if (intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo()) return;
 						var spriteTextIntersection = Options.findSpriteTextIntersection(scene);
 						if (spriteTextIntersection === undefined) {
+									options = new Options(options);
 									var rect = options.spriteText.rect ? JSON.parse(JSON.stringify(options.spriteText.rect)) : {};
 									rect.displayRect = true;
 									rect.backgroundColor = 'rgba(0, 0, 0, 1)';
@@ -8134,11 +8115,51 @@ function Raycaster() {
 						if (intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo()) return;
 						if (options.guiSelectPoint) options.guiSelectPoint.select(intersection);else if (options.axesHelper) options.axesHelper.exposePosition(intersection);
 			};
+			var intersectedObjects = [];
+			var intersects;
+			this.intersectionsInOut = function (particles, raycaster, renderer, mouse) {
+						var settings = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+						function getIntersects() {
+									if (particles === undefined) return;
+									intersects = Array.isArray(particles) ? raycaster.intersectObjects(particles) : raycaster.intersectObject(particles);
+						}
+						getIntersects();
+						intersects.forEach(function (intersection) {
+									var boDetected = false;
+									intersectedObjects.forEach(function (intersectedObject) {
+												if (intersectedObject.object === intersection.object) {
+															boDetected = true;
+															return;
+												}
+									});
+									if (!boDetected) {
+												intersectedObjects.push(intersection);
+									}
+									if (intersection && intersection.object.userData.raycaster && intersection.object.userData.raycaster.onIntersection) {
+												intersection.object.userData.raycaster.onIntersection(intersection, mouse);
+									} else {
+												if (!settings.scene) console.error('THREE.Raycaster.setStereoEffect(): settings.scene = ' + settings.scene);else Options.raycaster.onIntersection(intersection, settings.options, settings.scene, settings.camera, renderer);
+									}
+						});
+						intersectedObjects.forEach(function (intersectedObject) {
+									var boDetected = false;
+									intersects.forEach(function (intersection) {
+												if (intersectedObject.object === intersection.object) boDetected = true;
+									});
+									if (!boDetected) {
+												if (intersectedObject.object.userData.raycaster && intersectedObject.object.userData.raycaster.onIntersectionOut) intersectedObject.object.userData.raycaster.onIntersectionOut();else if (settings.scene) Options.raycaster.onIntersectionOut(settings.scene, renderer);
+												intersectedObjects.splice(intersectedObjects.findIndex(function (v) {
+															return v === intersectedObject;
+												}), 1);
+									}
+						});
+						return intersects;
+			};
 			this.EventListeners = function () {
 						function _class(camera, renderer) {
 									var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 									classCallCheck(this, _class);
-									var intersects, intersectedObject;
+									var intersectedObject;
 									var THREE = three$1.THREE,
 									    mouse = new THREE.Vector2(),
 									    particles = [],
@@ -8150,6 +8171,7 @@ function Raycaster() {
 															options: settings.options,
 															renderer: renderer,
 															camera: camera,
+															scene: settings.scene,
 															stereoEffect: options.stereoEffect,
 															raycasterEvents: false
 												});
@@ -8171,21 +8193,16 @@ function Raycaster() {
 												} else {
 															var intersect = intersects[0],
 															    object = intersect.object;
-															if (object.userData.raycaster && object.userData.raycaster.onIntersection) object.userData.raycaster.onIntersection(intersect);else Options.raycaster.onIntersection(intersect, options, settings.scene, camera, renderer);
+															if (object.userData.raycaster && object.userData.raycaster.onIntersection) object.userData.raycaster.onIntersection(intersect, mouse);else Options.raycaster.onIntersection(intersect, options, settings.scene, camera, renderer);
 															intersectedObject = object;
 												}
 									}, false);
 									window.addEventListener('pointerdown', function (event) {
 												if (raycaster === undefined) return;
-												if (raycaster.stereo !== undefined) {
-															raycaster.stereo.onDocumentMouseDown(event);
-															return;
-												}
 												if (intersects && intersects.length > 0) {
 															var intersect = intersects[0];
 															if (intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown) {
 																		intersect.object.userData.raycaster.onMouseDown(intersect);
-																		if (options && options.guiSelectPoint) options.guiSelectPoint.select(intersect);
 															} else Options.raycaster.onMouseDown(intersect, options);
 												}
 									}, false);
@@ -8874,22 +8891,26 @@ Player$1.cameraTarget = function () {
 									if (!_cameraTarget.boMaual) {
 												if (cameraTarget.boLook !== undefined) _cameraTarget.boLook = cameraTarget.boLook;else _cameraTarget.boLook = cameraTargetDefault.boLook;
 									}
+									cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera;
 									_cameraTarget.camera = cameraTarget.camera || cameraTargetDefault.camera;
 									_cameraTarget.distanceToCamera = cameraTarget.distanceToCamera || cameraTargetDefault.distanceToCamera || _cameraTarget.distanceToCamera || new THREE.Vector3().copy(cameraTargetDefault.camera.position);
 									if (!cameraTarget.rotation) cameraTarget.rotation = {};
 									if (cameraTarget.rotation.angle !== undefined) _cameraTarget.rotation.angle = cameraTarget.rotation.angle;else _cameraTarget.rotation.angle = cameraTargetDefault.rotation.angle || 0;
 									_cameraTarget.rotation.axis = cameraTarget.rotation.axis || cameraTargetDefault.rotation.axis || new THREE.Vector3(0, 1, 0);
 						}
-						this.changeTarget = function (mesh, i) {
+						this.changeTarget = function (mesh, i, options) {
 									assign$1();
-									var cameraTarget = _options.playerOptions.cameraTarget.get();
 									var func = !mesh.userData.player || typeof mesh.userData.player.arrayFuncs === "function" ? {} : mesh.userData.player.arrayFuncs[i];
 									if (!func.cameraTarget) func.cameraTarget = { boLook: false };
 									setCameraTarget(func.cameraTarget);
-									if (cameraTarget && cameraTarget.boLook) {
-												var target = getWorldPosition(mesh, new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize));
-												cameraTarget.target = target;
-									} else delete cameraTarget.target;
+									_options = _options || options;
+									var cameraTarget = _options.playerOptions.cameraTarget.get(_options);
+									if (cameraTarget) {
+												if (cameraTarget && cameraTarget.boLook) {
+															var target = getWorldPosition(mesh, new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize));
+															cameraTarget.target = target;
+												} else delete cameraTarget.target;
+									}
 						};
 						this.setCameraTarget = function (options) {
 									assign$1();
@@ -9034,6 +9055,7 @@ Player$1.selectMeshPlayScene = function (mesh) {
 			assign$1();
 			var t = settings.t,
 			    options = settings.options || { dat: false };
+			options = new Options(options);
 			if (t === undefined) t = options.playerOptions.min;
 			options.scales.setW();
 			if (!mesh.userData.player || options && options.boPlayer && mesh.userData.boFrustumPoints) return;
@@ -9121,7 +9143,7 @@ Player$1.selectMeshPlayScene = function (mesh) {
 									}
 									if (needsUpdate) attributes.position.needsUpdate = true;
 									if (funcs.line && funcs.line.addPoint) funcs.line.addPoint(mesh, i, color);
-									if (funcs.cameraTarget && funcs.cameraTarget.boLook === true) options.playerOptions.cameraTarget.changeTarget(mesh, i);
+									if (funcs.cameraTarget && funcs.cameraTarget.boLook === true) options.playerOptions.cameraTarget.changeTarget(mesh, i, options);
 						};
 						for (var i = 0; i < arrayFuncs.length; i++) {
 									var funcs, needsUpdate;
@@ -9380,9 +9402,12 @@ Player$1.selectPlayScene = function (group) {
 			    options = settings.options || new Options();
 			group.userData.t = t;
 			Player$1.selectMeshPlayScene(group, { t: t, options: options });
-			group.children.forEach(function (mesh) {
-						Player$1.selectMeshPlayScene(mesh, { t: t, options: options });
-			});
+			function selectMeshPlayScene(group) {
+						group.children.forEach(function (mesh) {
+									if (mesh instanceof THREE.Group) selectMeshPlayScene(mesh);else Player$1.selectMeshPlayScene(mesh, { t: t, options: options });
+						});
+			}
+			selectMeshPlayScene(group);
 			options.playerOptions.cameraTarget.setCameraTarget(options);
 			var cameraTarget = options.playerOptions.cameraTarget.get();
 			if (cameraTarget && cameraTarget.setCameraPosition) cameraTarget.setCameraPosition(index === undefined);
@@ -9641,7 +9666,8 @@ function MyPoints(arrayFuncs, group, settings) {
 	var THREE = three$1.THREE;
 	if (typeof arrayFuncs !== 'function' && arrayFuncs.length === 0) arrayFuncs.push(new THREE.Vector3());
 	settings = settings || {};
-	var pointsOptions = settings.pointsOptions || {};
+	settings.pointsOptions = settings.pointsOptions || {};
+	var pointsOptions = settings.pointsOptions;
 	settings.options = settings.options || new Options();
 	var options = settings.options;
 	if (!options.boOptions) {
@@ -9733,7 +9759,7 @@ function MyPoints(arrayFuncs, group, settings) {
 		group.add(points);
 		if (pointsOptions.boFrustumPoints) points.userData.boFrustumPoints = pointsOptions.boFrustumPoints;
 		if (options.guiSelectPoint) options.guiSelectPoint.addMesh(points);
-		options.eventListeners.addParticle(points);
+		if (options.eventListeners) options.eventListeners.addParticle(points);
 		if (pointsOptions.onReady !== undefined) pointsOptions.onReady(points);
 		if (!points.userData.boFrustumPoints && options.raycaster && options.raycaster.addParticle) options.raycaster.addParticle(points);
 	}
@@ -10179,6 +10205,7 @@ function AxesHelper(group, options) {
 	options.scales.text.rect.borderRadius = options.scales.text.rect.borderRadius !== undefined ? options.scales.text.rect.borderRadius : 15;
 	function setScale(axisName) {
 		var scale = options.scales[axisName];
+		if (!scale) return;
 		if (scale.marks === undefined) scale.marks = 3;
 		if (scale.offset === undefined) scale.offset = 0.1;
 		if (scale.zoomMultiplier === undefined) scale.zoomMultiplier = 1.1;
@@ -10746,7 +10773,11 @@ function AxesHelperGui(options, gui) {
 		return;
 	}
 	gui = gui || options.dat.gui;
-	if (!gui || !options.axesHelper || options.dat === false || options.dat.axesHelperGui === false) return;
+	if (!gui || options.dat === false || options.dat.axesHelperGui === false) return;
+	if (!options.axesHelper) {
+		console.error('AxesHelperGui: create AxesHelper instance first');
+		return;
+	}
 	var THREE = three$1.THREE,
 	    dat = three$1.dat;
 	var scalesDefault = JSON.parse(JSON.stringify(options.scales)),
@@ -11076,9 +11107,9 @@ function OrbitControlsGui(options, gui) {
 						}
 			}, 'defaultF'), lang.defaultButton, lang.defaultTitle);
 			this.setTarget = function (target) {
-						targetX.setValue(target.x);
-						targetY.setValue(target.y);
-						targetZ.setValue(target.z);
+						if (targetX) targetX.setValue(target.x);
+						if (targetY) targetY.setValue(target.y);
+						if (targetZ) targetZ.setValue(target.z);
 			};
 };
 
@@ -11368,8 +11399,7 @@ var GuiSelectPoint =
 function GuiSelectPoint(options) {
 			var guiParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 			classCallCheck(this, GuiSelectPoint);
-			var axesHelper = options.axesHelper,
-			guiSelectPoint = this,
+			var guiSelectPoint = this,
 			    THREE = three$1.THREE;
 			if (!options.boOptions) {
 						console.error('GuiSelectPoint: call options = new Options( options ) first');
@@ -11501,8 +11531,8 @@ function GuiSelectPoint(options) {
 						if (selectedPointIndex === -1) return;
 						var mesh = cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh,
 						    position = getObjectPosition$1(mesh, selectedPointIndex);
-						if (axesHelper !== undefined)
-									if (axesHelper !== false && axesHelper !== undefined) axesHelper.exposePosition({ object: mesh, index: selectedPointIndex });
+						if (options.axesHelper !== undefined)
+									if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition({ object: mesh, index: selectedPointIndex });
 						if (cWorld.x) cWorld.x.setValue(position.x);
 						if (cWorld.y) cWorld.y.setValue(position.y);
 						if (cWorld.z) cWorld.z.setValue(position.z);
@@ -11827,7 +11857,7 @@ function GuiSelectPoint(options) {
 									if (mesh === undefined) {
 												display = none;
 												mesh = undefined;
-												if (axesHelper !== undefined) axesHelper.exposePosition(getObjectPosition$1(getMesh(), value));
+												if (options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition$1(getMesh(), value));
 									} else {
 												var displayDefaultButtons = mesh.userData.default === undefined ? none : block;
 												buttonScaleDefault.domElement.parentElement.parentElement.style.display = displayDefaultButtons;
@@ -11992,7 +12022,7 @@ function GuiSelectPoint(options) {
 												display = 'block';
 												_this.select({ object: getMesh(), index: value });
 									}
-									if (axesHelper !== false && axesHelper !== undefined) axesHelper.exposePosition(getObjectPosition$1(getMesh(), value));
+									if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition$1(getMesh(), value));
 									displayPointControllers(display);
 						});
 						cPoints.__select[0].selected = true;
@@ -12168,8 +12198,8 @@ function GuiSelectPoint(options) {
 															onChange(value);
 												});
 									} else {
-												scale = axesHelper === undefined ? options.scales[axisName] :
-												axesHelper.options ? axesHelper.options.scales[axisName] : undefined;
+												scale = options.axesHelper === undefined ? options.scales[axisName] :
+												options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
 												if (scale) controller = fPoint.add({
 															value: scale.min
 												}, 'value', scale.min, scale.max, (scale.max - scale.min) / 100).onChange(function (value) {
@@ -12218,7 +12248,7 @@ function GuiSelectPoint(options) {
 									guiParams.pointControls(fPoint, dislayEl, getMesh, intersection);
 						}
 						function axesWorldGui(axisName) {
-									var scale = axesHelper === undefined ? options.scales[axisName] : axesHelper.options ? axesHelper.options.scales[axisName] : undefined;
+									var scale = options.axesHelper === undefined ? options.scales[axisName] : options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
 									if (!scale) return;
 									var controller = dat.controllerZeroStep(fPointWorld, { value: scale.min }, 'value');
 									controller.domElement.querySelector('input').readOnly = true;
@@ -12828,6 +12858,7 @@ function FrustumPoints(camera, group, canvas) {
 												var distanceTableWidth;
 												this.create = function (_uniforms) {
 																uniforms = _uniforms;
+																if (!options.scales.w) options.scales.setW();
 																var max = options.scales.w.max,
 																    min = options.scales.w.min;
 																uniforms.paletteA = { value: 1 / (max - min) };
@@ -13772,18 +13803,11 @@ function MyThree(createXDobjects, options) {
 												});
 												options.renderer = renderer;
 												options.cursor = renderer.domElement.style.cursor;
-												options.stereoEffect = options.stereoEffect || {};
-												options.stereoEffect.rememberSize = true;
+												if (options.stereoEffect !== false) {
+																options.stereoEffect = options.stereoEffect || {};
+																options.stereoEffect.rememberSize = true;
+												}
 												new StereoEffect(renderer, options);
-												var raycaster = new THREE.Raycaster();
-												raycaster.params.Points.threshold = 0.02;
-												if (raycaster.setStereoEffect !== undefined) raycaster.setStereoEffect({
-																options: options,
-																renderer: renderer,
-																camera: camera,
-																stereoEffect: options.stereoEffect,
-																raycasterEvents: false
-												});
 												options.eventListeners = new Options.raycaster.EventListeners(camera, renderer, { options: options, scene: scene });
 												function removeTraceLines() {
 																group.children.forEach(function (mesh) {
