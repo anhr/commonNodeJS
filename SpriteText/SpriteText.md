@@ -176,7 +176,7 @@ If you want the user can to change the height of the "Group" text, please add an
 ```
 SpriteTextGui( group, options, { spriteFolder: 'Sprite Text Setting for group' } );
 ```
-You can add <b>SpriteTextGui</b> for changing options of each sprite test separately. For example edit the "Group" </b>SpriteText</b> for it.
+You can add <b>SpriteTextGui</b> for changing options of each sprite test separately. For example edit the "group" </b>SpriteText</b> for it.
 ```
 const optionsIndividual = {
 
@@ -185,7 +185,7 @@ const optionsIndividual = {
 }
 const spriteTextGroup = new SpriteText( 'group', new THREE.Vector3( -4, 0, 0 ), optionsIndividual );
 ```
-Now the "Group" text is red.
+Now the "group" text is red.
 
 Add new <b>SpriteTextGui</b>.
 ```
@@ -196,4 +196,4 @@ SpriteTextGui( spriteTextGroup, options, {
 
 } );
 ```
-Now user can select another color of the "Group" text in the "Sprite with individual options" folder.
+Now user can select another color of the "group" text in the "Sprite with individual options" folder.
