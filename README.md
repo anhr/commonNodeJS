@@ -65,7 +65,7 @@ for control of the position of [threejs](https://github.com/anhr/three.js) 3D ob
 * ScaleController.js ScaleController is [dat.gui](https://github.com/dataarts/dat.gui) graphical user interface controller
 for control of the scale of [threejs](https://github.com/anhr/three.js) 3D object.
 [ScaleController API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/ScaleController/index.html).
-[Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/index.html).
 * SpriteText.js A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text component. SpriteText is a text that always faces towards the camera.
 [README.md](https://github.com/anhr/commonNodeJS/blob/master/SpriteText/README.md).
 [SpriteText API](https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/jsdoc/index.html).
