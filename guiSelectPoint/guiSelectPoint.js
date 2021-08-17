@@ -514,7 +514,9 @@ class GuiSelectPoint {
 		 */
 		this.update = function () {
 
-			const mesh = cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh;
+			const selectedItem = cMeshs.__select.options[cMeshs.__select.options.selectedIndex];
+			if ( !selectedItem ) return;
+			const mesh = selectedItem.mesh;
 			if ( !mesh )
 				return;
 			const index = this.getSelectedPointIndex();
