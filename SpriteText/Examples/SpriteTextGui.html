@@ -39,41 +39,10 @@
 		import { SpriteTextGui } from '../SpriteTextGui.js';
 		//import { SpriteTextGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteTextGui.js';
 
-//WARNING: Multiple instances of Three.js being imported. Use Options.createOrbitControls(...) http://localhost/anhr/commonNodeJS/master/jsdoc/Options/Options.html#createOrbitControls
-//		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
-//		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
-//		import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-//		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
-
-
-		/*Uncaught SyntaxError: The requested module '../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js' does not provide an export named 'ConvexBufferGeometry'
-				//import { ConvexBufferGeometry } from '../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js';//https://github.com/anhr/three.js
-				//import { ConvexBufferGeometry } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/geometries/ConvexGeometry.js';
-				//import { ConvexBufferGeometry } from 'https://threejs.org/examples/jsm/geometries/ConvexGeometry.js';
-		*/
-
 		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
-/*
-		import { WEBGL } from '../../../../three.js/dev/examples/jsm/WebGL.js';//https://github.com/anhr/three.js
-		//import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
-		//import { WEBGL } from 'https://threejs.org/examples/jsm/WebGL.js';
-
-		if ( WEBGL.isWebGLAvailable() === false ) {
-
-			document.body.appendChild( WEBGL.getWebGLErrorMessage() );
-
-		}
-*/
-
-//		import cookie from '../../cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
-//		import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
-//		import { getLanguageCode } from '../../lang.js';//https://github.com/anhr/commonNodeJS
-//		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
 
 		import Options from '../../Options.js'
-		//		SpriteText.setTHREE( THREE );
 
 		var camera, scene, renderer, stereoEffect, scale = 0.1;
 
@@ -85,17 +54,12 @@
 			scene = new THREE.Scene();
 
 			renderer = new THREE.WebGLRenderer( { antialias: true } );
-			//			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
 
 			// camera
 			camera = new THREE.PerspectiveCamera( 70 * scale, window.innerWidth / window.innerHeight, 1 * scale, 1000 * scale );
 			camera.position.set( 15, 20, 30 );
-			/*
-						camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-						camera.position.set( 0.4, 0.4, 2 );
-			*/
 			scene.add( camera );
 
 			//Settings for all SpriteText added to scene and child groups
@@ -119,17 +83,6 @@
 			// controls
 
 			new Options().createOrbitControls( camera, renderer, scene );
-/*
-			if ( typeof OrbitControls !== 'undefined' ) {
-
-				const controls = new OrbitControls( camera, renderer.domElement );
-				controls.minDistance = 25;
-				controls.maxDistance = 75;
-				controls.maxPolarAngle = Math.PI / 2;
-				controls.update();
-
-			}
-*/
 
 			scene.add( new THREE.AmbientLight( 0x222222 ) );
 
@@ -140,21 +93,6 @@
 
 
 			// points
-			/*
-						const vertices = new THREE.BoxGeometry( 20 * scale, 20 * scale, 20 * scale ).vertices;
-
-						// convex hull
-
-						const meshMaterial = new THREE.MeshLambertMaterial( {
-							color: 0xffffff,
-							opacity: 0.5,
-							transparent: true,
-						} );
-
-						const meshGeometry = new ConvexBufferGeometry( vertices );
-
-						const meshBack = new THREE.Mesh( meshGeometry, meshMaterial );
-			*/
 			const boxGeometry = new THREE.BoxGeometry( 20 * scale, 20 * scale, 20 * scale );
 
 			// convex hull
@@ -282,10 +220,6 @@
 
 				//dat-gui JavaScript Controller Library
 				const gui = stereoEffect.options.dat.gui;//new dat.GUI();
-//				const options = ;
-
-				//dat-gui JavaScript Controller Library
-//				const gui = options.dat.gui;
 
 				if ( typeof SpriteTextGui !== "undefined" ) {
 
@@ -295,7 +229,6 @@
 							dat: {
 
 								//gui: typeof dat !== 'undefined' ? new dat.GUI() : undefined,
-//								dat: typeof dat !== 'undefined' ? dat : undefined,
 								//cookie: false,
 								cookieName: 'All',
 								gui: gui,
@@ -305,9 +238,7 @@
 
 						}, {
 
-						//						getLanguageCode: getLanguageCode,
 						settings: { zoomMultiplier: 1.5, },
-						//						cookie: cookie,
 
 					} );
 
@@ -317,7 +248,6 @@
 							dat: {
 
 								//gui: typeof dat !== 'undefined' ? new dat.GUI() : undefined,
-//								dat: typeof dat !== 'undefined' ? dat : undefined,
 								//cookie: false,
 								cookieName: 'groupLevel2',
 								gui: gui,
@@ -328,9 +258,6 @@
 						}, {
 
 						spriteFolder: 'groupLevel2 sprites',
-						//						getLanguageCode: getLanguageCode,
-						//						cookie: cookie,
-						//settings: { zoomMultiplier: 1.5, },
 
 					} );
 
@@ -339,7 +266,6 @@
 							dat: {
 
 								//gui: typeof dat !== 'undefined' ? new dat.GUI() : undefined,
-//								dat: typeof dat !== 'undefined' ? dat : undefined,
 								//cookie: false,
 								cookieName: 'individual',
 								gui: gui,
@@ -350,7 +276,6 @@
 						}, {
 
 						spriteFolder: 'Sprite with individual options',
-//						getLanguageCode: getLanguageCode,
 						options: optionsIndividual,
 
 					} );
@@ -369,12 +294,7 @@
 							folder: gui,
 							dat: dat,
 
-						}/*options, {
-
-							getLanguageCode: getLanguageCode,
-							gui: gui,
-
-						}*/ );
+						} );
 
 				//default button
 				const defaultParams = {
@@ -394,7 +314,6 @@
 			} else {
 
 				SpriteText.updateSpriteTextGroup( scene );
-				//				SpriteText.updateSpriteTextGroup( groupLevel2 );
 
 			}
 
