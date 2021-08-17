@@ -11,7 +11,7 @@ My JavaScript library for NodeJS.
 * CanvasMenu. My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu) for canvas in my [three.js](https://threejs.org/) projects.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/canvasMenu).
 * clearThree.js Remove all child objects of the object and call dispose on their geometry, material and texture.
-[Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/index.html).
 * cookie. Cookies let you store user information in web pages. See [JavaScript Cookies](https://www.w3schools.com/js/js_cookies.asp).
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/Examples/index.html).
@@ -51,7 +51,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/index.html).
 * OrbitControlsGui.js [OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) graphical user interface.
 [OrbitControlsGui API](https://raw.githack.com/anhr/commonNodeJS/master/OrbitControls/jsdoc/index.html).
-[Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/index.html).
 * Player.js 3D objects animation.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/player).
 [Player API](https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html).
@@ -61,7 +61,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 * PositionController.js PositionController is [dat.gui](https://github.com/dataarts/dat.gui) graphical user interface controller
 for control of the position of [threejs](https://github.com/anhr/three.js) 3D object.
 [PositionController API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/PositionController/index.html).
-[Example](https://raw.githack.com/anhr/myThreejs/master/Examples/html/).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/index.html).
 * ScaleController.js ScaleController is [dat.gui](https://github.com/dataarts/dat.gui) graphical user interface controller
 for control of the scale of [threejs](https://github.com/anhr/three.js) 3D object.
 [ScaleController API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/ScaleController/index.html).
