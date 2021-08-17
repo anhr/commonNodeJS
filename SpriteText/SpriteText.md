@@ -153,7 +153,7 @@ Other settings takes from parent group i.e. from <b>scene</b>. You can see, chil
 ### SpriteTextGui
 
 Add <b>SpriteTextGui</b> into [dat.gui](https://github.com/anhr/dat.gui) for manual change settings of the <b>SpriteText</b>.
-[Example](https://raw.githack.com/anhr/SpriteText/master/Examples/SpriteTextGui.html)
+[Example](../Examples/SpriteTextGui.html).
 
 Import <b>dat.gui</b> and add <b>dat</b> into <b>three</b>.
 ```
