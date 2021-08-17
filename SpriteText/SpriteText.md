@@ -135,8 +135,7 @@ SpriteText.updateSpriteTextGroup( scene );
 ```
 after creating of all <b>SpriteText</b> instances for new <b>scene.userData.optionsSpriteText</b> have effect.
 Now you can see, your "Scene" text is green, text height is 0.2 and font name is "Times".
-
-Add new <b>SpriteText</b> before <b>SpriteText.updateSpriteTextGroup( scene );</b>.
+* You can create a group of texts with specific settings.
 ```
 const group = new THREE.Group();
 group.userData.optionsSpriteText = {
@@ -149,6 +148,7 @@ const spriteTextGroup = new SpriteText( 'group', new THREE.Vector3( -4, 0, 0 ) )
 group.add( spriteTextGroup );
 ```
 All <b>SpriteText</b> instances, added into <b>group</b>, have text height is 0.1.
+Other settings takes from parent group i.e. from <b>scene</b>. You can see, child group setting have more priority before parent settings.
 
 ### SpriteTextGui
 
