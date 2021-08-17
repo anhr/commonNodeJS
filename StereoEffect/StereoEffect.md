@@ -1,6 +1,6 @@
 # StereoEffect.
 
-Uses dual PerspectiveCameras for [Parallax Barrier](https://en.wikipedia.org/wiki/Parallax_barrier) effects.
+Uses dual [PerspectiveCameras](https://threejs.org/docs/index.html?q=PerspectiveCamera#api/en/cameras/PerspectiveCamera) for [Parallax Barrier](https://en.wikipedia.org/wiki/Parallax_barrier) effects.
 
 # Content
 * [Quick start.](#Quickstart)
@@ -181,7 +181,7 @@ Now you can see new "Stereo effects" folder in upper right corner of the canvas.
 Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over).
 * Create [EventListeners](../../../../commonNodeJS/master/jsdoc/Options/Raycaster_EventListeners.html) instance and get default cursor after creating of <b>StereoEffect</b> instance.
 ```
-const eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options } );
+const eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
 const cursor = renderer.domElement.style.cursor;
 ```
 * Define of the actions for objects in the 3d space the mouse is over.
