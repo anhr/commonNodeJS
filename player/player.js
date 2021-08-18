@@ -76,8 +76,8 @@ class Player {
 	 * @param {boolean} [settings.options.dat.playerGui] false - do not adds a <a href="../../player/jsdoc/module-Player-Player.html#gui" target="_blank">Player controllers</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {boolean} [settings.options.dat.playController] false - do not adds a <a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html" target="_blank">PlayController</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {Object} [settings.options.playerOptions] Player settings.
-	 * @param {number} [settings.options.playerOptions.min=0] Minimum range of the axis.
-	 * @param {number} [settings.options.playerOptions.max=1] Maximum range of the axis.
+	 * @param {number} [settings.options.playerOptions.min=0] Start time of the playing.
+	 * @param {number} [settings.options.playerOptions.max=1] Stop time of the playing.
 	 * @param {number} [settings.options.playerOptions.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
 	 * Have effect for <b>max</b> is not Infinity.
 	 * @param {number} [settings.options.playerOptions.dt=0.1] Step of the animation. Have effect only if <b>max</b> is infinity.
