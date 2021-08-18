@@ -243,15 +243,7 @@ class MyThree {
 			return;
 
 		options = new Options( options );
-/*
-		function getCanvasName() {
-			return typeof options.elContainer === "object" ?
-				options.elContainer.id :
-				typeof options.elContainer === "string" ?
-					options.elContainer :
-					'';
-		}
-*/
+		
 		var camera, group, scene, canvas;
 
 		function onloadScripts() {
@@ -657,10 +649,17 @@ class MyThree {
 				};
 				rendererSizeDefault = getRendererSize();
 
+				renderer.setSize( ( options.canvas !== undefined ) && ( options.canvas.width !== undefined ) ? options.canvas.width : canvas.clientWidth,
+					( options.canvas !== undefined ) && ( options.canvas.height !== undefined ) ? options.canvas.height : canvas.clientHeight );
+
+				//CanvasMenu вызываю после renderer.setSize
+				//потому что если задан options.canvas.fullScreen = true,
+				//то CanvasMenu изменяет размер renderer до fullScreen
 				new CanvasMenu( renderer, {
 
 					fullScreen: {
 
+						fullScreen: options.canvas.fullScreen,
 						camera: camera,
 						onFullScreenToggle: function ( fullScreen ) {
 
@@ -672,8 +671,6 @@ class MyThree {
 					options: options,
 
 				} );
-				renderer.setSize( ( options.canvas !== undefined ) && ( options.canvas.width !== undefined ) ? options.canvas.width : canvas.clientWidth,
-					( options.canvas !== undefined ) && ( options.canvas.height !== undefined ) ? options.canvas.height : canvas.clientHeight );
 
 				//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
 				options.createOrbitControls( camera, renderer, scene );

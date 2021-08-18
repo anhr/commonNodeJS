@@ -814,7 +814,12 @@ class Options {
 			 **/
 			canvas: {
 
-				get: function () { return options.canvas; },
+				get: function () {
+
+					if ( options.canvas ) return options.canvas;
+					return { fullScreen: true, }
+
+				},
 
 			},
 
