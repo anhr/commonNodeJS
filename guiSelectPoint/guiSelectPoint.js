@@ -523,9 +523,9 @@ class GuiSelectPoint {
 			if ( index === -1 )
 				return;
 			const position = getObjectPosition( mesh, index );
-			cWorld.x.setValue( position.x );
-			cWorld.y.setValue( position.y );
-			cWorld.z.setValue( position.z );
+			if( cWorld.x ) cWorld.x.setValue( position.x );
+			if( cWorld.y ) cWorld.y.setValue( position.y );
+			if( cWorld.z ) cWorld.z.setValue( position.z );
 
 		}
 		/**
