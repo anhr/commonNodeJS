@@ -157,7 +157,7 @@ class CanvasMenu {
 					fullScreen: settings.fullScreen,
 
 				} );
-			if ( settings.fullScreen.fullScreen ) fullScreenSettings.setFullScreen();
+			if ( settings.fullScreen.fullScreen !== false ) fullScreenSettings.setFullScreen();
 
 			/**
 			 * @param {StereoEffect} stereoEffect <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
