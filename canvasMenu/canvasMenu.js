@@ -157,7 +157,7 @@ class CanvasMenu {
 					fullScreen: settings.fullScreen,
 
 				} );
-			if ( settings.fullScreen.fullScreen !== false ) fullScreenSettings.setFullScreen();
+			if ( settings.fullScreen.fullScreen !== false ) fullScreenSettings.setFullScreen( false, true );
 
 			/**
 			 * @param {StereoEffect} stereoEffect <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
@@ -227,7 +227,12 @@ class CanvasMenu {
 			 */
 			this.setFullScreenButton = function ( fullScreen ) {
 
-				if ( fullScreen === undefined ) fullScreen = settings.fullScreen.fullScreen;
+				if ( fullScreen === undefined ) {
+
+					if ( settings.fullScreen.fullScreen === false ) fullScreen = false;
+					else fullScreen = true;
+
+				}
 				const elMenuButtonFullScreen = elContainer.querySelector( '#menuButtonFullScreen' );//document.getElementById( 'menuButtonFullScreen' );
 				if ( elMenuButtonFullScreen === null )
 					return true;

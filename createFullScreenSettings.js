@@ -54,60 +54,71 @@ function CreateFullScreenSettings( THREE, renderer, camera, options ) {
 	/**
 	 * Sets the full screen of the canvas.
 	 * @param {boolean} [fullScreen=false] false - full screen of the canvas.
+	 * @param {boolean} [boTimeout=false] true - set fullScreen after 0 msec timeout.
 	 */
-	this.setFullScreen = function ( fs=false ) {
+	this.setFullScreen = function ( fs = false, boTimeout = false ) {
 
-		const size = new THREE.Vector2();
-		renderer.getSize( size );
-		fullScreen = fs;
-		if ( fullScreen ) {
+		setTimeout( function () {
 
-			if ( style !== undefined ) {
+			//Если на веб странице один MyThree то по умолчанию он на всю страницу.
+			//Если на веб странице больше одного MyThree то по умолчанию все MyThree не на всю страницу.
+			//В противном случае если несколько MyThree на всю страницу то они будут накладываться друг на друга 
+			//между ними произойдет путаница
+			if ( boTimeout && options.fullScreen.arrayContainersLength && ( options.fullScreen.arrayContainersLength() > 1 ) )
+				fs = true;
+			const size = new THREE.Vector2();
+			renderer.getSize( size );
+			fullScreen = fs;
+			if ( fullScreen ) {
 
-				//restore size of the canvas
-				renderer.setSize( style.sizeOriginal.x, style.sizeOriginal.y );
-				renderer.domElement.style.position = style.position;
-				renderer.domElement.style.left = style.left;
-				renderer.domElement.style.top = style.top;
-				renderer.domElement.style.width = style.width;
-				renderer.domElement.style.height = style.height;
+				if ( style !== undefined ) {
 
-			}
-
-		} else {
-
-			if ( style === undefined ) {
-
-				style = {
-
-					sizeOriginal: new THREE.Vector2(),
-					position: renderer.domElement.style.position,
-					left: renderer.domElement.style.left,
-					top: renderer.domElement.style.top,
-					width: renderer.domElement.style.width,
-					height: renderer.domElement.style.height,
+					//restore size of the canvas
+					renderer.setSize( style.sizeOriginal.x, style.sizeOriginal.y );
+					renderer.domElement.style.position = style.position;
+					renderer.domElement.style.left = style.left;
+					renderer.domElement.style.top = style.top;
+					renderer.domElement.style.width = style.width;
+					renderer.domElement.style.height = style.height;
 
 				}
-				renderer.getSize( style.sizeOriginal );
+
+			} else {
+
+				if ( style === undefined ) {
+
+					style = {
+
+						sizeOriginal: new THREE.Vector2(),
+						position: renderer.domElement.style.position,
+						left: renderer.domElement.style.left,
+						top: renderer.domElement.style.top,
+						width: renderer.domElement.style.width,
+						height: renderer.domElement.style.height,
+
+					}
+					renderer.getSize( style.sizeOriginal );
+				}
+
+				//Full screen of the canvas
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.domElement.style.position = 'fixed';
+				renderer.domElement.style.left = 0;
+				renderer.domElement.style.top = 0;
+				renderer.domElement.style.width = '100%';
+				renderer.domElement.style.height = '100%';
+
 			}
 
-			//Full screen of the canvas
-			renderer.setSize( window.innerWidth, window.innerHeight );
-			renderer.domElement.style.position = 'fixed';
-			renderer.domElement.style.left = 0;
-			renderer.domElement.style.top = 0;
-			renderer.domElement.style.width = '100%';
-			renderer.domElement.style.height = '100%';
+			if ( options.fullScreen.onFullScreenToggle !== undefined ) options.fullScreen.onFullScreenToggle( fullScreen );
 
-		}
-			
-		if ( options.fullScreen.onFullScreenToggle !== undefined ) options.fullScreen.onFullScreenToggle( fullScreen );
-		
-		camera.aspect = size.x / size.y;
-		camera.updateProjectionMatrix();
-		fullScreen = !fullScreen;
-		if ( canvasMenu && canvasMenu.setFullScreenButton ) canvasMenu.setFullScreenButton( fullScreen );
-		CreateFullScreenSettings.RendererSetSize( renderer, options.canvasMenu );
+			camera.aspect = size.x / size.y;
+			camera.updateProjectionMatrix();
+			fullScreen = !fullScreen;
+			if ( canvasMenu && canvasMenu.setFullScreenButton ) canvasMenu.setFullScreenButton( fullScreen );
+			CreateFullScreenSettings.RendererSetSize( renderer, options.canvasMenu );
+
+		}, 0 );
 
 	}
 	/**

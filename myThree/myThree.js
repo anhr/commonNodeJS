@@ -100,7 +100,7 @@ const currentScriptPath = getCurrentScriptPath();
 
 function arrayContainersF() {
 
-	var array = [];
+	const array = [];
 	this.push = function ( elContainer ) {
 
 		array.push( elContainer );
@@ -114,10 +114,26 @@ function arrayContainersF() {
 
 		} );
 
-	}
+	};
+	Object.defineProperties( this, {
+
+		/**
+		 * getter
+		 */
+		length: {
+
+			get: function () {
+
+				return array.length;
+
+			},
+
+		},
+
+	} );
 
 };
-var arrayContainers = new arrayContainersF();
+const arrayContainers = new arrayContainersF();
 
 /*
  * if you asynhronous creates two or more myThreejs same time, then you will receive the error message:
@@ -661,11 +677,8 @@ class MyThree {
 
 						fullScreen: options.canvas.fullScreen,
 						camera: camera,
-						onFullScreenToggle: function ( fullScreen ) {
-
-							rendererSizeDefault.onFullScreenToggle( fullScreen );
-
-						},
+						arrayContainersLength: function() { return arrayContainers.length; },
+						onFullScreenToggle: function ( fullScreen ) { rendererSizeDefault.onFullScreenToggle( fullScreen ); },
 
 					},
 					options: options,
