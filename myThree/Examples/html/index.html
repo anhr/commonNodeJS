@@ -191,7 +191,7 @@
 
 				onIntersection: function ( intersection, mouse ) {
 
-//					options.raycaster.onIntersection( intersection, mouse );
+					//					options.raycaster.onIntersection( intersection, mouse );
 					MyThree.Options.raycaster.onIntersection( intersection, options, group, options.camera, options.renderer );
 
 				},
@@ -237,7 +237,7 @@
 			var cubeType = 'cube';
 			function addCube( cubePosition, color, selectPlayScene, name ) {
 
-				var cube = new THREE.Mesh( new THREE.BoxGeometry( 0.4, 0.4, 0.4 ),
+				const cube = new THREE.Mesh( new THREE.BoxGeometry( 0.4, 0.4, 0.4 ),
 					new THREE.MeshLambertMaterial( {
 
 						color: color,
@@ -258,7 +258,7 @@
 						if ( cube.userData.currentHex === undefined )
 							cube.userData.currentHex = cube.material.emissive.getHex();
 						cube.material.emissive.setHex( 0xff0000 );
-//						options.raycaster.onIntersection( intersection, mouse );
+						//						options.raycaster.onIntersection( intersection, mouse );
 						MyThree.Options.raycaster.onIntersection( intersection, options, group, options.camera, options.renderer );
 
 					},
@@ -266,14 +266,14 @@
 
 						if ( cube.userData.currentHex !== undefined ) cube.material.emissive.setHex( cube.userData.currentHex );
 						cube.userData.currentHex = undefined;
-//						options.raycaster.onIntersectionOut( scene );
+						//						options.raycaster.onIntersectionOut( scene );
 						MyThree.Options.raycaster.onIntersectionOut( group, options.renderer );
 
 					},
 					onMouseDown: function ( intersection ) {
 
 						//alert( 'Clicked over cube.' );
-						
+
 					},
 
 				}
@@ -347,7 +347,7 @@
 			frustumPoints: {},//Creates a FrustumPoints instance
 			canvas: {
 
-				fullScreen: false,
+				//fullScreen: false,
 				width: window.innerWidth / 2,
 				height: window.innerHeight / 2,
 
@@ -464,19 +464,19 @@
 
 		} );
 
-		new MyThree( function ( group, options ) { }, { elContainer: canvasContainer2 } );
+		new MyThree();// function ( group, options ) { }, { elContainer: canvasContainer2 } );
 
 	</script>
 	<h2>Simple canvas.</h2>
-	<div id="canvasContainer2"><img src="/anhr/TreeElementNodeJS/master/img/wait.gif"></div>
+	<!--<div id="canvasContainer2"><img src="/anhr/TreeElementNodeJS/master/img/wait.gif"></div>-->
 	<script type="module">
-		//import * as THREE from '../../../../../three.js/dev/build/three.module.js';
+				//import * as THREE from '../../../../../three.js/dev/build/three.module.js';
 
-		//import MyThree from '../../myThree.js';
-		//import MyThree from '../../build/myThree.module.js';
-		//import MyThree from '../../build/myThree.module.min.js';
+				//import MyThree from '../../myThree.js';
+				//import MyThree from '../../build/myThree.module.js';
+				//import MyThree from '../../build/myThree.module.min.js';
 
-		//new MyThree();
+				//new MyThree();
 	</script>
 </body>
 </html>
