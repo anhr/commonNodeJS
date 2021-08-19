@@ -6892,43 +6892,47 @@ function CreateFullScreenSettings(THREE, renderer, camera, options) {
 	};
 	this.setFullScreen = function () {
 		var fs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-		var size = new THREE.Vector2();
-		renderer.getSize(size);
-		fullScreen = fs;
-		if (fullScreen) {
-			if (style !== undefined) {
-				renderer.setSize(style.sizeOriginal.x, style.sizeOriginal.y);
-				renderer.domElement.style.position = style.position;
-				renderer.domElement.style.left = style.left;
-				renderer.domElement.style.top = style.top;
-				renderer.domElement.style.width = style.width;
-				renderer.domElement.style.height = style.height;
+		var boTimeout = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+		setTimeout(function () {
+			if (boTimeout && options.fullScreen.arrayContainersLength && options.fullScreen.arrayContainersLength() > 1) fs = true;
+			var size = new THREE.Vector2();
+			renderer.getSize(size);
+			fullScreen = fs;
+			if (fullScreen) {
+				if (style !== undefined) {
+					renderer.setSize(style.sizeOriginal.x, style.sizeOriginal.y);
+					renderer.domElement.style.position = style.position;
+					renderer.domElement.style.left = style.left;
+					renderer.domElement.style.top = style.top;
+					renderer.domElement.style.width = style.width;
+					renderer.domElement.style.height = style.height;
+				}
+			} else {
+				if (style === undefined) {
+					style = {
+						sizeOriginal: new THREE.Vector2(),
+						position: renderer.domElement.style.position,
+						left: renderer.domElement.style.left,
+						top: renderer.domElement.style.top,
+						width: renderer.domElement.style.width,
+						height: renderer.domElement.style.height
+					};
+					renderer.getSize(style.sizeOriginal);
+				}
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				renderer.domElement.style.position = 'fixed';
+				renderer.domElement.style.left = 0;
+				renderer.domElement.style.top = 0;
+				renderer.domElement.style.width = '100%';
+				renderer.domElement.style.height = '100%';
 			}
-		} else {
-			if (style === undefined) {
-				style = {
-					sizeOriginal: new THREE.Vector2(),
-					position: renderer.domElement.style.position,
-					left: renderer.domElement.style.left,
-					top: renderer.domElement.style.top,
-					width: renderer.domElement.style.width,
-					height: renderer.domElement.style.height
-				};
-				renderer.getSize(style.sizeOriginal);
-			}
-			renderer.setSize(window.innerWidth, window.innerHeight);
-			renderer.domElement.style.position = 'fixed';
-			renderer.domElement.style.left = 0;
-			renderer.domElement.style.top = 0;
-			renderer.domElement.style.width = '100%';
-			renderer.domElement.style.height = '100%';
-		}
-		if (options.fullScreen.onFullScreenToggle !== undefined) options.fullScreen.onFullScreenToggle(fullScreen);
-		camera.aspect = size.x / size.y;
-		camera.updateProjectionMatrix();
-		fullScreen = !fullScreen;
-		if (canvasMenu && canvasMenu.setFullScreenButton) canvasMenu.setFullScreenButton(fullScreen);
-		CreateFullScreenSettings.RendererSetSize(renderer, options.canvasMenu);
+			if (options.fullScreen.onFullScreenToggle !== undefined) options.fullScreen.onFullScreenToggle(fullScreen);
+			camera.aspect = size.x / size.y;
+			camera.updateProjectionMatrix();
+			fullScreen = !fullScreen;
+			if (canvasMenu && canvasMenu.setFullScreenButton) canvasMenu.setFullScreenButton(fullScreen);
+			CreateFullScreenSettings.RendererSetSize(renderer, options.canvasMenu);
+		}, 0);
 	};
 	this.onclick = function () {
 		if (stereoEffect !== undefined && parseInt(stereoEffect.settings.spatialMultiplex) !== StereoEffect.spatialMultiplexsIndexs.Mono) {
@@ -7961,7 +7965,8 @@ function Options(options) {
 						},
 						canvas: {
 									get: function get$$1() {
-												return options.canvas;
+												if (options.canvas) return options.canvas;
+												return { fullScreen: true };
 									}
 						},
 						frustumPoints: {
@@ -10050,7 +10055,7 @@ function CanvasMenu(renderer) {
 						canvasMenu: this,
 						fullScreen: settings.fullScreen
 				});
-				if (settings.fullScreen.fullScreen) fullScreenSettings.setFullScreen();
+				if (settings.fullScreen.fullScreen !== false) fullScreenSettings.setFullScreen(false, true);
 				this.getFullScreenSettings = function (stereoEffect) {
 						fullScreenSettings.setStereoEffect(stereoEffect);
 						return fullScreenSettings;
@@ -10089,7 +10094,9 @@ function CanvasMenu(renderer) {
 		if (options.player) options.player.addSliderEvents();
 		if (settings.fullScreen) {
 				this.setFullScreenButton = function (fullScreen) {
-						if (fullScreen === undefined) fullScreen = settings.fullScreen.fullScreen;
+						if (fullScreen === undefined) {
+								if (settings.fullScreen.fullScreen === false) fullScreen = false;else fullScreen = true;
+						}
 						var elMenuButtonFullScreen = elContainer.querySelector('#menuButtonFullScreen');
 						if (elMenuButtonFullScreen === null) return true;
 						if (fullScreen) {
@@ -11662,14 +11669,16 @@ function GuiSelectPoint(options) {
 						}
 			};
 			this.update = function () {
-						var mesh = cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh;
+						var selectedItem = cMeshs.__select.options[cMeshs.__select.options.selectedIndex];
+						if (!selectedItem) return;
+						var mesh = selectedItem.mesh;
 						if (!mesh) return;
 						var index = this.getSelectedPointIndex();
 						if (index === -1) return;
 						var position = getObjectPosition$1(mesh, index);
-						cWorld.x.setValue(position.x);
-						cWorld.y.setValue(position.y);
-						cWorld.z.setValue(position.z);
+						if (cWorld.x) cWorld.x.setValue(position.x);
+						if (cWorld.y) cWorld.y.setValue(position.y);
+						if (cWorld.z) cWorld.z.setValue(position.z);
 			};
 			this.getMeshIndex = function (mesh) {
 						if (mesh === undefined) return mesh;
@@ -13714,6 +13723,13 @@ function arrayContainersF() {
 												itemElContainer.style.display = itemElContainer === elContainer || !fullScreen ? 'block' : 'none';
 								});
 				};
+				Object.defineProperties(this, {
+								length: {
+												get: function get$$1() {
+																return array.length;
+												}
+								}
+				});
 }
 var arrayContainers = new arrayContainersF();
 var arrayCreates = [];
@@ -13896,16 +13912,20 @@ function MyThree(createXDobjects, options) {
 																};
 												}
 												rendererSizeDefault = getRendererSize();
+												renderer.setSize(options.canvas !== undefined && options.canvas.width !== undefined ? options.canvas.width : canvas.clientWidth, options.canvas !== undefined && options.canvas.height !== undefined ? options.canvas.height : canvas.clientHeight);
 												new CanvasMenu(renderer, {
 																fullScreen: {
+																				fullScreen: options.canvas.fullScreen,
 																				camera: camera,
+																				arrayContainersLength: function arrayContainersLength() {
+																								return arrayContainers.length;
+																				},
 																				onFullScreenToggle: function onFullScreenToggle(fullScreen) {
 																								rendererSizeDefault.onFullScreenToggle(fullScreen);
 																				}
 																},
 																options: options
 												});
-												renderer.setSize(options.canvas !== undefined && options.canvas.width !== undefined ? options.canvas.width : canvas.clientWidth, options.canvas !== undefined && options.canvas.height !== undefined ? options.canvas.height : canvas.clientHeight);
 												options.createOrbitControls(camera, renderer, scene);
 												new AxesHelper(scene, options);
 												if (fOptions) {
