@@ -16,15 +16,23 @@
 	https://searchcode.com/codesearch/view/85060658/
 	<script src="../../../webgl-debug/webgl-debug/build/webgl-debug.js"></script>
 	-->
-	<!--<script src="../../../../../three.js/dev/build/three.js"></script>-->
-	<!--<script src="../../../../../three.js/dev/build/three.min.js"></script>-->
-	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
-	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
-	<!--<script src="https://threejs.org/build/three.js"></script>-->
-	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
+	<!--
+	<script src="../../../../../three.js/dev/build/three.js"></script>
+	<script src="../../../../../three.js/dev/build/three.min.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>
+	<script src="https://threejs.org/build/three.js"></script>
+	<script src="https://threejs.org/build/three.min.js"></script>
+	-->
+	<!--
+	<script src="../../build/myThree.js"></script>
+	<script src="../../build/myThree.min.js"></script>
 
-	<!--<script src="../../build/myThree.js"></script>-->
-	<!--<script src="../../build/myThree.min.js"></script>-->
+	Error: Access to XMLHttpRequest at 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/getShaderMaterialPoints/vertex.c'
+		from origin 'http://localhost' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/myThree.js"></script>
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/myThree.min.js"></script>
+	-->
 </head>
 <body>
 	<p>
@@ -42,13 +50,6 @@
 		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
-		//получаю ошибку
-		//three.js:55 three: invalid _THREE = undefined. Call three.THREE = THREE first.
-		//Если исползую библиотеку build/myThree.module.js
-		//import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
-		//		import three from '../../../three.js'
-		//		three.THREE = THREE;
-
 		//test for duplicate dat library
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 		//three.dat = dat;
@@ -56,19 +57,13 @@
 		import MyThree from '../../myThree.js';
 		//import MyThree from '../../build/myThree.module.js';
 		//import MyThree from '../../build/myThree.module.min.js';
+
+		//Error: Access to XMLHttpRequest at 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/getShaderMaterialPoints/vertex.c'
+		//	from origin 'http://localhost' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/myThree.js';
+
 		if ( MyThree.default ) MyThree = MyThree.default;
 		MyThree.three.THREE = THREE;
-		/*Сейчас эту проверку делаю в Options.js
-				import { WEBGL } from '../../../../../three.js/dev/examples/jsm/WebGL.js';
-				//import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
-
-				if ( WEBGL.isWebGLAvailable() === false ) {
-
-					document.body.appendChild( WEBGL.getWebGLErrorMessage() );
-					alert( WEBGL.getWebGLErrorMessage().innerHTML );
-
-				}
-		*/
 		const tMin = 0;
 
 		new MyThree( function ( group, options ) {
@@ -136,13 +131,6 @@
 					//rotation: new THREE.Vector3( Math.PI / 2, 0 ),
 					frustumPoints: options.frustumPoints,//position of the each point of this points array is cloud of random positions according with normal distribution. See https://en.wikipedia.org/wiki/Normal_distribution for details.
 					//shaderMaterial: false,
-					/*
-										onReady: function ( points ) {
-
-											if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
-
-										},
-					*/
 
 				}
 
@@ -217,18 +205,13 @@
 					points.rotation.set( angle, 0, 0 );
 					myThreejs.limitAngles( points.rotation );
 					*/
-					//				setAttributes( a, b );
 
 				}
 
 			}
 			group.add( points );
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
-			//			if ( options.eventListeners ) options.eventListeners.addParticle( points );
 			options.eventListeners.addParticle( points );
-
-			//ATTENTION!!! You can adding of the cloud into points only if you want add points into group "group.add( points );"
-			// if you do not want to see a cloud without appropriate point.
 
 			//points.position.copy( new THREE.Vector3( 0.1, 0.2, 0.3 ) );
 			//points.scale.copy( new THREE.Vector3( 1.1, 1.2, 1.3 ) );
@@ -250,7 +233,6 @@
 				if ( name !== undefined )
 					cube.name = name;
 				cube.userData.color = cube.material.color;
-				//				myThreejs.setArrayFuncs( cube );//Display the "Restore default local position" button.
 				cube.userData.raycaster = {
 
 					onIntersection: function ( intersection, mouse ) {
@@ -258,7 +240,6 @@
 						if ( cube.userData.currentHex === undefined )
 							cube.userData.currentHex = cube.material.emissive.getHex();
 						cube.material.emissive.setHex( 0xff0000 );
-						//						options.raycaster.onIntersection( intersection, mouse );
 						MyThree.Options.raycaster.onIntersection( intersection, options, group, options.camera, options.renderer );
 
 					},
@@ -266,7 +247,6 @@
 
 						if ( cube.userData.currentHex !== undefined ) cube.material.emissive.setHex( cube.userData.currentHex );
 						cube.userData.currentHex = undefined;
-						//						options.raycaster.onIntersectionOut( scene );
 						MyThree.Options.raycaster.onIntersectionOut( group, options.renderer );
 
 					},
@@ -401,8 +381,6 @@
 				},
 				//stats: {},//JavaScript Performance Monitor. https://github.com/mrdoob/stats.js/ .
 
-				//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
-
 				//point: { size: 15 },
 				/*
 				cameraTarget: {
@@ -425,7 +403,6 @@
 				*/
 				dat: {//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
 
-					//				dat: typeof dat !== 'undefined' ? dat : undefined,
 					//cookie: false,
 					cookieName: 'myThree',
 					//orbitControlsGui: false,
@@ -465,7 +442,6 @@
 						//textHeight: 0.03,
 						//fov: camera.fov,
 						precision: 4,
-						//						rect: { displayRect: true },
 
 					},
 					x: {
