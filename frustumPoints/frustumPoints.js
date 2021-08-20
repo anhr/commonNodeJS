@@ -81,35 +81,35 @@ class FrustumPoints
 	 * @param {boolean|AxesHelper} [settings.options.axesHelper] <pre>false - do not add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
 	 * Or <b>AxesHelper</b> instance.
 	 * </pre>
-	 * @param {object} [settings.optionsShaderMaterial={}] <b>FrustumPoints</b> options.
-	 * @param {object} [settings.optionsShaderMaterial.point={}] points options.
-	 * @param {number} [settings.optionsShaderMaterial.point.size=0] Size of each frustum point.
-	 * @param {boolean} [settings.optionsShaderMaterial.display=true] true - display frustum points.
-	 * @param {boolean} [settings.optionsShaderMaterial.info=false] true - display information about frustum point if user move mouse over or click this point.
+	 * @param {object} [settings.options.frustumPoints] <b>FrustumPoints</b> options. undefined - do not create a <b>FrustumPoints</b> instance.
+	 * @param {object} [settings.options.frustumPoints.point={}] points options.
+	 * @param {number} [settings.options.frustumPoints.point.size=0] Size of each frustum point.
+	 * @param {boolean} [settings.options.frustumPoints.display=true] true - display frustum points.
+	 * @param {boolean} [settings.options.frustumPoints.info=false] true - display information about frustum point if user move mouse over or click this point.
 	 *
-	 * @param {object} [settings.optionsShaderMaterial.stereo] stereo mode options
-	 * @param {number} [settings.optionsShaderMaterial.stereo.hide=0] Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.
-	 * @param {number} [settings.optionsShaderMaterial.stereo.opacity=0.3] Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
+	 * @param {object} [settings.options.frustumPoints.stereo] stereo mode options
+	 * @param {number} [settings.options.frustumPoints.stereo.hide=0] Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.
+	 * @param {number} [settings.options.frustumPoints.stereo.opacity=0.3] Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
 	 *
-	 * @param {number} [settings.optionsShaderMaterial.zCount=50] The count of layers of the frustum of the camera's field of view.
-	 * @param {number} [settings.optionsShaderMaterial.yCount=30] The count of vertical points for each z level of the  frustum of the camera's field of view.
+	 * @param {number} [settings.options.frustumPoints.zCount=50] The count of layers of the frustum of the camera's field of view.
+	 * @param {number} [settings.options.frustumPoints.yCount=30] The count of vertical points for each z level of the  frustum of the camera's field of view.
 	 *
-	 * @param {number} [settings.optionsShaderMaterial.near=0] Shift of the frustum layer near to the camera in percents.
+	 * @param {number} [settings.options.frustumPoints.near=0] Shift of the frustum layer near to the camera in percents.
 	 * <pre>
 	 * 0 percents - no shift.
 	 * 100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
 	 * </pre>
-	 * @param {number} [settings.optionsShaderMaterial.far=0] Shift of the frustum layer far to the camera in percents.
+	 * @param {number} [settings.options.frustumPoints.far=0] Shift of the frustum layer far to the camera in percents.
 	 * <pre>
 	 * 0 percents - no shift.
 	 * 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
 	 * </pre>
-	 * @param {number} [settings.optionsShaderMaterial.base=100] Scale of the base of the frustum points in percents.
+	 * @param {number} [settings.options.frustumPoints.base=100] Scale of the base of the frustum points in percents.
 	 * <pre>
 	 * 0 base is null
 	 * 100 no scale
 	 * </pre>
-	 * @param {boolean} [settings.optionsShaderMaterial.square=false] true - Square base of the frustum points.
+	 * @param {boolean} [settings.options.frustumPoints.square=false] true - Square base of the frustum points.
 	 */
 	constructor( camera, group, canvas, settings = {} ) {
 
@@ -125,16 +125,15 @@ class FrustumPoints
 			return;
 
 		}
+		if ( !options.frustumPoints ) return;
 
 		this.getOptions = function () { return options; }
-//		setOptions.setPalette( options );
+		const optionsShaderMaterial = options.frustumPoints;
 		options.frustumPoints = this;
-//		setOptions.setScales( options );
 		const THREE = three.THREE;
 
 		const _arrayCloud = []//Массив координат точек, имеющих облако вокруг себя
 							//координаты точек сгруппированы в группы отдельно для каждого THREE.Points
-//			_frustumPoints = this;
 		var _guiSelectPoint, _names, _points;
 		_arrayCloud.getCloudsCount = function () {
 
@@ -222,7 +221,7 @@ class FrustumPoints
 				groupFrustumPoints = new THREE.Group();
 
 			settings.optionsShaderMaterial = settings.optionsShaderMaterial || {};
-			const optionsShaderMaterial = settings.optionsShaderMaterial;
+//			const optionsShaderMaterial = settings.optionsShaderMaterial;
 
 			optionsShaderMaterial.point = optionsShaderMaterial.point || {};
 			optionsShaderMaterial.point.size = optionsShaderMaterial.point.size || 0.01;//Size of each frustum point

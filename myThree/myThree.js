@@ -217,6 +217,7 @@ class MyThree {
 	 * @param {object} [options.dat.pointLightGui] false - do not adds a [PointLight]{@link https://threejs.org/docs/index.html?q=PointLight#api/en/lights/PointLight} folder.
 	 * @param {object} [options.cameraTarget] camera looking at selected point during playing. See the <b>cameraTarget</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.cameraTarget.html#init" target="_blank">Player.cameraTarget.init(...)</a> function for details.
 	 * @param {object} [options.frustumPoints] Creates a <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a> instance.
+	 * See <b>settings.options.frustumPoints</b> parameter of <a href="../../frustumPoints/jsdoc/FrustumPoints.html" target="_blank">FrustumPoints</a> class.
 	 * @param {MyThree.ColorPicker.palette|boolean|number} [options.palette=White color of all points] Points сolor.
 	 * <pre>
 	 * <b>MyThree.ColorPicker.palette</b> - is <b>new ColorPicker.palette( ... )</b>
@@ -402,57 +403,55 @@ class MyThree {
 				group = new THREE.Group();
 				scene.add( group );
 
-				if ( options.frustumPoints ) {
+				new FrustumPoints( camera, group, canvas, {
 
-					new FrustumPoints( camera, group, canvas, {
+					options: options,
+/*
+					optionsShaderMaterial: {//points options. Default is { }
 
-						options: options,
-						optionsShaderMaterial: {//points options. Default is { }
+						point: {//points options. Default is {}
 
-							point: {//points options. Default is {}
-
-								size: 0.01,//Size of each frustum point.Default is 0;
-
-							},
-
-							//Stereo options. Available only if user has selected a stereo mode (spatialMultiplex !== spatialMultiplex.Mono)
-							stereo: {
-
-								//lines: false, // Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.Default is true
-								//hide: 10, // Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.Default is 0
-								//opacity: 1,//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque. Default is 0.3
-
-							},
-
-							//
-
-							//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
-							//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
-
-							//изменение размеров усеченной пирамиды FrustumPoints
-
-							//near: 10,// Shift of the frustum layer near to the camera in percents.
-							//0 percents - no shift.
-							//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
-							//Default is 0
-
-							//far: 70,// Shift of the frustum layer far to the camera in percents.
-							// 0 percents - no shift.
-							// 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
-							// Default is 0
-
-							//base: 70,// Scale of the base of the frustum points in percents.
-							// 0 base is null
-							// 100 no scale
-							// Default is 100
-
-							//square: true,// true - Square base of the frustum points.Default is false
+							size: 0.01,//Size of each frustum point.Default is 0;
 
 						},
 
-					} );
+						//Stereo options. Available only if user has selected a stereo mode (spatialMultiplex !== spatialMultiplex.Mono)
+						stereo: {
 
-				}
+							//lines: false, // Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.Default is true
+							//hide: 10, // Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.Default is 0
+							//opacity: 1,//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque. Default is 0.3
+
+						},
+
+						//
+
+						//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
+						//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
+
+						//изменение размеров усеченной пирамиды FrustumPoints
+
+						//near: 10,// Shift of the frustum layer near to the camera in percents.
+						//0 percents - no shift.
+						//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
+						//Default is 0
+
+						//far: 70,// Shift of the frustum layer far to the camera in percents.
+						// 0 percents - no shift.
+						// 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
+						// Default is 0
+
+						//base: 70,// Scale of the base of the frustum points in percents.
+						// 0 base is null
+						// 100 no scale
+						// Default is 100
+
+						//square: true,// true - Square base of the frustum points.Default is false
+
+					},
+*/
+
+				} );
 
 				//
 

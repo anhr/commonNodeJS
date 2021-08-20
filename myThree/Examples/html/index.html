@@ -79,31 +79,31 @@
 
 			arrayFuncs = [ //arrayFuncs. See https://github.com/anhr/myThreejs#arrayfuncs-item for details
 				new THREE.Vector4( 0, 0, 0, 1 ),//4D point.
-				[new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-0.25' ), 0.5, 0, 1],//4D point.
-				[-0.5, 0.5, 0.0, -1],//4D point.
+				new THREE.Vector4(
+						'Math.sin(t*2*Math.PI)*0.5',//x
+						'Math.cos(t*2*Math.PI)*0.5',//y
+						//new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5+b' ),//z
+						't-1',//z
+						//new Function( 't', 'return t' ),//z
+						'1-2*t',//w
+						//new Function( 't', 'return 50+50*t' ),//w
+						//new THREE.Color( "rgb( 0, 0, 255)" ),//w
+						//1,//w
+					),//Animated 3D point
+				[-0.5, 0.5, 1.0, 0],//4D point.
 				//[ 0.25, 0, 0.75, -1 ],//4D point.
 				//				[0, 0, 0, -1],//4D point.
 
 				{
 
-					vector: new THREE.Vector4(
-						new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
-						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5+b' ),//y
-						//new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5+b' ),//z
-						new Function( 't', 'a', 'b', 'return t*a+b-1' ),//z
-						//new Function( 't', 'return t' ),//z
-						new Function( 't', 'return 1-2*t' ),//w
-						//new Function( 't', 'return 50+50*t' ),//w
-						//new THREE.Color( "rgb( 0, 0, 255)" ),//w
-						//1,//w
-					),//Animated 3D point
+					vector: ['Math.cos(t*2*Math.PI)*0.5-0.25', 0.5, 1, 1],//4D point.
 					trace: true,//Displays the trace of the point movement.
 					name: 'point 4',
 					cameraTarget: {
 
 						//boLook: false,
 						camera: options.camera,
-						//distanceToCamera: new THREE.Vector3( 0, 0, 0.2 ),
+						distanceToCamera: new THREE.Vector3( 0, 0, 1 ),
 						rotation: {
 
 							//angle: Math.PI,
@@ -321,150 +321,195 @@
 
 		}, {
 
-			elContainer: "canvasContainer1",//document.getElementById("canvasContainer1"),//id of the HTMLElement for canvas and HTMLElement with id="iframe-goes-in-here" for gui.
-			playerOptions: {//create a Player instance. 3D objects animation.
 
-				marks: 110,//Number of scenes of 3D objects animation.
-				name: 'Time (sec.)',
-				interval: 25,//Ticks per seconds.
-				min: tMin,
-				max: 1,
+				elContainer: "canvasContainer1",//document.getElementById("canvasContainer1"),//id of the HTMLElement for canvas and HTMLElement with id="iframe-goes-in-here" for gui.
+
+				playerOptions: {//create a Player instance. 3D objects animation.
+
+					marks: 110,//Number of scenes of 3D objects animation.
+					name: 'Time (sec.)',
+					interval: 25,//Ticks per seconds.
+					min: tMin,
+					max: 1,
+					/*
+					max: Infinity,
+					repeat: true,
+					zoomMultiplier: 1.1,
+					offset: 0.1,
+					max: 10,
+					*/
+
+				},
+
+				//player: false,//Do not create a Player instance
+				//canvasMenu: false,
+				//axesHelper: false,
+				//orbitControls: false,
+				//pointLight: false,
+				//stereoEffect: false,
+				frustumPoints: {
+
+					/*
+					point: {//points options. Default is {}
+
+						size: 0.01,//Size of each frustum point.Default is 0;
+
+					},
+					*/
+
+					//Stereo options. Available only if user has selected a stereo mode (spatialMultiplex !== spatialMultiplex.Mono)
+					/*
+					stereo: {
+
+						//hide: 10, // Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.Default is 0
+						//opacity: 1,//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque. Default is 0.3
+
+					},
+					*/
+
+					//
+
+					zCount: 100,// The count of layers of the frustum of the camera's field of view. Default is 50
+					yCount: 100,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
+
+					//изменение размеров усеченной пирамиды FrustumPoints
+
+					//near: 10,// Shift of the frustum layer near to the camera in percents.
+					//0 percents - no shift.
+					//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
+					//Default is 0
+
+					//far: 70,// Shift of the frustum layer far to the camera in percents.
+					// 0 percents - no shift.
+					// 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
+					// Default is 0
+
+					//base: 70,// Scale of the base of the frustum points in percents.
+					// 0 base is null
+					// 100 no scale
+					// Default is 100
+
+					square: true,// true - Square base of the frustum points.Default is false
+
+				},//Creates a FrustumPoints instance
+				canvas: {
+
+					//fullScreen: false,
+					width: window.innerWidth / 2,
+					height: window.innerHeight / 2,
+
+				},
+				//stats: {},//JavaScript Performance Monitor. https://github.com/mrdoob/stats.js/ .
+
+				//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+
+				//point: { size: 15 },
 				/*
-				max: Infinity,
-				repeat: true,
-				zoomMultiplier: 1.1,
-				offset: 0.1,
-				max: 10,
-				*/
+				cameraTarget: {
 
-			},
-			//player: false,//Do not create a Player instance
-			//canvasMenu: false,
-			//axesHelper: false,
-			//orbitControls: false,
-			//pointLight: false,
-			//stereoEffect: false,
-			frustumPoints: {},//Creates a FrustumPoints instance
-			canvas: {
+					//boLook: false,
+					rotation: {
 
-				//fullScreen: false,
-				width: window.innerWidth / 2,
-				height: window.innerHeight / 2,
+						//angle: Math.PI,
+						//angle: new Function( 't', 'return 5*t' ),
+						//angle: [0, Math.PI / 2],
+						//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+						//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
 
-			},
-			//stats: {},//JavaScript Performance Monitor. https://github.com/mrdoob/stats.js/ .
-
-			//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
-
-			//point: { size: 15 },
-			/*
-			cameraTarget: {
-
-				//boLook: false,
-				rotation: {
-
-					//angle: Math.PI,
-					//angle: new Function( 't', 'return 5*t' ),
-					//angle: [0, Math.PI / 2],
-					//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
-					//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
-
-				},
-				//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
-				//distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
-				distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+3*t' ) ),
-
-			},
-			*/
-			dat: {//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
-
-				//				dat: typeof dat !== 'undefined' ? dat : undefined,
-				//cookie: false,
-				cookieName: 'myThree',
-				//orbitControlsGui: false,
-				//axesHelperGui: false,
-				//playerGui: false,
-				//playController: false,
-				//stereoEffectsGui: false,
-				//guiSelectPoint: false,
-				//guiFrustumPoints:false,
-				//cameraGui: false,
-				//moveScene: false,
-				//spriteTextGui: false,
-				//folderPoint: false,
-				//pointLightGui: false,
-
-			},
-			//dat: false,
-			//palette: true,//ColorPicker.paletteIndexes.BGYW See https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes
-			//palette: MyThree.ColorPicker.paletteIndexes.bidirectional,//See https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes
-			palette: MyThree.ColorPicker.paletteIndexes.rainbow,//See https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes
-			//palette: new MyThree.ColorPicker.palette( { palette: MyThree.ColorPicker.paletteIndexes.bidirectional } ),
-			//a: 2,
-			//b: 0.3,
-			/*
-			camera: {
-
-				//position: new THREE.Vector3( 0, 0, 0.48 ),
-				//scale: new THREE.Vector3( 1, 1, 1 )
-
-			},
-			*/
-			scales: {
-
-				display: true,
-				text: {
-
-					//textHeight: 0.03,
-					//fov: camera.fov,
-					precision: 4,
-					//						rect: { displayRect: true },
-
-				},
-				x: {
-
-					//zoomMultiplier: 2,
-					//offset: 1,
-					name: 'latitude(km.)',
-					//min: -10,
-					//max: 10,
-					//marks: 11,
-
-				},
-				y: {
-
-					//name: 'Temperature(degrees Celsius)',
-					//min: -4,
-					//max: 2,
-
-				},
-				/*
-				z: {
-
-					//name: 'Radius(m.)',
-					//min: -110,
-					//max: -100,
-					//marks: 11,
+					},
+					//distanceToCamera: new THREE.Vector3( 0, 0, 2 ),
+					//distanceToCamera: new THREE.Vector3( 0, 0, [{ t: 0, v: 5 }, { t: 1, v: 2 }, { t: 10, v: 2 }, { t: 11, v: 5 }] ),
+					distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2+3*t' ) ),
 
 				},
 				*/
+				dat: {//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
+
+					//				dat: typeof dat !== 'undefined' ? dat : undefined,
+					//cookie: false,
+					cookieName: 'myThree',
+					//orbitControlsGui: false,
+					//axesHelperGui: false,
+					//playerGui: false,
+					//playController: false,
+					//stereoEffectsGui: false,
+					//guiSelectPoint: false,
+					//guiFrustumPoints:false,
+					//cameraGui: false,
+					//moveScene: false,
+					//spriteTextGui: false,
+					//folderPoint: false,
+					//pointLightGui: false,
+
+				},
+				//dat: false,
+				//palette: true,//ColorPicker.paletteIndexes.BGYW See https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes
+				palette: MyThree.ColorPicker.paletteIndexes.bidirectional,//See https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes
+				//palette: MyThree.ColorPicker.paletteIndexes.rainbow,//See https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes
+				//palette: new MyThree.ColorPicker.palette( { palette: MyThree.ColorPicker.paletteIndexes.bidirectional } ),
+				//a: 2,
+				//b: 0.3,
 				/*
-				w: {
-					name: 'energy',
-					//min: 0,
-					//max: 10,
-					//min: -1,
-					//max: 1,
-					//min: 0,//default
-					//max: 1,//defaukt
+				camera: {
+
+					//position: new THREE.Vector3( 0, 0, 0.48 ),
+					//scale: new THREE.Vector3( 1, 1, 1 )
+
 				},
 				*/
+				scales: {
 
-			},
+					display: true,
+					text: {
+
+						//textHeight: 0.03,
+						//fov: camera.fov,
+						precision: 4,
+						//						rect: { displayRect: true },
+
+					},
+					x: {
+
+						//zoomMultiplier: 2,
+						//offset: 1,
+						name: 'latitude(km.)',
+						//min: -10,
+						//max: 10,
+						//marks: 11,
+
+					},
+					y: {
+
+						//name: 'Temperature(degrees Celsius)',
+						//min: -4,
+						//max: 2,
+
+					},
+					z: {
+
+						//name: 'Radius(m.)',
+						//min: -110,
+						//max: -100,
+						//marks: 11,
+
+					},
+					/*
+					w: {
+						name: 'energy',
+						//min: 0,
+						//max: 10,
+						//min: -1,
+						//max: 1,
+						//min: 0,//default
+						//max: 1,//defaukt
+					},
+					*/
+
+				},
 
 		} );
 
-		new MyThree();// function ( group, options ) { }, { elContainer: canvasContainer2 } );
+		//new MyThree();// function ( group, options ) { }, { elContainer: canvasContainer2 } );
 
 	</script>
 	<h2>Simple canvas.</h2>
