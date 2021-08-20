@@ -35,9 +35,6 @@
 		import * as THREE from '../../../../three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
-		//import { THREE } from '../../three.js';//https://github.com/anhr/commonNodeJS
-		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 
 		import three from '../../three.js'
 		three.THREE = THREE;
@@ -48,24 +45,10 @@
 		import AxesHelperGui from '../AxesHelperGui.js';
 		//import AxesHelperGui from 'https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/AxesHelperGui.js';
 
-		//WARNING: Multiple instances of Three.js being imported. Use Options.createOrbitControls(...) http://localhost/anhr/commonNodeJS/master/jsdoc/Options/Options.html#createOrbitControls
-//		import { OrbitControls } from 'http://localhost/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-//		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';//https://github.com/anhr/three.js
-//		import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-//		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 
 		import { dat } from '../../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 		three.dat = dat;
-
-//		import cookie from '../../cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
-//		import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
-//		import { getLanguageCode } from '../../lang.js';
-//		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-
-		//import { SpriteText } from '../../SpriteText/SpriteText.js';
-		//import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
 
 		import { SpriteTextGui } from '../../SpriteText/SpriteTextGui.js';
 		//import { SpriteTextGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteTextGui.js';
@@ -76,16 +59,8 @@
 		import MoveGroupGui from '../../MoveGroupGui.js';
 		//import MoveGroupGui from 'https://raw.githack.com/anhr/commonNodeJS/master/MoveGroupGui.js';
 
-		//import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
+		import StereoEffect from '../../StereoEffect/StereoEffect.js';//https://github.com/anhr/commonNodeJS
 		//import StereoEffect from 'https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js';
-
-		//import Player from '../../player/player.js';
-		//import Player from '../../player/build/player.module.js';
-		//import Player from '../../player/build/player.module.min.js';
-		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/player.js';
-		//import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
-		//		Player.setTHREE();
-		//Player.assign();
 
 		import CameraGui from '../../CameraGui.js';
 		//import CameraGui from 'http://localhost/anhr/commonNodeJS/master/CameraGui.js';
@@ -94,17 +69,16 @@
 
 		import CanvasMenu from '../../canvasMenu/canvasMenu.js';
 		//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
-		//import CanvasMenu from 'http://localhost/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 
 		import MyPoints from '../../myPoints/myPoints.js';
 
-		var camera, scene, renderer, raycaster;//, guiSelectPoint, controls, moveGroup, axesHelper, stereoEffect, intersects;
-//		const threshold = 0.02;//mouse = new THREE.Vector2(), 0.08, arrayintersectObjects = [];
+		var camera, scene, renderer;
+
 		const options = new Options( {
 
 				//a: 2,
 				//b: 3,
-				//getLanguageCode: 'en',//getLanguageCode,
+				//getLanguageCode: 'en',
 				//orbitControls: false,
 				//stereoEffect: false,
 				dat: {
@@ -185,24 +159,6 @@
 
 					},
 				},
-/*				
-				//for Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
-				raycaster: {
-
-					onIntersection: function ( intersection, mouse ) {
-
-						Options.raycaster.onIntersection( intersection, options, scene, camera, renderer );
-
-					},
-
-					onIntersectionOut: function () {
-
-						Options.raycaster.onIntersectionOut( scene, renderer );
-
-					}
-
-				}
-*/				
 
 			} );
 
@@ -214,7 +170,6 @@
 			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 			const defaultCameraPosition = new THREE.Vector3( 0.4, 0.4, 2 );
 			camera.position.copy( defaultCameraPosition );
-			//			camera.position.z = 500;
 
 			scene = new THREE.Scene();
 			scene.userData.optionsSpriteText = {
@@ -240,10 +195,6 @@
 			if ( typeof AxesHelper !== "undefined" ) {
 
 				new AxesHelper( scene, options );
-/*
-				const axesHelper = new AxesHelper( scene, options );
-				options = axesHelper.options;
-*/
 				//Test for duplicate AxesHelper
 				//new AxesHelper( scene, options );
 
@@ -264,68 +215,25 @@
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			const cursor = renderer.domElement.style.cursor;
-//			document.body.appendChild( renderer.domElement );
 
 			window.addEventListener( 'resize', onWindowResize, false );
 
 			//
 
-			//			setOptions.orbitControls( camera, renderer, scene, options );
+			//Orbit controls allow the camera to orbit around a target.
+			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
 			options.createOrbitControls( camera, renderer, scene );
-/*
-			if ( typeof Player !== "undefined" ) {
-
-				if ( points ) {
-
-					points.userData.player = { arrayFuncs: arrayFuncs, }
-					Player.selectMeshPlayScene( points, { options: options } );
-
-				}
-
-			}
-*/
 			if ( typeof StereoEffect !== "undefined" ) {
 
-				new StereoEffect( renderer, options );/*{
-
-					//spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,
-					far: camera.far,
-					camera: camera,
-//					cookie: options.dat.cookie,
-					//stereoAspect: 1,
-					options: options,
-
-				} );*/
-
-				//Не помню зачем это
-				//options.stereoEffect.setSize( window.innerWidth, window.innerHeight );
+				new StereoEffect( renderer, options );
 
 			}
-/*
-			raycaster = new THREE.Raycaster();
-			raycaster.params.Points.threshold = threshold;
-			if ( raycaster.setStereoEffect !== undefined ) {
-
-				raycaster.setStereoEffect( {
-
-					renderer: renderer,
-					camera: camera,
-					stereoEffect: options.stereoEffect,
-
-				} );
-//				if ( typeof points !== 'undefined' ) raycaster.stereo.addParticle( points );
-//				if ( typeof pointsSizeAttenuation !== 'undefined' ) raycaster.stereo.addParticle( pointsSizeAttenuation );
-
-			}
-*/
 			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
 			
 			if ( typeof GuiSelectPoint !== "undefined" ) {
 
 				new GuiSelectPoint( options, {
 
-//						axesHelper: options.axesHelper,
-//						getLanguageCode: options.getLanguageCode,
 					cameraTarget: {
 
 						camera: camera,
@@ -334,12 +242,7 @@
 					},
 
 				} );
-				if ( options.guiSelectPoint ) options.guiSelectPoint.add();// gui;
-/*
-				guiSelectPoint.addMesh( points );
-				if ( typeof pointsSizeAttenuation !== 'undefined' )
-					guiSelectPoint.addMesh( pointsSizeAttenuation );
-*/
+				if ( options.guiSelectPoint ) options.guiSelectPoint.add();
 
 			}
 
@@ -386,7 +289,6 @@
 						size: 5,//0.05,
 						sizeAttenuation: false,
 						alphaTest: 0.5,
-						//					vertexColors: THREE.VertexColors
 
 					} ) );
 
@@ -402,7 +304,6 @@
 						size: 5,//0.05,
 						sizeAttenuation: false,
 						alphaTest: 0.5,
-						//					vertexColors: THREE.VertexColors
 
 					} ) );
 			if ( points ) {
@@ -412,133 +313,8 @@
 				points.name = 'no sizeAttenuation';
 				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 				if ( options.eventListeners ) options.eventListeners.addParticle( points );
-/*
-				if ( typeof StereoEffect === "undefined" )
-					arrayintersectObjects.push( points );
-*/
-/*
-				points.userData.raycaster = {
-
-					onIntersection: function ( intersection ) {
-
-						this.spriteText = StereoEffect.getTextIntersection( intersection, {
-
-							scales: options.scales,//{ x: {}, y: {}, z: {} },
-							spriteOptions: {
-
-								group: scene,
-								rect: {
-
-									displayRect: true,
-									borderRadius: 15,
-
-								},
-								center: {
-
-									camera: camera,
-									canvas: canvas,
-
-								}
-								//center: new THREE.Vector2( 1, 0 ),
-								//sizeAttenuation: true,
-
-							}
-
-						} );
-						renderer.domElement.style.cursor = 'pointer';
-
-					},
-					onIntersectionOut: function () {
-
-						//console.warn( 'onIntersectionOut' );
-						scene.remove( this.spriteText );
-						renderer.domElement.style.cursor = cursor;
-
-					},
-					onMouseDown: function ( intersect ) {
-
-						if ( typeof options.axesHelper !== 'undefined' )
-							options.axesHelper.exposePosition( intersect );
-						if ( options.guiSelectPoint ) options.guiSelectPoint.select( intersect );
-
-					}
-
-
-				}
-*/				
 
 			}
-/*
-			const pointsSizeAttenuation = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [
-				new THREE.Vector3( -1, -0.5, 0.5 ),
-				new THREE.Vector3( -3, 0.5, -0.5 )
-			] ),
-				new THREE.PointsMaterial( {
-
-					color: 0xffffff,
-					size: 0.2,//0.05,
-					//sizeAttenuation: true,
-					alphaTest: 0.5,
-
-				} ) );
-
-			if ( typeof pointsSizeAttenuation !== 'undefined' ) {
-
-				groupMove.add( pointsSizeAttenuation );
-				if ( typeof StereoEffect === "undefined" )
-					arrayintersectObjects.push( pointsSizeAttenuation );
-				pointsSizeAttenuation.userData.raycaster = {
-
-					onIntersection: function ( intersection ) {
-
-						if ( typeof StereoEffect !== 'undefined' )
-							this.spriteText = StereoEffect.getTextIntersection( intersection, {
-
-//								scales: options.axesHelper ? options.axesHelper.options.scales : options.scales,//{ x: {}, y: {}, z: {} },
-								scales: options.scales,//{ x: {}, y: {}, z: {} },
-								spriteOptions: {
-
-									group: scene,
-									rect: {
-
-										displayRect: true,
-										borderRadius: 15,
-
-									},
-									center: {
-
-										camera: camera,
-										canvas: canvas,
-
-									}
-									//center: new THREE.Vector2( 1, 0 ),
-									//sizeAttenuation: true,
-
-								}
-
-							} );
-						renderer.domElement.style.cursor = 'pointer';
-
-					},
-					onIntersectionOut: function () {
-
-						scene.remove( this.spriteText );
-						renderer.domElement.style.cursor = cursor;
-
-					},
-					onMouseDown: function ( intersect ) {
-
-						if ( options.axesHelper )
-							options.axesHelper.exposePosition( intersect );
-						if ( guiSelectPoint )
-							guiSelectPoint.select( intersect );
-
-					}
-
-				}
-
-			}
-*/
 
 			MyPoints( [
 				new THREE.Vector4( -0.5, -0.5, 0.5, new Function( 't', 'return 50 - 50*t' ) ),
@@ -582,15 +358,6 @@
 						}
 
 					},
-/*					
-					onReady: function ( points ) {
-
-//						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
-
-						if ( options.eventListeners ) options.eventListeners.addParticle( points );
-
-					},
-*/					
 
 				}
 
@@ -600,14 +367,6 @@
 				new CanvasMenu( renderer, {
 
 					options: options,
-/*					
-					onOver: function ( _mouseenter ) {
-
-						//mouseenter = _mouseenter;
-						console.log( 'onOver' );
-
-					},
-*/					
 
 				} );
 
@@ -616,11 +375,6 @@
 			if ( typeof SpriteTextGui !== "undefined" )
 				SpriteTextGui( scene, options, {
 
-/*
-					getLanguageCode: getLanguageCode,
-					cookie: options.dat.cookie,
-					cookieName: 'SpriteText',
-*/						
 					//settings: { zoomMultiplier: 1.5, },
 					//parentFolder: fScales,
 					//options: groupAxesHelper.userData.optionsSpriteText,
@@ -644,94 +398,6 @@
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
 		}
-
-		//Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
-/*
-		//		var bIntersectedOut = false;
-		var intersectedObject;
-		window.addEventListener( 'mousemove', function ( event ) {
-
-			// calculate mouse position in normalized device coordinates
-			// (-1 to +1) for both components
-
-			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-			//			console.warn( 'mouse.x = ' + mouse.x + ' mouse.y = ' + mouse.y );
-
-			//Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
-
-			// update the picking ray with the camera and mouse position
-			raycaster.setFromCamera( mouse, camera );
-
-			if ( raycaster.stereo !== undefined ) {
-
-				raycaster.stereo.onDocumentMouseMove( event );
-				return;
-
-			}
-			// calculate objects intersecting the picking ray
-			intersects = raycaster.intersectObjects( arrayintersectObjects );
-			if ( !intersects )
-				return;
-
-			arrayintersectObjects.forEach( function ( object ) {
-
-				//				var bIntersected = false;
-				if ( intersectedObject && ( intersects.length === 0 ) ) {
-
-					intersectedObject.userData.raycaster.onIntersectionOut();
-					intersectedObject = undefined;
-
-				}
-				else if ( !intersectedObject )
-					for ( var i = 0; i < intersects.length; i++ ) {
-
-						const intersect = intersects[i];
-						if ( Object.is( object, intersect.object ) ) {
-
-							object.userData.raycaster.onIntersection( intersect );
-							intersectedObject = object;
-							//						bIntersected = true;
-							//						bIntersectedOut = true;
-
-						}
-
-					}
-
-			} );
-
-		}, false );
-
-		//ATTENTION!!! The 'mousedown' event is not fired you use new version of the OrbitControls.
-		//See "OrbitControls: Implement Pointer events." commit https://github.com/mrdoob/three.js/commit/1422e36e9facbdc5f9d86cf6b97b005a2723a24a#diff-3285de3826a51619836a5c9adc6bee74
-		//window.addEventListener( 'mousedown', function( event )
-
-		window.addEventListener( 'pointerdown', function ( event ) {
-
-			if ( raycaster === undefined )
-				return;
-
-			if ( raycaster.stereo !== undefined ) {
-
-				raycaster.stereo.onDocumentMouseDown( event );
-				return;
-
-			}
-			if ( intersects && ( intersects.length > 0 ) ) {
-
-				if ( intersects[0].object.userData.raycaster ) {
-
-					const intersect = intersects[0];
-					intersect.object.userData.raycaster.onMouseDown( intersect );
-					if ( options.guiSelectPoint )
-						options.guiSelectPoint.select( intersect );
-
-				}
-
-			}
-
-		}, false );
-*/
 
 		function animate() {
 
