@@ -12796,9 +12796,11 @@ function FrustumPoints(camera, group, canvas) {
 								console.error('FrustumPoints: call options = new Options( options ) first');
 								return;
 				}
+				if (!options.frustumPoints) return;
 				this.getOptions = function () {
 								return options;
 				};
+				var optionsShaderMaterial = options.frustumPoints;
 				options.frustumPoints = this;
 				var THREE = three$1.THREE;
 				var _arrayCloud = [];
@@ -12842,7 +12844,6 @@ function FrustumPoints(camera, group, canvas) {
 								    _this = this,
 								groupFrustumPoints = new THREE.Group();
 								settings.optionsShaderMaterial = settings.optionsShaderMaterial || {};
-								var optionsShaderMaterial = settings.optionsShaderMaterial;
 								optionsShaderMaterial.point = optionsShaderMaterial.point || {};
 								optionsShaderMaterial.point.size = optionsShaderMaterial.point.size || 0.01;
 								optionsShaderMaterial.display = optionsShaderMaterial.display === undefined ? true : optionsShaderMaterial.display;
@@ -13801,18 +13802,9 @@ function MyThree(createXDobjects, options) {
 												};
 												group = new THREE.Group();
 												scene.add(group);
-												if (options.frustumPoints) {
-																new FrustumPoints(camera, group, canvas, {
-																				options: options,
-																				optionsShaderMaterial: {
-																								point: {
-																												size: 0.01
-																								},
-																								stereo: {
-																								}
-																				}
-																});
-												}
+												new FrustumPoints(camera, group, canvas, {
+																options: options
+												});
 												renderer = new THREE.WebGLRenderer({
 																antialias: true,
 																canvas: canvas
