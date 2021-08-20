@@ -122,6 +122,14 @@ NOTE. Please include `three.THREE = THREE;` line into your project before use my
 ```
 import FrustumPoints from './commonNodeJS/master/frustumPoints/frustumPoints.js';
 ```
+Add <b>frustumPoints</b> key to the <b>options</b> parameter of [Options](../../jsdoc/Options/Options.html).
+```
+const options = new Options( {
+
+	frustumPoints: {},
+
+} );
+```
 
 * Now you can use <b>FrustumPoints</b> in your javascript code.
 
@@ -170,26 +178,26 @@ Please move by mouse your points to near of the camera. You can see the cloud ar
 <a name="FrustumPointsSettings"></a>
 ## FrustumPoints Settings
 
-Currently you use default settings of the <b>frustumPoints</b>. You can set you own settings. Plase edit you <b>frustumPoints</b> instance for it.
+Currently you use default settings of the <b>frustumPoints</b>. You can set you own settings.
+Plase edit <b>frustumPoints</b> key of the <b>options</b> for it.
 For example you can to display clouds around each point more details. Please change the following settings:
 
 <b>zCount</b> - the count of layers of the frustum of the camera's field of view.
 
 <b>yCount</b> - The count of vertical points for each z level of the frustum of the camera's field of view.
 ```
-new FrustumPoints( camera, scene, canvas, {
+const options = new Options( {
 
-	options: options,
-	optionsShaderMaterial: {
+	frustumPoints: {
 
 		zCount: 100,
 		yCount: 100,
 
-	}
-				
+	},
+
 } );
 ```
-See [FrustumPoints](FrustumPoints.html) class for details.
+See <b>settings.options.frustumPoints</b> parameter of [FrustumPoints](FrustumPoints.html) class for details.
 
 NOTE! More details clouds takes huge resources of your GPU. You can see delays of visualization in this case.
 
@@ -216,6 +224,12 @@ Add <b>playerOptions</b> key to the <b>Options</b> parameter. See <b>settings.op
 ```
 const options = new Options( {
 
+	frustumPoints: {
+
+		zCount: 100,
+		yCount: 100,
+
+	},
 	playerOptions: {
 
 		marks: 100,//Ticks count of the playing.
@@ -280,6 +294,12 @@ and add <b>palette</b> key to <b>Options</b>.
 const options = new Options( {
 
 	palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+	frustumPoints: {
+
+		zCount: 100,
+		yCount: 100,
+
+	},
 	playerOptions: {
 
 		marks: 100,//Ticks count of the playing.
@@ -299,6 +319,12 @@ Please add a <b>scales</b> key into <b>Options</b> parameter for it.
 const options = new Options( {
 
 	palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+	frustumPoints: {
+
+		zCount: 100,
+		yCount: 100,
+
+	},
 	playerOptions: {
 
 		marks: 100,//Ticks count of the playing.
