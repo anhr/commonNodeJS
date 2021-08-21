@@ -442,9 +442,12 @@ class Options {
 
 										if ( !dat.gui && three.dat ) {
 
-											dat.gui = new three.dat.GUI( options.dat.parent ? {autoPlace: false,} : undefined );
+											dat.gui = new three.dat.GUI();// options.dat.parent ? {autoPlace: false,} : undefined );
 											if ( options.dat.parent ) {
 
+												options.dat.parent.appendChild(dat.gui.domElement.parentNode);
+												dat.gui.domElement.parentNode.style.position = 'absolute';//оставляем gui в пределах canvas
+/*												
 												const autoPlaceContainer = document.createElement('div');
 												autoPlaceContainer.classList.add( 'dg' );//делает видимыми папки
 												autoPlaceContainer.classList.add( three.dat.GUI.CLASS_AUTO_PLACE_CONTAINER );//делает видимыми папки
@@ -454,6 +457,7 @@ class Options {
 												autoPlaceContainer.style.position = 'absolute';//оставляем gui в пределах canvas
 //												autoPlaceContainer.style.float = 'right'; 
 //												options.dat.parent.appendChild(dat.gui.domElement);
+*/
 
 											}
 /*											
