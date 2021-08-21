@@ -41,17 +41,20 @@ class CanvasMenu {
 	 * <pre>
 	 * true - mouseenter event.
 	 * false - mouseleave event.
-	 * <pre>
+	 * </pre>
 	 *
 	 * @param {Object} [settings.fullScreen] Add a "Full Screen" button
+	 * <p>
+	 * Full screen of the canvas see <b>settings.options.canvas.fullScreen</b>.
+	 * </p>
 	 * @param {onFullScreen} settings.fullScreen.camera [THREE.PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
 	 * @param {onFullScreenToggle} [settings.fullScreen.onFullScreenToggle] user toggled fullscreen mode of the canvas.
-	 * @param {boolean} [settings.fullScreen.fullScreen] true - default canvas size is full screen.
 	 *
 	 * @param {Options} [settings.options=new Options()] <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a> instance. The following options are available.
 	 * See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 * @param {Player} [settings.options.player] <a href="../../Player/jsdoc/index.html" target="_blank">Player</a> instance. Playing of 3D ojbects in my projects.
 	 * @param {StereoEffect} [settings.options.stereoEffect] <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a> instance.
+	 * @param {boolean} [settings.options.canvas.fullScreen] Default canvas is full screen. false - no full screen
 	 * @param {Function} [settings.options.getLanguageCode=language code of your browser] returns the "primary language" subtag of the version of the browser.
 	 */
 	constructor( renderer, settings = {} ) {
@@ -157,7 +160,9 @@ class CanvasMenu {
 					fullScreen: settings.fullScreen,
 
 				} );
-			if ( settings.fullScreen.fullScreen !== false ) fullScreenSettings.setFullScreen( false, true );
+//			if ( settings.fullScreen.fullScreen !== false )
+			if ( options.canvas.fullScreen !== false )
+				fullScreenSettings.setFullScreen( false, true );
 
 			/**
 			 * @param {StereoEffect} stereoEffect <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
@@ -229,7 +234,9 @@ class CanvasMenu {
 
 				if ( fullScreen === undefined ) {
 
-					if ( settings.fullScreen.fullScreen === false ) fullScreen = false;
+//					if ( settings.fullScreen.fullScreen === false )
+					if ( options.canvas.fullScreen === false )
+						fullScreen = false;
 					else fullScreen = true;
 
 				}
