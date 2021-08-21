@@ -201,6 +201,7 @@ class MyThree {
 	 * <p>
 	 * undefined - do not use <b>dat-gui JavaScript Controller Library<b>. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 	 * </p>
+	 * @param {HTMLtag} [options.dat.parent] Parent of the canvas. Use if you want to see <b>dat.gui</b> inside of the canvas if canvas is not full screen.
 	 * @param {boolean} [options.dat.cookie] false - do not save to cookie all user settings
 	 * @param {string} [options.dat.cookieName] Name of the cookie.
 	 * @param {boolean} [options.dat.orbitControlsGui] false - do not adds a <a href="../../OrbitControls/jsdoc/" target="_blank">OrbitControlsGui</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.

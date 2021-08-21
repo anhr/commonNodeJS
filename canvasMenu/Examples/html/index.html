@@ -10,10 +10,6 @@
 
 	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
 
-	<!--Attention! Load controllerPlay.js file after StereoEffect.js if you want to localise controllerPlay buttons -->
-	<!--<script src="../../../controllerPlay/build/controllerPlay.js"></script>-->
-	<!--<script src="/anhr/controllerPlay/build/controllerPlay.min.js"></script>-->
-
 	<!-- move dat.gui into canvas. Use only if you do not import CanvasMenu -->
 	<link rel="stylesheet" href="../../../DropdownMenu/styles/gui.css" type="text/css">
 	<link rel="stylesheet" href="../../../DropdownMenu/styles/menu.css" type="text/css">
@@ -39,23 +35,12 @@
 	</div>
 	<script type="module">
 
-		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		import * as THREE from '../../../../../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
 
 		import three from '../../../three.js'
 		three.THREE = THREE;
 
-//WARNING: Multiple instances of Three.js being imported. Use Options.createOrbitControls(...) http://localhost/anhr/commonNodeJS/master/jsdoc/Options/Options.html#createOrbitControls
-//		import { OrbitControls } from '../../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
-//		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
-//		import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-
-		//cube
-/*Uncaught SyntaxError: The requested module '../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js' does not provide an export named 'ConvexBufferGeometry'
-		import { ConvexBufferGeometry } from '../../../../../three.js/dev/examples/jsm/geometries/ConvexGeometry.js';
-		//import { ConvexBufferGeometry } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/geometries/ConvexGeometry.js';
-		//import { ConvexBufferGeometry } from 'https://threejs.org/examples/jsm/geometries/ConvexGeometry.js';
-*/
 
 		import { dat } from '../../../dat/dat.module.js';
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
@@ -67,12 +52,9 @@
 		import CanvasMenu from '../../../canvasMenu/canvasMenu.js';
 		//import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
 
-//		import { getLanguageCode } from './commonNodeJS/master/lang.js';
-//		import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-
 		import Options from '../../../Options.js'
 
-		var camera, scene, renderer, cubeType = 'cube', group, stereoEffect;//playController, canvasMenu, stereoEffect, controls;
+		var camera, scene, renderer, cubeType = 'cube', group, stereoEffect;
 
 		init();
 		animate();
@@ -98,10 +80,8 @@
 				canvas: document.getElementById( "canvas" ),//elCanvas,
 
 			} );
-			//			renderer.setPixelRatio( window.devicePixelRatio );
 
 			renderer.setSize( window.innerWidth / 2, window.innerHeight / 2 );
-			//			renderer.setSize( window.innerWidth, window.innerHeight );
 
 			const options = new Options( {
 
@@ -111,8 +91,8 @@
 				//orbitControls: false,
 				dat: {
 
+					parent: document.getElementById( "canvas" ).parentElement,
 					//gui: typeof dat !== 'undefined' ? new dat.GUI() : undefined,
-//					dat: typeof dat !== 'undefined' ? dat : undefined,
 					//cookie: false,
 					//cookieName: 'CanvasMenu',
 					//orbitControlsGui: false,
@@ -144,12 +124,6 @@
 
 			//
 			options.createOrbitControls( camera, renderer, scene );
-/*
-			controls = new OrbitControls( camera, renderer.domElement );
-			controls.target.set( 0, 0, 0 );
-			controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-			controls.update();
-*/
 
 			//StereoEffect
 			if ( typeof StereoEffect !== 'undefined' ) {
@@ -163,7 +137,6 @@
 
 				new CanvasMenu( renderer, {
 
-					//					getLanguageCode: getLanguageCode,
 					menu: [
 
 						{
@@ -172,7 +145,6 @@
 							onclick: function ( event ) {
 
 								var message = 'Button onclick';
-								//console.log( message );
 								alert( message )
 
 							},
@@ -180,14 +152,8 @@
 						},
 
 					],
-					fullScreen: {
-
-						camera: camera,
-
-					},
-					//					stereoEffect: stereoEffect,
+					fullScreen: { camera: camera, },
 					options: options,
-					//					player: player,
 
 				} );
 
@@ -208,20 +174,7 @@
 
 			group = new THREE.Group();
 			scene.add( group );
-/*
-			//dat-gui JavaScript Controller Library
-			//https://github.com/dataarts/dat.gui
-			var gui = new dat.GUI( {
 
-				autoPlace: false,
-				//			closed: true,//Icorrect "Open Controls" button name
-
-			} );
-
-			//Close gui window
-			if ( gui.__closeButton.click !== undefined )//for compatibility with Safari 5.1.7 for Windows
-				gui.__closeButton.click();
-*/
 			//Points
 
 			var points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [
@@ -258,10 +211,6 @@
 				cube.userData.color = cube.material.color;
 				group.add( cube );
 
-				/*
-								if ( raycaster.stereo !== undefined )
-									raycaster.stereo.addParticles( cube );
-				*/
 
 			}
 			addCube( new THREE.Vector3( -1, 0, 0 ), 0xffffff );
@@ -269,44 +218,19 @@
 
 			if ( options.stereoEffect ) options.stereoEffect.gui();
 
-			//			window.addEventListener( 'resize', onResize, false );
 
 		}
-		/*
-				function onResize() {
-
-					var size;
-					if ( options.ocanvasMenu && options.canvasMenu.isFullScreen() )
-						size = new THREE.Vector2( window.innerWidth, window.innerHeight );
-					else {
-
-						size = new THREE.Vector2();
-						renderer.getSize( size );
-
-					}
-					camera.aspect = size.x / size.y;
-					camera.updateProjectionMatrix();
-
-					renderer.setSize( size.x, size.y );
-
-				}
-		*/
 		function onDocumentMouseMove( event ) {
 
-				/*if ( raycaster.stereo !== undefined )
-					raycaster.stereo.onDocumentMouseMove( event );
-				else */{
+			// Test of the old version of THREE.Raycaster
+			event.preventDefault();
+			var left = renderer.domElement.offsetLeft,
+				top = renderer.domElement.offsetTop,
+				size = new THREE.Vector2;
+			renderer.getSize( size );
+			mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
+			mouse.y = -( event.clientY / size.y ) * 2 + 1 + ( top / size.y ) * 2;
 
-				// Test of the old version of THREE.Raycaster
-				event.preventDefault();
-				var left = renderer.domElement.offsetLeft,
-					top = renderer.domElement.offsetTop,
-					size = new THREE.Vector2;
-				renderer.getSize( size );
-				mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
-				mouse.y = -( event.clientY / size.y ) * 2 + 1 + ( top / size.y ) * 2;
-
-			}
 			if ( event.buttons != 1 )
 				return;
 
@@ -315,10 +239,6 @@
 		}
 		function onDocumentMouseDown( event ) {
 
-			/*
-						if ( raycaster.stereo !== undefined )
-							raycaster.stereo.onDocumentMouseDown( event );
-			*/
 
 		}
 		function animate() {
@@ -337,7 +257,7 @@
 
 		}
 
-		var timeoutControls;
+//		var timeoutControls;
 	</script>
 </body>
 </html>

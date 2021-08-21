@@ -440,7 +440,47 @@ class Options {
 
 									get: function () {
 
-										if ( !dat.gui && three.dat ) dat.gui = new three.dat.GUI();
+										if ( !dat.gui && three.dat ) {
+
+											dat.gui = new three.dat.GUI( options.dat.parent ? {autoPlace: false,} : undefined );
+											if ( options.dat.parent ) {
+
+												const autoPlaceContainer = document.createElement('div');
+												autoPlaceContainer.classList.add( 'dg' );//делает видимыми папки
+												autoPlaceContainer.classList.add( three.dat.GUI.CLASS_AUTO_PLACE_CONTAINER );//делает видимыми папки
+												options.dat.parent.appendChild(autoPlaceContainer);
+												autoPlaceContainer.appendChild(dat.gui.domElement);
+												dat.gui.domElement.classList.add( three.dat.GUI.CLASS_AUTO_PLACE );//перемещает dat.gui в верхний правый угол. Папки остаются видимыми
+												autoPlaceContainer.style.position = 'absolute';//оставляем gui в пределах canvas
+//												autoPlaceContainer.style.float = 'right'; 
+//												options.dat.parent.appendChild(dat.gui.domElement);
+
+											}
+/*											
+											if (common.isUndefined(params.parent)) {
+											  if (autoPlaceVirgin) {
+												autoPlaceContainer = document.createElement('div');
+												dom.addClass(autoPlaceContainer, CSS_NAMESPACE);
+												dom.addClass(autoPlaceContainer, GUI.CLASS_AUTO_PLACE_CONTAINER);
+												document.body.appendChild(autoPlaceContainer);
+												autoPlaceVirgin = false;
+											  }
+
+											  // Put it in the dom for you.
+											  autoPlaceContainer.appendChild(this.domElement);
+
+											  // Apply the auto styles
+											  dom.addClass(this.domElement, GUI.CLASS_AUTO_PLACE);
+											}
+
+
+											// Make it not elastic.
+											if (!this.parent) {
+											  setWidth(_this, params.width);
+											}
+*/											
+
+										}
 										return dat.gui;
 
 									},
@@ -508,6 +548,11 @@ class Options {
 								pointLightGui: {
 
 									get: function () { return dat.pointLightGui; },
+
+								},
+								parent: {
+
+									get: function () { return dat.parent; },
 
 								},
 
