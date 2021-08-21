@@ -20,20 +20,10 @@ import ScaleController from '../ScaleController.js';
 import PositionController from '../PositionController.js';
 //import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
 
-//import Cookie from '../cookieNodeJS/cookie.js';
-//import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
-import { SpriteText } from '../SpriteText/SpriteText.js';
-//import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
-
 import { SpriteTextGui } from '../SpriteText/SpriteTextGui.js';
 //import { SpriteTextGui } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteTextGui.js';
 
-//import { dat } from '../dat/dat.module.js';
-//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
-
 import three from '../three.js'
-//import setOptions from '../setOptions.js'
 import Options from '../Options.js'
 
 /**
@@ -60,7 +50,6 @@ import Options from '../Options.js'
 */
 export default function AxesHelperGui( options, gui ) {
 
-//	options = options || new Options();
 	if ( !options.boOptions ) {
 
 		console.error( 'MoveGroupGui: call options = new Options( options ) first' );
@@ -68,10 +57,6 @@ export default function AxesHelperGui( options, gui ) {
 
 	}
 	gui = gui || options.dat.gui;
-/*	
-	if ( !gui || options.dat.moveScene === false )
-		return;
-*/
 	if ( !gui || ( options.dat === false ) || ( options.dat.axesHelperGui === false ) )
 		return;
 	if ( !options.axesHelper ) {
@@ -81,7 +66,7 @@ export default function AxesHelperGui( options, gui ) {
 
 	}
 	
-	const THREE = three.THREE, dat = three.dat;//options.dat.dat;
+	const THREE = three.THREE, dat = three.dat;
 
 	const scalesDefault = JSON.parse( JSON.stringify( options.scales ) ),
 		groupAxesHelper = options.axesHelper.getGroup();
@@ -116,11 +101,6 @@ export default function AxesHelperGui( options, gui ) {
 		defaultAxesIntersectionTitle: 'Restore default axes intersection.',
 
 	};
-/*	
-	const languageCode = options.getLanguageCode === undefined ? 'en'//Default language is English
-		: options.getLanguageCode();
-	switch ( languageCode )
-*/	
 	switch ( options.getLanguageCode() ){
 
 		case 'ru'://Russian language
@@ -163,12 +143,7 @@ export default function AxesHelperGui( options, gui ) {
 	}
 
 	const cookie = options.dat.cookie,
-//		cookieName = options.dat.cookieName;
 		cookieName = options.dat.getCookieName( 'AxesHelper' );
-/*	
-	const cookieName = 'AxesHelper' + ( options.cookieName ? '_' + options.cookieName : '' ),
-		cookie = options.cookie || new Cookie.defaultCookie();
-*/		
 	cookie.getObject( cookieName, options.scales, options.scales );
 
 	function setSettings() {
@@ -236,19 +211,12 @@ export default function AxesHelperGui( options, gui ) {
 		dat: {
 
 			gui: options.dat.gui,
-//			dat: options.dat.dat,
 			cookieName: 'AxesHelper_' + options.dat.getCookieName(),
 
 		},
 
 	}, {
 
-		//options: options,
-/*
-		getLanguageCode: options.getLanguageCode,
-		cookie: cookie,
-		cookieName: cookieName,
-*/		
 		parentFolder: fScales,
 
 	} );
@@ -256,7 +224,7 @@ export default function AxesHelperGui( options, gui ) {
 	//Axes intersection folder
 
 	const fAxesIntersection = fAxesHelper.addFolder( lang.axesIntersection ),
-		axesIntersectionControllers = { x: {}, y: {}, z: {} };//, w: {} };//, t: {}, };
+		axesIntersectionControllers = { x: {}, y: {}, z: {} };
 	function axesIntersection( axisName ) {
 
 		const scale = options.scales[axisName];
@@ -286,16 +254,12 @@ export default function AxesHelperGui( options, gui ) {
 	axesIntersection( 'x' );
 	axesIntersection( 'y' );
 	axesIntersection( 'z' );
+
 	//default button Axes intersection 
 	var defaultParams = {
 
 		defaultF: function ( value ) {
 			
-/*
-			axesIntersectionControllers.x.controller.setValue( optionsDefault.scales.posAxesIntersection.x );
-			axesIntersectionControllers.y.controller.setValue( optionsDefault.scales.posAxesIntersection.y );
-			axesIntersectionControllers.z.controller.setValue( optionsDefault.scales.posAxesIntersection.z );
-*/
 			axesIntersectionControllers.x.controller.setValue( scalesDefault.posAxesIntersection.x );
 			axesIntersectionControllers.y.controller.setValue( scalesDefault.posAxesIntersection.y );
 			axesIntersectionControllers.z.controller.setValue( scalesDefault.posAxesIntersection.z );

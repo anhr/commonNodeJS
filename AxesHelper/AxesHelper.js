@@ -18,15 +18,9 @@ import { SpriteText } from '../SpriteText/SpriteText.js';
 import clearThree from '../clearThree.js';
 //import clearThree from 'https://raw.githack.com/anhr/commonNodeJS/master/clearThree.js';
 
-//import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
-//import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
-//import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
-
 import { getObjectPosition } from '../getPosition.js';
-//getPositionSetTHREE( THREE );
 
 import three from '../three.js'
-//import setOptions from '../setOptions.js'
 import Options from '../Options.js'
 
 class AxesHelper {
@@ -75,9 +69,6 @@ class AxesHelper {
 
 		const axesHelper = this;
 
-		//	SpriteText.setTHREE( THREE );
-
-//		options = options || {};
 		options = options || new Options();
 		if ( !options.boOptions ) {
 
@@ -86,14 +77,7 @@ class AxesHelper {
 
 		}
 		if ( options.axesHelper === false ) return;
-/*
-		//Создаю новый объект camera что бы не засорять cookie лишней информацией
-		options.camera = {
 
-			fov: options.camera !== undefined ? options.camera.fov : 50,
-
-		};
-*/		
 		options.camera.fov = options.camera.fov || 50;
 
 		options.scales = options.scales || {};
@@ -117,15 +101,7 @@ class AxesHelper {
 		setScale( 'x' );
 		setScale( 'y' );
 		setScale( 'z' );
-/*
-		options.setScales( function ( scale ) {
 
-			if ( scale.marks === undefined ) scale.marks = 3;
-			if ( scale.offset === undefined ) scale.offset = 0.1;
-			if ( scale.zoomMultiplier === undefined ) scale.zoomMultiplier = 1.1;
-
-		} );
-*/
 		/**
 		 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 		 * */
@@ -454,11 +430,7 @@ class AxesHelper {
 						lineVertices[4] = pointVertice.y;
 						lineVertices[5] = pointVertice.z;
 
-						var size = getDashSize();//axesId );
-						/*по моему зевок
-											lineX.material.dashSize = size;
-											lineX.material.gapSize = size;
-						*/
+						var size = getDashSize();
 						line.material.dashSize = size;
 						line.material.gapSize = size;
 
@@ -562,11 +534,6 @@ class AxesHelper {
 			dotLines.dottedLines( intersection );
 
 		}
-		/* *
-		 * get THREE
-		 * @returns {@link https://github.com/anhr/three.js|THREE}
-		 */
-		//	this.getTHREE = function() { return THREE; }
 
 		/**
 		 * get group
