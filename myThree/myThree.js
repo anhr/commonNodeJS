@@ -170,9 +170,15 @@ class MyThree {
 	 * <pre>
 	 * If a string, then is id of the HTMLElement.
 	 * </pre>
+	 * 
 	 * @param {THREE.PerspectiveCamera} [options.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
 	 * @param {THREE.Vector3} [options.camera.position=new THREE.Vector3( 0.4, 0.4, 2 )] camera position.
 	 * @param {THREE.Vector3} [options.camera.scale=new THREE.Vector3( 1, 1, 1 )] camera scale.
+	 * @param {Number} [options.camera.fov=70] Camera frustum vertical field of view. See [fov]{@link https://threejs.org/docs/?q=PerspectiveCamera#api/en/cameras/PerspectiveCamera.fov}.
+	 * @param {Number} [options.camera.aspect=window.innerWidth / window.innerHeight] Camera frustum aspect ratio. See [aspect]{@link https://threejs.org/docs/?q=PerspectiveCamera#api/en/cameras/PerspectiveCamera.aspect}.
+	 * @param {Number} [options.camera.near=0.01] Camera frustum near plane. See [near]{@link https://threejs.org/docs/?q=PerspectiveCamera#api/en/cameras/PerspectiveCamera.near}.
+	 * @param {Number} [options.camera.far=10] Camera frustum far plane. See [far]{@link https://threejs.org/docs/?q=PerspectiveCamera#api/en/cameras/PerspectiveCamera.far}.
+	 * 
 	 * @param {THREE.Scene} [options.scene] [Scene]{@link https://threejs.org/docs/index.html#api/en/scenes/Scene}.
 	 * @param {THREE.Vector3} [options.scene.position=new THREE.Vector3( 0, 0, 0 )] scene position.
 	 * @param {boolean} [options.orbitControls] false - do not add the [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}. Allow the camera to orbit around a target.
@@ -363,7 +369,11 @@ class MyThree {
 
 				// CAMERA
 
-				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+//				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+				camera = new THREE.PerspectiveCamera( options.camera.fov || 70,
+					options.camera.aspect || window.innerWidth / window.innerHeight,
+					options.camera.near || 0.01,
+					options.camera.far || 10 );
 				camera.position.copy( options.camera.position );
 				camera.scale.copy( options.camera.scale );
 
