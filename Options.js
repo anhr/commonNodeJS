@@ -371,6 +371,12 @@ class Options {
 							dat = dat || {};
 							if ( dat.boDat )
 								return dat;//duplucate new Options
+							function guiParent() {
+
+								dat.parent.appendChild( dat.gui.domElement.parentNode );
+								dat.gui.domElement.parentNode.style.position = 'absolute';//оставляем gui в пределах canvas
+
+							}
 							Object.defineProperties( this, {
 
 
@@ -445,8 +451,11 @@ class Options {
 											dat.gui = new three.dat.GUI();// options.dat.parent ? {autoPlace: false,} : undefined );
 											if ( options.dat.parent ) {
 
-												options.dat.parent.appendChild(dat.gui.domElement.parentNode);
+												guiParent();
+/*
+												dat.parent.appendChild( dat.gui.domElement.parentNode );
 												dat.gui.domElement.parentNode.style.position = 'absolute';//оставляем gui в пределах canvas
+*/
 /*												
 												const autoPlaceContainer = document.createElement('div');
 												autoPlaceContainer.classList.add( 'dg' );//делает видимыми папки
@@ -557,6 +566,12 @@ class Options {
 								parent: {
 
 									get: function () { return dat.parent; },
+									set: function ( parent ) {
+
+										dat.parent = parent;
+										guiParent();
+
+									},
 
 								},
 

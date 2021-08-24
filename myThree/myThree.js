@@ -319,6 +319,8 @@ class MyThree {
 				requestId;
 
 			canvas = elContainer.querySelector( 'canvas' );
+			options.dat.parent = canvas.parentElement;
+
 			//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
 //			const gl = canvas.getContext( 'webgl' );
 
@@ -563,7 +565,7 @@ class MyThree {
 						options.dat.gui.__closeButton.click();
 
 					//Thanks to https://stackoverflow.com/questions/41404643/place-dat-gui-strictly-inside-three-js-scene-without-iframe
-					elContainer.querySelector( '#my-gui-container' ).appendChild( options.dat.gui.domElement );
+					//elContainer.querySelector( '#my-gui-container' ).appendChild( options.dat.gui.domElement );
 
 				}
 
@@ -955,7 +957,7 @@ class MyThree {
 			tag: 'style',
 
 		}
-
+/*		
 		if ( options.dat !== undefined ) {
 
 			loadScript.sync( currentScriptPath + '/../DropdownMenu/styles/gui.css', optionsStyle );
@@ -964,6 +966,7 @@ class MyThree {
 			loadScript.sync( currentScriptPath + '/../DropdownMenu/styles/menu.css', optionsStyle );
 
 		}
+*/		
 
 		/**
 		 * Save scale, position and rotation to the userData.default of the mesh
