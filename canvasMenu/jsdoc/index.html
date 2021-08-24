@@ -48,83 +48,114 @@
 <p><a href="../Examples/html/index.html">Example of using</a>.</p>
 <h2>Quick start</h2>
 <ul>
-<li>Create a folder on your localhost named as [folderName].</li>
+<li>Create a folder on your localhost named as [folderName].
+<ul>
+<li>Download <a href="https://github.com/anhr/three.js">three.js</a> repository into your &quot;[folderName]\three.js\dev&quot; folder.</li>
+<li>Download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</li>
+</ul>
+</li>
 <li>Add your web page into [folderName]. Example:</li>
 </ul>
 <pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+
 &lt;html>
 &lt;head>
 	&lt;title>CanvasMenu&lt;/title>
+
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://threejs.org/examples/main.css&quot;>
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;three.js/dev/examples/main.css&quot;>-->
+
+	&lt;!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>-->
+
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
 &lt;/head>
 &lt;body>
 	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
-	&lt;h1>
-		&lt;a href='https://github.com/anhr/commonNodeJS/tree/master/canvasMenu' target=&quot;_blank&quot;>CanvasMenu&lt;/a> inside &lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot;>Three.js&lt;/a> canvas.
-	&lt;/h1>
+	&lt;div id=&quot;info&quot;>
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a>
+		- &lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/canvasMenu&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>CanvasMenu&lt;/a>.
+		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
+	&lt;/div>
 	&lt;div>
 		&lt;canvas id=&quot;canvas&quot;>&lt;/canvas>
 	&lt;/div>
+
 	&lt;script type=&quot;module&quot;>
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
-		//import * as THREE from './three.js/dev/build/three.module.js';
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 
-		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
-		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
-		//Uncomment line below if you want use local commonNodeJS library in your project.
-		//import three from './commonNodeJS/master/three.js'
+		import three from './commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
-		const scene = new THREE.Scene();
-		const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		import Options from './commonNodeJS/master/Options.js'
 
-		const renderer = new THREE.WebGLRenderer( {
+		var camera, scene, renderer, stereoEffect;
 
-			canvas: document.getElementById( &quot;canvas&quot; ),
+		init();
+		animate();
 
-		} );
-		renderer.setSize( window.innerWidth / 2, window.innerHeight / 2 );
+		function init() {
 
-		const cube = new THREE.Mesh( new THREE.BoxGeometry(), new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) );
-		scene.add( cube );
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
 
-		camera.position.z = 5;
+			scene = new THREE.Scene();
 
-		var animate = function () {
+			const options = new Options();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
 
 			requestAnimationFrame( animate );
 
-			cube.rotation.x += 0.01;
-			cube.rotation.y += 0.01;
-
 			renderer.render( scene, camera );
 
-		};
+		}
 
-		animate();
 	&lt;/script>
 &lt;/body>
 &lt;/html>
 </code></pre>
 <p>NOTE. Please include <code>three.THREE = THREE;</code> line into your project before use my <a href="https://github.com/anhr/commonNodeJS">library</a>. See example above.</p>
-<ul>
-<li>The easiest way to use <b>CanvasMenu</b> in your code is import CanvasMenu from CanvasMenu.js.</li>
-</ul>
-<pre class="prettyprint source"><code>import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
+<p>The easiest way to use <b>CanvasMenu</b> in your code is import CanvasMenu from CanvasMenu.js.</p>
 <pre class="prettyprint source"><code>import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
 </code></pre>
-<ul>
-<li>Now you can use <b>CanvasMenu</b> in your javascript code. Example:</li>
-</ul>
+<p>Now you can use <b>CanvasMenu</b> in your javascript code. Example:</p>
 <pre class="prettyprint source"><code>new CanvasMenu( renderer );
 </code></pre>
 <p>Now your menu does nothing and you don't see it.</p>
-<ul>
-<li>Add some item into your menu:</li>
-</ul>
+<p>Also you can see</p>
+<p><i>CanvasMenu: menu is empty.</i></p>
+<p>warning in console.</p>
+<p>Add some item into your menu:</p>
 <pre class="prettyprint source"><code>new CanvasMenu( renderer, {
 
 	menu: [
@@ -308,7 +339,7 @@ For resolving of issue please add <b>rememberSize: true</b> key into <b>options<
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Aug 21 2021 18:17:18 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Aug 25 2021 06:03:13 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

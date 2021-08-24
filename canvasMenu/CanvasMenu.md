@@ -6,81 +6,119 @@ My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu
 
 ## Quick start
 
+
 * Create a folder on your localhost named as [folderName].
+	* Download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
+	* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 * Add your web page into [folderName]. Example:
 ```
 <!DOCTYPE html>
+
 <html>
 <head>
 	<title>CanvasMenu</title>
+
+	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
+
+	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">-->
+
+	<!--<script src="./three.js/dev/build/three.js"></script>-->
+	<!--<script src="./three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
 </head>
 <body>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
-	<h1>
-		<a href='https://github.com/anhr/commonNodeJS/tree/master/canvasMenu' target="_blank">CanvasMenu</a> inside <a href="https://threejs.org/" target="_blank">Three.js</a> canvas.
-	</h1>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/canvasMenu" target="_blank" rel="noopener">CanvasMenu</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
 	<div>
 		<canvas id="canvas"></canvas>
 	</div>
+
 	<script type="module">
 
-		import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
-		//import * as THREE from './three.js/dev/build/three.module.js';
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 
-		//Uncomment line below if you want use 'https://raw.githack.com/anhr/commonNodeJS/' library in your project.
-		import three from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js'
-		//Uncomment line below if you want use local commonNodeJS library in your project.
-		//import three from './commonNodeJS/master/three.js'
+		import three from './commonNodeJS/master/three.js'
 		three.THREE = THREE;
 
-		const scene = new THREE.Scene();
-		const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		import Options from './commonNodeJS/master/Options.js'
 
-		const renderer = new THREE.WebGLRenderer( {
+		var camera, scene, renderer, stereoEffect;
 
-			canvas: document.getElementById( "canvas" ),
+		init();
+		animate();
 
-		} );
-		renderer.setSize( window.innerWidth / 2, window.innerHeight / 2 );
+		function init() {
 
-		const cube = new THREE.Mesh( new THREE.BoxGeometry(), new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) );
-		scene.add( cube );
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
 
-		camera.position.z = 5;
+			scene = new THREE.Scene();
 
-		var animate = function () {
+			const options = new Options();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
 
 			requestAnimationFrame( animate );
 
-			cube.rotation.x += 0.01;
-			cube.rotation.y += 0.01;
-
 			renderer.render( scene, camera );
 
-		};
+		}
 
-		animate();
 	</script>
 </body>
 </html>
 ```
 NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
-* The easiest way to use <b>CanvasMenu</b> in your code is import CanvasMenu from CanvasMenu.js.
-```
-import CanvasMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/canvasMenu.js';
-```
-or download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
+The easiest way to use <b>CanvasMenu</b> in your code is import CanvasMenu from CanvasMenu.js.
 ```
 import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
 ```
-* Now you can use <b>CanvasMenu</b> in your javascript code. Example:
+Now you can use <b>CanvasMenu</b> in your javascript code. Example:
 ```
 new CanvasMenu( renderer );
 ```
 Now your menu does nothing and you don't see it.
-* Add some item into your menu:
+
+Also you can see
+
+<i>CanvasMenu: menu is empty.</i>
+
+warning in console.
+
+Add some item into your menu:
 ```
 new CanvasMenu( renderer, {
 
@@ -105,7 +143,7 @@ new CanvasMenu( renderer, {
 ```
 Please move mouse over canvas. Now you can see "Button" button on the bottom of the canvas. Click the "Button". An alert will be displayed.
 
-* Add a "Full Screen" button.
+Add a "Full Screen" button.
 
 Insert the <b>fullScreen</b> key into <b>options</b> parameter of the <b>CanvasMenu</b>.
 ```
@@ -127,12 +165,7 @@ new CanvasMenu( renderer, {
 		},
 
 	],
-	fullScreen: {
-
-		camera: camera,
-		THREE: THREE,
-
-	},
+	fullScreen: { camera: camera, },
 
 } );
 ```
