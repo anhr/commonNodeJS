@@ -59,6 +59,8 @@ export default function AxesHelperGui( options, gui ) {
 	gui = gui || options.dat.gui;
 	if ( !gui || ( options.dat === false ) || ( options.dat.axesHelperGui === false ) )
 		return;
+	if ( options.axesHelper === false )
+		return;
 	if ( !options.axesHelper ) {
 
 		console.error( 'AxesHelperGui: create AxesHelper instance first' );
