@@ -7751,6 +7751,10 @@ function Options(options) {
 															classCallCheck(this, Dat);
 															dat = dat || {};
 															if (dat.boDat) return dat;
+															function guiParent() {
+																		dat.parent.appendChild(dat.gui.domElement.parentNode);
+																		dat.gui.domElement.parentNode.style.position = 'absolute';
+															}
 															Object.defineProperties(this, {
 																		boDat: {
 																					get: function get$$1() {
@@ -7775,7 +7779,12 @@ function Options(options) {
 																		},
 																		gui: {
 																					get: function get$$1() {
-																								if (!dat.gui && three$1.dat) dat.gui = new three$1.dat.GUI();
+																								if (!dat.gui && three$1.dat) {
+																											dat.gui = new three$1.dat.GUI();
+																											if (options.dat.parent) {
+																														guiParent();
+																											}
+																								}
 																								return dat.gui;
 																					}
 																		},
@@ -7846,6 +7855,15 @@ function Options(options) {
 																		pointLightGui: {
 																					get: function get$$1() {
 																								return dat.pointLightGui;
+																					}
+																		},
+																		parent: {
+																					get: function get$$1() {
+																								return dat.parent;
+																					},
+																					set: function set$$1(parent) {
+																								dat.parent = parent;
+																								guiParent();
 																					}
 																		}
 															});
@@ -10061,7 +10079,7 @@ function CanvasMenu(renderer) {
 						canvasMenu: this,
 						fullScreen: settings.fullScreen
 				});
-				if (settings.fullScreen.fullScreen !== false) fullScreenSettings.setFullScreen(false, true);
+				if (options.canvas.fullScreen !== false) fullScreenSettings.setFullScreen(false, true);
 				this.getFullScreenSettings = function (stereoEffect) {
 						fullScreenSettings.setStereoEffect(stereoEffect);
 						return fullScreenSettings;
@@ -10101,7 +10119,7 @@ function CanvasMenu(renderer) {
 		if (settings.fullScreen) {
 				this.setFullScreenButton = function (fullScreen) {
 						if (fullScreen === undefined) {
-								if (settings.fullScreen.fullScreen === false) fullScreen = false;else fullScreen = true;
+								if (options.canvas.fullScreen === false) fullScreen = false;else fullScreen = true;
 						}
 						var elMenuButtonFullScreen = elContainer.querySelector('#menuButtonFullScreen');
 						if (elMenuButtonFullScreen === null) return true;
@@ -10787,6 +10805,7 @@ function AxesHelperGui(options, gui) {
 	}
 	gui = gui || options.dat.gui;
 	if (!gui || options.dat === false || options.dat.axesHelperGui === false) return;
+	if (options.axesHelper === false) return;
 	if (!options.axesHelper) {
 		console.error('AxesHelperGui: create AxesHelper instance first');
 		return;
@@ -10837,7 +10856,7 @@ function AxesHelperGui(options, gui) {
 			});
 	}
 	var cookie = options.dat.cookie,
-	cookieName = options.dat.getCookieName('AxesHelper');
+	    cookieName = options.dat.getCookieName('AxesHelper');
 	cookie.getObject(cookieName, options.scales, options.scales);
 	function setSettings() {
 		cookie.setObject(cookieName, options.scales);
@@ -13770,6 +13789,7 @@ function MyThree(createXDobjects, options) {
 								pointSize, stats,
 								requestId;
 								canvas = elContainer.querySelector('canvas');
+								options.dat.parent = canvas.parentElement;
 								function isFullScreen() {
 												if (options.canvasMenu) return options.canvasMenu.isFullScreen();
 												if (options.canvas) return options.canvas.fullScreen !== false;
@@ -13791,7 +13811,7 @@ function MyThree(createXDobjects, options) {
 								init();
 								animate();
 								function init() {
-												camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+												camera = new THREE.PerspectiveCamera(options.camera.fov || 70, options.camera.aspect || window.innerWidth / window.innerHeight, options.camera.near || 0.01, options.camera.far || 10);
 												camera.position.copy(options.camera.position);
 												camera.scale.copy(options.camera.scale);
 												options.camera = camera;
@@ -13849,7 +13869,6 @@ function MyThree(createXDobjects, options) {
 																}, 'loseContext');
 																if (options.dat.gui.__closeButton.click !== undefined)
 																				options.dat.gui.__closeButton.click();
-																elContainer.querySelector('#my-gui-container').appendChild(options.dat.gui.domElement);
 												}
 												new Player$1(group, {
 																onSelectScene: function onSelectScene(index, t) {
@@ -14040,13 +14059,6 @@ function MyThree(createXDobjects, options) {
 								var params = arrayCreates.shift();
 								if (params === undefined) return;
 								myThreejs.create(params.createXDobjects, params.options);
-				}
-				var optionsStyle = {
-								tag: 'style'
-				};
-				if (options.dat !== undefined) {
-								loadScript.sync(currentScriptPath$3 + '/../DropdownMenu/styles/gui.css', optionsStyle);
-								loadScript.sync(currentScriptPath$3 + '/../DropdownMenu/styles/menu.css', optionsStyle);
 				}
 				options.saveMeshDefault = function (mesh) {
 								mesh.userData.default = mesh.userData.default || {};
