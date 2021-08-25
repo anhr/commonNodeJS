@@ -11,7 +11,7 @@ My JavaScript library of [threejs](https://threejs.org/) extension.
 * CanvasMenu. My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu) for canvas in my [three.js](https://threejs.org/) projects.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/canvasMenu).
 [CanvasMenu API](https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/jsdoc/index.html).
-[Example](https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/Examples/html/index.html)
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/Examples/html/index.html).
 * clearThree.js Remove all child objects of the object and call dispose on their geometry, material and texture.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/index.html).
 * cookie. Cookies let you store user information in web pages. See [JavaScript Cookies](https://www.w3schools.com/js/js_cookies.asp).
