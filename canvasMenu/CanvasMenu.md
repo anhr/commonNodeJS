@@ -26,7 +26,8 @@ My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu
 <head>
 	<title>CanvasMenu</title>
 
-	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<link type="text/css" rel="stylesheet" href="./three.js/dev/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
 	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
 
 	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
@@ -196,8 +197,8 @@ new CanvasMenu( renderer, {
 } );
 ```
 Please move mouse over canvas.
-Now you can see "⤢" button on the bottom right corner of the canvas.
-Please click the "⤢" button if you want to see your canvas on the full screen.
+Now you can see "⤦" button on the bottom right corner of the canvas.
+Please click the "⤦" button if you want to resize your canvas to original size.
 
 <a name="StereoEffect"></a>
 ## Add a [Stereo Effect](https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md) menu item.
