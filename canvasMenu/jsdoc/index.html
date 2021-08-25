@@ -46,6 +46,16 @@
         <article><p><h1>CanvasMenu.</h1></p>
 <p>My <a href="https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu">dropdown menu</a> for canvas in my <a href="https://threejs.org/">three.js</a> projects.</p>
 <p><a href="../Examples/html/index.html">Example of using</a>.</p>
+<h1>Content</h1>
+<ul>
+<li><a href="#Quickstart">Quick start.</a></li>
+<li><a href="#AddMenuItem">Add some item into your menu.</a></li>
+<li><a href="#FullScreen">Add a &quot;Full Screen&quot; button.</a></li>
+<li><a href="#StereoEffect">Add a &quot;Stereo Effect&quot; menu item.</a></li>
+<li><a href="#Player">Add Player menu item.</a></li>
+<li><a href="#WebPage">Example of your web page.</a></li>
+</ul>
+<p><a name="QuickStart"></a></p>
 <h2>Quick start</h2>
 <ul>
 <li>Create a folder on your localhost named as [folderName].
@@ -66,8 +76,8 @@
 	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;three.js/dev/examples/main.css&quot;>-->
 
 	&lt;!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
-	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>
-	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>-->
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>-->
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>
 
 	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
 	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
@@ -145,7 +155,9 @@
 &lt;/html>
 </code></pre>
 <p>NOTE. Please include <code>three.THREE = THREE;</code> line into your project before use my <a href="https://github.com/anhr/commonNodeJS">library</a>. See example above.</p>
-<p>The easiest way to use <b>CanvasMenu</b> in your code is import CanvasMenu from CanvasMenu.js.</p>
+<ul>
+<li>The easiest way to use <b>CanvasMenu</b> in your code is import CanvasMenu from CanvasMenu.js.</li>
+</ul>
 <pre class="prettyprint source"><code>import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
 </code></pre>
 <p>Now you can use <b>CanvasMenu</b> in your javascript code. Example:</p>
@@ -155,7 +167,8 @@
 <p>Also you can see</p>
 <p><i>CanvasMenu: menu is empty.</i></p>
 <p>warning in console.</p>
-<p>Add some item into your menu:</p>
+<p><a name="AddMenuItem"></a></p>
+<h2>Add some item into your menu.</h2>
 <pre class="prettyprint source"><code>new CanvasMenu( renderer, {
 
 	menu: [
@@ -178,9 +191,16 @@
 } );
 </code></pre>
 <p>Please move mouse over canvas. Now you can see &quot;Button&quot; button on the bottom of the canvas. Click the &quot;Button&quot;. An alert will be displayed.</p>
-<ul>
-<li>Add a &quot;Full Screen&quot; button.</li>
-</ul>
+<p><a name="FullScreen"></a></p>
+<h2>Add a &quot;Full Screen&quot; button.</h2>
+<p>Remove</p>
+<p><i>&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;./three.js/dev/examples/main.css&gt;</i></p>
+<p>and</p>
+<p><i>&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;&gt;</i></p>
+<p>from <b>head</b> tag.</p>
+<p>Remove</p>
+<p><i>renderer.setSize( window.innerWidth, window.innerHeight );</i></p>
+<p>line.</p>
 <p>Insert the <b>fullScreen</b> key into <b>options</b> parameter of the <b>CanvasMenu</b>.</p>
 <pre class="prettyprint source"><code>new CanvasMenu( renderer, {
 
@@ -200,37 +220,26 @@
 		},
 
 	],
-	fullScreen: {
-
-		camera: camera,
-		THREE: THREE,
-
-	},
+	fullScreen: { camera: camera, },
 
 } );
 </code></pre>
 <p>Please move mouse over canvas.
 Now you can see &quot;⤢&quot; button on the bottom right corner of the canvas.
 Please click the &quot;⤢&quot; button if you want to see your canvas on the full screen.</p>
-<ul>
-<li>Add a <a href="https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md">Stereo Effect</a> menu item.</li>
-</ul>
+<p><a name="StereoEffect"></a></p>
+<h2>Add a <a href="https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md">Stereo Effect</a> menu item.</h2>
 <p>First, import <b>StereoEffect</b> into your code</p>
-<pre class="prettyprint source"><code>import StereoEffect from &quot;https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/StereoEffect.js&quot;;
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
 <pre class="prettyprint source"><code>import StereoEffect from &quot;./commonNodeJS/master/StereoEffect/StereoEffect.js&quot;;
 </code></pre>
 <p>Now you can use <b>StereoEffect</b> in your code.</p>
-<pre class="prettyprint source"><code>const stereoEffect = new StereoEffect( renderer );
+<pre class="prettyprint source"><code>new StereoEffect( renderer, options );
+stereoEffect = options.stereoEffect;
 </code></pre>
-<p>Add code into animate function</p>
+<p>Edit animate function</p>
 <pre class="prettyprint source"><code>function animate() {
 
 	requestAnimationFrame( animate );
-
-	cube.rotation.x += 0.01;
-	cube.rotation.y += 0.01;
 
 	if ( !stereoEffect )
 		renderer.render( scene, camera );
@@ -238,7 +247,7 @@ Please click the &quot;⤢&quot; button if you want to see your canvas on the fu
 
 }
 </code></pre>
-<p>For including of the <b>StereoEffect</b> into <b>CanvasMenu</b>, add the <b>stereoEffect: stereoEffect</b> key into <b>options</b> parameter of the <b>CanvasMenu</b>.</p>
+<p>For including of the <b>StereoEffect</b> into <b>CanvasMenu</b>, add the <b>options: options</b> key into <b>settings</b> parameter of the <b>CanvasMenu</b>.</p>
 <pre class="prettyprint source"><code>new CanvasMenu( renderer, {
 
 	menu: [
@@ -257,13 +266,8 @@ Please click the &quot;⤢&quot; button if you want to see your canvas on the fu
 		},
 
 	],
-	fullScreen: {
-
-		camera: camera,
-		THREE: THREE,
-
-	},
-	stereoEffect: stereoEffect,
+	fullScreen: { camera: camera, },
+	options: options,
 
 } );
 </code></pre>
@@ -272,57 +276,145 @@ Now you can see &quot;⚭&quot; menu item on the bottom of the canvas.
 Please click the &quot;⚭&quot; if you want to change of stereo mode.</p>
 <p>Currently your canvas is not full screen in the stereo mode.
 I think is is bad, because your stereo device can not to display stereo correctly if your canvas is not full screen.
-For resolving of issue please add <b>rememberSize: true</b> key into <b>options</b> parameter of the <b>StereoEffect</b>.</p>
-<pre class="prettyprint source"><code>const stereoEffect = new StereoEffect( renderer, {
+For resolving of issue please add <b>stereoEffect: { rememberSize: true, },</b> key into <b>options</b> parameter of the <b>Options</b>.</p>
+<pre class="prettyprint source"><code>const options = new Options( {
 
-	stereoEffect: { rememberSize: true, }
-
-} );
-</code></pre>
-<p>Now your canvas will be changing to full screen automatically if you choice a stereo mode.</p>
-<ul>
-<li>If you want to localize menu, please import <b>getLanguageCode</b></li>
-</ul>
-<pre class="prettyprint source"><code>import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-</code></pre>
-<p>or download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</p>
-<pre class="prettyprint source"><code>import { getLanguageCode } from './commonNodeJS/master/lang.js';
-</code></pre>
-<p>Add <b>getLanguageCode: getLanguageCode,</b> key into <b>options</b> parameter of the <b>CanvasMenu</b>.</p>
-<pre class="prettyprint source"><code>new CanvasMenu( renderer, {
-
-	menu: [
-
-		{
-
-			name: 'Button',
-			onclick: function ( event ) {
-
-				var message = 'Button onclick';
-				//console.log( message );
-				alert( message )
-
-			},
-
-		},
-
-	],
-	fullScreen: {
-
-		camera: camera,
-		THREE: THREE,
-
-	},
-	stereoEffect: stereoEffect,
-	getLanguageCode: getLanguageCode,
+	stereoEffect: { rememberSize: true, },
 
 } );
-
 </code></pre>
-<ul>
-<li>Add <a href="https://github.com/anhr/commonNodeJS/tree/master/player">Player</a> menu item.</li>
-</ul>
-<p>See &quot;Add player item into CanvasMenu.&quot; header in <a href="https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/index.html">Player API</a>.</p></article>
+<p>Now your canvas will be changing to full screen automatically if you choice a stereo mode.
+<a name="Player"></a></p>
+<h2>Add <a href="https://github.com/anhr/commonNodeJS/tree/master/player">Player</a> menu item.</h2>
+<p>See &quot;Add player item into CanvasMenu.&quot; header in <a href="../../player/jsdoc/index.html">Player API</a>.
+<a name="WebPage"></a></p>
+<h2>Example of your web page.</h2>
+<p>The following code is the result of this tutorial.</p>
+<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+
+&lt;html>
+&lt;head>
+	&lt;title>CanvasMenu&lt;/title>
+
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;./three.js/dev/examples/main.css&quot;>-->
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://threejs.org/examples/main.css&quot;>-->
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;three.js/dev/examples/main.css&quot;>-->
+	&lt;!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>-->
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>-->
+
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
+&lt;/head>
+&lt;body>
+	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
+	&lt;div id=&quot;info&quot;>
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a>
+		- &lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/canvasMenu&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>CanvasMenu&lt;/a>.
+		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
+	&lt;/div>
+	&lt;div>
+		&lt;canvas id=&quot;canvas&quot;>&lt;/canvas>
+	&lt;/div>
+
+	&lt;script type=&quot;module&quot;>
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
+		import Options from './commonNodeJS/master/Options.js'
+		import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
+		import StereoEffect from &quot;./commonNodeJS/master/StereoEffect/StereoEffect.js&quot;;
+		import Player from './commonNodeJS/master/player/player.js';
+
+		var camera, scene, renderer, stereoEffect;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			const options = new Options( {
+
+				stereoEffect: { rememberSize: true, },
+
+			} );
+
+			new Player( scene, { options: options, } );
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			//renderer.setSize( window.innerWidth, window.innerHeight );
+
+			new StereoEffect( renderer, options );
+			stereoEffect = options.stereoEffect;
+
+			new CanvasMenu( renderer, {
+
+				menu: [
+
+					{
+
+						name: 'Button',
+						onclick: function ( event ) {
+
+							var message = 'Button onclick';
+							//console.log( message );
+							alert( message )
+
+						},
+
+					},
+
+				],
+				fullScreen: { camera: camera, },
+				options: options,
+
+			} );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			if ( !stereoEffect )
+				renderer.render( scene, camera );
+			else stereoEffect.render( scene, camera );
+
+		}
+
+	&lt;/script>
+&lt;/body>
+&lt;/html>
+</code></pre></article>
     </section>
 
 
@@ -339,7 +431,7 @@ For resolving of issue please add <b>rememberSize: true</b> key into <b>options<
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Aug 25 2021 06:03:13 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Aug 25 2021 09:11:18 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
