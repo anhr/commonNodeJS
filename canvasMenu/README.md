@@ -7,6 +7,8 @@ Uses in my projects:
 
 See [CanvasMenu API](https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/jsdoc/index.html) for details.
 
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/canvasMenu/Examples/html/index.html).
+
 ## On the following browsers have been successfully tested:
 
 Windows 10
