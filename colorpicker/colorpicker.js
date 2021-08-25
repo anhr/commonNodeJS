@@ -125,10 +125,10 @@ class ColorPicker {
 		 * @param {object} [options] followed options is availablee
 		 * @param {paletteIndexes|object[]|Palette} [options.palette] Palette index or palette array or Palette. The following indexes are available:
 		 * <pre>
-		 * paletteIndexes.BGYW: 0 - blue, green, red, white palette.
-		 * paletteIndexes.monochrome: 1,
-		 * paletteIndexes.bidirectional: 2,//red, black, green
-		 * paletteIndexes.rainbow: 3,
+		 * <a href="../Example/index.html#BGYW" target="_blank">ColorPicker.paletteIndexes.BGYW</a>: 0 - blue, green, yellow, white palette.
+		 * <a href="../Example/index.html#Monochrome" target="_blank">ColorPicker.paletteIndexes.monochrome</a>: 1,
+		 * <a href="../Example/index.html#Bidirectional" target="_blank">ColorPicker.paletteIndexes.bidirectional</a>: 2,//red, black, green
+		 * <a href="../Example/index.html#rainbow" target="_blank">ColorPicker.paletteIndexes.rainbow</a>: 3,
 		 * Default is paletteIndexes.BGYW index.
 		 * Example of palette array:
 		[

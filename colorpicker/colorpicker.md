@@ -57,16 +57,34 @@ ColorPicker.create( "colorpicker", {
 
 } );
 ```
+Now you have created a default [ColorPicker.paletteIndexes.BGYW](../Example/index.html#BGYW) (blue, green, yellow, white) palette.
+You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](../Example/index.html#Bidirectional) palette.
+Please add <b>palette: ColorPicker.paletteIndexes.bidirectional,</b> key to the <b>options</b> parameter of <b>ColorPicker.create</b> for it.
+```
+ColorPicker.create( "colorpicker", {
+
+	sliderIndicator: {
+
+		callback: function ( c ) {
+
+			console.log( 'color: ' + c.percent + ' percent c.hex = ' + c.hex );
+
+		}
+
+	},
+	palette: ColorPicker.paletteIndexes.bidirectional,
+
+} );
+```
 Create palette.
 ```
 const palette = new ColorPicker.palette();
 ```
-Now you have created a default [ColorPicker.paletteIndexes.BGYW](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#BGYW) (blue, green, yellow, white) palette.
-You can select another palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette.
+[ColorPicker.paletteIndexes.bidirectional](../Example/index.html#Bidirectional") palette.
 ```
 const palette = new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } );
 ```
-[Available palettes](https://raw.githack.com/anhr/colorPicker/master/jsdoc/module-ColorPicker.html#~paletteIndexes).
+[Available palettes](../jsdoc/module-ColorPicker-ColorPicker.html#paletteIndexes).
 
 Also you can create your own custom palette.
 ```
