@@ -111,7 +111,7 @@ My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu
 ```
 NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
-* The easiest way to use <b>CanvasMenu</b> in your code is import CanvasMenu from CanvasMenu.js.
+The easiest way to use <b>CanvasMenu</b> in your code is import CanvasMenu from CanvasMenu.js.
 ```
 import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
 ```
