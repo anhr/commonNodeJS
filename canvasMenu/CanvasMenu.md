@@ -212,7 +212,7 @@ Now you can use <b>StereoEffect</b> in your code.
 new StereoEffect( renderer, options );
 stereoEffect = options.stereoEffect;
 ```
-Edit animate function
+Edit <b>animate</b> function.
 ```
 function animate() {
 
