@@ -9,7 +9,6 @@
  */
 
 import Player from '../player/player.js';
-import loadFile from '../loadFileNodeJS/loadFile.js';
 import MyPoints from '../myPoints/myPoints.js';
 
 import StereoEffect from '../StereoEffect/StereoEffect.js';
@@ -30,7 +29,9 @@ import OrbitControlsGui from '../OrbitControls/OrbitControlsGui.js';
 //import OrbitControlsGui from 'http://localhost/anhr/commonNodeJS/master/OrbitControls/OrbitControlsGui.js';
 //import OrbitControlsGui from 'https://raw.githack.com/anhr/commonNodeJS/master/OrbitControls/OrbitControlsGui.js';
 
-import loadScript from '../loadScriptNodeJS/loadScript.js';
+//import loadScript from '../loadScriptNodeJS/loadScript.js';
+//import loadFile from '../loadFileNodeJS/loadFile.js';
+
 import { dat } from '../dat/dat.module.js';
 
 import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
@@ -69,13 +70,14 @@ three.THREE = THREE2;
 import Options from '../Options.js'
 
 import pointLight from '../pointLight.js'
-
+/*
 var debug = {
 
 	opacity: 1 //непрозрачность frustumPoints
 
 };
-
+*/
+/*
 //Thanks to https://stackoverflow.com/a/27369985/5175935
 //Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
 const getCurrentScript = function () {
@@ -97,7 +99,7 @@ const getCurrentScriptPath = function () {
 	return path;
 };
 const currentScriptPath = getCurrentScriptPath();
-
+*/
 function arrayContainersF() {
 
 	const array = [];
@@ -164,7 +166,7 @@ class MyThree {
 	/**
 	 * @description I use MyThree in my projects for displaying of my 3D objects in the canvas.
 	 * @param {createXDobjects} [createXDobjects] <a href="../../myThree/jsdoc/module-MyThree.html#~createXDobjects" target="_blank">callback</a> creates my 3D objects.
-	 * @param {Options} [options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
+	 * @param {Object} [options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * The following options are available:
 	 * @param {HTMLElement|string} [options.elContainer=document.getElementById( "containerDSE" ) or a div element, child of body] If an HTMLElement, then a HTMLElement, contains a canvas and HTMLElement with id="iframe-goes-in-here" for gui.
 	 * <pre>
@@ -253,6 +255,8 @@ class MyThree {
 	 */
 	constructor( createXDobjects, options ) {
 
+		options = options || {};
+
 		const THREE = three.THREE;
 
 		var myThreejs = this;
@@ -265,713 +269,46 @@ class MyThree {
 		} );
 		if ( arrayCreates.length > 1 )
 			return;
-
-		options = new Options( options );
 		
 		var camera, group, scene, canvas;
 
-		function onloadScripts() {
-
-			var elContainer = options.elContainer === undefined ? document.getElementById( "containerDSE" ) :
-				typeof options.elContainer === "string" ? document.getElementById( options.elContainer ) : options.elContainer;
-			if ( elContainer === null ) {
-
-				if ( typeof options.elContainer === "string" )
-					console.warn( 'The ' + options.elContainer + ' element was not detected.' );
-				elContainer = document.createElement( 'div' );
-				document.querySelector( 'body' ).appendChild( elContainer );
-
-			}
-			arrayContainers.push( elContainer );
-			elContainer.innerHTML = loadFile.sync( currentScriptPath + '/canvasContainer.html' );
-			elContainer = elContainer.querySelector( '.container' );
-
-			//point size
-			const defaultPoint = {},
-
-				//uses only if stereo effects does not exists
-				mouse = new THREE.Vector2();
-
-			var renderer,
-
-//				controls,
-
-				//перенес в options.dat
-				//mouseenter = false,//true - мышка находится над gui или canvasMenu
-				//В этом случае не надо обрабатывать событие elContainer 'pointerdown'
-				//по которому выбирается точка на canvas.
-				//В противном случае если пользователь щелкнет на gui, то он может случайно выбрать точку на canvas.
-				//Тогда открывается папка Meshes и все органы управления сдвигаются вниз. Это неудобно.
-				//И вообще нехорошо когда выбирается точка когда пользователь не хочет это делать.
-
-				fOptions,//canvasMenu,  axesHelper,// INTERSECTED = [], scale = options.scale, colorsHelper = 0x80,
-				rendererSizeDefault, cameraPosition,//gui, fullScreen,
-
-				//point size
-				pointSize, 
-
-				stats,
-
-				//uses only if stereo effects does not exists
-//				intersects,// mouse = new THREE.Vector2(), 
-
-				//https://www.khronos.org/webgl/wiki/HandlingContextLost
-				requestId;
-
-			canvas = elContainer.querySelector( 'canvas' );
-			options.dat.parent = canvas.parentElement;
-
-			//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
-//			const gl = canvas.getContext( 'webgl' );
-
-			function isFullScreen() {
-
-				if ( options.canvasMenu ) return options.canvasMenu.isFullScreen();
-				if ( options.canvas ) return options.canvas.fullScreen !== false;
-				return true;
-
-			}
-			//https://www.khronos.org/webgl/wiki/HandlingContextLost
-
-
-			if ( typeof WebGLDebugUtils !== 'undefined' )
-				canvas = WebGLDebugUtils.makeLostContextSimulatingCanvas( canvas );
-
-			//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
-			canvas.addEventListener( "webglcontextlost", function ( event ) {
-
-				event.preventDefault();
-				if ( requestId !== undefined )
-					window.cancelAnimationFrame( requestId );
-				else console.error( 'myThreejs.create.onloadScripts: requestId = ' + requestId );
-				clearThree( scene );
-
-				//Не могу выполнить npm run build Получаю ошибку
-				//(babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/myThree/myThree.js: "raycaster" is read-only
-//				raycaster = undefined;
-
-				rendererSizeDefault.onFullScreenToggle( true );
-				alert( lang.webglcontextlost );
-
-			}, false );
-			canvas.addEventListener( "webglcontextrestored", function () {
-
-				console.warn( 'webglcontextrestored' );
-				init();
-				animate();
-
-			}, false );
-
-			//
-
-			init();
-			animate();
-
-			function init() {
-
-				// CAMERA
-
-//				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-				camera = new THREE.PerspectiveCamera( options.camera.fov || 70,
-					options.camera.aspect || window.innerWidth / window.innerHeight,
-					options.camera.near || 0.01,
-					options.camera.far || 10 );
-				camera.position.copy( options.camera.position );
-				camera.scale.copy( options.camera.scale );
-
-				//для возврата созданной камеры обратно в код, который вызвал new MyThree
-				//В частности это используется для создания точки, за которой будет следить камера
-				options.camera = camera;
-
-				options.point.sizePointsMaterial = 100;//size of points with material is not ShaderMaterial is options.point.size / options.point.sizePointsMaterial
-
-				//добавляю camera.userData.default что бы изменять положение камеры во время проигрывания
-				if ( options.cameraTarget ) {
-	
-					options.cameraTarget.camera = camera;
-					options.playerOptions.cameraTarget.init( options.cameraTarget, options );
-									
-				}
-
-				// SCENE
-
-				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0x000000 );
-				scene.fog = new THREE.Fog( 0x000000, 250, 1400 );
-				scene.userData.optionsSpriteText = {
-
-					textHeight: 0.04,
-					//fov: camera.fov,
-					/*
-					rect: {
-	
-						displayRect: true,
-						borderRadius: 15,
-	
-					},
-					*/
-
-				}
-
-				group = new THREE.Group();
-				scene.add( group );
-
-				new FrustumPoints( camera, group, canvas, {
-
-					options: options,
-/*
-					optionsShaderMaterial: {//points options. Default is { }
-
-						point: {//points options. Default is {}
-
-							size: 0.01,//Size of each frustum point.Default is 0;
-
-						},
-
-						//Stereo options. Available only if user has selected a stereo mode (spatialMultiplex !== spatialMultiplex.Mono)
-						stereo: {
-
-							//lines: false, // Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.Default is true
-							//hide: 10, // Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.Default is 0
-							//opacity: 1,//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque. Default is 0.3
-
-						},
-
-						//
-
-						//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
-						//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
-
-						//изменение размеров усеченной пирамиды FrustumPoints
-
-						//near: 10,// Shift of the frustum layer near to the camera in percents.
-						//0 percents - no shift.
-						//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
-						//Default is 0
-
-						//far: 70,// Shift of the frustum layer far to the camera in percents.
-						// 0 percents - no shift.
-						// 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
-						// Default is 0
-
-						//base: 70,// Scale of the base of the frustum points in percents.
-						// 0 base is null
-						// 100 no scale
-						// Default is 100
-
-						//square: true,// true - Square base of the frustum points.Default is false
-
-					},
-*/
-
-				} );
-
-				//
-
-				renderer = new THREE.WebGLRenderer( {
-
-					antialias: true,
-					canvas: canvas,
-
-				} );
-				options.renderer = renderer;
-
-				options.cursor = renderer.domElement.style.cursor;
-
-				if ( options.stereoEffect !== false ) {
-
-					options.stereoEffect = options.stereoEffect || {};
-					options.stereoEffect.rememberSize = true;//remember default size of the canvas. Resize of the canvas to full screen for stereo mode and restore to default size if no stereo effacts.
-
-				}
-				new StereoEffect( renderer, options );
-/*
-				const raycaster = new THREE.Raycaster();
-
-				//item.material.size is NaN if item.material is ShaderMaterial
-				//Влияет только на точки без ShaderMaterial
-				raycaster.params.Points.threshold = 0.02;//0.01;
-
-				if ( raycaster.setStereoEffect !== undefined )
-					raycaster.setStereoEffect( {
-
-						options: options,
-						renderer: renderer,
-						camera: camera,
-						scene: scene,
-						stereoEffect: options.stereoEffect,
-						raycasterEvents: false,
-
-					} );
-*/					
-				options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
-
-				function removeTraceLines() {
-
-					group.children.forEach( function ( mesh ) {
-
-						if ( ( mesh.userData.player === undefined ) || ( mesh.userData.player.arrayFuncs === undefined ) || ( typeof mesh.userData.player.arrayFuncs === "function" ) )
-							return;
-						mesh.userData.player.arrayFuncs.forEach( function ( vector ) {
-
-							if ( vector.line === undefined )
-								return;
-							vector.line.remove();
-							vector.line = new Player.traceLine( options );
-
-						} );
-
-					} );
-
-				}
-
-				//Light
-
-				const pointLight1 = new pointLight( scene, {
-
-					options: options, 
-					position: new THREE.Vector3( 2 * options.scale, 2 * options.scale, 2 * options.scale ),
-
-				} );
-				const pointLight2 = new pointLight( scene, {
-
-					options: options, 
-					position: new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ),
-
-				} );
-
-				//
-
-				//dat-gui JavaScript Controller Library
-				//https://github.com/dataarts/dat.gui
-				if ( ( options.dat.gui ) ) {
-
-					//for debugging
-					if ( typeof WebGLDebugUtils !== "undefined" )
-						options.dat.gui.add( {
-
-							loseContext: function ( value ) {
-
-								canvas.loseContext();
-								//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
-								//gl.getExtension( 'WEBGL_lose_context' ).loseContext();
-
-							},
-
-						}, 'loseContext' );
-
-					//Close gui window
-					if ( options.dat.gui.__closeButton.click !== undefined )//for compatibility with Safari 5.1.7 for Windows
-						options.dat.gui.__closeButton.click();
-
-					//Thanks to https://stackoverflow.com/questions/41404643/place-dat-gui-strictly-inside-three-js-scene-without-iframe
-					//elContainer.querySelector( '#my-gui-container' ).appendChild( options.dat.gui.domElement );
-
-				}
-
-				new Player( group, {
-
-					onSelectScene: function ( index, t ) {
-
-						options.boPlayer = true;
-						if ( options.frustumPoints !== undefined )
-							options.frustumPoints.updateCloudPoints();
-
-					},
-					options: options,
-					cameraTarget: { camera: camera, },
-					onChangeScaleT: function ( scale ) {
-
-						if ( options.player !== undefined )
-							options.player.onChangeScale( scale );
-						removeTraceLines();
-
-					},
-
-				} );
-				if ( options.player ) new options.player.PlayController();// gui );//, getLanguageCode );
-
-				if ( options.dat.gui ) {
-
-					fOptions = options.dat.gui.addFolder( lang.settings );
-					if ( options.player )
-						options.player.gui( fOptions );
-
-				}
-
-				//Settings for all SpriteText added to scene and child groups
-				if ( fOptions )
-					SpriteTextGui( scene, options, {
-
-						//settings: { zoomMultiplier: 1.5, },
-						folder: fOptions,
-						options: {
-
-							//rotation: 0,
-							//textHeight: 0.1 * scale,//0.05,
-							textHeight: 0.05,
-
-							//Camera frustum vertical field of view, from bottom to top of view, in degrees. Default is 50.
-							//Вертикальное поле обзора камеры, снизу вверх, в градусах.
-							//Если добавить эту настройку, то видимый размер текста не будет зависить от изменения camera.fov.
-							//Тогда textHeight будет вычисляться как options.fov * textHeight / 50
-							//Если не определить поле textHeight (см. выше) то textHeight = 0.04,
-							fov: camera.fov,
-
-							//sizeAttenuation: false,//true,//Whether the size of the sprite is attenuated by the camera depth. (Perspective camera only.) Default is false.
-
-						}
-
-					} );
-
-				if ( options.stereoEffect ) {
-
-					options.stereoEffect.gui( {
-
-						folder: fOptions,
-						onChangeMode: function ( mode ) {
-
-							switch ( mode ) {
-
-								case StereoEffect.spatialMultiplexsIndexs.Mono:
-									break;
-								case StereoEffect.spatialMultiplexsIndexs.SbS:
-								case StereoEffect.spatialMultiplexsIndexs.TaB:
-									break;
-								default: console.error( 'myThreejs: Invalid spatialMultiplexIndex = ' + mode );
-									return;
-
-							}
-							if ( options.frustumPoints !== undefined )
-								options.frustumPoints.updateGuiSelectPoint();
-
-						},
-
-					} );
-
-				}
-
-				function getRendererSize() {
-
-					var style = {
-
-						position: renderer.domElement.style.position,
-						left: renderer.domElement.style.left,
-						top: renderer.domElement.style.top,
-						width: renderer.domElement.style.width,
-						height: renderer.domElement.style.height,
-
-					},
-						sizeOriginal = new THREE.Vector2();
-					renderer.getSize( sizeOriginal );
-					return {
-
-						onFullScreenToggle: function ( fs ) {
-
-							arrayContainers.display( elContainer.parentElement, !fs );
-
-						},
-
-					};
-
-				};
-				rendererSizeDefault = getRendererSize();
-
-				renderer.setSize( ( options.canvas !== undefined ) && ( options.canvas.width !== undefined ) ? options.canvas.width : canvas.clientWidth,
-					( options.canvas !== undefined ) && ( options.canvas.height !== undefined ) ? options.canvas.height : canvas.clientHeight );
-
-				//CanvasMenu вызываю после renderer.setSize
-				//потому что если задан options.canvas.fullScreen = true,
-				//то CanvasMenu изменяет размер renderer до fullScreen
-				new CanvasMenu( renderer, {
-
-					fullScreen: {
-
-						fullScreen: options.canvas.fullScreen,
-						camera: camera,
-						arrayContainersLength: function() { return arrayContainers.length; },
-						onFullScreenToggle: function ( fullScreen ) { rendererSizeDefault.onFullScreenToggle( fullScreen ); },
-
-					},
-					options: options,
-
-				} );
-
-				//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
-				options.createOrbitControls( camera, renderer, scene );
-
-				// helper
-
-				new AxesHelper( scene, options );
-
-				if ( fOptions ) {
-				
-					new GuiSelectPoint( options, {
-
-						cameraTarget: {
-
-							camera: camera,
-							orbitControls: options.orbitControls,//controls,
-
-						},
-						//displays the trace of the movement of all points of the mesh
-						pointsControls: function ( fPoints, dislayEl, getMesh ) { },
-						//displays the trace of the point movement
-						pointControls: function ( fPoint, dislayEl, getMesh ) { },
-
-					} );
-					if ( options.guiSelectPoint ) options.guiSelectPoint.add();
-
-				}
-
-				defaultPoint.size = options.point.size;
-
-				const pointName = options.dat.getCookieName('Point');
-				if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
-
-				if ( createXDobjects ) createXDobjects( group, options );
-
-				if ( options.frustumPoints ) options.frustumPoints.create( renderer );
-
-				//На случай когда указана точка, за которой следит камера и когда Player не создан
-				if ( !options.player ) {
-
-					Player.selectPlayScene( group, { options: options } );//, Player.getTime(), 0 );
-
-				}
-				options.boPlayer = false;
-
-				//default setting for each 3D object
-				group.children.forEach( function ( mesh ) {
-
-					options.saveMeshDefault( mesh );
-
-				} );
-				if ( options.dat.gui ) {
-
-					AxesHelperGui( options, fOptions );
-
-					new MoveGroupGui( group, options, {
-
-						folder: fOptions,
-
-						} );
-
-					//OrbitControls gui
-
-					if ( options.orbitControls !== false ) {
-
-						new OrbitControlsGui( options, fOptions );
-
-					}
-
-					//camera gui
-
-					new CameraGui( camera, options, fOptions );
-
-					// light
-
-					const scales = options.axesHelper === false ? options.scales : options.axesHelper.options.scales;
-					pointLight1.controls( { group: group, folder: fOptions, folderName: lang.light + ' 1' } );
-					pointLight2.controls( { group: group, folder: fOptions, folderName: lang.light + ' 2' } );
-
-					//point
-
-					const folderPoint = new FolderPoint( options.point, function ( value ) {
-
-						if ( value === undefined )
-							value = options.point.size;
-						if ( value < 0 )
-							value = 0;
-						group.children.forEach( function ( mesh ) {
-
-							if ( ( mesh.type !== 'Points' ) || mesh.userData.boFrustumPoints )
-								return;
-							if ( mesh.material.uniforms === undefined )
-								mesh.material.size = value / options.point.sizePointsMaterial;//PointsMaterial
-							else mesh.material.uniforms.pointSize.value = value;//shaderMaterial
-
-						} );
-						folderPoint.size.setValue( value );
-						options.point.size = value;
-						options.dat.cookie.setObject( pointName, options.point );
-
-					}, options, {
-
-							folder: fOptions,
-							defaultPoint: defaultPoint,
-
-					} )
-
-					//Frustum points
-					if ( options.frustumPoints )// && options.dat.guiFrustumPoints )
-						options.frustumPoints.gui( fOptions );
-
-					options.restoreSceneController( camera, scene );
-
-				}
-
-				//https://github.com/mrdoob/stats.js/
-				if ( options.stats !== undefined ) {
-
-					try {
-
-						stats = new Stats();
-						elContainer.appendChild( stats.dom );
-
-					} catch ( e ) {
-
-						console.error( e + ". Please import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';" );
-
-					}
-
-				}
-
-				window.addEventListener( 'resize', onResize, false );
-
-			}
-			function onResize() {
-
-				var size;
-				if ( isFullScreen() )
-					size = new THREE.Vector2( window.innerWidth, window.innerHeight );
-				else {
-
-					size = new THREE.Vector2();
-					renderer.getSize( size );
-
-				}
-				camera.aspect = size.x / size.y;
-				camera.updateProjectionMatrix();
-
-				renderer.setSize( size.x, size.y );
-				if ( options.frustumPoints !== undefined )
-					options.frustumPoints.update();
-
-			}
-			function onObjectMouseDown( position, intersection ) {
-
-				if ( ( options.axesHelper !== undefined ) && ( intersection.object.type === "Points" ) )
-					options.axesHelper.exposePosition( position );
-				else alert( 'You are clicked the "' + intersection.object.type + '" type object.'
-					+ ( intersection.index === undefined ? '' : ' Index = ' + intersection.index + '.' )
-					+ ' Position( x: ' + position.x + ', y: ' + position.y + ', z: ' + position.z + ' )' );
-
-			}
-			function animate() {
-
-				if ( stats !== undefined )
-					stats.begin();
-
-				requestId = requestAnimationFrame( animate );
-
-				render();
-
-				if ( stats !== undefined )
-					stats.end();
-
-			}
-			function render() {
-
-				if ( !options.stereoEffect || !options.stereoEffect.render )
-					renderer.render( scene, camera );
-				else options.stereoEffect.render( scene, camera );
-				if ( cameraPosition === undefined )
-					cameraPosition = new THREE.Vector3();
-				if ( pointSize === undefined )
-					pointSize = options.point.size;
-				if (
-					!cameraPosition.equals( camera.position ) ||
-					( pointSize != options.point.size ) ||
-					( ( options.frustumPoints !== undefined ) && options.frustumPoints.animate() )
-				) {
-
-					cameraPosition.copy( camera.position );
-					pointSize = options.point.size;
-
-					group.children.forEach( function ( mesh ) {
-
-						if ( mesh instanceof THREE.Points === false )
-							return;
-
-						if ( mesh.geometry.attributes.size === undefined ) {
-
-							mesh.material.size = pointSize / options.point.sizePointsMaterial;
-							return;
-
-						}
-						if ( options.point.opacity !== undefined )
-							mesh.material.uniforms.opacity.value = options.point.opacity;
-
-						//scale
-						var scale = myPoints.getGlobalScale( mesh );
-						var cameraPosition = new THREE.Vector3( camera.position.x / scale.x, camera.position.y / scale.y, camera.position.z / scale.z );
-						scale = ( scale.x + scale.y + scale.z ) / 3;
-
-						//set size of points with ShaderMaterial
-						//https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial
-						//Example https://threejs.org/examples/?q=points#webgl_custom_attributes_points2
-
-						//points with ShaderMaterial
-						for ( var i = 0; i < mesh.geometry.attributes.position.count; i++ ) {
-
-							var position = getObjectPosition( mesh, i ),//getObjectLocalPosition( mesh, i ),
-								position3d = new THREE.Vector3( position.x, position.y, position.z ),
-								distance = position3d.distanceTo( cameraPosition ),
-								y = 1;
-							//дальние точки очень маленькие
-							//	angle = cameraPosition.angleTo( position3d ),
-							//	cameraFov = ( Math.PI / 180 ) * 0.5 * camera.fov,
-							//	y = 1 - 0.4 * ( angle / cameraFov );
-
-							mesh.geometry.attributes.size.setX( i, Math.tan(
-
-								mesh.userData.shaderMaterial.point !== undefined &&
-									mesh.userData.shaderMaterial.point.size !== undefined ?
-									mesh.userData.shaderMaterial.point.size : options.point.size
-
-							) * distance * scale * y );
-							mesh.geometry.attributes.size.needsUpdate = true;
-
-						}
-
-
-					} );
-
-				}
-				if ( options.guiSelectPoint && options.guiSelectPoint.render )
-					options.guiSelectPoint.render();
-
-			}
-
-			arrayCreates.shift();
-			var params = arrayCreates.shift();
-			if ( params === undefined )
-				return;
-			myThreejs.create( params.createXDobjects, params.options );
+//		function onloadScripts() {
+
+		var elContainer = options.elContainer === undefined ? document.getElementById( "containerDSE" ) :
+			typeof options.elContainer === "string" ? document.getElementById( options.elContainer ) : options.elContainer;
+		if ( elContainer === null ) {
+
+			if ( typeof options.elContainer === "string" )
+				console.warn( 'The ' + options.elContainer + ' element was not detected.' );
+			elContainer = document.createElement( 'div' );
+			document.querySelector( 'body' ).appendChild( elContainer );
+
+		}
+		arrayContainers.push( elContainer );
+/*			
+		elContainer.innerHTML = loadFile.sync( currentScriptPath + '/canvasContainer.html' );
+		elContainer = elContainer.querySelector( '.container' );
+*/			
+		elContainer.innerHTML = '';
+		const elDiv = document.createElement( 'div' );
+		elDiv.className = 'container';
+		elDiv.appendChild( document.createElement( 'canvas' ) );
+		elContainer.appendChild( elDiv );
+		elContainer = elDiv;
+
+		if ( three.dat ) {
+
+			options.dat = options.dat || {};
+			options.dat.parent = elContainer;
 
 		}
 
-		var optionsStyle = {
-
-			tag: 'style',
-
-		}
-/*		
-		if ( options.dat !== undefined ) {
-
-			loadScript.sync( currentScriptPath + '/../DropdownMenu/styles/gui.css', optionsStyle );
-
-			//for .container class
-			loadScript.sync( currentScriptPath + '/../DropdownMenu/styles/menu.css', optionsStyle );
-
-		}
-*/		
+		options = new Options( options );
 
 		/**
-		 * Save scale, position and rotation to the userData.default of the mesh
-		 * @param {any} mesh
-		 */
+			* Save scale, position and rotation to the userData.default of the mesh
+			* @param {any} mesh
+			*/
 		options.saveMeshDefault = function ( mesh ) {
 
 			mesh.userData.default = mesh.userData.default || {};
@@ -986,7 +323,700 @@ class MyThree {
 			mesh.userData.default.rotation.copy( mesh.rotation );
 
 		}
-		onloadScripts();
+
+		//point size
+		const defaultPoint = {},
+
+			//uses only if stereo effects does not exists
+			mouse = new THREE.Vector2();
+
+		var renderer,
+
+//				controls,
+
+			//перенес в options.dat
+			//mouseenter = false,//true - мышка находится над gui или canvasMenu
+			//В этом случае не надо обрабатывать событие elContainer 'pointerdown'
+			//по которому выбирается точка на canvas.
+			//В противном случае если пользователь щелкнет на gui, то он может случайно выбрать точку на canvas.
+			//Тогда открывается папка Meshes и все органы управления сдвигаются вниз. Это неудобно.
+			//И вообще нехорошо когда выбирается точка когда пользователь не хочет это делать.
+
+			fOptions,//canvasMenu,  axesHelper,// INTERSECTED = [], scale = options.scale, colorsHelper = 0x80,
+			rendererSizeDefault, cameraPosition,//gui, fullScreen,
+
+			//point size
+			pointSize, 
+
+			stats,
+
+			//uses only if stereo effects does not exists
+//				intersects,// mouse = new THREE.Vector2(), 
+
+			//https://www.khronos.org/webgl/wiki/HandlingContextLost
+			requestId;
+
+		canvas = elContainer.querySelector( 'canvas' );
+		if ( !canvas ) {
+
+			canvas = document.createElement( 'canvas' );
+			elContainer.appendChild( canvas );
+
+		}
+//			options.dat.parent = elContainer.querySelector( '#my-gui-container' );//canvas.parentElement;
+
+		//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
+//			const gl = canvas.getContext( 'webgl' );
+
+		function isFullScreen() {
+
+			if ( options.canvasMenu ) return options.canvasMenu.isFullScreen();
+			if ( options.canvas ) return options.canvas.fullScreen !== false;
+			return true;
+
+		}
+		//https://www.khronos.org/webgl/wiki/HandlingContextLost
+
+		const elImg = elContainer.querySelector('img');
+		if ( elImg ) elContainer.removeChild( elImg );
+
+		if ( typeof WebGLDebugUtils !== 'undefined' )
+			canvas = WebGLDebugUtils.makeLostContextSimulatingCanvas( canvas );
+
+		//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
+		canvas.addEventListener( "webglcontextlost", function ( event ) {
+
+			event.preventDefault();
+			if ( requestId !== undefined )
+				window.cancelAnimationFrame( requestId );
+			else console.error( 'myThreejs.create.onloadScripts: requestId = ' + requestId );
+			clearThree( scene );
+
+			//Не могу выполнить npm run build Получаю ошибку
+			//(babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/myThree/myThree.js: "raycaster" is read-only
+//				raycaster = undefined;
+
+			rendererSizeDefault.onFullScreenToggle( true );
+			alert( lang.webglcontextlost );
+
+		}, false );
+		canvas.addEventListener( "webglcontextrestored", function () {
+
+			console.warn( 'webglcontextrestored' );
+			init();
+			animate();
+
+		}, false );
+
+		//
+
+		init();
+		animate();
+
+		function init() {
+
+			// CAMERA
+
+//				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera = new THREE.PerspectiveCamera( options.camera.fov || 70,
+				options.camera.aspect || window.innerWidth / window.innerHeight,
+				options.camera.near || 0.01,
+				options.camera.far || 10 );
+			camera.position.copy( options.camera.position );
+			camera.scale.copy( options.camera.scale );
+
+			//для возврата созданной камеры обратно в код, который вызвал new MyThree
+			//В частности это используется для создания точки, за которой будет следить камера
+			options.camera = camera;
+
+			options.point.sizePointsMaterial = 100;//size of points with material is not ShaderMaterial is options.point.size / options.point.sizePointsMaterial
+
+			//добавляю camera.userData.default что бы изменять положение камеры во время проигрывания
+			if ( options.cameraTarget ) {
+	
+				options.cameraTarget.camera = camera;
+				options.playerOptions.cameraTarget.init( options.cameraTarget, options );
+									
+			}
+
+			// SCENE
+
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color( 0x000000 );
+			scene.fog = new THREE.Fog( 0x000000, 250, 1400 );
+			scene.userData.optionsSpriteText = {
+
+				textHeight: 0.04,
+				//fov: camera.fov,
+				/*
+				rect: {
+	
+					displayRect: true,
+					borderRadius: 15,
+	
+				},
+				*/
+
+			}
+
+			group = new THREE.Group();
+			scene.add( group );
+
+			new FrustumPoints( camera, group, canvas, {
+
+				options: options,
+/*
+				optionsShaderMaterial: {//points options. Default is { }
+
+					point: {//points options. Default is {}
+
+						size: 0.01,//Size of each frustum point.Default is 0;
+
+					},
+
+					//Stereo options. Available only if user has selected a stereo mode (spatialMultiplex !== spatialMultiplex.Mono)
+					stereo: {
+
+						//lines: false, // Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.Default is true
+						//hide: 10, // Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.Default is 0
+						//opacity: 1,//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque. Default is 0.3
+
+					},
+
+					//
+
+					//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
+					//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
+
+					//изменение размеров усеченной пирамиды FrustumPoints
+
+					//near: 10,// Shift of the frustum layer near to the camera in percents.
+					//0 percents - no shift.
+					//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
+					//Default is 0
+
+					//far: 70,// Shift of the frustum layer far to the camera in percents.
+					// 0 percents - no shift.
+					// 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
+					// Default is 0
+
+					//base: 70,// Scale of the base of the frustum points in percents.
+					// 0 base is null
+					// 100 no scale
+					// Default is 100
+
+					//square: true,// true - Square base of the frustum points.Default is false
+
+				},
+*/
+
+			} );
+
+			//
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: canvas,
+
+			} );
+			options.renderer = renderer;
+
+			options.cursor = renderer.domElement.style.cursor;
+
+			if ( options.stereoEffect !== false ) {
+
+				options.stereoEffect = options.stereoEffect || {};
+				options.stereoEffect.rememberSize = true;//remember default size of the canvas. Resize of the canvas to full screen for stereo mode and restore to default size if no stereo effacts.
+
+			}
+			new StereoEffect( renderer, options );
+/*
+			const raycaster = new THREE.Raycaster();
+
+			//item.material.size is NaN if item.material is ShaderMaterial
+			//Влияет только на точки без ShaderMaterial
+			raycaster.params.Points.threshold = 0.02;//0.01;
+
+			if ( raycaster.setStereoEffect !== undefined )
+				raycaster.setStereoEffect( {
+
+					options: options,
+					renderer: renderer,
+					camera: camera,
+					scene: scene,
+					stereoEffect: options.stereoEffect,
+					raycasterEvents: false,
+
+				} );
+*/					
+			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
+
+			function removeTraceLines() {
+
+				group.children.forEach( function ( mesh ) {
+
+					if ( ( mesh.userData.player === undefined ) || ( mesh.userData.player.arrayFuncs === undefined ) || ( typeof mesh.userData.player.arrayFuncs === "function" ) )
+						return;
+					mesh.userData.player.arrayFuncs.forEach( function ( vector ) {
+
+						if ( vector.line === undefined )
+							return;
+						vector.line.remove();
+						vector.line = new Player.traceLine( options );
+
+					} );
+
+				} );
+
+			}
+
+			//Light
+
+			const pointLight1 = new pointLight( scene, {
+
+				options: options, 
+				position: new THREE.Vector3( 2 * options.scale, 2 * options.scale, 2 * options.scale ),
+
+			} );
+			const pointLight2 = new pointLight( scene, {
+
+				options: options, 
+				position: new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ),
+
+			} );
+
+			//
+
+			//dat-gui JavaScript Controller Library
+			//https://github.com/dataarts/dat.gui
+			if ( ( options.dat.gui ) ) {
+
+				//for debugging
+				if ( typeof WebGLDebugUtils !== "undefined" )
+					options.dat.gui.add( {
+
+						loseContext: function ( value ) {
+
+							canvas.loseContext();
+							//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
+							//gl.getExtension( 'WEBGL_lose_context' ).loseContext();
+
+						},
+
+					}, 'loseContext' );
+
+				//Close gui window
+				if ( options.dat.gui.__closeButton.click !== undefined )//for compatibility with Safari 5.1.7 for Windows
+					options.dat.gui.__closeButton.click();
+
+				//Thanks to https://stackoverflow.com/questions/41404643/place-dat-gui-strictly-inside-three-js-scene-without-iframe
+//					elContainer.querySelector( '#my-gui-container' ).appendChild( options.dat.gui.domElement );
+//					options.dat.parent = elContainer.querySelector( '#my-gui-container' );//canvas.parentElement;
+//					options.dat.parent = elContainer;
+
+			}
+
+			new Player( group, {
+
+				onSelectScene: function ( index, t ) {
+
+					options.boPlayer = true;
+					if ( options.frustumPoints !== undefined )
+						options.frustumPoints.updateCloudPoints();
+
+				},
+				options: options,
+				cameraTarget: { camera: camera, },
+				onChangeScaleT: function ( scale ) {
+
+					if ( options.player !== undefined )
+						options.player.onChangeScale( scale );
+					removeTraceLines();
+
+				},
+
+			} );
+			if ( options.player ) new options.player.PlayController();// gui );//, getLanguageCode );
+
+			if ( options.dat.gui ) {
+
+				fOptions = options.dat.gui.addFolder( lang.settings );
+				if ( options.player )
+					options.player.gui( fOptions );
+
+			}
+
+			//Settings for all SpriteText added to scene and child groups
+			if ( fOptions )
+				SpriteTextGui( scene, options, {
+
+					//settings: { zoomMultiplier: 1.5, },
+					folder: fOptions,
+					options: {
+
+						//rotation: 0,
+						//textHeight: 0.1 * scale,//0.05,
+						textHeight: 0.05,
+
+						//Camera frustum vertical field of view, from bottom to top of view, in degrees. Default is 50.
+						//Вертикальное поле обзора камеры, снизу вверх, в градусах.
+						//Если добавить эту настройку, то видимый размер текста не будет зависить от изменения camera.fov.
+						//Тогда textHeight будет вычисляться как options.fov * textHeight / 50
+						//Если не определить поле textHeight (см. выше) то textHeight = 0.04,
+						fov: camera.fov,
+
+						//sizeAttenuation: false,//true,//Whether the size of the sprite is attenuated by the camera depth. (Perspective camera only.) Default is false.
+
+					}
+
+				} );
+
+			if ( options.stereoEffect ) {
+
+				options.stereoEffect.gui( {
+
+					folder: fOptions,
+					onChangeMode: function ( mode ) {
+
+						switch ( mode ) {
+
+							case StereoEffect.spatialMultiplexsIndexs.Mono:
+								break;
+							case StereoEffect.spatialMultiplexsIndexs.SbS:
+							case StereoEffect.spatialMultiplexsIndexs.TaB:
+								break;
+							default: console.error( 'myThreejs: Invalid spatialMultiplexIndex = ' + mode );
+								return;
+
+						}
+						if ( options.frustumPoints !== undefined )
+							options.frustumPoints.updateGuiSelectPoint();
+
+					},
+
+				} );
+
+			}
+
+			function getRendererSize() {
+
+				var style = {
+
+					position: renderer.domElement.style.position,
+					left: renderer.domElement.style.left,
+					top: renderer.domElement.style.top,
+					width: renderer.domElement.style.width,
+					height: renderer.domElement.style.height,
+
+				},
+					sizeOriginal = new THREE.Vector2();
+				renderer.getSize( sizeOriginal );
+				return {
+
+					onFullScreenToggle: function ( fs ) {
+
+						arrayContainers.display( elContainer.parentElement, !fs );
+//							arrayContainers.display( elContainer, !fs );
+
+					},
+
+				};
+
+			};
+			rendererSizeDefault = getRendererSize();
+
+			renderer.setSize( ( options.canvas !== undefined ) && ( options.canvas.width !== undefined ) ? options.canvas.width : canvas.clientWidth,
+				( options.canvas !== undefined ) && ( options.canvas.height !== undefined ) ? options.canvas.height : canvas.clientHeight );
+
+			//CanvasMenu вызываю после renderer.setSize
+			//потому что если задан options.canvas.fullScreen = true,
+			//то CanvasMenu изменяет размер renderer до fullScreen
+			new CanvasMenu( renderer, {
+
+				fullScreen: {
+
+					fullScreen: options.canvas.fullScreen,
+					camera: camera,
+					arrayContainersLength: function() { return arrayContainers.length; },
+					onFullScreenToggle: function ( fullScreen ) { rendererSizeDefault.onFullScreenToggle( fullScreen ); },
+
+				},
+				options: options,
+
+			} );
+
+			//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+			options.createOrbitControls( camera, renderer, scene );
+
+			// helper
+
+			new AxesHelper( scene, options );
+
+			if ( fOptions ) {
+				
+				new GuiSelectPoint( options, {
+
+					cameraTarget: {
+
+						camera: camera,
+						orbitControls: options.orbitControls,//controls,
+
+					},
+					//displays the trace of the movement of all points of the mesh
+					pointsControls: function ( fPoints, dislayEl, getMesh ) { },
+					//displays the trace of the point movement
+					pointControls: function ( fPoint, dislayEl, getMesh ) { },
+
+				} );
+				if ( options.guiSelectPoint ) options.guiSelectPoint.add();
+
+			}
+
+			defaultPoint.size = options.point.size;
+
+			const pointName = options.dat.getCookieName('Point');
+			if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
+
+			if ( createXDobjects ) createXDobjects( group, options );
+
+			if ( options.frustumPoints ) options.frustumPoints.create( renderer );
+
+			//На случай когда указана точка, за которой следит камера и когда Player не создан
+			if ( !options.player ) {
+
+				Player.selectPlayScene( group, { options: options } );//, Player.getTime(), 0 );
+
+			}
+			options.boPlayer = false;
+
+			//default setting for each 3D object
+			group.children.forEach( function ( mesh ) {
+
+				options.saveMeshDefault( mesh );
+
+			} );
+			if ( options.dat.gui ) {
+
+				AxesHelperGui( options, fOptions );
+
+				new MoveGroupGui( group, options, {
+
+					folder: fOptions,
+
+					} );
+
+				//OrbitControls gui
+
+				if ( options.orbitControls !== false ) {
+
+					new OrbitControlsGui( options, fOptions );
+
+				}
+
+				//camera gui
+
+				new CameraGui( camera, options, fOptions );
+
+				// light
+
+				const scales = options.axesHelper === false ? options.scales : options.axesHelper.options.scales;
+				pointLight1.controls( { group: group, folder: fOptions, folderName: lang.light + ' 1' } );
+				pointLight2.controls( { group: group, folder: fOptions, folderName: lang.light + ' 2' } );
+
+				//point
+
+				const folderPoint = new FolderPoint( options.point, function ( value ) {
+
+					if ( value === undefined )
+						value = options.point.size;
+					if ( value < 0 )
+						value = 0;
+					group.children.forEach( function ( mesh ) {
+
+						if ( ( mesh.type !== 'Points' ) || mesh.userData.boFrustumPoints )
+							return;
+						if ( mesh.material.uniforms === undefined )
+							mesh.material.size = value / options.point.sizePointsMaterial;//PointsMaterial
+						else mesh.material.uniforms.pointSize.value = value;//shaderMaterial
+
+					} );
+					folderPoint.size.setValue( value );
+					options.point.size = value;
+					options.dat.cookie.setObject( pointName, options.point );
+
+				}, options, {
+
+						folder: fOptions,
+						defaultPoint: defaultPoint,
+
+				} )
+
+				//Frustum points
+				if ( options.frustumPoints )// && options.dat.guiFrustumPoints )
+					options.frustumPoints.gui( fOptions );
+
+				options.restoreSceneController( camera, scene );
+
+			}
+
+			//https://github.com/mrdoob/stats.js/
+			if ( options.stats !== undefined ) {
+
+				try {
+
+					stats = new Stats();
+					elContainer.appendChild( stats.dom );
+
+				} catch ( e ) {
+
+					console.error( e + ". Please import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';" );
+
+				}
+
+			}
+
+			window.addEventListener( 'resize', onResize, false );
+
+		}
+		function onResize() {
+
+			var size;
+			if ( isFullScreen() )
+				size = new THREE.Vector2( window.innerWidth, window.innerHeight );
+			else {
+
+				size = new THREE.Vector2();
+				renderer.getSize( size );
+
+			}
+			camera.aspect = size.x / size.y;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( size.x, size.y );
+			if ( options.frustumPoints !== undefined )
+				options.frustumPoints.update();
+
+		}
+		function onObjectMouseDown( position, intersection ) {
+
+			if ( ( options.axesHelper !== undefined ) && ( intersection.object.type === "Points" ) )
+				options.axesHelper.exposePosition( position );
+			else alert( 'You are clicked the "' + intersection.object.type + '" type object.'
+				+ ( intersection.index === undefined ? '' : ' Index = ' + intersection.index + '.' )
+				+ ' Position( x: ' + position.x + ', y: ' + position.y + ', z: ' + position.z + ' )' );
+
+		}
+		function animate() {
+
+			if ( stats !== undefined )
+				stats.begin();
+
+			requestId = requestAnimationFrame( animate );
+
+			render();
+
+			if ( stats !== undefined )
+				stats.end();
+
+		}
+		function render() {
+
+			if ( !options.stereoEffect || !options.stereoEffect.render )
+				renderer.render( scene, camera );
+			else options.stereoEffect.render( scene, camera );
+			if ( cameraPosition === undefined )
+				cameraPosition = new THREE.Vector3();
+			if ( pointSize === undefined )
+				pointSize = options.point.size;
+			if (
+				!cameraPosition.equals( camera.position ) ||
+				( pointSize != options.point.size ) ||
+				( ( options.frustumPoints !== undefined ) && options.frustumPoints.animate() )
+			) {
+
+				cameraPosition.copy( camera.position );
+				pointSize = options.point.size;
+
+				group.children.forEach( function ( mesh ) {
+
+					if ( mesh instanceof THREE.Points === false )
+						return;
+
+					if ( mesh.geometry.attributes.size === undefined ) {
+
+						mesh.material.size = pointSize / options.point.sizePointsMaterial;
+						return;
+
+					}
+					if ( options.point.opacity !== undefined )
+						mesh.material.uniforms.opacity.value = options.point.opacity;
+
+					//scale
+					var scale = myPoints.getGlobalScale( mesh );
+					var cameraPosition = new THREE.Vector3( camera.position.x / scale.x, camera.position.y / scale.y, camera.position.z / scale.z );
+					scale = ( scale.x + scale.y + scale.z ) / 3;
+
+					//set size of points with ShaderMaterial
+					//https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial
+					//Example https://threejs.org/examples/?q=points#webgl_custom_attributes_points2
+
+					//points with ShaderMaterial
+					for ( var i = 0; i < mesh.geometry.attributes.position.count; i++ ) {
+
+						var position = getObjectPosition( mesh, i ),//getObjectLocalPosition( mesh, i ),
+							position3d = new THREE.Vector3( position.x, position.y, position.z ),
+							distance = position3d.distanceTo( cameraPosition ),
+							y = 1;
+						//дальние точки очень маленькие
+						//	angle = cameraPosition.angleTo( position3d ),
+						//	cameraFov = ( Math.PI / 180 ) * 0.5 * camera.fov,
+						//	y = 1 - 0.4 * ( angle / cameraFov );
+
+						mesh.geometry.attributes.size.setX( i, Math.tan(
+
+							mesh.userData.shaderMaterial.point !== undefined &&
+								mesh.userData.shaderMaterial.point.size !== undefined ?
+								mesh.userData.shaderMaterial.point.size : options.point.size
+
+						) * distance * scale * y );
+						mesh.geometry.attributes.size.needsUpdate = true;
+
+					}
+
+
+				} );
+
+			}
+			if ( options.guiSelectPoint && options.guiSelectPoint.render )
+				options.guiSelectPoint.render();
+
+		}
+
+		arrayCreates.shift();
+		var params = arrayCreates.shift();
+		if ( params === undefined )
+			return;
+		myThreejs.create( params.createXDobjects, params.options );
+
+//		}
+
+/*		
+		var optionsStyle = {
+
+			tag: 'style',
+
+		}
+		if ( options.dat !== undefined ) {
+
+			loadScript.sync( currentScriptPath + '/../DropdownMenu/styles/gui.css', optionsStyle );
+
+			//for .container class
+			loadScript.sync( currentScriptPath + '/../DropdownMenu/styles/menu.css', optionsStyle );
+
+		}
+*/		
+//		onloadScripts();
 
 	}
 

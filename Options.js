@@ -373,8 +373,29 @@ class Options {
 								return dat;//duplucate new Options
 							function guiParent() {
 
-								dat.parent.appendChild( dat.gui.domElement.parentNode );
+								dat.parent.appendChild( dat.gui.domElement );//.parentNode );
+/*								
+								dat.parent.style.position = 'absolute';//оставляем gui в пределах canvas
+								dat.parent.style.top = '0px';
+								dat.parent.style.right = '0px';
+//								dat.parent.style.z-index = 10;
+*/
+								dat.gui.domElement.style.position = 'absolute';//оставляем gui в пределах canvas
+								dat.gui.domElement.style.top = '0px';
+								dat.gui.domElement.style.right = '0px';
+//								dat.gui.domElement.style.z-index = 10;
+/*								
+								dat.parent.className = dat.gui.domElement.parentNode.className;
 								dat.gui.domElement.parentNode.style.position = 'absolute';//оставляем gui в пределах canvas
+								dat.gui.domElement.parentNode.style.top = '0px';
+								dat.gui.domElement.parentNode.style.right = '0px';
+//								dat.gui.domElement.parentNode.style.z-index = 10;
+*/
+								setTimeout( function () {
+
+									dat.gui.domElement.classList.remove( 'taller-than-window' );
+
+								}, 0 );
 
 							}
 							Object.defineProperties( this, {
@@ -448,7 +469,8 @@ class Options {
 
 										if ( !dat.gui && three.dat ) {
 
-											dat.gui = new three.dat.GUI();// options.dat.parent ? {autoPlace: false,} : undefined );
+											dat.gui = new three.dat.GUI( options.dat.parent ? { autoPlace: false, } : undefined );
+//											dat.gui = new three.dat.GUI( { autoPlace: false, } );
 											if ( options.dat.parent ) {
 
 												guiParent();
@@ -566,12 +588,15 @@ class Options {
 								parent: {
 
 									get: function () { return dat.parent; },
+/*
 									set: function ( parent ) {
 
 										dat.parent = parent;
+										if ( !dat.gui ) dat.gui = new three.dat.GUI();// options.dat.parent ? {autoPlace: false,} : undefined );
 										guiParent();
 
 									},
+*/
 
 								},
 
@@ -592,15 +617,20 @@ class Options {
 //					if ( !options.dat.gui && options.dat.dat ) options.dat.gui = new options.dat.dat.GUI();
 					if ( options.dat.gui ) {
 
-						const className = options.dat.gui.domElement.className;
-						var guiCount = 0;
-						options.dat.gui.domElement.parentElement.childNodes.forEach( function ( node ) {
+						//debug
+						setTimeout( function () {
 
-							if ( node.className === className ) guiCount++;
+							const className = options.dat.gui.domElement.className;
+							var guiCount = 0;
+							options.dat.gui.domElement.parentElement.childNodes.forEach( function ( node ) {
 
-						} );
-						if ( guiCount > 1 )
-							console.error( 'Options: duplicate dat.GUI' );
+								if ( node.className === className ) guiCount++;
+
+							} );
+							if ( guiCount > 1 )
+								console.error( 'Options: duplicate dat.GUI' );
+
+						}, 0 );
 
 						options.dat.gui.domElement.addEventListener( 'mouseenter', function ( event ) { options.dat.mouseenter = true; } );
 						options.dat.gui.domElement.addEventListener( 'mouseleave', function ( event ) { options.dat.mouseenter = false; } );
