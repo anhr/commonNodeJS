@@ -42,7 +42,7 @@ fs.mkdirSync( path.join( __dirname, DropdownMenu ), { recursive: true, force: tr
 fs.mkdirSync( path.join( __dirname, DropdownMenu + '\\' + styles ), { recursive: true, force: true } );
 fs.copyFile( path.join( __dirname, '..\\' + DropdownMenu + '\\' + styles + '\\gui.css' ), DropdownMenu + '\\' + styles + '\\gui.css', callback );
 fs.copyFile( path.join( __dirname, '..\\' + DropdownMenu + '\\' + styles + '\\menu.css' ), DropdownMenu + '\\' + styles + '\\menu.css', callback );
-fs.copyFile( path.join( __dirname, '\\canvasContainer.html' ), 'build\\canvasContainer.html', callback );
+//fs.copyFile( path.join( __dirname, '\\canvasContainer.html' ), 'build\\canvasContainer.html', callback );
 /*
 fs.copyFile( path.join( __dirname, '..\\getShaderMaterialPoints\\vertex.c' ), 'build\\vertex.c', callback );
 fs.copyFile( path.join( __dirname, '..\\getShaderMaterialPoints\\fragment.c' ), 'build\\fragment.c', callback );

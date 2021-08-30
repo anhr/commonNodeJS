@@ -7752,8 +7752,13 @@ function Options(options) {
 															dat = dat || {};
 															if (dat.boDat) return dat;
 															function guiParent() {
-																		dat.parent.appendChild(dat.gui.domElement.parentNode);
-																		dat.gui.domElement.parentNode.style.position = 'absolute';
+																		dat.parent.appendChild(dat.gui.domElement);
+																		dat.gui.domElement.style.position = 'absolute';
+																		dat.gui.domElement.style.top = '0px';
+																		dat.gui.domElement.style.right = '0px';
+																		setTimeout(function () {
+																					dat.gui.domElement.classList.remove('taller-than-window');
+																		}, 0);
 															}
 															Object.defineProperties(this, {
 																		boDat: {
@@ -7780,7 +7785,7 @@ function Options(options) {
 																		gui: {
 																					get: function get$$1() {
 																								if (!dat.gui && three$1.dat) {
-																											dat.gui = new three$1.dat.GUI();
+																											dat.gui = new three$1.dat.GUI(options.dat.parent ? { autoPlace: false } : undefined);
 																											if (options.dat.parent) {
 																														guiParent();
 																											}
@@ -7860,10 +7865,6 @@ function Options(options) {
 																		parent: {
 																					get: function get$$1() {
 																								return dat.parent;
-																					},
-																					set: function set$$1(parent) {
-																								dat.parent = parent;
-																								guiParent();
 																					}
 																		}
 															});
@@ -7873,12 +7874,14 @@ function Options(options) {
 												};
 												options.dat = new Dat(options.dat);
 												if (options.dat.gui) {
-															var className = options.dat.gui.domElement.className;
-															var guiCount = 0;
-															options.dat.gui.domElement.parentElement.childNodes.forEach(function (node) {
-																		if (node.className === className) guiCount++;
-															});
-															if (guiCount > 1) console.error('Options: duplicate dat.GUI');
+															setTimeout(function () {
+																		var className = options.dat.gui.domElement.className;
+																		var guiCount = 0;
+																		options.dat.gui.domElement.parentElement.childNodes.forEach(function (node) {
+																					if (node.className === className) guiCount++;
+																		});
+																		if (guiCount > 1) console.error('Options: duplicate dat.GUI');
+															}, 0);
 															options.dat.gui.domElement.addEventListener('mouseenter', function (event) {
 																		options.dat.mouseenter = true;
 															});
@@ -9548,22 +9551,6 @@ function assign$1() {
 }
 Player$1.assign = function () {
 			assign$1();
-};
-
-/**
- * node.js version of the synchronous download of the file.
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
- *
- * @copyright 2011 Data Arts Team, Google Creative Lab
- *
- * @license under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- */
-var loadFile = {
-  sync: sync
 };
 
 /**
@@ -13726,382 +13713,380 @@ function pointLight(scene) {
  * You may obtain a copy of the License at
  */
 if (typeof dat !== 'undefined') three$1.dat = dat;
-var getCurrentScript$3 = function getCurrentScript() {
-				if (document.currentScript && document.currentScript.src !== '') return document.currentScript.src;
-				var scripts = document.getElementsByTagName('script'),
-				    str = scripts[scripts.length - 1].src;
-				if (str !== '') return src;
-				return new Error().stack.match(/(https?:[^:]*)/)[0];
-};
-var getCurrentScriptPath$3 = function getCurrentScriptPath() {
-				var script = getCurrentScript$3(),
-				    path = script.substring(0, script.lastIndexOf('/'));
-				return path;
-};
-var currentScriptPath$3 = getCurrentScriptPath$3();
 function arrayContainersF() {
-				var array = [];
-				this.push = function (elContainer) {
-								array.push(elContainer);
-				};
-				this.display = function (elContainer, fullScreen) {
-								array.forEach(function (itemElContainer) {
-												itemElContainer.style.display = itemElContainer === elContainer || !fullScreen ? 'block' : 'none';
-								});
-				};
-				Object.defineProperties(this, {
-								length: {
-												get: function get$$1() {
-																return array.length;
-												}
-								}
-				});
+			var array = [];
+			this.push = function (elContainer) {
+						array.push(elContainer);
+			};
+			this.display = function (elContainer, fullScreen) {
+						array.forEach(function (itemElContainer) {
+									itemElContainer.style.display = itemElContainer === elContainer || !fullScreen ? 'block' : 'none';
+						});
+			};
+			Object.defineProperties(this, {
+						length: {
+									get: function get$$1() {
+												return array.length;
+									}
+						}
+			});
 }
 var arrayContainers = new arrayContainersF();
 var arrayCreates = [];
 var MyThree =
 function MyThree(createXDobjects, options) {
-				classCallCheck(this, MyThree);
-				var THREE = three$1.THREE;
-				var myThreejs = this;
-				arrayCreates.push({
-								createXDobjects: createXDobjects,
-								options: options
-				});
-				if (arrayCreates.length > 1) return;
-				options = new Options(options);
-				var camera, group, scene, canvas;
-				function onloadScripts() {
-								var elContainer = options.elContainer === undefined ? document.getElementById("containerDSE") : typeof options.elContainer === "string" ? document.getElementById(options.elContainer) : options.elContainer;
-								if (elContainer === null) {
-												if (typeof options.elContainer === "string") console.warn('The ' + options.elContainer + ' element was not detected.');
-												elContainer = document.createElement('div');
-												document.querySelector('body').appendChild(elContainer);
-								}
-								arrayContainers.push(elContainer);
-								elContainer.innerHTML = loadFile.sync(currentScriptPath$3 + '/canvasContainer.html');
-								elContainer = elContainer.querySelector('.container');
-								var defaultPoint = {},
-								mouse = new THREE.Vector2();
-								var renderer,
-								fOptions,
-								rendererSizeDefault, cameraPosition,
-								pointSize, stats,
-								requestId;
-								canvas = elContainer.querySelector('canvas');
-								options.dat.parent = canvas.parentElement;
-								function isFullScreen() {
-												if (options.canvasMenu) return options.canvasMenu.isFullScreen();
-												if (options.canvas) return options.canvas.fullScreen !== false;
-												return true;
-								}
-								if (typeof WebGLDebugUtils !== 'undefined') canvas = WebGLDebugUtils.makeLostContextSimulatingCanvas(canvas);
-								canvas.addEventListener("webglcontextlost", function (event) {
-												event.preventDefault();
-												if (requestId !== undefined) window.cancelAnimationFrame(requestId);else console.error('myThreejs.create.onloadScripts: requestId = ' + requestId);
-												clearThree(scene);
-												rendererSizeDefault.onFullScreenToggle(true);
-												alert(lang$1.webglcontextlost);
-								}, false);
-								canvas.addEventListener("webglcontextrestored", function () {
-												console.warn('webglcontextrestored');
-												init();
-												animate();
-								}, false);
-								init();
-								animate();
-								function init() {
-												camera = new THREE.PerspectiveCamera(options.camera.fov || 70, options.camera.aspect || window.innerWidth / window.innerHeight, options.camera.near || 0.01, options.camera.far || 10);
-												camera.position.copy(options.camera.position);
-												camera.scale.copy(options.camera.scale);
-												options.camera = camera;
-												options.point.sizePointsMaterial = 100;
-												if (options.cameraTarget) {
-																options.cameraTarget.camera = camera;
-																options.playerOptions.cameraTarget.init(options.cameraTarget, options);
-												}
-												scene = new THREE.Scene();
-												scene.background = new THREE.Color(0x000000);
-												scene.fog = new THREE.Fog(0x000000, 250, 1400);
-												scene.userData.optionsSpriteText = {
-																textHeight: 0.04
-												};
-												group = new THREE.Group();
-												scene.add(group);
-												new FrustumPoints(camera, group, canvas, {
-																options: options
+			classCallCheck(this, MyThree);
+			options = options || {};
+			var THREE = three$1.THREE;
+			var myThreejs = this;
+			arrayCreates.push({
+						createXDobjects: createXDobjects,
+						options: options
+			});
+			if (arrayCreates.length > 1) return;
+			var camera, group, scene, canvas;
+			var elContainer = options.elContainer === undefined ? document.getElementById("containerDSE") : typeof options.elContainer === "string" ? document.getElementById(options.elContainer) : options.elContainer;
+			if (elContainer === null) {
+						if (typeof options.elContainer === "string") console.warn('The ' + options.elContainer + ' element was not detected.');
+						elContainer = document.createElement('div');
+						document.querySelector('body').appendChild(elContainer);
+			}
+			arrayContainers.push(elContainer);
+			elContainer.innerHTML = '';
+			var elDiv = document.createElement('div');
+			elDiv.className = 'container';
+			elDiv.appendChild(document.createElement('canvas'));
+			elContainer.appendChild(elDiv);
+			elContainer = elDiv;
+			if (three$1.dat) {
+						options.dat = options.dat || {};
+						options.dat.parent = elContainer;
+			}
+			options = new Options(options);
+			options.saveMeshDefault = function (mesh) {
+						mesh.userData.default = mesh.userData.default || {};
+						mesh.userData.default.scale = new THREE.Vector3();
+						mesh.userData.default.scale.copy(mesh.scale);
+						mesh.userData.default.position = new THREE.Vector3();
+						mesh.userData.default.position.copy(mesh.position);
+						mesh.userData.default.rotation = new THREE.Euler();
+						mesh.userData.default.rotation.copy(mesh.rotation);
+			};
+			var defaultPoint = {},
+			mouse = new THREE.Vector2();
+			var renderer,
+			fOptions,
+			rendererSizeDefault, cameraPosition,
+			pointSize, stats,
+			requestId;
+			canvas = elContainer.querySelector('canvas');
+			if (!canvas) {
+						canvas = document.createElement('canvas');
+						elContainer.appendChild(canvas);
+			}
+			function isFullScreen() {
+						if (options.canvasMenu) return options.canvasMenu.isFullScreen();
+						if (options.canvas) return options.canvas.fullScreen !== false;
+						return true;
+			}
+			var elImg = elContainer.querySelector('img');
+			if (elImg) elContainer.removeChild(elImg);
+			if (typeof WebGLDebugUtils !== 'undefined') canvas = WebGLDebugUtils.makeLostContextSimulatingCanvas(canvas);
+			canvas.addEventListener("webglcontextlost", function (event) {
+						event.preventDefault();
+						if (requestId !== undefined) window.cancelAnimationFrame(requestId);else console.error('myThreejs.create.onloadScripts: requestId = ' + requestId);
+						clearThree(scene);
+						rendererSizeDefault.onFullScreenToggle(true);
+						alert(lang$1.webglcontextlost);
+			}, false);
+			canvas.addEventListener("webglcontextrestored", function () {
+						console.warn('webglcontextrestored');
+						init();
+						animate();
+			}, false);
+			init();
+			animate();
+			function init() {
+						camera = new THREE.PerspectiveCamera(options.camera.fov || 70, options.camera.aspect || window.innerWidth / window.innerHeight, options.camera.near || 0.01, options.camera.far || 10);
+						camera.position.copy(options.camera.position);
+						camera.scale.copy(options.camera.scale);
+						options.camera = camera;
+						options.point.sizePointsMaterial = 100;
+						if (options.cameraTarget) {
+									options.cameraTarget.camera = camera;
+									options.playerOptions.cameraTarget.init(options.cameraTarget, options);
+						}
+						scene = new THREE.Scene();
+						scene.background = new THREE.Color(0x000000);
+						scene.fog = new THREE.Fog(0x000000, 250, 1400);
+						scene.userData.optionsSpriteText = {
+									textHeight: 0.04
+						};
+						group = new THREE.Group();
+						scene.add(group);
+						new FrustumPoints(camera, group, canvas, {
+									options: options
+						});
+						renderer = new THREE.WebGLRenderer({
+									antialias: true,
+									canvas: canvas
+						});
+						options.renderer = renderer;
+						options.cursor = renderer.domElement.style.cursor;
+						if (options.stereoEffect !== false) {
+									options.stereoEffect = options.stereoEffect || {};
+									options.stereoEffect.rememberSize = true;
+						}
+						new StereoEffect(renderer, options);
+						options.eventListeners = new Options.raycaster.EventListeners(camera, renderer, { options: options, scene: scene });
+						function removeTraceLines() {
+									group.children.forEach(function (mesh) {
+												if (mesh.userData.player === undefined || mesh.userData.player.arrayFuncs === undefined || typeof mesh.userData.player.arrayFuncs === "function") return;
+												mesh.userData.player.arrayFuncs.forEach(function (vector) {
+															if (vector.line === undefined) return;
+															vector.line.remove();
+															vector.line = new Player$1.traceLine(options);
 												});
-												renderer = new THREE.WebGLRenderer({
-																antialias: true,
-																canvas: canvas
-												});
-												options.renderer = renderer;
-												options.cursor = renderer.domElement.style.cursor;
-												if (options.stereoEffect !== false) {
-																options.stereoEffect = options.stereoEffect || {};
-																options.stereoEffect.rememberSize = true;
+									});
+						}
+						var pointLight1 = new pointLight(scene, {
+									options: options,
+									position: new THREE.Vector3(2 * options.scale, 2 * options.scale, 2 * options.scale)
+						});
+						var pointLight2 = new pointLight(scene, {
+									options: options,
+									position: new THREE.Vector3(-2 * options.scale, -2 * options.scale, -2 * options.scale)
+						});
+						if (options.dat.gui) {
+									if (typeof WebGLDebugUtils !== "undefined") options.dat.gui.add({
+												loseContext: function loseContext(value) {
+															canvas.loseContext();
 												}
-												new StereoEffect(renderer, options);
-												options.eventListeners = new Options.raycaster.EventListeners(camera, renderer, { options: options, scene: scene });
-												function removeTraceLines() {
-																group.children.forEach(function (mesh) {
-																				if (mesh.userData.player === undefined || mesh.userData.player.arrayFuncs === undefined || typeof mesh.userData.player.arrayFuncs === "function") return;
-																				mesh.userData.player.arrayFuncs.forEach(function (vector) {
-																								if (vector.line === undefined) return;
-																								vector.line.remove();
-																								vector.line = new Player$1.traceLine(options);
-																				});
-																});
+									}, 'loseContext');
+									if (options.dat.gui.__closeButton.click !== undefined)
+												options.dat.gui.__closeButton.click();
+						}
+						new Player$1(group, {
+									onSelectScene: function onSelectScene(index, t) {
+												options.boPlayer = true;
+												if (options.frustumPoints !== undefined) options.frustumPoints.updateCloudPoints();
+									},
+									options: options,
+									cameraTarget: { camera: camera },
+									onChangeScaleT: function onChangeScaleT(scale) {
+												if (options.player !== undefined) options.player.onChangeScale(scale);
+												removeTraceLines();
+									}
+						});
+						if (options.player) new options.player.PlayController();
+						if (options.dat.gui) {
+									fOptions = options.dat.gui.addFolder(lang$1.settings);
+									if (options.player) options.player.gui(fOptions);
+						}
+						if (fOptions) SpriteTextGui(scene, options, {
+									folder: fOptions,
+									options: {
+												textHeight: 0.05,
+												fov: camera.fov
+									}
+						});
+						if (options.stereoEffect) {
+									options.stereoEffect.gui({
+												folder: fOptions,
+												onChangeMode: function onChangeMode(mode) {
+															switch (mode) {
+																		case StereoEffect.spatialMultiplexsIndexs.Mono:
+																					break;
+																		case StereoEffect.spatialMultiplexsIndexs.SbS:
+																		case StereoEffect.spatialMultiplexsIndexs.TaB:
+																					break;
+																		default:
+																					console.error('myThreejs: Invalid spatialMultiplexIndex = ' + mode);
+																					return;
+															}
+															if (options.frustumPoints !== undefined) options.frustumPoints.updateGuiSelectPoint();
 												}
-												var pointLight1 = new pointLight(scene, {
-																options: options,
-																position: new THREE.Vector3(2 * options.scale, 2 * options.scale, 2 * options.scale)
-												});
-												var pointLight2 = new pointLight(scene, {
-																options: options,
-																position: new THREE.Vector3(-2 * options.scale, -2 * options.scale, -2 * options.scale)
-												});
-												if (options.dat.gui) {
-																if (typeof WebGLDebugUtils !== "undefined") options.dat.gui.add({
-																				loseContext: function loseContext(value) {
-																								canvas.loseContext();
-																				}
-																}, 'loseContext');
-																if (options.dat.gui.__closeButton.click !== undefined)
-																				options.dat.gui.__closeButton.click();
+									});
+						}
+						function getRendererSize() {
+									var style = {
+												position: renderer.domElement.style.position,
+												left: renderer.domElement.style.left,
+												top: renderer.domElement.style.top,
+												width: renderer.domElement.style.width,
+												height: renderer.domElement.style.height
+									},
+									    sizeOriginal = new THREE.Vector2();
+									renderer.getSize(sizeOriginal);
+									return {
+												onFullScreenToggle: function onFullScreenToggle(fs) {
+															arrayContainers.display(elContainer.parentElement, !fs);
 												}
-												new Player$1(group, {
-																onSelectScene: function onSelectScene(index, t) {
-																				options.boPlayer = true;
-																				if (options.frustumPoints !== undefined) options.frustumPoints.updateCloudPoints();
-																},
-																options: options,
-																cameraTarget: { camera: camera },
-																onChangeScaleT: function onChangeScaleT(scale) {
-																				if (options.player !== undefined) options.player.onChangeScale(scale);
-																				removeTraceLines();
-																}
-												});
-												if (options.player) new options.player.PlayController();
-												if (options.dat.gui) {
-																fOptions = options.dat.gui.addFolder(lang$1.settings);
-																if (options.player) options.player.gui(fOptions);
+									};
+						}
+						rendererSizeDefault = getRendererSize();
+						renderer.setSize(options.canvas !== undefined && options.canvas.width !== undefined ? options.canvas.width : canvas.clientWidth, options.canvas !== undefined && options.canvas.height !== undefined ? options.canvas.height : canvas.clientHeight);
+						new CanvasMenu(renderer, {
+									fullScreen: {
+												fullScreen: options.canvas.fullScreen,
+												camera: camera,
+												arrayContainersLength: function arrayContainersLength() {
+															return arrayContainers.length;
+												},
+												onFullScreenToggle: function onFullScreenToggle(fullScreen) {
+															rendererSizeDefault.onFullScreenToggle(fullScreen);
 												}
-												if (fOptions) SpriteTextGui(scene, options, {
-																folder: fOptions,
-																options: {
-																				textHeight: 0.05,
-																				fov: camera.fov
-																}
-												});
-												if (options.stereoEffect) {
-																options.stereoEffect.gui({
-																				folder: fOptions,
-																				onChangeMode: function onChangeMode(mode) {
-																								switch (mode) {
-																												case StereoEffect.spatialMultiplexsIndexs.Mono:
-																																break;
-																												case StereoEffect.spatialMultiplexsIndexs.SbS:
-																												case StereoEffect.spatialMultiplexsIndexs.TaB:
-																																break;
-																												default:
-																																console.error('myThreejs: Invalid spatialMultiplexIndex = ' + mode);
-																																return;
-																								}
-																								if (options.frustumPoints !== undefined) options.frustumPoints.updateGuiSelectPoint();
-																				}
-																});
-												}
-												function getRendererSize() {
-																var style = {
-																				position: renderer.domElement.style.position,
-																				left: renderer.domElement.style.left,
-																				top: renderer.domElement.style.top,
-																				width: renderer.domElement.style.width,
-																				height: renderer.domElement.style.height
-																},
-																    sizeOriginal = new THREE.Vector2();
-																renderer.getSize(sizeOriginal);
-																return {
-																				onFullScreenToggle: function onFullScreenToggle(fs) {
-																								arrayContainers.display(elContainer.parentElement, !fs);
-																				}
-																};
-												}
-												rendererSizeDefault = getRendererSize();
-												renderer.setSize(options.canvas !== undefined && options.canvas.width !== undefined ? options.canvas.width : canvas.clientWidth, options.canvas !== undefined && options.canvas.height !== undefined ? options.canvas.height : canvas.clientHeight);
-												new CanvasMenu(renderer, {
-																fullScreen: {
-																				fullScreen: options.canvas.fullScreen,
-																				camera: camera,
-																				arrayContainersLength: function arrayContainersLength() {
-																								return arrayContainers.length;
-																				},
-																				onFullScreenToggle: function onFullScreenToggle(fullScreen) {
-																								rendererSizeDefault.onFullScreenToggle(fullScreen);
-																				}
-																},
-																options: options
-												});
-												options.createOrbitControls(camera, renderer, scene);
-												new AxesHelper(scene, options);
-												if (fOptions) {
-																new GuiSelectPoint(options, {
-																				cameraTarget: {
-																								camera: camera,
-																								orbitControls: options.orbitControls
-																				},
-																				pointsControls: function pointsControls(fPoints, dislayEl, getMesh) {},
-																				pointControls: function pointControls(fPoint, dislayEl, getMesh) {}
-																});
-																if (options.guiSelectPoint) options.guiSelectPoint.add();
-												}
-												defaultPoint.size = options.point.size;
-												var pointName = options.dat.getCookieName('Point');
-												if (options.dat) options.dat.cookie.getObject(pointName, options.point, options.point);
-												if (createXDobjects) createXDobjects(group, options);
-												if (options.frustumPoints) options.frustumPoints.create(renderer);
-												if (!options.player) {
-																Player$1.selectPlayScene(group, { options: options });
-												}
-												options.boPlayer = false;
+									},
+									options: options
+						});
+						options.createOrbitControls(camera, renderer, scene);
+						new AxesHelper(scene, options);
+						if (fOptions) {
+									new GuiSelectPoint(options, {
+												cameraTarget: {
+															camera: camera,
+															orbitControls: options.orbitControls
+												},
+												pointsControls: function pointsControls(fPoints, dislayEl, getMesh) {},
+												pointControls: function pointControls(fPoint, dislayEl, getMesh) {}
+									});
+									if (options.guiSelectPoint) options.guiSelectPoint.add();
+						}
+						defaultPoint.size = options.point.size;
+						var pointName = options.dat.getCookieName('Point');
+						if (options.dat) options.dat.cookie.getObject(pointName, options.point, options.point);
+						if (createXDobjects) createXDobjects(group, options);
+						if (options.frustumPoints) options.frustumPoints.create(renderer);
+						if (!options.player) {
+									Player$1.selectPlayScene(group, { options: options });
+						}
+						options.boPlayer = false;
+						group.children.forEach(function (mesh) {
+									options.saveMeshDefault(mesh);
+						});
+						if (options.dat.gui) {
+									AxesHelperGui(options, fOptions);
+									new MoveGroupGui(group, options, {
+												folder: fOptions
+									});
+									if (options.orbitControls !== false) {
+												new OrbitControlsGui(options, fOptions);
+									}
+									new CameraGui(camera, options, fOptions);
+									var scales = options.axesHelper === false ? options.scales : options.axesHelper.options.scales;
+									pointLight1.controls({ group: group, folder: fOptions, folderName: lang$1.light + ' 1' });
+									pointLight2.controls({ group: group, folder: fOptions, folderName: lang$1.light + ' 2' });
+									var folderPoint = new FolderPoint(options.point, function (value) {
+												if (value === undefined) value = options.point.size;
+												if (value < 0) value = 0;
 												group.children.forEach(function (mesh) {
-																options.saveMeshDefault(mesh);
+															if (mesh.type !== 'Points' || mesh.userData.boFrustumPoints) return;
+															if (mesh.material.uniforms === undefined) mesh.material.size = value / options.point.sizePointsMaterial;
+															else mesh.material.uniforms.pointSize.value = value;
 												});
-												if (options.dat.gui) {
-																AxesHelperGui(options, fOptions);
-																new MoveGroupGui(group, options, {
-																				folder: fOptions
-																});
-																if (options.orbitControls !== false) {
-																				new OrbitControlsGui(options, fOptions);
-																}
-																new CameraGui(camera, options, fOptions);
-																var scales = options.axesHelper === false ? options.scales : options.axesHelper.options.scales;
-																pointLight1.controls({ group: group, folder: fOptions, folderName: lang$1.light + ' 1' });
-																pointLight2.controls({ group: group, folder: fOptions, folderName: lang$1.light + ' 2' });
-																var folderPoint = new FolderPoint(options.point, function (value) {
-																				if (value === undefined) value = options.point.size;
-																				if (value < 0) value = 0;
-																				group.children.forEach(function (mesh) {
-																								if (mesh.type !== 'Points' || mesh.userData.boFrustumPoints) return;
-																								if (mesh.material.uniforms === undefined) mesh.material.size = value / options.point.sizePointsMaterial;
-																								else mesh.material.uniforms.pointSize.value = value;
-																				});
-																				folderPoint.size.setValue(value);
-																				options.point.size = value;
-																				options.dat.cookie.setObject(pointName, options.point);
-																}, options, {
-																				folder: fOptions,
-																				defaultPoint: defaultPoint
-																});
-																if (options.frustumPoints)
-																				options.frustumPoints.gui(fOptions);
-																options.restoreSceneController(camera, scene);
+												folderPoint.size.setValue(value);
+												options.point.size = value;
+												options.dat.cookie.setObject(pointName, options.point);
+									}, options, {
+												folder: fOptions,
+												defaultPoint: defaultPoint
+									});
+									if (options.frustumPoints)
+												options.frustumPoints.gui(fOptions);
+									options.restoreSceneController(camera, scene);
+						}
+						if (options.stats !== undefined) {
+									try {
+												stats = new Stats();
+												elContainer.appendChild(stats.dom);
+									} catch (e) {
+												console.error(e + ". Please import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';");
+									}
+						}
+						window.addEventListener('resize', onResize, false);
+			}
+			function onResize() {
+						var size;
+						if (isFullScreen()) size = new THREE.Vector2(window.innerWidth, window.innerHeight);else {
+									size = new THREE.Vector2();
+									renderer.getSize(size);
+						}
+						camera.aspect = size.x / size.y;
+						camera.updateProjectionMatrix();
+						renderer.setSize(size.x, size.y);
+						if (options.frustumPoints !== undefined) options.frustumPoints.update();
+			}
+			function animate() {
+						if (stats !== undefined) stats.begin();
+						requestId = requestAnimationFrame(animate);
+						render();
+						if (stats !== undefined) stats.end();
+			}
+			function render() {
+						if (!options.stereoEffect || !options.stereoEffect.render) renderer.render(scene, camera);else options.stereoEffect.render(scene, camera);
+						if (cameraPosition === undefined) cameraPosition = new THREE.Vector3();
+						if (pointSize === undefined) pointSize = options.point.size;
+						if (!cameraPosition.equals(camera.position) || pointSize != options.point.size || options.frustumPoints !== undefined && options.frustumPoints.animate()) {
+									cameraPosition.copy(camera.position);
+									pointSize = options.point.size;
+									group.children.forEach(function (mesh) {
+												if (mesh instanceof THREE.Points === false) return;
+												if (mesh.geometry.attributes.size === undefined) {
+															mesh.material.size = pointSize / options.point.sizePointsMaterial;
+															return;
 												}
-												if (options.stats !== undefined) {
-																try {
-																				stats = new Stats();
-																				elContainer.appendChild(stats.dom);
-																} catch (e) {
-																				console.error(e + ". Please import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';");
-																}
+												if (options.point.opacity !== undefined) mesh.material.uniforms.opacity.value = options.point.opacity;
+												var scale = myPoints.getGlobalScale(mesh);
+												var cameraPosition = new THREE.Vector3(camera.position.x / scale.x, camera.position.y / scale.y, camera.position.z / scale.z);
+												scale = (scale.x + scale.y + scale.z) / 3;
+												for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
+															var position = getObjectPosition$1(mesh, i),
+															position3d = new THREE.Vector3(position.x, position.y, position.z),
+															    distance = position3d.distanceTo(cameraPosition),
+															    y = 1;
+															mesh.geometry.attributes.size.setX(i, Math.tan(mesh.userData.shaderMaterial.point !== undefined && mesh.userData.shaderMaterial.point.size !== undefined ? mesh.userData.shaderMaterial.point.size : options.point.size) * distance * scale * y);
+															mesh.geometry.attributes.size.needsUpdate = true;
 												}
-												window.addEventListener('resize', onResize, false);
-								}
-								function onResize() {
-												var size;
-												if (isFullScreen()) size = new THREE.Vector2(window.innerWidth, window.innerHeight);else {
-																size = new THREE.Vector2();
-																renderer.getSize(size);
-												}
-												camera.aspect = size.x / size.y;
-												camera.updateProjectionMatrix();
-												renderer.setSize(size.x, size.y);
-												if (options.frustumPoints !== undefined) options.frustumPoints.update();
-								}
-								function animate() {
-												if (stats !== undefined) stats.begin();
-												requestId = requestAnimationFrame(animate);
-												render();
-												if (stats !== undefined) stats.end();
-								}
-								function render() {
-												if (!options.stereoEffect || !options.stereoEffect.render) renderer.render(scene, camera);else options.stereoEffect.render(scene, camera);
-												if (cameraPosition === undefined) cameraPosition = new THREE.Vector3();
-												if (pointSize === undefined) pointSize = options.point.size;
-												if (!cameraPosition.equals(camera.position) || pointSize != options.point.size || options.frustumPoints !== undefined && options.frustumPoints.animate()) {
-																cameraPosition.copy(camera.position);
-																pointSize = options.point.size;
-																group.children.forEach(function (mesh) {
-																				if (mesh instanceof THREE.Points === false) return;
-																				if (mesh.geometry.attributes.size === undefined) {
-																								mesh.material.size = pointSize / options.point.sizePointsMaterial;
-																								return;
-																				}
-																				if (options.point.opacity !== undefined) mesh.material.uniforms.opacity.value = options.point.opacity;
-																				var scale = myPoints.getGlobalScale(mesh);
-																				var cameraPosition = new THREE.Vector3(camera.position.x / scale.x, camera.position.y / scale.y, camera.position.z / scale.z);
-																				scale = (scale.x + scale.y + scale.z) / 3;
-																				for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
-																								var position = getObjectPosition$1(mesh, i),
-																								position3d = new THREE.Vector3(position.x, position.y, position.z),
-																								    distance = position3d.distanceTo(cameraPosition),
-																								    y = 1;
-																								mesh.geometry.attributes.size.setX(i, Math.tan(mesh.userData.shaderMaterial.point !== undefined && mesh.userData.shaderMaterial.point.size !== undefined ? mesh.userData.shaderMaterial.point.size : options.point.size) * distance * scale * y);
-																								mesh.geometry.attributes.size.needsUpdate = true;
-																				}
-																});
-												}
-												if (options.guiSelectPoint && options.guiSelectPoint.render) options.guiSelectPoint.render();
-								}
-								arrayCreates.shift();
-								var params = arrayCreates.shift();
-								if (params === undefined) return;
-								myThreejs.create(params.createXDobjects, params.options);
-				}
-				options.saveMeshDefault = function (mesh) {
-								mesh.userData.default = mesh.userData.default || {};
-								mesh.userData.default.scale = new THREE.Vector3();
-								mesh.userData.default.scale.copy(mesh.scale);
-								mesh.userData.default.position = new THREE.Vector3();
-								mesh.userData.default.position.copy(mesh.position);
-								mesh.userData.default.rotation = new THREE.Euler();
-								mesh.userData.default.rotation.copy(mesh.rotation);
-				};
-				onloadScripts();
+									});
+						}
+						if (options.guiSelectPoint && options.guiSelectPoint.render) options.guiSelectPoint.render();
+			}
+			arrayCreates.shift();
+			var params = arrayCreates.shift();
+			if (params === undefined) return;
+			myThreejs.create(params.createXDobjects, params.options);
 };
 var lang$1 = {
-				defaultButton: 'Default',
-				settings: 'Settings',
-				webglcontextlost: 'The user agent has detected that the drawing buffer associated with a WebGLRenderingContext object has been lost.',
-				light: 'Light',
-				opacity: 'Opacity'
+			defaultButton: 'Default',
+			settings: 'Settings',
+			webglcontextlost: 'The user agent has detected that the drawing buffer associated with a WebGLRenderingContext object has been lost.',
+			light: 'Light',
+			opacity: 'Opacity'
 };
 switch (getLanguageCode()) {
-				case 'ru':
-								lang$1.defaultButton = 'Восстановить';
-								lang$1.name = 'Имя';
-								lang$1.settings = 'Настройки';
-								lang$1.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
-								lang$1.light = 'Свет';
-								lang$1.opacity = 'Непрозрачность';
-								break;
+			case 'ru':
+						lang$1.defaultButton = 'Восстановить';
+						lang$1.name = 'Имя';
+						lang$1.settings = 'Настройки';
+						lang$1.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
+						lang$1.light = 'Свет';
+						lang$1.opacity = 'Непрозрачность';
+						break;
 }
 MyThree.MyPoints = MyPoints;
 MyThree.StereoEffect = {
-				spatialMultiplexsIndexs: StereoEffect.spatialMultiplexsIndexs
+			spatialMultiplexsIndexs: StereoEffect.spatialMultiplexsIndexs
 };MyThree.ColorPicker = ColorPicker$1;
 MyThree.getWorldPosition = getWorldPosition;
 MyThree.limitAngles = function (rotation) {
-				function limitAngle(axisName) {
-								while (rotation[axisName] > Math.PI * 2) {
-												rotation[axisName] -= Math.PI * 2;
-								}
-				}
-				limitAngle('x');
-				limitAngle('y');
-				limitAngle('z');
+			function limitAngle(axisName) {
+						while (rotation[axisName] > Math.PI * 2) {
+									rotation[axisName] -= Math.PI * 2;
+						}
+			}
+			limitAngle('x');
+			limitAngle('y');
+			limitAngle('z');
 };
 MyThree.Player = Player$1;
 MyThree.three = three$1;
