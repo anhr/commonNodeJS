@@ -9825,6 +9825,7 @@ function create(arrayMenu, options) {
 		case 'Gradient':
 		case 'Transparent':
 		case 'Custom':
+		case undefined:
 			break;
 		default:
 			console.error('DropdownMenu.create: Invalid options.decorations: ' + options.decorations);
