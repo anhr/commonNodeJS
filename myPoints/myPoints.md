@@ -7,6 +7,7 @@ I use <b>MyPoints</b> in my [three.js](https://threejs.org/) projects for create
 * [Quick start.](#Quickstart)
 * [Points settings.](#PointsSettings)
 * [Raycaster.](#Raycaster)
+* [Example of your web page.](#WebPage)
 
 <a name="Quickstart"></a>
 ## Quick start
@@ -169,7 +170,7 @@ First, import [Options](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/O
 ```
 import Options from './commonNodeJS/master/Options.js'
 ```
-Add event listener for </b>raycaster</b>.
+Add [event listener](../../jsdoc/Options/Raycaster_EventListeners.html) for </b>raycaster</b>.
 
 Note. Please create event listener after creating of <b>camera</b> and <b>renderer</b> and before creating of <b>myPoints</b>.
 ```
@@ -231,7 +232,8 @@ Please move mouse over center of any point. Mouse cursor will change to "pointer
 You can see an alert if you click a point.
 
 Currently you see alert only if user click in the center of the point. You can icrease the click area.
-Please add new [threshold](https://threejs.org/docs/#api/en/core/Raycaster.params) key into <b>new Options.raycaster.EventListeners</b> for it.
+Please add new [threshold](https://threejs.org/docs/#api/en/core/Raycaster.params) key into <b>settings</b> parameter of
+[new Options.raycaster.EventListeners](../../jsdoc/Options/Raycaster_EventListeners.html) for it.
 ```
 const eventListeners = new Options.raycaster.EventListeners( camera, renderer, {
 
@@ -239,4 +241,157 @@ const eventListeners = new Options.raycaster.EventListeners( camera, renderer, {
 	scene: scene,
 
 } );
+```
+<a name="WebPage"></a>
+## Example of your web page.
+The following code is the result of this tutorial.
+```
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>MyPoints</title>
+
+	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
+	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">-->
+	<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">
+
+	<!--<script src="./three.js/dev/build/three.js"></script>-->
+	<!--<script src="./three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
+</head>
+<body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/myPoints" target="_blank" rel="noopener">MyPoints</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+	<div>
+		<canvas id="canvas"></canvas>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+		import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
+		import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
+		import Options from './commonNodeJS/master/Options.js'
+
+		var camera, scene, renderer;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+
+			const eventListeners = new Options.raycaster.EventListeners( camera, renderer, {
+
+				threshold: 0.1,
+				scene: scene,
+
+			} );
+
+			const arrayFuncs = [
+				[],//first point. Zero position. White color.
+				[
+					0.5,//x
+					0.5,//y
+					0.5,//z
+					0.5//w - color of the point is green
+				]//second point
+			];
+			//const cursor = renderer.domElement.style.cursor;
+			MyPoints( arrayFuncs, scene, {
+
+				options: {
+					point: { size: 25 },
+					palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+					raycaster: {
+
+						addParticle: function ( item ) {
+
+							eventListeners.addParticle( item );
+
+						},
+
+					}
+
+				},
+				pointsOptions: {
+
+					//shaderMaterial: false,
+					raycaster: {
+			
+						/*
+						onIntersection: function ( intersection, mouse ) {
+
+							renderer.domElement.style.cursor = 'pointer';
+
+						},
+						onIntersectionOut: function () {
+
+							renderer.domElement.style.cursor = cursor;
+
+						},
+						*/
+						onMouseDown: function ( intersection ) {
+
+							alert( 'You have clicked over point' );
+
+						},
+
+					}
+
+				}
+
+			} );
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	</script>
+</body>
+</html>
 ```

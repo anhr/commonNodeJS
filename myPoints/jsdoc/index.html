@@ -50,6 +50,7 @@
 <li><a href="#Quickstart">Quick start.</a></li>
 <li><a href="#PointsSettings">Points settings.</a></li>
 <li><a href="#Raycaster">Raycaster.</a></li>
+<li><a href="#WebPage">Example of your web page.</a></li>
 </ul>
 <p><a name="Quickstart"></a></p>
 <h2>Quick start</h2>
@@ -205,7 +206,7 @@ and add new <b>palette</b> into <b>settings.options</b> parameter of <b>MyPoints
 <p>First, import <a href="https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/Options/index.html">Options</a>.</p>
 <pre class="prettyprint source"><code>import Options from './commonNodeJS/master/Options.js'
 </code></pre>
-<p>Add event listener for </b>raycaster</b>.</p>
+<p>Add <a href="../../jsdoc/Options/Raycaster_EventListeners.html">event listener</a> for </b>raycaster</b>.</p>
 <p>Note. Please create event listener after creating of <b>camera</b> and <b>renderer</b> and before creating of <b>myPoints</b>.</p>
 <pre class="prettyprint source"><code>const eventListeners = new Options.raycaster.EventListeners( camera, renderer, {
 
@@ -263,13 +264,166 @@ MyPoints( arrayFuncs, scene, {
 <p>Please move mouse over center of any point. Mouse cursor will change to &quot;pointer&quot;.
 You can see an alert if you click a point.</p>
 <p>Currently you see alert only if user click in the center of the point. You can icrease the click area.
-Please add new <a href="https://threejs.org/docs/#api/en/core/Raycaster.params">threshold</a> key into <b>new Options.raycaster.EventListeners</b> for it.</p>
+Please add new <a href="https://threejs.org/docs/#api/en/core/Raycaster.params">threshold</a> key into <b>settings</b> parameter of
+<a href="../../jsdoc/Options/Raycaster_EventListeners.html">new Options.raycaster.EventListeners</a> for it.</p>
 <pre class="prettyprint source"><code>const eventListeners = new Options.raycaster.EventListeners( camera, renderer, {
 
 	threshold: 0.1,
 	scene: scene,
 
 } );
+</code></pre>
+<p><a name="WebPage"></a></p>
+<h2>Example of your web page.</h2>
+<p>The following code is the result of this tutorial.</p>
+<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+
+&lt;html>
+&lt;head>
+	&lt;title>MyPoints&lt;/title>
+
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://threejs.org/examples/main.css&quot;>
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;three.js/dev/examples/main.css&quot;>-->
+	&lt;!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>-->
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>
+
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
+&lt;/head>
+&lt;body>
+	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
+	&lt;div id=&quot;info&quot;>
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a>
+		- &lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/myPoints&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>MyPoints&lt;/a>.
+		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
+	&lt;/div>
+	&lt;div>
+		&lt;canvas id=&quot;canvas&quot;>&lt;/canvas>
+	&lt;/div>
+
+	&lt;script type=&quot;module&quot;>
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+		import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
+		import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
+		import Options from './commonNodeJS/master/Options.js'
+
+		var camera, scene, renderer;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+
+			const eventListeners = new Options.raycaster.EventListeners( camera, renderer, {
+
+				threshold: 0.1,
+				scene: scene,
+
+			} );
+
+			const arrayFuncs = [
+				[],//first point. Zero position. White color.
+				[
+					0.5,//x
+					0.5,//y
+					0.5,//z
+					0.5//w - color of the point is green
+				]//second point
+			];
+			//const cursor = renderer.domElement.style.cursor;
+			MyPoints( arrayFuncs, scene, {
+
+				options: {
+					point: { size: 25 },
+					palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+					raycaster: {
+
+						addParticle: function ( item ) {
+
+							eventListeners.addParticle( item );
+
+						},
+
+					}
+
+				},
+				pointsOptions: {
+
+					//shaderMaterial: false,
+					raycaster: {
+			
+						/*
+						onIntersection: function ( intersection, mouse ) {
+
+							renderer.domElement.style.cursor = 'pointer';
+
+						},
+						onIntersectionOut: function () {
+
+							renderer.domElement.style.cursor = cursor;
+
+						},
+						*/
+						onMouseDown: function ( intersection ) {
+
+							alert( 'You have clicked over point' );
+
+						},
+
+					}
+
+				}
+
+			} );
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	&lt;/script>
+&lt;/body>
+&lt;/html>
 </code></pre></article>
     </section>
 
@@ -287,7 +441,7 @@ Please add new <a href="https://threejs.org/docs/#api/en/core/Raycaster.params">
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Aug 25 2021 07:05:34 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Aug 31 2021 11:59:03 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
