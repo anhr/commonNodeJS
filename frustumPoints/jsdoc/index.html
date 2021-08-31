@@ -55,6 +55,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 <li><a href="#datGui">Using <b>dat.gui</b> for manual change of the <b>FrustumPoints</b> settings.</a></li>
 <li><a href="#Player">Add <b>Player</b>.</a></li>
 <li><a href="#PointsColor">Points color.</a></li>
+<li><a href="#WebPage">Example of your web page.</a></li>
 </ul>
 <p><a name="QuickStart"></a></p>
 <h2>Quick start</h2>
@@ -384,7 +385,172 @@ Please add a <b>scales</b> key into <b>Options</b> parameter for it.</li>
 </code></pre>
 <p>Now you can see the interference of the clouds color of the first and second points.
 Green color of the cloud of the first point is interferencing with red color of  the cloud of the second point.
-As result you can see the dark color of the cloud if the second point is come near the first point.</p></article>
+As result you can see the dark color of the cloud if the second point is come near the first point.
+<a name="WebPage"></a></p>
+<h2>Example of your web page.</h2>
+<p>The following code is the result of this tutorial.</p>
+<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+
+&lt;html>
+&lt;head>
+	&lt;title>FrustumPoints&lt;/title>
+
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://threejs.org/examples/main.css&quot;>
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;three.js/dev/examples/main.css&quot;>-->
+	&lt;!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>-->
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>
+
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
+&lt;/head>
+&lt;body>
+	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
+	&lt;div id=&quot;info&quot;>
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a>
+		- &lt;a href=&quot;./commonNodeJS/master/frustumPoints/jsdoc/index.html&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>FrustumPoints&lt;/a>.
+		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
+	&lt;/div>
+	&lt;div>
+		&lt;canvas id=&quot;canvas&quot;>&lt;/canvas>
+	&lt;/div>
+
+	&lt;script type=&quot;module&quot;>
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
+		import Options from './commonNodeJS/master/Options.js'
+		import FrustumPoints from './commonNodeJS/master/frustumPoints/frustumPoints.js';
+		import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
+		import { dat } from './commonNodeJS/master/dat/dat.module.js';
+		three.dat = dat;
+		import Player from './commonNodeJS/master/player/player.js';
+		import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
+
+		var camera, scene, renderer, stereoEffect;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0, 0, 0.4 ) );
+
+			scene = new THREE.Scene();
+
+			const options = new Options( {
+
+				palette: new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.bidirectional } ),
+				frustumPoints: {
+
+					zCount: 100,
+					yCount: 100,
+
+				},
+				playerOptions: {
+
+					marks: 100,//Ticks count of the playing.
+					interval: 25,//Ticks per seconds.
+
+				},
+				scales: {
+
+					w: {
+
+						min: -1,
+						max: 1,
+
+					},
+
+				}
+
+			} );
+
+			const canvas = document.getElementById( 'canvas' );
+
+			new FrustumPoints( camera, scene, canvas, { options: options, } );
+
+			new Player( scene, { options: options, } );
+
+			const arrayFuncs = [
+				[],//point with zero position and palette index = max = 1 is white color for ColorPicker.paletteIndexes.BGYW. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
+				{
+
+					//move second point from [-0.5, -0.5, -0.5, ] for t = 0 to [0.5, 0.5, 0.5, ] for t = 1
+					vector: new THREE.Vector4(
+						new Function( 't', 'return t-0.5' ),//x
+						0,//new Function( 't', 'return t-0.5' ),//y
+						0,//new Function( 't', 'return t-0.5' ),//z
+						-1,//new Function( 't', 'return t' ),//w red color for ColorPicker.paletteIndexes.bidirectional and palette index min = -1
+					),
+					trace: true,
+
+				}
+			];
+			MyPoints( arrayFuncs, scene, {
+
+					pointsOptions: {
+
+						frustumPoints: options.frustumPoints,
+						//shaderMaterial: false,
+						onReady: function ( points ) {
+
+							options.player.play3DObject();
+
+						}
+					},
+
+			} );
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			//Orbit controls allow the camera to orbit around a target.
+			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+			options.createOrbitControls( camera, renderer, scene );
+
+			options.frustumPoints.create( renderer );
+			options.frustumPoints.gui();
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	&lt;/script>
+&lt;/body>
+&lt;/html>
+</code></pre></article>
     </section>
 
 
@@ -395,13 +561,13 @@ As result you can see the dark color of the cloud if the second point is come ne
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FrustumPoints.html">FrustumPoints</a></li><li><a href="FrustumPoints_guiSelectPoint.html">guiSelectPoint</a></li></ul><h3>Events</h3><ul><li><a href="FrustumPoints.html#event:onChangeControls">onChangeControls</a></li><li><a href="FrustumPoints.html#event:updateCloudPointItem">updateCloudPointItem</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-functionsFolder.html">functionsFolder</a></li></ul><h3>Classes</h3><ul><li><a href="FrustumPoints.html">FrustumPoints</a></li><li><a href="FrustumPoints_guiSelectPoint.html">guiSelectPoint</a></li><li><a href="module-functionsFolder-functionsFolder.html">functionsFolder</a></li></ul><h3>Events</h3><ul><li><a href="FrustumPoints.html#event:onChangeControls">onChangeControls</a></li><li><a href="FrustumPoints.html#event:updateCloudPointItem">updateCloudPointItem</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Aug 25 2021 07:01:09 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Aug 31 2021 11:36:21 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

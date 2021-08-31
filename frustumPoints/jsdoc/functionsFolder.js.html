@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: functionsFolder.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: functionsFolder.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module functionsFolder
+ * @description Adds the [Functions]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} folder into [dat.gui]{@link https://github.com/anhr/dat.gui}.
+ * 
+ * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+
+//import { dat } from './dat/dat.module.js';
+import Options from './Options.js'
+import three from './three.js'
+
+class functionsFolder {
+
+	/**
+	 * Adds the [Functions]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} folder into [dat.gui]{@link https://github.com/anhr/dat.gui}.
+	 * @param {GUI} fParent parent folder for functions folder.
+	 * @param {Object} scales [AxesHelper]{@link https://raw.githack.com/anhr/AxesHelper/master/jsdoc/module-AxesHelper.html} options.scales for details.
+	 * @param {Function} onFinishChange callback function is called every time, when user have entered new value of the function and the function controller is lost of the focus.
+	 * &lt;pre>
+	 * parameter value is new value of the function.
+	 * &lt;/pre>
+	 * @param {Options} options &lt;a href="../../jsdoc/Options/Options.html" target="_blank">Options&lt;/a> instance. The following options are available.
+	 * See the &lt;b>options&lt;/b> parameter of the &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree&lt;/a> class.
+	 * @param {Function} [options.getLanguageCode=language code of your browser] returns the "primary language" subtag of the version of the browser.
+	 * @param {object} [vector] Vector with initial text of the function
+	 * @param {string} [vector.x] text of the x axis function
+	 * @param {string} [vector.y] text of the y axis function
+	 * @param {string} [vector.z] text of the z axis function
+	*/
+	constructor( fParent, onFinishChange, options, vector ) {
+
+//		var options = settings.options || new Options();
+		if ( !options.boOptions ) {
+
+//			options = new Options( options );
+			console.error( 'functionsFolder: call options = new Options( options ) first' );
+			return;
+
+		}
+/*
+		gui = gui || options.dat.gui;
+		if ( !gui || options.dat.cameraGui === false )
+			return;
+*/
+		const dat = three.dat,//options.dat.dat,
+			THREE = three.THREE,
+			scales = options.scales;
+		const _this = this;
+		var boError = false,//true - обнаружена ошибка ввода. Нужно вывести сообщение об ошибке и вернуть фокус на поле управления
+			boAlert = false;//предотвращает бесконечный вывод сообщения об ошибке
+
+		//Localization
+		/*
+			const getLanguageCode = options.getLanguageCode || function () { return 'en'; };
+			const _languageCode = getLanguageCode();
+		*/
+		const lang = {
+
+			functions: 'Functions',
+
+			defaultButton: 'Default',
+			defaultTitle: 'Restore default functions.',
+
+		};
+
+		const _languageCode = options.getLanguageCode === undefined ? 'en'//Default language is English
+			: options.getLanguageCode();
+
+		switch ( _languageCode ) {
+
+			case 'ru'://Russian language
+
+				lang.functions = 'Функции';
+
+				lang.defaultButton = 'Восстановить';
+				lang.defaultTitle = 'Восстановить функции.';
+
+				break;
+			default://Custom language
+				if ( ( options.lang === undefined ) || ( options.lang.languageCode != _languageCode ) )
+					break;
+
+				Object.keys( options.lang ).forEach( function ( key ) {
+
+					if ( lang[key] === undefined )
+						return;
+					lang[key] = options.lang[key];
+
+				} );
+
+		}
+
+		if ( vector ) {
+
+			vector.x = getFuncText( vector.x );
+			vector.y = getFuncText( vector.y );
+			vector.z = getFuncText( vector.z );
+
+		} else vector = { x: '', y: '', z: '', }
+
+		const fFunctions = fParent.addFolder( lang.functions ),
+/*
+			vector = {
+
+				x: options.vector ? getFuncText( options.vector.x ) : '',
+				y: options.vector ? getFuncText( options.vector.y ) : '',
+				z: options.vector ? getFuncText( options.vector.z ) : '',
+				w: options.vector ? getFuncText( options.vector.w ) : '',
+
+			},
+*/
+			//onFinishChange вызывается даже если vector не изменился. Поэтому такой onFinishChange пропускается
+			vectorCur = {
+
+				x: vector.x,
+				y: vector.y,
+				z: vector.z,
+				w: vector.w,
+
+			},
+			cFunctions = {};
+		function createControl( axisName ) {
+
+			if ( vector[axisName] === undefined )
+				return;
+			cFunctions[axisName] = fFunctions.add( vector, axisName ).onFinishChange( function ( value ) {
+
+				__onFinishChange( value, axisName, vectorCur );
+
+			} );
+			dat.controllerNameAndTitle( cFunctions[axisName], getAxisName( axisName ) );
+
+		}
+		function getAxisName( axisName ) { return scales[axisName] &amp;&amp; scales[axisName].name ? scales[axisName].name : axisName; }
+		createControl( 'x' );
+		createControl( 'y' );
+		createControl( 'z' );
+		createControl( 'w' );
+
+		//Default scale button
+		const buttonDefault = fFunctions.add( {
+
+			defaultF: function ( value ) {
+
+			},
+
+		}, 'defaultF' );
+		dat.controllerNameAndTitle( buttonDefault, lang.defaultButton, lang.defaultTitle );
+
+		function getFuncText( func ) {
+
+			if ( func === undefined )
+				return;
+			if ( typeof func === 'object' ) {
+
+				if ( func instanceof THREE.Color ) return func.getStyle();
+				if ( Array.isArray( func ) ) return JSON.stringify( func )
+				func = func.func ? func.func : func;
+
+			}
+			const typeofFunc = typeof func;
+			switch ( typeofFunc ) {
+
+				case 'number':
+					func = func.toString();//если это не делать будет создан NumberControllerBox, ктороый не позволяет вводить float
+				case 'string':
+					return func;
+				case 'function':
+					return func.toString().split( /return (.*)/ )[1];
+				default: console.error( 'functionsFolder.getFuncText(...): typeof func = ' + typeofFunc );
+					return;
+			}
+
+		}
+		function __onFinishChange( value, axisName, vectorCur ) {
+
+			if ( ( vectorCur[axisName] === value ) &amp;&amp; !boError )
+				return;
+			try {
+
+				boError = false;
+				vectorCur[axisName] = value;
+				var func;
+				const typeofValue = typeof value;
+				switch ( typeofValue ) {
+
+					case 'string':
+
+						var float = parseFloat( value );
+						if ( float.toString() !== value ) {
+
+							//						const color = value.replace(/\s/g, "").toLowerCase().split( /rgb\((\d+),(\d+),(\d+)\)/ );
+							const color = value.replace( /\s/g, "" ).split( /rgb\((\d+),(\d+),(\d+)\)/ );
+							if ( color.length === 5 ) func = new THREE.Color( value );
+							else {
+
+								var array;
+								try {
+
+									array = JSON.parse( value );
+
+								} catch ( e ) { }
+								if ( Array.isArray( array ) ) func = array;
+								else {
+
+									func = new Function( 't', 'a', 'b', 'return ' + value );
+
+								}
+
+							}
+
+						} else func = float;
+						break;
+
+					case 'number':
+
+						func = value;
+						break;
+
+					default:
+						console.error( 'onFinishChange( ' + value + ' ): invalid type = ' + typeofValue );
+						return;
+
+				}
+
+				//Новое значение введено правильно
+				onFinishChange( func, axisName );
+				boAlert = false;
+
+			} catch ( e ) {
+
+				if ( !boAlert ) {
+
+					alert( 'Axis: ' + getAxisName( axisName ) + '. Function: "' + value + '". ' + e );
+					boAlert = true;
+
+				}
+				_this.setFocus( axisName );
+
+			}
+
+		}
+
+		/**
+		 * set the function text
+		 * @param {object} _vector vector of the axis functions.
+		 * @param {object} _vector.x x axis function.
+		 * @param {object} _vector.y y axis function.
+		 * @param {object} _vector.z z axis function.
+		 */
+		this.setFunction = function ( _vector ) {
+
+			_vector = _vector || options.vector;
+			if ( !_vector )
+				return;
+
+			const vector = {
+
+				x: _vector ? getFuncText( _vector.x ) : '',
+				y: _vector ? getFuncText( _vector.y ) : '',
+				z: _vector ? getFuncText( _vector.z ) : '',
+				w: _vector ? getFuncText( _vector.w ) : '',
+
+			},
+				//onFinishChange вызывается даже если vector не изменился. Поэтому такой onFinishChange пропускается
+				vectorCur = {
+
+					x: vector.x,
+					y: vector.y,
+					z: vector.z,
+					w: vector.w,
+
+				};
+			if ( !_vector.vectorDefault )
+				_vector.vectorDefault = {
+
+					x: vector.x,
+					y: vector.y,
+					z: vector.z,
+					w: vector.w,
+
+				};
+			function setVectorAxis( axisName ) {
+
+				if ( _vector[axisName] === undefined )
+					return;
+				cFunctions[axisName].__onFinishChange = function ( value ) {
+
+					__onFinishChange( value, axisName, vectorCur );
+
+				}
+				vector[axisName] = getFuncText( _vector[axisName] );
+				cFunctions[axisName].setValue( vector[axisName] );
+				vectorCur[axisName] = vector[axisName];
+
+			}
+			setVectorAxis( 'x' );
+			setVectorAxis( 'y' );
+			var dislay = false;
+			if ( _vector.z ) {
+
+				setVectorAxis( 'z' );
+				dislay = true;
+
+			}
+			buttonDefault.object.defaultF = function ( value ) {
+
+				function setValue( axisName ) {
+
+					if ( !cFunctions[axisName] )
+						return;
+					cFunctions[axisName].setValue( _vector.vectorDefault[axisName] );
+					cFunctions[axisName].__onFinishChange( _vector.vectorDefault[axisName] );
+
+				}
+				setValue( 'x' );
+				setValue( 'y' );
+				setValue( 'z' );
+				setValue( 'w' );
+
+			}
+			function dislayEl( controller, displayController ) {
+
+				if ( controller === undefined )
+					return;
+				if ( typeof displayController === "boolean" )
+					displayController = displayController ? 'block' : 'none';
+				var el = controller.domElement;
+				while ( el.tagName.toUpperCase() !== "LI" ) el = el.parentElement;
+				el.style.display = displayController;
+
+			}
+			dislayEl( cFunctions.z, dislay );
+			setVectorAxis( 'w' );
+
+		}
+		this.setFunction();
+
+		/**
+		 * Display functions folder
+		 * @param {string|boolean} display 'block' or true - functions folder is visible.
+		 * &lt;p>'none' or false - functions folder is hide.&lt;/p>
+		 */
+		this.displayFolder = function ( display ) {
+
+			fFunctions.domElement.style.display = typeof display === "boolean" ?
+				display ? 'block' : 'none' :
+				display;
+
+		}
+		/**
+		* set focus to controller
+		* @param {string} axisName Name of the axis of the controller
+		*/
+		this.setFocus = function ( axisName ) {
+
+			cFunctions[axisName].domElement.childNodes[0].focus();
+			boError = true;
+
+		}
+
+	}
+
+}
+
+export default functionsFolder;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-functionsFolder.html">functionsFolder</a></li></ul><h3>Classes</h3><ul><li><a href="FrustumPoints.html">FrustumPoints</a></li><li><a href="FrustumPoints_guiSelectPoint.html">guiSelectPoint</a></li><li><a href="module-functionsFolder-functionsFolder.html">functionsFolder</a></li></ul><h3>Events</h3><ul><li><a href="FrustumPoints.html#event:onChangeControls">onChangeControls</a></li><li><a href="FrustumPoints.html#event:updateCloudPointItem">updateCloudPointItem</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Aug 31 2021 11:36:21 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
