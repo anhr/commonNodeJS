@@ -10,17 +10,17 @@
  */
 
 /**
- * node.js version of the synchronous download of the file.
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
- *
- * @copyright 2011 Data Arts Team, Google Creative Lab
- *
- * @license under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- */
+* node.js version of the synchronous download of the file.
+* @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+*
+* @copyright 2011 Data Arts Team, Google Creative Lab
+*
+* @license under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*/
 function myRequest(options) {
 	this.loadXMLDoc = function () {
 		var req;
@@ -380,11 +380,21 @@ if (arrayPath[2] === '/build') currentScriptPath = arrayPath[1];
 arrayPath = currentScriptPath.split(/(.*)(\/canvasMenu)/);
 if (arrayPath[2] === '/canvasMenu') currentScriptPath = arrayPath[1] + '/DropdownMenu';
 loadScript.sync(currentScriptPath + '/styles/menu.css', optionsStyle);
+loadScript.sync(currentScriptPath + '/styles/gui.css', optionsStyle);
 loadScript.sync(currentScriptPath + '/styles/Decorations/transparent.css', optionsStyle);
 loadScript.sync(currentScriptPath + '/styles/Decorations/gradient.css', optionsStyle);
 function create(arrayMenu, options) {
 	options = options || {};
 	options.elParent = options.elParent || document.querySelector('body');
+	switch (options.decorations) {
+		case 'Gradient':
+		case 'Transparent':
+		case 'Custom':
+		case undefined:
+			break;
+		default:
+			console.error('DropdownMenu.create: Invalid options.decorations: ' + options.decorations);
+	}
 	var elMenu = document.createElement('menu');
 	if (options.elParent.classList.contains("container")) elMenu.className = 'controls';
 	var timeoutControls;
@@ -489,6 +499,8 @@ function create(arrayMenu, options) {
 				}
 				if (itemItem.radio === true) elName.classList.add('radio');
 				if (itemItem.checkbox === true) elName.classList.add('checkbox');
+				if (itemItem.id) elName.id = itemItem.id;
+				if (itemItem.title) elName.title = itemItem.title;
 				elName.innerHTML = getItemName(itemItem);
 				if (itemItem.checked === true) elName.classList.add(classChecked);
 				elDropdownChild.appendChild(elName);

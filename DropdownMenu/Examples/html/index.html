@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -28,6 +28,7 @@
 
 	<h2>Simple menu.</h2>
 	<script>
+
 		DropdownMenu.create( [
 
 			'Menu 1 ',
@@ -120,7 +121,10 @@
 
 	<h2>Drop menu to the left or/and up.</h2>
 	<h3><a href="../../styles/Decorations/gradient.css" target="_blank">Gradient decoration</a>.</h3>
-	<script>
+	<div id='Gradient'></div>
+	<script type="module">
+
+		import DropdownMenu from '../../dropdownMenu.js';
 		DropdownMenu.create( [
 
 			{
@@ -261,7 +265,8 @@
 
 		], {
 
-			decorations: 'Gradient',
+				decorations: 'Gradient',
+				elParent: document.getElementById( 'Gradient' ),
 
 		} );
 	</script>

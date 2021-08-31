@@ -103,6 +103,7 @@ function create( arrayMenu, options ) {
 		case 'Gradient':
 		case 'Transparent':
 		case 'Custom':
+		case undefined:
 			break;
 		default: console.error( 'DropdownMenu.create: Invalid options.decorations: ' + options.decorations );
 	}
@@ -227,7 +228,7 @@ function create( arrayMenu, options ) {
 					classChecked = 'checked';
 				function getItemName(item) {
 
-					var str = typeof item === 'string' ?
+					const str = typeof item === 'string' ?
 						item :
 							item.radio === true ?
 							( item.checked ? '◉' : '◎' ) + ' ' + item.name
