@@ -51,7 +51,7 @@ I use <b>getShaderMaterialPoints</b> in my [three.js](https://threejs.org/) proj
 
 		import Options from './commonNodeJS/master/Options.js'
 
-		var camera, scene, renderer, stereoEffect;
+		var camera, scene, renderer;
 
 		init();
 		animate();
