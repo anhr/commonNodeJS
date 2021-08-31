@@ -53,7 +53,7 @@ Add <b>GuiSelectPoint</b> into [dat.gui](https://github.com/anhr/dat.gui) for se
 
 		import Options from './commonNodeJS/master/Options.js'
 
-		var camera, scene, renderer, stereoEffect;
+		var camera, scene, renderer;
 
 		init();
 		animate();
