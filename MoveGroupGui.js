@@ -90,6 +90,23 @@ class MoveGroupGui {
 			let scale = options.scales[axisName];
 			if ( !scale )
 				return;
+			
+			options.moveGroupGui = options.moveGroupGui || { scales: {} };
+			options.moveGroupGui.scales[axisName] = options.moveGroupGui.scales[axisName] || {};
+			options.moveGroupGui.scales[axisName].default = function () {
+
+				const scalesControllers = options.scalesControllers[axisName];
+				scalesControllers.scale.setValue( groupOptionsDefault.scale[axisName] );
+				scalesControllers.scaleController.setValue( groupOptionsDefault[axisName].zoomMultiplier );
+				scalesControllers.position.setValue( groupOptionsDefault.position[axisName] );
+				scalesControllers.positionController.setValue( groupOptionsDefault[axisName].offset );
+				scalesControllers.rotation.setValue( groupOptionsDefault.rotation['_' + axisName] );
+
+			}
+/*если я вставлю функцию в options.scales[axisName], то она исчезнет во время вызова
+cookie.getObject( cookieName, options.scales, options.scales );
+в AxesHelperGui и поэтому MoveGroupGui нельзя вызывать до AxesHelperGui.
+
 			options.scales[axisName].default = function () {
 
 				const scalesControllers = options.scalesControllers[axisName];
@@ -100,6 +117,7 @@ class MoveGroupGui {
 				scalesControllers.rotation.setValue( groupOptionsDefault.rotation['_' + axisName] );
 
 			}
+*/			
 
 		}
 		setDefault( 'x' );
@@ -295,11 +313,8 @@ class MoveGroupGui {
 
 				defaultF: function ( value ) {
 
-					axes.default();
-					/*
-										if ( guiParams.axesHelper !== undefined )
-											guiParams.axesHelper.updateDotLines();
-					*/
+					options.moveGroupGui.scales[axisName].default();
+//					axes.default();
 
 				},
 
@@ -331,9 +346,14 @@ class MoveGroupGui {
 
 			defaultF: function ( value ) {
 
+				if ( options.moveGroupGui.scales.x ) options.moveGroupGui.scales.x.default();
+				if ( options.moveGroupGui.scales.y ) options.moveGroupGui.scales.y.default();
+				if ( options.moveGroupGui.scales.z ) options.moveGroupGui.scales.z.default();
+/*
 				if ( options.scales.x ) options.scales.x.default();
 				if ( options.scales.y ) options.scales.y.default();
 				if ( options.scales.z ) options.scales.z.default();
+*/				
 
 			},
 
