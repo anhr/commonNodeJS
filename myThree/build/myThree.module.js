@@ -12393,7 +12393,9 @@ function MoveGroupGui(group, options) {
 			function setDefault(axisName) {
 						var scale = options.scales[axisName];
 						if (!scale) return;
-						options.scales[axisName].default = function () {
+						options.moveGroupGui = options.moveGroupGui || { scales: {} };
+						options.moveGroupGui.scales[axisName] = options.moveGroupGui.scales[axisName] || {};
+						options.moveGroupGui.scales[axisName].default = function () {
 									var scalesControllers = options.scalesControllers[axisName];
 									scalesControllers.scale.setValue(groupOptionsDefault.scale[axisName]);
 									scalesControllers.scaleController.setValue(groupOptionsDefault[axisName].zoomMultiplier);
@@ -12498,7 +12500,7 @@ function MoveGroupGui(group, options) {
 						dat.controllerNameAndTitle(scaleControllers.rotation, lang.rotation);
 						dat.controllerNameAndTitle(scaleControllers.folder.add({
 									defaultF: function defaultF(value) {
-												axes.default();
+												options.moveGroupGui.scales[axisName].default();
 									}
 						}, 'defaultF'), lang.defaultButton, lang.defaultTitle);
 			}
@@ -12513,9 +12515,9 @@ function MoveGroupGui(group, options) {
 			}
 			var defaultParams = {
 						defaultF: function defaultF(value) {
-									if (options.scales.x) options.scales.x.default();
-									if (options.scales.y) options.scales.y.default();
-									if (options.scales.z) options.scales.z.default();
+									if (options.moveGroupGui.scales.x) options.moveGroupGui.scales.x.default();
+									if (options.moveGroupGui.scales.y) options.moveGroupGui.scales.y.default();
+									if (options.moveGroupGui.scales.z) options.moveGroupGui.scales.z.default();
 						}
 			};
 			dat.controllerNameAndTitle(fMoveGroup.add(defaultParams, 'defaultF'), lang.defaultButton, lang.defaultTitle);
