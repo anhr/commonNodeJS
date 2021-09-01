@@ -50,6 +50,7 @@
 <li><a href="#Quickstart">Quick start.</a></li>
 <li><a href="#MyPoints">Use <b>MyPoints</b> for create points.</a></li>
 <li><a href="#animate">Animate 3D objects.</a></li>
+<li><a href="#WebPage">Example of your web page.</a></li>
 <li><a href="#DirectoryContents">Directory Contents.</a></li>
 <li><a href="#Building">Building your own MyThree.</a></li>
 </ul>
@@ -116,31 +117,31 @@ MyThree.three.THREE = THREE;
 </ul>
 <p>Add a 3D object to the canvas. For example points.</p>
 <p><a name="MyPoints"></a></p>
-<h2>Use MyPoints for create points.</h2>
-<p>Add <b>MyPoints</b> instance into <b>createXDobjects</b> callback function of <a href="./module-MyThree-MyThree.html">MyThree</a>.
+<h2>Use <a href="../../myPoints/jsdoc/index.html">MyPoints</a> for create points.</h2>
+<p>Add <a href="../../myPoints/jsdoc/index.html">MyPoints</a> instance into <b>createXDobjects</b> callback function of <a href="./module-MyThree-MyThree.html">MyThree</a>.
 Example:</p>
 <pre class="prettyprint source"><code>new MyThree( function ( group, options ) {
 
-		const arrayFuncs = [
-			[],//first point. Zero position. White color.
-			[-0.5, 0.5, 0.5],//second point. White color.
-		];
-		MyThree.MyPoints( arrayFuncs, group, { options: options } );
+	const arrayFuncs = [
+		[],//first point. Zero position. White color.
+		[-0.5, 0.5, 0.5],//second point. White color.
+	];
+	MyThree.MyPoints( arrayFuncs, group, { options: options } );
 
-	} );
+} );
 </code></pre>
 <p><a name="animate"></a></p>
 <h2>Animate 3D objects.</h2>
 <p>See <a href="../../player/jsdoc/index.html">Player</a> for details.</p>
 <p>Move second point of <b>MyPoints</b>. Edit <b>arrayFuncs</b>:</p>
-<pre class="prettyprint source"><code>		const arrayFuncs = [
-			[],//first point. Zero position. White color.
-			[
-				'Math.sin(t*2*Math.PI)*0.5',//x
-				'Math.cos(t*2*Math.PI)*0.5',//y
-				0.5//z
-			],//second point. White color.
-		];
+<pre class="prettyprint source"><code>	const arrayFuncs = [
+		[],//first point. Zero position. White color.
+		[
+			'Math.sin(t*2*Math.PI)*0.5',//x
+			'Math.cos(t*2*Math.PI)*0.5',//y
+			0.5//z
+		],//second point. White color.
+	];
 </code></pre>
 <p><b>t</b> is current time. Default, current time is changing from 0 to 1 during playing.
 See <b>min</b> and <b>max</b> of the <b>settings.options.playerOptions</b> parameter of <a href="../../player/jsdoc/module-Player-Player.html">Player</a>.</p>
@@ -149,15 +150,15 @@ See <b>min</b> and <b>max</b> of the <b>settings.options.playerOptions</b> param
 Add a <b>playerOptions</b> key into <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html">MyThree</a>.</p>
 <pre class="prettyprint source"><code>new MyThree( function ( group, options ) {
 
-		const arrayFuncs = [
-			[],//first point. Zero position. White color.
-			[
-				'Math.sin(t*2*Math.PI)*0.5',//x
-				'Math.cos(t*2*Math.PI)*0.5',//y
-				0.5//z
-			],//second point. White color.
-		];
-		MyThree.MyPoints( arrayFuncs, group, { options: options } );
+	const arrayFuncs = [
+		[],//first point. Zero position. White color.
+		[
+			'Math.sin(t*2*Math.PI)*0.5',//x
+			'Math.cos(t*2*Math.PI)*0.5',//y
+			0.5//z
+		],//second point. White color.
+	];
+	MyThree.MyPoints( arrayFuncs, group, { options: options } );
 
 }, {
 
@@ -171,7 +172,72 @@ Add a <b>playerOptions</b> key into <b>options</b> parameter of <a href="../../m
 } );
 </code></pre>
 <p>See <b>settings.options.playerOptions</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.html">Player</a> for details.
-<a name="DirectoryContents"></a></p>
+<a name="WebPage"></a></p>
+<h2>Example of your web page.</h2>
+<p>The following code is the result of this tutorial.</p>
+<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+
+&lt;html>
+&lt;head>
+	&lt;title>MyThree&lt;/title>
+
+	&lt;!--for mobile devices-->
+	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0&quot;>
+
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
+&lt;/head>
+&lt;body>
+	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
+	&lt;div id=&quot;info&quot;>
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a>
+		- &lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/myThree&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>MyThree&lt;/a>.
+		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
+	&lt;/div>
+
+	&lt;script type=&quot;module&quot;>
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import MyThree from './commonNodeJS/master/myThree/myThree.js';
+		//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.js';
+		//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.min.js';
+		MyThree.three.THREE = THREE;
+
+		new MyThree( function ( group, options ) {
+
+			const arrayFuncs = [
+				[],//first point. Zero position. White color.
+				[
+					'Math.sin(t*2*Math.PI)*0.5',//x
+					'Math.cos(t*2*Math.PI)*0.5',//y
+					0.5//z
+				],//second point. White color.
+			];
+			MyThree.MyPoints( arrayFuncs, group, { options: options } );
+
+		}, {
+
+			playerOptions: {
+
+				marks: 110,//Ticks count. Number of scenes of 3D objects animation.
+				interval: 25,//Ticks per seconds.
+
+			},
+
+		} );
+
+	&lt;/script>
+&lt;/body>
+&lt;/html>
+</code></pre>
+<p><a name="DirectoryContents"></a></p>
 <h2>Directory Contents</h2>
 <pre class="prettyprint source"><code>build - Compiled source code.
 </code></pre>
@@ -198,7 +264,7 @@ $ npm run build
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Aug 27 2021 10:47:42 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Sep 01 2021 07:43:59 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
