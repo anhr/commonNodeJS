@@ -142,7 +142,7 @@ Add <b>Player</b> after creating of the <b>options</b> and before creation of th
 ```
 new Player( scene, { options: options, } );
 ```
-Currently your player is not doing anything. Please add a 3d object into canvas that you want to play with, for example [Points](https://threejs.org/docs/index.html?q=Points#api/en/objects/Points).
+Currently your player is not doing anything. Please add a 3d object into canvas that you want to play with after creation of <b>new Player</b> instance, for example [Points](https://threejs.org/docs/index.html?q=Points#api/en/objects/Points).
 Suppose you want to move a point during playing.
 ```
 const arrayFuncs = [
@@ -192,7 +192,7 @@ points.userData.player = {
 ```
 options.player.play3DObject();
 ```
-Attention! Please start playing after creation of all 3D objects, in current example after creating of the points.
+Attention! Please start playing after creation of all 3D objects and after creating of <b>new Player</b> instance, in current example after creating of the points.
 
 Update your web page. Now you can see moving a point on the canvas.
 
