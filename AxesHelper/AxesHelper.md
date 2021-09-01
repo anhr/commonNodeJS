@@ -63,7 +63,7 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 
 		import Options from './commonNodeJS/master/Options.js'
 
-		var camera, scene, renderer, stereoEffect;
+		var camera, scene, renderer;
 
 		init();
 		animate();
@@ -461,7 +461,7 @@ The following code is the result of this tutorial.
 		import GuiSelectPoint from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 		import MoveGroupGui from './commonNodeJS/master/MoveGroupGui.js';
 
-		var camera, scene, renderer, stereoEffect;
+		var camera, scene, renderer;
 
 		init();
 		animate();
