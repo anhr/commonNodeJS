@@ -1931,6 +1931,12 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 			if ( needsUpdate )
 				attributes.position.needsUpdate = true;
 
+			if ( funcs.trace && !funcs.line ) {
+
+				funcs.line = new Player.traceLine( options );
+				funcs.trace = false;
+
+			}
 			if ( funcs.line && funcs.line.addPoint )
 				funcs.line.addPoint( mesh, i, color );
 			if ( funcs.cameraTarget && ( funcs.cameraTarget.boLook === true ) )
@@ -2228,7 +2234,11 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 			}
 			if ( funcs.name !== undefined )
 				funcs.vector.name = funcs.name;
-			if ( funcs.trace && options.player ) funcs.vector.line = new Player.traceLine( options );
+
+//Если new Player создается после вызова Player.getPoints, то options.player === undefined и линия не рисуется
+//			if ( funcs.trace && options.player ) funcs.vector.line = new Player.traceLine( options );
+			if ( funcs.trace ) funcs.vector.trace = funcs.trace;
+
 			if ( funcs.cameraTarget ) {
 
 				funcs.vector.cameraTarget = funcs.cameraTarget;
