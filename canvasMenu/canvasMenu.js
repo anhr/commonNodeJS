@@ -67,7 +67,6 @@ class CanvasMenu {
 		}
 		const THREE = three.THREE;
 
-//		settings = settings || {};
 		settings.options = settings.options || new Options();
 		const options = settings.options;
 		if ( !options.boOptions ) {
@@ -86,7 +85,6 @@ class CanvasMenu {
 			nonFullScreen: 'Non Full Screen',
 		}
 
-//		const getLanguageCode = options.getLanguageCode || function () { return "en"; };
 		const getLanguageCode = options.getLanguageCode;
 		switch ( getLanguageCode() ) {
 
@@ -98,10 +96,6 @@ class CanvasMenu {
 				lang.repeatOn = 'Повторять проигрывание';
 				lang.repeatOff = 'Остановить повтор проигрывания';
 				lang.controllerTitle = 'Текущее время.';
-				/*
-										lang.fullScreen = 'На весь экран';
-										lang.nonFullScreen = 'Восстановить размеры экрана';
-				*/
 				lang.stereoEffects = 'Стерео эффекты';
 				lang.mono = 'Моно';
 				lang.sideBySide = 'Слева направо';
@@ -160,7 +154,6 @@ class CanvasMenu {
 					fullScreen: settings.fullScreen,
 
 				} );
-//			if ( settings.fullScreen.fullScreen !== false )
 			if ( options.canvas.fullScreen !== false )
 				fullScreenSettings.setFullScreen( false, true );
 
@@ -234,7 +227,6 @@ class CanvasMenu {
 
 				if ( fullScreen === undefined ) {
 
-//					if ( settings.fullScreen.fullScreen === false )
 					if ( options.canvas.fullScreen === false )
 						fullScreen = false;
 					else fullScreen = true;
@@ -276,7 +268,6 @@ class CanvasMenu {
 			if ( elMenu === undefined )
 				return;
 			var itemWidth = 0, elSlider;
-			//elMenu.childNodes.forEach( function ( menuItem )not compatible with IE 11
 			for ( var i = 0; i < elMenu.childNodes.length; i++ ) {
 
 				var menuItem = elMenu.childNodes[i];
@@ -292,7 +283,7 @@ class CanvasMenu {
 					itemWidth += menuItem.offsetWidth + styleWidth;
 				else {
 
-					elSlider = elSliderCur;//menuItem;
+					elSlider = elSliderCur;
 					itemWidth += styleWidth;
 
 				}
@@ -309,7 +300,7 @@ class CanvasMenu {
 			}
 
 		}
-		const size = { set: function ( width, height ) { this.x = width; this.y = height } };//new options.THREE.Vector2();
+		const size = { set: function ( width, height ) { this.x = width; this.y = height } };
 		renderer.getSize( size );
 		this.setSize( size.x, size.y );
 

@@ -31,10 +31,6 @@
 		import three from '../../three.js'
 		three.THREE = THREE;
 
-		//WARNING: Multiple instances of Three.js being imported. Use Options.createOrbitControls(...) http://localhost/anhr/commonNodeJS/master/jsdoc/Options/Options.html#createOrbitControls
-//		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
-//		import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-//		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
 
 		import FrustumPoints from '../frustumPoints.js';
 		//import FrustumPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/frustumPoints.js';
@@ -53,7 +49,7 @@
 		import Options from '../../Options.js'
 		import pointLight from '../../pointLight.js'
 
-		var camera, scene, renderer;//, frustumPoints, controls;
+		var camera, scene, renderer;
 
 		init();
 		animate();
@@ -61,7 +57,6 @@
 		function init() {
 
 			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-			//			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 0.4 ) );
 			camera.position.copy( new THREE.Vector3( 0, 0, 0.4 ) );
 
 			scene = new THREE.Scene();
@@ -74,7 +69,6 @@
 					interval: 25,//Ticks per seconds.
 
 				},
-//				dat: { dat: typeof dat === 'undefined' ? undefined : dat, },
 				frustumPoints: {},
 				scales: {
 
@@ -102,7 +96,6 @@
 			//test for duplicate FrustumPoints
 			//new FrustumPoints( camera, scene, canvas, { options: options} );
 			
-			//			const player = typeof Player === 'undefined' ? undefined : new Player( scene, {
 			if ( typeof Player !== 'undefined' ) new Player( scene, {
 
 				options: typeof options !== 'undefined' ? options : undefined,
@@ -177,16 +170,8 @@
 						pointsOptions: {
 
 							frustumPoints: typeof options.frustumPoints !== 'undefined' ? options.frustumPoints : undefined,
-/*
-							onReady: function ( points ) {
-
-								if ( typeof player === 'object' ) player.play3DObject();
-
-							}
-*/
 						},
 						//Player: Player,
-						//						options: { frustumPoints: options.frustumPoints },
 						options: typeof options !== 'undefined' ? options : undefined,
 
 					} );
@@ -243,10 +228,7 @@
 			requestAnimationFrame( animate );
 
 			renderer.render( scene, camera );
-			/*
-						if ( options.frustumPoints !== undefined )
-							options.frustumPoints.animate();
-			*/
+
 		}
 
 	</script>

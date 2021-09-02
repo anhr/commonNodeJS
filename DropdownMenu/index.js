@@ -56,11 +56,6 @@ loadScript.sync( currentScriptPath + '/styles/menu.css', optionsStyle );//move d
 loadScript.sync( currentScriptPath + '/styles/gui.css', optionsStyle );//move dat.gui into canvas
 loadScript.sync( currentScriptPath + '/styles/Decorations/transparent.css', optionsStyle );
 loadScript.sync( currentScriptPath + '/styles/Decorations/gradient.css', optionsStyle );
-/*
-loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/menu.css', optionsStyle );
-loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/Decorations/transparent.css', optionsStyle );
-loadScript.sync( 'https://raw.githack.com/anhr/DropdownMenu/master/styles/Decorations/gradient.css', optionsStyle );
-*/
 
 /**
  * Creates new menu
@@ -157,11 +152,11 @@ function create( arrayMenu, options ) {
 				var display = elDropdownChild.style.display;
 				elDropdownChild.style.display = 'block';
 				if ( drop.up )
-					elDropdownChild.style.top = '-' + ( elDropdownChild.offsetHeight/* + borderWidth*/ ) + 'px';
-				else elDropdownChild.style.top = ( elMenuButton.offsetHeight/* - borderWidth + top*/ -1 ) + 'px';
+					elDropdownChild.style.top = '-' + ( elDropdownChild.offsetHeight ) + 'px';
+				else elDropdownChild.style.top = ( elMenuButton.offsetHeight -1 ) + 'px';
 				if ( drop.left )
-					elDropdownChild.style.left = ( elMenuButton.offsetWidth - elDropdownChild.offsetWidth/* - borderWidth*/ ) + 'px';
-				elDropdownChild.style.display = display;//'none';
+					elDropdownChild.style.left = ( elMenuButton.offsetWidth - elDropdownChild.offsetWidth ) + 'px';
+				elDropdownChild.style.display = display;
 
 			}, 0 );
 
@@ -251,7 +246,6 @@ function create( arrayMenu, options ) {
 
 						if ( itemItem.radio === true ) {
 
-//							console.log( 'radio onclick ' + elName.innerHTML );
 							menuItem.items.forEach( function ( item ) {
 
 								if ( item.radio === true ) {
@@ -275,7 +269,6 @@ function create( arrayMenu, options ) {
 
 						} else if ( itemItem.checkbox === true ) {
 
-//							console.log( 'checkbox onclick ' + elName.innerHTML );
 							if ( itemItem.checked === true ) {
 
 								itemItem.elName.classList.add( classChecked );
@@ -340,7 +333,7 @@ function create( arrayMenu, options ) {
 						setTimeout( function () {
 
 							elDropdownChild.style.left = '-' + elMenuButton.clientWidth + 'px';
-							elDropdownChild.style.top = ( elMenuButton.offsetHeight/* - getMenuButtonBorderWidth()*/ - 1 ) + 'px';
+							elDropdownChild.style.top = ( elMenuButton.offsetHeight - 1 ) + 'px';
 
 						}, 0 );
 						break;
@@ -359,4 +352,3 @@ function create( arrayMenu, options ) {
 
 }
 export { create };
-//export default create;

@@ -18,13 +18,11 @@
 
 import loadScript from '../loadScriptNodeJS/loadScript.js';
 //import loadScript from 'https://raw.githack.com/anhr/commonNodeJS/master/loadScriptNodeJS/loadScript.js';
-//import loadScript from 'http://localhost/anhr/commonNodeJS/master/loadScriptNodeJS/loadScript.js';
 
 import three from '../three.js'
 
 const optionsStyle = {
 
-	//style rel="stylesheet"
 	tag: 'style'
 
 }
@@ -49,10 +47,8 @@ const getCurrentScriptPath = function () {
 		path = script.substring( 0, script.lastIndexOf( '/' ) );
 	return path;
 };
-//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
 const currentScriptPath = getCurrentScriptPath();
 
-//loadScript.sync( 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.css', optionsStyle );
 loadScript.sync( currentScriptPath + '/colorpicker.css', optionsStyle );
 
 const type = ( window.SVGAngle || document.implementation.hasFeature( "http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1" ) ? "SVG" : "VML" ),
@@ -199,7 +195,6 @@ class ColorPicker {
 
 			}
 
-//			const palette = options.palette instanceof Palette ? options.palette : new Palette( options );
 			const palette = options.palette instanceof this.palette ? options.palette : new this.palette( options );
 			var slide;
 			function getSlideHeight() {
@@ -567,14 +562,6 @@ class ColorPicker {
 			}
 
 			options = options || {};
-			/*есть случай когда для каждой точки создается своя палитра
-				if ( !options.duplicate && boCreated ) {
-			
-					console.warn( 'Palette: duplicate palette' );
-					return;
-			
-				}
-			*/
 			if ( options.palette === undefined )
 				options.palette = _this.paletteIndexes.BGYW;
 			
@@ -750,14 +737,6 @@ class ColorPicker {
 			this.toColor = function ( value, min, max ) {
 
 				const THREE = three.THREE;
-				/*
-						if ( typeof THREE === 'undefined' ) {
-				
-							console.error( 'Call ColorPicker.palette.setTHREE(THREE) first.' );
-							return;
-							
-						}
-				*/
 				if ( value instanceof THREE.Color )
 					return value;
 				var c = this.hsv2rgb( value, min, max );

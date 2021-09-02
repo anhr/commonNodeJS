@@ -18,16 +18,12 @@
 //import MyThree from '../myThree/myThree.js';
 import MyPoints from '../myPoints/myPoints.js';
 
-//import Cookie from '../cookieNodeJS/cookie.js';
-//import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
 import clearThree from '../clearThree.js';
 //import { dat } from '../dat/dat.module.js';
 
 import { getWorldPosition } from '../getPosition.js';
 
 import three from '../three.js'
-//import setOptions from '../setOptions.js'
 import FolderPoint from '../folderPoint.js'
 
 //memory limit
@@ -221,7 +217,6 @@ class FrustumPoints
 				groupFrustumPoints = new THREE.Group();
 
 			settings.optionsShaderMaterial = settings.optionsShaderMaterial || {};
-//			const optionsShaderMaterial = settings.optionsShaderMaterial;
 
 			optionsShaderMaterial.point = optionsShaderMaterial.point || {};
 			optionsShaderMaterial.point.size = optionsShaderMaterial.point.size || 0.01;//Size of each frustum point
@@ -252,13 +247,6 @@ class FrustumPoints
 
 			const cookie = options.dat.cookie,
 				cookieName = options.dat.getCookieName( 'FrustumPoints' );
-/*
-			const cookie = optionsShaderMaterial.cookie || new Cookie.defaultCookie(),
-				cookieName = 'FrustumPoints' + ( optionsShaderMaterial.cookieName ? '_' + optionsShaderMaterial.cookieName : '' );
-
-			delete optionsShaderMaterial.cookie;
-			delete optionsShaderMaterial.cookieName;
-*/
 
 			Object.freeze( optionsShaderMaterial );
 			cookie.getObject( cookieName, shaderMaterial, optionsShaderMaterial );
@@ -588,7 +576,7 @@ class FrustumPoints
 
 				const cameraPerspectiveHelper = new THREE.CameraHelper( camera );
 
-				var array, indexArray = 0;//, _names;// = [];
+				var array, indexArray = 0;
 
 				function getPoint( pointName ) {
 
@@ -930,7 +918,6 @@ class FrustumPoints
 						onReady: function ( points ) {
 
 							_points = points;
-							//						_points.userData.boFrustumPoints = true;
 							_points.userData.isInfo = function () { return shaderMaterial.info; }
 
 							if ( shaderMaterial.info && options.raycaster )
@@ -969,7 +956,6 @@ class FrustumPoints
 
 				var cameraQuaternionDefault = new THREE.Vector4( camera.quaternion.x, camera.quaternion.y, camera.quaternion.z, camera.quaternion.w );
 
-				//			if ( _points === undefined )
 				if ( !_points )
 					return;//User has changed 'Z Count' of the frustumPoints
 
@@ -1036,7 +1022,6 @@ class FrustumPoints
 					return;
 				if ( points.geometry.attributes.position.itemSize !== 4 )
 					console.error( 'points.geometry.attributes.position.itemSize = ' + points.geometry.attributes.position.itemSize );
-				//		cloud.updateItem( points.userData.cloud.indexArray + '_' + i,
 				cloud.cloudPoints.updateItem( points.userData.cloud.indexArray + i,
 					getWorldPosition( points,
 						new THREE.Vector4().fromArray( points.geometry.attributes.position.array, i * points.geometry.attributes.position.itemSize ) ),
@@ -1086,7 +1071,6 @@ class FrustumPoints
 						( pointOpacity === _points.userData.shaderMaterial.point.opacity ) )
 				) {
 
-//					needsUpdate();
 					return false;
 
 				}
@@ -1174,10 +1158,6 @@ class FrustumPoints
 					yCountTitle: "The count of vertical points for each z level of the  frustum of the camera's field of view.",
 
 				};
-/*
-				var languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
-					: guiParams.getLanguageCode();
-*/
 				switch ( options.getLanguageCode() ) {
 
 					case 'ru'://Russian language
@@ -1278,7 +1258,7 @@ class FrustumPoints
 					if ( _points === undefined ) {
 
 						saveSettings();
-						return;//shaderMaterial.display = false
+						return;
 
 					}
 					if ( shaderMaterial.info ) {
@@ -1312,14 +1292,12 @@ class FrustumPoints
 				const cSquare = fFrustumPoints.add( shaderMaterial, 'square' ).onChange( function ( value ) { update(); } );
 				dat.controllerNameAndTitle( cSquare, lang.square, lang.squareTitle );
 
-//				const folderPoint = new FolderPoint( fFrustumPoints, { size: shaderMaterial.point.size }, function ( value )
 				const folderPoint = new FolderPoint( shaderMaterial.point, function ( value ) {
 
 					//Не помню зачем это написал
 					if ( value === undefined ) {
 
 						console.warn( 'under constraction' );
-						//				value = _points.userData.shaderMaterial.point.size;
 
 					}
 					if ( value < 0 )
@@ -1334,7 +1312,6 @@ class FrustumPoints
 				}, new Options( { dat: {gui: options.dat.gui } } ), {
 
 					folder: fFrustumPoints,
-//					point: { size: 0.01 },
 					defaultPoint: { size: 0.01 },
 					PCOptions: {
 
@@ -1342,7 +1319,6 @@ class FrustumPoints
 						max: 0.1,
 
 					},
-//					getLanguageCode: options.getLanguageCode,
 
 				} );
 
@@ -1416,23 +1392,6 @@ class FrustumPoints
 				displayControllers( shaderMaterial.display );
 
 			}
-/*
-			function animate() {
-
-				requestAnimationFrame( animate );
-				if (
-					!_points ||
-					( _points.userData.shaderMaterial === undefined ) ||
-					(
-						( pointOpacity === _points.userData.shaderMaterial.point.opacity ) )
-				)
-					return;
-				pointOpacity = _points.userData.shaderMaterial.point.opacity;
-				_points.material.uniforms.opacity.value = _points.userData.shaderMaterial.point.opacity;
-
-			}
-			window.requestAnimationFrame( animate );
-*/
 			return this;
 
 		}
@@ -1443,7 +1402,6 @@ class FrustumPoints
 		this.guiSelectPoint = function () {
 
 			var cFrustumPointsX = null, cFrustumPointsY = null, cFrustumPointsZ = null;
-//				_this = this;
 			_guiSelectPoint = this;
 			/**
 			 * create controls
@@ -1479,7 +1437,6 @@ class FrustumPoints
 
 					const controller = fPoints.add( { Points: lang.notSelected }, 'Points', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
 
-//						_frustumPoints.selectPoint( _guiSelectPoint );
 						const index = _guiSelectPoint.getSelectedIndex();
 						if ( index === null ) {
 
@@ -1564,7 +1521,6 @@ class FrustumPoints
 			 */
 			this.getSelectedIndex = function () {
 
-//				return _frustumPoints.getSelectedIndex( this );
 				if ( _names === undefined ) {
 
 					console.warn( 'Сюда попадает во время отладки когда не задаю имени каждой точки или когда the cDisplay checkbox of the frustumPoints is not checked' );

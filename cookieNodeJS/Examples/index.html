@@ -12,62 +12,62 @@
 	<!--<script src="https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.min.js"></script>-->
 
 </head>
-			<body>
-				<p><a href='https://anhr.github.io/index.html' target="_blank">Home</a> | <a href='https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS' target="_blank">GitHub</a></p>
+<body>
+	<p><a href='https://anhr.github.io/index.html' target="_blank">Home</a> | <a href='https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS' target="_blank">GitHub</a></p>
 
-				<h1>node.js version of the cookie.</h1>
-				Cookies let you store user information in web pages.
-				See <a href='https://www.w3schools.com/js/js_cookies.asp' target="_blank">JavaScript Cookies</a> for details.
+	<h1>node.js version of the cookie.</h1>
+	Cookies let you store user information in web pages.
+	See <a href='https://www.w3schools.com/js/js_cookies.asp' target="_blank">JavaScript Cookies</a> for details.
 
-				<p>
-					Is the cookie enabled in your web browser? <span id="isenable"></span>
-				</p>
-				<script type="text/javascript">
-					var elIsEnable = document.getElementById( 'isenable' );
-					if ( cookie.isEnabled() )
-						elIsEnable.innerHTML = 'Yes';
-					else {
+	<p>
+		Is the cookie enabled in your web browser? <span id="isenable"></span>
+	</p>
+	<script type="text/javascript">
+		var elIsEnable = document.getElementById( 'isenable' );
+		if ( cookie.isEnabled() )
+			elIsEnable.innerHTML = 'Yes';
+		else {
 
-						elIsEnable.style.color = 'red';
-						elIsEnable.innerHTML =  'No';
+			elIsEnable.style.color = 'red';
+			elIsEnable.innerHTML =  'No';
 
-					}
-				</script>
+		}
+	</script>
 
-				<p>
-					Cookie value: <input id="inputage" value="25" /> <input type="button" value="Set cookie" onclick="setCookie()" />
-				</p>
-				<script type="text/javascript">
-					function setCookie() {
+	<p>
+		Cookie value: <input id="inputage" value="25" /> <input type="button" value="Set cookie" onclick="setCookie()" />
+	</p>
+	<script type="text/javascript">
+		function setCookie() {
 
-						cookie.set( 'age', document.getElementById( 'inputage' ).value );
-						getCookie();
+			cookie.set( 'age', document.getElementById( 'inputage' ).value );
+			getCookie();
 
-					}
-				</script>
+		}
+	</script>
 
-				<p>
-					<input type="button" value="Get cookie" onclick="getCookie()" /> value: <span id="outputage"></span>
-				</p>
-				<script type="text/javascript">
-					function getCookie() {
+	<p>
+		<input type="button" value="Get cookie" onclick="getCookie()" /> value: <span id="outputage"></span>
+	</p>
+	<script type="text/javascript">
+		function getCookie() {
 
-						document.getElementById( 'outputage' ).innerHTML = cookie.get( 'age', 30 );
+			document.getElementById( 'outputage' ).innerHTML = cookie.get( 'age', 30 );
 
-					}
-				</script>
+		}
+	</script>
 
-				<p>
-					<input type="button" value="Remove cookie" onclick="removeCookie()" />
-				</p>
-				<script type="text/javascript">
-					function removeCookie() {
+	<p>
+		<input type="button" value="Remove cookie" onclick="removeCookie()" />
+	</p>
+	<script type="text/javascript">
+		function removeCookie() {
 
-						cookie.remove( 'age' );
-						getCookie();
+			cookie.remove( 'age' );
+			getCookie();
 
-					}
-				</script>
+		}
+	</script>
 
-			</body>
-			</html>
+</body>
+</html>

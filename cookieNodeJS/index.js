@@ -108,7 +108,6 @@ function get( name, defaultValue ) {
  */
 function getObject( name, options, optionsDefault ) {
 
-//	new defaultCookie().getObject( name, options, JSON.parse( get( name, JSON.stringify( optionsDefault ) ) ) );
 	new defaultCookie().getObject( name, options, copyObject( name, optionsDefault ) );
 
 };
@@ -182,7 +181,6 @@ function defaultCookie( name ) {
 	 */
 	this.getObject = function ( name, options, optionsDefault ) {
 
-		// 
 		if ( !optionsDefault )
 			return;//object's settings is not saving
 		Object.keys( optionsDefault ).forEach( function ( key ) {

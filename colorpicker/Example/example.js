@@ -74,7 +74,6 @@ function example( ColorPicker ) {
 
 				//console.warn( 'callback: ' + c.percent + ' percent c.hex = ' + c.hex );
 				var color = 'RGB(' + c.r + ', ' + c.g + ', ' + c.b + ')';
-//				document.getElementById( 'color4' ).style.backgroundColor = color;
 				var elColor4 = document.getElementById( 'color4' );
 				elColor4.style.backgroundColor = color;
 				document.getElementById( 'color4text' ).innerHTML = color;
