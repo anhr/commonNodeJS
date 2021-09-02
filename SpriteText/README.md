@@ -3,7 +3,8 @@
 A [sprite](https://threejs.org/docs/index.html#api/en/objects/Sprite) based text component. SpriteText is a text that always faces towards the camera.
 
 I use SpriteText in my [three.js](https://threejs.org/) projects for displaying of the text in the canvas.
-[Example](https://raw.githack.com/anhr/SpriteText/master/Examples/SpriteText.html).
+[Example 1](https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/Examples/SpriteText.html).
+[Example 2](https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/Examples/SpriteTextGui.html).
 
 Uses in my projects:
  * [AxesHelper](../AxesHelper)
