@@ -17,6 +17,7 @@ I use <b>Player</b> in my [three.js](https://threejs.org/) projects for 3D objec
 * [Set the camera to look at the point.](#cameraLook)
 * [Time of the playing.](#playingTime)
 * [Use Raycaster for mouse picking (working out what objects in the 3d space the mouse is over).](#Raycaster)
+* [Example of your web page.](#WebPage)
 * [Directory Contents.](#DirectoryContents)
 * [Building your own Player.](#Building)
 
@@ -474,7 +475,7 @@ Import <b>MyPoints</b> into your web page for it.
 ```
 import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 ```
-Example.
+Now you can use <b>MyPoints</b> in your javascript code. Please call <b>MyPoints</b> after creating of <b>renderer</b> for your future code. Example:
 ```
 MyPoints( arrayFuncs, scene, {
 
@@ -583,7 +584,7 @@ Import <b>dat.gui</b>.
 import { dat } from './commonNodeJS/master/dat/dat.module.js';
 three.dat = dat;
 ```
-And call <b>player.gui()</b>
+And call <b>player.gui()</b> after creating of <b>new Player</b> instance.
 ```
 options.player.gui();
 ```
@@ -619,12 +620,12 @@ You can see the "Camera" folder in the upper right corner of the canvas.
 import GuiSelectPoint from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 ```
 * Create instance of the <b>GuiSelectPoint</b>.
+
+Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point and after creating of <b>new Player</b>.
 ```
 new GuiSelectPoint( options );
 if ( options.guiSelectPoint ) options.guiSelectPoint.add();
 ```
-
-Note! Create instance of the <b>GuiSelectPoint</b> before all meshes, from which user can to select point and after creating of <b>new Player</b>.
 
 You can see the "Meshes" folder in the upper right corner of the canvas.
 
@@ -633,7 +634,7 @@ please add
 ```
 options.guiSelectPoint.addMesh( points );
 ```
-line after <b>scene.add( points );</b>.
+line after <b>scene.add( points );</b> and after creating of <b>new GuiSelectPoint</b> instance.
 * If you use [getShaderMaterialPoints](../../getShaderMaterialPoints/jsdoc/module-getShaderMaterialPoints.html) for create points, please 
 add <b>options.guiSelectPoint.addMesh( points );</b>
 line into <b>onReady</b> callback function of <b>getShaderMaterialPoints</b>.
@@ -1052,6 +1053,312 @@ Note that the step only matters for <b>max: Infinity</b>.
 
 Go to [Raycaster](../../AxesHelper/jsdoc/index.html#Raycaster) for details.
 
+<a name="WebPage"></a>
+## Example of your web page.
+The following code is the result of this tutorial.
+```
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>Player</title>
+
+	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
+	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">-->
+	<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">
+
+	<!--<script src="./three.js/dev/build/three.js"></script>-->
+	<!--<script src="./three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
+</head>
+<body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/player" target="_blank" rel="noopener">Player</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+	<div>
+		<canvas id="canvas"></canvas>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
+		import Options from './commonNodeJS/master/Options.js'
+
+		import Player from './commonNodeJS/master/player/player.js';
+		//import Player from './commonNodeJS/master/player/build/player.module.js';
+		//import Player from './commonNodeJS/master/player/build/player.module.min.js';
+
+		//import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
+		//import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
+		import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
+		import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
+		import { dat } from './commonNodeJS/master/dat/dat.module.js';
+		three.dat = dat;
+		import CameraGui from './commonNodeJS/master/CameraGui.js';
+		import GuiSelectPoint from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+
+		var camera, scene, renderer;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			const options = new Options(
+
+				{
+
+					playerOptions: {//create a Player instance. 3D objects animation.
+
+						min: 0,
+						max: 1,//Infinity,
+						dt: 0.01,//Have effect for max: Infinity
+						marks: 100,//Ticks count of the playing.
+						interval: 25,//Ticks per seconds.
+
+					},
+					point: { size: 15 },
+					cameraTarget: {
+
+	
+						//boLook: false,//camera do not look at a selected point during playing.
+							//User can change this key if you add the CameraGui into dat.gui
+						camera: camera,
+						rotation: {
+
+							//rotate camera to 180 degrees
+							//angle: Math.PI,
+
+							//Camera rotation is function of the time.
+							angle: new Function( 't', 'return 2*t' ),
+
+							/*
+							angle: [
+								0,//rotation is 0 degrees for time is 0
+								Math.PI / 2//rotation is 90 degrees for time is max time
+							],
+							*/
+							/*
+							angle: [
+								{ t: 0, v: 0 },//rotation is 0 degrees for time is 0
+								{ t: 1, v: Math.PI / 2 },//rotation is 90 degrees for time is 1
+								{ t: 10, v: Math.PI / 2 },//rotation is 90 degrees for time is 10
+								{ t: 11, v: 0 }//rotation is 0 degrees for time is 11 and great.
+							],
+							*/
+							//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+						},
+						//distanceToCamera: new THREE.Vector3( 0, 0, 5 ),
+						distanceToCamera: new THREE.Vector3( 0, 0, new Function( 't', 'return 2 + 4 * t' ) ),
+						/*
+						distanceToCamera: new THREE.Vector3( 0, 0, [
+							{ t: 0, v: 5 },//distance to camera is 5 for time is 0
+							{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+							{ t: 10, v: 2 },//distance to camera is 2 for time is 10
+							{ t: 11, v: 5 }//distance to camera is 5 for time is 11 and great.
+						] ),
+						*/
+
+					}
+
+				}
+
+			);
+
+			const arrayFuncs = [
+				{
+
+					vector: new THREE.Vector4(
+						new Function( 't', 'a', 'b', 'return Math.sin(t*a*2*Math.PI)*0.5+b' ),//x
+						new Function( 't', 'a', 'b', 'return Math.cos(t*a*2*Math.PI)*0.5-b' ),//y
+						0.5,//z
+						{
+
+							func: new Function( 't', 'return 1-2*t' ),
+							min: -1,
+							max: 1,
+
+						},//w
+					),//First point
+					trace: true,//Displays the trace of the first point movement.
+
+					//Set the camera to look at the first point.
+					cameraTarget: {
+
+						camera: camera,
+						rotation: {
+
+							angle: 0,
+							//angle: new Function( 't', 'return 5*t' ),
+							//angle: [0, Math.PI / 2],
+							//angle: [{ t: 0, v: 0 }, { t: 1, v: Math.PI / 2 }, { t: 10, v: Math.PI / 2 },  { t: 11, v: 0 }],
+							//axis: new THREE.Vector3( 1, 0, 0 ),//Rotate around x axis
+
+						},
+						distanceToCamera: new THREE.Vector3( 0, 0, [
+							{ t: 0, v: 9 },//distance to camera is 9 for time is 0
+							{ t: 1, v: 2 },//distance to camera is 2 for time is 1
+						] ),
+
+					},
+
+				},
+				new THREE.Vector3( -0.5, -0.5, -0.5 ),//Second point
+			];
+			/*
+			const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
+					Player.getPoints( arrayFuncs,{ group: scene, options: options } ),
+					Player.getItemSize( arrayFuncs ) ),
+				new THREE.PointsMaterial( {
+
+					vertexColors: THREE.VertexColors,
+					size: 0.2,
+
+				} ) );
+			scene.add( points );
+			points.userData.player = {
+
+				arrayFuncs: arrayFuncs,
+				selectPlayScene: function ( t ) {
+
+					points.position.x = 8*t;
+
+				}
+
+			}
+			*/
+			/*
+			getShaderMaterialPoints( scene, arrayFuncs,
+				function ( points ) {
+
+					scene.add( points );
+					points.userData.player = {
+
+						arrayFuncs: arrayFuncs,
+						selectPlayScene: function ( t ) {
+
+							points.position.x = 8 * t;
+							points.rotation.z = - Math.PI * 2 * t;
+
+						}
+
+					}
+					options.player.play3DObject();
+					options.guiSelectPoint.addMesh( points );
+
+				},
+				{
+	
+					options: options,
+
+				} );
+			*/
+
+			new Player( scene, {
+
+				options: options,
+				cameraTarget: { camera: camera, },
+
+			} );
+
+			new GuiSelectPoint( options, {
+
+				cameraTarget: { camera: camera, },
+
+			} );
+			if ( options.guiSelectPoint ) options.guiSelectPoint.add();
+			//options.guiSelectPoint.addMesh( points );
+
+			new CameraGui( camera, options );
+
+			options.player.gui();
+			new options.player.PlayController();
+			//options.player.play3DObject();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+
+			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene } );
+			//options.eventListeners.addParticle( points );
+
+			MyPoints( arrayFuncs, scene, {
+
+				options: options,
+				pointsOptions: {
+
+					position: new THREE.Vector3( new Function( 't', 'return 8 * t' ), 0, 0 ),
+					rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
+					shaderMaterial: false,
+					onReady: function ( points ) {
+
+						options.player.play3DObject();
+
+					}
+
+				}
+
+			} );
+
+			new CanvasMenu( renderer, {
+
+				options: options,
+
+			} );
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			//Orbit controls allow the camera to orbit around a target.
+			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+			options.createOrbitControls( camera, renderer, scene );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	</script>
+</body>
+</html>
+```
 <a name="DirectoryContents"></a>
 ## Directory Contents
 
