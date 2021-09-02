@@ -136,6 +136,8 @@ SpriteText.updateSpriteTextGroup( scene );
 after creating of all <b>SpriteText</b> instances for new <b>scene.userData.optionsSpriteText</b> have effect.
 Now you can see, your "Scene" text is green, text height is 0.2 and font name is "Times".
 * You can create a group of texts with specific settings.
+
+Add it before <b>SpriteText.updateSpriteTextGroup( scene );</b>.
 ```
 const group = new THREE.Group();
 group.userData.optionsSpriteText = {
@@ -197,3 +199,138 @@ SpriteTextGui( spriteTextGroup, options, {
 } );
 ```
 Now user can select another color of the "group" text in the "Sprite with individual options" folder.
+<a name="WebPage"></a>
+## Example of your web page.
+The following code is the result of this tutorial.
+```
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>SpriteText</title>
+
+	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
+	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
+	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">-->
+	<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">
+
+	<!--<script src="./three.js/dev/build/three.js"></script>-->
+	<!--<script src="./three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
+</head>
+<body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/SpriteText" target="_blank" rel="noopener">SpriteText</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+	<div>
+		<canvas id="canvas"></canvas>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
+		import Options from './commonNodeJS/master/Options.js'
+		import { SpriteText } from './commonNodeJS/master/SpriteText/SpriteText.js';
+		import { dat } from './commonNodeJS/master/dat/dat.module.js';
+		three.dat = dat;
+		import { SpriteTextGui } from './commonNodeJS/master/SpriteText/SpriteTextGui.js';
+
+		var camera, scene, renderer;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			scene.userData.optionsSpriteText = {
+
+				fontColor: 'rgba(0, 255, 0, 1)', //green
+				textHeight: 0.2,
+				fontFace: 'Times',
+
+			};
+
+			scene.add( new SpriteText( 'Scene', new THREE.Vector3( 1, 0, 0 ) ) );
+
+			const group = new THREE.Group();
+			group.userData.optionsSpriteText = {
+
+				textHeight: 0.1,
+
+			};
+			scene.add( group );
+			const optionsIndividual = {
+
+				fontColor: 'rgba(255, 0, 0, 1)',//red
+
+			}
+			const spriteTextGroup = new SpriteText( 'group', new THREE.Vector3( -4, 0, 0 ), optionsIndividual );
+			group.add( spriteTextGroup );
+
+			SpriteText.updateSpriteTextGroup( scene );
+
+			const options = new Options();
+
+			SpriteTextGui( scene, options );
+			SpriteTextGui( group, options, { spriteFolder: 'Sprite Text Setting for group' } );
+			SpriteTextGui( spriteTextGroup, options, {
+
+				spriteFolder: 'Sprite with individual options',
+				options: optionsIndividual,
+
+			} );
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			//Orbit controls allow the camera to orbit around a target.
+			//https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+			options.createOrbitControls( camera, renderer, scene );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	</script>
+</body>
+</html>
+```
