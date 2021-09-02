@@ -1,6 +1,6 @@
 # StereoEffect.
 
-Uses dual PerspectiveCameras for [Parallax Barrier](https://en.wikipedia.org/wiki/Parallax_barrier) effects.
+Uses dual [PerspectiveCameras](https://threejs.org/docs/index.html?q=PerspectiveCamera#api/en/cameras/PerspectiveCamera) for [Parallax Barrier](https://en.wikipedia.org/wiki/Parallax_barrier) effects.
 
 I use StereoEffect in my [three.js](https://threejs.org/) projects.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/).
