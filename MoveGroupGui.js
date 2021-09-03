@@ -18,7 +18,7 @@ import three from './three.js'
 import ScaleController from './ScaleController.js';
 import PositionController from './PositionController.js';
 
-import Cookie from './cookieNodeJS/cookie.js';
+//import Cookie from './cookieNodeJS/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 class MoveGroupGui {
@@ -57,7 +57,8 @@ class MoveGroupGui {
 		else options.scales = options.scales || { x: {}, y: {}, z: {}, };
 
 
-		const cookie = options.cookie || new Cookie.defaultCookie(),
+//		const cookie = options.cookie || new Cookie.defaultCookie(),
+		const cookie = options.dat.cookie,
 			dat = three.dat,//options.dat.dat,
 			cookieName = 'MoveGroup' + ( options.cookieName ? '_' + options.cookieName : '' ),
 			optionsGroup = {
