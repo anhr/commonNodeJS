@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -81,7 +81,7 @@
 
 		import Options from '../../Options.js'
 
-		var camera, scene, renderer, raycaster, stereoEffect;
+		var camera, scene, renderer, stereoEffect;//, raycaster
 
 		init();
 		animate();
@@ -97,41 +97,10 @@
 
 				selectPlayScene: function ( t ) {
 
-/*
-					const axis = new THREE.Vector3( 0, 1, 0 );
-					const angle = 0;//Math.PI / 2;
-					camera.position.copy( distanceToCamera );
-					camera.position.applyAxisAngle( axis, angle );
-*/					
-/*
-					scene.position.x = -t;
-//					camera.position.x = t;
-//					camera.quaternion._y = t;
-//					scene.rotation.y = t;
-					const quaternion = new THREE.Quaternion( 0, t );
-					camera.position.applyQuaternion( quaternion );
-*/
-/*					
-					const target = new THREE.Vector3();//.sub(scene.position);
-					camera.lookAt( target );
-					camera.position.x = t;
-*/					
-/*
-					if( controls ) {
-
-						controls.target.x = t;
-//						camera.quaternion._y += 0.01;
-						camera.lookAt( scene.position );
-//						controls.update();
-
-					}
-*/					
-
 				}
 
 			}
 			
-//			const options = 
 			const options = new Options( {
 
 				//getLanguageCode: getLanguageCode,
@@ -176,7 +145,6 @@
 				//stereoEffect: false,
 				dat: {//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
 
-//					dat: typeof dat !== 'undefined' ? dat : undefined,
 					//gui: typeof dat !== 'undefined' ? new dat.GUI() : undefined,
 					//cookie: false,
 					cookieName: 'mySettings',
@@ -197,58 +165,14 @@
 				//dat: false,
 				raycaster: {
 
-/*
-					addParticle: function ( particle ) {
-
-						if ( raycaster && raycaster.stereo )
-							raycaster.stereo.addParticle( particle );
-
-					},
-*/
 					onIntersection: function ( intersection ) {
 
 						Options.raycaster.onIntersection( intersection, options, scene, camera, canvas, renderer );
-/*
-						this.spriteText = StereoEffect.getTextIntersection( intersection, {
-
-							scales: typeof axesHelper !== 'undefined' ? axesHelper.options.scales : { x: {}, y: {}, z: {} },
-							spriteOptions: {
-
-								group: scene,
-								rect: {
-
-									displayRect: true,
-									borderRadius: 15,
-
-								},
-								center: {
-
-									camera: camera,
-									canvas: canvas,
-
-								}
-								//center: new THREE.Vector2( 1, 0 ),
-								//sizeAttenuation: true,
-
-							}
-
-						} );
-						renderer.domElement.style.cursor = 'pointer';
-*/
 
 					},
 					onIntersectionOut: function () {
 
 						Options.raycaster.onIntersectionOut( scene, renderer );
-/*
-						if ( this.spriteText ) {
-
-							scene.remove( this.spriteText );
-							delete this.spriteText;
-
-						}
-						renderer.domElement.style.cursor = cursor;
-*/
 
 					},
 					onMouseDown: function ( intersect ) {
@@ -265,22 +189,9 @@
 			} );
 			if ( typeof Player !== 'undefined' ) {
 
-//				player = new Player( scene, 
 				new Player( scene, {
 
 					options: options,
-/*
-					playerOptions: {
-
-						marks: 100,//Ticks count of the playing.
-						interval: 25,//Ticks per seconds.
-						min: -1,
-						//max: 0,
-						//max: Infinity,//первращается в null после чтения из cookie
-						dt: 0.01,//for max: Infinity
-
-					},
-*/
 					cameraTarget: { camera: camera, },
 
 				} );
@@ -289,7 +200,6 @@
 				//new Player( scene, { options: options, } );
 
 
-//				Player.cameraTarget.init
 				options.playerOptions.cameraTarget.init( {
 
 					//boLook: false,
@@ -313,10 +223,8 @@
 
 			if ( ( typeof GuiSelectPoint !== "undefined" ) && ( typeof dat !== "undefined" ) ) {
 
-//				guiSelectPoint = new GuiSelectPoint
 				new GuiSelectPoint( options, {
 
-//					getLanguageCode: getLanguageCode,
 					/*
 					cameraTarget: {
 
@@ -324,13 +232,8 @@
 
 					},
 					*/
-//					options: options,
 
 				} );
-				
-				//Player changes the guiSelectPoint control's values during playing
-//				options.guiSelectPoint = guiSelectPoint;
-				//if ( selectPlaySceneOptions ) selectPlaySceneOptions.guiSelectPoint = guiSelectPoint;
 				
 			}
 
@@ -347,19 +250,6 @@
 			//
 
 			options.createOrbitControls( camera, renderer, scene );
-/*			
-			if ( typeof OrbitControls !== 'undefined' ) {
-
-				options.orbitControls = new OrbitControls( camera, renderer.domElement );
-				options.orbitControls.target.set(  -0.2, -0.2, -0.2 );
-				options.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-				options.orbitControls.update();
-//				if ( typeof Player !== 'undefined' ) Player.orbitControls = options.orbitControls;
-
-			}
-*/			
-
-//			const cursor = renderer.domElement.style.cursor;
 
 			if ( typeof StereoEffect !== "undefined" ) {
 				new StereoEffect( renderer, options );/*{
@@ -368,33 +258,11 @@
 					far: camera.far,
 					camera: camera,
 					//stereoAspect: 1,
-//					options: options,//Among other things, it adds the "Stereo Effects" button into canvasMenu
 
 				} );*/
 				stereoEffect = options.stereoEffect;
-//				stereoEffect.setSize( window.innerWidth, window.innerHeight );
 
 			}
-/*
-			raycaster = new THREE.Raycaster();
-			raycaster.params.Points.threshold = 0.03;
-
-			if ( raycaster.setStereoEffect ) {
-
-				//the precision of the raycaster when intersecting objects, in world units.
-				//See https://threejs.org/docs/#api/en/core/Raycaster.params.
-
-				raycaster.setStereoEffect( {
-
-					renderer: renderer,
-					camera: camera,
-					stereoEffect: stereoEffect,
-
-				} );
-//				raycaster.stereo.addParticles( arrayParticles );
-
-			}
-*/
 			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
 
 			var arrayFuncs = typeof Player === 'undefined' ?
@@ -516,7 +384,6 @@
 
 				},
 			];
-//			const arrayParticles = [];
 			if ( typeof getShaderMaterialPoints !== 'undefined' ) {
 
 				console.log( 'Using getShaderMaterialPoints method for creating of the points.' );
@@ -537,15 +404,6 @@
 						}
 
 						options.raycaster.addParticle( points );
-/*
-						points.userData.raycaster = {
-
-							onIntersection: options.raycaster.onIntersection,
-							onIntersectionOut: options.raycaster.onIntersectionOut,
-							onMouseDown: options.raycaster.onMouseDown,
-
-						}
-*/
 
 						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 
@@ -563,23 +421,11 @@
 				MyPoints( arrayFuncs, scene, {
 
 						options: options,
-//						pointsOptions: {
 
-							//position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
-							//rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
-							//shaderMaterial: { point: { size: 100 } },
-							//shaderMaterial: false,
-/*							
-							onReady: function( points ) {
-
-//								arrayParticles.push( points );
-//								options.eventListeners.addParticle( points );
-								if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
-
-							}
-*/							
-
-//						}
+						//position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
+						//rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
+						//shaderMaterial: { point: { size: 100 } },
+						//shaderMaterial: false,
 
 				} );
 				MyPoints( [
@@ -602,9 +448,6 @@
 
 					], scene, {
 
-//Не помню зачем всунул эту строку
-//						Player: typeof Player === 'undefined' ? undefined : Player,
-
 						options: options,
 						pointsOptions: {
 
@@ -612,15 +455,6 @@
 							//position: new THREE.Vector3( new Function( 't', 'return t' ), 0, 0 ),
 							//rotation: new THREE.Vector3( 0, 0, new Function( 't', 'return - Math.PI * 2 * t' ) ),
 							shaderMaterial: false,
-/*							
-							onReady: function( points ) {
-
-//								arrayParticles.push( points );
-//								options.eventListeners.addParticle( points );
-//								if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
-
-							}
-*/							
 
 						}
 
@@ -632,7 +466,6 @@
 				const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
 					typeof Player === 'undefined' ? arrayFuncs:
 						Player.getPoints( arrayFuncs, { group: scene, options: options } ),
-//						Player.getPoints( arrayFuncs, { group: scene, options: { player: { player: player } } } ),
 					typeof Player === 'undefined' ? 3:
 						Player.getItemSize( arrayFuncs )
 				),
@@ -669,21 +502,12 @@
 
 				}
 				arrayParticles.push( points );
-/*
-				points.userData.raycaster = {
-
-					onIntersection: options.raycaster.onIntersection,
-					onIntersectionOut: options.raycaster.onIntersectionOut,
-					onMouseDown: options.raycaster.onMouseDown,
-				}
-*/
 
 			}
 
 			//(index):663 Uncaught TypeError: THREE.CubeGeometry is not a constructor
 			//const cube = new THREE.Mesh( new THREE.CubeGeometry( 0.3, 0.3, 0.3 ), new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) );
 			const cube = new THREE.Mesh( new THREE.BoxGeometry( 0.3, 0.3, 0.3 ), new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) );
-//			cube.position.x = -1;
 			scene.add( cube );
 			cube.userData.player = {
 
@@ -703,82 +527,35 @@
 
 			if ( typeof CanvasMenu !== "undefined" ) {
 
-				new CanvasMenu( renderer, { options: options } );/*{
-
-					player: options.player,
-					stereoEffect: stereoEffect,
-					getLanguageCode: typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode,
-
-				} );*/
+				new CanvasMenu( renderer, { options: options } );
 
 			}
 
 			//Using [dat.gui](https://github.com/anhr/dat.gui) for change of the settings.
 
-//			if ( typeof dat !== "undefined" )
 			if ( options.dat ) {
 
-//				const gui = new dat.GUI();
 				const gui = options.dat.gui;
 
 				if ( stereoEffect )
 					stereoEffect.gui();
-/*
-					stereoEffect.gui( gui, {
-
-						getLanguageCode: typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode,
-						cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
-
-					} );
-*/
 				if ( typeof OrbitControlsGui !== 'undefined' ) {
 
-					new OrbitControlsGui( options );//, gui );
+					new OrbitControlsGui( options );
 
 				}
 				if ( ( typeof CameraGui !== 'undefined' ) && ( typeof Player !== 'undefined' ) )
 					new CameraGui( camera, options );
 				if ( options.player !== false ) {
 
-					options.player.gui(); /*gui, {
-
-						getLanguageCode: typeof getLanguageCode === 'undefined' ? undefined : getLanguageCode,
-						cookie: typeof cookie === 'undefined' ? undefined : cookie,//Saves a custom StereoEffect settings in the cookie
-
-					} );*/
-					new options.player.PlayController();// gui, getLanguageCode );
+					options.player.gui(); 
+					new options.player.PlayController();
 
 				}
 
 				if ( options.guiSelectPoint ) options.guiSelectPoint.add( gui );
 
 			}
-/*
-			if ( raycaster ) {
-
-				const mouse = new THREE.Vector2();
-				window.addEventListener( 'mousemove', function ( event ) {
-
-					// calculate mouse position in normalized device coordinates
-					// (-1 to +1) for both components
-
-					mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-					mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-					// update the picking ray with the camera and mouse position
-					raycaster.setFromCamera( mouse, camera );
-
-					if ( raycaster.stereo ) raycaster.stereo.onDocumentMouseMove( event );
-
-				}, false );
-				window.addEventListener( 'pointerdown', function ( event ) {
-
-					if ( raycaster.stereo ) raycaster.stereo.onDocumentMouseDown( event );
-
-				}, false );
-
-			}
-*/
 
 			window.addEventListener( 'resize', onWindowResize, false );
 

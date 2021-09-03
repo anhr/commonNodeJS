@@ -114,8 +114,3 @@ if ( typeof dat !== 'undefined' ) {
 	} else console.error( 'Duplicate dat.controllerSetValue method.' );
 
 }
-/*
-var datModifier = {
-}
-export default datModifier;
-*/

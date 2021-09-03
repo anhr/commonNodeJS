@@ -52,7 +52,7 @@
 		
 		import Options from '../../Options.js'
 
-		var camera, scene, renderer, stereoEffect;//, raycaster, axesHelper, controls, intersects, guiSelectPoint;
+		var camera, scene, renderer, stereoEffect;
 
 		init();
 		animate();
@@ -67,20 +67,12 @@
 
 			const options = new Options( {
 
-/*
-				dat: {
-
-					dat: dat
-
-				},
-*/				
 				stereoEffect: {
 
 					spatialMultiplex: typeof StereoEffect !== 'undefined' ? StereoEffect.spatialMultiplexsIndexs.SbS : undefined,//Side by side stereo effect
 					far: camera.far,
 					camera: camera,
 					//stereoAspect: 1,
-//					options: options,
 
 				},
 				//stereoEffect: false,
@@ -129,27 +121,16 @@
 				canvas: document.getElementById( 'canvas' ),
 
 			} );
-//			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			const cursor = renderer.domElement.style.cursor;
 			document.body.appendChild( renderer.domElement );
 			if ( typeof StereoEffect !== 'undefined' ) {
 
-				new StereoEffect( renderer, options );/*, {
-
-					spatialMultiplex: StereoEffect.spatialMultiplexsIndexs.SbS,//Side by side stereo effect
-					far: camera.far,
-					camera: camera,
-					//stereoAspect: 1,
-					options: options,
-
-				} );*/
+				new StereoEffect( renderer, options );
 				stereoEffect = options.stereoEffect;
 
 				//test for duplicate StereoEffect
 				//new StereoEffect( renderer, options );
-				
-//				if ( options.stereoEffect ) options.stereoEffect.setSize( window.innerWidth, window.innerHeight );
 
 			}
 
@@ -161,22 +142,6 @@
 			//[Raycaster](https://threejs.org/docs/index.html#api/en/core/Raycaster). Raycasting is used for mouse picking (working out what objects in the 3d space the mouse is over) amongst other things.
 			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene } );
 			options.eventListeners.addParticle( points );
-/*
-			raycaster = new THREE.Raycaster();
-			raycaster.params.Points.threshold = 0.02;//threshold is the precision of the raycaster when intersecting objects, in world units. See [params](https://threejs.org/docs/#api/en/core/Raycaster.params)
-			if ( raycaster.setStereoEffect ) {
-
-				raycaster.setStereoEffect( {
-
-					renderer: renderer,
-					camera: camera,
-					stereoEffect: options.stereoEffect,
-
-				} );
-				raycaster.stereo.addParticle( points );
-
-			}
-*/
 
 			window.addEventListener( 'resize', onWindowResize, false );
 
@@ -190,34 +155,6 @@
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
 		}
-/*
-		//Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
-		const mouse = new THREE.Vector2();
-		window.addEventListener( 'mousemove', function( event ) {
-
-			// calculate mouse position in normalized device coordinates
-			// (-1 to +1) for both components
-
-			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-			// update the picking ray with the camera and mouse position
-			raycaster.setFromCamera( mouse, camera );
-
-			raycaster.stereo.onDocumentMouseMove( event );
-
-		}, false );
-
-		//ATTENTION!!! The 'mousedown' event is not fired if you use new version of the OrbitControls.
-		//See "OrbitControls: Implement Pointer events." commit https://github.com/mrdoob/three.js/commit/1422e36e9facbdc5f9d86cf6b97b005a2723a24a#diff-3285de3826a51619836a5c9adc6bee74
-		//window.addEventListener( 'mousedown', function( event )
-
-		window.addEventListener( 'pointerdown', function( event ) {
-
-			raycaster.stereo.onDocumentMouseDown( event );
-
-		}, false );
-*/
 		function animate() {
 
 			requestAnimationFrame( animate );

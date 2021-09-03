@@ -23,12 +23,6 @@ import three from '../three.js'
 import PositionController from '../PositionController.js';
 //import PositionController from 'https://raw.githack.com/anhr/commonNodeJS/master/PositionController.js';
 
-//import cookie from '../cookieNodeJS/cookie.js';
-//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
-//import { dat } from '../dat/dat.module.js';
-//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
-
 import CreateFullScreenSettings from '../createFullScreenSettings.js';
 import Options from '../Options.js'
 
@@ -86,16 +80,9 @@ class StereoEffect {
 
 		}
 
-//		settings = settings || {};
-//		settings.options = settings.options || new Options();
-//		const options = settings.options;
 		if ( !options.boOptions ) {
 
 			options = new Options( options );
-/*
-			console.error( 'StereoEffect: call options = new Options( options ) first' );
-			return;
-*/			
 
 		}
 		if ( options.stereoEffect === false ) return;
@@ -109,10 +96,8 @@ class StereoEffect {
 
 		const THREE = three.THREE;
 		assign();
-//		const _this = this;
 
 		if ( !options.stereoEffect ) options.stereoEffect = {};
-//		options.stereoEffect = options.stereoEffect || {};
 
 		const settings = options.stereoEffect;
 		/**
@@ -123,14 +108,7 @@ class StereoEffect {
 		 * See <b>options</b> parameter of the <b>StereoEffect</b> class above.
 		 * */
 		this.options = options;
-/*
-		if ( options.stereoEffect ) {
 
-			console.error( 'StereoEffect: duplicate stereoEffect.' );
-			return;
-
-		}
-*/
 		options.stereoEffect = this;
 
 		//Убрал spatialMultiplex: settings.spatialMultiplex !== undefined ? settings.spatialMultiplex : spatialMultiplexsIndexs.Mono,//SbS,
@@ -177,33 +155,6 @@ class StereoEffect {
 		this.getRendererSize = function () {
 
 			return Options.raycaster.EventListeners.getRendererSize( renderer, settings.elParent );
-/*
-			const el = settings.elParent || renderer.domElement,
-				style = {
-
-					position: el.style.position,
-					left: el.style.left,
-					top: el.style.top,
-					width: el.style.width,
-					height: el.style.height,
-
-				},
-				rect = el.getBoundingClientRect(),
-				left = Math.round( rect.left ),
-				top = Math.round( rect.top ),
-				size = new THREE.Vector2();
-			renderer.getSize( size );
-			return {
-
-				getMousePosition: function ( mouse, event ) {
-
-					mouse.x = ( event.clientX / size.x ) * 2 - 1 - ( left / size.x ) * 2;
-					mouse.y = - ( event.clientY / size.y ) * 2 + 1 + ( top / size.y ) * 2;
-
-				},
-
-			};
-*/
 
 		};
 		var fullScreenSettings;
@@ -244,18 +195,6 @@ class StereoEffect {
 			var xL, yL, widthL, heightL,
 				xR, yR, widthR, heightR;
 			const parallax = settings.zeroParallax;
-			/*		
-					function setFullScreen( fullScreen, stereoEffect ){
-			
-						if ( !fullScreenSettings || ( spatialMultiplexCur === spatialMultiplex ) )
-							return;
-						fullScreenSettings.setFullScreen( fullScreen );
-						spatialMultiplexCur = spatialMultiplex;
-						if ( stereoEffect.setControllerSpatialMultiplex ) stereoEffect.setControllerSpatialMultiplex( spatialMultiplex );
-						else if ( stereoEffect.setSpatialMultiplex ) stereoEffect.setSpatialMultiplex( spatialMultiplex );
-			
-					}
-			*/
 			function setMultiplex( stereoEffect ) {
 
 				if ( !fullScreenSettings || ( spatialMultiplexCur === spatialMultiplex ) )
@@ -443,33 +382,17 @@ class StereoEffect {
 		 */
 		this.gui = function ( guiParams = {} ) {
 
-/*
-			if ( !optionsGui.boOptions ) {
-
-				console.error( 'StereoEffect.gui: call optionsGui = new Options( options ) first' );
-				return;
-
-			}
-*/
 			const gui = guiParams.folder || options.dat.gui;
 			if ( !gui || options.dat.stereoEffectsGui === false )
 				return;
 			const dat = guiParams.dat || three.dat;//options.dat.dat;
 			if ( guiParams === undefined ) guiParams = {};
 			guiParams.scale = guiParams.scale || 1;
-/*
-
-			const _lang = getLang( { getLanguageCode: guiParams.getLanguageCode, lang: guiParams.lang } );
-
-			const stereoEffect = 'StereoEffect' + ( guiParams.cookieName || '' );
-			guiParams.cookie = guiParams.cookie || new cookie.defaultCookie();
-*/
 			const stereoEffect = options.dat.getCookieName( 'StereoEffect' ),
 				_lang = getLang( { getLanguageCode: options.getLanguageCode, lang: options.lang } );
 			
 			const optionsDefault = {
 
-				//spatialMultiplex: settings.spatialMultiplex !== undefined ? settings.spatialMultiplex : spatialMultiplexsIndexs.Mono,//SbS,
 				spatialMultiplex: settings.spatialMultiplex,
 				eyeSep: ( new THREE.StereoCamera().eyeSep / 10 ) * settings.far,
 				focus: settings.focus,
@@ -547,7 +470,6 @@ class StereoEffect {
 					'focus', optionsDefault.focus / 10, optionsDefault.focus * 2, optionsDefault.focus / 1000 )
 					.onChange( function ( value ) {
 
-						//					settings.camera.focus = value;
 						settings.focus = value;
 						setObject( stereoEffect );
 
@@ -607,7 +529,6 @@ class StereoEffect {
 					object[key] = settings[key];
 
 				} );
-//				guiParams.cookie.setObject( name, object );
 				options.dat.cookie.setObject( name, object );
 
 			};
@@ -636,7 +557,7 @@ class StereoEffect {
 			menuItemStereoEffect = {
 
 				name: '⚭',
-				title: _lang.stereoEffects,//'Stereo effects',
+				title: _lang.stereoEffects,
 				id: 'menuButtonStereoEffects',
 				drop: 'up',
 				items: [
@@ -662,7 +583,6 @@ class StereoEffect {
 						onclick: function ( event ) {
 
 							settings.spatialMultiplex = spatialMultiplexsIndexs.SbS;
-							//if ( canvasMenu.setFullScreen ) canvasMenu.setFullScreen( false );
 
 						}
 					},
@@ -708,14 +628,6 @@ class StereoEffect {
 	}
 
 };
-/*
-const spatialMultiplexsIndexs = {
-	Mono: 0,
-	SbS: 1, //
-	TaB: 2, //
-}
-Object.freeze( spatialMultiplexsIndexs );
-*/
 /**
  * Enumeration of available stereo modes. Available as <b>StereoEffect.spatialMultiplexsIndexs</b>.
  * @see {@link https://en.wikipedia.org/wiki/DVB_3D-TV|DVB 3D-TV} for details
@@ -739,17 +651,6 @@ const spatialMultiplexsIndexs = StereoEffect.spatialMultiplexsIndexs;
 function assign() {
 
 	const THREE = three.THREE;
-/*
-	if ( THREE ) {
-
-		if ( !Object.is( THREE, _THREE ) )
-			console.error( 'setTHREE: duplicate THREE. Please use one instance of the THREE library.' )
-		return;
-
-	}
-	THREE = _THREE;
-	SpriteText.setTHREE( THREE );
-*/
 	if ( new THREE.Raycaster().setStereoEffect )
 		return;
 		
@@ -800,16 +701,6 @@ function assign() {
 			}
 
 			const stereoEffect = settings.stereoEffect !== undefined ? settings.stereoEffect : typeof effect !== 'undefined' ? effect :
-/*			
-				new StereoEffect( renderer, {
-
-					spatialMultiplex: spatialMultiplexsIndexs.Mono, //.SbS,
-					far: camera ? camera.far : undefined,
-					camera: camera,
-					stereoAspect: 1,
-
-				} ),
-*/				
 				new StereoEffect( renderer, settings.options ),
 				raycaster = this,
 				mouseL = new THREE.Vector2(),
@@ -860,8 +751,6 @@ function assign() {
 				}
 
 			}
-//			var intersectedObject = undefined;
-//			const intersectedObjects = [];
 			function intersection( optionsIntersection ) {
 
 				if ( mouse === undefined )
@@ -871,122 +760,8 @@ function assign() {
 				function isIntersection() {
 
 					intersects = Options.raycaster.intersectionsInOut( particles, raycaster, renderer, mouse, settings );
-/*
-					function getIntersects() {
-
-						if ( particles === undefined )
-							return;
-						intersects = Array.isArray( particles ) ? raycaster.intersectObjects( particles ) : raycaster.intersectObject( particles );
-
-					}
-					getIntersects();
-					//console.log( 'intersects.length ' + intersects.length );
-					intersects.forEach( function ( intersection ) {
-
-						var boDetected = false;
-						intersectedObjects.forEach( function ( intersectedObject ) {
-
-							if ( intersectedObject.object === intersection.object ) {
-
-								boDetected = true;
-								return;
-
-							}
-
-						} );
-						if ( !boDetected ) {
-
-							//console.log( 'add ' + intersection.object.name );
-							intersectedObjects.push( intersection );
-
-						}
-						if (
-							intersection &&
-							intersection.object.userData.raycaster &&
-							intersection.object.userData.raycaster.onIntersection
-						) {
-
-							intersection.object.userData.raycaster.onIntersection( intersection, mouse );
-
-						} else {
-
-							if ( !settings.scene )
-								console.error( 'THREE.Raycaster.setStereoEffect(): settings.scene = ' + settings.scene );
-							else Options.raycaster.onIntersection( intersection, settings.options, settings.scene, settings.camera, renderer );
-
-						}
-
-					} );
-					intersectedObjects.forEach( function ( intersectedObject ) {
-
-						var boDetected = false;
-						intersects.forEach( function ( intersection ) {
-
-							if ( intersectedObject.object === intersection.object )
-								boDetected = true;
-								
-						} );
-						if ( !boDetected ) {
-
-							if (
-								intersectedObject.object.userData.raycaster &&
-								intersectedObject.object.userData.raycaster.onIntersectionOut
-							)
-								intersectedObject.object.userData.raycaster.onIntersectionOut();
-							else if ( settings.scene ) Options.raycaster.onIntersectionOut( settings.scene, renderer );
-							
-							//console.log( 'remove ' + intersectedObject.object.name );
-							intersectedObjects.splice( intersectedObjects.findIndex(v => v === intersectedObject), 1 );
-
-						}
-
-					} );
-					//console.log( 'intersectedObjects.length ' + intersectedObjects.length );
-					return intersects.length > 0;
-*/					
 
 				}
-/*
-				function isIntersection() {
-
-					getIntersects();
-					if ( intersects.length > 0 ) {
-
-						const intersection = intersects[0];
-						if (
-							intersection &&
-							intersection.object.userData.raycaster &&
-							intersection.object.userData.raycaster.onIntersection
-						) {
-
-							intersection.object.userData.raycaster.onIntersection( intersection, mouse );
-
-						} else {
-
-							if ( !settings.scene )
-								console.error( 'THREE.Raycaster.setStereoEffect(): settings.scene = ' + settings.scene );
-							else Options.raycaster.onIntersection( intersection, settings.options, settings.scene, settings.camera, renderer );
-
-						}
-						if ( intersectedObject && ( intersectedObject !== intersection.object ) )
-							console.log( 'intersectedObject' );
-						intersectedObject = intersection.object;
-
-					} else if ( intersectedObject ){
-
-						if (
-							intersectedObject.userData.raycaster &&
-							intersectedObject.userData.raycaster.onIntersectionOut
-						) 
-							intersectedObject.userData.raycaster.onIntersectionOut();
-						else if ( settings.scene ) Options.raycaster.onIntersectionOut( settings.scene, renderer );
-						intersectedObject = undefined;
-
-					}
-					return intersects.length > 0;
-
-				}
-*/
 				if ( parseInt( stereoEffect.settings.spatialMultiplex ) !== spatialMultiplexsIndexs.Mono ) {
 
 					const mouseCur = mouse;
@@ -1035,29 +810,6 @@ function assign() {
 					intersection();
 
 				},
-				/* *
-				 * [pointerdown]{@link https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event} event.
-				 * User has clicked over an object from the <b>particles</b> array.
-				 * @param {object} event
-				 */
-/*				 
-				onDocumentMouseDown: function ( event ) {
-
-					if ( stereoEffect.options.dat.mouseenter )
-						return;
-					if ( intersects && intersects.length > 0 ) {
-
-						const intersect = intersects[0];
-						if ( intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown ) {
-
-							intersect.object.userData.raycaster.onMouseDown( intersect );
-
-						} else Options.raycaster.onMouseDown( intersect, settings.options );
-
-					}
-
-				},
-*/				
 				/**
 				 * <pre>
 				 * Available as <b>raycaster.stereo.isAddedToParticles( particle )</b>.
@@ -1185,7 +937,6 @@ function assign() {
 				}
 
 			};
-			//		var stereo = this.stereo;
 
 		}
 
@@ -1193,7 +944,6 @@ function assign() {
 
 }
 StereoEffect.assign = assign;
-//StereoEffect.setTHREE = setTHREE;
 
 //Localization
 
@@ -1222,12 +972,8 @@ switch ( getLanguageCode() ) {
 
 import { SpriteText } from '../SpriteText/SpriteText.js';
 //import { SpriteText } from 'https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/SpriteText.js';
-//SpriteText.setTHREE( THREE );
 
 import { getObjectPosition } from '../getPosition.js';
-//getPositionSetTHREE( THREE );
-//import { getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
-//import { getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
 
 /** @namespace
  * @description Creates the <a href="../../SpriteText/jsdoc" target="_blank">SpriteText</a> instance with information about point, intersected with mouse cursor.
@@ -1301,5 +1047,4 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 
 }
 
-//export { StereoEffect, spatialMultiplexsIndexs };
 export default StereoEffect;

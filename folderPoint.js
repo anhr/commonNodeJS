@@ -14,8 +14,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-
-//import { dat } from './dat/dat.module.js';
 import three from './three.js'
 
 import PositionController from './PositionController.js';
@@ -53,15 +51,10 @@ class FolderPoint {
 			console.error( 'FolderPoint: call options = new Options( options ) first' );
 			return;
 
-//			options = new Options( options );
-
 		}
 		const gui = settings.folder || options.dat.gui;
 		if ( !gui || options.dat.folderPoint === false )
 			return;
-
-//Пока что не требуется			
-//		options.folderPoint = this;
 
 		//Localization
 
@@ -91,10 +84,6 @@ class FolderPoint {
 				break;
 
 		}
-/*
-		const point = settings.point || {};
-		if ( point.size === undefined ) point.size = 5;//0.01;
-*/
 		const defaultPoint = settings.defaultPoint || {};
 		if ( defaultPoint.size === undefined ) defaultPoint.size = point.size;
 

@@ -13,10 +13,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-//import { dat } from './dat/dat.module.js';
 import functionsFolder from './functionsFolder.js';
-//import setOptions from './setOptions.js'
-//import Options from './Options.js'
 import Player from './player/player.js';
 import three from './three.js'
 
@@ -35,10 +32,6 @@ class CameraGui {
 	*/
 	constructor( camera, options, gui ) {
 
-//Deprecated. Use options.cameraGui = this;
-//Player.cameraGui = this;
-
-//		options = options || new Options();
 		if ( !options.boOptions ) {
 
 			console.error( 'CameraGui: call options = new Options( options ) first' );
@@ -51,10 +44,6 @@ class CameraGui {
 		const dat = three.dat,//options.dat.dat,
 			THREE = three.THREE;
 		options.cameraGui = this;
-
-		//scales
-//		setOptions.setScales( options );
-//		options.setScales();
 
 		//Обновить значения органов управления когда пользователь с помощью мыши передвинул камеру
 		if ( options.orbitControls )
@@ -83,10 +72,6 @@ class CameraGui {
 			defaultTitle: 'Restore default camera settings.',
 
 		};
-/*/
-		const _languageCode = options.getLanguageCode === undefined ? 'en'//Default language is English
-			: options.getLanguageCode();
-*/
 		switch ( options.getLanguageCode() ) {
 
 			case 'ru'://Russian language
@@ -154,15 +139,10 @@ class CameraGui {
 		//потому что при установке птички 'Look' - Следить в guiSelectPoint, вызывается options.player.selectScene()
 		if ( options.player ) {
 
-/*
-			Player.cameraTarget.init( { camera: camera }, options );
-			const cameraTarget = Player.cameraTarget.get();
-*/
 			options.playerOptions.cameraTarget.init( { camera: camera }, options );
 			const cameraTarget = options.playerOptions.cameraTarget.get();
 			controllerLook = fCamera.add( cameraTarget, 'boLook' ).onChange( function ( boLook ) {
 
-				//				if ( Player.player ) Player.player.selectScene();
 				if ( options.player ) {
 
 					cameraTarget.boMaual = true;
@@ -172,10 +152,6 @@ class CameraGui {
 				}
 				if ( boLook )
 					return;
-				/*					
-									if ( Player.orbitControls )
-										Player.orbitControls.reset();//обязательно вызвать controls.saveState();
-				*/
 				if ( options.orbitControls )
 					options.orbitControls.reset();//обязательно вызвать controls.saveState();
 
@@ -195,7 +171,6 @@ class CameraGui {
 
 				if ( isNaN( value ) ) return;
 				if ( camera.userData.cameraTarget ) camera.userData.cameraTarget.distanceToCameraCur[axisName] = value;
-				//			const cameraTarget = Player.cameraTarget.get();
 				cameraTarget.distanceToCameraCur[axisName] = value;
 				cameraTarget.setCameraPosition();
 				update();
@@ -205,20 +180,17 @@ class CameraGui {
 
 				x: dat.controllerZeroStep( fDistanceToCamera, distance, 'x', function ( value ) {
 
-					//				camera.userData.cameraTarget.distanceToCameraCur.x = value;
 					setDistance( 'x', value );
 
 				} ),
 				y: dat.controllerZeroStep( fDistanceToCamera, distance, 'y', function ( value ) {
 
-					//				Player.cameraTarget.get().distanceToCameraCur.y = value;
 					setDistance( 'y', value );
 
 				} ),
 
 				z: dat.controllerZeroStep( fDistanceToCamera, distance, 'z', function ( value ) {
 
-					//				camera.userData.cameraTarget.distanceToCameraCur.z = value;
 					setDistance( 'z', value );
 
 				} ),
@@ -232,20 +204,13 @@ class CameraGui {
 
 			funcFolder = new functionsFolder( fDistanceToCamera, function ( func, axisName ) {
 
-//				const cameraTarget = Player.cameraTarget.get();
 				const cameraTarget = options.playerOptions.cameraTarget.get();
 				cameraTarget.distanceToCamera[axisName] = func;
-				const value = Player.execFunc( cameraTarget.distanceToCamera, axisName, options.time );//Player.getTime() );
+				const value = Player.execFunc( cameraTarget.distanceToCamera, axisName, options.time );
 				controllersDistance[axisName].setValue( value, true );
-//				Player.cameraTarget.init( { camera: camera }, options );
 				options.playerOptions.cameraTarget.init( { camera: camera }, options );
 
-			}, options, cameraTarget.distanceToCamera/*, {
-
-				getLanguageCode: options.getLanguageCode,
-				vector: cameraTarget.distanceToCamera,
-
-			}*/ );
+			}, options, cameraTarget.distanceToCamera );
 
 		}
 
@@ -291,14 +256,8 @@ class CameraGui {
 
 		function update() {
 
-//			const cameraTarget = Player.cameraTarget.get();
 			const cameraTarget = options.playerOptions.cameraTarget.get( options );
 			
-/*не помню зачем это поставил
-			if ( !cameraTarget.boLook || !cameraTarget.target )
-				return;
-*/				
-
 			if ( controllersPosition.x ) controllersPosition.x.setValue( camera.position.x );
 			if ( controllersPosition.y ) controllersPosition.y.setValue( camera.position.y );
 			if ( controllersPosition.z ) controllersPosition.z.setValue( camera.position.z );
@@ -314,31 +273,28 @@ class CameraGui {
 			if ( funcFolder ) funcFolder.setFunction( cameraTarget.distanceToCamera );
 
 		}
-//		if ( this ) {
 
-			/**
-			 * Update camera controls.
-			 */
-			this.update = function () { update(); }
-			/**
-			 * Look at selected point
-			 * @param {boolean} [boLook=true] true - look at selected point
-			 */
-			this.look = function ( boLook = true ) {
+		/**
+			* Update camera controls.
+			*/
+		this.update = function () { update(); }
+		/**
+			* Look at selected point
+			* @param {boolean} [boLook=true] true - look at selected point
+			*/
+		this.look = function ( boLook = true ) {
 
 //				if ( controllerLook && ( controllerLook.getValue() !== boLook ) )
-				if ( controllerLook ) {
+			if ( controllerLook ) {
 
 //					controllerLook.setValue( boLook );
-					controllerLook.object[controllerLook.property] = boLook;
-					controllerLook.updateDisplay();
+				controllerLook.object[controllerLook.property] = boLook;
+				controllerLook.updateDisplay();
 
-
-				}
 
 			}
 
-//		}
+		}
 
 	}
 

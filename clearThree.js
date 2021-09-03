@@ -28,7 +28,6 @@ function clearThree( obj ) {
 
 			} );
 		obj.geometry.dispose();
-//		delete obj.geometry;
 
 	}
 
@@ -40,10 +39,6 @@ function clearThree( obj ) {
 				return
 			if ( typeof obj.material[prop].dispose === 'function' )
 				obj.material[prop].dispose();
-/*
-			if ( obj.material[prop] !== null && typeof obj.material[prop].dispose === 'function' )
-				obj.material[prop].dispose();
-*/
 
 		} )
 		if ( obj.material.uniforms !== undefined )

@@ -13,7 +13,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-//import { dat } from './dat/dat.module.js';
 import Options from './Options.js'
 import three from './three.js'
 
@@ -37,20 +36,13 @@ class functionsFolder {
 	*/
 	constructor( fParent, onFinishChange, options, vector ) {
 
-//		var options = settings.options || new Options();
 		if ( !options.boOptions ) {
 
-//			options = new Options( options );
 			console.error( 'functionsFolder: call options = new Options( options ) first' );
 			return;
 
 		}
-/*
-		gui = gui || options.dat.gui;
-		if ( !gui || options.dat.cameraGui === false )
-			return;
-*/
-		const dat = three.dat,//options.dat.dat,
+		const dat = three.dat,
 			THREE = three.THREE,
 			scales = options.scales;
 		const _this = this;
@@ -58,10 +50,7 @@ class functionsFolder {
 			boAlert = false;//предотвращает бесконечный вывод сообщения об ошибке
 
 		//Localization
-		/*
-			const getLanguageCode = options.getLanguageCode || function () { return 'en'; };
-			const _languageCode = getLanguageCode();
-		*/
+
 		const lang = {
 
 			functions: 'Functions',
@@ -107,16 +96,7 @@ class functionsFolder {
 		} else vector = { x: '', y: '', z: '', }
 
 		const fFunctions = fParent.addFolder( lang.functions ),
-/*
-			vector = {
 
-				x: options.vector ? getFuncText( options.vector.x ) : '',
-				y: options.vector ? getFuncText( options.vector.y ) : '',
-				z: options.vector ? getFuncText( options.vector.z ) : '',
-				w: options.vector ? getFuncText( options.vector.w ) : '',
-
-			},
-*/
 			//onFinishChange вызывается даже если vector не изменился. Поэтому такой onFinishChange пропускается
 			vectorCur = {
 
@@ -197,7 +177,6 @@ class functionsFolder {
 						var float = parseFloat( value );
 						if ( float.toString() !== value ) {
 
-							//						const color = value.replace(/\s/g, "").toLowerCase().split( /rgb\((\d+),(\d+),(\d+)\)/ );
 							const color = value.replace( /\s/g, "" ).split( /rgb\((\d+),(\d+),(\d+)\)/ );
 							if ( color.length === 5 ) func = new THREE.Color( value );
 							else {

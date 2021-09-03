@@ -14,14 +14,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import { dat } from '../dat/dat.module.js';//https://github.com/anhr/commonNodeJS
-//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
-
 import { ScaleControllers } from '../ScaleController.js';//https://github.com/anhr/commonNodeJS
 //import { ScaleControllers } from 'https://raw.githack.com/anhr/commonNodeJS/master/ScaleController.js';
-
-import Cookie from '../cookieNodeJS/cookie.js';//https://github.com/anhr/commonNodeJS/tree/master/cookieNodeJS
-//import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 import three from '../three.js'
 import Options from '../Options.js'
@@ -62,22 +56,13 @@ var _spriteTextGuiCount = 0;
  */
 export function SpriteTextGui( group, options, guiParams = {} ) {
 
-//	guiParams = guiParams || {};
 	options = new Options( options );
-/*
-	if ( !options.boOptions ) {
-
-		options = new Options( options );
-
-	}
-*/
 	const gui = guiParams.folder || options.dat.gui;
 	if ( !gui || options.dat.spriteTextGui === false )
 		return;
 	const optionsSpriteText = guiParams.optionsSpriteText || group.userData.optionsSpriteText || {},
 		THREE = three.THREE,
 		dat = three.dat;//options.dat.dat;
-//		options = guiParams.options || new Options();
 
 	if ( Object.keys(optionsSpriteText).length === 0 ) console.warn( 'SpriteTextGui: optionsSpriteText is empty.' );
 		
@@ -140,10 +125,6 @@ export function SpriteTextGui( group, options, guiParams = {} ) {
 		defaultTitle: 'Restore default Sprite Text settings.',
 
 	};
-/*
-	const _languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
-		: guiParams.getLanguageCode();
-*/		
 	switch ( options.getLanguageCode() ) {
 
 		case 'ru'://Russian language
@@ -208,10 +189,6 @@ export function SpriteTextGui( group, options, guiParams = {} ) {
 	}
 
 	guiParams.spriteFolder = guiParams.spriteFolder || lang.spriteText;
-/*	
-	const cookieName = 'SpriteText' + ( guiParams.cookieName ? '_' + guiParams.cookieName : '' ),
-		cookie = guiParams.cookie || new Cookie.defaultCookie(),
-*/		
 	_spriteTextGuiCount++;
 	const cookieName = options.dat.getCookieName( 'SpriteText' + _spriteTextGuiCount ),
 		cookie = options.dat.cookie,
