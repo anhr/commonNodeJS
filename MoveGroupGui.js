@@ -42,7 +42,6 @@ class MoveGroupGui {
 	 */
 	constructor( group, options, guiParams = {} ) {
 
-//		options = options || new Options();
 		if ( !options.boOptions ) {
 
 			console.error( 'MoveGroupGui: call options = new Options( options ) first' );
@@ -102,30 +101,11 @@ class MoveGroupGui {
 				scalesControllers.rotation.setValue( groupOptionsDefault.rotation['_' + axisName] );
 
 			}
-/*если я вставлю функцию в options.scales[axisName], то она исчезнет во время вызова
-cookie.getObject( cookieName, options.scales, options.scales );
-в AxesHelperGui и поэтому MoveGroupGui нельзя вызывать до AxesHelperGui.
-
-			options.scales[axisName].default = function () {
-
-				const scalesControllers = options.scalesControllers[axisName];
-				scalesControllers.scale.setValue( groupOptionsDefault.scale[axisName] );
-				scalesControllers.scaleController.setValue( groupOptionsDefault[axisName].zoomMultiplier );
-				scalesControllers.position.setValue( groupOptionsDefault.position[axisName] );
-				scalesControllers.positionController.setValue( groupOptionsDefault[axisName].offset );
-				scalesControllers.rotation.setValue( groupOptionsDefault.rotation['_' + axisName] );
-
-			}
-*/			
 
 		}
 		setDefault( 'x' );
 		setDefault( 'y' );
 		setDefault( 'z' );
-
-//		const guiParams = options;
-//		this.gui = function ( gui, guiParams )
-//		guiParams = guiParams || {};
 
 		//Localization
 
@@ -140,10 +120,6 @@ cookie.getObject( cookieName, options.scales, options.scales );
 			defaultTitle: 'Move group to default position.',
 
 		};
-/*
-		var languageCode = guiParams.getLanguageCode === undefined ? 'en'//Default language is English
-			: guiParams.getLanguageCode();
-*/
 		switch ( options.getLanguageCode() ) {
 
 			case 'ru'://Russian language
@@ -180,12 +156,9 @@ cookie.getObject( cookieName, options.scales, options.scales );
 			if ( !scale )
 				return;
 			scale.setValue( action( scale.getValue(), zoom ) );
-			//			cookie.setObject( cookieName, optionsGroup );
 			setSettings();
 
 		}
-
-		//
 
 		//move group folder
 		let fMoveGroup = gui.addFolder( lang.moveGroup );
@@ -227,10 +200,6 @@ cookie.getObject( cookieName, options.scales, options.scales );
 				var zoom = customController.controller.getValue();
 
 				axisZoom( axisName, action, zoom );
-				/*
-								if ( guiParams.axesHelper !== undefined )
-									guiParams.axesHelper.updateDotLines();
-				*/
 
 			}
 
@@ -242,12 +211,7 @@ cookie.getObject( cookieName, options.scales, options.scales );
 				{ settings: optionsGroup[axisName], getLanguageCode: guiParams.getLanguageCode, } ) ).onChange( function ( value ) {
 
 					optionsGroup[axisName].zoomMultiplier = value;
-					//					cookie.setObject( cookieName, optionsGroup );
 					setSettings();
-					/*
-										if ( guiParams.axesHelper )
-											guiParams.axesHelper.setSettings();
-					*/
 
 				} );
 			scaleControllers.scale = dat.controllerZeroStep( scaleControllers.folder, group.scale, axisName,
@@ -258,7 +222,6 @@ cookie.getObject( cookieName, options.scales, options.scales );
 
 			var positionController = new PositionController( function ( shift ) {
 
-				//			console.warn( 'shift = ' + shift );
 				function onclick( customController, action ) {
 
 					var offset = customController.controller.getValue();
@@ -270,20 +233,15 @@ cookie.getObject( cookieName, options.scales, options.scales );
 						if ( !position )
 							return;
 						position.setValue( action( position.getValue(), offset ) );
-						//						cookie.setObject( cookieName, optionsGroup );
 						setSettings();
 
 					}
 					axisOffset( axisName, action, offset );
-					/*
-										if ( guiParams.axesHelper !== undefined )
-											guiParams.axesHelper.updateDotLines();
-					*/
 
 				}
 				onclick( positionController, function ( value, zoom ) {
 
-					value += shift;//zoom;
+					value += shift;
 					return value;
 
 				} );
@@ -292,7 +250,6 @@ cookie.getObject( cookieName, options.scales, options.scales );
 			scaleControllers.positionController = scaleControllers.folder.add( positionController ).onChange( function ( value ) {
 
 				optionsGroup[axisName].offset = value;
-				//				cookie.setObject( cookieName, optionsGroup );
 				setSettings();
 
 			} );
@@ -304,7 +261,6 @@ cookie.getObject( cookieName, options.scales, options.scales );
 
 			scaleControllers.rotation = scaleControllers.folder.add( group.rotation, axisName, 0, Math.PI * 2, 1 / 360 ).
 				onChange( function ( value ) { setSettings(); } );
-			//						dat.controllerNameAndTitle( cRotations.x, options.scales.x.name );
 			dat.controllerNameAndTitle( scaleControllers.rotation, lang.rotation );
 
 			//Default button
@@ -313,7 +269,6 @@ cookie.getObject( cookieName, options.scales, options.scales );
 				defaultF: function ( value ) {
 
 					options.moveGroupGui.scales[axisName].default();
-//					axes.default();
 
 				},
 
@@ -329,13 +284,10 @@ cookie.getObject( cookieName, options.scales, options.scales );
 		if ( options.scales ) {
 
 			scale( options.scales.x,
-				//				guiParams.axesHelper === undefined ? windowRange : guiParams.axesHelper.windowRangeX,
 				options.scalesControllers.x, 'x' );
 			scale( options.scales.y,
-				//				guiParams.axesHelper === undefined ? windowRange : guiParams.axesHelper.windowRangeY,
 				options.scalesControllers.y, 'y' );
 			scale( options.scales.z,
-				//				guiParams.axesHelper === undefined ? windowRange : guiParams.axesHelper.windowRangeZ,
 				options.scalesControllers.z, 'z' );
 
 		}
@@ -348,11 +300,6 @@ cookie.getObject( cookieName, options.scales, options.scales );
 				if ( options.moveGroupGui.scales.x ) options.moveGroupGui.scales.x.default();
 				if ( options.moveGroupGui.scales.y ) options.moveGroupGui.scales.y.default();
 				if ( options.moveGroupGui.scales.z ) options.moveGroupGui.scales.z.default();
-/*
-				if ( options.scales.x ) options.scales.x.default();
-				if ( options.scales.y ) options.scales.y.default();
-				if ( options.scales.z ) options.scales.z.default();
-*/				
 
 			},
 

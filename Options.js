@@ -34,19 +34,15 @@ import three from './three.js'
 
 import { OrbitControls, createEventDispatcher } from './OrbitControls/OrbitControls.js';
 //import { OrbitControls } from '../../three.js/dev/examples/jsm/controls/OrbitControls.js';
-//import { OrbitControls } from 'http://localhost/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 //import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 //import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 
-//для сщздания пустого cookie который ничего не запоминает
+//для создания пустого cookie который ничего не запоминает
 import Cookie from './cookieNodeJS/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 import cookie from './cookieNodeJS/cookie.js';
 //import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
-//import { dat } from './dat/dat.module.js';
-//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
 import { getLanguageCode } from './lang.js';
 //import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
@@ -66,15 +62,10 @@ class Options {
 		options = options || {};
 		if ( options.boOptions )
 			return options;//duplucate new Options
-//		options.boOptions = true;
 
 		if ( options.a === undefined ) options.a = 1;
 		if ( options.b === undefined ) options.b = 0;
 
-		/* *
-		 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
-		 * */
-//		this.options = options;
 		/**
 		 * set the <b>scales.w</b> key of the <b>options</b>
 		 * @param {Object} options
@@ -114,7 +105,6 @@ class Options {
 			options.scales[axisName].name = options.scales[axisName].name || axisName;
 			options.scales[axisName].min = options.scales[axisName].min === undefined ? -1 : options.scales[axisName].min;
 			options.scales[axisName].max = options.scales[axisName].max === undefined ? 1 : options.scales[axisName].max;
-//			if ( callBack ) callBack( options.scales[axisName] );
 
 		}
 		setScale( 'x' );
@@ -145,28 +135,11 @@ class Options {
 		 */
 		this.createOrbitControls = function ( camera, renderer, scene ) {
 
-/*
-			if ( options.orbitControls !== false ) options.orbitControls = options.orbitControls || {};
-			if ( !options.orbitControls )
-				return;
-*/
 			if ( options.orbitControls === false )
 				return;
-/*
-			if ( _this.orbitControls ) {
-
-				console.error( 'Options.createOrbitControls: duplicate orbitControls.' );
-				return;
-				
-			}
-*/			
 
 			createEventDispatcher();
 			_this.orbitControls = new OrbitControls( camera, renderer.domElement );
-/*непонятно зачем это
-			if ( _this.orbitControls.settings ) console.error( 'OrbitControls.settings = ' + controls.settings );
-			_this.orbitControls.settings = options.orbitControls;
-*/
 			_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
 			_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 			_this.orbitControls.update();
@@ -211,12 +184,8 @@ class Options {
 
 					if ( options.player ) options.player.setTime( options.playerOptions.min );
 
-//					camera.position.copy( camera.userData.default.options.position );
 					camera.position.copy( cameraPosition );
 					scene.position.copy( scenePosition );
-					//scene.position.add( options.axesHelper.position );
-					//						scene.position.add( options.scene.position );
-					//scene.position.copy( options.scene.position );
 					if ( options.orbitControls !== false ) {
 
 						options.orbitControls.target = new three.THREE.Vector3();
@@ -224,15 +193,6 @@ class Options {
 						options.orbitControls.update();
 
 					}
-					/*						
-											controls.target = new THREE.Vector3();
-											controls.object.position.copy( camera.position );
-											controls.update();
-					*/
-					/*							
-												Player.selectPlayScene( group, { options: options } );
-												removeTraceLines();
-					*/
 
 				},
 
@@ -267,7 +227,6 @@ class Options {
 
 				get: function () {
 
-//					const options = this.options;
 					options.playerOptions = options.playerOptions || {};
 					const playerOptions = options.playerOptions;
 					playerOptions.min = playerOptions.min || 0;
@@ -374,23 +333,9 @@ class Options {
 							function guiParent() {
 
 								dat.parent.appendChild( dat.gui.domElement );//.parentNode );
-/*								
-								dat.parent.style.position = 'absolute';//оставляем gui в пределах canvas
-								dat.parent.style.top = '0px';
-								dat.parent.style.right = '0px';
-//								dat.parent.style.z-index = 10;
-*/
 								dat.gui.domElement.style.position = 'absolute';//оставляем gui в пределах canvas
 								dat.gui.domElement.style.top = '0px';
 								dat.gui.domElement.style.right = '0px';
-//								dat.gui.domElement.style.z-index = 10;
-/*								
-								dat.parent.className = dat.gui.domElement.parentNode.className;
-								dat.gui.domElement.parentNode.style.position = 'absolute';//оставляем gui в пределах canvas
-								dat.gui.domElement.parentNode.style.top = '0px';
-								dat.gui.domElement.parentNode.style.right = '0px';
-//								dat.gui.domElement.parentNode.style.z-index = 10;
-*/
 								setTimeout( function () {
 
 									dat.gui.domElement.classList.remove( 'taller-than-window' );
@@ -425,7 +370,6 @@ class Options {
 
 										console.warn('get dat depreacated. Use three.dat = dat.');
 										return three.dat;
-//										return dat.dat;
 
 									},
 									set: function ( dat ) {
@@ -470,50 +414,11 @@ class Options {
 										if ( !dat.gui && three.dat ) {
 
 											dat.gui = new three.dat.GUI( options.dat.parent ? { autoPlace: false, } : undefined );
-//											dat.gui = new three.dat.GUI( { autoPlace: false, } );
 											if ( options.dat.parent ) {
 
 												guiParent();
-/*
-												dat.parent.appendChild( dat.gui.domElement.parentNode );
-												dat.gui.domElement.parentNode.style.position = 'absolute';//оставляем gui в пределах canvas
-*/
-/*												
-												const autoPlaceContainer = document.createElement('div');
-												autoPlaceContainer.classList.add( 'dg' );//делает видимыми папки
-												autoPlaceContainer.classList.add( three.dat.GUI.CLASS_AUTO_PLACE_CONTAINER );//делает видимыми папки
-												options.dat.parent.appendChild(autoPlaceContainer);
-												autoPlaceContainer.appendChild(dat.gui.domElement);
-												dat.gui.domElement.classList.add( three.dat.GUI.CLASS_AUTO_PLACE );//перемещает dat.gui в верхний правый угол. Папки остаются видимыми
-												autoPlaceContainer.style.position = 'absolute';//оставляем gui в пределах canvas
-//												autoPlaceContainer.style.float = 'right'; 
-//												options.dat.parent.appendChild(dat.gui.domElement);
-*/
 
 											}
-/*											
-											if (common.isUndefined(params.parent)) {
-											  if (autoPlaceVirgin) {
-												autoPlaceContainer = document.createElement('div');
-												dom.addClass(autoPlaceContainer, CSS_NAMESPACE);
-												dom.addClass(autoPlaceContainer, GUI.CLASS_AUTO_PLACE_CONTAINER);
-												document.body.appendChild(autoPlaceContainer);
-												autoPlaceVirgin = false;
-											  }
-
-											  // Put it in the dom for you.
-											  autoPlaceContainer.appendChild(this.domElement);
-
-											  // Apply the auto styles
-											  dom.addClass(this.domElement, GUI.CLASS_AUTO_PLACE);
-											}
-
-
-											// Make it not elastic.
-											if (!this.parent) {
-											  setWidth(_this, params.width);
-											}
-*/											
 
 										}
 										return dat.gui;
@@ -542,7 +447,6 @@ class Options {
 								playerGui: {
 
 									get: function () { return dat.playerGui; },
-									//									set: function ( cameraGui ) { dat.cameraGui = cameraGui; },
 
 								},
 								orbitControlsGui: {
@@ -588,15 +492,6 @@ class Options {
 								parent: {
 
 									get: function () { return dat.parent; },
-/*
-									set: function ( parent ) {
-
-										dat.parent = parent;
-										if ( !dat.gui ) dat.gui = new three.dat.GUI();// options.dat.parent ? {autoPlace: false,} : undefined );
-										guiParent();
-
-									},
-*/
 
 								},
 
@@ -613,8 +508,6 @@ class Options {
 
 					}
 					options.dat = new Dat( options.dat );
-//					options.dat.gui = options.dat.gui || new dat.GUI();
-//					if ( !options.dat.gui && options.dat.dat ) options.dat.gui = new options.dat.dat.GUI();
 					if ( options.dat.gui ) {
 
 						//debug
@@ -638,7 +531,6 @@ class Options {
 					}
 					if ( options.dat.cookie === false ) options.dat.cookie = new Cookie.defaultCookie();
 					else if ( options.dat.cookie === undefined ) options.dat.cookie = cookie;
-//					options.dat.cookie = options.dat.cookie !== false ? cookie : new Cookie.defaultCookie();
 					options.dat.getCookieName = function ( cookieName = '' ) {
 
 						const name = options.dat.cookieName ||
@@ -664,25 +556,6 @@ class Options {
 
 				},
 				set: function ( dat ) { options.dat = dat; },
-/*
-				cookieName: {
-
-					get: function ( cookieName = '' ) {
-
-						const name = options.dat.cookieName ||
-							( options.elContainer ?
-								typeof options.elContainer === "object" ?
-									options.elContainer.id :
-									typeof options.elContainer === "string" ?
-										options.elContainer :
-										'' :
-								'' );
-						return cookieName + ( ( cookieName !== '' ) && ( name !== '' ) ? '_' : '' ) + name;
-
-					}
-
-				},
-*/
 
 			},
 
@@ -703,10 +576,6 @@ class Options {
 					if ( typeof options.getLanguageCode === "string" )
 						return function () {
 
-/*
-							if ( !this || !this.options )
-								return 'en';//English language
-*/
 							return options.getLanguageCode;
 
 						}
@@ -841,10 +710,6 @@ class Options {
 				get: function () {
 
 					options.camera = options.camera || {};
-/*					
-					options.camera.position = options.camera.position || new three.THREE.Vector3( 0.4, 0.4, 2 );
-					options.camera.scale = options.camera.scale || new three.THREE.Vector3( 1, 1, 1 );
-*/					
 					if ( !options.camera.position ) options.camera.position = new three.THREE.Vector3( 0.4, 0.4, 2 );
 					if ( !options.camera.scale ) options.camera.scale = new three.THREE.Vector3( 1, 1, 1 );
 					return options.camera;
@@ -1146,21 +1011,7 @@ class Options {
 
 				get: function () {
 
-//					if ( !options.guiSelectPoint ) console.error( 'Options.guiSelectPoint: Create new GuiSelectPoint( options ) first.' );
 					return options.guiSelectPoint;
-/*
-					if ( options.guiSelectPoint ) return options.guiSelectPoint;
-					return {
-
-						add: function () { },
-						addMesh: function () { },
-						setMesh: function () { },
-						getSelectedPointIndex: function () { },
-						isSelectedMesh: function () { },
-						select: function () { },
-
-					}
-*/
 
 				},
 				set: function ( guiSelectPoint ) {
@@ -1264,7 +1115,6 @@ class Raycaster {
 					}
 
 				} );
-//				spriteTextIntersection.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
 				spriteTextIntersection.scale.divide( scene.scale );
 				scene.add( spriteTextIntersection );
 				
@@ -1316,10 +1166,6 @@ class Raycaster {
 				options.guiSelectPoint.select( intersection );
 			else if ( options.axesHelper )
 				options.axesHelper.exposePosition( intersection );
-			/*infinity loop
-					if ( options.raycaster.onMouseDown )
-						options.raycaster.onMouseDown( intersection );
-			*/
 
 		}
 		const intersectedObjects = [];
@@ -1349,7 +1195,6 @@ class Raycaster {
 
 			}
 			getIntersects();
-			//console.log( 'intersects.length ' + intersects.length );
 			intersects.forEach( function ( intersection ) {
 
 				var boDetected = false;
@@ -1365,7 +1210,6 @@ class Raycaster {
 				} );
 				if ( !boDetected ) {
 
-					//console.log( 'add ' + intersection.object.name );
 					intersectedObjects.push( intersection );
 
 				}
@@ -1404,13 +1248,11 @@ class Raycaster {
 						intersectedObject.object.userData.raycaster.onIntersectionOut();
 					else if ( settings.scene ) Options.raycaster.onIntersectionOut( settings.scene, renderer );
 
-					//console.log( 'remove ' + intersectedObject.object.name );
 					intersectedObjects.splice( intersectedObjects.findIndex( v => v === intersectedObject ), 1 );
 
 				}
 
 			} );
-			//console.log( 'intersectedObjects.length ' + intersectedObjects.length );
 			return intersects;
 
 		}
@@ -1515,14 +1357,6 @@ cube.userData.raycaster = {
 					}
 
 					Options.raycaster.EventListeners.getRendererSize( renderer ).getMousePosition( mouse, event );
-					/*			
-								// calculate mouse position in normalized device coordinates
-								// (-1 to +1) for both components
-					
-								mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-								mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-								//			console.warn( 'mouse.x = ' + mouse.x + ' mouse.y = ' + mouse.y );
-					*/
 
 					//Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
 
@@ -1553,33 +1387,6 @@ cube.userData.raycaster = {
 						intersectedObject = object;
 
 					}
-					/*			
-								arrayintersectObjects.forEach( function ( object ) {
-					
-									//				var bIntersected = false;
-									if ( intersectedObject && ( intersects.length === 0 ) ) {
-					
-										intersectedObject.userData.raycaster.onIntersectionOut();
-										intersectedObject = undefined;
-					
-									}
-									else if ( !intersectedObject )
-										for ( var i = 0; i < intersects.length; i++ ) {
-					
-											const intersect = intersects[i];
-											if ( Object.is( object, intersect.object ) ) {
-					
-												object.userData.raycaster.onIntersection( intersect );
-												intersectedObject = object;
-												//						bIntersected = true;
-												//						bIntersectedOut = true;
-					
-											}
-					
-										}
-					
-								} );
-					*/
 
 				}, false );
 
@@ -1592,21 +1399,12 @@ cube.userData.raycaster = {
 
 					if ( raycaster === undefined )
 						return;
-/*
-					if ( raycaster.stereo !== undefined ) {
-
-						raycaster.stereo.onDocumentMouseDown( event );
-						return;
-
-					}
-*/					
 					if ( intersects && ( intersects.length > 0 ) ) {
 
 						const intersect = intersects[0];
 						if ( intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown ) {
 
 							intersect.object.userData.raycaster.onMouseDown( intersect );
-//							if ( options && options.guiSelectPoint ) options.guiSelectPoint.select( intersect );
 
 						} else Options.raycaster.onMouseDown( intersect, options );
 

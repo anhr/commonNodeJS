@@ -14,7 +14,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-//import Options from './Options.js'
 import three from './three.js'
 import MyPoints from './myPoints/myPoints.js';
 import Options from './Options.js'
@@ -38,7 +37,6 @@ class pointLight {
 	constructor( scene, settings = {} ) {
 
 		const options = new Options( settings.options );
-//		if ( options.dat.pointLightGui === false ) return;
 		if ( options.pointLight === false ) {
 
 			this.add = function (){ }
@@ -47,55 +45,16 @@ class pointLight {
 
 		}
 
-		const dat = three.dat,//options.dat.dat,
+		const dat = three.dat,
 			THREE = three.THREE,
 			strLight = 'mathBoxLight',
 			controllers = {},
 			multiplier = 2 * options.scale,//options.scale is 1
 			position = settings.position || new THREE.Vector3();// 0.5 * options.scale, 0.5 * options.scale, 0.5 * options.scale );
-/*
-		function isLight() {
-
-			return light !== undefined;
-
-		}
-*/
-		/* *
-		 * add [PointLight]{@link https://threejs.org/docs/index.html?q=pointLight#api/en/lights/PointLight} to the <b>scene</b>.
-		 * @param {THREE.Vector3} [positionCur] light position. Default is <b>new THREE.Vector3( 0.5 * options.scale, 0.5 * options.scale, 0.5 * options.scale )</b>
-		 */
-/*
-		this.add = function ( positionCur ) {
-
-			position = positionCur || position;
-			if ( !isLight() ) {
-
-				light = new THREE.PointLight( 0xffffff, 1 );
-				light.position.copy( position );
-				light.name = strLight;
-				scene.add( light );
-
-			}// else console.error( 'duplicate ' + strLight );
-			return light;
-
-		};
-*/
 		const light = new THREE.PointLight( 0xffffff, 1 );
 		light.position.copy( position );
 		light.name = strLight;
 		scene.add( light );
-	/* * remove [PointLight]{@link https://threejs.org/docs/index.html?q=pointLight#api/en/lights/PointLight} from the <b>scene</b>. */
-/*
-		this.remove = function () {
-
-			if ( light == undefined )
-				return;
-			scene.remove( light );
-			//delete light;//Parsing error: Deleting local variable in strict mode
-			light = undefined;
-
-		};
-*/
 		/**
 		 * Adds the folder of the light settings into [gui]{@link https://github.com/anhr/dat.gui}.
 		 * @param {object} [guiParams={}] Followed parameters is allowed.
@@ -156,29 +115,8 @@ class pointLight {
 
 				if ( value ) {
 
-/*
-					function getPoints( pointVerticesSrc, color ) {
-
-						var geometry = Array.isArray( pointVerticesSrc ) ?
-							new THREE.BufferGeometry().setFromPoints( pointVerticesSrc ) : pointVerticesSrc;
-						var threshold = 0.05 * options.scale;
-						return new THREE.Points( geometry,
-							new THREE.PointsMaterial( {
-
-								color: color === undefined ? 0xffffff : color,
-								//map: texture,
-								size: threshold,
-								alphaTest: 0.5
-
-							} ) );
-
-					}
-					lightSource = getPoints( [light.position] );
-					group.add( lightSource );
-*/
 					MyPoints( light.position, group, { pointsOptions: {
 
-//						shaderMaterial: false,
 						onReady( points ) { lightSource = points; }
 
 					} } );

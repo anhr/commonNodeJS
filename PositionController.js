@@ -15,8 +15,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-//import { controllers } from '../../dat.gui/CustomController/build/dat.gui.module.js';
 import { controllers } from './dat/dat.gui.module.js';
+//import { controllers } from '../../dat.gui/CustomController/build/dat.gui.module.js';
+
 import UpDownController from './UpDownController.js';
 
 class PositionController extends controllers.CustomController {
@@ -42,7 +43,6 @@ class PositionController extends controllers.CustomController {
 
 		options.min = options.min || 0.1;
 		options.max = options.max || 10;
-//		options.offset = options.offset || 0.1;
 		settings.offset = settings.offset || 0.1;
 		options.step = options.step || 0.1;
 
