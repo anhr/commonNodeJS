@@ -902,7 +902,6 @@ class FrustumPoints
 
 								onReady: function ( data, itemSize, updateItem ) {
 
-//									setOptions.setPalette( options );
 									options.scales.setW();
 									const min = options.scales.w.min, max = options.scales.w.max;
 									const size = data.length / itemSize;

@@ -93,7 +93,6 @@ function sync( src, options ) {
 
 	if ( isScriptExists( options.appendTo, src ) ) {
 
-		//options.onerror( 'duplicate downloading of the ' + src + ' file' );
 		options.onload();
 		return;
 
@@ -252,14 +251,6 @@ function async( src, options ) {
 				if ( options.onload !== undefined ) {
 
 					next();
-/*
-					if ( src instanceof Array && ( isrc < ( src.length - 1 ) ) ) {
-
-						isrc++;
-						async( src[isrc] );
-
-					} else options.onload();
-*/
 
 				}
 
@@ -272,16 +263,14 @@ function async( src, options ) {
 
 					if ( script.readyState == "complete" ) {
 
-						// �� ������ �������� loaded
-						if ( options.onload !== undefined ) options.onload(); // (2)
+						if ( options.onload !== undefined ) options.onload();
 
 					}
 
 					if ( script.readyState == "loaded" ) {
 
-						setTimeout( options.onload, 0 ); // (1)
+						setTimeout( options.onload, 0 );
 
-						// ������� ����������, ����� �� �������� �� complete
 						this.onreadystatechange = null;
 
 					}
@@ -366,10 +355,6 @@ function isScriptExists( elParent, srcAsync, onload ) {
 		var child = scripts[i];
 		if ( child.id === srcAsync ) {
 
-/*
-			if ( onload !== undefined )
-				onload();
-*/
 			return true;
 
 		}

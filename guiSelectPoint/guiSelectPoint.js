@@ -16,11 +16,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//var THREE;
-
-//import { dat } from '../dat/dat.module.js';
-//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
-
 import ScaleController from '../ScaleController.js';
 //import ScaleController from 'https://raw.githack.com/anhr/commonNodeJS/master/ScaleController.js';
 
@@ -38,20 +33,14 @@ import Player from '../player/player.js';
 
 import functionsFolder from '../functionsFolder.js';
 
-//import FrustumPoints from '../frustumPoints/frustumPoints.js';
-
 import {
 
-//	getWorldPosition,
 	getObjectPosition,
 	getObjectLocalPosition,
 
 } from '../getPosition.js';
 
 import three from '../three.js'
-
-//import setOptions from '../setOptions.js'
-//import Options from '../Options.js'
 
 class GuiSelectPoint {
 
@@ -97,9 +86,7 @@ class GuiSelectPoint {
 	 */
 	constructor( options, guiParams = {} ) {
 
-		//	GuiSelectPoint.setTHREE( _THREE );
-
-//если я создам крнстанту axesHelper то не будет вызываться функции axesHelper если экземляр AxesHelper будет создан позже GuiSelectPoint
+//если я создам константу axesHelper то не будет вызываться функции axesHelper если экземляр AxesHelper будет создан позже GuiSelectPoint
 //Теперь new AxesHelper и new GuiSelectPoint можно вызывать в любом порядке.
 //		const axesHelper = options.axesHelper,
 		const guiSelectPoint = this,
@@ -126,17 +113,10 @@ class GuiSelectPoint {
 		//Player changes the guiSelectPoint control's values during playing
 		options.guiSelectPoint = guiSelectPoint;
 
-		//	setOptions.setScales( options );
-		//	options.setScales();
-		/*	
-			if ( options.a === undefined ) options.a = 1;
-			if ( options.b === undefined ) options.b = 0;
-		*/
 		var cFrustumPoints;
 
 		//Localization
 
-//		const getLanguageCode = guiParams.getLanguageCode || function () { return 'en'; };
 		const getLanguageCode = options.getLanguageCode;
 
 		const lang = {
@@ -337,7 +317,6 @@ class GuiSelectPoint {
 			*/
 			if ( cCameraTarget ) {
 
-//				Player.cameraTarget.changeTarget( intersectionSelected.object, intersectionSelected.index );
 				options.playerOptions.cameraTarget.changeTarget( intersectionSelected.object, intersectionSelected.index );
 				cCameraTarget.updateDisplay();
 
@@ -368,10 +347,8 @@ class GuiSelectPoint {
 			var color = ( func === undefined ) || ( !attributes.color && !attributes.ca ) ?
 				undefined :
 				Array.isArray( func.w ) || ( typeof func.w === "function" ) ?
-//					Player.execFunc( func, 'w', Player.getTime(), options ) ://.a, options.b ) :
 					Player.execFunc( func, 'w', options.time, options ) :
 					isWObject() ?
-//						Player.execFunc( func.w, 'func', Player.getTime(), options ) ://.a, options.b ) :
 						Player.execFunc( func.w, 'func', options.time, options ) :
 						func.w;
 
@@ -379,7 +356,7 @@ class GuiSelectPoint {
 
 				if ( attributes.ca === undefined ) {
 
-					//				console.warn( 'Under constraction. цвет frustumPoints не известен потому что он вычисляется в шейдере D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master\frustumPoints\vertex.c' )
+//					console.warn( 'Under constraction. цвет frustumPoints не известен потому что он вычисляется в шейдере D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master\frustumPoints\vertex.c' )
 
 				} else {
 
@@ -545,7 +522,6 @@ class GuiSelectPoint {
 					return index;
 
 			}
-			//		console.error( 'Invalid mesh "' + mesh.name + '" index' );
 			//Сюда попадает когда Mesh проверяется с помощью THREE.Raycaster находится ли он под мышью, но этот Mesh не внесен в список GuiSelectPoint
 
 		}
@@ -640,20 +616,6 @@ class GuiSelectPoint {
 					return;
 
 				}
-				/*				
-							if (
-								( option.mesh !== undefined ) &&
-								( mesh.name !== '' ) && //если не делать эту проверку то невозможно вставить два mesh без имени
-								( option.mesh.name === mesh.name )
-							) {
-				
-								//Нельза добалять два mesh с одинаковым именем
-								return;//сюда попадает когда создаются точки без shaderMaterial
-								//Сначала вызывается из myPoints create.Points function
-								//Потом из guiSelectPointF.addControllers
-				
-							}
-				*/
 
 			}
 			const opt = document.createElement( 'option' );
@@ -841,14 +803,13 @@ class GuiSelectPoint {
 				line = point === undefined ? undefined : point.line;
 			if (
 				( line !== undefined )// &&
-				//			( typeof line.visible !== 'undefined' )//создан player
 			)
 				line.visible( value );
 			if ( !value )
 				return;
 			if ( point.line !== undefined )
 				return;
-			point.line = new Player.traceLine( /*THREE, intersection.object, */options );
+			point.line = new Player.traceLine( options );
 
 			//color
 			var color = intersection.object.geometry.attributes.color;
@@ -931,7 +892,7 @@ class GuiSelectPoint {
 					if ( mesh.userData.controllers !== undefined ) {
 
 						//FrustumPoints
-						mesh.userData.controllers();// cFrustumPoints );
+						mesh.userData.controllers();
 
 					} else {
 
@@ -957,7 +918,6 @@ class GuiSelectPoint {
 					dislayEl( cPoints, displayPoints );
 					if ( cTraceAll ) {
 
-						//					dislayEl( cTraceAll, Player.isCreated() ? displayPoints : false );
 						dislayEl( cTraceAll, options.player ? displayPoints : false );
 
 					}
@@ -1190,10 +1150,6 @@ class GuiSelectPoint {
 			if ( options.player ) {
 
 				var orbitControlsOptions;
-/*				
-				if ( guiParams.cameraTarget ) Player.cameraTarget.init( guiParams.cameraTarget, options );
-				const playerCameraTarget = Player.cameraTarget.get();
-*/				
 				if ( guiParams.cameraTarget ) options.playerOptions.cameraTarget.init( guiParams.cameraTarget, options );
 				const playerCameraTarget = options.playerOptions.cameraTarget.get( options );
 				if ( playerCameraTarget ) {
@@ -1256,7 +1212,6 @@ class GuiSelectPoint {
 								if ( options.orbitControls )
 									orbitControlsOptions.target.copy( options.orbitControls.target );
 
-//								Player.cameraTarget.changeTarget( mesh, index );
 								options.playerOptions.cameraTarget.changeTarget( mesh, index );
 
 							}
@@ -1421,18 +1376,6 @@ class GuiSelectPoint {
 
 					options.scales.setW();
 					scale = options.scales.w;
-					/*				
-									options.scales.w = options.scales.w || {};
-									scale = options.scales.w;
-					//				scale = scale || {};
-									scale.name = scale.name || axisName;
-									if ( options.palette instanceof ColorPicker.palette ) {
-					
-										scale.min = scale.min === undefined ? 0 : scale.min;
-										scale.max = scale.max === undefined ? 100 : scale.max;
-					
-									}
-					*/
 					function onChange( value ) {
 
 						const attributes = intersection.object.geometry.attributes,
@@ -1519,7 +1462,6 @@ class GuiSelectPoint {
 
 								if ( isReadOnlyController( controller ) )
 									return;
-								//							movePoint( axisName, value );
 								const points = intersection.object,
 									axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error( 'axisName:' + axisName );
 								points.geometry.attributes.position.array
@@ -1587,7 +1529,6 @@ class GuiSelectPoint {
 
 			} );
 			dat.controllerNameAndTitle( cTrace, lang.trace, lang.traceTitle ); guiParams
-			//		dislayEl( cTrace, Player.isCreated() );
 			dislayEl( cTrace, options.player );
 
 			if ( guiParams.pointControls ) {
@@ -1621,7 +1562,6 @@ class GuiSelectPoint {
 
 					const positionDefault = intersection.object.userData.player.arrayFuncs[intersection.index],
 						t = options.time;
-//						t = Player.getTime();
 					cX.setValue( typeof positionDefault.x === "function" ?
 						positionDefault.x( t, options.a, options.b ) : positionDefault.x );
 					cY.setValue( typeof positionDefault.y === "function" ?
@@ -1731,22 +1671,4 @@ class GuiSelectPoint {
 
 }
 
-/* *
- * set THREE
- * @param {THREE} _THREE {@link https://github.com/anhr/three.js|THREE}
- */
-/*
-GuiSelectPoint.setTHREE = function ( _THREE ) {
-
-	if ( THREE ) {
-
-		if ( !Object.is(THREE, _THREE) )
-			console.error( 'GuiSelectPoint.setTHREE: duplicate THREE. Please use one instance of the THREE library.' )
-		return;
-
-	}
-	THREE = _THREE;
-
-}
-*/
 export default GuiSelectPoint;

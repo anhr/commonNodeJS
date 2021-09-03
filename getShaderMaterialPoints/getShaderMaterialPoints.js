@@ -66,13 +66,6 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 			settings.pointsOptions.tMin === undefined ? 0 : settings.pointsOptions.tMin;
 
 	settings.options = settings.options || new Options();
-/*
-	settings.options = settings.options || {};
-	settings.options.a = settings.options.a || 1;
-	settings.options.b = settings.options.b || 0;
-	setOptions.setScales( settings.options );
-	setOptions.setPoint( settings.options );
-*/	
 
 	settings.pointsOptions = settings.pointsOptions || {};
 
@@ -86,7 +79,6 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 	else geometry = new THREE.BufferGeometry().setFromPoints
 		( Player.getPoints( arrayFuncs,
 			{ options: settings.options, group: group, t: tMin, } ),
-//			{ options: { a: settings.options.a, b: settings.options.b }, group: group, t: tMin, } ),
 			arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
 	const indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud( geometry ) :  undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 	if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints ) {
@@ -101,19 +93,12 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 					opacity: settings.pointsOptions === undefined ? undefined : settings.pointsOptions.opacity,
 					positions: geometry.attributes.position,
 					options: settings.options,
-/*					
-//					scale: settings.options.scales.w,
-					scales: settings.options.scales,
-					palette: settings.options.palette,
-					tMin: tMin,
-*/					
 
 				} ),
 			4 ) );
 
 	}
 
-//	const texture = new THREE.TextureLoader().load( "/anhr/commonNodeJS/master/getShaderMaterialPoints/textures/point.png",
 	const texture = new THREE.TextureLoader().load( currentScriptPath + "/textures/point.png",
 		function( texture ){}, function(){}, function(){ console.error('THREE.TextureLoader: error'); } );
 	texture.wrapS = THREE.RepeatWrapping;
@@ -221,31 +206,6 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 			cloud.editShaderText( shaderText );
 
 		}
-/*Если тут создавть geometry то не будут видны точки frustumPoints.js. Не разобрался почму это происходит
-		const arrayCloud = settings.pointsOptions === undefined ? settings.arrayCloud : settings.pointsOptions.arrayCloud;
-		var geometry;
-		if ( typeof arrayFuncs === 'function' )
-			geometry = arrayFuncs();
-		else geometry = new THREE.BufferGeometry().setFromPoints
-			( settings.Player.getPoints( arrayFuncs,
-				//			{ options: { a: settings.options.a, b: settings.options.b, player: settings.options.player }, group: group, t: tMin, } ),
-				{ options: { a: settings.options.a, b: settings.options.b }, group: group, t: Player.getSettings().min, } ),
-				arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
-		var indexArrayCloud = arrayCloud === undefined ? undefined : MyPoints.pushArrayCloud( THREE, arrayCloud, geometry );//индекс массива точек в pointsOptions.arrayCloud которые принадлежат этому points
-		if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints )
-			geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( settings.Player.getColors
-				( arrayFuncs,
-					{
-
-						opacity: settings.pointsOptions === undefined ? undefined : settings.pointsOptions.opacity,
-						positions: geometry.attributes.position,
-						scale: settings.options.scales.w,
-						palette: settings.options.palette,
-						tMin: Player.getSettings().min,
-
-					} ),
-				4 ) );
-*/
 
 		const points = new THREE.Points( geometry, new THREE.ShaderMaterial( {
 
@@ -269,10 +229,7 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 			points.userData.cloud = { indexArray: indexArrayCloud, }
 		points.userData.shaderMaterial = settings.pointsOptions === undefined ? settings.shaderMaterial : settings.pointsOptions.shaderMaterial;
 		onReady( points );
-/*если оставить эти строки то в guiSelectPoint будут добавляться точки даже если этого не хочет программист			
-		if ( settings.options.guiSelectPoint )
-			settings.options.guiSelectPoint.addMesh( points );
-*/
+
 		//Convert all points with cloud and shaderMaterial from local to world positions
 		// i.e. calculate scales, positions and rotation of the points.
 		//Converting of all points with cloud, but not shaderMaterial see updateCloudPoint in the frustumPoints.create function
@@ -291,10 +248,8 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 			points.material.uniforms.palette.value.needsUpdate = true;
 		if ( points.material.uniforms.cloudPoints !== undefined )
 			points.material.uniforms.cloudPoints.value.needsUpdate = true;
-//		Player.selectMeshPlayScene( points, undefined, 0, settings.options );
 		Player.selectMeshPlayScene( points, { options: settings.options } );
 		//Что бы камера смотрела на выбранную точку сразу после запуска приложения
-//		const cameraTarget = Player.cameraTarget.get( settings.options );
 		const cameraTarget = settings.options.playerOptions.cameraTarget.get( settings.options );
 		if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition();
 

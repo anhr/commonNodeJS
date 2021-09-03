@@ -15,7 +15,6 @@
 import Player from '../player/player.js';
 import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMaterialPoints.js';
 import three from '../three.js'
-//import setOptions from '../setOptions.js'
 import Options from '../Options.js'
 
 /**
@@ -100,45 +99,22 @@ import Options from '../Options.js'
  */
 function MyPoints( arrayFuncs, group, settings ) {
 
-	//	Player.setTHREE( THREE );
 	const THREE = three.THREE;
 	
 	if ( ( typeof arrayFuncs !== 'function' ) && ( arrayFuncs.length === 0 ) )
 		arrayFuncs.push( new THREE.Vector3() );
 
 	settings = settings || {};
-//	settings.Player = settings.Player || Player;
 
 	settings.pointsOptions = settings.pointsOptions || {};
 	const pointsOptions = settings.pointsOptions;
-//	settings.options = settings.options || ( pointsOptions.frustumPoints ? pointsOptions.frustumPoints.getOptions() : new Options() );
 	settings.options = settings.options || new Options();
 	var options = settings.options;// || {};
 	if ( !options.boOptions ) {
 
 		options = new Options( options );
-/*
-		console.error( 'MyPoints: call options = new Options( options ) first' );
-		return;
-*/		
 
 	}
-//	setOptions.setPoint( options );
-/*Убрал потому что когда нет AxesHelper и не запущен Player и пользователь навел мышку на точку
-то в текстовой строке не отобрахаются x, y, z.
-Это сделано на тот случай, когда в AxesHelper отображаются не все координаты
-Для решения проблемы решил вообще не создавть options.scales без AxesHelper,
-что будет означать что надо выводить все x, y, z для точки, на которую наведена мышка
-	options.scales = options.scales || {};
-	options.scales.w = options.scales.w || {};
-	if ( options.scales.w.min === undefined ) options.scales.w.min = 0;
-	if ( options.scales.w.max === undefined ) options.scales.w.max = 100;
-*/	
-
-/*
-	if ( !options.palette && pointsOptions.frustumPoints )
-		options.palette = pointsOptions.frustumPoints.getOptions().palette;
-*/
 	pointsOptions.tMin = pointsOptions.tMin || 0;
 	pointsOptions.name = pointsOptions.name || '';
 	pointsOptions.position = pointsOptions.position || new THREE.Vector3( 0, 0, 0 );
@@ -150,7 +126,6 @@ function MyPoints( arrayFuncs, group, settings ) {
 	//что бы вызывалась моя версия THREE.BufferGeometry().setFromPoints для создания geometry c itemSize = 4
 	//потому что в противном случае при добавлени этих точек в FrustumPoints.pushArrayCloud() координата w будет undefined
 	Player.assign();
-//	settings.Player.assign();
 
 	if ( pointsOptions.shaderMaterial !== false )
 		getShaderMaterialPoints( group, arrayFuncs,// Player,
@@ -160,8 +135,6 @@ function MyPoints( arrayFuncs, group, settings ) {
 
 			}, {
 
-//			Player: settings.Player,
-//			Player: Player,
 			options: options,
 			pointsOptions: pointsOptions,
 
@@ -171,7 +144,6 @@ function MyPoints( arrayFuncs, group, settings ) {
 		const points = new THREE.Points(
 
 			typeof arrayFuncs === 'function' ? arrayFuncs() :
-//				new THREE.BufferGeometry().setFromPoints( settings.Player.getPoints( arrayFuncs,
 				new THREE.BufferGeometry().setFromPoints( Player.getPoints( arrayFuncs,
 					{ options: options, group: group, t: pointsOptions.tMin } ), 4 ),
 			new THREE.PointsMaterial( { size: options.point.size / options.point.sizePointsMaterial, vertexColors: THREE.VertexColors } )
@@ -183,25 +155,12 @@ function MyPoints( arrayFuncs, group, settings ) {
 				indexArray: pointsOptions.frustumPoints.pushArrayCloud( points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 
 			}
-/*
-		if ( pointsOptions.frustumPoints )
-			points.userData.cloud = {
-
-				indexArray: pointsOptions.frustumPoints.pushArrayCloud( points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
-
-			}
-*/
 		points.geometry.setAttribute( 'color',
-//			new THREE.Float32BufferAttribute( settings.Player.getColors( arrayFuncs,
 			new THREE.Float32BufferAttribute( Player.getColors( arrayFuncs,
 				{
 
 					positions: points.geometry.attributes.position,
 					options: options,
-/*
-					scale: options.scales ? options.scales.w : { min: 0, max: 100 },
-					palette: options.palette,
-*/					
 
 				} ), 4 ) );
 		Points( points );
@@ -221,31 +180,6 @@ function MyPoints( arrayFuncs, group, settings ) {
 
 		}
 		if ( settings.pointsOptions.raycaster ) points.userData.raycaster = settings.pointsOptions.raycaster;
-/*		
-		points.userData.raycaster = {
-
-			onIntersection: function ( intersection, mouse ) {
-
-				if ( options.raycaster && options.raycaster.onIntersection )
-					options.raycaster.onIntersection( intersection, mouse, points.parent );
-
-			},
-			onIntersectionOut: function () {
-
-				if ( options.raycaster && options.raycaster.onIntersectionOut )
-					options.raycaster.onIntersectionOut();
-
-			},
-			onMouseDown: function ( intersection ) {
-
-				if ( options.raycaster && options.raycaster.onMouseDown )
-					options.raycaster.onMouseDown( intersection, options );
-				else Options.raycaster.onMouseDown( intersection, options );
-
-			}
-
-		}
-*/		
 		points.userData.player = {
 
 			arrayFuncs: arrayFuncs,
@@ -313,52 +247,12 @@ function MyPoints( arrayFuncs, group, settings ) {
 		if ( pointsOptions.boFrustumPoints ) points.userData.boFrustumPoints = pointsOptions.boFrustumPoints;
 		if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 		if ( options.eventListeners ) options.eventListeners.addParticle( points );
-//		options.eventListeners.addParticle( points );
 		if ( pointsOptions.onReady !== undefined ) pointsOptions.onReady( points );
 
-/*если оставить эти строки то в guiSelectPoint будут добавляться точки даже если этого не хочет программист			
-		if ( options.guiSelectPoint )
-			options.guiSelectPoint.addMesh( points );
-*/			
 		if ( !points.userData.boFrustumPoints && options.raycaster && options.raycaster.addParticle )
 			options.raycaster.addParticle( points );
 
 	}
 
 }
-/* *
- * Pushes to clouds array all points from geometry
- * @function MyPoints.
- * pushArrayCloud
- * @param {THREE} THREE {@link https://github.com/anhr/three.js|THREE}
- * @param {array} arrayCloud
- * @param {THREE.BufferGeometry} geometry
- * @returns index of the new array item
- */
-/*See FrustumPoints.pushArrayCloud
-MyPoints.pushArrayCloud = function( THREE, arrayCloud, geometry ) {
-
-	if ( arrayCloud === undefined ) {
-
-		console.error( 'pushArrayCloud function failed! arrayCloud = ' + arrayCloud );
-		return;
-
-	}
-
-	//Массив точек, имеющих облако params.arrayCloud, разбил на группы points
-	//В каждой группе points содержатся все точки, из одного mesh
-	//Это сделал потому что если одновременно имеются точки с 
-	// shaderMaterial и без shaderMaterial, то порядок добавления точек в params.arrayCloud
-	// Не совпадает с порядком расположения mesh в group
-	// потому что точки без shaderMaterial добавляются сразу после создания
-	// а точки с shaderMaterial добаляются только после вызова loadShaderText в function getShaderMaterialPoints
-	var index = arrayCloud.getCloudsCount(),
-		points = [];
-	arrayCloud.push( points );
-	for ( var i = 0; i < geometry.attributes.position.count; i++ )
-		points.push( new THREE.Vector4().fromArray( geometry.attributes.position.array, i * geometry.attributes.position.itemSize ) );
-	return index;
-
-}
-*/
 export default MyPoints;

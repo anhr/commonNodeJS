@@ -43,7 +43,6 @@
 
 	<h2>Canvas.</h2>
 	<div id="canvasContainer1">
-		<!--<img src="/anhr/TreeElementNodeJS/master/img/wait.gif">-->
 		<img src="../../../img/wait.gif">
 	</div>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
@@ -71,7 +70,7 @@
 
 		new MyThree( function ( group, options ) {
 
-			var arrayFuncs;//, sizes;
+			var arrayFuncs;
 
 			//Points
 
@@ -90,7 +89,6 @@
 				),//Animated 3D point
 				[-0.5, 0.5, 1.0, 0],//4D point.
 				//[ 0.25, 0, 0.75, -1 ],//4D point.
-				//				[0, 0, 0, -1],//4D point.
 
 				{
 
@@ -182,7 +180,6 @@
 
 				onIntersection: function ( intersection, mouse ) {
 
-					//					options.raycaster.onIntersection( intersection, mouse );
 					MyThree.Options.raycaster.onIntersection( intersection, options, group, options.camera, options.renderer );
 
 				},
@@ -220,6 +217,7 @@
 			//points.scale.copy( new THREE.Vector3( 1.1, 1.2, 1.3 ) );
 
 			//cubes
+
 			var cubeType = 'cube';
 			function addCube( cubePosition, color, selectPlayScene, name ) {
 

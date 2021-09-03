@@ -105,7 +105,7 @@ function myRequest( options ) {
 	this.ProcessReqChange = function ( processStatus200 ) {
 		var req = this.req;
 		if ( ( typeof isIE === 'undefined' ) || !isIE ) {
-			//	console.log("processReqChange(); req.statusText: " + req.statusText + ". req.status = " + req.status + ". req.readyState = " + req.readyState + ". req.responseText: " + req.responseText);
+			//console.log("processReqChange(); req.statusText: " + req.statusText + ". req.status = " + req.status + ". req.readyState = " + req.readyState + ". req.responseText: " + req.responseText);
 		}
 		// only if req shows "complete"
 		//http://www.w3schools.com/ajax/ajax_xmlhttprequest_onreadystatechange.asp

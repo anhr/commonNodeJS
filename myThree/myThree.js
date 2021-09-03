@@ -29,9 +29,6 @@ import OrbitControlsGui from '../OrbitControls/OrbitControlsGui.js';
 //import OrbitControlsGui from 'http://localhost/anhr/commonNodeJS/master/OrbitControls/OrbitControlsGui.js';
 //import OrbitControlsGui from 'https://raw.githack.com/anhr/commonNodeJS/master/OrbitControls/OrbitControlsGui.js';
 
-//import loadScript from '../loadScriptNodeJS/loadScript.js';
-//import loadFile from '../loadFileNodeJS/loadFile.js';
-
 import { dat } from '../dat/dat.module.js';
 
 import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
@@ -45,7 +42,6 @@ import ColorPicker from '../colorpicker/colorpicker.js';
 
 import MoveGroupGui from '../MoveGroupGui.js';
 
-//import CameraGui from 'http://localhost/anhr/commonNodeJS/master/CameraGui.js';
 import CameraGui from '../CameraGui.js';
 //import CameraGui from 'https://raw.githack.com/anhr/commonNodeJS/master/CameraGui.js';
 
@@ -70,36 +66,7 @@ three.THREE = THREE2;
 import Options from '../Options.js'
 
 import pointLight from '../pointLight.js'
-/*
-var debug = {
 
-	opacity: 1 //непрозрачность frustumPoints
-
-};
-*/
-/*
-//Thanks to https://stackoverflow.com/a/27369985/5175935
-//Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
-const getCurrentScript = function () {
-
-	if ( document.currentScript && ( document.currentScript.src !== '' ) )
-		return document.currentScript.src;
-	const scripts = document.getElementsByTagName( 'script' ),
-		str = scripts[scripts.length - 1].src;
-	if ( str !== '' )
-		return src;
-	//Thanks to https://stackoverflow.com/a/42594856/5175935
-	return new Error().stack.match( /(https?:[^:]*)/ )[0];
-
-};
-//Thanks to https://stackoverflow.com/a/27369985/5175935
-const getCurrentScriptPath = function () {
-	const script = getCurrentScript(),
-		path = script.substring( 0, script.lastIndexOf( '/' ) );
-	return path;
-};
-const currentScriptPath = getCurrentScriptPath();
-*/
 function arrayContainersF() {
 
 	const array = [];
@@ -272,8 +239,6 @@ class MyThree {
 		
 		var camera, group, scene, canvas;
 
-//		function onloadScripts() {
-
 		var elContainer = options.elContainer === undefined ? document.getElementById( "containerDSE" ) :
 			typeof options.elContainer === "string" ? document.getElementById( options.elContainer ) : options.elContainer;
 		if ( elContainer === null ) {
@@ -285,10 +250,6 @@ class MyThree {
 
 		}
 		arrayContainers.push( elContainer );
-/*			
-		elContainer.innerHTML = loadFile.sync( currentScriptPath + '/canvasContainer.html' );
-		elContainer = elContainer.querySelector( '.container' );
-*/			
 		elContainer.innerHTML = '';
 		const elDiv = document.createElement( 'div' );
 		elDiv.className = 'container';
@@ -306,9 +267,9 @@ class MyThree {
 		options = new Options( options );
 
 		/**
-			* Save scale, position and rotation to the userData.default of the mesh
-			* @param {any} mesh
-			*/
+		* Save scale, position and rotation to the userData.default of the mesh
+		* @param {THREE.Object3D} mesh
+		*/
 		options.saveMeshDefault = function ( mesh ) {
 
 			mesh.userData.default = mesh.userData.default || {};
