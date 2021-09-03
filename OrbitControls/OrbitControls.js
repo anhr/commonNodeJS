@@ -1,15 +1,4 @@
 import three from '../three.js'
-/*
-import {
-	EventDispatcher,
-	MOUSE,
-	Quaternion,
-	Spherical,
-	TOUCH,
-	Vector2,
-	Vector3
-} from '../../../build/three.module.js';
-*/
 // This set of controls performs orbiting, dollying (zooming), and panning.
 // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
 //
@@ -26,13 +15,6 @@ var OrbitControls = function ( object, domElement ) {
 		TOUCH = three.THREE.TOUCH,
 		Vector2 = three.THREE.Vector2,
 		Vector3 = three.THREE.Vector3;
-/*
-	OrbitControls.prototype = Object.create( EventDispatcher.prototype );
-	OrbitControls.prototype.constructor = OrbitControls;
-	
-	MapControls.prototype = Object.create( EventDispatcher.prototype );
-	MapControls.prototype.constructor = MapControls;
-*/
 	if ( domElement === undefined ) console.warn( 'THREE.OrbitControls: The second parameter "domElement" is now mandatory.' );
 	if ( domElement === document ) console.error( 'THREE.OrbitControls: "document" should not be used as the target "domElement". Please use "renderer.domElement" instead.' );
 
@@ -1212,10 +1194,6 @@ var OrbitControls = function ( object, domElement ) {
 	this.update();
 
 };
-/*
-OrbitControls.prototype = Object.create( EventDispatcher.prototype );
-OrbitControls.prototype.constructor = OrbitControls;
-*/
 
 // This set of controls performs orbiting, dollying (zooming), and panning.
 // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
@@ -1238,10 +1216,6 @@ var MapControls = function ( object, domElement ) {
 	this.touches.TWO = TOUCH.DOLLY_ROTATE;
 
 };
-/*
-MapControls.prototype = Object.create( EventDispatcher.prototype );
-MapControls.prototype.constructor = MapControls;
-*/
 
 var createEventDispatcher = function () {
 

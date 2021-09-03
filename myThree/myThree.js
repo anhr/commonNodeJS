@@ -293,8 +293,6 @@ class MyThree {
 
 		var renderer,
 
-//				controls,
-
 			//перенес в options.dat
 			//mouseenter = false,//true - мышка находится над gui или canvasMenu
 			//В этом случае не надо обрабатывать событие elContainer 'pointerdown'
@@ -311,9 +309,6 @@ class MyThree {
 
 			stats,
 
-			//uses only if stereo effects does not exists
-//				intersects,// mouse = new THREE.Vector2(), 
-
 			//https://www.khronos.org/webgl/wiki/HandlingContextLost
 			requestId;
 
@@ -324,10 +319,6 @@ class MyThree {
 			elContainer.appendChild( canvas );
 
 		}
-//			options.dat.parent = elContainer.querySelector( '#my-gui-container' );//canvas.parentElement;
-
-		//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
-//			const gl = canvas.getContext( 'webgl' );
 
 		function isFullScreen() {
 
@@ -426,50 +417,6 @@ class MyThree {
 			new FrustumPoints( camera, group, canvas, {
 
 				options: options,
-/*
-				optionsShaderMaterial: {//points options. Default is { }
-
-					point: {//points options. Default is {}
-
-						size: 0.01,//Size of each frustum point.Default is 0;
-
-					},
-
-					//Stereo options. Available only if user has selected a stereo mode (spatialMultiplex !== spatialMultiplex.Mono)
-					stereo: {
-
-						//lines: false, // Display or hide lines between Frustum Points for more comfortable visualisation in the stereo mode.Default is true
-						//hide: 10, // Hide the nearby to the camera points in percentage to all points for more comfortable visualisation.Default is 0
-						//opacity: 1,//Float in the range of 0.0 - 1.0 indicating how transparent the lines is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque. Default is 0.3
-
-					},
-
-					//
-
-					//zCount: 5,// The count of layers of the frustum of the camera's field of view. Default is 50
-					//yCount: 3,// The count of vertical points for each z level of the  frustum of the camera's field of view.. Default is 30
-
-					//изменение размеров усеченной пирамиды FrustumPoints
-
-					//near: 10,// Shift of the frustum layer near to the camera in percents.
-					//0 percents - no shift.
-					//100 percents - ближний к камере слой усеченной пирамиды приблизился к дальнему от камеры слою усеченной пирамиды.
-					//Default is 0
-
-					//far: 70,// Shift of the frustum layer far to the camera in percents.
-					// 0 percents - no shift.
-					// 100 percents - дальний от камеры слоем усеченной пирамиды приблизился к ближнему к камере слою усеченной пирамиды.
-					// Default is 0
-
-					//base: 70,// Scale of the base of the frustum points in percents.
-					// 0 base is null
-					// 100 no scale
-					// Default is 100
-
-					//square: true,// true - Square base of the frustum points.Default is false
-
-				},
-*/
 
 			} );
 
@@ -492,25 +439,6 @@ class MyThree {
 
 			}
 			new StereoEffect( renderer, options );
-/*
-			const raycaster = new THREE.Raycaster();
-
-			//item.material.size is NaN if item.material is ShaderMaterial
-			//Влияет только на точки без ShaderMaterial
-			raycaster.params.Points.threshold = 0.02;//0.01;
-
-			if ( raycaster.setStereoEffect !== undefined )
-				raycaster.setStereoEffect( {
-
-					options: options,
-					renderer: renderer,
-					camera: camera,
-					scene: scene,
-					stereoEffect: options.stereoEffect,
-					raycasterEvents: false,
-
-				} );
-*/					
 			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
 
 			function removeTraceLines() {
@@ -570,11 +498,6 @@ class MyThree {
 				//Close gui window
 				if ( options.dat.gui.__closeButton.click !== undefined )//for compatibility with Safari 5.1.7 for Windows
 					options.dat.gui.__closeButton.click();
-
-				//Thanks to https://stackoverflow.com/questions/41404643/place-dat-gui-strictly-inside-three-js-scene-without-iframe
-//					elContainer.querySelector( '#my-gui-container' ).appendChild( options.dat.gui.domElement );
-//					options.dat.parent = elContainer.querySelector( '#my-gui-container' );//canvas.parentElement;
-//					options.dat.parent = elContainer;
 
 			}
 
@@ -678,7 +601,6 @@ class MyThree {
 					onFullScreenToggle: function ( fs ) {
 
 						arrayContainers.display( elContainer.parentElement, !fs );
-//							arrayContainers.display( elContainer, !fs );
 
 					},
 
@@ -959,25 +881,6 @@ class MyThree {
 		if ( params === undefined )
 			return;
 		myThreejs.create( params.createXDobjects, params.options );
-
-//		}
-
-/*		
-		var optionsStyle = {
-
-			tag: 'style',
-
-		}
-		if ( options.dat !== undefined ) {
-
-			loadScript.sync( currentScriptPath + '/../DropdownMenu/styles/gui.css', optionsStyle );
-
-			//for .container class
-			loadScript.sync( currentScriptPath + '/../DropdownMenu/styles/menu.css', optionsStyle );
-
-		}
-*/		
-//		onloadScripts();
 
 	}
 

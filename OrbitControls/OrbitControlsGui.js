@@ -14,7 +14,6 @@
  */
 
 import PositionController from '../PositionController.js';
-//import { dat } from '../dat/dat.module.js';
 import three from '../three.js'
 
 class OrbitControlsGui {
@@ -34,7 +33,6 @@ class OrbitControlsGui {
 	 */
 	constructor( options, gui ) {
 
-//		options = options || {};
 		if ( !options.boOptions ) {
 
 			console.error( 'OrbitControlsGui: call options = new Options( options ) first' );
@@ -46,18 +44,7 @@ class OrbitControlsGui {
 			return;
 		const dat = three.dat,//options.dat.dat,
 			orbitControls = options.orbitControls;
-/*
-		if ( !orbitControls ) {
-
-			console.error( 'OrbitControlsGui: call Options.createOrbitControls(...) first' );
-			return;
-
-		}
-*/		
 		options.orbitControlsGui = this;
-
-		//scales
-//		setOptions.setScales( options );
 
 		orbitControls.addEventListener( 'change', function () {
 
@@ -181,7 +168,6 @@ class OrbitControlsGui {
 			},
 
 		}, 'defaultF' ), lang.defaultButton, lang.defaultTitle );
-//		if ( this )
 		/**
 		* Set camera [target]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls.target}.
 		* @param {THREE.Vector3} target new camera [target]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls.target}
