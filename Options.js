@@ -332,6 +332,7 @@ class Options {
 								return dat;//duplucate new Options
 							function guiParent() {
 
+								//без elMyGuiContainer не будет скроллинга gui
 								const elMyGuiContainer = document.createElement( 'div' );
 								dat.parent.appendChild( elMyGuiContainer );
 								elMyGuiContainer.appendChild( dat.gui.domElement );
