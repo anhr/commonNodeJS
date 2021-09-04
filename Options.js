@@ -332,6 +332,13 @@ class Options {
 								return dat;//duplucate new Options
 							function guiParent() {
 
+								const elMyGuiContainer = document.createElement( 'div' );
+								dat.parent.appendChild( elMyGuiContainer );
+								elMyGuiContainer.appendChild( dat.gui.domElement );
+								elMyGuiContainer.style.position = 'absolute';//оставляем gui в пределах canvas
+								elMyGuiContainer.style.top = '0px';
+								elMyGuiContainer.style.right = '0px';
+/*
 								dat.parent.appendChild( dat.gui.domElement );//.parentNode );
 								dat.gui.domElement.style.position = 'absolute';//оставляем gui в пределах canvas
 								dat.gui.domElement.style.top = '0px';
@@ -341,6 +348,7 @@ class Options {
 									dat.gui.domElement.classList.remove( 'taller-than-window' );
 
 								}, 0 );
+*/								
 
 							}
 							Object.defineProperties( this, {
@@ -413,7 +421,8 @@ class Options {
 
 										if ( !dat.gui && three.dat ) {
 
-											dat.gui = new three.dat.GUI( options.dat.parent ? { autoPlace: false, } : undefined );
+											//если сделать autoPlace: false то не будет скроллинга для gui
+											dat.gui = new three.dat.GUI();// options.dat.parent ? { autoPlace: false, } : undefined );
 											if ( options.dat.parent ) {
 
 												guiParent();
