@@ -350,7 +350,9 @@ class GuiSelectPoint {
 					Player.execFunc( func, 'w', options.time, options ) :
 					isWObject() ?
 						Player.execFunc( func.w, 'func', options.time, options ) :
-						func.w;
+						typeof func.w === "string" ?
+							Player.execFunc( func, 'w', options.time, options ) :
+							func.w;
 
 			if ( color === undefined ) {
 

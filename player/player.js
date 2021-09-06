@@ -1672,8 +1672,11 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 				}
 
-			} else if ( ( typeof funcs.w === "number" ) && options.palette )
-				color = options.palette.toColor( funcs.w, min, max );
+			} else //if ( ( typeof funcs.w === "number" ) && options.palette )
+			if ( options.palette )
+				color = options.palette.toColor(
+					typeof funcs.w === "number" ? funcs.w : Player.execFunc( funcs, 'w', t, options ),
+					min, max );
 			if ( color ) {
 
 				if ( !mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors )
@@ -2137,12 +2140,15 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 				boColorWarning = false;
 				
 			}
+			const t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
 			var color = optionsColor.options.palette.toColor(
 				funcs === undefined ?
 					new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
 					w instanceof Function ?
-						w( optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0 ) :
-						w,
+						w( t ) :
+						typeof w === "string" ?
+							Player.execFunc( funcs, 'w', t, optionsColor.options ) :
+							w,
 				min, max );
 			optionsColor.colors.push( color.r, color.g, color.b );
 

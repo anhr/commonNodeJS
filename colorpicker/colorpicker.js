@@ -671,6 +671,12 @@ class ColorPicker {
 			this.hsv2rgb = function ( stringPercent, min, max ) {
 
 				var percent = parseFloat( stringPercent );
+				if ( isNaN( percent ) ) {
+
+					console.error( 'ColorPicker.palette.hsv2rgb: stringPercent = ' + stringPercent );
+					return;
+					
+				}
 				if ( min !== undefined && max !== undefined )
 					percent = ( 100 / ( max - min ) ) * ( percent - min );
 				var lastPalette = arrayPalette[arrayPalette.length - 1];
