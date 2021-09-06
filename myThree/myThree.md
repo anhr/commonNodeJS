@@ -1,4 +1,6 @@
-﻿# MyThree.
+﻿
+
+# MyThree.
 
 I use <b>MyThree</b> in my [three.js](https://threejs.org/) projects for displaying of my 3D objects in the canvas.
 
@@ -64,7 +66,7 @@ Now you can use <b>MyThree</b> in your javascript code.
 ```
 new MyThree();
 ```
-Now you can a canvas on your web page. Inside of the canvas you can see:
+You can see a canvas on your web page. Inside of the canvas you can see:
 * [AxesHelper](../../AxesHelper/jsdoc/index.html) in the canvas center.
 * [dat.gui](https://github.com/anhr/dat.gui) controllers in the upper left corner of the canvas.
 * [CanvasMenu](../../canvasMenu/jsdoc/index.html) in the bottom of the canvas.
