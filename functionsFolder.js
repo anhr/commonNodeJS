@@ -211,7 +211,7 @@ class functionsFolder {
 				}
 
 				//Новое значение введено правильно
-				onFinishChange( func, axisName );
+				onFinishChange( func, axisName, value );
 				boAlert = false;
 
 			} catch ( e ) {

@@ -1628,7 +1628,7 @@ class GuiSelectPoint {
 			}, 'defaultF' );
 			dat.controllerNameAndTitle( cRestoreDefaultLocalPosition, lang.defaultButton, lang.defaultLocalPositionTitle );
 
-			funcFolder = new functionsFolder( fPoint, function ( func, axisName ) {
+			funcFolder = new functionsFolder( fPoint, function ( func, axisName, value ) {
 
 				const mesh = getMesh(),
 					index = cPoints.__select.options.selectedIndex - 1,
@@ -1647,19 +1647,24 @@ class GuiSelectPoint {
 					parent = parent.parent;
 
 				}
+/*
 				const position = mesh.geometry.attributes.position,
 					itemSize = position.itemSize;
-				var controller;
+*/
+				var controller, functionName;
 				switch ( axisName ) {
 
 					case 'x':
 						controller = cX;
+						functionName = 'xFunction';
 						break;
 					case 'y':
 						controller = cY;
+						functionName = 'yFunction';
 						break;
 					case 'z':
 						controller = cZ;
+						functionName = 'zFunction';
 						break;
 					case 'w':
 						if ( func instanceof THREE.Color ) {
@@ -1669,12 +1674,21 @@ class GuiSelectPoint {
 
 						}
 						controller = cW;
+						functionName = 'wFunction';
 						break;
 					default: console.error( 'GuiSelectPoint new functionsFolder onFinishChange: axisName = ' + axisName );
 						return;
 
 				}
 				setValue( controller, Player.execFunc( funcs, axisName, t, options ) );
+
+				if ( funcs.controllers ) {
+
+					//обновить органы управления на веб странице
+					const controllerObject = funcs.controllers[functionName];
+					if ( controllerObject ) controllerObject.controller.value = value;
+					
+				}
 
 			}, options, { x: '', y: '', z: '', w: '' } );/* {
 
