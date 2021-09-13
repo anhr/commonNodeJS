@@ -763,6 +763,7 @@ class GuiSelectPoint {
 				return selectedPointIndex;//options.dat !== true and gui === undefined. Do not use dat.gui
 
 			}
+			if ( !getMesh() ) return -1; //не выбран 3d объект.
 			const index = cPoints.__select.selectedOptions[0].index;
 			return index - 1;
 
