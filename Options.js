@@ -49,6 +49,7 @@ import { getLanguageCode } from './lang.js';
 
 import Player from './player/player.js';
 import StereoEffect from './StereoEffect/StereoEffect.js';
+import { createController } from './controller.js'
 
 class Options {
 
@@ -62,6 +63,8 @@ class Options {
 		options = options || {};
 		if ( options.boOptions )
 			return options;//duplucate new Options
+
+		var lang;
 
 		if ( options.a === undefined ) options.a = 1;
 		if ( options.b === undefined ) options.b = 0;
@@ -603,7 +606,205 @@ class Options {
 			 **/
 			scales: {
 
-				get: function () { return options.scales; },
+				get: function () {
+
+					class Scales {
+
+						/* *
+						 * scales
+						 * @param {object} scales
+						 */
+						constructor( scales ) {
+
+//							scales = scales || {};
+
+							class Scale {
+
+								/* *
+								 * scale
+								 * @param {object} scales
+								 * @param {string} axisName. 'x' or 'y' or 'z'
+								 */
+								constructor( scales, axisName ) {
+
+									const scale = scales[axisName];
+//									scale = scale || {};
+									this.isAxis = function () {
+
+										if ( !scales || ( !scales.x && !scales.y && !scales.z ) || scale ) return true;
+										return false;
+										
+									}
+									Object.defineProperties( this, {
+
+										/* *
+										 * getter
+										 * <pre>
+										 * returns true if <b>scale</b> was converted by <b>new Scale( scale );</b>
+										 * </pre>
+										 **/
+										boScale: {
+
+											get: function () { return true; },
+
+										},
+										min: {
+
+											get: function () {
+
+												if ( !scale || !scale.min ) return -1;
+												return scale.min;
+
+											},
+
+										},
+										max: {
+
+											get: function () {
+
+												if ( !scale || !scale.max ) return 1;
+												return scale.max;
+
+											},
+
+										},
+										name: {
+
+											get: function () {
+
+												if ( !scale || !scale.name ) return axisName;
+												return scale.name;
+
+											},
+
+										},
+
+									} );
+
+									//For debugging. Find a hidden keys
+									for ( var propertyName in scale ) {
+
+										if ( this[propertyName] === undefined ) console.error( 'Options.Scales: scale.' + propertyName + ' key is hidden' );
+
+									}
+
+								}
+
+							}
+							const scalesObject = {
+
+								x: new Scale( options.scales, 'x' ),
+								y: new Scale( options.scales, 'y' ),
+								z: new Scale( options.scales, 'z' ),
+
+							}
+/*								
+							if ( !options.scales.x.boScale )
+								options.scales.x = new Scale( options.scales, 'x' );
+							if ( !options.scales.y.boScale )
+								options.scales.y = new Scale( options.scales, 'y' );
+							if ( !options.scales.z.boScale )
+								options.scales.z = new Scale( options.scales, 'z' );
+*/								
+
+							Object.defineProperties( this, {
+
+								/* *
+								 * getter
+								 * <pre>
+								 * returns true if <b>scales</b> was converted by <b>new Scales( scales );</b>
+								 * </pre>
+								 **/
+								boScales: {
+
+									get: function () { return true; },
+
+								},
+
+								/* *
+								 * getter
+								 * <pre>
+								 * x
+								 * </pre>
+								 **/
+								x: {
+
+									get: function () {
+
+										return scalesObject.x;
+//										return scales.x;
+
+									},
+
+								},
+
+								/* *
+								 * getter
+								 * <pre>
+								 * y
+								 * </pre>
+								 **/
+								y: {
+
+									get: function () {
+
+										return scalesObject.y;
+//										return scales.y;
+
+									},
+
+								},
+
+								/* *
+								 * getter
+								 * <pre>
+								 * z
+								 * </pre>
+								 **/
+								z: {
+
+									get: function () {
+
+										return scalesObject.z;
+//										return scales.z;
+
+									},
+
+								},
+
+								/* *
+								 * getter
+								 * <pre>
+								 * setW
+								 * </pre>
+								 **/
+								setW: {
+
+									get: function () {
+
+										return scales.setW;
+
+									},
+
+								},
+
+							} );
+
+							//For debugging. Find a hidden keys
+							for ( var propertyName in scales ) {
+
+								if ( this[propertyName] === undefined ) console.error( 'Options: scales.' + propertyName + ' key is hidden' );
+
+							}
+
+						}
+
+					}
+					if ( !options.scales.boScales )
+						options.scales = new Scales( options.scales );
+					return options.scales;
+
+				},
 				set: function ( scales ) { options.scales = scales; }
 
 			},
@@ -1034,6 +1235,185 @@ class Options {
 
 			},
 
+			/**
+			 * getter
+			 * <pre>
+			 * Controllers list.
+			 * User can see and edit some parameters on the web page.
+			 * <b>t</b>: Object for view and edit of the current <a href="../../player/jsdoc/index.html" target="_blank">Player</a> time.
+			 * 
+			 *	Keys:
+			 *		<b>controller</b>:
+			 *			<b>HTMLElement</b> for view and edit of the current <a href="../../player/jsdoc/index.html" target="_blank">Player</a> time
+			 *			or <b>string</b> of <b>HTMLElement</b> id.
+			 *		<b>elName</b>:
+			 *			<b>HTMLElement</b> name of the time parameter. See <b>settings.options.playerOptions.name</b> parameter of <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a>
+			 *			or <b>string</b> of <b>HTMLElement</b> id.
+			 * </pre>
+			 *
+			 * See <b>options.controllers</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a>.
+			 * </pre>
+			 **/
+			controllers: {//не засунул это в options.playerOptions потому что при чтение из cockie теряется HTMLElement
+
+				get: function () {
+
+					class Controllers{
+
+						/* *
+						 * dat options
+						 * @param {dat} dat [dat]{@link https://github.com/dataarts/dat.gui}
+						 */
+						constructor( controllers ) {
+
+							var elName;
+							controllers = controllers || {};
+							Object.defineProperties( this, {
+
+								/* *
+								 * getter
+								 * <pre>
+								 * returns true if <b>controllers</b> was converted by <b>new Controllers( controllers );</b>
+								 * </pre>
+								 **/
+								boControllers: {
+
+									get: function () { return true; },
+
+								},
+
+								/* *
+								 * getter
+								 * <pre>
+								 * Object for view and edit of the current <a href="../../player/jsdoc/index.html" target="_blank">Player</a> time.
+								 * Keys:
+								 *	<b>controller</b>:
+								 *		<b>HTMLElement</b> for view and edit of the current <a href="../../player/jsdoc/index.html" target="_blank">Player</a> time
+								 *		or <b>string</b> of <b>HTMLElement</b> id.
+								 *	<b>elName</b>:
+								 *		<b>HTMLElement</b> name of the time parameter. See <b>settings.options.playerOptions.name</b> parameter of <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a>
+								 *		or <b>string</b> of <b>HTMLElement</b> id.
+								 * </pre>
+								 **/
+								t: {
+
+									get: function () {
+
+										if ( controllers.t === null )
+											console.error( 'options.controllers.t = ' + controllers.t );
+										if ( controllers.t ) {
+
+											createController( controllers.t, 't',
+												function () { return  options.playerOptions && options.playerOptions.name ? options.playerOptions.name : 't'; }, {
+
+												onchange: function ( event ) {
+
+													if ( !options.player ) {
+
+														console.error( 'options.controllers.t.onchange: create Player instance first.' + controllers.t.value );
+														return;
+
+													}
+													if ( options.player.setTime( controllers.t.controller.value ) === false ) {
+
+														alert( lang.timeAlert + controllers.t.controller.value );
+														controllers.t.controller.focus();
+
+													}
+
+												},
+
+											} );
+											if ( ( typeof lang !== 'undefined' ) && ( controllers.t.controller.title === '' ) )
+												controllers.t.controller.title = lang.controllerTTitle;
+/*
+											//time controller
+
+											if ( typeof controllers.t.controller === "string" ) controllers.t.controller = document.getElementById( controllers.t.controller );
+											if ( !controllers.t.controller ) {
+
+												var controller = document.getElementById( 't' );
+												if ( !controller ) {
+
+													controller = document.createElement( 'input' );
+													document.querySelector('body').appendChild( controller );
+													
+												}
+												controllers.t.controller = controller;
+
+											}
+											if ( controllers.t.controller.onchange === null )
+												controllers.t.controller.onchange = function( event ){
+
+													if ( !options.player ) {
+
+														console.error ( 'options.controllers.t.onchange: create Player instance first.' + controllers.t.value );
+														return;
+
+													}
+													if ( options.player.setTime( controllers.t.controller.value ) === false ) {
+
+														alert( lang.timeAlert + controllers.t.controller.value );
+														controllers.t.controller.focus();
+
+													}
+
+												}
+											if ( ( typeof lang !== 'undefined' ) && ( controllers.t.controller.title === '' ) )
+												controllers.t.controller.title = lang.controllerTTitle;
+
+											//time name
+
+											if ( controllers.t.elName !== false ) {
+
+												if ( typeof controllers.t.elName === "string" ) 
+													controllers.t.elName = document.getElementById( controllers.t.elName );
+												var str = '';
+												if ( !controllers.t.elName ) {
+
+													controllers.t.elName = document.createElement( 'span' );
+													controllers.t.controller.parentElement.insertBefore( controllers.t.elName, controllers.t.controller);
+													str = ' = ';
+
+												}
+												if ( controllers.t.elName.innerHTML === '' ) {
+
+													var name = options.playerOptions.name;
+													if ( name === '' ) name = 't';
+													controllers.t.elName.innerHTML = name + str;
+
+												}
+											
+											}
+*/
+
+										}
+										return controllers.t;
+
+									},
+
+								},
+
+							} );
+
+							//For debugging. Find a hidden keys
+							for ( var propertyName in controllers ) {
+
+								if ( this[propertyName] === undefined ) console.error( 'Controllers: controllers.' + propertyName + ' key is hidden' );
+
+							}
+
+						}
+
+					}
+					if ( !options.controllers.boControllers )
+						options.controllers = new Controllers( options.controllers );
+					return options.controllers;
+
+				},
+
+			},
+
 		} ); 
 
 		//For debugging. Find a hidden keys
@@ -1043,6 +1423,36 @@ class Options {
 
 		}
 		this.playerOptions.cameraTarget.init( this.cameraTarget, this, false );
+
+		//Localization
+
+		lang = {
+
+			timeAlert: 'Invalid time fromat: ',
+			controllerTTitle: 'Current time.',
+
+		};
+		switch ( this.getLanguageCode() ) {
+
+			case 'ru'://Russian language
+
+				lang.timeAlert = 'Неправильный формат времени: ';
+				lang.controllerTTitle = 'Текущее время.';
+
+				break;
+			default://Custom language
+				if ( ( options.lang === undefined ) || ( options.lang.languageCode != languageCode ) )
+					break;
+
+				Object.keys( options.lang ).forEach( function ( key ) {
+
+					if ( lang[key] === undefined )
+						return;
+					lang[key] = options.lang[key];
+
+				} );
+
+		}
 
 	}
 

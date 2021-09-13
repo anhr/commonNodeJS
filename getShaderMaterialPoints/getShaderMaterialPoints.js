@@ -14,6 +14,7 @@
 import three from '../three.js'
 import Player from '../player/player.js';
 import Options from '../Options.js'
+//import vertex from './getShaderMaterialPoints/vertex.glsl'
 
 //Thanks to https://stackoverflow.com/a/27369985/5175935
 //Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js

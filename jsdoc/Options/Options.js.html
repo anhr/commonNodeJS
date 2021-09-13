@@ -62,19 +62,15 @@ import three from './three.js'
 
 import { OrbitControls, createEventDispatcher } from './OrbitControls/OrbitControls.js';
 //import { OrbitControls } from '../../three.js/dev/examples/jsm/controls/OrbitControls.js';
-//import { OrbitControls } from 'http://localhost/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 //import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 //import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 
-//для сщздания пустого cookie который ничего не запоминает
+//для создания пустого cookie который ничего не запоминает
 import Cookie from './cookieNodeJS/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 import cookie from './cookieNodeJS/cookie.js';
 //import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
-//import { dat } from './dat/dat.module.js';
-//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 
 import { getLanguageCode } from './lang.js';
 //import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
@@ -94,15 +90,12 @@ class Options {
 		options = options || {};
 		if ( options.boOptions )
 			return options;//duplucate new Options
-//		options.boOptions = true;
+
+		var lang;
 
 		if ( options.a === undefined ) options.a = 1;
 		if ( options.b === undefined ) options.b = 0;
 
-		/* *
-		 * See the &lt;b>options&lt;/b> parameter of the &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree&lt;/a> class.
-		 * */
-//		this.options = options;
 		/**
 		 * set the &lt;b>scales.w&lt;/b> key of the &lt;b>options&lt;/b>
 		 * @param {Object} options
@@ -142,7 +135,6 @@ class Options {
 			options.scales[axisName].name = options.scales[axisName].name || axisName;
 			options.scales[axisName].min = options.scales[axisName].min === undefined ? -1 : options.scales[axisName].min;
 			options.scales[axisName].max = options.scales[axisName].max === undefined ? 1 : options.scales[axisName].max;
-//			if ( callBack ) callBack( options.scales[axisName] );
 
 		}
 		setScale( 'x' );
@@ -173,28 +165,11 @@ class Options {
 		 */
 		this.createOrbitControls = function ( camera, renderer, scene ) {
 
-/*
-			if ( options.orbitControls !== false ) options.orbitControls = options.orbitControls || {};
-			if ( !options.orbitControls )
-				return;
-*/
 			if ( options.orbitControls === false )
 				return;
-/*
-			if ( _this.orbitControls ) {
-
-				console.error( 'Options.createOrbitControls: duplicate orbitControls.' );
-				return;
-				
-			}
-*/			
 
 			createEventDispatcher();
 			_this.orbitControls = new OrbitControls( camera, renderer.domElement );
-/*непонятно зачем это
-			if ( _this.orbitControls.settings ) console.error( 'OrbitControls.settings = ' + controls.settings );
-			_this.orbitControls.settings = options.orbitControls;
-*/
 			_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
 			_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 			_this.orbitControls.update();
@@ -239,12 +214,8 @@ class Options {
 
 					if ( options.player ) options.player.setTime( options.playerOptions.min );
 
-//					camera.position.copy( camera.userData.default.options.position );
 					camera.position.copy( cameraPosition );
 					scene.position.copy( scenePosition );
-					//scene.position.add( options.axesHelper.position );
-					//						scene.position.add( options.scene.position );
-					//scene.position.copy( options.scene.position );
 					if ( options.orbitControls !== false ) {
 
 						options.orbitControls.target = new three.THREE.Vector3();
@@ -252,15 +223,6 @@ class Options {
 						options.orbitControls.update();
 
 					}
-					/*						
-											controls.target = new THREE.Vector3();
-											controls.object.position.copy( camera.position );
-											controls.update();
-					*/
-					/*							
-												Player.selectPlayScene( group, { options: options } );
-												removeTraceLines();
-					*/
 
 				},
 
@@ -295,7 +257,6 @@ class Options {
 
 				get: function () {
 
-//					const options = this.options;
 					options.playerOptions = options.playerOptions || {};
 					const playerOptions = options.playerOptions;
 					playerOptions.min = playerOptions.min || 0;
@@ -399,6 +360,28 @@ class Options {
 							dat = dat || {};
 							if ( dat.boDat )
 								return dat;//duplucate new Options
+							function guiParent() {
+
+								//без elMyGuiContainer не будет скроллинга gui
+								const elMyGuiContainer = document.createElement( 'div' );
+								dat.parent.appendChild( elMyGuiContainer );
+								elMyGuiContainer.appendChild( dat.gui.domElement );
+								elMyGuiContainer.style.position = 'absolute';//оставляем gui в пределах canvas
+								elMyGuiContainer.style.top = '0px';
+								elMyGuiContainer.style.right = '0px';
+/*
+								dat.parent.appendChild( dat.gui.domElement );//.parentNode );
+								dat.gui.domElement.style.position = 'absolute';//оставляем gui в пределах canvas
+								dat.gui.domElement.style.top = '0px';
+								dat.gui.domElement.style.right = '0px';
+								setTimeout( function () {
+
+									dat.gui.domElement.classList.remove( 'taller-than-window' );
+
+								}, 0 );
+*/								
+
+							}
 							Object.defineProperties( this, {
 
 
@@ -426,7 +409,6 @@ class Options {
 
 										console.warn('get dat depreacated. Use three.dat = dat.');
 										return three.dat;
-//										return dat.dat;
 
 									},
 									set: function ( dat ) {
@@ -468,7 +450,17 @@ class Options {
 
 									get: function () {
 
-										if ( !dat.gui &amp;&amp; three.dat ) dat.gui = new three.dat.GUI();
+										if ( !dat.gui &amp;&amp; three.dat ) {
+
+											//если сделать autoPlace: false то не будет скроллинга для gui
+											dat.gui = new three.dat.GUI();// options.dat.parent ? { autoPlace: false, } : undefined );
+											if ( options.dat.parent ) {
+
+												guiParent();
+
+											}
+
+										}
 										return dat.gui;
 
 									},
@@ -495,7 +487,6 @@ class Options {
 								playerGui: {
 
 									get: function () { return dat.playerGui; },
-									//									set: function ( cameraGui ) { dat.cameraGui = cameraGui; },
 
 								},
 								orbitControlsGui: {
@@ -538,6 +529,11 @@ class Options {
 									get: function () { return dat.pointLightGui; },
 
 								},
+								parent: {
+
+									get: function () { return dat.parent; },
+
+								},
 
 							} );
 
@@ -552,19 +548,22 @@ class Options {
 
 					}
 					options.dat = new Dat( options.dat );
-//					options.dat.gui = options.dat.gui || new dat.GUI();
-//					if ( !options.dat.gui &amp;&amp; options.dat.dat ) options.dat.gui = new options.dat.dat.GUI();
 					if ( options.dat.gui ) {
 
-						const className = options.dat.gui.domElement.className;
-						var guiCount = 0;
-						options.dat.gui.domElement.parentElement.childNodes.forEach( function ( node ) {
+						//debug
+						setTimeout( function () {
 
-							if ( node.className === className ) guiCount++;
+							const className = options.dat.gui.domElement.className;
+							var guiCount = 0;
+							options.dat.gui.domElement.parentElement.childNodes.forEach( function ( node ) {
 
-						} );
-						if ( guiCount > 1 )
-							console.error( 'Options: duplicate dat.GUI' );
+								if ( node.className === className ) guiCount++;
+
+							} );
+							if ( guiCount > 1 )
+								console.error( 'Options: duplicate dat.GUI' );
+
+						}, 0 );
 
 						options.dat.gui.domElement.addEventListener( 'mouseenter', function ( event ) { options.dat.mouseenter = true; } );
 						options.dat.gui.domElement.addEventListener( 'mouseleave', function ( event ) { options.dat.mouseenter = false; } );
@@ -572,7 +571,6 @@ class Options {
 					}
 					if ( options.dat.cookie === false ) options.dat.cookie = new Cookie.defaultCookie();
 					else if ( options.dat.cookie === undefined ) options.dat.cookie = cookie;
-//					options.dat.cookie = options.dat.cookie !== false ? cookie : new Cookie.defaultCookie();
 					options.dat.getCookieName = function ( cookieName = '' ) {
 
 						const name = options.dat.cookieName ||
@@ -598,25 +596,6 @@ class Options {
 
 				},
 				set: function ( dat ) { options.dat = dat; },
-/*
-				cookieName: {
-
-					get: function ( cookieName = '' ) {
-
-						const name = options.dat.cookieName ||
-							( options.elContainer ?
-								typeof options.elContainer === "object" ?
-									options.elContainer.id :
-									typeof options.elContainer === "string" ?
-										options.elContainer :
-										'' :
-								'' );
-						return cookieName + ( ( cookieName !== '' ) &amp;&amp; ( name !== '' ) ? '_' : '' ) + name;
-
-					}
-
-				},
-*/
 
 			},
 
@@ -637,10 +616,6 @@ class Options {
 					if ( typeof options.getLanguageCode === "string" )
 						return function () {
 
-/*
-							if ( !this || !this.options )
-								return 'en';//English language
-*/
 							return options.getLanguageCode;
 
 						}
@@ -775,10 +750,6 @@ class Options {
 				get: function () {
 
 					options.camera = options.camera || {};
-/*					
-					options.camera.position = options.camera.position || new three.THREE.Vector3( 0.4, 0.4, 2 );
-					options.camera.scale = options.camera.scale || new three.THREE.Vector3( 1, 1, 1 );
-*/					
 					if ( !options.camera.position ) options.camera.position = new three.THREE.Vector3( 0.4, 0.4, 2 );
 					if ( !options.camera.scale ) options.camera.scale = new three.THREE.Vector3( 1, 1, 1 );
 					return options.camera;
@@ -842,7 +813,12 @@ class Options {
 			 **/
 			canvas: {
 
-				get: function () { return options.canvas; },
+				get: function () {
+
+					if ( options.canvas ) return options.canvas;
+					return { fullScreen: true, }
+
+				},
 
 			},
 
@@ -1075,21 +1051,7 @@ class Options {
 
 				get: function () {
 
-					if ( !options.guiSelectPoint ) console.error( 'Options.guiSelectPoint: Create new GuiSelectPoint( options ) first.' );
 					return options.guiSelectPoint;
-/*
-					if ( options.guiSelectPoint ) return options.guiSelectPoint;
-					return {
-
-						add: function () { },
-						addMesh: function () { },
-						setMesh: function () { },
-						getSelectedPointIndex: function () { },
-						isSelectedMesh: function () { },
-						select: function () { },
-
-					}
-*/
 
 				},
 				set: function ( guiSelectPoint ) {
@@ -1102,6 +1064,167 @@ class Options {
 
 			},
 
+			/**
+			 * getter
+			 * &lt;pre>
+			 * Controllers list.
+			 * User can see and edit some parameters on the web page.
+			 * &lt;b>t&lt;/b>: Object for view and edit of the current &lt;a href="../../player/jsdoc/index.html" target="_blank">Player&lt;/a> time.
+			 * 
+			 *	Keys:
+			 *		&lt;b>controller&lt;/b>:
+			 *			&lt;b>HTMLElement&lt;/b> for view and edit of the current &lt;a href="../../player/jsdoc/index.html" target="_blank">Player&lt;/a> time
+			 *			or &lt;b>string&lt;/b> of &lt;b>HTMLElement&lt;/b> id.
+			 *		&lt;b>elName&lt;/b>:
+			 *			&lt;b>HTMLElement&lt;/b> name of the time parameter. See &lt;b>settings.options.playerOptions.name&lt;/b> parameter of &lt;a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player&lt;/a>
+			 *			or &lt;b>string&lt;/b> of &lt;b>HTMLElement&lt;/b> id.
+			 * &lt;/pre>
+			 *
+			 * See &lt;b>options.controllers&lt;/b> parameter of &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree&lt;/a>.
+			 * &lt;/pre>
+			 **/
+			controllers: {//не засунул это в options.playerOptions потому что при чтение из cockie теряется HTMLElement
+
+				get: function () {
+
+					class Controllers{
+
+						/* *
+						 * dat options
+						 * @param {dat} dat [dat]{@link https://github.com/dataarts/dat.gui}
+						 */
+						constructor( controllers ) {
+
+							var elName;
+							controllers = controllers || {};
+							Object.defineProperties( this, {
+
+								/* *
+								 * getter
+								 * &lt;pre>
+								 * returns true if &lt;b>controllers&lt;/b> was converted by &lt;b>new Controllers( controllers );&lt;/b>
+								 * &lt;/pre>
+								 **/
+								boControllers: {
+
+									get: function () { return true; },
+
+								},
+
+								/* *
+								 * getter
+								 * &lt;pre>
+								 * Object for view and edit of the current &lt;a href="../../player/jsdoc/index.html" target="_blank">Player&lt;/a> time.
+								 * Keys:
+								 *	&lt;b>controller&lt;/b>:
+								 *		&lt;b>HTMLElement&lt;/b> for view and edit of the current &lt;a href="../../player/jsdoc/index.html" target="_blank">Player&lt;/a> time
+								 *		or &lt;b>string&lt;/b> of &lt;b>HTMLElement&lt;/b> id.
+								 *	&lt;b>elName&lt;/b>:
+								 *		&lt;b>HTMLElement&lt;/b> name of the time parameter. See &lt;b>settings.options.playerOptions.name&lt;/b> parameter of &lt;a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player&lt;/a>
+								 *		or &lt;b>string&lt;/b> of &lt;b>HTMLElement&lt;/b> id.
+								 * &lt;/pre>
+								 **/
+								t: {
+
+									get: function () {
+
+										if ( controllers.t === null )
+											console.error( 'options.controllers.t = ' + controllers.t );
+										if ( controllers.t ) {
+
+/*
+											if ( !controllers.t.name ) {
+
+												var elName = document.getElementById( 'tName' );
+												if ( !elName ) {
+
+													elName = document.createElement( 'span' );
+													document.querySelector('body').appendChild( elName );
+													
+												}
+												controllers.t.name = elName;
+												var name = options.playerOptions.name;
+												if ( name === '' ) name = 't';
+												elName.innerHTML = name + ' = ';
+
+											}
+*/
+											//time controller
+
+											if ( typeof controllers.t.controller === "string" ) controllers.t.controller = document.getElementById( controllers.t.controller );
+											if ( !controllers.t.controller ) {
+
+												var controller = document.getElementById( 't' );
+												if ( !controller ) {
+
+													controller = document.createElement( 'input' );
+													document.querySelector('body').appendChild( controller );
+													
+												}
+												controllers.t.controller = controller;
+
+											}
+											if ( controllers.t.controller.onchange === null )
+												controllers.t.controller.onchange = function( event ){
+
+													if ( !options.player ) {
+
+														console.error ( 'options.controllers.t.onchange: create Player instance first.' + controllers.t.value );
+														return;
+
+													}
+													if ( options.player.setTime( controllers.t.controller.value ) === false ) {
+
+														alert( lang.timeAlert + controllers.t.controller.value );
+														controllers.t.controller.focus();
+
+													}
+
+												}
+											if ( ( typeof lang !== 'undefined' ) &amp;&amp; ( controllers.t.controller.title === '' ) )
+												controllers.t.controller.title = lang.controllerTTitle;
+
+											//time name
+
+											if ( typeof controllers.t.elName === "string" ) 
+												controllers.t.elName = document.getElementById( controllers.t.elName );
+											if ( !controllers.t.elName ) {
+
+												controllers.t.elName = document.createElement( 'span' );
+												controllers.t.controller.parentElement.insertBefore( controllers.t.elName, controllers.t.controller);
+
+											}
+											var name = options.playerOptions.name;
+											if ( name === '' ) name = 't';
+											controllers.t.elName.innerHTML = name + ' = ';
+
+										}
+										return controllers.t;
+
+									},
+
+								},
+
+							} );
+
+							//For debugging. Find a hidden keys
+							for ( var propertyName in controllers ) {
+
+								if ( this[propertyName] === undefined ) console.error( 'Controllers: controllers.' + propertyName + ' key is hidden' );
+
+							}
+
+						}
+
+					}
+					if ( !options.controllers.boControllers )
+						options.controllers = new Controllers( options.controllers );
+					return options.controllers;
+
+				},
+
+			},
+
 		} ); 
 
 		//For debugging. Find a hidden keys
@@ -1111,6 +1234,36 @@ class Options {
 
 		}
 		this.playerOptions.cameraTarget.init( this.cameraTarget, this, false );
+
+		//Localization
+
+		lang = {
+
+			timeAlert: 'Invalid time fromat: ',
+			controllerTTitle: 'Current time.',
+
+		};
+		switch ( this.getLanguageCode() ) {
+
+			case 'ru'://Russian language
+
+				lang.timeAlert = 'Неправильный формат времени: ';
+				lang.controllerTTitle = 'Текущее время.';
+
+				break;
+			default://Custom language
+				if ( ( options.lang === undefined ) || ( options.lang.languageCode != languageCode ) )
+					break;
+
+				Object.keys( options.lang ).forEach( function ( key ) {
+
+					if ( lang[key] === undefined )
+						return;
+					lang[key] = options.lang[key];
+
+				} );
+
+		}
 
 	}
 
@@ -1193,7 +1346,6 @@ class Raycaster {
 					}
 
 				} );
-//				spriteTextIntersection.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
 				spriteTextIntersection.scale.divide( scene.scale );
 				scene.add( spriteTextIntersection );
 				
@@ -1245,10 +1397,6 @@ class Raycaster {
 				options.guiSelectPoint.select( intersection );
 			else if ( options.axesHelper )
 				options.axesHelper.exposePosition( intersection );
-			/*infinity loop
-					if ( options.raycaster.onMouseDown )
-						options.raycaster.onMouseDown( intersection );
-			*/
 
 		}
 		const intersectedObjects = [];
@@ -1278,7 +1426,6 @@ class Raycaster {
 
 			}
 			getIntersects();
-			//console.log( 'intersects.length ' + intersects.length );
 			intersects.forEach( function ( intersection ) {
 
 				var boDetected = false;
@@ -1294,7 +1441,6 @@ class Raycaster {
 				} );
 				if ( !boDetected ) {
 
-					//console.log( 'add ' + intersection.object.name );
 					intersectedObjects.push( intersection );
 
 				}
@@ -1333,13 +1479,11 @@ class Raycaster {
 						intersectedObject.object.userData.raycaster.onIntersectionOut();
 					else if ( settings.scene ) Options.raycaster.onIntersectionOut( settings.scene, renderer );
 
-					//console.log( 'remove ' + intersectedObject.object.name );
 					intersectedObjects.splice( intersectedObjects.findIndex( v => v === intersectedObject ), 1 );
 
 				}
 
 			} );
-			//console.log( 'intersectedObjects.length ' + intersectedObjects.length );
 			return intersects;
 
 		}
@@ -1444,14 +1588,6 @@ cube.userData.raycaster = {
 					}
 
 					Options.raycaster.EventListeners.getRendererSize( renderer ).getMousePosition( mouse, event );
-					/*			
-								// calculate mouse position in normalized device coordinates
-								// (-1 to +1) for both components
-					
-								mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-								mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-								//			console.warn( 'mouse.x = ' + mouse.x + ' mouse.y = ' + mouse.y );
-					*/
 
 					//Raycaster https://threejs.org/docs/index.html#api/en/core/Raycaster
 
@@ -1482,33 +1618,6 @@ cube.userData.raycaster = {
 						intersectedObject = object;
 
 					}
-					/*			
-								arrayintersectObjects.forEach( function ( object ) {
-					
-									//				var bIntersected = false;
-									if ( intersectedObject &amp;&amp; ( intersects.length === 0 ) ) {
-					
-										intersectedObject.userData.raycaster.onIntersectionOut();
-										intersectedObject = undefined;
-					
-									}
-									else if ( !intersectedObject )
-										for ( var i = 0; i &lt; intersects.length; i++ ) {
-					
-											const intersect = intersects[i];
-											if ( Object.is( object, intersect.object ) ) {
-					
-												object.userData.raycaster.onIntersection( intersect );
-												intersectedObject = object;
-												//						bIntersected = true;
-												//						bIntersectedOut = true;
-					
-											}
-					
-										}
-					
-								} );
-					*/
 
 				}, false );
 
@@ -1521,21 +1630,12 @@ cube.userData.raycaster = {
 
 					if ( raycaster === undefined )
 						return;
-/*
-					if ( raycaster.stereo !== undefined ) {
-
-						raycaster.stereo.onDocumentMouseDown( event );
-						return;
-
-					}
-*/					
 					if ( intersects &amp;&amp; ( intersects.length > 0 ) ) {
 
 						const intersect = intersects[0];
 						if ( intersect.object.userData.raycaster &amp;&amp; intersect.object.userData.raycaster.onMouseDown ) {
 
 							intersect.object.userData.raycaster.onMouseDown( intersect );
-//							if ( options &amp;&amp; options.guiSelectPoint ) options.guiSelectPoint.select( intersect );
 
 						} else Options.raycaster.onMouseDown( intersect, options );
 
@@ -1633,13 +1733,13 @@ export default Options;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Options.raycaster.html">raycaster</a></li></ul><h3>Classes</h3><ul><li><a href="Options.html">Options</a></li><li><a href="Raycaster.html">Raycaster</a></li><li><a href="Raycaster_EventListeners.html">EventListeners</a></li></ul><h3>Global</h3><ul><li><a href="global.html#a">a</a></li><li><a href="global.html#axesHelper">axesHelper</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#boOptions">boOptions</a></li><li><a href="global.html#camera">camera</a></li><li><a href="global.html#cameraTarget">cameraTarget</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#canvasMenu">canvasMenu</a></li><li><a href="global.html#dat">dat</a></li><li><a href="global.html#elContainer">elContainer</a></li><li><a href="global.html#eventListeners">eventListeners</a></li><li><a href="global.html#frustumPoints">frustumPoints</a></li><li><a href="global.html#getLanguageCode">getLanguageCode</a></li><li><a href="global.html#guiSelectPoint">guiSelectPoint</a></li><li><a href="global.html#orbitControls">orbitControls</a></li><li><a href="global.html#palette">palette</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#playerOptions">playerOptions</a></li><li><a href="global.html#point">point</a></li><li><a href="global.html#pointLight">pointLight</a></li><li><a href="global.html#raycaster">raycaster</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scales">scales</a></li><li><a href="global.html#spriteText">spriteText</a></li><li><a href="global.html#stereoEffect">stereoEffect</a></li><li><a href="global.html#time">time</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Options.raycaster.html">raycaster</a></li></ul><h3>Classes</h3><ul><li><a href="Options.html">Options</a></li><li><a href="Raycaster.html">Raycaster</a></li><li><a href="Raycaster_EventListeners.html">EventListeners</a></li></ul><h3>Global</h3><ul><li><a href="global.html#a">a</a></li><li><a href="global.html#axesHelper">axesHelper</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#boOptions">boOptions</a></li><li><a href="global.html#camera">camera</a></li><li><a href="global.html#cameraTarget">cameraTarget</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#canvasMenu">canvasMenu</a></li><li><a href="global.html#controllers">controllers</a></li><li><a href="global.html#dat">dat</a></li><li><a href="global.html#elContainer">elContainer</a></li><li><a href="global.html#eventListeners">eventListeners</a></li><li><a href="global.html#frustumPoints">frustumPoints</a></li><li><a href="global.html#getLanguageCode">getLanguageCode</a></li><li><a href="global.html#guiSelectPoint">guiSelectPoint</a></li><li><a href="global.html#orbitControls">orbitControls</a></li><li><a href="global.html#palette">palette</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#playerOptions">playerOptions</a></li><li><a href="global.html#point">point</a></li><li><a href="global.html#pointLight">pointLight</a></li><li><a href="global.html#raycaster">raycaster</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scales">scales</a></li><li><a href="global.html#spriteText">spriteText</a></li><li><a href="global.html#stereoEffect">stereoEffect</a></li><li><a href="global.html#time">time</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Aug 14 2021 10:22:23 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Sep 08 2021 14:22:56 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

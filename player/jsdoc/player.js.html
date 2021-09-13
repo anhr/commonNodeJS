@@ -39,44 +39,14 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-//import cookie from '../cookieNodeJS/cookie.js';
-//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
 import ScaleController from '../ScaleController.js';
 import PositionController from '../PositionController.js';
-//import { dat } from '../dat/dat.module.js';
 import { controllers } from '../dat.gui/CustomController/build/dat.gui.module.js';
 
-//import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
-//import { GuiSelectPoint, getObjectPosition } from '../guiSelectPoint/guiSelectPoint.js';
-//import { GuiSelectPoint, getObjectPosition } from 'https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
-
-//import ColorPicker from '../colorpicker/colorpicker.js';
-//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
-
-//import { lang } from '../controllerPlay/index.js';
-
-//import Cookie from '../cookieNodeJS/cookie.js';
-//import Cookie from 'https://raw.githack.com/anhr/cookieNodeJS/master/cookie.js';
-//import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
-//import { getWorldPosition } from '../guiSelectPoint/guiSelectPoint.js';
 import { getWorldPosition } from '../getPosition.js';
-//getPositionSetTHREE( THREE );
 
 import three from '../three.js'
-//import setOptions from '../setOptions.js'
 import Options from '../Options.js'
-
-//var _timeSettings,
-
-	//сделал общим для всех плееров потому что в getShaderMaterialPoints вызывается Player.selectMeshPlayScene
-	//что бы установить начальные точки. Т.е. установить цвет и положение точек.
-	//Начальные точки в getShaderMaterialPoints устанавливаются отдельно потому что в getShaderMaterialPoints точки создаются в отдельной нити
-	//потому что сначала загружаются Shader файлы. Поэтому когда вызывается setTimeout( function () { onSelectScene(); }, 0 );
-	//что бы цвет точек был верным еще до начала проигрывания, точки из getShaderMaterialPoints еще не добавлены в группу для проигрывания.
-	//Кроме того цвет точек в getShaderMaterialPoints задается аттрибутом 'ca' а не 'color'.
-//	var _options;
 
 /**
  * @callback onSelectScene
@@ -125,15 +95,6 @@ class Player {
 	constructor( group, settings={} ) {
 
 		assign();
-/*
-		if ( Player.isCreated() ) {
-
-			console.error( 'Player: duplicate player.' );
-			return;
-
-		}
-*/
-//		settings = settings || {};
 
 		if ( !settings.options &amp;&amp; settings.frustumPoints ) settings.options = settings.frustumPoints.getOptions();
 		settings.options = settings.options || new Options();
@@ -144,36 +105,13 @@ class Player {
 			return;
 
 		}
-/*
-		if ( options.playerOptions &amp;&amp; settings.playerOptions ) {
 
-			console.warn( 'Player: Duplicate options of the player. Sets priority of the options of the current player.' );
-			options.playerOptions = settings.playerOptions;//приоритет имеет настройки данного плеера
-
-		}
-		options.playerOptions = options.playerOptions || settings.playerOptions;
-//		setOptions.setPlayerOptions( options );
-//		options.setPlayerOptions();
-		settings.playerOptions = options.playerOptions;
-*/
-
-//		if ( options.playerOptions === false ) return;
 		if ( options.player === false ) return;
-
-//Deprecated
-//Player.player = this;
 
 		options.boPlayer = options.boPlayer || false;
 
-/*
-		options.a = settings.a || 1;
-		options.b = settings.b || 0;
-*/		
-
 		//если тут создавать палитру то она не создастся если не создается плееер
 		//palette = new palette();
-
-//		assignSettings();
 
 		if ( options.player ) {
 
@@ -194,7 +132,6 @@ class Player {
 			index = index || 0;
 			const t = _this.getTime();
 			Player.selectPlayScene( group, { t: t, index: index, options: settings.options } );
-//			_this.setIndex( index, ( _timeSettings.name === '' ? '' : _timeSettings.name + ': ' ) + t );
 			_this.setIndex( index, ( options.playerOptions.name === '' ? '' : options.playerOptions.name + ': ' ) + t );
 			if ( settings.onSelectScene ) settings.onSelectScene( index, t );
 			if ( options.frustumPoints ) options.frustumPoints.updateCloudPoints();
@@ -219,14 +156,6 @@ class Player {
 				console.error( 'Player.getTime(): t = ' + t + ' playerOptions.max = ' + playerOptions.max );
 			if ( ( t &lt; playerOptions.min ) &amp;&amp; ( playerOptions.max !== null ) )
 				console.error( 'Player.getTime(): t = ' + t + ' playerOptions.min = ' + playerOptions.min );
-/*
-			const t = _timeSettings.min + selectSceneIndex * _timeSettings.dt;
-			if ( isNaN( t ) ) console.error( 'Player.getTime(): t = ' + t );
-			if ( ( _timeSettings.max !== null ) &amp;&amp; ( t > _timeSettings.max ) )
-				console.error( 'Player.getTime(): t = ' + t + ' _timeSettings.max = ' + _timeSettings.max );
-			if ( ( t &lt; _timeSettings.min ) &amp;&amp; ( _timeSettings.max !== null ) )
-				console.error( 'Player.getTime(): t = ' + t + ' _timeSettings.min = ' + _timeSettings.min );
-*/
 			return t;
 
 		}
@@ -234,40 +163,40 @@ class Player {
 		/**
 		 * set time
 		 * @param {number} t time
+		 * @returns false - invalid &lt;b>t&lt;/b>.
 		 */
 		this.setTime = function ( t ) {
 
-//			this.selectScene( parseInt( ( t - _timeSettings.min ) / _timeSettings.dt ) );
-			this.selectScene( parseInt( ( t - options.playerOptions.min ) / options.playerOptions.dt ) );
+			return this.selectScene( parseInt( ( t - options.playerOptions.min ) / options.playerOptions.dt ) );
 
 		}
 
 		/**
 		 * select scene for playing
 		 * @param {number} index Index of the scene. Range from 0 to options.playerOptions.marks - 1
+		 * @returns false - invalid &lt;b>index&lt;/b>.
 		 */
 		this.selectScene = function ( index ) {
 
+			if ( isNaN( index ) ) {
+
+				console.error( 'Player.selectScene: index = ' + index );
+				return false;
+				
+			}
 			if ( index === undefined ) {
 
 				onSelectScene( selectSceneIndex );
-				return;
+				return true;
 
 			}
 			index = parseInt( index );
-//			if ( _timeSettings.max !== null )
 			if ( options.playerOptions.max !== null ) {
 
-//				if ( index >= _timeSettings.marks )
 				if ( index >= options.playerOptions.marks )
 					index = 0;
 				else if ( index &lt; 0 )
 					index = options.playerOptions.marks - 1;
-//					index = _timeSettings.marks - 1;
-/*					
-				if ( selectSceneIndex > _timeSettings.marks )
-					selectSceneIndex = _timeSettings.marks;
-*/					
 				if ( selectSceneIndex > options.playerOptions.marks )
 					selectSceneIndex = options.playerOptions.marks;
 
@@ -280,6 +209,7 @@ class Player {
 				onSelectScene( selectSceneIndex );
 
 			}
+			return true;
 
 		}
 
@@ -308,7 +238,6 @@ class Player {
 
 			if ( ( controller.object !== undefined ) &amp;&amp; ( controller.object.playRate !== undefined ) )
 				controller.object.playRate = options.playerOptions.min;
-//				controller.object.playRate = _timeSettings.min;
 			this.controllers.push( controller );
 
 		}
@@ -320,14 +249,12 @@ class Player {
 
 		function RenamePlayButtons() {
 
-//			Player.player.controllers.forEach( function ( controller ) { if ( controller.onRenamePlayButtons ) controller.onRenamePlayButtons( playing ); } );
 			options.player.controllers.forEach( function ( controller ) { if ( controller.onRenamePlayButtons ) controller.onRenamePlayButtons( playing ); } );
 
 		}
 
 		function play() {
 
-//			if ( ( selectSceneIndex === -1 ) || ( ( selectSceneIndex === _timeSettings.marks ) &amp;&amp; ( _timeSettings.max !== null ) ) )
 			if (
 				( selectSceneIndex === -1 ) ||
 				(
@@ -353,7 +280,6 @@ class Player {
 		}
 		function isRepeat() {
 
-//			return _timeSettings.repeat;
 			return options.playerOptions.repeat;
 
 		}
@@ -361,7 +287,6 @@ class Player {
 		function playNext() {
 
 			selectSceneIndex++;
-//			if ( ( _timeSettings.max !== null ) &amp;&amp; selectSceneIndex >= _timeSettings.marks )
 			if ( ( options.playerOptions.max !== null ) &amp;&amp; selectSceneIndex >= options.playerOptions.marks ) {
 
 				if ( isRepeat() )
@@ -374,7 +299,6 @@ class Player {
 					//Тогда если убрать эту строку, то selectSceneIndex и время окажется за диапазоном допустимых значений
 					//и цвет точки окажется неверным
 					selectSceneIndex = options.playerOptions.marks - 1;
-//					selectSceneIndex = _timeSettings.marks - 1;
 
 					pause();
 					return;
@@ -399,7 +323,6 @@ class Player {
 			}
 
 			playing = true;
-//			if ( ( _timeSettings.max !== null ) &amp;&amp; ( selectSceneIndex >= ( _timeSettings.marks - 1 ) ) )
 			if ( ( options.playerOptions.max !== null ) &amp;&amp; ( selectSceneIndex >= ( options.playerOptions.marks - 1 ) ) )
 				selectSceneIndex = 0;//-1;
 			playNext();
@@ -414,7 +337,6 @@ class Player {
 				if ( time === undefined ) {
 
 					time = timestamp;
-//					timeNext = time + 1000 / _timeSettings.interval;
 					timeNext = time + 1000 / options.playerOptions.interval;
 
 				}
@@ -429,7 +351,6 @@ class Player {
 					return;
 				while ( timestamp > timeNext )
 					timeNext += 1000 / options.playerOptions.interval;
-//					timeNext += 1000 / _timeSettings.interval;
 				playNext();
 
 			}
@@ -444,10 +365,6 @@ class Player {
 
 			options.playerOptions.repeat = !options.playerOptions.repeat;
 			this.onChangeRepeat( options.playerOptions.repeat );
-/*
-			_timeSettings.repeat = !_timeSettings.repeat;
-			this.onChangeRepeat( _timeSettings.repeat );
-*/			
 
 		}
 
@@ -467,7 +384,6 @@ class Player {
 		 */
 		this.onChangeRepeat = function ( value ) {
 
-//			_timeSettings.repeat = value;
 			options.playerOptions.repeat = value;
 			this.controllers.forEach( function ( controller ) { if ( controller.onChangeRepeat ) controller.onChangeRepeat(); } );
 
@@ -613,7 +529,6 @@ class Player {
 			 */
 			constructor( gui ) {
 
-//				const player = Player.player;
 				const player = options.player, getLanguageCode = options.getLanguageCode;
 
 				gui = gui || options.dat.gui;
@@ -638,8 +553,8 @@ class Player {
 
 				}
 
-				var _getGroup, _selectScene, _renamePlayButtons, _renameRepeatButtons, _repeat;//,_playNext, timerId, _prev, _play, _next;
-				const colorOff = 'rgb(255,255,255)', colorOn = 'rgb(128,128,128)';//'rgb(200,200,200)';
+				var _renamePlayButtons, _renameRepeatButtons;//_selectScene, _repeat, _getGroup,
+				const colorOff = 'rgb(255,255,255)', colorOn = 'rgb(128,128,128)';
 
 				super( {
 
@@ -693,7 +608,7 @@ class Player {
 								RenameRepeatButtons( buttons.buttonRepeat.title === lang.repeatOn );
 
 							}
-							_repeat = repeat;
+//							_repeat = repeat;
 							var title, color;
 							if ( player.getSettings().repeat ) {
 
@@ -716,7 +631,7 @@ class Player {
 							return group;
 
 						}
-						_getGroup = getGroup;
+//						_getGroup = getGroup;
 
 						return buttons;
 
@@ -753,7 +668,6 @@ class Player {
 				 */
 				this.onChangeRepeat = function () {
 
-//					_renameRepeatButtons( player.getSettings().timeSettings.repeat );
 					_renameRepeatButtons( player.getSettings().options.playerOptions.repeat );
 
 				}
@@ -790,13 +704,6 @@ class Player {
 		 */
 		this.gui = function ( folder ) {
 
-/*
-			guiParams.getLanguageCode = guiParams.getLanguageCode || function () { return "en"; };
-			guiParams.cookie = guiParams.cookie || new Cookie.defaultCookie();
-			guiParams.cookieName = guiParams.cookieName || '';
-
-			const cookie = guiParams.cookie, cookieName = 'Player' + guiParams.cookieName;
-*/
 			const cookie = options.dat.cookie,
 				cookieName = options.dat.getCookieName( 'Player' ),
 				getLanguageCode = options.getLanguageCode,
@@ -808,10 +715,6 @@ class Player {
 
 			function setDT() {
 
-				/*
-					if ( _timeSettings.max === null ) _timeSettings.dt = _timeSettings.dt || 0.1;
-					else _timeSettings.dt = ( _timeSettings.max - _timeSettings.min ) / ( _timeSettings.marks - 1 );
-				*/
 				if ( options.playerOptions.max === null ) options.playerOptions.dt = options.playerOptions.dt || 0.1;
 				else options.playerOptions.dt = ( options.playerOptions.max - options.playerOptions.min ) / ( options.playerOptions.marks - 1 );
 
@@ -820,15 +723,10 @@ class Player {
 			function setSettings() {
 
 				setDT();
-/*
-				cookie.setObject( cookieName, _timeSettings );
-				if ( settings.onChangeScaleT ) settings.onChangeScaleT( _timeSettings );
-*/
 				cookie.setObject( cookieName, options.playerOptions );
 				if ( settings.onChangeScaleT ) settings.onChangeScaleT( options.playerOptions );
 
 			}
-			//function setMax() { if ( _timeSettings.max !== null ) _timeSettings.max = _timeSettings.min + _timeSettings.dt * ( _timeSettings.marks - 1 ); }
 			function setMax() {
 
 				if ( options.playerOptions.max !== null )
@@ -836,7 +734,6 @@ class Player {
 
 			}
 			setMax();
-//			const axesDefault = JSON.parse( JSON.stringify( _timeSettings ) ),
 			const axesDefault = JSON.parse( JSON.stringify( options.playerOptions ) ),
 				lang = getLang( {
 
@@ -844,21 +741,12 @@ class Player {
 
 				} );
 			Object.freeze( axesDefault );
-/*
-			const max = _timeSettings.max, marks = _timeSettings.marks;
-			cookie.getObject( cookieName, _timeSettings, _timeSettings );
-*/
 			const max = options.playerOptions.max, marks = options.playerOptions.marks;
 			cookie.getObject( cookieName, options.playerOptions, options.playerOptions );
 			if ( ( max === null ) || ( max === Infinity ) ||
-//				( _timeSettings.max === null )//раньше на веб странице плеер был настроен на бесконечное проигрыванияе а сейчас проигрывание ограничено по времени
 				( options.playerOptions.max === null )//раньше на веб странице плеер был настроен на бесконечное проигрыванияе а сейчас проигрывание ограничено по времени
 			) {
 
-/*
-				_timeSettings.max = max;
-				_timeSettings.marks = marks;
-*/
 				options.playerOptions.max = max;
 				options.playerOptions.marks = marks;
 
@@ -869,7 +757,6 @@ class Player {
 
 			function scale() {
 
-//				const axes = _timeSettings,
 				const axes = options.playerOptions,
 					scaleControllers = {};
 				function onclick( customController, action ) {
@@ -904,7 +791,7 @@ class Player {
 
 					onclick( positionController, function ( value, zoom ) {
 
-						value += shift;//zoom;
+						value += shift;
 						return value;
 
 					} );
@@ -946,7 +833,6 @@ class Player {
 						axes.marks = parseInt( axes.marks );
 						setSettings();
 						const elSlider = getSliderElement();
-//						if ( elSlider ) elSlider.max = _timeSettings.marks - 1;
 						if ( elSlider ) elSlider.max = options.playerOptions.marks - 1;
 
 					} );
@@ -1036,7 +922,6 @@ class Player {
 
 			_canvasMenu = canvasMenu;
 
-//			const player = this, menu = canvasMenu.menu, lang = Player.player.localization( getLanguageCode );//Player.player.PlayController.lang;
 			const player = this, menu = canvasMenu.menu, lang = player.localization( getLanguageCode );
 
 			//Previous button
@@ -1062,7 +947,6 @@ class Player {
 
 			} );
 
-//			if ( _timeSettings.max !== null )
 			if ( options.playerOptions.max !== null ) {
 
 				//Repeat button
@@ -1118,7 +1002,6 @@ class Player {
 				 */
 				onChangeRepeat: function () {
 
-//					canvasMenu.querySelector( '#menuButtonRepeat' ).title = _timeSettings.repeat ? lang.repeatOff : lang.repeatOn;
 					canvasMenu.querySelector( '#menuButtonRepeat' ).title = options.playerOptions.repeat ? lang.repeatOff : lang.repeatOn;
 
 				}
@@ -1132,13 +1015,11 @@ class Player {
 		 */
 		this.addSlider = function () {
 
-//			if ( _timeSettings.max === null )
 			if ( options.playerOptions.max === null )
 				return;
 
 			_canvasMenu.menu.push( {
 
-//				name: '&lt;input type="range" min="0" max="' + ( Player.getSettings().marks - 1 ) + '" value="0" class="slider" id="sliderPosition">',
 				name: '&lt;input type="range" min="0" max="' + ( options.playerOptions.marks - 1 ) + '" value="0" class="slider" id="sliderPosition">',
 				style: 'float: right;',
 
@@ -1185,7 +1066,10 @@ class Player {
 		 */
 		this.setIndex = function ( index, title ) {
 
-			if ( typeof this.PlayController === "object" ) this.PlayController.setValue( this.getTime() );
+			const t = this.getTime();
+			if ( options.controllers.t )
+				options.controllers.t.value = t;
+			if ( typeof this.PlayController === "object" ) this.PlayController.setValue( t );
 			const elSlider = getSliderElement();
 			if ( elSlider ) {
 
@@ -1211,13 +1095,6 @@ class Player {
 
 }
 
-/* * @namespace
- * @description Is player created?
- * @returns true if Player is created
- */
-//Player.isCreated = function () { return Player.player ? true : false; }
-
-
 /**
  * @class
  */
@@ -1240,7 +1117,6 @@ Player.cameraTarget = class {
 				}
 			};
 		var _options;
-		//	cameraTargetDefault.boLook = false;
 		cameraTargetDefault.rotation = {};
 		_cameraTarget.rotation = {};
 		var boTarget = false,//true - target point was detected. For displaying of the console warning if duplicate target point was detected
@@ -1264,15 +1140,6 @@ Player.cameraTarget = class {
 			else if ( _options &amp;&amp; options &amp;&amp; !Object.is( _options, options ) )
 				console.error( 'Player.cameraTarget.get: options is ambiguous' );
 			_options = _options || options;
-/*
-			if ( !_cameraTarget.camera &amp;&amp; !boPlayer &amp;&amp; Player.player ) {
-
-				cameraTargetDefault.camera = Player.player.getSettings().cameraTarget.camera;
-				if ( cameraTargetDefault.camera ) setCameraTarget();
-				boPlayer = true;
-
-			}
-*/			
 			if ( !_cameraTarget.camera &amp;&amp; !boPlayer &amp;&amp; _options.player ) {
 
 				cameraTargetDefault.camera = _options.player.getSettings().cameraTarget.camera;
@@ -1330,10 +1197,6 @@ Player.cameraTarget = class {
 			else if ( _options &amp;&amp; options &amp;&amp; !Object.is( _options, options ) )
 				console.error( 'Player.cameraTarget.init: options is ambiguous' );
 			_options = _options || options;
-			
-			//если вызывается эта функция значит надо следить за точкой
-			//если нет точки, за которой надо следить, и создан OrbitControls, то следить за OrbitControls.target https://threejs.org/docs/index.html?q=orbit#examples/en/controls/OrbitControls.target
-//			if ( cameraTarget.boLook === undefined ) cameraTarget.boLook = true;
 
 			//cameraTargetDefault.boLook = false по умолчанию камера не смотритт на выбранную точку если:
 			// 1 ни разу не вызывается init. Тоесть нет настроек cameraTargetDefault и нет ни однойточки, на которую смотрит камера
@@ -1368,7 +1231,6 @@ Player.cameraTarget = class {
 					cameraTargetDefault.boLook = true;//запрета на слежение камерой за точкой не было и есть точка, за которой надо следить
 
 			} else return;
-//			cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera || ( Player.player ? Player.player.getSettings().cameraTarget.camera : undefined );
 			cameraTargetDefault.camera = cameraTargetDefault.camera ||
 				cameraTarget.camera ||
 				( _options.player ? _options.player.getSettings().cameraTarget.camera : undefined );
@@ -1421,28 +1283,6 @@ Player.cameraTarget = class {
 
 		}
 
-		/* *
-		 * Set a target point, what camera is look at.
-		 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
-		*/
-/*
-		this.setTarget = function ( mesh ) {
-
-			if ( !mesh.geometry )
-				return;
-
-			const arrayFuncs = mesh.userData.player.arrayFuncs;
-			if ( arrayFuncs === undefined )
-				return;
-			for ( var i = 0; i &lt; arrayFuncs.length; i++ ) {
-
-				var funcs = arrayFuncs[i];
-				Player.cameraTarget.changeTarget( mesh, i );
-
-			}
-
-		}
-*/
 		/**
 		 * Change target.
 		 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} with selected point as target for camera.
@@ -1460,7 +1300,6 @@ Player.cameraTarget = class {
 			setCameraTarget( func.cameraTarget );
 
 			_options = _options || options;
-//			const cameraTarget = Player.cameraTarget.get();
 			const cameraTarget = _options.playerOptions.cameraTarget.get( _options );
 
 			if ( cameraTarget ) {
@@ -1483,7 +1322,6 @@ Player.cameraTarget = class {
 
 			assign();
 
-//			var cameraTarget = Player.cameraTarget.get( options );
 			var cameraTarget = options.playerOptions.cameraTarget.get( options );
 			if ( !cameraTarget ) cameraTarget = cameraTarget || {};
 			const camera = cameraTarget.camera;
@@ -1498,7 +1336,6 @@ Player.cameraTarget = class {
 			if ( !cameraTarget.distanceToCameraCur )
 				cameraTarget.distanceToCameraCur = new THREE.Vector3();
 
-//			const t = Player.getTime(),
 			const t = options.time,
 				distanceToCamera = cameraTarget.distanceToCamera,
 				distanceToCameraCur = new THREE.Vector3().copy( cameraTarget.distanceToCameraCur );
@@ -1510,7 +1347,6 @@ Player.cameraTarget = class {
 
 			);
 
-//			if ( !cameraTarget.setCameraPosition || update )
 			if ( !cameraTarget.setCameraPosition )
 				cameraTarget.setCameraPosition = function ( /*setCameraDefault*/ ) {
 
@@ -1525,16 +1361,11 @@ Player.cameraTarget = class {
 						)
 					) {
 
-/*
-						if ( camera.userData.default &amp;&amp; camera.userData.default.setDefault &amp;&amp; setCameraDefault )
-							camera.userData.default.setDefault();
-*/
 						return;//Камере не нужно следить за выбранной точкой или ни одна точка не определена как target
 
 					}
 					
 					distanceToCameraCur.copy( cameraTarget.distanceToCameraCur );
-//					const t = Player.getTime();
 					const t = options.time;
 					camera.position.copy( cameraTarget.distanceToCameraCur );
 					camera.position.applyAxisAngle( cameraTarget.rotation.axis, Player.execFunc( cameraTarget.rotation, 'angle', t, options ) );
@@ -1564,22 +1395,6 @@ Player.cameraTarget = class {
 							options.orbitControls._listeners.change[0]();//move frustumpoints
 
 					}
-/*					
-					if ( Player.orbitControls ) {
-
-						if ( !Player.orbitControls.target.equals( target ) ) {
-
-							Player.orbitControls.target.copy( target );
-							if ( Player.orbitControlsGui )
-								Player.orbitControlsGui.setTarget( target );
-
-						}
-						Player.orbitControls._listeners.change[0]();//move frustumpoints
-
-					}
-*/					
-//Если тут это взывать, то не будет обновляться cameraGui если не выбрана ни одна точка как target
-//					if ( options.cameraGui ) options.cameraGui.update();
 
 				}
 
@@ -1590,7 +1405,6 @@ Player.cameraTarget = class {
 	}
 
 }
-//Player.cameraTarget = new Player.cameraTarget();
 
 /** @namespace
  * @description execute function
@@ -1604,12 +1418,6 @@ Player.cameraTarget = class {
  */
 Player.execFunc = function ( funcs, axisName, t, options={} ) {
 
-//	setOptions.setPlayerOptions( options );
-//	options.setPlayerOptions();
-/*
-	if ( options.a === undefined ) options.a = 1;
-	if ( options.b === undefined ) options.b = 0;
-*/	
 	var func = funcs[axisName];
 	const a = options.a, b = options.b, typeofFuncs = typeof func;
 	if ( typeof t === "undefined" ) t = options.playerOptions ? options.playerOptions.min : 0;
@@ -1738,24 +1546,6 @@ Player.execFunc = function ( funcs, axisName, t, options={} ) {
 	return;
 
 }
-/*
-function palette() {
-
-	var paletteDefault;
-	this.get = function() {
-
-		if ( _options &amp;&amp; _options.palette )
-			return _options.palette;
-			
-		if ( !paletteDefault )
-			paletteDefault = new ColorPicker.palette();
-		return paletteDefault;
-
-	}
-
-}
-palette = new palette();
-*/
 
 /** @namespace
  * @description Select a scene for playing of the mesh
@@ -1781,17 +1571,10 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 	assign();
 
-	var t = settings.t, options = settings.options || { dat: false };//, index = settings.index
+	var t = settings.t, options = settings.options || { dat: false };
 
-//	options = options || {};
-//	if ( !options ) options = { dat: false };//не надо создавать еще одну версию new dat.GUI();
 	options = new Options( options );
-//	setOptions.setPlayerOptions( options );
-//	options.setPlayerOptions();
 	if ( t === undefined ) t = options.playerOptions.min;
-//	index = index || 0;
-//	setOptions.setScales( options );
-//	options.setScales();
 	options.scales.setW();
 	if (
 
@@ -1922,7 +1705,6 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 					color = funcs.w;
 				else {
 
-//					var value = funcs.w.func( t, a, b );
 					var value = Player.execFunc( funcs, 'w', t, options );
 					if ( funcs.w.min !== undefined ) min = funcs.w.min;
 					if ( funcs.w.max !== undefined ) max = funcs.w.max;
@@ -1930,8 +1712,11 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 				}
 
-			} else if ( ( typeof funcs.w === "number" ) &amp;&amp; options.palette )
-				color = options.palette.toColor( funcs.w, min, max );
+			} else //if ( ( typeof funcs.w === "number" ) &amp;&amp; options.palette )
+			if ( options.palette )
+				color = options.palette.toColor(
+					typeof funcs.w === "number" ? funcs.w : Player.execFunc( funcs, 'w', t, options ),
+					min, max );
 			if ( color ) {
 
 				if ( !mesh.material instanceof THREE.ShaderMaterial &amp;&amp; mesh.material.vertexColors !== THREE.VertexColors )
@@ -1944,10 +1729,6 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 								positions: mesh.geometry.attributes.position,
 								options: options,
-/*								
-								scale: { min: min, max: max },
-								palette: options.palette,
-*/								
 
 							} ), 4 ) );
 					if ( !Player.setColorAttribute( attributes, i, color ) )
@@ -1969,7 +1750,6 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 				funcs.line.addPoint( mesh, i, color );
 			if ( funcs.cameraTarget &amp;&amp; ( funcs.cameraTarget.boLook === true ) )
 				options.playerOptions.cameraTarget.changeTarget( mesh, i, options );
-//				Player.cameraTarget.changeTarget( mesh, i );
 
 		};
 
@@ -2152,16 +1932,7 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 	if ( optionsPoints.t === undefined ) optionsPoints.t = optionsPoints.options &amp;&amp; optionsPoints.options.player ? optionsPoints.options.player.getSettings().options.playerOptions.min : 0;
 	const options = optionsPoints.options || new Options(),
 		optionsDefault = { palette: options.palette };
-/*		
-	if ( !options.boOptions ) {
-
-		console.error( 'Player.getPoints: call options = new Options( options ) first' );
-		return;
-
-	}
-*/	
 	options.setW( optionsDefault );
-//	setOptions.setW( optionsDefault );
 	const wDefault = optionsDefault.scales.w.max;//new THREE.Vector4().w;//1;//цвет точки по умолчанию равен цвету палитры для максимального значения value,
 						//которе по умолчанияю равно 1 и определяется в Options class.
 						//Палитра по умолчанию ColorPicker.paletteIndexes.BGYW
@@ -2263,8 +2034,6 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 			if ( funcs.name !== undefined )
 				funcs.vector.name = funcs.name;
 
-//Если new Player создается после вызова Player.getPoints, то options.player === undefined и линия не рисуется
-//			if ( funcs.trace &amp;&amp; options.player ) funcs.vector.line = new Player.traceLine( options );
 			if ( funcs.trace ) funcs.vector.trace = funcs.trace;
 
 			if ( funcs.cameraTarget ) {
@@ -2288,12 +2057,7 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 			funcs.cameraTarget.bodefault = false;
 			if ( funcs.cameraTarget.boLook === undefined ) funcs.cameraTarget.boLook = true;
 
-/*
-			if ( options.playerOptions.cameraTarget ) console.error( 'Player.getPoints: options.playerOptions.cameraTarget = ' + options.playerOptions.cameraTarget );
-			else options.playerOptions.cameraTarget = new Player.cameraTarget();
-*/			
 			options.playerOptions.cameraTarget.init( funcs.cameraTarget, options );
-//			Player.cameraTarget.init( funcs.cameraTarget, options );
 
 		}
 		points.push( point );
@@ -2387,7 +2151,6 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 	optionsColor.colors = optionsColor.colors || [];
 	if ( !optionsColor.options.palette )
 		optionsColor.options.setPalette();
-//		setOptions.setPalette( optionsColor.options );
 
 	for ( var i = 0; i &lt; length; i++ ) {
 
@@ -2408,31 +2171,24 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 
 			} else {
 
-//				setOptions.setW( optionsColor.options );
 				optionsColor.options.setW();
 				min = optionsColor.options.scales.w.min; max = optionsColor.options.scales.w.max;
 
 			}
 			if ( w instanceof Function &amp;&amp; !optionsColor.options.player &amp;&amp; boColorWarning ) {
-/*
-				console.warn( 'Player.getColors: remove all functions from all THREE.Vector4.w items of the arrayFuncs.' );
-				console.warn( '	Or call Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
-				console.warn( '	If you use MyPoints for create of the points, please add Player: Player into settings parameter of the MyPoints function after creating of the Player.' );
-				console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
-*/				
-//				setOptions.setPlayerOptions( optionsColor.options );
-//				optionsColor.options.setPlayerOptions();
+
 				boColorWarning = false;
 				
 			}
+			const t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
 			var color = optionsColor.options.palette.toColor(
 				funcs === undefined ?
 					new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
 					w instanceof Function ?
-//						w( _timeSettings ? _timeSettings.min : 0 ) :
-//						w( _options.playerOptions ? _options.playerOptions.min : 0 ) :
-						w( optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0 ) :
-						w,
+						w( t ) :
+						typeof w === "string" ?
+							Player.execFunc( funcs, 'w', t, optionsColor.options ) :
+							w,
 				min, max );
 			optionsColor.colors.push( color.r, color.g, color.b );
 
@@ -2483,7 +2239,6 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 Player.traceLine = class traceLine
 {
 
-
 	/**
 	 * trace line of moving of the point during playing
 	 * @param {object} options the following options are available
@@ -2496,15 +2251,8 @@ Player.traceLine = class traceLine
 
 		assign();
 
-//		if ( !Player.isCreated() )
 		if ( !options.player ) {
 
-/*
-			console.warn( 'Player.traceLine: Remove all trace: true from arrayFunc parameter of the MyPoints or getShaderMaterialPoints method.' );
-			console.warn( '	Or call ne Player(...) https://raw.githack.com/anhr/commonNodeJS/master/player/jsdoc/module-Player.html' );
-			console.warn( '	If you use getShaderMaterialPoints or MyPoints for create of the points, please add Player: Player into settings parameter of the getShaderMaterialPoints or MyPoints method after creating of the Player.' );
-			console.warn( '	If you are using MyThree to create the scene, add the player key to the options parameter of the MyThree constructor. See https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/module-MyThree-MyThree.html' );
-*/			
 			return;
 
 		}
@@ -2515,7 +2263,6 @@ Player.traceLine = class traceLine
 		 */
 		this.isVisible = function () {
 
-//			if ( !Player.isCreated() )
 			if ( !options.player )
 				return false;//не запущен Player(...)
 
@@ -2532,7 +2279,6 @@ Player.traceLine = class traceLine
 		 */
 		this.visible = function ( visible ) {
 
-//			if ( !Player.isCreated() )
 			if ( !options.player )
 				return false;//не запущен Player(...)
 
@@ -2562,7 +2308,6 @@ Player.traceLine = class traceLine
 			const attributesPosition = mesh.geometry.attributes.position;
 			var point = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
 			point.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
-//			const sceneIndex = Player.getSelectSceneIndex();
 
 			//нельзя ставить const потому что привыполнении npm run build будет ошибка
 			// (babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/player/player.js: "sceneIndex" is read-only
@@ -2628,7 +2373,6 @@ Player.traceLine = class traceLine
 
 				//Thanks to https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
 				var MAX_POINTS;
-//				if ( _timeSettings.max !== null )
 				if ( options.playerOptions.max !== null ) {
 
 					if ( options.playerOptions &amp;&amp; options.playerOptions.marks )
@@ -2709,31 +2453,6 @@ Player.traceLine = class traceLine
 
 }
 
-/* * @namespace
- * @returns selected scene index.
- */
-/*
-Player.getSelectSceneIndex = function () {
-
-	if ( Player.player )
-		return Player.player.getSelectSceneIndex();
-	return 0;
-
-}
-*/
-/* * @namespace
- * @returns current time of the player.
- */
-/*
-Player.getTime = function () {
-
-	if ( Player.player )
-		return Player.player.getTime();
-	return 0;
-
-}
-*/
-
 /** @namespace
  * @description get item size of the attribute of the mesh geometry
  * @param {array} arrayFuncs points.geometry.attributes.position array.
@@ -2763,21 +2482,15 @@ Player.getItemSize = function ( arrayFuncs ) {
  */
 Player.selectPlayScene = function ( group, settings = {} ) {
 
-	//Эта строка нужна в случае если в 3D объекте не утанвавливатся аттрибут color.
-	//Другими словами если не вызывается Player.getColors
-//	ColorPicker.palette.setTHREE( THREE );
-//	settings = settings || {};
 	const t = settings.t !== undefined ? settings.t : 0,
 		index = settings.index !== undefined ? settings.index : undefined,
 		options = settings.options || new Options();
 	group.userData.t = t;
-//	Player.selectMeshPlayScene( group, t, index, options );
 	Player.selectMeshPlayScene( group, { t: t, options: options } );
 	function selectMeshPlayScene( group ) {
 
 		group.children.forEach( function ( mesh ) {
 
-	//		Player.selectMeshPlayScene( mesh, t, index, options );
 			if ( mesh instanceof THREE.Group ) selectMeshPlayScene( mesh );
 			else Player.selectMeshPlayScene( mesh, { t: t, options: options } );
 
@@ -2785,10 +2498,6 @@ Player.selectPlayScene = function ( group, settings = {} ) {
 
 	}
 	selectMeshPlayScene( group );
-/*	
-	Player.cameraTarget.setCameraTarget( options );
-	const cameraTarget = Player.cameraTarget.get();
-*/	
 	options.playerOptions.cameraTarget.setCameraTarget( options );
 	const cameraTarget = options.playerOptions.cameraTarget.get();
 
@@ -2845,7 +2554,6 @@ function assign( ) {
 			this.x *= v.x;
 			this.y *= v.y;
 			this.z *= v.z;
-			//		this.w *= v.w || 1;
 			if ( v.w !== undefined )
 				this.w *= v.w;
 
@@ -3013,7 +2721,7 @@ export default Player;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Sep 02 2021 09:05:50 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Sep 07 2021 09:09:27 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

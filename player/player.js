@@ -15,10 +15,16 @@ import ScaleController from '../ScaleController.js';
 import PositionController from '../PositionController.js';
 import { controllers } from '../dat.gui/CustomController/build/dat.gui.module.js';
 
-import { getWorldPosition } from '../getPosition.js';
+import {
+
+	getWorldPosition,
+	getObjectLocalPosition,
+
+} from '../getPosition.js';
 
 import three from '../three.js'
 import Options from '../Options.js'
+import { createController } from '../controller.js'
 
 /**
  * @callback onSelectScene
@@ -135,23 +141,31 @@ class Player {
 		/**
 		 * set time
 		 * @param {number} t time
+		 * @returns false - invalid <b>t</b>.
 		 */
 		this.setTime = function ( t ) {
 
-			this.selectScene( parseInt( ( t - options.playerOptions.min ) / options.playerOptions.dt ) );
+			return this.selectScene( parseInt( ( t - options.playerOptions.min ) / options.playerOptions.dt ) );
 
 		}
 
 		/**
 		 * select scene for playing
 		 * @param {number} index Index of the scene. Range from 0 to options.playerOptions.marks - 1
+		 * @returns false - invalid <b>index</b>.
 		 */
 		this.selectScene = function ( index ) {
 
+			if ( isNaN( index ) ) {
+
+				console.error( 'Player.selectScene: index = ' + index );
+				return false;
+				
+			}
 			if ( index === undefined ) {
 
 				onSelectScene( selectSceneIndex );
-				return;
+				return true;
 
 			}
 			index = parseInt( index );
@@ -173,6 +187,7 @@ class Player {
 				onSelectScene( selectSceneIndex );
 
 			}
+			return true;
 
 		}
 
@@ -1029,7 +1044,10 @@ class Player {
 		 */
 		this.setIndex = function ( index, title ) {
 
-			if ( typeof this.PlayController === "object" ) this.PlayController.setValue( this.getTime() );
+			const t = this.getTime();
+			if ( options.controllers.t )
+				options.controllers.t.controller.value = t;
+			if ( typeof this.PlayController === "object" ) this.PlayController.setValue( t );
 			const elSlider = getSliderElement();
 			if ( elSlider ) {
 
@@ -1720,6 +1738,161 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 	if ( mesh.scale.y <= 0 ) console.error( message + 'y = ' + mesh.scale.y );
 	if ( mesh.scale.z <= 0 ) console.error( message + 'z = ' + mesh.scale.z );
 
+	if ( mesh.userData.player && mesh.userData.player.arrayFuncs )
+		mesh.userData.player.arrayFuncs.forEach( function ( func, index ) {
+
+			if ( func.controllers ) {
+
+				//Localization
+
+				const lang = {
+
+					controllerXTitle: 'X position',
+					controllerYTitle: 'Y position',
+					controllerZTitle: 'Z position',
+
+					controllerXFunctionTitle: 'X = f(t)',
+					controllerYFunctionTitle: 'Y = f(t)',
+					controllerZFunctionTitle: 'Z = f(t)',
+
+					positionAlert: 'Invalid position fromat: ',
+
+				};
+				switch ( options.getLanguageCode() ){
+
+					case 'ru'://Russian language
+
+						lang.controllerXTitle = 'Позиция X';
+						lang.controllerYTitle = 'Позиция Y';
+						lang.controllerZTitle = 'Позиция Z';
+						lang.positionAlert = 'Неправильный формат позиции точки: ';
+
+						break;
+					default://Custom language
+						if ( ( options.lang === undefined ) || ( options.lang.languageCode != languageCode ) )
+							break;
+
+						Object.keys( options.lang ).forEach( function ( key ) {
+
+							if ( lang[key] === undefined )
+								return;
+							lang[key] = options.lang[key];
+
+						} );
+
+				}
+
+				//position
+
+				const positionLocal = getObjectLocalPosition( mesh, index );
+				function setPosition( value, axesId ) {
+
+					const indexValue = axesId + mesh.geometry.attributes.position.itemSize * index,
+						valueOld = mesh.geometry.attributes.position.array[ indexValue ];
+					mesh.geometry.attributes.position.array[ indexValue ] = value;
+					if ( isNaN( mesh.geometry.attributes.position.array[ indexValue ] ) ) {
+
+						alert( lang.positionAlert + value );
+						const controller = func.controllers[axesId === 0 ? 'x' : axesId === 1 ? 'y' : axesId === 2 ? 'z' : undefined].controller;
+						controller.focus();
+						controller.value = valueOld;
+						mesh.geometry.attributes.position.array[ indexValue ] = valueOld;
+						return;
+						
+					}
+					mesh.geometry.attributes.position.needsUpdate = true;
+					if ( options.axesHelper )
+						options.axesHelper.updateAxes();
+					if ( options.guiSelectPoint )
+						options.guiSelectPoint.update();
+
+				}
+				createController( func.controllers.x, 'x', function () { return options.scales.x.name; }, {
+
+					value: positionLocal.x,
+					title: lang.controllerXTitle,
+					onchange: function ( event ) {
+
+						setPosition( event.currentTarget.value, 0 );
+
+					},
+
+				} );
+				createController( func.controllers.y, 'y', function () { return options.scales.y.name; }, {
+
+					value: positionLocal.y,
+					title: lang.controllerYTitle,
+					onchange: function ( event ) {
+
+						setPosition( event.currentTarget.value, 1 );
+
+					},
+
+				} );
+				createController( func.controllers.z, 'z', function () { return options.scales.z.name; }, {
+
+					value: positionLocal.z,
+					title: lang.controllerZTitle,
+					onchange: function ( event ) {
+
+						setPosition( event.currentTarget.value, 2 );
+
+					},
+
+				} );
+				/*
+				createController( func.controllers.y, 'y', positionLocal.y, function ( event ) {
+
+					setPosition( event.currentTarget.value, 1 );
+
+				}, lang.controllerYTitle, function () { return options.scales.y.name; } );
+				createController( func.controllers.z, 'z', positionLocal.z, function ( event ) {
+
+					setPosition( event.currentTarget.value, 2 );
+
+				}, lang.controllerZTitle, function () { return options.scales.z.name; } );
+				*/
+
+				//function text
+
+				function name( axisNmae ) { return options.scales[axisNmae].name + ' = f(' + ( options.playerOptions && options.playerOptions.name ? options.playerOptions.name : 't' ) + ')'; }
+				createController( func.controllers.xFunction, 'xFunction', function(){ return name( 'x' ) }, {
+
+					value: func.x,
+					title: lang.controllerXFunctionTitle,
+					onchange: function ( event ) {
+
+						console( event );
+
+					},
+
+				} );
+				createController( func.controllers.yFunction, 'yFunction', function(){ return name( 'y' ) }, {
+
+					value: func.y,
+					title: lang.controllerYFunctionTitle,
+					onchange: function ( event ) {
+
+
+					},
+
+				} );
+				createController( func.controllers.zFunction, 'zFunction', function(){ return name( 'z' ) }, {
+
+					value: func.z,
+					title: lang.controllerZFunctionTitle,
+					onchange: function ( event ) {
+
+
+					},
+
+				} );
+
+
+			}
+
+		} );
+
 	if ( !options || !options.guiSelectPoint )
 		return;
 
@@ -1728,7 +1901,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 	var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
 	if ( ( selectedPointIndex !== -1 ) && options.guiSelectPoint.isSelectedMesh( mesh ) ) {
 
-		options.guiSelectPoint.setPosition( /*getObjectPosition( mesh, selectedPointIndex ), */{
+		options.guiSelectPoint.setPosition( {
 
 			object: mesh,
 			index: selectedPointIndex,
@@ -1995,7 +2168,7 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 				funcs.vector.name = funcs.name;
 
 			if ( funcs.trace ) funcs.vector.trace = funcs.trace;
-
+			if ( funcs.controllers ) funcs.vector.controllers = funcs.controllers;
 			if ( funcs.cameraTarget ) {
 
 				funcs.vector.cameraTarget = funcs.cameraTarget;

@@ -219,6 +219,18 @@ class MyThree {
 	 * See <b>options.scales</b> of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a>.
 	 *
 	 * @param {object} [options.scales.w] <b>w</b> axis options. See <a href="../../jsdoc/Options/Options.html#setW" target="_blank">Options.setW(options)</a> <b>options.scales.w</b> for details.
+	 * @param {object} [options.controllers] Controllers list.
+	 * <pre>
+	 * User can see and edit some parameters on the web page.
+	 * See <a href="../../jsdoc/Options/global.html#controllers" target="_blank">controllers</a> of the <b>Options</b>.
+	 * </pre>
+	 * @param {Object} [options.controllers.t] current <a href="../../player/jsdoc/index.html" target="_blank">Player</a> time.
+	 * @param {HTMLElement|string} [options.controllers.t.controller=document.getElementById( 't' )] controller of current <a href="../../player/jsdoc/index.html" target="_blank">Player</a> time
+	 * or <b>id</b> of the time controller.
+	 * @param {HTMLElement|string} [options.controllers.t.elName] <b>span</b> element of the <b>Player</b> time name. See <b>settings.options.playerOptions.name</b > parameter of <a href = "../../player/jsdoc/module-Player-Player.html" target = "_blank" >Player</a>
+	 * <pre>
+	 * or <b>id</b> of the <b>span</b> element.
+	 * </pre>
 	 */
 	constructor( createXDobjects, options ) {
 

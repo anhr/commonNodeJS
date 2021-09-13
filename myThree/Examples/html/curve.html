@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>Curve</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
+
+	<!--<script src="/anhr/commonNodeJS/master/loadScriptNodeJS/build/loadScript.js"></script>-->
+	<!--for debugging
+	https://github.com/vorg/webgl-debug
+	https://searchcode.com/codesearch/view/85060658/
+	<script src="../../../webgl-debug/webgl-debug/build/webgl-debug.js"></script>
+	-->
+	<!--
+	<script src="../../../../../three.js/dev/build/three.js"></script>
+	<script src="../../../../../three.js/dev/build/three.min.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>
+	<script src="https://threejs.org/build/three.js"></script>
+	<script src="https://threejs.org/build/three.min.js"></script>
+	-->
+	<!--
+	<script src="../../build/myThree.js"></script>
+	<script src="../../build/myThree.min.js"></script>
+
+	Error: Access to XMLHttpRequest at 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/getShaderMaterialPoints/vertex.c'
+		from origin 'http://localhost' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/myThree.js"></script>
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/myThree.min.js"></script>
+	-->
+	<style type="text/css">
+		.auto-style1 {
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<p>
+		<a href='https://github.com/anhr/commonNodeJS/tree/master/myThree' target="_blank">GitHub</a>
+	</p>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<h1><a href='https://en.wikipedia.org/wiki/Parametric_equation' target="_blank">Parametric equation</a> curve.</h1>
+	<div id="canvas"></div>
+	<p>
+		Parameter <b>t</b> is <input id="time" /><span id="tName"></span>
+		<br>
+		
+	</p>
+	<table>
+		<tr>
+			<td>Axis</td>
+			<td>f(t)</td>
+			<td>Position</td>
+		</tr>
+		<tr>
+			<td id="xName"></td>
+			<td><input id="xFunction" /></td>
+			<td><input id="x" /></td>
+		</tr>
+		<tr>
+			<td id="yName"></td>
+			<td><input id="yFunction" /></td>
+			<td><input id="y" /></td>
+		</tr>
+		<tr>
+			<td id="zName"></td>
+			<td><input id="zFunction" /></td>
+			<td><input id="z" /></td>
+		</tr>
+	</table>
+
+	<script type="module">
+
+		import * as THREE from '../../../../../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+
+		import MyThree from '../../myThree.js';
+		//import MyThree from '../../build/myThree.module.js';
+		//import MyThree from '../../build/myThree.module.min.js';
+
+		if ( MyThree.default ) MyThree = MyThree.default;
+		MyThree.three.THREE = THREE;
+
+		new MyThree( function ( group, options ) {
+
+			MyThree.MyPoints(
+
+				[
+					[],
+					{
+
+						vector: [
+							'Math.sin(t*2*Math.PI)*0.5',//x
+							'Math.cos(t*2*Math.PI)*0.5',//y
+							'Math.cos(t*2*Math.PI)*0.5',//z
+							'1-t',//w
+						],
+						name: 'Parametric equation',
+						trace: true,//Displays the trace of the point movement.
+						controllers: {
+
+							x: {
+
+								controller: document.getElementById( 'x' ),
+
+								elName: document.getElementById( 'xName' ),
+								//elName: 'xName',
+								//elName: false,
+
+							},
+							y: {
+
+								controller: document.getElementById( 'y' ),
+
+								elName: document.getElementById( 'yName' ),
+								//elName: 'yName',
+								//elName: false,
+
+							},
+							z: {
+
+								controller: document.getElementById( 'z' ),
+
+								elName: document.getElementById( 'zName' ),
+								//elName: 'zName',
+								//elName: false,
+
+							},
+							xFunction: {
+
+								controller: document.getElementById( 'xFunction' ),
+
+								//elName: document.getElementById( 'xFunctionName' ),
+								//elName: 'xFunctionName',
+								elName: false,
+
+							},
+							yFunction: {
+
+								controller: document.getElementById( 'yFunction' ),
+
+								//elName: document.getElementById( 'yFunctionName' ),
+								//elName: 'yFunctionName',
+								elName: false,
+
+							},
+							zFunction: {
+
+								controller: document.getElementById( 'zFunction' ),
+
+								//elName: document.getElementById( 'zFunctionName' ),
+								//elName: 'zFunctionName',
+								elName: false,
+
+							},
+
+						},
+
+					},
+					[1],
+
+				],
+				group, { options: options } );
+
+		}, {
+
+				elContainer: 'canvas',
+				canvas: { fullScreen: false, },
+				//player: false,
+				playerOptions: {
+
+					marks: 110,//Number of scenes of 3D objects animation.
+					interval: 25,//Ticks per seconds.
+					name: 'time',
+
+				},
+				scales: {
+
+					x: {
+
+						name: 'distance',
+
+					},
+					y: {
+
+						//name: 'altitude',
+
+					},
+					z: {
+
+						//name: 'speed',
+
+					},
+
+				},
+				controllers: {
+
+					t: {
+
+						//controller: document.getElementById( 'time' ),
+						controller: 'time',
+
+						//elName: document.getElementById( 'tName' ),
+						//elName: 'tName',
+						//elName: false,
+
+					},
+
+				},
+
+		} );
+
+	</script>
+</body>
+</html>

@@ -188,14 +188,12 @@ class MoveGroupGui {
 
 		}
 
-		function scale( axes, scaleControllers, axisName ) {
+		function scale( axes,// windowRange,
+			scaleControllers, axisName ) {
 
-/*
 			if ( axes === undefined )
 				return;//Not 3D AxesHelper
 			axes.name = axes.name || axisName;
-*/			
-			if ( !axes.isAxis() ) return;//Not 3D AxesHelper
 
 			function onclick( customController, action ) {
 

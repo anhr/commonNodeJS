@@ -130,7 +130,7 @@ class AxesHelper {
 			group.visible = options.scales.display;
 
 			const scale = options.scales[axisName];
-			if ( !scale )
+			if ( !scale.isAxis() )
 				return;
 
 			var color = options.scales.color, opacity = 1;
@@ -324,7 +324,7 @@ class AxesHelper {
 				group: group,
 
 			}
-			scale.name = scale.name || axisName;
+//			scale.name = scale.name || axisName;
 			group.add( new SpriteText(
 				scale.name,
 				new THREE.Vector3(
@@ -448,7 +448,7 @@ class AxesHelper {
 
 				function dottedLine( axisName ) {
 
-					if ( !options.scales[axisName] )
+					if ( !options.scales[axisName].isAxis() )
 						return;
 					var lineVertices = [
 						new THREE.Vector3().copy( options.scales.posAxesIntersection ),

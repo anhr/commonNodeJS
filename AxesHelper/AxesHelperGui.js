@@ -230,7 +230,7 @@ export default function AxesHelperGui( options, gui ) {
 	function axesIntersection( axisName ) {
 
 		const scale = options.scales[axisName];
-		if ( scale === undefined )
+		if ( !scale.isAxis() )
 			return;
 
 		const scaleControllers = axesIntersectionControllers[axisName];

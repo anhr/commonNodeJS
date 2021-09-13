@@ -175,7 +175,7 @@ class GuiSelectPoint {
 				lang.cameraTarget = 'Следить';
 				lang.cameraTargetTitle = 'Выберите эту точку, за которой следит камера.',
 
-					lang.point = 'Локальная позиция точки';
+				lang.point = 'Локальная позиция точки';
 				lang.pointTitle = 'Position attribute выбранной точки';
 
 				lang.trace = 'Трек';
@@ -278,6 +278,21 @@ class GuiSelectPoint {
 			if ( cWorld.x ) cWorld.x.setValue( position.x );
 			if ( cWorld.y ) cWorld.y.setValue( position.y );
 			if ( cWorld.z ) cWorld.z.setValue( position.z );
+
+			//Возможно не надо делать такую глубокую проверку. Не тестировал
+			if(
+				mesh.userData.player &&
+				mesh.userData.player.arrayFuncs &&
+				mesh.userData.player.arrayFuncs[selectedPointIndex] &&
+				mesh.userData.player.arrayFuncs[selectedPointIndex].controllers
+			) {
+
+				const controllers = mesh.userData.player.arrayFuncs[selectedPointIndex].controllers;
+				if ( controllers.x && controllers.x.controller ) controllers.x.controller.value = position.x;
+				if ( controllers.y && controllers.y.controller ) controllers.y.controller.value = position.y;
+				if ( controllers.z && controllers.z.controller ) controllers.z.controller.value = position.z;
+
+			}
 
 		}
 		function setValue( controller, v ) {
@@ -505,6 +520,11 @@ class GuiSelectPoint {
 			if( cWorld.x ) cWorld.x.setValue( position.x );
 			if( cWorld.y ) cWorld.y.setValue( position.y );
 			if( cWorld.z ) cWorld.z.setValue( position.z );
+
+			const positionLocal = getObjectLocalPosition( mesh, index );
+			if( cX ) cX.setValue( positionLocal.x );
+			if( cY ) cY.setValue( positionLocal.y );
+			if( cZ ) cZ.setValue( positionLocal.z );
 
 		}
 		/**
@@ -850,7 +870,7 @@ class GuiSelectPoint {
 				value = parseInt( value );
 				mesh = getMesh();
 
-				if ( !mesh.userData.boFrustumPoints ) {
+				if ( mesh && !mesh.userData.boFrustumPoints ) {
 
 					if ( !mesh.userData.player ) mesh.userData.player = {};
 					if ( !mesh.userData.player.arrayFuncs ) {
@@ -976,19 +996,19 @@ class GuiSelectPoint {
 					options.frustumPoints.updateCloudPoint( mesh );
 
 			}
-			if ( options.scales.x ) {
+			if ( options.scales.x.isAxis() ) {
 
 				cScaleX = dat.controllerZeroStep( fScale, scale, 'x', function ( value ) { setScale( 'x', value ); } );
 				dat.controllerNameAndTitle( cScaleX, options.scales.x.name );
 
 			}
-			if ( options.scales.y ) {
+			if ( options.scales.y.isAxis() ) {
 
 				cScaleY = dat.controllerZeroStep( fScale, scale, 'y', function ( value ) { setScale( 'y', value ); } );
 				dat.controllerNameAndTitle( cScaleY, options.scales.y.name );
 
 			}
-			if ( options.scales.z ) {
+			if ( options.scales.z.isAxis() ) {
 
 				cScaleZ = dat.controllerZeroStep( fScale, scale, 'z', function ( value ) { setScale( 'z', value ); } );
 				dat.controllerNameAndTitle( cScaleZ, options.scales.z.name );
@@ -1018,7 +1038,7 @@ class GuiSelectPoint {
 			function addAxisControllers( name ) {
 
 				const scale = options.scales[name];
-				if ( !scale )
+				if ( !scale.isAxis() )
 					return;
 				const axesName = scale.name,
 					f = fPosition.addFolder( axesName );
@@ -1073,7 +1093,7 @@ class GuiSelectPoint {
 			function addRotationControllers( name ) {
 
 				const scale = options.scales[name];
-				if ( !scale )
+				if ( !scale.isAxis() )
 					return;
 				cRotations[name] = fRotation.add( new THREE.Vector3(), name, 0, Math.PI * 2, 1 / 360 ).
 					onChange( function ( value ) {
@@ -1451,7 +1471,7 @@ class GuiSelectPoint {
 
 					scale = options.axesHelper === undefined ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
 						options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
-					if ( scale )
+					if ( scale.isAxis() )
 						controller = fPoint.add( {
 
 							value: scale.min,
@@ -1478,7 +1498,8 @@ class GuiSelectPoint {
 							} );
 
 				}
-				if ( scale )
+//				if ( scale )
+				if ( controller )
 					dat.controllerNameAndTitle( controller, scale.name );
 				return controller;
 
@@ -1545,7 +1566,7 @@ class GuiSelectPoint {
 
 				const scale = options.axesHelper === undefined ? options.scales[axisName] :
 					options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
-				if ( !scale )
+				if ( !scale.isAxis() )
 					return;
 				const controller = dat.controllerZeroStep( fPointWorld, { value: scale.min, }, 'value' );
 				controller.domElement.querySelector( 'input' ).readOnly = true;
