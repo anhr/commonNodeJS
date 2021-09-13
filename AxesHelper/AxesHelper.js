@@ -81,9 +81,11 @@ class AxesHelper {
 		options.camera.fov = options.camera.fov || 50;
 
 		options.scales = options.scales || {};
-		options.scales.display = options.scales.display !== undefined ? options.scales.display : true;
 		options.scales.color = options.scales.color || 'rgba(255, 255, 255, 0.5)';//'white';//0xffffff;
+/*		
+		options.scales.display = options.scales.display !== undefined ? options.scales.display : true;
 		options.scales.text = options.scales.text || {};
+*/		
 		options.scales.text.textHeight = options.scales.text.textHeight || 0.04;//Please specify the textHeight if you want the changing of the text height is available in gui.
 		options.scales.text.precision = options.scales.text.precision || 4;
 		options.scales.text.rect = options.scales.text.rect || {};

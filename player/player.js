@@ -1045,7 +1045,7 @@ class Player {
 		this.setIndex = function ( index, title ) {
 
 			const t = this.getTime();
-			if ( options.controllers.t )
+			if ( options.controllers && options.controllers.t )
 				options.controllers.t.controller.value = t;
 			if ( typeof this.PlayController === "object" ) this.PlayController.setValue( t );
 			const elSlider = getSliderElement();

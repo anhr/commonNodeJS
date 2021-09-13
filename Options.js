@@ -787,6 +787,40 @@ class Options {
 									},
 
 								},
+								/* *
+								 * getter and setter
+								 * <pre>
+								 * true - displays the label and scale of the axes.
+								 * </pre>
+								 **/
+								display: {
+
+									get: function () {
+
+										if ( scales.display === undefined ) scales.display = true;
+										return scales.display;
+
+									},
+//									set: function ( display ) { scales.display = display; },
+
+								},
+								/* *
+								 * getter and setter
+								 * <pre>
+								 * options of the text of the marks of AxesHelper
+								 * </pre>
+								 **/
+								text: {
+
+									get: function () {
+
+										if ( scales.text === undefined ) scales.text = {};
+										return scales.text;
+
+									},
+//									set: function ( text ) { scales.text = text; },
+
+								},
 
 							} );
 
@@ -1406,7 +1440,7 @@ class Options {
 						}
 
 					}
-					if ( !options.controllers.boControllers )
+					if ( options.controllers && !options.controllers.boControllers )
 						options.controllers = new Controllers( options.controllers );
 					return options.controllers;
 
