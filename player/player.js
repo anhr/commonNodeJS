@@ -1893,8 +1893,12 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 		} );
 
-	if ( !options || !options.guiSelectPoint )
+	if ( !options || !options.guiSelectPoint ) {
+
+		if ( options.axesHelper ) options.axesHelper.movePosition();
 		return;
+
+	}
 
 	options.guiSelectPoint.setMesh();
 

@@ -521,19 +521,32 @@ class AxesHelper {
 		}
 		dotLines = new dotLines( group );
 
+		var _intersection;
 		/**
 		* Expose position on axes.
 		* @param {THREE.Vector3|object} intersection position or intersection. See {@link https://threejs.org/docs/index.html#api/en/core/Raycaster|Raycaster} for detail.
 		*/
 		this.exposePosition = function ( intersection ) {
 
+			_intersection = intersection;
 			if ( intersection === undefined ) {
 
+				_intersection = undefined;
 				dotLines.remove();
 				return;
 
 			}
 			dotLines.dottedLines( intersection );
+
+		}
+		/**
+		* move exposed position on axes.
+		*/
+		this.movePosition = function () {
+
+			if ( !_intersection  )
+				return;
+			this.exposePosition( _intersection );
 
 		}
 
