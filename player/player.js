@@ -1525,6 +1525,8 @@ Player.execFunc = function ( funcs, axisName, t, options={} ) {
 
 }
 
+var lang;
+
 /** @namespace
  * @description Select a scene for playing of the mesh
  * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for playing.
@@ -1776,40 +1778,43 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 				//Localization
 
-				const lang = {
+				if ( !lang ) {
+					lang = {
 
-					controllerXTitle: 'X position',
-					controllerYTitle: 'Y position',
-					controllerZTitle: 'Z position',
+						controllerXTitle: 'X position',
+						controllerYTitle: 'Y position',
+						controllerZTitle: 'Z position',
 
-					controllerXFunctionTitle: 'X = f(t)',
-					controllerYFunctionTitle: 'Y = f(t)',
-					controllerZFunctionTitle: 'Z = f(t)',
+						controllerXFunctionTitle: 'X = f(t)',
+						controllerYFunctionTitle: 'Y = f(t)',
+						controllerZFunctionTitle: 'Z = f(t)',
 
-					positionAlert: 'Invalid position fromat: ',
+						positionAlert: 'Invalid position fromat: ',
 
-				};
-				switch ( options.getLanguageCode() ){
+					};
+					switch ( options.getLanguageCode() ) {
 
-					case 'ru'://Russian language
+						case 'ru'://Russian language
 
-						lang.controllerXTitle = 'Позиция X';
-						lang.controllerYTitle = 'Позиция Y';
-						lang.controllerZTitle = 'Позиция Z';
-						lang.positionAlert = 'Неправильный формат позиции точки: ';
+							lang.controllerXTitle = 'Позиция X';
+							lang.controllerYTitle = 'Позиция Y';
+							lang.controllerZTitle = 'Позиция Z';
+							lang.positionAlert = 'Неправильный формат позиции точки: ';
 
-						break;
-					default://Custom language
-						if ( ( options.lang === undefined ) || ( options.lang.languageCode != languageCode ) )
 							break;
+						default://Custom language
+							if ( ( options.lang === undefined ) || ( options.lang.languageCode != languageCode ) )
+								break;
 
-						Object.keys( options.lang ).forEach( function ( key ) {
+							Object.keys( options.lang ).forEach( function ( key ) {
 
-							if ( lang[key] === undefined )
-								return;
-							lang[key] = options.lang[key];
+								if ( lang[key] === undefined )
+									return;
+								lang[key] = options.lang[key];
 
-						} );
+							} );
+
+					}
 
 				}
 
@@ -1821,50 +1826,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 					const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : undefined;
 					if ( axisName === 'w' ){
 
-						//color
-						if ( options.palette ) {
-
-							const color = options.palette.toColor( value , options.scales.w.min, options.scales.w.max );
-							if ( color ) {
-
-								if ( !mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors )
-									console.error( 'Player.selectMeshPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors' );
-								const attributes = mesh.geometry.attributes, i = index;
-								if ( !Player.setColorAttribute( attributes, i, color ) && funcs instanceof THREE.Vector4 ) {
-
-									mesh.geometry.setAttribute( 'color',
-										new THREE.Float32BufferAttribute( Player.getColors( arrayFuncs,
-											{
-
-												positions: mesh.geometry.attributes.position,
-												options: options,
-
-											} ), 4 ) );
-									if ( !Player.setColorAttribute( attributes, i, color ) )
-										console.error( 'Player.selectMeshPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute' );
-
-								}
-
-							}
-
-						}
-/*						
-						const indexValue = mesh.geometry.attributes.ca.itemSize * index,
-							valueOld = mesh.geometry.attributes.ca.array[indexValue];
-						mesh.geometry.attributes.ca.array[indexValue] = value;
-						if ( isNaN( mesh.geometry.attributes.ca.array[indexValue] ) ) {
-
-							alert( lang.colorAlert + value );
-//							const controller = func.controllers[axesId === 0 ? 'x' : axesId === 1 ? 'y' : axesId === 2 ? 'z' : axesId === 3 ? 'w' : undefined].controller;
-							const controller = func.controllers[axisName].position.controller;
-							controller.focus();
-							controller.value = valueOld;
-							mesh.geometry.attributes.ca.array[indexValue] = valueOld;
-							return;
-
-						}
-						mesh.geometry.attributes.ca.needsUpdate = true;
-*/						
+						setColorAttibute( value, mesh, index );
 						if ( options.guiSelectPoint )
 							options.guiSelectPoint.update();
 
@@ -1876,7 +1838,6 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 					if ( isNaN( mesh.geometry.attributes.position.array[ indexValue ] ) ) {
 
 						alert( lang.positionAlert + value );
-//						const controller = func.controllers[axesId === 0 ? 'x' : axesId === 1 ? 'y' : axesId === 2 ? 'z' : axesId === 3 ? 'w' : undefined].controller;
 						const controller = func.controllers[axisName].position.controller;
 						controller.focus();
 						controller.value = valueOld;
@@ -1943,109 +1904,6 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 				createControllers( 'y' );
 				createControllers( 'z' );
 				createControllers( 'w' );
-/*
-				createController( func.controllers.x, 'x', function () { return options.scales.x.name; }, {
-
-					value: positionLocal.x,
-					title: lang.controllerXTitle,
-					onchange: function ( event ) {
-
-						setPosition( event.currentTarget.value, 0 );
-
-					},
-
-				} );
-				createController( func.controllers.y, 'y', function () { return options.scales.y.name; }, {
-
-					value: positionLocal.y,
-					title: lang.controllerYTitle,
-					onchange: function ( event ) {
-
-						setPosition( event.currentTarget.value, 1 );
-
-					},
-
-				} );
-				createController( func.controllers.z, 'z', function () { return options.scales.z.name; }, {
-
-					value: positionLocal.z,
-					title: lang.controllerZTitle,
-					onchange: function ( event ) {
-
-						setPosition( event.currentTarget.value, 2 );
-
-					},
-
-				} );
-				createController( func.controllers.w, 'w', function () { return options.scales.w.name; }, {
-
-					value: positionLocal.w,
-					title: lang.controllerWTitle,
-					onchange: function ( event ) {
-
-						setPosition( event.currentTarget.value, 3 );
-
-					},
-
-				} );
-
-				//function text
-
-				function onChange( event, axisName ){
-
-					try {
-
-						func[axisName] = event.currentTarget.value;
-						const value = Player.execFunc( func, axisName, options.player.getTime(), options );
-						if ( func.controllers[axisName] ) {
-
-							controller = func.controllers[axisName].controller;
-							controller.onchange( { currentTarget: { value: value } } );
-							controller.value = value;
-
-						} else 
-							setPosition( value, axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : undefined );
-						if ( options.guiSelectPoint )
-							options.guiSelectPoint.update();
-
-					} catch ( e ) {
-
-						alert( 'Axis: ' + options.scales[axisName].name + '. Function: "' + func[axisName] + '". ' + e );
-						event.currentTarget.focus();
-
-					}
-						
-				}
-				function name( axisNmae ) { return options.scales[axisNmae].name + ' = f(' + ( options.playerOptions && options.playerOptions.name ? options.playerOptions.name : 't' ) + ')'; }
-				createController( func.controllers.xFunction, 'xFunction', function(){ return name( 'x' ) }, {
-
-					value: func.x,
-					title: lang.controllerXFunctionTitle,
-					onchange: function ( event ) { onChange( event, 'x' ) },
-
-				} );
-				createController( func.controllers.yFunction, 'yFunction', function(){ return name( 'y' ) }, {
-
-					value: func.y,
-					title: lang.controllerYFunctionTitle,
-					onchange: function ( event ) { onChange( event, 'y' ) },
-
-				} );
-				createController( func.controllers.zFunction, 'zFunction', function(){ return name( 'z' ) }, {
-
-					value: func.z,
-					title: lang.controllerZFunctionTitle,
-					onchange: function ( event ) { onChange( event, 'z' ) },
-
-				} );
-				createController( func.controllers.wFunction, 'wFunction', function(){ return name( 'w' ) }, {
-
-					value: func.w,
-					title: lang.controllerWFunctionTitle,
-					onchange: function ( event ) { onChange( event, 'w' ) },
-
-				} );
-*/
 
 			}
 

@@ -520,6 +520,7 @@ class GuiSelectPoint {
 			if( cWorld.x ) cWorld.x.setValue( position.x );
 			if( cWorld.y ) cWorld.y.setValue( position.y );
 			if( cWorld.z ) cWorld.z.setValue( position.z );
+			if( cW ) cW.setValue( position.w );
 
 			const positionLocal = getObjectLocalPosition( mesh, index );
 			if( cX ) cX.setValue( positionLocal.x );

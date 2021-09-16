@@ -102,10 +102,10 @@
 					{
 
 						vector: [
-							'Math.sin(t*2*Math.PI)*0.5',//x
-							'Math.cos(t*2*Math.PI)*0.5',//y
-							'Math.cos(t*2*Math.PI)*0.5',//z
-							't',//w
+							'-1+2*t',//x
+							'Math.cos(t*20*Math.PI)*0.5',//y
+							'Math.sin(t*20*Math.PI)*0.5',//z
+							'1-t',//w
 						],
 						name: 'Parametric equation',
 						trace: true,//Displays the trace of the point movement.
@@ -113,16 +113,6 @@
 
 							x: {
 
-								position: {
-
-									//controller: document.getElementById( 'xPosition2' ),
-									controller: 'xPosition2',
-
-									//elName: document.getElementById( 'xName' ),
-									elName: 'xName',
-									//elName: false,
-
-								},
 								func: {
 
 									//controller: document.getElementById( 'xFunc2' ),
@@ -133,20 +123,20 @@
 									elName: false,
 
 								},
+								position: {
+
+									//controller: document.getElementById( 'xPosition2' ),
+									controller: 'xPosition2',
+
+									//elName: document.getElementById( 'xName' ),
+									elName: 'xName',
+									//elName: false,
+
+								},
 
 							},
 							y: {
 
-								position: {
-
-									//controller: document.getElementById( 'yPosition' ),
-									controller: 'yPosition',
-
-									//elName: document.getElementById( 'yName' ),
-									elName: 'yName',
-									//elName: false,
-
-								},
 								func: {
 
 									//controller: document.getElementById( 'yFunc' ),
@@ -157,20 +147,20 @@
 									elName: false,
 
 								},
+								position: {
+
+									//controller: document.getElementById( 'yPosition' ),
+									controller: 'yPosition',
+
+									//elName: document.getElementById( 'yName' ),
+									elName: 'yName',
+									//elName: false,
+
+								},
 
 							},
 							z: {
 
-								position: {
-
-									//controller: document.getElementById( 'zPosition' ),
-									controller: 'zPosition',
-
-									//elName: document.getElementById( 'zName' ),
-									elName: 'zName',
-									//elName: false,
-
-								},
 								func: {
 
 									//controller: document.getElementById( 'zFunc' ),
@@ -181,20 +171,20 @@
 									elName: false,
 
 								},
+								position: {
+
+									//controller: document.getElementById( 'zPosition' ),
+									controller: 'zPosition',
+
+									//elName: document.getElementById( 'zName' ),
+									elName: 'zName',
+									//elName: false,
+
+								},
 
 							},
 							w: {
 
-								position: {
-
-									//controller: document.getElementById( 'wPosition' ),
-									controller: 'wPosition',
-
-									//elName: document.getElementById( 'wName' ),
-									elName: 'wName',
-									//elName: false,
-
-								},
 								func: {
 
 									//controller: document.getElementById( 'wFunc' ),
@@ -203,6 +193,16 @@
 									//elName: document.getElementById( 'wFuncName' ),
 									//elName: 'wFuncName',
 									elName: false,
+
+								},
+								position: {
+
+									//controller: document.getElementById( 'wPosition' ),
+									controller: 'wPosition',
+
+									//elName: document.getElementById( 'wName' ),
+									elName: 'wName',
+									//elName: false,
 
 								},
 
@@ -223,7 +223,7 @@
 				//player: false,
 				playerOptions: {
 
-					marks: 110,//Number of scenes of 3D objects animation.
+					marks: 1100,//Number of scenes of 3D objects animation.
 					interval: 25,//Ticks per seconds.
 					name: 'time',
 
@@ -251,7 +251,7 @@
 
 					x: {
 
-						name: 'distance',
+						//name: 'distance',
 
 					},
 					y: {
