@@ -156,17 +156,17 @@ class Player {
 		 */
 		this.selectScene = function ( index ) {
 
-			if ( isNaN( index ) ) {
-
-				console.error( 'Player.selectScene: index = ' + index );
-				return false;
-				
-			}
 			if ( index === undefined ) {
 
 				onSelectScene( selectSceneIndex );
 				return true;
 
+			}
+			if ( isNaN( index ) ) {
+
+				console.error( 'Player.selectScene: index = ' + index );
+				return false;
+				
 			}
 			index = parseInt( index );
 			if ( options.playerOptions.max !== null ) {
