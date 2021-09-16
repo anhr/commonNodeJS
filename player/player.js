@@ -1637,6 +1637,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 			setPosition( 'x', 'setX' );
 			setPosition( 'y', 'setY' );
 			setPosition( 'z', 'setZ' );
+			setPosition( 'w', 'setW' );
 
 			//если тут поставить var то цвет точки, которая определена как THREE.Vector3 будет равет цвету предыдущей точки
 			//потому что перемнные типа var видны снаружи блока {}
