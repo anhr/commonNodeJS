@@ -526,6 +526,8 @@ class GuiSelectPoint {
 			if( cY ) cY.setValue( positionLocal.y );
 			if( cZ ) cZ.setValue( positionLocal.z );
 
+			funcFolder.update( mesh.userData.player.arrayFuncs[index] );
+
 		}
 		/**
 		 * get index of the mesh in the cMeshs controller
@@ -1648,24 +1650,17 @@ class GuiSelectPoint {
 					parent = parent.parent;
 
 				}
-/*
-				const position = mesh.geometry.attributes.position,
-					itemSize = position.itemSize;
-*/
-				var controller, functionName;
+				var controller;
 				switch ( axisName ) {
 
 					case 'x':
 						controller = cX;
-						functionName = 'xFunction';
 						break;
 					case 'y':
 						controller = cY;
-						functionName = 'yFunction';
 						break;
 					case 'z':
 						controller = cZ;
-						functionName = 'zFunction';
 						break;
 					case 'w':
 						if ( func instanceof THREE.Color ) {
@@ -1675,7 +1670,6 @@ class GuiSelectPoint {
 
 						}
 						controller = cW;
-						functionName = 'wFunction';
 						break;
 					default: console.error( 'GuiSelectPoint new functionsFolder onFinishChange: axisName = ' + axisName );
 						return;
@@ -1686,8 +1680,9 @@ class GuiSelectPoint {
 				if ( funcs.controllers ) {
 
 					//обновить органы управления на веб странице
-					const controllerObject = funcs.controllers[functionName];
-					if ( controllerObject ) controllerObject.controller.value = value;
+					const controllerObject = funcs.controllers[axisName];
+					if ( controllerObject && controllerObject.func && controllerObject.func.controller )
+						controllerObject.func.controller.value = value;
 					
 				}
 

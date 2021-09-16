@@ -59,20 +59,26 @@
 		</tr>
 		<tr>
 			<td id="xName"></td>
-			<td><input id="xFunction" /></td>
-			<td><input id="x" /></td>
+			<td><input id="xFunc2" /></td>
+			<td><input id="xPosition2" /></td>
 		</tr>
 		<tr>
 			<td id="yName"></td>
-			<td><input id="yFunction" /></td>
-			<td><input id="y" /></td>
+			<td><input id="yFunc" /></td>
+			<td><input id="yPosition" /></td>
 		</tr>
 		<tr>
 			<td id="zName"></td>
-			<td><input id="zFunction" /></td>
-			<td><input id="z" /></td>
+			<td><input id="zFunc" /></td>
+			<td><input id="zPosition" /></td>
+		</tr>
+		<tr>
+			<td id="wName"></td>
+			<td><input id="wFunc" /></td>
+			<td><input id="wPosition" /></td>
 		</tr>
 	</table>
+	<div id="xFuncName"></div>
 
 	<script type="module">
 
@@ -99,7 +105,7 @@
 							'Math.sin(t*2*Math.PI)*0.5',//x
 							'Math.cos(t*2*Math.PI)*0.5',//y
 							'Math.cos(t*2*Math.PI)*0.5',//z
-							'1-t',//w
+							't',//w
 						],
 						name: 'Parametric equation',
 						trace: true,//Displays the trace of the point movement.
@@ -107,56 +113,98 @@
 
 							x: {
 
-								controller: document.getElementById( 'x' ),
+								position: {
 
-								elName: document.getElementById( 'xName' ),
-								//elName: 'xName',
-								//elName: false,
+									//controller: document.getElementById( 'xPosition2' ),
+									controller: 'xPosition2',
+
+									//elName: document.getElementById( 'xName' ),
+									elName: 'xName',
+									//elName: false,
+
+								},
+								func: {
+
+									//controller: document.getElementById( 'xFunc2' ),
+									controller: 'xFunc2',
+
+									//elName: document.getElementById( 'xFuncName' ),
+									//elName: 'xFuncName',
+									elName: false,
+
+								},
 
 							},
 							y: {
 
-								controller: document.getElementById( 'y' ),
+								position: {
 
-								elName: document.getElementById( 'yName' ),
-								//elName: 'yName',
-								//elName: false,
+									//controller: document.getElementById( 'yPosition' ),
+									controller: 'yPosition',
+
+									//elName: document.getElementById( 'yName' ),
+									elName: 'yName',
+									//elName: false,
+
+								},
+								func: {
+
+									//controller: document.getElementById( 'yFunc' ),
+									controller: 'yFunc',
+
+									//elName: document.getElementById( 'yFuncName' ),
+									//elName: 'yFuncName',
+									elName: false,
+
+								},
 
 							},
 							z: {
 
-								controller: document.getElementById( 'z' ),
+								position: {
 
-								elName: document.getElementById( 'zName' ),
-								//elName: 'zName',
-								//elName: false,
+									//controller: document.getElementById( 'zPosition' ),
+									controller: 'zPosition',
 
-							},
-							xFunction: {
+									//elName: document.getElementById( 'zName' ),
+									elName: 'zName',
+									//elName: false,
 
-								controller: document.getElementById( 'xFunction' ),
+								},
+								func: {
 
-								//elName: document.getElementById( 'xFunctionName' ),
-								//elName: 'xFunctionName',
-								elName: false,
+									//controller: document.getElementById( 'zFunc' ),
+									controller: 'zFunc',
 
-							},
-							yFunction: {
+									//elName: document.getElementById( 'zFuncName' ),
+									//elName: 'zFuncName',
+									elName: false,
 
-								controller: document.getElementById( 'yFunction' ),
-
-								//elName: document.getElementById( 'yFunctionName' ),
-								//elName: 'yFunctionName',
-								elName: false,
+								},
 
 							},
-							zFunction: {
+							w: {
 
-								controller: document.getElementById( 'zFunction' ),
+								position: {
 
-								//elName: document.getElementById( 'zFunctionName' ),
-								//elName: 'zFunctionName',
-								elName: false,
+									//controller: document.getElementById( 'wPosition' ),
+									controller: 'wPosition',
+
+									//elName: document.getElementById( 'wName' ),
+									elName: 'wName',
+									//elName: false,
+
+								},
+								func: {
+
+									//controller: document.getElementById( 'wFunc' ),
+									controller: 'wFunc',
+
+									//elName: document.getElementById( 'wFuncName' ),
+									//elName: 'wFuncName',
+									elName: false,
+
+								},
 
 							},
 
@@ -189,7 +237,7 @@
 					//playerGui: false,
 					//playController: false,
 					//stereoEffectsGui: false,
-					guiSelectPoint: false,
+					//guiSelectPoint: false,
 					//guiFrustumPoints:false,
 					//cameraGui: false,
 					//moveScene: false,
@@ -214,6 +262,11 @@
 					z: {
 
 						//name: 'speed',
+
+					},
+					w: {
+
+						name: 'color',
 
 					},
 

@@ -81,17 +81,17 @@ class Options {
 			optionsCur = optionsCur || options;
 			const axisName = 'w';
 			optionsCur.scales = optionsCur.scales || {};
-			optionsCur.scales.w = optionsCur.scales.w || {};
+//			optionsCur.scales.w = optionsCur.scales.w || {};
 			const scale = optionsCur.scales.w;
-			scale.name = scale.name || axisName;
+//			scale.name = scale.name || axisName;
 			if ( !optionsCur.palette )
 				this.setPalette( optionsCur );
 
-			scale.min = scale.min === undefined ? 0 : scale.min;
+//			scale.min = scale.min === undefined ? 0 : scale.min;
 
 			//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
 			//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
-			scale.max = scale.max === undefined ? new three.THREE.Vector4().w : scale.max;
+//			scale.max = scale.max === undefined ? new three.THREE.Vector4().w : scale.max;
 
 		}
 		options.scales = options.scales || {};
@@ -652,7 +652,7 @@ class Options {
 
 											get: function () {
 
-												if ( !scale || !scale.min ) return -1;
+												if ( !scale || !scale.min ) return axisName === 'w' ? 0 : -1;
 												return scale.min;
 
 											},
@@ -662,7 +662,9 @@ class Options {
 
 											get: function () {
 
-												if ( !scale || !scale.max ) return 1;
+												//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
+												//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
+												if ( !scale || !scale.max ) return axisName === 'w' ? new three.THREE.Vector4().w : 1;
 												return scale.max;
 
 											},
@@ -696,16 +698,9 @@ class Options {
 								x: new Scale( options.scales, 'x' ),
 								y: new Scale( options.scales, 'y' ),
 								z: new Scale( options.scales, 'z' ),
+								w: new Scale( options.scales, 'w' ),
 
 							}
-/*								
-							if ( !options.scales.x.boScale )
-								options.scales.x = new Scale( options.scales, 'x' );
-							if ( !options.scales.y.boScale )
-								options.scales.y = new Scale( options.scales, 'y' );
-							if ( !options.scales.z.boScale )
-								options.scales.z = new Scale( options.scales, 'z' );
-*/								
 
 							Object.defineProperties( this, {
 
@@ -720,53 +715,38 @@ class Options {
 									get: function () { return true; },
 
 								},
-
-								/* *
-								 * getter
-								 * <pre>
-								 * x
-								 * </pre>
-								 **/
 								x: {
 
 									get: function () {
 
 										return scalesObject.x;
-//										return scales.x;
 
 									},
 
 								},
-
-								/* *
-								 * getter
-								 * <pre>
-								 * y
-								 * </pre>
-								 **/
 								y: {
 
 									get: function () {
 
 										return scalesObject.y;
-//										return scales.y;
 
 									},
 
 								},
-
-								/* *
-								 * getter
-								 * <pre>
-								 * z
-								 * </pre>
-								 **/
 								z: {
 
 									get: function () {
 
 										return scalesObject.z;
-//										return scales.z;
+
+									},
+
+								},
+								w: {
+
+									get: function () {
+
+										return scalesObject.w;
 
 									},
 
@@ -1360,66 +1340,6 @@ class Options {
 											} );
 											if ( ( typeof lang !== 'undefined' ) && ( controllers.t.controller.title === '' ) )
 												controllers.t.controller.title = lang.controllerTTitle;
-/*
-											//time controller
-
-											if ( typeof controllers.t.controller === "string" ) controllers.t.controller = document.getElementById( controllers.t.controller );
-											if ( !controllers.t.controller ) {
-
-												var controller = document.getElementById( 't' );
-												if ( !controller ) {
-
-													controller = document.createElement( 'input' );
-													document.querySelector('body').appendChild( controller );
-													
-												}
-												controllers.t.controller = controller;
-
-											}
-											if ( controllers.t.controller.onchange === null )
-												controllers.t.controller.onchange = function( event ){
-
-													if ( !options.player ) {
-
-														console.error ( 'options.controllers.t.onchange: create Player instance first.' + controllers.t.value );
-														return;
-
-													}
-													if ( options.player.setTime( controllers.t.controller.value ) === false ) {
-
-														alert( lang.timeAlert + controllers.t.controller.value );
-														controllers.t.controller.focus();
-
-													}
-
-												}
-											if ( ( typeof lang !== 'undefined' ) && ( controllers.t.controller.title === '' ) )
-												controllers.t.controller.title = lang.controllerTTitle;
-
-											//time name
-
-											if ( controllers.t.elName !== false ) {
-
-												if ( typeof controllers.t.elName === "string" ) 
-													controllers.t.elName = document.getElementById( controllers.t.elName );
-												var str = '';
-												if ( !controllers.t.elName ) {
-
-													controllers.t.elName = document.createElement( 'span' );
-													controllers.t.controller.parentElement.insertBefore( controllers.t.elName, controllers.t.controller);
-													str = ' = ';
-
-												}
-												if ( controllers.t.elName.innerHTML === '' ) {
-
-													var name = options.playerOptions.name;
-													if ( name === '' ) name = 't';
-													controllers.t.elName.innerHTML = name + str;
-
-												}
-											
-											}
-*/
 
 										}
 										return controllers.t;

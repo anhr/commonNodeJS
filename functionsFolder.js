@@ -345,6 +345,24 @@ class functionsFolder {
 			boError = true;
 
 		}
+		/**
+		* update the values of the controllers of the functions
+		*/
+		this.update = function ( newVector ) {
+
+			function updateAxis( axisName ) {
+
+				if ( cFunctions[axisName].getValue() === newVector[axisName] )
+					return;
+				cFunctions[axisName].setValue( newVector[axisName] );
+
+			}
+			updateAxis( 'x' );
+			updateAxis( 'y' );
+			updateAxis( 'z' );
+			updateAxis( 'w' );
+
+		}
 
 	}
 

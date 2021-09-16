@@ -1690,7 +1690,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 				}
 
-			} else //if ( ( typeof funcs.w === "number" ) && options.palette )
+			}/* else 
 			if ( options.palette )
 				color = options.palette.toColor(
 					typeof funcs.w === "number" ? funcs.w : Player.execFunc( funcs, 'w', t, options ),
@@ -1714,7 +1714,8 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 				}
 
-			}
+			}*/
+			color = setColorAttibute( typeof funcs.w === "number" ? funcs.w : Player.execFunc( funcs, 'w', t, options ), mesh, i, color );
 			if ( needsUpdate )
 				attributes.position.needsUpdate = true;
 
@@ -1737,6 +1738,36 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 	if ( mesh.scale.x <= 0 ) console.error( message + 'x = ' + mesh.scale.x );
 	if ( mesh.scale.y <= 0 ) console.error( message + 'y = ' + mesh.scale.y );
 	if ( mesh.scale.z <= 0 ) console.error( message + 'z = ' + mesh.scale.z );
+
+	function setColorAttibute( value, mesh, index , color ){
+
+		if ( options.palette )
+			color = options.palette.toColor( value, options.scales.w.min, options.scales.w.max );
+		if ( !color ) return;
+		if ( !mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors )
+			console.error( 'Player.selectMeshPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors' );
+		const attributes = mesh.geometry.attributes, arrayFuncs = mesh.userData.player.arrayFuncs;
+		if ( !Player.setColorAttribute( attributes, index, color ) && arrayFuncs[index] instanceof THREE.Vector4 ) {
+
+			if ( mesh.userData.player && arrayFuncs ) {
+
+				mesh.geometry.setAttribute( 'color',
+					new THREE.Float32BufferAttribute( Player.getColors( arrayFuncs,
+						{
+
+							positions: attributes.position,
+							options: options,
+
+						} ), 4 ) );
+				if ( !Player.setColorAttribute( attributes, index, color ) )
+					console.error( 'Player.selectMeshPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute' );
+
+			} else console.error( 'Player.selectMeshPlayScene: set color attribute failed. Invalid mesh.userData.player.arrayFuncs' );
+
+		}
+		return color;
+
+	}
 
 	if ( mesh.userData.player && mesh.userData.player.arrayFuncs )
 		mesh.userData.player.arrayFuncs.forEach( function ( func, index ) {
@@ -1785,7 +1816,59 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 				//position
 
 				const positionLocal = getObjectLocalPosition( mesh, index );
-				function setPosition( value, axesId ) {
+				function setPosition( value, axisName ) {
+
+					const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : undefined;
+					if ( axisName === 'w' ){
+
+						//color
+						if ( options.palette ) {
+
+							const color = options.palette.toColor( value , options.scales.w.min, options.scales.w.max );
+							if ( color ) {
+
+								if ( !mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors )
+									console.error( 'Player.selectMeshPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors' );
+								const attributes = mesh.geometry.attributes, i = index;
+								if ( !Player.setColorAttribute( attributes, i, color ) && funcs instanceof THREE.Vector4 ) {
+
+									mesh.geometry.setAttribute( 'color',
+										new THREE.Float32BufferAttribute( Player.getColors( arrayFuncs,
+											{
+
+												positions: mesh.geometry.attributes.position,
+												options: options,
+
+											} ), 4 ) );
+									if ( !Player.setColorAttribute( attributes, i, color ) )
+										console.error( 'Player.selectMeshPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute' );
+
+								}
+
+							}
+
+						}
+/*						
+						const indexValue = mesh.geometry.attributes.ca.itemSize * index,
+							valueOld = mesh.geometry.attributes.ca.array[indexValue];
+						mesh.geometry.attributes.ca.array[indexValue] = value;
+						if ( isNaN( mesh.geometry.attributes.ca.array[indexValue] ) ) {
+
+							alert( lang.colorAlert + value );
+//							const controller = func.controllers[axesId === 0 ? 'x' : axesId === 1 ? 'y' : axesId === 2 ? 'z' : axesId === 3 ? 'w' : undefined].controller;
+							const controller = func.controllers[axisName].position.controller;
+							controller.focus();
+							controller.value = valueOld;
+							mesh.geometry.attributes.ca.array[indexValue] = valueOld;
+							return;
+
+						}
+						mesh.geometry.attributes.ca.needsUpdate = true;
+*/						
+						if ( options.guiSelectPoint )
+							options.guiSelectPoint.update();
+
+					}
 
 					const indexValue = axesId + mesh.geometry.attributes.position.itemSize * index,
 						valueOld = mesh.geometry.attributes.position.array[ indexValue ];
@@ -1793,7 +1876,8 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 					if ( isNaN( mesh.geometry.attributes.position.array[ indexValue ] ) ) {
 
 						alert( lang.positionAlert + value );
-						const controller = func.controllers[axesId === 0 ? 'x' : axesId === 1 ? 'y' : axesId === 2 ? 'z' : undefined].controller;
+//						const controller = func.controllers[axesId === 0 ? 'x' : axesId === 1 ? 'y' : axesId === 2 ? 'z' : axesId === 3 ? 'w' : undefined].controller;
+						const controller = func.controllers[axisName].position.controller;
 						controller.focus();
 						controller.value = valueOld;
 						mesh.geometry.attributes.position.array[ indexValue ] = valueOld;
@@ -1807,6 +1891,59 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 						options.guiSelectPoint.update();
 
 				}
+				function createControllers( axisName ) {
+
+					const axisControllers = func.controllers[axisName];
+					if ( !axisControllers ) return;
+
+					//function text
+					createController( axisControllers.func, axisName + 'Func', function () { return options.scales[axisName].name + ' = f(t)'; }, {
+
+						value: func[axisName],
+						title: axisName === 'x' ? lang.controllerXFunctionTitle : axisName === 'y' ? lang.controllerYFunctionTitle : axisName === 'z' ? lang.controllerZFunctionTitle : axisName === 'w' ? lang.controllerWFunctionTitle : '',
+						onchange: function ( event ) {
+
+							try {
+
+								func[axisName] = event.currentTarget.value;
+								const value = Player.execFunc( func, axisName, options.player.getTime(), options );
+								if ( axisControllers.position && axisControllers.position.controller ) {
+
+									const controller = axisControllers.position.controller;
+									controller.onchange( { currentTarget: { value: value } } );
+									controller.value = value;
+
+								} else
+									setPosition( value, axisName );
+								if ( options.guiSelectPoint )
+									options.guiSelectPoint.update();
+
+							} catch ( e ) {
+
+								alert( 'Axis: ' + options.scales[axisName].name + '. Function: "' + func[axisName] + '". ' + e );
+								event.currentTarget.focus();
+
+							}
+
+						},
+
+					} );
+
+					//position
+					createController( axisControllers.position, axisName + 'Position', function () { return options.scales[axisName].name; }, {
+
+						value: positionLocal[axisName],
+						title: axisName === 'x' ? lang.controllerXTitle : axisName === 'y' ? lang.controllerYTitle : axisName === 'z' ? lang.controllerZTitle : axisName === 'w' ? lang.controllerWTitle : '',
+						onchange: function ( event ) { setPosition( event.currentTarget.value, axisName ); },
+
+					} );
+
+				}
+				createControllers( 'x' );
+				createControllers( 'y' );
+				createControllers( 'z' );
+				createControllers( 'w' );
+/*
 				createController( func.controllers.x, 'x', function () { return options.scales.x.name; }, {
 
 					value: positionLocal.x,
@@ -1840,54 +1977,75 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 					},
 
 				} );
-				/*
-				createController( func.controllers.y, 'y', positionLocal.y, function ( event ) {
+				createController( func.controllers.w, 'w', function () { return options.scales.w.name; }, {
 
-					setPosition( event.currentTarget.value, 1 );
+					value: positionLocal.w,
+					title: lang.controllerWTitle,
+					onchange: function ( event ) {
 
-				}, lang.controllerYTitle, function () { return options.scales.y.name; } );
-				createController( func.controllers.z, 'z', positionLocal.z, function ( event ) {
+						setPosition( event.currentTarget.value, 3 );
 
-					setPosition( event.currentTarget.value, 2 );
+					},
 
-				}, lang.controllerZTitle, function () { return options.scales.z.name; } );
-				*/
+				} );
 
 				//function text
 
+				function onChange( event, axisName ){
+
+					try {
+
+						func[axisName] = event.currentTarget.value;
+						const value = Player.execFunc( func, axisName, options.player.getTime(), options );
+						if ( func.controllers[axisName] ) {
+
+							controller = func.controllers[axisName].controller;
+							controller.onchange( { currentTarget: { value: value } } );
+							controller.value = value;
+
+						} else 
+							setPosition( value, axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : undefined );
+						if ( options.guiSelectPoint )
+							options.guiSelectPoint.update();
+
+					} catch ( e ) {
+
+						alert( 'Axis: ' + options.scales[axisName].name + '. Function: "' + func[axisName] + '". ' + e );
+						event.currentTarget.focus();
+
+					}
+						
+				}
 				function name( axisNmae ) { return options.scales[axisNmae].name + ' = f(' + ( options.playerOptions && options.playerOptions.name ? options.playerOptions.name : 't' ) + ')'; }
 				createController( func.controllers.xFunction, 'xFunction', function(){ return name( 'x' ) }, {
 
 					value: func.x,
 					title: lang.controllerXFunctionTitle,
-					onchange: function ( event ) {
-
-						console( event );
-
-					},
+					onchange: function ( event ) { onChange( event, 'x' ) },
 
 				} );
 				createController( func.controllers.yFunction, 'yFunction', function(){ return name( 'y' ) }, {
 
 					value: func.y,
 					title: lang.controllerYFunctionTitle,
-					onchange: function ( event ) {
-
-
-					},
+					onchange: function ( event ) { onChange( event, 'y' ) },
 
 				} );
 				createController( func.controllers.zFunction, 'zFunction', function(){ return name( 'z' ) }, {
 
 					value: func.z,
 					title: lang.controllerZFunctionTitle,
-					onchange: function ( event ) {
-
-
-					},
+					onchange: function ( event ) { onChange( event, 'z' ) },
 
 				} );
+				createController( func.controllers.wFunction, 'wFunction', function(){ return name( 'w' ) }, {
 
+					value: func.w,
+					title: lang.controllerWFunctionTitle,
+					onchange: function ( event ) { onChange( event, 'w' ) },
+
+				} );
+*/
 
 			}
 
@@ -2068,7 +2226,7 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 	optionsPoints = optionsPoints || {};
 	if ( optionsPoints.t === undefined ) optionsPoints.t = optionsPoints.options && optionsPoints.options.player ? optionsPoints.options.player.getSettings().options.playerOptions.min : 0;
 	const options = optionsPoints.options || new Options(),
-		optionsDefault = { palette: options.palette };
+		optionsDefault = new Options( { palette: options.palette } );
 	options.setW( optionsDefault );
 	const wDefault = optionsDefault.scales.w.max;//new THREE.Vector4().w;//1;//цвет точки по умолчанию равен цвету палитры для максимального значения value,
 						//которе по умолчанияю равно 1 и определяется в Options class.
