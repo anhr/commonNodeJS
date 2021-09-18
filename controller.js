@@ -13,6 +13,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import ColorPicker from './colorpicker/colorpicker.js';
+
 /**
  * @description View and edit some parameters on the web page.
  * @param {Object} [settings] see <b>arrayFuncs.controllers[axisName]</b> parameter of <a href="./player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints</a>
@@ -39,7 +41,13 @@ export function createController( settings, controllerId, name, options ) {
 
 	//controller
 
-	if ( typeof settings.controller === "string" ) settings.controller = document.getElementById( settings.controller );
+	if ( typeof settings.controller === "string" ) {
+
+		const id = settings.controller;
+		settings.controller = document.getElementById( settings.controller );
+		if ( !settings.controller ) console.warn( 'createController: invalid settings.controller = "' + id + '"' );
+
+	}
 	if ( !settings.controller ) {
 
 		var controller = document.getElementById( controllerId );
@@ -52,11 +60,21 @@ export function createController( settings, controllerId, name, options ) {
 		settings.controller = controller;
 
 	}
+	function setControllerValue( value ) {
+
+		if( settings.controller.value !== undefined )
+			settings.controller.value = value;//input element type
+		else settings.controller.innerHTML = value;//other element types. For example span
+
+	}
 	if ( options.value !== undefined ) {
 
+		setControllerValue( options.value );
+/*
 		if( settings.controller.value !== undefined )
 			settings.controller.value = options.value;//input element type
 		else settings.controller.innerHTML = options.value;//other element types. For example span
+*/		
 
 	}
 	if ( ( options.onchange !== undefined ) && settings.controller.onchange === null )
@@ -64,13 +82,82 @@ export function createController( settings, controllerId, name, options ) {
 	if ( ( options.title !== undefined ) && settings.controller.title === '' )
 		settings.controller.title = options.title;
 
+	//slider
+	if( settings.elSlider ) {
+
+		if ( typeof settings.elSlider === "string" ) {
+
+			const id = settings.elSlider;
+			settings.elSlider = document.getElementById( settings.elSlider );
+			if ( !settings.elSlider ) console.warn( 'createController: invalid settings.elSlider = "' + id + '"' );
+
+		}
+		if ( !settings.elSlider || ( settings.elSlider === true ) ) {
+
+			settings.elSlider = document.createElement( 'div' );
+			document.querySelector( 'body' ).appendChild( settings.elSlider );
+
+		}
+
+		settings.boSetValue = true;
+		//Horizontal Colorpicker with slider indicator
+		if ( !settings.colorpicker )
+			settings.colorpicker = ColorPicker.create( settings.elSlider, {
+
+				//direction: false,
+				duplicate: true,
+				sliderIndicator: {
+					callback: function ( c ) {
+
+						if ( settings.boSetValue ) return;
+						console.log( 'c.percent = ' + c.percent + ' c.hex = ' + c.hex )
+
+					},
+					value: options.value * 100,//percent
+
+				},
+				style: {
+
+					border: '1px solid black',
+					width: settings.controller.clientWidth + 'px',
+					height: settings.controller.clientHeight + 'px',
+
+				},
+				onError: function ( message ) { alert( 'Horizontal Colorpicker with slider indicator error: ' + message ); }
+
+			} );
+		if ( options.value !== undefined ) {
+
+			var value = options.value * 100;
+			if ( value < 0 ) value = 0;
+			if ( value > 100 ) value = 100;
+			settings.boSetValue = true;
+			settings.colorpicker.setValue( value );
+			settings.boSetValue = false;
+
+		}
+/*
+		document.getElementById( 'enterValueHI' ).onclick = function () {
+
+			settings.colorpicker.setValue( settings.controller.value );
+
+		}
+*/
+		
+	}
+
 	//name
 
 	if ( settings.elName === false )
 		return;
 
-	if ( typeof settings.elName === "string" )
+	if ( typeof settings.elName === "string" ) {
+
+		const id = settings.elName;
 		settings.elName = document.getElementById( settings.elName );
+		if ( !settings.elName ) console.warn( 'createController: invalid settings.elName = "' + id + '"' );
+
+	}
 	var str = '';
 	if ( !settings.elName ) {
 

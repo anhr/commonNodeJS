@@ -1819,8 +1819,6 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 				}
 
-				//position
-
 				const positionLocal = getObjectLocalPosition( mesh, index );
 				function setPosition( value, axisName ) {
 
@@ -1892,6 +1890,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 					} );
 
 					//position
+
 					createController( axisControllers.position, axisName + 'Position', function () { return options.scales[axisName].name; }, {
 
 						value: positionLocal[axisName],

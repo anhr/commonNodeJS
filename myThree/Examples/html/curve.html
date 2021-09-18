@@ -75,7 +75,7 @@
 		<tr>
 			<td id="wName"></td>
 			<td><input id="wFunc" /></td>
-			<td><input id="wPosition" /></td>
+			<td><input id="wPosition" /><div id="wSlider"></div></td>
 		</tr>
 	</table>
 	<div id="xFuncName"></div>
@@ -103,8 +103,8 @@
 
 						vector: [
 							'-1+2*t',//x
-							'Math.cos(t*20*Math.PI)*0.5',//y
-							'Math.sin(t*20*Math.PI)*0.5',//z
+							'Math.cos(t*5*Math.PI)*0.5',//y
+							'Math.sin(t*5*Math.PI)*0.5',//z
 							'1-t',//w
 						],
 						name: 'Parametric equation',
@@ -204,6 +204,10 @@
 									elName: 'wName',
 									//elName: false,
 
+									elSlider: document.getElementById( 'wSlider' ),
+									//elSlider: 'wSlider',
+									//elSlider: true,
+
 								},
 
 							},
@@ -223,7 +227,7 @@
 				//player: false,
 				playerOptions: {
 
-					marks: 1100,//Number of scenes of 3D objects animation.
+					marks: 110,//Number of scenes of 3D objects animation.
 					interval: 25,//Ticks per seconds.
 					name: 'time',
 
