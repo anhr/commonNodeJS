@@ -94,7 +94,7 @@ class ColorPicker {
 			return el;
 		}
 
-		var boCreated = false;
+//		var boCreated = false;
 		/**
 		 * @callback callback
 		 * @description Called whenever the color is changed provided chosen color in RGB HEX format. See options.sliderIndicator.callback param of the create method.
@@ -295,7 +295,8 @@ class ColorPicker {
 
 					const linearGradient = 'linearGradient';
 					slide = CreateSVGElement( 'svg', {
-						xmlns: 'http://www.w3.org/2000/svg',
+//						xmlns: 'http://www.w3.org/2000/svg',
+						xmlns: svgNS,
 						version: '1.1',
 						width: isHorizontal() ? '100%' : options.style.width,
 						height: options.style.height,
@@ -752,7 +753,7 @@ class ColorPicker {
 
 			}
 
-			boCreated = true;
+//			boCreated = true;
 
 		}
 	}
