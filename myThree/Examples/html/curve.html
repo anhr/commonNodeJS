@@ -46,39 +46,66 @@
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<h1><a href='https://en.wikipedia.org/wiki/Parametric_equation' target="_blank">Parametric equation</a> curve.</h1>
 	<div id="canvas"></div>
-	<p>
-		Parameter <b>t</b> is <input id="time" /><span id="tName"></span>
-		<br>
-		
-	</p>
-	<table>
-		<tr>
-			<td>Axis</td>
-			<td>f(t)</td>
-			<td>Position</td>
-		</tr>
-		<tr>
-			<td id="xName"></td>
-			<td><input id="xFunc2" /></td>
-			<td><input id="xPosition2" /></td>
-		</tr>
-		<tr>
-			<td id="yName"></td>
-			<td><input id="yFunc" /></td>
-			<td><input id="yPosition" /></td>
-		</tr>
-		<tr>
-			<td id="zName"></td>
-			<td><input id="zFunc" /></td>
-			<td><input id="zPosition" /></td>
-		</tr>
-		<tr>
-			<td id="wName"></td>
-			<td><input id="wFunc" /></td>
-			<td><input id="wPosition" /><div id="wSlider"></div></td>
-		</tr>
-	</table>
-	<div id="xFuncName"></div>
+	<fieldset>
+		<legend>Player</legend>
+		Parameter <b>t</b> is <input id="time" /> <span id="tName"></span>
+		<input id="prev" type="button" value="Prev" />
+		<input id="play" type="button" value="Play" />
+		<input id="next" type="button" value="Next" />
+	</fieldset>
+	<fieldset>
+		<legend id="pointName">Parametric equation controls</legend>
+		<table>
+			<tr>
+				<td>Axis</td>
+				<td>f(t)</td>
+				<td>Position</td>
+				<td title="Point position in the world space">World Position</td>
+			</tr>
+			<tr>
+				<td id="xPositionName"></td>
+				<td><input id="xFunc" /></td>
+				<td><input id="xPosition" /></td>
+				<td id="xWorldPosition"></td>
+			</tr>
+			<tr>
+				<td id="yPositionName"></td>
+				<td><input id="yFunc" /></td>
+				<td><input id="yPosition" /></td>
+				<td id="yWorldPosition"></td>
+			</tr>
+			<tr>
+				<td id="zPositionName"></td>
+				<td><input id="zFunc" /></td>
+				<td><input id="zPosition" /></td>
+				<td id="zWorldPosition"></td>
+			</tr>
+			<tr>
+				<td id="wPositionName"></td>
+				<td><input id="wFunc" /></td>
+				<td><input id="wPosition" /><br></td>
+			</tr>
+		</table>
+		<!--<div id="wSlider2"></div>-->
+	</fieldset>
+	<fieldset>
+		<legend id="pointName2">Parametric equation controls</legend>
+		<table>
+			<tr>
+				<td>Axis</td>
+				<td>f(t)</td>
+				<td>Position</td>
+				<td title="Point position in the world space">World Position</td>
+			</tr>
+			<tr>
+				<td id="yPositionName2"></td>
+				<td><input id="yFunc2" /></td>
+				<td><input id="yPosition2" /></td>
+				<td id="yWorldPosition2"></td>
+			</tr>
+		</table>
+		<!--<div id="wSlider2"></div>-->
+	</fieldset>
 
 	<script type="module">
 
@@ -92,6 +119,7 @@
 
 		if ( MyThree.default ) MyThree = MyThree.default;
 		MyThree.three.THREE = THREE;
+
 
 		new MyThree( function ( group, options ) {
 
@@ -107,188 +135,244 @@
 							'Math.sin(t*5*Math.PI)*0.5',//z
 							'1-t',//w
 						],
-						name: 'Parametric equation',
+						name: 'Point 1',
+						trace: true,//Displays the trace of the point movement.
+						controllers: {},
+
+					},
+					{
+
+						vector: [
+							0.4,//x
+							'1-2*t',//y
+						],
+						name: 'Point 2',
 						trace: true,//Displays the trace of the point movement.
 						controllers: {
 
+							pointName: document.getElementById( 'pointName2' ),
+							//pointName: 'pointName2',
+							/*
 							x: {
 
 								func: {
 
 									//controller: document.getElementById( 'xFunc2' ),
-									controller: 'xFunc2',
+									//controller: 'xFunc2',
 
-									//elName: document.getElementById( 'xFuncName' ),
-									//elName: 'xFuncName',
+									//elName: document.getElementById( 'xFuncName2' ),
+									//elName: 'xFuncName2',
 									elName: false,
 
 								},
 								position: {
 
 									//controller: document.getElementById( 'xPosition2' ),
-									controller: 'xPosition2',
+									//controller: 'xPosition2',
 
-									//elName: document.getElementById( 'xName' ),
-									elName: 'xName',
-									//elName: false,
+									//elName: document.getElementById( 'xPositionName2' ),
+									//elName: 'xPositionName2',
+									elName: false,
+
+								},
+								worldPosition: {
+
+									//controller: document.getElementById( 'xWorldPosition2' ),
+									controller: 'xWorldPosition2',
+
+									//elName: document.getElementById( 'xWorldName2' ),
+									//elName: 'xWorldName2',
+									elName: false,
 
 								},
 
 							},
+							*/
+							x: false,
 							y: {
 
 								func: {
 
-									//controller: document.getElementById( 'yFunc' ),
-									controller: 'yFunc',
+									//controller: document.getElementById( 'yFunc2' ),
+									controller: 'yFunc2',
 
-									//elName: document.getElementById( 'yFuncName' ),
-									//elName: 'yFuncName',
+									//elName: document.getElementById( 'yFuncName2' ),
+									//elName: 'yFuncName2',
 									elName: false,
 
 								},
 								position: {
 
-									//controller: document.getElementById( 'yPosition' ),
-									controller: 'yPosition',
+									//controller: document.getElementById( 'yPosition2' ),
+									controller: 'yPosition2',
 
-									//elName: document.getElementById( 'yName' ),
-									elName: 'yName',
+									//elName: document.getElementById( 'yPositionName2' ),
+									elName: 'yPositionName2',
 									//elName: false,
+
+								},
+								worldPosition: {
+
+									//controller: document.getElementById( 'yWorldPosition2' ),
+									controller: 'yWorldPosition2',
+
+									//elName: document.getElementById( 'yWorldName2' ),
+									//elName: 'yWorldName2',
+									elName: false,
 
 								},
 
 							},
+							/*
 							z: {
 
 								func: {
 
-									//controller: document.getElementById( 'zFunc' ),
-									controller: 'zFunc',
+									//controller: document.getElementById( 'zFunc2' ),
+									controller: 'zFunc2',
 
-									//elName: document.getElementById( 'zFuncName' ),
-									//elName: 'zFuncName',
+									//elName: document.getElementById( 'zFuncName2' ),
+									//elName: 'zFuncName2',
 									elName: false,
 
 								},
 								position: {
 
-									//controller: document.getElementById( 'zPosition' ),
-									controller: 'zPosition',
+									//controller: document.getElementById( 'zPosition2' ),
+									controller: 'zPosition2',
 
-									//elName: document.getElementById( 'zName' ),
-									elName: 'zName',
+									//elName: document.getElementById( 'zPositionName2' ),
+									//elName: 'zPositionName2',
 									//elName: false,
 
 								},
 
 							},
+							*/
+							z: false,
+							/*
 							w: {
 
 								func: {
 
-									//controller: document.getElementById( 'wFunc' ),
-									controller: 'wFunc',
+									//controller: document.getElementById( 'wFunc2' ),
+									controller: 'wFunc2',
 
-									//elName: document.getElementById( 'wFuncName' ),
-									//elName: 'wFuncName',
+									//elName: document.getElementById( 'wFuncName2' ),
+									//elName: 'wFuncName2',
 									elName: false,
 
 								},
 								position: {
 
-									//controller: document.getElementById( 'wPosition' ),
-									controller: 'wPosition',
+									//controller: document.getElementById( 'wPosition2' ),
+									controller: 'wPosition2',
 
-									//elName: document.getElementById( 'wName' ),
-									elName: 'wName',
+									//elName: document.getElementById( 'wPositionName2' ),
+									//elName: 'wPositionName2',
 									//elName: false,
 
-									elSlider: document.getElementById( 'wSlider' ),
-									//elSlider: 'wSlider',
+									//elSlider: document.getElementById( 'wSlider2' ),
+									elSlider: 'wSlider2',
 									//elSlider: true,
 
 								},
 
 							},
+							*/
+							w: false,
 
 						},
 
 					},
-					[1],
+					//					[1],
 
 				],
-				group, { options: options } );
+				group, {
+
+				options: options,
+				//pointsOptions: { position: new THREE.Vector3( 0.1, 0.2, 0.3 ) },
+
+			} );
 
 		}, {
 
-				elContainer: 'canvas',
-				canvas: { fullScreen: false, },
-				//player: false,
-				playerOptions: {
+			elContainer: 'canvas',
+			canvas: { fullScreen: false, },
+			//player: false,
+			playerOptions: {
 
-					marks: 110,//Number of scenes of 3D objects animation.
-					interval: 25,//Ticks per seconds.
-					name: 'time',
+				marks: 110,//Number of scenes of 3D objects animation.
+				interval: 25,//Ticks per seconds.
+				name: 'time',
 
-				},
-				dat: {//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
+			},
+			dat: {//use dat-gui JavaScript Controller Library. https://github.com/dataarts/dat.gui
 
-					//cookie: false,
-					//cookieName: 'curve',
-					//orbitControlsGui: false,
-					//axesHelperGui: false,
-					//playerGui: false,
-					//playController: false,
-					//stereoEffectsGui: false,
-					//guiSelectPoint: false,
-					//guiFrustumPoints:false,
-					//cameraGui: false,
-					//moveScene: false,
-					//spriteTextGui: false,
-					//folderPoint: false,
-					//pointLightGui: false,
+				//cookie: false,
+				//cookieName: 'curve',
+				//orbitControlsGui: false,
+				//axesHelperGui: false,
+				//playerGui: false,
+				//playController: false,
+				//stereoEffectsGui: false,
+				//guiSelectPoint: false,
+				//guiFrustumPoints:false,
+				//cameraGui: false,
+				//moveScene: false,
+				//spriteTextGui: false,
+				//folderPoint: false,
+				//pointLightGui: false,
 
-				},
-				//dat: false,
-				scales: {
+			},
+			//dat: false,
+			scales: {
 
-					x: {
+				x: {
 
-						//name: 'distance',
-
-					},
-					y: {
-
-						//name: 'altitude',
-
-					},
-					z: {
-
-						//name: 'speed',
-
-					},
-					w: {
-
-						name: 'color',
-
-					},
+					//name: 'distance',
 
 				},
-				controllers: {
+				y: {
 
-					t: {
+					//name: 'altitude',
 
-						//controller: document.getElementById( 'time' ),
-						controller: 'time',
+				},
+				z: {
 
-						//elName: document.getElementById( 'tName' ),
-						//elName: 'tName',
-						//elName: false,
+					//name: 'speed',
+
+				},
+				w: {
+
+					name: 'color',
+
+				},
+
+			},
+			/*
+			controllers: {
+
+				t: {
+
+					//controller: document.getElementById( 'time' ),
+					controller: 'time2',
+
+					//elName: document.getElementById( 'tName' ),
+					//elName: 'tName',
+					//elName: false,
+
+					player: {
+
+						//buttonPlay: document.getElementById( 'play2' ),
+						//buttonPlay: 'play2',
 
 					},
 
 				},
+
+			},
+			*/
 
 		} );
 

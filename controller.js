@@ -32,7 +32,8 @@ import ColorPicker from './colorpicker/colorpicker.js';
  * @param {Function} name returns name of value.
  * @param {Object} options
  * @param {Object} [options.elementName='input'] controllers tag name if <b>settings.controller</b> is not defined.
- * @param {Object} [options.value] controllers <b>value</b> or <b>innerHTML</b>.
+ * @param {String} [options.value] controllers <b>value</b> or <b>innerHTML</b>.
+ * @param {String} [options.axisName] axis name. For find element by ID.
  * @param {Function} [options.onchange] callback function is called if user has changed the controllers <b>value</b>.
  */
 export function createController( settings, controllerId, name, options ) {
@@ -50,6 +51,7 @@ export function createController( settings, controllerId, name, options ) {
 	}
 	if ( !settings.controller ) {
 
+		if ( settings.controller === null ) console.warn( 'createController: invalid settings.controller = ' + settings.controller );
 		var controller = document.getElementById( controllerId );
 		if ( !controller ) {
 
@@ -67,16 +69,8 @@ export function createController( settings, controllerId, name, options ) {
 		else settings.controller.innerHTML = value;//other element types. For example span
 
 	}
-	if ( options.value !== undefined ) {
-
+	if ( options.value !== undefined )
 		setControllerValue( options.value );
-/*
-		if( settings.controller.value !== undefined )
-			settings.controller.value = options.value;//input element type
-		else settings.controller.innerHTML = options.value;//other element types. For example span
-*/		
-
-	}
 	if ( ( options.onchange !== undefined ) && settings.controller.onchange === null )
 		settings.controller.onchange = options.onchange;
 	if ( ( options.title !== undefined ) && settings.controller.title === '' )
@@ -94,14 +88,22 @@ export function createController( settings, controllerId, name, options ) {
 		}
 		if ( !settings.elSlider || ( settings.elSlider === true ) ) {
 
-			settings.elSlider = document.createElement( 'div' );
-			document.querySelector( 'body' ).appendChild( settings.elSlider );
+			if ( options.axisName ) settings.elSlider = document.getElementById( options.axisName + 'Slider' );
+			if ( !settings.elSlider ) {
+
+				settings.elSlider = document.createElement( 'div' );
+				if ( settings.controller )
+					settings.controller.parentElement.appendChild( settings.elSlider );
+				else document.querySelector( 'body' ).appendChild( settings.elSlider );
+
+			}
 
 		}
 
 		settings.boSetValue = true;
 		//Horizontal Colorpicker with slider indicator
-		if ( !settings.colorpicker )
+		if ( !settings.colorpicker ) {
+
 			settings.colorpicker = ColorPicker.create( settings.elSlider, {
 
 				//direction: false,
@@ -109,8 +111,10 @@ export function createController( settings, controllerId, name, options ) {
 				sliderIndicator: {
 					callback: function ( c ) {
 
-						if ( settings.boSetValue ) return;
-						console.log( 'c.percent = ' + c.percent + ' c.hex = ' + c.hex )
+						if ( settings.boSetValue || !settings.controller ) return;
+						const value = c.percent / 100;
+						settings.controller.onchange( { currentTarget: { value: value } } );
+						settings.controller.value = value;
 
 					},
 					value: options.value * 100,//percent
@@ -126,6 +130,13 @@ export function createController( settings, controllerId, name, options ) {
 				onError: function ( message ) { alert( 'Horizontal Colorpicker with slider indicator error: ' + message ); }
 
 			} );
+
+			//Непонятно почему если это не сделать, то settings.elSlider не попадает под settings.controller
+			//Сейчас после settings.controller ставлю <br>
+			//settings.elSlider.style.display = 'none';
+			//settings.elSlider.style.display = 'block';
+
+		}
 		if ( options.value !== undefined ) {
 
 			var value = options.value * 100;
@@ -151,6 +162,7 @@ export function createController( settings, controllerId, name, options ) {
 	if ( settings.elName === false )
 		return;
 
+	if ( settings.elName === null ) console.warn( 'createController: invalid settings.elName = ' + settings.elName );
 	if ( typeof settings.elName === "string" ) {
 
 		const id = settings.elName;
@@ -161,9 +173,14 @@ export function createController( settings, controllerId, name, options ) {
 	var str = '';
 	if ( !settings.elName ) {
 
-		settings.elName = document.createElement( 'span' );
-		settings.controller.parentElement.insertBefore( settings.elName, settings.controller );
-		str = ' = ';
+		if ( options.axisName ) settings.elName = document.getElementById( options.axisName + 'Name' );
+		if ( !settings.elName ) {
+
+			settings.elName = document.createElement( 'span' );
+			settings.controller.parentElement.insertBefore( settings.elName, settings.controller );
+			str = ' = ';
+
+		}
 
 	}
 	if ( settings.elName.innerHTML !== '' )

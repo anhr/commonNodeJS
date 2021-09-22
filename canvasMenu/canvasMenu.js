@@ -204,13 +204,13 @@ class CanvasMenu {
 		this.querySelector = function ( selectors ) { return elMenu.querySelector( selectors ); }
 		elMenu.addEventListener( 'mouseenter', function ( event ) {
 
-			settings.options.dat.mouseenter = true;
+			if ( settings.options.dat ) settings.options.dat.mouseenter = true;
 			if ( settings.onOver ) settings.onOver( true );
 
 		} );
 		elMenu.addEventListener( 'mouseleave', function ( event ) {
 
-			settings.options.dat.mouseenter = false;
+			if ( settings.options.dat ) settings.options.dat.mouseenter = false;
 			if ( settings.onOver ) settings.onOver( false );
 
 		} );

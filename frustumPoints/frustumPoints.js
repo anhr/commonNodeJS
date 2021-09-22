@@ -246,16 +246,20 @@ class FrustumPoints
 			optionsShaderMaterial.square = optionsShaderMaterial.square !== undefined ? optionsShaderMaterial.square : false; //true - Square base of the frustum points.
 
 			const cookie = options.dat.cookie,
-				cookieName = options.dat.getCookieName( 'FrustumPoints' );
+				cookieName = options.dat ? options.dat.getCookieName( 'FrustumPoints' ) : 'FrustumPoints';
 
 			Object.freeze( optionsShaderMaterial );
-			cookie.getObject( cookieName, shaderMaterial, optionsShaderMaterial );
+			if ( cookie ) cookie.getObject( cookieName, shaderMaterial, optionsShaderMaterial );
 
 			//оставить shaderMaterial.stereo по умолчанию потому что сейчас lines не использую
 			//и возможно в cookie сохранились зачения shaderMaterial.stereo от старых версий этой программы
 			//		shaderMaterial.stereo.lines = optionsShaderMaterial.stereo.lines;
-			shaderMaterial.stereo.hide = optionsShaderMaterial.stereo.hide;
-			shaderMaterial.stereo.opacity = optionsShaderMaterial.stereo.opacity;
+			if ( shaderMaterial.stereo ) {
+
+				shaderMaterial.stereo.hide = optionsShaderMaterial.stereo.hide;
+				shaderMaterial.stereo.opacity = optionsShaderMaterial.stereo.opacity;
+
+			}
 
 			var cloud = function () {
 

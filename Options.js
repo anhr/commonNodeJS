@@ -51,6 +51,8 @@ import Player from './player/player.js';
 import StereoEffect from './StereoEffect/StereoEffect.js';
 import { createController } from './controller.js'
 
+var controllersList;
+
 class Options {
 
 	/**
@@ -173,7 +175,7 @@ class Options {
 				case 'ru'://Russian language
 
 					lang.defaultButton = 'Восстановить';
-					lang.defaultTitle = 'Восстановить положение сцены и проирывателя.';
+					lang.defaultTitle = 'Восстановить положение камеры и проирывателя.';
 
 					break;
 
@@ -520,6 +522,8 @@ class Options {
 						}
 
 					}
+					if ( options.dat === false )
+						return options.dat;
 					options.dat = new Dat( options.dat );
 					if ( options.dat.gui ) {
 
@@ -834,23 +838,21 @@ class Options {
 
 				get: function () {
 
-					if ( options.palette !== undefined ) {
+					if ( options.palette === undefined ) options.palette = true;
 
-						switch ( typeof options.palette ) {
+					switch ( typeof options.palette ) {
 
-							case 'number':
-								options.palette = new ColorPicker.palette( { palette: options.palette } );
-								break;
-							case 'boolean':
-								if ( options.palette )
-									options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGYW } );
-								break;
-							default: {
+						case 'number':
+							options.palette = new ColorPicker.palette( { palette: options.palette } );
+							break;
+						case 'boolean':
+							if ( options.palette )
+								options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGYW } );
+							break;
+						default: {
 
-								if ( options.palette instanceof ColorPicker.palette === false )
-									console.error( 'MyThree: invalid typeof options.palette: ' + typeof options.palette );
-
-							}
+							if ( options.palette instanceof ColorPicker.palette === false )
+								console.error( 'MyThree: invalid typeof options.palette: ' + typeof options.palette );
 
 						}
 
@@ -1315,6 +1317,34 @@ class Options {
 
 										if ( controllers.t === null )
 											console.error( 'options.controllers.t = ' + controllers.t );
+										const elTime = document.getElementById( 'time' );
+										if ( !controllers.t ) {
+
+											if ( !elTime ) return;
+											controllers.t = {
+
+//												controller: elTime,
+
+												elName: document.getElementById( 'tName' ),
+
+											}
+
+										}
+										if ( !controllers.t.controller && elTime ) controllers.t.controller = elTime;
+										if ( !controllers.t.player ) {
+
+											const buttonPrev = document.getElementById( 'prev' ),
+												buttonPlay = document.getElementById( 'play' ),
+												buttonNext = document.getElementById( 'next' );
+											if ( buttonPrev || buttonPlay || buttonNext ) {
+
+												controllers.t.player = {};
+												if ( buttonPrev ) controllers.t.player.buttonPrev = buttonPrev;
+												if ( buttonPlay ) controllers.t.player.buttonPlay = buttonPlay;
+												if ( buttonNext ) controllers.t.player.buttonNext = buttonNext;
+
+											}
+										}
 										if ( controllers.t ) {
 
 											createController( controllers.t, 't',
@@ -1324,7 +1354,7 @@ class Options {
 
 													if ( !options.player ) {
 
-														console.error( 'options.controllers.t.onchange: create Player instance first.' + controllers.t.value );
+														console.error( 'options.controllers.t.onchange: create Player instance first. ' + controllers.t.value );
 														return;
 
 													}
@@ -1340,11 +1370,33 @@ class Options {
 											} );
 											if ( ( typeof lang !== 'undefined' ) && ( controllers.t.controller.title === '' ) )
 												controllers.t.controller.title = lang.controllerTTitle;
-
+												
 										}
 										return controllers.t;
 
 									},
+
+								},
+
+								/* *
+								 * getter
+								 * <pre>
+								 * List of <a href="../../player/jsdoc/index.html" target="_blank">Player</a> buttons on the web page.
+								 * Keys:
+								 *	<b>buttonPrew</b>:
+								 *		<b>HTMLElement</b> Previous players tick.
+								 *		or <b>string</b> of <b>HTMLElement</b> id.
+								 *	<b>buttonPlay</b>:
+								 *		<b>HTMLElement</b> play or pause.
+								 *		or <b>string</b> of <b>HTMLElement</b> id.
+								 *	<b>buttonNext</b>:
+								 *		<b>HTMLElement</b> Next players tick.
+								 *		or <b>string</b> of <b>HTMLElement</b> id.
+								 * </pre>
+								 **/
+								player: {
+
+									get: function () { return controllers.player; },
 
 								},
 
@@ -1358,6 +1410,46 @@ class Options {
 							}
 
 						}
+
+					}
+					if ( controllersList === undefined ) {
+
+						controllersList = {
+
+							time: document.getElementById( 'time' ),
+							prev: document.getElementById( 'prev' ),
+							play: document.getElementById( 'play' ),
+							next: document.getElementById( 'next' ),
+
+						}
+						controllersList.boControllers = controllersList.time || controllersList.prev || controllersList.play || controllersList.next ?
+							true : false;
+						controllersList.boPlayer = controllersList.prev || controllersList.play || controllersList.next ?
+							true : false;
+
+					}
+					if ( !options.controllers && controllersList.boControllers ) {
+
+						options.controllers = { t: {} };
+						if ( controllersList.time ) options.controllers.t.controller = controllersList.time;
+/*						
+						if ( controllersList.prev || controllersList.play || controllersList.next ) {
+
+							options.controllers.t.player = {};
+							if ( controllersList.prev ) options.controllers.t.player.buttonPrev = controllersList.prev;
+							if ( controllersList.play ) options.controllers.t.player.buttonPlay = controllersList.play;
+							if ( controllersList.next ) options.controllers.t.player.buttonNext = controllersList.next;
+
+						}
+*/						
+
+					}
+					if ( !options.controllers.t.player && controllersList.boPlayer ) options.controllers.t.player = {};
+					if ( options.controllers.t.player ) {
+
+						if ( !options.controllers.t.player.buttonPrev && controllersList.prev ) options.controllers.t.player.buttonPrev = controllersList.prev;
+						if ( !options.controllers.t.player.buttonPlay && controllersList.play ) options.controllers.t.player.buttonPlay = controllersList.play;
+						if ( !options.controllers.t.player.buttonNext && controllersList.next ) options.controllers.t.player.buttonNext = controllersList.next;
 
 					}
 					if ( options.controllers && !options.controllers.boControllers )

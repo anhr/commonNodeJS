@@ -508,6 +508,7 @@ class Player {
 			constructor( gui ) {
 
 				const player = options.player, getLanguageCode = options.getLanguageCode;
+				player.createControllersButtons( options );
 
 				gui = gui || options.dat.gui;
 				if ( !gui || options.dat.playController === false ) {
@@ -883,6 +884,71 @@ class Player {
 
 		}
 
+		/**
+		 * Adds player buttons into web page.
+		 * @param {Object} options the following options are available
+		 * @param {Object} [options.controllers.t.player] player buttons, available from web page
+		 * @param {HTMLElement|string} [options.controllers.t.player.buttonPlay="play"] play or pause of the playing.
+		 * <pre>
+		 * HTMLElement - <b>input</b> element of the "button" type.
+		 * string - <b>id</b> of <b>input</b> element.
+		 * </pre>
+		*/
+		this.createControllersButtons = function ( options ) {
+
+			if ( !options.controllers || !options.controllers.t || !options.controllers.t.player ) return;
+			const settings = options.controllers.t.player
+			
+			//Previous button
+
+			if ( settings.buttonPrev === null ) console.warn( 'Player.createControllersButtons: invalid options.controllers.t.player.buttonPrev = ' + settings.buttonPrev );
+			if ( settings.buttonPrev ) {
+
+				const buttonPrev = typeof settings.buttonPrev === 'string' ? document.getElementById( settings.buttonPrev ) : settings.buttonPrev;
+				if ( buttonPrev ) {
+
+					buttonPrev.value = lang.prevSymbol;
+					buttonPrev.title = lang.prevSymbolTitle;
+					buttonPrev.onclick = function ( event ) { if ( options.player ) options.player.prev(); }
+
+				}
+
+			}
+
+			//Play button
+			
+			if ( settings.buttonPlay === null ) console.warn( 'Player.createControllersButtons: invalid options.controllers.t.player.buttonPlay = ' + settings.buttonPlay );
+			if ( settings.buttonPlay ) {
+
+				const buttonPlay = typeof settings.buttonPlay === 'string' ? document.getElementById( settings.buttonPlay ) : settings.buttonPlay;
+				if ( buttonPlay ) {
+
+					buttonPlay.value = playing ? lang.pause : lang.playSymbol;
+					buttonPlay.title = playing ? lang.pauseTitle : lang.playTitle;
+					buttonPlay.onclick = function ( event ) { if ( options.player ) options.player.play3DObject(); }
+
+				}
+
+			}
+
+			//Next button
+
+			if ( settings.buttonNext === null ) console.warn( 'Player.createControllersButtons: invalid options.controllers.t.player.buttonNext = ' + settings.buttonNext );
+			if ( settings.buttonNext ) {
+
+				const buttonNext = typeof settings.buttonNext === 'string' ? document.getElementById( settings.buttonNext ) : settings.buttonNext;
+				if ( buttonNext ) {
+
+					buttonNext.value = lang.nextSymbol;
+					buttonNext.title = lang.nextSymbolTitle;
+					buttonNext.onclick = function ( event ) { if ( options.player ) options.player.next(); }
+
+				}
+
+			}
+
+		}
+
 		var _canvasMenu;
 		/**
 		 * Adds a Player's menu item into [CanvasMenu]{@link https://github.com/anhr/commonNodeJS/tree/master/canvasMenu}.
@@ -895,7 +961,7 @@ class Player {
 		* Default returns the 'en' is English language.
 		* You can import { getLanguageCode } from '../../commonNodeJS/master/lang.js';
 		* </pre>
-		 */
+		*/
 		this.createCanvasMenuItem = function ( canvasMenu, getLanguageCode = function() { return 'en' } ) {
 
 			_canvasMenu = canvasMenu;
@@ -972,6 +1038,12 @@ class Player {
 					const elMenuButtonPlay = canvasMenu.querySelector( '#menuButtonPlay' );
 					elMenuButtonPlay.innerHTML = name;
 					elMenuButtonPlay.title = title;
+					if ( options.controllers && options.controllers.t && options.controllers.t.player && options.controllers.t.player.buttonPlay ) {
+
+						options.controllers.t.player.buttonPlay.value = name;
+						options.controllers.t.player.buttonPlay.title = title;
+
+					}
 
 				},
 
@@ -1527,6 +1599,51 @@ Player.execFunc = function ( funcs, axisName, t, options={} ) {
 
 var lang;
 
+class Ids {
+
+	constructor() {
+
+		function addKeys( axisName ) {
+
+			function keyValue( controllerId ) {
+
+				const id = axisName + controllerId;
+				return {
+
+//					controllerId: id,
+					get controllerId() { return this.boUsed ? undefined : id; },
+					get elController() { return document.getElementById( this.controllerId ); },
+
+					nameId: id + 'Name',
+					get elName() { return document.getElementById( this.nameId ); },
+
+				}
+
+			}
+			return {
+
+				func: keyValue( 'Func' ),
+				position: keyValue( 'Position' ),
+				worldPosition: keyValue( 'WorldPosition' ),
+
+			}
+
+		}
+		this.x = addKeys( 'x' );
+		this.y = addKeys( 'y' );
+		this.z = addKeys( 'z' );
+		this.w = addKeys( 'w' );
+		/*
+			y: addKeys( 'y' ),
+			z: addKeys( 'z' ),
+			w: addKeys( 'w' ),
+		*/
+
+	}
+
+}
+var ids = new Ids();
+
 /** @namespace
  * @description Select a scene for playing of the mesh
  * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for playing.
@@ -1693,31 +1810,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 				}
 
-			}/* else 
-			if ( options.palette )
-				color = options.palette.toColor(
-					typeof funcs.w === "number" ? funcs.w : Player.execFunc( funcs, 'w', t, options ),
-					min, max );
-			if ( color ) {
-
-				if ( !mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors )
-					console.error( 'Player.selectMeshPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors' );
-				if ( !Player.setColorAttribute( attributes, i, color ) && funcs instanceof THREE.Vector4 ) {
-
-					mesh.geometry.setAttribute( 'color',
-						new THREE.Float32BufferAttribute( Player.getColors( arrayFuncs,
-							{
-
-								positions: mesh.geometry.attributes.position,
-								options: options,
-
-							} ), 4 ) );
-					if ( !Player.setColorAttribute( attributes, i, color ) )
-						console.error( 'Player.selectMeshPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute' );
-
-				}
-
-			}*/
+			}
 			color = setColorAttibute( typeof funcs.w === "number" ? funcs.w : Player.execFunc( funcs, 'w', t, options ), mesh, i, color );
 			if ( needsUpdate )
 				attributes.position.needsUpdate = true;
@@ -1782,13 +1875,23 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 				if ( !lang ) {
 					lang = {
 
+
 						controllerXTitle: 'X position',
 						controllerYTitle: 'Y position',
 						controllerZTitle: 'Z position',
+						controllerWTitle: 'color index',
+
+						controllerWorld: 'World',
+
+						controllerXWorldTitle: 'X world position',
+						controllerYWorldTitle: 'Y world position',
+						controllerZWorldTitle: 'Z world position',
+						controllerWWorldTitle: 'color index',
 
 						controllerXFunctionTitle: 'X = f(t)',
 						controllerYFunctionTitle: 'Y = f(t)',
 						controllerZFunctionTitle: 'Z = f(t)',
+						controllerWFunctionTitle: 'W = f(t)',
 
 						positionAlert: 'Invalid position fromat: ',
 
@@ -1800,6 +1903,16 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 							lang.controllerXTitle = 'Позиция X';
 							lang.controllerYTitle = 'Позиция Y';
 							lang.controllerZTitle = 'Позиция Z';
+							lang.controllerWTitle = 'Индекс цвета';
+
+							lang.controllerWorld = 'Абсолютный';
+
+							lang.controllerXWorldTitle = 'Абсолютная позиция X';
+							lang.controllerYWorldTitle = 'Абсолютная позиция Y';
+							lang.controllerZWorldTitle = 'Абсолютная позиция Z';
+							lang.controllerWWorldTitle = 'Индекс цвета';
+
+
 							lang.positionAlert = 'Неправильный формат позиции точки: ';
 
 							break;
@@ -1853,11 +1966,95 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 				}
 				function createControllers( axisName ) {
 
-					const axisControllers = func.controllers[axisName];
+					var axisControllers = func.controllers[axisName];
+					if ( axisControllers === false ) return;
+					const position = 'position';
+/*					
+					if ( !axisControllers && ( ids[axisName].func.elController || ids[axisName].position.elController || ids[axisName].worldPosition.elController ) ) {
+
+						axisControllers = {};
+						function addKey( keyName ) {
+
+							if ( !ids[axisName][keyName].elController ) return;
+							axisControllers[keyName] = {
+
+								controller: ids[axisName][keyName].elController,
+								elName: ids[axisName][keyName].elName ? ids[axisName][keyName].elName : false,
+
+							}
+							if ( ( keyName === position ) && ( axisName === 'w' ) )
+								axisControllers[keyName].elSlider = true;
+
+						}
+						addKey( 'func' );
+						addKey( position );
+						addKey( 'worldPosition' );
+						func.controllers[axisName] = axisControllers;
+
+					}
+*/					
+					//если Controllers для текущей оси не определен а на веб странице есть Controllers для этой оси
+					//то нужно создать axisControllers
+					if ( !axisControllers && ( ids[axisName].func.elController || ids[axisName].position.elController || ids[axisName].worldPosition.elController ) ) {
+
+						axisControllers = {};
+						func.controllers[axisName] = axisControllers;
+
+					}
 					if ( !axisControllers ) return;
+					//добавляем в axisControllers те Controllers, которые есть на веб странице для текущей оси
+					function addKey( keyName ) {
+
+						if ( !ids[axisName][keyName].elController ) return;
+						if ( !axisControllers[keyName] ) {
+
+							if ( !ids[axisName][keyName].boUsed ) {
+
+								axisControllers[keyName] = {
+
+									controller: ids[axisName][keyName].elController,
+									elName: ids[axisName][keyName].elName ? ids[axisName][keyName].elName : false,
+
+								}
+								ids[axisName][keyName].boUsed = true;
+								if ( ( keyName === position ) && ( axisName === 'w' ) )
+									axisControllers[keyName].elSlider = true;
+
+							} else console.warn( 'Player.selectMeshPlayScene createControllers: Same controller is using for different points. Controller ID is "' + ids[axisName][keyName].controllerId + '""' );
+
+						}
+
+					}
+					addKey( 'func' );
+					addKey( position );
+					addKey( 'worldPosition' );
 
 					//function text
-					createController( axisControllers.func, axisName + 'Func', function () { return options.scales[axisName].name + ' = f(t)'; }, {
+
+/*
+					var axisControllers = func.controllers[axisName];
+
+					if ( !axisControllers ) {
+
+						if ( ids[axisName].func.elController ) {
+
+							func.controllers[axisName] = {
+
+								func: {
+
+									controller: ids[axisName].func.elController,
+									elName: ids[axisName].elName ? ids[axisName].elName : false,
+
+								}
+
+							}
+							axisControllers = func.controllers[axisName];
+
+						}
+
+					}
+*/
+					createController( axisControllers.func, ids[axisName].func.controllerId, function () { return options.scales[axisName].name + ' = f(t)'; }, {
 
 						value: func[axisName],
 						title: axisName === 'x' ? lang.controllerXFunctionTitle : axisName === 'y' ? lang.controllerYFunctionTitle : axisName === 'z' ? lang.controllerZFunctionTitle : axisName === 'w' ? lang.controllerWFunctionTitle : '',
@@ -1890,16 +2087,34 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 					} );
 
 					//position
-
 					createController( axisControllers.position, axisName + 'Position', function () { return options.scales[axisName].name; }, {
 
 						value: positionLocal[axisName],
 						title: axisName === 'x' ? lang.controllerXTitle : axisName === 'y' ? lang.controllerYTitle : axisName === 'z' ? lang.controllerZTitle : axisName === 'w' ? lang.controllerWTitle : '',
 						onchange: function ( event ) { setPosition( event.currentTarget.value, axisName ); },
+						axisName: axisName,
+
+					} );
+
+					//World position
+					createController( axisControllers.worldPosition, axisName + 'WorldPosition', function () { return lang.controllerWorld + ' ' + options.scales[axisName].name; }, {
+
+						value: getWorldPosition( mesh, positionLocal )[axisName],
+						title: axisName === 'x' ? lang.controllerXWorldTitle : axisName === 'y' ? lang.controllerYWorldTitle : axisName === 'z' ? lang.controllerZWorldTitle : axisName === 'w' ? lang.controllerWTitle : '',
 
 					} );
 
 				}
+
+				//point name
+				if ( func.name ) {
+
+					if ( !func.controllers.pointName ) func.controllers.pointName = 'pointName';
+					const elPointName = typeof func.controllers.pointName === "string" ? document.getElementById( func.controllers.pointName ) : func.controllers.pointName ;
+					if ( elPointName ) elPointName.innerHTML = func.name;
+
+				}
+
 				createControllers( 'x' );
 				createControllers( 'y' );
 				createControllers( 'z' );
@@ -2155,6 +2370,14 @@ Player.getPoints = function ( arrayFuncs, optionsPoints ) {
 						item.vector[0] === undefined ? 0 : item.vector[0],
 						item.vector[1] === undefined ? 0 : item.vector[1],
 						item.vector[2] === undefined ? 0 : item.vector[2],
+
+					);
+				else if ( item.vector.length < 3 )
+
+					arrayFuncs[i].vector = new THREE.Vector4(
+
+						item.vector[0] === undefined ? 0 : item.vector[0],
+						item.vector[1] === undefined ? 0 : item.vector[1],
 
 					);
 				else console.error( 'Player.getPoints(...) falied! item.vector.length = ' + item.vector.length );

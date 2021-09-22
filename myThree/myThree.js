@@ -194,7 +194,7 @@ class MyThree {
 	 * @param {object} [options.cameraTarget] camera looking at selected point during playing. See the <b>cameraTarget</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.cameraTarget.html#init" target="_blank">Player.cameraTarget.init(...)</a> function for details.
 	 * @param {object} [options.frustumPoints] Creates a <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a> instance.
 	 * See <b>settings.options.frustumPoints</b> parameter of <a href="../../frustumPoints/jsdoc/FrustumPoints.html" target="_blank">FrustumPoints</a> class.
-	 * @param {MyThree.ColorPicker.palette|boolean|number} [options.palette=White color of all points] Points сolor.
+	 * @param {MyThree.ColorPicker.palette|boolean|number} [options.palette=true] Points сolor.
 	 * <pre>
 	 * <b>MyThree.ColorPicker.palette</b> - is <b>new ColorPicker.palette( ... )</b>
 	 * See <a href="../../colorpicker/jsdoc/index.html" target="_blank">ColorPicker</a> for details.
@@ -231,6 +231,8 @@ class MyThree {
 	 * <pre>
 	 * or <b>id</b> of the <b>span</b> element.
 	 * </pre>
+	 * @param {Object} [options.controllers.t.player] <a href="../../player/jsdoc/index.html" target="_blank">Player's</a> buttons on the web page.
+	 * See <a href="../../player/jsdoc/module-Player-Player.html#createControllersButtons" target="_blank">player.createControllersButtons(options)</a> for details.
 	 */
 	constructor( createXDobjects, options ) {
 
@@ -269,7 +271,7 @@ class MyThree {
 		elContainer.appendChild( elDiv );
 		elContainer = elDiv;
 
-		if ( three.dat ) {
+		if ( three.dat && ( options.dat !== false ) ) {
 
 			options.dat = options.dat || {};
 			options.dat.parent = elContainer;
@@ -634,7 +636,53 @@ class MyThree {
 					fullScreen: options.canvas.fullScreen,
 					camera: camera,
 					arrayContainersLength: function() { return arrayContainers.length; },
-					onFullScreenToggle: function ( fullScreen ) { rendererSizeDefault.onFullScreenToggle( fullScreen ); },
+					onFullScreenToggle: function ( fullScreen ) {
+
+						rendererSizeDefault.onFullScreenToggle( fullScreen );
+
+						//скрыть controllers.w.position.elSlider of arrayFuncs типа colorpicker если canvas на весь экран
+						//иначе colorpicker будет виден в canvas
+						function onFullScreenToggle( group, fullScreen ) {
+
+							//если не делать этот setTimeout и если canvas по умолчанию на весь экран, то сквозь canvas будет видна палтра elSlider
+							//которую я рисую на веб станице если в настройках точек будет указана
+							setTimeout( function () {
+
+								function recursion( children ) {
+
+									children.forEach( function ( mesh ) {
+
+										recursion( mesh.children );
+										if ( mesh instanceof THREE.Group ) {
+
+											onFullScreenToggle( mesh, fullScreen );
+											return;
+
+										}
+										if ( ( mesh.userData.player === undefined ) || ( mesh.userData.player.arrayFuncs === undefined ) || ( typeof mesh.userData.player.arrayFuncs === "function" ) )
+											return;
+										mesh.userData.player.arrayFuncs.forEach( function ( vector ) {
+
+											if ( vector.controllers && vector.controllers.w && vector.controllers.w.position && vector.controllers.w.position.elSlider )
+												vector.controllers.w.position.elSlider.style.display = fullScreen ? 'block' : 'none';
+											if ( vector.line === undefined )
+												return;
+											vector.line.remove();
+											vector.line = new Player.traceLine( options );
+
+										} );
+
+									} );
+
+								}
+								recursion( group.children );
+
+							}, 0 );
+
+						}
+						onFullScreenToggle( scene, fullScreen );
+
+					},
 
 				},
 				options: options,
@@ -670,7 +718,7 @@ class MyThree {
 
 			defaultPoint.size = options.point.size;
 
-			const pointName = options.dat.getCookieName('Point');
+			const pointName = options.dat ? options.dat.getCookieName('Point') : 'Point';
 			if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
 
 			if ( createXDobjects ) createXDobjects( group, options );
