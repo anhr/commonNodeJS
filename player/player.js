@@ -1881,7 +1881,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 	}
 
-	if ( mesh.userData.player && mesh.userData.player.arrayFuncs )
+	if ( mesh.userData.player && mesh.userData.player.arrayFuncs && mesh.userData.player.arrayFuncs instanceof Array )
 		mesh.userData.player.arrayFuncs.forEach( function ( func, index ) {
 
 			if ( func.controllers ) {
