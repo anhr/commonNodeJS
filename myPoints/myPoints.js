@@ -96,8 +96,8 @@ import Options from '../Options.js'
  * Fires if mouse pointer leaves of intersection with the point.
  * @param {Function(intersection)} [settings.pointsOptions.raycaster.onMouseDown] Callback function that take as input the <b>[intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} </b>.
  * User has clicked over point.
- * @param {object} [settings.pointsOptions.controllers] Followed elements can display on the web page
- * @param {HTMLElement|string} [settings.pointsOptions.controllers.pointsName] Display of the <b>settings.pointsOptions.name</b> on the web page.
+ * @param {object} [settings.pointsOptions.elements] Followed elements can display on the web page
+ * @param {HTMLElement|string} [settings.pointsOptions.elements.pointsName] Display of the <b>settings.pointsOptions.name</b> on the web page.
  * <pre>
  * HTMLElement - element for displaying.
  * string - <b>id</b> of the element.
@@ -129,14 +129,14 @@ function MyPoints( arrayFuncs, group, settings ) {
 	pointsOptions.group = group;
 
 	//points name
-	if ( pointsOptions.name !== '' && pointsOptions.controllers ) {
+	if ( pointsOptions.name !== '' && pointsOptions.elements ) {
 
-		if ( pointsOptions.controllers.pointsName === null ) console.warn( 'MyPoints: Points name element is not exists' );
-		if ( !pointsOptions.controllers.pointsName ) pointsOptions.controllers.pointsName = 'pointsName';
-		const elPointsName = typeof pointsOptions.controllers.pointsName === "string" ?
-			document.getElementById( pointsOptions.controllers.pointsName ) : pointsOptions.controllers.pointsName ;
+		if ( pointsOptions.elements.pointsName === null ) console.warn( 'MyPoints: Points name element is not exists' );
+		if ( !pointsOptions.elements.pointsName ) pointsOptions.elements.pointsName = 'pointsName';
+		const elPointsName = typeof pointsOptions.elements.pointsName === "string" ?
+			document.getElementById( pointsOptions.elements.pointsName ) : pointsOptions.elements.pointsName ;
 		if ( elPointsName ) elPointsName.innerHTML = pointsOptions.name;
-		else console.warn( 'MyPoints: Element with id: "' + pointsOptions.controllers.pointsName + '" is not exists' );
+		else console.warn( 'MyPoints: Element with id: "' + pointsOptions.elements.pointsName + '" is not exists' );
 
 	}
 
