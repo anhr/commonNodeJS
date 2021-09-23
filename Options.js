@@ -684,6 +684,12 @@ class Options {
 											},
 
 										},
+										marks: {
+
+											get: function () { return scale.marks; },
+											set: function ( marks ) { scales.marks = marks; },
+
+										},
 
 									} );
 
@@ -721,38 +727,26 @@ class Options {
 								},
 								x: {
 
-									get: function () {
-
-										return scalesObject.x;
-
-									},
+									get: function () { return scalesObject.x; },
+									set: function ( x ) { scales.x = x; },
 
 								},
 								y: {
 
-									get: function () {
-
-										return scalesObject.y;
-
-									},
+									get: function () { return scalesObject.y; },
+									set: function ( y ) { scales.y = y; },
 
 								},
 								z: {
 
-									get: function () {
-
-										return scalesObject.z;
-
-									},
+									get: function () { return scalesObject.z; },
+									set: function ( z ) { scales.z = z; },
 
 								},
 								w: {
 
-									get: function () {
-
-										return scalesObject.w;
-
-									},
+									get: function () { return scalesObject.w; },
+									set: function ( w ) { scales.w = w; },
 
 								},
 
@@ -785,7 +779,7 @@ class Options {
 										return scales.display;
 
 									},
-//									set: function ( display ) { scales.display = display; },
+									set: function ( display ) { scales.display = display; },
 
 								},
 								/* *
@@ -802,7 +796,19 @@ class Options {
 										return scales.text;
 
 									},
-//									set: function ( text ) { scales.text = text; },
+									set: function ( text ) { scales.text = text; },
+
+								},
+								/* *
+								 * getter and setter
+								 * <pre>
+								 * Position of the axes intersection
+								 * </pre>
+								 **/
+								posAxesIntersection: {
+
+									get: function () { return scales.posAxesIntersection; },
+									set: function ( posAxesIntersection ) { scales.posAxesIntersection = posAxesIntersection; },
 
 								},
 

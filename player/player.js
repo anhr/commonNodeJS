@@ -2556,7 +2556,7 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 						w( t ) :
 						typeof w === "string" ?
 							Player.execFunc( funcs, 'w', t, optionsColor.options ) :
-							w,
+							w === undefined ? new THREE.Vector4().w : w,
 				min, max );
 			optionsColor.colors.push( color.r, color.g, color.b );
 
