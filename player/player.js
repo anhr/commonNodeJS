@@ -192,7 +192,7 @@ class Player {
 		}
 
 		/**
-		 * Go to next object 3D
+		 * Go to next animation scene
 		 */
 		this.next = function () {
 
@@ -201,7 +201,7 @@ class Player {
 		}
 
 		/**
-		 * Go to previous object 3D
+		 * Go to previous animation scene
 		 */
 		this.prev = function () {
 
@@ -887,8 +887,18 @@ class Player {
 		/**
 		 * Adds player buttons into web page.
 		 * @param {Object} options the following options are available
-		 * @param {Object} [options.controllers.t.player] player buttons, available from web page
-		 * @param {HTMLElement|string} [options.controllers.t.player.buttonPlay="play"] play or pause of the playing.
+		 * @param {Object} [options.controllers.player] player buttons, available from web page
+		 * @param {HTMLElement|string} [options.controllers.player.buttonPrev="prev"] Go to previous animation scene.
+		 * <pre>
+		 * HTMLElement - <b>input</b> element of the "button" type.
+		 * string - <b>id</b> of <b>input</b> element.
+		 * </pre>
+		 * @param {HTMLElement|string} [options.controllers.player.buttonPlay="play"] play or pause of the playing.
+		 * <pre>
+		 * HTMLElement - <b>input</b> element of the "button" type.
+		 * string - <b>id</b> of <b>input</b> element.
+		 * </pre>
+		 * @param {HTMLElement|string} [options.controllers.player.buttonNext="next"] Go to next animation scene.
 		 * <pre>
 		 * HTMLElement - <b>input</b> element of the "button" type.
 		 * string - <b>id</b> of <b>input</b> element.
@@ -896,20 +906,22 @@ class Player {
 		*/
 		this.createControllersButtons = function ( options ) {
 
-			if ( !options.controllers || !options.controllers.t || !options.controllers.t.player ) return;
-			const settings = options.controllers.t.player
-			
+			if ( !options.controllers || !options.controllers.player ) return;
+			const settings = options.controllers.player
+
 			//Previous button
 
-			if ( settings.buttonPrev === null ) console.warn( 'Player.createControllersButtons: invalid options.controllers.t.player.buttonPrev = ' + settings.buttonPrev );
+			if ( settings.buttonPrev === null ) console.warn( 'Player.createControllersButtons: invalid options.controllers.player.buttonPrev = ' + settings.buttonPrev );
 			if ( settings.buttonPrev ) {
 
 				const buttonPrev = typeof settings.buttonPrev === 'string' ? document.getElementById( settings.buttonPrev ) : settings.buttonPrev;
+				if ( buttonPrev === null ) console.warn( 'Player.createControllersButtons: invalid options.controllers.player.buttonPrev = ' + settings.buttonPrev );
 				if ( buttonPrev ) {
 
 					buttonPrev.value = lang.prevSymbol;
 					buttonPrev.title = lang.prevSymbolTitle;
 					buttonPrev.onclick = function ( event ) { if ( options.player ) options.player.prev(); }
+					settings.buttonPrev = buttonPrev;
 
 				}
 
@@ -917,15 +929,17 @@ class Player {
 
 			//Play button
 			
-			if ( settings.buttonPlay === null ) console.warn( 'Player.createControllersButtons: invalid options.controllers.t.player.buttonPlay = ' + settings.buttonPlay );
+			if ( settings.buttonPlay === null ) console.warn( 'Player.createControllersButtons: invalid options.controllers.player.buttonPlay = ' + settings.buttonPlay );
 			if ( settings.buttonPlay ) {
 
 				const buttonPlay = typeof settings.buttonPlay === 'string' ? document.getElementById( settings.buttonPlay ) : settings.buttonPlay;
+				if ( buttonPlay === null ) console.warn( 'Player.createControllersButtons: invalid options.controllers.player.buttonPlay = ' + settings.buttonPlay );
 				if ( buttonPlay ) {
 
 					buttonPlay.value = playing ? lang.pause : lang.playSymbol;
 					buttonPlay.title = playing ? lang.pauseTitle : lang.playTitle;
 					buttonPlay.onclick = function ( event ) { if ( options.player ) options.player.play3DObject(); }
+					settings.buttonPlay = buttonPlay;
 
 				}
 
@@ -933,15 +947,17 @@ class Player {
 
 			//Next button
 
-			if ( settings.buttonNext === null ) console.warn( 'Player.createControllersButtons: invalid options.controllers.t.player.buttonNext = ' + settings.buttonNext );
+			if ( settings.buttonNext === null ) console.warn( 'Player.createControllersButtons: invalid options.controllers.player.buttonNext = ' + settings.buttonNext );
 			if ( settings.buttonNext ) {
 
 				const buttonNext = typeof settings.buttonNext === 'string' ? document.getElementById( settings.buttonNext ) : settings.buttonNext;
+				if ( buttonNext === null ) console.warn( 'Player.createControllersButtons: invalid options.controllers.player.buttonNext = ' + settings.buttonNext );
 				if ( buttonNext ) {
 
 					buttonNext.value = lang.nextSymbol;
 					buttonNext.title = lang.nextSymbolTitle;
 					buttonNext.onclick = function ( event ) { if ( options.player ) options.player.next(); }
+					settings.buttonNext = buttonNext;
 
 				}
 
@@ -1038,10 +1054,10 @@ class Player {
 					const elMenuButtonPlay = canvasMenu.querySelector( '#menuButtonPlay' );
 					elMenuButtonPlay.innerHTML = name;
 					elMenuButtonPlay.title = title;
-					if ( options.controllers && options.controllers.t && options.controllers.t.player && options.controllers.t.player.buttonPlay ) {
+					if ( options.controllers && options.controllers.player && options.controllers.player.buttonPlay ) {
 
-						options.controllers.t.player.buttonPlay.value = name;
-						options.controllers.t.player.buttonPlay.title = title;
+						options.controllers.player.buttonPlay.value = name;
+						options.controllers.player.buttonPlay.title = title;
 
 					}
 
@@ -1969,30 +1985,6 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 					var axisControllers = func.controllers[axisName];
 					if ( axisControllers === false ) return;
 					const position = 'position';
-/*					
-					if ( !axisControllers && ( ids[axisName].func.elController || ids[axisName].position.elController || ids[axisName].worldPosition.elController ) ) {
-
-						axisControllers = {};
-						function addKey( keyName ) {
-
-							if ( !ids[axisName][keyName].elController ) return;
-							axisControllers[keyName] = {
-
-								controller: ids[axisName][keyName].elController,
-								elName: ids[axisName][keyName].elName ? ids[axisName][keyName].elName : false,
-
-							}
-							if ( ( keyName === position ) && ( axisName === 'w' ) )
-								axisControllers[keyName].elSlider = true;
-
-						}
-						addKey( 'func' );
-						addKey( position );
-						addKey( 'worldPosition' );
-						func.controllers[axisName] = axisControllers;
-
-					}
-*/					
 					//если Controllers для текущей оси не определен а на веб странице есть Controllers для этой оси
 					//то нужно создать axisControllers
 					if ( !axisControllers && ( ids[axisName].func.elController || ids[axisName].position.elController || ids[axisName].worldPosition.elController ) ) {

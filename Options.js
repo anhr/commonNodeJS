@@ -51,7 +51,7 @@ import Player from './player/player.js';
 import StereoEffect from './StereoEffect/StereoEffect.js';
 import { createController } from './controller.js'
 
-var controllersList;
+var boCreateControllers;
 
 class Options {
 
@@ -1331,6 +1331,7 @@ class Options {
 
 										}
 										if ( !controllers.t.controller && elTime ) controllers.t.controller = elTime;
+/*
 										if ( !controllers.t.player ) {
 
 											const buttonPrev = document.getElementById( 'prev' ),
@@ -1345,6 +1346,7 @@ class Options {
 
 											}
 										}
+*/										
 										if ( controllers.t ) {
 
 											createController( controllers.t, 't',
@@ -1412,44 +1414,33 @@ class Options {
 						}
 
 					}
-					if ( controllersList === undefined ) {
+					if ( boCreateControllers === undefined ) {
 
-						controllersList = {
+						boCreateControllers = true;
+						const time = document.getElementById( 'time' ),
+							prev = document.getElementById( 'prev' ),
+							play = document.getElementById( 'play' ),
+							next = document.getElementById( 'next' ),
+							boPlayer = prev || play || next ? true : false,
+							boControllers = time || boPlayer ? true : false;
+						if ( !options.controllers && boControllers ) {
 
-							time: document.getElementById( 'time' ),
-							prev: document.getElementById( 'prev' ),
-							play: document.getElementById( 'play' ),
-							next: document.getElementById( 'next' ),
-
-						}
-						controllersList.boControllers = controllersList.time || controllersList.prev || controllersList.play || controllersList.next ?
-							true : false;
-						controllersList.boPlayer = controllersList.prev || controllersList.play || controllersList.next ?
-							true : false;
-
-					}
-					if ( !options.controllers && controllersList.boControllers ) {
-
-						options.controllers = { t: {} };
-						if ( controllersList.time ) options.controllers.t.controller = controllersList.time;
-/*						
-						if ( controllersList.prev || controllersList.play || controllersList.next ) {
-
-							options.controllers.t.player = {};
-							if ( controllersList.prev ) options.controllers.t.player.buttonPrev = controllersList.prev;
-							if ( controllersList.play ) options.controllers.t.player.buttonPlay = controllersList.play;
-							if ( controllersList.next ) options.controllers.t.player.buttonNext = controllersList.next;
+							options.controllers = { t: {} };
+							if ( time ) options.controllers.t.controller = time;
 
 						}
-*/						
+						if ( options.controllers ) {
 
-					}
-					if ( !options.controllers.t.player && controllersList.boPlayer ) options.controllers.t.player = {};
-					if ( options.controllers.t.player ) {
+							if ( !options.controllers.player && boPlayer ) options.controllers.player = {};
+							if ( options.controllers.player ) {
 
-						if ( !options.controllers.t.player.buttonPrev && controllersList.prev ) options.controllers.t.player.buttonPrev = controllersList.prev;
-						if ( !options.controllers.t.player.buttonPlay && controllersList.play ) options.controllers.t.player.buttonPlay = controllersList.play;
-						if ( !options.controllers.t.player.buttonNext && controllersList.next ) options.controllers.t.player.buttonNext = controllersList.next;
+								if ( !options.controllers.player.buttonPrev && prev ) options.controllers.player.buttonPrev = prev;
+								if ( !options.controllers.player.buttonPlay && play ) options.controllers.player.buttonPlay = play;
+								if ( !options.controllers.player.buttonNext && next ) options.controllers.player.buttonNext = next;
+
+							}
+
+						}
 
 					}
 					if ( options.controllers && !options.controllers.boControllers )

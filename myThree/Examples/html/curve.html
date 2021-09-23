@@ -54,57 +54,60 @@
 		<input id="next" type="button" value="Next" />
 	</fieldset>
 	<fieldset>
-		<legend id="pointName">Parametric equation controls</legend>
-		<table>
-			<tr>
-				<td>Axis</td>
-				<td>f(t)</td>
-				<td>Position</td>
-				<td title="Point position in the world space">World Position</td>
-			</tr>
-			<tr>
-				<td id="xPositionName"></td>
-				<td><input id="xFunc" /></td>
-				<td><input id="xPosition" /></td>
-				<td id="xWorldPosition"></td>
-			</tr>
-			<tr>
-				<td id="yPositionName"></td>
-				<td><input id="yFunc" /></td>
-				<td><input id="yPosition" /></td>
-				<td id="yWorldPosition"></td>
-			</tr>
-			<tr>
-				<td id="zPositionName"></td>
-				<td><input id="zFunc" /></td>
-				<td><input id="zPosition" /></td>
-				<td id="zWorldPosition"></td>
-			</tr>
-			<tr>
-				<td id="wPositionName"></td>
-				<td><input id="wFunc" /></td>
-				<td><input id="wPosition" /><br></td>
-			</tr>
-		</table>
-		<!--<div id="wSlider2"></div>-->
-	</fieldset>
-	<fieldset>
-		<legend id="pointName2">Parametric equation controls</legend>
-		<table>
-			<tr>
-				<td>Axis</td>
-				<td>f(t)</td>
-				<td>Position</td>
-				<td title="Point position in the world space">World Position</td>
-			</tr>
-			<tr>
-				<td id="yPositionName2"></td>
-				<td><input id="yFunc2" /></td>
-				<td><input id="yPosition2" /></td>
-				<td id="yWorldPosition2"></td>
-			</tr>
-		</table>
-		<!--<div id="wSlider2"></div>-->
+		<legend id="pointsName">Points</legend>
+		<fieldset>
+			<legend id="pointName">Parametric equation controls</legend>
+			<table>
+				<tr>
+					<td>Axis</td>
+					<td>f(t)</td>
+					<td>Position</td>
+					<td title="Point position in the world space">World Position</td>
+				</tr>
+				<tr>
+					<td id="xPositionName"></td>
+					<td><input id="xFunc" /></td>
+					<td><input id="xPosition" /></td>
+					<td id="xWorldPosition"></td>
+				</tr>
+				<tr>
+					<td id="yPositionName"></td>
+					<td><input id="yFunc" /></td>
+					<td><input id="yPosition" /></td>
+					<td id="yWorldPosition"></td>
+				</tr>
+				<tr>
+					<td id="zPositionName"></td>
+					<td><input id="zFunc" /></td>
+					<td><input id="zPosition" /></td>
+					<td id="zWorldPosition"></td>
+				</tr>
+				<tr>
+					<td id="wPositionName"></td>
+					<td><input id="wFunc" /></td>
+					<td><input id="wPosition" /><br></td>
+				</tr>
+			</table>
+			<!--<div id="wSlider2"></div>-->
+		</fieldset>
+		<fieldset>
+			<legend id="pointName2">Parametric equation controls</legend>
+			<table>
+				<tr>
+					<td>Axis</td>
+					<td>f(t)</td>
+					<td>Position</td>
+					<td title="Point position in the world space">World Position</td>
+				</tr>
+				<tr>
+					<td id="yPositionName2"></td>
+					<td><input id="yFunc2" /></td>
+					<td><input id="yPosition2" /></td>
+					<td id="yWorldPosition2"></td>
+				</tr>
+			</table>
+			<!--<div id="wSlider2"></div>-->
+		</fieldset>
 	</fieldset>
 
 	<script type="module">
@@ -135,7 +138,7 @@
 							'Math.sin(t*5*Math.PI)*0.5',//z
 							'1-t',//w
 						],
-						name: 'Point 1',
+						name: 'Trigonometric functions',
 						trace: true,//Displays the trace of the point movement.
 						controllers: {},
 
@@ -146,7 +149,7 @@
 							0.4,//x
 							'1-2*t',//y
 						],
-						name: 'Point 2',
+						name: 'Line',
 						trace: true,//Displays the trace of the point movement.
 						controllers: {
 
@@ -291,7 +294,18 @@
 				group, {
 
 				options: options,
-				//pointsOptions: { position: new THREE.Vector3( 0.1, 0.2, 0.3 ) },
+				pointsOptions: { 
+
+					//position: new THREE.Vector3( 0.1, 0.2, 0.3 ),
+					name: 'Curves as parametric equations of time',
+					controllers: {
+
+						//pointsName: 'pointsName2',
+						//pointsName: document.getElementById( 'pointsName2' ),
+
+					},
+
+				},
 
 			} );
 
@@ -362,12 +376,18 @@
 					//elName: 'tName',
 					//elName: false,
 
-					player: {
 
-						//buttonPlay: document.getElementById( 'play2' ),
-						//buttonPlay: 'play2',
+				},
+				player: {
 
-					},
+					//buttonPlay: document.getElementById( 'play2' ),
+					buttonPlay: 'play2',
+
+					//buttonPrev: document.getElementById( 'prev2' ),
+					buttonPrev: 'prev2',
+
+					buttonNext: document.getElementById( 'next2' ),
+					//buttonNext: 'next2',
 
 				},
 

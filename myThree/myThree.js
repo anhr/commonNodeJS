@@ -231,7 +231,7 @@ class MyThree {
 	 * <pre>
 	 * or <b>id</b> of the <b>span</b> element.
 	 * </pre>
-	 * @param {Object} [options.controllers.t.player] <a href="../../player/jsdoc/index.html" target="_blank">Player's</a> buttons on the web page.
+	 * @param {Object} [options.controllers.player] <a href="../../player/jsdoc/index.html" target="_blank">Player's</a> buttons on the web page.
 	 * See <a href="../../player/jsdoc/module-Player-Player.html#createControllersButtons" target="_blank">player.createControllersButtons(options)</a> for details.
 	 */
 	constructor( createXDobjects, options ) {

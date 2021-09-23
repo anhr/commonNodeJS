@@ -96,6 +96,12 @@ import Options from '../Options.js'
  * Fires if mouse pointer leaves of intersection with the point.
  * @param {Function(intersection)} [settings.pointsOptions.raycaster.onMouseDown] Callback function that take as input the <b>[intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} </b>.
  * User has clicked over point.
+ * @param {object} [settings.pointsOptions.controllers] Followed elements can display on the web page
+ * @param {HTMLElement|string} [settings.pointsOptions.controllers.pointsName] Display of the <b>settings.pointsOptions.name</b> on the web page.
+ * <pre>
+ * HTMLElement - element for displaying.
+ * string - <b>id</b> of the element.
+ * </pre>
  */
 function MyPoints( arrayFuncs, group, settings ) {
 
@@ -121,6 +127,18 @@ function MyPoints( arrayFuncs, group, settings ) {
 	pointsOptions.scale = pointsOptions.scale || new THREE.Vector3( 1, 1, 1 );
 	pointsOptions.rotation = pointsOptions.rotation || new THREE.Vector3();
 	pointsOptions.group = group;
+
+	//points name
+	if ( pointsOptions.name !== '' && pointsOptions.controllers ) {
+
+		if ( pointsOptions.controllers.pointsName === null ) console.warn( 'MyPoints: Points name element is not exists' );
+		if ( !pointsOptions.controllers.pointsName ) pointsOptions.controllers.pointsName = 'pointsName';
+		const elPointsName = typeof pointsOptions.controllers.pointsName === "string" ?
+			document.getElementById( pointsOptions.controllers.pointsName ) : pointsOptions.controllers.pointsName ;
+		if ( elPointsName ) elPointsName.innerHTML = pointsOptions.name;
+		else console.warn( 'MyPoints: Element with id: "' + pointsOptions.controllers.pointsName + '" is not exists' );
+
+	}
 
 	//Эту строку нужно вызывать до создания точек THREE.Points
 	//что бы вызывалась моя версия THREE.BufferGeometry().setFromPoints для создания geometry c itemSize = 4
