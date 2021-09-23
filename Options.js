@@ -87,7 +87,7 @@ class Options {
 			const scale = optionsCur.scales.w;
 //			scale.name = scale.name || axisName;
 			if ( !optionsCur.palette )
-				this.setPalette( optionsCur );
+				_this.setPalette( optionsCur );
 
 //			scale.min = scale.min === undefined ? 0 : scale.min;
 
@@ -107,15 +107,17 @@ class Options {
 			if ( !options.scales[axisName] )
 				return;
 
+/*
 			options.scales[axisName].name = options.scales[axisName].name || axisName;
 			options.scales[axisName].min = options.scales[axisName].min === undefined ? -1 : options.scales[axisName].min;
 			options.scales[axisName].max = options.scales[axisName].max === undefined ? 1 : options.scales[axisName].max;
+*/			
 
 		}
 		setScale( 'x' );
 		setScale( 'y' );
 		setScale( 'z' );
-		options.scales.setW = function () { _this.setW(); }
+//		options.scales.setW = function () { _this.setW(); }
 		options.point = options.point || {};
 		options.point.size = options.point.size || 5.0;
 		options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
@@ -682,12 +684,18 @@ class Options {
 												return scale.name;
 
 											},
+//											set: function ( name ) { scale.name = name; },
 
 										},
 										marks: {
 
-											get: function () { return scale.marks; },
-											set: function ( marks ) { scales.marks = marks; },
+											get: function () {
+
+												if ( !scale.marks ) scale.marks = 3;
+												return scale.marks;
+
+											},
+//											set: function ( marks ) { scale.marks = marks; },
 
 										},
 
@@ -760,7 +768,11 @@ class Options {
 
 									get: function () {
 
+/*
+										if ( !scales.setW ) scales.setW = _this.setW;
 										return scales.setW;
+*/
+										return _this.setW;
 
 									},
 

@@ -1827,7 +1827,11 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 				}
 
 			}
-			color = setColorAttibute( typeof funcs.w === "number" ? funcs.w : Player.execFunc( funcs, 'w', t, options ), mesh, i, color );
+			color = setColorAttibute(
+				funcs.w === undefined ?
+					new THREE.Vector4().w :
+					typeof funcs.w === "number" ? funcs.w : Player.execFunc( funcs, 'w', t, options ),
+				mesh, i, color );
 			if ( needsUpdate )
 				attributes.position.needsUpdate = true;
 
