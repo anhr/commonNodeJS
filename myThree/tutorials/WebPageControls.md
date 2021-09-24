@@ -1,7 +1,7 @@
 ﻿
-# MyThree.
+# Curve.
 
-I use <b>MyThree</b> in my [three.js](https://threejs.org/) projects for displaying of my 3D objects in the canvas.
+[Parametric_equation](https://en.wikipedia.org/wiki/Parametric_equation) curve.
 
 # Content
 * [Quick start.](#Quickstart)
