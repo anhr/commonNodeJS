@@ -50,8 +50,8 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 * myThree.js I use MyThree in my projects for displaying of my 3D objects in the canvas.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/myThree).
 [MyThree API](https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/index.html).
-[Controls on the web page tutorial.](https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/tutorial-WebPageControls.html).
-[Example](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/index.html), [Curve](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/curve.html).
+[Controls on the web page tutorial](https://raw.githack.com/anhr/commonNodeJS/master/myThree/jsdoc/tutorial-WebPageControls.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/index.html), [Parametric equation curve example](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/curve.html).
 * OrbitControlsGui.js [OrbitControls](https://threejs.org/docs/index.html#examples/en/controls/OrbitControls) graphical user interface.
 [OrbitControlsGui API](https://raw.githack.com/anhr/commonNodeJS/master/OrbitControls/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/myThree/Examples/html/index.html).
