@@ -5348,7 +5348,7 @@ function getWorldPosition(object, pos) {
 	} while (object && object.parent);
 	return position;
 }
-function getObjectPosition$1(object, index) {
+function getObjectPosition(object, index) {
 	if (index === -1) return undefined;
 	if (index === undefined) return object.position;
 	return getWorldPosition(object, getObjectLocalPosition(object, index));
@@ -5878,7 +5878,7 @@ function ColorPicker() {
 			try {
 				var linearGradient = 'linearGradient';
 				slide = CreateSVGElement('svg', {
-					xmlns: 'http://www.w3.org/2000/svg',
+					xmlns: svgNS,
 					version: '1.1',
 					width: isHorizontal() ? '100%' : options.style.width,
 					height: options.style.height
@@ -6065,6 +6065,10 @@ function ColorPicker() {
 		};
 		this.hsv2rgb = function (stringPercent, min, max) {
 			var percent = parseFloat(stringPercent);
+			if (isNaN(percent)) {
+				console.error('ColorPicker.palette.hsv2rgb: stringPercent = ' + stringPercent);
+				return;
+			}
 			if (min !== undefined && max !== undefined) percent = 100 / (max - min) * (percent - min);
 			var lastPalette = arrayPalette[arrayPalette.length - 1];
 			if (lastPalette.percent !== 100) {
@@ -6107,7 +6111,6 @@ function ColorPicker() {
 			if (c === undefined) c = { r: 255, g: 255, b: 255 };
 			return new THREE.Color("rgb(" + c.r + ", " + c.g + ", " + c.b + ")");
 		};
-		
 	};
 };
 ColorPicker = new ColorPicker();
@@ -7583,7 +7586,7 @@ StereoEffect.getTextIntersection = function (intersection, options) {
 					var spriteText = Options.findSpriteTextIntersection(options.spriteOptions.group);
 					if (spriteText) return spriteText;
 					var THREE = three$1.THREE;
-					var position = getObjectPosition$1(intersection.object, intersection.index),
+					var position = getObjectPosition(intersection.object, intersection.index),
 					    scales = options.scales || {},
 					    isArrayFuncs = intersection.index !== undefined && intersection.object.userData.player !== undefined && intersection.object.userData.player.arrayFuncs !== undefined,
 					    funcs = !isArrayFuncs ? undefined : intersection.object.userData.player.arrayFuncs,
@@ -7598,6 +7601,108 @@ StereoEffect.getTextIntersection = function (intersection, options) {
 					!isArrayFuncs ? '' : funcs[intersection.index] instanceof THREE.Vector4 || funcs[intersection.index] instanceof THREE.Vector3 || typeof funcs === "function" ? color instanceof THREE.Color ? '\n' + lang.color + ': ' + new THREE.Color(color.r, color.g, color.b).getHexString() : position.w !== undefined ? '\n' + (scales.w && scales.w.name ? scales.w.name : 'W') + ': ' + position.w : '' : '') + (
 					intersection.object.geometry.attributes.ca === undefined || intersection.object.geometry.attributes.ca.itemSize < 4 ? '' : '\n' + lang.opacity + ': ' + new THREE.Vector4().fromArray(intersection.object.geometry.attributes.ca.array, intersection.index * intersection.object.geometry.attributes.ca.itemSize).w), position, options.spriteOptions);
 };
+
+/**
+ * View and edit some parameters on the web page.
+ *
+ * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * Thanks to https://stackoverflow.com/a/11900218/5175935
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
+function createController(settings, controllerId, name, options) {
+	if (!settings) return;
+	if (typeof settings.controller === "string") {
+		var id = settings.controller;
+		settings.controller = document.getElementById(settings.controller);
+		if (!settings.controller) console.warn('createController: invalid settings.controller = "' + id + '"');
+	}
+	if (!settings.controller) {
+		if (settings.controller === null) console.warn('createController: invalid settings.controller = ' + settings.controller);
+		var controller = document.getElementById(controllerId);
+		if (!controller) {
+			controller = document.createElement(options.elementName ? options.elementName : 'input');
+			document.querySelector('body').appendChild(controller);
+		}
+		settings.controller = controller;
+	}
+	function setControllerValue(value) {
+		if (settings.controller.value !== undefined) settings.controller.value = value;
+		else settings.controller.innerHTML = value;
+	}
+	if (options.value !== undefined) setControllerValue(options.value);
+	if (options.onchange !== undefined && settings.controller.onchange === null) settings.controller.onchange = options.onchange;
+	if (options.title !== undefined && settings.controller.title === '') settings.controller.title = options.title;
+	if (settings.elSlider) {
+		if (typeof settings.elSlider === "string") {
+			var _id = settings.elSlider;
+			settings.elSlider = document.getElementById(settings.elSlider);
+			if (!settings.elSlider) console.warn('createController: invalid settings.elSlider = "' + _id + '"');
+		}
+		if (!settings.elSlider || settings.elSlider === true) {
+			if (options.axisName) settings.elSlider = document.getElementById(options.axisName + 'Slider');
+			if (!settings.elSlider) {
+				settings.elSlider = document.createElement('div');
+				if (settings.controller) settings.controller.parentElement.appendChild(settings.elSlider);else document.querySelector('body').appendChild(settings.elSlider);
+			}
+		}
+		settings.boSetValue = true;
+		if (!settings.colorpicker) {
+			settings.colorpicker = ColorPicker$1.create(settings.elSlider, {
+				duplicate: true,
+				sliderIndicator: {
+					callback: function callback(c) {
+						if (settings.boSetValue || !settings.controller) return;
+						var value = c.percent / 100;
+						settings.controller.onchange({ currentTarget: { value: value } });
+						settings.controller.value = value;
+					},
+					value: options.value * 100
+				},
+				style: {
+					border: '1px solid black',
+					width: settings.controller.clientWidth + 'px',
+					height: settings.controller.clientHeight + 'px'
+				},
+				onError: function onError(message) {
+					alert('Horizontal Colorpicker with slider indicator error: ' + message);
+				}
+			});
+		}
+		if (options.value !== undefined) {
+			var value = options.value * 100;
+			if (value < 0) value = 0;
+			if (value > 100) value = 100;
+			settings.boSetValue = true;
+			settings.colorpicker.setValue(value);
+			settings.boSetValue = false;
+		}
+	}
+	if (settings.elName === false) return;
+	if (settings.elName === null) console.warn('createController: invalid settings.elName = ' + settings.elName);
+	if (typeof settings.elName === "string") {
+		var _id2 = settings.elName;
+		settings.elName = document.getElementById(settings.elName);
+		if (!settings.elName) console.warn('createController: invalid settings.elName = "' + _id2 + '"');
+	}
+	var str = '';
+	if (!settings.elName) {
+		if (options.axisName) settings.elName = document.getElementById(options.axisName + 'Name');
+		if (!settings.elName) {
+			settings.elName = document.createElement('span');
+			settings.controller.parentElement.insertBefore(settings.elName, settings.controller);
+			str = ' = ';
+		}
+	}
+	if (settings.elName.innerHTML !== '') return;
+	settings.elName.innerHTML = name() + str;
+}
 
 /**
  * options of the canvas
@@ -7616,6 +7721,7 @@ if (WEBGL.isWebGLAvailable() === false) {
 			document.body.appendChild(WEBGL.getWebGLErrorMessage());
 			alert(WEBGL.getWebGLErrorMessage().innerHTML);
 }
+var boCreateControllers;
 var Options =
 function Options(options) {
 			var _Object$definePropert;
@@ -7623,34 +7729,24 @@ function Options(options) {
 			var _this = this;
 			options = options || {};
 			if (options.boOptions) return options;
+			var lang;
 			if (options.a === undefined) options.a = 1;
 			if (options.b === undefined) options.b = 0;
 			this.setW = function (optionsCur) {
 						optionsCur = optionsCur || options;
-						var axisName = 'w';
 						optionsCur.scales = optionsCur.scales || {};
-						optionsCur.scales.w = optionsCur.scales.w || {};
 						var scale = optionsCur.scales.w;
-						scale.name = scale.name || axisName;
-						if (!optionsCur.palette) this.setPalette(optionsCur);
-						scale.min = scale.min === undefined ? 0 : scale.min;
-						scale.max = scale.max === undefined ? new three$1.THREE.Vector4().w : scale.max;
+						if (!optionsCur.palette) _this.setPalette(optionsCur);
 			};
 			options.scales = options.scales || {};
 			var boCreateScale = !options.scales.x && !options.scales.y && !options.scales.z;
 			function setScale(axisName) {
 						if (boCreateScale) options.scales[axisName] = options.scales[axisName] || {};
 						if (!options.scales[axisName]) return;
-						options.scales[axisName].name = options.scales[axisName].name || axisName;
-						options.scales[axisName].min = options.scales[axisName].min === undefined ? -1 : options.scales[axisName].min;
-						options.scales[axisName].max = options.scales[axisName].max === undefined ? 1 : options.scales[axisName].max;
 			}
 			setScale('x');
 			setScale('y');
 			setScale('z');
-			options.scales.setW = function () {
-						_this.setW();
-			};
 			options.point = options.point || {};
 			options.point.size = options.point.size || 5.0;
 			options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
@@ -7676,7 +7772,7 @@ function Options(options) {
 						switch (this.getLanguageCode()) {
 									case 'ru':
 												lang.defaultButton = 'Восстановить';
-												lang.defaultTitle = 'Восстановить положение сцены и проирывателя.';
+												lang.defaultTitle = 'Восстановить положение камеры и проирывателя.';
 												break;
 						}
 						var scenePosition = new three$1.THREE.Vector3().copy(scene.position),
@@ -7864,6 +7960,7 @@ function Options(options) {
 																		if (this[propertyName] === undefined) console.error('Dat: dat.' + propertyName + ' key is hidden');
 															}
 												};
+												if (options.dat === false) return options.dat;
 												options.dat = new Dat(options.dat);
 												if (options.dat.gui) {
 															setTimeout(function () {
@@ -7903,6 +8000,133 @@ function Options(options) {
 						},
 						scales: {
 									get: function get$$1() {
+												var Scales =
+												function Scales(scales) {
+															classCallCheck(this, Scales);
+															var Scale =
+															function Scale(scales, axisName) {
+																		classCallCheck(this, Scale);
+																		var scale = scales[axisName];
+																		this.isAxis = function () {
+																					if (!scales || !scales.x && !scales.y && !scales.z || scale) return true;
+																					return false;
+																		};
+																		Object.defineProperties(this, {
+																					boScale: {
+																								get: function get$$1() {
+																											return true;
+																								}
+																					},
+																					min: {
+																								get: function get$$1() {
+																											if (!scale || !scale.min) return axisName === 'w' ? 0 : -1;
+																											return scale.min;
+																								}
+																					},
+																					max: {
+																								get: function get$$1() {
+																											if (!scale || !scale.max) return axisName === 'w' ? new three$1.THREE.Vector4().w : 1;
+																											return scale.max;
+																								}
+																					},
+																					name: {
+																								get: function get$$1() {
+																											if (!scale || !scale.name) return axisName;
+																											return scale.name;
+																								}
+																					},
+																					marks: {
+																								get: function get$$1() {
+																											if (!scale.marks) scale.marks = 3;
+																											return scale.marks;
+																								}
+																					}
+																		});
+																		for (var propertyName in scale) {
+																					if (this[propertyName] === undefined) console.error('Options.Scales: scale.' + propertyName + ' key is hidden');
+																		}
+															};
+															var scalesObject = {
+																		x: new Scale(options.scales, 'x'),
+																		y: new Scale(options.scales, 'y'),
+																		z: new Scale(options.scales, 'z'),
+																		w: new Scale(options.scales, 'w')
+															};
+															Object.defineProperties(this, {
+																		boScales: {
+																					get: function get$$1() {
+																								return true;
+																					}
+																		},
+																		x: {
+																					get: function get$$1() {
+																								return scalesObject.x;
+																					},
+																					set: function set$$1(x) {
+																								scales.x = x;
+																					}
+																		},
+																		y: {
+																					get: function get$$1() {
+																								return scalesObject.y;
+																					},
+																					set: function set$$1(y) {
+																								scales.y = y;
+																					}
+																		},
+																		z: {
+																					get: function get$$1() {
+																								return scalesObject.z;
+																					},
+																					set: function set$$1(z) {
+																								scales.z = z;
+																					}
+																		},
+																		w: {
+																					get: function get$$1() {
+																								return scalesObject.w;
+																					},
+																					set: function set$$1(w) {
+																								scales.w = w;
+																					}
+																		},
+																		setW: {
+																					get: function get$$1() {
+																								return _this.setW;
+																					}
+																		},
+																		display: {
+																					get: function get$$1() {
+																								if (scales.display === undefined) scales.display = true;
+																								return scales.display;
+																					},
+																					set: function set$$1(display) {
+																								scales.display = display;
+																					}
+																		},
+																		text: {
+																					get: function get$$1() {
+																								if (scales.text === undefined) scales.text = {};
+																								return scales.text;
+																					},
+																					set: function set$$1(text) {
+																								scales.text = text;
+																					}
+																		},
+																		posAxesIntersection: {
+																					get: function get$$1() {
+																								return scales.posAxesIntersection;
+																					},
+																					set: function set$$1(posAxesIntersection) {
+																								scales.posAxesIntersection = posAxesIntersection;
+																					}
+																		}
+															});
+															for (var propertyName in scales) {
+																		if (this[propertyName] === undefined) console.error('Options: scales.' + propertyName + ' key is hidden');
+															}
+												};
+												if (!options.scales.boScales) options.scales = new Scales(options.scales);
 												return options.scales;
 									},
 									set: function set$$1(scales) {
@@ -7911,19 +8135,18 @@ function Options(options) {
 						},
 						palette: {
 									get: function get$$1() {
-												if (options.palette !== undefined) {
-															switch (_typeof(options.palette)) {
-																		case 'number':
-																					options.palette = new ColorPicker$1.palette({ palette: options.palette });
-																					break;
-																		case 'boolean':
-																					if (options.palette) options.palette = new ColorPicker$1.palette();
-																					break;
-																		default:
-																					{
-																								if (options.palette instanceof ColorPicker$1.palette === false) console.error('MyThree: invalid typeof options.palette: ' + _typeof(options.palette));
-																					}
-															}
+												if (options.palette === undefined) options.palette = true;
+												switch (_typeof(options.palette)) {
+															case 'number':
+																		options.palette = new ColorPicker$1.palette({ palette: options.palette });
+																		break;
+															case 'boolean':
+																		if (options.palette) options.palette = new ColorPicker$1.palette();
+																		break;
+															default:
+																		{
+																					if (options.palette instanceof ColorPicker$1.palette === false) console.error('MyThree: invalid typeof options.palette: ' + _typeof(options.palette));
+																		}
 												}
 												return options.palette;
 									}
@@ -8074,11 +8297,104 @@ function Options(options) {
 									if (options.guiSelectPoint) console.error('duplicate guiSelectPoint.');
 									options.guiSelectPoint = guiSelectPoint;
 						}
+			}), defineProperty(_Object$definePropert, 'controllers', {
+						get: function get$$1() {
+									var Controllers =
+									function Controllers(controllers) {
+												classCallCheck(this, Controllers);
+												controllers = controllers || {};
+												Object.defineProperties(this, {
+															boControllers: {
+																		get: function get$$1() {
+																					return true;
+																		}
+															},
+															t: {
+																		get: function get$$1() {
+																					if (controllers.t === null) console.error('options.controllers.t = ' + controllers.t);
+																					var elTime = document.getElementById('time');
+																					if (!controllers.t) {
+																								if (!elTime) return;
+																								controllers.t = {
+																											elName: document.getElementById('tName')
+																								};
+																					}
+																					if (!controllers.t.controller && elTime) controllers.t.controller = elTime;
+																					if (controllers.t) {
+																								createController(controllers.t, 't', function () {
+																											return options.playerOptions && options.playerOptions.name ? options.playerOptions.name : 't';
+																								}, {
+																											onchange: function onchange(event) {
+																														if (!options.player) {
+																																	console.error('options.controllers.t.onchange: create Player instance first. ' + controllers.t.value);
+																																	return;
+																														}
+																														if (options.player.setTime(controllers.t.controller.value) === false) {
+																																	alert(lang.timeAlert + controllers.t.controller.value);
+																																	controllers.t.controller.focus();
+																														}
+																											}
+																								});
+																								if (typeof lang !== 'undefined' && controllers.t.controller.title === '') controllers.t.controller.title = lang.controllerTTitle;
+																					}
+																					return controllers.t;
+																		}
+															},
+															player: {
+																		get: function get$$1() {
+																					return controllers.player;
+																		}
+															}
+												});
+												for (var propertyName in controllers) {
+															if (this[propertyName] === undefined) console.error('Controllers: controllers.' + propertyName + ' key is hidden');
+												}
+									};
+									if (boCreateControllers === undefined) {
+												boCreateControllers = true;
+												var time = document.getElementById('time'),
+												    prev = document.getElementById('prev'),
+												    play = document.getElementById('play'),
+												    next = document.getElementById('next'),
+												    boPlayer = prev || play || next ? true : false,
+												    boControllers = time || boPlayer ? true : false;
+												if (!options.controllers && boControllers) {
+															options.controllers = { t: {} };
+															if (time) options.controllers.t.controller = time;
+												}
+												if (options.controllers) {
+															if (!options.controllers.player && boPlayer) options.controllers.player = {};
+															if (options.controllers.player) {
+																		if (!options.controllers.player.buttonPrev && prev) options.controllers.player.buttonPrev = prev;
+																		if (!options.controllers.player.buttonPlay && play) options.controllers.player.buttonPlay = play;
+																		if (!options.controllers.player.buttonNext && next) options.controllers.player.buttonNext = next;
+															}
+												}
+									}
+									if (options.controllers && !options.controllers.boControllers) options.controllers = new Controllers(options.controllers);
+									return options.controllers;
+						}
 			}), _Object$definePropert));
 			for (var propertyName in options) {
 						if (this[propertyName] === undefined) console.error('Options: options.' + propertyName + ' key is hidden');
 			}
 			this.playerOptions.cameraTarget.init(this.cameraTarget, this, false);
+			lang = {
+						timeAlert: 'Invalid time fromat: ',
+						controllerTTitle: 'Current time.'
+			};
+			switch (this.getLanguageCode()) {
+						case 'ru':
+									lang.timeAlert = 'Неправильный формат времени: ';
+									lang.controllerTTitle = 'Текущее время.';
+									break;
+						default:
+									if (options.lang === undefined || options.lang.languageCode != languageCode) break;
+									Object.keys(options.lang).forEach(function (key) {
+												if (lang[key] === undefined) return;
+												lang[key] = options.lang[key];
+									});
+			}
 };
 Options.findSpriteTextIntersection = function (scene) {
 			var spriteTextIntersection;
@@ -8329,12 +8645,16 @@ function Player(group) {
 						return t;
 			};
 			this.setTime = function (t) {
-						this.selectScene(parseInt((t - options.playerOptions.min) / options.playerOptions.dt));
+						return this.selectScene(parseInt((t - options.playerOptions.min) / options.playerOptions.dt));
 			};
 			this.selectScene = function (index) {
 						if (index === undefined) {
 									onSelectScene(selectSceneIndex);
-									return;
+									return true;
+						}
+						if (isNaN(index)) {
+									console.error('Player.selectScene: index = ' + index);
+									return false;
 						}
 						index = parseInt(index);
 						if (options.playerOptions.max !== null) {
@@ -8345,6 +8665,7 @@ function Player(group) {
 									if (selectSceneIndex < index) selectSceneIndex++;else selectSceneIndex--;
 									onSelectScene(selectSceneIndex);
 						}
+						return true;
 			};
 			this.next = function () {
 						_this.selectScene(selectSceneIndex + 1);
@@ -8523,6 +8844,7 @@ function Player(group) {
 									classCallCheck(this, _class);
 									var player = options.player,
 									    getLanguageCode = options.getLanguageCode;
+									player.createControllersButtons(options);
 									gui = gui || options.dat.gui;
 									if (!gui || options.dat.playController === false) {
 												var _this2 = possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, {}));
@@ -8746,6 +9068,49 @@ function Player(group) {
 						}
 						scale();
 			};
+			this.createControllersButtons = function (options) {
+						if (!options.controllers || !options.controllers.player) return;
+						var settings = options.controllers.player;
+						if (settings.buttonPrev === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonPrev = ' + settings.buttonPrev);
+						if (settings.buttonPrev) {
+									var buttonPrev = typeof settings.buttonPrev === 'string' ? document.getElementById(settings.buttonPrev) : settings.buttonPrev;
+									if (buttonPrev === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonPrev = ' + settings.buttonPrev);
+									if (buttonPrev) {
+												buttonPrev.value = lang.prevSymbol;
+												buttonPrev.title = lang.prevSymbolTitle;
+												buttonPrev.onclick = function (event) {
+															if (options.player) options.player.prev();
+												};
+												settings.buttonPrev = buttonPrev;
+									}
+						}
+						if (settings.buttonPlay === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonPlay = ' + settings.buttonPlay);
+						if (settings.buttonPlay) {
+									var buttonPlay = typeof settings.buttonPlay === 'string' ? document.getElementById(settings.buttonPlay) : settings.buttonPlay;
+									if (buttonPlay === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonPlay = ' + settings.buttonPlay);
+									if (buttonPlay) {
+												buttonPlay.value = playing ? lang.pause : lang.playSymbol;
+												buttonPlay.title = playing ? lang.pauseTitle : lang.playTitle;
+												buttonPlay.onclick = function (event) {
+															if (options.player) options.player.play3DObject();
+												};
+												settings.buttonPlay = buttonPlay;
+									}
+						}
+						if (settings.buttonNext === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonNext = ' + settings.buttonNext);
+						if (settings.buttonNext) {
+									var buttonNext = typeof settings.buttonNext === 'string' ? document.getElementById(settings.buttonNext) : settings.buttonNext;
+									if (buttonNext === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonNext = ' + settings.buttonNext);
+									if (buttonNext) {
+												buttonNext.value = lang.nextSymbol;
+												buttonNext.title = lang.nextSymbolTitle;
+												buttonNext.onclick = function (event) {
+															if (options.player) options.player.next();
+												};
+												settings.buttonNext = buttonNext;
+									}
+						}
+			};
 			var _canvasMenu;
 			this.createCanvasMenuItem = function (canvasMenu) {
 						var getLanguageCode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {
@@ -8800,6 +9165,10 @@ function Player(group) {
 												var elMenuButtonPlay = canvasMenu.querySelector('#menuButtonPlay');
 												elMenuButtonPlay.innerHTML = name;
 												elMenuButtonPlay.title = title;
+												if (options.controllers && options.controllers.player && options.controllers.player.buttonPlay) {
+															options.controllers.player.buttonPlay.value = name;
+															options.controllers.player.buttonPlay.title = title;
+												}
 									},
 									onChangeRepeat: function onChangeRepeat() {
 												canvasMenu.querySelector('#menuButtonRepeat').title = options.playerOptions.repeat ? lang.repeatOff : lang.repeatOn;
@@ -8841,7 +9210,9 @@ function Player(group) {
 						return elSlider;
 			};
 			this.setIndex = function (index, title) {
-						if (_typeof(this.PlayController) === "object") this.PlayController.setValue(this.getTime());
+						var t = this.getTime();
+						if (options.controllers && options.controllers.t) options.controllers.t.controller.value = t;
+						if (_typeof(this.PlayController) === "object") this.PlayController.setValue(t);
 						var elSlider = getSliderElement();
 						if (elSlider) {
 									elSlider.value = index;
@@ -9072,6 +9443,37 @@ Player$1.execFunc = function (funcs, axisName, t) {
 			}
 			return;
 };
+var lang$1;
+var Ids = function Ids() {
+			classCallCheck(this, Ids);
+			function addKeys(axisName) {
+						function keyValue(controllerId) {
+									var id = axisName + controllerId;
+									return {
+												get controllerId() {
+															return this.boUsed ? undefined : id;
+												},
+												get elController() {
+															return document.getElementById(this.controllerId);
+												},
+												nameId: id + 'Name',
+												get elName() {
+															return document.getElementById(this.nameId);
+												}
+									};
+						}
+						return {
+									func: keyValue('Func'),
+									position: keyValue('Position'),
+									worldPosition: keyValue('WorldPosition')
+						};
+			}
+			this.x = addKeys('x');
+			this.y = addKeys('y');
+			this.z = addKeys('z');
+			this.w = addKeys('w');
+};
+var ids = new Ids();
 Player$1.selectMeshPlayScene = function (mesh) {
 			var settings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 			assign$1();
@@ -9124,6 +9526,7 @@ Player$1.selectMeshPlayScene = function (mesh) {
 									setPosition('x', 'setX');
 									setPosition('y', 'setY');
 									setPosition('z', 'setZ');
+									setPosition('w', 'setW');
 									var color = void 0;
 									function getColor() {
 												if (mesh.userData.player.palette) color = mesh.userData.player.palette.toColor(value, min, max);else if (options.palette) color = options.palette.toColor(value, min, max);else {
@@ -9152,17 +9555,8 @@ Player$1.selectMeshPlayScene = function (mesh) {
 															if (funcs.w.max !== undefined) max = funcs.w.max;
 															getColor();
 												}
-									} else if (typeof funcs.w === "number" && options.palette) color = options.palette.toColor(funcs.w, min, max);
-									if (color) {
-												if (!mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors) console.error('Player.selectMeshPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors');
-												if (!Player$1.setColorAttribute(attributes, i, color) && funcs instanceof THREE.Vector4) {
-															mesh.geometry.setAttribute('color', new THREE.Float32BufferAttribute(Player$1.getColors(arrayFuncs, {
-																		positions: mesh.geometry.attributes.position,
-																		options: options
-															}), 4));
-															if (!Player$1.setColorAttribute(attributes, i, color)) console.error('Player.selectMeshPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute');
-												}
 									}
+									color = setColorAttibute(funcs.w === undefined ? new THREE.Vector4().w : typeof funcs.w === "number" ? funcs.w : Player$1.execFunc(funcs, 'w', t, options), mesh, i, color);
 									if (needsUpdate) attributes.position.needsUpdate = true;
 									if (funcs.trace && !funcs.line) {
 												funcs.line = new Player$1.traceLine(options);
@@ -9183,11 +9577,172 @@ Player$1.selectMeshPlayScene = function (mesh) {
 			if (mesh.scale.x <= 0) console.error(message + 'x = ' + mesh.scale.x);
 			if (mesh.scale.y <= 0) console.error(message + 'y = ' + mesh.scale.y);
 			if (mesh.scale.z <= 0) console.error(message + 'z = ' + mesh.scale.z);
-			if (!options || !options.guiSelectPoint) return;
+			function setColorAttibute(value, mesh, index, color) {
+						if (options.palette) color = options.palette.toColor(value, options.scales.w.min, options.scales.w.max);
+						if (!color) return;
+						if (!mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors) console.error('Player.selectMeshPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors');
+						var attributes = mesh.geometry.attributes,
+						    arrayFuncs = mesh.userData.player.arrayFuncs;
+						if (!Player$1.setColorAttribute(attributes, index, color) && arrayFuncs[index] instanceof THREE.Vector4) {
+									if (mesh.userData.player && arrayFuncs) {
+												mesh.geometry.setAttribute('color', new THREE.Float32BufferAttribute(Player$1.getColors(arrayFuncs, {
+															positions: attributes.position,
+															options: options
+												}), 4));
+												if (!Player$1.setColorAttribute(attributes, index, color)) console.error('Player.selectMeshPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute');
+									} else console.error('Player.selectMeshPlayScene: set color attribute failed. Invalid mesh.userData.player.arrayFuncs');
+						}
+						return color;
+			}
+			if (mesh.userData.player && mesh.userData.player.arrayFuncs && mesh.userData.player.arrayFuncs instanceof Array) mesh.userData.player.arrayFuncs.forEach(function (func, index) {
+						if (func.controllers) {
+									var setPosition = function setPosition(value, axisName) {
+												var axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : undefined;
+												if (axisName === 'w') {
+															setColorAttibute(value, mesh, index);
+															if (options.guiSelectPoint) options.guiSelectPoint.update();
+												}
+												var indexValue = axesId + mesh.geometry.attributes.position.itemSize * index,
+												    valueOld = mesh.geometry.attributes.position.array[indexValue];
+												mesh.geometry.attributes.position.array[indexValue] = value;
+												var axisControllers = func.controllers[axisName];
+												if (isNaN(mesh.geometry.attributes.position.array[indexValue])) {
+															alert(lang$1.positionAlert + value);
+															var controller = axisControllers.position.controller;
+															controller.focus();
+															controller.value = valueOld;
+															mesh.geometry.attributes.position.array[indexValue] = valueOld;
+															return;
+												}
+												mesh.geometry.attributes.position.needsUpdate = true;
+												if (options.axesHelper) options.axesHelper.updateAxes();
+												if (options.guiSelectPoint) options.guiSelectPoint.update();
+												if (axisControllers.worldPosition && axisControllers.worldPosition.controller) {
+															var _controller = axisControllers.worldPosition.controller;
+															_controller.innerHTML = getObjectPosition(mesh, index)[axisName];
+												}
+									};
+									var createControllers = function createControllers(axisName) {
+												var axisControllers = func.controllers[axisName];
+												if (axisControllers === false) return;
+												var position = 'position';
+												if (!axisControllers && (ids[axisName].func.elController || ids[axisName].position.elController || ids[axisName].worldPosition.elController)) {
+															axisControllers = {};
+															func.controllers[axisName] = axisControllers;
+												}
+												if (!axisControllers) return;
+												function addKey(keyName) {
+															if (!ids[axisName][keyName].elController) return;
+															if (!axisControllers[keyName]) {
+																		if (!ids[axisName][keyName].boUsed) {
+																					axisControllers[keyName] = {
+																								controller: ids[axisName][keyName].elController,
+																								elName: ids[axisName][keyName].elName ? ids[axisName][keyName].elName : false
+																					};
+																					ids[axisName][keyName].boUsed = true;
+																					if (keyName === position && axisName === 'w') axisControllers[keyName].elSlider = true;
+																		} else console.warn('Player.selectMeshPlayScene createControllers: Same controller is using for different points. Controller ID is "' + ids[axisName][keyName].controllerId + '""');
+															}
+												}
+												addKey('func');
+												addKey(position);
+												addKey('worldPosition');
+												createController(axisControllers.func, ids[axisName].func.controllerId, function () {
+															return options.scales[axisName].name + ' = f(t)';
+												}, {
+															value: func[axisName],
+															title: axisName === 'x' ? lang$1.controllerXFunctionTitle : axisName === 'y' ? lang$1.controllerYFunctionTitle : axisName === 'z' ? lang$1.controllerZFunctionTitle : axisName === 'w' ? lang$1.controllerWFunctionTitle : '',
+															onchange: function onchange(event) {
+																		try {
+																					func[axisName] = event.currentTarget.value;
+																					var value = Player$1.execFunc(func, axisName, options.player.getTime(), options);
+																					if (axisControllers.position && axisControllers.position.controller) {
+																								var controller = axisControllers.position.controller;
+																								controller.onchange({ currentTarget: { value: value } });
+																								controller.value = value;
+																					} else setPosition(value, axisName);
+																					if (options.guiSelectPoint) options.guiSelectPoint.update();
+																		} catch (e) {
+																					alert('Axis: ' + options.scales[axisName].name + '. Function: "' + func[axisName] + '". ' + e);
+																					event.currentTarget.focus();
+																		}
+															}
+												});
+												createController(axisControllers.position, axisName + 'Position', function () {
+															return options.scales[axisName].name;
+												}, {
+															value: positionLocal[axisName],
+															title: axisName === 'x' ? lang$1.controllerXTitle : axisName === 'y' ? lang$1.controllerYTitle : axisName === 'z' ? lang$1.controllerZTitle : axisName === 'w' ? lang$1.controllerWTitle : '',
+															onchange: function onchange(event) {
+																		setPosition(event.currentTarget.value, axisName);
+															},
+															axisName: axisName
+												});
+												createController(axisControllers.worldPosition, axisName + 'WorldPosition', function () {
+															return lang$1.controllerWorld + ' ' + options.scales[axisName].name;
+												}, {
+															value: getWorldPosition(mesh, positionLocal)[axisName],
+															title: axisName === 'x' ? lang$1.controllerXWorldTitle : axisName === 'y' ? lang$1.controllerYWorldTitle : axisName === 'z' ? lang$1.controllerZWorldTitle : axisName === 'w' ? lang$1.controllerWTitle : ''
+												});
+									};
+									if (!lang$1) {
+												lang$1 = {
+															controllerXTitle: 'X position',
+															controllerYTitle: 'Y position',
+															controllerZTitle: 'Z position',
+															controllerWTitle: 'color index',
+															controllerWorld: 'World',
+															controllerXWorldTitle: 'X world position',
+															controllerYWorldTitle: 'Y world position',
+															controllerZWorldTitle: 'Z world position',
+															controllerWWorldTitle: 'color index',
+															controllerXFunctionTitle: 'X = f(t)',
+															controllerYFunctionTitle: 'Y = f(t)',
+															controllerZFunctionTitle: 'Z = f(t)',
+															controllerWFunctionTitle: 'W = f(t)',
+															positionAlert: 'Invalid position fromat: '
+												};
+												switch (options.getLanguageCode()) {
+															case 'ru':
+																		lang$1.controllerXTitle = 'Позиция X';
+																		lang$1.controllerYTitle = 'Позиция Y';
+																		lang$1.controllerZTitle = 'Позиция Z';
+																		lang$1.controllerWTitle = 'Индекс цвета';
+																		lang$1.controllerWorld = 'Абсолютный';
+																		lang$1.controllerXWorldTitle = 'Абсолютная позиция X';
+																		lang$1.controllerYWorldTitle = 'Абсолютная позиция Y';
+																		lang$1.controllerZWorldTitle = 'Абсолютная позиция Z';
+																		lang$1.controllerWWorldTitle = 'Индекс цвета';
+																		lang$1.positionAlert = 'Неправильный формат позиции точки: ';
+																		break;
+															default:
+																		if (options.lang === undefined || options.lang.languageCode != languageCode) break;
+																		Object.keys(options.lang).forEach(function (key) {
+																					if (lang$1[key] === undefined) return;
+																					lang$1[key] = options.lang[key];
+																		});
+												}
+									}
+									var positionLocal = getObjectLocalPosition(mesh, index);
+									if (func.name) {
+												if (!func.controllers.pointName) func.controllers.pointName = 'pointName';
+												var elPointName = typeof func.controllers.pointName === "string" ? document.getElementById(func.controllers.pointName) : func.controllers.pointName;
+												if (elPointName) elPointName.innerHTML = func.name;
+									}
+									createControllers('x');
+									createControllers('y');
+									createControllers('z');
+									createControllers('w');
+						}
+			});
+			if (!options || !options.guiSelectPoint) {
+						if (options.axesHelper) options.axesHelper.movePosition();
+						return;
+			}
 			options.guiSelectPoint.setMesh();
 			var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
 			if (selectedPointIndex !== -1 && options.guiSelectPoint.isSelectedMesh(mesh)) {
-						options.guiSelectPoint.setPosition(                                                    {
+						options.guiSelectPoint.setPosition({
 									object: mesh,
 									index: selectedPointIndex
 						});
@@ -9209,7 +9764,7 @@ Player$1.getPoints = function (arrayFuncs, optionsPoints) {
 			optionsPoints = optionsPoints || {};
 			if (optionsPoints.t === undefined) optionsPoints.t = optionsPoints.options && optionsPoints.options.player ? optionsPoints.options.player.getSettings().options.playerOptions.min : 0;
 			var options = optionsPoints.options || new Options(),
-			    optionsDefault = { palette: options.palette };
+			    optionsDefault = new Options({ palette: options.palette });
 			options.setW(optionsDefault);
 			var wDefault = optionsDefault.scales.w.max;
 			for (var i = 0; i < arrayFuncs.length; i++) {
@@ -9218,7 +9773,7 @@ Player$1.getPoints = function (arrayFuncs, optionsPoints) {
 									if (item.vector === undefined) arrayFuncs[i] = new THREE.Vector4(item.x === undefined ? 0 : item.x, item.y === undefined ? 0 : item.y, item.z === undefined ? 0 : item.z, item.w === undefined ? 0 : item.w);else if (item.vector instanceof THREE.Vector2 === true || item.vector instanceof THREE.Vector3 === true || item.vector instanceof THREE.Vector4 === true) {
 												if (item.vector instanceof THREE.Vector2 === true) arrayFuncs[i].vector = new THREE.Vector3(item.vector.x === undefined ? 0 : item.vector.x, item.vector.y === undefined ? 0 : item.vector.y, item.vector.z === undefined ? 0 : item.vector.z);
 									} else {
-												if (item.vector.length === 4) arrayFuncs[i].vector = new THREE.Vector4(item.vector[0] === undefined ? 0 : item.vector[0], item.vector[1] === undefined ? 0 : item.vector[1], item.vector[2] === undefined ? 0 : item.vector[2], item.vector[3] === undefined ? 0 : item.vector[3]);else if (item.vector.length === 3) arrayFuncs[i].vector = new THREE.Vector3(item.vector[0] === undefined ? 0 : item.vector[0], item.vector[1] === undefined ? 0 : item.vector[1], item.vector[2] === undefined ? 0 : item.vector[2]);else console.error('Player.getPoints(...) falied! item.vector.length = ' + item.vector.length);
+												if (item.vector.length === 4) arrayFuncs[i].vector = new THREE.Vector4(item.vector[0] === undefined ? 0 : item.vector[0], item.vector[1] === undefined ? 0 : item.vector[1], item.vector[2] === undefined ? 0 : item.vector[2], item.vector[3] === undefined ? 0 : item.vector[3]);else if (item.vector.length === 3) arrayFuncs[i].vector = new THREE.Vector3(item.vector[0] === undefined ? 0 : item.vector[0], item.vector[1] === undefined ? 0 : item.vector[1], item.vector[2] === undefined ? 0 : item.vector[2]);else if (item.vector.length < 3) arrayFuncs[i].vector = new THREE.Vector4(item.vector[0] === undefined ? 0 : item.vector[0], item.vector[1] === undefined ? 0 : item.vector[1]);else console.error('Player.getPoints(...) falied! item.vector.length = ' + item.vector.length);
 									}
 						}
 			}
@@ -9236,6 +9791,7 @@ Player$1.getPoints = function (arrayFuncs, optionsPoints) {
 									}
 									if (funcs.name !== undefined) funcs.vector.name = funcs.name;
 									if (funcs.trace) funcs.vector.trace = funcs.trace;
+									if (funcs.controllers) funcs.vector.controllers = funcs.controllers;
 									if (funcs.cameraTarget) {
 												funcs.vector.cameraTarget = funcs.cameraTarget;
 												delete funcs.cameraTarget;
@@ -9288,7 +9844,8 @@ Player$1.getColors = function (arrayFuncs, optionsColor) {
 												if (w instanceof Function && !optionsColor.options.player && boColorWarning) {
 															boColorWarning = false;
 												}
-												var color = optionsColor.options.palette.toColor(funcs === undefined ? new THREE.Vector4().fromBufferAttribute(optionsColor.positions, i).w : w instanceof Function ? w(optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0) : w, min, max);
+												var t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
+												var color = optionsColor.options.palette.toColor(funcs === undefined ? new THREE.Vector4().fromBufferAttribute(optionsColor.positions, i).w : w instanceof Function ? w(t) : typeof w === "string" ? Player$1.execFunc(funcs, 'w', t, optionsColor.options) : w === undefined ? new THREE.Vector4().w : w, min, max);
 												optionsColor.colors.push(color.r, color.g, color.b);
 									} else if (optionsColor.colors instanceof THREE.Float32BufferAttribute) vector = new THREE.Vector3(1, 1, 1);else optionsColor.colors.push(1, 1, 1);
 						if (optionsColor.opacity !== undefined) {
@@ -9687,6 +10244,12 @@ function MyPoints(arrayFuncs, group, settings) {
 	pointsOptions.scale = pointsOptions.scale || new THREE.Vector3(1, 1, 1);
 	pointsOptions.rotation = pointsOptions.rotation || new THREE.Vector3();
 	pointsOptions.group = group;
+	if (pointsOptions.name !== '' && pointsOptions.elements) {
+		if (pointsOptions.elements.pointsName === null) console.warn('MyPoints: Points name element is not exists');
+		if (!pointsOptions.elements.pointsName) pointsOptions.elements.pointsName = 'pointsName';
+		var elPointsName = typeof pointsOptions.elements.pointsName === "string" ? document.getElementById(pointsOptions.elements.pointsName) : pointsOptions.elements.pointsName;
+		if (elPointsName) elPointsName.innerHTML = pointsOptions.name;else console.warn('MyPoints: Element with id: "' + pointsOptions.elements.pointsName + '" is not exists');
+	}
 	Player$1.assign();
 	if (pointsOptions.shaderMaterial !== false) getShaderMaterialPoints(group, arrayFuncs,
 	function (points) {
@@ -10088,11 +10651,11 @@ function CanvasMenu(renderer) {
 				return elMenu.querySelector(selectors);
 		};
 		elMenu.addEventListener('mouseenter', function (event) {
-				settings.options.dat.mouseenter = true;
+				if (settings.options.dat) settings.options.dat.mouseenter = true;
 				if (settings.onOver) settings.onOver(true);
 		});
 		elMenu.addEventListener('mouseleave', function (event) {
-				settings.options.dat.mouseenter = false;
+				if (settings.options.dat) settings.options.dat.mouseenter = false;
 				if (settings.onOver) settings.onOver(false);
 		});
 		if (options.player) options.player.addSliderEvents();
@@ -10206,9 +10769,7 @@ function AxesHelper(group, options) {
 	if (options.axesHelper === false) return;
 	options.camera.fov = options.camera.fov || 50;
 	options.scales = options.scales || {};
-	options.scales.display = options.scales.display !== undefined ? options.scales.display : true;
 	options.scales.color = options.scales.color || 'rgba(255, 255, 255, 0.5)';
-	options.scales.text = options.scales.text || {};
 	options.scales.text.textHeight = options.scales.text.textHeight || 0.04;
 	options.scales.text.precision = options.scales.text.precision || 4;
 	options.scales.text.rect = options.scales.text.rect || {};
@@ -10217,7 +10778,6 @@ function AxesHelper(group, options) {
 	function setScale(axisName) {
 		var scale = options.scales[axisName];
 		if (!scale) return;
-		if (scale.marks === undefined) scale.marks = 3;
 		if (scale.offset === undefined) scale.offset = 0.1;
 		if (scale.zoomMultiplier === undefined) scale.zoomMultiplier = 1.1;
 	}
@@ -10238,7 +10798,7 @@ function AxesHelper(group, options) {
 		var group = new THREE.Group();
 		group.visible = options.scales.display;
 		var scale = options.scales[axisName];
-		if (!scale) return;
+		if (!scale.isAxis()) return;
 		var color = options.scales.color,
 		    opacity = 1;
 		try {
@@ -10340,9 +10900,7 @@ function AxesHelper(group, options) {
 		var axisNameOptions = {
 			center: new THREE.Vector2(axisName === 'y' ? 1.1 : -0.1, axisName === 'y' ? 0 : -0.1),
 			group: group
-		};
-		scale.name = scale.name || axisName;
-		group.add(new SpriteText(scale.name, new THREE.Vector3(axisName === 'x' ? scale.max : 0, axisName === 'y' ? scale.max : 0, axisName === 'z' ? scale.max : 0), axisNameOptions));
+		};group.add(new SpriteText(scale.name, new THREE.Vector3(axisName === 'x' ? scale.max : 0, axisName === 'y' ? scale.max : 0, axisName === 'z' ? scale.max : 0), axisNameOptions));
 		group.add(new SpriteText(scale.name, new THREE.Vector3(axisName === 'x' ? scale.min : 0, axisName === 'y' ? scale.min : 0, axisName === 'z' ? scale.min : 0), axisNameOptions));
 	};
 	this.createAxis('x');
@@ -10378,7 +10936,7 @@ function AxesHelper(group, options) {
 		}
 		this.dottedLines = function (_intersection) {
 			intersection = _intersection;
-			var pointVertice = intersection instanceof THREE.Vector4 || intersection instanceof THREE.Vector3 ? intersection : getObjectPosition$1(intersection.object, intersection.index);
+			var pointVertice = intersection instanceof THREE.Vector4 || intersection instanceof THREE.Vector3 ? intersection : getObjectPosition(intersection.object, intersection.index);
 			if (groupDotLines !== undefined) {
 				var _dottedLine = function _dottedLine(axisName) {
 					var line;
@@ -10416,7 +10974,7 @@ function AxesHelper(group, options) {
 			}
 			createGroup();
 			function dottedLine(axisName) {
-				if (!options.scales[axisName]) return;
+				if (!options.scales[axisName].isAxis()) return;
 				var lineVertices = [new THREE.Vector3().copy(options.scales.posAxesIntersection), pointVertice];
 				lineVertices[0].x = axisName === 'x' ? lineVertices[1].x : verticeAxis('x');
 				lineVertices[0].y = axisName === 'y' ? lineVertices[1].y : verticeAxis('y');
@@ -10466,12 +11024,19 @@ function AxesHelper(group, options) {
 		};
 	}
 	dotLines = new dotLines(group);
+	var _intersection;
 	this.exposePosition = function (intersection) {
+		_intersection = intersection;
 		if (intersection === undefined) {
+			_intersection = undefined;
 			dotLines.remove();
 			return;
 		}
 		dotLines.dottedLines(intersection);
+	};
+	this.movePosition = function () {
+		if (!_intersection) return;
+		this.exposePosition(_intersection);
 	};
 	this.getGroup = function () {
 		return groupAxesHelper;
@@ -10880,7 +11445,7 @@ function AxesHelperGui(options, gui) {
 	    axesIntersectionControllers = { x: {}, y: {}, z: {} };
 	function axesIntersection(axisName) {
 		var scale = options.scales[axisName];
-		if (scale === undefined) return;
+		if (!scale.isAxis()) return;
 		var scaleControllers = axesIntersectionControllers[axisName];
 		scaleControllers.controller = fAxesIntersection.add({
 			value: options.scales.posAxesIntersection[axisName]
@@ -11311,7 +11876,7 @@ function functionsFolder(fParent, onFinishChange, options, vector) {
 															console.error('onFinishChange( ' + value + ' ): invalid type = ' + typeofValue);
 															return;
 									}
-									onFinishChange(func, axisName);
+									onFinishChange(func, axisName, value);
 									boAlert = false;
 						} catch (e) {
 									if (!boAlert) {
@@ -11387,6 +11952,16 @@ function functionsFolder(fParent, onFinishChange, options, vector) {
 			this.setFocus = function (axisName) {
 						cFunctions[axisName].domElement.childNodes[0].focus();
 						boError = true;
+			};
+			this.update = function (newVector) {
+						function updateAxis(axisName) {
+									if (cFunctions[axisName].getValue() === newVector[axisName]) return;
+									cFunctions[axisName].setValue(newVector[axisName]);
+						}
+						updateAxis('x');
+						updateAxis('y');
+						updateAxis('z');
+						updateAxis('w');
 			};
 };
 
@@ -11542,12 +12117,18 @@ function GuiSelectPoint(options) {
 						if (selectedPointIndex === undefined) selectedPointIndex = guiSelectPoint.getSelectedPointIndex();
 						if (selectedPointIndex === -1) return;
 						var mesh = cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh,
-						    position = getObjectPosition$1(mesh, selectedPointIndex);
+						    position = getObjectPosition(mesh, selectedPointIndex);
 						if (options.axesHelper !== undefined)
 									if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition({ object: mesh, index: selectedPointIndex });
 						if (cWorld.x) cWorld.x.setValue(position.x);
 						if (cWorld.y) cWorld.y.setValue(position.y);
 						if (cWorld.z) cWorld.z.setValue(position.z);
+						if (mesh.userData.player && mesh.userData.player.arrayFuncs && mesh.userData.player.arrayFuncs[selectedPointIndex] && mesh.userData.player.arrayFuncs[selectedPointIndex].controllers) {
+									var controllers = mesh.userData.player.arrayFuncs[selectedPointIndex].controllers;
+									if (controllers.x && controllers.x.controller) controllers.x.controller.value = position.x;
+									if (controllers.y && controllers.y.controller) controllers.y.controller.value = position.y;
+									if (controllers.z && controllers.z.controller) controllers.z.controller.value = position.z;
+						}
 			}
 			function setValue(controller, v) {
 						if (!controller) return;
@@ -11578,7 +12159,7 @@ function GuiSelectPoint(options) {
 						setValue(cX, positionLocal.x);
 						setValue(cY, positionLocal.y);
 						setValue(cZ, positionLocal.z);
-						var position = getObjectPosition$1(intersectionSelected.object, intersectionSelected.index);
+						var position = getObjectPosition(intersectionSelected.object, intersectionSelected.index);
 						setValue(cWorld.x, position.x);
 						setValue(cWorld.y, position.y);
 						setValue(cWorld.z, position.z);
@@ -11593,7 +12174,7 @@ function GuiSelectPoint(options) {
 						function isWObject() {
 									return _typeof(func.w) === 'object' && func.w instanceof THREE.Color === false;
 						}
-						var color = func === undefined || !attributes.color && !attributes.ca ? undefined : Array.isArray(func.w) || typeof func.w === "function" ? Player$1.execFunc(func, 'w', options.time, options) : isWObject() ? Player$1.execFunc(func.w, 'func', options.time, options) : func.w;
+						var color = func === undefined || !attributes.color && !attributes.ca ? undefined : Array.isArray(func.w) || typeof func.w === "function" ? Player$1.execFunc(func, 'w', options.time, options) : isWObject() ? Player$1.execFunc(func.w, 'func', options.time, options) : typeof func.w === "string" ? Player$1.execFunc(func, 'w', options.time, options) : func.w;
 						if (color === undefined) {
 									if (attributes.ca === undefined) {
 									} else {
@@ -11678,10 +12259,16 @@ function GuiSelectPoint(options) {
 						if (!mesh) return;
 						var index = this.getSelectedPointIndex();
 						if (index === -1) return;
-						var position = getObjectPosition$1(mesh, index);
+						var position = getObjectPosition(mesh, index);
 						if (cWorld.x) cWorld.x.setValue(position.x);
 						if (cWorld.y) cWorld.y.setValue(position.y);
 						if (cWorld.z) cWorld.z.setValue(position.z);
+						if (cW) cW.setValue(position.w);
+						var positionLocal = getObjectLocalPosition(mesh, index);
+						if (cX) cX.setValue(positionLocal.x);
+						if (cY) cY.setValue(positionLocal.y);
+						if (cZ) cZ.setValue(positionLocal.z);
+						funcFolder.update(mesh.userData.player.arrayFuncs[index]);
 			};
 			this.getMeshIndex = function (mesh) {
 						if (mesh === undefined) return mesh;
@@ -11789,6 +12376,7 @@ function GuiSelectPoint(options) {
 									if (selectedPointIndex === undefined) console.error('myThreejs.create.onloadScripts.init.guiSelectPoint.getSelectedPointIndex:  selectedPointIndex = ' + selectedPointIndex);
 									return selectedPointIndex;
 						}
+						if (!getMesh()) return -1;
 						var index = cPoints.__select.selectedOptions[0].index;
 						return index - 1;
 			};
@@ -11851,7 +12439,7 @@ function GuiSelectPoint(options) {
 						cMeshs = f3DObjects.add({ Meshs: lang.notSelected }, 'Meshs', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
 									value = parseInt(value);
 									mesh = getMesh();
-									if (!mesh.userData.boFrustumPoints) {
+									if (mesh && !mesh.userData.boFrustumPoints) {
 												if (!mesh.userData.player) mesh.userData.player = {};
 												if (!mesh.userData.player.arrayFuncs) {
 															var position = mesh.geometry.attributes.position;
@@ -11869,7 +12457,7 @@ function GuiSelectPoint(options) {
 									if (mesh === undefined) {
 												display = none;
 												mesh = undefined;
-												if (options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition$1(getMesh(), value));
+												if (options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition(getMesh(), value));
 									} else {
 												var displayDefaultButtons = mesh.userData.default === undefined ? none : block;
 												buttonScaleDefault.domElement.parentElement.parentElement.style.display = displayDefaultButtons;
@@ -11934,19 +12522,19 @@ function GuiSelectPoint(options) {
 									exposePosition();
 									if (options.frustumPoints) options.frustumPoints.updateCloudPoint(mesh);
 						}
-						if (options.scales.x) {
+						if (options.scales.x.isAxis()) {
 									cScaleX = dat.controllerZeroStep(fScale, scale, 'x', function (value) {
 												setScale('x', value);
 									});
 									dat.controllerNameAndTitle(cScaleX, options.scales.x.name);
 						}
-						if (options.scales.y) {
+						if (options.scales.y.isAxis()) {
 									cScaleY = dat.controllerZeroStep(fScale, scale, 'y', function (value) {
 												setScale('y', value);
 									});
 									dat.controllerNameAndTitle(cScaleY, options.scales.y.name);
 						}
-						if (options.scales.z) {
+						if (options.scales.z.isAxis()) {
 									cScaleZ = dat.controllerZeroStep(fScale, scale, 'z', function (value) {
 												setScale('z', value);
 									});
@@ -11964,7 +12552,7 @@ function GuiSelectPoint(options) {
 						var fPosition = fMesh.addFolder(lang.position);
 						function addAxisControllers(name) {
 									var scale = options.scales[name];
-									if (!scale) return;
+									if (!scale.isAxis()) return;
 									var axesName = scale.name,
 									    f = fPosition.addFolder(axesName);
 									f.add(new PositionController(function (shift) {
@@ -12000,7 +12588,7 @@ function GuiSelectPoint(options) {
 						var fRotation = fMesh.addFolder(lang.rotation);
 						function addRotationControllers(name) {
 									var scale = options.scales[name];
-									if (!scale) return;
+									if (!scale.isAxis()) return;
 									cRotations[name] = fRotation.add(new THREE.Vector3(), name, 0, Math.PI * 2, 1 / 360).onChange(function (value) {
 												var mesh = getMesh();
 												if (!mesh.userData.boFrustumPoints) {
@@ -12034,7 +12622,7 @@ function GuiSelectPoint(options) {
 												display = 'block';
 												_this.select({ object: getMesh(), index: value });
 									}
-									if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition$1(getMesh(), value));
+									if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition(getMesh(), value));
 									displayPointControllers(display);
 						});
 						cPoints.__select[0].selected = true;
@@ -12212,7 +12800,7 @@ function GuiSelectPoint(options) {
 									} else {
 												scale = options.axesHelper === undefined ? options.scales[axisName] :
 												options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
-												if (scale) controller = fPoint.add({
+												if (scale.isAxis()) controller = fPoint.add({
 															value: scale.min
 												}, 'value', scale.min, scale.max, (scale.max - scale.min) / 100).onChange(function (value) {
 															if (isReadOnlyController(controller)) return;
@@ -12224,7 +12812,7 @@ function GuiSelectPoint(options) {
 															if (options.frustumPoints) options.frustumPoints.updateCloudPointItem(points, intersection.index);
 												});
 									}
-									if (scale) dat.controllerNameAndTitle(controller, scale.name);
+									if (controller) dat.controllerNameAndTitle(controller, scale.name);
 									return controller;
 						}
 						cX = axesGui('x');
@@ -12261,7 +12849,7 @@ function GuiSelectPoint(options) {
 						}
 						function axesWorldGui(axisName) {
 									var scale = options.axesHelper === undefined ? options.scales[axisName] : options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
-									if (!scale) return;
+									if (!scale.isAxis()) return;
 									var controller = dat.controllerZeroStep(fPointWorld, { value: scale.min }, 'value');
 									controller.domElement.querySelector('input').readOnly = true;
 									dat.controllerNameAndTitle(controller, scale.name);
@@ -12295,7 +12883,7 @@ function GuiSelectPoint(options) {
 									}
 						}, 'defaultF');
 						dat.controllerNameAndTitle(cRestoreDefaultLocalPosition, lang.defaultButton, lang.defaultLocalPositionTitle);
-						funcFolder = new functionsFolder(fPoint, function (func, axisName) {
+						funcFolder = new functionsFolder(fPoint, function (func, axisName, value) {
 									var mesh = getMesh(),
 									    index = cPoints.__select.options.selectedIndex - 1,
 									    funcs = mesh.userData.player.arrayFuncs[index];
@@ -12309,8 +12897,6 @@ function GuiSelectPoint(options) {
 												}
 												parent = parent.parent;
 									}
-									var position = mesh.geometry.attributes.position,
-									    itemSize = position.itemSize;
 									var controller;
 									switch (axisName) {
 												case 'x':
@@ -12334,6 +12920,10 @@ function GuiSelectPoint(options) {
 															return;
 									}
 									setValue(controller, Player$1.execFunc(funcs, axisName, t, options));
+									if (funcs.controllers) {
+												var controllerObject = funcs.controllers[axisName];
+												if (controllerObject && controllerObject.func && controllerObject.func.controller) controllerObject.func.controller.value = value;
+									}
 						}, options, { x: '', y: '', z: '', w: '' });
 			}
 			this.getFrustumPoints = function () {
@@ -12449,10 +13039,8 @@ function MoveGroupGui(group, options) {
 						if (options.guiSelectPoint) options.guiSelectPoint.update();
 						cookie.setObject(cookieName, optionsGroup);
 			}
-			function scale(axes,
-			scaleControllers, axisName) {
-						if (axes === undefined) return;
-						axes.name = axes.name || axisName;
+			function scale(axes, scaleControllers, axisName) {
+						if (!axes.isAxis()) return;
 						function onclick(customController, action) {
 									var zoom = customController.controller.getValue();
 									axisZoom(axisName, action, zoom);
@@ -12859,11 +13447,13 @@ function FrustumPoints(camera, group, canvas) {
 								optionsShaderMaterial.base = optionsShaderMaterial.base || 100;
 								optionsShaderMaterial.square = optionsShaderMaterial.square !== undefined ? optionsShaderMaterial.square : false;
 								var cookie = options.dat.cookie,
-								    cookieName = options.dat.getCookieName('FrustumPoints');
+								    cookieName = options.dat ? options.dat.getCookieName('FrustumPoints') : 'FrustumPoints';
 								Object.freeze(optionsShaderMaterial);
-								cookie.getObject(cookieName, shaderMaterial, optionsShaderMaterial);
-								shaderMaterial.stereo.hide = optionsShaderMaterial.stereo.hide;
-								shaderMaterial.stereo.opacity = optionsShaderMaterial.stereo.opacity;
+								if (cookie) cookie.getObject(cookieName, shaderMaterial, optionsShaderMaterial);
+								if (shaderMaterial.stereo) {
+												shaderMaterial.stereo.hide = optionsShaderMaterial.stereo.hide;
+												shaderMaterial.stereo.opacity = optionsShaderMaterial.stereo.opacity;
+								}
 								var cloud = function cloud() {
 												var uniforms;
 												var distanceTableWidth;
@@ -13747,7 +14337,7 @@ function MyThree(createXDobjects, options) {
 			elDiv.appendChild(document.createElement('canvas'));
 			elContainer.appendChild(elDiv);
 			elContainer = elDiv;
-			if (three$1.dat) {
+			if (three$1.dat && options.dat !== false) {
 						options.dat = options.dat || {};
 						options.dat.parent = elContainer;
 			}
@@ -13786,7 +14376,7 @@ function MyThree(createXDobjects, options) {
 						if (requestId !== undefined) window.cancelAnimationFrame(requestId);else console.error('myThreejs.create.onloadScripts: requestId = ' + requestId);
 						clearThree(scene);
 						rendererSizeDefault.onFullScreenToggle(true);
-						alert(lang$1.webglcontextlost);
+						alert(lang$2.webglcontextlost);
 			}, false);
 			canvas.addEventListener("webglcontextrestored", function () {
 						console.warn('webglcontextrestored');
@@ -13869,7 +14459,7 @@ function MyThree(createXDobjects, options) {
 						});
 						if (options.player) new options.player.PlayController();
 						if (options.dat.gui) {
-									fOptions = options.dat.gui.addFolder(lang$1.settings);
+									fOptions = options.dat.gui.addFolder(lang$2.settings);
 									if (options.player) options.player.gui(fOptions);
 						}
 						if (fOptions) SpriteTextGui(scene, options, {
@@ -13924,6 +14514,28 @@ function MyThree(createXDobjects, options) {
 												},
 												onFullScreenToggle: function onFullScreenToggle(fullScreen) {
 															rendererSizeDefault.onFullScreenToggle(fullScreen);
+															function onFullScreenToggle(group, fullScreen) {
+																		setTimeout(function () {
+																					function recursion(children) {
+																								children.forEach(function (mesh) {
+																											recursion(mesh.children);
+																											if (mesh instanceof THREE.Group) {
+																														onFullScreenToggle(mesh, fullScreen);
+																														return;
+																											}
+																											if (mesh.userData.player === undefined || mesh.userData.player.arrayFuncs === undefined || typeof mesh.userData.player.arrayFuncs === "function") return;
+																											mesh.userData.player.arrayFuncs.forEach(function (vector) {
+																														if (vector.controllers && vector.controllers.w && vector.controllers.w.position && vector.controllers.w.position.elSlider) vector.controllers.w.position.elSlider.style.display = fullScreen ? 'block' : 'none';
+																														if (vector.line === undefined) return;
+																														vector.line.remove();
+																														vector.line = new Player$1.traceLine(options);
+																											});
+																								});
+																					}
+																					recursion(group.children);
+																		}, 0);
+															}
+															onFullScreenToggle(scene, fullScreen);
 												}
 									},
 									options: options
@@ -13942,7 +14554,7 @@ function MyThree(createXDobjects, options) {
 									if (options.guiSelectPoint) options.guiSelectPoint.add();
 						}
 						defaultPoint.size = options.point.size;
-						var pointName = options.dat.getCookieName('Point');
+						var pointName = options.dat ? options.dat.getCookieName('Point') : 'Point';
 						if (options.dat) options.dat.cookie.getObject(pointName, options.point, options.point);
 						if (createXDobjects) createXDobjects(group, options);
 						if (options.frustumPoints) options.frustumPoints.create(renderer);
@@ -13963,8 +14575,8 @@ function MyThree(createXDobjects, options) {
 									}
 									new CameraGui(camera, options, fOptions);
 									var scales = options.axesHelper === false ? options.scales : options.axesHelper.options.scales;
-									pointLight1.controls({ group: group, folder: fOptions, folderName: lang$1.light + ' 1' });
-									pointLight2.controls({ group: group, folder: fOptions, folderName: lang$1.light + ' 2' });
+									pointLight1.controls({ group: group, folder: fOptions, folderName: lang$2.light + ' 1' });
+									pointLight2.controls({ group: group, folder: fOptions, folderName: lang$2.light + ' 2' });
 									var folderPoint = new FolderPoint(options.point, function (value) {
 												if (value === undefined) value = options.point.size;
 												if (value < 0) value = 0;
@@ -14029,7 +14641,7 @@ function MyThree(createXDobjects, options) {
 												var cameraPosition = new THREE.Vector3(camera.position.x / scale.x, camera.position.y / scale.y, camera.position.z / scale.z);
 												scale = (scale.x + scale.y + scale.z) / 3;
 												for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
-															var position = getObjectPosition$1(mesh, i),
+															var position = getObjectPosition(mesh, i),
 															position3d = new THREE.Vector3(position.x, position.y, position.z),
 															    distance = position3d.distanceTo(cameraPosition),
 															    y = 1;
@@ -14045,7 +14657,7 @@ function MyThree(createXDobjects, options) {
 			if (params === undefined) return;
 			myThreejs.create(params.createXDobjects, params.options);
 };
-var lang$1 = {
+var lang$2 = {
 			defaultButton: 'Default',
 			settings: 'Settings',
 			webglcontextlost: 'The user agent has detected that the drawing buffer associated with a WebGLRenderingContext object has been lost.',
@@ -14054,12 +14666,12 @@ var lang$1 = {
 };
 switch (getLanguageCode()) {
 			case 'ru':
-						lang$1.defaultButton = 'Восстановить';
-						lang$1.name = 'Имя';
-						lang$1.settings = 'Настройки';
-						lang$1.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
-						lang$1.light = 'Свет';
-						lang$1.opacity = 'Непрозрачность';
+						lang$2.defaultButton = 'Восстановить';
+						lang$2.name = 'Имя';
+						lang$2.settings = 'Настройки';
+						lang$2.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
+						lang$2.light = 'Свет';
+						lang$2.opacity = 'Непрозрачность';
 						break;
 }
 MyThree.MyPoints = MyPoints;
