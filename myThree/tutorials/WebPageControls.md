@@ -119,7 +119,7 @@ Now you can see, your points is moving. Also you can see a trace of moving of th
 <a name="AddControls"></a>
 ## Add controls on the web page.
 
-* [Player](../../player/jsdoc/module-Player-Player.html) controls.
+* [Player](../../player/jsdoc/index.html) controls.
 
 By Player controls user can see and edit current Player time. Also user can start/stop playing.
 
@@ -174,7 +174,7 @@ Also you can see duplicate of the <b>Player</b> controls on the upper right corn
 
 * Display and edit of the curve values.
 
-Please add the following tags to your web page for display and edit of your curve values.
+Please add the following tags to your web page for display and edit of your "Trigonometric function" curve values.
 ```
 <fieldset>
 	<legend id="pointsName">Points</legend>
@@ -255,7 +255,7 @@ Also you can see duplicate of the point's controls on the upper right corner of 
 1. Please open the "Meshes" folder.
 2. Select the "1 Points".
 3. Open the "Points" folder.
-4. Select the "Trigonometric functions" point.
+4. Select the "0 Trigonometric functions" point.
 
 * If you want to control two or more points on your web page, please use other control ids.
 
@@ -417,23 +417,23 @@ The following code is the result of this tutorial.
 				</tr>
 			</table>
 		</fieldset>
-	</fieldset>
-	<fieldset>
-		<legend id="pointName2">Parametric equation controls</legend>
-		<table>
-			<tr>
-				<td>Axis</td>
-				<td>f(t)</td>
-				<td>Position</td>
-				<td title="Point position in the world space">World Position</td>
-			</tr>
-			<tr>
-				<td id="yPositionName2"></td>
-				<td><input id="yFunc2" /></td>
-				<td><input id="yPosition2" /></td>
-				<td id="yWorldPosition2"></td>
-			</tr>
-		</table>
+		<fieldset>
+			<legend id="pointName2">Parametric equation controls</legend>
+			<table>
+				<tr>
+					<td>Axis</td>
+					<td>f(t)</td>
+					<td>Position</td>
+					<td title="Point position in the world space">World Position</td>
+				</tr>
+				<tr>
+					<td id="yPositionName2"></td>
+					<td><input id="yFunc2" /></td>
+					<td><input id="yPosition2" /></td>
+					<td id="yWorldPosition2"></td>
+				</tr>
+			</table>
+		</fieldset>
 	</fieldset>
 
 	<script type="module">
