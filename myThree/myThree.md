@@ -10,6 +10,7 @@ I use <b>MyThree</b> in my [three.js](https://threejs.org/) projects for display
 * [Example of your web page.](#WebPage)
 * [Directory Contents.](#DirectoryContents)
 * [Building your own MyThree.](#Building)
+* [Controls on the web page.](./tutorial-WebPageControls.html)
 
 <a name="QuickStart"></a>
 ## Quick start
@@ -201,6 +202,7 @@ The following code is the result of this tutorial.
 </body>
 </html>
 ```
+Also you can read a tutorial, explains how to add a curve on the canvas and use  controls on the web page for display and edit of the curve values. Go to [Controls on the web page.](./tutorial-WebPageControls.html)
 <a name="DirectoryContents"></a>
 ## Directory Contents
 

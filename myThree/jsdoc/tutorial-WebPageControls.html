@@ -29,13 +29,16 @@
 
 <article>
     <p></p>
-<h1>Curve.</h1>
-<p><a href="https://en.wikipedia.org/wiki/Parametric_equation">Parametric_equation</a> curve.</p>
+<h1><a href="https://en.wikipedia.org/wiki/Parametric_equation">Parametric_equation</a> curve.</h1>
+<p>This tutorial example explains how to add a curve on the canvas and use  controls on the web page for display and edit of the curve values.
+You will create two curves as function of time:</p>
+<p>First curve is trigonometric function of time.</p>
+<p>Second curve is line.</p>
+<p>Also you will add to your web page the controls for <a href="../../player/jsdoc/index.html">Player</a> and the curve function editing.</p>
 <h1>Content</h1>
 <ul>
 <li><a href="#Quickstart">Quick start.</a></li>
-<li><a href="#MyPoints">Use <b>MyPoints</b> for create points.</a></li>
-<li><a href="#animate">Animate 3D objects.</a></li>
+<li><a href="#AddControls">Add controls on the web page.</a></li>
 <li><a href="#WebPage">Example of your web page.</a></li>
 <li><a href="#DirectoryContents">Directory Contents.</a></li>
 <li><a href="#Building">Building your own MyThree.</a></li>
@@ -49,123 +52,13 @@
 <li>Download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</li>
 </ul>
 </li>
-<li>Add your web page into [folderName]. Example:</li>
+<li>Add your web page into [folderName] and add two points to the canvas. Example:</li>
 </ul>
 <pre class="prettyprint source"><code>&lt;!DOCTYPE html>
 
 &lt;html>
 &lt;head>
-	&lt;title>MyThree&lt;/title>
-
-	&lt;!--for mobile devices-->
-	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0&quot;>
-
-	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
-&lt;/head>
-&lt;body>
-	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
-	&lt;div id=&quot;info&quot;>
-		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a>
-		- &lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/myThree&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>MyThree&lt;/a>.
-		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
-	&lt;/div>
-
-	&lt;script type=&quot;module&quot;>
-
-		import * as THREE from './three.js/dev/build/three.module.js';
-		//import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-
-	&lt;/script>
-&lt;/body>
-&lt;/html>
-</code></pre>
-<p>The easiest way to use <b>MyThree</b> in your code is import <b>MyThree</b> from <b>myThree.js</b> file in your JavaScript module.
-<a href="../../../../commonNodeJS/master/myThree/Examples/html/index.html">Example</a>.</p>
-<pre class="prettyprint source"><code>import MyThree from './commonNodeJS/master/myThree/myThree.js';
-//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.js';
-//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.min.js';
-MyThree.three.THREE = THREE;
-</code></pre>
-<p>Now you can use <b>MyThree</b> in your javascript code.</p>
-<pre class="prettyprint source"><code>new MyThree();
-</code></pre>
-<p>You can see a canvas on your web page. Inside of the canvas you can see:</p>
-<ul>
-<li><a href="../../AxesHelper/jsdoc/index.html">AxesHelper</a> in the canvas center.</li>
-<li><a href="https://github.com/anhr/dat.gui">dat.gui</a> controllers in the upper left corner of the canvas.</li>
-<li><a href="../../canvasMenu/jsdoc/index.html">CanvasMenu</a> in the bottom of the canvas.</li>
-</ul>
-<p>Add a 3D object to the canvas. For example points.</p>
-<p><a name="MyPoints"></a></p>
-<h2>Use <a href="../../myPoints/jsdoc/index.html">MyPoints</a> for create points.</h2>
-<p>Add <a href="../../myPoints/jsdoc/index.html">MyPoints</a> instance into <b>createXDobjects</b> callback function of <a href="./module-MyThree-MyThree.html">MyThree</a>.
-Example:</p>
-<pre class="prettyprint source"><code>new MyThree( function ( group, options ) {
-
-	const arrayFuncs = [
-		[],//first point. Zero position. White color.
-		[-0.5, 0.5, 0.5],//second point. White color.
-	];
-	MyThree.MyPoints( arrayFuncs, group, { options: options } );
-
-} );
-</code></pre>
-<p><a name="animate"></a></p>
-<h2>Animate 3D objects.</h2>
-<p>See <a href="../../player/jsdoc/index.html">Player</a> for details.</p>
-<p>Move second point of <b>MyPoints</b>. Edit <b>arrayFuncs</b>:</p>
-<pre class="prettyprint source"><code>	const arrayFuncs = [
-		[],//first point. Zero position. White color.
-		[
-			'Math.sin(t*2*Math.PI)*0.5',//x
-			'Math.cos(t*2*Math.PI)*0.5',//y
-			0.5//z
-		],//second point. White color.
-	];
-</code></pre>
-<p><b>t</b> is current time. Default, current time is changing from 0 to 1 during playing.
-See <b>min</b> and <b>max</b> of the <b>settings.options.playerOptions</b> parameter of <a href="../../player/jsdoc/module-Player-Player.html">Player</a>.</p>
-<p>Please click &quot;►&quot; button on the left bottom corner of the canvas for playing.</p>
-<p>Default, the playing ticks count is 10. You can change it. Also you can set your ticks per seconds and other setting.
-Add a <b>playerOptions</b> key into <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html">MyThree</a>.</p>
-<pre class="prettyprint source"><code>new MyThree( function ( group, options ) {
-
-	const arrayFuncs = [
-		[],//first point. Zero position. White color.
-		[
-			'Math.sin(t*2*Math.PI)*0.5',//x
-			'Math.cos(t*2*Math.PI)*0.5',//y
-			0.5//z
-		],//second point. White color.
-	];
-	MyThree.MyPoints( arrayFuncs, group, { options: options } );
-
-}, {
-
-	playerOptions: {
-
-		marks: 110,//Ticks count. Number of scenes of 3D objects animation.
-		interval: 25,//Ticks per seconds.
-
-	},
-
-} );
-</code></pre>
-<p>See <b>settings.options.playerOptions</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.html">Player</a> for details.
-<a name="WebPage"></a></p>
-<h2>Example of your web page.</h2>
-<p>The following code is the result of this tutorial.</p>
-<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
-
-&lt;html>
-&lt;head>
-	&lt;title>MyThree&lt;/title>
+	&lt;title>Curve&lt;/title>
 
 	&lt;!--for mobile devices-->
 	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0&quot;>
@@ -198,22 +91,451 @@ Add a <b>playerOptions</b> key into <b>options</b> parameter of <a href="../../m
 
 		new MyThree( function ( group, options ) {
 
-			const arrayFuncs = [
-				[],//first point. Zero position. White color.
+			MyThree.MyPoints(
 				[
-					'Math.sin(t*2*Math.PI)*0.5',//x
-					'Math.cos(t*2*Math.PI)*0.5',//y
-					0.5//z
-				],//second point. White color.
-			];
-			MyThree.MyPoints( arrayFuncs, group, { options: options } );
+					{
+
+						vector: [
+							'-1+2*t',//x
+							'Math.cos(t*5*Math.PI)*0.5',//y
+							'Math.sin(t*5*Math.PI)*0.5',//z
+							'1-t',//w
+						],
+						name: 'Trigonometric functions',
+						trace: true,
+
+					},
+					{
+
+						vector: [
+							0.4,//x
+							'1-2*t',//y
+						],
+						name: 'Line',
+						trace: true,
+
+					},
+
+				],
+				group, {
+
+					options: options,
+
+				} );
 
 		}, {
 
+			canvas: { fullScreen: false, },
 			playerOptions: {
 
-				marks: 110,//Ticks count. Number of scenes of 3D objects animation.
-				interval: 25,//Ticks per seconds.
+				marks: 110,
+				interval: 25,
+
+			},
+
+		} );
+
+	&lt;/script>
+&lt;/body>
+&lt;/html>
+</code></pre>
+<p>See <a href="../../myThree/jsdoc/index.html">MyThree</a> for details.</p>
+<p>You can see, <b>x, y, z</b> and <b>w</b> values is function of the <b>t</b>. Currently <b>t=0</b> is default value.</p>
+<p>Please move mouse cursor to the left bottom corner of the canvas and press &quot;►&quot; button for playing of the <a href="../../player/jsdoc/index.html">Player</a>.
+Now you can see, your points is moving. Also you can see a trace of moving of the points.
+<a name="AddControls"></a></p>
+<h2>Add controls on the web page.</h2>
+<ul>
+<li><a href="../../player/jsdoc/module-Player-Player.html">Player</a> controls.</li>
+</ul>
+<p>By Player controls user can see and edit current Player time. Also user can start/stop playing.</p>
+<p>Please add the following tags to your web page to control the player from your web page.</p>
+<pre class="prettyprint source"><code>&lt;fieldset>
+	&lt;legend>Player&lt;/legend>
+	Parameter &lt;b>t&lt;/b> is &lt;input id=&quot;time&quot; /> &lt;span id=&quot;tName&quot;>&lt;/span>
+	&lt;input id=&quot;prev&quot; type=&quot;button&quot; value=&quot;Prev&quot; />
+	&lt;input id=&quot;play&quot; type=&quot;button&quot; value=&quot;Play&quot; />
+	&lt;input id=&quot;next&quot; type=&quot;button&quot; value=&quot;Next&quot; />
+&lt;/fieldset>
+</code></pre>
+<p>Default player controls have follow ids:</p>
+<table>
+	<tr>
+		<td><b>Element</b></td>
+		<td><b>id</b></td>
+		<td><b>Element type</b></td>
+	</tr>
+	<tr>
+		<td>Current Player time</td>
+		<td>"time"</td>
+		<td>input</td>
+	</tr>
+	<tr>
+		<td>Time name</td>
+		<td>"tName"</td>
+		<td>span</td>
+	</tr>
+	<tr>
+		<td>Go to previous animation scene</td>
+		<td>"prev"</td>
+		<td>input element of the button type</td>
+	</tr>
+	<tr>
+		<td>Start/stop of the playing</td>
+		<td>"play"</td>
+		<td>input element of the button type</td>
+	</tr>
+	<tr>
+		<td>Go to next animation scene</td>
+		<td>"next"</td>
+		<td>input element of the button type</td>
+	</tr>
+</table>
+<p>You can use another ids. Please see <b>options.controllers</b> parameters of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html">MyThree</a>.</p>
+<p>Now you can see the t parameter and some <b>Player</b> control buttjns on your web page.
+Also you can see duplicate of the <b>Player</b> controls on the upper right corner of the canvas. Please press the &quot;Open Controls&quot; for it.</p>
+<ul>
+<li>Display and edit of the curve values.</li>
+</ul>
+<p>Please add the following tags to your web page for display and edit of your curve values.</p>
+<pre class="prettyprint source"><code>&lt;fieldset>
+	&lt;legend id=&quot;pointsName&quot;>Points&lt;/legend>
+	&lt;fieldset>
+		&lt;legend id=&quot;pointName&quot;>Parametric equation controls&lt;/legend>
+		&lt;table>
+			&lt;tr>
+				&lt;td>Axis&lt;/td>
+				&lt;td>f(t)&lt;/td>
+				&lt;td>Position&lt;/td>
+				&lt;td title=&quot;Point position in the world space&quot;>World Position&lt;/td>
+			&lt;/tr>
+			&lt;tr>
+				&lt;td id=&quot;xPositionName&quot;>&lt;/td>
+				&lt;td>&lt;input id=&quot;xFunc&quot; />&lt;/td>
+				&lt;td>&lt;input id=&quot;xPosition&quot; />&lt;/td>
+				&lt;td id=&quot;xWorldPosition&quot;>&lt;/td>
+			&lt;/tr>
+			&lt;tr>
+				&lt;td id=&quot;yPositionName&quot;>&lt;/td>
+				&lt;td>&lt;input id=&quot;yFunc&quot; />&lt;/td>
+				&lt;td>&lt;input id=&quot;yPosition&quot; />&lt;/td>
+				&lt;td id=&quot;yWorldPosition&quot;>&lt;/td>
+			&lt;/tr>
+			&lt;tr>
+				&lt;td id=&quot;zPositionName&quot;>&lt;/td>
+				&lt;td>&lt;input id=&quot;zFunc&quot; />&lt;/td>
+				&lt;td>&lt;input id=&quot;zPosition&quot; />&lt;/td>
+				&lt;td id=&quot;zWorldPosition&quot;>&lt;/td>
+			&lt;/tr>
+			&lt;tr>
+				&lt;td id=&quot;wPositionName&quot;>&lt;/td>
+				&lt;td>&lt;input id=&quot;wFunc&quot; />&lt;/td>
+				&lt;td>&lt;input id=&quot;wPosition&quot; />&lt;br>&lt;/td>
+			&lt;/tr>
+		&lt;/table>
+	&lt;/fieldset>
+&lt;/fieldset>
+</code></pre>
+<p>Also add <b>controllers: {},</b> key into point, named as &quot;Trigonometric functions&quot;.</p>
+<pre class="prettyprint source"><code>MyThree.MyPoints(
+	[
+		{
+
+			vector: [
+				'-1+2*t',//x
+				'Math.cos(t*5*Math.PI)*0.5',//y
+				'Math.sin(t*5*Math.PI)*0.5',//z
+				'1-t',//w
+			],
+			name: 'Trigonometric functions',
+			trace: true,
+			controllers: {},
+
+		},
+		{
+
+			vector: [
+				0.4,//x
+				'1-2*t',//y
+			],
+			name: 'Line',
+			trace: true,
+
+		},
+
+	],
+	group, {
+
+	options: options,
+
+} );
+</code></pre>
+<p>Now you can see the &quot;Trigonometric functions&quot; area on your web page.
+Also you can see duplicate of the point's controls on the upper right corner of the canvas.</p>
+<ol>
+<li>Please open the &quot;Meshes&quot; folder.</li>
+<li>Select the &quot;1 Points&quot;.</li>
+<li>Open the &quot;Points&quot; folder.</li>
+<li>Select the &quot;Trigonometric functions&quot; point.</li>
+</ol>
+<ul>
+<li>If you want to control two or more points on your web page, please use other control ids.</li>
+</ul>
+<p>For example add tags for point, named as &quot;Line&quot;.</p>
+<pre class="prettyprint source"><code>&lt;fieldset>
+	&lt;legend id=&quot;pointName2&quot;>Parametric equation controls&lt;/legend>
+	&lt;table>
+		&lt;tr>
+			&lt;td>Axis&lt;/td>
+			&lt;td>f(t)&lt;/td>
+			&lt;td>Position&lt;/td>
+			&lt;td title=&quot;Point position in the world space&quot;>World Position&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td id=&quot;yPositionName2&quot;>&lt;/td>
+			&lt;td>&lt;input id=&quot;yFunc2&quot; />&lt;/td>
+			&lt;td>&lt;input id=&quot;yPosition2&quot; />&lt;/td>
+			&lt;td id=&quot;yWorldPosition2&quot;>&lt;/td>
+		&lt;/tr>
+	&lt;/table>
+&lt;/fieldset>
+</code></pre>
+<p>And add <b>controllers</b> key into this point.</p>
+<pre class="prettyprint source"><code>MyThree.MyPoints(
+	[
+		{
+
+			vector: [
+				'-1+2*t',//x
+				'Math.cos(t*5*Math.PI)*0.5',//y
+				'Math.sin(t*5*Math.PI)*0.5',//z
+				'1-t',//w
+			],
+			name: 'Trigonometric functions',
+			trace: true,
+			controllers: {},
+
+		},
+		{
+
+			vector: [
+				0.4,//x
+				'1-2*t',//y
+			],
+			name: 'Line',
+			trace: true,
+			controllers: {
+
+				pointName: 'pointName2',
+				x: false,
+				y: {
+
+					func: {
+
+						controller: 'yFunc2',
+						elName: false,
+
+					},
+					position: {
+
+						controller: 'yPosition2',
+						elName: 'yPositionName2',
+
+					},
+					worldPosition: {
+
+						controller: 'yWorldPosition2',
+						elName: false,
+
+					},
+
+				},
+				z: false,
+				w: false,
+
+			},
+
+		},
+
+	],
+	group, {
+
+	options: options,
+
+} );
+</code></pre>
+<p>See <b>arrayFuncs controllers</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html">Player.getPoints</a> about <b>controllers</b> key details.</p>
+<p><a name="WebPage"></a></p>
+<h2>Example of your web page.</h2>
+<p>The following code is the result of this tutorial.</p>
+<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+
+&lt;html>
+&lt;head>
+	&lt;title>Curve&lt;/title>
+
+	&lt;!--for mobile devices-->
+	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0&quot;>
+
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
+&lt;/head>
+&lt;body>
+	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
+	&lt;div id=&quot;info&quot;>
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a>
+		- &lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/myThree&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>MyThree&lt;/a>.
+		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
+	&lt;/div>
+	&lt;fieldset>
+		&lt;legend>Player&lt;/legend>
+		Parameter &lt;b>t&lt;/b> is &lt;input id=&quot;time&quot; /> &lt;span id=&quot;tName&quot;>&lt;/span>
+		&lt;input id=&quot;prev&quot; type=&quot;button&quot; value=&quot;Prev&quot; />
+		&lt;input id=&quot;play&quot; type=&quot;button&quot; value=&quot;Play&quot; />
+		&lt;input id=&quot;next&quot; type=&quot;button&quot; value=&quot;Next&quot; />
+	&lt;/fieldset>
+	&lt;fieldset>
+		&lt;legend id=&quot;pointsName&quot;>Points&lt;/legend>
+		&lt;fieldset>
+			&lt;legend id=&quot;pointName&quot;>Parametric equation controls&lt;/legend>
+			&lt;table>
+				&lt;tr>
+					&lt;td>Axis&lt;/td>
+					&lt;td>f(t)&lt;/td>
+					&lt;td>Position&lt;/td>
+					&lt;td title=&quot;Point position in the world space&quot;>World Position&lt;/td>
+				&lt;/tr>
+				&lt;tr>
+					&lt;td id=&quot;xPositionName&quot;>&lt;/td>
+					&lt;td>&lt;input id=&quot;xFunc&quot; />&lt;/td>
+					&lt;td>&lt;input id=&quot;xPosition&quot; />&lt;/td>
+					&lt;td id=&quot;xWorldPosition&quot;>&lt;/td>
+				&lt;/tr>
+				&lt;tr>
+					&lt;td id=&quot;yPositionName&quot;>&lt;/td>
+					&lt;td>&lt;input id=&quot;yFunc&quot; />&lt;/td>
+					&lt;td>&lt;input id=&quot;yPosition&quot; />&lt;/td>
+					&lt;td id=&quot;yWorldPosition&quot;>&lt;/td>
+				&lt;/tr>
+				&lt;tr>
+					&lt;td id=&quot;zPositionName&quot;>&lt;/td>
+					&lt;td>&lt;input id=&quot;zFunc&quot; />&lt;/td>
+					&lt;td>&lt;input id=&quot;zPosition&quot; />&lt;/td>
+					&lt;td id=&quot;zWorldPosition&quot;>&lt;/td>
+				&lt;/tr>
+				&lt;tr>
+					&lt;td id=&quot;wPositionName&quot;>&lt;/td>
+					&lt;td>&lt;input id=&quot;wFunc&quot; />&lt;/td>
+					&lt;td>&lt;input id=&quot;wPosition&quot; />&lt;br>&lt;/td>
+				&lt;/tr>
+			&lt;/table>
+		&lt;/fieldset>
+	&lt;/fieldset>
+	&lt;fieldset>
+		&lt;legend id=&quot;pointName2&quot;>Parametric equation controls&lt;/legend>
+		&lt;table>
+			&lt;tr>
+				&lt;td>Axis&lt;/td>
+				&lt;td>f(t)&lt;/td>
+				&lt;td>Position&lt;/td>
+				&lt;td title=&quot;Point position in the world space&quot;>World Position&lt;/td>
+			&lt;/tr>
+			&lt;tr>
+				&lt;td id=&quot;yPositionName2&quot;>&lt;/td>
+				&lt;td>&lt;input id=&quot;yFunc2&quot; />&lt;/td>
+				&lt;td>&lt;input id=&quot;yPosition2&quot; />&lt;/td>
+				&lt;td id=&quot;yWorldPosition2&quot;>&lt;/td>
+			&lt;/tr>
+		&lt;/table>
+	&lt;/fieldset>
+
+	&lt;script type=&quot;module&quot;>
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import MyThree from './commonNodeJS/master/myThree/myThree.js';
+		//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.js';
+		//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.min.js';
+		MyThree.three.THREE = THREE;
+
+		new MyThree( function ( group, options ) {
+
+			MyThree.MyPoints(
+				[
+					{
+
+						vector: [
+							'-1+2*t',//x
+							'Math.cos(t*5*Math.PI)*0.5',//y
+							'Math.sin(t*5*Math.PI)*0.5',//z
+							'1-t',//w
+						],
+						name: 'Trigonometric functions',
+						trace: true,
+						controllers: {},
+
+					},
+					{
+
+						vector: [
+							0.4,//x
+							'1-2*t',//y
+						],
+						name: 'Line',
+						trace: true,
+						controllers: {
+
+							pointName: 'pointName2',
+							x: false,
+							y: {
+
+								func: {
+
+									controller: 'yFunc2',
+									elName: false,
+
+								},
+								position: {
+
+									controller: 'yPosition2',
+									elName: 'yPositionName2',
+
+								},
+								worldPosition: {
+
+									controller: 'yWorldPosition2',
+									elName: false,
+
+								},
+
+							},
+							z: false,
+							w: false,
+
+						},
+
+					},
+
+				],
+				group, {
+
+				options: options,
+
+			} );
+
+		}, {
+
+			canvas: { fullScreen: false, },
+			playerOptions: {
+
+				marks: 110,
+				interval: 25,
 
 			},
 
@@ -247,7 +569,7 @@ $ npm run build
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Sep 24 2021 08:12:45 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Sep 27 2021 10:13:06 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

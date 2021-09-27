@@ -225,14 +225,26 @@ class MyThree {
 	 * See <a href="../../jsdoc/Options/global.html#controllers" target="_blank">controllers</a> of the <b>Options</b>.
 	 * </pre>
 	 * @param {Object} [options.controllers.t] current <a href="../../player/jsdoc/index.html" target="_blank">Player</a> time.
-	 * @param {HTMLElement|string} [options.controllers.t.controller=document.getElementById( 't' )] controller of current <a href="../../player/jsdoc/index.html" target="_blank">Player</a> time
-	 * or <b>id</b> of the time controller.
-	 * @param {HTMLElement|string} [options.controllers.t.elName] <b>span</b> element of the <b>Player</b> time name. See <b>settings.options.playerOptions.name</b > parameter of <a href = "../../player/jsdoc/module-Player-Player.html" target = "_blank" >Player</a>
+	 * @param {HTMLElement|string} [options.controllers.t.controller='time'] <b>input</b> element of current <a href="../../player/jsdoc/index.html" target="_blank">Player</a> time
+	 * or <b>id</b> of the time <b>input</b> element.
+	 * @param {HTMLElement|string} [options.controllers.t.elName='tName'] <b>span</b> element of the <b>Player</b> time name. See <b>settings.options.playerOptions.name</b > parameter of <a href = "../../player/jsdoc/module-Player-Player.html" target = "_blank" >Player</a>
 	 * <pre>
 	 * or <b>id</b> of the <b>span</b> element.
 	 * </pre>
 	 * @param {Object} [options.controllers.player] <a href="../../player/jsdoc/index.html" target="_blank">Player's</a> buttons on the web page.
 	 * See <a href="../../player/jsdoc/module-Player-Player.html#createControllersButtons" target="_blank">player.createControllersButtons(options)</a> for details.
+	 * @param {HTMLElement|string} [options.controllers.player.prev='prev'] <b>input</b> element of the button type. Go to previous animation scene.
+	 * <pre>
+	 * or element <b>id</b>.
+	 * </pre>
+	 * @param {HTMLElement|string} [options.controllers.player.play='play'] <b>input</b> element of the button type. Start/stop of the playing.
+	 * <pre>
+	 * or element <b>id</b>.
+	 * </pre>
+	 * @param {HTMLElement|string} [options.controllers.player.next='next'] <b>input</b> element of the button type. Go to next animation scene.
+	 * <pre>
+	 * or element <b>id</b>.
+	 * </pre>
 	 */
 	constructor( createXDobjects, options ) {
 

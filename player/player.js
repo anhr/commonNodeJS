@@ -19,6 +19,7 @@ import {
 
 	getWorldPosition,
 	getObjectLocalPosition,
+	getObjectPosition,
 
 } from '../getPosition.js';
 
@@ -1967,10 +1968,11 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 					const indexValue = axesId + mesh.geometry.attributes.position.itemSize * index,
 						valueOld = mesh.geometry.attributes.position.array[ indexValue ];
 					mesh.geometry.attributes.position.array[ indexValue ] = value;
+					const axisControllers = func.controllers[axisName];
 					if ( isNaN( mesh.geometry.attributes.position.array[ indexValue ] ) ) {
 
 						alert( lang.positionAlert + value );
-						const controller = func.controllers[axisName].position.controller;
+						const controller = axisControllers.position.controller;
 						controller.focus();
 						controller.value = valueOld;
 						mesh.geometry.attributes.position.array[ indexValue ] = valueOld;
@@ -1982,6 +1984,14 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 						options.axesHelper.updateAxes();
 					if ( options.guiSelectPoint )
 						options.guiSelectPoint.update();
+					if ( axisControllers.worldPosition && axisControllers.worldPosition.controller ) {
+
+						const controller = axisControllers.worldPosition.controller;
+						
+//						controller.onchange( { currentTarget: { value: value } } );
+						controller.innerHTML = getObjectPosition( mesh, index )[axisName];
+
+					}
 
 				}
 				function createControllers( axisName ) {
@@ -2256,6 +2266,50 @@ Player.setColorAttribute = function ( attributes, i, color ) {
  *         Default is camera.position.
  *      [orbitControls]: [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}. Change the <b>OrbitControl</b> setting during playing.
  *      [orbitControlsGui]: <a href="../../OrbitControls/jsdoc/index.html" target="_blank">OrbitControlsGui</a> instance;
+ *
+ *   },
+ *   //Use controls on the web page for display and edit of the point values.
+ *   [controllers]: {
+ *   
+ *      pointName: HTML element or id of element for point name
+ *      
+ *      //axisName is "x" or "y" or "z" or "w"
+ *      [axisName]: {
+ *
+ *         //Function text controller
+ *         func: {
+ *         
+ *            controller: HTMLElement - <b>input</b> element of function text
+ *               or string - id of the <b>input</b> element. Default id is "[axisName]Func". Example: "xFunc".
+ *            elName: HTMLElement - <b>span</b> element of the function name
+ *               or string - id of the <b>span</b> element. Default id is "[axisName]FuncName". Example: "xFuncName".
+ *               or false - name element is not exists.
+ *
+ *         }
+ *
+ *         //Point position controller
+ *         position: {
+ *
+ *            controller: HTMLElement - <b>input</b> element of the point position
+ *               or string - id of the <b>input</b> element. Default id is "[axisName]Position". Example: "xPosition".
+ *            elName: HTMLElement - <b>span</b> element of the point position name
+ *               or string - id of the <b>span</b> element. Default id is "[axisName]PositionName". Example: "xPositionName".
+ *               or false - name element is not exists.
+ *
+ *         }
+ *
+ *         //World point position controller.
+ *         worldPosition: {
+ *
+ *            controller: HTMLElement - <b>input</b> element of the world point position
+ *               or string - id of the <b>input</b> element. Default id is "[axisName]WorldPosition". Example: "xWorldPosition".
+ *            elName: HTMLElement - <b>span</b> element of the world point position name
+ *               or string - id of the <b>span</b> element. Default id is "[axisName]WorldPositionName". Example: "xWorldPositionName".
+ *               or false - name element is not exists.
+ *
+ *         }
+ *
+ *      }
  *
  *   },
  *
