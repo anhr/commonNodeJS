@@ -10,6 +10,8 @@ Second curve is line.
 
 Also you will add to your web page the controls for [Player](../../player/jsdoc/index.html) and the curve function editing.
 
+You will use my [library](https://github.com/anhr/commonNodeJS) in this tutorial.
+
 # Content
 * [Quick start.](#Quickstart)
 * [Add controls on the web page.](#AddControls)
