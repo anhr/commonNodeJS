@@ -1,0 +1,330 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>Intersects</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
+</head>
+<body>
+	<p>
+		<a href='https://github.com/anhr' target="_blank">About me</a>
+		| <a href="https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane" target="_blank">Three JS - Find all points where a mesh intersects a plane</a>
+		| <a href="https://jsfiddle.net/prisoner849/8uxw667m/" target="_blank">Example</a>
+	</p>
+<!--
+	<script src="https://cdn.jsdelivr.net/npm/three@0.117.0/build/three.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/three@0.117.0/examples/js/controls/OrbitControls.js"></script>
+-->
+	<h1>Intersects.</h1>
+<!--
+	<button id="pressMe" style="position: absolute;">
+		PressMe
+	</button>
+-->
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<script type="module">
+
+		import * as THREE from '../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+
+		//test for duplicate dat library
+		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+		//three.dat = dat;
+
+		import MyThree from '../commonNodeJS/master/myThree/myThree.js';
+		//import MyThree from '../../build/myThree.module.js';
+		//import MyThree from '../../build/myThree.module.min.js';
+
+		//Error: Access to XMLHttpRequest at 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/getShaderMaterialPoints/vertex.c'
+		//	from origin 'http://localhost' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/myThree.js';
+
+		if ( MyThree.default ) MyThree = MyThree.default;
+		MyThree.three.THREE = THREE;
+
+		new MyThree( function ( scene, options ) {
+
+/*
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
+			camera.position.set( 0, 10, 50 );
+			var renderer = new THREE.WebGLRenderer( {
+				antialias: true
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			var controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+			scene.add( new THREE.AxisHelper( 2 ) );
+*/
+			var planeGeom = new THREE.PlaneGeometry( 30, 30 );
+//			var planeGeom = new THREE.PlaneGeometry( 3, 3 );
+//			var planeGeom = new THREE.BufferGeometry();
+
+			function faces( scope ) {
+
+				scope.vertices = [];
+				scope.faces = [];
+				scope.faceVertexUvs = [[]];
+				var positions = scope.attributes.position.array;
+				var indices = scope.index !== null ? scope.index.array : undefined;
+				var normals = scope.attributes.normal !== undefined ? scope.attributes.normal.array : undefined;
+				var uvs = scope.attributes.uv !== undefined ? scope.attributes.uv.array : undefined;
+				var uvs2 = scope.attributes.uv2 !== undefined ? scope.attributes.uv2.array : undefined;
+				if ( uvs2 !== undefined ) { scope.faceVertexUvs[1] = []; }
+				const Vector3 = THREE.Vector3, Vector2 = THREE.Vector2;
+				for ( var i = 0; i < positions.length; i += 3 ) {
+
+					scope.vertices.push( new Vector3().fromArray( positions, i ) );
+
+				}
+				function Face3( a, b, c, normal, color, materialIndex ) {
+
+					this.a = a;
+					this.b = b;
+					this.c = c;
+
+					this.normal = ( normal && normal.isVector3 ) ? normal : new Vector3();
+					this.vertexNormals = Array.isArray( normal ) ? normal : [];
+					this.materialIndex = materialIndex !== undefined ? materialIndex : 0;
+
+				}
+				function addFace( a, b, c, materialIndex ) {
+
+					var vertexColors = undefined;
+					var vertexNormals = ( normals === undefined ) ? [] : [
+						new Vector3().fromArray( normals, a * 3 ),
+						new Vector3().fromArray( normals, b * 3 ),
+						new Vector3().fromArray( normals, c * 3 )
+					];
+
+					var face = new Face3( a, b, c, vertexNormals, vertexColors, materialIndex );
+
+					scope.faces.push( face );
+
+					if ( uvs !== undefined ) {
+
+						scope.faceVertexUvs[0].push( [
+							new Vector2().fromArray( uvs, a * 2 ),
+							new Vector2().fromArray( uvs, b * 2 ),
+							new Vector2().fromArray( uvs, c * 2 )
+						] );
+
+					}
+
+					if ( uvs2 !== undefined ) {
+
+						scope.faceVertexUvs[1].push( [
+							new Vector2().fromArray( uvs2, a * 2 ),
+							new Vector2().fromArray( uvs2, b * 2 ),
+							new Vector2().fromArray( uvs2, c * 2 )
+						] );
+
+					}
+
+				}
+
+				var groups = scope.groups;
+
+				if ( groups.length > 0 ) {
+
+					for ( var i = 0; i < groups.length; i++ ) {
+
+						var group = groups[i];
+
+						var start = group.start;
+						var count = group.count;
+
+						for ( var j = start, jl = start + count; j < jl; j += 3 ) {
+
+							if ( indices !== undefined ) {
+
+								addFace( indices[j], indices[j + 1], indices[j + 2], group.materialIndex );
+
+							} else {
+
+								addFace( j, j + 1, j + 2, group.materialIndex );
+
+							}
+
+						}
+
+					}
+
+				} else {
+
+					if ( indices !== undefined ) {
+
+						for ( var i = 0; i < indices.length; i += 3 ) {
+
+							addFace( indices[i], indices[i + 1], indices[i + 2] );
+
+						}
+
+					} else {
+
+						for ( var i = 0; i < positions.length / 3; i += 3 ) {
+
+							addFace( i, i + 1, i + 2 );
+
+						}
+
+					}
+
+				}
+				function computeFaceNormals() {
+
+					var cb = new Vector3(), ab = new Vector3();
+
+					for ( var f = 0, fl = scope.faces.length; f < fl; f++ ) {
+
+						var face = scope.faces[f];
+
+						var vA = scope.vertices[face.a];
+						var vB = scope.vertices[face.b];
+						var vC = scope.vertices[face.c];
+
+						cb.subVectors( vC, vB );
+						ab.subVectors( vA, vB );
+						cb.cross( ab );
+
+						cb.normalize();
+
+						face.normal.copy( cb );
+
+					}
+
+				};
+
+				computeFaceNormals();
+
+			}
+			planeGeom.rotateX( -Math.PI / 2 );
+			var plane = new THREE.Mesh( planeGeom, new THREE.MeshBasicMaterial( {
+				color: "lightgray",
+				transparent: true,
+				opacity: 0.75,
+				side: THREE.DoubleSide
+			} ) );
+			plane.position.y = -3.14;
+//			plane.position.y = -0.314;
+			plane.rotation.x = Math.PI / 5;
+			scene.add( plane );
+
+			var objGeom = new THREE.DodecahedronGeometry( 10, 0 );
+//			var objGeom = new THREE.DodecahedronGeometry( 1, 0 );
+			var obj = new THREE.Mesh( objGeom, new THREE.MeshBasicMaterial( {
+				color: "green",
+				wireframe: true
+			} ) );
+			obj.rotation.z = Math.PI / 10;
+			obj.position.set( 0, 3.14, 0 );
+//			obj.position.set( 0, 0.314, 0 );
+			scene.add( obj );
+
+			var button = { pressMe: drawIntersectionPoints };
+			options.dat.gui.add( button, 'pressMe' );
+//			pressMe.addEventListener( "click", drawIntersectionPoints, false );
+
+//			var pointsOfIntersection = new THREE.Geometry();
+			var pointsOfIntersection = new THREE.BufferGeometry();
+			pointsOfIntersection.vertices = [];
+
+			var a = new THREE.Vector3(),
+				b = new THREE.Vector3(),
+				c = new THREE.Vector3();
+			var planePointA = new THREE.Vector3(),
+				planePointB = new THREE.Vector3(),
+				planePointC = new THREE.Vector3();
+			var lineAB = new THREE.Line3(),
+				lineBC = new THREE.Line3(),
+				lineCA = new THREE.Line3();
+
+			var pointOfIntersection = new THREE.Vector3();
+
+			function drawIntersectionPoints() {
+				var mathPlane = new THREE.Plane();
+				faces( plane.geometry );
+				plane.localToWorld( planePointA.copy( plane.geometry.vertices[plane.geometry.faces[0].a] ) );
+				plane.localToWorld( planePointB.copy( plane.geometry.vertices[plane.geometry.faces[0].b] ) );
+				plane.localToWorld( planePointC.copy( plane.geometry.vertices[plane.geometry.faces[0].c] ) );
+				mathPlane.setFromCoplanarPoints( planePointA, planePointB, planePointC );
+
+				faces( obj.geometry );
+				obj.geometry.faces.forEach( function ( face ) {
+					obj.localToWorld( a.copy( obj.geometry.vertices[face.a] ) );
+					obj.localToWorld( b.copy( obj.geometry.vertices[face.b] ) );
+					obj.localToWorld( c.copy( obj.geometry.vertices[face.c] ) );
+					lineAB = new THREE.Line3( a, b );
+					lineBC = new THREE.Line3( b, c );
+					lineCA = new THREE.Line3( c, a );
+					setPointOfIntersection( lineAB, mathPlane );
+					setPointOfIntersection( lineBC, mathPlane );
+					setPointOfIntersection( lineCA, mathPlane );
+				} );
+
+				MyThree.MyPoints( pointsOfIntersection.vertices, scene );
+				const geometry = new THREE.BufferGeometry().setFromPoints( pointsOfIntersection.vertices );
+/*				
+				var pointsMaterial = new THREE.PointsMaterial( {
+					size: 2,
+					color: 0xffff00
+				} );
+				var points = new THREE.Points( geometry, pointsMaterial );
+				scene.add( points );
+*/
+
+				var lines = new THREE.LineSegments( geometry, new THREE.LineBasicMaterial( {
+					color: 0xffffff
+				} ) );
+				scene.add( lines );
+			}
+			drawIntersectionPoints();
+
+			function setPointOfIntersection( line, plane ) {
+
+				pointOfIntersection = plane.intersectLine( line, new THREE.Vector3() );
+				if ( pointOfIntersection ) {
+					pointsOfIntersection.vertices.push( pointOfIntersection.clone() );
+				};
+			}
+
+/*
+			render();
+
+			function render() {
+				requestAnimationFrame( render );
+				renderer.render( scene, camera );
+			}
+*/
+		}, {
+
+				camera: {
+
+					position: new THREE.Vector3( 0, 10, 50 ),
+					fov: 45,
+					near: 1,
+					far: 1000,
+
+				},
+
+				axesHelper: false,
+				player: false,
+				dat: {
+
+					guiSelectPoint: false,
+
+				}
+
+		} );
+
+	</script>
+</body>
+</html >
