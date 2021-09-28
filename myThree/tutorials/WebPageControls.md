@@ -14,8 +14,6 @@ Also you will add to your web page the controls for [Player](../../player/jsdoc/
 * [Quick start.](#Quickstart)
 * [Add controls on the web page.](#AddControls)
 * [Example of your web page.](#WebPage)
-* [Directory Contents.](#DirectoryContents)
-* [Building your own MyThree.](#Building)
 
 <a name="QuickStart"></a>
 ## Quick start
@@ -527,21 +525,4 @@ The following code is the result of this tutorial.
 	</script>
 </body>
 </html>
-```
-<a name="DirectoryContents"></a>
-## Directory Contents
-
-```
-build - Compiled source code.
-```
-
-<a name="Building"></a>
-## Building your own MyThree
-
-In the terminal, enter the following:
-
-```
-$ npm install
-$ npm install uglify-es
-$ npm run build
 ```
