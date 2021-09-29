@@ -1473,7 +1473,7 @@ class GuiSelectPoint {
 
 				} else {
 
-					scale = options.axesHelper === undefined ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
+					scale = ( options.axesHelper === undefined ) || ( options.axesHelper === false ) ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
 						options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
 					if ( scale.isAxis() )
 						controller = fPoint.add( {
@@ -1568,7 +1568,7 @@ class GuiSelectPoint {
 
 			function axesWorldGui( axisName ) {
 
-				const scale = options.axesHelper === undefined ? options.scales[axisName] :
+				const scale = ( options.axesHelper === undefined ) || ( options.axesHelper === false ) ? options.scales[axisName] :
 					options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
 				if ( !scale.isAxis() )
 					return;
