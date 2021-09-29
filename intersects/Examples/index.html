@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>Intersects</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
+</head>
+<body>
+	<p>
+		<a href='https://github.com/anhr' target="_blank">About me</a>
+		| <a href="https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane" target="_blank">Three JS - Find all points where a mesh intersects a plane</a>
+		| <a href="https://jsfiddle.net/prisoner849/8uxw667m/" target="_blank">Example</a>
+	</p>
+<!--
+	<script src="https://cdn.jsdelivr.net/npm/three@0.117.0/build/three.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/three@0.117.0/examples/js/controls/OrbitControls.js"></script>
+-->
+	<h1>Intersects.</h1>
+<!--
+	<button id="pressMe" style="position: absolute;">
+		PressMe
+	</button>
+-->
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<script type="module">
+
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+
+		//test for duplicate dat library
+		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
+		//three.dat = dat;
+
+		import MyThree from '../../myThree/myThree.js';
+		//import MyThree from '../../build/myThree.module.js';
+		//import MyThree from '../../build/myThree.module.min.js';
+
+		//Error: Access to XMLHttpRequest at 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/getShaderMaterialPoints/vertex.c'
+		//	from origin 'http://localhost' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/myThree.js';
+
+		if ( MyThree.default ) MyThree = MyThree.default;
+		MyThree.three.THREE = THREE;
+
+		new MyThree( function ( scene, options ) {
+
+			var planeGeom = new THREE.PlaneGeometry( 30, 30 );
+			planeGeom.rotateX( -Math.PI / 2 );
+			var plane = new THREE.Mesh( planeGeom, new THREE.MeshBasicMaterial( {
+				color: "lightgray",
+				transparent: true,
+				opacity: 0.75,
+				side: THREE.DoubleSide
+			} ) );
+			plane.position.y = -3.14;
+			plane.rotation.x = Math.PI / 5;
+			scene.add( plane );
+
+			var objGeom = new THREE.DodecahedronGeometry( 10, 0 );
+			var obj = new THREE.Mesh( objGeom, new THREE.MeshBasicMaterial( {
+				color: "green",
+				wireframe: true
+			} ) );
+			obj.rotation.z = Math.PI / 10;
+			obj.position.set( 0, 3.14, 0 );
+			scene.add( obj );
+		}, {
+
+				camera: {
+
+					position: new THREE.Vector3( 0, 10, 50 ),
+					fov: 45,
+					near: 1,
+					far: 1000,
+
+				},
+
+				axesHelper: false,
+				playerOptions: {
+
+					marks: 110,//Number of scenes of 3D objects animation.
+					interval: 25,//Ticks per seconds.
+
+				},
+//				player: false,
+				dat: {
+
+					guiSelectPoint: false,
+
+				}
+
+		} );
+
+	</script>
+</body>
+</html >
