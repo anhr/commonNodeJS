@@ -87,8 +87,12 @@ import Options from '../Options.js'
  * <b>new THREE.Vector3 ( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), 0, 0)</b>
  * @param {boolean} [settings.pointsOptions.opacity] if true then opacity of the point is depend from distance to all meshes points from the group with defined <b>mesh.userData.cloud</b>.
  * See <b>optionsColor.opacity</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.getColors.html" target="_blank">Player.getColors(...)</a>ions.getColors for details.
- * @param {function(THREE.Points)} [settings.pointsOptions.onReady] Callback function that take as input the <b>new THREE.Points</b>.
+ * @param {function} [settings.pointsOptions.onReady] Callback function that take as input the <b>new THREE.Points</b>.
  * Fires after creating of the points.
+ * <pre>
+ * function( points )
+ *	<b>points</b> - [Points]{@link https://threejs.org/docs/index.html?q=Poin#api/en/objects/Points}
+ * </pre>
  * @param {object} [settings.pointsOptions.raycaster] Followed [raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} options is available.
  * @param {Function(intersection, mouse)} [settings.pointsOptions.raycaster.onIntersection] Callback function that take as input the <b>[intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} </b>, and <b>mouse position</b>.
  * Fires after intersection of the mouse pointer with a point.
