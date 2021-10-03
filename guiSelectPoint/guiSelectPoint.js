@@ -581,6 +581,7 @@ class GuiSelectPoint {
 
 			const index = this.getMeshIndex( mesh ),
 				selectedIndex = cMeshs.__select.selectedIndex;
+			if ( index === undefined ) return;
 			cMeshs.__select.remove( index );
 			if ( selectedIndex === index ) {
 
