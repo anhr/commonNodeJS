@@ -51,7 +51,7 @@
 		if ( MyThree.default ) MyThree = MyThree.default;
 		MyThree.three.THREE = THREE;
 
-//		import { ConvexHull } from '../../../../three.js/dev/examples/jsm/math/ConvexHull.js';
+		import { ConvexHull } from '../../../../three.js/dev/examples/jsm/math/ConvexHull.js';
 
 		new MyThree( function ( scene, options ) {
 
@@ -72,36 +72,70 @@
 			scene.add( plane );
 			collidableMeshList.push( plane );
 
-//			const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
-//			const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
-			const objGeom = new THREE.BoxGeometry( 10, 10, 10 );
+			const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
+			//const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
+			//const objGeom = new THREE.BoxGeometry( 10, 10, 10 );
 			const obj = new THREE.Mesh( objGeom, new THREE.MeshBasicMaterial( {
 					color: "green",
 					wireframe: true
 				} ) );
-			//obj.rotation.z = Math.PI / 10;
+			obj.rotation.x = Math.PI / 10;
+			obj.rotation.y = Math.PI / 10;
 //			obj.position.set( 0, 3.14, 0 );
 			scene.add( obj );
-/*
 			const edges = new THREE.EdgesGeometry( obj.geometry );
+/*
 			const line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
 			scene.add( line );
 
 
-			const convexHull = new ConvexHull();
-			convexHull.setFromObject( obj );
 */
+/*
+			vertices.push( new THREE.Vector3().copy( edge.head().point ) );
+			edge = edge.next;
+			vertices.push( new THREE.Vector3().copy( edge.head().point ) );
+			edge = edge.next;
+			vertices.push( new THREE.Vector3().copy( edge.head().point ) );
+			edge = edge.next;
+			vertices.push( new THREE.Vector3().copy( edge.head().point ) );
+			edge = edge.next;
+			vertices.push( new THREE.Vector3().copy( edge.head().point ) );
+			const convexHullLine = new THREE.LineSegments( new THREE.BufferGeometry().setFromPoints( vertices ), new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+			convexHullLine.position.set( 1, 1, 1 );
+			scene.add( convexHullLine );
+*/
+/*
+			for ( let i = 0; i < faces.length; i ++ ) {
+
+				const face = faces[ i ];
+				let edge = face.edge; // we move along a doubly-connected edge list to access all face points (see HalfEdge docs)
+
+				do {
+
+					vertices.push( edge.head().point );
+					edge = edge.next;
+
+				} while ( edge !== face.edge );
+
+			} // build geometry
+			const convexHullLine = new THREE.LineSegments( new THREE.BufferGeometry().setFromPoints( vertices ), new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+			convexHullLine.position.set( 1, 1, 1 );
+			scene.add( convexHullLine );
+*/
+
+			const positions = edges.attributes.position;
+
 			//guiSelectPoint
 			obj.name = 'Dodecahedron';
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( obj );
 
 			//Player
 			var intersectLine;
+			var intersectPoints;
 			obj.userData.player = {
 
 				selectPlayScene: function ( t ) {
 
-					//obj.position.set( 0, 10 - 30 * t, 0 );
 					obj.position.set( 0, 0, 10 - 30 * t );
 					obj.updateMatrix();
 
@@ -109,7 +143,7 @@
 					//http://stemkoski.github.io/Three.js/Collision-Detection.html
 					const MovingCube = obj;
 //					for (var vertexIndex = 0; vertexIndex < MovingCube.geometry.vertices.length; vertexIndex++)
-					const positions = MovingCube.geometry.attributes.position;
+//					const positions = MovingCube.geometry.attributes.position;
 //					const originPoint = MovingCube.position.clone();
 /*
 					function getVertex( index ) {
@@ -151,8 +185,104 @@
 					line( vertex2, vertex0 );
 */					
 					const arrayIntersectPoints = [];
-					if ( intersectLine ) scene.remove( intersectLine );
-					for (var vertexIndex = 0; vertexIndex < positions.count / positions.itemSize ; vertexIndex++) {		
+					if ( intersectLine ) { 
+
+						if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( intersectLine );
+						scene.remove( intersectLine );
+
+					}
+					if ( intersectPoints ) { 
+
+						if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( intersectPoints );
+						scene.remove( intersectPoints );
+
+					}
+					
+		//			const vertices = [];
+					const convexHull = new ConvexHull();
+					convexHull.setFromObject( obj );
+					const faces = convexHull.faces;
+					let faceIndex = 0;
+
+					//в этом массиве хранятся все лучи, которые были проверены на пересечение
+					//Это позволяет не провреять на пересечение одни и те же лучи по несколько раз
+					const testedRays = [];
+
+					function setFace() {
+
+						const face = faces[faceIndex];
+						let edge = face.edge;
+						function setEdge() {
+
+/*
+							function getVertex( index ) {
+
+								if ( index >= positions.count ) console.error( 'getVertex index = ' + index + ' positions.count = ' + positions.count );
+								const vertex = positions.itemSize === 3 ? new THREE.Vector3() : positions.itemSize === 4 ? new THREE.Vector3() : undefined;
+								vertex.fromBufferAttribute( positions, index );
+								return getWorldPosition( MovingCube, vertex );
+
+							}
+							const globalOriginPoint = getVertex( vertexIndex ),
+								globalVertex = getVertex( vertexIndex + 1 ),
+								directionVector = globalVertex.clone().sub( globalOriginPoint );
+*/
+/*
+							function getVertex( vertex ) {
+
+								return vertex;
+//								return getWorldPosition( MovingCube, vertex );
+//								return new THREE.Vector3( vertex.x + 1, vertex.y + 1, vertex.z + 1 );
+
+							}
+							const globalOriginPoint = getVertex( edge.head().point ),
+								globalVertex = getVertex( edge.next.head().point ),
+								directionVector = globalVertex.clone().sub( globalOriginPoint );
+*/
+//							if ( !Object.is(edge.usedWith, edge.next) )
+							for( var i = 0; i < testedRays.length; i++ ) {
+
+								const testedRay = testedRays[i];
+								if ( Object.is( testedRay[1], edge ) && Object.is( testedRay[2], edge.next ) ) {
+
+									edge = edge.next;
+									return;
+
+								}
+
+							}
+
+							const globalOriginPoint = edge.head().point,
+								globalVertex = edge.next.head().point,
+								directionVector = globalVertex.clone().sub( globalOriginPoint );
+
+							const ray = new THREE.Raycaster( globalOriginPoint, directionVector.clone().normalize() );
+							const collisionResults = ray.intersectObjects( collidableMeshList );
+							if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
+								arrayIntersectPoints.push( new THREE.Vector3().copy(collisionResults[0].point) );
+/*
+							const line = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [ globalOriginPoint, globalVertex ] ), new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+//							line.position.set( 1, 1, 1 );
+							scene.add( line );
+*/
+							testedRays.push( [ edge, edge.next ] );
+							edge = edge.next;
+
+						}
+						setEdge();
+						setEdge();
+						setEdge();
+
+					}
+					while ( faceIndex < faces.length ) {
+
+						setFace();
+						faceIndex++;
+
+					}
+
+					for (var vertexIndex = 0; vertexIndex < positions.count; vertexIndex++)
+					{		
 /*
 						var localVertex = MovingCube.geometry.vertices[vertexIndex].clone();
 						var globalVertex = localVertex.applyMatrix4( MovingCube.matrix );
@@ -176,21 +306,40 @@
 						localVertex.fromBufferAttribute( positions, vertexIndex + 1 );
 						const globalVertex = localVertex.applyMatrix4( MovingCube.matrix );
 */
+						/*
 						function getVertex( index ) {
 
 							if ( index >= positions.count ) console.error( 'getVertex index = ' + index + ' positions.count = ' + positions.count );
 							const vertex = positions.itemSize === 3 ? new THREE.Vector3() : positions.itemSize === 4 ? new THREE.Vector3() : undefined;
 							vertex.fromBufferAttribute( positions, index );
-							return vertex.applyMatrix4( MovingCube.matrix );
+							return getWorldPosition( MovingCube, vertex );
+//							return vertex.applyMatrix4( MovingCube.matrix );
 
 						}
 						const globalOriginPoint = getVertex( vertexIndex ),
-							directionVector = getVertex( vertexIndex + 1 ).sub( globalOriginPoint );
-		
+//							globalVertex = getVertex( vertexIndex + positions.itemSize ),
+							globalVertex = getVertex( vertexIndex + 1 ),
+							directionVector = globalVertex.clone().sub( globalOriginPoint );
+						*/
+/*
+//if ( vertexIndex === 0 )
+{
+
+	const line = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [globalOriginPoint, globalVertex] ), new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+	//line.position.copy( obj.position );
+	scene.add( line );
+	//scene.remove( line );
+
+}
+*/
+						/*
 						const ray = new THREE.Raycaster( globalOriginPoint, directionVector.clone().normalize() );
 						const collisionResults = ray.intersectObjects( collidableMeshList );
+						*/
+						/*
 						if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
 							arrayIntersectPoints.push( collisionResults[0].point );
+						*/
 /*
 						const originPoint = getVertex( vertexIndex );
 						const collisionResults = ray.intersectObjects( collidableMeshList );
@@ -230,19 +379,29 @@
 							options: options,
 							pointsOptions: {
 
-								onReady: function() {
+								onReady: function( points ) {
 
-									console.log('111');
+									if ( intersectPoints ) { 
+
+										if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( intersectPoints );
+										scene.remove( intersectPoints );
+
+									}
+									intersectPoints = points;
 
 								}
 
 							}
 
 						} );
-/*						
 						intersectLine = new THREE.LineSegments( new THREE.BufferGeometry().setFromPoints( arrayIntersectPoints ), new THREE.LineBasicMaterial( { color: 0xffffff } ) );
 						scene.add( intersectLine );
-*/						
+						if ( options.guiSelectPoint ) {
+
+							intersectLine.name = 'intersectLine';
+							options.guiSelectPoint.addMesh( intersectLine );
+
+						}
 
 					}
 
