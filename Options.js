@@ -662,6 +662,7 @@ class Options {
 												return scale.min;
 
 											},
+											set: function ( min ) { scale.min = min; },
 
 										},
 										max: {
@@ -674,6 +675,7 @@ class Options {
 												return scale.max;
 
 											},
+											set: function ( max ) { scale.max = max; },
 
 										},
 										name: {
