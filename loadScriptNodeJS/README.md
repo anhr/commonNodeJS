@@ -1,5 +1,5 @@
 ﻿# loadScript
-The loadScript is node.js version of the load JavaScript file. [Example of using](https://raw.githack.com/anhr/loadScriptNodeJS/master/index.html)
+The loadScript is node.js version of the load JavaScript file. [Example of using](https://raw.githack.com/anhr/commonNodeJS/master/loadScriptNodeJS/Examples/index.html)
 
 ## Packaged Builds
 The easiest way to use loadScript in your code is by using the built source at `build/loadScript.js`.
