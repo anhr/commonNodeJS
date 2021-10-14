@@ -11,7 +11,7 @@ Generating a website:
 	/////////////////////////////////////////////////////////////
 	//AxesHelper doc
 
-	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\AxesHelper\master\jsdoc"
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\AxesHelper\jsdoc"
 
 	jsdoc -R "..\commonNodeJS\master\AxesHelper\AxesHelper.md" "..\commonNodeJS\master\AxesHelper\AxesHelper.js" "..\commonNodeJS\master\AxesHelper\AxesHelperGui.js" -d "..\commonNodeJS\master\AxesHelper\jsdoc"
 
