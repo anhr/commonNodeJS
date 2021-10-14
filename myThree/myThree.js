@@ -1062,4 +1062,7 @@ if ( window.__myThree__.boMyThree )
 	console.error( 'myThree: duplicate myThree. Please use one instance of the myThree class.' )
 window.__myThree__.boMyThree = true;
 
+import Intersections from '../Intersections/Intersections.js'
+MyThree.Intersections = Intersections;
+
 export default MyThree;

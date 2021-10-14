@@ -1,5 +1,27 @@
+Creates an intersection line for graphic objects..
+
 Three JS - Find all points where a mesh intersects a plane
 https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane
 
 Example
 https://jsfiddle.net/prisoner849/8uxw667m/
+--------------------------------
+isdoc https://github.com/jsdoc/jsdoc
+Getting Started with JSDoc 3 https://jsdoc.app/about-getting-started.html
+Generating a website:
+	Download https://github.com/jsdoc/jsdoc into D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc
+	Open "Node.js command prompt"
+
+	d:
+	cd "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc"
+	npm install -g jsdoc
+	/////////////////////////////////////////////////////////////
+	//Intersections doc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\intersections\jsdoc"
+
+	jsdoc -R "..\commonNodeJS\master\intersections\Intersections.md" "..\commonNodeJS\master\intersections\intersections.js" -d "..\commonNodeJS\master\intersections\jsdoc"
+
+	//See results in "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\intersections\jsdoc"
+
+	/////////////////////////////////////////////////////////////
