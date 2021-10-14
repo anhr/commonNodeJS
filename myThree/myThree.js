@@ -1063,6 +1063,10 @@ if ( window.__myThree__.boMyThree )
 window.__myThree__.boMyThree = true;
 
 import Intersections from '../Intersections/Intersections.js'
+/** @namespace
+ * @description Creates an intersection line for graphic objects.
+ * @see <a href="../../intersections/jsdoc/index.html" target="_blank">Intersections</a>.
+ */
 MyThree.Intersections = Intersections;
 
 export default MyThree;
