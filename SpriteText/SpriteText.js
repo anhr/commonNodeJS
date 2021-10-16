@@ -223,6 +223,7 @@ export function SpriteText( text, position,	options = {} ) {
 	}
 	if ( options.group )
 		options.group.add( sprite );
+	else three.group.add( sprite );
 
 	sprite.userData.optionsSpriteText = options;
 
