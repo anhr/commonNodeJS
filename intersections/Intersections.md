@@ -1,6 +1,6 @@
-# AxesHelper.
+# Intersections.
 
-An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [three.js](https://threejs.org/) projects.
+Creates an intersection line for graphic objects.
 
 # Content
 * [Quick start.](#Quickstart)

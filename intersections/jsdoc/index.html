@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>Intersections.</h1>
+<p>Creates an intersection line for graphic objects.</p>
+<h1>Content</h1>
+<ul>
+<li><a href="#Quickstart">Quick start.</a></li>
+<li><a href="#OrbitControls">Use the THREE.OrbitControls to rotate the camera.</a></li>
+<li><a href="#Raycaster">Use Raycaster for mouse picking (working out what objects in the 3d space the mouse is over).</a></li>
+<li><a href="#CameraTarget">Choose a point at which the camera is looking.</a></li>
+<li><a href="#Gui">Graphical user interface for changing settings.</a>
+<ul>
+<li><a href="#AxesHelperGui">AxesHelper settings.</a></li>
+<li><a href="#guiSelectPoint">Select a point from the mesh.</a></li>
+<li><a href="#MoveGroup">Move group of meshes.</a></li>
+</ul>
+</li>
+<li><a href="#WebPage">Example of your web page.</a></li>
+</ul>
+<p><a name="QuickStart"></a></p>
+<h2>Quick start</h2>
+<ul>
+<li>Create a folder on your localhost named as [folderName].
+<ul>
+<li>Download <a href="https://github.com/anhr/three.js">three.js</a> repository into your &quot;[folderName]\three.js\dev&quot; folder.</li>
+<li>Download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</li>
+</ul>
+</li>
+<li>Add your web page into [folderName]. Example:</li>
+</ul>
+<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+
+&lt;html>
+&lt;head>
+	&lt;title>AxesHelper&lt;/title>
+
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://threejs.org/examples/main.css&quot;>
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;three.js/dev/examples/main.css&quot;>-->
+
+	&lt;!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>-->
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>
+
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
+&lt;/head>
+&lt;body>
+	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
+	&lt;div id=&quot;info&quot;>
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a>
+		- &lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/AxesHelper&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>AxesHelper&lt;/a>.
+		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
+	&lt;/div>
+	&lt;div>
+		&lt;canvas id=&quot;canvas&quot;>&lt;/canvas>
+	&lt;/div>
+
+	&lt;script type=&quot;module&quot;>
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
+		import Options from './commonNodeJS/master/Options.js'
+
+		var camera, scene, renderer;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			const options = new Options();
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	&lt;/script>
+&lt;/body>
+&lt;/html>
+</code></pre>
+<p>NOTE. Please include <code>three.THREE = THREE;</code> line into your project before use my <a href="https://github.com/anhr/commonNodeJS">library</a>. See example above.</p>
+<p>The easiest way to use <b>AxesHelper</b> in your code is import <b>AxesHelper</b> from <b>AxesHelper.js</b> file in your JavaScript module.
+<a href="../Examples/index.html">Example</a>.</p>
+<pre class="prettyprint source"><code>import AxesHelper from './commonNodeJS/master/AxesHelper/AxesHelper.js';
+</code></pre>
+<p>Now you can use <b>AxesHelper</b> in your javascript code.</p>
+<p>The simplest <b>AxesHelper</b> has at least one axis.</p>
+<pre class="prettyprint source"><code>new AxesHelper( scene, options );
+</code></pre>
+<p>Now we want to customize <b>AxesHelper</b>.</p>
+<p>Name of the <b>X</b> is 'time'. Number of <b>X</b> scale marks is 5.</p>
+<p>Minimum <b>Y</b> is 0.</p>
+<p>See <b>options.scales</b> of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html">AxesHelper</a> for details.</p>
+<p>Please edit <b>options</b> for it.</p>
+<pre class="prettyprint source"><code>const options = new Options({
+
+	scales: {
+
+		text: {
+
+			//Please specify the textHeight if you want the changing of the text height is available in gui.
+			//Default textHeight is 0.04
+			textHeight: 0.04,
+
+			//fov: camera.fov,
+
+			//Precision of the scale marks is 3 digit.
+			//Please specify the precision if you want the changing of the precision is available in gui.
+			//Default precision is 4.
+			precision: 3,
+
+		},
+		x: {
+		
+			name: 'time',
+			marks: 5
+		
+		},
+		y: {
+		
+			min: 0,
+		
+		},
+		z: {}
+
+	}
+
+});
+</code></pre>
+<p><a name="OrbitControls"></a></p>
+<h2>Use the <a href="https://threejs.org/docs/index.html#examples/en/controls/OrbitControls">THREE.OrbitControls</a> to rotate the camera.</h2>
+<p>Add line after creating of the <b>renderer</b> in your code.</p>
+<pre class="prettyprint source"><code>options.createOrbitControls( camera, renderer, scene );
+</code></pre>
+<p><a name="Raycaster"></a></p>
+<h2>Use <a href="https://threejs.org/docs/index.html#api/en/core/Raycaster">Raycaster</a> for mouse picking (working out what objects in the 3d space the mouse is over).</h2>
+<p>Please create an 3D object, for example points.</p>
+<ul>
+<li>Use <a href="https://threejs.org/docs/index.html?q=Points#api/en/objects/Points">THREE.Points</a>.</li>
+</ul>
+<pre class="prettyprint source"><code>const arrayFuncs = [
+	new THREE.Vector3( 0.5, 0.5 ,0.5 ),
+	new THREE.Vector3( -0.5, -0.5 ,-0.5 )
+]
+const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints( arrayFuncs ),
+	new THREE.PointsMaterial( {
+
+		color: 0xffffff,
+		size: 5,//0.05,
+		sizeAttenuation: false,
+		alphaTest: 0.5,
+
+	} ) );
+scene.add( points );
+</code></pre>
+<p>Add <a href="../../jsdoc/Options/Raycaster_EventListeners.html">event listeners</a> and <a href="../../jsdoc/Options/Raycaster_EventListeners.html#addParticle">add points to particles</a>
+after creating of <b>renderer</b>.</p>
+<pre class="prettyprint source"><code>options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene } );
+options.eventListeners.addParticle( points );
+</code></pre>
+<p>For testing please move cursor over point. Cursor will be changing to 'pointer'.</p>
+<p>You can see a dot lines from point to axes if you click over point.</p>
+<p>You can customize the <b>raycaster</b> events. For example you can display an alert message if user has click over point.</p>
+<pre class="prettyprint source"><code>points.userData.raycaster = {
+
+	onMouseDown: function ( intersection ) {
+
+		alert( 'You have clicked over point.' );
+		Options.raycaster.onMouseDown( intersection, options );
+
+	}
+
+}
+</code></pre>
+<p>See <a href="../../jsdoc/Options/Raycaster_EventListeners.html" target="_blank">Raycaster#EventListeners</a> for more details.</p>
+<ul>
+<li>Easier way for displaying points is using of <a href="../../myPoints/jsdoc/" target="_blank">MyPoints</a>.</li>
+</ul>
+<p>First, import <b>MyPoints</b>.</p>
+<pre class="prettyprint source"><code>import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
+</code></pre>
+<p>Now you can use <b>MyPoints</b> in your javascript code.</p>
+<pre class="prettyprint source"><code>MyPoints( [
+	[],//first point. Zero position. White color.
+	[ -0.5, 0.5, 0.5 ],//second point. White color.
+], scene, { options: options } );
+</code></pre>
+<p>Please call <b>MyPoints</b> after creating of <b>renderer</b> and <b>options.eventListeners</b>
+if you want to use the <b>pointsOptions.shaderMaterial = false</b> key.</p>
+<pre class="prettyprint source"><code>MyPoints( [
+	[],//first point. Zero position. White color.
+	[ -0.5, 0.5, 0.5 ],//second point. White color.
+], scene, {
+	
+	options: options,
+	pointsOptions: { shaderMaterial: false, },
+	
+} );
+</code></pre>
+<p><a name="CameraTarget"></a></p>
+<h2>Choose a point at which the camera is looking.</h2>
+<p>First, import <b>Player</b>.</p>
+<pre class="prettyprint source"><code>import Player from './commonNodeJS/master/player/player.js';
+</code></pre>
+<p>See <a href="../../player/jsdoc/index.html#ImportPlayer">Player API</a> for details.</p>
+<ul>
+<li>Point of <b>THREE.Points</b> is camers target.</li>
+</ul>
+<p>Please, add the <b>cameraTarget</b> key into <b>arrayFuncs</b> array and use <b>Player.getPoints</b> for get of the points array for creation of the <b>THREE.Points</b>.</p>
+<pre class="prettyprint source"><code>const arrayFuncs = [
+	new THREE.Vector3( 0.5, 0.5 ,0.5 ),//First point
+	{
+
+		vector: new THREE.Vector3( -0.5, -0.5 ,-0.5 ),
+		cameraTarget: { camera: camera, },
+
+	}//Second point
+]
+const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
+		Player.getPoints( arrayFuncs, { group: scene, } ),
+		Player.getItemSize( arrayFuncs ) ),
+	new THREE.PointsMaterial( {
+
+		color: 0xffffff,
+		size: 5,//0.05,
+		sizeAttenuation: false,
+		alphaTest: 0.5,
+
+	} ) );
+</code></pre>
+<p>Define <b>points.userData.player</b> and call <b>Player.selectPlayScene(...)</b>.</p>
+<pre class="prettyprint source"><code>points.userData.player = { arrayFuncs: arrayFuncs, }
+Player.selectPlayScene( scene, { options: options } );
+</code></pre>
+<p>ATTENTION!!! Call <b>Player.selectPlayScene( scene, { options: options } );</b> after creation of the <b>OrbitControls</b> instance in the <b>options.createOrbitControls( camera, renderer, scene );</b> line.</p>
+<p>Now you can see the second point ( position is -0.5, -0.5 ,-0.5 ) in the center of the canvas. In other words, camera look at the second point.</p>
+<ul>
+<li>Point of <b>MyPoints</b> is camera target.</li>
+</ul>
+<p>Please remove <b>cameraTarget</b> key from second point of <b>arrayFuncs</b></p>
+<pre class="prettyprint source"><code>const arrayFuncs = [
+	new THREE.Vector3( 0.5, 0.5 ,0.5 ),//First point
+	{
+
+		vector: new THREE.Vector3( -0.5, -0.5 ,-0.5 ),
+		//cameraTarget: { camera: camera, },
+
+	}//Second point
+]
+</code></pre>
+<p>and add <b>cameraTarget</b> to second point of <b>MyPoints</b></p>
+<pre class="prettyprint source"><code>MyPoints( [
+	[],//first point. Zero position. White color.
+	{
+
+		vector: new THREE.Vector3( -0.5, 0.5, 0.5 ),
+		cameraTarget: { camera: camera, },
+
+	}//second point. White color.
+], scene, { options: options } );
+</code></pre>
+<p>Please create <b>MyPoints</b> before <b>Player.selectPlayScene( scene, { options: options } );</b> line
+if you want to use the <b>pointsOptions.shaderMaterial = false</b> key.</p>
+<pre class="prettyprint source"><code>MyPoints( [
+	[],//first point. Zero position. White color.
+	{
+
+		vector: new THREE.Vector3( -0.5, 0.5, 0.5 ),
+		cameraTarget: { camera: camera, },
+
+	}//second point. White color.
+], scene, {
+	
+	options: options,
+	pointsOptions: { shaderMaterial: false, },
+	
+} );
+</code></pre>
+<p>Now you can see the second point ( position is -0.5, 0.5, 0.5 ) of <b>MyPoints</b> in the center of the canvas. In other words, camera look at the second point.</p>
+<p><a name="Gui"></a></p>
+<h2>Graphical user interface for changing settings.</h2>
+<p><a name="AxesHelperGui"></a></p>
+<h3>AxesHelper settings.</h3>
+<p>Import <a href="https://github.com/anhr/dat.gui">dat.gui</a>.</p>
+<pre class="prettyprint source"><code>import { dat } from './commonNodeJS/master/dat/dat.module.js';
+three.dat = dat;
+</code></pre>
+<p>Add <a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelperGui</a> into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for manual change settings of the <b>AxesHelper</b>.</p>
+<p>Import <b>AxesHelperGui</b>.</p>
+<pre class="prettyprint source"><code>import AxesHelperGui from './commonNodeJS/master/AxesHelper/AxesHelperGui.js';
+</code></pre>
+<p>Create <b>AxesHelperGui</b> instance after creating of <b>AxesHelper</b> instance.</p>
+<pre class="prettyprint source"><code>AxesHelperGui( options );
+</code></pre>
+<p>Now you can see the &quot;Axes Helper&quot; folder in the dat.gui.</p>
+<p><a name="guiSelectPoint"></a></p>
+<h3>Select a point from the mesh.</h3>
+<p>Add <a href="../../guiSelectPoint/jsdoc/index.html">guiSelectPoint</a> into <a href="https://github.com/anhr/dat.gui">dat.gui</a> for select a point from the mesh.</p>
+<p><a name="MoveGroup"></a></p>
+<h3>Move a group of meshes.</h3>
+<p>Sometimes you need to move a group of meshes for better visualization. Use <a href="../../jsdoc/MoveGroupGui/index.html">MoveGroupGui</a> for it.</p>
+<p>Import <b>MoveGroupGui</b>.</p>
+<pre class="prettyprint source"><code>import MoveGroupGui from './commonNodeJS/master/MoveGroupGui.js';
+</code></pre>
+<p>Create the <b>MoveGroupGui</b> instance.</p>
+<pre class="prettyprint source"><code>new MoveGroupGui( scene, options );
+</code></pre>
+<p>Now you can see the 'Move Group' folder in the dat.gui.
+You can move, scale and rotate the scene. Unfortunately, you also move the axes.
+For resolving of the issue, create <b>groupMove</b> and move all your meshes from scene to <b>groupMove</b>.</p>
+<pre class="prettyprint source"><code>const groupMove = new THREE.Group();
+scene.add( groupMove );
+</code></pre>
+<p>Move <b>groupMove</b> instead of the <b>scene</b>. Replace <b>scene</b> to <b>groupMove</b> in the <b>new MoveGroupGui</b>.</p>
+<pre class="prettyprint source"><code>new MoveGroupGui( groupMove, options );
+</code></pre>
+<p>Remove points from scene and add it into <b>groupMove</b>.</p>
+<pre class="prettyprint source"><code>//scene.add( points );
+groupMove.add( points );
+</code></pre>
+<p>Remove <b>MyPoints</b> from scene and add it into <b>groupMove</b>.</p>
+<pre class="prettyprint source"><code>MyPoints( [
+	[],//first point. Zero position. White color.
+	{
+
+		vector: new THREE.Vector3( -0.5, 0.5, 0.5 ),
+		cameraTarget: { camera: camera, },
+
+	}//second point. White color.
+], groupMove, { options: options } );
+</code></pre>
+<p><a name="WebPage"></a></p>
+<h2>Example of your web page.</h2>
+<p>The following code is the result of this tutorial.</p>
+<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+
+&lt;html>
+&lt;head>
+	&lt;title>AxesHelper&lt;/title>
+
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://threejs.org/examples/main.css&quot;>
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;three.js/dev/examples/main.css&quot;>-->
+	&lt;!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
+	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>-->
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>
+
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
+	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
+&lt;/head>
+&lt;body>
+	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
+	&lt;div id=&quot;info&quot;>
+		&lt;a href=&quot;https://threejs.org/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>three.js&lt;/a>
+		- &lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/AxesHelper&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>AxesHelper&lt;/a>.
+		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
+	&lt;/div>
+	&lt;div>
+		&lt;canvas id=&quot;canvas&quot;>&lt;/canvas>
+	&lt;/div>
+
+	&lt;script type=&quot;module&quot;>
+
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import three from './commonNodeJS/master/three.js'
+		three.THREE = THREE;
+
+		import Options from './commonNodeJS/master/Options.js'
+		import AxesHelper from './commonNodeJS/master/AxesHelper/AxesHelper.js';
+		import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
+		import Player from './commonNodeJS/master/player/player.js';
+		import { dat } from './commonNodeJS/master/dat/dat.module.js';
+		three.dat = dat;
+		import AxesHelperGui from './commonNodeJS/master/AxesHelper/AxesHelperGui.js';
+		import GuiSelectPoint from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
+		import MoveGroupGui from './commonNodeJS/master/MoveGroupGui.js';
+
+		var camera, scene, renderer;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
+
+			scene = new THREE.Scene();
+
+			const groupMove = new THREE.Group();
+			scene.add( groupMove );
+
+			const arrayFuncs = [
+				new THREE.Vector3( 0.5, 0.5 ,0.5 ),//First point
+				{
+
+					vector: new THREE.Vector3( -0.5, -0.5 ,-0.5 ),
+					//cameraTarget: { camera: camera, },
+
+				}//Second point
+			]
+			const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
+					Player.getPoints( arrayFuncs, { group: scene, } ),
+					Player.getItemSize( arrayFuncs ) ),
+				new THREE.PointsMaterial( {
+
+					color: 0xffffff,
+					size: 5,//0.05,
+					sizeAttenuation: false,
+					alphaTest: 0.5,
+
+				} ) );
+			//scene.add( points );
+			groupMove.add( points );
+			points.userData.raycaster = {
+
+				onMouseDown: function ( intersection ) {
+
+					alert( 'You have clicked over point.' );
+					Options.raycaster.onMouseDown( intersection, options );
+
+				}
+
+			}
+
+			const options = new Options( {
+
+				scales: {
+
+					text: {
+
+						//Please specify the textHeight if you want the changing of the text height is available in gui.
+						//Default textHeight is 0.04
+						textHeight: 0.04,
+
+						//fov: camera.fov,
+
+						//Precision of the scale marks is 3 digit.
+						//Please specify the precision if you want the changing of the precision is available in gui.
+						//Default precision is 4.
+						precision: 3,
+
+					},
+					x: {
+
+						name: 'time',
+						marks: 5
+
+					},
+					y: {
+
+						min: 0,
+
+					},
+					z: {}
+
+				}
+
+			} );
+
+			new MoveGroupGui( groupMove, options );
+
+			new GuiSelectPoint( options );
+			options.guiSelectPoint.add();
+			options.guiSelectPoint.addMesh( points );
+
+			new AxesHelper( scene, options );
+			AxesHelperGui( options );
+
+			renderer = new THREE.WebGLRenderer( {
+
+				antialias: true,
+				canvas: document.getElementById( 'canvas' ),
+
+			} );
+
+			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene } );
+			options.eventListeners.addParticle( points );
+
+			MyPoints( [
+				[],//first point. Zero position. White color.
+				{
+
+					vector: new THREE.Vector3( -0.5, 0.5, 0.5 ),
+					cameraTarget: { camera: camera, },
+
+				}//second point. White color.
+			], groupMove, { options: options } );
+
+			options.createOrbitControls( camera, renderer, scene );
+
+			points.userData.player = { arrayFuncs: arrayFuncs, }
+			Player.selectPlayScene( scene, { options: options } );
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame( animate );
+
+			renderer.render( scene, camera );
+
+		}
+
+	&lt;/script>
+&lt;/body>
+&lt;/html>
+</code></pre>
+<p>Enjoy my code :)</p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Intersections.html">Intersections</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Intersections-Intersections.Faces.html">Faces</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Oct 16 2021 05:52:24 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

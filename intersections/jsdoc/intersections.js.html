@@ -1,4 +1,32 @@
-﻿/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: intersections.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: intersections.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>﻿/**
  * @module Intersections
  * @description Creates an intersection line for graphic objects.
  * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
@@ -19,9 +47,9 @@ import { SpriteText } from '../SpriteText/SpriteText.js'
 
 /**
  * Creates an array of graphic object [faces]{@link https://threejs.org/docs/index.html?q=fac#examples/en/math/convexhull/Face}.
- * @param {THREE.Mesh} object You can see an array of faces in <b>object.userData.intersections.faces</b> after creating of class.
+ * @param {THREE.Mesh} object You can see an array of faces in &lt;b>object.userData.intersections.faces&lt;/b> after creating of class.
  * See [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}.
- * @param {array} collidableMeshList Array of meshes, which intersects with <b>object</b>.
+ * @param {array} collidableMeshList Array of meshes, which intersects with &lt;b>object&lt;/b>.
  */
 function Faces( object, collidableMeshList ) {
 
@@ -34,7 +62,7 @@ function Faces( object, collidableMeshList ) {
 
 		//ищщем точки, которые совпадают или почти совпадают с небольшой погрешностью
 		//что бы у них был одинаковый индекс
-		for ( let i = 1; i < object.geometry.index.count; i++ ) {
+		for ( let i = 1; i &lt; object.geometry.index.count; i++ ) {
 
 			const point1 = new THREE.Vector3().fromBufferAttribute( positions, object.geometry.index.array[i] );
 			/*
@@ -53,9 +81,9 @@ function Faces( object, collidableMeshList ) {
 
 					const d = Math.abs( a - b )
 					if ( d === 0 ) return 0;
-					//								if ( ( d > 0 ) && ( d <= 7.347880586115415e-16 ) ) return 1;
-					if ( ( d > 0 ) && ( d <= 3.1840817637818772e-15 ) ) return 1;
-					//								if ( ( d > 0 ) && ( d <= 3.e-10 ) ) return 1;
+					//								if ( ( d > 0 ) &amp;&amp; ( d &lt;= 7.347880586115415e-16 ) ) return 1;
+					if ( ( d > 0 ) &amp;&amp; ( d &lt;= 3.1840817637818772e-15 ) ) return 1;
+					//								if ( ( d > 0 ) &amp;&amp; ( d &lt;= 3.e-10 ) ) return 1;
 					return 4;
 
 				}
@@ -63,8 +91,8 @@ function Faces( object, collidableMeshList ) {
 				//0 координаты совпадают
 				//1,2,3 одна, две или три коодинаты с маленьким отклонением. Остальные совпадают.
 				//4 есть хоть одна коодината с большим отклонением
-				//if ( ( res > 0 ) && ( res < 4 ) )
-				if ( res < 4 ) {
+				//if ( ( res > 0 ) &amp;&amp; ( res &lt; 4 ) )
+				if ( res &lt; 4 ) {
 
 					object.geometry.index.array[i] = object.geometry.index.array[j];
 					break;
@@ -78,7 +106,7 @@ function Faces( object, collidableMeshList ) {
 	} else {
 
 		const array = []
-		for ( var i = 0; i < positions.count; i++ )
+		for ( var i = 0; i &lt; positions.count; i++ )
 			array.push( i );
 		object.geometry.index = new THREE.Uint16BufferAttribute( array, 1 );
 
@@ -86,8 +114,8 @@ function Faces( object, collidableMeshList ) {
 
 	/**
 	 * @description Marks the selected face in a different color.
-	 * @param {Edge} edge <b>face.edge</b> First edge of selected face.
-	 * @param {number} lineFaceIndex LineFaceIndex enum item. Example: <b>LineFaceIndex.mouse</b>
+	 * @param {Edge} edge &lt;b>face.edge&lt;/b> First edge of selected face.
+	 * @param {number} lineFaceIndex &lt;a href="./module-Intersections-Intersections.LineFaceIndex.html" target="_blank">LineFaceIndex&lt;/a> enum item. Example: &lt;b>MyThree.Intersections.LineFaceIndex.mouse&lt;/b>
 	 * @param {number} color Color of the edges of the face. Example: 0xffffff - white color.
 	 */
 	function DrawFace( edge, lineFaceIndex, color ) {
@@ -122,7 +150,7 @@ function Faces( object, collidableMeshList ) {
 //		lineFace.position.set( p, p, p );
 //		three.group.add( lineFace );
 		object.add( lineFace );
-		if ( options.guiSelectPoint && ( lineFaceIndex === LineFaceIndex.selected ) ) {
+		if ( options.guiSelectPoint &amp;&amp; ( lineFaceIndex === LineFaceIndex.selected ) ) {
 
 			lineFace.name = edge.face.name;
 			options.guiSelectPoint.addMesh( lineFace );
@@ -132,8 +160,8 @@ function Faces( object, collidableMeshList ) {
 
 	}
 	/**
-	 * @description Hide the face, which was drawn by <a href="./module-Intersections-Intersections.DrawFace.html" target="_blank">DrawFace</a>.
-	 * @param {number} lineFaceIndex LineFaceIndex enum item. Example: <b>LineFaceIndex.mouse</b>
+	 * @description Hide the face, which was drawn by &lt;a href="./module-Intersections-Intersections.DrawFace.html" target="_blank">DrawFace&lt;/a>.
+	 * @param {number} lineFaceIndex &lt;a href="./module-Intersections-Intersections.LineFaceIndex.html" target="_blank">LineFaceIndex&lt;/a> enum item. Example: &lt;b>MyThree.Intersections.LineFaceIndex.mouse&lt;/b>
 	 */
 	function HideFace( lineFaceIndex ) {
 
@@ -182,18 +210,11 @@ function Faces( object, collidableMeshList ) {
 		console.log(point3.applyMatrix4( object.matrix ));
 		*/
 
+		//нарисорвать face
 		DrawFace( edge, LineFaceIndex.selected, 0xffffff );
 		DrawFace( edge.twin.face.edge, LineFaceIndex.selectedTwin1, 0xffff00 );
 		DrawFace( edge.prev.twin.face.edge, LineFaceIndex.selectedTwin2, 0xffff00 );
 		DrawFace( edge.prev.prev.twin.face.edge, LineFaceIndex.selectedTwin3, 0xffff00 );
-
-	}
-	function HideSelectedFace() {
-
-		HideFace( LineFaceIndex.selected);
-		HideFace( LineFaceIndex.selectedTwin1 );
-		HideFace( LineFaceIndex.selectedTwin2 );
-		HideFace( LineFaceIndex.selectedTwin3 );
 
 	}
 
@@ -210,13 +231,11 @@ function Faces( object, collidableMeshList ) {
 
 			if ( !spriteTextIntersection ) {
 
-/*
 				const attributesPosition = intersection.object.geometry.attributes.position,
 					position = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
 				position.fromArray( attributesPosition.array, intersection.index * attributesPosition.itemSize );
-*/
 				spriteTextIntersection = new SpriteText( '111',
-					new THREE.Vector3()//intersection.point//position
+					position//intersection.point
 					//, options.spriteOptions
 				);
 
@@ -276,7 +295,7 @@ function Faces( object, collidableMeshList ) {
 
 								get: function () {
 
-									for ( var i = 0; i < faces.length; i++ ) {
+									for ( var i = 0; i &lt; faces.length; i++ ) {
 
 										if ( Object.is( faces[i], this ) ) return 'Face ' + i;
 
@@ -317,7 +336,7 @@ function Faces( object, collidableMeshList ) {
 														if ( twin ) return twin;
 														//console.log('vectorIndex');
 														//console.log(vectorIndex);
-														for ( var i = 0; i < faces.length; i++ ) {
+														for ( var i = 0; i &lt; faces.length; i++ ) {
 
 															const item = faces[i];
 															const vectorIndexCur = new THREE.Vector3( item.edge.index, item.edge.prev.index, item.edge.prev.prev.index );
@@ -351,11 +370,11 @@ function Faces( object, collidableMeshList ) {
 																const prev = this.prev;
 																if ( !getTwin( this.index, prev.index ) )
 																	getTwin( prev.index, this.index )
-/*
-																	if ( !getTwin( prev.index, this.index ) )
-																		if ( !getTwin( prev.index, prev.prev.index ) )
-																			getTwin( prev.prev.index, prev.index )
-*/
+																/*
+																																					if ( !getTwin( prev.index, this.index ) )
+																																						if ( !getTwin( prev.index, prev.prev.index ) )
+																																							getTwin( prev.prev.index, prev.index )
+																*/
 																if ( twin ) break;
 
 															}
@@ -395,56 +414,21 @@ function Faces( object, collidableMeshList ) {
 					}
 
 				}
-				for ( let index = 0; index < object.geometry.index.count; index += 3 )
+				for ( let index = 0; index &lt; object.geometry.index.count; index += 3 )
 					faces.push( new Face( index ) );
 
 				//gui
 
-				if ( options.dat && options.dat.gui ) {
+				if ( options.dat &amp;&amp; options.dat.gui ) {
 
-					//Localization
-
-					const lang = {
-
-						notSelected: 'Not selected',
-						faces: 'Faces',
-
-					};
-					switch ( options.getLanguageCode() ) {
-
-						case 'ru'://Russian language
-
-							lang.notSelected = 'Не выбрана';
-							lang.faces = 'Грани';
-
-							break;
-						default://Custom language
-							if ( ( options.lang === undefined ) || ( options.lang.languageCode != languageCode ) )
-								break;
-
-							Object.keys( options.lang ).forEach( function ( key ) {
-
-								if ( lang[key] === undefined )
-									return;
-								lang[key] = options.lang[key];
-
-							} );
-
-					}
-
-					const dat = three.dat;
-					const selectFace = { [lang.notSelected]: -1 };
-					for ( var i = 0; i < faces.length; i++ )
+					const selectFace = {};
+					for ( var i = 0; i &lt; faces.length; i++ )
 						selectFace[faces[i].name] = i;
 					cFaces = options.dat.gui.add( { Faces: 'someName' }, 'Faces', selectFace ).onChange( function ( i ) {
 
-						if ( i != -1 )
-							DrawSelectedFace( faces[parseInt( i )].edge );
-						else HideSelectedFace();
+						DrawSelectedFace( faces[parseInt( i )].edge );
 
 					} );
-					cFaces.setValue( -1 );
-					dat.controllerNameAndTitle( cFaces, lang.faces );
 
 				}
 
@@ -493,8 +477,8 @@ function Faces( object, collidableMeshList ) {
 										rayOriginPoint = new THREE.Raycaster( globalOriginPoint, directionVector.clone().normalize(), 0, far + ( far / 100 ) ),
 										collisionResultsOriginPoint = rayOriginPoint.intersectObjects( collidableMeshList );
 									if ( collisionResultsOriginPoint.length > 0 )
-									//								if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() )
-									//								if ( collisionResultsOriginPoint.length > 0 && collisionResultsOriginPoint[0].distance < directionVector.length() )
+									//								if ( collisionResults.length > 0 &amp;&amp; collisionResults[0].distance &lt; directionVector.length() )
+									//								if ( collisionResultsOriginPoint.length > 0 &amp;&amp; collisionResultsOriginPoint[0].distance &lt; directionVector.length() )
 									{
 
 										const point = collisionResultsOriginPoint[0].point;
@@ -545,7 +529,7 @@ function Faces( object, collidableMeshList ) {
 							if ( setEdge() ) return true;
 
 						}
-						while ( faceIndex < faces.length ) {
+						while ( faceIndex &lt; faces.length ) {
 
 							if ( setFace() ) break;
 							faceIndex++;
@@ -619,10 +603,33 @@ const Intersections = {
 
 	/** @namespace
 	 * @description Array of graphic object faces.
-	 * @see <a href="./module-Intersections.html" target="_blank">Faces</a> method.
+	 * @see &lt;a href="./module-Intersections.html" target="_blank">Faces&lt;/a> method.
 	 */
 	Faces: Faces,
 
 };
 
 export default Intersections;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Intersections.html">Intersections</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-Intersections-Intersections.Faces.html">Faces</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Oct 16 2021 05:52:24 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

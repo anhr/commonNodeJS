@@ -732,6 +732,8 @@ class MyThree {
 
 			const pointName = options.dat ? options.dat.getCookieName('Point') : 'Point';
 			if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
+			three.options = options;
+			three.group = group;
 
 			if ( createXDobjects ) createXDobjects( group, options );
 
