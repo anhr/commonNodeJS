@@ -38,6 +38,10 @@
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * @see [How to detect collision in three.js?]{@link https://newbedev.com/how-to-detect-collision-in-three-js}
+ * @see [Collision detection example]{@link http://stemkoski.github.io/Three.js/Collision-Detection.html}
+ * @see [Three JS - Find all points where a mesh intersects a plane]{@link https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane}
 */
 
 import three from '../three.js'
@@ -81,9 +85,9 @@ function Faces( object, collidableMeshList ) {
 
 					const d = Math.abs( a - b )
 					if ( d === 0 ) return 0;
-					//								if ( ( d > 0 ) &amp;&amp; ( d &lt;= 7.347880586115415e-16 ) ) return 1;
+//					if ( ( d > 0 ) &amp;&amp; ( d &lt;= 7.347880586115415e-16 ) ) return 1;
 					if ( ( d > 0 ) &amp;&amp; ( d &lt;= 3.1840817637818772e-15 ) ) return 1;
-					//								if ( ( d > 0 ) &amp;&amp; ( d &lt;= 3.e-10 ) ) return 1;
+//					if ( ( d > 0 ) &amp;&amp; ( d &lt;= 3.e-10 ) ) return 1;
 					return 4;
 
 				}
@@ -105,6 +109,8 @@ function Faces( object, collidableMeshList ) {
 
 	} else {
 
+		//У некоторых геометрических фигур нет object.geometry.index. Например THREE.TetrahedronGeometry
+console.error( 'Faces: under constraction' );
 		const array = []
 		for ( var i = 0; i &lt; positions.count; i++ )
 			array.push( i );
@@ -115,7 +121,7 @@ function Faces( object, collidableMeshList ) {
 	/**
 	 * @description Marks the selected face in a different color.
 	 * @param {Edge} edge &lt;b>face.edge&lt;/b> First edge of selected face.
-	 * @param {number} lineFaceIndex &lt;a href="./module-Intersections-Intersections.LineFaceIndex.html" target="_blank">LineFaceIndex&lt;/a> enum item. Example: &lt;b>MyThree.Intersections.LineFaceIndex.mouse&lt;/b>
+	 * @param {number} lineFaceIndex LineFaceIndex enum item. Example: &lt;b>LineFaceIndex.mouse&lt;/b>
 	 * @param {number} color Color of the edges of the face. Example: 0xffffff - white color.
 	 */
 	function DrawFace( edge, lineFaceIndex, color ) {
@@ -161,7 +167,7 @@ function Faces( object, collidableMeshList ) {
 	}
 	/**
 	 * @description Hide the face, which was drawn by &lt;a href="./module-Intersections-Intersections.DrawFace.html" target="_blank">DrawFace&lt;/a>.
-	 * @param {number} lineFaceIndex &lt;a href="./module-Intersections-Intersections.LineFaceIndex.html" target="_blank">LineFaceIndex&lt;/a> enum item. Example: &lt;b>MyThree.Intersections.LineFaceIndex.mouse&lt;/b>
+	 * @param {number} lineFaceIndex LineFaceIndex enum item. Example: &lt;b>LineFaceIndex.mouse&lt;/b>
 	 */
 	function HideFace( lineFaceIndex ) {
 
@@ -210,17 +216,24 @@ function Faces( object, collidableMeshList ) {
 		console.log(point3.applyMatrix4( object.matrix ));
 		*/
 
-		//нарисорвать face
 		DrawFace( edge, LineFaceIndex.selected, 0xffffff );
 		DrawFace( edge.twin.face.edge, LineFaceIndex.selectedTwin1, 0xffff00 );
 		DrawFace( edge.prev.twin.face.edge, LineFaceIndex.selectedTwin2, 0xffff00 );
 		DrawFace( edge.prev.prev.twin.face.edge, LineFaceIndex.selectedTwin3, 0xffff00 );
 
 	}
+	function HideSelectedFace() {
+
+		HideFace( LineFaceIndex.selected);
+		HideFace( LineFaceIndex.selectedTwin1 );
+		HideFace( LineFaceIndex.selectedTwin2 );
+		HideFace( LineFaceIndex.selectedTwin3 );
+
+	}
 
 	//Raycaster
 
-	var spriteTextIntersection;
+	var spriteTextIntersection, cursor;
 	object.userData.raycaster = {
 
 		onIntersection: function ( intersection, mouse ) {
@@ -229,17 +242,33 @@ function Faces( object, collidableMeshList ) {
 			DrawFace( faces[intersection.faceIndex].edge, LineFaceIndex.mouse, 0xffffff );
 			//Options.raycaster.onIntersection( intersection, options, scene );//, camera, renderer );
 
+			//Sptite text
+
+			if ( spriteTextIntersection &amp;&amp; ( spriteTextIntersection.faceIndex != intersection.faceIndex ) ) {
+
+				scene.remove( spriteTextIntersection );
+				spriteTextIntersection = undefined;
+
+			}
 			if ( !spriteTextIntersection ) {
 
+/*
 				const attributesPosition = intersection.object.geometry.attributes.position,
 					position = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
 				position.fromArray( attributesPosition.array, intersection.index * attributesPosition.itemSize );
-				spriteTextIntersection = new SpriteText( '111',
-					position//intersection.point
-					//, options.spriteOptions
+*/
+				spriteTextIntersection = new SpriteText( 'Face id = ' + intersection.faceIndex,
+					intersection.point//new THREE.Vector3()//position
+					, { rect: { displayRect: true, }, }
 				);
+				spriteTextIntersection.faceIndex = intersection.faceIndex;
 
 			} else spriteTextIntersection.position.copy( intersection.point );
+
+			//cursor
+
+			if ( cursor === undefined ) cursor = options.renderer.domElement.style.cursor;
+			options.renderer.domElement.style.cursor = 'pointer';
 
 		},
 		onIntersectionOut: function () {
@@ -255,13 +284,15 @@ function Faces( object, collidableMeshList ) {
 
 			}
 
+			options.renderer.domElement.style.cursor = cursor;
+
 		},
 		onMouseDown: function ( intersection ) {
 
 			//alert( 'Clicked over object.' );
 			if ( cFaces ) {
 
-				cFaces.__select[intersection.faceIndex].selected = true;
+				cFaces.__select[intersection.faceIndex + 1].selected = true;
 				cFaces.__onChange(intersection.faceIndex);
 
 			} else DrawSelectedFace( object.userData.intersections.faces[intersection.faceIndex].edge );
@@ -370,11 +401,11 @@ function Faces( object, collidableMeshList ) {
 																const prev = this.prev;
 																if ( !getTwin( this.index, prev.index ) )
 																	getTwin( prev.index, this.index )
-																/*
-																																					if ( !getTwin( prev.index, this.index ) )
-																																						if ( !getTwin( prev.index, prev.prev.index ) )
-																																							getTwin( prev.prev.index, prev.index )
-																*/
+/*
+																	if ( !getTwin( prev.index, this.index ) )
+																		if ( !getTwin( prev.index, prev.prev.index ) )
+																			getTwin( prev.prev.index, prev.index )
+*/
 																if ( twin ) break;
 
 															}
@@ -421,14 +452,49 @@ function Faces( object, collidableMeshList ) {
 
 				if ( options.dat &amp;&amp; options.dat.gui ) {
 
-					const selectFace = {};
+					//Localization
+
+					const lang = {
+
+						notSelected: 'Not selected',
+						faces: 'Faces',
+
+					};
+					switch ( options.getLanguageCode() ) {
+
+						case 'ru'://Russian language
+
+							lang.notSelected = 'Не выбрана';
+							lang.faces = 'Грани';
+
+							break;
+						default://Custom language
+							if ( ( options.lang === undefined ) || ( options.lang.languageCode != languageCode ) )
+								break;
+
+							Object.keys( options.lang ).forEach( function ( key ) {
+
+								if ( lang[key] === undefined )
+									return;
+								lang[key] = options.lang[key];
+
+							} );
+
+					}
+
+					const dat = three.dat;
+					const selectFace = { [lang.notSelected]: -1 };
 					for ( var i = 0; i &lt; faces.length; i++ )
 						selectFace[faces[i].name] = i;
 					cFaces = options.dat.gui.add( { Faces: 'someName' }, 'Faces', selectFace ).onChange( function ( i ) {
 
-						DrawSelectedFace( faces[parseInt( i )].edge );
+						if ( i != -1 )
+							DrawSelectedFace( faces[parseInt( i )].edge );
+						else HideSelectedFace();
 
 					} );
+					cFaces.setValue( -1 );
+					dat.controllerNameAndTitle( cFaces, lang.faces );
 
 				}
 
@@ -443,8 +509,6 @@ function Faces( object, collidableMeshList ) {
 						object.position.set( 0, 0, 10 - 30 * t );
 						object.updateMatrix();
 
-						//thanks https://newbedev.com/how-to-detect-collision-in-three-js
-						//http://stemkoski.github.io/Three.js/Collision-Detection.html
 						const arrayIntersectPoints = [];
 						if ( intersectLine ) {
 
@@ -477,8 +541,8 @@ function Faces( object, collidableMeshList ) {
 										rayOriginPoint = new THREE.Raycaster( globalOriginPoint, directionVector.clone().normalize(), 0, far + ( far / 100 ) ),
 										collisionResultsOriginPoint = rayOriginPoint.intersectObjects( collidableMeshList );
 									if ( collisionResultsOriginPoint.length > 0 )
-									//								if ( collisionResults.length > 0 &amp;&amp; collisionResults[0].distance &lt; directionVector.length() )
-									//								if ( collisionResultsOriginPoint.length > 0 &amp;&amp; collisionResultsOriginPoint[0].distance &lt; directionVector.length() )
+//									if ( collisionResults.length > 0 &amp;&amp; collisionResults[0].distance &lt; directionVector.length() )
+//									if ( collisionResultsOriginPoint.length > 0 &amp;&amp; collisionResultsOriginPoint[0].distance &lt; directionVector.length() )
 									{
 
 										const point = collisionResultsOriginPoint[0].point;
@@ -626,7 +690,7 @@ export default Intersections;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Oct 16 2021 05:52:24 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Oct 16 2021 21:36:38 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

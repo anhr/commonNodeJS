@@ -10,6 +10,10 @@
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * @see [How to detect collision in three.js?]{@link https://newbedev.com/how-to-detect-collision-in-three-js}
+ * @see [Collision detection example]{@link http://stemkoski.github.io/Three.js/Collision-Detection.html}
+ * @see [Three JS - Find all points where a mesh intersects a plane]{@link https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane}
 */
 
 import three from '../three.js'
@@ -53,9 +57,9 @@ function Faces( object, collidableMeshList ) {
 
 					const d = Math.abs( a - b )
 					if ( d === 0 ) return 0;
-					//								if ( ( d > 0 ) && ( d <= 7.347880586115415e-16 ) ) return 1;
+//					if ( ( d > 0 ) && ( d <= 7.347880586115415e-16 ) ) return 1;
 					if ( ( d > 0 ) && ( d <= 3.1840817637818772e-15 ) ) return 1;
-					//								if ( ( d > 0 ) && ( d <= 3.e-10 ) ) return 1;
+//					if ( ( d > 0 ) && ( d <= 3.e-10 ) ) return 1;
 					return 4;
 
 				}
@@ -77,9 +81,28 @@ function Faces( object, collidableMeshList ) {
 
 	} else {
 
-		const array = []
+		//У некоторых геометрических фигур нет object.geometry.index. Например THREE.TetrahedronGeometry
+		console.error( 'Faces: under constraction' );
+		const array = [
+			0, 1, 2,
+			3, 2, 1,
+			3, 1, 0,
+			3, 0, 2
+		]
+/*
+		const array = [
+			0, 1, 2,
+			1, 2, 3,
+			2, 3, 4,
+			3, 4, 5,
+			4, 5, 6
+		]
+*/
+/*
+		const array = [];
 		for ( var i = 0; i < positions.count; i++ )
 			array.push( i );
+*/
 		object.geometry.index = new THREE.Uint16BufferAttribute( array, 1 );
 
 	}
@@ -199,7 +222,7 @@ function Faces( object, collidableMeshList ) {
 
 	//Raycaster
 
-	var spriteTextIntersection;
+	var spriteTextIntersection, cursor;
 	object.userData.raycaster = {
 
 		onIntersection: function ( intersection, mouse ) {
@@ -208,6 +231,14 @@ function Faces( object, collidableMeshList ) {
 			DrawFace( faces[intersection.faceIndex].edge, LineFaceIndex.mouse, 0xffffff );
 			//Options.raycaster.onIntersection( intersection, options, scene );//, camera, renderer );
 
+			//Sptite text
+
+			if ( spriteTextIntersection && ( spriteTextIntersection.faceIndex != intersection.faceIndex ) ) {
+
+				scene.remove( spriteTextIntersection );
+				spriteTextIntersection = undefined;
+
+			}
 			if ( !spriteTextIntersection ) {
 
 /*
@@ -215,12 +246,18 @@ function Faces( object, collidableMeshList ) {
 					position = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
 				position.fromArray( attributesPosition.array, intersection.index * attributesPosition.itemSize );
 */
-				spriteTextIntersection = new SpriteText( '111',
-					new THREE.Vector3()//intersection.point//position
-					//, options.spriteOptions
+				spriteTextIntersection = new SpriteText( 'Face id = ' + intersection.faceIndex,
+					intersection.point//new THREE.Vector3()//position
+					, { rect: { displayRect: true, }, }
 				);
+				spriteTextIntersection.faceIndex = intersection.faceIndex;
 
 			} else spriteTextIntersection.position.copy( intersection.point );
+
+			//cursor
+
+			if ( cursor === undefined ) cursor = options.renderer.domElement.style.cursor;
+			options.renderer.domElement.style.cursor = 'pointer';
 
 		},
 		onIntersectionOut: function () {
@@ -236,13 +273,15 @@ function Faces( object, collidableMeshList ) {
 
 			}
 
+			options.renderer.domElement.style.cursor = cursor;
+
 		},
 		onMouseDown: function ( intersection ) {
 
 			//alert( 'Clicked over object.' );
 			if ( cFaces ) {
 
-				cFaces.__select[intersection.faceIndex].selected = true;
+				cFaces.__select[intersection.faceIndex + 1].selected = true;
 				cFaces.__onChange(intersection.faceIndex);
 
 			} else DrawSelectedFace( object.userData.intersections.faces[intersection.faceIndex].edge );
@@ -459,8 +498,6 @@ function Faces( object, collidableMeshList ) {
 						object.position.set( 0, 0, 10 - 30 * t );
 						object.updateMatrix();
 
-						//thanks https://newbedev.com/how-to-detect-collision-in-three-js
-						//http://stemkoski.github.io/Three.js/Collision-Detection.html
 						const arrayIntersectPoints = [];
 						if ( intersectLine ) {
 
@@ -493,8 +530,8 @@ function Faces( object, collidableMeshList ) {
 										rayOriginPoint = new THREE.Raycaster( globalOriginPoint, directionVector.clone().normalize(), 0, far + ( far / 100 ) ),
 										collisionResultsOriginPoint = rayOriginPoint.intersectObjects( collidableMeshList );
 									if ( collisionResultsOriginPoint.length > 0 )
-									//								if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() )
-									//								if ( collisionResultsOriginPoint.length > 0 && collisionResultsOriginPoint[0].distance < directionVector.length() )
+//									if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() )
+//									if ( collisionResultsOriginPoint.length > 0 && collisionResultsOriginPoint[0].distance < directionVector.length() )
 									{
 
 										const point = collisionResultsOriginPoint[0].point;
