@@ -37,7 +37,29 @@ const getCurrentScriptPath = function () {
 	return path;
 };
 //console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
-const currentScriptPath = getCurrentScriptPath();
+const currentScriptPath = getCurrentScriptPath(),
+	_vertex_text = {
+
+		array: [],
+		setItem: function ( path, text ) { this.array.push( { path: path, text: text } ) },
+		getItem: function ( path ) {
+
+			for ( var i = 0; i < this.array.length; i++ ) { if ( this.array[i].path === path ) return this.array[i].text; }
+
+		}
+
+	},
+	_fragment_text = {
+
+		array: [],
+		setItem: function ( path, text ) { this.array.push( { path: path, text: text } ) },
+		getItem: function ( path ) {
+
+			for ( var i = 0; i < this.array.length; i++ ) { if ( this.array[i].path === path ) return this.array[i].text; }
+
+		}
+
+	};
 
 /**
  * get THREE.Points with THREE.ShaderMaterial material
@@ -154,21 +176,43 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 
 			options = options || {};
 
-			//load vertex.c file
-			const vertex_loader = new THREE.FileLoader( THREE.DefaultLoadingManager );
-			vertex_loader.setResponseType( 'text' );
-			vertex_loader.load( vertex_url, function ( vertex_text ) {
-				
-				//load fragment.c file
-				const fragment_loader = new THREE.FileLoader( THREE.DefaultLoadingManager );
-				fragment_loader.setResponseType( 'text' );
-				fragment_loader.load( fragment_url, function ( fragment_text ) {
+			var vertex_text = _vertex_text.getItem( vertex_url );
+			function loadFragment() {
 
-					onLoad( vertex_text, fragment_text );
+				const fragment_text = _fragment_text.getItem( fragment_url );
+				if ( !fragment_text ) {
+
+					//load fragment.c file
+					const fragment_loader = new THREE.FileLoader( THREE.DefaultLoadingManager );
+					fragment_loader.setResponseType( 'text' );
+					fragment_loader.load( fragment_url, function ( fragment_text ) {
+
+						_fragment_text.setItem( fragment_url, fragment_text );
+						onLoad( vertex_text, fragment_text );
+
+					}, options.onProgress, options.onError );
+
+				} else onLoad( vertex_text, fragment_text );
+
+			}
+			if ( !vertex_text ) {
+
+				//load vertex.c file
+				const vertex_loader = new THREE.FileLoader( THREE.DefaultLoadingManager );
+				vertex_loader.setResponseType( 'text' );
+				vertex_loader.load( vertex_url, function ( vertex_text_new ) {
+
+					_vertex_text.setItem( vertex_url, vertex_text_new );
+					vertex_text = vertex_text_new;
+					loadFragment();
 
 				}, options.onProgress, options.onError );
 
-			}, options.onProgress, options.onError );
+			} else {
+
+				loadFragment();
+
+			}
 
 		}
 
