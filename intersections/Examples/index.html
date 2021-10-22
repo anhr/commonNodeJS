@@ -18,6 +18,7 @@
 		| <a href="https://newbedev.com/how-to-detect-collision-in-three-js" target="_blank">How to detect collision in three.js?</a>
 	</p>
 	<h1>Intersects.</h1>
+	<img id="wait" src="../../img/wait.gif">
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<script type="module">
 
@@ -33,7 +34,7 @@
 		//	from origin 'http://localhost' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
 		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/myThree.js';
 
-//		import { getWorldPosition } from '../../getPosition.js';
+		//		import { getWorldPosition } from '../../getPosition.js';
 
 		if ( MyThree.default ) MyThree = MyThree.default;
 		MyThree.three.THREE = THREE;
@@ -44,7 +45,7 @@
 
 			//Thanks https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane
 			const planeGeom = new THREE.PlaneGeometry( 30, 30 );
-//			planeGeom.rotateX( -Math.PI / 2 );
+			//			planeGeom.rotateX( -Math.PI / 2 );
 			const plane = new THREE.Mesh( planeGeom, new THREE.MeshBasicMaterial( {
 
 				color: "lightgray",
@@ -53,31 +54,31 @@
 				side: THREE.DoubleSide
 
 			} ) );
-//			plane.position.y = -3.14;
-//			plane.rotation.x = Math.PI / 5;
+			//			plane.position.y = -3.14;
+			//			plane.rotation.x = Math.PI / 5;
 			plane.name = 'plane';
 			scene.add( plane );
 			collidableMeshList.push( plane );
-/*
-			const geometry = new THREE.BufferGeometry();
-			// create a simple square shape. We duplicate the top left and bottom right
-			// vertices because each vertex needs to appear once per triangle.
-			const vertices = new Float32Array( [
-				-1.0, -1.0,  1.0,
-				 1.0, -1.0,  1.0,
-				 1.0,  1.0,  1.0,
+			/*
+						const geometry = new THREE.BufferGeometry();
+						// create a simple square shape. We duplicate the top left and bottom right
+						// vertices because each vertex needs to appear once per triangle.
+						const vertices = new Float32Array( [
+							-1.0, -1.0,  1.0,
+							 1.0, -1.0,  1.0,
+							 1.0,  1.0,  1.0,
 
-				 1.0,  1.0,  1.0,
-				-1.0,  1.0,  1.0,
-				-1.0, -1.0,  1.0
-			] );
+							 1.0,  1.0,  1.0,
+							-1.0,  1.0,  1.0,
+							-1.0, -1.0,  1.0
+						] );
 
-			// itemSize = 3 because there are 3 values (components) per vertex
-			geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
-			const objGeom = geometry;
-*/
-			//const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
-			const objGeom = new THREE.TorusGeometry( 10, 3, 16, 100 );
+						// itemSize = 3 because there are 3 values (components) per vertex
+						geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+						const objGeom = geometry;
+			*/
+			const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
+			//const objGeom = new THREE.TorusGeometry( 10, 3, 16, 100 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 3, 3 );
 			//const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
 			//const objGeom = new THREE.BoxGeometry( 10, 10, 10 );
@@ -89,15 +90,18 @@
 			} ) );
 			obj.rotation.x = Math.PI / 6;
 			obj.rotation.y = Math.PI / 3;//2;//10;
-//			obj.position.set( 0, 3.14, 0 );
+			//			obj.position.set( 0, 3.14, 0 );
 			scene.add( obj );
 			MyThree.Intersections.Faces( obj, collidableMeshList );
+
+			const elWait = document.getElementById( 'wait' );
+			elWait.parentNode.removeChild( elWait );
 
 			//guiSelectPoint
 
 			obj.name = 'Geometry';
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( obj );
-//			const faces = obj.userData.intersections.faces;
+			//			const faces = obj.userData.intersections.faces;
 
 		}, {
 
