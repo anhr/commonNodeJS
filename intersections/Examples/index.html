@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -66,11 +66,18 @@
 
 				} ), 3 ) );
 */
-/*
+			const points = new THREE.Points(
+				//new THREE.BufferGeometry().setFromPoints( [new THREE.Vector4( 5, 5, -5, 1 )], 4 ),
+				new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3( 5, 5, -5 )], 3 ),
+				new THREE.PointsMaterial( { size: options.point.size / options.point.sizePointsMaterial, vertexColors: THREE.VertexColors } )
+
+			);
+			//points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [1, 1, 1, 1], 4 ) );
+
 			points.name = 'THREE.Points';
 			scene.add( points );
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
-*/
+/*
 			MyThree.MyPoints( [[5,5,-5]], scene, {
 
 				options: options,
@@ -82,7 +89,7 @@
 				}
 
 			} );
-
+*/
 			const collidableMeshList = [];
 
 			//Thanks https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane
