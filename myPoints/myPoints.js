@@ -26,7 +26,7 @@ import Options from '../Options.js'
  * @param {object|Options} [settings.options=new Options()] the following options are available.
  * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
  * @param {Object} [settings.options.point] point options.
- * See <a href="../../jsdoc/setOptions/SetOptions.html#setPoint" target="_blank">setOptions.setPoint(options)</a> for details.
+ * See <a href="../../jsdoc/Options/global.html#point" target="_blank">Options.point</a> for details.
  * @param {object} [settings.options.scales.w] followed w axis scale params is available
  * @param {object} [settings.options.scales.w.min=0] Minimal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.
  * @param {object} [settings.options.scales.w.max=1] Maximal range of the [color palette]{@link https://github.com/anhr/commonNodeJS/tree/master/colorpicker}.

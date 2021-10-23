@@ -208,12 +208,7 @@ class MyThree {
 	 * @param {boolean} [options.canvas.fullScreen] default is full screen. false - no full screen
 	 * @param {number} [options.a=1] Can be use as 'a' parameter of the <b>Function</b>. See <b>options.a</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.execFunc.html" target="_blank">Player.execFunc</a>.
 	 * @param {number} [options.b=0] Can be use as 'b' parameter of the <b>Function</b>. See <b>options.b</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.execFunc.html" target="_blank">Player.execFunc</a>.
-	 * @param {object} [options.point] point settings. Applies to points with ShaderMaterial.
-	 * <pre>
-	 * See [ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} for details.
-	 * The size of the point seems constant and does not depend on the distance to the camera.
-	 * </pre>
-	 * See <a href="../../jsdoc/Options/Options.html#setPoint" target="_blank">Options.setPoint(options)</a> for details.
+	 * @param {object} [options.point] point settings. See <a href="../../jsdoc/Options/global.html#point" target="_blank">Options.point</a> for details.
 	 * @param {object} [options.stats] Use JavaScript Performance Monitor. [stats]{@link https://github.com/mrdoob/stats.js/} .
 	 * @param {object} [options.scales] axes scales.
 	 * See <b>options.scales</b> of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a>.
