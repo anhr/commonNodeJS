@@ -713,51 +713,36 @@ function Faces( object, collidableMeshList ) {
 						} );
 						arrayIntersectLoops.forEach( function ( arrayIntersectLoop ) {
 
-							MyPoints( arrayIntersectLoop, scene, {
+							const geometry = new THREE.BufferGeometry().setFromPoints( arrayIntersectLoop );
+							arrayIntersectLoop.intersectLine = new THREE.LineLoop(
+								geometry,
+								new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+							scene.add( arrayIntersectLoop.intersectLine );
+							if ( options.guiSelectPoint ) {
+
+								arrayIntersectLoop.intersectLine.name = 'intersectLine';
+								options.guiSelectPoint.addMesh( arrayIntersectLoop.intersectLine );
+
+							}
+							/*
+							MyPoints( geometry, scene, {
 
 								options: options,
 								pointsOptions: {
 
 									name: 'intersection',
+									//shaderMaterial: false,
 									onReady: function ( points ) {
 
 										//points
 										arrayIntersectLoop.intersectPoints = points;
-/*
-										if ( intersectPoints ) {
-
-											if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( intersectPoints );
-											scene.remove( intersectPoints );
-
-										}
-										intersectPoints = points;
-*/
-
-										//lines
-
-/*
-										if ( intersectLine ) {
-
-											if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( intersectLine );
-											scene.remove( intersectLine );
-
-										}
-*/
-										arrayIntersectLoop.intersectLine = new THREE.LineLoop( points.geometry, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
-										scene.add( arrayIntersectLoop.intersectLine );
-
-										if ( options.guiSelectPoint ) {
-
-											arrayIntersectLoop.intersectLine.name = 'intersectLine';
-											options.guiSelectPoint.addMesh( arrayIntersectLoop.intersectLine );
-
-										}
 
 									}
 
 								}
 
 							} );
+							*/
 
 						} );
 
