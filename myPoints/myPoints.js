@@ -19,7 +19,7 @@ import Options from '../Options.js'
 
 /**
  * Creating the new [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} and adding it into group.
- * @param {array} arrayFuncs <b>points.geometry.attributes.position</b> array.
+ * @param {THREE.BufferGeometry|array} arrayFuncs [THREE.BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} or <b>points.geometry.attributes.position</b> array.
  * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
  * @param {THREE.Group} group [Group]{@link https://threejs.org/docs/index.html?q=grou#api/en/objects/Group} for new points.
  * @param {object} [settings] the following settings are available
@@ -166,8 +166,9 @@ function MyPoints( arrayFuncs, group, settings ) {
 		const points = new THREE.Points(
 
 			typeof arrayFuncs === 'function' ? arrayFuncs() :
-				new THREE.BufferGeometry().setFromPoints( Player.getPoints( arrayFuncs,
-					{ options: options, group: group, t: pointsOptions.tMin } ), 4 ),
+				arrayFuncs instanceof THREE.BufferGeometry ? arrayFuncs :
+					new THREE.BufferGeometry().setFromPoints( Player.getPoints( arrayFuncs,
+						{ options: options, group: group, t: pointsOptions.tMin } ), 4 ),
 			new THREE.PointsMaterial( { size: options.point.size / options.point.sizePointsMaterial, vertexColors: THREE.VertexColors } )
 
 		);
