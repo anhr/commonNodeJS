@@ -1860,10 +1860,6 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 	function setColorAttibute( value, mesh, index , color ){
 
-		//не менять цвет точки если позиция состоит из 3 значений
-		//такая ситуация имеется в геометрических фигурах. Например в кубе
-		if ( mesh.geometry.attributes.position.itemSize < 4 ) return;
-
 		if ( options.palette )
 			color = options.palette.toColor( value, options.scales.w.min, options.scales.w.max );
 		if ( !color ) return;
