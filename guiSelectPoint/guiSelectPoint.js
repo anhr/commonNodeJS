@@ -732,10 +732,9 @@ class GuiSelectPoint {
 				const line =
 					!mesh.userData.player ||
 						( mesh.userData.player.arrayFuncs === undefined ) ||
-						( typeof intersection.object.userData.player.arrayFuncs === "function" ) ||
-						( intersection.object.userData.player.arrayFuncs instanceof THREE.BufferGeometry ) ?
-							undefined :
-							mesh.userData.player.arrayFuncs[intersectionSelected.index].line;//You can not trace points if you do not defined the mesh.userData.player.arrayFuncs
+						( typeof intersection.object.userData.player.arrayFuncs === "function" ) ?
+						undefined :
+						mesh.userData.player.arrayFuncs[intersectionSelected.index].line;//You can not trace points if you do not defined the mesh.userData.player.arrayFuncs
 				if ( cTrace )
 					cTrace.setValue( ( line === undefined )
 						//					|| ( typeof line.isVisible === 'undefined' ) ?//не создан player
@@ -943,9 +942,7 @@ class GuiSelectPoint {
 							for ( var iPosition = 0; iPosition < mesh.geometry.attributes.position.count; iPosition++ ) {
 
 								const opt = document.createElement( 'option' ),
-									name = mesh.userData.player &&
-										mesh.userData.player.arrayFuncs &&
-										!( mesh.userData.player.arrayFuncs instanceof THREE.BufferGeometry ) ? mesh.userData.player.arrayFuncs[iPosition].name : '';
+									name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
 								opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
 								opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
 								cPoints.__select.appendChild( opt );
