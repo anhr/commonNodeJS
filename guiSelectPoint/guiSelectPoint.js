@@ -358,106 +358,116 @@ class GuiSelectPoint {
 			var opasity;
 			const func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined,
 				attributes = intersectionSelected.object.geometry.attributes;
-			function isWObject() { return ( typeof func.w === 'object' ) && ( func.w instanceof THREE.Color === false ); }
-			var color = ( func === undefined ) || ( !attributes.color && !attributes.ca ) ?
-				undefined :
-				Array.isArray( func.w ) || ( typeof func.w === "function" ) ?
-					Player.execFunc( func, 'w', options.time, options ) :
-					isWObject() ?
-						Player.execFunc( func.w, 'func', options.time, options ) :
-						typeof func.w === "string" ?
-							Player.execFunc( func, 'w', options.time, options ) :
-							func.w;
-
-			if ( color === undefined ) {
-
-				if ( attributes.ca === undefined ) {
-
-//					console.warn( 'Under constraction. цвет frustumPoints не известен потому что он вычисляется в шейдере D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master\frustumPoints\vertex.c' )
-
-				} else {
-
-					const vColor = new THREE.Vector4().fromArray(
-						attributes.ca.array,
-						intersectionSelected.index * attributes.ca.itemSize );
-					color = new THREE.Color( vColor.x, vColor.y, vColor.z );
-					opasity = vColor.w;
-
-				}
-
-			}
-
-			if ( color instanceof THREE.Color ) {
+			if ( attributes.position.itemSize < 4 ) {
 
 				displayControllerW = none;
-				displayControllerColor = block;
-				displayControllerOpacity = block;
-
-				//color
-				if ( intersectionSelected.object.userData.player.arrayFuncs === undefined ) {
-
-					displayControllerColor = none;
-					displayControllerOpacity = none;
-
-				} else {
-
-					const strColor = '#' + color.getHexString();
-					//Сначала надо установить initialValue потому что для FrustumPoints я устанвил readOnly для cColor.
-					//В этом случае я не могу отобразить цвет следующей точки FrustumPoints потому что в режиме readOnly
-					//при изменении цвета восстанвливается старый цвет из initialValue.
-					cColor.initialValue = strColor;
-					cColor.setValue( strColor );
-					cColor.userData = { intersection: intersectionSelected, };
-					if ( opasity !== undefined ) {
-
-						setValue( cOpacity, opasity );
-
-					} else displayControllerOpacity = none;
-					cOpacity.userData = { intersection: intersectionSelected, };
-
-				}
+				displayControllerColor = none;
+				displayControllerOpacity = none;
 
 			} else {
 
-				if ( cW === undefined )
-					displayControllerW = none;
-				else {
+				function isWObject() { return ( typeof func.w === 'object' ) && ( func.w instanceof THREE.Color === false ); }
+				var color = ( func === undefined ) || ( !attributes.color && !attributes.ca ) ?
+					undefined :
+					Array.isArray( func.w ) || ( typeof func.w === "function" ) ?
+						Player.execFunc( func, 'w', options.time, options ) :
+						isWObject() ?
+							Player.execFunc( func.w, 'func', options.time, options ) :
+							typeof func.w === "string" ?
+								Player.execFunc( func, 'w', options.time, options ) :
+								func.w;
 
-					if ( color === undefined )
-						displayControllerW = none;
-					else {
+				if ( color === undefined ) {
 
-						if ( !wLimitsDefault ) {
+					if ( attributes.ca === undefined ) {
 
-							wLimitsDefault = {
+						//					console.warn( 'Under constraction. цвет frustumPoints не известен потому что он вычисляется в шейдере D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master\frustumPoints\vertex.c' )
 
-								min: cW.__min,
-								max: cW.__max,
+					} else {
 
-							}
-
-						}
-						if ( isWObject() ) {
-
-							cW.min( func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min );
-							cW.max( func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max );
-							if ( ( cW.__min !== 'undefined' ) && ( cW.__max !== 'undefined' ) )
-								cW.step( ( cW.__max - cW.__min ) / 100 )
-
-						} else {
-
-							cW.min( wLimitsDefault.min );
-							cW.max( wLimitsDefault.max );
-
-						}
-						setValue( cW, color );
-						displayControllerW = block;
+						const vColor = new THREE.Vector4().fromArray(
+							attributes.ca.array,
+							intersectionSelected.index * attributes.ca.itemSize );
+						color = new THREE.Color( vColor.x, vColor.y, vColor.z );
+						opasity = vColor.w;
 
 					}
 
 				}
-				displayControllerColor = none;
-				displayControllerOpacity = none;
+
+				if ( color instanceof THREE.Color ) {
+
+					displayControllerW = none;
+					displayControllerColor = block;
+					displayControllerOpacity = block;
+
+					//color
+					if ( intersectionSelected.object.userData.player.arrayFuncs === undefined ) {
+
+						displayControllerColor = none;
+						displayControllerOpacity = none;
+
+					} else {
+
+						const strColor = '#' + color.getHexString();
+						//Сначала надо установить initialValue потому что для FrustumPoints я устанвил readOnly для cColor.
+						//В этом случае я не могу отобразить цвет следующей точки FrustumPoints потому что в режиме readOnly
+						//при изменении цвета восстанвливается старый цвет из initialValue.
+						cColor.initialValue = strColor;
+						cColor.setValue( strColor );
+						cColor.userData = { intersection: intersectionSelected, };
+						if ( opasity !== undefined ) {
+
+							setValue( cOpacity, opasity );
+
+						} else displayControllerOpacity = none;
+						cOpacity.userData = { intersection: intersectionSelected, };
+
+					}
+
+				} else {
+
+					if ( cW === undefined )
+						displayControllerW = none;
+					else {
+
+						if ( color === undefined )
+							displayControllerW = none;
+						else {
+
+							if ( !wLimitsDefault ) {
+
+								wLimitsDefault = {
+
+									min: cW.__min,
+									max: cW.__max,
+
+								}
+
+							}
+							if ( isWObject() ) {
+
+								cW.min( func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min );
+								cW.max( func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max );
+								if ( ( cW.__min !== 'undefined' ) && ( cW.__max !== 'undefined' ) )
+									cW.step( ( cW.__max - cW.__min ) / 100 )
+
+							} else {
+
+								cW.min( wLimitsDefault.min );
+								cW.max( wLimitsDefault.max );
+
+							}
+							setValue( cW, color );
+							displayControllerW = block;
+
+						}
+
+					}
+					displayControllerColor = none;
+					displayControllerOpacity = none;
+
+				}
 
 			}
 			dislayEl( cW, displayControllerW );
