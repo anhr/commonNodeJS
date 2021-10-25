@@ -83,6 +83,7 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 
 	settings = settings || {};
 
+	var geometry;
 	const THREE = three.THREE, tMin = settings.pointsOptions === undefined ?
 			settings.tMin === undefined ? 0 : settings.tMin :
 			settings.pointsOptions.tMin === undefined ? 0 : settings.pointsOptions.tMin;
@@ -96,10 +97,7 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 	//потому что в противном случае при добавлени этих точек в FrustumPoints.pushArrayCloud() координата w будет undefined
 	Player.assign();
 	
-	var geometry;
-	if ( arrayFuncs instanceof THREE.BufferGeometry )
-		geometry = arrayFuncs;
-	else if ( typeof arrayFuncs === 'function' )
+	if ( typeof arrayFuncs === 'function' )
 		geometry = arrayFuncs();
 	else geometry = new THREE.BufferGeometry().setFromPoints
 		( Player.getPoints( arrayFuncs,
@@ -111,7 +109,6 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 		//если не делать эту проверку, то будет неправильный цвет точки, если не задана палитра и шкала w
 		if ( !settings.options.scales.w ) settings.options.scales.setW();
 		
-//		if ( !( arrayFuncs instanceof THREE.BufferGeometry ) )
 		geometry.setAttribute( 'ca', new THREE.Float32BufferAttribute( Player.getColors
 			( arrayFuncs,
 				{
