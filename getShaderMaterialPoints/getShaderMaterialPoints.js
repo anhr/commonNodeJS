@@ -83,6 +83,7 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 
 	settings = settings || {};
 
+	var geometry;
 	const THREE = three.THREE, tMin = settings.pointsOptions === undefined ?
 			settings.tMin === undefined ? 0 : settings.tMin :
 			settings.pointsOptions.tMin === undefined ? 0 : settings.pointsOptions.tMin;

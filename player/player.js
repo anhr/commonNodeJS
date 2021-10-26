@@ -1361,9 +1361,7 @@ Player.cameraTarget = class {
 			assign();
 
 			//Update cameraTarget
-			const func = !mesh.userData.player ||
-				( typeof mesh.userData.player.arrayFuncs === "function" ) ||
-				( mesh.userData.player.arrayFuncs instanceof THREE.BufferGeometry ) ? {} : mesh.userData.player.arrayFuncs[i];
+			const func = !mesh.userData.player || ( typeof mesh.userData.player.arrayFuncs === "function" ) ? {} : mesh.userData.player.arrayFuncs[i];
 			if ( !func.cameraTarget )
 				func.cameraTarget = { boLook: false };
 			setCameraTarget( func.cameraTarget );
@@ -2561,24 +2559,11 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 
 	assign();
 	
-	optionsColor = optionsColor || {};
-	optionsColor.options = optionsColor.options || {};
-
-	optionsColor.colors = optionsColor.colors || [];
-	if ( !optionsColor.options.palette )
-		optionsColor.options.setPalette();
-
-	if ( arrayFuncs instanceof THREE.BufferGeometry ){
-
-		const length = arrayFuncs.attributes.position.count;
-		for ( var i = 0; i < length; i++ )
-			optionsColor.colors.push( 1, 1, 1, 1 );//white color and opacity
-		return optionsColor.colors;
-
-	}
-	
 	if ( !Array.isArray( arrayFuncs ) ) arrayFuncs = [ arrayFuncs ];
 
+	optionsColor = optionsColor || {};
+	optionsColor.options = optionsColor.options || {};
+	
 	if (
 		( optionsColor.positions !== undefined ) &&
 		Array.isArray( arrayFuncs ) &&
@@ -2592,6 +2577,10 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 
 	//не надо убирать const length. Иначе переполнится память
 	const length = Array.isArray( arrayFuncs ) ? arrayFuncs.length : optionsColor.positions.count;
+
+	optionsColor.colors = optionsColor.colors || [];
+	if ( !optionsColor.options.palette )
+		optionsColor.options.setPalette();
 
 	for ( var i = 0; i < length; i++ ) {
 
