@@ -60,7 +60,9 @@ import ColorPicker from './colorpicker/colorpicker.js';
 
 import three from './three.js'
 
-import { OrbitControls, createEventDispatcher } from './OrbitControls/OrbitControls.js';
+//Сейчас OrbitControls загружаю динамически в Options.createOrbitControls
+//import { OrbitControls } from './OrbitControls/OrbitControls.js';
+//import { OrbitControls, createEventDispatcher } from './OrbitControls/OrbitControls.js';
 //import { OrbitControls } from '../../three.js/dev/examples/jsm/controls/OrbitControls.js';
 //import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
 //import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
@@ -77,6 +79,9 @@ import { getLanguageCode } from './lang.js';
 
 import Player from './player/player.js';
 import StereoEffect from './StereoEffect/StereoEffect.js';
+import { createController } from './controller.js'
+
+var boCreateControllers;
 
 class Options {
 
@@ -108,17 +113,17 @@ class Options {
 			optionsCur = optionsCur || options;
 			const axisName = 'w';
 			optionsCur.scales = optionsCur.scales || {};
-			optionsCur.scales.w = optionsCur.scales.w || {};
+//			optionsCur.scales.w = optionsCur.scales.w || {};
 			const scale = optionsCur.scales.w;
-			scale.name = scale.name || axisName;
+//			scale.name = scale.name || axisName;
 			if ( !optionsCur.palette )
-				this.setPalette( optionsCur );
+				_this.setPalette( optionsCur );
 
-			scale.min = scale.min === undefined ? 0 : scale.min;
+//			scale.min = scale.min === undefined ? 0 : scale.min;
 
 			//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
 			//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
-			scale.max = scale.max === undefined ? new three.THREE.Vector4().w : scale.max;
+//			scale.max = scale.max === undefined ? new three.THREE.Vector4().w : scale.max;
 
 		}
 		options.scales = options.scales || {};
@@ -132,15 +137,17 @@ class Options {
 			if ( !options.scales[axisName] )
 				return;
 
+/*
 			options.scales[axisName].name = options.scales[axisName].name || axisName;
 			options.scales[axisName].min = options.scales[axisName].min === undefined ? -1 : options.scales[axisName].min;
 			options.scales[axisName].max = options.scales[axisName].max === undefined ? 1 : options.scales[axisName].max;
+*/			
 
 		}
 		setScale( 'x' );
 		setScale( 'y' );
 		setScale( 'z' );
-		options.scales.setW = function () { _this.setW(); }
+//		options.scales.setW = function () { _this.setW(); }
 		options.point = options.point || {};
 		options.point.size = options.point.size || 5.0;
 		options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
@@ -158,6 +165,12 @@ class Options {
 		}
 
 		/**
+		 * Rendering the scene
+		 * @see "Rendering the scene" paragraph of [Creating the scene]{@link https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene}
+		 * */
+		this.render = function () { }
+
+		/**
 		 * Create [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}
 		 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}. Use the &lt;b>camera&lt;/b> key if you want control cameras focus.
 		 * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
@@ -168,11 +181,35 @@ class Options {
 			if ( options.orbitControls === false )
 				return;
 
-			createEventDispatcher();
-			_this.orbitControls = new OrbitControls( camera, renderer.domElement );
+			//После появления класса class OrbitControls extends EventDispatcher пришлось динамически задгружать файл OrbitControls.js
+			//https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Statements/import#%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B9_%D0%B8%D0%BC%D0%BF%D0%BE%D1%80%D1%82_2
+			//Потому что EventDispatcher еще недоступен во время import { OrbitControls }
+/*
+			//Добавить async перед function в this.createOrbitControls
+			let module = await import( './OrbitControls/OrbitControls.js' );
+//			createEventDispatcher();
+			_this.orbitControls = new module.OrbitControls( camera, renderer.domElement );
 			_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
 			_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 			_this.orbitControls.update();
+*/			
+			import('./OrbitControls/OrbitControls.js')
+			  .then(module => {
+
+//				createEventDispatcher();
+				_this.orbitControls = new module.OrbitControls( camera, renderer.domElement );
+				_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
+				_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
+				_this.orbitControls.update();
+
+				if ( _this.frustumPoints )
+					_this.orbitControls.addEventListener( 'change', function () { _this.frustumPoints.onChangeControls(); } );
+
+
+			  })
+			  .catch(err => {
+				console.error( err.message );
+			  });
 
 		}
 
@@ -200,7 +237,7 @@ class Options {
 				case 'ru'://Russian language
 
 					lang.defaultButton = 'Восстановить';
-					lang.defaultTitle = 'Восстановить положение сцены и проирывателя.';
+					lang.defaultTitle = 'Восстановить положение камеры и проирывателя.';
 
 					break;
 
@@ -547,6 +584,8 @@ class Options {
 						}
 
 					}
+					if ( options.dat === false )
+						return options.dat;
 					options.dat = new Dat( options.dat );
 					if ( options.dat.gui ) {
 
@@ -633,7 +672,237 @@ class Options {
 			 **/
 			scales: {
 
-				get: function () { return options.scales; },
+				get: function () {
+
+					class Scales {
+
+						/* *
+						 * scales
+						 * @param {object} scales
+						 */
+						constructor( scales ) {
+
+//							scales = scales || {};
+
+							class Scale {
+
+								/* *
+								 * scale
+								 * @param {object} scales
+								 * @param {string} axisName. 'x' or 'y' or 'z'
+								 */
+								constructor( scales, axisName ) {
+
+									const scale = scales[axisName];
+//									scale = scale || {};
+									this.isAxis = function () {
+
+										if ( !scales || ( !scales.x &amp;&amp; !scales.y &amp;&amp; !scales.z ) || scale ) return true;
+										return false;
+										
+									}
+									Object.defineProperties( this, {
+
+										/* *
+										 * getter
+										 * &lt;pre>
+										 * returns true if &lt;b>scale&lt;/b> was converted by &lt;b>new Scale( scale );&lt;/b>
+										 * &lt;/pre>
+										 **/
+										boScale: {
+
+											get: function () { return true; },
+
+										},
+										min: {
+
+											get: function () {
+
+												if ( !scale || !scale.min ) return axisName === 'w' ? 0 : -1;
+												return scale.min;
+
+											},
+											set: function ( min ) { scale.min = min; },
+
+										},
+										max: {
+
+											get: function () {
+
+												//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
+												//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
+												if ( !scale || !scale.max ) return axisName === 'w' ? new three.THREE.Vector4().w : 1;
+												return scale.max;
+
+											},
+											set: function ( max ) { scale.max = max; },
+
+										},
+										name: {
+
+											get: function () {
+
+												if ( !scale || !scale.name ) return axisName;
+												return scale.name;
+
+											},
+//											set: function ( name ) { scale.name = name; },
+
+										},
+										marks: {
+
+											get: function () {
+
+												if ( !scale.marks ) scale.marks = 3;
+												return scale.marks;
+
+											},
+//											set: function ( marks ) { scale.marks = marks; },
+
+										},
+
+									} );
+
+									//For debugging. Find a hidden keys
+									for ( var propertyName in scale ) {
+
+										if ( this[propertyName] === undefined ) console.error( 'Options.Scales: scale.' + propertyName + ' key is hidden' );
+
+									}
+
+								}
+
+							}
+							const scalesObject = {
+
+								x: new Scale( options.scales, 'x' ),
+								y: new Scale( options.scales, 'y' ),
+								z: new Scale( options.scales, 'z' ),
+								w: new Scale( options.scales, 'w' ),
+
+							}
+
+							Object.defineProperties( this, {
+
+								/* *
+								 * getter
+								 * &lt;pre>
+								 * returns true if &lt;b>scales&lt;/b> was converted by &lt;b>new Scales( scales );&lt;/b>
+								 * &lt;/pre>
+								 **/
+								boScales: {
+
+									get: function () { return true; },
+
+								},
+								x: {
+
+									get: function () { return scalesObject.x; },
+									set: function ( x ) { scales.x = x; },
+
+								},
+								y: {
+
+									get: function () { return scalesObject.y; },
+									set: function ( y ) { scales.y = y; },
+
+								},
+								z: {
+
+									get: function () { return scalesObject.z; },
+									set: function ( z ) { scales.z = z; },
+
+								},
+								w: {
+
+									get: function () { return scalesObject.w; },
+									set: function ( w ) { scales.w = w; },
+
+								},
+
+								/* *
+								 * getter
+								 * &lt;pre>
+								 * setW
+								 * &lt;/pre>
+								 **/
+								setW: {
+
+									get: function () {
+
+/*
+										if ( !scales.setW ) scales.setW = _this.setW;
+										return scales.setW;
+*/
+										return _this.setW;
+
+									},
+
+								},
+								/* *
+								 * getter and setter
+								 * &lt;pre>
+								 * true - displays the label and scale of the axes.
+								 * &lt;/pre>
+								 **/
+								display: {
+
+									get: function () {
+
+										if ( scales.display === undefined ) scales.display = true;
+										return scales.display;
+
+									},
+									set: function ( display ) { scales.display = display; },
+
+								},
+								/* *
+								 * getter and setter
+								 * &lt;pre>
+								 * options of the text of the marks of AxesHelper
+								 * &lt;/pre>
+								 **/
+								text: {
+
+									get: function () {
+
+										if ( scales.text === undefined ) scales.text = {};
+										return scales.text;
+
+									},
+									set: function ( text ) { scales.text = text; },
+
+								},
+								/* *
+								 * getter and setter
+								 * &lt;pre>
+								 * Position of the axes intersection
+								 * &lt;/pre>
+								 **/
+								posAxesIntersection: {
+
+									get: function () { return scales.posAxesIntersection; },
+									set: function ( posAxesIntersection ) { scales.posAxesIntersection = posAxesIntersection; },
+
+								},
+
+							} );
+
+							//For debugging. Find a hidden keys
+							for ( var propertyName in scales ) {
+
+								if ( this[propertyName] === undefined ) console.error( 'Options: scales.' + propertyName + ' key is hidden' );
+
+							}
+
+						}
+
+					}
+					if ( !options.scales.boScales )
+						options.scales = new Scales( options.scales );
+					return options.scales;
+
+				},
 				set: function ( scales ) { options.scales = scales; }
 
 			},
@@ -649,23 +918,21 @@ class Options {
 
 				get: function () {
 
-					if ( options.palette !== undefined ) {
+					if ( options.palette === undefined ) options.palette = true;
 
-						switch ( typeof options.palette ) {
+					switch ( typeof options.palette ) {
 
-							case 'number':
-								options.palette = new ColorPicker.palette( { palette: options.palette } );
-								break;
-							case 'boolean':
-								if ( options.palette )
-									options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGYW } );
-								break;
-							default: {
+						case 'number':
+							options.palette = new ColorPicker.palette( { palette: options.palette } );
+							break;
+						case 'boolean':
+							if ( options.palette )
+								options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGYW } );
+							break;
+						default: {
 
-								if ( options.palette instanceof ColorPicker.palette === false )
-									console.error( 'MyThree: invalid typeof options.palette: ' + typeof options.palette );
-
-							}
+							if ( options.palette instanceof ColorPicker.palette === false )
+								console.error( 'MyThree: invalid typeof options.palette: ' + typeof options.palette );
 
 						}
 
@@ -1130,46 +1397,46 @@ class Options {
 
 										if ( controllers.t === null )
 											console.error( 'options.controllers.t = ' + controllers.t );
+										const elTime = document.getElementById( 'time' );
+										if ( !controllers.t ) {
+
+											if ( !elTime ) return;
+											controllers.t = {
+
+//												controller: elTime,
+
+												elName: document.getElementById( 'tName' ),
+
+											}
+
+										}
+										if ( !controllers.t.controller &amp;&amp; elTime ) controllers.t.controller = elTime;
+/*
+										if ( !controllers.t.player ) {
+
+											const buttonPrev = document.getElementById( 'prev' ),
+												buttonPlay = document.getElementById( 'play' ),
+												buttonNext = document.getElementById( 'next' );
+											if ( buttonPrev || buttonPlay || buttonNext ) {
+
+												controllers.t.player = {};
+												if ( buttonPrev ) controllers.t.player.buttonPrev = buttonPrev;
+												if ( buttonPlay ) controllers.t.player.buttonPlay = buttonPlay;
+												if ( buttonNext ) controllers.t.player.buttonNext = buttonNext;
+
+											}
+										}
+*/										
 										if ( controllers.t ) {
 
-/*
-											if ( !controllers.t.name ) {
+											createController( controllers.t, 't',
+												function () { return  options.playerOptions &amp;&amp; options.playerOptions.name ? options.playerOptions.name : 't'; }, {
 
-												var elName = document.getElementById( 'tName' );
-												if ( !elName ) {
-
-													elName = document.createElement( 'span' );
-													document.querySelector('body').appendChild( elName );
-													
-												}
-												controllers.t.name = elName;
-												var name = options.playerOptions.name;
-												if ( name === '' ) name = 't';
-												elName.innerHTML = name + ' = ';
-
-											}
-*/
-											//time controller
-
-											if ( typeof controllers.t.controller === "string" ) controllers.t.controller = document.getElementById( controllers.t.controller );
-											if ( !controllers.t.controller ) {
-
-												var controller = document.getElementById( 't' );
-												if ( !controller ) {
-
-													controller = document.createElement( 'input' );
-													document.querySelector('body').appendChild( controller );
-													
-												}
-												controllers.t.controller = controller;
-
-											}
-											if ( controllers.t.controller.onchange === null )
-												controllers.t.controller.onchange = function( event ){
+												onchange: function ( event ) {
 
 													if ( !options.player ) {
 
-														console.error ( 'options.controllers.t.onchange: create Player instance first.' + controllers.t.value );
+														console.error( 'options.controllers.t.onchange: create Player instance first. ' + controllers.t.value );
 														return;
 
 													}
@@ -1180,28 +1447,38 @@ class Options {
 
 													}
 
-												}
+												},
+
+											} );
 											if ( ( typeof lang !== 'undefined' ) &amp;&amp; ( controllers.t.controller.title === '' ) )
 												controllers.t.controller.title = lang.controllerTTitle;
-
-											//time name
-
-											if ( typeof controllers.t.elName === "string" ) 
-												controllers.t.elName = document.getElementById( controllers.t.elName );
-											if ( !controllers.t.elName ) {
-
-												controllers.t.elName = document.createElement( 'span' );
-												controllers.t.controller.parentElement.insertBefore( controllers.t.elName, controllers.t.controller);
-
-											}
-											var name = options.playerOptions.name;
-											if ( name === '' ) name = 't';
-											controllers.t.elName.innerHTML = name + ' = ';
-
+												
 										}
 										return controllers.t;
 
 									},
+
+								},
+
+								/* *
+								 * getter
+								 * &lt;pre>
+								 * List of &lt;a href="../../player/jsdoc/index.html" target="_blank">Player&lt;/a> buttons on the web page.
+								 * Keys:
+								 *	&lt;b>buttonPrew&lt;/b>:
+								 *		&lt;b>HTMLElement&lt;/b> Previous players tick.
+								 *		or &lt;b>string&lt;/b> of &lt;b>HTMLElement&lt;/b> id.
+								 *	&lt;b>buttonPlay&lt;/b>:
+								 *		&lt;b>HTMLElement&lt;/b> play or pause.
+								 *		or &lt;b>string&lt;/b> of &lt;b>HTMLElement&lt;/b> id.
+								 *	&lt;b>buttonNext&lt;/b>:
+								 *		&lt;b>HTMLElement&lt;/b> Next players tick.
+								 *		or &lt;b>string&lt;/b> of &lt;b>HTMLElement&lt;/b> id.
+								 * &lt;/pre>
+								 **/
+								player: {
+
+									get: function () { return controllers.player; },
 
 								},
 
@@ -1217,7 +1494,36 @@ class Options {
 						}
 
 					}
-					if ( !options.controllers.boControllers )
+					if ( boCreateControllers === undefined ) {
+
+						boCreateControllers = true;
+						const time = document.getElementById( 'time' ),
+							prev = document.getElementById( 'prev' ),
+							play = document.getElementById( 'play' ),
+							next = document.getElementById( 'next' ),
+							boPlayer = prev || play || next ? true : false,
+							boControllers = time || boPlayer ? true : false;
+						if ( !options.controllers &amp;&amp; boControllers ) {
+
+							options.controllers = { t: {} };
+							if ( time ) options.controllers.t.controller = time;
+
+						}
+						if ( options.controllers ) {
+
+							if ( !options.controllers.player &amp;&amp; boPlayer ) options.controllers.player = {};
+							if ( options.controllers.player ) {
+
+								if ( !options.controllers.player.buttonPrev &amp;&amp; prev ) options.controllers.player.buttonPrev = prev;
+								if ( !options.controllers.player.buttonPlay &amp;&amp; play ) options.controllers.player.buttonPlay = play;
+								if ( !options.controllers.player.buttonNext &amp;&amp; next ) options.controllers.player.buttonNext = next;
+
+							}
+
+						}
+
+					}
+					if ( options.controllers &amp;&amp; !options.controllers.boControllers )
 						options.controllers = new Controllers( options.controllers );
 					return options.controllers;
 
@@ -1739,7 +2045,7 @@ export default Options;</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Sep 08 2021 14:22:56 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Oct 27 2021 13:17:13 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

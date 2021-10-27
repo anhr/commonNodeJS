@@ -137,6 +137,20 @@ class Options {
 		}
 
 		/**
+		 * Rendering the scene
+		 * @see "Rendering the scene" paragraph of [Creating the scene]{@link https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene}
+		 * */
+		this.render = function () {
+
+			if ( this.intersections ) this.intersections();
+/*Не помню зачем это			
+			if ( this.guiSelectPoint && this.guiSelectPoint.render )
+				this.guiSelectPoint.render();
+*/				
+
+		}
+
+		/**
 		 * Create [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}
 		 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}. Use the <b>camera</b> key if you want control cameras focus.
 		 * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
