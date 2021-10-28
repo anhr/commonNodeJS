@@ -772,7 +772,7 @@ class MyThree {
 
 				// light
 
-				const scales = options.axesHelper === false ? options.scales : options.axesHelper.options.scales;
+//				const scales = options.axesHelper === false ? options.scales : options.axesHelper.options.scales;
 				pointLight1.controls( { group: group, folder: fOptions, folderName: lang.light + ' 1' } );
 				pointLight2.controls( { group: group, folder: fOptions, folderName: lang.light + ' 2' } );
 

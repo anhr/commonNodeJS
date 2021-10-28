@@ -609,147 +609,172 @@ function Faces( object, collidableMeshList ) {
 	} );
 	object.userData.intersections.faces;
 
-	var position = object.position.clone();
+	//список всех объектов, которые могут перемещаться и сталкиваться
+	const arrayMovingObjects = [object];
+	collidableMeshList.forEach( function ( object ) { arrayMovingObjects.push( object ); } );
+	arrayMovingObjects.forEach( function ( object ) {
+
+		object.userData.position = object.position.clone();
+		object.userData.rotation = object.rotation.clone();
+		object.userData.scale = object.scale.clone();
+
+	} );
 	if ( !options.intersections ) {
 
 		options.intersections = function () {
 
-			if ( position.equals( object.position ) ) return;
+			for ( var i = 0; i < arrayMovingObjects.length; i++ ) {
 
-			position = object.position.clone();
-			arrayIntersectLoops.forEach( function ( arrayIntersectLoop ) {
+				const object = arrayMovingObjects[i];
+				if (
+					!object.userData.position.equals( object.position ) ||
+					!object.userData.rotation.equals( object.rotation ) ||
+					!object.userData.scale.equals( object.scale )
+				) {
 
-				if ( arrayIntersectLoop.intersectLine ) scene.remove( arrayIntersectLoop.intersectLine );
-				if ( arrayIntersectLoop.intersectPoints ) scene.remove( arrayIntersectLoop.intersectPoints );
-				if ( options.guiSelectPoint ) {
+					object.userData.position = object.position.clone();
+					object.userData.rotation = object.rotation.clone();
+					object.userData.scale = object.scale.clone();
 
-					if ( arrayIntersectLoop.intersectLine ) options.guiSelectPoint.removeMesh( arrayIntersectLoop.intersectLine );
-					if ( arrayIntersectLoop.intersectPoints ) options.guiSelectPoint.removeMesh( arrayIntersectLoop.intersectPoints );
+					arrayIntersectLoops.forEach( function ( arrayIntersectLoop ) {
 
-				}
-				arrayIntersectLoop.length = 0;
+						if ( arrayIntersectLoop.intersectLine ) scene.remove( arrayIntersectLoop.intersectLine );
+						if ( arrayIntersectLoop.intersectPoints ) scene.remove( arrayIntersectLoop.intersectPoints );
+						if ( options.guiSelectPoint ) {
 
-			} );
-			arrayIntersectLoops.length = 0;
-
-			//найти intersection
-			edges.forEach( function ( edge ) {
-
-				edge.intersection = undefined;
-				edge.intersection;
-
-			} );
-
-			//Построить линии intersection в arrayIntersectLoops
-
-			arrayIntersectLoops.length = 0;
-			edges.forEach( function ( edge ) {
-
-				//некторые edge не принадлежат ни одному face. Их игнорировать
-				if ( edge.faces && edge.intersection ) {
-
-					const arrayIntersectLoop = [];
-					arrayIntersectLoops.push( arrayIntersectLoop );
-
-					//debugging
-					function Log( edge, face ) {
-
-						//console.log( ( face ? face.name + '. ' : '' ) +
-						//	'edge vertex IDs: ' + edge.vertex1.index + ', ' + edge.vertex2.index +
-						//	'. edge.intersection :' );
-						//console.log( edge.intersection );
-						//console.log( '--------' );
-
-					}
-					Log( edge );
-
-					while ( true ) {
-
-						arrayIntersectLoop.push( edge.intersection );
-						function isNextFace( face ) {
-
-							//										const face = edge.faces.face1;
-							const faceEdges = face.faceEdges;
-							function isNextEdge( edge2 ) {
-
-								const a = ( edge.vertex1.index === edge2.vertex1.index ) && ( edge.vertex2.index === edge2.vertex2.index ),
-									b = ( edge.vertex2.index === edge2.vertex1.index ) && ( edge.vertex1.index === edge2.vertex2.index ),
-									res = !( a || b ) && edge2.intersection;
-								if ( res ) Log( edge2, face );
-								return res;
-
-							}
-							if ( isNextEdge( faceEdges.edge1 ) ) {
-
-								edge.intersection = false;
-								edge = faceEdges.edge1;
-								return true;
-
-							}
-							if ( isNextEdge( faceEdges.edge2 ) ) {
-
-								edge.intersection = false;
-								edge = faceEdges.edge2;
-								return true;
-
-							}
-							if ( isNextEdge( faceEdges.edge3 ) ) {
-
-								edge.intersection = false;
-								edge = faceEdges.edge3;
-								return true;
-
-							}
-							return false;
+							if ( arrayIntersectLoop.intersectLine ) options.guiSelectPoint.removeMesh( arrayIntersectLoop.intersectLine );
+							if ( arrayIntersectLoop.intersectPoints ) options.guiSelectPoint.removeMesh( arrayIntersectLoop.intersectPoints );
 
 						}
-						if ( !isNextFace( edge.faces.face1 ) )
-							if ( !isNextFace( edge.faces.face2 ) ) {
+						arrayIntersectLoop.length = 0;
 
-								edge.intersection = false;
-								break;
+					} );
+					arrayIntersectLoops.length = 0;
+
+					//найти intersection
+					edges.forEach( function ( edge ) {
+
+						edge.intersection = undefined;
+						edge.intersection;
+
+					} );
+
+					//Построить линии intersection в arrayIntersectLoops
+
+					arrayIntersectLoops.length = 0;
+					edges.forEach( function ( edge ) {
+
+						//некторые edge не принадлежат ни одному face. Их игнорировать
+						if ( edge.faces && edge.intersection ) {
+
+							const arrayIntersectLoop = [];
+							arrayIntersectLoops.push( arrayIntersectLoop );
+
+							//debugging
+							function Log( edge, face ) {
+
+								//console.log( ( face ? face.name + '. ' : '' ) +
+								//	'edge vertex IDs: ' + edge.vertex1.index + ', ' + edge.vertex2.index +
+								//	'. edge.intersection :' );
+								//console.log( edge.intersection );
+								//console.log( '--------' );
 
 							}
+							Log( edge );
 
-					}
+							while ( true ) {
 
-				}
+								arrayIntersectLoop.push( edge.intersection );
+								function isNextFace( face ) {
 
-			} );
-			arrayIntersectLoops.forEach( function ( arrayIntersectLoop ) {
+									//										const face = edge.faces.face1;
+									const faceEdges = face.faceEdges;
+									function isNextEdge( edge2 ) {
 
-				const geometry = new THREE.BufferGeometry().setFromPoints( arrayIntersectLoop );
-				arrayIntersectLoop.intersectLine = new THREE.LineLoop(
-					geometry,
-					new THREE.LineBasicMaterial( { color: 0xffffff } ) );
-				scene.add( arrayIntersectLoop.intersectLine );
-				if ( options.guiSelectPoint ) {
+										const a = ( edge.vertex1.index === edge2.vertex1.index ) && ( edge.vertex2.index === edge2.vertex2.index ),
+											b = ( edge.vertex2.index === edge2.vertex1.index ) && ( edge.vertex1.index === edge2.vertex2.index ),
+											res = !( a || b ) && edge2.intersection;
+										if ( res ) Log( edge2, face );
+										return res;
 
-					arrayIntersectLoop.intersectLine.name = 'intersectLine';
-					options.guiSelectPoint.addMesh( arrayIntersectLoop.intersectLine );
+									}
+									if ( isNextEdge( faceEdges.edge1 ) ) {
 
-				}
-				/*
-				MyPoints( geometry, scene, {
+										edge.intersection = false;
+										edge = faceEdges.edge1;
+										return true;
 
-					options: options,
-					pointsOptions: {
+									}
+									if ( isNextEdge( faceEdges.edge2 ) ) {
 
-						name: 'intersection',
-						//shaderMaterial: false,
-						onReady: function ( points ) {
+										edge.intersection = false;
+										edge = faceEdges.edge2;
+										return true;
 
-							//points
-							arrayIntersectLoop.intersectPoints = points;
+									}
+									if ( isNextEdge( faceEdges.edge3 ) ) {
+
+										edge.intersection = false;
+										edge = faceEdges.edge3;
+										return true;
+
+									}
+									return false;
+
+								}
+								if ( !isNextFace( edge.faces.face1 ) )
+									if ( !isNextFace( edge.faces.face2 ) ) {
+
+										edge.intersection = false;
+										break;
+
+									}
+
+							}
 
 						}
 
-					}
+					} );
+					arrayIntersectLoops.forEach( function ( arrayIntersectLoop ) {
 
-				} );
-				*/
+						const geometry = new THREE.BufferGeometry().setFromPoints( arrayIntersectLoop );
+						arrayIntersectLoop.intersectLine = new THREE.LineLoop(
+							geometry,
+							new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+						scene.add( arrayIntersectLoop.intersectLine );
+						if ( options.guiSelectPoint ) {
 
-			} );
+							arrayIntersectLoop.intersectLine.name = 'intersectLine';
+							options.guiSelectPoint.addMesh( arrayIntersectLoop.intersectLine );
+
+						}
+						/*
+						MyPoints( geometry, scene, {
+		
+							options: options,
+							pointsOptions: {
+		
+								name: 'intersection',
+								//shaderMaterial: false,
+								onReady: function ( points ) {
+		
+									//points
+									arrayIntersectLoop.intersectPoints = points;
+		
+								}
+		
+							}
+		
+						} );
+						*/
+
+					} );
+					return;
+
+				}
+
+			}
+
 
 		}
 

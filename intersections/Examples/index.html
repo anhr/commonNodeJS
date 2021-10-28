@@ -41,71 +41,59 @@
 
 		new MyThree( function ( scene, options ) {
 
-/*
-			const points = new THREE.Points(
-				//new THREE.BufferGeometry().setFromPoints( [new THREE.Vector4( 5, 5, -5, 1 )], 4 ),
-				new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3( 5, 5, -5 )], 3 ),
-				new THREE.PointsMaterial( { size: options.point.size / options.point.sizePointsMaterial, vertexColors: THREE.VertexColors } )
-
-			);
-			//points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [1, 1, 1, 1], 4 ) );
-			points.name = 'THREE.Points';
-			scene.add( points );
-			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
-*/
-/*
-			MyThree.MyPoints( [[5,5,-5]], scene, {
-
-				options: options,
-				pointsOptions: {
-
-					name: 'MyPoints',
-					shaderMaterial: false,
-
-				}
-
-			} );
-*/
 			const collidableMeshList = [];
 
 			//Thanks https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane
-			const planeGeom = new THREE.PlaneGeometry( 30, 30 );
-			//			planeGeom.rotateX( -Math.PI / 2 );
-			const plane = new THREE.Mesh( planeGeom, new THREE.MeshBasicMaterial( {
+			//const planeGeom = new THREE.PlaneGeometry( 30, 30 );
+			const planeGeom = new THREE.TetrahedronGeometry( 10, 0 );
+//			planeGeom.rotateX( -Math.PI / 2 );
+			const plane = new THREE.Mesh( planeGeom,
+				/*
+				new THREE.MeshLambertMaterial( {
 
-				color: "lightgray",
-				transparent: true,
-				opacity: 0.75,
-				side: THREE.DoubleSide
+					color: "lightgray",
+					opacity: 0.8,
+					transparent: true,
 
-			} ) );
-			//			plane.position.y = -3.14;
-			//			plane.rotation.x = Math.PI / 5;
-			plane.name = 'plane';
+				} )
+				*/
+				new THREE.MeshBasicMaterial( {
+
+					color: "lightgray",
+					opacity: 0.75,
+					transparent: true,
+					side: THREE.DoubleSide
+
+				} )
+			);
+//			plane.position.y = -3.14;
+//			plane.rotation.x = Math.PI / 5;
 			scene.add( plane );
+			plane.name = 'plane';
+			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( plane );
 			collidableMeshList.push( plane );
-			/*
-						const geometry = new THREE.BufferGeometry();
-						// create a simple square shape. We duplicate the top left and bottom right
-						// vertices because each vertex needs to appear once per triangle.
-						const vertices = new Float32Array( [
-							-1.0, -1.0,  1.0,
-							 1.0, -1.0,  1.0,
-							 1.0,  1.0,  1.0,
+/*
+			const geometry = new THREE.BufferGeometry();
+			// create a simple square shape. We duplicate the top left and bottom right
+			// vertices because each vertex needs to appear once per triangle.
+			const vertices = new Float32Array( [
+				-1.0, -1.0,  1.0,
+				1.0, -1.0,  1.0,
+				1.0,  1.0,  1.0,
 
-							 1.0,  1.0,  1.0,
-							-1.0,  1.0,  1.0,
-							-1.0, -1.0,  1.0
-						] );
+				1.0,  1.0,  1.0,
+				-1.0,  1.0,  1.0,
+				-1.0, -1.0,  1.0
+			] );
 
-						// itemSize = 3 because there are 3 values (components) per vertex
-						geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
-						const objGeom = geometry;
-			*/
-			const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
+			// itemSize = 3 because there are 3 values (components) per vertex
+			geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+			const objGeom = geometry;
+*/
+			//const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 16, 100 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 3, 3 );
-			//const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
+			const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
 			//const objGeom = new THREE.BoxGeometry( 10, 10, 10 );
 			const obj = new THREE.Mesh( objGeom, new THREE.MeshBasicMaterial( {
 
@@ -117,19 +105,23 @@
 			obj.rotation.y = Math.PI / 3;//2;//10;
 			//			obj.position.set( 0, 3.14, 0 );
 			scene.add( obj );
+			obj.name = 'Geometry';
+			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( obj );
 			MyThree.Intersections.Faces( obj, collidableMeshList );
 
 			const elWait = document.getElementById( 'wait' );
 			elWait.parentNode.removeChild( elWait );
 
-			//guiSelectPoint
-
-			obj.name = 'Geometry';
-			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( obj );
-			//			const faces = obj.userData.intersections.faces;
-
 		}, {
 
+			/*
+			pointLight1: {
+
+//				position: new THREE.Vector3( 13, 2, 2 ),
+//				position: new THREE.Vector3( -20, -2, -2 ),
+
+			},
+			*/
 			//point: { size: 100 },
 			camera: {
 
