@@ -154,7 +154,11 @@ class MyThree {
 	 * @param {boolean} [options.axesHelper] false - do not add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
 	 * @param {boolean} [options.canvasMenu] false - do not create a <a href="../../canvasMenu/jsdoc/index.html" target="_blank">canvasMenu</a> instance.
 	 * @param {boolean} [options.stereoEffect] false - do not use <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
-	 * @param {boolean} [options.pointLight] false - do not use <a href="../../jsdoc/pointLight/index.html" target="_blank">pointLight</a>.
+	 * @param {boolean|Object} [options.pointLight] false - do not use <a href="../../jsdoc/pointLight/index.html" target="_blank">pointLight</a>.
+	 * @param {Object} [options.pointLight.pointLight1] First <b>pointLight</b> settings.
+	 * @param {THREE.Vector3} [options.pointLight.pointLight1.position] <b>pointLight</b> position.
+	 * @param {Object} [options.pointLight.pointLight2] Second <b>pointLight</b> settings.
+	 * @param {THREE.Vector3} [options.pointLight.pointLight2.position] <b>pointLight</b> position.
 	 * @param {object} [options.spriteText] spriteText options. See <a href="../../SpriteText/jsdoc/module-SpriteText.html" target="_blank">SpriteText</a> <b>options</b> parameter for details.
 	 *
 	 * @param {boolean} [options.player] false - do not create a <a href="../../player/jsdoc/index.html" target="_blank">Player</a> instance.
@@ -486,13 +490,15 @@ class MyThree {
 			const pointLight1 = new pointLight( scene, {
 
 				options: options, 
-				position: new THREE.Vector3( 2 * options.scale, 2 * options.scale, 2 * options.scale ),
+				position: options.pointLight && options.pointLight.pointLight1 && options.pointLight.pointLight1.position ? options.pointLight.pointLight1.position :
+					new THREE.Vector3( 2 * options.scale, 2 * options.scale, 2 * options.scale ),
 
 			} );
 			const pointLight2 = new pointLight( scene, {
 
 				options: options, 
-				position: new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ),
+				position: options.pointLight && options.pointLight.pointLight2 && options.pointLight.pointLight2.position ? options.pointLight.pointLight2.position :
+					new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ),
 
 			} );
 
