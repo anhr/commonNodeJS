@@ -48,26 +48,31 @@
 			const planeGeom = new THREE.TetrahedronGeometry( 10, 0 );
 //			planeGeom.rotateX( -Math.PI / 2 );
 			const plane = new THREE.Mesh( planeGeom,
-				/*
 				new THREE.MeshLambertMaterial( {
 
 					color: "lightgray",
 					opacity: 0.8,
 					transparent: true,
+					side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
 
 				} )
-				*/
+				/*
 				new THREE.MeshBasicMaterial( {
 
 					color: "lightgray",
 					opacity: 0.75,
 					transparent: true,
-					side: THREE.DoubleSide
+					side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
 
 				} )
+				*/
 			);
-//			plane.position.y = -3.14;
+			//plane.rotation.x = 0.625;
+			//plane.rotation.y = 2.386;
+			//plane.position.z = -15;//for TorusGeometry
+			//plane.position.z = -6;//for BoxGeometry
 //			plane.rotation.x = Math.PI / 5;
+//			plane.position.y = -3.14;
 			scene.add( plane );
 			plane.name = 'plane';
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( plane );
@@ -91,9 +96,9 @@
 			const objGeom = geometry;
 */
 			//const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
-			//const objGeom = new THREE.TorusGeometry( 10, 3, 16, 100 );
+			const objGeom = new THREE.TorusGeometry( 10, 3, 16, 100 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 3, 3 );
-			const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
+			//const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
 			//const objGeom = new THREE.BoxGeometry( 10, 10, 10 );
 			const obj = new THREE.Mesh( objGeom, new THREE.MeshBasicMaterial( {
 
@@ -101,9 +106,10 @@
 				wireframe: true
 
 			} ) );
-			obj.rotation.x = Math.PI / 6;
-			obj.rotation.y = Math.PI / 3;//2;//10;
-			//			obj.position.set( 0, 3.14, 0 );
+			obj.rotation.x = Math.PI / 2;
+			//obj.rotation.x = Math.PI / 6;
+			//obj.rotation.y = Math.PI / 3;//2;//10;
+//			obj.position.set( 0, 3.14, 0 );
 			scene.add( obj );
 			obj.name = 'Geometry';
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( obj );
@@ -114,14 +120,20 @@
 
 		}, {
 
-			/*
-			pointLight1: {
+			pointLight: {
 
-//				position: new THREE.Vector3( 13, 2, 2 ),
-//				position: new THREE.Vector3( -20, -2, -2 ),
+				pointLight1: {
+
+					position: new THREE.Vector3( 13, 2, 2 ),
+
+				},
+				pointLight2: {
+
+					position: new THREE.Vector3( -20, -2, -2 ),
+
+				},
 
 			},
-			*/
 			//point: { size: 100 },
 			camera: {
 
