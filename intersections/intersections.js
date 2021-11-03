@@ -395,9 +395,9 @@ function Faces( object, collidableMeshList ) {
 				}
 				*/
 				spriteTextIntersection = new SpriteText( face.name +
-						'\nVertices ids: ' + vertices.vertex1.index + ', ' + vertices.vertex2.index + ', ' + vertices.vertex3.index,
-						//'\nedge1' + textEdge( face.faceEdges.edge1 ) + '\nedge2' + textEdge( face.faceEdges.edge2 ) + '\nedge3' + textEdge( face.faceEdges.edge3 ),
-					intersection.point,//new THREE.Vector3()//position
+					'\nVertices ids: ' + vertices.vertex1.index + ', ' + vertices.vertex2.index + ', ' + vertices.vertex3.index,
+					//'\nedge1' + textEdge( face.faceEdges.edge1 ) + '\nedge2' + textEdge( face.faceEdges.edge2 ) + '\nedge3' + textEdge( face.faceEdges.edge3 ),
+					intersection.pointSpriteText,//intersection.point,//position
 					{
 
 						rect: { displayRect: true, },
@@ -407,7 +407,7 @@ function Faces( object, collidableMeshList ) {
 				);
 				spriteTextIntersection.faceIndex = intersection.faceIndex;
 
-			} else spriteTextIntersection.position.copy( intersection.point );
+			} else spriteTextIntersection.position.copy( intersection.pointSpriteText );//intersection.point );
 
 			//cursor
 

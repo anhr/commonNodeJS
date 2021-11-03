@@ -1041,8 +1041,8 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 
 				).w
 		),
-
-		position, options.spriteOptions
+		intersection.pointSpriteText,//position
+		options.spriteOptions
 	);
 
 }

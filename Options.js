@@ -1638,7 +1638,7 @@ class Raycaster {
 				if ( cursor === undefined ) cursor = renderer.domElement.style.cursor;
 				renderer.domElement.style.cursor = 'pointer';
 
-			} else spriteTextIntersection.position.copy( intersection.point );
+			} else spriteTextIntersection.position.copy( intersection.pointSpriteText );//intersection.point );
 
 		}
 
@@ -1713,6 +1713,17 @@ class Raycaster {
 			}
 			getIntersects();
 			intersects.forEach( function ( intersection ) {
+
+				//Когда создаем SpriteText с информацией об объекте, на которую наведена мышка,
+				//иногда этот текст загораживается объектами, которые расположены ближе к камере
+				//Для решения проблемы текст надо перенести ближе к камере
+				const three = window.__myThree__.three;
+				intersection.pointSpriteText = new three.THREE.Vector3();
+				//Так и не понял почему в режиме стерео текст отображается в неправильном месте
+				if ( settings.options.stereoEffect.settings.spatialMultiplex === StereoEffect.spatialMultiplexsIndexs.Mono )
+					raycaster.ray.at( three.options.camera.near + (three.options.camera.far - three.options.camera.near)/1000, intersection.pointSpriteText );
+				//Поэтому оставляю как было раньше
+				else intersection.pointSpriteText = intersection.point;
 
 				var boDetected = false;
 				intersectedObjects.forEach( function ( intersectedObject ) {
