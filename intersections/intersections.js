@@ -401,6 +401,7 @@ function Faces( object, collidableMeshList ) {
 					{
 
 						rect: { displayRect: true, },
+						group: scene,//для установки размера теста вручную пользователем
 						//textHeight: 0.013,
 
 					}
