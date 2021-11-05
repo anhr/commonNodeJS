@@ -380,23 +380,21 @@ function Faces( object, collidableMeshList ) {
 			if ( !spriteTextIntersection ) {
 
 				const vertices = face.vertices;
-				/*
 				function textEdge( edge ) {
 
 					function textVertex( vertex ) {
 
-						return '\n  index = ' + vertex.index +
-							'\n  point = ' + vertex.point.x + ' ' + vertex.point.y + ' ' + vertex.point.z;
+						return ' ' + vertex.index;
+//							'\n  point = ' + vertex.point.x + ' ' + vertex.point.y + ' ' + vertex.point.z;
 
 					}
-					return '\n vertex1' + textVertex( edge.vertex1 ) +
-						'\n vertex2' + textVertex( edge.vertex2 );
+					return ': v1' + textVertex( edge.vertex1 ) +
+						', v2' + textVertex( edge.vertex2 );
 
 				}
-				*/
 				spriteTextIntersection = new SpriteText( face.name +
-					'\nVertices ids: ' + vertices.vertex1.index + ', ' + vertices.vertex2.index + ', ' + vertices.vertex3.index,
-					//'\nedge1' + textEdge( face.faceEdges.edge1 ) + '\nedge2' + textEdge( face.faceEdges.edge2 ) + '\nedge3' + textEdge( face.faceEdges.edge3 ),
+					'\nVertices ids: ' + vertices.vertex1.index + ', ' + vertices.vertex2.index + ', ' + vertices.vertex3.index +
+					'\ne1' + textEdge( face.faceEdges.edge1 ) + '\ne2' + textEdge( face.faceEdges.edge2 ) + '\ne3' + textEdge( face.faceEdges.edge3 ),
 					intersection.pointSpriteText,//intersection.point,//position
 					{
 
@@ -750,7 +748,8 @@ function Faces( object, collidableMeshList ) {
 //									if ( i !== indexIntersection ) i = indexIntersection;
 									function isNextFace( face ) {
 
-if ( face.id === 2936 ) console.log( face.id );
+if ( face.id === 162 )//2936 )
+	console.log( face.id );
 										const faceEdges = face.faceEdges;
 
 										//поиск грани, котороая пересекает объект по одному ребру
@@ -773,7 +772,7 @@ if ( face.id === 2936 ) console.log( face.id );
 											)
 										) {
 
-											console.log( 'Оne edge, two intersetions. face.id = ' + face.id );
+											//console.log( 'Оne edge, two intersetions. face.id = ' + face.id );
 
 											if ( edge.intersection.length !== 2 ) console.error( 'isNextFace: Оne edge. edge.intersection.length = ' + edge.intersection.length )
 
@@ -835,7 +834,20 @@ if ( face.id === 2936 ) console.log( face.id );
 */
 											const a = ( edge.vertex1.index === edge2.vertex1.index ) && ( edge.vertex2.index === edge2.vertex2.index ),
 												b = ( edge.vertex2.index === edge2.vertex1.index ) && ( edge.vertex1.index === edge2.vertex2.index );
-											if ( a || b ) return false;//Индексы вершин ребер edge и edge2 совпадают. Значит edge2 уже добавлено в линию пересечения
+											if ( a || b ) {
+
+												/*
+												if ( ( edge.intersection.length > 1 ) && ( edge.intersection[0].faceIndex !== edge.intersection[1].faceIndex ) ) {
+
+													if ( indexIntersection === 0 ) indexIntersection = 1;
+													else indexIntersection = 0;
+													return true;//ребро проходит через две грани объекта
+
+												}
+												*/
+												return false;//Индексы вершин ребер edge и edge2 совпадают. Значит edge2 уже добавлено в линию пересечения
+
+											}
 											/*
 											for ( var j = 0; j < edge2.intersection.length; j++ ) {
 
@@ -860,8 +872,8 @@ if ( face.id === 2936 ) console.log( face.id );
 											}
 											if ( edge2.intersection.length > 1 ) {
 
-//												if ( i > 0 ) console.log( edge.faces.face1.name + ' ' + edge.faces.face2.name + ' edge.intersection.length = ' + edge.intersection.length );
-												console.log( edge2.faces.face1.name + ' ' + edge2.faces.face2.name + ' edge2.intersection.length = ' + edge2.intersection.length );
+												//												if ( i > 0 ) console.log( edge.faces.face1.name + ' ' + edge.faces.face2.name + ' edge.intersection.length = ' + edge.intersection.length );
+												//console.log( edge2.faces.face1.name + ' ' + edge2.faces.face2.name + ' edge2.intersection.length = ' + edge2.intersection.length );
 												for ( var j = 0; j < edge2.intersection.length; j++ ) {
 
 													if ( edge.intersection[indexIntersection].faceIndex === edge2.intersection[j].faceIndex ) {
@@ -874,12 +886,28 @@ if ( face.id === 2936 ) console.log( face.id );
 												}
 												console.warn( 'faceIndex was not detected' );
 
-											} else if ( edge2.intersection[i] ) {
+											} else
+												//												if ( edge2.intersection[i] && ( edge.intersection[indexFalse].faceIndex === edge2.intersection[i].faceIndex ) )
+												if ( edge2.intersection[i] ) {
 
-												setEdge( i );
-												return true;
+													if (
+														//следующая точка находится на другой грани объекта с которым пересекаются ребра
+														( edge.intersection[indexFalse].faceIndex !== edge2.intersection[i].faceIndex ) &&
+														(//на данной грани есть хоть одно ребро, которое пересекает объект дважды
+															( faceEdges.edge1.intersection.length > 1 ) ||
+															( faceEdges.edge2.intersection.length > 1 ) ||
+															( faceEdges.edge3.intersection.length > 1 )
+														)
+													) {
 
-											}
+														//console.log( edge.faces.face1.name + '' + edge.faces.face2.name + ' Another face ' + faceEdges );
+														return false;
+
+													}
+													setEdge( i );
+													return true;
+
+												}
 											return false;
 
 										}
