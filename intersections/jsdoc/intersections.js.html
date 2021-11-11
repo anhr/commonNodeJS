@@ -45,94 +45,283 @@
 */
 
 import three from '../three.js'
-//import MyThree from '../myThree/myThree.js';
-import MyPoints from '../myPoints/myPoints.js';
+//import MyPoints from '../myPoints/myPoints.js';
 import { SpriteText } from '../SpriteText/SpriteText.js'
+
+/*
+ * @param {function(index,min,max)} [settings.onProgress] Callback function of progress of creating of the &lt;b>Faces&lt;/b> that take as input:
+ * &lt;pre>
+ * &lt;b>index&lt;/b> current &lt;b>object.geometry.index&lt;/b>.
+ * &lt;b>min&lt;/b> min &lt;b>index&lt;/b>
+ * &lt;b>max&lt;/b> max &lt;b>index&lt;/b>
+ * &lt;//pre>
+ */
 
 /**
  * Creates an array of graphic object [faces]{@link https://threejs.org/docs/index.html?q=fac#examples/en/math/convexhull/Face}.
- * @param {THREE.Mesh} object You can see an array of faces in &lt;b>object.userData.intersections.faces&lt;/b> after creating of class.
+ * @param {THREE.Mesh} object You can see an array of faces in &lt;b>object.userData.intersections.faces&lt;/b> after creating of &lt;b>Faces&lt;/b>.
  * See [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}.
  * @param {array} collidableMeshList Array of meshes, which intersects with &lt;b>object&lt;/b>.
+ * @param {object} [settings] the following settings are available:
+ * @param {function(arrayIntersectLoops)} [settings.onReady] Callback function that called if intersection lines is ready and that take as input an array of all intersect lines.
+ * Every item of array is array of line vertices of &lt;b>THREE.Vector3&lt;/b> type.
  */
-function Faces( object, collidableMeshList ) {
+function Faces( object, collidableMeshList, settings = {} ) {
 
 	const THREE = three.THREE, options = three.options, scene = three.group;
+
 	let faces;
 	object.userData.intersections = {};
 	const positions = object.geometry.attributes.position;
+	
+	if ( !object.geometry.index ) {
 
-	if ( object.geometry.index ) {
+		//У некоторых геометрических фигур нет object.geometry.index. Например THREE.TetrahedronGeometry
+		const array = [];
+		for ( var i = 0; i &lt; positions.count; i++ ) array.push( i );
+		object.geometry.index = new THREE.Uint16BufferAttribute( array, 1 );
 
-		//ищщем точки, которые совпадают или почти совпадают с небольшой погрешностью
-		//что бы у них был одинаковый индекс
-		for ( let i = 1; i &lt; object.geometry.index.count; i++ ) {
+	}
+	//ищщем точки, которые совпадают или почти совпадают с небольшой погрешностью
+	//что бы у них был одинаковый индекс
+	for ( let i = 1; i &lt; object.geometry.index.count; i++ ) {
 
-			const point1 = new THREE.Vector3().fromBufferAttribute( positions, object.geometry.index.array[i] );
-			/*
-			console.log( 'index: ' + object.geometry.index.array[i] );
-			console.log( point1 );
-			*/
-			for ( let j = i - 1; j >= 0; j-- ) {
+		const point1 = new THREE.Vector3().fromBufferAttribute( positions, object.geometry.index.array[i] );
+		/*
+		console.log( 'index: ' + object.geometry.index.array[i] );
+		console.log( point1 );
+		*/
+		for ( let j = i - 1; j >= 0; j-- ) {
 
-				const point2 = new THREE.Vector3().fromBufferAttribute( positions, object.geometry.index.array[j] );
+			const point2 = new THREE.Vector3().fromBufferAttribute( positions, object.geometry.index.array[j] );
 
-				// @returns
-				// 	0 координаты совпадают
-				// 	1 коодинаты с маленьким отклонением
-				// 	4 коодинаты с большим отклонением
-				function Delta( a, b ) {
+			// @returns
+			// 	0 координаты совпадают
+			// 	1 коодинаты с маленьким отклонением
+			// 	4 коодинаты с большим отклонением
+			function Delta( a, b ) {
 
-					const d = Math.abs( a - b )
-					if ( d === 0 ) return 0;
+				const d = Math.abs( a - b )
+				if ( d === 0 ) return 0;
 //					if ( ( d > 0 ) &amp;&amp; ( d &lt;= 7.347880586115415e-16 ) ) return 1;
-					if ( ( d > 0 ) &amp;&amp; ( d &lt;= 3.1840817637818772e-15 ) ) return 1;
+//				if ( ( d > 0 ) &amp;&amp; ( d &lt;= 3.1840817637818772e-15 ) ) return 1;
+//				if ( ( d > 0 ) &amp;&amp; ( d &lt;= 3.394278283598952e-15 ) ) return 1;//use THREE.SphereGeometry for testing
+				if ( ( d > 0 ) &amp;&amp; ( d &lt;= 4e-15 ) ) return 1;//use THREE.SphereGeometry for testing
 //					if ( ( d > 0 ) &amp;&amp; ( d &lt;= 3.e-10 ) ) return 1;
-					return 4;
+				return 4;
 
-				}
-				const res = Delta( point2.x, point1.x ) + Delta( point2.y, point1.y ) + Delta( point2.z, point1.z );
-				//0 координаты совпадают
-				//1,2,3 одна, две или три коодинаты с маленьким отклонением. Остальные совпадают.
-				//4 есть хоть одна коодината с большим отклонением
-				//if ( ( res > 0 ) &amp;&amp; ( res &lt; 4 ) )
-				if ( res &lt; 4 ) {
+			}
+			const res = Delta( point2.x, point1.x ) + Delta( point2.y, point1.y ) + Delta( point2.z, point1.z );
+			//0 координаты совпадают
+			//1,2,3 одна, две или три коодинаты с маленьким отклонением. Остальные совпадают.
+			//4 есть хоть одна коодината с большим отклонением
+			//if ( ( res > 0 ) &amp;&amp; ( res &lt; 4 ) )
+			if ( res &lt; 4 ) {
 
-					object.geometry.index.array[i] = object.geometry.index.array[j];
-					break;
-
-				}
+				object.geometry.index.array[i] = object.geometry.index.array[j];
+				break;
 
 			}
 
 		}
 
-	} else {
+	}
 
-		//У некоторых геометрических фигур нет object.geometry.index. Например THREE.TetrahedronGeometry
-console.error( 'Faces: under constraction' );
-		const array = []
-		for ( var i = 0; i &lt; positions.count; i++ )
-			array.push( i );
-		object.geometry.index = new THREE.Uint16BufferAttribute( array, 1 );
+	//точки пересечения одного тела с другим могут образовывать несколько замкнутых линий ( Loops ).
+	//Например пересечение тора с плоскостью.
+	//Здесь перечислены все обнруженные Loops точек пересечения.
+	const arrayIntersectLoops = [];
+
+	//edges
+	const edges = [];
+	for ( var index = 0; index &lt; object.geometry.index.count; index++ ) {
+
+		class Edge {
+
+			constructor( index ) {
+
+//				if ( settings.onProgress ) settings.onProgress( index, 0, object.geometry.index.count );
+				this.twin = function ( face ) {
+
+					if ( this.faces.face1.id === face.id ) return this.faces.face2;
+					if ( this.faces.face2.id !== face.id ) console.error( 'Edge.twin: invalud face id' );
+					return this.faces.face1;
+
+				}
+				this.isSameEdge = function ( i ) {
+
+					if (
+						( i + 1 >= object.geometry.index.count ) ||
+						(
+							( object.geometry.index.array[i] === this.vertex1.index ) &amp;&amp;
+							( object.geometry.index.array[i + 1] === this.vertex2.index )
+						) ||
+						(
+							( object.geometry.index.array[i + 1] === this.vertex1.index ) &amp;&amp;
+							( object.geometry.index.array[i] === this.vertex2.index )
+						)
+					) return true;
+					return false;
+
+				}
+				function Vertex( index ) {
+
+					return {
+
+						get index() { return object.geometry.index.array[index]; },
+						get pointLocal() {
+
+							const vertex = positions.itemSize === 3 ? new THREE.Vector3() : positions.itemSize === 4 ? new THREE.Vector3() : undefined;
+							return vertex.fromBufferAttribute( positions, this.index );
+
+						},
+						get point() { return this.pointLocal.applyMatrix4( object.matrix ); },
+
+					}
+
+				};
+				var vertex1, vertex2,
+
+					//array - список точек пересечения, возвращенный THREE.Raycaster.intersectObjects
+					//collisionResultsOriginPoint.length === 0 пересечений не обнаружено
+					//undefined - точка пересечения еще не вычислялась
+					//collisionResultsOriginPoint[i] = false - уже добавлен в arrayIntersectLoop
+					collisionResultsOriginPoint;
+
+				//THREE.Vecor3 - Точка пересечения edge c объектами из списка collidableMeshList
+				//undefined - точка пересечения еще не вычислялась
+				//false - не пересекается или уже добавлен в arrayIntersectLoop
+//				intersectionPoint;
+				Object.defineProperties( this, {
+
+					intersection: {
+
+						/**
+						 * @returns THREE.Vector3 - intersection point
+						 * false - no intersection
+						 * undefined - intersections was not detected yet.
+						 * */
+						get: function () {
+
+//							if ( intersectionPoint === undefined )
+							if ( collisionResultsOriginPoint === undefined ) {
+
+								const globalOriginPoint = this.vertex1.point,
+									globalVertex = this.vertex2.point,
+									directionVector = globalVertex.clone().sub( globalOriginPoint ),
+									far = globalVertex.distanceTo( globalOriginPoint ),
+									rayOriginPoint = new THREE.Raycaster( globalOriginPoint, directionVector.clone().normalize(), 0, far );
+								collisionResultsOriginPoint = rayOriginPoint.intersectObjects( collidableMeshList );
+//if ( collisionResultsOriginPoint.length > 1 ) console.log( this.faces.face1.name + ' ' + this.faces.face2.name + ' collisionResultsOriginPoint.length = ' + collisionResultsOriginPoint.length );
+/*
+								if ( collisionResultsOriginPoint.length > 0 )
+								{
+
+//									intersectionPoint = collisionResultsOriginPoint[0].point;
+									//console.log( 'intersection. ' + arrayIntersectPoints.length + ' ' + edge.face.name + '. point:' );
+									//console.log( point );
+									//console.log( 'origin index = ' + edge.index );
+									//console.log( globalOriginPoint );
+									//console.log( 'prev index = ' + edge.prev.index );
+									//console.log( globalVertex );
+									//console.log( '-------------' );
+
+								}
+								else intersectionPoint = false;
+*/
+
+							}
+							return collisionResultsOriginPoint;
+//							return intersectionPoint;
+
+						},
+						set: function ( collisionResultsOriginPointNew ) { collisionResultsOriginPoint = collisionResultsOriginPointNew; },
+//						set: function ( intersectionPointNew ) { intersectionPoint = intersectionPointNew; },
+
+					},
+					vertex1: {
+
+						get: function () {
+
+							if ( !vertex1 ) {
+
+								vertex1 = Vertex( index );
+if ( vertex1.index === 230 ) console.log( 'vertex1.index = ' + vertex1.index );
+
+							}
+							return vertex1
+						}
+
+					},
+					vertex2: {
+
+						get: function () {
+
+							if ( !vertex2 ) {
+
+								vertex2 = Vertex( index + 1 );
+if ( vertex2.index === 230 ) console.log( 'vertex2.index = ' + vertex2.index );
+
+							}
+							return vertex2
+//							return { index: object.geometry.index.array[index + 1] }
+
+						}
+
+					},
+
+				} );
+				/*
+				console.log( 'Edge: vertex1: { index: ' + this.vertex1.index + ' } vertex2: { index: ' + this.vertex2.index + ' }' );
+				object.add( new THREE.Line( new THREE.BufferGeometry().setFromPoints( [this.vertex1.pointLocal, this.vertex2.pointLocal] ),
+					new THREE.LineBasicMaterial( { color: 0x0000ff } ) ) );
+				*/
+
+			}
+
+		}
+		var same = false;
+		edges.forEach( function ( edge ) {
+
+			if ( edge.isSameEdge( index ) ) {
+
+				same = true;
+				return;
+
+			}
+
+		} );
+		if ( !same ) {
+
+			const edge = new Edge( index );
+			/*
+			console.log( edges.length + ' edge' );
+			console.log( ' v1 = ' + edge.vertex1.index);
+			console.log( edge.vertex1.point );
+			console.log( ' v2 = ' + edge.vertex2.index );
+			console.log( edge.vertex2.point );
+			*/
+			edges.push( edge );
+
+		}
 
 	}
 
 	/**
 	 * @description Marks the selected face in a different color.
-	 * @param {Edge} edge &lt;b>face.edge&lt;/b> First edge of selected face.
+	 * @param {Face} face face for drawing.
 	 * @param {number} lineFaceIndex LineFaceIndex enum item. Example: &lt;b>LineFaceIndex.mouse&lt;/b>
 	 * @param {number} color Color of the edges of the face. Example: 0xffffff - white color.
 	 */
-	function DrawFace( edge, lineFaceIndex, color ) {
+	function DrawFace( face, lineFaceIndex, color ) {
 
 		const THREE = three.THREE;
 		const options = three.options;
 		const arrayPoints = [
 
-			edge.vertex.pointLocal,
-			edge.prev.vertex.pointLocal,
-			edge.prev.prev.vertex.pointLocal,
+			face.vertices.vertex1.pointLocal,
+			face.vertices.vertex2.pointLocal,
+			face.vertices.vertex3.pointLocal,
 
 		];
 		/*
@@ -151,14 +340,10 @@ console.error( 'Faces: under constraction' );
 		}
 		const lineFace = new THREE.LineLoop( new THREE.BufferGeometry().setFromPoints( arrayPoints ), new THREE.LineBasicMaterial( { color: color } ) );
 		faceLines[lineFaceIndex] = lineFace;
-//		const p = lineFaceIndex === 0 ? 0.1 : 0.2;
-//		const p = lineFaceIndex === 0 ? 0.01 : 0.02;
-//		lineFace.position.set( p, p, p );
-//		three.group.add( lineFace );
 		object.add( lineFace );
 		if ( options.guiSelectPoint &amp;&amp; ( lineFaceIndex === LineFaceIndex.selected ) ) {
 
-			lineFace.name = edge.face.name;
+			lineFace.name = face.name;
 			options.guiSelectPoint.addMesh( lineFace );
 			options.guiSelectPoint.select( { object: lineFace } );//, index: index } );
 
@@ -175,7 +360,6 @@ console.error( 'Faces: under constraction' );
 		if ( !lineFace ) return;
 		const options = three.options;
 		if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( lineFace );
-//		three.group.remove( lineFace );
 		object.remove( lineFace );
 
 	}
@@ -200,26 +384,35 @@ console.error( 'Faces: under constraction' );
 	}
 	Object.freeze( LineFaceIndex );
 
-	function DrawSelectedFace( edge ) {
+	function DrawSelectedFace( face ) {
 
 		/*
-		console.log( edge.face.name + ' indexes: ' + edge.index + ', ' + edge.prev.index + ', ' + edge.prev.prev.index + ', ' )
-		const point1 = new THREE.Vector3().fromBufferAttribute(object.geometry.attributes.position,edge.index);
-		console.log(point1);
-		const point2 = new THREE.Vector3().fromBufferAttribute(object.geometry.attributes.position,edge.prev.index);
-		console.log(point2);
-		const point3 = new THREE.Vector3().fromBufferAttribute( object.geometry.attributes.position, edge.prev.prev.index );
-		console.log(point3);
-		console.log('world points')
-		console.log(point1.applyMatrix4( object.matrix ));
-		console.log(point2.applyMatrix4( object.matrix ));
-		console.log(point3.applyMatrix4( object.matrix ));
+		console.log( '' );
+		console.log( face.name );
+		function textEdge( edge ) {
+
+			console.log( ' face1: ' + edge.faces.face1.name + ' face2: ' + edge.faces.face2.name );
+			function textVertex( vertex ) {
+
+				console.log( '  index = ' + vertex.index + ' point = ' + vertex.point.x + ' ' + vertex.point.y + ' ' + vertex.point.z );
+
+			}
+			console.log( ' vertex1' + textVertex( edge.vertex1 ) );
+			console.log( ' vertex2' + textVertex( edge.vertex2 ) );
+
+		}
+		console.log( 'edge1' ); textEdge( face.faceEdges.edge1 );
+		console.log( 'edge2' ); textEdge( face.faceEdges.edge2 );
+		console.log( 'edge3' ); textEdge( face.faceEdges.edge3 )
+		console.log( '' );
 		*/
 
-		DrawFace( edge, LineFaceIndex.selected, 0xffffff );
-		DrawFace( edge.twin.face.edge, LineFaceIndex.selectedTwin1, 0xffff00 );
-		DrawFace( edge.prev.twin.face.edge, LineFaceIndex.selectedTwin2, 0xffff00 );
-		DrawFace( edge.prev.prev.twin.face.edge, LineFaceIndex.selectedTwin3, 0xffff00 );
+		DrawFace( face, LineFaceIndex.selected, 0xffffff );
+		DrawFace( face.faceEdges.edge1.twin( face ), LineFaceIndex.selectedTwin1, 0xffff00 );
+		DrawFace( face.faceEdges.edge2.twin( face ), LineFaceIndex.selectedTwin2, 0xffff00 );
+		if ( face.faceEdges.edge3 )
+			DrawFace( face.faceEdges.edge3.twin( face ), LineFaceIndex.selectedTwin3, 0xffff00 );
+		else console.error( 'face.faceEdges.edge3: ' + face.faceEdges.edge3 );
 
 	}
 	function HideSelectedFace() {
@@ -238,9 +431,9 @@ console.error( 'Faces: under constraction' );
 
 		onIntersection: function ( intersection, mouse ) {
 
-			const faces = object.userData.intersections.faces;
-			DrawFace( faces[intersection.faceIndex].edge, LineFaceIndex.mouse, 0xffffff );
-			//Options.raycaster.onIntersection( intersection, options, scene );//, camera, renderer );
+			const faces = object.userData.intersections.faces,
+				face = faces[intersection.faceIndex];
+			DrawFace( face, LineFaceIndex.mouse, 0xffffff );
 
 			//Sptite text
 
@@ -252,18 +445,40 @@ console.error( 'Faces: under constraction' );
 			}
 			if ( !spriteTextIntersection ) {
 
-/*
-				const attributesPosition = intersection.object.geometry.attributes.position,
-					position = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
-				position.fromArray( attributesPosition.array, intersection.index * attributesPosition.itemSize );
-*/
-				spriteTextIntersection = new SpriteText( 'Face id = ' + intersection.faceIndex,
-					intersection.point//new THREE.Vector3()//position
-					, { rect: { displayRect: true, }, }
+				const vertices = face.vertices;
+				function textEdge( edge ) {
+
+					if ( !edge ) {
+
+						console.error( 'edge: ' + edge );
+						return '';
+
+					}
+					function textVertex( vertex ) {
+
+						return ' ' + vertex.index;
+//							'\n  point = ' + vertex.point.x + ' ' + vertex.point.y + ' ' + vertex.point.z;
+
+					}
+					return ': v1' + textVertex( edge.vertex1 ) +
+						', v2' + textVertex( edge.vertex2 );
+
+				}
+				spriteTextIntersection = new SpriteText( face.name +
+					'\nVertices ids: ' + vertices.vertex1.index + ', ' + vertices.vertex2.index + ', ' + vertices.vertex3.index +
+					'\ne1' + textEdge( face.faceEdges.edge1 ) + '\ne2' + textEdge( face.faceEdges.edge2 ) + '\ne3' + textEdge( face.faceEdges.edge3 ),
+					intersection.pointSpriteText,//intersection.point,//position
+					{
+
+						rect: { displayRect: true, },
+						group: scene,//для установки размера теста вручную пользователем
+						//textHeight: 0.013,
+
+					}
 				);
 				spriteTextIntersection.faceIndex = intersection.faceIndex;
 
-			} else spriteTextIntersection.position.copy( intersection.point );
+			} else spriteTextIntersection.position.copy( intersection.pointSpriteText );//intersection.point );
 
 			//cursor
 
@@ -274,8 +489,6 @@ console.error( 'Faces: under constraction' );
 		onIntersectionOut: function () {
 
 			HideFace( LineFaceIndex.mouse );
-
-			//Options.raycaster.onIntersectionOut( scene, renderer );
 
 			if ( spriteTextIntersection ) {
 
@@ -289,7 +502,6 @@ console.error( 'Faces: under constraction' );
 		},
 		onMouseDown: function ( intersection ) {
 
-			//alert( 'Clicked over object.' );
 			if ( cFaces ) {
 
 				cFaces.__select[intersection.faceIndex + 1].selected = true;
@@ -314,139 +526,182 @@ console.error( 'Faces: under constraction' );
 				faces = [];
 				class Face {
 
-					constructor( index ) {
+					/* *
+					 * [Face]{@link https://threejs.org/docs/index.html?q=Fa#examples/en/math/convexhull/Face}
+					 * @param {number} index index of vertices of the face &lt;b>from object.geometry.index&lt;/b>
+					 * @param {number} id identifier of the face in the &lt;b>faces&lt;/b> array.
+					 */
+					constructor( index, id ) {
 
-						var edge;
 						const vectorIndex = new THREE.Vector3();
 						vectorIndex.fromBufferAttribute( object.geometry.index, index );
+						this.isMyEdge = function ( edge ) {
+
+							function isSameEdge( edgeSame ) {
+
+								return ( edge.vertex1.index === edgeSame.vertex1.index ) &amp;&amp; ( edge.vertex2.index === edgeSame.vertex2.index )
+
+							}
+							return isSameEdge( edge1 ) || isSameEdge( edge2 ) || isSameEdge( edge3 );
+
+						}
 						Object.defineProperties( this, {
 
+
+							faceEdges: { get: function () { return faceEdges; } },//прилегающие к грани ребра
+							id: { get: function () { return id; } },//identifier of the face in the &lt;b>faces&lt;/b> array.
 							//for debugging
 							name: {
 
 								get: function () {
 
-									for ( var i = 0; i &lt; faces.length; i++ ) {
+									return 'Face ' + id;
 
-										if ( Object.is( faces[i], this ) ) return 'Face ' + i;
+								}
+
+							},
+							vertices: {
+
+								get: function () {
+
+									return {
+
+										vertex1: faceEdges.edge1.vertex1,
+										vertex2: faceEdges.edge1.vertex2,
+										get vertex3() {
+
+											if ( !faceEdges.edge3 ) {
+
+												console.error( 'faceEdges.edge3 = ' + faceEdges.edge3 );
+												if ( faceEdges.edge1.vertex1.index === faceEdges.edge2.vertex1.index )
+													return faceEdges.edge2.vertex2;
+												if ( faceEdges.edge1.vertex1.index === faceEdges.edge2.vertex2.index )
+													return faceEdges.edge2.vertex1;
+												if ( faceEdges.edge1.vertex2.index === faceEdges.edge2.vertex1.index )
+													return faceEdges.edge2.vertex2;
+												if ( faceEdges.edge1.vertex2.index === faceEdges.edge2.vertex2.index )
+													return faceEdges.edge2.vertex1;
+												return;
+
+											}
+											return ( faceEdges.edge1.vertex1.index !== faceEdges.edge3.vertex1.index ) &amp;&amp;
+												( faceEdges.edge1.vertex2.index !== faceEdges.edge3.vertex1.index ) ?
+												faceEdges.edge3.vertex1 : faceEdges.edge3.vertex2;
+
+										},
 
 									}
 
 								}
 
-							},
-
-							edge: {
-
-								get: function () {
-
-									if ( edge ) return edge;
-									class Edge {
-
-										constructor( index, face, prev ) {
-
-											const vertex = positions.itemSize === 3 ? new THREE.Vector3() : positions.itemSize === 4 ? new THREE.Vector3() : undefined;
-											this.vertex = {
-
-												get pointLocal() { return vertex.fromBufferAttribute( positions, index ); },
-												get point() { return this.pointLocal.applyMatrix4( object.matrix ); },
-
-											};
-											this.face = face;
-											//this.prev = prev;
-											this.index = index;
-											this.head = function () { return this.vertex; }
-											let twin;
-											Object.defineProperties( this, {
-
-												prev: { get: function () { return prev ? prev : this.face.edge; } },
-												twin: {
-
-													get: function () {
-
-														if ( twin ) return twin;
-														//console.log('vectorIndex');
-														//console.log(vectorIndex);
-														for ( var i = 0; i &lt; faces.length; i++ ) {
-
-															const item = faces[i];
-															const vectorIndexCur = new THREE.Vector3( item.edge.index, item.edge.prev.index, item.edge.prev.prev.index );
-															if ( vectorIndexCur.equals( vectorIndex ) ) {
-
-																//console.log( 'vectorIndexCur = vectorIndex' );
-																if ( !Object.is( face, item ) )
-																	console.error( 'Under constraction' )
-
-															} else {
-
-																function getTwin( s, e ) {
-
-																	twin = item.edge;
-																	if ( ( s !== twin.index ) || ( e !== twin.prev.index ) ) {
-
-																		twin = twin.prev;
-																		if ( ( s !== twin.index ) || ( e !== twin.prev.index ) ) {
-
-																			twin = twin.prev;
-																			if ( ( s !== twin.index ) || ( e !== item.edge.index ) )
-																				twin = undefined;//twin.prev;
-
-																		}
-
-																	}
-																	return twin;
-
-																}
-																//const prev = this.prev ? this.prev : this.face.edge;
-																const prev = this.prev;
-																if ( !getTwin( this.index, prev.index ) )
-																	getTwin( prev.index, this.index )
-/*
-																	if ( !getTwin( prev.index, this.index ) )
-																		if ( !getTwin( prev.index, prev.prev.index ) )
-																			getTwin( prev.prev.index, prev.index )
-*/
-																if ( twin ) break;
-
-															}
-
-														}
-														if ( !twin ) {
-
-															console.error( face.name + ' Edge.twin = ' + twin );
-															console.error( 'index = ' + this.index );
-															console.error( this.vertex.point );
-															console.error( 'index = ' + this.prev.index );
-															console.error( this.prev.vertex.point );
-															console.error( '----------------------' );
-															twin = { face: { used: true } };
-
-														}
-														return twin;
-
-													}
-
-												}
-
-											} );
-
-										}
-
-									}
-									edge = new Edge( vectorIndex.x, this, new Edge( vectorIndex.y, this, new Edge( vectorIndex.z, this ) ) );
-									return edge;
-
-								},
-
-							},
+							}
 
 						} );
+						//прилегающие к грани ребра
+						const faceEdges = {
+
+/*
+							edges: {},
+//							set edge3( edge3 ) { this.edges.edge3 = edge3 },
+							set edge3( edge3 ) { this.edges.edge3 = edge3 },
+							get edge3() {
+
+								if ( !this.edges.edge3 &amp;&amp; this.edge1 &amp;&amp; this.edge2 ) {
+
+									this.edges.edge3 = {}
+									if ( this.edge1.vertex2.index === this.edge2.vertex1.index ) {
+
+										this.edges.edge3.vertex1 = this.edge1.vertex1;
+										this.edges.edge3.vertex2 = this.edge2.vertex2;
+
+									} else if ( this.edge1.vertex2.index === this.edge2.vertex2.index ) {
+
+										this.edges.edge3.vertex1 = this.edge1.vertex1;
+										this.edges.edge3.vertex2 = this.edge2.vertex1;
+
+									} else if ( this.edge1.vertex1.index === this.edge2.vertex1.index ) {
+
+										this.edges.edge3.vertex1 = this.edge1.vertex2;
+										this.edges.edge3.vertex2 = this.edge2.vertex2;
+
+									} else if ( this.edge1.vertex1.index === this.edge2.vertex2.index ) {
+
+										this.edges.edge3.vertex1 = this.edge1.vertex2;
+										this.edges.edge3.vertex2 = this.edge2.vertex1;
+
+									} else console.error( 'get edge3 failed!' );
+
+								}
+
+								return this.edges.edge3;
+
+							},
+*/
+
+						};
+//if ( this.id === 350 ) console.log( this.name );
+						//Каждый face имеет три вершины vectorIndex
+						//в этом цикле из спска всех ребер edges, полученных из object.geometry.index,
+						//для face ищем три ребра faceEdges.edge1, faceEdges.edge2, faceEdges.edge3
+						//и для каждого ребра ищем два face, которым принадлежит это ребро edge.faces.face1 и edge.faces.face2
+						for ( var i = 0; i &lt; edges.length; i++ ) {
+
+							const edge = edges[i];
+							function setFace( face ) {
+
+								if ( !edge.faces ) edge.faces = {}
+								if ( !edge.faces.face1 ) edge.faces.face1 = face;
+								else if ( !edge.faces.face2 ) {
+
+									//не определен face.name
+									//if ( edge.faces.face1.name === face.name ) console.error( 'Face: duplicate edge face' );
+
+									edge.faces.face2 = face;
+
+								} else console.error( 'Face: too many edge.faces' );
+
+							}
+							if (
+								( vectorIndex.x === edge.vertex1.index ) &amp;&amp; ( vectorIndex.y === edge.vertex2.index ) ||
+								( vectorIndex.x === edge.vertex2.index ) &amp;&amp; ( vectorIndex.y === edge.vertex1.index )
+							) {
+
+								if ( faceEdges.edge1 ) console.error( 'Face: duplicate faceEdges.edge1' );
+								faceEdges.edge1 = edge;
+								setFace( this );
+
+							} else if (
+								( vectorIndex.z === edge.vertex1.index ) &amp;&amp; ( vectorIndex.y === edge.vertex2.index ) ||
+								( vectorIndex.z === edge.vertex2.index ) &amp;&amp; ( vectorIndex.y === edge.vertex1.index )
+							) {
+
+								if ( faceEdges.edge2 ) console.error( 'Face: duplicate faceEdges.edge2' );
+								faceEdges.edge2 = edge;
+								setFace( this );
+
+							} else if (
+								( vectorIndex.z === edge.vertex1.index ) &amp;&amp; ( vectorIndex.x === edge.vertex2.index ) ||
+								( vectorIndex.z === edge.vertex2.index ) &amp;&amp; ( vectorIndex.x === edge.vertex1.index )
+							) {
+
+								if ( faceEdges.edge3 ) console.error( 'Face: duplicate faceEdges.edge3' );
+								faceEdges.edge3 = edge;
+								setFace( this );
+
+							}
+							if ( faceEdges.edge1 &amp;&amp; faceEdges.edge2 &amp;&amp; faceEdges.edge3 )
+								break;
+
+						}
+						if ( !faceEdges.edge1 ) console.error( this.name + ' invalid edge1' );
+						if ( !faceEdges.edge2 ) console.error( this.name + ' invalid edge2' );
+						if ( !faceEdges.edge3 ) console.error( this.name + ' invalid edge3' );
 
 					}
 
 				}
 				for ( let index = 0; index &lt; object.geometry.index.count; index += 3 )
-					faces.push( new Face( index ) );
+					faces.push( new Face( index, faces.length ) );
 
 				//gui
 
@@ -489,7 +744,7 @@ console.error( 'Faces: under constraction' );
 					cFaces = options.dat.gui.add( { Faces: 'someName' }, 'Faces', selectFace ).onChange( function ( i ) {
 
 						if ( i != -1 )
-							DrawSelectedFace( faces[parseInt( i )].edge );
+							DrawSelectedFace( faces[parseInt( i )] );
 						else HideSelectedFace();
 
 					} );
@@ -500,151 +755,14 @@ console.error( 'Faces: under constraction' );
 
 				//Player
 
-				var intersectLine;
-				var intersectPoints;
+				//				var intersectLine;
+				//				var intersectPoints;
 				object.userData.player = {
 
 					selectPlayScene: function ( t ) {
 
 						object.position.set( 0, 0, 10 - 30 * t );
 						object.updateMatrix();
-
-						const arrayIntersectPoints = [];
-						if ( intersectLine ) {
-
-							if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( intersectLine );
-							scene.remove( intersectLine );
-
-						}
-						if ( intersectPoints ) {
-
-							if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( intersectPoints );
-							scene.remove( intersectPoints );
-
-						}
-						faces.forEach( function ( face ) { face.used = false; } );
-
-						let faceIndex = 0;
-						function setFace() {
-
-							const face = faces[faceIndex];
-							let edge = face.edge;
-							function setEdge() {
-
-								function getIntersect( edge, onIntersect ) {
-
-									if ( edge.twin.face.used ) return;
-									const globalOriginPoint = edge.head().point,
-										globalVertex = edge.prev.head().point,
-										directionVector = globalVertex.clone().sub( globalOriginPoint ),
-										far = globalVertex.distanceTo( globalOriginPoint ),
-										rayOriginPoint = new THREE.Raycaster( globalOriginPoint, directionVector.clone().normalize(), 0, far + ( far / 100 ) ),
-										collisionResultsOriginPoint = rayOriginPoint.intersectObjects( collidableMeshList );
-									if ( collisionResultsOriginPoint.length > 0 )
-//									if ( collisionResults.length > 0 &amp;&amp; collisionResults[0].distance &lt; directionVector.length() )
-//									if ( collisionResultsOriginPoint.length > 0 &amp;&amp; collisionResultsOriginPoint[0].distance &lt; directionVector.length() )
-									{
-
-										const point = collisionResultsOriginPoint[0].point;
-										arrayIntersectPoints.push( point );
-										/*
-										console.log( 'intersection. ' + arrayIntersectPoints.length + ' ' + edge.face.name + '. point:' );
-										console.log( point );
-										console.log( 'origin index = ' + edge.index );
-										console.log( globalOriginPoint );
-										console.log( 'prev index = ' + edge.prev.index );
-										console.log( globalVertex );
-										console.log( '-------------' );
-										*/
-										if ( onIntersect ) onIntersect( point );
-										return true;
-
-									}
-
-								}
-								if ( getIntersect( edge, function ( point ) {
-
-									while ( true ) {
-
-										const face = edge.twin.face;
-										if ( face.used ) return;
-										face.used = true;
-										edge = face.edge;
-										if ( getIntersect( edge ) ) continue;
-										edge = edge.prev;
-										if ( getIntersect( edge ) ) continue;
-										edge = edge.prev;
-										if ( getIntersect( edge ) ) continue;
-
-										//нужно если использовать THREE.Line вместо THREE.LineLoop
-										//arrayIntersectPoints.push( arrayIntersectPoints[0] );
-
-										break;
-
-									}
-
-
-								} ) ) return true;
-								edge = edge.prev;
-
-							}
-							if ( setEdge() ) return true;
-							if ( setEdge() ) return true;
-							if ( setEdge() ) return true;
-
-						}
-						while ( faceIndex &lt; faces.length ) {
-
-							if ( setFace() ) break;
-							faceIndex++;
-
-						}
-
-						if ( arrayIntersectPoints.length > 0 ) {
-
-							MyPoints( arrayIntersectPoints, scene, {
-
-								options: options,
-								pointsOptions: {
-
-									name: 'intersection',
-									onReady: function ( points ) {
-
-										//points
-
-										if ( intersectPoints ) {
-
-											if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( intersectPoints );
-											scene.remove( intersectPoints );
-
-										}
-										intersectPoints = points;
-
-										//lines
-
-										if ( intersectLine ) {
-
-											if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( intersectLine );
-											scene.remove( intersectLine );
-
-										}
-										intersectLine = new THREE.LineLoop( points.geometry, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
-										scene.add( intersectLine );
-
-										if ( options.guiSelectPoint ) {
-
-											intersectLine.name = 'intersectLine';
-											options.guiSelectPoint.addMesh( intersectLine );
-
-										}
-
-									}
-
-								}
-
-							} );
-
-						}
 
 					},
 
@@ -658,6 +776,363 @@ console.error( 'Faces: under constraction' );
 
 	} );
 	object.userData.intersections.faces;
+
+	//список всех объектов, которые могут перемещаться и сталкиваться
+	const arrayMovingObjects = [object];
+	collidableMeshList.forEach( function ( object ) { arrayMovingObjects.push( object ); } );
+	arrayMovingObjects.forEach( function ( object ) {
+
+		object.userData.position = object.position.clone();
+		object.userData.rotation = object.rotation.clone();
+		object.userData.scale = object.scale.clone();
+
+	} );
+	if ( !options.intersections ) {
+
+		options.intersections = function () {
+
+			for ( var i = 0; i &lt; arrayMovingObjects.length; i++ ) {
+
+				const object = arrayMovingObjects[i];
+				if (
+					!object.userData.position.equals( object.position ) ||
+					!object.userData.rotation.equals( object.rotation ) ||
+					!object.userData.scale.equals( object.scale )
+				) {
+
+					object.userData.position = object.position.clone();
+					object.userData.rotation = object.rotation.clone();
+					object.userData.scale = object.scale.clone();
+
+					arrayIntersectLoops.forEach( function ( arrayIntersectLoop ) {
+
+						if ( arrayIntersectLoop.intersectLine ) scene.remove( arrayIntersectLoop.intersectLine );
+						if ( arrayIntersectLoop.intersectPoints ) scene.remove( arrayIntersectLoop.intersectPoints );
+						if ( options.guiSelectPoint ) {
+
+							if ( arrayIntersectLoop.intersectLine ) options.guiSelectPoint.removeMesh( arrayIntersectLoop.intersectLine );
+							if ( arrayIntersectLoop.intersectPoints ) options.guiSelectPoint.removeMesh( arrayIntersectLoop.intersectPoints );
+
+						}
+						arrayIntersectLoop.length = 0;
+
+					} );
+					arrayIntersectLoops.length = 0;
+
+					//найти intersection
+					edges.forEach( function ( edge ) {
+
+						edge.intersection = undefined;
+						edge.intersection;//intersection detecting
+
+					} );
+
+					//Построить линии intersection в arrayIntersectLoops
+
+					arrayIntersectLoops.length = 0;
+					edges.forEach( function ( edge, index ) {
+
+						
+//						if ( edge.faces &amp;&amp; edge.intersection )
+						if (
+							edge.faces &amp;&amp;//некторые edge не принадлежат ни одному face. Их игнорировать
+							( edge.intersection.length > 0 )//были обнаружены точки пересечения
+						) {
+
+							for ( var i = 0; i &lt; edge.intersection.length; i++ ) {
+
+								if ( edge.intersection[i] === false ) continue;
+
+								//Точка пересечения еще не включена в линию пересечения arrayIntersectLoop
+
+								const arrayIntersectLoop = [];//список точек, которые образуют линию пересечения объектов
+								arrayIntersectLoops.push( arrayIntersectLoop );
+
+								//debugging
+								function Log( edge, face ) {
+
+									//console.log( ( face ? face.name + '. ' : '' ) +
+									//	'edge vertex IDs: ' + edge.vertex1.index + ', ' + edge.vertex2.index +
+									//	'. edge.intersection[i] :' );
+									//console.log( edge.intersection[i] );
+									//console.log( '--------' );
+
+								}
+								Log( edge );
+
+								var indexIntersection = i,//индекс точки пересечения в списке edge.intersection
+									//которую нужно добавить в линию пересечения объектов arrayIntersectLoop
+
+									indexOneEdgeIntersection,//индекс точки пересечения в списке edge.intersection
+									//когда на грани есть всего одно ребро с двумя точками пересечения
+									//а остальные ребра не пересекаются
+									//Нужно для удаления точки пересечения после ее добавления в линию пересчения объектов arrayIntersectLoop
+
+									indexFalse = i;//индекс точки пересечения, которая уже добавлена в в линию пересчения объектов arrayIntersectLoop
+									//но которая еще не удалена из edge
+
+								//В этом циклке создается линия пересчения объектов arrayIntersectLoop
+								while ( true ) {
+
+//									arrayIntersectLoop.push( edge.intersection );
+									arrayIntersectLoop.push( edge.intersection[indexIntersection].point );
+									indexFalse = indexIntersection;
+//									if ( i !== indexIntersection ) i = indexIntersection;
+									function isNextFace( face ) {
+
+if ( face.id === 327 )//162 )//2936 )
+	console.log( face.id );
+										if ( !face ) {
+
+											//use THREE.SphereGeometry for testing
+											console.error( 'face : ' + face + ' edge index = ' + index );
+											return false;
+
+										}
+										const faceEdges = face.faceEdges;
+
+										if ( !faceEdges.edge1 || !faceEdges.edge2 || !faceEdges.edge3 ) {
+
+											//use THREE.SphereGeometry for testing
+											console.error( face.name + ' faceEdges.edge1: ' + faceEdges.edge1 + ' faceEdges.edge2: ' + faceEdges.edge2 + ' faceEdges.edge3: ' + faceEdges.edge3 );
+											return false;
+
+										}
+
+										//поиск грани, котороая пересекает объект по одному ребру
+										//т.е. это ребро входит в одну грань объекта а выходит из другой грани
+										if (
+											(
+												( faceEdges.edge1.intersection.length  >  0 ) &amp;&amp;
+												( faceEdges.edge2.intersection.length === 0 ) &amp;&amp;
+												( faceEdges.edge3.intersection.length === 0 )
+											) ||
+											(
+												( faceEdges.edge1.intersection.length === 0 ) &amp;&amp;
+												( faceEdges.edge2.intersection.length  >  0 ) &amp;&amp;
+												( faceEdges.edge3.intersection.length === 0 )
+											) ||
+											(
+												( faceEdges.edge1.intersection.length === 0 ) &amp;&amp;
+												( faceEdges.edge2.intersection.length === 0 ) &amp;&amp;
+												( faceEdges.edge3.intersection.length  >  0 )
+											)
+										) {
+
+											//console.log( 'Оne edge, two intersetions. face.id = ' + face.id );
+
+											if ( edge.intersection.length !== 2 ) {
+
+												//console.error( 'isNextFace: Оne edge. edge.intersection.length = ' + edge.intersection.length );
+												//Что бы сюда попасть надо использовать THREE.DodecahedronGeometry для теста
+												return false;
+
+											}
+
+											//может это ребро уже использовалось?
+//											if ( !( !edge.intersection[0] &amp;&amp; !edge.intersection[1] ) )
+											if ( edge.intersection[0] &amp;&amp; edge.intersection[1] ) {
+
+												edge.intersection[indexIntersection] = false;
+												if ( indexIntersection === 0 ) indexIntersection = 1;
+												else indexIntersection = 0;
+												return true;
+
+											}
+											else {
+
+												//по второму разу проверяется грань у которой только одно ребро имеет две точки пересечения, а остальные ребра не пересекаютс
+												indexOneEdgeIntersection = indexIntersection;
+//												i = indexIntersection;
+/*
+												edge.intersection[0] = false;
+												edge.intersection[1] = false;
+*/
+												return false;
+
+											}
+/*
+											if ( faceEdges.edge1.intersection.length > 0 ) {
+
+
+											}
+											else if ( faceEdges.edge2.intersection.length > 0 ) {
+
+												for ( var i = 0; i &lt; faceEdges.edge2.intersection.length; i++ ) {
+
+													if ( edge.intersection[indexIntersection].point.equals( faceEdges.edge2.intersection[i].point ) )
+
+												}
+
+											}
+											else if ( faceEdges.edge3.intersection.length > 0 ) { }
+											else console.error('Faces.isNextFace: Оne edge, two intersetions failed.')
+*/
+
+										}
+										/* *
+										 * compare edge and edge2
+										 * @param {Edge} edge2
+										 * @returns true - edge2 пересекается с гранью.
+										 *	Совпадают индексы вершин ребер edge и edge2 а также индексы их граней
+										 */
+										function isNextEdge( edge2 ) {
+
+/*
+											if ( edge2.intersection.length === 0 ) return;//ребро edge2 не пересекается с гранью
+											const a = ( edge.vertex1.index === edge2.vertex1.index ) &amp;&amp; ( edge.vertex2.index === edge2.vertex2.index ),
+												b = ( edge.vertex2.index === edge2.vertex1.index ) &amp;&amp; ( edge.vertex1.index === edge2.vertex2.index );
+											if ( !( a || b ) ) return false;//Индексы вершин ребер edge и edge2 не совпадают
+											return true;
+*/
+											const a = ( edge.vertex1.index === edge2.vertex1.index ) &amp;&amp; ( edge.vertex2.index === edge2.vertex2.index ),
+												b = ( edge.vertex2.index === edge2.vertex1.index ) &amp;&amp; ( edge.vertex1.index === edge2.vertex2.index );
+											if ( a || b ) {
+
+												/*
+												if ( ( edge.intersection.length > 1 ) &amp;&amp; ( edge.intersection[0].faceIndex !== edge.intersection[1].faceIndex ) ) {
+
+													if ( indexIntersection === 0 ) indexIntersection = 1;
+													else indexIntersection = 0;
+													return true;//ребро проходит через две грани объекта
+
+												}
+												*/
+												return false;//Индексы вершин ребер edge и edge2 совпадают. Значит edge2 уже добавлено в линию пересечения
+
+											}
+											/*
+											for ( var j = 0; j &lt; edge2.intersection.length; j++ ) {
+
+												if ( !edge2.intersection[j] ) continue;
+												if ( edge2.intersection[j].faceIndex === edge.intersection[i].faceIndex ) return true;
+												console.log('111');
+
+											}
+											*/
+											function setEdge( indexIntersectionNew ) {
+
+												indexIntersection = indexIntersectionNew;
+												if ( indexOneEdgeIntersection !== undefined ) {
+
+													edge.intersection[indexOneEdgeIntersection] = false;
+													indexOneEdgeIntersection = undefined;
+
+												} else edge.intersection[indexFalse] = false;
+//												else edge.intersection[i] = false;
+												edge = edge2;
+
+											}
+											if ( edge2.intersection.length > 1 ) {
+
+												//												if ( i > 0 ) console.log( edge.faces.face1.name + ' ' + edge.faces.face2.name + ' edge.intersection.length = ' + edge.intersection.length );
+												//console.log( edge2.faces.face1.name + ' ' + edge2.faces.face2.name + ' edge2.intersection.length = ' + edge2.intersection.length );
+												for ( var j = 0; j &lt; edge2.intersection.length; j++ ) {
+
+													if ( edge.intersection[indexIntersection].faceIndex === edge2.intersection[j].faceIndex ) {
+
+														setEdge( j );
+														return true;
+
+													}
+
+												}
+												//console.warn( 'faceIndex was not detected' );
+
+											} else
+												//												if ( edge2.intersection[i] &amp;&amp; ( edge.intersection[indexFalse].faceIndex === edge2.intersection[i].faceIndex ) )
+												if ( edge2.intersection[i] ) {
+
+													if (
+														//следующая точка находится на другой грани объекта с которым пересекаются ребра
+														( edge.intersection[indexFalse].faceIndex !== edge2.intersection[i].faceIndex ) &amp;&amp;
+														(//на данной грани есть хоть одно ребро, которое пересекает объект дважды
+															( faceEdges.edge1.intersection.length > 1 ) ||
+															( faceEdges.edge2.intersection.length > 1 ) ||
+															( faceEdges.edge3.intersection.length > 1 )
+														)
+													) {
+
+														//console.log( edge.faces.face1.name + '' + edge.faces.face2.name + ' Another face ' + faceEdges );
+														return false;
+
+													}
+													setEdge( i );
+													return true;
+
+												}
+											return false;
+
+										}
+										if ( isNextEdge( faceEdges.edge1 ) )
+											return true;
+										if ( isNextEdge( faceEdges.edge2 ) )
+											return true;
+										if ( isNextEdge( faceEdges.edge3 ) )
+											return true;
+										return false;
+
+									}
+									if ( !isNextFace( edge.faces.face1 ) )
+										if ( !isNextFace( edge.faces.face2 ) ) {
+
+//											edge.intersection[i] = false;
+											edge.intersection[indexFalse] = false;
+											break; 
+
+										}
+
+								}
+
+							}
+
+						}
+
+					} );
+					if ( settings.onReady ) settings.onReady( arrayIntersectLoops );
+					arrayIntersectLoops.forEach( function ( arrayIntersectLoop, index ) {
+
+						const geometry = new THREE.BufferGeometry().setFromPoints( arrayIntersectLoop );
+						arrayIntersectLoop.intersectLine = new THREE.LineLoop(
+							geometry,
+							new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+						scene.add( arrayIntersectLoop.intersectLine );
+						if ( options.guiSelectPoint ) {
+
+							arrayIntersectLoop.intersectLine.name = 'intersect line ' + index;
+							options.guiSelectPoint.addMesh( arrayIntersectLoop.intersectLine );
+
+						}
+						if ( typeof MyPoints !== "undefined" )
+							MyPoints( geometry, scene, {
+		
+								options: options,
+								pointsOptions: {
+		
+									name: 'intersection',
+									//shaderMaterial: false,
+									onReady: function ( points ) {
+		
+										//points
+										arrayIntersectLoop.intersectPoints = points;
+		
+									}
+		
+								}
+		
+							} );
+
+					} );
+					return;
+
+				}
+
+			}
+
+
+		}
+
+	} else console.error( 'Faces: Duplicate options.intersections' )
 
 }
 
@@ -690,7 +1165,7 @@ export default Intersections;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Oct 16 2021 21:36:38 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Nov 09 2021 08:42:13 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
