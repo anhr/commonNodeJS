@@ -457,11 +457,9 @@ if ( vertex2.index === 230 ) console.log( 'vertex2.index = ' + vertex2.index );
 					function textVertex( vertex ) {
 
 						return ' ' + vertex.index;
-//							'\n  point = ' + vertex.point.x + ' ' + vertex.point.y + ' ' + vertex.point.z;
 
 					}
-					return ': v1' + textVertex( edge.vertex1 ) +
-						', v2' + textVertex( edge.vertex2 );
+					return ': v1' + textVertex( edge.vertex1 ) + ', v2' + textVertex( edge.vertex2 ) + ', i ' + edge.intersection.length;
 
 				}
 				spriteTextIntersection = new SpriteText( face.name +
@@ -641,7 +639,7 @@ if ( vertex2.index === 230 ) console.log( 'vertex2.index = ' + vertex2.index );
 						};
 //if ( this.id === 350 ) console.log( this.name );
 						//Каждый face имеет три вершины vectorIndex
-						//в этом цикле из спска всех ребер edges, полученных из object.geometry.index,
+						//в этом цикле из списка всех ребер edges, полученных из object.geometry.index,
 						//для face ищем три ребра faceEdges.edge1, faceEdges.edge2, faceEdges.edge3
 						//и для каждого ребра ищем два face, которым принадлежит это ребро edge.faces.face1 и edge.faces.face2
 						for ( var i = 0; i &lt; edges.length; i++ ) {
@@ -841,6 +839,8 @@ if ( vertex2.index === 230 ) console.log( 'vertex2.index = ' + vertex2.index );
 
 							for ( var i = 0; i &lt; edge.intersection.length; i++ ) {
 
+//if ( edge.intersection.length > 1 )
+//	console.log( 'edge.intersection.length = ' + edge.intersection.length );
 								if ( edge.intersection[i] === false ) continue;
 
 								//Точка пересечения еще не включена в линию пересечения arrayIntersectLoop
@@ -868,20 +868,80 @@ if ( vertex2.index === 230 ) console.log( 'vertex2.index = ' + vertex2.index );
 									//а остальные ребра не пересекаются
 									//Нужно для удаления точки пересечения после ее добавления в линию пересчения объектов arrayIntersectLoop
 
-									indexFalse = i;//индекс точки пересечения, которая уже добавлена в в линию пересчения объектов arrayIntersectLoop
+									indexFalse = i,//индекс точки пересечения, которая уже добавлена в в линию пересчения объектов arrayIntersectLoop
 									//но которая еще не удалена из edge
+/*
+									firstEdge = edge,//первое ребро в линии пересечения.
+
+									faceIndex = firstEdge.intersection[indexIntersection].faceIndex,
+*/
+									lastFace,//последняя грань в линии пересечения.
+									//Если в последем ребре линии пересечения нет последней грани lastFace,
+									//значит линия пересечения создана не полностью из за какой то ошибки.
+
+									boContinue = false;//true - Линия пересечения была создана не до конца из за какой нибудь ошибки
+									//Попробуем закончить ее с другой стороны
 
 								//В этом циклке создается линия пересчения объектов arrayIntersectLoop
 								while ( true ) {
 
-//									arrayIntersectLoop.push( edge.intersection );
-									arrayIntersectLoop.push( edge.intersection[indexIntersection].point );
+									const point = edge.intersection[indexIntersection].point;
+									if ( !point )
+										break;//сюда попадает когда встречается ошибка в построении линии пересечения и я пытаюсь закончить линию с другого конца
+											//тоесть boContinue = true
+											//Тестирование проводить с THREE.SphereGeometry( 15, 32, 16 );
+									if ( boContinue )
+										arrayIntersectLoop.splice( 0, 0, point );//в начало массива
+									else arrayIntersectLoop.push( point );
 									indexFalse = indexIntersection;
 //									if ( i !== indexIntersection ) i = indexIntersection;
 									function isNextFace( face ) {
 
-if ( face.id === 327 )//162 )//2936 )
-	console.log( face.id );
+//if ( face.id === 327 )//162 )//2936 )
+//	console.log( face.id );
+										//ищем точки пересечения, расположенные очень близко друг к другу, но принадлежашие к разным граням
+										//Это означает, что точка пересечения попала на ребро объекта
+										//В этом случае игнорируем ту точку пересечения, которая расположена на той же грани,
+										//на которой находится точка пересечения, уже добавленная в линию пересечения.
+										//Иначе здесь по ошибке будет конец линии пересечения
+										function ignoreIntersection( edge, edge2, edge3 ) {
+
+											if ( edge.intersection.length &lt; 2 ) return false;
+											if ( edge.intersection.length > 2 ) console.error( 'edge.intersection.length = ' + edge.intersection.length &lt; 2 );
+											if ( Math.abs( edge.intersection[0].distance - edge.intersection[1].distance ) &lt;= 7.549516567451064e-15 ) {
+
+												function selectIntersectionForIgnore( edge2 ) {
+
+													if ( edge2.intersection.length > 0 ) {
+
+														if ( edge2.intersection.length > 1 ) console.error( 'edge2.intersection.length = ' + edge2.intersection.length );
+														if ( edge2.intersection[0].faceIndex === edge.intersection[0].faceIndex )
+															edge.intersection[0] = false;
+														else if ( edge2.intersection[0].faceIndex === edge.intersection[1].faceIndex )
+															edge.intersection[1] = false;
+														else {
+
+															console.error( 'ignore intersection failed.' );
+															return false;
+
+														}
+														return true;
+
+													}
+													return false;
+
+												}
+												if ( !selectIntersectionForIgnore( edge2 ) )
+													selectIntersectionForIgnore( edge3 );
+												return true;
+											}
+											return false;
+
+										}
+										if ( !ignoreIntersection( face.faceEdges.edge1, face.faceEdges.edge2, face.faceEdges.edge3 ) )
+											if ( !ignoreIntersection( face.faceEdges.edge2, face.faceEdges.edge1, face.faceEdges.edge3 ) )
+												ignoreIntersection( face.faceEdges.edge3, face.faceEdges.edge2, face.faceEdges.edge1 );
+
 										if ( !face ) {
 
 											//use THREE.SphereGeometry for testing
@@ -1073,14 +1133,86 @@ if ( face.id === 327 )//162 )//2936 )
 										return false;
 
 									}
-									if ( !isNextFace( edge.faces.face1 ) )
+									const lastEdge = edge;
+									if ( !isNextFace( edge.faces.face1 ) ) {
+
 										if ( !isNextFace( edge.faces.face2 ) ) {
 
+											//конец линии пересечения объектов
 //											edge.intersection[i] = false;
 											edge.intersection[indexFalse] = false;
-											break; 
 
-										}
+											//Возможно линия пересечения была создана не до конца из за какой нибудь ошибки.
+											//Тестирование проводить с THREE.SphereGeometry( 15, 32, 16 );
+											boContinue = false;
+											if ( !lastFace || ( edge.faces.face1.id === lastFace.id ) || ( edge.faces.face2.id === lastFace.id ) ) {
+
+												//ошибок не обнаружено. Вычислять следующую линию пересечения
+												lastFace = undefined;
+												break;
+
+											}
+											//в последней грани lastFace ищем ребро, которое пересекается с объектом
+											//и которое еще не добавлено в линию пересечения.
+											//Начиная с найденного ребра достраиваем линию персечения с другого конца
+											Object.keys( lastFace.faceEdges ).forEach( key => {
+
+												const edgeCur = lastFace.faceEdges[key];
+												edgeCur.intersection.forEach( function ( intersection, index ) {
+
+													if ( intersection ) {
+
+														//Линия пересечения была создана не до конца из за какой нибудь ошибки
+														//Попробуем закончить ее с другой стороны
+														edge = edgeCur;
+														boContinue = true;
+														indexIntersection = index;
+														return;
+
+													}
+
+												} );
+
+											} );
+											lastFace = undefined;
+											/*
+											boContinue = true;
+											edge = firstEdge;
+											*/
+/*
+											Object.keys( firstEdge.faces ).forEach( key => {
+
+												const face = firstEdge.faces[key];
+												Object.keys( face.faceEdges ).forEach( key => {
+
+													const edgeCur = face.faceEdges[key];
+													edgeCur.intersection.forEach( function ( intersection, index ) {
+
+														console.log( faceIndex );
+														if ( intersection ) {
+
+															//Линия пересечения была создана не до конца из за какой нибудь ошибки
+															//Попробуем закончить ее с другой стороны
+															edge = edgeCur;
+															firstEdge = edgeCur;
+															boContinue = true;
+															indexIntersection = index;
+															return;
+
+														}
+
+													} );
+
+												} );
+
+											} );
+											if ( !boContinue )
+												break;
+*/
+
+										} else if ( !lastFace ) lastFace = lastEdge.faces.face1;
+
+									} else if ( !lastFace ) lastFace = lastEdge.faces.face2;
 
 								}
 
@@ -1165,7 +1297,7 @@ export default Intersections;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Nov 09 2021 08:42:13 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Nov 12 2021 09:06:16 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

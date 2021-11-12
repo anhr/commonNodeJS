@@ -1,16 +1,9 @@
 # Intersections.
 
-Creates an intersection line for graphic objects.
+Creates an intersection line for graphic objects. [Example](../Examples/index.html).
 
 # Content
 * [Quick start.](#Quickstart)
-* [Use the THREE.OrbitControls to rotate the camera.](#OrbitControls)
-* [Use Raycaster for mouse picking (working out what objects in the 3d space the mouse is over).](#Raycaster)
-* [Choose a point at which the camera is looking.](#CameraTarget)
-* [Graphical user interface for changing settings.](#Gui)
-	* [AxesHelper settings.](#AxesHelperGui)
-	* [Select a point from the mesh.](#guiSelectPoint)
-	* [Move group of meshes.](#MoveGroup)
 * [Example of your web page.](#WebPage)
 
 <a name="QuickStart"></a>
@@ -25,7 +18,7 @@ Creates an intersection line for graphic objects.
 
 <html>
 <head>
-	<title>AxesHelper</title>
+	<title>Intersections</title>
 
 	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
 	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
@@ -45,7 +38,7 @@ Creates an intersection line for graphic objects.
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
 		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
-		- <a href="https://github.com/anhr/commonNodeJS/tree/master/AxesHelper" target="_blank" rel="noopener">AxesHelper</a>.
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/intersections" target="_blank" rel="noopener">Intersections</a>.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
 	<div>
@@ -85,6 +78,8 @@ Creates an intersection line for graphic objects.
 			} );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 
+			options.createOrbitControls( camera, renderer, scene );
+
 			window.addEventListener( 'resize', onWindowResize, false );
 
 		}
@@ -109,12 +104,11 @@ Creates an intersection line for graphic objects.
 </body>
 </html>
 ```
-NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
+NOTE. Please include <b>three.THREE = THREE;</b> line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
-The easiest way to use <b>AxesHelper</b> in your code is import <b>AxesHelper</b> from <b>AxesHelper.js</b> file in your JavaScript module.
-[Example](../Examples/index.html).
+The easiest way to use <b>Intersections</b> in your code is import <b>Intersections</b> from <b>Intersections.js</b> file in your JavaScript module.
 ```
-import AxesHelper from './commonNodeJS/master/AxesHelper/AxesHelper.js';
+import Intersections from './commonNodeJS/master/Intersections/Intersections.js'
 ```
 
 Now you can use <b>AxesHelper</b> in your javascript code.
