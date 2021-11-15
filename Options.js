@@ -1551,6 +1551,8 @@ class Options {
 
 		}
 
+		if ( !three.options ) three.options = this;
+
 	}
 
 } 

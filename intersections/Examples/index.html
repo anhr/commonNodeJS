@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -117,9 +117,8 @@
 			const collidableMeshList = [];
 
 			//Thanks https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane
-			//const planeGeom = new THREE.PlaneGeometry( 30, 30 );
-			const planeGeom = new THREE.TetrahedronGeometry( 30,//10,
-				0 );
+			const planeGeom = new THREE.PlaneGeometry( 30, 30 );
+			//const planeGeom = new THREE.TetrahedronGeometry( 30, 0 );
 			//			planeGeom.rotateX( -Math.PI / 2 );
 			const plane = new THREE.Mesh( planeGeom,
 				new THREE.MeshLambertMaterial( {
@@ -169,8 +168,8 @@
 						geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
 						const objGeom = geometry;
 			*/
-			//const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
-			const objGeom = new THREE.SphereGeometry( 15, 32, 16 );
+			const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
+			//const objGeom = new THREE.SphereGeometry( 15, 32, 16 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 16, 100 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 3, 3 );
 			//const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
@@ -181,7 +180,7 @@
 				wireframe: true
 
 			} ) );
-			obj.rotation.x = Math.PI / 2;
+			//obj.rotation.x = Math.PI / 2;
 			//obj.rotation.x = Math.PI / 6;
 			//obj.rotation.y = Math.PI / 3;//2;//10;
 			//			obj.position.set( 0, 3.14, 0 );
@@ -189,12 +188,29 @@
 			obj.name = 'Geometry';
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( obj );
 //			const elLoadingProgress = document.getElementById( 'loadingProgress' );
+
+			//Player
+
+			//				var intersectLine;
+			//				var intersectPoints;
+			obj.userData.player = {
+
+				selectPlayScene: function ( t ) {
+
+					//obj.position.set( 0, 0, 10 - 30 * t );
+					//obj.updateMatrix();
+
+				},
+
+			}
+
 			const arrayIntersectLines = [];
 			MyThree.Intersections.Faces( obj, collidableMeshList, {
 
 				onReady: function ( arrayIntersectLoops ) {
 
-					while( arrayIntersectLines.length ) sceneIntersectionLines.remove( arrayIntersectLines.pop() );
+					if ( !sceneIntersectionLines ) return;
+					while ( arrayIntersectLines.length ) sceneIntersectionLines.remove( arrayIntersectLines.pop() );
 					arrayIntersectLoops.forEach( function ( arrayIntersectLoop ) {
 
 						const geometry = new THREE.BufferGeometry().setFromPoints( arrayIntersectLoop );
@@ -287,7 +303,7 @@
 			scales: scales,
 
 		} );
-		let sceneIntersectionLines;
+		var sceneIntersectionLines;
 		new MyThree( function ( scene, options ) {
 
 			sceneIntersectionLines = scene;
