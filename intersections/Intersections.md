@@ -111,14 +111,38 @@ The easiest way to use <b>Intersections</b> in your code is import <b>Intersecti
 import Intersections from './commonNodeJS/master/Intersections/Intersections.js'
 ```
 
-Now you can use <b>AxesHelper</b> in your javascript code.
+Now you can use <b>Intersections</b> in your javascript code for creating of an intersection line for graphic objects.
 
-The simplest <b>AxesHelper</b> has at least one axis.
+* First, create a graphical objects, for what you want to see the intersection line. For example plane and dodecahedron.
 ```
-new AxesHelper( scene, options );
+const planeGeom = new THREE.PlaneGeometry( 2, 2 );
+const plane = new THREE.Mesh( planeGeom,
+	new THREE.MeshBasicMaterial( {
+
+		color: "lightgray",
+		opacity: 0.75,
+		transparent: true,
+		side: THREE.DoubleSide
+
+	} )
+);
+scene.add( plane );
+
+const objGeom = new THREE.DodecahedronGeometry( 1, 0 );
+const obj = new THREE.Mesh( objGeom, new THREE.MeshBasicMaterial( {
+
+	color: "green",
+	wireframe: true
+
+} ) );
+scene.add( obj );
 ```
 
-Now we want to customize <b>AxesHelper</b>.
+Now you can see, dodecahedron is intersects with plane.
+
+* Create a line of intersection.
+
+
 
 Name of the <b>X</b> is 'time'. Number of <b>X</b> scale marks is 5.
 
