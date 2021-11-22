@@ -110,6 +110,8 @@ import Options from '../Options.js'
 function MyPoints( arrayFuncs, group, settings ) {
 
 	const THREE = three.THREE;
+
+	group = group || three.scene;
 	
 	if ( ( typeof arrayFuncs !== 'function' ) && ( arrayFuncs.length === 0 ) )
 		arrayFuncs.push( new THREE.Vector3() );
