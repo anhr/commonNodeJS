@@ -221,9 +221,9 @@ export function SpriteText( text, position,	options = {} ) {
 		sprite.userData.update( options );
 
 	}
-	if ( options.group )
-		options.group.add( sprite );
-	else three.group.add( sprite );
+	if ( options.group ) options.group.add( sprite );
+	else if ( three.group ) three.group.add( sprite );
+	else if ( three.scene ) three.scene.add( sprite );
 
 	sprite.userData.optionsSpriteText = options;
 
