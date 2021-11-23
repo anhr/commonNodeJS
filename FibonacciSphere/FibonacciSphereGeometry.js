@@ -29,15 +29,14 @@ class FibonacciSphereGeometry {
 
 		this.type = 'FibonacciSphereGeometry';
 
-		const raio_esfera = 1,//100,
-			vertices = [];
+		const vertices = [];
 			
 		for ( var i = 0; i < n; i++ ) {
 			var theta = i * Math.PI * ( 1 + Math.sqrt( 5 ) );
 			var phi = Math.acos( 1 - 2 * ( i + 0.5 ) / n )
-			var x = raio_esfera * Math.sin( phi ) * Math.cos( theta );
-			var y = raio_esfera * Math.sin( phi ) * Math.sin( theta );
-			var z = -raio_esfera * Math.cos( phi );
+			var x = radius * Math.sin( phi ) * Math.cos( theta );
+			var y = radius * Math.sin( phi ) * Math.sin( theta );
+			var z = -radius * Math.cos( phi );
 			vertices.push( new THREE.Vector3( x, y, z ) );
 		}
 		return new three.ConvexGeometry( vertices );
