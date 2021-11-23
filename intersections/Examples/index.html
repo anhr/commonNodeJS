@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -49,6 +49,8 @@
 //		import { getWorldPosition } from '../../getPosition.js';
 
 //		import { NURBSSurface } from '../../../../three.js/dev/examples/jsm/curves/NURBSSurface.js';
+
+		import { FibonacciSphereGeometry } from '../../FibonacciSphere/FibonacciSphereGeometry.js'
 
 		if ( MyThree.default ) MyThree = MyThree.default;
 		MyThree.three.THREE = THREE;
@@ -150,7 +152,7 @@
 			plane.name = 'plane';
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( plane );
 			collidableMeshList.push( plane );
-
+/*
 			const geometry = new THREE.BufferGeometry();
 			// create a simple square shape. We duplicate the top left and bottom right
 			// vertices because each vertex needs to appear once per triangle.
@@ -166,9 +168,10 @@
 			// itemSize = 3 because there are 3 values (components) per vertex
 			geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
 			const objGeom = geometry;
-
+*/
 			//const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
 			//const objGeom = new THREE.SphereGeometry( 15, 32, 16 );
+			const objGeom = new FibonacciSphereGeometry( 10, 320 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 16, 100 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 3, 3 );
 			//const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
