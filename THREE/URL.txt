@@ -1,0 +1,2 @@
+Сюда кладу файлы из THREE которые не включены в библитотку THREE
+за исключением "../OrbitControls/OrbitControls.js"
