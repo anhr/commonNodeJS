@@ -18,7 +18,7 @@
 
 import three from '../three.js'
 //import MyPoints from '../myPoints/myPoints.js';
-import { SpriteText } from '../SpriteText/SpriteText.js'
+//import { SpriteText } from '../SpriteText/SpriteText.js'
 
 class Intersections {
 
@@ -98,8 +98,11 @@ class Intersections {
 		//Здесь перечислены все обнруженные Loops точек пересечения.
 		const arrayIntersectLoops = [];
 
+		const edges = [];//список ребер, имеющих точки пересечения
 		function createIntersections() {
 
+			while ( object.children.length > 0 ) { object.remove( object.children[0] ); };
+			edges.length = 0;
 			arrayIntersectLoops.forEach( function ( arrayIntersectLoop ) {
 
 				if ( arrayIntersectLoop.intersectLine ) scene.remove( arrayIntersectLoop.intersectLine );
@@ -116,7 +119,6 @@ class Intersections {
 			arrayIntersectLoops.length = 0;
 
 			//Ищем точки пересечения объектов
-			const edges = [];//список ребер, имеющих точки пересечения
 			for ( var index = 0; index < object.geometry.index.count; index++ ) {
 
 				class Edge {
@@ -146,7 +148,22 @@ class Intersections {
 									return vertex.fromBufferAttribute( positions, this.index );
 
 								},
-								get point() { return this.pointLocal.applyMatrix4( object.matrix ); },
+								get point() {
+
+									const point = this.pointLocal.applyMatrix4( object.matrix );
+
+									//debug
+									if ( typeof SpriteText !== "undefined" ) {
+
+										const indexPoint = object.geometry.index.array[this.index];
+										//console.log( indexPoint + ' ' + point.x + ',' + point.y + ',' + point.z );
+										object.add( new SpriteText( indexPoint, this.pointLocal ) );
+
+									}
+
+									return point;
+
+								},
 
 							}
 
@@ -178,6 +195,17 @@ class Intersections {
 							},
 
 						} );
+
+						//debug
+						const index1 = object.geometry.index.array[this.vertex1.index], index2 = object.geometry.index.array[this.vertex2.index],
+							edgeIndex1 = 9, edgeIndex2 = 18;
+						console.log( 'index1 = ' + index1 + ' index2 = ' + index2 );
+						if (
+							( ( index1 === edgeIndex1 ) && ( index2 === edgeIndex2 ) ) ||
+							( ( index1 === edgeIndex2 ) && ( index2 === edgeIndex1 ) )
+						)
+							console.log( edgeIndex1 + ',' + edgeIndex2 );
+
 						const rayOriginPoint = new THREE.Raycaster( this.vertex1.point,
 							this.vertex2.point.clone().sub( this.vertex1.point ).clone().normalize(), 0,
 							this.vertex2.point.distanceTo( this.vertex1.point ) ),
@@ -275,7 +303,8 @@ class Intersections {
 
 					} );
 					//прилегающие к грани ребра
-					function emtyIntersection() { return { intersection: { length: 0, }, } }
+//					function emtyIntersection() { return { intersection: { length: 0, }, } }
+					function emtyIntersection() { return { intersection: [], } }
 					const intersectionEdges = {};//список ребер, имеющих пересечения
 					//список всех ребер грани
 					const faceEdges = {
@@ -310,7 +339,9 @@ class Intersections {
 					//и для каждого ребра ищем два face, которым принадлежит это ребро edge.faces.face1 и edge.faces.face2
 					for ( var i = 0; i < edges.length; i++ ) {
 
-						const edge = edges[i];
+						const edge = edges[i],
+							vertex1Index = object.geometry.index.array[edge.vertex1.index],
+							vertex2Index = object.geometry.index.array[edge.vertex2.index];
 						function setFace( face ) {
 
 							if ( !edge.faces ) edge.faces = {}
@@ -325,6 +356,35 @@ class Intersections {
 							} else console.error( 'Face: too many edge.faces' );
 
 						}
+						if (
+							( vectorIndex.x === vertex1Index ) && ( vectorIndex.y === vertex2Index ) ||
+							( vectorIndex.x === vertex2Index ) && ( vectorIndex.y === vertex1Index )
+						) {
+
+							if ( faceEdges.edge1 ) console.error( 'Face: duplicate faceEdges.edge1' );
+							faceEdges.edge1 = edge;
+							setFace( this );
+
+						} else if (
+							( vectorIndex.z === vertex1Index ) && ( vectorIndex.y === vertex2Index ) ||
+							( vectorIndex.z === vertex2Index ) && ( vectorIndex.y === vertex1Index )
+						) {
+
+							if ( faceEdges.edge2 ) console.error( 'Face: duplicate faceEdges.edge2' );
+							faceEdges.edge2 = edge;
+							setFace( this );
+
+						} else if (
+							( vectorIndex.z === vertex1Index ) && ( vectorIndex.x === vertex2Index ) ||
+							( vectorIndex.z === vertex2Index ) && ( vectorIndex.x === vertex1Index )
+						) {
+
+							if ( faceEdges.edge3 ) console.error( 'Face: duplicate faceEdges.edge3' );
+							faceEdges.edge3 = edge;
+							setFace( this );
+
+						}
+/*
 						if (
 							( vectorIndex.x === edge.vertex1.index ) && ( vectorIndex.y === edge.vertex2.index ) ||
 							( vectorIndex.x === edge.vertex2.index ) && ( vectorIndex.y === edge.vertex1.index )
@@ -353,6 +413,7 @@ class Intersections {
 							setFace( this );
 
 						}
+*/
 						if ( faceEdges.edge1.intersection.length && faceEdges.edge2.intersection.length && faceEdges.edge3.intersection.length )
 							break;
 
