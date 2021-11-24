@@ -24,6 +24,10 @@ My JavaScript library of [threejs](https://threejs.org/) extension.
 * DropdownMenu. node.js version of DropdownMenu
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/Examples/html/index.html).
+* FibonacciSphereGeometry. A class for generating sphere geometries by the [Fibonacci]{https://en.wikipedia.org/wiki/Fibonacci_number} algorithm.
+[README.md](../../tree/master/FibonacciSphere).
+[FibonacciSphereGeometry API](https://raw.githack.com/anhr/commonNodeJS/master/FibonacciSphere/jsdoc/index.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/FibonacciSphere/Examples/index.html).
 * FrustumPoints. Array of points, statically fixed in front of the camera.
 I use <b>FrustumPoints</b> for displaying of the clouds around points.
 [README.md](../../tree/master/frustumPoints).
