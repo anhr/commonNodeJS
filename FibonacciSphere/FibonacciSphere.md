@@ -4,6 +4,7 @@ A class for generating sphere geometries by the [Fibonacci]{@link https://en.wik
 
 Example of using.
 ```
+import FibonacciSphereGeometry from 'FibonacciSphereGeometry.js'
 const geometry = new FibonacciSphereGeometry( 1, 320 );
 const sphere = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {
 
@@ -13,3 +14,4 @@ const sphere = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {
 } ) );
 scene.add( sphere );
 ```
+[Example](../Examples/index.html).

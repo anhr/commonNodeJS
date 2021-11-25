@@ -51,4 +51,4 @@ class FibonacciSphereGeometry {
 
 }
 
-export { FibonacciSphereGeometry };
+export default FibonacciSphereGeometry;
