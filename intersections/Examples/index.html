@@ -50,7 +50,7 @@
 
 //		import { NURBSSurface } from '../../../../three.js/dev/examples/jsm/curves/NURBSSurface.js';
 
-		import { FibonacciSphereGeometry } from '../../FibonacciSphere/FibonacciSphereGeometry.js'
+		import FibonacciSphereGeometry from '../../FibonacciSphere/FibonacciSphereGeometry.js'
 
 		if ( MyThree.default ) MyThree = MyThree.default;
 		MyThree.three.THREE = THREE;
@@ -108,7 +108,7 @@
 			},
 			cameraOptions = {
 
-				position: new THREE.Vector3( 0, 10, 50 ),
+				position: new THREE.Vector3( 30, 10, 50 ),
 				fov: 45,
 				near: 1,
 				far: 1000,
@@ -119,59 +119,124 @@
 			const collidableMeshList = [];
 
 			//Thanks https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane
-			const planeGeom = new THREE.PlaneGeometry( 30, 30 );
-			//const planeGeom = new THREE.TetrahedronGeometry( 30, 0 );
-			//planeGeom.rotateX( -Math.PI / 2 );
-			const plane = new THREE.Mesh( planeGeom,
-				new THREE.MeshLambertMaterial( {
+			function plane( name = 'angle', planeGeom ) {
 
-					color: "lightgray",
-					opacity: 0.8,
-					transparent: true,
-					side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+				//custom geometry
+				if ( !planeGeom ) {
 
-				} )
-				/*
-				new THREE.MeshBasicMaterial( {
+					const size = 20.0,
+						vertices = new Float32Array( [
+							size, size, 3,//0
+							-size, size, 3,//1
+							-size, -size, 0,//2
+							size, -size, 0,//3
+							size, size, -3.0,//4
+							-size, size, -3.0,//5
+						] );
+					planeGeom = new THREE.BufferGeometry(),
+					planeGeom.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+					planeGeom.setIndex( [
+						0, 1, 2,
+						0, 2, 3,
+						2, 3, 4,
+						2, 4, 5,
+					] );
 
-					color: "lightgray",
-					opacity: 0.75,
-					transparent: true,
-					side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+				}
 
-				} )
-				*/
-			);
-			//plane.rotation.x = 0.625;
-			//plane.rotation.y = 2.386;
-			//plane.position.z = -15;//for TorusGeometry
-			//plane.position.z = -6;//for BoxGeometry
-			//			plane.rotation.x = Math.PI / 5;
-			//			plane.position.y = -3.14;
-			scene.add( plane );
-			plane.name = 'plane';
-			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( plane );
-			collidableMeshList.push( plane );
-/*
-			const geometry = new THREE.BufferGeometry();
-			// create a simple square shape. We duplicate the top left and bottom right
-			// vertices because each vertex needs to appear once per triangle.
+				//const planeGeom = new THREE.PlaneGeometry( 30, 30 );
+				//const planeGeom = new THREE.TetrahedronGeometry( 30, 0 );
+				//planeGeom.rotateX( -Math.PI / 2 );
+				const plane = new THREE.Mesh( planeGeom,
+
+					new THREE.MeshLambertMaterial( {
+
+						color: "lightgray",
+						opacity: 0.8,
+						transparent: true,
+						side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+
+					} )
+					/*
+					new THREE.MeshBasicMaterial( {
+
+						color: "blue",
+						wireframe: true,
+						side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+
+					} )
+					*/
+
+				);
+				//plane.rotation.x = 0.625;
+				//plane.rotation.y = 2.386;
+				//plane.position.z = 6;//for Triangle
+				//plane.position.z = -15;//for TorusGeometry
+				//plane.position.z = -6;//for BoxGeometry
+				//			plane.rotation.x = Math.PI / 5;
+				//			plane.position.y = -3.14;
+				scene.add( plane );
+				plane.name = name;
+				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( plane );
+				collidableMeshList.push( plane );
+				return plane;
+
+			}
+			//plane();//.rotation.z = 0.761;
+			plane( 'plane', new THREE.PlaneGeometry( 30, 30 ) ).rotation.y = Math.PI / 2;//.position.z = -5//
+			plane( 'Tetrahedron', new THREE.TetrahedronGeometry( 30, 0 ) );
+			/*
+			//triangle
+			const objGeom = new THREE.BufferGeometry();
 			const vertices = new Float32Array( [
-				-10.0, -10.0,  10.0,
-				10.0, -10.0,  10.0,
-				10.0,  10.0,  -10.0,
-//				1.0,  1.0,  1.0,
-//				-1.0,  1.0,  1.0,
-//				-1.0, -1.0,  1.0
-			] );
 
-			// itemSize = 3 because there are 3 values (components) per vertex
-			geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
-			const objGeom = geometry;
-*/
-			//const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
+				//10.0, 0, 10.0,
+				//10.0, 0, -10.0,
+				//-10.0, 0, 10.0,
+
+				//0.0, 1, -10.0,
+				//10.0, 1, -10.0,
+				//0.0, 1, 10.0,
+
+				-10.0, 1, 0.0,
+				-10.0, 1, -10.0,
+				10.0, 1, 0.0,
+
+				//5.773502826690674, 5.773502826690674, 5.773502826690674,
+				//3.568220853805542, 9.341723442077637, 0.0,
+				//5.773502826690674, 5.773502826690674, -5.773502826690674,
+
+				//начало или конец ребра пересекается с объектом
+				//0.0, 10.0, 0.0,
+				//0.0, 0.0, -10.0,
+				//0.0, 0.0, 10.0,
+
+				//грань в плоскости объекта. нет пересечений
+				//-10.0, 0.0, 0.0,
+				//0.0, 10.0, 0.0,
+				//10.0, 0.0, 0.0,
+
+				//ошибка - нет пересечений
+				//-10.0, 0.0, 0.0,
+				//0.0, 10.0, 10.0,
+				//10.0, 0.0, 0.0,
+
+				//-4.830455579402766, 0.0, 8.755952198100257,
+				//8.755952198100257, 10.000000000000002, 4.830455579402766,
+				//4.830455579402766, 0.0, -8.755952198100257,
+
+				//-4.605480987489556, -6.7421224146022904, -5.773502826690674,
+				//-1.7780230138774962, -9.84066212670253, 0.0,
+				//-4.605480987489556, -6.7421224146022904, 5.773502826690674,
+
+			] );
+			objGeom.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+			objGeom.index = new THREE.Uint16BufferAttribute( [2,1,0], 1 );
+			*/
+
+			const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
 			//const objGeom = new THREE.SphereGeometry( 15, 32, 16 );
-			const objGeom = new FibonacciSphereGeometry( 10, 320 );
+			//const objGeom = new FibonacciSphereGeometry( 10, 320 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 16, 100 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 3, 3 );
 			//const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
@@ -183,9 +248,11 @@
 
 			} ) );
 			//obj.rotation.x = Math.PI / 2;
-			//obj.rotation.x = Math.PI / 6;
-			//obj.rotation.y = Math.PI / 2;//10;
-			//			obj.position.set( 0, 3.14, 0 );
+			obj.rotation.y = Math.PI / 4;//0.813;
+			//obj.rotation.z = 0.186;
+			//obj.position.set( 9, 0, -12 );
+			//obj.position.set( 1, 0, 0 );
+			//obj.position.z = 8.9;
 			scene.add( obj );
 			obj.name = 'Geometry';
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( obj );
@@ -199,8 +266,8 @@
 
 				selectPlayScene: function ( t ) {
 
-					//obj.position.set( 0, 0, 10 - 30 * t );
-					//obj.updateMatrix();
+					obj.position.set( 0, 0, 10 - 30 * t );
+					obj.updateMatrix();
 
 				},
 
@@ -276,12 +343,12 @@
 
 				pointLight1: {
 
-					position: new THREE.Vector3( 13, 2, 2 ),
+					position: new THREE.Vector3( 100, 10, 2 ),
 
 				},
 				pointLight2: {
 
-					position: new THREE.Vector3( -20, -2, -2 ),
+					position: new THREE.Vector3( -100, -2, -2 ),
 
 				},
 
