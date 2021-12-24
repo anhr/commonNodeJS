@@ -149,6 +149,7 @@
 				//planeGeom.rotateX( -Math.PI / 2 );
 				const plane = new THREE.Mesh( planeGeom,
 
+					/*
 					new THREE.MeshLambertMaterial( {
 
 						color: "lightgray",
@@ -157,7 +158,7 @@
 						side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
 
 					} )
-					/*
+					*/
 					new THREE.MeshBasicMaterial( {
 
 						color: "blue",
@@ -165,7 +166,6 @@
 						side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
 
 					} )
-					*/
 
 				);
 				//plane.rotation.x = 0.625;
@@ -182,25 +182,27 @@
 				return plane;
 
 			}
-			//plane();//.rotation.z = 0.761;
-			plane( 'plane', new THREE.PlaneGeometry( 30, 30 ) ).rotation.y = Math.PI / 2;//.position.z = -5//
-			plane( 'Tetrahedron', new THREE.TetrahedronGeometry( 30, 0 ) );
+			plane();//.position.y = -16;//.rotation.z = 0.761;
+			plane( 'plane', new THREE.PlaneGeometry( 30, 30 ) ).rotation.y = Math.PI / 2;//.position.z = -5;
+			//plane( 'plane', new THREE.PlaneGeometry( 30, 30 ) );
+			//plane( 'Tetrahedron', new THREE.TetrahedronGeometry( 30, 0 ) );
+
 			/*
 			//triangle
 			const objGeom = new THREE.BufferGeometry();
 			const vertices = new Float32Array( [
 
-				//10.0, 0, 10.0,
-				//10.0, 0, -10.0,
-				//-10.0, 0, 10.0,
+				10.0, 0, 10.0,
+				10.0, 0, -10.0,
+				-10.0, 0, 10.0,
 
 				//0.0, 1, -10.0,
 				//10.0, 1, -10.0,
 				//0.0, 1, 10.0,
 
-				-10.0, 1, 0.0,
-				-10.0, 1, -10.0,
-				10.0, 1, 0.0,
+				//-10.0, 1, 0.0,
+				//-10.0, 1, -10.0,
+				//10.0, 1, 0.0,
 
 				//5.773502826690674, 5.773502826690674, 5.773502826690674,
 				//3.568220853805542, 9.341723442077637, 0.0,
@@ -234,10 +236,10 @@
 			objGeom.index = new THREE.Uint16BufferAttribute( [2,1,0], 1 );
 			*/
 
-			const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
+			//const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
 			//const objGeom = new THREE.SphereGeometry( 15, 32, 16 );
 			//const objGeom = new FibonacciSphereGeometry( 10, 320 );
-			//const objGeom = new THREE.TorusGeometry( 10, 3, 16, 100 );
+			const objGeom = new THREE.TorusGeometry( 10, 3, 16, 100 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 3, 3 );
 			//const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
 			//const objGeom = new THREE.BoxGeometry( 10, 10, 10 );
