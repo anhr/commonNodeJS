@@ -63,6 +63,10 @@ class Intersections {
 
 		}
 
+		//debug
+		var currentdate = new Date();
+console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' ищщем точки, которые совпадают' )
+
 		//ищщем точки, которые совпадают или почти совпадают с небольшой погрешностью
 		//что бы у них был одинаковый индекс
 		for ( let i = 1; i < object.geometry.index.count; i++ ) {
@@ -372,8 +376,18 @@ class Intersections {
 		//список граней
 		const faces = [];
 		//Заполнить список граней
-		for ( let index = 0; index < object.geometry.index.count; index += 3 ) {
+		index = 0;
+		function step( timestamp ) {
 
+			if ( index >= object.geometry.index.count ) {
+
+				boCreateIntersections = true;
+				setTimeout( function () { createIntersections(); }, 0 );//Таймаут нужен что бы установился matrixWorld объектов из collidableMeshList.
+				return;
+
+			}
+
+console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geometry index = ' + index )
 			class Face {
 
 				/* *
@@ -881,7 +895,12 @@ class Intersections {
 			}
 			faces.push( new Face( index, faces.length ) );
 
+			index += 3;
+
+			window.requestAnimationFrame( step );
+
 		}
+		window.requestAnimationFrame( step );
 		//console.log( 'faces' )
 
 		function equals( point1, point2 ) {
@@ -890,7 +909,10 @@ class Intersections {
 
 		}
 
+		var boCreateIntersections = false;
 		function createIntersections() {
+
+			if ( !boCreateIntersections ) return;
 
 			//Во время отладки у объекта могут быть дочение SpriteText с индксами вершин
 			while ( object.children.length > 0 ) { object.remove( object.children[0] ); };
@@ -1103,7 +1125,7 @@ class Intersections {
 			} );
 
 		}
-		setTimeout( function () { createIntersections(); }, 0 );//Таймаут нужен что бы установился matrixWorld объектов из collidableMeshList.
+//		setTimeout( function () { createIntersections(); }, 0 );//Таймаут нужен что бы установился matrixWorld объектов из collidableMeshList.
 		//Иначе линии пересечения будут строиться без учета реального положения, повррота и масштаба объектов из collidableMeshList.
 
 		//список всех объектов, которые могут перемещаться и сталкиваться
