@@ -119,7 +119,7 @@ class CanvasMenu {
 
 		}
 		const container = "container";
-		if ( !elContainer.classList.contains( "container" ) ) elContainer.classList.add( "container" );
+		if ( !elContainer.classList.contains( container ) ) elContainer.classList.add( container );
 		settings.menu = settings.menu || [];
 
 		/**
