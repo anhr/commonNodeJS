@@ -32,7 +32,7 @@ class Intersections {
 	 * @param {THREE.Mesh|array} collidableMeshList [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or array of meshes, which intersects with <b>object</b>.
 	 * @param {object} [settings] the following settings are available:
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
-	 * @param {function(arrayIntersectLoops)} [settings.onReady] Callback function that called if intersection lines is ready and that take as input an array of all intersect lines.
+	 * @param {function(intersectionLines)} [settings.onReady] Callback function that called if intersection lines is ready and that take as input an array of all intersect lines.
 	 * Every item of array is array of line vertices of <b>THREE.Vector3</b> type.
 	 */
 	constructor( object, collidableMeshList, settings = {} ) {
@@ -127,7 +127,7 @@ class Intersections {
 		//точки пересечения одного тела с другим могут образовывать несколько замкнутых линий ( Loops ).
 		//Например пересечение тора с плоскостью.
 		//Здесь перечислены все обнруженные Loops точек пересечения.
-		const arrayIntersectLoops = [],
+		const intersectionLines = [],
 
 			//Список граней, имеющих линии пересечения. Нужен что бы во врнмя построения линий пересечения не искать по всем граням.
 			arrayIntersectFaces = [];
@@ -227,7 +227,7 @@ class Intersections {
 									//array - список точек пересечения, возвращенный THREE.Raycaster.intersectObjects
 									//collisionResultsOriginPoint.length === 0 пересечений не обнаружено
 									//undefined - точка пересечения еще не вычислялась
-									//collisionResultsOriginPoint[i] = false - уже добавлен в arrayIntersectLoop
+									//collisionResultsOriginPoint[i] = false - уже добавлен в arrayIntersectLine
 									collisionResultsOriginPoint = rayOriginPoint.intersectObjects( collidableMeshList );//, false );//recursive = false на тот случай когда для отладки в пересекаемые объекты добавляю текст с номером вершины
 
 									if ( !this.faces )
@@ -1014,7 +1014,7 @@ class Intersections {
 			arrayIntersectFaces.length = 0;
 
 			//Удалить линии пересечения
-			for ( var i = arrayIntersectLoops.length - 1; i >= 0; i-- ) {
+			for ( var i = intersectionLines.length - 1; i >= 0; i-- ) {
 
 				//https://stackoverflow.com/a/68004442/5175935
 				function removeObject3D( object3D ) {
@@ -1034,24 +1034,24 @@ class Intersections {
 					return true;
 
 				}
-				const arrayIntersectLoop = arrayIntersectLoops[i];
-				if ( arrayIntersectLoop.intersectLine ) {
+				const arrayIntersectLine = intersectionLines[i];
+				if ( arrayIntersectLine.intersectLine ) {
 
-					removeObject3D( arrayIntersectLoop.intersectLine );
-//					clearThree( arrayIntersectLoop.intersectLine );
-					if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( arrayIntersectLoop.intersectLine );
-					arrayIntersectLoop.intersectLine = null;
-
-				}
-				if ( arrayIntersectLoop.intersectPoints ) {
-
-					removeObject3D( arrayIntersectLoop.intersectPoints );
-//					clearThree( arrayIntersectLoop.intersectPoints );
-					if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( arrayIntersectLoop.intersectPoints );
-					arrayIntersectLoop.intersectPoints = null;
+					removeObject3D( arrayIntersectLine.intersectLine );
+//					clearThree( arrayIntersectLine.intersectLine );
+					if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( arrayIntersectLine.intersectLine );
+					arrayIntersectLine.intersectLine = null;
 
 				}
-				arrayIntersectLoops.pop();
+				if ( arrayIntersectLine.intersectPoints ) {
+
+					removeObject3D( arrayIntersectLine.intersectPoints );
+//					clearThree( arrayIntersectLine.intersectPoints );
+					if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( arrayIntersectLine.intersectPoints );
+					arrayIntersectLine.intersectPoints = null;
+
+				}
+				intersectionLines.pop();
 
 			}
 
@@ -1208,7 +1208,7 @@ class Intersections {
 						}
 						if ( points.length > 1 ) {//не добавлять линию с количеством точек меньше 2
 
-							const arrayIntersectLoop = {
+							const arrayIntersectLine = {
 
 								intersectLine: new THREE.Line( new THREE.BufferGeometry().setFromPoints( points ),
 									new THREE.LineBasicMaterial( { color: 0xffffff } ) ),
@@ -1216,14 +1216,14 @@ class Intersections {
 								points: points,
 
 							}
-							arrayIntersectLoops.push( arrayIntersectLoop );
-							scene.add( arrayIntersectLoop.intersectLine );
+							intersectionLines.push( arrayIntersectLine );
+							scene.add( arrayIntersectLine.intersectLine );
 							if ( options.guiSelectPoint ) {
 
-								arrayIntersectLoop.intersectLine.name =
-									( arrayIntersectLoop.mesh.name === '' ? arrayIntersectLoops.length : arrayIntersectLoop.mesh.name ) +
+								arrayIntersectLine.intersectLine.name =
+									( arrayIntersectLine.mesh.name === '' ? intersectionLines.length : arrayIntersectLine.mesh.name ) +
 									'-' + ( object.name === '' ? 'intersection' : object.name );
-								options.guiSelectPoint.addMesh( arrayIntersectLoop.intersectLine );
+								options.guiSelectPoint.addMesh( arrayIntersectLine.intersectLine );
 
 							}
 
@@ -1234,7 +1234,7 @@ class Intersections {
 				} );
 
 			} );
-			if ( settings.onReady ) settings.onReady( arrayIntersectLoops );
+			if ( settings.onReady ) settings.onReady( intersectionLines );
 
 		}
 //		setTimeout( function () { createIntersections(); }, 0 );//Таймаут нужен что бы установился matrixWorld объектов из collidableMeshList.
