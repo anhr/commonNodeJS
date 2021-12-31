@@ -65,7 +65,7 @@ class Intersections {
 
 		//debug
 		var currentdate = new Date();
-console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' ищщем точки, которые совпадают' )
+//console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' ищщем точки, которые совпадают' )
 
 		//ищщем точки, которые совпадают или почти совпадают с небольшой погрешностью
 		//что бы у них был одинаковый индекс
@@ -133,6 +133,7 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' и�
 			arrayIntersectFaces = [];
 
 		const edges = [];//список ребер
+//			edges2 = [];//список ребер, кторый сспользуется при содании faces. Этот списоу уменьшается по мере создания faces. Это позволяетс сократить время создания faces
 		//Заполнить список ребер
 		for ( var index = 0; index < object.geometry.index.count; index += 3 ) {
 
@@ -197,9 +198,9 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' и�
 					const arraySpliceIntersection = [],
 						array = [];//только точки пересечения, которые нужно учитывать
 
-					this.spliceIntersection = function ( index ) {
+					this.spliceIntersection = function ( index, uuid ) {
 
-						arraySpliceIntersection.push( index );
+						arraySpliceIntersection.push( { index: index, uuid: uuid, } );
 						array.length = 0;
 
 					}
@@ -245,7 +246,7 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' и�
 
 											if ( intersection.object.uuid === intersectionObject.uuid ) {
 
-
+/*
 												//не добавлять точку пересечения в array если в другом ребре грани есть точка пересечения с тем же положением
 												var boSpliceIntersection = false;
 												for ( var i = 0; i < arraySpliceIntersection.length; i++ ) {
@@ -259,11 +260,21 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' и�
 
 												}
 												if ( !boSpliceIntersection )
+*/
 													arrayIntersectionsPush( intersection, array );
 
 											}
 
 										} );
+										//не добавлять точку пересечения в array если в другом ребре грани есть точка пересечения с тем же положением
+										if ( arraySpliceIntersection.length > 1 )
+											console.error( 'under construction' );//надо рассотировать arraySpliceIntersection так что бы из array сначала удалялись элементы с наибольшим индексом. Иначе не те элементы будут удаляться
+										for ( var i = 0; i < arraySpliceIntersection.length; i++ ) {
+
+											if ( arraySpliceIntersection[i].uuid === intersectionObject.uuid )
+												array.splice( arraySpliceIntersection[i].index, 1 );
+
+										}
 
 									}
 									res = array;
@@ -358,8 +369,12 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' и�
 				}
 
 			}
-			edges.push( new Edge( index, index + 1 ) );
-			edges.push( new Edge( index + 1, index + 2 ) );
+			var edge = new Edge( index, index + 1 );
+			edges.push( edge );
+//			edges2.push( edge );
+			edge = new Edge( index + 1, index + 2 )
+			edges.push( edge );
+//			edges2.push( edge );
 
 			//Если поменять порядок индексов, то в edges появятся одинаковые ребра,
 			//которые будут отличатся только переставленными edge.vector1 и edge.vector2
@@ -369,25 +384,72 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' и�
 			//Для проверки в примере установить plane( 'plane', new THREE.PlaneGeometry( 30, 30 ) ).rotation.y = Math.PI / 2;
 			//и const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
 			//и obj.position.z = 8.9;
-			edges.push( new Edge( index, index + 2 ) );
+			edge = new Edge( index, index + 2 );
+			edges.push( edge );
+//			edges2.push( edge );
 
 		}
 
 		//список граней
 		const faces = [];
+
+		//Progress window
+		const elCanvas = options.renderer.domElement, elContainer = elCanvas.parentElement;
+		if ( elContainer.tagName !== "DIV" ) {
+
+			console.error( 'Intersections: elContainer.tagName = ' + elContainer.tagName );
+			return;
+
+		}
+		const container = "container";
+		if ( !elContainer.classList.contains( container ) ) elContainer.classList.add( container );
+		const elProgress = document.createElement( 'div' ),
+			elTitle = document.createElement( 'div' ),
+			cProgress = document.createElement( 'input' );
+		elProgress.style.position = 'absolute';
+		elProgress.style.top = 0;
+		elProgress.style.left = 0;
+		elProgress.style.backgroundColor = 'white';
+		elProgress.style.margin = '2px';
+		elProgress.style.padding = '2px';
+		const lang = { progressTitle: 'Intersections preparing.<br>Wait please...', };
+		switch ( options.getLanguageCode() ) {
+
+			case 'ru'://Russian language
+
+				lang.progressTitle = 'Подготовка пересечений.<br>Пожалуйста подождите...';
+
+				break;
+
+		}
+		elTitle.innerHTML = lang.progressTitle;
+		elProgress.appendChild( elTitle );
+		cProgress.min = "0";
+		cProgress.max = object.geometry.index.count;
+		cProgress.type = "range";
+		cProgress.disabled = true;
+		elProgress.appendChild( cProgress );
+		elContainer.appendChild( elProgress );
+
 		//Заполнить список граней
 		index = 0;
+/*
+		const skip = parseInt( object.geometry.index.count / 100 );//время для TorusGeometry сократилось с 54 до 47 секунд
+		var skipCur = 0;
+*/
 		function step( timestamp ) {
 
+			cProgress.value = index;
 			if ( index >= object.geometry.index.count ) {
 
+				elProgress.remove();
 				boCreateIntersections = true;
 				setTimeout( function () { createIntersections(); }, 0 );//Таймаут нужен что бы установился matrixWorld объектов из collidableMeshList.
 				return;
 
 			}
 
-console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geometry index = ' + index )
+//console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geometry index = ' + index )
 			class Face {
 
 				/* *
@@ -523,7 +585,7 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 					//в этом цикле из списка всех ребер edges, полученных из object.geometry.index,
 					//для face ищем три ребра faceEdges.edge1, faceEdges.edge2, faceEdges.edge3
 					//и для каждого ребра ищем два face, которым принадлежит это ребро edge.faces.face1 и edge.faces.face2
-					for ( var i = 0; i < edges.length; i++ ) {
+					for ( var i = edges.length - 1; i >= 0; i-- ) {
 
 						const edge = edges[i],
 							vertex1Index = edge.vertex1.index,//object.geometry.index.array[edge.vertex1.index],
@@ -534,10 +596,8 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 							if ( !edge.faces.face1 ) edge.faces.face1 = face;
 							else if ( !edge.faces.face2 ) {
 
-								//не определен face.name
-								//if ( edge.faces.face1.name === face.name ) console.error( 'Face: duplicate edge face' );
-
 								edge.faces.face2 = face;
+								//edges2.pop();
 
 							} else console.error( 'Face: too many edge.faces' );
 
@@ -601,6 +661,8 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 
 							function returnPoint( point ) {
 
+//if ( vectorIndex.equals( new THREE.Vector3( 22, 13, 10 ) ) )
+//	console.log( '111' );
 								arrayIntersectLines.splice( i, 1 );
 								return point;
 
@@ -642,10 +704,14 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 
 						}
 						*/
-//if ( vectorIndex.equals( new THREE.Vector3( 0, 2, 40 ) ) )
+//if ( vectorIndex.equals( new THREE.Vector3( 18, 10, 9 ) ) )
 //	console.log( vectorIndex );
+
 						//список объектов пересечения 
+						//Внимание! Нельзя удадять intersectionObjects потому что размер массива faceEdges.intersectionObjects меняется при
+						//изменении faceEdges.intersectionObject и тогда могут быть пропущены некторые линии пересечения грани с объектом
 						const intersectionObjects = faceEdges.intersectionObjects;
+
 						//Для каждого объекта пересечения делаем отдельные линии пересечения
 						for ( var iIntersectionObject = 0; iIntersectionObject < intersectionObjects.length; iIntersectionObject++ ) {
 
@@ -664,28 +730,16 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 								for ( var j = faceEdges.edge2.intersection.length - 1; j >= 0; j-- ) {
 
 									if ( ( faceEdges.edge1.intersection.length > i ) && ( faceEdges.edge2.intersection.length > j ) &&
-										equals( faceEdges.edge1.intersection[i].point, faceEdges.edge2.intersection[j].point ) )
-									{
-
-										faceEdges.edge2.spliceIntersection( j );
-
-									}
+											equals( faceEdges.edge1.intersection[i].point, faceEdges.edge2.intersection[j].point ) )
+										faceEdges.edge2.spliceIntersection( j, faceEdges.intersectionObject.uuid );
 									for ( var k = faceEdges.edge3.intersection.length - 1; k >= 0; k-- ) {
 
 										if ( ( faceEdges.edge1.intersection.length > i ) && ( faceEdges.edge3.intersection.length > k ) &&
-											equals( faceEdges.edge1.intersection[i].point, faceEdges.edge3.intersection[k].point ) )
-										{
-
-											faceEdges.edge3.spliceIntersection( k );
-
-										}
+												equals( faceEdges.edge1.intersection[i].point, faceEdges.edge3.intersection[k].point ) )
+											faceEdges.edge3.spliceIntersection( k, faceEdges.intersectionObject.uuid );
 										if ( ( faceEdges.edge2.intersection.length > j ) && ( faceEdges.edge3.intersection.length > k ) &&
-											equals( faceEdges.edge2.intersection[j].point, faceEdges.edge3.intersection[k].point ) )
-										{
-
-											faceEdges.edge3.spliceIntersection( k );
-
-										}
+												equals( faceEdges.edge2.intersection[j].point, faceEdges.edge3.intersection[k].point ) )
+											faceEdges.edge3.spliceIntersection( k, faceEdges.intersectionObject.uuid );
 
 									}
 
@@ -724,16 +778,8 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 								}
 
 							}
-							function arrayIntersectionsPushEdge3( vertexIndex ) {
-
-								arrayIntersectionsPushEdge( vertexIndex, faceEdges.edge3 );
-
-							}
-							function arrayIntersectionsPushEdge2( vertexIndex ) {
-
-								arrayIntersectionsPushEdge( vertexIndex, faceEdges.edge2 );
-
-							}
+							function arrayIntersectionsPushEdge3( vertexIndex ) { arrayIntersectionsPushEdge( vertexIndex, faceEdges.edge3 ); }
+							function arrayIntersectionsPushEdge2( vertexIndex ) { arrayIntersectionsPushEdge( vertexIndex, faceEdges.edge2 ); }
 							
 							const arrayIntersections = [];//Все точки пересечения, начиная с faceEdges.edge1
 							function arrayPushEdge( edge, intersectionIndex )
@@ -746,6 +792,7 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 									get uuid() { return intersection.object.uuid; },
 									get faces() { return edge.faces; },
 									get point() { return intersection.point; },
+									get intersection() { return intersection; },
 
 								} );
 							}
@@ -868,11 +915,48 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 							else if ( !isOddOrZero( faceEdges.edge1.intersection.length ) || !isOddOrZero( lastEdge.intersection.length ) ) {
 
 								//faceEdges.edge1.vertex1 нахоится снаружи объекта.
-								//Тогда первую линию пересечения проводим через ближайшие к faceEdges.edge1.vertex1 точки пересечения
-								//console.log( faceEdges.intersectionObject.name + ' faceEdges.edge1.vertex1 нахоится снаружи объекта.' );
-								for ( var i = 0; i < intersectionCount / 2; i++ )
-									addIntersectLine( arrayIntersections[i], arrayIntersections[intersectionCount - 1 - i] );
-//									createIntersectLineSegment( [arrayIntersections[i].point, arrayIntersections[intersectionCount - 1 - i].point] );
+
+								//Возможно грань персекается с вершиной объекта в которой сходится 3 грани.
+								//Другими словами грань как бы надета на вершину пирамиды
+								var boDetected = false;
+								if ( intersectionCount === 6 ) {
+
+									function equalFaces( face1, face2 ) { return ( face1.a === face2.a ) && ( face1.b === face2.b ) && ( face1.c === face2.c ); }
+									if (
+										equalFaces( arrayIntersections[0].intersection.face, arrayIntersections[5].intersection.face ) &&
+										equalFaces( arrayIntersections[1].intersection.face, arrayIntersections[2].intersection.face ) &&
+										equalFaces( arrayIntersections[3].intersection.face, arrayIntersections[4].intersection.face )
+									) {
+
+										addIntersectLine( arrayIntersections[0], arrayIntersections[5] );
+										addIntersectLine( arrayIntersections[1], arrayIntersections[2] );
+										addIntersectLine( arrayIntersections[3], arrayIntersections[4] );
+										boDetected = true;
+
+									} else if (
+										equalFaces( arrayIntersections[0].intersection.face, arrayIntersections[1].intersection.face ) &&
+										equalFaces( arrayIntersections[2].intersection.face, arrayIntersections[3].intersection.face ) &&
+										equalFaces( arrayIntersections[4].intersection.face, arrayIntersections[5].intersection.face )
+									) {
+
+										console.error( 'under constraction' );
+										addIntersectLine( arrayIntersections[0], arrayIntersections[1] );
+										addIntersectLine( arrayIntersections[2], arrayIntersections[3] );
+										addIntersectLine( arrayIntersections[4], arrayIntersections[5] );
+										boDetected = true;
+
+									}
+
+								}
+								if ( !boDetected ) {
+
+									//Тогда первую линию пересечения проводим через ближайшие к faceEdges.edge1.vertex1 точки пересечения
+									//console.log( faceEdges.intersectionObject.name + ' faceEdges.edge1.vertex1 нахоится снаружи объекта.' );
+									for ( var i = 0; i < intersectionCount / 2; i++ )
+										addIntersectLine( arrayIntersections[i], arrayIntersections[intersectionCount - 1 - i] );
+									//									createIntersectLineSegment( [arrayIntersections[i].point, arrayIntersections[intersectionCount - 1 - i].point] );
+
+								}
 
 							} else {
 
@@ -896,8 +980,18 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 			faces.push( new Face( index, faces.length ) );
 
 			index += 3;
+			setTimeout( function () { step(); }, 0 );//это работает побыстрей
+/*
+			skipCur += 3;
+			if ( skipCur < skip )
+				setTimeout( function () { step(); }, 0 );//это работает побыстрей
+			else {
 
-			window.requestAnimationFrame( step );
+				skipCur = 0;
+				window.requestAnimationFrame( step );
+
+			}
+*/
 
 		}
 		window.requestAnimationFrame( step );
@@ -995,9 +1089,17 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 							boPush = true;//false - добавлять новую точку в начало points
 						while ( true ) {
 
-							if ( boPush )
-								points.push( point.point );
-							else points.unshift( point.point );
+							if ( boPush ) {
+
+								if ( !equals( points[points.length - 1], point.point ) )//не добавлять две одинаковые точки подряд
+									points.push( point.point );
+
+							} else {
+
+								if ( !equals( points[0], point.point ) )//не добавлять две одинаковые точки подряд
+									points.unshift( point.point );
+
+							}
 							const faces = point.faces;
 							if ( faceNext.id.equals( faces.face1.id ) )
 								faceNext = faces.face2;
@@ -1021,6 +1123,8 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 									//Поэтому продолжение линии пересечения надо искать на гранях, имеющих общие вершины с pointEnd.edge
 									for ( var iIntersectFaces = 0; iIntersectFaces < arrayIntersectFaces.length; iIntersectFaces++ ) {
 
+										if ( pointEnd.uuid !== arrayIntersectFaces[iIntersectFaces].mesh.uuid )
+											continue;
 										for ( var jIntersectFaces = 0; jIntersectFaces < arrayIntersectFaces[iIntersectFaces].length; jIntersectFaces++ ) {
 
 											const face = arrayIntersectFaces[iIntersectFaces][jIntersectFaces];
@@ -1102,19 +1206,26 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 							}
 
 						}
-						const arrayIntersectLoop = {
+						if ( points.length > 1 ) {//не добавлять линию с количеством точек меньше 2
 
-							intersectLine: new THREE.Line( new THREE.BufferGeometry().setFromPoints( points ),
-								new THREE.LineBasicMaterial( { color: 0xffffff } ) ),
-							mesh: meshLines.mesh,//с этим объектом пересекается
+							const arrayIntersectLoop = {
 
-						}
-						arrayIntersectLoops.push( arrayIntersectLoop );
-						scene.add( arrayIntersectLoop.intersectLine );
-						if ( options.guiSelectPoint ) {
+								intersectLine: new THREE.Line( new THREE.BufferGeometry().setFromPoints( points ),
+									new THREE.LineBasicMaterial( { color: 0xffffff } ) ),
+								mesh: meshLines.mesh,//с этим объектом пересекается
+								points: points,
 
-							arrayIntersectLoop.intersectLine.name = 'Intersect line ' + arrayIntersectLoops.length;
-							options.guiSelectPoint.addMesh( arrayIntersectLoop.intersectLine );
+							}
+							arrayIntersectLoops.push( arrayIntersectLoop );
+							scene.add( arrayIntersectLoop.intersectLine );
+							if ( options.guiSelectPoint ) {
+
+								arrayIntersectLoop.intersectLine.name =
+									( arrayIntersectLoop.mesh.name === '' ? arrayIntersectLoops.length : arrayIntersectLoop.mesh.name ) +
+									'-' + ( object.name === '' ? 'intersection' : object.name );
+								options.guiSelectPoint.addMesh( arrayIntersectLoop.intersectLine );
+
+							}
 
 						}
 
@@ -1123,6 +1234,7 @@ console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geo
 				} );
 
 			} );
+			if ( settings.onReady ) settings.onReady( arrayIntersectLoops );
 
 		}
 //		setTimeout( function () { createIntersections(); }, 0 );//Таймаут нужен что бы установился matrixWorld объектов из collidableMeshList.

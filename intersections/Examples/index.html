@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -25,7 +25,6 @@
 	-->
 	<div id="canvasContainer1">
 		<img src="../../img/wait.gif">
-		Loading... Wait about 30 seconds.<!--<input type="range" min="0" max="100" value="0" id="loadingProgress" title="Loading progress">-->
 	</div>
 	Intersection lines
 	<div id="intersectionLines">
@@ -47,8 +46,6 @@
 		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/myThree.js';
 
 //		import { getWorldPosition } from '../../getPosition.js';
-
-//		import { NURBSSurface } from '../../../../three.js/dev/examples/jsm/curves/NURBSSurface.js';
 
 		import FibonacciSphereGeometry from '../../FibonacciSphere/FibonacciSphereGeometry.js'
 
@@ -80,30 +77,17 @@
 				},
 				y: {
 
-					//name: 'Temperature(degrees Celsius)',
 					min: -10,
 					max: 10,
 
 				},
 				z: {
 
-					//name: 'Radius(m.)',
 					min: -10,
 					max: 10,
 					//marks: 11,
 
 				},
-				/*
-				w: {
-					name: 'energy',
-					//min: 0,
-					//max: 10,
-					//min: -1,
-					//max: 1,
-					//min: 0,//default
-					//max: 1,//defaukt
-				},
-				*/
 
 			},
 			cameraOptions = {
@@ -144,8 +128,6 @@
 
 				}
 
-				//const planeGeom = new THREE.PlaneGeometry( 30, 30 );
-				//const planeGeom = new THREE.TetrahedronGeometry( 30, 0 );
 				//planeGeom.rotateX( -Math.PI / 2 );
 				const plane = new THREE.Mesh( planeGeom,
 
@@ -168,13 +150,11 @@
 					} )
 
 				);
-				//plane.rotation.x = 0.625;
+				//plane.rotation.x = Math.PI / 5;
 				//plane.rotation.y = 2.386;
 				//plane.position.z = 6;//for Triangle
 				//plane.position.z = -15;//for TorusGeometry
 				//plane.position.z = -6;//for BoxGeometry
-				//			plane.rotation.x = Math.PI / 5;
-				//			plane.position.y = -3.14;
 				scene.add( plane );
 				plane.name = name;
 				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( plane );
@@ -182,20 +162,22 @@
 				return plane;
 
 			}
-			plane();//.position.y = -16;//.rotation.z = 0.761;
-			plane( 'plane', new THREE.PlaneGeometry( 30, 30 ) ).rotation.y = Math.PI / 2;//.position.z = -5;
-			//plane( 'plane', new THREE.PlaneGeometry( 30, 30 ) );
-			//plane( 'Tetrahedron', new THREE.TetrahedronGeometry( 30, 0 ) );
+			//plane();//.position.y = -16;//.rotation.z = 0.761;
+			plane( 'plane', new THREE.PlaneGeometry( 30, 30 ) );//.rotation.y = Math.PI / 2;//.position.z = -5;
+			plane( 'Tetrahedron', new THREE.TetrahedronGeometry( 20, 0 ) );
 
 			/*
 			//triangle
 			const objGeom = new THREE.BufferGeometry();
 			const vertices = new Float32Array( [
 
-				10.0, 0, 10.0,
-				10.0, 0, -10.0,
-				-10.0, 0, 10.0,
+				//10.0, 0, 10.0,
+				//10.0, 0, -10.0,
+				//-10.0, 0, 10.0,
 
+				0, -5.773502826690674, 8.164965999905352,
+				-4.082482831365281, 0, 9.128709156359584,
+				-8.164965999905352, -5.773502826690674, 0,
 				//0.0, 1, -10.0,
 				//10.0, 1, -10.0,
 				//0.0, 1, 10.0,
@@ -254,21 +236,20 @@
 			//obj.rotation.z = 0.186;
 			//obj.position.set( 9, 0, -12 );
 			//obj.position.set( 1, 0, 0 );
-			//obj.position.z = 8.9;
+			//obj.position.z = 8.85321100917431;//7.844036697247706;//10.36697247706422;
 			scene.add( obj );
 			obj.name = 'Geometry';
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( obj );
-//			const elLoadingProgress = document.getElementById( 'loadingProgress' );
 
 			//Player
 
-			//				var intersectLine;
-			//				var intersectPoints;
 			obj.userData.player = {
 
 				selectPlayScene: function ( t ) {
 
-					obj.position.set( 0, 0, 10 - 30 * t );
+					//obj.position.set( 0, 0, 10 - 30 * t );
+					
+					obj.position.set( 0, 0, 25 - 55 * t );
 					obj.updateMatrix();
 
 				},
@@ -276,67 +257,38 @@
 			}
 
 			const arrayIntersectLines = [];
-//			MyThree.Intersections.Faces( obj, collidableMeshList,
 			new MyThree.Intersections( obj, collidableMeshList, {
 
 				onReady: function ( arrayIntersectLoops ) {
 
-					if ( !sceneIntersectionLines ) return;
-					while ( arrayIntersectLines.length ) sceneIntersectionLines.remove( arrayIntersectLines.pop() );
+					if ( !canvasIntersectionLines.scene ) return;
+					while ( arrayIntersectLines.length ) {
+
+						const line = arrayIntersectLines.pop();
+						canvasIntersectionLines.scene.remove( line );
+						if ( canvasIntersectionLines.options.guiSelectPoint )
+							canvasIntersectionLines.options.guiSelectPoint.removeMesh( line );
+
+					}
 					arrayIntersectLoops.forEach( function ( arrayIntersectLoop ) {
 
-						const geometry = new THREE.BufferGeometry().setFromPoints( arrayIntersectLoop );
-						const object = new THREE.LineLoop( geometry, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
-						//const object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0xffffff } ) );
+						const geometry = new THREE.BufferGeometry().setFromPoints( arrayIntersectLoop.points );
+						const object = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
 						const index = arrayIntersectLines.push( object );
-						sceneIntersectionLines.add( arrayIntersectLines[index -1 ] );
-/*
-						function surface( nsControlPoints ) {
+						canvasIntersectionLines.scene.add( arrayIntersectLines[index -1 ] );
+						if ( canvasIntersectionLines.options.guiSelectPoint ) {
 
-							const degree1 = 2;
-							const degree2 = 3;
-							const knots1 = [0, 0, 0, 1, 1, 1];
-							const knots2 = [0, 0, 0, 0, 1, 1, 1, 1];
-							const nurbsSurface = new NURBSSurface( degree1, degree2, knots1, knots2, nsControlPoints );
-
-							const map = new THREE.TextureLoader().load( '../../../../three.js/dev/examples/textures/uv_grid_opengl.jpg' );
-							map.wrapS = map.wrapT = THREE.RepeatWrapping;
-							map.anisotropy = 16;
-
-							function getSurfacePoint( u, v, target ) {
-
-								return nurbsSurface.getPoint( u, v, target );
-
-							}
-
-							const geometry = new THREE.ParametricBufferGeometry( getSurfacePoint, 20, 20 );
-							const material = new THREE.MeshLambertMaterial( { map: map, side: THREE.DoubleSide } );
-							const object = new THREE.Mesh( geometry, material );
-							//					object.position.set( - 200, 100, 0 );
-							//					object.scale.multiplyScalar( 1 );
-							sceneIntersectionLines.add( object );
+							object.name = ( arrayIntersectLoop.mesh.name === '' ? arrayIntersectLoops.length : arrayIntersectLoop.mesh.name ) + '-'  + ( obj.name === '' ? 'intersection' : obj.name );
+							canvasIntersectionLines.options.guiSelectPoint.addMesh( object );
+							
 
 						}
-						surface( [arrayIntersectLoop] );
-*/
 
 					} );
 
 				},
-/*
-				onProgress: function ( index, min, max ) {
-
-					console.log( index );
-					elLoadingProgress.value = index * ( 100 / ( max - min ) );
-
-				},
-*/
 
 			} );
-			/*
-			const elWait = document.getElementById( 'wait' );
-			elWait.parentNode.removeChild( elWait );
-			*/
 
 		}, {
 
@@ -375,16 +327,18 @@
 			scales: scales,
 
 		} );
-		var sceneIntersectionLines;
+		const canvasIntersectionLines = {};
 		new MyThree( function ( scene, options ) {
 
-			sceneIntersectionLines = scene;
+			canvasIntersectionLines.scene = scene;
+			canvasIntersectionLines.options = options;
 
 		}, {
 
-			elContainer: "intersectionLines",
-			camera: cameraOptions,
-			scales: scales,
+				elContainer: "intersectionLines",
+				camera: cameraOptions,
+				scales: scales,
+				player: false,
 
 		} );
 
