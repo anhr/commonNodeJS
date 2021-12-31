@@ -1250,18 +1250,19 @@ class Intersections {
 			object.userData.scale = object.scale.clone();
 
 		} );
-		if ( !options.intersections ) {
+		if ( !options.intersections ) options.intersections = [];
+		options.intersections.push( function () {
 
-			options.intersections = function () {
+			for ( var i = 0; i < arrayMovingObjects.length; i++ ) {
 
-				for ( var i = 0; i < arrayMovingObjects.length; i++ ) {
+				const object = arrayMovingObjects[i];
+				if (
+					!object.userData.position.equals( object.position ) ||
+					!object.userData.rotation.equals( object.rotation ) ||
+					!object.userData.scale.equals( object.scale )
+				) {
 
-					const object = arrayMovingObjects[i];
-					if (
-						!object.userData.position.equals( object.position ) ||
-						!object.userData.rotation.equals( object.rotation ) ||
-						!object.userData.scale.equals( object.scale )
-					) {
+					setTimeout( function () {
 
 						object.userData.position = object.position.clone();
 						object.userData.rotation = object.rotation.clone();
@@ -1269,15 +1270,15 @@ class Intersections {
 
 						createIntersections();
 
-						return;
+					}, 0 );
 
-					}
+					return;
 
 				}
 
 			}
 
-		} else console.error( 'Faces: Duplicate options.intersections' );
+		} );
 
 	}
 

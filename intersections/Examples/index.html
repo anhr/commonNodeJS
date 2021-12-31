@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -259,7 +259,7 @@
 			const arrayIntersectLines = [];
 			new MyThree.Intersections( obj, collidableMeshList, {
 
-				onReady: function ( arrayIntersectLoops ) {
+				onReady: function ( intersectionLines ) {
 
 					if ( !canvasIntersectionLines.scene ) return;
 					while ( arrayIntersectLines.length ) {
@@ -270,15 +270,15 @@
 							canvasIntersectionLines.options.guiSelectPoint.removeMesh( line );
 
 					}
-					arrayIntersectLoops.forEach( function ( arrayIntersectLoop ) {
+					intersectionLines.forEach( function ( arrayIntersectLine ) {
 
-						const geometry = new THREE.BufferGeometry().setFromPoints( arrayIntersectLoop.points );
+						const geometry = new THREE.BufferGeometry().setFromPoints( arrayIntersectLine.points );
 						const object = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
 						const index = arrayIntersectLines.push( object );
 						canvasIntersectionLines.scene.add( arrayIntersectLines[index -1 ] );
 						if ( canvasIntersectionLines.options.guiSelectPoint ) {
 
-							object.name = ( arrayIntersectLoop.mesh.name === '' ? arrayIntersectLoops.length : arrayIntersectLoop.mesh.name ) + '-'  + ( obj.name === '' ? 'intersection' : obj.name );
+							object.name = ( arrayIntersectLine.mesh.name === '' ? intersectionLines.length : arrayIntersectLine.mesh.name ) + '-'  + ( obj.name === '' ? 'intersection' : obj.name );
 							canvasIntersectionLines.options.guiSelectPoint.addMesh( object );
 							
 
@@ -289,6 +289,9 @@
 				},
 
 			} );
+			
+			if ( collidableMeshList.length === 2 )
+				new MyThree.Intersections( collidableMeshList[1], collidableMeshList[0] );
 
 		}, {
 

@@ -142,11 +142,8 @@ class Options {
 		 * */
 		this.render = function () {
 
-			if ( this.intersections ) this.intersections();
-/*Не помню зачем это			
-			if ( this.guiSelectPoint && this.guiSelectPoint.render )
-				this.guiSelectPoint.render();
-*/				
+			if ( this.intersections )
+				this.intersections.forEach( function ( intersection ) { intersection(); } );
 
 		}
 
