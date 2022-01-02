@@ -26,21 +26,53 @@ import three from '../three.js'
 class Intersections {
 
 	/**
-	 * Creates an array of graphic object [faces]{@link https://threejs.org/docs/index.html?q=fac#examples/en/math/convexhull/Face}.
-	 * @param {THREE.Mesh} object You can see an array of faces in <b>object.userData.intersections.faces</b> after creating of <b>Faces</b>.
-	 * See [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}.
-	 * @param {THREE.Mesh|array} collidableMeshList [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or array of meshes, which intersects with <b>object</b>.
+	 * Creates an intersection lines for graphic objects.
+	 * @param {THREE.Mesh} object [graphic object]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for which the intersection lines with other objects will be obtained.
+	 * @param {THREE.Mesh|array} intersectMeshList <b>THREE.Mesh</b> - [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}, which intersects with <b>object</b>.
+	 * <pre>
+	 * <b>array</b> - array of intersect graphic objects. Every item is:
+	 *	<b>THREE.Mesh</b> - [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}, which intersects with <b>object</b>.
+	 *	or <b>object</b> - object keys is:
+	 *		<b>mesh</b> - [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}, which intersects with <b>object</b>.
+	 *		<b>color</b> - intersection lines [color]{@link https://en.wikipedia.org/wiki/Web_colors#Hex_triplet}.
+	 *			Examples: <b>0xffffff</b>, <b>'yellow'</b>. Default is white.
+	 * <pre>
 	 * @param {object} [settings] the following settings are available:
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
-	 * @param {function(intersectionLines)} [settings.onReady] Callback function that called if intersection lines is ready and that take as input an array of all intersect lines.
-	 * Every item of array is array of line vertices of <b>THREE.Vector3</b> type.
+	 * @param {function} [settings.onReady] Callback function that called if intersection lines is ready and that take as input an array of all intersect lines.
+	 * <pre>
+	 * <b>function( intersectionLines )</b>
+	 *	<b>intersectionLines</b> - array of all intersect lines.
+	 *	Every item of array is object. Object keys is:
+	 *		<b>mesh</b> - [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh}, which intersects with <b>object</b>.
+	 *		<b>points</b> - array of [points]{@link https://threejs.org/docs/index.html?q=Vect#api/en/math/Vector3} of intersection line.
+	 *		<b>color</b> - intersection line color.
+	 *			Default is white.
+	 * </pre>
 	 */
-	constructor( object, collidableMeshList, settings = {} ) {
-
-		if ( !Array.isArray( collidableMeshList ) ) collidableMeshList = [collidableMeshList];
+	constructor( object, intersectMeshList, settings = {} ) {
 
 		const THREE = three.THREE, options = three.options, scene = settings.scene || three.group;
-		const positions = object.geometry.attributes.position;
+		if ( object instanceof THREE.Mesh === false ) object = object.mesh;
+		const positions =  object.geometry.attributes.position;
+
+		if ( !Array.isArray( intersectMeshList ) ) intersectMeshList = [intersectMeshList];
+		const collidableMeshList = [], arrayIntersectLinesColor = [];
+		intersectMeshList.forEach( function ( item ) {
+
+			if ( item instanceof THREE.Mesh ) {
+
+				collidableMeshList.push( item );
+				arrayIntersectLinesColor.push( 0xffffff );//white
+
+			} else {
+
+				collidableMeshList.push( item.mesh );
+				arrayIntersectLinesColor.push( item.color || 0xffffff );
+
+			}
+
+		} );
 		/*
 		//debug
 		if ( typeof SpriteText !== "undefined" ) {
@@ -1208,11 +1240,24 @@ class Intersections {
 						}
 						if ( points.length > 1 ) {//не добавлять линию с количеством точек меньше 2
 
+							var color = 0xffffff;
+							for ( var i = 0; i < collidableMeshList.length; i++ ) {
+
+								if ( collidableMeshList[i].uuid === meshLines.mesh.uuid ) {
+
+									color = arrayIntersectLinesColor[i];
+									break;
+
+								}
+
+							}
+
 							const arrayIntersectLine = {
 
 								intersectLine: new THREE.Line( new THREE.BufferGeometry().setFromPoints( points ),
-									new THREE.LineBasicMaterial( { color: 0xffffff } ) ),
+									new THREE.LineBasicMaterial( { color: color } ) ),
 								mesh: meshLines.mesh,//с этим объектом пересекается
+								color: color,
 								points: points,
 
 							}

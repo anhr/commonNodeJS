@@ -100,10 +100,10 @@
 			}
 		new MyThree( function ( scene, options ) {
 
-			const collidableMeshList = [];
+			const intersectMeshList = [];
 
 			//Thanks https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane
-			function plane( name = 'angle', planeGeom ) {
+			function plane( name = 'angle', planeGeom, color = 0xffffff ) {
 
 				//custom geometry
 				if ( !planeGeom ) {
@@ -131,7 +131,6 @@
 				//planeGeom.rotateX( -Math.PI / 2 );
 				const plane = new THREE.Mesh( planeGeom,
 
-					/*
 					new THREE.MeshLambertMaterial( {
 
 						color: "lightgray",
@@ -140,7 +139,7 @@
 						side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
 
 					} )
-					*/
+					/*
 					new THREE.MeshBasicMaterial( {
 
 						color: "blue",
@@ -148,6 +147,7 @@
 						side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
 
 					} )
+					*/
 
 				);
 				//plane.rotation.x = Math.PI / 5;
@@ -158,13 +158,13 @@
 				scene.add( plane );
 				plane.name = name;
 				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( plane );
-				collidableMeshList.push( plane );
+				intersectMeshList.push( { mesh: plane, color: color } );
 				return plane;
 
 			}
 			//plane();//.position.y = -16;//.rotation.z = 0.761;
-			plane( 'plane', new THREE.PlaneGeometry( 30, 30 ) );//.rotation.y = Math.PI / 2;//.position.z = -5;
-			plane( 'Tetrahedron', new THREE.TetrahedronGeometry( 20, 0 ) );
+			plane( 'plane', new THREE.PlaneGeometry( 30, 30 ), 'yellow' );//.rotation.y = Math.PI / 2;//.position.z = -5;
+			plane( 'Tetrahedron', new THREE.TetrahedronGeometry( 20, 0 ) );//, 'magenta' );
 
 			/*
 			//triangle
@@ -218,9 +218,9 @@
 			objGeom.index = new THREE.Uint16BufferAttribute( [2,1,0], 1 );
 			*/
 
-			const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
+			//const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
 			//const objGeom = new THREE.SphereGeometry( 15, 32, 16 );
-			//const objGeom = new FibonacciSphereGeometry( 10, 320 );
+			const objGeom = new FibonacciSphereGeometry( 10, 320 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 16, 100 );
 			//const objGeom = new THREE.TorusGeometry( 10, 3, 3, 3 );
 			//const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
@@ -257,7 +257,7 @@
 			}
 
 			const arrayIntersectLines = [];
-			new MyThree.Intersections( obj, collidableMeshList, {
+			new MyThree.Intersections( obj, intersectMeshList, {
 
 				onReady: function ( intersectionLines ) {
 
@@ -273,7 +273,7 @@
 					intersectionLines.forEach( function ( arrayIntersectLine ) {
 
 						const geometry = new THREE.BufferGeometry().setFromPoints( arrayIntersectLine.points );
-						const object = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+						const object = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: arrayIntersectLine.color } ) );
 						const index = arrayIntersectLines.push( object );
 						canvasIntersectionLines.scene.add( arrayIntersectLines[index -1 ] );
 						if ( canvasIntersectionLines.options.guiSelectPoint ) {
@@ -290,8 +290,8 @@
 
 			} );
 			
-			if ( collidableMeshList.length === 2 )
-				new MyThree.Intersections( collidableMeshList[1], collidableMeshList[0] );
+			if ( intersectMeshList.length === 2 )
+				new MyThree.Intersections( intersectMeshList[1], { mesh: intersectMeshList[0].mesh, color: 'magenta' } );
 
 		}, {
 
@@ -300,12 +300,14 @@
 
 				pointLight1: {
 
-					position: new THREE.Vector3( 100, 10, 2 ),
+					//position: new THREE.Vector3( 100, 10, 2 ),
+					position: new THREE.Vector3( 0, 20, 20 ),
 
 				},
 				pointLight2: {
 
-					position: new THREE.Vector3( -100, -2, -2 ),
+					//position: new THREE.Vector3( -100, -2, -2 ),
+					position: new THREE.Vector3( 0, 0, -20 ),
 
 				},
 
