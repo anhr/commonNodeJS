@@ -39,6 +39,7 @@ class Intersections {
 	 * <pre>
 	 * @param {object} [settings] the following settings are available:
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
+	 * @param {THREE.WebGLRenderer} [settings.renderer] [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer}.
 	 * @param {function} [settings.onReady] Callback function that called if intersection lines is ready and that take as input an array of all intersect lines.
 	 * <pre>
 	 * <b>function( intersectionLines )</b>
@@ -52,7 +53,7 @@ class Intersections {
 	 */
 	constructor( object, intersectMeshList, settings = {} ) {
 
-		const THREE = three.THREE, options = three.options, scene = settings.scene || three.group;
+		const THREE = three.THREE, options = three.options || {}, scene = settings.scene || three.group;
 		if ( object instanceof THREE.Mesh === false ) object = object.mesh;
 		const positions =  object.geometry.attributes.position;
 
@@ -426,42 +427,48 @@ class Intersections {
 		const faces = [];
 
 		//Progress window
-		const elCanvas = options.renderer.domElement, elContainer = elCanvas.parentElement;
-		if ( elContainer.tagName !== "DIV" ) {
+		const renderer = options.renderer || settings.renderer;
+		var elProgress, cProgress;
+		if ( renderer ) {
 
-			console.error( 'Intersections: elContainer.tagName = ' + elContainer.tagName );
-			return;
+			const elCanvas = renderer.domElement, elContainer = elCanvas.parentElement;
+			if ( elContainer.tagName !== "DIV" ) {
 
-		}
-		const container = "container";
-		if ( !elContainer.classList.contains( container ) ) elContainer.classList.add( container );
-		const elProgress = document.createElement( 'div' ),
-			elTitle = document.createElement( 'div' ),
+				console.error( 'Intersections: elContainer.tagName = ' + elContainer.tagName );
+				return;
+
+			}
+			const container = "container";
+			if ( !elContainer.classList.contains( container ) ) elContainer.classList.add( container );
+			elProgress = document.createElement( 'div' );
 			cProgress = document.createElement( 'input' );
-		elProgress.style.position = 'absolute';
-		elProgress.style.top = 0;
-		elProgress.style.left = 0;
-		elProgress.style.backgroundColor = 'white';
-		elProgress.style.margin = '2px';
-		elProgress.style.padding = '2px';
-		const lang = { progressTitle: 'Intersections preparing.<br>Wait please...', };
-		switch ( options.getLanguageCode() ) {
+			const elTitle = document.createElement( 'div' );
+			elProgress.style.position = 'absolute';
+			elProgress.style.top = 0;
+			elProgress.style.left = 0;
+			elProgress.style.backgroundColor = 'white';
+			elProgress.style.margin = '2px';
+			elProgress.style.padding = '2px';
+			const lang = { progressTitle: 'Intersections preparing.<br>Wait please...', };
+			switch ( options.getLanguageCode() ) {
 
-			case 'ru'://Russian language
+				case 'ru'://Russian language
 
-				lang.progressTitle = 'Подготовка пересечений.<br>Пожалуйста подождите...';
+					lang.progressTitle = 'Подготовка пересечений.<br>Пожалуйста подождите...';
 
-				break;
+					break;
+
+			}
+			elTitle.innerHTML = lang.progressTitle;
+			elProgress.appendChild( elTitle );
+			cProgress.min = "0";
+			cProgress.max = object.geometry.index.count;
+			cProgress.type = "range";
+			cProgress.disabled = true;
+			elProgress.appendChild( cProgress );
+			elContainer.appendChild( elProgress );
 
 		}
-		elTitle.innerHTML = lang.progressTitle;
-		elProgress.appendChild( elTitle );
-		cProgress.min = "0";
-		cProgress.max = object.geometry.index.count;
-		cProgress.type = "range";
-		cProgress.disabled = true;
-		elProgress.appendChild( cProgress );
-		elContainer.appendChild( elProgress );
 
 		//Заполнить список граней
 		index = 0;
@@ -471,10 +478,12 @@ class Intersections {
 */
 		function step( timestamp ) {
 
-			cProgress.value = index;
+			if ( cProgress )
+				cProgress.value = index;
 			if ( index >= object.geometry.index.count ) {
 
-				elProgress.remove();
+				if ( elProgress )
+					elProgress.remove();
 				boCreateIntersections = true;
 				setTimeout( function () { createIntersections(); }, 0 );//Таймаут нужен что бы установился matrixWorld объектов из collidableMeshList.
 				return;
