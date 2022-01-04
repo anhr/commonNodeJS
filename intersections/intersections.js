@@ -392,7 +392,12 @@ class Intersections {
 					this.isCollision = function () { return collisionResultsOriginPoint.length > 0; }
 					this.isSame = function ( edge ) {
 
-						const boSame = ( ( this.vertex1.index === edge.vertex1.index ) && ( this.vertex2.index === edge.vertex2.index ) ) ||
+						//Если сделать const boSame
+						//то появится ошибка
+						//[!] (babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/Intersections/Intersections.js: "boSame" is read-only
+						//во время создания файлов myThree\build
+						//npm run build
+						var boSame = ( ( this.vertex1.index === edge.vertex1.index ) && ( this.vertex2.index === edge.vertex2.index ) ) ||
 							( ( this.vertex1.index === edge.vertex2.index ) && ( this.vertex2.index === edge.vertex1.index ) );
 						if ( boSame === undefined ) boSame = false;
 						return boSame;
