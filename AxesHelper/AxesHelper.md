@@ -109,7 +109,7 @@ An axis object to visualize the 1, 2 or 3 axes. I use <b>AxesHelper</b> in my [t
 </body>
 </html>
 ```
-NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
+NOTE. Please include <b>three.THREE = THREE;</b> line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
 The easiest way to use <b>AxesHelper</b> in your code is import <b>AxesHelper</b> from <b>AxesHelper.js</b> file in your JavaScript module.
 [Example](../Examples/index.html).

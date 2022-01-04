@@ -137,6 +137,17 @@ class Options {
 		}
 
 		/**
+		 * Rendering the scene
+		 * @see "Rendering the scene" paragraph of [Creating the scene]{@link https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene}
+		 * */
+		this.render = function () {
+
+			if ( this.intersections )
+				this.intersections.forEach( function ( intersection ) { intersection(); } );
+
+		}
+
+		/**
 		 * Create [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}
 		 * @param {THREE.PerspectiveCamera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}. Use the <b>camera</b> key if you want control cameras focus.
 		 * @param {THREE.WebGLRenderer} renderer [THREE.WebGLRenderer]{@link https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderer}.
@@ -147,18 +158,25 @@ class Options {
 			if ( options.orbitControls === false )
 				return;
 
-			//После появления класса class OrbitControls extends EventDispatcher пришлось динамически задгружать файл OrbitControls.js
-			//https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Statements/import#%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B9_%D0%B8%D0%BC%D0%BF%D0%BE%D1%80%D1%82_2
-			//Потому что EventDispatcher еще недоступен во время import { OrbitControls }
-/*
-			//Добавить async перед function в this.createOrbitControls
-			let module = await import( './OrbitControls/OrbitControls.js' );
-//			createEventDispatcher();
-			_this.orbitControls = new module.OrbitControls( camera, renderer.domElement );
+			_this.orbitControls = new three.OrbitControls( camera, renderer.domElement );
 			_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
 			_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 			_this.orbitControls.update();
-*/			
+
+			if ( _this.frustumPoints )
+				_this.orbitControls.addEventListener( 'change', function () { _this.frustumPoints.onChangeControls(); } );
+
+
+			//После появления класса class OrbitControls extends EventDispatcher пришлось динамически задгружать файл OrbitControls.js
+			//https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Statements/import#%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B9_%D0%B8%D0%BC%D0%BF%D0%BE%D1%80%D1%82_2
+			//Потому что EventDispatcher еще недоступен во время import { OrbitControls }
+			//
+			//В этом случае появляется ошибка
+			//[!] (babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/Options.js: 'import' and 'export' may only appear at the top level (173:3)
+			//во время создания файлов myThree\build
+			//npm run build
+			//Поэтому class OrbitControls создаю непосредственно в файле Options.js. Смотри выше.
+/*
 			import('./OrbitControls/OrbitControls.js')
 			  .then(module => {
 
@@ -176,6 +194,7 @@ class Options {
 			  .catch(err => {
 				console.error( err.message );
 			  });
+*/
 
 		}
 
@@ -1537,6 +1556,8 @@ class Options {
 
 		}
 
+		if ( !three.options ) three.options = this;
+
 	}
 
 } 
@@ -1624,7 +1645,7 @@ class Raycaster {
 				if ( cursor === undefined ) cursor = renderer.domElement.style.cursor;
 				renderer.domElement.style.cursor = 'pointer';
 
-			} else spriteTextIntersection.position.copy( intersection.point );
+			} else spriteTextIntersection.position.copy( intersection.pointSpriteText );//intersection.point );
 
 		}
 
@@ -1699,6 +1720,17 @@ class Raycaster {
 			}
 			getIntersects();
 			intersects.forEach( function ( intersection ) {
+
+				//Когда создаем SpriteText с информацией об объекте, на которую наведена мышка,
+				//иногда этот текст загораживается объектами, которые расположены ближе к камере
+				//Для решения проблемы текст надо перенести ближе к камере
+				const three = window.__myThree__.three;
+				intersection.pointSpriteText = new three.THREE.Vector3();
+				//Так и не понял почему в режиме стерео текст отображается в неправильном месте
+				if ( settings.options.stereoEffect.settings.spatialMultiplex === StereoEffect.spatialMultiplexsIndexs.Mono )
+					raycaster.ray.at( three.options.camera.near + (three.options.camera.far - three.options.camera.near)/1000, intersection.pointSpriteText );
+				//Поэтому оставляю как было раньше
+				else intersection.pointSpriteText = intersection.point;
 
 				var boDetected = false;
 				intersectedObjects.forEach( function ( intersectedObject ) {

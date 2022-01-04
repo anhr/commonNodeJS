@@ -97,7 +97,15 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 	//потому что в противном случае при добавлени этих точек в FrustumPoints.pushArrayCloud() координата w будет undefined
 	Player.assign();
 	
-	if ( typeof arrayFuncs === 'function' )
+	var geometry;
+	if ( arrayFuncs instanceof THREE.BufferGeometry ) {
+
+		geometry = arrayFuncs;
+		arrayFuncs = [];
+		for ( var i = 0; i < geometry.attributes.position.count; i++ )
+			arrayFuncs.push( new THREE.Vector3().fromBufferAttribute( geometry.attributes.position, i ) );
+
+	} else if ( typeof arrayFuncs === 'function' )
 		geometry = arrayFuncs();
 	else geometry = new THREE.BufferGeometry().setFromPoints
 		( Player.getPoints( arrayFuncs,

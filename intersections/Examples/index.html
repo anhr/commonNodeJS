@@ -1,0 +1,364 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>Intersects</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
+	<!--
+	<script src="../../myThree/build/myThree.js"></script>
+	<script src="../../myThree/build/myThree.min.js"></script>
+	<script src="../../../../../three.js/dev/build/three.js"></script>
+	<script src="../../../../../three.js/dev/build/three.min.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>
+	<script src="https://threejs.org/build/three.js"></script>
+	<script src="https://threejs.org/build/three.min.js"></script>
+	-->
+</head>
+<body>
+	<p>
+		<a href='https://github.com/anhr' target="_blank">About me</a>
+		<!--| <a href="https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane" target="_blank">Three JS - Find all points where a mesh intersects a plane</a>
+		| <a href="https://jsfiddle.net/prisoner849/8uxw667m/" target="_blank">Example</a>-->
+		| <a href="https://newbedev.com/how-to-detect-collision-in-three-js" target="_blank">How to detect collision in three.js?</a>
+	</p>
+	<h1>Intersects.</h1>
+	<!--
+	<div id="wait">
+		<img src="../../img/wait.gif">
+	</div>
+	-->
+	<div id="canvasContainer1">
+		<img src="../../img/wait.gif">
+	</div>
+	Intersection lines
+	<div id="intersectionLines">
+		<img src="../../img/wait.gif">
+	</div>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<script type="module">
+
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
+
+		//import MyThree from '../../myThree/myThree.js';
+		//import MyThree from '../../myThree/build/myThree.module.js';
+		//import MyThree from '../../myThree/build/myThree.module.min.js';
+		import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/myThree.js';
+		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/myThree.module.js';
+
+		//ERROR: Access to script at 'https://raw.githack.com/anhr/commonNodeJS/intersects/Intersections/Intersections.js'
+		//from origin 'http://localhost' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/intersects/myThree/myThree.js';
+
+//		import { getWorldPosition } from '../../getPosition.js';
+
+		import FibonacciSphereGeometry from '../../FibonacciSphere/FibonacciSphereGeometry.js'
+
+		if ( MyThree.default ) MyThree = MyThree.default;
+		MyThree.three.THREE = THREE;
+
+		const scales = {
+
+				display: false,
+				posAxesIntersection: new THREE.Vector3( 0, 0, -10 ),
+				/*
+				text: {
+
+					//textHeight: 0.03,
+					//fov: camera.fov,
+					precision: 4,
+
+				},
+				*/
+				x: {
+
+					//zoomMultiplier: 2,
+					//offset: 1,
+					//name: 'latitude(km.)',
+					min: -10,
+					max: 10,
+					//marks: 11,
+
+				},
+				y: {
+
+					min: -10,
+					max: 10,
+
+				},
+				z: {
+
+					min: -10,
+					max: 10,
+					//marks: 11,
+
+				},
+
+			},
+			cameraOptions = {
+
+				position: new THREE.Vector3( 30, 10, 50 ),
+				fov: 45,
+				near: 1,
+				far: 1000,
+
+			}
+		new MyThree( function ( scene, options ) {
+
+			const intersectMeshList = [];
+
+			//Thanks https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane
+			function plane( name = 'angle', planeGeom, color = 0xffffff ) {
+
+				//custom geometry
+				if ( !planeGeom ) {
+
+					const size = 20.0,
+						vertices = new Float32Array( [
+							size, size, 3,//0
+							-size, size, 3,//1
+							-size, -size, 0,//2
+							size, -size, 0,//3
+							size, size, -3.0,//4
+							-size, size, -3.0,//5
+						] );
+					planeGeom = new THREE.BufferGeometry(),
+					planeGeom.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+					planeGeom.setIndex( [
+						0, 1, 2,
+						0, 2, 3,
+						2, 3, 4,
+						2, 4, 5,
+					] );
+
+				}
+
+				//planeGeom.rotateX( -Math.PI / 2 );
+				const plane = new THREE.Mesh( planeGeom,
+
+					new THREE.MeshLambertMaterial( {
+
+						color: "lightgray",
+						opacity: 0.8,
+						transparent: true,
+						side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+
+					} )
+					/*
+					new THREE.MeshBasicMaterial( {
+
+						color: "blue",
+						wireframe: true,
+						side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+
+					} )
+					*/
+
+				);
+				//plane.rotation.x = Math.PI / 5;
+				//plane.rotation.y = 2.386;
+				//plane.position.z = 6;//for Triangle
+				//plane.position.z = -15;//for TorusGeometry
+				//plane.position.z = -6;//for BoxGeometry
+				scene.add( plane );
+				plane.name = name;
+				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( plane );
+				intersectMeshList.push( { mesh: plane, color: color } );
+				return plane;
+
+			}
+			//plane();//.position.y = -16;//.rotation.z = 0.761;
+			plane( 'plane', new THREE.PlaneGeometry( 30, 30 ), 'yellow' );//.rotation.y = Math.PI / 2;//.position.z = -5;
+			plane( 'Tetrahedron', new THREE.TetrahedronGeometry( 20, 0 ) );//, 'magenta' );
+
+			/*
+			//triangle
+			const objGeom = new THREE.BufferGeometry();
+			const vertices = new Float32Array( [
+
+				//10.0, 0, 10.0,
+				//10.0, 0, -10.0,
+				//-10.0, 0, 10.0,
+
+				0, -5.773502826690674, 8.164965999905352,
+				-4.082482831365281, 0, 9.128709156359584,
+				-8.164965999905352, -5.773502826690674, 0,
+				//0.0, 1, -10.0,
+				//10.0, 1, -10.0,
+				//0.0, 1, 10.0,
+
+				//-10.0, 1, 0.0,
+				//-10.0, 1, -10.0,
+				//10.0, 1, 0.0,
+
+				//5.773502826690674, 5.773502826690674, 5.773502826690674,
+				//3.568220853805542, 9.341723442077637, 0.0,
+				//5.773502826690674, 5.773502826690674, -5.773502826690674,
+
+				//начало или конец ребра пересекается с объектом
+				//0.0, 10.0, 0.0,
+				//0.0, 0.0, -10.0,
+				//0.0, 0.0, 10.0,
+
+				//грань в плоскости объекта. нет пересечений
+				//-10.0, 0.0, 0.0,
+				//0.0, 10.0, 0.0,
+				//10.0, 0.0, 0.0,
+
+				//ошибка - нет пересечений
+				//-10.0, 0.0, 0.0,
+				//0.0, 10.0, 10.0,
+				//10.0, 0.0, 0.0,
+
+				//-4.830455579402766, 0.0, 8.755952198100257,
+				//8.755952198100257, 10.000000000000002, 4.830455579402766,
+				//4.830455579402766, 0.0, -8.755952198100257,
+
+				//-4.605480987489556, -6.7421224146022904, -5.773502826690674,
+				//-1.7780230138774962, -9.84066212670253, 0.0,
+				//-4.605480987489556, -6.7421224146022904, 5.773502826690674,
+
+			] );
+			objGeom.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+			objGeom.index = new THREE.Uint16BufferAttribute( [2,1,0], 1 );
+			*/
+
+			//const objGeom = new THREE.DodecahedronGeometry( 10, 0 );
+			//const objGeom = new THREE.SphereGeometry( 15, 32, 16 );
+			const objGeom = new FibonacciSphereGeometry( 10, 320 );
+			//const objGeom = new THREE.TorusGeometry( 10, 3, 16, 100 );
+			//const objGeom = new THREE.TorusGeometry( 10, 3, 3, 3 );
+			//const objGeom = new THREE.TetrahedronGeometry( 10, 0 );
+			//const objGeom = new THREE.BoxGeometry( 10, 10, 10 );
+			const obj = new THREE.Mesh( objGeom, new THREE.MeshBasicMaterial( {
+
+				color: "green",
+				wireframe: true
+
+			} ) );
+			//obj.rotation.x = Math.PI / 2;
+			obj.rotation.y = Math.PI / 4;//0.813;
+			//obj.rotation.z = 0.186;
+			//obj.position.set( 9, 0, -12 );
+			//obj.position.set( 1, 0, 0 );
+			//obj.position.z = 8.85321100917431;//7.844036697247706;//10.36697247706422;
+			scene.add( obj );
+			obj.name = 'Geometry';
+			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( obj );
+
+			//Player
+
+			obj.userData.player = {
+
+				selectPlayScene: function ( t ) {
+
+					//obj.position.set( 0, 0, 10 - 30 * t );
+					
+					obj.position.set( 0, 0, 25 - 55 * t );
+					obj.updateMatrix();
+
+				},
+
+			}
+
+			const arrayIntersectLines = [];
+			new MyThree.Intersections( obj, intersectMeshList, {
+
+				onReady: function ( intersectionLines ) {
+
+					if ( !canvasIntersectionLines.scene ) return;
+					while ( arrayIntersectLines.length ) {
+
+						const line = arrayIntersectLines.pop();
+						canvasIntersectionLines.scene.remove( line );
+						if ( canvasIntersectionLines.options.guiSelectPoint )
+							canvasIntersectionLines.options.guiSelectPoint.removeMesh( line );
+
+					}
+					intersectionLines.forEach( function ( arrayIntersectLine ) {
+
+						const geometry = new THREE.BufferGeometry().setFromPoints( arrayIntersectLine.points );
+						const object = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: arrayIntersectLine.color } ) );
+						const index = arrayIntersectLines.push( object );
+						canvasIntersectionLines.scene.add( arrayIntersectLines[index -1 ] );
+						if ( canvasIntersectionLines.options.guiSelectPoint ) {
+
+							object.name = ( arrayIntersectLine.mesh.name === '' ? intersectionLines.length : arrayIntersectLine.mesh.name ) + '-'  + ( obj.name === '' ? 'intersection' : obj.name );
+							canvasIntersectionLines.options.guiSelectPoint.addMesh( object );
+							
+
+						}
+
+					} );
+
+				},
+
+			} );
+			
+			if ( intersectMeshList.length === 2 )
+				new MyThree.Intersections( intersectMeshList[1], { mesh: intersectMeshList[0].mesh, color: 'magenta' } );
+
+		}, {
+
+			elContainer: "canvasContainer1",
+			pointLight: {
+
+				pointLight1: {
+
+					//position: new THREE.Vector3( 100, 10, 2 ),
+					position: new THREE.Vector3( 0, 20, 20 ),
+
+				},
+				pointLight2: {
+
+					//position: new THREE.Vector3( -100, -2, -2 ),
+					position: new THREE.Vector3( 0, 0, -20 ),
+
+				},
+
+			},
+			//point: { size: 100 },
+
+			//axesHelper: false,
+			playerOptions: {
+
+				marks: 110,//Number of scenes of 3D objects animation.
+				interval: 25,//Ticks per seconds.
+
+			},
+			//player: false,
+			dat: {
+
+				//guiSelectPoint: false,
+
+			},
+			//dat: false,
+			camera: cameraOptions,
+			scales: scales,
+
+		} );
+		const canvasIntersectionLines = {};
+		new MyThree( function ( scene, options ) {
+
+			canvasIntersectionLines.scene = scene;
+			canvasIntersectionLines.options = options;
+
+		}, {
+
+				elContainer: "intersectionLines",
+				camera: cameraOptions,
+				scales: scales,
+				player: false,
+
+		} );
+
+	</script>
+</body>
+</html >

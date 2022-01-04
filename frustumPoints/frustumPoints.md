@@ -113,7 +113,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 </body>
 </html>
 ```
-NOTE. Please include `three.THREE = THREE;` line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
+NOTE. Please include <b>three.THREE = THREE;</b> line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
 
 <a name="CreateFrustumPoints"></a>
 ## Create FrustumPoints

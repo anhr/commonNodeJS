@@ -154,7 +154,11 @@ class MyThree {
 	 * @param {boolean} [options.axesHelper] false - do not add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
 	 * @param {boolean} [options.canvasMenu] false - do not create a <a href="../../canvasMenu/jsdoc/index.html" target="_blank">canvasMenu</a> instance.
 	 * @param {boolean} [options.stereoEffect] false - do not use <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
-	 * @param {boolean} [options.pointLight] false - do not use <a href="../../jsdoc/pointLight/index.html" target="_blank">pointLight</a>.
+	 * @param {boolean|Object} [options.pointLight] false - do not use <a href="../../jsdoc/pointLight/index.html" target="_blank">pointLight</a>.
+	 * @param {Object} [options.pointLight.pointLight1] First <b>pointLight</b> settings.
+	 * @param {THREE.Vector3} [options.pointLight.pointLight1.position] <b>pointLight</b> position.
+	 * @param {Object} [options.pointLight.pointLight2] Second <b>pointLight</b> settings.
+	 * @param {THREE.Vector3} [options.pointLight.pointLight2.position] <b>pointLight</b> position.
 	 * @param {object} [options.spriteText] spriteText options. See <a href="../../SpriteText/jsdoc/module-SpriteText.html" target="_blank">SpriteText</a> <b>options</b> parameter for details.
 	 *
 	 * @param {boolean} [options.player] false - do not create a <a href="../../player/jsdoc/index.html" target="_blank">Player</a> instance.
@@ -208,12 +212,7 @@ class MyThree {
 	 * @param {boolean} [options.canvas.fullScreen] default is full screen. false - no full screen
 	 * @param {number} [options.a=1] Can be use as 'a' parameter of the <b>Function</b>. See <b>options.a</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.execFunc.html" target="_blank">Player.execFunc</a>.
 	 * @param {number} [options.b=0] Can be use as 'b' parameter of the <b>Function</b>. See <b>options.b</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.execFunc.html" target="_blank">Player.execFunc</a>.
-	 * @param {object} [options.point] point settings. Applies to points with ShaderMaterial.
-	 * <pre>
-	 * See [ShaderMaterial]{@link https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial} for details.
-	 * The size of the point seems constant and does not depend on the distance to the camera.
-	 * </pre>
-	 * See <a href="../../jsdoc/Options/Options.html#setPoint" target="_blank">Options.setPoint(options)</a> for details.
+	 * @param {object} [options.point] point settings. See <a href="../../jsdoc/Options/global.html#point" target="_blank">Options.point</a> for details.
 	 * @param {object} [options.stats] Use JavaScript Performance Monitor. [stats]{@link https://github.com/mrdoob/stats.js/} .
 	 * @param {object} [options.scales] axes scales.
 	 * See <b>options.scales</b> of the <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a>.
@@ -491,13 +490,15 @@ class MyThree {
 			const pointLight1 = new pointLight( scene, {
 
 				options: options, 
-				position: new THREE.Vector3( 2 * options.scale, 2 * options.scale, 2 * options.scale ),
+				position: options.pointLight && options.pointLight.pointLight1 && options.pointLight.pointLight1.position ? options.pointLight.pointLight1.position :
+					new THREE.Vector3( 2 * options.scale, 2 * options.scale, 2 * options.scale ),
 
 			} );
 			const pointLight2 = new pointLight( scene, {
 
 				options: options, 
-				position: new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ),
+				position: options.pointLight && options.pointLight.pointLight2 && options.pointLight.pointLight2.position ? options.pointLight.pointLight2.position :
+					new THREE.Vector3( -2 * options.scale, -2 * options.scale, -2 * options.scale ),
 
 			} );
 
@@ -732,6 +733,8 @@ class MyThree {
 
 			const pointName = options.dat ? options.dat.getCookieName('Point') : 'Point';
 			if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
+//			three.options = options;//See Options constructor
+			three.group = group;
 
 			if ( createXDobjects ) createXDobjects( group, options );
 
@@ -775,7 +778,7 @@ class MyThree {
 
 				// light
 
-				const scales = options.axesHelper === false ? options.scales : options.axesHelper.options.scales;
+//				const scales = options.axesHelper === false ? options.scales : options.axesHelper.options.scales;
 				pointLight1.controls( { group: group, folder: fOptions, folderName: lang.light + ' 1' } );
 				pointLight2.controls( { group: group, folder: fOptions, folderName: lang.light + ' 2' } );
 
@@ -943,8 +946,12 @@ class MyThree {
 				} );
 
 			}
+			options.render();
+/*
+			if ( options.intersections ) options.intersections();
 			if ( options.guiSelectPoint && options.guiSelectPoint.render )
 				options.guiSelectPoint.render();
+*/
 
 		}
 
@@ -1061,5 +1068,12 @@ window.__myThree__ = window.__myThree__ || {};
 if ( window.__myThree__.boMyThree )
 	console.error( 'myThree: duplicate myThree. Please use one instance of the myThree class.' )
 window.__myThree__.boMyThree = true;
+
+import Intersections from '../Intersections/Intersections.js'
+/** @namespace
+ * @description Creates an intersection line for graphic objects.
+ * @see <a href="../../intersections/jsdoc/index.html" target="_blank">Intersections</a>.
+ */
+MyThree.Intersections = Intersections;
 
 export default MyThree;
