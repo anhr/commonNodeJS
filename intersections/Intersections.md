@@ -145,10 +145,14 @@ Now you can see, dodecahedron is intersects with plane.
 new Intersections( obj, plane, { scene: scene } );
 ```
 
-Also you can use <b>new MyThree.Intersections</b> instead of <b>new Intersections</b>. Include
+Also you can use <b>new MyThree.Intersections</b> instead of <b>new Intersections</b>. Import <b>MyThree</b> for it.
 ```
+import MyThree from './commonNodeJS/master/myThree/myThree.js';
+//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.js';
+//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.min.js';
 ```
 
+<a name="WebPage"></a>
 ## Example of your web page.
 The following code is the result of this tutorial.
 ```
@@ -156,7 +160,7 @@ The following code is the result of this tutorial.
 
 <html>
 <head>
-	<title>AxesHelper</title>
+	<title>Intersections</title>
 
 	<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">
 	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
@@ -175,7 +179,7 @@ The following code is the result of this tutorial.
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
 		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
-		- <a href="https://github.com/anhr/commonNodeJS/tree/master/AxesHelper" target="_blank" rel="noopener">AxesHelper</a>.
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/intersections" target="_blank" rel="noopener">Intersections</a>.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
 	<div>
@@ -192,14 +196,11 @@ The following code is the result of this tutorial.
 		three.THREE = THREE;
 
 		import Options from './commonNodeJS/master/Options.js'
-		import AxesHelper from './commonNodeJS/master/AxesHelper/AxesHelper.js';
-		import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
-		import Player from './commonNodeJS/master/player/player.js';
-		import { dat } from './commonNodeJS/master/dat/dat.module.js';
-		three.dat = dat;
-		import AxesHelperGui from './commonNodeJS/master/AxesHelper/AxesHelperGui.js';
-		import GuiSelectPoint from './commonNodeJS/master/guiSelectPoint/guiSelectPoint.js';
-		import MoveGroupGui from './commonNodeJS/master/MoveGroupGui.js';
+		import Intersections from './commonNodeJS/master/Intersections/Intersections.js'
+
+		//import MyThree from './commonNodeJS/master/myThree/myThree.js';
+		//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.js';
+		//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.min.js';
 
 		var camera, scene, renderer;
 
@@ -213,85 +214,32 @@ The following code is the result of this tutorial.
 
 			scene = new THREE.Scene();
 
-			const groupMove = new THREE.Group();
-			scene.add( groupMove );
+			const planeGeom = new THREE.PlaneGeometry( 2, 2 );
+			const plane = new THREE.Mesh( planeGeom,
+				new THREE.MeshBasicMaterial( {
 
-			const arrayFuncs = [
-				new THREE.Vector3( 0.5, 0.5 ,0.5 ),//First point
-				{
+					color: "lightgray",
+					opacity: 0.75,
+					transparent: true,
+					side: THREE.DoubleSide
 
-					vector: new THREE.Vector3( -0.5, -0.5 ,-0.5 ),
-					//cameraTarget: { camera: camera, },
+				} )
+			);
+			scene.add( plane );
 
-				}//Second point
-			]
-			const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
-					Player.getPoints( arrayFuncs, { group: scene, } ),
-					Player.getItemSize( arrayFuncs ) ),
-				new THREE.PointsMaterial( {
+			const objGeom = new THREE.DodecahedronGeometry( 1, 0 );
+			const obj = new THREE.Mesh( objGeom, new THREE.MeshBasicMaterial( {
 
-					color: 0xffffff,
-					size: 5,//0.05,
-					sizeAttenuation: false,
-					alphaTest: 0.5,
+				color: "green",
+				wireframe: true
 
-				} ) );
-			//scene.add( points );
-			groupMove.add( points );
-			points.userData.raycaster = {
+			} ) );
+			scene.add( obj );
 
-				onMouseDown: function ( intersection ) {
+			new Intersections( obj, plane, { scene: scene } );
+			//new MyThree.Intersections( obj, plane, { scene: scene } );
 
-					alert( 'You have clicked over point.' );
-					Options.raycaster.onMouseDown( intersection, options );
-
-				}
-
-			}
-
-			const options = new Options( {
-
-				scales: {
-
-					text: {
-
-						//Please specify the textHeight if you want the changing of the text height is available in gui.
-						//Default textHeight is 0.04
-						textHeight: 0.04,
-
-						//fov: camera.fov,
-
-						//Precision of the scale marks is 3 digit.
-						//Please specify the precision if you want the changing of the precision is available in gui.
-						//Default precision is 4.
-						precision: 3,
-
-					},
-					x: {
-
-						name: 'time',
-						marks: 5
-
-					},
-					y: {
-
-						min: 0,
-
-					},
-					z: {}
-
-				}
-
-			} );
-
-			new MoveGroupGui( groupMove, options );
-
-			new GuiSelectPoint( options );
-			options.guiSelectPoint.add();
-			options.guiSelectPoint.addMesh( points );
-
-			new AxesHelper( scene, options );
-			AxesHelperGui( options );
+			const options = new Options();
 
 			renderer = new THREE.WebGLRenderer( {
 
@@ -299,26 +247,9 @@ The following code is the result of this tutorial.
 				canvas: document.getElementById( 'canvas' ),
 
 			} );
-
-			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene } );
-			options.eventListeners.addParticle( points );
-
-			MyPoints( [
-				[],//first point. Zero position. White color.
-				{
-
-					vector: new THREE.Vector3( -0.5, 0.5, 0.5 ),
-					cameraTarget: { camera: camera, },
-
-				}//second point. White color.
-			], groupMove, { options: options } );
+			renderer.setSize( window.innerWidth, window.innerHeight );
 
 			options.createOrbitControls( camera, renderer, scene );
-
-			points.userData.player = { arrayFuncs: arrayFuncs, }
-			Player.selectPlayScene( scene, { options: options } );
-
-			renderer.setSize( window.innerWidth, window.innerHeight );
 
 			window.addEventListener( 'resize', onWindowResize, false );
 
@@ -344,5 +275,3 @@ The following code is the result of this tutorial.
 </body>
 </html>
 ```
-
-Enjoy my code :)
