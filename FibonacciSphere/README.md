@@ -1,6 +1,6 @@
 # FibonacciSphereGeometry.
 
-A class for generating sphere geometries by the [Fibonacci]{@link https://en.wikipedia.org/wiki/Fibonacci_number} algorithm.
+A class for generating sphere geometries by the [Fibonacci](https://en.wikipedia.org/wiki/Fibonacci_number) algorithm.
 
 Uses in my projects:
  * [Intersections](../intersections)
