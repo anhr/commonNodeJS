@@ -1069,7 +1069,7 @@ if ( window.__myThree__.boMyThree )
 	console.error( 'myThree: duplicate myThree. Please use one instance of the myThree class.' )
 window.__myThree__.boMyThree = true;
 
-import Intersections from '../Intersections/Intersections.js'
+import Intersections from '../intersections/intersections.js'
 /** @namespace
  * @description Creates an intersection line for graphic objects.
  * @see <a href="../../intersections/jsdoc/index.html" target="_blank">Intersections</a>.
