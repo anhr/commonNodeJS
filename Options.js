@@ -158,18 +158,25 @@ class Options {
 			if ( options.orbitControls === false )
 				return;
 
-			//После появления класса class OrbitControls extends EventDispatcher пришлось динамически задгружать файл OrbitControls.js
-			//https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Statements/import#%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B9_%D0%B8%D0%BC%D0%BF%D0%BE%D1%80%D1%82_2
-			//Потому что EventDispatcher еще недоступен во время import { OrbitControls }
-/*
-			//Добавить async перед function в this.createOrbitControls
-			let module = await import( './OrbitControls/OrbitControls.js' );
-//			createEventDispatcher();
-			_this.orbitControls = new module.OrbitControls( camera, renderer.domElement );
+			_this.orbitControls = new three.OrbitControls( camera, renderer.domElement );
 			_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
 			_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 			_this.orbitControls.update();
-*/			
+
+			if ( _this.frustumPoints )
+				_this.orbitControls.addEventListener( 'change', function () { _this.frustumPoints.onChangeControls(); } );
+
+
+			//После появления класса class OrbitControls extends EventDispatcher пришлось динамически задгружать файл OrbitControls.js
+			//https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Statements/import#%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B9_%D0%B8%D0%BC%D0%BF%D0%BE%D1%80%D1%82_2
+			//Потому что EventDispatcher еще недоступен во время import { OrbitControls }
+			//
+			//В этом случае появляется ошибка
+			//[!] (babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/Options.js: 'import' and 'export' may only appear at the top level (173:3)
+			//во время создания файлов myThree\build
+			//npm run build
+			//Поэтому class OrbitControls создаю непосредственно в файле Options.js. Смотри выше.
+/*
 			import('./OrbitControls/OrbitControls.js')
 			  .then(module => {
 
@@ -187,6 +194,7 @@ class Options {
 			  .catch(err => {
 				console.error( err.message );
 			  });
+*/
 
 		}
 
