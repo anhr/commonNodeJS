@@ -136,16 +136,21 @@ class Options {
 
 		}
 
-		/**
+		/* *
 		 * Rendering the scene
 		 * @see "Rendering the scene" paragraph of [Creating the scene]{@link https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene}
 		 * */
+/*
 		this.render = function () {
 
-			if ( this.intersections )
+			if ( this.intersections ) {
+
 				this.intersections.forEach( function ( intersection ) { intersection(); } );
 
+			}
+
 		}
+*/
 
 		/**
 		 * Create [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}

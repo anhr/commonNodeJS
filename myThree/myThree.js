@@ -946,12 +946,7 @@ class MyThree {
 				} );
 
 			}
-			options.render();
-/*
-			if ( options.intersections ) options.intersections();
-			if ( options.guiSelectPoint && options.guiSelectPoint.render )
-				options.guiSelectPoint.render();
-*/
+//			options.render();
 
 		}
 

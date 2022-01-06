@@ -17,11 +17,9 @@
 */
 
 import three from '../three.js'
-//import { SpriteText } from '../SpriteText/SpriteText.js'
-//import { getWorldPosition } from '../getPosition.js';
 
-//медленно работает
-//import clearThree from '../clearThree.js';
+//debug
+//import { SpriteText } from '../SpriteText/SpriteText.js'
 
 class Intersections {
 
@@ -98,7 +96,6 @@ class Intersections {
 
 		//debug
 		var currentdate = new Date();
-//console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' ищщем точки, которые совпадают' )
 
 		//ищщем точки, которые совпадают или почти совпадают с небольшой погрешностью
 		//что бы у них был одинаковый индекс
@@ -218,7 +215,11 @@ class Intersections {
 
 							},
 							//debug
-							set update( a ) { if ( typeof SpriteText !== "undefined" ) spriteText = a; },
+							set update( a ) {
+
+								//if ( typeof SpriteText !== "undefined" ) spriteText = a;
+
+							},
 
 						}
 
@@ -1040,7 +1041,8 @@ class Intersections {
 */
 
 		}
-		window.requestAnimationFrame( step );
+		setTimeout( function () { step(); }, 0 );//это работает побыстрей
+//		window.requestAnimationFrame( step );
 		//console.log( 'faces' )
 
 		function equals( point1, point2 ) {
@@ -1309,6 +1311,33 @@ class Intersections {
 			object.userData.scale = object.scale.clone();
 
 		} );
+		function movingObjects() {
+
+			for ( var i = 0; i < arrayMovingObjects.length; i++ ) {
+
+				const object = arrayMovingObjects[i];
+				if (
+					!object.userData.position.equals( object.position ) ||
+					!object.userData.rotation.equals( object.rotation ) ||
+					!object.userData.scale.equals( object.scale )
+				) {
+
+					object.userData.position = object.position.clone();
+					object.userData.rotation = object.rotation.clone();
+					object.userData.scale = object.scale.clone();
+
+					createIntersections();
+
+					break;
+
+				}
+
+			}
+			window.requestAnimationFrame( movingObjects );
+
+		}
+		window.requestAnimationFrame( movingObjects );
+/*
 		if ( !options.intersections ) options.intersections = [];
 		options.intersections.push( function () {
 
@@ -1338,6 +1367,7 @@ class Intersections {
 			}
 
 		} );
+*/
 
 	}
 
