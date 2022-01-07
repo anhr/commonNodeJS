@@ -72,19 +72,7 @@ class Intersections {
 			}
 
 		} );
-		/*
-		//debug
-		if ( typeof SpriteText !== "undefined" ) {
 
-			collidableMeshList.forEach( function ( mesh ) {
-
-				for ( var i = 0; i < mesh.geometry.attributes.position.count; i++ )
-					mesh.add( new SpriteText( i, new THREE.Vector3().fromBufferAttribute( mesh.geometry.attributes.position, i ) ) );
-
-			} );
-
-		}
-		*/
 		//У некоторых геометрических фигур нет object.geometry.index. Например THREE.TetrahedronGeometry
 		if ( !object.geometry.index ) {
 
@@ -95,7 +83,7 @@ class Intersections {
 		}
 
 		//debug
-		var currentdate = new Date();
+		//var currentdate = new Date();
 
 		//ищщем точки, которые совпадают или почти совпадают с небольшой погрешностью
 		//что бы у них был одинаковый индекс
@@ -163,7 +151,6 @@ class Intersections {
 			arrayIntersectFaces = [];
 
 		const edges = [];//список ребер
-//			edges2 = [];//список ребер, кторый сспользуется при содании faces. Этот списоу уменьшается по мере создания faces. Это позволяетс сократить время создания faces
 		//Заполнить список ребер
 		for ( var index = 0; index < object.geometry.index.count; index += 3 ) {
 
@@ -189,7 +176,6 @@ class Intersections {
 								if ( i === undefined )
 									console.error( 'Intersections.createIntersections.Edge.Vertex: i = ' + i );
 								return i;
-								//									return index;
 
 							},
 							get pointLocal() {
@@ -201,7 +187,6 @@ class Intersections {
 							get point() {
 
 								const point = this.pointLocal.applyMatrix4( object.matrix );
-//								const point = getWorldPosition( object, this.pointLocal );
 
 								//debug
 								if ( typeof SpriteText !== "undefined" && !spriteText ) {
@@ -214,23 +199,15 @@ class Intersections {
 								return point;
 
 							},
-/*
-							//debug
-							set update( a ) {
-
-								if ( typeof SpriteText !== "undefined" ) spriteText = a;
-
-							},
-*/
 
 						}
 
 					};
 					var vertex1, vertex2, collisionResultsOriginPoint, intersectionObject;
 
-						//индексы точек пересечения, положение которых совпадает с положением точек пересечения на соседних ребрах грани.
-						//Эти точи пересечения надо игнорировать, что бы количество точек пересечения на грани было четным.
-						//Подробности в Face.intersections
+					//индексы точек пересечения, положение которых совпадает с положением точек пересечения на соседних ребрах грани.
+					//Эти точи пересечения надо игнорировать, что бы количество точек пересечения на грани было четным.
+					//Подробности в Face.intersections
 					const arraySpliceIntersection = [],
 						array = [];//только точки пересечения, которые нужно учитывать
 
@@ -240,9 +217,6 @@ class Intersections {
 						array.length = 0;
 
 					}
-
-					//debug
-					if ( typeof SpriteText !== "undefined" ) { var groupSpriteText; }
 
 					Object.defineProperties( this, {
 
@@ -323,21 +297,6 @@ class Intersections {
 									res = array;
 
 								} else res = collisionResultsOriginPoint;
-								/*
-								//debug
-								if ( typeof SpriteText !== "undefined" ) {
-
-									if ( !groupSpriteText ) {
-
-										groupSpriteText = new THREE.Group();
-										object.parent.add( groupSpriteText );
-
-									}
-									groupSpriteText.children.forEach( function ( item ) { groupSpriteText.remove( item ); } );
-									res.forEach( function ( intersection, index ) { groupSpriteText.add( new SpriteText( 'i' + index, intersection.point ) ); } );
-
-								}
-								*/
 								return res;
 
 							},
@@ -708,9 +667,6 @@ class Intersections {
 
 					}
 
-					//debug
-					if ( typeof SpriteText !== "undefined" ) { var groupSpriteText; }
-
 					this.nextIntersectPoint = function ( point ) {
 
 						for ( var i = 0; i < arrayIntersectLines.length; i++ ) {
@@ -745,21 +701,6 @@ class Intersections {
 					//console.log( this.name + ' intersections: edge1 ' + faceEdges.edge1.intersection.length + ' edge2 ' + faceEdges.edge2.intersection.length + ' edge3 ' + faceEdges.edge3.intersection.length )
 					//если эта грань имеет пересечения с объектом, то строим линии пересечения грани с объектом
 					this.intersections = function () {
-						/*
-						//debug
-						if ( typeof SpriteText !== "undefined" ) {
-
-							object.add( new SpriteText( 'e1v1 ' + faceEdges.edge1.vertex1.index, faceEdges.edge1.vertex1.pointLocal ) );
-							object.add( new SpriteText( 'e1v2 ' + faceEdges.edge1.vertex2.index, faceEdges.edge1.vertex2.pointLocal ) );
-
-							object.add( new SpriteText( 'e2v1 ' + faceEdges.edge2.vertex1.index, faceEdges.edge2.vertex1.pointLocal, { center: { x: 0, y: 0, } } ) );
-							object.add( new SpriteText( 'e2v2 ' + faceEdges.edge2.vertex2.index, faceEdges.edge2.vertex2.pointLocal, { center: { x: 0, y: 0, } } ) );
-
-							object.add( new SpriteText( 'e3v1 ' + faceEdges.edge3.vertex1.index, faceEdges.edge3.vertex1.pointLocal, { center: { x: 1, y: 0, } } ) );
-							object.add( new SpriteText( 'e3v2 ' + faceEdges.edge3.vertex2.index, faceEdges.edge3.vertex2.pointLocal, { center: { x: 1, y: 0, } } ) );
-
-						}
-						*/
 //if ( vectorIndex.equals( new THREE.Vector3( 18, 10, 9 ) ) )
 //	console.log( vectorIndex );
 
@@ -804,12 +745,7 @@ class Intersections {
 							}
 
 							function isOdd( num ) { return num % 2; }
-							function isOddOrZero( num ) {
-
-//								return num === 0 ? true : isOdd( num );
-								return isOdd( num );
-
-							}
+							function isOddOrZero( num ) { return isOdd( num ); }
 
 							function arrayIntersectionsPushEdge( vertexIndex, edge ) {
 
@@ -819,14 +755,12 @@ class Intersections {
 
 										for ( var i = 0; i < edge.intersection.length; i++ )
 											arrayPushEdge( edge, i );
-//											arrayIntersectionsPush( edge.intersection[i], arrayIntersections );
 										break;
 
 									case edge.vertex2.index:
 
 										for ( var i = edge.intersection.length - 1; i >= 0; i-- )
 											arrayPushEdge( edge, i );
-//											arrayIntersectionsPush( edge.intersection[i], arrayIntersections );
 										break;
 
 									default: console.error( 'Face.intersections: arrayIntersections push failed!' );
@@ -855,7 +789,6 @@ class Intersections {
 							var lastEdge;//ребро, которое имеет общую точку с faceEdges.edge1.vertex1
 							for ( var i = 0; i < faceEdges.edge1.intersection.length; i++ )
 								arrayPushEdge( faceEdges.edge1, i );
-//								arrayIntersectionsPush( faceEdges.edge1.intersection[i], arrayIntersections );
 							switch ( faceEdges.edge1.vertex2.index ) {
 
 								case faceEdges.edge2.vertex1.index:
@@ -864,7 +797,6 @@ class Intersections {
 									//первая точка пересечения в faceEdges.edge2.intersection находтся ближе к faceEdges.edge1.vertex2
 									for ( var i = 0; i < faceEdges.edge2.intersection.length; i++ )
 										arrayPushEdge( faceEdges.edge2, i );
-//										arrayIntersectionsPush( faceEdges.edge2.intersection[i], arrayIntersections );
 									arrayIntersectionsPushEdge3( faceEdges.edge2.vertex2.index );
 									break;
 
@@ -874,7 +806,6 @@ class Intersections {
 									//первая точка пересечения в faceEdges.edge2.intersection находтся дальше от faceEdges.edge1.vertex2
 									for ( var i = faceEdges.edge2.intersection.length - 1; i >= 0; i-- )
 										arrayPushEdge( faceEdges.edge2, i );
-//										arrayIntersectionsPush( faceEdges.edge2.intersection[i], arrayIntersections );
 									arrayIntersectionsPushEdge3( faceEdges.edge2.vertex1.index );
 									break;
 
@@ -884,7 +815,6 @@ class Intersections {
 									//первая точка пересечения в faceEdges.edge3.intersection находтся ближе к faceEdges.edge1.vertex2
 									for ( var i = 0; i < faceEdges.edge3.intersection.length; i++ )
 										arrayPushEdge( faceEdges.edge3, i );
-//										arrayIntersectionsPush( faceEdges.edge3.intersection[i], arrayIntersections );
 									arrayIntersectionsPushEdge2( faceEdges.edge3.vertex2.index );
 									break;
 
@@ -894,29 +824,12 @@ class Intersections {
 									//первая точка пересечения в faceEdges.edge3.intersection находтся дальше от faceEdges.edge1.vertex2
 									for ( var i = faceEdges.edge3.intersection.length - 1; i >= 0; i-- )
 										arrayPushEdge( faceEdges.edge3, i );
-//										arrayIntersectionsPush( faceEdges.edge3.intersection[i], arrayIntersections );
 									arrayIntersectionsPushEdge2( faceEdges.edge3.vertex1.index );
 									break;
 
 								default: console.error( 'Face.intersections: arrayIntersections push failed!' );
 
 							}
-							/*
-							//debug
-							if ( typeof SpriteText !== "undefined" ) {
-
-								if ( !groupSpriteText ) {
-
-									groupSpriteText = new THREE.Group();
-									object.parent.add( groupSpriteText );
-
-								}
-								for ( var i = groupSpriteText.children.length - 1; i >= 0; i-- )
-									groupSpriteText.remove( groupSpriteText.children[i] );
-								arrayIntersections.forEach( function ( intersection, index ) { groupSpriteText.add( new SpriteText( index, intersection.point, { center: { x: 0, y: 0, } } ) ); } );
-
-							}
-							*/
 							const intersectionCount = arrayIntersections.length;
 							if ( isOdd( intersectionCount ) ) {
 
@@ -925,23 +838,6 @@ class Intersections {
 
 							}
 							function addIntersectLine( point1, point2 ) { arrayIntersectLines.push( { point1: point1, point2: point2 } ); }
-/*
-							function createIntersectLineSegment( points ) {
-
-								const arrayIntersectLoop = [];//список точек, которые образуют линию пересечения объектов
-								arrayIntersectLoops.push( arrayIntersectLoop );
-								arrayIntersectLoop.intersectLine = new THREE.Line( new THREE.BufferGeometry().setFromPoints( points ),
-									new THREE.LineBasicMaterial( { color: 0xffffff } ) );
-								scene.add( arrayIntersectLoop.intersectLine );
-								if ( options.guiSelectPoint ) {
-
-									arrayIntersectLoop.intersectLine.name = 'line segment ' + arrayIntersectLoops.length;
-									options.guiSelectPoint.addMesh( arrayIntersectLoop.intersectLine );
-
-								}
-
-							}
-*/
 
 							//Найти в списке граней, имеющих линии пересечения список граней для текущего объекта пересечения faceEdges.intersectionObject
 							let arrayMesh;
@@ -967,7 +863,6 @@ class Intersections {
 
 							if ( intersectionCount === 2 )
 								addIntersectLine( arrayIntersections[0], arrayIntersections[1] );
-//								createIntersectLineSegment( [arrayIntersections[0].point, arrayIntersections[1].point] );
 							else if ( !isOddOrZero( faceEdges.edge1.intersection.length ) || !isOddOrZero( lastEdge.intersection.length ) ) {
 
 								//faceEdges.edge1.vertex1 нахоится снаружи объекта.
@@ -1010,7 +905,6 @@ class Intersections {
 									//console.log( faceEdges.intersectionObject.name + ' faceEdges.edge1.vertex1 нахоится снаружи объекта.' );
 									for ( var i = 0; i < intersectionCount / 2; i++ )
 										addIntersectLine( arrayIntersections[i], arrayIntersections[intersectionCount - 1 - i] );
-									//									createIntersectLineSegment( [arrayIntersections[i].point, arrayIntersections[intersectionCount - 1 - i].point] );
 
 								}
 
@@ -1021,7 +915,6 @@ class Intersections {
 								//console.log( faceEdges.intersectionObject.name + ' faceEdges.edge1.vertex1 нахоится внутри объекта.' );
 								for ( var i = 0; i < intersectionCount; i += 2 )
 									addIntersectLine( arrayIntersections[i], arrayIntersections[i + 1] );
-//									createIntersectLineSegment( [arrayIntersections[i].point, arrayIntersections[i + 1].point] );
 
 							}
 
@@ -1036,22 +929,10 @@ class Intersections {
 			faces.push( new Face( index, faces.length ) );
 
 			index += 3;
-			setTimeout( function () { step(); }, 0 );//это работает побыстрей
-/*
-			skipCur += 3;
-			if ( skipCur < skip )
-				setTimeout( function () { step(); }, 0 );//это работает побыстрей
-			else {
-
-				skipCur = 0;
-				window.requestAnimationFrame( step );
-
-			}
-*/
+			setTimeout( function () { step(); }, 0 );
 
 		}
-		setTimeout( function () { step(); }, 0 );//это работает побыстрей
-//		window.requestAnimationFrame( step );
+		setTimeout( function () { step(); }, 0 );
 		//console.log( 'faces' )
 
 		function equals( point1, point2 ) {
@@ -1064,9 +945,6 @@ class Intersections {
 		function createIntersections() {
 
 			if ( !boCreateIntersections ) return;
-
-			//Во время отладки у объекта могут быть дочение SpriteText с индксами вершин
-//			while ( object.children.length > 0 ) { object.remove( object.children[0] ); };
 
 			arrayIntersectFaces.length = 0;
 
@@ -1095,7 +973,6 @@ class Intersections {
 				if ( arrayIntersectLine.intersectLine ) {
 
 					removeObject3D( arrayIntersectLine.intersectLine );
-//					clearThree( arrayIntersectLine.intersectLine );
 					if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( arrayIntersectLine.intersectLine );
 					arrayIntersectLine.intersectLine = null;
 
@@ -1103,7 +980,6 @@ class Intersections {
 				if ( arrayIntersectLine.intersectPoints ) {
 
 					removeObject3D( arrayIntersectLine.intersectPoints );
-//					clearThree( arrayIntersectLine.intersectPoints );
 					if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( arrayIntersectLine.intersectPoints );
 					arrayIntersectLine.intersectPoints = null;
 
@@ -1121,11 +997,7 @@ class Intersections {
 			} );
 
 			//Строим линии пересечения с гранью
-			faces.forEach( function ( face ) {
-
-				face.intersections();
-
-			} );
+			faces.forEach( function ( face ) { face.intersections(); } );
 
 			//строим линию пересечения с объектом
 			arrayIntersectFaces.forEach( function ( meshLines ) {
@@ -1227,7 +1099,6 @@ class Intersections {
 									//Может быть линию персечения нужно достроить с другого конца первой точки?
 									pointEnd = line.point1;
 									const face1IntersectLines = pointEnd.faces.face1.intersectLines(),
-//										face2IntersectLines = line.point1.faces.face2.intersectLines(),
 										face = face1IntersectLines.length ? pointEnd.faces.face1 : pointEnd.faces.face2,
 										intersectLines = face.intersectLines();
 									for ( var iIntersectLines = 0; iIntersectLines < intersectLines.length; iIntersectLines++ ) {
@@ -1346,37 +1217,6 @@ class Intersections {
 
 		}
 		window.requestAnimationFrame( movingObjects );
-/*
-		if ( !options.intersections ) options.intersections = [];
-		options.intersections.push( function () {
-
-			for ( var i = 0; i < arrayMovingObjects.length; i++ ) {
-
-				const object = arrayMovingObjects[i];
-				if (
-					!object.userData.position.equals( object.position ) ||
-					!object.userData.rotation.equals( object.rotation ) ||
-					!object.userData.scale.equals( object.scale )
-				) {
-
-					setTimeout( function () {
-
-						object.userData.position = object.position.clone();
-						object.userData.rotation = object.rotation.clone();
-						object.userData.scale = object.scale.clone();
-
-						createIntersections();
-
-					}, 0 );
-
-					return;
-
-				}
-
-			}
-
-		} );
-*/
 
 	}
 

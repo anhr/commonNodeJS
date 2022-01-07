@@ -946,7 +946,6 @@ class MyThree {
 				} );
 
 			}
-//			options.render();
 
 		}
 
