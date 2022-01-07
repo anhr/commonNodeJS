@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @module Intersections
  * @description Creates an intersection lines for graphic objects.
  * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
@@ -214,12 +214,14 @@ class Intersections {
 								return point;
 
 							},
+/*
 							//debug
 							set update( a ) {
 
-								//if ( typeof SpriteText !== "undefined" ) spriteText = a;
+								if ( typeof SpriteText !== "undefined" ) spriteText = a;
 
 							},
+*/
 
 						}
 
@@ -257,6 +259,13 @@ class Intersections {
 									//console.log( ' origin: ' + this.vertex1.point.x + ', ' + this.vertex1.point.y + ', ' + this.vertex1.point.z +
 									//	' vertex2: ' + this.vertex2.point.x + ', ' + this.vertex2.point.y + ', ' + this.vertex2.point.z )
 //										' direction: ' + direction.x + ', ' + direction.y + ', ' + direction.z )
+
+									//debug
+									//Если это не делать, то получу ошибку
+									//three.module.js:28094 THREE.Sprite: "Raycaster.camera" needs to be set in order to raycast against sprites.
+									//когда new Intersections вызывается несколько раз с разными object
+									//и когда SpriteText используется для указания индекса вершины
+									if ( typeof SpriteText !== "undefined" ) rayOriginPoint.camera = options.camera;
 
 									//array - список точек пересечения, возвращенный THREE.Raycaster.intersectObjects
 									//collisionResultsOriginPoint.length === 0 пересечений не обнаружено
@@ -1057,7 +1066,7 @@ class Intersections {
 			if ( !boCreateIntersections ) return;
 
 			//Во время отладки у объекта могут быть дочение SpriteText с индксами вершин
-			while ( object.children.length > 0 ) { object.remove( object.children[0] ); };
+//			while ( object.children.length > 0 ) { object.remove( object.children[0] ); };
 
 			arrayIntersectFaces.length = 0;
 
