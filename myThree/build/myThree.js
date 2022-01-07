@@ -9200,11 +9200,6 @@ function Options(options) {
 						if (options.palette) return;
 						options.palette = new ColorPicker$1.palette();
 			};
-			this.render = function () {
-						if (this.intersections) this.intersections.forEach(function (intersection) {
-									intersection();
-						});
-			};
 			this.createOrbitControls = function (camera, renderer, scene) {
 						if (options.orbitControls === false) return;
 						_this.orbitControls = new three$1.OrbitControls(camera, renderer.domElement);
@@ -15804,21 +15799,21 @@ function pointLight(scene) {
 };
 
 /**
-* @module Intersections
-* @description Creates an intersection lines for graphic objects.
-* @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
-*
-* @copyright 2011 Data Arts Team, Google Creative Lab
-*
-* @license under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* @see [How to detect collision in three.js?]{@link https://newbedev.com/how-to-detect-collision-in-three-js}
-* @see [Collision detection example]{@link http://stemkoski.github.io/Three.js/Collision-Detection.html}
-* @see [Three JS - Find all points where a mesh intersects a plane]{@link https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane}
+ * @module Intersections
+ * @description Creates an intersection lines for graphic objects.
+ * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * @see [How to detect collision in three.js?]{@link https://newbedev.com/how-to-detect-collision-in-three-js}
+ * @see [Collision detection example]{@link http://stemkoski.github.io/Three.js/Collision-Detection.html}
+ * @see [Three JS - Find all points where a mesh intersects a plane]{@link https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane}
 */
 var Intersections =
 function Intersections(object, intersectMeshList) {
@@ -15901,9 +15896,6 @@ function Intersections(object, intersectMeshList) {
 							object.add(spriteText);
 						}
 						return point;
-					},
-					set update(a) {
-						if (typeof SpriteText !== "undefined") spriteText = a;
 					}
 				};
 			}
@@ -15920,6 +15912,7 @@ function Intersections(object, intersectMeshList) {
 						if (!collisionResultsOriginPoint) {
 							var direction = this.vertex2.point.clone().sub(this.vertex1.point).clone().normalize(),
 							    rayOriginPoint = new THREE.Raycaster(this.vertex1.point, direction, 0, this.vertex2.point.distanceTo(this.vertex1.point));
+							if (typeof SpriteText !== "undefined") rayOriginPoint.camera = options.camera;
 							collisionResultsOriginPoint = rayOriginPoint.intersectObjects(collidableMeshList);
 							if (!this.faces) console.error('edge ' + this.vertex1.index + ' ' + this.vertex2.index + ' intersects ' + collisionResultsOriginPoint.length);
 						}
@@ -16204,13 +16197,11 @@ function Intersections(object, intersectMeshList) {
 							case edge.vertex1.index:
 								for (var i = 0; i < edge.intersection.length; i++) {
 									arrayPushEdge(edge, i);
-								}
-								break;
+								}break;
 							case edge.vertex2.index:
 								for (var i = edge.intersection.length - 1; i >= 0; i--) {
 									arrayPushEdge(edge, i);
-								}
-								break;
+								}break;
 							default:
 								console.error('Face.intersections: arrayIntersections push failed!');
 						}
@@ -16247,35 +16238,30 @@ function Intersections(object, intersectMeshList) {
 					}
 					for (i = 0; i < faceEdges.edge1.intersection.length; i++) {
 						arrayPushEdge(faceEdges.edge1, i);
-					}
-					switch (faceEdges.edge1.vertex2.index) {
+					}switch (faceEdges.edge1.vertex2.index) {
 						case faceEdges.edge2.vertex1.index:
 							lastEdge = faceEdges.edge3;
 							for (i = 0; i < faceEdges.edge2.intersection.length; i++) {
 								arrayPushEdge(faceEdges.edge2, i);
-							}
-							arrayIntersectionsPushEdge3(faceEdges.edge2.vertex2.index);
+							}arrayIntersectionsPushEdge3(faceEdges.edge2.vertex2.index);
 							break;
 						case faceEdges.edge2.vertex2.index:
 							lastEdge = faceEdges.edge3;
 							for (i = faceEdges.edge2.intersection.length - 1; i >= 0; i--) {
 								arrayPushEdge(faceEdges.edge2, i);
-							}
-							arrayIntersectionsPushEdge3(faceEdges.edge2.vertex1.index);
+							}arrayIntersectionsPushEdge3(faceEdges.edge2.vertex1.index);
 							break;
 						case faceEdges.edge3.vertex1.index:
 							lastEdge = faceEdges.edge2;
 							for (i = 0; i < faceEdges.edge3.intersection.length; i++) {
 								arrayPushEdge(faceEdges.edge3, i);
-							}
-							arrayIntersectionsPushEdge2(faceEdges.edge3.vertex2.index);
+							}arrayIntersectionsPushEdge2(faceEdges.edge3.vertex2.index);
 							break;
 						case faceEdges.edge3.vertex2.index:
 							lastEdge = faceEdges.edge2;
 							for (i = faceEdges.edge3.intersection.length - 1; i >= 0; i--) {
 								arrayPushEdge(faceEdges.edge3, i);
-							}
-							arrayIntersectionsPushEdge2(faceEdges.edge3.vertex1.index);
+							}arrayIntersectionsPushEdge2(faceEdges.edge3.vertex1.index);
 							break;
 						default:
 							console.error('Face.intersections: arrayIntersections push failed!');
@@ -16300,36 +16286,35 @@ function Intersections(object, intersectMeshList) {
 						arrayIntersectFaces.push(arrayMesh);
 					}
 					arrayMesh.push(_this);
-					if (intersectionCount === 2) addIntersectLine(arrayIntersections[0], arrayIntersections[1]);
-					else if (!isOddOrZero(faceEdges.edge1.intersection.length) || !isOddOrZero(lastEdge.intersection.length)) {
-							boDetected = false;
-							if (intersectionCount === 6) {
-								var equalFaces = function equalFaces(face1, face2) {
-									return face1.a === face2.a && face1.b === face2.b && face1.c === face2.c;
-								};
-								if (equalFaces(arrayIntersections[0].intersection.face, arrayIntersections[5].intersection.face) && equalFaces(arrayIntersections[1].intersection.face, arrayIntersections[2].intersection.face) && equalFaces(arrayIntersections[3].intersection.face, arrayIntersections[4].intersection.face)) {
-									addIntersectLine(arrayIntersections[0], arrayIntersections[5]);
-									addIntersectLine(arrayIntersections[1], arrayIntersections[2]);
-									addIntersectLine(arrayIntersections[3], arrayIntersections[4]);
-									boDetected = true;
-								} else if (equalFaces(arrayIntersections[0].intersection.face, arrayIntersections[1].intersection.face) && equalFaces(arrayIntersections[2].intersection.face, arrayIntersections[3].intersection.face) && equalFaces(arrayIntersections[4].intersection.face, arrayIntersections[5].intersection.face)) {
-									console.error('under constraction');
-									addIntersectLine(arrayIntersections[0], arrayIntersections[1]);
-									addIntersectLine(arrayIntersections[2], arrayIntersections[3]);
-									addIntersectLine(arrayIntersections[4], arrayIntersections[5]);
-									boDetected = true;
-								}
-							}
-							if (!boDetected) {
-								for (i = 0; i < intersectionCount / 2; i++) {
-									addIntersectLine(arrayIntersections[i], arrayIntersections[intersectionCount - 1 - i]);
-								}
-							}
-						} else {
-							for (i = 0; i < intersectionCount; i += 2) {
-								addIntersectLine(arrayIntersections[i], arrayIntersections[i + 1]);
+					if (intersectionCount === 2) addIntersectLine(arrayIntersections[0], arrayIntersections[1]);else if (!isOddOrZero(faceEdges.edge1.intersection.length) || !isOddOrZero(lastEdge.intersection.length)) {
+						boDetected = false;
+						if (intersectionCount === 6) {
+							var equalFaces = function equalFaces(face1, face2) {
+								return face1.a === face2.a && face1.b === face2.b && face1.c === face2.c;
+							};
+							if (equalFaces(arrayIntersections[0].intersection.face, arrayIntersections[5].intersection.face) && equalFaces(arrayIntersections[1].intersection.face, arrayIntersections[2].intersection.face) && equalFaces(arrayIntersections[3].intersection.face, arrayIntersections[4].intersection.face)) {
+								addIntersectLine(arrayIntersections[0], arrayIntersections[5]);
+								addIntersectLine(arrayIntersections[1], arrayIntersections[2]);
+								addIntersectLine(arrayIntersections[3], arrayIntersections[4]);
+								boDetected = true;
+							} else if (equalFaces(arrayIntersections[0].intersection.face, arrayIntersections[1].intersection.face) && equalFaces(arrayIntersections[2].intersection.face, arrayIntersections[3].intersection.face) && equalFaces(arrayIntersections[4].intersection.face, arrayIntersections[5].intersection.face)) {
+								console.error('under constraction');
+								addIntersectLine(arrayIntersections[0], arrayIntersections[1]);
+								addIntersectLine(arrayIntersections[2], arrayIntersections[3]);
+								addIntersectLine(arrayIntersections[4], arrayIntersections[5]);
+								boDetected = true;
 							}
 						}
+						if (!boDetected) {
+							for (i = 0; i < intersectionCount / 2; i++) {
+								addIntersectLine(arrayIntersections[i], arrayIntersections[intersectionCount - 1 - i]);
+							}
+						}
+					} else {
+						for (i = 0; i < intersectionCount; i += 2) {
+							addIntersectLine(arrayIntersections[i], arrayIntersections[i + 1]);
+						}
+					}
 				};
 				for (var iIntersectionObject = 0; iIntersectionObject < intersectionObjects.length; iIntersectionObject++) {
 					var i;
@@ -16357,16 +16342,15 @@ function Intersections(object, intersectMeshList) {
 			step();
 		}, 0);
 	}
-	window.requestAnimationFrame(step);
+	setTimeout(function () {
+		step();
+	}, 0);
 	function equals(point1, point2) {
 		return point1.distanceTo(point2) <= 9.0e-10;
 	}
 	var boCreateIntersections = false;
 	function createIntersections() {
 		if (!boCreateIntersections) return;
-		while (object.children.length > 0) {
-			object.remove(object.children[0]);
-		}
 		arrayIntersectFaces.length = 0;
 		for (var i = intersectionLines.length - 1; i >= 0; i--) {
 			var removeObject3D = function removeObject3D(object3D) {
@@ -16455,7 +16439,7 @@ function Intersections(object, intersectMeshList) {
 							if (!faceNext) {
 								pointEnd = line.point1;
 								var face1IntersectLines = pointEnd.faces.face1.intersectLines(),
-								_face2 = face1IntersectLines.length ? pointEnd.faces.face1 : pointEnd.faces.face2,
+								    _face2 = face1IntersectLines.length ? pointEnd.faces.face1 : pointEnd.faces.face2,
 								    _intersectLines = _face2.intersectLines();
 								for (var iIntersectLines = 0; iIntersectLines < _intersectLines.length; iIntersectLines++) {
 									var intersectLine = _intersectLines[iIntersectLines];
@@ -16506,27 +16490,20 @@ function Intersections(object, intersectMeshList) {
 		object.userData.rotation = object.rotation.clone();
 		object.userData.scale = object.scale.clone();
 	});
-	if (!options.intersections) options.intersections = [];
-	options.intersections.push(function () {
-		var _loop3 = function _loop3() {
-			var object = arrayMovingObjects[i];
-			if (!object.userData.position.equals(object.position) || !object.userData.rotation.equals(object.rotation) || !object.userData.scale.equals(object.scale)) {
-				setTimeout(function () {
-					object.userData.position = object.position.clone();
-					object.userData.rotation = object.rotation.clone();
-					object.userData.scale = object.scale.clone();
-					createIntersections();
-				}, 0);
-				return {
-					v: void 0
-				};
-			}
-		};
+	function movingObjects() {
 		for (var i = 0; i < arrayMovingObjects.length; i++) {
-			var _ret3 = _loop3();
-			if ((typeof _ret3 === 'undefined' ? 'undefined' : _typeof(_ret3)) === "object") return _ret3.v;
+			var _object = arrayMovingObjects[i];
+			if (!_object.userData.position.equals(_object.position) || !_object.userData.rotation.equals(_object.rotation) || !_object.userData.scale.equals(_object.scale)) {
+				_object.userData.position = _object.position.clone();
+				_object.userData.rotation = _object.rotation.clone();
+				_object.userData.scale = _object.scale.clone();
+				createIntersections();
+				break;
+			}
 		}
-	});
+		window.requestAnimationFrame(movingObjects);
+	}
+	window.requestAnimationFrame(movingObjects);
 };
 
 /**
@@ -16897,7 +16874,6 @@ function MyThree(createXDobjects, options) {
 												}
 									});
 						}
-						options.render();
 			}
 			arrayCreates.shift();
 			var params = arrayCreates.shift();
