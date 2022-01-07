@@ -18,7 +18,6 @@
 //import * as THREE from '../../../../../three.js/dev/build/three.module.min.js';
 //import * as THREE from '../../three.js/dev/build/three.module.js';
 //import * as THREE from '../../three.js/dev/src/Three.js';
-//import { THREE } from 'https://raw.githack.com/anhr/commonNodeJS/master/three.js';
 //import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 //import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.min.js';
 */
