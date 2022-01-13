@@ -225,14 +225,9 @@ class Intersections {
 
 								if ( !collisionResultsOriginPoint ) {
 
-//if ( ( this.vertex1.index === 22 ) || ( this.vertex2.index === 22 ) )
-//	console.log( 'this.vertex.index === 22' );
 									const direction = this.vertex2.point.clone().sub( this.vertex1.point ).clone().normalize(),
 										rayOriginPoint = new THREE.Raycaster( this.vertex1.point, direction, 0,
 											this.vertex2.point.distanceTo( this.vertex1.point ) );
-									//console.log( ' origin: ' + this.vertex1.point.x + ', ' + this.vertex1.point.y + ', ' + this.vertex1.point.z +
-									//	' vertex2: ' + this.vertex2.point.x + ', ' + this.vertex2.point.y + ', ' + this.vertex2.point.z )
-//										' direction: ' + direction.x + ', ' + direction.y + ', ' + direction.z )
 
 									//debug
 									//Если это не делать, то получу ошибку
@@ -263,21 +258,6 @@ class Intersections {
 
 											if ( intersection.object.uuid === intersectionObject.uuid ) {
 
-/*
-												//не добавлять точку пересечения в array если в другом ребре грани есть точка пересечения с тем же положением
-												var boSpliceIntersection = false;
-												for ( var i = 0; i < arraySpliceIntersection.length; i++ ) {
-
-													if ( arraySpliceIntersection[i] === index ) {
-
-														boSpliceIntersection = true;
-														break;
-
-													}
-
-												}
-												if ( !boSpliceIntersection )
-*/
 													arrayIntersectionsPush( intersection, array );
 
 											}
@@ -347,17 +327,6 @@ class Intersections {
 
 					} );
 
-					/*
-					//debug
-					const index1 = object.geometry.index.array[this.vertex1.index], index2 = object.geometry.index.array[this.vertex2.index],
-						edgeIndex1 = 9, edgeIndex2 = 18;
-					//console.log( 'index1 = ' + index1 + ' index2 = ' + index2 );
-					if (
-						( ( index1 === edgeIndex1 ) && ( index2 === edgeIndex2 ) ) ||
-						( ( index1 === edgeIndex2 ) && ( index2 === edgeIndex1 ) )
-					)
-						console.log( edgeIndex1 + ',' + edgeIndex2 );
-					*/
 					this.isCollision = function () { return collisionResultsOriginPoint.length > 0; }
 					this.isSame = function ( edge ) {
 
@@ -378,10 +347,8 @@ class Intersections {
 			}
 			var edge = new Edge( index, index + 1 );
 			edges.push( edge );
-//			edges2.push( edge );
 			edge = new Edge( index + 1, index + 2 )
 			edges.push( edge );
-//			edges2.push( edge );
 
 			//Если поменять порядок индексов, то в edges появятся одинаковые ребра,
 			//которые будут отличатся только переставленными edge.vector1 и edge.vector2
@@ -393,7 +360,6 @@ class Intersections {
 			//и obj.position.z = 8.9;
 			edge = new Edge( index, index + 2 );
 			edges.push( edge );
-//			edges2.push( edge );
 
 		}
 
@@ -446,10 +412,6 @@ class Intersections {
 
 		//Заполнить список граней
 		index = 0;
-/*
-		const skip = parseInt( object.geometry.index.count / 100 );//время для TorusGeometry сократилось с 54 до 47 секунд
-		var skipCur = 0;
-*/
 		function step( timestamp ) {
 
 			if ( cProgress )
@@ -464,7 +426,6 @@ class Intersections {
 
 			}
 
-//console.log( ( ( new Date().getTime() - currentdate.getTime() ) / 1000 ) + ' geometry index = ' + index )
 			class Face {
 
 				/* *
@@ -472,7 +433,7 @@ class Intersections {
 				 * @param {number} index index of vertices of the face <b>from object.geometry.index</b>
 				 * @param {number} id identifier of the face in the <b>faces</b> array.
 				 */
-				constructor( index/*, id*/ ) {
+				constructor( index ) {
 
 					const vectorIndex = new THREE.Vector3(),
 						arrayIntersectLines = [];//линии пересечения грани. каждый элемент содержит ребро и индекс начала и конца линии пересечения
@@ -481,10 +442,11 @@ class Intersections {
 
 
 						faceEdges: { get: function () { return faceEdges; } },//прилегающие к грани ребра
-						id: { get: function () { return vectorIndex; /*return id;*/ } },
+						id: { get: function () { return vectorIndex; } },
+
 						//for debugging
-						name: { get: function () { /*return 'Face ' + id;*/ return 'Face ' + vectorIndex.x + ', ' + vectorIndex.y + ', ' + vectorIndex.z; }
-},
+						name: { get: function () { return 'Face ' + vectorIndex.x + ', ' + vectorIndex.y + ', ' + vectorIndex.z; } },
+
 						vertices: {
 
 							get: function () {
@@ -673,8 +635,6 @@ class Intersections {
 
 							function returnPoint( point ) {
 
-//if ( vectorIndex.equals( new THREE.Vector3( 22, 13, 10 ) ) )
-//	console.log( '111' );
 								arrayIntersectLines.splice( i, 1 );
 								return point;
 
@@ -698,11 +658,8 @@ class Intersections {
 
 					}
 					this.intersectLines = function () { return arrayIntersectLines; }
-					//console.log( this.name + ' intersections: edge1 ' + faceEdges.edge1.intersection.length + ' edge2 ' + faceEdges.edge2.intersection.length + ' edge3 ' + faceEdges.edge3.intersection.length )
 					//если эта грань имеет пересечения с объектом, то строим линии пересечения грани с объектом
 					this.intersections = function () {
-//if ( vectorIndex.equals( new THREE.Vector3( 18, 10, 9 ) ) )
-//	console.log( vectorIndex );
 
 						//список объектов пересечения 
 						//Внимание! Нельзя удадять intersectionObjects потому что размер массива faceEdges.intersectionObjects меняется при
@@ -933,7 +890,6 @@ class Intersections {
 
 		}
 		setTimeout( function () { step(); }, 0 );
-		//console.log( 'faces' )
 
 		function equals( point1, point2 ) {
 
