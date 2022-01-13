@@ -1110,7 +1110,7 @@ class GuiSelectPoint {
 				const scale = options.scales[name];
 				if ( !scale.isAxis() )
 					return;
-				cRotations[name] = fRotation.add( new THREE.Vector3(), name, 0, Math.PI * 2, 1 / 360 ).
+				cRotations[name] = fRotation.add( new THREE.Vector3(), name, 0, Math.PI * 2, 0.01 ).
 					onChange( function ( value ) {
 
 						const mesh = getMesh();
