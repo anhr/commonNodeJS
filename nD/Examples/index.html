@@ -1,0 +1,231 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>nD</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
+	<!--
+	<script src="../../myThree/build/myThree.js"></script>
+	<script src="../../myThree/build/myThree.min.js"></script>
+	<script src="../../../../../three.js/dev/build/three.js"></script>
+	<script src="../../../../../three.js/dev/build/three.min.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>
+	<script src="https://threejs.org/build/three.js"></script>
+	<script src="https://threejs.org/build/three.min.js"></script>
+	-->
+</head>
+<body>
+	<p>
+		<a href='https://github.com/anhr' target="_blank">About me</a>
+	</p>
+	<h1>nD.</h1>
+	<h2>1D.</h2>
+	Click the "►" button in the lower left corner of the canvas to intersect the blue point with the green line.
+	<div id="1D">
+		<img src="../../img/wait.gif">
+	</div>
+	<h2>0D.</h2>
+	<div id="0D">
+		<img src="../../img/wait.gif">
+	</div>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<script type="module">
+
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import MyThree from '../../myThree/myThree.js';
+		//import MyThree from '../../myThree/build/myThree.module.js';
+		//import MyThree from '../../myThree/build/myThree.module.min.js';
+
+		if ( MyThree.default ) MyThree = MyThree.default;
+		MyThree.three.THREE = THREE;
+
+		const scales = {
+
+			display: false,
+			posAxesIntersection: new THREE.Vector3( 0, 0, -10 ),
+			/*
+			text: {
+
+				//textHeight: 0.03,
+				//fov: camera.fov,
+				precision: 4,
+
+			},
+			*/
+			x: {
+
+				//zoomMultiplier: 2,
+				//offset: 1,
+				//name: 'latitude(km.)',
+				min: -10,
+				max: 10,
+				//marks: 11,
+
+			},
+			y: {
+
+				min: -10,
+				max: 10,
+
+			},
+			z: {
+
+				min: -10,
+				max: 10,
+				//marks: 11,
+
+			},
+
+		},
+			cameraOptions = {
+
+				position: new THREE.Vector3( 30, 10, 50 ),
+				fov: 45,
+				near: 1,
+				far: 1000,
+
+			}
+		new MyThree( function ( scene, options ) {
+
+			//Line
+			const line = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [
+				new THREE.Vector3( -5, 0, 0 ),
+				new THREE.Vector3( 5, 0, 0 )
+			] ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
+			scene.add( line );
+			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( line );
+
+			//point
+			MyThree.MyPoints( [new THREE.Vector4(
+				-10, 0, 0,
+				0//blue color
+			)], scene,
+				{
+					pointsOptions: {
+
+						shaderMaterial: { point: { size: 10 } },
+						onReady: function ( points ) {
+
+							points.userData.player.selectPlayScene = function ( t ) {
+
+								points.position.x = t * 20;
+								points.updateMatrix();
+
+							}
+
+						}
+
+					}
+				} );
+			/*
+						const point = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3( 10, 0, 0 )] ),
+							new THREE.PointsMaterial( {
+
+			//					size: 10,
+								color: 0x0000FF,//blue
+			//					vertexColors: THREE.VertexColors
+
+							} ) );
+						scene.add( point );
+						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( point );
+			*/
+
+		}, {
+
+			elContainer: "1D",
+			/*
+			pointLight: {
+
+				pointLight1: {
+
+					//position: new THREE.Vector3( 100, 10, 2 ),
+					position: new THREE.Vector3( 0, 20, 20 ),
+
+				},
+				pointLight2: {
+
+					//position: new THREE.Vector3( -100, -2, -2 ),
+					position: new THREE.Vector3( 0, 0, -20 ),
+
+				},
+
+			},
+			*/
+			//point: { size: 100 },
+
+			//axesHelper: false,
+			playerOptions: {
+
+				marks: 110,//Number of scenes of 3D objects animation.
+				interval: 25,//Ticks per seconds.
+
+			},
+			//player: false,
+			dat: {
+
+				//guiSelectPoint: false,
+
+			},
+			//dat: false,
+			camera: {
+
+				position: new THREE.Vector3( 0, 0, 50 ),
+				fov: 45,
+				near: 1,
+				far: 1000,
+
+			},
+			orbitControls: false,
+			stereoEffect: false,
+			scales: {
+
+				posAxesIntersection: new THREE.Vector3( -10, 0, 0 ),
+				/*
+				text: {
+
+					//textHeight: 0.03,
+					//fov: camera.fov,
+					precision: 4,
+
+				},
+				*/
+				x: {
+
+					//zoomMultiplier: 2,
+					//offset: 1,
+					//name: 'latitude(km.)',
+					min: -10,
+					max: 10,
+					//marks: 11,
+
+				},
+				//y: {},
+
+			},
+
+		} );
+		const canvasIntersectionLines = {};
+		new MyThree( function ( scene, options ) {
+
+
+		}, {
+
+			elContainer: "0D",
+			camera: cameraOptions,
+			scales: scales,
+			player: false,
+
+		} );
+
+	</script>
+</body>
+</html >
