@@ -727,6 +727,7 @@ class Options {
 
 											get: function () {
 
+												if ( !scale ) return undefined;
 												if ( !scale.marks ) scale.marks = 3;
 												return scale.marks;
 
