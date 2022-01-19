@@ -29,7 +29,12 @@ class ND {
 	constructor( object ) {
 
 		const THREE = three.THREE, options = three.options || {}, scene = three.group;
-		const name = options.scales.x.name;
+		options.scales.x.name = 0;
+		options.scales.y = undefined;
+		options.scales.z = undefined;
+		options.scales.text.rect = options.scales.text.rect || {}
+		options.scales.text.rect.displayRect = false;
+		options.scales.text.precision = 2;
 /*
 		function createIntersections() {
 
@@ -165,7 +170,7 @@ ND.Plane = class extends ND.Vector {
 			switch ( this.length ) {
 
 				case 1://point
-					options.point.size = 200;
+					options.point.size = ( options.scales.x.max - options.scales.x.min ) * 10;//200;
 					mesh = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3( 0, 0, 0 )] ),
 						new THREE.PointsMaterial( { color: 0x0000FF, } ) );//blue
 					break;
@@ -183,11 +188,8 @@ ND.Plane = class extends ND.Vector {
 
 				selectPlayScene: function ( t ) {
 
-					_this[0] = -10 + t * 20;
-/*					
-					mesh.position.x = -10 + t * 20;
-					mesh.updateMatrix();
-*/					
+					_this[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min );
+//					_this[0] = -10 + t * 20;
 
 				},
 
