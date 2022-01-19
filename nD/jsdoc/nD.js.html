@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: nD.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: nD.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @module ND
  * @description N dimensional graphics
  * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
@@ -26,10 +54,9 @@ class ND {
 	/**
 	 * N dimensional graphics
 	 */
-	constructor( object ) {
+	constructor( object, panel ) {
 
 		const THREE = three.THREE, options = three.options || {}, scene = three.group;
-		const name = options.scales.x.name;
 /*
 		function createIntersections() {
 
@@ -48,7 +75,7 @@ class ND {
 		} );
 		function movingObjects() {
 
-			for ( var i = 0; i < arrayMovingObjects.length; i++ ) {
+			for ( var i = 0; i &lt; arrayMovingObjects.length; i++ ) {
 
 				const object = arrayMovingObjects[i];
 				if (
@@ -80,11 +107,11 @@ class ND {
 
 /** @class
  * @description
- * <pre>
+ * &lt;pre>
  * An n-dimensional vector is point in an n-dimensional space.
  * The length of an array is the dimension of the space.
  * @param {Array} [array=0] array of the values for appropriate axes.
- * </pre>
+ * &lt;/pre>
  * @example //Creates a point in 2-dimensional space. -5 is value for 0 axis and 7.8 is value for 1 axis.
  * const point = new ND.Vector([-5, 7.8]);
  * const axis0 = point[0]//-5
@@ -97,7 +124,7 @@ ND.Vector = class extends Array {
 		if ( array instanceof Array === false ) array = [array];
 		super();
 
-		for ( var i = 0; i < array.length; i++ ) {
+		for ( var i = 0; i &lt; array.length; i++ ) {
 
 			const item = array[i];
 			if ( typeof item === "number" )
@@ -134,69 +161,8 @@ ND.Vector = class extends Array {
 
 		} );
 
-	}
-	push() { console.error( 'ND.Vector.push() unavailable' ); }
-	pop() { console.error( 'ND.Vector.pop() unavailable' ); }
-
-}
-
-/** @class
- * @description 
- * <pre>
- * N-dimensional intersection plane.
- * Used to create a section with an n-dimensional graphic object.
- * For 1 dimensional space <b>ND.Plane</b> is point.
- * For 2 dimensional space <b>ND.Plane</b> is line.
- * For 3 dimensional space <b>ND.Plane</b> is plane.
- * For n-dimensional space <b>ND.Plane</b> is n-dimensional plane.
- * </pre>
- */
-ND.Plane = class extends ND.Vector {
-
-	constructor( array ) {
-
-		super( array );
-
-		var mesh;
-		this.createMesh = function ( scene ) {
-
-			const THREE = three.THREE, options = three.options || {};
-			scene = scene || three.group;
-			switch ( this.length ) {
-
-				case 1://point
-					options.point.size = 200;
-					mesh = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3( 0, 0, 0 )] ),
-						new THREE.PointsMaterial( { color: 0x0000FF, } ) );//blue
-					break;
-				default: {
-
-					console.error( 'ND.Plane.createMesh: invalid vector.length = ' + this.length );
-					return;
-
-				}
-				
-			}
-			scene.add( mesh );
-			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( mesh );
-			mesh.userData.player = {
-
-				selectPlayScene: function ( t ) {
-
-					_this[0] = -10 + t * 20;
-/*					
-					mesh.position.x = -10 + t * 20;
-					mesh.updateMatrix();
-*/					
-
-				},
-
-			}
-
-		}
-
 		//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
-		const _this = new Proxy( this, {
+		return new Proxy( this, {
 /*
 			get: function(target, name) {
 				console.log('Proxy get');
@@ -205,22 +171,63 @@ ND.Plane = class extends ND.Vector {
 */
 			set: function ( target, name, value ) {
 
+				console.log( 'Proxy set' );
 				target[name] = value;
-				if (mesh) {
-
-					mesh.position.x = target[name];
-					mesh.updateMatrix();
-					
-				}
 				return target[name];
 
 			}
 
 		} );
-		return _this;
 
+
+	}
+	push() { console.error( 'ND.Vector.push() unavailable' ); }
+	pop() { console.error( 'ND.Vector.pop() unavailable' ); }
+
+}
+
+/** @class
+ * @description 
+ * &lt;pre>
+ * N-dimensional intersection plane.
+ * Used to create a section with an n-dimensional graphic object.
+ * For 1 dimensional space &lt;b>ND.Plane&lt;/b> is point.
+ * For 2 dimensional space &lt;b>ND.Plane&lt;/b> is line.
+ * For 3 dimensional space &lt;b>ND.Plane&lt;/b> is plane.
+ * For n-dimensional space &lt;b>ND.Plane&lt;/b> is n-dimensional plane.
+ * &lt;/pre>
+ */
+ND.Plane = class extends ND.Vector {
+
+	constructor( array ) {
+
+		super( array );
+		
 	}
 
 }
 
 export default ND;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ND.html">ND</a></li></ul><h3>Classes</h3><ul><li><a href="module-ND-ND.html">ND</a></li><li><a href="module-ND-ND.Plane.html">Plane</a></li><li><a href="module-ND-ND.Vector.html">Vector</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jan 18 2022 10:57:54 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
