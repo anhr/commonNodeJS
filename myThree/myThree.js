@@ -705,10 +705,6 @@ class MyThree {
 			//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
 			options.createOrbitControls( camera, renderer, scene );
 
-			// helper
-
-			new AxesHelper( scene, options );
-
 			if ( fOptions ) {
 				
 				new GuiSelectPoint( options, {
@@ -737,6 +733,9 @@ class MyThree {
 			three.group = group;
 
 			if ( createXDobjects ) createXDobjects( group, options );
+
+			//вызываю после createXDobjects для того что бы была возможность редактировать настройки AxesHelper. Например в классе nD
+			new AxesHelper( scene, options );
 
 			if ( options.frustumPoints ) options.frustumPoints.create( renderer );
 
