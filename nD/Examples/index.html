@@ -44,9 +44,10 @@
 		import MyThree from '../../myThree/myThree.js';
 		//import MyThree from '../../myThree/build/myThree.module.js';
 		//import MyThree from '../../myThree/build/myThree.module.min.js';
-
 		if ( MyThree.default ) MyThree = MyThree.default;
 		MyThree.three.THREE = THREE;
+
+		import ND from '../nD.js';
 
 		const scales = {
 
@@ -96,48 +97,62 @@
 			}
 		new MyThree( function ( scene, options ) {
 
-			//Line
-			const line = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [
-				new THREE.Vector3( -5, 0, 0 ),
-				new THREE.Vector3( 5, 0, 0 )
-			] ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
-			scene.add( line );
-			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( line );
+			const arrayLine = [new ND.Vector([-0.5]), new ND.Vector(0.5)];
 
-			//point
-			MyThree.MyPoints( [new THREE.Vector4(
-				-10, 0, 0,
-				0//blue color
-			)], scene,
-				{
-					pointsOptions: {
-
-						shaderMaterial: { point: { size: 10 } },
-						onReady: function ( points ) {
-
-							points.userData.player.selectPlayScene = function ( t ) {
-
-								points.position.x = t * 20;
-								points.updateMatrix();
-
-							}
-
-						}
-
-					}
-				} );
+			//ND.Vector test
 			/*
-						const point = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3( 10, 0, 0 )] ),
-							new THREE.PointsMaterial( {
+			{
 
-			//					size: 10,
-								color: 0x0000FF,//blue
-			//					vertexColors: THREE.VertexColors
+				const point = new ND.Vector( [-5, 7.8] );
+				const point0 = point[0]//-5
+				const point1 = point[1]//7.8
 
-							} ) );
-						scene.add( point );
-						if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( point );
+			}
+			arrayLine[0][0] = -4;
+			var arr = new Proxy(arrayLine[0], {
+			  set: function(target, name, value) {
+			  	target[name] = value;
+				return target[name];
+			  }
+			});
+			const w = arr[0];
+			arr[0] = -4;
+			arrayLine[0].push( 56 );
+			arrayLine[0].pop();
 			*/
+
+			//Graphic object. Currenyly is line
+			const obj = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [
+				arrayLine[0].point,
+				arrayLine[1].point
+			] ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
+			scene.add( obj );
+			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( obj );
+
+			//Plane
+			const plane = new ND.Plane();//1-dimensional. plane[0] is 0
+			plane.createMesh();
+//			plane[0] = -5;
+/*
+			//point
+			options.point.size = 200;
+			const point = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3( 0, 0, 0 )] ),
+				new THREE.PointsMaterial( { color: 0x0000FF, } ) );//blue
+			scene.add( point );
+			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( point );
+			point.userData.player = {
+
+				selectPlayScene: function ( t ) {
+
+					point.position.x = -10 + t * 20;
+					point.updateMatrix();
+
+				},
+
+			}
+
+*/
+			new ND( obj );
 
 		}, {
 
@@ -178,26 +193,25 @@
 			//dat: false,
 			camera: {
 
-				position: new THREE.Vector3( 0, 0, 50 ),
+				position: new THREE.Vector3( 0, 0, 5 ),//50 ),
 				fov: 45,
 				near: 1,
 				far: 1000,
 
 			},
-			orbitControls: false,
+			//orbitControls: false,
 			stereoEffect: false,
-			scales: {
+			scales2: {
 
 				posAxesIntersection: new THREE.Vector3( -10, 0, 0 ),
-				/*
 				text: {
 
+					rect: { displayRect: false },
 					//textHeight: 0.03,
 					//fov: camera.fov,
-					precision: 4,
+					precision: 2,
 
 				},
-				*/
 				x: {
 
 					//zoomMultiplier: 2,
@@ -208,7 +222,14 @@
 					//marks: 11,
 
 				},
-				//y: {},
+				/*
+				y: {
+
+					min: -10,
+					max: 10,
+
+				},
+				*/
 
 			},
 
