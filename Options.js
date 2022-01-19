@@ -716,11 +716,11 @@ class Options {
 
 											get: function () {
 
-												if ( !scale || !scale.name ) return axisName;
+												if ( !scale || ( scale.name === undefined ) ) return axisName;
 												return scale.name;
 
 											},
-//											set: function ( name ) { scale.name = name; },
+											set: function ( name ) { scale.name = name; },
 
 										},
 										marks: {
@@ -773,19 +773,49 @@ class Options {
 								x: {
 
 									get: function () { return scalesObject.x; },
-									set: function ( x ) { scales.x = x; },
+									set: function ( x ) {
+
+										if ( x === undefined ) {
+
+											delete scales.x;
+											delete scalesObject.x;
+											scalesObject.x = new Scale( scales, 'x' );
+
+										} else scales.x = x;
+
+									},
 
 								},
 								y: {
 
 									get: function () { return scalesObject.y; },
-									set: function ( y ) { scales.y = y; },
+									set: function ( y ) {
+
+										if ( y === undefined ) {
+
+											delete scales.y;
+											delete scalesObject.y;
+											scalesObject.y = new Scale( scales, 'y' );
+
+										} else scales.y = y;
+
+									},
 
 								},
 								z: {
 
 									get: function () { return scalesObject.z; },
-									set: function ( z ) { scales.z = z; },
+									set: function ( z ) {
+
+										if ( z === undefined ) {
+
+											delete scales.z;
+											delete scalesObject.z;
+											scalesObject.z = new Scale( scales, 'z' );
+
+										} else scales.z = z;
+
+									},
 
 								},
 								w: {
