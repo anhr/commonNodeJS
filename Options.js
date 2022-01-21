@@ -58,7 +58,11 @@ var boCreateControllers;
 class Options {
 
 	/**
-	 * options of the canvas
+	 * <pre>
+	 * Options of the canvas
+	 * 
+	 * <b>options.onSelectScene</b> event. New time of the <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
+	 * </pre>
 	 * @param {Object} options See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 */
 	constructor( options ) {
