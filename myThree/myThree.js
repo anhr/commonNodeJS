@@ -244,6 +244,7 @@ class MyThree {
 	 * <pre>
 	 * or element <b>id</b>.
 	 * </pre>
+	 * @param {event} [options.onSelectScene] New time of the <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
 	 */
 	constructor( createXDobjects, options ) {
 
@@ -533,8 +534,8 @@ class MyThree {
 				onSelectScene: function ( index, t ) {
 
 					options.boPlayer = true;
-					if ( options.frustumPoints !== undefined )
-						options.frustumPoints.updateCloudPoints();
+					if ( options.frustumPoints !== undefined ) options.frustumPoints.updateCloudPoints();
+					if ( options.onSelectScene !== undefined ) options.onSelectScene( t );
 
 				},
 				options: options,
