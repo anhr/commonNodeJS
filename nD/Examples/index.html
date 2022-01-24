@@ -97,19 +97,21 @@
 			}
 		new MyThree( function ( scene, options ) {
 
-			const arrayLine = [new ND.Vector([-0.5]), new ND.Vector(0.5)];
+			const vectorsObject = [new ND.Vector([-0.5]), new ND.Vector(0.5)];
 
 			//ND.Vector test
 			/*
 			{
 
-				const point = new ND.Vector( [-5, 7.8] );
-				const point0 = point[0]//-5
-				const point1 = point[1]//7.8
+				const vector = new ND.Vector( [-5, 7.8] );
+				const n_dimension = vector.length//2
+				const point = vector.point;//THREE.Vector3( -5, 7.8, 0 )
+				const vector0 = vector[0]//-5
+				const vector1 = vector[1]//7.8
 
 			}
-			arrayLine[0][0] = -4;
-			var arr = new Proxy(arrayLine[0], {
+			vectorsObject[0][0] = -4;
+			var arr = new Proxy(vectorsObject[0], {
 			  set: function(target, name, value) {
 			  	target[name] = value;
 				return target[name];
@@ -117,64 +119,23 @@
 			});
 			const w = arr[0];
 			arr[0] = -4;
-			arrayLine[0].push( 56 );
-			arrayLine[0].pop();
+			vectorsObject[0].push( 56 );
+			vectorsObject[0].pop();
 			*/
 
-			//Graphic object. Currenyly is line
-			const obj = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [
-				arrayLine[0].point,
-				arrayLine[1].point
-			] ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
-			scene.add( obj );
-			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( obj );
+			const vectorPlane = new ND.Vector( [0.4] );
 
-			//Plane
-			const plane = new ND.Plane();//1-dimensional. plane[0] is 0
-			plane.createMesh();
-//			plane[0] = -5;
-/*
-			//point
-			options.point.size = 200;
-			const point = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3( 0, 0, 0 )] ),
-				new THREE.PointsMaterial( { color: 0x0000FF, } ) );//blue
-			scene.add( point );
-			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( point );
-			point.userData.player = {
+			new ND( vectorsObject, vectorPlane );
 
-				selectPlayScene: function ( t ) {
+			options.onSelectScene = function ( t ) {
 
-					point.position.x = -10 + t * 20;
-					point.updateMatrix();
-
-				},
+				vectorPlane[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min );
 
 			}
-
-*/
-			new ND( obj );
 
 		}, {
 
 			elContainer: "1D",
-			/*
-			pointLight: {
-
-				pointLight1: {
-
-					//position: new THREE.Vector3( 100, 10, 2 ),
-					position: new THREE.Vector3( 0, 20, 20 ),
-
-				},
-				pointLight2: {
-
-					//position: new THREE.Vector3( -100, -2, -2 ),
-					position: new THREE.Vector3( 0, 0, -20 ),
-
-				},
-
-			},
-			*/
 			//point: { size: 100 },
 
 			//axesHelper: false,
@@ -201,37 +162,7 @@
 			},
 			//orbitControls: false,
 			stereoEffect: false,
-			scales2: {
-
-				posAxesIntersection: new THREE.Vector3( -10, 0, 0 ),
-				text: {
-
-					rect: { displayRect: false },
-					//textHeight: 0.03,
-					//fov: camera.fov,
-					precision: 2,
-
-				},
-				x: {
-
-					//zoomMultiplier: 2,
-					//offset: 1,
-					//name: 'latitude(km.)',
-					min: -10,
-					max: 10,
-					//marks: 11,
-
-				},
-				/*
-				y: {
-
-					min: -10,
-					max: 10,
-
-				},
-				*/
-
-			},
+			//scales: { x: {} },
 
 		} );
 		const canvasIntersectionLines = {};
