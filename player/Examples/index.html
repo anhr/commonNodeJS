@@ -473,7 +473,6 @@
 						sizeAttenuation: false,
 
 					} ) );
-				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 				if ( typeof Player === 'undefined' ) {
 
 					points.geometry.setAttribute( 'color',
@@ -485,6 +484,9 @@
 				}
 					
 				scene.add( points );
+
+				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
+				
 				points.userData.player = {
 
 					arrayFuncs: arrayFuncs,
@@ -498,7 +500,7 @@
 					}
 
 				}
-				arrayParticles.push( points );
+//				arrayParticles.push( points );
 
 			}
 
