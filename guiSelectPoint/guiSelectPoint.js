@@ -89,8 +89,7 @@ class GuiSelectPoint {
 //если я создам константу axesHelper то не будет вызываться функции axesHelper если экземляр AxesHelper будет создан позже GuiSelectPoint
 //Теперь new AxesHelper и new GuiSelectPoint можно вызывать в любом порядке.
 //		const axesHelper = options.axesHelper,
-		const guiSelectPoint = this,
-			THREE = three.THREE;
+		const guiSelectPoint = this, THREE = three.THREE, folders = {};
 
 		if ( !options.boOptions ) {
 
@@ -214,12 +213,13 @@ class GuiSelectPoint {
 		}
 
 		var f3DObjects, fPoint, cRestoreDefaultLocalPosition, fPointWorld, fPoints, cMeshs, fMesh,// mesh,
-			intersection, 
+			intersection,
 			cScaleX, cScaleY, cScaleZ,
 			cPoints, selectedPointIndex = -1,
 			cX, cY, cZ, cW, cTrace, cTraceAll, cColor, cOpacity, cCameraTarget,
 			funcFolder,
-			boSetMesh = false;//Для предотвращения лишних вызовов exposePosition если выбрать точку и передвинуть камеру с помошью OrbitControls,
+			boSetMesh = false,//Для предотвращения лишних вызовов exposePosition если выбрать точку и передвинуть камеру с помошью OrbitControls,
+			fRotation;
 		const _this = this, cPosition = new THREE.Vector3(), cRotations = new THREE.Vector3(), cWorld = new THREE.Vector3();
 		function displayPointControllers( display ) {
 
@@ -868,6 +868,61 @@ class GuiSelectPoint {
 
 		}
 
+		this.updateScale = function ( axisName ) {
+
+			if ( !folders.position[axisName] ) {
+
+				console.error( 'GuiSelectPoint.updateScale: Under constraction.' );
+				return;
+
+			}
+			const none = 'none', block = 'block', display = options.scales[axisName].isAxis() ? block : none;
+			
+			//position
+
+			folders.position[axisName].domElement.style.display = display;
+
+			//Scale
+
+			var cScale;
+			switch(axisName) {
+
+				case 'x': cScale = cScaleX; break;
+				case 'y': cScale = cScaleY; break;
+				case 'z': cScale = cScaleZ; break;
+				default: console.error('GuiSelectPoint.updateScale: Invalid axis name: ' + axisName);
+					return;
+
+			}
+			cScale.domElement.parentElement.parentElement.style.display = display;
+
+			//Rotation
+
+			const boX = options.scales['x'].isAxis(),
+				 boY = options.scales['y'].isAxis(),
+				 boZ = options.scales['z'].isAxis();
+			var n = 0;//space dimension
+			if ( boX ) n++;
+			if ( boY ) n++;
+			if ( boZ ) n++;
+			switch ( n ) {
+
+				case 1:
+					fRotation.domElement.style.display = none;
+					break;
+				case 2:
+					fRotation.domElement.style.display = block;
+					if ( boX ) cRotations.x.domElement.parentElement.parentElement.style.display = none;
+					if ( boY ) cRotations.y.domElement.parentElement.parentElement.style.display = none;
+					if ( boZ ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
+					break;
+				default: console.error( 'GuiSelectPoint.updateScale: Invalid space dimension = ' + n );
+					return;
+
+			}
+
+		}
+
 		/**
 		 * Adds select point GUI into dat.gui folder
 		 * @param {GUI} [folder] [dat.gui]{@link https://github.com/anhr/dat.gui} folder.
@@ -1002,9 +1057,9 @@ class GuiSelectPoint {
 
 				} ) );
 			const scale = new THREE.Vector3();
-			function setScale( axesName, value ) {
+			function setScale( axisName, value ) {
 
-				mesh.scale[axesName] = value;
+				mesh.scale[axisName] = value;
 				mesh.needsUpdate = true;
 				exposePosition();
 				if ( options.frustumPoints )
@@ -1055,8 +1110,10 @@ class GuiSelectPoint {
 				const scale = options.scales[name];
 				if ( !scale.isAxis() )
 					return;
-				const axesName = scale.name,
-					f = fPosition.addFolder( axesName );
+				const axisName = scale.name,
+					f = fPosition.addFolder( axisName );
+				folders.position = folders.position || {};
+				folders.position[axisName] = f;
 				f.add( new PositionController( function ( shift ) {
 
 					mesh.position[name] += shift;
@@ -1079,7 +1136,7 @@ class GuiSelectPoint {
 				const position = new THREE.Vector3();
 
 				cPosition[name] = dat.controllerZeroStep( f, position, name, function ( value ) { setPosition( value ); } );
-				dat.controllerNameAndTitle( cPosition[name], axesName );
+				dat.controllerNameAndTitle( cPosition[name], axisName );
 
 			}
 			addAxisControllers( 'x' );
@@ -1104,7 +1161,7 @@ class GuiSelectPoint {
 
 			//rotation
 
-			var fRotation = fMesh.addFolder( lang.rotation );
+			fRotation = fMesh.addFolder( lang.rotation );
 			function addRotationControllers( name ) {
 
 				const scale = options.scales[name];

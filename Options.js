@@ -782,6 +782,7 @@ class Options {
 											scalesObject.x = new Scale( scales, 'x' );
 
 										} else scales.x = x;
+										if ( options.guiSelectPoint ) options.guiSelectPoint.updateScale( 'x' );
 
 									},
 
@@ -798,6 +799,7 @@ class Options {
 											scalesObject.y = new Scale( scales, 'y' );
 
 										} else scales.y = y;
+										if ( options.guiSelectPoint ) options.guiSelectPoint.updateScale( 'y' );
 
 									},
 
@@ -814,6 +816,7 @@ class Options {
 											scalesObject.z = new Scale( scales, 'z' );
 
 										} else scales.z = z;
+										if ( options.guiSelectPoint ) options.guiSelectPoint.updateScale( 'z' );
 
 									},
 
