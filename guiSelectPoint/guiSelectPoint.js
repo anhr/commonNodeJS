@@ -881,19 +881,30 @@ class GuiSelectPoint {
 			//position
 
 			folders.position[axisName].domElement.style.display = display;
+			cWorld[axisName].domElement.parentElement.parentElement.style.display = display;
 
-			//Scale
+			//Scale, point local position
 
-			var cScale;
+			var c, cScale;
 			switch(axisName) {
 
-				case 'x': cScale = cScaleX; break;
-				case 'y': cScale = cScaleY; break;
-				case 'z': cScale = cScaleZ; break;
+				case 'x':
+					c = cX;
+					cScale = cScaleX;
+					break;
+				case 'y':
+					c = cY;
+					cScale = cScaleY;
+					break;
+				case 'z':
+					c = cZ;
+					cScale = cScaleZ;
+					break;
 				default: console.error('GuiSelectPoint.updateScale: Invalid axis name: ' + axisName);
 					return;
 
 			}
+			c.domElement.parentElement.parentElement.style.display = display;
 			cScale.domElement.parentElement.parentElement.style.display = display;
 
 			//Rotation

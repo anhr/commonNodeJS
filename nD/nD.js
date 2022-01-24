@@ -88,11 +88,27 @@ class ND {
 					switch ( vectorPlane.length ) {
 
 						case 1://point
-							options.point.size = ( options.scales.x.max - options.scales.x.min ) * 10;//200;
-							mesh = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3( 0, 0, 0 )] ),
-								new THREE.PointsMaterial( { color: 0x0000FF, } ) );//blue
+							options.point.size = ( options.scales.x.max - options.scales.x.min ) * 500;//10
+							mesh = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [
+								new THREE.Vector4( 0, 0, 0, new THREE.Color( "rgb( 0, 0, 255)" ) )
+//								new THREE.Vector3( 0, 0, 0 )
+							], 4 ),
+								new THREE.PointsMaterial( {
+
+									color: 0x0000FF,//blue
+//									vertexColors: THREE.VertexColors,
+//									size: 500,//0.05,
+									sizeAttenuation: false,
+
+								} ) );
 							mesh.position.copy( vectorPlane.point );
 //							mesh.updateMatrix();
+/*
+							mesh.geometry.setAttribute( 'color',
+								new THREE.Float32BufferAttribute( [
+									1, 0, 0,//first point is red
+								], 3 ) );
+*/
 							break;
 						default: {
 
