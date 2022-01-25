@@ -60,21 +60,9 @@ class ND {
 
 		object.userData.raycaster = {
 
-			onIntersection: function ( intersection, mouse ) {
-
-				MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
-
-			},
-			onIntersectionOut: function () {
-
-				MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer );
-
-			},
-			onMouseDown: function ( intersection ) {
-
-				console.log( 'raycaster.onMouseDown' );
-
-			},
+			onIntersection: function ( intersection, mouse ) { MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer ); },
+			onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
+			onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
 
 		}
 		options.eventListeners.addParticle( object );
@@ -142,21 +130,9 @@ class ND {
 
 							mesh.userData.raycaster = {
 
-								onIntersection: function ( intersection, mouse ) {
-
-									MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
-
-								},
-								onIntersectionOut: function () {
-
-									MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer );
-
-								},
-								onMouseDown: function ( intersection ) {
-
-									console.log( 'raycaster.onMouseDown' );
-
-								},
+								onIntersection: function ( intersection, mouse ) { MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer ); },
+								onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
+								onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
 
 							}
 							options.eventListeners.addParticle( mesh );

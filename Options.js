@@ -1883,6 +1883,7 @@ cube.userData.raycaster = {
 				const THREE = three.THREE, mouse = new THREE.Vector2(), particles = [],
 					raycaster = new THREE.Raycaster(), options = settings.options || {};
 				raycaster.params.Points.threshold = settings.threshold !== undefined ? settings.threshold : 0.03;
+				raycaster.params.Line.threshold = raycaster.params.Points.threshold;
 
 				if ( raycaster.setStereoEffect ) {
 
