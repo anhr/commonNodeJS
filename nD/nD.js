@@ -18,6 +18,10 @@
 
 import three from '../three.js'
 
+import MyThree from '../myThree/myThree.js';
+//import MyThree from '../../build/myThree.module.js';
+//import MyThree from '../../build/myThree.module.min.js';
+
 //debug
 //import { SpriteText } from '../SpriteText/SpriteText.js'
 
@@ -109,6 +113,26 @@ class ND {
 									1, 0, 0,//first point is red
 								], 3 ) );
 */
+							mesh.userData.raycaster = {
+
+								onIntersection: function ( intersection, mouse ) {
+
+									MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
+
+								},
+								onIntersectionOut: function () {
+
+									MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer );
+
+								},
+								onMouseDown: function ( intersection ) {
+
+									console.log( 'raycaster.onMouseDown' );
+
+								},
+
+							}
+							options.eventListeners.addParticle( mesh );
 							break;
 						default: {
 
