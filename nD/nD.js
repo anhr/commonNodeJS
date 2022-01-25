@@ -48,12 +48,36 @@ class ND {
 		}
 
 		//Graphic object. Currenyly is line
+
 		const object = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [
 			vectorsObject[0].point,
 			vectorsObject[1].point
 		] ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
 		scene.add( object );
 		if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
+
+		//raycaster
+
+		object.userData.raycaster = {
+
+			onIntersection: function ( intersection, mouse ) {
+
+				MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
+
+			},
+			onIntersectionOut: function () {
+
+				MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer );
+
+			},
+			onMouseDown: function ( intersection ) {
+
+				console.log( 'raycaster.onMouseDown' );
+
+			},
+
+		}
+		options.eventListeners.addParticle( object );
 		
 		options.scales.x.name = 0;
 		options.scales.y.name = 1;
@@ -113,6 +137,9 @@ class ND {
 									1, 0, 0,//first point is red
 								], 3 ) );
 */
+
+							//raycaster
+
 							mesh.userData.raycaster = {
 
 								onIntersection: function ( intersection, mouse ) {
@@ -133,6 +160,7 @@ class ND {
 
 							}
 							options.eventListeners.addParticle( mesh );
+
 							break;
 						default: {
 
