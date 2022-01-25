@@ -1750,7 +1750,7 @@ class Raycaster {
 				const three = window.__myThree__.three;
 				intersection.pointSpriteText = new three.THREE.Vector3();
 				//Так и не понял почему в режиме стерео текст отображается в неправильном месте
-				if ( settings.options.stereoEffect.settings.spatialMultiplex === StereoEffect.spatialMultiplexsIndexs.Mono )
+				if ( settings.options.stereoEffect && ( settings.options.stereoEffect.settings.spatialMultiplex === StereoEffect.spatialMultiplexsIndexs.Mono ) )
 					raycaster.ray.at( three.options.camera.near + (three.options.camera.far - three.options.camera.near)/1000, intersection.pointSpriteText );
 				//Поэтому оставляю как было раньше
 				else intersection.pointSpriteText = intersection.point;
@@ -1939,9 +1939,12 @@ cube.userData.raycaster = {
 					} else {
 
 						const intersect = intersects[0], object = intersect.object;
-						if ( object.userData.raycaster && object.userData.raycaster.onIntersection )
+						if ( object.userData.raycaster && object.userData.raycaster.onIntersection ) {
+
+							intersect.pointSpriteText = intersect.point;
 							object.userData.raycaster.onIntersection( intersect, mouse );
-						else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
+							
+						} else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
 						intersectedObject = object;
 
 					}
