@@ -706,7 +706,7 @@ function assign() {
 				mouseL = new THREE.Vector2(),
 				mouseR = new THREE.Vector2();
 			var particles, //The object or array of objects to check for intersection with the ray. See THREE.Raycaster.intersectObject https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject for details.
-				intersects, //An array of intersections is returned by THREE.Raycaster.intersectObject or THREE.Raycaster.intersectObjects.
+//				intersects, //An array of intersections is returned by THREE.Raycaster.intersectObject or THREE.Raycaster.intersectObjects.
 				mouse; //Attention!!! Do not assign new THREE.Vector2() here
 			//for prevention of invalid detection of intersection with zero point ( THREE.Vector3( 0, 0, 0 ) )
 			//after opening of the web page and before user has moved mouse.
@@ -759,7 +759,8 @@ function assign() {
 				optionsIntersection = optionsIntersection || settings;
 				function isIntersection() {
 
-					intersects = Options.raycaster.intersectionsInOut( particles, raycaster, renderer, mouse, settings );
+//					intersects = Options.raycaster.intersectionsInOut( particles, raycaster, renderer, mouse, settings );
+					Options.raycaster.intersectionsInOut( particles, raycaster, renderer, mouse, settings );
 
 				}
 				if ( parseInt( stereoEffect.settings.spatialMultiplex ) !== spatialMultiplexsIndexs.Mono ) {
