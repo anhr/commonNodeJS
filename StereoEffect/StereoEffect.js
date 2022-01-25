@@ -1014,11 +1014,11 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 	return new SpriteText(
 
 		//text
-		( intersection.object.name === '' ? '' : lang.mesh + ': ' + intersection.object.name ) +
+		lang.mesh + ': ' + ( intersection.object.name === '' ? intersection.object.type : intersection.object.name ) +
 		( pointName === undefined ? '' : '\n'+ lang.pointName + ': ' + pointName ) +
-		( !boXYZ && !scales.x ? '' : '\n' + ( scales.x && scales.x.name ? scales.x.name : 'X' ) + ': ' + position.x ) +
-		( !boXYZ && !scales.y ? '' : '\n' + ( scales.y && scales.y.name ? scales.y.name : 'Y' ) + ': ' + position.y ) +
-		( !boXYZ && !scales.z ? '' : '\n' + ( scales.z && scales.z.name ? scales.z.name : 'Z' ) + ': ' + position.z ) + 
+		( ( !boXYZ && !scales.x ) || ( scales.x && !scales.x.isAxis() ) ? '' : '\n' + ( scales.x && scales.x.name ? scales.x.name : 'X' ) + ': ' + position.x ) +
+		( ( !boXYZ && !scales.y ) || ( scales.y && !scales.y.isAxis() ) ? '' : '\n' + ( scales.y && scales.y.name ? scales.y.name : 'Y' ) + ': ' + position.y ) +
+		( ( !boXYZ && !scales.z ) || ( scales.z && !scales.z.isAxis() ) ? '' : '\n' + ( scales.z && scales.z.name ? scales.z.name : 'Z' ) + ': ' + position.z ) + 
 		(//w
 			!isArrayFuncs ?
 				'' :
