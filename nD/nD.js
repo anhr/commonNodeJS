@@ -29,13 +29,28 @@ class ND {
 
 	/** @class
 	 * N-dimensional graphics
+	 * @param {Array} vectorsObject Array of vertices of the n-dimensional graphical object.
+	 * Every item of array is <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>.
+	 * @param {ND.Vector} vectorPlane N-dimensional <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a> of the plane
+	 * that intersects with n-dimensional graphical object.
+	 * Dimensional of the graphical space is defined from <b>vectorPlane.length</b>.
+	 * @param {Object} [settings={}] The following settings are available
+	 * @param {Event} [settings.onIntersection] Plane and object intersection event.
 	 */
-	constructor( vectorsObject, vectorPlane ) {
+	constructor( vectorsObject, vectorPlane, settings = {} ) {
 
 		const THREE = three.THREE, options = three.options || {}, scene = three.group;
-		const n = vectorPlane.length;
+		const n = vectorPlane.length;//Dimensional of the graphical space
 
 		//debug
+		switch( n ) {
+
+			case 1:
+				if ( vectorsObject.length !== n + 1 ) console.error( 'ND: vectorsObject.length !== ' + ( n + 1 ) );
+				break;
+			default: console.error( 'nD vectorPlane.onChange: Invalid dimension = ' + n );
+
+		}
 		for ( var i = 0; i < vectorsObject.length; i++ ) {
 
 			if ( vectorsObject[i].length !== n ) {
@@ -163,6 +178,18 @@ class ND {
 */
 					vectorPlane.onChange = function () {
 
+						switch( n ) {
+
+							case 1:
+								if ( ( vectorPlane[0] >= vectorsObject[0][0] ) && ( vectorPlane[0] <= vectorsObject[1][0] ) ) {
+
+									if ( settings.onIntersection ) settings.onIntersection();
+
+								}
+								break;
+							default: console.error( 'nD vectorPlane.onChange: Invalid dimension = ' + n );
+
+						}
 //						if ( !mesh ) return;
 						mesh.position.copy( vectorPlane.point );
 						mesh.updateMatrix();
@@ -280,7 +307,7 @@ ND.Vector = class extends Array {
 			/**
 			* @description
 			* <pre>
-			* <b><a href="./module-ND-ND.Vector.html" target="_blank">ND.Vector</a>.point</b>.
+			* <b><a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>.point</b>.
 			* Projection of the <b>ND.Vector</b> object into 3D space.
 			* Returns <b>THREE.Vector3</b> object.
 			* Projection of 1-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], 0, 0 ) </b>.

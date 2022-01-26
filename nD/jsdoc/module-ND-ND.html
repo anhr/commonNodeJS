@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-ND.html">ND</a>~</span>ND<span class="signature">()</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-ND.html">ND</a>~</span>ND<span class="signature">(vectorsObject, vectorPlane, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
             <div class="class-description">N-dimensional graphics</div>
         
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="ND"><span class="type-signature"></span>new ND<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ND"><span class="type-signature"></span>new ND<span class="signature">(vectorsObject, vectorPlane, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -59,6 +59,206 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>vectorsObject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Array of vertices of the n-dimensional graphical object.Every item of array is <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>vectorPlane</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ND.Vector</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">N-dimensional <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a> of the planethat intersects with n-dimensional graphical object.Dimensional of the graphical space is defined from <b>vectorPlane.length</b>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>settings</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">The following settings are available
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>onIntersection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Plane and object intersection event.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -94,7 +294,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line29">line 29</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line40">line 40</a>
     </li></ul></dd>
     
 
@@ -162,7 +362,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Jan 20 2022 19:41:56 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jan 25 2022 11:51:29 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
