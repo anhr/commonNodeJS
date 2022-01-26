@@ -57,17 +57,19 @@ class ND {
 
 	/** @class
 	 * N-dimensional graphics
+	 * @param {Options} options See &lt;a href="../../jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
 	 * @param {Array} vectorsObject Array of vertices of the n-dimensional graphical object.
 	 * Every item of array is &lt;a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector&lt;/a>.
 	 * @param {ND.Vector} vectorPlane N-dimensional &lt;a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector&lt;/a> of the plane
 	 * that intersects with n-dimensional graphical object.
 	 * Dimensional of the graphical space is defined from &lt;b>vectorPlane.length&lt;/b>.
 	 * @param {Object} [settings={}] The following settings are available
+	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * @param {Event} [settings.onIntersection] Plane and object intersection event.
 	 */
-	constructor( vectorsObject, vectorPlane, settings = {} ) {
+	constructor( options, vectorsObject, vectorPlane, settings = {} ) {
 
-		const THREE = three.THREE, options = three.options || {}, scene = three.group;
+		const THREE = three.THREE, scene = settings.scene;// || three.group;//, options = settings.options || three.options || {};
 		const n = vectorPlane.length;//Dimensional of the graphical space
 
 		//debug
@@ -90,25 +92,29 @@ class ND {
 
 		}
 
-		//Graphic object. Currenyly is line
+		if ( scene ) {
 
-		const object = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [
-			vectorsObject[0].point,
-			vectorsObject[1].point
-		] ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
-		scene.add( object );
-		if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
+			//Graphic object. Currenyly is line
 
-		//raycaster
+			const object = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [
+				vectorsObject[0].point,
+				vectorsObject[1].point
+			] ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
+			scene.add( object );
+			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
 
-		object.userData.raycaster = {
+			//raycaster
 
-			onIntersection: function ( intersection, mouse ) { MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer ); },
-			onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
-			onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
+			object.userData.raycaster = {
+
+				onIntersection: function ( intersection, mouse ) { MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer ); },
+				onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
+				onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
+
+			}
+			options.eventListeners.addParticle( object );
 
 		}
-		options.eventListeners.addParticle( object );
 		
 		options.scales.x.name = 0;
 		options.scales.y.name = 1;
@@ -132,18 +138,19 @@ class ND {
 		 * For n-dimensional space &lt;b>ND.Plane&lt;/b> is n-dimensional plane.
 		 * &lt;/pre>
 		 */
-		class Plane/* extends ND.Vector*/ {
+		class Plane {
 
 			constructor() {
 
-				const THREE = three.THREE, options = three.options || {};
+//				const THREE = three.THREE, options = three.options || {};
 
 //				super( array );
 
 				var mesh;
-				this.createMesh = function ( scene ) {
+				this.createMesh = function ( /*scene*/ ) {
 
-					scene = scene || three.group;
+//					scene = scene || three.group;
+					if ( !scene ) return;
 					switch ( vectorPlane.length ) {
 
 						case 1://point
@@ -209,8 +216,26 @@ class ND {
 						switch( n ) {
 
 							case 1:
-								if ( ( vectorPlane[0] >= vectorsObject[0][0] ) &amp;&amp; ( vectorPlane[0] &lt;= vectorsObject[0][0] ) )
-									console.log('intersection');
+								//https://stackoverflow.com/a/18881828/5175935
+								if ( !Number.prototype.between )
+									Number.prototype.between = function( a, b, inclusive ) {
+
+										var min = Math.min.apply( Math, [a, b] ),
+										max = Math.max.apply( Math, [a, b] );
+										return inclusive ? this >= min &amp;&amp; this &lt;= max : this > min &amp;&amp; this &lt; max;
+
+									};
+
+								//if ( ( vectorPlane[0] >= vectorsObject[0][0] ) &amp;&amp; ( vectorPlane[0] &lt;= vectorsObject[1][0] ) )
+/*								
+								if ( vectorPlane[0].between( vectorsObject[0][0], vectorsObject[1][0], true ) ) {
+
+									if ( settings.onIntersection ) settings.onIntersection();
+
+								}
+*/								
+								if ( settings.onIntersection )
+									settings.onIntersection( vectorPlane[0].between( vectorsObject[0][0], vectorsObject[1][0], true ) ? vectorPlane : undefined );
 								break;
 							default: console.error( 'nD vectorPlane.onChange: Invalid dimension = ' + n );
 
@@ -428,7 +453,7 @@ export default ND;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Jan 25 2022 11:51:29 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Jan 26 2022 13:26:01 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
