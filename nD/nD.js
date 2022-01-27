@@ -77,7 +77,7 @@ class ND {
 				vectorsObject[1].point
 			] ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
 			object.name = 'Object';
-object.position.copy( new THREE.Vector3( 0.1, 0, 0 ) );
+//object.position.copy( new THREE.Vector3( 0.1, 0, 0 ) );
 			scene.add( object );
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
 
@@ -171,7 +171,7 @@ object.position.copy( new THREE.Vector3( 0.1, 0, 0 ) );
 
 					mesh.userData.raycaster = {
 
-						onIntersection: function ( intersection, mouse ) { MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer ); },
+						onIntersection: function ( intersection, mouse ) { MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer, intersection.object.position ); },
 						onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
 						onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
 
@@ -205,6 +205,8 @@ object.position.copy( new THREE.Vector3( 0.1, 0, 0 ) );
 */								
 								if ( settings.onIntersection )
 									settings.onIntersection( vectorPlane[0].between( vectorsObject[0][0], vectorsObject[1][0], true ) ? vectorPlane : undefined );
+								break;
+							case 2:
 								break;
 							default: console.error( 'nD vectorPlane.onChange: Invalid dimension = ' + n );
 
