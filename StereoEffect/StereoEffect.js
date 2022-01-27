@@ -985,7 +985,6 @@ import { getObjectPosition } from '../getPosition.js';
  * @param {object} options.spriteOptions Options of the <b>SpriteText</b>.
  * See [SpriteText]{@link https://raw.githack.com/anhr/commonNodeJS/master/SpriteText/jsdoc/module-SpriteText..html} for details.
  * @returns <b>new SpriteText</b> with information about point, intersected with mouse cursor.
- * @param {THREE.Vector3} [options.position] <b>intersection.object.position</b>. Use if you want to see the position of the object instead  of one of the object's vertices position.
  */
 StereoEffect.getTextIntersection = function ( intersection, options ) {
 
@@ -994,7 +993,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 		return spriteText;
 		
 	const THREE = three.THREE;
-	const position = options.position || getObjectPosition( intersection.object, intersection.index ),
+	const position = getObjectPosition( intersection.object, intersection.index ),
 		scales = options.scales || {},
 		isArrayFuncs = (
 			( intersection.index !== undefined ) &&

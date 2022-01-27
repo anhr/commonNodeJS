@@ -44,6 +44,7 @@ class ND {
 	 */
 	constructor( vectorsObject, vectorPlane, options, settings = {} ) {
 
+		if ( !vectorPlane.point ) vectorPlane = new ND.Vector( vectorPlane );
 		const THREE = three.THREE, scene = settings.scene;// || three.group;//, options = settings.options || three.options || {};
 		const n = vectorPlane.length;//Dimensional of the graphical space
 
@@ -85,7 +86,13 @@ class ND {
 
 			object.userData.raycaster = {
 
-				onIntersection: function ( intersection, mouse ) { MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer, intersection.object.position ); },
+				onIntersection: function ( intersection, mouse ) {
+
+					delete intersection.index;
+					MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer//, intersection.object.position
+					);
+
+				},
 				onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
 				onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
 
@@ -171,7 +178,12 @@ class ND {
 
 					mesh.userData.raycaster = {
 
-						onIntersection: function ( intersection, mouse ) { MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer, intersection.object.position ); },
+						onIntersection: function ( intersection, mouse ) {
+
+							delete intersection.index;
+							MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
+
+						},
 						onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
 						onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
 
@@ -286,6 +298,20 @@ class ND {
 		}
 		window.requestAnimationFrame( movingObjects );
 */
+
+		Object.defineProperties( this, {
+
+			/**
+			* @description
+			* Returns N-dimensional <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a> of the plane.
+			*/
+			vectorPlane: {
+
+				get: function () { return vectorPlane; }
+
+			},
+
+		} );
 
 	}
 

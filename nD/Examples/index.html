@@ -59,10 +59,9 @@
 
 			const vectorsObject = [new ND.Vector( [-0.5, 0.5] ), new ND.Vector( [0.5, 0.5] )];
 
-			const vectorPlane = new ND.Vector( [0, 0] );
 			var point0D;
 
-			new ND( vectorsObject, vectorPlane, options, {
+			const nD = new ND( vectorsObject, [0, 0], options, {
 
 				scene: scene,
 				onIntersection: function ( nDgeometry ) {
@@ -110,7 +109,7 @@
 			//new time of the player event
 			options.onSelectScene = function ( t ) {
 
-				vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min );
+				nD.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min );
 
 			}
 

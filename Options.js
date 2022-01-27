@@ -1630,9 +1630,8 @@ class Raycaster {
 		 * @param {THREE.Scene} scene [Scene]{@link https://threejs.org/docs/index.html?q=sc#api/en/scenes/Scene}.
 		 * @param {THREE.Camera} camera [PerspectiveCamera]{@link https://threejs.org/docs/index.html?q=persp#api/en/cameras/PerspectiveCamera}.
 		 * @param {THREE.WebGLRenderer} renderer [WebGLRenderer]{@link https://threejs.org/docs/index.html?q=WebGLRenderer#api/en/renderers/WebGLRenderer} instance.
-		 * @param {THREE.Vector3} [position] <b>intersection.object.position</b>. Use if you want to see the position of the object instead  of one of the object's vertices position.
 		 */
-		this.onIntersection = function ( intersection, options, scene, camera, renderer, position ) {
+		this.onIntersection = function ( intersection, options, scene, camera, renderer ) {
 
 			const canvas = renderer.domElement;
 			if ( intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo() )
@@ -1647,7 +1646,6 @@ class Raycaster {
 				spriteTextIntersection = StereoEffect.getTextIntersection( intersection, {
 
 					scales: options.scales,
-					position: position,
 					spriteOptions: {
 
 						textHeight: options.spriteText.textHeight,
