@@ -63,14 +63,75 @@ class ND {
 	 * @param {ND.Vector} vectorPlane N-dimensional &lt;a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector&lt;/a> of the plane
 	 * that intersects with n-dimensional graphical object.
 	 * Dimensional of the graphical space is defined from &lt;b>vectorPlane.length&lt;/b>.
-	 * @param {Options} options See &lt;a href="../../jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
 	 * @param {Object} [settings={}] The following settings are available
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * Define &lt;b>scene&lt;/b> if you want visualise n-dimensional plane and n-dimensional object to 3-D space of the &lt;b>scene&lt;/b>.
+	 * @param {Options} [settings.options] See &lt;a href="../../jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
+	 * Uses only if &lt;b>scene&lt;/b> is defined.
 	 * @param {Event} [settings.onIntersection] Plane and object intersection event.
 	 * The &lt;b>onIntersection&lt;/b> function parameter is the (n-1)-dimensional geometry of the intersection if a collision occurred, or undefined if a collision did not occur.
 	 */
 	constructor( vectorsObject, vectorPlane, options, settings = {} ) {
+
+		if ( !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
+
+		class VectorsObject {
+
+			constructor( vectorsObject ) {
+
+				for ( var i = 0; i &lt; vectorsObject.length; i++ )
+					if ( !vectorsObject[i].point ) vectorsObject[i] = new  Vector( vectorsObject[i] );
+/*
+				Object.defineProperties( this, {
+
+					points: {
+
+						get: function () {
+
+							console.log( 'VectorsObject get points' );
+							return [];
+
+						}
+
+					},
+
+				} );
+*/
+
+				//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
+				return new Proxy( this, {
+
+					get: function ( target, name ) {
+
+						switch ( name ){
+
+							case 'lenght':
+								return vectorsObject.length;
+							case 'points':
+								const points = [];
+								for ( var i = 0; i &lt; vectorsObject.length; i++ )
+									points.push( vectorsObject[i].point );
+								return points;
+
+						}
+						return vectorsObject[name];
+
+					},
+/*					
+					set: function ( target, name, value ) {
+
+						target[name] = value;
+						return target[name];
+
+					}
+*/					
+
+				} );
+
+			}
+
+		}
+		vectorsObject = new VectorsObject( vectorsObject );
 
 		const THREE = three.THREE, scene = settings.scene;// || three.group;//, options = settings.options || three.options || {};
 		const n = vectorPlane.length;//Dimensional of the graphical space
@@ -99,11 +160,15 @@ class ND {
 		if ( scene ) {
 
 			//Graphic object. Currenyly is line
-
-			const object = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [
-				vectorsObject[0].point,
-				vectorsObject[1].point
-			] ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
+/*
+			const points = [];
+			for ( var i = 0; i &lt; vectorsObject.length; i++ )
+				points.push( vectorsObject[i].point );
+*/				
+				
+			const object = new THREE.LineLoop( new THREE.BufferGeometry().setFromPoints( vectorsObject.points ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
+			object.name = 'Object';
+//object.position.copy( new THREE.Vector3( 0.1, 0, 0 ) );
 			scene.add( object );
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
 
@@ -111,23 +176,29 @@ class ND {
 
 			object.userData.raycaster = {
 
-				onIntersection: function ( intersection, mouse ) { MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer ); },
+				onIntersection: function ( intersection, mouse ) {
+
+					delete intersection.index;
+					MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer//, intersection.object.position
+					);
+
+				},
 				onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
 				onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
 
 			}
 			options.eventListeners.addParticle( object );
+			options.scales.x.name = 0;
+			options.scales.y.name = 1;
+			options.scales.z.name = 2;
+			if ( n &lt;= 1 ) options.scales.y = undefined;
+			if ( n &lt;= 2 ) options.scales.z = undefined;
+			options.scales.text.rect = options.scales.text.rect || {}
+			options.scales.text.rect.displayRect = false;
+			options.scales.text.precision = 2;
 
 		}
 		
-		options.scales.x.name = 0;
-		options.scales.y.name = 1;
-		options.scales.z.name = 2;
-		if ( n &lt;= 1 ) options.scales.y = undefined;
-		if ( n &lt;= 2 ) options.scales.z = undefined;
-		options.scales.text.rect = options.scales.text.rect || {}
-		options.scales.text.rect.displayRect = false;
-		options.scales.text.precision = 2;
 
 		//Plane
 
@@ -155,49 +226,33 @@ class ND {
 
 //					scene = scene || three.group;
 					if ( !scene ) return;
+					const color = 0x0000FF;//blue
 					switch ( vectorPlane.length ) {
 
 						case 1://point
 							options.point.size = ( options.scales.x.max - options.scales.x.min ) * 500;//10
 							mesh = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [
-								new THREE.Vector4( 0, 0, 0, new THREE.Color( "rgb( 0, 0, 255)" ) )
-//								new THREE.Vector3( 0, 0, 0 )
-							], 4 ),
+//								new THREE.Vector4( 0, 0, 0, new THREE.Color( "rgb( 0, 0, 255)" ) )
+								new THREE.Vector3( 0, 0, 0 )
+							], 3 ),
 								new THREE.PointsMaterial( {
 
-									color: 0x0000FF,//blue
+									color: color,
 //									vertexColors: THREE.VertexColors,
 //									size: 500,//0.05,
 									sizeAttenuation: false,
 
 								} ) );
-							mesh.position.copy( vectorPlane.point );
-//							mesh.updateMatrix();
-/*
-							mesh.geometry.setAttribute( 'color',
-								new THREE.Float32BufferAttribute( [
-									1, 0, 0,//first point is red
-								], 3 ) );
-*/
-
-							//raycaster
-
-							mesh.userData.raycaster = {
-
-								onIntersection: function ( intersection, mouse ) { MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer ); },
-								onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
-								onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
-
-							}
-							options.eventListeners.addParticle( mesh );
 
 							break;
-						case 1://line
-							console.log( 'Plane is line' );
+						case 2://line
+							mesh = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [
+								new THREE.Vector3( options.scales.x.min, 0, 0 ), new THREE.Vector3( options.scales.x.max, 0, 0 )
+							] ), new THREE.LineBasicMaterial( { color: color } ) );
 							break;
 						default: {
 
-							console.error( 'ND.Plane.createMesh: invalid vector.length = ' + this.length );
+							console.error( 'ND.Plane.createMesh: invalid vector.length = ' + vectorPlane.length );
 							return;
 
 						}
@@ -206,18 +261,27 @@ class ND {
 					mesh.name = 'Plane';
 					scene.add( mesh );
 					if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( mesh );
-/*
-					mesh.userData.player = {
 
-						selectPlayScene: function ( t ) {
+					mesh.position.copy( vectorPlane.point );
 
-							_this[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min );
-							//					_this[0] = -10 + t * 20;
+					//raycaster
+
+					mesh.userData.raycaster = {
+
+						onIntersection: function ( intersection, mouse ) {
+
+							delete intersection.index;
+							MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
 
 						},
+						onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
+						onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
 
 					}
-*/
+					options.eventListeners.addParticle( mesh );
+
+					//
+
 					vectorPlane.onChange = function () {
 
 						switch( n ) {
@@ -243,6 +307,67 @@ class ND {
 */								
 								if ( settings.onIntersection )
 									settings.onIntersection( vectorPlane[0].between( vectorsObject[0][0], vectorsObject[1][0], true ) ? vectorPlane : undefined );
+								break;
+							case 2:
+
+								class Segments {
+
+									constructor() {
+
+										//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
+										return new Proxy( this, {
+
+											get: function ( target, name ) {
+
+												switch ( name ) {
+
+													case 'length':
+														switch ( n ) {
+
+															case 2:
+																return vectorsObject.length - 1;
+
+														}
+														console.error( 'ND.Plane.onChange.Segments.length: invalid n = ' + n );
+														return;
+
+												}
+												const index = parseInt( name ),
+													vectors = [];
+												for ( var i = 0; i &lt; n; i++ ) vectors.push( vectorsObject[index + i] )
+												return vectors;
+
+											},
+/*					
+											set: function ( target, name, value ) {
+											
+												target[name] = value;
+												return target[name];
+											
+											}
+*/
+
+										} );
+
+									}
+
+								}
+								const segments = new Segments();
+								for ( var i = 0; i &lt; segments.length; i++ ) {
+
+									const segment = segments[i];
+									for ( var j = 0; j &lt; segment.length; j++ ) {
+
+										for ( var k = 0; k &lt; n; k++ ) {
+
+											const nD = new ND( [segment[j][k], segment[j+1][k]], vectorPlane[k], options );
+											console.log(nD);
+
+										}
+
+									}
+
+								}
 								break;
 							default: console.error( 'nD vectorPlane.onChange: Invalid dimension = ' + n );
 
@@ -323,13 +448,38 @@ class ND {
 		window.requestAnimationFrame( movingObjects );
 */
 
+		/**
+		 * @returns intersection of &lt;b>vectorPlane&lt;/b> and &lt;b>vectorsObject&lt;/b>. See constructor for details.
+		 */
+		this.intersection = function () {
+
+			console.log( 'ND.intersection' );
+			return;
+
+		}
+
+		Object.defineProperties( this, {
+
+			/**
+			* @description
+			* Returns N-dimensional &lt;a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector&lt;/a> of the plane.
+			*/
+			vectorPlane: {
+
+				get: function () { return vectorPlane; }
+
+			},
+
+		} );
+
 	}
 
 }
 
-ND.Vector = class extends Array {
+//ND.Vector = class extends Array
+class Vector extends Array {
 
-	/**
+	/* *
 	 * @description
 	 * &lt;pre>
 	 * An n-dimensional vector is point in an n-dimensional space.
@@ -361,7 +511,7 @@ ND.Vector = class extends Array {
 
 		Object.defineProperties( this, {
 
-			/**
+			/* *
 			* @description
 			* &lt;pre>
 			* &lt;b>&lt;a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector&lt;/a>.point&lt;/b>.
@@ -454,13 +604,13 @@ export default ND;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ND.html">ND</a></li></ul><h3>Classes</h3><ul><li><a href="module-ND-ND.html">ND</a></li><li><a href="NDVector.ND.Vector.html">ND.Vector</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ND.html">ND</a></li></ul><h3>Classes</h3><ul><li><a href="module-ND-ND.html">ND</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Jan 26 2022 14:20:02 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Jan 28 2022 11:08:43 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
