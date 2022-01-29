@@ -71,8 +71,9 @@ class ND {
 	 * @param {Event} [settings.onIntersection] Plane and object intersection event.
 	 * The &lt;b>onIntersection&lt;/b> function parameter is the (n-1)-dimensional geometry of the intersection if a collision occurred, or undefined if a collision did not occur.
 	 */
-	constructor( vectorsObject, vectorPlane, options, settings = {} ) {
+	constructor( vectorsObject, vectorPlane, settings = {} ) {
 
+		const options = settings.options;
 		if ( !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
 
 		class VectorsObject {
@@ -287,6 +288,7 @@ class ND {
 						switch( n ) {
 
 							case 1:
+/*
 								//https://stackoverflow.com/a/18881828/5175935
 								if ( !Number.prototype.between )
 									Number.prototype.between = function( a, b, inclusive ) {
@@ -296,78 +298,12 @@ class ND {
 										return inclusive ? this >= min &amp;&amp; this &lt;= max : this > min &amp;&amp; this &lt; max;
 
 									};
-
-								//if ( ( vectorPlane[0] >= vectorsObject[0][0] ) &amp;&amp; ( vectorPlane[0] &lt;= vectorsObject[1][0] ) )
-/*								
-								if ( vectorPlane[0].between( vectorsObject[0][0], vectorsObject[1][0], true ) ) {
-
-									if ( settings.onIntersection ) settings.onIntersection();
-
-								}
-*/								
+*/
 								if ( settings.onIntersection )
 									settings.onIntersection( vectorPlane[0].between( vectorsObject[0][0], vectorsObject[1][0], true ) ? vectorPlane : undefined );
 								break;
-							case 2:
+							case 20:
 
-								class Segments {
-
-									constructor() {
-
-										//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
-										return new Proxy( this, {
-
-											get: function ( target, name ) {
-
-												switch ( name ) {
-
-													case 'length':
-														switch ( n ) {
-
-															case 2:
-																return vectorsObject.length - 1;
-
-														}
-														console.error( 'ND.Plane.onChange.Segments.length: invalid n = ' + n );
-														return;
-
-												}
-												const index = parseInt( name ),
-													vectors = [];
-												for ( var i = 0; i &lt; n; i++ ) vectors.push( vectorsObject[index + i] )
-												return vectors;
-
-											},
-/*					
-											set: function ( target, name, value ) {
-											
-												target[name] = value;
-												return target[name];
-											
-											}
-*/
-
-										} );
-
-									}
-
-								}
-								const segments = new Segments();
-								for ( var i = 0; i &lt; segments.length; i++ ) {
-
-									const segment = segments[i];
-									for ( var j = 0; j &lt; segment.length; j++ ) {
-
-										for ( var k = 0; k &lt; n; k++ ) {
-
-											const nD = new ND( [segment[j][k], segment[j+1][k]], vectorPlane[k], options );
-											console.log(nD);
-
-										}
-
-									}
-
-								}
 								break;
 							default: console.error( 'nD vectorPlane.onChange: Invalid dimension = ' + n );
 
@@ -449,12 +385,80 @@ class ND {
 */
 
 		/**
-		 * @returns intersection of &lt;b>vectorPlane&lt;/b> and &lt;b>vectorsObject&lt;/b>. See constructor for details.
+		 * @returns an array of intersection points of &lt;b>vectorPlane&lt;/b> and &lt;b>vectorsObject&lt;/b>. See constructor for details.
 		 */
 		this.intersection = function () {
 
-			console.log( 'ND.intersection' );
-			return;
+			class Segments {
+
+				constructor() {
+
+					//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
+					return new Proxy( this, {
+
+						get: function ( target, name ) {
+
+							switch ( name ) {
+
+								case 'length':
+									switch ( n ) {
+
+										case 2:
+											return vectorsObject.length;
+
+									}
+									console.error( 'ND.Plane.onChange.Segments.length: invalid n = ' + n );
+									return;
+
+							}
+							const index = parseInt( name ),
+								vectors = [];
+							for ( var i = 0; i &lt; n; i++ ) vectors.push( vectorsObject[ ( index + i - 1 ) === n ? 0 : index + i] );
+//							vectors.push( vectorsObject[0] )
+							return vectors;
+
+						},
+/*					
+						set: function ( target, name, value ) {
+
+							target[name] = value;
+							return target[name];
+
+						}
+*/
+
+					} );
+
+				}
+
+			}
+			const segments = new Segments(), intersects = [];
+			for ( var i = 0; i &lt; segments.length; i++ ) {
+
+				const s = segments[i];
+				if ( !vectorPlane[1].between( s[0][1], s[1][1], true ) )
+					continue;
+				const a = ( s[1][1] - s[0][1] ) / ( s[1][0] - s[0][0] ), b = s[0][1] - a * s[0][0],
+					x = ( vectorPlane[1] - b ) / a;
+				if ( !x.between( s[0][0], s[1][0], true ) )
+					continue;
+				intersects.push( [x, vectorPlane[1]] );
+/*
+				for ( var j = 0; j &lt; segment.length; j++ ) {
+
+					for ( var k = 0; k &lt; n; k++ ) {
+
+						const nD = new ND( [segment[j][k], segment[j+1][k]], vectorPlane[k] ),
+							intersection = nD.intersection();
+						console.log(nD);
+
+					}
+
+				}
+*/				
+
+			}
+			return intersects;
 
 		}
 
@@ -594,6 +598,16 @@ class Vector extends Array {
 }
 
 export default ND;
+
+//https://stackoverflow.com/a/18881828/5175935
+if ( !Number.prototype.between )
+	Number.prototype.between = function ( a, b, inclusive ) {
+
+		var min = Math.min.apply( Math, [a, b] ),
+			max = Math.max.apply( Math, [a, b] );
+		return inclusive ? this >= min &amp;&amp; this &lt;= max : this > min &amp;&amp; this &lt; max;
+
+	};
 </code></pre>
         </article>
     </section>
@@ -610,7 +624,7 @@ export default ND;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Jan 28 2022 11:08:43 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jan 29 2022 11:31:32 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
