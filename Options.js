@@ -346,6 +346,7 @@ class Options {
 			 *	cookieName:,// Name of the cookie.
 			 *	axesHelperGui: false,// - do not adds a <a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelperGui</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 			 *	stereoEffectsGui: false,// - do not adds <a href="../../StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#gui" target="_blank">Stereo Effects folder</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+			 *	folderPoint: false,// - do not adds <a href="../../jsdoc/folderPoint/FolderPoint.html" target="_blank">Point settings folder</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 			 *	playerGui: true,// - adds a <a href="../../player/jsdoc/module-Player.html#~Player.gui" target="_blank">Player controllers</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 			 *	guiSelectPoint: true,// - displays the <a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">Select Point</a>. [dat.gui]{@link https://github.com/dataarts/dat.gui} based graphical user interface for select a point from the mesh.
 			 *	guiFrustumPoints: true,// - Adds <a href="../../FrustumPoints/jsdoc/FrustumPoints.html#gui" target="_blank">Frustum Points folder</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
@@ -533,6 +534,7 @@ class Options {
 								folderPoint: {
 
 									get: function () { return dat.folderPoint; },
+									set: function ( folderPoint ) { dat.folderPoint = folderPoint; },
 
 								},
 								pointLightGui: {
@@ -976,7 +978,25 @@ class Options {
 			 **/
 			point: {
 
-				get: function () { return options.point; },
+//				get: function () { return options.point; },
+				get: function () {
+					return {
+
+						get size() { return options.point.size; },
+						set size( size ) {
+
+							if ( options.point.size === size ) return;
+							options.point.size = size;
+							if ( options.dat && options.dat.folderPoint ) options.dat.folderPoint.size.setValue( size );
+
+						},
+
+						get sizePointsMaterial() { return options.point.sizePointsMaterial; },
+						set sizePointsMaterial( sizePointsMaterial ) { options.point.sizePointsMaterial = sizePointsMaterial;},
+
+					};
+
+				},
 
 			},
 

@@ -56,6 +56,8 @@ class FolderPoint {
 		if ( !gui || options.dat.folderPoint === false )
 			return;
 
+		options.dat.folderPoint = this;
+
 		//Localization
 
 		const lang = {
