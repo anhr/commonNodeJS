@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-ND.html">ND</a>~</span>ND<span class="signature">(vectorsObject, vectorPlane, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-ND.html">ND</a>~</span>ND<span class="signature">(geometry, vectorPlane, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
             <div class="class-description">N-dimensional graphics.Checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.</div>
         
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="ND"><span class="type-signature"></span>new ND<span class="signature">(vectorsObject, vectorPlane, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ND"><span class="type-signature"></span>new ND<span class="signature">(geometry, vectorPlane, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -90,7 +90,7 @@
 
         <tr>
             
-                <td class="name"><code>vectorsObject</code></td>
+                <td class="name"><code>geometry</code></td>
             
 
             <td class="type">
@@ -118,7 +118,7 @@
                 </td>
             
 
-            <td class="description last">Array of vertices of the n-dimensional graphical object.Every item of array is <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>.</td>
+            <td class="description last">Array of vertices of the n-dimensional graphical object.Every item of array is n-dimensional vector of vertice of object.</td>
         </tr>
 
     
@@ -131,7 +131,7 @@
             <td class="type">
             
                 
-<span class="param-type">ND.Vector</span>
+<span class="param-type">Array</span>
 
 
             
@@ -153,7 +153,7 @@
                 </td>
             
 
-            <td class="description last">N-dimensional <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a> of the planethat intersects with n-dimensional graphical object.Dimensional of the graphical space is defined from <b>vectorPlane.length</b>.</td>
+            <td class="description last">N-dimensional vector of the planethat intersects with n-dimensional graphical object.Dimensional of the graphical space is defined from <b>vectorPlane.length</b>.</td>
         </tr>
 
     
@@ -416,6 +416,156 @@
     
 
     
+    <h4 class="name" id="convertVectors"><span class="type-signature"></span>convertVectors<span class="signature">(geometry)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Converts an array of vectors to the current dimension.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>geometry</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Geometry</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line376">line 376</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Copy of array of vectors with current dimension.
+</div>
+
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="intersection"><span class="type-signature"></span>intersection<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
@@ -464,7 +614,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line362">line 362</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line246">line 246</a>
     </li></ul></dd>
     
 
@@ -493,7 +643,7 @@
 
         
 <div class="param-desc">
-    an array of intersection points of <b>vectorPlane</b> and <b>vectorsObject</b>. See constructor for details.
+    an array of intersection points of <b>vectorPlane</b> and <b>geometry</b>. See constructor for details.
 </div>
 
 
@@ -520,13 +670,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ND.html">ND</a></li></ul><h3>Classes</h3><ul><li><a href="module-ND-ND.html">ND</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ND.html">ND</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-ND-geometry.html">geometry</a></li><li><a href="module-ND-vectorPlane.html">vectorPlane</a></li></ul><h3>Classes</h3><ul><li><a href="module-ND-ND.html">ND</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jan 29 2022 11:31:32 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Feb 02 2022 10:23:23 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

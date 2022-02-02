@@ -58,9 +58,9 @@ class ND {
 	/** @class
 	 * N-dimensional graphics.
 	 * Checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
-	 * @param {Array} vectorsObject Array of vertices of the n-dimensional graphical object.
-	 * Every item of array is &lt;a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector&lt;/a>.
-	 * @param {ND.Vector} vectorPlane N-dimensional &lt;a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector&lt;/a> of the plane
+	 * @param {Array} geometry Array of vertices of the n-dimensional graphical object.
+	 * Every item of array is n-dimensional vector of vertice of object.
+	 * @param {Array} vectorPlane N-dimensional vector of the plane
 	 * that intersects with n-dimensional graphical object.
 	 * Dimensional of the graphical space is defined from &lt;b>vectorPlane.length&lt;/b>.
 	 * @param {Object} [settings={}] The following settings are available
@@ -71,17 +71,151 @@ class ND {
 	 * @param {Event} [settings.onIntersection] Plane and object intersection event.
 	 * The &lt;b>onIntersection&lt;/b> function parameter is the (n-1)-dimensional geometry of the intersection if a collision occurred, or undefined if a collision did not occur.
 	 */
-	constructor( vectorsObject, vectorPlane, settings = {} ) {
+	constructor( geometry, vectorPlane, settings = {} ) {
 
-		const options = settings.options;
+		const options = settings.options, _ND = this;
+
+		let n;//dimension of the graphic object
+
+		//ND.Vector = class extends Array
+		class Vector extends Array {
+
+			/* *
+			 * @description
+			 * &lt;pre>
+			 * An n-dimensional vector is point in an n-dimensional space.
+			 * The length of an array is the dimension of the space.
+			 * @param {Array} [array=0] array of the values for appropriate axes.
+			 * &lt;/pre>
+			 * @example //Creates a point in 2-dimensional space. -5 is value for 0 axis and 7.8 is value for 1 axis.
+			 * const vector = new ND.Vector( [-5, 7.8] );
+			 * const n_dimension = vector.length//2
+			 * const point = vector.point;//THREE.Vector3( -5, 7.8, 0 )
+			 * const vector0 = vector[0]//-5
+			 * const vector1 = vector[1]//7.8
+			 * @memberof NDVector
+			 */
+			constructor( array = 0, settings = {} ) {
+
+				settings.axis = settings.axis || 'x';
+				if ( array instanceof Array === false ) array = [array];
+				super();
+
+				for ( var i = 0; i &lt; array.length; i++ ) {
+
+					if ( ( n !== undefined ) &amp;&amp; ( i >= n ) ) break;//массив точек текущего объекта пришел как результат пересечения панели с объетом более выокого измерения
+					const item = array[i];
+					if ( typeof item === "number" )
+						super.push( item );
+					else console.error( 'ND.Vector: invalid ' + item + ' item ' );
+
+				}
+				if ( n !== undefined ) while( this.length &lt; n ) super.push( 0 );
+
+				Object.defineProperties( this, {
+
+					/* *
+					* @description
+					* &lt;pre>
+					* &lt;b>&lt;a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector&lt;/a>.point&lt;/b>.
+					* Projection of the &lt;b>ND.Vector&lt;/b> object into 3D space.
+					* Returns &lt;b>THREE.Vector3&lt;/b> object.
+					* Projection of 1-dimensional vector into 3D space: &lt;b>THREE.Vector3( vector[0], 0, 0 ) &lt;/b>.
+					* Projection of 2-dimensional vector into 3D space: &lt;b>THREE.Vector3( vector[0], vector[1], 0 ) &lt;/b>.
+					* Projection of 3-dimensional vector into 3D space: &lt;b>THREE.Vector3( vector[0], vector[1], vector[2] ) &lt;/b>.
+					* &lt;/pre>
+					* @See &lt;a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector&lt;/a>
+					*/
+					point: {
+
+						get: function () {
+
+							const THREE = three.THREE;
+							switch ( this.length ) {
+
+								case 1:
+									switch ( settings.axis ) {
+
+										case 'x': return new THREE.Vector3( this[0], 0, 0 );
+										//								case 'y': return new THREE.Vector3( 0, this[0], 0 );
+										//								case 'z': return new THREE.Vector3( 0, 0, this[0] );
+										default: console.error( 'ND.Vector.point: invalid axis: ' + axis );
+
+									}
+									return;
+								case 2: return new THREE.Vector3( this[0], this[1], 0 );
+								case 3: return new THREE.Vector3( this[0], this[1], this[2] );
+								default: console.error( 'ND.Vector.point: invalid length: ' + this.length );
+
+							}
+
+						}
+
+					},
+					/*see Proxy.set
+								onChange: {
+					
+									set: function ( onChange ) {
+					
+										settings.onChange = onChange;
+					
+									},
+					
+								},
+					*/
+
+				} );
+
+				//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
+				return new Proxy( this, {
+					/*
+								get: function(target, name) {
+									console.log('Proxy get');
+								return target[name];
+								},
+					*/
+					set: function ( target, name, value ) {
+
+						if ( name === "onChange" ) {
+
+							settings.onChange = value;
+							return settings.onChange;
+
+						}
+						if( parseInt( name ) >= target.length ) {
+
+							target.push( value );
+							return target.length;
+
+						}
+						target[name] = value;
+						_ND.intersection();
+						if ( settings.onChange ) settings.onChange();
+						return target[name];
+
+					}
+
+				} );
+
+			}
+//			push( value ) { console.error( 'ND.Vector.push() unavailable' ); }
+			pop() { console.error( 'ND.Vector.pop() unavailable' ); }
+
+		}
+
 		if ( !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
+		n = vectorPlane.length;//Dimensional of the graphical space
 
-		class VectorsObject {
+		class Geometry {
 
-			constructor( vectorsObject ) {
+			constructor( geometry ) {
 
-				for ( var i = 0; i &lt; vectorsObject.length; i++ )
-					if ( !vectorsObject[i].point ) vectorsObject[i] = new  Vector( vectorsObject[i] );
+				for ( var i = 0; i &lt; geometry.length; i++ ) {
+
+					geometry[i] = new Vector( geometry[i] );
+//					if ( !geometry[i].point ) geometry[i] = new  Vector( geometry[i] );
+
+				}
 /*
 				Object.defineProperties( this, {
 
@@ -89,7 +223,7 @@ class ND {
 
 						get: function () {
 
-							console.log( 'VectorsObject get points' );
+							console.log( 'Geometry get points' );
 							return [];
 
 						}
@@ -107,15 +241,15 @@ class ND {
 						switch ( name ){
 
 							case 'lenght':
-								return vectorsObject.length;
+								return geometry.length;
 							case 'points':
 								const points = [];
-								for ( var i = 0; i &lt; vectorsObject.length; i++ )
-									points.push( vectorsObject[i].point );
+								for ( var i = 0; i &lt; geometry.length; i++ )
+									points.push( geometry[i].point );
 								return points;
 
 						}
-						return vectorsObject[name];
+						return geometry[name];
 
 					},
 /*					
@@ -132,26 +266,163 @@ class ND {
 			}
 
 		}
-		vectorsObject = new VectorsObject( vectorsObject );
+
+		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
+		/**
+		 * @returns an array of intersection points of &lt;b>vectorPlane&lt;/b> and &lt;b>geometry&lt;/b>. See constructor for details.
+		 */
+		this.intersection = function () {
+
+			class Segments {
+
+				constructor() {
+
+					//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
+					return new Proxy( this, {
+
+						get: function ( target, name ) {
+
+							switch ( name ) {
+
+								case 'length':
+									switch ( n ) {
+
+										case 1:
+										case 2:
+											return geometry.length;
+
+									}
+									console.error( 'ND.Plane.onChange.Segments.length: invalid n = ' + n );
+									return;
+
+							}
+							const index = parseInt( name ),
+								vectors = [];
+							for ( var i = 0; i &lt; n; i++ ) vectors.push( geometry[( index + i - 1 ) === n ? 0 : index + i] );
+							//							vectors.push( geometry[0] )
+							return vectors;
+
+						},
+						/*					
+												set: function ( target, name, value ) {
+						
+													target[name] = value;
+													return target[name];
+						
+												}
+						*/
+
+					} );
+
+				}
+
+			}
+			const segments = new Segments(), arrayIntersects = [];
+			for ( var i = 0; i &lt; segments.length; i++ ) {
+
+				const s = segments[i];
+				switch ( n ) {
+
+					case 1:
+						break;
+					default:
+						if ( !vectorPlane[1].between( s[0][1], s[1][1], true ) )
+							continue;
+						const a = ( s[1][1] - s[0][1] ) / ( s[1][0] - s[0][0] ), b = s[0][1] - a * s[0][0],
+							x = ( vectorPlane[1] - b ) / a;
+						if ( !x.between( s[0][0], s[1][0], true ) )
+							continue;
+						arrayIntersects.push( [x, vectorPlane[1]] );
+
+				}
+				/*
+								for ( var j = 0; j &lt; segment.length; j++ ) {
+				
+									for ( var k = 0; k &lt; n; k++ ) {
+				
+										const nD = new ND( [segment[j][k], segment[j+1][k]], vectorPlane[k] ),
+											intersection = nD.intersection();
+										console.log(nD);
+				
+									}
+				
+								}
+				*/
+
+			}
+			if ( settings.onIntersection )
+				settings.onIntersection( new Geometry( arrayIntersects ) );
+			if ( scene ) {
+
+				//если я не буду копировать массив, то элементы массива arrayIntersects преобразуются в класс Proxy.
+				//Если потом этот массив использовать для содания класса ND другой размерности, то получу сообщение об ошибке
+				//ND: Invalid vector dimension
+//				const arrayIntersectsCopy = [...arrayIntersects];
+
+				if ( objectIntersect ) {
+
+					if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( objectIntersect );
+					scene.remove( objectIntersect );
+
+				}
+				if ( arrayIntersects.length ) {
+
+					objectIntersect = new THREE.LineLoop(
+						new THREE.BufferGeometry().setFromPoints( new Geometry( arrayIntersects ).points ),
+						new THREE.LineBasicMaterial( { color: 0xffffff } ) );//white
+					objectIntersect.name = 'Intersect';
+					scene.add( objectIntersect );
+					if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( objectIntersect );
+
+					//raycaster
+
+					objectIntersect.userData.raycaster = {
+
+						onIntersection: function ( intersection, mouse ) {
+
+							delete intersection.index;
+							MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
+
+						},
+						onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
+						onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
+
+					}
+					options.eventListeners.addParticle( objectIntersect );
+
+				}
+
+			}
+			return arrayIntersects;
+
+		}
+		/**
+		 * Converts an array of vectors to the current dimension.
+		 * @param {Array|Geometry} geometry
+		 * @returns Copy of array of vectors with current dimension.
+		 */
+		this.convertVectors = function ( geometry ) { return new Geometry( [...geometry] ); }
+		geometry = new Geometry( geometry );
+//		geometry = this.geometry( geometry );
 
 		const THREE = three.THREE, scene = settings.scene;// || three.group;//, options = settings.options || three.options || {};
-		const n = vectorPlane.length;//Dimensional of the graphical space
 
 		//debug
 		switch( n ) {
 
 			case 1:
-				if ( vectorsObject.length !== n + 1 ) console.error( 'ND: vectorsObject.length !== ' + ( n + 1 ) );
+				if ( geometry.length !== n + 1 ) console.error( 'ND: geometry.length !== ' + ( n + 1 ) );
 				break;
 			case 2: break;
 			default: console.error( 'nD vectorPlane.onChange: Invalid dimension = ' + n );
 
 		}
-		for ( var i = 0; i &lt; vectorsObject.length; i++ ) {
+		for ( var i = 0; i &lt; geometry.length; i++ ) {
 
-			if ( vectorsObject[i].length !== n ) {
+			if ( geometry[i].length !== n ) {
 
 				console.error( 'ND: Invalid vector dimension' );
+				while ( geometry[i].length &lt; n ) geometry[i].push( 0 );
 				//return;
 
 			}
@@ -163,11 +434,11 @@ class ND {
 			//Graphic object. Currenyly is line
 /*
 			const points = [];
-			for ( var i = 0; i &lt; vectorsObject.length; i++ )
-				points.push( vectorsObject[i].point );
+			for ( var i = 0; i &lt; geometry.length; i++ )
+				points.push( geometry[i].point );
 */				
 				
-			const object = new THREE.LineLoop( new THREE.BufferGeometry().setFromPoints( vectorsObject.points ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
+			const object = new THREE.LineLoop( new THREE.BufferGeometry().setFromPoints( geometry.points ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
 			object.name = 'Object';
 //object.position.copy( new THREE.Vector3( 0.1, 0, 0 ) );
 			scene.add( object );
@@ -300,10 +571,10 @@ class ND {
 									};
 */
 								if ( settings.onIntersection )
-									settings.onIntersection( vectorPlane[0].between( vectorsObject[0][0], vectorsObject[1][0], true ) ? vectorPlane : undefined );
+									settings.onIntersection( vectorPlane[0].between( geometry[0][0], geometry[1][0], true ) ? vectorPlane : undefined );
 								break;
-							case 20:
-
+							case 2:
+								console.log(_ND);
 								break;
 							default: console.error( 'nD vectorPlane.onChange: Invalid dimension = ' + n );
 
@@ -384,87 +655,9 @@ class ND {
 		window.requestAnimationFrame( movingObjects );
 */
 
-		/**
-		 * @returns an array of intersection points of &lt;b>vectorPlane&lt;/b> and &lt;b>vectorsObject&lt;/b>. See constructor for details.
-		 */
-		this.intersection = function () {
-
-			class Segments {
-
-				constructor() {
-
-					//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
-					return new Proxy( this, {
-
-						get: function ( target, name ) {
-
-							switch ( name ) {
-
-								case 'length':
-									switch ( n ) {
-
-										case 2:
-											return vectorsObject.length;
-
-									}
-									console.error( 'ND.Plane.onChange.Segments.length: invalid n = ' + n );
-									return;
-
-							}
-							const index = parseInt( name ),
-								vectors = [];
-							for ( var i = 0; i &lt; n; i++ ) vectors.push( vectorsObject[ ( index + i - 1 ) === n ? 0 : index + i] );
-//							vectors.push( vectorsObject[0] )
-							return vectors;
-
-						},
-/*					
-						set: function ( target, name, value ) {
-
-							target[name] = value;
-							return target[name];
-
-						}
-*/
-
-					} );
-
-				}
-
-			}
-			const segments = new Segments(), intersects = [];
-			for ( var i = 0; i &lt; segments.length; i++ ) {
-
-				const s = segments[i];
-				if ( !vectorPlane[1].between( s[0][1], s[1][1], true ) )
-					continue;
-				const a = ( s[1][1] - s[0][1] ) / ( s[1][0] - s[0][0] ), b = s[0][1] - a * s[0][0],
-					x = ( vectorPlane[1] - b ) / a;
-				if ( !x.between( s[0][0], s[1][0], true ) )
-					continue;
-				intersects.push( [x, vectorPlane[1]] );
-/*
-				for ( var j = 0; j &lt; segment.length; j++ ) {
-
-					for ( var k = 0; k &lt; n; k++ ) {
-
-						const nD = new ND( [segment[j][k], segment[j+1][k]], vectorPlane[k] ),
-							intersection = nD.intersection();
-						console.log(nD);
-
-					}
-
-				}
-*/				
-
-			}
-			return intersects;
-
-		}
-
 		Object.defineProperties( this, {
 
-			/**
+			/** @namespace
 			* @description
 			* Returns N-dimensional &lt;a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector&lt;/a> of the plane.
 			*/
@@ -474,126 +667,19 @@ class ND {
 
 			},
 
-		} );
-
-	}
-
-}
-
-//ND.Vector = class extends Array
-class Vector extends Array {
-
-	/* *
-	 * @description
-	 * &lt;pre>
-	 * An n-dimensional vector is point in an n-dimensional space.
-	 * The length of an array is the dimension of the space.
-	 * @param {Array} [array=0] array of the values for appropriate axes.
-	 * &lt;/pre>
-	 * @example //Creates a point in 2-dimensional space. -5 is value for 0 axis and 7.8 is value for 1 axis.
-	 * const vector = new ND.Vector( [-5, 7.8] );
-	 * const n_dimension = vector.length//2
-	 * const point = vector.point;//THREE.Vector3( -5, 7.8, 0 )
-	 * const vector0 = vector[0]//-5
-	 * const vector1 = vector[1]//7.8
-	 * @memberof NDVector
-	 */
-	constructor( array = 0, settings = {} ) {
-
-		settings.axis = settings.axis || 'x';
-		if ( array instanceof Array === false ) array = [array];
-		super();
-
-		for ( var i = 0; i &lt; array.length; i++ ) {
-
-			const item = array[i];
-			if ( typeof item === "number" )
-				super.push( item );
-			else console.error( 'ND.Vector: invalid ' + item + ' item ' );
-		
-		}
-
-		Object.defineProperties( this, {
-
-			/* *
+			/** @namespace
 			* @description
-			* &lt;pre>
-			* &lt;b>&lt;a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector&lt;/a>.point&lt;/b>.
-			* Projection of the &lt;b>ND.Vector&lt;/b> object into 3D space.
-			* Returns &lt;b>THREE.Vector3&lt;/b> object.
-			* Projection of 1-dimensional vector into 3D space: &lt;b>THREE.Vector3( vector[0], 0, 0 ) &lt;/b>.
-			* Projection of 2-dimensional vector into 3D space: &lt;b>THREE.Vector3( vector[0], vector[1], 0 ) &lt;/b>.
-			* Projection of 3-dimensional vector into 3D space: &lt;b>THREE.Vector3( vector[0], vector[1], vector[2] ) &lt;/b>.
-			* &lt;/pre>
-			* @See &lt;a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector&lt;/a>
+			* Returns geometry of N-dimensional object. See &lt;b>geometry&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
 			*/
-			point: {
+			geometry: {
 
-				get: function () {
-
-					const THREE = three.THREE;
-					switch ( this.length ) {
-
-						case 1:
-							switch ( settings.axis ) {
-
-								case 'x': return new THREE.Vector3( this[0], 0, 0 );
-//								case 'y': return new THREE.Vector3( 0, this[0], 0 );
-//								case 'z': return new THREE.Vector3( 0, 0, this[0] );
-								default: console.error( 'ND.Vector.point: invalid axis: ' + axis );
-
-							}
-							return;
-						case 2: return new THREE.Vector3( this[0], this[1], 0 );
-						case 3: return new THREE.Vector3( this[0], this[1], this[2] );
-						default: console.error( 'ND.Vector.point: invalid length: ' + this.length );
-
-					}
-
-				}
+				get: function () { return geometry; }
 
 			},
-/*see Proxy.set
-			onChange: {
-
-				set: function ( onChange ) {
-
-					settings.onChange = onChange;
-
-				},
-
-			},
-*/
-
-		} );
-
-		//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
-		return new Proxy( this, {
-			/*
-						get: function(target, name) {
-							console.log('Proxy get');
-						return target[name];
-						},
-			*/
-			set: function ( target, name, value ) {
-
-				if ( name === "onChange" ) {
-
-					settings.onChange = value;
-					return settings.onChange;
-
-				}
-				target[name] = value;
-				if ( settings.onChange ) settings.onChange();
-				return target[name];
-
-			}
 
 		} );
 
 	}
-	push() { console.error( 'ND.Vector.push() unavailable' ); }
-	pop() { console.error( 'ND.Vector.pop() unavailable' ); }
 
 }
 
@@ -618,13 +704,13 @@ if ( !Number.prototype.between )
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ND.html">ND</a></li></ul><h3>Classes</h3><ul><li><a href="module-ND-ND.html">ND</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ND.html">ND</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-ND-geometry.html">geometry</a></li><li><a href="module-ND-vectorPlane.html">vectorPlane</a></li></ul><h3>Classes</h3><ul><li><a href="module-ND-ND.html">ND</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Jan 29 2022 11:31:32 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Feb 02 2022 10:23:23 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
