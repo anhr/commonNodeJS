@@ -641,11 +641,12 @@ class ND {
 
 			/** @namespace
 			* @description
-			* Returns geometry of N-dimensional object. See <b>geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+			* geometry of N-dimensional object. See <b>geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 			*/
 			geometry: {
 
-				get: function () { return geometry; }
+				get: function () { return geometry; },
+				set: function ( geometryNew ) { geometry = geometryNew; },
 
 			},
 
