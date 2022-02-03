@@ -54,53 +54,47 @@
 
 		import ND from '../nD.js';
 
+		const canvas1D = {}, canvas0D = {};
+
 		//2D
+		var _2D;
 		new MyThree( function ( scene, options ) {
 
-			const vectorsObject = [new ND.Vector( [-0.5, 0.5] ), new ND.Vector( [0.5, 0.5] )];
+//			const vectorsObject = [new ND.Vector( [-0.5, 0.5] ), new ND.Vector( [0.5, 0.5] )];
 
-			var point0D;
+			let line1D;
 
-			const nD = new ND( vectorsObject, [0, 0], options, {
+			_2D = new ND( 2/*[[-0.6, 0.1], [0.7, 0.5], [0, -0.4]], [0, 0.4]*/, {
 
+				geometry: [[-0.6, 0.1], [0.7, 0.5], [0, -0.4]],
 				scene: scene,
+				options: options,
 				onIntersection: function ( nDgeometry ) {
 
-					if ( !canvas0D.scene ) return;
-					if ( nDgeometry ) {
+					if ( _1D ) _1D.geometry = nDgeometry;
+/*
+					if ( !canvas1D.scene ) return;
+					if ( line1D ) {
 
-						if ( !point0D )
-							MyThree.MyPoints( [], canvas0D.scene, {
+						canvas1D.scene.remove( line1D );
+						if ( canvas1D.options.guiSelectPoint ) canvas1D.options.guiSelectPoint.removeMesh( line1D );
+						line1D = undefined;
 
-								pointsOptions: {
+					}
+					if ( nDgeometry.length ) {
 
-									onReady: function ( points ) {
+						if ( _1D ) {
 
-										point0D = points;
-										//console.log( 'MyPoints.onReady' );
-										if ( canvas0D.options.guiSelectPoint )
-											canvas0D.options.guiSelectPoint.addMesh( points );
-
-									},
-
-								},
-								name: 'intersection',
-
-							} );
-
-					} else {
-
-						if ( point0D ) {
-
-							//console.log( 'remove point' );
-							canvas0D.scene.remove( point0D );
-							if ( canvas0D.options.guiSelectPoint )
-								canvas0D.options.guiSelectPoint.removeMesh( point0D );
-							point0D = undefined;
+							line1D = new THREE.Line( new THREE.BufferGeometry().setFromPoints( _1D.convertVectors( nDgeometry ).points ),
+								new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
+							line1D.name = 'intersection';
+							canvas1D.scene.add( line1D );
+							if ( canvas1D.options.guiSelectPoint ) canvas1D.options.guiSelectPoint.addMesh( line1D );
 
 						}
 
 					}
+*/					
 
 				}
 
@@ -109,7 +103,7 @@
 			//new time of the player event
 			options.onSelectScene = function ( t ) {
 
-				nD.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min );
+				_2D.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min );
 
 			}
 
@@ -142,9 +136,12 @@
 		} );
 
 		//1D
+		var _1D;
 		new MyThree( function ( scene, options ) {
 
-			const vectorsObject = [new ND.Vector( [-0.5] ), new ND.Vector( 0.5 )];
+			canvas1D.scene = scene;
+			canvas1D.options = options;
+//			const vectorsObject = [new ND.Vector( [-0.5] ), 0.5 ];
 
 			//ND.Vector test
 			/*
@@ -170,18 +167,33 @@
 			vectorsObject[0].pop();
 			*/
 
-			const vectorPlane = new ND.Vector();
-			var point0D;
+//			const vectorPlane = new ND.Vector();
+			let point0D;
 
-			new ND( vectorsObject, vectorPlane, options, {
+			_1D = new ND( 1/*_2D.intersection(), 0*/, {
 
 				scene: scene,
+				options: options,
 				onIntersection: function ( nDgeometry ) {
 
 					if ( !canvas0D.scene ) return;
-					if ( nDgeometry ) {
+					if ( nDgeometry.length ) {
 
-						if ( !point0D )
+						if ( !point0D ) {
+
+							canvas0D.options.point.size = ( canvas0D.options.scales.x.max - canvas0D.options.scales.x.min ) * 500;//10
+							point0D = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3() ], 3 ),
+								new THREE.PointsMaterial( {
+
+									color: 0x00ff00,//green
+									sizeAttenuation: false,
+									size: canvas0D.options.point.size / options.point.sizePointsMaterial,
+
+								} ) );
+							point0D.name = 'intersection';
+							canvas0D.scene.add( point0D );
+							if ( canvas0D.options.guiSelectPoint ) canvas0D.options.guiSelectPoint.addMesh( point0D );
+/*
 							MyThree.MyPoints( [], canvas0D.scene, {
 
 								pointsOptions: {
@@ -199,6 +211,9 @@
 								name: 'intersection',
 
 							} );
+*/
+
+						}
 
 					} else {
 
@@ -221,7 +236,7 @@
 			//new time of the player event
 			options.onSelectScene = function ( t ) {
 
-				vectorPlane[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min );
+				_1D.vectorPlane[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min );
 
 			}
 
@@ -256,7 +271,6 @@
 
 		//0D
 
-		const canvas0D = {};
 		new MyThree( function ( scene, options ) {
 
 			canvas0D.scene = scene;
@@ -265,9 +279,11 @@
 		}, {
 
 			elContainer: "0D",
+			//point: { size: 1000 },
 			//scales: scales,
 			player: false,
-			dat: false,
+			//dat: { folderPoint: false, },
+			//dat: false,
 			axesHelper: false,
 			orbitControls: false,
 			stereoEffect: false,
