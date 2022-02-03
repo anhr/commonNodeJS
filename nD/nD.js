@@ -11,9 +11,6 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * @see [How to detect collision in three.js?]{@link https://newbedev.com/how-to-detect-collision-in-three-js}
- * @see [Collision detection example]{@link http://stemkoski.github.io/Three.js/Collision-Detection.html}
- * @see [Three JS - Find all points where a mesh intersects a plane]{@link https://stackoverflow.com/questions/42348495/three-js-find-all-points-where-a-mesh-intersects-a-plane}
 */
 
 import three from '../three.js'
@@ -30,12 +27,10 @@ class ND {
 	/** @class
 	 * N-dimensional graphics.
 	 * Checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
-	 * @param {Array} geometry Array of vertices of the n-dimensional graphical object.
-	 * Every item of array is n-dimensional vector of vertice of object.
-	 * @param {Array} vectorPlane N-dimensional vector of the plane
-	 * that intersects with n-dimensional graphical object.
-	 * Dimensional of the graphical space is defined from <b>vectorPlane.length</b>.
+	 * @param {number} n space dimension of the graphical object.
 	 * @param {Object} [settings={}] The following settings are available
+	 * @param {Array} [settings.geometry] Array of vertices of the n-dimensional graphical object.
+	 * Every item of array is n-dimensional vector of vertice of object.
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * Define <b>scene</b> if you want visualise n-dimensional plane and n-dimensional object to 3-D space of the <b>scene</b>.
 	 * @param {Options} [settings.options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
@@ -662,7 +657,7 @@ class ND {
 
 			/** @namespace
 			* @description
-			* Returns N-dimensional <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a> of the plane.
+			* Returns N-dimensional vector of the plane.
 			*/
 			vectorPlane: {
 
@@ -672,7 +667,7 @@ class ND {
 
 			/** @namespace
 			* @description
-			* geometry of N-dimensional object. See <b>geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+			* geometry of N-dimensional object. See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 			*/
 			geometry: {
 
