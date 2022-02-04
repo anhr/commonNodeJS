@@ -1688,7 +1688,7 @@ class Raycaster {
 				if ( cursor === undefined ) cursor = renderer.domElement.style.cursor;
 				renderer.domElement.style.cursor = 'pointer';
 
-			} else spriteTextIntersection.position.copy( intersection.pointSpriteText );//intersection.point );
+			} else if ( intersection.pointSpriteText ) spriteTextIntersection.position.copy( intersection.pointSpriteText );
 
 		}
 
