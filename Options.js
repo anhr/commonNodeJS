@@ -1924,9 +1924,11 @@ cube.userData.raycaster = {
 
 				}
 
+				const domElement = options.renderer ? options.renderer.domElement : window;
+				
 				//Is fired at an element when a pointing device (usually a mouse) is moved while the cursor's hotspot is inside it.
 				//See https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event
-				window.addEventListener( 'mousemove', function ( event ) {
+				domElement.addEventListener( 'mousemove', function ( event ) {
 
 					if ( raycaster.stereo !== undefined ) {
 
@@ -1945,7 +1947,7 @@ cube.userData.raycaster = {
 					intersects = raycaster.intersectObjects( particles );
 					if ( !intersects )
 						return;
-
+console.log('intersects.length='+ intersects.length);
 					if ( intersects.length === 0 ) {
 
 						if ( intersectedObject ) {
@@ -1977,7 +1979,7 @@ cube.userData.raycaster = {
 				//window.addEventListener( 'mousedown', function( event )
 				//is fired when a pointer becomes active. For mouse, it is fired when the device transitions from no buttons depressed to at least one button depressed. For touch, it is fired when physical contact is made with the digitizer. For pen, it is fired when the stylus makes physical contact with the digitizer.
 				//See https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event
-				window.addEventListener( 'pointerdown', function ( event ) {
+				domElement.addEventListener( 'pointerdown', function ( event ) {
 
 					if ( raycaster === undefined )
 						return;
