@@ -1947,7 +1947,6 @@ cube.userData.raycaster = {
 					intersects = raycaster.intersectObjects( particles );
 					if ( !intersects )
 						return;
-console.log('intersects.length='+ intersects.length);
 					if ( intersects.length === 0 ) {
 
 						if ( intersectedObject ) {
@@ -2018,6 +2017,26 @@ console.log('intersects.length='+ intersects.length);
 
 					}
 					particles.push( particle );
+
+				};
+				/**
+				 * Removes particle from array of objects to check for intersection with the ray.
+				 * @see <b>objects</b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+				 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for removing.
+				 */
+				this.removeParticle = function ( particle ) {
+
+					if ( particle.userData.boFrustumPoints )
+						return;
+					if ( raycaster.stereo ) {
+
+						console.error( 'Raycaster.EventListeners.removeParticle: Under construction' );
+						return;
+
+					}
+					const index = particles.indexOf( particle );
+					if ( index === -1 ) return;
+					particles.splice( index, 1 );
 
 				};
 

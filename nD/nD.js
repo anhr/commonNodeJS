@@ -270,6 +270,24 @@ class ND {
 				object.name = settings.name;
 			scene.add( object );
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
+
+			//raycaster
+
+			object.userData.raycaster = {
+
+				onIntersection: function ( intersection, mouse ) {
+
+					delete intersection.index;
+					MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer//, intersection.object3D.position
+					);
+
+				},
+				onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
+				onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
+
+			}
+			options.eventListeners.addParticle( object );
+
 			return object;
 
 		}
@@ -371,6 +389,7 @@ class ND {
 
 					if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( objectIntersect );
 					scene.remove( objectIntersect );
+					options.eventListeners.removeParticle( objectIntersect );
 
 				}
 				if ( arrayIntersects.length ) {
@@ -390,7 +409,6 @@ class ND {
 					objectIntersect.name = 'Intersect';
 					scene.add( objectIntersect );
 					if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( objectIntersect );
-*/
 
 					//raycaster
 
@@ -407,6 +425,7 @@ class ND {
 
 					}
 					options.eventListeners.addParticle( objectIntersect );
+*/
 
 				}
 
@@ -475,6 +494,7 @@ class ND {
 
 				scene.remove( object3D );
 				if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( object3D );
+				options.eventListeners.removeParticle( object3D );
 				object3D = undefined;
 
 			}
@@ -486,7 +506,6 @@ class ND {
 			//object3D.position.copy( new THREE.Vector3( 0.1, 0, 0 ) );
 			scene.add( object3D );
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object3D );
-*/
 
 			//raycaster
 
@@ -504,6 +523,7 @@ class ND {
 
 			}
 			options.eventListeners.addParticle( object3D );
+*/
 
 		}
 		projectTo3D();
