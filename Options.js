@@ -58,7 +58,7 @@ var boCreateControllers;
 class Options {
 
 	/**
-	 * options of the canvas
+	 * Options of the canvas
 	 * @param {Object} options See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 */
 	constructor( options ) {
@@ -346,6 +346,7 @@ class Options {
 			 *	cookieName:,// Name of the cookie.
 			 *	axesHelperGui: false,// - do not adds a <a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelperGui</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 			 *	stereoEffectsGui: false,// - do not adds <a href="../../StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#gui" target="_blank">Stereo Effects folder</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+			 *	folderPoint: false,// - do not adds <a href="../../jsdoc/folderPoint/FolderPoint.html" target="_blank">Point settings folder</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 			 *	playerGui: true,// - adds a <a href="../../player/jsdoc/module-Player.html#~Player.gui" target="_blank">Player controllers</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 			 *	guiSelectPoint: true,// - displays the <a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">Select Point</a>. [dat.gui]{@link https://github.com/dataarts/dat.gui} based graphical user interface for select a point from the mesh.
 			 *	guiFrustumPoints: true,// - Adds <a href="../../FrustumPoints/jsdoc/FrustumPoints.html#gui" target="_blank">Frustum Points folder</a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
@@ -533,6 +534,7 @@ class Options {
 								folderPoint: {
 
 									get: function () { return dat.folderPoint; },
+									set: function ( folderPoint ) { dat.folderPoint = folderPoint; },
 
 								},
 								pointLightGui: {
@@ -782,6 +784,7 @@ class Options {
 											scalesObject.x = new Scale( scales, 'x' );
 
 										} else scales.x = x;
+										if ( options.guiSelectPoint ) options.guiSelectPoint.updateScale( 'x' );
 
 									},
 
@@ -798,6 +801,7 @@ class Options {
 											scalesObject.y = new Scale( scales, 'y' );
 
 										} else scales.y = y;
+										if ( options.guiSelectPoint ) options.guiSelectPoint.updateScale( 'y' );
 
 									},
 
@@ -814,6 +818,7 @@ class Options {
 											scalesObject.z = new Scale( scales, 'z' );
 
 										} else scales.z = z;
+										if ( options.guiSelectPoint ) options.guiSelectPoint.updateScale( 'z' );
 
 									},
 
@@ -973,7 +978,25 @@ class Options {
 			 **/
 			point: {
 
-				get: function () { return options.point; },
+//				get: function () { return options.point; },
+				get: function () {
+					return {
+
+						get size() { return options.point.size; },
+						set size( size ) {
+
+							if ( options.point.size === size ) return;
+							options.point.size = size;
+							if ( options.dat && options.dat.folderPoint ) options.dat.folderPoint.size.setValue( size );
+
+						},
+
+						get sizePointsMaterial() { return options.point.sizePointsMaterial; },
+						set sizePointsMaterial( sizePointsMaterial ) { options.point.sizePointsMaterial = sizePointsMaterial;},
+
+					};
+
+				},
 
 			},
 
@@ -1747,7 +1770,7 @@ class Raycaster {
 				const three = window.__myThree__.three;
 				intersection.pointSpriteText = new three.THREE.Vector3();
 				//Так и не понял почему в режиме стерео текст отображается в неправильном месте
-				if ( settings.options.stereoEffect.settings.spatialMultiplex === StereoEffect.spatialMultiplexsIndexs.Mono )
+				if ( settings.options.stereoEffect && ( settings.options.stereoEffect.settings.spatialMultiplex === StereoEffect.spatialMultiplexsIndexs.Mono ) )
 					raycaster.ray.at( three.options.camera.near + (three.options.camera.far - three.options.camera.near)/1000, intersection.pointSpriteText );
 				//Поэтому оставляю как было раньше
 				else intersection.pointSpriteText = intersection.point;
@@ -1880,6 +1903,7 @@ cube.userData.raycaster = {
 				const THREE = three.THREE, mouse = new THREE.Vector2(), particles = [],
 					raycaster = new THREE.Raycaster(), options = settings.options || {};
 				raycaster.params.Points.threshold = settings.threshold !== undefined ? settings.threshold : 0.03;
+				raycaster.params.Line.threshold = raycaster.params.Points.threshold;
 
 				if ( raycaster.setStereoEffect ) {
 
@@ -1900,9 +1924,11 @@ cube.userData.raycaster = {
 
 				}
 
+				const domElement = options.renderer ? options.renderer.domElement : window;
+				
 				//Is fired at an element when a pointing device (usually a mouse) is moved while the cursor's hotspot is inside it.
 				//See https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event
-				window.addEventListener( 'mousemove', function ( event ) {
+				domElement.addEventListener( 'mousemove', function ( event ) {
 
 					if ( raycaster.stereo !== undefined ) {
 
@@ -1921,7 +1947,7 @@ cube.userData.raycaster = {
 					intersects = raycaster.intersectObjects( particles );
 					if ( !intersects )
 						return;
-
+console.log('intersects.length='+ intersects.length);
 					if ( intersects.length === 0 ) {
 
 						if ( intersectedObject ) {
@@ -1936,9 +1962,12 @@ cube.userData.raycaster = {
 					} else {
 
 						const intersect = intersects[0], object = intersect.object;
-						if ( object.userData.raycaster && object.userData.raycaster.onIntersection )
+						if ( object.userData.raycaster && object.userData.raycaster.onIntersection ) {
+
+							intersect.pointSpriteText = intersect.point;
 							object.userData.raycaster.onIntersection( intersect, mouse );
-						else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
+							
+						} else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
 						intersectedObject = object;
 
 					}
@@ -1950,7 +1979,7 @@ cube.userData.raycaster = {
 				//window.addEventListener( 'mousedown', function( event )
 				//is fired when a pointer becomes active. For mouse, it is fired when the device transitions from no buttons depressed to at least one button depressed. For touch, it is fired when physical contact is made with the digitizer. For pen, it is fired when the stylus makes physical contact with the digitizer.
 				//See https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event
-				window.addEventListener( 'pointerdown', function ( event ) {
+				domElement.addEventListener( 'pointerdown', function ( event ) {
 
 					if ( raycaster === undefined )
 						return;
