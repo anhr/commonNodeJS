@@ -253,6 +253,26 @@ class ND {
 		}
 
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
+		function create3DObject( geometry, settings = {} ) {
+
+			const indices = [],//[0,1,1,2,2,0],
+				length = geometry.length;
+			for ( var i = 0; i < length; i++ ) {
+
+				indices.push( i );
+				indices.push( i < ( length - 1 ) ? i + 1 : 0 );
+
+			}
+			const object = new THREE.LineSegments(
+				new THREE.BufferGeometry().setFromPoints( geometry.points ).setIndex( indices ),
+				new THREE.LineBasicMaterial( { color: settings.color || 0xffffff } ) );//white
+			if ( settings.name )
+				object.name = settings.name;
+			scene.add( object );
+			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
+			return object;
+
+		}
 		/**
 		 * @returns an array of intersection points of <b>vectorPlane</b> and <b>geometry</b>. See constructor for details.
 		 */
@@ -355,12 +375,22 @@ class ND {
 				}
 				if ( arrayIntersects.length ) {
 
+					objectIntersect = create3DObject( new Geometry( arrayIntersects ), { name: 'Intersect' } );
+/*
+					objectIntersect = new THREE.LineSegments(
+						new THREE.BufferGeometry().setFromPoints( new Geometry( arrayIntersects ).points ).setIndex( [0,1] ),
+						new THREE.LineBasicMaterial( { color: 0xffffff } ) );//white
+*/
+/*
 					objectIntersect = new THREE.LineLoop(
 						new THREE.BufferGeometry().setFromPoints( new Geometry( arrayIntersects ).points ),
 						new THREE.LineBasicMaterial( { color: 0xffffff } ) );//white
+*/
+/*
 					objectIntersect.name = 'Intersect';
 					scene.add( objectIntersect );
 					if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( objectIntersect );
+*/
 
 					//raycaster
 
@@ -449,11 +479,14 @@ class ND {
 
 			}
 			if ( geometry.lenght === 0 ) return;
+			object3D = create3DObject( geometry, { name: 'Object', color: 0x00ff00 } );//green
+/*
 			object3D = new THREE.LineLoop( new THREE.BufferGeometry().setFromPoints( geometry.points ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
 			object3D.name = 'Object';
 			//object3D.position.copy( new THREE.Vector3( 0.1, 0, 0 ) );
 			scene.add( object3D );
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object3D );
+*/
 
 			//raycaster
 
