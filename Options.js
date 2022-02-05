@@ -2030,7 +2030,7 @@ cube.userData.raycaster = {
 						return;
 					if ( raycaster.stereo ) {
 
-						console.error( 'Raycaster.EventListeners.removeParticle: Under construction' );
+						raycaster.stereo.removeParticle( particle );
 						return;
 
 					}
