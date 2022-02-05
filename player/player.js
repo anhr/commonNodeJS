@@ -57,6 +57,12 @@ class Player {
 	 * @param {number} [settings.options.playerOptions.max=1] Stop time of the playing.
 	 * @param {number} [settings.options.playerOptions.marks=10] Ticks count of the playing. Number of scenes of 3D objects animation.
 	 * Have effect for <b>max</b> is not Infinity.
+	 * @param {number} [settings.options.playerOptions.selectSceneIndex=0] current time index.
+	 * <pre>
+	 * Legal interval from 0 to to <b>marks - 1</b>.
+	 * If <b>selectSceneIndex</b> = 0 then time = <b>min</b>.
+	 * If <b>selectSceneIndex</b> = <b>marks - 1</b> then time = <b>max</b>.
+	 * <pre>
 	 * @param {number} [settings.options.playerOptions.dt=0.1] Step of the animation. Have effect only if <b>max</b> is infinity.
 	 * @param {boolean} [settings.options.playerOptions.repeat=false] true - Infinitely repeating 3D objects animation.
 	 * @param {number} [settings.options.playerOptions.interval=1] Ticks per seconds.
@@ -121,7 +127,7 @@ class Player {
 		//Кроме того трассировака начинается с нулевой точки
 		setTimeout( function () { onSelectScene(); }, 0 );
 
-		var selectSceneIndex = 0;
+		var selectSceneIndex = options.playerOptions.selectSceneIndex || 0;
 		const _this = this;
 
 		/**
