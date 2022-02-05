@@ -187,22 +187,40 @@ class ND {
 //					if ( !geometry[i].point ) geometry[i] = new  Vector( geometry[i] );
 
 				}
-/*
+
 				Object.defineProperties( this, {
 
 					points: {
 
 						get: function () {
 
-							console.log( 'Geometry get points' );
-							return [];
+							const points = [];
+							for ( var i = 0; i < this.length; i++ )
+								points.push( this[i].point );
+							return points;
+
+						}
+
+					},
+					segments: {
+
+						get: function () {
+
+							const indices = [],//[0,1,1,2,2,0],
+								length = this.length;
+							for ( var i = 0; i < length; i++ ) {
+
+								indices.push( i );
+								indices.push( i < ( length - 1 ) ? i + 1 : 0 );
+
+							}
+							return indices;
 
 						}
 
 					},
 
 				} );
-*/
 
 				//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
 				return new Proxy( this, {
@@ -213,28 +231,16 @@ class ND {
 
 							case 'lenght':
 								return target.length;
+/*
 							case 'points':
 								const points = [];
 								for ( var i = 0; i < target.length; i++ )
 									points.push( target[i].point );
 								return points;
+*/
 
 						}
 						return target[name];
-/*
-						switch ( name ){
-
-							case 'lenght':
-								return geometry.length;
-							case 'points':
-								const points = [];
-								for ( var i = 0; i < geometry.length; i++ )
-									points.push( geometry[i].point );
-								return points;
-
-						}
-						return geometry[name];
-*/						
 
 					},
 /*					
@@ -255,6 +261,8 @@ class ND {
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
 		function create3DObject( geometry, settings = {} ) {
 
+			const indices = geometry.segments;
+/*			
 			const indices = [],//[0,1,1,2,2,0],
 				length = geometry.length;
 			for ( var i = 0; i < length; i++ ) {
@@ -263,6 +271,7 @@ class ND {
 				indices.push( i < ( length - 1 ) ? i + 1 : 0 );
 
 			}
+*/			
 			const object = new THREE.LineSegments(
 				new THREE.BufferGeometry().setFromPoints( geometry.points ).setIndex( indices ),
 				new THREE.LineBasicMaterial( { color: settings.color || 0xffffff } ) );//white
@@ -443,7 +452,7 @@ class ND {
 //		geometry = this.geometry( geometry );
 
 		const THREE = three.THREE, scene = settings.scene;// || three.group;//, options = settings.options || three.options || {};
-
+/*
 		//debug
 		switch( n ) {
 
@@ -454,6 +463,7 @@ class ND {
 			default: console.error( 'nD vectorPlane.onChange: Invalid dimension = ' + n );
 
 		}
+*/		
 		for ( var i = 0; i < geometry.length; i++ ) {
 
 			if ( geometry[i].length !== n ) {
@@ -577,6 +587,9 @@ class ND {
 							mesh = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [
 								new THREE.Vector3( options.scales.x.min, 0, 0 ), new THREE.Vector3( options.scales.x.max, 0, 0 )
 							] ), new THREE.LineBasicMaterial( { color: color } ) );
+							break;
+						case 3://plane
+							mesh = new THREE.GridHelper( 2, 10, color, color );// 2000, 20, 0x888888, 0x444444 );
 							break;
 						default: {
 

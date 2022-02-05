@@ -25,17 +25,28 @@
 		<a href='https://github.com/anhr' target="_blank">About me</a>
 	</p>
 	<h1>nD.</h1>
+	<h2>3D.</h2>
+	Click the "►" button in the lower left corner of the canvas to intersect the blue panel with the green tetrahedron.
+	<br>
+	You can see a white loop line if the blue panel in 3D canvas intersects with the green tetrahedron.
+	<div id="3D">
+		<img src="../../img/wait.gif">
+	</div>
 	<h2>2D.</h2>
 	Click the "►" button in the lower left corner of the canvas to intersect the blue line with the green triangle.
+	<br>
+	You can see a white horizontal line if the blue line in 2D canvas intersects with the green triangle.
 	<div id="2D">
 		<img src="../../img/wait.gif">
 	</div>
 	<h2>1D.</h2>
+	You can see a green horizontal line if the blue line in 2D canvas intersects with the green triangle.
+	<br>
 	Click the "►" button in the lower left corner of the canvas to intersect the blue point with the green line.
 	<div id="1D">
 		<img src="../../img/wait.gif">
 	</div>
-	<h2>0D.</h2>You can see a white point in the center of 0D canvas if the blue point in 1D canvas intersects with the green line.
+	<h2>0D.</h2>You can see a green point in the center of 0D canvas if the blue point in 1D canvas intersects with the green line.
 	<div id="0D">
 		<img src="../../img/wait.gif">
 	</div>
@@ -56,11 +67,67 @@
 
 		const canvas1D = {}, canvas0D = {};
 
+		//3D
+		var _3D;
+		new MyThree( function ( scene, options ) {
+
+//			let line1D;
+
+			_3D = new ND( 3, {
+
+				geometry: [[-0.6, 0.1], [0.7, 0.5], [0, -0.4]],
+				scene: scene,
+				options: options,
+				onIntersection: function ( nDgeometry ) {
+
+					if ( _2D ) _2D.geometry = nDgeometry;
+
+				}
+
+			} );
+
+			//new time of the player event
+			options.onSelectScene = function ( t ) {
+
+				_3D.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min );
+
+			}
+
+		}, {
+
+			elContainer: "3D",
+
+			//axesHelper: false,
+			playerOptions: {
+
+				marks: 110,//Number of scenes of 3D objects animation.
+				interval: 25,//Ticks per seconds.
+
+			},
+			//player: false,
+			dat: {},
+			//dat: false,
+			/*
+			camera: {
+
+				position: new THREE.Vector3( 0, 0, 5 ),
+				fov: 45,
+				near: 1,
+				far: 1000,
+
+			},
+			*/
+			//orbitControls: false,
+			//stereoEffect: false,
+			//scales: { x: {} },
+
+		} );
+
 		//2D
 		var _2D;
 		new MyThree( function ( scene, options ) {
 
-//			const vectorsObject = [new ND.Vector( [-0.5, 0.5] ), new ND.Vector( [0.5, 0.5] )];
+			//			const vectorsObject = [new ND.Vector( [-0.5, 0.5] ), new ND.Vector( [0.5, 0.5] )];
 
 			let line1D;
 
@@ -72,29 +139,29 @@
 				onIntersection: function ( nDgeometry ) {
 
 					if ( _1D ) _1D.geometry = nDgeometry;
-/*
-					if ( !canvas1D.scene ) return;
-					if ( line1D ) {
+					/*
+										if ( !canvas1D.scene ) return;
+										if ( line1D ) {
 
-						canvas1D.scene.remove( line1D );
-						if ( canvas1D.options.guiSelectPoint ) canvas1D.options.guiSelectPoint.removeMesh( line1D );
-						line1D = undefined;
+											canvas1D.scene.remove( line1D );
+											if ( canvas1D.options.guiSelectPoint ) canvas1D.options.guiSelectPoint.removeMesh( line1D );
+											line1D = undefined;
 
-					}
-					if ( nDgeometry.length ) {
+										}
+										if ( nDgeometry.length ) {
 
-						if ( _1D ) {
+											if ( _1D ) {
 
-							line1D = new THREE.Line( new THREE.BufferGeometry().setFromPoints( _1D.convertVectors( nDgeometry ).points ),
-								new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
-							line1D.name = 'intersection';
-							canvas1D.scene.add( line1D );
-							if ( canvas1D.options.guiSelectPoint ) canvas1D.options.guiSelectPoint.addMesh( line1D );
+												line1D = new THREE.Line( new THREE.BufferGeometry().setFromPoints( _1D.convertVectors( nDgeometry ).points ),
+													new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
+												line1D.name = 'intersection';
+												canvas1D.scene.add( line1D );
+												if ( canvas1D.options.guiSelectPoint ) canvas1D.options.guiSelectPoint.addMesh( line1D );
 
-						}
+											}
 
-					}
-*/					
+										}
+					*/
 
 				}
 
@@ -141,7 +208,7 @@
 
 			canvas1D.scene = scene;
 			canvas1D.options = options;
-//			const vectorsObject = [new ND.Vector( [-0.5] ), 0.5 ];
+			//			const vectorsObject = [new ND.Vector( [-0.5] ), 0.5 ];
 
 			//ND.Vector test
 			/*
@@ -167,7 +234,7 @@
 			vectorsObject[0].pop();
 			*/
 
-//			const vectorPlane = new ND.Vector();
+			//			const vectorPlane = new ND.Vector();
 			let point0D;
 
 			_1D = new ND( 1/*_2D.intersection(), 0*/, {
@@ -182,7 +249,7 @@
 						if ( !point0D ) {
 
 							canvas0D.options.point.size = ( canvas0D.options.scales.x.max - canvas0D.options.scales.x.min ) * 500;//10
-							point0D = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3() ], 3 ),
+							point0D = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3()], 3 ),
 								new THREE.PointsMaterial( {
 
 									color: 0x00ff00,//green
@@ -193,25 +260,25 @@
 							point0D.name = 'intersection';
 							canvas0D.scene.add( point0D );
 							if ( canvas0D.options.guiSelectPoint ) canvas0D.options.guiSelectPoint.addMesh( point0D );
-/*
-							MyThree.MyPoints( [], canvas0D.scene, {
+							/*
+														MyThree.MyPoints( [], canvas0D.scene, {
 
-								pointsOptions: {
+															pointsOptions: {
 
-									onReady: function ( points ) {
+																onReady: function ( points ) {
 
-										point0D = points;
-										//console.log( 'MyPoints.onReady' );
-										if ( canvas0D.options.guiSelectPoint )
-											canvas0D.options.guiSelectPoint.addMesh( points );
+																	point0D = points;
+																	//console.log( 'MyPoints.onReady' );
+																	if ( canvas0D.options.guiSelectPoint )
+																		canvas0D.options.guiSelectPoint.addMesh( points );
 
-									},
+																},
 
-								},
-								name: 'intersection',
+															},
+															name: 'intersection',
 
-							} );
-*/
+														} );
+							*/
 
 						}
 
@@ -253,7 +320,7 @@
 
 			},
 			//player: false,
-			dat: { },
+			dat: {},
 			//dat: false,
 			camera: {
 
