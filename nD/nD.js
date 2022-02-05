@@ -181,6 +181,7 @@ class ND {
 			constructor( geometry = [] ) {
 
 				super();
+				const _geometry = this;
 				for ( var i = 0; i < geometry.length; i++ ) {
 
 					this[i] = new Vector( geometry[i] );
@@ -202,7 +203,7 @@ class ND {
 						}
 
 					},
-					segments: {
+					indices: {
 
 						get: function () {
 
@@ -215,6 +216,58 @@ class ND {
 
 							}
 							return indices;
+
+						}
+
+					},
+					segments: {
+
+						get: function () {
+
+							class Segments {
+
+								constructor() {
+
+									//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
+									return new Proxy( this, {
+
+										get: function ( target, name ) {
+
+											switch ( name ) {
+
+												case 'length':
+													switch ( n ) {
+
+														case 1:
+														case 2:
+															return geometry.length;
+
+													}
+													console.error( 'ND.Plane.onChange.Segments.length: invalid n = ' + n );
+													return geometry.length;
+
+											}
+											const index = parseInt( name ),
+												vectors = [];
+											for ( var i = 0; i < n; i++ ) vectors.push( _geometry[( index + i - 1 ) === n ? 0 : index + i] );
+											return vectors;
+
+										},
+										/*					
+																set: function ( target, name, value ) {
+										
+																	target[name] = value;
+																	return target[name];
+										
+																}
+										*/
+
+									} );
+
+								}
+
+							}
+							return new Segments();
 
 						}
 
@@ -261,7 +314,7 @@ class ND {
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
 		function create3DObject( geometry, settings = {} ) {
 
-			const indices = geometry.segments;
+			const indices = geometry.indices;
 /*			
 			const indices = [],//[0,1,1,2,2,0],
 				length = geometry.length;
@@ -305,6 +358,7 @@ class ND {
 		 */
 		this.intersection = function () {
 
+/*
 			class Segments {
 
 				constructor() {
@@ -325,7 +379,7 @@ class ND {
 
 									}
 									console.error( 'ND.Plane.onChange.Segments.length: invalid n = ' + n );
-									return;
+									return geometry.length;
 
 							}
 							const index = parseInt( name ),
@@ -335,21 +389,14 @@ class ND {
 							return vectors;
 
 						},
-						/*					
-												set: function ( target, name, value ) {
-						
-													target[name] = value;
-													return target[name];
-						
-												}
-						*/
 
 					} );
 
 				}
 
 			}
-			const segments = new Segments(), arrayIntersects = [];
+*/
+			const segments = geometry.segments, arrayIntersects = [];
 			for ( var i = 0; i < segments.length; i++ ) {
 
 				const s = segments[i];
@@ -359,6 +406,8 @@ class ND {
 						if ( !vectorPlane[0].between( s[0][0], segments[i + 1][0][0], true ) )
 							continue;
 						arrayIntersects.push( vectorPlane[0] );
+						break;
+					case 3:
 						break;
 					default:
 						if ( !vectorPlane[1].between( s[0][1], s[1][1], true ) )
@@ -401,42 +450,8 @@ class ND {
 					options.eventListeners.removeParticle( objectIntersect );
 
 				}
-				if ( arrayIntersects.length ) {
-
+				if ( arrayIntersects.length )
 					objectIntersect = create3DObject( new Geometry( arrayIntersects ), { name: 'Intersect' } );
-/*
-					objectIntersect = new THREE.LineSegments(
-						new THREE.BufferGeometry().setFromPoints( new Geometry( arrayIntersects ).points ).setIndex( [0,1] ),
-						new THREE.LineBasicMaterial( { color: 0xffffff } ) );//white
-*/
-/*
-					objectIntersect = new THREE.LineLoop(
-						new THREE.BufferGeometry().setFromPoints( new Geometry( arrayIntersects ).points ),
-						new THREE.LineBasicMaterial( { color: 0xffffff } ) );//white
-*/
-/*
-					objectIntersect.name = 'Intersect';
-					scene.add( objectIntersect );
-					if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( objectIntersect );
-
-					//raycaster
-
-					objectIntersect.userData.raycaster = {
-
-						onIntersection: function ( intersection, mouse ) {
-
-							delete intersection.index;
-							MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
-
-						},
-						onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
-						onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
-
-					}
-					options.eventListeners.addParticle( objectIntersect );
-*/
-
-				}
 
 			}
 			return arrayIntersects;
@@ -510,30 +525,6 @@ class ND {
 			}
 			if ( geometry.lenght === 0 ) return;
 			object3D = create3DObject( geometry, { name: 'Object', color: 0x00ff00 } );//green
-/*
-			object3D = new THREE.LineLoop( new THREE.BufferGeometry().setFromPoints( geometry.points ), new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
-			object3D.name = 'Object';
-			//object3D.position.copy( new THREE.Vector3( 0.1, 0, 0 ) );
-			scene.add( object3D );
-			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object3D );
-
-			//raycaster
-
-			object3D.userData.raycaster = {
-
-				onIntersection: function ( intersection, mouse ) {
-
-					delete intersection.index;
-					MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer//, intersection.object3D.position
-					);
-
-				},
-				onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
-				onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
-
-			}
-			options.eventListeners.addParticle( object3D );
-*/
 
 		}
 		projectTo3D();
@@ -590,6 +581,7 @@ class ND {
 							break;
 						case 3://plane
 							mesh = new THREE.GridHelper( 2, 10, color, color );// 2000, 20, 0x888888, 0x444444 );
+							mesh.rotation.x = Math.PI / 2;
 							break;
 						default: {
 

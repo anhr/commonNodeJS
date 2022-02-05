@@ -80,7 +80,7 @@
 				options: options,
 				onIntersection: function ( nDgeometry ) {
 
-					if ( _2D ) _2D.geometry = nDgeometry;
+					//if ( _2D ) _2D.geometry = nDgeometry;
 
 				}
 
@@ -89,7 +89,7 @@
 			//new time of the player event
 			options.onSelectScene = function ( t ) {
 
-				_3D.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min );
+				_3D.vectorPlane[2] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min );
 
 			}
 
@@ -101,6 +101,7 @@
 			playerOptions: {
 
 				marks: 110,//Number of scenes of 3D objects animation.
+				selectSceneIndex: 109,//time is 0.5 sec.
 				interval: 25,//Ticks per seconds.
 
 			},
@@ -182,6 +183,7 @@
 			playerOptions: {
 
 				marks: 110,//Number of scenes of 3D objects animation.
+				selectSceneIndex: 55,//time is 0.5 sec.
 				interval: 25,//Ticks per seconds.
 
 			},
@@ -316,6 +318,7 @@
 			playerOptions: {
 
 				marks: 110,//Number of scenes of 3D objects animation.
+				selectSceneIndex: 55,//time is 0.5 sec.
 				interval: 25,//Ticks per seconds.
 
 			},
