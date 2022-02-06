@@ -211,7 +211,7 @@ class Options {
 				case 'ru'://Russian language
 
 					lang.defaultButton = 'Восстановить';
-					lang.defaultTitle = 'Восстановить положение камеры и проирывателя.';
+					lang.defaultTitle = 'Восстановить положение камеры и проигрывателя.';
 
 					break;
 
@@ -223,7 +223,7 @@ class Options {
 			three.dat.controllerNameAndTitle( options.dat.gui.add( {
 				defaultF: function ( value ) {
 
-					if ( options.player ) options.player.setTime( options.playerOptions.min );
+					if ( options.player ) options.player.selectScene( options.playerOptions.selectSceneIndex );
 
 					camera.position.copy( cameraPosition );
 					scene.position.copy( scenePosition );
