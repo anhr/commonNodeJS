@@ -152,16 +152,18 @@ class ND {
 							return settings.onChange;
 
 						}
-						if( parseInt( name ) >= target.length ) {
+						const i = parseInt( name );
+						if( i >= target.length ) {
 
 							target.push( value );
 							return target.length;
 
 						}
-						target[name] = value;
+						target[i] = value;
 						_ND.intersection();
 						if ( settings.onChange ) settings.onChange();
-						return target[name];
+						//https://github.com/GoogleChrome/proxy-polyfill/issues/20
+						return true;//target[i];
 
 					}
 
@@ -253,14 +255,15 @@ class ND {
 											return vectors;
 
 										},
-										/*					
-																set: function ( target, name, value ) {
+				/*					
+										set: function ( target, name, value ) {
 										
-																	target[name] = value;
-																	return target[name];
+											target[name] = value;
+											//https://github.com/GoogleChrome/proxy-polyfill/issues/20
+											return true;//target[name];
 										
-																}
-										*/
+										}
+				*/
 
 									} );
 
@@ -300,7 +303,8 @@ class ND {
 					set: function ( target, name, value ) {
 
 						target[name] = value;
-						return target[name];
+						//https://github.com/GoogleChrome/proxy-polyfill/issues/20
+						return trur;//target[name];
 
 					}
 */					
@@ -654,7 +658,8 @@ class ND {
 							mesh.updateMatrix();
 
 						}
-						return target[name];
+						//https://github.com/GoogleChrome/proxy-polyfill/issues/20
+						return true;//target[name];
 
 					}
 
