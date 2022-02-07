@@ -661,7 +661,7 @@ function assign() {
 		 * @namespace
 		 * @description Sets the <b>StereoEffect</b> settings to the {@link https://threejs.org/docs/#api/en/core/Raycaster|THREE.Raycaster}.
 		 * Available as <b>THREE.Raycaster.setStereoEffect(...)</b>.
-		 * @param {Object} [settings]
+		 * @param {Object} [settings={}]
 		 * @param {Options} [settings.options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 		 * @param {THREE.PerspectiveCamera} settings.camera {@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera|PerspectiveCamera}
 		 * @param {THREE.Scene} [settings.scene] [Scene]{@link https://threejs.org/docs/index.html?q=Scene#api/en/scenes/Scene}
@@ -669,9 +669,9 @@ function assign() {
 		 * @param {THREE.WebGLRenderer} [settings.renderer=renderer parameter of THREE.StereoEffect] renderer. The {@link https://threejs.org/docs/#api/en/renderers/WebGLRenderer|WebGL renderer} displays your beautifully crafted scenes using WebGL.
 		 * @param {boolean} [settings.raycasterEvents=true] true - add raycaster events: mousemove and pointerdown.
 		 */
-		setStereoEffect: function ( settings ) {
+		setStereoEffect: function ( settings = {} ) {
 
-			settings = settings || {};
+			if ( settings.stereoEffect === false ) return;
 			settings.raycasterEvents = settings.raycasterEvents === undefined ? true : settings.raycasterEvents;
 			const camera = settings.camera, renderer = settings.renderer;
 
