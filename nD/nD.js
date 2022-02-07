@@ -178,18 +178,27 @@ class ND {
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
 //		n = vectorPlane.length;//Dimensional of the graphical space
 
-		class Geometry extends Array {
+		class Geometry {
 
 			constructor( geometry = [] ) {
 
-				super();
-				const _geometry = this;
-				for ( var i = 0; i < geometry.length; i++ ) {
+				if ( geometry instanceof Array ) {
 
-					this[i] = new Vector( geometry[i] );
+					const position = geometry;
+					geometry = { position: position, }
+
+				}
+//				super();
+				this.position = geometry.position || [];
+				const _geometry = this;
+				for ( var i = 0; i < geometry.position.length; i++ ) {
+
+					this.position[i] = new Vector( geometry.position[i] );
 //					if ( !geometry[i].point ) geometry[i] = new  Vector( geometry[i] );
 
 				}
+
+				var segments;
 
 				Object.defineProperties( this, {
 
@@ -198,8 +207,8 @@ class ND {
 						get: function () {
 
 							const points = [];
-							for ( var i = 0; i < this.length; i++ )
-								points.push( this[i].point );
+							for ( var i = 0; i < this.position.length; i++ )
+								points.push( this.position[i].point );
 							return points;
 
 						}
@@ -210,7 +219,7 @@ class ND {
 						get: function () {
 
 							const indices = [],//[0,1,1,2,2,0],
-								length = this.length;
+								length = this.position.length;
 							for ( var i = 0; i < length; i++ ) {
 
 								indices.push( i );
@@ -242,16 +251,16 @@ class ND {
 
 														case 1:
 														case 2:
-															return geometry.length;
+															return geometry.position.length;
 
 													}
 													console.error( 'ND.Plane.onChange.Segments.length: invalid n = ' + n );
-													return geometry.length;
+													return geometry.position.length;
 
 											}
 											const index = parseInt( name ),
 												vectors = [];
-											for ( var i = 0; i < n; i++ ) vectors.push( _geometry[( index + i - 1 ) === n ? 0 : index + i] );
+											for ( var i = 0; i < n; i++ ) vectors.push( _geometry.position[( index + i - 1 ) === n ? 0 : index + i] );
 											return vectors;
 
 										},
@@ -270,7 +279,8 @@ class ND {
 								}
 
 							}
-							return new Segments();
+							if ( !segments ) segments = new Segments();
+							return segments;
 
 						}
 
@@ -286,6 +296,7 @@ class ND {
 						switch ( name ){
 
 							case 'lenght':
+								console.error('use geometry.position.length');
 								return target.length;
 /*
 							case 'points':
@@ -318,6 +329,7 @@ class ND {
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
 		function create3DObject( geometry, settings = {} ) {
 
+			if ( geometry.position.lenght === 0 ) return;
 			const indices = geometry.indices;
 /*			
 			const indices = [],//[0,1,1,2,2,0],
@@ -527,7 +539,6 @@ class ND {
 				object3D = undefined;
 
 			}
-			if ( geometry.lenght === 0 ) return;
 			object3D = create3DObject( geometry, { name: 'Object', color: 0x00ff00 } );//green
 
 		}
