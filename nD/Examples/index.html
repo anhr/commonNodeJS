@@ -65,7 +65,18 @@
 
 		import ND from '../nD.js';
 
-		const canvas1D = {}, canvas0D = {};
+		const canvas1D = {}, canvas0D = {}, options = {
+
+			camera: {
+
+				position: new THREE.Vector3( 0, 0, 5 ),
+				fov: 45,
+				near: 1,
+				far: 1000,
+
+			},
+
+		};
 
 		//3D
 		var _3D;
@@ -78,7 +89,29 @@
 				geometry: {
 
 					//tetrahedron
-					position: [[-0.6, 0.1, 0.8], [0.7, 0.5, 0.8], [0, -0.4, 0.8], [0, 0, -0.3]],
+					position: [
+						[0.8, -0.6, 0.1],//0
+						[0.9, 0.7, 0.5],//1
+						[0.8, 0, -0.4],//2
+						[-0.6, 0.1, 0.1]//3
+/*
+						[-0.6, 0.1, 0.8],//0
+						[0.7, 0.5, 0.9],//1
+						[0, -0.4, 0.8],//2
+						[0, 0, -0.6]//3
+*/
+					],
+					//segments: [[0, 1, 2],[0, 1, 3],[0, 2, 3],[1, 2, 3],],
+//					segments: [[0, 1, 1, 2, 2, 0], [0, 1, 1, 3, 3, 0], [0, 2, 2, 3, 3, 0], [1, 2, 2, 3, 3, 1],],
+/*
+					segments: [
+						ND.faceToEdgesIndices( [0, 1, 2] ),
+						ND.faceToEdgesIndices( [0, 1, 3] ),
+						ND.faceToEdgesIndices( [0, 2, 3] ),
+						ND.faceToEdgesIndices( [1, 2, 3] ),
+					],
+*/
+					segments: ND.tetrahedronSegments(),
 
 				},
 				scene: scene,
@@ -102,7 +135,6 @@
 
 			elContainer: "3D",
 
-			//axesHelper: false,
 			playerOptions: {
 
 				marks: 111,//Number of scenes of 3D objects animation.
@@ -112,20 +144,6 @@
 			},
 			//player: false,
 			dat: {},
-			//dat: false,
-			/*
-			camera: {
-
-				position: new THREE.Vector3( 0, 0, 5 ),
-				fov: 45,
-				near: 1,
-				far: 1000,
-
-			},
-			*/
-			//orbitControls: false,
-			//stereoEffect: false,
-			//scales: { x: {} },
 
 		} );
 
@@ -133,11 +151,7 @@
 		var _2D;
 		new MyThree( function ( scene, options ) {
 
-			//			const vectorsObject = [new ND.Vector( [-0.5, 0.5] ), new ND.Vector( [0.5, 0.5] )];
-
-			let line1D;
-
-			_2D = new ND( 2/*[[-0.6, 0.1], [0.7, 0.5], [0, -0.4]], [0, 0.4]*/, {
+			_2D = new ND( 2, {
 
 				geometry: [[-0.6, 0.1], [0.7, 0.5], [0, -0.4]],
 				scene: scene,
@@ -145,29 +159,6 @@
 				onIntersection: function ( nDgeometry ) {
 
 					if ( _1D ) _1D.geometry = nDgeometry;
-					/*
-										if ( !canvas1D.scene ) return;
-										if ( line1D ) {
-
-											canvas1D.scene.remove( line1D );
-											if ( canvas1D.options.guiSelectPoint ) canvas1D.options.guiSelectPoint.removeMesh( line1D );
-											line1D = undefined;
-
-										}
-										if ( nDgeometry.length ) {
-
-											if ( _1D ) {
-
-												line1D = new THREE.Line( new THREE.BufferGeometry().setFromPoints( _1D.convertVectors( nDgeometry ).points ),
-													new THREE.LineBasicMaterial( { color: 0x00ff00 } ) );//green
-												line1D.name = 'intersection';
-												canvas1D.scene.add( line1D );
-												if ( canvas1D.options.guiSelectPoint ) canvas1D.options.guiSelectPoint.addMesh( line1D );
-
-											}
-
-										}
-					*/
 
 				}
 
@@ -195,6 +186,8 @@
 			//player: false,
 			dat: {},
 			//dat: false,
+			camera: options.camera,
+/*
 			camera: {
 
 				position: new THREE.Vector3( 0, 0, 5 ),
@@ -203,6 +196,7 @@
 				far: 1000,
 
 			},
+*/
 			orbitControls: false,
 			stereoEffect: false,
 			//scales: { x: {} },
@@ -251,7 +245,7 @@
 				onIntersection: function ( nDgeometry ) {
 
 					if ( !canvas0D.scene ) return;
-					if ( nDgeometry.length ) {
+					if ( nDgeometry.position.length ) {
 
 						if ( !point0D ) {
 
@@ -267,25 +261,6 @@
 							point0D.name = 'intersection';
 							canvas0D.scene.add( point0D );
 							if ( canvas0D.options.guiSelectPoint ) canvas0D.options.guiSelectPoint.addMesh( point0D );
-							/*
-														MyThree.MyPoints( [], canvas0D.scene, {
-
-															pointsOptions: {
-
-																onReady: function ( points ) {
-
-																	point0D = points;
-																	//console.log( 'MyPoints.onReady' );
-																	if ( canvas0D.options.guiSelectPoint )
-																		canvas0D.options.guiSelectPoint.addMesh( points );
-
-																},
-
-															},
-															name: 'intersection',
-
-														} );
-							*/
 
 						}
 
@@ -317,7 +292,6 @@
 		}, {
 
 			elContainer: "1D",
-			//point: { size: 100 },
 
 			//axesHelper: false,
 			playerOptions: {
@@ -330,6 +304,8 @@
 			//player: false,
 			dat: {},
 			//dat: false,
+			camera: options.camera,
+/*
 			camera: {
 
 				position: new THREE.Vector3( 0, 0, 5 ),
@@ -338,6 +314,7 @@
 				far: 1000,
 
 			},
+*/
 			orbitControls: false,
 			stereoEffect: false,
 			//scales: { x: {} },
@@ -354,11 +331,10 @@
 		}, {
 
 			elContainer: "0D",
-			//point: { size: 1000 },
 			//scales: scales,
 			player: false,
 			//dat: { folderPoint: false, },
-			//dat: false,
+			dat: false,
 			axesHelper: false,
 			orbitControls: false,
 			stereoEffect: false,
