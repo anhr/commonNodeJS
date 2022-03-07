@@ -174,24 +174,6 @@ class ND {
 				if ( !isNaN( i ) )
 					return {
 
-/*
-						position: new Proxy( target[i], {
-						
-							get: function(target, name) {
-							  
-								const i = parseInt( name );
-								if ( !isNaN( i ) ) {
-
-									if ( i < target.length )
-										return new Vector( settings.geometry.position[target[i]] );
-									console.error( 'ND: settings.geometry.edges position. invalid length: ' + target.length );
-
-								} else console.error( 'ND: settings.geometry.edges position. invalid name: ' + name );
-							  
-							},
-						
-						} ),
-*/
 						intersection: function ( geometryIntersection ) {
 
 							const i = parseInt( name );
@@ -200,16 +182,6 @@ class ND {
 								if ( i >= target.length )
 									console.error( 'ND: settings.geometry.edges[]intersection. invalid length: ' + target.length );
 								const indices = target[i];
-/*								
-								if ( indices.twin ) {
-
-									//У этого ребра есть близнец, у которого уже определена точка пересечения.
-									//Поэтому точку пересечения не надо вычислять
-									indices.intersection = target[indices.twin].intersection;
-									return;
-									
-								}
-*/
 								if ( indices.length !== 2 ) {
 
 									console.error( 'ND: settings.geometry.edges[]intersection. indices.length = ' + indices.length );
@@ -219,9 +191,6 @@ class ND {
 								const position0 = new Vector( settings.geometry.position[indices[0]] ),
 									position1 = new Vector( settings.geometry.position[indices[1]] );
 								function indicesIntersection ( position ) {
-
-									//если indices.intersection существует, значит оно устарело и его надо обновить
-									//if ( indices.intersection ) console.error( 'ND: settings.geometry.edges[]intersection. Duplicate indices.intersection' );
 
 									switch ( n ){
 
@@ -246,7 +215,6 @@ class ND {
 											geometryIntersection.position.push( vectorPlane[0] );
 										break;
 									case 2:
-//										if ( indices.intersection ) break;
 										var vector;
 										if ( vectorPlane[1].between( position0[1], position1[1], true ) ) {
 											
@@ -257,9 +225,6 @@ class ND {
 											if ( !x.between( position0[0], position1[0], true ) )
 												break;
 											vector = [x, vectorPlane[1]];
-	//										vector.segment = [s[0].index, s[1].index];//s.segment;
-	//										console.log('vector: ' + vector + ' segment: ' + vector.segment + ' s[0]: ' + s[0][0] + ' ' + s[0][1] + ' s[1]: ' + s[1][0] + ' ' + s[1][1])
-//											geometryIntersection.position.push( vector );
 
 										}
 										indicesIntersection ( vector );
@@ -270,7 +235,7 @@ class ND {
 												geometry: {
 												
 													position: settings.geometry.position,
-													indices: [indices],//settings.geometry.indices[0],
+													indices: [indices],
 													iAxes: [1,2],
 													
 												},
@@ -283,7 +248,7 @@ class ND {
 												geometry: {
 												
 													position: settings.geometry.position,
-													indices: [indices],//settings.geometry.indices[0],
+													indices: [indices],
 													iAxes: [0,2],
 													
 												},
@@ -293,29 +258,6 @@ class ND {
 											arrayIntersects12 = nD12.intersection();
 										indicesIntersection ( arrayIntersects02.length && arrayIntersects12.length ?
 												[arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined );
-/*										
-										indices.intersection = {
-											
-											position: arrayIntersects02.length && arrayIntersects12.length ?
-												[arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined,
-											
-										}
-*/
-/*											
-										if ( arrayIntersects02.length && arrayIntersects12.length ) {
-				
-											console.log('');
-											console.log('arrayIntersects02[0]: ' + arrayIntersects02[0][0])
-											console.log('arrayIntersects02[1]: ' + arrayIntersects02[1][0])
-											console.log('arrayIntersects12[0]: ' + arrayIntersects12[0][0])
-											console.log('arrayIntersects12[1]: ' + arrayIntersects12[1][0])
-											geometryIntersection.position.push( [arrayIntersects12[0][0], arrayIntersects02[0][0]] );
-											console.log(geometryIntersection.position[geometryIntersection.position.length - 1])
-											geometryIntersection.position.push( [arrayIntersects12[1][0], arrayIntersects02[1][0]] );
-											console.log(geometryIntersection.position[geometryIntersection.position.length - 1])
-				
-										}
-*/
 											
 								}
 
@@ -325,7 +267,6 @@ class ND {
 						indices: target[parseInt( name )],
 
 					};
-//					return { position: settings.geometry.position[target[i]] };
 				switch( name ){
 
 					case 'push':
@@ -416,8 +357,6 @@ class ND {
 					indices[1] = settings.geometry.edges[i].indices[1];
 					iEdges.push( i );
 					return;
-//					indices.twin = i;
-//					break;
 
 				}
 				
@@ -448,26 +387,9 @@ class ND {
 			case 1://[[0],[1]]
 				addEdge();
 				break;
-/*				
-			case 2://[[0, 1], [0, 2], [1, 2]]
-				for ( var i = 0; i < settings.geometry.indices.length; i++ )
-					addEdge( settings.geometry.indices[i] );
-				break;
-*/
 			//n = 2 [[0, 1], [0, 2], [1, 2]]
 			//n = 3 [[[0, 1], [1, 2], [2, 0]], [[0, 1], [1, 3], [3, 0]], [[0, 2], [2, 3], [3, 0]], [[1, 2], [2, 3], [3, 1]]] or [[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3],]
 			default: addEdges( settings.geometry.indices );
-/*
-				for ( var i = 0; i < settings.geometry.indices.length; i++ ) {
-					
-					const indice = settings.geometry.indices[i];
-					if ( indice[0] instanceof Array )
-						consol.log('');
-					else
-						addEdge( indice );
-
-				}
-*/
 
 		}
 		
@@ -492,7 +414,6 @@ class ND {
 			 */
 			constructor( array = 0, vectorSettings = {} ) {
 
-//				vectorSettings.axis = vectorSettings.axis || 'x';
 				if ( array instanceof Array === false ) {
 
 					if ( typeof array === 'number' ) array = [array];
@@ -501,8 +422,6 @@ class ND {
 
 				}
 				if ( n !== undefined ) while ( array.length < n ) array.push( 0 );
-
-//				Object.defineProperties( this, { } );
 
 				//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
 				return new Proxy( this, {
@@ -547,7 +466,6 @@ class ND {
 						if ( ( array.length > n ) && settings.geometry.iAxes && ( i < settings.geometry.iAxes.length ) )
 							i = settings.geometry.iAxes[i];
 						return array[i];
-						//						return target[name];
 
 					},
 					set: function ( target, name, value ) {
@@ -568,8 +486,7 @@ class ND {
 						array[i] = value;
 						_ND.intersection();
 						if ( vectorSettings.onChange ) vectorSettings.onChange();
-						//https://github.com/GoogleChrome/proxy-polyfill/issues/20
-						return true;//target[i];
+						return true;
 
 					}
 
@@ -580,7 +497,6 @@ class ND {
 			pop() { console.error( 'ND.Vector.pop() unavailable' ); }
 
 		}
-//const a = new Vector( [1,2] ), b = a[0], l = a.length, p = a.point/*, t = a.pop(); a.push(3);*/
 
 		const geometry = {
 
@@ -690,55 +606,6 @@ class ND {
 				get indices() {
 
 					const indices = [];
-/*
-					switch ( n ) {
-
-						case 1://[[0]	,	[1]]							to [0, 1]
-						case 2://[[0, 1],	[0, 2],	  [1, 2]]				to [0, 1, 0, 2, 1, 2],
-						case 3://[[0, 1, 2],[0, 1, 3],[0, 2, 3],[1, 2, 3],] to [0, 1, 0, 2, 1, 2, 0, 1, 0, 3, 1, 3, 0, 2, 0, 3, 2, 3, 1, 2, 1, 3, 2, 3]
-							function getIndices( sIndices ) {
-
-								sIndices.forEach( function ( indice ) {
-									
-									switch ( indice.length ) {
-
-										case 1:
-										case 2:
-											break;
-										case 3:
-											const indiceNew = [];
-											for ( var i = 0; i < indice.length; i++ ) {
-												
-												for ( var j = i + 1; j < indice.length; j++ ) {
-													
-//													indiceNew.push( [indice[i], indice[j]] );
-													indiceNew.push( indice[i] );
-													indiceNew.push( indice[j] );
-
-												}
-												
-											}
-											getIndices( indiceNew );
-											return;
-										default: console.error( 'ND.geometry.D3.indices: under constraction.' );
-											return;
-										
-									}
-									indice.forEach( function ( i ) {
-
-										if ( i >= settings.geometry.position.length ) console.error( 'ND.geometry.D3: invalid indice = ' + i );
-										else indices.push( i );
-
-									} );
-									
-								} );
-							}
-							getIndices( settings.geometry.indices );
-							break;
-						default: console.error( 'ND.Geometry.indices: under constaction. n = ' + n );
-
-					}
-*/
 					for ( var i = 0; i < settings.geometry.edges.length; i++ )
 						settings.geometry.edges[i].indices.forEach( function ( i ) { indices.push( i ) } );
 					return indices;
@@ -748,7 +615,6 @@ class ND {
 			},
 
 		}
-//const l = geometry.position.length, p0 = geometry.position[0], p = geometry.points;
 
 		vectorPlane = vectorPlane || new Vector( settings.vectorPlane );
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
@@ -764,16 +630,6 @@ class ND {
 			}
 			if ( geometry.position.length === 0 ) return;
 			const indices = geometry.D3.indices;
-/*			
-			const indices = [],//[0,1,1,2,2,0],
-				length = geometry.length;
-			for ( var i = 0; i < length; i++ ) {
-
-				indices.push( i );
-				indices.push( i < ( length - 1 ) ? i + 1 : 0 );
-
-			}
-*/			
 			const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ),
 				color = settings.color || 0xffffff,//default white
 				object = indices.length > 1 ?
@@ -790,23 +646,8 @@ class ND {
 			scene.add( object );
 			if ( typeof SpriteText !== "undefined" ) for ( var i = 0; i < geometry.points.length; i++ ) {
 
-/*				
-				const point = geometry.points[i];
-				if ( point.spriteText ) {
-
-					object.remove( point.spriteText );
-					if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( spriteText );
-					
-				}
-*/
-				const spriteText = new SpriteText( i, geometry.points[i], { group: object } );
-//				object.add( spriteText );
-//				if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( spriteText );
-/*				
-				geometry.spriteTexts = geometry.spriteTexts || [];
-				geometry.spriteTexts.push( spriteText );
-				geometry.object = object;
-*/
+//				const spriteText = new SpriteText( i, geometry.points[i], { group: object } );
+				new SpriteText( i, geometry.points[i], { group: object } );
 
 			}
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
@@ -836,10 +677,6 @@ class ND {
 		 */
 		this.intersection = function ( usedSegmentsPrev ) {
 
-/*
-			const segments = geometry.segments,
-				usedSegments = [];
-*/
 			const geometryIntersection = { position: [] };//, segments };
 			switch ( n ) {
 
@@ -847,15 +684,6 @@ class ND {
 					if ( ( settings.geometry.edges.length !== 1 ) || ( settings.geometry.iEdges.length !== 1 ) ) console.error( 'ND.intersection: under constraction. Это не линия.' );
 					const edge = settings.geometry.edges[settings.geometry.iEdges];
 					edge.intersection( geometryIntersection );
-/*					
-						position0 = edge.position[0], position1 = edge.position[1];
-//						position0 = settings.geometry.position[edge[0]], position1 = settings.geometry.position[edge[1]];
-					if ( vectorPlane[0].between( position0[0], position1[0], true ) )
-						geometryIntersection.position.push( vectorPlane[0] );
-					if ( segments.length !== 2 ) console.error( 'ND.intersection: under constraction. Это не линия.' );
-					if ( vectorPlane[0].between( segments[0].position[0][0], segments[1].position[0][0], true ) )
-						geometryIntersection.position.push( vectorPlane[0] );
-*/
 					break;
 				default: {
 
@@ -871,27 +699,8 @@ class ND {
 
 					}
 					iEdgeIntersection( settings.geometry.iEdges );
-/*
-					for ( var i = 0; i < settings.geometry.iEdges.length; i++ ) {
-						
-						if ( settings.geometry.iEdges[i] instanceof Array ) {
-
-							console.log('settings.geometry.iEdge is array');
-							
-						}else settings.geometry.edges[settings.geometry.iEdges[i]].intersection( geometryIntersection );
-
-					}
-*/
 					function getGeometryIntersection( segment, nSegment ) {
 
-/*						
-						if ( segment.length !== nSegment ) {
-
-							console.error( 'ND.intersection: invalid settings.geometry.indices segment = ' + segment.length );
-							return;
-
-						}
-*/
 						if ( nSegment > 2 ) {
 
 							segment.forEach( function ( item ) { getGeometryIntersection( item, nSegment - 1 ) } );
@@ -904,13 +713,6 @@ class ND {
 							const edgeIndices = settings.geometry.edges[i].indices;
 							if ( edgeIndices.intersection.position ) {
 								
-/*								
-								for ( var iIntersection = 0; iIntersection < geometryIntersection.position.length; iIntersection++ ) {
-
-									if ( geometryIntersection.position[iIntersection].iEdge === i ) return;
-										
-								}
-*/
 								if ( !edgeIndices.intersection.position.boUsed ) {
 									
 									edgeIndices.intersection.position.boUsed = true;
@@ -921,57 +723,17 @@ class ND {
 							}
 
 						} );
-/*						
-						segment.forEach( function ( edge ) {
-
-							if ( edge.intersection.position )
-								vertices.push( edge.intersection.position );
-
-						} );
-*/
 						if ( vertices.length > 0 ) geometryIntersection.position.push( ...vertices );
-//						if ( vertices.length === 2 ) geometryIntersection.position.push( [...vertices] );
-/*						
-						if ( vertices.length === ( segment.length - 1 ) ) geometryIntersection.position.push( ...vertices );
-						else if ( vertices.length !== 0 ) console.error( 'ND.intersection: invalid intersection vertices count = ' + vertices.length );
-*/
 
 					}
-//					getGeometryIntersection( settings.geometry.indices, n );
 					getGeometryIntersection( settings.geometry.iEdges, n );
 					defaultIndices( geometryIntersection, n - 1 );
-/*
-					settings.geometry.indices.forEach( function ( segment ) {
-
-						if ( segment.length !== 3 ) {
-
-							console.error( 'ND.intersection: invalid settings.geometry.indices segment = ' + segment.length );
-							return;
-
-						}
-						const vertices = [];
-						segment.forEach( function ( edge ) {
-
-							if ( edge.intersection.position )
-								vertices.push( edge.intersection.position );
-
-						} );
-						if ( vertices.length === 2 ) geometryIntersection.position.push( [...vertices] );
-						else if ( vertices.length !== 0 ) console.error( 'ND.intersection: invalid intersection vertices count = ' + vertices.length );
-
-					} );
-*/
 
 				}
 
 			}
 			if ( settings.onIntersection ) {
 
-/*
-				const array = [];
-				geometryIntersection.position.forEach( function ( intersect ) { array.push( intersect instanceof Array ? [...intersect] : intersect ); } );
-				settings.onIntersection( new Geometry( array ) );
-*/
 				settings.onIntersection( geometryIntersection );
 
 			}
@@ -996,55 +758,13 @@ class ND {
 			}
 			if ( geometryIntersection.position.length > n ){
 
-/*				
-				//remove duplicate points
-				for ( var i = 0; i < arrayIntersects.length; i++ ) {
-
-					for ( var j = i + 1; j < arrayIntersects.length; j ++ ) {
-
-						//https://stackoverflow.com/a/19746771/5175935
-						if ( arrayIntersects[i].every( function(value, index) { return value === arrayIntersects[j][index]} ) )
-							arrayIntersects.splice(j, 1);
-
-					}
-
-				}
-*/				
 
 			}
-//			if ( geometryIntersection.position.length === ( n - 1 ) ) geometryIntersection.position.pop();//грань коснулась панели одной вершиной
-//			else if ( ( geometryIntersection.position.length !== n ) && ( geometryIntersection.position.length !== 0 ) ) console.error( 'ND.intersection: geometryIntersection.position.length !== ' + n );
-//			return arrayIntersects;
 			return geometryIntersection.position;
 
 		}
 
 		const THREE = three.THREE, scene = settings.scene;// || three.group;//, options = settings.options || three.options || {};
-/*
-		//debug
-		switch( n ) {
-
-			case 1:
-				if ( geometry.length !== n + 1 ) console.error( 'ND: geometry.length !== ' + ( n + 1 ) );
-				break;
-			case 2: break;
-			default: console.error( 'nD vectorPlane.onChange: Invalid dimension = ' + n );
-
-		}
-*/		
-/*
-		for ( var i = 0; i < geometry.position.length; i++ ) {
-
-			if ( geometry.position[i].length !== n ) {
-
-				console.error( 'ND: Invalid vector dimension' );
-				while ( geometry[i].length < n ) geometry[i].push( 0 );
-				//return;
-
-			}
-
-		}
-*/		
 
 		if ( scene ) {
 
@@ -1065,11 +785,6 @@ class ND {
 			if ( !scene ) return;
 
 			//Graphic object. Currenyly is line
-			/*
-						const points = [];
-						for ( var i = 0; i < geometry.length; i++ )
-							points.push( geometry[i].point );
-			*/
 			if ( object3D ) {
 
 				for ( var i = object3D.children.length - 1; i >= 0; i-- ) {
@@ -1083,7 +798,6 @@ class ND {
 					}
 					
 				}
-//				console.log('object3D.children.length = ' + object3D.children.length);
 				scene.remove( object3D );
 				if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( object3D );
 				options.eventListeners.removeParticle( object3D );
@@ -1113,7 +827,7 @@ class ND {
 			constructor() {
 
 				var mesh;
-				this.createMesh = function ( /*scene*/ ) {
+				this.createMesh = function () {
 
 					if ( !scene ) return;
 					const color = 0x0000FF;//blue
@@ -1138,7 +852,7 @@ class ND {
 							] ), new THREE.LineBasicMaterial( { color: color } ) );
 							break;
 						case 3://plane
-							mesh = new THREE.GridHelper( 2, 10, color, color );// 2000, 20, 0x888888, 0x444444 );
+							mesh = new THREE.GridHelper( 2, 10, color, color );
 							mesh.rotation.x = Math.PI / 2;
 							break;
 						default: {
@@ -1209,7 +923,6 @@ class ND {
 				get: function () { return geometry; },
 				set: function ( geometryNew ) {
 
-//					geometry = new Geometry( geometryNew.geometry );
 					geometry.position = geometryNew.position;
 					projectTo3D();
 					this.intersection()
@@ -1235,15 +948,7 @@ ND.faceToEdgesIndices = function ( faceIndices ) {
 
 	const edgesIndices = [],
 		length = faceIndices.length;
-	for ( var i = 0; i < length; i++ ) {
-
-		edgesIndices.push( [faceIndices[i], i < ( length - 1 ) ? faceIndices[i + 1] : faceIndices[0]] );
-/*		
-		edgesIndices.push( faceIndices[i] );
-		edgesIndices.push( i < ( length - 1 ) ? faceIndices[i + 1] : faceIndices[0] );
-*/
-
-	}
+	for ( var i = 0; i < length; i++ ) { edgesIndices.push( [faceIndices[i], i < ( length - 1 ) ? faceIndices[i + 1] : faceIndices[0]] ); }
 	return edgesIndices;
 
 }
