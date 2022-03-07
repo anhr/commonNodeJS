@@ -33,14 +33,22 @@
 		<img src="../../img/wait.gif">
 	</div>
 	<h2>2D.</h2>
-	Click the "►" button in the lower left corner of the canvas to intersect the blue line with the green triangle.
+	You can see a green triangle if the blue panel in 3D canvas intersects with the green tetrahedron.
 	<br>
-	You can see a white horizontal line if the blue line in 2D canvas intersects with the green triangle.
+	The intersection panel in 2D space is horozontal line. You can see the panel on the 2D canvas as a blue line.
+	<br>
+	You can see a white horizontal line if the panel in 2D canvas intersects with the green triangle.
+	<br>
+	Click the "►" button in the lower left corner of the canvas to intersect the blue line with the green triangle.
 	<div id="2D">
 		<img src="../../img/wait.gif">
 	</div>
 	<h2>1D.</h2>
 	You can see a green horizontal line if the blue line in 2D canvas intersects with the green triangle.
+	<br>
+	The intersection panel in 1D space is a point. You can see the panel on the 1D canvas as a blue point.
+	<br>
+	You can see a white point if the panel intersects with the green line.
 	<br>
 	Click the "►" button in the lower left corner of the canvas to intersect the blue point with the green line.
 	<div id="1D">
@@ -82,8 +90,6 @@
 		var _3D;
 		new MyThree( function ( scene, options ) {
 
-//			let line1D;
-
 			_3D = new ND( 3, {
 
 				geometry: {
@@ -94,42 +100,29 @@
 						[0.9, 0.7, 0.5],//1
 						[0.8, 0, -0.4],//2
 						[-0.6, 0.1, 0.1]//3
-/*
-						[-0.6, 0.1, 0.8],//0
-						[0.7, 0.5, 0.9],//1
-						[0, -0.4, 0.8],//2
-						[0, 0, -0.6]//3
-*/
+
 					],
 					//segments: [[0, 1, 2],[0, 1, 3],[0, 2, 3],[1, 2, 3],],
 //					segments: [[0, 1, 1, 2, 2, 0], [0, 1, 1, 3, 3, 0], [0, 2, 2, 3, 3, 0], [1, 2, 2, 3, 3, 1],],
-/*
-					segments: [
-						ND.faceToEdgesIndices( [0, 1, 2] ),
-						ND.faceToEdgesIndices( [0, 1, 3] ),
-						ND.faceToEdgesIndices( [0, 2, 3] ),
-						ND.faceToEdgesIndices( [1, 2, 3] ),
-					],
-*/
-					segments: ND.tetrahedronSegments(),
+
+//					segments: [
+//						ND.faceToEdgesIndices( [0, 1, 2] ),
+//						ND.faceToEdgesIndices( [0, 1, 3] ),
+//						ND.faceToEdgesIndices( [0, 2, 3] ),
+//						ND.faceToEdgesIndices( [1, 2, 3] ),
+//					],
+
+//					segments: ND.tetrahedronSegments(),
 
 				},
 				scene: scene,
 				options: options,
-				onIntersection: function ( nDgeometry ) {
-
-					//if ( _2D ) _2D.geometry = nDgeometry;
-
-				}
+				onIntersection: function ( nDgeometry ) { if ( _2D ) _2D.geometry = nDgeometry; }
 
 			} );
 
 			//new time of the player event
-			options.onSelectScene = function ( t ) {
-
-				_3D.vectorPlane[2] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min );
-
-			}
+			options.onSelectScene = function ( t ) { _3D.vectorPlane[2] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min ); }
 
 		}, {
 
@@ -153,23 +146,21 @@
 
 			_2D = new ND( 2, {
 
-				geometry: [[-0.6, 0.1], [0.7, 0.5], [0, -0.4]],
+				//geometry: [[-0.7, 0.2], [0.8, 0.6], [0.1, -0.5]],
+				geometry: {
+
+					position: [[-0.7, 0.2], [0.8, 0.6], [0.1, -0.5]],
+					//indices: [[0, 1], [0, 2], [1, 2, 'r']],
+
+				},
 				scene: scene,
 				options: options,
-				onIntersection: function ( nDgeometry ) {
-
-					if ( _1D ) _1D.geometry = nDgeometry;
-
-				}
+				onIntersection: function ( nDgeometry ) { if ( _1D ) _1D.geometry = nDgeometry; }
 
 			} );
 
 			//new time of the player event
-			options.onSelectScene = function ( t ) {
-
-				_2D.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min );
-
-			}
+			options.onSelectScene = function ( t ) { _2D.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min ); }
 
 		}, {
 
@@ -187,16 +178,6 @@
 			dat: {},
 			//dat: false,
 			camera: options.camera,
-/*
-			camera: {
-
-				position: new THREE.Vector3( 0, 0, 5 ),
-				fov: 45,
-				near: 1,
-				far: 1000,
-
-			},
-*/
 			orbitControls: false,
 			stereoEffect: false,
 			//scales: { x: {} },
@@ -234,12 +215,15 @@
 			vectorsObject[0].push( 56 );
 			vectorsObject[0].pop();
 			*/
-
-			//			const vectorPlane = new ND.Vector();
 			let point0D;
+			_1D = new ND( 1, {
 
-			_1D = new ND( 1/*_2D.intersection(), 0*/, {
+				geometry: {
 
+					position: [[-0.5, 1], [0.5]],
+					//indices: ['a',[0], [1, 2], 1],
+
+				},
 				scene: scene,
 				options: options,
 				onIntersection: function ( nDgeometry ) {
@@ -283,11 +267,7 @@
 			} );
 
 			//new time of the player event
-			options.onSelectScene = function ( t ) {
-
-				_1D.vectorPlane[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min );
-
-			}
+			options.onSelectScene = function ( t ) { if ( _1D ) _1D.vectorPlane[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min ); }
 
 		}, {
 
@@ -305,16 +285,16 @@
 			dat: {},
 			//dat: false,
 			camera: options.camera,
-/*
-			camera: {
+			/*
+						camera: {
 
-				position: new THREE.Vector3( 0, 0, 5 ),
-				fov: 45,
-				near: 1,
-				far: 1000,
+							position: new THREE.Vector3( 0, 0, 5 ),
+							fov: 45,
+							near: 1,
+							far: 1000,
 
-			},
-*/
+						},
+			*/
 			orbitControls: false,
 			stereoEffect: false,
 			//scales: { x: {} },
