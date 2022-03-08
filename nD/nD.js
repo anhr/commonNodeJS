@@ -424,7 +424,7 @@ class ND {
 				if ( n !== undefined ) while ( array.length < n ) array.push( 0 );
 
 				//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
-				return new Proxy( this, {
+				return new Proxy( array, {
 
 					get: function ( target, name ) {
 
