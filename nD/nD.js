@@ -23,6 +23,14 @@ import MyThree from '../myThree/myThree.js';
 //import { SpriteText } from '../SpriteText/SpriteText.js'
 
 /*
+dimention	geometry	points	edges	faces	triangle
+1			line		2		0
+2			triangle	3		3		1
+3			Tetrahedron	4		6		4		1
+4			pentatope	5		10				10
+ */
+
+/*
  	 * <b>settings.geometry.segments: [[0, 1, 1, 2, 2, 0], [0, 1, 1, 3, 3, 0], [0, 2, 2, 3, 3, 0], [1, 2, 2, 3, 3, 1],]</b>,
 	 * Every segment is array of idexes of 3 edges of the face of the tetrahedron. Every edge is pair of the indices.
 	 *
@@ -174,174 +182,186 @@ class ND {
 		settings.geometry.edges = settings.geometry.edges || [];
 
 		//edges
-		if ( !settings.geometry.edges[0] ) settings.geometry.edges.push(
+		const boArray = settings.geometry.edges[0] instanceof Array;
+		if ( !settings.geometry.edges[0] || boArray ) {
 
-			new Proxy( [], {
+			function proxy(){
 
-				get: function ( target, name, value ) {
+				const edges = settings.geometry.edges[0];
+				return new Proxy( edges ? edges : [],
+				{
 
-					const i = parseInt( name );
-					if ( !isNaN( i ) )
-						return {
+					get: function ( target, name, value ) {
 
-							intersection: function ( geometryIntersection ) {
+						const i = parseInt( name );
+						if ( !isNaN( i ) )
+							return {
 
-								const i = parseInt( name );
-								if ( !isNaN( i ) ) {
+								intersection: function ( geometryIntersection ) {
 
-									if ( i >= target.length )
-										console.error( 'ND: settings.geometry.edges[]intersection. invalid length: ' + target.length );
-									const indices = target[i];
-									if ( indices.length !== 2 ) {
+									const i = parseInt( name );
+									if ( !isNaN( i ) ) {
 
-										console.error( 'ND: settings.geometry.edges[]intersection. indices.length = ' + indices.length );
-										return;
-									
-									}
-									const position0 = new Vector( settings.geometry.position[indices[0]] ),
-										position1 = new Vector( settings.geometry.position[indices[1]] );
-									function indicesIntersection ( position ) {
+										if ( i >= target.length )
+											console.error( 'ND: settings.geometry.edges[]intersection. invalid length: ' + target.length );
+										const indices = target[i];
+										if ( indices.length !== 2 ) {
 
-										switch ( n ){
+											console.error( 'ND: settings.geometry.edges[]intersection. indices.length = ' + indices.length );
+											return;
 
-											case 2:
-												break;
-											case 3:
-												if ( !position )
-													break;
-												position.push( vectorPlane[n-1] );
-												break;
-											default: console.error( 'ND: settings.geometry.edges[]intersection indicesIntersection(). n = ' + n + ' under constaction.' );
-											
 										}
-										indices.intersection = { position: position, }
-										if ( indices.intersection.position ) indices.intersection.position.iEdge = i;
-									
-									}
-									switch (n){
+										const position0 = new Vector( settings.geometry.position[indices[0]] ),
+											position1 = new Vector( settings.geometry.position[indices[1]] );
+										function indicesIntersection( position ) {
 
-										case 1:
-											if ( vectorPlane[0].between( position0[0], position1[0], true ) )
-												geometryIntersection.position.push( vectorPlane[0] );
-											break;
-										case 2:
-											var vector;
-											if ( vectorPlane[1].between( position0[1], position1[1], true ) ) {
-											
-												const a = ( position1[1] - position0[1] ) / ( position1[0] - position0[0] ),
-													b = position0[1] - a * position0[0],
-													x = Math.abs(a) === Infinity ? position1[0] : ( vectorPlane[1] - b ) / a;
-												if ( isNaN( x ) ) console.error( 'ND.intersection: x = ' + x );
-												if ( !x.between( position0[0], position1[0], true ) )
+											switch ( n ) {
+
+												case 2:
 													break;
-												vector = [x, vectorPlane[1]];
+												case 3:
+													if ( !position )
+														break;
+													position.push( vectorPlane[n - 1] );
+													break;
+												default: console.error( 'ND: settings.geometry.edges[]intersection indicesIntersection(). n = ' + n + ' under constaction.' );
 
 											}
-											indicesIntersection ( vector );
-											break;
-										default:
-											const nD02 = new ND( n - 1, {
-											
+											indices.intersection = { position: position, }
+											if ( indices.intersection.position ) indices.intersection.position.iEdge = i;
+
+										}
+										switch ( n ) {
+
+											case 1:
+												if ( vectorPlane[0].between( position0[0], position1[0], true ) )
+													geometryIntersection.position.push( vectorPlane[0] );
+												break;
+											case 2:
+												var vector;
+												if ( vectorPlane[1].between( position0[1], position1[1], true ) ) {
+
+													const a = ( position1[1] - position0[1] ) / ( position1[0] - position0[0] ),
+														b = position0[1] - a * position0[0],
+														x = Math.abs( a ) === Infinity ? position1[0] : ( vectorPlane[1] - b ) / a;
+													if ( isNaN( x ) ) console.error( 'ND.intersection: x = ' + x );
+													if ( !x.between( position0[0], position1[0], true ) )
+														break;
+													vector = [x, vectorPlane[1]];
+
+												}
+												indicesIntersection( vector );
+												break;
+											default:
+												const nD02 = new ND( n - 1, {
+
 													geometry: {
-												
+
 														position: settings.geometry.position,
-														indices: [indices],
-														iAxes: [1,2],
-													
+														edges: [[indices]],
+														//														indices: [indices],
+														iAxes: [1, 2],
+
 													},
 													vectorPlane: vectorPlane.array,
-											
+
 												} ),
-												arrayIntersects02 = nD02.intersection();
-											const nD12 = new ND( n - 1, {
-											
+													arrayIntersects02 = nD02.intersection();
+												const nD12 = new ND( n - 1, {
+
 													geometry: {
-												
+
 														position: settings.geometry.position,
-														indices: [indices],
-														iAxes: [0,2],
-													
+														edges: [[indices]],
+														//														indices: [indices],
+														iAxes: [0, 2],
+
 													},
 													vectorPlane: vectorPlane.array,
-											
+
 												} ),
-												arrayIntersects12 = nD12.intersection();
-											indicesIntersection ( arrayIntersects02.length && arrayIntersects12.length ?
+													arrayIntersects12 = nD12.intersection();
+												indicesIntersection( arrayIntersects02.length && arrayIntersects12.length ?
 													[arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined );
-											
-									}
 
-								} else console.error( 'ND: settings.geometry.edges[]intersection. invalid name: ' + name );
+										}
 
-							},
-							indices: target[parseInt( name )],
+									} else console.error( 'ND: settings.geometry.edges[]intersection. invalid name: ' + name );
 
-						};
-					switch( name ){
+								},
+								indices: target[parseInt( name )],
 
-						case 'push': return target.push;
-						case 'length': return target.length;
-						default: console.error( 'ND: settings.geometry.edges getter. Invalid name: ' + name );
-						
-					}
-				
-				},
-				set: function ( edges, prop, value ) {
+							};
+						switch ( name ) {
 
-					const index = parseInt( prop );
-					if ( isNaN( index ) ) return true;
-				
-	//				const iEdges = settings.geometry.iEdges;
-					if ( value instanceof Array ) {
+							case 'push': return target.push;
+							case 'length': return target.length;
+							case 'intersection': return undefined;
+							default: console.error( 'ND: settings.geometry.edges getter. Invalid name: ' + name );
+
+						}
+
+					},
+					set: function ( edges, prop, value ) {
+
+						const index = parseInt( prop );
+						if ( isNaN( index ) ) return true;
+
+						//				const iEdges = settings.geometry.iEdges;
+						if ( value instanceof Array ) {
+
+							edges[index] = value;
+							return true;
+
+						}
+						const indices = value;
+						if ( indices.length !== 2 ) {
+
+							console.error( 'ND: settings.geometry.edges.push invalid indices.length = ' + indices.length );
+							return true;
+
+						}
+
+						//find duplicate edge
+						for ( var i = 0; i < edges.length; i++ ) {
+
+							const edgeIndices = edges[i];
+							if ( ( edgeIndices[0] === indices[0] ) && ( edgeIndices[1] === indices[1] ) ) {
+
+								console.error( 'ND: settings.geometry.edges.push under constraction' );
+								//						iEdges.push( i );
+								return;
+
+							}
+							if ( ( edgeIndices[0] === indices[1] ) && ( edgeIndices[1] === indices[0] ) ) {
+
+
+								console.error( 'ND: settings.geometry.edges.push under constraction' );
+								//у этого ребра есть ребро близнец, у которого индексы вершин поменены местами
+								//Поэтому можно не искать точку пересечения а брать ее из близнеца
+								indices[0] = settings.geometry.edges[i].indices[0];
+								indices[1] = settings.geometry.edges[i].indices[1];
+								//						iEdges.push( i );
+								return;
+
+							}
+
+						}
+
+						//				iEdges.push( index );
 
 						edges[index] = value;
 						return true;
-					
-					}
-					const indices = value;
-					if ( indices.length !== 2 ) {
 
-						console.error( 'ND: settings.geometry.edges.push invalid indices.length = ' + indices.length );
-						return true;
-					
 					}
-				
-					//find duplicate edge
-					for ( var i = 0; i < edges.length; i++ ) {
-	
-						const edgeIndices = edges[i];
-						if ( ( edgeIndices[0] === indices[0] ) && ( edgeIndices[1] === indices[1] ) ) {
-						
-							console.error( 'ND: settings.geometry.edges.push under constraction' );
-	//						iEdges.push( i );
-							return;
-	
-						}
-						if ( ( edgeIndices[0] === indices[1] ) && ( edgeIndices[1] === indices[0] ) ) {
-						
-						
-							console.error( 'ND: settings.geometry.edges.push under constraction' );
-							//у этого ребра есть ребро близнец, у которого индексы вершин поменены местами
-							//Поэтому можно не искать точку пересечения а брать ее из близнеца
-							indices[0] = settings.geometry.edges[i].indices[0];
-							indices[1] = settings.geometry.edges[i].indices[1];
-	//						iEdges.push( i );
-							return;
-	
-						}
-					
-					}
-	
-	//				iEdges.push( index );
-				
-					edges[index] = value;
-					return true;
 
-				}
+				} );
 
-			} )
-			
-		);
+			}
+			if ( boArray ) settings.geometry.edges[0] = proxy();
+			else settings.geometry.edges.push( proxy() );
+
+		}
 		
 		//Сгруппировать индексы ребер объета из settings.geometry.edges по сегментам обекта
 		//Например если объект это линия:
@@ -470,7 +490,8 @@ class ND {
 */
 
 		}
-		function addEdges() {
+/*
+		function addEdges( level ) {
 
 			const geometry = settings.geometry, edges = geometry.edges[0];
 			if ( !geometry || ( edges.length > 0 ) )
@@ -481,7 +502,8 @@ class ND {
 				return;
 
 			}
-			const nIndices = n;
+			if ( level > 2 ) addEdges( level - 1 );
+			const nIndices = level;
 			const length = geometry.position.length;
 			const iLength = ( nIndices > 1 ) && ( length < 3 ) ?
 				length - 1 ://не соединять последнюю верштну с первой если размерность пространства больше 1 и количество вершин в объекте меньше 3. То есть это линия
@@ -501,6 +523,47 @@ class ND {
 			}
 
 		}
+*/
+		function addEdges( level ) {
+
+			const geometry = settings.geometry;
+			if ( !geometry.edges[level - 2] ) geometry.edges[level - 2] = [];
+			const edges = geometry.edges[level - 2];
+			if ( !geometry || ( edges.length > 0 ) )
+				return;
+			if ( ( n === 2 ) && ( geometry.position.length === 2 ) ) {
+
+				edges.push( [0, 1] );
+				return;
+
+			}
+			if ( level > 2 ) addEdges( level - 1 );
+			switch ( level ) {
+
+				case 2:
+					const length = settings.geometry.position.length;
+					function addItem( start = 0 ) {
+						
+		//				for ( var i = 0; i < length; i++ ) for ( var j = i + 1; j < length; j++ ) edges.push( [i, j] );
+						for ( var i = start; i < length; i++ ) {
+							
+							if ( start === 0 )
+								addItem( i + 1 );
+							else edges.push( [ start - 1, i ] );
+		
+						}
+		
+					}
+					addItem();
+					break;
+				case 3:
+					geometry.edges[level - 2] = [[0,1,3], [0,2,4], [3,4,5], [1,2,5]]
+					break;
+				default: console.error( 'ND addEdges: тут надо избавиться от swith' );
+				
+			}
+
+		}
 		switch ( n ) {
 
 			case 1://[0, 1]
@@ -509,7 +572,7 @@ class ND {
 			//n = 2 [[0, 1], [0, 2], [1, 2]]
 			//n = 3 [[[0, 1], [1, 2], [2, 0]], [[0, 1], [1, 3], [3, 0]], [[0, 2], [2, 3], [3, 0]], [[1, 2], [2, 3], [3, 1]]] or [[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3],]
 //			default: addEdges( settings.geometry.indices );
-			default: addEdges();
+			default: addEdges( n );
 
 		}
 		
@@ -825,7 +888,14 @@ class ND {
 					iEdgeIntersection( settings.geometry.iEdges );
 */					
 					const edges = settings.geometry.edges[0];
-					for ( var i = 0; i < edges.length; i++ ) edges[i].intersection();
+					//добавил для облегчения отладки. Если ставить точку остановки, то отладка сильно усложняется. Поэтому иду по шагам
+					function f() {
+						
+						for ( var i = 0; i < edges.length; i++ ) edges[i].intersection();
+
+					}
+					f();
+/*					
 					function getGeometryIntersection( segment, nSegment ) {
 
 						if ( nSegment > 2 ) {
@@ -854,8 +924,38 @@ class ND {
 
 					}
 					getGeometryIntersection( settings.geometry.iEdges, n );
-//					new ND ( n - 1, { geometry: geometryIntersection } )
-//					defaultIndices( geometryIntersection, n - 1 );
+*/
+					function getGeometryIntersection( segment ) {
+
+						const vertices = [];
+						for ( var i = segment.length - 1; i >=0 ; i-- ) {
+
+							var segmentItem = segment[i];
+							if ( !segmentItem.intersection ) {
+
+								if( ( typeof segmentItem === 'number' ) && !segment.intersection ) {
+
+									segmentItem = [settings.geometry.edges[0][segmentItem]];
+									if ( !segmentItem[0].intersection ) console.error( 'ND.intersection getGeometryIntersection: segmentItem.intersection = ' + segmentItem.intersection );
+									
+								}
+								getGeometryIntersection( segmentItem );
+								continue;
+								
+							}
+							const position = segmentItem.indices.intersection.position;
+							if ( position && !position.boUsed ) {
+								
+								position.boUsed = true;
+								vertices.push( position );
+
+							}
+
+						}
+						if ( vertices.length > 0 ) geometryIntersection.position.push( ...vertices );
+
+					}
+					getGeometryIntersection( settings.geometry.edges );
 
 				}
 
