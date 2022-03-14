@@ -259,7 +259,6 @@ class ND {
 
 														position: settings.geometry.position,
 														edges: [[indices]],
-														//														indices: [indices],
 														iAxes: [1, 2],
 
 													},
@@ -273,7 +272,6 @@ class ND {
 
 														position: settings.geometry.position,
 														edges: [[indices]],
-														//														indices: [indices],
 														iAxes: [0, 2],
 
 													},
@@ -307,7 +305,6 @@ class ND {
 						const index = parseInt( prop );
 						if ( isNaN( index ) ) return true;
 
-						//				const iEdges = settings.geometry.iEdges;
 						if ( value instanceof Array ) {
 
 							edges[index] = value;
@@ -347,8 +344,6 @@ class ND {
 							}
 
 						}
-
-						//				iEdges.push( index );
 
 						edges[index] = value;
 						return true;
@@ -401,9 +396,8 @@ class ND {
 		//]
 		//ребра [0, 2] и [3, 1] заменяю на [2, 0] и [1, 3]
 		//settings.geometry.iEdges = [[0, 1, 2], [0, 3, 4], [2, 5, 4], [1, 5, 3]]
-//		settings.geometry.iEdges = settings.geometry.iEdges || [];
 		
-		function addEdge( indices/*, iEdges*/ ) {
+		function addEdge( indices ) {
 
 			if ( settings.geometry.position.length < 2 ) return;//одна точка не имеет ребер
 			switch ( n ) {
@@ -413,117 +407,16 @@ class ND {
 					if ( settings.geometry.position ) {
 						
 						indices = [];
-//						settings.geometry.position.forEach( function ( indice, i ) { settings.geometry.edges.push( i ) } );
 						settings.geometry.position.forEach( function ( indice, i ) { indices.push( i ) } );
 						edges.push( indices );
-//						settings.geometry.iEdges.push( 0 );
-//						return;
 
 					}
 					break;
-				/*
-				case 2://Example [[0, 1],[1, 2],[2, 0]]
-					defaultIndices();
-					break;
-				case 3:
-					switch ( settings.geometry.position.length ) {
-
-						case 2:
-							settings.geometry.indices = [[0, 1]];
-							break;
-						case 3://Example [[0, 1],[1, 2],[2, 0]]
-							defaultIndices();
-							break;
-						case 4:
-							settings.geometry.indices = ND.tetrahedronIndices();//[[[0, 1], [1, 2], [2, 0]], [[0, 1], [1, 3], [3, 0]], [[0, 2], [2, 3], [3, 0]], [[1, 2], [2, 3], [3, 1]]]
-							break;
-						default: console.error( 'ND: default indices. settings.geometry.position.length = ' + settings.geometry.position.length + ' under constaction/' );
-
-					}
-					break;
-				*/
 				default: console.error( 'ND: default edges failed! n = ' + n );
 
 			}
-/*			
-			indices = indices || settings.geometry.indices;
-			if ( indices.length !== 2 ) {
-
-				console.error( 'ND edges addEdge: invalid indices.length = ' + indices.length );
-				return;
-
-			}
-			if ( indices[0] instanceof Array === true ) {
-
-				console.error( 'ND edges addEdge: invalid indices' );
-				return;
-
-			}
-*/
-/*
-			iEdges = iEdges || settings.geometry.iEdges;
-			
-			//find duplicate edge
-			for ( var i = 0; i < settings.geometry.edges.length; i++ ) {
-
-				const edgeIndices = settings.geometry.edges[i].indices;
-				if ( ( edgeIndices[0] === indices[0] ) && ( edgeIndices[1] === indices[1] ) ) {
-					
-					iEdges.push( i );
-					return;
-
-				}
-				if ( ( edgeIndices[0] === indices[1] ) && ( edgeIndices[1] === indices[0] ) ) {
-					
-					//у этого ребра есть ребро близнец, у которого индексы вершин поменены местами
-					//Поэтому можно не искать точку пересечения а брать ее из близнеца
-					indices[0] = settings.geometry.edges[i].indices[0];
-					indices[1] = settings.geometry.edges[i].indices[1];
-					iEdges.push( i );
-					return;
-
-				}
-				
-			}
-
-			iEdges.push( settings.geometry.edges.push( indices ) - 1 );
-*/
 
 		}
-/*
-		function addEdges( level ) {
-
-			const geometry = settings.geometry, edges = geometry.edges[0];
-			if ( !geometry || ( edges.length > 0 ) )
-				return;
-			if ( ( n === 2 ) && ( geometry.position.length === 2 ) ) {
-				
-				edges.push( [0, 1]);
-				return;
-
-			}
-			if ( level > 2 ) addEdges( level - 1 );
-			const nIndices = level;
-			const length = geometry.position.length;
-			const iLength = ( nIndices > 1 ) && ( length < 3 ) ?
-				length - 1 ://не соединять последнюю верштну с первой если размерность пространства больше 1 и количество вершин в объекте меньше 3. То есть это линия
-				length;
-			for ( var i = 0; i < iLength; i++ ) {
-
-				const indice = [];
-				for ( var j = 0; j < nIndices; j++ ) {
-
-					var ii = i + j;
-					if ( ii >= length ) ii = 0;//соединить последнюю верштну с первой
-					indice.push( ii );
-
-				}
-				edges.push( indice );
-
-			}
-
-		}
-*/
 		function addEdges( level ) {
 
 			const geometry = settings.geometry;
@@ -544,7 +437,6 @@ class ND {
 					const length = settings.geometry.position.length;
 					function addItem( start = 0 ) {
 						
-		//				for ( var i = 0; i < length; i++ ) for ( var j = i + 1; j < length; j++ ) edges.push( [i, j] );
 						for ( var i = start; i < length; i++ ) {
 							
 							if ( start === 0 )
@@ -571,7 +463,6 @@ class ND {
 				break;
 			//n = 2 [[0, 1], [0, 2], [1, 2]]
 			//n = 3 [[[0, 1], [1, 2], [2, 0]], [[0, 1], [1, 3], [3, 0]], [[0, 2], [2, 3], [3, 0]], [[1, 2], [2, 3], [3, 1]]] or [[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3],]
-//			default: addEdges( settings.geometry.indices );
 			default: addEdges( n );
 
 		}
@@ -615,7 +506,6 @@ class ND {
 
 							case "length":
 								return n + 1;
-//								return array.length;
 							case "array":
 								return array;
 							/* *
@@ -863,30 +753,12 @@ class ND {
 			switch ( n ) {
 
 				case 1:
-/*					
-					if ( ( settings.geometry.edges.length !== 1 ) || ( settings.geometry.iEdges.length !== 1 ) ) console.error( 'ND.intersection: under constraction. Это не линия.' );
-					const edge = settings.geometry.edges[settings.geometry.iEdges];
-*/
 					if ( settings.geometry.edges.length !== 1 ) console.error( 'ND.intersection: under constraction. Это не линия.' );
 					const edge = settings.geometry.edges[0][0];
 					edge.intersection( geometryIntersection );
 					break;
 				default: {
 
-/*						
-					function iEdgeIntersection( edges ) {
-
-						for ( var i = 0; i < edges.length; i++ ) {
-
-							const iEdge = edges[i];
-							if ( iEdge instanceof Array ) iEdgeIntersection( iEdge )
-							else settings.geometry.edges[iEdge].intersection( geometryIntersection );
-
-						}
-
-					}
-					iEdgeIntersection( settings.geometry.iEdges );
-*/					
 					const edges = settings.geometry.edges[0];
 					//добавил для облегчения отладки. Если ставить точку остановки, то отладка сильно усложняется. Поэтому иду по шагам
 					function f() {
@@ -895,36 +767,6 @@ class ND {
 
 					}
 					f();
-/*					
-					function getGeometryIntersection( segment, nSegment ) {
-
-						if ( nSegment > 2 ) {
-
-							segment.forEach( function ( item ) { getGeometryIntersection( item, nSegment - 1 ) } );
-							return;
-							
-						}
-						const vertices = [];
-						segment.forEach( function ( i ) {
-
-							const edgeIndices = settings.geometry.edges[i].indices;
-							if ( edgeIndices.intersection.position ) {
-								
-								if ( !edgeIndices.intersection.position.boUsed ) {
-									
-									edgeIndices.intersection.position.boUsed = true;
-									vertices.push( edgeIndices.intersection.position );
-
-								}
-
-							}
-
-						} );
-						if ( vertices.length > 0 ) geometryIntersection.position.push( ...vertices );
-
-					}
-					getGeometryIntersection( settings.geometry.iEdges, n );
-*/
 					function getGeometryIntersection( segment ) {
 
 						const vertices = [];
@@ -967,11 +809,6 @@ class ND {
 			}
 			if ( scene ) {
 
-				//если я не буду копировать массив, то элементы массива arrayIntersects преобразуются в класс Proxy.
-				//Если потом этот массив использовать для содания класса ND другой размерности, то получу сообщение об ошибке
-				//ND: Invalid vector dimension
-//				const arrayIntersectsCopy = [...arrayIntersects];
-
 				if ( objectIntersect ) {
 
 					if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( objectIntersect );
@@ -981,7 +818,6 @@ class ND {
 				}
 				if ( geometryIntersection.position.length )
 					objectIntersect = create3DObject( geometryIntersection, { name: 'Intersection' } );
-//					objectIntersect = create3DObject( new Geometry( geometryIntersection.position ), { name: 'Intersection' } );
 
 			}
 			if ( geometryIntersection.position.length > n ){
@@ -992,7 +828,7 @@ class ND {
 
 		}
 
-		const THREE = three.THREE, scene = settings.scene;// || three.group;//, options = settings.options || three.options || {};
+		const THREE = three.THREE, scene = settings.scene;
 
 		if ( scene ) {
 
@@ -1172,6 +1008,7 @@ class ND {
  * @example //Converting an array of triangle vertex indices:
  * ND.faceToEdgesIndices( [0, 1, 2] ) //returns followed array [[0, 1], [1, 2], [2, 0]]
  */
+/*
 ND.faceToEdgesIndices = function ( faceIndices ) {
 
 	const edgesIndices = [],
@@ -1180,7 +1017,7 @@ ND.faceToEdgesIndices = function ( faceIndices ) {
 	return edgesIndices;
 
 }
-
+*/
 /* *
  *@returns
  * <pre>
@@ -1188,16 +1025,16 @@ ND.faceToEdgesIndices = function ( faceIndices ) {
  * <b>[[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]]</b>
  * </pre>
  * */
-/**
+/* *
  *@returns
  * <pre>
  * An array of segments of pairs of vertex indices of edges of tetrahedron faces
  * <b>[[[0, 1], [1, 2], [2, 0]], [[0, 1], [1, 3], [3, 0]], [[0, 2], [2, 3], [3, 0]], [[1, 2], [2, 3], [3, 1]]]</b>
  * </pre>
  * */
+/*
 ND.tetrahedronIndices = function () {
 
-//	return [[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]];
 	return [
 		ND.faceToEdgesIndices( [0, 1, 2] ),
 		ND.faceToEdgesIndices( [0, 1, 3] ),
@@ -1206,7 +1043,7 @@ ND.tetrahedronIndices = function () {
 	];
 
 }
-
+*/
 export default ND;
 
 //https://stackoverflow.com/a/18881828/5175935
