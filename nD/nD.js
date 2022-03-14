@@ -176,18 +176,16 @@ class ND {
 		}
 		settings.geometry.position = settings.geometry.position || [];
 
-		//segments
+		//indices
 		
-		//список всех сегментов объекта
-		settings.geometry.edges = settings.geometry.edges || [];
+		settings.geometry.indices = settings.geometry.indices || [];
 
 		//edges
-		const boArray = settings.geometry.edges[0] instanceof Array;
-		if ( !settings.geometry.edges[0] || boArray ) {
+		const edges = settings.geometry.indices[0], boArray = edges instanceof Array;
+		if ( !settings.geometry.indices[0] || boArray ) {
 
 			function proxy(){
 
-				const edges = settings.geometry.edges[0];
 				return new Proxy( edges ? edges : [],
 				{
 
@@ -203,11 +201,11 @@ class ND {
 									if ( !isNaN( i ) ) {
 
 										if ( i >= target.length )
-											console.error( 'ND: settings.geometry.edges[]intersection. invalid length: ' + target.length );
+											console.error( 'ND: settings.geometry.indices[]intersection. invalid length: ' + target.length );
 										const indices = target[i];
 										if ( indices.length !== 2 ) {
 
-											console.error( 'ND: settings.geometry.edges[]intersection. indices.length = ' + indices.length );
+											console.error( 'ND: settings.geometry.indices[]intersection. indices.length = ' + indices.length );
 											return;
 
 										}
@@ -224,7 +222,7 @@ class ND {
 														break;
 													position.push( vectorPlane[n - 1] );
 													break;
-												default: console.error( 'ND: settings.geometry.edges[]intersection indicesIntersection(). n = ' + n + ' under constaction.' );
+												default: console.error( 'ND: settings.geometry.indices[]intersection indicesIntersection(). n = ' + n + ' under constaction.' );
 
 											}
 											indices.intersection = { position: position, }
@@ -258,7 +256,7 @@ class ND {
 													geometry: {
 
 														position: settings.geometry.position,
-														edges: [[indices]],
+														indices: [[indices]],
 														iAxes: [1, 2],
 
 													},
@@ -271,7 +269,7 @@ class ND {
 													geometry: {
 
 														position: settings.geometry.position,
-														edges: [[indices]],
+														indices: [[indices]],
 														iAxes: [0, 2],
 
 													},
@@ -284,7 +282,7 @@ class ND {
 
 										}
 
-									} else console.error( 'ND: settings.geometry.edges[]intersection. invalid name: ' + name );
+									} else console.error( 'ND: settings.geometry.indices[]intersection. invalid name: ' + name );
 
 								},
 								indices: target[parseInt( name )],
@@ -295,7 +293,7 @@ class ND {
 							case 'push': return target.push;
 							case 'length': return target.length;
 							case 'intersection': return undefined;
-							default: console.error( 'ND: settings.geometry.edges getter. Invalid name: ' + name );
+							default: console.error( 'ND: settings.geometry.indices getter. Invalid name: ' + name );
 
 						}
 
@@ -314,7 +312,7 @@ class ND {
 						const indices = value;
 						if ( indices.length !== 2 ) {
 
-							console.error( 'ND: settings.geometry.edges.push invalid indices.length = ' + indices.length );
+							console.error( 'ND: settings.geometry.indices.push invalid indices.length = ' + indices.length );
 							return true;
 
 						}
@@ -325,20 +323,18 @@ class ND {
 							const edgeIndices = edges[i];
 							if ( ( edgeIndices[0] === indices[0] ) && ( edgeIndices[1] === indices[1] ) ) {
 
-								console.error( 'ND: settings.geometry.edges.push under constraction' );
-								//						iEdges.push( i );
+								console.error( 'ND: settings.geometry.indices.push under constraction' );
 								return;
 
 							}
 							if ( ( edgeIndices[0] === indices[1] ) && ( edgeIndices[1] === indices[0] ) ) {
 
 
-								console.error( 'ND: settings.geometry.edges.push under constraction' );
+								console.error( 'ND: settings.geometry.indices.push under constraction' );
 								//у этого ребра есть ребро близнец, у которого индексы вершин поменены местами
 								//Поэтому можно не искать точку пересечения а брать ее из близнеца
-								indices[0] = settings.geometry.edges[i].indices[0];
-								indices[1] = settings.geometry.edges[i].indices[1];
-								//						iEdges.push( i );
+								indices[0] = settings.geometry.indices[i].indices[0];
+								indices[1] = settings.geometry.indices[i].indices[1];
 								return;
 
 							}
@@ -353,8 +349,8 @@ class ND {
 				} );
 
 			}
-			if ( boArray ) settings.geometry.edges[0] = proxy();
-			else settings.geometry.edges.push( proxy() );
+			if ( boArray ) settings.geometry.indices[0] = proxy();
+			else settings.geometry.indices.push( proxy() );
 
 		}
 		
@@ -403,7 +399,7 @@ class ND {
 			switch ( n ) {
 
 				case 1://Example [[0,1]]
-					const edges = settings.geometry.edges[0];
+					const edges = settings.geometry.indices[0];
 					if ( settings.geometry.position ) {
 						
 						indices = [];
@@ -420,8 +416,8 @@ class ND {
 		function addEdges( level ) {
 
 			const geometry = settings.geometry;
-			if ( !geometry.edges[level - 2] ) geometry.edges[level - 2] = [];
-			const edges = geometry.edges[level - 2];
+			if ( !geometry.indices[level - 2] ) geometry.indices[level - 2] = [];
+			const edges = geometry.indices[level - 2];
 			if ( !geometry || ( edges.length > 0 ) )
 				return;
 			if ( ( n === 2 ) && ( geometry.position.length === 2 ) ) {
@@ -449,7 +445,7 @@ class ND {
 					addItem();
 					break;
 				case 3:
-					geometry.edges[level - 2] = [[0,1,3], [0,2,4], [3,4,5], [1,2,5]]
+					geometry.indices[level - 2] = [[0,1,3], [0,2,4], [3,4,5], [1,2,5]]
 					break;
 				default: console.error( 'ND addEdges: тут надо избавиться от swith' );
 				
@@ -678,7 +674,7 @@ class ND {
 				},
 				get indices() {
 
-					const indices = [], edges = settings.geometry.edges[0];
+					const indices = [], edges = settings.geometry.indices[0];
 					for ( var i = 0; i < edges.length; i++ )
 						edges[i].indices.forEach( function ( i ) { indices.push( i ) } );
 					return indices;
@@ -753,13 +749,13 @@ class ND {
 			switch ( n ) {
 
 				case 1:
-					if ( settings.geometry.edges.length !== 1 ) console.error( 'ND.intersection: under constraction. Это не линия.' );
-					const edge = settings.geometry.edges[0][0];
+					if ( settings.geometry.indices.length !== 1 ) console.error( 'ND.intersection: under constraction. Это не линия.' );
+					const edge = settings.geometry.indices[0][0];
 					edge.intersection( geometryIntersection );
 					break;
 				default: {
 
-					const edges = settings.geometry.edges[0];
+					const edges = settings.geometry.indices[0];
 					//добавил для облегчения отладки. Если ставить точку остановки, то отладка сильно усложняется. Поэтому иду по шагам
 					function f() {
 						
@@ -777,7 +773,7 @@ class ND {
 
 								if( ( typeof segmentItem === 'number' ) && !segment.intersection ) {
 
-									segmentItem = [settings.geometry.edges[0][segmentItem]];
+									segmentItem = [settings.geometry.indices[0][segmentItem]];
 									if ( !segmentItem[0].intersection ) console.error( 'ND.intersection getGeometryIntersection: segmentItem.intersection = ' + segmentItem.intersection );
 									
 								}
@@ -797,7 +793,7 @@ class ND {
 						if ( vertices.length > 0 ) geometryIntersection.position.push( ...vertices );
 
 					}
-					getGeometryIntersection( settings.geometry.edges );
+					getGeometryIntersection( settings.geometry.indices );
 
 				}
 
