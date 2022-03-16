@@ -25,6 +25,19 @@
 		<a href='https://github.com/anhr' target="_blank">About me</a>
 	</p>
 	<h1>nD.</h1>
+	<h2>4D.</h2>
+	Here I am creating an 4D object.
+	Unfortunately, it is not possible to render the 4D object in our 3D space. Instead, I intersect the 4d object with a 3D panel and project the result into 3D space.
+	Currenty I have created <a href="https://en.wikipedia.org/wiki/5-cell" target="_blank">pentatope</a> as 4D object.
+	I get a <a href="https://en.wikipedia.org/wiki/Tetrahedron" target="_blank">tetrahedron</a> as a result of the intersection of a pentatope with the 3D panel.
+	You can see the green tetrahedron below in 3D canvas if  pentatope intersects with 3D panel. You can move 3D panel if you click the "►" button below.
+	<fieldset>
+		<legend>Player2</legend>
+		Parameter <b>t</b> is <input id="time" /> <span id="tName"></span>
+		<input id="prev" type="button" value="Prev" />
+		<input id="play" type="button" value="Play" />
+		<input id="next" type="button" value="Next" />
+	</fieldset>
 	<h2>3D.</h2>
 	Click the "►" button in the lower left corner of the canvas to intersect the blue panel with the green tetrahedron.
 	<br>
@@ -86,43 +99,87 @@
 
 		};
 
-		//3D
-		var _3D;
-		new MyThree( function ( scene, options ) {
+		const D = [
+			true,//0D
 
-			_3D = new ND( 3, {
+			false,//1D
+			//true,//1D
+
+			false,//2D
+			//true,//2D
+
+			//false,//3D
+			true,//3D
+
+			//false,//4D
+			true,//4D
+		]
+
+		//4D
+		var _4D;
+		if ( D[4] ) {
+
+			_4D = new ND( 4, {
 
 				geometry: {
 
 					//tetrahedron
 					position: [
-						[0.8, -0.6, 0.1],//0
-						[0.9, 0.7, 0.5],//1
-						[0.8, 0, -0.4],//2
-						[-0.6, 0.1, 0.1]//3
+						[0.8, -0.6, 0.1, -0.85],//0
+						[0.9, 0.7, 0.5, -0.55],//1
+						[0.8, 0, -0.4, 0],//2
+						[-0.6, 0.1, 0.1, 0.55],//3
+						[-0.6, 0.1, 0.1, 0.85],//5
 
 					],
-					//segments: [[0, 1, 2],[0, 1, 3],[0, 2, 3],[1, 2, 3],],
-//					segments: [[0, 1, 1, 2, 2, 0], [0, 1, 1, 3, 3, 0], [0, 2, 2, 3, 3, 0], [1, 2, 2, 3, 3, 1],],
-
-//					segments: [
-//						ND.faceToEdgesIndices( [0, 1, 2] ),
-//						ND.faceToEdgesIndices( [0, 1, 3] ),
-//						ND.faceToEdgesIndices( [0, 2, 3] ),
-//						ND.faceToEdgesIndices( [1, 2, 3] ),
-//					],
-
-//					segments: ND.tetrahedronSegments(),
 
 				},
-				scene: scene,
+				//			scene: scene,
 				options: options,
-				onIntersection: function ( nDgeometry ) { if ( _2D ) _2D.geometry = nDgeometry; }
+				onIntersection: function ( nDgeometry ) {
+
+					console.log( '_4D: onIntersection positions = ' + nDgeometry.position.length )
+					nDgeometry.position.forEach( function ( position, i ) { console.log( position ); } );
+					if ( nDgeometry.position.length === 0 )
+						return;
+					if ( _3D ) _3D.geometry = nDgeometry;
+
+				}
 
 			} );
 
-			//new time of the player event
-			options.onSelectScene = function ( t ) { _3D.vectorPlane[2] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min ); }
+		}
+
+		//3D
+		var _3D;
+		new MyThree( function ( scene, options ) {
+
+			if ( D[3] ) {
+
+				_3D = new ND( 3, {
+
+					geometry: {
+
+						//tetrahedron
+						position: [
+							[0.8, -0.6, 0.1],//0
+							[0.9, 0.7, 0.5],//1
+							[0.8, 0, -0.4],//2
+							[-0.6, 0.1, 0.1]//3
+
+						],
+
+					},
+					scene: scene,
+					options: options,
+					onIntersection: function ( nDgeometry ) { if ( _2D ) _2D.geometry = nDgeometry; }
+
+				} );
+
+				//new time of the player event
+				options.onSelectScene = function ( t ) { _3D.vectorPlane[2] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min ); }
+
+			}
 
 		}, {
 
@@ -140,27 +197,33 @@
 
 		} );
 
+		if ( _4D ) _4D.intersection();
+
 		//2D
 		var _2D;
 		new MyThree( function ( scene, options ) {
 
-			_2D = new ND( 2, {
+			if ( D[2] ) {
 
-				//geometry: [[-0.7, 0.2], [0.8, 0.6], [0.1, -0.5]],
-				geometry: {
+				_2D = new ND( 2, {
 
-					position: [[-0.7, 0.2], [0.8, 0.6], [0.1, -0.5]],
-					//indices: [[0, 1], [0, 2], [1, 2, 'r']],
+					//geometry: [[-0.7, 0.2], [0.8, 0.6], [0.1, -0.5]],
+					geometry: {
 
-				},
-				scene: scene,
-				options: options,
-				onIntersection: function ( nDgeometry ) { if ( _1D ) _1D.geometry = nDgeometry; }
+						position: [[-0.7, 0.2], [0.8, 0.6], [0.1, -0.5]],
+						//indices: [[0, 1], [0, 2], [1, 2, 'r']],
 
-			} );
+					},
+					scene: scene,
+					options: options,
+					onIntersection: function ( nDgeometry ) { if ( _1D ) _1D.geometry = nDgeometry; }
 
-			//new time of the player event
-			options.onSelectScene = function ( t ) { _2D.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min ); }
+				} );
+
+				//new time of the player event
+				options.onSelectScene = function ( t ) { _2D.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min ); }
+
+			}
 
 		}, {
 
@@ -190,84 +253,63 @@
 
 			canvas1D.scene = scene;
 			canvas1D.options = options;
-			//			const vectorsObject = [new ND.Vector( [-0.5] ), 0.5 ];
+			if ( D[1] ) {
 
-			//ND.Vector test
-			/*
-			{
+				let point0D;
+				_1D = new ND( 1, {
 
-				const vector = new ND.Vector( [-5, 7.8] );
-				const n_dimension = vector.length//2
-				const point = vector.point;//THREE.Vector3( -5, 7.8, 0 )
-				const vector0 = vector[0]//-5
-				const vector1 = vector[1]//7.8
+					geometry: {
 
-			}
-			vectorsObject[0][0] = -4;
-			var arr = new Proxy(vectorsObject[0], {
-			  set: function(target, name, value) {
-					target[name] = value;
-				return target[name];
-			  }
-			});
-			const w = arr[0];
-			arr[0] = -4;
-			vectorsObject[0].push( 56 );
-			vectorsObject[0].pop();
-			*/
-			let point0D;
-			_1D = new ND( 1, {
+						position: [[-0.5, 1], [0.5]],
+						//indices: ['a',[0], [1, 2], 1],
 
-				geometry: {
+					},
+					scene: scene,
+					options: options,
+					onIntersection: function ( nDgeometry ) {
 
-					position: [[-0.5, 1], [0.5]],
-					//indices: ['a',[0], [1, 2], 1],
+						if ( !canvas0D.scene ) return;
+						if ( nDgeometry.position.length ) {
 
-				},
-				scene: scene,
-				options: options,
-				onIntersection: function ( nDgeometry ) {
+							if ( !point0D ) {
 
-					if ( !canvas0D.scene ) return;
-					if ( nDgeometry.position.length ) {
+								canvas0D.options.point.size = ( canvas0D.options.scales.x.max - canvas0D.options.scales.x.min ) * 500;//10
+								point0D = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3()], 3 ),
+									new THREE.PointsMaterial( {
 
-						if ( !point0D ) {
+										color: 0x00ff00,//green
+										sizeAttenuation: false,
+										size: canvas0D.options.point.size / options.point.sizePointsMaterial,
 
-							canvas0D.options.point.size = ( canvas0D.options.scales.x.max - canvas0D.options.scales.x.min ) * 500;//10
-							point0D = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3()], 3 ),
-								new THREE.PointsMaterial( {
+									} ) );
+								point0D.name = 'intersection';
+								canvas0D.scene.add( point0D );
+								if ( canvas0D.options.guiSelectPoint ) canvas0D.options.guiSelectPoint.addMesh( point0D );
 
-									color: 0x00ff00,//green
-									sizeAttenuation: false,
-									size: canvas0D.options.point.size / options.point.sizePointsMaterial,
+							}
 
-								} ) );
-							point0D.name = 'intersection';
-							canvas0D.scene.add( point0D );
-							if ( canvas0D.options.guiSelectPoint ) canvas0D.options.guiSelectPoint.addMesh( point0D );
+						} else {
 
-						}
+							if ( point0D ) {
 
-					} else {
+								//console.log( 'remove point' );
+								canvas0D.scene.remove( point0D );
+								if ( canvas0D.options.guiSelectPoint )
+									canvas0D.options.guiSelectPoint.removeMesh( point0D );
+								point0D = undefined;
 
-						if ( point0D ) {
-
-							//console.log( 'remove point' );
-							canvas0D.scene.remove( point0D );
-							if ( canvas0D.options.guiSelectPoint )
-								canvas0D.options.guiSelectPoint.removeMesh( point0D );
-							point0D = undefined;
+							}
 
 						}
 
 					}
 
-				}
+				} );
 
-			} );
+				//new time of the player event
+				options.onSelectScene = function ( t ) { if ( _1D ) _1D.vectorPlane[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min ); }
 
-			//new time of the player event
-			options.onSelectScene = function ( t ) { if ( _1D ) _1D.vectorPlane[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min ); }
+			}
 
 		}, {
 

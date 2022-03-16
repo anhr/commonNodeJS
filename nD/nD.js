@@ -21,14 +21,13 @@ import MyThree from '../myThree/myThree.js';
 
 //debug
 //import { SpriteText } from '../SpriteText/SpriteText.js'
-
-/*
-dimention	geometry	points	edges	faces	triangle
+/**
+dimention	geometry	points	edges	triangle	tetrahedron	pentatope
 1			line		2		0
 2			triangle	3		3		1
-3			Tetrahedron	4		6		4		1
-4			pentatope	5		10				10
- */
+3			tetrahedron	4		6		4			1
+4			pentatope	5		10		10			5			1
+*/
 
 /*
  	 * <b>settings.geometry.segments: [[0, 1, 1, 2, 2, 0], [0, 1, 1, 3, 3, 0], [0, 2, 2, 3, 3, 0], [1, 2, 2, 3, 3, 1],]</b>,
@@ -68,78 +67,97 @@ class ND {
 	 * 	[0, 0, -0.6]//3
 	 * ]</b>,
 	 * </pre>
-	 * @param {Array} [settings.geometry.edges] Array of edges of the n-dimensional graphical object.
-	 * @param {Array} [settings.geometry.iEdges] Array of edge indices of the n-dimensional graphical object.
+	 * @param {Array} [settings.geometry.indices] Array of <b>indices</b> of vertices of the n-dimensional graphical object.
+	 * Allows for vertices to be re-used across multiple segments.
 	 * <pre>
+	 * <b>Indices</b> is divided to segments:
+	 * 
+	 * <b>indices[0]</b> segments is edges (lines). Every edge is two indexes of the edge's vertices. Used in 1D objects and higher.
+	 * <b>indices[1]</b> segments is faces (triangles). Every face is three indexes of the edges from <b>indices[0]</b>. Used in 3D objects and higher.
 	 * For example:
 	 * 
-	 * <b>n</b> = 1
-	 * line
+	 * <b>n</b> = 1 line.
 	 * <b>settings.geometry.position</b> = [
 	 *	[-0.5, 1],//0
 	 *	[0.5]//1
 	 *]
-	 * <b>settings.geometry.edges</b> = [
+	 * <b>settings.geometry.indices</b> = [
 	 *	[
 	 *		0,//index of the settings.geometry.position[0] = [-0.5, 1]
 	 *		1,//index of the settings.geometry.position[1] = [0.5]
 	 *	]//0
-	 *]
-	 * <b>settings.geometry.iEdges</b> = [
-	 *	[
-	 *		0,//index of the settings.geometry.edges[0]
-	 *	]
-	 *]
+	 *]//0
 	 *
-	 * <b>n</b> = 2
-	 * triangle
+	 * <b>n</b> = 2 triangle
 	 * <b>settings.geometry.position</b> = [
 	 *	[-0.7, 0.2],//0
 	 *	[0.8, 0.6],//1
 	 *	[0.1, -0.5]//2
 	 *],
-	 * <b>settings.geometry.edges</b> = [
+	 * //edges (lines)
+	 * <b>settings.geometry.indices[0]</b> = [
 	 *	[0, 1],//0 index of the settings.geometry.positions [-0.7, 0.2] and [0.8, 0.6]
-	 *	[1, 2],//1 index of the settings.geometry.positions = [0.8, 0.6] and [0.1, -0.5]
-	 *	[2, 0] //2 index of the settings.geometry.positions = [0.1, -0.5] and [-0.7, 0.2]
-	 *]
-	 * <b>settings.geometry.iEdges</b> = [
-	 *	[
-	 *		0,//index of the settings.geometry.edges[0]
-	 *		1,//index of the settings.geometry.edges[1]
-	 *		2,//index of the settings.geometry.edges[0]
-	 *	]
+	 *	[0, 2],//1 index of the settings.geometry.positions [-0.7, 0.2] and [0.1, -0.5]
+	 *	[1, 2] //2 index of the settings.geometry.positions [0.8, 0.6] and [0.1, -0.5]
 	 *]
 	 *
-	 * <b>n</b> = 3
-	 * tetrahedron
+	 * <b>n</b> = 3 tetrahedron.
 	 * <b>settings.geometry.position</b> = [
 	 *	[0.8, -0.6, 0.1],//0
 	 * 	[0.9, 0.7, 0.5],//1
 	 * 	[0.8, 0, -0.4],//2
 	 * 	[-0.6, 0.1, 0.1]//3
 	 * ],
-	 * <b>settings.geometry.edges</b> = [
-	 *	[0, 1],//0 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
-	 *	[1, 2],//1 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [0.8, 0, -0.4]
-	 *	[2, 0],//2 index of the settings.geometry.positions [0.8, 0, -0.4] and [0.8, -0.6, 0.1]
-	 *	[1, 3],//3 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
-	 *	[3, 0],//4 index of the settings.geometry.positions [-0.6, 0.1, 0.1] and [0.8, -0.6, 0.1]
-	 *	[2, 3],//5 index of the settings.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
+	 * //edges (lines)
+	 * <b>settings.geometry.indices[0]</b> = [
+	 *	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
+	 *	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.8, 0, -0.4]
+	 *	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [-0.6, 0.1, 0.1]
+	 *	[1, 2]//3 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [0.8, 0, -0.4]
+	 *	[1, 3]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
+	 *	[2, 3]//5 index of the settings.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
 	 *]
-	 * <b>settings.geometry.iEdges</b> = [
-	 *	[//tetrahedron face 0
-	 *		0, 1, 2//indices of the settings.geometry.edges
-	 *	]
-	 *	[//tetrahedron face 1
-	 *		0, 3, 4//indices of the settings.geometry.edges
-	 *	]
-	 *	[//tetrahedron face 2
-	 *		2, 5, 4//indices of the settings.geometry.edges
-	 *	]
-	 *	[//tetrahedron face 3
-	 *		1, 5, 3//indices of the settings.geometry.edges
-	 *	]
+	 * //faces (triangles). Indices of the edges <b>settings.geometry.indices[0]</b>
+	 * <b>settings.geometry.indices[1]</b> = [
+	 *	[0, 1, 3]//tetrahedron's face 0
+	 *	[0, 2, 4]//tetrahedron's face 1
+	 *	[3, 4, 5]//tetrahedron's face 2
+	 *	[1, 2, 5]//tetrahedron's face 3
+	 *]
+	 *
+	 * <b>n</b> = 4 pentachoron [5-cell]{@link https://en.wikipedia.org/wiki/5-cell}.
+	 * <b>settings.geometry.position</b> = [
+	 *	[0.8, -0.6, 0.1, -0.85],//0
+	 * 	[0.9, 0.7, 0.5, -0.55],//1
+	 * 	[0.8, 0, -0.4, 0],//2
+	 * 	[-0.6, 0.1, 0.1, 0.55]//3
+	 * 	[-0.6, 0.1, 0.1, 0.85]//4
+	 * ],
+	 * //edges (lines)
+	 * <b>settings.geometry.indices[0]</b> = [
+	 *	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.9, 0.7, 0.5, -0.55]
+	 *	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.8, 0, -0.4, 0]
+	 *	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, 0.1, 0.55]
+	 *	[0, 4]//3 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, 0.1, 0.85]
+	 *	[1, 2]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [0.8, 0, -0.4, 0]
+	 *	[1, 3]//5 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, 0.1, 0.55]
+	 *	[1, 4]//6 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, 0.1, 0.85]
+	 *	[2, 3]//7 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, 0.1, 0.55]
+	 *	[2, 4]//8 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, 0.1, 0.85]
+	 *	[3, 4]//9 index of the settings.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.6, 0.1, 0.1, 0.85]
+	 *]
+	 * //faces (triangles). Indices of the edges <b>settings.geometry.indices[0]</b>
+	 * <b>settings.geometry.indices[1]</b> = [
+	 *	[0, 1, 2]//tetrahedron's face 0
+	 *	[0, 1, 3]//tetrahedron's face 1
+	 *	[0, 4, 5]//tetrahedron's face 2
+	 *	[1, 2, 5]//tetrahedron's face 3
+	 *	[, , ]//tetrahedron's face 4
+	 *	[, , ]//tetrahedron's face 5
+	 *	[, , ]//tetrahedron's face 6
+	 *	[, , ]//tetrahedron's face 7
+	 *	[, , ]//tetrahedron's face 8
+	 *	[, , ]//tetrahedron's face 9
 	 *]
 	 * </pre>
 	 * @param {Array} [settings.geometry.segments] Array of segments of indices of vertices of the n-dimensional graphical object.
@@ -218,6 +236,7 @@ class ND {
 												case 2:
 													break;
 												case 3:
+												case 4:
 													if ( !position )
 														break;
 													position.push( vectorPlane[n - 1] );
@@ -239,16 +258,96 @@ class ND {
 												var vector;
 												if ( vectorPlane[1].between( position0[1], position1[1], true ) ) {
 
+/*													
+													if ( position1[0] === position0[0] ) {
+														
+														console.log( 'position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0] )
+														//break;//начало и конец линии по оси 0 совпадают
+
+													}
+*/
 													const a = ( position1[1] - position0[1] ) / ( position1[0] - position0[0] ),
 														b = position0[1] - a * position0[0],
-														x = Math.abs( a ) === Infinity ? position1[0] : ( vectorPlane[1] - b ) / a;
-													if ( isNaN( x ) ) console.error( 'ND.intersection: x = ' + x );
+														x = ( a === 0 ) || isNaN( a ) || ( Math.abs( a ) === Infinity ) ? position1[0] : ( vectorPlane[1] - b ) / a;
+													if ( isNaN( x ) ) { console.error( 'ND.intersection: x = ' + x + ' position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0] ); }
 													if ( !x.between( position0[0], position1[0], true ) )
 														break;
 													vector = [x, vectorPlane[1]];
 
 												}
 												indicesIntersection( vector );
+												break;
+											case 4:
+												const nD0 = new ND( 2, {
+
+													geometry: {
+
+														position: settings.geometry.position,
+														indices: [[indices]],
+														iAxes: [0, 3],
+
+													},
+													vectorPlane: vectorPlane.array,
+
+												} ),
+													arrayIntersects0 = nD0.intersection(),
+													nD1 = new ND( 2, {
+
+													geometry: {
+
+														position: settings.geometry.position,
+														indices: [[indices]],
+														iAxes: [1, 3],
+
+													},
+													vectorPlane: vectorPlane.array,
+
+												} ),
+													arrayIntersects1 = nD1.intersection(),
+													nD2 = new ND( 2, {
+
+														geometry: {
+
+															position: settings.geometry.position,
+															indices: [[indices]],
+															iAxes: [2, 3],
+
+														},
+														vectorPlane: vectorPlane.array,
+
+													} ),
+													arrayIntersects2 = nD2.intersection();
+												indicesIntersection( arrayIntersects0.length && arrayIntersects1.length && arrayIntersects2.length ?
+													[arrayIntersects0[0][0], arrayIntersects1[0][0], arrayIntersects2[0][0]] : undefined );
+/*
+												settings.geometry.indices[2].forEach( function ( tetrahedron ) {
+
+													const faces = [];
+													tetrahedron.forEach( function ( face ) {
+
+														faces.push( settings.geometry.indices[1][face] );
+														
+													} );
+													const nD = new ND( n - 1, {
+	
+														geometry: {
+	
+															position: settings.geometry.position,
+															indices: [
+																settings.geometry.indices[0].edges,
+																faces,
+															],
+															iAxes: [1, 2],
+	
+														},
+														vectorPlane: vectorPlane.array,
+	
+													} ),
+														arrayIntersects = nD.intersection();
+													if ( settings.onIntersection ) settings.onIntersection( { position: arrayIntersects } );
+													
+												} );
+*/
 												break;
 											default:
 												const nD02 = new ND( n - 1, {
@@ -293,6 +392,7 @@ class ND {
 							case 'push': return target.push;
 							case 'length': return target.length;
 							case 'intersection': return undefined;
+							case 'edges': return target;
 							default: console.error( 'ND: settings.geometry.indices getter. Invalid name: ' + name );
 
 						}
@@ -416,8 +516,12 @@ class ND {
 		function addEdges( level ) {
 
 			const geometry = settings.geometry;
+/*
 			if ( !geometry.indices[level - 2] ) geometry.indices[level - 2] = [];
 			const edges = geometry.indices[level - 2];
+*/
+			if ( !geometry.indices[0] ) geometry.indices[0] = [];
+			const edges = geometry.indices[0];
 			if ( !geometry || ( edges.length > 0 ) )
 				return;
 			if ( ( n === 2 ) && ( geometry.position.length === 2 ) ) {
@@ -445,7 +549,58 @@ class ND {
 					addItem();
 					break;
 				case 3:
-					geometry.indices[level - 2] = [[0,1,3], [0,2,4], [3,4,5], [1,2,5]]
+//					geometry.indices[level - 2] = [[0, 1, 3], [0, 2, 4], [3, 4, 5], [1, 2, 5]]
+					/*
+					[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
+					[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.8, 0, -0.4]
+					[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [-0.6, 0.1, 0.1]
+					[1, 2]//3 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [0.8, 0, -0.4]
+					[1, 3]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
+					[2, 3]//5 index of the settings.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
+					*/
+					//triangles (faces) 4
+					geometry.indices[1] = [
+						[3, 4, 5],//no 0 vertice
+						[1, 2, 5],//no 1 vertice
+						[0, 2, 4],//no 2 vertice
+						[0, 1, 3],//no 3 vertice
+					];
+					break;
+				case 4:
+					console.error( 'ND addEdges: тут надо избавиться от swith' );
+					/*
+					 *	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.9, 0.7, 0.5, -0.55]
+					 *	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.8, 0, -0.4, 0]
+					 *	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, 0.1, 0.55]
+					 *	[0, 4]//3 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, 0.1, 0.85]
+					 *	[1, 2]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [0.8, 0, -0.4, 0]
+					 *	[1, 3]//5 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, 0.1, 0.55]
+					 *	[1, 4]//6 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, 0.1, 0.85]
+					 *	[2, 3]//7 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, 0.1, 0.55]
+					 *	[2, 4]//8 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, 0.1, 0.85]
+					 *	[3, 4]//9 index of the settings.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.6, 0.1, 0.1, 0.85]
+					*/
+					//triangles (faces) 10
+					geometry.indices[1] = [
+						[7, 8, 9],//0 no 0, 1 vertices
+						[5, 6, 9],//1 no 0, 2 vertices
+						[4, 6, 8],//2 no 0, 3 vertices
+						[4, 5, 7],//3 no 0, 4 vertices
+						[2, 3, 9],//4 no 1, 2 vertices
+						[1, 3, 8],//5 no 1, 3 vertices
+						[1, 2, 7],//6 no 1, 4 vertices
+						[0, 3, 6],//7 no 2, 3 vertices
+						[0, 2, 5],//8 no 2, 4 vertices
+						[0, 1, 4],//9 no 3, 4 vertices
+					];
+					//tetrahedron 5
+					geometry.indices[2] = [
+						[2, 1, 3, 0],//0 no 0 vertice
+						[5, 6, 4, 0],//1 no 1 vertice
+						[8, 7, 1, 4],//2 no 2 vertice
+						[9, 7, 2, 5],//3 no 3 vertice
+						[9, 8, 3, 6],//4 no 4 vertice
+					];
 					break;
 				default: console.error( 'ND addEdges: тут надо избавиться от swith' );
 				
@@ -743,7 +898,7 @@ class ND {
 		/**
 		 * @returns an array of intersection points of <b>vectorPlane</b> and <b>geometry</b>. See constructor for details.
 		 */
-		this.intersection = function ( usedSegmentsPrev ) {
+		this.intersection = function () {
 
 			const geometryIntersection = { position: [] };//, segments };
 			switch ( n ) {

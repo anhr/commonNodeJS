@@ -290,7 +290,7 @@ For example, if you want to create a tetrahedron, then you need to create an arr
 
         <tr>
             
-                <td class="name"><code>edges</code></td>
+                <td class="name"><code>indices</code></td>
             
 
             <td class="type">
@@ -316,110 +316,86 @@ For example, if you want to create a tetrahedron, then you need to create an arr
 
             
 
-            <td class="description last">Array of edges of the n-dimensional graphical object.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>iEdges</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Array of edge indices of the n-dimensional graphical object.
+            <td class="description last">Array of <b>indices</b> of vertices of the n-dimensional graphical object.
+Allows for vertices to be re-used across multiple segments.
 <pre>
+<b>Indices</b> is divided to segments:
+
+<b>indices[0]</b> segments is edges (lines). Every edge is two indexes of the edge's vertices. Used in 1D objects and higher.
+<b>indices[1]</b> segments is faces (triangles). Every face is three indexes of the edges from <b>indices[0]</b>. Used in 3D objects and higher.
 For example:
 
-<b>n</b> = 1
-line
+<b>n</b> = 1 line
 <b>settings.geometry.position</b> = [
 	[-0.5, 1],//0
 	[0.5]//1
 ]
-<b>settings.geometry.edges</b> = [
+<b>settings.geometry.indices</b> = [
 	[
 		0,//index of the settings.geometry.position[0] = [-0.5, 1]
 		1,//index of the settings.geometry.position[1] = [0.5]
 	]//0
-]
-<b>settings.geometry.iEdges</b> = [
-	[
-		0,//index of the settings.geometry.edges[0]
-	]
-]
+]//0
 
-<b>n</b> = 2
-triangle
+<b>n</b> = 2 triangle
 <b>settings.geometry.position</b> = [
 	[-0.7, 0.2],//0
 	[0.8, 0.6],//1
 	[0.1, -0.5]//2
 ],
-<b>settings.geometry.edges</b> = [
+//edges (lines)
+<b>settings.geometry.indices[0]</b> = [
 	[0, 1],//0 index of the settings.geometry.positions [-0.7, 0.2] and [0.8, 0.6]
-	[1, 2],//1 index of the settings.geometry.positions = [0.8, 0.6] and [0.1, -0.5]
-	[2, 0] //2 index of the settings.geometry.positions = [0.1, -0.5] and [-0.7, 0.2]
-]
-<b>settings.geometry.iEdges</b> = [
-	[
-		0,//index of the settings.geometry.edges[0]
-		1,//index of the settings.geometry.edges[1]
-		2,//index of the settings.geometry.edges[0]
-	]
+	[0, 2],//1 index of the settings.geometry.positions [-0.7, 0.2] and [0.1, -0.5]
+	[1, 2] //2 index of the settings.geometry.positions [0.8, 0.6] and [0.1, -0.5]
 ]
 
-<b>n</b> = 3
-tetrahedron
+<b>n</b> = 3 tetrahedron
 <b>settings.geometry.position</b> = [
 	[0.8, -0.6, 0.1],//0
 	[0.9, 0.7, 0.5],//1
 	[0.8, 0, -0.4],//2
 	[-0.6, 0.1, 0.1]//3
 ],
-<b>settings.geometry.edges</b> = [
-	[0, 1],//0 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
-	[1, 2],//1 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [0.8, 0, -0.4]
-	[2, 0],//2 index of the settings.geometry.positions [0.8, 0, -0.4] and [0.8, -0.6, 0.1]
-	[1, 3],//3 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
-	[3, 0],//4 index of the settings.geometry.positions [-0.6, 0.1, 0.1] and [0.8, -0.6, 0.1]
-	[2, 3],//5 index of the settings.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
+//edges (lines)
+<b>settings.geometry.indices[0]</b> = [
+	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
+	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.8, 0, -0.4]
+	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [-0.6, 0.1, 0.1]
+	[1, 2]//3 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [0.8, 0, -0.4]
+	[1, 3]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
+	[2, 3]//5 index of the settings.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
 ]
-<b>settings.geometry.iEdges</b> = [
-	[//tetrahedron face 0
-		0, 1, 2//indices of the settings.geometry.edges
-	]
-	[//tetrahedron face 1
-		0, 3, 4//indices of the settings.geometry.edges
-	]
-	[//tetrahedron face 2
-		2, 5, 4//indices of the settings.geometry.edges
-	]
-	[//tetrahedron face 3
-		1, 5, 3//indices of the settings.geometry.edges
-	]
+//faces (triangles). Indices of the edges <b>settings.geometry.indices[0]</b>
+<b>settings.geometry.indices[1]</b> = [
+	[0, 1, 3]//tetrahedron's face 0
+	[0, 2, 4]//tetrahedron's face 1
+	[3, 4, 5]//tetrahedron's face 2
+	[1, 2, 5]//tetrahedron's face 3
+]
+
+<b>n</b> = 4 pentachoron <a href="https://en.wikipedia.org/wiki/5-cell">5-cell</a>
+<b>settings.geometry.position</b> = [
+	[0.8, -0.6, 0.1],//0
+	[0.9, 0.7, 0.5],//1
+	[0.8, 0, -0.4],//2
+	[-0.6, 0.1, 0.1]//3
+],
+//edges (lines)
+<b>settings.geometry.indices[0]</b> = [
+	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
+	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.8, 0, -0.4]
+	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [-0.6, 0.1, 0.1]
+	[1, 2]//3 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [0.8, 0, -0.4]
+	[1, 3]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
+	[2, 3]//5 index of the settings.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
+]
+//faces (triangles). Indices of the edges <b>settings.geometry.indices[0]</b>
+<b>settings.geometry.indices[1]</b> = [
+	[0, 1, 3]//tetrahedron's face 0
+	[0, 2, 4]//tetrahedron's face 1
+	[3, 4, 5]//tetrahedron's face 2
+	[1, 2, 5]//tetrahedron's face 3
 ]
 </pre></td>
         </tr>
@@ -689,7 +665,7 @@ The <b>onIntersection</b> function parameter is the (n-1)-dimensional geometry o
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line159">line 159</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line174">line 174</a>
     </li></ul></dd>
     
 
@@ -745,103 +721,6 @@ The <b>onIntersection</b> function parameter is the (n-1)-dimensional geometry o
     
 
     
-    <h4 class="name" id=".tetrahedronIndices"><span class="type-signature">(static) </span>tetrahedronIndices<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line1044">line 1044</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <pre>
-An array of segments of pairs of vertex indices of edges of tetrahedron faces
-<b>[[[0, 1], [1, 2], [2, 0]], [[0, 1], [1, 3], [3, 0]], [[0, 2], [2, 3], [3, 0]], [[1, 2], [2, 3], [3, 1]]]</b>
-</pre>
-</div>
-
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
     <h4 class="name" id="intersection"><span class="type-signature"></span>intersection<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
@@ -890,7 +769,7 @@ An array of segments of pairs of vertex indices of edges of tetrahedron faces
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line752">line 752</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line753">line 753</a>
     </li></ul></dd>
     
 
@@ -952,7 +831,7 @@ An array of segments of pairs of vertex indices of edges of tetrahedron faces
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue Mar 08 2022 09:13:17 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon Mar 14 2022 12:29:46 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
