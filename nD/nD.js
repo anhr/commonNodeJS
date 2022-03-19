@@ -130,23 +130,23 @@ class ND {
 	 * <b>n</b> = 4 pentachoron [5-cell]{@link https://en.wikipedia.org/wiki/5-cell}.
 	 * <b>settings.geometry.position</b> = [
 	 *	[0.8, -0.6, 0.1, -0.85],//0
-	 * 	[0.9, 0.7, 0.5, -0.55],//1
-	 * 	[0.8, 0, -0.4, 0],//2
-	 * 	[-0.6, 0.1, 0.1, 0.55]//3
-	 * 	[-0.6, 0.1, 0.1, 0.85]//4
+	 *	[0.9, 0.7, 0.5, -0.55],//1
+	 *	[0.8, 0, -0.4, 0],//2
+	 *	[-0.6, 0.1, -0.3, 0.55],//3
+	 *	[-0.5, 0.2, 0.3, 0.85],//4
 	 * ],
 	 * //edges (lines)
 	 * <b>settings.geometry.indices[0]</b> = [
 	 *	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.9, 0.7, 0.5, -0.55]
 	 *	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.8, 0, -0.4, 0]
-	 *	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, 0.1, 0.55]
-	 *	[0, 4]//3 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, 0.1, 0.85]
+	 *	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, -0.3, 0.55]
+	 *	[0, 4]//3 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.5, 0.2, 0.3, 0.85]
 	 *	[1, 2]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [0.8, 0, -0.4, 0]
-	 *	[1, 3]//5 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, 0.1, 0.55]
-	 *	[1, 4]//6 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, 0.1, 0.85]
-	 *	[2, 3]//7 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, 0.1, 0.55]
-	 *	[2, 4]//8 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, 0.1, 0.85]
-	 *	[3, 4]//9 index of the settings.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.6, 0.1, 0.1, 0.85]
+	 *	[1, 3]//5 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, -0.3, 0.55]
+	 *	[1, 4]//6 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.5, 0.2, 0.3, 0.85]
+	 *	[2, 3]//7 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, -0.3, 0.55]
+	 *	[2, 4]//8 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.5, 0.2, 0.3, 0.85]
+	 *	[3, 4]//9 index of the settings.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.5, 0.2, 0.3, 0.85]
 	 *]
 	 * //faces (triangles). Indices of the edges <b>settings.geometry.indices[0]</b>
 	 * <b>settings.geometry.indices[1]</b> = [
@@ -565,14 +565,14 @@ class ND {
 					/*
 					 *	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.9, 0.7, 0.5, -0.55]
 					 *	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.8, 0, -0.4, 0]
-					 *	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, 0.1, 0.55]
-					 *	[0, 4]//3 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, 0.1, 0.85]
+					 *	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, -0.3, 0.55]
+					 *	[0, 4]//3 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.5, 0.2, 0.3, 0.85]
 					 *	[1, 2]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [0.8, 0, -0.4, 0]
-					 *	[1, 3]//5 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, 0.1, 0.55]
-					 *	[1, 4]//6 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, 0.1, 0.85]
-					 *	[2, 3]//7 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, 0.1, 0.55]
-					 *	[2, 4]//8 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, 0.1, 0.85]
-					 *	[3, 4]//9 index of the settings.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.6, 0.1, 0.1, 0.85]
+					 *	[1, 3]//5 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, -0.3, 0.55]
+					 *	[1, 4]//6 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.5, 0.2, 0.3, 0.85]
+					 *	[2, 3]//7 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, -0.3, 0.55]
+					 *	[2, 4]//8 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.5, 0.2, 0.3, 0.85]
+					 *	[3, 4]//9 index of the settings.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.5, 0.2, 0.3, 0.85]
 					*/
 					//triangles (faces) 10
 					geometry.indices[1] = [
