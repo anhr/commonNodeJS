@@ -73,8 +73,9 @@ class ND {
 	 * <pre>
 	 * <b>Indices</b> is divided to segments:
 	 * 
-	 * <b>indices[0]</b> segments is edges (lines). Every edge is two indexes of the edge's vertices. Used in 1D objects and higher.
-	 * <b>indices[1]</b> segments is faces (triangles). Every face is three indexes of the edges from <b>indices[0]</b>. Used in 3D objects and higher.
+	 * <b>indices[0]</b> is edges (lines). Every edge is two indexes of the edge's vertices. Used in 1D objects and higher.
+	 * <b>indices[1]</b> is faces (triangles). Every face is three indexes of the edges from <b>indices[0]</b>. Used in 3D objects and higher.
+	 * <b>indices[2]</b> is bodies (tetrahedrons). Every bodie is four face indexes from <b>indices[1]</b>. Used in 4D objects and higher.
 	 * For example:
 	 * 
 	 * <b>n</b> = 1 line.
@@ -149,16 +150,24 @@ class ND {
 	 *]
 	 * //faces (triangles). Indices of the edges <b>settings.geometry.indices[0]</b>
 	 * <b>settings.geometry.indices[1]</b> = [
-	 *	[0, 1, 2]//tetrahedron's face 0
-	 *	[0, 1, 3]//tetrahedron's face 1
-	 *	[0, 4, 5]//tetrahedron's face 2
-	 *	[1, 2, 5]//tetrahedron's face 3
-	 *	[, , ]//tetrahedron's face 4
-	 *	[, , ]//tetrahedron's face 5
-	 *	[, , ]//tetrahedron's face 6
-	 *	[, , ]//tetrahedron's face 7
-	 *	[, , ]//tetrahedron's face 8
-	 *	[, , ]//tetrahedron's face 9
+	 *	[7, 8, 9],//0 no 0, 1 vertices
+	 *	[5, 6, 9],//1 no 0, 2 vertices
+	 *	[4, 6, 8],//2 no 0, 3 vertices
+	 *	[4, 5, 7],//3 no 0, 4 vertices
+	 *	[2, 3, 9],//4 no 1, 2 vertices
+	 *	[1, 3, 8],//5 no 1, 3 vertices
+	 *	[1, 2, 7],//6 no 1, 4 vertices
+	 *	[0, 3, 6],//7 no 2, 3 vertices
+	 *	[0, 2, 5],//8 no 2, 4 vertices
+	 *	[0, 1, 4],//9 no 3, 4 vertices
+	 *]
+	 * //bodies (tetrahedrons). Indices of the faces <b>settings.geometry.indices[1]</b>
+	 * <b>settings.geometry.indices[2]</b> = [
+	 * [2, 1, 3, 0],//0 no 0 vertice
+	 * [5, 6, 4, 0],//1 no 1 vertice
+	 * [8, 7, 1, 4],//2 no 2 vertice
+	 * [9, 7, 2, 5],//3 no 3 vertice
+	 * [9, 8, 3, 6],//4 no 4 vertice
 	 *]
 	 * </pre>
 	 * @param {Array} [settings.geometry.segments] Array of segments of indices of vertices of the n-dimensional graphical object.
