@@ -214,7 +214,8 @@ class ND {
 
 			function proxyEdges( newEdges ) {
 
-				edges = edges || newEdges;
+//				edges = edges || newEdges;
+				edges = newEdges || edges;
 				return new Proxy( edges ? edges : [],
 					{
 
@@ -229,6 +230,7 @@ class ND {
 										const i = parseInt( name );
 										if ( !isNaN( i ) ) {
 
+											if ( target.length === 0 ) return;//no edges
 											if ( i >= target.length )
 												console.error( 'ND: settings.geometry.indices[]intersection. invalid length: ' + target.length );
 											const indices = target[i];
@@ -589,11 +591,13 @@ class ND {
 					];
 					//tetrahedron 5
 					geometry.indices[2] = [
-						[2, 1, 3, 0],//0 no 0 vertice
+						[2],
+						/*
 						[5, 6, 4, 0],//1 no 1 vertice
 						[8, 7, 1, 4],//2 no 2 vertice
 						[9, 7, 2, 5],//3 no 3 vertice
 						[9, 8, 3, 6],//4 no 4 vertice
+						*/
 					];
 					break;
 				default: console.error( 'ND addEdges: тут надо избавиться от swith' );
@@ -829,9 +833,68 @@ class ND {
 					return points;
 
 				},
+//				edgeIndices: [],//в этом массиве хранятся индексы точек, что бы повторно их не вычислять
 				get indices() {
 
-					const indices = [], edges = settings.geometry.indices[0];
+//					if ( this.edgeIndices.length ) return this.edgeIndices;
+					const indices = [];
+					function getIndices( segment, index, boReturn ) {
+
+						var prevIndex = index;
+						for ( var i = segment.length - 1; i >= 0; i-- ) {
+
+							const segmentItem = segment[i];
+							if ( segmentItem instanceof Array ) {
+
+/*								
+								if ( ( typeof segmentItem === 'number' ) && !segment.intersection ) {
+								
+									segmentItem = [settings.geometry.indices[0][segmentItem]];
+									if ( !segmentItem[0].intersection ) console.error( 'ND.intersection getGeometryIntersection: segmentItem.intersection = ' + segmentItem.intersection );
+								
+								}
+*/
+								getIndices( segmentItem, index );
+								if ( boReturn ) return;
+
+							} else {
+
+								if ( prevIndex === index ) prevIndex--;
+								const item = segmentItem.indices ? segmentItem ://settings.geometry.indices.length === 1 перечислены только ребра
+									settings.geometry.indices[prevIndex][segmentItem];
+								if ( prevIndex > 0 )
+									getIndices( item, prevIndex );
+								else {
+
+									const edge = item.indices;
+									if ( edge.length !== 2 ) {
+
+										console.error( 'ND.geometry.D3.get indices: invalid edge.length = ' + edge.length );
+										return;
+
+									}
+									if ( edge[0] === edge[1] ) {
+
+										console.error( 'ND.geometry.D3.get indices: duplicate edge index = ' + edge[0] );
+										return;
+
+									}
+									indices.push( ...edge );
+	/*								
+									indices.push( edge[0] );
+									indices.push( edge[1] );
+	*/
+
+								}
+
+							}
+
+						}
+						index = prevIndex;
+
+					}
+					getIndices( settings.geometry.indices, settings.geometry.indices.length - 1, true );
+/*
 					for ( var i = 0; i < edges.length; i++ ) {
 						
 						const edge = edges[i].indices;
@@ -849,9 +912,10 @@ class ND {
 						}
 						indices.push( edge[0] );
 						indices.push( edge[1] );
-//						edges[i].indices.forEach( function ( i ) { indices.push( i ) } );
 
 					}
+*/
+//					this.edgeIndices = [...indices];
 					return indices;
 
 				},
@@ -1120,8 +1184,8 @@ class ND {
 							break;
 						default: {
 
-							console.error( 'ND.Plane.createMesh: invalid dimension = ' + n );
-							return;
+//							console.error( 'ND.Plane.createMesh: invalid dimension = ' + n );
+							return;//I can not render 4D and higher panel
 
 						}
 
