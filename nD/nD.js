@@ -981,10 +981,12 @@ class ND {
 		}
 		/**
 		 * @returns an array of intersection points of <b>vectorPlane</b> and <b>geometry</b>. See constructor for details.
+		 * @param {Object} [geometryIntersection = { position: [], indices: [[]] }] Arrays of vertices and indexes of the result of the intersection of the panel and the nD object. See <b>settings.geometry</b> of <b>ND</b> constructor for details.
+		 * @param {Array} [geometryIntersection.position] Array of vertices of the result of the intersection. See <b>settings.geometry.position</b> of <b>ND</b> constructor for details.
+		 * @param {Array} [geometryIntersection.indices] Array of <b>indices</b> of vertices of the result of the intersection. See <b>settings.geometry.indices</b> of <b>ND</b> constructor for details.
 		 */
-		this.intersection = function () {
+		this.intersection = function ( geometryIntersection = { position: [], indices: [[]] } ) {
 
-			const geometryIntersection = { position: [], indices: [[]] };
 			switch ( n ) {
 
 				case 1:
