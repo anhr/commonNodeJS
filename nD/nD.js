@@ -230,10 +230,22 @@ class ND {
 										const i = parseInt( name );
 										if ( !isNaN( i ) ) {
 
+											if ( i.toString() !== name ) {
+
+												console.error( 'ND: settings.geometry.indices[]intersection. invalid name = ' + name );
+												return;
+
+											}
 											if ( target.length === 0 ) return;//no edges
 											if ( i >= target.length )
 												console.error( 'ND: settings.geometry.indices[]intersection. invalid length: ' + target.length );
-											const indices = target[i];
+											var indices = target[i];
+											
+											//Когда размерность графического оъекта меньше 3
+											//и когда он создается из объета большей размерности
+											//то indices это прокси
+											if ( indices.indices ) indices = indices.indices;
+											
 											if ( indices.length !== 2 ) {
 
 												console.error( 'ND: settings.geometry.indices[]intersection. indices.length = ' + indices.length );
@@ -278,9 +290,11 @@ class ND {
 													if ( vectorPlane[1].between( position0[1], position1[1], true ) ) {
 
 														const a = ( position1[1] - position0[1] ) / ( position1[0] - position0[0] ),
-															b = position0[1] - a * position0[0],
-															x = ( a === 0 ) || isNaN( a ) || ( Math.abs( a ) === Infinity ) ? position1[0] : ( vectorPlane[1] - b ) / a;
-														if ( isNaN( x ) ) { console.error( 'ND.intersection: x = ' + x + ' position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0] ); }
+														b = position0[1] - a * position0[0],
+														x = ( a === 0 ) || isNaN( a ) || ( Math.abs( a ) === Infinity ) ?
+															position1[0] :
+															( vectorPlane[1] - b ) / a;
+														if ( isNaN( x ) || ( x === undefined ) ) { console.error( 'ND.intersection: x = ' + x + ' position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0] ); }
 														if ( !x.between( position0[0], position1[0], true ) )
 															break;
 														vector = [x, vectorPlane[1]];
@@ -332,34 +346,49 @@ class ND {
 														[arrayIntersects0[0][0], arrayIntersects1[0][0], arrayIntersects2[0][0]] : undefined );
 													break;
 												default:
-													const nD02 = new ND( n - 1, {
+													var position;
+													if ( vectorPlane[n - 1] === position1[n - 1] ) position = position1;
+													else if ( vectorPlane[n - 1] === position0[n - 1] ) position = position0;
+													if ( position ) {
 
-														geometry: {
+														//Вершина находится на панели.
+														//Для проверки запустить canvas 3D и установить время проигрывателя t = 0.3 так чтобы вершина 2 пирамиды попала на панель
+														//В этом случает треугольник пересечения сведется к трем точкам с одинаковыми координатами.
+														indicesIntersection( [position[0], position[1]] );
+														indices.intersection.boVerticeOnPanel = true;
 
-															position: settings.geometry.position,
-															indices: [[indices]],
-															iAxes: [1, 2],
+													} else {
 
-														},
-														vectorPlane: vectorPlane.array,
+														const nD02 = new ND( n - 1, {
 
-													} ),
-														arrayIntersects02 = nD02.intersection();
-													const nD12 = new ND( n - 1, {
+															geometry: {
 
-														geometry: {
+																position: settings.geometry.position,
+																indices: [[indices]],
+																iAxes: [1, 2],
 
-															position: settings.geometry.position,
-															indices: [[indices]],
-															iAxes: [0, 2],
+															},
+															vectorPlane: vectorPlane.array,
 
-														},
-														vectorPlane: vectorPlane.array,
+														} ),
+															arrayIntersects02 = nD02.intersection();
+														const nD12 = new ND( n - 1, {
 
-													} ),
-														arrayIntersects12 = nD12.intersection();
-													indicesIntersection( arrayIntersects02.length && arrayIntersects12.length ?
-														[arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined );
+															geometry: {
+
+																position: settings.geometry.position,
+																indices: [[indices]],
+																iAxes: [0, 2],
+
+															},
+															vectorPlane: vectorPlane.array,
+
+														} ),
+															arrayIntersects12 = nD12.intersection();
+														indicesIntersection( arrayIntersects02.length && arrayIntersects12.length ?
+															[arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined );
+
+													}
 
 											}
 
@@ -375,6 +404,7 @@ class ND {
 								case 'length': return target.length;
 								case 'intersection': return undefined;
 								case 'edges': return target;
+								case 'isProxy': return true;
 								default: console.error( 'ND: settings.geometry.indices getter. Invalid name: ' + name );
 
 							}
@@ -445,8 +475,9 @@ class ND {
 					} );
 
 			}
-			if ( boArray ) settings.geometry.indices[0] = proxyEdges();
-			else settings.geometry.indices.push( proxyEdges() );
+			const indices = settings.geometry.indices;
+			if ( boArray ) { if ( !indices[0].isProxy ) indices[0] = proxyEdges(); }
+			else indices.push( proxyEdges() );
 
 		}
 		
@@ -509,9 +540,9 @@ class ND {
 			}
 
 		}
-		function addEdges( level ) {
+		function addEdges( level, geometry ) {
 
-			const geometry = settings.geometry;
+			geometry = geometry || settings.geometry;
 /*
 			if ( !geometry.indices[level - 2] ) geometry.indices[level - 2] = [];
 			const edges = geometry.indices[level - 2];
@@ -526,6 +557,7 @@ class ND {
 				return;
 
 			}
+			if ( level === undefined ) return;
 			if ( level > 2 ) addEdges( level - 1 );
 			switch ( level ) {
 
@@ -591,13 +623,11 @@ class ND {
 					];
 					//tetrahedron 5
 					geometry.indices[2] = [
-						[2],
-						/*
+						//[1],
 						[5, 6, 4, 0],//1 no 1 vertice
 						[8, 7, 1, 4],//2 no 2 vertice
 						[9, 7, 2, 5],//3 no 3 vertice
 						[9, 8, 3, 6],//4 no 4 vertice
-						*/
 					];
 					break;
 				default: console.error( 'ND addEdges: тут надо избавиться от swith' );
@@ -867,23 +897,23 @@ class ND {
 								else {
 
 									const edge = item.indices;
-									if ( edge.length !== 2 ) {
+									if ( edge ) {
+										
+										if ( edge.length !== 2 ) {
+	
+											console.error( 'ND.geometry.D3.get indices: invalid edge.length = ' + edge.length );
+											return;
+	
+										}
+										if ( edge[0] === edge[1] ) {
+	
+											console.error( 'ND.geometry.D3.get indices: duplicate edge index = ' + edge[0] );
+											return;
+	
+										}
+										indices.push( ...edge );
 
-										console.error( 'ND.geometry.D3.get indices: invalid edge.length = ' + edge.length );
-										return;
-
-									}
-									if ( edge[0] === edge[1] ) {
-
-										console.error( 'ND.geometry.D3.get indices: duplicate edge index = ' + edge[0] );
-										return;
-
-									}
-									indices.push( ...edge );
-	/*								
-									indices.push( edge[0] );
-									indices.push( edge[1] );
-	*/
+									} else console.error( 'ND.geometry.D3.get indices: invalid edge. Возможно вычислены не все точки пересечения' );
 
 								}
 
@@ -893,29 +923,9 @@ class ND {
 						index = prevIndex;
 
 					}
+					if ( settings.geometry.indices[0].length === 0 )
+						return indices;//объект состоит из одной вершины и не имеет ребер
 					getIndices( settings.geometry.indices, settings.geometry.indices.length - 1, true );
-/*
-					for ( var i = 0; i < edges.length; i++ ) {
-						
-						const edge = edges[i].indices;
-						if ( edge.length !== 2 ) {
-
-							console.error( 'ND.projectTo3D create3Dobject get indices: invalid edge.length = ' + edge.length );
-							continue;
-							
-						}
-						if ( edge[0] === edge[1] ) {
-
-							console.error( 'ND.projectTo3D create3Dobject get indices: duplicate edge index = ' + edge[0] );
-							continue;
-							
-						}
-						indices.push( edge[0] );
-						indices.push( edge[1] );
-
-					}
-*/
-//					this.edgeIndices = [...indices];
 					return indices;
 
 				},
@@ -987,6 +997,57 @@ class ND {
 		 */
 		this.intersection = function ( geometryIntersection = { position: [], indices: [[]] } ) {
 
+			function intersection( iEdge, aEdge ) {
+				
+				for ( var i = 0; i < geometryIntersection.position.length; i++ ) {
+					
+					if ( geometryIntersection.position[i].iEdge === iEdge ) {
+
+						//duplicate position
+						if (
+							aEdge &&
+							( aEdge.length < 2 )//Длинна ребра линии пересечения получается больше 2 если ребро объекта лежит на пенели.
+												//Для проверки на canvas 3D сделать две вершины по оси z равными -0.4
+												//И проиграть проигрыватель на t = 0.3.
+						) aEdge.push( i );
+						return;
+
+					}
+
+				}
+				const edge = settings.geometry.indices[0][iEdge];
+				edge.intersection( geometryIntersection );
+				const position = edge.indices.intersection.position;
+				if ( position ) {
+					
+					var boAdd = true;
+					if ( edge.indices.intersection.boVerticeOnPanel ) {
+
+						//Вершина на панели. В этом случае все ребра, сходящиеся к этой вершине буду выдвать одну и ту же точку пересечения
+						//Не нужно добавлять повторяющиеся точки.
+						for ( var i = 0; i < geometryIntersection.position.length; i++ ) {
+
+							if ( position.equals( geometryIntersection.position[i] ) ) {
+
+								boAdd = false;
+								aEdge.boVerticeOnPanel = true;
+								break;
+								
+							}
+							
+						}
+						
+					}
+					if ( boAdd ) {
+						
+						geometryIntersection.position.push( position );
+						if ( aEdge ) aEdge.push( geometryIntersection.position.length - 1 );
+
+					}
+
+				}
+				
+			}
 			switch ( n ) {
 
 				case 1:
@@ -994,8 +1055,64 @@ class ND {
 					const edge = settings.geometry.indices[0][0];
 					edge.intersection( geometryIntersection );
 					break;
+				case 2:
+					const iFaces = settings.geometry.indices[1];
+					if ( iFaces ) settings.geometry.indices[1].forEach( function ( iFace ) { iFace.forEach( function ( iEdge ) { intersection( iEdge ) } ); } );
+					else {
+						
+						for ( var i = 0; i < settings.geometry.indices[0].length; i++ ) { intersection( i ); }
+						addEdges( undefined, geometryIntersection );
+
+					}
+					break;
 				default: {
 
+					const iSegments = settings.iSegments || ( n - 2 ), segments = settings.geometry.indices[iSegments];
+					if ( settings.indice === undefined ) {
+
+						for ( var i = 0; i < segments.length; i++ ) {
+
+							const nd = new ND( n, { geometry: settings.geometry, indice: i, iSegments: iSegments, } );
+							nd.intersection( geometryIntersection );
+
+						}
+
+					} else {
+
+						const segment = segments[settings.indice];
+						if ( iSegments > 1 ) {
+
+							for ( var i = 0; i < segment.length; i++ ) {
+	
+								const nd = new ND( n, { geometry: settings.geometry, indice: segment[i], iSegments: iSegments - 1, } );
+								nd.intersection( geometryIntersection );
+	
+							}
+
+						} else {
+
+							const edge = [];
+							for ( var i = 0; i < segment.length; i++ ) { intersection( segment[i], edge ); }
+							if ( edge.length > 0 ) {
+
+								if ( ( edge.length !== 2 ) || ( edge[0] === edge[1] ) ) {
+
+									//длинна массива edge модет быть меньше 2 если всего одна вершина находится на панели
+									//В этом случае линия пересечения geometryIntersection состоит из одной точки и невозможно создать ребро
+									if ( !edge.boVerticeOnPanel )
+										console.error( 'ND.intersection: invalid edge' );
+									return;
+
+								}
+								geometryIntersection.indices[0].push( edge );
+
+							}
+
+						}
+
+					}
+
+/*
 					const edges = settings.geometry.indices[0];
 					//добавил для облегчения отладки. Если ставить точку остановки, то отладка сильно усложняется. Поэтому иду по шагам
 					function f() { for ( var i = 0; i < edges.length; i++ ) edges[i].intersection(); }
@@ -1066,6 +1183,7 @@ class ND {
 
 					}
 					getGeometryIntersection( settings.geometry.indices, [], true );
+*/
 
 				}
 
@@ -1083,10 +1201,6 @@ class ND {
 				}
 				if ( geometryIntersection.position.length )
 					objectIntersect = create3DObject( geometryIntersection, { name: 'Intersection' } );
-
-			}
-			if ( geometryIntersection.position.length > n ){
-
 
 			}
 			return geometryIntersection.position;
@@ -1321,3 +1435,34 @@ if ( !Number.prototype.between )
 		return inclusive ? this >= min && this <= max : this > min && this < max;
 
 	};
+
+//Comparing arrays https://stackoverflow.com/a/14853974/5175935
+// Warn if overriding existing method
+if ( Array.prototype.equals )
+	console.warn( "Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code." );
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function ( array ) {
+	// if the other array is a falsy value, return
+	if ( !array )
+		return false;
+
+	// compare lengths - can save a lot of time 
+	if ( this.length != array.length )
+		return false;
+
+	for ( var i = 0, l = this.length; i < l; i++ ) {
+		// Check if we have nested arrays
+		if ( this[i] instanceof Array && array[i] instanceof Array ) {
+			// recurse into the nested arrays
+			if ( !this[i].equals( array[i] ) )
+				return false;
+		}
+		else if ( this[i] != array[i] ) {
+			// Warning - two different object instances will never be equal: {x:20} != {x:20}
+			return false;
+		}
+	}
+	return true;
+}
+// Hide method from for-in loops
+Object.defineProperty( Array.prototype, "equals", { enumerable: false } );
