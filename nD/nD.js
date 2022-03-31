@@ -347,8 +347,15 @@ class ND {
 													break;
 												default:
 													var position;
-													if ( vectorPlane[n - 1] === position1[n - 1] ) position = position1;
-													else if ( vectorPlane[n - 1] === position0[n - 1] ) position = position0;
+													
+													//Если позиции вершины находится на этом расстоянии от панели, то будем считать, что она находится на панели
+													//Для проверки запустить canvas 3D с geometry Variant 1 и проигрыватель в точке t = 0.6.
+													//
+													//В примере canvas 3D с geometry.position Variant 2 вершина точно находится на панели
+													const d = 5.56e-17;
+													
+													if ( Math.abs( vectorPlane[n - 1] - position1[n - 1] ) < d ) position = position1;
+													else if ( Math.abs( vectorPlane[n - 1] - position0[n - 1] ) < d ) position = position0;
 													if ( position ) {
 
 														//Вершина находится на панели.
@@ -645,6 +652,41 @@ class ND {
 			default: addEdges( n );
 
 		}
+
+		//В каждом сегменте geometry.indices[i] должно встечаться определенное количество индексов из передыдущего сегмента
+		//geometry.indices[i - 1]. В противном случае в geometry.indices[i] добавляем новый элемент, в который добавляем
+		//индексы из передыдущего сегмента geometry.indices[i - 1].
+		//Это нужно для того, что бы во время пересечения объекта с plane появлялся замкнутый intersection.
+		//Например после пересечения 3 мерного объекта с plane получалась замкнутая линия, тоесть начало и конец линии соединяем дополнительным ребром.
+		//Для проверки в примере запускаем _4D и _3D
+		const indices = settings.geometry.indices;
+		for( var i = 1; i < indices.length; i++ ) {
+
+			const indice = indices[i];
+			const arrayIndices = [];//Каждый элемент этого массива показывает сколько раз встречается индекс в сегменте geometry.indices[i].
+			var max = 0;//максимальное количество сколько раз встречается индекс в сегменте geometry.indices[i].
+			for ( var j = 0; j < indice.length; j++ ) {
+
+				const segment = indice[j];
+				for ( var k = 0; k < segment.length; k++ ) {
+
+					const index = segment[k];
+					if ( arrayIndices[index] === undefined ) arrayIndices[index] = 0;
+					arrayIndices[index]++;
+					if ( arrayIndices[index] > max ) max = arrayIndices[index];
+
+				}
+					
+			}
+			const arraySegment = [];//сюда добавляю все индексы, котоые встречаются меньше нужного
+			for ( var j = 0; j < arrayIndices.length; j++ ) {
+
+				if ( arrayIndices[j] < max ) arraySegment.push( j );
+				
+			}
+			if ( arraySegment.length > 0 ) indice.push( arraySegment );
+				
+		}
 		
 		var vectorPlane;
 
@@ -782,77 +824,19 @@ class ND {
 			set geometry( geometry ) {
 				
 				settings.geometry.position = geometry.position;
-				if ( geometry.indices ) settings.geometry.indices[0].edges = geometry.indices[0];
+				if ( geometry.indices ) {
+					
+					settings.geometry.indices.length = 1;
+					for ( var i = 0; i < geometry.indices.length; i++ ) {
+						
+						if ( i === 0 ) settings.geometry.indices[0].edges = geometry.indices[0];
+						else settings.geometry.indices[i] = geometry.indices[i];
+
+					}
+
+				}
 				
 			},
-/*
-			set position( position ) { settings.geometry.position = position; },
-			get segments() {
-
-				//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
-				return new Proxy( this, {
-
-					get: function ( target, name ) {
-
-						switch ( name ) {
-
-							case 'length':
-								return settings.geometry.indices.length;
-
-						}
-						function indice() { return settings.geometry.indices[parseInt( name )] }
-						switch ( n ) {
-
-							case 1:
-							case 2:
-							case 3:
-								return {
-									
-									position:
-										new Proxy( this, {
-						
-											get: function ( target, name ) {
-
-												const i = parseInt( name );
-												if ( isNaN( i ) ) {
-
-													switch ( name ) {
-							
-														case 'length':
-															return indice().length;
-														default: console.error( 'ND.geometry.segments.position: invalid name: ' + name );
-							
-													}
-													return;
-													
-												}
-												const ip = indice()[i];
-												if ( ip === undefined ) {
-
-													console.error( 'ND.geometry.segments.position: Invalid position index = ' + i );
-													return;
-													
-												}
-												return new Vector( settings.geometry.position[ip] );
-						
-											},
-						
-										} ),
-									indices: indice(),
-								
-								}
-							default: console.error( 'ND.geometry.segments[]: n = ' + n + ' under constraction' );
-								return;
-
-						}
-						return new Vector( settings.geometry.position[i] );
-
-					},
-
-				} );
-
-			},
-*/
 			D3: {
 				
 				get points() {
@@ -995,7 +979,7 @@ class ND {
 		 * @param {Array} [geometryIntersection.position] Array of vertices of the result of the intersection. See <b>settings.geometry.position</b> of <b>ND</b> constructor for details.
 		 * @param {Array} [geometryIntersection.indices] Array of <b>indices</b> of vertices of the result of the intersection. See <b>settings.geometry.indices</b> of <b>ND</b> constructor for details.
 		 */
-		this.intersection = function ( geometryIntersection = { position: [], indices: [[]] } ) {
+		this.intersection = function ( geometryIntersection = { position: [], indices: [[]] }, iIntersections ) {
 
 			function intersection( iEdge, aEdge ) {
 				
@@ -1017,6 +1001,10 @@ class ND {
 				}
 				const edge = settings.geometry.indices[0][iEdge];
 				edge.intersection( geometryIntersection );
+/*
+if ( !edge.indices )
+	console.error('111');
+*/
 				const position = edge.indices.intersection.position;
 				if ( position ) {
 					
@@ -1067,31 +1055,121 @@ class ND {
 					break;
 				default: {
 
-					const iSegments = settings.iSegments || ( n - 2 ), segments = settings.geometry.indices[iSegments];
+					var iSegments = settings.iSegments || ( n - 2 ),//Индекс массива индексов сегментов settings.geometry.indices[iSegments]
+											//для которого получаем вершины и индексы
+						segments;//массив индексов сегментов для которого получаем вершины и индексы
+					while( iSegments >= 0 ) {
+						
+						segments = settings.geometry.indices[iSegments];
+						if ( segments ) break;
+						iSegments--;
+
+					}
+					//settings.indice индекс сегмента в текущем массиве индексов сегментов settings.geometry.indices[iSegments][settings.indice]
 					if ( settings.indice === undefined ) {
 
 						for ( var i = 0; i < segments.length; i++ ) {
 
-							const nd = new ND( n, { geometry: settings.geometry, indice: i, iSegments: iSegments, } );
-							nd.intersection( geometryIntersection );
+							const nd = new ND( n, { geometry: settings.geometry, indice: i, iSegments: iSegments, } ),
+								s = iSegments - 1;
+							var iIntersections;
+							if ( s !== 0 ) {//Не создавать iIntersections для ребер
+
+/*								
+								geometryIntersection.indices[s] = geometryIntersection.indices[s] || [];
+								geometryIntersection.indices[s][i] = geometryIntersection.indices[s][i] || [];
+								iIntersections = geometryIntersection.indices[s][i];
+*/
+								iIntersections = [];
+
+							}
+							nd.intersection( geometryIntersection, iIntersections );
+							if ( iIntersections && iIntersections.length ) {
+
+								geometryIntersection.indices[s] = geometryIntersection.indices[s] || [];
+								geometryIntersection.indices[s].push( iIntersections );
+								
+							}
 
 						}
 
+						//Ищем ребра с одной вершиной. Такие ребра появляются если вершина находится на панели
+						//Это нужно когда объект пересекается панелью и одна из вершин находтся на панели
+						//Тода появляется два ребра с одной вершиной. Я их удаляю и объединяю в одно ребро.
+						//Для проверки запустить canvas 3D с geometry Variant 1 и проигрыватель установить на t = 0.6
+						const edges = geometryIntersection.indices[0];
+						var vertices = [];//список вершин ребер с одной вершиной.
+						for ( var i = edges.length - 1; i >= 0; i-- ) {
+
+							const edge = edges[i];
+							if ( edge.boVerticeOnPanel && ( edge.length === 1 ) ) {
+								
+								vertices.push( edge[0] );
+								edges.splice( i, 1 ); 
+
+							}
+
+						}
+						if ( vertices.length > 0 ) {
+
+							if ( vertices.length != 2 ) console.error( 'ND.intersection: invalid edge.' );
+							else edges.push( vertices );
+							
+						}
+
+						//ищем вершины с одним ребром и объединяем такие вершины в новое ребро.
+						//Это нужно чтобы линия грани была замкнутая.
+						//Для проверки создаем в примере _4D и _3D
+						for ( var i = 0; i < geometryIntersection.position.length; i++ ) {
+
+							var verticesCount = 0;
+							for ( var j = 0; j < edges.length; j++ ) {
+
+								const edge = edges[j];
+								for ( var k = 0; k < edge.length; k++ ) {
+
+									if ( edge[k] === i ) verticesCount++;
+									
+								}
+
+							}
+							if ( verticesCount < 2 ) {
+
+								if ( verticesCount === 0 ) console.error( 'ND.intersection: Invalid verticesCount = ' + verticesCount );
+								else vertices.push( i );
+									
+							}
+
+						}
+						if ( vertices.length > 0 ) {
+
+							console.error( 'ND.intersection: invalid edges count.' );
+							if ( vertices.length != 2 ) console.error( 'ND.intersection: invalid edge.' );
+							else edges.push( vertices );
+							
+						}
+
+
 					} else {
 
-						const segment = segments[settings.indice];
+						var segment = segments[settings.indice];
+/*
+						segment.iIntersections = segment.indices || [];//индексы сегметнов, которые образуются от пересечения с панелью
+										//Для iSegments === 1 это индексы ребер, которые образуются от пересечения с панелью
+*/
 						if ( iSegments > 1 ) {
 
 							for ( var i = 0; i < segment.length; i++ ) {
 	
 								const nd = new ND( n, { geometry: settings.geometry, indice: segment[i], iSegments: iSegments - 1, } );
-								nd.intersection( geometryIntersection );
+								nd.intersection( geometryIntersection, iIntersections );
 	
 							}
 
 						} else {
 
 							const edge = [];
+							if ( segment.indices ) segment = segment.indices;
 							for ( var i = 0; i < segment.length; i++ ) { intersection( segment[i], edge ); }
 							if ( edge.length > 0 ) {
 
@@ -1099,91 +1177,43 @@ class ND {
 
 									//длинна массива edge модет быть меньше 2 если всего одна вершина находится на панели
 									//В этом случае линия пересечения geometryIntersection состоит из одной точки и невозможно создать ребро
-									if ( !edge.boVerticeOnPanel )
+									if ( !edge.boVerticeOnPanel ) {
+										
 										console.error( 'ND.intersection: invalid edge' );
-									return;
+										return;
+
+									}
 
 								}
-								geometryIntersection.indices[0].push( edge );
+								const intersectionEdges = geometryIntersection.indices[0];
+								var duplicateEdge = false;
+								for ( var i = 0; i < intersectionEdges.length; i++ ) {
+
+									const intersectionEdge = intersectionEdges[i];
+									if (
+										( intersectionEdge[0] === edge[0] ) && ( intersectionEdge[1] === edge[1] ) ||
+										( intersectionEdge[0] === edge[1] ) && ( intersectionEdge[1] === edge[0] )
+									) {
+
+										duplicateEdge = true;
+										if ( iIntersections ) iIntersections.push( i );
+										break;
+									}
+									
+								}
+								if ( !duplicateEdge ) {
+									
+//									segment.iIntersections.push( intersectionEdges.length );
+									if ( iIntersections ) iIntersections.push( intersectionEdges.length );
+									intersectionEdges.push( edge );
+
+								}
 
 							}
 
 						}
 
 					}
-
-/*
-					const edges = settings.geometry.indices[0];
-					//добавил для облегчения отладки. Если ставить точку остановки, то отладка сильно усложняется. Поэтому иду по шагам
-					function f() { for ( var i = 0; i < edges.length; i++ ) edges[i].intersection(); }
-					f();
-					function getGeometryIntersection( segment, indices, boReturn ) {
-
-						const vertices = [];
-						for ( var i = segment.length - 1; i >= 0 ; i-- ) {
-
-							var segmentItem = segment[i];
-							if ( !segmentItem.intersection ) {
-
-								if( ( typeof segmentItem === 'number' ) && !segment.intersection ) {
-
-									segmentItem = [settings.geometry.indices[0][segmentItem]];
-									if ( !segmentItem[0].intersection ) console.error( 'ND.intersection getGeometryIntersection: segmentItem.intersection = ' + segmentItem.intersection );
-									
-								}
-								getGeometryIntersection( segmentItem, indices );
-								switch ( indices.length ) {
-									case 0:
-									case 1:
-										break;
-									case 2:
-										geometryIntersection.indices[0].push( [...indices] );
-										indices.length = 0;
-										break;
-									default: console.error( 'ND.intersection getGeometryIntersection: invalid indices.length = ' + indices.length );
-								}
-								if ( boReturn ) return;
-								continue;
-								
-							}
-							const position = segmentItem.indices.intersection.position;
-							if ( position ) {
-
-								if ( !position.boUsed ){
-
-									position.boUsed = true;
-									if ( segment.length === 1 )
-										//объект это фигура размерностью выше 2D
-										//В таких фигурах пересечения для каждого ребра находятся отдельно
-										//Поэтому segment.length === 1
-										//и для кажого ребра отделно заносятся позиция в geometryIntersection.position
-										//Поэтому в vertices всегда заностися всего одна position
-										position.indice = geometryIntersection.position.length;
-									//объект это треугольникю.
-									//В треугольнике индексы всех ребер перечисленны в settings.geometry.indices[0]	
-									//и все пересечения сразу заносятся в vertices
-									else position.indice = vertices.length;
-									vertices.push( position );
-									
-								}
-
-								//debug
-								indices.forEach( function ( indice ) {
-									
-									if ( indice === position.indice ) console.error( 'ND.intersection getGeometryIntersection: duplicate edge index = ' + indice );
-									
-								} );
-								
-								indices.push( position.indice );
-
-							}
-
-						}
-						if ( vertices.length > 0 ) geometryIntersection.position.push( ...vertices );
-
-					}
-					getGeometryIntersection( settings.geometry.indices, [], true );
-*/
 
 				}
 
@@ -1366,8 +1396,8 @@ class ND {
 				get: function () { return geometry; },
 				set: function ( geometryNew ) {
 
-//					geometry.position = geometryNew.position;
 					geometry.geometry = geometryNew;
+//					settings.geometry = geometryNew;
 					projectTo3D();
 					this.intersection()
 
@@ -1381,49 +1411,6 @@ class ND {
 
 }
 
-/* *
- * Converts face vertex indices to an array of pairs of face edge vertex index.
- * @param {Array} faceIndices face vertex indices
- * @returns array of pairs of face edge vertex index.
- * @example //Converting an array of triangle vertex indices:
- * ND.faceToEdgesIndices( [0, 1, 2] ) //returns followed array [[0, 1], [1, 2], [2, 0]]
- */
-/*
-ND.faceToEdgesIndices = function ( faceIndices ) {
-
-	const edgesIndices = [],
-		length = faceIndices.length;
-	for ( var i = 0; i < length; i++ ) { edgesIndices.push( [faceIndices[i], i < ( length - 1 ) ? faceIndices[i + 1] : faceIndices[0]] ); }
-	return edgesIndices;
-
-}
-*/
-/* *
- *@returns
- * <pre>
- * An array of vertex indices of 4 tetrahedron faces
- * <b>[[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]]</b>
- * </pre>
- * */
-/* *
- *@returns
- * <pre>
- * An array of segments of pairs of vertex indices of edges of tetrahedron faces
- * <b>[[[0, 1], [1, 2], [2, 0]], [[0, 1], [1, 3], [3, 0]], [[0, 2], [2, 3], [3, 0]], [[1, 2], [2, 3], [3, 1]]]</b>
- * </pre>
- * */
-/*
-ND.tetrahedronIndices = function () {
-
-	return [
-		ND.faceToEdgesIndices( [0, 1, 2] ),
-		ND.faceToEdgesIndices( [0, 1, 3] ),
-		ND.faceToEdgesIndices( [0, 2, 3] ),
-		ND.faceToEdgesIndices( [1, 2, 3] ),
-	];
-
-}
-*/
 export default ND;
 
 //https://stackoverflow.com/a/18881828/5175935
