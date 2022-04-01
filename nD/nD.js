@@ -1110,45 +1110,60 @@ if ( !edge.indices )
 							}
 
 						}
+						switch( vertices.length ) {
+
+							case 0:
+							case 1://одна вершина находится на панели
+								break;
+							case 2:
+								edges.push( vertices );
+								break;
+							default: console.error( 'ND.intersection: invalid edge.' );
+						}
+/*						
 						if ( vertices.length > 0 ) {
 
 							if ( vertices.length != 2 ) console.error( 'ND.intersection: invalid edge.' );
 							else edges.push( vertices );
 							
 						}
+*/
 
-						//ищем вершины с одним ребром и объединяем такие вершины в новое ребро.
-						//Это нужно чтобы линия грани была замкнутая.
-						//Для проверки создаем в примере _4D и _3D
-						for ( var i = 0; i < geometryIntersection.position.length; i++ ) {
-
-							var verticesCount = 0;
-							for ( var j = 0; j < edges.length; j++ ) {
-
-								const edge = edges[j];
-								for ( var k = 0; k < edge.length; k++ ) {
-
-									if ( edge[k] === i ) verticesCount++;
-									
+						if ( edges.length > 1 ) {
+							
+							//ищем вершины с одним ребром и объединяем такие вершины в новое ребро.
+							//Это нужно чтобы линия грани была замкнутая.
+							//Для проверки создаем в примере _4D и _3D
+							for ( var i = 0; i < geometryIntersection.position.length; i++ ) {
+	
+								var verticesCount = 0;
+								for ( var j = 0; j < edges.length; j++ ) {
+	
+									const edge = edges[j];
+									for ( var k = 0; k < edge.length; k++ ) {
+	
+										if ( edge[k] === i ) verticesCount++;
+										
+									}
+	
 								}
-
+								if ( verticesCount < 2 ) {
+	
+									if ( verticesCount === 0 ) console.error( 'ND.intersection: Invalid verticesCount = ' + verticesCount );
+									else vertices.push( i );
+										
+								}
+	
 							}
-							if ( verticesCount < 2 ) {
-
-								if ( verticesCount === 0 ) console.error( 'ND.intersection: Invalid verticesCount = ' + verticesCount );
-								else vertices.push( i );
-									
+							if ( vertices.length > 0 ) {
+	
+								console.error( 'ND.intersection: invalid edges count.' );
+								if ( vertices.length != 2 ) console.error( 'ND.intersection: invalid edge.' );
+								else edges.push( vertices );
+								
 							}
 
 						}
-						if ( vertices.length > 0 ) {
-
-							console.error( 'ND.intersection: invalid edges count.' );
-							if ( vertices.length != 2 ) console.error( 'ND.intersection: invalid edge.' );
-							else edges.push( vertices );
-							
-						}
-
 
 					} else {
 

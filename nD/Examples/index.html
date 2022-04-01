@@ -3,7 +3,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="utf-8" />
-	<title>nD Copy</title>
+	<title>nD</title>
 
 	<!--for mobile devices-->
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
@@ -25,6 +25,25 @@
 		<a href='https://github.com/anhr' target="_blank">About me</a>
 	</p>
 	<h1>nD.</h1>
+	Here I want to show a series of graphic objects of different space dimensions.
+	Each graphic object of the current space dimension is the result of the intersection of a graphic object of a higher space dimension with some panel except a 5D graphic object.
+	<br>
+	First I create a 5D graphic object on the canvas under the 5D heading.
+	Then I intersect this object with a 4D panel.
+	Then I transfer the result of the intersection to the canvas under the  4D heading, cross it with a 3D panel.
+	I repeat this up to the canvas under the heading 0D.
+	<h2>5D.</h2>
+	Here I am creating an 5D object.
+	Unfortunately, it is not possible to render the 5D object in our 3D space. Instead, you can see on the canvas below a projection of all the vertices of the 5D objects to 3D space.
+	Also I intersected the 5D object with the 4D panel. You can't to see 4D panel because I can't render the 4D panel because it's 4D space.
+	The result of the intersection is a 4D object if the 5D object intersects the 4D panel.
+	<br>
+	Currenty I have created 5D version of <a href="https://en.wikipedia.org/wiki/5-cell" target="_blank">pentatope</a>. You can see it as green lines.
+	I get a 4D object as a result of the intersection of a 5D version of pentatope with the 4D panel.
+	You can see it as white lines.
+	<div id="5D">
+		<img src="../../img/wait.gif">
+	</div>
 	<h2>4D.</h2>
 	Here I am creating an 4D object.
 	Unfortunately, it is not possible to render the 4D object in our 3D space. Instead, you can see on the canvas below a projection of all the vertices of the 4D objects to 3D space.
@@ -32,7 +51,7 @@
 	The result of the intersection is a 3D object if the 4D object intersects the 3D panel.
 	<br>
 	Currenty I have created <a href="https://en.wikipedia.org/wiki/5-cell" target="_blank">pentatope</a> as 4D object. You can see it as green lines.
-	I get a <a href="https://en.wikipedia.org/wiki/Tetrahedron" target="_blank">tetrahedron</a> as a result of the intersection of a pentatope with the 3D panel.
+	I get a 3D object as a result of the intersection of a pentatope with the 3D panel.
 	You can see it as white lines.
 	<!--
 	<fieldset>
@@ -47,25 +66,27 @@
 		<img src="../../img/wait.gif">
 	</div>
 	<h2>3D.</h2>
-	Click the "►" button in the lower left corner of the canvas to intersect the blue panel with the green tetrahedron.
+	Click the "►" button in the lower left corner of the canvas to intersect the blue panel with the green graphic object.
 	<br>
-	You can see a white loop line if the blue panel in 3D canvas intersects with the green tetrahedron.
+	You can see a white loop line if the blue panel in 3D canvas intersects with the green graphic object.
+	Real panel is surface with infinite length and width. But I have limited it to axes dimentions.
 	<div id="3D">
 		<img src="../../img/wait.gif">
 	</div>
 	<h2>2D.</h2>
-	You can see a green triangle if the blue panel in 3D canvas intersects with the green tetrahedron.
+	You can see a green loop line if the blue panel in 3D canvas intersects with the green graphic object.
 	<br>
-	The intersection panel in 2D space is horozontal line. You can see the panel on the 2D canvas as a blue line.
+	The intersection panel in 2D space is infinity horozontal line. You can see the panel on the 2D canvas as a blue line.
+	I have limited it to axis dimention.
 	<br>
-	You can see a white horizontal line if the panel in 2D canvas intersects with the green triangle.
+	You can see a white horizontal line if the panel in 2D canvas intersects with the green graphic object.
 	<br>
-	Click the "►" button in the lower left corner of the canvas to intersect the blue line with the green triangle.
+	Click the "►" button in the lower left corner of the canvas to intersect the blue line with the green graphic object.
 	<div id="2D">
 		<img src="../../img/wait.gif">
 	</div>
 	<h2>1D.</h2>
-	You can see a green horizontal line if the blue line in 2D canvas intersects with the green triangle.
+	You can see a green horizontal line if the blue line in 2D canvas intersects with the green graphic object.
 	<br>
 	The intersection panel in 1D space is a point. You can see the panel on the 1D canvas as a blue point.
 	<br>
@@ -121,6 +142,9 @@
 
 			//false,//4D
 			true,//4D
+
+			false,//5D
+			//true,//5D
 		],
 			playerOptions = {
 
@@ -129,6 +153,52 @@
 				interval: 25,//Ticks per seconds.
 
 			};
+
+		//5D
+		var _5D;
+		new MyThree( function ( scene, options ) {
+
+			if ( D[5] ) {
+
+				_5D = new ND( 5, {
+
+					geometry: {
+
+						//5D tetrahedron
+						position: [
+							[0.8, -0.6, 0.1, -0.85, -0.57],//0
+							[0.9, 0.7, 0.5, -0.55, -0.37],//1
+							[0.8, 0, -0.4, 0.1, -0.17],//2
+							[-0.6, 0.1, -0.3, 0.55, 0.7],//3
+							[-0.5, 0.2, 0.3, 0.75, 0.27],//4
+							[-0.7, 0.3, 0.4, 0.95, 0.77],//5
+
+						],
+
+					},
+					scene: scene,
+					options: options,
+					onIntersection: function ( nDgeometry ) {
+
+						if ( _4D ) _4D.geometry = nDgeometry;
+
+					}
+
+				} );
+
+				//new time of the player event
+				options.onSelectScene = function ( t ) { _5D.vectorPlane[4] = -1 + t * 2; }
+
+			}
+
+		}, {
+
+			elContainer: "5D",
+			playerOptions: Object.assign( {}, playerOptions ),
+			//player: false,
+			dat: {},
+
+		} );
 
 		//4D
 		var _4D;
@@ -155,12 +225,12 @@
 					options: options,
 					onIntersection: function ( nDgeometry ) {
 
-/*						
-						console.log( '_4D: onIntersection positions = ' + nDgeometry.position.length )
-						nDgeometry.position.forEach( function ( position, i ) { console.log( position ); } );
-						if ( nDgeometry.position.length === 0 )
-							return;
-*/
+						/*
+												console.log( '_4D: onIntersection positions = ' + nDgeometry.position.length )
+												nDgeometry.position.forEach( function ( position, i ) { console.log( position ); } );
+												if ( nDgeometry.position.length === 0 )
+													return;
+						*/
 						if ( _3D ) _3D.geometry = nDgeometry;
 
 					}
@@ -191,14 +261,16 @@
 
 					geometry: {
 
-						//Variant 1
+						/*
+						//Variant 1 Вершина 1 находится близко к панели если проигрыватель установить на t = 0.6 .
+						//Будем считать что она находится на панели. Смотри proxyEdges.intersection
 						position: [
-							[0.8, -0.0631578947368421, -0.34736842105263155],
-							[0.15000000000000005, -0.19999999999999996, 0.2],
-							[-0.04999999999999993, -0.175, -0.14285714285714288],
-							[0.14999999999999997, 0.4, 0.09999999999999996],
-							[0.35, 0.5035714285714284, 0.4214285714285714],
-							[0.8153846153846154, 0.10769230769230766, -0.2615384615384616],
+							[0.8, -0.0631578947368421, -0.34736842105263155],//0
+							[0.15000000000000005, -0.19999999999999996, 0.2],//1
+							[-0.04999999999999993, -0.175, -0.14285714285714288],//2
+							[0.14999999999999997, 0.4, 0.09999999999999996],//3
+							[0.35, 0.5035714285714284, 0.4214285714285714],//4
+							[0.8153846153846154, 0.10769230769230766, -0.2615384615384616],//5
 						],
 						indices: [
 
@@ -218,14 +290,15 @@
 							[
 								[0, 1, 2],
 								[6, 7, 4, 0],
-								[5, 8, 7],
+								//[5, 8, 7],
 								[1, 3, 6, 8],
 								[2, 3, 5, 4],
 							],
 						],
+						*/
 
 						//tetrahedron
-						position2: [
+						position: [
 
 							/*
 							[0.8, -0.6, 0.1],//0
@@ -236,8 +309,8 @@
 							//Variant 2 Вершина, ребро, грань находится на панели если координата 2 каждой вершины равна -0.4 и проигрыватель установить на t = 0.3
 							[0.8, -0.6, -0.4],//0
 							[0.9, 0.7, 0.5],//1
-							[0.8, 0, 0.4],//2
-							[-0.6, 0.1, 0.4]//3
+							[0.8, 0, -0.4],//2
+							[-0.6, 0.1, -0.4]//3
 							/*
 							//Линия пересечения - четырехугольник
 							[-0.8, 0, -0.5],//0
