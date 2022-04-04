@@ -237,8 +237,13 @@ class ND {
 
 											}
 											if ( target.length === 0 ) return;//no edges
-											if ( i >= target.length )
+											if ( i >= target.length ) {
+												
 												console.error( 'ND: settings.geometry.indices[]intersection. invalid length: ' + target.length );
+												this.indices = { intersection: {} };
+												return;
+
+											}
 											var indices = target[i];
 											
 											//Когда размерность графического оъекта меньше 3
@@ -266,6 +271,14 @@ class ND {
 
 													case 2:
 														break;
+													default:
+														if ( !position )
+															break;
+														position.push( vectorPlane[n - 1] );
+														break;
+/*														
+													case 2:
+														break;
 													case 3:
 													case 4:
 														if ( !position )
@@ -273,6 +286,7 @@ class ND {
 														position.push( vectorPlane[n - 1] );
 														break;
 													default: console.error( 'ND: settings.geometry.indices[]intersection indicesIntersection(). n = ' + n + ' under constaction.' );
+*/
 
 												}
 												indices.intersection = { position: position, }
@@ -302,6 +316,7 @@ class ND {
 													}
 													indicesIntersection( vector );
 													break;
+/*
 												case 4:
 													const nD0 = new ND( 2, {
 
@@ -345,7 +360,101 @@ class ND {
 													indicesIntersection( arrayIntersects0.length && arrayIntersects1.length && arrayIntersects2.length ?
 														[arrayIntersects0[0][0], arrayIntersects1[0][0], arrayIntersects2[0][0]] : undefined );
 													break;
+												case 5: {
+
+													const nD0 = new ND( 2, {
+
+														geometry: {
+
+															position: settings.geometry.position,
+															indices: [[indices]],
+															iAxes: [0, 4],/////////////////////////////////////
+
+														},
+														vectorPlane: vectorPlane.array,
+
+													} ),
+														arrayIntersects0 = nD0.intersection(),
+														nD1 = new ND( 2, {
+
+															geometry: {
+
+																position: settings.geometry.position,
+																indices: [[indices]],
+																iAxes: [1, 4],///////////////////////////////
+
+															},
+															vectorPlane: vectorPlane.array,
+
+														} ),
+														arrayIntersects1 = nD1.intersection(),
+														nD2 = new ND( 2, {
+
+															geometry: {
+
+																position: settings.geometry.position,
+																indices: [[indices]],
+																iAxes: [2, 4],/////////////////////////////////
+
+															},
+															vectorPlane: vectorPlane.array,
+
+														} ),
+														arrayIntersects2 = nD2.intersection(),
+														nD3 = new ND( 2, {
+
+															geometry: {
+
+																position: settings.geometry.position,
+																indices: [[indices]],
+																iAxes: [3, 4],/////////////////////////////////
+
+															},
+															vectorPlane: vectorPlane.array,
+
+														} ),
+														arrayIntersects3 = nD3.intersection();
+													indicesIntersection( arrayIntersects0.length && arrayIntersects1.length && arrayIntersects2.length && arrayIntersects3.length ?////////////////////////////////
+														[arrayIntersects0[0][0], arrayIntersects1[0][0], arrayIntersects2[0][0], arrayIntersects3[0][0]] : undefined );///////////////////////////////
+													break;
+
+												}
+*/
 												default:
+
+													function intersectionAxis( axis ) {
+
+														const nD0 = new ND( 2, {
+
+															geometry: {
+
+																position: settings.geometry.position,
+																indices: [[indices]],
+																iAxes: [axis, n - 1],
+
+															},
+															vectorPlane: vectorPlane.array,
+
+														} );
+														return nD0.intersection();
+
+													}
+													const arrayIntersections = [];
+													var boIntersect = true;
+													for ( var iIntersection = 0; iIntersection < n - 1; iIntersection++ ) {
+														
+														const item = intersectionAxis( iIntersection );
+														if ( boIntersect && ( item.length === 0 ) ) {
+															
+															boIntersect = false;
+															break;
+
+														}
+														if ( item.length ) arrayIntersections.push( item[0][0] );
+
+													}
+													indicesIntersection( boIntersect ? arrayIntersections : undefined );
+/*
 													var position;
 													
 													//Если позиции вершины находится на этом расстоянии от панели, то будем считать, что она находится на панели
@@ -396,6 +505,7 @@ class ND {
 															[arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined );
 
 													}
+*/
 
 											}
 
@@ -438,7 +548,24 @@ class ND {
 
 							if ( value instanceof Array ) {
 
+								//Do not add a duplicate edge
+								for ( var i = 0; i < edges.length; i++ ) { 
+
+									const edge = edges[i];
+									if (
+										( ( edge[0] === value[0] ) && ( edge[1] === value[1] ) ) ||
+										( ( edge[1] === value[0] ) && ( edge[0] === value[1] ) )
+									) {
+										
+										value.index = i;
+										return true;
+
+									}
+										
+								}
+								
 								edges[index] = value;
+								value.index = index;
 								return true;
 
 							}
@@ -547,17 +674,16 @@ class ND {
 			}
 
 		}
-		function addEdges( level, geometry ) {
+		function addEdges( level, geometry, positionIndices = [], levelIndices ) {
 
+			if ( positionIndices.length === 0 ) settings.geometry.position.forEach( function ( position, i ) { positionIndices.push( i ) } );
 			geometry = geometry || settings.geometry;
-/*
-			if ( !geometry.indices[level - 2] ) geometry.indices[level - 2] = [];
-			const edges = geometry.indices[level - 2];
-*/
 			if ( !geometry.indices[0] ) geometry.indices[0] = [];
 			const edges = geometry.indices[0];
+/*			
 			if ( !geometry || ( edges.length > 0 ) )
 				return;
+*/
 			if ( ( n === 2 ) && ( geometry.position.length === 2 ) ) {
 
 				edges.push( [0, 1] );
@@ -565,79 +691,183 @@ class ND {
 
 			}
 			if ( level === undefined ) return;
-			if ( level > 2 ) addEdges( level - 1 );
+			if ( level > 2 ) { 
+				
+/*				
+				if ( edges.length > 0 )
+					return;
+*/
+				for ( var i = 0; i < positionIndices.length; i++ ) {
+
+					const posIndices = [];
+					positionIndices.forEach( function ( indice, j ) { if ( positionIndices[i] !== positionIndices[j] ) posIndices.push( positionIndices[j] ); } );
+/*
+					for ( var j = 0; j < positionIndices.length; j++ ) {
+
+						if ( positionIndices[i] !== positionIndices[j] ) posIndices.push( positionIndices[j] );
+
+					}
+*/
+					const lIndices = [];//тут перечислены индексы всех индексов, котоые были добавлены в settings.geometry.indices
+					addEdges( level - 1, undefined, posIndices, lIndices );
+					if ( lIndices.length ) {
+
+						const l = level - 2;
+						if ( l === 0 ) console.error( 'ND addEdges: invalid l = ' + 1 );
+						settings.geometry.indices[l] = settings.geometry.indices[l] === undefined ? new Proxy( [], {
+							
+							get: function ( target, name ) {
+						
+								const i = parseInt( name );
+								if ( !isNaN( i ) )
+									return target[i];
+								switch ( name ) {
+	
+									case 'push': return target.push;
+									case 'length': return target.length;
+									case 'isProxy': return true;
+									default: console.error( 'ND: settings.geometry.indices[' + l + ']. Invalid name: ' + name );
+	
+								}
+						
+							},
+							set: function ( target, name, value ) {
+						
+								const index = parseInt( name );
+								if ( isNaN( index ) ) {
+	
+									switch( name ){
+											
+										case 'length':
+											break;
+										default: console.error( 'ND settings.geometry.indices[' + l + ']: invalid name: ' + name );
+											return false;
+
+									}
+									return true;
+	
+								}
+								if ( value instanceof Array === false ) {
+
+									console.error( 'ND settings.geometry.indices[' + l + ']: invalid name: ' + name );
+									return false;
+
+								}
+								
+								//Do not add a duplicate segment
+								for ( var i = 0; i < target.length; i++ ) { 
+
+									const segment = target[i],
+										aDetected = [];//список индексов, которые уже встечались в текущем сегменте
+									if ( segment.length !== value.length )
+										continue;//segment не может быть дупликатным если его длинна не равно длинне value
+									for ( var j = 0; j < segment.length; j++ ) { 
+	
+										aDetected[j] = false;
+										for ( var k = 0; k < value.length; k++ ) { 
+
+											if ( segment[j] === value[k] ) {
+
+												aDetected[j] = true;
+												break;
+												
+											}
+												
+										}
+											
+									}
+									var boDetected = true;
+									for ( var j = 0; j < aDetected.length; j++ ) {
+
+										if ( !aDetected[j] ) {
+
+											boDetected = false;
+											break;
+											
+										}
+										
+									}
+									if ( boDetected ) {
+
+										value.index = i;
+										return true;
+										
+									}
+										
+								}
+								
+								target[index] = value;
+								value.index = index;
+								return true;
+						
+							}
+						
+						} ) : settings.geometry.indices[l];
+						settings.geometry.indices[l].push( lIndices );
+						if ( levelIndices ) levelIndices.push( lIndices.index );
+
+					}
+
+				}
+/*
+				const position = settings.geometry.position;
+				for ( var i = 0; i < position.length; i++ ) {
+					
+					const positionIndices = [];
+					for ( var j = 0; j < position.length; j++ ) {
+
+						if ( i !== j ) positionIndices.push( j );
+						
+					}
+					const levelIndices = [];//тут перечислены индексы всех индексов, котоые были добавлены в settings.geometry.indices
+					addEdges( level - 1, undefined, positionIndices, levelIndices );
+					if ( levelIndices.length ) {
+
+						const l = level - 2;
+						settings.geometry.indices[l] = settings.geometry.indices[l] || [];
+						settings.geometry.indices[l].push( levelIndices );
+						
+					}
+
+				}
+*/
+
+			}
 			switch ( level ) {
 
 				case 2:
-					const length = settings.geometry.position.length;
+					
+					//перечислены индексы вершин, которые образуют грань и которые составляют замкнутую линию реьер грани.
+					//По умолчанию для грани в виде треугольника индексы вершин совпадают с положением вершины в 
+					//settings.geometry.position т.е. positionIndices = [0, 1, 2]
+					if ( !positionIndices ) {
+						
+						positionIndices = [];
+						settings.geometry.position.forEach( function ( item, i ) { positionIndices.push( i ) } );
+
+					}
+					const length = positionIndices.length;
+//					const length = settings.geometry.position.length;
+					
 					function addItem( start = 0 ) {
 						
 						for ( var i = start; i < length; i++ ) {
 							
 							if ( start === 0 )
 								addItem( i + 1 );
-							else edges.push( [ start - 1, i ] );
+							else {
+								
+								const edge = [ positionIndices[start - 1], positionIndices[i] ];
+								edges.push( edge );
+								if ( levelIndices ) levelIndices.push( edge.index );
+
+							}
 		
 						}
 		
 					}
 					addItem();
 					break;
-				case 3:
-//					geometry.indices[level - 2] = [[0, 1, 3], [0, 2, 4], [3, 4, 5], [1, 2, 5]]
-					/*
-					[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
-					[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.8, 0, -0.4]
-					[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [-0.6, 0.1, 0.1]
-					[1, 2]//3 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [0.8, 0, -0.4]
-					[1, 3]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
-					[2, 3]//5 index of the settings.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
-					*/
-					//triangles (faces) 4
-					geometry.indices[1] = [
-						[3, 4, 5],//no 0 vertice
-						[1, 2, 5],//no 1 vertice
-						[0, 2, 4],//no 2 vertice
-						[0, 1, 3],//no 3 vertice
-					];
-					break;
-				case 4:
-					console.error( 'ND addEdges: тут надо избавиться от swith' );
-					/*
-					 *	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.9, 0.7, 0.5, -0.55]
-					 *	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.8, 0, -0.4, 0]
-					 *	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, -0.3, 0.55]
-					 *	[0, 4]//3 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.5, 0.2, 0.3, 0.85]
-					 *	[1, 2]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [0.8, 0, -0.4, 0]
-					 *	[1, 3]//5 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, -0.3, 0.55]
-					 *	[1, 4]//6 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.5, 0.2, 0.3, 0.85]
-					 *	[2, 3]//7 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, -0.3, 0.55]
-					 *	[2, 4]//8 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.5, 0.2, 0.3, 0.85]
-					 *	[3, 4]//9 index of the settings.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.5, 0.2, 0.3, 0.85]
-					*/
-					//triangles (faces) 10
-					geometry.indices[1] = [
-						[7, 8, 9],//0 no 0, 1 vertices
-						[5, 6, 9],//1 no 0, 2 vertices
-						[4, 6, 8],//2 no 0, 3 vertices
-						[4, 5, 7],//3 no 0, 4 vertices
-						[2, 3, 9],//4 no 1, 2 vertices
-						[1, 3, 8],//5 no 1, 3 vertices
-						[1, 2, 7],//6 no 1, 4 vertices
-						[0, 3, 6],//7 no 2, 3 vertices
-						[0, 2, 5],//8 no 2, 4 vertices
-						[0, 1, 4],//9 no 3, 4 vertices
-					];
-					//tetrahedron 5
-					geometry.indices[2] = [
-						//[1],
-						[5, 6, 4, 0],//1 no 1 vertice
-						[8, 7, 1, 4],//2 no 2 vertice
-						[9, 7, 2, 5],//3 no 3 vertice
-						[9, 8, 3, 6],//4 no 4 vertice
-					];
-					break;
-				default: console.error( 'ND addEdges: тут надо избавиться от swith' );
 				
 			}
 
@@ -647,9 +877,7 @@ class ND {
 			case 1://[0, 1]
 				addEdge();
 				break;
-			//n = 2 [[0, 1], [0, 2], [1, 2]]
-			//n = 3 [[[0, 1], [1, 2], [2, 0]], [[0, 1], [1, 3], [3, 0]], [[0, 2], [2, 3], [3, 0]], [[1, 2], [2, 3], [3, 1]]] or [[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3],]
-			default: addEdges( n );
+			default: if ( settings.geometry.indices[0].length === 0 )  addEdges( n );
 
 		}
 
@@ -1177,7 +1405,31 @@ if ( !edge.indices )
 							for ( var i = 0; i < segment.length; i++ ) {
 	
 								const nd = new ND( n, { geometry: settings.geometry, indice: segment[i], iSegments: iSegments - 1, } );
-								nd.intersection( geometryIntersection, iIntersections );
+								if ( n > 4 ) {
+
+									if ( n === 5 ) {
+										var iIntersect = [];
+										nd.intersection( geometryIntersection, iIntersect );
+										if ( iIntersect.length ) {
+											
+											if ( iIntersect.length === 1 ) {
+												
+												iIntersect = iIntersect[0];
+												iIntersections.push( iIntersect );
+	
+											} else {
+
+												const ind = n - 4;
+												geometryIntersection.indices[ind] = geometryIntersection.indices[ind] || [];
+												geometryIntersection.indices[ind].push( iIntersect );
+												
+											}
+
+										}
+	
+									} else console.error( 'ND.intersection: n = ' + n + ' under constraction' );
+
+								} else nd.intersection( geometryIntersection, iIntersections );
 	
 							}
 

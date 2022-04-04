@@ -131,17 +131,17 @@
 		const D = [
 			true,//0D
 
-			//false,//1D
-			true,//1D
+			false,//1D
+			//true,//1D
 
-			//false,//2D
-			true,//2D
+			false,//2D
+			//true,//2D
 
 			//false,//3D
 			true,//3D
 
-			//false,//4D
-			true,//4D
+			false,//4D
+			//true,//4D
 
 			false,//5D
 			//true,//5D
@@ -170,7 +170,7 @@
 							[0.9, 0.7, 0.5, -0.55, -0.37],//1
 							[0.8, 0, -0.4, 0.1, -0.17],//2
 							[-0.6, 0.1, -0.3, 0.55, 0.7],//3
-							[-0.5, 0.2, 0.3, 0.75, 0.27],//4
+							[-0.5, 0.7, 0.3, 0.75, 0.27],//4
 							[-0.7, 0.3, 0.4, 0.95, 0.77],//5
 
 						],
@@ -223,17 +223,7 @@
 					},
 					scene: scene,
 					options: options,
-					onIntersection: function ( nDgeometry ) {
-
-						/*
-												console.log( '_4D: onIntersection positions = ' + nDgeometry.position.length )
-												nDgeometry.position.forEach( function ( position, i ) { console.log( position ); } );
-												if ( nDgeometry.position.length === 0 )
-													return;
-						*/
-						if ( _3D ) _3D.geometry = nDgeometry;
-
-					}
+					onIntersection: function ( nDgeometry ) { if ( _3D ) _3D.geometry = nDgeometry; }
 
 				} );
 
