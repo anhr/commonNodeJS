@@ -420,41 +420,8 @@ class ND {
 
 												}
 */
-												default:
+												case 3:
 
-													function intersectionAxis( axis ) {
-
-														const nD0 = new ND( 2, {
-
-															geometry: {
-
-																position: settings.geometry.position,
-																indices: [[indices]],
-																iAxes: [axis, n - 1],
-
-															},
-															vectorPlane: vectorPlane.array,
-
-														} );
-														return nD0.intersection();
-
-													}
-													const arrayIntersections = [];
-													var boIntersect = true;
-													for ( var iIntersection = 0; iIntersection < n - 1; iIntersection++ ) {
-														
-														const item = intersectionAxis( iIntersection );
-														if ( boIntersect && ( item.length === 0 ) ) {
-															
-															boIntersect = false;
-															break;
-
-														}
-														if ( item.length ) arrayIntersections.push( item[0][0] );
-
-													}
-													indicesIntersection( boIntersect ? arrayIntersections : undefined );
-/*
 													var position;
 													
 													//Если позиции вершины находится на этом расстоянии от панели, то будем считать, что она находится на панели
@@ -505,7 +472,41 @@ class ND {
 															[arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined );
 
 													}
-*/
+													break;
+												default:
+
+													function intersectionAxis( axis ) {
+
+														const nD0 = new ND( 2, {
+
+															geometry: {
+
+																position: settings.geometry.position,
+																indices: [[indices]],
+																iAxes: [axis, n - 1],
+
+															},
+															vectorPlane: vectorPlane.array,
+
+														} );
+														return nD0.intersection();
+
+													}
+													const arrayIntersections = [];
+													var boIntersect = true;
+													for ( var iIntersection = 0; iIntersection < n - 1; iIntersection++ ) {
+														
+														const item = intersectionAxis( iIntersection );
+														if ( boIntersect && ( item.length === 0 ) ) {
+															
+															boIntersect = false;
+															break;
+
+														}
+														if ( item.length ) arrayIntersections.push( item[0][0] );
+
+													}
+													indicesIntersection( boIntersect ? arrayIntersections : undefined );
 
 											}
 
@@ -1385,7 +1386,7 @@ if ( !edge.indices )
 							}
 							if ( vertices.length > 0 ) {
 	
-								console.error( 'ND.intersection: invalid edges count.' );
+//непонятно зачем это сообщение								console.error( 'ND.intersection: invalid edges count.' );
 								if ( vertices.length != 2 ) console.error( 'ND.intersection: invalid edge.' );
 								else edges.push( vertices );
 								
