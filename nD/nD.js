@@ -675,6 +675,99 @@ class ND {
 			}
 
 		}
+		function proxySegments() {
+
+			return new Proxy( [], {
+
+				get: function ( target, name ) {
+
+					const i = parseInt( name );
+					if ( !isNaN( i ) )
+						return target[i];
+					switch ( name ) {
+
+						case 'push': return target.push;
+						case 'length': return target.length;
+						case 'isProxy': return true;
+						default: console.error( 'ND: settings.geometry.indices[' + l + ']. Invalid name: ' + name );
+
+					}
+
+				},
+				set: function ( target, name, value ) {
+
+					const index = parseInt( name );
+					if ( isNaN( index ) ) {
+
+						switch ( name ) {
+
+							case 'length':
+								break;
+							default: console.error( 'ND settings.geometry.indices[' + l + ']: invalid name: ' + name );
+								return false;
+
+						}
+						return true;
+
+					}
+					if ( value instanceof Array === false ) {
+
+						console.error( 'ND settings.geometry.indices[' + l + ']: invalid name: ' + name );
+						return false;
+
+					}
+
+					//Do not add a duplicate segment
+					for ( var i = 0; i < target.length; i++ ) {
+
+						const segment = target[i],
+							aDetected = [];//список индексов, которые уже встечались в текущем сегменте
+						if ( segment.length !== value.length )
+							continue;//segment не может быть дупликатным если его длинна не равно длинне value
+						for ( var j = 0; j < segment.length; j++ ) {
+
+							aDetected[j] = false;
+							for ( var k = 0; k < value.length; k++ ) {
+
+								if ( segment[j] === value[k] ) {
+
+									aDetected[j] = true;
+									break;
+
+								}
+
+							}
+
+						}
+						var boDetected = true;
+						for ( var j = 0; j < aDetected.length; j++ ) {
+
+							if ( !aDetected[j] ) {
+
+								boDetected = false;
+								break;
+
+							}
+
+						}
+						if ( boDetected ) {
+
+							value.index = i;
+							return true;
+
+						}
+
+					}
+
+					target[index] = value;
+					value.index = index;
+					return true;
+
+				}
+
+			} );
+
+		}
 		function addEdges( level, geometry, positionIndices = [], levelIndices ) {
 
 			if ( positionIndices.length === 0 ) settings.geometry.position.forEach( function ( position, i ) { positionIndices.push( i ) } );
@@ -715,95 +808,7 @@ class ND {
 
 						const l = level - 2;
 						if ( l === 0 ) console.error( 'ND addEdges: invalid l = ' + 1 );
-						settings.geometry.indices[l] = settings.geometry.indices[l] === undefined ? new Proxy( [], {
-							
-							get: function ( target, name ) {
-						
-								const i = parseInt( name );
-								if ( !isNaN( i ) )
-									return target[i];
-								switch ( name ) {
-	
-									case 'push': return target.push;
-									case 'length': return target.length;
-									case 'isProxy': return true;
-									default: console.error( 'ND: settings.geometry.indices[' + l + ']. Invalid name: ' + name );
-	
-								}
-						
-							},
-							set: function ( target, name, value ) {
-						
-								const index = parseInt( name );
-								if ( isNaN( index ) ) {
-	
-									switch( name ){
-											
-										case 'length':
-											break;
-										default: console.error( 'ND settings.geometry.indices[' + l + ']: invalid name: ' + name );
-											return false;
-
-									}
-									return true;
-	
-								}
-								if ( value instanceof Array === false ) {
-
-									console.error( 'ND settings.geometry.indices[' + l + ']: invalid name: ' + name );
-									return false;
-
-								}
-								
-								//Do not add a duplicate segment
-								for ( var i = 0; i < target.length; i++ ) { 
-
-									const segment = target[i],
-										aDetected = [];//список индексов, которые уже встечались в текущем сегменте
-									if ( segment.length !== value.length )
-										continue;//segment не может быть дупликатным если его длинна не равно длинне value
-									for ( var j = 0; j < segment.length; j++ ) { 
-	
-										aDetected[j] = false;
-										for ( var k = 0; k < value.length; k++ ) { 
-
-											if ( segment[j] === value[k] ) {
-
-												aDetected[j] = true;
-												break;
-												
-											}
-												
-										}
-											
-									}
-									var boDetected = true;
-									for ( var j = 0; j < aDetected.length; j++ ) {
-
-										if ( !aDetected[j] ) {
-
-											boDetected = false;
-											break;
-											
-										}
-										
-									}
-									if ( boDetected ) {
-
-										value.index = i;
-										return true;
-										
-									}
-										
-								}
-								
-								target[index] = value;
-								value.index = index;
-								return true;
-						
-							}
-						
-						} ) : settings.geometry.indices[l];
+						settings.geometry.indices[l] = settings.geometry.indices[l] === undefined ? proxySegments() : settings.geometry.indices[l];
 						settings.geometry.indices[l].push( lIndices );
 						if ( levelIndices ) levelIndices.push( lIndices.index );
 
@@ -1421,7 +1426,7 @@ if ( !edge.indices )
 											} else {
 
 												const ind = n - 4;
-												geometryIntersection.indices[ind] = geometryIntersection.indices[ind] || [];
+												geometryIntersection.indices[ind] = geometryIntersection.indices[ind] || proxySegments();
 												geometryIntersection.indices[ind].push( iIntersect );
 												
 											}
