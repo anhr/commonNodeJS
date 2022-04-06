@@ -1081,11 +1081,35 @@ class ND {
 					return points;
 
 				},
-//				edgeIndices: [],//в этом массиве хранятся индексы точек, что бы повторно их не вычислять
 				get indices() {
 
-//					if ( this.edgeIndices.length ) return this.edgeIndices;
 					const indices = [];
+					if ( settings.geometry.indices[0].length === 0 )
+						return indices;//объект состоит из одной вершины и не имеет ребер
+					const edges = settings.geometry.indices[0];
+					for ( var i = 0; i < edges.length; i++ ) {
+
+						const edge = edges[i].indices;
+						if ( edge ) {
+							
+							if ( edge.length !== 2 ) {
+
+								console.error( 'ND.geometry.D3.get indices: invalid edge.length = ' + edge.length );
+								return;
+
+							}
+							if ( edge[0] === edge[1] ) {
+
+								console.error( 'ND.geometry.D3.get indices: duplicate edge index = ' + edge[0] );
+								return;
+
+							}
+							indices.push( ...edge );
+
+						} else console.error( 'ND.geometry.D3.get indices: invalid edge. Возможно вычислены не все точки пересечения' );
+						
+					}
+/*
 					function getIndices( segment, index, boReturn ) {
 
 						var prevIndex = index;
@@ -1094,14 +1118,6 @@ class ND {
 							const segmentItem = segment[i];
 							if ( segmentItem instanceof Array ) {
 
-/*								
-								if ( ( typeof segmentItem === 'number' ) && !segment.intersection ) {
-								
-									segmentItem = [settings.geometry.indices[0][segmentItem]];
-									if ( !segmentItem[0].intersection ) console.error( 'ND.intersection getGeometryIntersection: segmentItem.intersection = ' + segmentItem.intersection );
-								
-								}
-*/
 								getIndices( segmentItem, index );
 								if ( boReturn ) return;
 
@@ -1144,6 +1160,7 @@ class ND {
 					if ( settings.geometry.indices[0].length === 0 )
 						return indices;//объект состоит из одной вершины и не имеет ребер
 					getIndices( settings.geometry.indices, settings.geometry.indices.length - 1, true );
+*/
 					return indices;
 
 				},
@@ -1185,6 +1202,7 @@ class ND {
 				new SpriteText( i, geometry.D3.points[i], { group: object } );
 
 			}
+			object.userData.nd = function () { console.log('object.userData.nd') }
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
 
 			//raycaster
@@ -1679,6 +1697,56 @@ if ( !edge.indices )
 			},
 
 		} );
+
+	}
+
+}
+
+ND.gui = class {
+
+	constructor( options, dat, fParent ) {
+
+		//Localization
+
+		const getLanguageCode = options.getLanguageCode;
+
+		const lang = {
+
+			nD: 'nD',
+			nDTitle: 'n-dimensional object',
+
+		};
+
+		const _languageCode = getLanguageCode();
+
+		switch ( _languageCode ) {
+
+			case 'ru'://Russian language
+
+				lang.nDTitle = 'n-мерный объект';
+
+				break;
+			default://Custom language
+				if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
+					break;
+
+				Object.keys( guiParams.lang ).forEach( function ( key ) {
+
+					if ( lang[key] === undefined )
+						return;
+					lang[key] = guiParams.lang[key];
+
+				} );
+
+		}
+		const fND = fParent.addFolder( lang.nD );
+		dat.folderNameAndTitle( fND, lang.nD, lang.nDTitle );
+
+		this.object = function( object ) {
+
+			fND.domElement.style.display = object.userData.nd ?  'block' : 'none';
+			
+		}
 
 	}
 
