@@ -41,6 +41,7 @@ import {
 } from '../getPosition.js';
 
 import three from '../three.js'
+import ND from '../nD/nD.js'
 
 class GuiSelectPoint {
 
@@ -219,7 +220,8 @@ class GuiSelectPoint {
 			cX, cY, cZ, cW, cTrace, cTraceAll, cColor, cOpacity, cCameraTarget,
 			funcFolder,
 			boSetMesh = false,//Для предотвращения лишних вызовов exposePosition если выбрать точку и передвинуть камеру с помошью OrbitControls,
-			fRotation;
+			fRotation,
+			nD;//n-dimensional object
 		const _this = this, cPosition = new THREE.Vector3(), cRotations = new THREE.Vector3(), cWorld = new THREE.Vector3();
 		function displayPointControllers( display ) {
 
@@ -951,6 +953,8 @@ class GuiSelectPoint {
 				value = parseInt( value );
 				mesh = getMesh();
 
+				nD.object( mesh, dat );
+
 				if ( mesh && !mesh.userData.boFrustumPoints ) {
 
 					if ( !mesh.userData.player ) mesh.userData.player = {};
@@ -1248,6 +1252,10 @@ class GuiSelectPoint {
 				cFrustumPoints.create( fPoints, getLanguageCode() );
 			if ( guiParams.myThreejs )
 				guiParams.myThreejs.cFrustumPoints = cFrustumPoints;
+
+			//nD
+
+			nD = new ND.gui( options, dat, fMesh );
 
 			//Camera target
 			// Может устанвливаться только если создан проигрыватель options.player,

@@ -204,6 +204,8 @@ class ND {
 		}
 		settings.geometry.position = settings.geometry.position || [];
 
+//		var groupSegments;
+
 		//indices
 		
 		settings.geometry.indices = settings.geometry.indices || [];
@@ -1055,6 +1057,7 @@ class ND {
 				} );
 
 			},
+			get geometry() { return settings.geometry },
 			set geometry( geometry ) {
 				
 				settings.geometry.position = geometry.position;
@@ -1083,85 +1086,110 @@ class ND {
 				},
 				get indices() {
 
-					const indices = [];
-					if ( settings.geometry.indices[0].length === 0 )
-						return indices;//объект состоит из одной вершины и не имеет ребер
-					const edges = settings.geometry.indices[0];
-					for ( var i = 0; i < edges.length; i++ ) {
-
-						const edge = edges[i].indices;
-						if ( edge ) {
-							
-							if ( edge.length !== 2 ) {
-
-								console.error( 'ND.geometry.D3.get indices: invalid edge.length = ' + edge.length );
-								return;
-
-							}
-							if ( edge[0] === edge[1] ) {
-
-								console.error( 'ND.geometry.D3.get indices: duplicate edge index = ' + edge[0] );
-								return;
-
-							}
-							indices.push( ...edge );
-
-						} else console.error( 'ND.geometry.D3.get indices: invalid edge. Возможно вычислены не все точки пересечения' );
+					const indices = [], colors = [];
+					//если объект не состоит из одной вершины и имеет ребера
+					if ( settings.geometry.indices[0].length !== 0 ) {
 						
-					}
-/*
-					function getIndices( segment, index, boReturn ) {
-
-						var prevIndex = index;
-						for ( var i = segment.length - 1; i >= 0; i-- ) {
-
-							const segmentItem = segment[i];
-							if ( segmentItem instanceof Array ) {
-
-								getIndices( segmentItem, index );
-								if ( boReturn ) return;
-
-							} else {
-
-								if ( prevIndex === index ) prevIndex--;
-								const item = segmentItem.indices ? segmentItem ://settings.geometry.indices.length === 1 перечислены только ребра
-									settings.geometry.indices[prevIndex][segmentItem];
-								if ( prevIndex > 0 )
-									getIndices( item, prevIndex );
-								else {
-
-									const edge = item.indices;
-									if ( edge ) {
-										
-										if ( edge.length !== 2 ) {
+						const edges = settings.geometry.indices[0];
+						for ( var i = 0; i < edges.length; i++ ) {
 	
-											console.error( 'ND.geometry.D3.get indices: invalid edge.length = ' + edge.length );
-											return;
+							const edge = edges[i].indices;
+							if ( edge ) {
+								
+								if ( edge.length !== 2 ) {
 	
-										}
-										if ( edge[0] === edge[1] ) {
+									console.error( 'ND.geometry.D3.get indices: invalid edge.length = ' + edge.length );
+									return;
 	
-											console.error( 'ND.geometry.D3.get indices: duplicate edge index = ' + edge[0] );
-											return;
-	
-										}
-										indices.push( ...edge );
-
-									} else console.error( 'ND.geometry.D3.get indices: invalid edge. Возможно вычислены не все точки пересечения' );
-
 								}
-
-							}
-
+								if ( edge[0] === edge[1] ) {
+	
+									console.error( 'ND.geometry.D3.get indices: duplicate edge index = ' + edge[0] );
+									return;
+	
+								}
+								indices.push( ...edge );
+								if ( this.color ) {
+	
+									const color = new THREE.Color(this.color);
+									function hexToRgb(hex) {
+									  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+									  return result ? {
+									    r: parseInt(result[1], 16),
+									    g: parseInt(result[2], 16),
+									    b: parseInt(result[3], 16)
+									  } : null;
+									}
+									const rgb = hexToRgb( color.getHexString() );
+									function push() {
+										
+										colors.push( rgb.r );
+										colors.push( rgb.g );
+										colors.push( rgb.b );
+	
+									}
+									push();
+									if ( edges.length === 1 ) push();//Это линия. Надо установить цвет конца
+	
+								}
+	
+							} else console.error( 'ND.geometry.D3.get indices: invalid edge. Возможно вычислены не все точки пересечения' );
+							
 						}
-						index = prevIndex;
-
+	/*
+						function getIndices( segment, index, boReturn ) {
+	
+							var prevIndex = index;
+							for ( var i = segment.length - 1; i >= 0; i-- ) {
+	
+								const segmentItem = segment[i];
+								if ( segmentItem instanceof Array ) {
+	
+									getIndices( segmentItem, index );
+									if ( boReturn ) return;
+	
+								} else {
+	
+									if ( prevIndex === index ) prevIndex--;
+									const item = segmentItem.indices ? segmentItem ://settings.geometry.indices.length === 1 перечислены только ребра
+										settings.geometry.indices[prevIndex][segmentItem];
+									if ( prevIndex > 0 )
+										getIndices( item, prevIndex );
+									else {
+	
+										const edge = item.indices;
+										if ( edge ) {
+											
+											if ( edge.length !== 2 ) {
+		
+												console.error( 'ND.geometry.D3.get indices: invalid edge.length = ' + edge.length );
+												return;
+		
+											}
+											if ( edge[0] === edge[1] ) {
+		
+												console.error( 'ND.geometry.D3.get indices: duplicate edge index = ' + edge[0] );
+												return;
+		
+											}
+											indices.push( ...edge );
+	
+										} else console.error( 'ND.geometry.D3.get indices: invalid edge. Возможно вычислены не все точки пересечения' );
+	
+									}
+	
+								}
+	
+							}
+							index = prevIndex;
+	
+						}
+						if ( settings.geometry.indices[0].length === 0 )
+							return indices;//объект состоит из одной вершины и не имеет ребер
+						getIndices( settings.geometry.indices, settings.geometry.indices.length - 1, true );
+	*/
 					}
-					if ( settings.geometry.indices[0].length === 0 )
-						return indices;//объект состоит из одной вершины и не имеет ребер
-					getIndices( settings.geometry.indices, settings.geometry.indices.length - 1, true );
-*/
-					return indices;
+					return { indices: indices, colors: colors, };
 
 				},
 
@@ -1173,7 +1201,7 @@ class ND {
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
 
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
-		function create3DObject( geometry, settings = {} ) {
+		function create3DObject( geometry, settings3D = {} ) {
 
 			if ( !geometry.D3 ) {
 
@@ -1182,11 +1210,26 @@ class ND {
 				
 			}
 			if ( geometry.position.length === 0 ) return;
-			const indices = geometry.D3.indices;
-			const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ),
-				color = settings.color || 0xffffff,//default white
-				object = indices.length > 1 ?
-					new THREE.LineSegments( buffer.setIndex( indices ), new THREE.LineBasicMaterial( { color: color } ) ) :
+			const color = settings3D.color || 0xffffff;//default white
+			geometry.D3.color = color;
+			const indices3D = geometry.D3.indices, indices = indices3D.indices, colors = indices3D.colors;
+
+			const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points );
+
+			//https://stackoverflow.com/a/68405743/5175935
+//			buffer.setAttribute( 'color', new THREE.Uint8BufferAttribute( colors, 3, true ) );
+			
+			const object = indices.length > 1 ?
+					new THREE.LineSegments( buffer.setIndex( indices ), new THREE.LineBasicMaterial( {
+
+						color: color,
+//						vertexColors: true,
+/*
+						transparent: true,
+						opacity: 0.3,
+*/
+
+					} ) ) :
 					new THREE.Points( buffer, new THREE.PointsMaterial( {
 						
 						color: color,
@@ -1194,15 +1237,322 @@ class ND {
 						size: options.point.size / ( options.point.sizePointsMaterial * 2 ),
 						
 					} ) );
-			if ( settings.name )
-				object.name = settings.name;
+			if ( settings3D.name )
+				object.name = settings3D.name;
 			scene.add( object );
 			if ( typeof SpriteText !== "undefined" ) for ( var i = 0; i < geometry.D3.points.length; i++ ) {
 
 				new SpriteText( i, geometry.D3.points[i], { group: object } );
 
 			}
-			object.userData.nd = function () { console.log('object.userData.nd') }
+			object.userData.nd = function ( fParent, dat ) {
+
+				//Localization
+
+				const getLanguageCode = options.getLanguageCode;
+
+				const lang = {
+
+					vertices: 'Vertices',
+					verticesTitle: 'Vertices.',
+					edges: 'Edges',
+					edgesTitle: 'The selected edge lists the vertex indices of the edge.',
+					faces: 'Faces',
+					facesTitle: 'The selected face lists the indexes of the edges of that face.',
+					bodies: 'Bodies',
+					bodiesTitle: 'The selected body lists the indexes of the faces of this body.',
+					objects: 'Objects',
+					objectsTitle: 'The selected object lists the indexes of the objects that this object consists of. It can be indexes of bodies.',
+
+					notSelected: 'Not selected',
+
+				};
+
+				const _languageCode = getLanguageCode();
+
+				switch ( _languageCode ) {
+
+					case 'ru'://Russian language
+
+						lang.vertices = 'Вершины';
+						lang.verticesTitle = 'Вершины.';
+						lang.edges = 'Ребра';
+						lang.edgesTitle = 'В выбранном ребре перечислены индексы вершин ребра.';
+						lang.faces = 'Грани';
+						lang.facesTitle = 'В выбранной грани перечислены индексы ребер этой грани.';
+						lang.bodies = 'Тела';
+						lang.bodiesTitle = 'В выбранном теле перечислены индексы граней этого тела.';
+						lang.objects = 'Объекты';
+						lang.objectsTitle = 'В выбранном объекте перечислены индексы объектов, из которого состоит этот объект. Это могут быть индексы тел.';
+
+						lang.notSelected = 'Не выбран';
+
+						break;
+					default://Custom language
+						if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
+							break;
+
+						Object.keys( guiParams.lang ).forEach( function ( key ) {
+
+							if ( lang[key] === undefined )
+								return;
+							lang[key] = guiParams.lang[key];
+
+						} );
+
+				}
+				for ( var i = fParent.__controllers.length - 1; i >= 0; i-- ) { fParent.remove( fParent.__controllers[i] ); }
+//				fParent.__controllers.forEach( controller => fParent.remove( controller ) );
+				const indices = geometry.geometry.indices, segmentIndex = indices.length - 1;
+				function addController(
+					segmentIndex,//settings.geometry.indices index
+					fParent,
+					segmentItems,//массив индексов элементов текущего segment, которые выбрал пользователь
+					prevLine//выбранный пользователем сегмент объекта на более высоком уровне. Например если пользователь выбрал ребро то prevLine указывает на выбранную пользователем грань
+				) {
+
+					//				const indices = settings.geometry.indices,
+					var segment;
+					if ( segmentItems ) {
+
+						segment = [];
+						if ( segmentIndex === -1 ) {
+
+							//vertices
+							segmentItems.forEach( i => segment.push( settings.geometry.position[i] ) );
+							
+						} else {
+							
+							//indices
+							const index = indices[segmentIndex];
+							segmentItems.forEach( i => segment.push( index[i].indices ? index[i].indices : index[i] ) );
+
+						}
+						
+					}else segment = indices[segmentIndex];
+					const items = { Items: [lang.notSelected] };
+					var line, fChildSegment;
+					var name, title;
+					switch ( segmentIndex ) {
+
+						case -1: name = lang.vertices; title = lang.verticesTitle; break;
+						case 0: name = lang.edges; title = lang.edgesTitle; break;
+						case 1: name = lang.faces; title = lang.facesTitle; break;
+						case 2: name = lang.bodies; title = lang.bodiesTitle; break;
+						default: name = lang.objects; title = lang.objectsTitle;
+
+					}
+					const fSegment = fParent.addFolder( name );
+					dat.folderNameAndTitle( fSegment, name, title );
+					const cSegment = fSegment.add( items, 'Items', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
+
+						if ( fChildSegment ) {
+							
+							const controller = fChildSegment.__controllers[0];
+							if ( controller.__select.selectedIndex != 0 ) {
+								
+								controller.__select.selectedIndex = 0;
+								controller.__onChange();
+
+							}
+							fSegment.removeFolder( fChildSegment );
+							fChildSegment = undefined;
+
+						}
+						const selectedIndex = cSegment.__select.selectedIndex - 1;
+						if ( line ) {
+
+							line.parent.remove( line );
+							line = undefined;
+
+						}
+						const opacityDefault = 0.3, parentObject = object;
+						function opacityItem( item, transparent, opacity = opacityDefault ) {
+							
+							if ( !item.material ) return;
+							if ( transparent && ( opacity === 0 ) && ( Object.is( item.parent, parentObject ) ) ) parentObject.remove( item ); 
+							else {
+								
+								if ( !item.parent ) parentObject.add( item );
+								item.material.transparent = transparent;
+								item.material.opacity = transparent ? opacity : 1;
+
+							}
+							
+						}
+						function opacity( transparent = true, opacity = opacityDefault ) {
+
+/*							
+							if ( prevLine ) {
+
+								opacityItem( prevLine );
+								return;
+								
+							}
+*/
+//							object.parent.children.forEach( item => opacityItem( item, transparent, opacity ) );
+							scene.children.forEach( item => opacityItem( item, transparent, opacity ) );
+
+						}
+
+						//Непонятно почему, но прозрачность линии зависит от индекса текущего сегмента segmentIndex.
+						//Для проверки открыть холст 5D.
+						//Если в 5D прозрачность делать постоянной 0.3, то при выборе тела (body) из объета, объект буден практически непрозрачным
+						function getOpacity() {
+							
+							return -0.1 * segmentIndex + opacityDefault;
+							
+						}
+
+						function removeVerticeControls(){
+
+							if ( segmentIndex !== -1 ) return;
+							for ( var i = fSegment.__controllers.length - 1; i >=0 ; i-- ) {
+
+								const controller = fSegment.__controllers[i];
+								if ( Object.is(cSegment, controller) ) continue;
+								fSegment.remove(controller);
+								
+							}
+							
+						}
+
+						if ( selectedIndex === -1 ) {
+
+							removeVerticeControls();
+							if ( prevLine ) {
+
+								opacityItem( prevLine, false );
+								if ( prevLine.userData.prevLine ) opacityItem( prevLine.userData.prevLine, true, getOpacity() );
+								else opacity( true );
+								return;
+								
+							}
+							opacity( false );
+							return;
+
+						}
+						if ( prevLine ) {
+							
+							opacity( true, 0 );
+							/*
+							setTimeout( function () {
+	
+								opacityItem( prevLine, true );
+								console.log( 'opacity: ' + prevLine.userData.name );
+	
+							}, 0 );
+*/
+							opacityItem( prevLine, true, getOpacity() );
+//							console.log( 'opacity: ' + prevLine.userData.name );
+/*
+							prevLine.material.transparent = true;
+							prevLine.material.opacity = 0.3;
+*/
+							if ( prevLine.userData.prevLine ) {
+
+								opacityItem( prevLine.userData.prevLine, true, 0 );
+/*
+								prevLine.userData.prevLine.material.transparent = true;
+								prevLine.userData.prevLine.material.opacity = 0;
+*/
+								
+							}
+
+						} else opacity();
+						if ( segmentIndex === -1 ) {
+
+							//Vertices
+							removeVerticeControls();
+/*							
+							for ( var i = fSegment.__controllers.length - 1; i >=0 ; i-- ) {
+
+								const controller = fSegment.__controllers[i];
+								if ( Object.is(cSegment, controller) ) continue;
+								fSegment.remove(controller);
+								
+							}
+*/
+							const vertice = settings.geometry.position[selectedIndex];
+							for ( var i = 0; i < vertice.length; i++ ) 
+								dat.controllerZeroStep( fSegment, vertice, i ).domElement.querySelector( 'input' ).readOnly = true;
+							
+						} else {
+							
+	//						var level = segmentIndex;
+							const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points );
+							const lineIndices = [];
+							function createIndices( item, level ) {
+	
+								if ( level > 0 ) {
+	
+									level--;
+									for ( var i = 0; i < item.length; i++ ) createIndices( indices[level][item[i]], level );
+									return;
+	
+								}
+								const itemIndices = item.indices || item;
+								itemIndices.forEach( i => { lineIndices.push( i ); } );
+	
+							}
+							createIndices( segment[selectedIndex], segmentIndex );
+	//если вместо buffer использовать object.geometry то при выборе сегмета объекта становятся невидимыми все остальные сегменты объекта
+	//						line = new THREE.LineSegments( object.geometry.setIndex( indices ), new THREE.LineBasicMaterial( { color: object.material.color } ) );
+							line = new THREE.LineSegments( buffer.setIndex( lineIndices ), new THREE.LineBasicMaterial( { color: object.material.color } ) );
+	
+							//debug
+							line.userData.name = fSegment.name + ' ' + value;
+							
+	/*
+							if ( !groupSegments ) {
+								
+								groupSegments = new THREE.Group();
+								scene.add( groupSegments );
+								parentObject = groupSegments;
+	
+							}
+	*/
+							parentObject.add( line );
+
+						}
+						if ( prevLine && line ) line.userData.prevLine = prevLine;
+						if ( segmentIndex >= 0 ) fChildSegment = addController( segmentIndex - 1, fSegment, segment[selectedIndex], line );
+
+					} );
+					dat.controllerNameAndTitle( cSegment, '' );
+					cSegment.__select[0].selected = true;
+
+					for ( var i = 0; i < segment.length; i++ ) {
+
+						const item = segment[i], opt = document.createElement( 'option' ), indices = item.indices ? item.indices : item;
+						opt.innerHTML = '(' + i + ') ' + ( segmentIndex === -1 ? '' : indices.toString() );
+						opt.item = item;
+						cSegment.__select.appendChild( opt );
+
+					}
+					return fSegment;
+
+				}
+				const childFolders = Object.keys(fParent.__folders);
+				switch( childFolders.length ){
+
+					case 0: break;
+					case 1:
+						const childFolder = fParent.__folders[childFolders[0]], controller = childFolder.__controllers[0];
+						if ( controller.__select.selectedIndex != 0 ) {
+							
+							controller.__select.selectedIndex = 0;
+							controller.__onChange();
+
+						}
+						fParent.removeFolder( childFolder );
+						break;
+					default: console.error( 'ND.create3DObject.nd: object.userData.nd. Invalid childFolders.length = ' + childFolders.length );
+						
+				}
+				addController( segmentIndex, fParent );
+			
+			}
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
 
 			//raycaster
@@ -1742,9 +2092,16 @@ ND.gui = class {
 		const fND = fParent.addFolder( lang.nD );
 		dat.folderNameAndTitle( fND, lang.nD, lang.nDTitle );
 
-		this.object = function( object ) {
+		this.object = function( object, dat ) {
 
-			fND.domElement.style.display = object.userData.nd ?  'block' : 'none';
+			var display = 'none';
+			if ( object && object.userData.nd ) {
+
+				display = 'block';
+				object.userData.nd( fND, dat );
+				
+			}
+			fND.domElement.style.display =  display;
 			
 		}
 
