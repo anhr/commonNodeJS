@@ -949,6 +949,17 @@ class MyThree {
 
 		}
 
+		/**
+		 * Sets the size of the canvas
+		 * @param {number} width width of the canvas
+		 * @param {number} height height of the canvas
+		 */
+		this.setSize = function ( width, height ) {
+
+			renderer.setSize( width, height );
+			
+		}
+
 		arrayCreates.shift();
 		var params = arrayCreates.shift();
 		if ( params === undefined )
