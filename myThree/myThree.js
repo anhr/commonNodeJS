@@ -951,11 +951,22 @@ class MyThree {
 
 		/**
 		 * Sets the size of the canvas
-		 * @param {number} width width of the canvas
+		 * @param {number|object} width width of the canvas.
+		 * <pre>
+		 * If <b>width</b> is object, followed keys is available:
+		 * </pre>
+		 * @param {number} width.width width of the canvas
+		 * @param {number} width.height height of the canvas
 		 * @param {number} height height of the canvas
 		 */
 		this.setSize = function ( width, height ) {
 
+			if ( typeof width === "object" ) {
+
+				height = width.height;
+				width = width.width;
+				
+			}
 			renderer.setSize( width, height );
 			
 		}
@@ -1080,5 +1091,9 @@ import Intersections from '../intersections/intersections.js'
  * @see <a href="../../intersections/jsdoc/index.html" target="_blank">Intersections</a>.
  */
 MyThree.Intersections = Intersections;
+
+import TreeView from '../treeView/treeView.js';
+MyThree.TreeView = TreeView;
+
 
 export default MyThree;
