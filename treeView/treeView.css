@@ -1,12 +1,16 @@
-﻿ul, #myUL {
+/*Thanks to https://www.w3schools.com/howto/howto_js_treeview.asp*/
+/* Remove default bullets */
+ul, #myUL {
 	list-style-type: none;
 }
 
+/* Remove margins and padding from the parent ul */
 #myUL {
 	margin: 0;
 	padding: 0;
 }
 
+/* Style the caret/arrow */
 .caret {
 	cursor: pointer;
 	-webkit-user-select: none;
@@ -15,6 +19,7 @@
 	user-select: none;
 }
 
+	/* Create the caret/arrow with a unicode, and style it */
 	.caret::before {
 		content: "\25B6";
 		color: black;
@@ -22,16 +27,47 @@
 		margin-right: 6px;
 	}
 
+/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
 .caret-down::before {
 	-ms-transform: rotate(90deg);
 	-webkit-transform: rotate(90deg);
 	' transform: rotate(90deg);
 }
 
+/* Hide the nested list */
 .nested {
-	display: none;
+	/*display: none;*/
 }
 
+/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
 .active {
+	/*
 	display: block;
+	max-height: 1000px;
+	*/
+	opacity: 1;
 }
+
+/* hide the nested list when the user clicks on the caret/arrow (with JavaScript) */
+.hide {
+	/*
+	display: none;
+	*/
+	max-height: 0px;
+	opacity: 0;
+}
+
+/*animane branch.*/
+.b-toggle {
+	-moz-transition: opacity 0.5s, max-height 0.5s;
+	-ms-transition: opacity 0.5s, max-height 0.5s;
+	transition: max-height 0.5s, opacity 0.5s;/*, -ms-transform 0.5s, -webkit-transform 0.5s, transform 0.5s;*/
+	transition-delay: 0.5s, 0s;
+	/*
+	opacity: 0;
+	overflow: auto;
+	max-height: 0;
+	_display: none;
+	*/
+}
+

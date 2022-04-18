@@ -1,22 +1,18 @@
-﻿<h1>CanvasMenu.</h1>
+﻿<h1>TreeView.</h1>
 
-My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu) for canvas in my [three.js](https://threejs.org/) projects.
+Tree view with CSS and JavaScript. Thanks to [Learn how to create a tree view with CSS and JavaScript.]{@link https://www.w3schools.com/howto/howto_js_treeview.asp}.
 
-[Example of using](../Examples/html/index.html).
+[Example of using](../Examples/index.html).
 
 # Content
 * [Quick start.](#Quickstart)
-* [Add some item into your menu.](#AddMenuItem)
-* [Add a "Full Screen" button.](#FullScreen)
-* [Add a "Stereo Effect" menu item.](#StereoEffect)
-* [Add Player menu item.](#Player)
+* [Include canvas into tree branch.](#IncludeCanvas)
 * [Example of your web page.](#WebPage)
 
 <a name="QuickStart"></a>
 ## Quick start
 
 * Create a folder on your localhost named as [folderName].
-	* Download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
 	* Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 * Add your web page into [folderName]. Example:
 ```
@@ -24,250 +20,151 @@ My [dropdown menu](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu
 
 <html>
 <head>
-	<title>CanvasMenu</title>
-
-	<link type="text/css" rel="stylesheet" href="./three.js/dev/examples/main.css">
-	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
-	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
-
-	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
-	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">-->
-	<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">
-
-	<!--<script src="./three.js/dev/build/three.js"></script>-->
-	<!--<script src="./three.js/dev/build/three.min.js"></script>-->
-	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
-	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
-	<!--<script src="https://threejs.org/build/three.js"></script>-->
-	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
+	<title>tree view</title>
 </head>
 <body>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
-		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
-		- <a href="https://github.com/anhr/commonNodeJS/tree/master/canvasMenu" target="_blank" rel="noopener">CanvasMenu</a>.
+		<a href="https://github.com/anhr/commonNodeJS/tree/master/treeViev" target="_blank" rel="noopener">TreeView</a>.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
-	<div>
-		<canvas id="canvas"></canvas>
-	</div>
-
-	<script type="module">
-
-		import * as THREE from './three.js/dev/build/three.module.js';
-		//import * as THREE from 'https://threejs.org/build/three.module.js';
-		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
-
-		import three from './commonNodeJS/master/three.js'
-		three.THREE = THREE;
-
-		import Options from './commonNodeJS/master/Options.js'
-
-		var camera, scene, renderer, stereoEffect;
-
-		init();
-		animate();
-
-		function init() {
-
-			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
-
-			scene = new THREE.Scene();
-
-			const options = new Options();
-
-			renderer = new THREE.WebGLRenderer( {
-
-				antialias: true,
-				canvas: document.getElementById( 'canvas' ),
-
-			} );
-			renderer.setSize( window.innerWidth, window.innerHeight );
-
-			window.addEventListener( 'resize', onWindowResize, false );
-
-		}
-		function onWindowResize() {
-
-			camera.aspect = window.innerWidth / window.innerHeight;
-			camera.updateProjectionMatrix();
-
-			renderer.setSize( window.innerWidth, window.innerHeight );
-
-		}
-
-		function animate() {
-
-			requestAnimationFrame( animate );
-
-			renderer.render( scene, camera );
-
-		}
-
-	</script>
 </body>
 </html>
 ```
-NOTE. Please include <b>three.THREE = THREE;</b> line into your project before use my [library](https://github.com/anhr/commonNodeJS). See example above.
-
-The easiest way to use <b>CanvasMenu</b> in your code is import CanvasMenu from CanvasMenu.js.
+* Add CSS into <b>head</b> tag:
 ```
-import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
+<link type="text/css" rel="stylesheet" href="./commonNodeJS/master/treeView/treeView.css">
 ```
-Now you can use <b>CanvasMenu</b> in your javascript code. Example:
+* Add a tree HTML with one branch:
 ```
-new CanvasMenu( renderer );
+<ul id="myUL">
+	<li>
+		<span class="caret">Introduction</span>
+		<ul class="nested">
+			<li>
+				Tree view with CSS and JavaScript. Thanks to <a href="https://www.w3schools.com/howto/howto_js_treeview.asp" target="_blank">Learn how to create a tree view with CSS and JavaScript.</a>
+			</li>
+		</ul>
+	</li>
+</ul>
 ```
-Now your menu does nothing and you don't see it.
-
-Also you can see
-
-<i>CanvasMenu: menu is empty.</i>
-
-warning in console.
-
-<a name="AddMenuItem"></a>
-## Add some item into your menu.
+Now you can see a tree with one opened branch. You can hide a branch by default. Please add the <b>nide</b> class to nested <b>ul</b> tag for it.
 ```
-new CanvasMenu( renderer, {
+<ul id="myUL">
+	<li>
+		<span class="caret">Introduction</span>
+		<ul class="nested hide">
+			<li>
+				Tree view with CSS and JavaScript. Thanks to <a href="https://www.w3schools.com/howto/howto_js_treeview.asp" target="_blank">Learn how to create a tree view with CSS and JavaScript.</a>
+			</li>
+		</ul>
+	</li>
+</ul>
+```
+* Add a javascript code so the user can interact with the tree.
+```
+<script type="module">
+	import TreeView from './commonNodeJS/master/treeView/treeView.js';
+	new TreeView();
+</script>
+```
+<a name="IncludeCanvas"></a>
+## Include canvas into tree branch.
+* Add new <b>Canvas</b> branch into tree.
+```
+<ul id="myUL">
+	<li>
+		<span class="caret">Introduction</span>
+		<ul class="nested hide">
+			<li>
+				Tree view with CSS and JavaScript. Thanks to <a href="https://www.w3schools.com/howto/howto_js_treeview.asp" target="_blank">Learn how to create a tree view with CSS and JavaScript.</a>
+			</li>
+		</ul>
+	</li>
+	<li>
+		<span class="caret">Canvas.</span>
+		<ul class="nested hide" id="articleCanvas">
+			<li>
+				Example of including a canvas in the tree branch.
+				<div class="canvas" id="canvasPoints">
+					<img src="../../img/wait.gif">
+				</div>
+			</li>
+		</ul>
+	</li>
+</ul>
+```
+* Include <b>THREE</b> and <b>MyThree</b>.
+```
+import * as THREE from './three.js/dev/build/three.module.js';
+//import * as THREE from 'https://threejs.org/build/three.module.js';
+//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 
-	menu: [
+import MyThree from './commonNodeJS/master/myThree/myThree.js';
+//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.js';
+//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.min.js';
+if ( MyThree.default ) MyThree = MyThree.default;
+MyThree.three.THREE = THREE;
+```
+* Replace <b>new TreeView();</b> to
+```
+new TreeView().setCanvas( 'articleCanvas', new MyThree( function ( scene, options ) {
 
-		{
+	MyThree.MyPoints(
 
-			name: 'Button',
-			onclick: function ( event ) {
+		[
+			[],
+			{
 
-				var message = 'Button onclick';
-				//console.log( message );
-				alert( message )
+				vector: [
+					'-1+2*t',//x
+					'Math.cos(t*5*Math.PI)*0.5',//y
+					'Math.sin(t*5*Math.PI)*0.5',//z
+					'1-t',//w
+				],
+				name: 'Trigonometric functions',
+				trace: true,
+				controllers: {},
+
+			},
+			{
+
+				vector: [
+					0.4,//x
+					'1-2*t',//y
+				],
+				name: 'Line',
+				trace: true,
 
 			},
 
-		},
+		],
+		scene, {
 
-	],
+			options: options,
+			pointsOptions: { 
 
-} );
-```
-Please move mouse over canvas. Now you can see "Button" button on the bottom of the canvas. Click the "Button". An alert will be displayed.
-
-<a name="FullScreen"></a>
-## Add a "Full Screen" button.
-
-Remove
-
-<i>&lt;link type="text/css" rel="stylesheet" href="./three.js/dev/examples/main.css&gt;</i>
-
-and
-
-<i>&lt;link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css"&gt;</i>
-
-from <b>head</b> tag.
-
-Remove
-
-<i>renderer.setSize( window.innerWidth, window.innerHeight );</i>
-
-line.
-
-Insert the <b>fullScreen</b> key into <b>options</b> parameter of the <b>CanvasMenu</b>.
-```
-new CanvasMenu( renderer, {
-
-	menu: [
-
-		{
-
-			name: 'Button',
-			onclick: function ( event ) {
-
-				var message = 'Button onclick';
-				//console.log( message );
-				alert( message )
+				name: 'Points',
 
 			},
 
-		},
+	} );
 
-	],
-	fullScreen: { camera: camera, },
+}, {
 
-} );
+	elContainer: "canvasPoints",
+	playerOptions: {
+
+		marks: 111,//Number of scenes of 3D objects animation.
+		interval: 25,//Ticks per seconds.
+
+	},
+	dat: {},
+	canvas: { fullScreen: false },
+
+} ) );
 ```
-Please move mouse over canvas.
-Now you can see "⤦" button on the bottom right corner of the canvas.
-Please click the "⤦" button if you want to resize your canvas to original size.
-
-<a name="StereoEffect"></a>
-## Add a [Stereo Effect](https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md) menu item.
-
-First, import <b>StereoEffect</b> into your code
-```
-import StereoEffect from "./commonNodeJS/master/StereoEffect/StereoEffect.js";
-```
-Now you can use <b>StereoEffect</b> in your code.
-```
-new StereoEffect( renderer, options );
-stereoEffect = options.stereoEffect;
-```
-Edit <b>animate</b> function.
-```
-function animate() {
-
-	requestAnimationFrame( animate );
-
-	if ( !stereoEffect )
-		renderer.render( scene, camera );
-	else stereoEffect.render( scene, camera );
-
-}
-```
-For including of the <b>StereoEffect</b> into <b>CanvasMenu</b>, add the <b>options: options</b> key into <b>settings</b> parameter of the <b>CanvasMenu</b>.
-```
-new CanvasMenu( renderer, {
-
-	menu: [
-
-		{
-
-			name: 'Button',
-			onclick: function ( event ) {
-
-				var message = 'Button onclick';
-				//console.log( message );
-				alert( message )
-
-			},
-
-		},
-
-	],
-	fullScreen: { camera: camera, },
-	options: options,
-
-} );
-```
-Please move mouse over canvas.
-Now you can see "⚭" menu item on the bottom of the canvas.
-Please click the "⚭" if you want to change of stereo mode.
-
-Currently your canvas is not full screen in the stereo mode.
-I think is is bad, because your stereo device can not to display stereo correctly if your canvas is not full screen.
-For resolving of issue please add <b>stereoEffect: { rememberSize: true, },</b> key into <b>options</b> parameter of the <b>Options</b>.
-```
-const options = new Options( {
-
-	stereoEffect: { rememberSize: true, },
-
-} );
-```
-Now your canvas will be changing to full screen automatically if you choice a stereo mode.
-<a name="Player"></a>
-## Add [Player](https://github.com/anhr/commonNodeJS/tree/master/player) menu item.
-
-See "Add player item into CanvasMenu." header in [Player API](../../player/jsdoc/index.html).
+* Now you can use <b>new MyThree.TreeView</b> instead <b>new TreeView</b> and can remove <b>import TreeView from './commonNodeJS/master/treeView/treeView.js';</b> line.
 <a name="WebPage"></a>
 ## Example of your web page.
 The following code is the result of this tutorial.
@@ -276,124 +173,103 @@ The following code is the result of this tutorial.
 
 <html>
 <head>
-	<title>CanvasMenu</title>
-
-	<!--<link type="text/css" rel="stylesheet" href="./three.js/dev/examples/main.css">-->
-	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
-	<!--<link type="text/css" rel="stylesheet" href="three.js/dev/examples/main.css">-->
-	<!-- Three.js Full Screen Issue https://stackoverflow.com/questions/10425310/three-js-full-screen-issue/15633516 -->
-	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">-->
-	<!--<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">-->
-
-	<!--<script src="./three.js/dev/build/three.js"></script>-->
-	<!--<script src="./three.js/dev/build/three.min.js"></script>-->
-	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
-	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
-	<!--<script src="https://threejs.org/build/three.js"></script>-->
-	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
+	<title>tree view</title>
+	<link type="text/css" rel="stylesheet" href="./commonNodeJS/master/treeView/treeView.css">
 </head>
 <body>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<div id="info">
-		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
-		- <a href="https://github.com/anhr/commonNodeJS/tree/master/canvasMenu" target="_blank" rel="noopener">CanvasMenu</a>.
+		<a href="https://github.com/anhr/commonNodeJS/tree/master/treeViev" target="_blank" rel="noopener">TreeView</a>.
 		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
 	</div>
-	<div>
-		<canvas id="canvas"></canvas>
-	</div>
-
+	<ul id="myUL">
+		<li>
+			<span class="caret">Introduction</span>
+			<ul class="nested hide">
+				<li>
+					Tree view with CSS and JavaScript. Thanks to <a href="https://www.w3schools.com/howto/howto_js_treeview.asp" target="_blank">Learn how to create a tree view with CSS and JavaScript.</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<span class="caret">Canvas.</span>
+			<ul class="nested hide" id="articleCanvas">
+				<li>
+					Example of including a canvas in the tree branch.
+					<div class="canvas" id="canvasPoints">
+						<img src="../../img/wait.gif">
+					</div>
+				</li>
+			</ul>
+		</li>
+	</ul>
 	<script type="module">
-
 		import * as THREE from './three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 
-		import three from './commonNodeJS/master/three.js'
-		three.THREE = THREE;
+		import MyThree from './commonNodeJS/master/myThree/myThree.js';
+		//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.js';
+		//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.min.js';
+		if ( MyThree.default ) MyThree = MyThree.default;
+		MyThree.three.THREE = THREE;
 
-		import Options from './commonNodeJS/master/Options.js'
-		import CanvasMenu from './commonNodeJS/master/canvasMenu/canvasMenu.js';
-		import StereoEffect from "./commonNodeJS/master/StereoEffect/StereoEffect.js";
-		import Player from './commonNodeJS/master/player/player.js';
+		//import TreeView from './commonNodeJS/master/treeView/treeView.js';
+		new MyThree.TreeView().setCanvas( 'articleCanvas', new MyThree( function ( scene, options ) {
 
-		var camera, scene, renderer, stereoEffect;
+			MyThree.MyPoints(
 
-		init();
-		animate();
-
-		function init() {
-
-			camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-			camera.position.copy( new THREE.Vector3( 0.4, 0.4, 2 ) );
-
-			scene = new THREE.Scene();
-
-			const options = new Options( {
-
-				stereoEffect: { rememberSize: true, },
-
-			} );
-
-			new Player( scene, { options: options, } );
-
-			renderer = new THREE.WebGLRenderer( {
-
-				antialias: true,
-				canvas: document.getElementById( 'canvas' ),
-
-			} );
-			//renderer.setSize( window.innerWidth, window.innerHeight );
-
-			new StereoEffect( renderer, options );
-			stereoEffect = options.stereoEffect;
-
-			new CanvasMenu( renderer, {
-
-				menu: [
-
+				[
+					[],
 					{
 
-						name: 'Button',
-						onclick: function ( event ) {
+						vector: [
+							'-1+2*t',//x
+							'Math.cos(t*5*Math.PI)*0.5',//y
+							'Math.sin(t*5*Math.PI)*0.5',//z
+							'1-t',//w
+						],
+						name: 'Trigonometric functions',
+						trace: true,
+						controllers: {},
 
-							var message = 'Button onclick';
-							//console.log( message );
-							alert( message )
+					},
+					{
 
-						},
+						vector: [
+							0.4,//x
+							'1-2*t',//y
+						],
+						name: 'Line',
+						trace: true,
 
 					},
 
 				],
-				fullScreen: { camera: camera, },
-				options: options,
+				scene, {
+
+					options: options,
+					pointsOptions: { 
+
+						name: 'Points',
+
+					},
 
 			} );
 
-			window.addEventListener( 'resize', onWindowResize, false );
+		}, {
 
-		}
-		function onWindowResize() {
+			elContainer: "canvasPoints",
+			playerOptions: {
 
-			camera.aspect = window.innerWidth / window.innerHeight;
-			camera.updateProjectionMatrix();
+				marks: 111,//Number of scenes of 3D objects animation.
+				interval: 25,//Ticks per seconds.
 
-			renderer.setSize( window.innerWidth, window.innerHeight );
+			},
+			dat: {},
+			canvas: { fullScreen: false },
 
-		}
-
-		function animate() {
-
-			requestAnimationFrame( animate );
-
-			if ( !stereoEffect )
-				renderer.render( scene, camera );
-			else stereoEffect.render( scene, camera );
-
-		}
-
-	</script>
-</body>
+		} ) );
+	</script></body>
 </html>
 ```

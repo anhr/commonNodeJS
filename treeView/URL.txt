@@ -13,10 +13,10 @@ Generating a website:
 	/////////////////////////////////////////////////////////////
 	//colorpicker doc
 
-	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\canvasMenu\jsdoc"
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\treeView\jsdoc"
 
-	jsdoc -R "..\commonNodeJS\master\canvasMenu\CanvasMenu.md" "..\commonNodeJS\master\canvasMenu\canvasMenu.js" -d "..\commonNodeJS\master\canvasMenu\jsdoc"
+	jsdoc -R "..\commonNodeJS\master\treeView\treeView.md" "..\commonNodeJS\master\treeView\treeView.js" -d "..\commonNodeJS\master\treeView\jsdoc"
 
-	//See results in "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\canvasMenu\jsdoc"
+	//See results in "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\treeView\jsdoc"
 
 	/////////////////////////////////////////////////////////////

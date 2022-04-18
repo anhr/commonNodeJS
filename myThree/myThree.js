@@ -967,6 +967,18 @@ class MyThree {
 				width = width.width;
 				
 			}
+			if ( width === undefined ) {
+
+				//Используется в treeView.js для открытия ветки с холстом
+				const target = { set: function( width, height ) {
+
+					renderer.setSize( width, height );
+					
+				}};
+				renderer.getSize( target );
+				return;
+				
+			}
 			renderer.setSize( width, height );
 			
 		}
