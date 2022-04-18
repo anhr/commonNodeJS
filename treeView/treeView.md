@@ -31,10 +31,6 @@ Tree view with CSS and JavaScript. Thanks to [Learn how to create a tree view wi
 </body>
 </html>
 ```
-* Add CSS into <b>head</b> tag:
-```
-<link type="text/css" rel="stylesheet" href="./commonNodeJS/master/treeView/treeView.css">
-```
 * Add a tree HTML with one branch:
 ```
 <ul id="myUL">
@@ -47,6 +43,10 @@ Tree view with CSS and JavaScript. Thanks to [Learn how to create a tree view wi
 		</ul>
 	</li>
 </ul>
+```
+* Add CSS into <b>head</b> tag:
+```
+<link type="text/css" rel="stylesheet" href="./commonNodeJS/master/treeView/treeView.css">
 ```
 Now you can see a tree with one opened branch. You can hide a branch by default. Please add the <b>nide</b> class to nested <b>ul</b> tag for it.
 ```
@@ -94,7 +94,8 @@ Now you can see a tree with one opened branch. You can hide a branch by default.
 	</li>
 </ul>
 ```
-* Include <b>THREE</b> and <b>MyThree</b>.
+* Download [three.js](https://github.com/anhr/three.js) repository into your "[folderName]\three.js\dev" folder.
+* Import <b>THREE</b> and <b>MyThree</b>.
 ```
 import * as THREE from './three.js/dev/build/three.module.js';
 //import * as THREE from 'https://threejs.org/build/three.module.js';

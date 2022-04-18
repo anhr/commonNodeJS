@@ -18,7 +18,7 @@ class TreeView {
 	/**
 	 * @class Tree view with CSS and JavaScript. Thanks to [Learn how to create a tree view with CSS and JavaScript.]{@link https://www.w3schools.com/howto/howto_js_treeview.asp}
 	 * @param {object} [settings={}] the following settings are available:
-	 * @param {boolean} [settings.animate] true - allows you to open a tree branch smoothly.
+	 * @param {boolean} [settings.animate] true - allows you to open/close a tree branch smoothly.
 	 * @param {string} [settings.paddingInlineStart="40px"] right shift of the tree branch. Example: "10px"
 	 */
 	constructor( settings = {} ) {
