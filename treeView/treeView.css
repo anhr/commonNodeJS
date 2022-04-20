@@ -51,8 +51,8 @@ ul, #myUL {
 /* hide the nested list when the user clicks on the caret/arrow (with JavaScript) */
 .hide {
 	/*
-	display: none;
 	*/
+	display: none;
 	max-height: 0px;
 	opacity: 0;
 }

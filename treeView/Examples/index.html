@@ -21,6 +21,14 @@
 	<!-- Tree View https://www.w3schools.com/howto/howto_js_treeview.asp -->
 	<ul id="myUL">
 		<li>
+			<span class="caret">Introduction</span>
+			<ul class="nested">
+				<li>
+					Tree view with CSS and JavaScript. Thanks to <a href="https://www.w3schools.com/howto/howto_js_treeview.asp" target="_blank">Learn how to create a tree view with CSS and JavaScript.</a>
+				</li>
+			</ul>
+		</li>
+		<li>
 			<span class="caret">Canvas.</span>
 			<ul class="nested hide" id="articleCanvas">
 				<li>
@@ -28,14 +36,6 @@
 					<div class="canvas" id="canvasPoints">
 						<img src="../../img/wait.gif">
 					</div>
-				</li>
-			</ul>
-		</li>
-		<li>
-			<span class="caret">Introduction</span>
-			<ul class="nested">
-				<li>
-					Tree view with CSS and JavaScript. Thanks to <a href="https://www.w3schools.com/howto/howto_js_treeview.asp" target="_blank">Learn how to create a tree view with CSS and JavaScript.</a>
 				</li>
 			</ul>
 		</li>
@@ -59,6 +59,7 @@
 			
 			animate: true,
 			paddingInlineStart: '10px',
+			cookie: true,
 		
 		} ).setCanvas( 'articleCanvas', new MyThree( function ( scene, options ) {
 
