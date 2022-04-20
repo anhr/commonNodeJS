@@ -51,7 +51,7 @@ class TreeView {
 					else elNested.id = branchId;
 
 				}
-				var boBranchOpen;
+				let boBranchOpen;
 				switch( cookie.get( cookieName + elNested.id ) ) {
 
 					case 'false': boBranchOpen = false; break;
