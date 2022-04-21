@@ -719,6 +719,24 @@ class ND {
 
 					}
 
+					//remove duplicate indices from value
+					for ( var i = value.length - 1; i >= 0; i--  ) {
+						
+						for ( var j = i - 1; j >= 0; j--  ) {
+
+							if ( value[i] === value[j] ) {
+
+								console.error( 'nD proxySegments() set: duplicate index = ' + value[i] );
+								value.splice( i, 1 );
+								continue;
+								
+							}
+							
+						}
+
+						
+					}
+
 					//Do not add a duplicate segment
 					for ( var i = 0; i < target.length; i++ ) {
 
@@ -1689,7 +1707,7 @@ if ( !edge.indices )
 							nd.intersection( geometryIntersection, iIntersections );
 							if ( iIntersections && iIntersections.length ) {
 
-								geometryIntersection.indices[s] = geometryIntersection.indices[s] || [];
+								geometryIntersection.indices[s] = geometryIntersection.indices[s] || proxySegments();
 								geometryIntersection.indices[s].push( iIntersections );
 								
 							}
@@ -1796,8 +1814,8 @@ if ( !edge.indices )
 
 												const ind = n - 4;
 												geometryIntersection.indices[ind] = geometryIntersection.indices[ind] || proxySegments();
-												if ( iIntersections ) iIntersections.push( geometryIntersection.indices[ind].length );
 												geometryIntersection.indices[ind].push( iIntersect );
+												if ( iIntersections ) iIntersections.push( iIntersect.index );
 												
 											}
 
