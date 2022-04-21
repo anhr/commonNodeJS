@@ -32,7 +32,7 @@
 	<ul id="myUL">
 		<li>
 			<span class="caret">Introduction</span>
-			<ul class="nested">
+			<ul class="nested hide">
 				<li>
 					Here I want to show a series of graphic objects of different space dimensions.
 					Each graphic object of the current space dimension is the result of the intersection of a graphic object of a higher space dimension with some panel except a 5D graphic object.
@@ -46,7 +46,7 @@
 		</li>
 		<li>
 			<span class="caret">5D.</span>
-			<ul class="nested" id="article5D">
+			<ul class="nested hide" id="article5D">
 				<li>
 					Here I am creating an 5D object.
 					Unfortunately, it is not possible to render the 5D object in our 3D space. Instead, you can see on the canvas below a projection of all the vertices of the 5D objects to 3D space.
@@ -64,7 +64,7 @@
 		</li>
 		<li>
 			<span class="caret">4D.</span>
-			<ul class="nested" id="article4D">
+			<ul class="nested hide" id="article4D">
 				<li>
 					Here I am creating an 4D object.
 					Unfortunately, it is not possible to render the 4D object in our 3D space. Instead, you can see on the canvas below a projection of all the vertices of the 4D objects to 3D space.
@@ -80,41 +80,67 @@
 				</li>
 			</ul>
 		</li>
+		<li>
+			<span class="caret">3D.</span>
+			<ul class="nested hide" id="article3D">
+				<li>
+					Click the "►" button in the lower left corner of the canvas to intersect the blue panel with the green graphic object.
+					<br>
+					You can see a white loop line if the blue panel in 3D canvas intersects with the green graphic object.
+					Real panel is surface with infinite length and width. But I have limited it to axes dimentions.
+					<div id="3D">
+						<img src="../../img/wait.gif">
+					</div>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<span class="caret">2D.</span>
+			<ul class="nested hide" id="article2D">
+				<li>
+					You can see a green loop line if the blue panel in 3D canvas intersects with the green graphic object.
+					<br>
+					The intersection panel in 2D space is infinity horozontal line. You can see the panel on the 2D canvas as a blue line.
+					I have limited it to axis dimention.
+					<br>
+					You can see a white horizontal line if the panel in 2D canvas intersects with the green graphic object.
+					<br>
+					Click the "►" button in the lower left corner of the canvas to intersect the blue line with the green graphic object.
+					<div id="2D">
+						<img src="../../img/wait.gif">
+					</div>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<span class="caret">1D.</span>
+			<ul class="nested hide" id="article1D">
+				<li>
+					You can see a green horizontal line if the blue line in 2D canvas intersects with the green graphic object.
+					<br>
+					The intersection panel in 1D space is a point. You can see the panel on the 1D canvas as a blue point.
+					<br>
+					You can see a white point if the panel intersects with the green line.
+					<br>
+					Click the "►" button in the lower left corner of the canvas to intersect the blue point with the green line.
+					<div id="1D">
+						<img src="../../img/wait.gif">
+					</div>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<span class="caret">0D.</span>
+			<ul class="nested hide" id="article0D">
+				<li>
+					You can see a green point in the center of 0D canvas if the blue point in 1D canvas intersects with the green line.
+					<div id="0D">
+						<img src="../../img/wait.gif">
+					</div>
+				</li>
+			</ul>
+		</li>
 	</ul>
-	Click the "►" button in the lower left corner of the canvas to intersect the blue panel with the green graphic object.
-	<br>
-	You can see a white loop line if the blue panel in 3D canvas intersects with the green graphic object.
-	Real panel is surface with infinite length and width. But I have limited it to axes dimentions.
-	<div id="3D">
-		<img src="../../img/wait.gif">
-	</div>
-	<h2>2D.</h2>
-	You can see a green loop line if the blue panel in 3D canvas intersects with the green graphic object.
-	<br>
-	The intersection panel in 2D space is infinity horozontal line. You can see the panel on the 2D canvas as a blue line.
-	I have limited it to axis dimention.
-	<br>
-	You can see a white horizontal line if the panel in 2D canvas intersects with the green graphic object.
-	<br>
-	Click the "►" button in the lower left corner of the canvas to intersect the blue line with the green graphic object.
-	<div id="2D">
-		<img src="../../img/wait.gif">
-	</div>
-	<h2>1D.</h2>
-	You can see a green horizontal line if the blue line in 2D canvas intersects with the green graphic object.
-	<br>
-	The intersection panel in 1D space is a point. You can see the panel on the 1D canvas as a blue point.
-	<br>
-	You can see a white point if the panel intersects with the green line.
-	<br>
-	Click the "►" button in the lower left corner of the canvas to intersect the blue point with the green line.
-	<div id="1D">
-		<img src="../../img/wait.gif">
-	</div>
-	<h2>0D.</h2>You can see a green point in the center of 0D canvas if the blue point in 1D canvas intersects with the green line.
-	<div id="0D">
-		<img src="../../img/wait.gif">
-	</div>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
 	<script type="module">
 
@@ -130,29 +156,29 @@
 
 		import ND from '../nD.js';
 
-		const treeView = new MyThree.TreeView();
-/*
-		///////////////////////////////////////
-		//Tree View
-		//https://www.w3schools.com/howto/howto_js_treeview.asp
-		var toggler = document.getElementsByClassName( "caret" );
-		var i;
-		for ( i = 0; i < toggler.length; i++ ) {
+		const treeView = new MyThree.TreeView( { animate: true, paddingInlineStart: '10px', cookie: true, } );
+		/*
+				///////////////////////////////////////
+				//Tree View
+				//https://www.w3schools.com/howto/howto_js_treeview.asp
+				var toggler = document.getElementsByClassName( "caret" );
+				var i;
+				for ( i = 0; i < toggler.length; i++ ) {
 
-			toggler[i].addEventListener( "click", function () {
+					toggler[i].addEventListener( "click", function () {
 
-				const elNested = this.parentElement.querySelector( ".nested" );
-				elNested.classList.toggle( "active" );
-				this.classList.toggle( "caret-down" );
+						const elNested = this.parentElement.querySelector( ".nested" );
+						elNested.classList.toggle( "active" );
+						this.classList.toggle( "caret-down" );
 
-				//если не выполнить эту команду, то меню на холсте будет состоять из двух строк
-				if ( elNested.myThree ) elNested.myThree.setSize( 300, 150 );
+						//если не выполнить эту команду, то меню на холсте будет состоять из двух строк
+						if ( elNested.myThree ) elNested.myThree.setSize( 300, 150 );
 
-			} );
+					} );
 
-		}
-		///////////////////////////////////////
-*/
+				}
+				///////////////////////////////////////
+		*/
 
 		const canvas1D = {}, canvas0D = {}, options = {
 
@@ -179,8 +205,8 @@
 			false,//3D
 			//true,//3D
 
-			//false,//4D
-			true,//4D
+			false,//4D
+			//true,//4D
 
 			//false,//5D
 			true,//5D
@@ -217,11 +243,7 @@
 					},
 					scene: scene,
 					options: options,
-					onIntersection: function ( nDgeometry ) {
-
-						if ( _4D ) _4D.geometry = nDgeometry;
-
-					}
+					onIntersection: function ( geometryIntersection ) { if ( _4D ) _4D.geometry = geometryIntersection; }
 
 				} );
 
@@ -238,10 +260,10 @@
 			} );
 			//если не выполнить эту команду, то холст будет пустой
 			treeView.setCanvas( 'article5D', myThree );
-/*
-			myThree.setSize( 300, 150 );
-			document.getElementById( 'article5D' ).myThree = myThree;
-*/
+			/*
+						myThree.setSize( 300, 150 );
+						document.getElementById( 'article5D' ).myThree = myThree;
+			*/
 
 		}
 
@@ -268,7 +290,7 @@
 					},
 					scene: scene,
 					options: options,
-					onIntersection: function ( nDgeometry ) { if ( _3D ) _3D.geometry = nDgeometry; }
+					onIntersection: function ( geometryIntersection ) { if ( _3D ) _3D.geometry = geometryIntersection; }
 
 				} );
 
@@ -288,9 +310,9 @@
 
 		//3D
 		var _3D;
-		new MyThree( function ( scene, options ) {
+		if ( D[3] ) {
 
-			if ( D[3] ) {
+			const myThree = new MyThree( function ( scene, options ) {
 
 				_3D = new ND( 3, {
 
@@ -359,31 +381,32 @@
 					},
 					scene: scene,
 					options: options,
-					onIntersection: function ( nDgeometry ) { if ( _2D ) _2D.geometry = nDgeometry; }
+					onIntersection: function ( geometryIntersection ) { if ( _2D ) _2D.geometry = geometryIntersection; }
 
 				} );
 
 				//new time of the player event
 				options.onSelectScene = function ( t ) { _3D.vectorPlane[2] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min ); }
 
-			}
+			}, {
 
-		}, {
+				elContainer: "3D",
+				playerOptions: Object.assign( {}, playerOptions ),
+				//player: false,
+				dat: {},
 
-			elContainer: "3D",
-			playerOptions: Object.assign( {}, playerOptions ),
-			//player: false,
-			dat: {},
+			} );
+			treeView.setCanvas( 'article3D', myThree );
 
-		} );
+		}
 
 		if ( _4D ) _4D.intersection();
 
 		//2D
 		var _2D;
-		new MyThree( function ( scene, options ) {
+		if ( D[2] ) {
 
-			if ( D[2] ) {
+			const myThree = new MyThree( function ( scene, options ) {
 
 				_2D = new ND( 2, {
 
@@ -407,38 +430,39 @@
 					},
 					scene: scene,
 					options: options,
-					onIntersection: function ( nDgeometry ) { if ( _1D ) _1D.geometry = nDgeometry; }
+					onIntersection: function ( geometryIntersection ) { if ( _1D ) _1D.geometry = geometryIntersection; }
 
 				} );
 
 				//new time of the player event
 				options.onSelectScene = function ( t ) { _2D.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min ); }
 
-			}
+			}, {
 
-		}, {
+				elContainer: "2D",
+				//axesHelper: false,
+				playerOptions: Object.assign( {}, playerOptions ),
+				//player: false,
+				dat: {},
+				//dat: false,
+				camera: options.camera,
+				orbitControls: false,
+				stereoEffect: false,
+				//scales: { x: {} },
 
-			elContainer: "2D",
-			//axesHelper: false,
-			playerOptions: Object.assign( {}, playerOptions ),
-			//player: false,
-			dat: {},
-			//dat: false,
-			camera: options.camera,
-			orbitControls: false,
-			stereoEffect: false,
-			//scales: { x: {} },
+			} );
+			treeView.setCanvas( 'article2D', myThree );
 
-		} );
+		}
 
 		//1D
 		var _1D;
-		new MyThree( function ( scene, options ) {
+		if ( D[1] ) {
 
-			canvas1D.scene = scene;
-			canvas1D.options = options;
-			if ( D[1] ) {
+			const myThree = new MyThree( function ( scene, options ) {
 
+				canvas1D.scene = scene;
+				canvas1D.options = options;
 				let point0D;
 				_1D = new ND( 1, {
 
@@ -450,10 +474,10 @@
 					},
 					scene: scene,
 					options: options,
-					onIntersection: function ( nDgeometry ) {
+					onIntersection: function ( geometryIntersection ) {
 
 						if ( !canvas0D.scene ) return;
-						if ( nDgeometry.position.length ) {
+						if ( geometryIntersection.position.length ) {
 
 							if ( !point0D ) {
 
@@ -493,82 +517,88 @@
 				//new time of the player event
 				options.onSelectScene = function ( t ) { if ( _1D ) _1D.vectorPlane[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min ); }
 
-			}
+			}, {
 
-		}, {
+				elContainer: "1D",
+				//axesHelper: false,
+				playerOptions: Object.assign( {}, playerOptions ),
+				//player: false,
+				dat: {},
+				//dat: false,
+				camera: options.camera,
+				/*
+							camera: {
 
-			elContainer: "1D",
-			//axesHelper: false,
-			playerOptions: Object.assign( {}, playerOptions ),
-			//player: false,
-			dat: {},
-			//dat: false,
-			camera: options.camera,
-			/*
-						camera: {
+								position: new THREE.Vector3( 0, 0, 5 ),
+								fov: 45,
+								near: 1,
+								far: 1000,
 
-							position: new THREE.Vector3( 0, 0, 5 ),
-							fov: 45,
-							near: 1,
-							far: 1000,
+							},
+				*/
+				orbitControls: false,
+				stereoEffect: false,
+				//scales: { x: {} },
 
-						},
-			*/
-			orbitControls: false,
-			stereoEffect: false,
-			//scales: { x: {} },
+			} );
+			treeView.setCanvas( 'article1D', myThree );
 
-		} );
+		}
 
 		//0D
 
-		new MyThree( function ( scene, options ) {
+		{
 
-			canvas0D.scene = scene;
-			canvas0D.options = options;
-			/*
-						//https://stackoverflow.com/a/68405743/5175935
-						const geometry = new THREE.BufferGeometry().setFromPoints( [
-							new THREE.Vector3( 1, 0, 0 ),//0
-							new THREE.Vector3( 0, 0, 0 ),//1
-							new THREE.Vector3( 0, 1, 0 ),//2
-							new THREE.Vector3( 1, 0, 0 ),//3
-							new THREE.Vector3( 0, 1, 0 ),//4
-							new THREE.Vector3( 1, 1, 0 ),//5
-						] );
+			const myThree = new MyThree( function ( scene, options ) {
 
-						const colors = [
-							255, 0, 0,
-							255, 0, 0,
-							0, 255, 0,
-							0, 255, 0,
-							0, 0, 255,
-							0, 0, 255,
-						];
+				canvas0D.scene = scene;
+				canvas0D.options = options;
+				/*
+							//https://stackoverflow.com/a/68405743/5175935
+							const geometry = new THREE.BufferGeometry().setFromPoints( [
+								new THREE.Vector3( 1, 0, 0 ),//0
+								new THREE.Vector3( 0, 0, 0 ),//1
+								new THREE.Vector3( 0, 1, 0 ),//2
+								new THREE.Vector3( 1, 0, 0 ),//3
+								new THREE.Vector3( 0, 1, 0 ),//4
+								new THREE.Vector3( 1, 1, 0 ),//5
+							] );
+	
+							const colors = [
+								255, 0, 0,
+								255, 0, 0,
+								0, 255, 0,
+								0, 255, 0,
+								0, 0, 255,
+								0, 0, 255,
+							];
+	
+							geometry.setAttribute( 'color', new THREE.Uint8BufferAttribute( colors, 3, true ) );
+							geometry.setIndex( [0, 1, 3, 2] );
+	
+							const material = new THREE.LineBasicMaterial( {
+								vertexColors: true
+							} );
+	
+							const lines = new THREE.LineSegments( geometry, material );
+							scene.add( lines );
+				*/
 
-						geometry.setAttribute( 'color', new THREE.Uint8BufferAttribute( colors, 3, true ) );
-						geometry.setIndex( [0, 1, 3, 2] );
+			}, {
 
-						const material = new THREE.LineBasicMaterial( {
-							vertexColors: true
-						} );
+				elContainer: "0D",
+				//scales: scales,
+				player: false,
+				//dat: { folderPoint: false, },
+				dat: false,
+				axesHelper: false,
+				orbitControls: false,
+				stereoEffect: false,
 
-						const lines = new THREE.LineSegments( geometry, material );
-						scene.add( lines );
-			*/
+			} );
+			treeView.setCanvas( 'article0D', myThree );
 
-		}, {
-
-			elContainer: "0D",
-			//scales: scales,
-			player: false,
-			//dat: { folderPoint: false, },
-			dat: false,
-			axesHelper: false,
-			orbitControls: false,
-			stereoEffect: false,
-
-		} );
+		}
 
 	</script>
 </body>

@@ -1795,6 +1795,7 @@ if ( !edge.indices )
 
 												const ind = n - 4;
 												geometryIntersection.indices[ind] = geometryIntersection.indices[ind] || proxySegments();
+												if ( iIntersections ) iIntersections.push( geometryIntersection.indices[ind].length );
 												geometryIntersection.indices[ind].push( iIntersect );
 												
 											}
@@ -1816,7 +1817,7 @@ if ( !edge.indices )
 
 								if ( ( edge.length !== 2 ) || ( edge[0] === edge[1] ) ) {
 
-									//длинна массива edge модет быть меньше 2 если всего одна вершина находится на панели
+									//длинна массива edge может быть меньше 2 если всего одна вершина находится на панели
 									//В этом случае линия пересечения geometryIntersection состоит из одной точки и невозможно создать ребро
 									if ( !edge.boVerticeOnPanel ) {
 										
