@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-ND.html">ND</a>~</span>ND<span class="signature">(n, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-ND.html">ND</a>~</span>ND<span class="signature">(n, settings<span class="signature-attributes">opt</span>, position<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
             <div class="class-description">N-dimensional graphics.
 Checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.</div>
@@ -47,7 +47,7 @@ Checks for a collision between an n-dimensional plane and an n-dimensional graph
     
 
     
-    <h4 class="name" id="ND"><span class="type-signature"></span>new ND<span class="signature">(n, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ND"><span class="type-signature"></span>new ND<span class="signature">(n, settings<span class="signature-attributes">opt</span>, position<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -539,10 +539,60 @@ intersecting with the <b>settings.geometry</b> n-dimensional graphical object.</
         </tr>
 
     
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
 
         <tr>
             
-                <td class="name"><code>scene</code></td>
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Array - position of the n-dimensional graphical object in n-dimensional coordinates.
+<pre>
+number - position of the 0 coordinate of the n-dimensional graphical object.
+<pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>settings.scene</code></td>
             
 
             <td class="type">
@@ -567,6 +617,10 @@ intersecting with the <b>settings.geometry</b> n-dimensional graphical object.</
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last"><a href="https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene">THREE.Scene</a>.
 Define <b>scene</b> if you want visualise n-dimensional plane and n-dimensional object to 3-D space of the <b>scene</b>.</td>
@@ -576,7 +630,7 @@ Define <b>scene</b> if you want visualise n-dimensional plane and n-dimensional 
 
         <tr>
             
-                <td class="name"><code>options</code></td>
+                <td class="name"><code>settings.options</code></td>
             
 
             <td class="type">
@@ -601,6 +655,10 @@ Define <b>scene</b> if you want visualise n-dimensional plane and n-dimensional 
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 Uses only if <b>scene</b> is defined.</td>
@@ -610,7 +668,7 @@ Uses only if <b>scene</b> is defined.</td>
 
         <tr>
             
-                <td class="name"><code>onIntersection</code></td>
+                <td class="name"><code>settings.onIntersection</code></td>
             
 
             <td class="type">
@@ -635,16 +693,13 @@ Uses only if <b>scene</b> is defined.</td>
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">Plane and object intersection event.
 The <b>onIntersection</b> function parameter is the (n-1)-dimensional geometry of the intersection if a collision occurred, or undefined if a collision did not occur.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
         </tr>
 
     
@@ -685,7 +740,7 @@ The <b>onIntersection</b> function parameter is the (n-1)-dimensional geometry o
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line195">line 195</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line199">line 199</a>
     </li></ul></dd>
     
 
@@ -989,7 +1044,7 @@ The <b>onIntersection</b> function parameter is the (n-1)-dimensional geometry o
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line1585">line 1585</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line1660">line 1660</a>
     </li></ul></dd>
     
 
@@ -1051,7 +1106,7 @@ The <b>onIntersection</b> function parameter is the (n-1)-dimensional geometry o
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Apr 21 2022 07:41:17 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu Apr 28 2022 08:12:21 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -185,6 +185,10 @@ class ND {
 	 * In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.
 	 * @param {Array} [settings.vectorPlane] n-dimensional position of the panel
 	 * intersecting with the <b>settings.geometry</b> n-dimensional graphical object.
+	 * @param {Array|number} [position] Array - position of the n-dimensional graphical object in n-dimensional coordinates.
+	 * <pre>
+	 * number - position of the 0 coordinate of the n-dimensional graphical object.
+	 * <pre>
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * Define <b>scene</b> if you want visualise n-dimensional plane and n-dimensional object to 3-D space of the <b>scene</b>.
 	 * @param {Options} [settings.options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
