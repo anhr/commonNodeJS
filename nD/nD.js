@@ -1714,6 +1714,72 @@ if ( !edge.indices )
 				}
 				
 			}
+			if ( !geometryIntersection.position.isProxy )
+				geometryIntersection.position = new Proxy( geometryIntersection.position, {
+		
+					get: function ( target, name, args ) {
+		
+						const i = parseInt( name );
+						if ( !isNaN( i ) ) {
+		
+							return  target[i];
+		
+						}
+						switch ( name ) {
+
+							case 'push': return target.push;
+							case 'length': return target.length;
+							case 'forEach': return target.forEach;
+							case 'isProxy': return true;
+							default: console.error( 'ND: settings.geometry.position Proxy. Invalid name: ' + name );
+		
+						}
+		
+					},
+					set: function ( target, name, value ) {
+	
+						const i = parseInt( name );
+						if ( isNaN( i ) ) {
+							
+							if ( name === "boPositionError" ) {
+								
+								target[name] = value;
+								return true;
+
+							}
+							return target[name];
+
+						}
+						if ( i >= target.length ) {
+	
+							//find duplicate item
+							var boDuplicate  = false;
+							for ( var j = 0; j < i; j++ ) {
+	
+								boDuplicate = true;
+								for ( var k = 0; k < target[j].length; k++ ) {
+	
+									if ( target[j][k] !== value[k] ) {
+	
+										boDuplicate = false;
+										break;
+										
+									}
+									
+								}
+								if ( !boDuplicate ) break;
+								
+							}
+							if ( !boDuplicate ) target.push( value );
+							return target.length;
+	
+						}
+						target[i] = value;
+						return true;
+	
+					}
+					
+				} );
 			switch ( n ) {
 
 				case 1:
