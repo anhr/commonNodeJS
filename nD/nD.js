@@ -364,6 +364,7 @@ class ND {
 //		settings.position = new Vector( settings.position );
 		settings.position = settings.position || [];
 		if ( !( settings.position instanceof Array ) ) settings.position = [settings.position];
+		if ( settings.geometry.position.target ) settings.geometry.position = settings.geometry.position.target;
 		settings.geometry.position.boPositionError = true;
 		const positionWorld = new Proxy( settings.geometry.position ? settings.geometry.position : [], {
 	
@@ -465,6 +466,7 @@ class ND {
 						case 'forEach': return target.forEach;
 						case 'isProxy': return true;
 						case 'boPositionError': return target.boPositionError;
+						case 'target': return target;
 						default: console.error( 'ND: settings.geometry.position Proxy. Invalid name: ' + name );
 	
 					}
@@ -1747,6 +1749,7 @@ if ( !edge.indices )
 							case 'length': return target.length;
 							case 'forEach': return target.forEach;
 							case 'isProxy': return true;
+							case 'target': return target;
 							default: console.error( 'ND: settings.geometry.position Proxy. Invalid name: ' + name );
 		
 						}
