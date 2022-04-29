@@ -269,13 +269,13 @@
 
 		//4D
 		var _4D;
-		treeView.setCanvas( 'article4D', new MyThree( function ( scene, options ) {
+		if ( D[4] ) {
 
-			if ( D[4] ) {
+			treeView.setCanvas( 'article4D', new MyThree( function ( scene, options ) {
 
-				position: [ 0.1, -0.2, 0.3, 5 ],
 				_4D = new ND( 4, {
 
+					position: [0.1, -0.2, 0.3, 5],
 					geometry: {
 
 						//tetrahedron
@@ -298,16 +298,16 @@
 				//new time of the player event
 				options.onSelectScene = function ( t ) { _4D.vectorPlane[3] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min ); }
 
-			}
+			}, {
 
-		}, {
+				elContainer: "4D",
+				playerOptions: Object.assign( {}, playerOptions ),
+				//player: false,
+				dat: {},
 
-			elContainer: "4D",
-			playerOptions: Object.assign( {}, playerOptions ),
-			//player: false,
-			dat: {},
+			} ) );
 
-		} ) );
+		}
 
 		//3D
 		var _3D;

@@ -378,7 +378,7 @@ class ND {
 						
 						if ( !( settings.position instanceof Array ) ) {
 							
-							console.error( 'ND: settings.position is not array' );
+							console.error( 'ND get positionWorld: settings.position is not array' );
 							settings.position = [settings.position];
 
 						}
@@ -386,7 +386,9 @@ class ND {
 						//значение target остается прежним
 						settings.geometry.position[i].forEach( ( value, i ) => {
 	
-							array.push( value + ( settings.position[i] !== undefined ? settings.position[i] : 0 ) );
+							if ( value !== undefined )
+								array.push( value + ( settings.position[i] !== undefined ? settings.position[i] : 0 ) );
+							else console.error( 'ND get positionWorld: invalig array item = ' + value );
 							
 						} )
 
@@ -413,7 +415,15 @@ class ND {
 						return function () {
 
 							const v = [];
-							target.forEach( ( value, i ) => v[i] = positionWorld[i] );
+//							target.forEach( ( value, i ) => v[i] = positionWorld[i] );
+							settings.geometry.position.boPositionError = false;
+							settings.geometry.position.forEach( ( value, i ) => {
+								
+								v[i] = positionWorld[i]
+								settings.geometry.position.boPositionError = false;
+							
+							} );
+							settings.geometry.position.boPositionError = true;
 							return v;
 		
 						}
@@ -436,6 +446,12 @@ class ND {
 	
 //						return new Vector().copy( target[i] ).add( settings.position );
 						if ( settings.geometry.position.boPositionError ) console.error( 'ND: Use position instread settings.geometry.position' )
+						if ( i >= target.length ) {
+
+							console.error( 'ND get settings.geometry.position: invalid index = ' + i );
+							return;
+							
+						}
 						if ( target[i] instanceof Array )
 							return  target[i];
 						console.error( 'ND: get settings.geometry.position is not array.' )
@@ -1767,7 +1783,7 @@ if ( !edge.indices )
 									}
 									
 								}
-								if ( !boDuplicate ) break;
+								if ( boDuplicate ) break;
 								
 							}
 							if ( !boDuplicate ) target.push( value );
