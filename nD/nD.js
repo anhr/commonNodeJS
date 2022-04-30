@@ -412,6 +412,7 @@ class ND {
 					case 'length': return settings.geometry.position.length;
 					case 'forEach': return settings.geometry.position.forEach;
 					case 'isProxy': return true;
+					case 'target': return;// target; Если вершинрнуть target, то неверно сработает if ( settings.geometry.position.target ) и позиция intersection будет неверна
 					case 'copy': 
 						return function () {
 
@@ -656,7 +657,7 @@ class ND {
 
 															geometry: {
 
-																position: settings.geometry.position,
+																position: positionWorld,//settings.geometry.position,
 																indices: [[indices]],
 																iAxes: [axis, n - 1],
 
