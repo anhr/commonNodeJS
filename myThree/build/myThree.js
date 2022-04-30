@@ -9892,6 +9892,10 @@ function Options(options) {
 									if (options.controllers && !options.controllers.boControllers) options.controllers = new Controllers(options.controllers);
 									return options.controllers;
 						}
+			}), defineProperty(_Object$definePropert, 'title', {
+						get: function get$$1() {
+									return options.title;
+						}
 			}), _Object$definePropert));
 			for (var propertyName in options) {
 						if (this[propertyName] === undefined) console.error('Options: options.' + propertyName + ' key is hidden');
@@ -13582,7 +13586,166 @@ function ND(n) {
 		var position = settings.geometry;
 		settings.geometry = { position: position };
 	}
-	settings.geometry.position = settings.geometry.position || [];
+	var Vector = function () {
+		function Vector() {
+			var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+			var vectorSettings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+			classCallCheck(this, Vector);
+			if (array.isVector) return array;
+			if (array instanceof Array === false) {
+				if (typeof array === 'number') array = [array];else if (array.array) array = array.array;else console.error('ND.Vector: invalid array type');
+			}
+			if (n !== undefined) while (array.length < n) {
+				array.push(0);
+			}
+			return new Proxy(array, {
+				get: function get$$1(target, name) {
+					switch (name) {
+						case "length":
+							return n + 1;
+						case "array":
+							return array;
+						case "point":
+							var _THREE = three$1.THREE;
+							return new _THREE.Vector3(this.get(undefined, 0), this.get(undefined, 1), this.get(undefined, 2));
+						case "copy":
+							return function (v) {
+								target.forEach(function (value, i) {
+									return target[i] = v[i];
+								});
+								return this;
+							};
+						case "add":
+							return function (v) {
+								target.forEach(function (value, i) {
+									return target[i] += v[i];
+								});
+								return this;
+							};
+						case "index":
+							return vectorSettings.index;
+						case "isVector":
+							return true;
+					}
+					var i = parseInt(name);
+					if (isNaN(i)) {
+						console.error('Vector.get: invalid name: ' + name);
+						return;
+					}
+					if (i >= n) return 0;
+					if (array.length > n && settings.geometry.iAxes && i < settings.geometry.iAxes.length) i = settings.geometry.iAxes[i];
+					return array[i];
+				},
+				set: function set$$1(target, name, value) {
+					if (name === "onChange") {
+						vectorSettings.onChange = value;
+						return vectorSettings.onChange;
+					}
+					var i = parseInt(name);
+					if (i >= array.length) {
+						array.push(value);
+						return array.length;
+					}
+					array[i] = value;
+					_ND.intersection();
+					if (vectorSettings.onChange) vectorSettings.onChange();
+					return true;
+				}
+			});
+		}
+		createClass(Vector, [{
+			key: 'push',
+			value: function push(value) {
+				console.error('ND.Vector.push() unavailable');
+			}
+		}, {
+			key: 'pop',
+			value: function pop() {
+				console.error('ND.Vector.pop() unavailable');
+			}
+		}]);
+		return Vector;
+	}();
+	settings.position = settings.position || [];
+	if (!(settings.position instanceof Array)) settings.position = [settings.position];
+	if (settings.geometry.position.target) settings.geometry.position = settings.geometry.position.target;
+	settings.geometry.position.boPositionError = true;
+	var positionWorld = new Proxy(settings.geometry.position ? settings.geometry.position : [], {
+		get: function get$$1(target, name) {
+			var i = parseInt(name);
+			if (!isNaN(i)) {
+				var array = [];
+				settings.geometry.position.boPositionError = false;
+				if (settings.geometry.position[i] !== undefined) {
+					if (!(settings.position instanceof Array)) {
+						console.error('ND get positionWorld: settings.position is not array');
+						settings.position = [settings.position];
+					}
+					settings.geometry.position[i].forEach(function (value, i) {
+						if (value !== undefined) array.push(value + (settings.position[i] !== undefined ? settings.position[i] : 0));else console.error('ND get positionWorld: invalig array item = ' + value);
+					});
+				} else console.error('ND positionWorld get index');
+				settings.geometry.position.boPositionError = true;
+				return array;
+			}
+			switch (name) {
+				case 'push':
+					return settings.geometry.position.push;
+				case 'length':
+					return settings.geometry.position.length;
+				case 'forEach':
+					return settings.geometry.position.forEach;
+				case 'isProxy':
+					return true;
+				case 'target':
+					return;
+				case 'copy':
+					return function () {
+						var v = [];
+						settings.geometry.position.boPositionError = false;
+						settings.geometry.position.forEach(function (value, i) {
+							v[i] = positionWorld[i];
+							settings.geometry.position.boPositionError = false;
+						});
+						settings.geometry.position.boPositionError = true;
+						return v;
+					};
+				default:
+					console.error('ND: settings.geometry.position Proxy. Invalid name: ' + name);
+			}
+		}
+	});
+	if (!settings.geometry.position.isProxy) settings.geometry.position = new Proxy(settings.geometry.position ? settings.geometry.position : [], {
+		get: function get$$1(target, name, args) {
+			var i = parseInt(name);
+			if (!isNaN(i)) {
+				if (settings.geometry.position.boPositionError) console.error('ND: Use position instread settings.geometry.position');
+				if (i >= target.length) {
+					console.error('ND get settings.geometry.position: invalid index = ' + i);
+					return;
+				}
+				if (target[i] instanceof Array) return target[i];
+				console.error('ND: get settings.geometry.position is not array.');
+				return [target[i]];
+			}
+			switch (name) {
+				case 'push':
+					return target.push;
+				case 'length':
+					return target.length;
+				case 'forEach':
+					return target.forEach;
+				case 'isProxy':
+					return true;
+				case 'boPositionError':
+					return target.boPositionError;
+				case 'target':
+					return target;
+				default:
+					console.error('ND: settings.geometry.position Proxy. Invalid name: ' + name);
+			}
+		}
+	});
 	settings.geometry.indices = settings.geometry.indices || [];
 	var edges = settings.geometry.indices[0],
 	    boArray = edges instanceof Array;
@@ -13628,11 +13791,11 @@ function ND(n) {
 									console.error('ND: settings.geometry.indices[]intersection. indices[0] === indices[1] = ' + indices[0]);
 									return;
 								}
-								var position0 = new Vector(settings.geometry.position[indices[0]]),
-								    position1 = new Vector(settings.geometry.position[indices[1]]);
+								var position0 = new Vector(positionWorld[indices[0]]),
+								    position1 = new Vector(positionWorld[indices[1]]);
 								switch (n) {
 									case 1:
-										if (vectorPlane[0].between(position0[0], position1[0], true)) geometryIntersection.position.push(vectorPlane[0]);
+										if (vectorPlane[0].between(position0[0], position1[0], true)) geometryIntersection.position.push([vectorPlane[0]]);
 										break;
 									case 2:
 										var vector;
@@ -13643,22 +13806,25 @@ function ND(n) {
 											if (isNaN(x) || x === undefined) {
 												console.error('ND.intersection: x = ' + x + ' position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0]);
 											}
-											if (!x.between(position0[0], position1[0], true)) break;
+											if (!x.between(position0[0], position1[0], true)) {
+												indices.intersection = {};
+												break;
+											}
 											vector = [x, vectorPlane[1]];
 										}
 										indicesIntersection(vector);
 										break;
 									case 3:
-										var position;
+										var pos;
 										var d = 5.56e-17;
-										if (Math.abs(vectorPlane[n - 1] - position1[n - 1]) < d) position = position1;else if (Math.abs(vectorPlane[n - 1] - position0[n - 1]) < d) position = position0;
-										if (position) {
-											indicesIntersection([position[0], position[1]]);
+										if (Math.abs(vectorPlane[n - 1] - position1[n - 1]) < d) pos = position1;else if (Math.abs(vectorPlane[n - 1] - position0[n - 1]) < d) pos = position0;
+										if (pos) {
+											indicesIntersection([pos[0], pos[1]]);
 											indices.intersection.boVerticeOnPanel = true;
 										} else {
 											var nD02 = new ND(n - 1, {
 												geometry: {
-													position: settings.geometry.position,
+													position: positionWorld.copy(),
 													indices: [[indices]],
 													iAxes: [1, 2]
 												},
@@ -13667,7 +13833,7 @@ function ND(n) {
 											    arrayIntersects02 = nD02.intersection();
 											var nD12 = new ND(n - 1, {
 												geometry: {
-													position: settings.geometry.position,
+													position: positionWorld.copy(),
 													indices: [[indices]],
 													iAxes: [0, 2]
 												},
@@ -13681,7 +13847,7 @@ function ND(n) {
 										var intersectionAxis = function intersectionAxis(axis) {
 											var nD0 = new ND(2, {
 												geometry: {
-													position: settings.geometry.position,
+													position: positionWorld,
 													indices: [[indices]],
 													iAxes: [axis, n - 1]
 												},
@@ -13781,7 +13947,7 @@ function ND(n) {
 				var _edges = settings.geometry.indices[0];
 				if (settings.geometry.position) {
 					indices = [];
-					settings.geometry.position.forEach(function (indice, i) {
+					positionWorld.forEach(function (indice, i) {
 						indices.push(i);
 					});
 					_edges.push(indices);
@@ -13823,6 +13989,15 @@ function ND(n) {
 					console.error('ND settings.geometry.indices[' + l + ']: invalid name: ' + name);
 					return false;
 				}
+				for (var i = value.length - 1; i >= 0; i--) {
+					for (var j = i - 1; j >= 0; j--) {
+						if (value[i] === value[j]) {
+							console.error('nD proxySegments() set: duplicate index = ' + value[i]);
+							value.splice(i, 1);
+							continue;
+						}
+					}
+				}
 				for (var i = 0; i < target.length; i++) {
 					var segment = target[i],
 					    aDetected = [];
@@ -13857,7 +14032,7 @@ function ND(n) {
 	function addEdges(level, geometry) {
 		var positionIndices = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
 		var levelIndices = arguments[3];
-		if (positionIndices.length === 0) settings.geometry.position.forEach(function (position, i) {
+		if (positionIndices.length === 0) positionWorld.forEach(function (position, i) {
 			positionIndices.push(i);
 		});
 		geometry = geometry || settings.geometry;
@@ -13939,69 +14114,6 @@ function ND(n) {
 		if (arraySegment.length > 0) indice.push(arraySegment);
 	}
 	var vectorPlane;
-	var Vector = function () {
-		function Vector() {
-			var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-			var vectorSettings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-			classCallCheck(this, Vector);
-			if (array instanceof Array === false) {
-				if (typeof array === 'number') array = [array];else if (array.array) array = array.array;else console.error('ND.Vector: invalid array type');
-			}
-			if (n !== undefined) while (array.length < n) {
-				array.push(0);
-			}
-			return new Proxy(array, {
-				get: function get$$1(target, name) {
-					switch (name) {
-						case "length":
-							return n + 1;
-						case "array":
-							return array;
-						case "point":
-							var _THREE = three$1.THREE;
-							return new _THREE.Vector3(this.get(undefined, 0), this.get(undefined, 1), this.get(undefined, 2));
-						case "index":
-							return vectorSettings.index;
-					}
-					var i = parseInt(name);
-					if (isNaN(i)) {
-						console.error('Vector.get: invalid name: ' + name);
-						return;
-					}
-					if (i >= n) return 0;
-					if (array.length > n && settings.geometry.iAxes && i < settings.geometry.iAxes.length) i = settings.geometry.iAxes[i];
-					return array[i];
-				},
-				set: function set$$1(target, name, value) {
-					if (name === "onChange") {
-						vectorSettings.onChange = value;
-						return vectorSettings.onChange;
-					}
-					var i = parseInt(name);
-					if (i >= array.length) {
-						array.push(value);
-						return array.length;
-					}
-					array[i] = value;
-					_ND.intersection();
-					if (vectorSettings.onChange) vectorSettings.onChange();
-					return true;
-				}
-			});
-		}
-		createClass(Vector, [{
-			key: 'push',
-			value: function push(value) {
-				console.error('ND.Vector.push() unavailable');
-			}
-		}, {
-			key: 'pop',
-			value: function pop() {
-				console.error('ND.Vector.pop() unavailable');
-			}
-		}]);
-		return Vector;
-	}();
 	var geometry = {
 		get position() {
 			return new Proxy(this, {
@@ -14015,7 +14127,7 @@ function ND(n) {
 						console.error('ND.geometry.position: invalid name: ' + name);
 						return;
 					}
-					return new Vector(settings.geometry.position[i]);
+					return new Vector(positionWorld[i]);
 				}
 			});
 		},
@@ -14357,6 +14469,55 @@ function ND(n) {
 				}
 			}
 		}
+		if (!geometryIntersection.position.isProxy) geometryIntersection.position = new Proxy(geometryIntersection.position, {
+			get: function get$$1(target, name, args) {
+				var i = parseInt(name);
+				if (!isNaN(i)) {
+					return target[i];
+				}
+				switch (name) {
+					case 'push':
+						return target.push;
+					case 'length':
+						return target.length;
+					case 'forEach':
+						return target.forEach;
+					case 'isProxy':
+						return true;
+					case 'target':
+						return target;
+					default:
+						console.error('ND: settings.geometry.position Proxy. Invalid name: ' + name);
+				}
+			},
+			set: function set$$1(target, name, value) {
+				var i = parseInt(name);
+				if (isNaN(i)) {
+					if (name === "boPositionError") {
+						target[name] = value;
+						return true;
+					}
+					return target[name];
+				}
+				if (i >= target.length) {
+					var boDuplicate = false;
+					for (var j = 0; j < i; j++) {
+						boDuplicate = true;
+						for (var k = 0; k < target[j].length; k++) {
+							if (target[j][k] !== value[k]) {
+								boDuplicate = false;
+								break;
+							}
+						}
+						if (boDuplicate) break;
+					}
+					if (!boDuplicate) target.push(value);
+					return target.length;
+				}
+				target[i] = value;
+				return true;
+			}
+		});
 		switch (n) {
 			case 1:
 				if (settings.geometry.indices.length !== 1) console.error('ND.intersection: under constraction. Это не линия.');
@@ -14387,7 +14548,10 @@ function ND(n) {
 					}
 					if (settings.indice === undefined) {
 						for (var i = 0; i < segments.length; i++) {
-							var nd = new ND(n, { geometry: settings.geometry, indice: i, iSegments: iSegments }),
+							var nd = new ND(n, { geometry: {
+									indices: settings.geometry.indices,
+									position: positionWorld.copy()
+								}, indice: i, iSegments: iSegments }),
 							    s = iSegments - 1;
 							var iIntersections;
 							if (s !== 0) {
@@ -14395,7 +14559,7 @@ function ND(n) {
 							}
 							nd.intersection(geometryIntersection, iIntersections);
 							if (iIntersections && iIntersections.length) {
-								geometryIntersection.indices[s] = geometryIntersection.indices[s] || [];
+								geometryIntersection.indices[s] = geometryIntersection.indices[s] || proxySegments();
 								geometryIntersection.indices[s].push(iIntersections);
 							}
 						}
@@ -14452,6 +14616,7 @@ function ND(n) {
 												var ind = n - 4;
 												geometryIntersection.indices[ind] = geometryIntersection.indices[ind] || proxySegments();
 												geometryIntersection.indices[ind].push(iIntersect);
+												if (iIntersections) iIntersections.push(iIntersect.index);
 											}
 										}
 									} else console.error('ND.intersection: n = ' + n + ' under constraction');
@@ -17759,28 +17924,71 @@ var TreeView =
 function TreeView() {
 	var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	classCallCheck(this, TreeView);
-	var toggler = document.getElementsByClassName("caret");
-	var i;
+	var toggler = document.getElementsByClassName("caret"),
+	    cookieName = 'TreeView_';
+	var i,
+	    id = 1;
 	for (i = 0; i < toggler.length; i++) {
-		var elNested = toggler[i].parentElement.querySelector(".nested");
-		if (settings.animate !== undefined) elNested.classList.add('b-toggle');
+		var elNested = toggler[i].parentElement.querySelector(".nested"),
+		    boHide = elNested.classList.contains('hide');
+		if (settings.animate !== undefined) {
+			elNested.style.display = boHide ? 'none' : 'block';
+			elNested.classList.add('b-toggle');
+		}
 		if (settings.paddingInlineStart !== undefined) elNested.style.paddingInlineStart = settings.paddingInlineStart;
+		if (settings.cookie) {
+			if (elNested.id === '') {
+				var branchId = 'branch_' + id;
+				id++;
+				if (document.getElementById(branchId)) console.error('duplicate branch id: ' + branchId);else elNested.id = branchId;
+			}
+			var boBranchOpen = void 0;
+			switch (cookie.get(cookieName + elNested.id)) {
+				case 'false':
+					boBranchOpen = false;break;
+				case 'true':
+					boBranchOpen = true;break;
+				case '':
+					break;
+				default:
+					console.error('TreeView: Invalid cookie value');
+			}
+			if (boBranchOpen !== undefined && boBranchOpen === boHide) {
+				elNested.classList.toggle("hide");
+				elNested.classList.toggle("active");
+				elNested.style.display = boHide ? 'block' : 'none';
+			}
+		}
+		if (!elNested.classList.contains('hide')) {
+			var classList = elNested.parentElement.querySelector(".caret").classList;
+			if (!classList.contains("caret-down")) classList.toggle("caret-down");
+		}
 		toggler[i].addEventListener("click", function () {
 			var elNested = this.parentElement.querySelector(".nested");
+			if (elNested.classList.contains('hide')) {
+				elNested.style.display = 'block';
+				elNested.boTimeout = false;
+			} else {
+				elNested.boTimeout = true;
+				setTimeout(function () {
+					if (elNested.boTimeout) elNested.style.display = 'none';
+				}, 1000);
+			}
 			elNested.classList.toggle("hide");
 			elNested.classList.toggle("active");
 			elNested.style.maxHeight = this.parentElement.querySelector(".active") ? elNested.offsetHeight + 'px' : '';
 			this.classList.toggle("caret-down");
+			if (settings.cookie) cookie.set(cookieName + elNested.id, !elNested.classList.contains('hide'));
 			if (elNested.myThree) elNested.myThree.setSize();
 		});
 	}
-	this.setCanvas = function (articleId, myThree) {
+	this.setCanvas = function (branchId, myThree) {
 		var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 		settings.size = settings.size || {};
 		if (settings.size.width === undefined) settings.size.width = 300;
 		if (settings.size.height === undefined) settings.size.height = 150;
 		myThree.setSize(settings.size);
-		document.getElementById(articleId).myThree = myThree;
+		document.getElementById(branchId).myThree = myThree;
 	};
 };
 
@@ -17842,6 +18050,15 @@ function MyThree(createXDobjects, options) {
 	if (three$1.dat && options.dat !== false) {
 		options.dat = options.dat || {};
 		options.dat.parent = elContainer;
+	}
+	if (options.title) {
+		var _elDiv = document.createElement('div');
+		_elDiv.style.position = 'absolute';
+		_elDiv.style.top = '0px';
+		_elDiv.style.color = 'white';
+		_elDiv.style.padding = '3px';
+		_elDiv.innerHTML = options.title;
+		elContainer.appendChild(_elDiv);
 	}
 	options = new Options(options);
 	options.saveMeshDefault = function (mesh) {

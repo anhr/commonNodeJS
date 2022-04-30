@@ -245,6 +245,7 @@ class MyThree {
 	 * or element <b>id</b>.
 	 * </pre>
 	 * @param {event} [options.onSelectScene] New time of the <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
+	 * @param {string} [options.title] text in the top left corner of the canvas.
 	 */
 	constructor( createXDobjects, options ) {
 
@@ -287,6 +288,18 @@ class MyThree {
 
 			options.dat = options.dat || {};
 			options.dat.parent = elContainer;
+
+		}
+
+		if ( options.title ) {
+			
+			const elDiv = document.createElement( 'div' );
+			elDiv.style.position = 'absolute';
+			elDiv.style.top = '0px';
+			elDiv.style.color = 'white';
+			elDiv.style.padding = '3px';
+			elDiv.innerHTML = options.title;
+			elContainer.appendChild( elDiv );
 
 		}
 

@@ -1559,6 +1559,18 @@ class Options {
 
 			},
 
+			/**
+			 * getter
+			 * <pre>
+			 * title
+			 * </pre>
+			 **/
+			title: {
+
+				get: function () { return options.title; }
+
+			},
+
 		} ); 
 
 		//For debugging. Find a hidden keys
