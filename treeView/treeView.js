@@ -41,6 +41,7 @@ class TreeView {
 
 			}
 			if ( settings.paddingInlineStart !== undefined ) elNested.style.paddingInlineStart = settings.paddingInlineStart;
+			let boBranchOpen = settings.open ? settings.open : false;
 			if ( settings.cookie ) {
 
 				if ( elNested.id === '' ) {
@@ -51,7 +52,6 @@ class TreeView {
 					else elNested.id = branchId;
 
 				}
-				let boBranchOpen;
 				switch( cookie.get( cookieName + elNested.id ) ) {
 
 					case 'false': boBranchOpen = false; break;
@@ -60,14 +60,14 @@ class TreeView {
 					default: console.error( 'TreeView: Invalid cookie value' );
 						
 				}
-				if ( ( boBranchOpen !== undefined ) && ( boBranchOpen === boHide ) ) {
-					
-					elNested.classList.toggle( "hide" );
-					elNested.classList.toggle( "active" );
-					elNested.style.display = boHide ? 'block' : 'none';
-
-				}
 				
+			}
+			if ( ( boBranchOpen !== undefined ) && ( boBranchOpen === boHide ) ) {
+				
+				elNested.classList.toggle( "hide" );
+				elNested.classList.toggle( "active" );
+				elNested.style.display = boHide ? 'block' : 'none';
+
 			}
 			if ( !elNested.classList.contains('hide') ) {
 				

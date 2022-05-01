@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -156,29 +156,7 @@
 
 		import ND from '../nD.js';
 
-		const treeView = new MyThree.TreeView( { animate: true, paddingInlineStart: '10px', cookie: true, } );
-		/*
-				///////////////////////////////////////
-				//Tree View
-				//https://www.w3schools.com/howto/howto_js_treeview.asp
-				var toggler = document.getElementsByClassName( "caret" );
-				var i;
-				for ( i = 0; i < toggler.length; i++ ) {
-
-					toggler[i].addEventListener( "click", function () {
-
-						const elNested = this.parentElement.querySelector( ".nested" );
-						elNested.classList.toggle( "active" );
-						this.classList.toggle( "caret-down" );
-
-						//если не выполнить эту команду, то меню на холсте будет состоять из двух строк
-						if ( elNested.myThree ) elNested.myThree.setSize( 300, 150 );
-
-					} );
-
-				}
-				///////////////////////////////////////
-		*/
+		const treeView = new MyThree.TreeView( { animate: true, paddingInlineStart: '10px', open: true, cookie: true, } );
 
 		const canvas1D = {}, canvas0D = {}, options = {
 
@@ -256,6 +234,7 @@
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
 				dat: {},
+				title: '5D',
 
 			} );
 			//если не выполнить эту команду, то холст будет пустой
@@ -304,6 +283,7 @@
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
 				dat: {},
+				title: '4D',
 
 			} ) );
 
@@ -397,6 +377,7 @@
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
 				dat: {},
+				title: '3D',
 
 			} );
 			treeView.setCanvas( 'article3D', myThree );
@@ -453,6 +434,7 @@
 				orbitControls: false,
 				stereoEffect: false,
 				//scales: { x: {} },
+				title: '2D',
 
 			} );
 			treeView.setCanvas( 'article2D', myThree );
@@ -531,19 +513,10 @@
 				dat: {},
 				//dat: false,
 				camera: options.camera,
-				/*
-							camera: {
-
-								position: new THREE.Vector3( 0, 0, 5 ),
-								fov: 45,
-								near: 1,
-								far: 1000,
-
-							},
-				*/
 				orbitControls: false,
 				stereoEffect: false,
 				//scales: { x: {} },
+				title: '1D',
 
 			} );
 			treeView.setCanvas( 'article1D', myThree );
@@ -599,6 +572,7 @@
 				axesHelper: false,
 				orbitControls: false,
 				stereoEffect: false,
+				title: '0D',
 
 			} );
 			treeView.setCanvas( 'article0D', myThree );
