@@ -18,6 +18,7 @@ import three from '../three.js'
 import MyThree from '../myThree/myThree.js';
 //import MyThree from '../../build/myThree.module.js';
 //import MyThree from '../../build/myThree.module.min.js';
+import PositionController from '../PositionController.js';
 
 //debug
 import { SpriteText } from '../SpriteText/SpriteText.js'
@@ -206,39 +207,6 @@ class ND {
 			settings.geometry = { position: position, }
 
 		}
-//		settings.geometry.position = settings.geometry.position || [];
-/*
-		settings.geometry.position = new Proxy( {
-
-			[Symbol.iterator]: Array.prototype.values,
-			forEach: Array.prototype.forEach,
-
-		}, {
-
-			get( target, property ) {
-
-				const i = parseInt( property );
-				if ( !isNaN( i ) )
-					return target[i];
-				switch ( property ) {
-
-//					case 'push': return target.push;
-					case 'length': return target.length;
-					case 'isProxy': return true;
-
-				}
-				return Reflect.get( target, property );
-
-			},
-			has( target, property ) {
-
-				if ( ['length'].includes( property ) ) return true;
-				return Reflect.has( target, property );
-
-			},
-
-		} );
-*/		
 
 		class Vector {
 
@@ -361,9 +329,89 @@ class ND {
 
 		}
 
-//		settings.position = new Vector( settings.position );
-		settings.position = settings.position || [];
-		if ( !( settings.position instanceof Array ) ) settings.position = [settings.position];
+//		settings.position = settings.position || [];
+//		if ( !( settings.position instanceof Array ) ) settings.position = [settings.position];
+		function update() {
+			
+			_ND.intersection();
+			object3D.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
+			object3D.geometry.attributes.position.needsUpdate = true;
+//			projectTo3D();
+			
+		}
+		if ( !settings.position || !settings.position.isProxy )
+			settings.position = new Proxy( settings.position ? settings.position instanceof Array ? settings.position : [settings.position] : [], {
+
+				get: function ( target, name, args ) {
+
+					const i = parseInt( name );
+					if ( !isNaN( i ) ) {
+
+/*
+						if ( i >= target.length ) {
+
+							console.error( 'ND get settings.geometry.position: invalid index = ' + i );
+							return;
+
+						}
+*/
+						if ( target instanceof Array ) {
+							
+							if ( i < target.length && ( target[i] !== undefined ) )
+								return target[i];
+							return 0;
+/*							
+							if ( i < n ) return 0;
+							console.error( 'ND get settings.position: invalid index = ' + i );
+							return;
+*/
+
+						}
+						return target;
+
+					}
+					switch ( name ) {
+
+						case 'isProxy': return true;
+						case 'folders':
+							target.folders = target.folders || [];
+							return target.folders;
+						case 'arguments': return;//for dat.GUI
+/*
+						case 'push': return target.push;
+						case 'length': return target.length;
+						case 'forEach': return target.forEach;
+						case 'boPositionError': return target.boPositionError;
+						case 'target': return target;
+*/
+						default: console.error( 'ND: settings.geometry.position Proxy. Invalid name: ' + name );
+
+					}
+
+				},
+				set: function ( target, name, value ) {
+
+					target[name] = value;
+					
+					const input = target.folders[name].cPosition.domElement.querySelector('input');
+					if ( parseFloat( input.value ) !== value ) {
+						
+						input.value = value;
+						update();
+
+					}
+/*					
+					const cPosition = target.folders[name].cPosition;
+					if ( cPosition.getValue() !== value )
+						cPosition.setValue( value );
+*/
+					return true;
+					
+				},
+
+
+			} );
+
 		if ( settings.geometry.position.target ) settings.geometry.position = settings.geometry.position.target;
 		settings.geometry.position.boPositionError = true;
 		const positionWorld = new Proxy( settings.geometry.position ? settings.geometry.position : [], {
@@ -386,9 +434,14 @@ class ND {
 						//если использовать target то при обновлении settings.geometry.position, когда новая фигрура создается из холста более высокого измерения
 						//значение target остается прежним
 						settings.geometry.position[i].forEach( ( value, i ) => {
-	
+
+/*							
+							if ( i >= n )
+								return;
+*/
+//const a = settings.position[1];							
 							if ( value !== undefined )
-								array.push( value + ( settings.position[i] !== undefined ? settings.position[i] : 0 ) );
+								array.push( value + settings.position[i] );
 							else console.error( 'ND get positionWorld: invalig array item = ' + value );
 							
 						} )
@@ -1358,6 +1411,10 @@ class ND {
 					objects: 'Objects',
 					objectsTitle: 'The selected object lists the indexes of the objects that this object consists of. It can be indexes of bodies.',
 
+					position: 'Position',
+					defaultButton: 'Default',
+					defaultPositionTitle: 'Restore default position',
+
 					notSelected: 'Not selected',
 
 				};
@@ -1379,6 +1436,10 @@ class ND {
 						lang.objects = 'Объекты';
 						lang.objectsTitle = 'В выбранном объекте перечислены индексы объектов, из которого состоит этот объект. Это могут быть индексы тел.';
 
+						lang.position = 'Позиция';
+						lang.defaultButton = 'Восстановить';
+						lang.defaultPositionTitle = 'Восстановить позицию объекта по умолчанию';
+
 						lang.notSelected = 'Не выбран';
 
 						break;
@@ -1396,7 +1457,7 @@ class ND {
 
 				}
 				for ( var i = fParent.__controllers.length - 1; i >= 0; i-- ) { fParent.remove( fParent.__controllers[i] ); }
-//				fParent.__controllers.forEach( controller => fParent.remove( controller ) );
+
 				const indices = geometry.geometry.indices, segmentIndex = indices.length - 1;
 				function addController(
 					segmentIndex,//settings.geometry.indices index
@@ -1437,6 +1498,7 @@ class ND {
 
 					}
 					const fSegment = fParent.addFolder( name );
+					fSegment.userData = { objectItems: true, }
 					dat.folderNameAndTitle( fSegment, name, title );
 					const cSegment = fSegment.add( items, 'Items', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
 
@@ -1628,12 +1690,30 @@ class ND {
 
 				}
 				const childFolders = Object.keys(fParent.__folders);
+				childFolders.forEach( folderName => {
+
+					const childFolder = fParent.__folders[folderName];
+					if ( childFolder.userData && childFolder.userData.objectItems ) {
+						
+						const controller = childFolder.__controllers[0];
+						if ( controller && controller.__select.selectedIndex != 0 ) {
+							
+							controller.__select.selectedIndex = 0;
+							controller.__onChange();
+
+						}
+						
+					}
+					fParent.removeFolder( childFolder );
+					
+				} );
+/*				
 				switch( childFolders.length ){
 
 					case 0: break;
 					case 1:
 						const childFolder = fParent.__folders[childFolders[0]], controller = childFolder.__controllers[0];
-						if ( controller.__select.selectedIndex != 0 ) {
+						if ( controller && controller.__select.selectedIndex != 0 ) {
 							
 							controller.__select.selectedIndex = 0;
 							controller.__onChange();
@@ -1644,6 +1724,35 @@ class ND {
 					default: console.error( 'ND.create3DObject.nd: object.userData.nd. Invalid childFolders.length = ' + childFolders.length );
 						
 				}
+*/				
+
+				const fPosition = fParent.addFolder( lang.position );
+				for ( var i = 0; i < n; i++ ) {
+
+					const axisName = i, f = fPosition.addFolder( axisName );
+//					settings.position.folders[i] = f;
+					settings.position.folders[i] = {
+						
+						positionController: new PositionController( function ( shift ) { settings.position[axisName] += shift; },
+																   { getLanguageCode: options.getLanguageCode, } ),
+						default: settings.position[i],
+						
+					};
+					f.add( settings.position.folders[i].positionController );
+					
+					settings.position.folders[i].cPosition = dat.controllerZeroStep( f, settings.position, i, function ( value ) { update(); } );
+					dat.controllerNameAndTitle( settings.position.folders[i].cPosition, axisName );
+					
+				}
+
+				//Restore default position.
+				const buttonPositionDefault = fPosition.add( {
+	
+					defaultF: function ( value ) { settings.position.folders.forEach( item => item.cPosition.setValue( item.default ) ); },
+	
+				}, 'defaultF' );
+				dat.controllerNameAndTitle( buttonPositionDefault, lang.defaultButton, lang.defaultPositionTitle );
+				
 				addController( segmentIndex, fParent );
 			
 			}

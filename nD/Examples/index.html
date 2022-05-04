@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -233,16 +233,12 @@
 				elContainer: "5D",
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
-				dat: {},
+				//dat: false,
 				title: '5D',
 
 			} );
 			//если не выполнить эту команду, то холст будет пустой
 			treeView.setCanvas( 'article5D', myThree );
-			/*
-						myThree.setSize( 300, 150 );
-						document.getElementById( 'article5D' ).myThree = myThree;
-			*/
 
 		}
 
@@ -282,7 +278,7 @@
 				elContainer: "4D",
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
-				dat: {},
+				//dat: false,
 				title: '4D',
 
 			} ) );
@@ -376,7 +372,7 @@
 				elContainer: "3D",
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
-				dat: {},
+				//dat: false,
 				title: '3D',
 
 			} );
@@ -428,7 +424,6 @@
 				//axesHelper: false,
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
-				dat: {},
 				//dat: false,
 				camera: options.camera,
 				orbitControls: false,
@@ -452,11 +447,12 @@
 				let point0D;
 				_1D = new ND( 1, {
 
+					//position: [0.1, 78],//tesing of settings.position = new Proxy
 					position: 0.1,
 					geometry: {
 
-						position: [[-0.5, 1], [0.5]],
-						//indices: ['a',[0], [1, 2], 1],
+						//position: [[-0.5, 1], [0.5]],//tesing of settings.position = new Proxy
+						position: [[-0.5], [0.5]],
 
 					},
 					scene: scene,
@@ -510,7 +506,6 @@
 				//axesHelper: false,
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
-				dat: {},
 				//dat: false,
 				camera: options.camera,
 				orbitControls: false,
