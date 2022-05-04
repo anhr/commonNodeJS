@@ -337,6 +337,7 @@ class ND {
 			object3D.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
 			object3D.geometry.attributes.position.needsUpdate = true;
 //			projectTo3D();
+			options.guiSelectPoint.update();
 			
 		}
 		if ( !settings.position || !settings.position.isProxy )
