@@ -174,7 +174,8 @@ class MyThree {
 	 *	"en" - English language,
 	 *	"ru" - Russian.
 	 * </pre>
-	 * @param {object} [options.dat] use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {object|boolean} [options.dat] use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * <p>false - do not use dat-gui.</p>
 	 * @param {GUI} options.dat.dat [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {GUI} [options.dat.gui] new [dat.GUI()]{@link https://github.com/dataarts/dat.gui} instance.
 	 * <p>
