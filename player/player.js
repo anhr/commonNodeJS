@@ -1740,7 +1740,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 	function setAttributes( a, b ) {
 
-		if ( !mesh.geometry )
+		if ( !mesh.geometry || mesh.userData.nd )
 			return;
 			
 		const attributes = mesh.geometry.attributes,

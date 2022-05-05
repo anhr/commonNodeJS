@@ -1352,7 +1352,7 @@ class ND {
 
 			if ( !geometry.D3 ) {
 
-				const nD = new ND( n, { geometry: geometry } );
+				const nD = new ND( n, { geometry: geometry, } );
 				geometry = nD.geometry;
 				
 			}
