@@ -393,7 +393,7 @@ class ND {
 		if ( !settings.rotation || !settings.rotation.isProxy ) {
 
 			if ( ( n === 2 ) && ( typeof settings.rotation === "number" ) )
-				settings.rotation = [0, 0, settings.rotation];
+				settings.rotation = [0, 0, settings.rotation];//Rotation of 2D objects is only available around axis 2 only
 			settings.rotation = new Proxy( settings.rotation ? settings.rotation instanceof Array ? settings.rotation : [settings.rotation] : [], {
 
 				get: function ( target, name, args ) {
