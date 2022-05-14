@@ -178,11 +178,11 @@
 			false,//1D
 			//true,//1D
 
-			//false,//2D
-			true,//2D
+			false,//2D
+			//true,//2D
 
-			false,//3D
-			//true,//3D
+			//false,//3D
+			true,//3D
 
 			false,//4D
 			//true,//4D
@@ -296,7 +296,8 @@
 				_3D = new ND( 3, {
 
 					position: position,
-					rotation: Math.PI / 4,
+					//rotation: Math.PI / 4,
+					rotation: [Math.PI / 4, 1, 2],
 					geometry: {
 
 						/*
