@@ -190,6 +190,10 @@ class ND {
 	 * <pre>
 	 * number - position of the 0 coordinate of the n-dimensional graphical object.
 	 * <pre>
+	 * @param {Array|number} [rotation] Array - rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
+	 * <pre>
+	 * number - rotation in radians around axis 0 or rotation around axis 2 for 2D objects i.e. space dimension n = 2.
+	 * <pre>
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * Define <b>scene</b> if you want visualise n-dimensional plane and n-dimensional object to 3-D space of the <b>scene</b>.
 	 * @param {Options} [settings.options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
