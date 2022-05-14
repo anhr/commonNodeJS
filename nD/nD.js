@@ -390,7 +390,10 @@ class ND {
 
 			} );
 
-		if ( !settings.rotation || !settings.rotation.isProxy )
+		if ( !settings.rotation || !settings.rotation.isProxy ) {
+
+			if ( ( n === 2 ) && ( typeof settings.rotation === "number" ) )
+				settings.rotation = [0, 0, settings.rotation];
 			settings.rotation = new Proxy( settings.rotation ? settings.rotation instanceof Array ? settings.rotation : [settings.rotation] : [], {
 
 				get: function ( target, name, args ) {
@@ -437,6 +440,9 @@ class ND {
 
 
 			} );
+
+		}
+
 /*
 class Quaternion2 {
 
