@@ -21,6 +21,7 @@
 	-->
 	<!-- Tree View https://www.w3schools.com/howto/howto_js_treeview.asp -->
 	<link type="text/css" rel="stylesheet" href="../../treeView/treeView.css">
+	<script src="../../../../mathjs/mathjs/lib/browser/math.js"></script>
 </head>
 <body>
 	<p>
@@ -174,20 +175,20 @@
 		const D = [
 			true,//0D
 
-			//false,//1D
-			true,//1D
+			false,//1D
+			//true,//1D
 
 			//false,//2D
 			true,//2D
 
-			//false,//3D
-			true,//3D
+			false,//3D
+			//true,//3D
 
-			//false,//4D
-			true,//4D
+			false,//4D
+			//true,//4D
 
-			//false,//5D
-			true,//5D
+			false,//5D
+			//true,//5D
 		],
 			playerOptions = {
 
@@ -295,6 +296,7 @@
 				_3D = new ND( 3, {
 
 					position: position,
+					rotation: Math.PI / 4,
 					geometry: {
 
 						/*
@@ -390,7 +392,8 @@
 
 				_2D = new ND( 2, {
 
-					position: [ 0.1, -0.2 ],
+					position: [0.1, -0.2],
+					rotation: [0, 0, Math.PI / 4],
 					geometry: {
 
 						position: [

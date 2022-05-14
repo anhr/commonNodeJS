@@ -264,13 +264,15 @@ class ND {
 							/*
 							* Copies the values of the v to this vector.
 							*/
+/*								
 							case "copy":
 								return function ( v ) {
 
 									target.forEach( ( value, i ) => target[i] = v[i] );
 									return this;
-				
+
 								}
+*/
 							/*
 							* Adds v to this vector.
 							*/
@@ -348,24 +350,11 @@ class ND {
 					const i = parseInt( name );
 					if ( !isNaN( i ) ) {
 
-/*
-						if ( i >= target.length ) {
-
-							console.error( 'ND get settings.geometry.position: invalid index = ' + i );
-							return;
-
-						}
-*/
 						if ( target instanceof Array ) {
 							
 							if ( i < target.length && ( target[i] !== undefined ) )
 								return target[i];
 							return 0;
-/*							
-							if ( i < n ) return 0;
-							console.error( 'ND get settings.position: invalid index = ' + i );
-							return;
-*/
 
 						}
 						return target;
@@ -378,14 +367,7 @@ class ND {
 							target.folders = target.folders || [];
 							return target.folders;
 						case 'arguments': return;//for dat.GUI
-/*
-						case 'push': return target.push;
-						case 'length': return target.length;
-						case 'forEach': return target.forEach;
-						case 'boPositionError': return target.boPositionError;
-						case 'target': return target;
-*/
-						default: console.error( 'ND: settings.geometry.position Proxy. Invalid name: ' + name );
+						default: console.error( 'ND: settings.position Proxy. Invalid name: ' + name );
 
 					}
 
@@ -401,17 +383,152 @@ class ND {
 						update();
 
 					}
-/*					
-					const cPosition = target.folders[name].cPosition;
-					if ( cPosition.getValue() !== value )
-						cPosition.setValue( value );
-*/
 					return true;
 					
 				},
 
 
 			} );
+
+		if ( !settings.rotation || !settings.rotation.isProxy )
+			settings.rotation = new Proxy( settings.rotation ? settings.rotation instanceof Array ? settings.rotation : [settings.rotation] : [], {
+
+				get: function ( target, name, args ) {
+
+					const i = parseInt( name );
+					if ( !isNaN( i ) ) {
+
+						if ( target instanceof Array ) {
+
+							if ( i < target.length && ( target[i] !== undefined ) )
+								return target[i];
+							return 0;
+
+						}
+						return target;
+
+					}
+					switch ( name ) {
+
+						case 'isProxy': return true;
+						case 'folders':
+							target.folders = target.folders || [];
+							return target.folders;
+						case 'arguments': return;//for dat.GUI
+						default: console.error( 'ND: settings.rotation Proxy. Invalid name: ' + name );
+
+					}
+
+				},
+				set: function ( target, name, value ) {
+
+					target[name] = value;
+
+					const input = target.folders[name].cRotation.domElement.querySelector( 'input' );
+					if ( parseFloat( input.value ) !== value ) {
+
+						input.value = value;
+						update();
+
+					}
+					return true;
+
+				},
+
+
+			} );
+/*
+class Quaternion2 {
+
+	constructor() { }
+	setFromEuler( euler, update ) {
+
+
+//				const x = euler.x, y = euler._y, z = euler._z;//, order = euler._order;
+//				const x = settings.rotation[0], y = settings.rotation[1], z = settings.rotation[2];//, order = euler._order;
+		const rotation = settings.rotation;
+
+		// http://www.mathworks.com/matlabcentral/fileexchange/
+		// 	20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/
+		//	content/SpinCalc.m
+
+		const cos = Math.cos;
+		const sin = Math.sin;
+
+		const c = [];
+		for ( var i = 0; i < n; i++ ) c[i] = cos( rotation[i] / 2 );
+
+		const s = [];
+		for ( var i = 0; i < n; i++ ) s[i] = sin( rotation[i] / 2 );
+
+		this._x = s1 * c2 * c3 + c1 * s2 * s3;
+		this._y = c1 * s2 * c3 - s1 * c2 * s3;
+		this._z = c1 * c2 * s3 + s1 * s2 * c3;
+		this._w = c1 * c2 * c3 - s1 * s2 * s3;
+
+
+		if ( update !== false ) this._onChangeCallback();
+
+		return this;
+
+	}
+	_onChangeCallback() { }
+
+}
+const _quaternion2 = new Quaternion2();
+const Quaternion = new Proxy( [], {
+
+	get: function ( target, name ) {
+
+		const i = parseInt( name );
+		if ( !isNaN( i ) ) {
+
+			console.log( 'get Quaternion i = ' + i );
+
+		}
+		switch ( name ) {
+
+			default: console.error( 'ND: get Quaternion. Invalid name: ' + name );
+
+		}
+
+	},
+
+} );
+*/
+/*
+		const _quaternion = [];
+		_quaternion.setFromEuler = function ( euler, update ) {
+
+
+			//				const x = euler.x, y = euler._y, z = euler._z;//, order = euler._order;
+			//				const x = settings.rotation[0], y = settings.rotation[1], z = settings.rotation[2];//, order = euler._order;
+			const rotation = settings.rotation;
+
+			// http://www.mathworks.com/matlabcentral/fileexchange/
+			// 	20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/
+			//	content/SpinCalc.m
+
+			const cos = Math.cos;
+			const sin = Math.sin;
+
+			const c = [];
+			for ( var i = 0; i < n; i++ ) c[i] = cos( rotation[i] / 2 );
+
+			const s = [];
+			for ( var i = 0; i < n; i++ ) s[i] = sin( rotation[i] / 2 );
+
+			this[0] = s[0] * c[1] * c[2] + c[0] * s[1] * s[2];
+			this[1] = c[0] * s[1] * c[2] - s[0] * c[1] * s[2];
+			this[2] = c[0] * c[1] * s[2] + s[0] * s[1] * c[2];
+			this[3] = c[0] * c[1] * c[2] - s[0] * s[1] * s[2];
+
+//			if ( update !== false ) this._onChangeCallback();
+
+			return this;
+
+		}
+*/
 
 		if ( settings.geometry.position.target ) settings.geometry.position = settings.geometry.position.target;
 		settings.geometry.position.boPositionError = true;
@@ -421,42 +538,208 @@ class ND {
 
 				const i = parseInt( name );
 				if ( !isNaN( i ) ) {
-
+/*
+if ( n === 2 )
+	console.log('n === 2');
+*/
 					const array = [];
 					settings.geometry.position.boPositionError = false;
 					if ( settings.geometry.position[i] !== undefined ) {
-						
+
 						if ( !( settings.position instanceof Array ) ) {
-							
+
 							console.error( 'ND get positionWorld: settings.position is not array' );
 							settings.position = [settings.position];
 
 						}
 						//если использовать target то при обновлении settings.geometry.position, когда новая фигрура создается из холста более высокого измерения
 						//значение target остается прежним
-						settings.geometry.position[i].forEach( ( value, i ) => {
+						/*						
+												const p2 = settings.geometry.position.clone(i);
+												p2.applyEuler();// new Euler() );
+						*/
+						/*
+						const THREE = three.THREE;
+						const angle = settings.rotation;
+						const a = new THREE.Euler( angle[0], angle[1], angle[2], 'XYZ' );
+						const p = settings.geometry.position.clone(i);
+						const b = new THREE.Vector3( p[0], p[1], p[2] );
+						b.applyEuler(a);
+						p[0] = b.x; p[1] = b.y; p[2] = b.z;
+						*/
+/*
+						function getMatrixX( alpha ) {
 
-/*							
-							if ( i >= n )
-								return;
+							const cos = Math.cos( alpha ), sin = Math.sin( alpha );
+							return math.matrix( [[1, 0, 0], [0, cos, -sin], [0, sin, cos]] );
+
+						}
+						const mX = getMatrixX( settings.rotation[0] );
+						function getMatrixY( alpha ) {
+
+							const cos = Math.cos( alpha ), sin = Math.sin( alpha );
+							return math.matrix( [[cos, 0, sin], [0, 1, 0], [-sin, 0, cos]] );
+
+						}
+						const mY = getMatrixY( settings.rotation[1] );
+						function getMatrixZ( alpha ) {
+
+							const cos = Math.cos( alpha ), sin = Math.sin( alpha );
+							return math.matrix( [[cos, -sin, 0], [sin, cos, 0], [0, 0, 1]] );
+
+						}
+						const mZ = getMatrixZ( settings.rotation[2] );
+						const m = math.multiply( math.multiply( mX, mY ), mZ );
+						const p = math.multiply( m, settings.geometry.position[i] );
 */
-//const a = settings.position[1];							
-							if ( value !== undefined )
-								array.push( value + settings.position[i] );
-							else console.error( 'ND get positionWorld: invalig array item = ' + value );
+						//is rotation?
+						var boRotation = false;
+						if ( n === 2 ) {
+
+							//вращение только вокруг оси 2
+							if ( settings.rotation[2] !== 0 ) boRotation = true;
+								
+						} else for ( var j = 0; j < n; j++ ) {
 							
-						} )
+							if ( settings.rotation[j] !== 0 ) {
+
+								boRotation = true;
+								break;
+								
+							}
+								
+						}
+						
+						if ( boRotation ) {
+
+							function getMatrix( index ) {
+
+								const alpha = settings.rotation[index], cos = Math.cos( alpha ), sin = Math.sin( alpha ),
+									array = [];
+								if ( n === 2 ) {
+
+									//https://ru.wikipedia.org/wiki/%D0%9C%D0%B0%D1%82%D1%80%D0%B8%D1%86%D0%B0_%D0%BF%D0%BE%D0%B2%D0%BE%D1%80%D0%BE%D1%82%D0%B0
+									array.push( [cos, -sin] );
+									array.push( [sin, cos] );
+									
+								} else for ( var j = 0; j < n; j++ ) {
+
+									function addRow( first, second ) {
+	
+										for ( var k = 0; k < n; k++ ) {
+	
+											switch ( k ) {
+	
+												case index - 1: row.push( ( ( index === ( n - 1 ) ) && ( k === 1 ) ) ? second ://второе значение в первом ряду когда синусы и кочинусы в начале матрицы
+													first ); break;
+												case index + 1: row.push( index === 0 ? first : second ); break;
+												default: row.push( ( k === ( n - 1 ) ) && ( index === 0 ) ? second :
+													( k === 0 ) && ( index === ( n - 1 ) ) ? first : 0 );
+	
+											}
+	
+										}
+	
+									}
+									const row = [];
+									switch ( j ) {
+
+										case index - 1:
+
+											if ( ( index === ( n - 1 ) && ( j === 1 ) ) ) addRow( sin, cos );//второй ряд с синусом и косинусинусом в начале матрицы
+											else addRow( cos, sin );//..., cos, 0, sin,...
+											break;
+
+										case ( index + 1 ):
+
+											if ( index === 0 ) addRow( cos, -sin );//..., cos, 0, -sin,...
+											else addRow( -sin, cos );//..., -sin, 0, cos,...
+											break;
+
+										case index:
+											for ( var k = 0; k < n; k++ ) {
+
+												//..., 0, 1, 0,...
+												if ( k === index ) row.push( 1 );
+												else row.push( 0 );
+
+											}
+											break;
+										default: if ( ( j === ( n - 1 ) ) && ( index === 0 ) ) addRow( sin, cos );//добавить косинусы и синусы в конце матрицы
+										else if ( ( j === 0 ) && ( index === ( n - 1 ) ) ) addRow( cos, -sin );//добавить косинусы и синусы в начале матрицы
+										else console.error( 'ND.intersection positionWorld: Invalid index = ' + index );// row.push( 0 );
+
+									}
+
+									array.push( row );
+								}
+								return math.matrix( array );
+
+							}
+/*
+												const mXa = getMatrix( 0 );
+												const mYa = getMatrix( 1 );
+												const mZa = getMatrix( 2 );
+												const ma = math.multiply( math.multiply( mXa, mYa ), mZa );
+												const p2 = math.multiply( ma, settings.geometry.position[i] );
+						*/
+							var m3;
+							if ( n === 2 ) m3 = getMatrix( 2 );//вращение только вокруг оси 2
+							else for ( var j = 0; j < n; j++ ) {
+
+								const m = getMatrix( j );
+								if ( m3 ) m3 = math.multiply( m3, m );
+								else m3 = m;
+
+							}
+							var position = [];
+							for ( var j = 0; j < n; j++ ) position.push( settings.geometry.position[i][j] );
+							const p = math.multiply( m3, position );
+							/*						
+													const p2 = math.multiply( math.multiply( math.multiply( math.rotationMatrix(settings.rotation[0], [1, 0, 0]),
+																										 math.rotationMatrix(settings.rotation[1], [0, 1, 0])),
+																						   math.rotationMatrix(settings.rotation[2], [0, 0, 1])),
+																			settings.geometry.position[i] );
+							*/
+							/*
+													var p;
+													for ( var j = 0; j < n; j++ ) {
+							
+														const arrayRotationAxis = [];
+														for ( var k = 0; k < n; k++ ) arrayRotationAxis.push( j === k ? 1 : 0 );
+														const rotationMatrix = math.rotationMatrix(settings.rotation[j], arrayRotationAxis );
+														if ( p ) p = math.multiply( p, rotationMatrix );
+														else p = rotationMatrix;
+														
+													}
+													p = math.multiply( p, settings.geometry.position[i] );
+							*/
+							p.forEach( ( value, i ) => {
+
+								if ( value !== undefined ) {
+
+									array.push( value + settings.position[i] );
+
+								} else console.error( 'ND get positionWorld: invalig array item = ' + value );
+
+							} )
+
+						} else {
+
+//							for ( var j = 0; j < n; j++ ) array.push( settings.geometry.position[i][j] + settings.position[j] );
+							settings.geometry.position[i].forEach( ( value, j ) => array.push( settings.geometry.position[i][j] + settings.position[j] ) );
+/*							
+							settings.geometry.position.boPositionError = false;
+							const value = new Vector().copy( target[i] ).add( settings.position );
+							settings.geometry.position.boPositionError = true;
+							return value;
+*/
+
+						}
 
 					} else console.error('ND positionWorld get index')
 					settings.geometry.position.boPositionError = true;
 					return array;
-					
-/*					
-					settings.geometry.position.boPositionError = false;
-					const value = new Vector().copy( target[i] ).add( settings.position );
-					settings.geometry.position.boPositionError = true;
-					return value;
-*/
 //					return target[i];
 
 				}
@@ -522,6 +805,44 @@ class ND {
 						case 'isProxy': return true;
 						case 'boPositionError': return target.boPositionError;
 						case 'target': return target;
+						/*
+						* Returns a new vector with the same values as this one.
+						*/
+						case "clone":
+							return function ( i ) {
+
+								const v = [];
+								target[i].forEach( ( value, j ) => v[j] = target[i][j] );
+/*								
+								v.applyQuaternion = function( q ) {
+							
+							
+									// calculate quat * vector
+
+									const ix =   q[3] * this[0] + q[1] * this[2] - q[2] * this[1];
+									const iy =   q[3] * this[1] + q[2] * this[0] - q[0] * this[2];
+									const iz =   q[3] * this[2] + q[0] * this[1] - q[1] * this[0];
+									const iw = - q[0] * this[0] - q[1] * this[1] - q[2] * this[2];
+							
+									// calculate result * inverse quat
+									this[0] = ix * q[3] + iw * - q[0] + iy * - q[2] - iz * - q[1];
+									this[1] = iy * q[3] + iw * - q[1] + iz * - q[0] - ix * - q[2];
+									this[2] = iz * q[3] + iw * - q[2] + ix * - q[1] - iy * - q[0];
+							
+									return this;
+							
+								}
+*/								
+/*								
+								v.applyEuler = function( euler ) {
+
+									return this.applyQuaternion( _quaternion.setFromEuler( euler ) );
+									
+								}
+*/
+								return v;
+			
+							}
 						default: console.error( 'ND: settings.geometry.position Proxy. Invalid name: ' + name );
 	
 					}
@@ -1413,8 +1734,10 @@ class ND {
 					objectsTitle: 'The selected object lists the indexes of the objects that this object consists of. It can be indexes of bodies.',
 
 					position: 'Position',
+					rotation: 'Rotation',
 					defaultButton: 'Default',
 					defaultPositionTitle: 'Restore default position',
+					defaultRotationTitle: 'Restore default rotation',
 
 					notSelected: 'Not selected',
 
@@ -1438,8 +1761,10 @@ class ND {
 						lang.objectsTitle = 'В выбранном объекте перечислены индексы объектов, из которого состоит этот объект. Это могут быть индексы тел.';
 
 						lang.position = 'Позиция';
+						lang.rotation = 'Вращение';
 						lang.defaultButton = 'Восстановить';
 						lang.defaultPositionTitle = 'Восстановить позицию объекта по умолчанию';
+						lang.defaultRotationTitle = 'Восстановить вращение объекта по умолчанию',
 
 						lang.notSelected = 'Не выбран';
 
@@ -1726,25 +2051,60 @@ class ND {
 						
 				}
 */				
-
-				const fPosition = fParent.addFolder( lang.position );
-				for ( var i = 0; i < n; i++ ) {
-
-					const axisName = i, f = fPosition.addFolder( axisName );
-//					settings.position.folders[i] = f;
-					settings.position.folders[i] = {
-						
-						positionController: new PositionController( function ( shift ) { settings.position[axisName] += shift; },
-																   { getLanguageCode: options.getLanguageCode, } ),
-						default: settings.position[i],
-						
-					};
-					f.add( settings.position.folders[i].positionController );
+				const fPosition = fParent.addFolder( lang.position ),
+					fRotation = fParent.addFolder( lang.rotation );
+				function rotation( i ) {
 					
-					settings.position.folders[i].cPosition = dat.controllerZeroStep( f, settings.position, i, function ( value ) { update(); } );
-					dat.controllerNameAndTitle( settings.position.folders[i].cPosition, axisName );
+					settings.rotation.folders[i] = {
+
+						cRotation: fRotation.add( settings.rotation, i, 0, Math.PI * 2, 0.01 ).onChange( function ( value ) { update(); } ),
+						default: settings.rotation[i],
+
+					}
 					
 				}
+				for ( var i = 0; i < n; i++ ) {
+
+					const axisName = i;
+
+					//position
+					{
+						
+						const f = fPosition.addFolder( axisName );
+						settings.position.folders[i] = {
+	
+							positionController: new PositionController( function ( shift ) { settings.position[axisName] += shift; },
+								{ getLanguageCode: options.getLanguageCode, } ),
+							default: settings.position[i],
+	
+						};
+						f.add( settings.position.folders[i].positionController );
+	
+						settings.position.folders[i].cPosition = dat.controllerZeroStep( f, settings.position, i, function ( value ) { update(); } );
+						dat.controllerNameAndTitle( settings.position.folders[i].cPosition, axisName );
+
+					}
+
+					//rotation
+					if ( n > 2 ) {
+
+						rotation( i );
+/*						
+						settings.rotation.folders[i] = {
+
+							cRotation: fRotation.add( settings.rotation, axisName, 0, Math.PI * 2, 0.01 ).onChange( function ( value ) { update(); } ),
+							default: settings.rotation[i],
+
+						}
+*/
+
+					}
+
+				}
+				
+				//rotation поворот только вокруг оси 2
+				if ( n === 2 ) rotation( 2 );
+
 
 				//Restore default position.
 				const buttonPositionDefault = fPosition.add( {
@@ -1753,6 +2113,14 @@ class ND {
 	
 				}, 'defaultF' );
 				dat.controllerNameAndTitle( buttonPositionDefault, lang.defaultButton, lang.defaultPositionTitle );
+
+				//Restore default rotation.
+				const buttonRotationDefault = fRotation.add( {
+
+					defaultF: function ( value ) { settings.rotation.folders.forEach( item => item.cRotation.setValue( item.default ) ); },
+
+				}, 'defaultF' );
+				dat.controllerNameAndTitle( buttonRotationDefault, lang.defaultButton, lang.defaultRotationTitle );
 				
 				addController( segmentIndex, fParent );
 			
