@@ -344,6 +344,7 @@ class ND {
 			object3D.geometry.attributes.position.needsUpdate = true;
 //			projectTo3D();
 			options.guiSelectPoint.update();
+//console.log(positionWorld[0]);
 			
 		}
 		if ( !settings.position || !settings.position.isProxy )
@@ -430,6 +431,8 @@ class ND {
 				set: function ( target, name, value ) {
 
 					target[name] = value;
+
+					settings.geometry.position.reset();
 
 					const input = target.folders[name].cRotation.domElement.querySelector( 'input' );
 					if ( parseFloat( input.value ) !== value ) {
@@ -552,9 +555,17 @@ const Quaternion = new Proxy( [], {
 if ( n === 2 )
 	console.log('n === 2');
 */
-					const array = [];
 					settings.geometry.position.boPositionError = false;
-					if ( settings.geometry.position[i] !== undefined ) {
+					const positionPoint = settings.geometry.position[i];
+					if ( positionPoint.positionWorld ) {
+						
+						//не надо снова вычислять мировые координатя точки если они уже вычислены
+						settings.geometry.position.boPositionError = true;
+						return positionPoint.positionWorld;
+
+					}
+					const array = [];
+					if ( positionPoint !== undefined ) {
 
 						if ( !( settings.position instanceof Array ) ) {
 
@@ -600,7 +611,7 @@ if ( n === 2 )
 						}
 						const mZ = getMatrixZ( settings.rotation[2] );
 						const m = math.multiply( math.multiply( mX, mY ), mZ );
-						const p = math.multiply( m, settings.geometry.position[i] );
+						const p = math.multiply( m, positionPoint );
 */
 						//is rotation?
 						var boRotation = false;
@@ -703,13 +714,13 @@ if ( n === 2 )
 
 							}
 							var position = [];
-							for ( var j = 0; j < n; j++ ) position.push( settings.geometry.position[i][j] );
+							for ( var j = 0; j < n; j++ ) position.push( positionPoint[j] );
 							const p = math.multiply( m3, position );
 							/*						
 													const p2 = math.multiply( math.multiply( math.multiply( math.rotationMatrix(settings.rotation[0], [1, 0, 0]),
 																										 math.rotationMatrix(settings.rotation[1], [0, 1, 0])),
 																						   math.rotationMatrix(settings.rotation[2], [0, 0, 1])),
-																			settings.geometry.position[i] );
+																			positionPoint );
 							*/
 							/*
 													var p;
@@ -722,7 +733,7 @@ if ( n === 2 )
 														else p = rotationMatrix;
 														
 													}
-													p = math.multiply( p, settings.geometry.position[i] );
+													p = math.multiply( p, positionPoint );
 							*/
 							p.forEach( ( value, i ) => {
 
@@ -736,8 +747,8 @@ if ( n === 2 )
 
 						} else {
 
-//							for ( var j = 0; j < n; j++ ) array.push( settings.geometry.position[i][j] + settings.position[j] );
-							settings.geometry.position[i].forEach( ( value, j ) => array.push( settings.geometry.position[i][j] + settings.position[j] ) );
+//							for ( var j = 0; j < n; j++ ) array.push( positionPoint[j] + settings.position[j] );
+							positionPoint.forEach( ( value, j ) => array.push( positionPoint[j] + settings.position[j] ) );
 /*							
 							settings.geometry.position.boPositionError = false;
 							const value = new Vector().copy( target[i] ).add( settings.position );
@@ -748,6 +759,7 @@ if ( n === 2 )
 						}
 
 					} else console.error('ND positionWorld get index')
+					positionPoint.positionWorld = array;
 					settings.geometry.position.boPositionError = true;
 					return array;
 //					return target[i];
@@ -768,7 +780,7 @@ if ( n === 2 )
 							settings.geometry.position.boPositionError = false;
 							settings.geometry.position.forEach( ( value, i ) => {
 								
-								v[i] = positionWorld[i]
+								v[i] = positionWorld[i];
 								settings.geometry.position.boPositionError = false;
 							
 							} );
@@ -853,10 +865,25 @@ if ( n === 2 )
 								return v;
 			
 							}
+						case "reset":
+							return function () {
+
+								target.forEach( item => item.positionWorld = undefined );
+
+							}
 						default: console.error( 'ND: settings.geometry.position Proxy. Invalid name: ' + name );
 	
 					}
 	
+				},
+				set: function ( target, name, value ) {
+
+					target[name] = value;
+
+					settings.geometry.position.reset();
+
+					return true;
+
 				},
 				
 			} );
