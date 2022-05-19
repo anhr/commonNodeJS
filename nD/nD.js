@@ -380,6 +380,8 @@ class ND {
 				set: function ( target, name, value ) {
 
 					target[name] = value;
+
+					settings.geometry.position.reset();
 					
 					const input = target.folders[name].cPosition.domElement.querySelector('input');
 					if ( parseFloat( input.value ) !== value ) {
@@ -569,7 +571,7 @@ if ( n === 2 )
 
 						if ( !( settings.position instanceof Array ) ) {
 
-							console.error( 'ND get positionWorld: settings.position is not array' );
+							console.error( 'ND positionWorld get: settings.position is not array' );
 							settings.position = [settings.position];
 
 						}
@@ -633,11 +635,57 @@ if ( n === 2 )
 						
 						if ( boRotation ) {
 
+							//https://math.stackexchange.com/questions/1402362/can-rotations-in-4d-be-given-an-explicit-matrix-form
+							//https://en.wikipedia.org/wiki/Rotation_matrix#:~:text=A%20basic%20rotation%20(also%20called,which%20codifies%20their%20alternating%20signs.
 							function getMatrix( index ) {
 
 								const alpha = settings.rotation[index], cos = Math.cos( alpha ), sin = Math.sin( alpha ),
 									array = [];
-								if ( n === 2 ) {
+if ( n === 4 ) {
+
+	switch( index ) {
+
+		case 0://xy
+			array.push( [cos, -sin, 0, 0] );
+			array.push( [sin,  cos, 0, 0] );
+			array.push( [0,      0, 1, 0] );
+			array.push( [0,      0, 0, 1] );
+			break;
+		case 1://xz
+			array.push( [cos, 0, -sin, 0] );
+			array.push( [0,   1,    0, 0] );
+			array.push( [sin, 0,  cos, 0] );
+			array.push( [0,   0,    0, 1] );
+			break;
+		case 2://xw
+			array.push( [cos, 0, 0, -sin] );
+			array.push( [0,   1, 0,    0] );
+			array.push( [0,   0, 1,    0] );
+			array.push( [sin, 0, 0,  cos] );
+			break;
+		case 3://yz
+			array.push( [1,   0,    0, 0] );
+			array.push( [0, cos, -sin, 0] );
+			array.push( [0, sin,  cos, 0] );
+			array.push( [0,   0,    0, 1] );
+			break;
+		case 4://yw
+			array.push( [1,   0, 0,    0] );
+			array.push( [0, cos, 0, -sin] );
+			array.push( [0,   0, 1,    0] );
+			array.push( [0, sin, 0,  cos] );
+			break;
+		case 5://zw
+			array.push( [1, 0,   0,    0] );
+			array.push( [0, 1,   0,    0] );
+			array.push( [0, 0, cos, -sin] );
+			array.push( [0, 0, sin,  cos] );
+			break;
+		default: console.error( 'nD: positionWorld getMatrix. n = ' + n + ' invalid index =  ' + index );
+			
+	}
+									
+								} else if ( n === 2 ) {
 
 									//https://ru.wikipedia.org/wiki/%D0%9C%D0%B0%D1%82%D1%80%D0%B8%D1%86%D0%B0_%D0%BF%D0%BE%D0%B2%D0%BE%D1%80%D0%BE%D1%82%D0%B0
 									array.push( [cos, -sin] );
@@ -688,7 +736,7 @@ if ( n === 2 )
 											break;
 										default: if ( ( j === ( n - 1 ) ) && ( index === 0 ) ) addRow( sin, cos );//добавить косинусы и синусы в конце матрицы
 										else if ( ( j === 0 ) && ( index === ( n - 1 ) ) ) addRow( cos, -sin );//добавить косинусы и синусы в начале матрицы
-										else console.error( 'ND.intersection positionWorld: Invalid index = ' + index );// row.push( 0 );
+										else console.error( 'ND: positionWorld get. Invalid index = ' + index );// row.push( 0 );
 
 									}
 
@@ -705,13 +753,107 @@ if ( n === 2 )
 												const p2 = math.multiply( ma, settings.geometry.position[i] );
 						*/
 							var m3;
+
+							//create rotation axies
+							const rotationAxes = [];
+							/**
+							 * add rows
+							 * @param {number} iAxis индекс текущей оси
+							 */
+							function addRows( iAxis ) {
+
+								while ( true ) {
+
+									const iRow = rotationAxes.push( [iAxis] ) - 1;//индекс текущего ряда
+									if ( iRow >= n ) break;
+
+								}
+
+							}
+							addRows( 0 );
+/*
+							var iAxisCur = 1;//индекс оси, для которой создаются ряды. Индексы осей до iAxisCur не меняются. Индексы осей после iAxisCur увеличиваются на едини
+							while ( true ) {
+
+								const iRow = rotationAxes.push( [] ) - 1;//индекс текущего ряда
+								var iAxis = 0;//индекс текущей оси
+								function addAxis( iAxis ) {
+									
+									rotationAxes[iRow].push( iRow === 0 ?
+										iAxis ://первый ряд
+										( iAxis > 0 ) && ( rotationAxes[iRow - 1][iAxis - 1] === rotationAxes[iRow][iAxis - 1] ) ?
+											//индекс педедыдущей оси не изменился по сравнению с индексом в предыдущем ряду
+											rotationAxes[iRow - 1][iAxis] + ( ( iAxis < iAxisCur ) ?
+												0 ://индекс оси совпадает с индексом в предыдущем ряду
+												1 )//индекс оси на 1 больше индекса в предыдущем ряду
+											: iAxis > 0 ?
+												//индекс педедыдущей оси изменился по сравнению с индексом в предыдущем ряду
+												//индекс текущей оси равен индексу предыдущей оси плюс 1
+												rotationAxes[iRow][iAxis - 1] + 1 :
+												//оставить индекс текущей оси таким же как в предыдущем ряду
+												rotationAxes[iRow - 1][iAxis]
+																			 
+									);
+									if ( rotationAxes[iRow][iAxis] === ( n - 1 ) ) iAxisCur--;//индекс оси достиг максимального значения. Надо увеличить на единицу индекс предыдущей оси
+									iAxis++;
+									if ( iAxis >= ( n - 2 ) ) return;//Количество осей на 2 меньше размерности пространства
+									addAxis( iAxis );
+
+								}
+								addAxis( iAxis );
+								
+							}
+*/
+/*							
+							while ( true ) {
+
+								const iRow = rotationAxes.push( [] ) - 1;
+								var iAxis = 0;
+								function addAxis( iAxis ) {
+									
+									rotationAxes[iRow].push( iAxis );
+									iAxis++;
+									if ( iAxis >= ( n - 2 ) ) return;//Количество осей на 2 меньше размерности пространства
+									addAxis( iAxis );
+
+								}
+								addAxis( iAxis );
+								
+							}
+*/							
+/*							
+							const ii = [];
+							for ( var j = 0; j < ( n - 2); j++ ) ii.push( j );
+							function rotationAxies( j ) {
+								
+								for ( ii[j] = j; ii[j] < ( n - 2 ); ii[j]++ ) {
+	
+									rotationAxies( ii[j] + 1 );
+									console.log(ii);
+									
+								}
+
+							}
+							rotationAxies( 0 );
+*/
+							
 							if ( n === 2 ) m3 = getMatrix( 2 );//вращение только вокруг оси 2
-							else for ( var j = 0; j < n; j++ ) {
+							else if ( n === 3 ) for ( var j = 0; j < n; j++ ) {
 
 								const m = getMatrix( j );
 								if ( m3 ) m3 = math.multiply( m3, m );
 								else m3 = m;
 
+							} else if ( n === 4 ) {
+
+								for ( var j = 0; j < 6; j++ ) {
+
+									const m = getMatrix( j );
+									if ( m3 ) m3 = math.multiply( m3, m );
+									else m3 = m;
+	
+								}
+								
 							}
 							var position = [];
 							for ( var j = 0; j < n; j++ ) position.push( positionPoint[j] );
@@ -741,7 +883,7 @@ if ( n === 2 )
 
 									array.push( value + settings.position[i] );
 
-								} else console.error( 'ND get positionWorld: invalig array item = ' + value );
+								} else console.error( 'ND: positionWorld get: invalig array item = ' + value );
 
 							} )
 
@@ -788,7 +930,7 @@ if ( n === 2 )
 							return v;
 		
 						}
-					default: console.error( 'ND: settings.geometry.position Proxy. Invalid name: ' + name );
+					default: console.error( 'ND: positionWorld Proxy. Invalid name: ' + name );
 
 				}
 
@@ -2266,6 +2408,12 @@ if ( !edge.indices )
 							case 'forEach': return target.forEach;
 							case 'isProxy': return true;
 							case 'target': return target;
+							case "reset":
+								return function () {
+	
+									target.forEach( item => item.positionWorld = undefined );
+	
+								}
 							default: console.error( 'ND: settings.geometry.position Proxy. Invalid name: ' + name );
 		
 						}
@@ -2277,7 +2425,8 @@ if ( !edge.indices )
 						if ( isNaN( i ) ) {
 							
 							if ( name === "boPositionError" ) {
-								
+
+//console.log('geometryIntersection.position: name = ' + name + ' value = ' + value);
 								target[name] = value;
 								return true;
 
@@ -2309,6 +2458,7 @@ if ( !edge.indices )
 							return target.length;
 	
 						}
+console.log('geometryIntersection.position: i = ' + i + ' value = ' + value);
 						target[i] = value;
 						return true;
 	
