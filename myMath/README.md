@@ -4,7 +4,7 @@ Math library.
 
 ## Features
 
-* [Matrices](./matrix)
+* [Matrices](./matrix).
 
  ## Have a job for me?
 Please read [About Me](https://anhr.github.io/AboutMe/).
