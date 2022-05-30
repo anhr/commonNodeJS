@@ -18,10 +18,10 @@ import three from '../three.js'
 import MyThree from '../myThree/myThree.js';
 //import MyThree from '../../build/myThree.module.js';
 //import MyThree from '../../build/myThree.module.min.js';
-import PositionController from '../PositionController.js';
 
-//debug
+import PositionController from '../PositionController.js';
 import { SpriteText } from '../SpriteText/SpriteText.js'
+import MyMath from '../myMath/myMath.js'
 
 /**
 dimention	geometry	points	edges	triangle	tetrahedron	pentatope
