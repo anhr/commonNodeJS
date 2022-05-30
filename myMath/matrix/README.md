@@ -1,4 +1,4 @@
-# [matrix](https://en.wikipedia.org/wiki/Matrix_(mathematics)).
+# [Matrix](https://en.wikipedia.org/wiki/Matrix_(mathematics)).
 
 Matrix.
 
