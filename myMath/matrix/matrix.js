@@ -31,7 +31,7 @@ class Matrix {
 		* @returns new matrix as result of multiplication of matrices.
 		* @see [Matrix multiplication]{@link https://en.wikipedia.org/wiki/Matrix_multiplication}
 		* @example
-		* const matrix = new Matrix( [[1, 2], [3, 4], [5, 5]] );
+		* const matrix = new Matrix( [[1, 2], [3, 4], [5, 6]] );
 		* const res = matrix.multiply( [[7, 8, 9, 10], [11, 12, 13,14] );
 		* res is : [[29, 32, 35, 38], [65, 72, 79, 86], [101, 112, 123, 134]]
 		*/
