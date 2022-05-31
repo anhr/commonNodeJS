@@ -1,6 +1,6 @@
 /**
 * @module Matrix
-* @description A matrix (plural matrices) is a rectangular array or table of numbers, symbols, or expressions, arranged in rows and columns, which is used to represent a mathematical object or a property of such an object.
+* @description A matrix (plural matrices) is a rectangular array or table of numbers, arranged in rows and columns, which is used to represent a mathematical object or a property of such an object.
 * @see [Matrix (mathematics)]{@link https://en.wikipedia.org/wiki/Matrix_(mathematics)}
 * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
 *
@@ -17,7 +17,7 @@
 class Matrix {
 
 	/** @class
-	 * A matrix (plural matrices) is a rectangular array or table of numbers, symbols, or expressions, arranged in rows and columns, which is used to represent a mathematical object or a property of such an object.
+	 * A matrix (plural matrices) is a rectangular array or table of numbers, arranged in rows and columns, which is used to represent a mathematical object or a property of such an object.
 	 * @see [Matrix (mathematics)]{@link https://en.wikipedia.org/wiki/Matrix_(mathematics)}
 	 * @param {Array} a 2-dimensional array that initializes the matrix.
 	 * @example
