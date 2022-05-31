@@ -720,7 +720,8 @@ class ND {
 									array.push( row );
 
 								}
-								return math.matrix( array );
+//								return math.matrix( array );
+								return new MyMath.Matrix( array );
 
 							}
 							var m3;
@@ -832,18 +833,44 @@ class ND {
 								}
 
 							}
-							
+
+							/*
+							//test
+							{
+
+								const a = [
+										[1, 2],
+										[3, 4],
+										[5, 6],
+									],
+									b = [
+										[7,   8, 9 ,10],
+										[11, 12, 13,14],
+									],
+									v = [15, 16, 17, 18];
+								const c = new MyMath.Matrix( a ).multiply( b );
+								const cv = c.multiply( v );
+								console.log(cv);
+								const m1 = math.matrix( a ),
+									m2 = math.matrix( b ),
+									c2 = math.multiply( m1, m2 );
+								const cv2 = math.multiply( c2, v );
+								console.log(cv2);
+
+							}
+							*/
 							if ( n === 2 ) m3 = getMatrix( 0 );//вращение только вокруг оси 2
 							for ( var j = 0; j < rotationAxes.length; j++ ) {
 
 								const m = getMatrix( j );
-								if ( m3 ) m3 = math.multiply( m3, m );
+								if ( m3 ) m3 = m3.multiply( m );//m3 = math.multiply( m3, m );
 								else m3 = m;
 	
 							}
 							var position = [];
 							for ( var j = 0; j < n; j++ ) position.push( positionPoint[j] );
-							const p = math.multiply( m3, position );
+//							const p2 = math.multiply( m3, position );
+							const p = m3.multiply( position );
 							p.forEach( ( value, i ) => {
 
 								if ( value !== undefined ) {
