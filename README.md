@@ -51,6 +51,11 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 [Example](https://raw.githack.com/anhr/loadScriptNodeJS/master/index.html).
 * MoveGroup.js [MoveGroup](https://github.com/anhr/commonNodeJS/blob/master/MoveGroupGui.js) is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for change group's position, scale and rotation.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/index.html).
+* myMath.js Math library.
+** matrix.js A matrix (plural matrices) is a rectangular array or table of numbers, symbols, or expressions, arranged in rows and columns, which is used to represent a mathematical object or a property of such an object.
+[README.md](https://github.com/anhr/commonNodeJS/tree/master/myPoints).
+[myPoints API](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/Examples/index.html).
 * myPoints.js Array of my points.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/myPoints).
 [myPoints API](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html).
