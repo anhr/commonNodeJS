@@ -33,10 +33,9 @@ class Matrix {
 		* @example
 		* const matrix = new Matrix( [[1, 2], [3, 4], [5, 5]] );
 		* const res = matrix.multiply( [[7, 8, 9, 10], [11, 12, 13,14] );
-		* res is ( 3 )[Array( 4 ), Array( 4 ), Array( 4 )]
-		*	0: ( 4 )[29, 32, 35, 38]
-		*	1: ( 4 )[65, 72, 79, 86]
-		*	2: ( 4 )[101, 112, 123, 134]
+		* res is :	[[29, 32, 35, 38],
+		*			[65, 72, 79, 86],
+		*			[101, 112, 123, 134]]
 		*/
 		this.multiply = function ( b ) { };//Эту функцию засунул что бы построить jsdoc
 		/**
