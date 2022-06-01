@@ -849,8 +849,10 @@ class ND {
 									],
 									v = [15, 16, 17, 18];
 								const c = new MyMath.Matrix( a ).multiply( b );
-								const cv = c.multiply( v );
+								const cv = c * v;
+								//const cv = c.multiply( v );
 								console.log(cv);
+								
 								const m1 = math.matrix( a ),
 									m2 = math.matrix( b ),
 									c2 = math.multiply( m1, m2 );
