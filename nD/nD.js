@@ -74,9 +74,9 @@ class ND {
 	 * <pre>
 	 * <b>Indices</b> is divided to segments:
 	 * 
-	 * <b>indices[0]</b> is edges (lines). Every edge is two indexes of the edge's vertices. Used in 1D objects and higher.
-	 * <b>indices[1]</b> is faces (triangles). Every face is three indexes of the edges from <b>indices[0]</b>. Used in 3D objects and higher.
-	 * <b>indices[2]</b> is bodies (tetrahedrons). Every bodie is four face indexes from <b>indices[1]</b>. Used in 4D objects and higher.
+	 * <b>indices[0]</b> is edges. Every edge is two indexes of the edge's vertices. Used in 1D objects and higher.
+	 * <b>indices[1]</b> is faces. Every face is three indexes of the edges from <b>indices[0]</b>. Used in 3D objects and higher.
+	 * <b>indices[2]</b> is bodies. Every bodie is four face indexes from <b>indices[1]</b>. Used in 4D objects and higher.
 	 * For example:
 	 * 
 	 * <b>n</b> = 1 line.
@@ -97,7 +97,7 @@ class ND {
 	 *	[0.8, 0.6],//1
 	 *	[0.1, -0.5]//2
 	 *],
-	 * //edges (lines)
+	 * //edges
 	 * <b>settings.geometry.indices[0]</b> = [
 	 *	[0, 1],//0 index of the settings.geometry.positions [-0.7, 0.2] and [0.8, 0.6]
 	 *	[0, 2],//1 index of the settings.geometry.positions [-0.7, 0.2] and [0.1, -0.5]
@@ -111,7 +111,7 @@ class ND {
 	 * 	[0.8, 0, -0.4],//2
 	 * 	[-0.6, 0.1, 0.1]//3
 	 * ],
-	 * //edges (lines)
+	 * //edges
 	 * <b>settings.geometry.indices[0]</b> = [
 	 *	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
 	 *	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.8, 0, -0.4]
@@ -120,7 +120,7 @@ class ND {
 	 *	[1, 3]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
 	 *	[2, 3]//5 index of the settings.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
 	 *]
-	 * //faces (triangles). Indices of the edges <b>settings.geometry.indices[0]</b>
+	 * //faces. Indices of the edges <b>settings.geometry.indices[0]</b>
 	 * <b>settings.geometry.indices[1]</b> = [
 	 *	[0, 1, 3]//tetrahedron's face 0
 	 *	[0, 2, 4]//tetrahedron's face 1
@@ -136,7 +136,7 @@ class ND {
 	 *	[-0.6, 0.1, -0.3, 0.55],//3
 	 *	[-0.5, 0.2, 0.3, 0.85],//4
 	 * ],
-	 * //edges (lines)
+	 * //edges
 	 * <b>settings.geometry.indices[0]</b> = [
 	 *	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.9, 0.7, 0.5, -0.55]
 	 *	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.8, 0, -0.4, 0]
@@ -149,7 +149,7 @@ class ND {
 	 *	[2, 4]//8 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.5, 0.2, 0.3, 0.85]
 	 *	[3, 4]//9 index of the settings.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.5, 0.2, 0.3, 0.85]
 	 *]
-	 * //faces (triangles). Indices of the edges <b>settings.geometry.indices[0]</b>
+	 * //faces. Indices of the edges <b>settings.geometry.indices[0]</b>
 	 * <b>settings.geometry.indices[1]</b> = [
 	 *	[7, 8, 9],//0 no 0, 1 vertices
 	 *	[5, 6, 9],//1 no 0, 2 vertices
@@ -162,7 +162,7 @@ class ND {
 	 *	[0, 2, 5],//8 no 2, 4 vertices
 	 *	[0, 1, 4],//9 no 3, 4 vertices
 	 *]
-	 * //bodies (tetrahedrons). Indices of the faces <b>settings.geometry.indices[1]</b>
+	 * //bodies. Indices of the faces <b>settings.geometry.indices[1]</b>
 	 * <b>settings.geometry.indices[2]</b> = [
 	 * [2, 1, 3, 0],//0 no 0 vertice
 	 * [5, 6, 4, 0],//1 no 1 vertice
@@ -186,12 +186,11 @@ class ND {
 	 * In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.
 	 * @param {Array} [settings.vectorPlane] n-dimensional position of the panel
 	 * intersecting with the <b>settings.geometry</b> n-dimensional graphical object.
-	 * @param {boolean} [settings.boDisplayVerticeID=false] true - displays on the scene the vertice ID near to the vertice.
-	 * @param {Array|number} [position] Array - position of the n-dimensional graphical object in n-dimensional coordinates.
+	 * @param {Array|number} [settings.position] Array - position of the n-dimensional graphical object in n-dimensional coordinates.
 	 * <pre>
 	 * number - position of the 0 coordinate of the n-dimensional graphical object.
 	 * <pre>
-	 * @param {Array|number} [rotation] Array - rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
+	 * @param {Array|number} [settings.rotation] Array - rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
 	 * <pre>
 	 * number - rotation in radians around axis 0 or rotation around axis 2 for 2D objects i.e. space dimension n = 2.
 	 * <pre>
@@ -201,6 +200,7 @@ class ND {
 	 * Uses only if <b>scene</b> is defined.
 	 * @param {Event} [settings.onIntersection] Plane and object intersection event.
 	 * The <b>onIntersection</b> function parameter is the (n-1)-dimensional geometry of the intersection if a collision occurred, or undefined if a collision did not occur.
+	 * @param {boolean} [settings.boDisplayVerticeID=false] true - displays on the scene the vertice ID near to the vertice.
 	 */
 	constructor( n, settings = {} ) {
 
