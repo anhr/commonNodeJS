@@ -186,6 +186,7 @@ class ND {
 	 * In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.
 	 * @param {Array} [settings.vectorPlane] n-dimensional position of the panel
 	 * intersecting with the <b>settings.geometry</b> n-dimensional graphical object.
+	 * @param {boolean} [settings.boDisplayVerticeID=false] true - displays on the scene the vertice ID near to the vertice.
 	 * @param {Array|number} [position] Array - position of the n-dimensional graphical object in n-dimensional coordinates.
 	 * <pre>
 	 * number - position of the 0 coordinate of the n-dimensional graphical object.
@@ -341,6 +342,11 @@ class ND {
 			object3D.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
 			object3D.geometry.attributes.position.needsUpdate = true;
 			options.guiSelectPoint.update();
+			object3D.children.forEach( child => {
+				
+				if ( child.type === 'Sprite' ) child.position.copy( geometry.D3.points[child.userData.pointID] );
+					
+			} );
 			
 		}
 		if ( !settings.position || !settings.position.isProxy )
@@ -1699,6 +1705,27 @@ class ND {
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
 
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
+		function displayVerticeID( object, geometry ) {
+			
+			if ( !settings.boDisplayVerticeID ) {
+				
+				for ( var i = object.children.length - 1; i >= 0; i-- ) {
+
+					const child = object.children[i];
+					if ( child.type === 'Sprite' ) object.remove( child );
+
+				}
+				return;
+
+			}
+			for ( var i = 0; i < geometry.D3.points.length; i++ ) {
+
+				const spriteText = new SpriteText( i, geometry.D3.points[i], { group: object } );
+				spriteText.userData.pointID = i;
+
+			}
+			
+		}
 		function create3DObject( geometry, settings3D = {} ) {
 
 			if ( !geometry.D3 ) {
@@ -1731,11 +1758,9 @@ class ND {
 				object.name = settings3D.name;
 			scene.add( object );
 
-			if ( typeof SpriteText !== "undefined" ) for ( var i = 0; i < geometry.D3.points.length; i++ ) {
-
-				new SpriteText( i, geometry.D3.points[i], { group: object } );
-
-			}
+//			if ( typeof SpriteText !== "undefined" )
+			displayVerticeID( object, geometry );
+			
 			object.userData.nd = function ( fParent, dat ) {
 
 				//Localization
@@ -1767,6 +1792,9 @@ class ND {
 					defaultButton: 'Default',
 					defaultPositionTitle: 'Restore default position',
 					defaultRotationTitle: 'Restore default rotation',
+					
+					displayVerticeID: 'Vertice ID',
+					displayVerticeIDTitle: 'Display on the scene the vertice ID near to the vertice',
 
 					notSelected: 'Not selected',
 
@@ -1800,7 +1828,10 @@ class ND {
 
 						lang.defaultButton = 'Восстановить';
 						lang.defaultPositionTitle = 'Восстановить позицию объекта по умолчанию';
-						lang.defaultRotationTitle = 'Восстановить вращение объекта по умолчанию',
+						lang.defaultRotationTitle = 'Восстановить вращение объекта по умолчанию';
+
+						lang.displayVerticeID = 'Номера вершин';
+						lang.displayVerticeIDTitle = 'На сцене возле каждой вершины показать ее идентификатор';
 
 						lang.notSelected = 'Не выбран';
 
@@ -1820,6 +1851,15 @@ class ND {
 				}
 				for ( var i = fParent.__controllers.length - 1; i >= 0; i-- ) { fParent.remove( fParent.__controllers[i] ); }
 
+				settings.boDisplayVerticeID = settings.boDisplayVerticeID || false;
+				const cDisplayVerticeID = fParent.add( settings, 'boDisplayVerticeID' ).onChange( function ( value ) {
+					
+					update();
+					displayVerticeID( object, geometry );
+					
+				} );
+				dat.controllerNameAndTitle( cDisplayVerticeID, lang.displayVerticeID, lang.displayVerticeIDTitle );
+				
 				const indices = geometry.geometry.indices, segmentIndex = indices.length - 1;
 				function addController(
 					segmentIndex,//settings.geometry.indices index
