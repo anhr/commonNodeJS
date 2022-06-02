@@ -11,6 +11,10 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
+ * @see [4D Geometry Viewer]{@link https://github.com/anhr/humke-4d-geometry}
+ * @see [Tesseract]{@link https://ciechanow.ski/tesseract/}
+ * @see [4D-Shapes]{@link https://artemonigiri.github.io/4D-Shapes/}
+ * @see [The Regular Polychora]{@link https://www.qfbox.info/4d/regular}
 */
 
 import three from '../three.js'
