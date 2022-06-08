@@ -35,21 +35,6 @@ dimention	geometry	points	edges	triangle	tetrahedron	pentatope
 4			pentatope	5		10		10			5			1
 */
 
-/*
- 	 * <b>settings.geometry.segments: [[0, 1, 1, 2, 2, 0], [0, 1, 1, 3, 3, 0], [0, 2, 2, 3, 3, 0], [1, 2, 2, 3, 3, 1],]</b>,
-	 * Every segment is array of idexes of 3 edges of the face of the tetrahedron. Every edge is pair of the indices.
-	 *
-	 * You can use <a href="#.faceToEdgesIndices" target="_blank">ND.faceToEdgesIndices</a> to create edge indices from face vertex indices.
-	 * Example:
-	 * <b>settings.geometry.segments: [
-	 * 	ND.faceToEdgesIndices( [0, 1, 2] ),
-	 * 	ND.faceToEdgesIndices( [0, 1, 3] ),
-	 * 	ND.faceToEdgesIndices( [0, 2, 3] ),
-	 * 	ND.faceToEdgesIndices( [1, 2, 3] ),
-	 * ]</b>
-	 * The parameter of every <a href="#.faceToEdgesIndices" target="_blank">ND.faceToEdgesIndices</a> function is an array of indices of 3 vertices of the tetrahedron face.
-* */
-
 class ND {
 
 	/** @class
@@ -175,15 +160,6 @@ class ND {
 	 * [9, 8, 3, 6],//4 no 4 vertice
 	 *]
 	 * </pre>
-	 * @param {Array} [settings.geometry.segments] Array of segments of indices of vertices of the n-dimensional graphical object.
-	 * <pre>
-	 * For example, if you want to create a tetrahedron, then you need to create an array of 4 segments.
-	 * <b>settings.geometry.segments: [[0, 1, 2],[0, 1, 3],[0, 2, 3],[1, 2, 3],]</b>,
-	 * Every segment is array of idexes of the face of the tetrahedron.
-	 * 
-	 * An easier way to get an array of segments of tetrahedron indices is to use the <a href="#.tetrahedronIndices" target="_blank">ND.tetrahedronSegments</a> method.
-	 * <b>settings.geometry.segments: ND.tetrahedronIndices(),</b>
-	 * </pre>
 	 * @param {Array} [settings.geometry.iAxes] array of indices of the axes.
 	 * For example if <b>iAxes</b> is [1,2], then axis 1 interpret as axis 0 and axis 2 interpret as axis 1.
 	 * As result, you can rotate axes around another axis to 90 degrees.
@@ -226,12 +202,12 @@ class ND {
 	 * number - rotation in radians around axis 0 or rotation around axis 2 for 2D objects i.e. space dimension n = 2.
 	 * See [Can rotations in 4D be given an explicit matrix form?]{@link https://math.stackexchange.com/questions/1402362/can-rotations-in-4d-be-given-an-explicit-matrix-form}, [Rotation matrix]{@link https://en.wikipedia.org/wiki/Rotation_matrix}.
 	 * Examples:
-	 * <b>n = 3</b>, <b>rotation = [Math.PI / 5, 1, 2, 3, 4, 5]</b>
+	 * <b>n = 4</b>, <b>rotation = [Math.PI / 5, 1, 2, 3, 4, 5]</b>
 	 * rotation around 0, 1(xy) plane is Math.PI / 5 radians.
 	 * rotation around 0, 2(xz) plane is 1 radian.
 	 * etc.
 	 *
-	 * <b>n = 3</b>, <b>rotation = Math.PI / 5</b>
+	 * <b>n = 4</b>, <b>rotation = Math.PI / 5</b>
 	 * rotation around 0, 1(xy) plane is Math.PI / 5 radians.
 	 *
 	 * <b>n = 2</b>, <b>rotation = [0, 0, Math.PI / 4]</b>
