@@ -939,6 +939,8 @@ class ND {
 			
 		} );
 
+		var _prevLine;
+
 		//For debug Вылавливает случаи вызова settings.geometry.position вместо positionWorld
 		if ( !settings.geometry.position.isProxy )
 			settings.geometry.position = new Proxy( settings.geometry.position ? settings.geometry.position : [], {
@@ -948,15 +950,83 @@ class ND {
 					const i = parseInt( name );
 					if ( !isNaN( i ) ) {
 	
-						if ( settings.geometry.position.boPositionError ) console.error( 'ND: Use positionWorld instread settings.geometry.position' )
+						if ( settings.geometry.position.boPositionError ) {
+
+							//срабатывает когда меняется позиция вершины.
+							//Не хочу менять boPositionError в этом случае, потому что это может происходить на веб странице пользователя
+							//console.error( 'ND: Use positionWorld instread settings.geometry.position' );
+
+						}
 						if ( i >= target.length ) {
 
 							console.error( 'ND get settings.geometry.position: invalid index = ' + i );
 							return;
 							
 						}
-						if ( target[i] instanceof Array )
-							return  target[i];
+						if ( target[i] instanceof Array ) {
+
+//							return target[i];
+							return new Proxy( target[i], {
+
+								get: function ( target, name, args ) {
+
+									const i = parseInt( name );
+									if ( !isNaN( i ) ) {
+
+										return target[i];
+
+									}
+									switch ( name ) {
+
+										case 'positionWorld': return target.positionWorld;
+										case 'forEach': return target.forEach;
+										case 'length': return target.length;
+										case 'indices': return target.indices;
+										case 'i': return target.i;
+										case 'arguments': return target.arguments;
+/*
+										case 'push': return target.push;
+										case 'forEach': return target.forEach;
+										case 'isProxy': return true;
+										case 'boPositionError': return target.boPositionError;
+										case 'target': return target;
+*/
+										default: console.error( 'ND: settings.geometry.position[i] Proxy. Invalid name: ' + name );
+
+									}
+
+								},
+								set: function ( target, name, value ) {
+
+									const i = parseInt( name );
+									target[name] = value;
+									if ( !isNaN( i ) ) {
+										
+										target.positionWorld = undefined;
+/*
+										_prevLine.children.forEach( item => {
+
+											if ( item.type != 'Sprite' ) {
+												
+												item.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
+												item.geometry.attributes.position.needsUpdate = true;
+
+											}
+												
+										} )
+*/
+										_prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
+										_prevLine.geometry.attributes.position.needsUpdate = true;
+										update();//изменилась позиция вершины
+
+									}
+									return true;
+
+								},
+
+							} );
+
+						}
 						console.error( 'ND: get settings.geometry.position is not array.' )
 						return  [target[i]];
 	
@@ -993,9 +1063,19 @@ class ND {
 				},
 				set: function ( target, name, value ) {
 
+					const i = parseInt( name );
+					if ( !isNaN( i ) ) {
+
+						//изменилась позиция вершины
+						return true;
+						
+					}
 					target[name] = value;
 
-					settings.geometry.position.reset();
+//if ( name != 'boPositionError' )
+//	console.log('ND settings.geometry.position set: name = ' + name );
+					
+//					settings.geometry.position.reset();
 
 					return true;
 
@@ -1004,8 +1084,14 @@ class ND {
 			} );
 
 		//indices
-		
-		settings.geometry.indices = settings.geometry.indices || [];
+
+		if ( !settings.geometry.indices ) {
+
+			settings.geometry.indices = [];
+			settings.geometry.indices.boAddIndices = true;
+			
+		}
+//		settings.geometry.indices = settings.geometry.indices || [];
 
 		//edges
 		var edges = settings.geometry.indices[0], boArray = edges instanceof Array;
@@ -1096,10 +1182,18 @@ class ND {
 															position1[0] :
 															( vectorPlane[1] - b ) / a;
 														if ( isNaN( x ) || ( x === undefined ) ) { console.error( 'ND.intersection: x = ' + x + ' position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0] ); }
+
+														//Если x почти равно position0[0] и position0[0] то будем считать что x между ними
+														const d = 1e-15;//-1.1102230246251565e-16 
 														if ( !x.between( position0[0], position1[0], true ) ) {
 															
-															indices.intersection = {};
-															break;
+															if ( ! ( ( Math.abs( x - position0[0] ) < d ) && ( Math.abs( x - position0[0] ) < d ) ) ) {
+																
+																indices.intersection = {};
+																break;
+
+															}
+//else console.log('x почти равно position0[0] и position0[0]');
 
 														}
 														vector = [x, vectorPlane[1]];
@@ -1554,39 +1648,42 @@ class ND {
 
 		}
 
-		//В каждом сегменте geometry.indices[i] должно встечаться определенное количество индексов из передыдущего сегмента
-		//geometry.indices[i - 1]. В противном случае в geometry.indices[i] добавляем новый элемент, в который добавляем
-		//индексы из передыдущего сегмента geometry.indices[i - 1].
-		//Это нужно для того, что бы во время пересечения объекта с plane появлялся замкнутый intersection.
-		//Например после пересечения 3 мерного объекта с plane получалась замкнутая линия, тоесть начало и конец линии соединяем дополнительным ребром.
-		//Для проверки в примере запускаем _4D и _3D
-		const indices = settings.geometry.indices;
-		for( var i = 1; i < indices.length; i++ ) {
-
-			const indice = indices[i];
-			const arrayIndices = [];//Каждый элемент этого массива показывает сколько раз встречается индекс в сегменте geometry.indices[i].
-			var max = 0;//максимальное количество сколько раз встречается индекс в сегменте geometry.indices[i].
-			for ( var j = 0; j < indice.length; j++ ) {
-
-				const segment = indice[j];
-				for ( var k = 0; k < segment.length; k++ ) {
-
-					const index = segment[k];
-					if ( arrayIndices[index] === undefined ) arrayIndices[index] = 0;
-					arrayIndices[index]++;
-					if ( arrayIndices[index] > max ) max = arrayIndices[index];
-
+		if ( settings.geometry.indices.boAddIndices ) {
+			//В каждом сегменте geometry.indices[i] должно встечаться определенное количество индексов из передыдущего сегмента
+			//geometry.indices[i - 1]. В противном случае в geometry.indices[i] добавляем новый элемент, в который добавляем
+			//индексы из передыдущего сегмента geometry.indices[i - 1].
+			//Это нужно для того, что бы во время пересечения объекта с plane появлялся замкнутый intersection.
+			//Например после пересечения 3 мерного объекта с plane получалась замкнутая линия, тоесть начало и конец линии соединяем дополнительным ребром.
+			//Для проверки в примере запускаем _4D и _3D
+			const indices = settings.geometry.indices;
+			for( var i = 1; i < indices.length; i++ ) {
+	
+				const indice = indices[i];
+				const arrayIndices = [];//Каждый элемент этого массива показывает сколько раз встречается индекс в сегменте geometry.indices[i].
+				var max = 0;//максимальное количество сколько раз встречается индекс в сегменте geometry.indices[i].
+				for ( var j = 0; j < indice.length; j++ ) {
+	
+					const segment = indice[j];
+					for ( var k = 0; k < segment.length; k++ ) {
+	
+						const index = segment[k];
+						if ( arrayIndices[index] === undefined ) arrayIndices[index] = 0;
+						arrayIndices[index]++;
+						if ( arrayIndices[index] > max ) max = arrayIndices[index];
+	
+					}
+						
 				}
+				const arraySegment = [];//сюда добавляю все индексы, котоые встречаются меньше нужного
+				for ( var j = 0; j < arrayIndices.length; j++ ) {
+	
+					if ( arrayIndices[j] < max ) arraySegment.push( j );
+					
+				}
+				if ( arraySegment.length > 0 ) indice.push( arraySegment );
 					
 			}
-			const arraySegment = [];//сюда добавляю все индексы, котоые встречаются меньше нужного
-			for ( var j = 0; j < arrayIndices.length; j++ ) {
 
-				if ( arrayIndices[j] < max ) arraySegment.push( j );
-				
-			}
-			if ( arraySegment.length > 0 ) indice.push( arraySegment );
-				
 		}
 		
 		var vectorPlane;
@@ -1876,9 +1973,16 @@ class ND {
 					prevLine//выбранный пользователем сегмент объекта на более высоком уровне. Например если пользователь выбрал ребро то prevLine указывает на выбранную пользователем грань
 				) {
 
+					_prevLine = prevLine;
 					var segment;
 					if ( segmentItems ) {
 
+						function addItem( item, i ) {
+
+							item.i = i;
+							segment.push( item );
+
+						}
 						segment = [];
 						if ( segmentIndex === -1 ) {
 
@@ -1888,8 +1992,8 @@ class ND {
 							
 							//непонятно почему, но для 2D вершины перечислены в segmentItems.indices
 							if ( segmentItems.forEach )
-								segmentItems.forEach( i => segment.push( settings.geometry.position[i] ) );
-							else segmentItems.indices.forEach( i => segment.push( settings.geometry.position[i] ) );
+								segmentItems.forEach( i => addItem( settings.geometry.position[i], i ) );
+							else segmentItems.indices.forEach( i => addItem( settings.geometry.position[i], i ) );
 							
 							settings.geometry.position.boPositionError = true;
 							
@@ -1897,7 +2001,7 @@ class ND {
 							
 							//indices
 							const index = indices[segmentIndex];
-							segmentItems.forEach( i => segment.push( index[i].indices ? index[i].indices : index[i] ) );
+							segmentItems.forEach( i => addItem( index[i].indices ? index[i].indices : index[i], i ) );
 
 						}
 						
@@ -2012,10 +2116,31 @@ class ND {
 							//Vertices
 							removeVerticeControls();
 							settings.geometry.position.boPositionError = false;
-							const vertice = settings.geometry.position[selectedIndex];
+							const vertice = settings.geometry.position[segment[selectedIndex].i];
 							settings.geometry.position.boPositionError = true;
-							for ( var i = 0; i < vertice.length; i++ ) 
-								dat.controllerZeroStep( fSegment, vertice, i ).domElement.querySelector( 'input' ).readOnly = true;
+							for ( var i = 0; i < vertice.length; i++ ) {
+								
+//								dat.controllerZeroStep( fSegment, vertice, i ).domElement.querySelector( 'input' ).readOnly = true;
+								switch(i){
+
+									case 0:
+									case 1:
+									case 2:
+										var axis;
+										switch(i){
+		
+											case 0: axis = options.scales.x; break;
+											case 1: axis = options.scales.y; break;
+											case 2: axis = options.scales.z; break;
+												
+										}
+										fSegment.add( vertice, i, axis.min, axis.max, ( axis.max - axis.min ) / 100 );
+										break;
+									default: dat.controllerZeroStep( fSegment, vertice, i );
+										
+								}
+
+							}
 							
 						} else {
 							
@@ -2038,11 +2163,13 @@ class ND {
 	//если вместо buffer использовать object.geometry то при выборе сегмета объекта становятся невидимыми все остальные сегменты объекта
 	//						line = new THREE.LineSegments( object.geometry.setIndex( indices ), new THREE.LineBasicMaterial( { color: object.material.color } ) );
 							line = new THREE.LineSegments( buffer.setIndex( lineIndices ), new THREE.LineBasicMaterial( { color: object.material.color } ) );
+//							segment[selectedIndex].line = line;//для изенения положения вершины
 	
 							//debug
 							line.userData.name = fSegment.name + ' ' + value;
 							
 							parentObject.add( line );
+//							_prevLine = parentObject;
 
 						}
 						if ( prevLine && line ) line.userData.prevLine = prevLine;
@@ -2055,7 +2182,7 @@ class ND {
 					for ( var i = 0; i < segment.length; i++ ) {
 
 						const item = segment[i], opt = document.createElement( 'option' ), indices = item.indices ? item.indices : item;
-						opt.innerHTML = '(' + i + ') ' + ( segmentIndex === -1 ? '' : indices.toString() );
+						opt.innerHTML = '(' + ( item.i === undefined ? i : item.i ) + ') ' + ( segmentIndex === -1 ? '' : indices.toString() );
 						opt.item = item;
 						cSegment.__select.appendChild( opt );
 
@@ -2493,8 +2620,10 @@ class ND {
 									//длинна массива edge может быть меньше 2 если всего одна вершина находится на панели
 									//В этом случае линия пересечения geometryIntersection состоит из одной точки и невозможно создать ребро
 									if ( !edge.boVerticeOnPanel ) {
-										
-										console.error( 'ND.intersection: invalid edge' );
+
+										const error = 'ND.intersection: invalid edge';
+										console.error( error );
+//										throw error;
 										return;
 
 									}
