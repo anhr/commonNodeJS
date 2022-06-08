@@ -196,17 +196,49 @@ class ND {
 	 * <pre>
 	 * @param {Array|number} [settings.rotation] Array - rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
 	 * <table>
-		 <tr><td><b>n</b> space dimension</td><td>Array index</td><td>Axis of rotation</td><td>Axis type</td></tr>
-		 <tr><td>0 no rotation</td></tr>
-		 <tr><td>1 no rotation</td></tr>
-		 <tr><td>2</td><td>0</td><td></td><td>No effect for 2-dimensional space</td></tr>
-		 <tr><td></td><td>1</td><td></td><td>No effect for 2-dimensional space</td></tr>
-		 <tr><td></td><td>2</td><td>2(z)</td><td>point</td></tr>
-		 <tr><td>3</td><td>0</td>0<td></td><td>No effect for 2-dimensional space</td></tr>
+		 <tr><td><b>n</b> space dimension</td><td>Array index</td><td>Axis of rotation</td><td>Axis type</td><td>Note</td></tr>
+		 <tr><td>0</td><td></td><td></td><td></td><td>no rotation</td></tr>
+		 <tr><td>1</td><td></td><td></td><td></td><td>no rotation</td></tr>
+		 <tr><td>2</td><td>0</td><td></td><td></td><td>No effect for 2-dimensional space</td></tr>
+		 <tr><td></td><td>1</td><td></td><td></td><td>No effect for 2-dimensional space</td></tr>
+		 <tr><td></td><td>2</td><td>2(z)</td><td>point</td><td></td></tr>
+		 <tr><td>3</td><td>0</td><td>0(x)</td><td>line</td><td></td></tr>
+		 <tr><td></td><td>1</td><td>1(y)</td><td></td><td></td></tr>
+		 <tr><td></td><td>2</td><td>2(z)</td><td></td><td></td></tr>
+		 <tr><td>4</td><td>0</td><td>0, 1(xy)</td><td>plane</td><td></td></tr>
+		 <tr><td></td><td>1</td><td>0, 2(xz)</td><td></td><td></td></tr>
+		 <tr><td></td><td>2</td><td>0, 3(xw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>3</td><td>1, 2(yz)</td><td></td><td></td></tr>
+		 <tr><td></td><td>4</td><td>1, 3(yw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>5</td><td>2, 3(zw)</td><td></td><td></td></tr>
+		 <tr><td>5</td><td>0</td><td>0, 1, 2(xyz)</td><td>3D space</td><td></td></tr>
+		 <tr><td></td><td>1</td><td>0, 1, 3(xyw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>2</td><td>0, 1, 4(xy4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>3</td><td>0, 2, 3(xzw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>4</td><td>0, 2, 4(xz4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>5</td><td>0, 3, 4(xw4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>6</td><td>1, 2, 3(yzw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>7</td><td>1, 2, 4(yz4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>8</td><td>1, 3, 4(yw4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>9</td><td>2, 3, 4(zw4)</td><td></td><td></td></tr>
 		</table>
 	 * <pre>
 	 * number - rotation in radians around axis 0 or rotation around axis 2 for 2D objects i.e. space dimension n = 2.
-	 * See [Can rotations in 4D be given an explicit matrix form?]{@link https://math.stackexchange.com/questions/1402362/can-rotations-in-4d-be-given-an-explicit-matrix-form}, [Rotation matrix]{@link https://en.wikipedia.org/wiki/Rotation_matrix.}.
+	 * See [Can rotations in 4D be given an explicit matrix form?]{@link https://math.stackexchange.com/questions/1402362/can-rotations-in-4d-be-given-an-explicit-matrix-form}, [Rotation matrix]{@link https://en.wikipedia.org/wiki/Rotation_matrix}.
+	 * Examples:
+	 * <b>n = 3</b>, <b>rotation = [Math.PI / 5, 1, 2, 3, 4, 5]</b>
+	 * rotation around 0, 1(xy) plane is Math.PI / 5 radians.
+	 * rotation around 0, 2(xz) plane is 1 radian.
+	 * etc.
+	 *
+	 * <b>n = 3</b>, <b>rotation = Math.PI / 5</b>
+	 * rotation around 0, 1(xy) plane is Math.PI / 5 radians.
+	 *
+	 * <b>n = 2</b>, <b>rotation = [0, 0, Math.PI / 4]</b>
+	 * rotation around 2(z) point is Math.PI / 4 radians.
+	 *
+	 * <b>n = 2</b>, <b>rotation = Math.PI / 5</b>
+	 * rotation around 2(z) point is Math.PI / 5 radians.
 	 * <pre>
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * Define <b>scene</b> if you want visualise n-dimensional plane and n-dimensional object to 3-D space of the <b>scene</b>.
