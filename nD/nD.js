@@ -549,6 +549,115 @@ class ND {
 		if ( settings.geometry.position.target ) settings.geometry.position = settings.geometry.position.target;
 		settings.geometry.position.boPositionError = true;
 		const rotationAxes = [[]];//массив осей вращения
+		function setRotationAxes() {
+
+			if ( rotationAxes[0].length != 0 ) return;
+
+			//create rotation axies
+
+			//первый ряд
+
+			//индексы рядов и колонок матрицы, в которые заносятся значения тригонометрических функций
+			//Тригонометрические функци надо внестив следующие 4 ячейки матрицы:
+			//m[tI[0], tI[0]] = cos, m[tI[0], tI[1]] = -sin, m[tI[1], tI[0]] = sin, m[tI[1], tI[1]] = cos.
+			//const tI = [0,1];
+			//Для первой матрицы получается
+			//m[0, 0] = cos, m[0, 1] = -sin, m[1, 0] = sin, m[1, 1] = cos.
+
+			if ( n === 2 ) rotationAxes[0].push( 2 );//в двумерном пространстве вращение вокруг оси 2
+			else for ( var j = 0; j < ( n - 2 ); j++ ) rotationAxes[0].push( j );
+			rotationAxes[0].tI = [0, 1];
+
+			const iLastColumn = rotationAxes[0].length - 1;
+
+			var boLastRow = false;
+
+			while ( !boLastRow ) {
+
+				const iLastRow = rotationAxes.length - 1, lastRow = rotationAxes[iLastRow],
+					row = [];
+
+				for ( var j = iLastColumn; j >= 0; j-- ) {
+
+					const prevColumn = lastRow[j];
+					var iAxis;//индекс оси
+					if ( j === iLastColumn ) iAxis = prevColumn + 1;//увеличить на 1 последнюю колонку
+					else iAxis = prevColumn;
+					if ( iAxis >= n ) {
+
+						function createRow( j ) {
+
+							if ( j <= 0 ) return false;//последний ряд
+							//если это последняя колонка и если индекс оси больше количества осей в n пространстве
+							//увеличить индекс оси в предыдущей колонке
+							const prevRowColumn = lastRow[j - 1] + 1;
+							//предыдущая колонка не может больше или рано текушей колонке в предыдущем ряде
+							if ( prevRowColumn >= lastRow[j] ) return createRow( j - 1 );
+							row[j - 1] = prevRowColumn;
+							//индекс оси в текущей колонке равен индексу в предыдущей колонке плюс 1
+							row[j] = row[j - 1] + 1;
+
+							//все последующие колонки увеличиваются на единицу
+							for ( var k = j + 1; k <= iLastColumn; k++ ) row[k] = row[k - 1] + 1;
+
+							//копируем из последнего ряда оставшиеся колонки слева 
+							j = j - 2;
+							while ( j >= 0 ) {
+
+								row[j] = lastRow[j];
+								j--;
+
+							}
+							return true;
+
+						}
+						boLastRow = !createRow( j );
+						break;
+
+					}
+					else row[j] = iAxis;
+
+				}
+				if ( !boLastRow ) {
+
+					row.tI = [lastRow.tI[0]];
+					var tI1 = lastRow.tI[1] + 1;
+					if ( tI1 >= n ) {
+
+						row.tI[0]++;
+						tI1 = row.tI[0] + 1;
+
+					}
+					row.tI[1] = tI1;
+					if ( row.length === 0 ) {
+
+						console.error( 'ND positionWorld get: row is empty' );
+						break;
+
+					}
+					rotationAxes.push( row );
+
+					//debug
+					if ( iLastRow === rotationAxes.length - 1 ) {
+
+						console.error( 'ND positionWorld get: row is not added' );
+						break;
+
+					}
+					/*
+					if ( iLastRow >= 100 ) {
+	
+						console.error( 'ND positionWorld get: Invalid iLastRow = ' + iLastRow );
+						break;
+	
+					}
+					*/
+
+				}
+
+			}
+
+		}
 		const positionWorld = new Proxy( settings.geometry.position ? settings.geometry.position : [], {
 	
 			get: function ( target, name ) {
@@ -750,113 +859,7 @@ class ND {
 							}
 							var m3;
 
-							if ( rotationAxes[0].length === 0 ) {
-
-								//create rotation axies
-
-								//первый ряд
-
-								//индексы рядов и колонок матрицы, в которые заносятся значения тригонометрических функций
-								//Тригонометрические функци надо внестив следующие 4 ячейки матрицы:
-								//m[tI[0], tI[0]] = cos, m[tI[0], tI[1]] = -sin, m[tI[1], tI[0]] = sin, m[tI[1], tI[1]] = cos.
-								//const tI = [0,1];
-								//Для первой матрицы получается
-								//m[0, 0] = cos, m[0, 1] = -sin, m[1, 0] = sin, m[1, 1] = cos.
-
-								if ( n === 2 ) rotationAxes[0].push( 2 );//в двумерном пространстве вращение вокруг оси 2
-								else for ( var j = 0; j < ( n - 2 ); j++ ) rotationAxes[0].push( j );
-								rotationAxes[0].tI = [0, 1];
-
-								const iLastColumn = rotationAxes[0].length - 1;
-
-								var boLastRow = false;
-
-								while ( !boLastRow ) {
-
-									const iLastRow = rotationAxes.length - 1, lastRow = rotationAxes[iLastRow],
-										row = [];
-
-									for ( var j = iLastColumn; j >= 0; j-- ) {
-
-										const prevColumn = lastRow[j];
-										var iAxis;//индекс оси
-										if ( j === iLastColumn ) iAxis = prevColumn + 1;//увеличить на 1 последнюю колонку
-										else iAxis = prevColumn;
-										if ( iAxis >= n ) {
-
-											function createRow( j ) {
-
-												if ( j <= 0 ) return false;//последний ряд
-												//если это последняя колонка и если индекс оси больше количества осей в n пространстве
-												//увеличить индекс оси в предыдущей колонке
-												const prevRowColumn = lastRow[j - 1] + 1;
-												//предыдущая колонка не может больше или рано текушей колонке в предыдущем ряде
-												if ( prevRowColumn >= lastRow[j] ) return createRow( j - 1 );
-												row[j - 1] = prevRowColumn;
-												//индекс оси в текущей колонке равен индексу в предыдущей колонке плюс 1
-												row[j] = row[j - 1] + 1;
-
-												//все последующие колонки увеличиваются на единицу
-												for ( var k = j + 1; k <= iLastColumn; k++ ) row[k] = row[k - 1] + 1;
-
-												//копируем из последнего ряда оставшиеся колонки слева 
-												j = j - 2;
-												while ( j >= 0 ) {
-
-													row[j] = lastRow[j];
-													j--;
-
-												}
-												return true;
-
-											}
-											boLastRow = !createRow( j );
-											break;
-
-										}
-										else row[j] = iAxis;
-
-									}
-									if ( !boLastRow ) {
-
-										row.tI = [lastRow.tI[0]];
-										var tI1 = lastRow.tI[1] + 1;
-										if ( tI1 >= n ) {
-
-											row.tI[0]++;
-											tI1 = row.tI[0] + 1;
-
-										}
-										row.tI[1] = tI1;
-										if ( row.length === 0 ) {
-
-											console.error( 'ND positionWorld get: row is empty' );
-											break;
-
-										}
-										rotationAxes.push( row );
-
-										//debug
-										if ( iLastRow === rotationAxes.length - 1 ) {
-
-											console.error( 'ND positionWorld get: row is not added' );
-											break;
-
-										}
-										/*
-										if ( iLastRow >= 100 ) {
-		
-											console.error( 'ND positionWorld get: Invalid iLastRow = ' + iLastRow );
-											break;
-		
-										}
-										*/
-
-									}
-
-								}
-
-							}
+							setRotationAxes();
 
 							/*
 							//test
@@ -910,6 +913,7 @@ class ND {
 						} else {
 
 							positionPoint.forEach( ( value, j ) => array.push( positionPoint[j] + settings.position[j] ) );
+							setRotationAxes();
 
 						}
 
