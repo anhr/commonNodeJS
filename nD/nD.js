@@ -195,8 +195,18 @@ class ND {
 	 * number - position of the 0 coordinate of the n-dimensional graphical object.
 	 * <pre>
 	 * @param {Array|number} [settings.rotation] Array - rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
+	 * <table>
+		 <tr><td><b>n</b> space dimension</td><td>Array index</td><td>Axis of rotation</td><td>Axis type</td></tr>
+		 <tr><td>0 no rotation</td></tr>
+		 <tr><td>1 no rotation</td></tr>
+		 <tr><td>2</td><td>0</td><td></td><td>No effect for 2-dimensional space</td></tr>
+		 <tr><td></td><td>1</td><td></td><td>No effect for 2-dimensional space</td></tr>
+		 <tr><td></td><td>2</td><td>2(z)</td><td>point</td></tr>
+		 <tr><td>3</td><td>0</td>0<td></td><td>No effect for 2-dimensional space</td></tr>
+		</table>
 	 * <pre>
 	 * number - rotation in radians around axis 0 or rotation around axis 2 for 2D objects i.e. space dimension n = 2.
+	 * See [Can rotations in 4D be given an explicit matrix form?]{@link https://math.stackexchange.com/questions/1402362/can-rotations-in-4d-be-given-an-explicit-matrix-form}, [Rotation matrix]{@link https://en.wikipedia.org/wiki/Rotation_matrix.}.
 	 * <pre>
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * Define <b>scene</b> if you want visualise n-dimensional plane and n-dimensional object to 3-D space of the <b>scene</b>.
@@ -567,7 +577,7 @@ class ND {
 						if ( settings.rotation.isRotation() ) {
 
 							//https://math.stackexchange.com/questions/1402362/can-rotations-in-4d-be-given-an-explicit-matrix-form
-							//https://en.wikipedia.org/wiki/Rotation_matrix#:~:text=A%20basic%20rotation%20(also%20called,which%20codifies%20their%20alternating%20signs.
+							//https://en.wikipedia.org/wiki/Rotation_matrix
 							function getMatrix( index ) {
 
 								const cos = settings.rotation.trigonometry[index].cos, sin = settings.rotation.trigonometry[index].sin,
@@ -2209,7 +2219,8 @@ class ND {
 					
 				} );
 				const fPosition = fParent.addFolder( lang.position ),
-					fRotation = rotationAxes[0].length === 0 ? undefined : fParent.addFolder( lang.rotation );
+					fRotation = n < 2 ? undefined : fParent.addFolder( lang.rotation );
+//					fRotation = rotationAxes[0].length === 0 ? undefined : fParent.addFolder( lang.rotation );
 				function rotation( i ) {
 					
 					if ( rotationAxes[i].length === 0 ) return;
