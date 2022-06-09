@@ -400,6 +400,11 @@ class ND {
 							target.folders = target.folders || [];
 							return target.folders;
 						case 'arguments': return;//for dat.GUI
+						case 'clear': return function() {
+							
+							target.forEach( ( pos, i ) => target[i] = 0 );
+						
+						}
 						default: console.error( 'ND: settings.position Proxy. Invalid name: ' + name );
 
 					}
@@ -521,6 +526,12 @@ class ND {
 							return boRotation;
 						
 						}
+						case 'clear': return function() {
+							
+							target.forEach( ( angle, i ) => target[i] = 0 );
+							target.trigonometry = undefined;
+						
+						}
 						case 'arguments': return;//for dat.GUI
 						default: console.error( 'ND: settings.rotation Proxy. Invalid name: ' + name );
 
@@ -559,6 +570,8 @@ class ND {
 		const rotationAxes = [[]];//массив осей вращения
 		function setRotationAxes() {
 
+			if ( n < 2 ) return;
+			
 			if ( rotationAxes[0].length != 0 ) return;
 
 			//create rotation axies
@@ -2867,6 +2880,8 @@ class ND {
 
 					geometry.geometry = geometryNew;
 //					settings.geometry = geometryNew;
+					settings.rotation.clear();
+					settings.position.clear();
 					projectTo3D();
 					this.intersection()
 
