@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -78,6 +78,9 @@
 					Currenty I have created <a href="https://en.wikipedia.org/wiki/5-cell" target="_blank">pentatope</a> as 4D object. You can see it as green lines.
 					I get a 3D object as a result of the intersection of a pentatope with the 3D panel.
 					You can see it as white lines.
+					<p>
+					<input type="checkbox" id="5Dto4D">check the box if you want to import a 4D object from a 5D canvas as a result of the intersection of the 5D object with the 4D panel.
+					</p>
 					<div class="canvas" id="4D">
 						<img src="../../img/wait.gif">
 					</div>
@@ -179,9 +182,9 @@
 
 				D5: true,
 				D4: true,
-				D3: true,
-				D2: true,
-				D1: true,
+				//D3: true,
+				//D2: true,
+				//D1: true,
 
 			},
 			playerOptions = {
@@ -191,6 +194,26 @@
 				interval: 25,//Ticks per seconds.
 
 			};
+		const c5Dto4D = document.getElementById( "5Dto4D" );
+		c5Dto4D.onchange = function(params) {
+
+			if ( !_4D ) return;
+			if ( c5Dto4D.checked ) {
+				
+				if (  c5Dto4D.geometry ) {
+					
+					c5Dto4D.geometryOld = _4D.geometry.copy;
+					_4D.geometry = c5Dto4D.geometry;
+
+				}
+				return;
+
+			}
+//			_4D.geometry = c5Dto4D.geometryOld.geometry;
+			_4D.settings = c5Dto4D.geometryOld;
+//			_4D.intersection();
+		
+		}
 
 		//5D
 		var _5D;
@@ -219,7 +242,12 @@
 					},
 					scene: scene,
 					options: options,
-					onIntersection: function ( geometryIntersection ) { if ( _4D ) _4D.geometry = geometryIntersection; }
+					onIntersection: function ( geometryIntersection ) {
+						
+						c5Dto4D.geometry = geometryIntersection;
+						if ( _4D && c5Dto4D.checked ) _4D.geometry = geometryIntersection;
+					
+					}
 
 				} );
 
@@ -248,10 +276,10 @@
 
 				_4D = new ND( 4, {
 
-					//position: [-0.3],// -0.2, 0.3, 5],
+					position: [-0.3],// -0.2, 0.3, 5],
 					//rotation: [0.01],
-					//rotation: [Math.PI / 5, 1, 2, 3, 4, 5],
-					rotation: [0, 0, 0, 0, 0, - Math.PI / 2],
+					rotation: [Math.PI / 5, 1, 2, 3, 4, 5],
+					//rotation: [0, 0, 0, 0, 0, - Math.PI / 2],
 					boDisplayVerticeID: true,
 					geometry: {
 
@@ -451,9 +479,10 @@
 
 				_3D = new ND( 3, {
 
-					position: [-0.3],
+					//position: [-0.3],
 					//rotation: Math.PI / 4,
-					rotation: [Math.PI / 5, 1, 2],
+					rotation: [Math.PI / 4, Math.PI / 5],
+					boDisplayVerticeID: true,
 					geometry: {
 
 						/*
@@ -493,7 +522,7 @@
 						*/
 
 						//tetrahedron
-						position: [
+						position2: [
 
 							/*
 							[0.8, -0.6, 0.1],//0
@@ -514,6 +543,52 @@
 							[0, 0.6, 0.4]//3
 							*/
 
+						],
+
+						//cube
+						position: [
+							[ 0.5,  0.5,  0.5],//0
+							[ 0.5, -0.5,  0.5],//1
+							[-0.5,  0.5,  0.5],//2
+							[-0.5, -0.5,  0.5],//3
+
+							[ 0.5,  0.5, -0.5],//4
+							[ 0.5, -0.5, -0.5],//5
+							[-0.5,  0.5, -0.5],//6
+							[-0.5, -0.5, -0.5],//7
+						],
+						indices: [
+
+							//edges
+							[
+								//face 0
+								[0, 1],//0 face 1
+								[1, 3],//1 face 4
+								[3, 2],//2 face 3
+								[2, 0],//3 face 2
+
+								//face 1
+								[0, 4],//4 face 2
+								[4, 5],//5 face 5
+								[5, 1],//6 face 4
+
+								//face 2
+								[2, 6],//7 face 3
+								[6, 4],//8 face 5
+
+								[7, 3],//9 face 3, 4
+								[7, 5],//10 face 4, 5
+								[7, 6],//11 face 3, 5
+							],
+							//faces
+							[
+								[0, 1, 2, 3],//0
+								[0, 4, 5, 6],//1
+								[3, 7, 8, 4],//2
+								[2, 7, 9, 11],//3
+								[1, 9, 10, 6],//4
+								[5, 8, 10, 11],//5
+							],
 						],
 
 					},
