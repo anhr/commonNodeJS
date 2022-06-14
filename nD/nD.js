@@ -42,7 +42,7 @@ class ND {
 	 * Checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
 	 * @param {number} n space dimension of the graphical object.
 	 * @param {Object} [settings={}] The following settings are available
-	 * @param {Array|Object} [settings.geometry] Array of vertices of the n-dimensional graphical object.
+	 * @param {Array|Object} [settings.geometry] Array of vertices and indices of the n-dimensional graphical object.
 	 * <pre>
 	 * Every item of array is n-dimensional vector of vertice of object.
 	 * Or Object. See object's keys below.
@@ -1132,13 +1132,15 @@ class ND {
 			settings.geometry.position = proxyGeometryPosition();
 		//indices
 
-		if ( !settings.geometry.indices ) {
+		function setIndices() {
+			
+			if ( settings.geometry.indices ) return;
 
 			settings.geometry.indices = [];
 			settings.geometry.indices.boAddIndices = true;
 			
 		}
-//		settings.geometry.indices = settings.geometry.indices || [];
+		setIndices();
 
 		//edges
 		function proxyEdges( newEdges ) {
@@ -1437,14 +1439,21 @@ class ND {
 				} );
 
 		}
-		var edges = settings.geometry.indices[0], boArray = edges instanceof Array;
-		if ( !settings.geometry.indices[0] || boArray ) {
-
-			const indices = settings.geometry.indices;
-			if ( boArray ) { if ( !indices[0].isProxy ) indices[0] = proxyEdges(); }
-			else indices.push( proxyEdges() );
+		var edges;
+		function setEdges() {
+			
+			edges = settings.geometry.indices[0];
+			var boArray = edges instanceof Array;
+			if ( !settings.geometry.indices[0] || boArray ) {
+	
+				const indices = settings.geometry.indices;
+				if ( boArray ) { if ( !indices[0].isProxy ) indices[0] = proxyEdges(); }
+				else indices.push( proxyEdges() );
+	
+			}
 
 		}
+		setEdges();
 		
 		//Сгруппировать индексы ребер объета из settings.geometry.edges по сегментам обекта
 		//Например если объект это линия:
@@ -1688,14 +1697,19 @@ class ND {
 			}
 
 		}
-		switch ( n ) {
-
-			case 1://[0, 1]
-				addEdge();
-				break;
-			default: if ( settings.geometry.indices[0].length === 0 )  addEdges( n );
+		function appendEdges() {
+			
+			switch ( n ) {
+	
+				case 1://[0, 1]
+					addEdge();
+					break;
+				default: if ( settings.geometry.indices[0].length === 0 )  addEdges( n );
+	
+			}
 
 		}
+		appendEdges();
 
 		if ( settings.geometry.indices.boAddIndices ) {
 			//В каждом сегменте geometry.indices[i] должно встечаться определенное количество индексов из передыдущего сегмента
@@ -1833,11 +1847,13 @@ class ND {
 
 					}
 
-				}
+				} else delete settings.geometry.indices;
 				
 			},
+			//Projection of nD object to 3D space for visualization
 			D3: {
 				
+				//Returns a points of projection
 				get points() {
 
 					const points = [];
@@ -1846,6 +1862,7 @@ class ND {
 					return points;
 
 				},
+				//Returns an indices of projection
 				get indices() {
 
 					const indices = [], colors = [];
@@ -2924,22 +2941,47 @@ class ND {
 		const plane = new Plane();
 		plane.createMesh();
 
+		/**
+		* @description set new geometry, position and rotation of nD object
+		* See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {Object} settingsNew new nD object
+		* @param {Object} settingsNew.geometry geometry of new nD object. See See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {Array} settingsNew.geometry.position Array of vertices of the n-dimensional graphical object.
+	    * See See <b>settings.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {Array} [settingsNew.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
+	    * See See <b>settings.geometry.indices</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {Array|number} [settingsNew.position] position of the n-dimensional graphical object in n-dimensional coordinates.
+	    * See See <b>settings.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {Array|number} [settingsNew.rotation] rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
+	    * See See <b>settings.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		*/
+		this.settings = function ( settingsNew ) { console.error( 'ND: settings' ); }
+		/**
+		* @description
+		* Returns N-dimensional vector of the plane that intersects nD object.
+		*/
+		this.vectorPlane;
+		/**
+		* @description
+	    * <pre>
+	    * returns geometry of N-dimensional object. See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+	    *	key <b>geometry</b> - get or set a geometry of nD object. See See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+	    *	key <b>D3</b> - Projection of nD object to 3D space for visualization.
+	    *		<b>D3.points</b> - Points of projection. See <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setFromPoints" target="_blank">.setFromPoints</a> of <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
+	    *		<b>D3.indices</b> - Indices of points of projection. See <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setIndex" target="_blank">.setIndex</a> of <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
+	    *		<b>D3.color</b> - color of projection.
+	    * </pre>
+		*/
+		this.geometry;
+
 		Object.defineProperties( this, {
 
-			/** @namespace
-			* @description
-			* Returns N-dimensional vector of the plane.
-			*/
 			vectorPlane: {
 
 				get: function () { return vectorPlane; }
 
 			},
 
-			/** @namespace
-			* @description
-			* geometry of N-dimensional object. See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-			*/
 			geometry: {
 
 				get: function () { return geometry; },
@@ -2956,16 +2998,15 @@ class ND {
 
 			},
 
-			/** @namespace
-			* @description set new geometry, position and rotation of nD object
-			* See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-			*/
 			settings: {
 
 				set: function ( settingsNew ) {
 
 					settings.geometry = settingsNew.geometry;
 					
+					setIndices();
+					setEdges();
+					appendEdges();
 					if ( !settings.geometry.indices[0].isProxy ) settings.geometry.indices[0] = proxyEdges( settingsNew.geometry.indices[0] );
 					
 					settings.position = settingsNew.position;

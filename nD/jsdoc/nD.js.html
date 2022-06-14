@@ -70,7 +70,7 @@ class ND {
 	 * Checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
 	 * @param {number} n space dimension of the graphical object.
 	 * @param {Object} [settings={}] The following settings are available
-	 * @param {Array|Object} [settings.geometry] Array of vertices of the n-dimensional graphical object.
+	 * @param {Array|Object} [settings.geometry] Array of vertices and indices of the n-dimensional graphical object.
 	 * &lt;pre>
 	 * Every item of array is n-dimensional vector of vertice of object.
 	 * Or Object. See object's keys below.
@@ -403,8 +403,10 @@ class ND {
 			} );
 			
 		}
-		if ( !settings.position || !settings.position.isProxy )
-			settings.position = new Proxy( settings.position ? settings.position instanceof Array ? settings.position : [settings.position] : [], {
+		function proxyPosition() {
+
+			if ( settings.position &amp;&amp; settings.position.isProxy ) return settings.position;
+			return new Proxy( settings.position ? settings.position instanceof Array ? settings.position : [settings.position] : [], {
 
 				get: function ( target, name, args ) {
 
@@ -412,7 +414,7 @@ class ND {
 					if ( !isNaN( i ) ) {
 
 						if ( target instanceof Array ) {
-							
+
 							if ( i &lt; target.length &amp;&amp; ( target[i] !== undefined ) )
 								return target[i];
 							return 0;
@@ -428,6 +430,13 @@ class ND {
 							target.folders = target.folders || [];
 							return target.folders;
 						case 'arguments': return;//for dat.GUI
+						case 'clear': return function () {
+
+							target.forEach( ( pos, i ) => target[i] = 0 );
+
+						}
+						case 'forEach': return target.forEach;
+						case 'length': return target.length;
 						default: console.error( 'ND: settings.position Proxy. Invalid name: ' + name );
 
 					}
@@ -438,24 +447,28 @@ class ND {
 					target[name] = value;
 
 					settings.geometry.position.reset();
-					
-					const input = target.folders[name].cPosition.domElement.querySelector('input');
+
+					const input = target.folders[name].cPosition.domElement.querySelector( 'input' );
 					if ( parseFloat( input.value ) !== value ) {
-						
+
 						input.value = value;
 						update();
 
 					}
 					return true;
-					
-				},
 
+				},
 
 			} );
 
-		if ( !settings.rotation || !settings.rotation.isProxy ) {
+		}
+//		if ( !settings.position || !settings.position.isProxy )
+		settings.position = proxyPosition();
 
-			settings.rotation = new Proxy( settings.rotation ? settings.rotation instanceof Array ? settings.rotation : [settings.rotation] : [], {
+		function proxyRotation() {
+
+			if ( settings.rotation &amp;&amp; settings.rotation.isProxy ) return settings.rotation;
+			return new Proxy( settings.rotation ? settings.rotation instanceof Array ? settings.rotation : [settings.rotation] : [], {
 
 				get: function ( target, name, args ) {
 
@@ -467,9 +480,9 @@ class ND {
 							if ( i &lt; target.length &amp;&amp; ( target[i] !== undefined ) ) {
 
 								if ( !target.boUseRotation ) {
-									
+
 									//https://stackoverflow.com/a/57023880/5175935
-									const strFunction = (new Error()).stack.split("\n")[3].trim().split(" ")[1];
+									const strFunction = ( new Error() ).stack.split( "\n" )[3].trim().split( " " )[1];
 									if ( ( strFunction !== "NumberControllerSlider.updateDisplay" ) &amp;&amp; ( strFunction !== "NumberControllerBox.updateDisplay" ) )//пользователь изменил угол вращения из dat.GUI
 										console.error( 'ND settings.rotation get: use settings.rotation.trigonometry unstead settings.rotation. ' + strFunction )
 
@@ -491,7 +504,7 @@ class ND {
 							target.folders = target.folders || [];
 							return target.folders;
 						case 'trigonometry':
-							if ( !target.trigonometry ){
+							if ( !target.trigonometry ) {
 
 								target.trigonometry = new Proxy( [], {
 
@@ -506,7 +519,7 @@ class ND {
 												const angle = settings.rotation[i];
 												settings.rotation.boUseRotation = false;
 												target[i] = { sin: Math.sin( angle ), cos: Math.cos( angle ) };
-												
+
 											}
 											return target[i];
 
@@ -528,28 +541,36 @@ class ND {
 
 
 								} );
-								
+
 							}
 							return target.trigonometry;
-						case 'isRotation': return function() {
-							
+						case 'isRotation': return function () {
+
 							target.boUseRotation = true;
 							var boRotation = false
 							for ( var j = 0; j &lt; n; j++ ) {
-									
+
 								if ( settings.rotation[j] !== 0 ) {
-									
+
 									boRotation = true;
 									break;
 
 								}
-									
+
 							}
 							target.boUseRotation = false;
 							return boRotation;
-						
+
+						}
+						case 'clear': return function () {
+
+							target.forEach( ( angle, i ) => target[i] = 0 );
+							target.trigonometry = undefined;
+
 						}
 						case 'arguments': return;//for dat.GUI
+						case 'forEach': return target.forEach;
+						case 'length': return target.length;
 						default: console.error( 'ND: settings.rotation Proxy. Invalid name: ' + name );
 
 					}
@@ -562,7 +583,7 @@ class ND {
 
 					settings.rotation.trigonometry[name].cos = Math.cos( value );
 					settings.rotation.trigonometry[name].sin = Math.sin( value );
-					
+
 					settings.geometry.position.reset();
 
 					const input = target.folders[name].cRotation.domElement.querySelector( 'input' );
@@ -578,6 +599,11 @@ class ND {
 
 
 			} );
+
+		}
+		if ( !settings.rotation || !settings.rotation.isProxy ) {
+
+			settings.rotation = proxyRotation();
 			settings.rotation.boUseRotation = false;
 
 		}
@@ -587,6 +613,8 @@ class ND {
 		const rotationAxes = [[]];//массив осей вращения
 		function setRotationAxes() {
 
+			if ( n &lt; 2 ) return;
+			
 			if ( rotationAxes[0].length != 0 ) return;
 
 			//create rotation axies
@@ -991,15 +1019,16 @@ class ND {
 
 		var _prevLine;
 
-		//For debug Вылавливает случаи вызова settings.geometry.position вместо positionWorld
-		if ( !settings.geometry.position.isProxy )
-			settings.geometry.position = new Proxy( settings.geometry.position ? settings.geometry.position : [], {
-	
+		function proxyGeometryPosition() {
+
+			if ( settings.geometry.position &amp;&amp; settings.geometry.position.isProxy ) return settings.geometry.position;
+			return new Proxy( settings.geometry.position ? settings.geometry.position : [], {
+
 				get: function ( target, name, args ) {
-	
+
 					const i = parseInt( name );
 					if ( !isNaN( i ) ) {
-	
+
 						if ( settings.geometry.position.boPositionError ) {
 
 							//срабатывает когда меняется позиция вершины.
@@ -1011,11 +1040,11 @@ class ND {
 
 							console.error( 'ND get settings.geometry.position: invalid index = ' + i );
 							return;
-							
+
 						}
 						if ( target[i] instanceof Array ) {
 
-//							return target[i];
+							//							return target[i];
 							return new Proxy( target[i], {
 
 								get: function ( target, name, args ) {
@@ -1034,14 +1063,8 @@ class ND {
 										case 'indices': return target.indices;
 										case 'i': return target.i;
 										case 'arguments': return target.arguments;
-/*
-										case 'push': return target.push;
-										case 'forEach': return target.forEach;
-										case 'isProxy': return true;
-										case 'boPositionError': return target.boPositionError;
-										case 'target': return target;
-*/
-										default: console.error( 'ND: settings.geometry.position[i] Proxy. Invalid name: ' + name );
+										case 'reset': return function() { delete target.positionWorld; }
+										default: console.error( 'ND: settings.geometry.position[i] get. Invalid name: ' + name );
 
 									}
 
@@ -1051,25 +1074,21 @@ class ND {
 									const i = parseInt( name );
 									target[name] = value;
 									if ( !isNaN( i ) ) {
-										
+
 										target.positionWorld = undefined;
-/*
-										_prevLine.children.forEach( item => {
-
-											if ( item.type != 'Sprite' ) {
-												
-												item.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
-												item.geometry.attributes.position.needsUpdate = true;
-
-											}
-												
-										} )
-*/
 										_prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
 										_prevLine.geometry.attributes.position.needsUpdate = true;
 										update();//изменилась позиция вершины
 
 									}
+/*									
+									switch ( name ) {
+
+										case 'positionWorld': target[name] = value;
+										default: console.error( 'ND: settings.geometry.position[i] set. Invalid name: ' + name );
+
+									}
+*/
 									return true;
 
 								},
@@ -1078,11 +1097,11 @@ class ND {
 
 						}
 						console.error( 'ND: get settings.geometry.position is not array.' )
-						return  [target[i]];
-	
+						return [target[i]];
+
 					}
 					switch ( name ) {
-	
+
 						case 'push': return target.push;
 						case 'length': return target.length;
 						case 'forEach': return target.forEach;
@@ -1098,18 +1117,21 @@ class ND {
 								const v = [];
 								target[i].forEach( ( value, j ) => v[j] = target[i][j] );
 								return v;
-			
-							}
-						case "reset":
-							return function () {
-
-								target.forEach( item => item.positionWorld = undefined );
 
 							}
+						case "reset": return function () {
+
+//							for ( var i = 0; i &lt; settings.geometry.position.length; i++ ) settings.geometry.position[i].positionWorld = undefined;
+//							settings.geometry.position.forEach( item => item.reset() );
+//							settings.geometry.position.forEach( item => delete item.positionWorld );
+//							for ( var i = 0; i &lt; target.length; i++ ) delete target.positionWorld;
+							target.forEach( item => delete item.positionWorld );
+						
+						}
 						default: console.error( 'ND: settings.geometry.position Proxy. Invalid name: ' + name );
-	
+
 					}
-	
+
 				},
 				set: function ( target, name, value ) {
 
@@ -1118,21 +1140,24 @@ class ND {
 
 						//изменилась позиция вершины
 						return true;
-						
+
 					}
 					target[name] = value;
 
-//if ( name != 'boPositionError' )
-//	console.log('ND settings.geometry.position set: name = ' + name );
-					
-//					settings.geometry.position.reset();
+					//if ( name != 'boPositionError' )
+					//	console.log('ND settings.geometry.position set: name = ' + name );
+
+					//					settings.geometry.position.reset();
 
 					return true;
 
 				},
-				
+
 			} );
 
+		}
+//		if ( !settings.geometry.position.isProxy )
+			settings.geometry.position = proxyGeometryPosition();
 		//indices
 
 		if ( !settings.geometry.indices ) {
@@ -1144,303 +1169,305 @@ class ND {
 //		settings.geometry.indices = settings.geometry.indices || [];
 
 		//edges
-		var edges = settings.geometry.indices[0], boArray = edges instanceof Array;
-		if ( !settings.geometry.indices[0] || boArray ) {
+		function proxyEdges( newEdges ) {
 
-			function proxyEdges( newEdges ) {
+			edges = newEdges || edges;
+			if ( edges &amp;&amp; edges.isProxy ) return edges;
+			return new Proxy( edges ? edges : [],
+				{
 
-				edges = newEdges || edges;
-				return new Proxy( edges ? edges : [],
-					{
+					get: function ( target, name, value ) {
 
-						get: function ( target, name, value ) {
+						const i = parseInt( name );
+						if ( !isNaN( i ) )
+							return {
 
-							const i = parseInt( name );
-							if ( !isNaN( i ) )
-								return {
+								intersection: function ( geometryIntersection ) {
 
-									intersection: function ( geometryIntersection ) {
+									const i = parseInt( name );
+									if ( !isNaN( i ) ) {
 
-										const i = parseInt( name );
-										if ( !isNaN( i ) ) {
+										if ( i.toString() !== name ) {
 
-											if ( i.toString() !== name ) {
+											console.error( 'ND: settings.geometry.indices[]intersection. invalid name = ' + name );
+											return;
 
-												console.error( 'ND: settings.geometry.indices[]intersection. invalid name = ' + name );
-												return;
+										}
+										if ( target.length === 0 ) return;//no edges
+										if ( i >= target.length ) {
 
-											}
-											if ( target.length === 0 ) return;//no edges
-											if ( i >= target.length ) {
-												
-												console.error( 'ND: settings.geometry.indices[]intersection. invalid length: ' + target.length );
-												this.indices = { intersection: {} };
-												return;
+											console.error( 'ND: settings.geometry.indices[]intersection. invalid length: ' + target.length );
+											this.indices = { intersection: {} };
+											return;
 
-											}
-											var indices = target[i];
-											
-											//Когда размерность графического оъекта меньше 3
-											//и когда он создается из объета большей размерности
-											//то indices это прокси
-											if ( indices.indices ) indices = indices.indices;
-											
-											if ( indices.length !== 2 ) {
+										}
+										var indices = target[i];
 
-												console.error( 'ND: settings.geometry.indices[]intersection. indices.length = ' + indices.length );
-												return;
+										//Когда размерность графического оъекта меньше 3
+										//и когда он создается из объета большей размерности
+										//то indices это прокси
+										if ( indices.indices ) indices = indices.indices;
 
-											}
-											if ( indices[0] === indices[1] ) {
+										if ( indices.length !== 2 ) {
 
-												console.error( 'ND: settings.geometry.indices[]intersection. indices[0] === indices[1] = ' + indices[0] );
-												return;
+											console.error( 'ND: settings.geometry.indices[]intersection. indices.length = ' + indices.length );
+											return;
 
-											}
-											const position0 = new Vector( positionWorld[indices[0]] ),
-												position1 = new Vector( positionWorld[indices[1]] );
-											function indicesIntersection( position ) {
+										}
+										if ( indices[0] === indices[1] ) {
 
-												switch ( n ) {
+											console.error( 'ND: settings.geometry.indices[]intersection. indices[0] === indices[1] = ' + indices[0] );
+											return;
 
-													case 2:
-														break;
-													default:
-														if ( !position )
-															break;
-														position.push( vectorPlane[n - 1] );
-														break;
+										}
+										const position0 = new Vector( positionWorld[indices[0]] ),
+											position1 = new Vector( positionWorld[indices[1]] );
+										function indicesIntersection( position ) {
 
-												}
-												indices.intersection = { position: position, }
-												if ( indices.intersection.position ) indices.intersection.position.iEdge = i;
-
-											}
 											switch ( n ) {
 
-												case 1:
-													if ( vectorPlane[0].between( position0[0], position1[0], true ) )
-														geometryIntersection.position.push( [vectorPlane[0]] );
-													break;
 												case 2:
-													var vector;
-													if ( vectorPlane[1].between( position0[1], position1[1], true ) ) {
+													break;
+												default:
+													if ( !position )
+														break;
+													position.push( vectorPlane[n - 1] );
+													break;
 
-														const a = ( position1[1] - position0[1] ) / ( position1[0] - position0[0] ),
+											}
+											indices.intersection = { position: position, }
+											if ( indices.intersection.position ) indices.intersection.position.iEdge = i;
+
+										}
+										switch ( n ) {
+
+											case 1:
+												if ( vectorPlane[0].between( position0[0], position1[0], true ) )
+													geometryIntersection.position.push( [vectorPlane[0]] );
+												break;
+											case 2:
+												var vector;
+												if ( vectorPlane[1].between( position0[1], position1[1], true ) ) {
+
+													const a = ( position1[1] - position0[1] ) / ( position1[0] - position0[0] ),
 														b = position0[1] - a * position0[0],
 														x = ( a === 0 ) || isNaN( a ) || ( Math.abs( a ) === Infinity ) ?
 															position1[0] :
 															( vectorPlane[1] - b ) / a;
-														if ( isNaN( x ) || ( x === undefined ) ) { console.error( 'ND.intersection: x = ' + x + ' position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0] ); }
+													if ( isNaN( x ) || ( x === undefined ) ) { console.error( 'ND.intersection: x = ' + x + ' position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0] ); }
 
-														//Если x почти равно position0[0] и position0[0] то будем считать что x между ними
-														const d = 1e-15;//-1.1102230246251565e-16 
-														if ( !x.between( position0[0], position1[0], true ) ) {
-															
-															if ( ! ( ( Math.abs( x - position0[0] ) &lt; d ) &amp;&amp; ( Math.abs( x - position0[0] ) &lt; d ) ) ) {
-																
-																indices.intersection = {};
-																break;
+													//Если x почти равно position0[0] и position0[0] то будем считать что x между ними
+													const d = 1e-15;//-1.1102230246251565e-16 
+													if ( !x.between( position0[0], position1[0], true ) ) {
 
-															}
-//else console.log('x почти равно position0[0] и position0[0]');
+														if ( !( ( Math.abs( x - position0[0] ) &lt; d ) &amp;&amp; ( Math.abs( x - position0[0] ) &lt; d ) ) ) {
 
-														}
-														vector = [x, vectorPlane[1]];
-
-													}
-													indicesIntersection( vector );
-													break;
-												case 3:
-
-													var pos;
-													
-													//Если позиции вершины находится на этом расстоянии от панели, то будем считать, что она находится на панели
-													//Для проверки запустить canvas 3D с geometry Variant 1 и проигрыватель в точке t = 0.6.
-													//
-													//В примере canvas 3D с geometry.position Variant 2 вершина точно находится на панели
-													const d = 5.56e-17;
-													
-													if ( Math.abs( vectorPlane[n - 1] - position1[n - 1] ) &lt; d ) pos = position1;
-													else if ( Math.abs( vectorPlane[n - 1] - position0[n - 1] ) &lt; d ) pos = position0;
-													if ( pos ) {
-
-														//Вершина находится на панели.
-														//Для проверки запустить canvas 3D и установить время проигрывателя t = 0.3 так чтобы вершина 2 пирамиды попала на панель
-														//В этом случает треугольник пересечения сведется к трем точкам с одинаковыми координатами.
-														indicesIntersection( [pos[0], pos[1]] );
-														indices.intersection.boVerticeOnPanel = true;
-
-													} else {
-
-														const nD02 = new ND( n - 1, {
-
-															geometry: {
-
-																position: positionWorld.copy(),//settings.geometry.position,
-																indices: [[indices]],
-																iAxes: [1, 2],
-
-															},
-															vectorPlane: vectorPlane.array,
-
-														} ),
-															arrayIntersects02 = nD02.intersection();
-														const nD12 = new ND( n - 1, {
-
-															geometry: {
-
-																position: positionWorld.copy(),//settings.geometry.position,
-																indices: [[indices]],
-																iAxes: [0, 2],
-
-															},
-															vectorPlane: vectorPlane.array,
-
-														} ),
-															arrayIntersects12 = nD12.intersection();
-														indicesIntersection( arrayIntersects02.length &amp;&amp; arrayIntersects12.length ?
-															[arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined );
-
-													}
-													break;
-												default:
-
-													function intersectionAxis( axis ) {
-
-														const nD0 = new ND( 2, {
-
-															geometry: {
-
-																position: positionWorld,//settings.geometry.position,
-																indices: [[indices]],
-																iAxes: [axis, n - 1],
-
-															},
-															vectorPlane: vectorPlane.array,
-
-														} );
-														return nD0.intersection();
-
-													}
-													const arrayIntersections = [];
-													var boIntersect = true;
-													for ( var iIntersection = 0; iIntersection &lt; n - 1; iIntersection++ ) {
-														
-														const item = intersectionAxis( iIntersection );
-														if ( boIntersect &amp;&amp; ( item.length === 0 ) ) {
-															
-															boIntersect = false;
+															indices.intersection = {};
 															break;
 
 														}
-														if ( item.length ) arrayIntersections.push( item[0][0] );
+														//else console.log('x почти равно position0[0] и position0[0]');
 
 													}
-													indicesIntersection( boIntersect ? arrayIntersections : undefined );
+													vector = [x, vectorPlane[1]];
 
-											}
+												}
+												indicesIntersection( vector );
+												break;
+											case 3:
 
-										} else console.error( 'ND: settings.geometry.indices[]intersection. invalid name: ' + name );
+												var pos;
 
-									},
-									indices: target[parseInt( name )],
+												//Если позиции вершины находится на этом расстоянии от панели, то будем считать, что она находится на панели
+												//Для проверки запустить canvas 3D с geometry Variant 1 и проигрыватель в точке t = 0.6.
+												//
+												//В примере canvas 3D с geometry.position Variant 2 вершина точно находится на панели
+												const d = 5.56e-17;
 
-								};
-							switch ( name ) {
+												if ( Math.abs( vectorPlane[n - 1] - position1[n - 1] ) &lt; d ) pos = position1;
+												else if ( Math.abs( vectorPlane[n - 1] - position0[n - 1] ) &lt; d ) pos = position0;
+												if ( pos ) {
 
-								case 'push': return target.push;
-								case 'length': return target.length;
-								case 'intersection': return undefined;
-								case 'edges': return target;
-								case 'isProxy': return true;
-								default: console.error( 'ND: settings.geometry.indices getter. Invalid name: ' + name );
+													//Вершина находится на панели.
+													//Для проверки запустить canvas 3D и установить время проигрывателя t = 0.3 так чтобы вершина 2 пирамиды попала на панель
+													//В этом случает треугольник пересечения сведется к трем точкам с одинаковыми координатами.
+													indicesIntersection( [pos[0], pos[1]] );
+													indices.intersection.boVerticeOnPanel = true;
+
+												} else {
+
+													const nD02 = new ND( n - 1, {
+
+														geometry: {
+
+															position: positionWorld.copy(),//settings.geometry.position,
+															indices: [[indices]],
+															iAxes: [1, 2],
+
+														},
+														vectorPlane: vectorPlane.array,
+
+													} ),
+														arrayIntersects02 = nD02.intersection();
+													const nD12 = new ND( n - 1, {
+
+														geometry: {
+
+															position: positionWorld.copy(),//settings.geometry.position,
+															indices: [[indices]],
+															iAxes: [0, 2],
+
+														},
+														vectorPlane: vectorPlane.array,
+
+													} ),
+														arrayIntersects12 = nD12.intersection();
+													indicesIntersection( arrayIntersects02.length &amp;&amp; arrayIntersects12.length ?
+														[arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined );
+
+												}
+												break;
+											default:
+
+												function intersectionAxis( axis ) {
+
+													const nD0 = new ND( 2, {
+
+														geometry: {
+
+															position: positionWorld,//settings.geometry.position,
+															indices: [[indices]],
+															iAxes: [axis, n - 1],
+
+														},
+														vectorPlane: vectorPlane.array,
+
+													} );
+													return nD0.intersection();
+
+												}
+												const arrayIntersections = [];
+												var boIntersect = true;
+												for ( var iIntersection = 0; iIntersection &lt; n - 1; iIntersection++ ) {
+
+													const item = intersectionAxis( iIntersection );
+													if ( boIntersect &amp;&amp; ( item.length === 0 ) ) {
+
+														boIntersect = false;
+														break;
+
+													}
+													if ( item.length ) arrayIntersections.push( item[0][0] );
+
+												}
+												indicesIntersection( boIntersect ? arrayIntersections : undefined );
+
+										}
+
+									} else console.error( 'ND: settings.geometry.indices[]intersection. invalid name: ' + name );
+
+								},
+								indices: target[parseInt( name )],
+
+							};
+						switch ( name ) {
+
+							case 'push': return target.push;
+							case 'length': return target.length;
+							case 'intersection': return undefined;
+							case 'edges': return target;
+							case 'isProxy': return true;
+							case 'forEach': return target.forEach;
+							default: console.error( 'ND: settings.geometry.indices getter. Invalid name: ' + name );
+
+						}
+
+					},
+					set: function ( edges, prop, value ) {
+
+						const index = parseInt( prop );
+						if ( isNaN( index ) ) {
+
+							switch ( prop ) {
+
+								case 'length':
+									break;
+								case 'edges':
+									settings.geometry.indices[0] = proxyEdges( value );
+									break;
+								default: console.error( 'ND settings.geometry.indices[0].set: invalid prop: ' + prop );
 
 							}
+							return true;
 
-						},
-						set: function ( edges, prop, value ) {
+						}
 
-							const index = parseInt( prop );
-							if ( isNaN( index ) ) {
+						if ( value instanceof Array ) {
 
-								switch ( prop ) {
-
-									case 'length':
-										break;
-									case 'edges':
-										settings.geometry.indices[0] = proxyEdges( value );
-										break;
-									default: console.error( 'ND settings.geometry.indices[0].set: invalid prop: ' + prop );
-
-								}
-								return true;
-
-							}
-
-							if ( value instanceof Array ) {
-
-								//Do not add a duplicate edge
-								for ( var i = 0; i &lt; edges.length; i++ ) { 
-
-									const edge = edges[i];
-									if (
-										( ( edge[0] === value[0] ) &amp;&amp; ( edge[1] === value[1] ) ) ||
-										( ( edge[1] === value[0] ) &amp;&amp; ( edge[0] === value[1] ) )
-									) {
-										
-										value.index = i;
-										return true;
-
-									}
-										
-								}
-								
-								edges[index] = value;
-								value.index = index;
-								return true;
-
-							}
-							const indices = value;
-							if ( indices.length !== 2 ) {
-
-								console.error( 'ND: settings.geometry.indices.push invalid indices.length = ' + indices.length );
-								return true;
-
-							}
-
-							//find duplicate edge
+							//Do not add a duplicate edge
 							for ( var i = 0; i &lt; edges.length; i++ ) {
 
-								const edgeIndices = edges[i];
-								if ( ( edgeIndices[0] === indices[0] ) &amp;&amp; ( edgeIndices[1] === indices[1] ) ) {
+								const edge = edges[i];
+								if (
+									( ( edge[0] === value[0] ) &amp;&amp; ( edge[1] === value[1] ) ) ||
+									( ( edge[1] === value[0] ) &amp;&amp; ( edge[0] === value[1] ) )
+								) {
 
-									console.error( 'ND: settings.geometry.indices.push under constraction' );
-									return;
-
-								}
-								if ( ( edgeIndices[0] === indices[1] ) &amp;&amp; ( edgeIndices[1] === indices[0] ) ) {
-
-
-									console.error( 'ND: settings.geometry.indices.push under constraction' );
-									//у этого ребра есть ребро близнец, у которого индексы вершин поменены местами
-									//Поэтому можно не искать точку пересечения а брать ее из близнеца
-									indices[0] = settings.geometry.indices[i].indices[0];
-									indices[1] = settings.geometry.indices[i].indices[1];
-									return;
+									value.index = i;
+									return true;
 
 								}
 
 							}
 
 							edges[index] = value;
+							value.index = index;
+							return true;
+
+						}
+						const indices = value;
+						if ( indices.length !== 2 ) {
+
+							console.error( 'ND: settings.geometry.indices.push invalid indices.length = ' + indices.length );
 							return true;
 
 						}
 
-					} );
+						//find duplicate edge
+						for ( var i = 0; i &lt; edges.length; i++ ) {
 
-			}
+							const edgeIndices = edges[i];
+							if ( ( edgeIndices[0] === indices[0] ) &amp;&amp; ( edgeIndices[1] === indices[1] ) ) {
+
+								console.error( 'ND: settings.geometry.indices.push under constraction' );
+								return;
+
+							}
+							if ( ( edgeIndices[0] === indices[1] ) &amp;&amp; ( edgeIndices[1] === indices[0] ) ) {
+
+
+								console.error( 'ND: settings.geometry.indices.push under constraction' );
+								//у этого ребра есть ребро близнец, у которого индексы вершин поменены местами
+								//Поэтому можно не искать точку пересечения а брать ее из близнеца
+								indices[0] = settings.geometry.indices[i].indices[0];
+								indices[1] = settings.geometry.indices[i].indices[1];
+								return;
+
+							}
+
+						}
+
+						edges[index] = value;
+						return true;
+
+					}
+
+				} );
+
+		}
+		var edges = settings.geometry.indices[0], boArray = edges instanceof Array;
+		if ( !settings.geometry.indices[0] || boArray ) {
+
 			const indices = settings.geometry.indices;
 			if ( boArray ) { if ( !indices[0].isProxy ) indices[0] = proxyEdges(); }
 			else indices.push( proxyEdges() );
@@ -1767,6 +1794,52 @@ class ND {
 				} );
 
 			},
+			get copy() {
+				
+				const copySettings = { geometry: { position: [], indices: [] }, position: [], rotation: [] };
+				settings.geometry.position.forEach( vertice => {
+					
+					const copy = [];
+					vertice.forEach( axis => copy.push(axis) );
+					copySettings.geometry.position.push( copy );
+					
+				} );
+				settings.geometry.indices.forEach( indexes => {
+					
+					const copy = [];
+					indexes.forEach( arrayIndex => {
+						
+						const copyArrayIndex = [];
+						if ( arrayIndex.indices ) arrayIndex = arrayIndex.indices;
+						arrayIndex.forEach( index => copyArrayIndex.push(index) );
+						copy.push(copyArrayIndex);
+					
+					} );
+					copySettings.geometry.indices.push( copy );
+					
+				} );
+				function copyItem( array ){
+					
+					const copy = [];
+					array.forEach( item => {
+						
+/*						
+						const copyItem = [];
+						item.forEach( i => copyItem.push(i) );
+*/
+						copy.push( item );
+						
+					} );
+					return copy;
+					
+				}
+				copySettings.position = copyItem( settings.position );
+				settings.rotation.boUseRotation = true;
+				copySettings.rotation = copyItem( settings.rotation );
+				settings.rotation.boUseRotation = false;
+				return copySettings;
+			
+			},
 			get geometry() { return settings.geometry },
 			set geometry( geometry ) {
 				
@@ -1776,16 +1849,25 @@ class ND {
 					settings.geometry.indices.length = 1;
 					for ( var i = 0; i &lt; geometry.indices.length; i++ ) {
 						
-						if ( i === 0 ) settings.geometry.indices[0].edges = geometry.indices[0];
-						else settings.geometry.indices[i] = geometry.indices[i];
+						if ( i === 0 ) {
+
+							//убрать edge.intersection, который был создан в ND более высокого уровня, а поэтому в нем указан неверный settings.geometry.iAxes, что приводит к перепутыванию осей
+							settings.geometry.indices[0].edges.length = 0;
+							geometry.indices[0].forEach( edge => settings.geometry.indices[0].edges.push( edge.indices === undefined ? edge : edge.indices ) );
+							
+//							settings.geometry.indices[0].edges = geometry.indices[0];
+							
+						} else settings.geometry.indices[i] = geometry.indices[i];
 
 					}
 
 				}
 				
 			},
+			//Projection of nD object to 3D space for visualization
 			D3: {
 				
+				//Returns a points of projection
 				get points() {
 
 					const points = [];
@@ -1794,6 +1876,7 @@ class ND {
 					return points;
 
 				},
+				//Returns an indices of projection
 				get indices() {
 
 					const indices = [], colors = [];
@@ -2872,22 +2955,47 @@ class ND {
 		const plane = new Plane();
 		plane.createMesh();
 
+		/**
+		* @description set new geometry, position and rotation of nD object
+		* See &lt;b>settings&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
+		* @param {Object} settingsNew new nD object
+		* @param {Object} settingsNew.geometry geometry of new nD object. See See &lt;b>settings.geometry&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
+		* @param {Array} settingsNew.geometry.position Array of vertices of the n-dimensional graphical object.
+	    * See See &lt;b>settings.geometry.position&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
+		* @param {Array} [settingsNew.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
+	    * See See &lt;b>settings.geometry.indices&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
+		* @param {Array|number} [settingsNew.position] position of the n-dimensional graphical object in n-dimensional coordinates.
+	    * See See &lt;b>settings.position&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
+		* @param {Array|number} [settingsNew.rotation] rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
+	    * See See &lt;b>settings.rotation&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
+		*/
+		this.settings = function ( settingsNew ) { console.error( 'ND: settings' ); }
+		/**
+		* @description
+		* Returns N-dimensional vector of the plane that intersects nD object.
+		*/
+		this.vectorPlane;
+		/**
+		* @description
+	    * &lt;pre>
+	    * returns geometry of N-dimensional object. See &lt;b>settings.geometry&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
+	    *	key &lt;b>geometry&lt;/b> - get or set a geometry of nD object. See See &lt;b>settings.geometry&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
+	    *	key &lt;b>D3&lt;/b> - Projection of nD object to 3D space for visualization.
+	    *		&lt;b>D3.points&lt;/b> - Points of projection. See &lt;a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setFromPoints" target="_blank">.setFromPoints&lt;/a> of &lt;a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry&lt;/a>.
+	    *		&lt;b>D3.indices&lt;/b> - Indices of points of projection. See &lt;a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setIndex" target="_blank">.setIndex&lt;/a> of &lt;a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry&lt;/a>.
+	    *		&lt;b>D3.color&lt;/b> - color of projection.
+	    * &lt;/pre>
+		*/
+		this.geometry;
+
 		Object.defineProperties( this, {
 
-			/** @namespace
-			* @description
-			* Returns N-dimensional vector of the plane.
-			*/
 			vectorPlane: {
 
 				get: function () { return vectorPlane; }
 
 			},
 
-			/** @namespace
-			* @description
-			* geometry of N-dimensional object. See &lt;b>settings.geometry&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
-			*/
 			geometry: {
 
 				get: function () { return geometry; },
@@ -2895,6 +3003,39 @@ class ND {
 
 					geometry.geometry = geometryNew;
 //					settings.geometry = geometryNew;
+					settings.rotation.clear();
+					settings.position.clear();
+					projectTo3D();
+					this.intersection()
+
+				},
+
+			},
+
+			settings: {
+
+				set: function ( settingsNew ) {
+
+					settings.geometry = settingsNew.geometry;
+					
+					if ( !settings.geometry.indices[0].isProxy ) settings.geometry.indices[0] = proxyEdges( settingsNew.geometry.indices[0] );
+					
+					settings.position = settingsNew.position;
+					settings.position = proxyPosition();
+					
+					settings.rotation = settingsNew.rotation;
+					settings.rotation = proxyRotation();
+/*					
+					settings.geometry.position.forEach( vector => {
+						
+						delete vector.positionWorld;
+						console.log(vector.positionWorld);
+							
+					} );
+*/
+					settings.geometry.position = proxyGeometryPosition();
+					settings.geometry.position.reset();
+					
 					projectTo3D();
 					this.intersection()
 
@@ -3017,13 +3158,13 @@ Object.defineProperty( Array.prototype, "equals", { enumerable: false } );
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ND.html">ND</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-ND-geometry.html">geometry</a></li><li><a href="module-ND-vectorPlane.html">vectorPlane</a></li></ul><h3>Classes</h3><ul><li><a href="module-ND-ND.html">ND</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ND.html">ND</a></li></ul><h3>Classes</h3><ul><li><a href="module-ND-ND.html">ND</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jun 08 2022 12:28:57 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Jun 12 2022 15:26:49 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
