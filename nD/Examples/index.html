@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -216,8 +216,7 @@
 				return;
 
 			}
-//			_4D.geometry = c5Dto4D.geometryOld.geometry;
-			_4D.settings = c5Dto4D.geometryOld;
+			_4D.object = c5Dto4D.geometryOld;
 //			_4D.intersection();
 		
 		}
@@ -281,18 +280,16 @@
 
 			treeView.setCanvas( 'article4D', new MyThree( function ( scene, options ) {
 
-//				const _4DObjectName = document.querySelector('input[name="4Dobject"]:checked').value,
-				const _4DObjectGeometry = {};
+				const _4DObject = { geometry: {} };
 				document.querySelectorAll( 'input[name="4Dobject"]' ).forEach( radio => {
 
 					function onChange() {
 
-						delete _4DObjectGeometry.position;
-						delete _4DObjectGeometry.indices;
+						_4DObject.geometry = {};
 						switch( radio.value ) {
 
 							case 'tetrahedron':
-								_4DObjectGeometry.position = [
+								_4DObject.geometry.position = [
 									[0.8, -0.6, 0.1, -0.85],//0
 									[0.9, 0.7, 0.5, -0.55],//1
 									[0.8, 0, -0.4, 0.1],//2
@@ -301,7 +298,7 @@
 								];
 								break;
 							case 'tesseract':
-								_4DObjectGeometry.position = [
+								_4DObject.geometry.position = [
 
 									//cube 0
 
@@ -336,7 +333,7 @@
 
 									[0.5, 0.5, 0.5, 0.5],//15 cube 1 edge ,  face 
 								];
-								_4DObjectGeometry.indices = [
+								_4DObject.geometry.indices = [
 
 									//edges
 									[
@@ -448,13 +445,15 @@
 							derfault: console.error( 'Invalid 4D object name: ' + _4DObjectName );
 						
 						}
+						_4DObject.position = [-0.3];// -0.2, 0.3, 5];
+						_4DObject.rotation = [Math.PI / 5, 1, 2, 3, 4, 5];
 
 					}
 					radio.addEventListener( 'change', function () {
 
 						onChange();
-//						c5Dto4D.geometryOld = _4D.geometry.copy;
-						_4D.settings = { geometry: _4DObjectGeometry };
+//						_4D.object = { geometry: _4DObjectGeometry };
+						_4D.object = _4DObject;
 						
 					} );
 
@@ -464,17 +463,23 @@
 			
 				_4D = new ND( 4, {
 
-					position: [-0.3],// -0.2, 0.3, 5],
+/*
+					//position: [-0.3],// -0.2, 0.3, 5],
+					position: _4DObject.position,
 					//rotation: [0.01],
-					rotation: [Math.PI / 5, 1, 2, 3, 4, 5],
+					//rotation: [Math.PI / 5, 1, 2, 3, 4, 5],
 					//rotation: [0, 0, 0, 0, 0, - Math.PI / 2],
-					boDisplayVerticeID: true,
+					rotation: _4DObject.rotation,
 					geometry: {
 
 						position: _4DObjectGeometry.position,
 						indices: _4DObjectGeometry.indices,
 
 					},
+					geometry: _4DObject.geometry,
+*/
+					object: _4DObject,
+					boDisplayVerticeID: true,
 					scene: scene,
 					options: options,
 					onIntersection: function ( geometryIntersection ) { if ( _3D ) _3D.geometry = geometryIntersection; }

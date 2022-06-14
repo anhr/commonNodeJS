@@ -231,6 +231,15 @@ class ND {
 	constructor( n, settings = {} ) {
 
 		const options = settings.options, _ND = this;
+		if ( settings.object ) {
+
+			settings.geometry = settings.geometry || settings.object.geometry;
+			settings.geometry.position = settings.geometry.position || settings.object.geometry.position;
+			settings.geometry.indices = settings.geometry.indices || settings.object.geometry.indices;
+			settings.position = settings.position || settings.object.position;
+			settings.rotation = settings.rotation || settings.object.rotation;
+			
+		}
 		settings.geometry = settings.geometry || {};
 		if ( settings.geometry instanceof Array ) {
 
@@ -238,6 +247,7 @@ class ND {
 			settings.geometry = { position: position, }
 
 		}
+		settings.geometry.position = settings.geometry.position || [];
 
 		class Vector {
 
@@ -1528,7 +1538,8 @@ class ND {
 						case 'push': return target.push;
 						case 'length': return target.length;
 						case 'isProxy': return true;
-						default: console.error( 'ND: settings.geometry.indices[' + l + ']. Invalid name: ' + name );
+						case 'forEach': return target.forEach;
+						default: console.error( 'ND: settings.geometry.indices[' + name + ']. Invalid name: ' + name );
 
 					}
 
@@ -1542,7 +1553,7 @@ class ND {
 
 							case 'length':
 								break;
-							default: console.error( 'ND settings.geometry.indices[' + l + ']: invalid name: ' + name );
+							default: console.error( 'ND settings.geometry.indices[' + name + ']: invalid name: ' + name );
 								return false;
 
 						}
@@ -2944,18 +2955,18 @@ class ND {
 		/**
 		* @description set new geometry, position and rotation of nD object
 		* See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Object} settingsNew new nD object
-		* @param {Object} settingsNew.geometry geometry of new nD object. See See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Array} settingsNew.geometry.position Array of vertices of the n-dimensional graphical object.
+		* @param {Object} objectNew new nD object
+		* @param {Object} objectNew.geometry geometry of new nD object. See See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {Array} objectNew.geometry.position Array of vertices of the n-dimensional graphical object.
 	    * See See <b>settings.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Array} [settingsNew.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
+		* @param {Array} [objectNew.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
 	    * See See <b>settings.geometry.indices</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Array|number} [settingsNew.position] position of the n-dimensional graphical object in n-dimensional coordinates.
+		* @param {Array|number} [objectNew.position] position of the n-dimensional graphical object in n-dimensional coordinates.
 	    * See See <b>settings.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Array|number} [settingsNew.rotation] rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
+		* @param {Array|number} [objectNew.rotation] rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
 	    * See See <b>settings.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		*/
-		this.settings = function ( settingsNew ) { console.error( 'ND: settings' ); }
+		this.object = function ( objectNew ) { console.error( 'ND: settings' ); }
 		/**
 		* @description
 		* Returns N-dimensional vector of the plane that intersects nD object.
@@ -2988,7 +2999,6 @@ class ND {
 				set: function ( geometryNew ) {
 
 					geometry.geometry = geometryNew;
-//					settings.geometry = geometryNew;
 					settings.rotation.clear();
 					settings.position.clear();
 					projectTo3D();
@@ -2998,21 +3008,21 @@ class ND {
 
 			},
 
-			settings: {
+			object: {
 
-				set: function ( settingsNew ) {
+				set: function ( objectNew ) {
 
-					settings.geometry = settingsNew.geometry;
+					settings.geometry = objectNew.geometry;
 					
 					setIndices();
 					setEdges();
 					appendEdges();
-					if ( !settings.geometry.indices[0].isProxy ) settings.geometry.indices[0] = proxyEdges( settingsNew.geometry.indices[0] );
+					if ( !settings.geometry.indices[0].isProxy ) settings.geometry.indices[0] = proxyEdges( objectNew.geometry.indices[0] );
 					
-					settings.position = settingsNew.position;
+					settings.position = objectNew.position;
 					settings.position = proxyPosition();
 					
-					settings.rotation = settingsNew.rotation;
+					settings.rotation = objectNew.rotation;
 					settings.rotation = proxyRotation();
 /*					
 					settings.geometry.position.forEach( vector => {
