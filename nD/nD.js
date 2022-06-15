@@ -42,23 +42,23 @@ class ND {
 	 * Checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
 	 * @param {number} n space dimension of the graphical object.
 	 * @param {Object} [settings={}] The following settings are available
-	 * @param {Array|Object} [settings.geometry] Array of vertices and indices of the n-dimensional graphical object.
+	 * @param {Array|Object} [settings.object.geometry] Array of vertices and indices of the n-dimensional graphical object.
 	 * <pre>
 	 * Every item of array is n-dimensional vector of vertice of object.
 	 * Or Object. See object's keys below.
 	 * </pre>
-	 * @param {Array} [settings.geometry.position] Array of vertices of the n-dimensional graphical object.
+	 * @param {Array} [settings.object.geometry.position] Array of vertices of the n-dimensional graphical object.
 	 * <pre>
 	 * Every item of array is n-dimensional vector of vertice of object.
 	 * For example, if you want to create a tetrahedron, then you need to create an array of 4 vertices.
-	 * <b>settings.geometry.position: [
+	 * <b>settings.object.geometry.position: [
 	 * 	[-0.6, 0.1, 0.8],//0
 	 * 	[0.7, 0.5, 0.9],//1
 	 * 	[0, -0.4, 0.8],//2
 	 * 	[0, 0, -0.6]//3
 	 * ]</b>,
 	 * </pre>
-	 * @param {Array} [settings.geometry.indices] Array of <b>indices</b> of vertices of the n-dimensional graphical object.
+	 * @param {Array} [settings.object.geometry.indices] Array of <b>indices</b> of vertices of the n-dimensional graphical object.
 	 * Allows for vertices to be re-used across multiple segments.
 	 * <pre>
 	 * <b>Indices</b> is divided to segments:
@@ -69,48 +69,48 @@ class ND {
 	 * For example:
 	 * 
 	 * <b>n</b> = 1 line.
-	 * <b>settings.geometry.position</b> = [
+	 * <b>settings.object.geometry.position</b> = [
 	 *	[-0.5, 1],//0
 	 *	[0.5]//1
 	 *]
-	 * <b>settings.geometry.indices</b> = [
+	 * <b>settings.object.geometry.indices</b> = [
 	 *	[
-	 *		0,//index of the settings.geometry.position[0] = [-0.5, 1]
-	 *		1,//index of the settings.geometry.position[1] = [0.5]
+	 *		0,//index of the settings.object.geometry.position[0] = [-0.5, 1]
+	 *		1,//index of the settings.object.geometry.position[1] = [0.5]
 	 *	]//0
 	 *]//0
 	 *
 	 * <b>n</b> = 2 triangle
-	 * <b>settings.geometry.position</b> = [
+	 * <b>settings.object.geometry.position</b> = [
 	 *	[-0.7, 0.2],//0
 	 *	[0.8, 0.6],//1
 	 *	[0.1, -0.5]//2
 	 *],
 	 * //edges
-	 * <b>settings.geometry.indices[0]</b> = [
-	 *	[0, 1],//0 index of the settings.geometry.positions [-0.7, 0.2] and [0.8, 0.6]
-	 *	[0, 2],//1 index of the settings.geometry.positions [-0.7, 0.2] and [0.1, -0.5]
-	 *	[1, 2] //2 index of the settings.geometry.positions [0.8, 0.6] and [0.1, -0.5]
+	 * <b>settings.object.geometry.indices[0]</b> = [
+	 *	[0, 1],//0 index of the settings.object.geometry.positions [-0.7, 0.2] and [0.8, 0.6]
+	 *	[0, 2],//1 index of the settings.object.geometry.positions [-0.7, 0.2] and [0.1, -0.5]
+	 *	[1, 2] //2 index of the settings.object.geometry.positions [0.8, 0.6] and [0.1, -0.5]
 	 *]
 	 *
 	 * <b>n</b> = 3 tetrahedron.
-	 * <b>settings.geometry.position</b> = [
+	 * <b>settings.object.geometry.position</b> = [
 	 *	[0.8, -0.6, 0.1],//0
 	 * 	[0.9, 0.7, 0.5],//1
 	 * 	[0.8, 0, -0.4],//2
 	 * 	[-0.6, 0.1, 0.1]//3
 	 * ],
 	 * //edges
-	 * <b>settings.geometry.indices[0]</b> = [
-	 *	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
-	 *	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.8, 0, -0.4]
-	 *	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [-0.6, 0.1, 0.1]
-	 *	[1, 2]//3 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [0.8, 0, -0.4]
-	 *	[1, 3]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
-	 *	[2, 3]//5 index of the settings.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
+	 * <b>settings.object.geometry.indices[0]</b> = [
+	 *	[0, 1]//0 index of the settings.object.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
+	 *	[0, 2]//1 index of the settings.object.geometry.positions [0.8, -0.6, 0.1] and [0.8, 0, -0.4]
+	 *	[0, 3]//2 index of the settings.object.geometry.positions [0.8, -0.6, 0.1] and [-0.6, 0.1, 0.1]
+	 *	[1, 2]//3 index of the settings.object.geometry.positions [0.9, 0.7, 0.5] and [0.8, 0, -0.4]
+	 *	[1, 3]//4 index of the settings.object.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
+	 *	[2, 3]//5 index of the settings.object.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
 	 *]
-	 * //faces. Indices of the edges <b>settings.geometry.indices[0]</b>
-	 * <b>settings.geometry.indices[1]</b> = [
+	 * //faces. Indices of the edges <b>settings.object.geometry.indices[0]</b>
+	 * <b>settings.object.geometry.indices[1]</b> = [
 	 *	[0, 1, 3]//tetrahedron's face 0
 	 *	[0, 2, 4]//tetrahedron's face 1
 	 *	[3, 4, 5]//tetrahedron's face 2
@@ -118,7 +118,7 @@ class ND {
 	 *]
 	 *
 	 * <b>n</b> = 4 pentachoron [5-cell]{@link https://en.wikipedia.org/wiki/5-cell}.
-	 * <b>settings.geometry.position</b> = [
+	 * <b>settings.object.geometry.position</b> = [
 	 *	[0.8, -0.6, 0.1, -0.85],//0
 	 *	[0.9, 0.7, 0.5, -0.55],//1
 	 *	[0.8, 0, -0.4, 0],//2
@@ -126,20 +126,20 @@ class ND {
 	 *	[-0.5, 0.2, 0.3, 0.85],//4
 	 * ],
 	 * //edges
-	 * <b>settings.geometry.indices[0]</b> = [
-	 *	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.9, 0.7, 0.5, -0.55]
-	 *	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.8, 0, -0.4, 0]
-	 *	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, -0.3, 0.55]
-	 *	[0, 4]//3 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.5, 0.2, 0.3, 0.85]
-	 *	[1, 2]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [0.8, 0, -0.4, 0]
-	 *	[1, 3]//5 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, -0.3, 0.55]
-	 *	[1, 4]//6 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.5, 0.2, 0.3, 0.85]
-	 *	[2, 3]//7 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, -0.3, 0.55]
-	 *	[2, 4]//8 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.5, 0.2, 0.3, 0.85]
-	 *	[3, 4]//9 index of the settings.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.5, 0.2, 0.3, 0.85]
+	 * <b>settings.object.geometry.indices[0]</b> = [
+	 *	[0, 1]//0 index of the settings.object.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.9, 0.7, 0.5, -0.55]
+	 *	[0, 2]//1 index of the settings.object.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.8, 0, -0.4, 0]
+	 *	[0, 3]//2 index of the settings.object.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, -0.3, 0.55]
+	 *	[0, 4]//3 index of the settings.object.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.5, 0.2, 0.3, 0.85]
+	 *	[1, 2]//4 index of the settings.object.geometry.positions [0.9, 0.7, 0.5, -0.55] and [0.8, 0, -0.4, 0]
+	 *	[1, 3]//5 index of the settings.object.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, -0.3, 0.55]
+	 *	[1, 4]//6 index of the settings.object.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.5, 0.2, 0.3, 0.85]
+	 *	[2, 3]//7 index of the settings.object.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, -0.3, 0.55]
+	 *	[2, 4]//8 index of the settings.object.geometry.positions [0.8, 0, -0.4, 0] and [-0.5, 0.2, 0.3, 0.85]
+	 *	[3, 4]//9 index of the settings.object.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.5, 0.2, 0.3, 0.85]
 	 *]
-	 * //faces. Indices of the edges <b>settings.geometry.indices[0]</b>
-	 * <b>settings.geometry.indices[1]</b> = [
+	 * //faces. Indices of the edges <b>settings.object.geometry.indices[0]</b>
+	 * <b>settings.object.geometry.indices[1]</b> = [
 	 *	[7, 8, 9],//0 no 0, 1 vertices
 	 *	[5, 6, 9],//1 no 0, 2 vertices
 	 *	[4, 6, 8],//2 no 0, 3 vertices
@@ -151,8 +151,8 @@ class ND {
 	 *	[0, 2, 5],//8 no 2, 4 vertices
 	 *	[0, 1, 4],//9 no 3, 4 vertices
 	 *]
-	 * //bodies. Indices of the faces <b>settings.geometry.indices[1]</b>
-	 * <b>settings.geometry.indices[2]</b> = [
+	 * //bodies. Indices of the faces <b>settings.object.geometry.indices[1]</b>
+	 * <b>settings.object.geometry.indices[2]</b> = [
 	 * [2, 1, 3, 0],//0 no 0 vertice
 	 * [5, 6, 4, 0],//1 no 1 vertice
 	 * [8, 7, 1, 4],//2 no 2 vertice
@@ -160,12 +160,12 @@ class ND {
 	 * [9, 8, 3, 6],//4 no 4 vertice
 	 *]
 	 * </pre>
-	 * @param {Array} [settings.geometry.iAxes] array of indices of the axes.
+	 * @param {Array} [settings.object.geometry.iAxes] array of indices of the axes.
 	 * For example if <b>iAxes</b> is [1,2], then axis 1 interpret as axis 0 and axis 2 interpret as axis 1.
 	 * As result, you can rotate axes around another axis to 90 degrees.
 	 * In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.
 	 * @param {Array} [settings.vectorPlane] n-dimensional position of the panel
-	 * intersecting with the <b>settings.geometry</b> n-dimensional graphical object.
+	 * intersecting with the <b>settings.object.geometry</b> n-dimensional graphical object.
 	 * @param {Array|number} [settings.position] Array - position of the n-dimensional graphical object in n-dimensional coordinates.
 	 * <pre>
 	 * number - position of the 0 coordinate of the n-dimensional graphical object.
@@ -231,23 +231,37 @@ class ND {
 	constructor( n, settings = {} ) {
 
 		const options = settings.options, _ND = this;
+/*
 		if ( settings.object ) {
 
-			settings.geometry = settings.geometry || settings.object.geometry;
-			settings.geometry.position = settings.geometry.position || settings.object.geometry.position;
-			settings.geometry.indices = settings.geometry.indices || settings.object.geometry.indices;
+			settings.object.geometry = settings.object.geometry || settings.object.geometry;
+			settings.object.geometry.position = settings.object.geometry.position || settings.object.geometry.position;
+			settings.object.geometry.indices = settings.object.geometry.indices || settings.object.geometry.indices;
 			settings.position = settings.position || settings.object.position;
 			settings.rotation = settings.rotation || settings.object.rotation;
 			
 		}
-		settings.geometry = settings.geometry || {};
-		if ( settings.geometry instanceof Array ) {
+*/
+		settings.object = settings.object || {};
+settings.object.geometry = settings.object.geometry || settings.geometry || {};
+if ( settings.geometry || settings.position || settings.rotation )
+	console.warn( 'deprecated settings key' );
+if ( settings.geometry ) {
+	
+	settings.object.geometry.position = settings.object.geometry.position || settings.geometry.position || [];
+	settings.object.geometry.indices = settings.object.geometry.indices || settings.geometry.indices;
 
-			const position = settings.geometry;
-			settings.geometry = { position: position, }
+}
+settings.object.position = settings.object.position || settings.position;
+settings.object.rotation = settings.object.rotation || settings.rotation;
+		settings.object.geometry = settings.object.geometry || {};
+		if ( settings.object.geometry instanceof Array ) {
+
+			const position = settings.object.geometry;
+			settings.object.geometry = { position: position, }
 
 		}
-		settings.geometry.position = settings.geometry.position || [];
+		settings.object.geometry.position = settings.object.geometry.position || [];
 
 		class Vector {
 
@@ -337,8 +351,8 @@ class ND {
 						}
 						if ( i >= n )
 							return 0;
-						if ( ( array.length > n ) && settings.geometry.iAxes && ( i < settings.geometry.iAxes.length ) )
-							i = settings.geometry.iAxes[i];
+						if ( ( array.length > n ) && settings.object.geometry.iAxes && ( i < settings.object.geometry.iAxes.length ) )
+							i = settings.object.geometry.iAxes[i];
 						return array[i];
 
 					},
@@ -387,8 +401,8 @@ class ND {
 		}
 		function proxyPosition() {
 
-			if ( settings.position && settings.position.isProxy ) return settings.position;
-			return new Proxy( settings.position ? settings.position instanceof Array ? settings.position : [settings.position] : [], {
+			if ( settings.object.position && settings.object.position.isProxy ) return settings.object.position;
+			return new Proxy( settings.object.position ? settings.object.position instanceof Array ? settings.object.position : [settings.object.position] : [], {
 
 				get: function ( target, name, args ) {
 
@@ -419,7 +433,7 @@ class ND {
 						}
 						case 'forEach': return target.forEach;
 						case 'length': return target.length;
-						default: console.error( 'ND: settings.position Proxy. Invalid name: ' + name );
+						default: console.error( 'ND: settings.object.position Proxy. Invalid name: ' + name );
 
 					}
 
@@ -428,7 +442,7 @@ class ND {
 
 					target[name] = value;
 
-					settings.geometry.position.reset();
+					settings.object.geometry.position.reset();
 
 					const input = target.folders[name].cPosition.domElement.querySelector( 'input' );
 					if ( parseFloat( input.value ) !== value ) {
@@ -444,13 +458,13 @@ class ND {
 			} );
 
 		}
-//		if ( !settings.position || !settings.position.isProxy )
-		settings.position = proxyPosition();
+//		if ( !settings.object.position || !settings.object.position.isProxy )
+		settings.object.position = proxyPosition();
 
 		function proxyRotation() {
 
-			if ( settings.rotation && settings.rotation.isProxy ) return settings.rotation;
-			return new Proxy( settings.rotation ? settings.rotation instanceof Array ? settings.rotation : [settings.rotation] : [], {
+			if ( settings.object.rotation && settings.object.rotation.isProxy ) return settings.object.rotation;
+			return new Proxy( settings.object.rotation ? settings.object.rotation instanceof Array ? settings.object.rotation : [settings.object.rotation] : [], {
 
 				get: function ( target, name, args ) {
 
@@ -466,7 +480,7 @@ class ND {
 									//https://stackoverflow.com/a/57023880/5175935
 									const strFunction = ( new Error() ).stack.split( "\n" )[3].trim().split( " " )[1];
 									if ( ( strFunction !== "NumberControllerSlider.updateDisplay" ) && ( strFunction !== "NumberControllerBox.updateDisplay" ) )//пользователь изменил угол вращения из dat.GUI
-										console.error( 'ND settings.rotation get: use settings.rotation.trigonometry unstead settings.rotation. ' + strFunction )
+										console.error( 'ND settings.object.rotation get: use settings.object.rotation.trigonometry unstead settings.object.rotation. ' + strFunction )
 
 								}
 								return target[i];
@@ -497,9 +511,9 @@ class ND {
 
 											if ( !target[i] ) {
 
-												settings.rotation.boUseRotation = true;
-												const angle = settings.rotation[i];
-												settings.rotation.boUseRotation = false;
+												settings.object.rotation.boUseRotation = true;
+												const angle = settings.object.rotation[i];
+												settings.object.rotation.boUseRotation = false;
 												target[i] = { sin: Math.sin( angle ), cos: Math.cos( angle ) };
 
 											}
@@ -508,7 +522,7 @@ class ND {
 										}
 										switch ( name ) {
 
-											default: console.error( 'ND: settings.rotation Proxy. Invalid name: ' + name );
+											default: console.error( 'ND: settings.object.rotation Proxy. Invalid name: ' + name );
 
 										}
 
@@ -532,7 +546,7 @@ class ND {
 							var boRotation = false
 							for ( var j = 0; j < n; j++ ) {
 
-								if ( settings.rotation[j] !== 0 ) {
+								if ( settings.object.rotation[j] !== 0 ) {
 
 									boRotation = true;
 									break;
@@ -553,7 +567,7 @@ class ND {
 						case 'arguments': return;//for dat.GUI
 						case 'forEach': return target.forEach;
 						case 'length': return target.length;
-						default: console.error( 'ND: settings.rotation Proxy. Invalid name: ' + name );
+						default: console.error( 'ND: settings.object.rotation Proxy. Invalid name: ' + name );
 
 					}
 
@@ -563,10 +577,10 @@ class ND {
 					target[name] = value;
 					if ( isNaN( parseInt( name ) ) ) return true;
 
-					settings.rotation.trigonometry[name].cos = Math.cos( value );
-					settings.rotation.trigonometry[name].sin = Math.sin( value );
+					settings.object.rotation.trigonometry[name].cos = Math.cos( value );
+					settings.object.rotation.trigonometry[name].sin = Math.sin( value );
 
-					settings.geometry.position.reset();
+					settings.object.geometry.position.reset();
 
 					const input = target.folders[name].cRotation.domElement.querySelector( 'input' );
 					if ( parseFloat( input.value ) !== value ) {
@@ -583,15 +597,15 @@ class ND {
 			} );
 
 		}
-		if ( !settings.rotation || !settings.rotation.isProxy ) {
+		if ( !settings.object.rotation || !settings.object.rotation.isProxy ) {
 
-			settings.rotation = proxyRotation();
-			settings.rotation.boUseRotation = false;
+			settings.object.rotation = proxyRotation();
+			settings.object.rotation.boUseRotation = false;
 
 		}
 
-		if ( settings.geometry.position.target ) settings.geometry.position = settings.geometry.position.target;
-		settings.geometry.position.boPositionError = true;
+		if ( settings.object.geometry.position.target ) settings.object.geometry.position = settings.object.geometry.position.target;
+		settings.object.geometry.position.boPositionError = true;
 		const rotationAxes = [[]];//массив осей вращения
 		function setRotationAxes() {
 
@@ -704,38 +718,38 @@ class ND {
 			}
 
 		}
-		const positionWorld = new Proxy( settings.geometry.position ? settings.geometry.position : [], {
+		const positionWorld = new Proxy( settings.object.geometry.position ? settings.object.geometry.position : [], {
 	
 			get: function ( target, name ) {
 
 				const i = parseInt( name );
 				if ( !isNaN( i ) ) {
 
-					settings.geometry.position.boPositionError = false;
-					const positionPoint = settings.geometry.position[i];
+					settings.object.geometry.position.boPositionError = false;
+					const positionPoint = settings.object.geometry.position[i];
 					if ( positionPoint.positionWorld ) {
 						
 						//не надо снова вычислять мировые координатя точки если они уже вычислены
-						settings.geometry.position.boPositionError = true;
+						settings.object.geometry.position.boPositionError = true;
 						return positionPoint.positionWorld;
 
 					}
 					const array = [];
 					if ( positionPoint !== undefined ) {
 
-						if ( !( settings.position instanceof Array ) ) {
+						if ( !( settings.object.position instanceof Array ) ) {
 
-							console.error( 'ND positionWorld get: settings.position is not array' );
-							settings.position = [settings.position];
+							console.error( 'ND positionWorld get: settings.object.position is not array' );
+							settings.object.position = [settings.object.position];
 
 						}
-						if ( settings.rotation.isRotation() ) {
+						if ( settings.object.rotation.isRotation() ) {
 
 							//https://math.stackexchange.com/questions/1402362/can-rotations-in-4d-be-given-an-explicit-matrix-form
 							//https://en.wikipedia.org/wiki/Rotation_matrix
 							function getMatrix( index ) {
 
-								const cos = settings.rotation.trigonometry[index].cos, sin = settings.rotation.trigonometry[index].sin,
+								const cos = settings.object.rotation.trigonometry[index].cos, sin = settings.object.rotation.trigonometry[index].sin,
 									array = [];
 								/*
 								if ( n === 5 ) {
@@ -950,7 +964,7 @@ class ND {
 
 								if ( value !== undefined ) {
 
-									array.push( value + settings.position[i] );
+									array.push( value + settings.object.position[i] );
 
 								} else console.error( 'ND: positionWorld get: invalig array item = ' + value );
 
@@ -958,36 +972,36 @@ class ND {
 
 						} else {
 
-							positionPoint.forEach( ( value, j ) => array.push( positionPoint[j] + settings.position[j] ) );
+							positionPoint.forEach( ( value, j ) => array.push( positionPoint[j] + settings.object.position[j] ) );
 							setRotationAxes();
 
 						}
 
 					} else console.error('ND positionWorld get index')
 					positionPoint.positionWorld = array;
-					settings.geometry.position.boPositionError = true;
+					settings.object.geometry.position.boPositionError = true;
 					return array;
 
 				}
 				switch ( name ) {
 
-					case 'push': return settings.geometry.position.push;
-					case 'length': return settings.geometry.position.length;
-					case 'forEach': return settings.geometry.position.forEach;
+					case 'push': return settings.object.geometry.position.push;
+					case 'length': return settings.object.geometry.position.length;
+					case 'forEach': return settings.object.geometry.position.forEach;
 					case 'isProxy': return true;
-					case 'target': return;// target; Если вершинрнуть target, то неверно сработает if ( settings.geometry.position.target ) и позиция intersection будет неверна
+					case 'target': return;// target; Если вершинрнуть target, то неверно сработает if ( settings.object.geometry.position.target ) и позиция intersection будет неверна
 					case 'copy': 
 						return function () {
 
 							const v = [];
-							settings.geometry.position.boPositionError = false;
-							settings.geometry.position.forEach( ( value, i ) => {
+							settings.object.geometry.position.boPositionError = false;
+							settings.object.geometry.position.forEach( ( value, i ) => {
 								
 								v[i] = positionWorld[i];
-								settings.geometry.position.boPositionError = false;
+								settings.object.geometry.position.boPositionError = false;
 							
 							} );
-							settings.geometry.position.boPositionError = true;
+							settings.object.geometry.position.boPositionError = true;
 							return v;
 		
 						}
@@ -1003,24 +1017,24 @@ class ND {
 
 		function proxyGeometryPosition() {
 
-			if ( settings.geometry.position && settings.geometry.position.isProxy ) return settings.geometry.position;
-			return new Proxy( settings.geometry.position ? settings.geometry.position : [], {
+			if ( settings.object.geometry.position && settings.object.geometry.position.isProxy ) return settings.object.geometry.position;
+			return new Proxy( settings.object.geometry.position ? settings.object.geometry.position : [], {
 
 				get: function ( target, name, args ) {
 
 					const i = parseInt( name );
 					if ( !isNaN( i ) ) {
 
-						if ( settings.geometry.position.boPositionError ) {
+						if ( settings.object.geometry.position.boPositionError ) {
 
 							//срабатывает когда меняется позиция вершины.
 							//Не хочу менять boPositionError в этом случае, потому что это может происходить на веб странице пользователя
-							//console.error( 'ND: Use positionWorld instread settings.geometry.position' );
+							//console.error( 'ND: Use positionWorld instread settings.object.geometry.position' );
 
 						}
 						if ( i >= target.length ) {
 
-							console.error( 'ND get settings.geometry.position: invalid index = ' + i );
+							console.error( 'ND get settings.object.geometry.position: invalid index = ' + i );
 							return;
 
 						}
@@ -1046,7 +1060,7 @@ class ND {
 										case 'i': return target.i;
 										case 'arguments': return target.arguments;
 										case 'reset': return function() { delete target.positionWorld; }
-										default: console.error( 'ND: settings.geometry.position[i] get. Invalid name: ' + name );
+										default: console.error( 'ND: settings.object.geometry.position[i] get. Invalid name: ' + name );
 
 									}
 
@@ -1067,7 +1081,7 @@ class ND {
 									switch ( name ) {
 
 										case 'positionWorld': target[name] = value;
-										default: console.error( 'ND: settings.geometry.position[i] set. Invalid name: ' + name );
+										default: console.error( 'ND: settings.object.geometry.position[i] set. Invalid name: ' + name );
 
 									}
 */
@@ -1078,7 +1092,7 @@ class ND {
 							} );
 
 						}
-						console.error( 'ND: get settings.geometry.position is not array.' )
+						console.error( 'ND: get settings.object.geometry.position is not array.' )
 						return [target[i]];
 
 					}
@@ -1103,14 +1117,14 @@ class ND {
 							}
 						case "reset": return function () {
 
-//							for ( var i = 0; i < settings.geometry.position.length; i++ ) settings.geometry.position[i].positionWorld = undefined;
-//							settings.geometry.position.forEach( item => item.reset() );
-//							settings.geometry.position.forEach( item => delete item.positionWorld );
+//							for ( var i = 0; i < settings.object.geometry.position.length; i++ ) settings.object.geometry.position[i].positionWorld = undefined;
+//							settings.object.geometry.position.forEach( item => item.reset() );
+//							settings.object.geometry.position.forEach( item => delete item.positionWorld );
 //							for ( var i = 0; i < target.length; i++ ) delete target.positionWorld;
 							target.forEach( item => delete item.positionWorld );
 						
 						}
-						default: console.error( 'ND: settings.geometry.position Proxy. Invalid name: ' + name );
+						default: console.error( 'ND: settings.object.geometry.position Proxy. Invalid name: ' + name );
 
 					}
 
@@ -1127,9 +1141,9 @@ class ND {
 					target[name] = value;
 
 					//if ( name != 'boPositionError' )
-					//	console.log('ND settings.geometry.position set: name = ' + name );
+					//	console.log('ND settings.object.geometry.position set: name = ' + name );
 
-					//					settings.geometry.position.reset();
+					//					settings.object.geometry.position.reset();
 
 					return true;
 
@@ -1138,16 +1152,16 @@ class ND {
 			} );
 
 		}
-//		if ( !settings.geometry.position.isProxy )
-			settings.geometry.position = proxyGeometryPosition();
+//		if ( !settings.object.geometry.position.isProxy )
+			settings.object.geometry.position = proxyGeometryPosition();
 		//indices
 
 		function setIndices() {
 			
-			if ( settings.geometry.indices ) return;
+			if ( settings.object.geometry.indices ) return;
 
-			settings.geometry.indices = [];
-			settings.geometry.indices.boAddIndices = true;
+			settings.object.geometry.indices = [];
+			settings.object.geometry.indices.boAddIndices = true;
 			
 		}
 		setIndices();
@@ -1173,14 +1187,14 @@ class ND {
 
 										if ( i.toString() !== name ) {
 
-											console.error( 'ND: settings.geometry.indices[]intersection. invalid name = ' + name );
+											console.error( 'ND: settings.object.geometry.indices[]intersection. invalid name = ' + name );
 											return;
 
 										}
 										if ( target.length === 0 ) return;//no edges
 										if ( i >= target.length ) {
 
-											console.error( 'ND: settings.geometry.indices[]intersection. invalid length: ' + target.length );
+											console.error( 'ND: settings.object.geometry.indices[]intersection. invalid length: ' + target.length );
 											this.indices = { intersection: {} };
 											return;
 
@@ -1194,13 +1208,13 @@ class ND {
 
 										if ( indices.length !== 2 ) {
 
-											console.error( 'ND: settings.geometry.indices[]intersection. indices.length = ' + indices.length );
+											console.error( 'ND: settings.object.geometry.indices[]intersection. indices.length = ' + indices.length );
 											return;
 
 										}
 										if ( indices[0] === indices[1] ) {
 
-											console.error( 'ND: settings.geometry.indices[]intersection. indices[0] === indices[1] = ' + indices[0] );
+											console.error( 'ND: settings.object.geometry.indices[]intersection. indices[0] === indices[1] = ' + indices[0] );
 											return;
 
 										}
@@ -1282,26 +1296,26 @@ class ND {
 
 													const nD02 = new ND( n - 1, {
 
-														geometry: {
+														object: { geometry: {
 
-															position: positionWorld.copy(),//settings.geometry.position,
+															position: positionWorld.copy(),//settings.object.geometry.position,
 															indices: [[indices]],
 															iAxes: [1, 2],
 
-														},
+														} },
 														vectorPlane: vectorPlane.array,
 
 													} ),
 														arrayIntersects02 = nD02.intersection();
 													const nD12 = new ND( n - 1, {
 
-														geometry: {
+														object: { geometry: {
 
-															position: positionWorld.copy(),//settings.geometry.position,
+															position: positionWorld.copy(),//settings.object.geometry.position,
 															indices: [[indices]],
 															iAxes: [0, 2],
 
-														},
+														} },
 														vectorPlane: vectorPlane.array,
 
 													} ),
@@ -1317,13 +1331,13 @@ class ND {
 
 													const nD0 = new ND( 2, {
 
-														geometry: {
+														object: { geometry: {
 
-															position: positionWorld,//settings.geometry.position,
+															position: positionWorld,//settings.object.geometry.position,
 															indices: [[indices]],
 															iAxes: [axis, n - 1],
 
-														},
+														} },
 														vectorPlane: vectorPlane.array,
 
 													} );
@@ -1348,7 +1362,7 @@ class ND {
 
 										}
 
-									} else console.error( 'ND: settings.geometry.indices[]intersection. invalid name: ' + name );
+									} else console.error( 'ND: settings.object.geometry.indices[]intersection. invalid name: ' + name );
 
 								},
 								indices: target[parseInt( name )],
@@ -1362,7 +1376,7 @@ class ND {
 							case 'edges': return target;
 							case 'isProxy': return true;
 							case 'forEach': return target.forEach;
-							default: console.error( 'ND: settings.geometry.indices getter. Invalid name: ' + name );
+							default: console.error( 'ND: settings.object.geometry.indices getter. Invalid name: ' + name );
 
 						}
 
@@ -1377,9 +1391,9 @@ class ND {
 								case 'length':
 									break;
 								case 'edges':
-									settings.geometry.indices[0] = proxyEdges( value );
+									settings.object.geometry.indices[0] = proxyEdges( value );
 									break;
-								default: console.error( 'ND settings.geometry.indices[0].set: invalid prop: ' + prop );
+								default: console.error( 'ND settings.object.geometry.indices[0].set: invalid prop: ' + prop );
 
 							}
 							return true;
@@ -1412,7 +1426,7 @@ class ND {
 						const indices = value;
 						if ( indices.length !== 2 ) {
 
-							console.error( 'ND: settings.geometry.indices.push invalid indices.length = ' + indices.length );
+							console.error( 'ND: settings.object.geometry.indices.push invalid indices.length = ' + indices.length );
 							return true;
 
 						}
@@ -1423,18 +1437,18 @@ class ND {
 							const edgeIndices = edges[i];
 							if ( ( edgeIndices[0] === indices[0] ) && ( edgeIndices[1] === indices[1] ) ) {
 
-								console.error( 'ND: settings.geometry.indices.push under constraction' );
+								console.error( 'ND: settings.object.geometry.indices.push under constraction' );
 								return;
 
 							}
 							if ( ( edgeIndices[0] === indices[1] ) && ( edgeIndices[1] === indices[0] ) ) {
 
 
-								console.error( 'ND: settings.geometry.indices.push under constraction' );
+								console.error( 'ND: settings.object.geometry.indices.push under constraction' );
 								//у этого ребра есть ребро близнец, у которого индексы вершин поменены местами
 								//Поэтому можно не искать точку пересечения а брать ее из близнеца
-								indices[0] = settings.geometry.indices[i].indices[0];
-								indices[1] = settings.geometry.indices[i].indices[1];
+								indices[0] = settings.object.geometry.indices[i].indices[0];
+								indices[1] = settings.object.geometry.indices[i].indices[1];
 								return;
 
 							}
@@ -1452,11 +1466,11 @@ class ND {
 		var edges;
 		function setEdges() {
 			
-			edges = settings.geometry.indices[0];
+			edges = settings.object.geometry.indices[0];
 			var boArray = edges instanceof Array;
-			if ( !settings.geometry.indices[0] || boArray ) {
+			if ( !settings.object.geometry.indices[0] || boArray ) {
 	
-				const indices = settings.geometry.indices;
+				const indices = settings.object.geometry.indices;
 				if ( boArray ) { if ( !indices[0].isProxy ) indices[0] = proxyEdges(); }
 				else indices.push( proxyEdges() );
 	
@@ -1465,35 +1479,35 @@ class ND {
 		}
 		setEdges();
 		
-		//Сгруппировать индексы ребер объета из settings.geometry.edges по сегментам обекта
+		//Сгруппировать индексы ребер объета из settings.object.geometry.edges по сегментам обекта
 		//Например если объект это линия:
 		//n = 1
-		//settings.geometry.indices = [0, 1]//одно ребро
-		//settings.geometry.edges = [0, 1]
-		//settings.geometry.iEdges = [0]
+		//settings.object.geometry.indices = [0, 1]//одно ребро
+		//settings.object.geometry.edges = [0, 1]
+		//settings.object.geometry.iEdges = [0]
 		//где
-		// 0, //индекс ребра [0, 1] из settings.geometry.edges 
+		// 0, //индекс ребра [0, 1] из settings.object.geometry.edges 
 		//
 		//Объект это треугольник:
 		//n = 2
-		//settings.geometry.indices = [[0, 1], [1, 2], [0, 2]]//3 ребра
-		//settings.geometry.edges = [[0, 1], [1, 2], [0, 2]]
-		//settings.geometry.iEdges = [0, 1, 2]
+		//settings.object.geometry.indices = [[0, 1], [1, 2], [0, 2]]//3 ребра
+		//settings.object.geometry.edges = [[0, 1], [1, 2], [0, 2]]
+		//settings.object.geometry.iEdges = [0, 1, 2]
 		//где
-		// 0, //индекс первого  ребра [0, 1] из settings.geometry.edges 
-		// 1, //индекс второго  ребра [0, 2] из settings.geometry.edges 
-		// 2, //индекс третьего ребра [1, 2] из settings.geometry.edges 
+		// 0, //индекс первого  ребра [0, 1] из settings.object.geometry.edges 
+		// 1, //индекс второго  ребра [0, 2] из settings.object.geometry.edges 
+		// 2, //индекс третьего ребра [1, 2] из settings.object.geometry.edges 
 		//
 		//Объект это пирамида:
 		//n = 3
-		//settings.geometry.indices = [
+		//settings.object.geometry.indices = [
 		//	[[0, 1], [1, 2], [2, 0]],
 		//	[[0, 1], [1, 3], [3, 0]],
 		//	[[0, 2], [2, 3], [3, 0]],
 		//	[[1, 2], [2, 3], [3, 1]]
 		//]
 		//4 грани 6 ребер. 
-		//settings.geometry.edges = 0: (2) [
+		//settings.object.geometry.edges = 0: (2) [
 		//	[0, 1],//0
 		//	[1, 2],//1
 		//	[2, 0],//2
@@ -1502,16 +1516,16 @@ class ND {
 		//	[2, 3]//5
 		//]
 		//ребра [0, 2] и [3, 1] заменяю на [2, 0] и [1, 3]
-		//settings.geometry.iEdges = [[0, 1, 2], [0, 3, 4], [2, 5, 4], [1, 5, 3]]
+		//settings.object.geometry.iEdges = [[0, 1, 2], [0, 3, 4], [2, 5, 4], [1, 5, 3]]
 		
 		function addEdge( indices ) {
 
-			if ( settings.geometry.position.length < 2 ) return;//одна точка не имеет ребер
+			if ( settings.object.geometry.position.length < 2 ) return;//одна точка не имеет ребер
 			switch ( n ) {
 
 				case 1://Example [[0,1]]
-					const edges = settings.geometry.indices[0];
-					if ( settings.geometry.position ) {
+					const edges = settings.object.geometry.indices[0];
+					if ( settings.object.geometry.position ) {
 						
 						indices = [];
 						positionWorld.forEach( function ( indice, i ) { indices.push( i ) } );
@@ -1539,7 +1553,7 @@ class ND {
 						case 'length': return target.length;
 						case 'isProxy': return true;
 						case 'forEach': return target.forEach;
-						default: console.error( 'ND: settings.geometry.indices[' + name + ']. Invalid name: ' + name );
+						default: console.error( 'ND: settings.object.geometry.indices[' + name + ']. Invalid name: ' + name );
 
 					}
 
@@ -1553,7 +1567,7 @@ class ND {
 
 							case 'length':
 								break;
-							default: console.error( 'ND settings.geometry.indices[' + name + ']: invalid name: ' + name );
+							default: console.error( 'ND settings.object.geometry.indices[' + name + ']: invalid name: ' + name );
 								return false;
 
 						}
@@ -1562,7 +1576,7 @@ class ND {
 					}
 					if ( value instanceof Array === false ) {
 
-						console.error( 'ND settings.geometry.indices[' + l + ']: invalid name: ' + name );
+						console.error( 'ND settings.object.geometry.indices[' + l + ']: invalid name: ' + name );
 						return false;
 
 					}
@@ -1639,7 +1653,7 @@ class ND {
 		function addEdges( level, geometry, positionIndices = [], levelIndices ) {
 
 			if ( positionIndices.length === 0 ) positionWorld.forEach( function ( position, i ) { positionIndices.push( i ) } );
-			geometry = geometry || settings.geometry;
+			geometry = geometry || settings.object.geometry;
 			if ( !geometry.indices[0] ) geometry.indices[0] = [];
 			const edges = geometry.indices[0];
 			if ( ( n === 2 ) && ( geometry.position.length === 2 ) ) {
@@ -1655,14 +1669,14 @@ class ND {
 
 					const posIndices = [];
 					positionIndices.forEach( function ( indice, j ) { if ( positionIndices[i] !== positionIndices[j] ) posIndices.push( positionIndices[j] ); } );
-					const lIndices = [];//тут перечислены индексы всех индексов, котоые были добавлены в settings.geometry.indices
+					const lIndices = [];//тут перечислены индексы всех индексов, котоые были добавлены в settings.object.geometry.indices
 					addEdges( level - 1, undefined, posIndices, lIndices );
 					if ( lIndices.length ) {
 
 						const l = level - 2;
 						if ( l === 0 ) console.error( 'ND addEdges: invalid l = ' + 1 );
-						settings.geometry.indices[l] = settings.geometry.indices[l] === undefined ? proxySegments() : settings.geometry.indices[l];
-						settings.geometry.indices[l].push( lIndices );
+						settings.object.geometry.indices[l] = settings.object.geometry.indices[l] === undefined ? proxySegments() : settings.object.geometry.indices[l];
+						settings.object.geometry.indices[l].push( lIndices );
 						if ( levelIndices ) levelIndices.push( lIndices.index );
 
 					}
@@ -1676,11 +1690,11 @@ class ND {
 					
 					//перечислены индексы вершин, которые образуют грань и которые составляют замкнутую линию реьер грани.
 					//По умолчанию для грани в виде треугольника индексы вершин совпадают с положением вершины в 
-					//settings.geometry.position т.е. positionIndices = [0, 1, 2]
+					//settings.object.geometry.position т.е. positionIndices = [0, 1, 2]
 					if ( !positionIndices ) {
 						
 						positionIndices = [];
-						settings.geometry.position.forEach( function ( item, i ) { positionIndices.push( i ) } );
+						settings.object.geometry.position.forEach( function ( item, i ) { positionIndices.push( i ) } );
 
 					}
 					const length = positionIndices.length;
@@ -1715,21 +1729,21 @@ class ND {
 				case 1://[0, 1]
 					addEdge();
 					break;
-				default: if ( settings.geometry.indices[0].length === 0 )  addEdges( n );
+				default: if ( settings.object.geometry.indices[0].length === 0 )  addEdges( n );
 	
 			}
 
 		}
 		appendEdges();
 
-		if ( settings.geometry.indices.boAddIndices ) {
+		if ( settings.object.geometry.indices.boAddIndices ) {
 			//В каждом сегменте geometry.indices[i] должно встечаться определенное количество индексов из передыдущего сегмента
 			//geometry.indices[i - 1]. В противном случае в geometry.indices[i] добавляем новый элемент, в который добавляем
 			//индексы из передыдущего сегмента geometry.indices[i - 1].
 			//Это нужно для того, что бы во время пересечения объекта с plane появлялся замкнутый intersection.
 			//Например после пересечения 3 мерного объекта с plane получалась замкнутая линия, тоесть начало и конец линии соединяем дополнительным ребром.
 			//Для проверки в примере запускаем _4D и _3D
-			const indices = settings.geometry.indices;
+			const indices = settings.object.geometry.indices;
 			for( var i = 1; i < indices.length; i++ ) {
 	
 				const indice = indices[i];
@@ -1774,7 +1788,7 @@ class ND {
 						switch ( name ) {
 
 							case 'length':
-								return settings.geometry.position.length;
+								return settings.object.geometry.position.length;
 
 						}
 						const i = parseInt( name );
@@ -1794,14 +1808,14 @@ class ND {
 			get copy() {
 				
 				const copySettings = { geometry: { position: [], indices: [] }, position: [], rotation: [] };
-				settings.geometry.position.forEach( vertice => {
+				settings.object.geometry.position.forEach( vertice => {
 					
 					const copy = [];
 					vertice.forEach( axis => copy.push(axis) );
 					copySettings.geometry.position.push( copy );
 					
 				} );
-				settings.geometry.indices.forEach( indexes => {
+				settings.object.geometry.indices.forEach( indexes => {
 					
 					const copy = [];
 					indexes.forEach( arrayIndex => {
@@ -1830,35 +1844,35 @@ class ND {
 					return copy;
 					
 				}
-				copySettings.position = copyItem( settings.position );
-				settings.rotation.boUseRotation = true;
-				copySettings.rotation = copyItem( settings.rotation );
-				settings.rotation.boUseRotation = false;
+				copySettings.position = copyItem( settings.object.position );
+				settings.object.rotation.boUseRotation = true;
+				copySettings.rotation = copyItem( settings.object.rotation );
+				settings.object.rotation.boUseRotation = false;
 				return copySettings;
 			
 			},
-			get geometry() { return settings.geometry },
+			get geometry() { return settings.object.geometry },
 			set geometry( geometry ) {
 				
-				settings.geometry.position = geometry.position;
+				settings.object.geometry.position = geometry.position;
 				if ( geometry.indices ) {
 					
-					settings.geometry.indices.length = 1;
+					settings.object.geometry.indices.length = 1;
 					for ( var i = 0; i < geometry.indices.length; i++ ) {
 						
 						if ( i === 0 ) {
 
-							//убрать edge.intersection, который был создан в ND более высокого уровня, а поэтому в нем указан неверный settings.geometry.iAxes, что приводит к перепутыванию осей
-							settings.geometry.indices[0].edges.length = 0;
-							geometry.indices[0].forEach( edge => settings.geometry.indices[0].edges.push( edge.indices === undefined ? edge : edge.indices ) );
+							//убрать edge.intersection, который был создан в ND более высокого уровня, а поэтому в нем указан неверный settings.object.geometry.iAxes, что приводит к перепутыванию осей
+							settings.object.geometry.indices[0].edges.length = 0;
+							geometry.indices[0].forEach( edge => settings.object.geometry.indices[0].edges.push( edge.indices === undefined ? edge : edge.indices ) );
 							
-//							settings.geometry.indices[0].edges = geometry.indices[0];
+//							settings.object.geometry.indices[0].edges = geometry.indices[0];
 							
-						} else settings.geometry.indices[i] = geometry.indices[i];
+						} else settings.object.geometry.indices[i] = geometry.indices[i];
 
 					}
 
-				} else delete settings.geometry.indices;
+				} else delete settings.object.geometry.indices;
 				
 			},
 			//Projection of nD object to 3D space for visualization
@@ -1878,9 +1892,9 @@ class ND {
 
 					const indices = [], colors = [];
 					//если объект не состоит из одной вершины и имеет ребера
-					if ( settings.geometry.indices[0].length !== 0 ) {
+					if ( settings.object.geometry.indices[0].length !== 0 ) {
 						
-						const edges = settings.geometry.indices[0];
+						const edges = settings.object.geometry.indices[0];
 						for ( var i = 0; i < edges.length; i++ ) {
 	
 							const edge = edges[i].indices;
@@ -1965,7 +1979,7 @@ class ND {
 
 			if ( !geometry.D3 ) {
 
-				const nD = new ND( n, { geometry: geometry, } );
+				const nD = new ND( n, { object: { geometry: geometry, } } );
 				geometry = nD.geometry;
 				
 			}
@@ -2097,7 +2111,7 @@ class ND {
 				
 				const indices = geometry.geometry.indices, segmentIndex = indices.length - 1;
 				function addController(
-					segmentIndex,//settings.geometry.indices index
+					segmentIndex,//settings.object.geometry.indices index
 					fParent,
 					segmentItems,//массив индексов элементов текущего segment, которые выбрал пользователь
 					prevLine//выбранный пользователем сегмент объекта на более высоком уровне. Например если пользователь выбрал ребро то prevLine указывает на выбранную пользователем грань
@@ -2118,14 +2132,14 @@ class ND {
 
 							//vertices
 							
-							settings.geometry.position.boPositionError = false;
+							settings.object.geometry.position.boPositionError = false;
 							
 							//непонятно почему, но для 2D вершины перечислены в segmentItems.indices
 							if ( segmentItems.forEach )
-								segmentItems.forEach( i => addItem( settings.geometry.position[i], i ) );
-							else segmentItems.indices.forEach( i => addItem( settings.geometry.position[i], i ) );
+								segmentItems.forEach( i => addItem( settings.object.geometry.position[i], i ) );
+							else segmentItems.indices.forEach( i => addItem( settings.object.geometry.position[i], i ) );
 							
-							settings.geometry.position.boPositionError = true;
+							settings.object.geometry.position.boPositionError = true;
 							
 						} else {
 							
@@ -2245,9 +2259,9 @@ class ND {
 
 							//Vertices
 							removeVerticeControls();
-							settings.geometry.position.boPositionError = false;
-							const vertice = settings.geometry.position[segment[selectedIndex].i];
-							settings.geometry.position.boPositionError = true;
+							settings.object.geometry.position.boPositionError = false;
+							const vertice = settings.object.geometry.position[segment[selectedIndex].i];
+							settings.object.geometry.position.boPositionError = true;
 							for ( var i = 0; i < vertice.length; i++ ) {
 								
 //								dat.controllerZeroStep( fSegment, vertice, i ).domElement.querySelector( 'input' ).readOnly = true;
@@ -2344,11 +2358,11 @@ class ND {
 				function rotation( i ) {
 					
 					if ( rotationAxes[i].length === 0 ) return;
-					settings.rotation.boUseRotation = true;
-					settings.rotation.folders[i] = {
+					settings.object.rotation.boUseRotation = true;
+					settings.object.rotation.folders[i] = {
 
-						cRotation: fRotation.add( settings.rotation, i, 0, Math.PI * 2, 0.01 ).onChange( function ( value ) { update(); } ),
-						default: settings.rotation[i],
+						cRotation: fRotation.add( settings.object.rotation, i, 0, Math.PI * 2, 0.01 ).onChange( function ( value ) { update(); } ),
+						default: settings.object.rotation[i],
 
 					}
 					var name = '', title = '';
@@ -2362,8 +2376,8 @@ class ND {
 						default: title = lang.rotationnDSpaceTitle; break;
 							
 					}
-					dat.controllerNameAndTitle( settings.rotation.folders[i].cRotation, n === 2 ? '2' : name, title );
-					settings.rotation.boUseRotation = false;
+					dat.controllerNameAndTitle( settings.object.rotation.folders[i].cRotation, n === 2 ? '2' : name, title );
+					settings.object.rotation.boUseRotation = false;
 					
 				}
 				for ( var i = 0; i < n; i++ ) {
@@ -2374,17 +2388,17 @@ class ND {
 					{
 						
 						const f = fPosition.addFolder( axisName );
-						settings.position.folders[i] = {
+						settings.object.position.folders[i] = {
 	
-							positionController: new PositionController( function ( shift ) { settings.position[axisName] += shift; },
+							positionController: new PositionController( function ( shift ) { settings.object.position[axisName] += shift; },
 								{ getLanguageCode: options.getLanguageCode, } ),
-							default: settings.position[i],
+							default: settings.object.position[i],
 	
 						};
-						f.add( settings.position.folders[i].positionController );
+						f.add( settings.object.position.folders[i].positionController );
 	
-						settings.position.folders[i].cPosition = dat.controllerZeroStep( f, settings.position, i, function ( value ) { update(); } );
-						dat.controllerNameAndTitle( settings.position.folders[i].cPosition, axisName );
+						settings.object.position.folders[i].cPosition = dat.controllerZeroStep( f, settings.object.position, i, function ( value ) { update(); } );
+						dat.controllerNameAndTitle( settings.object.position.folders[i].cPosition, axisName );
 
 					}
 /*
@@ -2406,7 +2420,7 @@ class ND {
 				//Restore default position.
 				const buttonPositionDefault = fPosition.add( {
 	
-					defaultF: function ( value ) { settings.position.folders.forEach( item => item.cPosition.setValue( item.default ) ); },
+					defaultF: function ( value ) { settings.object.position.folders.forEach( item => item.cPosition.setValue( item.default ) ); },
 	
 				}, 'defaultF' );
 				dat.controllerNameAndTitle( buttonPositionDefault, lang.defaultButton, lang.defaultPositionTitle );
@@ -2416,7 +2430,7 @@ class ND {
 					
 					const buttonRotationDefault = fRotation.add( {
 	
-						defaultF: function ( value ) { settings.rotation.folders.forEach( item => item.cRotation.setValue( item.default ) ); },
+						defaultF: function ( value ) { settings.object.rotation.folders.forEach( item => item.cRotation.setValue( item.default ) ); },
 	
 					}, 'defaultF' );
 					dat.controllerNameAndTitle( buttonRotationDefault, lang.defaultButton, lang.defaultRotationTitle );
@@ -2450,9 +2464,9 @@ class ND {
 		}
 		/**
 		 * @returns an array of intersection points of <b>vectorPlane</b> and <b>geometry</b>. See constructor for details.
-		 * @param {object} [geometryIntersection = { position: [], indices: [[]] }] Arrays of vertices and indexes of the result of the intersection of the panel and the nD object. See <b>settings.geometry</b> of <b>ND</b> constructor for details.
-		 * @param {array} [geometryIntersection.position] Array of vertices of the result of the intersection. See <b>settings.geometry.position</b> of <b>ND</b> constructor for details.
-		 * @param {array} [geometryIntersection.indices] Array of <b>indices</b> of vertices of the result of the intersection. See <b>settings.geometry.indices</b> of <b>ND</b> constructor for details.
+		 * @param {object} [geometryIntersection = { position: [], indices: [[]] }] Arrays of vertices and indexes of the result of the intersection of the panel and the nD object. See <b>settings.object.geometry</b> of <b>ND</b> constructor for details.
+		 * @param {array} [geometryIntersection.position] Array of vertices of the result of the intersection. See <b>settings.object.geometry.position</b> of <b>ND</b> constructor for details.
+		 * @param {array} [geometryIntersection.indices] Array of <b>indices</b> of vertices of the result of the intersection. See <b>settings.object.geometry.indices</b> of <b>ND</b> constructor for details.
 		 * @param {array} [iIntersections] Array of indices that have been added to <b>geometryIntersection.indices</b>
 		 */
 		this.intersection = function ( geometryIntersection = { position: [], indices: [[]] }, iIntersections ) {
@@ -2475,7 +2489,7 @@ class ND {
 					}
 
 				}
-				const edge = settings.geometry.indices[0][iEdge];
+				const edge = settings.object.geometry.indices[0][iEdge];
 				edge.intersection( geometryIntersection );
 				const position = edge.indices.intersection.position;
 				if ( position ) {
@@ -2532,7 +2546,7 @@ class ND {
 									target.forEach( item => item.positionWorld = undefined );
 	
 								}
-							default: console.error( 'ND: settings.geometry.position Proxy. Invalid name: ' + name );
+							default: console.error( 'ND: settings.object.geometry.position Proxy. Invalid name: ' + name );
 		
 						}
 		
@@ -2585,43 +2599,43 @@ class ND {
 			switch ( n ) {
 
 				case 1:
-					if ( settings.geometry.indices.length !== 1 ) console.error( 'ND.intersection: under constraction. Это не линия.' );
-					const edge = settings.geometry.indices[0][0];
+					if ( settings.object.geometry.indices.length !== 1 ) console.error( 'ND.intersection: under constraction. Это не линия.' );
+					const edge = settings.object.geometry.indices[0][0];
 					edge.intersection( geometryIntersection );
 					break;
 				case 2:
-					const iFaces = settings.geometry.indices[1];
-					if ( iFaces ) settings.geometry.indices[1].forEach( function ( iFace ) { iFace.forEach( function ( iEdge ) { intersection( iEdge ) } ); } );
+					const iFaces = settings.object.geometry.indices[1];
+					if ( iFaces ) settings.object.geometry.indices[1].forEach( function ( iFace ) { iFace.forEach( function ( iEdge ) { intersection( iEdge ) } ); } );
 					else {
 						
-						for ( var i = 0; i < settings.geometry.indices[0].length; i++ ) { intersection( i ); }
+						for ( var i = 0; i < settings.object.geometry.indices[0].length; i++ ) { intersection( i ); }
 						addEdges( undefined, geometryIntersection );
 
 					}
 					break;
 				default: {
 
-					var iSegments = settings.iSegments || ( n - 2 ),//Индекс массива индексов сегментов settings.geometry.indices[iSegments]
+					var iSegments = settings.iSegments || ( n - 2 ),//Индекс массива индексов сегментов settings.object.geometry.indices[iSegments]
 											//для которого получаем вершины и индексы
 						segments;//массив индексов сегментов для которого получаем вершины и индексы
 					while( iSegments >= 0 ) {
 						
-						segments = settings.geometry.indices[iSegments];
+						segments = settings.object.geometry.indices[iSegments];
 						if ( segments ) break;
 						iSegments--;
 
 					}
-					//settings.indice индекс сегмента в текущем массиве индексов сегментов settings.geometry.indices[iSegments][settings.indice]
+					//settings.indice индекс сегмента в текущем массиве индексов сегментов settings.object.geometry.indices[iSegments][settings.indice]
 					if ( settings.indice === undefined ) {
 
 						for ( var i = 0; i < segments.length; i++ ) {
 
-							const nd = new ND( n, { geometry: {
+							const nd = new ND( n, { object: { geometry: {
 								
-								indices: settings.geometry.indices,
+								indices: settings.object.geometry.indices,
 								position: positionWorld.copy(),
 							
-							}, indice: i, iSegments: iSegments, } ),
+							} }, indice: i, iSegments: iSegments, } ),
 								s = iSegments - 1;
 							var iIntersections;
 							if ( s !== 0 ) {//Не создавать iIntersections для ребер
@@ -2709,7 +2723,7 @@ class ND {
 
 							for ( var i = 0; i < segment.length; i++ ) {
 	
-								const nd = new ND( n, { geometry: settings.geometry, indice: segment[i], iSegments: iSegments - 1, } );
+								const nd = new ND( n, { object: settings.object, indice: segment[i], iSegments: iSegments - 1, } );
 								if ( n > 4 ) {
 
 									if ( n === 5 ) {
@@ -2853,8 +2867,8 @@ class ND {
 			}
 			object3D = create3DObject( geometry, { name: 'Object', color: 0x00ff00 } );//green
 
-			//сейчас позиция объекта складывается с позицией каздой точки в settings.geometry.position = new Proxy
-			//object3D.position.copy( settings.position.point );
+			//сейчас позиция объекта складывается с позицией каздой точки в settings.object.geometry.position = new Proxy
+			//object3D.position.copy( settings.object.position.point );
 
 		}
 		projectTo3D();
@@ -2956,15 +2970,15 @@ class ND {
 		* @description set new geometry, position and rotation of nD object
 		* See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Object} objectNew new nD object
-		* @param {Object} objectNew.geometry geometry of new nD object. See See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {Object} objectNew.geometry geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array} objectNew.geometry.position Array of vertices of the n-dimensional graphical object.
-	    * See See <b>settings.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+	    * See See <b>settings.object.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array} [objectNew.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
-	    * See See <b>settings.geometry.indices</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+	    * See See <b>settings.object.geometry.indices</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array|number} [objectNew.position] position of the n-dimensional graphical object in n-dimensional coordinates.
-	    * See See <b>settings.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+	    * See See <b>settings.object.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array|number} [objectNew.rotation] rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
-	    * See See <b>settings.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+	    * See See <b>settings.object.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		*/
 		this.object = function ( objectNew ) { console.error( 'ND: settings' ); }
 		/**
@@ -2975,8 +2989,8 @@ class ND {
 		/**
 		* @description
 	    * <pre>
-	    * returns geometry of N-dimensional object. See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-	    *	key <b>geometry</b> - get or set a geometry of nD object. See See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+	    * returns geometry of N-dimensional object. See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+	    *	key <b>geometry</b> - get or set a geometry of nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 	    *	key <b>D3</b> - Projection of nD object to 3D space for visualization.
 	    *		<b>D3.points</b> - Points of projection. See <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setFromPoints" target="_blank">.setFromPoints</a> of <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
 	    *		<b>D3.indices</b> - Indices of points of projection. See <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setIndex" target="_blank">.setIndex</a> of <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
@@ -2999,8 +3013,8 @@ class ND {
 				set: function ( geometryNew ) {
 
 					geometry.geometry = geometryNew;
-					settings.rotation.clear();
-					settings.position.clear();
+					settings.object.rotation.clear();
+					settings.object.position.clear();
 					projectTo3D();
 					this.intersection()
 
@@ -3012,28 +3026,26 @@ class ND {
 
 				set: function ( objectNew ) {
 
-					settings.geometry = objectNew.geometry;
+//					settings.object.geometry = objectNew.geometry;
+					settings.object = objectNew;
 					
 					setIndices();
 					setEdges();
-					appendEdges();
-					if ( !settings.geometry.indices[0].isProxy ) settings.geometry.indices[0] = proxyEdges( objectNew.geometry.indices[0] );
-					
+					if ( !settings.object.geometry.indices[0].isProxy ) settings.object.geometry.indices[0] = proxyEdges( objectNew.geometry.indices[0] );
+
+					settings.object.position = proxyPosition();
+					settings.object.rotation = proxyRotation();
+/*					
 					settings.position = objectNew.position;
 					settings.position = proxyPosition();
 					
 					settings.rotation = objectNew.rotation;
 					settings.rotation = proxyRotation();
-/*					
-					settings.geometry.position.forEach( vector => {
-						
-						delete vector.positionWorld;
-						console.log(vector.positionWorld);
-							
-					} );
-*/
-					settings.geometry.position = proxyGeometryPosition();
-					settings.geometry.position.reset();
+*/					
+					settings.object.geometry.position = proxyGeometryPosition();
+					settings.object.geometry.position.reset();
+					
+					appendEdges();
 					
 					projectTo3D();
 					this.intersection()
