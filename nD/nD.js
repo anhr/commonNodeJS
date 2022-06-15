@@ -232,18 +232,8 @@ class ND {
 	constructor( n, settings = {} ) {
 
 		const options = settings.options, _ND = this;
-/*
-		if ( settings.object ) {
-
-			settings.object.geometry = settings.object.geometry || settings.object.geometry;
-			settings.object.geometry.position = settings.object.geometry.position || settings.object.geometry.position;
-			settings.object.geometry.indices = settings.object.geometry.indices || settings.object.geometry.indices;
-			settings.position = settings.position || settings.object.position;
-			settings.rotation = settings.rotation || settings.object.rotation;
-			
-		}
-*/
 		settings.object = settings.object || {};
+/*		
 settings.object.geometry = settings.object.geometry || settings.geometry || {};
 if ( settings.geometry || settings.position || settings.rotation )
 	console.warn( 'deprecated settings key' );
@@ -255,6 +245,7 @@ if ( settings.geometry ) {
 }
 settings.object.position = settings.object.position || settings.position;
 settings.object.rotation = settings.object.rotation || settings.rotation;
+*/
 		settings.object.geometry = settings.object.geometry || {};
 		if ( settings.object.geometry instanceof Array ) {
 

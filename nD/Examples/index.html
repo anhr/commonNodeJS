@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -75,15 +75,15 @@
 					Also I intersected the 4D object with the 3D panel. You can't to see 3D panel because I can't render the 3D panel because it's 3D space and fills the entire canvas.
 					The result of the intersection is a 3D object if the 4D object intersects the 3D panel.
 					<br>
-					Currenty I have created <a href="https://en.wikipedia.org/wiki/5-cell" target="_blank">pentatope</a> as 4D object. You can see it as green lines.
-					I get a 3D object as a result of the intersection of a pentatope with the 3D panel.
+					Currenty I have created <a href="https://en.wikipedia.org/wiki/5-cell" target="_blank">pentatope</a> or <a href="https://en.wikipedia.org/wiki/Tesseract" target="_blank">tesseract</a> as 4D object. You can see it as green lines.
+					I get a 3D object as a result of the intersection of 4D object with the 3D panel.
 					You can see it as white lines.
 					<p>
 						<input type="checkbox" id="5Dto4D">check the box if you want to import a 4D object from a 5D canvas as a result of the intersection of the 5D object with the 4D panel.
 						<ul>
 							<li id="4Dselector">
 								4D Object:
-								<input type="radio" name="4Dobject" value="tetrahedron" id="tetrahedron" checked><label for="tetrahedron">Tetrahedron</label>
+								<input type="radio" name="4Dobject" value="pentatope" id="pentatope" checked><label for="pentatope">Pentatope</label>
 								<input type="radio" name="4Dobject" value="tesseract" id="tesseract"><label for="tesseract">Tesseract</label>.
 							</li>
 						</ul>
@@ -298,7 +298,7 @@
 						_4DObject.geometry = {};
 						switch( radio.value ) {
 
-							case 'tetrahedron':
+							case 'pentatope':
 								_4DObject.geometry.position = [
 									[0.8, -0.6, 0.1, -0.85],//0
 									[0.9, 0.7, 0.5, -0.55],//1
