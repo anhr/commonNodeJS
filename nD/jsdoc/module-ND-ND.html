@@ -188,6 +188,64 @@ Checks for a collision between an n-dimensional plane and an n-dimensional graph
 
         <tr>
             
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">geometry, position and rotation of  the n-dimensional graphical object.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
                 <td class="name"><code>geometry</code></td>
             
 
@@ -215,10 +273,6 @@ Checks for a collision between an n-dimensional plane and an n-dimensional graph
                 </td>
             
 
-            
-                <td class="default">
-                
-                </td>
             
 
             <td class="description last">Array of vertices and indices of the n-dimensional graphical object.
@@ -283,7 +337,7 @@ Or Object. See object's keys below.
 <pre>
 Every item of array is n-dimensional vector of vertice of object.
 For example, if you want to create a tetrahedron, then you need to create an array of 4 vertices.
-<b>settings.geometry.position: [
+<b>settings.object.geometry.position: [
 	[-0.6, 0.1, 0.8],//0
 	[0.7, 0.5, 0.9],//1
 	[0, -0.4, 0.8],//2
@@ -333,48 +387,48 @@ Allows for vertices to be re-used across multiple segments.
 For example:
 
 <b>n</b> = 1 line.
-<b>settings.geometry.position</b> = [
+<b>settings.object.geometry.position</b> = [
 	[-0.5, 1],//0
 	[0.5]//1
 ]
-<b>settings.geometry.indices</b> = [
+<b>settings.object.geometry.indices</b> = [
 	[
-		0,//index of the settings.geometry.position[0] = [-0.5, 1]
-		1,//index of the settings.geometry.position[1] = [0.5]
+		0,//index of the settings.object.geometry.position[0] = [-0.5, 1]
+		1,//index of the settings.object.geometry.position[1] = [0.5]
 	]//0
 ]//0
 
 <b>n</b> = 2 triangle
-<b>settings.geometry.position</b> = [
+<b>settings.object.geometry.position</b> = [
 	[-0.7, 0.2],//0
 	[0.8, 0.6],//1
 	[0.1, -0.5]//2
 ],
 //edges
-<b>settings.geometry.indices[0]</b> = [
-	[0, 1],//0 index of the settings.geometry.positions [-0.7, 0.2] and [0.8, 0.6]
-	[0, 2],//1 index of the settings.geometry.positions [-0.7, 0.2] and [0.1, -0.5]
-	[1, 2] //2 index of the settings.geometry.positions [0.8, 0.6] and [0.1, -0.5]
+<b>settings.object.geometry.indices[0]</b> = [
+	[0, 1],//0 index of the settings.object.geometry.positions [-0.7, 0.2] and [0.8, 0.6]
+	[0, 2],//1 index of the settings.object.geometry.positions [-0.7, 0.2] and [0.1, -0.5]
+	[1, 2] //2 index of the settings.object.geometry.positions [0.8, 0.6] and [0.1, -0.5]
 ]
 
 <b>n</b> = 3 tetrahedron.
-<b>settings.geometry.position</b> = [
+<b>settings.object.geometry.position</b> = [
 	[0.8, -0.6, 0.1],//0
 	[0.9, 0.7, 0.5],//1
 	[0.8, 0, -0.4],//2
 	[-0.6, 0.1, 0.1]//3
 ],
 //edges
-<b>settings.geometry.indices[0]</b> = [
-	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
-	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [0.8, 0, -0.4]
-	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1] and [-0.6, 0.1, 0.1]
-	[1, 2]//3 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [0.8, 0, -0.4]
-	[1, 3]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
-	[2, 3]//5 index of the settings.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
+<b>settings.object.geometry.indices[0]</b> = [
+	[0, 1]//0 index of the settings.object.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
+	[0, 2]//1 index of the settings.object.geometry.positions [0.8, -0.6, 0.1] and [0.8, 0, -0.4]
+	[0, 3]//2 index of the settings.object.geometry.positions [0.8, -0.6, 0.1] and [-0.6, 0.1, 0.1]
+	[1, 2]//3 index of the settings.object.geometry.positions [0.9, 0.7, 0.5] and [0.8, 0, -0.4]
+	[1, 3]//4 index of the settings.object.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
+	[2, 3]//5 index of the settings.object.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
 ]
-//faces. Indices of the edges <b>settings.geometry.indices[0]</b>
-<b>settings.geometry.indices[1]</b> = [
+//faces. Indices of the edges <b>settings.object.geometry.indices[0]</b>
+<b>settings.object.geometry.indices[1]</b> = [
 	[0, 1, 3]//tetrahedron's face 0
 	[0, 2, 4]//tetrahedron's face 1
 	[3, 4, 5]//tetrahedron's face 2
@@ -382,7 +436,7 @@ For example:
 ]
 
 <b>n</b> = 4 pentachoron <a href="https://en.wikipedia.org/wiki/5-cell">5-cell</a>.
-<b>settings.geometry.position</b> = [
+<b>settings.object.geometry.position</b> = [
 	[0.8, -0.6, 0.1, -0.85],//0
 	[0.9, 0.7, 0.5, -0.55],//1
 	[0.8, 0, -0.4, 0],//2
@@ -390,20 +444,20 @@ For example:
 	[-0.5, 0.2, 0.3, 0.85],//4
 ],
 //edges
-<b>settings.geometry.indices[0]</b> = [
-	[0, 1]//0 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.9, 0.7, 0.5, -0.55]
-	[0, 2]//1 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.8, 0, -0.4, 0]
-	[0, 3]//2 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, -0.3, 0.55]
-	[0, 4]//3 index of the settings.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.5, 0.2, 0.3, 0.85]
-	[1, 2]//4 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [0.8, 0, -0.4, 0]
-	[1, 3]//5 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, -0.3, 0.55]
-	[1, 4]//6 index of the settings.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.5, 0.2, 0.3, 0.85]
-	[2, 3]//7 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, -0.3, 0.55]
-	[2, 4]//8 index of the settings.geometry.positions [0.8, 0, -0.4, 0] and [-0.5, 0.2, 0.3, 0.85]
-	[3, 4]//9 index of the settings.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.5, 0.2, 0.3, 0.85]
+<b>settings.object.geometry.indices[0]</b> = [
+	[0, 1]//0 index of the settings.object.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.9, 0.7, 0.5, -0.55]
+	[0, 2]//1 index of the settings.object.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.8, 0, -0.4, 0]
+	[0, 3]//2 index of the settings.object.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, -0.3, 0.55]
+	[0, 4]//3 index of the settings.object.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.5, 0.2, 0.3, 0.85]
+	[1, 2]//4 index of the settings.object.geometry.positions [0.9, 0.7, 0.5, -0.55] and [0.8, 0, -0.4, 0]
+	[1, 3]//5 index of the settings.object.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, -0.3, 0.55]
+	[1, 4]//6 index of the settings.object.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.5, 0.2, 0.3, 0.85]
+	[2, 3]//7 index of the settings.object.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, -0.3, 0.55]
+	[2, 4]//8 index of the settings.object.geometry.positions [0.8, 0, -0.4, 0] and [-0.5, 0.2, 0.3, 0.85]
+	[3, 4]//9 index of the settings.object.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.5, 0.2, 0.3, 0.85]
 ]
-//faces. Indices of the edges <b>settings.geometry.indices[0]</b>
-<b>settings.geometry.indices[1]</b> = [
+//faces. Indices of the edges <b>settings.object.geometry.indices[0]</b>
+<b>settings.object.geometry.indices[1]</b> = [
 	[7, 8, 9],//0 no 0, 1 vertices
 	[5, 6, 9],//1 no 0, 2 vertices
 	[4, 6, 8],//2 no 0, 3 vertices
@@ -415,8 +469,8 @@ For example:
 	[0, 2, 5],//8 no 2, 4 vertices
 	[0, 1, 4],//9 no 3, 4 vertices
 ]
-//bodies. Indices of the faces <b>settings.geometry.indices[1]</b>
-<b>settings.geometry.indices[2]</b> = [
+//bodies. Indices of the faces <b>settings.object.geometry.indices[1]</b>
+<b>settings.object.geometry.indices[2]</b> = [
 [2, 1, 3, 0],//0 no 0 vertice
 [5, 6, 4, 0],//1 no 1 vertice
 [8, 7, 1, 4],//2 no 2 vertice
@@ -427,10 +481,137 @@ For example:
         </tr>
 
     
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
 
         <tr>
             
-                <td class="name"><code>iAxes</code></td>
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array - position of the n-dimensional graphical object in n-dimensional coordinates.
+<pre>
+number - position of the 0 coordinate of the n-dimensional graphical object.
+<pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rotation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array - rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
+<table>
+		 <tr><td><b>n</b> space dimension</td><td>Array index</td><td>Axis of rotation</td><td>Axis type</td><td>Note</td></tr>
+		 <tr><td>0</td><td></td><td></td><td></td><td>no rotation</td></tr>
+		 <tr><td>1</td><td></td><td></td><td></td><td>no rotation</td></tr>
+		 <tr><td>2</td><td>0</td><td></td><td></td><td>No effect for 2-dimensional space</td></tr>
+		 <tr><td></td><td>1</td><td></td><td></td><td>No effect for 2-dimensional space</td></tr>
+		 <tr><td></td><td>2</td><td>2(z)</td><td>point</td><td></td></tr>
+		 <tr><td>3</td><td>0</td><td>0(x)</td><td>line</td><td></td></tr>
+		 <tr><td></td><td>1</td><td>1(y)</td><td></td><td></td></tr>
+		 <tr><td></td><td>2</td><td>2(z)</td><td></td><td></td></tr>
+		 <tr><td>4</td><td>0</td><td>0, 1(xy)</td><td>plane</td><td></td></tr>
+		 <tr><td></td><td>1</td><td>0, 2(xz)</td><td></td><td></td></tr>
+		 <tr><td></td><td>2</td><td>0, 3(xw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>3</td><td>1, 2(yz)</td><td></td><td></td></tr>
+		 <tr><td></td><td>4</td><td>1, 3(yw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>5</td><td>2, 3(zw)</td><td></td><td></td></tr>
+		 <tr><td>5</td><td>0</td><td>0, 1, 2(xyz)</td><td>3D space</td><td></td></tr>
+		 <tr><td></td><td>1</td><td>0, 1, 3(xyw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>2</td><td>0, 1, 4(xy4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>3</td><td>0, 2, 3(xzw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>4</td><td>0, 2, 4(xz4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>5</td><td>0, 3, 4(xw4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>6</td><td>1, 2, 3(yzw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>7</td><td>1, 2, 4(yz4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>8</td><td>1, 3, 4(yw4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>9</td><td>2, 3, 4(zw4)</td><td></td><td></td></tr>
+		</table>
+<pre>
+number - rotation in radians around axis 0 or rotation around axis 2 for 2D objects i.e. space dimension n = 2.
+See <a href="https://math.stackexchange.com/questions/1402362/can-rotations-in-4d-be-given-an-explicit-matrix-form">Can rotations in 4D be given an explicit matrix form?</a>, <a href="https://en.wikipedia.org/wiki/Rotation_matrix">Rotation matrix</a>.
+Examples:
+<b>n = 4</b>, <b>rotation = [Math.PI / 5, 1, 2, 3, 4, 5]</b>
+rotation around 0, 1(xy) plane is Math.PI / 5 radians.
+rotation around 0, 2(xz) plane is 1 radian.
+etc.
+
+<b>n = 4</b>, <b>rotation = Math.PI / 5</b>
+rotation around 0, 1(xy) plane is Math.PI / 5 radians.
+
+<b>n = 2</b>, <b>rotation = [0, 0, Math.PI / 4]</b>
+rotation around 2(z) point is Math.PI / 4 radians.
+
+<b>n = 2</b>, <b>rotation = Math.PI / 5</b>
+rotation around 2(z) point is Math.PI / 5 radians.
+<pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>geometry.iAxes</code></td>
             
 
             <td class="type">
@@ -504,135 +685,7 @@ In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.</td>
             
 
             <td class="description last">n-dimensional position of the panel
-intersecting with the <b>settings.geometry</b> n-dimensional graphical object.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>position</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-|
-
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Array - position of the n-dimensional graphical object in n-dimensional coordinates.
-<pre>
-number - position of the 0 coordinate of the n-dimensional graphical object.
-<pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>rotation</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-|
-
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Array - rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
-<table>
-		 <tr><td><b>n</b> space dimension</td><td>Array index</td><td>Axis of rotation</td><td>Axis type</td><td>Note</td></tr>
-		 <tr><td>0</td><td></td><td></td><td></td><td>no rotation</td></tr>
-		 <tr><td>1</td><td></td><td></td><td></td><td>no rotation</td></tr>
-		 <tr><td>2</td><td>0</td><td></td><td></td><td>No effect for 2-dimensional space</td></tr>
-		 <tr><td></td><td>1</td><td></td><td></td><td>No effect for 2-dimensional space</td></tr>
-		 <tr><td></td><td>2</td><td>2(z)</td><td>point</td><td></td></tr>
-		 <tr><td>3</td><td>0</td><td>0(x)</td><td>line</td><td></td></tr>
-		 <tr><td></td><td>1</td><td>1(y)</td><td></td><td></td></tr>
-		 <tr><td></td><td>2</td><td>2(z)</td><td></td><td></td></tr>
-		 <tr><td>4</td><td>0</td><td>0, 1(xy)</td><td>plane</td><td></td></tr>
-		 <tr><td></td><td>1</td><td>0, 2(xz)</td><td></td><td></td></tr>
-		 <tr><td></td><td>2</td><td>0, 3(xw)</td><td></td><td></td></tr>
-		 <tr><td></td><td>3</td><td>1, 2(yz)</td><td></td><td></td></tr>
-		 <tr><td></td><td>4</td><td>1, 3(yw)</td><td></td><td></td></tr>
-		 <tr><td></td><td>5</td><td>2, 3(zw)</td><td></td><td></td></tr>
-		 <tr><td>5</td><td>0</td><td>0, 1, 2(xyz)</td><td>3D space</td><td></td></tr>
-		 <tr><td></td><td>1</td><td>0, 1, 3(xyw)</td><td></td><td></td></tr>
-		 <tr><td></td><td>2</td><td>0, 1, 4(xy4)</td><td></td><td></td></tr>
-		 <tr><td></td><td>3</td><td>0, 2, 3(xzw)</td><td></td><td></td></tr>
-		 <tr><td></td><td>4</td><td>0, 2, 4(xz4)</td><td></td><td></td></tr>
-		 <tr><td></td><td>5</td><td>0, 3, 4(xw4)</td><td></td><td></td></tr>
-		 <tr><td></td><td>6</td><td>1, 2, 3(yzw)</td><td></td><td></td></tr>
-		 <tr><td></td><td>7</td><td>1, 2, 4(yz4)</td><td></td><td></td></tr>
-		 <tr><td></td><td>8</td><td>1, 3, 4(yw4)</td><td></td><td></td></tr>
-		 <tr><td></td><td>9</td><td>2, 3, 4(zw4)</td><td></td><td></td></tr>
-		</table>
-<pre>
-number - rotation in radians around axis 0 or rotation around axis 2 for 2D objects i.e. space dimension n = 2.
-See <a href="https://math.stackexchange.com/questions/1402362/can-rotations-in-4d-be-given-an-explicit-matrix-form">Can rotations in 4D be given an explicit matrix form?</a>, <a href="https://en.wikipedia.org/wiki/Rotation_matrix">Rotation matrix</a>.
-Examples:
-<b>n = 4</b>, <b>rotation = [Math.PI / 5, 1, 2, 3, 4, 5]</b>
-rotation around 0, 1(xy) plane is Math.PI / 5 radians.
-rotation around 0, 2(xz) plane is 1 radian.
-etc.
-
-<b>n = 4</b>, <b>rotation = Math.PI / 5</b>
-rotation around 0, 1(xy) plane is Math.PI / 5 radians.
-
-<b>n = 2</b>, <b>rotation = [0, 0, Math.PI / 4]</b>
-rotation around 2(z) point is Math.PI / 4 radians.
-
-<b>n = 2</b>, <b>rotation = Math.PI / 5</b>
-rotation around 2(z) point is Math.PI / 5 radians.
-<pre></td>
+intersecting with the <b>settings.object.geometry</b> n-dimensional graphical object.</td>
         </tr>
 
     
@@ -833,7 +886,7 @@ The <b>onIntersection</b> function parameter is the (n-1)-dimensional geometry o
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line231">line 231</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line232">line 232</a>
     </li></ul></dd>
     
 
@@ -903,8 +956,8 @@ The <b>onIntersection</b> function parameter is the (n-1)-dimensional geometry o
 
 <div class="description">
     <pre>
-returns geometry of N-dimensional object. See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-	key <b>geometry</b> - get or set a geometry of nD object. See See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+returns geometry of N-dimensional object. See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+	key <b>geometry</b> - get or set a geometry of nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 	key <b>D3</b> - Projection of nD object to 3D space for visualization.
 		<b>D3.points</b> - Points of projection. See <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setFromPoints" target="_blank">.setFromPoints</a> of <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
 		<b>D3.indices</b> - Indices of points of projection. See <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setIndex" target="_blank">.setIndex</a> of <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
@@ -947,7 +1000,7 @@ returns geometry of N-dimensional object. See <b>settings.geometry</b> parameter
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line2961">line 2961</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3001">line 3001</a>
     </li></ul></dd>
     
 
@@ -1009,7 +1062,7 @@ returns geometry of N-dimensional object. See <b>settings.geometry</b> parameter
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line2949">line 2949</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line2989">line 2989</a>
     </li></ul></dd>
     
 
@@ -1113,7 +1166,7 @@ returns geometry of N-dimensional object. See <b>settings.geometry</b> parameter
                 </td>
             
 
-            <td class="description last">Arrays of vertices and indexes of the result of the intersection of the panel and the nD object. See <b>settings.geometry</b> of <b>ND</b> constructor for details.
+            <td class="description last">Arrays of vertices and indexes of the result of the intersection of the panel and the nD object. See <b>settings.object.geometry</b> of <b>ND</b> constructor for details.
                 <h6>Properties</h6>
                 
 
@@ -1167,7 +1220,7 @@ returns geometry of N-dimensional object. See <b>settings.geometry</b> parameter
 
             
 
-            <td class="description last">Array of vertices of the result of the intersection. See <b>settings.geometry.position</b> of <b>ND</b> constructor for details.</td>
+            <td class="description last">Array of vertices of the result of the intersection. See <b>settings.object.geometry.position</b> of <b>ND</b> constructor for details.</td>
         </tr>
 
     
@@ -1200,7 +1253,7 @@ returns geometry of N-dimensional object. See <b>settings.geometry</b> parameter
 
             
 
-            <td class="description last">Array of <b>indices</b> of vertices of the result of the intersection. See <b>settings.geometry.indices</b> of <b>ND</b> constructor for details.</td>
+            <td class="description last">Array of <b>indices</b> of vertices of the result of the intersection. See <b>settings.object.geometry.indices</b> of <b>ND</b> constructor for details.</td>
         </tr>
 
     
@@ -1285,7 +1338,7 @@ returns geometry of N-dimensional object. See <b>settings.geometry</b> parameter
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line2433">line 2433</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line2473">line 2473</a>
     </li></ul></dd>
     
 
@@ -1331,7 +1384,7 @@ returns geometry of N-dimensional object. See <b>settings.geometry</b> parameter
     
 
     
-    <h4 class="name" id="settings"><span class="type-signature"></span>settings<span class="signature">(settingsNew)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="object"><span class="type-signature"></span>object<span class="signature">(objectNew)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1376,7 +1429,7 @@ See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">N
 
         <tr>
             
-                <td class="name"><code>settingsNew</code></td>
+                <td class="name"><code>objectNew</code></td>
             
 
             <td class="type">
@@ -1444,7 +1497,7 @@ See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">N
 
             
 
-            <td class="description last">geometry of new nD object. See See <b>settings.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+            <td class="description last">geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
                 <h6>Properties</h6>
                 
 
@@ -1497,7 +1550,7 @@ See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">N
             
 
             <td class="description last">Array of vertices of the n-dimensional graphical object.
-See See <b>settings.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.</td>
+See See <b>settings.object.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.</td>
         </tr>
 
     
@@ -1531,7 +1584,7 @@ See See <b>settings.geometry.position</b> parameter of <a href="./module-ND-ND.h
             
 
             <td class="description last">Array of indices of vertices of the n-dimensional graphical object.
-See See <b>settings.geometry.indices</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.</td>
+See See <b>settings.object.geometry.indices</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.</td>
         </tr>
 
     
@@ -1575,7 +1628,7 @@ See See <b>settings.geometry.indices</b> parameter of <a href="./module-ND-ND.ht
             
 
             <td class="description last">position of the n-dimensional graphical object in n-dimensional coordinates.
-See See <b>settings.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.</td>
+See See <b>settings.object.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.</td>
         </tr>
 
     
@@ -1612,7 +1665,7 @@ See See <b>settings.position</b> parameter of <a href="./module-ND-ND.html" targ
             
 
             <td class="description last">rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
-See See <b>settings.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.</td>
+See See <b>settings.object.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.</td>
         </tr>
 
     
@@ -1660,7 +1713,7 @@ See See <b>settings.rotation</b> parameter of <a href="./module-ND-ND.html" targ
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line2944">line 2944</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line2984">line 2984</a>
     </li></ul></dd>
     
 
@@ -1712,7 +1765,7 @@ See See <b>settings.rotation</b> parameter of <a href="./module-ND-ND.html" targ
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sun Jun 12 2022 15:26:49 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jun 15 2022 08:20:30 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

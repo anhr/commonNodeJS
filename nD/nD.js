@@ -42,6 +42,7 @@ class ND {
 	 * Checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
 	 * @param {number} n space dimension of the graphical object.
 	 * @param {Object} [settings={}] The following settings are available
+	 * @param {Object} [settings.object] geometry, position and rotation of  the n-dimensional graphical object.
 	 * @param {Array|Object} [settings.object.geometry] Array of vertices and indices of the n-dimensional graphical object.
 	 * <pre>
 	 * Every item of array is n-dimensional vector of vertice of object.
@@ -160,17 +161,11 @@ class ND {
 	 * [9, 8, 3, 6],//4 no 4 vertice
 	 *]
 	 * </pre>
-	 * @param {Array} [settings.object.geometry.iAxes] array of indices of the axes.
-	 * For example if <b>iAxes</b> is [1,2], then axis 1 interpret as axis 0 and axis 2 interpret as axis 1.
-	 * As result, you can rotate axes around another axis to 90 degrees.
-	 * In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.
-	 * @param {Array} [settings.vectorPlane] n-dimensional position of the panel
-	 * intersecting with the <b>settings.object.geometry</b> n-dimensional graphical object.
-	 * @param {Array|number} [settings.position] Array - position of the n-dimensional graphical object in n-dimensional coordinates.
+	 * @param {Array|number} [settings.object.position] Array - position of the n-dimensional graphical object in n-dimensional coordinates.
 	 * <pre>
 	 * number - position of the 0 coordinate of the n-dimensional graphical object.
 	 * <pre>
-	 * @param {Array|number} [settings.rotation] Array - rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
+	 * @param {Array|number} [settings.object.rotation] Array - rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
 	 * <table>
 		 <tr><td><b>n</b> space dimension</td><td>Array index</td><td>Axis of rotation</td><td>Axis type</td><td>Note</td></tr>
 		 <tr><td>0</td><td></td><td></td><td></td><td>no rotation</td></tr>
@@ -216,6 +211,12 @@ class ND {
 	 * <b>n = 2</b>, <b>rotation = Math.PI / 5</b>
 	 * rotation around 2(z) point is Math.PI / 5 radians.
 	 * <pre>
+	 * @param {Array} [settings.object.geometry.iAxes] array of indices of the axes.
+	 * For example if <b>iAxes</b> is [1,2], then axis 1 interpret as axis 0 and axis 2 interpret as axis 1.
+	 * As result, you can rotate axes around another axis to 90 degrees.
+	 * In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.
+	 * @param {Array} [settings.vectorPlane] n-dimensional position of the panel
+	 * intersecting with the <b>settings.object.geometry</b> n-dimensional graphical object.
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * Define <b>scene</b> if you want visualise n-dimensional plane and n-dimensional object to 3-D space of the <b>scene</b>.
 	 * @param {Options} [settings.options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
