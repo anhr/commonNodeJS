@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -98,10 +98,21 @@
 			<span class="caret">3D.</span>
 			<ul class="nested hide" id="article3D">
 				<li>
-					Click the "►" button in the lower left corner of the canvas to intersect the blue panel with the green graphic object.
+					Click the "►" button in the lower left corner of the canvas to intersect the blue panel with the green 3D graphic object.
 					<br>
-					You can see a white loop line if the blue panel in 3D canvas intersects with the green graphic object.
+					You can see a white loop line if the blue panel in 3D canvas intersects with the green 3D graphic object.
+					Currenty I have created pyramid or cube as 3D object.
 					Real panel is surface with infinite length and width. But I have limited it to axes dimentions.
+					<p>
+						<input type="checkbox" id="4Dto3D">check the box if you want to import a 3D object from a 4D canvas as a result of the intersection of the 4D object with the 3D panel.
+						<ul>
+							<li id="3Dselector">
+								3D Object:
+								<input type="radio" name="3Dobject" value="pyramid" id="pyramid" checked><label for="pyramid">Pyramid</label>
+								<input type="radio" name="3Dobject" value="cube" id="cube"><label for="cube">Cube</label>.
+							</li>
+						</ul>
+					</p>
 					<div id="3D">
 						<img src="../../img/wait.gif">
 					</div>
@@ -187,11 +198,11 @@
 
 		const D = {
 
-				D5: true,
-				D4: true,
+				//D5: true,
+				//D4: true,
 				D3: true,
-				D2: true,
-				D1: true,
+				//D2: true,
+				//D1: true,
 
 			},
 			playerOptions = {
@@ -201,31 +212,154 @@
 				interval: 25,//Ticks per seconds.
 
 			};
-		const c5Dto4D = document.getElementById( "5Dto4D" );
-		c5Dto4D.onchange = function(params) {
+		const controls = {
 
-			if ( !_4D ) return;
-			var display4Dselector;
-			if ( c5Dto4D.checked ) {
-				
-				if (  c5Dto4D.geometry ) {
-					
-					c5Dto4D.geometryOld = _4D.geometry.copy;
-					_4D.geometry = c5Dto4D.geometry;
+			c5Dto4D: document.getElementById( "5Dto4D" ),
+			c4Dto3D: document.getElementById( "4Dto3D" ),
+/*
+			init: function () {
+
+				this.c5Dto4D.onchange = function ( params ) {
+
+					if ( !_4D ) return;
+					var display4Dselector;
+					if ( controls.c5Dto4D.checked ) {
+
+						if ( controls.c5Dto4D.geometry ) {
+
+							controls.c5Dto4D.geometryOld = _4D.geometry.copy;
+							_4D.geometry = controls.c5Dto4D.geometry;
+
+						}
+						display4Dselector = 'none';
+
+					} else {
+
+						display4Dselector = 'block';
+						_4D.object = controls.c5Dto4D.geometryOld;
+						//			_4D.intersection();
+
+					}
+					document.getElementById( '4Dselector' ).style.display = display4Dselector;
 
 				}
-				display4Dselector = 'none';
+//				setОnChange( this.c5Dto4D );
 
-			} else {
-				
-				display4Dselector = 'block';
-				_4D.object = c5Dto4D.geometryOld;
-	//			_4D.intersection();
+			},
+*/
+			setОnChange: function ( cImportObject, nD, nDselectorName ) {
+
+				cImportObject.onchange = function ( params ) {
+
+					if ( !nD ) return;
+					var display4Dselector;
+					if ( cImportObject.checked ) {
+
+						if ( cImportObject.geometry ) {
+
+							cImportObject.geometryOld = nD.geometry.copy;
+							nD.geometry = cImportObject.geometry;
+
+						}
+						display4Dselector = 'none';
+
+					} else {
+
+						display4Dselector = 'block';
+						nD.object = cImportObject.geometryOld;
+						//			nD.intersection();
+
+					}
+					document.getElementById( nDselectorName ).style.display = display4Dselector;
+
+				}
+
+			},
+			getObject: function ( cRadioName, aObjects ) {
+
+				const nDObject = { geometry: {}, aObjects: aObjects };
+
+				var position, rotation;
+				aObjects.forEach( object => {
+
+					if ( !object.name ) {
+						
+						if ( object.position ) position = object.position;
+						if ( object.rotation ) rotation = object.rotation;
+
+					}
+						
+				} )
+				document.querySelectorAll( 'input[name="' + cRadioName + '"]' ).forEach( radio => {
+
+					function onChange() {
+
+						nDObject.geometry = {};
+						aObjects.forEach( object => {
+
+							if ( radio.value === object.name ) {
+
+								object.geometry.position.forEach( vertice => delete vertice.positionWorld );
+/*								
+								if ( object.geometry.indices )
+									object.geometry.indices.forEach( array => {
+	
+										array.forEach( index => {
+
+											delete index.index;
+											
+										} );
+										
+									} );
+*/
+								if ( object.geometry.indices ) {
+									
+									const indices = [];
+									object.geometry.indices.forEach( array => {
+	
+										const item = [];
+										indices.push( item );
+										array.forEach( index => {
+
+											item.push( index );
+											
+										} );
+										
+									} );
+									nDObject.geometry.indices = indices;
+
+								}
+								nDObject.name = object.name;
+								nDObject.geometry.position = object.geometry.position;
+//								nDObject.geometry.indices = object.geometry.indices;
+								const p = object.position || position;
+								if ( p ) nDObject.position = [...p];
+								const r = object.rotation || rotation;
+								if ( r ) nDObject.rotation = [...r];
+								
+							}
+							
+						} );
+
+					}
+					radio.addEventListener( 'change', function () {
+
+						onChange();
+//						_4D.object = { geometry: _4DObjectGeometry };
+						aObjects.nD.object = nDObject;
+						
+					} );
+
+					if ( radio.checked ) onChange();
+						
+				} );
+				return nDObject;
 
 			}
-			document.getElementById( '4Dselector' ).style.display = display4Dselector;
-		
+
+
 		}
+//		controls.init();
 
 		//5D
 		var _5D;
@@ -260,8 +394,8 @@
 					options: options,
 					onIntersection: function ( geometryIntersection ) {
 						
-						c5Dto4D.geometry = geometryIntersection;
-						if ( _4D && c5Dto4D.checked ) _4D.geometry = geometryIntersection;
+						controls.c5Dto4D.geometry = geometryIntersection;
+						if ( _4D && controls.c5Dto4D.checked ) _4D.geometry = geometryIntersection;
 					
 					}
 
@@ -290,25 +424,41 @@
 
 			treeView.setCanvas( 'article4D', new MyThree( function ( scene, options ) {
 
-				const _4DObject = { geometry: {} };
-				document.querySelectorAll( 'input[name="4Dobject"]' ).forEach( radio => {
+			
+				_4D = new ND( 4, {
 
-					function onChange() {
+					object: controls.getObject( "4Dobject", [
+						{
+							
+							position: [-0.4, -0.2, 0, 0.1],
+							rotation: [0, 0, 0, 0, 0, - Math.PI / 2],
+							
+						},
+						{
 
-						_4DObject.geometry = {};
-						switch( radio.value ) {
+							name: 'pentatope',
+							geometry: {
 
-							case 'pentatope':
-								_4DObject.geometry.position = [
+								position: [
 									[0.8, -0.6, 0.1, -0.85],//0
 									[0.9, 0.7, 0.5, -0.55],//1
 									[0.8, 0, -0.4, 0.1],//2
 									[-0.6, 0.1, -0.3, 0.55],//3
 									[-0.5, 0.2, 0.3, 0.85],//4
-								];
-								break;
-							case 'tesseract':
-								_4DObject.geometry.position = [
+								],
+
+							}
+
+						},
+						{
+
+							name: 'tesseract',
+							position: [-0.3],// -0.2, 0.3, 5],
+							//rotation: [Math.PI / 5, 1, 2.16, 3, 4, 5],
+							rotation: [0, 0, 1, 0, 1.1, 1.2],
+							geometry: {
+
+								position: [
 
 									//cube 0
 
@@ -342,8 +492,8 @@
 									[0.5, 0.5, -0.5, 0.5],//14 cube 1 edge 19, 20 face 8
 
 									[0.5, 0.5, 0.5, 0.5],//15 cube 1 edge ,  face 
-								];
-								_4DObject.geometry.indices = [
+								],
+								indices: [
 
 									//edges
 									[
@@ -423,14 +573,9 @@
 										[1, 25, 27, 13],//15 cube 2, 0, 1
 
 										[24, 4, 28, 16],//16 cube 3, 2
-										//[0, 4, 6, 5],//face 1 17 cube 3, 2
-										//[0, 24, 25, 12],//face 12 17 cube 3
 										[6, 25, 29, 17],//17 cube 3
 										[5, 28, 29, 18],//18 cube 3
-										//[12, 16, 17, 18],//face 7 20 cube 3
 
-										//[3, 4, 7, 8],// face 2 21 cube 4
-										//[4, 24, 28, 16],//face 16 22 cube 4
 										[8, 28, 30, 20],//19 cube 4
 										[7, 26, 30, 19],//20 cube 4
 
@@ -450,62 +595,29 @@
 										[3, 10, 14, 20, 21, 23],//7
 										//[7, 9, 10, 11, 8, 6],//7
 									],
-								];
-								break;
-							derfault: console.error( 'Invalid 4D object name: ' + _4DObjectName );
-						
-						}
-						_4DObject.position = [-0.3];// -0.2, 0.3, 5];
-						_4DObject.rotation = [Math.PI / 5, 1, 2, 3, 4, 5];
+								]
 
-					}
-					radio.addEventListener( 'change', function () {
+							}
 
-						onChange();
-//						_4D.object = { geometry: _4DObjectGeometry };
-						_4D.object = _4DObject;
-						
-					} );
-
-					if ( radio.checked ) onChange();
-						
-				} );
-			
-				_4D = new ND( 4, {
-
-/*
-					//position: [-0.3],// -0.2, 0.3, 5],
-					position: _4DObject.position,
-					//rotation: [0.01],
-					//rotation: [Math.PI / 5, 1, 2, 3, 4, 5],
-					//rotation: [0, 0, 0, 0, 0, - Math.PI / 2],
-					rotation: _4DObject.rotation,
-					geometry: {
-
-						position: _4DObjectGeometry.position,
-						indices: _4DObjectGeometry.indices,
-
-					},
-					geometry: _4DObject.geometry,
-*/
-					object: _4DObject,
+						}] ),
 					boDisplayVerticeID: true,
 					scene: scene,
 					options: options,
-					onIntersection: function ( geometryIntersection ) { if ( _3D ) _3D.geometry = geometryIntersection; }
+					onIntersection: function ( geometryIntersection ) {
+
+						controls.c4Dto3D.geometry = geometryIntersection;
+						if ( _3D && controls.c4Dto3D.checked ) _3D.geometry = geometryIntersection;
+
+					}
 
 				} );
+
+				controls.setОnChange( controls.c5Dto4D, _4D, '4Dselector' );
 
 				//new time of the player event
 				options.onSelectScene = function ( t ) {
 					
 					_4D.vectorPlane[3] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min );
-					//_4D.geometry.geometry.position[2][0] = -0.5 + t;
-/*					
-					const position = _4D.geometry.geometry.position[0];
-					position[0] = -0.5 + t;
-					_4D.geometry.geometry.position[0] = position;
-*/
 					
 				}
 
@@ -529,128 +641,104 @@
 
 				_3D = new ND( 3, {
 
-					object: {
-						
-						//position: [-0.3],
-						//rotation: Math.PI / 4,
-						rotation: [Math.PI / 4, Math.PI / 5],
-						geometry: {
-	
-							/*
-							//Variant 1 Вершина 1 находится близко к панели если проигрыватель установить на t = 0.6 .
-							//Будем считать что она находится на панели. Смотри proxyEdges.intersection
-							position: [
-								[0.8, -0.0631578947368421, -0.34736842105263155],//0
-								[0.15000000000000005, -0.19999999999999996, 0.2],//1
-								[-0.04999999999999993, -0.175, -0.14285714285714288],//2
-								[0.14999999999999997, 0.4, 0.09999999999999996],//3
-								[0.35, 0.5035714285714284, 0.4214285714285714],//4
-								[0.8153846153846154, 0.10769230769230766, -0.2615384615384616],//5
-							],
-							indices: [
-	
-								//edges
-								[
-									[0, 1],//0
-									[0, 2],//1
-									[2, 1],//2
-									[2, 3],//3
-									[1, 4],//4
-									[3, 4],//5
-									[0, 5],//6
-									[5, 4],//7
-									[5, 3],//8
-								],
-								//faces
-								[
-									[0, 1, 2],
-									[6, 7, 4, 0],
-									//[5, 8, 7],
-									[1, 3, 6, 8],
-									[2, 3, 5, 4],
-								],
-							],
-							*/
-	
-							//tetrahedron
-							position2: [
-	
-								/*
-								[0.8, -0.6, 0.1],//0
-								[0.9, 0.7, 0.5],//1
-								[0.8, 0, -0.4],//2
-								[-0.6, 0.1, 0.1]//3
-								*/
-								//Variant 2 Вершина, ребро, грань находится на панели если координата 2 каждой вершины равна -0.4 и проигрыватель установить на t = 0.3
-								[0.8, -0.6, -0.4],//0
-								[0.9, 0.7, 0.5],//1
-								[0.8, 0, -0.4],//2
-								[-0.6, 0.1, -0.4]//3
-								/*
-								//Линия пересечения - четырехугольник
-								[-0.8, 0, -0.5],//0
-								[0.9, 0, -0.5],//1
-								[0, -0.7, 0.4],//2
-								[0, 0.6, 0.4]//3
-								*/
-	
-							],
-	
-							//cube
-							position: [
-								[ 0.5,  0.5,  0.5],//0
-								[ 0.5, -0.5,  0.5],//1
-								[-0.5,  0.5,  0.5],//2
-								[-0.5, -0.5,  0.5],//3
-	
-								[ 0.5,  0.5, -0.5],//4
-								[ 0.5, -0.5, -0.5],//5
-								[-0.5,  0.5, -0.5],//6
-								[-0.5, -0.5, -0.5],//7
-							],
-							indices: [
-	
-								//edges
-								[
-									//face 0
-									[0, 1],//0 face 1
-									[1, 3],//1 face 4
-									[3, 2],//2 face 3
-									[2, 0],//3 face 2
-	
-									//face 1
-									[0, 4],//4 face 2
-									[4, 5],//5 face 5
-									[5, 1],//6 face 4
-	
-									//face 2
-									[2, 6],//7 face 3
-									[6, 4],//8 face 5
-	
-									[7, 3],//9 face 3, 4
-									[7, 5],//10 face 4, 5
-									[7, 6],//11 face 3, 5
-								],
-								//faces
-								[
-									[0, 1, 2, 3],//0
-									[0, 4, 5, 6],//1
-									[3, 7, 8, 4],//2
-									[2, 7, 9, 11],//3
-									[1, 9, 10, 6],//4
-									[5, 8, 10, 11],//5
-								],
-							],
-	
+					object: controls.getObject( "3Dobject", [
+						{
+							
+							//position: [-0.3],
+							//rotation: Math.PI / 4,
+							rotation: [Math.PI / 4, Math.PI / 5],
+							
 						},
-						
-					},
+						{
+
+							name: 'pyramid',
+							geometry: {
+
+								position: [
+									/*
+									[0.8, -0.6, 0.1],//0
+									[0.9, 0.7, 0.5],//1
+									[0.8, 0, -0.4],//2
+									[-0.6, 0.1, 0.1]//3
+									*/
+									//Variant 2 Вершина, ребро, грань находится на панели если координата 2 каждой вершины равна -0.4 и проигрыватель установить на t = 0.3
+									[0.8, -0.6, -0.4],//0
+									[0.9, 0.7, 0.5],//1
+									[0.8, 0, -0.4],//2
+									[-0.6, 0.1, -0.4]//3
+									/*
+									//Линия пересечения - четырехугольник
+									[-0.8, 0, -0.5],//0
+									[0.9, 0, -0.5],//1
+									[0, -0.7, 0.4],//2
+									[0, 0.6, 0.4]//3
+									*/
+								],
+
+							}
+
+						},
+						{
+
+							name: 'cube',
+							geometry: {
+
+								position: [
+									[ 0.5,  0.5,  0.5],//0
+									[ 0.5, -0.5,  0.5],//1
+									[-0.5,  0.5,  0.5],//2
+									[-0.5, -0.5,  0.5],//3
+	
+									[ 0.5,  0.5, -0.5],//4
+									[ 0.5, -0.5, -0.5],//5
+									[-0.5,  0.5, -0.5],//6
+									[-0.5, -0.5, -0.5],//7
+								],
+								indices: [
+	
+									//edges
+									[
+										//face 0
+										[0, 1],//0 face 1
+										[1, 3],//1 face 4
+										[3, 2],//2 face 3
+										[2, 0],//3 face 2
+	
+										//face 1
+										[0, 4],//4 face 2
+										[4, 5],//5 face 5
+										[5, 1],//6 face 4
+	
+										//face 2
+										[2, 6],//7 face 3
+										[6, 4],//8 face 5
+	
+										[7, 3],//9 face 3, 4
+										[7, 5],//10 face 4, 5
+										[7, 6],//11 face 3, 5
+									],
+									//faces
+									[
+										[0, 1, 2, 3],//0
+										[0, 4, 5, 6],//1
+										[3, 7, 8, 4],//2
+										[2, 7, 9, 11],//3
+										[1, 9, 10, 6],//4
+										[5, 8, 10, 11],//5
+									],
+								]
+
+							}
+
+						}] ),
 					boDisplayVerticeID: true,
 					scene: scene,
 					options: options,
 					onIntersection: function ( geometryIntersection ) { if ( _2D ) _2D.geometry = geometryIntersection; }
 
 				} );
+
+				controls.setОnChange( controls.c4Dto3D, _3D, '3Dselector' );
 
 				//new time of the player event
 				options.onSelectScene = function ( t ) { _3D.vectorPlane[2] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min ); }
@@ -824,36 +912,6 @@
 
 				canvas0D.scene = scene;
 				canvas0D.options = options;
-				/*
-							//https://stackoverflow.com/a/68405743/5175935
-							const geometry = new THREE.BufferGeometry().setFromPoints( [
-								new THREE.Vector3( 1, 0, 0 ),//0
-								new THREE.Vector3( 0, 0, 0 ),//1
-								new THREE.Vector3( 0, 1, 0 ),//2
-								new THREE.Vector3( 1, 0, 0 ),//3
-								new THREE.Vector3( 0, 1, 0 ),//4
-								new THREE.Vector3( 1, 1, 0 ),//5
-							] );
-	
-							const colors = [
-								255, 0, 0,
-								255, 0, 0,
-								0, 255, 0,
-								0, 255, 0,
-								0, 0, 255,
-								0, 0, 255,
-							];
-	
-							geometry.setAttribute( 'color', new THREE.Uint8BufferAttribute( colors, 3, true ) );
-							geometry.setIndex( [0, 1, 3, 2] );
-	
-							const material = new THREE.LineBasicMaterial( {
-								vertexColors: true
-							} );
-	
-							const lines = new THREE.LineSegments( geometry, material );
-							scene.add( lines );
-				*/
 
 			}, {
 

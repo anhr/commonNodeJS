@@ -233,6 +233,7 @@ class ND {
 
 		const options = settings.options, _ND = this;
 		settings.object = settings.object || {};
+		settings.object.name = settings.object.name || 'Object';
 /*		
 settings.object.geometry = settings.object.geometry || settings.geometry || {};
 if ( settings.geometry || settings.position || settings.rotation )
@@ -246,6 +247,7 @@ if ( settings.geometry ) {
 settings.object.position = settings.object.position || settings.position;
 settings.object.rotation = settings.object.rotation || settings.rotation;
 */
+		if ( settings.object.aObjects ) settings.object.aObjects.nD = this;
 		settings.object.geometry = settings.object.geometry || {};
 		if ( settings.object.geometry instanceof Array ) {
 
@@ -1799,7 +1801,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 			},
 			get copy() {
 				
-				const copySettings = { geometry: { position: [], indices: [] }, position: [], rotation: [] };
+				const copySettings = { geometry: { position: [], indices: [] }, position: [], rotation: [], aObjects: settings.object.aObjects };
 				settings.object.geometry.position.forEach( vertice => {
 					
 					const copy = [];
@@ -2857,7 +2859,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 				object3D = undefined;
 
 			}
-			object3D = create3DObject( geometry, { name: 'Object', color: 0x00ff00 } );//green
+			object3D = create3DObject( geometry, { name: settings.object.name, color: 0x00ff00 } );//green
 
 			//сейчас позиция объекта складывается с позицией каздой точки в settings.object.geometry.position = new Proxy
 			//object3D.position.copy( settings.object.position.point );
@@ -3016,6 +3018,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 
 			object: {
 
+				get: function () { return settings.object; },
 				set: function ( objectNew ) {
 
 //					settings.object.geometry = objectNew.geometry;
