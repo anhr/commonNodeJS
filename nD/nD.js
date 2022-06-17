@@ -42,7 +42,8 @@ class ND {
 	 * Checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
 	 * @param {number} n space dimension of the graphical object.
 	 * @param {Object} [settings={}] The following settings are available
-	 * @param {Object} [settings.object] geometry, position and rotation of  the n-dimensional graphical object.
+	 * @param {Object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
+	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
 	 * @param {Array|Object} [settings.object.geometry] Array of vertices and indices of the n-dimensional graphical object.
 	 * <pre>
 	 * Every item of array is n-dimensional vector of vertice of object.
@@ -1801,7 +1802,15 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 			},
 			get copy() {
 				
-				const copySettings = { geometry: { position: [], indices: [] }, position: [], rotation: [], aObjects: settings.object.aObjects };
+				const copySettings = {
+					
+					geometry: { position: [], indices: [] },
+					position: [],
+					rotation: [],
+					aObjects: settings.object.aObjects,
+					name: settings.object.name,
+					
+				};
 				settings.object.geometry.position.forEach( vertice => {
 					
 					const copy = [];
@@ -3007,6 +3016,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 				set: function ( geometryNew ) {
 
 					geometry.geometry = geometryNew;
+					settings.object.name = 'Object';
 					settings.object.rotation.clear();
 					settings.object.position.clear();
 					projectTo3D();
@@ -3023,6 +3033,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 
 //					settings.object.geometry = objectNew.geometry;
 					settings.object = objectNew;
+					settings.object.name = settings.object.name || 'Object';
 					
 					setIndices();
 					setEdges();
