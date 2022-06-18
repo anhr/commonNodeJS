@@ -198,9 +198,9 @@
 
 		const D = {
 
-				//D5: true,
+				D5: true,
 				D4: true,
-				D3: true,
+				//D3: true,
 				//D2: true,
 				//D1: true,
 
@@ -312,6 +312,7 @@
 										
 									} );
 */
+/*								
 								if ( object.geometry.indices ) {
 									
 									const indices = [];
@@ -329,15 +330,17 @@
 									nDObject.geometry.indices = indices;
 
 								}
+*/								
 								nDObject.name = object.name;
 								nDObject.geometry.position = object.geometry.position;
-//								nDObject.geometry.indices = object.geometry.indices;
+								nDObject.geometry.indices = object.geometry.indices;
+/*								
 								const p = object.position || position;
 								if ( p ) nDObject.position = [...p];
-/*								
 								const r = object.rotation || rotation;
 								if ( r ) nDObject.rotation = [...r];
 */
+								nDObject.position = object.position || position;
 								nDObject.rotation = object.rotation || rotation;
 								
 							}

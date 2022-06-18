@@ -3031,12 +3031,38 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 				get: function () { return settings.object; },
 				set: function ( object ) {
 
+					if ( !object ) {
+						
+						console.error( 'ND.object set: invalid object' );
+						return;//отсутствует холст с размерностью пространства верхнего уровня
+
+					}
 //					settings.object.geometry = object.geometry;
 					settings.object = object;
+					const p = object.position;
+					if ( p ) settings.object.position = [...p];
 					const r = object.rotation;
 					if ( r ) settings.object.rotation = [...r];
 					settings.object.name = settings.object.name || 'Object';
 					
+					//copy indices
+					if ( object.geometry.indices ) {
+						
+						const indices = [];
+						object.geometry.indices.forEach( array => {
+
+							const item = [];
+							indices.push( item );
+							array.forEach( index => {
+
+								item.push( index );
+								
+							} );
+							
+						} );
+						settings.object.geometry.indices = indices;
+
+					}
 					setIndices();
 					setEdges();
 					if ( !settings.object.geometry.indices[0].isProxy ) settings.object.geometry.indices[0] = proxyEdges( object.geometry.indices[0] );
