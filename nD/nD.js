@@ -2972,18 +2972,18 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 		/**
 		* @description set new geometry, position and rotation of nD object
 		* See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Object} objectNew new nD object
-		* @param {Object} objectNew.geometry geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Array} objectNew.geometry.position Array of vertices of the n-dimensional graphical object.
+		* @param {Object} object new nD object
+		* @param {Object} object.geometry geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {Array} object.geometry.position Array of vertices of the n-dimensional graphical object.
 	    * See See <b>settings.object.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Array} [objectNew.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
+		* @param {Array} [object.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
 	    * See See <b>settings.object.geometry.indices</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Array|number} [objectNew.position] position of the n-dimensional graphical object in n-dimensional coordinates.
+		* @param {Array|number} [object.position] position of the n-dimensional graphical object in n-dimensional coordinates.
 	    * See See <b>settings.object.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Array|number} [objectNew.rotation] rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
+		* @param {Array|number} [object.rotation] rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
 	    * See See <b>settings.object.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		*/
-		this.object = function ( objectNew ) { console.error( 'ND: settings' ); }
+		this.object = function ( object ) { console.error( 'ND: settings' ); }
 		/**
 		* @description
 		* Returns N-dimensional vector of the plane that intersects nD object.
@@ -3029,23 +3029,25 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 			object: {
 
 				get: function () { return settings.object; },
-				set: function ( objectNew ) {
+				set: function ( object ) {
 
-//					settings.object.geometry = objectNew.geometry;
-					settings.object = objectNew;
+//					settings.object.geometry = object.geometry;
+					settings.object = object;
+					const r = object.rotation;
+					if ( r ) settings.object.rotation = [...r];
 					settings.object.name = settings.object.name || 'Object';
 					
 					setIndices();
 					setEdges();
-					if ( !settings.object.geometry.indices[0].isProxy ) settings.object.geometry.indices[0] = proxyEdges( objectNew.geometry.indices[0] );
+					if ( !settings.object.geometry.indices[0].isProxy ) settings.object.geometry.indices[0] = proxyEdges( object.geometry.indices[0] );
 
 					settings.object.position = proxyPosition();
 					settings.object.rotation = proxyRotation();
 /*					
-					settings.position = objectNew.position;
+					settings.position = object.position;
 					settings.position = proxyPosition();
 					
-					settings.rotation = objectNew.rotation;
+					settings.rotation = object.rotation;
 					settings.rotation = proxyRotation();
 */					
 					settings.object.geometry.position = proxyGeometryPosition();

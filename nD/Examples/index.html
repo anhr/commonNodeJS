@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -334,8 +334,11 @@
 //								nDObject.geometry.indices = object.geometry.indices;
 								const p = object.position || position;
 								if ( p ) nDObject.position = [...p];
+/*								
 								const r = object.rotation || rotation;
 								if ( r ) nDObject.rotation = [...r];
+*/
+								nDObject.rotation = object.rotation || rotation;
 								
 							}
 							
