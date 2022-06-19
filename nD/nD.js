@@ -387,7 +387,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 			_ND.intersection();
 			object3D.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
 			object3D.geometry.attributes.position.needsUpdate = true;
-			options.guiSelectPoint.update();
+			if (options.guiSelectPoint) options.guiSelectPoint.update();
 			object3D.children.forEach( child => {
 				
 				if ( child.type === 'Sprite' ) child.position.copy( geometry.D3.points[child.userData.pointID] );
@@ -471,6 +471,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 
 							if ( i < target.length && ( target[i] !== undefined ) ) {
 
+								/*
 								if ( !target.boUseRotation ) {
 
 									//https://stackoverflow.com/a/57023880/5175935
@@ -479,6 +480,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 										console.error( 'ND settings.object.rotation get: use settings.object.rotation.trigonometry unstead settings.object.rotation. ' + strFunction )
 
 								}
+								*/
 								return target[i];
 
 							}
@@ -578,13 +580,17 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 
 					settings.object.geometry.position.reset();
 
-					const input = target.folders[name].cRotation.domElement.querySelector( 'input' );
-					if ( parseFloat( input.value ) !== value ) {
-
-						input.value = value;
-						update();
+					if ( target.folders ) {
+						
+						const input = target.folders[name].cRotation.domElement.querySelector( 'input' );
+						if ( parseFloat( input.value ) !== value ) {
+	
+							input.value = value;
+	
+						}
 
 					}
+					update();
 					return true;
 
 				},
@@ -2461,7 +2467,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 				onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
 
 			}
-			options.eventListeners.addParticle( object );
+			if ( options.eventListeners ) options.eventListeners.addParticle( object );
 
 			return object;
 
@@ -2818,7 +2824,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 
 					if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( objectIntersect );
 					scene.remove( objectIntersect );
-					options.eventListeners.removeParticle( objectIntersect );
+					if (options.eventListeners) options.eventListeners.removeParticle( objectIntersect );
 
 				}
 				if ( geometryIntersection.position.length )
