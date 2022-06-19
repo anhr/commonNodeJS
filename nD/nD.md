@@ -1,6 +1,6 @@
-# Intersections.
+# N-dimensional graphics.
 
-Creates an intersection line for graphic objects. [Example](../Examples/index.html).
+Creates an N-dimensional graphic object, checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
 
 # Content
 * [Quick start.](#Quickstart)

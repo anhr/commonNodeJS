@@ -39,7 +39,8 @@ class ND {
 
 	/** @class
 	 * N-dimensional graphics.
-	 * Checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
+	 * Creates an N-dimensional graphic object,
+	 * checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
 	 * @param {number} n space dimension of the graphical object.
 	 * @param {Object} [settings={}] The following settings are available
 	 * @param {Object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
