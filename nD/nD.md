@@ -135,7 +135,7 @@ var _4D;
 ```
 Create a tesseract after creating of the <b>scene</b> and <b>options</b> inside of <b>init</b> function.
 ```
-new ND( 4, {
+_4D = new ND( 4, {
 
 	object: {
 
