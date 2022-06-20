@@ -73,12 +73,19 @@
 	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>-->
 	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>
 
-	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--
+	&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>
+	&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>
+	&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>
+	&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>
+	&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>
+	&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>
+
+	&lt;script src=&quot;./commonNodeJS/master/nD/build/nD.js&quot;>&lt;/script>
+	&lt;script src=&quot;./commonNodeJS/master/nD/build/nD.min.js&quot;>&lt;/script>
+	&lt;script src=&quot;https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.js&quot;>&lt;/script>
+	&lt;script src=&quot;https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.min.js&quot;>&lt;/script>
+	-->
 &lt;/head>
 &lt;body>
 	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
@@ -156,6 +163,12 @@
 <p>NOTE. Please include <b>MyThree.three.THREE = THREE;</b> line into your project before use my <a href="https://github.com/anhr/commonNodeJS">library</a>. See example above.</p>
 <p>The easiest way to use <b>ND</b> in your code is import <b>ND</b> from <b>nD.js</b> file in your JavaScript module.</p>
 <pre class="prettyprint source"><code>import ND from './commonNodeJS/master/nD/nD.js'
+//import ND from './commonNodeJS/master/nD/build/nD.module.js';
+//import ND from './commonNodeJS/master/nD/build/nD.module.min.js';
+//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/nD.js';
+//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.js';
+//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
+if ( ND.default ) ND = ND.default;
 </code></pre>
 <p>Now you can use <b>ND</b> in your javascript code for creating an N-dimensional graphic object. For example <a href="https://en.wikipedia.org/wiki/tesseract">tesseract</a>.</p>
 <ul>
@@ -364,12 +377,19 @@ if ( _4D.object.rotation[2] > Math.PI * 2 ) _4D.object.rotation[2] = 0;
 	&lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;https://raw.githack.com/anhr/commonNodeJS/master/css/main.css&quot;>-->
 	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;commonNodeJS/master/css/main.css&quot;>
 
-	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>-->
-	&lt;!--&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>-->
+	&lt;!--
+	&lt;script src=&quot;./three.js/dev/build/three.js&quot;>&lt;/script>
+	&lt;script src=&quot;./three.js/dev/build/three.min.js&quot;>&lt;/script>
+	&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.js&quot;>&lt;/script>
+	&lt;script src=&quot;https://raw.githack.com/anhr/three.js/dev/build/three.min.js&quot;>&lt;/script>
+	&lt;script src=&quot;https://threejs.org/build/three.js&quot;>&lt;/script>
+	&lt;script src=&quot;https://threejs.org/build/three.min.js&quot;>&lt;/script>
+
+	&lt;script src=&quot;./commonNodeJS/master/nD/build/nD.js&quot;>&lt;/script>
+	&lt;script src=&quot;./commonNodeJS/master/nD/build/nD.min.js&quot;>&lt;/script>
+	&lt;script src=&quot;https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.js&quot;>&lt;/script>
+	&lt;script src=&quot;https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.min.js&quot;>&lt;/script>
+	-->
 &lt;/head>
 &lt;body>
 	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
@@ -397,6 +417,12 @@ if ( _4D.object.rotation[2] > Math.PI * 2 ) _4D.object.rotation[2] = 0;
 		import Options from './commonNodeJS/master/Options.js'
 
 		import ND from './commonNodeJS/master/nD/nD.js'
+		//import ND from './commonNodeJS/master/nD/build/nD.module.js';
+		//import ND from './commonNodeJS/master/nD/build/nD.module.min.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/nD.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
+		if ( ND.default ) ND = ND.default;
 
 		var camera, scene, renderer;
 
@@ -630,7 +656,7 @@ if ( _4D.object.rotation[2] > Math.PI * 2 ) _4D.object.rotation[2] = 0;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon Jun 20 2022 06:31:38 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon Jun 20 2022 09:47:09 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

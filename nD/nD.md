@@ -26,12 +26,19 @@ Creates an N-dimensional graphic object, checks for a collision between an n-dim
 	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">-->
 	<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">
 
-	<!--<script src="./three.js/dev/build/three.js"></script>-->
-	<!--<script src="./three.js/dev/build/three.min.js"></script>-->
-	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
-	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
-	<!--<script src="https://threejs.org/build/three.js"></script>-->
-	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
+	<!--
+	<script src="./three.js/dev/build/three.js"></script>
+	<script src="./three.js/dev/build/three.min.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>
+	<script src="https://threejs.org/build/three.js"></script>
+	<script src="https://threejs.org/build/three.min.js"></script>
+
+	<script src="./commonNodeJS/master/nD/build/nD.js"></script>
+	<script src="./commonNodeJS/master/nD/build/nD.min.js"></script>
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.js"></script>
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.min.js"></script>
+	-->
 </head>
 <body>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
@@ -111,6 +118,12 @@ NOTE. Please include <b>MyThree.three.THREE = THREE;</b> line into your project 
 The easiest way to use <b>ND</b> in your code is import <b>ND</b> from <b>nD.js</b> file in your JavaScript module.
 ```
 import ND from './commonNodeJS/master/nD/nD.js'
+//import ND from './commonNodeJS/master/nD/build/nD.module.js';
+//import ND from './commonNodeJS/master/nD/build/nD.module.min.js';
+//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/nD.js';
+//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.js';
+//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
+if ( ND.default ) ND = ND.default;
 ```
 
 Now you can use <b>ND</b> in your javascript code for creating an N-dimensional graphic object. For example [tesseract](https://en.wikipedia.org/wiki/tesseract).
@@ -324,12 +337,19 @@ The following code is the result of this tutorial.
 	<!--<link type="text/css" rel="stylesheet" href="https://raw.githack.com/anhr/commonNodeJS/master/css/main.css">-->
 	<link type="text/css" rel="stylesheet" href="commonNodeJS/master/css/main.css">
 
-	<!--<script src="./three.js/dev/build/three.js"></script>-->
-	<!--<script src="./three.js/dev/build/three.min.js"></script>-->
-	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
-	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
-	<!--<script src="https://threejs.org/build/three.js"></script>-->
-	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
+	<!--
+	<script src="./three.js/dev/build/three.js"></script>
+	<script src="./three.js/dev/build/three.min.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>
+	<script src="https://threejs.org/build/three.js"></script>
+	<script src="https://threejs.org/build/three.min.js"></script>
+
+	<script src="./commonNodeJS/master/nD/build/nD.js"></script>
+	<script src="./commonNodeJS/master/nD/build/nD.min.js"></script>
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.js"></script>
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.min.js"></script>
+	-->
 </head>
 <body>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
@@ -357,6 +377,12 @@ The following code is the result of this tutorial.
 		import Options from './commonNodeJS/master/Options.js'
 
 		import ND from './commonNodeJS/master/nD/nD.js'
+		//import ND from './commonNodeJS/master/nD/build/nD.module.js';
+		//import ND from './commonNodeJS/master/nD/build/nD.module.min.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/nD.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
+		if ( ND.default ) ND = ND.default;
 
 		var camera, scene, renderer;
 

@@ -19,6 +19,11 @@
 	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>
 	<script src="https://threejs.org/build/three.js"></script>
 	<script src="https://threejs.org/build/three.min.js"></script>
+	
+	<script src="../build/nD.js"></script>
+	<script src="../build/nD.min.js"></script>
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.js"></script>
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.min.js"></script>
 	-->
 	<!-- Tree View https://www.w3schools.com/howto/howto_js_treeview.asp -->
 	<link type="text/css" rel="stylesheet" href="../../treeView/treeView.css">
@@ -180,11 +185,13 @@
 		if ( MyThree.default ) MyThree = MyThree.default;
 		MyThree.three.THREE = THREE;
 
-		//import ND from '../nD.js';
+		import ND from '../nD.js';
 		//import ND from '../build/nD.module.js';
 		//import ND from '../build/nD.module.min.js';
-import ND from 'https://raw.githack.com/anhr/commonNodeJS/nD/nD/nD.js';
-		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/nD.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
+		if ( ND.default ) ND = ND.default;
 
 		const treeView = new MyThree.TreeView( { animate: true, paddingInlineStart: '10px', open: true, cookie: true, } );
 
@@ -221,37 +228,6 @@ import ND from 'https://raw.githack.com/anhr/commonNodeJS/nD/nD/nD.js';
 
 			c5Dto4D: document.getElementById( "5Dto4D" ),
 			c4Dto3D: document.getElementById( "4Dto3D" ),
-/*
-			init: function () {
-
-				this.c5Dto4D.onchange = function ( params ) {
-
-					if ( !_4D ) return;
-					var display4Dselector;
-					if ( controls.c5Dto4D.checked ) {
-
-						if ( controls.c5Dto4D.geometry ) {
-
-							controls.c5Dto4D.geometryOld = _4D.geometry.copy;
-							_4D.geometry = controls.c5Dto4D.geometry;
-
-						}
-						display4Dselector = 'none';
-
-					} else {
-
-						display4Dselector = 'block';
-						_4D.object = controls.c5Dto4D.geometryOld;
-						//			_4D.intersection();
-
-					}
-					document.getElementById( '4Dselector' ).style.display = display4Dselector;
-
-				}
-//				setОnChange( this.c5Dto4D );
-
-			},
-*/
 			setОnChange: function ( cImportObject, nD, nDselectorName ) {
 
 				cImportObject.onchange = function ( params ) {
@@ -305,46 +281,9 @@ import ND from 'https://raw.githack.com/anhr/commonNodeJS/nD/nD/nD.js';
 							if ( radio.value === object.name ) {
 
 								object.geometry.position.forEach( vertice => delete vertice.positionWorld );
-/*								
-								if ( object.geometry.indices )
-									object.geometry.indices.forEach( array => {
-	
-										array.forEach( index => {
-
-											delete index.index;
-											
-										} );
-										
-									} );
-*/
-/*								
-								if ( object.geometry.indices ) {
-									
-									const indices = [];
-									object.geometry.indices.forEach( array => {
-	
-										const item = [];
-										indices.push( item );
-										array.forEach( index => {
-
-											item.push( index );
-											
-										} );
-										
-									} );
-									nDObject.geometry.indices = indices;
-
-								}
-*/								
 								nDObject.name = object.name;
 								nDObject.geometry.position = object.geometry.position;
 								nDObject.geometry.indices = object.geometry.indices;
-/*								
-								const p = object.position || position;
-								if ( p ) nDObject.position = [...p];
-								const r = object.rotation || rotation;
-								if ( r ) nDObject.rotation = [...r];
-*/
 								nDObject.position = object.position || position;
 								nDObject.rotation = object.rotation || rotation;
 								
