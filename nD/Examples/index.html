@@ -1,0 +1,951 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>nD</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
+	<!--
+	<script src="../../myThree/build/myThree.js"></script>
+	<script src="../../myThree/build/myThree.min.js"></script>
+	
+	<script src="../../../../../three.js/dev/build/three.js"></script>
+	<script src="../../../../../three.js/dev/build/three.min.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>
+	<script src="https://threejs.org/build/three.js"></script>
+	<script src="https://threejs.org/build/three.min.js"></script>
+	
+	<script src="../build/nD.js"></script>
+	<script src="../build/nD.min.js"></script>
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.js"></script>
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.min.js"></script>
+	-->
+	<!-- Tree View https://www.w3schools.com/howto/howto_js_treeview.asp -->
+	<link type="text/css" rel="stylesheet" href="../../treeView/treeView.css">
+
+	<!--https://github.com/josdejong/mathjs
+	<script src="../../../../mathjs/mathjs/lib/browser/math.js"></script>-->
+
+</head>
+<body>
+	<p>
+		<a href='https://github.com/anhr' target="_blank">About me</a>
+	</p>
+	<h1>nD.</h1>
+
+	<!-- Tree View https://www.w3schools.com/howto/howto_js_treeview.asp -->
+	<ul id="myUL">
+		<li>
+			<span class="caret">Introduction</span>
+			<ul class="nested hide">
+				<li>
+					Here I want to show a series of graphic objects of different space dimensions.
+					Each graphic object of the current space dimension is the result of the intersection of a graphic object of a higher space dimension with some panel except a 5D graphic object.
+					<br>
+					First I create a 5D graphic object on the canvas under the 5D heading.
+					Then I intersect this object with a 4D panel.
+					Then I transfer the result of the intersection to the canvas under the  4D heading, cross it with a 3D panel.
+					I repeat this up to the canvas under the heading 0D.
+				</li>
+			</ul>
+		</li>
+		<li>
+			<span class="caret">5D.</span>
+			<ul class="nested hide" id="article5D">
+				<li>
+					Here I am creating an 5D object.
+					Unfortunately, it is not possible to render the 5D object in our 3D space. Instead, you can see on the canvas below a projection of all the vertices of the 5D objects to 3D space.
+					Also I intersected the 5D object with the 4D panel. You can't to see 4D panel because I can't render the 4D panel because it's 4D space.
+					The result of the intersection is a 4D object if the 5D object intersects the 4D panel.
+					<br>
+					Currenty I have created 5D version of <a href="https://en.wikipedia.org/wiki/5-cell" target="_blank">pentatope</a>. You can see it as green lines.
+					I get a 4D object as a result of the intersection of a 5D version of pentatope with the 4D panel.
+					You can see it as white lines.
+					<div class="canvas" id="5D">
+						<img src="../../img/wait.gif">
+					</div>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<span class="caret">4D.</span>
+			<ul class="nested hide" id="article4D">
+				<li>
+					Here I am creating an 4D object.
+					Unfortunately, it is not possible to render the 4D object in our 3D space. Instead, you can see on the canvas below a projection of all the vertices of the 4D objects to 3D space.
+					Also I intersected the 4D object with the 3D panel. You can't to see 3D panel because I can't render the 3D panel because it's 3D space and fills the entire canvas.
+					The result of the intersection is a 3D object if the 4D object intersects the 3D panel.
+					<br>
+					Currenty I have created <a href="https://en.wikipedia.org/wiki/5-cell" target="_blank">pentatope</a> or <a href="https://en.wikipedia.org/wiki/Tesseract" target="_blank">tesseract</a> as 4D object. You can see it as green lines.
+					I get a 3D object as a result of the intersection of 4D object with the 3D panel.
+					You can see it as white lines.
+					<p>
+						<input type="checkbox" id="5Dto4D"><label for="5Dto4D">check the box if you want to import a 4D object from a 5D canvas as a result of the intersection of the 5D object with the 4D panel.</label>
+						<ul>
+							<li id="4Dselector">
+								4D Object:
+								<input type="radio" name="4Dobject" value="pentatope" id="pentatope" checked><label for="pentatope">Pentatope</label>
+								<input type="radio" name="4Dobject" value="tesseract" id="tesseract"><label for="tesseract">Tesseract</label>.
+							</li>
+						</ul>
+					</p>
+					<div class="canvas" id="4D">
+						<img src="../../img/wait.gif">
+					</div>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<span class="caret">3D.</span>
+			<ul class="nested hide" id="article3D">
+				<li>
+					Click the "►" button in the lower left corner of the canvas to intersect the blue panel with the green 3D graphic object.
+					<br>
+					You can see a white loop line if the blue panel in 3D canvas intersects with the green 3D graphic object.
+					Currenty I have created pyramid or cube as 3D object.
+					Real panel is surface with infinite length and width. But I have limited it to axes dimentions.
+					<p>
+						<input type="checkbox" id="4Dto3D"><label for="4Dto3D">check the box if you want to import a 3D object from a 4D canvas as a result of the intersection of the 4D object with the 3D panel.</label>
+						<ul>
+							<li id="3Dselector">
+								3D Object:
+								<input type="radio" name="3Dobject" value="pyramid" id="pyramid" checked><label for="pyramid">Pyramid</label>
+								<input type="radio" name="3Dobject" value="cube" id="cube"><label for="cube">Cube</label>.
+							</li>
+						</ul>
+					</p>
+					<div id="3D">
+						<img src="../../img/wait.gif">
+					</div>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<span class="caret">2D.</span>
+			<ul class="nested hide" id="article2D">
+				<li>
+					You can see a green loop line if the blue panel in 3D canvas intersects with the green graphic object.
+					<br>
+					The intersection panel in 2D space is infinity horozontal line. You can see the panel on the 2D canvas as a blue line.
+					I have limited it to axis dimention.
+					<br>
+					You can see a white horizontal line if the panel in 2D canvas intersects with the green graphic object.
+					<br>
+					Click the "►" button in the lower left corner of the canvas to intersect the blue line with the green graphic object.
+					<p>
+						<input type="checkbox" id="3Dto2D"><label for="3Dto2D">check the box if you want to import a 2D object from a 3D canvas as a result of the intersection of the 3D object with the 2D panel.</label>
+						<ul>
+							<li id="2Dselector">
+								2D Object:
+								<input type="radio" name="2Dobject" value="triangle" id="triangle" checked><label for="triangle">Triangle</label>
+								<input type="radio" name="2Dobject" value="square" id="square"><label for="square">Square</label>.
+							</li>
+						</ul>
+					</p>
+					<div id="2D">
+						<img src="../../img/wait.gif">
+					</div>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<span class="caret">1D.</span>
+			<ul class="nested hide" id="article1D">
+				<li>
+					You can see a green horizontal line if the blue line in 2D canvas intersects with the green graphic object.
+					<br>
+					The intersection panel in 1D space is a point. You can see the panel on the 1D canvas as a blue point.
+					<br>
+					You can see a white point if the panel intersects with the green line.
+					<br>
+					Click the "►" button in the lower left corner of the canvas to intersect the blue point with the green line.
+					<div id="1D">
+						<img src="../../img/wait.gif">
+					</div>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<span class="caret">0D.</span>
+			<ul class="nested hide" id="article0D">
+				<li>
+					You can see a green point in the center of 0D canvas if the blue point in 1D canvas intersects with the green line.
+					<div id="0D">
+						<img src="../../img/wait.gif">
+					</div>
+				</li>
+			</ul>
+		</li>
+	</ul>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<script type="module">
+
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import MyThree from '../../myThree/myThree.js';
+		//import MyThree from '../../myThree/build/myThree.module.js';
+		//import MyThree from '../../myThree/build/myThree.module.min.js';
+		if ( MyThree.default ) MyThree = MyThree.default;
+		MyThree.three.THREE = THREE;
+
+		import ND from '../nD.js';
+		//import ND from '../build/nD.module.js';
+		//import ND from '../build/nD.module.min.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/nD.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
+		if ( ND.default ) ND = ND.default;
+
+		const treeView = new MyThree.TreeView( { animate: true, paddingInlineStart: '10px', open: true, cookie: true, } );
+
+		const canvas1D = {}, canvas0D = {}, options = {
+
+			camera: {
+
+				position: new THREE.Vector3( 0, 0, 5 ),
+				fov: 45,
+				near: 1,
+				far: 1000,
+
+			},
+
+		};
+
+		const D = {
+
+				D5: true,
+				D4: true,
+				D3: true,
+				D2: true,
+				D1: true,
+
+			},
+			playerOptions = {
+
+				marks: 111,//Number of scenes of 3D objects animation.
+				selectSceneIndex: 55,//time is 0.5 sec.
+				interval: 25,//Ticks per seconds.
+
+			};
+		const controls = {
+
+			c5Dto4D: document.getElementById( "5Dto4D" ),
+			c4Dto3D: document.getElementById( "4Dto3D" ),
+			c3Dto2D: document.getElementById( "3Dto2D" ),
+			setОnChange: function ( cImportObject, nD, nDselectorName ) {
+
+				cImportObject.onchange = function ( params ) {
+
+					if ( !nD ) return;
+					var display4Dselector;
+					if ( cImportObject.checked ) {
+
+						if ( cImportObject.geometry ) {
+
+							cImportObject.geometryOld = nD.geometry.copy;
+							nD.geometry = cImportObject.geometry;
+
+						}
+						display4Dselector = 'none';
+
+					} else {
+
+						display4Dselector = 'block';
+						nD.object = cImportObject.geometryOld;
+						//			nD.intersection();
+
+					}
+					document.getElementById( nDselectorName ).style.display = display4Dselector;
+
+				}
+
+			},
+			getObject: function ( cRadioName, aObjects ) {
+
+				const nDObject = { geometry: {}, aObjects: aObjects };
+
+				var position, rotation;
+				aObjects.forEach( object => {
+
+					if ( !object.name ) {
+						
+						if ( object.position ) position = object.position;
+						if ( object.rotation ) rotation = object.rotation;
+
+					}
+						
+				} )
+				document.querySelectorAll( 'input[name="' + cRadioName + '"]' ).forEach( radio => {
+
+					function onChange() {
+
+						nDObject.geometry = {};
+						aObjects.forEach( object => {
+
+							if ( radio.value === object.name ) {
+
+								object.geometry.position.forEach( vertice => delete vertice.positionWorld );
+								nDObject.name = object.name;
+								nDObject.geometry.position = object.geometry.position;
+								nDObject.geometry.indices = object.geometry.indices;
+								nDObject.position = object.position || position;
+								nDObject.rotation = object.rotation || rotation;
+								
+							}
+							
+						} );
+
+					}
+					radio.addEventListener( 'change', function () {
+
+						onChange();
+//						_4D.object = { geometry: _4DObjectGeometry };
+						aObjects.nD.object = nDObject;
+						
+					} );
+
+					if ( radio.checked ) onChange();
+						
+				} );
+				return nDObject;
+
+			}
+
+
+		}
+//		controls.init();
+
+		//5D
+		var _5D;
+		if ( D.D5 ) {
+
+			const myThree = new MyThree( function ( scene, options ) {
+
+				_5D = new ND( 5, {
+
+					object: {
+						
+						position: [0, -0.2],
+						rotation: [Math.PI / 5, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+						geometry: {
+	
+							//5D tetrahedron
+							position: [
+								[0.8, -0.6, 0.1, -0.85, -0.57],//0
+								[0.9, 0.7, 0.5, -0.55, -0.37],//1
+								[0.8, 0, -0.4, 0.1, -0.17],//2
+	//							[0.8, 0, -0.4, 0.1, -1],//2
+								[-0.6, 0.1, -0.3, 0.55, 0.7],//3
+								[-0.5, 0.7, 0.3, 0.75, 0.27],//4
+								[-0.7, 0.3, 0.4, 0.95, 0.77],//5
+	
+							],
+	
+						},
+
+					},
+					scene: scene,
+					options: options,
+					onIntersection: function ( geometryIntersection ) {
+						
+						controls.c5Dto4D.geometry = geometryIntersection;
+						if ( _4D && controls.c5Dto4D.checked ) _4D.geometry = geometryIntersection;
+					
+					}
+
+				} );
+
+				//new time of the player event
+				options.onSelectScene = function ( t ) { _5D.vectorPlane[4] = -1 + t * 2; }
+
+			}, {
+
+				elContainer: "5D",
+				playerOptions: Object.assign( {}, playerOptions ),
+				//player: false,
+				//dat: false,
+				title: '5D',
+
+			} );
+			//если не выполнить эту команду, то холст будет пустой
+			treeView.setCanvas( 'article5D', myThree );
+
+		}
+
+		//4D
+		var _4D;
+		if ( D.D4 ) {
+
+			treeView.setCanvas( 'article4D', new MyThree( function ( scene, options ) {
+
+			
+				_4D = new ND( 4, {
+
+					object: controls.getObject( "4Dobject", [
+						{
+							
+							position: [-0.4, -0.2, 0, 0.1],
+							rotation: [0, 0, 0, 0, 0, - Math.PI / 2],
+							
+						},
+						{
+
+							name: 'pentatope',
+							geometry: {
+
+								position: [
+									[0.8, -0.6, 0.1, -0.85],//0
+									[0.9, 0.7, 0.5, -0.55],//1
+									[0.8, 0, -0.4, 0.1],//2
+									[-0.6, 0.1, -0.3, 0.55],//3
+									[-0.5, 0.2, 0.3, 0.85],//4
+								],
+
+							}
+
+						},
+						{
+
+							name: 'tesseract',
+							position: [-0.3],// -0.2, 0.3, 5],
+							//rotation: [Math.PI / 5, 1, 2.16, 3, 4, 5],
+							rotation: [0, 0, 1, 0, 1.1, 1.2],
+							geometry: {
+
+								position: [
+
+									//cube 0
+
+									//face 0
+									[-0.5, -0.5, -0.5, -0.5],//0 cube 0 face 0, , 
+									[-0.5, -0.5, 0.5, -0.5],//1 cube 0 face 0, , 
+									[-0.5, 0.5, -0.5, -0.5],//2 cube 0 face 0, , 
+									[-0.5, 0.5, 0.5, -0.5],//3 cube 0 face 0, , 
+
+									//face 1
+									[0.5, -0.5, -0.5, -0.5],//4 cube 0 face 1, , 
+									[0.5, -0.5, 0.5, -0.5],//5 cube 0 face 1, , 
+
+									//face 2
+									[0.5, 0.5, -0.5, -0.5],//6 cube 0 face 2, , 
+
+									[0.5, 0.5, 0.5, -0.5],//7 cube 0 face 3, 4, 5
+
+									//cube 1
+
+									//face 6
+									[-0.5, -0.5, -0.5, 0.5],//8 cube 1 edge 12, 15 face 6, 8
+									[-0.5, -0.5, 0.5, 0.5],//9 cube 1 edge 12, 13 face 6
+									[-0.5, 0.5, -0.5, 0.5],//10 cube 1 edge 14, 15 face 6, 8
+									[-0.5, 0.5, 0.5, 0.5],//11 cube 1 edge 13, 14 face 6
+
+									[0.5, -0.5, -0.5, 0.5],//12 cube 1 edge 16, 18 face 7, 8
+
+									[0.5, -0.5, 0.5, 0.5],//13 cube 1 edge 16, 18 face 7
+
+									[0.5, 0.5, -0.5, 0.5],//14 cube 1 edge 19, 20 face 8
+
+									[0.5, 0.5, 0.5, 0.5],//15 cube 1 edge ,  face 
+								],
+								indices: [
+
+									//edges
+									[
+										//cube 0
+
+										[0, 1],//0 cube 0, 2, 3 face 0, 1, 12, 17
+										[1, 3],//1 cube 0, 2 face 0, 4, 15
+										[3, 2],//2 cube 0, 2 face 0, 3, 14
+										[2, 0],//3 cube 0, 2, 4 face 0, 2, 13, 21
+
+										[4, 0],//4 cube 0, 3, 4 face 1, 2, 16, 17, 21
+										[4, 5],//5 cube 0, 3 face 1, 5, 17, 19
+										[5, 1],//6 cube 0, 3 face 1, 4, 17, 18
+
+										[6, 2],//7 cube 0, 4 face 2, 3, 21
+										[6, 4],//8 cube 0, 4 face 2, 5, 21
+
+										[7, 3],//9 cube 0 face 3, 4
+										[7, 5],//10 cube 0 face 4, 5
+										[7, 6],//11 cube 0 face 3, 5
+
+										//cube 1
+
+										[8, 9],//12 cube 1, 2, 3 face 6, 7, 12, 17, 20
+										[9, 11],//13 cube 1, 2 face 6, 9, 15
+										[10, 11],//14 cube 1, 2 face 6, 10, 14
+										[10, 8],//15 cube 1, 2, 4 face 6, 7, 13
+
+										[12, 8],//16 cube 1, 3 face 7, 8, 16, 20
+										[13, 9],//17 cube 1, 3 face 7, 9, 18, 20
+										[13, 12],//18 cube 1, 3 face 7, 11, 19, 20
+
+										[14, 10],//19 cube 1 face 8, 10
+										[14, 12],//20 cube 1, 4 face 8, 11, 21
+
+										[15, 11],//21 cube 1 face 9, 10
+										[15, 13],//22 cube 1 face 9, 11
+
+										[14, 15],//23 cube 1 face 10, 11
+
+										//cube 2
+										[0, 8],//24 cube 2, 3, 4 face 12, 13, 16, 17
+										[1, 9],//25 cube 2, 3 face 12, 15, 16, 17, 18
+										[2, 10],//26 cube 2, 4 face 13, 14
+										[3, 11],//27 cube 2 face 14, 15
+
+										//cube 3
+										[4, 12],//28 cube 3, 2 face 16, 19, 21
+										[5, 13],//29 cube 3,  face 18, 19
+
+										//cube 4
+										[6, 14],//30 cube 4,  face 21, 
+
+										//cube 5
+										[7, 15],//31 cube 5, face, 
+									],
+									//faces
+									[
+										[0, 1, 2, 3],//0 cube 0, 2
+										[0, 4, 5, 6],//1 cube 0, 3
+										[4, 3, 7, 8],//2 cube 0, 
+										[11, 9, 7, 2],//3 cube 0, 
+										[6, 1, 9, 10],//4 cube 0, 
+										[5, 8, 11, 10],//5 cube 0, 
+
+										[12, 13, 14, 15],//6 cube 1, 2
+										[16, 17, 18, 12],//7 cube 1, 
+										[19, 20, 16, 15],//8 cube 1, 
+										[21, 13, 22, 17],//9 cube 1, 
+										[14, 19, 23, 21],//10 cube 1, 
+										[18, 20, 22, 23],//11 cube 1, 
+
+										[24, 0, 25, 12],//12 cube 2, 0, 1
+										//[0, 3, 2, 1],//face 0 13 cube 2, 0, 
+										[3, 24, 26, 15],//13 cube 2, 0, 1
+										[2, 26, 27, 14],//14 cube 2, 0, 1
+										[1, 25, 27, 13],//15 cube 2, 0, 1
+
+										[24, 4, 28, 16],//16 cube 3, 2
+										[6, 25, 29, 17],//17 cube 3
+										[5, 28, 29, 18],//18 cube 3
+
+										[8, 28, 30, 20],//19 cube 4
+										[7, 26, 30, 19],//20 cube 4
+
+										[11, 30, 31, 23],//21 cube 5
+										[10, 29, 31, 22],//22 cube 5
+										[9, 27, 31, 21],//23 cube 5
+									],
+									//cubes
+									[
+										[0, 1, 2, 3, 4, 5],//0
+										[6, 7, 8, 9, 10, 11],//1
+										[12, 0, 6, 13, 14, 15],//2
+										[16, 1, 12, 17, 18, 7],//3
+										[2, 16, 13, 19, 20, 8],//4
+										[5, 11, 18, 19, 21, 22],//5
+										[4, 15, 17, 22, 23, 9],//6
+										[3, 10, 14, 20, 21, 23],//7
+									],
+								]
+
+							}
+
+						}] ),
+					boDisplayVerticeID: true,
+					scene: scene,
+					options: options,
+					onIntersection: function ( geometryIntersection ) {
+
+						controls.c4Dto3D.geometry = geometryIntersection;
+						if ( _3D && controls.c4Dto3D.checked ) _3D.geometry = geometryIntersection;
+
+					}
+
+				} );
+
+				controls.setОnChange( controls.c5Dto4D, _4D, '4Dselector' );
+
+				//new time of the player event
+				options.onSelectScene = function ( t ) {
+					
+					_4D.vectorPlane[3] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min );
+					
+				}
+
+			}, {
+
+				elContainer: "4D",
+				playerOptions: Object.assign( {}, playerOptions ),
+				//player: false,
+				//dat: false,
+				title: '4D',
+
+			} ) );
+
+		}
+
+		//3D
+		var _3D;
+		if ( D.D3 ) {
+
+			const myThree = new MyThree( function ( scene, options ) {
+
+				_3D = new ND( 3, {
+
+					object: controls.getObject( "3Dobject", [
+						{
+							
+							//position: [-0.3],
+							//rotation: Math.PI / 4,
+							rotation: [Math.PI / 4, Math.PI / 5],
+							
+						},
+						{
+
+							name: 'pyramid',
+							geometry: {
+
+								position: [
+									/*
+									[0.8, -0.6, 0.1],//0
+									[0.9, 0.7, 0.5],//1
+									[0.8, 0, -0.4],//2
+									[-0.6, 0.1, 0.1]//3
+									*/
+									//Variant 2 Вершина, ребро, грань находится на панели если координата 2 каждой вершины равна -0.4 и проигрыватель установить на t = 0.3
+									[0.8, -0.6, -0.4],//0
+									[0.9, 0.7, 0.5],//1
+									[0.8, 0, -0.4],//2
+									[-0.6, 0.1, -0.4]//3
+									/*
+									//Линия пересечения - четырехугольник
+									[-0.8, 0, -0.5],//0
+									[0.9, 0, -0.5],//1
+									[0, -0.7, 0.4],//2
+									[0, 0.6, 0.4]//3
+									*/
+								],
+
+							}
+
+						},
+						{
+
+							name: 'cube',
+							geometry: {
+
+								position: [
+									[ 0.5,  0.5,  0.5],//0
+									[ 0.5, -0.5,  0.5],//1
+									[-0.5,  0.5,  0.5],//2
+									[-0.5, -0.5,  0.5],//3
+	
+									[ 0.5,  0.5, -0.5],//4
+									[ 0.5, -0.5, -0.5],//5
+									[-0.5,  0.5, -0.5],//6
+									[-0.5, -0.5, -0.5],//7
+								],
+								indices: [
+	
+									//edges
+									[
+										//face 0
+										[0, 1],//0 face 1
+										[1, 3],//1 face 4
+										[3, 2],//2 face 3
+										[2, 0],//3 face 2
+	
+										//face 1
+										[0, 4],//4 face 2
+										[4, 5],//5 face 5
+										[5, 1],//6 face 4
+	
+										//face 2
+										[2, 6],//7 face 3
+										[6, 4],//8 face 5
+	
+										[7, 3],//9 face 3, 4
+										[7, 5],//10 face 4, 5
+										[7, 6],//11 face 3, 5
+									],
+									//faces
+									[
+										[0, 1, 2, 3],//0
+										[0, 4, 5, 6],//1
+										[3, 7, 8, 4],//2
+										[2, 7, 9, 11],//3
+										[1, 9, 10, 6],//4
+										[5, 8, 10, 11],//5
+									],
+								]
+
+							}
+
+						}] ),
+					boDisplayVerticeID: true,
+					scene: scene,
+					options: options,
+					onIntersection: function ( geometryIntersection ) {
+
+//						if ( _2D ) _2D.geometry = geometryIntersection;
+						controls.c3Dto2D.geometry = geometryIntersection;
+						if ( _2D && controls.c3Dto2D.checked ) _2D.geometry = geometryIntersection;
+
+					}
+
+				} );
+
+				controls.setОnChange( controls.c4Dto3D, _3D, '3Dselector' );
+
+				//new time of the player event
+				options.onSelectScene = function ( t ) { _3D.vectorPlane[2] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min ); }
+
+			}, {
+
+				elContainer: "3D",
+				playerOptions: Object.assign( {}, playerOptions ),
+				//player: false,
+				//dat: false,
+				title: '3D',
+
+			} );
+			treeView.setCanvas( 'article3D', myThree );
+
+		}
+
+		if ( _4D ) _4D.intersection();
+
+		//2D
+		var _2D;
+		if ( D.D2 ) {
+
+			const myThree = new MyThree( function ( scene, options ) {
+
+				_2D = new ND( 2, {
+
+					object: /*{
+						
+						position: [0.1, -0.2],
+						//rotation: [0, 0, Math.PI / 4],
+						rotation: Math.PI / 5,
+						geometry: {
+	
+							position: [
+								[-0.7, 0.2],
+								[0.8, 0.6],
+								[0.1, -0.5],
+							],
+	
+						},
+						
+					},
+					*/
+					controls.getObject( "2Dobject", [
+						{
+							
+							position: [0.1, -0.2],
+							//rotation: [0, 0, Math.PI / 4],
+							rotation: Math.PI / 5,
+							
+						},
+						{
+
+							name: 'triangle',
+							geometry: {
+
+								position: [
+									[-0.7, 0.2],
+									[0.8, 0.6],
+									[0.1, -0.5],
+								],
+
+							}
+
+						},
+						{
+
+							name: 'square',
+							geometry: {
+
+								position: [
+									[ 0.5,  0.5,  0.5],//0
+									[ 0.5, -0.5,  0.5],//1
+									[-0.5,  0.5,  0.5],//2
+									[-0.5, -0.5,  0.5],//3
+								],
+								indices: [
+	
+									//edges
+									[
+										//face 0
+										[0, 1],//0 face 1
+										[1, 3],//1 face 4
+										[3, 2],//2 face 3
+										[2, 0],//3 face 2
+									],
+									/*
+									//faces
+									[
+										[0, 1, 2, 3],//0
+									],
+									*/
+								]
+
+							}
+
+						}] ),
+
+
+					scene: scene,
+					options: options,
+					onIntersection: function ( geometryIntersection ) { if ( _1D ) _1D.geometry = geometryIntersection; }
+
+				} );
+
+				controls.setОnChange( controls.c3Dto2D, _2D, '2Dselector' );
+
+				//new time of the player event
+				options.onSelectScene = function ( t ) { _2D.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min ); }
+
+			}, {
+
+				elContainer: "2D",
+				//axesHelper: false,
+				playerOptions: Object.assign( {}, playerOptions ),
+				//player: false,
+				//dat: false,
+				camera: options.camera,
+				orbitControls: false,
+				stereoEffect: false,
+				//scales: { x: {} },
+				title: '2D',
+
+			} );
+			treeView.setCanvas( 'article2D', myThree );
+
+		}
+
+		//1D
+		var _1D;
+		if ( D.D1 ) {
+
+			const myThree = new MyThree( function ( scene, options ) {
+
+				canvas1D.scene = scene;
+				canvas1D.options = options;
+				let point0D;
+				_1D = new ND( 1, {
+
+					object: {
+						
+						//position: [0.1, 78],//tesing of settings.position = new Proxy
+						position: 0.1,
+						geometry: {
+	
+							//position: [[-0.5, 1], [0.5]],//tesing of settings.position = new Proxy
+							position: [[-0.5], [0.5]],
+	
+						},
+						
+					},
+					scene: scene,
+					options: options,
+					onIntersection: function ( geometryIntersection ) {
+
+						if ( !canvas0D.scene ) return;
+						if ( geometryIntersection.position.length ) {
+
+							if ( !point0D ) {
+
+								canvas0D.options.point.size = ( canvas0D.options.scales.x.max - canvas0D.options.scales.x.min ) * 500;//10
+								point0D = new THREE.Points( new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3()], 3 ),
+									new THREE.PointsMaterial( {
+
+										color: 0x00ff00,//green
+										sizeAttenuation: false,
+										size: canvas0D.options.point.size / options.point.sizePointsMaterial,
+
+									} ) );
+								point0D.name = 'intersection';
+								canvas0D.scene.add( point0D );
+								if ( canvas0D.options.guiSelectPoint ) canvas0D.options.guiSelectPoint.addMesh( point0D );
+
+							}
+
+						} else {
+
+							if ( point0D ) {
+
+								//console.log( 'remove point' );
+								canvas0D.scene.remove( point0D );
+								if ( canvas0D.options.guiSelectPoint )
+									canvas0D.options.guiSelectPoint.removeMesh( point0D );
+								point0D = undefined;
+
+							}
+
+						}
+
+					}
+
+				} );
+
+				//new time of the player event
+				options.onSelectScene = function ( t ) { if ( _1D ) _1D.vectorPlane[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min ); }
+
+			}, {
+
+				elContainer: "1D",
+				//axesHelper: false,
+				playerOptions: Object.assign( {}, playerOptions ),
+				//player: false,
+				//dat: false,
+				camera: options.camera,
+				orbitControls: false,
+				stereoEffect: false,
+				//scales: { x: {} },
+				title: '1D',
+
+			} );
+			treeView.setCanvas( 'article1D', myThree );
+
+		}
+
+		//0D
+
+		{
+
+			const myThree = new MyThree( function ( scene, options ) {
+
+				canvas0D.scene = scene;
+				canvas0D.options = options;
+
+			}, {
+
+				elContainer: "0D",
+				//scales: scales,
+				player: false,
+				//dat: { folderPoint: false, },
+				dat: false,
+				axesHelper: false,
+				orbitControls: false,
+				stereoEffect: false,
+				title: '0D',
+
+			} );
+			treeView.setCanvas( 'article0D', myThree );
+
+		}
+
+	</script>
+</body>
+</html >

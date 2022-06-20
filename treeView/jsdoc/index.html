@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><p><h1>TreeView.</h1></p>
+<p>Tree view with CSS and JavaScript. Thanks to <a href="https://www.w3schools.com/howto/howto_js_treeview.asp">Learn how to create a tree view with CSS and JavaScript.</a>.</p>
+<p><a href="../Examples/index.html">Example of using</a>.</p>
+<h1>Content</h1>
+<ul>
+<li><a href="#Quickstart">Quick start.</a></li>
+<li><a href="#IncludeCanvas">Include canvas into tree branch.</a></li>
+<li><a href="#WebPage">Example of your web page.</a></li>
+</ul>
+<p><a name="QuickStart"></a></p>
+<h2>Quick start</h2>
+<ul>
+<li>Create a folder on your localhost named as [folderName].
+<ul>
+<li>Download <a href="https://github.com/anhr/commonNodeJS">commonNodeJS</a> repository into your &quot;[folderName]\commonNodeJS\master&quot; folder.</li>
+</ul>
+</li>
+<li>Add your web page into [folderName]. Example:</li>
+</ul>
+<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+
+&lt;html>
+&lt;head>
+	&lt;title>tree view&lt;/title>
+&lt;/head>
+&lt;body>
+	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
+	&lt;div id=&quot;info&quot;>
+		&lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/treeViev&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>TreeView&lt;/a>.
+		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
+	&lt;/div>
+&lt;/body>
+&lt;/html>
+</code></pre>
+<ul>
+<li>Add a tree HTML with one branch:</li>
+</ul>
+<pre class="prettyprint source"><code>&lt;ul id=&quot;myUL&quot;>
+	&lt;li>
+		&lt;span class=&quot;caret&quot;>Introduction&lt;/span>
+		&lt;ul class=&quot;nested&quot;>
+			&lt;li>
+				Tree view with CSS and JavaScript. Thanks to &lt;a href=&quot;https://www.w3schools.com/howto/howto_js_treeview.asp&quot; target=&quot;_blank&quot;>Learn how to create a tree view with CSS and JavaScript.&lt;/a>
+			&lt;/li>
+		&lt;/ul>
+	&lt;/li>
+&lt;/ul>
+</code></pre>
+<ul>
+<li>Add CSS into <b>head</b> tag:</li>
+</ul>
+<pre class="prettyprint source"><code>&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;./commonNodeJS/master/treeView/treeView.css&quot;>
+</code></pre>
+<p>Now you can see a tree with one opened branch. You can hide a branch by default. Please add the <b>nide</b> class to nested <b>ul</b> tag for it.</p>
+<pre class="prettyprint source"><code>&lt;ul id=&quot;myUL&quot;>
+	&lt;li>
+		&lt;span class=&quot;caret&quot;>Introduction&lt;/span>
+		&lt;ul class=&quot;nested hide&quot;>
+			&lt;li>
+				Tree view with CSS and JavaScript. Thanks to &lt;a href=&quot;https://www.w3schools.com/howto/howto_js_treeview.asp&quot; target=&quot;_blank&quot;>Learn how to create a tree view with CSS and JavaScript.&lt;/a>
+			&lt;/li>
+		&lt;/ul>
+	&lt;/li>
+&lt;/ul>
+</code></pre>
+<ul>
+<li>Add a javascript code so the user can interact with the tree.</li>
+</ul>
+<pre class="prettyprint source"><code>&lt;script type=&quot;module&quot;>
+	import TreeView from './commonNodeJS/master/treeView/treeView.js';
+	new TreeView();
+&lt;/script>
+</code></pre>
+<p><a name="IncludeCanvas"></a></p>
+<h2>Include canvas into tree branch.</h2>
+<ul>
+<li>Add new <b>Canvas</b> branch into tree.</li>
+</ul>
+<pre class="prettyprint source"><code>&lt;ul id=&quot;myUL&quot;>
+	&lt;li>
+		&lt;span class=&quot;caret&quot;>Introduction&lt;/span>
+		&lt;ul class=&quot;nested hide&quot;>
+			&lt;li>
+				Tree view with CSS and JavaScript. Thanks to &lt;a href=&quot;https://www.w3schools.com/howto/howto_js_treeview.asp&quot; target=&quot;_blank&quot;>Learn how to create a tree view with CSS and JavaScript.&lt;/a>
+			&lt;/li>
+		&lt;/ul>
+	&lt;/li>
+	&lt;li>
+		&lt;span class=&quot;caret&quot;>Canvas.&lt;/span>
+		&lt;ul class=&quot;nested hide&quot; id=&quot;articleCanvas&quot;>
+			&lt;li>
+				Example of including a canvas in the tree branch.
+				&lt;div class=&quot;canvas&quot; id=&quot;canvasPoints&quot;>
+					&lt;img src=&quot;../../img/wait.gif&quot;>
+				&lt;/div>
+			&lt;/li>
+		&lt;/ul>
+	&lt;/li>
+&lt;/ul>
+</code></pre>
+<ul>
+<li>Download <a href="https://github.com/anhr/three.js">three.js</a> repository into your &quot;[folderName]\three.js\dev&quot; folder.</li>
+<li>Import <b>THREE</b> and <b>MyThree</b>.</li>
+</ul>
+<pre class="prettyprint source"><code>import * as THREE from './three.js/dev/build/three.module.js';
+//import * as THREE from 'https://threejs.org/build/three.module.js';
+//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+import MyThree from './commonNodeJS/master/myThree/myThree.js';
+//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.js';
+//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.min.js';
+if ( MyThree.default ) MyThree = MyThree.default;
+MyThree.three.THREE = THREE;
+</code></pre>
+<ul>
+<li>Replace <b>new TreeView();</b> to</li>
+</ul>
+<pre class="prettyprint source"><code>new TreeView().setCanvas( 'articleCanvas', new MyThree( function ( scene, options ) {
+
+	MyThree.MyPoints(
+
+		[
+			[],
+			{
+
+				vector: [
+					'-1+2*t',//x
+					'Math.cos(t*5*Math.PI)*0.5',//y
+					'Math.sin(t*5*Math.PI)*0.5',//z
+					'1-t',//w
+				],
+				name: 'Trigonometric functions',
+				trace: true,
+				controllers: {},
+
+			},
+			{
+
+				vector: [
+					0.4,//x
+					'1-2*t',//y
+				],
+				name: 'Line',
+				trace: true,
+
+			},
+
+		],
+		scene, {
+
+			options: options,
+			pointsOptions: { 
+
+				name: 'Points',
+
+			},
+
+	} );
+
+}, {
+
+	elContainer: &quot;canvasPoints&quot;,
+	playerOptions: {
+
+		marks: 111,//Number of scenes of 3D objects animation.
+		interval: 25,//Ticks per seconds.
+
+	},
+	dat: {},
+	canvas: { fullScreen: false },
+
+} ) );
+</code></pre>
+<ul>
+<li>Now you can use <b>new MyThree.TreeView</b> instead <b>new TreeView</b> and can remove <b>import TreeView from './commonNodeJS/master/treeView/treeView.js';</b> line.
+<a name="WebPage"></a></li>
+</ul>
+<h2>Example of your web page.</h2>
+<p>The following code is the result of this tutorial.</p>
+<pre class="prettyprint source"><code>&lt;!DOCTYPE html>
+
+&lt;html>
+&lt;head>
+	&lt;title>tree view&lt;/title>
+	&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;./commonNodeJS/master/treeView/treeView.css&quot;>
+&lt;/head>
+&lt;body>
+	&lt;script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );&lt;/script>
+	&lt;div id=&quot;info&quot;>
+		&lt;a href=&quot;https://github.com/anhr/commonNodeJS/tree/master/treeViev&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>TreeView&lt;/a>.
+		By &lt;a href=&quot;https://github.com/anhr&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>anhr&lt;/a>
+	&lt;/div>
+	&lt;ul id=&quot;myUL&quot;>
+		&lt;li>
+			&lt;span class=&quot;caret&quot;>Introduction&lt;/span>
+			&lt;ul class=&quot;nested hide&quot;>
+				&lt;li>
+					Tree view with CSS and JavaScript. Thanks to &lt;a href=&quot;https://www.w3schools.com/howto/howto_js_treeview.asp&quot; target=&quot;_blank&quot;>Learn how to create a tree view with CSS and JavaScript.&lt;/a>
+				&lt;/li>
+			&lt;/ul>
+		&lt;/li>
+		&lt;li>
+			&lt;span class=&quot;caret&quot;>Canvas.&lt;/span>
+			&lt;ul class=&quot;nested hide&quot; id=&quot;articleCanvas&quot;>
+				&lt;li>
+					Example of including a canvas in the tree branch.
+					&lt;div class=&quot;canvas&quot; id=&quot;canvasPoints&quot;>
+						&lt;img src=&quot;../../img/wait.gif&quot;>
+					&lt;/div>
+				&lt;/li>
+			&lt;/ul>
+		&lt;/li>
+	&lt;/ul>
+	&lt;script type=&quot;module&quot;>
+		import * as THREE from './three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import MyThree from './commonNodeJS/master/myThree/myThree.js';
+		//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.js';
+		//import MyThree from './commonNodeJS/master/myThree/build/myThree.module.min.js';
+		if ( MyThree.default ) MyThree = MyThree.default;
+		MyThree.three.THREE = THREE;
+
+		//import TreeView from './commonNodeJS/master/treeView/treeView.js';
+		new MyThree.TreeView().setCanvas( 'articleCanvas', new MyThree( function ( scene, options ) {
+
+			MyThree.MyPoints(
+
+				[
+					[],
+					{
+
+						vector: [
+							'-1+2*t',//x
+							'Math.cos(t*5*Math.PI)*0.5',//y
+							'Math.sin(t*5*Math.PI)*0.5',//z
+							'1-t',//w
+						],
+						name: 'Trigonometric functions',
+						trace: true,
+						controllers: {},
+
+					},
+					{
+
+						vector: [
+							0.4,//x
+							'1-2*t',//y
+						],
+						name: 'Line',
+						trace: true,
+
+					},
+
+				],
+				scene, {
+
+					options: options,
+					pointsOptions: { 
+
+						name: 'Points',
+
+					},
+
+			} );
+
+		}, {
+
+			elContainer: &quot;canvasPoints&quot;,
+			playerOptions: {
+
+				marks: 111,//Number of scenes of 3D objects animation.
+				interval: 25,//Ticks per seconds.
+
+			},
+			dat: {},
+			canvas: { fullScreen: false },
+
+		} ) );
+	&lt;/script>&lt;/body>
+&lt;/html>
+</code></pre></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-TreeView.html">TreeView</a></li></ul><h3>Classes</h3><ul><li><a href="module-TreeView-TreeView.html">TreeView</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Apr 20 2022 07:05:44 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

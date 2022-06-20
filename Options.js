@@ -211,7 +211,7 @@ class Options {
 				case 'ru'://Russian language
 
 					lang.defaultButton = 'Восстановить';
-					lang.defaultTitle = 'Восстановить положение камеры и проирывателя.';
+					lang.defaultTitle = 'Восстановить положение камеры и проигрывателя.';
 
 					break;
 
@@ -223,7 +223,7 @@ class Options {
 			three.dat.controllerNameAndTitle( options.dat.gui.add( {
 				defaultF: function ( value ) {
 
-					if ( options.player ) options.player.setTime( options.playerOptions.min );
+					if ( options.player ) options.player.selectScene( options.playerOptions.selectSceneIndex );
 
 					camera.position.copy( cameraPosition );
 					scene.position.copy( scenePosition );
@@ -1559,6 +1559,18 @@ class Options {
 
 			},
 
+			/**
+			 * getter
+			 * <pre>
+			 * title
+			 * </pre>
+			 **/
+			title: {
+
+				get: function () { return options.title; }
+
+			},
+
 		} ); 
 
 		//For debugging. Find a hidden keys
@@ -1947,7 +1959,6 @@ cube.userData.raycaster = {
 					intersects = raycaster.intersectObjects( particles );
 					if ( !intersects )
 						return;
-console.log('intersects.length='+ intersects.length);
 					if ( intersects.length === 0 ) {
 
 						if ( intersectedObject ) {
@@ -2018,6 +2029,26 @@ console.log('intersects.length='+ intersects.length);
 
 					}
 					particles.push( particle );
+
+				};
+				/**
+				 * Removes particle from array of objects to check for intersection with the ray.
+				 * @see <b>objects</b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+				 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for removing.
+				 */
+				this.removeParticle = function ( particle ) {
+
+					if ( particle.userData.boFrustumPoints )
+						return;
+					if ( raycaster.stereo ) {
+
+						raycaster.stereo.removeParticle( particle );
+						return;
+
+					}
+					const index = particles.indexOf( particle );
+					if ( index === -1 ) return;
+					particles.splice( index, 1 );
 
 				};
 

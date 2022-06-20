@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: ND</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: ND</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>
+            <span class="ancestors"><a href="module-ND.html">ND</a>~</span>ND<span class="signature">(n, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description">N-dimensional graphics.
+Creates an N-dimensional graphic object,
+checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.</div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    
+    <h4 class="name" id="ND"><span class="type-signature"></span>new ND<span class="signature">(n, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>n</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">space dimension of the graphical object.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>settings</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">The following settings are available
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">geometry, position and rotation of the n-dimensional graphical object.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">name of n-dimensional graphical object.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>geometry</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array of vertices and indices of the n-dimensional graphical object.
+<pre>
+Every item of array is n-dimensional vector of vertice of object.
+Or Object. See object's keys below.
+</pre>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array of vertices of the n-dimensional graphical object.
+<pre>
+Every item of array is n-dimensional vector of vertice of object.
+For example, if you want to create a tetrahedron, then you need to create an array of 4 vertices.
+<b>settings.object.geometry.position: [
+	[-0.6, 0.1, 0.8],//0
+	[0.7, 0.5, 0.9],//1
+	[0, -0.4, 0.8],//2
+	[0, 0, -0.6]//3
+]</b>,
+</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>indices</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array of <b>indices</b> of vertices of the n-dimensional graphical object.
+Allows for vertices to be re-used across multiple segments.
+<pre>
+<b>Indices</b> is divided to segments:
+
+<b>indices[0]</b> is edges. Every edge is two indexes of the edge's vertices. Used in 1D objects and higher.
+<b>indices[1]</b> is faces. Every face is three indexes of the edges from <b>indices[0]</b>. Used in 3D objects and higher.
+<b>indices[2]</b> is bodies. Every bodie is four face indexes from <b>indices[1]</b>. Used in 4D objects and higher.
+For example:
+
+<b>n</b> = 1 line.
+<b>settings.object.geometry.position</b> = [
+	[-0.5, 1],//0
+	[0.5]//1
+]
+<b>settings.object.geometry.indices</b> = [
+	[
+		0,//index of the settings.object.geometry.position[0] = [-0.5, 1]
+		1,//index of the settings.object.geometry.position[1] = [0.5]
+	]//0
+]//0
+
+<b>n</b> = 2 triangle
+<b>settings.object.geometry.position</b> = [
+	[-0.7, 0.2],//0
+	[0.8, 0.6],//1
+	[0.1, -0.5]//2
+],
+//edges
+<b>settings.object.geometry.indices[0]</b> = [
+	[0, 1],//0 index of the settings.object.geometry.positions [-0.7, 0.2] and [0.8, 0.6]
+	[0, 2],//1 index of the settings.object.geometry.positions [-0.7, 0.2] and [0.1, -0.5]
+	[1, 2] //2 index of the settings.object.geometry.positions [0.8, 0.6] and [0.1, -0.5]
+]
+
+<b>n</b> = 3 tetrahedron.
+<b>settings.object.geometry.position</b> = [
+	[0.8, -0.6, 0.1],//0
+	[0.9, 0.7, 0.5],//1
+	[0.8, 0, -0.4],//2
+	[-0.6, 0.1, 0.1]//3
+],
+//edges
+<b>settings.object.geometry.indices[0]</b> = [
+	[0, 1]//0 index of the settings.object.geometry.positions [0.8, -0.6, 0.1] and [0.9, 0.7, 0.5]
+	[0, 2]//1 index of the settings.object.geometry.positions [0.8, -0.6, 0.1] and [0.8, 0, -0.4]
+	[0, 3]//2 index of the settings.object.geometry.positions [0.8, -0.6, 0.1] and [-0.6, 0.1, 0.1]
+	[1, 2]//3 index of the settings.object.geometry.positions [0.9, 0.7, 0.5] and [0.8, 0, -0.4]
+	[1, 3]//4 index of the settings.object.geometry.positions [0.9, 0.7, 0.5] and [-0.6, 0.1, 0.1]
+	[2, 3]//5 index of the settings.object.geometry.positions [0.8, 0, -0.4] and [-0.6, 0.1, 0.1]
+]
+//faces. Indices of the edges <b>settings.object.geometry.indices[0]</b>
+<b>settings.object.geometry.indices[1]</b> = [
+	[0, 1, 3]//tetrahedron's face 0
+	[0, 2, 4]//tetrahedron's face 1
+	[3, 4, 5]//tetrahedron's face 2
+	[1, 2, 5]//tetrahedron's face 3
+]
+
+<b>n</b> = 4 pentachoron <a href="https://en.wikipedia.org/wiki/5-cell">5-cell</a>.
+<b>settings.object.geometry.position</b> = [
+	[0.8, -0.6, 0.1, -0.85],//0
+	[0.9, 0.7, 0.5, -0.55],//1
+	[0.8, 0, -0.4, 0],//2
+	[-0.6, 0.1, -0.3, 0.55],//3
+	[-0.5, 0.2, 0.3, 0.85],//4
+],
+//edges
+<b>settings.object.geometry.indices[0]</b> = [
+	[0, 1]//0 index of the settings.object.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.9, 0.7, 0.5, -0.55]
+	[0, 2]//1 index of the settings.object.geometry.positions [0.8, -0.6, 0.1, -0.85] and [0.8, 0, -0.4, 0]
+	[0, 3]//2 index of the settings.object.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.6, 0.1, -0.3, 0.55]
+	[0, 4]//3 index of the settings.object.geometry.positions [0.8, -0.6, 0.1, -0.85] and [-0.5, 0.2, 0.3, 0.85]
+	[1, 2]//4 index of the settings.object.geometry.positions [0.9, 0.7, 0.5, -0.55] and [0.8, 0, -0.4, 0]
+	[1, 3]//5 index of the settings.object.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.6, 0.1, -0.3, 0.55]
+	[1, 4]//6 index of the settings.object.geometry.positions [0.9, 0.7, 0.5, -0.55] and [-0.5, 0.2, 0.3, 0.85]
+	[2, 3]//7 index of the settings.object.geometry.positions [0.8, 0, -0.4, 0] and [-0.6, 0.1, -0.3, 0.55]
+	[2, 4]//8 index of the settings.object.geometry.positions [0.8, 0, -0.4, 0] and [-0.5, 0.2, 0.3, 0.85]
+	[3, 4]//9 index of the settings.object.geometry.positions [-0.6, 0.1, 0.1, 0.55] and [-0.5, 0.2, 0.3, 0.85]
+]
+//faces. Indices of the edges <b>settings.object.geometry.indices[0]</b>
+<b>settings.object.geometry.indices[1]</b> = [
+	[7, 8, 9],//0 no 0, 1 vertices
+	[5, 6, 9],//1 no 0, 2 vertices
+	[4, 6, 8],//2 no 0, 3 vertices
+	[4, 5, 7],//3 no 0, 4 vertices
+	[2, 3, 9],//4 no 1, 2 vertices
+	[1, 3, 8],//5 no 1, 3 vertices
+	[1, 2, 7],//6 no 1, 4 vertices
+	[0, 3, 6],//7 no 2, 3 vertices
+	[0, 2, 5],//8 no 2, 4 vertices
+	[0, 1, 4],//9 no 3, 4 vertices
+]
+//bodies. Indices of the faces <b>settings.object.geometry.indices[1]</b>
+<b>settings.object.geometry.indices[2]</b> = [
+[2, 1, 3, 0],//0 no 0 vertice
+[5, 6, 4, 0],//1 no 1 vertice
+[8, 7, 1, 4],//2 no 2 vertice
+[9, 7, 2, 5],//3 no 3 vertice
+[9, 8, 3, 6],//4 no 4 vertice
+]
+</pre></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array - position of the n-dimensional graphical object in n-dimensional coordinates.
+<pre>
+number - position of the 0 coordinate of the n-dimensional graphical object.
+<pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rotation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array - rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
+<table>
+		 <tr><td><b>n</b> space dimension</td><td>Array index</td><td>Axis of rotation</td><td>Axis type</td><td>Note</td></tr>
+		 <tr><td>0</td><td></td><td></td><td></td><td>no rotation</td></tr>
+		 <tr><td>1</td><td></td><td></td><td></td><td>no rotation</td></tr>
+		 <tr><td>2</td><td>0</td><td></td><td></td><td>No effect for 2-dimensional space</td></tr>
+		 <tr><td></td><td>1</td><td></td><td></td><td>No effect for 2-dimensional space</td></tr>
+		 <tr><td></td><td>2</td><td>2(z)</td><td>point</td><td></td></tr>
+		 <tr><td>3</td><td>0</td><td>0(x)</td><td>line</td><td></td></tr>
+		 <tr><td></td><td>1</td><td>1(y)</td><td></td><td></td></tr>
+		 <tr><td></td><td>2</td><td>2(z)</td><td></td><td></td></tr>
+		 <tr><td>4</td><td>0</td><td>0, 1(xy)</td><td>plane</td><td></td></tr>
+		 <tr><td></td><td>1</td><td>0, 2(xz)</td><td></td><td></td></tr>
+		 <tr><td></td><td>2</td><td>0, 3(xw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>3</td><td>1, 2(yz)</td><td></td><td></td></tr>
+		 <tr><td></td><td>4</td><td>1, 3(yw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>5</td><td>2, 3(zw)</td><td></td><td></td></tr>
+		 <tr><td>5</td><td>0</td><td>0, 1, 2(xyz)</td><td>3D space</td><td></td></tr>
+		 <tr><td></td><td>1</td><td>0, 1, 3(xyw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>2</td><td>0, 1, 4(xy4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>3</td><td>0, 2, 3(xzw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>4</td><td>0, 2, 4(xz4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>5</td><td>0, 3, 4(xw4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>6</td><td>1, 2, 3(yzw)</td><td></td><td></td></tr>
+		 <tr><td></td><td>7</td><td>1, 2, 4(yz4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>8</td><td>1, 3, 4(yw4)</td><td></td><td></td></tr>
+		 <tr><td></td><td>9</td><td>2, 3, 4(zw4)</td><td></td><td></td></tr>
+		</table>
+<pre>
+number - rotation in radians around axis 0 or rotation around axis 2 for 2D objects i.e. space dimension n = 2.
+See <a href="https://math.stackexchange.com/questions/1402362/can-rotations-in-4d-be-given-an-explicit-matrix-form">Can rotations in 4D be given an explicit matrix form?</a>, <a href="https://en.wikipedia.org/wiki/Rotation_matrix">Rotation matrix</a>.
+Examples:
+<b>n = 4</b>, <b>rotation = [Math.PI / 5, 1, 2, 3, 4, 5]</b>
+rotation around 0, 1(xy) plane is Math.PI / 5 radians.
+rotation around 0, 2(xz) plane is 1 radian.
+etc.
+
+<b>n = 4</b>, <b>rotation = Math.PI / 5</b>
+rotation around 0, 1(xy) plane is Math.PI / 5 radians.
+
+<b>n = 2</b>, <b>rotation = [0, 0, Math.PI / 4]</b>
+rotation around 2(z) point is Math.PI / 4 radians.
+
+<b>n = 2</b>, <b>rotation = Math.PI / 5</b>
+rotation around 2(z) point is Math.PI / 5 radians.
+<pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>geometry.iAxes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">array of indices of the axes.
+For example if <b>iAxes</b> is [1,2], then axis 1 interpret as axis 0 and axis 2 interpret as axis 1.
+As result, you can rotate axes around another axis to 90 degrees.
+In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>vectorPlane</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">n-dimensional position of the panel
+intersecting with the <b>settings.object.geometry</b> n-dimensional graphical object.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>scene</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">THREE.Scene</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><a href="https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene">THREE.Scene</a>.
+Define <b>scene</b> if you want visualise n-dimensional plane and n-dimensional object to 3-D space of the <b>scene</b>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Options</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
+Uses only if <b>scene</b> is defined.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>onIntersection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Plane and object intersection event.
+The <b>onIntersection</b> function parameter is the (n-1)-dimensional geometry of the intersection if a collision occurred, or undefined if a collision did not occur.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>boDisplayVerticeID</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">true - displays on the scene the vertice ID near to the vertice.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line232">line 232</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://github.com/anhr/humke-4d-geometry">4D Geometry Viewer</a></li>
+        
+            <li><a href="https://ciechanow.ski/tesseract/">Tesseract</a></li>
+        
+            <li><a href="https://artemonigiri.github.io/4D-Shapes/">4D-Shapes</a></li>
+        
+            <li><a href="https://www.qfbox.info/4d/regular">The Regular Polychora</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="geometry"><span class="type-signature"></span>geometry<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <pre>
+returns geometry of N-dimensional object. See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+	key <b>geometry</b> - get or set a geometry of nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+	key <b>D3</b> - Projection of nD object to 3D space for visualization.
+		<b>D3.points</b> - Points of projection. See <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setFromPoints" target="_blank">.setFromPoints</a> of <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
+		<b>D3.indices</b> - Indices of points of projection. See <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setIndex" target="_blank">.setIndex</a> of <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
+		<b>D3.color</b> - color of projection.
+</pre>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3008">line 3008</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="vectorPlane"><span class="type-signature"></span>vectorPlane<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Returns N-dimensional vector of the plane that intersects nD object.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line2996">line 2996</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="intersection"><span class="type-signature"></span>intersection<span class="signature">(geometryIntersection<span class="signature-attributes">opt</span>, iIntersections<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>geometryIntersection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    { position: [], indices: [[]] }
+                
+                </td>
+            
+
+            <td class="description last">Arrays of vertices and indexes of the result of the intersection of the panel and the nD object. See <b>settings.object.geometry</b> of <b>ND</b> constructor for details.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array of vertices of the result of the intersection. See <b>settings.object.geometry.position</b> of <b>ND</b> constructor for details.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>indices</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array of <b>indices</b> of vertices of the result of the intersection. See <b>settings.object.geometry.indices</b> of <b>ND</b> constructor for details.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iIntersections</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Array of indices that have been added to <b>geometryIntersection.indices</b></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line2480">line 2480</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    an array of intersection points of <b>vectorPlane</b> and <b>geometry</b>. See constructor for details.
+</div>
+
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="object"><span class="type-signature"></span>object<span class="signature">(object)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    set new geometry, position and rotation of nD object
+See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">new nD object
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>geometry</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array of vertices of the n-dimensional graphical object.
+See See <b>settings.object.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>indices</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array of indices of vertices of the n-dimensional graphical object.
+See See <b>settings.object.geometry.indices</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">position of the n-dimensional graphical object in n-dimensional coordinates.
+See See <b>settings.object.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rotation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
+See See <b>settings.object.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line2991">line 2991</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ND.html">ND</a></li></ul><h3>Classes</h3><ul><li><a href="module-ND-ND.html">ND</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon Jun 20 2022 10:30:46 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

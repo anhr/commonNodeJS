@@ -86,7 +86,7 @@ var boCreateControllers;
 class Options {
 
 	/**
-	 * options of the canvas
+	 * Options of the canvas
 	 * @param {Object} options See the &lt;b>options&lt;/b> parameter of the &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree&lt;/a> class.
 	 */
 	constructor( options ) {
@@ -163,22 +163,6 @@ class Options {
 			options.palette = new ColorPicker.palette();//ColorPicker.paletteIndexes.BGYW 
 
 		}
-
-		/* *
-		 * Rendering the scene
-		 * @see "Rendering the scene" paragraph of [Creating the scene]{@link https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene}
-		 * */
-/*
-		this.render = function () {
-
-			if ( this.intersections ) {
-
-				this.intersections.forEach( function ( intersection ) { intersection(); } );
-
-			}
-
-		}
-*/
 
 		/**
 		 * Create [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}
@@ -390,6 +374,7 @@ class Options {
 			 *	cookieName:,// Name of the cookie.
 			 *	axesHelperGui: false,// - do not adds a &lt;a href="../../AxesHelper/jsdoc/module-AxesHelperGui.html" target="_blank">AxesHelperGui&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 			 *	stereoEffectsGui: false,// - do not adds &lt;a href="../../StereoEffect/jsdoc/module-StereoEffect-StereoEffect.html#gui" target="_blank">Stereo Effects folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+			 *	folderPoint: false,// - do not adds &lt;a href="../../jsdoc/folderPoint/FolderPoint.html" target="_blank">Point settings folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 			 *	playerGui: true,// - adds a &lt;a href="../../player/jsdoc/module-Player.html#~Player.gui" target="_blank">Player controllers&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
 			 *	guiSelectPoint: true,// - displays the &lt;a href="../../guiSelectPoint/jsdoc/module-GuiSelectPoint.html" target="_blank">Select Point&lt;/a>. [dat.gui]{@link https://github.com/dataarts/dat.gui} based graphical user interface for select a point from the mesh.
 			 *	guiFrustumPoints: true,// - Adds &lt;a href="../../FrustumPoints/jsdoc/FrustumPoints.html#gui" target="_blank">Frustum Points folder&lt;/a> into [dat.gui]{@link https://github.com/dataarts/dat.gui}.
@@ -577,6 +562,7 @@ class Options {
 								folderPoint: {
 
 									get: function () { return dat.folderPoint; },
+									set: function ( folderPoint ) { dat.folderPoint = folderPoint; },
 
 								},
 								pointLightGui: {
@@ -760,17 +746,18 @@ class Options {
 
 											get: function () {
 
-												if ( !scale || !scale.name ) return axisName;
+												if ( !scale || ( scale.name === undefined ) ) return axisName;
 												return scale.name;
 
 											},
-//											set: function ( name ) { scale.name = name; },
+											set: function ( name ) { scale.name = name; },
 
 										},
 										marks: {
 
 											get: function () {
 
+												if ( !scale ) return undefined;
 												if ( !scale.marks ) scale.marks = 3;
 												return scale.marks;
 
@@ -816,19 +803,52 @@ class Options {
 								x: {
 
 									get: function () { return scalesObject.x; },
-									set: function ( x ) { scales.x = x; },
+									set: function ( x ) {
+
+										if ( x === undefined ) {
+
+											delete scales.x;
+											delete scalesObject.x;
+											scalesObject.x = new Scale( scales, 'x' );
+
+										} else scales.x = x;
+										if ( options.guiSelectPoint ) options.guiSelectPoint.updateScale( 'x' );
+
+									},
 
 								},
 								y: {
 
 									get: function () { return scalesObject.y; },
-									set: function ( y ) { scales.y = y; },
+									set: function ( y ) {
+
+										if ( y === undefined ) {
+
+											delete scales.y;
+											delete scalesObject.y;
+											scalesObject.y = new Scale( scales, 'y' );
+
+										} else scales.y = y;
+										if ( options.guiSelectPoint ) options.guiSelectPoint.updateScale( 'y' );
+
+									},
 
 								},
 								z: {
 
 									get: function () { return scalesObject.z; },
-									set: function ( z ) { scales.z = z; },
+									set: function ( z ) {
+
+										if ( z === undefined ) {
+
+											delete scales.z;
+											delete scalesObject.z;
+											scalesObject.z = new Scale( scales, 'z' );
+
+										} else scales.z = z;
+										if ( options.guiSelectPoint ) options.guiSelectPoint.updateScale( 'z' );
+
+									},
 
 								},
 								w: {
@@ -986,7 +1006,25 @@ class Options {
 			 **/
 			point: {
 
-				get: function () { return options.point; },
+//				get: function () { return options.point; },
+				get: function () {
+					return {
+
+						get size() { return options.point.size; },
+						set size( size ) {
+
+							if ( options.point.size === size ) return;
+							options.point.size = size;
+							if ( options.dat &amp;&amp; options.dat.folderPoint ) options.dat.folderPoint.size.setValue( size );
+
+						},
+
+						get sizePointsMaterial() { return options.point.sizePointsMaterial; },
+						set sizePointsMaterial( sizePointsMaterial ) { options.point.sizePointsMaterial = sizePointsMaterial;},
+
+					};
+
+				},
 
 			},
 
@@ -1678,7 +1716,7 @@ class Raycaster {
 				if ( cursor === undefined ) cursor = renderer.domElement.style.cursor;
 				renderer.domElement.style.cursor = 'pointer';
 
-			} else spriteTextIntersection.position.copy( intersection.pointSpriteText );//intersection.point );
+			} else if ( intersection.pointSpriteText ) spriteTextIntersection.position.copy( intersection.pointSpriteText );
 
 		}
 
@@ -1760,7 +1798,7 @@ class Raycaster {
 				const three = window.__myThree__.three;
 				intersection.pointSpriteText = new three.THREE.Vector3();
 				//Так и не понял почему в режиме стерео текст отображается в неправильном месте
-				if ( settings.options.stereoEffect.settings.spatialMultiplex === StereoEffect.spatialMultiplexsIndexs.Mono )
+				if ( settings.options.stereoEffect &amp;&amp; ( settings.options.stereoEffect.settings.spatialMultiplex === StereoEffect.spatialMultiplexsIndexs.Mono ) )
 					raycaster.ray.at( three.options.camera.near + (three.options.camera.far - three.options.camera.near)/1000, intersection.pointSpriteText );
 				//Поэтому оставляю как было раньше
 				else intersection.pointSpriteText = intersection.point;
@@ -1893,6 +1931,7 @@ cube.userData.raycaster = {
 				const THREE = three.THREE, mouse = new THREE.Vector2(), particles = [],
 					raycaster = new THREE.Raycaster(), options = settings.options || {};
 				raycaster.params.Points.threshold = settings.threshold !== undefined ? settings.threshold : 0.03;
+				raycaster.params.Line.threshold = raycaster.params.Points.threshold;
 
 				if ( raycaster.setStereoEffect ) {
 
@@ -1913,9 +1952,11 @@ cube.userData.raycaster = {
 
 				}
 
+				const domElement = options.renderer ? options.renderer.domElement : window;
+				
 				//Is fired at an element when a pointing device (usually a mouse) is moved while the cursor's hotspot is inside it.
 				//See https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event
-				window.addEventListener( 'mousemove', function ( event ) {
+				domElement.addEventListener( 'mousemove', function ( event ) {
 
 					if ( raycaster.stereo !== undefined ) {
 
@@ -1934,7 +1975,7 @@ cube.userData.raycaster = {
 					intersects = raycaster.intersectObjects( particles );
 					if ( !intersects )
 						return;
-
+console.log('intersects.length='+ intersects.length);
 					if ( intersects.length === 0 ) {
 
 						if ( intersectedObject ) {
@@ -1949,9 +1990,12 @@ cube.userData.raycaster = {
 					} else {
 
 						const intersect = intersects[0], object = intersect.object;
-						if ( object.userData.raycaster &amp;&amp; object.userData.raycaster.onIntersection )
+						if ( object.userData.raycaster &amp;&amp; object.userData.raycaster.onIntersection ) {
+
+							intersect.pointSpriteText = intersect.point;
 							object.userData.raycaster.onIntersection( intersect, mouse );
-						else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
+							
+						} else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
 						intersectedObject = object;
 
 					}
@@ -1963,7 +2007,7 @@ cube.userData.raycaster = {
 				//window.addEventListener( 'mousedown', function( event )
 				//is fired when a pointer becomes active. For mouse, it is fired when the device transitions from no buttons depressed to at least one button depressed. For touch, it is fired when physical contact is made with the digitizer. For pen, it is fired when the stylus makes physical contact with the digitizer.
 				//See https://developer.mozilla.org/en-US/docs/Web/API/Document/pointerdown_event
-				window.addEventListener( 'pointerdown', function ( event ) {
+				domElement.addEventListener( 'pointerdown', function ( event ) {
 
 					if ( raycaster === undefined )
 						return;
@@ -1986,6 +2030,30 @@ cube.userData.raycaster = {
 				 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} or derived class instance for check for intersection with the ray.
 				 */
 				this.addParticle = function ( particle ) {
+
+					if ( particle.userData.boFrustumPoints )
+						return;
+					if ( raycaster.stereo ) {
+
+						raycaster.stereo.addParticle( particle );
+						return;
+
+					}
+					if ( isAddedToParticles( particle ) ) {
+
+						console.error( 'Duplicate particle "' + particle.name + '"' );
+						return;
+
+					}
+					particles.push( particle );
+
+				};
+				/**
+				 * Removes particle from array of objects to check for intersection with the ray.
+				 * @see &lt;b>objects&lt;/b> parameter of the [Raycaster.intersectObjects]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObjects} for details.
+				 * @param {THREE.Mesh} particle The [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for removing.
+				 */
+				this.removeParticle = function ( particle ) {
 
 					if ( particle.userData.boFrustumPoints )
 						return;
@@ -2076,7 +2144,7 @@ export default Options;</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Jan 06 2022 08:54:09 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Feb 04 2022 09:48:39 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

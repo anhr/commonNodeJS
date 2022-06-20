@@ -127,7 +127,9 @@ class Player {
 		//Кроме того трассировака начинается с нулевой точки
 		setTimeout( function () { onSelectScene(); }, 0 );
 
-		var selectSceneIndex = options.playerOptions.selectSceneIndex || 0;
+		options.playerOptions.selectSceneIndex = options.playerOptions.selectSceneIndex || 0;
+		var selectSceneIndex = options.playerOptions.selectSceneIndex;
+
 		const _this = this;
 
 		/**
@@ -1738,7 +1740,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 	function setAttributes( a, b ) {
 
-		if ( !mesh.geometry )
+		if ( !mesh.geometry || mesh.userData.nd )
 			return;
 			
 		const attributes = mesh.geometry.attributes,

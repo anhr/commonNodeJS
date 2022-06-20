@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>treeView</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<meta name="author" content="Andrej Hristoliubov https://anhr.github.io/AboutMe/">
+	<!-- Tree View https://www.w3schools.com/howto/howto_js_treeview.asp -->
+	<link type="text/css" rel="stylesheet" href="../treeView.css">
+</head>
+<body>
+	<p>
+		<a href='https://github.com/anhr' target="_blank">About me</a>
+	</p>
+	<h1>Tree view.</h1>
+
+	<!-- Tree View https://www.w3schools.com/howto/howto_js_treeview.asp -->
+	<ul id="myUL">
+		<li>
+			<span class="caret">Introduction</span>
+			<ul class="nested">
+				<li>
+					Tree view with CSS and JavaScript. Thanks to <a href="https://www.w3schools.com/howto/howto_js_treeview.asp" target="_blank">Learn how to create a tree view with CSS and JavaScript.</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<span class="caret">Canvas.</span>
+			<ul class="nested hide" id="articleCanvas">
+				<li>
+					Example of including a canvas in the tree branch.
+					<div class="canvas" id="canvasPoints">
+						<img src="../../img/wait.gif">
+					</div>
+				</li>
+			</ul>
+		</li>
+	</ul>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<script type="module">
+
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import MyThree from '../../myThree/myThree.js';
+		//import MyThree from '../../myThree/build/myThree.module.js';
+		//import MyThree from '../../myThree/build/myThree.module.min.js';
+		if ( MyThree.default ) MyThree = MyThree.default;
+		MyThree.three.THREE = THREE;
+
+		//import TreeView from '../treeView.js';
+
+		new MyThree.TreeView( {
+			
+			animate: true,
+			paddingInlineStart: '10px',
+			cookie: true,
+		
+		} ).setCanvas( 'articleCanvas', new MyThree( function ( scene, options ) {
+
+			MyThree.MyPoints(
+
+				[
+					[],
+					{
+
+						vector: [
+							'-1+2*t',//x
+							'Math.cos(t*5*Math.PI)*0.5',//y
+							'Math.sin(t*5*Math.PI)*0.5',//z
+							'1-t',//w
+						],
+						name: 'Trigonometric functions',
+						trace: true,
+						controllers: {},
+
+					},
+					{
+
+						vector: [
+							0.4,//x
+							'1-2*t',//y
+						],
+						name: 'Line',
+						trace: true,
+
+					},
+
+				],
+				scene, {
+
+					options: options,
+					pointsOptions: { 
+
+						name: 'Points',
+
+					},
+
+			} );
+
+		}, {
+
+			elContainer: "canvasPoints",
+			playerOptions: {
+
+				marks: 111,//Number of scenes of 3D objects animation.
+				interval: 25,//Ticks per seconds.
+
+			},
+			dat: {},
+			canvas: { fullScreen: false },
+
+		} ) );
+
+	</script>
+</body>
+</html>

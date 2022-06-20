@@ -174,7 +174,8 @@ class MyThree {
 	 *	"en" - English language,
 	 *	"ru" - Russian.
 	 * </pre>
-	 * @param {object} [options.dat] use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {object|boolean} [options.dat] use dat-gui JavaScript Controller Library. [dat.gui]{@link https://github.com/dataarts/dat.gui}.
+	 * <p>false - do not use dat-gui.</p>
 	 * @param {GUI} options.dat.dat [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {GUI} [options.dat.gui] new [dat.GUI()]{@link https://github.com/dataarts/dat.gui} instance.
 	 * <p>
@@ -244,6 +245,8 @@ class MyThree {
 	 * <pre>
 	 * or element <b>id</b>.
 	 * </pre>
+	 * @param {event} [options.onSelectScene] New time of the <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
+	 * @param {string} [options.title] text in the top left corner of the canvas.
 	 */
 	constructor( createXDobjects, options ) {
 
@@ -286,6 +289,18 @@ class MyThree {
 
 			options.dat = options.dat || {};
 			options.dat.parent = elContainer;
+
+		}
+
+		if ( options.title ) {
+			
+			const elDiv = document.createElement( 'div' );
+			elDiv.style.position = 'absolute';
+			elDiv.style.top = '0px';
+			elDiv.style.color = 'white';
+			elDiv.style.padding = '3px';
+			elDiv.innerHTML = options.title;
+			elContainer.appendChild( elDiv );
 
 		}
 
@@ -533,8 +548,8 @@ class MyThree {
 				onSelectScene: function ( index, t ) {
 
 					options.boPlayer = true;
-					if ( options.frustumPoints !== undefined )
-						options.frustumPoints.updateCloudPoints();
+					if ( options.frustumPoints !== undefined ) options.frustumPoints.updateCloudPoints();
+					if ( options.onSelectScene !== undefined ) options.onSelectScene( t );
 
 				},
 				options: options,
@@ -948,6 +963,40 @@ class MyThree {
 
 		}
 
+		/**
+		 * Sets the size of the canvas
+		 * @param {number|object} width width of the canvas.
+		 * <pre>
+		 * If <b>width</b> is object, followed keys is available:
+		 * </pre>
+		 * @param {number} width.width width of the canvas
+		 * @param {number} width.height height of the canvas
+		 * @param {number} height height of the canvas
+		 */
+		this.setSize = function ( width, height ) {
+
+			if ( typeof width === "object" ) {
+
+				height = width.height;
+				width = width.width;
+				
+			}
+			if ( width === undefined ) {
+
+				//Используется в treeView.js для открытия ветки с холстом
+				const target = { set: function( width, height ) {
+
+					renderer.setSize( width, height );
+					
+				}};
+				renderer.getSize( target );
+				return;
+				
+			}
+			renderer.setSize( width, height );
+			
+		}
+
 		arrayCreates.shift();
 		var params = arrayCreates.shift();
 		if ( params === undefined )
@@ -1068,5 +1117,9 @@ import Intersections from '../intersections/intersections.js'
  * @see <a href="../../intersections/jsdoc/index.html" target="_blank">Intersections</a>.
  */
 MyThree.Intersections = Intersections;
+
+import TreeView from '../treeView/treeView.js';
+MyThree.TreeView = TreeView;
+
 
 export default MyThree;
