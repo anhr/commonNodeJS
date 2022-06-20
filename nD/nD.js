@@ -19,9 +19,10 @@
 
 import three from '../three.js'
 
-import MyThree from '../myThree/myThree.js';
+//import MyThree from '../myThree/myThree.js';
 //import MyThree from '../../build/myThree.module.js';
 //import MyThree from '../../build/myThree.module.min.js';
+import Options from '../Options.js'
 
 import PositionController from '../PositionController.js';
 import { SpriteText } from '../SpriteText/SpriteText.js'
@@ -2459,12 +2460,12 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 				onIntersection: function ( intersection, mouse ) {
 
 					delete intersection.index;
-					MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer//, intersection.object3D.position
-					);
+//					MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
+					Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
 
 				},
-				onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
-				onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
+				onIntersectionOut: function () { Options.raycaster.onIntersectionOut( scene, options.renderer ); },
+				onMouseDown: function ( intersection ) { Options.raycaster.onMouseDown( intersection, options ); },
 
 			}
 			if ( options.eventListeners ) options.eventListeners.addParticle( object );
@@ -2950,11 +2951,11 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 						onIntersection: function ( intersection, mouse ) {
 
 							delete intersection.index;
-							MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
+							Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
 
 						},
-						onIntersectionOut: function () { MyThree.Options.raycaster.onIntersectionOut( scene, options.renderer ); },
-						onMouseDown: function ( intersection ) { MyThree.Options.raycaster.onMouseDown( intersection, options ); },
+						onIntersectionOut: function () { Options.raycaster.onIntersectionOut( scene, options.renderer ); },
+						onMouseDown: function ( intersection ) { Options.raycaster.onMouseDown( intersection, options ); },
 
 					}
 					options.eventListeners.addParticle( mesh );

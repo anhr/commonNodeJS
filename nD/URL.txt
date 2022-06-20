@@ -1,0 +1,27 @@
+﻿Building
+
+Open "Node.js command prompt"
+
+d:
+cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\nD"
+npm install
+npm install uglify-es //for build/ND.module.min.js
+npm run build
+
+--------------------------------
+jsdoc https://github.com/jsdoc/jsdoc
+Getting Started with JSDoc 3 https://jsdoc.app/about-getting-started.html
+Generating a website:
+	Download https://github.com/jsdoc/jsdoc into D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc
+	Open "Node.js command prompt"
+
+	d:
+	cd "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc"
+	npm install -g jsdoc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\nD\jsdoc"
+
+	jsdoc -R "..\commonNodeJS\master\nD\nD.md" "..\commonNodeJS\master\nD\nD.js" -d "..\commonNodeJS\master\nD\jsdoc"
+
+	//Open "http://localhost/anhr/commonNodeJS/master/nD/jsdoc/index.html"
+

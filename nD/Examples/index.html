@@ -12,6 +12,7 @@
 	<!--
 	<script src="../../myThree/build/myThree.js"></script>
 	<script src="../../myThree/build/myThree.min.js"></script>
+	
 	<script src="../../../../../three.js/dev/build/three.js"></script>
 	<script src="../../../../../three.js/dev/build/three.min.js"></script>
 	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>
@@ -179,7 +180,11 @@
 		if ( MyThree.default ) MyThree = MyThree.default;
 		MyThree.three.THREE = THREE;
 
-		import ND from '../nD.js';
+		//import ND from '../nD.js';
+		//import ND from '../build/nD.module.js';
+		//import ND from '../build/nD.module.min.js';
+import ND from 'https://raw.githack.com/anhr/commonNodeJS/nD/nD/nD.js';
+		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
 
 		const treeView = new MyThree.TreeView( { animate: true, paddingInlineStart: '10px', open: true, cookie: true, } );
 
