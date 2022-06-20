@@ -3047,7 +3047,12 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 					const p = object.position;
 					if ( p ) settings.object.position = [...p];
 					const r = object.rotation;
-					if ( r ) settings.object.rotation = [...r];
+					if ( r ) {
+						
+						if ( r instanceof Array ) settings.object.rotation = [...r];
+						else settings.object.rotation = r;
+
+					}
 					settings.object.name = settings.object.name || 'Object';
 					
 					//copy indices
