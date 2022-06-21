@@ -12108,8 +12108,7 @@ function ND(n) {
 						var position = [];
 						for (var j = 0; j < n; j++) {
 							position.push(positionPoint[j]);
-						}
-						var p = m3.multiply(position);
+						}var p = m3.multiply(position);
 						p.forEach(function (value, i) {
 							if (value !== undefined) {
 								array.push(value + settings.object.position[i]);
@@ -13502,7 +13501,9 @@ function ND(n) {
 				var p = object.position;
 				if (p) settings.object.position = [].concat(toConsumableArray(p));
 				var r = object.rotation;
-				if (r) settings.object.rotation = [].concat(toConsumableArray(r));
+				if (r) {
+					if (r instanceof Array) settings.object.rotation = [].concat(toConsumableArray(r));else settings.object.rotation = r;
+				}
 				settings.object.name = settings.object.name || 'Object';
 				if (object.geometry.indices) {
 					var _indices2 = [];
