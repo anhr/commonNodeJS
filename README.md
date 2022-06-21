@@ -96,7 +96,7 @@ for control of the scale of [threejs](https://github.com/anhr/three.js) 3D objec
 [README.md](https://github.com/anhr/commonNodeJS/blob/master/StereoEffect/README.md).
 [StereoEffect API](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/StereoEffect/Examples/).
-* treeView.js Tree view with CSS and JavaScript. Thanks to [tree view]{@link https://www.w3schools.com/howto/howto_js_treeview.asp}.
+* treeView.js Tree view with CSS and JavaScript. Thanks to [Learn how to create a tree view with CSS and JavaScript][https://www.w3schools.com/howto/howto_js_treeview.asp].
 [README.md](https://github.com/anhr/commonNodeJS/blob/master/treeView/README.md).
 [TreeView API](https://raw.githack.com/anhr/commonNodeJS/master/treeView/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/treeView/Examples/).
