@@ -26,11 +26,11 @@ import { SpriteText } from '../SpriteText/SpriteText.js'
 import MyMath from '../myMath/myMath.js'
 
 /**
-dimention	geometry	points	edges	triangle	tetrahedron	pentatope
+dimention	geometry	points	edges	faces	bodyes	4D objects
 1			line		2		0
 2			triangle	3		3		1
-3			tetrahedron	4		6		4			1
-4			pentatope	5		10		10			5			1
+3			tetrahedron	4		6		4		1
+4			pentatope	5		10		10		5		1
 */
 
 class ND {
@@ -234,19 +234,6 @@ class ND {
 		const options = settings.options, _ND = this;
 		settings.object = settings.object || {};
 		settings.object.name = settings.object.name || 'Object';
-/*		
-settings.object.geometry = settings.object.geometry || settings.geometry || {};
-if ( settings.geometry || settings.position || settings.rotation )
-	console.warn( 'deprecated settings key' );
-if ( settings.geometry ) {
-	
-	settings.object.geometry.position = settings.object.geometry.position || settings.geometry.position || [];
-	settings.object.geometry.indices = settings.object.geometry.indices || settings.geometry.indices;
-
-}
-settings.object.position = settings.object.position || settings.position;
-settings.object.rotation = settings.object.rotation || settings.rotation;
-*/
 		if ( settings.object.aObjects ) settings.object.aObjects.nD = this;
 		settings.object.geometry = settings.object.geometry || {};
 		if ( settings.object.geometry instanceof Array ) {
@@ -310,18 +297,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 							case "point":
 								const THREE = three.THREE;
 								return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
-							/*
-							* Copies the values of the v to this vector.
-							*/
-/*								
-							case "copy":
-								return function ( v ) {
-
-									target.forEach( ( value, i ) => target[i] = v[i] );
-									return this;
-
-								}
-*/
 							/*
 							* Adds v to this vector.
 							*/
@@ -452,7 +427,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 			} );
 
 		}
-//		if ( !settings.object.position || !settings.object.position.isProxy )
 		settings.object.position = proxyPosition();
 
 		function proxyRotation() {
@@ -704,14 +678,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 						break;
 
 					}
-					/*
-					if ( iLastRow >= 100 ) {
-	
-						console.error( 'ND positionWorld get: Invalid iLastRow = ' + iLastRow );
-						break;
-	
-					}
-					*/
 
 				}
 
@@ -913,7 +879,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 									array.push( row );
 
 								}
-//								return math.matrix( array );
 								return new MyMath.Matrix( array );
 
 							}
@@ -958,7 +923,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 							}
 							var position = [];
 							for ( var j = 0; j < n; j++ ) position.push( positionPoint[j] );
-//							const p2 = math.multiply( m3, position );
 							const p = m3.multiply( position );
 							p.forEach( ( value, i ) => {
 
@@ -1040,7 +1004,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 						}
 						if ( target[i] instanceof Array ) {
 
-							//							return target[i];
 							return new Proxy( target[i], {
 
 								get: function ( target, name, args ) {
@@ -1077,14 +1040,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 										update();//изменилась позиция вершины
 
 									}
-/*									
-									switch ( name ) {
-
-										case 'positionWorld': target[name] = value;
-										default: console.error( 'ND: settings.object.geometry.position[i] set. Invalid name: ' + name );
-
-									}
-*/
 									return true;
 
 								},
@@ -1115,15 +1070,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 								return v;
 
 							}
-						case "reset": return function () {
-
-//							for ( var i = 0; i < settings.object.geometry.position.length; i++ ) settings.object.geometry.position[i].positionWorld = undefined;
-//							settings.object.geometry.position.forEach( item => item.reset() );
-//							settings.object.geometry.position.forEach( item => delete item.positionWorld );
-//							for ( var i = 0; i < target.length; i++ ) delete target.positionWorld;
-							target.forEach( item => delete item.positionWorld );
-						
-						}
+						case "reset": return function () { target.forEach( item => delete item.positionWorld ); }
 						default: console.error( 'ND: settings.object.geometry.position Proxy. Invalid name: ' + name );
 
 					}
@@ -1143,8 +1090,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 					//if ( name != 'boPositionError' )
 					//	console.log('ND settings.object.geometry.position set: name = ' + name );
 
-					//					settings.object.geometry.position.reset();
-
 					return true;
 
 				},
@@ -1152,8 +1097,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 			} );
 
 		}
-//		if ( !settings.object.geometry.position.isProxy )
-			settings.object.geometry.position = proxyGeometryPosition();
+		settings.object.geometry.position = proxyGeometryPosition();
 		//indices
 
 		function setIndices() {
@@ -1840,15 +1784,7 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 				function copyItem( array ){
 					
 					const copy = [];
-					array.forEach( item => {
-						
-/*						
-						const copyItem = [];
-						item.forEach( i => copyItem.push(i) );
-*/
-						copy.push( item );
-						
-					} );
+					array.forEach( item => { copy.push( item ); } );
 					return copy;
 					
 				}
@@ -2015,7 +1951,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 				object.name = settings3D.name;
 			scene.add( object );
 
-//			if ( typeof SpriteText !== "undefined" )
 			displayVerticeID( object, geometry );
 			
 			object.userData.nd = function ( fParent, dat ) {
@@ -2272,7 +2207,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 							settings.object.geometry.position.boPositionError = true;
 							for ( var i = 0; i < vertice.length; i++ ) {
 								
-//								dat.controllerZeroStep( fSegment, vertice, i ).domElement.querySelector( 'input' ).readOnly = true;
 								switch(i){
 
 									case 0:
@@ -2312,16 +2246,12 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 	
 							}
 							createIndices( segment[selectedIndex], segmentIndex );
-	//если вместо buffer использовать object.geometry то при выборе сегмета объекта становятся невидимыми все остальные сегменты объекта
-	//						line = new THREE.LineSegments( object.geometry.setIndex( indices ), new THREE.LineBasicMaterial( { color: object.material.color } ) );
 							line = new THREE.LineSegments( buffer.setIndex( lineIndices ), new THREE.LineBasicMaterial( { color: object.material.color } ) );
-//							segment[selectedIndex].line = line;//для изенения положения вершины
 	
 							//debug
 							line.userData.name = fSegment.name + ' ' + value;
 							
 							parentObject.add( line );
-//							_prevLine = parentObject;
 
 						}
 						if ( prevLine && line ) line.userData.prevLine = prevLine;
@@ -2362,7 +2292,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 				} );
 				const fPosition = fParent.addFolder( lang.position ),
 					fRotation = n < 2 ? undefined : fParent.addFolder( lang.rotation );
-//					fRotation = rotationAxes[0].length === 0 ? undefined : fParent.addFolder( lang.rotation );
 				function rotation( i ) {
 					
 					if ( rotationAxes[i].length === 0 ) return;
@@ -2409,14 +2338,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 						dat.controllerNameAndTitle( settings.object.position.folders[i].cPosition, axisName );
 
 					}
-/*
-					//rotation
-					if ( n > 2 ) {
-
-						rotation( i );
-
-					}
-*/
 
 				}
 				
@@ -2457,7 +2378,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 				onIntersection: function ( intersection, mouse ) {
 
 					delete intersection.index;
-//					MyThree.Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
 					Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
 
 				},
@@ -2597,7 +2517,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 							return target.length;
 	
 						}
-//console.log('geometryIntersection.position: i = ' + i + ' value = ' + value);
 						target[i] = value;
 						return true;
 	
@@ -2875,9 +2794,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 			}
 			object3D = create3DObject( geometry, { name: settings.object.name, color: 0x00ff00 } );//green
 
-			//сейчас позиция объекта складывается с позицией каздой точки в settings.object.geometry.position = new Proxy
-			//object3D.position.copy( settings.object.position.point );
-
 		}
 		projectTo3D();
 
@@ -2980,13 +2896,13 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 		* @param {Object} object new nD object
 		* @param {Object} object.geometry geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array} object.geometry.position Array of vertices of the n-dimensional graphical object.
-	    * See See <b>settings.object.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* See See <b>settings.object.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array} [object.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
-	    * See See <b>settings.object.geometry.indices</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* See See <b>settings.object.geometry.indices</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array|number} [object.position] position of the n-dimensional graphical object in n-dimensional coordinates.
-	    * See See <b>settings.object.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* See See <b>settings.object.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array|number} [object.rotation] rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
-	    * See See <b>settings.object.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* See See <b>settings.object.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		*/
 		this.object = function ( object ) { console.error( 'ND: settings' ); }
 		/**
@@ -2996,14 +2912,14 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 		this.vectorPlane;
 		/**
 		* @description
-	    * <pre>
-	    * returns geometry of N-dimensional object. See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-	    *	key <b>geometry</b> - get or set a geometry of nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-	    *	key <b>D3</b> - Projection of nD object to 3D space for visualization.
-	    *		<b>D3.points</b> - Points of projection. See <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setFromPoints" target="_blank">.setFromPoints</a> of <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
-	    *		<b>D3.indices</b> - Indices of points of projection. See <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setIndex" target="_blank">.setIndex</a> of <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
-	    *		<b>D3.color</b> - color of projection.
-	    * </pre>
+		* <pre>
+		* returns geometry of N-dimensional object. See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		*	key <b>geometry</b> - get or set a geometry of nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		*	key <b>D3</b> - Projection of nD object to 3D space for visualization.
+		*		<b>D3.points</b> - Points of projection. See <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setFromPoints" target="_blank">.setFromPoints</a> of <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
+		*		<b>D3.indices</b> - Indices of points of projection. See <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setIndex" target="_blank">.setIndex</a> of <a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
+		*		<b>D3.color</b> - color of projection.
+		* </pre>
 		*/
 		this.geometry;
 
@@ -3042,7 +2958,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 						return;//отсутствует холст с размерностью пространства верхнего уровня
 
 					}
-//					settings.object.geometry = object.geometry;
 					settings.object = object;
 					const p = object.position;
 					if ( p ) settings.object.position = [...p];
@@ -3079,13 +2994,6 @@ settings.object.rotation = settings.object.rotation || settings.rotation;
 
 					settings.object.position = proxyPosition();
 					settings.object.rotation = proxyRotation();
-/*					
-					settings.position = object.position;
-					settings.position = proxyPosition();
-					
-					settings.rotation = object.rotation;
-					settings.rotation = proxyRotation();
-*/					
 					settings.object.geometry.position = proxyGeometryPosition();
 					settings.object.geometry.position.reset();
 					

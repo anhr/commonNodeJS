@@ -259,7 +259,6 @@
 
 						display4Dselector = 'block';
 						nD.object = cImportObject.geometryOld;
-						//			nD.intersection();
 
 					}
 					document.getElementById( nDselectorName ).style.display = display4Dselector;
@@ -306,7 +305,6 @@
 					radio.addEventListener( 'change', function () {
 
 						onChange();
-//						_4D.object = { geometry: _4DObjectGeometry };
 						aObjects.nD.object = nDObject;
 						
 					} );
@@ -320,7 +318,6 @@
 
 
 		}
-//		controls.init();
 
 		//5D
 		var _5D;
@@ -341,7 +338,6 @@
 								[0.8, -0.6, 0.1, -0.85, -0.57],//0
 								[0.9, 0.7, 0.5, -0.55, -0.37],//1
 								[0.8, 0, -0.4, 0.1, -0.17],//2
-	//							[0.8, 0, -0.4, 0.1, -1],//2
 								[-0.6, 0.1, -0.3, 0.55, 0.7],//3
 								[-0.5, 0.7, 0.3, 0.75, 0.27],//4
 								[-0.7, 0.3, 0.4, 0.95, 0.77],//5
@@ -696,7 +692,6 @@
 					options: options,
 					onIntersection: function ( geometryIntersection ) {
 
-//						if ( _2D ) _2D.geometry = geometryIntersection;
 						controls.c3Dto2D.geometry = geometryIntersection;
 						if ( _2D && controls.c3Dto2D.checked ) _2D.geometry = geometryIntersection;
 
@@ -732,24 +727,7 @@
 
 				_2D = new ND( 2, {
 
-					object: /*{
-						
-						position: [0.1, -0.2],
-						//rotation: [0, 0, Math.PI / 4],
-						rotation: Math.PI / 5,
-						geometry: {
-	
-							position: [
-								[-0.7, 0.2],
-								[0.8, 0.6],
-								[0.1, -0.5],
-							],
-	
-						},
-						
-					},
-					*/
-					controls.getObject( "2Dobject", [
+					object: controls.getObject( "2Dobject", [
 						{
 							
 							position: [0.1, -0.2],
@@ -792,12 +770,6 @@
 										[3, 2],//2 face 3
 										[2, 0],//3 face 2
 									],
-									/*
-									//faces
-									[
-										[0, 1, 2, 3],//0
-									],
-									*/
 								]
 
 							}
@@ -885,7 +857,6 @@
 
 							if ( point0D ) {
 
-								//console.log( 'remove point' );
 								canvas0D.scene.remove( point0D );
 								if ( canvas0D.options.guiSelectPoint )
 									canvas0D.options.guiSelectPoint.removeMesh( point0D );
