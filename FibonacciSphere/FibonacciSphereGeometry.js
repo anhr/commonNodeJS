@@ -1,7 +1,7 @@
 /**
  * @module FibonacciSphereGeometry
  * @description A class for generating sphere geometries by the [Fibonacci]{@link https://en.wikipedia.org/wiki/Fibonacci_number} algorithm.
- * @see [Flickering in mobile with antialias!]{@link https://discourse.threejs.org/t/flickering-in-mobile-with-antialias/27808}
+ * @see [fibonacci-sphere]{@link https://github.com/GDOR-11/fibonacci-sphere}
  * @example [Thanks]{@link https://gdor-11.github.io/fibonacci-sphere/program.html}
  * 
  * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
@@ -29,15 +29,18 @@ class FibonacciSphereGeometry {
 
 		this.type = 'FibonacciSphereGeometry';
 
-		const vertices = [];
+		const vertices = [], a = Math.PI * ( 1 + Math.sqrt( 5 ) );
 			
+		//https://github.com/GDOR-11/fibonacci-sphere/blob/main/program.html
 		for ( var i = 0; i < n; i++ ) {
-			var theta = i * Math.PI * ( 1 + Math.sqrt( 5 ) );
-			var phi = Math.acos( 1 - 2 * ( i + 0.5 ) / n )
-			var x = radius * Math.sin( phi ) * Math.cos( theta );
-			var y = radius * Math.sin( phi ) * Math.sin( theta );
-			var z = -radius * Math.cos( phi );
+
+			const theta = i * a,
+				phi = Math.acos( 1 - 2 * ( i + 0.5 ) / n ),
+				x = radius * Math.sin( phi ) * Math.cos( theta ),
+				y = radius * Math.sin( phi ) * Math.sin( theta ),
+				z = -radius * Math.cos( phi );
 			vertices.push( new THREE.Vector3( x, y, z ) );
+
 		}
 		return new three.ConvexGeometry( vertices );
 
