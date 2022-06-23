@@ -1,7 +1,7 @@
 ﻿/**
  * custom controller, allow to user to change a value step by step.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *

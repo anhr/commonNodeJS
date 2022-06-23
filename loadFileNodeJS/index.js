@@ -1,6 +1,6 @@
 ﻿/**
  * node.js version of the synchronous download of the file.
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *

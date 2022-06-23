@@ -3,7 +3,7 @@
  * @description A sprite based text component. Text that always faces towards the camera.
  * @see {@link https://threejs.org/docs/index.html#api/en/objects/Sprite|THREE.Sprite}
  * 
- * @author Andrej Hristoliubov. {@link https://anhr.github.io/AboutMe/|AboutMe}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *

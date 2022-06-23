@@ -4,7 +4,7 @@
  * Array of points, statically fixed in front of the camera.
  * I use frustumPoints for displaying of the clouds around points.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *

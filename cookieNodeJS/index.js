@@ -4,7 +4,7 @@
  * Cookies let you store user information in web pages.
  * @see {@link https://www.w3schools.com/js/js_cookies.asp}
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *

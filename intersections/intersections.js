@@ -1,7 +1,7 @@
 /**
  * @module Intersections
  * @description Creates an intersection lines for graphic objects.
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *

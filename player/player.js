@@ -1,7 +1,7 @@
 /**
  * @module Player
  * @description 3D objects animation.
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
  * @license under the Apache License, Version 2.0 (the "License");

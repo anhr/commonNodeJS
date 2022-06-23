@@ -1,7 +1,7 @@
 /**
  * @module AxesHelper
  * @description An axis object to visualize the 1, 2 or 3 axes.
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *

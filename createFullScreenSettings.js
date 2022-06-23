@@ -2,7 +2,7 @@
  * @module CreateFullScreenSettings
  * @description creates functions for resize of the canvas to fullscreen and restore to default size.
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *

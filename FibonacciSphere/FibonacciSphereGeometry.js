@@ -4,7 +4,7 @@
  * @see [fibonacci-sphere]{@link https://github.com/GDOR-11/fibonacci-sphere}
  * @example [Thanks]{@link https://gdor-11.github.io/fibonacci-sphere/program.html}
  * 
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *

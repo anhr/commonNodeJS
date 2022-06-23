@@ -1,7 +1,7 @@
 ﻿/**
  * node.js version of download of the scripts.
  * 
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * Copyright 2011 Data Arts Team, Google Creative Lab
  *

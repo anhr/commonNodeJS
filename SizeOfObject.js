@@ -1,7 +1,7 @@
 /**
  * Size of object in bytes.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  * Thanks to https://stackoverflow.com/a/11900218/5175935
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab

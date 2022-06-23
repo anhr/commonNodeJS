@@ -3,7 +3,7 @@
  * @description Adds <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> settings folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
  * @see {@link https://github.com/anhr/AxesHelper|AxesHelper}
  *
- * @author {@link https://anhr.github.io/AboutMe/|Andrej Hristoliubov}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *

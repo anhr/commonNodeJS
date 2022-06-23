@@ -1,7 +1,7 @@
 /**
  * @module ColorPicker
  * @description Pure JavaScript color picker.
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * Thanks to https://github.com/DavidDurman/FlexiColorPicker
  *

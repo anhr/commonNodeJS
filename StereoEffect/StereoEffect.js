@@ -3,7 +3,7 @@
  * @description Uses dual PerspectiveCameras for Parallax Barrier effects.
  * @see About {@link https://en.wikipedia.org/wiki/Parallax_barrier|Parallax barrier}.
  * 
- * @author {@link https://anhr.github.io/AboutMe/|Andrej Hristoliubov}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  * @author {@link http://alteredqualia.com/|alteredq}
  * @author {@link http://mrdoob.com/|mrdoob}
  * @author {@link http://aleksandarrodic.com/|arodic}

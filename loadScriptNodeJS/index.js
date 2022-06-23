@@ -1,6 +1,6 @@
 /**
  * node.js version of the load JavaScript file
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * Thanks to:
  *http://javascript.ru/forum/events/21439-dinamicheskaya-zagruzka-skriptov.html

@@ -5,7 +5,7 @@
  * 
  * @see {@link https://github.com/anhr/dat.gui|dat.gui}, {@link https://threejs.org/docs/index.html#api/en/objects/Mesh|three.js mesh}.
  *
- * @author Andrej Hristoliubov. {@link https://anhr.github.io/AboutMe/|AboutMe}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *

@@ -3,7 +3,7 @@
  * @description Adds SpriteText settings folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
  * @see {@link https://github.com/anhr/SpriteText|SpriteText}
  *
- * @author Andrej Hristoliubov. {@link https://anhr.github.io/AboutMe/|AboutMe}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
