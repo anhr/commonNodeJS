@@ -41,7 +41,7 @@ import {
 } from '../getPosition.js';
 
 import three from '../three.js'
-import ND from '../nD/nD.js'
+//import ND from '../nD/nD.js'
 
 class GuiSelectPoint {
 
@@ -953,7 +953,7 @@ class GuiSelectPoint {
 				value = parseInt( value );
 				mesh = getMesh();
 
-				nD.object( mesh, dat );
+				if ( nD ) nD.object( mesh, dat, options );
 
 				if ( mesh && !mesh.userData.boFrustumPoints ) {
 
@@ -1255,7 +1255,8 @@ class GuiSelectPoint {
 
 			//nD
 
-			nD = new ND.gui( options, dat, fMesh );
+			if ( options.dat && options.dat.guiSelectPoint && options.dat.guiSelectPoint.point ) nD = options.dat.guiSelectPoint.point( options, dat, fMesh );
+//			nD = new ND.gui( options, dat, fMesh );
 
 			//Camera target
 			// Может устанвливаться только если создан проигрыватель options.player,
