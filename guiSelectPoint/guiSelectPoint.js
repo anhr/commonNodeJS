@@ -872,13 +872,39 @@ class GuiSelectPoint {
 
 		this.updateScale = function ( axisName ) {
 
+			const none = 'none', block = 'block', display = options.scales[axisName].isAxis() ? block : none;
+			
+			//Rotation
+
+			const boX = options.scales['x'].isAxis(),
+				 boY = options.scales['y'].isAxis(),
+				 boZ = options.scales['z'].isAxis();
+			var n = 0;//space dimension
+			if ( boX ) n++;
+			if ( boY ) n++;
+			if ( boZ ) n++;
+			switch ( n ) {
+
+				case 1:
+					fRotation.domElement.style.display = none;
+					break;
+				case 2:
+					fRotation.domElement.style.display = block;
+					if ( boX ) cRotations.x.domElement.parentElement.parentElement.style.display = none;
+					if ( boY ) cRotations.y.domElement.parentElement.parentElement.style.display = none;
+					if ( boZ ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
+					break;
+				default: console.error( 'GuiSelectPoint.updateScale: Invalid space dimension = ' + n );
+					return;
+
+			}
+			
 			if ( !folders.position[axisName] ) {
 
 				console.error( 'GuiSelectPoint.updateScale: Under constraction.' );
 				return;
 
 			}
-			const none = 'none', block = 'block', display = options.scales[axisName].isAxis() ? block : none;
 			
 			//position
 
@@ -908,31 +934,6 @@ class GuiSelectPoint {
 			}
 			c.domElement.parentElement.parentElement.style.display = display;
 			cScale.domElement.parentElement.parentElement.style.display = display;
-
-			//Rotation
-
-			const boX = options.scales['x'].isAxis(),
-				 boY = options.scales['y'].isAxis(),
-				 boZ = options.scales['z'].isAxis();
-			var n = 0;//space dimension
-			if ( boX ) n++;
-			if ( boY ) n++;
-			if ( boZ ) n++;
-			switch ( n ) {
-
-				case 1:
-					fRotation.domElement.style.display = none;
-					break;
-				case 2:
-					fRotation.domElement.style.display = block;
-					if ( boX ) cRotations.x.domElement.parentElement.parentElement.style.display = none;
-					if ( boY ) cRotations.y.domElement.parentElement.parentElement.style.display = none;
-					if ( boZ ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
-					break;
-				default: console.error( 'GuiSelectPoint.updateScale: Invalid space dimension = ' + n );
-					return;
-
-			}
 
 		}
 
@@ -988,7 +989,7 @@ class GuiSelectPoint {
 					const displayDefaultButtons = mesh.userData.default === undefined ? none : block;
 					buttonScaleDefault.domElement.parentElement.parentElement.style.display = displayDefaultButtons;
 					buttonPositionDefault.domElement.parentElement.parentElement.style.display = displayDefaultButtons;
-					buttonRotationDefault.domElement.parentElement.parentElement.style.display = displayDefaultButtons;
+					if ( buttonRotationDefault ) buttonRotationDefault.domElement.parentElement.parentElement.style.display = displayDefaultButtons;
 
 					display = block;
 					var displayPoints = none, displayfPoints = none, displayFrustumPoints = block;
@@ -1176,51 +1177,88 @@ class GuiSelectPoint {
 
 			//rotation
 
-			fRotation = fMesh.addFolder( lang.rotation );
-			function addRotationControllers( name ) {
+			function addRotationFolder() {
 
-				const scale = options.scales[name];
-				if ( !scale.isAxis() )
-					return;
-				cRotations[name] = fRotation.add( new THREE.Vector3(), name, 0, Math.PI * 2, 0.01 ).
-					onChange( function ( value ) {
+				const boX = options.scales.x.isAxis(),
+					boY = options.scales.y.isAxis(),
+					boZ = options.scales.z.isAxis();
+				var n = 0;//space dimension
+				if ( boX ) n++;
+				if ( boY ) n++;
+				if ( boZ ) n++;
+				if ( n === 1 ) return;
+				fRotation = fMesh.addFolder( lang.rotation );
+				function addRotationControllers( name ) {
 
-						const mesh = getMesh();
-						if ( !mesh.userData.boFrustumPoints ) {
+					const scale = options.scales[name];
+/*					
+					if ( !scale.isAxis() )
+						return;
+*/
+					cRotations[name] = fRotation.add( new THREE.Vector3(), name, 0, Math.PI * 2, 0.01 ).
+						onChange( function ( value ) {
 
-							mesh.rotation[name] = value;
-							mesh.needsUpdate = true;
+							const mesh = getMesh();
+							if ( !mesh.userData.boFrustumPoints ) {
 
-						}
+								mesh.rotation[name] = value;
+								mesh.needsUpdate = true;
 
-						if ( !boSetMesh )
-							exposePosition();
-						if ( options.frustumPoints !== undefined )
-							options.frustumPoints.updateCloudPoint( mesh );
+							}
 
-					} );
-				dat.controllerNameAndTitle( cRotations[name], scale.name );
+							if ( !boSetMesh )
+								exposePosition();
+							if ( options.frustumPoints !== undefined )
+								options.frustumPoints.updateCloudPoint( mesh );
+
+						} );
+					dat.controllerNameAndTitle( cRotations[name], scale.name );
+
+				}
+				switch ( n ) {
+
+/*
+					case 1:
+						fRotation.domElement.style.display = none;
+						break;
+*/
+					case 2:
+/*						
+						fRotation.domElement.style.display = block;
+						if ( boX ) cRotations.x.domElement.parentElement.parentElement.style.display = none;
+						if ( boY ) cRotations.y.domElement.parentElement.parentElement.style.display = none;
+						if ( boZ ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
+*/
+						addRotationControllers( !boX ? 'x' : !boY ? 'y' : 'z' );
+						break;
+					case 3:
+						addRotationControllers( 'x' );
+						addRotationControllers( 'y' );
+						addRotationControllers( 'z' );
+						break;
+					default: console.error( 'GuiSelectPoint.updateScale: Invalid space dimension = ' + n );
+						return;
+
+				}
+
+				//Default rotation button
+				buttonRotationDefault = fRotation.add( {
+
+					defaultF: function ( value ) {
+
+						mesh.rotation.copy( mesh.userData.default.rotation );
+						mesh.needsUpdate = true;
+
+						setRotationControllers();
+						exposePosition();
+
+					},
+
+				}, 'defaultF' );
+				dat.controllerNameAndTitle( buttonRotationDefault, lang.defaultButton, lang.defaultRotationTitle );
 
 			}
-			addRotationControllers( 'x' );
-			addRotationControllers( 'y' );
-			addRotationControllers( 'z' );
-
-			//Default rotation button
-			buttonRotationDefault = fRotation.add( {
-
-				defaultF: function ( value ) {
-
-					mesh.rotation.copy( mesh.userData.default.rotation );
-					mesh.needsUpdate = true;
-
-					setRotationControllers();
-					exposePosition();
-
-				},
-
-			}, 'defaultF' );
-			dat.controllerNameAndTitle( buttonRotationDefault, lang.defaultButton, lang.defaultRotationTitle );
+			addRotationFolder();
 
 			//Points
 
