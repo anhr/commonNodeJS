@@ -722,7 +722,12 @@ class Options {
 												return scale.name;
 
 											},
-											set: function ( name ) { scale.name = name; },
+											set: function ( name ) {
+												
+												scale.name = name;
+												if ( options.guiSelectPoint ) options.guiSelectPoint.setAxisName( axisName, name );
+												
+											},
 
 										},
 										marks: {

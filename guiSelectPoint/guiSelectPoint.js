@@ -486,6 +486,25 @@ class GuiSelectPoint {
 			funcFolder.displayFolder( !boReadOnly );
 
 		}
+		/**
+		 * sets axis name of the controllers
+		 * @param {String} axis axis. 'x' or 'y' or 'z'.
+		 * @param {String} name new axis name
+		 */
+		this.setAxisName = function ( axis, name ) {
+
+			//position
+			cPosition[axis].name( name );
+			folders.position[axis].name = name;
+
+			//scale
+			const cScale = axis === 'x' ? cScaleX : axis === 'y' ? cScaleY : axis === 'z' ? cScaleZ : undefined;
+			cScale.name( name );
+
+			//rotation
+			cRotations[axis].name( name );
+
+		}
 		/**Sets controllers to position, scale and rotation of the mesh.  If AxesHelper is exist, expose the mesh to the axes. */
 		this.setMesh = function () {
 
