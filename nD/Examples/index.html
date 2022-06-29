@@ -164,6 +164,9 @@
 					You can see a white point if the panel intersects with the green line.
 					<br>
 					Click the "►" button in the lower left corner of the canvas to intersect the blue point with the green line.
+					<p>
+						<input type="checkbox" id="2Dto1D"><label for="2Dto1D">check the box if you want to import a 1D object from a 2D canvas as a result of the intersection of the 2D object with line.</label>
+					</p>
 					<div id="1D">
 						<img src="../../img/wait.gif">
 					</div>
@@ -220,25 +223,27 @@
 
 		const D = {
 
-				D5: true,
-				D4: true,
-				D3: true,
-				D2: true,
-				D1: true,
+			D5: true,
+			D4: true,
+			D3: true,
+			D2: true,
+			D1: true,
 
-			},
+		},
 			playerOptions = {
 
 				marks: 111,//Number of scenes of 3D objects animation.
 				selectSceneIndex: 55,//time is 0.5 sec.
 				interval: 25,//Ticks per seconds.
 
-			};
+			},
+			guiPoint = function ( options, dat, fMesh ) { return new ND.gui( options, dat, fMesh ); };
 		const controls = {
 
 			c5Dto4D: document.getElementById( "5Dto4D" ),
 			c4Dto3D: document.getElementById( "4Dto3D" ),
 			c3Dto2D: document.getElementById( "3Dto2D" ),
+			c2Dto1D: document.getElementById( "2Dto1D" ),
 			setОnChange: function ( cImportObject, nD, nDselectorName ) {
 
 				cImportObject.onchange = function ( params ) {
@@ -367,6 +372,8 @@
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
 				//dat: false,
+//				dat: dat,
+				dat: { guiSelectPoint: { point: guiPoint, }, },
 				title: '5D',
 
 			} );
@@ -583,6 +590,24 @@
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
 				//dat: false,
+//				dat: dat,
+				dat: { guiSelectPoint: { point: guiPoint, }, },
+/*
+				dat: {
+
+					//guiSelectPoint: false,
+					guiSelectPoint: {
+
+						point: function ( options, dat, fMesh ) {
+
+							return new ND.gui( options, dat, fMesh );
+
+						},
+
+					},
+
+				},
+*/
 				title: '4D',
 
 			} ) );
@@ -710,6 +735,7 @@
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
 				//dat: false,
+				dat: { guiSelectPoint: { point: guiPoint, }, },
 				title: '3D',
 
 			} );
@@ -779,7 +805,13 @@
 
 					scene: scene,
 					options: options,
-					onIntersection: function ( geometryIntersection ) { if ( _1D ) _1D.geometry = geometryIntersection; }
+					onIntersection: function ( geometryIntersection ) {
+
+						controls.c2Dto1D.geometry = geometryIntersection;
+						if ( _1D && controls.c2Dto1D.checked ) _1D.geometry = geometryIntersection;
+//						if ( _1D ) _1D.geometry = geometryIntersection;
+
+					}
 
 				} );
 
@@ -795,6 +827,7 @@
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
 				//dat: false,
+				dat: { guiSelectPoint: { point: guiPoint, }, },
 				camera: options.camera,
 				orbitControls: false,
 				stereoEffect: false,
@@ -821,6 +854,7 @@
 						
 						//position: [0.1, 78],//tesing of settings.position = new Proxy
 						position: 0.1,
+						name: 'line',
 						geometry: {
 	
 							//position: [[-0.5, 1], [0.5]],//tesing of settings.position = new Proxy
@@ -880,6 +914,7 @@
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
 				//dat: false,
+				dat: { guiSelectPoint: { point: guiPoint, }, },
 				camera: options.camera,
 				orbitControls: false,
 				stereoEffect: false,
