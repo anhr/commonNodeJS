@@ -1911,9 +1911,10 @@ class ND {
 				return;
 
 			}
-			for ( var i = 0; i < geometry.D3.points.length; i++ ) {
+			const points = geometry.D3.points;
+			for ( var i = 0; i < points.length; i++ ) {
 
-				const spriteText = new SpriteText( i, geometry.D3.points[i], { group: object } );
+				const spriteText = new SpriteText( i, points[i], { group: object } );
 				spriteText.userData.pointID = i;
 
 			}
