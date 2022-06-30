@@ -3022,9 +3022,10 @@ ND.gui = class {
 
 	/** @class
 	 * Custom controllers for N-dimensional graphic object
-	 * @param {Options} options See the<b>options</b> parameter of the<a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
-	 * @param {GUI} dat[dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {Options} options See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+	 * @param {GUI} dat [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
 	 * @param {GUI} fParent parent folder.
+	 * @example new ND.gui( options, dat, fMesh );
 	 */
 	constructor( options, dat, fParent ) {
 
