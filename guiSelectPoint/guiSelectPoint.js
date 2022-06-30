@@ -32,7 +32,7 @@ import Player from '../player/player.js';
 //import Player from 'https://raw.githack.com/anhr/commonNodeJS/master/player/build/player.module.min.js';
 
 import functionsFolder from '../functionsFolder.js';
-
+import { SpriteText } from '../SpriteText/SpriteText.js'
 import {
 
 	getObjectPosition,
@@ -49,7 +49,15 @@ class GuiSelectPoint {
 	 * @class A dat.gui based graphical user interface for select a point from the mesh.
 	 * @param {Options} options See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 * @param {GUI} [options.dat.dat] [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
-	 * @param {boolean} [options.dat.guiSelectPoint] false - do not displays <b>GuiSelectPoint</b>.
+	 * @param {boolean|Object} [options.dat.guiSelectPoint] false - do not displays <b>GuiSelectPoint</b>.
+	 * @param {Function} [options.dat.guiSelectPoint.point] Callback function to create custom controllers for each point of selected mesh with custom controllers.
+	 * <pre>
+	 * parameter <b>options</b> See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+	 * parameter <b>dat</b> [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
+	 * parameter <b>fParent</b> parent folder.
+	 * example <b>point: function ( options, dat, fMesh ) { return new FermatSpiral.gui( options, dat, fMesh ); },</b>
+	 * </pre>
+	 * @param {boolean} [options.dat.guiSelectPoint.boDisplayVerticeID] true - display on the scene the point ID near to the point.
 	 * @param {AxesHelper} [options.axesHelper] An axis object to visualize axes.
 	 * See <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
 	 * @param {Function} [options.getLanguageCode=language code of your browser] Your custom getLanguageCode() function.
@@ -128,6 +136,9 @@ class GuiSelectPoint {
 			rotation: 'Rotation',
 			points: 'Points',
 
+			displayVerticeID: 'Point ID',
+			displayVerticeIDTitle: 'Display on the scene the point ID near to the point',
+
 			cameraTarget: 'Look',
 			cameraTargetTitle: 'Choose this point the camera is looking at.',
 
@@ -171,6 +182,9 @@ class GuiSelectPoint {
 				lang.position = 'Позиция';
 				lang.rotation = 'Вращение';
 				lang.points = 'Точки';
+
+				lang.displayVerticeID = 'Номера точек';
+				lang.displayVerticeIDTitle = 'На сцене возле каждой точки показать ее идентификатор';
 
 				lang.cameraTarget = 'Следить';
 				lang.cameraTargetTitle = 'Выберите эту точку, за которой следит камера.',
@@ -221,7 +235,7 @@ class GuiSelectPoint {
 			funcFolder,
 			boSetMesh = false,//Для предотвращения лишних вызовов exposePosition если выбрать точку и передвинуть камеру с помошью OrbitControls,
 			fRotation,
-			nD;//n-dimensional object
+			cCustom;//Custom point controllers
 		const _this = this, cPosition = new THREE.Vector3(), cRotations = new THREE.Vector3(), cWorld = new THREE.Vector3();
 		function displayPointControllers( display ) {
 
@@ -688,6 +702,7 @@ class GuiSelectPoint {
 
 			}
 			cMeshs.__select.appendChild( opt );
+			displayVerticeID( mesh );
 
 		}
 		/**
@@ -955,6 +970,32 @@ class GuiSelectPoint {
 			cScale.domElement.parentElement.parentElement.style.display = display;
 
 		}
+		function displayVerticeID( object ) {
+
+			if ( object.userData.boFrustumPoints ) return;
+			if ( !options.dat.guiSelectPoint.boDisplayVerticeID ) {
+
+				for ( var i = object.children.length - 1; i >= 0; i-- ) {
+
+					const child = object.children[i];
+					if ( child.type === 'Sprite' ) object.remove( child );
+
+				}
+				return;
+
+			}
+			let gp = object.geometry.attributes.position;
+			object.updateMatrixWorld();
+			for ( let i = 0; i < gp.count; i++ ) {
+
+				let p = new THREE.Vector3().fromBufferAttribute( gp, i ); // set p from `position`
+				//						object.localToWorld(p); // p has wordl coords
+				const spriteText = new SpriteText( i, p, { group: object } );
+				spriteText.userData.pointID = i;
+
+			}
+
+		}
 
 		/**
 		 * Adds select point GUI into dat.gui folder
@@ -973,7 +1014,7 @@ class GuiSelectPoint {
 				value = parseInt( value );
 				mesh = getMesh();
 
-				if ( nD ) nD.object( mesh, dat, options );
+				if ( cCustom ) cCustom.object( mesh, dat, options );
 
 				if ( mesh && !mesh.userData.boFrustumPoints ) {
 
@@ -1308,11 +1349,33 @@ class GuiSelectPoint {
 			if ( cFrustumPoints !== undefined )
 				cFrustumPoints.create( fPoints, getLanguageCode() );
 			if ( guiParams.myThreejs )
-				guiParams.myThreejs.cFrustumPoints = cFrustumPoints;
+				guiParams.myThreejs.cFrustumPoints = cFrustumPoints
 
-			//nD
+			//display vertice ID
+			
+			options.dat.guiSelectPoint = options.dat.guiSelectPoint || {};
+			options.dat.guiSelectPoint.boDisplayVerticeID = options.dat.guiSelectPoint.boDisplayVerticeID || false;
+			const cDisplayVerticeID = f3DObjects.add( options.dat.guiSelectPoint, 'boDisplayVerticeID' ).onChange( function ( value ) {
+				
+				for ( var i = 1; i < cMeshs.__select.options.length; i++ ) {
 
-			if ( options.dat && options.dat.guiSelectPoint && options.dat.guiSelectPoint.point ) nD = options.dat.guiSelectPoint.point( options, dat, fMesh );
+					var option = cMeshs.__select.options[i];
+					if ( option.mesh === undefined ) {
+
+						console.error( 'guiSelectPoint: cDisplayVerticeID.onChange. Invalud option.mesh' );
+						continue;
+
+					}
+					displayVerticeID( option.mesh );//getMesh() );
+
+				}
+				
+			} );
+			dat.controllerNameAndTitle( cDisplayVerticeID, lang.displayVerticeID, lang.displayVerticeIDTitle );
+			
+			//Custom point controllers 
+
+			if ( options.dat && options.dat.guiSelectPoint && options.dat.guiSelectPoint.point ) cCustom = options.dat.guiSelectPoint.point( options, dat, fMesh );
 //			nD = new ND.gui( options, dat, fMesh );
 
 			//Camera target
