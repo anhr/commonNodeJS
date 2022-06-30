@@ -1898,6 +1898,7 @@ class ND {
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
 
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
+/*
 		function displayVerticeID( object, geometry ) {
 			
 			if ( !settings.boDisplayVerticeID ) {
@@ -1920,6 +1921,7 @@ class ND {
 			}
 			
 		}
+*/
 		function create3DObject( geometry, settings3D = {} ) {
 
 			if ( !geometry.D3 ) {
@@ -1952,7 +1954,7 @@ class ND {
 				object.name = settings3D.name;
 			scene.add( object );
 
-			displayVerticeID( object, geometry );
+//			displayVerticeID( object, geometry );
 			
 			object.userData.nd = function ( fParent, dat ) {
 
@@ -1985,9 +1987,10 @@ class ND {
 					defaultButton: 'Default',
 					defaultPositionTitle: 'Restore default position',
 					defaultRotationTitle: 'Restore default rotation',
-					
+/*					
 					displayVerticeID: 'Vertice ID',
 					displayVerticeIDTitle: 'Display on the scene the vertice ID near to the vertice',
+*/
 
 					notSelected: 'Not selected',
 
@@ -2022,9 +2025,10 @@ class ND {
 						lang.defaultButton = 'Восстановить';
 						lang.defaultPositionTitle = 'Восстановить позицию объекта по умолчанию';
 						lang.defaultRotationTitle = 'Восстановить вращение объекта по умолчанию';
-
+/*
 						lang.displayVerticeID = 'Номера вершин';
 						lang.displayVerticeIDTitle = 'На сцене возле каждой вершины показать ее идентификатор';
+*/
 
 						lang.notSelected = 'Не выбран';
 
@@ -2043,7 +2047,7 @@ class ND {
 
 				}
 				for ( var i = fParent.__controllers.length - 1; i >= 0; i-- ) { fParent.remove( fParent.__controllers[i] ); }
-
+/*
 				settings.boDisplayVerticeID = settings.boDisplayVerticeID || false;
 				const cDisplayVerticeID = fParent.add( settings, 'boDisplayVerticeID' ).onChange( function ( value ) {
 					
@@ -2052,6 +2056,7 @@ class ND {
 					
 				} );
 				dat.controllerNameAndTitle( cDisplayVerticeID, lang.displayVerticeID, lang.displayVerticeIDTitle );
+*/
 				
 				const indices = geometry.geometry.indices, segmentIndex = indices.length - 1;
 				function addController(
@@ -3015,6 +3020,12 @@ class ND {
 
 ND.gui = class {
 
+	/** @class
+	 * Custom controllers for N-dimensional graphic object
+	 * @param {Options} options See the<b>options</b> parameter of the<a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+	 * @param {GUI} dat[dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
+	 * @param {GUI} fParent parent folder.
+	 */
 	constructor( options, dat, fParent ) {
 
 		//Localization
