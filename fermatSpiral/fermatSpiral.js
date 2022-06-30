@@ -14,8 +14,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import three from '../../commonNodeJS/master/three.js'
-import PositionController from '../../commonNodeJS/master/PositionController.js';
+import three from '../three.js'
+import PositionController from '../PositionController.js';
 
 class FermatSpiral {
 
