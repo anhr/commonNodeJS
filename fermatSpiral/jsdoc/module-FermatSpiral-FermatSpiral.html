@@ -218,12 +218,12 @@
             
                 <td class="default">
                 
-                    0.01
+                    0.04
                 
                 </td>
             
 
-            <td class="description last">constant scaling factor.</td>
+            <td class="description last">constant scaling factor. See <a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral</a> for details.</td>
         </tr>
 
     
@@ -343,13 +343,13 @@
 
         <tr>
             
-                <td class="name"><code>boDisplayVerticeID</code></td>
+                <td class="name"><code>object</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">Object</span>
 
 
             
@@ -370,12 +370,152 @@
             
                 <td class="default">
                 
-                    false
+                </td>
+            
+
+            <td class="description last">creates an <a href="https://threejs.org/docs/index.html?q=lines#api/en/objects/LineSegments">LineSegments</a> object as <b>FermatSpiral</b>.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>scene</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Group</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
                 
                 </td>
             
 
-            <td class="description last">true - displays on the scene the point ID near to the point.</td>
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><a href="https://threejs.org/docs/index.html?q=scene#api/en/scenes/Scene">Scene</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Options</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Add <b>options</b> key if you want to add custom controllers for <b>FermatSpiral</b> object into <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a>.
+See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>color</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'green'
+                
+                </td>
+            
+
+            <td class="description last">color of <b>FermatSpiral</b>.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -423,7 +563,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="fermatSpiral.js.html">fermatSpiral.js</a>, <a href="fermatSpiral.js.html#line32">line 32</a>
+        <a href="fermatSpiral.js.html">fermatSpiral.js</a>, <a href="fermatSpiral.js.html#line36">line 36</a>
     </li></ul></dd>
     
 
@@ -517,7 +657,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="fermatSpiral.js.html">fermatSpiral.js</a>, <a href="fermatSpiral.js.html#line50">line 50</a>
+        <a href="fermatSpiral.js.html">fermatSpiral.js</a>, <a href="fermatSpiral.js.html#line54">line 54</a>
     </li></ul></dd>
     
 
@@ -579,7 +719,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="fermatSpiral.js.html">fermatSpiral.js</a>, <a href="fermatSpiral.js.html#line45">line 45</a>
+        <a href="fermatSpiral.js.html">fermatSpiral.js</a>, <a href="fermatSpiral.js.html#line49">line 49</a>
     </li></ul></dd>
     
 
@@ -641,7 +781,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="fermatSpiral.js.html">fermatSpiral.js</a>, <a href="fermatSpiral.js.html#line40">line 40</a>
+        <a href="fermatSpiral.js.html">fermatSpiral.js</a>, <a href="fermatSpiral.js.html#line44">line 44</a>
     </li></ul></dd>
     
 
@@ -681,7 +821,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Jul 01 2022 05:18:02 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Jul 01 2022 06:23:55 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

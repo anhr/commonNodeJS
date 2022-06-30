@@ -23,11 +23,15 @@ class FermatSpiral {
 	 * Implementation of Vogel's model of <a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral</a>.
 	 * @param {Object} [settings={}] The following settings are available
 	 * @param {Number} [settings.count=500] points count.
-	 * @param {Float} [settings.c=0.01] constant scaling factor.
+	 * @param {Float} [settings.c=0.04] constant scaling factor. See <a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral</a> for details.
 	 * @param {Array} [settings.center=[0,0]] center of Vogel's model.
 	 * @param {Number} [settings.center[0]] x position of the center.
 	 * @param {Number} [settings.center[1]] y position of the center.
-	 * @param {boolean} [settings.boDisplayVerticeID=false] true - displays on the scene the point ID near to the point.
+	 * @param {Object} [settings.object] creates an [LineSegments]{@link https://threejs.org/docs/index.html?q=lines#api/en/objects/LineSegments} object as <b>FermatSpiral</b>.
+	 * @param {Group} settings.object.scene [Scene]{@link https://threejs.org/docs/index.html?q=scene#api/en/scenes/Scene}.
+	 * @param {Options} [settings.object.options] Add <b>options</b> key if you want to add custom controllers for <b>FermatSpiral</b> object into <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a>.
+	 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+	 * @param {String} [settings.object.color='green'] color of <b>FermatSpiral</b>.
 	 */
 	constructor( settings = {} ) {
 
@@ -116,41 +120,6 @@ class FermatSpiral {
 						
 						const cCount = dat.controllerZeroStep( fParent, settings, 'count', function ( value ) { update(); } );
 						dat.controllerNameAndTitle( cCount, lang.count, lang.countTitle );
-						
-//						for ( var i = fParent.__controllers.length - 1; i >= 0; i-- ) { fParent.remove( fParent.__controllers[i] ); }
-/*		
-						settings.boDisplayVerticeID = settings.boDisplayVerticeID || false;
-						const cDisplayVerticeID = fParent.add( settings, 'boDisplayVerticeID' ).onChange( function ( value ) {
-							
-							function displayVerticeID( object, geometry ) {
-
-								if ( !settings.boDisplayVerticeID ) {
-
-									for ( var i = object.children.length - 1; i >= 0; i-- ) {
-
-										const child = object.children[i];
-										if ( child.type === 'Sprite' ) object.remove( child );
-
-									}
-									return;
-
-								}
-								let gp = object.geometry.attributes.position;
-								for ( let i = 0; i < gp.count; i++ ) {
-
-									let p = new THREE.Vector3().fromBufferAttribute( gp, i ); // set p from `position`
-									object.localToWorld( p ); // p has wordl coords
-									const spriteText = new SpriteText( i, p, { group: object } );
-									spriteText.userData.pointID = i;
-
-								}
-
-							}
-							displayVerticeID( object );
-							
-						} );
-						dat.controllerNameAndTitle( cDisplayVerticeID, lang.displayVerticeID, lang.displayVerticeIDTitle );
-*/
 						
 					}
 
@@ -251,7 +220,7 @@ class FermatSpiral {
 
 		}
 */
-		settings.c = settings.c === undefined ? 0.03 : settings.c;//constant scaling factor
+		settings.c = settings.c === undefined ? 0.04 : settings.c;//constant scaling factor
 		settings.center = settings.center || [0, 0];
 		const golden_angle = 137.508;//140.2554;
 		function angleFermat( n ) { return n * golden_angle; }
@@ -280,6 +249,20 @@ class FermatSpiral {
 			
 		}
 		createFermatPlot();
+		if ( settings.object ) {
+
+			settings.object.color = settings.object.color || "green";
+			const object = new THREE.LineSegments(
+				new THREE.BufferGeometry().setFromPoints( this.points ).setIndex( this.indices ),
+				new THREE.LineBasicMaterial( { color: settings.object.color, } ) );
+
+//			const object = new THREE.Line( new THREE.BufferGeometry().setFromPoints( fermatSpiral.vertices ), new THREE.LineBasicMaterial( { color: color } ) );
+//			const object = new THREE.Mesh( new MyThree.three.ConvexGeometry( fermatSpiral.vertices ), new THREE.MeshBasicMaterial( { color: color, wireframe: true } ) );
+			this.object = object;
+			settings.object.scene.add( object );
+			if ( settings.object.options && settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.addMesh( object );
+			
+		}
 
 	}
 }
