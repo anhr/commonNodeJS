@@ -54,11 +54,7 @@ class FermatSpiral {
 		this.indices;
 		Object.defineProperties( this, {
 
-			points: {
-
-				get: function () { return points; }
-
-			},
+			points: { get: function () { return points; } },
 			object: {
 
 				set: function ( objectNew ) {
@@ -223,46 +219,55 @@ class FermatSpiral {
 		settings.c = settings.c === undefined ? 0.04 : settings.c;//constant scaling factor
 		settings.center = settings.center || [0, 0];
 		const golden_angle = 137.508;//140.2554;
-		function angleFermat( n ) { return n * golden_angle; }
-		function radiusFermat( n ) { return settings.c * Math.sqrt( n ); }
-		function describeFermatPoint( n ) { return polarToCartesian( radiusFermat( n ), angleFermat( n ) ); }
-		function createFermatPlot() {
+		const _this = this;
+		function update() {
 
-			const l = settings.count === undefined ? 500 : settings.count;
-			for ( var i = 0; i < l; i++ ) {
+			function angleFermat( n ) { return n * golden_angle; }
+			function radiusFermat( n ) { return settings.c * Math.sqrt( n ); }
+			function describeFermatPoint( n ) { return polarToCartesian( radiusFermat( n ), angleFermat( n ) ); }
+			function createFermatPlot() {
 
-				points[i] = describeFermatPoint( i );
+				const l = settings.count === undefined ? 500 : settings.count;
+				if ( points.length > 0 ) points.length = 0;
+				if ( indices.length > 0 ) indices.length = 0;
+				for ( var i = 0; i < l; i++ ) {
 
+					points[i] = describeFermatPoint( i );
+
+				}
+
+			}
+			function polarToCartesian( radius, angleInDegrees ) {
+
+				const angleInRadians = ( angleInDegrees - 90 ) * Math.PI / 180.0;
+
+				return new THREE.Vector3(
+
+					settings.center[0] + ( radius * Math.cos( angleInRadians ) ),
+					settings.center[1] + ( radius * Math.sin( angleInRadians ) )
+
+				);
+
+			}
+			createFermatPlot();
+			if ( settings.object ) {
+	
+				if ( object ) object.parent.remove( object );
+				settings.object.color = settings.object.color || "green";
+				const mesh = new THREE.LineSegments(
+					new THREE.BufferGeometry().setFromPoints( _this.points ).setIndex( _this.indices ),
+					new THREE.LineBasicMaterial( { color: settings.object.color, } ) );
+	
+	//			const mesh = new THREE.Line( new THREE.BufferGeometry().setFromPoints( _this.vertices ), new THREE.LineBasicMaterial( { color: color } ) );
+	//			const mesh = new THREE.Mesh( new MyThree.three.ConvexGeometry( _this.vertices ), new THREE.MeshBasicMaterial( { color: color, wireframe: true } ) );
+				_this.object = mesh;
+				settings.object.scene.add( mesh );
+				if ( settings.object.options && settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.addMesh( mesh );
+				
 			}
 
 		}
-		function polarToCartesian( radius, angleInDegrees ) {
-
-			const angleInRadians = ( angleInDegrees - 90 ) * Math.PI / 180.0;
-
-			return new THREE.Vector3(
-				
-				settings.center[0] + ( radius * Math.cos( angleInRadians ) ),
-				settings.center[1] + ( radius * Math.sin( angleInRadians ) )
-				
-			);
-			
-		}
-		createFermatPlot();
-		if ( settings.object ) {
-
-			settings.object.color = settings.object.color || "green";
-			const object = new THREE.LineSegments(
-				new THREE.BufferGeometry().setFromPoints( this.points ).setIndex( this.indices ),
-				new THREE.LineBasicMaterial( { color: settings.object.color, } ) );
-
-//			const object = new THREE.Line( new THREE.BufferGeometry().setFromPoints( fermatSpiral.vertices ), new THREE.LineBasicMaterial( { color: color } ) );
-//			const object = new THREE.Mesh( new MyThree.three.ConvexGeometry( fermatSpiral.vertices ), new THREE.MeshBasicMaterial( { color: color, wireframe: true } ) );
-			this.object = object;
-			settings.object.scene.add( object );
-			if ( settings.object.options && settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.addMesh( object );
-			
-		}
+		update();
 
 	}
 }
