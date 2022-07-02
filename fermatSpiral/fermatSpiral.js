@@ -259,8 +259,12 @@ class FermatSpiral {
 			createFermatPlot();
 			if ( settings.object ) {
 	
-				if ( object ) object.geometry.setFromPoints( _this.points ).setIndex( _this.indices );//object.parent.remove( object );
-				else {
+				if ( object ) {
+					
+					object.geometry.setFromPoints( _this.points ).setIndex( _this.indices );//object.parent.remove( object );
+					if ( settings.object.options && settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.updatePoints();
+					
+				} else {
 					
 					settings.object.color = settings.object.color || "green";
 					const mesh = new THREE.LineSegments(

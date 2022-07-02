@@ -997,6 +997,20 @@ class GuiSelectPoint {
 
 		}
 
+		function addPoints( mesh ) {
+
+			for ( var iPosition = 0; iPosition < mesh.geometry.attributes.position.count; iPosition++ ) {
+
+				const opt = document.createElement( 'option' ),
+					name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
+				opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
+				opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
+				cPoints.__select.appendChild( opt );
+
+			}
+
+		}
+
 		/**
 		 * Adds select point GUI into dat.gui folder
 		 * @param {GUI} [folder] [dat.gui]{@link https://github.com/anhr/dat.gui} folder.
@@ -1070,15 +1084,7 @@ class GuiSelectPoint {
 						if ( mesh.geometry.attributes ) {
 
 							displayfPoints = block;
-							for ( var iPosition = 0; iPosition < mesh.geometry.attributes.position.count; iPosition++ ) {
-
-								const opt = document.createElement( 'option' ),
-									name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
-								opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
-								opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
-								cPoints.__select.appendChild( opt );
-
-							}
+							addPoints( mesh );
 
 						}
 
@@ -1571,6 +1577,33 @@ class GuiSelectPoint {
 			opt.innerHTML = lang.notSelected;
 			opt.setAttribute( 'value', -1 );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
 			cPoints.__select.appendChild( opt );
+
+		}
+		/**Updates points in the points list control. */
+		this.updatePoints = function () {
+
+			const boDisplayVerticeID = options.dat.guiSelectPoint.boDisplayVerticeID,
+				mesh = getMesh();
+
+			//убрать с холста идентификаторы точек
+			if ( boDisplayVerticeID ) {
+
+				options.dat.guiSelectPoint.boDisplayVerticeID = false;
+				displayVerticeID( mesh );
+
+			}
+
+			cPoints.__onChange( -1 );
+			this.removePoints();
+			addPoints( mesh );
+
+			//восстановить идентификаторы точек
+			if ( boDisplayVerticeID ) {
+
+				options.dat.guiSelectPoint.boDisplayVerticeID = true;
+				displayVerticeID( mesh );
+
+			}
 
 		}
 		function addPointControllers() {
