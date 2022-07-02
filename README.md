@@ -24,7 +24,7 @@ My JavaScript library of [threejs](https://threejs.org/) extension.
 * DropdownMenu. node.js version of DropdownMenu
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/Examples/html/index.html).
-* FermatSpiral. Implementation of Vogel's model of [Fermat's spiral]{@link https://en.wikipedia.org/wiki/Fermat's_spiral}.
+* FermatSpiral. Implementation of Vogel's model of [Fermat's spiral](https://en.wikipedia.org/wiki/Fermat's_spiral).
 [github](../../tree/master/fermatSpiral).
 [FermatSpiral API](https://raw.githack.com/anhr/commonNodeJS/master/fermatSpiral/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/fermatSpiral/Examples/index.html).
