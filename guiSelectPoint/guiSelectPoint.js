@@ -1011,6 +1011,26 @@ class GuiSelectPoint {
 
 		}
 
+		function createPlayerArrayFuncs( mesh ) {
+
+			if ( !mesh || mesh.userData.boFrustumPoints ) return;
+			if ( !mesh.userData.player ) mesh.userData.player = {};
+			if ( !mesh.userData.player.arrayFuncs ) {
+
+				const position = mesh.geometry.attributes.position;
+				mesh.userData.player.arrayFuncs = [];
+				for ( var i = 0; i < position.count; i++ ) {
+
+					const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
+					vector.w = 1;
+					mesh.userData.player.arrayFuncs.push( vector );
+
+				}
+
+			}
+
+		}
+
 		/**
 		 * Adds select point GUI into dat.gui folder
 		 * @param {GUI} [folder] [dat.gui]{@link https://github.com/anhr/dat.gui} folder.
@@ -1030,6 +1050,8 @@ class GuiSelectPoint {
 
 				if ( cCustom ) cCustom.object( mesh, dat, options );
 
+				createPlayerArrayFuncs( mesh );
+/*
 				if ( mesh && !mesh.userData.boFrustumPoints ) {
 
 					if ( !mesh.userData.player ) mesh.userData.player = {};
@@ -1048,6 +1070,7 @@ class GuiSelectPoint {
 					}
 
 				}
+*/
 
 				const none = 'none', block = 'block';
 				var display;
@@ -1595,6 +1618,9 @@ class GuiSelectPoint {
 
 			cPoints.__onChange( -1 );
 			this.removePoints();
+			mesh.userData.player.arrayFuncs.length = 0;
+			delete mesh.userData.player.arrayFuncs;
+			createPlayerArrayFuncs( mesh );
 			addPoints( mesh );
 
 			//восстановить идентификаторы точек
