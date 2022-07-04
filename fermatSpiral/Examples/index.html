@@ -67,18 +67,21 @@
 //			MyThree.MyPoints( fermatSpiral.vertices, scene, { options: options } );
 
 		}, {
-			
+
 			player: false,
-			dat: { guiSelectPoint: {
+			dat: {
+				guiSelectPoint: {
 
-				point: function ( options, dat, fMesh ) { return new FermatSpiral.gui( options, dat, fMesh ); },
-				//boDisplayVerticeID: true,
+					point: function ( options, dat, fMesh ) { return new FermatSpiral.gui( options, dat, fMesh ); },
+					//boDisplayVerticeID: true,
 
-			}, },
+				},
+			},
 			//orbitControls: false,
+			orbitControls: { enableRotate: false, },
 			camera: { position: new THREE.Vector3( 0, 0, 2 ) },
 			stereoEffect: false,
-			//canvasMenu: false,
+			canvasMenu: false,
 			scales: {
 
 				x: {},
