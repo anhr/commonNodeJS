@@ -71,7 +71,13 @@ class FermatSpiral {
 						const lang = {
 
 							count: 'Points',
-							countTitle: 'Spiral points count',
+							countTitle: 'Spiral points count.',
+
+							c: 'scaling factor',
+							cTitle: "constant scaling factor of of Vogel's model of Fermat's spiral.",
+
+							defaultButton: 'Default',
+							defaultPositionTitle: 'Restore default spiral',
 		
 							notSelected: 'Not selected',
 		
@@ -85,6 +91,12 @@ class FermatSpiral {
 
 								lang.count = 'Точки';
 								lang.countTitle = 'Количестао точек спирали';
+
+								lang.c = 'Масштаб';
+								lang.cTitle = 'Масштабный коэффициент модели Фогеля спирали Ферма';
+
+								lang.defaultButton = 'Восстановить';
+								lang.defaultPositionTitle = 'Восстановить параметры спирали';
 		
 								lang.notSelected = 'Не выбран';
 		
@@ -105,24 +117,69 @@ class FermatSpiral {
 						
 						//Points count
 						
-						const positionController = new PositionController( function ( shift ) {
-							
+						const fCount = fParent.addFolder( lang.count );
+
+						fCount.add( new PositionController( function ( shift ) {
+
 								settings.count += shift;
 								if ( settings.count < 1 ) settings.count = 1;
 								cCount.setValue( settings.count, true );
-								
+
 							},
 							{
-								
+
 								getLanguageCode: getLanguageCode,
 								min: 1, max: 100, step: 1, settings: { offset: 1 },
-							
+
 							}
-						);
-						fParent.add( positionController );
+						) );
 						
-						const cCount = dat.controllerZeroStep( fParent, settings, 'count', function ( value ) { update(); } );
+						const cCount = dat.controllerZeroStep( fCount, settings, 'count', function ( value ) { update(); } );
 						dat.controllerNameAndTitle( cCount, lang.count, lang.countTitle );
+
+						//constant scaling factor
+
+						const fC = fParent.addFolder( lang.c );
+
+						fC.add( new PositionController( function ( shift ) {
+
+								settings.c += shift;
+								if ( settings.c < 0 ) settings.c = 0;
+								cC.setValue( settings.c, true );
+
+							},
+							{
+
+								getLanguageCode: getLanguageCode,
+								min: 0, max: 0.1, step: 0.001, settings: { offset: 0.001 },
+
+							}
+						) );
+
+						const cC = dat.controllerZeroStep( fC, settings, 'c', function ( value ) { update(); } );
+						dat.controllerNameAndTitle( cC, lang.c, lang.cTitle );
+
+						//Restore Fermat's spiral.
+						const defaultValues = {
+
+							count: settings.count,
+							c: settings.c,
+
+						}
+						const buttonDefault = fParent.add( {
+
+							defaultF: function ( value ) {
+
+								settings.count = defaultValues.count;
+								cCount.setValue( settings.count );
+								settings.c = defaultValues.c;
+								cC.setValue( settings.c );
+								update();
+
+							},
+
+						}, 'defaultF' );
+						dat.controllerNameAndTitle( buttonDefault, lang.defaultButton, lang.defaultPositionTitle );
 						
 					}
 
