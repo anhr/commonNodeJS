@@ -480,6 +480,11 @@ class MyThree {
 				canvas: canvas,
 
 			} );
+
+			//если не выполнить эту команду то в http://localhost/anhr/commonNodeJS/master/fermatSpiral/Examples/
+			//холст будет не на весь экран потомучто там не используется меню
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			
 			options.renderer = renderer;
 
 			options.cursor = renderer.domElement.style.cursor;
