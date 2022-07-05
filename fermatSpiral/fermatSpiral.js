@@ -190,6 +190,21 @@ class FermatSpiral {
 
 				get: function () {
 			
+					//График для последней точки спирали x ближайшая точка с максимальным индексом y
+					//https://www.kontrolnaya-rabota.ru/s/grafik/tochka/
+					//формула: y = 1.449378838441997 * Math.sqrt (x)
+					//x; y;
+					//0.0; 0.0
+					//1.0; 1.0
+					//5; 2
+					//7; 3
+					//17; 5
+					//38; 8
+					//95; 13
+					//234; 21
+					//583; 34
+					//1480; 55
+					//9871;144
 					if ( indices.length > 0 ) return indices;
 					points.forEach( ( vertice1, i ) => {
 
@@ -197,9 +212,10 @@ class FermatSpiral {
 							//aNear[0] индекс текущей вершины,
 							//aNear[1...4] индексы четырех вершин, которые ближе всего расположены к текущей вершине
 						aNear.push( [i] );
-//						aNear[0].iMax = 0;
+//						for ( var j = i + 1; j < points.length; j++ )
 						points.forEach( ( vertice2, j ) => {
 
+//							const vertice2 = points[j];
 							if ( i != j ) {
 
 								const distance = vertice1.distanceTo( vertice2 );
@@ -229,29 +245,51 @@ class FermatSpiral {
 										getMax();
 
 									}
-/*										
-									aNear.forEach( ( index, k ) => {
-
-										if ( k != 0 ) {
-
-											if ( distance < index.distance )
-												console.log('qqq')
-
-										}
-
-									} );
-*/									
 									
 								}
 
 							}
 
 						} );
+if ( i === ( points.length - 1 ) ) {
+	
+	var iMax = 0;
+	for ( var j = 1; j < aNear.length; j++ ) {
+
+		if ( iMax < aNear[j][0] ) iMax = aNear[j][0];
+		
+	}
+	console.log( 'i = ' + i + ' iMax = ' + iMax + ' ' + ( i - iMax ) );
+
+}
 						const i0 = aNear[0][0];
 						for ( var i = 1; i < aNear.length; i++ ) {
-							
+
+							const i1 = aNear[i][0];
+							var boDuplicate = false;
+							for ( var j = 0; j < indices.length; j += 2 ) {
+
+								if (
+										( ( indices[j] === i0 ) && ( indices[j + 1] === i1 ) ) ||
+										( ( indices[j] === i1 ) && ( indices[j + 1] === i0 ) )
+									) {
+									
+									boDuplicate = true;
+									break;
+
+								}
+								
+							}
+							if ( !boDuplicate ) {
+								
+								indices.push( i0 );
+								indices.push( i1 );
+
+							}
+/*
 							indices.push( i0 );
 							indices.push( aNear[i][0] );
+*/
 
 						}
 						
