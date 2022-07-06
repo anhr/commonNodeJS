@@ -54,7 +54,37 @@ class FermatSpiral {
 		this.indices;
 		Object.defineProperties( this, {
 
-			points: { get: function () { return points; } },
+			points: {
+
+				get: function () {
+
+//					return points;
+					return new Proxy( points, {
+
+						get: function ( target, name ) {
+
+							switch ( name ) {
+
+								case 'length':
+									return settings.count;//target.length;
+
+							}
+							const i = parseInt( name );
+							if ( isNaN( i ) ) {
+
+								console.error( 'FermatSpiral.points: invalid name: ' + name );
+								return;
+
+							}
+							return target[i];
+
+						},
+
+					} );
+
+				}
+
+			},
 			object: {
 
 				set: function ( objectNew ) {
@@ -190,21 +220,6 @@ class FermatSpiral {
 
 				get: function () {
 			
-					//График для последней точки спирали x ближайшая точка с максимальным индексом y
-					//https://www.kontrolnaya-rabota.ru/s/grafik/tochka/
-					//формула: y = 1.449378838441997 * Math.sqrt (x)
-					//x; y;
-					//0.0; 0.0
-					//1.0; 1.0
-					//5; 2
-					//7; 3
-					//17; 5
-					//38; 8
-					//95; 13
-					//234; 21
-					//583; 34
-					//1480; 55
-					//9871;144
 					if ( indices.length > 0 ) return indices;
 					points.forEach( ( vertice1, i ) => {
 
@@ -251,6 +266,7 @@ class FermatSpiral {
 							}
 
 						} );
+/*						
 if ( i === ( points.length - 1 ) ) {
 	
 	var iMax = 0;
@@ -262,6 +278,7 @@ if ( i === ( points.length - 1 ) ) {
 	console.log( 'i = ' + i + ' iMax = ' + iMax + ' ' + ( i - iMax ) );
 
 }
+*/
 						const i0 = aNear[0][0];
 						for ( var i = 1; i < aNear.length; i++ ) {
 
@@ -280,8 +297,8 @@ if ( i === ( points.length - 1 ) ) {
 								}
 								
 							}
-							if ( !boDuplicate ) {
-								
+							if ( !boDuplicate && ( i0 < settings.count ) && ( i1 < settings.count ) ) {
+
 								indices.push( i0 );
 								indices.push( i1 );
 
@@ -303,21 +320,6 @@ if ( i === ( points.length - 1 ) ) {
 		} );
 		settings.count = settings.count === undefined ? 500 : settings.count;
 		settings.center = settings.center || [0, 0];
-/*
-		settings.a = settings.a === undefined ? 1 : settings.a;
-		const maxAngle = Math.PI * 2, fiStep = maxAngle / settings.count;
-		for ( var i = 0; i < settings.count; i++ ) {
-
-			const fi = i * fiStep, sqrtFi = Math.sqrt( fi ), r = settings.a * sqrtFi;
-			points[i] = new THREE.Vector3(
-
-				settings.center[0] + r * Math.cos( fi ),
-				settings.center[1] + r * Math.sin( fi )
-
-			);;
-
-		}
-*/
 		settings.c = settings.c === undefined ? 0.04 : settings.c;//constant scaling factor
 		settings.center = settings.center || [0, 0];
 		const golden_angle = 137.508;//140.2554;
@@ -329,7 +331,31 @@ if ( i === ( points.length - 1 ) ) {
 			function describeFermatPoint( n ) { return polarToCartesian( radiusFermat( n ), angleFermat( n ) ); }
 			function createFermatPlot() {
 
-				const l = settings.count === undefined ? 500 : settings.count;
+//				settings.count = settings.count === undefined ? 500 : settings.count;
+
+				//График для последней точки спирали x ближайшая точка с максимальным индексом y
+				//https://www.kontrolnaya-rabota.ru/s/grafik/tochka/
+				//формула: y = 1.449378838441997 * Math.sqrt (x)
+				//x; y;
+				//0.0; 0.0
+				//1.0; 1.0
+				//5; 2
+				//7; 3
+				//17; 5
+				//38; 8
+				//95; 13
+				//234; 21
+				//583; 34
+				//1480; 55
+				//9871;144
+
+				//Точки спирали, находящиеся на краю спирали, иногда имеют лишние ребра, напраленные внутрь спирали.
+				//Это происходит потому, что нет ближайших точек, которые находятся за пределами спирали.
+				//Для решения проблемы увеличиваю количество точек спирали l больше settings.count для того что бы точки, расположенные на краю спирали имели ребра
+				//направленные к этим лишним точкам.
+				const l = settings.count + parseInt( 3.8/*2.5*//*1.449378838441997*/ * Math.sqrt( settings.count ) );
+				//3.8 выбрал что бы не было лишних ребер при settings.count = 3800
+
 				if ( points.length > 0 ) points.length = 0;
 				if ( indices.length > 0 ) indices.length = 0;
 				for ( var i = 0; i < l; i++ ) {
