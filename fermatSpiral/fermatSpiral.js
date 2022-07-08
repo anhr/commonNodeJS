@@ -65,8 +65,7 @@ class FermatSpiral {
 
 							switch ( name ) {
 
-								case 'length':
-									return settings.count;//target.length;
+								case 'length': return settings.count;//target.length;
 
 							}
 							const i = parseInt( name );
@@ -322,62 +321,154 @@ if ( i === ( points.length - 1 ) ) {
 		settings.center = settings.center || [0, 0];
 		settings.c = settings.c === undefined ? 0.04 : settings.c;//constant scaling factor
 		settings.center = settings.center || [0, 0];
-		const golden_angle = 137.508;//140.2554;
 		const _this = this;
 		function update() {
 
-			function angleFermat( n ) { return n * golden_angle; }
-			function radiusFermat( n ) { return settings.c * Math.sqrt( n ); }
-			function describeFermatPoint( n ) { return polarToCartesian( radiusFermat( n ), angleFermat( n ) ); }
-			function createFermatPlot() {
+			//График для последней точки спирали x ближайшая точка с максимальным индексом y
+			//https://www.kontrolnaya-rabota.ru/s/grafik/tochka/
+			//формула: y = 1.449378838441997 * Math.sqrt (x)
+			//x; y;
+			//0.0; 0.0
+			//1.0; 1.0
+			//5; 2
+			//7; 3
+			//17; 5
+			//38; 8
+			//95; 13
+			//234; 21
+			//583; 34
+			//1480; 55
+			//9871;144
 
-//				settings.count = settings.count === undefined ? 500 : settings.count;
+			//Точки спирали, находящиеся на краю спирали, иногда имеют лишние ребра, напраленные внутрь спирали.
+			//Это происходит потому, что нет ближайших точек, которые находятся за пределами спирали.
+			//Для решения проблемы увеличиваю количество точек спирали l больше settings.count для того что бы точки, расположенные на краю спирали имели ребра
+			//направленные к этим лишним точкам.
+			const l = settings.count + parseInt( 3.8 * Math.sqrt( settings.count ) );
+			//3.8 выбрал что бы не было лишних ребер при settings.count = 3800
 
-				//График для последней точки спирали x ближайшая точка с максимальным индексом y
-				//https://www.kontrolnaya-rabota.ru/s/grafik/tochka/
-				//формула: y = 1.449378838441997 * Math.sqrt (x)
-				//x; y;
-				//0.0; 0.0
-				//1.0; 1.0
-				//5; 2
-				//7; 3
-				//17; 5
-				//38; 8
-				//95; 13
-				//234; 21
-				//583; 34
-				//1480; 55
-				//9871;144
+			if ( points.length > 0 ) points.length = 0;
+			if ( indices.length > 0 ) indices.length = 0;
+//			const golden_angle = 137.508;//140.2554;
+//			const a = ( 137.508 - 90 ) * Math.PI / 180.0;
+			const a = 137.508 * Math.PI / 180.0, b = 90 * Math.PI / 180.0;
+			for ( var i = 0; i < l; i++ ) {
 
-				//Точки спирали, находящиеся на краю спирали, иногда имеют лишние ребра, напраленные внутрь спирали.
-				//Это происходит потому, что нет ближайших точек, которые находятся за пределами спирали.
-				//Для решения проблемы увеличиваю количество точек спирали l больше settings.count для того что бы точки, расположенные на краю спирали имели ребра
-				//направленные к этим лишним точкам.
-				const l = settings.count + parseInt( 3.8/*2.5*//*1.449378838441997*/ * Math.sqrt( settings.count ) );
-				//3.8 выбрал что бы не было лишних ребер при settings.count = 3800
-
-				if ( points.length > 0 ) points.length = 0;
-				if ( indices.length > 0 ) indices.length = 0;
-				for ( var i = 0; i < l; i++ ) {
-
-					points[i] = describeFermatPoint( i );
-
-				}
-
-			}
-			function polarToCartesian( radius, angleInDegrees ) {
-
-				const angleInRadians = ( angleInDegrees - 90 ) * Math.PI / 180.0;
-
-				return new THREE.Vector3(
+				const angleInRadians = i * a - b;
+				const radius = settings.c * Math.sqrt( i );
+/*
+				points[i] = new THREE.Vector3(
 
 					settings.center[0] + ( radius * Math.cos( angleInRadians ) ),
 					settings.center[1] + ( radius * Math.sin( angleInRadians ) )
 
 				);
+*/
+				class Vector {
+
+					constructor( array ) {
+
+						return new Proxy( array, {
+
+							get: function ( target, name ) {
+
+								switch ( name ) {
+
+									case 'x': return array[0];
+									case 'y': return array[1];
+									case 'z': return array[2];
+									case "distanceTo":
+										return function ( v ) {
+
+											var a = 0;
+											array.forEach( ( item, i ) => { const b = item - v[i]; a = a + b * b; } )
+											return Math.sqrt( a );
+
+										}
+//									case "length": return n + 1;
+//									case "array": return array;
+									/* *
+									* @description
+									* <pre>
+									* <b><a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>.point</b>.
+									* Projection of the <b>ND.Vector</b> object into 3D space.
+									* Returns <b>THREE.Vector3</b> object.
+									* Projection of 1-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], 0, 0 ) </b>.
+									* Projection of 2-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], 0 ) </b>.
+									* Projection of 3-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], vector[2] ) </b>.
+									* </pre>
+									* @See <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>
+									*/
+									case "point":
+										const THREE = three.THREE;
+										return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
+									/*
+									* Adds v to this vector.
+									*/
+/*
+									case "add":
+										return function ( v ) {
+
+											target.forEach( ( value, i ) => target[i] += v[i] );
+											return this;
+
+										}
+									case "index": return vectorSettings.index;
+									case "isVector": return true;
+*/
+
+								}
+								var i = parseInt( name );
+								if ( isNaN( i ) ) {
+
+									console.error( 'Vector.get: invalid name: ' + name );
+									return;
+
+								}
+/*								
+								if ( i >= n )
+									return 0;
+								if ( ( array.length > n ) && settings.object.geometry.iAxes && ( i < settings.object.geometry.iAxes.length ) )
+									i = settings.object.geometry.iAxes[i];
+*/
+								return array[i];
+
+							},
+							set: function ( target, name, value ) {
+
+								if ( name === "onChange" ) {
+
+									vectorSettings.onChange = value;
+									return vectorSettings.onChange;
+
+								}
+								const i = parseInt( name );
+								if ( i >= array.length ) {
+
+									array.push( value );
+									return array.length;
+
+								}
+								array[i] = value;
+								_ND.intersection();
+								if ( vectorSettings.onChange ) vectorSettings.onChange();
+								return true;
+
+							}
+
+						} );
+
+					}
+
+				} 
+				points[i] = new Vector ([
+
+					settings.center[0] + ( radius * Math.cos( angleInRadians ) ),
+					settings.center[1] + ( radius * Math.sin( angleInRadians ) )
+
+				] );
 
 			}
-			createFermatPlot();
 			if ( settings.object ) {
 	
 				if ( object ) {
@@ -388,6 +479,11 @@ if ( i === ( points.length - 1 ) ) {
 				} else {
 					
 					settings.object.color = settings.object.color || "green";
+/*					
+const geometry = new THREE.BufferGeometry().setFromPoints( _this.points );
+const edges = new THREE.EdgesGeometry( geometry );
+const mesh = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: settings.object.color } ) );
+*/
 					const mesh = new THREE.LineSegments(
 						new THREE.BufferGeometry().setFromPoints( _this.points ).setIndex( _this.indices ),
 						new THREE.LineBasicMaterial( { color: settings.object.color, } ) );
