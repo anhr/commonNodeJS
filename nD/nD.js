@@ -326,23 +326,29 @@ class ND {
 					},
 					set: function ( target, name, value ) {
 
-						if ( name === "onChange" ) {
-
-							vectorSettings.onChange = value;
-							return vectorSettings.onChange;
-
-						}
 						const i = parseInt( name );
-						if ( i >= array.length ) {
-
-							array.push( value );
-							return array.length;
-
+						if ( !isNaN( i ) ) {
+								
+							if ( i >= array.length ) {
+	
+								array.push( value );
+								return array.length;
+	
+							}
+							array[i] = value;
+							_ND.intersection();
+							if ( vectorSettings.onChange ) vectorSettings.onChange();
+							return true;
+							
 						}
-						array[i] = value;
-						_ND.intersection();
-						if ( vectorSettings.onChange ) vectorSettings.onChange();
-						return true;
+						switch ( name ) {
+	
+							case 'onChange':
+								vectorSettings.onChange = value;
+								return vectorSettings.onChange;
+							default: console.error( 'ND: Vector set. Invalid name: ' + name );
+	
+						}
 
 					}
 
@@ -1841,10 +1847,10 @@ class ND {
 						for ( var i = 0; i < edges.length; i++ ) {
 	
 							const edge = edges[i].indices;
-							if ( edge ) {
+							if ( edge !== undefined ) {
 								
 								if ( edge.length !== 2 ) {
-	
+
 									console.error( 'ND.geometry.D3.get indices: invalid edge.length = ' + edge.length );
 									return;
 	
