@@ -277,43 +277,43 @@ class ND {
 
 					get: function ( target, name ) {
 
-						switch ( name ) {
-
-							case "length": return n + 1;
-							case "array": return array;
-							/* *
-							* @description
-							* <pre>
-							* <b><a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>.point</b>.
-							* Projection of the <b>ND.Vector</b> object into 3D space.
-							* Returns <b>THREE.Vector3</b> object.
-							* Projection of 1-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], 0, 0 ) </b>.
-							* Projection of 2-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], 0 ) </b>.
-							* Projection of 3-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], vector[2] ) </b>.
-							* </pre>
-							* @See <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>
-							*/
-							case "point":
-								const THREE = three.THREE;
-								return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
-							/*
-							* Adds v to this vector.
-							*/
-							case "add":
-								return function ( v ) {
-
-									target.forEach( ( value, i ) => target[i] += v[i] );
-									return this;
-				
-								}
-							case "index": return vectorSettings.index;
-							case "isVector": return true;
-
-						}
 						var i = parseInt( name );
 						if ( isNaN( i ) ) {
 
-							console.error( 'Vector.get: invalid name: ' + name );
+							switch ( name ) {
+
+								case "length": return n + 1;
+								case "array": return array;
+								/* *
+								* @description
+								* <pre>
+								* <b><a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>.point</b>.
+								* Projection of the <b>ND.Vector</b> object into 3D space.
+								* Returns <b>THREE.Vector3</b> object.
+								* Projection of 1-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], 0, 0 ) </b>.
+								* Projection of 2-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], 0 ) </b>.
+								* Projection of 3-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], vector[2] ) </b>.
+								* </pre>
+								* @See <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>
+								*/
+								case "point":
+									const THREE = three.THREE;
+									return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
+								/*
+								* Adds v to this vector.
+								*/
+								case "add":
+									return function ( v ) {
+
+										target.forEach( ( value, i ) => target[i] += v[i] );
+										return this;
+
+									}
+								case "index": return vectorSettings.index;
+								case "isVector": return true;
+								default: console.error( 'ND: Vector get. Invalid name: ' + name );
+
+							}
 							return;
 
 						}
