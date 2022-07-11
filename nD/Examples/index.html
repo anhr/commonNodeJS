@@ -144,6 +144,7 @@
 								2D Object:
 								<input type="radio" name="2Dobject" value="triangle" id="triangle" checked><label for="triangle">Triangle</label>
 								<input type="radio" name="2Dobject" value="square" id="square"><label for="square">Square</label>.
+								<input type="radio" name="2Dobject" value="fermatSpiral" id="fermatSpiral"><label for="fermatSpiral">FermatSpiral</label>.
 							</li>
 						</ul>
 					</p>
@@ -205,6 +206,8 @@
 		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.js';
 		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
 		if ( ND.default ) ND = ND.default;
+
+		import FermatSpiral from '../../fermatSpiral/fermatSpiral.js';
 
 		const treeView = new MyThree.TreeView( { animate: true, paddingInlineStart: '10px', open: true, cookie: true, } );
 
@@ -295,22 +298,37 @@
 
 							if ( radio.value === object.name ) {
 
-								object.geometry.position.forEach( vertice => delete vertice.positionWorld );
 								nDObject.name = object.name;
-								nDObject.geometry.position = object.geometry.position;
-								nDObject.geometry.indices = object.geometry.indices;
 								nDObject.position = object.position || position;
 								nDObject.rotation = object.rotation || rotation;
+								if ( object.geometry ) {
+									
+									object.geometry.position.forEach( vertice => delete vertice.positionWorld );
+									nDObject.geometry.position = object.geometry.position;
+									nDObject.geometry.indices = object.geometry.indices;
+
+								} else if ( object.object ) {
+
+									const obj = object.object();
+									nDObject.geometry = obj.geometry;
+/*									
+									nDObject.geometry.position = obj.points;
+									nDObject.geometry.indices = [obj.indices];
+*/
+									
+								} else console.error( 'Invalid object: ' + object.name );
 								
 							}
 							
 						} );
+						if ( nDObject.geometry.position ) return true;
+						console.error( 'Unknown object: ' + radio.value );
+						return false;
 
 					}
 					radio.addEventListener( 'change', function () {
 
-						onChange();
-						aObjects.nD.object = nDObject;
+						if ( onChange() ) aObjects.nD.object = nDObject;
 						
 					} );
 
@@ -800,7 +818,33 @@
 
 							}
 
-						}] ),
+						},
+						{
+
+							name: 'fermatSpiral',
+							object: function () {
+
+								return new FermatSpiral( {
+
+									//count: 3800,
+									//c: 0.05,
+									/*
+									object: {
+						
+										scene: scene,
+										options: options,
+										//color: 'red',
+	
+									}
+									*/
+
+								} )
+
+							}
+
+						},
+
+					] ),
 
 
 					scene: scene,
@@ -829,7 +873,8 @@
 				//dat: false,
 				dat: { guiSelectPoint: { point: guiPoint, }, },
 				camera: options.camera,
-				orbitControls: false,
+				//orbitControls: false,
+				orbitControls: { enableRotate: false, },
 				stereoEffect: false,
 				//scales: { x: {} },
 				title: '2D',
