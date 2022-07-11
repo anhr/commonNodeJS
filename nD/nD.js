@@ -1815,8 +1815,6 @@ class ND {
 							settings.object.geometry.indices[0].edges.length = 0;
 							geometry.indices[0].forEach( edge => settings.object.geometry.indices[0].edges.push( edge.indices === undefined ? edge : edge.indices ) );
 							
-//							settings.object.geometry.indices[0].edges = geometry.indices[0];
-							
 						} else settings.object.geometry.indices[i] = geometry.indices[i];
 
 					}
@@ -1903,30 +1901,6 @@ class ND {
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
 
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
-/*
-		function displayVerticeID( object, geometry ) {
-			
-			if ( !settings.boDisplayVerticeID ) {
-				
-				for ( var i = object.children.length - 1; i >= 0; i-- ) {
-
-					const child = object.children[i];
-					if ( child.type === 'Sprite' ) object.remove( child );
-
-				}
-				return;
-
-			}
-			const points = geometry.D3.points;
-			for ( var i = 0; i < points.length; i++ ) {
-
-				const spriteText = new SpriteText( i, points[i], { group: object } );
-				spriteText.userData.pointID = i;
-
-			}
-			
-		}
-*/
 		function create3DObject( geometry, settings3D = {} ) {
 
 			if ( !geometry.D3 ) {
@@ -1959,8 +1933,6 @@ class ND {
 				object.name = settings3D.name;
 			scene.add( object );
 
-//			displayVerticeID( object, geometry );
-			
 			object.userData.nd = function ( fParent, dat ) {
 
 				//Localization
@@ -1992,10 +1964,6 @@ class ND {
 					defaultButton: 'Default',
 					defaultPositionTitle: 'Restore default position',
 					defaultRotationTitle: 'Restore default rotation',
-/*					
-					displayVerticeID: 'Vertice ID',
-					displayVerticeIDTitle: 'Display on the scene the vertice ID near to the vertice',
-*/
 
 					notSelected: 'Not selected',
 
@@ -2030,10 +1998,6 @@ class ND {
 						lang.defaultButton = 'Восстановить';
 						lang.defaultPositionTitle = 'Восстановить позицию объекта по умолчанию';
 						lang.defaultRotationTitle = 'Восстановить вращение объекта по умолчанию';
-/*
-						lang.displayVerticeID = 'Номера вершин';
-						lang.displayVerticeIDTitle = 'На сцене возле каждой вершины показать ее идентификатор';
-*/
 
 						lang.notSelected = 'Не выбран';
 
@@ -2052,16 +2016,6 @@ class ND {
 
 				}
 				for ( var i = fParent.__controllers.length - 1; i >= 0; i-- ) { fParent.remove( fParent.__controllers[i] ); }
-/*
-				settings.boDisplayVerticeID = settings.boDisplayVerticeID || false;
-				const cDisplayVerticeID = fParent.add( settings, 'boDisplayVerticeID' ).onChange( function ( value ) {
-					
-					update();
-					displayVerticeID( object, geometry );
-					
-				} );
-				dat.controllerNameAndTitle( cDisplayVerticeID, lang.displayVerticeID, lang.displayVerticeIDTitle );
-*/
 				
 				const indices = geometry.geometry.indices, segmentIndex = indices.length - 1;
 				function addController(
@@ -2856,7 +2810,6 @@ class ND {
 							break;
 						default: {
 
-//							console.error( 'ND.Plane.createMesh: invalid dimension = ' + n );
 							return;//I can not render 4D and higher panel
 
 						}
