@@ -38,7 +38,7 @@
 
 		new MyThree( function ( scene, options ) {
 
-//options.scales.z = undefined;
+			const color = "green";
 			const fermatSpiral = new FermatSpiral( {
 				
 				//count: 3800,
@@ -54,17 +54,19 @@
 				*/
 				
 			} );
-			const color = "green";
 			const mesh = new THREE.LineSegments(
 				new THREE.BufferGeometry().setFromPoints( fermatSpiral.points ).setIndex( fermatSpiral.indices ),
 				new THREE.LineBasicMaterial( { color: color, } ) );
-//			const mesh = new THREE.Line( new THREE.BufferGeometry().setFromPoints( fermatSpiral.vertices ), new THREE.LineBasicMaterial( { color: color } ) );
-//			const mesh = new THREE.Mesh( new MyThree.three.ConvexGeometry( fermatSpiral.vertices ), new THREE.MeshBasicMaterial( { color: color, wireframe: true } ) );
-//			mesh.type = FermatSpiral.objectType;
-			fermatSpiral.object = mesh;
+			//const mesh = new THREE.Line( new THREE.BufferGeometry().setFromPoints( fermatSpiral.points ), new THREE.LineBasicMaterial( { color: color } ) );
+//			const mesh = new THREE.Mesh( new MyThree.three.ConvexGeometry( fermatSpiral.points ), new THREE.MeshBasicMaterial( { color: color, wireframe: true } ) );
 			scene.add( mesh );
-			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( mesh );
-//			MyThree.MyPoints( fermatSpiral.vertices, scene, { options: options } );
+			if ( options.guiSelectPoint ) {
+
+				fermatSpiral.object = mesh;//Allow user to edit Fermat's spiral settings
+				options.guiSelectPoint.addMesh( mesh );
+
+			}
+			//MyThree.MyPoints( fermatSpiral.points, scene, { options: options } );
 
 		}, {
 

@@ -35,7 +35,7 @@ class FermatSpiral {
 	 */
 	constructor( settings = {} ) {
 
-		const points = [], indices = [], THREE = three.THREE;
+		const points = [], indices = [], THREE = three.THREE, geometry = { position: [], indices: [[]] };
 		var object;
 		/**
 		* @description
@@ -52,8 +52,98 @@ class FermatSpiral {
 		* Gets Fermat's spiral [BufferGeometry.index]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.index}.
 		*/
 		this.indices;
+		/**
+		* @description
+		* Under constraction
+		* returns Fermat's spiral geometry.
+		*/
+		this.geometry;
 		Object.defineProperties( this, {
 
+			geometry: {
+
+				get: function () {
+
+					geometry.position.length = 0;
+					for ( var i = 0; i < settings.count; i++ ) {
+
+						const point = points[i], axes = [];
+						point.forEach( axis => axes.push( axis ) )
+						geometry.position.push( axes );
+						
+					}
+					this.indices;//create edges
+
+					//create faces
+					//Каждая грань состоит из петли вершин.
+					//Если двигаться по этой петле, то обязательно попадешь на вершину, с которой начинается петля.
+					//Грань ищу путем поиска замкнутой петли из вершин.
+					//Все грани состоят максимум из 3 или 4 вершин за исключением граней в начале спирали.
+					//Если петля слишком длинная, значит это не грань
+					geometry.indices.push( [] );//faces array
+					var nStep = 0;//количестко вершин в петле
+					function loop( verticeStart, vertice ) {
+
+						if ( verticeStart.aNear[0][0] === vertice.aNear[0][0] ) return true;
+						if ( nStep > 4 ) return false;//петля слишком длинная
+						for ( var i = 1; i < vertice.aNear.length; i++ ) {
+
+							const verticeIndex = vertice.aNear[i];
+							const vertice2 = points[verticeIndex[0]];
+							if ( !loop( verticeStart, vertice2 ) ) break;
+							
+						}
+						nStep++;
+						return false;
+						
+					}
+					points.forEach( vertice => {
+
+						vertice.aNear.forEach( ( verticeIndex, j ) => {
+
+							if ( j !== 0 ) {
+								
+								const vertice2 = points[verticeIndex[0]];
+								loop( vertice, vertice2 );
+
+							}
+							
+						} );
+						
+					} );
+/*					
+					geometry.indices[0].forEach( ( edge, i ) => {
+						
+						var faceCount = 0;//каждое ребро должно принадлежать двум граням за исключением ребер на краю спирали
+						geometry.indices[1].forEach( ( face, j ) => {
+						
+							for ( var k = 0; k < face.length; k++ ) {
+						
+								const edgeIndex = face[k];
+								if ( edgeIndex === i ) continue;
+
+								const edgeFace = geometry.indices[0][edgeIndex];
+								if ( ( edgeFace[0] === edge[0] ) || ( edgeFace[1] === edge[1] ) || ( edgeFace[0] === edge[1] || ( edgeFace[1] === edge[0] ) ) ) {
+									
+									//два ребра имеют общую вершину. Значит новое ребро надо добавить в грань
+									face.push(i);
+									faceCount++;
+									break;
+									
+								}
+								
+							}
+							
+						} );
+						if ( faceCount === 0 ) geometry.indices[1].push([i]);//Ребро не встретилось ни в одной грани. Добавить новую грань с ребром с индексом i
+						
+					} );
+*/					
+					return geometry;
+
+				}
+
+			},
 			points: {
 
 				get: function () {
@@ -63,15 +153,22 @@ class FermatSpiral {
 
 						get: function ( target, name ) {
 
-							switch ( name ) {
-
-								case 'length': return settings.count;//target.length;
-
-							}
 							const i = parseInt( name );
 							if ( isNaN( i ) ) {
 
-								console.error( 'FermatSpiral.points: invalid name: ' + name );
+								switch ( name ) {
+	
+									case 'length': return settings.count;//target.length;
+									case 'forEach': return target.forEach;
+	
+									//for ND
+										
+									case 'isProxy': return true;
+									case "reset": return function () { target.forEach( item => delete item.positionWorld ); }
+										
+									default: console.error( 'FermatSpiral: points get. Invalid name: ' + name );
+	
+								}
 								return;
 
 							}
@@ -89,9 +186,13 @@ class FermatSpiral {
 				set: function ( objectNew ) {
 
 					object = objectNew;
+//					if ( !settings.object ) return;//немогу изменять настройки спирали если спираль не создана внутри settings.object
 					object.userData.fermatSpiral = function ( fParent, dat, options ) {
 
 						if ( fParent.__controllers.length !== 0 ) return;
+
+						settings.object = settings.object || {};
+						settings.object.options = options;
 
 						//Localization
 		
@@ -163,7 +264,16 @@ class FermatSpiral {
 							}
 						) );
 						
-						const cCount = dat.controllerZeroStep( fCount, settings, 'count', function ( value ) { update(); } );
+						function controllerUpdate() {
+
+							update();
+/*							
+							if ( settings.object ) update();
+							else console.error( 'FermatSpiral: update. Invalid settings.object' );
+*/
+						
+						}
+						const cCount = dat.controllerZeroStep( fCount, settings, 'count', function ( value ) { controllerUpdate(); } );
 						dat.controllerNameAndTitle( cCount, lang.count, lang.countTitle );
 
 						//constant scaling factor
@@ -185,7 +295,7 @@ class FermatSpiral {
 							}
 						) );
 
-						const cC = dat.controllerZeroStep( fC, settings, 'c', function ( value ) { update(); } );
+						const cC = dat.controllerZeroStep( fC, settings, 'c', function ( value ) { controllerUpdate(); } );
 						dat.controllerNameAndTitle( cC, lang.c, lang.cTitle );
 
 						//Restore Fermat's spiral.
@@ -222,94 +332,91 @@ class FermatSpiral {
 					if ( indices.length > 0 ) return indices;
 					points.forEach( ( vertice1, i ) => {
 
-						const aNear = [];//индексы четырех вершин, которые ближе всего расположены к текущей вершине
-							//aNear[0] индекс текущей вершины,
-							//aNear[1...4] индексы четырех вершин, которые ближе всего расположены к текущей вершине
-						aNear.push( [i] );
-//						for ( var j = i + 1; j < points.length; j++ )
+						vertice1.aNear = [];//индексы четырех вершин, которые ближе всего расположены к текущей вершине vertice1
+						//aNear[0] индекс текущей вершины,
+						//aNear[1...4] индексы четырех вершин, которые ближе всего расположены к текущей вершине
+						vertice1.aNear.push( [i] );
+						//						for ( var j = i + 1; j < points.length; j++ )
 						points.forEach( ( vertice2, j ) => {
 
-//							const vertice2 = points[j];
+							//							const vertice2 = points[j];
 							if ( i != j ) {
 
 								const distance = vertice1.distanceTo( vertice2 );
 								function getMax() {
 
-									for ( var iMax = 1; iMax < aNear.length; iMax++ ) {
+									for ( var iMax = 1; iMax < vertice1.aNear.length; iMax++ ) {
 
-										const item = aNear[iMax], maxItem = aNear[aNear[0].iMax];
-										if ( maxItem.distance < item.distance ) aNear[0].iMax = iMax;
+										const item = vertice1.aNear[iMax], maxItem = vertice1.aNear[vertice1.aNear[0].iMax];
+										if ( maxItem.distance < item.distance ) vertice1.aNear[0].iMax = iMax;
 
 									}
-									
-								}
-								if ( aNear.length < 5 ) {
 
-									const length = aNear.push( [j] );
-									aNear[length - 1].distance = distance;
-									if ( aNear[0].iMax === undefined ) aNear[0].iMax = length - 1;
+								}
+								if ( vertice1.aNear.length < 7 ) {
+
+									const length = vertice1.aNear.push( [j] );
+									vertice1.aNear[length - 1].distance = distance;
+									if ( vertice1.aNear[0].iMax === undefined ) vertice1.aNear[0].iMax = length - 1;
 									getMax();
 
 								} else {
 
-									if ( aNear[aNear[0].iMax].distance > distance ) {
-										
-										aNear[aNear[0].iMax] = [j];
-										aNear[aNear[0].iMax].distance = distance;
+									if ( vertice1.aNear[vertice1.aNear[0].iMax].distance > distance ) {
+
+										vertice1.aNear[vertice1.aNear[0].iMax] = [j];
+										vertice1.aNear[vertice1.aNear[0].iMax].distance = distance;
 										getMax();
 
 									}
-									
+
 								}
 
 							}
 
 						} );
-/*						
-if ( i === ( points.length - 1 ) ) {
-	
-	var iMax = 0;
-	for ( var j = 1; j < aNear.length; j++ ) {
+						/*						
+						if ( i === ( points.length - 1 ) ) {
+							
+							var iMax = 0;
+							for ( var j = 1; j < vertice1.aNear.length; j++ ) {
+						
+								if ( iMax < vertice1.aNear[j][0] ) iMax = vertice1.aNear[j][0];
+								
+							}
+							console.log( 'i = ' + i + ' iMax = ' + iMax + ' ' + ( i - iMax ) );
+						
+						}
+						*/
+						const i0 = vertice1.aNear[0][0];
+						for ( var i = 1; i < vertice1.aNear.length; i++ ) {
 
-		if ( iMax < aNear[j][0] ) iMax = aNear[j][0];
-		
-	}
-	console.log( 'i = ' + i + ' iMax = ' + iMax + ' ' + ( i - iMax ) );
-
-}
-*/
-						const i0 = aNear[0][0];
-						for ( var i = 1; i < aNear.length; i++ ) {
-
-							const i1 = aNear[i][0];
+							const i1 = vertice1.aNear[i][0];
 							var boDuplicate = false;
 							for ( var j = 0; j < indices.length; j += 2 ) {
 
 								if (
-										( ( indices[j] === i0 ) && ( indices[j + 1] === i1 ) ) ||
-										( ( indices[j] === i1 ) && ( indices[j + 1] === i0 ) )
-									) {
-									
+									( ( indices[j] === i0 ) && ( indices[j + 1] === i1 ) ) ||
+									( ( indices[j] === i1 ) && ( indices[j + 1] === i0 ) )
+								) {
+
 									boDuplicate = true;
 									break;
 
 								}
-								
+
 							}
 							if ( !boDuplicate && ( i0 < settings.count ) && ( i1 < settings.count ) ) {
 
 								indices.push( i0 );
 								indices.push( i1 );
+								geometry.indices[0].push( [i0, i1] );
 
 							}
-/*
-							indices.push( i0 );
-							indices.push( aNear[i][0] );
-*/
 
 						}
-						
-					} )
+
+					} );
 					return indices;
 			
 				}
@@ -347,11 +454,10 @@ if ( i === ( points.length - 1 ) ) {
 			const l = settings.count + parseInt( 3.8 * Math.sqrt( settings.count ) );
 			//3.8 выбрал что бы не было лишних ребер при settings.count = 3800
 
-			if ( points.length > 0 ) points.length = 0;
-			if ( indices.length > 0 ) indices.length = 0;
-//			const golden_angle = 137.508;//140.2554;
-//			const a = ( 137.508 - 90 ) * Math.PI / 180.0;
-			const a = 137.508 * Math.PI / 180.0, b = 90 * Math.PI / 180.0;
+			points.length = 0;
+			indices.length = 0;
+			const golden_angle = 137.5077640500378546463487,//137.508;//https://en.wikipedia.org/wiki/Golden_angle
+				a = golden_angle * Math.PI / 180.0, b = 90 * Math.PI / 180.0;
 			for ( var i = 0; i < l; i++ ) {
 
 				const angleInRadians = i * a - b;
@@ -372,62 +478,68 @@ if ( i === ( points.length - 1 ) ) {
 
 							get: function ( target, name ) {
 
-								switch ( name ) {
-
-									case 'x': return array[0];
-									case 'y': return array[1];
-									case 'z': return array[2];
-									case "distanceTo":
-										return function ( v ) {
-
-											var a = 0;
-											array.forEach( ( item, i ) => { const b = item - v[i]; a = a + b * b; } )
-											return Math.sqrt( a );
-
-										}
-//									case "length": return n + 1;
-//									case "array": return array;
-									/* *
-									* @description
-									* <pre>
-									* <b><a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>.point</b>.
-									* Projection of the <b>ND.Vector</b> object into 3D space.
-									* Returns <b>THREE.Vector3</b> object.
-									* Projection of 1-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], 0, 0 ) </b>.
-									* Projection of 2-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], 0 ) </b>.
-									* Projection of 3-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], vector[2] ) </b>.
-									* </pre>
-									* @See <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>
-									*/
-									case "point":
-										const THREE = three.THREE;
-										return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
-									/*
-									* Adds v to this vector.
-									*/
-/*
-									case "add":
-										return function ( v ) {
-
-											target.forEach( ( value, i ) => target[i] += v[i] );
-											return this;
-
-										}
-									case "index": return vectorSettings.index;
-									case "isVector": return true;
-*/
-
-								}
 								var i = parseInt( name );
 								if ( isNaN( i ) ) {
 
-									console.error( 'Vector.get: invalid name: ' + name );
-									return;
+									switch ( name ) {
+
+										case 'x': return array[0];
+										case 'y': return array[1];
+										case 'z': return array[2];
+										case "distanceTo":
+											return function ( v ) {
+
+												var a = 0;
+												array.forEach( ( item, i ) => { const b = item - v[i]; a = a + b * b; } )
+												return Math.sqrt( a );
+
+											}
+										case "getComponent":
+											return function	( index ) {
+
+												switch ( index ) {
+										
+													case 0: return this.x;
+													case 1: return this.y;
+													case 2: return this.z;
+													default: console.error( 'FermatSpiral: Vector.getComponent(index) index is out of range: ' + index );
+										
+												}
+										
+											}
+										case 'forEach': return target.forEach;
+										case "length": return target.length;
+										//									case "array": return array;
+										/* *
+										* @description
+										* <pre>
+										* <b><a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>.point</b>.
+										* Projection of the <b>ND.Vector</b> object into 3D space.
+										* Returns <b>THREE.Vector3</b> object.
+										* Projection of 1-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], 0, 0 ) </b>.
+										* Projection of 2-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], 0 ) </b>.
+										* Projection of 3-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], vector[2] ) </b>.
+										* </pre>
+										* @See <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>
+										*/
+										case "point":
+											const THREE = three.THREE;
+											return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
+										case "aNear": return this.aNear;
+
+										default: console.error( 'FermatSpiral: Vector get. Invalid name: ' + name );
+
+									}
+
+								}
+								if ( i >= array.length ) {
+
+									//сюда попадает когда спираль создаю из MyThree.MyPoints
+									//console.error( 'FermatSpiral: Vector get. Invalid i = ' + i );
+									return 0;
 
 								}
 /*								
-								if ( i >= n )
-									return 0;
 								if ( ( array.length > n ) && settings.object.geometry.iAxes && ( i < settings.object.geometry.iAxes.length ) )
 									i = settings.object.geometry.iAxes[i];
 */
@@ -436,22 +548,33 @@ if ( i === ( points.length - 1 ) ) {
 							},
 							set: function ( target, name, value ) {
 
-								if ( name === "onChange" ) {
-
-									vectorSettings.onChange = value;
-									return vectorSettings.onChange;
-
-								}
 								const i = parseInt( name );
-								if ( i >= array.length ) {
+								if ( !isNaN( i ) ) {
+									
+									if ( i >= array.length ) {
 
-									array.push( value );
-									return array.length;
-
+										console.error( 'FermatSpiral: Vector set. Invalid i = ' + i );
+//										array.push( value );
+										return array.length;
+	
+									}
+									array[i] = value;
+									return true;
+									
 								}
-								array[i] = value;
-								_ND.intersection();
-								if ( vectorSettings.onChange ) vectorSettings.onChange();
+								switch ( name ) {
+
+									case 'aNear': 
+										this[name] = value;
+										break;
+/*										
+									case 'onChange':
+										vectorSettings.onChange = value;
+										return vectorSettings.onChange;
+*/
+									default: console.error( 'FermatSpiral: Vector set. Invalid name: ' + name );
+			
+								}
 								return true;
 
 							}
@@ -469,33 +592,33 @@ if ( i === ( points.length - 1 ) ) {
 				] );
 
 			}
-			if ( settings.object ) {
+			
 	
-				if ( object ) {
+			if ( object ) {
 					
-					object.geometry.setFromPoints( _this.points ).setIndex( _this.indices );//object.parent.remove( object );
-					if ( settings.object.options && settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.updatePoints();
+				object.geometry.setFromPoints( _this.points ).setIndex( _this.indices );//object.parent.remove( object );
+				if ( settings.object.options && settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.updatePoints();
 					
-				} else {
+			} else {
 					
-					settings.object.color = settings.object.color || "green";
-/*					
-const geometry = new THREE.BufferGeometry().setFromPoints( _this.points );
-const edges = new THREE.EdgesGeometry( geometry );
-const mesh = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: settings.object.color } ) );
-*/
-					const mesh = new THREE.LineSegments(
-						new THREE.BufferGeometry().setFromPoints( _this.points ).setIndex( _this.indices ),
-						new THREE.LineBasicMaterial( { color: settings.object.color, } ) );
-		
-		//			const mesh = new THREE.Line( new THREE.BufferGeometry().setFromPoints( _this.vertices ), new THREE.LineBasicMaterial( { color: color } ) );
-		//			const mesh = new THREE.Mesh( new MyThree.three.ConvexGeometry( _this.vertices ), new THREE.MeshBasicMaterial( { color: color, wireframe: true } ) );
-					settings.object.scene.add( mesh );
-					if ( settings.object.options && settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.addMesh( mesh );
+				if ( settings.object ) {
+
+					var mesh;
+					if ( typeof settings.object === "function" ) mesh = settings.object( _this );
+					else {
+
+						settings.object.color = settings.object.color || "green";
+						mesh = new THREE.LineSegments(
+							new THREE.BufferGeometry().setFromPoints( _this.points ).setIndex( _this.indices ),
+							new THREE.LineBasicMaterial( { color: settings.object.color, } ) );
+						settings.object.scene.add( mesh );
+						if ( settings.object.options && settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.addMesh( mesh );
+
+					}
 					_this.object = mesh;
 
 				}
-				
+
 			}
 
 		}
