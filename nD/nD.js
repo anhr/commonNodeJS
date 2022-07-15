@@ -22,8 +22,9 @@ import three from '../three.js'
 import Options from '../Options.js'
 
 import PositionController from '../PositionController.js';
-import { SpriteText } from '../SpriteText/SpriteText.js'
+//import { SpriteText } from '../SpriteText/SpriteText.js'
 import MyMath from '../myMath/myMath.js'
+import GuiIndices from '../guiIndices.js';
 
 /**
 dimention	geometry	points	edges	faces	bodyes	4D objects
@@ -982,7 +983,9 @@ class ND {
 			
 		} );
 
-		var _prevLine;
+		//делаю как объект для совместимости с GuiIndices потому что в javascript нельзя передовать ссылки на переменные
+		//https://stackoverflow.com/questions/7744611/pass-variables-by-reference-in-javascript
+		const _prevLine = {};
 
 		function proxyGeometryPosition() {
 
@@ -1040,8 +1043,12 @@ class ND {
 									if ( !isNaN( i ) ) {
 
 										target.positionWorld = undefined;
-										_prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
-										_prevLine.geometry.attributes.position.needsUpdate = true;
+										if ( _prevLine.prevLine ) {
+											
+											_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
+											_prevLine.prevLine.geometry.attributes.position.needsUpdate = true;
+
+										}
 										update();//изменилась позиция вершины
 
 									}
@@ -1935,6 +1942,7 @@ class ND {
 
 			object.userData.nd = function ( fParent, dat ) {
 
+
 				//Localization
 
 				const getLanguageCode = options.getLanguageCode;
@@ -2025,7 +2033,7 @@ class ND {
 					prevLine//выбранный пользователем сегмент объекта на более высоком уровне. Например если пользователь выбрал ребро то prevLine указывает на выбранную пользователем грань
 				) {
 
-					_prevLine = prevLine;
+					_prevLine.prevLine = prevLine;
 					var segment;
 					if ( segmentItems ) {
 
@@ -2039,7 +2047,11 @@ class ND {
 						if ( segmentIndex === -1 ) {
 
 							//vertices
-							
+							//непонятно почему, но для 2D вершины перечислены в segmentItems.indices
+							if ( segmentItems.forEach )
+								segmentItems.forEach( i => addItem( geometry.geometry.position[i], i ) );
+							else segmentItems.indices.forEach( i => addItem( geometry.geometry.position[i], i ) );
+/*							
 							settings.object.geometry.position.boPositionError = false;
 							
 							//непонятно почему, но для 2D вершины перечислены в segmentItems.indices
@@ -2048,6 +2060,7 @@ class ND {
 							else segmentItems.indices.forEach( i => addItem( settings.object.geometry.position[i], i ) );
 							
 							settings.object.geometry.position.boPositionError = true;
+*/
 							
 						} else {
 							
@@ -2167,9 +2180,17 @@ class ND {
 
 							//Vertices
 							removeVerticeControls();
+
+							//если так сделать, то при выборе объекта пересечения почемуто исчезают _prevLine.prevLine и object3D
+							//и как результат появляется ошибка когда пользователь изменяет положение вершины
+//							const vertice = geometry.geometry.position[segment[selectedIndex].i];
+
+							const vertice = settings.object.geometry.position[segment[selectedIndex].i];
+/*							
 							settings.object.geometry.position.boPositionError = false;
 							const vertice = settings.object.geometry.position[segment[selectedIndex].i];
 							settings.object.geometry.position.boPositionError = true;
+*/
 							for ( var i = 0; i < vertice.length; i++ ) {
 								
 								switch(i){
@@ -2241,16 +2262,27 @@ class ND {
 				childFolders.forEach( folderName => {
 
 					const childFolder = fParent.__folders[folderName];
-					if ( childFolder.userData && childFolder.userData.objectItems ) {
+					var controller;
+					if ( childFolder.userData && childFolder.userData.objectItems ) controller = childFolder.__controllers[0];
+					else if ( folderName === 'indices' ) {
 						
-						const controller = childFolder.__controllers[0];
-						if ( controller && controller.__select.selectedIndex != 0 ) {
-							
-							controller.__select.selectedIndex = 0;
-							controller.__onChange();
+						//ищем controller в GuiIndices
+						Object.keys( childFolder.__folders ).forEach( folderName => {
 
-						}
+							if ( !controller ) {
+
+								const folder = childFolder.__folders[folderName];
+								if ( folder.userData && folder.userData.objectItems ) controller = folder.__controllers[0];
+
+							}
+						});
+
+					}
+					if ( controller && controller.__select.selectedIndex != 0 ) {
 						
+						controller.__select.selectedIndex = 0;
+						controller.__onChange();
+
 					}
 					fParent.removeFolder( childFolder );
 					
@@ -2332,6 +2364,8 @@ class ND {
 				}
 				
 				addController( segmentIndex, fParent );
+				
+				new GuiIndices( geometry, fParent, dat, options, object, { settings: settings, prevLine: _prevLine } );
 			
 			}
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
