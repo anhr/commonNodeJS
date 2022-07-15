@@ -143,7 +143,7 @@ var toConsumableArray = function (arr) {
 /**
  * three class for [THREE]{@link https://github.com/anhr/three.js} and [dat.GUI(...)]{@link https://github.com/anhr/dat.gui} variables.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -2313,7 +2313,7 @@ var WEBGL = {
 
 /**
 * node.js version of the synchronous download of the file.
-* @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+* @author [Andrej Hristoliubov]{@link https://github.com/anhr}
 *
 * @copyright 2011 Data Arts Team, Google Creative Lab
 *
@@ -2499,7 +2499,7 @@ function sync(url, options) {
 
 /**
  * node.js version of the load JavaScript file
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * Thanks to:
  *http://javascript.ru/forum/events/21439-dinamicheskaya-zagruzka-skriptov.html
@@ -2645,7 +2645,7 @@ var loadScript = {
 /**
  * @module ColorPicker
  * @description Pure JavaScript color picker.
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * Thanks to https://github.com/DavidDurman/FlexiColorPicker
  *
@@ -3024,7 +3024,7 @@ var ColorPicker$1 = ColorPicker;
  * Cookies let you store user information in web pages.
  * @see {@link https://www.w3schools.com/js/js_cookies.asp}
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -3096,7 +3096,7 @@ function defaultCookie(name) {
 /**
 * node.js version of the cookie.
 *
-* @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+* @author [Andrej Hristoliubov]{@link https://github.com/anhr}
 *
 * @copyright 2011 Data Arts Team, Google Creative Lab
 *
@@ -3118,7 +3118,7 @@ var cookie = {
 /**
  * @module Localization.
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -5605,7 +5605,7 @@ var controllers = {
 /**
 * custom controller, allow to user to change a value step by step.
 *
-* @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+* @author [Andrej Hristoliubov]{@link https://github.com/anhr}
 *
 * @copyright 2011 Data Arts Team, Google Creative Lab
 *
@@ -5656,7 +5656,7 @@ var UpDownController = {
  * @see {@link https://threejs.org/} about threejs
  * @see {@link https://github.com/dataarts/dat.gui} about dat.GUI
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -5742,7 +5742,7 @@ var ScaleController = function (_controllers$CustomCo) {
  * @see {@link https://threejs.org/} about threejs
  * @see {@link https://github.com/dataarts/dat.gui} about dat.GUI
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -5753,69 +5753,69 @@ var ScaleController = function (_controllers$CustomCo) {
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 var PositionController = function (_controllers$CustomCo) {
-				inherits(PositionController, _controllers$CustomCo);
-				function PositionController(onclickController, options) {
-								classCallCheck(this, PositionController);
-								options = options || {};
-								options.settings = options.settings || {};
-								var settings = options.settings;
-								options.min = options.min || 0.1;
-								options.max = options.max || 10;
-								settings.offset = settings.offset || 0.1;
-								options.step = options.step || 0.1;
-								var _this = possibleConstructorReturn(this, (PositionController.__proto__ || Object.getPrototypeOf(PositionController)).call(this, {
-												offset: settings.offset,
-												property: function property(customController) {
-																var lang = {
-																				offset: 'Offset',
-																				add: 'add',
-																				subtract: 'subtract',
-																				wheelPosition: 'Scroll the mouse wheel to change the position'
-																};
-																var _languageCode = options.getLanguageCode === undefined ? 'en'
-																: options.getLanguageCode();
-																switch (_languageCode) {
-																				case 'ru':
-																								lang.offset = 'Сдвиг';
-																								lang.add = 'добавить';
-																								lang.subtract = 'вычесть';
-																								lang.wheelPosition = 'Прокрутите колесико мыши для изменения позиции';
-																								break;
-																				default:
-																								if (options.lang === undefined || options.lang.languageCode != _languageCode) break;
-																								Object.keys(options.lang).forEach(function (key) {
-																												if (lang[key] === undefined) return;
-																												lang[key] = options.lang[key];
-																								});
-																}
-																var buttons = {},
-																    addButton = UpDownController.addButton;
-																buttons.Label = addButton(lang.offset, {
-																				title: lang.wheelPosition,
-																				onwheel: function onwheel(delta) {
-																								var shift = customController.controller.getValue();
-																								onclickController(delta > 0 ? shift : -shift);
-																				}
-																});
-																buttons.in = addButton('↑', {
-																				title: lang.add,
-																				onclick: function onclick() {
-																								onclickController(customController.controller.getValue());
-																				}
-																});
-																buttons.out = addButton('↓', {
-																				title: lang.subtract,
-																				onclick: function onclick() {
-																								onclickController(-customController.controller.getValue());
-																				}
-																});
-																return buttons;
-												}
-								}, 'offset', options.min, options.max, options.step));
-								if (_this.property === undefined) console.error('init() returns ' + _this.property);
-								return _this;
+	inherits(PositionController, _controllers$CustomCo);
+	function PositionController(onclickController, options) {
+		classCallCheck(this, PositionController);
+		options = options || {};
+		options.settings = options.settings || {};
+		var settings = options.settings;
+		if (options.min === undefined) options.min = 0.1;
+		if (options.max === undefined) options.max = 10;
+		if (settings.offset === undefined) settings.offset = 0.1;
+		if (options.step === undefined) options.step = 0.1;
+		var _this = possibleConstructorReturn(this, (PositionController.__proto__ || Object.getPrototypeOf(PositionController)).call(this, {
+			offset: settings.offset,
+			property: function property(customController) {
+				var lang = {
+					offset: 'Offset',
+					add: 'add',
+					subtract: 'subtract',
+					wheelPosition: 'Scroll the mouse wheel to change the position'
+				};
+				var _languageCode = options.getLanguageCode === undefined ? 'en'
+				: options.getLanguageCode();
+				switch (_languageCode) {
+					case 'ru':
+						lang.offset = 'Сдвиг';
+						lang.add = 'добавить';
+						lang.subtract = 'вычесть';
+						lang.wheelPosition = 'Прокрутите колесико мыши для изменения позиции';
+						break;
+					default:
+						if (options.lang === undefined || options.lang.languageCode != _languageCode) break;
+						Object.keys(options.lang).forEach(function (key) {
+							if (lang[key] === undefined) return;
+							lang[key] = options.lang[key];
+						});
 				}
-				return PositionController;
+				var buttons = {},
+				    addButton = UpDownController.addButton;
+				buttons.Label = addButton(lang.offset, {
+					title: lang.wheelPosition,
+					onwheel: function onwheel(delta) {
+						var shift = customController.controller.getValue();
+						onclickController(delta > 0 ? shift : -shift);
+					}
+				});
+				buttons.in = addButton('↑', {
+					title: lang.add,
+					onclick: function onclick() {
+						onclickController(customController.controller.getValue());
+					}
+				});
+				buttons.out = addButton('↓', {
+					title: lang.subtract,
+					onclick: function onclick() {
+						onclickController(-customController.controller.getValue());
+					}
+				});
+				return buttons;
+			}
+		}, 'offset', options.min, options.max, options.step));
+		if (_this.property === undefined) console.error('init() returns ' + _this.property);
+		return _this;
+	}
+	return PositionController;
 }(controllers.CustomController);
 
 function ___$insertStyle$1(css) {
@@ -8272,7 +8272,7 @@ var controllers$1 = {
 /**
  * get position functions library
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -8320,7 +8320,7 @@ function getObjectPosition(object, index) {
 /**
  * View and edit some parameters on the web page.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  * Thanks to https://stackoverflow.com/a/11900218/5175935
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
@@ -8422,7 +8422,7 @@ function createController(settings, controllerId, name, options) {
 /**
  * @module Player
  * @description 3D objects animation.
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
  * @license under the Apache License, Version 2.0 (the "License");
@@ -9937,7 +9937,7 @@ Player$1.assign = function () {
  * @module CreateFullScreenSettings
  * @description creates functions for resize of the canvas to fullscreen and restore to default size.
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -10037,7 +10037,7 @@ CreateFullScreenSettings.RendererSetSize = function (renderer, canvasMenu) {
  * @description A sprite based text component. Text that always faces towards the camera.
  * @see {@link https://threejs.org/docs/index.html#api/en/objects/Sprite|THREE.Sprite}
  *
- * @author Andrej Hristoliubov. {@link https://anhr.github.io/AboutMe/|AboutMe}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -10192,7 +10192,7 @@ SpriteText.updateSpriteTextGroup = function (group) {
  * @description Uses dual PerspectiveCameras for Parallax Barrier effects.
  * @see About {@link https://en.wikipedia.org/wiki/Parallax_barrier|Parallax barrier}.
  *
- * @author {@link https://anhr.github.io/AboutMe/|Andrej Hristoliubov}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  * @author {@link http://alteredqualia.com/|alteredq}
  * @author {@link http://mrdoob.com/|mrdoob}
  * @author {@link http://aleksandarrodic.com/|arodic}
@@ -10674,7 +10674,7 @@ StereoEffect.getTextIntersection = function (intersection, options) {
 /**
  * options of the canvas
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -10723,7 +10723,9 @@ function Options(options) {
 			};
 			this.createOrbitControls = function (camera, renderer, scene) {
 						if (options.orbitControls === false) return;
+						var settings = options.orbitControls || {};
 						_this.orbitControls = new three$1.OrbitControls(camera, renderer.domElement);
+						if (settings.enableRotate !== undefined) _this.orbitControls.enableRotate = settings.enableRotate;
 						_this.orbitControls.target.set(scene.position.x * 2, scene.position.y * 2, scene.position.z * 2);
 						_this.orbitControls.saveState();
 						_this.orbitControls.update();
@@ -11014,6 +11016,7 @@ function Options(options) {
 																								},
 																								set: function set$$1(name) {
 																											scale.name = name;
+																											if (options.guiSelectPoint) options.guiSelectPoint.setAxisName(axisName, name);
 																								}
 																					},
 																					marks: {
@@ -11631,7 +11634,7 @@ Options.raycaster = new Raycaster();
 * @module Matrix
 * @description A matrix (plural matrices) is a rectangular array or table of numbers, arranged in rows and columns, which is used to represent a mathematical object or a property of such an object.
 * @see [Matrix (mathematics)]{@link https://en.wikipedia.org/wiki/Matrix_(mathematics)}
-* @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+* @author [Andrej Hristoliubov]{@link https://github.com/anhr}
 *
 * @copyright 2011 Data Arts Team, Google Creative Lab
 *
@@ -11720,7 +11723,7 @@ var Matrix2 = new Proxy([], {
 /**
  * @module MyMath
  * @description Math library.
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -11734,9 +11737,241 @@ var Matrix2 = new Proxy([], {
 var MyMath = { Matrix: Matrix };
 
 /**
+ * @module GuiIndices
+ * @description A dat.gui based graphical user interface for selecting geometry indexes of N-dimensional graphic objects.
+ *
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+*/
+var GuiIndices =
+function GuiIndices(geometry, fParent, dat, options, object) {
+	var settings = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : {};
+	classCallCheck(this, GuiIndices);
+	var scene = object.parent;
+	fParent = fParent.addFolder('indices');
+	var THREE = three$1.THREE;
+	var getLanguageCode = options.getLanguageCode;
+	var lang = {
+		indices: 'Indices',
+		indicesTitle: 'Vertices indices',
+		vertices: 'Vertices',
+		verticesTitle: 'Vertices.',
+		edges: 'Edges',
+		edgesTitle: 'The selected edge lists the vertex indices of the edge.',
+		faces: 'Faces',
+		facesTitle: 'The selected face lists the indexes of the edges of that face.',
+		bodies: 'Bodies',
+		bodiesTitle: 'The selected body lists the indexes of the faces of this body.',
+		objects: 'Objects',
+		objectsTitle: 'The selected object lists the indexes of the objects that this object consists of. It can be indexes of bodies.',
+		defaultButton: 'Default',
+		defaultPositionTitle: 'Restore default position',
+		defaultRotationTitle: 'Restore default rotation',
+		notSelected: 'Not selected'
+	};
+	var _languageCode = getLanguageCode();
+	switch (_languageCode) {
+		case 'ru':
+			lang.indices = 'Индексы';
+			lang.indicesTitle = 'Индексы вершин';
+			lang.vertices = 'Вершины';
+			lang.verticesTitle = 'Вершины.';
+			lang.edges = 'Ребра';
+			lang.edgesTitle = 'В выбранном ребре перечислены индексы вершин ребра.';
+			lang.faces = 'Грани';
+			lang.facesTitle = 'В выбранной грани перечислены индексы ребер этой грани.';
+			lang.bodies = 'Тела';
+			lang.bodiesTitle = 'В выбранном теле перечислены индексы граней этого тела.';
+			lang.objects = 'Объекты';
+			lang.objectsTitle = 'В выбранном объекте перечислены индексы объектов, из которого состоит этот объект. Это могут быть индексы тел.';
+			lang.notSelected = 'Не выбран';
+			break;
+		default:
+			if (guiParams.lang === undefined || guiParams.lang.languageCode != _languageCode) break;
+			Object.keys(guiParams.lang).forEach(function (key) {
+				if (lang[key] === undefined) return;
+				lang[key] = guiParams.lang[key];
+			});
+	}
+	dat.folderNameAndTitle(fParent, lang.indices, lang.indicesTitle);
+	var indices = geometry.geometry.indices,
+	    segmentIndex = indices.length - 1;
+	function addController(segmentIndex,
+	fParent, segmentItems,
+	prevLine
+	) {
+		if (settings.prevLine) settings.prevLine.prevLine = prevLine;
+		var segment;
+		if (segmentItems) {
+			var addItem = function addItem(item, i) {
+				item.i = i;
+				segment.push(item);
+			};
+			segment = [];
+			if (segmentIndex === -1) {
+				if (segmentItems.forEach) segmentItems.forEach(function (i) {
+					return addItem(geometry.geometry.position[i], i);
+				});else segmentItems.indices.forEach(function (i) {
+					return addItem(geometry.geometry.position[i], i);
+				});
+			} else {
+				var index = indices[segmentIndex];
+				segmentItems.forEach(function (i) {
+					return addItem(index[i].indices ? index[i].indices : index[i], i);
+				});
+			}
+		} else segment = indices[segmentIndex];
+		var items = { Items: [lang.notSelected] };
+		var line, fChildSegment;
+		var name, title;
+		switch (segmentIndex) {
+			case -1:
+				name = lang.vertices;title = lang.verticesTitle;break;
+			case 0:
+				name = lang.edges;title = lang.edgesTitle;break;
+			case 1:
+				name = lang.faces;title = lang.facesTitle;break;
+			case 2:
+				name = lang.bodies;title = lang.bodiesTitle;break;
+			default:
+				name = lang.objects;title = lang.objectsTitle;
+		}
+		var fSegment = fParent.addFolder(name);
+		fSegment.userData = { objectItems: true };
+		dat.folderNameAndTitle(fSegment, name, title);
+		var cSegment = fSegment.add(items, 'Items', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
+			if (fChildSegment) {
+				var controller = fChildSegment.__controllers[0];
+				if (controller.__select.selectedIndex != 0) {
+					controller.__select.selectedIndex = 0;
+					controller.__onChange();
+				}
+				fSegment.removeFolder(fChildSegment);
+				fChildSegment = undefined;
+			}
+			var selectedIndex = cSegment.__select.selectedIndex - 1;
+			if (line) {
+				line.parent.remove(line);
+				line = undefined;
+			}
+			var opacityDefault = 0.3,
+			    parentObject = object;
+			function opacityItem(item, transparent) {
+				var opacity = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : opacityDefault;
+				if (!item.material) return;
+				if (transparent && opacity === 0 && Object.is(item.parent, parentObject)) parentObject.remove(item);else {
+					if (!item.parent) parentObject.add(item);
+					item.material.transparent = transparent;
+					item.material.opacity = transparent ? opacity : 1;
+				}
+			}
+			function opacity() {
+				var transparent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+				var opacity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : opacityDefault;
+				scene.children.forEach(function (item) {
+					return opacityItem(item, transparent, opacity);
+				});
+			}
+			function getOpacity() {
+				return -0.1 * segmentIndex + opacityDefault;
+			}
+			function removeVerticeControls() {
+				if (segmentIndex !== -1) return;
+				for (var i = fSegment.__controllers.length - 1; i >= 0; i--) {
+					var _controller = fSegment.__controllers[i];
+					if (Object.is(cSegment, _controller)) continue;
+					fSegment.remove(_controller);
+				}
+			}
+			if (selectedIndex === -1) {
+				removeVerticeControls();
+				if (prevLine) {
+					opacityItem(prevLine, false);
+					if (prevLine.userData.prevLine) opacityItem(prevLine.userData.prevLine, true, getOpacity());else opacity(true);
+					return;
+				}
+				opacity(false);
+				return;
+			}
+			if (prevLine) {
+				opacity(true, 0);
+				opacityItem(prevLine, true, getOpacity());
+				if (prevLine.userData.prevLine) {
+					opacityItem(prevLine.userData.prevLine, true, 0);
+				}
+			} else opacity();
+			if (segmentIndex === -1) {
+				removeVerticeControls();
+				var vertice = settings.settings.object.geometry.position[segment[selectedIndex].i];
+				for (var i = 0; i < vertice.length; i++) {
+					switch (i) {
+						case 0:
+						case 1:
+						case 2:
+							var axis;
+							switch (i) {
+								case 0:
+									axis = options.scales.x;break;
+								case 1:
+									axis = options.scales.y;break;
+								case 2:
+									axis = options.scales.z;break;
+							}
+							fSegment.add(vertice, i, axis.min, axis.max, (axis.max - axis.min) / 100);
+							break;
+						default:
+							dat.controllerZeroStep(fSegment, vertice, i);
+					}
+				}
+			} else {
+				var _createIndices = function _createIndices(item, level) {
+					if (level > 0) {
+						level--;
+						for (var i = 0; i < item.length; i++) {
+							_createIndices(indices[level][item[i]], level);
+						}return;
+					}
+					var itemIndices = item.indices || item;
+					itemIndices.forEach(function (i) {
+						lineIndices.push(i);
+					});
+				};
+				var buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
+				var lineIndices = [];
+				_createIndices(segment[selectedIndex], segmentIndex);
+				line = new THREE.LineSegments(buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
+				line.userData.name = fSegment.name + ' ' + value;
+				parentObject.add(line);
+			}
+			if (prevLine && line) line.userData.prevLine = prevLine;
+			if (segmentIndex >= 0) fChildSegment = addController(segmentIndex - 1, fSegment, segment[selectedIndex], line);
+		});
+		dat.controllerNameAndTitle(cSegment, '');
+		cSegment.__select[0].selected = true;
+		for (var i = 0; i < segment.length; i++) {
+			var item = segment[i],
+			    opt = document.createElement('option'),
+			    _indices = item.indices ? item.indices : item;
+			opt.innerHTML = '(' + (item.i === undefined ? i : item.i) + ') ' + (segmentIndex === -1 ? '' : _indices.toString());
+			opt.item = item;
+			cSegment.__select.appendChild(opt);
+		}
+		return fSegment;
+	}
+	addController(segmentIndex, fParent);
+};
+
+/**
  * @module ND
  * @description N-dimensional graphics
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -11780,29 +12015,30 @@ function ND(n) {
 			}
 			return new Proxy(array, {
 				get: function get$$1(target, name) {
-					switch (name) {
-						case "length":
-							return n + 1;
-						case "array":
-							return array;
-						case "point":
-							var _THREE = three$1.THREE;
-							return new _THREE.Vector3(this.get(undefined, 0), this.get(undefined, 1), this.get(undefined, 2));
-						case "add":
-							return function (v) {
-								target.forEach(function (value, i) {
-									return target[i] += v[i];
-								});
-								return this;
-							};
-						case "index":
-							return vectorSettings.index;
-						case "isVector":
-							return true;
-					}
 					var i = parseInt(name);
 					if (isNaN(i)) {
-						console.error('Vector.get: invalid name: ' + name);
+						switch (name) {
+							case "length":
+								return n + 1;
+							case "array":
+								return array;
+							case "point":
+								var _THREE = three$1.THREE;
+								return new _THREE.Vector3(this.get(undefined, 0), this.get(undefined, 1), this.get(undefined, 2));
+							case "add":
+								return function (v) {
+									target.forEach(function (value, i) {
+										return target[i] += v[i];
+									});
+									return this;
+								};
+							case "index":
+								return vectorSettings.index;
+							case "isVector":
+								return true;
+							default:
+								console.error('ND: Vector get. Invalid name: ' + name);
+						}
 						return;
 					}
 					if (i >= n) return 0;
@@ -11810,19 +12046,24 @@ function ND(n) {
 					return array[i];
 				},
 				set: function set$$1(target, name, value) {
-					if (name === "onChange") {
-						vectorSettings.onChange = value;
-						return vectorSettings.onChange;
-					}
 					var i = parseInt(name);
-					if (i >= array.length) {
-						array.push(value);
-						return array.length;
+					if (!isNaN(i)) {
+						if (i >= array.length) {
+							array.push(value);
+							return array.length;
+						}
+						array[i] = value;
+						_ND.intersection();
+						if (vectorSettings.onChange) vectorSettings.onChange();
+						return true;
 					}
-					array[i] = value;
-					_ND.intersection();
-					if (vectorSettings.onChange) vectorSettings.onChange();
-					return true;
+					switch (name) {
+						case 'onChange':
+							vectorSettings.onChange = value;
+							return vectorSettings.onChange;
+						default:
+							console.error('ND: Vector set. Invalid name: ' + name);
+					}
 				}
 			});
 		}
@@ -12158,7 +12399,7 @@ function ND(n) {
 			}
 		}
 	});
-	var _prevLine;
+	var _prevLine = {};
 	function proxyGeometryPosition() {
 		if (settings.object.geometry.position && settings.object.geometry.position.isProxy) return settings.object.geometry.position;
 		return new Proxy(settings.object.geometry.position ? settings.object.geometry.position : [], {
@@ -12204,8 +12445,10 @@ function ND(n) {
 								target[name] = value;
 								if (!isNaN(i)) {
 									target.positionWorld = undefined;
-									_prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints(geometry.D3.points).attributes.position.array;
-									_prevLine.geometry.attributes.position.needsUpdate = true;
+									if (_prevLine.prevLine) {
+										_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints(geometry.D3.points).attributes.position.array;
+										_prevLine.prevLine.geometry.attributes.position.needsUpdate = true;
+									}
 									update();
 								}
 								return true;
@@ -12736,7 +12979,7 @@ function ND(n) {
 					var _edges2 = settings.object.geometry.indices[0];
 					for (var i = 0; i < _edges2.length; i++) {
 						var edge = _edges2[i].indices;
-						if (edge) {
+						if (edge !== undefined) {
 							if (edge.length !== 2) {
 								console.error('ND.geometry.D3.get indices: invalid edge.length = ' + edge.length);
 								return;
@@ -12777,19 +13020,6 @@ function ND(n) {
 	vectorPlane = vectorPlane || new Vector(settings.vectorPlane);
 	if (!vectorPlane || !vectorPlane.point) vectorPlane = new Vector(vectorPlane);
 	var objectIntersect;
-	function displayVerticeID(object, geometry) {
-		if (!settings.boDisplayVerticeID) {
-			for (var i = object.children.length - 1; i >= 0; i--) {
-				var child = object.children[i];
-				if (child.type === 'Sprite') object.remove(child);
-			}
-			return;
-		}
-		for (var i = 0; i < geometry.D3.points.length; i++) {
-			var spriteText = new SpriteText(i, geometry.D3.points[i], { group: object });
-			spriteText.userData.pointID = i;
-		}
-	}
 	function create3DObject(geometry) {
 		var settings3D = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 		if (!geometry.D3) {
@@ -12812,7 +13042,6 @@ function ND(n) {
 		}));
 		if (settings3D.name) object.name = settings3D.name;
 		scene.add(object);
-		displayVerticeID(object, geometry);
 		object.userData.nd = function (fParent, dat) {
 			var getLanguageCode = options.getLanguageCode;
 			var lang = {
@@ -12836,8 +13065,6 @@ function ND(n) {
 				defaultButton: 'Default',
 				defaultPositionTitle: 'Restore default position',
 				defaultRotationTitle: 'Restore default rotation',
-				displayVerticeID: 'Vertice ID',
-				displayVerticeIDTitle: 'Display on the scene the vertice ID near to the vertice',
 				notSelected: 'Not selected'
 			};
 			var _languageCode = getLanguageCode();
@@ -12863,8 +13090,6 @@ function ND(n) {
 					lang.defaultButton = 'Восстановить';
 					lang.defaultPositionTitle = 'Восстановить позицию объекта по умолчанию';
 					lang.defaultRotationTitle = 'Восстановить вращение объекта по умолчанию';
-					lang.displayVerticeID = 'Номера вершин';
-					lang.displayVerticeIDTitle = 'На сцене возле каждой вершины показать ее идентификатор';
 					lang.notSelected = 'Не выбран';
 					break;
 				default:
@@ -12877,19 +13102,13 @@ function ND(n) {
 			for (var i = fParent.__controllers.length - 1; i >= 0; i--) {
 				fParent.remove(fParent.__controllers[i]);
 			}
-			settings.boDisplayVerticeID = settings.boDisplayVerticeID || false;
-			var cDisplayVerticeID = fParent.add(settings, 'boDisplayVerticeID').onChange(function (value) {
-				update();
-				displayVerticeID(object, geometry);
-			});
-			dat.controllerNameAndTitle(cDisplayVerticeID, lang.displayVerticeID, lang.displayVerticeIDTitle);
 			var indices = geometry.geometry.indices,
 			    segmentIndex = indices.length - 1;
 			function addController(segmentIndex,
 			fParent, segmentItems,
 			prevLine
 			) {
-				_prevLine = prevLine;
+				_prevLine.prevLine = prevLine;
 				var segment;
 				if (segmentItems) {
 					var _addItem2 = function _addItem2(item, i) {
@@ -12898,13 +13117,11 @@ function ND(n) {
 					};
 					segment = [];
 					if (segmentIndex === -1) {
-						settings.object.geometry.position.boPositionError = false;
 						if (segmentItems.forEach) segmentItems.forEach(function (i) {
-							return _addItem2(settings.object.geometry.position[i], i);
+							return _addItem2(geometry.geometry.position[i], i);
 						});else segmentItems.indices.forEach(function (i) {
-							return _addItem2(settings.object.geometry.position[i], i);
+							return _addItem2(geometry.geometry.position[i], i);
 						});
-						settings.object.geometry.position.boPositionError = true;
 					} else {
 						var _index = indices[segmentIndex];
 						segmentItems.forEach(function (i) {
@@ -12993,9 +13210,7 @@ function ND(n) {
 					} else opacity();
 					if (segmentIndex === -1) {
 						removeVerticeControls();
-						settings.object.geometry.position.boPositionError = false;
 						var vertice = settings.object.geometry.position[segment[selectedIndex].i];
-						settings.object.geometry.position.boPositionError = true;
 						for (var i = 0; i < vertice.length; i++) {
 							switch (i) {
 								case 0:
@@ -13054,12 +13269,18 @@ function ND(n) {
 			var childFolders = Object.keys(fParent.__folders);
 			childFolders.forEach(function (folderName) {
 				var childFolder = fParent.__folders[folderName];
-				if (childFolder.userData && childFolder.userData.objectItems) {
-					var controller = childFolder.__controllers[0];
-					if (controller && controller.__select.selectedIndex != 0) {
-						controller.__select.selectedIndex = 0;
-						controller.__onChange();
-					}
+				var controller;
+				if (childFolder.userData && childFolder.userData.objectItems) controller = childFolder.__controllers[0];else if (folderName === 'indices') {
+					Object.keys(childFolder.__folders).forEach(function (folderName) {
+						if (!controller) {
+							var folder = childFolder.__folders[folderName];
+							if (folder.userData && folder.userData.objectItems) controller = folder.__controllers[0];
+						}
+					});
+				}
+				if (controller && controller.__select.selectedIndex != 0) {
+					controller.__select.selectedIndex = 0;
+					controller.__onChange();
 				}
 				fParent.removeFolder(childFolder);
 			});
@@ -13137,6 +13358,7 @@ function ND(n) {
 				dat.controllerNameAndTitle(buttonRotationDefault, lang.defaultButton, lang.defaultRotationTitle);
 			}
 			addController(segmentIndex, fParent);
+			new GuiIndices(geometry, fParent, dat, options, object, { settings: settings, prevLine: _prevLine });
 		};
 		if (options.guiSelectPoint) options.guiSelectPoint.addMesh(object);
 		object.userData.raycaster = {
