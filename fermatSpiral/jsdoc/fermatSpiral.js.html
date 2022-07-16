@@ -41,9 +41,18 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
-
+/*
 import three from '../three.js'
 import PositionController from '../PositionController.js';
+import GuiIndices from '../guiIndices.js';
+*/
+import ND from '../nD/nD.js';
+//import ND from '../nD/build/nD.module.js';
+//import ND from '../nD/build/nD.module.min.js';
+//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/nD.js';
+//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.js';
+//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
+if ( ND.default ) ND = ND.default;
 
 class FermatSpiral {
 
@@ -52,9 +61,11 @@ class FermatSpiral {
 	 * @param {Object} [settings={}] The following settings are available
 	 * @param {Number} [settings.count=500] points count.
 	 * @param {Float} [settings.c=0.04] constant scaling factor. See &lt;a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral&lt;/a> for details.
-	 * @param {Array} [settings.center=[0,0]] center of Vogel's model.
-	 * @param {Number} [settings.center[0]] x position of the center.
-	 * @param {Number} [settings.center[1]] y position of the center.
+	 * @param {Array|number} [settings.position] Array - position of the n-dimensional graphical object in n-dimensional coordinates.
+	 * &lt;pre>
+	 * number - position of the 0 coordinate of the n-dimensional graphical object.
+	 * See &lt;b>settings.object.position&lt;/b> parameter of the &lt;a href="../../nD/jsdoc/module-ND-ND.html" target="_blank">ND&lt;/a> class.
+	 * &lt;pre>
 	 * @param {Object} [settings.object] creates an [LineSegments]{@link https://threejs.org/docs/index.html?q=lines#api/en/objects/LineSegments} object as &lt;b>FermatSpiral&lt;/b>.
 	 * @param {Group} settings.object.scene [Scene]{@link https://threejs.org/docs/index.html?q=scene#api/en/scenes/Scene}.
 	 * @param {Options} [settings.object.options] Add &lt;b>options&lt;/b> key if you want to add custom controllers for &lt;b>FermatSpiral&lt;/b> object into &lt;a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint&lt;/a>.
@@ -63,234 +74,199 @@ class FermatSpiral {
 	 */
 	constructor( settings = {} ) {
 
-		const points = [], indices = [], THREE = three.THREE;
-		var object;
-		/**
-		* @description
-		* Returns points of the Fermat's spiral.
-		*/
-		this.points;
-		/**
-		* @description
-		* Sets new Fermat's spiral [Object3D]{@link https://threejs.org/docs/index.html?q=mesh#api/en/core/Object3D}.
-		*/
-		this.object;
-		/**
-		* @description
-		* Gets Fermat's spiral [BufferGeometry.index]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.index}.
-		*/
-		this.indices;
-		Object.defineProperties( this, {
+		const points = [], indices = [];//, THREE = three.THREE, geometry = { position: [], indices: [[]] };
+		settings.count = settings.count === undefined ? 500 : settings.count;
+		settings.position = settings.position || [0, 0];
+		settings.c = settings.c === undefined ? 0.04 : settings.c;//constant scaling factor
+		const _this = this;
+		function update() {
 
-			points: {
+			//График для последней точки спирали x ближайшая точка с максимальным индексом y
+			//https://www.kontrolnaya-rabota.ru/s/grafik/tochka/
+			//формула: y = 1.449378838441997 * Math.sqrt (x)
+			//x; y;
+			//0.0; 0.0
+			//1.0; 1.0
+			//5; 2
+			//7; 3
+			//17; 5
+			//38; 8
+			//95; 13
+			//234; 21
+			//583; 34
+			//1480; 55
+			//9871;144
 
-				get: function () { return points; }
+			//Точки спирали, находящиеся на краю спирали, иногда имеют лишние ребра, напраленные внутрь спирали.
+			//Это происходит потому, что нет ближайших точек, которые находятся за пределами спирали.
+			//Для решения проблемы увеличиваю количество точек спирали l больше settings.count для того что бы точки, расположенные на краю спирали имели ребра
+			//направленные к этим лишним точкам.
+			const l = settings.count + parseInt( 3.8 * Math.sqrt( settings.count ) );
+			//3.8 выбрал что бы не было лишних ребер при settings.count = 3800
 
-			},
+			points.length = 0;
+			indices.length = 0;
+			const golden_angle = 137.5077640500378546463487,//137.508;//https://en.wikipedia.org/wiki/Golden_angle
+				a = golden_angle * Math.PI / 180.0, b = 90 * Math.PI / 180.0;
+			for ( var i = 0; i &lt; l; i++ ) {
+
+				const angleInRadians = i * a - b;
+				const radius = settings.c * Math.sqrt( i );
+				points.push( [radius * Math.cos( angleInRadians ), radius * Math.sin( angleInRadians )] );
+/*
+				points[i] = new Vector( [
+
+					settings.position[0] + ( radius * Math.cos( angleInRadians ) ),
+					settings.position[1] + ( radius * Math.sin( angleInRadians ) )
+
+				] );
+*/
+
+			}
+
+/*
+			if ( object ) {
+
+				object.geometry.setFromPoints( _this.points ).setIndex( _this.indices );//object.parent.remove( object );
+				if ( settings.object.options &amp;&amp; settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.updatePoints();
+
+			} else {
+
+				if ( settings.object ) {
+
+					var mesh;
+					if ( typeof settings.object === "function" ) mesh = settings.object( _this );
+					else {
+
+						settings.object.color = settings.object.color || "green";
+						mesh = new THREE.LineSegments(
+							new THREE.BufferGeometry().setFromPoints( _this.points ).setIndex( _this.indices ),
+							new THREE.LineBasicMaterial( { color: settings.object.color, } ) );
+						settings.object.scene.add( mesh );
+						if ( settings.object.options &amp;&amp; settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.addMesh( mesh );
+
+					}
+					_this.object = mesh;
+
+				}
+
+			}
+*/
+			//indices
+
+			points.forEach( ( vertice1, i ) => {
+
+				vertice1.aNear = [];//индексы четырех вершин, которые ближе всего расположены к текущей вершине vertice1
+				//aNear[0] индекс текущей вершины,
+				//aNear[1...4] индексы четырех вершин, которые ближе всего расположены к текущей вершине
+				vertice1.aNear.push( [i] );
+				//						for ( var j = i + 1; j &lt; points.length; j++ )
+				points.forEach( ( vertice2, j ) => {
+
+					if ( i != j ) {
+
+						function distanceTo( v, array ) {
+
+							var a = 0;
+							array.forEach( ( item, i ) => { const b = item - v[i]; a = a + b * b; } )
+							return Math.sqrt( a );
+
+						}
+//						const distance = vertice1.distanceTo( vertice2 );
+						const distance = distanceTo( vertice2, vertice1 );
+						function getMax() {
+
+							for ( var iMax = 1; iMax &lt; vertice1.aNear.length; iMax++ ) {
+
+								const item = vertice1.aNear[iMax], maxItem = vertice1.aNear[vertice1.aNear[0].iMax];
+								if ( maxItem.distance &lt; item.distance ) vertice1.aNear[0].iMax = iMax;
+
+							}
+
+						}
+						if ( vertice1.aNear.length &lt; 7 ) {
+
+							const length = vertice1.aNear.push( [j] );
+							vertice1.aNear[length - 1].distance = distance;
+							if ( vertice1.aNear[0].iMax === undefined ) vertice1.aNear[0].iMax = length - 1;
+							getMax();
+
+						} else {
+
+							if ( vertice1.aNear[vertice1.aNear[0].iMax].distance > distance ) {
+
+								vertice1.aNear[vertice1.aNear[0].iMax] = [j];
+								vertice1.aNear[vertice1.aNear[0].iMax].distance = distance;
+								getMax();
+
+							}
+
+						}
+
+					}
+
+				} );
+				const i0 = vertice1.aNear[0][0];
+				for ( var i = 1; i &lt; vertice1.aNear.length; i++ ) {
+
+					const i1 = vertice1.aNear[i][0];
+					var boDuplicate = false;
+					for ( var j = 0; j &lt; indices.length; j += 2 ) {
+
+						if (
+							( ( indices[j] === i0 ) &amp;&amp; ( indices[j + 1] === i1 ) ) ||
+							( ( indices[j] === i1 ) &amp;&amp; ( indices[j + 1] === i0 ) )
+						) {
+
+							boDuplicate = true;
+							break;
+
+						}
+
+					}
+					if ( !boDuplicate &amp;&amp; ( i0 &lt; settings.count ) &amp;&amp; ( i1 &lt; settings.count ) ) {
+
+/*
+						indices.push( i0 );
+						indices.push( i1 );
+						geometry.indices[0].push( [i0, i1] );
+*/
+						indices.push( [i0, i1] );
+
+					}
+
+				}
+
+			} );
+
+		}
+		update();
+		new ND( 5, {
+
 			object: {
 
-				set: function ( objectNew ) {
+				position: settings.position,
+				//rotation: settings.rotation,
+				geometry: {
 
-					object = objectNew;
-					object.userData.fermatSpiral = function ( fParent, dat, options ) {
-
-						if ( fParent.__controllers.length !== 0 ) return;
-
-						//Localization
-		
-						const getLanguageCode = options.getLanguageCode;
-		
-						const lang = {
-
-							count: 'Points',
-							countTitle: 'Spiral points count',
-		
-							notSelected: 'Not selected',
-		
-						};
-		
-						const _languageCode = getLanguageCode();
-		
-						switch ( _languageCode ) {
-		
-							case 'ru'://Russian language
-
-								lang.count = 'Точки';
-								lang.countTitle = 'Количестао точек спирали';
-		
-								lang.notSelected = 'Не выбран';
-		
-								break;
-							default://Custom language
-								if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
-									break;
-		
-								Object.keys( guiParams.lang ).forEach( function ( key ) {
-		
-									if ( lang[key] === undefined )
-										return;
-									lang[key] = guiParams.lang[key];
-		
-								} );
-		
-						}
-						
-						//Points count
-						
-						const positionController = new PositionController( function ( shift ) {
-							
-							settings.count += shift;
-							cCount.setValue( settings.count, true );
-							
-						},
-								{ getLanguageCode: getLanguageCode, } );
-						fParent.add( positionController );
-						
-						const cCount = dat.controllerZeroStep( fParent, settings, 'count', function ( value ) { update(); } );
-						dat.controllerNameAndTitle( cCount, lang.count, lang.countTitle );
-						
-					}
+					position: points,
+					indices: [indices],
 
 				},
 
 			},
-			indices: {
-
-				get: function () {
-			
-					if ( indices.length > 0 ) return indices;
-					points.forEach( ( vertice1, i ) => {
-
-						const aNear = [];//индексы четырех вершин, которые ближе всего расположены к текущей вершине
-							//aNear[0] индекс текущей вершины,
-							//aNear[1...4] индексы четырех вершин, которые ближе всего расположены к текущей вершине
-						aNear.push( [i] );
-//						aNear[0].iMax = 0;
-						points.forEach( ( vertice2, j ) => {
-
-							if ( i != j ) {
-
-								const distance = vertice1.distanceTo( vertice2 );
-								function getMax() {
-
-									for ( var iMax = 1; iMax &lt; aNear.length; iMax++ ) {
-
-										const item = aNear[iMax], maxItem = aNear[aNear[0].iMax];
-										if ( maxItem.distance &lt; item.distance ) aNear[0].iMax = iMax;
-
-									}
-									
-								}
-								if ( aNear.length &lt; 5 ) {
-
-									const length = aNear.push( [j] );
-									aNear[length - 1].distance = distance;
-									if ( aNear[0].iMax === undefined ) aNear[0].iMax = length - 1;
-									getMax();
-
-								} else {
-
-									if ( aNear[aNear[0].iMax].distance > distance ) {
-										
-										aNear[aNear[0].iMax] = [j];
-										aNear[aNear[0].iMax].distance = distance;
-										getMax();
-
-									}
-/*										
-									aNear.forEach( ( index, k ) => {
-
-										if ( k != 0 ) {
-
-											if ( distance &lt; index.distance )
-												console.log('qqq')
-
-										}
-
-									} );
-*/									
-									
-								}
-
-							}
-
-						} );
-						const i0 = aNear[0][0];
-						for ( var i = 1; i &lt; aNear.length; i++ ) {
-							
-							indices.push( i0 );
-							indices.push( aNear[i][0] );
-
-						}
-						
-					} )
-					return indices;
-			
-				}
-
-			},
-
-		} );
-		settings.count = settings.count === undefined ? 500 : settings.count;
-		settings.center = settings.center || [0, 0];
+			scene: settings.object.scene,
+			options: settings.object.options,
 /*
-		settings.a = settings.a === undefined ? 1 : settings.a;
-		const maxAngle = Math.PI * 2, fiStep = maxAngle / settings.count;
-		for ( var i = 0; i &lt; settings.count; i++ ) {
+			onIntersection: function ( geometryIntersection ) {
 
-			const fi = i * fiStep, sqrtFi = Math.sqrt( fi ), r = settings.a * sqrtFi;
-			points[i] = new THREE.Vector3(
-
-				settings.center[0] + r * Math.cos( fi ),
-				settings.center[1] + r * Math.sin( fi )
-
-			);;
-
-		}
-*/
-		settings.c = settings.c === undefined ? 0.04 : settings.c;//constant scaling factor
-		settings.center = settings.center || [0, 0];
-		const golden_angle = 137.508;//140.2554;
-		function angleFermat( n ) { return n * golden_angle; }
-		function radiusFermat( n ) { return settings.c * Math.sqrt( n ); }
-		function describeFermatPoint( n ) { return polarToCartesian( radiusFermat( n ), angleFermat( n ) ); }
-		function createFermatPlot() {
-
-			const l = settings.count === undefined ? 500 : settings.count;
-			for ( var i = 0; i &lt; l; i++ ) {
-
-				points[i] = describeFermatPoint( i );
+				controls.c5Dto4D.geometry = geometryIntersection;
+				if ( _4D &amp;&amp; controls.c5Dto4D.checked ) _4D.geometry = geometryIntersection;
 
 			}
+*/
 
-		}
-		function polarToCartesian( radius, angleInDegrees ) {
-
-			const angleInRadians = ( angleInDegrees - 90 ) * Math.PI / 180.0;
-
-			return new THREE.Vector3(
-				
-				settings.center[0] + ( radius * Math.cos( angleInRadians ) ),
-				settings.center[1] + ( radius * Math.sin( angleInRadians ) )
-				
-			);
-			
-		}
-		createFermatPlot();
-		if ( settings.object ) {
-
-			settings.object.color = settings.object.color || "green";
-			const object = new THREE.LineSegments(
-				new THREE.BufferGeometry().setFromPoints( this.points ).setIndex( this.indices ),
-				new THREE.LineBasicMaterial( { color: settings.object.color, } ) );
-
-//			const object = new THREE.Line( new THREE.BufferGeometry().setFromPoints( fermatSpiral.vertices ), new THREE.LineBasicMaterial( { color: color } ) );
-//			const object = new THREE.Mesh( new MyThree.three.ConvexGeometry( fermatSpiral.vertices ), new THREE.MeshBasicMaterial( { color: color, wireframe: true } ) );
-			this.object = object;
-			settings.object.scene.add( object );
-			if ( settings.object.options &amp;&amp; settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.addMesh( object );
-			
-		}
+		} );
 
 	}
 }
@@ -380,7 +356,7 @@ export default FermatSpiral;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Fri Jul 01 2022 06:23:55 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat Jul 16 2022 08:39:25 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

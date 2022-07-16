@@ -33,9 +33,11 @@ class FermatSpiral {
 	 * @param {Object} [settings={}] The following settings are available
 	 * @param {Number} [settings.count=500] points count.
 	 * @param {Float} [settings.c=0.04] constant scaling factor. See <a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral</a> for details.
-	 * @param {Array} [settings.position=[0,0]] center of Vogel's model.
-	 * @param {Number} [settings.position[0]] x position of the center.
-	 * @param {Number} [settings.position[1]] y position of the center.
+	 * @param {Array|number} [settings.position] Array - position of the n-dimensional graphical object in n-dimensional coordinates.
+	 * <pre>
+	 * number - position of the 0 coordinate of the n-dimensional graphical object.
+	 * See <b>settings.object.position</b> parameter of the <a href="../../nD/jsdoc/module-ND-ND.html" target="_blank">ND</a> class.
+	 * <pre>
 	 * @param {Object} [settings.object] creates an [LineSegments]{@link https://threejs.org/docs/index.html?q=lines#api/en/objects/LineSegments} object as <b>FermatSpiral</b>.
 	 * @param {Group} settings.object.scene [Scene]{@link https://threejs.org/docs/index.html?q=scene#api/en/scenes/Scene}.
 	 * @param {Options} [settings.object.options] Add <b>options</b> key if you want to add custom controllers for <b>FermatSpiral</b> object into <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a>.
