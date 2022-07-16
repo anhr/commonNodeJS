@@ -516,7 +516,8 @@ class GuiSelectPoint {
 			cScale.name( name );
 
 			//rotation
-			cRotations[axis].name( name );
+			const cRotation = cRotations[axis];
+			if ( cRotation.name ) cRotation.name( name );
 
 		}
 		/**Sets controllers to position, scale and rotation of the mesh.  If AxesHelper is exist, expose the mesh to the axes. */

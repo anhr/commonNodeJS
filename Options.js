@@ -726,8 +726,12 @@ class Options {
 											},
 											set: function ( name ) {
 												
-												scale.name = name;
-												if ( options.guiSelectPoint ) options.guiSelectPoint.setAxisName( axisName, name );
+												if ( scale ) {
+													
+													scale.name = name;
+													if ( options.guiSelectPoint ) options.guiSelectPoint.setAxisName( axisName, name );
+
+												}
 												
 											},
 
