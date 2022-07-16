@@ -31,12 +31,18 @@ class FermatSpiral {
 	/**
 	 * Implementation of Vogel's model of <a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral</a>.
 	 * @param {Object} [settings={}] The following settings are available
+	 * @param {number} [settings.n=2] space dimension of Fermat's spiral.
 	 * @param {Number} [settings.count=500] points count.
 	 * @param {Float} [settings.c=0.04] constant scaling factor. See <a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral</a> for details.
-	 * @param {Array|number} [settings.position] Array - position of the n-dimensional graphical object in n-dimensional coordinates.
+	 * @param {Array|number} [settings.position] Array - position of Fermat's spiral in n-dimensional coordinates.
 	 * <pre>
-	 * number - position of the 0 coordinate of the n-dimensional graphical object.
+	 * number - position of the 0 coordinate of Fermat's spiral.
 	 * See <b>settings.object.position</b> parameter of the <a href="../../nD/jsdoc/module-ND-ND.html" target="_blank">ND</a> class.
+	 * <pre>
+	 * @param {Array|number} [settings.rotation] Array - rotation in radians of Fermat's spiral in n-dimensional coordinates.
+	 * <pre>
+	 * number - rotation in radians around axis 0 or rotation around axis 2 for 2D Fermat's spiral i.e. space dimension n = 2.
+	 * See <b>settings.object.rotation</b> parameter of the <a href="../../nD/jsdoc/module-ND-ND.html" target="_blank">ND</a> class.
 	 * <pre>
 	 * @param {Object} [settings.object] creates an [LineSegments]{@link https://threejs.org/docs/index.html?q=lines#api/en/objects/LineSegments} object as <b>FermatSpiral</b>.
 	 * @param {Group} settings.object.scene [Scene]{@link https://threejs.org/docs/index.html?q=scene#api/en/scenes/Scene}.
@@ -47,8 +53,10 @@ class FermatSpiral {
 	constructor( settings = {} ) {
 
 		const points = [], indices = [];//, THREE = three.THREE, geometry = { position: [], indices: [[]] };
+		settings.n = settings.n === undefined ? 2 : settings.n;
 		settings.count = settings.count === undefined ? 500 : settings.count;
-		settings.position = settings.position || [0, 0];
+//		settings.position = settings.position || [0, 0];
+//		settings.rotation = settings.rotation || [0, 0];
 		settings.c = settings.c === undefined ? 0.04 : settings.c;//constant scaling factor
 		const _this = this;
 		function update() {
@@ -213,12 +221,12 @@ class FermatSpiral {
 
 		}
 		update();
-		new ND( 5, {
+		new ND( settings.n, {
 
 			object: {
 
 				position: settings.position,
-				//rotation: settings.rotation,
+				rotation: settings.rotation,
 				geometry: {
 
 					position: points,
