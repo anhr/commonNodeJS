@@ -1019,6 +1019,7 @@ class ND {
 									const i = parseInt( name );
 									if ( !isNaN( i ) ) {
 
+										if ( i >= target.length ) return 0;
 										return target[i];
 
 									}
