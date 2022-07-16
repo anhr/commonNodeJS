@@ -33,9 +33,9 @@ class FermatSpiral {
 	 * @param {Object} [settings={}] The following settings are available
 	 * @param {Number} [settings.count=500] points count.
 	 * @param {Float} [settings.c=0.04] constant scaling factor. See <a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral</a> for details.
-	 * @param {Array} [settings.center=[0,0]] center of Vogel's model.
-	 * @param {Number} [settings.center[0]] x position of the center.
-	 * @param {Number} [settings.center[1]] y position of the center.
+	 * @param {Array} [settings.position=[0,0]] center of Vogel's model.
+	 * @param {Number} [settings.position[0]] x position of the center.
+	 * @param {Number} [settings.position[1]] y position of the center.
 	 * @param {Object} [settings.object] creates an [LineSegments]{@link https://threejs.org/docs/index.html?q=lines#api/en/objects/LineSegments} object as <b>FermatSpiral</b>.
 	 * @param {Group} settings.object.scene [Scene]{@link https://threejs.org/docs/index.html?q=scene#api/en/scenes/Scene}.
 	 * @param {Options} [settings.object.options] Add <b>options</b> key if you want to add custom controllers for <b>FermatSpiral</b> object into <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a>.
@@ -46,9 +46,8 @@ class FermatSpiral {
 
 		const points = [], indices = [];//, THREE = three.THREE, geometry = { position: [], indices: [[]] };
 		settings.count = settings.count === undefined ? 500 : settings.count;
-		settings.center = settings.center || [0, 0];
+		settings.position = settings.position || [0, 0];
 		settings.c = settings.c === undefined ? 0.04 : settings.c;//constant scaling factor
-		settings.center = settings.center || [0, 0];
 		const _this = this;
 		function update() {
 
@@ -87,8 +86,8 @@ class FermatSpiral {
 /*
 				points[i] = new Vector( [
 
-					settings.center[0] + ( radius * Math.cos( angleInRadians ) ),
-					settings.center[1] + ( radius * Math.sin( angleInRadians ) )
+					settings.position[0] + ( radius * Math.cos( angleInRadians ) ),
+					settings.position[1] + ( radius * Math.sin( angleInRadians ) )
 
 				] );
 */
@@ -216,8 +215,8 @@ class FermatSpiral {
 
 			object: {
 
-				position: settings.center,
-				//rotation: [Math.PI / 5, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+				position: settings.position,
+				//rotation: settings.rotation,
 				geometry: {
 
 					position: points,
