@@ -925,9 +925,9 @@ class GuiSelectPoint {
 					break;
 				case 2:
 					fRotation.domElement.style.display = block;
-					if ( boX ) cRotations.x.domElement.parentElement.parentElement.style.display = none;
-					if ( boY ) cRotations.y.domElement.parentElement.parentElement.style.display = none;
-					if ( boZ ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
+					if ( boX && cRotations.x.domElement ) cRotations.x.domElement.parentElement.parentElement.style.display = none;
+					if ( boY && cRotations.y.domElement ) cRotations.y.domElement.parentElement.parentElement.style.display = none;
+					if ( boZ && cRotations.z.domElement ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
 					break;
 				default: console.error( 'GuiSelectPoint.updateScale: Invalid space dimension = ' + n );
 					return;
