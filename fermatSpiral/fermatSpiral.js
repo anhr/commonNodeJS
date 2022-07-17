@@ -223,6 +223,7 @@ class FermatSpiral {
 		update();
 		new ND( settings.n, {
 
+			plane: false,
 			object: {
 
 				position: settings.position,

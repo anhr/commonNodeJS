@@ -216,8 +216,9 @@ class ND {
 	 * For example if <b>iAxes</b> is [1,2], then axis 1 interpret as axis 0 and axis 2 interpret as axis 1.
 	 * As result, you can rotate axes around another axis to 90 degrees.
 	 * In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.
+	 * @param {Boolean} [settings.plane=true] true - create <b>vectorPlane</b>. See <b>settings.vectorPlane</b> below.
 	 * @param {Array} [settings.vectorPlane] n-dimensional position of the panel
-	 * intersecting with the <b>settings.object.geometry</b> n-dimensional graphical object.
+	 * intersecting with the <b>settings.object.geometry</b> n-dimensional graphical object. Available only if <b>settings.plane</b> is true.
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * Define <b>scene</b> if you want visualise n-dimensional plane and n-dimensional object to 3-D space of the <b>scene</b>.
 	 * @param {Options} [settings.options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
@@ -2886,8 +2887,13 @@ class ND {
 			}
 
 		}
-		const plane = new Plane();
-		plane.createMesh();
+		if ( settings.plane === undefined ) settings.plane = true;
+		if ( settings.plane ) {
+			
+			const plane = new Plane();
+			plane.createMesh();
+
+		}
 
 		/**
 		* @description set new geometry, position and rotation of nD object
