@@ -936,7 +936,7 @@ class GuiSelectPoint {
 			
 			if ( !folders.position[axisName] ) {
 
-				console.error( 'GuiSelectPoint.updateScale: Under constraction.' );
+				if ( options.scales[axisName].isAxis() ) console.error( 'GuiSelectPoint.updateScale: Under constraction.' );
 				return;
 
 			}
