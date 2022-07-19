@@ -1632,6 +1632,8 @@ class GuiSelectPoint {
 
 			}
 
+			if ( mesh.userData.nd ) mesh.userData.nd.update();
+
 		}
 		function addPointControllers() {
 

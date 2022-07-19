@@ -24,7 +24,7 @@ import Options from '../Options.js'
 import PositionController from '../PositionController.js';
 //import { SpriteText } from '../SpriteText/SpriteText.js'
 import MyMath from '../myMath/myMath.js'
-import GuiIndices from '../guiIndices.js';
+//import GuiIndices from '../guiIndices.js';
 
 /**
 dimention	geometry	points	edges	faces	bodyes	4D objects
@@ -1942,8 +1942,11 @@ class ND {
 				object.name = settings3D.name;
 			scene.add( object );
 
+			if ( settings.controllers ) settings.controllers( object );
+
 			object.userData.nd = function ( fParent, dat ) {
 
+				if ( !object.userData.nd.update )object.userData.nd.update = function(){ object.userData.nd( fParent, dat ) }
 
 				//Localization
 
@@ -2367,7 +2370,7 @@ class ND {
 				
 				addController( segmentIndex, fParent );
 				
-				new GuiIndices( geometry, fParent, dat, options, object, { settings: settings, prevLine: _prevLine } );
+//				new GuiIndices( geometry, fParent, dat, options, object, { settings: settings, prevLine: _prevLine } );
 			
 			}
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
@@ -2963,7 +2966,8 @@ class ND {
 						return;//отсутствует холст с размерностью пространства верхнего уровня
 
 					}
-					settings.object = object;
+					if ( !object.update )
+						settings.object = object;
 					const p = object.position;
 					if ( p ) settings.object.position = [...p];
 					const r = object.rotation;
@@ -2985,7 +2989,8 @@ class ND {
 							indices.push( item );
 							array.forEach( index => {
 
-								item.push( index );
+								if ( index.indices ) item.push( index.indices );
+								else item.push( index );
 								
 							} );
 							
@@ -3004,6 +3009,13 @@ class ND {
 					
 					appendEdges();
 					
+					if ( object.update ) {
+
+						object3D.geometry.setFromPoints( geometry.D3.points ).setIndex( geometry.D3.indices.indices );
+						if ( settings.options && settings.options.guiSelectPoint ) settings.options.guiSelectPoint.updatePoints();
+						return;
+						
+					}
 					projectTo3D();
 					this.intersection()
 

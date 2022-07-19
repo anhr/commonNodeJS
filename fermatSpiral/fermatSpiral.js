@@ -13,9 +13,10 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
+
+import PositionController from '../PositionController.js';
 /*
 import three from '../three.js'
-import PositionController from '../PositionController.js';
 import GuiIndices from '../guiIndices.js';
 */
 import ND from '../nD/nD.js';
@@ -221,19 +222,281 @@ class FermatSpiral {
 
 		}
 		update();
-		new ND( settings.n, {
+		const geometry = {
 
-			plane: false,
-			object: {
+			position: new Proxy( points, {
 
-				position: settings.position,
-				rotation: settings.rotation,
-				geometry: {
+				get: function ( target, name, args ) {
 
-					position: points,
-					indices: [indices],
+					const i = parseInt( name );
+					if ( !isNaN( i ) ) {
+
+						if ( target instanceof Array ) {
+
+							if ( i < target.length && ( target[i] !== undefined ) )
+								return target[i];
+							return 0;
+
+						}
+						return target;
+
+					}
+					switch ( name ) {
+
+/*
+						case 'isProxy': return true;
+						case 'folders':
+							target.folders = target.folders || [];
+							return target.folders;
+						case 'arguments': return;//for dat.GUI
+						case 'clear': return function () {
+
+							target.forEach( ( pos, i ) => target[i] = 0 );
+
+						}
+						case 'length': return target.length;
+*/
+						case 'target': return target.target;
+						case 'isProxy': return target.isProxy;
+						case 'length': return settings.count;
+						case 'boPositionError': return target.boPositionError;
+						case 'forEach': return target.forEach;
+						default: console.error( 'FermatSpiral: geometry.position get : ' + name );
+
+					}
 
 				},
+/*
+				set: function ( target, name, value ) {
+
+					target[name] = value;
+
+					settings.object.geometry.position.reset();
+
+					const input = target.folders[name].cPosition.domElement.querySelector( 'input' );
+					if ( parseFloat( input.value ) !== value ) {
+
+						input.value = value;
+						update();
+
+					}
+					return true;
+
+				},
+*/
+
+			} ),
+			indices: [indices],
+/*
+			indices: [new Proxy( indices, {
+
+				get: function ( target, name, args ) {
+
+					const i = parseInt( name );
+					if ( !isNaN( i ) ) {
+
+						if ( target instanceof Array ) {
+
+							if ( i < target.length && ( target[i] !== undefined ) )
+								return target[i];
+							return 0;
+
+						}
+						return target;
+
+					}
+					switch ( name ) {
+
+						case 'isProxy': return target.isProxy;
+						case 'length': return target.length;
+						case 'forEach': return target.forEach;
+						default: console.error( 'FermatSpiral: geometry.indices get : ' + name );
+
+					}
+
+				},
+
+			} )],
+*/
+
+		}
+
+		const nd = new ND( settings.n, {
+
+			plane: false,
+			controllers: function( object ){
+				
+				object.userData.fermatSpiral = function ( fParent, dat, options ) {
+
+					settings.object = settings.object || {};
+					settings.object.options = options;
+
+					//Localization
+
+					const getLanguageCode = options.getLanguageCode;
+
+					const lang = {
+
+						count: 'Points',
+						countTitle: 'Spiral points count.',
+
+						c: 'scaling factor',
+						cTitle: "constant scaling factor of of Vogel's model of Fermat's spiral.",
+
+						defaultButton: 'Default',
+						defaultPositionTitle: 'Restore default spiral',
+
+						notSelected: 'Not selected',
+
+					};
+
+					const _languageCode = getLanguageCode();
+
+					switch ( _languageCode ) {
+
+						case 'ru'://Russian language
+
+							lang.count = 'Точки';
+							lang.countTitle = 'Количестао точек спирали';
+
+							lang.c = 'Масштаб';
+							lang.cTitle = 'Масштабный коэффициент модели Фогеля спирали Ферма';
+
+							lang.defaultButton = 'Восстановить';
+							lang.defaultPositionTitle = 'Восстановить параметры спирали';
+
+							lang.notSelected = 'Не выбран';
+
+							break;
+						default://Custom language
+							if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
+								break;
+
+							Object.keys( guiParams.lang ).forEach( function ( key ) {
+
+								if ( lang[key] === undefined )
+									return;
+								lang[key] = guiParams.lang[key];
+
+							} );
+
+					}
+
+					//Points count
+
+					const fCount = fParent.addFolder( lang.count );
+					dat.folderNameAndTitle( fCount, lang.count, lang.countTitle );
+
+					fCount.add( new PositionController( function ( shift ) {
+
+						settings.count += shift;
+						if ( settings.count < 1 ) settings.count = 1;
+						cCount.setValue( settings.count, true );
+
+					},
+						{
+
+							getLanguageCode: getLanguageCode,
+							min: 1, max: 100, step: 1, settings: { offset: 1 },
+
+						}
+					) );
+
+					function controllerUpdate() {
+						
+						update();
+						geometry.indices = [indices];
+//console.log( indices + ' ' + points )
+						nd.object = { 
+							
+							update: true,
+							geometry: geometry,
+/*							
+							geometry: {
+
+								position: points,
+								indices: [indices],
+					
+							},
+*/
+							
+						}
+						//if ( settings.object.options && settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.updatePoints();
+					
+					}
+					const cCount = dat.controllerZeroStep( fCount, settings, 'count', function ( value ) { controllerUpdate(); } );
+					dat.controllerNameAndTitle( cCount, lang.count, lang.countTitle );
+
+					//constant scaling factor
+
+					const fC = fParent.addFolder( lang.c );
+					dat.folderNameAndTitle( fC, lang.c, lang.cTitle );
+
+					fC.add( new PositionController( function ( shift ) {
+
+						settings.c += shift;
+						if ( settings.c < 0 ) settings.c = 0;
+						cC.setValue( settings.c, true );
+
+					},
+						{
+
+							getLanguageCode: getLanguageCode,
+							min: 0, max: 0.1, step: 0.001, settings: { offset: 0.001 },
+
+						}
+					) );
+
+					const cC = dat.controllerZeroStep( fC, settings, 'c', function ( value ) { controllerUpdate(); } );
+					dat.controllerNameAndTitle( cC, lang.c, lang.cTitle );
+
+					//Restore Fermat's spiral.
+					const defaultValues = {
+
+						count: settings.count,
+						c: settings.c,
+
+					}
+					const buttonDefault = fParent.add( {
+
+						defaultF: function ( value ) {
+
+							settings.count = defaultValues.count;
+							cCount.setValue( settings.count );
+							settings.c = defaultValues.c;
+							cC.setValue( settings.c );
+							update();
+
+						},
+
+					}, 'defaultF' );
+					dat.controllerNameAndTitle( buttonDefault, lang.defaultButton, lang.defaultPositionTitle );
+/*
+					new GuiIndices( {
+
+						geometry: geometry,
+						D3: {
+
+							//Returns a points of projection
+							get points() {
+								return points;
+
+							},
+
+						},
+
+					}, fParent, dat, options, object, settings.object.scene );
+*/		
+
+				}
+
+			},
+			object: {
+
+				name: 'Fermat Spiral',
+				position: settings.position,
+				rotation: settings.rotation,
+				geometry: geometry,
 
 			},
 			scene: settings.object.scene,
@@ -303,10 +566,20 @@ FermatSpiral.gui = class {
 		this.object = function ( object, dat, options ) {
 
 			var display = 'none';
-			if ( object && object.userData.fermatSpiral ) {
+			if ( object ) {
 
-				display = 'block';
-				object.userData.fermatSpiral( fFermatSpiral, dat, options );
+				if ( object.userData.fermatSpiral ) {
+					
+					display = 'block';
+					object.userData.fermatSpiral( fFermatSpiral, dat, options );
+
+				}
+				if ( object.userData.nd ) {
+
+					display = 'block';
+					object.userData.nd( fFermatSpiral.addFolder( 'nD' ), dat, options );
+
+				}
 
 			}
 			fFermatSpiral.domElement.style.display = display;
