@@ -53,7 +53,7 @@ class FermatSpiral {
 	 */
 	constructor( settings = {} ) {
 
-		const points = [], indices = [[]];//, THREE = three.THREE, geometry = { position: [], indices: [[]] };
+		const points = [], indices = [];//, THREE = three.THREE, geometry = { position: [], indices: [[]] };
 		settings.n = settings.n === undefined ? 2 : settings.n;
 		settings.count = settings.count === undefined ? 500 : settings.count;
 //		settings.position = settings.position || [0, 0];
@@ -86,8 +86,7 @@ class FermatSpiral {
 			//3.8 выбрал что бы не было лишних ребер при settings.count = 3800
 
 			points.length = 0;
-//			indices[0].length = 0;//удалить все ребра
-			indices[0] = [];//удалить все ребра
+			indices.length = 0;
 			const golden_angle = 137.5077640500378546463487,//137.508;//https://en.wikipedia.org/wiki/Golden_angle
 				a = golden_angle * Math.PI / 180.0, b = 90 * Math.PI / 180.0;
 			for ( var i = 0; i < l; i++ ) {
@@ -95,9 +94,45 @@ class FermatSpiral {
 				const angleInRadians = i * a - b;
 				const radius = settings.c * Math.sqrt( i );
 				points.push( [radius * Math.cos( angleInRadians ), radius * Math.sin( angleInRadians )] );
+/*
+				points[i] = new Vector( [
+
+					settings.position[0] + ( radius * Math.cos( angleInRadians ) ),
+					settings.position[1] + ( radius * Math.sin( angleInRadians ) )
+
+				] );
+*/
 
 			}
 
+/*
+			if ( object ) {
+
+				object.geometry.setFromPoints( _this.points ).setIndex( _this.indices );//object.parent.remove( object );
+				if ( settings.object.options && settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.updatePoints();
+
+			} else {
+
+				if ( settings.object ) {
+
+					var mesh;
+					if ( typeof settings.object === "function" ) mesh = settings.object( _this );
+					else {
+
+						settings.object.color = settings.object.color || "green";
+						mesh = new THREE.LineSegments(
+							new THREE.BufferGeometry().setFromPoints( _this.points ).setIndex( _this.indices ),
+							new THREE.LineBasicMaterial( { color: settings.object.color, } ) );
+						settings.object.scene.add( mesh );
+						if ( settings.object.options && settings.object.options.guiSelectPoint ) settings.object.options.guiSelectPoint.addMesh( mesh );
+
+					}
+					_this.object = mesh;
+
+				}
+
+			}
+*/
 			//indices
 
 			points.forEach( ( vertice1, i ) => {
@@ -157,11 +192,11 @@ class FermatSpiral {
 
 					const i1 = vertice1.aNear[i][0];
 					var boDuplicate = false;
-					for ( var j = 0; j < indices[0].length; j += 2 ) {
+					for ( var j = 0; j < indices.length; j += 2 ) {
 
 						if (
-							( ( indices[0][j] === i0 ) && ( indices[0][j + 1] === i1 ) ) ||
-							( ( indices[0][j] === i1 ) && ( indices[0][j + 1] === i0 ) )
+							( ( indices[j] === i0 ) && ( indices[j + 1] === i1 ) ) ||
+							( ( indices[j] === i1 ) && ( indices[j + 1] === i0 ) )
 						) {
 
 							boDuplicate = true;
@@ -172,7 +207,12 @@ class FermatSpiral {
 					}
 					if ( !boDuplicate && ( i0 < settings.count ) && ( i1 < settings.count ) ) {
 
-						indices[0].push( [i0, i1] );
+/*
+						indices.push( i0 );
+						indices.push( i1 );
+						geometry.indices[0].push( [i0, i1] );
+*/
+						indices.push( [i0, i1] );
 
 					}
 
@@ -246,7 +286,7 @@ class FermatSpiral {
 */
 
 			} ),
-			indices: indices,
+			indices: [indices],
 /*
 			indices: [new Proxy( indices, {
 
@@ -365,7 +405,7 @@ class FermatSpiral {
 					function controllerUpdate() {
 						
 						update();
-						geometry.indices = indices;
+						geometry.indices = [indices];
 //console.log( indices + ' ' + points )
 						nd.object = { 
 							
@@ -375,7 +415,7 @@ class FermatSpiral {
 							geometry: {
 
 								position: points,
-								indices: indices,
+								indices: [indices],
 					
 							},
 */
