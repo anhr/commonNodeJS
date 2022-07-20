@@ -2911,6 +2911,7 @@ class ND {
 		* See See <b>settings.object.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array|number} [object.rotation] rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
 		* See See <b>settings.object.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {Boolean} [object.update] true - update old object with new parameters.
 		*/
 		this.object = function ( object ) { console.error( 'ND: settings' ); }
 		/**
