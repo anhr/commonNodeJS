@@ -2403,6 +2403,8 @@ class ND {
 		 */
 		this.intersection = function ( geometryIntersection = { position: [], indices: [[]] }, iIntersections ) {
 
+			if ( settings.plane === false ) return;
+			
 			function intersection( iEdge, aEdge ) {
 				
 				for ( var i = 0; i < geometryIntersection.position.length; i++ ) {
