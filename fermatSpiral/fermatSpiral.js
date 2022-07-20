@@ -53,11 +53,48 @@ class FermatSpiral {
 	 */
 	constructor( settings = {} ) {
 
-		const points = [], indices = [[]];//, THREE = three.THREE, geometry = { position: [], indices: [[]] };
+		const points = [];//, indices = [[]];
 		settings.n = settings.n === undefined ? 2 : settings.n;
 		settings.count = settings.count === undefined ? 500 : settings.count;
 		settings.c = settings.c === undefined ? 0.04 : settings.c;//constant scaling factor
 		const _this = this;
+		this.geometry = {
+
+			position: new Proxy( points, {
+
+				get: function ( target, name, args ) {
+
+					const i = parseInt( name );
+					if ( !isNaN( i ) ) {
+
+						if ( target instanceof Array ) {
+
+							if ( i < target.length && ( target[i] !== undefined ) )
+								return target[i];
+							return 0;
+
+						}
+						return target;
+
+					}
+					switch ( name ) {
+
+						case 'target': return target.target;
+						case 'isProxy': return target.isProxy;
+						case 'length': return settings.count;
+						case 'boPositionError': return target.boPositionError;
+						case 'forEach': return target.forEach;
+						default: console.error( 'FermatSpiral: geometry.position get : ' + name );
+
+					}
+
+				},
+
+			} ),
+			indices: [[]],
+			//			indices: indices,
+
+		}
 		function update() {
 
 			//График для последней точки спирали x ближайшая точка с максимальным индексом y
@@ -84,8 +121,7 @@ class FermatSpiral {
 			//3.8 выбрал что бы не было лишних ребер при settings.count = 3800
 
 			points.length = 0;
-//			indices[0].length = 0;//удалить все ребра
-			indices[0] = [];//удалить все ребра
+			_this.geometry.indices[0] = [];//удалить все ребра
 			const golden_angle = 137.5077640500378546463487,//137.508;//https://en.wikipedia.org/wiki/Golden_angle
 				a = golden_angle * Math.PI / 180.0, b = 90 * Math.PI / 180.0;
 			for ( var i = 0; i < l; i++ ) {
@@ -153,13 +189,13 @@ class FermatSpiral {
 				const i0 = vertice1.aNear[0][0];
 				for ( var i = 1; i < vertice1.aNear.length; i++ ) {
 
-					const i1 = vertice1.aNear[i][0];
+					const i1 = vertice1.aNear[i][0], edges = _this.geometry.indices[0];
 					var boDuplicate = false;
-					for ( var j = 0; j < indices[0].length; j += 2 ) {
+					for ( var j = 0; j < edges.length; j += 2 ) {
 
 						if (
-							( ( indices[0][j] === i0 ) && ( indices[0][j + 1] === i1 ) ) ||
-							( ( indices[0][j] === i1 ) && ( indices[0][j + 1] === i0 ) )
+							( ( edges[j] === i0 ) && ( edges[j + 1] === i1 ) ) ||
+							( ( edges[j] === i1 ) && ( edges[j + 1] === i0 ) )
 						) {
 
 							boDuplicate = true;
@@ -170,7 +206,7 @@ class FermatSpiral {
 					}
 					if ( !boDuplicate && ( i0 < settings.count ) && ( i1 < settings.count ) ) {
 
-						indices[0].push( [i0, i1] );
+						edges.push( [i0, i1] );
 
 					}
 
@@ -180,42 +216,6 @@ class FermatSpiral {
 
 		}
 		update();
-		this.geometry = {
-
-			position: new Proxy( points, {
-
-				get: function ( target, name, args ) {
-
-					const i = parseInt( name );
-					if ( !isNaN( i ) ) {
-
-						if ( target instanceof Array ) {
-
-							if ( i < target.length && ( target[i] !== undefined ) )
-								return target[i];
-							return 0;
-
-						}
-						return target;
-
-					}
-					switch ( name ) {
-
-						case 'target': return target.target;
-						case 'isProxy': return target.isProxy;
-						case 'length': return settings.count;
-						case 'boPositionError': return target.boPositionError;
-						case 'forEach': return target.forEach;
-						default: console.error( 'FermatSpiral: geometry.position get : ' + name );
-
-					}
-
-				},
-
-			} ),
-			indices: indices,
-
-		}
 
 		var nd;
 		if ( settings.object )
@@ -303,7 +303,7 @@ class FermatSpiral {
 						function controllerUpdate() {
 						
 							update();
-							_this.geometry.indices = indices;
+//							_this.geometry.indices = indices;
 							nd.object = { 
 							
 								update: true,
