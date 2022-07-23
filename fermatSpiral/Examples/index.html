@@ -82,7 +82,12 @@
 			dat: {
 				guiSelectPoint: {
 
-					point: function ( options, dat, fMesh ) { return new FermatSpiral.gui( options, dat, fMesh ); },
+					point: function ( options, dat, fMesh ) {
+						
+						return new ND.gui( options, dat, fMesh );
+//						return new FermatSpiral.gui( options, dat, fMesh );
+					
+					},
 					//boDisplayVerticeID: true,
 
 				},

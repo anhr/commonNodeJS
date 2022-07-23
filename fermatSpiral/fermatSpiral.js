@@ -620,7 +620,11 @@ FermatSpiral.gui = class {
 
 }
 
-//FermatSpiral.objectType = 'FermatSpiral';
+/** @namespace
+ * @description N-dimensional graphics.
+ * @see <a href="../../nD/jsdoc/index.html" target="_blank">ND</a>.
+ */
+FermatSpiral.ND = ND;
 
 export default FermatSpiral;
 
