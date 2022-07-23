@@ -58,8 +58,168 @@ class FermatSpiral {
 		settings.count = settings.count === undefined ? 500 : settings.count;
 		settings.c = settings.c === undefined ? 0.04 : settings.c;//constant scaling factor
 		const _this = this;
+//		var boGuiCreated = false;
 		this.geometry = {
 
+			gui: function( fParent, dat, /*ndGui, */options, nd ){
+				
+				settings.object = settings.object || {};
+				settings.object.options = options;
+
+				//Localization
+
+				const getLanguageCode = options.getLanguageCode;
+
+				const lang = {
+
+					fermatSpiral: "Fermat's Spiral",
+					fermatSpiralTitle: "Fermat's Spiral Vogel Model.",
+					
+					count: 'Points',
+					countTitle: 'Spiral points count.',
+
+					c: 'scaling factor',
+					cTitle: "constant scaling factor of of Vogel's model of Fermat's spiral.",
+
+					defaultButton: 'Default',
+					defaultPositionTitle: 'Restore default spiral',
+
+					notSelected: 'Not selected',
+
+				};
+
+				const _languageCode = getLanguageCode();
+
+				switch ( _languageCode ) {
+
+					case 'ru'://Russian language
+
+						lang.fermatSpiral = 'Спираль Ферма';
+						lang.fermatSpiralTitle = 'Спираль Ферма. Модель Фогеля.';
+						
+						lang.count = 'Точки';
+						lang.countTitle = 'Количестао точек спирали';
+
+						lang.c = 'Масштаб';
+						lang.cTitle = 'Масштабный коэффициент модели Фогеля спирали Ферма';
+
+						lang.defaultButton = 'Восстановить';
+						lang.defaultPositionTitle = 'Восстановить параметры спирали';
+
+						lang.notSelected = 'Не выбран';
+
+						break;
+					default://Custom language
+						if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
+							break;
+
+						Object.keys( guiParams.lang ).forEach( function ( key ) {
+
+							if ( lang[key] === undefined )
+								return;
+							lang[key] = guiParams.lang[key];
+
+						} );
+
+				}
+/*
+				lang.nd = fParent.name;
+				lang.ndTitle = fParent.__ul.querySelector( "li.title" ).title;
+*/
+				fParent = fParent.addFolder( lang.fermatSpiral );
+				fParent.customFolder = true;
+				dat.folderNameAndTitle( fParent, lang.fermatSpiral, lang.fermatSpiralTitle );
+
+				//Points count
+
+				const fCount = fParent.addFolder( lang.count );
+				dat.folderNameAndTitle( fCount, lang.count, lang.countTitle );
+
+				fCount.add( new PositionController( function ( shift ) {
+
+					settings.count += shift;
+					if ( settings.count < 1 ) settings.count = 1;
+					cCount.setValue( settings.count, true );
+
+				},
+					{
+
+						getLanguageCode: getLanguageCode,
+						min: 1, max: 100, step: 1, settings: { offset: 1 },
+
+					}
+				) );
+
+				function controllerUpdate() {
+				
+					update();
+//							_this.geometry.indices = indices;
+					nd.object = { 
+					
+						update: true,
+						geometry: _this.geometry,
+					
+					}
+			
+				}
+				const cCount = dat.controllerZeroStep( fCount, settings, 'count', function ( value ) { controllerUpdate(); } );
+				dat.controllerNameAndTitle( cCount, lang.count, lang.countTitle );
+
+				//constant scaling factor
+
+				const fC = fParent.addFolder( lang.c );
+				dat.folderNameAndTitle( fC, lang.c, lang.cTitle );
+
+				fC.add( new PositionController( function ( shift ) {
+
+					settings.c += shift;
+					if ( settings.c < 0 ) settings.c = 0;
+					cC.setValue( settings.c, true );
+
+				},
+					{
+
+						getLanguageCode: getLanguageCode,
+						min: 0, max: 0.1, step: 0.001, settings: { offset: 0.001 },
+
+					}
+				) );
+
+				const cC = dat.controllerZeroStep( fC, settings, 'c', function ( value ) { controllerUpdate(); } );
+				dat.controllerNameAndTitle( cC, lang.c, lang.cTitle );
+
+				//Restore Fermat's spiral.
+				const defaultValues = {
+
+					count: settings.count,
+					c: settings.c,
+
+				}
+				const buttonDefault = fParent.add( {
+
+					defaultF: function ( value ) {
+
+						settings.count = defaultValues.count;
+						cCount.setValue( settings.count );
+						settings.c = defaultValues.c;
+						cC.setValue( settings.c );
+						update();
+
+					},
+
+				}, 'defaultF' );
+				dat.controllerNameAndTitle( buttonDefault, lang.defaultButton, lang.defaultPositionTitle );
+
+/*				
+				const fND = fParent.addFolder( lang.nd );
+				dat.folderNameAndTitle( fND, lang.nd, lang.ndTitle );
+				ndGui( fND, dat, true );
+*/
+
+//				boGuiCreated = true;
+				return fParent;
+				
+			},
 			position: new Proxy( points, {
 
 				get: function ( target, name, args ) {
@@ -95,6 +255,8 @@ class FermatSpiral {
 			//			indices: indices,
 
 		}
+//		this.geometry.gui.isCreated = function(){ return boGuiCreated };
+		
 		function update() {
 
 			//График для последней точки спирали x ближайшая точка с максимальным индексом y

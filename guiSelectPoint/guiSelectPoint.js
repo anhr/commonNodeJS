@@ -633,6 +633,7 @@ class GuiSelectPoint {
 
 				cPoints.__onChange( -1 );
 				_this.removePoints();
+				cMeshs.__onChange( -1 );
 
 			}
 

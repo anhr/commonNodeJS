@@ -1944,9 +1944,26 @@ class ND {
 
 			if ( settings.controllers ) settings.controllers( object );
 
-			object.userData.nd = function ( fParent, dat ) {
+			object.userData.nd = function ( fParent, dat, gui = false, boUpdate = false ) {
 
-				if ( !object.userData.nd.update )object.userData.nd.update = function(){ object.userData.nd( fParent, dat ) }
+				if ( !object.userData.nd.update )object.userData.nd.update = function(){ object.userData.nd( fParent, dat, gui, true ) }
+
+				if ( !boUpdate ) {
+					
+					if ( fParent.parent.fCustom ) {
+	
+						fParent.parent.fCustom.parent.removeFolder( fParent.parent.fCustom );
+						fParent.parent.fCustom = undefined;
+						
+					}				
+					if ( !gui && geometry.geometry.gui/* && !geometry.geometry.gui.isCreated()*/ ) {
+	
+						fParent.parent.fCustom = geometry.geometry.gui( fParent, dat, /*object.userData.nd, */settings.options, _ND );
+	//					return;
+						
+					}
+
+				}
 
 				//Localization
 
@@ -2289,7 +2306,7 @@ class ND {
 						controller.__onChange();
 
 					}
-					fParent.removeFolder( childFolder );
+					if ( !childFolder.customFolder )  fParent.removeFolder( childFolder );
 					
 				} );
 				const fPosition = fParent.addFolder( lang.position ),
