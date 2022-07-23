@@ -384,6 +384,7 @@ class FermatSpiral {
 			nd = new ND( settings.n, {
 
 				plane: false,
+/*
 				controllers: function( object ){
 				
 					object.userData.fermatSpiral = function ( fParent, dat, options ) {
@@ -525,6 +526,7 @@ class FermatSpiral {
 					}
 
 				},
+*/
 				object: {
 
 					name: 'Fermat Spiral',
@@ -545,15 +547,16 @@ class FermatSpiral {
 	}
 }
 
+/*
 FermatSpiral.gui = class {
 
-	/** @class
-	 * Custom controllers for implementation of Vogel's model of <a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral</a>.
-	 * @param {Options} options See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
-	 * @param {GUI} dat [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
-	 * @param {GUI} fParent parent folder.
-	 * @example new FermatSpiral.gui( options, dat, fMesh );
-	 */
+	///* * @class
+	// * Custom controllers for implementation of Vogel's model of <a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral</a>.
+	// * @param {Options} options See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+	// * @param {GUI} dat [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
+	// * @param {GUI} fParent parent folder.
+	// * @example new FermatSpiral.gui( options, dat, fMesh );
+	// /
 	constructor( options, dat, fParent ) {
 
 		//Localization
@@ -619,6 +622,7 @@ FermatSpiral.gui = class {
 	}
 
 }
+*/
 
 /** @namespace
  * @description N-dimensional graphics.

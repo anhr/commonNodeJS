@@ -1942,7 +1942,7 @@ class ND {
 				object.name = settings3D.name;
 			scene.add( object );
 
-			if ( settings.controllers ) settings.controllers( object );
+//			if ( settings.controllers ) settings.controllers( object );
 
 			object.userData.nd = function ( fParent, dat, gui = false, boUpdate = false ) {
 
