@@ -256,11 +256,9 @@ class ND {
 			 * </pre>
 			 * @example //Creates a point in 2-dimensional space. -5 is value for 0 axis and 7.8 is value for 1 axis.
 			 * const vector = new ND.Vector( [-5, 7.8] );
-			 * const n_dimension = vector.length//2
 			 * const point = vector.point;//THREE.Vector3( -5, 7.8, 0 )
 			 * const vector0 = vector[0]//-5
 			 * const vector1 = vector[1]//7.8
-			 * @memberof NDVector
 			 */
 			constructor( array = 0, vectorSettings = {} ) {
 
@@ -284,7 +282,7 @@ class ND {
 
 							switch ( name ) {
 
-								case "length": return n + 1;
+//								case "length": return n + 1;
 								case "array": return array;
 								/* *
 								* @description
