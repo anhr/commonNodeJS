@@ -15,10 +15,6 @@
 */
 
 import PositionController from '../PositionController.js';
-/*
-import three from '../three.js'
-import GuiIndices from '../guiIndices.js';
-*/
 import ND from '../nD/nD.js';
 //import ND from '../nD/build/nD.module.js';
 //import ND from '../nD/build/nD.module.min.js';
@@ -58,7 +54,6 @@ class FermatSpiral {
 		settings.count = settings.count === undefined ? 500 : settings.count;
 		settings.c = settings.c === undefined ? 0.04 : settings.c;//constant scaling factor
 		const _this = this;
-//		var boGuiCreated = false;
 		this.geometry = {
 
 			gui: function( fParent, dat, /*ndGui, */options, nd ){
@@ -122,10 +117,6 @@ class FermatSpiral {
 						} );
 
 				}
-/*
-				lang.nd = fParent.name;
-				lang.ndTitle = fParent.__ul.querySelector( "li.title" ).title;
-*/
 				fParent = fParent.addFolder( lang.fermatSpiral );
 				fParent.customFolder = true;
 				dat.folderNameAndTitle( fParent, lang.fermatSpiral, lang.fermatSpiralTitle );
@@ -153,7 +144,6 @@ class FermatSpiral {
 				function controllerUpdate() {
 				
 					update();
-//							_this.geometry.indices = indices;
 					nd.object = { 
 					
 						update: true,
@@ -210,13 +200,6 @@ class FermatSpiral {
 				}, 'defaultF' );
 				dat.controllerNameAndTitle( buttonDefault, lang.defaultButton, lang.defaultPositionTitle );
 
-/*				
-				const fND = fParent.addFolder( lang.nd );
-				dat.folderNameAndTitle( fND, lang.nd, lang.ndTitle );
-				ndGui( fND, dat, true );
-*/
-
-//				boGuiCreated = true;
 				return fParent;
 				
 			},
@@ -251,11 +234,11 @@ class FermatSpiral {
 				},
 
 			} ),
-			indices: [[]],
-			//			indices: indices,
+			indices: [
+				[]//edges
+			],
 
 		}
-//		this.geometry.gui.isCreated = function(){ return boGuiCreated };
 		
 		function update() {
 
@@ -298,11 +281,10 @@ class FermatSpiral {
 
 			points.forEach( ( vertice1, i ) => {
 
-				vertice1.aNear = [];//индексы четырех вершин, которые ближе всего расположены к текущей вершине vertice1
+				vertice1.aNear = [];//индексы вершин, которые ближе всего расположены к текущей вершине vertice1
 				//aNear[0] индекс текущей вершины,
 				//aNear[1...4] индексы четырех вершин, которые ближе всего расположены к текущей вершине
 				vertice1.aNear.push( [i] );
-				//						for ( var j = i + 1; j < points.length; j++ )
 				points.forEach( ( vertice2, j ) => {
 
 					if ( i != j ) {
@@ -385,149 +367,6 @@ class FermatSpiral {
 			nd = new ND( settings.n, {
 
 				plane: false,
-/*
-				controllers: function( object ){
-				
-					object.userData.fermatSpiral = function ( fParent, dat, options ) {
-
-						settings.object = settings.object || {};
-						settings.object.options = options;
-
-						//Localization
-
-						const getLanguageCode = options.getLanguageCode;
-
-						const lang = {
-
-							count: 'Points',
-							countTitle: 'Spiral points count.',
-
-							c: 'scaling factor',
-							cTitle: "constant scaling factor of of Vogel's model of Fermat's spiral.",
-
-							defaultButton: 'Default',
-							defaultPositionTitle: 'Restore default spiral',
-
-							notSelected: 'Not selected',
-
-						};
-
-						const _languageCode = getLanguageCode();
-
-						switch ( _languageCode ) {
-
-							case 'ru'://Russian language
-
-								lang.count = 'Точки';
-								lang.countTitle = 'Количестао точек спирали';
-
-								lang.c = 'Масштаб';
-								lang.cTitle = 'Масштабный коэффициент модели Фогеля спирали Ферма';
-
-								lang.defaultButton = 'Восстановить';
-								lang.defaultPositionTitle = 'Восстановить параметры спирали';
-
-								lang.notSelected = 'Не выбран';
-
-								break;
-							default://Custom language
-								if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
-									break;
-
-								Object.keys( guiParams.lang ).forEach( function ( key ) {
-
-									if ( lang[key] === undefined )
-										return;
-									lang[key] = guiParams.lang[key];
-
-								} );
-
-						}
-
-						//Points count
-
-						const fCount = fParent.addFolder( lang.count );
-						dat.folderNameAndTitle( fCount, lang.count, lang.countTitle );
-
-						fCount.add( new PositionController( function ( shift ) {
-
-							settings.count += shift;
-							if ( settings.count < 1 ) settings.count = 1;
-							cCount.setValue( settings.count, true );
-
-						},
-							{
-
-								getLanguageCode: getLanguageCode,
-								min: 1, max: 100, step: 1, settings: { offset: 1 },
-
-							}
-						) );
-
-						function controllerUpdate() {
-						
-							update();
-//							_this.geometry.indices = indices;
-							nd.object = { 
-							
-								update: true,
-								geometry: _this.geometry,
-							
-							}
-					
-						}
-						const cCount = dat.controllerZeroStep( fCount, settings, 'count', function ( value ) { controllerUpdate(); } );
-						dat.controllerNameAndTitle( cCount, lang.count, lang.countTitle );
-
-						//constant scaling factor
-
-						const fC = fParent.addFolder( lang.c );
-						dat.folderNameAndTitle( fC, lang.c, lang.cTitle );
-
-						fC.add( new PositionController( function ( shift ) {
-
-							settings.c += shift;
-							if ( settings.c < 0 ) settings.c = 0;
-							cC.setValue( settings.c, true );
-
-						},
-							{
-
-								getLanguageCode: getLanguageCode,
-								min: 0, max: 0.1, step: 0.001, settings: { offset: 0.001 },
-
-							}
-						) );
-
-						const cC = dat.controllerZeroStep( fC, settings, 'c', function ( value ) { controllerUpdate(); } );
-						dat.controllerNameAndTitle( cC, lang.c, lang.cTitle );
-
-						//Restore Fermat's spiral.
-						const defaultValues = {
-
-							count: settings.count,
-							c: settings.c,
-
-						}
-						const buttonDefault = fParent.add( {
-
-							defaultF: function ( value ) {
-
-								settings.count = defaultValues.count;
-								cCount.setValue( settings.count );
-								settings.c = defaultValues.c;
-								cC.setValue( settings.c );
-								update();
-
-							},
-
-						}, 'defaultF' );
-						dat.controllerNameAndTitle( buttonDefault, lang.defaultButton, lang.defaultPositionTitle );
-
-					}
-
-				},
-*/
 				object: {
 
 					name: 'Fermat Spiral',
@@ -538,92 +377,11 @@ class FermatSpiral {
 				},
 				scene: settings.object.scene,
 				options: settings.object.options,
-	/*
-				scene: settings.object ? settings.object.scene : undefined,
-				options: settings.object ? settings.object.options : undefined,
-	*/
 
 			} );
 
 	}
 }
-
-/*
-FermatSpiral.gui = class {
-
-	///* * @class
-	// * Custom controllers for implementation of Vogel's model of <a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral</a>.
-	// * @param {Options} options See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
-	// * @param {GUI} dat [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
-	// * @param {GUI} fParent parent folder.
-	// * @example new FermatSpiral.gui( options, dat, fMesh );
-	// /
-	constructor( options, dat, fParent ) {
-
-		//Localization
-
-		const getLanguageCode = options.getLanguageCode;
-
-		const lang = {
-
-			fermatSpiral: "Fermat's Spiral",
-			fermatSpiralTitle: "Fermat's Spiral Vogel Model.",
-
-		};
-
-		const _languageCode = getLanguageCode();
-
-		switch ( _languageCode ) {
-
-			case 'ru'://Russian language
-
-				lang.fermatSpiral = 'Спираль Ферма';
-				lang.fermatSpiralTitle = 'Спираль Ферма. Модель Фогеля.';
-
-				break;
-			default://Custom language
-				if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
-					break;
-
-				Object.keys( guiParams.lang ).forEach( function ( key ) {
-
-					if ( lang[key] === undefined )
-						return;
-					lang[key] = guiParams.lang[key];
-
-				} );
-
-		}
-		const fFermatSpiral = fParent.addFolder( lang.fermatSpiral );
-		dat.folderNameAndTitle( fFermatSpiral, lang.fermatSpiral, lang.fermatSpiralTitle );
-
-		this.object = function ( object, dat, options ) {
-
-			var display = 'none';
-			if ( object ) {
-
-				if ( object.userData.fermatSpiral ) {
-					
-					display = 'block';
-					object.userData.fermatSpiral( fFermatSpiral, dat, options );
-
-				}
-				if ( object.userData.nd ) {
-
-					display = 'block';
-					object.userData.nd( fFermatSpiral.addFolder( 'nD' ), dat, options );
-
-				}
-
-			}
-			fFermatSpiral.domElement.style.display = display;
-
-		}
-
-	}
-
-}
-*/
 
 /** @namespace
  * @description N-dimensional graphics.
