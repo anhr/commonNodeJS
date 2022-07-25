@@ -348,10 +348,11 @@ class FermatSpiral {
 					}
 
 				} );
-				const i0 = vertice1.aNear[0][0];
+				const edges = _this.geometry.indices[0],
+					i0 = vertice1.aNear[0][0];
 				for ( var i = 1; i < vertice1.aNear.length; i++ ) {
 
-					const i1 = vertice1.aNear[i][0], edges = _this.geometry.indices[0];
+					const i1 = vertice1.aNear[i][0];
 					var boDuplicate = false;
 					for ( var j = 0; j < edges.length; j += 2 ) {
 
