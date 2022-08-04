@@ -29,3 +29,4 @@ FermatSpiral/fermats-spiral/*
 FermatSpiral/fermat/*
 
 /.vs
+*Copy*.js
