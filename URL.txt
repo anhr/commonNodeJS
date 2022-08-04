@@ -1,3 +1,12 @@
+How to Edit Source Files Directly in Chrome
+https://www.sitepoint.com/edit-source-files-in-chrome/
+Open Chrome as Administrator
+Step 1: Launch Developer Tools (devtools) F12
+Step 2: Associate a Folder with the Workspace
+	Navigate to the Sources tab
+	Click the Filesystem tab, then click + Add folder to workspace. 
+
+-----------------------------------------------------
 Building
 
 Open "Node.js command prompt"
