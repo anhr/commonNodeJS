@@ -737,7 +737,7 @@ class GuiSelectPoint {
 				cMeshs.__select[index].selected = true;
 				cMeshs.__onChange( index - 1 );
 
-			}
+			} else if ( cCustom ) cCustom.object( getMesh(), dat, options );
 
 			this.selectPoint2 = function ( selectedMesh ) {
 
@@ -752,7 +752,8 @@ class GuiSelectPoint {
 				if ( !intersectionSelected.object.userData.boFrustumPoints ) {
 
 					//fPoints.open();много времени на открытие когда много точек
-					cPoints.__select[intersectionSelected.index + 1].selected = true;
+					const point = cPoints.__select[intersectionSelected.index + 1];
+					if ( point ) point.selected = true;
 
 				} else {//FrustumPoints
 

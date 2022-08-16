@@ -1011,6 +1011,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 
 	const boXYZ = !scales.x &&  !scales.y &&  !scales.z;
 	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
+	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
 	return new SpriteText(
 
 		//text
@@ -1044,8 +1045,11 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 					intersection.index * intersection.object.geometry.attributes.ca.itemSize
 
 				).w
+		) +
+		(//Custom text
+			intersection.object.userData.raycaster && intersection.object.userData.raycaster.text ? intersection.object.userData.raycaster.text( intersection/*, intersection.object.userData.raycaster.points*/ ) : ''
 		),
-		intersection.pointSpriteText ? intersection.pointSpriteText : position,
+		intersection.pointSpriteText ? intersection.pointSpriteText : intersection.point,//position,
 		options.spriteOptions
 	);
 

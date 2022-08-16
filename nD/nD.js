@@ -36,13 +36,13 @@ dimention	geometry	points	edges	faces	bodyes	4D objects
 
 class ND {
 
-	/** @class
+	/**
 	 * N-dimensional graphics.
 	 * Creates an N-dimensional graphic object,
 	 * checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
 	 * @param {number} n space dimension of the graphical object.
-	 * @param {Object} [settings={}] The following settings are available
-	 * @param {Object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
+	 * @param {settings} [settings={}] The following settings are available
+	 * @param {settings} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
 	 * @param {Array|Object} [settings.object.geometry] Array of vertices and indices of the n-dimensional graphical object.
 	 * <pre>
@@ -234,6 +234,167 @@ class ND {
 
 		const options = settings.options, _ND = this;
 		settings.object = settings.object || {};
+		settings.object.raycaster = settings.object.raycaster || {};
+		settings.object.raycaster.text = settings.object.raycaster.text || function( intersection ) {
+
+
+			//Localization
+
+			const getLanguageCode = settings.options.getLanguageCode;
+
+			const lang = {
+
+				pointId: "point Id",
+				edgeId: "edge Id",
+				faceId: "face Id",
+				bodyId: "body Id",
+				segmentId: "segment Id",
+
+			};
+
+			const _languageCode = getLanguageCode();
+
+			switch (_languageCode) {
+
+				case 'ru'://Russian language
+
+					lang.pointId = 'Индекс точки';
+					lang.edgeId = 'Индекс ребра';
+					lang.faceId = 'Индекс грани';
+					lang.bodyId = 'Индекс тела';
+					lang.segmentId = 'Индекс сегмента';
+
+					break;
+				default://Custom language
+					if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
+						break;
+
+					Object.keys(guiParams.lang).forEach(function (key) {
+
+						if (lang[key] === undefined)
+							return;
+						lang[key] = guiParams.lang[key];
+
+					});
+
+			}
+
+			const index = intersection.object.geometry.index, edge = [
+/*				
+					index.getX(intersection.index),
+					index.getY(intersection.index)
+*/
+					index.getX(intersection.indexNew),
+					index.getY(intersection.indexNew)
+				],
+				indices = intersection.object.userData.geometry.indices;
+//				indices = settings.object.geometry.indices;
+			edges = indices[0];
+
+			//find point id
+			var minDistance = Infinity, pointId;
+/*			
+			geometry.D3.points.forEach( ( point, i ) => {
+	
+				const distance = intersection.point.distanceTo( point );
+				if ( minDistance > distance  ) {
+	
+					minDistance = distance;
+					pointId = i;
+					
+				}
+			});
+*/
+			function distance ( i ) {
+
+				const pointIndex = edge[i],
+					distance = intersection.point.distanceTo( new THREE.Vector3().fromBufferAttribute( intersection.object.geometry.attributes.position, pointIndex ) );
+//					distance = intersection.point.distanceTo( geometry.D3.points[pointIndex] );
+				if ( minDistance > distance  ) {
+	
+					minDistance = distance;
+					pointId = pointIndex;
+					
+				}
+				
+			}
+			distance ( 0 );
+			distance ( 1 );
+			var text = '\n' + lang.pointId + ': ' + pointId;
+			
+			//Find edge index
+			for ( var segmentIndex = 0; segmentIndex < edges.length; segmentIndex++ ) {
+
+				const edgeCur = edges[segmentIndex];
+				if (
+					( ( edgeCur.indices[0] === edge[0] ) && ( edgeCur.indices[1] === edge[1] ) ) ||
+					( ( edgeCur.indices[0] === edge[1] ) && ( edgeCur.indices[1] === edge[0] ) )
+				) {
+
+					text += '\n' + lang.edgeId + ': ' + segmentIndex;
+					edges.selected = segmentIndex;
+					
+					//find segment id.
+					//indices[1] is faces
+					//indices[2] is bodies
+					var detectedIndex;//индекс элемента текушего сегмента segment = indices[indicesSegment]
+						//в котором встечается индекс segmentIndex выбранного сегмента перудыдущего уровня
+					for ( var indicesSegment = 1; indicesSegment < indices.length; indicesSegment++ ) {
+
+						const segment = indices[indicesSegment];//текуший сегмент
+						//Встречаются ли в текушем сегменте segment индекс segmentIndex выбранного сегмента перудыдущего уровня
+						segment.forEach( ( segmentItem, segmentIndexCur ) => {
+
+							//найти в текущем элементе сегмента segmentItem индекс segmentIndex выбранного сегмента перудыдущего уровня
+							//и присвоить detectedIndex = segmentIndexCur равному индексу текущего элемента сегмента
+							for ( var i = 0; i < segmentItem.length; i++ ) {
+								
+								//segmentIndex индекс выбранного сегмента перудыдущего уровня
+								//для segment = indices[1] is faces это индекс выбранного edge
+								//для segment = indices[2] is bodies это индекс выбранного face
+								if ( segmentItem[i] === segmentIndex ) {
+									
+									if ( detectedIndex != undefined ) console.log( 'Duplicate segment: ' + i );
+									detectedIndex = segmentIndexCur;
+									break;
+
+								}
+
+							}
+							
+						} );
+						if ( !detectedIndex ) {
+							
+							console.error( 'ND: mouse move. Index of segment was not detected' );
+							break;
+
+						}
+						else {
+							
+							segmentIndex = detectedIndex;
+							var segmentName;
+							switch( indicesSegment ) {//индекс ткушего сегмета
+
+								case 1: segmentName = lang.faceId; break;
+								case 2: segmentName = lang.bodyId; break;
+								default: segmentName = lang.segmentId;
+									
+							}
+							text += '\n' + segmentName + ': ' + segmentIndex;
+							segment.selected = segmentIndex;
+
+						}
+						
+					}
+					const segment = indices[indices.length - 1][segmentIndex];
+					break;
+					
+				}
+				
+			}
+			return text;
+			
+		};
 		settings.object.name = settings.object.name || 'Object';
 		if ( settings.object.aObjects ) settings.object.aObjects.nD = this;
 		settings.object.geometry = settings.object.geometry || {};
@@ -1031,6 +1192,7 @@ class ND {
 										case 'i': return target.i;
 										case 'arguments': return target.arguments;
 										case 'reset': return function() { delete target.positionWorld; }
+										case 'edges': return target.edges;
 										default: console.error( 'ND: settings.object.geometry.position[i] get. Invalid name: ' + name );
 
 									}
@@ -1332,6 +1494,7 @@ class ND {
 							case 'edges': return target;
 							case 'isProxy': return true;
 							case 'forEach': return target.forEach;
+							case 'selected': return target.selected;
 							default: console.error( 'ND: settings.object.geometry.indices getter. Invalid name: ' + name );
 
 						}
@@ -1344,11 +1507,9 @@ class ND {
 
 							switch ( prop ) {
 
-								case 'length':
-									break;
-								case 'edges':
-									settings.object.geometry.indices[0] = proxyEdges( value );
-									break;
+								case 'length': break;
+								case 'edges': settings.object.geometry.indices[0] = proxyEdges( value ); break;
+								case 'selected': edges.selected = value; break;
 								default: console.error( 'ND settings.object.geometry.indices[0].set: invalid prop: ' + prop );
 
 							}
@@ -1509,6 +1670,7 @@ class ND {
 						case 'length': return target.length;
 						case 'isProxy': return true;
 						case 'forEach': return target.forEach;
+						case 'selected': return target.selected;
 						default: console.error( 'ND: settings.object.geometry.indices[' + name + ']. Invalid name: ' + name );
 
 					}
@@ -1521,8 +1683,8 @@ class ND {
 
 						switch ( name ) {
 
-							case 'length':
-								break;
+							case 'length': break;
+							case 'selected': target.selected = value; break;
 							default: console.error( 'ND settings.object.geometry.indices[' + name + ']: invalid name: ' + name );
 								return false;
 
@@ -1942,6 +2104,7 @@ class ND {
 
 //			if ( settings.controllers ) settings.controllers( object );
 
+			object.userData.geometry = geometry.geometry;
 			object.userData.nd = function ( fParent, dat, gui = false, boUpdate = false ) {
 
 				if ( !object.userData.nd.update )object.userData.nd.update = function(){ object.userData.nd( fParent, dat, gui, true ) }
@@ -2264,17 +2427,48 @@ class ND {
 						if ( segmentIndex >= 0 ) fChildSegment = addController( segmentIndex - 1, fSegment, segment[selectedIndex], line );
 
 					} );
-					dat.controllerNameAndTitle( cSegment, '' );
-					cSegment.__select[0].selected = true;
+					dat.controllerNameAndTitle(cSegment, '');
+					var selectedItem = 0;//, innerHTML;
+					//cSegment.__select[0].selected = true;
 
+					const selected = segmentIndex >= 0 ? indices[segmentIndex].selected : undefined;
+					var selectedOpt;//debug
 					for ( var i = 0; i < segment.length; i++ ) {
 
 						const item = segment[i], opt = document.createElement( 'option' ), indices = item.indices ? item.indices : item;
 						opt.innerHTML = '(' + ( item.i === undefined ? i : item.i ) + ') ' + ( segmentIndex === -1 ? '' : indices.toString() );
 						opt.item = item;
+						if ( ( selected != undefined) && ( selected === item.index ) ) {
+							
+							selectedOpt = opt;//debug
+							selectedItem = i + 1;
+//							innerHTML = opt.innerHTML;
+/*
+//							opt.item.selectedIndex = i;
+							cSegment.__select.selectedIndex = i;//opt.item.selectedIndex;
+							opt.selected = true,
+							cSegment.setValue( opt.innerHTML );
+*/
+/*							
+							setTimeout( function() {
+							
+								cSegment.__select.selectedIndex = i;//opt.item.selectedIndex;
+	//							opt.selected = true,
+								cSegment.setValue( opt.innerHTML );
+							
+							},
+							0 );
+*/
+
+						}
 						cSegment.__select.appendChild( opt );
 
 					}
+					if ( selected && !selectedOpt ) console.error( 'ND: addController. Selected item was not detected' );
+//					cSegment.__select[selectedItem].selected = true;
+					cSegment.__select.selectedIndex = selectedItem;
+					if ( segmentIndex != -1 )//не понятно почему то не выбирается пункт "не выбран" для вершин если не сделать эту проверку
+						cSegment.setValue( cSegment.__select[selectedItem].innerHTML );
 					return fSegment;
 
 				}
@@ -2396,12 +2590,29 @@ class ND {
 
 				onIntersection: function ( intersection, mouse ) {
 
+					intersection.indexNew = intersection.index;
+					//если убрать строку ниже, то будет ошибка
+					//Cannot read properties of undefined (reading 'cameraTarget')
+					//в строке
+					//if (!func.cameraTarget)
+					//в функции this.changeTarget класса Player.cameraTarget в файле player.js
+					//
+					//Но зато будут видны иденксы точек, ребер, граней и т.д. если навести мышку на многомерную фигуру
+					//
+					//Лень разбираться почему так сделал.
+					//Для решения проблемы создаю новую переменную intersection.indexNew. Смотри строку выше.
+					//
+					//Для тестирования запусить http://localhost/anhr/commonNodeJS/master/nD/Examples/
+					//На холсте 5D щелкнуть мышкой на Object или Intersection.
 					delete intersection.index;
+
 					Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
 
 				},
 				onIntersectionOut: function () { Options.raycaster.onIntersectionOut( scene, options.renderer ); },
 				onMouseDown: function ( intersection ) { Options.raycaster.onMouseDown( intersection, options ); },
+				text: settings.object.raycaster ? settings.object.raycaster.text : undefined,
+//				points: geometry.D3.points,
 
 			}
 			if ( options.eventListeners ) options.eventListeners.addParticle( object );

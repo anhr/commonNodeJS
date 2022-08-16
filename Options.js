@@ -1680,6 +1680,12 @@ class Raycaster {
 			if ( intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo() )
 				return;
 			var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
+			if ( spriteTextIntersection && ( !intersection.pointSpriteText || ( intersection.object.userData.raycaster && intersection.object.userData.raycaster.text ) ) ) {
+				
+				scene.remove( spriteTextIntersection );
+				spriteTextIntersection = undefined;
+
+			}
 			if ( spriteTextIntersection === undefined ) {
 
 				options = new Options( options );
@@ -1986,7 +1992,7 @@ cube.userData.raycaster = {
 						const intersect = intersects[0], object = intersect.object;
 						if ( object.userData.raycaster && object.userData.raycaster.onIntersection ) {
 
-							intersect.pointSpriteText = intersect.point;
+//							intersect.pointSpriteText = intersect.point;
 							object.userData.raycaster.onIntersection( intersect, mouse );
 							
 						} else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );

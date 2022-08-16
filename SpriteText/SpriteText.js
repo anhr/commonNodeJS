@@ -21,7 +21,7 @@ import three from '../three.js'
  * A sprite based text component.
  * @param {string|number} text The text to be displayed on the sprite. You can include a multiline text separated by "\r\n".
  * @param {THREE.Vector3} [position=new THREE.Vector3()] Position of the text.
- * @param {object} [options={}] the following options are available
+ * @param {options} [options={}] the following options are available
  * @param {string} [options.name] Name of the <b>SpriteText</b> instance.
  * @param {THREE.Group} [options.group] Parent group of the SpriteText with common options.
  * See {@link https://github.com/anhr/SpriteText#groupuserdataoptionsspritetext---common-options-for-the-group-of-the-spritetext|common options for the group of the SpriteText}.
@@ -43,7 +43,7 @@ import three from '../three.js'
  * @param {boolean} [options.italic=false] CSS font-style.
  * @param {string} [options.fontProperties] Other font properties. The font property uses the same syntax as the CSS font property.
  * 	Default is empty string. Example "900", "oblique lighter".
- * @param {object} [options.rect={}] rectangle around the text.
+ * @param {options} [options.rect={}] rectangle around the text.
  * @param {boolean} [options.rect.displayRect=false] true - the rectangle around the text is visible.
  * @param {string} [options.rect.backgroundColor='rgba(0, 0, 0, 0)' - black transparent] background color. RGBA object or RGB object or HEX value
  * <pre>

@@ -452,6 +452,8 @@ class FermatSpiral {
 							*/
 														case 'push': return target.push;
 														case 'length': return target.length;
+														case 'name': return target.name;
+														case 'forEach': return target.forEach;
 														default: console.error('FermatSpiral: Vector.edges get : ' + name);
 							
 													}
@@ -705,9 +707,8 @@ class FermatSpiral {
 		}
 		update();
 
-		var nd;
 		if ( settings.object )
-			nd = new ND( n, {
+			new ND( n, {
 
 				plane: false,
 				object: {
