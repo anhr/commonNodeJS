@@ -2626,7 +2626,7 @@ class ND {
 		}
 		/**
 		 * @returns an array of intersection points of <b>vectorPlane</b> and <b>geometry</b>. See constructor for details.
-		 * @param {object} [geometryIntersection = { position: [], indices: [[]] }] Arrays of vertices and indexes of the result of the intersection of the panel and the nD object. See <b>settings.object.geometry</b> of <b>ND</b> constructor for details.
+		 * @param {geometryIntersection} [geometryIntersection = { position: [], indices: [[]] }] Arrays of vertices and indexes of the result of the intersection of the panel and the nD object. See <b>settings.object.geometry</b> of <b>ND</b> constructor for details.
 		 * @param {array} [geometryIntersection.position] Array of vertices of the result of the intersection. See <b>settings.object.geometry.position</b> of <b>ND</b> constructor for details.
 		 * @param {array} [geometryIntersection.indices] Array of <b>indices</b> of vertices of the result of the intersection. See <b>settings.object.geometry.indices</b> of <b>ND</b> constructor for details.
 		 * @param {array} [iIntersections] Array of indices that have been added to <b>geometryIntersection.indices</b>
@@ -3133,8 +3133,8 @@ class ND {
 		/**
 		* @description set new geometry, position and rotation of nD object
 		* See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Object} object new nD object
-		* @param {Object} object.geometry geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {nDObject} object new nD object
+		* @param {geometry} object.geometry geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array} object.geometry.position Array of vertices of the n-dimensional graphical object.
 		* See See <b>settings.object.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array} [object.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
@@ -3264,7 +3264,7 @@ class ND {
 
 ND.gui = class {
 
-	/** @class
+	/**
 	 * Custom controllers for N-dimensional graphic object
 	 * @param {Options} options See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 * @param {GUI} dat [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
@@ -3352,7 +3352,8 @@ if ( !Number.prototype.between )
 if ( Array.prototype.equals )
 	console.warn( "Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code." );
 // attach the .equals method to Array's prototype to call it on any array
-Array.prototype.equals = function ( array ) {
+Array.prototype.equals = function (array) {
+
 	// if the other array is a falsy value, return
 	if ( !array )
 		return false;
@@ -3361,17 +3362,23 @@ Array.prototype.equals = function ( array ) {
 	if ( this.length != array.length )
 		return false;
 
-	for ( var i = 0, l = this.length; i < l; i++ ) {
+	for (var i = 0, l = this.length; i < l; i++) {
+
 		// Check if we have nested arrays
-		if ( this[i] instanceof Array && array[i] instanceof Array ) {
+		if (this[i] instanceof Array && array[i] instanceof Array) {
+
 			// recurse into the nested arrays
 			if ( !this[i].equals( array[i] ) )
 				return false;
+
 		}
-		else if ( this[i] != array[i] ) {
+		else if (this[i] != array[i]) {
+
 			// Warning - two different object instances will never be equal: {x:20} != {x:20}
 			return false;
+
 		}
+
 	}
 	return true;
 }
