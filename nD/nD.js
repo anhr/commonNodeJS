@@ -2465,10 +2465,14 @@ class ND {
 
 					}
 					if ( selected && !selectedOpt ) console.error( 'ND: addController. Selected item was not detected' );
-//					cSegment.__select[selectedItem].selected = true;
-					cSegment.__select.selectedIndex = selectedItem;
-					if ( segmentIndex != -1 )//не понятно почему то не выбирается пункт "не выбран" для вершин если не сделать эту проверку
-						cSegment.setValue( cSegment.__select[selectedItem].innerHTML );
+					cSegment.__select[selectedItem].selected = true;
+					if ( selectedItem != 0 ) {
+						
+						cSegment.__select.selectedIndex = selectedItem;
+//						if ( segmentIndex != -1 )//не понятно почему то не выбирается пункт "не выбран" для вершин если не сделать эту проверку
+							cSegment.setValue( cSegment.__select[selectedItem].innerHTML );
+
+					}
 					return fSegment;
 
 				}
@@ -3313,7 +3317,16 @@ ND.gui = class {
 				display = 'block';
 				object.userData.nd( fND, dat );
 				
-			}
+			} else Object.keys( fND.__folders ).forEach( key => {
+
+				const folder = fND.__folders[key];
+				if ( !folder.userData || ( folder.userData.objectItems === undefined ) ) return;
+				const cSegment = folder.__controllers[0], selectedItem = 0;
+				cSegment.__select.selectedIndex = selectedItem;
+				cSegment.setValue( cSegment.__select[selectedItem].innerHTML );
+				
+				
+			} );
 			fND.domElement.style.display =  display;
 			
 		}

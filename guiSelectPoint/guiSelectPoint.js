@@ -1051,7 +1051,7 @@ class GuiSelectPoint {
 				value = parseInt( value );
 				mesh = getMesh();
 
-				if ( cCustom ) cCustom.object( mesh, dat, options );
+				if ( cCustom ) cCustom.object( mesh, dat, value === -1 );//options );
 
 				createPlayerArrayFuncs( mesh );
 /*
