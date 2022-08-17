@@ -239,12 +239,12 @@ class FermatSpiral {
 				//edges
 				new Proxy([], {
 
-					get: function (target, name, args) {
+					get: function (edges, name, args) {
 
 						const i = parseInt(name);
 						if (!isNaN(i)) {
 
-							const edge = target[i];
+							const edge = edges[i];
 //							console.log( edge );
 							if ( ( edge === undefined ) || edge.length != 2 ) {
 								
@@ -254,34 +254,35 @@ class FermatSpiral {
 							}
 							return edge;
 /*							
-							if (target instanceof Array) {
+							if (edges instanceof Array) {
 
-								if (i < target.length && (target[i] !== undefined))
-									return target[i];
+								if (i < edges.length && (edges[i] !== undefined))
+									return edges[i];
 								return 0;
 
 							}
-							return target;
+							return edges;
 */
 
 						}
 						switch (name) {
 
 /*
-							case 'target': return target.target;
-							case 'isProxy': return target.isProxy;
-							case 'boPositionError': return target.boPositionError;
-							case 'forEach': return target.forEach;
+							case 'edges': return edges.edges;
+							case 'isProxy': return edges.isProxy;
+							case 'boPositionError': return edges.boPositionError;
+							case 'forEach': return edges.forEach;
 */
-							case 'length': return target.length;
-							case 'push': return target.push;
-							case 'isProxy': return target.isProxy;
+							case 'length': return edges.length;
+							case 'push': return edges.push;
+							case 'isProxy': return edges.isProxy;
+							case 'selected': return edges.selected;
 							default: console.error('FermatSpiral: geometry.position get : ' + name);
 
 						}
 
 					},
-					set: function (target, name, value) {
+					set: function (edges, name, value) {
 
 						//value - массив с индексами вершин ребра
 						const i = parseInt(name);//индекс ребра
@@ -308,24 +309,26 @@ class FermatSpiral {
 								throw new Error( 'FermatSpiral: indices edges set' );
 //								return true;
 /*
-							if (i >= target.length) {
+							if (i >= edges.length) {
 
-								target.push(value);
-//								return target.length;
+								edges.push(value);
+//								return edges.length;
 
-							} else target[i] = value;
+							} else edges[i] = value;
 */
-							target.push(value);
-							return target.length;
+							edges.push(value);
+							return edges.length;
 //							return true;
 
 						}
 						switch (name) {
 
-							case 'length': target.length = value; return true;
-							default: console.error('ND: Vector set. Invalid name: ' + name);
+							case 'length': edges.length = value; break;
+							case 'selected': edges.selected = value; break;
+							default: console.error('fermatSpiral: indices set. Invalid name: ' + name);
 
 						}
+						return true;
 
 					}
 
@@ -497,7 +500,7 @@ class FermatSpiral {
 													switch (name) {
 							
 														case 'length': target.length = value; return true;
-														default: console.error('ND: Vector set. Invalid name: ' + name);
+														default: console.error('fermatSpiral: Vector set. Invalid name: ' + name);
 							
 													}
 							
@@ -505,7 +508,10 @@ class FermatSpiral {
 							
 											});
 										return target.edges;
-									default: console.error( 'ND: Vector get. Invalid name: ' + name );
+									case 'indices': return target.indices;
+									case 'i': return target.i;
+									case 'arguments': return target.arguments;
+									default: console.error( 'fermatSpiral: Vector get. Invalid name: ' + name );
 
 								}
 								return;
@@ -531,18 +537,20 @@ class FermatSpiral {
 	
 								}
 								array[i] = value;
-								_ND.intersection();
+//								_ND.intersection();
 								if ( vectorSettings.onChange ) vectorSettings.onChange();
 								return true;
 							
 							}
 							switch ( name ) {
 	
-								case 'onChange': vectorSettings.onChange = value; return vectorSettings.onChange;
-								case 'positionWorld': target.positionWorld = value; return true;
-								default: console.error( 'ND: Vector set. Invalid name: ' + name );
+								case 'onChange': vectorSettings.onChange = value; break;
+								case 'positionWorld': target.positionWorld = value; break;
+								case 'i': target.i = value; break;
+								default: console.error( 'fermatSpiral: Vector set. Invalid name: ' + name );
 	
 							}
+							return true;
 
 						}
 

@@ -1193,6 +1193,7 @@ class ND {
 										case 'arguments': return target.arguments;
 										case 'reset': return function() { delete target.positionWorld; }
 										case 'edges': return target.edges;
+										case 'index': return target.index;
 										default: console.error( 'ND: settings.object.geometry.position[i] get. Invalid name: ' + name );
 
 									}
@@ -2435,10 +2436,11 @@ class ND {
 					var selectedOpt;//debug
 					for ( var i = 0; i < segment.length; i++ ) {
 
-						const item = segment[i], opt = document.createElement( 'option' ), indices = item.indices ? item.indices : item;
+						const item = segment[i], opt = document.createElement( 'option' ), indices = item.indices ? item.indices : item,
+							itemIndex = item.index ? item.index : i;
 						opt.innerHTML = '(' + ( item.i === undefined ? i : item.i ) + ') ' + ( segmentIndex === -1 ? '' : indices.toString() );
 						opt.item = item;
-						if ( ( selected != undefined) && ( selected === item.index ) ) {
+						if ( ( selected != undefined) && ( selected === itemIndex ) ) {
 							
 							selectedOpt = opt;//debug
 							selectedItem = i + 1;
