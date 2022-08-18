@@ -2014,11 +2014,9 @@ cube.userData.raycaster = {
 					if ( intersects && ( intersects.length > 0 ) ) {
 
 						const intersect = intersects[0];
-						if ( intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown ) {
-
+						if ( intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown )
 							intersect.object.userData.raycaster.onMouseDown( intersect );
-
-						} else Options.raycaster.onMouseDown( intersect, options );
+						else Options.raycaster.onMouseDown( intersect, options );
 
 					}
 

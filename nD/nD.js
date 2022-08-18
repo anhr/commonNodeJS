@@ -2436,9 +2436,9 @@ class ND {
 					var selectedOpt;//debug
 					for ( var i = 0; i < segment.length; i++ ) {
 
-						const item = segment[i], opt = document.createElement( 'option' ), indices = item.indices ? item.indices : item,
-							itemIndex = item.index ? item.index : i;
-						opt.innerHTML = '(' + ( item.i === undefined ? i : item.i ) + ') ' + ( segmentIndex === -1 ? '' : indices.toString() );
+						const item = segment[i], opt = document.createElement( 'option' ),
+							itemIndex = item.index ? item.index : item.i ? item.i : i;
+						opt.innerHTML = '(' + (item.i === undefined ? i : item.i) + ') ' + (segmentIndex === -1 ? '' : ( item.indices ? item.indices : item ).toString() );
 						opt.item = item;
 						if ( ( selected != undefined) && ( selected === itemIndex ) ) {
 							
