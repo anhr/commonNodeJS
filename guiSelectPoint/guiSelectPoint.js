@@ -737,7 +737,15 @@ class GuiSelectPoint {
 				cMeshs.__select[index].selected = true;
 				cMeshs.__onChange( index - 1 );
 
-			} else if ( cCustom ) cCustom.object( getMesh(), dat, options );
+			} else if ( cCustom ) {
+
+				const mesh = getMesh();
+				cCustom.object(intersectionSelected.event && intersectionSelected.event.button === 0 ?
+						mesh :
+						undefined,//Пользователь нажал не левую кнопку мыши. Надо восстановить выбранный nD объект
+					dat, options);
+
+			}
 
 			this.selectPoint2 = function ( selectedMesh ) {
 

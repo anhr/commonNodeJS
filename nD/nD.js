@@ -18,13 +18,9 @@
 */
 
 import three from '../three.js'
-
 import Options from '../Options.js'
-
 import PositionController from '../PositionController.js';
-//import { SpriteText } from '../SpriteText/SpriteText.js'
 import MyMath from '../myMath/myMath.js'
-//import GuiIndices from '../guiIndices.js';
 
 /**
 dimention	geometry	points	edges	faces	bodyes	4D objects
@@ -2437,7 +2433,7 @@ class ND {
 					for ( var i = 0; i < segment.length; i++ ) {
 
 						const item = segment[i], opt = document.createElement( 'option' ),
-							itemIndex = item.index ? item.index : item.i ? item.i : i;
+							itemIndex = item.index != undefined ? item.index : item.i != undefined ? item.i : i;
 						opt.innerHTML = '(' + (item.i === undefined ? i : item.i) + ') ' + (segmentIndex === -1 ? '' : ( item.indices ? item.indices : item ).toString() );
 						opt.item = item;
 						if ( ( selected != undefined) && ( selected === itemIndex ) ) {
@@ -2616,7 +2612,12 @@ class ND {
 
 				},
 				onIntersectionOut: function () { Options.raycaster.onIntersectionOut( scene, options.renderer ); },
-				onMouseDown: function ( intersection ) { Options.raycaster.onMouseDown( intersection, options ); },
+				onMouseDown: function ( intersection, event ) {
+					
+					intersection.event = event;//Теперь можно выполнять разные действия в зависимости от нажатой кнопки мыши
+					Options.raycaster.onMouseDown( intersection, options );
+				
+				},
 				text: settings.object.raycaster ? settings.object.raycaster.text : undefined,
 //				points: geometry.D3.points,
 

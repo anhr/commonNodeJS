@@ -2015,7 +2015,7 @@ cube.userData.raycaster = {
 
 						const intersect = intersects[0];
 						if ( intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown )
-							intersect.object.userData.raycaster.onMouseDown( intersect );
+							intersect.object.userData.raycaster.onMouseDown( intersect, event );//передаем состояние кнопок мыши
 						else Options.raycaster.onMouseDown( intersect, options );
 
 					}
