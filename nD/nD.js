@@ -2408,7 +2408,28 @@ class ND {
 	
 								}
 								const itemIndices = item.indices || item;
-								itemIndices.forEach( i => { lineIndices.push( i ); } );
+								if ( itemIndices.length !== 2 ) console.error( 'ND: createIndices. Invalid itemIndices.length = ' + itemIndices.length );
+								var boDetected = false;
+								for ( var lineIndicesIndex = 0; lineIndicesIndex < lineIndices.length; lineIndicesIndex += 2 ) {
+
+									if ( ( lineIndices[lineIndicesIndex] === itemIndices[0] ) && ( lineIndices[lineIndicesIndex + 1] === itemIndices[1] ) ) {
+
+										boDetected = true;
+										break;
+										
+									}
+/*									
+									if ( ( lineIndices[lineIndicesIndex] === itemIndices[1] ) && ( lineIndices[lineIndicesIndex + 1] === itemIndices[0] ) ) {
+
+										boDetected = true;
+console.log( 'ND: createIndices. есть сегметы с обратным расположением индексов' );
+										break;
+										
+									}
+*/
+									
+								}
+								if ( !boDetected ) itemIndices.forEach( i => { lineIndices.push( i ); } );
 	
 							}
 							createIndices( segment[selectedIndex], segmentIndex );
