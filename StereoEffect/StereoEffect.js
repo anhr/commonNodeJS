@@ -1009,6 +1009,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 				Player.execFunc( func, 'w', group.userData.t, options ) ://.a, options.b ) :
 				func.w;
 
+	if ( intersection.object.userData.onIntersection ) intersection.object.userData.onIntersection();
 	const boXYZ = !scales.x &&  !scales.y &&  !scales.z;
 	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
 	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;

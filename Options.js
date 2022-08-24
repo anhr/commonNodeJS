@@ -1760,8 +1760,12 @@ class Raycaster {
 				return;//No display information about frustum point
 			if ( options.guiSelectPoint )
 				options.guiSelectPoint.select( intersection );
-			else if ( options.axesHelper )
-				options.axesHelper.exposePosition( intersection );
+			else {
+
+				if ( intersection.object.userData.onMouseDown ) intersection.object.userData.onMouseDown( intersection );
+				if ( options.axesHelper ) options.axesHelper.exposePosition( intersection );
+
+			}
 
 		}
 		const intersectedObjects = [];

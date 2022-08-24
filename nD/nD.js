@@ -2067,6 +2067,42 @@ class ND {
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
 
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
+
+		//The user has selected a segment of nD object
+		const selectSegment = {
+
+			line: undefined,//segment of nD object, selected by user
+			removeLine: function (line) {
+
+						if (line) {
+
+							line.parent.remove(line);
+							line = undefined;
+
+						}
+				return line;
+
+			},
+			opacityDefault: 0.3,
+			opacityItem: function (item, parentObject, transparent, opacity = selectSegment.opacityDefault) {
+
+				if (!item.material) return;
+				if (transparent && (opacity === 0) && (Object.is(item.parent, parentObject))) parentObject.remove(item);
+				else {
+
+					if (!item.parent) parentObject.add(item);
+					item.material.transparent = transparent;
+					item.material.opacity = transparent ? opacity : 1;
+
+				}
+
+			}
+
+		}
+
+//		var line;//часть nD объекта, выбранная пользователем
+//		const opacityDefault = 0.3;
+
 		function create3DObject( geometry, settings3D = {} ) {
 
 			if ( !geometry.D3 ) {
@@ -2102,6 +2138,89 @@ class ND {
 //			if ( settings.controllers ) settings.controllers( object );
 
 			object.userData.geometry = geometry.geometry;
+/*
+			object.userData.onIntersection = function (){
+
+				console.log('object.userData.onIntersection');
+				
+			}
+*/
+			object.userData.onMouseDown = function ( intersection ) {
+
+				const indices = geometry.geometry.indices, segmentIndex = 0,//edges
+					segment = indices[segmentIndex], selectedIndex = segment.selected;
+
+				selectSegment.line = selectSegment.removeLine(selectSegment.line );
+				const opacityDefault = intersection.event && intersection.event.button === 0 ? selectSegment.opacityDefault : 1, parentObject = object;
+/*
+				function opacityItem( item, transparent, opacity = opacityDefault ) {
+					
+					if ( !item.material ) return;
+					if ( transparent && ( opacity === 0 ) && ( Object.is( item.parent, parentObject ) ) ) parentObject.remove( item ); 
+					else {
+						
+						if ( !item.parent ) parentObject.add( item );
+						item.material.transparent = transparent;
+						item.material.opacity = transparent ? opacity : 1;
+
+					}
+					
+				}
+*/
+				function opacity( transparent = true, opacity = opacityDefault ) {
+
+//					scene.children.forEach(item => opacityItem(item, transparent, opacity));
+					scene.children.forEach(item => selectSegment.opacityItem(item, parentObject, transparent, opacity));
+
+				}
+				opacity();
+				
+				const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points );
+				const lineIndices = [];
+				function createIndices( item, level ) {
+
+					if ( level > 0 ) {
+
+						level--;
+						for ( var i = 0; i < item.length; i++ ) createIndices( indices[level][item[i]], level );
+						return;
+
+					}
+					const itemIndices = item.indices || item;
+					if ( itemIndices.length !== 2 ) console.error( 'ND: createIndices. Invalid itemIndices.length = ' + itemIndices.length );
+					var boDetected = false;
+					for ( var lineIndicesIndex = 0; lineIndicesIndex < lineIndices.length; lineIndicesIndex += 2 ) {
+
+						if ( ( lineIndices[lineIndicesIndex] === itemIndices[0] ) && ( lineIndices[lineIndicesIndex + 1] === itemIndices[1] ) ) {
+
+							boDetected = true;
+							break;
+							
+						}
+/*									
+						if ( ( lineIndices[lineIndicesIndex] === itemIndices[1] ) && ( lineIndices[lineIndicesIndex + 1] === itemIndices[0] ) ) {
+
+							boDetected = true;
+console.log( 'ND: createIndices. есть сегметы с обратным расположением индексов' );
+							break;
+							
+						}
+*/
+						
+					}
+					if ( !boDetected ) itemIndices.forEach( i => { lineIndices.push( i ); } );
+
+				}
+				createIndices( segment[selectedIndex], segmentIndex );
+				
+				selectSegment.line = new THREE.LineSegments( buffer.setIndex( lineIndices ), new THREE.LineBasicMaterial( { color: object.material.color, } ) );
+
+				//debug
+//				selectSegment.line.userData.name = fSegment.name + ' ' + value;
+				
+				parentObject.add( selectSegment.line );
+				
+			}
 			object.userData.nd = function ( fParent, dat, gui = false, boUpdate = false ) {
 
 				if ( !object.userData.nd.update )object.userData.nd.update = function(){ object.userData.nd( fParent, dat, gui, true ) }
@@ -2252,7 +2371,7 @@ class ND {
 						
 					}else segment = indices[segmentIndex];
 					const items = { Items: [lang.notSelected] };
-					var line, fChildSegment;
+					var fChildSegment, line;
 					var name, title;
 					switch ( segmentIndex ) {
 
@@ -2282,13 +2401,26 @@ class ND {
 
 						}
 						const selectedIndex = cSegment.__select.selectedIndex - 1;
-						if ( line ) {
+						line = selectSegment.removeLine(line);
+/*
+						if ( selectSegment.line ) {
+
+							selectSegment.line.parent.remove( selectSegment.line );
+							selectSegment.line = undefined;
+
+						}
+*/
+/*
+						if (line) {
 
 							line.parent.remove( line );
 							line = undefined;
 
 						}
-						const opacityDefault = 0.3, parentObject = object;
+*/
+						const parentObject = object;
+//						const opacityDefault = 0.3, parentObject = object;
+/*
 						function opacityItem( item, transparent, opacity = opacityDefault ) {
 							
 							if ( !item.material ) return;
@@ -2302,9 +2434,11 @@ class ND {
 							}
 							
 						}
-						function opacity( transparent = true, opacity = opacityDefault ) {
+*/
+						function opacity(transparent = true, opacity = selectSegment.opacityDefault ) {
 
-							scene.children.forEach( item => opacityItem( item, transparent, opacity ) );
+							scene.children.forEach(item => selectSegment.opacityItem(item, parentObject, transparent, opacity));
+//							scene.children.forEach(item => opacityItem(item, transparent, opacity));
 
 						}
 
@@ -2313,7 +2447,7 @@ class ND {
 						//Если в 5D прозрачность делать постоянной 0.3, то при выборе тела (body) из объета, объект буден практически непрозрачным
 						function getOpacity() {
 							
-							return -0.1 * segmentIndex + opacityDefault;
+							return -0.1 * segmentIndex + selectSegment.opacityDefault;
 							
 						}
 
@@ -2335,8 +2469,12 @@ class ND {
 							removeVerticeControls();
 							if ( prevLine ) {
 
-								opacityItem( prevLine, false );
-								if ( prevLine.userData.prevLine ) opacityItem( prevLine.userData.prevLine, true, getOpacity() );
+/*
+								opacityItem(prevLine, false);
+								if (prevLine.userData.prevLine) opacityItem(prevLine.userData.prevLine, true, getOpacity());
+*/
+								selectSegment.opacityItem(prevLine, parentObject, false);
+								if (prevLine.userData.prevLine) selectSegment.opacityItem(prevLine.userData.prevLine, parentObject, true, getOpacity() );
 								else opacity( true );
 								return;
 								
@@ -2347,13 +2485,13 @@ class ND {
 						}
 						if ( prevLine ) {
 							
-							opacity( true, 0 );
+							opacity(true, 0);
+/*
 							opacityItem( prevLine, true, getOpacity() );
-							if ( prevLine.userData.prevLine ) {
-
-								opacityItem( prevLine.userData.prevLine, true, 0 );
-								
-							}
+							if ( prevLine.userData.prevLine ) opacityItem( prevLine.userData.prevLine, true, 0 );
+ */
+							selectSegment.opacityItem(prevLine, parentObject, true, getOpacity() );
+							if (prevLine.userData.prevLine) selectSegment.opacityItem(prevLine.userData.prevLine, parentObject, true, 0 );
 
 						} else opacity();
 						if ( segmentIndex === -1 ) {
@@ -2432,17 +2570,29 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 								if ( !boDetected ) itemIndices.forEach( i => { lineIndices.push( i ); } );
 	
 							}
-							createIndices( segment[selectedIndex], segmentIndex );
-							line = new THREE.LineSegments( buffer.setIndex( lineIndices ), new THREE.LineBasicMaterial( { color: object.material.color } ) );
+							createIndices(segment[selectedIndex], segmentIndex);
+/*
+							selectSegment.line = new THREE.LineSegments( buffer.setIndex( lineIndices ), new THREE.LineBasicMaterial( { color: object.material.color } ) );
 	
 							//debug
-							line.userData.name = fSegment.name + ' ' + value;
+							selectSegment.line.userData.name = fSegment.name + ' ' + value;
 							
+							parentObject.add( selectSegment.line );
+*/
+							line = new THREE.LineSegments(buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
+
+							//debug
+							line.userData.name = fSegment.name + ' ' + value;
+
 							parentObject.add( line );
 
 						}
-						if ( prevLine && line ) line.userData.prevLine = prevLine;
-						if ( segmentIndex >= 0 ) fChildSegment = addController( segmentIndex - 1, fSegment, segment[selectedIndex], line );
+/*
+						if ( prevLine && selectSegment.line ) selectSegment.line.userData.prevLine = prevLine;
+						if ( segmentIndex >= 0 ) fChildSegment = addController( segmentIndex - 1, fSegment, segment[selectedIndex], selectSegment.line );
+*/
+						if (prevLine && line) line.userData.prevLine = prevLine;
+						if (segmentIndex >= 0) fChildSegment = addController(segmentIndex - 1, fSegment, segment[selectedIndex], line);
 
 					} );
 					dat.controllerNameAndTitle(cSegment, '');
