@@ -15,6 +15,7 @@
 */
 
 import PositionController from '../PositionController.js';
+
 import ND from '../nD/nD.js';
 //import ND from '../nD/build/nD.module.js';
 //import ND from '../nD/build/nD.module.min.js';
@@ -292,7 +293,7 @@ class FermatSpiral {
 							function addIndex( edgeIndex ) {
 								
 								try {
-					
+
 									points[value[edgeIndex]].edges.push( i );
 					
 								} catch ( e ) {
@@ -348,11 +349,6 @@ class FermatSpiral {
 				 * The length of an array is the dimension of the space.
 				 * @param {Array} [array=0] array of the values for appropriate axes.
 				 * </pre>
-				 * @example //Creates a point in 2-dimensional space. -5 is value for 0 axis and 7.8 is value for 1 axis.
-				 * const vector = new ND.Vector( [-5, 7.8] );
-				 * const point = vector.point;//THREE.Vector3( -5, 7.8, 0 )
-				 * const vector0 = vector[0]//-5
-				 * const vector1 = vector[1]//7.8
 				 */
 				constructor( array = 0, vectorSettings = {} ) {
 
@@ -361,7 +357,7 @@ class FermatSpiral {
 
 						if ( typeof array === 'number' ) array = [array];
 						else if ( array.array ) array = array.array;
-						else console.error( 'ND.Vector: invalid array type' );
+						else console.error( 'FermatSpiral: Vector: invalid array type' );
 
 					}
 					if ( n !== undefined ) while ( array.length < n ) array.push( 0 );
@@ -386,14 +382,12 @@ class FermatSpiral {
 									/* *
 									* @description
 									* <pre>
-									* <b><a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>.point</b>.
-									* Projection of the <b>ND.Vector</b> object into 3D space.
+									* Projection of the <b>Vector</b> object into 3D space.
 									* Returns <b>THREE.Vector3</b> object.
 									* Projection of 1-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], 0, 0 ) </b>.
 									* Projection of 2-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], 0 ) </b>.
 									* Projection of 3-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], vector[2] ) </b>.
 									* </pre>
-									* @See <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>
 									*/
 									case "point":
 										const THREE = three.THREE;
@@ -469,7 +463,7 @@ class FermatSpiral {
 							
 														//value - индекс ребра
 														const maxLength = 6;
-														if ( target.length > maxLength ) {
+														if ( target.length >= maxLength ) {
 
 															//https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Error
 															function MyError(message, id) {
@@ -586,7 +580,9 @@ class FermatSpiral {
 			//3.8 выбрал что бы не было лишних ребер при settings.count = 3800
 
 			points.length = 0;
-			_this.geometry.indices[0].length = 0;//удалить все ребра
+			const edges = _this.geometry.indices[0];
+			edges.length = 0;//удалить все ребра
+//			_this.geometry.indices[0].length = 0;//удалить все ребра
 			const golden_angle = 137.5077640500378546463487,//137.508;//https://en.wikipedia.org/wiki/Golden_angle
 				a = golden_angle * Math.PI / 180.0, b = 90 * Math.PI / 180.0;
 			for ( var i = 0; i < l; i++ ) {
@@ -594,36 +590,19 @@ class FermatSpiral {
 				const angleInRadians = i * a - b;
 				const radius = settings.c * Math.sqrt( i );
 				points.push( new Vector([radius * Math.cos( angleInRadians ), radius * Math.sin( angleInRadians )]) );
-//				points.push( [radius * Math.cos( angleInRadians ), radius * Math.sin( angleInRadians )] );
 
 			}
 
 			//indices
+			points.forEach((vertice1, i) => {
 
-			points.forEach( ( vertice1, i ) => {
-
-/*
-				vertice1.aNear = [];//индексы вершин, которые ближе всего расположены к текущей вершине vertice1
-				//aNear[0] индекс текущей вершины,
-				//aNear[1...4] индексы четырех вершин, которые ближе всего расположены к текущей вершине
-*/
 				vertice1.aNear.push( [i] );
 
 				points.forEach( ( vertice2, j ) => {
 
 					if ( i != j ) {
 
-/*						
-						function distanceTo( v, array ) {
-
-							var a = 0;
-							array.forEach( ( item, i ) => { const b = item - v[i]; a = a + b * b; } )
-							return Math.sqrt( a );
-
-						}
-*/
 						const distance = vertice1.distanceTo( vertice2 );
-//						const distance = distanceTo( vertice2, vertice1 );
 						function getMax() {
 
 							for ( var iMax = 1; iMax < vertice1.aNear.length; iMax++ ) {
@@ -656,27 +635,11 @@ class FermatSpiral {
 					}
 
 				} );
-				const edges = _this.geometry.indices[0],
-					i0 = vertice1.aNear[0][0];
-				for ( var i = 1; i < vertice1.aNear.length; i++ ) {
+				const i0 = vertice1.aNear[0][0];
+				for ( var k = 1; k < vertice1.aNear.length; k++ ) {
 
-					const i1 = vertice1.aNear[i][0];
+					const i1 = vertice1.aNear[k][0];
 					var boDuplicate = false;
-/*					
-					for ( var j = 0; j < edges.length; j += 2 ) {
-
-						if (
-							( ( edges[j] === i0 ) && ( edges[j + 1] === i1 ) ) ||
-							( ( edges[j] === i1 ) && ( edges[j + 1] === i0 ) )
-						) {
-
-							boDuplicate = true;
-							break;
-
-						}
-
-					}
-*/
 					for ( var j = 0; j < edges.length; j++ ) {
 
 						if (
@@ -710,7 +673,7 @@ class FermatSpiral {
 
 				}
 
-			} );
+			});
 
 		}
 		update();

@@ -350,7 +350,7 @@ class ND {
 								//для segment = indices[2] is bodies это индекс выбранного face
 								if ( segmentItem[i] === segmentIndex ) {
 									
-									if ( detectedIndex != undefined ) console.log( 'Duplicate segment: ' + i );
+									//if ( detectedIndex != undefined ) console.log( 'Duplicate segment: ' + i );
 									detectedIndex = segmentIndexCur;
 									break;
 
