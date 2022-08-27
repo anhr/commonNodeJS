@@ -289,6 +289,12 @@ class FermatSpiral {
 						const i = parseInt(name);//индекс ребра
 						if (!isNaN(i)) {
 
+							const i0 = value[0], i1 = value[1]
+							if (
+								( ( i0 === 0 ) && ( i1 === 4 ) ) || ( ( i0 === 4 ) && ( i1 === 0 ) ) ||
+								( ( i0 === 0 ) && ( i1 === 6 ) ) || ( ( i0 === 6 ) && ( i1 === 0 ) )
+							)
+								throw new MyError('FermatSpiral: indices set. Invalid edge.', MyError.IDS.invalidEdge );
 							//добавить индекс ребра в список ребер двух вершин, которые составляют ребро
 							function addIndex( edgeIndex ) {
 								
@@ -307,7 +313,7 @@ class FermatSpiral {
 
 							}
 							if ( !addIndex( 0 ) || !addIndex( 1 ) )
-								throw new Error( 'FermatSpiral: indices edges set' );
+								throw new MyError('FermatSpiral: indices set. Invalid edge.', MyError.IDS.edgesCountOverflow);
 //								return true;
 /*
 							if (i >= edges.length) {
@@ -465,24 +471,6 @@ class FermatSpiral {
 														const maxLength = 6;
 														if ( target.length >= maxLength ) {
 
-															//https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Error
-															function MyError(message, id) {
-
-																this.name = 'MyError';
-																this.message = message;
-																this.IDS = MyError.IDS;
-																this.id = id;
-																this.stack = (new Error()).stack;
-
-															}
-															MyError.IDS = {
-
-																edgesCountOverflow: 0,//Edges length > maxLength
-
-															}
-															MyError.prototype = Object.create(Error.prototype);
-															MyError.prototype.constructor = MyError;
-															
 															throw new MyError('FermatSpiral: update Vector get edges set. Edges length > ' + maxLength, MyError.IDS.edgesCountOverflow );
 
 														}
@@ -661,8 +649,15 @@ class FermatSpiral {
 
 						} catch ( e ) {
 
+							switch ( e.id ) {
+
+								case e.IDS.edgesCountOverflow:
+								case e.IDS.invalidEdge:
+									break;
+								default: console.error( e.message );	
+							}
 /*							
-							if ( e.id === e.IDS.edgesCountOverflow )
+							if ( ( e.id != undefined ) && ( e.id === e.IDS.invalidEdge ) )
 								return false;
 							else console.error( e.message );
 */
@@ -697,6 +692,25 @@ class FermatSpiral {
 
 	}
 }
+
+//https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Error
+function MyError(message, id) {
+
+	this.name = 'MyError';
+	this.message = message;
+	this.IDS = MyError.IDS;
+	this.id = id;
+	this.stack = (new Error()).stack;
+
+}
+MyError.IDS = {
+
+	edgesCountOverflow: 0,//Edges length > maxLength
+	invalidEdge: 1,//вручную не добавляю некоторые ребра, что бы не было пересекающихся ребер
+
+}
+MyError.prototype = Object.create(Error.prototype);
+MyError.prototype.constructor = MyError;
 
 /** @namespace
  * @description N-dimensional graphics.
