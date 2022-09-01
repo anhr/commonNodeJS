@@ -368,10 +368,137 @@ class FermatSpiral {
 					}
 					if ( n !== undefined ) while ( array.length < n ) array.push( 0 );
 					
-					const aNear = [];//индексы вершин, которые ближе всего расположены к текущей вершине vertice1
-					//aNear[0] индекс текущей вершины,
-					//aNear[1...4] индексы вершин, которые ближе всего расположены к текущей вершине
-					//vertice1.aNear.push( [i] );
+					//индексы вершин, которые ближе всего расположены к текущей вершине
+					array.aNear = new Proxy([], {
+
+						get: function ( aNear, name ) {
+
+							const i = parseInt(name);
+							if (!isNaN(i)) {
+
+								if (name >= aNear.length)
+									console.error('FermatSpiral: Vector aNear get. Invalid index = ' + name);
+								return aNear[i];
+
+							}
+							function getMax() {
+
+								var iMax;
+								for (var i = 0; i < aNear.length; i++) {
+
+									if ( iMax === undefined ) iMax = i;
+									else if ( aNear[iMax].distance < aNear[i].distance) iMax = i;
+
+								}
+								if ( iMax != undefined )  aNear.iMax = iMax;
+								else console.error( 'FermatSpiral: Vector aNear add getMax. Invalid iMax = ' + iMax );
+/*								
+								if ((aNear.iMax === undefined) && (aNear.length > 0)) aNear.iMax = 0;
+								const maxItem = aNear[aNear.iMax];
+								for (var iMax = 0; iMax < aNear.length; iMax++) {
+
+									const item = aNear[iMax];
+									if (maxItem.distance < item.distance) aNear.iMax = iMax;
+
+								}
+*/
+
+							}
+							switch (name) {
+
+								case 'length': return aNear.length;
+/*
+								case 'verticeIndex': return function (i) {
+
+									if (target.length != 0) {
+
+										if (target[0][0] != i)
+											console.error('FermatSpiral: update Vector aNear verticeIndex. Invalid target.length = ' + target.length);
+										return;
+
+									}
+									target.push([i]);
+
+								}
+*/
+								case 'add': return function ( i, distance ) {
+
+									//debug
+									for( var j = 0; j < aNear.length; j++ ) {
+
+										if ( aNear[j].i === i ) {
+
+											console.error( 'FermatSpiral: Vector aNear add. Duplicate index = ' + i );
+											return;
+											
+										}
+										
+									}
+									
+									const newItem = { i: i, distance: distance, };
+									if ( aNear.length < 6 ) {
+										
+										aNear.push( newItem );
+										getMax();
+										
+									} else {
+
+										if ( aNear[aNear.iMax].distance > distance ) {
+											
+											aNear[aNear.iMax] = newItem;
+											getMax();
+
+										}
+/*
+										if ( vertice1.aNear[vertice1.aNear[0].iMax].distance > distance ) {
+			
+											vertice1.aNear[vertice1.aNear[0].iMax] = [j];
+											vertice1.aNear[vertice1.aNear[0].iMax].distance = distance;
+											getMax();
+			
+										}
+*/
+			
+									}
+									
+/*
+									const length = vertice1.aNear.push( { i: i, distance: distance, } );
+									if ( vertice1.aNear.iMax === undefined ) vertice1.aNear.iMax = length - 1;
+*/
+									
+								}
+/*
+								case 'removeNear': return function (index) {
+
+									for (var i = 1; i < target.length; i++) {
+
+										const item = target[i]
+										if (item[0] === index) {
+
+											target.splice(i, 1);
+											target[0].iMax = undefined;
+											getMax();
+											break;
+
+										}
+
+									}
+
+								}
+*/
+								default: console.error('FermatSpiral: Update Vector get. name: ' + name);
+
+							}
+
+						},
+						set: function (target, name, value) {
+
+							target[name] = value;
+							return true;
+
+						},
+
+					});
 
 					//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
 					return new Proxy( array, {
@@ -421,7 +548,7 @@ class FermatSpiral {
 											return Math.sqrt( a );
 
 										}
-									case "aNear": return aNear;
+									case "aNear": return array.aNear;
 									case "positionWorld": return array.positionWorld;
 									case "forEach": return array.forEach;
 									case "length": return array.length;
@@ -578,13 +705,15 @@ class FermatSpiral {
 			//indices
 			points.forEach((vertice1, i) => {
 
-				vertice1.aNear.push( [i] );
+//				vertice1.aNear.push( [i] );
+				vertice1.i = i;
 
 				points.forEach( ( vertice2, j ) => {
 
 					if ( i != j ) {
 
 						const distance = vertice1.distanceTo( vertice2 );
+/*						
 						function getMax() {
 
 							for ( var iMax = 1; iMax < vertice1.aNear.length; iMax++ ) {
@@ -595,6 +724,9 @@ class FermatSpiral {
 							}
 
 						}
+*/
+						vertice1.aNear.add( j, distance );
+/*						
 						if ( vertice1.aNear.length < 7 ) {
 
 							const length = vertice1.aNear.push( [j] );
@@ -613,14 +745,16 @@ class FermatSpiral {
 							}
 
 						}
+*/
 
 					}
 
 				} );
-				const i0 = vertice1.aNear[0][0];
-				for ( var k = 1; k < vertice1.aNear.length; k++ ) {
+//				const i0 = vertice1.aNear[0][0];
+				const i0 = vertice1.i;
+				for ( var k = 0; k < vertice1.aNear.length; k++ ) {
 
-					const i1 = vertice1.aNear[k][0];
+					const i1 = vertice1.aNear[k].i;
 					var boDuplicate = false;
 					for ( var j = 0; j < edges.length; j++ ) {
 
