@@ -206,28 +206,28 @@ class FermatSpiral {
 			},
 			position: new Proxy( points, {
 
-				get: function ( target, name, args ) {
+				get: function ( points, name, args ) {
 
 					const i = parseInt( name );
 					if ( !isNaN( i ) ) {
 
-						if ( target instanceof Array ) {
+						if ( points instanceof Array ) {
 
-							if ( i < target.length && ( target[i] !== undefined ) )
-								return target[i];
+							if ( i < points.length && ( points[i] !== undefined ) )
+								return points[i];
 							return 0;
 
 						}
-						return target;
+						return points;
 
 					}
 					switch ( name ) {
 
-						case 'target': return target.target;
-						case 'isProxy': return target.isProxy;
+						case 'target': return points.target;
+						case 'isProxy': return points.isProxy;
 						case 'length': return settings.count;
-						case 'boPositionError': return target.boPositionError;
-						case 'forEach': return target.forEach;
+						case 'boPositionError': return points.boPositionError;
+						case 'forEach': return points.forEach;
 						default: console.error( 'FermatSpiral: geometry.position get : ' + name );
 
 					}
@@ -376,7 +376,7 @@ class FermatSpiral {
 					//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
 					return new Proxy( array, {
 
-						get: function ( target, name ) {
+						get: function (array, name ) {
 
 							var i = parseInt( name );
 							if ( isNaN( i ) ) {
@@ -404,7 +404,7 @@ class FermatSpiral {
 									case "add":
 										return function ( v ) {
 
-											target.forEach( ( value, i ) => target[i] += v[i] );
+											array.forEach((value, i) => array[i] += v[i] );
 											return this;
 
 										}
@@ -422,77 +422,71 @@ class FermatSpiral {
 
 										}
 									case "aNear": return aNear;
-									case "positionWorld": return target.positionWorld;
-									case "forEach": return target.forEach;
-									case "length": return target.length;
+									case "positionWorld": return array.positionWorld;
+									case "forEach": return array.forEach;
+									case "length": return array.length;
 									case "edges": 
 										
-										if ( !target.edges )
-											target.edges = new Proxy([], {
+										if (!array.edges )
+											array.edges = new Proxy([], {
 
-												get: function (target, name, args) {
+												get: function (edges, name, args) {
 							
 													const i = parseInt(name);
 													if (!isNaN(i)) {
 							
-														if (target instanceof Array) {
+														if (edges instanceof Array) {
 							
-															if (i < target.length && (target[i] !== undefined))
-																return target[i];
+															if (i < edges.length && (edges[i] !== undefined))
+																return edges[i];
 															return 0;
 							
 														}
-														return target;
+														return edges;
 							
 													}
 													switch (name) {
 							
-							/*
-														case 'target': return target.target;
-														case 'isProxy': return target.isProxy;
-														case 'boPositionError': return target.boPositionError;
-														case 'forEach': return target.forEach;
-							*/
-														case 'push': return target.push;
-														case 'length': return target.length;
-														case 'name': return target.name;
-														case 'forEach': return target.forEach;
+														case 'push': return edges.push;
+														case 'length': return edges.length;
+														case 'name': return edges.name;
+														case 'forEach': return edges.forEach;
 														default: console.error('FermatSpiral: Vector.edges get : ' + name);
 							
 													}
 							
 												},
-												set: function (target, name, value) {
+												set: function (edges, name, value) {
 							
 													const i = parseInt(name);//индекс ребра
 													if (!isNaN(i)) {
 							
 														//value - индекс ребра
 														const maxLength = 6;
-														if ( target.length >= maxLength ) {
+														if (edges.length >= maxLength ) {
 
 															throw new MyError('FermatSpiral: update Vector get edges set. Edges length > ' + maxLength, MyError.IDS.edgesCountOverflow );
 
 														}
-														if (i >= target.length) target.push(value);
-														else target[i] = value;
-														return target.length;
+														if (i >= edges.length) edges.push(value);
+														else edges[i] = value;
+														return edges.length;
 							
 													}
 													switch (name) {
 							
-														case 'length': target.length = value; return true;
-														default: console.error('fermatSpiral: Vector set. Invalid name: ' + name);
+														case 'length': edges.length = value; return true;
+														default: console.error('fermatSpiral: Vector edges set. Invalid name: ' + name);
 							
 													}
 							
 												}
 							
 											});
-										return target.edges;
-									case 'indices': return target.indices;
-									case 'i': return target.i;
-									case 'arguments': return target.arguments;
+										return array.edges;
+									case 'indices': return array.indices;
+									case 'i': return array.i;
+									case 'arguments': return array.arguments;
 									default: console.error( 'fermatSpiral: Vector get. Invalid name: ' + name );
 
 								}
@@ -506,12 +500,12 @@ class FermatSpiral {
 							return array[i];
 
 						},
-						set: function ( target, name, value ) {
+						set: function ( array, name, value ) {
 
 							const i = parseInt( name );
 							if ( !isNaN( i ) ) {
 								
-//								target.positionWorld = undefined;
+//								array.positionWorld = undefined;
 								if ( i >= array.length ) {
 	
 									array.push( value );
@@ -527,8 +521,8 @@ class FermatSpiral {
 							switch ( name ) {
 	
 								case 'onChange': vectorSettings.onChange = value; break;
-								case 'positionWorld': target.positionWorld = value; break;
-								case 'i': target.i = value; break;
+								case 'positionWorld': array.positionWorld = value; break;
+								case 'i': array.i = value; break;
 								default: console.error( 'fermatSpiral: Vector set. Invalid name: ' + name );
 	
 							}
