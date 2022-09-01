@@ -46,13 +46,9 @@
 */
 
 import three from '../three.js'
-
 import Options from '../Options.js'
-
 import PositionController from '../PositionController.js';
-//import { SpriteText } from '../SpriteText/SpriteText.js'
 import MyMath from '../myMath/myMath.js'
-//import GuiIndices from '../guiIndices.js';
 
 /**
 dimention	geometry	points	edges	faces	bodyes	4D objects
@@ -69,8 +65,8 @@ class ND {
 	 * Creates an N-dimensional graphic object,
 	 * checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
 	 * @param {number} n space dimension of the graphical object.
-	 * @param {settings} [settings={}] The following settings are available
-	 * @param {settings} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
+	 * @param {object} [settings={}] The following settings are available
+	 * @param {object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
 	 * @param {Array|Object} [settings.object.geometry] Array of vertices and indices of the n-dimensional graphical object.
 	 * &lt;pre>
@@ -308,36 +304,18 @@ class ND {
 			}
 
 			const index = intersection.object.geometry.index, edge = [
-/*				
-					index.getX(intersection.index),
-					index.getY(intersection.index)
-*/
 					index.getX(intersection.indexNew),
 					index.getY(intersection.indexNew)
 				],
 				indices = intersection.object.userData.geometry.indices;
-//				indices = settings.object.geometry.indices;
 			edges = indices[0];
 
 			//find point id
 			var minDistance = Infinity, pointId;
-/*			
-			geometry.D3.points.forEach( ( point, i ) => {
-	
-				const distance = intersection.point.distanceTo( point );
-				if ( minDistance > distance  ) {
-	
-					minDistance = distance;
-					pointId = i;
-					
-				}
-			});
-*/
 			function distance ( i ) {
 
 				const pointIndex = edge[i],
 					distance = intersection.point.distanceTo( new THREE.Vector3().fromBufferAttribute( intersection.object.geometry.attributes.position, pointIndex ) );
-//					distance = intersection.point.distanceTo( geometry.D3.points[pointIndex] );
 				if ( minDistance > distance  ) {
 	
 					minDistance = distance;
@@ -382,7 +360,7 @@ class ND {
 								//для segment = indices[2] is bodies это индекс выбранного face
 								if ( segmentItem[i] === segmentIndex ) {
 									
-									if ( detectedIndex != undefined ) console.log( 'Duplicate segment: ' + i );
+									//if ( detectedIndex != undefined ) console.log( 'Duplicate segment: ' + i );
 									detectedIndex = segmentIndexCur;
 									break;
 
@@ -471,7 +449,6 @@ class ND {
 
 							switch ( name ) {
 
-//								case "length": return n + 1;
 								case "array": return array;
 								/* *
 								* @description
@@ -1221,6 +1198,7 @@ class ND {
 										case 'arguments': return target.arguments;
 										case 'reset': return function() { delete target.positionWorld; }
 										case 'edges': return target.edges;
+										case 'index': return target.index;
 										default: console.error( 'ND: settings.object.geometry.position[i] get. Invalid name: ' + name );
 
 									}
@@ -2098,6 +2076,39 @@ class ND {
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
 
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
+
+		//The user has selected a segment of nD object
+		const selectSegment = {
+
+			line: undefined,//segment of nD object, selected by user
+			removeLine: function (line) {
+
+						if (line) {
+
+							line.parent.remove(line);
+							line = undefined;
+
+						}
+				return line;
+
+			},
+			opacityDefault: 0.3,
+			opacityItem: function (item, parentObject, transparent, opacity = selectSegment.opacityDefault) {
+
+				if (!item.material) return;
+				if (transparent &amp;&amp; (opacity === 0) &amp;&amp; (Object.is(item.parent, parentObject))) parentObject.remove(item);
+				else {
+
+					if (!item.parent) parentObject.add(item);
+					item.material.transparent = transparent;
+					item.material.opacity = transparent ? opacity : 1;
+
+				}
+
+			}
+
+		}
+
 		function create3DObject( geometry, settings3D = {} ) {
 
 			if ( !geometry.D3 ) {
@@ -2130,9 +2141,55 @@ class ND {
 				object.name = settings3D.name;
 			scene.add( object );
 
-//			if ( settings.controllers ) settings.controllers( object );
-
 			object.userData.geometry = geometry.geometry;
+			object.userData.onMouseDown = function ( intersection ) {
+
+				const indices = geometry.geometry.indices, segmentIndex = 0,//edges
+					segment = indices[segmentIndex], selectedIndex = segment.selected;
+
+				selectSegment.line = selectSegment.removeLine(selectSegment.line );
+				const opacityDefault = intersection.event &amp;&amp; intersection.event.button === 0 ? selectSegment.opacityDefault : 1, parentObject = object;
+				function opacity( transparent = true, opacity = opacityDefault ) {
+
+					scene.children.forEach(item => selectSegment.opacityItem(item, parentObject, transparent, opacity));
+
+				}
+				opacity();
+				
+				const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points );
+				const lineIndices = [];
+				function createIndices( item, level ) {
+
+					if ( level > 0 ) {
+
+						level--;
+						for ( var i = 0; i &lt; item.length; i++ ) createIndices( indices[level][item[i]], level );
+						return;
+
+					}
+					const itemIndices = item.indices || item;
+					if ( itemIndices.length !== 2 ) console.error( 'ND: createIndices. Invalid itemIndices.length = ' + itemIndices.length );
+					var boDetected = false;
+					for ( var lineIndicesIndex = 0; lineIndicesIndex &lt; lineIndices.length; lineIndicesIndex += 2 ) {
+
+						if ( ( lineIndices[lineIndicesIndex] === itemIndices[0] ) &amp;&amp; ( lineIndices[lineIndicesIndex + 1] === itemIndices[1] ) ) {
+
+							boDetected = true;
+							break;
+							
+						}
+						
+					}
+					if ( !boDetected ) itemIndices.forEach( i => { lineIndices.push( i ); } );
+
+				}
+				createIndices( segment[selectedIndex], segmentIndex );
+				
+				selectSegment.line = new THREE.LineSegments( buffer.setIndex( lineIndices ), new THREE.LineBasicMaterial( { color: object.material.color, } ) );
+
+				parentObject.add( selectSegment.line );
+				
+			}
 			object.userData.nd = function ( fParent, dat, gui = false, boUpdate = false ) {
 
 				if ( !object.userData.nd.update )object.userData.nd.update = function(){ object.userData.nd( fParent, dat, gui, true ) }
@@ -2148,7 +2205,6 @@ class ND {
 					if ( !gui &amp;&amp; geometry.geometry.gui/* &amp;&amp; !geometry.geometry.gui.isCreated()*/ ) {
 	
 						fParent.parent.fCustom = geometry.geometry.gui( fParent, dat, /*object.userData.nd, */settings.options, _ND );
-	//					return;
 						
 					}
 
@@ -2262,16 +2318,6 @@ class ND {
 							if ( segmentItems.forEach )
 								segmentItems.forEach( i => addItem( geometry.geometry.position[i], i ) );
 							else segmentItems.indices.forEach( i => addItem( geometry.geometry.position[i], i ) );
-/*							
-							settings.object.geometry.position.boPositionError = false;
-							
-							//непонятно почему, но для 2D вершины перечислены в segmentItems.indices
-							if ( segmentItems.forEach )
-								segmentItems.forEach( i => addItem( settings.object.geometry.position[i], i ) );
-							else segmentItems.indices.forEach( i => addItem( settings.object.geometry.position[i], i ) );
-							
-							settings.object.geometry.position.boPositionError = true;
-*/
 							
 						} else {
 							
@@ -2283,7 +2329,7 @@ class ND {
 						
 					}else segment = indices[segmentIndex];
 					const items = { Items: [lang.notSelected] };
-					var line, fChildSegment;
+					var fChildSegment, line;
 					var name, title;
 					switch ( segmentIndex ) {
 
@@ -2313,29 +2359,11 @@ class ND {
 
 						}
 						const selectedIndex = cSegment.__select.selectedIndex - 1;
-						if ( line ) {
+						line = selectSegment.removeLine(line);
+						const parentObject = object;
+						function opacity(transparent = true, opacity = selectSegment.opacityDefault ) {
 
-							line.parent.remove( line );
-							line = undefined;
-
-						}
-						const opacityDefault = 0.3, parentObject = object;
-						function opacityItem( item, transparent, opacity = opacityDefault ) {
-							
-							if ( !item.material ) return;
-							if ( transparent &amp;&amp; ( opacity === 0 ) &amp;&amp; ( Object.is( item.parent, parentObject ) ) ) parentObject.remove( item ); 
-							else {
-								
-								if ( !item.parent ) parentObject.add( item );
-								item.material.transparent = transparent;
-								item.material.opacity = transparent ? opacity : 1;
-
-							}
-							
-						}
-						function opacity( transparent = true, opacity = opacityDefault ) {
-
-							scene.children.forEach( item => opacityItem( item, transparent, opacity ) );
+							scene.children.forEach(item => selectSegment.opacityItem(item, parentObject, transparent, opacity));
 
 						}
 
@@ -2344,7 +2372,7 @@ class ND {
 						//Если в 5D прозрачность делать постоянной 0.3, то при выборе тела (body) из объета, объект буден практически непрозрачным
 						function getOpacity() {
 							
-							return -0.1 * segmentIndex + opacityDefault;
+							return -0.1 * segmentIndex + selectSegment.opacityDefault;
 							
 						}
 
@@ -2366,8 +2394,8 @@ class ND {
 							removeVerticeControls();
 							if ( prevLine ) {
 
-								opacityItem( prevLine, false );
-								if ( prevLine.userData.prevLine ) opacityItem( prevLine.userData.prevLine, true, getOpacity() );
+								selectSegment.opacityItem(prevLine, parentObject, false);
+								if (prevLine.userData.prevLine) selectSegment.opacityItem(prevLine.userData.prevLine, parentObject, true, getOpacity() );
 								else opacity( true );
 								return;
 								
@@ -2378,13 +2406,9 @@ class ND {
 						}
 						if ( prevLine ) {
 							
-							opacity( true, 0 );
-							opacityItem( prevLine, true, getOpacity() );
-							if ( prevLine.userData.prevLine ) {
-
-								opacityItem( prevLine.userData.prevLine, true, 0 );
-								
-							}
+							opacity(true, 0);
+							selectSegment.opacityItem(prevLine, parentObject, true, getOpacity() );
+							if (prevLine.userData.prevLine) selectSegment.opacityItem(prevLine.userData.prevLine, parentObject, true, 0 );
 
 						} else opacity();
 						if ( segmentIndex === -1 ) {
@@ -2397,11 +2421,6 @@ class ND {
 //							const vertice = geometry.geometry.position[segment[selectedIndex].i];
 
 							const vertice = settings.object.geometry.position[segment[selectedIndex].i];
-/*							
-							settings.object.geometry.position.boPositionError = false;
-							const vertice = settings.object.geometry.position[segment[selectedIndex].i];
-							settings.object.geometry.position.boPositionError = true;
-*/
 							for ( var i = 0; i &lt; vertice.length; i++ ) {
 								
 								switch(i){
@@ -2439,20 +2458,32 @@ class ND {
 	
 								}
 								const itemIndices = item.indices || item;
-								itemIndices.forEach( i => { lineIndices.push( i ); } );
+								if ( itemIndices.length !== 2 ) console.error( 'ND: createIndices. Invalid itemIndices.length = ' + itemIndices.length );
+								var boDetected = false;
+								for ( var lineIndicesIndex = 0; lineIndicesIndex &lt; lineIndices.length; lineIndicesIndex += 2 ) {
+
+									if ( ( lineIndices[lineIndicesIndex] === itemIndices[0] ) &amp;&amp; ( lineIndices[lineIndicesIndex + 1] === itemIndices[1] ) ) {
+
+										boDetected = true;
+										break;
+										
+									}
+									
+								}
+								if ( !boDetected ) itemIndices.forEach( i => { lineIndices.push( i ); } );
 	
 							}
-							createIndices( segment[selectedIndex], segmentIndex );
-							line = new THREE.LineSegments( buffer.setIndex( lineIndices ), new THREE.LineBasicMaterial( { color: object.material.color } ) );
-	
+							createIndices(segment[selectedIndex], segmentIndex);
+							line = new THREE.LineSegments(buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
+
 							//debug
 							line.userData.name = fSegment.name + ' ' + value;
-							
+
 							parentObject.add( line );
 
 						}
-						if ( prevLine &amp;&amp; line ) line.userData.prevLine = prevLine;
-						if ( segmentIndex >= 0 ) fChildSegment = addController( segmentIndex - 1, fSegment, segment[selectedIndex], line );
+						if (prevLine &amp;&amp; line) line.userData.prevLine = prevLine;
+						if (segmentIndex >= 0) fChildSegment = addController(segmentIndex - 1, fSegment, segment[selectedIndex], line);
 
 					} );
 					dat.controllerNameAndTitle(cSegment, '');
@@ -2463,30 +2494,14 @@ class ND {
 					var selectedOpt;//debug
 					for ( var i = 0; i &lt; segment.length; i++ ) {
 
-						const item = segment[i], opt = document.createElement( 'option' ), indices = item.indices ? item.indices : item;
-						opt.innerHTML = '(' + ( item.i === undefined ? i : item.i ) + ') ' + ( segmentIndex === -1 ? '' : indices.toString() );
+						const item = segment[i], opt = document.createElement( 'option' ),
+							itemIndex = item.index != undefined ? item.index : item.i != undefined ? item.i : i;
+						opt.innerHTML = '(' + (item.i === undefined ? i : item.i) + ') ' + (segmentIndex === -1 ? '' : ( item.indices ? item.indices : item ).toString() );
 						opt.item = item;
-						if ( ( selected != undefined) &amp;&amp; ( selected === item.index ) ) {
+						if ( ( selected != undefined) &amp;&amp; ( selected === itemIndex ) ) {
 							
 							selectedOpt = opt;//debug
 							selectedItem = i + 1;
-//							innerHTML = opt.innerHTML;
-/*
-//							opt.item.selectedIndex = i;
-							cSegment.__select.selectedIndex = i;//opt.item.selectedIndex;
-							opt.selected = true,
-							cSegment.setValue( opt.innerHTML );
-*/
-/*							
-							setTimeout( function() {
-							
-								cSegment.__select.selectedIndex = i;//opt.item.selectedIndex;
-	//							opt.selected = true,
-								cSegment.setValue( opt.innerHTML );
-							
-							},
-							0 );
-*/
 
 						}
 						cSegment.__select.appendChild( opt );
@@ -2497,8 +2512,7 @@ class ND {
 					if ( selectedItem != 0 ) {
 						
 						cSegment.__select.selectedIndex = selectedItem;
-//						if ( segmentIndex != -1 )//не понятно почему то не выбирается пункт "не выбран" для вершин если не сделать эту проверку
-							cSegment.setValue( cSegment.__select[selectedItem].innerHTML );
+						cSegment.setValue( cSegment.__select[selectedItem].innerHTML );
 
 					}
 					return fSegment;
@@ -2610,8 +2624,6 @@ class ND {
 				}
 				
 				addController( segmentIndex, fParent );
-				
-//				new GuiIndices( geometry, fParent, dat, options, object, { settings: settings, prevLine: _prevLine } );
 			
 			}
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
@@ -2642,9 +2654,13 @@ class ND {
 
 				},
 				onIntersectionOut: function () { Options.raycaster.onIntersectionOut( scene, options.renderer ); },
-				onMouseDown: function ( intersection ) { Options.raycaster.onMouseDown( intersection, options ); },
+				onMouseDown: function ( intersection, event ) {
+					
+					intersection.event = event;//Теперь можно выполнять разные действия в зависимости от нажатой кнопки мыши
+					Options.raycaster.onMouseDown( intersection, options );
+				
+				},
 				text: settings.object.raycaster ? settings.object.raycaster.text : undefined,
-//				points: geometry.D3.points,
 
 			}
 			if ( options.eventListeners ) options.eventListeners.addParticle( object );
@@ -2959,7 +2975,6 @@ class ND {
 
 										const error = 'ND.intersection: invalid edge';
 										console.error( error );
-//										throw error;
 										return;
 
 									}
@@ -3161,8 +3176,8 @@ class ND {
 		/**
 		* @description set new geometry, position and rotation of nD object
 		* See &lt;b>settings&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
-		* @param {nDObject} object new nD object
-		* @param {geometry} object.geometry geometry of new nD object. See See &lt;b>settings.object.geometry&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
+		* @param {object} object new nD object
+		* @param {object} object.geometry geometry of new nD object. See See &lt;b>settings.object.geometry&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
 		* @param {Array} object.geometry.position Array of vertices of the n-dimensional graphical object.
 		* See See &lt;b>settings.object.geometry.position&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
 		* @param {Array} [object.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
@@ -3292,7 +3307,7 @@ class ND {
 
 ND.gui = class {
 
-	/** @class
+	/**
 	 * Custom controllers for N-dimensional graphic object
 	 * @param {Options} options See &lt;b>options&lt;/b> parameter of &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree&lt;/a> class.
 	 * @param {GUI} dat [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
@@ -3380,7 +3395,8 @@ if ( !Number.prototype.between )
 if ( Array.prototype.equals )
 	console.warn( "Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code." );
 // attach the .equals method to Array's prototype to call it on any array
-Array.prototype.equals = function ( array ) {
+Array.prototype.equals = function (array) {
+
 	// if the other array is a falsy value, return
 	if ( !array )
 		return false;
@@ -3389,17 +3405,23 @@ Array.prototype.equals = function ( array ) {
 	if ( this.length != array.length )
 		return false;
 
-	for ( var i = 0, l = this.length; i &lt; l; i++ ) {
+	for (var i = 0, l = this.length; i &lt; l; i++) {
+
 		// Check if we have nested arrays
-		if ( this[i] instanceof Array &amp;&amp; array[i] instanceof Array ) {
+		if (this[i] instanceof Array &amp;&amp; array[i] instanceof Array) {
+
 			// recurse into the nested arrays
 			if ( !this[i].equals( array[i] ) )
 				return false;
+
 		}
-		else if ( this[i] != array[i] ) {
+		else if (this[i] != array[i]) {
+
 			// Warning - two different object instances will never be equal: {x:20} != {x:20}
 			return false;
+
 		}
+
 	}
 	return true;
 }
@@ -3421,7 +3443,7 @@ Object.defineProperty( Array.prototype, "equals", { enumerable: false } );
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Wed Aug 17 2022 10:21:38 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Sep 01 2022 14:19:58 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

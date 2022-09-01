@@ -37,8 +37,8 @@ class ND {
 	 * Creates an N-dimensional graphic object,
 	 * checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
 	 * @param {number} n space dimension of the graphical object.
-	 * @param {settings} [settings={}] The following settings are available
-	 * @param {settings} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
+	 * @param {object} [settings={}] The following settings are available
+	 * @param {object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
 	 * @param {Array|Object} [settings.object.geometry] Array of vertices and indices of the n-dimensional graphical object.
 	 * <pre>
@@ -276,36 +276,18 @@ class ND {
 			}
 
 			const index = intersection.object.geometry.index, edge = [
-/*				
-					index.getX(intersection.index),
-					index.getY(intersection.index)
-*/
 					index.getX(intersection.indexNew),
 					index.getY(intersection.indexNew)
 				],
 				indices = intersection.object.userData.geometry.indices;
-//				indices = settings.object.geometry.indices;
 			edges = indices[0];
 
 			//find point id
 			var minDistance = Infinity, pointId;
-/*			
-			geometry.D3.points.forEach( ( point, i ) => {
-	
-				const distance = intersection.point.distanceTo( point );
-				if ( minDistance > distance  ) {
-	
-					minDistance = distance;
-					pointId = i;
-					
-				}
-			});
-*/
 			function distance ( i ) {
 
 				const pointIndex = edge[i],
 					distance = intersection.point.distanceTo( new THREE.Vector3().fromBufferAttribute( intersection.object.geometry.attributes.position, pointIndex ) );
-//					distance = intersection.point.distanceTo( geometry.D3.points[pointIndex] );
 				if ( minDistance > distance  ) {
 	
 					minDistance = distance;
@@ -439,7 +421,6 @@ class ND {
 
 							switch ( name ) {
 
-//								case "length": return n + 1;
 								case "array": return array;
 								/* *
 								* @description
@@ -2100,9 +2081,6 @@ class ND {
 
 		}
 
-//		var line;//часть nD объекта, выбранная пользователем
-//		const opacityDefault = 0.3;
-
 		function create3DObject( geometry, settings3D = {} ) {
 
 			if ( !geometry.D3 ) {
@@ -2135,16 +2113,7 @@ class ND {
 				object.name = settings3D.name;
 			scene.add( object );
 
-//			if ( settings.controllers ) settings.controllers( object );
-
 			object.userData.geometry = geometry.geometry;
-/*
-			object.userData.onIntersection = function (){
-
-				console.log('object.userData.onIntersection');
-				
-			}
-*/
 			object.userData.onMouseDown = function ( intersection ) {
 
 				const indices = geometry.geometry.indices, segmentIndex = 0,//edges
@@ -2152,24 +2121,8 @@ class ND {
 
 				selectSegment.line = selectSegment.removeLine(selectSegment.line );
 				const opacityDefault = intersection.event && intersection.event.button === 0 ? selectSegment.opacityDefault : 1, parentObject = object;
-/*
-				function opacityItem( item, transparent, opacity = opacityDefault ) {
-					
-					if ( !item.material ) return;
-					if ( transparent && ( opacity === 0 ) && ( Object.is( item.parent, parentObject ) ) ) parentObject.remove( item ); 
-					else {
-						
-						if ( !item.parent ) parentObject.add( item );
-						item.material.transparent = transparent;
-						item.material.opacity = transparent ? opacity : 1;
-
-					}
-					
-				}
-*/
 				function opacity( transparent = true, opacity = opacityDefault ) {
 
-//					scene.children.forEach(item => opacityItem(item, transparent, opacity));
 					scene.children.forEach(item => selectSegment.opacityItem(item, parentObject, transparent, opacity));
 
 				}
@@ -2197,15 +2150,6 @@ class ND {
 							break;
 							
 						}
-/*									
-						if ( ( lineIndices[lineIndicesIndex] === itemIndices[1] ) && ( lineIndices[lineIndicesIndex + 1] === itemIndices[0] ) ) {
-
-							boDetected = true;
-console.log( 'ND: createIndices. есть сегметы с обратным расположением индексов' );
-							break;
-							
-						}
-*/
 						
 					}
 					if ( !boDetected ) itemIndices.forEach( i => { lineIndices.push( i ); } );
@@ -2215,9 +2159,6 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 				
 				selectSegment.line = new THREE.LineSegments( buffer.setIndex( lineIndices ), new THREE.LineBasicMaterial( { color: object.material.color, } ) );
 
-				//debug
-//				selectSegment.line.userData.name = fSegment.name + ' ' + value;
-				
 				parentObject.add( selectSegment.line );
 				
 			}
@@ -2236,7 +2177,6 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 					if ( !gui && geometry.geometry.gui/* && !geometry.geometry.gui.isCreated()*/ ) {
 	
 						fParent.parent.fCustom = geometry.geometry.gui( fParent, dat, /*object.userData.nd, */settings.options, _ND );
-	//					return;
 						
 					}
 
@@ -2350,16 +2290,6 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 							if ( segmentItems.forEach )
 								segmentItems.forEach( i => addItem( geometry.geometry.position[i], i ) );
 							else segmentItems.indices.forEach( i => addItem( geometry.geometry.position[i], i ) );
-/*							
-							settings.object.geometry.position.boPositionError = false;
-							
-							//непонятно почему, но для 2D вершины перечислены в segmentItems.indices
-							if ( segmentItems.forEach )
-								segmentItems.forEach( i => addItem( settings.object.geometry.position[i], i ) );
-							else segmentItems.indices.forEach( i => addItem( settings.object.geometry.position[i], i ) );
-							
-							settings.object.geometry.position.boPositionError = true;
-*/
 							
 						} else {
 							
@@ -2402,43 +2332,10 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 						}
 						const selectedIndex = cSegment.__select.selectedIndex - 1;
 						line = selectSegment.removeLine(line);
-/*
-						if ( selectSegment.line ) {
-
-							selectSegment.line.parent.remove( selectSegment.line );
-							selectSegment.line = undefined;
-
-						}
-*/
-/*
-						if (line) {
-
-							line.parent.remove( line );
-							line = undefined;
-
-						}
-*/
 						const parentObject = object;
-//						const opacityDefault = 0.3, parentObject = object;
-/*
-						function opacityItem( item, transparent, opacity = opacityDefault ) {
-							
-							if ( !item.material ) return;
-							if ( transparent && ( opacity === 0 ) && ( Object.is( item.parent, parentObject ) ) ) parentObject.remove( item ); 
-							else {
-								
-								if ( !item.parent ) parentObject.add( item );
-								item.material.transparent = transparent;
-								item.material.opacity = transparent ? opacity : 1;
-
-							}
-							
-						}
-*/
 						function opacity(transparent = true, opacity = selectSegment.opacityDefault ) {
 
 							scene.children.forEach(item => selectSegment.opacityItem(item, parentObject, transparent, opacity));
-//							scene.children.forEach(item => opacityItem(item, transparent, opacity));
 
 						}
 
@@ -2469,10 +2366,6 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 							removeVerticeControls();
 							if ( prevLine ) {
 
-/*
-								opacityItem(prevLine, false);
-								if (prevLine.userData.prevLine) opacityItem(prevLine.userData.prevLine, true, getOpacity());
-*/
 								selectSegment.opacityItem(prevLine, parentObject, false);
 								if (prevLine.userData.prevLine) selectSegment.opacityItem(prevLine.userData.prevLine, parentObject, true, getOpacity() );
 								else opacity( true );
@@ -2486,10 +2379,6 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 						if ( prevLine ) {
 							
 							opacity(true, 0);
-/*
-							opacityItem( prevLine, true, getOpacity() );
-							if ( prevLine.userData.prevLine ) opacityItem( prevLine.userData.prevLine, true, 0 );
- */
 							selectSegment.opacityItem(prevLine, parentObject, true, getOpacity() );
 							if (prevLine.userData.prevLine) selectSegment.opacityItem(prevLine.userData.prevLine, parentObject, true, 0 );
 
@@ -2504,11 +2393,6 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 //							const vertice = geometry.geometry.position[segment[selectedIndex].i];
 
 							const vertice = settings.object.geometry.position[segment[selectedIndex].i];
-/*							
-							settings.object.geometry.position.boPositionError = false;
-							const vertice = settings.object.geometry.position[segment[selectedIndex].i];
-							settings.object.geometry.position.boPositionError = true;
-*/
 							for ( var i = 0; i < vertice.length; i++ ) {
 								
 								switch(i){
@@ -2556,29 +2440,12 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 										break;
 										
 									}
-/*									
-									if ( ( lineIndices[lineIndicesIndex] === itemIndices[1] ) && ( lineIndices[lineIndicesIndex + 1] === itemIndices[0] ) ) {
-
-										boDetected = true;
-console.log( 'ND: createIndices. есть сегметы с обратным расположением индексов' );
-										break;
-										
-									}
-*/
 									
 								}
 								if ( !boDetected ) itemIndices.forEach( i => { lineIndices.push( i ); } );
 	
 							}
 							createIndices(segment[selectedIndex], segmentIndex);
-/*
-							selectSegment.line = new THREE.LineSegments( buffer.setIndex( lineIndices ), new THREE.LineBasicMaterial( { color: object.material.color } ) );
-	
-							//debug
-							selectSegment.line.userData.name = fSegment.name + ' ' + value;
-							
-							parentObject.add( selectSegment.line );
-*/
 							line = new THREE.LineSegments(buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
 
 							//debug
@@ -2587,10 +2454,6 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 							parentObject.add( line );
 
 						}
-/*
-						if ( prevLine && selectSegment.line ) selectSegment.line.userData.prevLine = prevLine;
-						if ( segmentIndex >= 0 ) fChildSegment = addController( segmentIndex - 1, fSegment, segment[selectedIndex], selectSegment.line );
-*/
 						if (prevLine && line) line.userData.prevLine = prevLine;
 						if (segmentIndex >= 0) fChildSegment = addController(segmentIndex - 1, fSegment, segment[selectedIndex], line);
 
@@ -2611,23 +2474,6 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 							
 							selectedOpt = opt;//debug
 							selectedItem = i + 1;
-//							innerHTML = opt.innerHTML;
-/*
-//							opt.item.selectedIndex = i;
-							cSegment.__select.selectedIndex = i;//opt.item.selectedIndex;
-							opt.selected = true,
-							cSegment.setValue( opt.innerHTML );
-*/
-/*							
-							setTimeout( function() {
-							
-								cSegment.__select.selectedIndex = i;//opt.item.selectedIndex;
-	//							opt.selected = true,
-								cSegment.setValue( opt.innerHTML );
-							
-							},
-							0 );
-*/
 
 						}
 						cSegment.__select.appendChild( opt );
@@ -2638,8 +2484,7 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 					if ( selectedItem != 0 ) {
 						
 						cSegment.__select.selectedIndex = selectedItem;
-//						if ( segmentIndex != -1 )//не понятно почему то не выбирается пункт "не выбран" для вершин если не сделать эту проверку
-							cSegment.setValue( cSegment.__select[selectedItem].innerHTML );
+						cSegment.setValue( cSegment.__select[selectedItem].innerHTML );
 
 					}
 					return fSegment;
@@ -2751,8 +2596,6 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 				}
 				
 				addController( segmentIndex, fParent );
-				
-//				new GuiIndices( geometry, fParent, dat, options, object, { settings: settings, prevLine: _prevLine } );
 			
 			}
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
@@ -2790,7 +2633,6 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 				
 				},
 				text: settings.object.raycaster ? settings.object.raycaster.text : undefined,
-//				points: geometry.D3.points,
 
 			}
 			if ( options.eventListeners ) options.eventListeners.addParticle( object );
@@ -3105,7 +2947,6 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 
 										const error = 'ND.intersection: invalid edge';
 										console.error( error );
-//										throw error;
 										return;
 
 									}
@@ -3307,8 +3148,8 @@ console.log( 'ND: createIndices. есть сегметы с обратным р�
 		/**
 		* @description set new geometry, position and rotation of nD object
 		* See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {nDObject} object new nD object
-		* @param {geometry} object.geometry geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {object} object new nD object
+		* @param {object} object.geometry geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array} object.geometry.position Array of vertices of the n-dimensional graphical object.
 		* See See <b>settings.object.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array} [object.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
