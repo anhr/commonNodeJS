@@ -28,9 +28,9 @@ class FermatSpiral {
 
 	/**
 	 * Implementation of Vogel's model of <a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral</a>.
-	 * @param {settings} [settings={}] The following settings are available
+	 * @param {object} [settings={}] The following settings are available
 	 * @param {number} [settings.n=2] space dimension of Fermat's spiral.
-	 * @param {Number} [settings.count=500] points count.
+	 * @param {number} [settings.count=500] points count.
 	 * @param {Float} [settings.c=0.04] constant scaling factor. See <a href="https://en.wikipedia.org/wiki/Fermat%27s_spiral" target="_blank">Fermat's spiral</a> for details.
 	 * @param {Array|number} [settings.position] Array - position of Fermat's spiral in n-dimensional coordinates.
 	 * <pre>
@@ -42,7 +42,7 @@ class FermatSpiral {
 	 * number - rotation in radians around axis 0 or rotation around axis 2 for 2D Fermat's spiral i.e. space dimension n = 2.
 	 * See <b>settings.object.rotation</b> parameter of the <a href="../../nD/jsdoc/module-ND-ND.html" target="_blank">ND</a> class.
 	 * <pre>
-	 * @param {settings} [settings.object] creates an [LineSegments]{@link https://threejs.org/docs/index.html?q=lines#api/en/objects/LineSegments} object as <b>FermatSpiral</b>.
+	 * @param {object} [settings.object] creates an [LineSegments]{@link https://threejs.org/docs/index.html?q=lines#api/en/objects/LineSegments} object as <b>FermatSpiral</b>.
 	 * @param {Group} settings.object.scene [Scene]{@link https://threejs.org/docs/index.html?q=scene#api/en/scenes/Scene}.
 	 * @param {Options} [settings.object.options] Add <b>options</b> key if you want to add custom controllers for <b>FermatSpiral</b> object into <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a>.
 	 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
@@ -246,7 +246,6 @@ class FermatSpiral {
 						if (!isNaN(i)) {
 
 							const edge = edges[i];
-//							console.log( edge );
 							if ( ( edge === undefined ) || edge.length != 2 ) {
 								
 //								console.error( 'FermatSpiral; indices edges get. invalid edge: ' + edge );
@@ -254,26 +253,10 @@ class FermatSpiral {
 
 							}
 							return edge;
-/*							
-							if (edges instanceof Array) {
-
-								if (i < edges.length && (edges[i] !== undefined))
-									return edges[i];
-								return 0;
-
-							}
-							return edges;
-*/
 
 						}
 						switch (name) {
 
-/*
-							case 'edges': return edges.edges;
-							case 'isProxy': return edges.isProxy;
-							case 'boPositionError': return edges.boPositionError;
-							case 'forEach': return edges.forEach;
-*/
 							case 'length': return edges.length;
 							case 'push': return edges.push;
 							case 'isProxy': return edges.isProxy;
@@ -314,15 +297,6 @@ class FermatSpiral {
 							}
 							if ( !addIndex( 0 ) || !addIndex( 1 ) )
 								throw new MyError('FermatSpiral: indices set. Invalid edge.', MyError.IDS.edgesCountOverflow);
-//								return true;
-/*
-							if (i >= edges.length) {
-
-								edges.push(value);
-//								return edges.length;
-
-							} else edges[i] = value;
-*/
 							edges.push(value);
 							return edges.length;
 //							return true;
@@ -392,35 +366,11 @@ class FermatSpiral {
 								}
 								if ( iMax != undefined )  aNear.iMax = iMax;
 								else console.error( 'FermatSpiral: Vector aNear add getMax. Invalid iMax = ' + iMax );
-/*								
-								if ((aNear.iMax === undefined) && (aNear.length > 0)) aNear.iMax = 0;
-								const maxItem = aNear[aNear.iMax];
-								for (var iMax = 0; iMax < aNear.length; iMax++) {
-
-									const item = aNear[iMax];
-									if (maxItem.distance < item.distance) aNear.iMax = iMax;
-
-								}
-*/
 
 							}
 							switch (name) {
 
 								case 'length': return aNear.length;
-/*
-								case 'verticeIndex': return function (i) {
-
-									if (target.length != 0) {
-
-										if (target[0][0] != i)
-											console.error('FermatSpiral: update Vector aNear verticeIndex. Invalid target.length = ' + target.length);
-										return;
-
-									}
-									target.push([i]);
-
-								}
-*/
 								case 'add': return function ( i, distance ) {
 
 									//debug
@@ -449,43 +399,11 @@ class FermatSpiral {
 											getMax();
 
 										}
-/*
-										if ( vertice1.aNear[vertice1.aNear[0].iMax].distance > distance ) {
-			
-											vertice1.aNear[vertice1.aNear[0].iMax] = [j];
-											vertice1.aNear[vertice1.aNear[0].iMax].distance = distance;
-											getMax();
-			
-										}
-*/
 			
 									}
 									
-/*
-									const length = vertice1.aNear.push( { i: i, distance: distance, } );
-									if ( vertice1.aNear.iMax === undefined ) vertice1.aNear.iMax = length - 1;
-*/
 									
 								}
-/*
-								case 'removeNear': return function (index) {
-
-									for (var i = 1; i < target.length; i++) {
-
-										const item = target[i]
-										if (item[0] === index) {
-
-											target.splice(i, 1);
-											target[0].iMax = undefined;
-											getMax();
-											break;
-
-										}
-
-									}
-
-								}
-*/
 								default: console.error('FermatSpiral: Update Vector get. name: ' + name);
 
 							}
@@ -510,7 +428,6 @@ class FermatSpiral {
 
 								switch ( name ) {
 
-									//case "length": return n + 1;
 									case "array": return array;
 									/* *
 									* @description
@@ -632,7 +549,6 @@ class FermatSpiral {
 							const i = parseInt( name );
 							if ( !isNaN( i ) ) {
 								
-//								array.positionWorld = undefined;
 								if ( i >= array.length ) {
 	
 									array.push( value );
@@ -640,7 +556,6 @@ class FermatSpiral {
 	
 								}
 								array[i] = value;
-//								_ND.intersection();
 								if ( vectorSettings.onChange ) vectorSettings.onChange();
 								return true;
 							
@@ -691,7 +606,6 @@ class FermatSpiral {
 			points.length = 0;
 			const edges = _this.geometry.indices[0];
 			edges.length = 0;//удалить все ребра
-//			_this.geometry.indices[0].length = 0;//удалить все ребра
 			const golden_angle = 137.5077640500378546463487,//137.508;//https://en.wikipedia.org/wiki/Golden_angle
 				a = golden_angle * Math.PI / 180.0, b = 90 * Math.PI / 180.0;
 			for ( var i = 0; i < l; i++ ) {
@@ -705,7 +619,6 @@ class FermatSpiral {
 			//indices
 			points.forEach((vertice1, i) => {
 
-//				vertice1.aNear.push( [i] );
 				vertice1.i = i;
 
 				points.forEach( ( vertice2, j ) => {
@@ -713,44 +626,11 @@ class FermatSpiral {
 					if ( i != j ) {
 
 						const distance = vertice1.distanceTo( vertice2 );
-/*						
-						function getMax() {
-
-							for ( var iMax = 1; iMax < vertice1.aNear.length; iMax++ ) {
-
-								const item = vertice1.aNear[iMax], maxItem = vertice1.aNear[vertice1.aNear[0].iMax];
-								if ( maxItem.distance < item.distance ) vertice1.aNear[0].iMax = iMax;
-
-							}
-
-						}
-*/
 						vertice1.aNear.add( j, distance );
-/*						
-						if ( vertice1.aNear.length < 7 ) {
-
-							const length = vertice1.aNear.push( [j] );
-							vertice1.aNear[length - 1].distance = distance;
-							if ( vertice1.aNear[0].iMax === undefined ) vertice1.aNear[0].iMax = length - 1;
-							getMax();
-
-						} else {
-
-							if ( vertice1.aNear[vertice1.aNear[0].iMax].distance > distance ) {
-
-								vertice1.aNear[vertice1.aNear[0].iMax] = [j];
-								vertice1.aNear[vertice1.aNear[0].iMax].distance = distance;
-								getMax();
-
-							}
-
-						}
-*/
 
 					}
 
 				} );
-//				const i0 = vertice1.aNear[0][0];
 				const i0 = vertice1.i;
 				for ( var k = 0; k < vertice1.aNear.length; k++ ) {
 
@@ -784,11 +664,6 @@ class FermatSpiral {
 									break;
 								default: console.error( e.message );	
 							}
-/*							
-							if ( ( e.id != undefined ) && ( e.id === e.IDS.invalidEdge ) )
-								return false;
-							else console.error( e.message );
-*/
 							
 						}
 						
