@@ -1981,6 +1981,81 @@ class ND {
 					return points;
 
 				},
+				//returns indices of the faces vertices
+				get faceIndices() {
+
+					const aFaceIndices = [];
+					const indices = settings.object.geometry.indices;
+					if ( indices.length < 2 ) return aFaceIndices;
+					indices[1].forEach( face => {
+						
+						const faceVertices = [];
+						face.forEach( ( edge, iEdge ) => {
+							
+							if ( iEdge > 2 ) {
+
+								console.error( 'ND: geometry.D3.faceIndices get. invalid face edges count.');
+								return;
+								
+							}
+							const edgeVertices = indices[0][edge].indices;
+/*							
+							function push( i ) {
+
+								if ( faceVertices.length > 2 ) {
+									
+									console.error( 'ND: geometry.D3.faceIndices get. Invalid face vertices count = ' + faceVertices.length );
+									return;
+
+								}
+								const vertice = new THREE.Vector3().copy( geometry.D3.points[i] );
+								vertice.i = i;
+								faceVertices.push( vertice );
+								
+							}
+*/
+							if ( faceVertices.length === 0 ) {
+
+/*								
+								push( edgeVertices[0] );
+								push( edgeVertices[1] );
+*/
+								faceVertices.push( edgeVertices[0] );
+								faceVertices.push( edgeVertices[1] );
+
+							} else {
+
+//									var boPush = false;//for debug
+								var boVertice0 = false, boVertice1 = false;
+								for ( var i = 0; i < faceVertices.length; i++ ) {
+
+									const faceVertice = faceVertices[i];
+									if ( faceVertice === edgeVertices[0] ) boVertice1 = true;
+									else if ( faceVertice === edgeVertices[1] ) boVertice0 = true;
+									
+								}
+//									if ( !boPush ) console.error( 'ND: geometry.D3.faceIndices get. Missing push');
+								if ( !boVertice0 && !boVertice1 ) console.error( 'ND: geometry.D3.faceIndices get. Missing push');
+								else if ( boVertice0 != boVertice1 ) {
+
+									faceVertices.push( edgeVertices[boVertice0 ? 0 : 1] );
+/*									
+									if ( boVertice0 ) push( edgeVertices[0] );
+									else push( edgeVertices[1] );
+*/
+									
+								}//else вершины третьего ребра совпадают с одной оз вершин первого и второго ребра
+								
+							}
+							
+						});
+						if ( faceVertices.length === 3 ) aFaceIndices.push( faceVertices[0], faceVertices[1], faceVertices[2] );
+						else console.error( 'ND: PolyhedronGeometry: subdivide. Invalid face vertices count');
+						
+					});
+					return aFaceIndices;
+
+				},
 				//Returns an indices of projection
 				get indices() {
 
@@ -2102,6 +2177,7 @@ class ND {
 			tetrahedron.position.x = 0.5;
 			scene.add( tetrahedron );
 */
+/*
 			//See original code from D:\My documents\MyProjects\webgl\three.js\GitHub\three.js\dev\src\geometries\PolyhedronGeometry.js
 			class PolyhedronGeometry extends THREE.BufferGeometry {
 
@@ -2203,20 +2279,10 @@ class ND {
 										if ( faceVertice.i === edgeVertices[0] ) {
 
 											boVertice1 = true;
-/*											
-											push( edgeVertices[1] );
-											boPush = true;
-											break;
-*/
 											 
 										} else if ( faceVertice.i === edgeVertices[1] ) {
 
 											boVertice0 = true;
-/*											
-											push( edgeVertices[0] );
-											boPush = true;
-											break;
-*/
 											 
 										 }
 										
@@ -2237,27 +2303,6 @@ class ND {
 							else console.error( 'ND: PolyhedronGeometry: subdivide. Invalid face vertices count');
 							
 						});
-/*
-						const a = new Vector3();
-						const b = new Vector3();
-						const c = new Vector3();
-
-						// iterate over all faces and apply a subdivison with the given detail value
-
-						for (let i = 0; i < indices.length; i += 3) {
-
-							// get the vertices of the face
-
-							getVertexByIndex(indices[i + 0], a);
-							getVertexByIndex(indices[i + 1], b);
-							getVertexByIndex(indices[i + 2], c);
-
-							// perform subdivision
-
-							subdivideFace(a, b, c, detail);
-
-						}
-*/
 
 					}
 
@@ -2402,17 +2447,6 @@ class ND {
 						vertexBuffer.push(vertex.x, vertex.y, vertex.z);
 
 					}
-/*
-					function getVertexByIndex(index, vertex) {
-
-						const stride = index * 3;
-
-						vertex.x = vertices[stride + 0];
-						vertex.y = vertices[stride + 1];
-						vertex.z = vertices[stride + 2];
-
-					}
-*/
 
 					function correctUVs() {
 
@@ -2491,20 +2525,27 @@ class ND {
 
 			}
 
-			const buffer = new PolyhedronGeometry(/* [
-					1, 1, 1, 	- 1, - 1, 1, 	- 1, 1, - 1, 	1, - 1, - 1
-				], [
-					2, 1, 0, 	0, 3, 2,	1, 3, 0,	2, 3, 1
-				], 1, 0 */);
+			const buffer = new PolyhedronGeometry();
+*/
 			
-//			const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points );
+			const buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
+			buffer.setIndex( geometry.D3.faceIndices/*[
+				0,1,2,
+				0,1,3,
+				0,2,3,
+				1,2,3,
+			]*/);//indices);
+			buffer.computeVertexNormals ();
+			
+			const material = new THREE.MeshLambertMaterial({
+				color: 0xffffff,
+				opacity: 0.5,
+				transparent: true,
+				side: THREE.DoubleSide
+			})
 
 			const object = indices.length > 1 ?
-				new THREE.Mesh( buffer, new THREE.MeshLambertMaterial( {
-					color: 0xffff00,
-					opacity: 0.5,
-					transparent: true
-				} ) ) :
+				new THREE.Mesh(buffer, material) :
 /*				
 				new THREE.Mesh( new THREE.BoxGeometry( 0.4, 0.4, 0.4 ), new THREE.MeshLambertMaterial( {
 					color: 0xffff00,
