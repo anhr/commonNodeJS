@@ -1271,7 +1271,7 @@ class ND {
 			return new Proxy( edges ? edges : [],
 				{
 
-					get: function ( target, name, value ) {
+					get: function ( edges, name, value ) {
 
 						const i = parseInt( name );
 						if ( !isNaN( i ) )
@@ -1288,15 +1288,15 @@ class ND {
 											return;
 
 										}
-										if ( target.length === 0 ) return;//no edges
-										if ( i >= target.length ) {
+										if ( edges.length === 0 ) return;//no edges
+										if ( i >= edges.length ) {
 
-											console.error( 'ND: settings.object.geometry.indices[]intersection. invalid length: ' + target.length );
+											console.error( 'ND: settings.object.geometry.indices[]intersection. invalid length: ' + edges.length );
 											this.indices = { intersection: {} };
 											return;
 
 										}
-										var indices = target[i];
+										var indices = edges[i];
 
 										//Когда размерность графического оъекта меньше 3
 										//и когда он создается из объета большей размерности
@@ -1462,18 +1462,18 @@ class ND {
 									} else console.error( 'ND: settings.object.geometry.indices[]intersection. invalid name: ' + name );
 
 								},
-								indices: target[parseInt( name )],
+								indices: edges[parseInt( name )],
 
 							};
 						switch ( name ) {
 
-							case 'push': return target.push;
-							case 'length': return target.length;
+							case 'push': return edges.push;
+							case 'length': return edges.length;
 							case 'intersection': return undefined;
-							case 'edges': return target;
+							case 'edges': return edges;
 							case 'isProxy': return true;
-							case 'forEach': return target.forEach;
-							case 'selected': return target.selected;
+							case 'forEach': return edges.forEach;
+							case 'selected': return edges.selected;
 							default: console.error( 'ND: settings.object.geometry.indices getter. Invalid name: ' + name );
 
 						}
