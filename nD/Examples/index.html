@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -226,11 +226,11 @@
 
 		const D = {
 
-			D5: true,
-			D4: true,
+			//D5: true,
+			//D4: true,
 			D3: true,
-			D2: true,
-			D1: true,
+			//D2: true,
+			//D1: true,
 
 		},
 			playerOptions = {
@@ -299,6 +299,7 @@
 							if ( radio.value === object.name ) {
 
 								nDObject.name = object.name;
+								if ( object.faces !== undefined ) nDObject.faces = object.faces;
 								nDObject.position = object.position || position;
 								nDObject.rotation = object.rotation || rotation;
 								if ( object.geometry ) {
@@ -311,10 +312,6 @@
 
 									const obj = object.object();
 									nDObject.geometry = obj.geometry;
-/*									
-									nDObject.geometry.position = obj.points;
-									nDObject.geometry.indices = [obj.indices];
-*/
 									
 								} else console.error( 'Invalid object: ' + object.name );
 								
@@ -639,6 +636,7 @@
 						{
 
 							name: 'pyramid',
+							faces: true,
 							geometry: {
 
 								position: [
