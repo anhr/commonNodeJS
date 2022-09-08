@@ -40,6 +40,7 @@ class ND {
 	 * @param {object} [settings={}] The following settings are available
 	 * @param {object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
+	 * @param {boolean} [settings.object.faces=false] true - display the n-dimensional graphical object faces instead of edges.
 	 * @param {Array|Object} [settings.object.geometry] Array of vertices and indices of the n-dimensional graphical object.
 	 * <pre>
 	 * Every item of array is n-dimensional vector of vertice of object.

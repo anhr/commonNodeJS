@@ -68,6 +68,7 @@ class ND {
 	 * @param {object} [settings={}] The following settings are available
 	 * @param {object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
+	 * @param {boolean} [settings.object.faces=false] true - display the n-dimensional graphical object faces instead of edges.
 	 * @param {Array|Object} [settings.object.geometry] Array of vertices and indices of the n-dimensional graphical object.
 	 * &lt;pre>
 	 * Every item of array is n-dimensional vector of vertice of object.
@@ -2009,6 +2010,81 @@ class ND {
 					return points;
 
 				},
+				//returns indices of the faces vertices
+				get faceIndices() {
+
+					const aFaceIndices = [];
+					const indices = settings.object.geometry.indices;
+					if ( indices.length &lt; 2 ) return aFaceIndices;
+					indices[1].forEach( face => {
+						
+						const faceVertices = [];
+						face.forEach( ( edge, iEdge ) => {
+							
+							if ( iEdge > 2 ) {
+
+								console.error( 'ND: geometry.D3.faceIndices get. invalid face edges count.');
+								return;
+								
+							}
+							const edgeVertices = indices[0][edge].indices;
+/*							
+							function push( i ) {
+
+								if ( faceVertices.length > 2 ) {
+									
+									console.error( 'ND: geometry.D3.faceIndices get. Invalid face vertices count = ' + faceVertices.length );
+									return;
+
+								}
+								const vertice = new THREE.Vector3().copy( geometry.D3.points[i] );
+								vertice.i = i;
+								faceVertices.push( vertice );
+								
+							}
+*/
+							if ( faceVertices.length === 0 ) {
+
+/*								
+								push( edgeVertices[0] );
+								push( edgeVertices[1] );
+*/
+								faceVertices.push( edgeVertices[0] );
+								faceVertices.push( edgeVertices[1] );
+
+							} else {
+
+//									var boPush = false;//for debug
+								var boVertice0 = false, boVertice1 = false;
+								for ( var i = 0; i &lt; faceVertices.length; i++ ) {
+
+									const faceVertice = faceVertices[i];
+									if ( faceVertice === edgeVertices[0] ) boVertice1 = true;
+									else if ( faceVertice === edgeVertices[1] ) boVertice0 = true;
+									
+								}
+//									if ( !boPush ) console.error( 'ND: geometry.D3.faceIndices get. Missing push');
+								if ( !boVertice0 &amp;&amp; !boVertice1 ) console.error( 'ND: geometry.D3.faceIndices get. Missing push');
+								else if ( boVertice0 != boVertice1 ) {
+
+									faceVertices.push( edgeVertices[boVertice0 ? 0 : 1] );
+/*									
+									if ( boVertice0 ) push( edgeVertices[0] );
+									else push( edgeVertices[1] );
+*/
+									
+								}//else вершины третьего ребра совпадают с одной оз вершин первого и второго ребра
+								
+							}
+							
+						});
+						if ( faceVertices.length === 3 ) aFaceIndices.push( faceVertices[0], faceVertices[1], faceVertices[2] );
+						else console.error( 'ND: PolyhedronGeometry: subdivide. Invalid face vertices count');
+						
+					});
+					return aFaceIndices;
+
+				},
 				//Returns an indices of projection
 				get indices() {
 
@@ -2121,22 +2197,27 @@ class ND {
 			const color = settings3D.color || 0xffffff;//default white
 			geometry.D3.color = color;
 			const indices3D = geometry.D3.indices, indices = indices3D.indices, colors = indices3D.colors;
-
-			const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points );
-
+			
+			const buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
+			buffer.setIndex( geometry.D3.faceIndices );
+			buffer.computeVertexNormals ();
+			
 			const object = indices.length > 1 ?
-					new THREE.LineSegments( buffer.setIndex( indices ), new THREE.LineBasicMaterial( {
-
+				settings3D.faces ?
+					new THREE.Mesh(buffer, new THREE.MeshLambertMaterial({
 						color: color,
-
+						opacity: 0.5,
+						transparent: true,
+						side: THREE.DoubleSide
 					} ) ) :
-					new THREE.Points( buffer, new THREE.PointsMaterial( {
-						
-						color: color,
-						sizeAttenuation: false,
-						size: options.point.size / ( options.point.sizePointsMaterial * 2 ),
-						
-					} ) );
+					new THREE.LineSegments( buffer.setIndex( indices ), new THREE.LineBasicMaterial( { color: color, } ) ) :
+				new THREE.Points( buffer, new THREE.PointsMaterial( {
+					
+					color: color,
+					sizeAttenuation: false,
+					size: options.point.size / ( options.point.sizePointsMaterial * 2 ),
+					
+				} ) );
 			if ( settings3D.name )
 				object.name = settings3D.name;
 			scene.add( object );
@@ -3071,7 +3152,13 @@ class ND {
 				object3D = undefined;
 
 			}
-			object3D = create3DObject( geometry, { name: settings.object.name, color: 0x00ff00 } );//green
+			object3D = create3DObject( geometry, {
+				
+				name: settings.object.name,
+				faces: settings.object.faces,
+				color: 0x00ff00,//green
+			
+			} );
 
 		}
 		projectTo3D();
@@ -3443,7 +3530,7 @@ Object.defineProperty( Array.prototype, "equals", { enumerable: false } );
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Sep 01 2022 14:19:58 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Sep 08 2022 07:13:11 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
