@@ -1,0 +1,48 @@
+<html>
+<head>
+	<title>GPU</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<meta name="author" content="Andrej Hristoliubov https://github.com/anhr">
+</head>
+<body>
+	<script nomodule>alert('Fatal error: Your browser do not support modular JavaScript code.');</script>
+	<div id="info">
+		<a href="https://github.com/anhr/commonNodeJS/tree/master/GPU" target="_blank" rel="noopener">GPU</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+	<script src="../../../../gpu.js/dist/gpu-browser.js"></script>
+	<script>
+
+		const generateMatrices = () => {
+			const matrices = [[], []]
+			for (let y = 0; y < 512; y++) {
+				matrices[0].push([])
+				matrices[1].push([])
+				for (let x = 0; x < 512; x++) {
+					matrices[0][y].push(Math.random())
+					matrices[1][y].push(Math.random())
+				}
+			}
+			return matrices
+		}
+
+		// GPU is a constructor and namespace for browser
+		const gpu = new GPU();
+		const multiplyMatrix = gpu.createKernel(function (a, b) {
+			let sum = 0;
+			for (let i = 0; i < 512; i++) {
+				sum += a[this.thread.y][i] * b[i][this.thread.x];
+			}
+			return sum;
+		}).setOutput([512, 512]);
+
+		const matrices = generateMatrices()
+		const out = multiplyMatrix(matrices[0], matrices[1])
+		//    console.log(out[y][x]) // Logs the element at the xth row and the yth column of the matrix
+		console.log(out[10][12]) // Logs the element at the 10th row and the 12th column of the output matrix
+	</script>
+</body>
+</html>
