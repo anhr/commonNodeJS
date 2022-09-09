@@ -40,7 +40,16 @@ class ND {
 	 * @param {object} [settings={}] The following settings are available
 	 * @param {object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
-	 * @param {boolean} [settings.object.faces=false] true - display the n-dimensional graphical object faces instead of edges.
+	 * @param {boolean|object} [settings.object.faces] true or object - display the n-dimensional graphical object faces instead of edges.
+	 * @param {number} [settings.object.faces.color] color of  the n-dimensional graphical object.
+	 * @param {float} [settings.object.faces.opacity=0.5] color Float in the range of 0.0 - 1.0 indicating how transparent the material is.
+	 * A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
+	 * If the <b>transparent</b> property is not set to true, the material will remain fully opaque and this value will only affect its color.
+	 * See [Material.opacity]{@link https://threejs.org/docs/#api/en/materials/Material.opacity}.
+	 * @param {boolean} [settings.object.faces.transparent= true] Defines whether this material is transparent.
+	 * This has an effect on rendering as transparent objects need special treatment and are rendered after non-transparent objects.
+	 * When set to true, the extent to which the material is transparent is controlled by setting its <b>opacity</b> property.
+	 * See [Material.transparent]{@link https://threejs.org/docs/#api/en/materials/Material.transparent}.
 	 * @param {Array|Object} [settings.object.geometry] Array of vertices and indices of the n-dimensional graphical object.
 	 * <pre>
 	 * Every item of array is n-dimensional vector of vertice of object.
