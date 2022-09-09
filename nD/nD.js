@@ -1826,7 +1826,7 @@ class ND {
 				case 1://[0, 1]
 					addEdge();
 					break;
-				default: if ( settings.object.geometry.indices[0].length === 0 )  addEdges( n );
+				default: if ( settings.object.geometry.indices[0].length === 0 ) addEdges( n );
 	
 			}
 
@@ -2171,18 +2171,26 @@ class ND {
 			const indices3D = geometry.D3.indices, indices = indices3D.indices, colors = indices3D.colors;
 			
 			const buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
-			buffer.setIndex( geometry.D3.faceIndices );
-			buffer.computeVertexNormals ();
+			if ( settings3D.faces ) {
+
+				if ( settings3D.faces === true ) settings3D.faces = {};
+				if ( settings3D.faces.color === undefined ) settings3D.faces.color = color;
+				if ( settings3D.faces.opacity === undefined ) settings3D.faces.opacity = 0.5;
+				if ( settings3D.faces.transparent === undefined ) settings3D.faces.transparent = true;
+				buffer.setIndex( geometry.D3.faceIndices );
+				buffer.computeVertexNormals ();
+
+			} else buffer.setIndex( indices )
 			
 			const object = indices.length > 1 ?
 				settings3D.faces ?
 					new THREE.Mesh(buffer, new THREE.MeshLambertMaterial({
-						color: color,
-						opacity: 0.5,
-						transparent: true,
+						color: settings3D.faces.color,
+						opacity: settings3D.faces.opacity,
+						transparent: settings3D.faces.transparent,
 						side: THREE.DoubleSide
 					} ) ) :
-					new THREE.LineSegments( buffer.setIndex( indices ), new THREE.LineBasicMaterial( { color: color, } ) ) :
+					new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( { color: color, } ) ) :
 				new THREE.Points( buffer, new THREE.PointsMaterial( {
 					
 					color: color,

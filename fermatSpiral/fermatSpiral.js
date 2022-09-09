@@ -853,6 +853,12 @@ faces.push( [2, 3, 1] );
 				object: {
 
 					name: 'Fermat Spiral',
+					faces: {
+						
+						transparent: false,
+						//opacity: 1,
+						
+					},//true,
 					position: settings.position,
 					rotation: settings.rotation,
 					geometry: this.geometry,
