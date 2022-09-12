@@ -1,4 +1,4 @@
-﻿/**
+/**
  * node.js version of the synchronous download of the file.
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -273,7 +273,7 @@ function sync( url, options ) {
 			} );
 
 		}
-		, false//Synchronous mode
+		, options.async === undefined ? false : true//Synchronous mode
 
 	);
 	//console.log( 'sync(' + url + ')' );
