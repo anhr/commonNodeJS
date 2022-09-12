@@ -183,10 +183,11 @@ class WebGPU {
 			else {
 
 //				loadScript.async(settings.shaderCodeFile);
-				loadFile.sync(settings.shaderCodeFile, {
-					async: true,
+				loadFile.async(settings.shaderCodeFile, {
+//					async: true,
 					onload: function (shaderCode, url ) { onLoad(shaderCode) }
 				});
+				//console.log('loading shader code file')
 
 			}
 			async function onLoad(shaderCode) {

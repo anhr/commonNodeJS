@@ -219,7 +219,7 @@ function myRequest( options ) {
  */
 
 /**
- * Synchronous load file
+ * Load file synchronously
  * @param {string} url URL of an external file.
  * @param {Object} [options] the following options are available.
  * @param {Function} [options.onload] function () The onload event occurs when a script has been loaded. Optional.
@@ -280,6 +280,42 @@ function sync( url, options ) {
 	return response;
 
 }
+/**
+ * Load file asynchronously
+ * @param {string} url URL of an external file.
+ * @param {Object} [options] the following options are available.
+ * @param {Function} [options.onload] function () The onload event occurs when a script has been loaded. Optional.
+ * @param {onerror} [options.onerror] function ( str ) The onerror event occurs when an error has been occured. Optional.
+ * @returns {string} file content
+ * @example
+ * 
+	//Simplest example.
+	document.getElementById( "elID" ).innerHTML = loadFile.sync('element.html');
+ *
+ * @example
+ *
+	//onload, onerror events.
+	document.getElementById( "elID").innerHTML = loadFile.sync( 'element.html',
+	{
+		onload: function ( response ) {
+
+			var str = 'file has been loaded successfully';
+			console.log( str );
+
+		},
+		onerror: function ( str, e ) {
+
+			console.error( str );
+
+		},
+	}, );
+ */
+function async(url, options) {
+
+	options.async = true;
+	sync(url, options);
+
+}
 
 /**
  * display a text to HTML
@@ -306,4 +342,4 @@ function escapeHtml( str ) {
 	} );
 }
 
-export { sync, escapeHtml };
+export { sync, async, escapeHtml };
