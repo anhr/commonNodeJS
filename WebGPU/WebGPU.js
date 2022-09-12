@@ -2,7 +2,6 @@
  * @module webGPU
  * @description [GPU Compute on the web]{@link https://web.dev/gpu-compute/}.
  * @see [webGPU]{@link https://gpuweb.github.io/gpuweb/}
- ddddd
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -14,6 +13,9 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
+
+//import loadScript from '../loadScriptNodeJS/loadScript.js'
+import loadFile from '../loadFileNodeJS/loadFile.js'
 
 class webGPU {
 
@@ -71,7 +73,7 @@ class webGPU {
 
 		}
 
-		async function onWebGPUInitialized() {
+		function onWebGPUInitialized() {
 
 			input.forEach(inputMatrux => {
 
@@ -151,64 +153,80 @@ class webGPU {
 
 			// Compute shader code
 
-			const shaderModule = gpuDevice.createShaderModule({ code: settings.shaderCode });
+			const shaderCode = settings.shaderCode;
+			if (shaderCode)
+				onLoad(shaderCode)
+			else {
 
-			// Pipeline setup
+//				loadScript.async(settings.shaderCodeFile);
+				loadFile.sync(settings.shaderCodeFile, {
+					async: true,
+					onload: function (shaderCode, url ) { onLoad(shaderCode) }
+				});
 
-			const computePipeline = gpuDevice.createComputePipeline({
-				layout: gpuDevice.createPipelineLayout({
-					bindGroupLayouts: [bindGroupLayout]
-				}),
-				compute: {
-					module: shaderModule,
-					entryPoint: "main"
-				}
-			});
-			
-			// Commands submission
+			}
+			async function onLoad(shaderCode) {
 
-			//https://gpuweb.github.io/gpuweb/#dom-gpudevice-createcommandencoder
-			const commandEncoder = gpuDevice.createCommandEncoder();
+				const shaderModule = gpuDevice.createShaderModule({ code: shaderCode });
 
-			const passEncoder = commandEncoder.beginComputePass();
-			passEncoder.setPipeline(computePipeline);
-			passEncoder.setBindGroup(0, bindGroup);
-			
-			const workgroupCount = [];
-			input.forEach( ( item, i ) => workgroupCount.push( Math.ceil( item.matrix[i] / 8 ) ) );
-			const workgroupCountX = workgroupCount[0], workgroupCountY = workgroupCount[1], workgroupCountZ = workgroupCount[3];
-/*			
-			const workgroupCountX = Math.ceil(firstMatrix[0] / 8);
-			const workgroupCountY = Math.ceil(secondMatrix[1] / 8);
-*/   
-			//https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups
-			passEncoder.dispatchWorkgroups(workgroupCountX, workgroupCountY, workgroupCountZ);
-			passEncoder.end();
+				// Pipeline setup
 
-			// Get a GPU buffer for reading in an unmapped state.
-			const gpuReadBuffer = gpuDevice.createBuffer({
-				size: resultMatrixBufferSize,
-				usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
-			});
+				const computePipeline = gpuDevice.createComputePipeline({
+					layout: gpuDevice.createPipelineLayout({
+						bindGroupLayouts: [bindGroupLayout]
+					}),
+					compute: {
+						module: shaderModule,
+						entryPoint: "main"
+					}
+				});
 
-			// Encode commands for copying buffer to buffer.
-			commandEncoder.copyBufferToBuffer(
-				resultMatrixBuffer /* source buffer */,
-				0 /* source offset */,
-				gpuReadBuffer /* destination buffer */,
-				0 /* destination offset */,
-				resultMatrixBufferSize /* size */
-			);
+				// Commands submission
 
-			// Submit GPU commands.
-			const gpuCommands = commandEncoder.finish();
-			gpuDevice.queue.submit([gpuCommands]);
+				//https://gpuweb.github.io/gpuweb/#dom-gpudevice-createcommandencoder
+				const commandEncoder = gpuDevice.createCommandEncoder();
 
-			// Read buffer.
-			await gpuReadBuffer.mapAsync(GPUMapMode.READ);
-			const arrayBuffer = gpuReadBuffer.getMappedRange();
-			out( arrayBuffer );
-//			console.log(new Float32Array(arrayBuffer));
+				const passEncoder = commandEncoder.beginComputePass();
+				passEncoder.setPipeline(computePipeline);
+				passEncoder.setBindGroup(0, bindGroup);
+
+				const workgroupCount = [];
+				input.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
+				const workgroupCountX = workgroupCount[0], workgroupCountY = workgroupCount[1], workgroupCountZ = workgroupCount[3];
+				/*			
+							const workgroupCountX = Math.ceil(firstMatrix[0] / 8);
+							const workgroupCountY = Math.ceil(secondMatrix[1] / 8);
+				*/
+				//https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups
+				passEncoder.dispatchWorkgroups(workgroupCountX, workgroupCountY, workgroupCountZ);
+				passEncoder.end();
+
+				// Get a GPU buffer for reading in an unmapped state.
+				const gpuReadBuffer = gpuDevice.createBuffer({
+					size: resultMatrixBufferSize,
+					usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+				});
+
+				// Encode commands for copying buffer to buffer.
+				commandEncoder.copyBufferToBuffer(
+					resultMatrixBuffer /* source buffer */,
+					0 /* source offset */,
+					gpuReadBuffer /* destination buffer */,
+					0 /* destination offset */,
+					resultMatrixBufferSize /* size */
+				);
+
+				// Submit GPU commands.
+				const gpuCommands = commandEncoder.finish();
+				gpuDevice.queue.submit([gpuCommands]);
+
+				// Read buffer.
+				await gpuReadBuffer.mapAsync(GPUMapMode.READ);
+				const arrayBuffer = gpuReadBuffer.getMappedRange();
+				out(arrayBuffer);
+				//			console.log(new Float32Array(arrayBuffer));
+
+			}
 
 		}
 
