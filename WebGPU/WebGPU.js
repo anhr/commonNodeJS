@@ -21,9 +21,27 @@ class WebGPU {
 
 	/**
 	 * [WebGPU]{@link https://gpuweb.github.io/gpuweb/}. GPU Compute on the web.
-	 * @param {Array} input Array of input matrix
-	 * @param {any} out
-	 * @param {any} settings
+	 * @param {Array} input Array of input matrix. See [Shader programming]{@link  https://web.dev/gpu-compute/#shader-programming}.
+	 * <pre>
+	 * Example:
+	 * <b>[
+	 *   [
+	 *      [1, 2, 3, 4],
+	 *      [5, 6, 7, 8]
+	 *   ],
+	 *   [
+	 *      [1, 2],
+	 *      [3, 4],
+	 *      [5, 6],
+	 *      [7, 8],
+	 *   
+	 *]</b>
+	 * </pre>
+	 * @param {ArrayBuffer} out output buffer. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
+	 * @param {object} settings The following settings are available
+	 * @param {Number} [settings.resultMatrixBufferSize] The size of the output buffer in bytes.
+	 * @param {USVString} [settings.shaderCode] The [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code for the shader module. See [USVString]{@link https://webidl.spec.whatwg.org/#idl-USVString}.
+	 * @param {String} [settings.shaderCodeFile] The name of the file with [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code. Have effect only if the code undefined.
 	 */
 	constructor(input = [], out, settings) {
 
