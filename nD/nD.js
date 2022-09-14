@@ -2175,7 +2175,7 @@ class ND {
 				
 			}
 			if ( geometry.position.length === 0 ) return;
-			const color = settings3D.color || 0xffffff;//default white
+			const color = settings3D.color || 'white';//0xffffff
 			geometry.D3.color = color;
 			const indices3D = geometry.D3.indices, indices = indices3D.indices, colors = indices3D.colors;
 			
