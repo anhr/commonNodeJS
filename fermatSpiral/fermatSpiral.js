@@ -47,6 +47,16 @@ class FermatSpiral {
 	 * @param {Options} [settings.object.options] Add <b>options</b> key if you want to add custom controllers for <b>FermatSpiral</b> object into <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a>.
 	 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 * @param {String} [settings.object.color='green'] color of <b>FermatSpiral</b>.
+	 * @param {boolean|object} [settings.object.faces] true or object - display the <b>FermatSpiral</b> faces instead of edges.
+	 * @param {number} [settings.object.faces.color=settings.object.color] color of  the <b>FermatSpiral</b>.
+	 * @param {float} [settings.object.faces.opacity=0.5] color Float in the range of 0.0 - 1.0 indicating how transparent the material is.
+	 * A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
+	 * If the <b>transparent</b> property is not set to true, the material will remain fully opaque and this value will only affect its color.
+	 * See [Material.opacity]{@link https://threejs.org/docs/#api/en/materials/Material.opacity}.
+	 * @param {boolean} [settings.object.faces.transparent= true] Defines whether this material is transparent.
+	 * This has an effect on rendering as transparent objects need special treatment and are rendered after non-transparent objects.
+	 * When set to true, the extent to which the material is transparent is controlled by setting its <b>opacity</b> property.
+	 * See [Material.transparent]{@link https://threejs.org/docs/#api/en/materials/Material.transparent}.
 	 */
 	constructor( settings = {} ) {
 
@@ -1046,6 +1056,7 @@ faces.push( [2, 3, 1] );
 						
 					},//true,
 					*/
+					color: settings.object.color,
 					faces: settings.object.faces,
 					position: settings.position,
 					rotation: settings.rotation,
