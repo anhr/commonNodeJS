@@ -42,7 +42,6 @@ class ND {
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
 	 * @param {String} [settings.object.color='green'] color of N-dimensional graphic object.
 	 * @param {boolean|object} [settings.object.faces] true or object - display the n-dimensional graphical object faces instead of edges.
-	 * @param {number} [settings.object.faces.color=settings.object.color] color of  the n-dimensional graphical object.
 	 * @param {float} [settings.object.faces.opacity=0.5] color Float in the range of 0.0 - 1.0 indicating how transparent the material is.
 	 * A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
 	 * If the <b>transparent</b> property is not set to true, the material will remain fully opaque and this value will only affect its color.
@@ -2195,7 +2194,8 @@ class ND {
 			const object = indices.length > 1 ?
 				settings3D.faces ?
 					new THREE.Mesh(buffer, new THREE.MeshLambertMaterial({
-						color: settings3D.faces.color,
+//						color: settings3D.faces.color,
+						color: color,
 						opacity: settings3D.faces.opacity,
 						transparent: settings3D.faces.transparent,
 						side: THREE.DoubleSide

@@ -48,7 +48,6 @@ class FermatSpiral {
 	 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 * @param {String} [settings.object.color='green'] color of <b>FermatSpiral</b>.
 	 * @param {boolean|object} [settings.object.faces] true or object - display the <b>FermatSpiral</b> faces instead of edges.
-	 * @param {number} [settings.object.faces.color=settings.object.color] color of  the <b>FermatSpiral</b>.
 	 * @param {float} [settings.object.faces.opacity=0.5] color Float in the range of 0.0 - 1.0 indicating how transparent the material is.
 	 * A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
 	 * If the <b>transparent</b> property is not set to true, the material will remain fully opaque and this value will only affect its color.
