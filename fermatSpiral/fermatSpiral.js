@@ -250,7 +250,7 @@ class FermatSpiral {
 
 		function update() {
 
-			const maxLength = 6;//максимальное количество ремер вершины
+			const maxLength = 7;//максимальное количество ребер вершины
 
 			class Vector {
 
@@ -318,7 +318,7 @@ class FermatSpiral {
 									}
 									
 									const newItem = { i: i, distance: distance, };
-									if ( aNear.length < 6 ) {
+									if ( aNear.length < maxLength ) {
 										
 										aNear.push( newItem );
 										getMax();
