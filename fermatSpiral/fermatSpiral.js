@@ -576,7 +576,7 @@ class FermatSpiral {
 						case 'push': return edges.push;
 						case 'isProxy': return edges.isProxy;
 						case 'selected': return edges.selected;
-						case 'hidden': return edges.hidden;
+//						case 'hidden': return edges.hidden;
 						case 'add': return function(edge) { edges.push(edge); }
 						default: console.error('FermatSpiral: geometry edges get : ' + name);
 
@@ -634,8 +634,10 @@ class FermatSpiral {
 						const edgesCountOverflow = !addIndex(0) || !addIndex(1); 
 						if ( edgesCountOverflow ) {
 
+/*
 							edges.hidden = edges.hidden || [];
 							edges.hidden.push( value );
+*/
 							throw new MyError('FermatSpiral: geometry.indices edges set. Invalid edge.', MyError.IDS.edgesCountOverflow);
 
 						}
@@ -806,7 +808,7 @@ if ( ( edge[0] === 1 ) && ( edge[1] === 2 ) )
 				}
 
 			});
-
+/*
 			//В спирали есть дырки, тоесть не хватает граней. Это потому что некотрые ребра скрыты для того чтобы не было перекресчивающихся ребер.
 			//Ищем ребра, котрые были скрыты, потому что если их добавить к вершине, то количество ребер для одной вкршины будет больше допустимого.
 			//У некторых таких скрытых ребер одна из вершин имеет количество ребер меньше допустимого, поэтому в спирали появляются дырки.
@@ -892,6 +894,7 @@ if ( ( edge[0] === 1 ) && ( edge[1] === 2 ) )
 					}
 					
 				}
+*/
 
 			//faces
 			_this.geometry.indices[1] = new Proxy([], {
