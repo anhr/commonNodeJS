@@ -647,8 +647,8 @@ class FermatSpiral {
 						//Значит edge добавлять не надо.
 						function findCrossEdge(edge) {
 
-if ( ( edge[0] === 1 ) && ( edge[1] === 2 ) )
-	console.log('edge[1,2]')
+//if ( ( edge[0] === 1 ) && ( edge[1] === 2 ) )
+//	console.log('edge[1,2]')
 							//координаты вершин ребра edge, которые нужны для проверки пересечения edge с ранее добавленными ребрами
 							const edgePoints = [points[edge[0]], points[edge[1]]];
 							
