@@ -639,65 +639,87 @@ class FermatSpiral {
 							throw new MyError('FermatSpiral: geometry.indices edges set. Invalid edge.', MyError.IDS.edgesCountOverflow);
 
 						}
-						/*
+
 						//найти две вершины edgeCross, которые вместе с вершинами edge образуют ромб.
 						//Если ребро edgeCross существует, значит edgeCross пересекает ромб и ребро edge будет пересекаться с edgeCross.
 						//Значит edge добавлять не надо.
-						function findCrossEdge(edges0, edges1, edge) {
+						function findCrossEdge(edge) {
 
-							//Найти вторую пару вершин ромба edgeCross
-							//и идентификатор вершины verticeCross, через которую возможно проходит ребро edgeCross, пересекающее ромб
-							const edgeCross = [];
-							var verticeCross;
-							for (var edges0Id = 0; edges0Id < edges0.length; edges0Id++) {
+if ( ( edge[0] === 1 ) && ( edge[1] === 2 ) )
+	console.log('edge[1,2]')
+							//координаты вершин ребра edge, которые нужны для проверки пересечения edge с ранее добавленными ребрами
+							const edgePoints = [points[edge[0]], points[edge[1]]];
+							
+							function find ( vertice ) {
 
-								const vertices0 = edges[edges0[edges0Id]],
-									vertice0Id = (vertices0[0] === edge[0]) || (vertices0[0] === edge[1]) ? vertices0[1] : vertices0[0];
-								for (var edges1Id = 0; edges1Id < edges1.length; edges1Id++) {
+								//vertice одна из вершин ребра edge
+								const verticeEdges = points[vertice].edges;
+								for ( var iVerticeEdge = 0; iVerticeEdge < verticeEdges.length; iVerticeEdge++ ) {
 
-									const vertices1 = edges[edges1[edges1Id]],
-										vertice1Id = (vertices1[0] === edge[0]) || (vertices1[0] === edge[1]) ? vertices1[1] : vertices1[0];
-									if (vertice1Id === vertice0Id) {
+									const verticeEdge = edges[verticeEdges[iVerticeEdge]],
+										verticeNext = (verticeEdge[0] === vertice) ? verticeEdge[1] : verticeEdge[0],
+										verticeNextEdges = points[verticeNext].edges;
+									for ( var iVerticeNextEdge = 0; iVerticeNextEdge < verticeNextEdges.length ; iVerticeNextEdge++ ) {
 
-										edgeCross.push(vertice1Id);
-										break;
+										const verticeNextEdge = edges[verticeNextEdges[iVerticeNextEdge]],
+											verticeNextNext = (verticeNextEdge[0] === verticeNext) ? verticeNextEdge[1] : verticeNextEdge[0];
+										if ( verticeNextNext === vertice ) 
+											//ребро verticeNextEdge равно verticeEdge. Тоесть пошли назад.
+											//Это ребро не надо проверять на пересечение с ребром edge
+											continue;
+										
+										//координаты вершин ребра verticeNextEdge, которые нужно сравнивать с координатами edgePoints ребра edge
+										const edgeNextPoints = [points[verticeNextEdge[0]], points[verticeNextEdge[1]]];
+										
+										//https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
+										// returns true if the line from (a,b)->(c,d) intersects with (p,q)->(r,s)
+										function intersects( line1, line2 ) {
 
+											const
+												a = line1[0][0], b = line1[0][1],
+												c = line1[1][0], d = line1[1][1],
+												
+												p = line2[0][0], q = line2[0][1],
+												r = line2[1][0], s = line2[1][1];
+											const det = (c - a) * (s - q) - (r - p) * (d - b);
+											if (det === 0)
+												return false;
+											const lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det,
+												gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
+											return (0 < lambda && lambda < 1) && (0 < gamma && gamma < 1);
+											
+										}
+										if ( intersects( edgeNextPoints, edgePoints ))
+											return true;
 									}
-
+									
 								}
-								if (edgeCross.length > 1) {
-
-									verticeCross = vertice0Id;
-									break;
-
-								}
-
-							}
-							if (verticeCross === undefined)
 								return false;
-
-							//ищем ребро, которое пересекает ромб
-							const verticeCrossEdges = points[verticeCross].edges;
-							var boDetected = false;
-							for (var verticeCrossEdgeId = 0; verticeCrossEdgeId < verticeCrossEdges.length; verticeCrossEdgeId++) {
-
-								const id = verticeCrossEdges[verticeCrossEdgeId],
-									verticeCrossEdge = edges[id];
-								if (
-									((verticeCrossEdge[0] === edgeCross[0]) && (verticeCrossEdge[1] === edgeCross[1])) ||
-									((verticeCrossEdge[0] === edgeCross[0]) && (verticeCrossEdge[1] === edgeCross[1]))
-								)
-									return true;
-
+								
 							}
-							return false;
+							return find(edge[0]) || find(edge[1]);
 
 						}
-						*/
-						const edges0 = points[value[0]].edges, edges1 = points[value[1]].edges;
+//						const edges0 = points[value[0]].edges, edges1 = points[value[1]].edges;
 //if (((value[0] === 39) && (value[1] === 47)) || ((value[0] === 26) && (value[1] === 60)))
 //if ((value[0] === 4) && (value[1] === 0))
 //	console.log('add edge')
+						if (!findCrossEdge(value)) {
+
+							points[value[0]].edges.push(i);
+							points[value[1]].edges.push(i);
+
+							value.i = edges.length;
+							edges.push(value);
+//							console.log('not cross')
+
+						}
+						else {
+
+//							console.log('findCrossEdge');
+							throw new MyError('FermatSpiral: geometry.indices edges set. Crossed edge detected.', MyError.IDS.edgesCountOverflow);
+
+						}
 /*
 						if (!findCrossEdge(edges0, edges1, value)) {
 
@@ -710,90 +732,6 @@ class FermatSpiral {
 						}
 						throw new MyError('FermatSpiral: geometry.indices edges set. Crossed edge detected.', MyError.IDS.edgesCountOverflow);
 */
-/*
-						//найти две вершины edgeCross, которые вместе с вершинами edge образуют ромб.
-						//Если ребро edgeCross существует, значит edgeCross пересекает ромб и ребро edge будет пересекаться с edgeCross.
-						//Значит edge добавлять не надо.
-						function findCrossEdge(edges0, edges1, edge) {
-
-							//Найти вторую пару вершин ромба edgeCross
-							//и идентификатор вершины verticeCross, через которую возможно проходит ребро edgeCross, пересекающее ромб
-							const edgeCross = [];
-							var verticeCross;
-							for (var edges0Id = 0; edges0Id < edges0.length; edges0Id++) {
-
-								const vertices0 = edges[edges0[edges0Id]],
-									vertice0Id = (vertices0[0] === edge[0]) || (vertices0[0] === edge[1]) ? vertices0[1] : vertices0[0];
-								for (var edges1Id = 0; edges1Id < edges1.length; edges1Id++) {
-
-									const vertices1 = edges[edges1[edges1Id]],
-										vertice1Id = (vertices1[0] === edge[0]) || (vertices1[0] === edge[1]) ? vertices1[1] : vertices1[0];
-									if (vertice1Id === vertice0Id) {
-
-										edgeCross.push(vertice1Id);
-										break;
-
-									}
-
-								}
-								if (edgeCross.length > 1) {
-
-									verticeCross = vertice0Id;
-									break;
-
-								}
-
-							}
-							if ( verticeCross === undefined )
-								return false;
-
-							//ищем ребро, которое пересекает ромб
-							const verticeCrossEdges = points[verticeCross].edges;
-							var boDetected = false;
-							for (var verticeCrossEdgeId = 0; verticeCrossEdgeId < verticeCrossEdges.length; verticeCrossEdgeId++) {
-
-								const id = verticeCrossEdges[verticeCrossEdgeId],
-									verticeCrossEdge = edges[id];
-								if (
-									((verticeCrossEdge[0] === edgeCross[0]) && (verticeCrossEdge[1] === edgeCross[1])) ||
-									((verticeCrossEdge[0] === edgeCross[0]) && (verticeCrossEdge[1] === edgeCross[1]))
-								) 
-									return true;
-
-							}
-							return false;
-							
-						}
-						const edges0 = points[value[0]].edges, edges1 = points[value[1]].edges;
-//if (((value[0] === 39) && (value[1] === 47)) || ((value[0] === 26) && (value[1] === 60)))
-if ((value[0] === 4) && (value[1] === 0))
-	console.log('add edge')
-						if ( !findCrossEdge(edges0, edges1, value) ) {
-							
-							edges0.push(i);
-							edges1.push(i);
-							
-							value.i = edges.length;
-							edges.push(value);
-
-						}
-							throw new MyError('FermatSpiral: geometry.indices edges set. Crossed edge detected.', MyError.IDS.edgesCountOverflow);
-*/
-						points[value[0]].edges.push(i);
-						points[value[1]].edges.push(i);
-
-						value.i = edges.length;
-/*
-if (
-	(i0 === 0) && (i1 === 4) ||
-//							(i0 === 1) && (i1 === 2) ||
-	(i0 === 0) && (i1 === 6) ||
-	(i0 === 39) && (i1 === 47) ||
-	(i0 === 58) && (i1 === 50)
-)
-	console.log( 'add edge' )
-*/
-						edges.push(value);
 						return edges.length;
 //						return true;
 
