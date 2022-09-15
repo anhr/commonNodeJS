@@ -598,6 +598,7 @@ class FermatSpiral {
 							(i0 === 58) && (i1 === 50)
 						)
 */
+/*
 						if (
 							((i0 === 0) && (i1 === 4)) || ((i0 === 4) && (i1 === 0)) ||
 							((i0 === 0) && (i1 === 6)) || ((i0 === 6) && (i1 === 0)) ||
@@ -605,7 +606,7 @@ class FermatSpiral {
 							((i0 === 58) && (i1 === 50) || (i0 === 50) && (i1 === 58))
 						)
 							throw new MyError('FermatSpiral: indices set. Invalid edge.', MyError.IDS.invalidEdge);
-
+*/
 						//добавить индекс ребра в список ребер двух вершин, которые составляют ребро
 						function addIndex(edgeIndex) {
 
@@ -638,6 +639,77 @@ class FermatSpiral {
 							throw new MyError('FermatSpiral: geometry.indices edges set. Invalid edge.', MyError.IDS.edgesCountOverflow);
 
 						}
+						/*
+						//найти две вершины edgeCross, которые вместе с вершинами edge образуют ромб.
+						//Если ребро edgeCross существует, значит edgeCross пересекает ромб и ребро edge будет пересекаться с edgeCross.
+						//Значит edge добавлять не надо.
+						function findCrossEdge(edges0, edges1, edge) {
+
+							//Найти вторую пару вершин ромба edgeCross
+							//и идентификатор вершины verticeCross, через которую возможно проходит ребро edgeCross, пересекающее ромб
+							const edgeCross = [];
+							var verticeCross;
+							for (var edges0Id = 0; edges0Id < edges0.length; edges0Id++) {
+
+								const vertices0 = edges[edges0[edges0Id]],
+									vertice0Id = (vertices0[0] === edge[0]) || (vertices0[0] === edge[1]) ? vertices0[1] : vertices0[0];
+								for (var edges1Id = 0; edges1Id < edges1.length; edges1Id++) {
+
+									const vertices1 = edges[edges1[edges1Id]],
+										vertice1Id = (vertices1[0] === edge[0]) || (vertices1[0] === edge[1]) ? vertices1[1] : vertices1[0];
+									if (vertice1Id === vertice0Id) {
+
+										edgeCross.push(vertice1Id);
+										break;
+
+									}
+
+								}
+								if (edgeCross.length > 1) {
+
+									verticeCross = vertice0Id;
+									break;
+
+								}
+
+							}
+							if (verticeCross === undefined)
+								return false;
+
+							//ищем ребро, которое пересекает ромб
+							const verticeCrossEdges = points[verticeCross].edges;
+							var boDetected = false;
+							for (var verticeCrossEdgeId = 0; verticeCrossEdgeId < verticeCrossEdges.length; verticeCrossEdgeId++) {
+
+								const id = verticeCrossEdges[verticeCrossEdgeId],
+									verticeCrossEdge = edges[id];
+								if (
+									((verticeCrossEdge[0] === edgeCross[0]) && (verticeCrossEdge[1] === edgeCross[1])) ||
+									((verticeCrossEdge[0] === edgeCross[0]) && (verticeCrossEdge[1] === edgeCross[1]))
+								)
+									return true;
+
+							}
+							return false;
+
+						}
+						*/
+						const edges0 = points[value[0]].edges, edges1 = points[value[1]].edges;
+//if (((value[0] === 39) && (value[1] === 47)) || ((value[0] === 26) && (value[1] === 60)))
+//if ((value[0] === 4) && (value[1] === 0))
+//	console.log('add edge')
+/*
+						if (!findCrossEdge(edges0, edges1, value)) {
+
+							edges0.push(i);
+							edges1.push(i);
+
+							value.i = edges.length;
+							edges.push(value);
+
+						}
+						throw new MyError('FermatSpiral: geometry.indices edges set. Crossed edge detected.', MyError.IDS.edgesCountOverflow);
+*/
 /*
 						//найти две вершины edgeCross, которые вместе с вершинами edge образуют ромб.
 						//Если ребро edgeCross существует, значит edgeCross пересекает ромб и ребро edge будет пересекаться с edgeCross.
@@ -705,7 +777,7 @@ if ((value[0] === 4) && (value[1] === 0))
 							edges.push(value);
 
 						}
-						throw new MyError('FermatSpiral: geometry.indices edges set. Crossed edge detected.', MyError.IDS.edgesCountOverflow);
+							throw new MyError('FermatSpiral: geometry.indices edges set. Crossed edge detected.', MyError.IDS.edgesCountOverflow);
 */
 						points[value[0]].edges.push(i);
 						points[value[1]].edges.push(i);
