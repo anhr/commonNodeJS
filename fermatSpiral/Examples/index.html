@@ -55,7 +55,7 @@
 					
 					scene: scene,
 					options: options,
-					color: 'red',
+					//color: 'red',
 					/*
 					faces: {
 
@@ -69,21 +69,6 @@
 				}
 				
 			} );
-/*			
-			const mesh = new THREE.LineSegments(
-				new THREE.BufferGeometry().setFromPoints( fermatSpiral.points ).setIndex( fermatSpiral.indices ),
-				new THREE.LineBasicMaterial( { color: color, } ) );
-			//const mesh = new THREE.Line( new THREE.BufferGeometry().setFromPoints( fermatSpiral.points ), new THREE.LineBasicMaterial( { color: color } ) );
-//			const mesh = new THREE.Mesh( new MyThree.three.ConvexGeometry( fermatSpiral.points ), new THREE.MeshBasicMaterial( { color: color, wireframe: true } ) );
-			scene.add( mesh );
-			if ( options.guiSelectPoint ) {
-
-				fermatSpiral.object = mesh;//Allow user to edit Fermat's spiral settings
-				options.guiSelectPoint.addMesh( mesh );
-
-			}
-			//MyThree.MyPoints( fermatSpiral.points, scene, { options: options } );
-*/			
 
 		}, {
 
@@ -94,14 +79,13 @@
 					point: function ( options, dat, fMesh ) {
 						
 						return new FermatSpiral.ND.gui( options, dat, fMesh );
-//						return new FermatSpiral.gui( options, dat, fMesh );
 					
 					},
 					//boDisplayVerticeID: true,
 
 				},
 			},
-            //dat: false,
+			//dat: false,
 			//orbitControls: false,
 			orbitControls: { enableRotate: false, },
 			camera: { position: new THREE.Vector3( 0, 0, 2 ) },

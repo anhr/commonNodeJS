@@ -589,14 +589,23 @@ class FermatSpiral {
 					const i = parseInt(name);//индекс ребра
 					if (!isNaN(i)) {
 
-/*
 						const i0 = value[0], i1 = value[1]
+/*						
+						if (
+							(i0 === 1) && (i1 === 2) ||
+							(i0 === 0) && (i1 === 6) ||
+							(i0 === 39) && (i1 === 47) ||
+							(i0 === 58) && (i1 === 50)
+						)
+*/
 						if (
 							((i0 === 0) && (i1 === 4)) || ((i0 === 4) && (i1 === 0)) ||
-							((i0 === 0) && (i1 === 6)) || ((i0 === 6) && (i1 === 0))
+							((i0 === 0) && (i1 === 6)) || ((i0 === 6) && (i1 === 0)) ||
+							((i0 === 39) && (i1 === 47) || (i0 === 47) && (i1 === 39)) ||
+							((i0 === 58) && (i1 === 50) || (i0 === 50) && (i1 === 58))
 						)
 							throw new MyError('FermatSpiral: indices set. Invalid edge.', MyError.IDS.invalidEdge);
-*/
+
 						//добавить индекс ребра в список ребер двух вершин, которые составляют ребро
 						function addIndex(edgeIndex) {
 
@@ -684,6 +693,9 @@ class FermatSpiral {
 							
 						}
 						const edges0 = points[value[0]].edges, edges1 = points[value[1]].edges;
+//if (((value[0] === 39) && (value[1] === 47)) || ((value[0] === 26) && (value[1] === 60)))
+if ((value[0] === 4) && (value[1] === 0))
+	console.log('add edge')
 						if ( !findCrossEdge(edges0, edges1, value) ) {
 							
 							edges0.push(i);
@@ -699,8 +711,17 @@ class FermatSpiral {
 						points[value[1]].edges.push(i);
 
 						value.i = edges.length;
+/*
+if (
+	(i0 === 0) && (i1 === 4) ||
+//							(i0 === 1) && (i1 === 2) ||
+	(i0 === 0) && (i1 === 6) ||
+	(i0 === 39) && (i1 === 47) ||
+	(i0 === 58) && (i1 === 50)
+)
+	console.log( 'add edge' )
+*/
 						edges.push(value);
-
 						return edges.length;
 //						return true;
 
@@ -791,8 +812,8 @@ class FermatSpiral {
 					if ((edges0.length < maxLength) || (edges1.length < maxLength)) {
 
 //console.log( 'edges0.length = ' + edges0.length + ' edges1.length = ' + edges1.length + ' edgeHidden ' + edgeHidden );
-if ( ( edgeHidden[0] === 22 ) && ( edgeHidden[1] === 17 ) )
-	console.log(edgeHidden);
+//if ( ( edgeHidden[0] === 22 ) && ( edgeHidden[1] === 17 ) )
+//	console.log(edgeHidden);
 						
 						//найти две вершины edgeCross, которые вместе с вершинами edgeHidden образуют ромб.
 						//Если ребро edgeCross существует, значит edgeCross пересекает ромб и ребро edgeHidden будет пересекаться с edgeCross.
@@ -853,7 +874,7 @@ if ( ( edgeHidden[0] === 22 ) && ( edgeHidden[1] === 17 ) )
 							edges1.add(edgeId);
 							
 							edgeHidden.i = edgeId;
-console.log('Add hidden edge ' + edgeHidden.i + ' (' + edgeHidden + ')' )
+//console.log('Add hidden edge ' + edgeHidden.i + ' (' + edgeHidden + ')' )
 							edges.add(edgeHidden);
 
 						}
@@ -1027,6 +1048,7 @@ faces.push( [2, 3, 1] );
 				} );
 				
 			}
+/*			
 			points.forEach( ( vertice, i ) => {
 
 				if ( vertice.aNear.length > vertice.edges.length ) {
@@ -1036,6 +1058,7 @@ faces.push( [2, 3, 1] );
 				}
 				
 			} );
+*/
 
 		}
 		update();
