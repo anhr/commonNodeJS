@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: gui</title>
+    <title>JSDoc: Class: VectorN</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: gui</h1>
+    <h1 class="page-title">Class: VectorN</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>gui<span class="signature">(options, dat, fParent)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>VectorN<span class="signature">(n, array)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="gui"><span class="type-signature"></span>new gui<span class="signature">(options, dat, fParent)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="VectorN"><span class="type-signature"></span>new VectorN<span class="signature">(n, array)</span><span class="type-signature"></span></h4>
     
 
     
@@ -49,7 +49,7 @@
 
 
 <div class="description">
-    Custom controllers for N-dimensional graphic object
+    base class for n-dimensional vector.
 </div>
 
 
@@ -85,13 +85,13 @@
 
         <tr>
             
-                <td class="name"><code>options</code></td>
+                <td class="name"><code>n</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Options</span>
+<span class="param-type">number</span>
 
 
             
@@ -101,20 +101,20 @@
 
             
 
-            <td class="description last">See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.</td>
+            <td class="description last">dimension of the vector.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>dat</code></td>
+                <td class="name"><code>array</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">GUI</span>
+<span class="param-type">Array</span>
 
 
             
@@ -124,30 +124,7 @@
 
             
 
-            <td class="description last"><a href="https://github.com/dataarts/dat.gui">dat.GUI()</a>.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>fParent</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">GUI</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">parent folder.</td>
+            <td class="description last">array of the values of the vector.</td>
         </tr>
 
     
@@ -188,7 +165,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3405">line 3405</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3476">line 3476</a>
     </li></ul></dd>
     
 
@@ -215,11 +192,6 @@
 
 
 
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>new ND.gui( options, dat, fMesh );</code></pre>
 
 
 
