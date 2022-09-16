@@ -164,7 +164,10 @@ const dom = {
   bind: function(elem, event, func, newBool) {
     const bool = newBool || false;
     if (elem.addEventListener) {
-      elem.addEventListener(event, func, bool);
+//      elem.addEventListener(event, func, bool);
+      elem.addEventListener(event, func, {
+            passive: true//https://web.dev/i18n/ru/uses-passive-event-listeners/
+        });
     } else if (elem.attachEvent) {
       elem.attachEvent('on' + event, func);
     }

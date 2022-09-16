@@ -835,9 +835,10 @@ var dom = {
     elem.dispatchEvent(evt);
   },
   bind: function bind(elem, event, func, newBool) {
-    var bool = newBool || false;
     if (elem.addEventListener) {
-      elem.addEventListener(event, func, bool);
+      elem.addEventListener(event, func, {
+        passive: true
+      });
     } else if (elem.attachEvent) {
       elem.attachEvent('on' + event, func);
     }

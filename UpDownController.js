@@ -1,4 +1,4 @@
-﻿/**
+/**
  * custom controller, allow to user to change a value step by step.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -43,7 +43,11 @@ var UpDownController = {
 			if ( button.addEventListener ) {
 				if ( 'onwheel' in document ) {
 					// IE9+, FF17+, Ch31+
-					button.addEventListener( "wheel", onWheel );
+					button.addEventListener( "wheel", onWheel, {
+						
+						passive: true//https://web.dev/i18n/ru/uses-passive-event-listeners/
+					
+					} );
 				} else if ( 'onmousewheel' in document ) {
 					// устаревший вариант события
 					button.addEventListener( "mousewheel", onWheel );
