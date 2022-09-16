@@ -252,7 +252,7 @@ class FermatSpiral {
 
 			const maxLength = 7;//максимальное количество ребер вершины
 
-			class Vector {
+			class Vector extends ND.VectorN {
 
 				/* *
 				 * @description
@@ -264,6 +264,8 @@ class FermatSpiral {
 				 */
 				constructor( array = 0, vectorSettings = {} ) {
 
+					array = super(n, array).array;
+/*
 					if ( array.isVector ) return array;
 					if ( array instanceof Array === false ) {
 
@@ -273,6 +275,7 @@ class FermatSpiral {
 
 					}
 					if ( n !== undefined ) while ( array.length < n ) array.push( 0 );
+*/
 					
 					//индексы вершин, которые ближе всего расположены к текущей вершине
 					array.aNear = new Proxy([], {
@@ -360,7 +363,7 @@ class FermatSpiral {
 
 								switch ( name ) {
 
-									case "array": return array;
+//									case "array": return array;
 									/* *
 									* @description
 									* <pre>
@@ -371,12 +374,15 @@ class FermatSpiral {
 									* Projection of 3-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], vector[2] ) </b>.
 									* </pre>
 									*/
+/*
 									case "point":
 										const THREE = three.THREE;
 										return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
+*/
 									/*
 									* Adds v to this vector.
 									*/
+/*
 									case "add":
 										return function ( v ) {
 
@@ -386,6 +392,7 @@ class FermatSpiral {
 										}
 									case "index": return vectorSettings.index;
 									case "isVector": return true;
+*/
 									/*
 									* Computes the distance from this vector to v.
 									*/
@@ -463,7 +470,12 @@ class FermatSpiral {
 									case 'indices': return array.indices;
 									case 'i': return array.i;
 									case 'arguments': return array.arguments;
-									default: console.error( 'fermatSpiral: Vector get. Invalid name: ' + name );
+									default: {
+
+										return _this[name];
+//										console.error('fermatSpiral: Vector get. Invalid name: ' + name);
+
+									}
 
 								}
 								return;

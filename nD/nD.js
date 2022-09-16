@@ -394,7 +394,7 @@ class ND {
 		}
 		settings.object.geometry.position = settings.object.geometry.position || [];
 
-		class Vector {
+		class Vector extends ND.VectorN {
 
 			/* *
 			 * @description
@@ -411,6 +411,9 @@ class ND {
 			 */
 			constructor( array = 0, vectorSettings = {} ) {
 
+				array = super(n, array).array;
+				const _this = this;
+/*				
 				if ( array.isVector ) return array;
 				if ( array instanceof Array === false ) {
 
@@ -420,6 +423,7 @@ class ND {
 
 				}
 				if ( n !== undefined ) while ( array.length < n ) array.push( 0 );
+*/
 
 				//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
 				return new Proxy( array, {
@@ -431,7 +435,7 @@ class ND {
 
 							switch ( name ) {
 
-								case "array": return array;
+//								case "array": return array;
 								/* *
 								* @description
 								* <pre>
@@ -450,6 +454,7 @@ class ND {
 								/*
 								* Adds v to this vector.
 								*/
+/*
 								case "add":
 									return function ( v ) {
 
@@ -459,7 +464,13 @@ class ND {
 									}
 								case "index": return vectorSettings.index;
 								case "isVector": return true;
-								default: console.error( 'ND: Vector get. Invalid name: ' + name );
+*/
+								default: {
+
+									return _this[name];
+//									console.error( 'ND: Vector get. Invalid name: ' + name );
+								
+								}
 
 							}
 							return;
@@ -3450,6 +3461,97 @@ ND.gui = class {
 			fND.domElement.style.display =  display;
 			
 		}
+
+	}
+
+}
+
+ND.VectorN = class {
+
+	/**
+	 * base class for n-dimensional vector.
+	 * @param {number} n dimension of the vector.
+	 * @param {Array} array array of the values of the vector.
+	 */
+	constructor(n, array) {
+		
+		if (array.isVector) return array;
+		if (array instanceof Array === false) {
+
+			if (typeof array === 'number') array = [array];
+			else if (array.array) array = array.array;
+			else console.error('FermatSpiral: Vector: invalid array type');
+
+		}
+		if (n !== undefined) while (array.length < n) array.push(0);
+
+		//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
+		return new Proxy(array, {
+
+			get: function (target, name) {
+
+				var i = parseInt(name);
+				if (isNaN(i)) {
+
+					switch (name) {
+
+						case "array": return array;
+						/*
+						* Adds v to this vector.
+						*/
+						case "add":
+							return function (v) {
+
+								target.forEach((value, i) => target[i] += v[i]);
+								return this;
+
+							}
+						case "index": return vectorSettings.index;
+						case "isVector": return true;
+						default: console.error('ND: Vector get. Invalid name: ' + name);
+
+					}
+					return;
+
+				}
+				if (i >= n)
+					return 0;
+				if ((array.length > n) && settings.object.geometry.iAxes && (i < settings.object.geometry.iAxes.length))
+					i = settings.object.geometry.iAxes[i];
+				return array[i];
+
+			},
+/*
+			set: function (target, name, value) {
+
+				const i = parseInt(name);
+				if (!isNaN(i)) {
+
+					if (i >= array.length) {
+
+						array.push(value);
+						return array.length;
+
+					}
+					array[i] = value;
+					_ND.intersection();
+					if (vectorSettings.onChange) vectorSettings.onChange();
+					return true;
+
+				}
+				switch (name) {
+
+					case 'onChange':
+						vectorSettings.onChange = value;
+						return vectorSettings.onChange;
+					default: console.error('ND: Vector set. Invalid name: ' + name);
+
+				}
+
+			}
+*/
+
+		});
 
 	}
 
