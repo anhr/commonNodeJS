@@ -1,0 +1,6 @@
+ WebGPY https://gpuweb.github.io/gpuweb/
+
+thanks to https://web.dev/gpu-compute/
+
+Tutorial
+https://gpuweb.github.io/gpuweb/explainer/
