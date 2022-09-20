@@ -47,7 +47,17 @@
 			const pointerVector = new THREE.Vector2( - 10.0, - 10.0 ); // Out of bounds first
 			const scaleVector = new THREE.Vector2( 1, 1 );
 
-			init().then( animate ).catch( error );
+			function onInit() {
+
+				renderer.compute(computeNode);
+				animate();
+
+			}
+			
+			init().then( onInit ).catch( error );
+
+			//read buffer id
+			let readId;
 
 			async function init() {
 
@@ -63,6 +73,13 @@
 				camera.position.z = 1;
 
 				scene = new THREE.Scene();
+
+				//read buffer
+                const readNum = 33;
+                const readSize = 2; // vec2
+                const readArray = new Float32Array(readNum * readSize);
+                const readBuffer = new THREE.InstancedBufferAttribute(readArray, 2);
+                const readBufferNode = Nodes.storage(readBuffer, 'vec2', readNum);
 
 				// initialize particles
 
@@ -84,7 +101,7 @@
 
 				const computeShaderNode = new Nodes.ShaderNode( ( inputs, builder ) => {
 
-					const particle = Nodes.element( particleBufferNode, Nodes.instanceIndex );
+                    const particle = Nodes.element(particleBufferNode, Nodes.instanceIndex);
 					const velocity = Nodes.element( velocityBufferNode, Nodes.instanceIndex );
 
 					const pointer = Nodes.uniform( pointerVector );
@@ -103,6 +120,11 @@
 
 					Nodes.assign( particle, Nodes.cond( Nodes.lessThanEqual( distanceFromPointer, pointerSize ), Nodes.vec3(), position ) ).build( builder );
 
+                    const read = Nodes.element(readBufferNode, Nodes.instanceIndex);
+					const b = Nodes.assign( read, Nodes.cond( Nodes.lessThanEqual( distanceFromPointer, pointerSize ), Nodes.vec3(), position ) );
+					b.build( builder );
+					readId = b.aNode.node.id;
+					
 				} );
 
 				// compute
@@ -120,13 +142,21 @@
 						const velX = Nodes.mul( Nodes.sin( randomAngle ), randomSpeed );
 						const velY = Nodes.mul( Nodes.cos( randomAngle ), randomSpeed );
 
-						const velocity = Nodes.element( velocityBufferNode, Nodes.instanceIndex );
+                        const velocity = Nodes.element(velocityBufferNode, Nodes.instanceIndex);
 
-						Nodes.assign( velocity.xy, Nodes.vec2( velX, velY ) ).build( builder );
+						Nodes.assign(velocity.xy, Nodes.vec2(velX, velY)).build(builder);
+
+                        const readX = Nodes.mul(Nodes.sin(randomAngle), randomSpeed);
+                        const readY = Nodes.mul(Nodes.cos(randomAngle), randomSpeed);
+const read = Nodes.element(readBufferNode, Nodes.instanceIndex);
+                        Nodes.assign(read.xy, Nodes.vec2(readX, readY)).build(builder);
 
 					} );
 
-					renderer.compute( Nodes.compute( precomputeShaderNode, computeNode.count ) );
+					const computeShaderNode = Nodes.compute( precomputeShaderNode, computeNode.count );
+					renderer.compute( computeShaderNode );
+const computeShader = renderer._computePipelines.nodes.get( computeShaderNode /*computeNode*/ ).computeShader;
+console.log(computeShader);
 
 				};
 
@@ -192,6 +222,28 @@
 
 			function animate() {
 
+				async function read() {
+					
+					const bindings = renderer._bindings.get( computeNode );
+					for ( var i = 0; i < bindings.bindings.length; i++ ) {
+	
+						const binding = bindings.bindings[i];
+						if ( binding.name === ( "NodeBuffer_" + readId ) ) {
+	
+							
+							const usage = binding.bufferGPU.usage;
+							binding.bufferGPU.usage |= GPUBufferUsage.MAP_READ;
+							await binding.bufferGPU.mapAsync(GPUMapMode.READ);
+							const arrayBuffer = binding.bufferGPU.getMappedRange();
+							break;
+							
+						}
+						
+					}
+
+				}
+				//read();
+				
 				requestAnimationFrame( animate );
 
 				renderer.compute( computeNode );

@@ -257,6 +257,7 @@ class WebGPU {
 
 		initializeWebGPU();
 
+/*
 		//https://web.dev/gpu-compute/
 		async function f() {
 
@@ -275,8 +276,8 @@ class WebGPU {
 			// First Matrix
 
 			const firstMatrix = new Float32Array([
-				2 /* rows */,
-				4 /* columns */,
+				2, //rows
+				4, //columns
 				1,
 				2,
 				3,
@@ -299,8 +300,8 @@ class WebGPU {
 			// Second Matrix
 
 			const secondMatrix = new Float32Array([
-				4 /* rows */,
-				2 /* columns */,
+				4, //rows
+				2, //columns
 				1,
 				2,
 				3,
@@ -453,11 +454,11 @@ class WebGPU {
 
 			// Encode commands for copying buffer to buffer.
 			commandEncoder.copyBufferToBuffer(
-				resultMatrixBuffer /* source buffer */,
-				0 /* source offset */,
-				gpuReadBuffer /* destination buffer */,
-				0 /* destination offset */,
-				resultMatrixBufferSize /* size */
+				resultMatrixBuffer, //source buffer
+				0, //source offset
+				gpuReadBuffer, //destination buffer
+				0, //destination offset
+				resultMatrixBufferSize //size
 			);
 
 			// Submit GPU commands.
@@ -472,6 +473,7 @@ class WebGPU {
 
 		}
 		f();
+*/
 
 	}
 
