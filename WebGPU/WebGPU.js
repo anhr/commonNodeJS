@@ -182,12 +182,7 @@ class WebGPU {
 				onLoad(shaderCode)
 			else {
 
-//				loadScript.async(settings.shaderCodeFile);
-				loadFile.async(settings.shaderCodeFile, {
-//					async: true,
-					onload: function (shaderCode, url ) { onLoad(shaderCode) }
-				});
-				//console.log('loading shader code file')
+				loadFile.async(settings.shaderCodeFile, { onload: function (shaderCode, url ) { onLoad(shaderCode) } } );
 
 			}
 			async function onLoad(shaderCode) {
@@ -218,10 +213,7 @@ class WebGPU {
 				const workgroupCount = [];
 				input.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
 				const workgroupCountX = workgroupCount[0], workgroupCountY = workgroupCount[1], workgroupCountZ = workgroupCount[3];
-				/*			
-							const workgroupCountX = Math.ceil(firstMatrix[0] / 8);
-							const workgroupCountY = Math.ceil(secondMatrix[1] / 8);
-				*/
+
 				//https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups
 				passEncoder.dispatchWorkgroups(workgroupCountX, workgroupCountY, workgroupCountZ);
 				passEncoder.end();
@@ -234,11 +226,11 @@ class WebGPU {
 
 				// Encode commands for copying buffer to buffer.
 				commandEncoder.copyBufferToBuffer(
-					resultMatrixBuffer /* source buffer */,
-					0 /* source offset */,
-					gpuReadBuffer /* destination buffer */,
-					0 /* destination offset */,
-					resultMatrixBufferSize /* size */
+					resultMatrixBuffer, // source buffer
+					0, // source offset
+					gpuReadBuffer, // destination buffer
+					0, // destination offset
+					resultMatrixBufferSize // size
 				);
 
 				// Submit GPU commands.
@@ -249,14 +241,13 @@ class WebGPU {
 				await gpuReadBuffer.mapAsync(GPUMapMode.READ);
 				const arrayBuffer = gpuReadBuffer.getMappedRange();
 				out(arrayBuffer);
-				//			console.log(new Float32Array(arrayBuffer));
 
 			}
 
 		}
 
 		initializeWebGPU();
-
+/*
 		//https://web.dev/gpu-compute/
 		async function f() {
 
@@ -275,8 +266,8 @@ class WebGPU {
 			// First Matrix
 
 			const firstMatrix = new Float32Array([
-				2 /* rows */,
-				4 /* columns */,
+				2, // rows
+				4, // columns
 				1,
 				2,
 				3,
@@ -299,8 +290,8 @@ class WebGPU {
 			// Second Matrix
 
 			const secondMatrix = new Float32Array([
-				4 /* rows */,
-				2 /* columns */,
+				4, // rows
+				2, // columns
 				1,
 				2,
 				3,
@@ -453,11 +444,11 @@ class WebGPU {
 
 			// Encode commands for copying buffer to buffer.
 			commandEncoder.copyBufferToBuffer(
-				resultMatrixBuffer /* source buffer */,
-				0 /* source offset */,
-				gpuReadBuffer /* destination buffer */,
-				0 /* destination offset */,
-				resultMatrixBufferSize /* size */
+				resultMatrixBuffer, // source buffer
+				0, // source offset
+				gpuReadBuffer, // destination buffer
+				0, // destination offset
+				resultMatrixBufferSize // size
 			);
 
 			// Submit GPU commands.
@@ -472,6 +463,7 @@ class WebGPU {
 
 		}
 		f();
+*/
 
 	}
 
