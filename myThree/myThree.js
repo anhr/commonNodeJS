@@ -290,12 +290,16 @@ class MyThree {
 
 		}
 		arrayContainers.push( elContainer );
-		elContainer.innerHTML = '';
-		const elDiv = document.createElement( 'div' );
-		elDiv.className = 'container';
-		elDiv.appendChild( document.createElement( 'canvas' ) );
-		elContainer.appendChild( elDiv );
-		elContainer = elDiv;
+		if ( !elContainer.querySelector('canvas') ) {
+			
+			elContainer.innerHTML = '';
+			const elDiv = document.createElement( 'div' );
+			elDiv.className = 'container';
+			elDiv.appendChild( document.createElement( 'canvas' ) );
+			elContainer.appendChild( elDiv );
+			elContainer = elDiv;
+
+		}
 
 		if ( three.dat && ( options.dat !== false ) ) {
 
