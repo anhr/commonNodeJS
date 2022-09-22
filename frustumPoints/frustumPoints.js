@@ -109,10 +109,6 @@ class FrustumPoints
 	 */
 	constructor( camera, group, canvas, settings = {} ) {
 
-		//Непонятно почему frustumPoints не видны если убрать эту команду
-		//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
-		canvas.getContext( 'webgl' );
-
 		settings.options = settings.options || new Options();
 		const options = settings.options;
 		if ( !options.boOptions ) {
@@ -122,6 +118,14 @@ class FrustumPoints
 
 		}
 		if ( !options.frustumPoints ) return;
+
+		//Непонятно почему frustumPoints не видны если убрать эту команду
+		//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
+		canvas.getContext('webgl2');
+
+		//Error:
+		//three.module.js:27163 THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Canvas has an existing context of a different type
+		//canvas.getContext('webgl');
 
 		this.getOptions = function () { return options; }
 		const optionsShaderMaterial = options.frustumPoints;
