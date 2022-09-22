@@ -135,9 +135,17 @@ class MyThree {
 	 * @param {createXDobjects} [createXDobjects] <a href="../../myThree/jsdoc/module-MyThree.html#~createXDobjects" target="_blank">callback</a> creates my 3D objects.
 	 * @param {Object} [options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * The following options are available:
-	 * @param {HTMLElement|string} [options.elContainer=document.getElementById( "containerDSE" ) or a div element, child of body] If an HTMLElement, then a HTMLElement, contains a canvas and HTMLElement with id="iframe-goes-in-here" for gui.
+	 * @param {HTMLElement|string} [options.elContainer=document.getElementById( "containerDSE" ) or a new div element, child of body] If an HTMLElement, then a HTMLElement, contains a canvas and HTMLElement with id="iframe-goes-in-here" for gui.
 	 * <pre>
 	 * If a string, then is id of the HTMLElement.
+	 * Examples of the <b>elContainer</b>:
+	 * <b>&lt;div class="container" id="containerDSE"&gt;
+	 * 	&lt;canvas id="canvas" style="background-color:black"&gt;&lt;/canvas&gt;
+	 * &lt;/div&gt</b>;
+	 * or
+	 * <b>&lt;div class="container" id="containerDSE"&gt;
+	 * &lt;/div&gt;</b>
+	 * New canvas is created inside of the div tag.
 	 * </pre>
 	 * 
 	 * @param {THREE.PerspectiveCamera} [options.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
