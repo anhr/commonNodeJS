@@ -74,7 +74,7 @@ class FermatSpiral {
 	 * @param {Group} settings.object.scene [Scene]{@link https://threejs.org/docs/index.html?q=scene#api/en/scenes/Scene}.
 	 * @param {Options} [settings.object.options] Add &lt;b>options&lt;/b> key if you want to add custom controllers for &lt;b>FermatSpiral&lt;/b> object into &lt;a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint&lt;/a>.
 	 * See the &lt;b>options&lt;/b> parameter of the &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree&lt;/a> class.
-	 * @param {String} [settings.object.color='green'] color of &lt;b>FermatSpiral&lt;/b>.
+	 * @param {String} [settings.object.color='lime'] color of &lt;b>FermatSpiral&lt;/b>.
 	 * @param {boolean|object} [settings.object.faces] true or object - display the &lt;b>FermatSpiral&lt;/b> faces instead of edges.
 	 * @param {float} [settings.object.faces.opacity=0.5] color Float in the range of 0.0 - 1.0 indicating how transparent the material is.
 	 * A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
@@ -278,9 +278,9 @@ class FermatSpiral {
 
 		function update() {
 
-			const maxLength = 6;//максимальное количество ремер вершины
+			const maxLength = 7;//максимальное количество ребер вершины
 
-			class Vector {
+			class Vector extends ND.VectorN {
 
 				/* *
 				 * @description
@@ -292,6 +292,8 @@ class FermatSpiral {
 				 */
 				constructor( array = 0, vectorSettings = {} ) {
 
+					array = super(n, array).array;
+/*
 					if ( array.isVector ) return array;
 					if ( array instanceof Array === false ) {
 
@@ -301,6 +303,7 @@ class FermatSpiral {
 
 					}
 					if ( n !== undefined ) while ( array.length &lt; n ) array.push( 0 );
+*/
 					
 					//индексы вершин, которые ближе всего расположены к текущей вершине
 					array.aNear = new Proxy([], {
@@ -346,7 +349,7 @@ class FermatSpiral {
 									}
 									
 									const newItem = { i: i, distance: distance, };
-									if ( aNear.length &lt; 6 ) {
+									if ( aNear.length &lt; maxLength ) {
 										
 										aNear.push( newItem );
 										getMax();
@@ -388,7 +391,7 @@ class FermatSpiral {
 
 								switch ( name ) {
 
-									case "array": return array;
+//									case "array": return array;
 									/* *
 									* @description
 									* &lt;pre>
@@ -399,12 +402,15 @@ class FermatSpiral {
 									* Projection of 3-dimensional vector into 3D space: &lt;b>THREE.Vector3( vector[0], vector[1], vector[2] ) &lt;/b>.
 									* &lt;/pre>
 									*/
+/*
 									case "point":
 										const THREE = three.THREE;
 										return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
+*/
 									/*
 									* Adds v to this vector.
 									*/
+/*
 									case "add":
 										return function ( v ) {
 
@@ -414,6 +420,7 @@ class FermatSpiral {
 										}
 									case "index": return vectorSettings.index;
 									case "isVector": return true;
+*/
 									/*
 									* Computes the distance from this vector to v.
 									*/
@@ -467,14 +474,11 @@ class FermatSpiral {
 													if (!isNaN(i)) {
 							
 														//value - индекс ребра
-//														const maxLength = 6;
 														if (edges.length >= maxLength ) {
 
 															throw new MyError('FermatSpiral: update Vector get edges set. Edges length > ' + maxLength, MyError.IDS.edgesCountOverflow );
 
 														}
-//if ( ( array.i === 9 ) &amp;&amp; ( value === 40 ) )
-//	console.log( 'vertice ' + array.i );
 														if (i >= edges.length) edges.push(value);
 														else edges[i] = value;
 														return edges.length;
@@ -494,7 +498,12 @@ class FermatSpiral {
 									case 'indices': return array.indices;
 									case 'i': return array.i;
 									case 'arguments': return array.arguments;
-									default: console.error( 'fermatSpiral: Vector get. Invalid name: ' + name );
+									default: {
+
+										return _this[name];
+//										console.error('fermatSpiral: Vector get. Invalid name: ' + name);
+
+									}
 
 								}
 								return;
@@ -559,10 +568,11 @@ class FermatSpiral {
 			//1480; 55
 			//9871;144
 
-			//Точки спирали, находящиеся на краю спирали, иногда имеют лишние ребра, напраленные внутрь спирали.
-			//Это происходит потому, что нет ближайших точек, которые находятся за пределами спирали.
-			//Для решения проблемы увеличиваю количество точек спирали l больше settings.count для того что бы точки, расположенные на краю спирали имели ребра
+			//Увеличиваю количество точек спирали l больше settings.count для того что бы точки, расположенные на краю спирали имели ребра
 			//направленные к этим лишним точкам.
+			//Это нужно для того, что бы не добалялось неправиьное ребро 1344[429, 450]
+			//котрое пересекается с ребром 1262[484, 395].
+			//Это происходит потому, что еще не добавлено ребро 1346[429, 395] и 1347[429, 484] и нет никакой возможности перейти кр ребру 1262[484, 395].
 			const l = settings.count + parseInt( 3.8 * Math.sqrt( settings.count ) );
 			//3.8 выбрал что бы не было лишних ребер при settings.count = 3800
 
@@ -590,7 +600,6 @@ class FermatSpiral {
 						const edge = edges[i];
 						if ((edge === undefined) || edge.length != 2) {
 
-							//								console.error( 'FermatSpiral; indices edges get. invalid edge: ' + edge );
 							throw new Error('FermatSpiral: indices edges get. Invalid edge: ' + edge + ' i = ' + i);
 
 						}
@@ -604,7 +613,6 @@ class FermatSpiral {
 						case 'push': return edges.push;
 						case 'isProxy': return edges.isProxy;
 						case 'selected': return edges.selected;
-						case 'hidden': return edges.hidden;
 						case 'add': return function(edge) { edges.push(edge); }
 						default: console.error('FermatSpiral: geometry edges get : ' + name);
 
@@ -617,118 +625,91 @@ class FermatSpiral {
 					const i = parseInt(name);//индекс ребра
 					if (!isNaN(i)) {
 
-/*
-						const i0 = value[0], i1 = value[1]
-						if (
-							((i0 === 0) &amp;&amp; (i1 === 4)) || ((i0 === 4) &amp;&amp; (i1 === 0)) ||
-							((i0 === 0) &amp;&amp; (i1 === 6)) || ((i0 === 6) &amp;&amp; (i1 === 0))
-						)
-							throw new MyError('FermatSpiral: indices set. Invalid edge.', MyError.IDS.invalidEdge);
-*/
+//if ( i === 1344 )
+//	console.log( 'edgeId = ' + i );
 						//добавить индекс ребра в список ребер двух вершин, которые составляют ребро
 						function addIndex(edgeIndex) {
 
 							if( points[value[edgeIndex]].edges.length >= maxLength ) return false;
-/*							
-							try {
-
-								points[value[edgeIndex]].edges.push(i);
-
-							} catch (e) {
-
-								if (e.id === e.IDS.edgesCountOverflow)
-									return false;
-								else console.error(e.message);
-
-							}
-*/
 							return true;
 
 						}
-/*						
-						if ( !addIndex(0) || !addIndex(1) )
-							throw new MyError('FermatSpiral: geometry.indices edges set. Invalid edge.', MyError.IDS.edgesCountOverflow);
-*/
 						const edgesCountOverflow = !addIndex(0) || !addIndex(1); 
 						if ( edgesCountOverflow ) {
 
-							edges.hidden = edges.hidden || [];
-							edges.hidden.push( value );
 							throw new MyError('FermatSpiral: geometry.indices edges set. Invalid edge.', MyError.IDS.edgesCountOverflow);
 
 						}
-/*
+
 						//найти две вершины edgeCross, которые вместе с вершинами edge образуют ромб.
 						//Если ребро edgeCross существует, значит edgeCross пересекает ромб и ребро edge будет пересекаться с edgeCross.
 						//Значит edge добавлять не надо.
-						function findCrossEdge(edges0, edges1, edge) {
+						function findCrossEdge(edge) {
 
-							//Найти вторую пару вершин ромба edgeCross
-							//и идентификатор вершины verticeCross, через которую возможно проходит ребро edgeCross, пересекающее ромб
-							const edgeCross = [];
-							var verticeCross;
-							for (var edges0Id = 0; edges0Id &lt; edges0.length; edges0Id++) {
+							//координаты вершин ребра edge, которые нужны для проверки пересечения edge с ранее добавленными ребрами
+							const edgePoints = [points[edge[0]], points[edge[1]]];
+							
+							function find ( vertice ) {
 
-								const vertices0 = edges[edges0[edges0Id]],
-									vertice0Id = (vertices0[0] === edge[0]) || (vertices0[0] === edge[1]) ? vertices0[1] : vertices0[0];
-								for (var edges1Id = 0; edges1Id &lt; edges1.length; edges1Id++) {
+								//vertice одна из вершин ребра edge
+								const verticeEdges = points[vertice].edges;
+								for ( var iVerticeEdge = 0; iVerticeEdge &lt; verticeEdges.length; iVerticeEdge++ ) {
 
-									const vertices1 = edges[edges1[edges1Id]],
-										vertice1Id = (vertices1[0] === edge[0]) || (vertices1[0] === edge[1]) ? vertices1[1] : vertices1[0];
-									if (vertice1Id === vertice0Id) {
+									const verticeEdge = edges[verticeEdges[iVerticeEdge]],
+										verticeNext = (verticeEdge[0] === vertice) ? verticeEdge[1] : verticeEdge[0],
+										verticeNextEdges = points[verticeNext].edges;
+									for ( var iVerticeNextEdge = 0; iVerticeNextEdge &lt; verticeNextEdges.length ; iVerticeNextEdge++ ) {
 
-										edgeCross.push(vertice1Id);
-										break;
+										const verticeNextEdge = edges[verticeNextEdges[iVerticeNextEdge]],
+											verticeNextNext = (verticeNextEdge[0] === verticeNext) ? verticeNextEdge[1] : verticeNextEdge[0];
+										if ( verticeNextNext === vertice ) 
+											//ребро verticeNextEdge равно verticeEdge. Тоесть пошли назад.
+											//Это ребро не надо проверять на пересечение с ребром edge
+											continue;
+										
+										//координаты вершин ребра verticeNextEdge, которые нужно сравнивать с координатами edgePoints ребра edge
+										const edgeNextPoints = [points[verticeNextEdge[0]], points[verticeNextEdge[1]]];
+										
+										//https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
+										// returns true if the line1 intersects with line2
+										function intersects( line1, line2 ) {
 
+											const
+												a = line1[0][0], b = line1[0][1],
+												c = line1[1][0], d = line1[1][1],
+												
+												p = line2[0][0], q = line2[0][1],
+												r = line2[1][0], s = line2[1][1];
+											const det = (c - a) * (s - q) - (r - p) * (d - b);
+											if (det === 0)
+												return false;
+											const lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det,
+												gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
+											return (0 &lt; lambda &amp;&amp; lambda &lt; 1) &amp;&amp; (0 &lt; gamma &amp;&amp; gamma &lt; 1);
+											
+										}
+										if ( intersects( edgeNextPoints, edgePoints ))
+											return true;
 									}
-
+									
 								}
-								if (edgeCross.length > 1) {
-
-									verticeCross = vertice0Id;
-									break;
-
-								}
-
-							}
-							if ( verticeCross === undefined )
 								return false;
-
-							//ищем ребро, которое пересекает ромб
-							const verticeCrossEdges = points[verticeCross].edges;
-							var boDetected = false;
-							for (var verticeCrossEdgeId = 0; verticeCrossEdgeId &lt; verticeCrossEdges.length; verticeCrossEdgeId++) {
-
-								const id = verticeCrossEdges[verticeCrossEdgeId],
-									verticeCrossEdge = edges[id];
-								if (
-									((verticeCrossEdge[0] === edgeCross[0]) &amp;&amp; (verticeCrossEdge[1] === edgeCross[1])) ||
-									((verticeCrossEdge[0] === edgeCross[0]) &amp;&amp; (verticeCrossEdge[1] === edgeCross[1]))
-								) 
-									return true;
-
+								
 							}
-							return false;
-							
+							return find(edge[0]) || find(edge[1]);
+
 						}
-						const edges0 = points[value[0]].edges, edges1 = points[value[1]].edges;
-						if ( !findCrossEdge(edges0, edges1, value) ) {
-							
-							edges0.push(i);
-							edges1.push(i);
-							
-							value.i = edges.length;
+						if (!findCrossEdge(value)) {
+
+							points[value[0]].edges.push(i);
+							points[value[1]].edges.push(i);
+
+//							value.i = edges.length;
+							value.i = i;
 							edges.push(value);
 
 						}
-						throw new MyError('FermatSpiral: geometry.indices edges set. Crossed edge detected.', MyError.IDS.edgesCountOverflow);
-*/
-						points[value[0]].edges.push(i);
-						points[value[1]].edges.push(i);
-
-						value.i = edges.length;
-						edges.push(value);
-
+						else throw new MyError('FermatSpiral: geometry.indices edges set. Crossed edge detected.', MyError.IDS.edgesCountOverflow);
 						return edges.length;
 //						return true;
 
@@ -804,92 +785,6 @@ class FermatSpiral {
 
 			});
 
-			//В спирали есть дырки, тоесть не хватает граней. Это потому что некотрые ребра скрыты для того чтобы не было перекресчивающихся ребер.
-			//Ищем ребра, котрые были скрыты, потому что если их добавить к вершине, то количество ребер для одной вкршины будет больше допустимого.
-			//У некторых таких скрытых ребер одна из вершин имеет количество ребер меньше допустимого, поэтому в спирали появляются дырки.
-			//Если скрытое ребро имеет вершину, у которой количество ребер меньше допустимого,
-			//то делаем это ребро видимым, несмотря на то, что у противоположной вершины количество ребер будет больше доустимого.
-			if (edges.hidden)
-//				for (var i = edges.hidden.length - 1; i >= 0; i-- )
-				for (var i = 0; i &lt; edges.hidden.length; i++ ) {
-
-					const edgeHidden = edges.hidden[i];
-					//поиск скрытого ребра edgeHidden в вершине
-					const edges0 = points[edgeHidden[0]].edges, edges1 = points[edgeHidden[1]].edges;
-					if ((edges0.length &lt; maxLength) || (edges1.length &lt; maxLength)) {
-
-//console.log( 'edges0.length = ' + edges0.length + ' edges1.length = ' + edges1.length + ' edgeHidden ' + edgeHidden );
-if ( ( edgeHidden[0] === 22 ) &amp;&amp; ( edgeHidden[1] === 17 ) )
-	console.log(edgeHidden);
-						
-						//найти две вершины edgeCross, которые вместе с вершинами edgeHidden образуют ромб.
-						//Если ребро edgeCross существует, значит edgeCross пересекает ромб и ребро edgeHidden будет пересекаться с edgeCross.
-						//Значит edgeHidden добавлять не надо.
-
-						//Найти вторую пару вершин ромба edgeCross
-						//и идентификатор вершины verticeCross, через которую возможно проходит ребро edgeCross, пересекающее ромб
-						const edgeCross = [];
-						let verticeCross;
-						for ( var edges0Id = 0; edges0Id &lt; edges0.length; edges0Id++ ) {
-
-							const vertices0 = edges[edges0[edges0Id]],
-								vertice0Id = ( vertices0[0] === edgeHidden[0] ) || ( vertices0[0] === edgeHidden[1] ) ? vertices0[1] : vertices0[0];
-							for ( var edges1Id = 0; edges1Id &lt; edges1.length; edges1Id++ ) {
-
-								const vertices1 = edges[edges1[edges1Id]],
-									vertice1Id = ( vertices1[0] === edgeHidden[0] ) || ( vertices1[0] === edgeHidden[1] ) ? vertices1[1] : vertices1[0];
-								if ( vertice1Id === vertice0Id ) {
-									
-									edgeCross.push( vertice1Id );
-									break;
-
-								}
-								
-							}
-							if ( edgeCross.length > 1 ) {
-
-								verticeCross = vertice0Id;
-								break;
-
-							}
-							
-						}
-						
-						//ищем ребро, которое пересекает ромб
-						const verticeCrossEdges = points[verticeCross].edges;
-//						verticeCross = undefined;
-						var boDetected = false;
-						for ( var verticeCrossEdgeId = 0; verticeCrossEdgeId &lt; verticeCrossEdges.length; verticeCrossEdgeId++ ) {
-
-							const id = verticeCrossEdges[verticeCrossEdgeId],
-								verticeCrossEdge = edges[id];
-							if (
-								( ( verticeCrossEdge[0] === edgeCross[0] ) &amp;&amp; ( verticeCrossEdge[1] === edgeCross[1] ) ) ||
-								( ( verticeCrossEdge[0] === edgeCross[1] ) &amp;&amp; ( verticeCrossEdge[1] === edgeCross[0] ) )
-							) {
-								
-								boDetected = true;
-								break;
-
-							}
-							
-						}
-						if (!boDetected) {
-
-							const edgeId = edges.length;
-							edges0.add(edgeId);
-							edges1.add(edgeId);
-							
-							edgeHidden.i = edgeId;
-console.log('Add hidden edge ' + edgeHidden.i + ' (' + edgeHidden + ')' )
-							edges.add(edgeHidden);
-
-						}
-						
-					}
-					
-				}
-
 			//faces
 			_this.geometry.indices[1] = new Proxy([], {
 
@@ -899,12 +794,7 @@ console.log('Add hidden edge ' + edgeHidden.i + ' (' + edgeHidden + ')' )
 					if (!isNaN(i)) {
 
 						const face = faces[i];
-						if ( ( face === undefined ) || face.length != 3 ) {
-
-							//								console.error( 'FermatSpiral; indices faces get. invalid face: ' + face );
-							throw new Error('FermatSpiral: indices faces get. Invalid face: ' + face + ' i = ' + i);
-
-						}
+						if ( ( face === undefined ) || face.length != 3 ) throw new Error('FermatSpiral: indices faces get. Invalid face: ' + face + ' i = ' + i);
 						return face;
 
 					}
@@ -913,7 +803,6 @@ console.log('Add hidden edge ' + edgeHidden.i + ' (' + edgeHidden + ')' )
 						case 'length': return faces.length;
 						case 'push': return faces.push;
 						case 'forEach': return faces.forEach;
-//						case 'isProxy': return faces.isProxy;
 						case 'selected': return faces.selected;
 						default: console.error('FermatSpiral: geometry faces get : ' + name);
 
@@ -924,6 +813,8 @@ console.log('Add hidden edge ' + edgeHidden.i + ' (' + edgeHidden + ')' )
 
 					//value - массив с индексами ребер грани
 					const i = parseInt(name);//индекс ребра
+//if ( i === 915 )
+//	console.log( 'i = ' + i )
 					if (!isNaN(i)) {
 
 						if ( value.length != 3 )
@@ -945,7 +836,6 @@ console.log('Add hidden edge ' + edgeHidden.i + ' (' + edgeHidden + ')' )
 										count++;
 										if ( count > 2 )
 											throw new MyError('FermatSpiral: geometry faces set. Duplicate face: (' + faceId + ') ' + value, MyError.IDS.invalidFace);
-//											throw 'FermatSpiral: geometry faces set. Duplicate face: (' + faceId + ') ' + value;
 										break;
 										
 									}
@@ -1028,10 +918,6 @@ console.log('Add hidden edge ' + edgeHidden.i + ' (' + edgeHidden + ')' )
 										//обнаружена грань
 										try {
 			
-/*
-faces.push( [1, 2, 3] );
-faces.push( [2, 3, 1] );
-*/
 											faces.push( [edge.i, edge0.i, edge1.i, ] );
 			
 										} catch (e) {
@@ -1050,20 +936,11 @@ faces.push( [2, 3, 1] );
 								
 						}
 						
-					} //else console.error('Under constraction');
+					}
 					
 				} );
 				
 			}
-			points.forEach( ( vertice, i ) => {
-
-				if ( vertice.aNear.length > vertice.edges.length ) {
-					
-					console.log('vertice');
-
-				}
-				
-			} );
 
 		}
 		update();
@@ -1075,14 +952,6 @@ faces.push( [2, 3, 1] );
 				object: {
 
 					name: 'Fermat Spiral',
-					/*
-					faces: {
-						
-						transparent: false,
-						//opacity: 1,
-						
-					},//true,
-					*/
 					color: settings.object.color,
 					faces: settings.object.faces,
 					position: settings.position,
@@ -1142,7 +1011,7 @@ export default FermatSpiral;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Sep 15 2022 04:06:49 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Sep 24 2022 07:38:33 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

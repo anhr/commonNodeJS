@@ -46,7 +46,7 @@ class FermatSpiral {
 	 * @param {Group} settings.object.scene [Scene]{@link https://threejs.org/docs/index.html?q=scene#api/en/scenes/Scene}.
 	 * @param {Options} [settings.object.options] Add <b>options</b> key if you want to add custom controllers for <b>FermatSpiral</b> object into <a href="../../guiSelectPoint/jsdoc/index.html" target="_blank">GuiSelectPoint</a>.
 	 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
-	 * @param {String} [settings.object.color='green'] color of <b>FermatSpiral</b>.
+	 * @param {String} [settings.object.color='lime'] color of <b>FermatSpiral</b>.
 	 * @param {boolean|object} [settings.object.faces] true or object - display the <b>FermatSpiral</b> faces instead of edges.
 	 * @param {float} [settings.object.faces.opacity=0.5] color Float in the range of 0.0 - 1.0 indicating how transparent the material is.
 	 * A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
