@@ -2170,6 +2170,7 @@ class ND {
 					if (!item.parent) parentObject.add(item);
 					item.material.transparent = transparent;
 					item.material.opacity = transparent ? opacity : 1;
+					item.material.needsUpdate = true;//for THREE.REVISION = "145dev"
 
 				}
 
