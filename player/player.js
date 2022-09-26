@@ -2835,7 +2835,14 @@ Player.traceLine = class traceLine
 				// draw range
 				geometry.setDrawRange( sceneIndex, sceneIndex );
 
-				line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
+				line = new THREE.Line( geometry, new THREE.LineBasicMaterial( {
+					
+					//неудачная попытка исправить frustumPoints после перехода на THREE.REVISION = "145dev"
+					//vertexColors: true,//THREE.VertexColors//Undefined in THREE.REVISION = "145dev"
+
+					vertexColors: THREE.VertexColors
+				
+				} ) );
 				line.visible = true;
 				mesh.add( line );
 
