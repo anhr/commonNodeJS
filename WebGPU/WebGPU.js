@@ -142,6 +142,21 @@ class WebGPU {
 
 			});
 
+			// Debug Matrix
+
+			let debugMatrixBuffer, debugMatrixBufferSize;
+			if (settings.debugMatrixBufferSize != undefined) {
+
+				debugMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + settings.debugMatrixBufferSize);
+				debugMatrixBuffer = gpuDevice.createBuffer({
+
+					size: debugMatrixBufferSize,
+					usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+
+				});
+
+			}
+
 			// Bind group layout and bind group
 			
 			const entriesBindGroupLayout = [], entriesBindGroup = [];
@@ -169,12 +184,29 @@ class WebGPU {
 				buffer: { type: "storage" }
 				
 			} );
-			entriesBindGroup.push( {
-				
+			entriesBindGroup.push({
+
 				binding: input.length,
 				resource: { buffer: resultMatrixBuffer }
-				
-			} );
+
+			});
+			if (debugMatrixBuffer) {
+
+				entriesBindGroupLayout.push({
+
+					binding: input.length + 1,
+					visibility: GPUShaderStage.COMPUTE,
+					buffer: { type: "storage" }
+
+				});
+				entriesBindGroup.push({
+
+					binding: input.length + 1,
+					resource: { buffer: debugMatrixBuffer }
+
+				});
+
+			}
 			const bindGroupLayout = gpuDevice.createBindGroupLayout({ entries: entriesBindGroupLayout });
 			
 			const bindGroup = gpuDevice.createBindGroup({
@@ -189,11 +221,7 @@ class WebGPU {
 			const shaderCode = settings.shaderCode;
 			if (shaderCode)
 				onLoad(shaderCode)
-			else {
-
-				loadFile.async(settings.shaderCodeFile, { onload: function (shaderCode, url ) { onLoad(shaderCode) } } );
-
-			}
+			else loadFile.async(settings.shaderCodeFile, { onload: function (shaderCode, url ) { onLoad(shaderCode) } } );
 			async function onLoad(shaderCode) {
 
 				const shaderModule = gpuDevice.createShaderModule({ code: shaderCode });
@@ -242,6 +270,36 @@ class WebGPU {
 					resultMatrixBufferSize // size
 				);
 
+				let gpuDebugBuffer;
+				if (debugMatrixBuffer) {
+
+					// Get a GPU buffer for reading in an unmapped state.
+					gpuDebugBuffer = gpuDevice.createBuffer({
+						size: debugMatrixBufferSize,
+						usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+					});
+	 
+					// Encode commands for copying buffer to buffer.
+					commandEncoder.copyBufferToBuffer(
+						debugMatrixBuffer, // source buffer
+						0, // source offset
+						gpuDebugBuffer, // destination buffer
+						0, // destination offset
+						debugMatrixBufferSize // size
+					);
+/*	
+					// Submit GPU commands.
+					const gpuCommands = commandEncoder.finish();
+					gpuDevice.queue.submit([gpuCommands]);
+	
+					// Read buffer.
+					await gpuReadBuffer.mapAsync(GPUMapMode.READ);
+					const arrayBuffer = gpuReadBuffer.getMappedRange();
+					out(arrayBuffer);
+*/	 
+					
+				}
+
 				// Submit GPU commands.
 				const gpuCommands = commandEncoder.finish();
 				gpuDevice.queue.submit([gpuCommands]);
@@ -250,6 +308,17 @@ class WebGPU {
 				await gpuReadBuffer.mapAsync(GPUMapMode.READ);
 				const arrayBuffer = gpuReadBuffer.getMappedRange();
 				out(arrayBuffer);
+
+				// Debug buffer.
+				if (gpuDebugBuffer) {
+
+					await gpuDebugBuffer.mapAsync(GPUMapMode.READ);
+					const arrayBuffer = gpuDebugBuffer.getMappedRange();
+					arrayBuffer.name = 'debug';
+					arrayBuffer.type = Uint32Array;
+					out(arrayBuffer);
+
+				}
 
 			}
 
@@ -268,6 +337,155 @@ class WebGPU {
  * The API is constantly changing and currently unsafe.
  * As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to read GPU data for other processes! Don't browse the web with it enabled.
  * */
-WebGPU.isSupportWebGPU = function() { return 'gpu' in navigator; }
+WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
+
+WebGPU.out2Matrix = function(out) {
+	
+	const array = out.type ? new out.type(out) : new Float32Array(out),
+		rowsCount = array[0],
+		columnsCount = array[1];
+	const matrix = [];
+	for (let rowId = 0; rowId < rowsCount; rowId++) {
+
+		const row = [];
+		for (let columnId = 0; columnId < columnsCount; columnId++)
+			row.push(array[rowId * columnsCount + 2 + columnId]);
+		matrix.push(row);
+
+	}
+	return matrix;
+/*
+	return new Proxy([], {
+
+		get: function (row, name, args) {
+
+			const rowId = parseInt(name);
+			if (!isNaN(rowId)) {
+
+				if (rowId >= rowsCount) {
+
+					console.error('WebGPU.out: get row: Invalid row range ' + rowId);
+					return;
+
+				}
+				row.length = 0;
+				for (let columnId = 0; columnId < columnsCount; columnId++) row.push(array[rowId * columnsCount + 2 + columnId]);
+				return new Proxy(row, {
+
+					get: function (row, name, args) {
+
+						const columnId = parseInt(name);
+						if (!isNaN(columnId)) {
+
+							return row[columnId];
+
+						}
+						switch (name) {
+
+							default: console.error('WebGPU.out: get column: ' + name);
+
+						}
+
+					},
+
+				});
+
+			}
+			switch (name) {
+
+				default: console.error('WebGPU.out: get row: ' + name);
+
+			}
+
+		},
+
+	});
+*/
+/*
+	return new Proxy([], {
+
+		get: function (row, name, args) {
+
+			const rowId = parseInt(name);
+			if (!isNaN(rowId)) {
+
+				if ( rowId >= rowsCount ){
+
+					console.error('WebGPU.out: get row: Invalid row range ' + rowId);
+					return;
+					
+				}
+				return new Proxy([], {
+
+					get: function (out, name, args) {
+
+						const columnId = parseInt(name);
+						if (!isNaN(columnId)) {
+
+							if ( columnId >= columnsCount ){
+
+								console.error('WebGPU.out: get column: Invalid column range ' + columnId);
+								return;
+								
+							}
+							return array[rowId * columnsCount + 2 + columnId];
+
+						}
+						switch (name) {
+
+							default: console.error('WebGPU.out: get column: ' + name);
+
+						}
+
+					},
+
+				});
+
+			}
+			switch (name) {
+
+				default: console.error('WebGPU.out: get row: ' + name);
+
+			}
+
+		},
+
+	});
+*/
+/*	
+	const columnsLength = array[0];
+	const rowLength = array[1];
+	return new Proxy(out, {
+
+		get: function (out, name, args) {
+	
+			const i = parseInt(name);
+			if (!isNaN(i)) {
+
+//				const row = out.slice(i * rowLength + 2, i * rowLength + 2 + rowLength);
+				const row = [];
+				for (let j = 0; j < rowLength; j++)
+					row.push(array[i * rowLength + 2 + j]);
+				return row;
+	
+			}
+			switch (name) {
+	
+				case 'forEach': return function( args ){
+
+					for ( let columnId = 0; columnId < columnsLength; columnId++ )
+						args(this[columnId]);
+					
+				}
+				default: console.error('WebGPU.out: get : ' + name);
+	
+			}
+	
+		},
+	
+	});
+*/	
+
+}
 
 export default WebGPU;

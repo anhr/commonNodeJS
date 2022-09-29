@@ -22,7 +22,9 @@ import ND from '../nD/nD.js';
 //import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/nD.js';
 //import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.js';
 //import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
-if ( ND.default ) ND = ND.default;
+if (ND.default) ND = ND.default;
+
+import WebGPU from '../WebGPU/WebGPU.js';
 
 class FermatSpiral {
 
@@ -262,25 +264,25 @@ class FermatSpiral {
 				 * @param {Array} [array=0] array of the values for appropriate axes.
 				 * </pre>
 				 */
-				constructor( array = 0, vectorSettings = {} ) {
+				constructor(array = 0, vectorSettings = {}) {
 
 					array = super(n, array).array;
-/*
-					if ( array.isVector ) return array;
-					if ( array instanceof Array === false ) {
-
-						if ( typeof array === 'number' ) array = [array];
-						else if ( array.array ) array = array.array;
-						else console.error( 'FermatSpiral: Vector: invalid array type' );
-
-					}
-					if ( n !== undefined ) while ( array.length < n ) array.push( 0 );
-*/
+					/*
+										if ( array.isVector ) return array;
+										if ( array instanceof Array === false ) {
 					
+											if ( typeof array === 'number' ) array = [array];
+											else if ( array.array ) array = array.array;
+											else console.error( 'FermatSpiral: Vector: invalid array type' );
+					
+										}
+										if ( n !== undefined ) while ( array.length < n ) array.push( 0 );
+					*/
+
 					//индексы вершин, которые ближе всего расположены к текущей вершине
 					array.aNear = new Proxy([], {
 
-						get: function ( aNear, name ) {
+						get: function (aNear, name) {
 
 							const i = parseInt(name);
 							if (!isNaN(i)) {
@@ -295,49 +297,49 @@ class FermatSpiral {
 								var iMax;
 								for (var i = 0; i < aNear.length; i++) {
 
-									if ( iMax === undefined ) iMax = i;
-									else if ( aNear[iMax].distance < aNear[i].distance) iMax = i;
+									if (iMax === undefined) iMax = i;
+									else if (aNear[iMax].distance < aNear[i].distance) iMax = i;
 
 								}
-								if ( iMax != undefined )  aNear.iMax = iMax;
-								else console.error( 'FermatSpiral: Vector aNear add getMax. Invalid iMax = ' + iMax );
+								if (iMax != undefined) aNear.iMax = iMax;
+								else console.error('FermatSpiral: Vector aNear add getMax. Invalid iMax = ' + iMax);
 
 							}
 							switch (name) {
 
 								case 'length': return aNear.length;
-								case 'add': return function ( i, distance ) {
+								case 'add': return function (i, distance) {
 
 									//debug
-									for( var j = 0; j < aNear.length; j++ ) {
+									for (var j = 0; j < aNear.length; j++) {
 
-										if ( aNear[j].i === i ) {
+										if (aNear[j].i === i) {
 
-											console.error( 'FermatSpiral: Vector aNear add. Duplicate index = ' + i );
+											console.error('FermatSpiral: Vector aNear add. Duplicate index = ' + i);
 											return;
-											
+
 										}
-										
+
 									}
-									
+
 									const newItem = { i: i, distance: distance, };
-									if ( aNear.length < maxLength ) {
-										
-										aNear.push( newItem );
+									if (aNear.length < maxLength) {
+
+										aNear.push(newItem);
 										getMax();
-										
+
 									} else {
 
-										if ( aNear[aNear.iMax].distance > distance ) {
-											
+										if (aNear[aNear.iMax].distance > distance) {
+
 											aNear[aNear.iMax] = newItem;
 											getMax();
 
 										}
-			
+
 									}
-									
-									
+
+
 								}
 								default: console.error('FermatSpiral: Update Vector get. name: ' + name);
 
@@ -354,16 +356,16 @@ class FermatSpiral {
 					});
 
 					//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
-					return new Proxy( array, {
+					return new Proxy(array, {
 
-						get: function (array, name ) {
+						get: function (array, name) {
 
-							var i = parseInt( name );
-							if ( isNaN( i ) ) {
+							var i = parseInt(name);
+							if (isNaN(i)) {
 
-								switch ( name ) {
+								switch (name) {
 
-//									case "array": return array;
+									//									case "array": return array;
 									/* *
 									* @description
 									* <pre>
@@ -374,97 +376,97 @@ class FermatSpiral {
 									* Projection of 3-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], vector[2] ) </b>.
 									* </pre>
 									*/
-/*
-									case "point":
-										const THREE = three.THREE;
-										return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
-*/
+									/*
+																		case "point":
+																			const THREE = three.THREE;
+																			return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
+									*/
 									/*
 									* Adds v to this vector.
 									*/
-/*
-									case "add":
-										return function ( v ) {
-
-											array.forEach((value, i) => array[i] += v[i] );
-											return this;
-
-										}
-									case "index": return vectorSettings.index;
-									case "isVector": return true;
-*/
+									/*
+																		case "add":
+																			return function ( v ) {
+									
+																				array.forEach((value, i) => array[i] += v[i] );
+																				return this;
+									
+																			}
+																		case "index": return vectorSettings.index;
+																		case "isVector": return true;
+									*/
 									/*
 									* Computes the distance from this vector to v.
 									*/
 									case "distanceTo":
-										return function ( v ) {
+										return function (v) {
 
 											var a = 0;
-											array.forEach( ( item, i ) => { const b = item - v[i]; a = a + b * b; } )
-											return Math.sqrt( a );
+											array.forEach((item, i) => { const b = item - v[i]; a = a + b * b; })
+											return Math.sqrt(a);
 
 										}
 									case "aNear": return array.aNear;
 									case "positionWorld": return array.positionWorld;
 									case "forEach": return array.forEach;
 									case "length": return array.length;
-									case "edges": 
-										
-										if (!array.edges )
+									case "edges":
+
+										if (!array.edges)
 											array.edges = new Proxy([], {
 
 												get: function (edges, name, args) {
-							
+
 													const i = parseInt(name);
 													if (!isNaN(i)) {
-							
+
 														if (edges instanceof Array) {
-							
+
 															if (i < edges.length && (edges[i] !== undefined))
 																return edges[i];
 															return 0;
-							
+
 														}
 														return edges;
-							
+
 													}
 													switch (name) {
-							
+
 														case 'push': return edges.push;
 														case 'length': return edges.length;
 														case 'name': return edges.name;
 														case 'forEach': return edges.forEach;
-														case 'add': return function(id){ edges.push(id); }
+														case 'add': return function (id) { edges.push(id); }
 														default: console.error('FermatSpiral: Vector.edges get : ' + name);
-							
+
 													}
-							
+
 												},
 												set: function (edges, name, value) {
-							
+
 													const i = parseInt(name);//индекс ребра
 													if (!isNaN(i)) {
-							
-														//value - индекс ребра
-														if (edges.length >= maxLength ) {
 
-															throw new MyError('FermatSpiral: update Vector get edges set. Edges length > ' + maxLength, MyError.IDS.edgesCountOverflow );
+														//value - индекс ребра
+														if (edges.length >= maxLength) {
+
+															throw new MyError('FermatSpiral: update Vector get edges set. Edges length > ' + maxLength, MyError.IDS.edgesCountOverflow);
 
 														}
 														if (i >= edges.length) edges.push(value);
 														else edges[i] = value;
 														return edges.length;
-							
+
 													}
 													switch (name) {
-							
+
 														case 'length': edges.length = value; return true;
 														default: console.error('fermatSpiral: Vector edges set. Invalid name: ' + name);
-							
+
 													}
-							
+
 												}
-							
+
 											});
 										return array.edges;
 									case 'indices': return array.indices;
@@ -473,7 +475,7 @@ class FermatSpiral {
 									default: {
 
 										return _this[name];
-//										console.error('fermatSpiral: Vector get. Invalid name: ' + name);
+										//										console.error('fermatSpiral: Vector get. Invalid name: ' + name);
 
 									}
 
@@ -481,46 +483,46 @@ class FermatSpiral {
 								return;
 
 							}
-							if ( i >= n )
+							if (i >= n)
 								return 0;
-							if ( ( array.length > n ) && settings.object.geometry.iAxes && ( i < settings.object.geometry.iAxes.length ) )
+							if ((array.length > n) && settings.object.geometry.iAxes && (i < settings.object.geometry.iAxes.length))
 								i = settings.object.geometry.iAxes[i];
 							return array[i];
 
 						},
-						set: function ( array, name, value ) {
+						set: function (array, name, value) {
 
-							const i = parseInt( name );
-							if ( !isNaN( i ) ) {
-								
-								if ( i >= array.length ) {
-	
-									array.push( value );
+							const i = parseInt(name);
+							if (!isNaN(i)) {
+
+								if (i >= array.length) {
+
+									array.push(value);
 									return array.length;
-	
+
 								}
 								array[i] = value;
-								if ( vectorSettings.onChange ) vectorSettings.onChange();
+								if (vectorSettings.onChange) vectorSettings.onChange();
 								return true;
-							
+
 							}
-							switch ( name ) {
-	
+							switch (name) {
+
 								case 'onChange': vectorSettings.onChange = value; break;
 								case 'positionWorld': array.positionWorld = value; break;
 								case 'i': array.i = value; break;
-								default: console.error( 'fermatSpiral: Vector set. Invalid name: ' + name );
-	
+								default: console.error('fermatSpiral: Vector set. Invalid name: ' + name);
+
 							}
 							return true;
 
 						}
 
-					} );
+					});
 
 				}
-				push( value ) { console.error( 'FermatSpiral Vector.push() unavailable' ); }
-				pop() { console.error( 'FermatSpiral Vector.pop() unavailable' ); }
+				push(value) { console.error('FermatSpiral Vector.push() unavailable'); }
+				pop() { console.error('FermatSpiral Vector.pop() unavailable'); }
 
 			}
 
@@ -545,17 +547,68 @@ class FermatSpiral {
 			//Это нужно для того, что бы не добалялось неправиьное ребро 1344[429, 450]
 			//котрое пересекается с ребром 1262[484, 395].
 			//Это происходит потому, что еще не добавлено ребро 1346[429, 395] и 1347[429, 484] и нет никакой возможности перейти кр ребру 1262[484, 395].
-			const l = settings.count + parseInt( 3.8 * Math.sqrt( settings.count ) );
+			const l = settings.count + parseInt(3.8 * Math.sqrt(settings.count));
 			//3.8 выбрал что бы не было лишних ребер при settings.count = 3800
 
 			points.length = 0;
-			const golden_angle = 137.5077640500378546463487,//137.508;//https://en.wikipedia.org/wiki/Golden_angle
-				a = golden_angle * Math.PI / 180.0, b = 90 * Math.PI / 180.0;
-			for ( var i = 0; i < l; i++ ) {
+			if (WebGPU.isSupportWebGPU()) {
 
-				const angleInRadians = i * a - b;
-				const radius = settings.c * Math.sqrt( i );
-				points.push( new Vector([radius * Math.cos( angleInRadians ), radius * Math.sin( angleInRadians )]) );
+				new WebGPU(
+					//500,//input
+[
+	[
+		[1, 2, 3, 4],
+		[5, 6, 7, 8]
+	],
+	[
+		[1, 2],
+		[3, 4],
+		[5, 6],
+		[7, 8],
+	]
+],
+					//out
+					function (out) {
+
+						if ( out.name ) console.log(out.name);
+						const matrix = WebGPU.out2Matrix(out);
+						const row = matrix[3];
+						const item = row[1];//array[3][1];
+						console.log(matrix);
+/*						
+						const matrix = [];
+						array.forEach( row => matrix.push(row));
+						console.log(matrix);
+//						array.forEach( row => console.log(row));
+//						array.forEach( function(row) { console.log(row) });
+//						const item = array[3];
+//						console.log(out.type ? new out.type(out) : new Float32Array(out));
+*/
+
+					},
+					//settings
+					{
+
+						resultMatrixBufferSize: 1000,//4,//l,
+						debugMatrixBufferSize: 1000,
+						//shaderCode: shaderCode,
+						shaderCodeFile: currentScriptPath + '/WebGPU/create.c',
+
+					}
+				);
+				console.log('WebGPU')
+
+			} else {
+
+				const golden_angle = 137.5077640500378546463487,//137.508;//https://en.wikipedia.org/wiki/Golden_angle
+					a = golden_angle * Math.PI / 180.0, b = 90 * Math.PI / 180.0;
+				for (var i = 0; i < l; i++) {
+
+					const angleInRadians = i * a - b;
+					const radius = settings.c * Math.sqrt(i);
+					points.push(new Vector([radius * Math.cos(angleInRadians), radius * Math.sin(angleInRadians)]));
+
+				}
 
 			}
 
@@ -967,3 +1020,48 @@ FermatSpiral.ND = ND;
 
 export default FermatSpiral;
 
+
+//Thanks to https://stackoverflow.com/a/27369985/5175935
+//Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
+const getCurrentScript = function () {
+
+	if (document.currentScript && (document.currentScript.src !== ''))
+		return document.currentScript.src;
+	const scripts = document.getElementsByTagName('script'),
+		str = scripts[scripts.length - 1].src;
+	if (str !== '')
+		return src;
+	//Thanks to https://stackoverflow.com/a/42594856/5175935
+	return new Error().stack.match(/(https?:[^:]*)/)[0];
+
+};
+//Thanks to https://stackoverflow.com/a/27369985/5175935
+const getCurrentScriptPath = function () {
+	const script = getCurrentScript(),
+		path = script.substring(0, script.lastIndexOf('/'));
+	return path;
+};
+//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
+const currentScriptPath = getCurrentScriptPath(),
+	_vertex_text = {
+
+		array: [],
+		setItem: function (path, text) { this.array.push({ path: path, text: text }) },
+		getItem: function (path) {
+
+			for (var i = 0; i < this.array.length; i++) { if (this.array[i].path === path) return this.array[i].text; }
+
+		}
+
+	},
+	_fragment_text = {
+
+		array: [],
+		setItem: function (path, text) { this.array.push({ path: path, text: text }) },
+		getItem: function (path) {
+
+			for (var i = 0; i < this.array.length; i++) { if (this.array[i].path === path) return this.array[i].text; }
+
+		}
+
+	};
