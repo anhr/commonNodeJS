@@ -162,7 +162,7 @@ class WebGPU {
 				usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
 
 			});
-
+/*
 			// Debug Matrix
 
 			let debugMatrixBuffer, debugMatrixBufferSize;
@@ -177,6 +177,7 @@ class WebGPU {
 				});
 
 			}
+*/
 
 			// Bind group layout and bind group
 			
@@ -214,6 +215,7 @@ class WebGPU {
 
 			});
 			binding++;
+/*
 			if (debugMatrixBuffer) {
 
 //				const binding = input.length + 1;
@@ -233,6 +235,7 @@ class WebGPU {
 				binding++;
 
 			}
+*/
 			if (paramBuffer) {
 
 //				const binding = input.length + 2;
@@ -293,7 +296,15 @@ class WebGPU {
 				passEncoder.setBindGroup(0, bindGroup);
 
 				const workgroupCount = [];
-				input.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
+				if ( input instanceof Array )
+					input.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
+				else {
+					
+					console.log('under constaction')
+					workgroupCount.push(1);
+					workgroupCount.push(1);
+
+				}
 				const workgroupCountX = workgroupCount[0], workgroupCountY = workgroupCount[1], workgroupCountZ = workgroupCount[3];
 
 				//https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups
@@ -314,7 +325,7 @@ class WebGPU {
 					0, // destination offset
 					resultMatrixBufferSize // size
 				);
-
+/*
 				let gpuDebugBuffer;
 				if (debugMatrixBuffer) {
 
@@ -332,18 +343,9 @@ class WebGPU {
 						0, // destination offset
 						debugMatrixBufferSize // size
 					);
-/*	
-					// Submit GPU commands.
-					const gpuCommands = commandEncoder.finish();
-					gpuDevice.queue.submit([gpuCommands]);
-	
-					// Read buffer.
-					await gpuReadBuffer.mapAsync(GPUMapMode.READ);
-					const arrayBuffer = gpuReadBuffer.getMappedRange();
-					out(arrayBuffer);
-*/	 
 					
 				}
+*/
 
 				// Submit GPU commands.
 				const gpuCommands = commandEncoder.finish();
@@ -353,7 +355,7 @@ class WebGPU {
 				await gpuReadBuffer.mapAsync(GPUMapMode.READ);
 				const arrayBuffer = gpuReadBuffer.getMappedRange();
 				out(arrayBuffer);
-
+/*
 				// Debug buffer.
 				if (gpuDebugBuffer) {
 
@@ -364,6 +366,7 @@ class WebGPU {
 					out(arrayBuffer);
 
 				}
+*/
 
 			}
 
@@ -387,14 +390,15 @@ WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
 WebGPU.out2Matrix = function(out) {
 	
 	const array = out.type ? new out.type(out) : new Float32Array(out),
-		rowsCount = array[0],
-		columnsCount = array[1];
+		dimension = array[0],//Dimension of resultMatrix
+		rowsCount = array[1],
+		columnsCount = array[2];
 	const matrix = [];
 	for (let rowId = 0; rowId < rowsCount; rowId++) {
 
 		const row = [];
 		for (let columnId = 0; columnId < columnsCount; columnId++)
-			row.push(array[rowId * columnsCount + 2 + columnId]);
+			row.push(array[rowId * columnsCount + dimension + 1 + columnId]);
 		matrix.push(row);
 
 	}

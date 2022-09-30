@@ -554,7 +554,8 @@ class FermatSpiral {
 			if (WebGPU.isSupportWebGPU()) {
 
 				new WebGPU(
-					//500,//input
+					{},//500,//input
+/*
 [
 	[
 		[1, 2, 3, 4],
@@ -567,6 +568,7 @@ class FermatSpiral {
 		[7, 8],
 	]
 ],
+*/
 					//out
 					function (out) {
 
@@ -590,7 +592,7 @@ class FermatSpiral {
 					{
 
 						resultMatrixBufferSize: 1000,//4,//l,
-						debugMatrixBufferSize: 1000,
+//						debugMatrixBufferSize: 1000,
 						//shaderCode: shaderCode,
 						shaderCodeFile: currentScriptPath + '/WebGPU/create.c',
 
