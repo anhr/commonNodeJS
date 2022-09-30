@@ -181,39 +181,42 @@ class WebGPU {
 			// Bind group layout and bind group
 			
 			const entriesBindGroupLayout = [], entriesBindGroup = [];
+			let binding = 0;
 			for ( var i = 0; i < input.length; i++ ) {
 				
 				entriesBindGroupLayout.push( {
 					
-					binding: i,
+					binding: binding,//i,
 					visibility: GPUShaderStage.COMPUTE,
 					buffer: { type: "read-only-storage" }
 					
 				} );
 				entriesBindGroup.push( {
 					
-					binding: i,
+					binding: binding,//i,
 					resource: { buffer: input[i].gpuBuffer }
 					
-				} );
+				});
+				binding++;
 
 			}
 			entriesBindGroupLayout.push( {
 				
-				binding: input.length,
+				binding: binding,//input.length,
 				visibility: GPUShaderStage.COMPUTE,
 				buffer: { type: "storage" }
 				
 			} );
 			entriesBindGroup.push({
 
-				binding: input.length,
+				binding: binding,//input.length,
 				resource: { buffer: resultMatrixBuffer }
 
 			});
+			binding++;
 			if (debugMatrixBuffer) {
 
-				const binding = input.length + 1;
+//				const binding = input.length + 1;
 				entriesBindGroupLayout.push({
 
 					binding: binding,
@@ -227,11 +230,12 @@ class WebGPU {
 					resource: { buffer: debugMatrixBuffer }
 
 				});
+				binding++;
 
 			}
 			if (paramBuffer) {
 
-				const binding = input.length + 2;
+//				const binding = input.length + 2;
 				entriesBindGroupLayout.push({
 
 					binding: binding,
@@ -243,6 +247,7 @@ class WebGPU {
 					binding: binding,
 					resource: { buffer: paramBuffer, }
 				});
+				binding++;
 
 			}
 
