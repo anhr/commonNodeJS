@@ -122,6 +122,27 @@ class WebGPU {
 	
 				});
 
+			//params
+
+			const params = {
+				count: 111.0,
+			};
+			const paramBufferSize = 1 * Float32Array.BYTES_PER_ELEMENT;
+			let paramBuffer = gpuDevice.createBuffer({
+
+				size: paramBufferSize,
+				usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+
+			});
+			gpuDevice.queue.writeBuffer(
+
+				paramBuffer,
+				0,
+				new Float32Array([
+					params.count,
+				])
+			);
+
 			// Result Matrix
 
 /*				
@@ -192,21 +213,40 @@ class WebGPU {
 			});
 			if (debugMatrixBuffer) {
 
+				const binding = input.length + 1;
 				entriesBindGroupLayout.push({
 
-					binding: input.length + 1,
+					binding: binding,
 					visibility: GPUShaderStage.COMPUTE,
 					buffer: { type: "storage" }
 
 				});
 				entriesBindGroup.push({
 
-					binding: input.length + 1,
+					binding: binding,
 					resource: { buffer: debugMatrixBuffer }
 
 				});
 
 			}
+			if (paramBuffer) {
+
+				const binding = input.length + 2;
+				entriesBindGroupLayout.push({
+
+					binding: binding,
+					visibility: GPUShaderStage.COMPUTE,
+					buffer: { type: "uniform" }
+
+				});
+				entriesBindGroup.push({
+					binding: binding,
+					resource: { buffer: paramBuffer, }
+				});
+
+			}
+
+
 			const bindGroupLayout = gpuDevice.createBindGroupLayout({ entries: entriesBindGroupLayout });
 			
 			const bindGroup = gpuDevice.createBindGroup({

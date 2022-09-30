@@ -1,4 +1,4 @@
-WebGPY
+﻿WebGPU
 https://gpuweb.github.io/gpuweb/
 WebGPU Shading Language
 https://gpuweb.github.io/gpuweb/wgsl/
@@ -8,7 +8,8 @@ Tutorial:
 	https://gpuweb.github.io/gpuweb/explainer/
 	WebGPU Shading Language
 	https://gpuweb.github.io/gpuweb/explainer/#wgsl
-
+	Очень хорошо видно исходники. К сожалению исользуется язык ts
+	https://austin-eng.com/webgpu-samples
 
 thanks to https://web.dev/gpu-compute/
 

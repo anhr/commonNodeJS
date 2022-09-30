@@ -16,7 +16,12 @@ numbers : array<u32>,
 }
 @group(0) @binding(3) var<storage, read_write> debugMatrix : DebugMatrix;
 //@group(0) @binding(4) var<storage, read_write> debugIndex : u32;
-//var<private> debugIndex = 0u;
+
+//params
+struct Params {
+count: f32,//fermatSpiral points count
+}
+@binding(4) @group(0) var<uniform> params : Params;
 
 @compute @workgroup_size(8, 8)
 fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
@@ -31,7 +36,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 //	debugMatrix.numbers[20] = 789.1;
 
 //	resultMatrix.size = vec2(firstMatrix.size.x, secondMatrix.size.y);
-	resultMatrix.size = vec2(500, 2);//каждый ряд это координаты точки fermat spiral
+	resultMatrix.size = vec2(params.count, 2);//каждый ряд это координаты точки fermat spiral
 	let resultCell = vec2(global_id.x, global_id.y);
 	var result = 123.4;
 /*
