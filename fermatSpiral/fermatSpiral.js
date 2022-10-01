@@ -554,7 +554,14 @@ class FermatSpiral {
 			if (WebGPU.isSupportWebGPU()) {
 
 				new WebGPU(
-					{},//500,//input
+					{
+						/*
+						params: {
+							count: 111.0,
+						},
+						*/
+						
+					},//500,//input
 /*
 [
 	[

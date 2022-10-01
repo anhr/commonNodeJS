@@ -124,9 +124,13 @@ class WebGPU {
 
 			//params
 
+/*
 			const params = {
 				count: 111.0,
 			};
+*/
+			input.params = input.params || {};
+			if (input.params.count === undefined) input.params.count = 10;
 			const paramBufferSize = 1 * Float32Array.BYTES_PER_ELEMENT;
 			let paramBuffer = gpuDevice.createBuffer({
 
@@ -139,7 +143,7 @@ class WebGPU {
 				paramBuffer,
 				0,
 				new Float32Array([
-					params.count,
+					input.params.count,
 				])
 			);
 
