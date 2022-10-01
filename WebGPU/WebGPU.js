@@ -390,10 +390,40 @@ WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
 WebGPU.out2Matrix = function(out) {
 	
 	const array = out.type ? new out.type(out) : new Float32Array(out),
-		dimension = array[0],//Dimension of resultMatrix
+		matrix = [],
+		dimension = array[0];//Dimension of resultMatrix
+	let valueIndex = dimension + 1;
+	function iteration (level, matrixLevel) {
+
+		if (level > dimension) return;
+		const levelCount = array[level];
+		for (let i = 0; i < levelCount; i++){
+
+			const matrixNextLevel = [];
+			matrixLevel.push(matrixNextLevel);
+			if (level === (dimension - 1)) {
+
+				for (let j = 0; j < array[dimension]; j++) {
+					
+					matrixNextLevel.push(array[valueIndex]);
+					valueIndex++;
+
+				}
+				
+			} else {
+				
+				const nextlLevel = level + 1;
+				iteration (nextlLevel, matrixNextLevel);
+
+			}
+
+		}
+		
+	}
+	iteration (1, matrix);
+/*	
 		rowsCount = array[1],
 		columnsCount = array[2];
-	const matrix = [];
 	for (let rowId = 0; rowId < rowsCount; rowId++) {
 
 		const row = [];
@@ -402,6 +432,7 @@ WebGPU.out2Matrix = function(out) {
 		matrix.push(row);
 
 	}
+*/
 	return matrix;
 /*
 	return new Proxy([], {
