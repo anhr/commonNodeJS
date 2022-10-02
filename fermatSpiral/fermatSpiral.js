@@ -553,59 +553,32 @@ class FermatSpiral {
 			points.length = 0;
 			if (WebGPU.isSupportWebGPU()) {
 
-				new WebGPU(
-					{
-						/*
-						params: {
-							count: 111.0,
-						},
-						*/
-						
-					},//500,//input
-/*
-[
-	[
-		[1, 2, 3, 4],
-		[5, 6, 7, 8]
-	],
-	[
-		[1, 2],
-		[3, 4],
-		[5, 6],
-		[7, 8],
-	]
-],
-*/
-					//out
-					function (out) {
+				console.log('WebGPU')
+				new WebGPU({
 
-						if ( out.name ) console.log(out.name);
+					input: {
+
+						params: {
+
+							count: 10.0,
+
+						},
+
+					},//500,//input
+					out: function (out) {
+
+						if (out.name) console.log(out.name);
 						const matrix = WebGPU.out2Matrix(out);
 						const row = matrix[3];
 						const item = row[1];//array[3][1];
 						console.log(matrix);
-/*						
-						const matrix = [];
-						array.forEach( row => matrix.push(row));
-						console.log(matrix);
-//						array.forEach( row => console.log(row));
-//						array.forEach( function(row) { console.log(row) });
-//						const item = array[3];
-//						console.log(out.type ? new out.type(out) : new Float32Array(out));
-*/
 
 					},
-					//settings
-					{
+					resultMatrixBufferSize: 1000,//4,//l,
+					//shaderCode: shaderCode,
+					shaderCodeFile: currentScriptPath + '/WebGPU/create.c',
 
-						resultMatrixBufferSize: 1000,//4,//l,
-//						debugMatrixBufferSize: 1000,
-						//shaderCode: shaderCode,
-						shaderCodeFile: currentScriptPath + '/WebGPU/create.c',
-
-					}
-				);
-				console.log('WebGPU')
+				});
 
 			} else {
 
