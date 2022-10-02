@@ -569,8 +569,6 @@ class FermatSpiral {
 
 						if (out.name) console.log(out.name);
 						const matrix = WebGPU.out2Matrix(out);
-						const row = matrix[3];
-						const item = row[1];//array[3][1];
 						console.log(matrix);
 
 					},
