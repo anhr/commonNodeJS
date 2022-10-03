@@ -67,7 +67,7 @@
 	`;
 		new WebGPU({
 
-			input: [firstMatrix, secondMatrix],
+            input: { matrices: [firstMatrix, secondMatrix] },
 			//shaderCode: shaderCode,
 			shaderCodeFile: 'Shader.c',
 			resultMatrixBufferSize: firstMatrix.length * secondMatrix[0].length,

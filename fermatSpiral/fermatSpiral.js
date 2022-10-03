@@ -553,30 +553,41 @@ class FermatSpiral {
 			points.length = 0;
 			if (WebGPU.isSupportWebGPU()) {
 
-				console.log('WebGPU')
-				new WebGPU({
+				console.log('WebGPU');
+				const debugCount = 1;//Count of out debug values.
+				new WebGPU(
+					{
 
-					input: {
+						input: {
 
-						params: {
+							params: {
 
-							count: 10.0,
+								count: 10.0,
+
+							},
+
+						},//500,//input
+						out: function (out) {
+
+							if (out.name) console.log(out.name);
+							const matrix = WebGPU.out2Matrix(out, [
+								10,//fermatSpiral vertices count. Каждый ряд это координата точки 
+								2 + debugCount,//fermatSpiral vertice plus debug information
+							]);
+							console.log(matrix);
 
 						},
+						resultMatrixBufferSize: 1000,//4,//l,
+						//shaderCode: shaderCode,
+						shaderCodeFile: currentScriptPath + '/WebGPU/create.c',
+						shaderCodeText: function (text) {
 
-					},//500,//input
-					out: function (out) {
+							return text.replace( '%debugCount', debugCount );
 
-						if (out.name) console.log(out.name);
-						const matrix = WebGPU.out2Matrix(out);
-						console.log(matrix);
+						}
 
 					},
-					resultMatrixBufferSize: 1000,//4,//l,
-					//shaderCode: shaderCode,
-					shaderCodeFile: currentScriptPath + '/WebGPU/create.c',
-
-				});
+				);
 
 			} else {
 

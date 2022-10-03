@@ -21,8 +21,9 @@ class WebGPU {
 
 	/**
 	 * [WebGPU]{@link https://gpuweb.github.io/gpuweb/}. GPU Compute on the web.
-	 * @param {object} input Input values for WebGPU. The following Input values are available:
-	 * @param {Array} input Array of input matrix. See [Shader programming]{@link  https://web.dev/gpu-compute/#shader-programming}.
+	 * @param {object} settings The following settings are available
+	 * @param {object} [settings.input] Input values for WebGPU. The following Input values are available:
+	 * @param {Array} [settings.input.matrices] Array of input matrices. See [Shader programming]{@link  https://web.dev/gpu-compute/#shader-programming}.
 	 * <pre>
 	 * Example:
 	 * <b>[
@@ -38,11 +39,27 @@ class WebGPU {
 	 *   
 	 *]</b>
 	 * </pre>
-	 * @param {ArrayBuffer} out output buffer. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
-	 * @param {object} settings The following settings are available
+	 * @param {object} [settings.input.params] input parameters list
+	 * <pre>
+	 * Example:
+	 * <b>params: {
+	 *   count: 10.0,
+	 *},</b>
+	 * </pre>
+	 * @param {Function} [settings.out] <b>function(out)</b> called when output data is ready. <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
 	 * @param {Number} [settings.resultMatrixBufferSize] The size of the output buffer in bytes.
 	 * @param {USVString} [settings.shaderCode] The [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code for the shader module. See [USVString]{@link https://webidl.spec.whatwg.org/#idl-USVString}.
-	 * @param {String} [settings.shaderCodeFile] The name of the file with [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code. Have effect only if the code undefined.
+	 * @param {String} [settings.shaderCodeFile] The name of the file with [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code.
+	 * Have effect only if the <b>shaderCode</b> undefined.
+	 * @param {Function} [settings.shaderCodeText] <b>function(text)</b> called after downloading of the shader code from file and before creating of the Shader Module.
+	 * See [createShaderModule(descriptor)]{@link https://gpuweb.github.io/gpuweb/#dom-gpudevice-createshadermodule}
+	 * <pre>
+	 * The <b>text</b> argument is text of the shader code. You can modify shader code and return new text.
+	 * Example:
+	 * <b>shaderCodeText: function (text) {
+	 *   return text.replace( '%debugCount', 1 );
+	 *},</b>
+	 * </pre>
 	 */
 	constructor(settings) {
 
@@ -154,19 +171,27 @@ class WebGPU {
 
 			// Result Matrix
 
+/*
 			if (settings.resultMatrixBufferSize === undefined) {
 
 				console.error('WebGPU: Invalid settings.resultMatrixBufferSize = ' + settings.resultMatrixBufferSize);
 				return;
 
 			}
-			const resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + settings.resultMatrixBufferSize);
-			const resultMatrixBuffer = gpuDevice.createBuffer({
+*/
+			let resultMatrixBuffer, resultMatrixBufferSize;
+			if (settings.resultMatrixBufferSize !== undefined) {
 
-				size: resultMatrixBufferSize,
-				usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+//				const resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + settings.resultMatrixBufferSize);
+				resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * settings.resultMatrixBufferSize;
+				resultMatrixBuffer = gpuDevice.createBuffer({
 
-			});
+					size: resultMatrixBufferSize,
+					usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+
+				});
+
+			}
 
 			// Bind group layout and bind group
 
@@ -240,6 +265,7 @@ class WebGPU {
 			else loadFile.async(settings.shaderCodeFile, { onload: function (shaderCode, url ) { onLoad(shaderCode) } } );
 			async function onLoad(shaderCode) {
 
+				if (settings.shaderCodeText) shaderCode = settings.shaderCodeText(shaderCode);
 				const shaderModule = gpuDevice.createShaderModule({ code: shaderCode });
 
 				// Pipeline setup
@@ -322,23 +348,75 @@ class WebGPU {
  * */
 WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
 
-WebGPU.out2Matrix = function(out) {
+/**
+ * Converts the <b>out</b> array to matrix.
+ * @param {ArrayBuffer} out out [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}. See <b>settings.out</b> param of WebGPU for details.
+ * @param {Array} [size] size of result matrix.
+ * <pre>
+ * <b>size.length</b> is dimension of result matrix.
+ * <b>size[0]</b> is first dimension.
+ * ---
+ * <b>size[i]</b> is next dimension.
+ * ---
+ * <b>size[size.length - 1]</b> is last dimension.
+ * Esample:
+ * <b>[
+ *   10,//rows count
+ *   2//columns count
+ * ]
+ * </b>
+ * creates two dimesional matrix with 10 rows and 2 columns.
+ * 
+ * If <b>size</b> is undefined, then dimension and size of result matrix must be defined in the header of the out:
+ * First item of the out is dimension of result matrix.
+ * Second item of the out is first dimension.
+ * ---
+ * Next item of the out is next dimension.
+ * ---
+ * dimension item of the out is last dimension.
+ * Example:
+ * <b>
+ * const array = new Float32Array(out);
+ * </b>
+ * if
+ * <b>
+ * array[0] = 2//two dimesional matrix
+ * array[1] = 10//rows count
+ * array[2] = 2//columns count
+ * </b>
+ * then result matrix is two dimensional matrix with ten rows and two columns.
+ * </pre>
+ * @returns result matrix.
+ */
+WebGPU.out2Matrix = function(out, size) {
 	
 	const array = out.type ? new out.type(out) : new Float32Array(out),
-		matrix = [],
-		dimension = array[0];//Dimension of resultMatrix
-	let valueIndex = dimension + 1;
+		matrix = [];
+	let valueIndex,
+		dimension;//Dimension of resultMatrix
+	if (size){
+
+		valueIndex = 0;
+		dimension = size.length;
+		
+	} else {
+		
+		valueIndex = dimension + 1;
+		dimension = array[0];
+
+	}
 	function iteration (level, matrixLevel) {
 
 		if (level > dimension) return;
-		const levelCount = array[level];
+		const levelCount = size ? size[level -1] : array[level];
 		for (let i = 0; i < levelCount; i++){
 
 			const matrixNextLevel = [];
 			matrixLevel.push(matrixNextLevel);
 			if (level === (dimension - 1)) {
 
-				for (let j = 0; j < array[dimension]; j++) {
+				const length = size ? size[dimension - 1] : array[dimension];
+				for (let j = 0; j < length; j++) {
 					
 					matrixNextLevel.push(array[valueIndex]);
 					valueIndex++;
@@ -356,150 +434,7 @@ WebGPU.out2Matrix = function(out) {
 		
 	}
 	iteration (1, matrix);
-/*	
-		rowsCount = array[1],
-		columnsCount = array[2];
-	for (let rowId = 0; rowId < rowsCount; rowId++) {
-
-		const row = [];
-		for (let columnId = 0; columnId < columnsCount; columnId++)
-			row.push(array[rowId * columnsCount + dimension + 1 + columnId]);
-		matrix.push(row);
-
-	}
-*/
 	return matrix;
-/*
-	return new Proxy([], {
-
-		get: function (row, name, args) {
-
-			const rowId = parseInt(name);
-			if (!isNaN(rowId)) {
-
-				if (rowId >= rowsCount) {
-
-					console.error('WebGPU.out: get row: Invalid row range ' + rowId);
-					return;
-
-				}
-				row.length = 0;
-				for (let columnId = 0; columnId < columnsCount; columnId++) row.push(array[rowId * columnsCount + 2 + columnId]);
-				return new Proxy(row, {
-
-					get: function (row, name, args) {
-
-						const columnId = parseInt(name);
-						if (!isNaN(columnId)) {
-
-							return row[columnId];
-
-						}
-						switch (name) {
-
-							default: console.error('WebGPU.out: get column: ' + name);
-
-						}
-
-					},
-
-				});
-
-			}
-			switch (name) {
-
-				default: console.error('WebGPU.out: get row: ' + name);
-
-			}
-
-		},
-
-	});
-*/
-/*
-	return new Proxy([], {
-
-		get: function (row, name, args) {
-
-			const rowId = parseInt(name);
-			if (!isNaN(rowId)) {
-
-				if ( rowId >= rowsCount ){
-
-					console.error('WebGPU.out: get row: Invalid row range ' + rowId);
-					return;
-					
-				}
-				return new Proxy([], {
-
-					get: function (out, name, args) {
-
-						const columnId = parseInt(name);
-						if (!isNaN(columnId)) {
-
-							if ( columnId >= columnsCount ){
-
-								console.error('WebGPU.out: get column: Invalid column range ' + columnId);
-								return;
-								
-							}
-							return array[rowId * columnsCount + 2 + columnId];
-
-						}
-						switch (name) {
-
-							default: console.error('WebGPU.out: get column: ' + name);
-
-						}
-
-					},
-
-				});
-
-			}
-			switch (name) {
-
-				default: console.error('WebGPU.out: get row: ' + name);
-
-			}
-
-		},
-
-	});
-*/
-/*	
-	const columnsLength = array[0];
-	const rowLength = array[1];
-	return new Proxy(out, {
-
-		get: function (out, name, args) {
-	
-			const i = parseInt(name);
-			if (!isNaN(i)) {
-
-//				const row = out.slice(i * rowLength + 2, i * rowLength + 2 + rowLength);
-				const row = [];
-				for (let j = 0; j < rowLength; j++)
-					row.push(array[i * rowLength + 2 + j]);
-				return row;
-	
-			}
-			switch (name) {
-	
-				case 'forEach': return function( args ){
-
-					for ( let columnId = 0; columnId < columnsLength; columnId++ )
-						args(this[columnId]);
-					
-				}
-				default: console.error('WebGPU.out: get : ' + name);
-	
-			}
-	
-		},
-	
-	});
-*/	
 
 }
 

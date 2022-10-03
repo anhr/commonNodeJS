@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-WebGPU.html">WebGPU</a>~</span>WebGPU<span class="signature">(input, out, settings)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-WebGPU.html">WebGPU</a>~</span>WebGPU<span class="signature">(settings)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -42,7 +42,7 @@
     
 
     
-    <h4 class="name" id="WebGPU"><span class="type-signature"></span>new WebGPU<span class="signature">(input, out, settings)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="WebGPU"><span class="type-signature"></span>new WebGPU<span class="signature">(settings)</span><span class="type-signature"></span></h4>
     
 
     
@@ -82,67 +82,6 @@
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>input</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Array of input matrix. See <a href="https://web.dev/gpu-compute/#shader-programming">Shader programming</a>.
-<pre>
-Example:
-<b>[
-  [
-     [1, 2, 3, 4],
-     [5, 6, 7, 8]
-  ],
-  [
-     [1, 2],
-     [3, 4],
-     [5, 6],
-     [7, 8],
-  
-]</b>
-</pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>out</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ArrayBuffer</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">output buffer. See <a href="https://webidl.spec.whatwg.org/#idl-ArrayBuffer">ArrayBuffer</a>.</td>
-        </tr>
-
     
 
         <tr>
@@ -187,6 +126,187 @@ Example:
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Input values for WebGPU. The following Input values are available:
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>matrices</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array of input matrices. See <a href="https://web.dev/gpu-compute/#shader-programming">Shader programming</a>.
+<pre>
+Example:
+<b>[
+  [
+     [1, 2, 3, 4],
+     [5, 6, 7, 8]
+  ],
+  [
+     [1, 2],
+     [3, 4],
+     [5, 6],
+     [7, 8],
+  
+]</b>
+</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">input parameters list
+<pre>
+Example:
+<b>params: {
+  count: 10.0,
+},</b>
+</pre></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>out</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><b>function(out)</b> called when output data is ready. <b>out</b> argument is array of output data. See <a href="https://webidl.spec.whatwg.org/#idl-ArrayBuffer">ArrayBuffer</a>.</td>
+        </tr>
+
     
 
         <tr>
@@ -283,7 +403,49 @@ Example:
 
             
 
-            <td class="description last">The name of the file with <a href="https://gpuweb.github.io/gpuweb/wgsl/">WGSL</a> source code. Have effect only if the code undefined.</td>
+            <td class="description last">The name of the file with <a href="https://gpuweb.github.io/gpuweb/wgsl/">WGSL</a> source code.
+Have effect only if the <b>shaderCode</b> undefined.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>shaderCodeText</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><b>function(text)</b> called after downloading of the shader code from file and before creating of the Shader Module.
+See <a href="https://gpuweb.github.io/gpuweb/#dom-gpudevice-createshadermodule">createShaderModule(descriptor)</a>
+<pre>
+The <b>text</b> argument is text of the shader code. You can modify shader code and return new text.
+Example:
+<b>shaderCodeText: function (text) {
+  return text.replace( '%debugCount', 1 );
+},</b>
+</pre></td>
         </tr>
 
     
@@ -331,7 +493,7 @@ Example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line46">line 46</a>
+        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line64">line 64</a>
     </li></ul></dd>
     
 
@@ -435,7 +597,7 @@ Example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line264">line 264</a>
+        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line349">line 349</a>
     </li></ul></dd>
     
 
@@ -480,6 +642,229 @@ As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to re
 
 
         
+            
+
+    
+
+    
+    <h4 class="name" id=".out2Matrix"><span class="type-signature">(static) </span>out2Matrix<span class="signature">(out, size<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Converts the <b>out</b> array to matrix.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>out</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ArrayBuffer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">out <a href="https://webidl.spec.whatwg.org/#idl-ArrayBuffer">ArrayBuffer</a>. See <b>settings.out</b> param of WebGPU for details.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>size</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">size of result matrix.<pre>
+<b>size.length</b> is dimension of result matrix.
+<b>size[0]</b> is first dimension.
+---
+<b>size[i]</b> is next dimension.
+---
+<b>size[size.length - 1]</b> is last dimension.
+Esample:
+<b>[
+  10,//rows count
+  2//columns count
+]
+</b>
+creates two dimesional matrix with 10 rows and 2 columns.
+
+If <b>size</b> is undefined, then dimension and size of result matrix must be defined in the header of the out:
+First item of the out is dimension of result matrix.
+Second item of the out is first dimension.
+---
+Next item of the out is next dimension.
+---
+dimension item of the out is last dimension.
+Example:
+<b>
+const array = new Float32Array(out);
+</b>
+if
+<b>
+array[0] = 2//two dimesional matrix
+array[1] = 10//rows count
+array[2] = 2//columns count
+</b>
+then result matrix is two dimensional matrix with ten rows and two columns.
+</pre></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line391">line 391</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    result matrix.
+</div>
+
+
+
+    
+
+
+
+
+
+        
     
 
     
@@ -501,7 +886,7 @@ As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to re
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon Sep 26 2022 11:33:38 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon Oct 03 2022 10:04:51 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -1,4 +1,6 @@
 ﻿//Вычисляем координаты точек точки fermat spiral
+const debugCount = %debugCountu;//Count of out debug values.
+/*
 const dimension = 2u;//Dimension of resultMatrix
 struct Matrix {//5.2.10. Structure Types https://gpuweb.github.io/gpuweb/wgsl/#struct-types
 	dimension: f32,
@@ -6,35 +8,22 @@ struct Matrix {//5.2.10. Structure Types https://gpuweb.github.io/gpuweb/wgsl/#s
 	size : array<f32, dimension>,//5.2.9. Array Types https://gpuweb.github.io/gpuweb/wgsl/#fixed-size-array
 	numbers : array<f32>,
 }
-
-
-//@group(0) @binding(0) var<storage, read> firstMatrix : Matrix;
-//@group(0) @binding(1) var<storage, read> secondMatrix : Matrix;
-@group(0) @binding(0) var<storage, read_write> resultMatrix : Matrix;
-/*
-//debug
-struct DebugMatrix {
-size: vec2<u32>,
-numbers : array<u32>,
-}
-@group(0) @binding(3) var<storage, read_write> debugMatrix : DebugMatrix;
 */
+
+//@group(0) @binding(0) var<storage, read_write> resultMatrix : Matrix;
+@group(0) @binding(0) var<storage, read_write> resultMatrix : array<f32>;
+
 //params
 struct Params {
 	count: f32,//fermatSpiral points count
 }
-@binding(1) @group(0) var<uniform> params : Params;
+@group(0) @binding(1) var<uniform> params : Params;
 
 //@compute @workgroup_size(8, 8)
 @compute @workgroup_size(8)
 fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
 /*
-	// Guard against out-of-bounds work group sizes
-	if (global_id.x >= u32(firstMatrix.size.x) || global_id.y >= u32(secondMatrix.size.y)) {
-		return;
-	}
-*/
 //	debugMatrix.size = vec2(500, 2);
 
 	resultMatrix.dimension = f32(dimension);//fermatSpiral points count. Каждый ряд это координата точки 
@@ -42,6 +31,8 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 	resultMatrix.size[0] = params.count;//fermatSpiral points count. Каждый ряд это координата точки 
 	resultMatrix.size[1] = 2 + 1;//в каждом ряду по две точки. Сюда можно добавить несколько отдадочных значений
 //	resultMatrix.size[2] = 2;//for debug
+*/
+	const rowSize = 2u + debugCount;//в каждом ряду по две точки. Сюда можно добавить несколько отдадочных значений
 //	let resultCell = vec2(global_id.x, global_id.y);
 
 	const golden_angle = 137.5077640500378546463487;//137.508;//https://en.wikipedia.org/wiki/Golden_angle
@@ -77,13 +68,26 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 	*/
 	//let index = resultCell.y + resultCell.x * u32(resultMatrix.size[1] * resultMatrix.size[2]);
 //	let index = resultCell.y + resultCell.x * u32(resultMatrix.size[1]);
-	let index = i * u32(resultMatrix.size[1]);
+//	let index = i * u32(resultMatrix.size[1]);
+	var index = i * rowSize;
+/*
 	resultMatrix.numbers[index] = result.x;
 	resultMatrix.numbers[index + 1] = result.y;
 
 	//debug
 	resultMatrix.numbers[index + 2] = f32(global_id.x);
 //	resultMatrix.numbers[index + 3] = f32(global_id.y);
+*/
+	resultMatrix[index] = result.x;
+	index++;
+	resultMatrix[index] = result.y;
+
+	//debug
+	if (debugCount > 0) {
+		index++;
+		resultMatrix[index] = f32(global_id.x);
+	}
+	//	resultMatrix[index + 3] = f32(global_id.y);
 /*
 resultMatrix.numbers[index + 4] = 45.6;
 resultMatrix.numbers[index + 5] = 47.8;
