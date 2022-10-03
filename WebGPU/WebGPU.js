@@ -124,8 +124,8 @@ class WebGPU {
 				paramBuffer;
 			if (input) {
 
-				if (input instanceof Array)
-					input.forEach(inputMatrux => {
+				if (input.matrices)
+					input.matrices.forEach(inputMatrux => {
 
 						//create matrix
 						const matrix = [
@@ -182,7 +182,7 @@ class WebGPU {
 			let resultMatrixBuffer, resultMatrixBufferSize;
 			if (settings.resultMatrixBufferSize !== undefined) {
 
-//				const resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + settings.resultMatrixBufferSize);
+				//resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + settings.resultMatrixBufferSize);
 				resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * settings.resultMatrixBufferSize;
 				resultMatrixBuffer = gpuDevice.createBuffer({
 
@@ -197,7 +197,7 @@ class WebGPU {
 
 			const entriesBindGroupLayout = [], entriesBindGroup = [];
 			let binding = 0;
-			for (var i = 0; i < input.length; i++) {
+			if (input.matrices) for (var i = 0; i < input.matrices.length; i++) {
 
 				entriesBindGroupLayout.push({
 
@@ -209,7 +209,7 @@ class WebGPU {
 				entriesBindGroup.push({
 
 					binding: binding,//i,
-					resource: { buffer: input[i].gpuBuffer }
+					resource: { buffer: input.matrices[i].gpuBuffer }
 
 				});
 				binding++;
@@ -290,13 +290,8 @@ class WebGPU {
 				passEncoder.setBindGroup(0, bindGroup);//set @group(0) in the shading code
 
 				const workgroupCount = [];
-/*				
-				if ( input instanceof Array )
-					input.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
-*/
-/*
 				if (input.matrices)
-					input.matrices.forEach((item, i) => workgroupCount.push(Math.ceil(item[i] / 8)));
+					input.matrices.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
 				else {
 					
 					console.log('under constaction')
@@ -304,9 +299,6 @@ class WebGPU {
 					workgroupCount.push(1);
 
 				}
-*/
-				workgroupCount.push(1);
-				workgroupCount.push(1);
 				const workgroupCountX = workgroupCount[0], workgroupCountY = workgroupCount[1], workgroupCountZ = workgroupCount[3];
 
 				//https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups
@@ -404,13 +396,13 @@ WebGPU.out2Matrix = function(out, size) {
 		dimension;//Dimension of resultMatrix
 	if (size){
 
-		valueIndex = 0;
 		dimension = size.length;
+		valueIndex = 0;
 		
 	} else {
 		
-		valueIndex = dimension + 1;
 		dimension = array[0];
+		valueIndex = dimension + 1;
 
 	}
 	function iteration (level, matrixLevel) {
