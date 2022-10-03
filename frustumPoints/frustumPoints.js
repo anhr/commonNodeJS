@@ -109,10 +109,6 @@ class FrustumPoints
 	 */
 	constructor( camera, group, canvas, settings = {} ) {
 
-		//Непонятно почему frustumPoints не видны если убрать эту команду
-		//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
-		canvas.getContext( 'webgl' );
-
 		settings.options = settings.options || new Options();
 		const options = settings.options;
 		if ( !options.boOptions ) {
@@ -122,6 +118,17 @@ class FrustumPoints
 
 		}
 		if ( !options.frustumPoints ) return;
+
+		//Непонятно почему frustumPoints не видны ни в старой ни в новой версии three.js
+		//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
+		//в новой версии three.js (THREE.REVISION = "145dev") ошибки нет но frustumPoints не видно
+		canvas.getContext('webgl2');
+
+		//в старой версии three.js (THREE.REVISION = "135dev") frustumPoints видно и ошибки нет
+		//в новой версии three.js (THREE.REVISION = "145dev") frustumPoints не видно
+		//Error:
+		//THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Canvas has an existing context of a different type
+		//canvas.getContext('webgl');
 
 		this.getOptions = function () { return options; }
 		const optionsShaderMaterial = options.frustumPoints;
@@ -414,6 +421,10 @@ class FrustumPoints
 							x = vector.r;
 							y = vector.g;
 							z = vector.b;
+							
+							//неудачная попытка исправить frustumPoints после перехода на THREE.REVISION = "145dev"
+							//http://htmlbook.ru/css/value/color#:~:text=RGBA,-Internet%20Explorer&text=%D0%A4%D0%BE%D1%80%D0%BC%D0%B0%D1%82%20RGBA%20%D0%BF%D0%BE%D1%85%D0%BE%D0%B6%20%D0%BF%D0%BE%20%D1%81%D0%B8%D0%BD%D1%82%D0%B0%D0%BA%D1%81%D0%B8%D1%81%D1%83,%D0%BF%D1%80%D0%BE%D0%B2%D0%BE%D0%B4%D0%B8%D1%82%D1%8C%20%D0%B8%D0%BC%D0%B5%D0%BD%D0%BD%D0%BE%20%D0%BF%D0%BE%20%D1%8D%D1%82%D0%BE%D0%B9%20%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D0%B8.
+							//w = 1//for THREE.REVISION = "145dev" warning : THREE.WebGLRenderer: THREE.RGBFormat has been removed. Use THREE.RGBAFormat instead. https://github.com/mrdoob/three.js/pull/23228
 
 						} else {
 
@@ -903,11 +914,15 @@ class FrustumPoints
 							uniforms.cameraQuaternion = { value: camera.quaternion };
 
 							//palette
-							//ВНИМАНИЕ!!! Для того, что бы палитра передалась в vertex надо добавить 
+							//ВНИМАНИЕ!!! Для того, что бы палитра передалась в vertex надо добавить
 							//points.material.uniforms.palette.value.needsUpdate = true;
 							//в getShaderMaterialPoints.loadShaderText
 
-							new cloud.addUniforms( THREE.RGBFormat, 256, 'palette', {
+							//неудачная попытка исправить frustumPoints после перехода на THREE.REVISION = "145dev"
+							//new cloud.addUniforms(THREE.RGBAFormat,//for THREE.REVISION = "145dev" warning : THREE.WebGLRenderer: THREE.RGBFormat has been removed. Use THREE.RGBAFormat instead. https://github.com/mrdoob/three.js/pull/23228
+
+							new cloud.addUniforms(THREE.RGBFormat,
+								256, 'palette', {
 
 								onReady: function ( data, itemSize, updateItem ) {
 

@@ -40,7 +40,7 @@ class ND {
 	 * @param {object} [settings={}] The following settings are available
 	 * @param {object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
-	 * @param {String} [settings.object.color='green'] color of N-dimensional graphic object.
+	 * @param {String} [settings.object.color='lime'] color of N-dimensional graphic object.
 	 * @param {boolean|object} [settings.object.faces] true or object - display the n-dimensional graphical object faces instead of edges.
 	 * @param {float} [settings.object.faces.opacity=0.5] color Float in the range of 0.0 - 1.0 indicating how transparent the material is.
 	 * A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
@@ -2170,6 +2170,7 @@ class ND {
 					if (!item.parent) parentObject.add(item);
 					item.material.transparent = transparent;
 					item.material.opacity = transparent ? opacity : 1;
+					item.material.needsUpdate = true;//for THREE.REVISION = "145dev"
 
 				}
 
@@ -3157,7 +3158,7 @@ class ND {
 				
 				name: settings.object.name,
 				faces: settings.object.faces,
-				color: settings.object.color || 'green',//0x00ff00
+				color: settings.object.color || 'lime',//0x00ff00,//'green'
 			
 			} );
 

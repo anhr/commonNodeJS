@@ -66,24 +66,33 @@
 		resultMatrix.numbers[index] = result;
 	  }
 	`;
-		new WebGPU(
+		new WebGPU({
 
+			input: { matrices: [firstMatrix, secondMatrix] },
+			//shaderCode: shaderCode,
+			shaderCodeFile: 'Shader.c',
+
+			
+			resultMatrixBufferSize: firstMatrix.length * secondMatrix[0].length +
+
+				//result matrix has reserved two two elements in the head of the matrix for size of the matrix.
+				//First element is rows count of the matrix.
+				//Second element is columns count of the matrix.
+				3,
+
+			out: function(out) {
+
+				console.log(new Float32Array(out));
+				const matrix = WebGPU.out2Matrix(out);
+				console.log(matrix);
+
+			},
+
+		}
+
+			/*
 			//input
 			[firstMatrix, secondMatrix],
-			/*
-			[
-				[
-					[1, 2, 3, 4],
-					[5, 6, 7, 8]
-				],
-				[
-					[1, 2],
-					[3, 4],
-					[5, 6],
-					[7, 8],
-				]
-			],
-			*/
 			//out
 			function ( out ) {
 
@@ -98,6 +107,7 @@
 				shaderCodeFile: 'Shader.c',
 				
 			}
+			*/
 
 		);
 

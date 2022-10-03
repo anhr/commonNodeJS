@@ -61,10 +61,17 @@ function myRequest( options ) {
 	}
 
 	this.getUrl = function () {
+		
 		if ( ( typeof this.url == 'undefined' ) || ( this.url == null ) ) {
-			this.url = "XMLHttpRequest.xml";
+
+			//непонятно зачем это засунул
+//			this.url = "XMLHttpRequest.xml";
+			
+			ErrorMessage( 'XMLHttpRequest: Invalid url: ' + this.url );
+			
 		}
 		return this.url + ( this.params ? this.params : "" );
+		
 	}
 
 	this.XMLHttpRequestReStart = function ( async ) {

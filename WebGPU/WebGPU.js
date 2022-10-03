@@ -21,7 +21,9 @@ class WebGPU {
 
 	/**
 	 * [WebGPU]{@link https://gpuweb.github.io/gpuweb/}. GPU Compute on the web.
-	 * @param {Array} input Array of input matrix. See [Shader programming]{@link  https://web.dev/gpu-compute/#shader-programming}.
+	 * @param {object} settings The following settings are available
+	 * @param {object} [settings.input] Input values for WebGPU. The following Input values are available:
+	 * @param {Array} [settings.input.matrices] Array of input matrices. See [Shader programming]{@link  https://web.dev/gpu-compute/#shader-programming}.
 	 * <pre>
 	 * Example:
 	 * <b>[
@@ -37,13 +39,29 @@ class WebGPU {
 	 *   
 	 *]</b>
 	 * </pre>
-	 * @param {ArrayBuffer} out output buffer. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
-	 * @param {object} settings The following settings are available
+	 * @param {object} [settings.input.params] input parameters list
+	 * <pre>
+	 * Example:
+	 * <b>params: {
+	 *   count: 10.0,
+	 *},</b>
+	 * </pre>
+	 * @param {Function} [settings.out] <b>function(out)</b> called when output data is ready. <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
 	 * @param {Number} [settings.resultMatrixBufferSize] The size of the output buffer in bytes.
 	 * @param {USVString} [settings.shaderCode] The [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code for the shader module. See [USVString]{@link https://webidl.spec.whatwg.org/#idl-USVString}.
-	 * @param {String} [settings.shaderCodeFile] The name of the file with [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code. Have effect only if the code undefined.
+	 * @param {String} [settings.shaderCodeFile] The name of the file with [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code.
+	 * Have effect only if the <b>shaderCode</b> undefined.
+	 * @param {Function} [settings.shaderCodeText] <b>function(text)</b> called after downloading of the shader code from file and before creating of the Shader Module.
+	 * See [createShaderModule(descriptor)]{@link https://gpuweb.github.io/gpuweb/#dom-gpudevice-createshadermodule}
+	 * <pre>
+	 * The <b>text</b> argument is text of the shader code. You can modify shader code and return new text.
+	 * Example:
+	 * <b>shaderCodeText: function (text) {
+	 *   return text.replace( '%debugCount', 1 );
+	 *},</b>
+	 * </pre>
 	 */
-	constructor(input = [], out, settings) {
+	constructor(settings) {
 
 		let gpuDevice = null;
 
@@ -51,9 +69,11 @@ class WebGPU {
 		async function initializeWebGPU() {
 
 			// Check to ensure the user agent supports WebGPU.
-			if (!('gpu' in navigator)) {
-				console.error("User agent doesn't support WebGPU. WebGPU is available for now in Chrome Canary https://www.google.com/intl/ru/chrome/canary/ on desktop behind an experimental flag. You can enable it at chrome://flags/#enable-unsafe-webgpu. The API is constantly changing and currently unsafe. As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to read GPU data for other processes! Don't browse the web with it enabled.");
-				return false;
+//			if (!('gpu' in navigator))
+			if ( !WebGPU.isSupportWebGPU() )
+			{
+				console.error("WebGPU: User agent doesn't support WebGPU. WebGPU is available for now in Chrome Canary https://www.google.com/intl/ru/chrome/canary/ on desktop behind an experimental flag. You can enable it at chrome://flags/#enable-unsafe-webgpu. The API is constantly changing and currently unsafe. As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to read GPU data for other processes! Don't browse the web with it enabled.");
+				return;
 			}
 
 			// Request an adapter.
@@ -71,10 +91,10 @@ class WebGPU {
 			// against the adapters features and limits prior to calling requestDevice().
 			gpuDevice = await gpuAdapter.requestDevice();
 
-			// requestDevice will never return null, but if a valid device request can�t be
+			// requestDevice will never return null, but if a valid device request can't be
 			// fulfilled for some reason it may resolve to a device which has already been lost.
 			// Additionally, devices can be lost at any time after creation for a variety of reasons
-			// (ie: browser resource management, driver updates), so it�s a good idea to always
+			// (ie: browser resource management, driver updates), so it's a good idea to always
 			// handle lost devices gracefully.
 			gpuDevice.lost.then((info) => {
 				console.error(`WebGPU device was lost: ${info.message}`);
@@ -93,86 +113,148 @@ class WebGPU {
 
 			onWebGPUInitialized();
 
-			return true;
+//			return true;
 
 		}
 
 		function onWebGPUInitialized() {
 
-			input.forEach(inputMatrux => {
+			const input = settings.input;
+			let bindGroupLayout, bindGroup,
+				paramBuffer;
+			if (input) {
 
-				//create matrix
-				const matrix = [
-					inputMatrux.length,//rows
-					inputMatrux[0].length,//columns
-				];
-				inputMatrux.forEach(row => row.forEach(value => matrix.push(value)));
-				inputMatrux.matrix = new Float32Array(matrix);
+				if (input.matrices)
+					input.matrices.forEach(inputMatrux => {
 
-				inputMatrux.gpuBuffer = gpuDevice.createBuffer({
-					mappedAtCreation: true,
-					size: inputMatrux.matrix.byteLength,
-					usage: GPUBufferUsage.STORAGE
-				});
-				new Float32Array(inputMatrux.gpuBuffer.getMappedRange()).set(inputMatrux.matrix);
-				inputMatrux.gpuBuffer.unmap();
+						//create matrix
+						const matrix = [
+							inputMatrux.length,//rows
+							inputMatrux[0].length,//columns
+						];
+						inputMatrux.forEach(row => row.forEach(value => matrix.push(value)));
+						inputMatrux.matrix = new Float32Array(matrix);
 
-			});
+						inputMatrux.gpuBuffer = gpuDevice.createBuffer({
+							mappedAtCreation: true,
+							size: inputMatrux.matrix.byteLength,
+							usage: GPUBufferUsage.STORAGE
+						});
+						new Float32Array(inputMatrux.gpuBuffer.getMappedRange()).set(inputMatrux.matrix);
+						inputMatrux.gpuBuffer.unmap();
+
+					});
+
+				//params
+
+				if (input.params) {
+
+					const paramBufferSize = 1 * Float32Array.BYTES_PER_ELEMENT;
+					paramBuffer = gpuDevice.createBuffer({
+
+						size: paramBufferSize,
+						usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+
+					});
+					gpuDevice.queue.writeBuffer(
+
+						paramBuffer,
+						0,
+						new Float32Array([
+							input.params.count,
+						])
+					);
+
+				}
+
+			}
 
 			// Result Matrix
 
-/*				
-			const resultMatrixBufferSize =
-				Float32Array.BYTES_PER_ELEMENT * (2 + firstMatrix[0] * secondMatrix[1]);
-*/
-			const resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + settings.resultMatrixBufferSize);
-			const resultMatrixBuffer = gpuDevice.createBuffer({
+/*
+			if (settings.resultMatrixBufferSize === undefined) {
 
-				size: resultMatrixBufferSize,
-				usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
-
-			});
-
-			// Bind group layout and bind group
-			
-			const entriesBindGroupLayout = [], entriesBindGroup = [];
-			for ( var i = 0; i < input.length; i++ ) {
-				
-				entriesBindGroupLayout.push( {
-					
-					binding: i,
-					visibility: GPUShaderStage.COMPUTE,
-					buffer: { type: "read-only-storage" }
-					
-				} );
-				entriesBindGroup.push( {
-					
-					binding: i,
-					resource: { buffer: input[i].gpuBuffer }
-					
-				} );
+				console.error('WebGPU: Invalid settings.resultMatrixBufferSize = ' + settings.resultMatrixBufferSize);
+				return;
 
 			}
-			entriesBindGroupLayout.push( {
-				
-				binding: input.length,
+*/
+			let resultMatrixBuffer, resultMatrixBufferSize;
+			if (settings.resultMatrixBufferSize !== undefined) {
+
+				//resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + settings.resultMatrixBufferSize);
+				resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * settings.resultMatrixBufferSize;
+				resultMatrixBuffer = gpuDevice.createBuffer({
+
+					size: resultMatrixBufferSize,
+					usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+
+				});
+
+			}
+
+			// Bind group layout and bind group
+
+			const entriesBindGroupLayout = [], entriesBindGroup = [];
+			let binding = 0;
+			if (input.matrices) for (var i = 0; i < input.matrices.length; i++) {
+
+				entriesBindGroupLayout.push({
+
+					binding: binding,//i,
+					visibility: GPUShaderStage.COMPUTE,
+					buffer: { type: "read-only-storage" }
+
+				});
+				entriesBindGroup.push({
+
+					binding: binding,//i,
+					resource: { buffer: input.matrices[i].gpuBuffer }
+
+				});
+				binding++;
+
+			}
+			entriesBindGroupLayout.push({
+
+				binding: binding,//input.length,
 				visibility: GPUShaderStage.COMPUTE,
 				buffer: { type: "storage" }
-				
-			} );
-			entriesBindGroup.push( {
-				
-				binding: input.length,
+
+			});
+			entriesBindGroup.push({
+
+				binding: binding,//input.length,
 				resource: { buffer: resultMatrixBuffer }
-				
-			} );
-			const bindGroupLayout = gpuDevice.createBindGroupLayout({ entries: entriesBindGroupLayout });
-			
-			const bindGroup = gpuDevice.createBindGroup({
-				
+
+			});
+			binding++;
+			if (paramBuffer) {
+
+				//				const binding = input.length + 2;
+				entriesBindGroupLayout.push({
+
+					binding: binding,
+					visibility: GPUShaderStage.COMPUTE,
+					buffer: { type: "uniform" }
+
+				});
+				entriesBindGroup.push({
+					binding: binding,
+					resource: { buffer: paramBuffer, }
+				});
+				binding++;
+
+			}
+
+
+			bindGroupLayout = gpuDevice.createBindGroupLayout({ entries: entriesBindGroupLayout });
+
+			bindGroup = gpuDevice.createBindGroup({
+
 				layout: bindGroupLayout,
 				entries: entriesBindGroup
-				
+
 			});
 
 			// Compute shader code
@@ -180,18 +262,10 @@ class WebGPU {
 			const shaderCode = settings.shaderCode;
 			if (shaderCode)
 				onLoad(shaderCode)
-			else {
-
-//				loadScript.async(settings.shaderCodeFile);
-				loadFile.async(settings.shaderCodeFile, {
-//					async: true,
-					onload: function (shaderCode, url ) { onLoad(shaderCode) }
-				});
-				//console.log('loading shader code file')
-
-			}
+			else loadFile.async(settings.shaderCodeFile, { onload: function (shaderCode, url ) { onLoad(shaderCode) } } );
 			async function onLoad(shaderCode) {
 
+				if (settings.shaderCodeText) shaderCode = settings.shaderCodeText(shaderCode);
 				const shaderModule = gpuDevice.createShaderModule({ code: shaderCode });
 
 				// Pipeline setup
@@ -213,15 +287,20 @@ class WebGPU {
 
 				const passEncoder = commandEncoder.beginComputePass();
 				passEncoder.setPipeline(computePipeline);
-				passEncoder.setBindGroup(0, bindGroup);
+				passEncoder.setBindGroup(0, bindGroup);//set @group(0) in the shading code
 
 				const workgroupCount = [];
-				input.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
+				if (input.matrices)
+					input.matrices.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
+				else {
+					
+					console.log('under constaction')
+					workgroupCount.push(1);
+					workgroupCount.push(1);
+
+				}
 				const workgroupCountX = workgroupCount[0], workgroupCountY = workgroupCount[1], workgroupCountZ = workgroupCount[3];
-				/*			
-							const workgroupCountX = Math.ceil(firstMatrix[0] / 8);
-							const workgroupCountY = Math.ceil(secondMatrix[1] / 8);
-				*/
+
 				//https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups
 				passEncoder.dispatchWorkgroups(workgroupCountX, workgroupCountY, workgroupCountZ);
 				passEncoder.end();
@@ -234,11 +313,11 @@ class WebGPU {
 
 				// Encode commands for copying buffer to buffer.
 				commandEncoder.copyBufferToBuffer(
-					resultMatrixBuffer /* source buffer */,
-					0 /* source offset */,
-					gpuReadBuffer /* destination buffer */,
-					0 /* destination offset */,
-					resultMatrixBufferSize /* size */
+					resultMatrixBuffer, // source buffer
+					0, // source offset
+					gpuReadBuffer, // destination buffer
+					0, // destination offset
+					resultMatrixBufferSize // size
 				);
 
 				// Submit GPU commands.
@@ -248,8 +327,7 @@ class WebGPU {
 				// Read buffer.
 				await gpuReadBuffer.mapAsync(GPUMapMode.READ);
 				const arrayBuffer = gpuReadBuffer.getMappedRange();
-				out(arrayBuffer);
-				//			console.log(new Float32Array(arrayBuffer));
+				if (settings.out) settings.out(arrayBuffer);
 
 			}
 
@@ -257,225 +335,106 @@ class WebGPU {
 
 		initializeWebGPU();
 
-/*
-		//https://web.dev/gpu-compute/
-		async function f() {
+	}
 
-			if (!("gpu" in navigator)) {
-				console.log("WebGPU is not supported. WebGPU is available for now in Chrome Canary https://www.google.com/intl/ru/chrome/canary/ on desktop behind an experimental flag. You can enable it at chrome://flags/#enable-unsafe-webgpu. The API is constantly changing and currently unsafe. As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to read GPU data for other processes! Don't browse the web with it enabled.");
-				return;
-			}
+}
 
-			const adapter = await navigator.gpu.requestAdapter();
-			if (!adapter) {
-				console.log("Failed to get GPU adapter.");
-				return;
-			}
-			const device = await adapter.requestDevice();
+/**
+ * @returns true if your browser supports [WebGPU]{@link https://gpuweb.github.io/gpuweb/}.
+ * WebGPU is available for now in [Chrome Canary]{@link https://www.google.com/intl/ru/chrome/canary/} on desktop behind an experimental flag.
+ * You can enable it at <b>chrome://flags/#enable-unsafe-webgpu</b>.
+ * The API is constantly changing and currently unsafe.
+ * As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to read GPU data for other processes! Don't browse the web with it enabled.
+ * */
+WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
 
-			// First Matrix
+/**
+ * Converts the <b>out</b> array to matrix.
+ * @param {ArrayBuffer} out out [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}. See <b>settings.out</b> param of WebGPU for details.
+ * @param {Array} [size] size of result matrix.
+ * <pre>
+ * <b>size.length</b> is dimension of result matrix.
+ * <b>size[0]</b> is first dimension.
+ * ---
+ * <b>size[i]</b> is next dimension.
+ * ---
+ * <b>size[size.length - 1]</b> is last dimension.
+ * Esample:
+ * <b>[
+ *   10,//rows count
+ *   2//columns count
+ * ]
+ * </b>
+ * creates two dimesional matrix with 10 rows and 2 columns.
+ * 
+ * If <b>size</b> is undefined, then dimension and size of result matrix must be defined in the header of the out:
+ * First item of the out is dimension of result matrix.
+ * Second item of the out is first dimension.
+ * ---
+ * Next item of the out is next dimension.
+ * ---
+ * dimension item of the out is last dimension.
+ * Example:
+ * <b>
+ * const array = new Float32Array(out);
+ * </b>
+ * if
+ * <b>
+ * array[0] = 2//two dimesional matrix
+ * array[1] = 10//rows count
+ * array[2] = 2//columns count
+ * </b>
+ * then result matrix is two dimensional matrix with ten rows and two columns.
+ * </pre>
+ * @returns result matrix.
+ */
+WebGPU.out2Matrix = function(out, size) {
+	
+	const array = out.type ? new out.type(out) : new Float32Array(out),
+		matrix = [];
+	let valueIndex,
+		dimension;//Dimension of resultMatrix
+	if (size){
 
-			const firstMatrix = new Float32Array([
-				2, //rows
-				4, //columns
-				1,
-				2,
-				3,
-				4,
-				5,
-				6,
-				7,
-				8
-			]);
-
-			const gpuBufferFirstMatrix = device.createBuffer({
-				mappedAtCreation: true,
-				size: firstMatrix.byteLength,
-				usage: GPUBufferUsage.STORAGE
-			});
-			const arrayBufferFirstMatrix = gpuBufferFirstMatrix.getMappedRange();
-			new Float32Array(arrayBufferFirstMatrix).set(firstMatrix);
-			gpuBufferFirstMatrix.unmap();
-
-			// Second Matrix
-
-			const secondMatrix = new Float32Array([
-				4, //rows
-				2, //columns
-				1,
-				2,
-				3,
-				4,
-				5,
-				6,
-				7,
-				8
-			]);
-
-			const gpuBufferSecondMatrix = device.createBuffer({
-				mappedAtCreation: true,
-				size: secondMatrix.byteLength,
-				usage: GPUBufferUsage.STORAGE
-			});
-			const arrayBufferSecondMatrix = gpuBufferSecondMatrix.getMappedRange();
-			new Float32Array(arrayBufferSecondMatrix).set(secondMatrix);
-			gpuBufferSecondMatrix.unmap();
-
-			// Result Matrix
-
-			const resultMatrixBufferSize =
-				Float32Array.BYTES_PER_ELEMENT * (2 + firstMatrix[0] * secondMatrix[1]);
-			const resultMatrixBuffer = device.createBuffer({
-				size: resultMatrixBufferSize,
-				usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
-			});
-
-			// Bind group layout and bind group
-
-			const bindGroupLayout = device.createBindGroupLayout({
-				entries: [
-
-					//input
-					{
-						binding: 0,
-						visibility: GPUShaderStage.COMPUTE,
-						buffer: {
-							type: "read-only-storage"
-						}
-					},
-					{
-						binding: 1,
-						visibility: GPUShaderStage.COMPUTE,
-						buffer: {
-							type: "read-only-storage"
-						}
-					},
-
-					//output
-					{
-						binding: 2,
-						visibility: GPUShaderStage.COMPUTE,
-						buffer: {
-							type: "storage"
-						}
-					}
-				]
-			});
-
-			const bindGroup = device.createBindGroup({
-				layout: bindGroupLayout,
-				entries: [
-					{
-						binding: 0,
-						resource: {
-							buffer: gpuBufferFirstMatrix
-						}
-					},
-					{
-						binding: 1,
-						resource: {
-							buffer: gpuBufferSecondMatrix
-						}
-					},
-					{
-						binding: 2,
-						resource: {
-							buffer: resultMatrixBuffer
-						}
-					}
-				]
-			});
-
-			// Compute shader code
-
-			const shaderModule = device.createShaderModule({
-				code: `
-	  struct Matrix {
-		size : vec2<f32>,
-		numbers: array<f32>,
-	  }
-
-	  @group(0) @binding(0) var<storage, read> firstMatrix : Matrix;
-	  @group(0) @binding(1) var<storage, read> secondMatrix : Matrix;
-	  @group(0) @binding(2) var<storage, read_write> resultMatrix : Matrix;
-
-	  @compute @workgroup_size(8, 8)
-	  fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
-		// Guard against out-of-bounds work group sizes
-		if (global_id.x >= u32(firstMatrix.size.x) || global_id.y >= u32(secondMatrix.size.y)) {
-		  return;
-		}
-
-		resultMatrix.size = vec2(firstMatrix.size.x, secondMatrix.size.y);
-
-		let resultCell = vec2(global_id.x, global_id.y);
-		var result = 0.0;
-		for (var i = 0u; i < u32(firstMatrix.size.y); i = i + 1u) {
-		  let a = i + resultCell.x * u32(firstMatrix.size.y);
-		  let b = resultCell.y + i * u32(secondMatrix.size.y);
-		  result = result + firstMatrix.numbers[a] * secondMatrix.numbers[b];
-		}
-
-		let index = resultCell.y + resultCell.x * u32(secondMatrix.size.y);
-		resultMatrix.numbers[index] = result;
-	  }
-	`
-			});
-
-			// Pipeline setup
-
-			const computePipeline = device.createComputePipeline({
-				layout: device.createPipelineLayout({
-					bindGroupLayouts: [bindGroupLayout]
-				}),
-				compute: {
-					module: shaderModule,
-					entryPoint: "main"
-				}
-			});
-
-			// Commands submission
-
-			const commandEncoder = device.createCommandEncoder();
-
-			const passEncoder = commandEncoder.beginComputePass();
-			passEncoder.setPipeline(computePipeline);
-			passEncoder.setBindGroup(0, bindGroup);
-			const workgroupCountX = Math.ceil(firstMatrix[0] / 8);
-			const workgroupCountY = Math.ceil(secondMatrix[1] / 8);
-			passEncoder.dispatchWorkgroups(workgroupCountX, workgroupCountY);
-			passEncoder.end();
-
-			// Get a GPU buffer for reading in an unmapped state.
-			const gpuReadBuffer = device.createBuffer({
-				size: resultMatrixBufferSize,
-				usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
-			});
-
-			// Encode commands for copying buffer to buffer.
-			commandEncoder.copyBufferToBuffer(
-				resultMatrixBuffer, //source buffer
-				0, //source offset
-				gpuReadBuffer, //destination buffer
-				0, //destination offset
-				resultMatrixBufferSize //size
-			);
-
-			// Submit GPU commands.
-			const gpuCommands = commandEncoder.finish();
-			device.queue.submit([gpuCommands]);
-
-			// Read buffer.
-			await gpuReadBuffer.mapAsync(GPUMapMode.READ);
-			const arrayBuffer = gpuReadBuffer.getMappedRange();
-			console.log(new Float32Array(arrayBuffer));
-			return 1;
-
-		}
-		f();
-*/
+		dimension = size.length;
+		valueIndex = 0;
+		
+	} else {
+		
+		dimension = array[0];
+		valueIndex = dimension + 1;
 
 	}
+	function iteration (level, matrixLevel) {
+
+		if (level > dimension) return;
+		const levelCount = size ? size[level -1] : array[level];
+		for (let i = 0; i < levelCount; i++){
+
+			const matrixNextLevel = [];
+			matrixLevel.push(matrixNextLevel);
+			if (level === (dimension - 1)) {
+
+				const length = size ? size[dimension - 1] : array[dimension];
+				for (let j = 0; j < length; j++) {
+					
+					matrixNextLevel.push(array[valueIndex]);
+					valueIndex++;
+
+				}
+				
+			} else {
+				
+				const nextlLevel = level + 1;
+				iteration (nextlLevel, matrixNextLevel);
+
+			}
+
+		}
+		
+	}
+	iteration (1, matrix);
+	return matrix;
 
 }
 
