@@ -287,11 +287,16 @@ class WebGPU {
 
 				const passEncoder = commandEncoder.beginComputePass();
 				passEncoder.setPipeline(computePipeline);
-				passEncoder.setBindGroup(0, bindGroup);
+				passEncoder.setBindGroup(0, bindGroup);//set @group(0) in the shading code
 
 				const workgroupCount = [];
+/*				
 				if ( input instanceof Array )
 					input.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
+*/
+/*
+				if (input.matrices)
+					input.matrices.forEach((item, i) => workgroupCount.push(Math.ceil(item[i] / 8)));
 				else {
 					
 					console.log('under constaction')
@@ -299,6 +304,9 @@ class WebGPU {
 					workgroupCount.push(1);
 
 				}
+*/
+				workgroupCount.push(1);
+				workgroupCount.push(1);
 				const workgroupCountX = workgroupCount[0], workgroupCountY = workgroupCount[1], workgroupCountZ = workgroupCount[3];
 
 				//https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups
