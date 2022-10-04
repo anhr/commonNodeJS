@@ -48,6 +48,13 @@ class WebGPU {
 	 * </pre>
 	 * @param {Function} [settings.out] <b>function(out)</b> called when output data is ready. <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
 	 * @param {Number} [settings.resultMatrixBufferSize] The size of the output buffer in bytes.
+	 * @param {Number} [settings.workgroupCount=[1]] For dispatch work to be performed with the current GPUComputePipeline.
+	 * <pre>
+	 * See [dispatchWorkgroups]{@link https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups} of [GPUComputePipeline]{@link https://gpuweb.github.io/gpuweb/#gpucomputepipeline}
+	 * workgroupCount[0] is workgroupCountX
+	 * workgroupCount[1] is workgroupCountY
+	 * workgroupCount[2] is workgroupCountZ
+	 * </pre>
 	 * @param {USVString} [settings.shaderCode] The [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code for the shader module. See [USVString]{@link https://webidl.spec.whatwg.org/#idl-USVString}.
 	 * @param {String} [settings.shaderCodeFile] The name of the file with [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code.
 	 * Have effect only if the <b>shaderCode</b> undefined.
@@ -197,7 +204,7 @@ class WebGPU {
 
 			const entriesBindGroupLayout = [], entriesBindGroup = [];
 			let binding = 0;
-			if (input.matrices) for (var i = 0; i < input.matrices.length; i++) {
+			if (input && input.matrices) for (var i = 0; i < input.matrices.length; i++) {
 
 				entriesBindGroupLayout.push({
 
@@ -289,14 +296,19 @@ class WebGPU {
 				passEncoder.setPipeline(computePipeline);
 				passEncoder.setBindGroup(0, bindGroup);//set @group(0) in the shading code
 
-				const workgroupCount = [];
-				if (input.matrices)
+				let workgroupCount = [];
+				if (input && input.matrices)
 					input.matrices.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
 				else {
 					
-					console.log('under constaction')
-					workgroupCount.push(1);
-					workgroupCount.push(1);
+//					console.log('under constaction')
+					if (settings.workgroupCount) workgroupCount = settings.workgroupCount;
+					else {
+						
+						workgroupCount.push(1);
+	//					workgroupCount.push(1);
+
+					}
 
 				}
 				const workgroupCountX = workgroupCount[0], workgroupCountY = workgroupCount[1], workgroupCountZ = workgroupCount[3];

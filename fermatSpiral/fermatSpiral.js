@@ -558,6 +558,7 @@ class FermatSpiral {
 				new WebGPU(
 					{
 
+/*
 						input: {
 
 							params: {
@@ -567,22 +568,24 @@ class FermatSpiral {
 							},
 
 						},//500,//input
+*/
 						out: function (out) {
 
 							if (out.name) console.log(out.name);
 							const matrix = WebGPU.out2Matrix(out, [
-								10,//fermatSpiral vertices count. Каждый ряд это координата точки 
+								l,//fermatSpiral vertices count. Каждый ряд это координата точки 
 								2 + debugCount,//fermatSpiral vertice plus debug information
 							]);
 							console.log(matrix);
 
 						},
-						resultMatrixBufferSize: 1000,//4,//l,
+						resultMatrixBufferSize: l * (2 + debugCount),//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки
+						workgroupCount: [l],//задаем количество переллельных процессов GPU равное числу вершин fermatSpiral
 						//shaderCode: shaderCode,
 						shaderCodeFile: currentScriptPath + '/WebGPU/create.c',
 						shaderCodeText: function (text) {
 
-							return text.replace( '%debugCount', debugCount );
+							return text.replace( '%debugCount', debugCount ).replace( '%workgroup_size', l );
 
 						}
 

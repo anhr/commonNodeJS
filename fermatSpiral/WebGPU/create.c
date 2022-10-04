@@ -12,15 +12,17 @@ struct Matrix {//5.2.10. Structure Types https://gpuweb.github.io/gpuweb/wgsl/#s
 
 //@group(0) @binding(0) var<storage, read_write> resultMatrix : Matrix;
 @group(0) @binding(0) var<storage, read_write> resultMatrix : array<f32>;
-
+/*
 //params
 struct Params {
 	count: f32,//fermatSpiral points count
 }
 @group(0) @binding(1) var<uniform> params : Params;
-
+*/
 //@compute @workgroup_size(8, 8)
-@compute @workgroup_size(8)
+//@compute @workgroup_size(8)
+//@compute @workgroup_size(%workgroup_size)
+@compute @workgroup_size(1)
 fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
 /*
