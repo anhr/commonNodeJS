@@ -267,17 +267,6 @@ class FermatSpiral {
 				constructor(array = 0, vectorSettings = {}) {
 
 					array = super(n, array).array;
-					/*
-										if ( array.isVector ) return array;
-										if ( array instanceof Array === false ) {
-					
-											if ( typeof array === 'number' ) array = [array];
-											else if ( array.array ) array = array.array;
-											else console.error( 'FermatSpiral: Vector: invalid array type' );
-					
-										}
-										if ( n !== undefined ) while ( array.length < n ) array.push( 0 );
-					*/
 
 					//индексы вершин, которые ближе всего расположены к текущей вершине
 					array.aNear = new Proxy([], {
@@ -573,11 +562,18 @@ class FermatSpiral {
 						out: function (out) {
 
 							if (out.name) console.log(out.name);
-							const matrix = WebGPU.out2Matrix(out, [
-								l,//fermatSpiral vertices count. Каждый ряд это координата точки 
-								2 + debugCount,//fermatSpiral vertice plus debug information
-							]);
-							console.log(matrix);
+//							const matrix = 
+							WebGPU.out2Matrix(out, {
+								
+								size: [
+									l,//fermatSpiral vertices count. Каждый ряд это координата точки 
+									2 + debugCount,//fermatSpiral vertice plus debug information
+								],
+								push: item => { points.push(new Vector([item[0], item[1]])); }
+								
+							});
+//							console.log(matrix);
+							console.log(points);
 
 						},
 						resultMatrixBufferSize: l * (2 + debugCount),//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки

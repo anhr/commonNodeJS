@@ -159,15 +159,15 @@ class WebGPU {
 
 				if (input.params) {
 
-					let paramBufferSize = 0,
+					let paramBufferSize = 0, data = [],
 						dataType;//true - Uint32Array, false - Float32Array
+					input.params.type ||= Uint32Array;
 					Object.keys(input.params).forEach( function (key) {
 		
 						if (key === 'type') return;
 						const param = input.params[key];
 						if (typeof param === "number") {
 
-							input.params.type ||= Uint32Array;
 							function isInt(n) { return n % 1 === 0; }
 							const isInteger = isInt(param);
 							if(
@@ -180,6 +180,7 @@ class WebGPU {
 								
 							}
 							paramBufferSize += input.params.type.BYTES_PER_ELEMENT;
+							data.push(param);
 /*							
 							function isInt(n) { return n % 1 === 0; }
 							const arrayType = isInt(param);
@@ -211,9 +212,7 @@ class WebGPU {
 
 						paramBuffer,
 						0,
-						new Float32Array([
-							input.params.count,
-						])
+						new input.params.type(data)
 					);
 
 				}
@@ -407,7 +406,8 @@ WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
 /**
  * Converts the <b>out</b> array to matrix.
  * @param {ArrayBuffer} out out [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}. See <b>settings.out</b> param of WebGPU for details.
- * @param {Array} [size] size of result matrix.
+ * @param {object} [settings={}] The following settings are available
+ * @param {Array} [settings.size] size of result matrix.
  * <pre>
  * <b>size.length</b> is dimension of result matrix.
  * <b>size[0]</b> is first dimension.
@@ -442,14 +442,17 @@ WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
  * </b>
  * then result matrix is two dimensional matrix with ten rows and two columns.
  * </pre>
+ * @param {Function} [settings.push] <b>function(item)</b> item. <b>item</b> - new item. Called if new matrix item is ready. You can add new item into your matrix.
+ * Result matrix is empty if you added push into setting.
  * @returns result matrix.
  */
-WebGPU.out2Matrix = function(out, size) {
+WebGPU.out2Matrix = function(out, settings={}) {
 	
 	const array = out.type ? new out.type(out) : new Float32Array(out),
 		matrix = [];
 	let valueIndex,
 		dimension;//Dimension of resultMatrix
+	const size = settings.size;
 	if (size){
 
 		dimension = size.length;
@@ -468,7 +471,6 @@ WebGPU.out2Matrix = function(out, size) {
 		for (let i = 0; i < levelCount; i++){
 
 			const matrixNextLevel = [];
-			matrixLevel.push(matrixNextLevel);
 			if (level === (dimension - 1)) {
 
 				const length = size ? size[dimension - 1] : array[dimension];
@@ -478,6 +480,7 @@ WebGPU.out2Matrix = function(out, size) {
 					valueIndex++;
 
 				}
+				if (settings.push) settings.push(matrixNextLevel);
 				
 			} else {
 				
@@ -485,6 +488,7 @@ WebGPU.out2Matrix = function(out, size) {
 				iteration (nextlLevel, matrixNextLevel);
 
 			}
+			if (!settings.push) matrixLevel.push(matrixNextLevel);
 
 		}
 		

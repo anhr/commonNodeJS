@@ -1,5 +1,11 @@
 ﻿//Вычисляем координаты точек точки fermat spiral
 const debugCount = %debugCountu;//Count of out debug values.
+const rowSize = 2u + debugCount;//в каждом ряду по две точки. Сюда можно добавить несколько отдадочных значений
+
+const golden_angle = 137.5077640500378546463487;//137.508;//https://en.wikipedia.org/wiki/Golden_angle
+const pi = 3.141592653589793;
+const a = golden_angle * pi / 180.0;
+const b = 90 * pi / 180.0;
 /*
 const dimension = 2u;//Dimension of resultMatrix
 struct Matrix {//5.2.10. Structure Types https://gpuweb.github.io/gpuweb/wgsl/#struct-types
@@ -35,13 +41,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 	resultMatrix.size[1] = 2 + 1;//в каждом ряду по две точки. Сюда можно добавить несколько отдадочных значений
 //	resultMatrix.size[2] = 2;//for debug
 */
-	const rowSize = 2u + debugCount;//в каждом ряду по две точки. Сюда можно добавить несколько отдадочных значений
 //	let resultCell = vec2(global_id.x, global_id.y);
-
-	let golden_angle = 137.5077640500378546463487;//137.508;//https://en.wikipedia.org/wiki/Golden_angle
-	let pi = 3.141592653589793;
-	let a = golden_angle * pi / 180.0;
-	let b = 90 * pi / 180.0;
 	let i = global_id.x;//fermatSpiral vertice index
 
 	let angleInRadians = f32(i) * a - b;
@@ -84,8 +84,9 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 	resultMatrix.numbers[index + 2] = f32(global_id.x);
 //	resultMatrix.numbers[index + 3] = f32(global_id.y);
 */
-	resultMatrix[index] = params.c;// radius;// *cos(angleInRadians);// result.x;
+	resultMatrix[index] = radius * cos(angleInRadians);
 	index++;
+	resultMatrix[index] = radius * sin(angleInRadians);
 	//resultMatrix[index] = result.y;
 
 	//debug
