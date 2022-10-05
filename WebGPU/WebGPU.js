@@ -40,10 +40,13 @@ class WebGPU {
 	 *]</b>
 	 * </pre>
 	 * @param {object} [settings.input.params] input parameters list
+	 * @param {object} [settings.input.params.type=Uint32Array] type of the input parameters list. Allowed <b>Float32Array</b> and <b>Uint32Array</b>.
 	 * <pre>
 	 * Example:
 	 * <b>params: {
-	 *   count: 10.0,
+	 *   type: Float32Array,
+	 *   c: 0.04,
+	 *   count: 10,
 	 *},</b>
 	 * </pre>
 	 * @param {Function} [settings.out] <b>function(out)</b> called when output data is ready. <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
@@ -164,6 +167,7 @@ class WebGPU {
 						const param = input.params[key];
 						if (typeof param === "number") {
 
+							input.params.type ||= Uint32Array;
 							function isInt(n) { return n % 1 === 0; }
 							const isInteger = isInt(param);
 							if(
