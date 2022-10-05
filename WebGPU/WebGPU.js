@@ -442,8 +442,9 @@ WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
  * </b>
  * then result matrix is two dimensional matrix with ten rows and two columns.
  * </pre>
- * @param {Function} [settings.push] <b>function(item)</b> item. <b>item</b> - new item. Called if new matrix item is ready. You can add new item into your matrix.
- * Result matrix is empty if you added push into setting.
+ * @param {Function} [settings.push] <b>function(item)</b>. <b>item</b> - new matrix item.
+ * Called when a new matrix item is ready. You can add a new item to your matrix.
+ * The result matrix is empty if you have added <b>push</b> to the <b>setting</b>.
  * @returns result matrix.
  */
 WebGPU.out2Matrix = function(out, settings={}) {
