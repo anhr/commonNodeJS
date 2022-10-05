@@ -48,12 +48,12 @@ class WebGPU {
 	 * </pre>
 	 * @param {Function} [settings.out] <b>function(out)</b> called when output data is ready. <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
 	 * @param {Number} [settings.resultMatrixBufferSize] The size of the output buffer in bytes.
-	 * @param {Number} [settings.workgroupCount=[1]] For dispatch work to be performed with the current GPUComputePipeline.
+	 * @param {Array} [settings.workgroupCount=[1]] For dispatch work to be performed with the current GPUComputePipeline.
 	 * <pre>
-	 * See [dispatchWorkgroups]{@link https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups} of [GPUComputePipeline]{@link https://gpuweb.github.io/gpuweb/#gpucomputepipeline}
-	 * workgroupCount[0] is workgroupCountX
-	 * workgroupCount[1] is workgroupCountY
-	 * workgroupCount[2] is workgroupCountZ
+	 * See [dispatchWorkgroups]{@link https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups} of [GPUComputePipeline]{@link https://gpuweb.github.io/gpuweb/#gpucomputepipeline}.
+	 * <b>workgroupCount[0]</b> is <b>workgroupCountX</b>
+	 * <b>workgroupCount[1]</b> is <b>workgroupCountY</b>
+	 * <b>workgroupCount[2]</b> is <b>workgroupCountZ</b>
 	 * </pre>
 	 * @param {USVString} [settings.shaderCode] The [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code for the shader module. See [USVString]{@link https://webidl.spec.whatwg.org/#idl-USVString}.
 	 * @param {String} [settings.shaderCodeFile] The name of the file with [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code.
@@ -156,7 +156,47 @@ class WebGPU {
 
 				if (input.params) {
 
+					let paramBufferSize = 0,
+						dataType;//true - Uint32Array, false - Float32Array
+					Object.keys(input.params).forEach( function (key) {
+		
+						if (key === 'type') return;
+						const param = input.params[key];
+						if (typeof param === "number") {
+
+							function isInt(n) { return n % 1 === 0; }
+							const isInteger = isInt(param);
+							if(
+//								(isInteger && (input.params.type === Float32Array)) ||
+								(!isInteger && (input.params.type === Uint32Array))
+							) {
+
+								console.error('WebGPU: Invalid ' + key + ' = ' + param + ' parameter type. ' + (input.params.type === Uint32Array ? 'Integer' : 'Float' ) + ' is allowed only.' );
+								return;
+								
+							}
+							paramBufferSize += input.params.type.BYTES_PER_ELEMENT;
+/*							
+							function isInt(n) { return n % 1 === 0; }
+							const arrayType = isInt(param);
+							if ((dataType != undefined ) && (dataType != arrayType) ) {
+
+								console.error('WebGPU: different types of parameters is not allowed');
+								return;
+								
+							}
+							else dataType = arrayType;
+							if (arrayType)
+								paramBufferSize += Uint32Array.BYTES_PER_ELEMENT;
+							else paramBufferSize += Float32Array.BYTES_PER_ELEMENT;
+*/							
+
+						} else console.error('WebGPU: Invalid param: ' + param);
+					} );
+/*					
+					console.warn('сейчас возможен только один параметр с плавающей точкой')
 					const paramBufferSize = 1 * Float32Array.BYTES_PER_ELEMENT;
+*/	 
 					paramBuffer = gpuDevice.createBuffer({
 
 						size: paramBufferSize,

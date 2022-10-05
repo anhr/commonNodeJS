@@ -558,17 +558,18 @@ class FermatSpiral {
 				new WebGPU(
 					{
 
-/*
 						input: {
 
 							params: {
 
-								count: 10.0,
+								type: Float32Array,//Uint32Array,
+//								count: 10,
+								c: settings.c,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
+//								text: 'text',
 
 							},
 
 						},//500,//input
-*/
 						out: function (out) {
 
 							if (out.name) console.log(out.name);

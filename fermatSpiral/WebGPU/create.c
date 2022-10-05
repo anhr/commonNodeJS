@@ -12,13 +12,14 @@ struct Matrix {//5.2.10. Structure Types https://gpuweb.github.io/gpuweb/wgsl/#s
 
 //@group(0) @binding(0) var<storage, read_write> resultMatrix : Matrix;
 @group(0) @binding(0) var<storage, read_write> resultMatrix : array<f32>;
-/*
+
 //params
 struct Params {
-	count: f32,//fermatSpiral points count
+//count: f32,//fermatSpiral points count
+c : f32,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
 }
 @group(0) @binding(1) var<uniform> params : Params;
-*/
+
 //@compute @workgroup_size(8, 8)
 //@compute @workgroup_size(8)
 //@compute @workgroup_size(%workgroup_size)
@@ -37,18 +38,21 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 	const rowSize = 2u + debugCount;//в каждом ряду по две точки. Сюда можно добавить несколько отдадочных значений
 //	let resultCell = vec2(global_id.x, global_id.y);
 
-	const golden_angle = 137.5077640500378546463487;//137.508;//https://en.wikipedia.org/wiki/Golden_angle
-	const pi = 3.141592653589793;
-	const a = golden_angle * pi / 180.0;
-	const b = 90 * pi / 180.0;
+	let golden_angle = 137.5077640500378546463487;//137.508;//https://en.wikipedia.org/wiki/Golden_angle
+	let pi = 3.141592653589793;
+	let a = golden_angle * pi / 180.0;
+	let b = 90 * pi / 180.0;
 	let i = global_id.x;//fermatSpiral vertice index
 
-//	const angleInRadians = global_id.x * a - b;
+	let angleInRadians = f32(i) * a - b;
+	let radius = params.c * sqrt(f32(i));
+//	let vertice = vec2(radius * cos(angleInRadians), radius * sin(angleInRadians));
 /*
-	const radius = settings.c * Math.sqrt(i);
-		points.push(new Vector([radius * Math.cos(angleInRadians), radius * Math.sin(angleInRadians)]));
+					const angleInRadians = i * a - b;
+					const radius = settings.c * Math.sqrt(i);
+					points.push(new Vector([radius * Math.cos(angleInRadians), radius * Math.sin(angleInRadians)]));
 */
-	let result = vec2(123.4, 456.7);
+//	let result = vec2(123.4, 456.7);
 /*
 	var result = 0.0;
 	for (var i = 0u; i < u32(firstMatrix.size.y); i = i + 1u) {
@@ -80,9 +84,9 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 	resultMatrix.numbers[index + 2] = f32(global_id.x);
 //	resultMatrix.numbers[index + 3] = f32(global_id.y);
 */
-	resultMatrix[index] = result.x;
+	resultMatrix[index] = params.c;// radius;// *cos(angleInRadians);// result.x;
 	index++;
-	resultMatrix[index] = result.y;
+	//resultMatrix[index] = result.y;
 
 	//debug
 	if (debugCount > 0) {
