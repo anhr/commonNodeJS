@@ -135,23 +135,23 @@ class WebGPU {
 			if (input) {
 
 				if (input.matrices)
-					input.matrices.forEach(inputMatrux => {
+					input.matrices.forEach(inputMatrix => {
 
 						//create matrix
 						const matrix = [
-							inputMatrux.length,//rows
-							inputMatrux[0].length,//columns
+							inputMatrix.length,//rows
+							inputMatrix[0].length,//columns
 						];
-						inputMatrux.forEach(row => row.forEach(value => matrix.push(value)));
-						inputMatrux.matrix = new Float32Array(matrix);
+						inputMatrix.forEach(row => row.forEach(value => matrix.push(value)));
+						inputMatrix.matrix = new Float32Array(matrix);
 
-						inputMatrux.gpuBuffer = gpuDevice.createBuffer({
+						inputMatrix.gpuBuffer = gpuDevice.createBuffer({
 							mappedAtCreation: true,
-							size: inputMatrux.matrix.byteLength,
+							size: inputMatrix.matrix.byteLength,
 							usage: GPUBufferUsage.STORAGE
 						});
-						new Float32Array(inputMatrux.gpuBuffer.getMappedRange()).set(inputMatrux.matrix);
-						inputMatrux.gpuBuffer.unmap();
+						new Float32Array(inputMatrix.gpuBuffer.getMappedRange()).set(inputMatrix.matrix);
+						inputMatrix.gpuBuffer.unmap();
 
 					});
 

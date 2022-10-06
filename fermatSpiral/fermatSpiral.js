@@ -543,9 +543,13 @@ class FermatSpiral {
 			//3.8 выбрал что бы не было лишних ребер при settings.count = 3800
 
 			points.length = 0;
+
+			//speed test
+			const timeStart = Date.now();
+			
 			if (WebGPU.isSupportWebGPU()) {
 
-				console.log('WebGPU');
+				console.log('WebGPU: Create frematSpiral vertices');
 				const debugCount = 1;//Count of out debug values.
 				new WebGPU(
 					{
@@ -609,6 +613,8 @@ class FermatSpiral {
 			}
 
 			function createEdgesAndFaces() {
+
+				console.log('FermatSpiral: Vertices creation time = ' + ((Date.now() - timeStart)) + ' milliseconds.');
 
 				//indices
 
@@ -752,61 +758,102 @@ class FermatSpiral {
 
 				const edges = _this.geometry.indices[0];
 				edges.length = 0;//удалить все ребра
-				points.forEach((vertice1, i) => {
+/*
+				if (WebGPU.isSupportWebGPU()) {
 
-					vertice1.i = i;
+					console.log('WebGPU: Find frematSpiral near vertices');
+					const debugCount = 1;//Count of out debug values.
+					new WebGPU(
+						{
 
-					points.forEach((vertice2, j) => {
+							input: {
 
-						if (i != j) {
+								matrices: [points],
 
-							const distance = vertice1.distanceTo(vertice2);
-							vertice1.aNear.add(j, distance);
+							},
+							out: function (out) {
 
-						}
+								if (out.name) console.log(out.name);
+								const matrix = WebGPU.out2Matrix(out, {
 
-					});
-					const i0 = vertice1.i;
-					for (var k = 0; k < vertice1.aNear.length; k++) {
+									size: [
+										3,
+										2,
+									],
 
-						const i1 = vertice1.aNear[k].i;
-						var boDuplicate = false;
-						for (var j = 0; j < edges.length; j++) {
+								});
+								console.log(matrix);
 
-							if (
-								((edges[j][0] === i0) && (edges[j][1] === i1)) ||
-								((edges[j][0] === i1) && (edges[j][1] === i0))
-							) {
+							},
+							resultMatrixBufferSize: points.length,//на каждую вершину fermatSpiral тратится плюс количество значений для отладки
+							workgroupCount: [points.length],//задаем количество переллельных процессов GPU равное числу вершин fermatSpiral
+							//shaderCode: shaderCode,
+							shaderCodeFile: currentScriptPath + '/WebGPU/anear.c',
 
-								boDuplicate = true;
-								break;
+						},
+					);
+
+				} //else
+*/
+				{
+
+					points.forEach((vertice1, i) => {
+
+						vertice1.i = i;
+
+						points.forEach((vertice2, j) => {
+
+							if (i != j) {
+
+								const distance = vertice1.distanceTo(vertice2);
+								vertice1.aNear.add(j, distance);
 
 							}
 
-						}
-						if (!boDuplicate && (i0 < settings.count) && (i1 < settings.count)) {
+						});
+						const i0 = vertice1.i;
+						for (var k = 0; k < vertice1.aNear.length; k++) {
 
-							try {
+							const i1 = vertice1.aNear[k].i;
+							var boDuplicate = false;
+							for (var j = 0; j < edges.length; j++) {
 
-								edges.push([i0, i1]);
+								if (
+									((edges[j][0] === i0) && (edges[j][1] === i1)) ||
+									((edges[j][0] === i1) && (edges[j][1] === i0))
+								) {
 
-							} catch (e) {
+									boDuplicate = true;
+									break;
 
-								switch (e.id) {
+								}
 
-									case e.IDS.edgesCountOverflow:
-									case e.IDS.invalidEdge:
-										break;
-									default: console.error(e.message);
+							}
+							if (!boDuplicate && (i0 < settings.count) && (i1 < settings.count)) {
+
+								try {
+
+									edges.push([i0, i1]);
+
+								} catch (e) {
+
+									switch (e.id) {
+
+										case e.IDS.edgesCountOverflow:
+										case e.IDS.invalidEdge:
+											break;
+										default: console.error(e.message);
+									}
+
 								}
 
 							}
 
 						}
 
-					}
+					});
 
-				});
+				}
 
 				//faces
 				_this.geometry.indices[1] = new Proxy([], {
