@@ -550,7 +550,11 @@ class FermatSpiral {
 			if (WebGPU.isSupportWebGPU()) {
 
 				console.log('WebGPU: Create frematSpiral vertices');
-				const debugCount = 1;//Count of out debug values.
+				const debugCount = 2,//Count of out debug values.
+					aNearType = Uint32Array,
+					verticesRowlength = 2 + debugCount,//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки
+					aNearDebugCount = 2,
+					aNearRowlength = maxLength + aNearDebugCount;//максимальное количство индексов вершин, ближайших к текущей вершине
 				new WebGPU(
 					{
 
@@ -565,32 +569,76 @@ class FermatSpiral {
 
 							},
 
-						},//500,//input
-						out: function (out) {
+						},
+						//resultMatrixBufferSize: l * (2 + debugCount),//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки
+						results: [
+
+							//vertices
+							{
+
+								bufferSize: l * verticesRowlength,
+							
+							},
+
+							//aNear
+							{
+
+								type: aNearType,
+								bufferSize: l * aNearRowlength,
+
+							},
+						],
+						out: function (out, i) {
 
 							if (out.name) console.log(out.name);
-//							const matrix = 
-							WebGPU.out2Matrix(out, {
-								
-								size: [
-									l,//fermatSpiral vertices count. Каждый ряд это координата точки 
-									2 + debugCount,//fermatSpiral vertice plus debug information
-								],
-								push: item => { points.push(new Vector([item[0], item[1]])); }
-								
-							});
-//							console.log(matrix);
-//							console.log(points);
-							createEdgesAndFaces();
+							switch(i) {
+
+								case 0://Vertices
+									const vertices = WebGPU.out2Matrix(out, {
+										
+										size: [
+											l,//fermatSpiral vertices count. Каждый ряд это координата точки 
+											verticesRowlength,
+										],
+										push: item => { points.push(new Vector([item[0], item[1]])); },
+										returnMatrix: true,//return matrix for debug
+										
+									});
+									console.log(vertices);
+		//							console.log(points);
+									createEdgesAndFaces();
+									break;
+								case 1://aNear
+									const aNear = WebGPU.out2Matrix(out, {
+										
+										size: [
+											l,//fermatSpiral vertices count. индекс ряда это индекс вершины 
+											aNearRowlength,//Количество индексов вершин, ближайших к данной вершине
+										],
+										type: aNearType,
+										
+									});
+									console.log('aNear:');
+									console.log(aNear);
+									break;
+								default: console.error('FermatSpiral: Create vertices WebGPU out failed. Invalid result ArrayBuffer index = ' + i);
+
+							}
 
 						},
-						resultMatrixBufferSize: l * (2 + debugCount),//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки
-						workgroupCount: [l],//задаем количество переллельных процессов GPU равное числу вершин fermatSpiral
+						workgroupCount: [
+							l,//задаем количество переллельных процессов GPU равное числу вершин fermatSpiral
+
+							2,//удваиваем количство поцессов.
+								//Первый проход - вычисляются вершины fermaSpiral
+								//Второй проход - вычисляются индексы ближайших вершин aNear
+						],
+
 						//shaderCode: shaderCode,
 						shaderCodeFile: currentScriptPath + '/WebGPU/create.c',
 						shaderCodeText: function (text) {
 
-							return text.replace( '%debugCount', debugCount ).replace( '%workgroup_size', l );
+							return text.replace('%debugCount', debugCount).replace('%aNearRowLength', aNearRowlength);// ( '%workgroup_size', l );
 
 						}
 

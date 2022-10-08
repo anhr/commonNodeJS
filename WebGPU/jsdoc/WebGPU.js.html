@@ -77,7 +77,11 @@ class WebGPU {
 	 *   count: 10,
 	 *},&lt;/b>
 	 * &lt;/pre>
-	 * @param {Function} [settings.out] &lt;b>function(out)&lt;/b> called when output data is ready. &lt;b>out&lt;/b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
+	 * @param {Function} [settings.out] &lt;b>function(out, i)&lt;/b> called when output data is ready.
+	 * &lt;pre>
+	 * &lt;b>out&lt;/b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
+	 * &lt;b>i&lt;/b> argument is index of the &lt;b>settings.results&lt;/b> array item.
+	 * &lt;/pre>
 	 * @param {Number} [settings.resultMatrixBufferSize] The size of the output buffer in bytes.
 	 * @param {Array} [settings.workgroupCount=[1]] For dispatch work to be performed with the current GPUComputePipeline.
 	 * &lt;pre>
@@ -163,23 +167,23 @@ class WebGPU {
 			if (input) {
 
 				if (input.matrices)
-					input.matrices.forEach(inputMatrux => {
+					input.matrices.forEach(inputMatrix => {
 
 						//create matrix
 						const matrix = [
-							inputMatrux.length,//rows
-							inputMatrux[0].length,//columns
+							inputMatrix.length,//rows
+							inputMatrix[0].length,//columns
 						];
-						inputMatrux.forEach(row => row.forEach(value => matrix.push(value)));
-						inputMatrux.matrix = new Float32Array(matrix);
+						inputMatrix.forEach(row => row.forEach(value => matrix.push(value)));
+						inputMatrix.matrix = new Float32Array(matrix);
 
-						inputMatrux.gpuBuffer = gpuDevice.createBuffer({
+						inputMatrix.gpuBuffer = gpuDevice.createBuffer({
 							mappedAtCreation: true,
-							size: inputMatrux.matrix.byteLength,
+							size: inputMatrix.matrix.byteLength,
 							usage: GPUBufferUsage.STORAGE
 						});
-						new Float32Array(inputMatrux.gpuBuffer.getMappedRange()).set(inputMatrux.matrix);
-						inputMatrux.gpuBuffer.unmap();
+						new Float32Array(inputMatrix.gpuBuffer.getMappedRange()).set(inputMatrix.matrix);
+						inputMatrix.gpuBuffer.unmap();
 
 					});
 
@@ -248,15 +252,26 @@ class WebGPU {
 			}
 
 			// Result Matrix
+			if (settings.results)
+				settings.results.forEach(resultMatrix => {
 
+					resultMatrix.type ||= Float32Array;
+					const bufferSize = resultMatrix.type.BYTES_PER_ELEMENT * resultMatrix.bufferSize;
+					if (!bufferSize) {
+
+						console.error('WebGPU: bufferSize key is not defined in the settings.results item.');
+						return;
+						
+					}
+					resultMatrix.buffer = gpuDevice.createBuffer({
+	
+						size: bufferSize,
+						usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+	
+					});
+
+				});
 /*
-			if (settings.resultMatrixBufferSize === undefined) {
-
-				console.error('WebGPU: Invalid settings.resultMatrixBufferSize = ' + settings.resultMatrixBufferSize);
-				return;
-
-			}
-*/
 			let resultMatrixBuffer, resultMatrixBufferSize;
 			if (settings.resultMatrixBufferSize !== undefined) {
 
@@ -270,6 +285,7 @@ class WebGPU {
 				});
 
 			}
+*/   
 
 			// Bind group layout and bind group
 
@@ -293,20 +309,44 @@ class WebGPU {
 				binding++;
 
 			}
-			entriesBindGroupLayout.push({
-
-				binding: binding,//input.length,
-				visibility: GPUShaderStage.COMPUTE,
-				buffer: { type: "storage" }
+			if (settings.results) settings.results.forEach(resultMatrix => {
+				
+				entriesBindGroupLayout.push({
+	
+					binding: binding,//input.length,
+					visibility: GPUShaderStage.COMPUTE,
+					buffer: { type: "storage" }
+	
+				});
+				entriesBindGroup.push({
+	
+					binding: binding,//input.length,
+					resource: { buffer: resultMatrix.buffer }
+	
+				});
+				binding++;
 
 			});
-			entriesBindGroup.push({
+/*				
+			if (resultMatrixBuffer) {
+				
+				entriesBindGroupLayout.push({
+	
+					binding: binding,//input.length,
+					visibility: GPUShaderStage.COMPUTE,
+					buffer: { type: "storage" }
+	
+				});
+				entriesBindGroup.push({
+	
+					binding: binding,//input.length,
+					resource: { buffer: resultMatrixBuffer }
+	
+				});
+				binding++;
 
-				binding: binding,//input.length,
-				resource: { buffer: resultMatrixBuffer }
-
-			});
-			binding++;
+			}
+*/			
 			if (paramBuffer) {
 
 				//				const binding = input.length + 2;
@@ -388,29 +428,74 @@ class WebGPU {
 				passEncoder.dispatchWorkgroups(workgroupCountX, workgroupCountY, workgroupCountZ);
 				passEncoder.end();
 
-				// Get a GPU buffer for reading in an unmapped state.
-				const gpuReadBuffer = gpuDevice.createBuffer({
-					size: resultMatrixBufferSize,
-					usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
-				});
+				if (settings.results)
+					settings.results.forEach(resultMatrix => {
+						
+						// Get a GPU buffer for reading in an unmapped state.
+						resultMatrix.gpuReadBuffer = gpuDevice.createBuffer({
+							size: resultMatrix.buffer.size,
+							usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+						});
+		
+						// Encode commands for copying buffer to buffer.
+						commandEncoder.copyBufferToBuffer(
+							resultMatrix.buffer, // source buffer
+							0, // source offset
+							resultMatrix.gpuReadBuffer, // destination buffer
+							0, // destination offset
+							resultMatrix.buffer.size // size
+						);
+						
+					});
+/*				
+				let gpuReadBuffer;
+				if (resultMatrixBuffer) {
+					
+					// Get a GPU buffer for reading in an unmapped state.
+					gpuReadBuffer = gpuDevice.createBuffer({
+						size: resultMatrixBufferSize,
+						usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+					});
+	
+					// Encode commands for copying buffer to buffer.
+					commandEncoder.copyBufferToBuffer(
+						resultMatrixBuffer, // source buffer
+						0, // source offset
+						gpuReadBuffer, // destination buffer
+						0, // destination offset
+						resultMatrixBufferSize // size
+					);
 
-				// Encode commands for copying buffer to buffer.
-				commandEncoder.copyBufferToBuffer(
-					resultMatrixBuffer, // source buffer
-					0, // source offset
-					gpuReadBuffer, // destination buffer
-					0, // destination offset
-					resultMatrixBufferSize // size
-				);
+				}
+*/				
 
 				// Submit GPU commands.
 				const gpuCommands = commandEncoder.finish();
 				gpuDevice.queue.submit([gpuCommands]);
 
 				// Read buffer.
-				await gpuReadBuffer.mapAsync(GPUMapMode.READ);
-				const arrayBuffer = gpuReadBuffer.getMappedRange();
-				if (settings.out) settings.out(arrayBuffer);
+				if (settings.results) {
+					
+//					settings.results.forEach(resultMatrix => 
+					for (let i = 0; i &lt; settings.results.length; i++)
+					{
+
+						const resultMatrix = settings.results[i];
+						await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
+						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), i);
+						
+					}
+
+				}
+/*				
+				if (gpuReadBuffer) {
+					
+					await gpuReadBuffer.mapAsync(GPUMapMode.READ);
+					const arrayBuffer = gpuReadBuffer.getMappedRange();
+					if (settings.out) settings.out(arrayBuffer);
+
+				}
+*/				
 
 			}
 
@@ -433,8 +518,9 @@ WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
 
 /**
  * Converts the &lt;b>out&lt;/b> array to matrix.
- * @param {ArrayBuffer} out out [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}. See &lt;b>settings.out&lt;/b> param of WebGPU for details.
+ * @param {ArrayBuffer} out out [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}. See &lt;b>settings.out&lt;/b> param of &lt;b>WebGPU&lt;/b> class for details.
  * @param {object} [settings={}] The following settings are available
+ * @param {object} [settings.type=Float32Array] type of the &lt;b>out&lt;/b> ArrayBuffer. Allowed &lt;b>Float32Array&lt;/b> and &lt;b>Uint32Array&lt;/b>.
  * @param {Array} [settings.size] size of result matrix.
  * &lt;pre>
  * &lt;b>size.length&lt;/b> is dimension of result matrix.
@@ -472,12 +558,14 @@ WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
  * &lt;/pre>
  * @param {Function} [settings.push] &lt;b>function(item)&lt;/b>. &lt;b>item&lt;/b> - new matrix item.
  * Called when a new matrix item is ready. You can add a new item to your matrix.
- * The result matrix is empty if you have added &lt;b>push&lt;/b> to the &lt;b>setting&lt;/b>.
+ * The result matrix is empty if you have added &lt;b>push&lt;/b> to the &lt;b>setting&lt;/b> and &lt;b>settings.returnMatrix&lt;/b> is not true.
+ * @param {boolean} [settings.returnMatrix] true - result matrix is not empty. Has effect only if &lt;b>settings.push&lt;/b> is defined.
  * @returns result matrix.
  */
 WebGPU.out2Matrix = function(out, settings={}) {
 	
-	const array = out.type ? new out.type(out) : new Float32Array(out),
+//	const array = out.type ? new out.type(out) : new Float32Array(out),
+	const array = settings.type ? new settings.type(out) : new Float32Array(out),
 		matrix = [];
 	let valueIndex,
 		dimension;//Dimension of resultMatrix
@@ -517,7 +605,7 @@ WebGPU.out2Matrix = function(out, settings={}) {
 				iteration (nextlLevel, matrixNextLevel);
 
 			}
-			if (!settings.push) matrixLevel.push(matrixNextLevel);
+			if (!settings.push || settings.returnMatrix) matrixLevel.push(matrixNextLevel);
 
 		}
 		
@@ -544,7 +632,7 @@ export default WebGPU;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Oct 06 2022 04:25:25 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Oct 08 2022 07:37:11 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

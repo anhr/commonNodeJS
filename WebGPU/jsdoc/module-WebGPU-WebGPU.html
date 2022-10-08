@@ -385,7 +385,11 @@ Example:
                 </td>
             
 
-            <td class="description last"><b>function(out)</b> called when output data is ready. <b>out</b> argument is array of output data. See <a href="https://webidl.spec.whatwg.org/#idl-ArrayBuffer">ArrayBuffer</a>.</td>
+            <td class="description last"><b>function(out, i)</b> called when output data is ready.
+<pre>
+<b>out</b> argument is array of output data. See <a href="https://webidl.spec.whatwg.org/#idl-ArrayBuffer">ArrayBuffer</a>.
+<b>i</b> argument is index of the <b>settings.results</b> array item.
+</pre></td>
         </tr>
 
     
@@ -635,7 +639,7 @@ Example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line74">line 74</a>
+        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line78">line 78</a>
     </li></ul></dd>
     
 
@@ -739,7 +743,7 @@ Example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line404">line 404</a>
+        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line489">line 489</a>
     </li></ul></dd>
     
 
@@ -865,7 +869,7 @@ As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to re
                 </td>
             
 
-            <td class="description last">out <a href="https://webidl.spec.whatwg.org/#idl-ArrayBuffer">ArrayBuffer</a>. See <b>settings.out</b> param of WebGPU for details.</td>
+            <td class="description last">out <a href="https://webidl.spec.whatwg.org/#idl-ArrayBuffer">ArrayBuffer</a>. See <b>settings.out</b> param of <b>WebGPU</b> class for details.</td>
         </tr>
 
     
@@ -922,12 +926,53 @@ As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to re
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    Float32Array
+                
+                </td>
+            
+
+            <td class="description last">type of the <b>out</b> ArrayBuffer. Allowed <b>Float32Array</b> and <b>Uint32Array</b>.</td>
+        </tr>
+
     
 
         <tr>
@@ -956,6 +1001,10 @@ As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to re
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">size of result matrix.
@@ -1024,10 +1073,51 @@ then result matrix is two dimensional matrix with ten rows and two columns.
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last"><b>function(item)</b>. <b>item</b> - new matrix item.
 Called when a new matrix item is ready. You can add a new item to your matrix.
-The result matrix is empty if you have added <b>push</b> to the <b>setting</b>.</td>
+The result matrix is empty if you have added <b>push</b> to the <b>setting</b> and <b>settings.returnMatrix</b> is not true.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>returnMatrix</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">true - result matrix is not empty. Has effect only if <b>settings.push</b> is defined.</td>
         </tr>
 
     
@@ -1075,7 +1165,7 @@ The result matrix is empty if you have added <b>push</b> to the <b>setting</b>.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line450">line 450</a>
+        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line537">line 537</a>
     </li></ul></dd>
     
 
@@ -1137,7 +1227,7 @@ The result matrix is empty if you have added <b>push</b> to the <b>setting</b>.<
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Oct 06 2022 04:25:25 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Oct 08 2022 07:37:11 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -49,7 +49,11 @@ class WebGPU {
 	 *   count: 10,
 	 *},</b>
 	 * </pre>
-	 * @param {Function} [settings.out] <b>function(out)</b> called when output data is ready. <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
+	 * @param {Function} [settings.out] <b>function(out, i)</b> called when output data is ready.
+	 * <pre>
+	 * <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
+	 * <b>i</b> argument is index of the <b>settings.results</b> array item.
+	 * </pre>
 	 * @param {Number} [settings.resultMatrixBufferSize] The size of the output buffer in bytes.
 	 * @param {Array} [settings.workgroupCount=[1]] For dispatch work to be performed with the current GPUComputePipeline.
 	 * <pre>
@@ -220,15 +224,26 @@ class WebGPU {
 			}
 
 			// Result Matrix
+			if (settings.results)
+				settings.results.forEach(resultMatrix => {
 
+					resultMatrix.type ||= Float32Array;
+					const bufferSize = resultMatrix.type.BYTES_PER_ELEMENT * resultMatrix.bufferSize;
+					if (!bufferSize) {
+
+						console.error('WebGPU: bufferSize key is not defined in the settings.results item.');
+						return;
+						
+					}
+					resultMatrix.buffer = gpuDevice.createBuffer({
+	
+						size: bufferSize,
+						usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+	
+					});
+
+				});
 /*
-			if (settings.resultMatrixBufferSize === undefined) {
-
-				console.error('WebGPU: Invalid settings.resultMatrixBufferSize = ' + settings.resultMatrixBufferSize);
-				return;
-
-			}
-*/
 			let resultMatrixBuffer, resultMatrixBufferSize;
 			if (settings.resultMatrixBufferSize !== undefined) {
 
@@ -242,6 +257,7 @@ class WebGPU {
 				});
 
 			}
+*/   
 
 			// Bind group layout and bind group
 
@@ -265,20 +281,44 @@ class WebGPU {
 				binding++;
 
 			}
-			entriesBindGroupLayout.push({
-
-				binding: binding,//input.length,
-				visibility: GPUShaderStage.COMPUTE,
-				buffer: { type: "storage" }
+			if (settings.results) settings.results.forEach(resultMatrix => {
+				
+				entriesBindGroupLayout.push({
+	
+					binding: binding,//input.length,
+					visibility: GPUShaderStage.COMPUTE,
+					buffer: { type: "storage" }
+	
+				});
+				entriesBindGroup.push({
+	
+					binding: binding,//input.length,
+					resource: { buffer: resultMatrix.buffer }
+	
+				});
+				binding++;
 
 			});
-			entriesBindGroup.push({
+/*				
+			if (resultMatrixBuffer) {
+				
+				entriesBindGroupLayout.push({
+	
+					binding: binding,//input.length,
+					visibility: GPUShaderStage.COMPUTE,
+					buffer: { type: "storage" }
+	
+				});
+				entriesBindGroup.push({
+	
+					binding: binding,//input.length,
+					resource: { buffer: resultMatrixBuffer }
+	
+				});
+				binding++;
 
-				binding: binding,//input.length,
-				resource: { buffer: resultMatrixBuffer }
-
-			});
-			binding++;
+			}
+*/			
 			if (paramBuffer) {
 
 				//				const binding = input.length + 2;
@@ -360,29 +400,74 @@ class WebGPU {
 				passEncoder.dispatchWorkgroups(workgroupCountX, workgroupCountY, workgroupCountZ);
 				passEncoder.end();
 
-				// Get a GPU buffer for reading in an unmapped state.
-				const gpuReadBuffer = gpuDevice.createBuffer({
-					size: resultMatrixBufferSize,
-					usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
-				});
+				if (settings.results)
+					settings.results.forEach(resultMatrix => {
+						
+						// Get a GPU buffer for reading in an unmapped state.
+						resultMatrix.gpuReadBuffer = gpuDevice.createBuffer({
+							size: resultMatrix.buffer.size,
+							usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+						});
+		
+						// Encode commands for copying buffer to buffer.
+						commandEncoder.copyBufferToBuffer(
+							resultMatrix.buffer, // source buffer
+							0, // source offset
+							resultMatrix.gpuReadBuffer, // destination buffer
+							0, // destination offset
+							resultMatrix.buffer.size // size
+						);
+						
+					});
+/*				
+				let gpuReadBuffer;
+				if (resultMatrixBuffer) {
+					
+					// Get a GPU buffer for reading in an unmapped state.
+					gpuReadBuffer = gpuDevice.createBuffer({
+						size: resultMatrixBufferSize,
+						usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+					});
+	
+					// Encode commands for copying buffer to buffer.
+					commandEncoder.copyBufferToBuffer(
+						resultMatrixBuffer, // source buffer
+						0, // source offset
+						gpuReadBuffer, // destination buffer
+						0, // destination offset
+						resultMatrixBufferSize // size
+					);
 
-				// Encode commands for copying buffer to buffer.
-				commandEncoder.copyBufferToBuffer(
-					resultMatrixBuffer, // source buffer
-					0, // source offset
-					gpuReadBuffer, // destination buffer
-					0, // destination offset
-					resultMatrixBufferSize // size
-				);
+				}
+*/				
 
 				// Submit GPU commands.
 				const gpuCommands = commandEncoder.finish();
 				gpuDevice.queue.submit([gpuCommands]);
 
 				// Read buffer.
-				await gpuReadBuffer.mapAsync(GPUMapMode.READ);
-				const arrayBuffer = gpuReadBuffer.getMappedRange();
-				if (settings.out) settings.out(arrayBuffer);
+				if (settings.results) {
+					
+//					settings.results.forEach(resultMatrix => 
+					for (let i = 0; i < settings.results.length; i++)
+					{
+
+						const resultMatrix = settings.results[i];
+						await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
+						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), i);
+						
+					}
+
+				}
+/*				
+				if (gpuReadBuffer) {
+					
+					await gpuReadBuffer.mapAsync(GPUMapMode.READ);
+					const arrayBuffer = gpuReadBuffer.getMappedRange();
+					if (settings.out) settings.out(arrayBuffer);
+
+				}
+*/				
 
 			}
 
@@ -405,8 +490,9 @@ WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
 
 /**
  * Converts the <b>out</b> array to matrix.
- * @param {ArrayBuffer} out out [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}. See <b>settings.out</b> param of WebGPU for details.
+ * @param {ArrayBuffer} out out [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}. See <b>settings.out</b> param of <b>WebGPU</b> class for details.
  * @param {object} [settings={}] The following settings are available
+ * @param {object} [settings.type=Float32Array] type of the <b>out</b> ArrayBuffer. Allowed <b>Float32Array</b> and <b>Uint32Array</b>.
  * @param {Array} [settings.size] size of result matrix.
  * <pre>
  * <b>size.length</b> is dimension of result matrix.
@@ -444,12 +530,14 @@ WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
  * </pre>
  * @param {Function} [settings.push] <b>function(item)</b>. <b>item</b> - new matrix item.
  * Called when a new matrix item is ready. You can add a new item to your matrix.
- * The result matrix is empty if you have added <b>push</b> to the <b>setting</b>.
+ * The result matrix is empty if you have added <b>push</b> to the <b>setting</b> and <b>settings.returnMatrix</b> is not true.
+ * @param {boolean} [settings.returnMatrix] true - result matrix is not empty. Has effect only if <b>settings.push</b> is defined.
  * @returns result matrix.
  */
 WebGPU.out2Matrix = function(out, settings={}) {
 	
-	const array = out.type ? new out.type(out) : new Float32Array(out),
+//	const array = out.type ? new out.type(out) : new Float32Array(out),
+	const array = settings.type ? new settings.type(out) : new Float32Array(out),
 		matrix = [];
 	let valueIndex,
 		dimension;//Dimension of resultMatrix
@@ -477,6 +565,12 @@ WebGPU.out2Matrix = function(out, settings={}) {
 				const length = size ? size[dimension - 1] : array[dimension];
 				for (let j = 0; j < length; j++) {
 					
+					if (valueIndex >= array.length){
+
+						console.error('WebGPU.out2Matrix: out of the index range of the out array. ' + valueIndex);
+						return;
+						
+					}
 					matrixNextLevel.push(array[valueIndex]);
 					valueIndex++;
 
@@ -489,7 +583,7 @@ WebGPU.out2Matrix = function(out, settings={}) {
 				iteration (nextlLevel, matrixNextLevel);
 
 			}
-			if (!settings.push) matrixLevel.push(matrixNextLevel);
+			if (!settings.push || settings.returnMatrix) matrixLevel.push(matrixNextLevel);
 
 		}
 		
