@@ -49,8 +49,8 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 		case 1: {
 			var index = i * aNearRowLength;
 			var vertexIndex = i * rowSize;
-			aNear[index] = u32(verticesMatrix[vertexIndex] * 1000.0f);
-//			aNear[index] = u32(0.02701997011899948f * 1000.0f);
+//			aNear[index] = u32(verticesMatrix[vertexIndex] * 1000.0f);
+			aNear[index] = u32(0.02701997011899948f * 1000.0f);
 			index++;
 			aNear[index] = global_id.x;
 			index++;
