@@ -10,5 +10,7 @@ Tutorial:
 	https://gpuweb.github.io/gpuweb/explainer/#wgsl
 	Очень хорошо видно исходники. К сожалению исользуется язык ts
 	https://austin-eng.com/webgpu-samples
+	Подробно написано как WebGPU работает
+	https://surma.dev/things/webgpu/
 
 thanks to https://web.dev/gpu-compute/
