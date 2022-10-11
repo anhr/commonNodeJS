@@ -185,27 +185,10 @@ class WebGPU {
 							}
 							paramBufferSize += input.params.type.BYTES_PER_ELEMENT;
 							data.push(param);
-/*							
-							function isInt(n) { return n % 1 === 0; }
-							const arrayType = isInt(param);
-							if ((dataType != undefined ) && (dataType != arrayType) ) {
-
-								console.error('WebGPU: different types of parameters is not allowed');
-								return;
-								
-							}
-							else dataType = arrayType;
-							if (arrayType)
-								paramBufferSize += Uint32Array.BYTES_PER_ELEMENT;
-							else paramBufferSize += Float32Array.BYTES_PER_ELEMENT;
-*/							
 
 						} else console.error('WebGPU: Invalid param: ' + param);
+
 					} );
-/*					
-					console.warn('сейчас возможен только один параметр с плавающей точкой')
-					const paramBufferSize = 1 * Float32Array.BYTES_PER_ELEMENT;
-*/	 
 					paramBuffer = gpuDevice.createBuffer({
 
 						size: paramBufferSize,
@@ -243,21 +226,6 @@ class WebGPU {
 					});
 
 				});
-/*
-			let resultMatrixBuffer, resultMatrixBufferSize;
-			if (settings.resultMatrixBufferSize !== undefined) {
-
-				//resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + settings.resultMatrixBufferSize);
-				resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * settings.resultMatrixBufferSize;
-				resultMatrixBuffer = gpuDevice.createBuffer({
-
-					size: resultMatrixBufferSize,
-					usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
-
-				});
-
-			}
-*/   
 
 			// Bind group layout and bind group
 
@@ -299,26 +267,6 @@ class WebGPU {
 				binding++;
 
 			});
-/*				
-			if (resultMatrixBuffer) {
-				
-				entriesBindGroupLayout.push({
-	
-					binding: binding,//input.length,
-					visibility: GPUShaderStage.COMPUTE,
-					buffer: { type: "storage" }
-	
-				});
-				entriesBindGroup.push({
-	
-					binding: binding,//input.length,
-					resource: { buffer: resultMatrixBuffer }
-	
-				});
-				binding++;
-
-			}
-*/			
 			if (paramBuffer) {
 
 				//				const binding = input.length + 2;
@@ -419,27 +367,6 @@ class WebGPU {
 						);
 						
 					});
-/*				
-				let gpuReadBuffer;
-				if (resultMatrixBuffer) {
-					
-					// Get a GPU buffer for reading in an unmapped state.
-					gpuReadBuffer = gpuDevice.createBuffer({
-						size: resultMatrixBufferSize,
-						usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
-					});
-	
-					// Encode commands for copying buffer to buffer.
-					commandEncoder.copyBufferToBuffer(
-						resultMatrixBuffer, // source buffer
-						0, // source offset
-						gpuReadBuffer, // destination buffer
-						0, // destination offset
-						resultMatrixBufferSize // size
-					);
-
-				}
-*/				
 
 				// Submit GPU commands.
 				const gpuCommands = commandEncoder.finish();
@@ -459,15 +386,6 @@ class WebGPU {
 					}
 
 				}
-/*				
-				if (gpuReadBuffer) {
-					
-					await gpuReadBuffer.mapAsync(GPUMapMode.READ);
-					const arrayBuffer = gpuReadBuffer.getMappedRange();
-					if (settings.out) settings.out(arrayBuffer);
-
-				}
-*/				
 
 			}
 
