@@ -560,14 +560,22 @@ class FermatSpiral {
 
 						input: {
 
-							params: {
+							params: [
+								{
 
-								type: Float32Array,//Uint32Array,
-//								count: 10,
-								c: settings.c,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
-//								text: 'text',
+									type: Float32Array,//Uint32Array,
+	//								count: 10,
+									c: settings.c,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
+	//								text: 'text',
 
-							},
+								},
+								{
+
+									//type: Uint32Array,
+									phase: 0,
+
+								},
+							],
 
 						},
 						//resultMatrixBufferSize: l * (2 + debugCount),//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки

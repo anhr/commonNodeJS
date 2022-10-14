@@ -12,17 +12,23 @@ const aNearRowLength = %aNearRowLengthu;//у каждой вершины по и
 @group(0) @binding(1) var<storage, read_write> aNear : array<u32>;
 
 //params
+
 struct Params {
-c : f32,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
+c: f32,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
 }
 @group(0) @binding(2) var<uniform> params : Params;
+struct ParamsU {
+phase: u32,
+}
+@group(0) @binding(3) var<uniform> paramsU : ParamsU;
 
 @compute @workgroup_size(1)//, 1)
 fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
 	let i = global_id.x;//fermatSpiral vertice index
 
-	switch (global_id.y) {
+//	switch (global_id.y)
+	switch (paramsU.phase) {
 
 		//Vertices
 		case 0: {
@@ -40,7 +46,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 			}
 			if (debugCount > 1) {
 				index++;
-				verticesMatrix[index] = f32(global_id.y);
+				verticesMatrix[index] = f32(paramsU.phase);
 			}
 			break;
 		}
@@ -49,12 +55,18 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 		case 1: {
 			var index = i * aNearRowLength;
 			var vertexIndex = i * rowSize;
-//			aNear[index] = u32(verticesMatrix[vertexIndex] * 1000.0f);
-			aNear[index] = u32(0.02701997011899948f * 1000.0f);
+			aNear[index] = u32(abs(verticesMatrix[vertexIndex] * 100000.0f));
+/*
+			aNear[index] = u32(abs(verticesMatrix[rowSize] * 100000.0f));
+			index++;
+			aNear[index] = u32(abs(verticesMatrix[21 * rowSize] * 100000.0f));
+*/
+			//			aNear[index] = u32(0.02701997011899948f * 1000.0f);
 			index++;
 			aNear[index] = global_id.x;
 			index++;
-			aNear[index] = global_id.y;
+//			aNear[index] = global_id.y;
+			aNear[index] = paramsU.phase;
 			break;
 		}
 
