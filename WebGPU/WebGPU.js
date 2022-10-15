@@ -163,6 +163,57 @@ class WebGPU {
 
 				if (input.params) {
 
+					function writeBuffer(item, type) {
+
+						let paramBufferSize = 0;
+						const data = [];
+						Object.keys(item).forEach(key => {
+
+							const param = item[key];
+							if (typeof param === "number") {
+
+								function isInt(n) { return n % 1 === 0; }
+								const isInteger = isInt(param);
+								if ((!isInteger && (type === Uint32Array))) {
+
+									console.error('WebGPU: Invalid ' + key + ' = ' + param + ' parameter type. ' + (type === Uint32Array ? 'Integer' : 'Float') + ' is allowed only.');
+									return;
+
+								}
+								paramBufferSize += type.BYTES_PER_ELEMENT;
+								data.push(param);
+
+							} else console.error('WebGPU: Invalid param: ' + param);
+
+						});
+						const paramBuffer = gpuDevice.createBuffer({
+
+							size: paramBufferSize,
+							usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+
+						});
+						gpuDevice.queue.writeBuffer(
+
+							paramBuffer,
+							0,
+							new type(data)
+						);
+						paramBuffers.push(paramBuffer);
+						paramBuffer.data = data;
+						
+					}
+					Object.keys(input.params).forEach(key => {
+
+						switch(key){
+
+							case 'f32': writeBuffer(input.params[key], Float32Array); break;
+							case 'u32': writeBuffer(input.params[key], Uint32Array); break;
+							default: console.error('WebGPU: Invalid input.params "' + key + '" key.');
+								
+						}
+						
+					});
+/*
 					input.params.forEach(item => {
 
 						let paramBufferSize = 0;
@@ -209,6 +260,7 @@ class WebGPU {
 						paramBuffer.data = data;
 
 					});
+*/
 
 				}
 
@@ -414,7 +466,7 @@ if (paramBuffer) {
 	
 		paramBuffer,
 		0,
-		new input.params[1].type(data)
+		new Uint32Array(data)
 	);
 	gpuDevice.queue.submit([createCommandEncoder()]);
 	const resultMatrix = settings.results[1];
