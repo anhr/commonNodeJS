@@ -562,16 +562,16 @@ class FermatSpiral {
 
 							params: {
 
+								//type is Float32Array
 								f32: {
 
-//									type: Float32Array,//Uint32Array,
 									c: settings.c,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
 
 								},
+								//type is Uint32Array,
 								u32: {
 
-									//type: Uint32Array,
-									phase: 0,
+									pass: 1,
 
 								},
 

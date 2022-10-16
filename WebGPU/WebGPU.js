@@ -133,9 +133,8 @@ class WebGPU {
 
 		function onWebGPUInitialized() {
 
-			const input = settings.input;//, datas = [];
-			let bindGroupLayout, bindGroup;
-			const paramBuffers = [];
+			const input = settings.input, paramBuffers = [];
+			let bindGroupLayout, bindGroup, passMax;
 			if (input) {
 
 				if (input.matrices)
@@ -169,7 +168,19 @@ class WebGPU {
 						const data = [];
 						Object.keys(item).forEach(key => {
 
-							const param = item[key];
+							let param = item[key];
+							if ((type === Uint32Array) && (key === 'pass')) {
+								
+								if (param < 1) {
+	
+									console.error('WebGPU: input.params.u32.pass = ' + input.params.u32.pass + '. Minimum 1 pass allowed.')
+									return;
+									
+								}
+								passMax = param;
+								param = 0;//first pass
+
+							}
 							if (typeof param === "number") {
 
 								function isInt(n) { return n % 1 === 0; }
@@ -213,54 +224,6 @@ class WebGPU {
 						}
 						
 					});
-/*
-					input.params.forEach(item => {
-
-						let paramBufferSize = 0;
-//							dataType;//true - Uint32Array, false - Float32Array
-						item.type ||= Uint32Array;
-						const data = [];
-						Object.keys(item).forEach(key => {
-
-							if (key === 'type') return;
-							const param = item[key];
-							if (typeof param === "number") {
-
-								function isInt(n) { return n % 1 === 0; }
-								const isInteger = isInt(param);
-								if (
-									//								(isInteger && (input.params.type === Float32Array)) ||
-									(!isInteger && (input.params.type === Uint32Array))
-								) {
-
-									console.error('WebGPU: Invalid ' + key + ' = ' + param + ' parameter type. ' + (input.params.type === Uint32Array ? 'Integer' : 'Float') + ' is allowed only.');
-									return;
-
-								}
-								paramBufferSize += item.type.BYTES_PER_ELEMENT;
-								data.push(param);
-
-							} else console.error('WebGPU: Invalid param: ' + param);
-
-						});
-//						datas.push(data);
-						const paramBuffer = gpuDevice.createBuffer({
-
-							size: paramBufferSize,
-							usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-
-						});
-						gpuDevice.queue.writeBuffer(
-
-							paramBuffer,
-							0,
-							new item.type(data)
-						);
-						paramBuffers.push(paramBuffer);
-						paramBuffer.data = data;
-
-					});
-*/
 
 				}
 
