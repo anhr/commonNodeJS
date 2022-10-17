@@ -67,16 +67,30 @@ class WebGPU {
 	 *   
 	 *]&lt;/b>
 	 * &lt;/pre>
-	 * @param {object} [settings.input.params] input parameters list
-	 * @param {object} [settings.input.params.type=Uint32Array] type of the input parameters list. Allowed &lt;b>Float32Array&lt;/b> and &lt;b>Uint32Array&lt;/b>.
+	 * @param {object} [settings.input.params] The following input parameters types are available
+	 * @param {object} [settings.input.params.f32] &lt;b>f32&lt;/b> type of [floating point literal]{@link https://gpuweb.github.io/gpuweb/wgsl/#floating-point-literal} list.
+	 * Every item of the list is &lt;b>key: value&lt;/b> pair. &lt;b>value&lt;/b> is any [Number]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number} value.
 	 * &lt;pre>
 	 * Example:
 	 * &lt;b>params: {
-	 *   type: Float32Array,
-	 *   c: 0.04,
-	 *   count: 10,
+	 *   f32: {
+	 *     c: 0.04,
+	 *     radius: 10
+	 *   },
 	 *},&lt;/b>
 	 * &lt;/pre>
+	 * @param {object} [settings.input.params.u32] &lt;b>u32&lt;/b> type of [integer literal]{@link https://gpuweb.github.io/gpuweb/wgsl/#integer-literal} list.
+	 * Every item of the list is &lt;b>key: value&lt;/b> pair. &lt;b>value&lt;/b> is any unsigned integer [Number]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number} value.
+	 * &lt;pre>
+	 * Example:
+	 * &lt;b>params: {
+	 *   u32: {
+	 *     points: 40,
+	 *     count: 1000
+	 *   },
+	 *},&lt;/b>
+	 * &lt;/pre>
+	 * Following keys is reserved and do not allowed for use: &lt;b>paramBuffer&lt;/b>, &lt;b>data&lt;/b>.
 	 * @param {Function} [settings.out] &lt;b>function(out, i)&lt;/b> called when output data is ready.
 	 * &lt;pre>
 	 * &lt;b>out&lt;/b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
@@ -161,9 +175,8 @@ class WebGPU {
 
 		function onWebGPUInitialized() {
 
-			const input = settings.input;
-			let bindGroupLayout, bindGroup,
-				paramBuffer;
+			const input = settings.input;//, paramBuffers = [];
+			let bindGroupLayout, bindGroup, passMax;
 			if (input) {
 
 				if (input.matrices)
@@ -191,61 +204,81 @@ class WebGPU {
 
 				if (input.params) {
 
-					let paramBufferSize = 0, data = [],
-						dataType;//true - Uint32Array, false - Float32Array
-					input.params.type ||= Uint32Array;
-					Object.keys(input.params).forEach( function (key) {
-		
-						if (key === 'type') return;
-						const param = input.params[key];
-						if (typeof param === "number") {
+					function writeBuffer(item, type) {
 
-							function isInt(n) { return n % 1 === 0; }
-							const isInteger = isInt(param);
-							if(
-//								(isInteger &amp;&amp; (input.params.type === Float32Array)) ||
-								(!isInteger &amp;&amp; (input.params.type === Uint32Array))
-							) {
+						let paramBufferSize = 0;
+						const data = [];
+						Object.keys(item).forEach(key => {
 
-								console.error('WebGPU: Invalid ' + key + ' = ' + param + ' parameter type. ' + (input.params.type === Uint32Array ? 'Integer' : 'Float' ) + ' is allowed only.' );
+							let invalidKey;
+							switch(key){
+								case 'paramBuffer':
+								case 'data':
+									invalidKey = key; break;
+							}
+							if(invalidKey){
+	
+								console.error('WebGPU: Invalid input.params[key]. "' + invalidKey + '" key is not allowed');
 								return;
 								
 							}
-							paramBufferSize += input.params.type.BYTES_PER_ELEMENT;
-							data.push(param);
-/*							
-							function isInt(n) { return n % 1 === 0; }
-							const arrayType = isInt(param);
-							if ((dataType != undefined ) &amp;&amp; (dataType != arrayType) ) {
-
-								console.error('WebGPU: different types of parameters is not allowed');
-								return;
+							let param = item[key];
+							if ((type === Uint32Array) &amp;&amp; (key === 'pass')) {
 								
+								if (param &lt; 1) {
+	
+									console.error('WebGPU: input.params.u32.pass = ' + input.params.u32.pass + '. Minimum 1 pass allowed.')
+									return;
+									
+								}
+								passMax = param;
+								param = 0;//first pass
+
 							}
-							else dataType = arrayType;
-							if (arrayType)
-								paramBufferSize += Uint32Array.BYTES_PER_ELEMENT;
-							else paramBufferSize += Float32Array.BYTES_PER_ELEMENT;
-*/							
+							if (typeof param === "number") {
 
-						} else console.error('WebGPU: Invalid param: ' + param);
-					} );
-/*					
-					console.warn('сейчас возможен только один параметр с плавающей точкой')
-					const paramBufferSize = 1 * Float32Array.BYTES_PER_ELEMENT;
-*/	 
-					paramBuffer = gpuDevice.createBuffer({
+								function isInt(n) { return n % 1 === 0; }
+								const isInteger = isInt(param);
+								if ((!isInteger &amp;&amp; (type === Uint32Array))) {
 
-						size: paramBufferSize,
-						usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+									console.error('WebGPU: Invalid ' + key + ' = ' + param + ' parameter type. ' + (type === Uint32Array ? 'Integer' : 'Float') + ' is allowed only.');
+									return;
 
+								}
+								paramBufferSize += type.BYTES_PER_ELEMENT;
+								data.push(param);
+
+							} else console.error('WebGPU: Invalid param: ' + param);
+
+						});
+						item.paramBuffer = gpuDevice.createBuffer({
+
+							size: paramBufferSize,
+							usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+
+						});
+						gpuDevice.queue.writeBuffer(
+
+							item.paramBuffer,
+							0,
+							new type(data)
+						);
+//						paramBuffers.push(paramBuffer);
+						item.data = data;
+//						paramBuffer.data = data;
+						
+					}
+					Object.keys(input.params).forEach(key => {
+
+						switch(key){
+
+							case 'f32': writeBuffer(input.params[key], Float32Array); break;
+							case 'u32': writeBuffer(input.params[key], Uint32Array); break;
+							default: console.error('WebGPU: Invalid input.params "' + key + '" key.');
+								
+						}
+						
 					});
-					gpuDevice.queue.writeBuffer(
-
-						paramBuffer,
-						0,
-						new input.params.type(data)
-					);
 
 				}
 
@@ -271,21 +304,6 @@ class WebGPU {
 					});
 
 				});
-/*
-			let resultMatrixBuffer, resultMatrixBufferSize;
-			if (settings.resultMatrixBufferSize !== undefined) {
-
-				//resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * (2 + settings.resultMatrixBufferSize);
-				resultMatrixBufferSize = Float32Array.BYTES_PER_ELEMENT * settings.resultMatrixBufferSize;
-				resultMatrixBuffer = gpuDevice.createBuffer({
-
-					size: resultMatrixBufferSize,
-					usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
-
-				});
-
-			}
-*/   
 
 			// Bind group layout and bind group
 
@@ -327,27 +345,7 @@ class WebGPU {
 				binding++;
 
 			});
-/*				
-			if (resultMatrixBuffer) {
-				
-				entriesBindGroupLayout.push({
-	
-					binding: binding,//input.length,
-					visibility: GPUShaderStage.COMPUTE,
-					buffer: { type: "storage" }
-	
-				});
-				entriesBindGroup.push({
-	
-					binding: binding,//input.length,
-					resource: { buffer: resultMatrixBuffer }
-	
-				});
-				binding++;
-
-			}
-*/			
-			if (paramBuffer) {
+			paramBuffers.forEach(paramBuffer => {
 
 				//				const binding = input.length + 2;
 				entriesBindGroupLayout.push({
@@ -363,7 +361,7 @@ class WebGPU {
 				});
 				binding++;
 
-			}
+			});
 
 
 			bindGroupLayout = gpuDevice.createBindGroupLayout({ entries: entriesBindGroupLayout });
@@ -400,82 +398,66 @@ class WebGPU {
 
 				// Commands submission
 
-				//https://gpuweb.github.io/gpuweb/#dom-gpudevice-createcommandencoder
-				const commandEncoder = gpuDevice.createCommandEncoder();
+				function createCommandEncoder() {
 
-				const passEncoder = commandEncoder.beginComputePass();
-				passEncoder.setPipeline(computePipeline);
-				passEncoder.setBindGroup(0, bindGroup);//set @group(0) in the shading code
+					//https://gpuweb.github.io/gpuweb/#dom-gpudevice-createcommandencoder
+					const commandEncoder = gpuDevice.createCommandEncoder();
 
-				let workgroupCount = [];
-				if (input &amp;&amp; input.matrices)
-					input.matrices.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
-				else {
-					
-//					console.log('under constaction')
-					if (settings.workgroupCount) workgroupCount = settings.workgroupCount;
+					const passEncoder = commandEncoder.beginComputePass();
+					passEncoder.setPipeline(computePipeline);
+					passEncoder.setBindGroup(0, bindGroup);//set @group(0) in the shading code
+
+					let workgroupCount = [];
+					if (input &amp;&amp; input.matrices)
+						input.matrices.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
 					else {
-						
-						workgroupCount.push(1);
-	//					workgroupCount.push(1);
+
+						//					console.log('under constaction')
+						if (settings.workgroupCount) workgroupCount = settings.workgroupCount;
+						else {
+
+							workgroupCount.push(1);
+							//					workgroupCount.push(1);
+
+						}
 
 					}
+					const workgroupCountX = workgroupCount[0], workgroupCountY = workgroupCount[1], workgroupCountZ = workgroupCount[3];
 
-				}
-				const workgroupCountX = workgroupCount[0], workgroupCountY = workgroupCount[1], workgroupCountZ = workgroupCount[3];
+					//https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups
+					passEncoder.dispatchWorkgroups(workgroupCountX, workgroupCountY, workgroupCountZ);
+					passEncoder.end();
 
-				//https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups
-				passEncoder.dispatchWorkgroups(workgroupCountX, workgroupCountY, workgroupCountZ);
-				passEncoder.end();
+					if (settings.results)
+						settings.results.forEach(resultMatrix => {
 
-				if (settings.results)
-					settings.results.forEach(resultMatrix => {
-						
-						// Get a GPU buffer for reading in an unmapped state.
-						resultMatrix.gpuReadBuffer = gpuDevice.createBuffer({
-							size: resultMatrix.buffer.size,
-							usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+							// Get a GPU buffer for reading in an unmapped state.
+							resultMatrix.gpuReadBuffer = gpuDevice.createBuffer({
+								size: resultMatrix.buffer.size,
+								usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+							});
+
+							// Encode commands for copying buffer to buffer.
+							commandEncoder.copyBufferToBuffer(
+								resultMatrix.buffer, // source buffer
+								0, // source offset
+								resultMatrix.gpuReadBuffer, // destination buffer
+								0, // destination offset
+								resultMatrix.buffer.size // size
+							);
+
 						});
-		
-						// Encode commands for copying buffer to buffer.
-						commandEncoder.copyBufferToBuffer(
-							resultMatrix.buffer, // source buffer
-							0, // source offset
-							resultMatrix.gpuReadBuffer, // destination buffer
-							0, // destination offset
-							resultMatrix.buffer.size // size
-						);
-						
-					});
-/*				
-				let gpuReadBuffer;
-				if (resultMatrixBuffer) {
-					
-					// Get a GPU buffer for reading in an unmapped state.
-					gpuReadBuffer = gpuDevice.createBuffer({
-						size: resultMatrixBufferSize,
-						usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
-					});
-	
-					// Encode commands for copying buffer to buffer.
-					commandEncoder.copyBufferToBuffer(
-						resultMatrixBuffer, // source buffer
-						0, // source offset
-						gpuReadBuffer, // destination buffer
-						0, // destination offset
-						resultMatrixBufferSize // size
-					);
+					return commandEncoder.finish();
 
 				}
-*/				
 
 				// Submit GPU commands.
-				const gpuCommands = commandEncoder.finish();
-				gpuDevice.queue.submit([gpuCommands]);
+				gpuDevice.queue.submit([createCommandEncoder()]);
 
 				// Read buffer.
 				if (settings.results) {
-					
+
+/*					
 //					settings.results.forEach(resultMatrix => 
 					for (let i = 0; i &lt; settings.results.length; i++)
 					{
@@ -485,17 +467,33 @@ class WebGPU {
 						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), i);
 						
 					}
+*/	 
+const resultMatrix = settings.results[0];
+await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
+if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 0);
+const paramBuffer = paramBuffers[1];
+if (paramBuffer) {
+
+/*	
+	const promise = gpuDevice.queue.onSubmittedWorkDone();
+	promise.catch();
+*/ 
+	const data = paramBuffer.data;
+	data[0] = 1;
+	gpuDevice.queue.writeBuffer(
+	
+		paramBuffer,
+		0,
+		new Uint32Array(data)
+	);
+	gpuDevice.queue.submit([createCommandEncoder()]);
+	const resultMatrix = settings.results[1];
+	await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
+	if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 1);
+
+}
 
 				}
-/*				
-				if (gpuReadBuffer) {
-					
-					await gpuReadBuffer.mapAsync(GPUMapMode.READ);
-					const arrayBuffer = gpuReadBuffer.getMappedRange();
-					if (settings.out) settings.out(arrayBuffer);
-
-				}
-*/				
 
 			}
 
@@ -593,6 +591,12 @@ WebGPU.out2Matrix = function(out, settings={}) {
 				const length = size ? size[dimension - 1] : array[dimension];
 				for (let j = 0; j &lt; length; j++) {
 					
+					if (valueIndex >= array.length){
+
+						console.error('WebGPU.out2Matrix: out of the index range of the out array. ' + valueIndex);
+						return;
+						
+					}
 					matrixNextLevel.push(array[valueIndex]);
 					valueIndex++;
 
@@ -632,7 +636,7 @@ export default WebGPU;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Oct 08 2022 07:37:11 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon Oct 17 2022 07:18:35 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

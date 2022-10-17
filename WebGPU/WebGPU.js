@@ -39,16 +39,30 @@ class WebGPU {
 	 *   
 	 *]</b>
 	 * </pre>
-	 * @param {object} [settings.input.params] input parameters list
-	 * @param {object} [settings.input.params.type=Uint32Array] type of the input parameters list. Allowed <b>Float32Array</b> and <b>Uint32Array</b>.
+	 * @param {object} [settings.input.params] The following input parameters types are available
+	 * @param {object} [settings.input.params.f32] <b>f32</b> type of [floating point literal]{@link https://gpuweb.github.io/gpuweb/wgsl/#floating-point-literal} list.
+	 * Every item of the list is <b>key: value</b> pair. <b>value</b> is any [Number]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number} value.
 	 * <pre>
 	 * Example:
 	 * <b>params: {
-	 *   type: Float32Array,
-	 *   c: 0.04,
-	 *   count: 10,
+	 *   f32: {
+	 *     c: 0.04,
+	 *     radius: 10
+	 *   },
 	 *},</b>
 	 * </pre>
+	 * @param {object} [settings.input.params.u32] <b>u32</b> type of [integer literal]{@link https://gpuweb.github.io/gpuweb/wgsl/#integer-literal} list.
+	 * Every item of the list is <b>key: value</b> pair. <b>value</b> is any unsigned integer [Number]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number} value.
+	 * <pre>
+	 * Example:
+	 * <b>params: {
+	 *   u32: {
+	 *     points: 40,
+	 *     count: 1000
+	 *   },
+	 *},</b>
+	 * </pre>
+	 * Following keys is reserved and do not allowed for use: <b>paramBuffer</b>, <b>data</b>.
 	 * @param {Function} [settings.out] <b>function(out, i)</b> called when output data is ready.
 	 * <pre>
 	 * <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
@@ -133,7 +147,7 @@ class WebGPU {
 
 		function onWebGPUInitialized() {
 
-			const input = settings.input, paramBuffers = [];
+			const input = settings.input;//, paramBuffers = [];
 			let bindGroupLayout, bindGroup, passMax;
 			if (input) {
 
@@ -168,6 +182,18 @@ class WebGPU {
 						const data = [];
 						Object.keys(item).forEach(key => {
 
+							let invalidKey;
+							switch(key){
+								case 'paramBuffer':
+								case 'data':
+									invalidKey = key; break;
+							}
+							if(invalidKey){
+	
+								console.error('WebGPU: Invalid input.params[key]. "' + invalidKey + '" key is not allowed');
+								return;
+								
+							}
 							let param = item[key];
 							if ((type === Uint32Array) && (key === 'pass')) {
 								
@@ -197,7 +223,7 @@ class WebGPU {
 							} else console.error('WebGPU: Invalid param: ' + param);
 
 						});
-						const paramBuffer = gpuDevice.createBuffer({
+						item.paramBuffer = gpuDevice.createBuffer({
 
 							size: paramBufferSize,
 							usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
@@ -205,12 +231,13 @@ class WebGPU {
 						});
 						gpuDevice.queue.writeBuffer(
 
-							paramBuffer,
+							item.paramBuffer,
 							0,
 							new type(data)
 						);
-						paramBuffers.push(paramBuffer);
-						paramBuffer.data = data;
+//						paramBuffers.push(paramBuffer);
+						item.data = data;
+//						paramBuffer.data = data;
 						
 					}
 					Object.keys(input.params).forEach(key => {

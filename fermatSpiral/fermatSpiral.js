@@ -566,6 +566,8 @@ class FermatSpiral {
 								f32: {
 
 									c: settings.c,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
+//paramBuffer: {},
+//data:[],
 
 								},
 								//type is Uint32Array,
