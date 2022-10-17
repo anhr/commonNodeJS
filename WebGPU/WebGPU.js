@@ -148,7 +148,7 @@ class WebGPU {
 		function onWebGPUInitialized() {
 
 			const input = settings.input;//, paramBuffers = [];
-			let bindGroupLayout, bindGroup, passMax;
+			let bindGroupLayout, bindGroup;//, passMax;
 			if (input) {
 
 				if (input.matrices)
@@ -203,8 +203,9 @@ class WebGPU {
 									return;
 									
 								}
-								passMax = param;
+//								passMax = param;
 								param = 0;//first pass
+								data.passIndex = data.length;
 
 							}
 							if (typeof param === "number") {
@@ -317,6 +318,31 @@ class WebGPU {
 				binding++;
 
 			});
+			Object.keys(input.params).forEach(key => {
+
+				switch(key){
+
+					case 'f32':
+					case 'u32':
+						entriesBindGroupLayout.push({
+		
+							binding: binding,
+							visibility: GPUShaderStage.COMPUTE,
+							buffer: { type: "uniform" }
+		
+						});
+						entriesBindGroup.push({
+							binding: binding,
+							resource: { buffer: input.params[key].paramBuffer, }
+						});
+						binding++;
+						break;
+					default: console.error('WebGPU: Invalid input.params "' + key + '" key.');
+						
+				}
+				
+			});
+/*			
 			paramBuffers.forEach(paramBuffer => {
 
 				//				const binding = input.length + 2;
@@ -334,6 +360,7 @@ class WebGPU {
 				binding++;
 
 			});
+*/   
 
 
 			bindGroupLayout = gpuDevice.createBindGroupLayout({ entries: entriesBindGroupLayout });
@@ -443,25 +470,27 @@ class WebGPU {
 const resultMatrix = settings.results[0];
 await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
 if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 0);
-const paramBuffer = paramBuffers[1];
-if (paramBuffer) {
+//const paramBuffer = paramBuffers[1];
+const paramBuffer = input.params.u32.paramBuffer;
+if (paramBuffer && (input.params.u32.pass != undefined)) {
 
-/*	
-	const promise = gpuDevice.queue.onSubmittedWorkDone();
-	promise.catch();
-*/ 
-	const data = paramBuffer.data;
-	data[0] = 1;
-	gpuDevice.queue.writeBuffer(
-	
-		paramBuffer,
-		0,
-		new Uint32Array(data)
-	);
-	gpuDevice.queue.submit([createCommandEncoder()]);
-	const resultMatrix = settings.results[1];
-	await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
-	if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 1);
+//	const data = paramBuffer.data;
+	const data = input.params.u32.data;
+	if (data[data.passIndex] < input.params.u32.pass) {
+		
+		data[data.passIndex] = data[data.passIndex] + 1;
+		gpuDevice.queue.writeBuffer(
+		
+			paramBuffer,
+			0,
+			new Uint32Array(data)
+		);
+		gpuDevice.queue.submit([createCommandEncoder()]);
+		const resultMatrix = settings.results[1];
+		await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
+		if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 1);
+
+	}
 
 }
 
