@@ -63,6 +63,8 @@ class WebGPU {
 	 *},</b>
 	 * </pre>
 	 * Following keys is reserved and do not allowed for use: <b>paramBuffer</b>, <b>data</b>.
+	 * @param {Number} [settings.input.params.u32.pass] [GPUQueue.submit]{@link https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit} of <b>commandBuffers</b> count.
+	 * Minimum 1 <b>pass</b> allowed.
 	 * @param {Function} [settings.out] <b>function(out, i)</b> called when output data is ready.
 	 * <pre>
 	 * <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
