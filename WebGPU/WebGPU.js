@@ -63,8 +63,8 @@ class WebGPU {
 	 *},</b>
 	 * </pre>
 	 * Following keys is reserved and do not allowed for use: <b>paramBuffer</b>, <b>data</b>.
-	 * @param {Number} [settings.input.params.u32.pass] [GPUQueue.submit]{@link https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit} of <b>commandBuffers</b> count.
-	 * Minimum 1 <b>pass</b> allowed.
+	 * @param {Number} [settings.input.params.u32.phase] [GPUQueue.submit]{@link https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit} of <b>commandBuffers</b> count.
+	 * Minimum 1 <b>phase</b> allowed.
 	 * @param {Function} [settings.out] <b>function(out, i)</b> called when output data is ready.
 	 * <pre>
 	 * <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
@@ -197,16 +197,16 @@ class WebGPU {
 								
 							}
 							let param = item[key];
-							if ((type === Uint32Array) && (key === 'pass')) {
+							if ((type === Uint32Array) && (key === 'phase')) {
 								
 								if (param < 1) {
 	
-									console.error('WebGPU: input.params.u32.pass = ' + input.params.u32.pass + '. Minimum 1 pass allowed.')
+									console.error('WebGPU: input.params.u32.phase = ' + input.params.u32.phase + '. Minimum 1 phase allowed.')
 									return;
 									
 								}
 //								passMax = param;
-								param = 0;//first pass
+								param = 0;//first phase
 								data.passIndex = data.length;
 
 							}
@@ -472,29 +472,28 @@ class WebGPU {
 const resultMatrix = settings.results[0];
 await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
 if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 0);
-//const paramBuffer = paramBuffers[1];
-const paramBuffer = input.params.u32.paramBuffer;
-if (paramBuffer && (input.params.u32.pass != undefined)) {
+					const paramBuffer = input.params.u32.paramBuffer;
+					if (paramBuffer && (input.params.u32.phase != undefined)) {
 
-//	const data = paramBuffer.data;
-	const data = input.params.u32.data;
-	if (data[data.passIndex] < input.params.u32.pass) {
+					//	const data = paramBuffer.data;
+						const data = input.params.u32.data;
+						data[data.passIndex] = data[data.passIndex] + 1;
+						if (data[data.passIndex] < input.params.u32.phase) {
 		
-		data[data.passIndex] = data[data.passIndex] + 1;
-		gpuDevice.queue.writeBuffer(
+							gpuDevice.queue.writeBuffer(
 		
-			paramBuffer,
-			0,
-			new Uint32Array(data)
-		);
-		gpuDevice.queue.submit([createCommandEncoder()]);
-		const resultMatrix = settings.results[1];
-		await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
-		if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 1);
+								paramBuffer,
+								0,
+								new Uint32Array(data)
+							);
+							gpuDevice.queue.submit([createCommandEncoder()]);
+							const resultMatrix = settings.results[1];
+							await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
+							if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 1);
 
-	}
+						}
 
-}
+					}
 
 				}
 
