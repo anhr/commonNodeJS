@@ -17,12 +17,14 @@ struct Params {
 c: f32,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
 }
 @group(0) @binding(2) var<uniform> params : Params;
+/*
 struct ParamsU {
 //a: u32,
 phase: u32,
 }
 @group(0) @binding(3) var<uniform> paramsU : ParamsU;
-@group(0) @binding(4) var<uniform> phase : u32;
+*/
+@group(0) @binding(3) var<uniform> phase : u32;
 
 @compute @workgroup_size(1)//, 1)
 fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {

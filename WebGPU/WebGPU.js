@@ -180,6 +180,7 @@ class WebGPU {
 						const data = [];
 						Object.keys(item).forEach(key => {
 
+/*
 							let invalidKey;
 							switch(key){
 								case 'paramBuffer':
@@ -192,7 +193,9 @@ class WebGPU {
 								return;
 								
 							}
+*/
 							let param = item[key];
+/*
 							if ((type === Uint32Array) && (key === 'phase')) {
 								
 								if (param < 1) {
@@ -206,6 +209,7 @@ class WebGPU {
 								data.passIndex = data.length;
 
 							}
+*/
 							if (typeof param === "number") {
 
 								function isInt(n) { return n % 1 === 0; }
