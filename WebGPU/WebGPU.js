@@ -458,23 +458,23 @@ class WebGPU {
 				// Read buffer.
 				if (settings.results) {
 
-/*					
-//					settings.results.forEach(resultMatrix => 
-					for (let i = 0; i < settings.results.length; i++)
-					{
+					async function waitResult(i) {
 
 						const resultMatrix = settings.results[i];
 						await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
 						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), i);
-						
+
 					}
-*/	 
-const resultMatrix = settings.results[0];
-await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
-if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 0);
 					const paramBuffer = input.params.u32.paramBuffer;
 					if (paramBuffer && (input.params.u32.phase != undefined)) {
 
+						await waitResult(0);
+/*						
+						const resultMatrix = settings.results[0];
+						await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
+						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 0);
+*/	  
+						
 					//	const data = paramBuffer.data;
 						const data = input.params.u32.data;
 						data[data.passIndex] = data[data.passIndex] + 1;
@@ -487,12 +487,30 @@ if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 0);
 								new Uint32Array(data)
 							);
 							gpuDevice.queue.submit([createCommandEncoder()]);
+/*
 							const resultMatrix = settings.results[1];
 							await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
 							if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 1);
+*/
+							await waitResult(1);
 
 						}
 
+					} else {
+						
+	//					settings.results.forEach(resultMatrix => 
+						for (let i = 0; i < settings.results.length; i++)
+						{
+
+/*	
+							const resultMatrix = settings.results[i];
+							await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
+							if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), i);
+*/
+							await waitResult(i);
+							
+						}
+						
 					}
 
 				}

@@ -573,9 +573,8 @@ class FermatSpiral {
 								//type is Uint32Array,
 								u32: {
 
-//a: 56,
+//a: 67,
 									phase: 2,
-//b: 89,
 
 								},
 

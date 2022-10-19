@@ -18,6 +18,7 @@ c: f32,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/w
 }
 @group(0) @binding(2) var<uniform> params : Params;
 struct ParamsU {
+//a: u32,
 phase: u32,
 }
 @group(0) @binding(3) var<uniform> paramsU : ParamsU;
@@ -27,8 +28,9 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
 	let i = global_id.x;//fermatSpiral vertice index
 
-//	switch (global_id.y)
-	switch (paramsU.phase) {
+//	switch (0)
+	switch (paramsU.phase)
+	{
 
 		//Vertices
 		case 0: {
@@ -44,10 +46,12 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 				index++;
 				verticesMatrix[index] = f32(global_id.x);
 			}
+/*
 			if (debugCount > 1) {
 				index++;
 				verticesMatrix[index] = f32(paramsU.phase);
 			}
+*/
 			break;
 		}
 
@@ -65,8 +69,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 			index++;
 			aNear[index] = global_id.x;
 			index++;
-//			aNear[index] = global_id.y;
-			aNear[index] = paramsU.phase;
+//			aNear[index] = paramsU.phase;
 			break;
 		}
 
