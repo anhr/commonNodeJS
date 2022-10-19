@@ -22,14 +22,15 @@ struct ParamsU {
 phase: u32,
 }
 @group(0) @binding(3) var<uniform> paramsU : ParamsU;
+@group(0) @binding(4) var<uniform> phase : u32;
 
 @compute @workgroup_size(1)//, 1)
 fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
 	let i = global_id.x;//fermatSpiral vertice index
 
-//	switch (0)
-	switch (paramsU.phase)
+//	switch (paramsU.phase)
+	switch (phase)
 	{
 
 		//Vertices
@@ -70,6 +71,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 			aNear[index] = global_id.x;
 			index++;
 //			aNear[index] = paramsU.phase;
+			aNear[index] = phase;
 			break;
 		}
 

@@ -143,14 +143,12 @@ class WebGPU {
 
 			onWebGPUInitialized();
 
-//			return true;
-
 		}
 
 		function onWebGPUInitialized() {
 
-			const input = settings.input;//, paramBuffers = [];
-			let bindGroupLayout, bindGroup;//, passMax;
+			const input = settings.input;
+			let bindGroupLayout, bindGroup;//, paramBufferPhase;
 			if (input) {
 
 				if (input.matrices)
@@ -173,8 +171,6 @@ class WebGPU {
 						inputMatrix.gpuBuffer.unmap();
 
 					});
-
-				//params
 
 				if (input.params) {
 
@@ -238,9 +234,7 @@ class WebGPU {
 							0,
 							new type(data)
 						);
-//						paramBuffers.push(paramBuffer);
 						item.data = data;
-//						paramBuffer.data = data;
 						
 					}
 					Object.keys(input.params).forEach(key => {
@@ -254,6 +248,29 @@ class WebGPU {
 						}
 						
 					});
+
+				}
+				if (input.phase) {
+
+					if (input.phase.length < 1) {
+
+						console.error('WebGPU: input.phase.length = ' + input.phase.length + '. Minimum 1 phase allowed.')
+						return;
+
+					}
+					//								passMax = param;
+					input.phase.param = 0;//first phase
+					input.phase.paramBuffer = gpuDevice.createBuffer({
+
+						size: Uint32Array.BYTES_PER_ELEMENT,
+						usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+
+					});
+					gpuDevice.queue.writeBuffer(
+						input.phase.paramBuffer,
+						0,
+						new Uint32Array([input.phase.param])
+					);
 
 				}
 
@@ -306,14 +323,14 @@ class WebGPU {
 				
 				entriesBindGroupLayout.push({
 	
-					binding: binding,//input.length,
+					binding: binding,
 					visibility: GPUShaderStage.COMPUTE,
 					buffer: { type: "storage" }
 	
 				});
 				entriesBindGroup.push({
 	
-					binding: binding,//input.length,
+					binding: binding,
 					resource: { buffer: resultMatrix.buffer }
 	
 				});
@@ -344,26 +361,23 @@ class WebGPU {
 				}
 				
 			});
-/*			
-			paramBuffers.forEach(paramBuffer => {
 
-				//				const binding = input.length + 2;
+			if (input.phase) {
+				
 				entriesBindGroupLayout.push({
-
+				
 					binding: binding,
 					visibility: GPUShaderStage.COMPUTE,
 					buffer: { type: "uniform" }
-
+				
 				});
 				entriesBindGroup.push({
 					binding: binding,
-					resource: { buffer: paramBuffer, }
+					resource: { buffer: input.phase.paramBuffer, }
 				});
 				binding++;
 
-			});
-*/   
-
+			}
 
 			bindGroupLayout = gpuDevice.createBindGroupLayout({ entries: entriesBindGroupLayout });
 
@@ -465,34 +479,50 @@ class WebGPU {
 						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), i);
 
 					}
-					const paramBuffer = input.params.u32.paramBuffer;
-					if (paramBuffer && (input.params.u32.phase != undefined)) {
+//					const paramBuffer = input.params.u32.paramBuffer;
+//					if (paramBuffer && (input.params.u32.phase != undefined))
+					if (input.phase != undefined)
+					{
 
-						await waitResult(0);
+						async function result() {
+							
+							let resultIndex = input.phase[input.phase.param];
+							if (resultIndex instanceof Array) {
+	
+//								if (resultIndex.length === 0) await waitResult(input.phase.param);
+//								else
+								for(let i = 0; i < resultIndex.length; i++) await waitResult(i);
+								
+							} else await waitResult(resultIndex);
+
+						}
+						await result();
 /*						
 						const resultMatrix = settings.results[0];
 						await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
 						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 0);
 */	  
-						
-					//	const data = paramBuffer.data;
+
+/*						
 						const data = input.params.u32.data;
 						data[data.passIndex] = data[data.passIndex] + 1;
-						if (data[data.passIndex] < input.params.u32.phase) {
+						if (data[data.passIndex] < input.params.u32.phase)
+*/
+						input.phase.param++;
+						if (input.phase.param < input.phase.length)
+						{
 		
+							const paramBuffer = input.phase.paramBuffer;
 							gpuDevice.queue.writeBuffer(
 		
 								paramBuffer,
 								0,
-								new Uint32Array(data)
+								new Uint32Array([input.phase.param])
+
 							);
 							gpuDevice.queue.submit([createCommandEncoder()]);
-/*
-							const resultMatrix = settings.results[1];
-							await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
-							if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 1);
-*/
-							await waitResult(1);
+							await result();
+//							await waitResult(1);
 
 						}
 

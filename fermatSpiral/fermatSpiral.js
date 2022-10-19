@@ -579,6 +579,7 @@ class FermatSpiral {
 								},
 
 							},
+							phase: [[],[0,1]],
 
 						},
 						//resultMatrixBufferSize: l * (2 + debugCount),//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки
