@@ -99,7 +99,6 @@ class WebGPU {
 		async function initializeWebGPU() {
 
 			// Check to ensure the user agent supports WebGPU.
-//			if (!('gpu' in navigator))
 			if ( !WebGPU.isSupportWebGPU() )
 			{
 				console.error("WebGPU: User agent doesn't support WebGPU. WebGPU is available for now in Chrome Canary https://www.google.com/intl/ru/chrome/canary/ on desktop behind an experimental flag. You can enable it at chrome://flags/#enable-unsafe-webgpu. The API is constantly changing and currently unsafe. As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to read GPU data for other processes! Don't browse the web with it enabled.");
@@ -148,7 +147,7 @@ class WebGPU {
 		function onWebGPUInitialized() {
 
 			const input = settings.input;
-			let bindGroupLayout, bindGroup;//, paramBufferPhase;
+			let bindGroupLayout, bindGroup;
 			if (input) {
 
 				if (input.matrices)
@@ -180,36 +179,7 @@ class WebGPU {
 						const data = [];
 						Object.keys(item).forEach(key => {
 
-/*
-							let invalidKey;
-							switch(key){
-								case 'paramBuffer':
-								case 'data':
-									invalidKey = key; break;
-							}
-							if(invalidKey){
-	
-								console.error('WebGPU: Invalid input.params[key]. "' + invalidKey + '" key is not allowed');
-								return;
-								
-							}
-*/
 							let param = item[key];
-/*
-							if ((type === Uint32Array) && (key === 'phase')) {
-								
-								if (param < 1) {
-	
-									console.error('WebGPU: input.params.u32.phase = ' + input.params.u32.phase + '. Minimum 1 phase allowed.')
-									return;
-									
-								}
-//								passMax = param;
-								param = 0;//first phase
-								data.passIndex = data.length;
-
-							}
-*/
 							if (typeof param === "number") {
 
 								function isInt(n) { return n % 1 === 0; }
@@ -262,7 +232,6 @@ class WebGPU {
 						return;
 
 					}
-					//								passMax = param;
 					input.phase.param = 0;//first phase
 					input.phase.paramBuffer = gpuDevice.createBuffer({
 
@@ -309,14 +278,14 @@ class WebGPU {
 
 				entriesBindGroupLayout.push({
 
-					binding: binding,//i,
+					binding: binding,
 					visibility: GPUShaderStage.COMPUTE,
 					buffer: { type: "read-only-storage" }
 
 				});
 				entriesBindGroup.push({
 
-					binding: binding,//i,
+					binding: binding,
 					resource: { buffer: input.matrices[i].gpuBuffer }
 
 				});
@@ -431,14 +400,8 @@ class WebGPU {
 						input.matrices.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
 					else {
 
-						//					console.log('under constaction')
 						if (settings.workgroupCount) workgroupCount = settings.workgroupCount;
-						else {
-
-							workgroupCount.push(1);
-							//					workgroupCount.push(1);
-
-						}
+						else workgroupCount.push(1);
 
 					}
 					const workgroupCountX = workgroupCount[0], workgroupCountY = workgroupCount[1], workgroupCountZ = workgroupCount[3];
@@ -483,8 +446,6 @@ class WebGPU {
 						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), i);
 
 					}
-//					const paramBuffer = input.params.u32.paramBuffer;
-//					if (paramBuffer && (input.params.u32.phase != undefined))
 					if (input.phase != undefined)
 					{
 
@@ -493,25 +454,12 @@ class WebGPU {
 							let resultIndex = input.phase[input.phase.param];
 							if (resultIndex instanceof Array) {
 	
-//								if (resultIndex.length === 0) await waitResult(input.phase.param);
-//								else
 								for(let i = 0; i < resultIndex.length; i++) await waitResult(i);
 								
 							} else await waitResult(resultIndex);
 
 						}
 						await result();
-/*						
-						const resultMatrix = settings.results[0];
-						await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
-						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 0);
-*/	  
-
-/*						
-						const data = input.params.u32.data;
-						data[data.passIndex] = data[data.passIndex] + 1;
-						if (data[data.passIndex] < input.params.u32.phase)
-*/
 						input.phase.param++;
 						if (input.phase.param < input.phase.length)
 						{
@@ -526,24 +474,12 @@ class WebGPU {
 							);
 							gpuDevice.queue.submit([createCommandEncoder()]);
 							await result();
-//							await waitResult(1);
 
 						}
 
 					} else {
 						
-	//					settings.results.forEach(resultMatrix => 
-						for (let i = 0; i < settings.results.length; i++)
-						{
-
-/*	
-							const resultMatrix = settings.results[i];
-							await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
-							if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), i);
-*/
-							await waitResult(i);
-							
-						}
+						for (let i = 0; i < settings.results.length; i++) await waitResult(i);
 						
 					}
 
@@ -616,7 +552,6 @@ WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
  */
 WebGPU.out2Matrix = function(out, settings={}) {
 	
-//	const array = out.type ? new out.type(out) : new Float32Array(out),
 	const array = settings.type ? new settings.type(out) : new Float32Array(out),
 		matrix = [];
 	let valueIndex,
