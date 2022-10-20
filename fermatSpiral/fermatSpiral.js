@@ -590,7 +590,8 @@ class FermatSpiral {
 							//vertices
 							{
 
-								bufferSize: l * verticesRowlength,
+//								bufferSize: l * verticesRowlength,
+								count: l * verticesRowlength,
 							
 							},
 
@@ -598,7 +599,8 @@ class FermatSpiral {
 							{
 
 								type: aNearType,
-								bufferSize: l * aNearRowlength,
+//								bufferSize: l * aNearRowlength,
+								count: l * aNearRowlength,
 
 							},
 						],

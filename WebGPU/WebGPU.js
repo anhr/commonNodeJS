@@ -62,9 +62,12 @@ class WebGPU {
 	 *   },
 	 *},</b>
 	 * </pre>
-	 * Following keys is reserved and do not allowed for use: <b>paramBuffer</b>, <b>data</b>.
-	 * @param {Number} [settings.input.params.u32.phase] [GPUQueue.submit]{@link https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit} of <b>commandBuffers</b> count.
+	 * @param {Array} [settings.input.phase] [GPUQueue.submit]{@link https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit} of <b>commandBuffers</b> count.
 	 * Minimum 1 <b>phase</b> allowed.
+	 * @param {Array} [settings.results] Array of descriptions of the output data. <b>See settings.out</b> below.
+	 * <pre>
+	 * The following descriptions have every <b>settings.results</b> item.
+	 * </pre>
 	 * @param {Function} [settings.out] <b>function(out, i)</b> called when output data is ready.
 	 * <pre>
 	 * <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
@@ -254,10 +257,10 @@ class WebGPU {
 				settings.results.forEach(resultMatrix => {
 
 					resultMatrix.type ||= Float32Array;
-					const bufferSize = resultMatrix.type.BYTES_PER_ELEMENT * resultMatrix.bufferSize;
+					const bufferSize = resultMatrix.type.BYTES_PER_ELEMENT * resultMatrix.count;
 					if (!bufferSize) {
 
-						console.error('WebGPU: bufferSize key is not defined in the settings.results item.');
+						console.error('WebGPU: "count" key is not defined in the settings.results item.');
 						return;
 						
 					}
@@ -310,30 +313,34 @@ class WebGPU {
 				binding++;
 
 			});
-			Object.keys(input.params).forEach(key => {
-
-				switch(key){
-
-					case 'f32':
-					case 'u32':
-						entriesBindGroupLayout.push({
-		
-							binding: binding,
-							visibility: GPUShaderStage.COMPUTE,
-							buffer: { type: "uniform" }
-		
-						});
-						entriesBindGroup.push({
-							binding: binding,
-							resource: { buffer: input.params[key].paramBuffer, }
-						});
-						binding++;
-						break;
-					default: console.error('WebGPU: Invalid input.params "' + key + '" key.');
-						
-				}
+			if (input.params) {
 				
-			});
+				Object.keys(input.params).forEach(key => {
+	
+					switch(key){
+	
+						case 'f32':
+						case 'u32':
+							entriesBindGroupLayout.push({
+			
+								binding: binding,
+								visibility: GPUShaderStage.COMPUTE,
+								buffer: { type: "uniform" }
+			
+							});
+							entriesBindGroup.push({
+								binding: binding,
+								resource: { buffer: input.params[key].paramBuffer, }
+							});
+							binding++;
+							break;
+						default: console.error('WebGPU: Invalid input.params "' + key + '" key.');
+							
+					}
+					
+				});
+
+			}
 
 			if (input.phase) {
 				
