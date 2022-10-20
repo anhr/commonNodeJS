@@ -104,7 +104,7 @@ for control of the scale of [threejs](https://github.com/anhr/three.js) 3D objec
 [README.md](https://github.com/anhr/commonNodeJS/blob/master/treeView/README.md).
 [TreeView API](https://raw.githack.com/anhr/commonNodeJS/master/treeView/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/treeView/Examples/).
-* WebGPU.js [WebGPU]{@link https://gpuweb.github.io/gpuweb/}. GPU Compute on the web.
+* WebGPU.js [WebGPU](https://gpuweb.github.io/gpuweb/). GPU Compute on the web.
 [README.md](https://github.com/anhr/commonNodeJS/blob/master/WebGPU/README.md).
 [WebGPU API](https://raw.githack.com/anhr/commonNodeJS/master/WebGPU/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/WebGPU/Examples/).
