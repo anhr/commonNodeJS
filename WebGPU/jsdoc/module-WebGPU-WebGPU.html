@@ -370,32 +370,17 @@ Example:
     points: 40,
     count: 1000
   },
-},</b>
-</pre>
-Following keys is reserved and do not allowed for use: <b>paramBuffer</b>, <b>data</b>.
-                <h6>Properties</h6>
-                
+}</b>
+</pre></td>
+        </tr>
 
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
+    
+    </tbody>
+</table>
 
-        <th>Type</th>
+            </td>
+        </tr>
 
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
         <tr>
@@ -406,7 +391,7 @@ Following keys is reserved and do not allowed for use: <b>paramBuffer</b>, <b>da
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">Array</span>
 
 
             
@@ -426,8 +411,24 @@ Following keys is reserved and do not allowed for use: <b>paramBuffer</b>, <b>da
 
             
 
-            <td class="description last"><a href="https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit">GPUQueue.submit</a> of <b>commandBuffers</b> count.
-Minimum 1 <b>phase</b> allowed.</td>
+            <td class="description last">You can divide GPU compute to phases.
+<pre>
+Every phase calls the <a href="https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit">GPUQueue.submit</a> of <b>commandBuffers</b>. Use the <b>phase</b> array for it.
+Length of the <b>phase</b> array is count of the phases of GPU computing.
+Every item of the <b>phase</b> array is array of the <b>settings.results</b> indexes,
+you want to output after the current GPU computing phase.
+Use empty item array if you do not want to output any data after current GPU computing phase.
+Minimum 1 <b>phase</b> allowed. Default is one phase of GPU computing.
+See example of divide of the GPU computing to two phases. 
+<b>phase: [
+  [],//First phase. No data output.
+  [//Second phase.
+    0,//Output of the first item of the settings.results array.
+    1//Output of the second item of the settings.results array.
+  ]
+]</b>
+You can see an example of divide in my code. Please open <a href="../../fermatSpiral/fermatSpiral.js" target="_blank">fermatSpiral.js</a> and <a href="../../fermatSpiral/WebGPU/create.c" target="_blank">create.c</a> files for it.
+</pre></td>
         </tr>
 
     
@@ -438,17 +439,50 @@ Minimum 1 <b>phase</b> allowed.</td>
         </tr>
 
     
-    </tbody>
-</table>
 
+        <tr>
+            
+                <td class="name"><code>results</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
             </td>
-        </tr>
 
-    
-    </tbody>
-</table>
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
-            </td>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Array of descriptions of the output data. See <b>settings.out</b> below.
+<pre>
+The following descriptions have every <b>settings.results</b> item.
+  type: Type of the output data. Available <b>Uint32Array</b> and <b>Float32Array</b> types. Optional. Default type is <b>Float32Array</b>.
+  count: Count of output data array items.
+Example of <b>settings.results</b> array item:
+<b>{
+  type: Uint32Array,
+  count: 1000
+}</b>
+</pre></td>
         </tr>
 
     
@@ -490,43 +524,6 @@ Minimum 1 <b>phase</b> allowed.</td>
 <b>out</b> argument is array of output data. See <a href="https://webidl.spec.whatwg.org/#idl-ArrayBuffer">ArrayBuffer</a>.
 <b>i</b> argument is index of the <b>settings.results</b> array item.
 </pre></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>resultMatrixBufferSize</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">The size of the output buffer in bytes.</td>
         </tr>
 
     
@@ -739,7 +736,7 @@ Example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line94">line 94</a>
+        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line119">line 119</a>
     </li></ul></dd>
     
 
@@ -843,7 +840,7 @@ Example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line517">line 517</a>
+        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line534">line 534</a>
     </li></ul></dd>
     
 
@@ -1265,7 +1262,7 @@ The result matrix is empty if you have added <b>push</b> to the <b>setting</b> a
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line565">line 565</a>
+        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line582">line 582</a>
     </li></ul></dd>
     
 
@@ -1327,7 +1324,7 @@ The result matrix is empty if you have added <b>push</b> to the <b>setting</b> a
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Oct 18 2022 10:00:15 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Oct 20 2022 10:54:53 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -88,17 +88,42 @@ class WebGPU {
 	 *     points: 40,
 	 *     count: 1000
 	 *   },
-	 *},&lt;/b>
+	 *}&lt;/b>
 	 * &lt;/pre>
-	 * Following keys is reserved and do not allowed for use: &lt;b>paramBuffer&lt;/b>, &lt;b>data&lt;/b>.
-	 * @param {Number} [settings.input.params.u32.phase] [GPUQueue.submit]{@link https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit} of &lt;b>commandBuffers&lt;/b> count.
-	 * Minimum 1 &lt;b>phase&lt;/b> allowed.
+	 * @param {Array} [settings.input.phase] You can divide GPU compute to phases.
+	 * &lt;pre>
+	 * Every phase calls the [GPUQueue.submit]{@link https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit} of &lt;b>commandBuffers&lt;/b>. Use the &lt;b>phase&lt;/b> array for it.
+	 * Length of the &lt;b>phase&lt;/b> array is count of the phases of GPU computing.
+	 * Every item of the &lt;b>phase&lt;/b> array is array of the &lt;b>settings.results&lt;/b> indexes,
+	 * you want to output after the current GPU computing phase.
+	 * Use empty item array if you do not want to output any data after current GPU computing phase.
+	 * Minimum 1 &lt;b>phase&lt;/b> allowed. Default is one phase of GPU computing.
+	 * See example of divide of the GPU computing to two phases. 
+	 * &lt;b>phase: [
+	 *   [],//First phase. No data output.
+	 *   [//Second phase.
+	 *     0,//Output of the first item of the settings.results array.
+	 *     1//Output of the second item of the settings.results array.
+	 *   ]
+	 * ]&lt;/b>
+	 * You can see an example of divide in my code. Please open &lt;a href="../../fermatSpiral/fermatSpiral.js" target="_blank">fermatSpiral.js&lt;/a> and &lt;a href="../../fermatSpiral/WebGPU/create.c" target="_blank">create.c&lt;/a> files for it.
+	 * &lt;/pre>
+	 * @param {Array} [settings.results] Array of descriptions of the output data. See &lt;b>settings.out&lt;/b> below.
+	 * &lt;pre>
+	 * The following descriptions have every &lt;b>settings.results&lt;/b> item.
+	 *   type: Type of the output data. Available &lt;b>Uint32Array&lt;/b> and &lt;b>Float32Array&lt;/b> types. Optional. Default type is &lt;b>Float32Array&lt;/b>.
+	 *   count: Count of output data array items.
+	 * Example of &lt;b>settings.results&lt;/b> array item:
+	 * &lt;b>{
+	 *   type: Uint32Array,
+	 *   count: 1000
+	 *}&lt;/b>
+	 * &lt;/pre>
 	 * @param {Function} [settings.out] &lt;b>function(out, i)&lt;/b> called when output data is ready.
 	 * &lt;pre>
 	 * &lt;b>out&lt;/b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
 	 * &lt;b>i&lt;/b> argument is index of the &lt;b>settings.results&lt;/b> array item.
 	 * &lt;/pre>
-	 * @param {Number} [settings.resultMatrixBufferSize] The size of the output buffer in bytes.
 	 * @param {Array} [settings.workgroupCount=[1]] For dispatch work to be performed with the current GPUComputePipeline.
 	 * &lt;pre>
 	 * See [dispatchWorkgroups]{@link https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups} of [GPUComputePipeline]{@link https://gpuweb.github.io/gpuweb/#gpucomputepipeline}.
@@ -127,7 +152,6 @@ class WebGPU {
 		async function initializeWebGPU() {
 
 			// Check to ensure the user agent supports WebGPU.
-//			if (!('gpu' in navigator))
 			if ( !WebGPU.isSupportWebGPU() )
 			{
 				console.error("WebGPU: User agent doesn't support WebGPU. WebGPU is available for now in Chrome Canary https://www.google.com/intl/ru/chrome/canary/ on desktop behind an experimental flag. You can enable it at chrome://flags/#enable-unsafe-webgpu. The API is constantly changing and currently unsafe. As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to read GPU data for other processes! Don't browse the web with it enabled.");
@@ -171,14 +195,12 @@ class WebGPU {
 
 			onWebGPUInitialized();
 
-//			return true;
-
 		}
 
 		function onWebGPUInitialized() {
 
-			const input = settings.input;//, paramBuffers = [];
-			let bindGroupLayout, bindGroup;//, passMax;
+			const input = settings.input;
+			let bindGroupLayout, bindGroup;
 			if (input) {
 
 				if (input.matrices)
@@ -202,8 +224,6 @@ class WebGPU {
 
 					});
 
-				//params
-
 				if (input.params) {
 
 					function writeBuffer(item, type) {
@@ -212,32 +232,7 @@ class WebGPU {
 						const data = [];
 						Object.keys(item).forEach(key => {
 
-							let invalidKey;
-							switch(key){
-								case 'paramBuffer':
-								case 'data':
-									invalidKey = key; break;
-							}
-							if(invalidKey){
-	
-								console.error('WebGPU: Invalid input.params[key]. "' + invalidKey + '" key is not allowed');
-								return;
-								
-							}
 							let param = item[key];
-							if ((type === Uint32Array) &amp;&amp; (key === 'phase')) {
-								
-								if (param &lt; 1) {
-	
-									console.error('WebGPU: input.params.u32.phase = ' + input.params.u32.phase + '. Minimum 1 phase allowed.')
-									return;
-									
-								}
-//								passMax = param;
-								param = 0;//first phase
-								data.passIndex = data.length;
-
-							}
 							if (typeof param === "number") {
 
 								function isInt(n) { return n % 1 === 0; }
@@ -266,9 +261,7 @@ class WebGPU {
 							0,
 							new type(data)
 						);
-//						paramBuffers.push(paramBuffer);
 						item.data = data;
-//						paramBuffer.data = data;
 						
 					}
 					Object.keys(input.params).forEach(key => {
@@ -284,6 +277,28 @@ class WebGPU {
 					});
 
 				}
+				if (input.phase) {
+
+					if (input.phase.length &lt; 1) {
+
+						console.error('WebGPU: input.phase.length = ' + input.phase.length + '. Minimum 1 phase allowed.')
+						return;
+
+					}
+					input.phase.param = 0;//first phase
+					input.phase.paramBuffer = gpuDevice.createBuffer({
+
+						size: Uint32Array.BYTES_PER_ELEMENT,
+						usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+
+					});
+					gpuDevice.queue.writeBuffer(
+						input.phase.paramBuffer,
+						0,
+						new Uint32Array([input.phase.param])
+					);
+
+				}
 
 			}
 
@@ -292,10 +307,10 @@ class WebGPU {
 				settings.results.forEach(resultMatrix => {
 
 					resultMatrix.type ||= Float32Array;
-					const bufferSize = resultMatrix.type.BYTES_PER_ELEMENT * resultMatrix.bufferSize;
+					const bufferSize = resultMatrix.type.BYTES_PER_ELEMENT * resultMatrix.count;
 					if (!bufferSize) {
 
-						console.error('WebGPU: bufferSize key is not defined in the settings.results item.');
+						console.error('WebGPU: "count" key is not defined in the settings.results item.');
 						return;
 						
 					}
@@ -316,14 +331,14 @@ class WebGPU {
 
 				entriesBindGroupLayout.push({
 
-					binding: binding,//i,
+					binding: binding,
 					visibility: GPUShaderStage.COMPUTE,
 					buffer: { type: "read-only-storage" }
 
 				});
 				entriesBindGroup.push({
 
-					binding: binding,//i,
+					binding: binding,
 					resource: { buffer: input.matrices[i].gpuBuffer }
 
 				});
@@ -334,64 +349,65 @@ class WebGPU {
 				
 				entriesBindGroupLayout.push({
 	
-					binding: binding,//input.length,
+					binding: binding,
 					visibility: GPUShaderStage.COMPUTE,
 					buffer: { type: "storage" }
 	
 				});
 				entriesBindGroup.push({
 	
-					binding: binding,//input.length,
+					binding: binding,
 					resource: { buffer: resultMatrix.buffer }
 	
 				});
 				binding++;
 
 			});
-			Object.keys(input.params).forEach(key => {
-
-				switch(key){
-
-					case 'f32':
-					case 'u32':
-						entriesBindGroupLayout.push({
-		
-							binding: binding,
-							visibility: GPUShaderStage.COMPUTE,
-							buffer: { type: "uniform" }
-		
-						});
-						entriesBindGroup.push({
-							binding: binding,
-							resource: { buffer: input.params[key].paramBuffer, }
-						});
-						binding++;
-						break;
-					default: console.error('WebGPU: Invalid input.params "' + key + '" key.');
-						
-				}
+			if (input.params) {
 				
-			});
-/*			
-			paramBuffers.forEach(paramBuffer => {
+				Object.keys(input.params).forEach(key => {
+	
+					switch(key){
+	
+						case 'f32':
+						case 'u32':
+							entriesBindGroupLayout.push({
+			
+								binding: binding,
+								visibility: GPUShaderStage.COMPUTE,
+								buffer: { type: "uniform" }
+			
+							});
+							entriesBindGroup.push({
+								binding: binding,
+								resource: { buffer: input.params[key].paramBuffer, }
+							});
+							binding++;
+							break;
+						default: console.error('WebGPU: Invalid input.params "' + key + '" key.');
+							
+					}
+					
+				});
 
-				//				const binding = input.length + 2;
+			}
+
+			if (input.phase) {
+				
 				entriesBindGroupLayout.push({
-
+				
 					binding: binding,
 					visibility: GPUShaderStage.COMPUTE,
 					buffer: { type: "uniform" }
-
+				
 				});
 				entriesBindGroup.push({
 					binding: binding,
-					resource: { buffer: paramBuffer, }
+					resource: { buffer: input.phase.paramBuffer, }
 				});
 				binding++;
 
-			});
-*/   
-
+			}
 
 			bindGroupLayout = gpuDevice.createBindGroupLayout({ entries: entriesBindGroupLayout });
 
@@ -441,14 +457,8 @@ class WebGPU {
 						input.matrices.forEach((item, i) => workgroupCount.push(Math.ceil(item.matrix[i] / 8)));
 					else {
 
-						//					console.log('under constaction')
 						if (settings.workgroupCount) workgroupCount = settings.workgroupCount;
-						else {
-
-							workgroupCount.push(1);
-							//					workgroupCount.push(1);
-
-						}
+						else workgroupCount.push(1);
 
 					}
 					const workgroupCountX = workgroupCount[0], workgroupCountY = workgroupCount[1], workgroupCountZ = workgroupCount[3];
@@ -486,41 +496,48 @@ class WebGPU {
 				// Read buffer.
 				if (settings.results) {
 
-/*					
-//					settings.results.forEach(resultMatrix => 
-					for (let i = 0; i &lt; settings.results.length; i++)
-					{
+					async function waitResult(i) {
 
 						const resultMatrix = settings.results[i];
 						await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
 						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), i);
-						
-					}
-*/	 
-const resultMatrix = settings.results[0];
-await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
-if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 0);
-					const paramBuffer = input.params.u32.paramBuffer;
-					if (paramBuffer &amp;&amp; (input.params.u32.phase != undefined)) {
 
-					//	const data = paramBuffer.data;
-						const data = input.params.u32.data;
-						data[data.passIndex] = data[data.passIndex] + 1;
-						if (data[data.passIndex] &lt; input.params.u32.phase) {
+					}
+					if (input.phase != undefined)
+					{
+
+						async function result() {
+							
+							let resultIndex = input.phase[input.phase.param];
+							if (resultIndex instanceof Array) {
+	
+								for(let i = 0; i &lt; resultIndex.length; i++) await waitResult(i);
+								
+							} else await waitResult(resultIndex);
+
+						}
+						await result();
+						input.phase.param++;
+						if (input.phase.param &lt; input.phase.length)
+						{
 		
+							const paramBuffer = input.phase.paramBuffer;
 							gpuDevice.queue.writeBuffer(
 		
 								paramBuffer,
 								0,
-								new Uint32Array(data)
+								new Uint32Array([input.phase.param])
+
 							);
 							gpuDevice.queue.submit([createCommandEncoder()]);
-							const resultMatrix = settings.results[1];
-							await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
-							if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), 1);
+							await result();
 
 						}
 
+					} else {
+						
+						for (let i = 0; i &lt; settings.results.length; i++) await waitResult(i);
+						
 					}
 
 				}
@@ -592,7 +609,6 @@ WebGPU.isSupportWebGPU = function () { return 'gpu' in navigator; }
  */
 WebGPU.out2Matrix = function(out, settings={}) {
 	
-//	const array = out.type ? new out.type(out) : new Float32Array(out),
 	const array = settings.type ? new settings.type(out) : new Float32Array(out),
 		matrix = [];
 	let valueIndex,
@@ -666,7 +682,7 @@ export default WebGPU;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Oct 18 2022 10:00:15 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Oct 20 2022 10:54:53 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

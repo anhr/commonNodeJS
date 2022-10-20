@@ -60,20 +60,42 @@ class WebGPU {
 	 *     points: 40,
 	 *     count: 1000
 	 *   },
-	 *},</b>
+	 *}</b>
 	 * </pre>
-	 * @param {Array} [settings.input.phase] [GPUQueue.submit]{@link https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit} of <b>commandBuffers</b> count.
-	 * Minimum 1 <b>phase</b> allowed.
-	 * @param {Array} [settings.results] Array of descriptions of the output data. <b>See settings.out</b> below.
+	 * @param {Array} [settings.input.phase] You can divide GPU compute to phases.
+	 * <pre>
+	 * Every phase calls the [GPUQueue.submit]{@link https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit} of <b>commandBuffers</b>. Use the <b>phase</b> array for it.
+	 * Length of the <b>phase</b> array is count of the phases of GPU computing.
+	 * Every item of the <b>phase</b> array is array of the <b>settings.results</b> indexes,
+	 * you want to output after the current GPU computing phase.
+	 * Use empty item array if you do not want to output any data after current GPU computing phase.
+	 * Minimum 1 <b>phase</b> allowed. Default is one phase of GPU computing.
+	 * See example of divide of the GPU computing to two phases. 
+	 * <b>phase: [
+	 *   [],//First phase. No data output.
+	 *   [//Second phase.
+	 *     0,//Output of the first item of the settings.results array.
+	 *     1//Output of the second item of the settings.results array.
+	 *   ]
+	 * ]</b>
+	 * You can see an example of divide in my code. Please open <a href="../../fermatSpiral/fermatSpiral.js" target="_blank">fermatSpiral.js</a> and <a href="../../fermatSpiral/WebGPU/create.c" target="_blank">create.c</a> files for it.
+	 * </pre>
+	 * @param {Array} [settings.results] Array of descriptions of the output data. See <b>settings.out</b> below.
 	 * <pre>
 	 * The following descriptions have every <b>settings.results</b> item.
+	 *   type: Type of the output data. Available <b>Uint32Array</b> and <b>Float32Array</b> types. Optional. Default type is <b>Float32Array</b>.
+	 *   count: Count of output data array items.
+	 * Example of <b>settings.results</b> array item:
+	 * <b>{
+	 *   type: Uint32Array,
+	 *   count: 1000
+	 *}</b>
 	 * </pre>
 	 * @param {Function} [settings.out] <b>function(out, i)</b> called when output data is ready.
 	 * <pre>
 	 * <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
 	 * <b>i</b> argument is index of the <b>settings.results</b> array item.
 	 * </pre>
-	 * @param {Number} [settings.resultMatrixBufferSize] The size of the output buffer in bytes.
 	 * @param {Array} [settings.workgroupCount=[1]] For dispatch work to be performed with the current GPUComputePipeline.
 	 * <pre>
 	 * See [dispatchWorkgroups]{@link https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups} of [GPUComputePipeline]{@link https://gpuweb.github.io/gpuweb/#gpucomputepipeline}.
