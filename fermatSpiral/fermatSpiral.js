@@ -581,10 +581,15 @@ class FermatSpiral {
 */
 
 							},
-							phase: [[],[0,1]],
+							phase: [
+								[],//First phase. No data output.
+								[//Second phase.
+									0,//First, output of the fermat spiral vertices
+									1//Second, output of veretice indices, nearest to corrent vertice.
+								]
+							],
 
 						},
-						//resultMatrixBufferSize: l * (2 + debugCount),//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки
 						results: [
 
 							//vertices
@@ -822,102 +827,65 @@ class FermatSpiral {
 
 				const edges = _this.geometry.indices[0];
 				edges.length = 0;//удалить все ребра
-/*
-				if (WebGPU.isSupportWebGPU()) {
+//				{
 
-					console.log('WebGPU: Find frematSpiral near vertices');
-					const debugCount = 1;//Count of out debug values.
-					new WebGPU(
-						{
+				points.forEach((vertice1, i) => {
 
-							input: {
+					vertice1.i = i;
 
-								matrices: [points],
+					points.forEach((vertice2, j) => {
 
-							},
-							out: function (out) {
+						if (i != j) {
 
-								if (out.name) console.log(out.name);
-								const matrix = WebGPU.out2Matrix(out, {
+							const distance = vertice1.distanceTo(vertice2);
+							vertice1.aNear.add(j, distance);
 
-									size: [
-										3,
-										2,
-									],
+						}
 
-								});
-								console.log(matrix);
+					});
+					const i0 = vertice1.i;
+					for (var k = 0; k < vertice1.aNear.length; k++) {
 
-							},
-							resultMatrixBufferSize: points.length,//на каждую вершину fermatSpiral тратится плюс количество значений для отладки
-							workgroupCount: [points.length],//задаем количество переллельных процессов GPU равное числу вершин fermatSpiral
-							//shaderCode: shaderCode,
-							shaderCodeFile: currentScriptPath + '/WebGPU/anear.c',
+						const i1 = vertice1.aNear[k].i;
+						var boDuplicate = false;
+						for (var j = 0; j < edges.length; j++) {
 
-						},
-					);
+							if (
+								((edges[j][0] === i0) && (edges[j][1] === i1)) ||
+								((edges[j][0] === i1) && (edges[j][1] === i0))
+							) {
 
-				} //else
-*/
-				{
-
-					points.forEach((vertice1, i) => {
-
-						vertice1.i = i;
-
-						points.forEach((vertice2, j) => {
-
-							if (i != j) {
-
-								const distance = vertice1.distanceTo(vertice2);
-								vertice1.aNear.add(j, distance);
+								boDuplicate = true;
+								break;
 
 							}
 
-						});
-						const i0 = vertice1.i;
-						for (var k = 0; k < vertice1.aNear.length; k++) {
+						}
+						if (!boDuplicate && (i0 < settings.count) && (i1 < settings.count)) {
 
-							const i1 = vertice1.aNear[k].i;
-							var boDuplicate = false;
-							for (var j = 0; j < edges.length; j++) {
+							try {
 
-								if (
-									((edges[j][0] === i0) && (edges[j][1] === i1)) ||
-									((edges[j][0] === i1) && (edges[j][1] === i0))
-								) {
+								edges.push([i0, i1]);
 
-									boDuplicate = true;
-									break;
+							} catch (e) {
 
-								}
+								switch (e.id) {
 
-							}
-							if (!boDuplicate && (i0 < settings.count) && (i1 < settings.count)) {
-
-								try {
-
-									edges.push([i0, i1]);
-
-								} catch (e) {
-
-									switch (e.id) {
-
-										case e.IDS.edgesCountOverflow:
-										case e.IDS.invalidEdge:
-											break;
-										default: console.error(e.message);
-									}
-
+									case e.IDS.edgesCountOverflow:
+									case e.IDS.invalidEdge:
+										break;
+									default: console.error(e.message);
 								}
 
 							}
 
 						}
 
-					});
+					}
 
-				}
+				});
+
+//				}
 
 				//faces
 				_this.geometry.indices[1] = new Proxy([], {
