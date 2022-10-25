@@ -111,7 +111,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 					aNear[aNearIndex + aNear[aNearLengthIndex]] = j;//запомнить индекс текущей ближайшей вершины в ячейке с индексом, равным индексу первой обнаруженной вершины плюс клличество уже обнаруженных вершин
 					aNearDistance[aNearDistanceIndex + aNear[aNearLengthIndex]] = vecDistance;
 					aNear[aNearLengthIndex]++;
-					getMax(iMaxIndex, aNearLengthIndex, global_id);
+					getMax(iMaxIndex, aNearLengthIndex, i);
 
 				} else {
 
@@ -154,23 +154,21 @@ if (j == 2) {
 }
 
 //Найти индекс максимально удаленной вершины из массива aNear
-fn getMax(iMaxIndex : u32, aNearLengthIndex : u32, global_id : vec3<u32>) {
+fn getMax(iMaxIndex : u32, aNearLengthIndex : u32, i : u32) {
 
 //	aNear[iMaxIndex] = aNear[aNearLengthIndex];
 	var iMax = 0u;//aNear[iMaxIndex];
-	let aNearDistanceIndex = global_id.x * maxLength;
-	for (var i = 0u; i < aNear[aNearLengthIndex]; i++) {
+	let aNearDistanceIndex = i * maxLength;
+	for (var aNearIndex = 0u; aNearIndex < aNear[aNearLengthIndex]; aNearIndex++) {
 
-		if (aNearDistance[aNearDistanceIndex + iMax] < aNearDistance[aNearDistanceIndex + i]) {
-			iMax = i;
-		}
+		if (aNearDistance[aNearDistanceIndex + iMax] < aNearDistance[aNearDistanceIndex + aNearIndex]) { iMax = aNearIndex; }
 		/*
 		//debug
 		if (i == 1) {
-			verticesMatrix[global_id.x * verticesRowSize + 2] = aNearDistance[aNearDistanceIndex + iMax];
-			verticesMatrix[global_id.x * verticesRowSize + 3] = aNearDistance[aNearDistanceIndex + i];
-			aNear[global_id.x * aNearRowLength + 9] = aNearDistanceIndex;
-			aNear[global_id.x * aNearRowLength + 10] = iMax;
+			verticesMatrix[i * verticesRowSize + 2] = aNearDistance[aNearDistanceIndex + iMax];
+			verticesMatrix[i * verticesRowSize + 3] = aNearDistance[aNearDistanceIndex + i];
+			aNear[i * aNearRowLength + 9] = aNearDistanceIndex;
+			aNear[i * aNearRowLength + 10] = iMax;
 		}
 		*/
 
