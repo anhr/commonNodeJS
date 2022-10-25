@@ -284,6 +284,7 @@ class FermatSpiral {
 								return aNear[i];
 
 							}
+							//Найти индекс максимально удаленной вершины из массива aNear
 							function getMax() {
 
 								var iMax;
@@ -551,10 +552,13 @@ class FermatSpiral {
 
 				console.log('WebGPU: Create frematSpiral vertices');
 				const debugCount = 2,//Count of out debug values.
-					aNearType = Uint32Array,
+//					aNearType = Uint32Array,
 					verticesRowlength = 2 + debugCount,//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки
-					aNearDebugCount = 2,
-					aNearRowlength = maxLength + aNearDebugCount;//максимальное количство индексов вершин, ближайших к текущей вершине
+					aNearDebugCount = debugCount,//2,
+					aNearRowlength = 1 + //тут хранится количство индексов вершин, ближайших к текущей вершине
+						1 + //индекс максимально удаленной вершины из массива aNear
+						maxLength +//максимальное количство индексов вершин, ближайших к текущей вершине
+						aNearDebugCount;//место для отладки
 				new WebGPU(
 					{
 
@@ -584,8 +588,9 @@ class FermatSpiral {
 							phase: [
 								[],//First phase. No data output.
 								[//Second phase.
-									0,//First, output of the fermat spiral vertices
-									1//Second, output of veretice indices, nearest to corrent vertice.
+									0,//output of the fermat spiral vertices
+									1,//output of veretice indices, nearest to corrent vertice.
+									2,//distance between current vertice and nearest vertices.
 								]
 							],
 
@@ -593,21 +598,16 @@ class FermatSpiral {
 						results: [
 
 							//vertices
-							{
-
-//								bufferSize: l * verticesRowlength,
-								count: l * verticesRowlength,
-							
-							},
-
+							{ count: l * verticesRowlength, },
 							//aNear
 							{
 
-								type: aNearType,
-//								bufferSize: l * aNearRowlength,
+								type: Uint32Array,//aNearType,
 								count: l * aNearRowlength,
 
 							},
+							//aNearDistance расстояния между текущей вершиной и ближайшими к ней вершинами
+							{ count: l * aNearRowlength, },
 						],
 						out: function (out, i) {
 
@@ -636,11 +636,26 @@ class FermatSpiral {
 											l,//fermatSpiral vertices count. индекс ряда это индекс вершины 
 											aNearRowlength,//Количество индексов вершин, ближайших к данной вершине
 										],
-										type: aNearType,
+										type: Uint32Array,//aNearType,
 										
 									});
 									console.log('aNear:');
+									//console.table(aNear);
 									console.log(aNear);
+									break;
+								case 2://aNearDistance distance between current vertice and nearest vertices.
+									const distance = WebGPU.out2Matrix(out, {
+										
+										size: [
+											l,//fermatSpiral vertices count. индекс ряда это индекс вершины 
+											maxLength,//aNearRowlength,//Количество индексов вершин, ближайших к данной вершине
+										],
+//										type: Uint32Array,
+										
+									});
+									console.log('aNear distance:');
+									//console.table(distance);
+									console.log(distance);
 									break;
 								default: console.error('FermatSpiral: Create vertices WebGPU out failed. Invalid result ArrayBuffer index = ' + i);
 
@@ -659,7 +674,7 @@ class FermatSpiral {
 						shaderCodeFile: currentScriptPath + '/WebGPU/create.c',
 						shaderCodeText: function (text) {
 
-							return text.replace('%debugCount', debugCount).replace('%aNearRowLength', aNearRowlength);// ( '%workgroup_size', l );
+							return text.replace('%debugCount', debugCount).replace('%aNearRowLength', aNearRowlength);
 
 						}
 
