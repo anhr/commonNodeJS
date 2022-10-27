@@ -876,25 +876,26 @@ class FermatSpiral {
 							}
 
 						}
-						if (!boDuplicate && (i0 < settings.count) && (i1 < settings.count)) {
+						if (boDuplicate || (i0 >= settings.count) || (i1 >= settings.count)) continue;
+//						if (!boDuplicate && (i0 < settings.count) && (i1 < settings.count)) {
 
-							try {
+						try {
 
-								edges.push([i0, i1]);
+							edges.push([i0, i1]);
 
-							} catch (e) {
+						} catch (e) {
 
-								switch (e.id) {
+							switch (e.id) {
 
-									case e.IDS.edgesCountOverflow:
-									case e.IDS.invalidEdge:
-										break;
-									default: console.error(e.message);
-								}
-
+								case e.IDS.edgesCountOverflow:
+								case e.IDS.invalidEdge:
+									break;
+								default: console.error(e.message);
 							}
 
 						}
+
+//						}
 
 					}
 
