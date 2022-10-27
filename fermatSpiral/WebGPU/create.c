@@ -115,6 +115,25 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
 				} else {
 
+					let aNearDistanceMaxIndex = aNearDistanceIndex + aNear[iMaxIndex];
+					if (aNearDistance[aNearDistanceMaxIndex] > vecDistance) {
+
+						//debug
+						if ((i == 1) && (j == 9)) {
+							var indexDebug = index + aNearRowLength - debugCount;
+							aNear[indexDebug] = i;// aNear[iMaxIndex];
+							indexDebug++;
+							aNear[indexDebug] = j;
+							verticesMatrix[i * verticesRowSize + 2 + 0] = vecDistance;
+							verticesMatrix[i * verticesRowSize + 2 + 1] = aNearDistance[aNearDistanceMaxIndex];
+						}
+
+						aNearDistance[aNearDistanceMaxIndex] = vecDistance;
+//						aNear[aNear.iMax] = newItem;
+						getMax(iMaxIndex, aNearLengthIndex, i);
+
+					}
+
 				}
 /*
 if (j == 2) {
@@ -133,12 +152,13 @@ if (j == 2) {
 */
 
 			}
-/*
+			/*
+			//debug
 			var indexDebug = index + aNearRowLength - debugCount;
 			aNear[indexDebug] = aNearIndex;// verticesMatrixLength;
 			indexDebug++;
 			aNear[indexDebug] = aNearLengthIndex;
-*/
+			*/
 			break;
 		}
 
@@ -154,10 +174,12 @@ if (j == 2) {
 }
 
 //Найти индекс максимально удаленной вершины из массива aNear
-fn getMax(iMaxIndex : u32, aNearLengthIndex : u32, i : u32) {
+fn getMax(iMaxIndex : u32,//индекс места для хранения индекса максимально удаленной вершины из массива aNear
+	aNearLengthIndex : u32,//индекс места для количества обнаруженных индексов вершин, ближайших к текущей вершине
+	i : u32//fermatSpiral vertice index
+) {
 
-//	aNear[iMaxIndex] = aNear[aNearLengthIndex];
-	var iMax = 0u;//aNear[iMaxIndex];
+	var iMax = 0u;
 	let aNearDistanceIndex = i * maxLength;
 	for (var aNearIndex = 0u; aNearIndex < aNear[aNearLengthIndex]; aNearIndex++) {
 
@@ -165,8 +187,8 @@ fn getMax(iMaxIndex : u32, aNearLengthIndex : u32, i : u32) {
 		/*
 		//debug
 		if (i == 1) {
-			verticesMatrix[i * verticesRowSize + 2] = aNearDistance[aNearDistanceIndex + iMax];
-			verticesMatrix[i * verticesRowSize + 3] = aNearDistance[aNearDistanceIndex + i];
+			verticesMatrix[i * verticesRowSize + 2 + 0] = aNearDistance[aNearDistanceIndex + iMax];
+			verticesMatrix[i * verticesRowSize + 2 + 1] = aNearDistance[aNearDistanceIndex + i];
 			aNear[i * aNearRowLength + 9] = aNearDistanceIndex;
 			aNear[i * aNearRowLength + 10] = iMax;
 		}
@@ -174,15 +196,5 @@ fn getMax(iMaxIndex : u32, aNearLengthIndex : u32, i : u32) {
 
 	}
 	aNear[iMaxIndex] = iMax;
-/*
-	for (var i = 0; i < aNear.length; i++) {
-
-		if (iMax == = undefined) iMax = i;
-		else if (aNear[iMax].distance < aNear[i].distance) iMax = i;
-
-	}
-	if (iMax != undefined) aNear.iMax = iMax;
-	else console.error('FermatSpiral: Vector aNear add getMax. Invalid iMax = ' + iMax);
-*/
 
 }
