@@ -558,7 +558,17 @@ class FermatSpiral {
 					aNearRowlength = 1 + //тут хранится количство индексов вершин, ближайших к текущей вершине
 						1 + //индекс максимально удаленной вершины из массива aNear
 						maxLength +//максимальное количство индексов вершин, ближайших к текущей вершине
-						aNearDebugCount;//место для отладки
+						aNearDebugCount,//место для отладки
+
+					//Use https://planetcalc.com/5992/ for approximation.
+					//x 22 1120 2169
+					//y 19 2904 5853
+					//edgesCount = 0.00011085*points.length*points.length + 2.4848132*points.length - 50.75835068;
+					edgesCount = points.length >= 22 ? 0.00008558 * points.length * points.length + 2.52977007 * points.length - 36 : 19;
+
+				console.log('Vertices: ' + points.length +
+					//' edges: ' + edges.length +
+					' edgesCount: ' + edgesCount);
 				new WebGPU(
 					{
 
@@ -591,6 +601,7 @@ class FermatSpiral {
 									0,//output of the fermat spiral vertices
 									1,//output of veretice indices, nearest to corrent vertice.
 									2,//distance between current vertice and nearest vertices.
+									3,//edges
 								]
 							],
 
@@ -608,6 +619,8 @@ class FermatSpiral {
 							},
 							//aNearDistance расстояния между текущей вершиной и ближайшими к ней вершинами
 							{ count: l * aNearRowlength, },
+							//edges
+							{ count: edgesCount, },
 						],
 						out: function (out, i) {
 
@@ -858,7 +871,7 @@ class FermatSpiral {
 						}
 
 					});
-					const i0 = vertice1.i;
+//					const i0 = vertice1.i;
 					for (var k = 0; k < vertice1.aNear.length; k++) {
 
 						const i1 = vertice1.aNear[k].i;
@@ -866,8 +879,8 @@ class FermatSpiral {
 						for (var j = 0; j < edges.length; j++) {
 
 							if (
-								((edges[j][0] === i0) && (edges[j][1] === i1)) ||
-								((edges[j][0] === i1) && (edges[j][1] === i0))
+								((edges[j][0] === i) && (edges[j][1] === i1)) ||
+								((edges[j][0] === i1) && (edges[j][1] === i))
 							) {
 
 								boDuplicate = true;
@@ -876,12 +889,12 @@ class FermatSpiral {
 							}
 
 						}
-						if (boDuplicate || (i0 >= settings.count) || (i1 >= settings.count)) continue;
-//						if (!boDuplicate && (i0 < settings.count) && (i1 < settings.count)) {
+						if (boDuplicate || (i >= settings.count) || (i1 >= settings.count)) continue;
+//						if (!boDuplicate && (i < settings.count) && (i1 < settings.count)) {
 
 						try {
 
-							edges.push([i0, i1]);
+							edges.push([i, i1]);
 
 						} catch (e) {
 
@@ -902,7 +915,7 @@ class FermatSpiral {
 				});
 
 //				}
-
+				
 				//faces
 				_this.geometry.indices[1] = new Proxy([], {
 

@@ -7,42 +7,34 @@ const golden_angle = 137.5077640500378546463487;//137.508;//https://en.wikipedia
 const pi : f32 = 3.141592653589793;//Проблема с точностью. На самом деле получается 3.1415927410125732 ошибка уже в 8 знаке
 const a = golden_angle * pi / 180.0;
 const b = 90 * pi / 180.0;
-@group(0) @binding(0) var<storage, read_write> verticesMatrix : array<f32>;
 
 const aNearRowLength = %aNearRowLengthu;//количество обнаруженных индексов вершин, ближайших к текущей вершине
-	//плюс индекс максимально удаленной вершины из массива aNear
-	//плюс максимальное количство индексов вершин, ближайших к текущей вершине
-	//плюс отладочная информация
+//плюс индекс максимально удаленной вершины из массива aNear
+//плюс максимальное количство индексов вершин, ближайших к текущей вершине
+//плюс отладочная информация
 
 //максимальное количество ребер вершины
 const maxLength = aNearRowLength
-	- 1//место для количества обнаруженных индексов вершин, ближайших к текущей вершине
-	- 1//место для индекса максимально удаленной вершины из массива aNear
-	- debugCount;//считается что место для отладочной информации в массиве индексов ближайших к текущей вершине вершин равно количеству мест для отладочной информации в массиве verticesMatrix с вершинами fermat spiral
+- 1//место для количества обнаруженных индексов вершин, ближайших к текущей вершине
+- 1//место для индекса максимально удаленной вершины из массива aNear
+- debugCount;//считается что место для отладочной информации в массиве индексов ближайших к текущей вершине вершин равно количеству мест для отладочной информации в массиве verticesMatrix с вершинами fermat spiral
+
+@group(0) @binding(0) var<storage, read_write> verticesMatrix : array<f32>;
 @group(0) @binding(1) var<storage, read_write> aNear : array<u32>;//индексы ближайших к текущей вершине вершин
-/*
-struct ANear {
-size: u32,//
-index : array<u32>,//индексы ближайших к текущей вершине вершин
-}
-@group(0) @binding(1) var<storage, read_write> aNear : ANear;
-*/
 @group(0) @binding(2) var<storage, read_write> aNearDistance : array<f32>;//distance between current vertice and nearest vertices.
+struct Edges {
+length: u32,
+indices : array<u32>,
+}
+@group(0) @binding(3) var<storage, read_write> edges : Edges;
 
 //params
 
 struct Params {
 c: f32,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
 }
-@group(0) @binding(3) var<uniform> params : Params;
-/*
-struct ParamsU {
-//a: u32,
-phase: u32,
-}
-@group(0) @binding(3) var<uniform> paramsU : ParamsU;
-*/
-@group(0) @binding(4) var<uniform> phase : u32;
+@group(0) @binding(4) var<uniform> params : Params;
+@group(0) @binding(5) var<uniform> phase : u32;
 
 @compute @workgroup_size(1)//, 1)
 fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
@@ -84,10 +76,10 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 			var aNearLengthIndex = index;//индекс места для количества обнаруженных индексов вершин, ближайших к текущей вершине
 			var iMaxIndex = index + 1;//индекс места для хранения индекса максимально удаленной вершины из массива aNear
 			var aNearIndex = index + 2;//индекс индекса первой обнаруженной вершины, ближайших к текущей вершине
-			let vertex1Index = i * verticesRowSize;
-//			let vertex1 = verticesMatrix[vertex1Index];
-			let vertex1 = vec2(verticesMatrix[vertex1Index], verticesMatrix[vertex1Index + 1]);
-//			aNear[index] = u32(abs(vertex1.x * 100000.0f));
+			let vertice1Index = i * verticesRowSize;
+//			let vertice1 = verticesMatrix[vertice1Index];
+			let vertice1 = vec2(verticesMatrix[vertice1Index], verticesMatrix[vertice1Index + 1]);
+//			aNear[index] = u32(abs(vertice1.x * 100000.0f));
 //			index++;
 //			var aNearDistanceIndex = index;
 			var aNearDistanceIndex = i * maxLength;//в этом массиве нет отладочной информации
@@ -98,14 +90,14 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 */
 			//			aNear[index] = u32(0.02701997011899948f * 1000.0f);
 //			aNear[index] = global_id.x;
-//			let vertex2 = verticesMatrix[vertex1Index + 1];
-//			aNearDistance[aNearDistanceIndex + 1] = vertex2;
+//			let vertice2 = verticesMatrix[vertice1Index + 1];
+//			aNearDistance[aNearDistanceIndex + 1] = vertice2;
 			var verticesMatrixLength = arrayLength(&verticesMatrix) / verticesRowSize;//22
 			for (var j = 0u; j < verticesMatrixLength; j++) {
 				if (i == j) { continue; }
-				let vertex2Index = j * verticesRowSize;
-				let vertex2 = vec2(verticesMatrix[vertex2Index], verticesMatrix[vertex2Index + 1]);
-				let vecDistance = distance(vertex1, vertex2);
+				let vertice2Index = j * verticesRowSize;
+				let vertice2 = vec2(verticesMatrix[vertice2Index], verticesMatrix[vertice2Index + 1]);
+				let vecDistance = distance(vertice1, vertice2);
 				if (aNear[aNearLengthIndex] < maxLength) {
 
 					aNear[aNearIndex + aNear[aNearLengthIndex]] = j;//запомнить индекс текущей ближайшей вершины в ячейке с индексом, равным индексу первой обнаруженной вершины плюс клличество уже обнаруженных вершин
@@ -118,6 +110,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 					let aNearDistanceMaxIndex = aNearDistanceIndex + aNear[iMaxIndex];
 					if (aNearDistance[aNearDistanceMaxIndex] > vecDistance) {
 
+						/*
 						//debug
 						if ((i == 1) && (j == 9)) {
 							var indexDebug = index + aNearRowLength - debugCount;
@@ -127,6 +120,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 							verticesMatrix[i * verticesRowSize + 2 + 0] = vecDistance;
 							verticesMatrix[i * verticesRowSize + 2 + 1] = aNearDistance[aNearDistanceMaxIndex];
 						}
+						*/
 
 						aNearDistance[aNearDistanceMaxIndex] = vecDistance;
 //						aNear[aNear.iMax] = newItem;
@@ -141,24 +135,33 @@ if (j == 2) {
 	aNearDistance[aNearDistanceIndex] = vecDistance;
 
 	aNearDistanceIndex++;
-	aNearDistance[aNearDistanceIndex] = vertex1.x;
+	aNearDistance[aNearDistanceIndex] = vertice1.x;
 	aNearDistanceIndex++;
-	aNearDistance[aNearDistanceIndex] = vertex1.y;
+	aNearDistance[aNearDistanceIndex] = vertice1.y;
 	aNearDistanceIndex++;
-	aNearDistance[aNearDistanceIndex] = vertex2.x;
+	aNearDistance[aNearDistanceIndex] = vertice2.x;
 	aNearDistanceIndex++;
-	aNearDistance[aNearDistanceIndex] = vertex2.y;
+	aNearDistance[aNearDistanceIndex] = vertice2.y;
 }
 */
 
 			}
-			/*
-			//debug
-			var indexDebug = index + aNearRowLength - debugCount;
-			aNear[indexDebug] = aNearIndex;// verticesMatrixLength;
-			indexDebug++;
-			aNear[indexDebug] = aNearLengthIndex;
-			*/
+			for (var k = 0u; k < aNear[aNearLengthIndex]; k++) {
+				let i1 = aNear[aNearIndex + k];
+				var boDuplicate = false;
+				edges.length = 123;
+				edges.indices[5] = 456;
+				/*
+				//debug
+				if (k == 1) {
+					var indexDebug = index + aNearRowLength - debugCount;
+					aNear[indexDebug] = i1;
+					indexDebug++;
+					aNear[indexDebug] = aNearLengthIndex;
+				}
+				*/
+				//for (var j = 0u; j < edges.length; j++){}
+			}
 			break;
 		}
 
