@@ -555,9 +555,17 @@ class FermatSpiral {
 //					aNearType = Uint32Array,
 					verticesRowlength = 2 + debugCount,//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки
 					aNearDebugCount = debugCount,//2,
+
+					//длинна массива индексов вершин, ближайших к текущей вершине
+					aNearlength = (
+						1 +//индекс ближайшей вершины
+						1//расстояние между вершинами
+					) * maxLength,//максимальное количство индексов вершин, ближайших к текущей вершине
+
+					//длинна структуры VerticeANears равная длинне ряда в масиве aNear
 					aNearRowlength = 1 + //тут хранится количство индексов вершин, ближайших к текущей вершине
 						1 + //индекс максимально удаленной вершины из массива aNear
-						maxLength +//максимальное количство индексов вершин, ближайших к текущей вершине
+						aNearlength +//длинна массива индексов вершин, ближайших к текущей вершине
 						aNearDebugCount,//место для отладки
 
 					//Use https://planetcalc.com/5992/ for approximation.
@@ -643,11 +651,30 @@ class FermatSpiral {
 									createEdgesAndFaces();
 									break;
 								case 1://aNear
+									const verticesANears = [], uInt32Array = new Uint32Array(out), float32Array = new Float32Array(out);
+									for(var i = 0, j = 0; i < l; i++, j += aNearRowlength){
+
+										const aNear = [], step = aNearlength / maxLength;
+										for (var k = 0; k < aNearlength; k++){
+
+											aNear.push({ i: uInt32Array[j + 2 + k], distance: float32Array[j + 2 + k + 1]})
+											k++;
+										}
+										verticesANears.push({
+											length: uInt32Array[j],//количества обнаруженных индексов вершин, ближайших к текущей вершине
+											iMax: uInt32Array[j + 1],//индекс максимально удаленной вершины из массива aNear
+											aNear : aNear,//индексы вершин, которые ближе всего расположены к текущей вершине
+											debug: [uInt32Array[j + aNearlength + 2 + 0], uInt32Array[j + aNearlength + 2 + 1]],
+										});
+										
+									}
+									console.log('verticesANears = ');
+									console.dirxml(verticesANears);
 									const aNear = WebGPU.out2Matrix(out, {
 										
 										size: [
 											l,//fermatSpiral vertices count. индекс ряда это индекс вершины 
-											aNearRowlength,//Количество индексов вершин, ближайших к данной вершине
+											aNearRowlength,//длинна структуры VerticeANears равная длинне ряда в масиве aNear
 										],
 										type: Uint32Array,//aNearType,
 										
