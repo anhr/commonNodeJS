@@ -55,7 +55,6 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
 	let i = global_id.x;//fermatSpiral vertice index
 
-//	switch (paramsU.phase)
 	switch (phase)
 	{
 
@@ -111,34 +110,27 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 				let vertice2Index = j * verticesRowSize;
 				let vertice2 = vec2(verticesMatrix[vertice2Index], verticesMatrix[vertice2Index + 1]);
 				let vecDistance = distance(vertice1, vertice2);
-//				if (aNear[aNearLengthIndex] < maxLength)
 				if (aNear[i].length < maxLength) {
 
-//					aNear[aNearIndex + aNear[aNearLengthIndex]] = j;//запомнить индекс текущей ближайшей вершины в ячейке с индексом, равным индексу первой обнаруженной вершины плюс клличество уже обнаруженных вершин
 					aNear[i].aNear[aNear[i].length].i = j;//добавить индекс текущей ближайшей вершины
 aNear[i].aNear[aNear[i].length].distance = 456;//добавить индекс текущей ближайшей вершины
-//					aNearDistance[aNearDistanceIndex + aNear[aNearLengthIndex]] = vecDistance;
 					aNearDistance[aNearDistanceIndex + aNear[i].length] = vecDistance;
-//					aNear[aNearLengthIndex]++;
 					aNear[i].length++;
-					getMax(/*iMaxIndex, aNearLengthIndex, */i);
+					getMax(i);
 
 				} else {
 
-//					let aNearDistanceMaxIndex = aNearDistanceIndex + aNear[iMaxIndex];
 					let aNearDistanceMaxIndex = aNearDistanceIndex + aNear[i].iMax;
 					if (aNearDistance[aNearDistanceMaxIndex] > vecDistance) {
 
 						aNearDistance[aNearDistanceMaxIndex] = vecDistance;
-//						aNear[aNear.iMax] = newItem;
-						getMax(/*iMaxIndex, aNearLengthIndex, */i);
+						getMax(i);
 
 					}
 
 				}
 
 			}
-//			for (var k = 0u; k < aNear[aNearLengthIndex]; k++)
 			for (var k = 0u; k < aNear[i].length; k++) {
 				let i1 = aNear[aNearIndex + k];
 				var boDuplicate = false;
@@ -171,15 +163,12 @@ aNear[i].aNear[aNear[i].length].distance = 456;//добавить индекс �
 
 //Найти индекс максимально удаленной вершины из массива aNear
 fn getMax(
-//	iMaxIndex : u32,//индекс места для хранения индекса максимально удаленной вершины из массива aNear
-//	aNearLengthIndex : u32,//индекс места для количества обнаруженных индексов вершин, ближайших к текущей вершине
 	i : u32//fermatSpiral vertice index
 ) {
 
 	var iMax = 0u;
 	let aNearDistanceIndex = i * maxLength;
 //	var aNearItem = aNear[i];
-//	for (var aNearIndex = 0u; aNearIndex < aNear[aNearLengthIndex]; aNearIndex++)
 	for (var aNearIndex = 0u; aNearIndex < aNear[i].length; aNearIndex++) {
 
 		if (aNearDistance[aNearDistanceIndex + iMax] < aNearDistance[aNearDistanceIndex + aNearIndex]) { iMax = aNearIndex; }
@@ -194,7 +183,6 @@ fn getMax(
 		*/
 
 	}
-//	aNear[iMaxIndex] = iMax;
 	aNear[i].iMax = iMax;
 
 }
