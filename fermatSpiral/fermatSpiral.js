@@ -323,6 +323,8 @@ class FermatSpiral {
 
 									} else {
 
+										//Если максимально расстояние до ближайшей вершины больше растояние до текущей вершины, то заменить ближайшую вершину с максимальным расстоянием
+										//See phase i in D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\fermatSpiral\WebGPU\create.c file
 										if (aNear[aNear.iMax].distance > distance) {
 
 											aNear[aNear.iMax] = newItem;
@@ -884,18 +886,15 @@ class FermatSpiral {
 				edges.length = 0;//удалить все ребра
 //				{
 
+				//see phase 1 (aNear) in the D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\fermatSpiral\WebGPU\create.c file
 				points.forEach((vertice1, i) => {
 
 					vertice1.i = i;
 
 					points.forEach((vertice2, j) => {
 
-						if (i != j) {
-
-							const distance = vertice1.distanceTo(vertice2);
-							vertice1.aNear.add(j, distance);
-
-						}
+						if (i != j)
+							vertice1.aNear.add(j, vertice1.distanceTo(vertice2));
 
 					});
 //					const i0 = vertice1.i;
