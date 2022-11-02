@@ -87,18 +87,18 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 		case 1: {
 			var index = i * aNearRowLength;
 //			var aNearItem = aNear[i];
-			var aNearLengthIndex = index;//индекс места для количества обнаруженных индексов вершин, ближайших к текущей вершине
-			var iMaxIndex = index + 1;//индекс места для хранения индекса максимально удаленной вершины из массива aNear
-			var aNearIndex = index + 2;//индекс индекса первой обнаруженной вершины, ближайших к текущей вершине
+//			var aNearLengthIndex = index;//индекс места для количества обнаруженных индексов вершин, ближайших к текущей вершине
+//			var iMaxIndex = index + 1;//индекс места для хранения индекса максимально удаленной вершины из массива aNear
+//			var aNearIndex = index + 2;//индекс индекса первой обнаруженной вершины, ближайших к текущей вершине
 			let vertice1Index = i * verticesRowSize;
 			let vertice1 = vec2(verticesMatrix[vertice1Index], verticesMatrix[vertice1Index + 1]);//координаты вершины для которой будем искать ближайшие вершины
-			var aNearDistanceIndex = i * maxLength;//в этом массиве нет отладочной информации
+//			var aNearDistanceIndex = i * maxLength;//в этом массиве нет отладочной информации
 			var verticesMatrixLength = arrayLength(&verticesMatrix) / verticesRowSize;//22
 
 			//debug
+			/*
 			var indexDebug = index + aNearRowLength - debugCount;
 			aNear[i].debug[0] = 123;// aNear[iMaxIndex];
-			/*
 			indexDebug++;
 			aNear[indexDebug] = j;
 			verticesMatrix[i * verticesRowSize + 2 + 0] = vecDistance;
@@ -140,7 +140,8 @@ if (aNearDistance[aNearDistanceMaxIndex] > vecDistance) {
 
 			}
 			for (var k = 0u; k < aNear[i].length; k++) {
-				let i1 = aNear[aNearIndex + k];
+				let i1 = aNear[i].aNear[k].i;
+//				let i1 = aNear[aNearIndex + k];
 				var boDuplicate = false;
 				edges.length = 123;
 				edges.indices[5] = 456;
