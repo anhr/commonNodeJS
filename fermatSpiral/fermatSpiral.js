@@ -610,8 +610,8 @@ class FermatSpiral {
 								[//Second phase.
 									0,//output of the fermat spiral vertices
 									1,//output of veretice indices, nearest to corrent vertice.
-									2,//distance between current vertice and nearest vertices.
-									3,//edges
+//									2,//distance between current vertice and nearest vertices.
+									2,//edges
 								]
 							],
 
@@ -628,7 +628,7 @@ class FermatSpiral {
 
 							},
 							//aNearDistance расстояния между текущей вершиной и ближайшими к ней вершинами
-							{ count: l * aNearRowlength, },
+//							{ count: l * aNearRowlength, },
 							//edges
 							{ count: edgesCount, },
 						],
@@ -685,7 +685,9 @@ class FermatSpiral {
 									//console.table(aNear);
 									console.log(aNear);
 									break;
-								case 2://aNearDistance distance between current vertice and nearest vertices.
+								case 2://Edges
+/*									
+									//aNearDistance distance between current vertice and nearest vertices.
 									const distance = WebGPU.out2Matrix(out, {
 										
 										size: [
@@ -698,6 +700,7 @@ class FermatSpiral {
 									console.log('aNear distance:');
 									//console.table(distance);
 									console.log(distance);
+*/		 
 									break;
 								default: console.error('FermatSpiral: Create vertices WebGPU out failed. Invalid result ArrayBuffer index = ' + i);
 

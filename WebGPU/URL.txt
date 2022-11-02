@@ -12,5 +12,7 @@ Tutorial:
 	https://austin-eng.com/webgpu-samples
 	Подробно написано как WebGPU работает
 	https://surma.dev/things/webgpu/
+	3d графика. Используется ts
+	https://www.youtube.com/watch?v=1Ydti6_-aB4
 
 thanks to https://web.dev/gpu-compute/

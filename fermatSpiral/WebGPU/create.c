@@ -35,20 +35,20 @@ aNear : array<ANear, maxLength>,//индексы вершин, которые б
 debug: array<u32, debugCount>,
 }
 @group(0) @binding(1) var<storage, read_write> aNear : array<VerticeANears>;//<u32>;//индексы ближайших к текущей вершине вершин
-@group(0) @binding(2) var<storage, read_write> aNearDistance : array<f32>;//distance between current vertice and nearest vertices.
+//@group(0) @binding(2) var<storage, read_write> aNearDistance : array<f32>;//distance between current vertice and nearest vertices.
 struct Edges {
 length: u32,
 indices : array<u32>,
 }
-@group(0) @binding(3) var<storage, read_write> edges : Edges;
+@group(0) @binding(2) var<storage, read_write> edges : Edges;
 
 //params
 
 struct Params {
 c: f32,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
 }
-@group(0) @binding(4) var<uniform> params : Params;
-@group(0) @binding(5) var<uniform> phase : u32;
+@group(0) @binding(3) var<uniform> params : Params;
+@group(0) @binding(4) var<uniform> phase : u32;
 
 @compute @workgroup_size(1)//, 1)
 fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
@@ -114,7 +114,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
 					aNear[i].aNear[aNear[i].length].i = j;//добавить индекс текущей ближайшей вершины
 					aNear[i].aNear[aNear[i].length].distance = vecDistance;
-aNearDistance[aNearDistanceIndex + aNear[i].length] = vecDistance;
+//aNearDistance[aNearDistanceIndex + aNear[i].length] = vecDistance;
 					aNear[i].length++;
 					getMax(i);
 
@@ -127,6 +127,7 @@ aNearDistance[aNearDistanceIndex + aNear[i].length] = vecDistance;
 						aNear[i].aNear[aNear[i].iMax].distance = vecDistance;
 						getMax(i);
 					}
+/*
 let aNearDistanceMaxIndex = aNearDistanceIndex + aNear[i].iMax;
 if (aNearDistance[aNearDistanceMaxIndex] > vecDistance) {
 
@@ -134,7 +135,7 @@ if (aNearDistance[aNearDistanceMaxIndex] > vecDistance) {
 	getMax(i);
 
 }
-
+*/
 				}
 
 			}
@@ -178,7 +179,8 @@ fn getMax(
 //	var aNearItem = aNear[i];
 	for (var aNearIndex = 0u; aNearIndex < aNear[i].length; aNearIndex++) {
 
-		if (aNearDistance[aNearDistanceIndex + iMax] < aNearDistance[aNearDistanceIndex + aNearIndex]) { iMax = aNearIndex; }
+//		if (aNearDistance[aNearDistanceIndex + iMax] < aNearDistance[aNearDistanceIndex + aNearIndex]) { iMax = aNearIndex; }
+		if (aNear[i].aNear[aNear[i].iMax].distance < aNear[i].aNear[aNearIndex].distance) { iMax = aNearIndex; }
 		/*
 		//debug
 		if (i == 1) {
