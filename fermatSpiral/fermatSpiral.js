@@ -638,6 +638,15 @@ class FermatSpiral {
 							switch(i) {
 
 								case 0://Vertices
+									const verticesMatrix = [], verticesArray = new Float32Array(out);
+									for(var i = 0, j = 0; i < l; i++, j += verticesRowlength){
+										verticesMatrix.push({
+											vertice: new Vector([verticesArray[j], verticesArray[j + 1]]),
+											debug: [verticesArray[j + 2 + 0], verticesArray[j + 2 + 1]],
+										});
+									}
+									console.log('vertices = ');
+									console.log(verticesMatrix);
 									const vertices = WebGPU.out2Matrix(out, {
 										
 										size: [
