@@ -1,0 +1,23 @@
+fermatSpiral.js:755 FermatSpiral: Vertices creation time = 0 milliseconds.
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 6}[[Handler]]: Object[[Target]]: Array(7)0: {i: 1, distance: 0.04}1: {i: 2, distance: 0.05656854249492381}2: {i: 3, distance: 0.06928203230275509}3: {i: 4, distance: 0.08}4: {i: 5, distance: 0.08944271909999157}5: {i: 6, distance: 0.09797958971132711}6: {i: 7, distance: 0.10583005244258363}iMax: 6length: 7[[Prototype]]: Array(0)[[IsRevoked]]: false
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 6}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 2}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 4}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 2}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 3}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 5}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 0}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 0}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 0}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 0}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 5}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 6}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 1}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 0}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 0}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 0}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 5}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 4}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 2}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 5}
+fermatSpiral.js:912 Proxy {0: {…}, 1: {…}, 2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, iMax: 1}

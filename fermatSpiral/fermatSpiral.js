@@ -301,6 +301,7 @@ class FermatSpiral {
 							switch (name) {
 
 								case 'length': return aNear.length;
+								case 'forEach': return aNear.forEach;
 								case 'add': return function (i, distance) {
 
 									//debug
@@ -679,8 +680,15 @@ class FermatSpiral {
 										});
 										
 									}
+									
+									//debug
 									console.log('verticesANears = ');
-									console.dirxml(verticesANears);
+									verticesANears.forEach(item => {
+										let log = '';
+										item.aNear.forEach(aNear => log +=' i:' + aNear.i + ' d:' + aNear.distance);
+										console.log('iMax:' + item.iMax + log);
+									});
+									
 									const aNear = WebGPU.out2Matrix(out, {
 										
 										size: [
@@ -909,6 +917,12 @@ class FermatSpiral {
 							vertice1.aNear.add(j, vertice1.distanceTo(vertice2));
 
 					});
+
+					//debug
+					let log = '';
+					vertice1.aNear.forEach(aNear => log +=' i:' + aNear.i + ' d:' + aNear.distance);
+					console.log(log);
+					
 //					const i0 = vertice1.i;
 					for (var k = 0; k < vertice1.aNear.length; k++) {
 
