@@ -549,7 +549,8 @@ class FermatSpiral {
 			points.length = 0;
 
 			//speed test
-			const timeStart = Date.now();
+			console.time('FermatSpiral: Vertices creation time = ');
+			//const timeStart = Date.now();
 			
 			if (WebGPU.isSupportWebGPU()) {
 
@@ -760,7 +761,8 @@ class FermatSpiral {
 
 			function createEdgesAndFaces() {
 
-				console.log('FermatSpiral: Vertices creation time = ' + ((Date.now() - timeStart)) + ' milliseconds.');
+				console.timeEnd('FermatSpiral: Vertices creation time = ');
+//				console.log('FermatSpiral: Vertices creation time = ' + ((Date.now() - timeStart)) + ' milliseconds.');
 
 				//indices
 
