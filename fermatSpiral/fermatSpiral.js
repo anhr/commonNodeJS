@@ -302,6 +302,7 @@ class FermatSpiral {
 
 								case 'length': return aNear.length;
 								case 'forEach': return aNear.forEach;
+								case 'iMax': return aNear.iMax;
 								case 'add': return function (i, distance) {
 
 									//debug
@@ -921,8 +922,8 @@ class FermatSpiral {
 					});
 
 					//debug
-					let log = '';
-					vertice1.aNear.forEach(aNear => log +=' i:' + aNear.i + ' d:' + aNear.distance);
+					let log = 'iMax:' + vertice1.aNear.iMax;
+					vertice1.aNear.forEach(aNear => log += ' i:' + aNear.i + ' d:' + aNear.distance);
 					console.log(log);
 					
 //					const i0 = vertice1.i;

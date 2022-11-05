@@ -120,8 +120,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 				} else {
 
 					//debug
-					if ((i == 2) && (j == 15))
-					{
+					if ((i == 2) && (j == 15)) {
 						verticesMatrix[i].debug[0] = vecDistance;
 						verticesMatrix[i].debug[1] = aNear[i].aNear[aNear[i].iMax].distance;
 						aNear[i].debug[0] = aNear[i].iMax;
@@ -131,9 +130,11 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 					//Если максимально расстояние до ближайшей вершины больше растояние до текущей вершины, то заменить ближайшую вершину с максимальным расстоянием
 					//See array.aNear = new Proxy add aNear in FermatSpiral
 					if (aNear[i].aNear[aNear[i].iMax].distance > vecDistance) {
+
 						aNear[i].aNear[aNear[i].iMax].i = j;//изменить индекс текущей ближайшей вершины
 						aNear[i].aNear[aNear[i].iMax].distance = vecDistance;
 						getMax(i);
+
 					}
 /*
 let aNearDistanceMaxIndex = aNearDistanceIndex + aNear[i].iMax;
@@ -183,13 +184,13 @@ fn getMax(
 	i : u32//fermatSpiral vertice index
 ) {
 
-	var iMax = aNear[i].iMax;
+	var aNearItem = aNear[i];
+	var iMax = aNearItem.iMax;
 //	let aNearDistanceIndex = i * maxLength;
-//	var aNearItem = aNear[i];
 	for (var aNearIndex = 0u; aNearIndex < aNear[i].length; aNearIndex++) {
 
-//		if (aNearDistance[aNearDistanceIndex + iMax] < aNearDistance[aNearDistanceIndex + aNearIndex]) { iMax = aNearIndex; }
-		if (aNear[i].aNear[aNear[i].iMax].distance < aNear[i].aNear[aNearIndex].distance) { iMax = aNearIndex; }
+//		if (aNear[i].aNear[aNear[i].iMax].distance < aNear[i].aNear[aNearIndex].distance) { iMax = aNearIndex; }
+		if (aNearItem.aNear[iMax].distance < aNearItem.aNear[aNearIndex].distance) { iMax = aNearIndex; }
 		/*
 		//debug
 		if (i == 1) {
