@@ -593,19 +593,19 @@ class FermatSpiral {
 								f32: {
 
 									c: settings.c,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
-//paramBuffer: {},
-//data:[],
+									//paramBuffer: {},
+									//data:[],
 
 								},
 								//type is Uint32Array,
-/*
-								u32: {
-
-//a: 67,
-//									phase: 2,
-
-								},
-*/
+								/*
+																u32: {
+								
+								//a: 67,
+								//									phase: 2,
+								
+																},
+								*/
 
 							},
 							phase: [
@@ -613,7 +613,7 @@ class FermatSpiral {
 								[//Second phase.
 									0,//output of the fermat spiral vertices
 									1,//output of veretice indices, nearest to corrent vertice.
-//									2,//distance between current vertice and nearest vertices.
+									//									2,//distance between current vertice and nearest vertices.
 									2,//edges
 								]
 							],
@@ -622,7 +622,38 @@ class FermatSpiral {
 						results: [
 
 							//vertices
-							{ count: l * verticesRowlength, },
+							{
+								count: l * verticesRowlength,
+								out: {
+									phase: 2,
+									onReady: out => {
+									
+										const verticesMatrix = [], verticesArray = new Float32Array(out);
+										for(var i = 0, j = 0; i < l; i++, j += verticesRowlength){
+											verticesMatrix.push({
+												vertice: new Vector([verticesArray[j], verticesArray[j + 1]]),
+												debug: [verticesArray[j + 2 + 0], verticesArray[j + 2 + 1]],
+											});
+										}
+										console.log('vertices = ');
+										console.log(verticesMatrix);
+										const vertices = WebGPU.out2Matrix(out, {
+										
+											size: [
+												l,//fermatSpiral vertices count. Каждый ряд это координата точки 
+												verticesRowlength,
+											],
+											push: item => { points.push(new Vector([item[0], item[1]])); },
+											returnMatrix: true,//return matrix for debug
+										
+										});
+										console.log(vertices);
+			//							console.log(points);
+										createEdgesAndFaces();
+									
+									}
+								}
+							},
 							//aNear
 							{
 
@@ -635,12 +666,13 @@ class FermatSpiral {
 							//edges
 							{ count: edgesCount, },
 						],
-						out: function (out, i) {
+						out: (out, i) => {
 
 							if (out.name) console.log(out.name);
 							switch(i) {
 
 								case 0://Vertices
+/*									
 									const verticesMatrix = [], verticesArray = new Float32Array(out);
 									for(var i = 0, j = 0; i < l; i++, j += verticesRowlength){
 										verticesMatrix.push({
@@ -663,6 +695,7 @@ class FermatSpiral {
 									console.log(vertices);
 		//							console.log(points);
 									createEdgesAndFaces();
+*/		 
 									break;
 								case 1://aNear
 									const verticesANears = [], uInt32Array = new Uint32Array(out), float32Array = new Float32Array(out);

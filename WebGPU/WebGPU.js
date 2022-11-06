@@ -470,9 +470,26 @@ class WebGPU {
 
 					async function waitResult(i) {
 
+						for ( let resultIndex = 0; resultIndex < settings.results.length; resultIndex++) {
+
+							const result = settings.results[resultIndex];
+							if( !result.out ) return;
+							if ((result.out.phase || 0) !== i) return;
+							if( !result.out.onReady ) {
+								
+								console.error('WebGPU: Please add settings.results[' + resultIndex + '].out.onReady callback function');
+								return;
+
+							}
+							await result.gpuReadBuffer.mapAsync(GPUMapMode.READ);
+							result.out.onReady(result.gpuReadBuffer.getMappedRange());
+							
+						}
+/*						
 						const resultMatrix = settings.results[i];
 						await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
 						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), i);
+*/	  
 
 					}
 					if (input.phase != undefined)
