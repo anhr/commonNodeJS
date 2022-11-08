@@ -469,12 +469,7 @@ class FermatSpiral {
 									case 'indices': return array.indices;
 									case 'i': return array.i;
 									case 'arguments': return array.arguments;
-									default: {
-
-										return _this[name];
-										//										console.error('fermatSpiral: Vector get. Invalid name: ' + name);
-
-									}
+									default: { return _this[name]; }
 
 								}
 								return;
@@ -551,13 +546,11 @@ class FermatSpiral {
 
 			//speed test
 			console.time('FermatSpiral: Vertices creation time = ');
-			//const timeStart = Date.now();
 			
 			if (WebGPU.isSupportWebGPU()) {
 
 				console.log('WebGPU: Create frematSpiral vertices');
 				const debugCount = 2,//Count of out debug values.
-//					aNearType = Uint32Array,
 					verticesRowlength = 2 + debugCount,//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки
 					aNearDebugCount = debugCount,//2,
 
@@ -593,32 +586,17 @@ class FermatSpiral {
 								f32: {
 
 									c: settings.c,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/wiki/Fermat%27s_spiral for details.
-									//paramBuffer: {},
-									//data:[],
 
 								},
 								//type is Uint32Array,
 								/*
-																u32: {
+								u32: {
 								
-								//a: 67,
-								//									phase: 2,
 								
-																},
+								},
 								*/
 
 							},
-/*
-							phase: [
-								[],//First phase. No data output.
-								[//Second phase.
-									0,//output of the fermat spiral vertices
-									1,//output of veretice indices, nearest to corrent vertice.
-									//									2,//distance between current vertice and nearest vertices.
-									2,//edges
-								]
-							],
-*/
 
 						},
 						results: [
@@ -628,15 +606,18 @@ class FermatSpiral {
 								count: l * verticesRowlength,
 								out: out => {
 
-									const verticesMatrix = [], verticesArray = new Float32Array(out);
+									const verticesArray = new Float32Array(out);
+									console.log('vertices:');
+									/*
+									const verticesMatrix = [];
 									for (var i = 0, j = 0; i < l; i++, j += verticesRowlength) {
 										verticesMatrix.push({
 											vertice: new Vector([verticesArray[j], verticesArray[j + 1]]),
 											debug: [verticesArray[j + 2 + 0], verticesArray[j + 2 + 1]],
 										});
 									}
-									console.log('vertices = ');
 									console.log(verticesMatrix);
+									*/
 									const vertices = WebGPU.out2Matrix(out, {
 
 										size: [
@@ -648,7 +629,6 @@ class FermatSpiral {
 
 									});
 									console.log(vertices);
-									//							console.log(points);
 									createEdgesAndFaces();
 
 								}
@@ -656,7 +636,6 @@ class FermatSpiral {
 							//aNear
 							{
 
-//								type: Uint32Array,//aNearType,
 								count: l * aNearRowlength,
 								phase: 1,
 								out: out => {
@@ -680,6 +659,7 @@ class FermatSpiral {
 
 									}
 
+									/*
 									//debug
 									console.log('verticesANears = ');
 									verticesANears.forEach(item => {
@@ -687,6 +667,7 @@ class FermatSpiral {
 										item.aNear.forEach(aNear => log += ' i:' + aNear.i + ' d:' + aNear.distance);
 										console.log('iMax:' + item.iMax + log);
 									});
+									*/
 
 									const aNear = WebGPU.out2Matrix(out, {
 
@@ -704,8 +685,6 @@ class FermatSpiral {
 								}
 
 							},
-							//aNearDistance расстояния между текущей вершиной и ближайшими к ней вершинами
-//							{ count: l * aNearRowlength, },
 							//edges
 							{
 
@@ -719,107 +698,8 @@ class FermatSpiral {
 
 							},
 						],
-						out: (out, i) => {
-
-							if (out.name) console.log(out.name);
-							switch(i) {
-
-								case 0://Vertices
-/*									
-									const verticesMatrix = [], verticesArray = new Float32Array(out);
-									for(var i = 0, j = 0; i < l; i++, j += verticesRowlength){
-										verticesMatrix.push({
-											vertice: new Vector([verticesArray[j], verticesArray[j + 1]]),
-											debug: [verticesArray[j + 2 + 0], verticesArray[j + 2 + 1]],
-										});
-									}
-									console.log('vertices = ');
-									console.log(verticesMatrix);
-									const vertices = WebGPU.out2Matrix(out, {
-										
-										size: [
-											l,//fermatSpiral vertices count. Каждый ряд это координата точки 
-											verticesRowlength,
-										],
-										push: item => { points.push(new Vector([item[0], item[1]])); },
-										returnMatrix: true,//return matrix for debug
-										
-									});
-									console.log(vertices);
-		//							console.log(points);
-									createEdgesAndFaces();
-*/		 
-									break;
-								case 1://aNear
-/*
-									const verticesANears = [], uInt32Array = new Uint32Array(out), float32Array = new Float32Array(out);
-									for(var i = 0, j = 0; i < l; i++, j += aNearRowlength){
-
-										const aNear = [], step = aNearlength / maxLength;
-										for (var k = 0; k < aNearlength; k++){
-
-											aNear.push({ i: uInt32Array[j + 2 + k], distance: float32Array[j + 2 + k + 1]})
-											k++;
-										}
-										verticesANears.push({
-											length: uInt32Array[j],//количества обнаруженных индексов вершин, ближайших к текущей вершине
-											iMax: uInt32Array[j + 1],//индекс максимально удаленной вершины из массива aNear
-											aNear : aNear,//индексы вершин, которые ближе всего расположены к текущей вершине
-											debug: [uInt32Array[j + aNearlength + 2 + 0], uInt32Array[j + aNearlength + 2 + 1]],
-										});
-										
-									}
-									
-									//debug
-									console.log('verticesANears = ');
-									verticesANears.forEach(item => {
-										let log = '';
-										item.aNear.forEach(aNear => log +=' i:' + aNear.i + ' d:' + aNear.distance);
-										console.log('iMax:' + item.iMax + log);
-									});
-									
-									const aNear = WebGPU.out2Matrix(out, {
-										
-										size: [
-											l,//fermatSpiral vertices count. индекс ряда это индекс вершины 
-											aNearRowlength,//длинна структуры VerticeANears равная длинне ряда в масиве aNear
-										],
-										type: Uint32Array,//aNearType,
-										
-									});
-									console.log('aNear:');
-									//console.table(aNear);
-									console.log(aNear);
-*/
-									break;
-								case 2://Edges
-/*									
-									//aNearDistance distance between current vertice and nearest vertices.
-									const distance = WebGPU.out2Matrix(out, {
-										
-										size: [
-											l,//fermatSpiral vertices count. индекс ряда это индекс вершины 
-											maxLength,//aNearRowlength,//Количество индексов вершин, ближайших к данной вершине
-										],
-//										type: Uint32Array,
-										
-									});
-									console.log('aNear distance:');
-									//console.table(distance);
-									console.log(distance);
-*/		 
-									break;
-								default: console.error('FermatSpiral: Create vertices WebGPU out failed. Invalid result ArrayBuffer index = ' + i);
-
-							}
-
-						},
 						workgroupCount: [
-							l,//задаем количество переллельных процессов GPU равное числу вершин fermatSpiral
-
-//							2,//удваиваем количство поцессов.
-								//Первый проход - вычисляются вершины fermaSpiral
-								//Второй проход - вычисляются индексы ближайших вершин aNear
+							l,//задаем количество пареллельных процессов GPU равное числу вершин fermatSpiral
 						],
 
 						//shaderCode: shaderCode,
@@ -851,7 +731,6 @@ class FermatSpiral {
 			function createEdgesAndFaces() {
 
 				console.timeEnd('FermatSpiral: Vertices creation time = ');
-//				console.log('FermatSpiral: Vertices creation time = ' + ((Date.now() - timeStart)) + ' milliseconds.');
 
 				//indices
 
@@ -970,14 +849,12 @@ class FermatSpiral {
 								points[value[0]].edges.push(i);
 								points[value[1]].edges.push(i);
 
-								//							value.i = edges.length;
 								value.i = i;
 								edges.push(value);
 
 							}
 							else throw new MyError('FermatSpiral: geometry.indices edges set. Crossed edge detected.', MyError.IDS.edgesCountOverflow);
 							return edges.length;
-							//						return true;
 
 						}
 						switch (name) {
@@ -995,7 +872,6 @@ class FermatSpiral {
 
 				const edges = _this.geometry.indices[0];
 				edges.length = 0;//удалить все ребра
-//				{
 
 				//see phase 1 (aNear) in the D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\fermatSpiral\WebGPU\create.c file
 				points.forEach((vertice1, i) => {
@@ -1009,12 +885,13 @@ class FermatSpiral {
 
 					});
 
+					/*
 					//debug
 					let log = 'iMax:' + vertice1.aNear.iMax;
 					vertice1.aNear.forEach(aNear => log += ' i:' + aNear.i + ' d:' + aNear.distance);
 					console.log(log);
+					*/
 					
-//					const i0 = vertice1.i;
 					for (var k = 0; k < vertice1.aNear.length; k++) {
 
 						const i1 = vertice1.aNear[k].i;
@@ -1033,7 +910,6 @@ class FermatSpiral {
 
 						}
 						if (boDuplicate || (i >= settings.count) || (i1 >= settings.count)) continue;
-//						if (!boDuplicate && (i < settings.count) && (i1 < settings.count)) {
 
 						try {
 
@@ -1051,13 +927,9 @@ class FermatSpiral {
 
 						}
 
-//						}
-
 					}
 
 				});
-
-//				}
 				
 				//faces
 				_this.geometry.indices[1] = new Proxy([], {
@@ -1087,8 +959,6 @@ class FermatSpiral {
 
 						//value - массив с индексами ребер грани
 						const i = parseInt(name);//индекс ребра
-						//if ( i === 915 )
-						//	console.log( 'i = ' + i )
 						if (!isNaN(i)) {
 
 							if (value.length != 3)
@@ -1128,7 +998,6 @@ class FermatSpiral {
 
 							});
 							faces.push(value);
-							//						return faces.length;
 							return true;
 
 						}
@@ -1152,7 +1021,6 @@ class FermatSpiral {
 					const edge = edges[edgeId];//первое ребро грани
 					if (edge.faces && (edge.faces.length > 1)) continue;
 					const point0 = points[edge[0]];//первая вершина первого ребра edge
-					//					point1 = points[edge[1]];//вторая вершина первого ребра edge
 
 					//перебираем все ребра первой вершины point0 первого ребра edge
 					point0.edges.forEach(edgeIndex0 => {
@@ -1289,13 +1157,14 @@ const getCurrentScript = function () {
 	return new Error().stack.match(/(https?:[^:]*)/)[0];
 
 };
+
 //Thanks to https://stackoverflow.com/a/27369985/5175935
 const getCurrentScriptPath = function () {
 	const script = getCurrentScript(),
 		path = script.substring(0, script.lastIndexOf('/'));
 	return path;
 };
-//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
+
 const currentScriptPath = getCurrentScriptPath(),
 	_vertex_text = {
 

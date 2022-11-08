@@ -14,7 +14,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import loadScript from '../loadScriptNodeJS/loadScript.js'
 import loadFile from '../loadFileNodeJS/loadFile.js'
 
 class WebGPU {
@@ -252,21 +251,8 @@ class WebGPU {
 				}
 				settings.results.forEach((result, i) => {
 
-					if (!result.out)
-						console.error('WebGPU: settings.results[' + i + '].out is undefined.');
-					else {
-
-/*						
-						if (typeof result.out === "function") {
-
-							const onReady = result.out;
-							result.out = { onReady: onReady }
-
-						}
-*/	  
-						if ((result.phase !== undefined) && (result.phase > phase.max)) phase.max = result.phase;
-
-					}
+					if (!result.out) console.error('WebGPU: settings.results[' + i + '].out is undefined.');
+					else if ((result.phase !== undefined) && (result.phase > phase.max)) phase.max = result.phase;
 
 				});
 				if ( phase.max > 0 ){
@@ -284,30 +270,6 @@ class WebGPU {
 					);
 					
 				}
-/*				
-				if (input.phase) {
-
-					if (input.phase.length < 1) {
-
-						console.error('WebGPU: input.phase.length = ' + input.phase.length + '. Minimum 1 phase allowed.')
-						return;
-
-					}
-					input.phase.param = 0;//first phase
-					input.phase.paramBuffer = gpuDevice.createBuffer({
-
-						size: Uint32Array.BYTES_PER_ELEMENT,
-						usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-
-					});
-					gpuDevice.queue.writeBuffer(
-						input.phase.paramBuffer,
-						0,
-						new Uint32Array([input.phase.param])
-					);
-
-				}
-*/	
 
 			}
 
@@ -417,24 +379,6 @@ class WebGPU {
 				binding++;
 				
 			}
-/*			
-			if (input.phase) {
-				
-				entriesBindGroupLayout.push({
-				
-					binding: binding,
-					visibility: GPUShaderStage.COMPUTE,
-					buffer: { type: "uniform" }
-				
-				});
-				entriesBindGroup.push({
-					binding: binding,
-					resource: { buffer: input.phase.paramBuffer, }
-				});
-				binding++;
-
-			}
-*/			
 
 			bindGroupLayout = gpuDevice.createBindGroupLayout({ entries: entriesBindGroupLayout });
 
@@ -525,28 +469,6 @@ class WebGPU {
 
 					async function waitResult(i) {
 
-/*						
-						for ( let resultIndex = 0; resultIndex < settings.results.length; resultIndex++) {
-
-							const result = settings.results[resultIndex];
-							if( !result.out ) {
-								
-								console.error('WebGPU: settings.results[' + resultIndex + '].out is undefined.')
-								continue;
-
-							}
-							if ((result.out.phase || 0) !== i) return;
-							if( !result.out.onReady ) {
-								
-								console.error('WebGPU: Please add settings.results[' + resultIndex + '].out.onReady callback function');
-								return;
-
-							}
-							await result.gpuReadBuffer.mapAsync(GPUMapMode.READ);
-							result.out.onReady(result.gpuReadBuffer.getMappedRange());
-							
-						}
-*/
 						const result = settings.results[i];
 						if( !result.out ) {
 							
@@ -555,22 +477,8 @@ class WebGPU {
 
 						}
 						if ((result.phase || 0) !== phase.param) return;
-/*						
-						if( !result.out.onReady ) {
-							
-							console.error('WebGPU: Please add settings.results[' + resultIndex + '].out.onReady callback function');
-							return;
-
-						}
-*/	  
 						await result.gpuReadBuffer.mapAsync(GPUMapMode.READ);
-//						result.out.onReady(result.gpuReadBuffer.getMappedRange());
 						result.out(result.gpuReadBuffer.getMappedRange());
-/*						
-						const resultMatrix = settings.results[i];
-						await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
-						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), i);
-*/	  
 
 					}
 					while ( true ){
@@ -588,43 +496,6 @@ class WebGPU {
 						gpuDevice.queue.submit([createCommandEncoder()]);
 						
 					}
-/*
-					if (input.phase != undefined) {
-
-						async function result() {
-							
-							let resultIndex = input.phase[input.phase.param];
-							if (resultIndex instanceof Array) {
-	
-								for(let i = 0; i < resultIndex.length; i++) await waitResult(i);
-								
-							} else await waitResult(resultIndex);
-
-						}
-						await result();
-						input.phase.param++;
-						if (input.phase.param < input.phase.length)
-						{
-		
-							const paramBuffer = input.phase.paramBuffer;
-							gpuDevice.queue.writeBuffer(
-		
-								paramBuffer,
-								0,
-								new Uint32Array([input.phase.param])
-
-							);
-							gpuDevice.queue.submit([createCommandEncoder()]);
-							await result();
-
-						}
-
-					} else {
-						
-						for (let i = 0; i < settings.results.length; i++) await waitResult(i);
-						
-					}
-*/
 
 				}
 
