@@ -53,6 +53,7 @@ c: f32,//constant scaling factor. See Fermat's spiral https://en.wikipedia.org/w
 }
 @group(0) @binding(3) var<uniform> params : Params;
 @group(0) @binding(4) var<uniform> phase : u32;
+//const phase = 0u;
 
 @compute @workgroup_size(1)//, 1)
 fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {

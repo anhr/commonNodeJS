@@ -173,6 +173,7 @@ class WebGPU {
 
 			const input = settings.input;
 			let bindGroupLayout, bindGroup;
+			const phase = { param: 0, max: 0 }
 			if (input) {
 
 				if (input.matrices)
@@ -249,6 +250,39 @@ class WebGPU {
 					});
 
 				}
+				settings.results.forEach((result, i) => {
+
+					if (!result.out)
+						console.error('WebGPU: settings.results[' + i + '].out is undefined.');
+					else {
+
+						if (typeof result.out === "function") {
+
+							const onReady = result.out;
+							result.out = { onReady: onReady }
+
+						}
+						if ((result.out.phase !== undefined) && (result.out.phase > phase.max)) phase.max = result.out.phase;
+
+					}
+
+				});
+				if ( phase.max > 0 ){
+					
+					phase.paramBuffer = gpuDevice.createBuffer({
+
+						size: Uint32Array.BYTES_PER_ELEMENT,
+						usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+
+					});
+					gpuDevice.queue.writeBuffer(
+						phase.paramBuffer,
+						0,
+						new Uint32Array([phase.param])
+					);
+					
+				}
+/*				
 				if (input.phase) {
 
 					if (input.phase.length < 1) {
@@ -271,6 +305,7 @@ class WebGPU {
 					);
 
 				}
+*/	
 
 			}
 
@@ -364,6 +399,23 @@ class WebGPU {
 
 			}
 
+			if ( phase.max > 0 ) {
+				
+				entriesBindGroupLayout.push({
+				
+					binding: binding,
+					visibility: GPUShaderStage.COMPUTE,
+					buffer: { type: "uniform" }
+				
+				});
+				entriesBindGroup.push({
+					binding: binding,
+					resource: { buffer: phase.paramBuffer, }
+				});
+				binding++;
+				
+			}
+/*			
 			if (input.phase) {
 				
 				entriesBindGroupLayout.push({
@@ -380,6 +432,7 @@ class WebGPU {
 				binding++;
 
 			}
+*/			
 
 			bindGroupLayout = gpuDevice.createBindGroupLayout({ entries: entriesBindGroupLayout });
 
@@ -470,10 +523,16 @@ class WebGPU {
 
 					async function waitResult(i) {
 
+/*						
 						for ( let resultIndex = 0; resultIndex < settings.results.length; resultIndex++) {
 
 							const result = settings.results[resultIndex];
-							if( !result.out ) return;
+							if( !result.out ) {
+								
+								console.error('WebGPU: settings.results[' + resultIndex + '].out is undefined.')
+								continue;
+
+							}
 							if ((result.out.phase || 0) !== i) return;
 							if( !result.out.onReady ) {
 								
@@ -485,6 +544,23 @@ class WebGPU {
 							result.out.onReady(result.gpuReadBuffer.getMappedRange());
 							
 						}
+*/
+						const result = settings.results[i];
+						if( !result.out ) {
+							
+							console.error('WebGPU: settings.results[' + i + '].out is undefined.')
+							return;
+
+						}
+						if ((result.out.phase || 0) !== phase.param) return;
+						if( !result.out.onReady ) {
+							
+							console.error('WebGPU: Please add settings.results[' + resultIndex + '].out.onReady callback function');
+							return;
+
+						}
+						await result.gpuReadBuffer.mapAsync(GPUMapMode.READ);
+						result.out.onReady(result.gpuReadBuffer.getMappedRange());
 /*						
 						const resultMatrix = settings.results[i];
 						await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
@@ -492,8 +568,23 @@ class WebGPU {
 */	  
 
 					}
-					if (input.phase != undefined)
-					{
+					while ( true ){
+						
+						for (let i = 0; i < settings.results.length; i++) await waitResult(i);
+						phase.param++;
+						if (phase.param > phase.max) break;
+						gpuDevice.queue.writeBuffer(
+	
+							phase.paramBuffer,
+							0,
+							new Uint32Array([phase.param])
+
+						);
+						gpuDevice.queue.submit([createCommandEncoder()]);
+						
+					}
+/*
+					if (input.phase != undefined) {
 
 						async function result() {
 							
@@ -528,6 +619,7 @@ class WebGPU {
 						for (let i = 0; i < settings.results.length; i++) await waitResult(i);
 						
 					}
+*/
 
 				}
 
