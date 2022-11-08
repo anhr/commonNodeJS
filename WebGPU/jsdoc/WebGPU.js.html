@@ -42,7 +42,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import loadScript from '../loadScriptNodeJS/loadScript.js'
 import loadFile from '../loadFileNodeJS/loadFile.js'
 
 class WebGPU {
@@ -108,21 +107,38 @@ class WebGPU {
 	 * ]&lt;/b>
 	 * You can see an example of divide in my code. Please open &lt;a href="../../fermatSpiral/fermatSpiral.js" target="_blank">fermatSpiral.js&lt;/a> and &lt;a href="../../fermatSpiral/WebGPU/create.c" target="_blank">create.c&lt;/a> files for it.
 	 * &lt;/pre>
-	 * @param {Array} [settings.results] Array of descriptions of the output data. See &lt;b>settings.out&lt;/b> below.
+	 * @param {Array} [settings.results] Array of descriptions of the output data.
 	 * &lt;pre>
-	 * The following descriptions have every &lt;b>settings.results&lt;/b> item.
-	 *   type: Type of the output data. Available &lt;b>Uint32Array&lt;/b> and &lt;b>Float32Array&lt;/b> types. Optional. Default type is &lt;b>Float32Array&lt;/b>.
-	 *   count: Count of output data array items.
 	 * Example of &lt;b>settings.results&lt;/b> array item:
 	 * &lt;b>{
-	 *   type: Uint32Array,
 	 *   count: 1000
+	 *   out: out => {
+	 *
+	 *     const aNear = WebGPU.out2Matrix(out, {
+	 *
+	 *       size: [
+	 *         l,
+	 *         aNearRowlength,
+	 *       ],
+	 *       type: Uint32Array,
+	 *
+	 *     });
+	 *     console.log('aNear:');
+	 *     console.log(aNear);
+	 *
+	 *   }
+	 *
 	 *}&lt;/b>
 	 * &lt;/pre>
-	 * @param {Function} [settings.out] &lt;b>function(out, i)&lt;/b> called when output data is ready.
+	 * The following descriptions have every &lt;b>settings.results&lt;/b> item.
+	 * @param {Number} settings.results.count Count of output data array items.
+	 * @param {Function} [settings.results.out] &lt;b>function(out)&lt;/b> called when output data is ready.
 	 * &lt;pre>
 	 * &lt;b>out&lt;/b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
-	 * &lt;b>i&lt;/b> argument is index of the &lt;b>settings.results&lt;/b> array item.
+	 * &lt;/pre>
+	 * @param {Number} [settings.results.phase=0] You can divide GPU compute to phases. Please define a phase, when current output data will be ready.
+	 * &lt;pre>
+	 * See &lt;a href="../../fermatSpiral/WebGPU/create.c" target="_blank">Shader.c&lt;/a> example of [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code, where computing was divided to phases.
 	 * &lt;/pre>
 	 * @param {Array} [settings.workgroupCount=[1]] For dispatch work to be performed with the current GPUComputePipeline.
 	 * &lt;pre>
@@ -201,6 +217,7 @@ class WebGPU {
 
 			const input = settings.input;
 			let bindGroupLayout, bindGroup;
+			const phase = { param: 0, max: 0 }
 			if (input) {
 
 				if (input.matrices)
@@ -277,27 +294,26 @@ class WebGPU {
 					});
 
 				}
-				if (input.phase) {
+				settings.results.forEach((result, i) => {
 
-					if (input.phase.length &lt; 1) {
+					if (!result.out) console.error('WebGPU: settings.results[' + i + '].out is undefined.');
+					else if ((result.phase !== undefined) &amp;&amp; (result.phase > phase.max)) phase.max = result.phase;
 
-						console.error('WebGPU: input.phase.length = ' + input.phase.length + '. Minimum 1 phase allowed.')
-						return;
-
-					}
-					input.phase.param = 0;//first phase
-					input.phase.paramBuffer = gpuDevice.createBuffer({
+				});
+				if ( phase.max > 0 ){
+					
+					phase.paramBuffer = gpuDevice.createBuffer({
 
 						size: Uint32Array.BYTES_PER_ELEMENT,
 						usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
 
 					});
 					gpuDevice.queue.writeBuffer(
-						input.phase.paramBuffer,
+						phase.paramBuffer,
 						0,
-						new Uint32Array([input.phase.param])
+						new Uint32Array([phase.param])
 					);
-
+					
 				}
 
 			}
@@ -392,7 +408,7 @@ class WebGPU {
 
 			}
 
-			if (input.phase) {
+			if ( phase.max > 0 ) {
 				
 				entriesBindGroupLayout.push({
 				
@@ -403,10 +419,10 @@ class WebGPU {
 				});
 				entriesBindGroup.push({
 					binding: binding,
-					resource: { buffer: input.phase.paramBuffer, }
+					resource: { buffer: phase.paramBuffer, }
 				});
 				binding++;
-
+				
 			}
 
 			bindGroupLayout = gpuDevice.createBindGroupLayout({ entries: entriesBindGroupLayout });
@@ -498,45 +514,31 @@ class WebGPU {
 
 					async function waitResult(i) {
 
-						const resultMatrix = settings.results[i];
-						await resultMatrix.gpuReadBuffer.mapAsync(GPUMapMode.READ);
-						if (settings.out) settings.out(resultMatrix.gpuReadBuffer.getMappedRange(), i);
+						const result = settings.results[i];
+						if( !result.out ) {
+							
+							console.error('WebGPU: settings.results[' + i + '].out is undefined.')
+							return;
+
+						}
+						if ((result.phase || 0) !== phase.param) return;
+						await result.gpuReadBuffer.mapAsync(GPUMapMode.READ);
+						result.out(result.gpuReadBuffer.getMappedRange());
 
 					}
-					if (input.phase != undefined)
-					{
-
-						async function result() {
-							
-							let resultIndex = input.phase[input.phase.param];
-							if (resultIndex instanceof Array) {
-	
-								for(let i = 0; i &lt; resultIndex.length; i++) await waitResult(i);
-								
-							} else await waitResult(resultIndex);
-
-						}
-						await result();
-						input.phase.param++;
-						if (input.phase.param &lt; input.phase.length)
-						{
-		
-							const paramBuffer = input.phase.paramBuffer;
-							gpuDevice.queue.writeBuffer(
-		
-								paramBuffer,
-								0,
-								new Uint32Array([input.phase.param])
-
-							);
-							gpuDevice.queue.submit([createCommandEncoder()]);
-							await result();
-
-						}
-
-					} else {
+					while ( true ){
 						
 						for (let i = 0; i &lt; settings.results.length; i++) await waitResult(i);
+						phase.param++;
+						if (phase.param > phase.max) break;
+						gpuDevice.queue.writeBuffer(
+	
+							phase.paramBuffer,
+							0,
+							new Uint32Array([phase.param])
+
+						);
+						gpuDevice.queue.submit([createCommandEncoder()]);
 						
 					}
 
@@ -682,7 +684,7 @@ export default WebGPU;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Oct 20 2022 10:54:53 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Nov 08 2022 11:20:39 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

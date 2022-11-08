@@ -79,21 +79,38 @@ class WebGPU {
 	 * ]</b>
 	 * You can see an example of divide in my code. Please open <a href="../../fermatSpiral/fermatSpiral.js" target="_blank">fermatSpiral.js</a> and <a href="../../fermatSpiral/WebGPU/create.c" target="_blank">create.c</a> files for it.
 	 * </pre>
-	 * @param {Array} [settings.results] Array of descriptions of the output data. See <b>settings.out</b> below.
+	 * @param {Array} [settings.results] Array of descriptions of the output data.
 	 * <pre>
-	 * The following descriptions have every <b>settings.results</b> item.
-	 *   type: Type of the output data. Available <b>Uint32Array</b> and <b>Float32Array</b> types. Optional. Default type is <b>Float32Array</b>.
-	 *   count: Count of output data array items.
 	 * Example of <b>settings.results</b> array item:
 	 * <b>{
-	 *   type: Uint32Array,
 	 *   count: 1000
+	 *   out: out => {
+	 *
+	 *     const aNear = WebGPU.out2Matrix(out, {
+	 *
+	 *       size: [
+	 *         l,
+	 *         aNearRowlength,
+	 *       ],
+	 *       type: Uint32Array,
+	 *
+	 *     });
+	 *     console.log('aNear:');
+	 *     console.log(aNear);
+	 *
+	 *   }
+	 *
 	 *}</b>
 	 * </pre>
-	 * @param {Function} [settings.out] <b>function(out, i)</b> called when output data is ready.
+	 * The following descriptions have every <b>settings.results</b> item.
+	 * @param {Number} settings.results.count Count of output data array items.
+	 * @param {Function} [settings.results.out] <b>function(out)</b> called when output data is ready.
 	 * <pre>
 	 * <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
-	 * <b>i</b> argument is index of the <b>settings.results</b> array item.
+	 * </pre>
+	 * @param {Number} [settings.results.phase=0] You can divide GPU compute to phases. Please define a phase, when current output data will be ready.
+	 * <pre>
+	 * See <a href="../../fermatSpiral/WebGPU/create.c" target="_blank">Shader.c</a> example of [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code, where computing was divided to phases.
 	 * </pre>
 	 * @param {Array} [settings.workgroupCount=[1]] For dispatch work to be performed with the current GPUComputePipeline.
 	 * <pre>

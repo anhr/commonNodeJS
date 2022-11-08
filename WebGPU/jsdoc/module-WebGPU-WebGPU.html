@@ -216,22 +216,7 @@
 
             
 
-            <td class="description last">Array of input matrices. See <a href="https://web.dev/gpu-compute/#shader-programming">Shader programming</a>.
-<pre>
-Example:
-<b>[
-  [
-     [1, 2, 3, 4],
-     [5, 6, 7, 8]
-  ],
-  [
-     [1, 2],
-     [3, 4],
-     [5, 6],
-     [7, 8],
-  
-]</b>
-</pre></td>
+            <td class="description last">Array of input matrices. See <a href="https://web.dev/gpu-compute/#shader-programming">Shader programming</a>.<pre>Example:<b>[  [     [1, 2, 3, 4],     [5, 6, 7, 8]  ],  [     [1, 2],     [3, 4],     [5, 6],     [7, 8],  ]</b></pre></td>
         </tr>
 
     
@@ -318,17 +303,7 @@ Example:
 
             
 
-            <td class="description last"><b>f32</b> type of <a href="https://gpuweb.github.io/gpuweb/wgsl/#floating-point-literal">floating point literal</a> list.
-Every item of the list is <b>key: value</b> pair. <b>value</b> is any <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a> value.
-<pre>
-Example:
-<b>params: {
-  f32: {
-    c: 0.04,
-    radius: 10
-  },
-},</b>
-</pre></td>
+            <td class="description last"><b>f32</b> type of <a href="https://gpuweb.github.io/gpuweb/wgsl/#floating-point-literal">floating point literal</a> list.Every item of the list is <b>key: value</b> pair. <b>value</b> is any <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a> value.<pre>Example:<b>params: {  f32: {    c: 0.04,    radius: 10  },},</b></pre></td>
         </tr>
 
     
@@ -361,17 +336,7 @@ Example:
 
             
 
-            <td class="description last"><b>u32</b> type of <a href="https://gpuweb.github.io/gpuweb/wgsl/#integer-literal">integer literal</a> list.
-Every item of the list is <b>key: value</b> pair. <b>value</b> is any unsigned integer <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a> value.
-<pre>
-Example:
-<b>params: {
-  u32: {
-    points: 40,
-    count: 1000
-  },
-}</b>
-</pre></td>
+            <td class="description last"><b>u32</b> type of <a href="https://gpuweb.github.io/gpuweb/wgsl/#integer-literal">integer literal</a> list.Every item of the list is <b>key: value</b> pair. <b>value</b> is any unsigned integer <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a> value.<pre>Example:<b>params: {  u32: {    points: 40,    count: 1000  },}</b></pre></td>
         </tr>
 
     
@@ -411,24 +376,7 @@ Example:
 
             
 
-            <td class="description last">You can divide GPU compute to phases.
-<pre>
-Every phase calls the <a href="https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit">GPUQueue.submit</a> of <b>commandBuffers</b>. Use the <b>phase</b> array for it.
-Length of the <b>phase</b> array is count of the phases of GPU computing.
-Every item of the <b>phase</b> array is array of the <b>settings.results</b> indexes,
-you want to output after the current GPU computing phase.
-Use empty item array if you do not want to output any data after current GPU computing phase.
-Minimum 1 <b>phase</b> allowed. Default is one phase of GPU computing.
-See example of divide of the GPU computing to two phases. 
-<b>phase: [
-  [],//First phase. No data output.
-  [//Second phase.
-    0,//Output of the first item of the settings.results array.
-    1//Output of the second item of the settings.results array.
-  ]
-]</b>
-You can see an example of divide in my code. Please open <a href="../../fermatSpiral/fermatSpiral.js" target="_blank">fermatSpiral.js</a> and <a href="../../fermatSpiral/WebGPU/create.c" target="_blank">create.c</a> files for it.
-</pre></td>
+            <td class="description last">You can divide GPU compute to phases.<pre>Every phase calls the <a href="https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit">GPUQueue.submit</a> of <b>commandBuffers</b>. Use the <b>phase</b> array for it.Length of the <b>phase</b> array is count of the phases of GPU computing.Every item of the <b>phase</b> array is array of the <b>settings.results</b> indexes,you want to output after the current GPU computing phase.Use empty item array if you do not want to output any data after current GPU computing phase.Minimum 1 <b>phase</b> allowed. Default is one phase of GPU computing.See example of divide of the GPU computing to two phases. <b>phase: [  [],//First phase. No data output.  [//Second phase.    0,//Output of the first item of the settings.results array.    1//Output of the second item of the settings.results array.  ]]</b>You can see an example of divide in my code. Please open <a href="../../fermatSpiral/fermatSpiral.js" target="_blank">fermatSpiral.js</a> and <a href="../../fermatSpiral/WebGPU/create.c" target="_blank">create.c</a> files for it.</pre></td>
         </tr>
 
     
@@ -472,17 +420,65 @@ You can see an example of divide in my code. Please open <a href="../../fermatSp
                 </td>
             
 
-            <td class="description last">Array of descriptions of the output data. See <b>settings.out</b> below.
-<pre>
-The following descriptions have every <b>settings.results</b> item.
-  type: Type of the output data. Available <b>Uint32Array</b> and <b>Float32Array</b> types. Optional. Default type is <b>Float32Array</b>.
-  count: Count of output data array items.
-Example of <b>settings.results</b> array item:
-<b>{
-  type: Uint32Array,
-  count: 1000
-}</b>
-</pre></td>
+            <td class="description last">Array of descriptions of the output data.<pre>Example of <b>settings.results</b> array item:<b>{  count: 1000  out: out => {    const aNear = WebGPU.out2Matrix(out, {      size: [        l,        aNearRowlength,      ],      type: Uint32Array,    });    console.log('aNear:');    console.log(aNear);  }}</b></pre>The following descriptions have every <b>settings.results</b> item.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>count</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Count of output data array items.</td>
         </tr>
 
     
@@ -519,11 +515,53 @@ Example of <b>settings.results</b> array item:
                 </td>
             
 
-            <td class="description last"><b>function(out, i)</b> called when output data is ready.
-<pre>
-<b>out</b> argument is array of output data. See <a href="https://webidl.spec.whatwg.org/#idl-ArrayBuffer">ArrayBuffer</a>.
-<b>i</b> argument is index of the <b>settings.results</b> array item.
-</pre></td>
+            <td class="description last"><b>function(out)</b> called when output data is ready.<pre><b>out</b> argument is array of output data. See <a href="https://webidl.spec.whatwg.org/#idl-ArrayBuffer">ArrayBuffer</a>.</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>phase</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last">You can divide GPU compute to phases. Please define a phase, when current output data will be ready.<pre>See <a href="../../fermatSpiral/WebGPU/create.c" target="_blank">Shader.c</a> example of <a href="https://gpuweb.github.io/gpuweb/wgsl/">WGSL</a> source code, where computing was divided to phases.</pre></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -562,13 +600,7 @@ Example of <b>settings.results</b> array item:
                 </td>
             
 
-            <td class="description last">For dispatch work to be performed with the current GPUComputePipeline.
-<pre>
-See <a href="https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups">dispatchWorkgroups</a> of <a href="https://gpuweb.github.io/gpuweb/#gpucomputepipeline">GPUComputePipeline</a>.
-<b>workgroupCount[0]</b> is <b>workgroupCountX</b>
-<b>workgroupCount[1]</b> is <b>workgroupCountY</b>
-<b>workgroupCount[2]</b> is <b>workgroupCountZ</b>
-</pre></td>
+            <td class="description last">For dispatch work to be performed with the current GPUComputePipeline.<pre>See <a href="https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatchworkgroups">dispatchWorkgroups</a> of <a href="https://gpuweb.github.io/gpuweb/#gpucomputepipeline">GPUComputePipeline</a>.<b>workgroupCount[0]</b> is <b>workgroupCountX</b><b>workgroupCount[1]</b> is <b>workgroupCountY</b><b>workgroupCount[2]</b> is <b>workgroupCountZ</b></pre></td>
         </tr>
 
     
@@ -642,8 +674,7 @@ See <a href="https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-dispatch
                 </td>
             
 
-            <td class="description last">The name of the file with <a href="https://gpuweb.github.io/gpuweb/wgsl/">WGSL</a> source code.
-Have effect only if the <b>shaderCode</b> undefined.</td>
+            <td class="description last">The name of the file with <a href="https://gpuweb.github.io/gpuweb/wgsl/">WGSL</a> source code.Have effect only if the <b>shaderCode</b> undefined.</td>
         </tr>
 
     
@@ -680,15 +711,7 @@ Have effect only if the <b>shaderCode</b> undefined.</td>
                 </td>
             
 
-            <td class="description last"><b>function(text)</b> called after downloading of the shader code from file and before creating of the Shader Module.
-See <a href="https://gpuweb.github.io/gpuweb/#dom-gpudevice-createshadermodule">createShaderModule(descriptor)</a>
-<pre>
-The <b>text</b> argument is text of the shader code. You can modify shader code and return new text.
-Example:
-<b>shaderCodeText: function (text) {
-  return text.replace( '%debugCount', 1 );
-},</b>
-</pre></td>
+            <td class="description last"><b>function(text)</b> called after downloading of the shader code from file and before creating of the Shader Module.See <a href="https://gpuweb.github.io/gpuweb/#dom-gpudevice-createshadermodule">createShaderModule(descriptor)</a><pre>The <b>text</b> argument is text of the shader code. You can modify shader code and return new text.Example:<b>shaderCodeText: function (text) {  return text.replace( '%debugCount', 1 );},</b></pre></td>
         </tr>
 
     
@@ -736,7 +759,7 @@ Example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line119">line 119</a>
+        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line135">line 135</a>
     </li></ul></dd>
     
 
@@ -840,7 +863,7 @@ Example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line534">line 534</a>
+        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line536">line 536</a>
     </li></ul></dd>
     
 
@@ -869,11 +892,7 @@ Example:
 
         
 <div class="param-desc">
-    true if your browser supports <a href="https://gpuweb.github.io/gpuweb/">WebGPU</a>.
-WebGPU is available for now in <a href="https://www.google.com/intl/ru/chrome/canary/">Chrome Canary</a> on desktop behind an experimental flag.
-You can enable it at <b>chrome://flags/#enable-unsafe-webgpu</b>.
-The API is constantly changing and currently unsafe.
-As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to read GPU data for other processes! Don't browse the web with it enabled.
+    true if your browser supports <a href="https://gpuweb.github.io/gpuweb/">WebGPU</a>.WebGPU is available for now in <a href="https://www.google.com/intl/ru/chrome/canary/">Chrome Canary</a> on desktop behind an experimental flag.You can enable it at <b>chrome://flags/#enable-unsafe-webgpu</b>.The API is constantly changing and currently unsafe.As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to read GPU data for other processes! Don't browse the web with it enabled.
 </div>
 
 
@@ -1104,41 +1123,7 @@ As GPU sandboxing isn't implemented yet for the WebGPU API, it is possible to re
                 </td>
             
 
-            <td class="description last">size of result matrix.
-<pre>
-<b>size.length</b> is dimension of result matrix.
-<b>size[0]</b> is first dimension.
----
-<b>size[i]</b> is next dimension.
----
-<b>size[size.length - 1]</b> is last dimension.
-Esample:
-<b>[
-  10,//rows count
-  2//columns count
-]
-</b>
-creates two dimesional matrix with 10 rows and 2 columns.
-
-If <b>size</b> is undefined, then dimension and size of result matrix must be defined in the header of the out:
-First item of the out is dimension of result matrix.
-Second item of the out is first dimension.
----
-Next item of the out is next dimension.
----
-dimension item of the out is last dimension.
-Example:
-<b>
-const array = new Float32Array(out);
-</b>
-if
-<b>
-array[0] = 2//two dimesional matrix
-array[1] = 10//rows count
-array[2] = 2//columns count
-</b>
-then result matrix is two dimensional matrix with ten rows and two columns.
-</pre></td>
+            <td class="description last">size of result matrix.<pre><b>size.length</b> is dimension of result matrix.<b>size[0]</b> is first dimension.---<b>size[i]</b> is next dimension.---<b>size[size.length - 1]</b> is last dimension.Esample:<b>[  10,//rows count  2//columns count]</b>creates two dimesional matrix with 10 rows and 2 columns.If <b>size</b> is undefined, then dimension and size of result matrix must be defined in the header of the out:First item of the out is dimension of result matrix.Second item of the out is first dimension.---Next item of the out is next dimension.---dimension item of the out is last dimension.Example:<b>const array = new Float32Array(out);</b>if<b>array[0] = 2//two dimesional matrixarray[1] = 10//rows countarray[2] = 2//columns count</b>then result matrix is two dimensional matrix with ten rows and two columns.</pre></td>
         </tr>
 
     
@@ -1175,9 +1160,7 @@ then result matrix is two dimensional matrix with ten rows and two columns.
                 </td>
             
 
-            <td class="description last"><b>function(item)</b>. <b>item</b> - new matrix item.
-Called when a new matrix item is ready. You can add a new item to your matrix.
-The result matrix is empty if you have added <b>push</b> to the <b>setting</b> and <b>settings.returnMatrix</b> is not true.</td>
+            <td class="description last"><b>function(item)</b>. <b>item</b> - new matrix item.Called when a new matrix item is ready. You can add a new item to your matrix.The result matrix is empty if you have added <b>push</b> to the <b>setting</b> and <b>settings.returnMatrix</b> is not true.</td>
         </tr>
 
     
@@ -1262,7 +1245,7 @@ The result matrix is empty if you have added <b>push</b> to the <b>setting</b> a
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line582">line 582</a>
+        <a href="WebGPU.js.html">WebGPU.js</a>, <a href="WebGPU.js.html#line584">line 584</a>
     </li></ul></dd>
     
 
@@ -1324,7 +1307,7 @@ The result matrix is empty if you have added <b>push</b> to the <b>setting</b> a
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Oct 20 2022 10:54:53 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Nov 08 2022 11:20:39 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

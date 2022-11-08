@@ -603,7 +603,7 @@ class FermatSpiral {
 
 							//vertices
 							{
-								count: l * verticesRowlength,
+								//count: l * verticesRowlength,
 								out: out => {
 
 									const verticesArray = new Float32Array(out);
