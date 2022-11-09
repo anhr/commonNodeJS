@@ -91,9 +91,17 @@
 						//First element is rows count of the matrix.
 						//Second element is columns count of the matrix.
 						3,
+					out: out => {
+
+						console.log(new Float32Array(out));
+						const matrix = WebGPU.out2Matrix(out);
+						console.log(matrix);
+
+					}
 
 				},
 			],
+/*
 			out: function(out) {
 
 				console.log(new Float32Array(out));
@@ -101,6 +109,7 @@
 				console.log(matrix);
 
 			},
+*/
 
 		});
 

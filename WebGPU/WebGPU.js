@@ -61,24 +61,6 @@ class WebGPU {
 	 *   },
 	 *}</b>
 	 * </pre>
-	 * @param {Array} [settings.input.phase] You can divide GPU compute to phases.
-	 * <pre>
-	 * Every phase calls the [GPUQueue.submit]{@link https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit} of <b>commandBuffers</b>. Use the <b>phase</b> array for it.
-	 * Length of the <b>phase</b> array is count of the phases of GPU computing.
-	 * Every item of the <b>phase</b> array is array of the <b>settings.results</b> indexes,
-	 * you want to output after the current GPU computing phase.
-	 * Use empty item array if you do not want to output any data after current GPU computing phase.
-	 * Minimum 1 <b>phase</b> allowed. Default is one phase of GPU computing.
-	 * See example of divide of the GPU computing to two phases. 
-	 * <b>phase: [
-	 *   [],//First phase. No data output.
-	 *   [//Second phase.
-	 *     0,//Output of the first item of the settings.results array.
-	 *     1//Output of the second item of the settings.results array.
-	 *   ]
-	 * ]</b>
-	 * You can see an example of divide in my code. Please open <a href="../../fermatSpiral/fermatSpiral.js" target="_blank">fermatSpiral.js</a> and <a href="../../fermatSpiral/WebGPU/create.c" target="_blank">create.c</a> files for it.
-	 * </pre>
 	 * @param {Array} [settings.results] Array of descriptions of the output data.
 	 * <pre>
 	 * Example of <b>settings.results</b> array item:
@@ -104,13 +86,18 @@ class WebGPU {
 	 * </pre>
 	 * The following descriptions have every <b>settings.results</b> item.
 	 * @param {Number} settings.results.count Count of output data array items.
-	 * @param {Function} [settings.results.out] <b>function(out)</b> called when output data is ready.
+	 * @param {Function} settings.results.out <b>function(out)</b> called when output data is ready.
 	 * <pre>
 	 * <b>out</b> argument is array of output data. See [ArrayBuffer]{@link https://webidl.spec.whatwg.org/#idl-ArrayBuffer}.
 	 * </pre>
-	 * @param {Number} [settings.results.phase=0] You can divide GPU compute to phases. Please define a phase, when current output data will be ready.
+	 * @param {Number} [settings.results.phase=0] You can divide GPU compute to phases.
 	 * <pre>
+	 * Please add <b>@group(0) @binding(4) var<uniform> phase : u32;</b> buffer into your [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code
+	 * if you want to divide GPU compute to phases.
 	 * See <a href="../../fermatSpiral/WebGPU/create.c" target="_blank">Shader.c</a> example of [WGSL]{@link https://gpuweb.github.io/gpuweb/wgsl/} source code, where computing was divided to phases.
+	 * Note, you can see the <b>switch (phase)</b> in the example, that divides computing to phases.
+	 * 
+	 * Please define a phase, when current output data will be ready.
 	 * </pre>
 	 * @param {Array} [settings.workgroupCount=[1]] For dispatch work to be performed with the current GPUComputePipeline.
 	 * <pre>
