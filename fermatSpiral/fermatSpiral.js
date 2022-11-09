@@ -603,12 +603,12 @@ class FermatSpiral {
 
 							//vertices
 							{
-								//count: l * verticesRowlength,
+								count: l * verticesRowlength,
 								out: out => {
 
-									const verticesArray = new Float32Array(out);
 									console.log('vertices:');
 									/*
+									const verticesArray = new Float32Array(out);
 									const verticesMatrix = [];
 									for (var i = 0, j = 0; i < l; i++, j += verticesRowlength) {
 										verticesMatrix.push({
