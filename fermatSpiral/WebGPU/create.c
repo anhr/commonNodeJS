@@ -27,7 +27,6 @@ vertice: vec2<f32>,
 debug : array<f32, debugCount>,
 };
 @group(0) @binding(0) var<storage, read_write> verticesMatrix : array <VerticesMatrix>;
-//@group(0) @binding(0) var<storage, read_write> verticesMatrix : array<f32>;
 struct ANear {
 i: u32,//индекс вершины, ближайшей к текущей вершине
 distance: f32,//distance between current vertice and nearest vertice.
@@ -79,15 +78,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 		//aNear. See createEdgesAndFaces in FermatSpiral
 		case 1: {
 			var index = i * aNearRowLength;
-//			var aNearItem = aNear[i];
-//			var aNearLengthIndex = index;//индекс места для количества обнаруженных индексов вершин, ближайших к текущей вершине
-//			var iMaxIndex = index + 1;//индекс места для хранения индекса максимально удаленной вершины из массива aNear
-//			var aNearIndex = index + 2;//индекс индекса первой обнаруженной вершины, ближайших к текущей вершине
-//			let vertice1Index = i * verticesRowSize;
-//			let vertice1 = vec2(verticesMatrix[vertice1Index], verticesMatrix[vertice1Index + 1]);//координаты вершины для которой будем искать ближайшие вершины
 			let vertice1 = verticesMatrix[i].vertice;//координаты вершины для которой будем искать ближайшие вершины
-//			var aNearDistanceIndex = i * maxLength;//в этом массиве нет отладочной информации
-//			var verticesMatrixLength = arrayLength(&verticesMatrix) / verticesRowSize;//22
 
 			//debug
 			/*
@@ -99,14 +90,9 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 			verticesMatrix[i * verticesRowSize + 2 + 1] = aNearDistance[aNearDistanceMaxIndex];
 			*/
 
-//			for (var j = 0u; j < verticesMatrixLength; j++)
 			for (var j = 0u; j < arrayLength(&verticesMatrix); j++)
 			{
 				if (i == j) { continue; }
-/*
-				let vertice2Index = j * verticesRowSize;
-				let vertice2 = vec2(verticesMatrix[vertice2Index], verticesMatrix[vertice2Index + 1]);//Координаты текущей ближайшей вершины
-*/
 				let vertice2 = verticesMatrix[j].vertice;//Координаты текущей ближайшей вершины
 				let vecDistance = distance(vertice1, vertice2);//расстояние между вершиной и текущей ближайшей вершиной
 
@@ -114,7 +100,6 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
 					aNear[i].aNear[aNear[i].length].i = j;//добавить индекс текущей ближайшей вершины
 					aNear[i].aNear[aNear[i].length].distance = vecDistance;
-//aNearDistance[aNearDistanceIndex + aNear[i].length] = vecDistance;
 					aNear[i].length++;
 					getMax(i);
 
@@ -137,24 +122,15 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 						getMax(i);
 
 					}
-/*
-let aNearDistanceMaxIndex = aNearDistanceIndex + aNear[i].iMax;
-if (aNearDistance[aNearDistanceMaxIndex] > vecDistance) {
 
-	aNearDistance[aNearDistanceMaxIndex] = vecDistance;
-	getMax(i);
-
-}
-*/
 				}
 
 			}
 			for (var k = 0u; k < aNear[i].length; k++) {
 				let i1 = aNear[i].aNear[k].i;
-//				let i1 = aNear[aNearIndex + k];
 				var boDuplicate = false;
-				edges.length = 123;
-				edges.indices[5] = 456;
+edges.length = 123;
+edges.indices[5] = 456;
 				/*
 				//debug
 				if (k == 1) {
@@ -187,10 +163,8 @@ fn getMax(
 
 	var aNearItem = aNear[i];
 	var iMax = aNearItem.iMax;
-//	let aNearDistanceIndex = i * maxLength;
 	for (var aNearIndex = 0u; aNearIndex < aNear[i].length; aNearIndex++) {
 
-//		if (aNear[i].aNear[aNear[i].iMax].distance < aNear[i].aNear[aNearIndex].distance) { iMax = aNearIndex; }
 		if (aNearItem.aNear[iMax].distance < aNearItem.aNear[aNearIndex].distance) { iMax = aNearIndex; }
 		/*
 		//debug
