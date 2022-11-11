@@ -551,7 +551,6 @@ class FermatSpiral {
 
 				console.log('WebGPU: Create frematSpiral vertices');
 				const debugCount = 2,//Count of out debug values.
-					verticesRowlength = 2 + debugCount,//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки
 					aNearDebugCount = debugCount,//2,
 
 					//длинна массива индексов вершин, ближайших к текущей вершине
@@ -559,12 +558,16 @@ class FermatSpiral {
 						1 +//индекс ближайшей вершины
 						1//расстояние между вершинами
 					) * maxLength,//максимальное количство индексов вершин, ближайших к текущей вершине
-
-					//длинна структуры VerticeANears равная длинне ряда в масиве aNear
+					
 					aNearRowlength = 1 + //тут хранится количство индексов вершин, ближайших к текущей вершине
 						1 + //индекс максимально удаленной вершины из массива aNear
 						aNearlength +//длинна массива индексов вершин, ближайших к текущей вершине
 						aNearDebugCount,//место для отладки
+					verticesRowlength = 2//vector
+						+ aNearRowlength//aNear
+						+ debugCount,//на каждую вершину fermatSpiral тратится две ячейки resultMatrix плюс количество значений для отладки
+
+					//длинна структуры VerticeANears равная длинне ряда в масиве aNear
 
 					//Use https://planetcalc.com/5992/ for approximation.
 					//x 22 1120 2169
@@ -604,20 +607,26 @@ class FermatSpiral {
 							//vertices
 							{
 								count: l * verticesRowlength,
+								phase: 1,
 								out: out => {
 
 									console.log('vertices:');
-									/*
-									const verticesArray = new Float32Array(out);
-									const vertices = [];
-									for (var i = 0, j = 0; i < l; i++, j += verticesRowlength) {
-										vertices.push({
-											vertice: new Vector([verticesArray[j], verticesArray[j + 1]]),
-											debug: [verticesArray[j + 2 + 0], verticesArray[j + 2 + 1]],
-										});
+									
+									{
+										
+										const verticesArray = new Float32Array(out);
+										const verticesArrayU32 = new Float32Array(out);
+										const vertices = [];
+										for (var i = 0, j = 0; i < l; i++, j += verticesRowlength) {
+											vertices.push({
+												vertice: new Vector([verticesArray[j], verticesArray[j + 1]]),
+												debug: [verticesArray[j + 2 + 0], verticesArray[j + 2 + 1]],
+											});
+										}
+										console.log(vertices);
+
 									}
-									console.log(vertices);
-									*/
+									
 									const vertices = WebGPU.out2Matrix(out, {
 
 										size: [
