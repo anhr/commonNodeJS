@@ -516,7 +516,8 @@ class GuiSelectPoint {
 			cScale.name( name );
 
 			//rotation
-			cRotations[axis].name( name );
+			const cRotation = cRotations[axis];
+			if ( cRotation.name ) cRotation.name( name );
 
 		}
 		/**Sets controllers to position, scale and rotation of the mesh.  If AxesHelper is exist, expose the mesh to the axes. */
@@ -632,6 +633,7 @@ class GuiSelectPoint {
 
 				cPoints.__onChange( -1 );
 				_this.removePoints();
+				cMeshs.__onChange( -1 );
 
 			}
 
@@ -735,6 +737,14 @@ class GuiSelectPoint {
 				cMeshs.__select[index].selected = true;
 				cMeshs.__onChange( index - 1 );
 
+			} else if ( cCustom ) {
+
+				const mesh = getMesh();
+				cCustom.object(intersectionSelected.event && intersectionSelected.event.button === 0 ?
+						mesh :
+						undefined,//Пользователь нажал не левую кнопку мыши. Надо восстановить выбранный nD объект
+					dat, options);
+
 			}
 
 			this.selectPoint2 = function ( selectedMesh ) {
@@ -750,7 +760,8 @@ class GuiSelectPoint {
 				if ( !intersectionSelected.object.userData.boFrustumPoints ) {
 
 					//fPoints.open();много времени на открытие когда много точек
-					cPoints.__select[intersectionSelected.index + 1].selected = true;
+					const point = cPoints.__select[intersectionSelected.index + 1];
+					if ( point ) point.selected = true;
 
 				} else {//FrustumPoints
 
@@ -924,9 +935,9 @@ class GuiSelectPoint {
 					break;
 				case 2:
 					fRotation.domElement.style.display = block;
-					if ( boX ) cRotations.x.domElement.parentElement.parentElement.style.display = none;
-					if ( boY ) cRotations.y.domElement.parentElement.parentElement.style.display = none;
-					if ( boZ ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
+					if ( boX && cRotations.x.domElement ) cRotations.x.domElement.parentElement.parentElement.style.display = none;
+					if ( boY && cRotations.y.domElement ) cRotations.y.domElement.parentElement.parentElement.style.display = none;
+					if ( boZ && cRotations.z.domElement ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
 					break;
 				default: console.error( 'GuiSelectPoint.updateScale: Invalid space dimension = ' + n );
 					return;
@@ -935,7 +946,7 @@ class GuiSelectPoint {
 			
 			if ( !folders.position[axisName] ) {
 
-				console.error( 'GuiSelectPoint.updateScale: Under constraction.' );
+				if ( options.scales[axisName].isAxis() ) console.error( 'GuiSelectPoint.updateScale: Under constraction.' );
 				return;
 
 			}
@@ -997,6 +1008,40 @@ class GuiSelectPoint {
 
 		}
 
+		function addPoints( mesh ) {
+
+			for ( var iPosition = 0; iPosition < mesh.geometry.attributes.position.count; iPosition++ ) {
+
+				const opt = document.createElement( 'option' ),
+					name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
+				opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
+				opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
+				cPoints.__select.appendChild( opt );
+
+			}
+
+		}
+
+		function createPlayerArrayFuncs( mesh ) {
+
+			if ( !mesh || mesh.userData.boFrustumPoints ) return;
+			if ( !mesh.userData.player ) mesh.userData.player = {};
+			if ( !mesh.userData.player.arrayFuncs ) {
+
+				const position = mesh.geometry.attributes.position;
+				mesh.userData.player.arrayFuncs = [];
+				for ( var i = 0; i < position.count; i++ ) {
+
+					const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
+					vector.w = 1;
+					mesh.userData.player.arrayFuncs.push( vector );
+
+				}
+
+			}
+
+		}
+
 		/**
 		 * Adds select point GUI into dat.gui folder
 		 * @param {GUI} [folder] [dat.gui]{@link https://github.com/anhr/dat.gui} folder.
@@ -1014,8 +1059,10 @@ class GuiSelectPoint {
 				value = parseInt( value );
 				mesh = getMesh();
 
-				if ( cCustom ) cCustom.object( mesh, dat, options );
+				if ( cCustom ) cCustom.object( mesh, dat, value === -1 );//options );
 
+				createPlayerArrayFuncs( mesh );
+/*
 				if ( mesh && !mesh.userData.boFrustumPoints ) {
 
 					if ( !mesh.userData.player ) mesh.userData.player = {};
@@ -1034,6 +1081,7 @@ class GuiSelectPoint {
 					}
 
 				}
+*/
 
 				const none = 'none', block = 'block';
 				var display;
@@ -1070,15 +1118,7 @@ class GuiSelectPoint {
 						if ( mesh.geometry.attributes ) {
 
 							displayfPoints = block;
-							for ( var iPosition = 0; iPosition < mesh.geometry.attributes.position.count; iPosition++ ) {
-
-								const opt = document.createElement( 'option' ),
-									name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
-								opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
-								opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
-								cPoints.__select.appendChild( opt );
-
-							}
+							addPoints( mesh );
 
 						}
 
@@ -1571,6 +1611,38 @@ class GuiSelectPoint {
 			opt.innerHTML = lang.notSelected;
 			opt.setAttribute( 'value', -1 );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
 			cPoints.__select.appendChild( opt );
+
+		}
+		/**Updates points in the points list control. */
+		this.updatePoints = function () {
+
+			const boDisplayVerticeID = options.dat.guiSelectPoint.boDisplayVerticeID,
+				mesh = getMesh();
+
+			//убрать с холста идентификаторы точек
+			if ( boDisplayVerticeID ) {
+
+				options.dat.guiSelectPoint.boDisplayVerticeID = false;
+				displayVerticeID( mesh );
+
+			}
+
+			cPoints.__onChange( -1 );
+			this.removePoints();
+			mesh.userData.player.arrayFuncs.length = 0;
+			delete mesh.userData.player.arrayFuncs;
+			createPlayerArrayFuncs( mesh );
+			addPoints( mesh );
+
+			//восстановить идентификаторы точек
+			if ( boDisplayVerticeID ) {
+
+				options.dat.guiSelectPoint.boDisplayVerticeID = true;
+				displayVerticeID( mesh );
+
+			}
+
+			if ( mesh.userData.nd ) mesh.userData.nd.update();
 
 		}
 		function addPointControllers() {

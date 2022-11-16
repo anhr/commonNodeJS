@@ -18,11 +18,8 @@
 */
 
 import three from '../three.js'
-
 import Options from '../Options.js'
-
 import PositionController from '../PositionController.js';
-import { SpriteText } from '../SpriteText/SpriteText.js'
 import MyMath from '../myMath/myMath.js'
 
 /**
@@ -35,14 +32,24 @@ dimention	geometry	points	edges	faces	bodyes	4D objects
 
 class ND {
 
-	/** @class
+	/**
 	 * N-dimensional graphics.
 	 * Creates an N-dimensional graphic object,
 	 * checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
 	 * @param {number} n space dimension of the graphical object.
-	 * @param {Object} [settings={}] The following settings are available
-	 * @param {Object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
+	 * @param {object} [settings={}] The following settings are available
+	 * @param {object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
+	 * @param {String} [settings.object.color='lime'] color of N-dimensional graphic object.
+	 * @param {boolean|object} [settings.object.faces] true or object - display the n-dimensional graphical object faces instead of edges.
+	 * @param {float} [settings.object.faces.opacity=0.5] color Float in the range of 0.0 - 1.0 indicating how transparent the material is.
+	 * A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
+	 * If the <b>transparent</b> property is not set to true, the material will remain fully opaque and this value will only affect its color.
+	 * See [Material.opacity]{@link https://threejs.org/docs/#api/en/materials/Material.opacity}.
+	 * @param {boolean} [settings.object.faces.transparent= true] Defines whether this material is transparent.
+	 * This has an effect on rendering as transparent objects need special treatment and are rendered after non-transparent objects.
+	 * When set to true, the extent to which the material is transparent is controlled by setting its <b>opacity</b> property.
+	 * See [Material.transparent]{@link https://threejs.org/docs/#api/en/materials/Material.transparent}.
 	 * @param {Array|Object} [settings.object.geometry] Array of vertices and indices of the n-dimensional graphical object.
 	 * <pre>
 	 * Every item of array is n-dimensional vector of vertice of object.
@@ -215,8 +222,9 @@ class ND {
 	 * For example if <b>iAxes</b> is [1,2], then axis 1 interpret as axis 0 and axis 2 interpret as axis 1.
 	 * As result, you can rotate axes around another axis to 90 degrees.
 	 * In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.
+	 * @param {Boolean} [settings.plane=true] true - create <b>vectorPlane</b>. See <b>settings.vectorPlane</b> below.
 	 * @param {Array} [settings.vectorPlane] n-dimensional position of the panel
-	 * intersecting with the <b>settings.object.geometry</b> n-dimensional graphical object.
+	 * intersecting with the <b>settings.object.geometry</b> n-dimensional graphical object. Available only if <b>settings.plane</b> is true.
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * Define <b>scene</b> if you want visualise n-dimensional plane and n-dimensional object to 3-D space of the <b>scene</b>.
 	 * @param {Options} [settings.options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
@@ -232,6 +240,149 @@ class ND {
 
 		const options = settings.options, _ND = this;
 		settings.object = settings.object || {};
+		settings.object.raycaster = settings.object.raycaster || {};
+		settings.object.raycaster.text = settings.object.raycaster.text || function( intersection ) {
+
+
+			//Localization
+
+			const getLanguageCode = settings.options.getLanguageCode;
+
+			const lang = {
+
+				pointId: "point Id",
+				edgeId: "edge Id",
+				faceId: "face Id",
+				bodyId: "body Id",
+				segmentId: "segment Id",
+
+			};
+
+			const _languageCode = getLanguageCode();
+
+			switch (_languageCode) {
+
+				case 'ru'://Russian language
+
+					lang.pointId = 'Индекс точки';
+					lang.edgeId = 'Индекс ребра';
+					lang.faceId = 'Индекс грани';
+					lang.bodyId = 'Индекс тела';
+					lang.segmentId = 'Индекс сегмента';
+
+					break;
+				default://Custom language
+					if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
+						break;
+
+					Object.keys(guiParams.lang).forEach(function (key) {
+
+						if (lang[key] === undefined)
+							return;
+						lang[key] = guiParams.lang[key];
+
+					});
+
+			}
+
+			const index = intersection.object.geometry.index, edge = [
+					index.getX(intersection.indexNew),
+					index.getY(intersection.indexNew)
+				],
+				indices = intersection.object.userData.geometry.indices;
+			edges = indices[0];
+
+			//find point id
+			var minDistance = Infinity, pointId;
+			function distance ( i ) {
+
+				const pointIndex = edge[i],
+					distance = intersection.point.distanceTo( new THREE.Vector3().fromBufferAttribute( intersection.object.geometry.attributes.position, pointIndex ) );
+				if ( minDistance > distance  ) {
+	
+					minDistance = distance;
+					pointId = pointIndex;
+					
+				}
+				
+			}
+			distance ( 0 );
+			distance ( 1 );
+			var text = '\n' + lang.pointId + ': ' + pointId;
+			
+			//Find edge index
+			for ( var segmentIndex = 0; segmentIndex < edges.length; segmentIndex++ ) {
+
+				const edgeCur = edges[segmentIndex];
+				if (
+					( ( edgeCur.indices[0] === edge[0] ) && ( edgeCur.indices[1] === edge[1] ) ) ||
+					( ( edgeCur.indices[0] === edge[1] ) && ( edgeCur.indices[1] === edge[0] ) )
+				) {
+
+					text += '\n' + lang.edgeId + ': ' + segmentIndex;
+					edges.selected = segmentIndex;
+					
+					//find segment id.
+					//indices[1] is faces
+					//indices[2] is bodies
+					var detectedIndex;//индекс элемента текушего сегмента segment = indices[indicesSegment]
+						//в котором встечается индекс segmentIndex выбранного сегмента перудыдущего уровня
+					for ( var indicesSegment = 1; indicesSegment < indices.length; indicesSegment++ ) {
+
+						const segment = indices[indicesSegment];//текуший сегмент
+						//Встречаются ли в текушем сегменте segment индекс segmentIndex выбранного сегмента перудыдущего уровня
+						segment.forEach( ( segmentItem, segmentIndexCur ) => {
+
+							//найти в текущем элементе сегмента segmentItem индекс segmentIndex выбранного сегмента перудыдущего уровня
+							//и присвоить detectedIndex = segmentIndexCur равному индексу текущего элемента сегмента
+							for ( var i = 0; i < segmentItem.length; i++ ) {
+								
+								//segmentIndex индекс выбранного сегмента перудыдущего уровня
+								//для segment = indices[1] is faces это индекс выбранного edge
+								//для segment = indices[2] is bodies это индекс выбранного face
+								if ( segmentItem[i] === segmentIndex ) {
+									
+									//if ( detectedIndex != undefined ) console.log( 'Duplicate segment: ' + i );
+									detectedIndex = segmentIndexCur;
+									break;
+
+								}
+
+							}
+							
+						} );
+						if ( !detectedIndex ) {
+							
+							console.error( 'ND: mouse move. Index of segment was not detected' );
+							break;
+
+						}
+						else {
+							
+							segmentIndex = detectedIndex;
+							var segmentName;
+							switch( indicesSegment ) {//индекс ткушего сегмета
+
+								case 1: segmentName = lang.faceId; break;
+								case 2: segmentName = lang.bodyId; break;
+								default: segmentName = lang.segmentId;
+									
+							}
+							text += '\n' + segmentName + ': ' + segmentIndex;
+							segment.selected = segmentIndex;
+
+						}
+						
+					}
+					const segment = indices[indices.length - 1][segmentIndex];
+					break;
+					
+				}
+				
+			}
+			return text;
+			
+		};
 		settings.object.name = settings.object.name || 'Object';
 		if ( settings.object.aObjects ) settings.object.aObjects.nD = this;
 		settings.object.geometry = settings.object.geometry || {};
@@ -243,7 +394,7 @@ class ND {
 		}
 		settings.object.geometry.position = settings.object.geometry.position || [];
 
-		class Vector {
+		class Vector extends ND.VectorN {
 
 			/* *
 			 * @description
@@ -254,14 +405,15 @@ class ND {
 			 * </pre>
 			 * @example //Creates a point in 2-dimensional space. -5 is value for 0 axis and 7.8 is value for 1 axis.
 			 * const vector = new ND.Vector( [-5, 7.8] );
-			 * const n_dimension = vector.length//2
 			 * const point = vector.point;//THREE.Vector3( -5, 7.8, 0 )
 			 * const vector0 = vector[0]//-5
 			 * const vector1 = vector[1]//7.8
-			 * @memberof NDVector
 			 */
 			constructor( array = 0, vectorSettings = {} ) {
 
+				array = super(n, array).array;
+				const _this = this;
+/*				
 				if ( array.isVector ) return array;
 				if ( array instanceof Array === false ) {
 
@@ -271,49 +423,56 @@ class ND {
 
 				}
 				if ( n !== undefined ) while ( array.length < n ) array.push( 0 );
+*/
 
 				//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
 				return new Proxy( array, {
 
 					get: function ( target, name ) {
 
-						switch ( name ) {
-
-							case "length": return n + 1;
-							case "array": return array;
-							/* *
-							* @description
-							* <pre>
-							* <b><a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>.point</b>.
-							* Projection of the <b>ND.Vector</b> object into 3D space.
-							* Returns <b>THREE.Vector3</b> object.
-							* Projection of 1-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], 0, 0 ) </b>.
-							* Projection of 2-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], 0 ) </b>.
-							* Projection of 3-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], vector[2] ) </b>.
-							* </pre>
-							* @See <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>
-							*/
-							case "point":
-								const THREE = three.THREE;
-								return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
-							/*
-							* Adds v to this vector.
-							*/
-							case "add":
-								return function ( v ) {
-
-									target.forEach( ( value, i ) => target[i] += v[i] );
-									return this;
-				
-								}
-							case "index": return vectorSettings.index;
-							case "isVector": return true;
-
-						}
 						var i = parseInt( name );
 						if ( isNaN( i ) ) {
 
-							console.error( 'Vector.get: invalid name: ' + name );
+							switch ( name ) {
+
+//								case "array": return array;
+								/* *
+								* @description
+								* <pre>
+								* <b><a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>.point</b>.
+								* Projection of the <b>ND.Vector</b> object into 3D space.
+								* Returns <b>THREE.Vector3</b> object.
+								* Projection of 1-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], 0, 0 ) </b>.
+								* Projection of 2-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], 0 ) </b>.
+								* Projection of 3-dimensional vector into 3D space: <b>THREE.Vector3( vector[0], vector[1], vector[2] ) </b>.
+								* </pre>
+								* @See <a href="./NDVector.ND.Vector.html" target="_blank">ND.Vector</a>
+								*/
+								case "point":
+									const THREE = three.THREE;
+									return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
+								/*
+								* Adds v to this vector.
+								*/
+/*
+								case "add":
+									return function ( v ) {
+
+										target.forEach( ( value, i ) => target[i] += v[i] );
+										return this;
+
+									}
+								case "index": return vectorSettings.index;
+								case "isVector": return true;
+*/
+								default: {
+
+									return _this[name];
+//									console.error( 'ND: Vector get. Invalid name: ' + name );
+								
+								}
+
+							}
 							return;
 
 						}
@@ -326,23 +485,29 @@ class ND {
 					},
 					set: function ( target, name, value ) {
 
-						if ( name === "onChange" ) {
-
-							vectorSettings.onChange = value;
-							return vectorSettings.onChange;
-
-						}
 						const i = parseInt( name );
-						if ( i >= array.length ) {
-
-							array.push( value );
-							return array.length;
-
+						if ( !isNaN( i ) ) {
+								
+							if ( i >= array.length ) {
+	
+								array.push( value );
+								return array.length;
+	
+							}
+							array[i] = value;
+							_ND.intersection();
+							if ( vectorSettings.onChange ) vectorSettings.onChange();
+							return true;
+							
 						}
-						array[i] = value;
-						_ND.intersection();
-						if ( vectorSettings.onChange ) vectorSettings.onChange();
-						return true;
+						switch ( name ) {
+	
+							case 'onChange':
+								vectorSettings.onChange = value;
+								return vectorSettings.onChange;
+							default: console.error( 'ND: Vector set. Invalid name: ' + name );
+	
+						}
 
 					}
 
@@ -976,7 +1141,9 @@ class ND {
 			
 		} );
 
-		var _prevLine;
+		//делаю как объект для совместимости с GuiIndices потому что в javascript нельзя передовать ссылки на переменные
+		//https://stackoverflow.com/questions/7744611/pass-variables-by-reference-in-javascript
+		const _prevLine = {};
 
 		function proxyGeometryPosition() {
 
@@ -1010,6 +1177,7 @@ class ND {
 									const i = parseInt( name );
 									if ( !isNaN( i ) ) {
 
+										if ( i >= target.length ) return 0;
 										return target[i];
 
 									}
@@ -1022,6 +1190,8 @@ class ND {
 										case 'i': return target.i;
 										case 'arguments': return target.arguments;
 										case 'reset': return function() { delete target.positionWorld; }
+										case 'edges': return target.edges;
+										case 'index': return target.index;
 										default: console.error( 'ND: settings.object.geometry.position[i] get. Invalid name: ' + name );
 
 									}
@@ -1034,8 +1204,12 @@ class ND {
 									if ( !isNaN( i ) ) {
 
 										target.positionWorld = undefined;
-										_prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
-										_prevLine.geometry.attributes.position.needsUpdate = true;
+										if ( _prevLine.prevLine ) {
+											
+											_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
+											_prevLine.prevLine.geometry.attributes.position.needsUpdate = true;
+
+										}
 										update();//изменилась позиция вершины
 
 									}
@@ -1117,7 +1291,7 @@ class ND {
 			return new Proxy( edges ? edges : [],
 				{
 
-					get: function ( target, name, value ) {
+					get: function ( edges, name, value ) {
 
 						const i = parseInt( name );
 						if ( !isNaN( i ) )
@@ -1134,15 +1308,15 @@ class ND {
 											return;
 
 										}
-										if ( target.length === 0 ) return;//no edges
-										if ( i >= target.length ) {
+										if ( edges.length === 0 ) return;//no edges
+										if ( i >= edges.length ) {
 
-											console.error( 'ND: settings.object.geometry.indices[]intersection. invalid length: ' + target.length );
+											console.error( 'ND: settings.object.geometry.indices[]intersection. invalid length: ' + edges.length );
 											this.indices = { intersection: {} };
 											return;
 
 										}
-										var indices = target[i];
+										var indices = edges[i];
 
 										//Когда размерность графического оъекта меньше 3
 										//и когда он создается из объета большей размерности
@@ -1308,17 +1482,18 @@ class ND {
 									} else console.error( 'ND: settings.object.geometry.indices[]intersection. invalid name: ' + name );
 
 								},
-								indices: target[parseInt( name )],
+								indices: edges[parseInt( name )],
 
 							};
 						switch ( name ) {
 
-							case 'push': return target.push;
-							case 'length': return target.length;
+							case 'push': return edges.push;
+							case 'length': return edges.length;
 							case 'intersection': return undefined;
-							case 'edges': return target;
+							case 'edges': return edges;
 							case 'isProxy': return true;
-							case 'forEach': return target.forEach;
+							case 'forEach': return edges.forEach;
+							case 'selected': return edges.selected;
 							default: console.error( 'ND: settings.object.geometry.indices getter. Invalid name: ' + name );
 
 						}
@@ -1331,11 +1506,9 @@ class ND {
 
 							switch ( prop ) {
 
-								case 'length':
-									break;
-								case 'edges':
-									settings.object.geometry.indices[0] = proxyEdges( value );
-									break;
+								case 'length': break;
+								case 'edges': settings.object.geometry.indices[0] = proxyEdges( value ); break;
+								case 'selected': edges.selected = value; break;
 								default: console.error( 'ND settings.object.geometry.indices[0].set: invalid prop: ' + prop );
 
 							}
@@ -1496,6 +1669,7 @@ class ND {
 						case 'length': return target.length;
 						case 'isProxy': return true;
 						case 'forEach': return target.forEach;
+						case 'selected': return target.selected;
 						default: console.error( 'ND: settings.object.geometry.indices[' + name + ']. Invalid name: ' + name );
 
 					}
@@ -1508,8 +1682,8 @@ class ND {
 
 						switch ( name ) {
 
-							case 'length':
-								break;
+							case 'length': break;
+							case 'selected': target.selected = value; break;
 							default: console.error( 'ND settings.object.geometry.indices[' + name + ']: invalid name: ' + name );
 								return false;
 
@@ -1672,7 +1846,7 @@ class ND {
 				case 1://[0, 1]
 					addEdge();
 					break;
-				default: if ( settings.object.geometry.indices[0].length === 0 )  addEdges( n );
+				default: if ( settings.object.geometry.indices[0].length === 0 ) addEdges( n );
 	
 			}
 
@@ -1809,8 +1983,6 @@ class ND {
 							settings.object.geometry.indices[0].edges.length = 0;
 							geometry.indices[0].forEach( edge => settings.object.geometry.indices[0].edges.push( edge.indices === undefined ? edge : edge.indices ) );
 							
-//							settings.object.geometry.indices[0].edges = geometry.indices[0];
-							
 						} else settings.object.geometry.indices[i] = geometry.indices[i];
 
 					}
@@ -1830,6 +2002,81 @@ class ND {
 					return points;
 
 				},
+				//returns indices of the faces vertices
+				get faceIndices() {
+
+					const aFaceIndices = [];
+					const indices = settings.object.geometry.indices;
+					if ( indices.length < 2 ) return aFaceIndices;
+					indices[1].forEach( face => {
+						
+						const faceVertices = [];
+						face.forEach( ( edge, iEdge ) => {
+							
+							if ( iEdge > 2 ) {
+
+								console.error( 'ND: geometry.D3.faceIndices get. invalid face edges count.');
+								return;
+								
+							}
+							const edgeVertices = indices[0][edge].indices;
+/*							
+							function push( i ) {
+
+								if ( faceVertices.length > 2 ) {
+									
+									console.error( 'ND: geometry.D3.faceIndices get. Invalid face vertices count = ' + faceVertices.length );
+									return;
+
+								}
+								const vertice = new THREE.Vector3().copy( geometry.D3.points[i] );
+								vertice.i = i;
+								faceVertices.push( vertice );
+								
+							}
+*/
+							if ( faceVertices.length === 0 ) {
+
+/*								
+								push( edgeVertices[0] );
+								push( edgeVertices[1] );
+*/
+								faceVertices.push( edgeVertices[0] );
+								faceVertices.push( edgeVertices[1] );
+
+							} else {
+
+//									var boPush = false;//for debug
+								var boVertice0 = false, boVertice1 = false;
+								for ( var i = 0; i < faceVertices.length; i++ ) {
+
+									const faceVertice = faceVertices[i];
+									if ( faceVertice === edgeVertices[0] ) boVertice1 = true;
+									else if ( faceVertice === edgeVertices[1] ) boVertice0 = true;
+									
+								}
+//									if ( !boPush ) console.error( 'ND: geometry.D3.faceIndices get. Missing push');
+								if ( !boVertice0 && !boVertice1 ) console.error( 'ND: geometry.D3.faceIndices get. Missing push');
+								else if ( boVertice0 != boVertice1 ) {
+
+									faceVertices.push( edgeVertices[boVertice0 ? 0 : 1] );
+/*									
+									if ( boVertice0 ) push( edgeVertices[0] );
+									else push( edgeVertices[1] );
+*/
+									
+								}//else вершины третьего ребра совпадают с одной оз вершин первого и второго ребра
+								
+							}
+							
+						});
+						if ( faceVertices.length === 3 ) aFaceIndices.push( faceVertices[0], faceVertices[1], faceVertices[2] );
+						else console.error( 'ND: PolyhedronGeometry: subdivide. Invalid face vertices count');
+						
+					});
+					return aFaceIndices;
+
+				},
 				//Returns an indices of projection
 				get indices() {
 
@@ -1841,10 +2088,10 @@ class ND {
 						for ( var i = 0; i < edges.length; i++ ) {
 	
 							const edge = edges[i].indices;
-							if ( edge ) {
+							if ( edge !== undefined ) {
 								
 								if ( edge.length !== 2 ) {
-	
+
 									console.error( 'ND.geometry.D3.get indices: invalid edge.length = ' + edge.length );
 									return;
 	
@@ -1897,30 +2144,40 @@ class ND {
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
 
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
-/*
-		function displayVerticeID( object, geometry ) {
-			
-			if ( !settings.boDisplayVerticeID ) {
-				
-				for ( var i = object.children.length - 1; i >= 0; i-- ) {
 
-					const child = object.children[i];
-					if ( child.type === 'Sprite' ) object.remove( child );
+		//The user has selected a segment of nD object
+		const selectSegment = {
+
+			line: undefined,//segment of nD object, selected by user
+			removeLine: function (line) {
+
+						if (line) {
+
+							line.parent.remove(line);
+							line = undefined;
+
+						}
+				return line;
+
+			},
+			opacityDefault: 0.3,
+			opacityItem: function (item, parentObject, transparent, opacity = selectSegment.opacityDefault) {
+
+				if (!item.material) return;
+				if (transparent && (opacity === 0) && (Object.is(item.parent, parentObject))) parentObject.remove(item);
+				else {
+
+					if (!item.parent) parentObject.add(item);
+					item.material.transparent = transparent;
+					item.material.opacity = transparent ? opacity : 1;
+					item.material.needsUpdate = true;//for THREE.REVISION = "145dev"
 
 				}
-				return;
 
 			}
-			const points = geometry.D3.points;
-			for ( var i = 0; i < points.length; i++ ) {
 
-				const spriteText = new SpriteText( i, points[i], { group: object } );
-				spriteText.userData.pointID = i;
-
-			}
-			
 		}
-*/
+
 		function create3DObject( geometry, settings3D = {} ) {
 
 			if ( !geometry.D3 ) {
@@ -1930,32 +2187,111 @@ class ND {
 				
 			}
 			if ( geometry.position.length === 0 ) return;
-			const color = settings3D.color || 0xffffff;//default white
+			const color = settings3D.color || 'white';//0xffffff
 			geometry.D3.color = color;
 			const indices3D = geometry.D3.indices, indices = indices3D.indices, colors = indices3D.colors;
+			
+			const buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
+			if ( settings3D.faces ) {
 
-			const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points );
+				if ( settings3D.faces === true ) settings3D.faces = {};
+				if ( settings3D.faces.color === undefined ) settings3D.faces.color = color;
+				if ( settings3D.faces.opacity === undefined ) settings3D.faces.opacity = 0.5;
+				if ( settings3D.faces.transparent === undefined ) settings3D.faces.transparent = true;
+				buffer.setIndex( geometry.D3.faceIndices );
+				buffer.computeVertexNormals ();
 
+			} else buffer.setIndex( indices )
+			
 			const object = indices.length > 1 ?
-					new THREE.LineSegments( buffer.setIndex( indices ), new THREE.LineBasicMaterial( {
-
+				settings3D.faces ?
+					new THREE.Mesh(buffer, new THREE.MeshLambertMaterial({
+//						color: settings3D.faces.color,
 						color: color,
-
+						opacity: settings3D.faces.opacity,
+						transparent: settings3D.faces.transparent,
+						side: THREE.DoubleSide
 					} ) ) :
-					new THREE.Points( buffer, new THREE.PointsMaterial( {
-						
-						color: color,
-						sizeAttenuation: false,
-						size: options.point.size / ( options.point.sizePointsMaterial * 2 ),
-						
-					} ) );
+					new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( { color: color, } ) ) :
+				new THREE.Points( buffer, new THREE.PointsMaterial( {
+					
+					color: color,
+					sizeAttenuation: false,
+					size: options.point.size / ( options.point.sizePointsMaterial * 2 ),
+					
+				} ) );
 			if ( settings3D.name )
 				object.name = settings3D.name;
 			scene.add( object );
 
-//			displayVerticeID( object, geometry );
-			
-			object.userData.nd = function ( fParent, dat ) {
+			object.userData.geometry = geometry.geometry;
+			object.userData.onMouseDown = function ( intersection ) {
+
+				const indices = geometry.geometry.indices, segmentIndex = 0,//edges
+					segment = indices[segmentIndex], selectedIndex = segment.selected;
+
+				selectSegment.line = selectSegment.removeLine(selectSegment.line );
+				const opacityDefault = intersection.event && intersection.event.button === 0 ? selectSegment.opacityDefault : 1, parentObject = object;
+				function opacity( transparent = true, opacity = opacityDefault ) {
+
+					scene.children.forEach(item => selectSegment.opacityItem(item, parentObject, transparent, opacity));
+
+				}
+				opacity();
+				
+				const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points );
+				const lineIndices = [];
+				function createIndices( item, level ) {
+
+					if ( level > 0 ) {
+
+						level--;
+						for ( var i = 0; i < item.length; i++ ) createIndices( indices[level][item[i]], level );
+						return;
+
+					}
+					const itemIndices = item.indices || item;
+					if ( itemIndices.length !== 2 ) console.error( 'ND: createIndices. Invalid itemIndices.length = ' + itemIndices.length );
+					var boDetected = false;
+					for ( var lineIndicesIndex = 0; lineIndicesIndex < lineIndices.length; lineIndicesIndex += 2 ) {
+
+						if ( ( lineIndices[lineIndicesIndex] === itemIndices[0] ) && ( lineIndices[lineIndicesIndex + 1] === itemIndices[1] ) ) {
+
+							boDetected = true;
+							break;
+							
+						}
+						
+					}
+					if ( !boDetected ) itemIndices.forEach( i => { lineIndices.push( i ); } );
+
+				}
+				createIndices( segment[selectedIndex], segmentIndex );
+				
+				selectSegment.line = new THREE.LineSegments( buffer.setIndex( lineIndices ), new THREE.LineBasicMaterial( { color: object.material.color, } ) );
+
+				parentObject.add( selectSegment.line );
+				
+			}
+			object.userData.nd = function ( fParent, dat, gui = false, boUpdate = false ) {
+
+				if ( !object.userData.nd.update )object.userData.nd.update = function(){ object.userData.nd( fParent, dat, gui, true ) }
+
+				if ( !boUpdate ) {
+					
+					if ( fParent.parent.fCustom ) {
+	
+						fParent.parent.fCustom.parent.removeFolder( fParent.parent.fCustom );
+						fParent.parent.fCustom = undefined;
+						
+					}				
+					if ( !gui && geometry.geometry.gui/* && !geometry.geometry.gui.isCreated()*/ ) {
+	
+						fParent.parent.fCustom = geometry.geometry.gui( fParent, dat, /*object.userData.nd, */settings.options, _ND );
+						
+					}
+
+				}
 
 				//Localization
 
@@ -1986,10 +2322,6 @@ class ND {
 					defaultButton: 'Default',
 					defaultPositionTitle: 'Restore default position',
 					defaultRotationTitle: 'Restore default rotation',
-/*					
-					displayVerticeID: 'Vertice ID',
-					displayVerticeIDTitle: 'Display on the scene the vertice ID near to the vertice',
-*/
 
 					notSelected: 'Not selected',
 
@@ -2024,10 +2356,6 @@ class ND {
 						lang.defaultButton = 'Восстановить';
 						lang.defaultPositionTitle = 'Восстановить позицию объекта по умолчанию';
 						lang.defaultRotationTitle = 'Восстановить вращение объекта по умолчанию';
-/*
-						lang.displayVerticeID = 'Номера вершин';
-						lang.displayVerticeIDTitle = 'На сцене возле каждой вершины показать ее идентификатор';
-*/
 
 						lang.notSelected = 'Не выбран';
 
@@ -2046,16 +2374,6 @@ class ND {
 
 				}
 				for ( var i = fParent.__controllers.length - 1; i >= 0; i-- ) { fParent.remove( fParent.__controllers[i] ); }
-/*
-				settings.boDisplayVerticeID = settings.boDisplayVerticeID || false;
-				const cDisplayVerticeID = fParent.add( settings, 'boDisplayVerticeID' ).onChange( function ( value ) {
-					
-					update();
-					displayVerticeID( object, geometry );
-					
-				} );
-				dat.controllerNameAndTitle( cDisplayVerticeID, lang.displayVerticeID, lang.displayVerticeIDTitle );
-*/
 				
 				const indices = geometry.geometry.indices, segmentIndex = indices.length - 1;
 				function addController(
@@ -2065,7 +2383,7 @@ class ND {
 					prevLine//выбранный пользователем сегмент объекта на более высоком уровне. Например если пользователь выбрал ребро то prevLine указывает на выбранную пользователем грань
 				) {
 
-					_prevLine = prevLine;
+					_prevLine.prevLine = prevLine;
 					var segment;
 					if ( segmentItems ) {
 
@@ -2079,15 +2397,10 @@ class ND {
 						if ( segmentIndex === -1 ) {
 
 							//vertices
-							
-							settings.object.geometry.position.boPositionError = false;
-							
 							//непонятно почему, но для 2D вершины перечислены в segmentItems.indices
 							if ( segmentItems.forEach )
-								segmentItems.forEach( i => addItem( settings.object.geometry.position[i], i ) );
-							else segmentItems.indices.forEach( i => addItem( settings.object.geometry.position[i], i ) );
-							
-							settings.object.geometry.position.boPositionError = true;
+								segmentItems.forEach( i => addItem( geometry.geometry.position[i], i ) );
+							else segmentItems.indices.forEach( i => addItem( geometry.geometry.position[i], i ) );
 							
 						} else {
 							
@@ -2099,7 +2412,7 @@ class ND {
 						
 					}else segment = indices[segmentIndex];
 					const items = { Items: [lang.notSelected] };
-					var line, fChildSegment;
+					var fChildSegment, line;
 					var name, title;
 					switch ( segmentIndex ) {
 
@@ -2129,29 +2442,11 @@ class ND {
 
 						}
 						const selectedIndex = cSegment.__select.selectedIndex - 1;
-						if ( line ) {
+						line = selectSegment.removeLine(line);
+						const parentObject = object;
+						function opacity(transparent = true, opacity = selectSegment.opacityDefault ) {
 
-							line.parent.remove( line );
-							line = undefined;
-
-						}
-						const opacityDefault = 0.3, parentObject = object;
-						function opacityItem( item, transparent, opacity = opacityDefault ) {
-							
-							if ( !item.material ) return;
-							if ( transparent && ( opacity === 0 ) && ( Object.is( item.parent, parentObject ) ) ) parentObject.remove( item ); 
-							else {
-								
-								if ( !item.parent ) parentObject.add( item );
-								item.material.transparent = transparent;
-								item.material.opacity = transparent ? opacity : 1;
-
-							}
-							
-						}
-						function opacity( transparent = true, opacity = opacityDefault ) {
-
-							scene.children.forEach( item => opacityItem( item, transparent, opacity ) );
+							scene.children.forEach(item => selectSegment.opacityItem(item, parentObject, transparent, opacity));
 
 						}
 
@@ -2160,7 +2455,7 @@ class ND {
 						//Если в 5D прозрачность делать постоянной 0.3, то при выборе тела (body) из объета, объект буден практически непрозрачным
 						function getOpacity() {
 							
-							return -0.1 * segmentIndex + opacityDefault;
+							return -0.1 * segmentIndex + selectSegment.opacityDefault;
 							
 						}
 
@@ -2182,8 +2477,8 @@ class ND {
 							removeVerticeControls();
 							if ( prevLine ) {
 
-								opacityItem( prevLine, false );
-								if ( prevLine.userData.prevLine ) opacityItem( prevLine.userData.prevLine, true, getOpacity() );
+								selectSegment.opacityItem(prevLine, parentObject, false);
+								if (prevLine.userData.prevLine) selectSegment.opacityItem(prevLine.userData.prevLine, parentObject, true, getOpacity() );
 								else opacity( true );
 								return;
 								
@@ -2194,22 +2489,21 @@ class ND {
 						}
 						if ( prevLine ) {
 							
-							opacity( true, 0 );
-							opacityItem( prevLine, true, getOpacity() );
-							if ( prevLine.userData.prevLine ) {
-
-								opacityItem( prevLine.userData.prevLine, true, 0 );
-								
-							}
+							opacity(true, 0);
+							selectSegment.opacityItem(prevLine, parentObject, true, getOpacity() );
+							if (prevLine.userData.prevLine) selectSegment.opacityItem(prevLine.userData.prevLine, parentObject, true, 0 );
 
 						} else opacity();
 						if ( segmentIndex === -1 ) {
 
 							//Vertices
 							removeVerticeControls();
-							settings.object.geometry.position.boPositionError = false;
+
+							//если так сделать, то при выборе объекта пересечения почемуто исчезают _prevLine.prevLine и object3D
+							//и как результат появляется ошибка когда пользователь изменяет положение вершины
+//							const vertice = geometry.geometry.position[segment[selectedIndex].i];
+
 							const vertice = settings.object.geometry.position[segment[selectedIndex].i];
-							settings.object.geometry.position.boPositionError = true;
 							for ( var i = 0; i < vertice.length; i++ ) {
 								
 								switch(i){
@@ -2247,31 +2541,61 @@ class ND {
 	
 								}
 								const itemIndices = item.indices || item;
-								itemIndices.forEach( i => { lineIndices.push( i ); } );
+								if ( itemIndices.length !== 2 ) console.error( 'ND: createIndices. Invalid itemIndices.length = ' + itemIndices.length );
+								var boDetected = false;
+								for ( var lineIndicesIndex = 0; lineIndicesIndex < lineIndices.length; lineIndicesIndex += 2 ) {
+
+									if ( ( lineIndices[lineIndicesIndex] === itemIndices[0] ) && ( lineIndices[lineIndicesIndex + 1] === itemIndices[1] ) ) {
+
+										boDetected = true;
+										break;
+										
+									}
+									
+								}
+								if ( !boDetected ) itemIndices.forEach( i => { lineIndices.push( i ); } );
 	
 							}
-							createIndices( segment[selectedIndex], segmentIndex );
-							line = new THREE.LineSegments( buffer.setIndex( lineIndices ), new THREE.LineBasicMaterial( { color: object.material.color } ) );
-	
+							createIndices(segment[selectedIndex], segmentIndex);
+							line = new THREE.LineSegments(buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
+
 							//debug
 							line.userData.name = fSegment.name + ' ' + value;
-							
+
 							parentObject.add( line );
 
 						}
-						if ( prevLine && line ) line.userData.prevLine = prevLine;
-						if ( segmentIndex >= 0 ) fChildSegment = addController( segmentIndex - 1, fSegment, segment[selectedIndex], line );
+						if (prevLine && line) line.userData.prevLine = prevLine;
+						if (segmentIndex >= 0) fChildSegment = addController(segmentIndex - 1, fSegment, segment[selectedIndex], line);
 
 					} );
-					dat.controllerNameAndTitle( cSegment, '' );
-					cSegment.__select[0].selected = true;
+					dat.controllerNameAndTitle(cSegment, '');
+					var selectedItem = 0;//, innerHTML;
+					//cSegment.__select[0].selected = true;
 
+					const selected = segmentIndex >= 0 ? indices[segmentIndex].selected : undefined;
+					var selectedOpt;//debug
 					for ( var i = 0; i < segment.length; i++ ) {
 
-						const item = segment[i], opt = document.createElement( 'option' ), indices = item.indices ? item.indices : item;
-						opt.innerHTML = '(' + ( item.i === undefined ? i : item.i ) + ') ' + ( segmentIndex === -1 ? '' : indices.toString() );
+						const item = segment[i], opt = document.createElement( 'option' ),
+							itemIndex = item.index != undefined ? item.index : item.i != undefined ? item.i : i;
+						opt.innerHTML = '(' + (item.i === undefined ? i : item.i) + ') ' + (segmentIndex === -1 ? '' : ( item.indices ? item.indices : item ).toString() );
 						opt.item = item;
+						if ( ( selected != undefined) && ( selected === itemIndex ) ) {
+							
+							selectedOpt = opt;//debug
+							selectedItem = i + 1;
+
+						}
 						cSegment.__select.appendChild( opt );
+
+					}
+					if ( selected && !selectedOpt ) console.error( 'ND: addController. Selected item was not detected' );
+					cSegment.__select[selectedItem].selected = true;
+					if ( selectedItem != 0 ) {
+						
+						cSegment.__select.selectedIndex = selectedItem;
+						cSegment.setValue( cSegment.__select[selectedItem].innerHTML );
 
 					}
 					return fSegment;
@@ -2281,18 +2605,29 @@ class ND {
 				childFolders.forEach( folderName => {
 
 					const childFolder = fParent.__folders[folderName];
-					if ( childFolder.userData && childFolder.userData.objectItems ) {
+					var controller;
+					if ( childFolder.userData && childFolder.userData.objectItems ) controller = childFolder.__controllers[0];
+					else if ( folderName === 'indices' ) {
 						
-						const controller = childFolder.__controllers[0];
-						if ( controller && controller.__select.selectedIndex != 0 ) {
-							
-							controller.__select.selectedIndex = 0;
-							controller.__onChange();
+						//ищем controller в GuiIndices
+						Object.keys( childFolder.__folders ).forEach( folderName => {
 
-						}
-						
+							if ( !controller ) {
+
+								const folder = childFolder.__folders[folderName];
+								if ( folder.userData && folder.userData.objectItems ) controller = folder.__controllers[0];
+
+							}
+						});
+
 					}
-					fParent.removeFolder( childFolder );
+					if ( controller && controller.__select.selectedIndex != 0 ) {
+						
+						controller.__select.selectedIndex = 0;
+						controller.__onChange();
+
+					}
+					if ( !childFolder.customFolder )  fParent.removeFolder( childFolder );
 					
 				} );
 				const fPosition = fParent.addFolder( lang.position ),
@@ -2382,12 +2717,33 @@ class ND {
 
 				onIntersection: function ( intersection, mouse ) {
 
+					intersection.indexNew = intersection.index;
+					//если убрать строку ниже, то будет ошибка
+					//Cannot read properties of undefined (reading 'cameraTarget')
+					//в строке
+					//if (!func.cameraTarget)
+					//в функции this.changeTarget класса Player.cameraTarget в файле player.js
+					//
+					//Но зато будут видны иденксы точек, ребер, граней и т.д. если навести мышку на многомерную фигуру
+					//
+					//Лень разбираться почему так сделал.
+					//Для решения проблемы создаю новую переменную intersection.indexNew. Смотри строку выше.
+					//
+					//Для тестирования запусить http://localhost/anhr/commonNodeJS/master/nD/Examples/
+					//На холсте 5D щелкнуть мышкой на Object или Intersection.
 					delete intersection.index;
+
 					Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
 
 				},
 				onIntersectionOut: function () { Options.raycaster.onIntersectionOut( scene, options.renderer ); },
-				onMouseDown: function ( intersection ) { Options.raycaster.onMouseDown( intersection, options ); },
+				onMouseDown: function ( intersection, event ) {
+					
+					intersection.event = event;//Теперь можно выполнять разные действия в зависимости от нажатой кнопки мыши
+					Options.raycaster.onMouseDown( intersection, options );
+				
+				},
+				text: settings.object.raycaster ? settings.object.raycaster.text : undefined,
 
 			}
 			if ( options.eventListeners ) options.eventListeners.addParticle( object );
@@ -2397,13 +2753,15 @@ class ND {
 		}
 		/**
 		 * @returns an array of intersection points of <b>vectorPlane</b> and <b>geometry</b>. See constructor for details.
-		 * @param {object} [geometryIntersection = { position: [], indices: [[]] }] Arrays of vertices and indexes of the result of the intersection of the panel and the nD object. See <b>settings.object.geometry</b> of <b>ND</b> constructor for details.
+		 * @param {geometryIntersection} [geometryIntersection = { position: [], indices: [[]] }] Arrays of vertices and indexes of the result of the intersection of the panel and the nD object. See <b>settings.object.geometry</b> of <b>ND</b> constructor for details.
 		 * @param {array} [geometryIntersection.position] Array of vertices of the result of the intersection. See <b>settings.object.geometry.position</b> of <b>ND</b> constructor for details.
 		 * @param {array} [geometryIntersection.indices] Array of <b>indices</b> of vertices of the result of the intersection. See <b>settings.object.geometry.indices</b> of <b>ND</b> constructor for details.
 		 * @param {array} [iIntersections] Array of indices that have been added to <b>geometryIntersection.indices</b>
 		 */
 		this.intersection = function ( geometryIntersection = { position: [], indices: [[]] }, iIntersections ) {
 
+			if ( settings.plane === false ) return;
+			
 			function intersection( iEdge, aEdge ) {
 				
 				for ( var i = 0; i < geometryIntersection.position.length; i++ ) {
@@ -2700,7 +3058,6 @@ class ND {
 
 										const error = 'ND.intersection: invalid edge';
 										console.error( error );
-//										throw error;
 										return;
 
 									}
@@ -2797,7 +3154,13 @@ class ND {
 				object3D = undefined;
 
 			}
-			object3D = create3DObject( geometry, { name: settings.object.name, color: 0x00ff00 } );//green
+			object3D = create3DObject( geometry, {
+				
+				name: settings.object.name,
+				faces: settings.object.faces,
+				color: settings.object.color || 'lime',//0x00ff00,//'green'
+			
+			} );
 
 		}
 		projectTo3D();
@@ -2850,7 +3213,6 @@ class ND {
 							break;
 						default: {
 
-//							console.error( 'ND.Plane.createMesh: invalid dimension = ' + n );
 							return;//I can not render 4D and higher panel
 
 						}
@@ -2892,14 +3254,19 @@ class ND {
 			}
 
 		}
-		const plane = new Plane();
-		plane.createMesh();
+		if ( settings.plane === undefined ) settings.plane = true;
+		if ( settings.plane ) {
+			
+			const plane = new Plane();
+			plane.createMesh();
+
+		}
 
 		/**
 		* @description set new geometry, position and rotation of nD object
 		* See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Object} object new nD object
-		* @param {Object} object.geometry geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {object} object new nD object
+		* @param {object} object.geometry geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array} object.geometry.position Array of vertices of the n-dimensional graphical object.
 		* See See <b>settings.object.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array} [object.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
@@ -2908,6 +3275,7 @@ class ND {
 		* See See <b>settings.object.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
 		* @param {Array|number} [object.rotation] rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
 		* See See <b>settings.object.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
+		* @param {Boolean} [object.update] true - update old object with new parameters.
 		*/
 		this.object = function ( object ) { console.error( 'ND: settings' ); }
 		/**
@@ -2963,7 +3331,8 @@ class ND {
 						return;//отсутствует холст с размерностью пространства верхнего уровня
 
 					}
-					settings.object = object;
+					if ( !object.update )
+						settings.object = object;
 					const p = object.position;
 					if ( p ) settings.object.position = [...p];
 					const r = object.rotation;
@@ -2985,7 +3354,8 @@ class ND {
 							indices.push( item );
 							array.forEach( index => {
 
-								item.push( index );
+								if ( index.indices ) item.push( index.indices );
+								else item.push( index );
 								
 							} );
 							
@@ -3004,6 +3374,13 @@ class ND {
 					
 					appendEdges();
 					
+					if ( object.update ) {
+
+						object3D.geometry.setFromPoints( geometry.D3.points ).setIndex( geometry.D3.indices.indices );
+						if ( settings.options && settings.options.guiSelectPoint ) settings.options.guiSelectPoint.updatePoints();
+						return;
+						
+					}
 					projectTo3D();
 					this.intersection()
 
@@ -3019,7 +3396,7 @@ class ND {
 
 ND.gui = class {
 
-	/** @class
+	/**
 	 * Custom controllers for N-dimensional graphic object
 	 * @param {Options} options See <b>options</b> parameter of <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 * @param {GUI} dat [dat.GUI()]{@link https://github.com/dataarts/dat.gui}.
@@ -3072,10 +3449,110 @@ ND.gui = class {
 				display = 'block';
 				object.userData.nd( fND, dat );
 				
-			}
+			} else Object.keys( fND.__folders ).forEach( key => {
+
+				const folder = fND.__folders[key];
+				if ( !folder.userData || ( folder.userData.objectItems === undefined ) ) return;
+				const cSegment = folder.__controllers[0], selectedItem = 0;
+				cSegment.__select.selectedIndex = selectedItem;
+				cSegment.setValue( cSegment.__select[selectedItem].innerHTML );
+				
+				
+			} );
 			fND.domElement.style.display =  display;
 			
 		}
+
+	}
+
+}
+
+ND.VectorN = class {
+
+	/**
+	 * base class for n-dimensional vector.
+	 * @param {number} n dimension of the vector.
+	 * @param {Array} array array of the values of the vector.
+	 */
+	constructor(n, array) {
+		
+		if (array.isVector) return array;
+		if (array instanceof Array === false) {
+
+			if (typeof array === 'number') array = [array];
+			else if (array.array) array = array.array;
+			else console.error('FermatSpiral: Vector: invalid array type');
+
+		}
+		if (n !== undefined) while (array.length < n) array.push(0);
+
+		//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
+		return new Proxy(array, {
+
+			get: function (target, name) {
+
+				var i = parseInt(name);
+				if (isNaN(i)) {
+
+					switch (name) {
+
+						case "array": return array;
+						/*
+						* Adds v to this vector.
+						*/
+						case "add":
+							return function (v) {
+
+								target.forEach((value, i) => target[i] += v[i]);
+								return this;
+
+							}
+						case "index": return vectorSettings.index;
+						case "isVector": return true;
+						default: console.error('ND: Vector get. Invalid name: ' + name);
+
+					}
+					return;
+
+				}
+				if (i >= n)
+					return 0;
+				if ((array.length > n) && settings.object.geometry.iAxes && (i < settings.object.geometry.iAxes.length))
+					i = settings.object.geometry.iAxes[i];
+				return array[i];
+
+			},
+/*
+			set: function (target, name, value) {
+
+				const i = parseInt(name);
+				if (!isNaN(i)) {
+
+					if (i >= array.length) {
+
+						array.push(value);
+						return array.length;
+
+					}
+					array[i] = value;
+					_ND.intersection();
+					if (vectorSettings.onChange) vectorSettings.onChange();
+					return true;
+
+				}
+				switch (name) {
+
+					case 'onChange':
+						vectorSettings.onChange = value;
+						return vectorSettings.onChange;
+					default: console.error('ND: Vector set. Invalid name: ' + name);
+
+				}
+
+			}
+*/
+
+		});
 
 	}
 
@@ -3098,7 +3575,8 @@ if ( !Number.prototype.between )
 if ( Array.prototype.equals )
 	console.warn( "Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code." );
 // attach the .equals method to Array's prototype to call it on any array
-Array.prototype.equals = function ( array ) {
+Array.prototype.equals = function (array) {
+
 	// if the other array is a falsy value, return
 	if ( !array )
 		return false;
@@ -3107,17 +3585,23 @@ Array.prototype.equals = function ( array ) {
 	if ( this.length != array.length )
 		return false;
 
-	for ( var i = 0, l = this.length; i < l; i++ ) {
+	for (var i = 0, l = this.length; i < l; i++) {
+
 		// Check if we have nested arrays
-		if ( this[i] instanceof Array && array[i] instanceof Array ) {
+		if (this[i] instanceof Array && array[i] instanceof Array) {
+
 			// recurse into the nested arrays
 			if ( !this[i].equals( array[i] ) )
 				return false;
+
 		}
-		else if ( this[i] != array[i] ) {
+		else if (this[i] != array[i]) {
+
 			// Warning - two different object instances will never be equal: {x:20} != {x:20}
 			return false;
+
 		}
+
 	}
 	return true;
 }

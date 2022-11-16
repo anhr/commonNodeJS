@@ -107,34 +107,6 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var toConsumableArray = function (arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-    return arr2;
-  } else {
-    return Array.from(arr);
-  }
-};
-
 function ___$insertStyle(css) {
   if (!css) {
     return;
@@ -2590,7 +2562,7 @@ var GUI$1 = GUI;
 /**
 * custom controller, allow to user to change a value step by step.
 *
-* @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+* @author [Andrej Hristoliubov]{@link https://github.com/anhr}
 *
 * @copyright 2011 Data Arts Team, Google Creative Lab
 *
@@ -2637,7 +2609,7 @@ var UpDownController = {
 /**
  * three class for [THREE]{@link https://github.com/anhr/three.js} and [dat.GUI(...)]{@link https://github.com/anhr/dat.gui} variables.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -4757,7 +4729,7 @@ var three$1 = three;
  * @see {@link https://threejs.org/} about threejs
  * @see {@link https://github.com/dataarts/dat.gui} about dat.GUI
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -4861,7 +4833,7 @@ function ScaleControllers(folder, object, property, onChange, options) {
  * @see {@link https://threejs.org/} about threejs
  * @see {@link https://github.com/dataarts/dat.gui} about dat.GUI
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -4878,10 +4850,10 @@ var PositionController = function (_controllers$CustomCo) {
 								options = options || {};
 								options.settings = options.settings || {};
 								var settings = options.settings;
-								options.min = options.min || 0.1;
-								options.max = options.max || 10;
-								settings.offset = settings.offset || 0.1;
-								options.step = options.step || 0.1;
+								if (options.min === undefined) options.min = 0.1;
+								if (options.max === undefined) options.max = 10;
+								if (settings.offset === undefined) settings.offset = 0.1;
+								if (options.step === undefined) options.step = 0.1;
 								var _this = possibleConstructorReturn(this, (PositionController.__proto__ || Object.getPrototypeOf(PositionController)).call(this, {
 												offset: settings.offset,
 												property: function property(customController) {
@@ -7391,7 +7363,7 @@ var controllers$1 = {
 /**
  * get position functions library
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -7493,7 +7465,7 @@ var WEBGL = {
 
 /**
 * node.js version of the synchronous download of the file.
-* @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+* @author [Andrej Hristoliubov]{@link https://github.com/anhr}
 *
 * @copyright 2011 Data Arts Team, Google Creative Lab
 *
@@ -7679,7 +7651,7 @@ function sync(url, options) {
 
 /**
  * node.js version of the load JavaScript file
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * Thanks to:
  *http://javascript.ru/forum/events/21439-dinamicheskaya-zagruzka-skriptov.html
@@ -7825,7 +7797,7 @@ var loadScript = {
 /**
  * @module ColorPicker
  * @description Pure JavaScript color picker.
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * Thanks to https://github.com/DavidDurman/FlexiColorPicker
  *
@@ -8204,7 +8176,7 @@ var ColorPicker$1 = ColorPicker;
  * Cookies let you store user information in web pages.
  * @see {@link https://www.w3schools.com/js/js_cookies.asp}
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -8276,7 +8248,7 @@ function defaultCookie(name) {
 /**
 * node.js version of the cookie.
 *
-* @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+* @author [Andrej Hristoliubov]{@link https://github.com/anhr}
 *
 * @copyright 2011 Data Arts Team, Google Creative Lab
 *
@@ -8298,7 +8270,7 @@ var cookie = {
 /**
  * @module Localization.
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -8335,7 +8307,7 @@ function getLanguageCode() {
  * @module CreateFullScreenSettings
  * @description creates functions for resize of the canvas to fullscreen and restore to default size.
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -8435,7 +8407,7 @@ CreateFullScreenSettings.RendererSetSize = function (renderer, canvasMenu) {
  * @description A sprite based text component. Text that always faces towards the camera.
  * @see {@link https://threejs.org/docs/index.html#api/en/objects/Sprite|THREE.Sprite}
  *
- * @author Andrej Hristoliubov. {@link https://anhr.github.io/AboutMe/|AboutMe}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -8590,7 +8562,7 @@ SpriteText$1.updateSpriteTextGroup = function (group) {
  * @description Uses dual PerspectiveCameras for Parallax Barrier effects.
  * @see About {@link https://en.wikipedia.org/wiki/Parallax_barrier|Parallax barrier}.
  *
- * @author {@link https://anhr.github.io/AboutMe/|Andrej Hristoliubov}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  * @author {@link http://alteredqualia.com/|alteredq}
  * @author {@link http://mrdoob.com/|mrdoob}
  * @author {@link http://aleksandarrodic.com/|arodic}
@@ -9072,7 +9044,7 @@ StereoEffect.getTextIntersection = function (intersection, options) {
 /**
  * View and edit some parameters on the web page.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  * Thanks to https://stackoverflow.com/a/11900218/5175935
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
@@ -9174,7 +9146,7 @@ function createController(settings, controllerId, name, options) {
 /**
  * options of the canvas
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -9223,7 +9195,9 @@ function Options(options) {
 			};
 			this.createOrbitControls = function (camera, renderer, scene) {
 						if (options.orbitControls === false) return;
+						var settings = options.orbitControls || {};
 						_this.orbitControls = new three$1.OrbitControls(camera, renderer.domElement);
+						if (settings.enableRotate !== undefined) _this.orbitControls.enableRotate = settings.enableRotate;
 						_this.orbitControls.target.set(scene.position.x * 2, scene.position.y * 2, scene.position.z * 2);
 						_this.orbitControls.saveState();
 						_this.orbitControls.update();
@@ -9513,7 +9487,10 @@ function Options(options) {
 																											return scale.name;
 																								},
 																								set: function set$$1(name) {
-																											scale.name = name;
+																											if (scale) {
+																														scale.name = name;
+																														if (options.guiSelectPoint) options.guiSelectPoint.setAxisName(axisName, name);
+																											}
 																								}
 																					},
 																					marks: {
@@ -10130,7 +10107,7 @@ Options.raycaster = new Raycaster();
 /**
  * @module Player
  * @description 3D objects animation.
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
  * @license under the Apache License, Version 2.0 (the "License");
@@ -11038,7 +11015,7 @@ Player$1.selectMeshPlayScene = function (mesh) {
 						setRotation('z');
 			}
 			function setAttributes(a, b) {
-						if (!mesh.geometry) return;
+						if (!mesh.geometry || mesh.userData.nd) return;
 						var attributes = mesh.geometry.attributes,
 						    arrayFuncs = mesh.userData.player.arrayFuncs;
 						if (arrayFuncs === undefined) return;
@@ -11644,7 +11621,7 @@ Player$1.assign = function () {
 /**
  * @module getShaderMaterialPoints
  * @description get THREE.Points with THREE.ShaderMaterial material
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
  * @license under the Apache License, Version 2.0 (the "License");
@@ -11798,7 +11775,7 @@ function getShaderMaterialPoints(group, arrayFuncs, onReady, settings) {
 /**
  * @module MyPoints
  * @description Array of my points.
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -11928,7 +11905,7 @@ function MyPoints(arrayFuncs, group, settings) {
  * @module DropdownMenu
  * @description Creates a drop down menu in your javaScript code.
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -12118,7 +12095,7 @@ function create(arrayMenu, options) {
  * @module DropdownMenu
  * @description Creates a drop down menu in your javaScript code.
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -12136,7 +12113,7 @@ var DropdownMenu = {
  * @module CanvasMenu
  * @description My [dropdown menu]{@link https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu} for canvas in my [three.js]{@link https://threejs.org/} projects.
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -12301,8 +12278,8 @@ function CanvasMenu(renderer) {
  *
  * Thanks to https://stackoverflow.com/a/48768960/5175935
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
- * @author 欧阳维杰 https://stackoverflow.com/users/6045817/%e6%ac%a7%e9%98%b3%e7%bb%b4%e6%9d%b0
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ * @author [欧阳维杰]{@link https://stackoverflow.com/users/6045817/%e6%ac%a7%e9%98%b3%e7%bb%b4%e6%9d%b0}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -12336,7 +12313,7 @@ function clearThree$1(obj) {
 /**
  * @module AxesHelper
  * @description An axis object to visualize the 1, 2 or 3 axes.
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -12652,7 +12629,7 @@ function AxesHelper(group, options) {
  * @description Adds SpriteText settings folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
  * @see {@link https://github.com/anhr/SpriteText|SpriteText}
  *
- * @author Andrej Hristoliubov. {@link https://anhr.github.io/AboutMe/|AboutMe}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -12923,7 +12900,7 @@ function SpriteTextGui(group, options) {
  * @description Adds <a href="../../AxesHelper/jsdoc/module-AxesHelper-AxesHelper.html" target="_blank">AxesHelper</a> settings folder into {@link https://github.com/anhr/dat.gui|dat.gui}.
  * @see {@link https://github.com/anhr/AxesHelper|AxesHelper}
  *
- * @author {@link https://anhr.github.io/AboutMe/|Andrej Hristoliubov}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -13189,7 +13166,7 @@ function AxesHelperGui(options, gui) {
  * @module OrbitControlsGui
  * @description [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls} graphical user interface
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -13342,7 +13319,7 @@ if (typeof dat !== 'undefined') {
  * @module functionsFolder
  * @description Adds the [Functions]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function} folder into [dat.gui]{@link https://github.com/anhr/dat.gui}.
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -13556,1270 +13533,13 @@ function functionsFolder(fParent, onFinishChange, options, vector) {
 };
 
 /**
- * @module ND
- * @description N-dimensional graphics
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
- *
- * @copyright 2011 Data Arts Team, Google Creative Lab
- *
- * @license under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
-*/
-var ND =
-function ND(n) {
-	var settings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-	classCallCheck(this, ND);
-	var options = settings.options,
-	    _ND = this;
-	settings.geometry = settings.geometry || {};
-	if (settings.geometry instanceof Array) {
-		var position = settings.geometry;
-		settings.geometry = { position: position };
-	}
-	var Vector = function () {
-		function Vector() {
-			var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-			var vectorSettings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-			classCallCheck(this, Vector);
-			if (array.isVector) return array;
-			if (array instanceof Array === false) {
-				if (typeof array === 'number') array = [array];else if (array.array) array = array.array;else console.error('ND.Vector: invalid array type');
-			}
-			if (n !== undefined) while (array.length < n) {
-				array.push(0);
-			}
-			return new Proxy(array, {
-				get: function get$$1(target, name) {
-					switch (name) {
-						case "length":
-							return n + 1;
-						case "array":
-							return array;
-						case "point":
-							var _THREE = three$1.THREE;
-							return new _THREE.Vector3(this.get(undefined, 0), this.get(undefined, 1), this.get(undefined, 2));
-						case "copy":
-							return function (v) {
-								target.forEach(function (value, i) {
-									return target[i] = v[i];
-								});
-								return this;
-							};
-						case "add":
-							return function (v) {
-								target.forEach(function (value, i) {
-									return target[i] += v[i];
-								});
-								return this;
-							};
-						case "index":
-							return vectorSettings.index;
-						case "isVector":
-							return true;
-					}
-					var i = parseInt(name);
-					if (isNaN(i)) {
-						console.error('Vector.get: invalid name: ' + name);
-						return;
-					}
-					if (i >= n) return 0;
-					if (array.length > n && settings.geometry.iAxes && i < settings.geometry.iAxes.length) i = settings.geometry.iAxes[i];
-					return array[i];
-				},
-				set: function set$$1(target, name, value) {
-					if (name === "onChange") {
-						vectorSettings.onChange = value;
-						return vectorSettings.onChange;
-					}
-					var i = parseInt(name);
-					if (i >= array.length) {
-						array.push(value);
-						return array.length;
-					}
-					array[i] = value;
-					_ND.intersection();
-					if (vectorSettings.onChange) vectorSettings.onChange();
-					return true;
-				}
-			});
-		}
-		createClass(Vector, [{
-			key: 'push',
-			value: function push(value) {
-				console.error('ND.Vector.push() unavailable');
-			}
-		}, {
-			key: 'pop',
-			value: function pop() {
-				console.error('ND.Vector.pop() unavailable');
-			}
-		}]);
-		return Vector;
-	}();
-	settings.position = settings.position || [];
-	if (!(settings.position instanceof Array)) settings.position = [settings.position];
-	if (settings.geometry.position.target) settings.geometry.position = settings.geometry.position.target;
-	settings.geometry.position.boPositionError = true;
-	var positionWorld = new Proxy(settings.geometry.position ? settings.geometry.position : [], {
-		get: function get$$1(target, name) {
-			var i = parseInt(name);
-			if (!isNaN(i)) {
-				var array = [];
-				settings.geometry.position.boPositionError = false;
-				if (settings.geometry.position[i] !== undefined) {
-					if (!(settings.position instanceof Array)) {
-						console.error('ND get positionWorld: settings.position is not array');
-						settings.position = [settings.position];
-					}
-					settings.geometry.position[i].forEach(function (value, i) {
-						if (value !== undefined) array.push(value + (settings.position[i] !== undefined ? settings.position[i] : 0));else console.error('ND get positionWorld: invalig array item = ' + value);
-					});
-				} else console.error('ND positionWorld get index');
-				settings.geometry.position.boPositionError = true;
-				return array;
-			}
-			switch (name) {
-				case 'push':
-					return settings.geometry.position.push;
-				case 'length':
-					return settings.geometry.position.length;
-				case 'forEach':
-					return settings.geometry.position.forEach;
-				case 'isProxy':
-					return true;
-				case 'target':
-					return;
-				case 'copy':
-					return function () {
-						var v = [];
-						settings.geometry.position.boPositionError = false;
-						settings.geometry.position.forEach(function (value, i) {
-							v[i] = positionWorld[i];
-							settings.geometry.position.boPositionError = false;
-						});
-						settings.geometry.position.boPositionError = true;
-						return v;
-					};
-				default:
-					console.error('ND: settings.geometry.position Proxy. Invalid name: ' + name);
-			}
-		}
-	});
-	if (!settings.geometry.position.isProxy) settings.geometry.position = new Proxy(settings.geometry.position ? settings.geometry.position : [], {
-		get: function get$$1(target, name, args) {
-			var i = parseInt(name);
-			if (!isNaN(i)) {
-				if (settings.geometry.position.boPositionError) console.error('ND: Use position instread settings.geometry.position');
-				if (i >= target.length) {
-					console.error('ND get settings.geometry.position: invalid index = ' + i);
-					return;
-				}
-				if (target[i] instanceof Array) return target[i];
-				console.error('ND: get settings.geometry.position is not array.');
-				return [target[i]];
-			}
-			switch (name) {
-				case 'push':
-					return target.push;
-				case 'length':
-					return target.length;
-				case 'forEach':
-					return target.forEach;
-				case 'isProxy':
-					return true;
-				case 'boPositionError':
-					return target.boPositionError;
-				case 'target':
-					return target;
-				default:
-					console.error('ND: settings.geometry.position Proxy. Invalid name: ' + name);
-			}
-		}
-	});
-	settings.geometry.indices = settings.geometry.indices || [];
-	var edges = settings.geometry.indices[0],
-	    boArray = edges instanceof Array;
-	if (!settings.geometry.indices[0] || boArray) {
-		var _proxyEdges = function _proxyEdges(newEdges) {
-			edges = newEdges || edges;
-			return new Proxy(edges ? edges : [], {
-				get: function get$$1(target, name, value) {
-					var i = parseInt(name);
-					if (!isNaN(i)) return {
-						intersection: function intersection(geometryIntersection) {
-							var i = parseInt(name);
-							if (!isNaN(i)) {
-								var indicesIntersection = function indicesIntersection(position) {
-									switch (n) {
-										case 2:
-											break;
-										default:
-											if (!position) break;
-											position.push(vectorPlane[n - 1]);
-											break;
-									}
-									indices.intersection = { position: position };
-									if (indices.intersection.position) indices.intersection.position.iEdge = i;
-								};
-								if (i.toString() !== name) {
-									console.error('ND: settings.geometry.indices[]intersection. invalid name = ' + name);
-									return;
-								}
-								if (target.length === 0) return;
-								if (i >= target.length) {
-									console.error('ND: settings.geometry.indices[]intersection. invalid length: ' + target.length);
-									this.indices = { intersection: {} };
-									return;
-								}
-								var indices = target[i];
-								if (indices.indices) indices = indices.indices;
-								if (indices.length !== 2) {
-									console.error('ND: settings.geometry.indices[]intersection. indices.length = ' + indices.length);
-									return;
-								}
-								if (indices[0] === indices[1]) {
-									console.error('ND: settings.geometry.indices[]intersection. indices[0] === indices[1] = ' + indices[0]);
-									return;
-								}
-								var position0 = new Vector(positionWorld[indices[0]]),
-								    position1 = new Vector(positionWorld[indices[1]]);
-								switch (n) {
-									case 1:
-										if (vectorPlane[0].between(position0[0], position1[0], true)) geometryIntersection.position.push([vectorPlane[0]]);
-										break;
-									case 2:
-										var vector;
-										if (vectorPlane[1].between(position0[1], position1[1], true)) {
-											var a = (position1[1] - position0[1]) / (position1[0] - position0[0]),
-											    b = position0[1] - a * position0[0],
-											    x = a === 0 || isNaN(a) || Math.abs(a) === Infinity ? position1[0] : (vectorPlane[1] - b) / a;
-											if (isNaN(x) || x === undefined) {
-												console.error('ND.intersection: x = ' + x + ' position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0]);
-											}
-											if (!x.between(position0[0], position1[0], true)) {
-												indices.intersection = {};
-												break;
-											}
-											vector = [x, vectorPlane[1]];
-										}
-										indicesIntersection(vector);
-										break;
-									case 3:
-										var pos;
-										var d = 5.56e-17;
-										if (Math.abs(vectorPlane[n - 1] - position1[n - 1]) < d) pos = position1;else if (Math.abs(vectorPlane[n - 1] - position0[n - 1]) < d) pos = position0;
-										if (pos) {
-											indicesIntersection([pos[0], pos[1]]);
-											indices.intersection.boVerticeOnPanel = true;
-										} else {
-											var nD02 = new ND(n - 1, {
-												geometry: {
-													position: positionWorld.copy(),
-													indices: [[indices]],
-													iAxes: [1, 2]
-												},
-												vectorPlane: vectorPlane.array
-											}),
-											    arrayIntersects02 = nD02.intersection();
-											var nD12 = new ND(n - 1, {
-												geometry: {
-													position: positionWorld.copy(),
-													indices: [[indices]],
-													iAxes: [0, 2]
-												},
-												vectorPlane: vectorPlane.array
-											}),
-											    arrayIntersects12 = nD12.intersection();
-											indicesIntersection(arrayIntersects02.length && arrayIntersects12.length ? [arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined);
-										}
-										break;
-									default:
-										var intersectionAxis = function intersectionAxis(axis) {
-											var nD0 = new ND(2, {
-												geometry: {
-													position: positionWorld,
-													indices: [[indices]],
-													iAxes: [axis, n - 1]
-												},
-												vectorPlane: vectorPlane.array
-											});
-											return nD0.intersection();
-										};
-										var arrayIntersections = [];
-										var boIntersect = true;
-										for (var iIntersection = 0; iIntersection < n - 1; iIntersection++) {
-											var item = intersectionAxis(iIntersection);
-											if (boIntersect && item.length === 0) {
-												boIntersect = false;
-												break;
-											}
-											if (item.length) arrayIntersections.push(item[0][0]);
-										}
-										indicesIntersection(boIntersect ? arrayIntersections : undefined);
-								}
-							} else console.error('ND: settings.geometry.indices[]intersection. invalid name: ' + name);
-						},
-						indices: target[parseInt(name)]
-					};
-					switch (name) {
-						case 'push':
-							return target.push;
-						case 'length':
-							return target.length;
-						case 'intersection':
-							return undefined;
-						case 'edges':
-							return target;
-						case 'isProxy':
-							return true;
-						default:
-							console.error('ND: settings.geometry.indices getter. Invalid name: ' + name);
-					}
-				},
-				set: function set$$1(edges, prop, value) {
-					var index = parseInt(prop);
-					if (isNaN(index)) {
-						switch (prop) {
-							case 'length':
-								break;
-							case 'edges':
-								settings.geometry.indices[0] = _proxyEdges(value);
-								break;
-							default:
-								console.error('ND settings.geometry.indices[0].set: invalid prop: ' + prop);
-						}
-						return true;
-					}
-					if (value instanceof Array) {
-						for (var i = 0; i < edges.length; i++) {
-							var edge = edges[i];
-							if (edge[0] === value[0] && edge[1] === value[1] || edge[1] === value[0] && edge[0] === value[1]) {
-								value.index = i;
-								return true;
-							}
-						}
-						edges[index] = value;
-						value.index = index;
-						return true;
-					}
-					var indices = value;
-					if (indices.length !== 2) {
-						console.error('ND: settings.geometry.indices.push invalid indices.length = ' + indices.length);
-						return true;
-					}
-					for (var i = 0; i < edges.length; i++) {
-						var edgeIndices = edges[i];
-						if (edgeIndices[0] === indices[0] && edgeIndices[1] === indices[1]) {
-							console.error('ND: settings.geometry.indices.push under constraction');
-							return;
-						}
-						if (edgeIndices[0] === indices[1] && edgeIndices[1] === indices[0]) {
-							console.error('ND: settings.geometry.indices.push under constraction');
-							indices[0] = settings.geometry.indices[i].indices[0];
-							indices[1] = settings.geometry.indices[i].indices[1];
-							return;
-						}
-					}
-					edges[index] = value;
-					return true;
-				}
-			});
-		};
-		var _indices = settings.geometry.indices;
-		if (boArray) {
-			if (!_indices[0].isProxy) _indices[0] = _proxyEdges();
-		} else _indices.push(_proxyEdges());
-	}
-	function addEdge(indices) {
-		if (settings.geometry.position.length < 2) return;
-		switch (n) {
-			case 1:
-				var _edges = settings.geometry.indices[0];
-				if (settings.geometry.position) {
-					indices = [];
-					positionWorld.forEach(function (indice, i) {
-						indices.push(i);
-					});
-					_edges.push(indices);
-				}
-				break;
-			default:
-				console.error('ND: default edges failed! n = ' + n);
-		}
-	}
-	function proxySegments() {
-		return new Proxy([], {
-			get: function get$$1(target, name) {
-				var i = parseInt(name);
-				if (!isNaN(i)) return target[i];
-				switch (name) {
-					case 'push':
-						return target.push;
-					case 'length':
-						return target.length;
-					case 'isProxy':
-						return true;
-					default:
-						console.error('ND: settings.geometry.indices[' + l + ']. Invalid name: ' + name);
-				}
-			},
-			set: function set$$1(target, name, value) {
-				var index = parseInt(name);
-				if (isNaN(index)) {
-					switch (name) {
-						case 'length':
-							break;
-						default:
-							console.error('ND settings.geometry.indices[' + l + ']: invalid name: ' + name);
-							return false;
-					}
-					return true;
-				}
-				if (value instanceof Array === false) {
-					console.error('ND settings.geometry.indices[' + l + ']: invalid name: ' + name);
-					return false;
-				}
-				for (var i = value.length - 1; i >= 0; i--) {
-					for (var j = i - 1; j >= 0; j--) {
-						if (value[i] === value[j]) {
-							console.error('nD proxySegments() set: duplicate index = ' + value[i]);
-							value.splice(i, 1);
-							continue;
-						}
-					}
-				}
-				for (var i = 0; i < target.length; i++) {
-					var segment = target[i],
-					    aDetected = [];
-					if (segment.length !== value.length) continue;
-					for (var j = 0; j < segment.length; j++) {
-						aDetected[j] = false;
-						for (var k = 0; k < value.length; k++) {
-							if (segment[j] === value[k]) {
-								aDetected[j] = true;
-								break;
-							}
-						}
-					}
-					var boDetected = true;
-					for (var j = 0; j < aDetected.length; j++) {
-						if (!aDetected[j]) {
-							boDetected = false;
-							break;
-						}
-					}
-					if (boDetected) {
-						value.index = i;
-						return true;
-					}
-				}
-				target[index] = value;
-				value.index = index;
-				return true;
-			}
-		});
-	}
-	function addEdges(level, geometry) {
-		var positionIndices = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-		var levelIndices = arguments[3];
-		if (positionIndices.length === 0) positionWorld.forEach(function (position, i) {
-			positionIndices.push(i);
-		});
-		geometry = geometry || settings.geometry;
-		if (!geometry.indices[0]) geometry.indices[0] = [];
-		var edges = geometry.indices[0];
-		if (n === 2 && geometry.position.length === 2) {
-			edges.push([0, 1]);
-			return;
-		}
-		if (level === undefined) return;
-		if (level > 2) {
-			var _loop = function _loop() {
-				var posIndices = [];
-				positionIndices.forEach(function (indice, j) {
-					if (positionIndices[i] !== positionIndices[j]) posIndices.push(positionIndices[j]);
-				});
-				var lIndices = [];
-				addEdges(level - 1, undefined, posIndices, lIndices);
-				if (lIndices.length) {
-					var _l = level - 2;
-					if (_l === 0) console.error('ND addEdges: invalid l = ' + 1);
-					settings.geometry.indices[_l] = settings.geometry.indices[_l] === undefined ? proxySegments() : settings.geometry.indices[_l];
-					settings.geometry.indices[_l].push(lIndices);
-					if (levelIndices) levelIndices.push(lIndices.index);
-				}
-			};
-			for (var i = 0; i < positionIndices.length; i++) {
-				_loop();
-			}
-		}
-		switch (level) {
-			case 2:
-				if (!positionIndices) {
-					positionIndices = [];
-					settings.geometry.position.forEach(function (item, i) {
-						positionIndices.push(i);
-					});
-				}
-				var length = positionIndices.length;
-				var _addItem = function _addItem() {
-					var start = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-					for (var i = start; i < length; i++) {
-						if (start === 0) _addItem(i + 1);else {
-							var edge = [positionIndices[start - 1], positionIndices[i]];
-							edges.push(edge);
-							if (levelIndices) levelIndices.push(edge.index);
-						}
-					}
-				};
-				_addItem();
-				break;
-		}
-	}
-	switch (n) {
-		case 1:
-			addEdge();
-			break;
-		default:
-			if (settings.geometry.indices[0].length === 0) addEdges(n);
-	}
-	var indices = settings.geometry.indices;
-	for (var i = 1; i < indices.length; i++) {
-		var indice = indices[i];
-		var arrayIndices = [];
-		var max = 0;
-		for (var j = 0; j < indice.length; j++) {
-			var segment = indice[j];
-			for (var k = 0; k < segment.length; k++) {
-				var index = segment[k];
-				if (arrayIndices[index] === undefined) arrayIndices[index] = 0;
-				arrayIndices[index]++;
-				if (arrayIndices[index] > max) max = arrayIndices[index];
-			}
-		}
-		var arraySegment = [];
-		for (var j = 0; j < arrayIndices.length; j++) {
-			if (arrayIndices[j] < max) arraySegment.push(j);
-		}
-		if (arraySegment.length > 0) indice.push(arraySegment);
-	}
-	var vectorPlane;
-	var geometry = {
-		get position() {
-			return new Proxy(this, {
-				get: function get$$1(target, name) {
-					switch (name) {
-						case 'length':
-							return settings.geometry.position.length;
-					}
-					var i = parseInt(name);
-					if (isNaN(i)) {
-						console.error('ND.geometry.position: invalid name: ' + name);
-						return;
-					}
-					return new Vector(positionWorld[i]);
-				}
-			});
-		},
-		get geometry() {
-			return settings.geometry;
-		},
-		set geometry(geometry) {
-			settings.geometry.position = geometry.position;
-			if (geometry.indices) {
-				settings.geometry.indices.length = 1;
-				for (var i = 0; i < geometry.indices.length; i++) {
-					if (i === 0) settings.geometry.indices[0].edges = geometry.indices[0];else settings.geometry.indices[i] = geometry.indices[i];
-				}
-			}
-		},
-		D3: {
-			get points() {
-				var points = [];
-				for (var i = 0; i < geometry.position.length; i++) {
-					points.push(geometry.position[i].point);
-				}return points;
-			},
-			get indices() {
-				var _this = this;
-				var indices = [],
-				    colors = [];
-				if (settings.geometry.indices[0].length !== 0) {
-					var _edges2 = settings.geometry.indices[0];
-					for (var i = 0; i < _edges2.length; i++) {
-						var edge = _edges2[i].indices;
-						if (edge) {
-							if (edge.length !== 2) {
-								console.error('ND.geometry.D3.get indices: invalid edge.length = ' + edge.length);
-								return;
-							}
-							if (edge[0] === edge[1]) {
-								console.error('ND.geometry.D3.get indices: duplicate edge index = ' + edge[0]);
-								return;
-							}
-							indices.push.apply(indices, toConsumableArray(edge));
-							if (this.color) {
-								(function () {
-									var hexToRgb = function hexToRgb(hex) {
-										var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-										return result ? {
-											r: parseInt(result[1], 16),
-											g: parseInt(result[2], 16),
-											b: parseInt(result[3], 16)
-										} : null;
-									};
-									var push = function push() {
-										colors.push(rgb.r);
-										colors.push(rgb.g);
-										colors.push(rgb.b);
-									};
-									var color = new THREE.Color(_this.color);
-									var rgb = hexToRgb(color.getHexString());
-									push();
-									if (_edges2.length === 1) push();
-								})();
-							}
-						} else console.error('ND.geometry.D3.get indices: invalid edge. Возможно вычислены не все точки пересечения');
-					}
-				}
-				return { indices: indices, colors: colors };
-			}
-		}
-	};
-	vectorPlane = vectorPlane || new Vector(settings.vectorPlane);
-	if (!vectorPlane || !vectorPlane.point) vectorPlane = new Vector(vectorPlane);
-	var objectIntersect;
-	function create3DObject(geometry) {
-		var settings3D = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-		if (!geometry.D3) {
-			var nD = new ND(n, { geometry: geometry });
-			geometry = nD.geometry;
-		}
-		if (geometry.position.length === 0) return;
-		var color = settings3D.color || 0xffffff;
-		geometry.D3.color = color;
-		var indices3D = geometry.D3.indices,
-		    indices = indices3D.indices,
-		    colors = indices3D.colors;
-		var buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
-		var object = indices.length > 1 ? new THREE.LineSegments(buffer.setIndex(indices), new THREE.LineBasicMaterial({
-			color: color
-		})) : new THREE.Points(buffer, new THREE.PointsMaterial({
-			color: color,
-			sizeAttenuation: false,
-			size: options.point.size / (options.point.sizePointsMaterial * 2)
-		}));
-		if (settings3D.name) object.name = settings3D.name;
-		scene.add(object);
-		if (typeof SpriteText$1 !== "undefined") for (var i = 0; i < geometry.D3.points.length; i++) {
-			new SpriteText$1(i, geometry.D3.points[i], { group: object });
-		}
-		object.userData.nd = function (fParent, dat) {
-			var getLanguageCode = options.getLanguageCode;
-			var lang = {
-				vertices: 'Vertices',
-				verticesTitle: 'Vertices.',
-				edges: 'Edges',
-				edgesTitle: 'The selected edge lists the vertex indices of the edge.',
-				faces: 'Faces',
-				facesTitle: 'The selected face lists the indexes of the edges of that face.',
-				bodies: 'Bodies',
-				bodiesTitle: 'The selected body lists the indexes of the faces of this body.',
-				objects: 'Objects',
-				objectsTitle: 'The selected object lists the indexes of the objects that this object consists of. It can be indexes of bodies.',
-				notSelected: 'Not selected'
-			};
-			var _languageCode = getLanguageCode();
-			switch (_languageCode) {
-				case 'ru':
-					lang.vertices = 'Вершины';
-					lang.verticesTitle = 'Вершины.';
-					lang.edges = 'Ребра';
-					lang.edgesTitle = 'В выбранном ребре перечислены индексы вершин ребра.';
-					lang.faces = 'Грани';
-					lang.facesTitle = 'В выбранной грани перечислены индексы ребер этой грани.';
-					lang.bodies = 'Тела';
-					lang.bodiesTitle = 'В выбранном теле перечислены индексы граней этого тела.';
-					lang.objects = 'Объекты';
-					lang.objectsTitle = 'В выбранном объекте перечислены индексы объектов, из которого состоит этот объект. Это могут быть индексы тел.';
-					lang.notSelected = 'Не выбран';
-					break;
-				default:
-					if (guiParams.lang === undefined || guiParams.lang.languageCode != _languageCode) break;
-					Object.keys(guiParams.lang).forEach(function (key) {
-						if (lang[key] === undefined) return;
-						lang[key] = guiParams.lang[key];
-					});
-			}
-			for (var i = fParent.__controllers.length - 1; i >= 0; i--) {
-				fParent.remove(fParent.__controllers[i]);
-			}
-			var indices = geometry.geometry.indices,
-			    segmentIndex = indices.length - 1;
-			function addController(segmentIndex,
-			fParent, segmentItems,
-			prevLine
-			) {
-				var segment;
-				if (segmentItems) {
-					segment = [];
-					if (segmentIndex === -1) {
-						segmentItems.forEach(function (i) {
-							return segment.push(settings.geometry.position[i]);
-						});
-					} else {
-						var _index = indices[segmentIndex];
-						segmentItems.forEach(function (i) {
-							return segment.push(_index[i].indices ? _index[i].indices : _index[i]);
-						});
-					}
-				} else segment = indices[segmentIndex];
-				var items = { Items: [lang.notSelected] };
-				var line, fChildSegment;
-				var name, title;
-				switch (segmentIndex) {
-					case -1:
-						name = lang.vertices;title = lang.verticesTitle;break;
-					case 0:
-						name = lang.edges;title = lang.edgesTitle;break;
-					case 1:
-						name = lang.faces;title = lang.facesTitle;break;
-					case 2:
-						name = lang.bodies;title = lang.bodiesTitle;break;
-					default:
-						name = lang.objects;title = lang.objectsTitle;
-				}
-				var fSegment = fParent.addFolder(name);
-				dat.folderNameAndTitle(fSegment, name, title);
-				var cSegment = fSegment.add(items, 'Items', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
-					if (fChildSegment) {
-						var controller = fChildSegment.__controllers[0];
-						if (controller.__select.selectedIndex != 0) {
-							controller.__select.selectedIndex = 0;
-							controller.__onChange();
-						}
-						fSegment.removeFolder(fChildSegment);
-						fChildSegment = undefined;
-					}
-					var selectedIndex = cSegment.__select.selectedIndex - 1;
-					if (line) {
-						line.parent.remove(line);
-						line = undefined;
-					}
-					var opacityDefault = 0.3,
-					    parentObject = object;
-					function opacityItem(item, transparent) {
-						var opacity = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : opacityDefault;
-						if (!item.material) return;
-						if (transparent && opacity === 0 && Object.is(item.parent, parentObject)) parentObject.remove(item);else {
-							if (!item.parent) parentObject.add(item);
-							item.material.transparent = transparent;
-							item.material.opacity = transparent ? opacity : 1;
-						}
-					}
-					function opacity() {
-						var transparent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-						var opacity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : opacityDefault;
-						scene.children.forEach(function (item) {
-							return opacityItem(item, transparent, opacity);
-						});
-					}
-					function getOpacity() {
-						return -0.1 * segmentIndex + opacityDefault;
-					}
-					function removeVerticeControls() {
-						if (segmentIndex !== -1) return;
-						for (var i = fSegment.__controllers.length - 1; i >= 0; i--) {
-							var _controller = fSegment.__controllers[i];
-							if (Object.is(cSegment, _controller)) continue;
-							fSegment.remove(_controller);
-						}
-					}
-					if (selectedIndex === -1) {
-						removeVerticeControls();
-						if (prevLine) {
-							opacityItem(prevLine, false);
-							if (prevLine.userData.prevLine) opacityItem(prevLine.userData.prevLine, true, getOpacity());else opacity(true);
-							return;
-						}
-						opacity(false);
-						return;
-					}
-					if (prevLine) {
-						opacity(true, 0);
-						opacityItem(prevLine, true, getOpacity());
-						if (prevLine.userData.prevLine) {
-							opacityItem(prevLine.userData.prevLine, true, 0);
-						}
-					} else opacity();
-					if (segmentIndex === -1) {
-						removeVerticeControls();
-						var vertice = settings.geometry.position[selectedIndex];
-						for (var i = 0; i < vertice.length; i++) {
-							dat.controllerZeroStep(fSegment, vertice, i).domElement.querySelector('input').readOnly = true;
-						}
-					} else {
-						var _createIndices = function _createIndices(item, level) {
-							if (level > 0) {
-								level--;
-								for (var i = 0; i < item.length; i++) {
-									_createIndices(indices[level][item[i]], level);
-								}return;
-							}
-							var itemIndices = item.indices || item;
-							itemIndices.forEach(function (i) {
-								lineIndices.push(i);
-							});
-						};
-						var _buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
-						var lineIndices = [];
-						_createIndices(segment[selectedIndex], segmentIndex);
-						line = new THREE.LineSegments(_buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
-						line.userData.name = fSegment.name + ' ' + value;
-						parentObject.add(line);
-					}
-					if (prevLine && line) line.userData.prevLine = prevLine;
-					if (segmentIndex >= 0) fChildSegment = addController(segmentIndex - 1, fSegment, segment[selectedIndex], line);
-				});
-				dat.controllerNameAndTitle(cSegment, '');
-				cSegment.__select[0].selected = true;
-				for (var i = 0; i < segment.length; i++) {
-					var item = segment[i],
-					    opt = document.createElement('option'),
-					    _indices2 = item.indices ? item.indices : item;
-					opt.innerHTML = '(' + i + ') ' + (segmentIndex === -1 ? '' : _indices2.toString());
-					opt.item = item;
-					cSegment.__select.appendChild(opt);
-				}
-				return fSegment;
-			}
-			var childFolders = Object.keys(fParent.__folders);
-			switch (childFolders.length) {
-				case 0:
-					break;
-				case 1:
-					var childFolder = fParent.__folders[childFolders[0]],
-					    controller = childFolder.__controllers[0];
-					if (controller.__select.selectedIndex != 0) {
-						controller.__select.selectedIndex = 0;
-						controller.__onChange();
-					}
-					fParent.removeFolder(childFolder);
-					break;
-				default:
-					console.error('ND.create3DObject.nd: object.userData.nd. Invalid childFolders.length = ' + childFolders.length);
-			}
-			addController(segmentIndex, fParent);
-		};
-		if (options.guiSelectPoint) options.guiSelectPoint.addMesh(object);
-		object.userData.raycaster = {
-			onIntersection: function onIntersection(intersection, mouse) {
-				delete intersection.index;
-				MyThree.Options.raycaster.onIntersection(intersection, options, scene, options.camera, options.renderer
-				);
-			},
-			onIntersectionOut: function onIntersectionOut() {
-				MyThree.Options.raycaster.onIntersectionOut(scene, options.renderer);
-			},
-			onMouseDown: function onMouseDown(intersection) {
-				MyThree.Options.raycaster.onMouseDown(intersection, options);
-			}
-		};
-		options.eventListeners.addParticle(object);
-		return object;
-	}
-	this.intersection = function () {
-		var geometryIntersection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { position: [], indices: [[]] };
-		var iIntersections = arguments[1];
-		function intersection(iEdge, aEdge) {
-			for (var i = 0; i < geometryIntersection.position.length; i++) {
-				if (geometryIntersection.position[i].iEdge === iEdge) {
-					if (aEdge && aEdge.length < 2
-					) aEdge.push(i);
-					return;
-				}
-			}
-			var edge = settings.geometry.indices[0][iEdge];
-			edge.intersection(geometryIntersection);
-			var position = edge.indices.intersection.position;
-			if (position) {
-				var boAdd = true;
-				if (edge.indices.intersection.boVerticeOnPanel) {
-					for (var i = 0; i < geometryIntersection.position.length; i++) {
-						if (position.equals(geometryIntersection.position[i])) {
-							boAdd = false;
-							aEdge.boVerticeOnPanel = true;
-							break;
-						}
-					}
-				}
-				if (boAdd) {
-					geometryIntersection.position.push(position);
-					if (aEdge) aEdge.push(geometryIntersection.position.length - 1);
-				}
-			}
-		}
-		if (!geometryIntersection.position.isProxy) geometryIntersection.position = new Proxy(geometryIntersection.position, {
-			get: function get$$1(target, name, args) {
-				var i = parseInt(name);
-				if (!isNaN(i)) {
-					return target[i];
-				}
-				switch (name) {
-					case 'push':
-						return target.push;
-					case 'length':
-						return target.length;
-					case 'forEach':
-						return target.forEach;
-					case 'isProxy':
-						return true;
-					case 'target':
-						return target;
-					default:
-						console.error('ND: settings.geometry.position Proxy. Invalid name: ' + name);
-				}
-			},
-			set: function set$$1(target, name, value) {
-				var i = parseInt(name);
-				if (isNaN(i)) {
-					if (name === "boPositionError") {
-						target[name] = value;
-						return true;
-					}
-					return target[name];
-				}
-				if (i >= target.length) {
-					var boDuplicate = false;
-					for (var j = 0; j < i; j++) {
-						boDuplicate = true;
-						for (var k = 0; k < target[j].length; k++) {
-							if (target[j][k] !== value[k]) {
-								boDuplicate = false;
-								break;
-							}
-						}
-						if (boDuplicate) break;
-					}
-					if (!boDuplicate) target.push(value);
-					return target.length;
-				}
-				target[i] = value;
-				return true;
-			}
-		});
-		switch (n) {
-			case 1:
-				if (settings.geometry.indices.length !== 1) console.error('ND.intersection: under constraction. Это не линия.');
-				var edge = settings.geometry.indices[0][0];
-				edge.intersection(geometryIntersection);
-				break;
-			case 2:
-				var iFaces = settings.geometry.indices[1];
-				if (iFaces) settings.geometry.indices[1].forEach(function (iFace) {
-					iFace.forEach(function (iEdge) {
-						intersection(iEdge);
-					});
-				});else {
-					for (var i = 0; i < settings.geometry.indices[0].length; i++) {
-						intersection(i);
-					}
-					addEdges(undefined, geometryIntersection);
-				}
-				break;
-			default:
-				{
-					var iSegments = settings.iSegments || n - 2,
-					segments;
-					while (iSegments >= 0) {
-						segments = settings.geometry.indices[iSegments];
-						if (segments) break;
-						iSegments--;
-					}
-					if (settings.indice === undefined) {
-						for (var i = 0; i < segments.length; i++) {
-							var nd = new ND(n, { geometry: {
-									indices: settings.geometry.indices,
-									position: positionWorld.copy()
-								}, indice: i, iSegments: iSegments }),
-							    s = iSegments - 1;
-							var iIntersections;
-							if (s !== 0) {
-								iIntersections = [];
-							}
-							nd.intersection(geometryIntersection, iIntersections);
-							if (iIntersections && iIntersections.length) {
-								geometryIntersection.indices[s] = geometryIntersection.indices[s] || proxySegments();
-								geometryIntersection.indices[s].push(iIntersections);
-							}
-						}
-						var _edges3 = geometryIntersection.indices[0];
-						var vertices = [];
-						for (var i = _edges3.length - 1; i >= 0; i--) {
-							var _edge = _edges3[i];
-							if (_edge.boVerticeOnPanel && _edge.length === 1) {
-								vertices.push(_edge[0]);
-								_edges3.splice(i, 1);
-							}
-						}
-						switch (vertices.length) {
-							case 0:
-							case 1:
-								break;
-							case 2:
-								_edges3.push(vertices);
-								break;
-							default:
-								console.error('ND.intersection: invalid edge.');
-						}
-						if (_edges3.length > 1) {
-							for (var i = 0; i < geometryIntersection.position.length; i++) {
-								var verticesCount = 0;
-								for (var j = 0; j < _edges3.length; j++) {
-									var _edge2 = _edges3[j];
-									for (var k = 0; k < _edge2.length; k++) {
-										if (_edge2[k] === i) verticesCount++;
-									}
-								}
-								if (verticesCount < 2) {
-									if (verticesCount === 0) console.error('ND.intersection: Invalid verticesCount = ' + verticesCount);else vertices.push(i);
-								}
-							}
-							if (vertices.length > 0) {
-								if (vertices.length != 2) console.error('ND.intersection: invalid edge.');else _edges3.push(vertices);
-							}
-						}
-					} else {
-						var segment = segments[settings.indice];
-						if (iSegments > 1) {
-							for (var i = 0; i < segment.length; i++) {
-								var _nd = new ND(n, { geometry: settings.geometry, indice: segment[i], iSegments: iSegments - 1 });
-								if (n > 4) {
-									if (n === 5) {
-										var iIntersect = [];
-										_nd.intersection(geometryIntersection, iIntersect);
-										if (iIntersect.length) {
-											if (iIntersect.length === 1) {
-												iIntersect = iIntersect[0];
-												iIntersections.push(iIntersect);
-											} else {
-												var ind = n - 4;
-												geometryIntersection.indices[ind] = geometryIntersection.indices[ind] || proxySegments();
-												geometryIntersection.indices[ind].push(iIntersect);
-												if (iIntersections) iIntersections.push(iIntersect.index);
-											}
-										}
-									} else console.error('ND.intersection: n = ' + n + ' under constraction');
-								} else _nd.intersection(geometryIntersection, iIntersections);
-							}
-						} else {
-							var _edge3 = [];
-							if (segment.indices) segment = segment.indices;
-							for (var i = 0; i < segment.length; i++) {
-								intersection(segment[i], _edge3);
-							}
-							if (_edge3.length > 0) {
-								if (_edge3.length !== 2 || _edge3[0] === _edge3[1]) {
-									if (!_edge3.boVerticeOnPanel) {
-										console.error('ND.intersection: invalid edge');
-										return;
-									}
-								}
-								var intersectionEdges = geometryIntersection.indices[0];
-								var duplicateEdge = false;
-								for (var i = 0; i < intersectionEdges.length; i++) {
-									var intersectionEdge = intersectionEdges[i];
-									if (intersectionEdge[0] === _edge3[0] && intersectionEdge[1] === _edge3[1] || intersectionEdge[0] === _edge3[1] && intersectionEdge[1] === _edge3[0]) {
-										duplicateEdge = true;
-										if (iIntersections) iIntersections.push(i);
-										break;
-									}
-								}
-								if (!duplicateEdge) {
-									if (iIntersections) iIntersections.push(intersectionEdges.length);
-									intersectionEdges.push(_edge3);
-								}
-							}
-						}
-					}
-				}
-		}
-		if (settings.onIntersection) settings.onIntersection(geometryIntersection);
-		if (scene) {
-			if (objectIntersect) {
-				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(objectIntersect);
-				scene.remove(objectIntersect);
-				options.eventListeners.removeParticle(objectIntersect);
-			}
-			if (geometryIntersection.position.length) objectIntersect = create3DObject(geometryIntersection, { name: 'Intersection' });
-		}
-		return geometryIntersection.position;
-	};
-	var THREE = three$1.THREE,
-	    scene = settings.scene;
-	if (scene) {
-		options.scales.x.name = 0;
-		options.scales.y.name = 1;
-		options.scales.z.name = 2;
-		if (n <= 1) options.scales.y = undefined;
-		if (n <= 2) options.scales.z = undefined;
-		options.scales.text.rect = options.scales.text.rect || {};
-		options.scales.text.rect.displayRect = false;
-		options.scales.text.precision = 2;
-	}
-	var object3D;
-	function projectTo3D() {
-		if (!scene) return;
-		if (object3D) {
-			for (var i = object3D.children.length - 1; i >= 0; i--) {
-				var child = object3D.children[i];
-				if (child instanceof THREE.Sprite) {
-					object3D.remove(child);
-					if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(child);
-				}
-			}
-			scene.remove(object3D);
-			if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(object3D);
-			options.eventListeners.removeParticle(object3D);
-			object3D = undefined;
-		}
-		object3D = create3DObject(geometry, { name: 'Object', color: 0x00ff00 });
-	}
-	projectTo3D();
-	var Plane = function Plane() {
-		classCallCheck(this, Plane);
-		var mesh;
-		this.createMesh = function () {
-			if (!scene) return;
-			var color = 0x0000FF;
-			switch (n) {
-				case 1:
-					options.point.size = (options.scales.x.max - options.scales.x.min) * 500;
-					mesh = new THREE.Points(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0)], 3), new THREE.PointsMaterial({
-						color: color,
-						sizeAttenuation: false
-					}));
-					break;
-				case 2:
-					mesh = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(options.scales.x.min, 0, 0), new THREE.Vector3(options.scales.x.max, 0, 0)]), new THREE.LineBasicMaterial({ color: color }));
-					break;
-				case 3:
-					mesh = new THREE.GridHelper(2, 10, color, color);
-					mesh.rotation.x = Math.PI / 2;
-					break;
-				default:
-					{
-						return;
-					}
-			}
-			mesh.name = 'Plane';
-			scene.add(mesh);
-			if (options.guiSelectPoint) options.guiSelectPoint.addMesh(mesh);
-			mesh.position.copy(vectorPlane.point);
-			mesh.userData.raycaster = {
-				onIntersection: function onIntersection(intersection, mouse) {
-					delete intersection.index;
-					MyThree.Options.raycaster.onIntersection(intersection, options, scene, options.camera, options.renderer);
-				},
-				onIntersectionOut: function onIntersectionOut() {
-					MyThree.Options.raycaster.onIntersectionOut(scene, options.renderer);
-				},
-				onMouseDown: function onMouseDown(intersection) {
-					MyThree.Options.raycaster.onMouseDown(intersection, options);
-				}
-			};
-			options.eventListeners.addParticle(mesh);
-			vectorPlane.onChange = function () {
-				mesh.position.copy(vectorPlane.point);
-				mesh.updateMatrix();
-			};
-		};
-	};
-	var plane = new Plane();
-	plane.createMesh();
-	Object.defineProperties(this, {
-		vectorPlane: {
-			get: function get$$1() {
-				return vectorPlane;
-			}
-		},
-		geometry: {
-			get: function get$$1() {
-				return geometry;
-			},
-			set: function set$$1(geometryNew) {
-				geometry.geometry = geometryNew;
-				projectTo3D();
-				this.intersection();
-			}
-		}
-	});
-};
-ND.gui = function () {
-	function _class(options, dat, fParent) {
-		classCallCheck(this, _class);
-		var getLanguageCode = options.getLanguageCode;
-		var lang = {
-			nD: 'nD',
-			nDTitle: 'n-dimensional object'
-		};
-		var _languageCode = getLanguageCode();
-		switch (_languageCode) {
-			case 'ru':
-				lang.nDTitle = 'n-мерный объект';
-				break;
-			default:
-				if (guiParams.lang === undefined || guiParams.lang.languageCode != _languageCode) break;
-				Object.keys(guiParams.lang).forEach(function (key) {
-					if (lang[key] === undefined) return;
-					lang[key] = guiParams.lang[key];
-				});
-		}
-		var fND = fParent.addFolder(lang.nD);
-		dat.folderNameAndTitle(fND, lang.nD, lang.nDTitle);
-		this.object = function (object, dat) {
-			var display = 'none';
-			if (object && object.userData.nd) {
-				display = 'block';
-				object.userData.nd(fND, dat);
-			}
-			fND.domElement.style.display = display;
-		};
-	}
-	return _class;
-}();
-if (!Number.prototype.between) Number.prototype.between = function (a, b, inclusive) {
-	var min = Math.min.apply(Math, [a, b]),
-	    max = Math.max.apply(Math, [a, b]);
-	return inclusive ? this >= min && this <= max : this > min && this < max;
-};
-if (Array.prototype.equals) console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
-Array.prototype.equals = function (array) {
-	if (!array) return false;
-	if (this.length != array.length) return false;
-	for (var i = 0, l = this.length; i < l; i++) {
-		if (this[i] instanceof Array && array[i] instanceof Array) {
-			if (!this[i].equals(array[i])) return false;
-		} else if (this[i] != array[i]) {
-			return false;
-		}
-	}
-	return true;
-};
-Object.defineProperty(Array.prototype, "equals", { enumerable: false });
-
-/**
  * @module GuiSelectPoint
  *
  * @description A dat.gui based graphical user interface for select a point from the mesh.
  *
  * @see {@link https://github.com/anhr/dat.gui|dat.gui}, {@link https://threejs.org/docs/index.html#api/en/objects/Mesh|three.js mesh}.
  *
- * @author Andrej Hristoliubov. {@link https://anhr.github.io/AboutMe/|AboutMe}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -14831,1018 +13551,1106 @@ Object.defineProperty(Array.prototype, "equals", { enumerable: false });
 */
 var GuiSelectPoint =
 function GuiSelectPoint(options) {
-	var guiParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-	classCallCheck(this, GuiSelectPoint);
-	var guiSelectPoint = this,
-	    THREE = three$1.THREE,
-	    folders = {};
-	if (!options.boOptions) {
-		console.error('GuiSelectPoint: call options = new Options( options ) first');
-		return;
-	}
-	if (options.dat.guiSelectPoint === false || !options.dat.gui) {
-		this.add = function (gui) {};
-		this.addMesh = function (points) {};
-		this.select = function (intersect) {};
-		return;
-	}
-	var dat = three$1.dat;
-	options.guiSelectPoint = guiSelectPoint;
-	var cFrustumPoints;
-	var getLanguageCode = options.getLanguageCode;
-	var lang = {
-		meshs: 'Meshes',
-		notSelected: 'Not selected',
-		select: 'Select',
-		position: 'Position',
-		rotation: 'Rotation',
-		points: 'Points',
-		cameraTarget: 'Look',
-		cameraTargetTitle: 'Choose this point the camera is looking at.',
-		point: 'Point Local Position',
-		pointTitle: 'The position attribute of the selected point',
-		trace: 'Trace',
-		traceTitle: 'Display the trace of the point movement.',
-		traceAllTitle: 'Display the trace of the movement of all points of the mesh.',
-		pointWorld: 'Point World Position',
-		pointWorldTitle: 'The position of the selected point after scaling, moving and rotation of the mesh',
-		mesh: 'Mesh',
-		scale: 'Scale',
-		color: 'Сolor',
-		opacity: 'Opacity',
-		opacityTitle: 'Float in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.',
-		defaultButton: 'Default',
-		defaultScaleTitle: 'Restore default 3d object scale.',
-		defaultPositionTitle: 'Restore default 3d object position.',
-		default3DObjectTitle: 'Restore default settings of all 3d objects.',
-		defaultRotationTitle: 'Restore default 3d object rotation.',
-		defaultLocalPositionTitle: 'Restore default local position.',
-		moveGroup: 'Move Scene'
-	};
-	var _languageCode = getLanguageCode();
-	switch (_languageCode) {
-		case 'ru':
-			lang.meshs = '3D объекты';
-			lang.notSelected = 'Не выбран';
-			lang.select = 'Выбрать';
-			lang.position = 'Позиция';
-			lang.rotation = 'Вращение';
-			lang.points = 'Точки';
-			lang.cameraTarget = 'Следить';
-			lang.cameraTargetTitle = 'Выберите эту точку, за которой следит камера.', lang.point = 'Локальная позиция точки';
-			lang.pointTitle = 'Position attribute выбранной точки';
-			lang.trace = 'Трек';
-			lang.traceTitle = 'Показать трек перемещения точки.';
-			lang.traceAllTitle = 'Показать трек перемещения всех точек выбранного 3D объекта.';
-			lang.pointWorld = 'Абсолютная позиция точки';
-			lang.pointWorldTitle = 'Позиция выбранной точки после масштабирования, перемещения и вращения 3D объекта';
-			lang.mesh = '3D объект';
-			lang.scale = 'Масштаб';
-			lang.color = 'Цвет';
-			lang.opacity = 'Непрозрачность';
-			lang.opacityTitle = 'Число в диапазоне 0,0 - 1,0, указывающее, насколько прозрачен материал. Значение 0.0 означает полностью прозрачный, 1.0 - полностью непрозрачный.';
-			lang.defaultButton = 'Восстановить';
-			lang.defaultScaleTitle = 'Восстановить масштаб 3D объекта по умолчанию.';
-			lang.defaultPositionTitle = 'Восстановить позицию 3D объекта по умолчанию.';
-			lang.default3DObjectTitle = 'Восстановить настройки всех 3D объектов по умолчанию.';
-			lang.defaultRotationTitle = 'Восстановить поворот 3D объекта по умолчанию.';
-			lang.defaultLocalPositionTitle = 'Восстановить локальную позицию точки по умолчанию.';
-			break;
-		default:
-			if (guiParams.lang === undefined || guiParams.lang.languageCode != _languageCode) break;
-			Object.keys(guiParams.lang).forEach(function (key) {
-				if (lang[key] === undefined) return;
-				lang[key] = guiParams.lang[key];
-			});
-	}
-	var f3DObjects,
-	    fPoint,
-	    cRestoreDefaultLocalPosition,
-	    fPointWorld,
-	    fPoints,
-	    cMeshs,
-	    fMesh,
-	intersection,
-	    cScaleX,
-	    cScaleY,
-	    cScaleZ,
-	    cPoints,
-	    selectedPointIndex = -1,
-	    cX,
-	    cY,
-	    cZ,
-	    cW,
-	    cTrace,
-	    cTraceAll,
-	    cColor,
-	    cOpacity,
-	    cCameraTarget,
-	    funcFolder,
-	    boSetMesh = false,
-	fRotation,
-	    nD;
-	var _this = this,
-	    cPosition = new THREE.Vector3(),
-	    cRotations = new THREE.Vector3(),
-	    cWorld = new THREE.Vector3();
-	function displayPointControllers(display) {
-		fPointWorld.domElement.style.display = display;
-		fPoint.domElement.style.display = display;
-		if (cCameraTarget) {
-			var mesh = getMesh();
-			cCameraTarget.domElement.parentElement.parentElement.style.display = mesh && mesh.userData.boFrustumPoints ? 'none' :
-			display;
-		}
-	}
-	if (options.frustumPoints) cFrustumPoints = new options.frustumPoints.guiSelectPoint();
-	function dislayEl(controller, displayController) {
-		if (controller === undefined) return;
-		if (typeof displayController === "boolean") displayController = displayController ? 'block' : 'none';else if (displayController === undefined) displayController = 'none';else if (typeof displayController !== "string") displayController = 'block';
-		var el = controller.domElement;
-		while (el.tagName.toUpperCase() !== "LI") {
-			el = el.parentElement;
-		}el.style.display = displayController;
-	}
-	function exposePosition(selectedPointIndex) {
-		if (selectedPointIndex === undefined) selectedPointIndex = guiSelectPoint.getSelectedPointIndex();
-		if (selectedPointIndex === -1) return;
-		var mesh = cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh,
-		    position = getObjectPosition(mesh, selectedPointIndex);
-		if (options.axesHelper !== undefined)
-			if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition({ object: mesh, index: selectedPointIndex });
-		if (cWorld.x) cWorld.x.setValue(position.x);
-		if (cWorld.y) cWorld.y.setValue(position.y);
-		if (cWorld.z) cWorld.z.setValue(position.z);
-		if (mesh.userData.player && mesh.userData.player.arrayFuncs && mesh.userData.player.arrayFuncs[selectedPointIndex] && mesh.userData.player.arrayFuncs[selectedPointIndex].controllers) {
-			var controllers = mesh.userData.player.arrayFuncs[selectedPointIndex].controllers;
-			if (controllers.x && controllers.x.controller) controllers.x.controller.value = position.x;
-			if (controllers.y && controllers.y.controller) controllers.y.controller.value = position.y;
-			if (controllers.z && controllers.z.controller) controllers.z.controller.value = position.z;
-		}
-	}
-	function setValue(controller, v) {
-		if (!controller) return;
-		var input = controller.domElement.querySelector('input'),
-		    readOnly = input.readOnly;
-		input.readOnly = false;
-		controller.object[controller.property] = v;
-		if (controller.__onChange) controller.__onChange.call(controller, v);
-		controller.initialValue = v;
-		controller.updateDisplay();
-		input.readOnly = readOnly;
-		return controller;
-	}
-	var wLimitsDefault;
-	function setPosition(intersectionSelected) {
-		var player = intersectionSelected.object.userData.player;
-		var boDisplayFuncFolder = 'none';
-		if (player && player.arrayFuncs) {
-			funcFolder.setFunction(player.arrayFuncs[intersectionSelected.index]);
-			boDisplayFuncFolder = 'block';
-		}
-		funcFolder.displayFolder(boDisplayFuncFolder);
-		if (cCameraTarget) {
-			options.playerOptions.cameraTarget.changeTarget(intersectionSelected.object, intersectionSelected.index);
-			cCameraTarget.updateDisplay();
-		}
-		var positionLocal = getObjectLocalPosition(intersectionSelected.object, intersectionSelected.index);
-		setValue(cX, positionLocal.x);
-		setValue(cY, positionLocal.y);
-		setValue(cZ, positionLocal.z);
-		var position = getObjectPosition(intersectionSelected.object, intersectionSelected.index);
-		setValue(cWorld.x, position.x);
-		setValue(cWorld.y, position.y);
-		setValue(cWorld.z, position.z);
-		var displayControllerW, displayControllerColor, displayControllerOpacity;
-		var none = 'none',
-		    block = 'block';
-		if (intersection.object.userData.player && typeof intersection.object.userData.player.arrayFuncs === "function") {
-		}
-		var opasity;
-		var func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined,
-		    attributes = intersectionSelected.object.geometry.attributes;
-		if (attributes.position.itemSize < 4) {
-			displayControllerW = none;
-			displayControllerColor = none;
-			displayControllerOpacity = none;
-		} else {
-			var isWObject = function isWObject() {
-				return _typeof(func.w) === 'object' && func.w instanceof THREE.Color === false;
+			var guiParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+			classCallCheck(this, GuiSelectPoint);
+			var guiSelectPoint = this,
+			    THREE = three$1.THREE,
+			    folders = {};
+			if (!options.boOptions) {
+						console.error('GuiSelectPoint: call options = new Options( options ) first');
+						return;
+			}
+			if (options.dat.guiSelectPoint === false || !options.dat.gui) {
+						this.add = function (gui) {};
+						this.addMesh = function (points) {};
+						this.select = function (intersect) {};
+						return;
+			}
+			var dat = three$1.dat;
+			options.guiSelectPoint = guiSelectPoint;
+			var cFrustumPoints;
+			var getLanguageCode = options.getLanguageCode;
+			var lang = {
+						meshs: 'Meshes',
+						notSelected: 'Not selected',
+						select: 'Select',
+						position: 'Position',
+						rotation: 'Rotation',
+						points: 'Points',
+						displayVerticeID: 'Point ID',
+						displayVerticeIDTitle: 'Display on the scene the point ID near to the point',
+						cameraTarget: 'Look',
+						cameraTargetTitle: 'Choose this point the camera is looking at.',
+						point: 'Point Local Position',
+						pointTitle: 'The position attribute of the selected point',
+						trace: 'Trace',
+						traceTitle: 'Display the trace of the point movement.',
+						traceAllTitle: 'Display the trace of the movement of all points of the mesh.',
+						pointWorld: 'Point World Position',
+						pointWorldTitle: 'The position of the selected point after scaling, moving and rotation of the mesh',
+						mesh: 'Mesh',
+						scale: 'Scale',
+						color: 'Сolor',
+						opacity: 'Opacity',
+						opacityTitle: 'Float in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.',
+						defaultButton: 'Default',
+						defaultScaleTitle: 'Restore default 3d object scale.',
+						defaultPositionTitle: 'Restore default 3d object position.',
+						default3DObjectTitle: 'Restore default settings of all 3d objects.',
+						defaultRotationTitle: 'Restore default 3d object rotation.',
+						defaultLocalPositionTitle: 'Restore default local position.',
+						moveGroup: 'Move Scene'
 			};
-			var color = func === undefined || !attributes.color && !attributes.ca ? undefined : Array.isArray(func.w) || typeof func.w === "function" ? Player$1.execFunc(func, 'w', options.time, options) : isWObject() ? Player$1.execFunc(func.w, 'func', options.time, options) : typeof func.w === "string" ? Player$1.execFunc(func, 'w', options.time, options) : func.w;
-			if (color === undefined) {
-				if (attributes.ca === undefined) {
-				} else {
-					var vColor = new THREE.Vector4().fromArray(attributes.ca.array, intersectionSelected.index * attributes.ca.itemSize);
-					color = new THREE.Color(vColor.x, vColor.y, vColor.z);
-					opasity = vColor.w;
-				}
+			var _languageCode = getLanguageCode();
+			switch (_languageCode) {
+						case 'ru':
+									lang.meshs = '3D объекты';
+									lang.notSelected = 'Не выбран';
+									lang.select = 'Выбрать';
+									lang.position = 'Позиция';
+									lang.rotation = 'Вращение';
+									lang.points = 'Точки';
+									lang.displayVerticeID = 'Номера точек';
+									lang.displayVerticeIDTitle = 'На сцене возле каждой точки показать ее идентификатор';
+									lang.cameraTarget = 'Следить';
+									lang.cameraTargetTitle = 'Выберите эту точку, за которой следит камера.', lang.point = 'Локальная позиция точки';
+									lang.pointTitle = 'Position attribute выбранной точки';
+									lang.trace = 'Трек';
+									lang.traceTitle = 'Показать трек перемещения точки.';
+									lang.traceAllTitle = 'Показать трек перемещения всех точек выбранного 3D объекта.';
+									lang.pointWorld = 'Абсолютная позиция точки';
+									lang.pointWorldTitle = 'Позиция выбранной точки после масштабирования, перемещения и вращения 3D объекта';
+									lang.mesh = '3D объект';
+									lang.scale = 'Масштаб';
+									lang.color = 'Цвет';
+									lang.opacity = 'Непрозрачность';
+									lang.opacityTitle = 'Число в диапазоне 0,0 - 1,0, указывающее, насколько прозрачен материал. Значение 0.0 означает полностью прозрачный, 1.0 - полностью непрозрачный.';
+									lang.defaultButton = 'Восстановить';
+									lang.defaultScaleTitle = 'Восстановить масштаб 3D объекта по умолчанию.';
+									lang.defaultPositionTitle = 'Восстановить позицию 3D объекта по умолчанию.';
+									lang.default3DObjectTitle = 'Восстановить настройки всех 3D объектов по умолчанию.';
+									lang.defaultRotationTitle = 'Восстановить поворот 3D объекта по умолчанию.';
+									lang.defaultLocalPositionTitle = 'Восстановить локальную позицию точки по умолчанию.';
+									break;
+						default:
+									if (guiParams.lang === undefined || guiParams.lang.languageCode != _languageCode) break;
+									Object.keys(guiParams.lang).forEach(function (key) {
+												if (lang[key] === undefined) return;
+												lang[key] = guiParams.lang[key];
+									});
 			}
-			if (color instanceof THREE.Color) {
-				displayControllerW = none;
-				displayControllerColor = block;
-				displayControllerOpacity = block;
-				if (intersectionSelected.object.userData.player.arrayFuncs === undefined) {
-					displayControllerColor = none;
-					displayControllerOpacity = none;
-				} else {
-					var strColor = '#' + color.getHexString();
-					cColor.initialValue = strColor;
-					cColor.setValue(strColor);
-					cColor.userData = { intersection: intersectionSelected };
-					if (opasity !== undefined) {
-						setValue(cOpacity, opasity);
-					} else displayControllerOpacity = none;
-					cOpacity.userData = { intersection: intersectionSelected };
-				}
-			} else {
-				if (cW === undefined) displayControllerW = none;else {
-					if (color === undefined) displayControllerW = none;else {
-						if (!wLimitsDefault) {
-							wLimitsDefault = {
-								min: cW.__min,
-								max: cW.__max
-							};
+			var f3DObjects,
+			    fPoint,
+			    cRestoreDefaultLocalPosition,
+			    fPointWorld,
+			    fPoints,
+			    cMeshs,
+			    fMesh,
+			intersection,
+			    cScaleX,
+			    cScaleY,
+			    cScaleZ,
+			    cPoints,
+			    selectedPointIndex = -1,
+			    cX,
+			    cY,
+			    cZ,
+			    cW,
+			    cTrace,
+			    cTraceAll,
+			    cColor,
+			    cOpacity,
+			    cCameraTarget,
+			    funcFolder,
+			    boSetMesh = false,
+			fRotation,
+			    cCustom;
+			var _this = this,
+			    cPosition = new THREE.Vector3(),
+			    cRotations = new THREE.Vector3(),
+			    cWorld = new THREE.Vector3();
+			function displayPointControllers(display) {
+						fPointWorld.domElement.style.display = display;
+						fPoint.domElement.style.display = display;
+						if (cCameraTarget) {
+									var mesh = getMesh();
+									cCameraTarget.domElement.parentElement.parentElement.style.display = mesh && mesh.userData.boFrustumPoints ? 'none' :
+									display;
 						}
-						if (isWObject()) {
-							cW.min(func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min);
-							cW.max(func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max);
-							if (cW.__min !== 'undefined' && cW.__max !== 'undefined') cW.step((cW.__max - cW.__min) / 100);
+			}
+			if (options.frustumPoints) cFrustumPoints = new options.frustumPoints.guiSelectPoint();
+			function dislayEl(controller, displayController) {
+						if (controller === undefined) return;
+						if (typeof displayController === "boolean") displayController = displayController ? 'block' : 'none';else if (displayController === undefined) displayController = 'none';else if (typeof displayController !== "string") displayController = 'block';
+						var el = controller.domElement;
+						while (el.tagName.toUpperCase() !== "LI") {
+									el = el.parentElement;
+						}el.style.display = displayController;
+			}
+			function exposePosition(selectedPointIndex) {
+						if (selectedPointIndex === undefined) selectedPointIndex = guiSelectPoint.getSelectedPointIndex();
+						if (selectedPointIndex === -1) return;
+						var mesh = cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh,
+						    position = getObjectPosition(mesh, selectedPointIndex);
+						if (options.axesHelper !== undefined)
+									if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition({ object: mesh, index: selectedPointIndex });
+						if (cWorld.x) cWorld.x.setValue(position.x);
+						if (cWorld.y) cWorld.y.setValue(position.y);
+						if (cWorld.z) cWorld.z.setValue(position.z);
+						if (mesh.userData.player && mesh.userData.player.arrayFuncs && mesh.userData.player.arrayFuncs[selectedPointIndex] && mesh.userData.player.arrayFuncs[selectedPointIndex].controllers) {
+									var controllers = mesh.userData.player.arrayFuncs[selectedPointIndex].controllers;
+									if (controllers.x && controllers.x.controller) controllers.x.controller.value = position.x;
+									if (controllers.y && controllers.y.controller) controllers.y.controller.value = position.y;
+									if (controllers.z && controllers.z.controller) controllers.z.controller.value = position.z;
+						}
+			}
+			function setValue(controller, v) {
+						if (!controller) return;
+						var input = controller.domElement.querySelector('input'),
+						    readOnly = input.readOnly;
+						input.readOnly = false;
+						controller.object[controller.property] = v;
+						if (controller.__onChange) controller.__onChange.call(controller, v);
+						controller.initialValue = v;
+						controller.updateDisplay();
+						input.readOnly = readOnly;
+						return controller;
+			}
+			var wLimitsDefault;
+			function setPosition(intersectionSelected) {
+						var player = intersectionSelected.object.userData.player;
+						var boDisplayFuncFolder = 'none';
+						if (player && player.arrayFuncs) {
+									funcFolder.setFunction(player.arrayFuncs[intersectionSelected.index]);
+									boDisplayFuncFolder = 'block';
+						}
+						funcFolder.displayFolder(boDisplayFuncFolder);
+						if (cCameraTarget) {
+									options.playerOptions.cameraTarget.changeTarget(intersectionSelected.object, intersectionSelected.index);
+									cCameraTarget.updateDisplay();
+						}
+						var positionLocal = getObjectLocalPosition(intersectionSelected.object, intersectionSelected.index);
+						setValue(cX, positionLocal.x);
+						setValue(cY, positionLocal.y);
+						setValue(cZ, positionLocal.z);
+						var position = getObjectPosition(intersectionSelected.object, intersectionSelected.index);
+						setValue(cWorld.x, position.x);
+						setValue(cWorld.y, position.y);
+						setValue(cWorld.z, position.z);
+						var displayControllerW, displayControllerColor, displayControllerOpacity;
+						var none = 'none',
+						    block = 'block';
+						if (intersection.object.userData.player && typeof intersection.object.userData.player.arrayFuncs === "function") {
+						}
+						var opasity;
+						var func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined,
+						    attributes = intersectionSelected.object.geometry.attributes;
+						if (attributes.position.itemSize < 4) {
+									displayControllerW = none;
+									displayControllerColor = none;
+									displayControllerOpacity = none;
 						} else {
-							cW.min(wLimitsDefault.min);
-							cW.max(wLimitsDefault.max);
+									var isWObject = function isWObject() {
+												return _typeof(func.w) === 'object' && func.w instanceof THREE.Color === false;
+									};
+									var color = func === undefined || !attributes.color && !attributes.ca ? undefined : Array.isArray(func.w) || typeof func.w === "function" ? Player$1.execFunc(func, 'w', options.time, options) : isWObject() ? Player$1.execFunc(func.w, 'func', options.time, options) : typeof func.w === "string" ? Player$1.execFunc(func, 'w', options.time, options) : func.w;
+									if (color === undefined) {
+												if (attributes.ca === undefined) {
+												} else {
+															var vColor = new THREE.Vector4().fromArray(attributes.ca.array, intersectionSelected.index * attributes.ca.itemSize);
+															color = new THREE.Color(vColor.x, vColor.y, vColor.z);
+															opasity = vColor.w;
+												}
+									}
+									if (color instanceof THREE.Color) {
+												displayControllerW = none;
+												displayControllerColor = block;
+												displayControllerOpacity = block;
+												if (intersectionSelected.object.userData.player.arrayFuncs === undefined) {
+															displayControllerColor = none;
+															displayControllerOpacity = none;
+												} else {
+															var strColor = '#' + color.getHexString();
+															cColor.initialValue = strColor;
+															cColor.setValue(strColor);
+															cColor.userData = { intersection: intersectionSelected };
+															if (opasity !== undefined) {
+																		setValue(cOpacity, opasity);
+															} else displayControllerOpacity = none;
+															cOpacity.userData = { intersection: intersectionSelected };
+												}
+									} else {
+												if (cW === undefined) displayControllerW = none;else {
+															if (color === undefined) displayControllerW = none;else {
+																		if (!wLimitsDefault) {
+																					wLimitsDefault = {
+																								min: cW.__min,
+																								max: cW.__max
+																					};
+																		}
+																		if (isWObject()) {
+																					cW.min(func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min);
+																					cW.max(func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max);
+																					if (cW.__min !== 'undefined' && cW.__max !== 'undefined') cW.step((cW.__max - cW.__min) / 100);
+																		} else {
+																					cW.min(wLimitsDefault.min);
+																					cW.max(wLimitsDefault.max);
+																		}
+																		setValue(cW, color);
+																		displayControllerW = block;
+															}
+												}
+												displayControllerColor = none;
+												displayControllerOpacity = none;
+									}
 						}
-						setValue(cW, color);
-						displayControllerW = block;
-					}
-				}
-				displayControllerColor = none;
-				displayControllerOpacity = none;
+						dislayEl(cW, displayControllerW);
+						dislayEl(cColor, displayControllerColor);
+						dislayEl(cOpacity, displayControllerOpacity);
+						var boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : false;
+						if (cX) cX.domElement.querySelector('input').readOnly = boReadOnly;
+						if (cY) cY.domElement.querySelector('input').readOnly = boReadOnly;
+						if (cZ) cZ.domElement.querySelector('input').readOnly = boReadOnly;
+						if (cW) cW.domElement.querySelector('input').readOnly = boReadOnly;
+						cColor.domElement.querySelector('input').readOnly = boReadOnly;
+						cOpacity.domElement.querySelector('input').readOnly = boReadOnly;
+						funcFolder.displayFolder(!boReadOnly);
 			}
-		}
-		dislayEl(cW, displayControllerW);
-		dislayEl(cColor, displayControllerColor);
-		dislayEl(cOpacity, displayControllerOpacity);
-		var boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : false;
-		if (cX) cX.domElement.querySelector('input').readOnly = boReadOnly;
-		if (cY) cY.domElement.querySelector('input').readOnly = boReadOnly;
-		if (cZ) cZ.domElement.querySelector('input').readOnly = boReadOnly;
-		if (cW) cW.domElement.querySelector('input').readOnly = boReadOnly;
-		cColor.domElement.querySelector('input').readOnly = boReadOnly;
-		cOpacity.domElement.querySelector('input').readOnly = boReadOnly;
-		funcFolder.displayFolder(!boReadOnly);
-	}
-	this.setMesh = function () {
-		boSetMesh = true;
-		setScaleControllers();
-		setPositionControllers();
-		setRotationControllers();
-		exposePosition();
-		boSetMesh = false;
-	};
-	this.setPosition = function (intersectionSelected) {
-		for (var i = 0; i < cMeshs.__select.length; i++) {
-			var option = cMeshs.__select[i];
-			if (option.selected && Object.is(option.mesh, intersectionSelected.object)) {
-				setPosition(intersectionSelected);
+			this.setAxisName = function (axis, name) {
+						cPosition[axis].name(name);
+						folders.position[axis].name = name;
+						var cScale = axis === 'x' ? cScaleX : axis === 'y' ? cScaleY : axis === 'z' ? cScaleZ : undefined;
+						cScale.name(name);
+						var cRotation = cRotations[axis];
+						if (cRotation.name) cRotation.name(name);
+			};
+			this.setMesh = function () {
+						boSetMesh = true;
+						setScaleControllers();
+						setPositionControllers();
+						setRotationControllers();
+						exposePosition();
+						boSetMesh = false;
+			};
+			this.setPosition = function (intersectionSelected) {
+						for (var i = 0; i < cMeshs.__select.length; i++) {
+									var option = cMeshs.__select[i];
+									if (option.selected && Object.is(option.mesh, intersectionSelected.object)) {
+												setPosition(intersectionSelected);
+									}
+						}
+			};
+			this.update = function () {
+						var selectedItem = cMeshs.__select.options[cMeshs.__select.options.selectedIndex];
+						if (!selectedItem) return;
+						var mesh = selectedItem.mesh;
+						if (!mesh) return;
+						var index = this.getSelectedPointIndex();
+						if (index === -1) return;
+						var position = getObjectPosition(mesh, index);
+						if (cWorld.x) cWorld.x.setValue(position.x);
+						if (cWorld.y) cWorld.y.setValue(position.y);
+						if (cWorld.z) cWorld.z.setValue(position.z);
+						if (cW) cW.setValue(position.w);
+						var positionLocal = getObjectLocalPosition(mesh, index);
+						if (cX) cX.setValue(positionLocal.x);
+						if (cY) cY.setValue(positionLocal.y);
+						if (cZ) cZ.setValue(positionLocal.z);
+						funcFolder.update(mesh.userData.player.arrayFuncs[index]);
+			};
+			this.getMeshIndex = function (mesh) {
+						if (mesh === undefined) return mesh;
+						var index;
+						for (index = 0; index < cMeshs.__select.options.length; index++) {
+									var option = cMeshs.__select.options[index];
+									if (Object.is(option.mesh, mesh)) return index;
+						}
+			};
+			this.setIndexMesh = function (index, mesh) {
+						if (index === undefined) return;
+						cMeshs.__select.options[index].mesh = mesh;
+						this.selectPoint(-1);
+			};
+			this.selectPoint = function (index) {
+						cPoints.__onChange(index);
+						cPoints.__select[index + 1].selected = true;
+			};
+			this.removeMesh = function (mesh) {
+						var index = this.getMeshIndex(mesh),
+						    selectedIndex = cMeshs.__select.selectedIndex;
+						if (index === undefined) return;
+						cMeshs.__select.remove(index);
+						if (selectedIndex === index) {
+									cPoints.__onChange(-1);
+									_this.removePoints();
+									cMeshs.__onChange(-1);
+						}
+			};
+			var arrayMeshs = [];
+			this.addMesh = function (mesh) {
+						if (!mesh.parent) {
+									console.error('GuiSelectPoint.addMesh: Add mesh into scene first.');
+									return;
+						}
+						if (!cMeshs) {
+									for (var i = 0; i < arrayMeshs.length; i++) {
+												if (arrayMeshs[i].uuid === mesh.uuid) {
+															console.error('guiSelectPoint.addMesh: Duplicate mesh: ' + mesh.name);
+															return;
+												}
+									}
+									arrayMeshs.push(mesh);
+									return;
+						}
+						for (var i = 0; i < cMeshs.__select.options.length; i++) {
+									var option = cMeshs.__select.options[i];
+									if (mesh.userData.boFrustumPoints && option.mesh !== undefined && option.mesh.userData.boFrustumPoints) return;
+									if (option.mesh !== undefined && option.mesh.uuid === mesh.uuid) {
+												console.error('guiSelectPoint.addMesh(...): Duplicate mesh.');
+												return;
+									}
+						}
+						var opt = document.createElement('option');
+						opt.innerHTML = cMeshs.__select.length + ' ' + (mesh.name === '' ? mesh.constructor.name : mesh.name);
+						opt.mesh = mesh;
+						mesh.userData.default = mesh.userData.default || {
+									scale: new THREE.Vector3().copy(mesh.scale),
+									position: mesh.position instanceof THREE.Vector3 ? new THREE.Vector3().copy(mesh.position) : mesh.position instanceof THREE.Vector4 ? new THREE.Vector4().copy(mesh.position) : undefined,
+									rotation: new THREE.Euler().copy(mesh.rotation)
+						};
+						cMeshs.__select.appendChild(opt);
+						displayVerticeID(mesh);
+			};
+			this.select = function (intersectionSelected) {
+						var position = getObjectLocalPosition(intersectionSelected.object, intersectionSelected.index);
+						if (f3DObjects === undefined) {
+									console.error('Не знаю как сюда попасть');
+						}
+						var index = this.getMeshIndex(intersectionSelected.object);
+						if (!index) return;
+						if (cMeshs.__select[index].selected === false) {
+									cMeshs.__select[index].selected = true;
+									cMeshs.__onChange(index - 1);
+						}
+						this.selectPoint2 = function (selectedMesh) {
+									if (intersectionSelected.index === undefined || isNaN(intersectionSelected.index)) return;
+									if (selectedMesh !== undefined && !Object.is(intersectionSelected.object, selectedMesh)) return;
+									if (!intersectionSelected.object.userData.boFrustumPoints) {
+												cPoints.__select[intersectionSelected.index + 1].selected = true;
+									} else {
+												cFrustumPoints.pointIndexes(intersectionSelected.object.userData.pointIndexes(intersectionSelected.index));
+									}
+									var block = 'block';
+									displayPointControllers(block);
+									intersection = intersectionSelected;
+									if (guiParams.setIntersection) guiParams.setIntersection(intersectionSelected);
+									setPosition(intersectionSelected);
+									var mesh = getMesh();
+									var line = !mesh.userData.player || mesh.userData.player.arrayFuncs === undefined || typeof intersection.object.userData.player.arrayFuncs === "function" ? undefined : mesh.userData.player.arrayFuncs[intersectionSelected.index].line;
+									if (cTrace) cTrace.setValue(line === undefined ?
+									false : line.isVisible());
+									cRestoreDefaultLocalPosition.domElement.parentElement.parentElement.style.display = !intersection.object.userData.player || intersection.object.userData.player.arrayFuncs === undefined ? 'none' : block;
+						};
+						this.selectPoint2(undefined);
+			};
+			this.isSelectedMesh = function (meshCur) {
+						return getMesh() === meshCur;
+			};
+			this.getSelectedPointIndex = function () {
+						if (cFrustumPoints !== undefined && cFrustumPoints.isDisplay() &&
+						options.frustumPoints && options.frustumPoints.isDisplay()
+						) {
+												var selectedIndex = cFrustumPoints.getSelectedIndex();
+												return selectedIndex === null ? -1 : selectedIndex;
+									}
+						if (cPoints === undefined) {
+									if (selectedPointIndex === undefined) console.error('myThreejs.create.onloadScripts.init.guiSelectPoint.getSelectedPointIndex:  selectedPointIndex = ' + selectedPointIndex);
+									return selectedPointIndex;
+						}
+						if (!getMesh()) return -1;
+						var index = cPoints.__select.selectedOptions[0].index;
+						return index - 1;
+			};
+			function getMesh() {
+						if (!cMeshs) {
+									console.error('GuiSelectPoint().getSelectedPointIndex().getMesh(): call GuiSelectPoint.add(); first.');
+									return undefined;
+						}
+						var selectedIndex = cMeshs.__select.options.selectedIndex;
+						if (selectedIndex !== -1) return cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh;
+						return undefined;
 			}
-		}
-	};
-	this.update = function () {
-		var selectedItem = cMeshs.__select.options[cMeshs.__select.options.selectedIndex];
-		if (!selectedItem) return;
-		var mesh = selectedItem.mesh;
-		if (!mesh) return;
-		var index = this.getSelectedPointIndex();
-		if (index === -1) return;
-		var position = getObjectPosition(mesh, index);
-		if (cWorld.x) cWorld.x.setValue(position.x);
-		if (cWorld.y) cWorld.y.setValue(position.y);
-		if (cWorld.z) cWorld.z.setValue(position.z);
-		if (cW) cW.setValue(position.w);
-		var positionLocal = getObjectLocalPosition(mesh, index);
-		if (cX) cX.setValue(positionLocal.x);
-		if (cY) cY.setValue(positionLocal.y);
-		if (cZ) cZ.setValue(positionLocal.z);
-		funcFolder.update(mesh.userData.player.arrayFuncs[index]);
-	};
-	this.getMeshIndex = function (mesh) {
-		if (mesh === undefined) return mesh;
-		var index;
-		for (index = 0; index < cMeshs.__select.options.length; index++) {
-			var option = cMeshs.__select.options[index];
-			if (Object.is(option.mesh, mesh)) return index;
-		}
-	};
-	this.setIndexMesh = function (index, mesh) {
-		if (index === undefined) return;
-		cMeshs.__select.options[index].mesh = mesh;
-		this.selectPoint(-1);
-	};
-	this.selectPoint = function (index) {
-		cPoints.__onChange(index);
-		cPoints.__select[index + 1].selected = true;
-	};
-	this.removeMesh = function (mesh) {
-		var index = this.getMeshIndex(mesh),
-		    selectedIndex = cMeshs.__select.selectedIndex;
-		if (index === undefined) return;
-		cMeshs.__select.remove(index);
-		if (selectedIndex === index) {
-			cPoints.__onChange(-1);
-			_this.removePoints();
-		}
-	};
-	var arrayMeshs = [];
-	this.addMesh = function (mesh) {
-		if (!mesh.parent) {
-			console.error('GuiSelectPoint.addMesh: Add mesh into scene first.');
-			return;
-		}
-		if (!cMeshs) {
-			for (var i = 0; i < arrayMeshs.length; i++) {
-				if (arrayMeshs[i].uuid === mesh.uuid) {
-					console.error('guiSelectPoint.addMesh: Duplicate mesh: ' + mesh.name);
-					return;
-				}
+			function isNotSetControllers() {
+						return getMesh() === undefined;
 			}
-			arrayMeshs.push(mesh);
-			return;
-		}
-		for (var i = 0; i < cMeshs.__select.options.length; i++) {
-			var option = cMeshs.__select.options[i];
-			if (mesh.userData.boFrustumPoints && option.mesh !== undefined && option.mesh.userData.boFrustumPoints) return;
-			if (option.mesh !== undefined && option.mesh.uuid === mesh.uuid) {
-				console.error('guiSelectPoint.addMesh(...): Duplicate mesh.');
-				return;
+			function setScaleControllers() {
+						if (isNotSetControllers()) return;
+						var mesh = getMesh();
+						if (cScaleX) cScaleX.setValue(mesh.scale.x);
+						if (cScaleY) cScaleY.setValue(mesh.scale.y);
+						if (cScaleZ) cScaleZ.setValue(mesh.scale.z);
 			}
-		}
-		var opt = document.createElement('option');
-		opt.innerHTML = cMeshs.__select.length + ' ' + (mesh.name === '' ? mesh.constructor.name : mesh.name);
-		opt.mesh = mesh;
-		mesh.userData.default = mesh.userData.default || {
-			scale: new THREE.Vector3().copy(mesh.scale),
-			position: mesh.position instanceof THREE.Vector3 ? new THREE.Vector3().copy(mesh.position) : mesh.position instanceof THREE.Vector4 ? new THREE.Vector4().copy(mesh.position) : undefined,
-			rotation: new THREE.Euler().copy(mesh.rotation)
-		};
-		cMeshs.__select.appendChild(opt);
-	};
-	this.select = function (intersectionSelected) {
-		var position = getObjectLocalPosition(intersectionSelected.object, intersectionSelected.index);
-		if (f3DObjects === undefined) {
-			console.error('Не знаю как сюда попасть');
-		}
-		var index = this.getMeshIndex(intersectionSelected.object);
-		if (!index) return;
-		if (cMeshs.__select[index].selected === false) {
-			cMeshs.__select[index].selected = true;
-			cMeshs.__onChange(index - 1);
-		}
-		this.selectPoint2 = function (selectedMesh) {
-			if (intersectionSelected.index === undefined || isNaN(intersectionSelected.index)) return;
-			if (selectedMesh !== undefined && !Object.is(intersectionSelected.object, selectedMesh)) return;
-			if (!intersectionSelected.object.userData.boFrustumPoints) {
-				cPoints.__select[intersectionSelected.index + 1].selected = true;
-			} else {
-				cFrustumPoints.pointIndexes(intersectionSelected.object.userData.pointIndexes(intersectionSelected.index));
+			function setPositionControllers() {
+						if (isNotSetControllers()) return;
+						var mesh = getMesh();
+						if (cPosition.x) cPosition.x.setValue(mesh.position.x);
+						if (cPosition.y) cPosition.y.setValue(mesh.position.y);
+						if (cPosition.z) cPosition.z.setValue(mesh.position.z);
 			}
-			var block = 'block';
-			displayPointControllers(block);
-			intersection = intersectionSelected;
-			if (guiParams.setIntersection) guiParams.setIntersection(intersectionSelected);
-			setPosition(intersectionSelected);
-			var mesh = getMesh();
-			var line = !mesh.userData.player || mesh.userData.player.arrayFuncs === undefined || typeof intersection.object.userData.player.arrayFuncs === "function" ? undefined : mesh.userData.player.arrayFuncs[intersectionSelected.index].line;
-			if (cTrace) cTrace.setValue(line === undefined ?
-			false : line.isVisible());
-			cRestoreDefaultLocalPosition.domElement.parentElement.parentElement.style.display = !intersection.object.userData.player || intersection.object.userData.player.arrayFuncs === undefined ? 'none' : block;
-		};
-		this.selectPoint2(undefined);
-	};
-	this.isSelectedMesh = function (meshCur) {
-		return getMesh() === meshCur;
-	};
-	this.getSelectedPointIndex = function () {
-		if (cFrustumPoints !== undefined && cFrustumPoints.isDisplay() &&
-		options.frustumPoints && options.frustumPoints.isDisplay()
-		) {
-				var selectedIndex = cFrustumPoints.getSelectedIndex();
-				return selectedIndex === null ? -1 : selectedIndex;
+			function setRotationControllers() {
+						if (isNotSetControllers()) return;
+						var mesh = getMesh();
+						if (cRotations.x) cRotations.x.setValue(mesh.rotation.x);
+						if (cRotations.y) cRotations.y.setValue(mesh.rotation.y);
+						if (cRotations.z) cRotations.z.setValue(mesh.rotation.z);
 			}
-		if (cPoints === undefined) {
-			if (selectedPointIndex === undefined) console.error('myThreejs.create.onloadScripts.init.guiSelectPoint.getSelectedPointIndex:  selectedPointIndex = ' + selectedPointIndex);
-			return selectedPointIndex;
-		}
-		if (!getMesh()) return -1;
-		var index = cPoints.__select.selectedOptions[0].index;
-		return index - 1;
-	};
-	function getMesh() {
-		if (!cMeshs) {
-			console.error('GuiSelectPoint().getSelectedPointIndex().getMesh(): call GuiSelectPoint.add(); first.');
-			return undefined;
-		}
-		var selectedIndex = cMeshs.__select.options.selectedIndex;
-		if (selectedIndex !== -1) return cMeshs.__select.options[cMeshs.__select.options.selectedIndex].mesh;
-		return undefined;
-	}
-	function isNotSetControllers() {
-		return getMesh() === undefined;
-	}
-	function setScaleControllers() {
-		if (isNotSetControllers()) return;
-		var mesh = getMesh();
-		if (cScaleX) cScaleX.setValue(mesh.scale.x);
-		if (cScaleY) cScaleY.setValue(mesh.scale.y);
-		if (cScaleZ) cScaleZ.setValue(mesh.scale.z);
-	}
-	function setPositionControllers() {
-		if (isNotSetControllers()) return;
-		var mesh = getMesh();
-		if (cPosition.x) cPosition.x.setValue(mesh.position.x);
-		if (cPosition.y) cPosition.y.setValue(mesh.position.y);
-		if (cPosition.z) cPosition.z.setValue(mesh.position.z);
-	}
-	function setRotationControllers() {
-		if (isNotSetControllers()) return;
-		var mesh = getMesh();
-		if (cRotations.x) cRotations.x.setValue(mesh.rotation.x);
-		if (cRotations.y) cRotations.y.setValue(mesh.rotation.y);
-		if (cRotations.z) cRotations.z.setValue(mesh.rotation.z);
-	}
-	function visibleTraceLine(intersection, value, getMesh) {
-		if (!intersection || !intersection.object.userData.player || intersection.object.userData.player.arrayFuncs === undefined) return;
-		var index = intersection.index || 0,
-		    point = intersection.object.userData.player.arrayFuncs[index],
-		    line = point === undefined ? undefined : point.line;
-		if (line !== undefined)
-			line.visible(value);
-		if (!value) return;
-		if (point.line !== undefined) return;
-		point.line = new Player$1.traceLine(options);
-		var color = intersection.object.geometry.attributes.color;
-		if (color === undefined) color = new THREE.Color(0xffffff);
-		else {
-				var vector = new THREE.Vector3().fromArray(color.array, index * color.itemSize);
-				color = new THREE.Color(vector.x, vector.y, vector.z);
+			function visibleTraceLine(intersection, value, getMesh) {
+						if (!intersection || !intersection.object.userData.player || intersection.object.userData.player.arrayFuncs === undefined) return;
+						var index = intersection.index || 0,
+						    point = intersection.object.userData.player.arrayFuncs[index],
+						    line = point === undefined ? undefined : point.line;
+						if (line !== undefined)
+									line.visible(value);
+						if (!value) return;
+						if (point.line !== undefined) return;
+						point.line = new Player$1.traceLine(options);
+						var color = intersection.object.geometry.attributes.color;
+						if (color === undefined) color = new THREE.Color(0xffffff);
+						else {
+												var vector = new THREE.Vector3().fromArray(color.array, index * color.itemSize);
+												color = new THREE.Color(vector.x, vector.y, vector.z);
+									}
+						point.line.addPoint(getMesh(), index, color);
 			}
-		point.line.addPoint(getMesh(), index, color);
-	}
-	this.updateScale = function (axisName) {
-		if (!folders.position[axisName]) {
-			console.error('GuiSelectPoint.updateScale: Under constraction.');
-			return;
-		}
-		var none = 'none',
-		    block = 'block',
-		    display = options.scales[axisName].isAxis() ? block : none;
-		folders.position[axisName].domElement.style.display = display;
-		cWorld[axisName].domElement.parentElement.parentElement.style.display = display;
-		var c, cScale;
-		switch (axisName) {
-			case 'x':
-				c = cX;
-				cScale = cScaleX;
-				break;
-			case 'y':
-				c = cY;
-				cScale = cScaleY;
-				break;
-			case 'z':
-				c = cZ;
-				cScale = cScaleZ;
-				break;
-			default:
-				console.error('GuiSelectPoint.updateScale: Invalid axis name: ' + axisName);
-				return;
-		}
-		c.domElement.parentElement.parentElement.style.display = display;
-		cScale.domElement.parentElement.parentElement.style.display = display;
-		var boX = options.scales['x'].isAxis(),
-		    boY = options.scales['y'].isAxis(),
-		    boZ = options.scales['z'].isAxis();
-		var n = 0;
-		if (boX) n++;
-		if (boY) n++;
-		if (boZ) n++;
-		switch (n) {
-			case 1:
-				fRotation.domElement.style.display = none;
-				break;
-			case 2:
-				fRotation.domElement.style.display = block;
-				if (boX) cRotations.x.domElement.parentElement.parentElement.style.display = none;
-				if (boY) cRotations.y.domElement.parentElement.parentElement.style.display = none;
-				if (boZ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
-				break;
-			default:
-				console.error('GuiSelectPoint.updateScale: Invalid space dimension = ' + n);
-				return;
-		}
-	};
-	this.add = function (folder) {
-		folder = folder || options.dat.gui;
-		if (!folder) return;
-		f3DObjects = folder.addFolder(lang.meshs);
-		var mesh, buttonScaleDefault, buttonPositionDefault, buttonRotationDefault;
-		cMeshs = f3DObjects.add({ Meshs: lang.notSelected }, 'Meshs', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
-			value = parseInt(value);
-			mesh = getMesh();
-			nD.object(mesh, dat);
-			if (mesh && !mesh.userData.boFrustumPoints) {
-				if (!mesh.userData.player) mesh.userData.player = {};
-				if (!mesh.userData.player.arrayFuncs) {
-					var position = mesh.geometry.attributes.position;
-					mesh.userData.player.arrayFuncs = [];
-					for (var i = 0; i < position.count; i++) {
-						var vector = new THREE.Vector4().fromArray(mesh.geometry.attributes.position.array, i * position.itemSize);
-						vector.w = 1;
-						mesh.userData.player.arrayFuncs.push(vector);
-					}
-				}
+			this.updateScale = function (axisName) {
+						var none = 'none',
+						    block = 'block',
+						    display = options.scales[axisName].isAxis() ? block : none;
+						var boX = options.scales['x'].isAxis(),
+						    boY = options.scales['y'].isAxis(),
+						    boZ = options.scales['z'].isAxis();
+						var n = 0;
+						if (boX) n++;
+						if (boY) n++;
+						if (boZ) n++;
+						switch (n) {
+									case 1:
+												fRotation.domElement.style.display = none;
+												break;
+									case 2:
+												fRotation.domElement.style.display = block;
+												if (boX && cRotations.x.domElement) cRotations.x.domElement.parentElement.parentElement.style.display = none;
+												if (boY && cRotations.y.domElement) cRotations.y.domElement.parentElement.parentElement.style.display = none;
+												if (boZ && cRotations.z.domElement) cRotations.z.domElement.parentElement.parentElement.style.display = none;
+												break;
+									default:
+												console.error('GuiSelectPoint.updateScale: Invalid space dimension = ' + n);
+												return;
+						}
+						if (!folders.position[axisName]) {
+									if (options.scales[axisName].isAxis()) console.error('GuiSelectPoint.updateScale: Under constraction.');
+									return;
+						}
+						folders.position[axisName].domElement.style.display = display;
+						cWorld[axisName].domElement.parentElement.parentElement.style.display = display;
+						var c, cScale;
+						switch (axisName) {
+									case 'x':
+												c = cX;
+												cScale = cScaleX;
+												break;
+									case 'y':
+												c = cY;
+												cScale = cScaleY;
+												break;
+									case 'z':
+												c = cZ;
+												cScale = cScaleZ;
+												break;
+									default:
+												console.error('GuiSelectPoint.updateScale: Invalid axis name: ' + axisName);
+												return;
+						}
+						c.domElement.parentElement.parentElement.style.display = display;
+						cScale.domElement.parentElement.parentElement.style.display = display;
+			};
+			function displayVerticeID(object) {
+						if (object.userData.boFrustumPoints) return;
+						if (!options.dat.guiSelectPoint.boDisplayVerticeID) {
+									for (var i = object.children.length - 1; i >= 0; i--) {
+												var child = object.children[i];
+												if (child.type === 'Sprite') object.remove(child);
+									}
+									return;
+						}
+						var gp = object.geometry.attributes.position;
+						object.updateMatrixWorld();
+						for (var _i = 0; _i < gp.count; _i++) {
+									var p = new THREE.Vector3().fromBufferAttribute(gp, _i);
+									var spriteText = new SpriteText$1(_i, p, { group: object });
+									spriteText.userData.pointID = _i;
+						}
 			}
-			var none = 'none',
-			    block = 'block';
-			var display;
-			if (mesh === undefined) {
-				display = none;
-				mesh = undefined;
-				if (options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition(getMesh(), value));
-			} else {
-				var displayDefaultButtons = mesh.userData.default === undefined ? none : block;
-				buttonScaleDefault.domElement.parentElement.parentElement.style.display = displayDefaultButtons;
-				buttonPositionDefault.domElement.parentElement.parentElement.style.display = displayDefaultButtons;
-				buttonRotationDefault.domElement.parentElement.parentElement.style.display = displayDefaultButtons;
-				display = block;
-				var displayPoints = none,
-				    displayfPoints = none,
-				    displayFrustumPoints = block;
-				cPoints.__onChange(-1);
-				_this.removePoints();
-				if (mesh.userData.controllers !== undefined) {
-					mesh.userData.controllers();
-				} else {
-					displayPoints = block;
-					displayFrustumPoints = none;
-					if (mesh.geometry.attributes) {
+			function addPoints(mesh) {
 						for (var iPosition = 0; iPosition < mesh.geometry.attributes.position.count; iPosition++) {
-							var opt = document.createElement('option'),
-							    name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
-							opt.innerHTML = iPosition + (name === undefined ? '' : ' ' + name);
-							opt.setAttribute('value', iPosition);
-							cPoints.__select.appendChild(opt);
+									var opt = document.createElement('option'),
+									    name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
+									opt.innerHTML = iPosition + (name === undefined ? '' : ' ' + name);
+									opt.setAttribute('value', iPosition);
+									cPoints.__select.appendChild(opt);
 						}
-					}
-				}
-				dislayEl(cPoints, displayPoints);
-				if (cTraceAll) {
-					dislayEl(cTraceAll, options.player ? displayPoints : false);
-				}
-				if (cFrustumPoints !== undefined) cFrustumPoints.display(displayFrustumPoints);
-				setScaleControllers();
-				setPositionControllers();
-				setRotationControllers();
-				orbitControlsOptions = undefined;
 			}
-			fMesh.domElement.style.display = display;
-			if (mesh !== undefined && mesh.userData.traceAll !== undefined) cTraceAll.setValue(mesh.userData.traceAll);
-		});
-		dat.controllerNameAndTitle(cMeshs, lang.select);
-		fMesh = f3DObjects.addFolder(lang.mesh);
-		fMesh.domElement.style.display = 'none';
-		fMesh.open();
-		var fScale = fMesh.addFolder(lang.scale);
-		fScale.add(new ScaleController(function (customController, action) {
-			var zoom = customController.controller.getValue();
-			mesh.scale.x = action(mesh.scale.x, zoom);
-			mesh.scale.y = action(mesh.scale.y, zoom);
-			mesh.scale.z = action(mesh.scale.z, zoom);
-			mesh.needsUpdate = true;
-			setScaleControllers();
-			exposePosition();
-			if (options.frustumPoints) options.frustumPoints.updateCloudPoint(mesh);
-		}, {
-			settings: { zoomMultiplier: 1.1 },
-			getLanguageCode: getLanguageCode
-		}));
-		var scale = new THREE.Vector3();
-		function setScale(axisName, value) {
-			mesh.scale[axisName] = value;
-			mesh.needsUpdate = true;
-			exposePosition();
-			if (options.frustumPoints) options.frustumPoints.updateCloudPoint(mesh);
-		}
-		if (options.scales.x.isAxis()) {
-			cScaleX = dat.controllerZeroStep(fScale, scale, 'x', function (value) {
-				setScale('x', value);
-			});
-			dat.controllerNameAndTitle(cScaleX, options.scales.x.name);
-		}
-		if (options.scales.y.isAxis()) {
-			cScaleY = dat.controllerZeroStep(fScale, scale, 'y', function (value) {
-				setScale('y', value);
-			});
-			dat.controllerNameAndTitle(cScaleY, options.scales.y.name);
-		}
-		if (options.scales.z.isAxis()) {
-			cScaleZ = dat.controllerZeroStep(fScale, scale, 'z', function (value) {
-				setScale('z', value);
-			});
-			dat.controllerNameAndTitle(cScaleZ, options.scales.z.name);
-		}
-		buttonScaleDefault = fScale.add({
-			defaultF: function defaultF(value) {
-				mesh.scale.copy(mesh.userData.default.scale);
-				mesh.needsUpdate = true;
-				setScaleControllers();
-				exposePosition();
-			}
-		}, 'defaultF');
-		dat.controllerNameAndTitle(buttonScaleDefault, lang.defaultButton, lang.defaultScaleTitle);
-		var fPosition = fMesh.addFolder(lang.position);
-		function addAxisControllers(name) {
-			var scale = options.scales[name];
-			if (!scale.isAxis()) return;
-			var axisName = scale.name,
-			    f = fPosition.addFolder(axisName);
-			folders.position = folders.position || {};
-			folders.position[axisName] = f;
-			f.add(new PositionController(function (shift) {
-				mesh.position[name] += shift;
-				mesh.needsUpdate = true;
-				setPositionControllers();
-				exposePosition();
-				if (options.frustumPoints) options.frustumPoints.updateCloudPoint(mesh);
-			}, { getLanguageCode: getLanguageCode }));
-			function setPosition(value) {
-				mesh.position[name] = value;
-				mesh.needsUpdate = true;
-				exposePosition();
-			}
-			var position = new THREE.Vector3();
-			cPosition[name] = dat.controllerZeroStep(f, position, name, function (value) {
-				setPosition(value);
-			});
-			dat.controllerNameAndTitle(cPosition[name], axisName);
-		}
-		addAxisControllers('x');
-		addAxisControllers('y');
-		addAxisControllers('z');
-		buttonPositionDefault = fPosition.add({
-			defaultF: function defaultF(value) {
-				mesh.position.copy(mesh.userData.default.position);
-				mesh.needsUpdate = true;
-				setPositionControllers();
-				exposePosition();
-			}
-		}, 'defaultF');
-		dat.controllerNameAndTitle(buttonPositionDefault, lang.defaultButton, lang.defaultPositionTitle);
-		fRotation = fMesh.addFolder(lang.rotation);
-		function addRotationControllers(name) {
-			var scale = options.scales[name];
-			if (!scale.isAxis()) return;
-			cRotations[name] = fRotation.add(new THREE.Vector3(), name, 0, Math.PI * 2, 0.01).onChange(function (value) {
-				var mesh = getMesh();
-				if (!mesh.userData.boFrustumPoints) {
-					mesh.rotation[name] = value;
-					mesh.needsUpdate = true;
-				}
-				if (!boSetMesh) exposePosition();
-				if (options.frustumPoints !== undefined) options.frustumPoints.updateCloudPoint(mesh);
-			});
-			dat.controllerNameAndTitle(cRotations[name], scale.name);
-		}
-		addRotationControllers('x');
-		addRotationControllers('y');
-		addRotationControllers('z');
-		buttonRotationDefault = fRotation.add({
-			defaultF: function defaultF(value) {
-				mesh.rotation.copy(mesh.userData.default.rotation);
-				mesh.needsUpdate = true;
-				setRotationControllers();
-				exposePosition();
-			}
-		}, 'defaultF');
-		dat.controllerNameAndTitle(buttonRotationDefault, lang.defaultButton, lang.defaultRotationTitle);
-		fPoints = fMesh.addFolder(lang.points);
-		cPoints = fPoints.add({ Points: lang.notSelected }, 'Points', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
-			value = parseInt(value);
-			var display;
-			if (value === -1) {
-				display = 'none';
-			} else {
-				display = 'block';
-				_this.select({ object: getMesh(), index: value });
-			}
-			if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition(getMesh(), value));
-			displayPointControllers(display);
-		});
-		cPoints.__select[0].selected = true;
-		dat.controllerNameAndTitle(cPoints, lang.select);
-		if (cFrustumPoints !== undefined) cFrustumPoints.create(fPoints, getLanguageCode());
-		if (guiParams.myThreejs) guiParams.myThreejs.cFrustumPoints = cFrustumPoints;
-		nD = new ND.gui(options, dat, fMesh);
-		if (options.player) {
-			var orbitControlsOptions;
-			if (guiParams.cameraTarget) options.playerOptions.cameraTarget.init(guiParams.cameraTarget, options);
-			var playerCameraTarget = options.playerOptions.cameraTarget.get(options);
-			if (playerCameraTarget) {
-				cCameraTarget = fPoints.add(playerCameraTarget, 'boLook').onChange(function (boLook) {
-					var mesh = getMesh();
-					if (mesh.userData.boFrustumPoints) {
-						if (boLook) {
-							console.warn('guiSelectPoint.cCameraTarget.onChange(...). The camera can not look at the frustum point.');
-							cCameraTarget.setValue(false);
+			function createPlayerArrayFuncs(mesh) {
+						if (!mesh || mesh.userData.boFrustumPoints) return;
+						if (!mesh.userData.player) mesh.userData.player = {};
+						if (!mesh.userData.player.arrayFuncs) {
+									var position = mesh.geometry.attributes.position;
+									mesh.userData.player.arrayFuncs = [];
+									for (var i = 0; i < position.count; i++) {
+												var vector = new THREE.Vector4().fromArray(mesh.geometry.attributes.position.array, i * position.itemSize);
+												vector.w = 1;
+												mesh.userData.player.arrayFuncs.push(vector);
+									}
 						}
-						return;
-					}
-					if (!mesh.userData.player) {
-						mesh.userData.player = { arrayFuncs: [] };
-						for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
-							mesh.userData.player.arrayFuncs.push(new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize));
-						}
-					}
-					var index = mesh.userData.boFrustumPoints ? cFrustumPoints.getSelectedIndex() : cPoints.__select.options.selectedIndex - 1,
-					    point = typeof mesh.userData.player.arrayFuncs === "function" ? new THREE.Vector3().fromArray(mesh.userData.player.arrayFuncs().attributes.position.array, index * 3) : mesh.userData.player.arrayFuncs !== undefined ? mesh.userData.player.arrayFuncs[index] : new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, index * 3);
-					for (var i = 0; i < cMeshs.__select.options.length; i++) {
-						var _mesh = cMeshs.__select.options[i].mesh;
-						if (!_mesh || !_mesh.userData.player || !_mesh.userData.player.arrayFuncs) continue;
-						var arrayFuncs = _mesh.userData.player.arrayFuncs;
-						for (var j = 0; j < arrayFuncs.length; j++) {
-							if (arrayFuncs[j].cameraTarget) arrayFuncs[j].cameraTarget.boLook = false;
-						}
-					}
-					if (point.cameraTarget) point.cameraTarget.boLook = boLook;
-					if (options.player) options.player.selectScene();
-					if (options.cameraGui) options.cameraGui.look(boLook);
-					if (boLook) {
-						if (!point.cameraTarget) {
-							if (playerCameraTarget.boLook === undefined) Player$1.cameraTarget2.boLook = false;
-							if (!orbitControlsOptions) orbitControlsOptions = {};
-							if (!orbitControlsOptions.target) orbitControlsOptions.target = new THREE.Vector3();
-							if (options.orbitControls) orbitControlsOptions.target.copy(options.orbitControls.target);
-							options.playerOptions.cameraTarget.changeTarget(mesh, index);
-						}
-						return;
-					}
-					if (guiParams.cameraTarget) guiParams.cameraTarget.camera.userData.cameraTargetPoint = point.cameraTarget;
-					if (options.orbitControls) options.orbitControls.reset();
-					if (orbitControlsOptions) {
-						if (getCameraTarget()) return;
-						if (Player$1.orbitControls) Player$1.orbitControls.target.copy(orbitControlsOptions.target);
-						guiParams.cameraTarget.camera.lookAt(orbitControlsOptions.target);
-						point.cameraTarget = undefined;
-					}
-				});
-				dat.controllerNameAndTitle(cCameraTarget, lang.cameraTarget, lang.cameraTargetTitle);
 			}
-		}
-		fPoint = fPoints.addFolder(lang.point);
-		dat.folderNameAndTitle(fPoint, lang.point, lang.pointTitle);
-		fPointWorld = fPoints.addFolder(lang.pointWorld);
-		dat.folderNameAndTitle(fPointWorld, lang.pointWorld, lang.pointWorldTitle);
-		fPointWorld.open();
-		displayPointControllers('none');
-		if (guiParams.pointsControls) {
-			guiParams.pointsControls(fPoints, dislayEl, getMesh);
-		}
-		cTraceAll = fPoints.add({ trace: false }, 'trace').onChange(function (value) {
-			var mesh = getMesh();
-			mesh.userData.traceAll = value;
-			for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
-				visibleTraceLine({ object: mesh, index: i }, value, getMesh);
-			}cTrace.setValue(value);
-		});
-		dat.controllerNameAndTitle(cTraceAll, lang.trace, lang.traceAllTitle);
-		dislayEl(cTraceAll, options.player);
-		dat.controllerNameAndTitle(f3DObjects.add({
-			defaultF: function defaultF(value) {
-				for (var i = 0; i < cMeshs.__select.options.length; i++) {
-					var _mesh2 = cMeshs.__select.options[i].mesh;
-					if (!_mesh2) continue;
-					_mesh2.scale.copy(_mesh2.userData.default.scale);
-					_mesh2.position.copy(_mesh2.userData.default.position);
-					_mesh2.rotation.copy(_mesh2.userData.default.rotation);
-					_mesh2.needsUpdate = true;
-				}
-				setScaleControllers();
-				setPositionControllers();
-				setRotationControllers();
-				exposePosition();
-				if (options.frustumPoints) options.frustumPoints.onChangeControls();
-			}
-		}, 'defaultF'), lang.defaultButton, lang.default3DObjectTitle);
-		addPointControllers();
-		while (arrayMeshs.length > 0) {
-			this.addMesh(arrayMeshs[arrayMeshs.length - 1]);
-			arrayMeshs.pop();
-		}
-	};
-	this.setColorAttribute = function (attributes, i, color) {
-		if (typeof color === "string") color = new THREE.Color(color);
-		var colorAttribute = attributes.color || attributes.ca;
-		if (colorAttribute === undefined) return;
-		colorAttribute.setX(i, color.r);
-		colorAttribute.setY(i, color.g);
-		colorAttribute.setZ(i, color.b);
-		colorAttribute.needsUpdate = true;
-	};
-	this.removePoints = function () {
-		cPoints.domElement.querySelectorAll('select option').forEach(function (option) {
-			return option.remove();
-		});
-		var opt = document.createElement('option');
-		opt.innerHTML = lang.notSelected;
-		opt.setAttribute('value', -1);
-		cPoints.__select.appendChild(opt);
-	};
-	function addPointControllers() {
-		function isReadOnlyController(controller) {
-			if (controller.domElement.querySelector('input').readOnly) {
-				if (controller.getValue() !== controller.initialValue) {
-					if (controller.boSetValue === undefined) {
-						controller.boSetValue = true;
-						setValue(controller, controller.initialValue);
-						controller.boSetValue = undefined;
-						controller.initialValue = controller.getValue();
-					}
-				}
-				return true;
-			}
-			return false;
-		}
-		function axesGui(axisName                     ) {
-			var scale, controller;
-			if (axisName === 'w') {
-				var onChange = function onChange(value) {
-					var attributes = intersection.object.geometry.attributes,
-					    i = intersection.index;
-					if (attributes.position.itemSize < 4) {
-						console.error('guiSelectPoint.addPointControllers().axesGui().controller.onChange(): attributes.position.itemSize = ' + attributes.position.itemSize);
-						return;
-					}
-					if (options.palette) {
-						var color = options.palette.toColor(value, controller.__min, controller.__max);
-						_this.setColorAttribute(attributes, i, color);
-					}
-					attributes.position.setW(i, value);
-					if (options.frustumPoints) options.frustumPoints.updateCloudPointItem(intersection.object, intersection.index);
-				};
-				options.scales.setW();
-				scale = options.scales.w;
-				if (scale.min !== undefined && scale.max !== undefined) {
-					controller = fPoint.add({
-						value: scale.min
-					}, 'value', scale.min, scale.max, (scale.max - scale.min) / 100).onChange(function (value) {
-						onChange(value);
-					});
-					if (options.palette instanceof ColorPicker$1.palette) {
-						controller.domElement.querySelector('.slider-fg').style.height = '40%';
-						var elSlider = controller.domElement.querySelector('.slider');
-						ColorPicker$1.create(elSlider, {
-							palette: options.palette,
-							style: {
-							}
+			this.add = function (folder) {
+						folder = folder || options.dat.gui;
+						if (!folder) return;
+						f3DObjects = folder.addFolder(lang.meshs);
+						var mesh, buttonScaleDefault, buttonPositionDefault, buttonRotationDefault;
+						cMeshs = f3DObjects.add({ Meshs: lang.notSelected }, 'Meshs', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
+									value = parseInt(value);
+									mesh = getMesh();
+									if (cCustom) cCustom.object(mesh, dat, options);
+									createPlayerArrayFuncs(mesh);
+									var none = 'none',
+									    block = 'block';
+									var display;
+									if (mesh === undefined) {
+												display = none;
+												mesh = undefined;
+												if (options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition(getMesh(), value));
+									} else {
+												var displayDefaultButtons = mesh.userData.default === undefined ? none : block;
+												buttonScaleDefault.domElement.parentElement.parentElement.style.display = displayDefaultButtons;
+												buttonPositionDefault.domElement.parentElement.parentElement.style.display = displayDefaultButtons;
+												if (buttonRotationDefault) buttonRotationDefault.domElement.parentElement.parentElement.style.display = displayDefaultButtons;
+												display = block;
+												var displayPoints = none,
+												    displayfPoints = none,
+												    displayFrustumPoints = block;
+												cPoints.__onChange(-1);
+												_this.removePoints();
+												if (mesh.userData.controllers !== undefined) {
+															mesh.userData.controllers();
+												} else {
+															displayPoints = block;
+															displayFrustumPoints = none;
+															if (mesh.geometry.attributes) {
+																		addPoints(mesh);
+															}
+												}
+												dislayEl(cPoints, displayPoints);
+												if (cTraceAll) {
+															dislayEl(cTraceAll, options.player ? displayPoints : false);
+												}
+												if (cFrustumPoints !== undefined) cFrustumPoints.display(displayFrustumPoints);
+												setScaleControllers();
+												setPositionControllers();
+												setRotationControllers();
+												orbitControlsOptions = undefined;
+									}
+									fMesh.domElement.style.display = display;
+									if (mesh !== undefined && mesh.userData.traceAll !== undefined) cTraceAll.setValue(mesh.userData.traceAll);
 						});
-					}
-				} else controller = fPoint.add({
-					value: 0
-				}, 'value').onChange(function (value) {
-					onChange(value);
-				});
-			} else {
-				scale = options.axesHelper === undefined || options.axesHelper === false ? options.scales[axisName] :
-				options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
-				if (scale.isAxis()) controller = fPoint.add({
-					value: scale.min
-				}, 'value', scale.min, scale.max, (scale.max - scale.min) / 100).onChange(function (value) {
-					if (isReadOnlyController(controller)) return;
-					var points = intersection.object,
-					    axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName);
-					points.geometry.attributes.position.array[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
-					points.geometry.attributes.position.needsUpdate = true;
-					exposePosition(intersection.index);
-					if (options.frustumPoints) options.frustumPoints.updateCloudPointItem(points, intersection.index);
-				});
+						dat.controllerNameAndTitle(cMeshs, lang.select);
+						fMesh = f3DObjects.addFolder(lang.mesh);
+						fMesh.domElement.style.display = 'none';
+						fMesh.open();
+						var fScale = fMesh.addFolder(lang.scale);
+						fScale.add(new ScaleController(function (customController, action) {
+									var zoom = customController.controller.getValue();
+									mesh.scale.x = action(mesh.scale.x, zoom);
+									mesh.scale.y = action(mesh.scale.y, zoom);
+									mesh.scale.z = action(mesh.scale.z, zoom);
+									mesh.needsUpdate = true;
+									setScaleControllers();
+									exposePosition();
+									if (options.frustumPoints) options.frustumPoints.updateCloudPoint(mesh);
+						}, {
+									settings: { zoomMultiplier: 1.1 },
+									getLanguageCode: getLanguageCode
+						}));
+						var scale = new THREE.Vector3();
+						function setScale(axisName, value) {
+									mesh.scale[axisName] = value;
+									mesh.needsUpdate = true;
+									exposePosition();
+									if (options.frustumPoints) options.frustumPoints.updateCloudPoint(mesh);
+						}
+						if (options.scales.x.isAxis()) {
+									cScaleX = dat.controllerZeroStep(fScale, scale, 'x', function (value) {
+												setScale('x', value);
+									});
+									dat.controllerNameAndTitle(cScaleX, options.scales.x.name);
+						}
+						if (options.scales.y.isAxis()) {
+									cScaleY = dat.controllerZeroStep(fScale, scale, 'y', function (value) {
+												setScale('y', value);
+									});
+									dat.controllerNameAndTitle(cScaleY, options.scales.y.name);
+						}
+						if (options.scales.z.isAxis()) {
+									cScaleZ = dat.controllerZeroStep(fScale, scale, 'z', function (value) {
+												setScale('z', value);
+									});
+									dat.controllerNameAndTitle(cScaleZ, options.scales.z.name);
+						}
+						buttonScaleDefault = fScale.add({
+									defaultF: function defaultF(value) {
+												mesh.scale.copy(mesh.userData.default.scale);
+												mesh.needsUpdate = true;
+												setScaleControllers();
+												exposePosition();
+									}
+						}, 'defaultF');
+						dat.controllerNameAndTitle(buttonScaleDefault, lang.defaultButton, lang.defaultScaleTitle);
+						var fPosition = fMesh.addFolder(lang.position);
+						function addAxisControllers(name) {
+									var scale = options.scales[name];
+									if (!scale.isAxis()) return;
+									var axisName = scale.name,
+									    f = fPosition.addFolder(axisName);
+									folders.position = folders.position || {};
+									folders.position[axisName] = f;
+									f.add(new PositionController(function (shift) {
+												mesh.position[name] += shift;
+												mesh.needsUpdate = true;
+												setPositionControllers();
+												exposePosition();
+												if (options.frustumPoints) options.frustumPoints.updateCloudPoint(mesh);
+									}, { getLanguageCode: getLanguageCode }));
+									function setPosition(value) {
+												mesh.position[name] = value;
+												mesh.needsUpdate = true;
+												exposePosition();
+									}
+									var position = new THREE.Vector3();
+									cPosition[name] = dat.controllerZeroStep(f, position, name, function (value) {
+												setPosition(value);
+									});
+									dat.controllerNameAndTitle(cPosition[name], axisName);
+						}
+						addAxisControllers('x');
+						addAxisControllers('y');
+						addAxisControllers('z');
+						buttonPositionDefault = fPosition.add({
+									defaultF: function defaultF(value) {
+												mesh.position.copy(mesh.userData.default.position);
+												mesh.needsUpdate = true;
+												setPositionControllers();
+												exposePosition();
+									}
+						}, 'defaultF');
+						dat.controllerNameAndTitle(buttonPositionDefault, lang.defaultButton, lang.defaultPositionTitle);
+						function addRotationFolder() {
+									var boX = options.scales.x.isAxis(),
+									    boY = options.scales.y.isAxis(),
+									    boZ = options.scales.z.isAxis();
+									var n = 0;
+									if (boX) n++;
+									if (boY) n++;
+									if (boZ) n++;
+									if (n === 1) return;
+									fRotation = fMesh.addFolder(lang.rotation);
+									function addRotationControllers(name) {
+												var scale = options.scales[name];
+												cRotations[name] = fRotation.add(new THREE.Vector3(), name, 0, Math.PI * 2, 0.01).onChange(function (value) {
+															var mesh = getMesh();
+															if (!mesh.userData.boFrustumPoints) {
+																		mesh.rotation[name] = value;
+																		mesh.needsUpdate = true;
+															}
+															if (!boSetMesh) exposePosition();
+															if (options.frustumPoints !== undefined) options.frustumPoints.updateCloudPoint(mesh);
+												});
+												dat.controllerNameAndTitle(cRotations[name], scale.name);
+									}
+									switch (n) {
+												case 2:
+															addRotationControllers(!boX ? 'x' : !boY ? 'y' : 'z');
+															break;
+												case 3:
+															addRotationControllers('x');
+															addRotationControllers('y');
+															addRotationControllers('z');
+															break;
+												default:
+															console.error('GuiSelectPoint.updateScale: Invalid space dimension = ' + n);
+															return;
+									}
+									buttonRotationDefault = fRotation.add({
+												defaultF: function defaultF(value) {
+															mesh.rotation.copy(mesh.userData.default.rotation);
+															mesh.needsUpdate = true;
+															setRotationControllers();
+															exposePosition();
+												}
+									}, 'defaultF');
+									dat.controllerNameAndTitle(buttonRotationDefault, lang.defaultButton, lang.defaultRotationTitle);
+						}
+						addRotationFolder();
+						fPoints = fMesh.addFolder(lang.points);
+						cPoints = fPoints.add({ Points: lang.notSelected }, 'Points', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
+									value = parseInt(value);
+									var display;
+									if (value === -1) {
+												display = 'none';
+									} else {
+												display = 'block';
+												_this.select({ object: getMesh(), index: value });
+									}
+									if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition(getMesh(), value));
+									displayPointControllers(display);
+						});
+						cPoints.__select[0].selected = true;
+						dat.controllerNameAndTitle(cPoints, lang.select);
+						if (cFrustumPoints !== undefined) cFrustumPoints.create(fPoints, getLanguageCode());
+						if (guiParams.myThreejs) guiParams.myThreejs.cFrustumPoints = cFrustumPoints;
+						options.dat.guiSelectPoint = options.dat.guiSelectPoint || {};
+						options.dat.guiSelectPoint.boDisplayVerticeID = options.dat.guiSelectPoint.boDisplayVerticeID || false;
+						var cDisplayVerticeID = f3DObjects.add(options.dat.guiSelectPoint, 'boDisplayVerticeID').onChange(function (value) {
+									for (var i = 1; i < cMeshs.__select.options.length; i++) {
+												var option = cMeshs.__select.options[i];
+												if (option.mesh === undefined) {
+															console.error('guiSelectPoint: cDisplayVerticeID.onChange. Invalud option.mesh');
+															continue;
+												}
+												displayVerticeID(option.mesh);
+									}
+						});
+						dat.controllerNameAndTitle(cDisplayVerticeID, lang.displayVerticeID, lang.displayVerticeIDTitle);
+						if (options.dat && options.dat.guiSelectPoint && options.dat.guiSelectPoint.point) cCustom = options.dat.guiSelectPoint.point(options, dat, fMesh);
+						if (options.player) {
+									var orbitControlsOptions;
+									if (guiParams.cameraTarget) options.playerOptions.cameraTarget.init(guiParams.cameraTarget, options);
+									var playerCameraTarget = options.playerOptions.cameraTarget.get(options);
+									if (playerCameraTarget) {
+												cCameraTarget = fPoints.add(playerCameraTarget, 'boLook').onChange(function (boLook) {
+															var mesh = getMesh();
+															if (mesh.userData.boFrustumPoints) {
+																		if (boLook) {
+																					console.warn('guiSelectPoint.cCameraTarget.onChange(...). The camera can not look at the frustum point.');
+																					cCameraTarget.setValue(false);
+																		}
+																		return;
+															}
+															if (!mesh.userData.player) {
+																		mesh.userData.player = { arrayFuncs: [] };
+																		for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
+																					mesh.userData.player.arrayFuncs.push(new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize));
+																		}
+															}
+															var index = mesh.userData.boFrustumPoints ? cFrustumPoints.getSelectedIndex() : cPoints.__select.options.selectedIndex - 1,
+															    point = typeof mesh.userData.player.arrayFuncs === "function" ? new THREE.Vector3().fromArray(mesh.userData.player.arrayFuncs().attributes.position.array, index * 3) : mesh.userData.player.arrayFuncs !== undefined ? mesh.userData.player.arrayFuncs[index] : new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, index * 3);
+															for (var i = 0; i < cMeshs.__select.options.length; i++) {
+																		var _mesh = cMeshs.__select.options[i].mesh;
+																		if (!_mesh || !_mesh.userData.player || !_mesh.userData.player.arrayFuncs) continue;
+																		var arrayFuncs = _mesh.userData.player.arrayFuncs;
+																		for (var j = 0; j < arrayFuncs.length; j++) {
+																					if (arrayFuncs[j].cameraTarget) arrayFuncs[j].cameraTarget.boLook = false;
+																		}
+															}
+															if (point.cameraTarget) point.cameraTarget.boLook = boLook;
+															if (options.player) options.player.selectScene();
+															if (options.cameraGui) options.cameraGui.look(boLook);
+															if (boLook) {
+																		if (!point.cameraTarget) {
+																					if (playerCameraTarget.boLook === undefined) Player$1.cameraTarget2.boLook = false;
+																					if (!orbitControlsOptions) orbitControlsOptions = {};
+																					if (!orbitControlsOptions.target) orbitControlsOptions.target = new THREE.Vector3();
+																					if (options.orbitControls) orbitControlsOptions.target.copy(options.orbitControls.target);
+																					options.playerOptions.cameraTarget.changeTarget(mesh, index);
+																		}
+																		return;
+															}
+															if (guiParams.cameraTarget) guiParams.cameraTarget.camera.userData.cameraTargetPoint = point.cameraTarget;
+															if (options.orbitControls) options.orbitControls.reset();
+															if (orbitControlsOptions) {
+																		if (getCameraTarget()) return;
+																		if (Player$1.orbitControls) Player$1.orbitControls.target.copy(orbitControlsOptions.target);
+																		guiParams.cameraTarget.camera.lookAt(orbitControlsOptions.target);
+																		point.cameraTarget = undefined;
+															}
+												});
+												dat.controllerNameAndTitle(cCameraTarget, lang.cameraTarget, lang.cameraTargetTitle);
+									}
+						}
+						fPoint = fPoints.addFolder(lang.point);
+						dat.folderNameAndTitle(fPoint, lang.point, lang.pointTitle);
+						fPointWorld = fPoints.addFolder(lang.pointWorld);
+						dat.folderNameAndTitle(fPointWorld, lang.pointWorld, lang.pointWorldTitle);
+						fPointWorld.open();
+						displayPointControllers('none');
+						if (guiParams.pointsControls) {
+									guiParams.pointsControls(fPoints, dislayEl, getMesh);
+						}
+						cTraceAll = fPoints.add({ trace: false }, 'trace').onChange(function (value) {
+									var mesh = getMesh();
+									mesh.userData.traceAll = value;
+									for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
+												visibleTraceLine({ object: mesh, index: i }, value, getMesh);
+									}cTrace.setValue(value);
+						});
+						dat.controllerNameAndTitle(cTraceAll, lang.trace, lang.traceAllTitle);
+						dislayEl(cTraceAll, options.player);
+						dat.controllerNameAndTitle(f3DObjects.add({
+									defaultF: function defaultF(value) {
+												for (var i = 0; i < cMeshs.__select.options.length; i++) {
+															var _mesh2 = cMeshs.__select.options[i].mesh;
+															if (!_mesh2) continue;
+															_mesh2.scale.copy(_mesh2.userData.default.scale);
+															_mesh2.position.copy(_mesh2.userData.default.position);
+															_mesh2.rotation.copy(_mesh2.userData.default.rotation);
+															_mesh2.needsUpdate = true;
+												}
+												setScaleControllers();
+												setPositionControllers();
+												setRotationControllers();
+												exposePosition();
+												if (options.frustumPoints) options.frustumPoints.onChangeControls();
+									}
+						}, 'defaultF'), lang.defaultButton, lang.default3DObjectTitle);
+						addPointControllers();
+						while (arrayMeshs.length > 0) {
+									this.addMesh(arrayMeshs[arrayMeshs.length - 1]);
+									arrayMeshs.pop();
+						}
+			};
+			this.setColorAttribute = function (attributes, i, color) {
+						if (typeof color === "string") color = new THREE.Color(color);
+						var colorAttribute = attributes.color || attributes.ca;
+						if (colorAttribute === undefined) return;
+						colorAttribute.setX(i, color.r);
+						colorAttribute.setY(i, color.g);
+						colorAttribute.setZ(i, color.b);
+						colorAttribute.needsUpdate = true;
+			};
+			this.removePoints = function () {
+						cPoints.domElement.querySelectorAll('select option').forEach(function (option) {
+									return option.remove();
+						});
+						var opt = document.createElement('option');
+						opt.innerHTML = lang.notSelected;
+						opt.setAttribute('value', -1);
+						cPoints.__select.appendChild(opt);
+			};
+			this.updatePoints = function () {
+						var boDisplayVerticeID = options.dat.guiSelectPoint.boDisplayVerticeID,
+						    mesh = getMesh();
+						if (boDisplayVerticeID) {
+									options.dat.guiSelectPoint.boDisplayVerticeID = false;
+									displayVerticeID(mesh);
+						}
+						cPoints.__onChange(-1);
+						this.removePoints();
+						mesh.userData.player.arrayFuncs.length = 0;
+						delete mesh.userData.player.arrayFuncs;
+						createPlayerArrayFuncs(mesh);
+						addPoints(mesh);
+						if (boDisplayVerticeID) {
+									options.dat.guiSelectPoint.boDisplayVerticeID = true;
+									displayVerticeID(mesh);
+						}
+						if (mesh.userData.nd) mesh.userData.nd.update();
+			};
+			function addPointControllers() {
+						function isReadOnlyController(controller) {
+									if (controller.domElement.querySelector('input').readOnly) {
+												if (controller.getValue() !== controller.initialValue) {
+															if (controller.boSetValue === undefined) {
+																		controller.boSetValue = true;
+																		setValue(controller, controller.initialValue);
+																		controller.boSetValue = undefined;
+																		controller.initialValue = controller.getValue();
+															}
+												}
+												return true;
+									}
+									return false;
+						}
+						function axesGui(axisName                     ) {
+									var scale, controller;
+									if (axisName === 'w') {
+												var onChange = function onChange(value) {
+															var attributes = intersection.object.geometry.attributes,
+															    i = intersection.index;
+															if (attributes.position.itemSize < 4) {
+																		console.error('guiSelectPoint.addPointControllers().axesGui().controller.onChange(): attributes.position.itemSize = ' + attributes.position.itemSize);
+																		return;
+															}
+															if (options.palette) {
+																		var color = options.palette.toColor(value, controller.__min, controller.__max);
+																		_this.setColorAttribute(attributes, i, color);
+															}
+															attributes.position.setW(i, value);
+															if (options.frustumPoints) options.frustumPoints.updateCloudPointItem(intersection.object, intersection.index);
+												};
+												options.scales.setW();
+												scale = options.scales.w;
+												if (scale.min !== undefined && scale.max !== undefined) {
+															controller = fPoint.add({
+																		value: scale.min
+															}, 'value', scale.min, scale.max, (scale.max - scale.min) / 100).onChange(function (value) {
+																		onChange(value);
+															});
+															if (options.palette instanceof ColorPicker$1.palette) {
+																		controller.domElement.querySelector('.slider-fg').style.height = '40%';
+																		var elSlider = controller.domElement.querySelector('.slider');
+																		ColorPicker$1.create(elSlider, {
+																					palette: options.palette,
+																					style: {
+																					}
+																		});
+															}
+												} else controller = fPoint.add({
+															value: 0
+												}, 'value').onChange(function (value) {
+															onChange(value);
+												});
+									} else {
+												scale = options.axesHelper === undefined || options.axesHelper === false ? options.scales[axisName] :
+												options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
+												if (scale.isAxis()) controller = fPoint.add({
+															value: scale.min
+												}, 'value', scale.min, scale.max, (scale.max - scale.min) / 100).onChange(function (value) {
+															if (isReadOnlyController(controller)) return;
+															var points = intersection.object,
+															    axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName);
+															points.geometry.attributes.position.array[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
+															points.geometry.attributes.position.needsUpdate = true;
+															exposePosition(intersection.index);
+															if (options.frustumPoints) options.frustumPoints.updateCloudPointItem(points, intersection.index);
+												});
+									}
+									if (controller) dat.controllerNameAndTitle(controller, scale.name);
+									return controller;
+						}
+						cX = axesGui('x');
+						cY = axesGui('y');
+						cZ = axesGui('z');
+						cW = axesGui('w');
+						cColor = fPoint.addColor({
+									color: '#FFFFFF'
+						}, 'color').onChange(function (value) {
+									if (isReadOnlyController(cColor)) return;
+									if (cColor.userData === undefined) return;
+									var intersection = cColor.userData.intersection;
+									_this.setColorAttribute(intersection.object.geometry.attributes, intersection.index, value);
+						});
+						dat.controllerNameAndTitle(cColor, options.scales.w ? options.scales.w.name : lang.color);
+						cOpacity = fPoint.add({
+									opasity: 1
+						}, 'opasity', 0, 1, 0.01).onChange(function (opasity) {
+									if (isReadOnlyController(cOpacity)) return;
+									if (cColor.userData === undefined) return;
+									var intersection = cColor.userData.intersection;
+									var points = intersection.object;
+									if (points.geometry.attributes.ca === undefined) return;
+									points.geometry.attributes.ca.array[3 + intersection.index * points.geometry.attributes.ca.itemSize] = opasity;
+									points.geometry.attributes.ca.needsUpdate = true;
+						});
+						dat.controllerNameAndTitle(cOpacity, lang.opacity, lang.opacityTitle);
+						cTrace = fPoint.add({ trace: false }, 'trace').onChange(function (value) {
+									visibleTraceLine(intersection, value, getMesh);
+						});
+						dat.controllerNameAndTitle(cTrace, lang.trace, lang.traceTitle);dislayEl(cTrace, options.player);
+						if (guiParams.pointControls) {
+									guiParams.pointControls(fPoint, dislayEl, getMesh, intersection);
+						}
+						function axesWorldGui(axisName) {
+									var scale = options.axesHelper === undefined || options.axesHelper === false ? options.scales[axisName] : options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
+									if (!scale.isAxis()) return;
+									var controller = dat.controllerZeroStep(fPointWorld, { value: scale.min }, 'value');
+									controller.domElement.querySelector('input').readOnly = true;
+									dat.controllerNameAndTitle(controller, scale.name);
+									return controller;
+						}
+						cWorld.x = axesWorldGui('x');
+						cWorld.y = axesWorldGui('y');
+						cWorld.z = axesWorldGui('z');
+						cRestoreDefaultLocalPosition = fPoint.add({
+									defaultF: function defaultF() {
+												var positionDefault = intersection.object.userData.player.arrayFuncs[intersection.index],
+												    t = options.time;
+												cX.setValue(typeof positionDefault.x === "function" ? positionDefault.x(t, options.a, options.b) : positionDefault.x);
+												cY.setValue(typeof positionDefault.y === "function" ? positionDefault.y(t, options.a, options.b) : positionDefault.y);
+												cZ.setValue(typeof positionDefault.z === "function" ? positionDefault.z(t, options.a, options.b) : positionDefault.z === undefined ? 0 :
+												positionDefault.z);
+												if (positionDefault.w !== undefined) {
+															if (positionDefault.w.r !== undefined) cColor.setValue('#' + new THREE.Color(positionDefault.w.r, positionDefault.w.g, positionDefault.w.b).getHexString());else if (typeof positionDefault.w === "function") {
+																		setValue(cW, positionDefault.w(t));
+																		return;
+															} else if (positionDefault.w.func) {
+																		setValue(cW, positionDefault.w.func(t));
+																		return;
+															}
+															var float = parseFloat(positionDefault.w);
+															if (float === positionDefault.w) setValue(cW, positionDefault.w);else console.error('Restore default local position: Invalid W axis.');
+												} else {
+															cColor.setValue(cColor.initialValue);
+															cOpacity.setValue(cOpacity.initialValue);
+												}
+									}
+						}, 'defaultF');
+						dat.controllerNameAndTitle(cRestoreDefaultLocalPosition, lang.defaultButton, lang.defaultLocalPositionTitle);
+						funcFolder = new functionsFolder(fPoint, function (func, axisName, value) {
+									var mesh = getMesh(),
+									    index = cPoints.__select.options.selectedIndex - 1,
+									    funcs = mesh.userData.player.arrayFuncs[index];
+									funcs[axisName] = func;
+									var parent = mesh.parent,
+									    t = 0;
+									while (parent) {
+												if (parent.userData.t) {
+															t = parent.userData.t;
+															break;
+												}
+												parent = parent.parent;
+									}
+									var controller;
+									switch (axisName) {
+												case 'x':
+															controller = cX;
+															break;
+												case 'y':
+															controller = cY;
+															break;
+												case 'z':
+															controller = cZ;
+															break;
+												case 'w':
+															if (func instanceof THREE.Color) {
+																		cColor.setValue('#' + func.getHexString());
+																		return;
+															}
+															controller = cW;
+															break;
+												default:
+															console.error('GuiSelectPoint new functionsFolder onFinishChange: axisName = ' + axisName);
+															return;
+									}
+									setValue(controller, Player$1.execFunc(funcs, axisName, t, options));
+									if (funcs.controllers) {
+												var controllerObject = funcs.controllers[axisName];
+												if (controllerObject && controllerObject.func && controllerObject.func.controller) controllerObject.func.controller.value = value;
+									}
+						}, options, { x: '', y: '', z: '', w: '' });
 			}
-			if (controller) dat.controllerNameAndTitle(controller, scale.name);
-			return controller;
-		}
-		cX = axesGui('x');
-		cY = axesGui('y');
-		cZ = axesGui('z');
-		cW = axesGui('w');
-		cColor = fPoint.addColor({
-			color: '#FFFFFF'
-		}, 'color').onChange(function (value) {
-			if (isReadOnlyController(cColor)) return;
-			if (cColor.userData === undefined) return;
-			var intersection = cColor.userData.intersection;
-			_this.setColorAttribute(intersection.object.geometry.attributes, intersection.index, value);
-		});
-		dat.controllerNameAndTitle(cColor, options.scales.w ? options.scales.w.name : lang.color);
-		cOpacity = fPoint.add({
-			opasity: 1
-		}, 'opasity', 0, 1, 0.01).onChange(function (opasity) {
-			if (isReadOnlyController(cOpacity)) return;
-			if (cColor.userData === undefined) return;
-			var intersection = cColor.userData.intersection;
-			var points = intersection.object;
-			if (points.geometry.attributes.ca === undefined) return;
-			points.geometry.attributes.ca.array[3 + intersection.index * points.geometry.attributes.ca.itemSize] = opasity;
-			points.geometry.attributes.ca.needsUpdate = true;
-		});
-		dat.controllerNameAndTitle(cOpacity, lang.opacity, lang.opacityTitle);
-		cTrace = fPoint.add({ trace: false }, 'trace').onChange(function (value) {
-			visibleTraceLine(intersection, value, getMesh);
-		});
-		dat.controllerNameAndTitle(cTrace, lang.trace, lang.traceTitle);dislayEl(cTrace, options.player);
-		if (guiParams.pointControls) {
-			guiParams.pointControls(fPoint, dislayEl, getMesh, intersection);
-		}
-		function axesWorldGui(axisName) {
-			var scale = options.axesHelper === undefined || options.axesHelper === false ? options.scales[axisName] : options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
-			if (!scale.isAxis()) return;
-			var controller = dat.controllerZeroStep(fPointWorld, { value: scale.min }, 'value');
-			controller.domElement.querySelector('input').readOnly = true;
-			dat.controllerNameAndTitle(controller, scale.name);
-			return controller;
-		}
-		cWorld.x = axesWorldGui('x');
-		cWorld.y = axesWorldGui('y');
-		cWorld.z = axesWorldGui('z');
-		cRestoreDefaultLocalPosition = fPoint.add({
-			defaultF: function defaultF() {
-				var positionDefault = intersection.object.userData.player.arrayFuncs[intersection.index],
-				    t = options.time;
-				cX.setValue(typeof positionDefault.x === "function" ? positionDefault.x(t, options.a, options.b) : positionDefault.x);
-				cY.setValue(typeof positionDefault.y === "function" ? positionDefault.y(t, options.a, options.b) : positionDefault.y);
-				cZ.setValue(typeof positionDefault.z === "function" ? positionDefault.z(t, options.a, options.b) : positionDefault.z === undefined ? 0 :
-				positionDefault.z);
-				if (positionDefault.w !== undefined) {
-					if (positionDefault.w.r !== undefined) cColor.setValue('#' + new THREE.Color(positionDefault.w.r, positionDefault.w.g, positionDefault.w.b).getHexString());else if (typeof positionDefault.w === "function") {
-						setValue(cW, positionDefault.w(t));
-						return;
-					} else if (positionDefault.w.func) {
-						setValue(cW, positionDefault.w.func(t));
-						return;
-					}
-					var float = parseFloat(positionDefault.w);
-					if (float === positionDefault.w) setValue(cW, positionDefault.w);else console.error('Restore default local position: Invalid W axis.');
-				} else {
-					cColor.setValue(cColor.initialValue);
-					cOpacity.setValue(cOpacity.initialValue);
-				}
-			}
-		}, 'defaultF');
-		dat.controllerNameAndTitle(cRestoreDefaultLocalPosition, lang.defaultButton, lang.defaultLocalPositionTitle);
-		funcFolder = new functionsFolder(fPoint, function (func, axisName, value) {
-			var mesh = getMesh(),
-			    index = cPoints.__select.options.selectedIndex - 1,
-			    funcs = mesh.userData.player.arrayFuncs[index];
-			funcs[axisName] = func;
-			var parent = mesh.parent,
-			    t = 0;
-			while (parent) {
-				if (parent.userData.t) {
-					t = parent.userData.t;
-					break;
-				}
-				parent = parent.parent;
-			}
-			var controller;
-			switch (axisName) {
-				case 'x':
-					controller = cX;
-					break;
-				case 'y':
-					controller = cY;
-					break;
-				case 'z':
-					controller = cZ;
-					break;
-				case 'w':
-					if (func instanceof THREE.Color) {
-						cColor.setValue('#' + func.getHexString());
-						return;
-					}
-					controller = cW;
-					break;
-				default:
-					console.error('GuiSelectPoint new functionsFolder onFinishChange: axisName = ' + axisName);
-					return;
-			}
-			setValue(controller, Player$1.execFunc(funcs, axisName, t, options));
-			if (funcs.controllers) {
-				var controllerObject = funcs.controllers[axisName];
-				if (controllerObject && controllerObject.func && controllerObject.func.controller) controllerObject.func.controller.value = value;
-			}
-		}, options, { x: '', y: '', z: '', w: '' });
-	}
-	this.getFrustumPoints = function () {
-		return cFrustumPoints;
-	};
-	return this;
+			this.getFrustumPoints = function () {
+						return cFrustumPoints;
+			};
+			return this;
 };
 
 /**
@@ -15850,7 +14658,7 @@ function GuiSelectPoint(options) {
  *
  * @description Add MoveGroup folder into {@link https://github.com/anhr/dat.gui|dat.gui} for changing group's position, scale and rotation.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -16021,7 +14829,7 @@ function MoveGroupGui(group, options) {
  * @module CameraGui
  * @description [Camera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera} graphical user interface.
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -16197,7 +15005,7 @@ function CameraGui(camera, options, gui) {
  *
  * GUI for changing point settings.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -16270,7 +15078,7 @@ var FolderPoint = function FolderPoint(point, setSize, options) {
  * Array of points, statically fixed in front of the camera.
  * I use frustumPoints for displaying of the clouds around points.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -17091,7 +15899,7 @@ function FrustumPoints(camera, group, canvas) {
  * @description A light that gets emitted from a single point in all directions.
  * @see [PointLight]{@link https://threejs.org/docs/index.html?q=pointLight#api/en/lights/PointLight}
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -17196,7 +16004,7 @@ function pointLight(scene) {
 /**
  * @module Intersections
  * @description Creates an intersection lines for graphic objects.
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -17904,7 +16712,7 @@ function Intersections(object, intersectMeshList) {
  * @module TreeView
  * @description Tree view with CSS and JavaScript. Thanks to [Learn how to create a tree view with CSS and JavaScript.]{@link https://www.w3schools.com/howto/howto_js_treeview.asp}
  *
- * @author [Andrej Hristoliubov]{@link https://anhr.github.io/AboutMe/}
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -17930,13 +16738,13 @@ function TreeView() {
 			elNested.classList.add('b-toggle');
 		}
 		if (settings.paddingInlineStart !== undefined) elNested.style.paddingInlineStart = settings.paddingInlineStart;
+		var boBranchOpen = settings.open ? settings.open : false;
 		if (settings.cookie) {
 			if (elNested.id === '') {
 				var branchId = 'branch_' + id;
 				id++;
 				if (document.getElementById(branchId)) console.error('duplicate branch id: ' + branchId);else elNested.id = branchId;
 			}
-			var boBranchOpen = void 0;
 			switch (cookie.get(cookieName + elNested.id)) {
 				case 'false':
 					boBranchOpen = false;break;
@@ -17947,11 +16755,11 @@ function TreeView() {
 				default:
 					console.error('TreeView: Invalid cookie value');
 			}
-			if (boBranchOpen !== undefined && boBranchOpen === boHide) {
-				elNested.classList.toggle("hide");
-				elNested.classList.toggle("active");
-				elNested.style.display = boHide ? 'block' : 'none';
-			}
+		}
+		if (boBranchOpen !== undefined && boBranchOpen === boHide) {
+			elNested.classList.toggle("hide");
+			elNested.classList.toggle("active");
+			elNested.style.display = boHide ? 'block' : 'none';
 		}
 		if (!elNested.classList.contains('hide')) {
 			var classList = elNested.parentElement.querySelector(".caret").classList;
@@ -17997,424 +16805,425 @@ function TreeView() {
  */
 if (typeof dat !== 'undefined') three$1.dat = dat;
 function arrayContainersF() {
-	var array = [];
-	this.push = function (elContainer) {
-		array.push(elContainer);
-	};
-	this.display = function (elContainer, fullScreen) {
-		array.forEach(function (itemElContainer) {
-			itemElContainer.style.display = itemElContainer === elContainer || !fullScreen ? 'block' : 'none';
-		});
-	};
-	Object.defineProperties(this, {
-		length: {
-			get: function get$$1() {
-				return array.length;
-			}
-		}
-	});
+			var array = [];
+			this.push = function (elContainer) {
+						array.push(elContainer);
+			};
+			this.display = function (elContainer, fullScreen) {
+						array.forEach(function (itemElContainer) {
+									itemElContainer.style.display = itemElContainer === elContainer || !fullScreen ? 'block' : 'none';
+						});
+			};
+			Object.defineProperties(this, {
+						length: {
+									get: function get$$1() {
+												return array.length;
+									}
+						}
+			});
 }
 var arrayContainers = new arrayContainersF();
 var arrayCreates = [];
 var MyThree =
 function MyThree(createXDobjects, options) {
-	classCallCheck(this, MyThree);
-	options = options || {};
-	var THREE = three$1.THREE;
-	var myThreejs = this;
-	arrayCreates.push({
-		createXDobjects: createXDobjects,
-		options: options
-	});
-	if (arrayCreates.length > 1) return;
-	var camera, group, scene, canvas;
-	var elContainer = options.elContainer === undefined ? document.getElementById("containerDSE") : typeof options.elContainer === "string" ? document.getElementById(options.elContainer) : options.elContainer;
-	if (elContainer === null) {
-		if (typeof options.elContainer === "string") console.warn('The ' + options.elContainer + ' element was not detected.');
-		elContainer = document.createElement('div');
-		document.querySelector('body').appendChild(elContainer);
-	}
-	arrayContainers.push(elContainer);
-	elContainer.innerHTML = '';
-	var elDiv = document.createElement('div');
-	elDiv.className = 'container';
-	elDiv.appendChild(document.createElement('canvas'));
-	elContainer.appendChild(elDiv);
-	elContainer = elDiv;
-	if (three$1.dat && options.dat !== false) {
-		options.dat = options.dat || {};
-		options.dat.parent = elContainer;
-	}
-	if (options.title) {
-		var _elDiv = document.createElement('div');
-		_elDiv.style.position = 'absolute';
-		_elDiv.style.top = '0px';
-		_elDiv.style.color = 'white';
-		_elDiv.style.padding = '3px';
-		_elDiv.innerHTML = options.title;
-		elContainer.appendChild(_elDiv);
-	}
-	options = new Options(options);
-	options.saveMeshDefault = function (mesh) {
-		mesh.userData.default = mesh.userData.default || {};
-		mesh.userData.default.scale = new THREE.Vector3();
-		mesh.userData.default.scale.copy(mesh.scale);
-		mesh.userData.default.position = new THREE.Vector3();
-		mesh.userData.default.position.copy(mesh.position);
-		mesh.userData.default.rotation = new THREE.Euler();
-		mesh.userData.default.rotation.copy(mesh.rotation);
-	};
-	var defaultPoint = {},
-	mouse = new THREE.Vector2();
-	var renderer,
-	fOptions,
-	rendererSizeDefault, cameraPosition,
-	pointSize, stats,
-	requestId;
-	canvas = elContainer.querySelector('canvas');
-	if (!canvas) {
-		canvas = document.createElement('canvas');
-		elContainer.appendChild(canvas);
-	}
-	function isFullScreen() {
-		if (options.canvasMenu) return options.canvasMenu.isFullScreen();
-		if (options.canvas) return options.canvas.fullScreen !== false;
-		return true;
-	}
-	var elImg = elContainer.querySelector('img');
-	if (elImg) elContainer.removeChild(elImg);
-	if (typeof WebGLDebugUtils !== 'undefined') canvas = WebGLDebugUtils.makeLostContextSimulatingCanvas(canvas);
-	canvas.addEventListener("webglcontextlost", function (event) {
-		event.preventDefault();
-		if (requestId !== undefined) window.cancelAnimationFrame(requestId);else console.error('myThreejs.create.onloadScripts: requestId = ' + requestId);
-		clearThree(scene);
-		rendererSizeDefault.onFullScreenToggle(true);
-		alert(lang$2.webglcontextlost);
-	}, false);
-	canvas.addEventListener("webglcontextrestored", function () {
-		console.warn('webglcontextrestored');
-		init();
-		animate();
-	}, false);
-	init();
-	animate();
-	function init() {
-		camera = new THREE.PerspectiveCamera(options.camera.fov || 70, options.camera.aspect || window.innerWidth / window.innerHeight, options.camera.near || 0.01, options.camera.far || 10);
-		camera.position.copy(options.camera.position);
-		camera.scale.copy(options.camera.scale);
-		options.camera = camera;
-		options.point.sizePointsMaterial = 100;
-		if (options.cameraTarget) {
-			options.cameraTarget.camera = camera;
-			options.playerOptions.cameraTarget.init(options.cameraTarget, options);
-		}
-		scene = new THREE.Scene();
-		scene.background = new THREE.Color(0x000000);
-		scene.fog = new THREE.Fog(0x000000, 250, 1400);
-		scene.userData.optionsSpriteText = {
-			textHeight: 0.04
-		};
-		group = new THREE.Group();
-		scene.add(group);
-		new FrustumPoints(camera, group, canvas, {
-			options: options
-		});
-		renderer = new THREE.WebGLRenderer({
-			antialias: true,
-			canvas: canvas
-		});
-		options.renderer = renderer;
-		options.cursor = renderer.domElement.style.cursor;
-		if (options.stereoEffect !== false) {
-			options.stereoEffect = options.stereoEffect || {};
-			options.stereoEffect.rememberSize = true;
-		}
-		new StereoEffect(renderer, options);
-		options.eventListeners = new Options.raycaster.EventListeners(camera, renderer, { options: options, scene: scene });
-		function removeTraceLines() {
-			group.children.forEach(function (mesh) {
-				if (mesh.userData.player === undefined || mesh.userData.player.arrayFuncs === undefined || typeof mesh.userData.player.arrayFuncs === "function") return;
-				mesh.userData.player.arrayFuncs.forEach(function (vector) {
-					if (vector.line === undefined) return;
-					vector.line.remove();
-					vector.line = new Player$1.traceLine(options);
-				});
+			classCallCheck(this, MyThree);
+			options = options || {};
+			var THREE = three$1.THREE;
+			var myThreejs = this;
+			arrayCreates.push({
+						createXDobjects: createXDobjects,
+						options: options
 			});
-		}
-		var pointLight1 = new pointLight(scene, {
-			options: options,
-			position: options.pointLight && options.pointLight.pointLight1 && options.pointLight.pointLight1.position ? options.pointLight.pointLight1.position : new THREE.Vector3(2 * options.scale, 2 * options.scale, 2 * options.scale)
-		});
-		var pointLight2 = new pointLight(scene, {
-			options: options,
-			position: options.pointLight && options.pointLight.pointLight2 && options.pointLight.pointLight2.position ? options.pointLight.pointLight2.position : new THREE.Vector3(-2 * options.scale, -2 * options.scale, -2 * options.scale)
-		});
-		if (options.dat.gui) {
-			if (typeof WebGLDebugUtils !== "undefined") options.dat.gui.add({
-				loseContext: function loseContext(value) {
-					canvas.loseContext();
-				}
-			}, 'loseContext');
-			if (options.dat.gui.__closeButton.click !== undefined)
-				options.dat.gui.__closeButton.click();
-		}
-		new Player$1(group, {
-			onSelectScene: function onSelectScene(index, t) {
-				options.boPlayer = true;
-				if (options.frustumPoints !== undefined) options.frustumPoints.updateCloudPoints();
-				if (options.onSelectScene !== undefined) options.onSelectScene(t);
-			},
-			options: options,
-			cameraTarget: { camera: camera },
-			onChangeScaleT: function onChangeScaleT(scale) {
-				if (options.player !== undefined) options.player.onChangeScale(scale);
-				removeTraceLines();
+			if (arrayCreates.length > 1) return;
+			var camera, group, scene, canvas;
+			var elContainer = options.elContainer === undefined ? document.getElementById("containerDSE") : typeof options.elContainer === "string" ? document.getElementById(options.elContainer) : options.elContainer;
+			if (elContainer === null) {
+						if (typeof options.elContainer === "string") console.warn('The ' + options.elContainer + ' element was not detected.');
+						elContainer = document.createElement('div');
+						document.querySelector('body').appendChild(elContainer);
 			}
-		});
-		if (options.player) new options.player.PlayController();
-		if (options.dat.gui) {
-			fOptions = options.dat.gui.addFolder(lang$2.settings);
-			if (options.player) options.player.gui(fOptions);
-		}
-		if (fOptions) SpriteTextGui(scene, options, {
-			folder: fOptions,
-			options: {
-				textHeight: 0.05,
-				fov: camera.fov
+			arrayContainers.push(elContainer);
+			elContainer.innerHTML = '';
+			var elDiv = document.createElement('div');
+			elDiv.className = 'container';
+			elDiv.appendChild(document.createElement('canvas'));
+			elContainer.appendChild(elDiv);
+			elContainer = elDiv;
+			if (three$1.dat && options.dat !== false) {
+						options.dat = options.dat || {};
+						options.dat.parent = elContainer;
 			}
-		});
-		if (options.stereoEffect) {
-			options.stereoEffect.gui({
-				folder: fOptions,
-				onChangeMode: function onChangeMode(mode) {
-					switch (mode) {
-						case StereoEffect.spatialMultiplexsIndexs.Mono:
-							break;
-						case StereoEffect.spatialMultiplexsIndexs.SbS:
-						case StereoEffect.spatialMultiplexsIndexs.TaB:
-							break;
-						default:
-							console.error('myThreejs: Invalid spatialMultiplexIndex = ' + mode);
-							return;
-					}
-					if (options.frustumPoints !== undefined) options.frustumPoints.updateGuiSelectPoint();
-				}
-			});
-		}
-		function getRendererSize() {
-			var style = {
-				position: renderer.domElement.style.position,
-				left: renderer.domElement.style.left,
-				top: renderer.domElement.style.top,
-				width: renderer.domElement.style.width,
-				height: renderer.domElement.style.height
-			},
-			    sizeOriginal = new THREE.Vector2();
-			renderer.getSize(sizeOriginal);
-			return {
-				onFullScreenToggle: function onFullScreenToggle(fs) {
-					arrayContainers.display(elContainer.parentElement, !fs);
-				}
+			if (options.title) {
+						var _elDiv = document.createElement('div');
+						_elDiv.style.position = 'absolute';
+						_elDiv.style.top = '0px';
+						_elDiv.style.color = 'white';
+						_elDiv.style.padding = '3px';
+						_elDiv.innerHTML = options.title;
+						elContainer.appendChild(_elDiv);
+			}
+			options = new Options(options);
+			options.saveMeshDefault = function (mesh) {
+						mesh.userData.default = mesh.userData.default || {};
+						mesh.userData.default.scale = new THREE.Vector3();
+						mesh.userData.default.scale.copy(mesh.scale);
+						mesh.userData.default.position = new THREE.Vector3();
+						mesh.userData.default.position.copy(mesh.position);
+						mesh.userData.default.rotation = new THREE.Euler();
+						mesh.userData.default.rotation.copy(mesh.rotation);
 			};
-		}
-		rendererSizeDefault = getRendererSize();
-		renderer.setSize(options.canvas !== undefined && options.canvas.width !== undefined ? options.canvas.width : canvas.clientWidth, options.canvas !== undefined && options.canvas.height !== undefined ? options.canvas.height : canvas.clientHeight);
-		new CanvasMenu(renderer, {
-			fullScreen: {
-				fullScreen: options.canvas.fullScreen,
-				camera: camera,
-				arrayContainersLength: function arrayContainersLength() {
-					return arrayContainers.length;
-				},
-				onFullScreenToggle: function onFullScreenToggle(fullScreen) {
-					rendererSizeDefault.onFullScreenToggle(fullScreen);
-					function onFullScreenToggle(group, fullScreen) {
-						setTimeout(function () {
-							function recursion(children) {
-								children.forEach(function (mesh) {
-									recursion(mesh.children);
-									if (mesh instanceof THREE.Group) {
-										onFullScreenToggle(mesh, fullScreen);
-										return;
-									}
-									if (mesh.userData.player === undefined || mesh.userData.player.arrayFuncs === undefined || typeof mesh.userData.player.arrayFuncs === "function") return;
-									mesh.userData.player.arrayFuncs.forEach(function (vector) {
-										if (vector.controllers && vector.controllers.w && vector.controllers.w.position && vector.controllers.w.position.elSlider) vector.controllers.w.position.elSlider.style.display = fullScreen ? 'block' : 'none';
-										if (vector.line === undefined) return;
-										vector.line.remove();
-										vector.line = new Player$1.traceLine(options);
+			var defaultPoint = {},
+			mouse = new THREE.Vector2();
+			var renderer,
+			fOptions,
+			rendererSizeDefault, cameraPosition,
+			pointSize, stats,
+			requestId;
+			canvas = elContainer.querySelector('canvas');
+			if (!canvas) {
+						canvas = document.createElement('canvas');
+						elContainer.appendChild(canvas);
+			}
+			function isFullScreen() {
+						if (options.canvasMenu) return options.canvasMenu.isFullScreen();
+						if (options.canvas) return options.canvas.fullScreen !== false;
+						return true;
+			}
+			var elImg = elContainer.querySelector('img');
+			if (elImg) elContainer.removeChild(elImg);
+			if (typeof WebGLDebugUtils !== 'undefined') canvas = WebGLDebugUtils.makeLostContextSimulatingCanvas(canvas);
+			canvas.addEventListener("webglcontextlost", function (event) {
+						event.preventDefault();
+						if (requestId !== undefined) window.cancelAnimationFrame(requestId);else console.error('myThreejs.create.onloadScripts: requestId = ' + requestId);
+						clearThree(scene);
+						rendererSizeDefault.onFullScreenToggle(true);
+						alert(lang$2.webglcontextlost);
+			}, false);
+			canvas.addEventListener("webglcontextrestored", function () {
+						console.warn('webglcontextrestored');
+						init();
+						animate();
+			}, false);
+			init();
+			animate();
+			function init() {
+						camera = new THREE.PerspectiveCamera(options.camera.fov || 70, options.camera.aspect || window.innerWidth / window.innerHeight, options.camera.near || 0.01, options.camera.far || 10);
+						camera.position.copy(options.camera.position);
+						camera.scale.copy(options.camera.scale);
+						options.camera = camera;
+						options.point.sizePointsMaterial = 100;
+						if (options.cameraTarget) {
+									options.cameraTarget.camera = camera;
+									options.playerOptions.cameraTarget.init(options.cameraTarget, options);
+						}
+						scene = new THREE.Scene();
+						scene.background = new THREE.Color(0x000000);
+						scene.fog = new THREE.Fog(0x000000, 250, 1400);
+						scene.userData.optionsSpriteText = {
+									textHeight: 0.04
+						};
+						group = new THREE.Group();
+						scene.add(group);
+						new FrustumPoints(camera, group, canvas, {
+									options: options
+						});
+						renderer = new THREE.WebGLRenderer({
+									antialias: true,
+									canvas: canvas
+						});
+						renderer.setSize(window.innerWidth, window.innerHeight);
+						options.renderer = renderer;
+						options.cursor = renderer.domElement.style.cursor;
+						if (options.stereoEffect !== false) {
+									options.stereoEffect = options.stereoEffect || {};
+									options.stereoEffect.rememberSize = true;
+						}
+						new StereoEffect(renderer, options);
+						options.eventListeners = new Options.raycaster.EventListeners(camera, renderer, { options: options, scene: scene });
+						function removeTraceLines() {
+									group.children.forEach(function (mesh) {
+												if (mesh.userData.player === undefined || mesh.userData.player.arrayFuncs === undefined || typeof mesh.userData.player.arrayFuncs === "function") return;
+												mesh.userData.player.arrayFuncs.forEach(function (vector) {
+															if (vector.line === undefined) return;
+															vector.line.remove();
+															vector.line = new Player$1.traceLine(options);
+												});
 									});
-								});
-							}
-							recursion(group.children);
-						}, 0);
-					}
-					onFullScreenToggle(scene, fullScreen);
-				}
-			},
-			options: options
-		});
-		options.createOrbitControls(camera, renderer, scene);
-		if (fOptions) {
-			new GuiSelectPoint(options, {
-				cameraTarget: {
-					camera: camera,
-					orbitControls: options.orbitControls
-				},
-				pointsControls: function pointsControls(fPoints, dislayEl, getMesh) {},
-				pointControls: function pointControls(fPoint, dislayEl, getMesh) {}
-			});
-			if (options.guiSelectPoint) options.guiSelectPoint.add();
-		}
-		defaultPoint.size = options.point.size;
-		var pointName = options.dat ? options.dat.getCookieName('Point') : 'Point';
-		if (options.dat) options.dat.cookie.getObject(pointName, options.point, options.point);
-		three$1.group = group;
-		if (createXDobjects) createXDobjects(group, options);
-		new AxesHelper(scene, options);
-		if (options.frustumPoints) options.frustumPoints.create(renderer);
-		if (!options.player) {
-			Player$1.selectPlayScene(group, { options: options });
-		}
-		options.boPlayer = false;
-		group.children.forEach(function (mesh) {
-			options.saveMeshDefault(mesh);
-		});
-		if (options.dat.gui) {
-			AxesHelperGui(options, fOptions);
-			new MoveGroupGui(group, options, {
-				folder: fOptions
-			});
-			if (options.orbitControls !== false) {
-				new OrbitControlsGui(options, fOptions);
+						}
+						var pointLight1 = new pointLight(scene, {
+									options: options,
+									position: options.pointLight && options.pointLight.pointLight1 && options.pointLight.pointLight1.position ? options.pointLight.pointLight1.position : new THREE.Vector3(2 * options.scale, 2 * options.scale, 2 * options.scale)
+						});
+						var pointLight2 = new pointLight(scene, {
+									options: options,
+									position: options.pointLight && options.pointLight.pointLight2 && options.pointLight.pointLight2.position ? options.pointLight.pointLight2.position : new THREE.Vector3(-2 * options.scale, -2 * options.scale, -2 * options.scale)
+						});
+						if (options.dat.gui) {
+									if (typeof WebGLDebugUtils !== "undefined") options.dat.gui.add({
+												loseContext: function loseContext(value) {
+															canvas.loseContext();
+												}
+									}, 'loseContext');
+									if (options.dat.gui.__closeButton.click !== undefined)
+												options.dat.gui.__closeButton.click();
+						}
+						new Player$1(group, {
+									onSelectScene: function onSelectScene(index, t) {
+												options.boPlayer = true;
+												if (options.frustumPoints !== undefined) options.frustumPoints.updateCloudPoints();
+												if (options.onSelectScene !== undefined) options.onSelectScene(t);
+									},
+									options: options,
+									cameraTarget: { camera: camera },
+									onChangeScaleT: function onChangeScaleT(scale) {
+												if (options.player !== undefined) options.player.onChangeScale(scale);
+												removeTraceLines();
+									}
+						});
+						if (options.player) new options.player.PlayController();
+						if (options.dat.gui) {
+									fOptions = options.dat.gui.addFolder(lang$2.settings);
+									if (options.player) options.player.gui(fOptions);
+						}
+						if (fOptions) SpriteTextGui(scene, options, {
+									folder: fOptions,
+									options: {
+												textHeight: 0.05,
+												fov: camera.fov
+									}
+						});
+						if (options.stereoEffect) {
+									options.stereoEffect.gui({
+												folder: fOptions,
+												onChangeMode: function onChangeMode(mode) {
+															switch (mode) {
+																		case StereoEffect.spatialMultiplexsIndexs.Mono:
+																					break;
+																		case StereoEffect.spatialMultiplexsIndexs.SbS:
+																		case StereoEffect.spatialMultiplexsIndexs.TaB:
+																					break;
+																		default:
+																					console.error('myThreejs: Invalid spatialMultiplexIndex = ' + mode);
+																					return;
+															}
+															if (options.frustumPoints !== undefined) options.frustumPoints.updateGuiSelectPoint();
+												}
+									});
+						}
+						function getRendererSize() {
+									var style = {
+												position: renderer.domElement.style.position,
+												left: renderer.domElement.style.left,
+												top: renderer.domElement.style.top,
+												width: renderer.domElement.style.width,
+												height: renderer.domElement.style.height
+									},
+									    sizeOriginal = new THREE.Vector2();
+									renderer.getSize(sizeOriginal);
+									return {
+												onFullScreenToggle: function onFullScreenToggle(fs) {
+															arrayContainers.display(elContainer.parentElement, !fs);
+												}
+									};
+						}
+						rendererSizeDefault = getRendererSize();
+						renderer.setSize(options.canvas !== undefined && options.canvas.width !== undefined ? options.canvas.width : canvas.clientWidth, options.canvas !== undefined && options.canvas.height !== undefined ? options.canvas.height : canvas.clientHeight);
+						new CanvasMenu(renderer, {
+									fullScreen: {
+												fullScreen: options.canvas.fullScreen,
+												camera: camera,
+												arrayContainersLength: function arrayContainersLength() {
+															return arrayContainers.length;
+												},
+												onFullScreenToggle: function onFullScreenToggle(fullScreen) {
+															rendererSizeDefault.onFullScreenToggle(fullScreen);
+															function onFullScreenToggle(group, fullScreen) {
+																		setTimeout(function () {
+																					function recursion(children) {
+																								children.forEach(function (mesh) {
+																											recursion(mesh.children);
+																											if (mesh instanceof THREE.Group) {
+																														onFullScreenToggle(mesh, fullScreen);
+																														return;
+																											}
+																											if (mesh.userData.player === undefined || mesh.userData.player.arrayFuncs === undefined || typeof mesh.userData.player.arrayFuncs === "function") return;
+																											mesh.userData.player.arrayFuncs.forEach(function (vector) {
+																														if (vector.controllers && vector.controllers.w && vector.controllers.w.position && vector.controllers.w.position.elSlider) vector.controllers.w.position.elSlider.style.display = fullScreen ? 'block' : 'none';
+																														if (vector.line === undefined) return;
+																														vector.line.remove();
+																														vector.line = new Player$1.traceLine(options);
+																											});
+																								});
+																					}
+																					recursion(group.children);
+																		}, 0);
+															}
+															onFullScreenToggle(scene, fullScreen);
+												}
+									},
+									options: options
+						});
+						options.createOrbitControls(camera, renderer, scene);
+						if (fOptions) {
+									new GuiSelectPoint(options, {
+												cameraTarget: {
+															camera: camera,
+															orbitControls: options.orbitControls
+												},
+												pointsControls: function pointsControls(fPoints, dislayEl, getMesh) {},
+												pointControls: function pointControls(fPoint, dislayEl, getMesh) {}
+									});
+									if (options.guiSelectPoint) options.guiSelectPoint.add();
+						}
+						defaultPoint.size = options.point.size;
+						var pointName = options.dat ? options.dat.getCookieName('Point') : 'Point';
+						if (options.dat) options.dat.cookie.getObject(pointName, options.point, options.point);
+						three$1.group = group;
+						if (createXDobjects) createXDobjects(group, options);
+						new AxesHelper(scene, options);
+						if (options.frustumPoints) options.frustumPoints.create(renderer);
+						if (!options.player) {
+									Player$1.selectPlayScene(group, { options: options });
+						}
+						options.boPlayer = false;
+						group.children.forEach(function (mesh) {
+									options.saveMeshDefault(mesh);
+						});
+						if (options.dat.gui) {
+									AxesHelperGui(options, fOptions);
+									new MoveGroupGui(group, options, {
+												folder: fOptions
+									});
+									if (options.orbitControls !== false) {
+												new OrbitControlsGui(options, fOptions);
+									}
+									new CameraGui(camera, options, fOptions);
+									pointLight1.controls({ group: group, folder: fOptions, folderName: lang$2.light + ' 1' });
+									pointLight2.controls({ group: group, folder: fOptions, folderName: lang$2.light + ' 2' });
+									var folderPoint = new FolderPoint(options.point, function (value) {
+												if (value === undefined) value = options.point.size;
+												if (value < 0) value = 0;
+												group.children.forEach(function (mesh) {
+															if (mesh.type !== 'Points' || mesh.userData.boFrustumPoints) return;
+															if (mesh.material.uniforms === undefined) mesh.material.size = value / options.point.sizePointsMaterial;
+															else mesh.material.uniforms.pointSize.value = value;
+												});
+												folderPoint.size.setValue(value);
+												options.point.size = value;
+												options.dat.cookie.setObject(pointName, options.point);
+									}, options, {
+												folder: fOptions,
+												defaultPoint: defaultPoint
+									});
+									if (options.frustumPoints)
+												options.frustumPoints.gui(fOptions);
+									options.restoreSceneController(camera, scene);
+						}
+						if (options.stats !== undefined) {
+									try {
+												stats = new Stats();
+												elContainer.appendChild(stats.dom);
+									} catch (e) {
+												console.error(e + ". Please import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';");
+									}
+						}
+						window.addEventListener('resize', onResize, false);
 			}
-			new CameraGui(camera, options, fOptions);
-			pointLight1.controls({ group: group, folder: fOptions, folderName: lang$2.light + ' 1' });
-			pointLight2.controls({ group: group, folder: fOptions, folderName: lang$2.light + ' 2' });
-			var folderPoint = new FolderPoint(options.point, function (value) {
-				if (value === undefined) value = options.point.size;
-				if (value < 0) value = 0;
-				group.children.forEach(function (mesh) {
-					if (mesh.type !== 'Points' || mesh.userData.boFrustumPoints) return;
-					if (mesh.material.uniforms === undefined) mesh.material.size = value / options.point.sizePointsMaterial;
-					else mesh.material.uniforms.pointSize.value = value;
-				});
-				folderPoint.size.setValue(value);
-				options.point.size = value;
-				options.dat.cookie.setObject(pointName, options.point);
-			}, options, {
-				folder: fOptions,
-				defaultPoint: defaultPoint
-			});
-			if (options.frustumPoints)
-				options.frustumPoints.gui(fOptions);
-			options.restoreSceneController(camera, scene);
-		}
-		if (options.stats !== undefined) {
-			try {
-				stats = new Stats();
-				elContainer.appendChild(stats.dom);
-			} catch (e) {
-				console.error(e + ". Please import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';");
+			function onResize() {
+						var size;
+						if (isFullScreen()) size = new THREE.Vector2(window.innerWidth, window.innerHeight);else {
+									size = new THREE.Vector2();
+									renderer.getSize(size);
+						}
+						camera.aspect = size.x / size.y;
+						camera.updateProjectionMatrix();
+						renderer.setSize(size.x, size.y);
+						if (options.frustumPoints !== undefined) options.frustumPoints.update();
 			}
-		}
-		window.addEventListener('resize', onResize, false);
-	}
-	function onResize() {
-		var size;
-		if (isFullScreen()) size = new THREE.Vector2(window.innerWidth, window.innerHeight);else {
-			size = new THREE.Vector2();
-			renderer.getSize(size);
-		}
-		camera.aspect = size.x / size.y;
-		camera.updateProjectionMatrix();
-		renderer.setSize(size.x, size.y);
-		if (options.frustumPoints !== undefined) options.frustumPoints.update();
-	}
-	function animate() {
-		if (stats !== undefined) stats.begin();
-		requestId = requestAnimationFrame(animate);
-		render();
-		if (stats !== undefined) stats.end();
-	}
-	function render() {
-		if (!options.stereoEffect || !options.stereoEffect.render) renderer.render(scene, camera);else options.stereoEffect.render(scene, camera);
-		if (cameraPosition === undefined) cameraPosition = new THREE.Vector3();
-		if (pointSize === undefined) pointSize = options.point.size;
-		if (!cameraPosition.equals(camera.position) || pointSize != options.point.size || options.frustumPoints !== undefined && options.frustumPoints.animate()) {
-			cameraPosition.copy(camera.position);
-			pointSize = options.point.size;
-			group.children.forEach(function (mesh) {
-				if (mesh instanceof THREE.Points === false) return;
-				if (mesh.geometry.attributes.size === undefined) {
-					mesh.material.size = pointSize / options.point.sizePointsMaterial;
-					return;
-				}
-				if (options.point.opacity !== undefined) mesh.material.uniforms.opacity.value = options.point.opacity;
-				var scale = myPoints.getGlobalScale(mesh);
-				var cameraPosition = new THREE.Vector3(camera.position.x / scale.x, camera.position.y / scale.y, camera.position.z / scale.z);
-				scale = (scale.x + scale.y + scale.z) / 3;
-				for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
-					var position = getObjectPosition(mesh, i),
-					position3d = new THREE.Vector3(position.x, position.y, position.z),
-					    distance = position3d.distanceTo(cameraPosition),
-					    y = 1;
-					mesh.geometry.attributes.size.setX(i, Math.tan(mesh.userData.shaderMaterial.point !== undefined && mesh.userData.shaderMaterial.point.size !== undefined ? mesh.userData.shaderMaterial.point.size : options.point.size) * distance * scale * y);
-					mesh.geometry.attributes.size.needsUpdate = true;
-				}
-			});
-		}
-	}
-	this.setSize = function (width, height) {
-		if ((typeof width === 'undefined' ? 'undefined' : _typeof(width)) === "object") {
-			height = width.height;
-			width = width.width;
-		}
-		if (width === undefined) {
-			var target = { set: function set$$1(width, height) {
-					renderer.setSize(width, height);
-				} };
-			renderer.getSize(target);
-			return;
-		}
-		renderer.setSize(width, height);
-	};
-	arrayCreates.shift();
-	var params = arrayCreates.shift();
-	if (params === undefined) return;
-	myThreejs.create(params.createXDobjects, params.options);
+			function animate() {
+						if (stats !== undefined) stats.begin();
+						requestId = requestAnimationFrame(animate);
+						render();
+						if (stats !== undefined) stats.end();
+			}
+			function render() {
+						if (!options.stereoEffect || !options.stereoEffect.render) renderer.render(scene, camera);else options.stereoEffect.render(scene, camera);
+						if (cameraPosition === undefined) cameraPosition = new THREE.Vector3();
+						if (pointSize === undefined) pointSize = options.point.size;
+						if (!cameraPosition.equals(camera.position) || pointSize != options.point.size || options.frustumPoints !== undefined && options.frustumPoints.animate()) {
+									cameraPosition.copy(camera.position);
+									pointSize = options.point.size;
+									group.children.forEach(function (mesh) {
+												if (mesh instanceof THREE.Points === false) return;
+												if (mesh.geometry.attributes.size === undefined) {
+															mesh.material.size = pointSize / options.point.sizePointsMaterial;
+															return;
+												}
+												if (options.point.opacity !== undefined) mesh.material.uniforms.opacity.value = options.point.opacity;
+												var scale = myPoints.getGlobalScale(mesh);
+												var cameraPosition = new THREE.Vector3(camera.position.x / scale.x, camera.position.y / scale.y, camera.position.z / scale.z);
+												scale = (scale.x + scale.y + scale.z) / 3;
+												for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
+															var position = getObjectPosition(mesh, i),
+															position3d = new THREE.Vector3(position.x, position.y, position.z),
+															    distance = position3d.distanceTo(cameraPosition),
+															    y = 1;
+															mesh.geometry.attributes.size.setX(i, Math.tan(mesh.userData.shaderMaterial.point !== undefined && mesh.userData.shaderMaterial.point.size !== undefined ? mesh.userData.shaderMaterial.point.size : options.point.size) * distance * scale * y);
+															mesh.geometry.attributes.size.needsUpdate = true;
+												}
+									});
+						}
+			}
+			this.setSize = function (width, height) {
+						if ((typeof width === 'undefined' ? 'undefined' : _typeof(width)) === "object") {
+									height = width.height;
+									width = width.width;
+						}
+						if (width === undefined) {
+									var target = { set: function set$$1(width, height) {
+															renderer.setSize(width, height);
+												} };
+									renderer.getSize(target);
+									return;
+						}
+						renderer.setSize(width, height);
+			};
+			arrayCreates.shift();
+			var params = arrayCreates.shift();
+			if (params === undefined) return;
+			myThreejs.create(params.createXDobjects, params.options);
 };
 var lang$2 = {
-	defaultButton: 'Default',
-	settings: 'Settings',
-	webglcontextlost: 'The user agent has detected that the drawing buffer associated with a WebGLRenderingContext object has been lost.',
-	light: 'Light',
-	opacity: 'Opacity'
+			defaultButton: 'Default',
+			settings: 'Settings',
+			webglcontextlost: 'The user agent has detected that the drawing buffer associated with a WebGLRenderingContext object has been lost.',
+			light: 'Light',
+			opacity: 'Opacity'
 };
 switch (getLanguageCode()) {
-	case 'ru':
-		lang$2.defaultButton = 'Восстановить';
-		lang$2.name = 'Имя';
-		lang$2.settings = 'Настройки';
-		lang$2.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
-		lang$2.light = 'Свет';
-		lang$2.opacity = 'Непрозрачность';
-		break;
+			case 'ru':
+						lang$2.defaultButton = 'Восстановить';
+						lang$2.name = 'Имя';
+						lang$2.settings = 'Настройки';
+						lang$2.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
+						lang$2.light = 'Свет';
+						lang$2.opacity = 'Непрозрачность';
+						break;
 }
 MyThree.MyPoints = MyPoints;
 MyThree.StereoEffect = {
-	spatialMultiplexsIndexs: StereoEffect.spatialMultiplexsIndexs
+			spatialMultiplexsIndexs: StereoEffect.spatialMultiplexsIndexs
 };MyThree.ColorPicker = ColorPicker$1;
 MyThree.getWorldPosition = getWorldPosition;
 MyThree.limitAngles = function (rotation) {
-	function limitAngle(axisName) {
-		while (rotation[axisName] > Math.PI * 2) {
-			rotation[axisName] -= Math.PI * 2;
-		}
-	}
-	limitAngle('x');
-	limitAngle('y');
-	limitAngle('z');
+			function limitAngle(axisName) {
+						while (rotation[axisName] > Math.PI * 2) {
+									rotation[axisName] -= Math.PI * 2;
+						}
+			}
+			limitAngle('x');
+			limitAngle('y');
+			limitAngle('z');
 };
 MyThree.Player = Player$1;
 MyThree.three = three$1;

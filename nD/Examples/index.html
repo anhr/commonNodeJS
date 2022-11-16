@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -144,6 +144,7 @@
 								2D Object:
 								<input type="radio" name="2Dobject" value="triangle" id="triangle" checked><label for="triangle">Triangle</label>
 								<input type="radio" name="2Dobject" value="square" id="square"><label for="square">Square</label>.
+								<input type="radio" name="2Dobject" value="fermatSpiral" id="fermatSpiral"><label for="fermatSpiral">FermatSpiral</label>.
 							</li>
 						</ul>
 					</p>
@@ -205,6 +206,8 @@
 		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.js';
 		//import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
 		if ( ND.default ) ND = ND.default;
+
+		import FermatSpiral from '../../fermatSpiral/fermatSpiral.js';
 
 		const treeView = new MyThree.TreeView( { animate: true, paddingInlineStart: '10px', open: true, cookie: true, } );
 
@@ -295,22 +298,34 @@
 
 							if ( radio.value === object.name ) {
 
-								object.geometry.position.forEach( vertice => delete vertice.positionWorld );
 								nDObject.name = object.name;
-								nDObject.geometry.position = object.geometry.position;
-								nDObject.geometry.indices = object.geometry.indices;
+								if ( object.faces !== undefined ) nDObject.faces = object.faces;
 								nDObject.position = object.position || position;
 								nDObject.rotation = object.rotation || rotation;
+								if ( object.geometry ) {
+									
+									object.geometry.position.forEach( vertice => delete vertice.positionWorld );
+									nDObject.geometry.position = object.geometry.position;
+									nDObject.geometry.indices = object.geometry.indices;
+
+								} else if ( object.object ) {
+
+									const obj = object.object();
+									nDObject.geometry = obj.geometry;
+									
+								} else console.error( 'Invalid object: ' + object.name );
 								
 							}
 							
 						} );
+						if ( nDObject.geometry.position ) return true;
+						console.error( 'Unknown object: ' + radio.value );
+						return false;
 
 					}
 					radio.addEventListener( 'change', function () {
 
-						onChange();
-						aObjects.nD.object = nDObject;
+						if ( onChange() ) aObjects.nD.object = nDObject;
 						
 					} );
 
@@ -334,8 +349,10 @@
 
 					object: {
 						
-						position: [0, -0.2],
-						rotation: [Math.PI / 5, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+						//position: [0, -0.2],
+						rotation: [Math.PI / 2, Math.PI],
+						//rotation: [Math.PI / 5, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+						//faces: true,
 						geometry: {
 	
 							//5D tetrahedron
@@ -371,9 +388,9 @@
 				elContainer: "5D",
 				playerOptions: Object.assign( {}, playerOptions ),
 				//player: false,
-				//dat: false,
 //				dat: dat,
 				dat: { guiSelectPoint: { point: guiPoint, }, },
+				//dat: false,
 				title: '5D',
 
 			} );
@@ -401,6 +418,7 @@
 						{
 
 							name: 'pentatope',
+                            //faces: true,
 							geometry: {
 
 								position: [
@@ -417,6 +435,7 @@
 						{
 
 							name: 'tesseract',
+							//faces: true,//сейчас нет необхлдимых граней
 							position: [-0.3],// -0.2, 0.3, 5],
 							//rotation: [Math.PI / 5, 1, 2.16, 3, 4, 5],
 							rotation: [0, 0, 1, 0, 1.1, 1.2],
@@ -592,22 +611,6 @@
 				//dat: false,
 //				dat: dat,
 				dat: { guiSelectPoint: { point: guiPoint, }, },
-/*
-				dat: {
-
-					//guiSelectPoint: false,
-					guiSelectPoint: {
-
-						point: function ( options, dat, fMesh ) {
-
-							return new ND.gui( options, dat, fMesh );
-
-						},
-
-					},
-
-				},
-*/
 				title: '4D',
 
 			} ) );
@@ -622,6 +625,7 @@
 
 				_3D = new ND( 3, {
 
+					//plane: false,
 					object: controls.getObject( "3Dobject", [
 						{
 							
@@ -633,6 +637,7 @@
 						{
 
 							name: 'pyramid',
+							//faces: true,
 							geometry: {
 
 								position: [
@@ -655,6 +660,12 @@
 									[0, 0.6, 0.4]//3
 									*/
 								],
+								/*
+								indices: [
+									[[1,2],[1,3],[3,2],],
+									[[0,1,2]]
+								],
+								*/
 
 							}
 
@@ -662,6 +673,7 @@
 						{
 
 							name: 'cube',
+							//faces: true,
 							geometry: {
 
 								position: [
@@ -697,15 +709,47 @@
 										[7, 3],//9 face 3, 4
 										[7, 5],//10 face 4, 5
 										[7, 6],//11 face 3, 5
+
+										//display faces. settings.object.faces = true
+										[0, 3],//12 face 0
+
+										//[1, 7],//13
+										[5, 3],//13
+
+										[0, 5],//14
+										[0, 6],//15
+										[6, 3],//16
+										[6, 5],//17
 									],
 									//faces
 									[
+										//display edges only
+										/*
 										[0, 1, 2, 3],//0
 										[0, 4, 5, 6],//1
 										[3, 7, 8, 4],//2
 										[2, 7, 9, 11],//3
 										[1, 9, 10, 6],//4
 										[5, 8, 10, 11],//5
+										*/
+										//display faces. settings.object.faces = true
+										[0, 1, 12],//0
+										[12, 2, 3],//1
+										[2, 16, 7],//2
+										[7, 15, 3],//3
+										[15, 4, 8],//4
+										[8, 5, 17],//5
+										[5, 4, 14],//6
+										[14, 6, 0],//7
+										[11, 10, 17],//8
+										/*
+										[10, 6, 13],//9
+										[13, 9, 1],//10
+										*/
+										[13, 6, 1],//9
+										[13, 10, 9],//10
+
+										[11, 9, 16],//11
 									],
 								]
 
@@ -764,6 +808,7 @@
 						{
 
 							name: 'triangle',
+							//faces: true,
 							geometry: {
 
 								position: [
@@ -800,7 +845,33 @@
 
 							}
 
-						}] ),
+						},
+						{
+
+							name: 'fermatSpiral',
+							object: function () {
+
+								return new FermatSpiral( {
+
+									//count: 3800,
+									//c: 0.05,
+									/*
+									object: {
+						
+										scene: scene,
+										options: options,
+										//color: 'red',
+	
+									}
+									*/
+
+								} )
+
+							}
+
+						},
+
+					] ),
 
 
 					scene: scene,
@@ -829,7 +900,8 @@
 				//dat: false,
 				dat: { guiSelectPoint: { point: guiPoint, }, },
 				camera: options.camera,
-				orbitControls: false,
+				//orbitControls: false,
+				orbitControls: { enableRotate: false, },
 				stereoEffect: false,
 				//scales: { x: {} },
 				title: '2D',
@@ -855,6 +927,7 @@
 						//position: [0.1, 78],//tesing of settings.position = new Proxy
 						position: 0.1,
 						name: 'line',
+						//faces: true,
 						geometry: {
 	
 							//position: [[-0.5, 1], [0.5]],//tesing of settings.position = new Proxy

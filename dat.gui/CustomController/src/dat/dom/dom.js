@@ -1,4 +1,4 @@
-/**
+﻿/**
  * dat-gui JavaScript Controller Library
  * http://code.google.com/p/dat-gui
  *
@@ -165,6 +165,13 @@ const dom = {
     const bool = newBool || false;
     if (elem.addEventListener) {
       elem.addEventListener(event, func, bool);
+/*если так сделать то будет ошибка 
+ * Unable to preventDefault inside passive event listener invocation.
+ * когда щелкнуть на строку "Open controls"
+      elem.addEventListener(event, func, {
+            passive: true//https://web.dev/i18n/ru/uses-passive-event-listeners/
+        });
+*/
     } else if (elem.attachEvent) {
       elem.attachEvent('on' + event, func);
     }

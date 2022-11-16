@@ -135,9 +135,17 @@ class MyThree {
 	 * @param {createXDobjects} [createXDobjects] <a href="../../myThree/jsdoc/module-MyThree.html#~createXDobjects" target="_blank">callback</a> creates my 3D objects.
 	 * @param {Object} [options] See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * The following options are available:
-	 * @param {HTMLElement|string} [options.elContainer=document.getElementById( "containerDSE" ) or a div element, child of body] If an HTMLElement, then a HTMLElement, contains a canvas and HTMLElement with id="iframe-goes-in-here" for gui.
+	 * @param {HTMLElement|string} [options.elContainer=document.getElementById( "containerDSE" ) or a new div element, child of body] If an HTMLElement, then a HTMLElement, contains a canvas and HTMLElement with id="iframe-goes-in-here" for gui.
 	 * <pre>
 	 * If a string, then is id of the HTMLElement.
+	 * Examples of the <b>elContainer</b>:
+	 * <b>&lt;div class="container" id="containerDSE"&gt;
+	 * 	&lt;canvas id="canvas" style="background-color:black"&gt;&lt;/canvas&gt;
+	 * &lt;/div&gt</b>;
+	 * or
+	 * <b>&lt;div class="container" id="containerDSE"&gt;
+	 * &lt;/div&gt;</b>
+	 * New canvas is created inside of the div tag.
 	 * </pre>
 	 * 
 	 * @param {THREE.PerspectiveCamera} [options.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
@@ -150,7 +158,11 @@ class MyThree {
 	 * 
 	 * @param {THREE.Scene} [options.scene] [Scene]{@link https://threejs.org/docs/index.html#api/en/scenes/Scene}.
 	 * @param {THREE.Vector3} [options.scene.position=new THREE.Vector3( 0, 0, 0 )] scene position.
-	 * @param {boolean} [options.orbitControls] false - do not add the [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}. Allow the camera to orbit around a target.
+	 * @param {boolean|object} [options.orbitControls] false - do not add the [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}. Allow the camera to orbit around a target.
+	 * <pre>
+	 * or
+	 * </pre>
+	 * @param {boolean} [options.orbitControls.enableRotate=true] Enable or disable horizontal and vertical rotation of the camera.
 	 * @param {boolean} [options.axesHelper] false - do not add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
 	 * @param {boolean} [options.canvasMenu] false - do not create a <a href="../../canvasMenu/jsdoc/index.html" target="_blank">canvasMenu</a> instance.
 	 * @param {boolean} [options.stereoEffect] false - do not use <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
@@ -286,12 +298,16 @@ class MyThree {
 
 		}
 		arrayContainers.push( elContainer );
-		elContainer.innerHTML = '';
-		const elDiv = document.createElement( 'div' );
-		elDiv.className = 'container';
-		elDiv.appendChild( document.createElement( 'canvas' ) );
-		elContainer.appendChild( elDiv );
-		elContainer = elDiv;
+		if ( !elContainer.querySelector('canvas') ) {
+			
+			elContainer.innerHTML = '';
+			const elDiv = document.createElement( 'div' );
+			elDiv.className = 'container';
+			elDiv.appendChild( document.createElement( 'canvas' ) );
+			elContainer.appendChild( elDiv );
+			elContainer = elDiv;
+
+		}
 
 		if ( three.dat && ( options.dat !== false ) ) {
 
@@ -476,6 +492,11 @@ class MyThree {
 				canvas: canvas,
 
 			} );
+
+			//если не выполнить эту команду то в http://localhost/anhr/commonNodeJS/master/fermatSpiral/Examples/
+			//холст будет не на весь экран потомучто там не используется меню
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			
 			options.renderer = renderer;
 
 			options.cursor = renderer.domElement.style.cursor;

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * node.js version of the synchronous download of the file.
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -61,10 +61,17 @@ function myRequest( options ) {
 	}
 
 	this.getUrl = function () {
+		
 		if ( ( typeof this.url == 'undefined' ) || ( this.url == null ) ) {
-			this.url = "XMLHttpRequest.xml";
+
+			//непонятно зачем это засунул
+//			this.url = "XMLHttpRequest.xml";
+			
+			ErrorMessage( 'XMLHttpRequest: Invalid url: ' + this.url );
+			
 		}
 		return this.url + ( this.params ? this.params : "" );
+		
 	}
 
 	this.XMLHttpRequestReStart = function ( async ) {
@@ -219,11 +226,12 @@ function myRequest( options ) {
  */
 
 /**
- * Synchronous load file
+ * Load file synchronously
  * @param {string} url URL of an external file.
  * @param {Object} [options] the following options are available.
- * @param {Function} [options.onload] function () The onload event occurs when a script has been loaded. Optional.
- * @param {onerror} [options.onerror] function ( str ) The onerror event occurs when an error has been occured. Optional.
+ * @param {Function} [options.onload] function () The onload event occurs when a script has been loaded.
+ * @param {onerror} [options.onerror] function ( str ) The onerror event occurs when an error has been occured.
+ * @param {boolean} [options.async=false] true - load file asynchronously. You can use <b>async</b> method instead.
  * @returns {string} file content
  * @example
  * 
@@ -273,11 +281,47 @@ function sync( url, options ) {
 			} );
 
 		}
-		, false//Synchronous mode
+		, options.async === undefined ? false : true//Synchronous mode
 
 	);
 	//console.log( 'sync(' + url + ')' );
 	return response;
+
+}
+/**
+ * Load file asynchronously
+ * @param {string} url URL of an external file.
+ * @param {Object} [options] the following options are available.
+ * @param {Function} [options.onload] function () The onload event occurs when a script has been loaded.
+ * @param {onerror} [options.onerror] function ( str ) The onerror event occurs when an error has been occured.
+ * @returns {string} file content
+ * @example
+ * 
+	//Simplest example.
+	document.getElementById( "elID" ).innerHTML = loadFile.sync('element.html');
+ *
+ * @example
+ *
+	//onload, onerror events.
+	document.getElementById( "elID").innerHTML = loadFile.async( 'element.html',
+	{
+		onload: function ( response ) {
+
+			var str = 'file has been loaded successfully';
+			console.log( str );
+
+		},
+		onerror: function ( str, e ) {
+
+			console.error( str );
+
+		},
+	}, );
+ */
+function async(url, options) {
+
+	options.async = true;
+	sync(url, options);
 
 }
 
@@ -306,4 +350,4 @@ function escapeHtml( str ) {
 	} );
 }
 
-export { sync, escapeHtml };
+export { sync, async, escapeHtml };

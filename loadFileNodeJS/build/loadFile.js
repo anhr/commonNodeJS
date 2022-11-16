@@ -19,7 +19,7 @@
 
 /**
  * node.js version of the synchronous download of the file.
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -198,9 +198,13 @@ function sync(url, options) {
 			options.onload(response, url);
 			return;
 		});
-	}, false
+	}, options.async === undefined ? false : true
 	);
 	return response;
+}
+function async(url, options) {
+	options.async = true;
+	sync(url, options);
 }
 function escapeHtml(str) {
 	return str.replace(/[&<>"'\/]/g, function (s) {
@@ -217,6 +221,7 @@ function escapeHtml(str) {
 }
 
 exports.sync = sync;
+exports.async = async;
 exports.escapeHtml = escapeHtml;
 
 Object.defineProperty(exports, '__esModule', { value: true });

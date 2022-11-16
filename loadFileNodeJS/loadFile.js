@@ -11,11 +11,12 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { sync } from './index.js';
+import { sync, async } from './index.js';
 
 var loadFile = {
 
 	sync: sync,
+	async: async,
 
 }
 

@@ -1,4 +1,4 @@
-https://github.com/anhr/dat.gui
+﻿https://github.com/anhr/dat.gui
 
 Building dat.gui\CustomController
 
@@ -8,3 +8,8 @@ d:
 cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\dat.gui\CustomController"
 npm install
 npm run build
+
+скопировать результат из
+D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\dat.gui\CustomController\build
+в
+D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\dat

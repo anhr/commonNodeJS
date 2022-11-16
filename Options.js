@@ -147,7 +147,9 @@ class Options {
 			if ( options.orbitControls === false )
 				return;
 
+			const settings = options.orbitControls || {};
 			_this.orbitControls = new three.OrbitControls( camera, renderer.domElement );
+			if ( settings.enableRotate !== undefined ) _this.orbitControls.enableRotate = settings.enableRotate;
 			_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
 			_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 			_this.orbitControls.update();
@@ -724,8 +726,12 @@ class Options {
 											},
 											set: function ( name ) {
 												
-												scale.name = name;
-												if ( options.guiSelectPoint ) options.guiSelectPoint.setAxisName( axisName, name );
+												if ( scale ) {
+													
+													scale.name = name;
+													if ( options.guiSelectPoint ) options.guiSelectPoint.setAxisName( axisName, name );
+
+												}
 												
 											},
 
@@ -1674,6 +1680,12 @@ class Raycaster {
 			if ( intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo() )
 				return;
 			var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
+			if ( spriteTextIntersection && ( !intersection.pointSpriteText || ( intersection.object.userData.raycaster && intersection.object.userData.raycaster.text ) ) ) {
+				
+				scene.remove( spriteTextIntersection );
+				spriteTextIntersection = undefined;
+
+			}
 			if ( spriteTextIntersection === undefined ) {
 
 				options = new Options( options );
@@ -1748,8 +1760,12 @@ class Raycaster {
 				return;//No display information about frustum point
 			if ( options.guiSelectPoint )
 				options.guiSelectPoint.select( intersection );
-			else if ( options.axesHelper )
-				options.axesHelper.exposePosition( intersection );
+			else {
+
+				if ( intersection.object.userData.onMouseDown ) intersection.object.userData.onMouseDown( intersection );
+				if ( options.axesHelper ) options.axesHelper.exposePosition( intersection );
+
+			}
 
 		}
 		const intersectedObjects = [];
@@ -1980,7 +1996,7 @@ cube.userData.raycaster = {
 						const intersect = intersects[0], object = intersect.object;
 						if ( object.userData.raycaster && object.userData.raycaster.onIntersection ) {
 
-							intersect.pointSpriteText = intersect.point;
+//							intersect.pointSpriteText = intersect.point;
 							object.userData.raycaster.onIntersection( intersect, mouse );
 							
 						} else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
@@ -2002,11 +2018,9 @@ cube.userData.raycaster = {
 					if ( intersects && ( intersects.length > 0 ) ) {
 
 						const intersect = intersects[0];
-						if ( intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown ) {
-
-							intersect.object.userData.raycaster.onMouseDown( intersect );
-
-						} else Options.raycaster.onMouseDown( intersect, options );
+						if ( intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown )
+							intersect.object.userData.raycaster.onMouseDown( intersect, event );//передаем состояние кнопок мыши
+						else Options.raycaster.onMouseDown( intersect, options );
 
 					}
 

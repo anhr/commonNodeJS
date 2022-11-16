@@ -24,6 +24,10 @@ My JavaScript library of [threejs](https://threejs.org/) extension.
 * DropdownMenu. node.js version of DropdownMenu
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/Examples/html/index.html).
+* FermatSpiral. Implementation of Vogel's model of [Fermat's spiral](https://en.wikipedia.org/wiki/Fermat's_spiral).
+[github](../../tree/master/fermatSpiral).
+[FermatSpiral API](https://raw.githack.com/anhr/commonNodeJS/master/fermatSpiral/jsdoc/index.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/fermatSpiral/Examples/index.html).
 * FibonacciSphereGeometry. A class for generating sphere geometries by the [Fibonacci](https://en.wikipedia.org/wiki/Fibonacci_number) algorithm.
 [github](../../tree/master/FibonacciSphere).
 [FibonacciSphereGeometry API](https://raw.githack.com/anhr/commonNodeJS/master/FibonacciSphere/jsdoc/index.html).
@@ -100,3 +104,7 @@ for control of the scale of [threejs](https://github.com/anhr/three.js) 3D objec
 [README.md](https://github.com/anhr/commonNodeJS/blob/master/treeView/README.md).
 [TreeView API](https://raw.githack.com/anhr/commonNodeJS/master/treeView/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/treeView/Examples/).
+* WebGPU.js [WebGPU](https://gpuweb.github.io/gpuweb/) Compute on the web.
+[README.md](https://github.com/anhr/commonNodeJS/blob/master/WebGPU/README.md).
+[WebGPU API](https://raw.githack.com/anhr/commonNodeJS/master/WebGPU/jsdoc/index.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/WebGPU/Examples/).

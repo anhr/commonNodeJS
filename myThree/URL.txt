@@ -93,6 +93,13 @@ edit rollup.config.js and rollup.config.min.js files:
 
 ERROR
 ------------
+[!] (babel plugin) Error: Couldn't find preset "env" relative to directory "D:\\My documents\\MyProjects\\webgl\\three.js\\GitHub\\commonNodeJS\\master"
+
+	Собрать D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\cookieNodeJS\build
+	как описано в D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\cookieNodeJS\URL.txt
+
+ERROR
+------------
 Error: Couldn't find preset "env" relative to directory  "D:\\My documents\\MyProjects\\webgl\\three.js\\GitHub\\nodejs\\commonNodeJS"
 
 Заменить относительный путь
