@@ -1170,6 +1170,7 @@ class GuiSelectPoint {
 
 					settings: { zoomMultiplier: 1.1, },
 					getLanguageCode: getLanguageCode,
+					newBool: true,
 
 				} ) );
 			const scale = new THREE.Vector3();

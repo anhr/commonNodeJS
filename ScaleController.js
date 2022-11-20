@@ -164,7 +164,7 @@ folder.add( new ScaleController( function ( customController, action ) {
 
 			},
 
-		}, 'multiplier', 1.1, 10, 0.1 );
+		}, 'multiplier', 1.1, 10, 0.1, options.newBool );
 		if ( this.property === undefined )
 			console.error( 'init() returns ' + this.property );
 

@@ -837,7 +837,9 @@ var dom = {
   bind: function bind(elem, event, func, newBool) {
     var bool = newBool || false;
     if (elem.addEventListener) {
-      elem.addEventListener(event, func, bool);
+      elem.addEventListener(event, func, {
+        passive: bool
+      });
     } else if (elem.attachEvent) {
       elem.attachEvent('on' + event, func);
     }
@@ -1181,13 +1183,13 @@ function map(v, i1, i2, o1, o2) {
 }
 var NumberControllerSlider = function (_NumberController) {
   inherits(NumberControllerSlider, _NumberController);
-  function NumberControllerSlider(object, property, min, max, step) {
+  function NumberControllerSlider(object, property, min, max, step, newBool) {
     classCallCheck(this, NumberControllerSlider);
     var _this2 = possibleConstructorReturn(this, (NumberControllerSlider.__proto__ || Object.getPrototypeOf(NumberControllerSlider)).call(this, object, property, { min: min, max: max, step: step }));
     var _this = _this2;
     _this2.__background = document.createElement('div');
     _this2.__foreground = document.createElement('div');
-    dom.bind(_this2.__background, 'mousedown', onMouseDown);
+    dom.bind(_this2.__background, 'mousedown', onMouseDown, newBool);
     dom.bind(_this2.__background, 'touchstart', onTouchStart);
     dom.addClass(_this2.__background, 'slider');
     dom.addClass(_this2.__foreground, 'slider-fg');
@@ -1538,7 +1540,7 @@ var ControllerFactory = function ControllerFactory(object, property) {
   if (Common.isNumber(initialValue)) {
     if (Common.isNumber(arguments[2]) && Common.isNumber(arguments[3])) {
       if (Common.isNumber(arguments[4])) {
-        return new NumberControllerSlider(object, property, arguments[2], arguments[3], arguments[4]);
+        return new NumberControllerSlider(object, property, arguments[2], arguments[3], arguments[4], arguments[5]);
       }
       return new NumberControllerSlider(object, property, arguments[2], arguments[3]);
     }

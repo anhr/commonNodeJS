@@ -35,7 +35,7 @@ function map(v, i1, i2, o1, o2) {
  * @param {Number} stepValue Increment by which to change value
  */
 class NumberControllerSlider extends NumberController {
-  constructor(object, property, min, max, step) {
+  constructor(object, property, min, max, step, newBool) {
     super(object, property, { min: min, max: max, step: step });
 
     const _this = this;
@@ -43,7 +43,7 @@ class NumberControllerSlider extends NumberController {
     this.__background = document.createElement('div');
     this.__foreground = document.createElement('div');
 
-    dom.bind(this.__background, 'mousedown', onMouseDown);
+    dom.bind(this.__background, 'mousedown', onMouseDown, newBool);
     dom.bind(this.__background, 'touchstart', onTouchStart);
 
     dom.addClass(this.__background, 'slider');
