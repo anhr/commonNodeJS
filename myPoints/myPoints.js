@@ -171,7 +171,14 @@ function MyPoints( arrayFuncs, group, settings ) {
 			typeof arrayFuncs === 'function' ? arrayFuncs() :
 				new THREE.BufferGeometry().setFromPoints( Player.getPoints( arrayFuncs,
 					{ options: options, group: group, t: pointsOptions.tMin } ), 4 ),
-			new THREE.PointsMaterial( { size: options.point.size / options.point.sizePointsMaterial, vertexColors: THREE.VertexColors } )
+			new THREE.PointsMaterial( {
+				
+				size: options.point.size / options.point.sizePointsMaterial, 
+
+				//THREE.Material: 'vertexColors' parameter is undefined.
+				//vertexColors: THREE.VertexColors
+			
+			} )
 
 		);
 		if ( pointsOptions.frustumPoints )

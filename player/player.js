@@ -2840,7 +2840,8 @@ Player.traceLine = class traceLine
 					//неудачная попытка исправить frustumPoints после перехода на THREE.REVISION = "145dev"
 					//vertexColors: true,//THREE.VertexColors//Undefined in THREE.REVISION = "145dev"
 
-					vertexColors: THREE.VertexColors
+					//THREE.Material: 'vertexColors' parameter is undefined.
+					//vertexColors: THREE.VertexColors
 				
 				} ) );
 				line.visible = true;
