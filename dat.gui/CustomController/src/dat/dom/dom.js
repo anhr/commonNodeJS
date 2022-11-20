@@ -169,8 +169,12 @@ const dom = {
  * Unable to preventDefault inside passive event listener invocation.
  * когда щелкнуть на строку "Open controls"
 */
-      elem.addEventListener(event, func, {
+        elem.addEventListener(event, func, {
+
+          //for removing of
+          //[Violation] Added non-passive event listener to a scroll-blocking <some> event. Consider marking event handler as 'passive' to make the page more responsive. See <URL>
           passive: bool//https://web.dev/i18n/ru/uses-passive-event-listeners/
+
         });
     } else if (elem.attachEvent) {
       elem.attachEvent('on' + event, func);
