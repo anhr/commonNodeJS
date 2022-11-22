@@ -1195,6 +1195,7 @@ var NumberControllerSlider = function (_NumberController) {
     var _this = _this2;
     _this2.__background = document.createElement('div');
     _this2.__foreground = document.createElement('div');
+    _this2.newBool = newBool;
     dom.bind(_this2.__background, 'mousedown', onMouseDown, newBool);
     dom.bind(_this2.__background, 'touchstart', onTouchStart);
     dom.addClass(_this2.__background, 'slider');
@@ -1206,7 +1207,7 @@ var NumberControllerSlider = function (_NumberController) {
       onMouseDrag(e);
     }
     function onMouseDrag(e) {
-      e.preventDefault();
+      if (!_this.newBool) e.preventDefault();
       var bgRect = _this.__background.getBoundingClientRect();
       _this.setValue(map(e.clientX, bgRect.left, bgRect.right, _this.__min, _this.__max));
       return false;

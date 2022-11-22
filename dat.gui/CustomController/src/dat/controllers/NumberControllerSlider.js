@@ -1,4 +1,4 @@
-/**
+﻿/**
  * dat-gui JavaScript Controller Library
  * http://code.google.com/p/dat-gui
  *
@@ -43,6 +43,14 @@ class NumberControllerSlider extends NumberController {
     this.__background = document.createElement('div');
     this.__foreground = document.createElement('div');
 
+    //for remove of error:
+    //Unable to preventDefault inside passive event listener invocation.
+    //Эта ошибка происходит когда событию задается свойство passive = true. Смотри dom.bind функцияю в файле "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\dat.gui\CustomController\src\dat\dom\dom.js" строка 176
+    //Потому что для такого события нельзя вызывать preventDefault(). Смотри https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+    //Я никак не могу опредплить, установден ли passive = true для данного события.
+    //Поэтому я запоминаю значение newBool а потом исползую его в function onMouseDrag(e)
+    this.newBool = newBool;
+
     dom.bind(this.__background, 'mousedown', onMouseDown, newBool);
     dom.bind(this.__background, 'touchstart', onTouchStart);
 
@@ -59,7 +67,9 @@ class NumberControllerSlider extends NumberController {
     }
 
     function onMouseDrag(e) {
-      e.preventDefault();
+
+      if (!_this.newBool)
+        e.preventDefault();
 
       const bgRect = _this.__background.getBoundingClientRect();
 
