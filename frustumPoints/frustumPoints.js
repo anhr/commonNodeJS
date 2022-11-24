@@ -301,7 +301,8 @@ class FrustumPoints
 					uniforms.paletteB = { value: - min / ( max - min ) };//0.5 };
 
 					//array of all points with cloud
-					this.cloudPoints = new this.addUniforms( THREE.RGBAFormat, _arrayCloud.getCloudsCount(), 'cloudPoints' );
+					this.cloudPoints = new this.addUniforms(THREE.RGBAFormat, _arrayCloud.getCloudsCount(), 'cloudPoints');
+
 
 					//function of distance between points. Use for creating of the cloud around point
 					//distanceTable is THREE.DataTexture
