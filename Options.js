@@ -32,13 +32,6 @@ import ColorPicker from './colorpicker/colorpicker.js';
 
 import three from './three.js'
 
-//Сейчас OrbitControls загружаю динамически в Options.createOrbitControls
-//import { OrbitControls } from './OrbitControls/OrbitControls.js';
-//import { OrbitControls, createEventDispatcher } from './OrbitControls/OrbitControls.js';
-//import { OrbitControls } from '../../three.js/dev/examples/jsm/controls/OrbitControls.js';
-//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
-
 //для создания пустого cookie который ничего не запоминает
 import Cookie from './cookieNodeJS/cookie.js';
 //import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
@@ -156,36 +149,6 @@ class Options {
 
 			if ( _this.frustumPoints )
 				_this.orbitControls.addEventListener( 'change', function () { _this.frustumPoints.onChangeControls(); } );
-
-
-			//После появления класса class OrbitControls extends EventDispatcher пришлось динамически задгружать файл OrbitControls.js
-			//https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Statements/import#%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B9_%D0%B8%D0%BC%D0%BF%D0%BE%D1%80%D1%82_2
-			//Потому что EventDispatcher еще недоступен во время import { OrbitControls }
-			//
-			//В этом случае появляется ошибка
-			//[!] (babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/Options.js: 'import' and 'export' may only appear at the top level (173:3)
-			//во время создания файлов myThree\build
-			//npm run build
-			//Поэтому class OrbitControls создаю непосредственно в файле Options.js. Смотри выше.
-/*
-			import('./OrbitControls/OrbitControls.js')
-			  .then(module => {
-
-//				createEventDispatcher();
-				_this.orbitControls = new module.OrbitControls( camera, renderer.domElement );
-				_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
-				_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-				_this.orbitControls.update();
-
-				if ( _this.frustumPoints )
-					_this.orbitControls.addEventListener( 'change', function () { _this.frustumPoints.onChangeControls(); } );
-
-
-			  })
-			  .catch(err => {
-				console.error( err.message );
-			  });
-*/
 
 		}
 

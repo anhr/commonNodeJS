@@ -210,14 +210,6 @@ class FrustumPoints
 			if ( _arrayCloud.length === 0 )
 				return undefined;//нет точек с облаком. Поэтому нет смысла создавать frustumPoints
 
-/*			
-			//После того как появился class OrbitControls extends EventDispatcher я вынужден динамически асинхронно подкачивать 
-			//файл OrbitControls.js. Смотри Options.createOrbitControls
-			//Поэтому к данному моменту options.orbitControls еще undefined
-			if ( options.orbitControls )
-				options.orbitControls.addEventListener( 'change', function () { _this.onChangeControls(); } );
-*/				
-
 			const shaderMaterial = {}, zeroPoint = new THREE.Vector3(), cameraDistanceDefault = camera.position.distanceTo( zeroPoint ), _this = this,// lines = []
 				groupFrustumPoints = new THREE.Group();
 

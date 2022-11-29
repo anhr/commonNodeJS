@@ -32,9 +32,6 @@
 		//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 
 		import Options from '../../Options.js'
-//		import { OrbitControls, createEventDispatcher } from '../../OrbitControls/OrbitControls.js';
-//		import { OrbitControls } from '../../OrbitControls/OrbitControls.js';
-		import { OrbitControls } from '../../../../three.js/dev/examples/jsm/controls/OrbitControls.js';
 
 		const scene = new THREE.Scene();
 		const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -56,24 +53,10 @@
 
 		} );
 
-		if ( typeof OrbitControls !== 'undefined' ) {
-
-//			createEventDispatcher();
-			const controls = new OrbitControls( camera, renderer.domElement );
-			controls.target.set( 0, 0, 0 );
-			controls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-			controls.update();
-
-		} else {
-
-			const options = new Options();
+		const options = new Options();
 		
-			//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
-			options.createOrbitControls( camera, renderer, scene );
-
-		}
-
-		//const cursor = renderer.domElement.style.cursor;
+		//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
+		options.createOrbitControls( camera, renderer, scene );
 
 		//
 
