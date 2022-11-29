@@ -136,7 +136,17 @@ const options = new Options( {
 
 ```
 const canvas = document.getElementById( 'canvas' );
-new FrustumPoints( camera, scene, canvas, { options: options, } );
+const gl = new FrustumPoints( camera, scene, canvas, { options: options, } ).gl;
+```
+Please edit the <b>renderer</b> after creating of <b>FrustumPoints</b>.
+```
+renderer = new THREE.WebGLRenderer({
+
+    antialias: true,
+    canvas: document.getElementById('canvas'),
+    context: gl,
+
+});
 ```
 Currently your <b>FrustumPoints</b> is not visible. Please add points to highlight the <b>FrustumPoints</b> for visualisation.
 A <b>FrustumPoints</b> cloud will be visible around each new point.
@@ -459,7 +469,7 @@ The following code is the result of this tutorial.
 
 			const canvas = document.getElementById( 'canvas' );
 
-			new FrustumPoints( camera, scene, canvas, { options: options, } );
+			const gl = new FrustumPoints( camera, scene, canvas, { options: options, } ).gl;
 
 			new Player( scene, { options: options, } );
 
@@ -497,6 +507,7 @@ The following code is the result of this tutorial.
 
 				antialias: true,
 				canvas: document.getElementById( 'canvas' ),
+				context: gl,
 
 			} );
 			renderer.setSize( window.innerWidth, window.innerHeight );
