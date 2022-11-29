@@ -478,11 +478,11 @@ class MyThree {
 			group = new THREE.Group();
 			scene.add( group );
 
-			new FrustumPoints( camera, group, canvas, {
+			const gl = new FrustumPoints( camera, group, canvas, {
 
 				options: options,
 
-			} );
+			} ).gl;
 
 			//
 
@@ -490,6 +490,7 @@ class MyThree {
 
 				antialias: true,
 				canvas: canvas,
+				context: gl,
 
 			} );
 
