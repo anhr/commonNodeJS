@@ -163,7 +163,12 @@
 			var points = new THREE.Points(
 				new THREE.BufferGeometry().setFromPoints( MyThree.Player.getPoints//options.getPoints
 					( arrayFuncs, { options: options, group: group, t: tMin } ), 4 ),
-				new THREE.PointsMaterial( { size: options.point.size, vertexColors: THREE.VertexColors } ) );
+				new THREE.PointsMaterial( {
+			
+					size: options.point.size,
+					vertexColors: true,//THREE.VertexColors//VertexColor parameter not working in v.0.142.0 but works in v0.140.2 or below https://discourse.threejs.org/t/vertexcolor-parameter-not-working-in-v-0-142-0-but-works-in-v0-140-2-or-below/40607
+		
+				} ) );
 
 			if ( !options.player )
 				points.geometry.setAttribute( 'color',
@@ -221,7 +226,7 @@
 			points = new THREE.Points(
 			//	new THREE.BufferGeometry().setFromPoints( [new THREE.Vector4( 0.5, 0.5, -0.5, 1 )], 4 ),
 				new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3( 0.5, 0.5, -0.5 )], 3 ),
-				new THREE.PointsMaterial( { size: 5, vertexColors: THREE.VertexColors } )
+				new THREE.PointsMaterial( { size: 5, vertexColors: true } )
 
 			);
 			points.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [1, 1, 1, 1], 4 ) );

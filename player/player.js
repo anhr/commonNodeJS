@@ -1873,8 +1873,12 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 		if ( options.palette )
 			color = options.palette.toColor( value, options.scales.w.min, options.scales.w.max );
 		if ( !color ) return;
-		if ( !mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors )
-			console.error( 'Player.selectMeshPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors' );
+		if (
+//			!mesh.material instanceof THREE.ShaderMaterial &&
+			!(mesh.material instanceof THREE.ShaderMaterial) &&
+			mesh.material.vertexColors !== true//THREE.VertexColors//VertexColor parameter not working in v.0.142.0 but works in v0.140.2 or below https://discourse.threejs.org/t/vertexcolor-parameter-not-working-in-v-0-142-0-but-works-in-v0-140-2-or-below/40607
+		)
+			console.error( 'Player.selectMeshPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to true.' );
 		const attributes = mesh.geometry.attributes, arrayFuncs = mesh.userData.player.arrayFuncs;
 		if ( !Player.setColorAttribute( attributes, index, color ) && arrayFuncs[index] instanceof THREE.Vector4 ) {
 
