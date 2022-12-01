@@ -876,7 +876,9 @@ var dom = {
   bind: function bind(elem, event, func, newBool) {
     var bool = newBool || false;
     if (elem.addEventListener) {
-      elem.addEventListener(event, func, bool);
+      elem.addEventListener(event, func, {
+        passive: bool
+      });
     } else if (elem.attachEvent) {
       elem.attachEvent('on' + event, func);
     }
@@ -1214,13 +1216,14 @@ function map(v, i1, i2, o1, o2) {
 }
 var NumberControllerSlider = function (_NumberController) {
   inherits$1(NumberControllerSlider, _NumberController);
-  function NumberControllerSlider(object, property, min, max, step) {
+  function NumberControllerSlider(object, property, min, max, step, newBool) {
     classCallCheck$1(this, NumberControllerSlider);
     var _this2 = possibleConstructorReturn$1(this, (NumberControllerSlider.__proto__ || Object.getPrototypeOf(NumberControllerSlider)).call(this, object, property, { min: min, max: max, step: step }));
     var _this = _this2;
     _this2.__background = document.createElement('div');
     _this2.__foreground = document.createElement('div');
-    dom.bind(_this2.__background, 'mousedown', onMouseDown);
+    _this2.newBool = newBool;
+    dom.bind(_this2.__background, 'mousedown', onMouseDown, newBool);
     dom.bind(_this2.__background, 'touchstart', onTouchStart);
     dom.addClass(_this2.__background, 'slider');
     dom.addClass(_this2.__foreground, 'slider-fg');
@@ -1231,7 +1234,7 @@ var NumberControllerSlider = function (_NumberController) {
       onMouseDrag(e);
     }
     function onMouseDrag(e) {
-      e.preventDefault();
+      if (!_this.newBool) e.preventDefault();
       var bgRect = _this.__background.getBoundingClientRect();
       _this.setValue(map(e.clientX, bgRect.left, bgRect.right, _this.__min, _this.__max));
       return false;
@@ -1568,7 +1571,7 @@ var ControllerFactory = function ControllerFactory(object, property) {
   if (Common.isNumber(initialValue)) {
     if (Common.isNumber(arguments[2]) && Common.isNumber(arguments[3])) {
       if (Common.isNumber(arguments[4])) {
-        return new NumberControllerSlider(object, property, arguments[2], arguments[3], arguments[4]);
+        return new NumberControllerSlider(object, property, arguments[2], arguments[3], arguments[4], arguments[5]);
       }
       return new NumberControllerSlider(object, property, arguments[2], arguments[3]);
     }
@@ -2560,18 +2563,18 @@ var controllers = {
 var GUI$1 = GUI;
 
 /**
-* custom controller, allow to user to change a value step by step.
-*
-* @author [Andrej Hristoliubov]{@link https://github.com/anhr}
-*
-* @copyright 2011 Data Arts Team, Google Creative Lab
-*
-* @license under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*/
+ * custom controller, allow to user to change a value step by step.
+ *
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
 var UpDownController = {
 	addButton: function addButton(innerHTML, options) {
 		options = options || {};
@@ -2591,7 +2594,9 @@ var UpDownController = {
 			button.style.cursor = 'n-resize';
 			if (button.addEventListener) {
 				if ('onwheel' in document) {
-					button.addEventListener("wheel", onWheel);
+					button.addEventListener("wheel", onWheel, {
+						passive: true
+					});
 				} else if ('onmousewheel' in document) {
 					button.addEventListener("mousewheel", onWheel);
 				} else {
@@ -4279,7 +4284,7 @@ var Three = function () {
 																																								panLeft(deltaX * (scope.object.right - scope.object.left) / scope.object.zoom / element.clientWidth, scope.object.matrix);
 																																								panUp(deltaY * (scope.object.top - scope.object.bottom) / scope.object.zoom / element.clientHeight, scope.object.matrix);
 																																			} else {
-																																								console.warn('WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.');
+																																								console.warn('WARNING: OrbitControls encountered an unknown camera type - pan disabled.');
 																																								scope.enablePan = false;
 																																			}
 																														};
@@ -4292,7 +4297,7 @@ var Three = function () {
 																																			scope.object.updateProjectionMatrix();
 																																			zoomChanged = true;
 																														} else {
-																																			console.warn('WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.');
+																																			console.warn('WARNING: OrbitControls encountered an unknown camera type - dolly/zoom disabled.');
 																																			scope.enableZoom = false;
 																														}
 																									}
@@ -4304,7 +4309,7 @@ var Three = function () {
 																																			scope.object.updateProjectionMatrix();
 																																			zoomChanged = true;
 																														} else {
-																																			console.warn('WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.');
+																																			console.warn('WARNING: OrbitControls encountered an unknown camera type - dolly/zoom disabled.');
 																																			scope.enableZoom = false;
 																														}
 																									}
@@ -4802,7 +4807,7 @@ var ScaleController = function (_controllers$CustomCo) {
 				});
 				return buttons;
 			}
-		}, 'multiplier', 1.1, 10, 0.1));
+		}, 'multiplier', 1.1, 10, 0.1, options.newBool));
 		if (_this.property === undefined) console.error('init() returns ' + _this.property);
 		return _this;
 	}
@@ -5678,7 +5683,9 @@ var dom$1$1 = {
   bind: function bind(elem, event, func, newBool) {
     var bool = newBool || false;
     if (elem.addEventListener) {
-      elem.addEventListener(event, func, bool);
+      elem.addEventListener(event, func, {
+        passive: bool
+      });
     } else if (elem.attachEvent) {
       elem.attachEvent('on' + event, func);
     }
@@ -6016,13 +6023,14 @@ function map$1(v, i1, i2, o1, o2) {
 }
 var NumberControllerSlider$1 = function (_NumberController) {
   inherits$2(NumberControllerSlider, _NumberController);
-  function NumberControllerSlider(object, property, min, max, step) {
+  function NumberControllerSlider(object, property, min, max, step, newBool) {
     classCallCheck$2(this, NumberControllerSlider);
     var _this2 = possibleConstructorReturn$2(this, (NumberControllerSlider.__proto__ || Object.getPrototypeOf(NumberControllerSlider)).call(this, object, property, { min: min, max: max, step: step }));
     var _this = _this2;
     _this2.__background = document.createElement('div');
     _this2.__foreground = document.createElement('div');
-    dom$1$1.bind(_this2.__background, 'mousedown', onMouseDown);
+    _this2.newBool = newBool;
+    dom$1$1.bind(_this2.__background, 'mousedown', onMouseDown, newBool);
     dom$1$1.bind(_this2.__background, 'touchstart', onTouchStart);
     dom$1$1.addClass(_this2.__background, 'slider');
     dom$1$1.addClass(_this2.__foreground, 'slider-fg');
@@ -6033,7 +6041,7 @@ var NumberControllerSlider$1 = function (_NumberController) {
       onMouseDrag(e);
     }
     function onMouseDrag(e) {
-      e.preventDefault();
+      if (!_this.newBool) e.preventDefault();
       var bgRect = _this.__background.getBoundingClientRect();
       _this.setValue(map$1(e.clientX, bgRect.left, bgRect.right, _this.__min, _this.__max));
       return false;
@@ -6370,7 +6378,7 @@ var ControllerFactory$1 = function ControllerFactory(object, property) {
   if (Common$1.isNumber(initialValue)) {
     if (Common$1.isNumber(arguments[2]) && Common$1.isNumber(arguments[3])) {
       if (Common$1.isNumber(arguments[4])) {
-        return new NumberControllerSlider$1(object, property, arguments[2], arguments[3], arguments[4]);
+        return new NumberControllerSlider$1(object, property, arguments[2], arguments[3], arguments[4], arguments[5]);
       }
       return new NumberControllerSlider$1(object, property, arguments[2], arguments[3]);
     }
@@ -7464,17 +7472,17 @@ var WEBGL = {
 };
 
 /**
-* node.js version of the synchronous download of the file.
-* @author [Andrej Hristoliubov]{@link https://github.com/anhr}
-*
-* @copyright 2011 Data Arts Team, Google Creative Lab
-*
-* @license under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*/
+ * node.js version of the synchronous download of the file.
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ */
 function myRequest(options) {
 	this.loadXMLDoc = function () {
 		var req;
@@ -7515,7 +7523,7 @@ function myRequest(options) {
 	};
 	this.getUrl = function () {
 		if (typeof this.url == 'undefined' || this.url == null) {
-			this.url = "XMLHttpRequest.xml";
+			ErrorMessage('XMLHttpRequest: Invalid url: ' + this.url);
 		}
 		return this.url + (this.params ? this.params : "");
 	};
@@ -7644,7 +7652,7 @@ function sync(url, options) {
 			options.onload(response, url);
 			return;
 		});
-	}, false
+	}, options.async === undefined ? false : true
 	);
 	return response;
 }
@@ -7701,16 +7709,16 @@ function sync$1(src, options) {
 		script.innerHTML = sync(src, options);
 	}, options);
 }
-function async(src, options) {
+function async$1(src, options) {
 	options = options || {};
 	options.appendTo = options.appendTo || document.getElementsByTagName('head')[0];
 	options.onload = options.onload || function () {};
 	var isrc;
-	function async(srcAsync) {
+	function async$$1(srcAsync) {
 		function next() {
 			if (src instanceof Array && isrc < src.length - 1) {
 				isrc++;
-				async(src[isrc]);
+				async$$1(src[isrc]);
 			} else options.onload();
 		}
 		if (isScriptExists(options.appendTo, srcAsync, options.onload)) {
@@ -7748,8 +7756,8 @@ function async(src, options) {
 	}
 	if (src instanceof Array) {
 		isrc = 0;
-		async(src[isrc]);
-	} else async(src);
+		async$$1(src[isrc]);
+	} else async$$1(src);
 }
 function loadScriptBase(callback, options) {
 	options.tag = options.tag || {};
@@ -7791,7 +7799,7 @@ function isScriptExists(elParent, srcAsync, onload) {
 
 var loadScript = {
   sync: sync$1,
-  async: async
+  async: async$1
 };
 
 /**
@@ -8578,467 +8586,471 @@ SpriteText$1.updateSpriteTextGroup = function (group) {
 */
 var StereoEffect =
 function StereoEffect(renderer) {
-					var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Options();
-					classCallCheck(this, StereoEffect);
-					if (!renderer) {
-										console.error('StereoEffect: renderer = ' + renderer);
-										return;
-					}
-					if (!options.boOptions) {
-										options = new Options(options);
-					}
-					if (options.stereoEffect === false) return;
-					if (options.dat.gui) options.dat.mouseenter = false;
-					var THREE = three$1.THREE;
-					assign();
-					if (!options.stereoEffect) options.stereoEffect = {};
-					var settings = options.stereoEffect;
-					this.settings = settings;
-					this.options = options;
-					options.stereoEffect = this;
-					if (settings.spatialMultiplex === undefined) settings.spatialMultiplex = spatialMultiplexsIndexs.Mono;
-					settings.stereo = new THREE.StereoCamera();
-					settings.stereo.aspect = settings.stereoAspect || 1;
-					if (settings.far === undefined) settings.far = new THREE.PerspectiveCamera().focus;
-					settings.focus = settings.camera === undefined ? new THREE.PerspectiveCamera().focus : new THREE.Vector3().distanceTo(settings.camera.position);
-					settings.zeroParallax = 0;
-					settings.eyeSep = settings.eyeSep || new THREE.StereoCamera().eyeSep / 10 * settings.far;
-					if (settings.camera !== undefined) settings.camera.focus = settings.focus;
-					this.setEyeSeparation = function (eyeSep) {
-										settings.stereo.eyeSep = eyeSep;
-					};
-					this.setEyeSeparation(settings.eyeSep);
-					this.getRendererSize = function () {
-										return Options.raycaster.EventListeners.getRendererSize(renderer, settings.elParent);
-					};
-					var fullScreenSettings;
-					var spatialMultiplexCur;
-					this.render = function (scene, camera) {
-										var spatialMultiplex = parseInt(settings.spatialMultiplex);
-										if (settings.rememberSize && !fullScreenSettings) {
-															if (_canvasMenu && _canvasMenu.getFullScreenSettings) fullScreenSettings = _canvasMenu.getFullScreenSettings(this);else fullScreenSettings = new CreateFullScreenSettings(THREE, renderer, camera, {
-																				canvasMenu: _canvasMenu,
-																				stereoEffect: this
-															});
-										}
-										scene.updateMatrixWorld();
-										if (camera.parent === null) camera.updateMatrixWorld();
-										var size = new THREE.Vector2();
-										renderer.getSize(size);
-										if (renderer.autoClear) renderer.clear();
-										renderer.setScissorTest(true);
-										var xL, yL, widthL, heightL, xR, yR, widthR, heightR;
-										var parallax = settings.zeroParallax;
-										function setMultiplex(stereoEffect) {
-															if (!fullScreenSettings || spatialMultiplexCur === spatialMultiplex) return false;
-															spatialMultiplexCur = spatialMultiplex;
-															if (stereoEffect.setControllerSpatialMultiplex) stereoEffect.setControllerSpatialMultiplex(spatialMultiplex);else if (stereoEffect.setSpatialMultiplex) stereoEffect.setSpatialMultiplex(spatialMultiplex);
-															return true;
-										}
-										function setFullScreen(fullScreen, stereoEffect) {
-															if (setMultiplex(stereoEffect)) fullScreenSettings.setFullScreen(fullScreen);
-										}
-										switch (spatialMultiplex) {
-															case spatialMultiplexsIndexs.Mono:
-																				renderer.setScissor(0, 0, size.width, size.height);
-																				renderer.setViewport(0, 0, size.width, size.height);
-																				renderer.render(scene, camera);
-																				renderer.setScissorTest(false);
-																				if (options.canvasMenu) setMultiplex(this);else setFullScreen(true, this);
-																				return;
-															case spatialMultiplexsIndexs.SbS:
-																				var _width = size.width / 2;
-																				xL = 0 + parallax;yL = 0;widthL = _width;heightL = size.height;
-																				xR = _width - parallax;yR = 0;widthR = _width;heightR = size.height;
-																				setFullScreen(false, this);
-																				break;
-															case spatialMultiplexsIndexs.TaB:
-																				xL = 0 + parallax;yL = 0;widthL = size.width;heightL = size.height / 2;
-																				xR = 0 - parallax;yR = size.height / 2;widthR = size.width;heightR = size.height / 2;
-																				setFullScreen(false, this);
-																				break;
-															default:
-																				console.error('THREE.StereoEffect.render: Invalid "Spatial  multiplex" parameter: ' + spatialMultiplex);
-										}
-										settings.stereo.update(camera);
-										renderer.setScissor(xL, yL, widthL, heightL);
-										renderer.setViewport(xL, yL, widthL, heightL);
-										renderer.render(scene, settings.stereo.cameraL);
-										renderer.setScissor(xR, yR, widthR, heightR);
-										renderer.setViewport(xR, yR, widthR, heightR);
-										renderer.render(scene, settings.stereo.cameraR);
-										renderer.setScissorTest(false);
-					};
-					function getLang(params) {
-										params = params || {};
-										var _lang = {
-															stereoEffects: 'Stereo effects',
-															spatialMultiplexName: 'Spatial  multiplex',
-															spatialMultiplexTitle: 'Choose a way to do spatial multiplex.',
-															spatialMultiplexs: {
-																				'Mono': spatialMultiplexsIndexs.Mono,
-																				'Side by side': spatialMultiplexsIndexs.SbS,
-																				'Top and bottom': spatialMultiplexsIndexs.TaB
-															},
-															eyeSeparationName: 'Eye separation',
-															eyeSeparationTitle: 'The distance between left and right cameras.',
-															focus: 'Focus',
-															focusTitle: 'Object distance.',
-															zeroParallaxName: 'Zero parallax',
-															zeroParallaxTitle: 'Distance to objects with zero parallax.',
-															defaultButton: 'Default',
-															defaultTitle: 'Restore default stereo effects settings.'
-										};
-										var _languageCode = params.getLanguageCode === undefined ? 'en'
-										: params.getLanguageCode();
-										switch (_languageCode) {
-															case 'ru':
-																				_lang.stereoEffects = 'Стерео эффекты';
-																				_lang.spatialMultiplexName = 'Мультиплекс';
-																				_lang.spatialMultiplexTitle = 'Выберите способ создания пространственного мультиплексирования.';
-																				_lang.spatialMultiplexs = {
-																									'Моно': spatialMultiplexsIndexs.Mono,
-																									'Слева направо': spatialMultiplexsIndexs.SbS,
-																									'Сверху вниз': spatialMultiplexsIndexs.TaB
-																				};
-																				_lang.eyeSeparationName = 'Развод камер';
-																				_lang.eyeSeparationTitle = 'Расстояние между левой и правой камерами.';
-																				_lang.focus = 'Фокус';
-																				_lang.focusTitle = 'Расстояние до объекта.';
-																				_lang.zeroParallaxName = 'Параллакс 0';
-																				_lang.zeroParallaxTitle = 'Расстояние до объектов с нулевым параллаксом.';
-																				_lang.defaultButton = 'Восстановить';
-																				_lang.defaultTitle = 'Восстановить настройки стерео эффектов по умолчанию.';
-																				break;
-															default:
-																				if (params.lang === undefined || params.lang._languageCode != _languageCode) break;
-																				Object.keys(params.lang).forEach(function (key) {
-																									if (_lang[key] === undefined) return;
-																									_lang[key] = params.lang[key];
-																				});
-										}
-										return _lang;
-					}
-					this.gui = function () {
-										var guiParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-										var gui = guiParams.folder || options.dat.gui;
-										if (!gui || options.dat.stereoEffectsGui === false) return;
-										var dat = guiParams.dat || three$1.dat;
-										if (guiParams === undefined) guiParams = {};
-										guiParams.scale = guiParams.scale || 1;
-										var stereoEffect = options.dat.getCookieName('StereoEffect'),
-										    _lang = getLang({ getLanguageCode: options.getLanguageCode, lang: options.lang });
-										var optionsDefault = {
-															spatialMultiplex: settings.spatialMultiplex,
-															eyeSep: new THREE.StereoCamera().eyeSep / 10 * settings.far,
-															focus: settings.focus,
-															zeroParallax: 0
-										};
-										Object.freeze(optionsDefault);
-										options.dat.cookie.getObject(stereoEffect, settings, optionsDefault);
-										settings.spatialMultiplex = parseInt(settings.spatialMultiplex);
-										if (this.setSpatialMultiplex) this.setSpatialMultiplex(settings.spatialMultiplex);
-										function displayControllers(value) {
-															var display = value == spatialMultiplexsIndexs.Mono ? 'none' : 'block';
-															_fEyeSeparation.domElement.style.display = display;
-															if (_controllerCameraFocus !== undefined) _controllerCameraFocus.__li.style.display = display;
-															_controllerDefaultF.__li.style.display = display;
-															_controllerZeroParallax.__li.style.display = display;
-										}
-										var _fStereoEffects = gui.addFolder(_lang.stereoEffects);
-										var _controllerSpatialMultiplex = _fStereoEffects.add(settings, 'spatialMultiplex', _lang.spatialMultiplexs).onChange(function (value) {
-															value = parseInt(value);
-															displayControllers(value);
-															setObject(stereoEffect);
-															if (guiParams.onChangeMode) guiParams.onChangeMode(value);
-															if (menuItemStereoEffect) menuItemStereoEffect.select(value);
-										});
-										dat.controllerNameAndTitle(_controllerSpatialMultiplex, _lang.spatialMultiplexName, _lang.spatialMultiplexTitle);
-										this.setControllerSpatialMultiplex = function (index) {
-															saveToCookie = false;
-															_controllerSpatialMultiplex.setValue(index);
-															saveToCookie = true;
-										};
-										var _fEyeSeparation = _fStereoEffects.addFolder(_lang.eyeSeparationName);
-										dat.folderNameAndTitle(_fEyeSeparation, _lang.eyeSeparationName, _lang.eyeSeparationTitle);
-										_fEyeSeparation.add(new PositionController(function (shift) {
-															settings.eyeSep += shift;
-															_controllerEyeSep.setValue(settings.eyeSep);
-										}, { settings: { offset: 0.01 }, min: 0.0001, max: 0.01, step: 0.0001 }));
-										var _controllerEyeSep = dat.controllerZeroStep(_fEyeSeparation, settings.stereo, 'eyeSep', function (value) {
-															settings.eyeSep = value;
-															setObject(stereoEffect);
-										});
-										dat.controllerNameAndTitle(_controllerEyeSep, _lang.eyeSeparationName, _lang.eyeSeparationTitle);
-										if (settings.camera !== undefined) settings.camera.focus = settings.focus;
-										var _controllerCameraFocus;
-										if (settings.camera) {
-															_controllerCameraFocus = _fStereoEffects.add(settings.camera, 'focus', optionsDefault.focus / 10, optionsDefault.focus * 2, optionsDefault.focus / 1000).onChange(function (value) {
-																				settings.focus = value;
-																				setObject(stereoEffect);
-															});
-															dat.controllerNameAndTitle(_controllerCameraFocus, _lang.focus, _lang.focusTitle);
-										}
-										var _minMax = (60 - 400 / 9) * guiParams.scale + 400 / 9;
-										var _controllerZeroParallax = _fStereoEffects.add(settings, 'zeroParallax', -_minMax, _minMax).onChange(function (value) {
-															settings.zeroParallax = value;
-															setObject(stereoEffect);
-										});
-										dat.controllerNameAndTitle(_controllerZeroParallax, _lang.zeroParallaxName, _lang.zeroParallaxTitle);
-										var _controllerDefaultF = _fStereoEffects.add({
-															defaultF: function defaultF(value) {
-																				settings.stereo.eyeSep = optionsDefault.eyeSep;
-																				_controllerEyeSep.setValue(settings.stereo.eyeSep);
-																				if (settings.camera) {
-																									settings.camera.focus = optionsDefault.focus;
-																									_controllerCameraFocus.setValue(settings.camera.focus);
-																				}
-																				settings.zeroParallax = optionsDefault.zeroParallax;
-																				_controllerZeroParallax.setValue(settings.zeroParallax);
-															}
-										}, 'defaultF');
-										dat.controllerNameAndTitle(_controllerDefaultF, _lang.defaultButton, _lang.defaultTitle);
-										displayControllers(settings.spatialMultiplex);
-										var saveToCookie = true;
-										function setObject(name) {
-															if (!saveToCookie) return;
-															var object = {};
-															Object.keys(optionsDefault).forEach(function (key) {
-																				object[key] = settings[key];
-															});
-															options.dat.cookie.setObject(name, object);
-										}
-					};
-					var _canvasMenu, menuItemStereoEffect;
-					this.createCanvasMenuItem = function (canvasMenu, params) {
-										_canvasMenu = canvasMenu;
-										params = params || {};
-										var _lang = getLang({ getLanguageCode: params.getLanguageCode, lang: params.lang }),
-										    spatialMultiplexs = Object.keys(_lang.spatialMultiplexs);
-										menuItemStereoEffect = {
-															name: '⚭',
-															title: _lang.stereoEffects,
-															id: 'menuButtonStereoEffects',
-															drop: 'up',
-															items: [{
-																				name: spatialMultiplexs[spatialMultiplexsIndexs.Mono],
-																				id: 'menuButtonStereoEffectsMono',
-																				radio: true,
-																				checked: settings.spatialMultiplex === spatialMultiplexsIndexs.Mono,
-																				spatialMultiplex: spatialMultiplexsIndexs.Mono,
-																				onclick: function onclick(event) {
-																									settings.spatialMultiplex = spatialMultiplexsIndexs.Mono;
-																				}
-															}, {
-																				name: spatialMultiplexs[spatialMultiplexsIndexs.SbS],
-																				id: 'menuButtonStereoEffectsSbS',
-																				radio: true,
-																				checked: settings.spatialMultiplex === spatialMultiplexsIndexs.SbS,
-																				spatialMultiplex: spatialMultiplexsIndexs.SbS,
-																				onclick: function onclick(event) {
-																									settings.spatialMultiplex = spatialMultiplexsIndexs.SbS;
-																				}
-															}, {
-																				name: spatialMultiplexs[spatialMultiplexsIndexs.TaB],
-																				id: 'menuButtonStereoEffectsTaB',
-																				radio: true,
-																				checked: settings.spatialMultiplex === spatialMultiplexsIndexs.TaB,
-																				spatialMultiplex: spatialMultiplexsIndexs.TaB,
-																				onclick: function onclick(event) {
-																									settings.spatialMultiplex = spatialMultiplexsIndexs.TaB;
-																				}
-															}]
-										};
-										menuItemStereoEffect.select = function (value) {
-															menuItemStereoEffect.items.forEach(function (item) {
-																				if (item.spatialMultiplex === value) {
-																									if (!item.checked) item.elName.onclick({ target: item.elName });
-																				}
-															});
-										};
-										this.setSpatialMultiplex = function (index) {
-															menuItemStereoEffect.select(index);
-										};
-										canvasMenu.menu.push(menuItemStereoEffect);
-					};
+	var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Options();
+	classCallCheck(this, StereoEffect);
+	if (!renderer) {
+		console.error('StereoEffect: renderer = ' + renderer);
+		return;
+	}
+	if (!options.boOptions) {
+		options = new Options(options);
+	}
+	if (options.stereoEffect === false) return;
+	if (options.dat.gui) options.dat.mouseenter = false;
+	var THREE = three$1.THREE;
+	assign();
+	if (!options.stereoEffect) options.stereoEffect = {};
+	var settings = options.stereoEffect;
+	this.settings = settings;
+	this.options = options;
+	options.stereoEffect = this;
+	if (settings.spatialMultiplex === undefined) settings.spatialMultiplex = spatialMultiplexsIndexs.Mono;
+	settings.stereo = new THREE.StereoCamera();
+	settings.stereo.aspect = settings.stereoAspect || 1;
+	if (settings.far === undefined) settings.far = new THREE.PerspectiveCamera().focus;
+	settings.focus = settings.camera === undefined ? new THREE.PerspectiveCamera().focus : new THREE.Vector3().distanceTo(settings.camera.position);
+	settings.zeroParallax = 0;
+	settings.eyeSep = settings.eyeSep || new THREE.StereoCamera().eyeSep / 10 * settings.far;
+	if (settings.camera !== undefined) settings.camera.focus = settings.focus;
+	this.setEyeSeparation = function (eyeSep) {
+		settings.stereo.eyeSep = eyeSep;
+	};
+	this.setEyeSeparation(settings.eyeSep);
+	this.getRendererSize = function () {
+		return Options.raycaster.EventListeners.getRendererSize(renderer, settings.elParent);
+	};
+	var fullScreenSettings;
+	var spatialMultiplexCur;
+	this.render = function (scene, camera) {
+		var spatialMultiplex = parseInt(settings.spatialMultiplex);
+		if (settings.rememberSize && !fullScreenSettings) {
+			if (_canvasMenu && _canvasMenu.getFullScreenSettings) fullScreenSettings = _canvasMenu.getFullScreenSettings(this);else fullScreenSettings = new CreateFullScreenSettings(THREE, renderer, camera, {
+				canvasMenu: _canvasMenu,
+				stereoEffect: this
+			});
+		}
+		scene.updateMatrixWorld();
+		if (camera.parent === null) camera.updateMatrixWorld();
+		var size = new THREE.Vector2();
+		renderer.getSize(size);
+		if (renderer.autoClear) renderer.clear();
+		renderer.setScissorTest(true);
+		var xL, yL, widthL, heightL, xR, yR, widthR, heightR;
+		var parallax = settings.zeroParallax;
+		function setMultiplex(stereoEffect) {
+			if (!fullScreenSettings || spatialMultiplexCur === spatialMultiplex) return false;
+			spatialMultiplexCur = spatialMultiplex;
+			if (stereoEffect.setControllerSpatialMultiplex) stereoEffect.setControllerSpatialMultiplex(spatialMultiplex);else if (stereoEffect.setSpatialMultiplex) stereoEffect.setSpatialMultiplex(spatialMultiplex);
+			return true;
+		}
+		function setFullScreen(fullScreen, stereoEffect) {
+			if (setMultiplex(stereoEffect)) fullScreenSettings.setFullScreen(fullScreen);
+		}
+		switch (spatialMultiplex) {
+			case spatialMultiplexsIndexs.Mono:
+				renderer.setScissor(0, 0, size.width, size.height);
+				renderer.setViewport(0, 0, size.width, size.height);
+				renderer.render(scene, camera);
+				renderer.setScissorTest(false);
+				if (options.canvasMenu) setMultiplex(this);else setFullScreen(true, this);
+				return;
+			case spatialMultiplexsIndexs.SbS:
+				var _width = size.width / 2;
+				xL = 0 + parallax;yL = 0;widthL = _width;heightL = size.height;
+				xR = _width - parallax;yR = 0;widthR = _width;heightR = size.height;
+				setFullScreen(false, this);
+				break;
+			case spatialMultiplexsIndexs.TaB:
+				xL = 0 + parallax;yL = 0;widthL = size.width;heightL = size.height / 2;
+				xR = 0 - parallax;yR = size.height / 2;widthR = size.width;heightR = size.height / 2;
+				setFullScreen(false, this);
+				break;
+			default:
+				console.error('THREE.StereoEffect.render: Invalid "Spatial  multiplex" parameter: ' + spatialMultiplex);
+		}
+		settings.stereo.update(camera);
+		renderer.setScissor(xL, yL, widthL, heightL);
+		renderer.setViewport(xL, yL, widthL, heightL);
+		renderer.render(scene, settings.stereo.cameraL);
+		renderer.setScissor(xR, yR, widthR, heightR);
+		renderer.setViewport(xR, yR, widthR, heightR);
+		renderer.render(scene, settings.stereo.cameraR);
+		renderer.setScissorTest(false);
+	};
+	function getLang(params) {
+		params = params || {};
+		var _lang = {
+			stereoEffects: 'Stereo effects',
+			spatialMultiplexName: 'Spatial  multiplex',
+			spatialMultiplexTitle: 'Choose a way to do spatial multiplex.',
+			spatialMultiplexs: {
+				'Mono': spatialMultiplexsIndexs.Mono,
+				'Side by side': spatialMultiplexsIndexs.SbS,
+				'Top and bottom': spatialMultiplexsIndexs.TaB
+			},
+			eyeSeparationName: 'Eye separation',
+			eyeSeparationTitle: 'The distance between left and right cameras.',
+			focus: 'Focus',
+			focusTitle: 'Object distance.',
+			zeroParallaxName: 'Zero parallax',
+			zeroParallaxTitle: 'Distance to objects with zero parallax.',
+			defaultButton: 'Default',
+			defaultTitle: 'Restore default stereo effects settings.'
+		};
+		var _languageCode = params.getLanguageCode === undefined ? 'en'
+		: params.getLanguageCode();
+		switch (_languageCode) {
+			case 'ru':
+				_lang.stereoEffects = 'Стерео эффекты';
+				_lang.spatialMultiplexName = 'Мультиплекс';
+				_lang.spatialMultiplexTitle = 'Выберите способ создания пространственного мультиплексирования.';
+				_lang.spatialMultiplexs = {
+					'Моно': spatialMultiplexsIndexs.Mono,
+					'Слева направо': spatialMultiplexsIndexs.SbS,
+					'Сверху вниз': spatialMultiplexsIndexs.TaB
+				};
+				_lang.eyeSeparationName = 'Развод камер';
+				_lang.eyeSeparationTitle = 'Расстояние между левой и правой камерами.';
+				_lang.focus = 'Фокус';
+				_lang.focusTitle = 'Расстояние до объекта.';
+				_lang.zeroParallaxName = 'Параллакс 0';
+				_lang.zeroParallaxTitle = 'Расстояние до объектов с нулевым параллаксом.';
+				_lang.defaultButton = 'Восстановить';
+				_lang.defaultTitle = 'Восстановить настройки стерео эффектов по умолчанию.';
+				break;
+			default:
+				if (params.lang === undefined || params.lang._languageCode != _languageCode) break;
+				Object.keys(params.lang).forEach(function (key) {
+					if (_lang[key] === undefined) return;
+					_lang[key] = params.lang[key];
+				});
+		}
+		return _lang;
+	}
+	this.gui = function () {
+		var guiParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+		var gui = guiParams.folder || options.dat.gui;
+		if (!gui || options.dat.stereoEffectsGui === false) return;
+		var dat = guiParams.dat || three$1.dat;
+		if (guiParams === undefined) guiParams = {};
+		guiParams.scale = guiParams.scale || 1;
+		var stereoEffect = options.dat.getCookieName('StereoEffect'),
+		    _lang = getLang({ getLanguageCode: options.getLanguageCode, lang: options.lang });
+		var optionsDefault = {
+			spatialMultiplex: settings.spatialMultiplex,
+			eyeSep: new THREE.StereoCamera().eyeSep / 10 * settings.far,
+			focus: settings.focus,
+			zeroParallax: 0
+		};
+		Object.freeze(optionsDefault);
+		options.dat.cookie.getObject(stereoEffect, settings, optionsDefault);
+		settings.spatialMultiplex = parseInt(settings.spatialMultiplex);
+		if (this.setSpatialMultiplex) this.setSpatialMultiplex(settings.spatialMultiplex);
+		function displayControllers(value) {
+			var display = value == spatialMultiplexsIndexs.Mono ? 'none' : 'block';
+			_fEyeSeparation.domElement.style.display = display;
+			if (_controllerCameraFocus !== undefined) _controllerCameraFocus.__li.style.display = display;
+			_controllerDefaultF.__li.style.display = display;
+			_controllerZeroParallax.__li.style.display = display;
+		}
+		var _fStereoEffects = gui.addFolder(_lang.stereoEffects);
+		var _controllerSpatialMultiplex = _fStereoEffects.add(settings, 'spatialMultiplex', _lang.spatialMultiplexs).onChange(function (value) {
+			value = parseInt(value);
+			displayControllers(value);
+			setObject(stereoEffect);
+			if (guiParams.onChangeMode) guiParams.onChangeMode(value);
+			if (menuItemStereoEffect) menuItemStereoEffect.select(value);
+		});
+		dat.controllerNameAndTitle(_controllerSpatialMultiplex, _lang.spatialMultiplexName, _lang.spatialMultiplexTitle);
+		this.setControllerSpatialMultiplex = function (index) {
+			saveToCookie = false;
+			_controllerSpatialMultiplex.setValue(index);
+			saveToCookie = true;
+		};
+		var _fEyeSeparation = _fStereoEffects.addFolder(_lang.eyeSeparationName);
+		dat.folderNameAndTitle(_fEyeSeparation, _lang.eyeSeparationName, _lang.eyeSeparationTitle);
+		_fEyeSeparation.add(new PositionController(function (shift) {
+			settings.eyeSep += shift;
+			_controllerEyeSep.setValue(settings.eyeSep);
+		}, { settings: { offset: 0.01 }, min: 0.0001, max: 0.01, step: 0.0001 }));
+		var _controllerEyeSep = dat.controllerZeroStep(_fEyeSeparation, settings.stereo, 'eyeSep', function (value) {
+			settings.eyeSep = value;
+			setObject(stereoEffect);
+		});
+		dat.controllerNameAndTitle(_controllerEyeSep, _lang.eyeSeparationName, _lang.eyeSeparationTitle);
+		if (settings.camera !== undefined) settings.camera.focus = settings.focus;
+		var _controllerCameraFocus;
+		if (settings.camera) {
+			_controllerCameraFocus = _fStereoEffects.add(settings.camera, 'focus', optionsDefault.focus / 10, optionsDefault.focus * 2, optionsDefault.focus / 1000).onChange(function (value) {
+				settings.focus = value;
+				setObject(stereoEffect);
+			});
+			dat.controllerNameAndTitle(_controllerCameraFocus, _lang.focus, _lang.focusTitle);
+		}
+		var _minMax = (60 - 400 / 9) * guiParams.scale + 400 / 9;
+		var _controllerZeroParallax = _fStereoEffects.add(settings, 'zeroParallax', -_minMax, _minMax).onChange(function (value) {
+			settings.zeroParallax = value;
+			setObject(stereoEffect);
+		});
+		dat.controllerNameAndTitle(_controllerZeroParallax, _lang.zeroParallaxName, _lang.zeroParallaxTitle);
+		var _controllerDefaultF = _fStereoEffects.add({
+			defaultF: function defaultF(value) {
+				settings.stereo.eyeSep = optionsDefault.eyeSep;
+				_controllerEyeSep.setValue(settings.stereo.eyeSep);
+				if (settings.camera) {
+					settings.camera.focus = optionsDefault.focus;
+					_controllerCameraFocus.setValue(settings.camera.focus);
+				}
+				settings.zeroParallax = optionsDefault.zeroParallax;
+				_controllerZeroParallax.setValue(settings.zeroParallax);
+			}
+		}, 'defaultF');
+		dat.controllerNameAndTitle(_controllerDefaultF, _lang.defaultButton, _lang.defaultTitle);
+		displayControllers(settings.spatialMultiplex);
+		var saveToCookie = true;
+		function setObject(name) {
+			if (!saveToCookie) return;
+			var object = {};
+			Object.keys(optionsDefault).forEach(function (key) {
+				object[key] = settings[key];
+			});
+			options.dat.cookie.setObject(name, object);
+		}
+	};
+	var _canvasMenu, menuItemStereoEffect;
+	this.createCanvasMenuItem = function (canvasMenu, params) {
+		_canvasMenu = canvasMenu;
+		params = params || {};
+		var _lang = getLang({ getLanguageCode: params.getLanguageCode, lang: params.lang }),
+		    spatialMultiplexs = Object.keys(_lang.spatialMultiplexs);
+		menuItemStereoEffect = {
+			name: '⚭',
+			title: _lang.stereoEffects,
+			id: 'menuButtonStereoEffects',
+			drop: 'up',
+			items: [{
+				name: spatialMultiplexs[spatialMultiplexsIndexs.Mono],
+				id: 'menuButtonStereoEffectsMono',
+				radio: true,
+				checked: settings.spatialMultiplex === spatialMultiplexsIndexs.Mono,
+				spatialMultiplex: spatialMultiplexsIndexs.Mono,
+				onclick: function onclick(event) {
+					settings.spatialMultiplex = spatialMultiplexsIndexs.Mono;
+				}
+			}, {
+				name: spatialMultiplexs[spatialMultiplexsIndexs.SbS],
+				id: 'menuButtonStereoEffectsSbS',
+				radio: true,
+				checked: settings.spatialMultiplex === spatialMultiplexsIndexs.SbS,
+				spatialMultiplex: spatialMultiplexsIndexs.SbS,
+				onclick: function onclick(event) {
+					settings.spatialMultiplex = spatialMultiplexsIndexs.SbS;
+				}
+			}, {
+				name: spatialMultiplexs[spatialMultiplexsIndexs.TaB],
+				id: 'menuButtonStereoEffectsTaB',
+				radio: true,
+				checked: settings.spatialMultiplex === spatialMultiplexsIndexs.TaB,
+				spatialMultiplex: spatialMultiplexsIndexs.TaB,
+				onclick: function onclick(event) {
+					settings.spatialMultiplex = spatialMultiplexsIndexs.TaB;
+				}
+			}]
+		};
+		menuItemStereoEffect.select = function (value) {
+			menuItemStereoEffect.items.forEach(function (item) {
+				if (item.spatialMultiplex === value) {
+					if (!item.checked) item.elName.onclick({ target: item.elName });
+				}
+			});
+		};
+		this.setSpatialMultiplex = function (index) {
+			menuItemStereoEffect.select(index);
+		};
+		canvasMenu.menu.push(menuItemStereoEffect);
+	};
 };
 
 StereoEffect.spatialMultiplexsIndexs = {
-					Mono: 0,
-					SbS: 1,
-					TaB: 2
+	Mono: 0,
+	SbS: 1,
+	TaB: 2
 };
 Object.freeze(StereoEffect.spatialMultiplexsIndexs);
 var spatialMultiplexsIndexs = StereoEffect.spatialMultiplexsIndexs;
 function assign() {
-					var THREE = three$1.THREE;
-					if (new THREE.Raycaster().setStereoEffect) return;
-					Object.assign(THREE.Raycaster.prototype, {
-										setStereoEffect: function setStereoEffect() {
-															var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-															if (settings.stereoEffect === false) return;
-															settings.raycasterEvents = settings.raycasterEvents === undefined ? true : settings.raycasterEvents;
-															var camera = settings.camera,
-															    renderer = settings.renderer;
-															if (settings.raycasterEvents) {
-																				var _mouse = new THREE.Vector2();
-																				window.addEventListener('mousemove', function (event) {
-																									_mouse.x = event.clientX / window.innerWidth * 2 - 1;
-																									_mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-																									raycaster.setFromCamera(_mouse, camera);
-																									raycaster.stereo.onDocumentMouseMove(event);
-																				}, false);
-																				window.addEventListener('pointerdown', function (event) {
-																									raycaster.stereo.onDocumentMouseDown(event);
-																				}, false);
-															}
-															var stereoEffect = settings.stereoEffect !== undefined ? settings.stereoEffect : typeof effect !== 'undefined' ? effect : new StereoEffect(renderer, settings.options),
-															    raycaster = this,
-															    mouseL = new THREE.Vector2(),
-															    mouseR = new THREE.Vector2();
-															var particles,
-															mouse;
-															function getMousePosition() {
-																				stereoEffect.getRendererSize().getMousePosition(mouse, event);
-																				function mousePosition(vectorName, b) {
-																									mouseL.copy(mouse);
-																									mouseR.copy(mouse);
-																									var a = 0.5;
-																									mouseL[vectorName] += a;
-																									mouseL[vectorName] *= 2;
-																									mouseR[vectorName] -= a;
-																									mouseR[vectorName] *= 2;
-																									var size = new THREE.Vector2();
-																									renderer.getSize(size);
-																									var zeroParallax = stereoEffect.settings.zeroParallax / size.x * b;
-																									mouseL.x -= zeroParallax;
-																									mouseR.x += zeroParallax;
-																				}
-																				switch (parseInt(stereoEffect.settings.spatialMultiplex)) {
-																									case spatialMultiplexsIndexs.Mono:
-																														return;
-																									case spatialMultiplexsIndexs.SbS:
-																														mousePosition('x', 4);
-																														break;
-																									case spatialMultiplexsIndexs.TaB:
-																														mousePosition('y', 2);
-																														break;
-																									default:
-																														console.error('THREE.Raycaster.setStereoEffect.getMousePosition: Invalid effect.settings.spatialMultiplex = ' + effect.settings.spatialMultiplex);
-																														return;
-																				}
-															}
-															function intersection(optionsIntersection) {
-																				if (mouse === undefined) return;
-																				optionsIntersection = optionsIntersection || settings;
-																				function isIntersection() {
-																									Options.raycaster.intersectionsInOut(particles, raycaster, renderer, mouse, settings);
-																				}
-																				if (parseInt(stereoEffect.settings.spatialMultiplex) !== spatialMultiplexsIndexs.Mono) {
-																									var mouseCur = mouse;
-																									mouse = mouseL;
-																									raycaster.setFromCamera(mouseL, camera);
-																									if (!isIntersection()) {
-																														mouse = mouseR;
-																														raycaster.setFromCamera(mouseR, camera);
-																														isIntersection();
-																									}
-																									mouse = mouseCur;
-																									return;
-																				}
-																				raycaster.setFromCamera(mouse, camera);
-																				isIntersection();
-															}
-															this.stereo = {
-																				onDocumentMouseMove: function onDocumentMouseMove(event) {
-																									if (particles === undefined) return;
-																									event.preventDefault();
-																									if (mouse === undefined) mouse = new THREE.Vector2();
-																									getMousePosition();
-																									intersection();
-																				},
-																				isAddedToParticles: function isAddedToParticles(particle) {
-																									if (!particles) return false;
-																									return particles.includes(particle);
-																				},
-																				addParticle: function addParticle(particle) {
-																									if (particles === undefined) particles = [];
-																									if (this.isAddedToParticles(particle)) {
-																														console.error('Duplicate particle "' + particle.name + '"');
-																														return;
-																									}
-																									particles.push(particle);
-																				},
-																				addParticles: function addParticles(newParticles) {
-																									if (particles !== undefined) {
-																														if (!Array.isArray(particles)) {
-																																			var particlesCur = particles;
-																																			particles = [];
-																																			particles.push(particlesCur);
-																														}
-																														particles.push(newParticles);
-																														return;
-																									}
-																									particles = newParticles;
-																				},
-																				removeParticle: function removeParticle(particle) {
-																									for (var i = 0; i < particles.length; i++) {
-																														if (Object.is(particle, particles[i])) {
-																																			particles.splice(i, 1);
-																																			break;
-																														}
-																									}
-																				},
-																				removeParticles: function removeParticles() {
-																									particles = undefined;
-																				},
-																				getPosition: function getPosition(intersection) {
-																									var attributesPosition = intersection.object.geometry.attributes.position;
-																									var position = attributesPosition.itemSize >= 4 ? new THREE.Vector4(0, 0, 0, 0) : new THREE.Vector3();
-																									if (intersection.index !== undefined) {
-																														position.fromArray(attributesPosition.array, intersection.index * attributesPosition.itemSize);
-																														position.multiply(intersection.object.scale);
-																														position.add(intersection.object.position);
-																									} else position = intersection.object.position;
-																									return position;
-																				}
-															};
-										}
-					});
+	var THREE = three$1.THREE;
+	if (new THREE.Raycaster().setStereoEffect) return;
+	Object.assign(THREE.Raycaster.prototype, {
+		setStereoEffect: function setStereoEffect() {
+			var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+			if (settings.stereoEffect === false) return;
+			settings.raycasterEvents = settings.raycasterEvents === undefined ? true : settings.raycasterEvents;
+			var camera = settings.camera,
+			    renderer = settings.renderer;
+			if (settings.raycasterEvents) {
+				var _mouse = new THREE.Vector2();
+				window.addEventListener('mousemove', function (event) {
+					_mouse.x = event.clientX / window.innerWidth * 2 - 1;
+					_mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+					raycaster.setFromCamera(_mouse, camera);
+					raycaster.stereo.onDocumentMouseMove(event);
+				}, false);
+				window.addEventListener('pointerdown', function (event) {
+					raycaster.stereo.onDocumentMouseDown(event);
+				}, false);
+			}
+			var stereoEffect = settings.stereoEffect !== undefined ? settings.stereoEffect : typeof effect !== 'undefined' ? effect : new StereoEffect(renderer, settings.options),
+			    raycaster = this,
+			    mouseL = new THREE.Vector2(),
+			    mouseR = new THREE.Vector2();
+			var particles,
+			mouse;
+			function getMousePosition() {
+				stereoEffect.getRendererSize().getMousePosition(mouse, event);
+				function mousePosition(vectorName, b) {
+					mouseL.copy(mouse);
+					mouseR.copy(mouse);
+					var a = 0.5;
+					mouseL[vectorName] += a;
+					mouseL[vectorName] *= 2;
+					mouseR[vectorName] -= a;
+					mouseR[vectorName] *= 2;
+					var size = new THREE.Vector2();
+					renderer.getSize(size);
+					var zeroParallax = stereoEffect.settings.zeroParallax / size.x * b;
+					mouseL.x -= zeroParallax;
+					mouseR.x += zeroParallax;
+				}
+				switch (parseInt(stereoEffect.settings.spatialMultiplex)) {
+					case spatialMultiplexsIndexs.Mono:
+						return;
+					case spatialMultiplexsIndexs.SbS:
+						mousePosition('x', 4);
+						break;
+					case spatialMultiplexsIndexs.TaB:
+						mousePosition('y', 2);
+						break;
+					default:
+						console.error('THREE.Raycaster.setStereoEffect.getMousePosition: Invalid effect.settings.spatialMultiplex = ' + effect.settings.spatialMultiplex);
+						return;
+				}
+			}
+			function intersection(optionsIntersection) {
+				if (mouse === undefined) return;
+				optionsIntersection = optionsIntersection || settings;
+				function isIntersection() {
+					Options.raycaster.intersectionsInOut(particles, raycaster, renderer, mouse, settings);
+				}
+				if (parseInt(stereoEffect.settings.spatialMultiplex) !== spatialMultiplexsIndexs.Mono) {
+					var mouseCur = mouse;
+					mouse = mouseL;
+					raycaster.setFromCamera(mouseL, camera);
+					if (!isIntersection()) {
+						mouse = mouseR;
+						raycaster.setFromCamera(mouseR, camera);
+						isIntersection();
+					}
+					mouse = mouseCur;
+					return;
+				}
+				raycaster.setFromCamera(mouse, camera);
+				isIntersection();
+			}
+			this.stereo = {
+				onDocumentMouseMove: function onDocumentMouseMove(event) {
+					if (particles === undefined) return;
+					event.preventDefault();
+					if (mouse === undefined) mouse = new THREE.Vector2();
+					getMousePosition();
+					intersection();
+				},
+				isAddedToParticles: function isAddedToParticles(particle) {
+					if (!particles) return false;
+					return particles.includes(particle);
+				},
+				addParticle: function addParticle(particle) {
+					if (particles === undefined) particles = [];
+					if (this.isAddedToParticles(particle)) {
+						console.error('Duplicate particle "' + particle.name + '"');
+						return;
+					}
+					particles.push(particle);
+				},
+				addParticles: function addParticles(newParticles) {
+					if (particles !== undefined) {
+						if (!Array.isArray(particles)) {
+							var particlesCur = particles;
+							particles = [];
+							particles.push(particlesCur);
+						}
+						particles.push(newParticles);
+						return;
+					}
+					particles = newParticles;
+				},
+				removeParticle: function removeParticle(particle) {
+					for (var i = 0; i < particles.length; i++) {
+						if (Object.is(particle, particles[i])) {
+							particles.splice(i, 1);
+							break;
+						}
+					}
+				},
+				removeParticles: function removeParticles() {
+					particles = undefined;
+				},
+				getPosition: function getPosition(intersection) {
+					var attributesPosition = intersection.object.geometry.attributes.position;
+					var position = attributesPosition.itemSize >= 4 ? new THREE.Vector4(0, 0, 0, 0) : new THREE.Vector3();
+					if (intersection.index !== undefined) {
+						position.fromArray(attributesPosition.array, intersection.index * attributesPosition.itemSize);
+						position.multiply(intersection.object.scale);
+						position.add(intersection.object.position);
+					} else position = intersection.object.position;
+					return position;
+				}
+			};
+		}
+	});
 }
 StereoEffect.assign = assign;
 var lang = {
-					mesh: 'Mesh',
-					pointName: 'Point Name',
-					color: 'Сolor',
-					opacity: 'Opacity'
+	mesh: 'Mesh',
+	pointName: 'Point Name',
+	color: 'Сolor',
+	opacity: 'Opacity'
 };
 switch (getLanguageCode()) {
-					case 'ru':
-										lang.mesh = '3D объект';
-										lang.pointName = 'Имя точки';
-										lang.color = 'Цвет';
-										lang.opacity = 'Непрозрачность';
-										break;
+	case 'ru':
+		lang.mesh = '3D объект';
+		lang.pointName = 'Имя точки';
+		lang.color = 'Цвет';
+		lang.opacity = 'Непрозрачность';
+		break;
 }
 StereoEffect.getTextIntersection = function (intersection, options) {
-					var spriteText = Options.findSpriteTextIntersection(options.spriteOptions.group);
-					if (spriteText) return spriteText;
-					var THREE = three$1.THREE;
-					var position = getObjectPosition(intersection.object, intersection.index),
-					    scales = options.scales || {},
-					    isArrayFuncs = intersection.index !== undefined && intersection.object.userData.player !== undefined && intersection.object.userData.player.arrayFuncs !== undefined,
-					    funcs = !isArrayFuncs ? undefined : intersection.object.userData.player.arrayFuncs,
-					    func = funcs === undefined || typeof funcs === "function" ? undefined : funcs[intersection.index],
-					    pointName = isArrayFuncs && func ? func.name : undefined,
-					    color = !isArrayFuncs || func === undefined ? undefined : Array.isArray(func.w) ? Player.execFunc(func, 'w', group.userData.t, options) :
-					func.w;
-					var boXYZ = !scales.x && !scales.y && !scales.z;
-					options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
-					return new SpriteText$1(
-					lang.mesh + ': ' + (intersection.object.name === '' ? intersection.object.type : intersection.object.name) + (pointName === undefined ? '' : '\n' + lang.pointName + ': ' + pointName) + (!boXYZ && !scales.x || scales.x && !scales.x.isAxis() ? '' : '\n' + (scales.x && scales.x.name || scales.x.name === 0 ? scales.x.name : 'X') + ': ' + position.x) + (!boXYZ && !scales.y || scales.y && !scales.y.isAxis() ? '' : '\n' + (scales.y && scales.y.name || scales.y.name === 0 ? scales.y.name : 'Y') + ': ' + position.y) + (!boXYZ && !scales.z || scales.z && !scales.z.isAxis() ? '' : '\n' + (scales.z && scales.z.name || scales.z.name === 0 ? scales.z.name : 'Z') + ': ' + position.z) + (
-					!isArrayFuncs ? '' : funcs[intersection.index] instanceof THREE.Vector4 || funcs[intersection.index] instanceof THREE.Vector3 || typeof funcs === "function" ? color instanceof THREE.Color ? '\n' + lang.color + ': ' + new THREE.Color(color.r, color.g, color.b).getHexString() : position.w !== undefined ? '\n' + (scales.w && scales.w.name ? scales.w.name : 'W') + ': ' + position.w : '' : '') + (
-					intersection.object.geometry.attributes.ca === undefined || intersection.object.geometry.attributes.ca.itemSize < 4 ? '' : '\n' + lang.opacity + ': ' + new THREE.Vector4().fromArray(intersection.object.geometry.attributes.ca.array, intersection.index * intersection.object.geometry.attributes.ca.itemSize).w), intersection.pointSpriteText ? intersection.pointSpriteText : position, options.spriteOptions);
+	var spriteText = Options.findSpriteTextIntersection(options.spriteOptions.group);
+	if (spriteText) return spriteText;
+	var THREE = three$1.THREE;
+	var position = getObjectPosition(intersection.object, intersection.index),
+	    scales = options.scales || {},
+	    isArrayFuncs = intersection.index !== undefined && intersection.object.userData.player !== undefined && intersection.object.userData.player.arrayFuncs !== undefined,
+	    funcs = !isArrayFuncs ? undefined : intersection.object.userData.player.arrayFuncs,
+	    func = funcs === undefined || typeof funcs === "function" ? undefined : funcs[intersection.index],
+	    pointName = isArrayFuncs && func ? func.name : undefined,
+	    color = !isArrayFuncs || func === undefined ? undefined : Array.isArray(func.w) ? Player.execFunc(func, 'w', group.userData.t, options) :
+	func.w;
+	if (intersection.object.userData.onIntersection) intersection.object.userData.onIntersection();
+	var boXYZ = !scales.x && !scales.y && !scales.z;
+	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
+	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
+	return new SpriteText$1(
+	lang.mesh + ': ' + (intersection.object.name === '' ? intersection.object.type : intersection.object.name) + (pointName === undefined ? '' : '\n' + lang.pointName + ': ' + pointName) + (!boXYZ && !scales.x || scales.x && !scales.x.isAxis() ? '' : '\n' + (scales.x && scales.x.name || scales.x.name === 0 ? scales.x.name : 'X') + ': ' + position.x) + (!boXYZ && !scales.y || scales.y && !scales.y.isAxis() ? '' : '\n' + (scales.y && scales.y.name || scales.y.name === 0 ? scales.y.name : 'Y') + ': ' + position.y) + (!boXYZ && !scales.z || scales.z && !scales.z.isAxis() ? '' : '\n' + (scales.z && scales.z.name || scales.z.name === 0 ? scales.z.name : 'Z') + ': ' + position.z) + (
+	!isArrayFuncs ? '' : funcs[intersection.index] instanceof THREE.Vector4 || funcs[intersection.index] instanceof THREE.Vector3 || typeof funcs === "function" ? color instanceof THREE.Color ? '\n' + lang.color + ': ' + new THREE.Color(color.r, color.g, color.b).getHexString() : position.w !== undefined ? '\n' + (scales.w && scales.w.name ? scales.w.name : 'W') + ': ' + position.w : '' : '') + (
+	intersection.object.geometry.attributes.ca === undefined || intersection.object.geometry.attributes.ca.itemSize < 4 ? '' : '\n' + lang.opacity + ': ' + new THREE.Vector4().fromArray(intersection.object.geometry.attributes.ca.array, intersection.index * intersection.object.geometry.attributes.ca.itemSize).w) + (
+	intersection.object.userData.raycaster && intersection.object.userData.raycaster.text ? intersection.object.userData.raycaster.text(intersection                                                    ) : ''), intersection.pointSpriteText ? intersection.pointSpriteText : intersection.point,
+	options.spriteOptions);
 };
 
 /**
@@ -9909,6 +9921,10 @@ function Raycaster() {
 						var canvas = renderer.domElement;
 						if (intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo()) return;
 						var spriteTextIntersection = Options.findSpriteTextIntersection(scene);
+						if (spriteTextIntersection && (!intersection.pointSpriteText || intersection.object.userData.raycaster && intersection.object.userData.raycaster.text)) {
+									scene.remove(spriteTextIntersection);
+									spriteTextIntersection = undefined;
+						}
 						if (spriteTextIntersection === undefined) {
 									options = new Options(options);
 									var rect = options.spriteText.rect ? JSON.parse(JSON.stringify(options.spriteText.rect)) : {};
@@ -9947,7 +9963,10 @@ function Raycaster() {
 			};
 			this.onMouseDown = function (intersection, options) {
 						if (intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo()) return;
-						if (options.guiSelectPoint) options.guiSelectPoint.select(intersection);else if (options.axesHelper) options.axesHelper.exposePosition(intersection);
+						if (options.guiSelectPoint) options.guiSelectPoint.select(intersection);else {
+									if (intersection.object.userData.onMouseDown) intersection.object.userData.onMouseDown(intersection);
+									if (options.axesHelper) options.axesHelper.exposePosition(intersection);
+						}
 			};
 			var intersectedObjects = [];
 			var intersects;
@@ -10034,7 +10053,6 @@ function Raycaster() {
 															var intersect = intersects[0],
 															    object = intersect.object;
 															if (object.userData.raycaster && object.userData.raycaster.onIntersection) {
-																		intersect.pointSpriteText = intersect.point;
 																		object.userData.raycaster.onIntersection(intersect, mouse);
 															} else Options.raycaster.onIntersection(intersect, options, settings.scene, camera, renderer);
 															intersectedObject = object;
@@ -10044,9 +10062,8 @@ function Raycaster() {
 												if (raycaster === undefined) return;
 												if (intersects && intersects.length > 0) {
 															var intersect = intersects[0];
-															if (intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown) {
-																		intersect.object.userData.raycaster.onMouseDown(intersect);
-															} else Options.raycaster.onMouseDown(intersect, options);
+															if (intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown) intersect.object.userData.raycaster.onMouseDown(intersect, event);
+															else Options.raycaster.onMouseDown(intersect, options);
 												}
 									}, false);
 									function isAddedToParticles(particle) {
@@ -10118,1504 +10135,1507 @@ Options.raycaster = new Raycaster();
  */
 var Player$1 =
 function Player(group) {
-			var settings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-			classCallCheck(this, Player);
-			assign$1();
-			if (!settings.options && settings.frustumPoints) settings.options = settings.frustumPoints.getOptions();
-			settings.options = settings.options || new Options();
-			var options = settings.options;
-			if (!options.boOptions) {
-						console.error('Player: call options = new Options( options ) first');
-						return;
+	var settings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	classCallCheck(this, Player);
+	assign$1();
+	if (!settings.options && settings.frustumPoints) settings.options = settings.frustumPoints.getOptions();
+	settings.options = settings.options || new Options();
+	var options = settings.options;
+	if (!options.boOptions) {
+		console.error('Player: call options = new Options( options ) first');
+		return;
+	}
+	if (options.player === false) return;
+	options.boPlayer = options.boPlayer || false;
+	if (options.player) {
+		console.error('Player: duplicate player.');
+		return;
+	}
+	options.player = this;
+	settings.cameraTarget = settings.cameraTarget || {};
+	function onSelectScene(index) {
+		index = index || 0;
+		var t = _this.getTime();
+		Player.selectPlayScene(group, { t: t, index: index, options: settings.options });
+		_this.setIndex(index, (options.playerOptions.name === '' ? '' : options.playerOptions.name + ': ') + t);
+		if (settings.onSelectScene) settings.onSelectScene(index, t);
+		if (options.frustumPoints) options.frustumPoints.updateCloudPoints();
+	}
+	setTimeout(function () {
+		onSelectScene();
+	}, 0);
+	options.playerOptions.selectSceneIndex = options.playerOptions.selectSceneIndex || 0;
+	var selectSceneIndex = options.playerOptions.selectSceneIndex;
+	var _this = this;
+	this.getTime = function () {
+		var playerOptions = options.playerOptions,
+		    t = playerOptions.min + selectSceneIndex * playerOptions.dt;
+		if (isNaN(t)) console.error('Player.getTime(): t = ' + t);
+		if (playerOptions.max !== null && t > playerOptions.max) console.error('Player.getTime(): t = ' + t + ' playerOptions.max = ' + playerOptions.max);
+		if (t < playerOptions.min && playerOptions.max !== null) console.error('Player.getTime(): t = ' + t + ' playerOptions.min = ' + playerOptions.min);
+		return t;
+	};
+	this.setTime = function (t) {
+		return this.selectScene(parseInt((t - options.playerOptions.min) / options.playerOptions.dt));
+	};
+	this.selectScene = function (index) {
+		if (index === undefined) {
+			onSelectScene(selectSceneIndex);
+			return true;
+		}
+		if (isNaN(index)) {
+			console.error('Player.selectScene: index = ' + index);
+			return false;
+		}
+		index = parseInt(index);
+		if (options.playerOptions.max !== null) {
+			if (index >= options.playerOptions.marks) index = 0;else if (index < 0) index = options.playerOptions.marks - 1;
+			if (selectSceneIndex > options.playerOptions.marks) selectSceneIndex = options.playerOptions.marks;
+		}
+		while (selectSceneIndex !== index) {
+			if (selectSceneIndex < index) selectSceneIndex++;else selectSceneIndex--;
+			onSelectScene(selectSceneIndex);
+		}
+		return true;
+	};
+	this.next = function () {
+		_this.selectScene(selectSceneIndex + 1);
+	};
+	this.prev = function () {
+		_this.selectScene(selectSceneIndex - 1);
+	};
+	this.pushController = function (controller) {
+		if (controller.object !== undefined && controller.object.playRate !== undefined) controller.object.playRate = options.playerOptions.min;
+		this.controllers.push(controller);
+	};
+	this.controllers = [];
+	var playing = false,
+	    time,
+	    timeNext;
+	function RenamePlayButtons() {
+		options.player.controllers.forEach(function (controller) {
+			if (controller.onRenamePlayButtons) controller.onRenamePlayButtons(playing);
+		});
+	}
+	function play() {
+		if (selectSceneIndex === -1 || selectSceneIndex === options.playerOptions.marks && options.playerOptions.max !== null) {
+			selectSceneIndex = 0;
+		}
+		onSelectScene(selectSceneIndex);
+	}
+	function pause() {
+		playing = false;
+		RenamePlayButtons();
+		time = undefined;
+	}
+	function isRepeat() {
+		return options.playerOptions.repeat;
+	}
+	function playNext() {
+		selectSceneIndex++;
+		if (options.playerOptions.max !== null && selectSceneIndex >= options.playerOptions.marks) {
+			if (isRepeat()) selectSceneIndex = 0;else {
+				selectSceneIndex = options.playerOptions.marks - 1;
+				pause();
+				return;
 			}
-			if (options.player === false) return;
-			options.boPlayer = options.boPlayer || false;
-			if (options.player) {
-						console.error('Player: duplicate player.');
-						return;
+		}
+		play();
+	}
+	this.play3DObject = function () {
+		if (playing) {
+			pause();
+			return;
+		}
+		playing = true;
+		if (options.playerOptions.max !== null && selectSceneIndex >= options.playerOptions.marks - 1) selectSceneIndex = 0;
+		playNext();
+		RenamePlayButtons();
+		function step(timestamp) {
+			if (playing) window.requestAnimationFrame(step);else time = undefined;
+			if (time === undefined) {
+				time = timestamp;
+				timeNext = time + 1000 / options.playerOptions.interval;
 			}
-			options.player = this;
-			settings.cameraTarget = settings.cameraTarget || {};
-			function onSelectScene(index) {
-						index = index || 0;
-						var t = _this.getTime();
-						Player.selectPlayScene(group, { t: t, index: index, options: settings.options });
-						_this.setIndex(index, (options.playerOptions.name === '' ? '' : options.playerOptions.name + ': ') + t);
-						if (settings.onSelectScene) settings.onSelectScene(index, t);
-						if (options.frustumPoints) options.frustumPoints.updateCloudPoints();
+			if (isNaN(timeNext) || timeNext === Infinity) {
+				console.error('Player.animate: timeNext = ' + timeNext);
+				playing = false;
 			}
-			setTimeout(function () {
-						onSelectScene();
-			}, 0);
-			options.playerOptions.selectSceneIndex = options.playerOptions.selectSceneIndex || 0;
-			var selectSceneIndex = options.playerOptions.selectSceneIndex;
-			var _this = this;
-			this.getTime = function () {
-						var playerOptions = options.playerOptions,
-						    t = playerOptions.min + selectSceneIndex * playerOptions.dt;
-						if (isNaN(t)) console.error('Player.getTime(): t = ' + t);
-						if (playerOptions.max !== null && t > playerOptions.max) console.error('Player.getTime(): t = ' + t + ' playerOptions.max = ' + playerOptions.max);
-						if (t < playerOptions.min && playerOptions.max !== null) console.error('Player.getTime(): t = ' + t + ' playerOptions.min = ' + playerOptions.min);
-						return t;
-			};
-			this.setTime = function (t) {
-						return this.selectScene(parseInt((t - options.playerOptions.min) / options.playerOptions.dt));
-			};
-			this.selectScene = function (index) {
-						if (index === undefined) {
-									onSelectScene(selectSceneIndex);
-									return true;
-						}
-						if (isNaN(index)) {
-									console.error('Player.selectScene: index = ' + index);
-									return false;
-						}
-						index = parseInt(index);
-						if (options.playerOptions.max !== null) {
-									if (index >= options.playerOptions.marks) index = 0;else if (index < 0) index = options.playerOptions.marks - 1;
-									if (selectSceneIndex > options.playerOptions.marks) selectSceneIndex = options.playerOptions.marks;
-						}
-						while (selectSceneIndex !== index) {
-									if (selectSceneIndex < index) selectSceneIndex++;else selectSceneIndex--;
-									onSelectScene(selectSceneIndex);
-						}
-						return true;
-			};
-			this.next = function () {
-						_this.selectScene(selectSceneIndex + 1);
-			};
-			this.prev = function () {
-						_this.selectScene(selectSceneIndex - 1);
-			};
-			this.pushController = function (controller) {
-						if (controller.object !== undefined && controller.object.playRate !== undefined) controller.object.playRate = options.playerOptions.min;
-						this.controllers.push(controller);
-			};
-			this.controllers = [];
-			var playing = false,
-			    time,
-			    timeNext;
-			function RenamePlayButtons() {
-						options.player.controllers.forEach(function (controller) {
-									if (controller.onRenamePlayButtons) controller.onRenamePlayButtons(playing);
-						});
+			if (timestamp < timeNext) return;
+			while (timestamp > timeNext) {
+				timeNext += 1000 / options.playerOptions.interval;
+			}playNext();
+		}
+		window.requestAnimationFrame(step);
+	};
+	this.repeat = function () {
+		options.playerOptions.repeat = !options.playerOptions.repeat;
+		this.onChangeRepeat(options.playerOptions.repeat);
+	};
+	this.getSettings = function () {
+		return settings;
+	};
+	this.getSelectSceneIndex = function () {
+		return selectSceneIndex;
+	};
+	this.onChangeRepeat = function (value) {
+		options.playerOptions.repeat = value;
+		this.controllers.forEach(function (controller) {
+			if (controller.onChangeRepeat) controller.onChangeRepeat();
+		});
+	};
+	function getLang(params) {
+		params = params || {};
+		var lang = {
+			player: 'Player',
+			playerTitle: '3D objects animation.',
+			min: 'Min',
+			max: 'Max',
+			dt: 'Step',
+			dtTitle: 'Time between frames',
+			marks: 'Frames',
+			marksTitle: 'Player frames count',
+			interval: 'Rate',
+			intervalTitle: 'Rate of changing of animation scenes per second.',
+			time: 'Time',
+			defaultButton: 'Default',
+			defaultTitle: 'Restore default player settings.'
+		};
+		var _languageCode = params.getLanguageCode === undefined ? 'en'
+		: params.getLanguageCode();
+		switch (_languageCode) {
+			case 'ru':
+				lang.player = 'Проигрыватель';
+				lang.playerTitle = 'Анимация 3D объектов.';
+				lang.min = 'Минимум';
+				lang.max = 'Максимум';
+				lang.dt = 'Шаг';
+				lang.dtTitle = 'Веремя между кадрами';
+				lang.marks = 'Кадры';
+				lang.marksTitle = 'Количество кадров проигрывателя';
+				lang.interval = 'Темп', lang.intervalTitle = 'Скорость смены кадров в секунду.';
+				lang.time = 'Время';
+				lang.defaultButton = 'Восстановить';
+				lang.defaultTitle = 'Восстановить настройки проигрывателя по умолчанию.';
+				break;
+			default:
+				if (params.lang === undefined || params.lang._languageCode != _languageCode) break;
+				Object.keys(params.lang).forEach(function (key) {
+					if (_lang[key] === undefined) return;
+					_lang[key] = params.lang[key];
+				});
+		}
+		return lang;
+	}
+	var lang = {
+		prevSymbol: '←',
+		prevSymbolTitle: 'Go to previous animation scene',
+		nextSymbol: '→',
+		nextSymbolTitle: 'Go to next animation scene',
+		playSymbol: '►',
+		playTitle: 'Play',
+		pause: '❚❚',
+		pauseTitle: 'Pause',
+		repeat: '⥀',
+		repeatOn: 'Turn repeat on',
+		repeatOff: 'Turn repeat off',
+		controllerTitle: 'Current time.',
+		stereoEffects: 'Stereo effects',
+		mono: 'Mono',
+		sideBySide: 'Side by side',
+		topAndBottom: 'Top and bottom'
+	};
+	function localization(getLanguageCode) {
+		switch (getLanguageCode()) {
+			case 'ru':
+				lang.prevSymbolTitle = 'Кадр назад';
+				lang.playTitle = 'Проиграть';
+				lang.nextSymbolTitle = 'Кадр вперед';
+				lang.pauseTitle = 'Пауза';
+				lang.repeatOn = 'Повторять проигрывание';
+				lang.repeatOff = 'Остановить повтор проигрывания';
+				lang.controllerTitle = 'Текущее время.';
+				lang.stereoEffects = 'Стерео эффекты';
+				lang.mono = 'Моно';
+				lang.sideBySide = 'Слева направо';
+				lang.topAndBottom = 'Сверху вниз';
+				break;
+		}
+	}
+	this.localization = function () {
+		var getLanguageCode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {
+			return 'en';
+		};
+		localization(getLanguageCode);
+		return lang;
+	};
+	this.PlayController = function (_controllers$CustomCo) {
+		inherits(_class, _controllers$CustomCo);
+		function _class(gui) {
+			classCallCheck(this, _class);
+			var player = options.player,
+			    getLanguageCode = options.getLanguageCode;
+			player.createControllersButtons(options);
+			gui = gui || options.dat.gui;
+			if (!gui || options.dat.playController === false) {
+				var _this2 = possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, {}));
+				return possibleConstructorReturn(_this2);
 			}
-			function play() {
-						if (selectSceneIndex === -1 || selectSceneIndex === options.playerOptions.marks && options.playerOptions.max !== null) {
-									selectSceneIndex = 0;
-						}
-						onSelectScene(selectSceneIndex);
+			localization(getLanguageCode);
+			function addButton(innerHTML, title, onclick) {
+				var button = document.createElement('span');
+				button.innerHTML = innerHTML;
+				button.title = title;
+				button.style.cursor = 'pointer';
+				button.style.margin = '0px 2px';
+				button.onclick = onclick;
+				return button;
 			}
-			function pause() {
-						playing = false;
-						RenamePlayButtons();
-						time = undefined;
-			}
-			function isRepeat() {
-						return options.playerOptions.repeat;
-			}
-			function playNext() {
-						selectSceneIndex++;
-						if (options.playerOptions.max !== null && selectSceneIndex >= options.playerOptions.marks) {
-									if (isRepeat()) selectSceneIndex = 0;else {
-												selectSceneIndex = options.playerOptions.marks - 1;
-												pause();
-												return;
-									}
-						}
-						play();
-			}
-			this.play3DObject = function () {
-						if (playing) {
-									pause();
-									return;
-						}
-						playing = true;
-						if (options.playerOptions.max !== null && selectSceneIndex >= options.playerOptions.marks - 1) selectSceneIndex = 0;
-						playNext();
-						RenamePlayButtons();
-						function step(timestamp) {
-									if (playing) window.requestAnimationFrame(step);else time = undefined;
-									if (time === undefined) {
-												time = timestamp;
-												timeNext = time + 1000 / options.playerOptions.interval;
-									}
-									if (isNaN(timeNext) || timeNext === Infinity) {
-												console.error('Player.animate: timeNext = ' + timeNext);
-												playing = false;
-									}
-									if (timestamp < timeNext) return;
-									while (timestamp > timeNext) {
-												timeNext += 1000 / options.playerOptions.interval;
-									}playNext();
-						}
-						window.requestAnimationFrame(step);
-			};
-			this.repeat = function () {
-						options.playerOptions.repeat = !options.playerOptions.repeat;
-						this.onChangeRepeat(options.playerOptions.repeat);
-			};
-			this.getSettings = function () {
-						return settings;
-			};
-			this.getSelectSceneIndex = function () {
-						return selectSceneIndex;
-			};
-			this.onChangeRepeat = function (value) {
-						options.playerOptions.repeat = value;
-						this.controllers.forEach(function (controller) {
-									if (controller.onChangeRepeat) controller.onChangeRepeat();
-						});
-			};
-			function getLang(params) {
-						params = params || {};
-						var lang = {
-									player: 'Player',
-									playerTitle: '3D objects animation.',
-									min: 'Min',
-									max: 'Max',
-									dt: 'Step',
-									dtTitle: 'Time between frames',
-									marks: 'Frames',
-									marksTitle: 'Player frames count',
-									interval: 'Rate',
-									intervalTitle: 'Rate of changing of animation scenes per second.',
-									time: 'Time',
-									defaultButton: 'Default',
-									defaultTitle: 'Restore default player settings.'
+			var _renamePlayButtons, _renameRepeatButtons;
+			var colorOff = 'rgb(255,255,255)',
+			    colorOn = 'rgb(128,128,128)';
+			var _this2 = possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, {
+				playRate: 1,
+				property: function property(customController) {
+					var buttons = {};
+					function RenamePlayButtons(innerHTML, title) {
+						buttons.buttonPlay.innerHTML = innerHTML;
+						buttons.buttonPlay.title = title;
+					}
+					_renamePlayButtons = RenamePlayButtons;
+					buttons.buttonPrev = addButton(lang.prevSymbol, lang.prevSymbolTitle, player.prev);
+					buttons.buttonPlay = addButton(playing ? lang.pause : lang.playSymbol, playing ? lang.pauseTitle : lang.playTitle, player.play3DObject);
+					if (player.getSettings().options.playerOptions.max !== null) {
+						var RenameRepeatButtons = function RenameRepeatButtons(isRepeat) {
+							var title, color;
+							if (isRepeat) {
+								title = lang.repeatOff;
+								color = colorOff;
+							} else {
+								title = lang.repeatOn;
+								color = colorOn;
+							}
+							if (buttons.buttonRepeat.title === title) return;
+							buttons.buttonRepeat.title = title;
+							buttons.buttonRepeat.style.color = color;
+							player.onChangeRepeat(isRepeat);
 						};
-						var _languageCode = params.getLanguageCode === undefined ? 'en'
-						: params.getLanguageCode();
-						switch (_languageCode) {
-									case 'ru':
-												lang.player = 'Проигрыватель';
-												lang.playerTitle = 'Анимация 3D объектов.';
-												lang.min = 'Минимум';
-												lang.max = 'Максимум';
-												lang.dt = 'Шаг';
-												lang.dtTitle = 'Веремя между кадрами';
-												lang.marks = 'Кадры';
-												lang.marksTitle = 'Количество кадров проигрывателя';
-												lang.interval = 'Темп', lang.intervalTitle = 'Скорость смены кадров в секунду.';
-												lang.time = 'Время';
-												lang.defaultButton = 'Восстановить';
-												lang.defaultTitle = 'Восстановить настройки проигрывателя по умолчанию.';
-												break;
-									default:
-												if (params.lang === undefined || params.lang._languageCode != _languageCode) break;
-												Object.keys(params.lang).forEach(function (key) {
-															if (_lang[key] === undefined) return;
-															_lang[key] = params.lang[key];
-												});
-						}
-						return lang;
-			}
-			var lang = {
-						prevSymbol: '←',
-						prevSymbolTitle: 'Go to previous animation scene',
-						nextSymbol: '→',
-						nextSymbolTitle: 'Go to next animation scene',
-						playSymbol: '►',
-						playTitle: 'Play',
-						pause: '❚❚',
-						pauseTitle: 'Pause',
-						repeat: '⥀',
-						repeatOn: 'Turn repeat on',
-						repeatOff: 'Turn repeat off',
-						controllerTitle: 'Current time.',
-						stereoEffects: 'Stereo effects',
-						mono: 'Mono',
-						sideBySide: 'Side by side',
-						topAndBottom: 'Top and bottom'
-			};
-			function localization(getLanguageCode) {
-						switch (getLanguageCode()) {
-									case 'ru':
-												lang.prevSymbolTitle = 'Кадр назад';
-												lang.playTitle = 'Проиграть';
-												lang.nextSymbolTitle = 'Кадр вперед';
-												lang.pauseTitle = 'Пауза';
-												lang.repeatOn = 'Повторять проигрывание';
-												lang.repeatOff = 'Остановить повтор проигрывания';
-												lang.controllerTitle = 'Текущее время.';
-												lang.stereoEffects = 'Стерео эффекты';
-												lang.mono = 'Моно';
-												lang.sideBySide = 'Слева направо';
-												lang.topAndBottom = 'Сверху вниз';
-												break;
-						}
-			}
-			this.localization = function () {
-						var getLanguageCode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {
-									return 'en';
+						var repeat = function repeat(value) {
+							RenameRepeatButtons(buttons.buttonRepeat.title === lang.repeatOn);
 						};
-						localization(getLanguageCode);
-						return lang;
+						_renameRepeatButtons = RenameRepeatButtons;
+						var title, color;
+						if (player.getSettings().repeat) {
+							title = lang.repeatOff;
+							color = colorOff;
+						} else {
+							title = lang.repeatOn;
+							color = colorOn;
+						}
+						buttons.buttonRepeat = addButton(lang.repeat, title, repeat);
+						buttons.buttonRepeat.style.color = color;
+					}
+					buttons.buttonNext = addButton(lang.nextSymbol, lang.nextSymbolTitle, player.next);
+					return buttons;
+				}
+			}, 'playRate'));
+			player.PlayController = _this2;
+			_this2.lang = lang;
+			_this2.onRenamePlayButtons = function (playing) {
+				var name, title;
+				if (playing) {
+					name = lang.pause;
+					title = lang.pauseTitle;
+				} else {
+					name = lang.playSymbol;
+					title = lang.playTitle;
+				}
+				_renamePlayButtons(name, title, true);
 			};
-			this.PlayController = function (_controllers$CustomCo) {
-						inherits(_class, _controllers$CustomCo);
-						function _class(gui) {
-									classCallCheck(this, _class);
-									var player = options.player,
-									    getLanguageCode = options.getLanguageCode;
-									player.createControllersButtons(options);
-									gui = gui || options.dat.gui;
-									if (!gui || options.dat.playController === false) {
-												var _this2 = possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, {}));
-												return possibleConstructorReturn(_this2);
-									}
-									localization(getLanguageCode);
-									function addButton(innerHTML, title, onclick) {
-												var button = document.createElement('span');
-												button.innerHTML = innerHTML;
-												button.title = title;
-												button.style.cursor = 'pointer';
-												button.style.margin = '0px 2px';
-												button.onclick = onclick;
-												return button;
-									}
-									var _renamePlayButtons, _renameRepeatButtons;
-									var colorOff = 'rgb(255,255,255)',
-									    colorOn = 'rgb(128,128,128)';
-									var _this2 = possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, {
-												playRate: 1,
-												property: function property(customController) {
-															var buttons = {};
-															function RenamePlayButtons(innerHTML, title) {
-																		buttons.buttonPlay.innerHTML = innerHTML;
-																		buttons.buttonPlay.title = title;
-															}
-															_renamePlayButtons = RenamePlayButtons;
-															buttons.buttonPrev = addButton(lang.prevSymbol, lang.prevSymbolTitle, player.prev);
-															buttons.buttonPlay = addButton(playing ? lang.pause : lang.playSymbol, playing ? lang.pauseTitle : lang.playTitle, player.play3DObject);
-															if (player.getSettings().options.playerOptions.max !== null) {
-																		var RenameRepeatButtons = function RenameRepeatButtons(isRepeat) {
-																					var title, color;
-																					if (isRepeat) {
-																								title = lang.repeatOff;
-																								color = colorOff;
-																					} else {
-																								title = lang.repeatOn;
-																								color = colorOn;
-																					}
-																					if (buttons.buttonRepeat.title === title) return;
-																					buttons.buttonRepeat.title = title;
-																					buttons.buttonRepeat.style.color = color;
-																					player.onChangeRepeat(isRepeat);
-																		};
-																		var repeat = function repeat(value) {
-																					RenameRepeatButtons(buttons.buttonRepeat.title === lang.repeatOn);
-																		};
-																		_renameRepeatButtons = RenameRepeatButtons;
-																		var title, color;
-																		if (player.getSettings().repeat) {
-																					title = lang.repeatOff;
-																					color = colorOff;
-																		} else {
-																					title = lang.repeatOn;
-																					color = colorOn;
-																		}
-																		buttons.buttonRepeat = addButton(lang.repeat, title, repeat);
-																		buttons.buttonRepeat.style.color = color;
-															}
-															buttons.buttonNext = addButton(lang.nextSymbol, lang.nextSymbolTitle, player.next);
-															return buttons;
-												}
-									}, 'playRate'));
-									player.PlayController = _this2;
-									_this2.lang = lang;
-									_this2.onRenamePlayButtons = function (playing) {
-												var name, title;
-												if (playing) {
-															name = lang.pause;
-															title = lang.pauseTitle;
-												} else {
-															name = lang.playSymbol;
-															title = lang.playTitle;
-												}
-												_renamePlayButtons(name, title, true);
-									};
-									_this2.onChangeRepeat = function () {
-												_renameRepeatButtons(player.getSettings().options.playerOptions.repeat);
-									};
-									player.pushController(_this2);
-									_this2.setValue = function (value) {
-												this._controller.domElement.childNodes[0].value = value;
-									};
-									var controler = gui.add(_this2);
-									controler.__truncationSuspended = true;
-									return possibleConstructorReturn(_this2);
-						}
-						createClass(_class, [{
-									key: 'controller',
-									set: function set$$1(newController) {
-												this._controller = newController;
-												this._controller.onChange(function (value) {
-															options.player.setTime(value);
-												});
-												this._controller.domElement.title = this.lang.controllerTitle;
-									},
-									get: function get$$1() {
-												return this._controller;
-									}
-						}]);
-						return _class;
-			}(controllers$1.CustomController);
-			this.gui = function (folder) {
-						var cookie = options.dat.cookie,
-						    cookieName = options.dat.getCookieName('Player'),
-						    getLanguageCode = options.getLanguageCode,
-						    dat = three$1.dat;
-						folder = folder || options.dat.gui;
-						if (!folder || options.dat.playerGui === false) return;
-						function setDT() {
-									if (options.playerOptions.max === null) options.playerOptions.dt = options.playerOptions.dt || 0.1;else options.playerOptions.dt = (options.playerOptions.max - options.playerOptions.min) / (options.playerOptions.marks - 1);
-						}
-						function setSettings() {
-									setDT();
-									cookie.setObject(cookieName, options.playerOptions);
-									if (settings.onChangeScaleT) settings.onChangeScaleT(options.playerOptions);
-						}
-						function setMax() {
-									if (options.playerOptions.max !== null) options.playerOptions.max = options.playerOptions.min + options.playerOptions.dt * (options.playerOptions.marks - 1);
-						}
-						setMax();
-						var axesDefault = JSON.parse(JSON.stringify(options.playerOptions)),
-						    lang = getLang({
-									getLanguageCode: getLanguageCode
-						});
-						Object.freeze(axesDefault);
-						var max = options.playerOptions.max,
-						    marks = options.playerOptions.marks;
-						cookie.getObject(cookieName, options.playerOptions, options.playerOptions);
-						if (max === null || max === Infinity || options.playerOptions.max === null
-						) {
-												options.playerOptions.max = max;
-												options.playerOptions.marks = marks;
-									}
-						var fPlayer = folder.addFolder(lang.player);
-						dat.folderNameAndTitle(fPlayer, lang.player, lang.playerTitle);
-						function scale() {
-									var axes = options.playerOptions,
-									    scaleControllers = {};
-									function onclick(customController, action) {
-												var zoom = customController.controller.getValue();
-												axes.min = action(axes.min, zoom);
-												scaleControllers.min.setValue(axes.min);
-												if (axes.max) {
-															axes.max = action(axes.max, zoom);
-															setDT();
-															scaleControllers.max.setValue(axes.max);
-												}
-												setSettings();
-									}
-									scaleControllers.folder = fPlayer.addFolder(axes.name !== '' ? axes.name : lang.time);
-									scaleControllers.scaleController = scaleControllers.folder.add(new ScaleController(onclick, { settings: settings.options.playerOptions, getLanguageCode: getLanguageCode })).onChange(function (value) {
-												axes.zoomMultiplier = value;
-												setSettings();
-									});
-									var positionController = new PositionController(function (shift) {
-												onclick(positionController, function (value, zoom) {
-															value += shift;
-															return value;
-												});
-									}, { settings: settings.options.playerOptions, getLanguageCode: getLanguageCode });
-									scaleControllers.positionController = scaleControllers.folder.add(positionController).onChange(function (value) {
-												axes.offset = value;
-												setSettings();
-									});
-									scaleControllers.min = dat.controllerZeroStep(scaleControllers.folder, axes, 'min', function (value) {
-												setSettings();
-									});
-									dat.controllerNameAndTitle(scaleControllers.min, lang.min);
-									setMax();
-									if (axes.max !== null) {
-												scaleControllers.max = dat.controllerZeroStep(scaleControllers.folder, axes, 'max', function (value) {
-															setSettings();
-												});
-												dat.controllerNameAndTitle(scaleControllers.max, lang.max);
-									} else {
-												scaleControllers.dt = dat.controllerZeroStep(scaleControllers.folder, axes, 'dt', function (value) {
-															setSettings();
-												});
-												dat.controllerNameAndTitle(scaleControllers.dt, lang.dt, lang.dtTitle);
-									}
-									if (axes.marks) {
-												scaleControllers.marks = scaleControllers.folder.add(axes, 'marks').onChange(function (value) {
-															axes.marks = parseInt(axes.marks);
-															setSettings();
-															var elSlider = getSliderElement();
-															if (elSlider) elSlider.max = options.playerOptions.marks - 1;
-												});
-												dat.controllerNameAndTitle(scaleControllers.marks, axes.marksName === undefined ? lang.marks : axes.marksName, axes.marksTitle === undefined ? lang.marksTitle : axes.marksTitle);
-									}
-									scaleControllers.interval = scaleControllers.folder.add(settings.options.playerOptions                 , 'interval', 1, 25, 1).onChange(function (value) {
-												setSettings();
-									});
-									dat.controllerNameAndTitle(scaleControllers.interval, lang.interval, lang.intervalTitle);
-									dat.controllerNameAndTitle(scaleControllers.folder.add({
-												defaultF: function defaultF(value) {
-															axes.zoomMultiplier = axesDefault.zoomMultiplier;
-															scaleControllers.scaleController.setValue(axes.zoomMultiplier);
-															axes.offset = axesDefault.offset;
-															scaleControllers.positionController.setValue(axes.offset);
-															axes.min = axesDefault.min;
-															scaleControllers.min.setValue(axes.min);
-															if (scaleControllers.max) {
-																		axes.max = axesDefault.max;
-																		setDT();
-																		scaleControllers.max.setValue(axes.max);
-															}
-															if (scaleControllers.dt) {
-																		axes.dt = axesDefault.dt;
-																		scaleControllers.dt.setValue(axes.dt);
-															}
-															if (axesDefault.marks) {
-																		axes.marks = axesDefault.marks;
-																		if (scaleControllers.marks) scaleControllers.marks.setValue(axes.marks);
-															}
-															axes.interval = axesDefault.interval;
-															scaleControllers.interval.setValue(axes.interval);
-															setSettings();
-												}
-									}, 'defaultF'), lang.defaultButton, lang.defaultTitle);
-						}
-						scale();
+			_this2.onChangeRepeat = function () {
+				_renameRepeatButtons(player.getSettings().options.playerOptions.repeat);
 			};
-			this.createControllersButtons = function (options) {
-						if (!options.controllers || !options.controllers.player) return;
-						var settings = options.controllers.player;
-						if (settings.buttonPrev === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonPrev = ' + settings.buttonPrev);
-						if (settings.buttonPrev) {
-									var buttonPrev = typeof settings.buttonPrev === 'string' ? document.getElementById(settings.buttonPrev) : settings.buttonPrev;
-									if (buttonPrev === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonPrev = ' + settings.buttonPrev);
-									if (buttonPrev) {
-												buttonPrev.value = lang.prevSymbol;
-												buttonPrev.title = lang.prevSymbolTitle;
-												buttonPrev.onclick = function (event) {
-															if (options.player) options.player.prev();
-												};
-												settings.buttonPrev = buttonPrev;
-									}
-						}
-						if (settings.buttonPlay === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonPlay = ' + settings.buttonPlay);
-						if (settings.buttonPlay) {
-									var buttonPlay = typeof settings.buttonPlay === 'string' ? document.getElementById(settings.buttonPlay) : settings.buttonPlay;
-									if (buttonPlay === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonPlay = ' + settings.buttonPlay);
-									if (buttonPlay) {
-												buttonPlay.value = playing ? lang.pause : lang.playSymbol;
-												buttonPlay.title = playing ? lang.pauseTitle : lang.playTitle;
-												buttonPlay.onclick = function (event) {
-															if (options.player) options.player.play3DObject();
-												};
-												settings.buttonPlay = buttonPlay;
-									}
-						}
-						if (settings.buttonNext === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonNext = ' + settings.buttonNext);
-						if (settings.buttonNext) {
-									var buttonNext = typeof settings.buttonNext === 'string' ? document.getElementById(settings.buttonNext) : settings.buttonNext;
-									if (buttonNext === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonNext = ' + settings.buttonNext);
-									if (buttonNext) {
-												buttonNext.value = lang.nextSymbol;
-												buttonNext.title = lang.nextSymbolTitle;
-												buttonNext.onclick = function (event) {
-															if (options.player) options.player.next();
-												};
-												settings.buttonNext = buttonNext;
-									}
-						}
+			player.pushController(_this2);
+			_this2.setValue = function (value) {
+				this._controller.domElement.childNodes[0].value = value;
 			};
-			var _canvasMenu;
-			this.createCanvasMenuItem = function (canvasMenu) {
-						var getLanguageCode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {
-									return 'en';
-						};
-						_canvasMenu = canvasMenu;
-						var player = this,
-						    menu = canvasMenu.menu,
-						    lang = player.localization(getLanguageCode);
-						menu.push({
-									name: lang.prevSymbol,
-									title: lang.prevSymbolTitle,
-									onclick: function onclick(event) {
-												player.prev();
-									}
-						});
-						menu.push({
-									name: playing ? lang.pause : lang.playSymbol,
-									title: playing ? lang.pauseTitle : lang.playTitle,
-									id: "menuButtonPlay",
-									onclick: function onclick(event) {
-												player.play3DObject();
-									}
-						});
-						if (options.playerOptions.max !== null) {
-									menu.push({
-												name: lang.repeat,
-												title: this.getSettings().repeat ? lang.repeatOff : lang.repeatOn,
-												id: "menuButtonRepeat",
-												onclick: function onclick(event) {
-															player.repeat();
-												}
-									});
-						}
-						menu.push({
-									name: lang.nextSymbol,
-									title: lang.nextSymbolTitle,
-									onclick: function onclick(event) {
-												player.next();
-									}
-						});
-						this.controllers.push({
-									onRenamePlayButtons: function onRenamePlayButtons(playing) {
-												var name, title;
-												if (playing) {
-															name = lang.pause;
-															title = lang.pauseTitle;
-												} else {
-															name = lang.playSymbol;
-															title = lang.playTitle;
-												}
-												var elMenuButtonPlay = canvasMenu.querySelector('#menuButtonPlay');
-												elMenuButtonPlay.innerHTML = name;
-												elMenuButtonPlay.title = title;
-												if (options.controllers && options.controllers.player && options.controllers.player.buttonPlay) {
-															options.controllers.player.buttonPlay.value = name;
-															options.controllers.player.buttonPlay.title = title;
-												}
-									},
-									onChangeRepeat: function onChangeRepeat() {
-												canvasMenu.querySelector('#menuButtonRepeat').title = options.playerOptions.repeat ? lang.repeatOff : lang.repeatOn;
-									}
-						});
-			};
-			this.addSlider = function () {
-						if (options.playerOptions.max === null) return;
-						_canvasMenu.menu.push({
-									name: '<input type="range" min="0" max="' + (options.playerOptions.marks - 1) + '" value="0" class="slider" id="sliderPosition">',
-									style: 'float: right;'
-						});
-			};
-			function getSliderElement() {
-						if (_canvasMenu) return _canvasMenu.querySelector('#sliderPosition');
+			var controler = gui.add(_this2);
+			controler.__truncationSuspended = true;
+			return possibleConstructorReturn(_this2);
+		}
+		createClass(_class, [{
+			key: 'controller',
+			set: function set$$1(newController) {
+				this._controller = newController;
+				this._controller.onChange(function (value) {
+					options.player.setTime(value);
+				});
+				this._controller.domElement.title = this.lang.controllerTitle;
+			},
+			get: function get$$1() {
+				return this._controller;
 			}
-			this.addSliderEvents = function () {
-						var elSlider = getSliderElement();
-						if (elSlider) {
-									elSlider.onchange = function (event) {
-												_player.selectScene(parseInt(elSlider.value));
-									};
-									elSlider.oninput = function (event) {
-												_player.selectScene(parseInt(elSlider.value));
-									};
-									var pointerdown;
-									var _player = this;
-									elSlider.addEventListener('pointerdown', function (e) {
-												pointerdown = true;
-									});
-									elSlider.addEventListener('pointerup', function (e) {
-												pointerdown = false;
-									});
-									elSlider.addEventListener('mousemove', function (e) {
-												if (!pointerdown) return;
-												_player.selectScene((options.playerOptions.marks - 1) * e.offsetX / elSlider.clientWidth);
-									});
-						}
-						return elSlider;
+		}]);
+		return _class;
+	}(controllers$1.CustomController);
+	this.gui = function (folder) {
+		var cookie = options.dat.cookie,
+		    cookieName = options.dat.getCookieName('Player'),
+		    getLanguageCode = options.getLanguageCode,
+		    dat = three$1.dat;
+		folder = folder || options.dat.gui;
+		if (!folder || options.dat.playerGui === false) return;
+		function setDT() {
+			if (options.playerOptions.max === null) options.playerOptions.dt = options.playerOptions.dt || 0.1;else options.playerOptions.dt = (options.playerOptions.max - options.playerOptions.min) / (options.playerOptions.marks - 1);
+		}
+		function setSettings() {
+			setDT();
+			cookie.setObject(cookieName, options.playerOptions);
+			if (settings.onChangeScaleT) settings.onChangeScaleT(options.playerOptions);
+		}
+		function setMax() {
+			if (options.playerOptions.max !== null) options.playerOptions.max = options.playerOptions.min + options.playerOptions.dt * (options.playerOptions.marks - 1);
+		}
+		setMax();
+		var axesDefault = JSON.parse(JSON.stringify(options.playerOptions)),
+		    lang = getLang({
+			getLanguageCode: getLanguageCode
+		});
+		Object.freeze(axesDefault);
+		var max = options.playerOptions.max,
+		    marks = options.playerOptions.marks;
+		cookie.getObject(cookieName, options.playerOptions, options.playerOptions);
+		if (max === null || max === Infinity || options.playerOptions.max === null
+		) {
+				options.playerOptions.max = max;
+				options.playerOptions.marks = marks;
+			}
+		var fPlayer = folder.addFolder(lang.player);
+		dat.folderNameAndTitle(fPlayer, lang.player, lang.playerTitle);
+		function scale() {
+			var axes = options.playerOptions,
+			    scaleControllers = {};
+			function onclick(customController, action) {
+				var zoom = customController.controller.getValue();
+				axes.min = action(axes.min, zoom);
+				scaleControllers.min.setValue(axes.min);
+				if (axes.max) {
+					axes.max = action(axes.max, zoom);
+					setDT();
+					scaleControllers.max.setValue(axes.max);
+				}
+				setSettings();
+			}
+			scaleControllers.folder = fPlayer.addFolder(axes.name !== '' ? axes.name : lang.time);
+			scaleControllers.scaleController = scaleControllers.folder.add(new ScaleController(onclick, { settings: settings.options.playerOptions, getLanguageCode: getLanguageCode })).onChange(function (value) {
+				axes.zoomMultiplier = value;
+				setSettings();
+			});
+			var positionController = new PositionController(function (shift) {
+				onclick(positionController, function (value, zoom) {
+					value += shift;
+					return value;
+				});
+			}, { settings: settings.options.playerOptions, getLanguageCode: getLanguageCode });
+			scaleControllers.positionController = scaleControllers.folder.add(positionController).onChange(function (value) {
+				axes.offset = value;
+				setSettings();
+			});
+			scaleControllers.min = dat.controllerZeroStep(scaleControllers.folder, axes, 'min', function (value) {
+				setSettings();
+			});
+			dat.controllerNameAndTitle(scaleControllers.min, lang.min);
+			setMax();
+			if (axes.max !== null) {
+				scaleControllers.max = dat.controllerZeroStep(scaleControllers.folder, axes, 'max', function (value) {
+					setSettings();
+				});
+				dat.controllerNameAndTitle(scaleControllers.max, lang.max);
+			} else {
+				scaleControllers.dt = dat.controllerZeroStep(scaleControllers.folder, axes, 'dt', function (value) {
+					setSettings();
+				});
+				dat.controllerNameAndTitle(scaleControllers.dt, lang.dt, lang.dtTitle);
+			}
+			if (axes.marks) {
+				scaleControllers.marks = scaleControllers.folder.add(axes, 'marks').onChange(function (value) {
+					axes.marks = parseInt(axes.marks);
+					setSettings();
+					var elSlider = getSliderElement();
+					if (elSlider) elSlider.max = options.playerOptions.marks - 1;
+				});
+				dat.controllerNameAndTitle(scaleControllers.marks, axes.marksName === undefined ? lang.marks : axes.marksName, axes.marksTitle === undefined ? lang.marksTitle : axes.marksTitle);
+			}
+			scaleControllers.interval = scaleControllers.folder.add(settings.options.playerOptions                 , 'interval', 1, 25, 1).onChange(function (value) {
+				setSettings();
+			});
+			dat.controllerNameAndTitle(scaleControllers.interval, lang.interval, lang.intervalTitle);
+			dat.controllerNameAndTitle(scaleControllers.folder.add({
+				defaultF: function defaultF(value) {
+					axes.zoomMultiplier = axesDefault.zoomMultiplier;
+					scaleControllers.scaleController.setValue(axes.zoomMultiplier);
+					axes.offset = axesDefault.offset;
+					scaleControllers.positionController.setValue(axes.offset);
+					axes.min = axesDefault.min;
+					scaleControllers.min.setValue(axes.min);
+					if (scaleControllers.max) {
+						axes.max = axesDefault.max;
+						setDT();
+						scaleControllers.max.setValue(axes.max);
+					}
+					if (scaleControllers.dt) {
+						axes.dt = axesDefault.dt;
+						scaleControllers.dt.setValue(axes.dt);
+					}
+					if (axesDefault.marks) {
+						axes.marks = axesDefault.marks;
+						if (scaleControllers.marks) scaleControllers.marks.setValue(axes.marks);
+					}
+					axes.interval = axesDefault.interval;
+					scaleControllers.interval.setValue(axes.interval);
+					setSettings();
+				}
+			}, 'defaultF'), lang.defaultButton, lang.defaultTitle);
+		}
+		scale();
+	};
+	this.createControllersButtons = function (options) {
+		if (!options.controllers || !options.controllers.player) return;
+		var settings = options.controllers.player;
+		if (settings.buttonPrev === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonPrev = ' + settings.buttonPrev);
+		if (settings.buttonPrev) {
+			var buttonPrev = typeof settings.buttonPrev === 'string' ? document.getElementById(settings.buttonPrev) : settings.buttonPrev;
+			if (buttonPrev === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonPrev = ' + settings.buttonPrev);
+			if (buttonPrev) {
+				buttonPrev.value = lang.prevSymbol;
+				buttonPrev.title = lang.prevSymbolTitle;
+				buttonPrev.onclick = function (event) {
+					if (options.player) options.player.prev();
+				};
+				settings.buttonPrev = buttonPrev;
+			}
+		}
+		if (settings.buttonPlay === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonPlay = ' + settings.buttonPlay);
+		if (settings.buttonPlay) {
+			var buttonPlay = typeof settings.buttonPlay === 'string' ? document.getElementById(settings.buttonPlay) : settings.buttonPlay;
+			if (buttonPlay === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonPlay = ' + settings.buttonPlay);
+			if (buttonPlay) {
+				buttonPlay.value = playing ? lang.pause : lang.playSymbol;
+				buttonPlay.title = playing ? lang.pauseTitle : lang.playTitle;
+				buttonPlay.onclick = function (event) {
+					if (options.player) options.player.play3DObject();
+				};
+				settings.buttonPlay = buttonPlay;
+			}
+		}
+		if (settings.buttonNext === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonNext = ' + settings.buttonNext);
+		if (settings.buttonNext) {
+			var buttonNext = typeof settings.buttonNext === 'string' ? document.getElementById(settings.buttonNext) : settings.buttonNext;
+			if (buttonNext === null) console.warn('Player.createControllersButtons: invalid options.controllers.player.buttonNext = ' + settings.buttonNext);
+			if (buttonNext) {
+				buttonNext.value = lang.nextSymbol;
+				buttonNext.title = lang.nextSymbolTitle;
+				buttonNext.onclick = function (event) {
+					if (options.player) options.player.next();
+				};
+				settings.buttonNext = buttonNext;
+			}
+		}
+	};
+	var _canvasMenu;
+	this.createCanvasMenuItem = function (canvasMenu) {
+		var getLanguageCode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {
+			return 'en';
+		};
+		_canvasMenu = canvasMenu;
+		var player = this,
+		    menu = canvasMenu.menu,
+		    lang = player.localization(getLanguageCode);
+		menu.push({
+			name: lang.prevSymbol,
+			title: lang.prevSymbolTitle,
+			onclick: function onclick(event) {
+				player.prev();
+			}
+		});
+		menu.push({
+			name: playing ? lang.pause : lang.playSymbol,
+			title: playing ? lang.pauseTitle : lang.playTitle,
+			id: "menuButtonPlay",
+			onclick: function onclick(event) {
+				player.play3DObject();
+			}
+		});
+		if (options.playerOptions.max !== null) {
+			menu.push({
+				name: lang.repeat,
+				title: this.getSettings().repeat ? lang.repeatOff : lang.repeatOn,
+				id: "menuButtonRepeat",
+				onclick: function onclick(event) {
+					player.repeat();
+				}
+			});
+		}
+		menu.push({
+			name: lang.nextSymbol,
+			title: lang.nextSymbolTitle,
+			onclick: function onclick(event) {
+				player.next();
+			}
+		});
+		this.controllers.push({
+			onRenamePlayButtons: function onRenamePlayButtons(playing) {
+				var name, title;
+				if (playing) {
+					name = lang.pause;
+					title = lang.pauseTitle;
+				} else {
+					name = lang.playSymbol;
+					title = lang.playTitle;
+				}
+				var elMenuButtonPlay = canvasMenu.querySelector('#menuButtonPlay');
+				elMenuButtonPlay.innerHTML = name;
+				elMenuButtonPlay.title = title;
+				if (options.controllers && options.controllers.player && options.controllers.player.buttonPlay) {
+					options.controllers.player.buttonPlay.value = name;
+					options.controllers.player.buttonPlay.title = title;
+				}
+			},
+			onChangeRepeat: function onChangeRepeat() {
+				canvasMenu.querySelector('#menuButtonRepeat').title = options.playerOptions.repeat ? lang.repeatOff : lang.repeatOn;
+			}
+		});
+	};
+	this.addSlider = function () {
+		if (options.playerOptions.max === null) return;
+		_canvasMenu.menu.push({
+			name: '<input type="range" min="0" max="' + (options.playerOptions.marks - 1) + '" value="0" class="slider" id="sliderPosition">',
+			style: 'float: right;'
+		});
+	};
+	function getSliderElement() {
+		if (_canvasMenu) return _canvasMenu.querySelector('#sliderPosition');
+	}
+	this.addSliderEvents = function () {
+		var elSlider = getSliderElement();
+		if (elSlider) {
+			elSlider.onchange = function (event) {
+				_player.selectScene(parseInt(elSlider.value));
 			};
-			this.setIndex = function (index, title) {
-						var t = this.getTime();
-						if (options.controllers && options.controllers.t) options.controllers.t.controller.value = t;
-						if (_typeof(this.PlayController) === "object") this.PlayController.setValue(t);
-						var elSlider = getSliderElement();
-						if (elSlider) {
-									elSlider.value = index;
-									elSlider.title = title;
-						}
+			elSlider.oninput = function (event) {
+				_player.selectScene(parseInt(elSlider.value));
 			};
-			this.onChangeScale = function (scale) {
-						getSliderElement().max = scale.marks - 1;
-						this.selectScene(0);
-			};
+			var pointerdown;
+			var _player = this;
+			elSlider.addEventListener('pointerdown', function (e) {
+				pointerdown = true;
+			});
+			elSlider.addEventListener('pointerup', function (e) {
+				pointerdown = false;
+			});
+			elSlider.addEventListener('mousemove', function (e) {
+				if (!pointerdown) return;
+				_player.selectScene((options.playerOptions.marks - 1) * e.offsetX / elSlider.clientWidth);
+			});
+		}
+		return elSlider;
+	};
+	this.setIndex = function (index, title) {
+		var t = this.getTime();
+		if (options.controllers && options.controllers.t) options.controllers.t.controller.value = t;
+		if (_typeof(this.PlayController) === "object") this.PlayController.setValue(t);
+		var elSlider = getSliderElement();
+		if (elSlider) {
+			elSlider.value = index;
+			elSlider.title = title;
+		}
+	};
+	this.onChangeScale = function (scale) {
+		getSliderElement().max = scale.marks - 1;
+		this.selectScene(0);
+	};
 };
 Player$1.cameraTarget = function () {
-			function _class2() {
-						classCallCheck(this, _class2);
-						var cameraTargetDefault = { boLook: false },
-						_cameraTarget = {
-									boLook: cameraTargetDefault.boLook,
-									getDistanceToCamera: function getDistanceToCamera() {
-												if (typeof this.distanceToCameraCur !== 'undefined') return this.distanceToCameraCur;
-												return this.distanceToCamera;
-									}
-						};
-						var _options;
-						cameraTargetDefault.rotation = {};
-						_cameraTarget.rotation = {};
-						var boTarget = false,
-						boPlayer = false;
-						var boCameraTargetLook;
-						this.get = function (options) {
-									if (!options && !_options) console.error('Player.cameraTarget.get: options = ' + options);else if (_options && options && !Object.is(_options, options)) console.error('Player.cameraTarget.get: options is ambiguous');
-									_options = _options || options;
-									if (!_cameraTarget.camera && !boPlayer && _options.player) {
-												cameraTargetDefault.camera = _options.player.getSettings().cameraTarget.camera;
-												if (cameraTargetDefault.camera) setCameraTarget();
-												boPlayer = true;
-									}
-									if (_cameraTarget.camera) return _cameraTarget;
-						};
-						this.init = function (cameraTarget, options) {
-									var boErrorMessage = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-									if (!cameraTarget) return;
-									if (!options && !_options) console.error('Player.cameraTarget.init: options = ' + options);else if (_options && options && !Object.is(_options, options)) console.error('Player.cameraTarget.init: options is ambiguous');
-									_options = _options || options;
-									if (cameraTarget.bodefault !== false) {
-												if (boTarget) return;
-												if (cameraTarget.boLook !== undefined) {
-															cameraTargetDefault.boLook = cameraTarget.boLook;
-															boCameraTargetLook = cameraTarget.boLook;
-												}
-									} else if (cameraTarget.boLook === true) {
-												if (boTarget) console.warn('playerCameraTarget().init(...): duplicate target point');
-												boTarget = true;
-												if (boCameraTargetLook === undefined) cameraTargetDefault.boLook = true;
-									} else return;
-									cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera || (_options.player ? _options.player.getSettings().cameraTarget.camera : undefined);
-									if (!cameraTargetDefault.camera && boErrorMessage) {
-												console.error('playerCameraTarget().init(...): cameraTargetDefault.camera = ' + cameraTargetDefault.camera);
-												return;
-									}
-									cameraTargetDefault.distanceToCamera = cameraTargetDefault.distanceToCamera || cameraTarget.distanceToCamera;
-									cameraTarget.rotation = cameraTarget.rotation || {};
-									cameraTargetDefault.rotation.angle = cameraTargetDefault.rotation.angle || cameraTarget.rotation.angle;
-									cameraTargetDefault.rotation.axis = cameraTargetDefault.rotation.axis || cameraTarget.rotation.axis;
-									setCameraTarget(cameraTarget);
-						};
-						function setCameraTarget(cameraTarget) {
-									assign$1();
-									if (!cameraTarget) cameraTarget = cameraTargetDefault;
-									if (!_cameraTarget.boMaual) {
-												if (cameraTarget.boLook !== undefined) _cameraTarget.boLook = cameraTarget.boLook;else _cameraTarget.boLook = cameraTargetDefault.boLook;
-									}
-									cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera;
-									_cameraTarget.camera = cameraTarget.camera || cameraTargetDefault.camera;
-									_cameraTarget.distanceToCamera = cameraTarget.distanceToCamera || cameraTargetDefault.distanceToCamera || _cameraTarget.distanceToCamera || new THREE.Vector3().copy(cameraTargetDefault.camera.position);
-									if (!cameraTarget.rotation) cameraTarget.rotation = {};
-									if (cameraTarget.rotation.angle !== undefined) _cameraTarget.rotation.angle = cameraTarget.rotation.angle;else _cameraTarget.rotation.angle = cameraTargetDefault.rotation.angle || 0;
-									_cameraTarget.rotation.axis = cameraTarget.rotation.axis || cameraTargetDefault.rotation.axis || new THREE.Vector3(0, 1, 0);
-						}
-						this.changeTarget = function (mesh, i, options) {
-									assign$1();
-									var func = !mesh.userData.player || typeof mesh.userData.player.arrayFuncs === "function" ? {} : mesh.userData.player.arrayFuncs[i];
-									if (!func.cameraTarget) func.cameraTarget = { boLook: false };
-									setCameraTarget(func.cameraTarget);
-									_options = _options || options;
-									var cameraTarget = _options.playerOptions.cameraTarget.get(_options);
-									if (cameraTarget) {
-												if (cameraTarget && cameraTarget.boLook) {
-															var target = getWorldPosition(mesh, new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize));
-															cameraTarget.target = target;
-												} else delete cameraTarget.target;
-									}
-						};
-						this.setCameraTarget = function (options) {
-									assign$1();
-									var cameraTarget = options.playerOptions.cameraTarget.get(options);
-									if (!cameraTarget) cameraTarget = cameraTarget || {};
-									var camera = cameraTarget.camera;
-									if (!camera) return;
-									if (!cameraTarget.distanceToCamera) cameraTarget.distanceToCamera = new THREE.Vector3().copy(camera.position);
-									if (!cameraTarget.distanceToCameraCur) cameraTarget.distanceToCameraCur = new THREE.Vector3();
-									var t = options.time,
-									    distanceToCamera = cameraTarget.distanceToCamera,
-									    distanceToCameraCur = new THREE.Vector3().copy(cameraTarget.distanceToCameraCur);
-									cameraTarget.distanceToCameraCur.set(Player$1.execFunc(distanceToCamera, 'x', t, options), Player$1.execFunc(distanceToCamera, 'y', t, options), Player$1.execFunc(distanceToCamera, 'z', t, options));
-									if (!cameraTarget.setCameraPosition) cameraTarget.setCameraPosition = function ()                     {
-												var target = cameraTarget.target;
-												if (!cameraTarget.boLook ||
-												!target &&
-												cameraTarget.distanceToCameraCur.equals(distanceToCameraCur)
-												) {
-																		return;
-															}
-												distanceToCameraCur.copy(cameraTarget.distanceToCameraCur);
-												var t = options.time;
-												camera.position.copy(cameraTarget.distanceToCameraCur);
-												camera.position.applyAxisAngle(cameraTarget.rotation.axis, Player$1.execFunc(cameraTarget.rotation, 'angle', t, options));
-												if (!target) {
-															if (Player$1.orbitControls) target = Player$1.orbitControls.target;else {
-																		return;
-															}
-												}
-												camera.position.add(target);
-												camera.lookAt(target);
-												if (options.orbitControls) {
-															if (!options.orbitControls.target.equals(target)) {
-																		options.orbitControls.target.copy(target);
-																		if (options.orbitControlsGui) options.orbitControlsGui.setTarget(target);
-															}
-															if (options.orbitControls._listeners) options.orbitControls._listeners.change[0]();
-												}
-									};
-									if (options.cameraGui) options.cameraGui.update();
-						};
+	function _class2() {
+		classCallCheck(this, _class2);
+		var cameraTargetDefault = { boLook: false },
+		_cameraTarget = {
+			boLook: cameraTargetDefault.boLook,
+			getDistanceToCamera: function getDistanceToCamera() {
+				if (typeof this.distanceToCameraCur !== 'undefined') return this.distanceToCameraCur;
+				return this.distanceToCamera;
 			}
-			return _class2;
+		};
+		var _options;
+		cameraTargetDefault.rotation = {};
+		_cameraTarget.rotation = {};
+		var boTarget = false,
+		boPlayer = false;
+		var boCameraTargetLook;
+		this.get = function (options) {
+			if (!options && !_options) console.error('Player.cameraTarget.get: options = ' + options);else if (_options && options && !Object.is(_options, options)) console.error('Player.cameraTarget.get: options is ambiguous');
+			_options = _options || options;
+			if (!_cameraTarget.camera && !boPlayer && _options.player) {
+				cameraTargetDefault.camera = _options.player.getSettings().cameraTarget.camera;
+				if (cameraTargetDefault.camera) setCameraTarget();
+				boPlayer = true;
+			}
+			if (_cameraTarget.camera) return _cameraTarget;
+		};
+		this.init = function (cameraTarget, options) {
+			var boErrorMessage = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+			if (!cameraTarget) return;
+			if (!options && !_options) console.error('Player.cameraTarget.init: options = ' + options);else if (_options && options && !Object.is(_options, options)) console.error('Player.cameraTarget.init: options is ambiguous');
+			_options = _options || options;
+			if (cameraTarget.bodefault !== false) {
+				if (boTarget) return;
+				if (cameraTarget.boLook !== undefined) {
+					cameraTargetDefault.boLook = cameraTarget.boLook;
+					boCameraTargetLook = cameraTarget.boLook;
+				}
+			} else if (cameraTarget.boLook === true) {
+				if (boTarget) console.warn('playerCameraTarget().init(...): duplicate target point');
+				boTarget = true;
+				if (boCameraTargetLook === undefined) cameraTargetDefault.boLook = true;
+			} else return;
+			cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera || (_options.player ? _options.player.getSettings().cameraTarget.camera : undefined);
+			if (!cameraTargetDefault.camera && boErrorMessage) {
+				console.error('playerCameraTarget().init(...): cameraTargetDefault.camera = ' + cameraTargetDefault.camera);
+				return;
+			}
+			cameraTargetDefault.distanceToCamera = cameraTargetDefault.distanceToCamera || cameraTarget.distanceToCamera;
+			cameraTarget.rotation = cameraTarget.rotation || {};
+			cameraTargetDefault.rotation.angle = cameraTargetDefault.rotation.angle || cameraTarget.rotation.angle;
+			cameraTargetDefault.rotation.axis = cameraTargetDefault.rotation.axis || cameraTarget.rotation.axis;
+			setCameraTarget(cameraTarget);
+		};
+		function setCameraTarget(cameraTarget) {
+			assign$1();
+			if (!cameraTarget) cameraTarget = cameraTargetDefault;
+			if (!_cameraTarget.boMaual) {
+				if (cameraTarget.boLook !== undefined) _cameraTarget.boLook = cameraTarget.boLook;else _cameraTarget.boLook = cameraTargetDefault.boLook;
+			}
+			cameraTargetDefault.camera = cameraTargetDefault.camera || cameraTarget.camera;
+			_cameraTarget.camera = cameraTarget.camera || cameraTargetDefault.camera;
+			_cameraTarget.distanceToCamera = cameraTarget.distanceToCamera || cameraTargetDefault.distanceToCamera || _cameraTarget.distanceToCamera || new THREE.Vector3().copy(cameraTargetDefault.camera.position);
+			if (!cameraTarget.rotation) cameraTarget.rotation = {};
+			if (cameraTarget.rotation.angle !== undefined) _cameraTarget.rotation.angle = cameraTarget.rotation.angle;else _cameraTarget.rotation.angle = cameraTargetDefault.rotation.angle || 0;
+			_cameraTarget.rotation.axis = cameraTarget.rotation.axis || cameraTargetDefault.rotation.axis || new THREE.Vector3(0, 1, 0);
+		}
+		this.changeTarget = function (mesh, i, options) {
+			assign$1();
+			var func = !mesh.userData.player || typeof mesh.userData.player.arrayFuncs === "function" ? {} : mesh.userData.player.arrayFuncs[i];
+			if (!func.cameraTarget) func.cameraTarget = { boLook: false };
+			setCameraTarget(func.cameraTarget);
+			_options = _options || options;
+			var cameraTarget = _options.playerOptions.cameraTarget.get(_options);
+			if (cameraTarget) {
+				if (cameraTarget && cameraTarget.boLook) {
+					var target = getWorldPosition(mesh, new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, i * mesh.geometry.attributes.position.itemSize));
+					cameraTarget.target = target;
+				} else delete cameraTarget.target;
+			}
+		};
+		this.setCameraTarget = function (options) {
+			assign$1();
+			var cameraTarget = options.playerOptions.cameraTarget.get(options);
+			if (!cameraTarget) cameraTarget = cameraTarget || {};
+			var camera = cameraTarget.camera;
+			if (!camera) return;
+			if (!cameraTarget.distanceToCamera) cameraTarget.distanceToCamera = new THREE.Vector3().copy(camera.position);
+			if (!cameraTarget.distanceToCameraCur) cameraTarget.distanceToCameraCur = new THREE.Vector3();
+			var t = options.time,
+			    distanceToCamera = cameraTarget.distanceToCamera,
+			    distanceToCameraCur = new THREE.Vector3().copy(cameraTarget.distanceToCameraCur);
+			cameraTarget.distanceToCameraCur.set(Player$1.execFunc(distanceToCamera, 'x', t, options), Player$1.execFunc(distanceToCamera, 'y', t, options), Player$1.execFunc(distanceToCamera, 'z', t, options));
+			if (!cameraTarget.setCameraPosition) cameraTarget.setCameraPosition = function ()                     {
+				var target = cameraTarget.target;
+				if (!cameraTarget.boLook ||
+				!target &&
+				cameraTarget.distanceToCameraCur.equals(distanceToCameraCur)
+				) {
+						return;
+					}
+				distanceToCameraCur.copy(cameraTarget.distanceToCameraCur);
+				var t = options.time;
+				camera.position.copy(cameraTarget.distanceToCameraCur);
+				camera.position.applyAxisAngle(cameraTarget.rotation.axis, Player$1.execFunc(cameraTarget.rotation, 'angle', t, options));
+				if (!target) {
+					if (Player$1.orbitControls) target = Player$1.orbitControls.target;else {
+						return;
+					}
+				}
+				camera.position.add(target);
+				camera.lookAt(target);
+				if (options.orbitControls) {
+					if (!options.orbitControls.target.equals(target)) {
+						options.orbitControls.target.copy(target);
+						if (options.orbitControlsGui) options.orbitControlsGui.setTarget(target);
+					}
+					if (options.orbitControls._listeners) options.orbitControls._listeners.change[0]();
+				}
+			};
+			if (options.cameraGui) options.cameraGui.update();
+		};
+	}
+	return _class2;
 }();
 Player$1.execFunc = function (funcs, axisName, t) {
-			var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-			var func = funcs[axisName];
-			var a = options.a,
-			    b = options.b,
-			    typeofFuncs = typeof func === 'undefined' ? 'undefined' : _typeof(func);
-			if (typeof t === "undefined") t = options.playerOptions ? options.playerOptions.min : 0;
-			switch (typeofFuncs) {
-						case "undefined":
-									return undefined;
-						case "number":
-									return func;
-						case "string":
-									func = new Function('t', 'a', 'b', 'return ' + func);
-						case "function":
-									try {
-												var res = func(t, a, b);
-												if (res === undefined) throw 'function returns ' + res;
-												if (!Array.isArray(res)) return res;else func = res;
-									} catch (e) {
-												console.error(e);
-												throw e;
-												return;
-									}
-						case "object":
-									if (Array.isArray(func)) {
-												var execW = function execW(i) {
-															if (typeof _a[i] === "function") return _a[i](t, _a, b);
-															if (_a[i] instanceof THREE.Color) return _a[i];
-												};
-												if (func.length === 0) {
-															console.error('Player.execFunc: funcs["' + axisName + '"] array is empty');
-															return;
-												}
-												var _a = func,
-												    l = func.length - 1,
-												    max = options.playerOptions.max === null ? Infinity : options.playerOptions.max,
-												    min = options.playerOptions.min,
-												    tStep = (max - min) / l;
-												var tStart = min,
-												    tStop = max,
-												    iStart = 0,
-												    iStop = l;
-												for (var i = 0; i < func.length; i++) {
-															if (tStep * i + min < t) {
-																		iStart = i;
-																		iStop = i + 1;
-																		tStart = tStep * iStart + min;
-																		tStop = tStep * iStop + min;
-															}
-												}
-												if (typeof _a[iStart] !== "number") {
-															if (axisName === 'w') {
-																		return execW(iStart);
-															}
-															if (_typeof(_a[iStart]) === "object") {
-																		for (var i = 0; i < func.length; i++) {
-																					if (i === func.length - 1) return _a[i].v;
-																					iStart = i;iStop = i + 1;
-																					tStart = _a[iStart].t;tStop = _a[iStop].t;
-																					if (tStart <= t && tStop > t) {
-																								var x = (_a[iStop].v - _a[iStart].v) / (tStop - tStart),
-																								    y = _a[iStart].v - x * tStart;
-																								return x * t + y;
-																					}
-																		}
-																		console.error('Player.execFunc: value is not detected');
-																		return;
-															} else {
-																		console.error('Player.execFunc: funcs["' + axisName + '"] array item ' + iStart + ' typeof = ' + _typeof(_a[iStart]) + ' is not number');
-																		return;
-															}
-												}
-												if (iStop >= func.length) iStop = iStart;
-												if (typeof _a[iStop] !== "number") {
-															if (axisName === 'w') return execW(iStop);
-															if (_typeof(_a[iStop]) !== "object") {
-																		console.error('Player.execFunc: funcs["' + axisName + '"] array item ' + iStop + ' typeof = ' + _typeof(_a[iStop]) + ' is not number');
-																		return;
-															}
-												}
-												var x = (_a[iStop] - _a[iStart]) / (tStop - tStart),
-												    y = _a[iStart] - x * tStart;
-												if (isNaN(x) || isNaN(y)) console.error('Player.execFunc: invalid x = ' + x + ' or y = ' + y);
-												return x * t + y;
-									}
-									if (func.func) return func.func instanceof Function ? func.func(t, a, b) : func.func;
-									if (axisName !== 'w') console.error('Player.execFunc: funcs["' + axisName + '"] object is not array');
-									return func;
-						default:
-									console.error('Player.execFunc: Invalud typeof funcs["' + axisName + '"]: ' + typeofFuncs);
+	var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+	var func = funcs[axisName];
+	var a = options.a,
+	    b = options.b,
+	    typeofFuncs = typeof func === 'undefined' ? 'undefined' : _typeof(func);
+	if (typeof t === "undefined") t = options.playerOptions ? options.playerOptions.min : 0;
+	switch (typeofFuncs) {
+		case "undefined":
+			return undefined;
+		case "number":
+			return func;
+		case "string":
+			func = new Function('t', 'a', 'b', 'return ' + func);
+		case "function":
+			try {
+				var res = func(t, a, b);
+				if (res === undefined) throw 'function returns ' + res;
+				if (!Array.isArray(res)) return res;else func = res;
+			} catch (e) {
+				console.error(e);
+				throw e;
+				return;
 			}
-			return;
+		case "object":
+			if (Array.isArray(func)) {
+				var execW = function execW(i) {
+					if (typeof _a[i] === "function") return _a[i](t, _a, b);
+					if (_a[i] instanceof THREE.Color) return _a[i];
+				};
+				if (func.length === 0) {
+					console.error('Player.execFunc: funcs["' + axisName + '"] array is empty');
+					return;
+				}
+				var _a = func,
+				    l = func.length - 1,
+				    max = options.playerOptions.max === null ? Infinity : options.playerOptions.max,
+				    min = options.playerOptions.min,
+				    tStep = (max - min) / l;
+				var tStart = min,
+				    tStop = max,
+				    iStart = 0,
+				    iStop = l;
+				for (var i = 0; i < func.length; i++) {
+					if (tStep * i + min < t) {
+						iStart = i;
+						iStop = i + 1;
+						tStart = tStep * iStart + min;
+						tStop = tStep * iStop + min;
+					}
+				}
+				if (typeof _a[iStart] !== "number") {
+					if (axisName === 'w') {
+						return execW(iStart);
+					}
+					if (_typeof(_a[iStart]) === "object") {
+						for (var i = 0; i < func.length; i++) {
+							if (i === func.length - 1) return _a[i].v;
+							iStart = i;iStop = i + 1;
+							tStart = _a[iStart].t;tStop = _a[iStop].t;
+							if (tStart <= t && tStop > t) {
+								var x = (_a[iStop].v - _a[iStart].v) / (tStop - tStart),
+								    y = _a[iStart].v - x * tStart;
+								return x * t + y;
+							}
+						}
+						console.error('Player.execFunc: value is not detected');
+						return;
+					} else {
+						console.error('Player.execFunc: funcs["' + axisName + '"] array item ' + iStart + ' typeof = ' + _typeof(_a[iStart]) + ' is not number');
+						return;
+					}
+				}
+				if (iStop >= func.length) iStop = iStart;
+				if (typeof _a[iStop] !== "number") {
+					if (axisName === 'w') return execW(iStop);
+					if (_typeof(_a[iStop]) !== "object") {
+						console.error('Player.execFunc: funcs["' + axisName + '"] array item ' + iStop + ' typeof = ' + _typeof(_a[iStop]) + ' is not number');
+						return;
+					}
+				}
+				var x = (_a[iStop] - _a[iStart]) / (tStop - tStart),
+				    y = _a[iStart] - x * tStart;
+				if (isNaN(x) || isNaN(y)) console.error('Player.execFunc: invalid x = ' + x + ' or y = ' + y);
+				return x * t + y;
+			}
+			if (func.func) return func.func instanceof Function ? func.func(t, a, b) : func.func;
+			if (axisName !== 'w') console.error('Player.execFunc: funcs["' + axisName + '"] object is not array');
+			return func;
+		default:
+			console.error('Player.execFunc: Invalud typeof funcs["' + axisName + '"]: ' + typeofFuncs);
+	}
+	return;
 };
 var lang$1;
 var Ids = function Ids() {
-			classCallCheck(this, Ids);
-			function addKeys(axisName) {
-						function keyValue(controllerId) {
-									var id = axisName + controllerId;
-									return {
-												get controllerId() {
-															return this.boUsed ? undefined : id;
-												},
-												get elController() {
-															return document.getElementById(this.controllerId);
-												},
-												nameId: id + 'Name',
-												get elName() {
-															return document.getElementById(this.nameId);
-												}
-									};
-						}
-						return {
-									func: keyValue('Func'),
-									position: keyValue('Position'),
-									worldPosition: keyValue('WorldPosition')
-						};
-			}
-			this.x = addKeys('x');
-			this.y = addKeys('y');
-			this.z = addKeys('z');
-			this.w = addKeys('w');
+	classCallCheck(this, Ids);
+	function addKeys(axisName) {
+		function keyValue(controllerId) {
+			var id = axisName + controllerId;
+			return {
+				get controllerId() {
+					return this.boUsed ? undefined : id;
+				},
+				get elController() {
+					return document.getElementById(this.controllerId);
+				},
+				nameId: id + 'Name',
+				get elName() {
+					return document.getElementById(this.nameId);
+				}
+			};
+		}
+		return {
+			func: keyValue('Func'),
+			position: keyValue('Position'),
+			worldPosition: keyValue('WorldPosition')
+		};
+	}
+	this.x = addKeys('x');
+	this.y = addKeys('y');
+	this.z = addKeys('z');
+	this.w = addKeys('w');
 };
 var ids = new Ids();
 Player$1.selectMeshPlayScene = function (mesh) {
-			var settings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-			assign$1();
-			var t = settings.t,
-			    options = settings.options || { dat: false };
-			options = new Options(options);
-			if (t === undefined) t = options.playerOptions.min;
-			options.scales.setW();
-			if (!mesh.userData.player || options && options.boPlayer && mesh.userData.boFrustumPoints) return;
-			if (mesh.geometry) {
-						delete mesh.geometry.boundingSphere;
-						mesh.geometry.boundingSphere = null;
+	var settings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	assign$1();
+	var t = settings.t,
+	    options = settings.options || { dat: false };
+	options = new Options(options);
+	if (t === undefined) t = options.playerOptions.min;
+	options.scales.setW();
+	if (!mesh.userData.player || options && options.boPlayer && mesh.userData.boFrustumPoints) return;
+	if (mesh.geometry) {
+		delete mesh.geometry.boundingSphere;
+		mesh.geometry.boundingSphere = null;
+	}
+	if (mesh.userData.player.selectPlayScene) {
+		var setRotation = function setRotation(axisName) {
+			while (mesh.rotation[axisName] < 0) {
+				mesh.rotation[axisName] += Math.PI * 2;
+			}while (mesh.rotation[axisName] > Math.PI * 2) {
+				mesh.rotation[axisName] -= Math.PI * 2;
 			}
-			if (mesh.userData.player.selectPlayScene) {
-						var setRotation = function setRotation(axisName) {
-									while (mesh.rotation[axisName] < 0) {
-												mesh.rotation[axisName] += Math.PI * 2;
-									}while (mesh.rotation[axisName] > Math.PI * 2) {
-												mesh.rotation[axisName] -= Math.PI * 2;
-									}
-						};
-						mesh.userData.player.selectPlayScene(t);
-						setRotation('x');
-						setRotation('y');
-						setRotation('z');
+		};
+		mesh.userData.player.selectPlayScene(t);
+		setRotation('x');
+		setRotation('y');
+		setRotation('z');
+	}
+	function setAttributes(a, b) {
+		if (!mesh.geometry || mesh.userData.nd) return;
+		var attributes = mesh.geometry.attributes,
+		    arrayFuncs = mesh.userData.player.arrayFuncs;
+		if (arrayFuncs === undefined) return;
+		if (t === undefined) console.error('setPosition: t = ' + t);
+		var min, max;
+		if (options && options.scales.w !== undefined) {
+			min = options.scales.w.min;max = options.scales.w.max;
+		} else {
+			max = value;
+			min = max - 1;
+		}
+		var _loop = function _loop() {
+			funcs = arrayFuncs[i];
+			needsUpdate = false;
+			function setPosition(axisName, fnName) {
+				var value = Player$1.execFunc(funcs, axisName, t, options);
+				if (value !== undefined) {
+					attributes.position[fnName](i, value);
+					needsUpdate = true;
+				}
 			}
-			function setAttributes(a, b) {
-						if (!mesh.geometry || mesh.userData.nd) return;
-						var attributes = mesh.geometry.attributes,
-						    arrayFuncs = mesh.userData.player.arrayFuncs;
-						if (arrayFuncs === undefined) return;
-						if (t === undefined) console.error('setPosition: t = ' + t);
-						var min, max;
-						if (options && options.scales.w !== undefined) {
-									min = options.scales.w.min;max = options.scales.w.max;
-						} else {
-									max = value;
-									min = max - 1;
+			setPosition('x', 'setX');
+			setPosition('y', 'setY');
+			setPosition('z', 'setZ');
+			setPosition('w', 'setW');
+			var color = void 0;
+			function getColor() {
+				if (mesh.userData.player.palette) color = mesh.userData.player.palette.toColor(value, min, max);else if (options.palette) color = options.palette.toColor(value, min, max);else {
+					var c = { r: 255, g: 255, b: 255 };
+					color = new THREE.Color("rgb(" + c.r + ", " + c.g + ", " + c.b + ")");
+					return color;
+				}
+			}
+			if (typeof funcs.w === "function") {
+				value = funcs.w(t, a, b);
+				if (options.scales.w) {
+					min = options.scales.w.min;
+					max = options.scales.w.max;
+				} else {
+					console.warn('Player.selectMeshPlayScene: Кажется эти экстремумы заданы неверно');
+					min = 0;
+					max = 100;
+				}
+				if (attributes.position.itemSize >= 4) attributes.position.setW(i, value);
+				needsUpdate = true;
+				getColor();
+			} else if (_typeof(funcs.w) === "object") {
+				if (funcs.w instanceof THREE.Color) color = funcs.w;else {
+					value = Player$1.execFunc(funcs, 'w', t, options);
+					if (funcs.w.min !== undefined) min = funcs.w.min;
+					if (funcs.w.max !== undefined) max = funcs.w.max;
+					getColor();
+				}
+			}
+			color = setColorAttibute(funcs.w === undefined ? new THREE.Vector4().w : typeof funcs.w === "number" ? funcs.w : Player$1.execFunc(funcs, 'w', t, options), mesh, i, color);
+			if (needsUpdate) attributes.position.needsUpdate = true;
+			if (funcs.trace && !funcs.line) {
+				funcs.line = new Player$1.traceLine(options);
+				funcs.trace = false;
+			}
+			if (funcs.line && funcs.line.addPoint) funcs.line.addPoint(mesh, i, color);
+			if (funcs.cameraTarget && funcs.cameraTarget.boLook === true) options.playerOptions.cameraTarget.changeTarget(mesh, i, options);
+		};
+		for (var i = 0; i < arrayFuncs.length; i++) {
+			var funcs, needsUpdate;
+			var value;
+			var value;
+			_loop();
+		}
+	}
+	setAttributes(options ? options.a : 1, options ? options.b : 0);
+	var message = 'Player.selectMeshPlayScene: invalid mesh.scale.';
+	if (mesh.scale.x <= 0) console.error(message + 'x = ' + mesh.scale.x);
+	if (mesh.scale.y <= 0) console.error(message + 'y = ' + mesh.scale.y);
+	if (mesh.scale.z <= 0) console.error(message + 'z = ' + mesh.scale.z);
+	function setColorAttibute(value, mesh, index, color) {
+		if (mesh.geometry.attributes.position.itemSize < 4) return;
+		if (options.palette) color = options.palette.toColor(value, options.scales.w.min, options.scales.w.max);
+		if (!color) return;
+		if (
+		!(mesh.material instanceof THREE.ShaderMaterial) && mesh.material.vertexColors !== true
+		) console.error('Player.selectMeshPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to true.');
+		var attributes = mesh.geometry.attributes,
+		    arrayFuncs = mesh.userData.player.arrayFuncs;
+		if (!Player$1.setColorAttribute(attributes, index, color) && arrayFuncs[index] instanceof THREE.Vector4) {
+			if (mesh.userData.player && arrayFuncs) {
+				mesh.geometry.setAttribute('color', new THREE.Float32BufferAttribute(Player$1.getColors(arrayFuncs, {
+					positions: attributes.position,
+					options: options
+				}), 4));
+				if (!Player$1.setColorAttribute(attributes, index, color)) console.error('Player.selectMeshPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute');
+			} else console.error('Player.selectMeshPlayScene: set color attribute failed. Invalid mesh.userData.player.arrayFuncs');
+		}
+		return color;
+	}
+	if (mesh.userData.player && mesh.userData.player.arrayFuncs && mesh.userData.player.arrayFuncs instanceof Array) mesh.userData.player.arrayFuncs.forEach(function (func, index) {
+		if (func.controllers) {
+			var setPosition = function setPosition(value, axisName) {
+				var axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : undefined;
+				if (axisName === 'w') {
+					setColorAttibute(value, mesh, index);
+					if (options.guiSelectPoint) options.guiSelectPoint.update();
+				}
+				var indexValue = axesId + mesh.geometry.attributes.position.itemSize * index,
+				    valueOld = mesh.geometry.attributes.position.array[indexValue];
+				mesh.geometry.attributes.position.array[indexValue] = value;
+				var axisControllers = func.controllers[axisName];
+				if (isNaN(mesh.geometry.attributes.position.array[indexValue])) {
+					alert(lang$1.positionAlert + value);
+					var controller = axisControllers.position.controller;
+					controller.focus();
+					controller.value = valueOld;
+					mesh.geometry.attributes.position.array[indexValue] = valueOld;
+					return;
+				}
+				mesh.geometry.attributes.position.needsUpdate = true;
+				if (options.axesHelper) options.axesHelper.updateAxes();
+				if (options.guiSelectPoint) options.guiSelectPoint.update();
+				if (axisControllers.worldPosition && axisControllers.worldPosition.controller) {
+					var _controller = axisControllers.worldPosition.controller;
+					_controller.innerHTML = getObjectPosition(mesh, index)[axisName];
+				}
+			};
+			var createControllers = function createControllers(axisName) {
+				var axisControllers = func.controllers[axisName];
+				if (axisControllers === false) return;
+				var position = 'position';
+				if (!axisControllers && (ids[axisName].func.elController || ids[axisName].position.elController || ids[axisName].worldPosition.elController)) {
+					axisControllers = {};
+					func.controllers[axisName] = axisControllers;
+				}
+				if (!axisControllers) return;
+				function addKey(keyName) {
+					if (!ids[axisName][keyName].elController) return;
+					if (!axisControllers[keyName]) {
+						if (!ids[axisName][keyName].boUsed) {
+							axisControllers[keyName] = {
+								controller: ids[axisName][keyName].elController,
+								elName: ids[axisName][keyName].elName ? ids[axisName][keyName].elName : false
+							};
+							ids[axisName][keyName].boUsed = true;
+							if (keyName === position && axisName === 'w') axisControllers[keyName].elSlider = true;
+						} else console.warn('Player.selectMeshPlayScene createControllers: Same controller is using for different points. Controller ID is "' + ids[axisName][keyName].controllerId + '""');
+					}
+				}
+				addKey('func');
+				addKey(position);
+				addKey('worldPosition');
+				createController(axisControllers.func, ids[axisName].func.controllerId, function () {
+					return options.scales[axisName].name + ' = f(t)';
+				}, {
+					value: func[axisName],
+					title: axisName === 'x' ? lang$1.controllerXFunctionTitle : axisName === 'y' ? lang$1.controllerYFunctionTitle : axisName === 'z' ? lang$1.controllerZFunctionTitle : axisName === 'w' ? lang$1.controllerWFunctionTitle : '',
+					onchange: function onchange(event) {
+						try {
+							func[axisName] = event.currentTarget.value;
+							var value = Player$1.execFunc(func, axisName, options.player.getTime(), options);
+							if (axisControllers.position && axisControllers.position.controller) {
+								var controller = axisControllers.position.controller;
+								controller.onchange({ currentTarget: { value: value } });
+								controller.value = value;
+							} else setPosition(value, axisName);
+							if (options.guiSelectPoint) options.guiSelectPoint.update();
+						} catch (e) {
+							alert('Axis: ' + options.scales[axisName].name + '. Function: "' + func[axisName] + '". ' + e);
+							event.currentTarget.focus();
 						}
-						var _loop = function _loop() {
-									funcs = arrayFuncs[i];
-									needsUpdate = false;
-									function setPosition(axisName, fnName) {
-												var value = Player$1.execFunc(funcs, axisName, t, options);
-												if (value !== undefined) {
-															attributes.position[fnName](i, value);
-															needsUpdate = true;
-												}
-									}
-									setPosition('x', 'setX');
-									setPosition('y', 'setY');
-									setPosition('z', 'setZ');
-									setPosition('w', 'setW');
-									var color = void 0;
-									function getColor() {
-												if (mesh.userData.player.palette) color = mesh.userData.player.palette.toColor(value, min, max);else if (options.palette) color = options.palette.toColor(value, min, max);else {
-															var c = { r: 255, g: 255, b: 255 };
-															color = new THREE.Color("rgb(" + c.r + ", " + c.g + ", " + c.b + ")");
-															return color;
-												}
-									}
-									if (typeof funcs.w === "function") {
-												value = funcs.w(t, a, b);
-												if (options.scales.w) {
-															min = options.scales.w.min;
-															max = options.scales.w.max;
-												} else {
-															console.warn('Player.selectMeshPlayScene: Кажется эти экстремумы заданы неверно');
-															min = 0;
-															max = 100;
-												}
-												if (attributes.position.itemSize >= 4) attributes.position.setW(i, value);
-												needsUpdate = true;
-												getColor();
-									} else if (_typeof(funcs.w) === "object") {
-												if (funcs.w instanceof THREE.Color) color = funcs.w;else {
-															value = Player$1.execFunc(funcs, 'w', t, options);
-															if (funcs.w.min !== undefined) min = funcs.w.min;
-															if (funcs.w.max !== undefined) max = funcs.w.max;
-															getColor();
-												}
-									}
-									color = setColorAttibute(funcs.w === undefined ? new THREE.Vector4().w : typeof funcs.w === "number" ? funcs.w : Player$1.execFunc(funcs, 'w', t, options), mesh, i, color);
-									if (needsUpdate) attributes.position.needsUpdate = true;
-									if (funcs.trace && !funcs.line) {
-												funcs.line = new Player$1.traceLine(options);
-												funcs.trace = false;
-									}
-									if (funcs.line && funcs.line.addPoint) funcs.line.addPoint(mesh, i, color);
-									if (funcs.cameraTarget && funcs.cameraTarget.boLook === true) options.playerOptions.cameraTarget.changeTarget(mesh, i, options);
-						};
-						for (var i = 0; i < arrayFuncs.length; i++) {
-									var funcs, needsUpdate;
-									var value;
-									var value;
-									_loop();
-						}
-			}
-			setAttributes(options ? options.a : 1, options ? options.b : 0);
-			var message = 'Player.selectMeshPlayScene: invalid mesh.scale.';
-			if (mesh.scale.x <= 0) console.error(message + 'x = ' + mesh.scale.x);
-			if (mesh.scale.y <= 0) console.error(message + 'y = ' + mesh.scale.y);
-			if (mesh.scale.z <= 0) console.error(message + 'z = ' + mesh.scale.z);
-			function setColorAttibute(value, mesh, index, color) {
-						if (mesh.geometry.attributes.position.itemSize < 4) return;
-						if (options.palette) color = options.palette.toColor(value, options.scales.w.min, options.scales.w.max);
-						if (!color) return;
-						if (!mesh.material instanceof THREE.ShaderMaterial && mesh.material.vertexColors !== THREE.VertexColors) console.error('Player.selectMeshPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to THREE.VertexColors. Example: vertexColors: THREE.VertexColors');
-						var attributes = mesh.geometry.attributes,
-						    arrayFuncs = mesh.userData.player.arrayFuncs;
-						if (!Player$1.setColorAttribute(attributes, index, color) && arrayFuncs[index] instanceof THREE.Vector4) {
-									if (mesh.userData.player && arrayFuncs) {
-												mesh.geometry.setAttribute('color', new THREE.Float32BufferAttribute(Player$1.getColors(arrayFuncs, {
-															positions: attributes.position,
-															options: options
-												}), 4));
-												if (!Player$1.setColorAttribute(attributes, index, color)) console.error('Player.selectMeshPlayScene: the color attribute is not exists. Please use THREE.Vector3 instead THREE.Vector4 in the arrayFuncs or add "color" attribute');
-									} else console.error('Player.selectMeshPlayScene: set color attribute failed. Invalid mesh.userData.player.arrayFuncs');
-						}
-						return color;
-			}
-			if (mesh.userData.player && mesh.userData.player.arrayFuncs && mesh.userData.player.arrayFuncs instanceof Array) mesh.userData.player.arrayFuncs.forEach(function (func, index) {
-						if (func.controllers) {
-									var setPosition = function setPosition(value, axisName) {
-												var axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : undefined;
-												if (axisName === 'w') {
-															setColorAttibute(value, mesh, index);
-															if (options.guiSelectPoint) options.guiSelectPoint.update();
-												}
-												var indexValue = axesId + mesh.geometry.attributes.position.itemSize * index,
-												    valueOld = mesh.geometry.attributes.position.array[indexValue];
-												mesh.geometry.attributes.position.array[indexValue] = value;
-												var axisControllers = func.controllers[axisName];
-												if (isNaN(mesh.geometry.attributes.position.array[indexValue])) {
-															alert(lang$1.positionAlert + value);
-															var controller = axisControllers.position.controller;
-															controller.focus();
-															controller.value = valueOld;
-															mesh.geometry.attributes.position.array[indexValue] = valueOld;
-															return;
-												}
-												mesh.geometry.attributes.position.needsUpdate = true;
-												if (options.axesHelper) options.axesHelper.updateAxes();
-												if (options.guiSelectPoint) options.guiSelectPoint.update();
-												if (axisControllers.worldPosition && axisControllers.worldPosition.controller) {
-															var _controller = axisControllers.worldPosition.controller;
-															_controller.innerHTML = getObjectPosition(mesh, index)[axisName];
-												}
-									};
-									var createControllers = function createControllers(axisName) {
-												var axisControllers = func.controllers[axisName];
-												if (axisControllers === false) return;
-												var position = 'position';
-												if (!axisControllers && (ids[axisName].func.elController || ids[axisName].position.elController || ids[axisName].worldPosition.elController)) {
-															axisControllers = {};
-															func.controllers[axisName] = axisControllers;
-												}
-												if (!axisControllers) return;
-												function addKey(keyName) {
-															if (!ids[axisName][keyName].elController) return;
-															if (!axisControllers[keyName]) {
-																		if (!ids[axisName][keyName].boUsed) {
-																					axisControllers[keyName] = {
-																								controller: ids[axisName][keyName].elController,
-																								elName: ids[axisName][keyName].elName ? ids[axisName][keyName].elName : false
-																					};
-																					ids[axisName][keyName].boUsed = true;
-																					if (keyName === position && axisName === 'w') axisControllers[keyName].elSlider = true;
-																		} else console.warn('Player.selectMeshPlayScene createControllers: Same controller is using for different points. Controller ID is "' + ids[axisName][keyName].controllerId + '""');
-															}
-												}
-												addKey('func');
-												addKey(position);
-												addKey('worldPosition');
-												createController(axisControllers.func, ids[axisName].func.controllerId, function () {
-															return options.scales[axisName].name + ' = f(t)';
-												}, {
-															value: func[axisName],
-															title: axisName === 'x' ? lang$1.controllerXFunctionTitle : axisName === 'y' ? lang$1.controllerYFunctionTitle : axisName === 'z' ? lang$1.controllerZFunctionTitle : axisName === 'w' ? lang$1.controllerWFunctionTitle : '',
-															onchange: function onchange(event) {
-																		try {
-																					func[axisName] = event.currentTarget.value;
-																					var value = Player$1.execFunc(func, axisName, options.player.getTime(), options);
-																					if (axisControllers.position && axisControllers.position.controller) {
-																								var controller = axisControllers.position.controller;
-																								controller.onchange({ currentTarget: { value: value } });
-																								controller.value = value;
-																					} else setPosition(value, axisName);
-																					if (options.guiSelectPoint) options.guiSelectPoint.update();
-																		} catch (e) {
-																					alert('Axis: ' + options.scales[axisName].name + '. Function: "' + func[axisName] + '". ' + e);
-																					event.currentTarget.focus();
-																		}
-															}
-												});
-												createController(axisControllers.position, axisName + 'Position', function () {
-															return options.scales[axisName].name;
-												}, {
-															value: positionLocal[axisName],
-															title: axisName === 'x' ? lang$1.controllerXTitle : axisName === 'y' ? lang$1.controllerYTitle : axisName === 'z' ? lang$1.controllerZTitle : axisName === 'w' ? lang$1.controllerWTitle : '',
-															onchange: function onchange(event) {
-																		setPosition(event.currentTarget.value, axisName);
-															},
-															axisName: axisName
-												});
-												createController(axisControllers.worldPosition, axisName + 'WorldPosition', function () {
-															return lang$1.controllerWorld + ' ' + options.scales[axisName].name;
-												}, {
-															value: getWorldPosition(mesh, positionLocal)[axisName],
-															title: axisName === 'x' ? lang$1.controllerXWorldTitle : axisName === 'y' ? lang$1.controllerYWorldTitle : axisName === 'z' ? lang$1.controllerZWorldTitle : axisName === 'w' ? lang$1.controllerWTitle : ''
-												});
-									};
-									if (!lang$1) {
-												lang$1 = {
-															controllerXTitle: 'X position',
-															controllerYTitle: 'Y position',
-															controllerZTitle: 'Z position',
-															controllerWTitle: 'color index',
-															controllerWorld: 'World',
-															controllerXWorldTitle: 'X world position',
-															controllerYWorldTitle: 'Y world position',
-															controllerZWorldTitle: 'Z world position',
-															controllerWWorldTitle: 'color index',
-															controllerXFunctionTitle: 'X = f(t)',
-															controllerYFunctionTitle: 'Y = f(t)',
-															controllerZFunctionTitle: 'Z = f(t)',
-															controllerWFunctionTitle: 'W = f(t)',
-															positionAlert: 'Invalid position fromat: '
-												};
-												switch (options.getLanguageCode()) {
-															case 'ru':
-																		lang$1.controllerXTitle = 'Позиция X';
-																		lang$1.controllerYTitle = 'Позиция Y';
-																		lang$1.controllerZTitle = 'Позиция Z';
-																		lang$1.controllerWTitle = 'Индекс цвета';
-																		lang$1.controllerWorld = 'Абсолютный';
-																		lang$1.controllerXWorldTitle = 'Абсолютная позиция X';
-																		lang$1.controllerYWorldTitle = 'Абсолютная позиция Y';
-																		lang$1.controllerZWorldTitle = 'Абсолютная позиция Z';
-																		lang$1.controllerWWorldTitle = 'Индекс цвета';
-																		lang$1.positionAlert = 'Неправильный формат позиции точки: ';
-																		break;
-															default:
-																		if (options.lang === undefined || options.lang.languageCode != languageCode) break;
-																		Object.keys(options.lang).forEach(function (key) {
-																					if (lang$1[key] === undefined) return;
-																					lang$1[key] = options.lang[key];
-																		});
-												}
-									}
-									var positionLocal = getObjectLocalPosition(mesh, index);
-									if (func.name) {
-												if (!func.controllers.pointName) func.controllers.pointName = 'pointName';
-												var elPointName = typeof func.controllers.pointName === "string" ? document.getElementById(func.controllers.pointName) : func.controllers.pointName;
-												if (elPointName) elPointName.innerHTML = func.name;
-									}
-									createControllers('x');
-									createControllers('y');
-									createControllers('z');
-									createControllers('w');
-						}
-			});
-			if (!options || !options.guiSelectPoint) {
-						if (options.axesHelper) options.axesHelper.movePosition();
-						return;
-			}
-			options.guiSelectPoint.setMesh();
-			var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
-			if (selectedPointIndex !== -1 && options.guiSelectPoint.isSelectedMesh(mesh)) {
-						options.guiSelectPoint.setPosition({
-									object: mesh,
-									index: selectedPointIndex
+					}
+				});
+				createController(axisControllers.position, axisName + 'Position', function () {
+					return options.scales[axisName].name;
+				}, {
+					value: positionLocal[axisName],
+					title: axisName === 'x' ? lang$1.controllerXTitle : axisName === 'y' ? lang$1.controllerYTitle : axisName === 'z' ? lang$1.controllerZTitle : axisName === 'w' ? lang$1.controllerWTitle : '',
+					onchange: function onchange(event) {
+						setPosition(event.currentTarget.value, axisName);
+					},
+					axisName: axisName
+				});
+				createController(axisControllers.worldPosition, axisName + 'WorldPosition', function () {
+					return lang$1.controllerWorld + ' ' + options.scales[axisName].name;
+				}, {
+					value: getWorldPosition(mesh, positionLocal)[axisName],
+					title: axisName === 'x' ? lang$1.controllerXWorldTitle : axisName === 'y' ? lang$1.controllerYWorldTitle : axisName === 'z' ? lang$1.controllerZWorldTitle : axisName === 'w' ? lang$1.controllerWTitle : ''
+				});
+			};
+			if (!lang$1) {
+				lang$1 = {
+					controllerXTitle: 'X position',
+					controllerYTitle: 'Y position',
+					controllerZTitle: 'Z position',
+					controllerWTitle: 'color index',
+					controllerWorld: 'World',
+					controllerXWorldTitle: 'X world position',
+					controllerYWorldTitle: 'Y world position',
+					controllerZWorldTitle: 'Z world position',
+					controllerWWorldTitle: 'color index',
+					controllerXFunctionTitle: 'X = f(t)',
+					controllerYFunctionTitle: 'Y = f(t)',
+					controllerZFunctionTitle: 'Z = f(t)',
+					controllerWFunctionTitle: 'W = f(t)',
+					positionAlert: 'Invalid position fromat: '
+				};
+				switch (options.getLanguageCode()) {
+					case 'ru':
+						lang$1.controllerXTitle = 'Позиция X';
+						lang$1.controllerYTitle = 'Позиция Y';
+						lang$1.controllerZTitle = 'Позиция Z';
+						lang$1.controllerWTitle = 'Индекс цвета';
+						lang$1.controllerWorld = 'Абсолютный';
+						lang$1.controllerXWorldTitle = 'Абсолютная позиция X';
+						lang$1.controllerYWorldTitle = 'Абсолютная позиция Y';
+						lang$1.controllerZWorldTitle = 'Абсолютная позиция Z';
+						lang$1.controllerWWorldTitle = 'Индекс цвета';
+						lang$1.positionAlert = 'Неправильный формат позиции точки: ';
+						break;
+					default:
+						if (options.lang === undefined || options.lang.languageCode != languageCode) break;
+						Object.keys(options.lang).forEach(function (key) {
+							if (lang$1[key] === undefined) return;
+							lang$1[key] = options.lang[key];
 						});
+				}
 			}
+			var positionLocal = getObjectLocalPosition(mesh, index);
+			if (func.name) {
+				if (!func.controllers.pointName) func.controllers.pointName = 'pointName';
+				var elPointName = typeof func.controllers.pointName === "string" ? document.getElementById(func.controllers.pointName) : func.controllers.pointName;
+				if (elPointName) elPointName.innerHTML = func.name;
+			}
+			createControllers('x');
+			createControllers('y');
+			createControllers('z');
+			createControllers('w');
+		}
+	});
+	if (!options || !options.guiSelectPoint) {
+		if (options.axesHelper) options.axesHelper.movePosition();
+		return;
+	}
+	options.guiSelectPoint.setMesh();
+	var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
+	if (selectedPointIndex !== -1 && options.guiSelectPoint.isSelectedMesh(mesh)) {
+		options.guiSelectPoint.setPosition({
+			object: mesh,
+			index: selectedPointIndex
+		});
+	}
 };
 Player$1.setColorAttribute = function (attributes, i, color) {
-			if (typeof color === "string") color = new THREE.Color(color);
-			var colorAttribute = attributes.color || attributes.ca;
-			if (colorAttribute === undefined) return false;
-			colorAttribute.setX(i, color.r);
-			colorAttribute.setY(i, color.g);
-			colorAttribute.setZ(i, color.b);
-			colorAttribute.needsUpdate = true;
-			return true;
+	if (typeof color === "string") color = new THREE.Color(color);
+	var colorAttribute = attributes.color || attributes.ca;
+	if (colorAttribute === undefined) return false;
+	colorAttribute.setX(i, color.r);
+	colorAttribute.setY(i, color.g);
+	colorAttribute.setZ(i, color.b);
+	colorAttribute.needsUpdate = true;
+	return true;
 };
 Player$1.getPoints = function (arrayFuncs, optionsPoints) {
-			assign$1();
-			if (!Array.isArray(arrayFuncs)) arrayFuncs = [arrayFuncs];
-			optionsPoints = optionsPoints || {};
-			if (optionsPoints.t === undefined) optionsPoints.t = optionsPoints.options && optionsPoints.options.player ? optionsPoints.options.player.getSettings().options.playerOptions.min : 0;
-			var options = optionsPoints.options || new Options(),
-			    optionsDefault = new Options({ palette: options.palette });
-			options.setW(optionsDefault);
-			var wDefault = optionsDefault.scales.w.max;
-			for (var i = 0; i < arrayFuncs.length; i++) {
-						var item = arrayFuncs[i];
-						if (Array.isArray(item)) arrayFuncs[i] = new THREE.Vector4(item[0] === undefined ? 0 : item[0], item[1] === undefined ? 0 : item[1], item[2] === undefined ? 0 : item[2], item[3] === undefined ? wDefault : item[3]);else if ((typeof item === 'undefined' ? 'undefined' : _typeof(item)) === "object" && item instanceof THREE.Vector2 === false && item instanceof THREE.Vector3 === false && item instanceof THREE.Vector4 === false) {
-									if (item.vector === undefined) arrayFuncs[i] = new THREE.Vector4(item.x === undefined ? 0 : item.x, item.y === undefined ? 0 : item.y, item.z === undefined ? 0 : item.z, item.w === undefined ? 0 : item.w);else if (item.vector instanceof THREE.Vector2 === true || item.vector instanceof THREE.Vector3 === true || item.vector instanceof THREE.Vector4 === true) {
-												if (item.vector instanceof THREE.Vector2 === true) arrayFuncs[i].vector = new THREE.Vector3(item.vector.x === undefined ? 0 : item.vector.x, item.vector.y === undefined ? 0 : item.vector.y, item.vector.z === undefined ? 0 : item.vector.z);
-									} else {
-												if (item.vector.length === 4) arrayFuncs[i].vector = new THREE.Vector4(item.vector[0] === undefined ? 0 : item.vector[0], item.vector[1] === undefined ? 0 : item.vector[1], item.vector[2] === undefined ? 0 : item.vector[2], item.vector[3] === undefined ? 0 : item.vector[3]);else if (item.vector.length === 3) arrayFuncs[i].vector = new THREE.Vector3(item.vector[0] === undefined ? 0 : item.vector[0], item.vector[1] === undefined ? 0 : item.vector[1], item.vector[2] === undefined ? 0 : item.vector[2]);else if (item.vector.length < 3) arrayFuncs[i].vector = new THREE.Vector4(item.vector[0] === undefined ? 0 : item.vector[0], item.vector[1] === undefined ? 0 : item.vector[1]);else console.error('Player.getPoints(...) falied! item.vector.length = ' + item.vector.length);
-									}
-						}
+	assign$1();
+	if (!Array.isArray(arrayFuncs)) arrayFuncs = [arrayFuncs];
+	optionsPoints = optionsPoints || {};
+	if (optionsPoints.t === undefined) optionsPoints.t = optionsPoints.options && optionsPoints.options.player ? optionsPoints.options.player.getSettings().options.playerOptions.min : 0;
+	var options = optionsPoints.options || new Options(),
+	    optionsDefault = new Options({ palette: options.palette });
+	options.setW(optionsDefault);
+	var wDefault = optionsDefault.scales.w.max;
+	for (var i = 0; i < arrayFuncs.length; i++) {
+		var item = arrayFuncs[i];
+		if (Array.isArray(item)) arrayFuncs[i] = new THREE.Vector4(item[0] === undefined ? 0 : item[0], item[1] === undefined ? 0 : item[1], item[2] === undefined ? 0 : item[2], item[3] === undefined ? wDefault : item[3]);else if ((typeof item === 'undefined' ? 'undefined' : _typeof(item)) === "object" && item instanceof THREE.Vector2 === false && item instanceof THREE.Vector3 === false && item instanceof THREE.Vector4 === false) {
+			if (item.vector === undefined) arrayFuncs[i] = new THREE.Vector4(item.x === undefined ? 0 : item.x, item.y === undefined ? 0 : item.y, item.z === undefined ? 0 : item.z, item.w === undefined ? 0 : item.w);else if (item.vector instanceof THREE.Vector2 === true || item.vector instanceof THREE.Vector3 === true || item.vector instanceof THREE.Vector4 === true) {
+				if (item.vector instanceof THREE.Vector2 === true) arrayFuncs[i].vector = new THREE.Vector3(item.vector.x === undefined ? 0 : item.vector.x, item.vector.y === undefined ? 0 : item.vector.y, item.vector.z === undefined ? 0 : item.vector.z);
+			} else {
+				if (item.vector.length === 4) arrayFuncs[i].vector = new THREE.Vector4(item.vector[0] === undefined ? 0 : item.vector[0], item.vector[1] === undefined ? 0 : item.vector[1], item.vector[2] === undefined ? 0 : item.vector[2], item.vector[3] === undefined ? 0 : item.vector[3]);else if (item.vector.length === 3) arrayFuncs[i].vector = new THREE.Vector3(item.vector[0] === undefined ? 0 : item.vector[0], item.vector[1] === undefined ? 0 : item.vector[1], item.vector[2] === undefined ? 0 : item.vector[2]);else if (item.vector.length < 3) arrayFuncs[i].vector = new THREE.Vector4(item.vector[0] === undefined ? 0 : item.vector[0], item.vector[1] === undefined ? 0 : item.vector[1]);else console.error('Player.getPoints(...) falied! item.vector.length = ' + item.vector.length);
 			}
-			var points = [];
-			for (var i = 0; i < arrayFuncs.length; i++) {
-						var getAxis = function getAxis(axisName) {
-									if (typeof funcs === "number") funcs = new THREE.Vector4(funcs, 0, 0, 0);
-									if (funcs instanceof THREE.Vector2 || funcs instanceof THREE.Vector3 || funcs instanceof THREE.Vector4) {
-												var value = Player$1.execFunc(funcs, axisName, optionsPoints.t, options);
-												return value;
-									}
-									if (funcs.vector === undefined) {
-												console.error('Player.getAxis().getPoints(): funcs.vector = ' + funcs.vector);
-												return;
-									}
-									if (funcs.name !== undefined) funcs.vector.name = funcs.name;
-									if (funcs.trace) funcs.vector.trace = funcs.trace;
-									if (funcs.controllers) funcs.vector.controllers = funcs.controllers;
-									if (funcs.cameraTarget) {
-												funcs.vector.cameraTarget = funcs.cameraTarget;
-												delete funcs.cameraTarget;
-									}
-									arrayFuncs[i] = funcs.vector;
-									funcs = funcs.vector;
-									return Player$1.execFunc(funcs, axisName, optionsPoints.t, options);
-						};
-						var funcs = arrayFuncs[i];
-						var point = funcs.vector instanceof THREE.Vector3 === true ? new THREE.Vector3(getAxis('x'), getAxis('y'), getAxis('z')) : new THREE.Vector4(getAxis('x'), getAxis('y'), getAxis('z'), getAxis('w'));
-						if (funcs.cameraTarget) {
-									funcs.cameraTarget.bodefault = false;
-									if (funcs.cameraTarget.boLook === undefined) funcs.cameraTarget.boLook = true;
-									options.playerOptions.cameraTarget.init(funcs.cameraTarget, options);
-						}
-						points.push(point);
+		}
+	}
+	var points = [];
+	for (var i = 0; i < arrayFuncs.length; i++) {
+		var getAxis = function getAxis(axisName) {
+			if (typeof funcs === "number") funcs = new THREE.Vector4(funcs, 0, 0, 0);
+			if (funcs instanceof THREE.Vector2 || funcs instanceof THREE.Vector3 || funcs instanceof THREE.Vector4) {
+				var value = Player$1.execFunc(funcs, axisName, optionsPoints.t, options);
+				return value;
 			}
-			return points;
+			if (funcs.vector === undefined) {
+				console.error('Player.getAxis().getPoints(): funcs.vector = ' + funcs.vector);
+				return;
+			}
+			if (funcs.name !== undefined) funcs.vector.name = funcs.name;
+			if (funcs.trace) funcs.vector.trace = funcs.trace;
+			if (funcs.controllers) funcs.vector.controllers = funcs.controllers;
+			if (funcs.cameraTarget) {
+				funcs.vector.cameraTarget = funcs.cameraTarget;
+				delete funcs.cameraTarget;
+			}
+			arrayFuncs[i] = funcs.vector;
+			funcs = funcs.vector;
+			return Player$1.execFunc(funcs, axisName, optionsPoints.t, options);
+		};
+		var funcs = arrayFuncs[i];
+		var point = funcs.vector instanceof THREE.Vector3 === true ? new THREE.Vector3(getAxis('x'), getAxis('y'), getAxis('z')) : new THREE.Vector4(getAxis('x'), getAxis('y'), getAxis('z'), getAxis('w'));
+		if (funcs.cameraTarget) {
+			funcs.cameraTarget.bodefault = false;
+			if (funcs.cameraTarget.boLook === undefined) funcs.cameraTarget.boLook = true;
+			options.playerOptions.cameraTarget.init(funcs.cameraTarget, options);
+		}
+		points.push(point);
+	}
+	return points;
 };
 var boColorWarning = true;
 Player$1.getColors = function (arrayFuncs, optionsColor) {
-			assign$1();
-			if (!Array.isArray(arrayFuncs)) arrayFuncs = [arrayFuncs];
-			optionsColor = optionsColor || {};
-			optionsColor.options = optionsColor.options || {};
-			if (optionsColor.positions !== undefined && Array.isArray(arrayFuncs) && arrayFuncs.length !== optionsColor.positions.count) {
-						console.error('getColors failed! arrayFuncs.length: ' + arrayFuncs.length + ' != positions.count: ' + optionsColor.positions.count);
-						return optionsColor.colors;
-			}
-			var length = Array.isArray(arrayFuncs) ? arrayFuncs.length : optionsColor.positions.count;
-			optionsColor.colors = optionsColor.colors || [];
-			if (!optionsColor.options.palette) optionsColor.options.setPalette();
-			for (var i = 0; i < length; i++) {
-						var funcs = Array.isArray(arrayFuncs) ? arrayFuncs[i] : undefined;
-						var vector;
-						if (funcs instanceof THREE.Vector4 ||
-						optionsColor.positions && optionsColor.positions.itemSize === 4
-						) {
-												var min = void 0,
-												    max = void 0;
-												var w = funcs.w;
-												if (funcs.w instanceof Object && funcs.w.func) {
-															if (funcs.w.max) max = funcs.w.max;
-															if (funcs.w.min) min = funcs.w.min;
-															w = funcs.w.func;
-												} else {
-															optionsColor.options.setW();
-															min = optionsColor.options.scales.w.min;max = optionsColor.options.scales.w.max;
-												}
-												if (w instanceof Function && !optionsColor.options.player && boColorWarning) {
-															boColorWarning = false;
-												}
-												var t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
-												var color = optionsColor.options.palette.toColor(funcs === undefined ? new THREE.Vector4().fromBufferAttribute(optionsColor.positions, i).w : w instanceof Function ? w(t) : typeof w === "string" ? Player$1.execFunc(funcs, 'w', t, optionsColor.options) : w === undefined ? new THREE.Vector4().w : w, min, max);
-												optionsColor.colors.push(color.r, color.g, color.b);
-									} else if (optionsColor.colors instanceof THREE.Float32BufferAttribute) vector = new THREE.Vector3(1, 1, 1);else optionsColor.colors.push(1, 1, 1);
-						if (optionsColor.opacity !== undefined) {
-									var opacity = 0,
-									    standardNormalDistributionZero = getStandardNormalDistribution(0);
-									group.children.forEach(function (mesh) {
-												if (!mesh.userData.cloud) return;
-												for (var iMesh = 0; iMesh < mesh.geometry.attributes.position.count; iMesh++) {
-															var position = getObjectPosition(mesh, iMesh);
-															opacity += getStandardNormalDistribution(getWorldPosition(camera, new THREE.Vector3().fromBufferAttribute(optionsColor.positions, i)).distanceTo(position) * 5) / standardNormalDistributionZero;
-												}
-									});
-									if (debug.opacity !== undefined) opacity = debug.opacity;
-									if (optionsColor.colors instanceof THREE.Float32BufferAttribute) {
-												optionsColor.colors.setXYZW(i, vector.x, vector.y, vector.z, opacity);
-									} else optionsColor.colors.push(opacity);
-						} else optionsColor.colors.push(1);
-			}
-			return optionsColor.colors;
+	assign$1();
+	if (!Array.isArray(arrayFuncs)) arrayFuncs = [arrayFuncs];
+	optionsColor = optionsColor || {};
+	optionsColor.options = optionsColor.options || {};
+	if (optionsColor.positions !== undefined && Array.isArray(arrayFuncs) && arrayFuncs.length !== optionsColor.positions.count) {
+		console.error('getColors failed! arrayFuncs.length: ' + arrayFuncs.length + ' != positions.count: ' + optionsColor.positions.count);
+		return optionsColor.colors;
+	}
+	var length = Array.isArray(arrayFuncs) ? arrayFuncs.length : optionsColor.positions.count;
+	optionsColor.colors = optionsColor.colors || [];
+	if (!optionsColor.options.palette) optionsColor.options.setPalette();
+	for (var i = 0; i < length; i++) {
+		var funcs = Array.isArray(arrayFuncs) ? arrayFuncs[i] : undefined;
+		var vector;
+		if (funcs instanceof THREE.Vector4 ||
+		optionsColor.positions && optionsColor.positions.itemSize === 4
+		) {
+				var min = void 0,
+				    max = void 0;
+				var w = funcs.w;
+				if (funcs.w instanceof Object && funcs.w.func) {
+					if (funcs.w.max) max = funcs.w.max;
+					if (funcs.w.min) min = funcs.w.min;
+					w = funcs.w.func;
+				} else {
+					optionsColor.options.setW();
+					min = optionsColor.options.scales.w.min;max = optionsColor.options.scales.w.max;
+				}
+				if (w instanceof Function && !optionsColor.options.player && boColorWarning) {
+					boColorWarning = false;
+				}
+				var t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
+				var color = optionsColor.options.palette.toColor(funcs === undefined ? new THREE.Vector4().fromBufferAttribute(optionsColor.positions, i).w : w instanceof Function ? w(t) : typeof w === "string" ? Player$1.execFunc(funcs, 'w', t, optionsColor.options) : w === undefined ? new THREE.Vector4().w : w, min, max);
+				optionsColor.colors.push(color.r, color.g, color.b);
+			} else if (optionsColor.colors instanceof THREE.Float32BufferAttribute) vector = new THREE.Vector3(1, 1, 1);else optionsColor.colors.push(1, 1, 1);
+		if (optionsColor.opacity !== undefined) {
+			var opacity = 0,
+			    standardNormalDistributionZero = getStandardNormalDistribution(0);
+			group.children.forEach(function (mesh) {
+				if (!mesh.userData.cloud) return;
+				for (var iMesh = 0; iMesh < mesh.geometry.attributes.position.count; iMesh++) {
+					var position = getObjectPosition(mesh, iMesh);
+					opacity += getStandardNormalDistribution(getWorldPosition(camera, new THREE.Vector3().fromBufferAttribute(optionsColor.positions, i)).distanceTo(position) * 5) / standardNormalDistributionZero;
+				}
+			});
+			if (debug.opacity !== undefined) opacity = debug.opacity;
+			if (optionsColor.colors instanceof THREE.Float32BufferAttribute) {
+				optionsColor.colors.setXYZW(i, vector.x, vector.y, vector.z, opacity);
+			} else optionsColor.colors.push(opacity);
+		} else optionsColor.colors.push(1);
+	}
+	return optionsColor.colors;
 };
 Player$1.traceLine =
 function traceLine(options) {
-			classCallCheck(this, traceLine);
-			var line;
-			var arrayLines = [];
-			assign$1();
-			if (!options.player) {
-						return;
+	classCallCheck(this, traceLine);
+	var line;
+	var arrayLines = [];
+	assign$1();
+	if (!options.player) {
+		return;
+	}
+	this.isVisible = function () {
+		if (!options.player) return false;
+		if (line) return line.visible;
+		if (arrayLines.length === 0) return false;
+		return arrayLines[0].visible;
+	};
+	this.visible = function (visible) {
+		if (!options.player) return false;
+		if (line) {
+			line.visible = visible;
+			return;
+		}
+		arrayLines.forEach(function (line) {
+			line.visible = visible;
+		});
+	};
+	this.addPoint = function (mesh, index, color) {
+		var attributesPosition = mesh.geometry.attributes.position;
+		var point = attributesPosition.itemSize >= 4 ? new THREE.Vector4(0, 0, 0, 0) : new THREE.Vector3();
+		point.fromArray(attributesPosition.array, index * attributesPosition.itemSize);
+		var sceneIndex = options.player ? options.player.getSelectSceneIndex() : 0;
+		if (options.playerOptions.max === null) {
+			sceneIndex = Math.abs(sceneIndex);
+			if (sceneIndex < arrayLines.length - 1) {
+				while (sceneIndex < arrayLines.length - 1) {
+					mesh.remove(arrayLines[arrayLines.length - 1]);
+					arrayLines.pop();
+				}
+				return;
 			}
-			this.isVisible = function () {
-						if (!options.player) return false;
-						if (line) return line.visible;
-						if (arrayLines.length === 0) return false;
-						return arrayLines[0].visible;
-			};
-			this.visible = function (visible) {
-						if (!options.player) return false;
-						if (line) {
-									line.visible = visible;
-									return;
-						}
-						arrayLines.forEach(function (line) {
-									line.visible = visible;
-						});
-			};
-			this.addPoint = function (mesh, index, color) {
-						var attributesPosition = mesh.geometry.attributes.position;
-						var point = attributesPosition.itemSize >= 4 ? new THREE.Vector4(0, 0, 0, 0) : new THREE.Vector3();
-						point.fromArray(attributesPosition.array, index * attributesPosition.itemSize);
-						var sceneIndex = options.player ? options.player.getSelectSceneIndex() : 0;
-						if (options.playerOptions.max === null) {
-									sceneIndex = Math.abs(sceneIndex);
-									if (sceneIndex < arrayLines.length - 1) {
-												while (sceneIndex < arrayLines.length - 1) {
-															mesh.remove(arrayLines[arrayLines.length - 1]);
-															arrayLines.pop();
-												}
-												return;
-									}
-									var geometry = new THREE.BufferGeometry(),
-									    _MAX_POINTS = 2;
-									var positions = new Float32Array(_MAX_POINTS * 3);
-									geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-									var colors = new Float32Array(_MAX_POINTS * 3);
-									geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-									var _line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ vertexColors: THREE.VertexColors }));
-									mesh.add(_line);
-									if (arrayLines[0]) _line.visible = arrayLines[0].visible;
-									point = new THREE.Vector3().copy(point);
-									var itemSize = _line.geometry.attributes.position.itemSize;
-									point.toArray(_line.geometry.attributes.position.array, 1 * itemSize);
-									var point0 = arrayLines.length === 0 ? point : new THREE.Vector3().fromArray(arrayLines[arrayLines.length - 1].geometry.attributes.position.array, 1 * itemSize);
-									point0.toArray(_line.geometry.attributes.position.array, 0 * itemSize);
-									_line.geometry.attributes.position.needsUpdate = true;
-									if (color === undefined) color = new THREE.Color(1, 1, 1);
-									Player$1.setColorAttribute(_line.geometry.attributes, 0, arrayLines.length === 0 ? color : new THREE.Color().fromArray(arrayLines[arrayLines.length - 1].geometry.attributes.color.array, 1 * itemSize));
-									Player$1.setColorAttribute(_line.geometry.attributes, 1, color);
-									arrayLines.push(_line);
-									return;
-						}
-						if (line === undefined) {
-									var _geometry = new THREE.BufferGeometry();
-									var MAX_POINTS;
-									if (options.playerOptions.max !== null) {
-												if (options.playerOptions && options.playerOptions.marks) MAX_POINTS = options.playerOptions.marks;else if (options.player && options.player.marks) MAX_POINTS = options.player.marks;else {
-															console.error('Player.traceLine: MAX_POINTS = ' + MAX_POINTS + '. Create Player first or remove all trace = true from all items of the arrayFuncs');
-															return;
-												}
-									} else MAX_POINTS = sceneIndex + 1;
-									var _positions = new Float32Array(MAX_POINTS * 3);
-									_geometry.setAttribute('position', new THREE.BufferAttribute(_positions, 3));
-									var _colors = new Float32Array(MAX_POINTS * 3);
-									_geometry.setAttribute('color', new THREE.Float32BufferAttribute(_colors, 3));
-									_geometry.setDrawRange(sceneIndex, sceneIndex);
-									line = new THREE.Line(_geometry, new THREE.LineBasicMaterial({ vertexColors: THREE.VertexColors }));
-									line.visible = true;
-									mesh.add(line);
-						}
-						if (line.geometry) {
-									delete line.geometry.boundingSphere;
-									line.geometry.boundingSphere = null;
-						}
-						point = new THREE.Vector3().copy(point);
-						point.toArray(line.geometry.attributes.position.array, sceneIndex * line.geometry.attributes.position.itemSize);
-						line.geometry.attributes.position.needsUpdate = true;
-						if (color === undefined) color = new THREE.Color(1, 1, 1);
-						Player$1.setColorAttribute(line.geometry.attributes, sceneIndex, color);
-						var start = line.geometry.drawRange.start,
-						    count = sceneIndex + 1 - start;
-						if (start > sceneIndex) {
-									var stop = start + line.geometry.drawRange.count;
-									start = sceneIndex;
-									count = stop - start;
-						}
-						line.geometry.setDrawRange(start, count);
-			};
-			this.remove = function () {
-						if (line === undefined) return;
-						line.geometry.dispose();
-						line.material.dispose();
-						line.parent.remove(line);
-			};
+			var geometry = new THREE.BufferGeometry(),
+			    _MAX_POINTS = 2;
+			var positions = new Float32Array(_MAX_POINTS * 3);
+			geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+			var colors = new Float32Array(_MAX_POINTS * 3);
+			geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+			var _line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ vertexColors: THREE.VertexColors }));
+			mesh.add(_line);
+			if (arrayLines[0]) _line.visible = arrayLines[0].visible;
+			point = new THREE.Vector3().copy(point);
+			var itemSize = _line.geometry.attributes.position.itemSize;
+			point.toArray(_line.geometry.attributes.position.array, 1 * itemSize);
+			var point0 = arrayLines.length === 0 ? point : new THREE.Vector3().fromArray(arrayLines[arrayLines.length - 1].geometry.attributes.position.array, 1 * itemSize);
+			point0.toArray(_line.geometry.attributes.position.array, 0 * itemSize);
+			_line.geometry.attributes.position.needsUpdate = true;
+			if (color === undefined) color = new THREE.Color(1, 1, 1);
+			Player$1.setColorAttribute(_line.geometry.attributes, 0, arrayLines.length === 0 ? color : new THREE.Color().fromArray(arrayLines[arrayLines.length - 1].geometry.attributes.color.array, 1 * itemSize));
+			Player$1.setColorAttribute(_line.geometry.attributes, 1, color);
+			arrayLines.push(_line);
+			return;
+		}
+		if (line === undefined) {
+			var _geometry = new THREE.BufferGeometry();
+			var MAX_POINTS;
+			if (options.playerOptions.max !== null) {
+				if (options.playerOptions && options.playerOptions.marks) MAX_POINTS = options.playerOptions.marks;else if (options.player && options.player.marks) MAX_POINTS = options.player.marks;else {
+					console.error('Player.traceLine: MAX_POINTS = ' + MAX_POINTS + '. Create Player first or remove all trace = true from all items of the arrayFuncs');
+					return;
+				}
+			} else MAX_POINTS = sceneIndex + 1;
+			var _positions = new Float32Array(MAX_POINTS * 3);
+			_geometry.setAttribute('position', new THREE.BufferAttribute(_positions, 3));
+			var _colors = new Float32Array(MAX_POINTS * 3);
+			_geometry.setAttribute('color', new THREE.Float32BufferAttribute(_colors, 3));
+			_geometry.setDrawRange(sceneIndex, sceneIndex);
+			line = new THREE.Line(_geometry, new THREE.LineBasicMaterial({
+			}));
+			line.visible = true;
+			mesh.add(line);
+		}
+		if (line.geometry) {
+			delete line.geometry.boundingSphere;
+			line.geometry.boundingSphere = null;
+		}
+		point = new THREE.Vector3().copy(point);
+		point.toArray(line.geometry.attributes.position.array, sceneIndex * line.geometry.attributes.position.itemSize);
+		line.geometry.attributes.position.needsUpdate = true;
+		if (color === undefined) color = new THREE.Color(1, 1, 1);
+		Player$1.setColorAttribute(line.geometry.attributes, sceneIndex, color);
+		var start = line.geometry.drawRange.start,
+		    count = sceneIndex + 1 - start;
+		if (start > sceneIndex) {
+			var stop = start + line.geometry.drawRange.count;
+			start = sceneIndex;
+			count = stop - start;
+		}
+		line.geometry.setDrawRange(start, count);
+	};
+	this.remove = function () {
+		if (line === undefined) return;
+		line.geometry.dispose();
+		line.material.dispose();
+		line.parent.remove(line);
+	};
 };
 Player$1.getItemSize = function (arrayFuncs) {
-			assign$1();
-			for (var i = 0; i < arrayFuncs.length; i++) {
-						var func = arrayFuncs[i];
-						if (func instanceof THREE.Vector4) return 4;
-			}
-			return 3;
+	assign$1();
+	for (var i = 0; i < arrayFuncs.length; i++) {
+		var func = arrayFuncs[i];
+		if (func instanceof THREE.Vector4) return 4;
+	}
+	return 3;
 };
 Player$1.selectPlayScene = function (group) {
-			var settings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-			var t = settings.t !== undefined ? settings.t : 0,
-			    index = settings.index !== undefined ? settings.index : undefined,
-			    options = settings.options || new Options();
-			group.userData.t = t;
-			Player$1.selectMeshPlayScene(group, { t: t, options: options });
-			function selectMeshPlayScene(group) {
-						group.children.forEach(function (mesh) {
-									if (mesh instanceof THREE.Group) selectMeshPlayScene(mesh);else Player$1.selectMeshPlayScene(mesh, { t: t, options: options });
-						});
-			}
-			selectMeshPlayScene(group);
-			options.playerOptions.cameraTarget.setCameraTarget(options);
-			var cameraTarget = options.playerOptions.cameraTarget.get();
-			if (cameraTarget && cameraTarget.setCameraPosition) cameraTarget.setCameraPosition(index === undefined);
+	var settings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	var t = settings.t !== undefined ? settings.t : 0,
+	    index = settings.index !== undefined ? settings.index : undefined,
+	    options = settings.options || new Options();
+	group.userData.t = t;
+	Player$1.selectMeshPlayScene(group, { t: t, options: options });
+	function selectMeshPlayScene(group) {
+		group.children.forEach(function (mesh) {
+			if (mesh instanceof THREE.Group) selectMeshPlayScene(mesh);else Player$1.selectMeshPlayScene(mesh, { t: t, options: options });
+		});
+	}
+	selectMeshPlayScene(group);
+	options.playerOptions.cameraTarget.setCameraTarget(options);
+	var cameraTarget = options.playerOptions.cameraTarget.get();
+	if (cameraTarget && cameraTarget.setCameraPosition) cameraTarget.setCameraPosition(index === undefined);
 };
 var THREE;
 function assign$1() {
-			if (!three$1.isThree()) {
-						console.warn('Player: can not assign. Set THREE first.');
-						return;
+	if (!three$1.isThree()) {
+		console.warn('Player: can not assign. Set THREE first.');
+		return;
+	}
+	THREE = three$1.THREE;
+	Object.assign(THREE.BufferGeometry.prototype, {
+		setFromPoints: function setFromPoints(points, itemSize) {
+			itemSize = itemSize || 3;
+			var position = [];
+			for (var i = 0, l = points.length; i < l; i++) {
+				var point = points[i];
+				position.push(point.x, point.y, point.z || 0);
+				if (itemSize >= 4) position.push(point.w || 0);
 			}
-			THREE = three$1.THREE;
-			Object.assign(THREE.BufferGeometry.prototype, {
-						setFromPoints: function setFromPoints(points, itemSize) {
-									itemSize = itemSize || 3;
-									var position = [];
-									for (var i = 0, l = points.length; i < l; i++) {
-												var point = points[i];
-												position.push(point.x, point.y, point.z || 0);
-												if (itemSize >= 4) position.push(point.w || 0);
-									}
-									this.setAttribute('position', new THREE.Float32BufferAttribute(position, itemSize));
-									return this;
-						}
-			});
-			Object.assign(THREE.Vector4.prototype, {
-						multiply: function multiply(v) {
-									this.x *= v.x;
-									this.y *= v.y;
-									this.z *= v.z;
-									if (v.w !== undefined) this.w *= v.w;
-									return this;
-						}
-			});
-			Object.assign(THREE.Vector4.prototype, {
-						add: function add(v, w) {
-									if (w !== undefined) {
-												console.warn('THREE.Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.');
-												return this.addVectors(v, w);
-									}
-									this.x += v.x;
-									this.y += v.y;
-									this.z += v.z;
-									if (v.w !== undefined) this.w += v.w;
-									return this;
-						}
-			});
-			Object.assign(THREE.Points.prototype, {
-						raycast: function raycast(raycaster, intersects) {
-									var _inverseMatrix = new THREE.Matrix4();
-									var _ray = new THREE.Ray();
-									var _sphere = new THREE.Sphere();
-									var _position = new THREE.Vector3();
-									function testPoint(point, index, localThresholdSq, matrixWorld, raycaster, intersects, object) {
-												var rayPointDistanceSq = _ray.distanceSqToPoint(point);
-												if (rayPointDistanceSq < localThresholdSq) {
-															var intersectPoint = new THREE.Vector3();
-															_ray.closestPointToPoint(point, intersectPoint);
-															intersectPoint.applyMatrix4(matrixWorld);
-															var distance = raycaster.ray.origin.distanceTo(intersectPoint);
-															if (distance < raycaster.near || distance > raycaster.far) return;
-															intersects.push({
-																		distance: distance,
-																		distanceToRay: Math.sqrt(rayPointDistanceSq),
-																		point: intersectPoint,
-																		index: index,
-																		face: null,
-																		object: object
-															});
-												}
-									}
-									var geometry = this.geometry;
-									var matrixWorld = this.matrixWorld;
-									var threshold = raycaster.params.Points.threshold;
-									if (geometry.boundingSphere === null) geometry.computeBoundingSphere();
-									_sphere.copy(geometry.boundingSphere);
-									_sphere.applyMatrix4(matrixWorld);
-									_sphere.radius += threshold;
-									if (raycaster.ray.intersectsSphere(_sphere) === false) return;
-									_inverseMatrix.copy(matrixWorld).invert();
-									_ray.copy(raycaster.ray).applyMatrix4(_inverseMatrix);
-									var localThreshold = threshold / ((this.scale.x + this.scale.y + this.scale.z) / 3);
-									var localThresholdSq = localThreshold * localThreshold;
-									if (geometry.isBufferGeometry) {
-												var index = geometry.index;
-												var attributes = geometry.attributes;
-												var positions = attributes.position.array;
-												var itemSize = attributes.position.itemSize;
-												if (index !== null) {
-															var indices = index.array;
-															for (var i = 0, il = indices.length; i < il; i++) {
-																		var a = indices[i];
-																		_position.fromArray(positions, a * itemSize);
-																		testPoint(_position, a, localThresholdSq, matrixWorld, raycaster, intersects, this);
-															}
-												} else {
-															for (var _i = 0, l = positions.length / itemSize; _i < l; _i++) {
-																		_position.fromArray(positions, _i * itemSize);
-																		testPoint(_position, _i, localThresholdSq, matrixWorld, raycaster, intersects, this);
-															}
-												}
-									} else {
-												var vertices = geometry.vertices;
-												for (var _i2 = 0, _l = vertices.length; _i2 < _l; _i2++) {
-															testPoint(vertices[_i2], _i2, localThresholdSq, matrixWorld, raycaster, intersects, this);
-												}
-									}
-						}
-			});
+			this.setAttribute('position', new THREE.Float32BufferAttribute(position, itemSize));
+			return this;
+		}
+	});
+	Object.assign(THREE.Vector4.prototype, {
+		multiply: function multiply(v) {
+			this.x *= v.x;
+			this.y *= v.y;
+			this.z *= v.z;
+			if (v.w !== undefined) this.w *= v.w;
+			return this;
+		}
+	});
+	Object.assign(THREE.Vector4.prototype, {
+		add: function add(v, w) {
+			if (w !== undefined) {
+				console.warn('THREE.Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.');
+				return this.addVectors(v, w);
+			}
+			this.x += v.x;
+			this.y += v.y;
+			this.z += v.z;
+			if (v.w !== undefined) this.w += v.w;
+			return this;
+		}
+	});
+	Object.assign(THREE.Points.prototype, {
+		raycast: function raycast(raycaster, intersects) {
+			var _inverseMatrix = new THREE.Matrix4();
+			var _ray = new THREE.Ray();
+			var _sphere = new THREE.Sphere();
+			var _position = new THREE.Vector3();
+			function testPoint(point, index, localThresholdSq, matrixWorld, raycaster, intersects, object) {
+				var rayPointDistanceSq = _ray.distanceSqToPoint(point);
+				if (rayPointDistanceSq < localThresholdSq) {
+					var intersectPoint = new THREE.Vector3();
+					_ray.closestPointToPoint(point, intersectPoint);
+					intersectPoint.applyMatrix4(matrixWorld);
+					var distance = raycaster.ray.origin.distanceTo(intersectPoint);
+					if (distance < raycaster.near || distance > raycaster.far) return;
+					intersects.push({
+						distance: distance,
+						distanceToRay: Math.sqrt(rayPointDistanceSq),
+						point: intersectPoint,
+						index: index,
+						face: null,
+						object: object
+					});
+				}
+			}
+			var geometry = this.geometry;
+			var matrixWorld = this.matrixWorld;
+			var threshold = raycaster.params.Points.threshold;
+			if (geometry.boundingSphere === null) geometry.computeBoundingSphere();
+			_sphere.copy(geometry.boundingSphere);
+			_sphere.applyMatrix4(matrixWorld);
+			_sphere.radius += threshold;
+			if (raycaster.ray.intersectsSphere(_sphere) === false) return;
+			_inverseMatrix.copy(matrixWorld).invert();
+			_ray.copy(raycaster.ray).applyMatrix4(_inverseMatrix);
+			var localThreshold = threshold / ((this.scale.x + this.scale.y + this.scale.z) / 3);
+			var localThresholdSq = localThreshold * localThreshold;
+			if (geometry.isBufferGeometry) {
+				var index = geometry.index;
+				var attributes = geometry.attributes;
+				var positions = attributes.position.array;
+				var itemSize = attributes.position.itemSize;
+				if (index !== null) {
+					var indices = index.array;
+					for (var i = 0, il = indices.length; i < il; i++) {
+						var a = indices[i];
+						_position.fromArray(positions, a * itemSize);
+						testPoint(_position, a, localThresholdSq, matrixWorld, raycaster, intersects, this);
+					}
+				} else {
+					for (var _i = 0, l = positions.length / itemSize; _i < l; _i++) {
+						_position.fromArray(positions, _i * itemSize);
+						testPoint(_position, _i, localThresholdSq, matrixWorld, raycaster, intersects, this);
+					}
+				}
+			} else {
+				var vertices = geometry.vertices;
+				for (var _i2 = 0, _l = vertices.length; _i2 < _l; _i2++) {
+					testPoint(vertices[_i2], _i2, localThresholdSq, matrixWorld, raycaster, intersects, this);
+				}
+			}
+		}
+	});
 }
 Player$1.assign = function () {
-			assign$1();
+	assign$1();
 };
 
 /**
@@ -11817,7 +11837,9 @@ function MyPoints(arrayFuncs, group, settings) {
 		options: options,
 		pointsOptions: pointsOptions
 	});else {
-		var points = new THREE.Points(typeof arrayFuncs === 'function' ? arrayFuncs() : new THREE.BufferGeometry().setFromPoints(Player$1.getPoints(arrayFuncs, { options: options, group: group, t: pointsOptions.tMin }), 4), new THREE.PointsMaterial({ size: options.point.size / options.point.sizePointsMaterial, vertexColors: THREE.VertexColors }));
+		var points = new THREE.Points(typeof arrayFuncs === 'function' ? arrayFuncs() : new THREE.BufferGeometry().setFromPoints(Player$1.getPoints(arrayFuncs, { options: options, group: group, t: pointsOptions.tMin }), 4), new THREE.PointsMaterial({
+			size: options.point.size / options.point.sizePointsMaterial
+		}));
 		if (pointsOptions.frustumPoints) points.userData.cloud = {
 			indexArray: pointsOptions.frustumPoints.pushArrayCloud(points.geometry)
 		};
@@ -13931,12 +13953,17 @@ function GuiSelectPoint(options) {
 						if (cMeshs.__select[index].selected === false) {
 									cMeshs.__select[index].selected = true;
 									cMeshs.__onChange(index - 1);
+						} else if (cCustom) {
+									var mesh = getMesh();
+									cCustom.object(intersectionSelected.event && intersectionSelected.event.button === 0 ? mesh : undefined,
+									dat, options);
 						}
 						this.selectPoint2 = function (selectedMesh) {
 									if (intersectionSelected.index === undefined || isNaN(intersectionSelected.index)) return;
 									if (selectedMesh !== undefined && !Object.is(intersectionSelected.object, selectedMesh)) return;
 									if (!intersectionSelected.object.userData.boFrustumPoints) {
-												cPoints.__select[intersectionSelected.index + 1].selected = true;
+												var point = cPoints.__select[intersectionSelected.index + 1];
+												if (point) point.selected = true;
 									} else {
 												cFrustumPoints.pointIndexes(intersectionSelected.object.userData.pointIndexes(intersectionSelected.index));
 									}
@@ -14121,7 +14148,7 @@ function GuiSelectPoint(options) {
 						cMeshs = f3DObjects.add({ Meshs: lang.notSelected }, 'Meshs', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
 									value = parseInt(value);
 									mesh = getMesh();
-									if (cCustom) cCustom.object(mesh, dat, options);
+									if (cCustom) cCustom.object(mesh, dat, value === -1);
 									createPlayerArrayFuncs(mesh);
 									var none = 'none',
 									    block = 'block';
@@ -14179,7 +14206,8 @@ function GuiSelectPoint(options) {
 									if (options.frustumPoints) options.frustumPoints.updateCloudPoint(mesh);
 						}, {
 									settings: { zoomMultiplier: 1.1 },
-									getLanguageCode: getLanguageCode
+									getLanguageCode: getLanguageCode,
+									newBool: true
 						}));
 						var scale = new THREE.Vector3();
 						function setScale(axisName, value) {
@@ -15100,7 +15128,7 @@ var FrustumPoints =
 function FrustumPoints(camera, group, canvas) {
 				var settings = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 				classCallCheck(this, FrustumPoints);
-				canvas.getContext('webgl');
+				var THREE = three$1.THREE;
 				settings.options = settings.options || new Options();
 				var options = settings.options;
 				if (!options.boOptions) {
@@ -15108,12 +15136,12 @@ function FrustumPoints(camera, group, canvas) {
 								return;
 				}
 				if (!options.frustumPoints) return;
+				this.gl = canvas.getContext('webgl');
 				this.getOptions = function () {
 								return options;
 				};
 				var optionsShaderMaterial = options.frustumPoints;
 				options.frustumPoints = this;
-				var THREE = three$1.THREE;
 				var _arrayCloud = [];
 				var _guiSelectPoint, _names, _points;
 				_arrayCloud.getCloudsCount = function () {
@@ -15221,6 +15249,7 @@ function FrustumPoints(camera, group, canvas) {
 																								x = vector.r;
 																								y = vector.g;
 																								z = vector.b;
+																								w = 1;
 																				} else {
 																								x = vector.x;
 																								y = vector.y;
@@ -15516,7 +15545,7 @@ function FrustumPoints(camera, group, canvas) {
 																								cameraPositionDefault.applyQuaternion(cameraQuaternionDefault);
 																								_uniforms2.cameraPositionDefault = { value: cameraPositionDefault };
 																								_uniforms2.cameraQuaternion = { value: camera.quaternion };
-																								new cloud.addUniforms(THREE.RGBFormat, 256, 'palette', {
+																								new cloud.addUniforms(THREE.RGBAFormat, 256, 'palette', {
 																												onReady: function onReady(data, itemSize, updateItem) {
 																																options.scales.setW();
 																																var min = options.scales.w.min,
@@ -16805,425 +16834,428 @@ function TreeView() {
  */
 if (typeof dat !== 'undefined') three$1.dat = dat;
 function arrayContainersF() {
-			var array = [];
-			this.push = function (elContainer) {
-						array.push(elContainer);
-			};
-			this.display = function (elContainer, fullScreen) {
-						array.forEach(function (itemElContainer) {
-									itemElContainer.style.display = itemElContainer === elContainer || !fullScreen ? 'block' : 'none';
-						});
-			};
-			Object.defineProperties(this, {
-						length: {
-									get: function get$$1() {
-												return array.length;
-									}
-						}
-			});
+	var array = [];
+	this.push = function (elContainer) {
+		array.push(elContainer);
+	};
+	this.display = function (elContainer, fullScreen) {
+		array.forEach(function (itemElContainer) {
+			itemElContainer.style.display = itemElContainer === elContainer || !fullScreen ? 'block' : 'none';
+		});
+	};
+	Object.defineProperties(this, {
+		length: {
+			get: function get$$1() {
+				return array.length;
+			}
+		}
+	});
 }
 var arrayContainers = new arrayContainersF();
 var arrayCreates = [];
 var MyThree =
 function MyThree(createXDobjects, options) {
-			classCallCheck(this, MyThree);
-			options = options || {};
-			var THREE = three$1.THREE;
-			var myThreejs = this;
-			arrayCreates.push({
-						createXDobjects: createXDobjects,
-						options: options
+	classCallCheck(this, MyThree);
+	options = options || {};
+	var THREE = three$1.THREE;
+	var myThreejs = this;
+	arrayCreates.push({
+		createXDobjects: createXDobjects,
+		options: options
+	});
+	if (arrayCreates.length > 1) return;
+	var camera, group, scene, canvas;
+	var elContainer = options.elContainer === undefined ? document.getElementById("containerDSE") : typeof options.elContainer === "string" ? document.getElementById(options.elContainer) : options.elContainer;
+	if (elContainer === null) {
+		if (typeof options.elContainer === "string") console.warn('The ' + options.elContainer + ' element was not detected.');
+		elContainer = document.createElement('div');
+		document.querySelector('body').appendChild(elContainer);
+	}
+	arrayContainers.push(elContainer);
+	if (!elContainer.querySelector('canvas')) {
+		elContainer.innerHTML = '';
+		var elDiv = document.createElement('div');
+		elDiv.className = 'container';
+		elDiv.appendChild(document.createElement('canvas'));
+		elContainer.appendChild(elDiv);
+		elContainer = elDiv;
+	}
+	if (three$1.dat && options.dat !== false) {
+		options.dat = options.dat || {};
+		options.dat.parent = elContainer;
+	}
+	if (options.title) {
+		var _elDiv = document.createElement('div');
+		_elDiv.style.position = 'absolute';
+		_elDiv.style.top = '0px';
+		_elDiv.style.color = 'white';
+		_elDiv.style.padding = '3px';
+		_elDiv.innerHTML = options.title;
+		elContainer.appendChild(_elDiv);
+	}
+	options = new Options(options);
+	options.saveMeshDefault = function (mesh) {
+		mesh.userData.default = mesh.userData.default || {};
+		mesh.userData.default.scale = new THREE.Vector3();
+		mesh.userData.default.scale.copy(mesh.scale);
+		mesh.userData.default.position = new THREE.Vector3();
+		mesh.userData.default.position.copy(mesh.position);
+		mesh.userData.default.rotation = new THREE.Euler();
+		mesh.userData.default.rotation.copy(mesh.rotation);
+	};
+	var defaultPoint = {},
+	mouse = new THREE.Vector2();
+	var renderer,
+	fOptions,
+	rendererSizeDefault, cameraPosition,
+	pointSize, stats,
+	requestId;
+	canvas = elContainer.querySelector('canvas');
+	if (!canvas) {
+		canvas = document.createElement('canvas');
+		elContainer.appendChild(canvas);
+	}
+	function isFullScreen() {
+		if (options.canvasMenu) return options.canvasMenu.isFullScreen();
+		if (options.canvas) return options.canvas.fullScreen !== false;
+		return true;
+	}
+	var elImg = elContainer.querySelector('img');
+	if (elImg) elContainer.removeChild(elImg);
+	if (typeof WebGLDebugUtils !== 'undefined') canvas = WebGLDebugUtils.makeLostContextSimulatingCanvas(canvas);
+	canvas.addEventListener("webglcontextlost", function (event) {
+		event.preventDefault();
+		if (requestId !== undefined) window.cancelAnimationFrame(requestId);else console.error('myThreejs.create.onloadScripts: requestId = ' + requestId);
+		clearThree(scene);
+		rendererSizeDefault.onFullScreenToggle(true);
+		alert(lang$2.webglcontextlost);
+	}, false);
+	canvas.addEventListener("webglcontextrestored", function () {
+		console.warn('webglcontextrestored');
+		init();
+		animate();
+	}, false);
+	init();
+	animate();
+	function init() {
+		camera = new THREE.PerspectiveCamera(options.camera.fov || 70, options.camera.aspect || window.innerWidth / window.innerHeight, options.camera.near || 0.01, options.camera.far || 10);
+		camera.position.copy(options.camera.position);
+		camera.scale.copy(options.camera.scale);
+		options.camera = camera;
+		options.point.sizePointsMaterial = 100;
+		if (options.cameraTarget) {
+			options.cameraTarget.camera = camera;
+			options.playerOptions.cameraTarget.init(options.cameraTarget, options);
+		}
+		scene = new THREE.Scene();
+		scene.background = new THREE.Color(0x000000);
+		scene.fog = new THREE.Fog(0x000000, 250, 1400);
+		scene.userData.optionsSpriteText = {
+			textHeight: 0.04
+		};
+		group = new THREE.Group();
+		scene.add(group);
+		var gl = new FrustumPoints(camera, group, canvas, {
+			options: options
+		}).gl;
+		renderer = new THREE.WebGLRenderer({
+			antialias: true,
+			canvas: canvas,
+			context: gl
+		});
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		options.renderer = renderer;
+		options.cursor = renderer.domElement.style.cursor;
+		if (options.stereoEffect !== false) {
+			options.stereoEffect = options.stereoEffect || {};
+			options.stereoEffect.rememberSize = true;
+		}
+		new StereoEffect(renderer, options);
+		options.eventListeners = new Options.raycaster.EventListeners(camera, renderer, { options: options, scene: scene });
+		function removeTraceLines() {
+			group.children.forEach(function (mesh) {
+				if (mesh.userData.player === undefined || mesh.userData.player.arrayFuncs === undefined || typeof mesh.userData.player.arrayFuncs === "function") return;
+				mesh.userData.player.arrayFuncs.forEach(function (vector) {
+					if (vector.line === undefined) return;
+					vector.line.remove();
+					vector.line = new Player$1.traceLine(options);
+				});
 			});
-			if (arrayCreates.length > 1) return;
-			var camera, group, scene, canvas;
-			var elContainer = options.elContainer === undefined ? document.getElementById("containerDSE") : typeof options.elContainer === "string" ? document.getElementById(options.elContainer) : options.elContainer;
-			if (elContainer === null) {
-						if (typeof options.elContainer === "string") console.warn('The ' + options.elContainer + ' element was not detected.');
-						elContainer = document.createElement('div');
-						document.querySelector('body').appendChild(elContainer);
+		}
+		var pointLight1 = new pointLight(scene, {
+			options: options,
+			position: options.pointLight && options.pointLight.pointLight1 && options.pointLight.pointLight1.position ? options.pointLight.pointLight1.position : new THREE.Vector3(2 * options.scale, 2 * options.scale, 2 * options.scale)
+		});
+		var pointLight2 = new pointLight(scene, {
+			options: options,
+			position: options.pointLight && options.pointLight.pointLight2 && options.pointLight.pointLight2.position ? options.pointLight.pointLight2.position : new THREE.Vector3(-2 * options.scale, -2 * options.scale, -2 * options.scale)
+		});
+		if (options.dat.gui) {
+			if (typeof WebGLDebugUtils !== "undefined") options.dat.gui.add({
+				loseContext: function loseContext(value) {
+					canvas.loseContext();
+				}
+			}, 'loseContext');
+			if (options.dat.gui.__closeButton.click !== undefined)
+				options.dat.gui.__closeButton.click();
+		}
+		new Player$1(group, {
+			onSelectScene: function onSelectScene(index, t) {
+				options.boPlayer = true;
+				if (options.frustumPoints !== undefined) options.frustumPoints.updateCloudPoints();
+				if (options.onSelectScene !== undefined) options.onSelectScene(t);
+			},
+			options: options,
+			cameraTarget: { camera: camera },
+			onChangeScaleT: function onChangeScaleT(scale) {
+				if (options.player !== undefined) options.player.onChangeScale(scale);
+				removeTraceLines();
 			}
-			arrayContainers.push(elContainer);
-			elContainer.innerHTML = '';
-			var elDiv = document.createElement('div');
-			elDiv.className = 'container';
-			elDiv.appendChild(document.createElement('canvas'));
-			elContainer.appendChild(elDiv);
-			elContainer = elDiv;
-			if (three$1.dat && options.dat !== false) {
-						options.dat = options.dat || {};
-						options.dat.parent = elContainer;
+		});
+		if (options.player) new options.player.PlayController();
+		if (options.dat.gui) {
+			fOptions = options.dat.gui.addFolder(lang$2.settings);
+			if (options.player) options.player.gui(fOptions);
+		}
+		if (fOptions) SpriteTextGui(scene, options, {
+			folder: fOptions,
+			options: {
+				textHeight: 0.05,
+				fov: camera.fov
 			}
-			if (options.title) {
-						var _elDiv = document.createElement('div');
-						_elDiv.style.position = 'absolute';
-						_elDiv.style.top = '0px';
-						_elDiv.style.color = 'white';
-						_elDiv.style.padding = '3px';
-						_elDiv.innerHTML = options.title;
-						elContainer.appendChild(_elDiv);
-			}
-			options = new Options(options);
-			options.saveMeshDefault = function (mesh) {
-						mesh.userData.default = mesh.userData.default || {};
-						mesh.userData.default.scale = new THREE.Vector3();
-						mesh.userData.default.scale.copy(mesh.scale);
-						mesh.userData.default.position = new THREE.Vector3();
-						mesh.userData.default.position.copy(mesh.position);
-						mesh.userData.default.rotation = new THREE.Euler();
-						mesh.userData.default.rotation.copy(mesh.rotation);
+		});
+		if (options.stereoEffect) {
+			options.stereoEffect.gui({
+				folder: fOptions,
+				onChangeMode: function onChangeMode(mode) {
+					switch (mode) {
+						case StereoEffect.spatialMultiplexsIndexs.Mono:
+							break;
+						case StereoEffect.spatialMultiplexsIndexs.SbS:
+						case StereoEffect.spatialMultiplexsIndexs.TaB:
+							break;
+						default:
+							console.error('myThreejs: Invalid spatialMultiplexIndex = ' + mode);
+							return;
+					}
+					if (options.frustumPoints !== undefined) options.frustumPoints.updateGuiSelectPoint();
+				}
+			});
+		}
+		function getRendererSize() {
+			var style = {
+				position: renderer.domElement.style.position,
+				left: renderer.domElement.style.left,
+				top: renderer.domElement.style.top,
+				width: renderer.domElement.style.width,
+				height: renderer.domElement.style.height
+			},
+			    sizeOriginal = new THREE.Vector2();
+			renderer.getSize(sizeOriginal);
+			return {
+				onFullScreenToggle: function onFullScreenToggle(fs) {
+					arrayContainers.display(elContainer.parentElement, !fs);
+				}
 			};
-			var defaultPoint = {},
-			mouse = new THREE.Vector2();
-			var renderer,
-			fOptions,
-			rendererSizeDefault, cameraPosition,
-			pointSize, stats,
-			requestId;
-			canvas = elContainer.querySelector('canvas');
-			if (!canvas) {
-						canvas = document.createElement('canvas');
-						elContainer.appendChild(canvas);
-			}
-			function isFullScreen() {
-						if (options.canvasMenu) return options.canvasMenu.isFullScreen();
-						if (options.canvas) return options.canvas.fullScreen !== false;
-						return true;
-			}
-			var elImg = elContainer.querySelector('img');
-			if (elImg) elContainer.removeChild(elImg);
-			if (typeof WebGLDebugUtils !== 'undefined') canvas = WebGLDebugUtils.makeLostContextSimulatingCanvas(canvas);
-			canvas.addEventListener("webglcontextlost", function (event) {
-						event.preventDefault();
-						if (requestId !== undefined) window.cancelAnimationFrame(requestId);else console.error('myThreejs.create.onloadScripts: requestId = ' + requestId);
-						clearThree(scene);
-						rendererSizeDefault.onFullScreenToggle(true);
-						alert(lang$2.webglcontextlost);
-			}, false);
-			canvas.addEventListener("webglcontextrestored", function () {
-						console.warn('webglcontextrestored');
-						init();
-						animate();
-			}, false);
-			init();
-			animate();
-			function init() {
-						camera = new THREE.PerspectiveCamera(options.camera.fov || 70, options.camera.aspect || window.innerWidth / window.innerHeight, options.camera.near || 0.01, options.camera.far || 10);
-						camera.position.copy(options.camera.position);
-						camera.scale.copy(options.camera.scale);
-						options.camera = camera;
-						options.point.sizePointsMaterial = 100;
-						if (options.cameraTarget) {
-									options.cameraTarget.camera = camera;
-									options.playerOptions.cameraTarget.init(options.cameraTarget, options);
-						}
-						scene = new THREE.Scene();
-						scene.background = new THREE.Color(0x000000);
-						scene.fog = new THREE.Fog(0x000000, 250, 1400);
-						scene.userData.optionsSpriteText = {
-									textHeight: 0.04
-						};
-						group = new THREE.Group();
-						scene.add(group);
-						new FrustumPoints(camera, group, canvas, {
-									options: options
-						});
-						renderer = new THREE.WebGLRenderer({
-									antialias: true,
-									canvas: canvas
-						});
-						renderer.setSize(window.innerWidth, window.innerHeight);
-						options.renderer = renderer;
-						options.cursor = renderer.domElement.style.cursor;
-						if (options.stereoEffect !== false) {
-									options.stereoEffect = options.stereoEffect || {};
-									options.stereoEffect.rememberSize = true;
-						}
-						new StereoEffect(renderer, options);
-						options.eventListeners = new Options.raycaster.EventListeners(camera, renderer, { options: options, scene: scene });
-						function removeTraceLines() {
-									group.children.forEach(function (mesh) {
-												if (mesh.userData.player === undefined || mesh.userData.player.arrayFuncs === undefined || typeof mesh.userData.player.arrayFuncs === "function") return;
-												mesh.userData.player.arrayFuncs.forEach(function (vector) {
-															if (vector.line === undefined) return;
-															vector.line.remove();
-															vector.line = new Player$1.traceLine(options);
-												});
-									});
-						}
-						var pointLight1 = new pointLight(scene, {
-									options: options,
-									position: options.pointLight && options.pointLight.pointLight1 && options.pointLight.pointLight1.position ? options.pointLight.pointLight1.position : new THREE.Vector3(2 * options.scale, 2 * options.scale, 2 * options.scale)
-						});
-						var pointLight2 = new pointLight(scene, {
-									options: options,
-									position: options.pointLight && options.pointLight.pointLight2 && options.pointLight.pointLight2.position ? options.pointLight.pointLight2.position : new THREE.Vector3(-2 * options.scale, -2 * options.scale, -2 * options.scale)
-						});
-						if (options.dat.gui) {
-									if (typeof WebGLDebugUtils !== "undefined") options.dat.gui.add({
-												loseContext: function loseContext(value) {
-															canvas.loseContext();
-												}
-									}, 'loseContext');
-									if (options.dat.gui.__closeButton.click !== undefined)
-												options.dat.gui.__closeButton.click();
-						}
-						new Player$1(group, {
-									onSelectScene: function onSelectScene(index, t) {
-												options.boPlayer = true;
-												if (options.frustumPoints !== undefined) options.frustumPoints.updateCloudPoints();
-												if (options.onSelectScene !== undefined) options.onSelectScene(t);
-									},
-									options: options,
-									cameraTarget: { camera: camera },
-									onChangeScaleT: function onChangeScaleT(scale) {
-												if (options.player !== undefined) options.player.onChangeScale(scale);
-												removeTraceLines();
+		}
+		rendererSizeDefault = getRendererSize();
+		renderer.setSize(options.canvas !== undefined && options.canvas.width !== undefined ? options.canvas.width : canvas.clientWidth, options.canvas !== undefined && options.canvas.height !== undefined ? options.canvas.height : canvas.clientHeight);
+		new CanvasMenu(renderer, {
+			fullScreen: {
+				fullScreen: options.canvas.fullScreen,
+				camera: camera,
+				arrayContainersLength: function arrayContainersLength() {
+					return arrayContainers.length;
+				},
+				onFullScreenToggle: function onFullScreenToggle(fullScreen) {
+					rendererSizeDefault.onFullScreenToggle(fullScreen);
+					function onFullScreenToggle(group, fullScreen) {
+						setTimeout(function () {
+							function recursion(children) {
+								children.forEach(function (mesh) {
+									recursion(mesh.children);
+									if (mesh instanceof THREE.Group) {
+										onFullScreenToggle(mesh, fullScreen);
+										return;
 									}
-						});
-						if (options.player) new options.player.PlayController();
-						if (options.dat.gui) {
-									fOptions = options.dat.gui.addFolder(lang$2.settings);
-									if (options.player) options.player.gui(fOptions);
-						}
-						if (fOptions) SpriteTextGui(scene, options, {
-									folder: fOptions,
-									options: {
-												textHeight: 0.05,
-												fov: camera.fov
-									}
-						});
-						if (options.stereoEffect) {
-									options.stereoEffect.gui({
-												folder: fOptions,
-												onChangeMode: function onChangeMode(mode) {
-															switch (mode) {
-																		case StereoEffect.spatialMultiplexsIndexs.Mono:
-																					break;
-																		case StereoEffect.spatialMultiplexsIndexs.SbS:
-																		case StereoEffect.spatialMultiplexsIndexs.TaB:
-																					break;
-																		default:
-																					console.error('myThreejs: Invalid spatialMultiplexIndex = ' + mode);
-																					return;
-															}
-															if (options.frustumPoints !== undefined) options.frustumPoints.updateGuiSelectPoint();
-												}
+									if (mesh.userData.player === undefined || mesh.userData.player.arrayFuncs === undefined || typeof mesh.userData.player.arrayFuncs === "function") return;
+									mesh.userData.player.arrayFuncs.forEach(function (vector) {
+										if (vector.controllers && vector.controllers.w && vector.controllers.w.position && vector.controllers.w.position.elSlider) vector.controllers.w.position.elSlider.style.display = fullScreen ? 'block' : 'none';
+										if (vector.line === undefined) return;
+										vector.line.remove();
+										vector.line = new Player$1.traceLine(options);
 									});
-						}
-						function getRendererSize() {
-									var style = {
-												position: renderer.domElement.style.position,
-												left: renderer.domElement.style.left,
-												top: renderer.domElement.style.top,
-												width: renderer.domElement.style.width,
-												height: renderer.domElement.style.height
-									},
-									    sizeOriginal = new THREE.Vector2();
-									renderer.getSize(sizeOriginal);
-									return {
-												onFullScreenToggle: function onFullScreenToggle(fs) {
-															arrayContainers.display(elContainer.parentElement, !fs);
-												}
-									};
-						}
-						rendererSizeDefault = getRendererSize();
-						renderer.setSize(options.canvas !== undefined && options.canvas.width !== undefined ? options.canvas.width : canvas.clientWidth, options.canvas !== undefined && options.canvas.height !== undefined ? options.canvas.height : canvas.clientHeight);
-						new CanvasMenu(renderer, {
-									fullScreen: {
-												fullScreen: options.canvas.fullScreen,
-												camera: camera,
-												arrayContainersLength: function arrayContainersLength() {
-															return arrayContainers.length;
-												},
-												onFullScreenToggle: function onFullScreenToggle(fullScreen) {
-															rendererSizeDefault.onFullScreenToggle(fullScreen);
-															function onFullScreenToggle(group, fullScreen) {
-																		setTimeout(function () {
-																					function recursion(children) {
-																								children.forEach(function (mesh) {
-																											recursion(mesh.children);
-																											if (mesh instanceof THREE.Group) {
-																														onFullScreenToggle(mesh, fullScreen);
-																														return;
-																											}
-																											if (mesh.userData.player === undefined || mesh.userData.player.arrayFuncs === undefined || typeof mesh.userData.player.arrayFuncs === "function") return;
-																											mesh.userData.player.arrayFuncs.forEach(function (vector) {
-																														if (vector.controllers && vector.controllers.w && vector.controllers.w.position && vector.controllers.w.position.elSlider) vector.controllers.w.position.elSlider.style.display = fullScreen ? 'block' : 'none';
-																														if (vector.line === undefined) return;
-																														vector.line.remove();
-																														vector.line = new Player$1.traceLine(options);
-																											});
-																								});
-																					}
-																					recursion(group.children);
-																		}, 0);
-															}
-															onFullScreenToggle(scene, fullScreen);
-												}
-									},
-									options: options
-						});
-						options.createOrbitControls(camera, renderer, scene);
-						if (fOptions) {
-									new GuiSelectPoint(options, {
-												cameraTarget: {
-															camera: camera,
-															orbitControls: options.orbitControls
-												},
-												pointsControls: function pointsControls(fPoints, dislayEl, getMesh) {},
-												pointControls: function pointControls(fPoint, dislayEl, getMesh) {}
-									});
-									if (options.guiSelectPoint) options.guiSelectPoint.add();
-						}
-						defaultPoint.size = options.point.size;
-						var pointName = options.dat ? options.dat.getCookieName('Point') : 'Point';
-						if (options.dat) options.dat.cookie.getObject(pointName, options.point, options.point);
-						three$1.group = group;
-						if (createXDobjects) createXDobjects(group, options);
-						new AxesHelper(scene, options);
-						if (options.frustumPoints) options.frustumPoints.create(renderer);
-						if (!options.player) {
-									Player$1.selectPlayScene(group, { options: options });
-						}
-						options.boPlayer = false;
-						group.children.forEach(function (mesh) {
-									options.saveMeshDefault(mesh);
-						});
-						if (options.dat.gui) {
-									AxesHelperGui(options, fOptions);
-									new MoveGroupGui(group, options, {
-												folder: fOptions
-									});
-									if (options.orbitControls !== false) {
-												new OrbitControlsGui(options, fOptions);
-									}
-									new CameraGui(camera, options, fOptions);
-									pointLight1.controls({ group: group, folder: fOptions, folderName: lang$2.light + ' 1' });
-									pointLight2.controls({ group: group, folder: fOptions, folderName: lang$2.light + ' 2' });
-									var folderPoint = new FolderPoint(options.point, function (value) {
-												if (value === undefined) value = options.point.size;
-												if (value < 0) value = 0;
-												group.children.forEach(function (mesh) {
-															if (mesh.type !== 'Points' || mesh.userData.boFrustumPoints) return;
-															if (mesh.material.uniforms === undefined) mesh.material.size = value / options.point.sizePointsMaterial;
-															else mesh.material.uniforms.pointSize.value = value;
-												});
-												folderPoint.size.setValue(value);
-												options.point.size = value;
-												options.dat.cookie.setObject(pointName, options.point);
-									}, options, {
-												folder: fOptions,
-												defaultPoint: defaultPoint
-									});
-									if (options.frustumPoints)
-												options.frustumPoints.gui(fOptions);
-									options.restoreSceneController(camera, scene);
-						}
-						if (options.stats !== undefined) {
-									try {
-												stats = new Stats();
-												elContainer.appendChild(stats.dom);
-									} catch (e) {
-												console.error(e + ". Please import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';");
-									}
-						}
-						window.addEventListener('resize', onResize, false);
+								});
+							}
+							recursion(group.children);
+						}, 0);
+					}
+					onFullScreenToggle(scene, fullScreen);
+				}
+			},
+			options: options
+		});
+		options.createOrbitControls(camera, renderer, scene);
+		if (fOptions) {
+			new GuiSelectPoint(options, {
+				cameraTarget: {
+					camera: camera,
+					orbitControls: options.orbitControls
+				},
+				pointsControls: function pointsControls(fPoints, dislayEl, getMesh) {},
+				pointControls: function pointControls(fPoint, dislayEl, getMesh) {}
+			});
+			if (options.guiSelectPoint) options.guiSelectPoint.add();
+		}
+		defaultPoint.size = options.point.size;
+		var pointName = options.dat ? options.dat.getCookieName('Point') : 'Point';
+		if (options.dat) options.dat.cookie.getObject(pointName, options.point, options.point);
+		three$1.group = group;
+		if (createXDobjects) createXDobjects(group, options);
+		new AxesHelper(scene, options);
+		if (options.frustumPoints) options.frustumPoints.create(renderer);
+		if (!options.player) {
+			Player$1.selectPlayScene(group, { options: options });
+		}
+		options.boPlayer = false;
+		group.children.forEach(function (mesh) {
+			options.saveMeshDefault(mesh);
+		});
+		if (options.dat.gui) {
+			AxesHelperGui(options, fOptions);
+			new MoveGroupGui(group, options, {
+				folder: fOptions
+			});
+			if (options.orbitControls !== false) {
+				new OrbitControlsGui(options, fOptions);
 			}
-			function onResize() {
-						var size;
-						if (isFullScreen()) size = new THREE.Vector2(window.innerWidth, window.innerHeight);else {
-									size = new THREE.Vector2();
-									renderer.getSize(size);
-						}
-						camera.aspect = size.x / size.y;
-						camera.updateProjectionMatrix();
-						renderer.setSize(size.x, size.y);
-						if (options.frustumPoints !== undefined) options.frustumPoints.update();
+			new CameraGui(camera, options, fOptions);
+			pointLight1.controls({ group: group, folder: fOptions, folderName: lang$2.light + ' 1' });
+			pointLight2.controls({ group: group, folder: fOptions, folderName: lang$2.light + ' 2' });
+			var folderPoint = new FolderPoint(options.point, function (value) {
+				if (value === undefined) value = options.point.size;
+				if (value < 0) value = 0;
+				group.children.forEach(function (mesh) {
+					if (mesh.type !== 'Points' || mesh.userData.boFrustumPoints) return;
+					if (mesh.material.uniforms === undefined) mesh.material.size = value / options.point.sizePointsMaterial;
+					else mesh.material.uniforms.pointSize.value = value;
+				});
+				folderPoint.size.setValue(value);
+				options.point.size = value;
+				options.dat.cookie.setObject(pointName, options.point);
+			}, options, {
+				folder: fOptions,
+				defaultPoint: defaultPoint
+			});
+			if (options.frustumPoints)
+				options.frustumPoints.gui(fOptions);
+			options.restoreSceneController(camera, scene);
+		}
+		if (options.stats !== undefined) {
+			try {
+				stats = new Stats();
+				elContainer.appendChild(stats.dom);
+			} catch (e) {
+				console.error(e + ". Please import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';");
 			}
-			function animate() {
-						if (stats !== undefined) stats.begin();
-						requestId = requestAnimationFrame(animate);
-						render();
-						if (stats !== undefined) stats.end();
-			}
-			function render() {
-						if (!options.stereoEffect || !options.stereoEffect.render) renderer.render(scene, camera);else options.stereoEffect.render(scene, camera);
-						if (cameraPosition === undefined) cameraPosition = new THREE.Vector3();
-						if (pointSize === undefined) pointSize = options.point.size;
-						if (!cameraPosition.equals(camera.position) || pointSize != options.point.size || options.frustumPoints !== undefined && options.frustumPoints.animate()) {
-									cameraPosition.copy(camera.position);
-									pointSize = options.point.size;
-									group.children.forEach(function (mesh) {
-												if (mesh instanceof THREE.Points === false) return;
-												if (mesh.geometry.attributes.size === undefined) {
-															mesh.material.size = pointSize / options.point.sizePointsMaterial;
-															return;
-												}
-												if (options.point.opacity !== undefined) mesh.material.uniforms.opacity.value = options.point.opacity;
-												var scale = myPoints.getGlobalScale(mesh);
-												var cameraPosition = new THREE.Vector3(camera.position.x / scale.x, camera.position.y / scale.y, camera.position.z / scale.z);
-												scale = (scale.x + scale.y + scale.z) / 3;
-												for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
-															var position = getObjectPosition(mesh, i),
-															position3d = new THREE.Vector3(position.x, position.y, position.z),
-															    distance = position3d.distanceTo(cameraPosition),
-															    y = 1;
-															mesh.geometry.attributes.size.setX(i, Math.tan(mesh.userData.shaderMaterial.point !== undefined && mesh.userData.shaderMaterial.point.size !== undefined ? mesh.userData.shaderMaterial.point.size : options.point.size) * distance * scale * y);
-															mesh.geometry.attributes.size.needsUpdate = true;
-												}
-									});
-						}
-			}
-			this.setSize = function (width, height) {
-						if ((typeof width === 'undefined' ? 'undefined' : _typeof(width)) === "object") {
-									height = width.height;
-									width = width.width;
-						}
-						if (width === undefined) {
-									var target = { set: function set$$1(width, height) {
-															renderer.setSize(width, height);
-												} };
-									renderer.getSize(target);
-									return;
-						}
-						renderer.setSize(width, height);
-			};
-			arrayCreates.shift();
-			var params = arrayCreates.shift();
-			if (params === undefined) return;
-			myThreejs.create(params.createXDobjects, params.options);
+		}
+		window.addEventListener('resize', onResize, false);
+	}
+	function onResize() {
+		var size;
+		if (isFullScreen()) size = new THREE.Vector2(window.innerWidth, window.innerHeight);else {
+			size = new THREE.Vector2();
+			renderer.getSize(size);
+		}
+		camera.aspect = size.x / size.y;
+		camera.updateProjectionMatrix();
+		renderer.setSize(size.x, size.y);
+		if (options.frustumPoints !== undefined) options.frustumPoints.update();
+	}
+	function animate() {
+		if (stats !== undefined) stats.begin();
+		requestId = requestAnimationFrame(animate);
+		render();
+		if (stats !== undefined) stats.end();
+	}
+	function render() {
+		if (!options.stereoEffect || !options.stereoEffect.render) renderer.render(scene, camera);else options.stereoEffect.render(scene, camera);
+		if (cameraPosition === undefined) cameraPosition = new THREE.Vector3();
+		if (pointSize === undefined) pointSize = options.point.size;
+		if (!cameraPosition.equals(camera.position) || pointSize != options.point.size || options.frustumPoints !== undefined && options.frustumPoints.animate()) {
+			cameraPosition.copy(camera.position);
+			pointSize = options.point.size;
+			group.children.forEach(function (mesh) {
+				if (mesh instanceof THREE.Points === false) return;
+				if (mesh.geometry.attributes.size === undefined) {
+					mesh.material.size = pointSize / options.point.sizePointsMaterial;
+					return;
+				}
+				if (options.point.opacity !== undefined) mesh.material.uniforms.opacity.value = options.point.opacity;
+				var scale = myPoints.getGlobalScale(mesh);
+				var cameraPosition = new THREE.Vector3(camera.position.x / scale.x, camera.position.y / scale.y, camera.position.z / scale.z);
+				scale = (scale.x + scale.y + scale.z) / 3;
+				for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
+					var position = getObjectPosition(mesh, i),
+					position3d = new THREE.Vector3(position.x, position.y, position.z),
+					    distance = position3d.distanceTo(cameraPosition),
+					    y = 1;
+					mesh.geometry.attributes.size.setX(i, Math.tan(mesh.userData.shaderMaterial.point !== undefined && mesh.userData.shaderMaterial.point.size !== undefined ? mesh.userData.shaderMaterial.point.size : options.point.size) * distance * scale * y);
+					mesh.geometry.attributes.size.needsUpdate = true;
+				}
+			});
+		}
+	}
+	this.setSize = function (width, height) {
+		if ((typeof width === 'undefined' ? 'undefined' : _typeof(width)) === "object") {
+			height = width.height;
+			width = width.width;
+		}
+		if (width === undefined) {
+			var target = { set: function set$$1(width, height) {
+					renderer.setSize(width, height);
+				} };
+			renderer.getSize(target);
+			return;
+		}
+		renderer.setSize(width, height);
+	};
+	arrayCreates.shift();
+	var params = arrayCreates.shift();
+	if (params === undefined) return;
+	myThreejs.create(params.createXDobjects, params.options);
 };
 var lang$2 = {
-			defaultButton: 'Default',
-			settings: 'Settings',
-			webglcontextlost: 'The user agent has detected that the drawing buffer associated with a WebGLRenderingContext object has been lost.',
-			light: 'Light',
-			opacity: 'Opacity'
+	defaultButton: 'Default',
+	settings: 'Settings',
+	webglcontextlost: 'The user agent has detected that the drawing buffer associated with a WebGLRenderingContext object has been lost.',
+	light: 'Light',
+	opacity: 'Opacity'
 };
 switch (getLanguageCode()) {
-			case 'ru':
-						lang$2.defaultButton = 'Восстановить';
-						lang$2.name = 'Имя';
-						lang$2.settings = 'Настройки';
-						lang$2.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
-						lang$2.light = 'Свет';
-						lang$2.opacity = 'Непрозрачность';
-						break;
+	case 'ru':
+		lang$2.defaultButton = 'Восстановить';
+		lang$2.name = 'Имя';
+		lang$2.settings = 'Настройки';
+		lang$2.webglcontextlost = 'Пользовательский агент обнаружил, что буфер рисунка, связанный с объектом WebGLRenderingContext, потерян.';
+		lang$2.light = 'Свет';
+		lang$2.opacity = 'Непрозрачность';
+		break;
 }
 MyThree.MyPoints = MyPoints;
 MyThree.StereoEffect = {
-			spatialMultiplexsIndexs: StereoEffect.spatialMultiplexsIndexs
+	spatialMultiplexsIndexs: StereoEffect.spatialMultiplexsIndexs
 };MyThree.ColorPicker = ColorPicker$1;
 MyThree.getWorldPosition = getWorldPosition;
 MyThree.limitAngles = function (rotation) {
-			function limitAngle(axisName) {
-						while (rotation[axisName] > Math.PI * 2) {
-									rotation[axisName] -= Math.PI * 2;
-						}
-			}
-			limitAngle('x');
-			limitAngle('y');
-			limitAngle('z');
+	function limitAngle(axisName) {
+		while (rotation[axisName] > Math.PI * 2) {
+			rotation[axisName] -= Math.PI * 2;
+		}
+	}
+	limitAngle('x');
+	limitAngle('y');
+	limitAngle('z');
 };
 MyThree.Player = Player$1;
 MyThree.three = three$1;
