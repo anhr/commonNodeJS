@@ -176,7 +176,8 @@ function MyPoints( arrayFuncs, group, settings ) {
 				size: options.point.size / options.point.sizePointsMaterial, 
 
 				//THREE.Material: 'vertexColors' parameter is undefined.
-				//vertexColors: THREE.VertexColors
+				//vertexColors: THREE.VertexColors,
+				vertexColors: true,
 			
 			} )
 
