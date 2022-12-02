@@ -259,6 +259,7 @@ function myRequest( options ) {
 function sync( url, options ) {
 
 	options = options || {};
+	if (options.async === true) console.warn('Load file asynchronously is deprecated. Please use fetch.');
 	options.onload = options.onload || function () { };
 	options.onerror = options.onerror || function () { };
 
