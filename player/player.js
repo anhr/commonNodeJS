@@ -2757,6 +2757,8 @@ Player.traceLine = class traceLine
 
 			if ( options.playerOptions.max === null ) {
 
+				//Infinity play
+				
 				sceneIndex = Math.abs( sceneIndex );
 				if ( sceneIndex < ( arrayLines.length - 1 ) ) {
 
@@ -2778,7 +2780,7 @@ Player.traceLine = class traceLine
 				const colors = new Float32Array( MAX_POINTS * 3 ); // 3 coordinates per point
 				geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
 
-				const line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } ) );
+				const line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { vertexColors: true } ) );
 				//			group.add( line );
 				mesh.add( line );
 
@@ -2842,7 +2844,7 @@ Player.traceLine = class traceLine
 				line = new THREE.Line( geometry, new THREE.LineBasicMaterial( {
 					
 					//неудачная попытка исправить frustumPoints после перехода на THREE.REVISION = "145dev"
-					//vertexColors: true,//THREE.VertexColors//Undefined in THREE.REVISION = "145dev"
+					vertexColors: true,
 
 					//THREE.Material: 'vertexColors' parameter is undefined.
 					//vertexColors: THREE.VertexColors
