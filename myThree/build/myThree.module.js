@@ -7640,6 +7640,7 @@ function myRequest(options) {
 }
 function sync(url, options) {
 	options = options || {};
+	if (options.async === true) console.warn('Load file asynchronously is deprecated. Please use fetch.');
 	options.onload = options.onload || function () {};
 	options.onerror = options.onerror || function () {};
 	var response,
@@ -11445,7 +11446,7 @@ function traceLine(options) {
 			geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 			var colors = new Float32Array(_MAX_POINTS * 3);
 			geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-			var _line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ vertexColors: THREE.VertexColors }));
+			var _line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ vertexColors: true }));
 			mesh.add(_line);
 			if (arrayLines[0]) _line.visible = arrayLines[0].visible;
 			point = new THREE.Vector3().copy(point);
@@ -11475,6 +11476,7 @@ function traceLine(options) {
 			_geometry.setAttribute('color', new THREE.Float32BufferAttribute(_colors, 3));
 			_geometry.setDrawRange(sceneIndex, sceneIndex);
 			line = new THREE.Line(_geometry, new THREE.LineBasicMaterial({
+				vertexColors: true
 			}));
 			line.visible = true;
 			mesh.add(line);
@@ -11838,7 +11840,8 @@ function MyPoints(arrayFuncs, group, settings) {
 		pointsOptions: pointsOptions
 	});else {
 		var points = new THREE.Points(typeof arrayFuncs === 'function' ? arrayFuncs() : new THREE.BufferGeometry().setFromPoints(Player$1.getPoints(arrayFuncs, { options: options, group: group, t: pointsOptions.tMin }), 4), new THREE.PointsMaterial({
-			size: options.point.size / options.point.sizePointsMaterial
+			size: options.point.size / options.point.sizePointsMaterial,
+			vertexColors: true
 		}));
 		if (pointsOptions.frustumPoints) points.userData.cloud = {
 			indexArray: pointsOptions.frustumPoints.pushArrayCloud(points.geometry)
