@@ -251,14 +251,14 @@ Now you can see a trace line of the moving of the first point.
 
 <a name="PointsColor"></a>
 ## Points color.
-* In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> key and add <b>vertexColors: THREE.VertexColors</b>.
+* In the <b>THREE.PointsMaterial</b> parameters of your <b>points</b> remove the <b>color</b> key and add <b>vertexColors: true</b>.
 ```
 const points = new THREE.Points( new THREE.BufferGeometry().setFromPoints(
 		Player.getPoints( arrayFuncs,{ group: scene, options: options } ),
 		Player.getItemSize( arrayFuncs ) ),
 	new THREE.PointsMaterial( {
 
-		vertexColors: THREE.VertexColors,
+		vertexColors: true,
 		size: 0.2,
 
 	} ) );
@@ -1231,7 +1231,7 @@ The following code is the result of this tutorial.
 					Player.getItemSize( arrayFuncs ) ),
 				new THREE.PointsMaterial( {
 
-					vertexColors: THREE.VertexColors,
+					vertexColors: true,
 					size: 0.2,
 
 				} ) );
