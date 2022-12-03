@@ -11426,7 +11426,7 @@ function traceLine(options) {
 			geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 			var colors = new Float32Array(_MAX_POINTS * 3);
 			geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-			var _line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ vertexColors: THREE.VertexColors }));
+			var _line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ vertexColors: true }));
 			mesh.add(_line);
 			if (arrayLines[0]) _line.visible = arrayLines[0].visible;
 			point = new THREE.Vector3().copy(point);
@@ -11456,6 +11456,7 @@ function traceLine(options) {
 			_geometry.setAttribute('color', new THREE.Float32BufferAttribute(_colors, 3));
 			_geometry.setDrawRange(sceneIndex, sceneIndex);
 			line = new THREE.Line(_geometry, new THREE.LineBasicMaterial({
+				vertexColors: true
 			}));
 			line.visible = true;
 			mesh.add(line);
