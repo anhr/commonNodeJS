@@ -11113,9 +11113,6 @@ Player$1.selectMeshPlayScene = function (mesh) {
 		if (mesh.geometry.attributes.position.itemSize < 4) return;
 		if (options.palette) color = options.palette.toColor(value, options.scales.w.min, options.scales.w.max);
 		if (!color) return;
-		if (
-		!(mesh.material instanceof THREE.ShaderMaterial) && mesh.material.vertexColors !== true
-		) console.error('Player.selectMeshPlayScene: Please set the vertexColors parameter of the THREE.PointsMaterial of your points to true.');
 		var attributes = mesh.geometry.attributes,
 		    arrayFuncs = mesh.userData.player.arrayFuncs;
 		if (!Player$1.setColorAttribute(attributes, index, color) && arrayFuncs[index] instanceof THREE.Vector4) {
