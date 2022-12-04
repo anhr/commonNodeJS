@@ -52,7 +52,7 @@ export default function AxesHelperGui( options, gui ) {
 
 	if ( !options.boOptions ) {
 
-		console.error( 'MoveGroupGui: call options = new Options( options ) first' );
+		console.error( 'AxesHelperGui: call options = new Options( options ) first' );
 		return;
 
 	}
