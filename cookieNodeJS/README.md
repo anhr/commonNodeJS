@@ -91,8 +91,8 @@ cookie.setObject('user', user);
 gets an object from cookie.
 
 	name: name of the object.
-	options: load an object from cookie into <b>options</b>
-	optionsDefault: copy to <b>options</b> this default object if named object is not exists in the cookie.
+	options: load an object from cookie into **options**
+	optionsDefault: copy to **options** this default object if named object is not exists in the cookie.
 
 #### Example
 ```
