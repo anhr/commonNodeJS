@@ -102,8 +102,8 @@ function get( name, defaultValue ) {
 
 /**
  * gets an object from cookie.
- * @param {string} name name of the object
- * @param {any} options load an object from cookie into options
+ * @param {string} name name of the object.
+ * @param {any} options load an object from cookie into options.
  * @param {Object} optionsDefault copy to options this default object if named object is not exists in the cookie.
  */
 function getObject( name, options, optionsDefault ) {

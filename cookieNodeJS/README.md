@@ -73,7 +73,26 @@ const age = cookie.get('age', 25);
 sets an object into cookie.
 
 	name: cookie name.
-	object: an object for saving into cookie
+	object: an object for saving into cookie.
+
+#### Example
+```
+const user = {
+
+	name: 'Ivan',
+	age: 25,
+				
+}
+cookie.setObject('user', user);
+```
+
+### getObject( name, options, optionsDefault );
+
+gets an object from cookie.
+
+	name: name of the object.
+	options: load an object from cookie into <b>options</b>
+	optionsDefault: copy to <b>options</b> this default object if named object is not exists in the cookie.
 
 #### Example
 ```
