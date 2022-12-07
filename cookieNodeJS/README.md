@@ -65,7 +65,25 @@ get a cookie.
 
 #### Example
 ```
-var age = cookie.get('age', 25);
+const age = cookie.get('age', 25);
+```
+
+### cookie.setObject( name, object );
+
+sets an object into cookie.
+
+	name: cookie name.
+	object: an object for saving into cookie
+
+#### Example
+```
+const user = {
+
+	name: 'Ivan',
+	age: 25,
+				
+}
+cookie.setObject('user', user);
 ```
 
 ### cookie.remove( name );
