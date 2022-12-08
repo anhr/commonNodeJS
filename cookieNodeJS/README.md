@@ -110,7 +110,10 @@ gets an object from cookie and returns a copy of object.
 
 #### Example
 ```
-const user = cookie.copyObject( 'user', user );
+const user = cookie.copyObject( 'user', {
+	name: 'Lisa',
+	age: 19
+} );
 ```
 
 ### cookie.remove( name );
