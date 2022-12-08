@@ -100,6 +100,19 @@ const user = {};
 cookie.getObject( 'user', user );
 ```
 
+### copyObject( name, objectDefault )
+
+gets an object from cookie and returns a copy of object.
+
+	name: name of the object.
+	objectDefault: copy to options this default object if named object is not exists in the cookie.
+	returns copy of object from cookie.
+
+#### Example
+```
+const user = cookie.copyObject( 'user', user );
+```
+
 ### cookie.remove( name );
 
 Remove cookie.
