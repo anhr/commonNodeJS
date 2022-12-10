@@ -17,7 +17,7 @@
  * Cookies let you store user information in web pages.
  * @see {@link https://www.w3schools.com/js/js_cookies.asp}
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -83,7 +83,7 @@ function defaultCookie(name) {
 		if (!optionsDefault) return;
 		Object.keys(optionsDefault).forEach(function (key) {
 			var option = optionsDefault[key];
-			if (option !== undefined) options[key] = JSON.parse(JSON.stringify(option));
+			if (option !== undefined && typeof option !== 'function') options[key] = JSON.parse(JSON.stringify(option));
 		});
 	};
 	this.copyObject = function (name, objectDefault) {

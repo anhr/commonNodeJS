@@ -65,7 +65,7 @@ function set( name, value, cookie_date ) {
 /**
  * sets an object into cookie.
  * @param {string} name cookie name.
- * @param {any} object an object for saving into cookie
+ * @param {any} object an object for saving into cookie.
  */
 function setObject( name, object ) {
 
@@ -114,9 +114,9 @@ function getObject( name, options, optionsDefault ) {
 
 /**
  * gets an object from cookie and returns a copy of object.
- * @param {string} name name of the object
+ * @param {string} name name of the object.
  * @param {Object} objectDefault copy to options this default object if named object is not exists in the cookie.
- * @returns copy of object from cookie
+ * @returns copy of object from cookie.
  */
 function copyObject( name, objectDefault ) {
 

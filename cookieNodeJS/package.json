@@ -56,5 +56,8 @@
       "no-bitwise": 0,
       "no-plusplus": 0
     }
+  },
+  "dependencies": {
+    "uglify-es": "^3.3.9"
   }
 }

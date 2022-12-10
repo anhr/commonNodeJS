@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -6,10 +6,12 @@
 	<title>cookie</title>
 	<meta name="author" content="Andrej Hristoliubov https://github.com/anhr">
 
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.js"></script>
+	<!--
+	<script src="../build/cookie.min.js"></script>
 	<script src="../build/cookie.js"></script>
-	<!--<script src="../build/cookie.min.js"></script>-->
-	<!--<script src="https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.js"></script>-->
-	<!--<script src="https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.min.js"></script>-->
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.min.js"></script>
+	-->
 
 </head>
 <body>
@@ -66,6 +68,39 @@
 			cookie.remove( 'age' );
 			getCookie();
 
+		}
+	</script>
+	<script type="module">
+
+		//import cookie from '../cookie.js'
+		//import * as cookie from '../build/cookie.module.js'
+		//import * as cookie from '../build/cookie.module.min.js'
+		import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
+
+        if ( cookie.isEnabled() ) {
+
+			const ageDefault = 25, ageName = 'age';
+			cookie.set(ageName, ageDefault);
+			let age = parseInt(cookie.get(ageName));
+			if (ageDefault !== age) console.error('Invalid ' + ageName + ': ' + age);
+			cookie.remove( ageName );
+			
+			age = cookie.get(ageName);
+			if (age !== '') console.error('Invalid ' + ageName + ': ' + age);
+			const userObjectName = 'user', userDefault = {
+
+				name: 'Ivan',
+				age: 25,
+				
+			}
+			cookie.setObject(userObjectName, userDefault);
+			let user = {};
+			cookie.getObject( userObjectName, user );
+			if ((user.age !== userDefault.age) || (user.name !== userDefault.name)) console.error('Invalid ' + userObjectName + ': ' + JSON.stringify( user ));
+			user = cookie.copyObject( userObjectName, userDefault );
+			if ((user.age !== userDefault.age) || (user.name !== userDefault.name)) console.error('Invalid ' + userObjectName + ': ' + JSON.stringify( user ));
+			cookie.remove( userObjectName );
+			
 		}
 	</script>
 
