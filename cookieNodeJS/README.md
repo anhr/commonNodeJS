@@ -23,14 +23,14 @@ or
 * Download [commonNodeJS](https://github.com/anhr/commonNodeJS) repository into your "[folderName]\commonNodeJS\master" folder.
 
 ```
-<script src="../build/cookie.min.js"></script>
+<script src="../build/cookie.js"></script>
 ```
 or
 ```
-<script src="../build/cookie.js"></script>
+<script src="../build/cookie.min.js"></script>
 ```
 
-or you can import cookie from cookie.js file in your JavaScript module. [Example.](https://raw.githack.com/anhr/myThreejs/master/Examples/html/)
+or you can import cookie from cookie.js file in your JavaScript module. [Example.](https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/Examples/index.html)
 ```
 import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
@@ -40,11 +40,11 @@ import cookie from './commonNodeJS/master/cookieNodeJS/cookie.js';
 ```
 or
 ```
-import * as cookie from 'https://raw.githack.com/anhr/commonNodeJS/dev/cookieNodeJS/build/cookie.module.js';
+import * as cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.module.js';
 ```
 or
 ```
-import * as cookie from 'https://raw.githack.com/anhr/commonNodeJS/dev/cookieNodeJS/build/cookie.module.min.js';
+import * as cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.module.min.js';
 ```
 or
 ```
