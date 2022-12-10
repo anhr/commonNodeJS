@@ -169,12 +169,13 @@ In the terminal, enter the following:
 
 ```
 $ npm install
+$ npm install uglify-es
 $ npm run build
 ```
 
 ## npm scripts
 
-- npm run build - Build development and production version of scripts.
+- npm run build - Build scripts.
 
 ## Thanks
 The following libraries / open-source projects were used in the development of cookie:
