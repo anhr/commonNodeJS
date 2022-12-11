@@ -159,7 +159,7 @@ class Options {
 		 */
 		this.restoreSceneController = function ( camera, scene ) {
 
-			if ( !three.dat )//options.dat.dat
+			if ( !three.dat || ( options.dat === false ) )//options.dat.dat
 				return;
 				
 			//Localization
