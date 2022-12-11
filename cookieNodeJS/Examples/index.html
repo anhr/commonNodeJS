@@ -25,13 +25,13 @@
 		Is the cookie enabled in your web browser? <span id="isenable"></span>
 	</p>
 	<script type="text/javascript">
-		var elIsEnable = document.getElementById( 'isenable' );
-		if ( cookie.isEnabled() )
+		var elIsEnable = document.getElementById('isenable');
+		if (cookie.isEnabled())
 			elIsEnable.innerHTML = 'Yes';
 		else {
 
 			elIsEnable.style.color = 'red';
-			elIsEnable.innerHTML =  'No';
+			elIsEnable.innerHTML = 'No';
 
 		}
 	</script>
@@ -42,7 +42,7 @@
 	<script type="text/javascript">
 		function setCookie() {
 
-			cookie.set( 'age', document.getElementById( 'inputage' ).value );
+			cookie.set('age', document.getElementById('inputage').value);
 			getCookie();
 
 		}
@@ -54,7 +54,7 @@
 	<script type="text/javascript">
 		function getCookie() {
 
-			document.getElementById( 'outputage' ).innerHTML = cookie.get( 'age', 30 );
+			document.getElementById('outputage').innerHTML = cookie.get('age', 30);
 
 		}
 	</script>
@@ -65,14 +65,15 @@
 	<script type="text/javascript">
 		function removeCookie() {
 
-			cookie.remove( 'age' );
+			cookie.remove('age');
 			getCookie();
 
 		}
 	</script>
+	Instructions: Check out DevTools JavaScript console.
 	<script type="module">
 
-		//import cookie from '../cookie.js'
+		import cookie from '../cookie.js'
 		//import * as cookie from '../build/cookie.module.js'
 		//import * as cookie from '../build/cookie.module.min.js'
 		//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
@@ -80,33 +81,49 @@
 		//import * as cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.module.js';
 		//import * as cookie from 'https://raw.githack.com/anhr/commonNodeJS/dev/cookieNodeJS/build/cookie.module.js';
 		//import * as cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/build/cookie.module.min.js';
-		import * as cookie from 'https://raw.githack.com/anhr/commonNodeJS/dev/cookieNodeJS/build/cookie.module.min.js';
+		//import * as cookie from 'https://raw.githack.com/anhr/commonNodeJS/dev/cookieNodeJS/build/cookie.module.min.js';
 
-        if ( cookie.isEnabled() ) {
+		if (cookie.isEnabled()) {
 
+			console.log('Cookies is enabled.')
+			
 			const ageDefault = 25, ageName = 'age';
 			cookie.set(ageName, ageDefault);
 			let age = parseInt(cookie.get(ageName));
 			if (ageDefault !== age) console.error('Invalid ' + ageName + ': ' + age);
-			cookie.remove( ageName );
+			else console.log('Cookies set/get passed.');
 			
+			cookie.remove(ageName);
 			age = cookie.get(ageName);
 			if (age !== '') console.error('Invalid ' + ageName + ': ' + age);
+			else console.log('Remove cookies passed.');
+			
 			const userObjectName = 'user', userDefault = {
 
 				name: 'Ivan',
 				age: 25,
-				
+
 			}
 			cookie.setObject(userObjectName, userDefault);
 			let user = {};
-			cookie.getObject( userObjectName, user );
-			if ((user.age !== userDefault.age) || (user.name !== userDefault.name)) console.error('Invalid ' + userObjectName + ': ' + JSON.stringify( user ));
-			user = cookie.copyObject( userObjectName, userDefault );
-			if ((user.age !== userDefault.age) || (user.name !== userDefault.name)) console.error('Invalid ' + userObjectName + ': ' + JSON.stringify( user ));
-			cookie.remove( userObjectName );
-			
-		}
+			cookie.getObject(userObjectName, user);
+			if ((user.age !== userDefault.age) || (user.name !== userDefault.name)) console.error('Invalid ' + userObjectName + ': ' + JSON.stringify(user));
+			else console.log('Cookies setObject/getObject passed.');
+
+			user = undefined;
+            user = cookie.copyObject(userObjectName);//, userDefault);
+			if ((user.age !== userDefault.age) || (user.name !== userDefault.name)) console.error('Invalid ' + userObjectName + ': ' + JSON.stringify(user));
+			else console.log('Cookies copyObject passed.');
+
+			const defaultCookie = new cookie.defaultCookie(userObjectName);
+			user = undefined;
+            user = defaultCookie.copyObject(userObjectName, {});
+			if ((user.age !== undefined) || (user.name !== undefined)) console.error('Invalid ' + userObjectName + ': ' + JSON.stringify(user));
+			else console.log('defaultCookie passed.');
+
+			cookie.remove(userObjectName);
+
+		} else console.log('Cookies is not enabled.')
 	</script>
 
 </body>

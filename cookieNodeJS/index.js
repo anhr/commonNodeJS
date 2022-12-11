@@ -153,71 +153,74 @@ function consoleCookieEnabled() {
  * Default cookie is not saving settings
  * @param {any} name is not using
  */
-function defaultCookie( name ) {
+class defaultCookie {
 
-	/**
-	 * Default cookie is not loading settings
-	 * @param {any} defaultValue
-	 * @returns defaultValue
-	 */
-	this.get = function ( defaultValue ) {
+	constructor(name) {
+		/**
+		 * Default cookie is not loading settings
+		 * @param {any} defaultValue
+		 * @returns defaultValue
+		 */
+		this.get = function (defaultValue) {
 
-		return defaultValue;
+			return defaultValue;
 
-	};
+		};
 
-	/**
-	 * Default cookie is not saving settings
-	 */
-	this.set = function () {
+		/**
+		 * Default cookie is not saving settings
+		 */
+		this.set = function () {
 
-	};
+		};
 
-	/**
-	 * Default cookie is not loading objects
-	 * @param {string} name is not using
-	 * @param {any} options load an object from optionsDefault into options
-	 * @param {Object} optionsDefault source object
-	 */
-	this.getObject = function ( name, options, optionsDefault ) {
+		/**
+		 * Default cookie is not loading objects
+		 * @param {string} name is not using
+		 * @param {any} options load an object from optionsDefault into options
+		 * @param {Object} optionsDefault source object
+		 */
+		this.getObject = function (name, options, optionsDefault) {
 
-		if ( !optionsDefault )
-			return;//object's settings is not saving
-		Object.keys( optionsDefault ).forEach( function ( key ) {
+			if (!optionsDefault)
+				return;//object's settings is not saving
+			Object.keys(optionsDefault).forEach(function (key) {
 
-			//I cannot modify options[key] if optionsDefault is read only and options[key] is not copy of optionsDefault[key]
-			//options[key] = optionsDefault[key];
-			//copy key
-			var option = optionsDefault[key];
-			if ( ( option !== undefined ) && ( typeof option !== 'function' ) )
-				options[key] = JSON.parse( JSON.stringify( option ) );
+				//I cannot modify options[key] if optionsDefault is read only and options[key] is not copy of optionsDefault[key]
+				//options[key] = optionsDefault[key];
+				//copy key
+				var option = optionsDefault[key];
+				if ((option !== undefined) && (typeof option !== 'function'))
+					options[key] = JSON.parse(JSON.stringify(option));
 
-		} );
+			});
 
-	};
+		};
 
-	/**
-	 * copy and returns an object from objectDefault
-	 * @param {string} name is not using
-	 * @param {any} objectDefault source object
-	 */
-	this.copyObject = function ( name, objectDefault ){
+		/**
+		 * copy and returns an object from objectDefault
+		 * @param {string} name is not using
+		 * @param {any} objectDefault source object
+		 */
+		this.copyObject = function (name, objectDefault) {
 
-		return JSON.parse( JSON.stringify( objectDefault ) );
+			return JSON.parse(JSON.stringify(objectDefault));
+
+		}
+
+		/**
+		 * Default cookie is not saving object's settings
+		 */
+		this.setObject = function () {
+
+		};
+
+		this.isTrue = function (defaultValue) {
+
+			return defaultValue;
+
+		};
 
 	}
-
-	/**
-	 * Default cookie is not saving object's settings
-	 */
-	this.setObject = function () {
-
-	};
-
-	this.isTrue = function ( defaultValue ) {
-
-		return defaultValue;
-
-	};
 
 };
