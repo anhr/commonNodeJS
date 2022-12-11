@@ -144,6 +144,18 @@ const user = cookie.copyObject( 'user', {
 } );
 ```
 
+### cookie.defaultCookie( name );
+
+Default cookie is not saving settings.
+
+	name: is not using.
+
+#### Example
+```
+const defaultCookie = new cookie.defaultCookie('user');
+const user = defaultCookie.copyObject('user', {});
+```
+
 ### cookie.remove( name );
 
 Remove cookie.
