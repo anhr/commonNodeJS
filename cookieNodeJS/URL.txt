@@ -9,7 +9,7 @@ Building cookie
 Open "Node.js command prompt"
 
 d:
-//cd "D:\My documents\MyProjects\webgl\three.js\GitHub\cookieNodeJS\master"
 cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\cookieNodeJS"
 npm install
+npm install uglify-es //for build/cookie.module.min.js
 npm run build
