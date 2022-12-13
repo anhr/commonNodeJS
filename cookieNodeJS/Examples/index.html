@@ -111,13 +111,13 @@
 			else console.log('Cookies setObject/getObject passed.');
 
 			user = undefined;
-            user = cookie.copyObject(userObjectName);//, userDefault);
+			user = cookie.copyObject(userObjectName);//, userDefault);
 			if ((user.age !== userDefault.age) || (user.name !== userDefault.name)) console.error('Invalid ' + userObjectName + ': ' + JSON.stringify(user));
 			else console.log('Cookies copyObject passed.');
 
 			const defaultCookie = new cookie.defaultCookie(userObjectName);
 			user = undefined;
-            user = defaultCookie.copyObject(userObjectName, {});
+			user = defaultCookie.copyObject(userObjectName, {});
 			if ((user.age !== undefined) || (user.name !== undefined)) console.error('Invalid ' + userObjectName + ': ' + JSON.stringify(user));
 			else console.log('defaultCookie passed.');
 
