@@ -11,6 +11,28 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+
+
+
+
+
+
+
+
+
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
 /**
  * @module cookie
  * @description node.js version of the cookie.
@@ -30,7 +52,7 @@
 function isEnabled() {
 	return navigator.cookieEnabled;
 }
-function set(name, value, cookie_date) {
+function set$1(name, value, cookie_date) {
 	if (!isEnabled()) {
 		consoleCookieEnabled();
 		return;
@@ -44,15 +66,21 @@ function set(name, value, cookie_date) {
 	if (document.cookie === '') console.error('document.cookie is empty');
 }
 function setObject(name, object) {
-	set(name, JSON.stringify(object));
+	set$1(name, JSON.stringify(object));
 }
-function get(name, defaultValue) {
+function get$1(name, defaultValue) {
 	if (!isEnabled()) {
 		consoleCookieEnabled();
 		return;
 	}
 	var results = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-	if (results) return unescape(results[2]);
+	if (results) {
+		var result = results[2],
+		    type = typeof defaultValue === 'undefined' ? 'undefined' : _typeof(defaultValue);
+		return type === "number" ?
+		result % 1 === 0 ? parseInt(result) : parseFloat(result) : type === "boolean" ?
+		result === 'true' ? true : false : unescape(result);
+	}
 	if (typeof defaultValue == 'undefined') return '';
 	return defaultValue;
 }
@@ -60,7 +88,7 @@ function getObject(name, options, optionsDefault) {
 	new defaultCookie().getObject(name, options, copyObject(name, optionsDefault));
 }
 function copyObject(name, objectDefault) {
-	return JSON.parse(get(name, JSON.stringify(objectDefault)));
+	return JSON.parse(get$1(name, JSON.stringify(objectDefault)));
 }
 function remove(name) {
 	if (!isEnabled()) {
@@ -74,7 +102,8 @@ function remove(name) {
 function consoleCookieEnabled() {
 	console.error('navigator.cookieEnabled = ' + navigator.cookieEnabled);
 }
-function defaultCookie(name) {
+var defaultCookie = function defaultCookie(name) {
+	classCallCheck(this, defaultCookie);
 	this.get = function (defaultValue) {
 		return defaultValue;
 	};
@@ -93,7 +122,7 @@ function defaultCookie(name) {
 	this.isTrue = function (defaultValue) {
 		return defaultValue;
 	};
-}
+};
 
-export { isEnabled, set, setObject, get, getObject, copyObject, remove, defaultCookie };
+export { isEnabled, set$1 as set, setObject, get$1 as get, getObject, copyObject, remove, defaultCookie };
 //# sourceMappingURL=cookie.module.js.map

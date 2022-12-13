@@ -17,6 +17,28 @@
 	(factory((global.cookie = {})));
 }(this, (function (exports) { 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+
+
+
+
+
+
+
+
+
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
 /**
  * @module cookie
  * @description node.js version of the cookie.
@@ -36,7 +58,7 @@
 function isEnabled() {
 	return navigator.cookieEnabled;
 }
-function set(name, value, cookie_date) {
+function set$1(name, value, cookie_date) {
 	if (!isEnabled()) {
 		consoleCookieEnabled();
 		return;
@@ -50,15 +72,21 @@ function set(name, value, cookie_date) {
 	if (document.cookie === '') console.error('document.cookie is empty');
 }
 function setObject(name, object) {
-	set(name, JSON.stringify(object));
+	set$1(name, JSON.stringify(object));
 }
-function get(name, defaultValue) {
+function get$1(name, defaultValue) {
 	if (!isEnabled()) {
 		consoleCookieEnabled();
 		return;
 	}
 	var results = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-	if (results) return unescape(results[2]);
+	if (results) {
+		var result = results[2],
+		    type = typeof defaultValue === 'undefined' ? 'undefined' : _typeof(defaultValue);
+		return type === "number" ?
+		result % 1 === 0 ? parseInt(result) : parseFloat(result) : type === "boolean" ?
+		result === 'true' ? true : false : unescape(result);
+	}
 	if (typeof defaultValue == 'undefined') return '';
 	return defaultValue;
 }
@@ -66,7 +94,7 @@ function getObject(name, options, optionsDefault) {
 	new defaultCookie().getObject(name, options, copyObject(name, optionsDefault));
 }
 function copyObject(name, objectDefault) {
-	return JSON.parse(get(name, JSON.stringify(objectDefault)));
+	return JSON.parse(get$1(name, JSON.stringify(objectDefault)));
 }
 function remove(name) {
 	if (!isEnabled()) {
@@ -80,7 +108,8 @@ function remove(name) {
 function consoleCookieEnabled() {
 	console.error('navigator.cookieEnabled = ' + navigator.cookieEnabled);
 }
-function defaultCookie(name) {
+var defaultCookie = function defaultCookie(name) {
+	classCallCheck(this, defaultCookie);
 	this.get = function (defaultValue) {
 		return defaultValue;
 	};
@@ -99,12 +128,12 @@ function defaultCookie(name) {
 	this.isTrue = function (defaultValue) {
 		return defaultValue;
 	};
-}
+};
 
 exports.isEnabled = isEnabled;
-exports.set = set;
+exports.set = set$1;
 exports.setObject = setObject;
-exports.get = get;
+exports.get = get$1;
 exports.getObject = getObject;
 exports.copyObject = copyObject;
 exports.remove = remove;
