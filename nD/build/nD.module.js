@@ -3076,7 +3076,8 @@ function remove(name) {
 function consoleCookieEnabled() {
 	console.error('navigator.cookieEnabled = ' + navigator.cookieEnabled);
 }
-function defaultCookie(name) {
+var defaultCookie = function defaultCookie(name) {
+	classCallCheck(this, defaultCookie);
 	this.get = function (defaultValue) {
 		return defaultValue;
 	};
@@ -3095,7 +3096,9 @@ function defaultCookie(name) {
 	this.isTrue = function (defaultValue) {
 		return defaultValue;
 	};
-}
+};
+
+
 
 var cookie = Object.freeze({
 	isEnabled: isEnabled,
@@ -10705,955 +10708,955 @@ StereoEffect.getTextIntersection = function (intersection, options) {
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 if (WEBGL.isWebGLAvailable() === false) {
-			document.body.appendChild(WEBGL.getWebGLErrorMessage());
-			alert(WEBGL.getWebGLErrorMessage().innerHTML);
+	document.body.appendChild(WEBGL.getWebGLErrorMessage());
+	alert(WEBGL.getWebGLErrorMessage().innerHTML);
 }
 var boCreateControllers;
 var Options =
 function Options(options) {
-			var _Object$definePropert;
-			classCallCheck(this, Options);
-			var _this = this;
-			options = options || {};
-			if (options.boOptions) return options;
-			var lang;
-			if (options.a === undefined) options.a = 1;
-			if (options.b === undefined) options.b = 0;
-			this.setW = function (optionsCur) {
-						optionsCur = optionsCur || options;
-						optionsCur.scales = optionsCur.scales || {};
-						var scale = optionsCur.scales.w;
-						if (!optionsCur.palette) _this.setPalette(optionsCur);
-			};
-			options.scales = options.scales || {};
-			var boCreateScale = !options.scales.x && !options.scales.y && !options.scales.z;
-			function setScale(axisName) {
-						if (boCreateScale) options.scales[axisName] = options.scales[axisName] || {};
-						if (!options.scales[axisName]) return;
+	var _Object$definePropert;
+	classCallCheck(this, Options);
+	var _this = this;
+	options = options || {};
+	if (options.boOptions) return options;
+	var lang;
+	if (options.a === undefined) options.a = 1;
+	if (options.b === undefined) options.b = 0;
+	this.setW = function (optionsCur) {
+		optionsCur = optionsCur || options;
+		optionsCur.scales = optionsCur.scales || {};
+		var scale = optionsCur.scales.w;
+		if (!optionsCur.palette) _this.setPalette(optionsCur);
+	};
+	options.scales = options.scales || {};
+	var boCreateScale = !options.scales.x && !options.scales.y && !options.scales.z;
+	function setScale(axisName) {
+		if (boCreateScale) options.scales[axisName] = options.scales[axisName] || {};
+		if (!options.scales[axisName]) return;
+	}
+	setScale('x');
+	setScale('y');
+	setScale('z');
+	options.point = options.point || {};
+	options.point.size = options.point.size || 5.0;
+	options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
+	this.setPalette = function () {
+		if (options.palette) return;
+		options.palette = new ColorPicker$1.palette();
+	};
+	this.createOrbitControls = function (camera, renderer, scene) {
+		if (options.orbitControls === false) return;
+		var settings = options.orbitControls || {};
+		_this.orbitControls = new three$1.OrbitControls(camera, renderer.domElement);
+		if (settings.enableRotate !== undefined) _this.orbitControls.enableRotate = settings.enableRotate;
+		_this.orbitControls.target.set(scene.position.x * 2, scene.position.y * 2, scene.position.z * 2);
+		_this.orbitControls.saveState();
+		_this.orbitControls.update();
+		if (_this.frustumPoints) _this.orbitControls.addEventListener('change', function () {
+			_this.frustumPoints.onChangeControls();
+		});
+	};
+	this.restoreSceneController = function (camera, scene) {
+		if (!three$1.dat || options.dat === false)
+			return;
+		var lang = {
+			defaultButton: 'Default',
+			defaultTitle: 'Reset player and restore camera position.'
+		};
+		switch (this.getLanguageCode()) {
+			case 'ru':
+				lang.defaultButton = 'Восстановить';
+				lang.defaultTitle = 'Восстановить положение камеры и проигрывателя.';
+				break;
+		}
+		var scenePosition = new three$1.THREE.Vector3().copy(scene.position),
+		    cameraPosition = new three$1.THREE.Vector3().copy(camera.position);
+		three$1.dat.controllerNameAndTitle(options.dat.gui.add({
+			defaultF: function defaultF(value) {
+				if (options.player) options.player.selectScene(options.playerOptions.selectSceneIndex);
+				camera.position.copy(cameraPosition);
+				scene.position.copy(scenePosition);
+				if (options.orbitControls !== false) {
+					options.orbitControls.target = new three$1.THREE.Vector3();
+					options.orbitControls.object.position.copy(camera.position);
+					options.orbitControls.update();
+				}
 			}
-			setScale('x');
-			setScale('y');
-			setScale('z');
-			options.point = options.point || {};
-			options.point.size = options.point.size || 5.0;
-			options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
-			this.setPalette = function () {
-						if (options.palette) return;
-						options.palette = new ColorPicker$1.palette();
-			};
-			this.createOrbitControls = function (camera, renderer, scene) {
-						if (options.orbitControls === false) return;
-						var settings = options.orbitControls || {};
-						_this.orbitControls = new three$1.OrbitControls(camera, renderer.domElement);
-						if (settings.enableRotate !== undefined) _this.orbitControls.enableRotate = settings.enableRotate;
-						_this.orbitControls.target.set(scene.position.x * 2, scene.position.y * 2, scene.position.z * 2);
-						_this.orbitControls.saveState();
-						_this.orbitControls.update();
-						if (_this.frustumPoints) _this.orbitControls.addEventListener('change', function () {
-									_this.frustumPoints.onChangeControls();
-						});
-			};
-			this.restoreSceneController = function (camera, scene) {
-						if (!three$1.dat)
-									return;
-						var lang = {
-									defaultButton: 'Default',
-									defaultTitle: 'Reset player and restore camera position.'
-						};
-						switch (this.getLanguageCode()) {
-									case 'ru':
-												lang.defaultButton = 'Восстановить';
-												lang.defaultTitle = 'Восстановить положение камеры и проигрывателя.';
-												break;
+		}, 'defaultF'), lang.defaultButton, lang.defaultTitle);
+	};
+	Object.defineProperties(this, (_Object$definePropert = {
+		playerOptions: {
+			get: function get$$1() {
+				options.playerOptions = options.playerOptions || {};
+				var playerOptions = options.playerOptions;
+				playerOptions.min = playerOptions.min || 0;
+				if (playerOptions.max === Infinity) playerOptions.max = null;
+				if (playerOptions.max !== null) {
+					if (playerOptions.max === undefined) playerOptions.max = 1;
+					playerOptions.marks = playerOptions.marks || 10;
+				} else playerOptions.marks = null;
+				if (playerOptions.max === null) playerOptions.dt = playerOptions.dt || 0.1;else playerOptions.dt = (playerOptions.max - playerOptions.min) / (playerOptions.marks - 1);
+				playerOptions.repeat = playerOptions.repeat || false;
+				playerOptions.interval = playerOptions.interval || 1;
+				playerOptions.zoomMultiplier = playerOptions.zoomMultiplier || 1.1;
+				playerOptions.offset = playerOptions.offset || 0.1;
+				playerOptions.name = playerOptions.name || '';
+				if (!playerOptions.cameraTarget) {
+					var cameraTarget = new Player$1.cameraTarget();
+					Object.defineProperties(playerOptions, {
+						cameraTarget: {
+							get: function get$$1() {
+								return cameraTarget;
+							}
 						}
-						var scenePosition = new three$1.THREE.Vector3().copy(scene.position),
-						    cameraPosition = new three$1.THREE.Vector3().copy(camera.position);
-						three$1.dat.controllerNameAndTitle(options.dat.gui.add({
-									defaultF: function defaultF(value) {
-												if (options.player) options.player.selectScene(options.playerOptions.selectSceneIndex);
-												camera.position.copy(cameraPosition);
-												scene.position.copy(scenePosition);
-												if (options.orbitControls !== false) {
-															options.orbitControls.target = new three$1.THREE.Vector3();
-															options.orbitControls.object.position.copy(camera.position);
-															options.orbitControls.update();
-												}
-									}
-						}, 'defaultF'), lang.defaultButton, lang.defaultTitle);
-			};
-			Object.defineProperties(this, (_Object$definePropert = {
-						playerOptions: {
-									get: function get$$1() {
-												options.playerOptions = options.playerOptions || {};
-												var playerOptions = options.playerOptions;
-												playerOptions.min = playerOptions.min || 0;
-												if (playerOptions.max === Infinity) playerOptions.max = null;
-												if (playerOptions.max !== null) {
-															if (playerOptions.max === undefined) playerOptions.max = 1;
-															playerOptions.marks = playerOptions.marks || 10;
-												} else playerOptions.marks = null;
-												if (playerOptions.max === null) playerOptions.dt = playerOptions.dt || 0.1;else playerOptions.dt = (playerOptions.max - playerOptions.min) / (playerOptions.marks - 1);
-												playerOptions.repeat = playerOptions.repeat || false;
-												playerOptions.interval = playerOptions.interval || 1;
-												playerOptions.zoomMultiplier = playerOptions.zoomMultiplier || 1.1;
-												playerOptions.offset = playerOptions.offset || 0.1;
-												playerOptions.name = playerOptions.name || '';
-												if (!playerOptions.cameraTarget) {
-															var cameraTarget = new Player$1.cameraTarget();
-															Object.defineProperties(playerOptions, {
-																		cameraTarget: {
-																					get: function get$$1() {
-																								return cameraTarget;
-																					}
-																		}
-															});
-												}
-												return options.playerOptions;
-									},
-									set: function set$$1(playerOptions) {
-												options.playerOptions = playerOptions;
-									}
-						},
-						a: {
-									get: function get$$1() {
-												return options.a;
-									}
-						},
-						b: {
-									get: function get$$1() {
-												return options.b;
-									}
+					});
+				}
+				return options.playerOptions;
+			},
+			set: function set$$1(playerOptions) {
+				options.playerOptions = playerOptions;
+			}
+		},
+		a: {
+			get: function get$$1() {
+				return options.a;
+			}
+		},
+		b: {
+			get: function get$$1() {
+				return options.b;
+			}
+		},
+		dat: {
+			get: function get$$1() {
+				var Dat =
+				function Dat(dat) {
+					classCallCheck(this, Dat);
+					dat = dat || {};
+					if (dat.boDat) return dat;
+					function guiParent() {
+						var elMyGuiContainer = document.createElement('div');
+						dat.parent.appendChild(elMyGuiContainer);
+						elMyGuiContainer.appendChild(dat.gui.domElement);
+						elMyGuiContainer.style.position = 'absolute';
+						elMyGuiContainer.style.top = '0px';
+						elMyGuiContainer.style.right = '0px';
+					}
+					Object.defineProperties(this, {
+						boDat: {
+							get: function get$$1() {
+								return true;
+							}
 						},
 						dat: {
-									get: function get$$1() {
-												var Dat =
-												function Dat(dat) {
-															classCallCheck(this, Dat);
-															dat = dat || {};
-															if (dat.boDat) return dat;
-															function guiParent() {
-																		var elMyGuiContainer = document.createElement('div');
-																		dat.parent.appendChild(elMyGuiContainer);
-																		elMyGuiContainer.appendChild(dat.gui.domElement);
-																		elMyGuiContainer.style.position = 'absolute';
-																		elMyGuiContainer.style.top = '0px';
-																		elMyGuiContainer.style.right = '0px';
-															}
-															Object.defineProperties(this, {
-																		boDat: {
-																					get: function get$$1() {
-																								return true;
-																					}
-																		},
-																		dat: {
-																					get: function get$$1() {
-																								console.warn('get dat depreacated. Use three.dat = dat.');
-																								return three$1.dat;
-																					},
-																					set: function set$$1(dat) {
-																								console.warn('Set dat depreacated. Use three.dat = dat.');
-																								if (dat.dat && dat.dat.constructor.name === dat.constructor.name && dat.dat.constructor.name !== 'Object') console.error('duplicate dat.');
-																								dat.dat = dat;
-																					}
-																		},
-																		cookieName: {
-																					get: function get$$1() {
-																								return dat.cookieName;
-																					}
-																		},
-																		gui: {
-																					get: function get$$1() {
-																								if (!dat.gui && three$1.dat) {
-																											dat.gui = new three$1.dat.GUI();
-																											if (options.dat.parent) {
-																														guiParent();
-																											}
-																								}
-																								return dat.gui;
-																					}
-																		},
-																		cookie: {
-																					get: function get$$1() {
-																								return dat.cookie;
-																					},
-																					set: function set$$1(cookie$$1) {
-																								dat.cookie = cookie$$1;
-																					}
-																		},
-																		guiSelectPoint: {
-																					get: function get$$1() {
-																								return dat.guiSelectPoint;
-																					},
-																					set: function set$$1(guiSelectPoint) {
-																								dat.guiSelectPoint = guiSelectPoint;
-																					}
-																		},
-																		cameraGui: {
-																					get: function get$$1() {
-																								return dat.cameraGui;
-																					},
-																					set: function set$$1(cameraGui) {
-																								dat.cameraGui = cameraGui;
-																					}
-																		},
-																		playerGui: {
-																					get: function get$$1() {
-																								return dat.playerGui;
-																					}
-																		},
-																		orbitControlsGui: {
-																					get: function get$$1() {
-																								return dat.orbitControlsGui;
-																					}
-																		},
-																		axesHelperGui: {
-																					get: function get$$1() {
-																								return dat.axesHelperGui;
-																					}
-																		},
-																		playController: {
-																					get: function get$$1() {
-																								return dat.playController;
-																					}
-																		},
-																		stereoEffectsGui: {
-																					get: function get$$1() {
-																								return dat.playController;
-																					}
-																		},
-																		moveScene: {
-																					get: function get$$1() {
-																								return dat.moveScene;
-																					}
-																		},
-																		spriteTextGui: {
-																					get: function get$$1() {
-																								return dat.spriteTextGui;
-																					}
-																		},
-																		folderPoint: {
-																					get: function get$$1() {
-																								return dat.folderPoint;
-																					},
-																					set: function set$$1(folderPoint) {
-																								dat.folderPoint = folderPoint;
-																					}
-																		},
-																		pointLightGui: {
-																					get: function get$$1() {
-																								return dat.pointLightGui;
-																					}
-																		},
-																		parent: {
-																					get: function get$$1() {
-																								return dat.parent;
-																					}
-																		}
-															});
-															for (var propertyName in dat) {
-																		if (this[propertyName] === undefined) console.error('Dat: dat.' + propertyName + ' key is hidden');
-															}
-												};
-												if (options.dat === false) return options.dat;
-												options.dat = new Dat(options.dat);
-												if (options.dat.gui) {
-															setTimeout(function () {
-																		var className = options.dat.gui.domElement.className;
-																		var guiCount = 0;
-																		options.dat.gui.domElement.parentElement.childNodes.forEach(function (node) {
-																					if (node.className === className) guiCount++;
-																		});
-																		if (guiCount > 1) console.error('Options: duplicate dat.GUI');
-															}, 0);
-															options.dat.gui.domElement.addEventListener('mouseenter', function (event) {
-																		options.dat.mouseenter = true;
-															});
-															options.dat.gui.domElement.addEventListener('mouseleave', function (event) {
-																		options.dat.mouseenter = false;
-															});
-												}
-												if (options.dat.cookie === false) options.dat.cookie = new cookie.defaultCookie();else if (options.dat.cookie === undefined) options.dat.cookie = cookie;
-												options.dat.getCookieName = function () {
-															var cookieName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-															var name = options.dat.cookieName || (options.elContainer ? _typeof(options.elContainer) === "object" ? options.elContainer.id : typeof options.elContainer === "string" ? options.elContainer : '' : '');
-															return cookieName + (cookieName !== '' && name !== '' ? '_' : '') + name;
-												};
-												return options.dat;
-									},
-									set: function set$$1(dat) {
-												options.dat = dat;
-									}
+							get: function get$$1() {
+								console.warn('get dat depreacated. Use three.dat = dat.');
+								return three$1.dat;
+							},
+							set: function set$$1(dat) {
+								console.warn('Set dat depreacated. Use three.dat = dat.');
+								if (dat.dat && dat.dat.constructor.name === dat.constructor.name && dat.dat.constructor.name !== 'Object') console.error('duplicate dat.');
+								dat.dat = dat;
+							}
 						},
-						getLanguageCode: {
-									get: function get$$1() {
-												if (typeof options.getLanguageCode === "string") return function () {
-															return options.getLanguageCode;
-												};
-												return options.getLanguageCode || getLanguageCode;
-									}
+						cookieName: {
+							get: function get$$1() {
+								return dat.cookieName;
+							}
 						},
-						scales: {
-									get: function get$$1() {
-												var Scales =
-												function Scales(scales) {
-															classCallCheck(this, Scales);
-															var Scale =
-															function Scale(scales, axisName) {
-																		classCallCheck(this, Scale);
-																		var scale = scales[axisName];
-																		this.isAxis = function () {
-																					if (!scales || !scales.x && !scales.y && !scales.z || scale) return true;
-																					return false;
-																		};
-																		Object.defineProperties(this, {
-																					boScale: {
-																								get: function get$$1() {
-																											return true;
-																								}
-																					},
-																					min: {
-																								get: function get$$1() {
-																											if (!scale || !scale.min) return axisName === 'w' ? 0 : -1;
-																											return scale.min;
-																								},
-																								set: function set$$1(min) {
-																											scale.min = min;
-																								}
-																					},
-																					max: {
-																								get: function get$$1() {
-																											if (!scale || !scale.max) return axisName === 'w' ? new three$1.THREE.Vector4().w : 1;
-																											return scale.max;
-																								},
-																								set: function set$$1(max) {
-																											scale.max = max;
-																								}
-																					},
-																					name: {
-																								get: function get$$1() {
-																											if (!scale || scale.name === undefined) return axisName;
-																											return scale.name;
-																								},
-																								set: function set$$1(name) {
-																											if (scale) {
-																														scale.name = name;
-																														if (options.guiSelectPoint) options.guiSelectPoint.setAxisName(axisName, name);
-																											}
-																								}
-																					},
-																					marks: {
-																								get: function get$$1() {
-																											if (!scale) return undefined;
-																											if (!scale.marks) scale.marks = 3;
-																											return scale.marks;
-																								}
-																					}
-																		});
-																		for (var propertyName in scale) {
-																					if (this[propertyName] === undefined) console.error('Options.Scales: scale.' + propertyName + ' key is hidden');
-																		}
-															};
-															var scalesObject = {
-																		x: new Scale(options.scales, 'x'),
-																		y: new Scale(options.scales, 'y'),
-																		z: new Scale(options.scales, 'z'),
-																		w: new Scale(options.scales, 'w')
-															};
-															Object.defineProperties(this, {
-																		boScales: {
-																					get: function get$$1() {
-																								return true;
-																					}
-																		},
-																		x: {
-																					get: function get$$1() {
-																								return scalesObject.x;
-																					},
-																					set: function set$$1(x) {
-																								if (x === undefined) {
-																											delete scales.x;
-																											delete scalesObject.x;
-																											scalesObject.x = new Scale(scales, 'x');
-																								} else scales.x = x;
-																								if (options.guiSelectPoint) options.guiSelectPoint.updateScale('x');
-																					}
-																		},
-																		y: {
-																					get: function get$$1() {
-																								return scalesObject.y;
-																					},
-																					set: function set$$1(y) {
-																								if (y === undefined) {
-																											delete scales.y;
-																											delete scalesObject.y;
-																											scalesObject.y = new Scale(scales, 'y');
-																								} else scales.y = y;
-																								if (options.guiSelectPoint) options.guiSelectPoint.updateScale('y');
-																					}
-																		},
-																		z: {
-																					get: function get$$1() {
-																								return scalesObject.z;
-																					},
-																					set: function set$$1(z) {
-																								if (z === undefined) {
-																											delete scales.z;
-																											delete scalesObject.z;
-																											scalesObject.z = new Scale(scales, 'z');
-																								} else scales.z = z;
-																								if (options.guiSelectPoint) options.guiSelectPoint.updateScale('z');
-																					}
-																		},
-																		w: {
-																					get: function get$$1() {
-																								return scalesObject.w;
-																					},
-																					set: function set$$1(w) {
-																								scales.w = w;
-																					}
-																		},
-																		setW: {
-																					get: function get$$1() {
-																								return _this.setW;
-																					}
-																		},
-																		display: {
-																					get: function get$$1() {
-																								if (scales.display === undefined) scales.display = true;
-																								return scales.display;
-																					},
-																					set: function set$$1(display) {
-																								scales.display = display;
-																					}
-																		},
-																		text: {
-																					get: function get$$1() {
-																								if (scales.text === undefined) scales.text = {};
-																								return scales.text;
-																					},
-																					set: function set$$1(text) {
-																								scales.text = text;
-																					}
-																		},
-																		posAxesIntersection: {
-																					get: function get$$1() {
-																								return scales.posAxesIntersection;
-																					},
-																					set: function set$$1(posAxesIntersection) {
-																								scales.posAxesIntersection = posAxesIntersection;
-																					}
-																		}
-															});
-															for (var propertyName in scales) {
-																		if (this[propertyName] === undefined) console.error('Options: scales.' + propertyName + ' key is hidden');
-															}
-												};
-												if (!options.scales.boScales) options.scales = new Scales(options.scales);
-												return options.scales;
-									},
-									set: function set$$1(scales) {
-												options.scales = scales;
+						gui: {
+							get: function get$$1() {
+								if (!dat.gui && three$1.dat) {
+									dat.gui = new three$1.dat.GUI();
+									if (options.dat.parent) {
+										guiParent();
 									}
+								}
+								return dat.gui;
+							}
 						},
-						palette: {
-									get: function get$$1() {
-												if (options.palette === undefined) options.palette = true;
-												switch (_typeof(options.palette)) {
-															case 'number':
-																		options.palette = new ColorPicker$1.palette({ palette: options.palette });
-																		break;
-															case 'boolean':
-																		if (options.palette) options.palette = new ColorPicker$1.palette();
-																		break;
-															default:
-																		{
-																					if (options.palette instanceof ColorPicker$1.palette === false) console.error('MyThree: invalid typeof options.palette: ' + _typeof(options.palette));
-																		}
-												}
-												return options.palette;
-									}
+						cookie: {
+							get: function get$$1() {
+								return dat.cookie;
+							},
+							set: function set$$1(cookie$$1) {
+								dat.cookie = cookie$$1;
+							}
 						},
-						boOptions: {
-									get: function get$$1() {
-												return true;
-									}
+						guiSelectPoint: {
+							get: function get$$1() {
+								return dat.guiSelectPoint;
+							},
+							set: function set$$1(guiSelectPoint) {
+								dat.guiSelectPoint = guiSelectPoint;
+							}
 						},
-						point: {
-									get: function get$$1() {
-												return {
-															get size() {
-																		return options.point.size;
-															},
-															set size(size) {
-																		if (options.point.size === size) return;
-																		options.point.size = size;
-																		if (options.dat && options.dat.folderPoint) options.dat.folderPoint.size.setValue(size);
-															},
-															get sizePointsMaterial() {
-																		return options.point.sizePointsMaterial;
-															},
-															set sizePointsMaterial(sizePointsMaterial) {
-																		options.point.sizePointsMaterial = sizePointsMaterial;
-															}
-												};
-									}
+						cameraGui: {
+							get: function get$$1() {
+								return dat.cameraGui;
+							},
+							set: function set$$1(cameraGui) {
+								dat.cameraGui = cameraGui;
+							}
 						},
-						spriteText: {
-									get: function get$$1() {
-												if (options.spriteText) return options.spriteText;
-												return {};
-									}
+						playerGui: {
+							get: function get$$1() {
+								return dat.playerGui;
+							}
 						},
-						raycaster: {
-									get: function get$$1() {
-												if (options.raycaster) return options.raycaster;
-									},
-									set: function set$$1(raycaster) {
-												options.raycaster = raycaster;
-									}
+						orbitControlsGui: {
+							get: function get$$1() {
+								return dat.orbitControlsGui;
+							}
 						},
-						camera: {
-									get: function get$$1() {
-												options.camera = options.camera || {};
-												if (!options.camera.position) options.camera.position = new three$1.THREE.Vector3(0.4, 0.4, 2);
-												if (!options.camera.scale) options.camera.scale = new three$1.THREE.Vector3(1, 1, 1);
-												return options.camera;
-									},
-									set: function set$$1(camera) {
-												options.camera = camera;
-									}
+						axesHelperGui: {
+							get: function get$$1() {
+								return dat.axesHelperGui;
+							}
 						},
-						cameraTarget: {
-									get: function get$$1() {
-												return options.cameraTarget;
-									}
+						playController: {
+							get: function get$$1() {
+								return dat.playController;
+							}
 						},
-						elContainer: {
-									get: function get$$1() {
-												return options.elContainer;
-									}
+						stereoEffectsGui: {
+							get: function get$$1() {
+								return dat.playController;
+							}
 						},
-						canvasMenu: {
-									get: function get$$1() {
-												return options.canvasMenu;
-									},
-									set: function set$$1(canvasMenu) {
-												if (options.canvasMenu && options.canvasMenu !== true && options.canvasMenu !== false) console.warn('Duplicate canvasMenu');
-												options.canvasMenu = canvasMenu;
-									}
+						moveScene: {
+							get: function get$$1() {
+								return dat.moveScene;
+							}
 						},
-						canvas: {
-									get: function get$$1() {
-												if (options.canvas) return options.canvas;
-												return { fullScreen: true };
-									}
+						spriteTextGui: {
+							get: function get$$1() {
+								return dat.spriteTextGui;
+							}
 						},
-						frustumPoints: {
-									get: function get$$1() {
-												return options.frustumPoints;
-									},
-									set: function set$$1(frustumPoints) {
-												if (options.frustumPoints && options.frustumPoints.constructor.name === frustumPoints.constructor.name && options.frustumPoints.constructor.name !== 'Object') console.error('duplicate frustumPoints.');
-												options.frustumPoints = frustumPoints;
-									}
+						folderPoint: {
+							get: function get$$1() {
+								return dat.folderPoint;
+							},
+							set: function set$$1(folderPoint) {
+								dat.folderPoint = folderPoint;
+							}
 						},
-						stereoEffect: {
-									get: function get$$1() {
-												return options.stereoEffect;
-									},
-									set: function set$$1(stereoEffect) {
-												if (options.stereoEffect && options.stereoEffect.constructor.name === stereoEffect.constructor.name && options.stereoEffect.constructor.name !== 'Object') console.error('duplicate stereoEffect.');
-												options.stereoEffect = stereoEffect;
-									}
+						pointLightGui: {
+							get: function get$$1() {
+								return dat.pointLightGui;
+							}
 						},
-						player: {
-									get: function get$$1() {
-												return options.player;
-									},
-									set: function set$$1(player) {
-												if (options.player) console.error('duplicate player.');
-												options.player = player;
-									}
-						},
-						time: {
-									get: function get$$1() {
-												if (options.player) return options.player.getTime();
-												return 0;
-									}
-						},
-						axesHelper: {
-									get: function get$$1() {
-												return options.axesHelper;
-									},
-									set: function set$$1(axesHelper) {
-												if (options.axesHelper) console.error('duplicate axesHelper.');
-												options.axesHelper = axesHelper;
-									}
+						parent: {
+							get: function get$$1() {
+								return dat.parent;
+							}
 						}
-			}, defineProperty(_Object$definePropert, 'canvasMenu', {
-						get: function get$$1() {
-									return options.canvasMenu;
-						},
-						set: function set$$1(canvasMenu) {
-									if (options.canvasMenu) console.error('duplicate canvasMenu.');
-									options.canvasMenu = canvasMenu;
-						}
-			}), defineProperty(_Object$definePropert, 'orbitControls', {
-						get: function get$$1() {
-									return options.orbitControls;
-						},
-						set: function set$$1(orbitControls) {
-									if (options.orbitControls && options.orbitControls.constructor.name === orbitControls.constructor.name && options.orbitControls.constructor.name !== 'Object') console.error('duplicate orbitControls.');
-									options.orbitControls = orbitControls;
-						}
-			}), defineProperty(_Object$definePropert, 'scale', {
-						get: function get$$1() {
-									return 1;
-						}
-			}), defineProperty(_Object$definePropert, 'pointLight', {
-						get: function get$$1() {
-									return options.pointLight;
-						}
-			}), defineProperty(_Object$definePropert, 'cameraTarget', {
-						get: function get$$1() {
-									return options.cameraTarget;
-						}
-			}), defineProperty(_Object$definePropert, 'eventListeners', {
-						get: function get$$1() {
-									if (options.eventListeners) return options.eventListeners;
-						},
-						set: function set$$1(eventListeners) {
-									if (options.eventListeners) console.error('duplicate eventListeners.');
-									options.eventListeners = eventListeners;
-						}
-			}), defineProperty(_Object$definePropert, 'guiSelectPoint', {
-						get: function get$$1() {
-									return options.guiSelectPoint;
-						},
-						set: function set$$1(guiSelectPoint) {
-									if (options.guiSelectPoint) console.error('duplicate guiSelectPoint.');
-									options.guiSelectPoint = guiSelectPoint;
-						}
-			}), defineProperty(_Object$definePropert, 'controllers', {
-						get: function get$$1() {
-									var Controllers =
-									function Controllers(controllers) {
-												classCallCheck(this, Controllers);
-												controllers = controllers || {};
-												Object.defineProperties(this, {
-															boControllers: {
-																		get: function get$$1() {
-																					return true;
-																		}
-															},
-															t: {
-																		get: function get$$1() {
-																					if (controllers.t === null) console.error('options.controllers.t = ' + controllers.t);
-																					var elTime = document.getElementById('time');
-																					if (!controllers.t) {
-																								if (!elTime) return;
-																								controllers.t = {
-																											elName: document.getElementById('tName')
-																								};
-																					}
-																					if (!controllers.t.controller && elTime) controllers.t.controller = elTime;
-																					if (controllers.t) {
-																								createController(controllers.t, 't', function () {
-																											return options.playerOptions && options.playerOptions.name ? options.playerOptions.name : 't';
-																								}, {
-																											onchange: function onchange(event) {
-																														if (!options.player) {
-																																	console.error('options.controllers.t.onchange: create Player instance first. ' + controllers.t.value);
-																																	return;
-																														}
-																														if (options.player.setTime(controllers.t.controller.value) === false) {
-																																	alert(lang.timeAlert + controllers.t.controller.value);
-																																	controllers.t.controller.focus();
-																														}
-																											}
-																								});
-																								if (typeof lang !== 'undefined' && controllers.t.controller.title === '') controllers.t.controller.title = lang.controllerTTitle;
-																					}
-																					return controllers.t;
-																		}
-															},
-															player: {
-																		get: function get$$1() {
-																					return controllers.player;
-																		}
-															}
-												});
-												for (var propertyName in controllers) {
-															if (this[propertyName] === undefined) console.error('Controllers: controllers.' + propertyName + ' key is hidden');
-												}
-									};
-									if (boCreateControllers === undefined) {
-												boCreateControllers = true;
-												var time = document.getElementById('time'),
-												    prev = document.getElementById('prev'),
-												    play = document.getElementById('play'),
-												    next = document.getElementById('next'),
-												    boPlayer = prev || play || next ? true : false,
-												    boControllers = time || boPlayer ? true : false;
-												if (!options.controllers && boControllers) {
-															options.controllers = { t: {} };
-															if (time) options.controllers.t.controller = time;
-												}
-												if (options.controllers) {
-															if (!options.controllers.player && boPlayer) options.controllers.player = {};
-															if (options.controllers.player) {
-																		if (!options.controllers.player.buttonPrev && prev) options.controllers.player.buttonPrev = prev;
-																		if (!options.controllers.player.buttonPlay && play) options.controllers.player.buttonPlay = play;
-																		if (!options.controllers.player.buttonNext && next) options.controllers.player.buttonNext = next;
-															}
-												}
-									}
-									if (options.controllers && !options.controllers.boControllers) options.controllers = new Controllers(options.controllers);
-									return options.controllers;
-						}
-			}), defineProperty(_Object$definePropert, 'title', {
-						get: function get$$1() {
-									return options.title;
-						}
-			}), _Object$definePropert));
-			for (var propertyName in options) {
-						if (this[propertyName] === undefined) console.error('Options: options.' + propertyName + ' key is hidden');
+					});
+					for (var propertyName in dat) {
+						if (this[propertyName] === undefined) console.error('Dat: dat.' + propertyName + ' key is hidden');
+					}
+				};
+				if (options.dat === false) return options.dat;
+				options.dat = new Dat(options.dat);
+				if (options.dat.gui) {
+					setTimeout(function () {
+						var className = options.dat.gui.domElement.className;
+						var guiCount = 0;
+						options.dat.gui.domElement.parentElement.childNodes.forEach(function (node) {
+							if (node.className === className) guiCount++;
+						});
+						if (guiCount > 1) console.error('Options: duplicate dat.GUI');
+					}, 0);
+					options.dat.gui.domElement.addEventListener('mouseenter', function (event) {
+						options.dat.mouseenter = true;
+					});
+					options.dat.gui.domElement.addEventListener('mouseleave', function (event) {
+						options.dat.mouseenter = false;
+					});
+				}
+				if (options.dat.cookie === false) options.dat.cookie = new cookie.defaultCookie();else if (options.dat.cookie === undefined) options.dat.cookie = cookie;
+				options.dat.getCookieName = function () {
+					var cookieName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+					var name = options.dat.cookieName || (options.elContainer ? _typeof(options.elContainer) === "object" ? options.elContainer.id : typeof options.elContainer === "string" ? options.elContainer : '' : '');
+					return cookieName + (cookieName !== '' && name !== '' ? '_' : '') + name;
+				};
+				return options.dat;
+			},
+			set: function set$$1(dat) {
+				options.dat = dat;
 			}
-			this.playerOptions.cameraTarget.init(this.cameraTarget, this, false);
-			lang = {
-						timeAlert: 'Invalid time fromat: ',
-						controllerTTitle: 'Current time.'
+		},
+		getLanguageCode: {
+			get: function get$$1() {
+				if (typeof options.getLanguageCode === "string") return function () {
+					return options.getLanguageCode;
+				};
+				return options.getLanguageCode || getLanguageCode;
+			}
+		},
+		scales: {
+			get: function get$$1() {
+				var Scales =
+				function Scales(scales) {
+					classCallCheck(this, Scales);
+					var Scale =
+					function Scale(scales, axisName) {
+						classCallCheck(this, Scale);
+						var scale = scales[axisName];
+						this.isAxis = function () {
+							if (!scales || !scales.x && !scales.y && !scales.z || scale) return true;
+							return false;
+						};
+						Object.defineProperties(this, {
+							boScale: {
+								get: function get$$1() {
+									return true;
+								}
+							},
+							min: {
+								get: function get$$1() {
+									if (!scale || !scale.min) return axisName === 'w' ? 0 : -1;
+									return scale.min;
+								},
+								set: function set$$1(min) {
+									scale.min = min;
+								}
+							},
+							max: {
+								get: function get$$1() {
+									if (!scale || !scale.max) return axisName === 'w' ? new three$1.THREE.Vector4().w : 1;
+									return scale.max;
+								},
+								set: function set$$1(max) {
+									scale.max = max;
+								}
+							},
+							name: {
+								get: function get$$1() {
+									if (!scale || scale.name === undefined) return axisName;
+									return scale.name;
+								},
+								set: function set$$1(name) {
+									if (scale) {
+										scale.name = name;
+										if (options.guiSelectPoint) options.guiSelectPoint.setAxisName(axisName, name);
+									}
+								}
+							},
+							marks: {
+								get: function get$$1() {
+									if (!scale) return undefined;
+									if (!scale.marks) scale.marks = 3;
+									return scale.marks;
+								}
+							}
+						});
+						for (var propertyName in scale) {
+							if (this[propertyName] === undefined) console.error('Options.Scales: scale.' + propertyName + ' key is hidden');
+						}
+					};
+					var scalesObject = {
+						x: new Scale(options.scales, 'x'),
+						y: new Scale(options.scales, 'y'),
+						z: new Scale(options.scales, 'z'),
+						w: new Scale(options.scales, 'w')
+					};
+					Object.defineProperties(this, {
+						boScales: {
+							get: function get$$1() {
+								return true;
+							}
+						},
+						x: {
+							get: function get$$1() {
+								return scalesObject.x;
+							},
+							set: function set$$1(x) {
+								if (x === undefined) {
+									delete scales.x;
+									delete scalesObject.x;
+									scalesObject.x = new Scale(scales, 'x');
+								} else scales.x = x;
+								if (options.guiSelectPoint) options.guiSelectPoint.updateScale('x');
+							}
+						},
+						y: {
+							get: function get$$1() {
+								return scalesObject.y;
+							},
+							set: function set$$1(y) {
+								if (y === undefined) {
+									delete scales.y;
+									delete scalesObject.y;
+									scalesObject.y = new Scale(scales, 'y');
+								} else scales.y = y;
+								if (options.guiSelectPoint) options.guiSelectPoint.updateScale('y');
+							}
+						},
+						z: {
+							get: function get$$1() {
+								return scalesObject.z;
+							},
+							set: function set$$1(z) {
+								if (z === undefined) {
+									delete scales.z;
+									delete scalesObject.z;
+									scalesObject.z = new Scale(scales, 'z');
+								} else scales.z = z;
+								if (options.guiSelectPoint) options.guiSelectPoint.updateScale('z');
+							}
+						},
+						w: {
+							get: function get$$1() {
+								return scalesObject.w;
+							},
+							set: function set$$1(w) {
+								scales.w = w;
+							}
+						},
+						setW: {
+							get: function get$$1() {
+								return _this.setW;
+							}
+						},
+						display: {
+							get: function get$$1() {
+								if (scales.display === undefined) scales.display = true;
+								return scales.display;
+							},
+							set: function set$$1(display) {
+								scales.display = display;
+							}
+						},
+						text: {
+							get: function get$$1() {
+								if (scales.text === undefined) scales.text = {};
+								return scales.text;
+							},
+							set: function set$$1(text) {
+								scales.text = text;
+							}
+						},
+						posAxesIntersection: {
+							get: function get$$1() {
+								return scales.posAxesIntersection;
+							},
+							set: function set$$1(posAxesIntersection) {
+								scales.posAxesIntersection = posAxesIntersection;
+							}
+						}
+					});
+					for (var propertyName in scales) {
+						if (this[propertyName] === undefined) console.error('Options: scales.' + propertyName + ' key is hidden');
+					}
+				};
+				if (!options.scales.boScales) options.scales = new Scales(options.scales);
+				return options.scales;
+			},
+			set: function set$$1(scales) {
+				options.scales = scales;
+			}
+		},
+		palette: {
+			get: function get$$1() {
+				if (options.palette === undefined) options.palette = true;
+				switch (_typeof(options.palette)) {
+					case 'number':
+						options.palette = new ColorPicker$1.palette({ palette: options.palette });
+						break;
+					case 'boolean':
+						if (options.palette) options.palette = new ColorPicker$1.palette();
+						break;
+					default:
+						{
+							if (options.palette instanceof ColorPicker$1.palette === false) console.error('MyThree: invalid typeof options.palette: ' + _typeof(options.palette));
+						}
+				}
+				return options.palette;
+			}
+		},
+		boOptions: {
+			get: function get$$1() {
+				return true;
+			}
+		},
+		point: {
+			get: function get$$1() {
+				return {
+					get size() {
+						return options.point.size;
+					},
+					set size(size) {
+						if (options.point.size === size) return;
+						options.point.size = size;
+						if (options.dat && options.dat.folderPoint) options.dat.folderPoint.size.setValue(size);
+					},
+					get sizePointsMaterial() {
+						return options.point.sizePointsMaterial;
+					},
+					set sizePointsMaterial(sizePointsMaterial) {
+						options.point.sizePointsMaterial = sizePointsMaterial;
+					}
+				};
+			}
+		},
+		spriteText: {
+			get: function get$$1() {
+				if (options.spriteText) return options.spriteText;
+				return {};
+			}
+		},
+		raycaster: {
+			get: function get$$1() {
+				if (options.raycaster) return options.raycaster;
+			},
+			set: function set$$1(raycaster) {
+				options.raycaster = raycaster;
+			}
+		},
+		camera: {
+			get: function get$$1() {
+				options.camera = options.camera || {};
+				if (!options.camera.position) options.camera.position = new three$1.THREE.Vector3(0.4, 0.4, 2);
+				if (!options.camera.scale) options.camera.scale = new three$1.THREE.Vector3(1, 1, 1);
+				return options.camera;
+			},
+			set: function set$$1(camera) {
+				options.camera = camera;
+			}
+		},
+		cameraTarget: {
+			get: function get$$1() {
+				return options.cameraTarget;
+			}
+		},
+		elContainer: {
+			get: function get$$1() {
+				return options.elContainer;
+			}
+		},
+		canvasMenu: {
+			get: function get$$1() {
+				return options.canvasMenu;
+			},
+			set: function set$$1(canvasMenu) {
+				if (options.canvasMenu && options.canvasMenu !== true && options.canvasMenu !== false) console.warn('Duplicate canvasMenu');
+				options.canvasMenu = canvasMenu;
+			}
+		},
+		canvas: {
+			get: function get$$1() {
+				if (options.canvas) return options.canvas;
+				return { fullScreen: true };
+			}
+		},
+		frustumPoints: {
+			get: function get$$1() {
+				return options.frustumPoints;
+			},
+			set: function set$$1(frustumPoints) {
+				if (options.frustumPoints && options.frustumPoints.constructor.name === frustumPoints.constructor.name && options.frustumPoints.constructor.name !== 'Object') console.error('duplicate frustumPoints.');
+				options.frustumPoints = frustumPoints;
+			}
+		},
+		stereoEffect: {
+			get: function get$$1() {
+				return options.stereoEffect;
+			},
+			set: function set$$1(stereoEffect) {
+				if (options.stereoEffect && options.stereoEffect.constructor.name === stereoEffect.constructor.name && options.stereoEffect.constructor.name !== 'Object') console.error('duplicate stereoEffect.');
+				options.stereoEffect = stereoEffect;
+			}
+		},
+		player: {
+			get: function get$$1() {
+				return options.player;
+			},
+			set: function set$$1(player) {
+				if (options.player) console.error('duplicate player.');
+				options.player = player;
+			}
+		},
+		time: {
+			get: function get$$1() {
+				if (options.player) return options.player.getTime();
+				return 0;
+			}
+		},
+		axesHelper: {
+			get: function get$$1() {
+				return options.axesHelper;
+			},
+			set: function set$$1(axesHelper) {
+				if (options.axesHelper) console.error('duplicate axesHelper.');
+				options.axesHelper = axesHelper;
+			}
+		}
+	}, defineProperty(_Object$definePropert, 'canvasMenu', {
+		get: function get$$1() {
+			return options.canvasMenu;
+		},
+		set: function set$$1(canvasMenu) {
+			if (options.canvasMenu) console.error('duplicate canvasMenu.');
+			options.canvasMenu = canvasMenu;
+		}
+	}), defineProperty(_Object$definePropert, 'orbitControls', {
+		get: function get$$1() {
+			return options.orbitControls;
+		},
+		set: function set$$1(orbitControls) {
+			if (options.orbitControls && options.orbitControls.constructor.name === orbitControls.constructor.name && options.orbitControls.constructor.name !== 'Object') console.error('duplicate orbitControls.');
+			options.orbitControls = orbitControls;
+		}
+	}), defineProperty(_Object$definePropert, 'scale', {
+		get: function get$$1() {
+			return 1;
+		}
+	}), defineProperty(_Object$definePropert, 'pointLight', {
+		get: function get$$1() {
+			return options.pointLight;
+		}
+	}), defineProperty(_Object$definePropert, 'cameraTarget', {
+		get: function get$$1() {
+			return options.cameraTarget;
+		}
+	}), defineProperty(_Object$definePropert, 'eventListeners', {
+		get: function get$$1() {
+			if (options.eventListeners) return options.eventListeners;
+		},
+		set: function set$$1(eventListeners) {
+			if (options.eventListeners) console.error('duplicate eventListeners.');
+			options.eventListeners = eventListeners;
+		}
+	}), defineProperty(_Object$definePropert, 'guiSelectPoint', {
+		get: function get$$1() {
+			return options.guiSelectPoint;
+		},
+		set: function set$$1(guiSelectPoint) {
+			if (options.guiSelectPoint) console.error('duplicate guiSelectPoint.');
+			options.guiSelectPoint = guiSelectPoint;
+		}
+	}), defineProperty(_Object$definePropert, 'controllers', {
+		get: function get$$1() {
+			var Controllers =
+			function Controllers(controllers) {
+				classCallCheck(this, Controllers);
+				controllers = controllers || {};
+				Object.defineProperties(this, {
+					boControllers: {
+						get: function get$$1() {
+							return true;
+						}
+					},
+					t: {
+						get: function get$$1() {
+							if (controllers.t === null) console.error('options.controllers.t = ' + controllers.t);
+							var elTime = document.getElementById('time');
+							if (!controllers.t) {
+								if (!elTime) return;
+								controllers.t = {
+									elName: document.getElementById('tName')
+								};
+							}
+							if (!controllers.t.controller && elTime) controllers.t.controller = elTime;
+							if (controllers.t) {
+								createController(controllers.t, 't', function () {
+									return options.playerOptions && options.playerOptions.name ? options.playerOptions.name : 't';
+								}, {
+									onchange: function onchange(event) {
+										if (!options.player) {
+											console.error('options.controllers.t.onchange: create Player instance first. ' + controllers.t.value);
+											return;
+										}
+										if (options.player.setTime(controllers.t.controller.value) === false) {
+											alert(lang.timeAlert + controllers.t.controller.value);
+											controllers.t.controller.focus();
+										}
+									}
+								});
+								if (typeof lang !== 'undefined' && controllers.t.controller.title === '') controllers.t.controller.title = lang.controllerTTitle;
+							}
+							return controllers.t;
+						}
+					},
+					player: {
+						get: function get$$1() {
+							return controllers.player;
+						}
+					}
+				});
+				for (var propertyName in controllers) {
+					if (this[propertyName] === undefined) console.error('Controllers: controllers.' + propertyName + ' key is hidden');
+				}
 			};
-			switch (this.getLanguageCode()) {
-						case 'ru':
-									lang.timeAlert = 'Неправильный формат времени: ';
-									lang.controllerTTitle = 'Текущее время.';
-									break;
-						default:
-									if (options.lang === undefined || options.lang.languageCode != languageCode) break;
-									Object.keys(options.lang).forEach(function (key) {
-												if (lang[key] === undefined) return;
-												lang[key] = options.lang[key];
-									});
+			if (boCreateControllers === undefined) {
+				boCreateControllers = true;
+				var time = document.getElementById('time'),
+				    prev = document.getElementById('prev'),
+				    play = document.getElementById('play'),
+				    next = document.getElementById('next'),
+				    boPlayer = prev || play || next ? true : false,
+				    boControllers = time || boPlayer ? true : false;
+				if (!options.controllers && boControllers) {
+					options.controllers = { t: {} };
+					if (time) options.controllers.t.controller = time;
+				}
+				if (options.controllers) {
+					if (!options.controllers.player && boPlayer) options.controllers.player = {};
+					if (options.controllers.player) {
+						if (!options.controllers.player.buttonPrev && prev) options.controllers.player.buttonPrev = prev;
+						if (!options.controllers.player.buttonPlay && play) options.controllers.player.buttonPlay = play;
+						if (!options.controllers.player.buttonNext && next) options.controllers.player.buttonNext = next;
+					}
+				}
 			}
-			if (!three$1.options) three$1.options = this;
+			if (options.controllers && !options.controllers.boControllers) options.controllers = new Controllers(options.controllers);
+			return options.controllers;
+		}
+	}), defineProperty(_Object$definePropert, 'title', {
+		get: function get$$1() {
+			return options.title;
+		}
+	}), _Object$definePropert));
+	for (var propertyName in options) {
+		if (this[propertyName] === undefined) console.error('Options: options.' + propertyName + ' key is hidden');
+	}
+	this.playerOptions.cameraTarget.init(this.cameraTarget, this, false);
+	lang = {
+		timeAlert: 'Invalid time fromat: ',
+		controllerTTitle: 'Current time.'
+	};
+	switch (this.getLanguageCode()) {
+		case 'ru':
+			lang.timeAlert = 'Неправильный формат времени: ';
+			lang.controllerTTitle = 'Текущее время.';
+			break;
+		default:
+			if (options.lang === undefined || options.lang.languageCode != languageCode) break;
+			Object.keys(options.lang).forEach(function (key) {
+				if (lang[key] === undefined) return;
+				lang[key] = options.lang[key];
+			});
+	}
+	if (!three$1.options) three$1.options = this;
 };
 Options.findSpriteTextIntersection = function (scene) {
-			var spriteTextIntersection;
-			scene.children.forEach(function (item) {
-						if (item.type === "Sprite" && item.name === Options.findSpriteTextIntersection.spriteTextIntersectionName) {
-									spriteTextIntersection = item;
-									return;
-						}
-			});
-			return spriteTextIntersection;
+	var spriteTextIntersection;
+	scene.children.forEach(function (item) {
+		if (item.type === "Sprite" && item.name === Options.findSpriteTextIntersection.spriteTextIntersectionName) {
+			spriteTextIntersection = item;
+			return;
+		}
+	});
+	return spriteTextIntersection;
 };
 Options.findSpriteTextIntersection.spriteTextIntersectionName = 'spriteTextIntersection';
 var Raycaster =
 function Raycaster() {
-			classCallCheck(this, Raycaster);
-			var cursor;
-			this.onIntersection = function (intersection, options, scene, camera, renderer) {
-						var canvas = renderer.domElement;
-						if (intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo()) return;
-						var spriteTextIntersection = Options.findSpriteTextIntersection(scene);
-						if (spriteTextIntersection && (!intersection.pointSpriteText || intersection.object.userData.raycaster && intersection.object.userData.raycaster.text)) {
-									scene.remove(spriteTextIntersection);
-									spriteTextIntersection = undefined;
-						}
-						if (spriteTextIntersection === undefined) {
-									options = new Options(options);
-									var rect = options.spriteText.rect ? JSON.parse(JSON.stringify(options.spriteText.rect)) : {};
-									rect.displayRect = true;
-									rect.backgroundColor = 'rgba(0, 0, 0, 1)';
-									spriteTextIntersection = StereoEffect.getTextIntersection(intersection, {
-												scales: options.scales,
-												spriteOptions: {
-															textHeight: options.spriteText.textHeight,
-															fontColor: options.spriteText.fontColor,
-															rect: rect,
-															group: scene,
-															center: {
-																		camera: camera,
-																		canvas: canvas
-															}
-												}
-									});
-									spriteTextIntersection.scale.divide(scene.scale);
-									scene.add(spriteTextIntersection);
-									if (cursor === undefined) cursor = renderer.domElement.style.cursor;
-									renderer.domElement.style.cursor = 'pointer';
-						} else if (intersection.pointSpriteText) spriteTextIntersection.position.copy(intersection.pointSpriteText);
+	classCallCheck(this, Raycaster);
+	var cursor;
+	this.onIntersection = function (intersection, options, scene, camera, renderer) {
+		var canvas = renderer.domElement;
+		if (intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo()) return;
+		var spriteTextIntersection = Options.findSpriteTextIntersection(scene);
+		if (spriteTextIntersection && (!intersection.pointSpriteText || intersection.object.userData.raycaster && intersection.object.userData.raycaster.text)) {
+			scene.remove(spriteTextIntersection);
+			spriteTextIntersection = undefined;
+		}
+		if (spriteTextIntersection === undefined) {
+			options = new Options(options);
+			var rect = options.spriteText.rect ? JSON.parse(JSON.stringify(options.spriteText.rect)) : {};
+			rect.displayRect = true;
+			rect.backgroundColor = 'rgba(0, 0, 0, 1)';
+			spriteTextIntersection = StereoEffect.getTextIntersection(intersection, {
+				scales: options.scales,
+				spriteOptions: {
+					textHeight: options.spriteText.textHeight,
+					fontColor: options.spriteText.fontColor,
+					rect: rect,
+					group: scene,
+					center: {
+						camera: camera,
+						canvas: canvas
+					}
+				}
+			});
+			spriteTextIntersection.scale.divide(scene.scale);
+			scene.add(spriteTextIntersection);
+			if (cursor === undefined) cursor = renderer.domElement.style.cursor;
+			renderer.domElement.style.cursor = 'pointer';
+		} else if (intersection.pointSpriteText) spriteTextIntersection.position.copy(intersection.pointSpriteText);
+	};
+	this.onIntersectionOut = function (scene, renderer) {
+		var detected = false;
+		do {
+			var spriteTextIntersection = Options.findSpriteTextIntersection(scene);
+			if (spriteTextIntersection !== undefined) {
+				scene.remove(spriteTextIntersection);
+				if (detected) console.error('Duplicate spriteTextIntersection');
+				detected = true;
+			}
+		} while (spriteTextIntersection !== undefined);
+		renderer.domElement.style.cursor = cursor;
+	};
+	this.onMouseDown = function (intersection, options) {
+		if (intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo()) return;
+		if (options.guiSelectPoint) options.guiSelectPoint.select(intersection);else {
+			if (intersection.object.userData.onMouseDown) intersection.object.userData.onMouseDown(intersection);
+			if (options.axesHelper) options.axesHelper.exposePosition(intersection);
+		}
+	};
+	var intersectedObjects = [];
+	var intersects;
+	this.intersectionsInOut = function (particles, raycaster, renderer, mouse) {
+		var settings = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+		function getIntersects() {
+			if (particles === undefined) return;
+			intersects = Array.isArray(particles) ? raycaster.intersectObjects(particles) : raycaster.intersectObject(particles);
+		}
+		getIntersects();
+		intersects.forEach(function (intersection) {
+			var three = window.__myThree__.three;
+			intersection.pointSpriteText = new three.THREE.Vector3();
+			if (settings.options.stereoEffect && settings.options.stereoEffect.settings.spatialMultiplex === StereoEffect.spatialMultiplexsIndexs.Mono) raycaster.ray.at(three.options.camera.near + (three.options.camera.far - three.options.camera.near) / 1000, intersection.pointSpriteText);
+			else intersection.pointSpriteText = intersection.point;
+			var boDetected = false;
+			intersectedObjects.forEach(function (intersectedObject) {
+				if (intersectedObject.object === intersection.object) {
+					boDetected = true;
+					return;
+				}
+			});
+			if (!boDetected) {
+				intersectedObjects.push(intersection);
+			}
+			if (intersection && intersection.object.userData.raycaster && intersection.object.userData.raycaster.onIntersection) {
+				intersection.object.userData.raycaster.onIntersection(intersection, mouse);
+			} else {
+				if (!settings.scene) console.error('THREE.Raycaster.setStereoEffect(): settings.scene = ' + settings.scene);else Options.raycaster.onIntersection(intersection, settings.options, settings.scene, settings.camera, renderer);
+			}
+		});
+		intersectedObjects.forEach(function (intersectedObject) {
+			var boDetected = false;
+			intersects.forEach(function (intersection) {
+				if (intersectedObject.object === intersection.object) boDetected = true;
+			});
+			if (!boDetected) {
+				if (intersectedObject.object.userData.raycaster && intersectedObject.object.userData.raycaster.onIntersectionOut) intersectedObject.object.userData.raycaster.onIntersectionOut();else if (settings.scene) Options.raycaster.onIntersectionOut(settings.scene, renderer);
+				intersectedObjects.splice(intersectedObjects.findIndex(function (v) {
+					return v === intersectedObject;
+				}), 1);
+			}
+		});
+		return intersects;
+	};
+	this.EventListeners = function () {
+		function _class(camera, renderer) {
+			var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+			classCallCheck(this, _class);
+			var intersectedObject;
+			var THREE = three$1.THREE,
+			    mouse = new THREE.Vector2(),
+			    particles = [],
+			    raycaster = new THREE.Raycaster(),
+			    options = settings.options || {};
+			raycaster.params.Points.threshold = settings.threshold !== undefined ? settings.threshold : 0.03;
+			raycaster.params.Line.threshold = raycaster.params.Points.threshold;
+			if (raycaster.setStereoEffect) {
+				raycaster.setStereoEffect({
+					options: settings.options,
+					renderer: renderer,
+					camera: camera,
+					scene: settings.scene,
+					stereoEffect: options.stereoEffect,
+					raycasterEvents: false
+				});
+			}
+			var domElement = options.renderer ? options.renderer.domElement : window;
+			domElement.addEventListener('mousemove', function (event) {
+				if (raycaster.stereo !== undefined) {
+					raycaster.stereo.onDocumentMouseMove(event);
+					return;
+				}
+				Options.raycaster.EventListeners.getRendererSize(renderer).getMousePosition(mouse, event);
+				raycaster.setFromCamera(mouse, camera);
+				intersects = raycaster.intersectObjects(particles);
+				if (!intersects) return;
+				if (intersects.length === 0) {
+					if (intersectedObject) {
+						if (intersectedObject.userData.raycaster && intersectedObject.userData.raycaster.onIntersectionOut) intersectedObject.userData.raycaster.onIntersectionOut();else Options.raycaster.onIntersectionOut(settings.scene, renderer);
+						intersectedObject = undefined;
+					}
+				} else {
+					var intersect = intersects[0],
+					    object = intersect.object;
+					if (object.userData.raycaster && object.userData.raycaster.onIntersection) {
+						object.userData.raycaster.onIntersection(intersect, mouse);
+					} else Options.raycaster.onIntersection(intersect, options, settings.scene, camera, renderer);
+					intersectedObject = object;
+				}
+			}, false);
+			domElement.addEventListener('pointerdown', function (event) {
+				if (raycaster === undefined) return;
+				if (intersects && intersects.length > 0) {
+					var intersect = intersects[0];
+					if (intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown) intersect.object.userData.raycaster.onMouseDown(intersect, event);
+					else Options.raycaster.onMouseDown(intersect, options);
+				}
+			}, false);
+			function isAddedToParticles(particle) {
+				return particles.includes(particle);
+			}
+			this.addParticle = function (particle) {
+				if (particle.userData.boFrustumPoints) return;
+				if (raycaster.stereo) {
+					raycaster.stereo.addParticle(particle);
+					return;
+				}
+				if (isAddedToParticles(particle)) {
+					console.error('Duplicate particle "' + particle.name + '"');
+					return;
+				}
+				particles.push(particle);
 			};
-			this.onIntersectionOut = function (scene, renderer) {
-						var detected = false;
-						do {
-									var spriteTextIntersection = Options.findSpriteTextIntersection(scene);
-									if (spriteTextIntersection !== undefined) {
-												scene.remove(spriteTextIntersection);
-												if (detected) console.error('Duplicate spriteTextIntersection');
-												detected = true;
-									}
-						} while (spriteTextIntersection !== undefined);
-						renderer.domElement.style.cursor = cursor;
+			this.removeParticle = function (particle) {
+				if (particle.userData.boFrustumPoints) return;
+				if (raycaster.stereo) {
+					raycaster.stereo.removeParticle(particle);
+					return;
+				}
+				var index = particles.indexOf(particle);
+				if (index === -1) return;
+				particles.splice(index, 1);
 			};
-			this.onMouseDown = function (intersection, options) {
-						if (intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo()) return;
-						if (options.guiSelectPoint) options.guiSelectPoint.select(intersection);else {
-									if (intersection.object.userData.onMouseDown) intersection.object.userData.onMouseDown(intersection);
-									if (options.axesHelper) options.axesHelper.exposePosition(intersection);
-						}
-			};
-			var intersectedObjects = [];
-			var intersects;
-			this.intersectionsInOut = function (particles, raycaster, renderer, mouse) {
-						var settings = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
-						function getIntersects() {
-									if (particles === undefined) return;
-									intersects = Array.isArray(particles) ? raycaster.intersectObjects(particles) : raycaster.intersectObject(particles);
-						}
-						getIntersects();
-						intersects.forEach(function (intersection) {
-									var three = window.__myThree__.three;
-									intersection.pointSpriteText = new three.THREE.Vector3();
-									if (settings.options.stereoEffect && settings.options.stereoEffect.settings.spatialMultiplex === StereoEffect.spatialMultiplexsIndexs.Mono) raycaster.ray.at(three.options.camera.near + (three.options.camera.far - three.options.camera.near) / 1000, intersection.pointSpriteText);
-									else intersection.pointSpriteText = intersection.point;
-									var boDetected = false;
-									intersectedObjects.forEach(function (intersectedObject) {
-												if (intersectedObject.object === intersection.object) {
-															boDetected = true;
-															return;
-												}
-									});
-									if (!boDetected) {
-												intersectedObjects.push(intersection);
-									}
-									if (intersection && intersection.object.userData.raycaster && intersection.object.userData.raycaster.onIntersection) {
-												intersection.object.userData.raycaster.onIntersection(intersection, mouse);
-									} else {
-												if (!settings.scene) console.error('THREE.Raycaster.setStereoEffect(): settings.scene = ' + settings.scene);else Options.raycaster.onIntersection(intersection, settings.options, settings.scene, settings.camera, renderer);
-									}
-						});
-						intersectedObjects.forEach(function (intersectedObject) {
-									var boDetected = false;
-									intersects.forEach(function (intersection) {
-												if (intersectedObject.object === intersection.object) boDetected = true;
-									});
-									if (!boDetected) {
-												if (intersectedObject.object.userData.raycaster && intersectedObject.object.userData.raycaster.onIntersectionOut) intersectedObject.object.userData.raycaster.onIntersectionOut();else if (settings.scene) Options.raycaster.onIntersectionOut(settings.scene, renderer);
-												intersectedObjects.splice(intersectedObjects.findIndex(function (v) {
-															return v === intersectedObject;
-												}), 1);
-									}
-						});
-						return intersects;
-			};
-			this.EventListeners = function () {
-						function _class(camera, renderer) {
-									var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-									classCallCheck(this, _class);
-									var intersectedObject;
-									var THREE = three$1.THREE,
-									    mouse = new THREE.Vector2(),
-									    particles = [],
-									    raycaster = new THREE.Raycaster(),
-									    options = settings.options || {};
-									raycaster.params.Points.threshold = settings.threshold !== undefined ? settings.threshold : 0.03;
-									raycaster.params.Line.threshold = raycaster.params.Points.threshold;
-									if (raycaster.setStereoEffect) {
-												raycaster.setStereoEffect({
-															options: settings.options,
-															renderer: renderer,
-															camera: camera,
-															scene: settings.scene,
-															stereoEffect: options.stereoEffect,
-															raycasterEvents: false
-												});
-									}
-									var domElement = options.renderer ? options.renderer.domElement : window;
-									domElement.addEventListener('mousemove', function (event) {
-												if (raycaster.stereo !== undefined) {
-															raycaster.stereo.onDocumentMouseMove(event);
-															return;
-												}
-												Options.raycaster.EventListeners.getRendererSize(renderer).getMousePosition(mouse, event);
-												raycaster.setFromCamera(mouse, camera);
-												intersects = raycaster.intersectObjects(particles);
-												if (!intersects) return;
-												if (intersects.length === 0) {
-															if (intersectedObject) {
-																		if (intersectedObject.userData.raycaster && intersectedObject.userData.raycaster.onIntersectionOut) intersectedObject.userData.raycaster.onIntersectionOut();else Options.raycaster.onIntersectionOut(settings.scene, renderer);
-																		intersectedObject = undefined;
-															}
-												} else {
-															var intersect = intersects[0],
-															    object = intersect.object;
-															if (object.userData.raycaster && object.userData.raycaster.onIntersection) {
-																		object.userData.raycaster.onIntersection(intersect, mouse);
-															} else Options.raycaster.onIntersection(intersect, options, settings.scene, camera, renderer);
-															intersectedObject = object;
-												}
-									}, false);
-									domElement.addEventListener('pointerdown', function (event) {
-												if (raycaster === undefined) return;
-												if (intersects && intersects.length > 0) {
-															var intersect = intersects[0];
-															if (intersect.object.userData.raycaster && intersect.object.userData.raycaster.onMouseDown) intersect.object.userData.raycaster.onMouseDown(intersect, event);
-															else Options.raycaster.onMouseDown(intersect, options);
-												}
-									}, false);
-									function isAddedToParticles(particle) {
-												return particles.includes(particle);
-									}
-									this.addParticle = function (particle) {
-												if (particle.userData.boFrustumPoints) return;
-												if (raycaster.stereo) {
-															raycaster.stereo.addParticle(particle);
-															return;
-												}
-												if (isAddedToParticles(particle)) {
-															console.error('Duplicate particle "' + particle.name + '"');
-															return;
-												}
-												particles.push(particle);
-									};
-									this.removeParticle = function (particle) {
-												if (particle.userData.boFrustumPoints) return;
-												if (raycaster.stereo) {
-															raycaster.stereo.removeParticle(particle);
-															return;
-												}
-												var index = particles.indexOf(particle);
-												if (index === -1) return;
-												particles.splice(index, 1);
-									};
-						}
-						createClass(_class, null, [{
-									key: 'getRendererSize',
-									value: function getRendererSize(renderer, el) {
-												el = el || renderer.domElement;
-												var style = {
-															position: el.style.position,
-															left: el.style.left,
-															top: el.style.top,
-															width: el.style.width,
-															height: el.style.height
-												},
-												    rect = el.getBoundingClientRect(),
-												    left = Math.round(rect.left),
-												    top = Math.round(rect.top),
-												    size = new three$1.THREE.Vector2();
-												renderer.getSize(size);
-												return {
-															getMousePosition: function getMousePosition(mouse, event) {
-																		mouse.x = event.clientX / size.x * 2 - 1 - left / size.x * 2;
-																		mouse.y = -(event.clientY / size.y) * 2 + 1 + top / size.y * 2;
-															}
-												};
-									}
-						}]);
-						return _class;
-			}();
+		}
+		createClass(_class, null, [{
+			key: 'getRendererSize',
+			value: function getRendererSize(renderer, el) {
+				el = el || renderer.domElement;
+				var style = {
+					position: el.style.position,
+					left: el.style.left,
+					top: el.style.top,
+					width: el.style.width,
+					height: el.style.height
+				},
+				    rect = el.getBoundingClientRect(),
+				    left = Math.round(rect.left),
+				    top = Math.round(rect.top),
+				    size = new three$1.THREE.Vector2();
+				renderer.getSize(size);
+				return {
+					getMousePosition: function getMousePosition(mouse, event) {
+						mouse.x = event.clientX / size.x * 2 - 1 - left / size.x * 2;
+						mouse.y = -(event.clientY / size.y) * 2 + 1 + top / size.y * 2;
+					}
+				};
+			}
+		}]);
+		return _class;
+	}();
 };
 Options.raycaster = new Raycaster();
 
