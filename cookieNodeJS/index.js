@@ -92,8 +92,16 @@ function get( name, defaultValue ) {
 	//http://ruseller.com/lessons.php?rub=28&id=593
 	var results = document.cookie.match( '(^|;) ?' + name + '=([^;]*)(;|$)' );
 
-	if ( results )
-		return ( unescape( results[2] ) );
+	if ( results ) {
+		
+		const result = results[2], type = typeof defaultValue;
+		return type === "number" ?//number
+				result % 1 === 0 ? parseInt(result) : parseFloat(result) :
+			type === "boolean" ?//boolean
+				result === 'true' ? true : false :
+			unescape( result );//string
+
+	}
 	if ( typeof defaultValue == 'undefined' )
 		return '';
 	return defaultValue;
