@@ -11,20 +11,6 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-/*
-import { isEnabled, set as setCookie, get as getCookie, getObject, copyObject, setObject, defaultCookie, remove } from './index.js';
-var cookie = {
 
-	isEnabled: isEnabled,
-	set: setCookie,
-	setObject: setObject,
-	get: getCookie,
-	getObject: getObject,
-	copyObject: copyObject,
-	defaultCookie: defaultCookie,
-	remove: remove,
-
-}
-*/
 import * as cookie from './index.js';
 export default cookie;
