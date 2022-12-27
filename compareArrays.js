@@ -65,11 +65,12 @@ function compareArrays(a1, a2) {
 
 	}
 
+	const strcompareArrays = 'compareArrays';
 	const name2 = Object.keys(a1)[1];
 	a2 = a1[name2];
 	const name1 = Object.keys(a1)[0];
 	a1 = a1[name1];
-	if (a1.length !== a2.length) console.error('compareArrays: ' + name1 + '.length: ' + a1.length + ' !== ' + name2 + '.length: ' + a2.length);
+	if (a1.length !== a2.length) console.error(strcompareArrays + ': ' + name1 + '.length: ' + a1.length + ' !== ' + name2 + '.length: ' + a2.length);
 	Object.keys(a1).forEach(i => {
 
 		const i1 = a1[i], i2 = a2[i], type = typeof i1;
@@ -89,20 +90,19 @@ function compareArrays(a1, a2) {
 
 						if ( typeof i1[key] === "string" ) {
 
-							if (i1[key] !== i2[key]) console.error('compareArrays: ' + name1 + '[' + i + ']["' + key + '"]: ' + i1[key] + ' !== ' + name2 + '[' + i + ']["' + key + '"]: ' + i2[key]);
+							if (i1[key] !== i2[key]) console.error(strcompareArrays + ': ' + name1 + '[' + i + ']["' + key + '"]: ' + i1[key] + ' !== ' + name2 + '[' + i + ']["' + key + '"]: ' + i2[key]);
 							
 						} else if (Math.abs(i1[key] - i2[key]) > 1.2e-5)//4e-6)//3.527606030825914e-7)
-							console.error('compareArrays: ' + name1 + '[' + i + ']["' + key + '"]: ' + i1[key] + ' !== ' + name2 + '[' + i + ']["' + key + '"]: ' + i2[key]);
+							console.error(strcompareArrays + ': ' + name1 + '[' + i + ']["' + key + '"]: ' + i1[key] + ' !== ' + name2 + '[' + i + ']["' + key + '"]: ' + i2[key]);
 
 					}
 
 				});
-			else if (i1 !== i2) console.error('compareArrays: ' + name1 + '[' + i + ']: ' + i1 + ' !== ' + name2 + '[' + i + ']: ' + i2);
+			else if (i1 !== i2) console.error(strcompareArrays + ': ' + name1 + '[' + i + ']: ' + i1 + ' !== ' + name2 + '[' + i + ']: ' + i2);
 
-		} else console.error('compareArrays: ' + name2 + '["' + i + '"] is undefined.');
+		} else console.error(strcompareArrays + ': ' + name2 + '["' + i + '"] is undefined.');
 
 	});
 
 }
 export default compareArrays;
-
