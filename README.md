@@ -20,6 +20,8 @@ My JavaScript library of [threejs](https://threejs.org/) extension.
 * colorpicker. Pure JavaScript color picker.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/colorpicker).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html). [Module version](https://raw.githack.com/anhr/ColorPicker/master/Example/modular.html).
+* compareArrays. Compares two arrays and output to the console an error message if arrays is not identical.
+[compareArrays API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/compareArrays/index.html).
 * dat.js Modify of the [dat.gui](https://github.com/dataarts/dat.gui) object.
 * DropdownMenu. node.js version of DropdownMenu
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/DropdownMenu).

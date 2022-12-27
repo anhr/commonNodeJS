@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Module: compareArrays</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Module: compareArrays</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description">Compares two arrays and output to the console an error message if arrays is not identical.</div>
+        
+
+        
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="https://github.com/anhr">Andrej Hristoliubov</a></li>
+        </ul>
+    </dd>
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>2011 Data Arts Team, Google Creative Lab</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>under the Apache License, Version 2.0 (the "License");you may not use this file except in compliance with the License.You may obtain a copy of the License athttp://www.apache.org/licenses/LICENSE-2.0</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="compareArrays.js.html">compareArrays.js</a>, <a href="compareArrays.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~compareArrays"><span class="type-signature">(inner) </span>compareArrays<span class="signature">(a1, a2<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Compares two arrays and output to the console an error message if arrays is not identical.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><pre>if type is Array then, this array will be compare with <b>a2</b>	Example. The following code:	<b>	const a1 = [1, 2, 3, 'cat'  , [1.1, 1.1000000001], { name: 'Tom'  , age: 20 }];	const a2 = [1, 2, 4, 'mouse', [1.2, 1.1000000002], { name: 'Jerry', age: 20 }];											a1.i = 5;	compareArrays(a1, a2);	</b>	will output to the console:	<b>	compareArrays: trueArray[2]: 3 !== checkArray[2]: 4	compareArrays: trueArray[3]: cat !== checkArray[3]: mouse	compareArrays: trueArray[4]["0"]: 1.1 !== checkArray[4]["0"]: 1.2	compareArrays: trueArray[5]["name"]: Tom !== checkArray[5]["name"]: Jerry	compareArrays: checkArray["i"] is undefined.	</b>	Note: <b>a1[4]["1"] = 1.1000000001</b> is equal <b>a2[4]["1"] = 1.1000000002</b> because the difference between two floats is less than 1.2e-5.	if type is Object then an object with two keys:	First key is true array.	Second key is array to check.	Example. The following code:	<b>	const a1 = [1, 2, 3, 'cat'  , [1.1, 1.1000000001], { name: 'Tom'  , age: 20 }];	const a2 = [1, 2, 4, 'mouse', [1.2, 1.1000000002], { name: 'Jerry', age: 20 }];											a1.i = 5;	compareArrays({a1: a1, a2: a2});	</b>	will output to the console:	<b>	compareArrays: a1[2]: 3 !== a2[2]: 4	compareArrays: a1[3]: cat !== a2[3]: mouse	compareArrays.js:73 compareArrays: a1[4]["0"]: 1.1 !== a2[4]["0"]: 1.2	compareArrays: a1[5]["name"]: Tom !== a2[5]["name"]: Jerry	compareArrays: a2["i"] is undefined.	</b></pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>a2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">This array will be compare with <b>a1</b>. Use only if <b>a1</b> is Array type</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="compareArrays.js.html">compareArrays.js</a>, <a href="compareArrays.js.html#line59">line 59</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-compareArrays.html">compareArrays</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Dec 27 2022 07:54:34 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
