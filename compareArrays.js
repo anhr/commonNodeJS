@@ -98,7 +98,7 @@ function compareArrays(a1, a2) {
 					}
 
 				});
-			else if (i1 !== i2) console.error(strcompareArrays + ': ' + name1 + '[' + i + ']: ' + i1 + ' !== ' + name2 + '[' + i + ']: ' + i2);
+			else if ( ( a2.length > i ) && (i1 !== i2) ) console.error(strcompareArrays + ': ' + name1 + '[' + i + ']: ' + i1 + ' !== ' + name2 + '[' + i + ']: ' + i2);
 
 		} else console.error(strcompareArrays + ': ' + name2 + '["' + i + '"] is undefined.');
 
