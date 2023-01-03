@@ -5,6 +5,8 @@ Creates an N-dimensional graphic object, checks for a collision between an n-dim
 # Content
 * [Quick start.](#Quickstart)
 * [Example of your web page.](#WebPage)
+* [Directory Contents.](#DirectoryContents)
+* [Building your own ND.](#Building)
 
 <a name="QuickStart"></a>
 ## Quick start
@@ -599,4 +601,21 @@ The following code is the result of this tutorial.
 
 	</script></body>
 </html>
+```
+<a name="DirectoryContents"></a>
+## Directory Contents
+
+```
+build - Compiled source code.
+```
+
+<a name="Building"></a>
+## Building your own ND.
+
+In the terminal, enter the following:
+
+```
+$ npm install
+$ npm install uglify-es
+$ npm run build
 ```
