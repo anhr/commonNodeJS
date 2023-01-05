@@ -49,7 +49,7 @@
  *	<b>
  *	compareArrays: a1[2]: 3 !== a2[2]: 4
  *	compareArrays: a1[3]: cat !== a2[3]: mouse
- *	compareArrays.js:73 compareArrays: a1[4]["0"]: 1.1 !== a2[4]["0"]: 1.2
+ *	compareArrays: a1[4]["0"]: 1.1 !== a2[4]["0"]: 1.2
  *	compareArrays: a1[5]["name"]: Tom !== a2[5]["name"]: Jerry
  *	compareArrays: a2["i"] is undefined.
  *	</b>
