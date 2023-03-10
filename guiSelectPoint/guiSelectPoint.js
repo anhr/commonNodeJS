@@ -637,6 +637,8 @@ class GuiSelectPoint {
 
 			}
 
+			if (cMeshs.__select.options.length < 2) f3DObjects.domElement.style.display = 'none';
+
 		}
 
 		const arrayMeshs = [];//сюда попадают все mesh в случае, когда this.addMesh вызывается до вызова this.add
@@ -655,6 +657,8 @@ class GuiSelectPoint {
 
 			}
 
+			f3DObjects.domElement.style.display = 'block';
+			
 			if ( !cMeshs ) {
 
 				//Test for duplicate item
@@ -1052,6 +1056,7 @@ class GuiSelectPoint {
 			if ( !folder )
 				return;//gui не создан
 			f3DObjects = folder.addFolder( lang.meshs );
+			f3DObjects.domElement.style.display = 'none';
 			var mesh, buttonScaleDefault, buttonPositionDefault, buttonRotationDefault;
 
 			cMeshs = f3DObjects.add( { Meshs: lang.notSelected }, 'Meshs', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
