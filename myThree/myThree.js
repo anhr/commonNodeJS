@@ -231,6 +231,7 @@ class MyThree {
 	 * @param {number} [options.canvas.width] width of the canvas
 	 * @param {number} [options.canvas.height] height of the canvas
 	 * @param {boolean} [options.canvas.fullScreen] default is full screen. false - no full screen
+	 * @param {boolean} [options.canvas.noButtonFullScreen] true - hide Full Screen button. default - Full Screen button is visible.
 	 * @param {number} [options.a=1] Can be use as 'a' parameter of the <b>Function</b>. See <b>options.a</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.execFunc.html" target="_blank">Player.execFunc</a>.
 	 * @param {number} [options.b=0] Can be use as 'b' parameter of the <b>Function</b>. See <b>options.b</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.execFunc.html" target="_blank">Player.execFunc</a>.
 	 * @param {object} [options.point] point settings. See <a href="../../jsdoc/Options/global.html#point" target="_blank">Options.point</a> for details.
