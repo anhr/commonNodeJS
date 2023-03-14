@@ -12249,7 +12249,7 @@ function CanvasMenu(renderer) {
 				this.setFullScreen = function (fullScreen) {
 						return fullScreenSettings.setFullScreen(fullScreen);
 				};
-				settings.menu.push({
+				if (!options.canvas.noButtonFullScreen) settings.menu.push({
 						style: 'float: right;',
 						id: "menuButtonFullScreen",
 						onclick: function onclick(event) {
