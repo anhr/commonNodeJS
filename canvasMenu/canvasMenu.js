@@ -176,13 +176,14 @@ class CanvasMenu {
 			 * @param {boolean} fullScreen false - full screen of the canvas.
 			 */
 			this.setFullScreen = function ( fullScreen ) { return fullScreenSettings.setFullScreen( fullScreen ); }
-			settings.menu.push( {
-
-				style: 'float: right;',
-				id: "menuButtonFullScreen",
-				onclick: function ( event ) { fullScreenSettings.onclick(); }
-
-			} );
+			if (!options.canvas.noButtonFullScreen)
+				settings.menu.push( {
+	
+					style: 'float: right;',
+					id: "menuButtonFullScreen",
+					onclick: function ( event ) { fullScreenSettings.onclick(); }
+	
+				} );
 
 		}
 
