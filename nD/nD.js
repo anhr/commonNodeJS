@@ -2449,7 +2449,7 @@ class ND {
 						if ( fChildSegment ) {
 							
 							const controller = fChildSegment.__controllers[0];
-							if ( controller.__select.selectedIndex != 0 ) {
+							if ( controller.__select && ( controller.__select.selectedIndex != 0 ) ) {
 								
 								controller.__select.selectedIndex = 0;
 								controller.__onChange();
