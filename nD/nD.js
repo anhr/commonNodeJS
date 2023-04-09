@@ -2437,7 +2437,7 @@ class ND {
 					dat.folderNameAndTitle( fSegment, name, title );
 					switch ( segmentIndex ) {
 
-						case 0:
+						case 0://edges
 							cDistance = dat.controllerZeroStep( fSegment, { value: '', }, 'value' );
 							cDistance.domElement.querySelector( 'input' ).readOnly = true;
 							dat.controllerNameAndTitle( cDistance, lang.distance, lang.distanceTitle );
@@ -2494,7 +2494,7 @@ class ND {
 
 							switch ( segmentIndex ) {
 			
-								case 0:
+								case 0://edges
 									cDistance.setValue( '' );
 									break;
 			
@@ -2587,7 +2587,7 @@ class ND {
 
 							switch ( segmentIndex ) {
 			
-								case 0:
+								case 0://edges
 
 									//debug
 									if ( lineIndices.length != 2 ) {
