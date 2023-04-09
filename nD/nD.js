@@ -2301,8 +2301,12 @@ class ND {
 
 					vertices: 'Vertices',
 					verticesTitle: 'Vertices.',
+
 					edges: 'Edges',
 					edgesTitle: 'The selected edge lists the vertex indices of the edge.',
+					distance: 'Distance',
+					distanceTitle: 'Distance between edge vertices.',
+
 					faces: 'Faces',
 					facesTitle: 'The selected face lists the indexes of the edges of that face.',
 					bodies: 'Bodies',
@@ -2335,8 +2339,12 @@ class ND {
 
 						lang.vertices = 'Вершины';
 						lang.verticesTitle = 'Вершины.';
+
 						lang.edges = 'Ребра';
 						lang.edgesTitle = 'В выбранном ребре перечислены индексы вершин ребра.';
+						lang.distance = 'Расстояние';
+						lang.distanceTitle = 'Расстояние между вершинами ребра.';
+
 						lang.faces = 'Грани';
 						lang.facesTitle = 'В выбранной грани перечислены индексы ребер этой грани.';
 						lang.bodies = 'Тела';
@@ -2424,8 +2432,18 @@ class ND {
 
 					}
 					const fSegment = fParent.addFolder( name );
+					let cDistance;
 					fSegment.userData = { objectItems: true, }
 					dat.folderNameAndTitle( fSegment, name, title );
+					switch ( segmentIndex ) {
+
+						case 0:
+							cDistance = dat.controllerZeroStep( fSegment, { value: '', }, 'value' );
+							cDistance.domElement.querySelector( 'input' ).readOnly = true;
+							dat.controllerNameAndTitle( cDistance, lang.distance, lang.distanceTitle );
+							break;
+
+					}
 					const cSegment = fSegment.add( items, 'Items', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
 
 						if ( fChildSegment ) {
@@ -2474,6 +2492,14 @@ class ND {
 
 						if ( selectedIndex === -1 ) {
 
+							switch ( segmentIndex ) {
+			
+								case 0:
+									cDistance.setValue( '' );
+									break;
+			
+							}
+							
 							removeVerticeControls();
 							if ( prevLine ) {
 
@@ -2558,6 +2584,23 @@ class ND {
 							}
 							createIndices(segment[selectedIndex], segmentIndex);
 							line = new THREE.LineSegments(buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
+
+							switch ( segmentIndex ) {
+			
+								case 0:
+
+									//debug
+									if ( lineIndices.length != 2 ) {
+										
+										console.error( 'ND: Select edge. Invalid lineIndices.length = ' + lineIndices.length );
+										break;
+
+									}
+										
+									cDistance.setValue( geometry.D3.points[lineIndices[0]].distanceTo( geometry.D3.points[lineIndices[1]] ) );
+									break;
+			
+							}
 
 							//debug
 							line.userData.name = fSegment.name + ' ' + value;
