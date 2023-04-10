@@ -2779,7 +2779,17 @@ class ND {
 					Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
 
 				},
-				onIntersectionOut: function () { Options.raycaster.onIntersectionOut( scene, options.renderer ); },
+				onIntersectionOut: function () {
+					
+					//когда мышка покидает объект, нужно удалить индексы ребер, граней и т.д., над которыми была мышка.
+					//В противном случае, когда выбираешь объект в dat.GUI, 
+					//автоматически веберется ребро, грань и т.д. над которыми последний раз была мышка
+					//Визуально это вызывает недоумение у пользователя
+					geometry.geometry.indices.forEach( indice => indice.selected = undefined );
+					
+					Options.raycaster.onIntersectionOut( scene, options.renderer );
+				
+				},
 				onMouseDown: function ( intersection, event ) {
 					
 					intersection.event = event;//Теперь можно выполнять разные действия в зависимости от нажатой кнопки мыши
