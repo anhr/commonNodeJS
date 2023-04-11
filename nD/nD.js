@@ -2648,28 +2648,32 @@ class ND {
 				childFolders.forEach( folderName => {
 
 					const childFolder = fParent.__folders[folderName];
-					var controller;
-					if ( childFolder.userData && childFolder.userData.objectItems ) controller = childFolder.__controllers[0];
-					else if ( folderName === 'indices' ) {
+					childFolder.__controllers.forEach( ( item, i ) => {
+
+						var controller;
+						if ( childFolder.userData && childFolder.userData.objectItems ) controller = childFolder.__controllers[i];
+						else if ( folderName === 'indices' ) {
+							
+							//ищем controller в GuiIndices
+							Object.keys( childFolder.__folders ).forEach( folderName => {
+	
+								if ( !controller ) {
+	
+									const folder = childFolder.__folders[folderName];
+									if ( folder.userData && folder.userData.objectItems ) controller = folder.__controllers[i];
+	
+								}
+							});
+	
+						}
+						if ( controller && controller.__select && controller.__select.selectedIndex != 0 ) {
+							
+							controller.__select.selectedIndex = 0;
+							controller.__onChange();
+	
+						}
 						
-						//ищем controller в GuiIndices
-						Object.keys( childFolder.__folders ).forEach( folderName => {
-
-							if ( !controller ) {
-
-								const folder = childFolder.__folders[folderName];
-								if ( folder.userData && folder.userData.objectItems ) controller = folder.__controllers[0];
-
-							}
-						});
-
-					}
-					if ( controller && controller.__select.selectedIndex != 0 ) {
-						
-						controller.__select.selectedIndex = 0;
-						controller.__onChange();
-
-					}
+					} );
 					if ( !childFolder.customFolder )  fParent.removeFolder( childFolder );
 					
 				} );
