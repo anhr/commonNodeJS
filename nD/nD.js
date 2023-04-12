@@ -2153,7 +2153,8 @@ class ND {
 
 						if (line) {
 
-							if (line.parent) line.parent.remove(line);
+							//if (line.parent)
+								line.parent.remove(line);
 							line = undefined;
 
 						}
