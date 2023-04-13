@@ -2439,7 +2439,7 @@ class ND {
 					switch ( segmentIndex ) {
 
 						case 0://edges
-							cDistance = dat.controllerZeroStep( fSegment, { value: '', }, 'value' );
+							cDistance = dat.controllerZeroStep( fSegment, { value: 0, }, 'value' );
 							cDistance.domElement.querySelector( 'input' ).readOnly = true;
 							dat.controllerNameAndTitle( cDistance, lang.distance, lang.distanceTitle );
 							break;
