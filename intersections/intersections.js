@@ -400,6 +400,7 @@ class Intersections {
 
 			}
 			elTitle.innerHTML = lang.progressTitle;
+			elTitle.style.color = 'black';
 			elProgress.appendChild( elTitle );
 			cProgress.min = "0";
 			cProgress.max = object.geometry.index.count;

@@ -2153,7 +2153,8 @@ class ND {
 
 						if (line) {
 
-							line.parent.remove(line);
+							//if (line.parent)
+								line.parent.remove(line);
 							line = undefined;
 
 						}
@@ -2301,8 +2302,12 @@ class ND {
 
 					vertices: 'Vertices',
 					verticesTitle: 'Vertices.',
+
 					edges: 'Edges',
 					edgesTitle: 'The selected edge lists the vertex indices of the edge.',
+					distance: 'Distance',
+					distanceTitle: 'Distance between edge vertices.',
+
 					faces: 'Faces',
 					facesTitle: 'The selected face lists the indexes of the edges of that face.',
 					bodies: 'Bodies',
@@ -2335,8 +2340,12 @@ class ND {
 
 						lang.vertices = 'Вершины';
 						lang.verticesTitle = 'Вершины.';
+
 						lang.edges = 'Ребра';
 						lang.edgesTitle = 'В выбранном ребре перечислены индексы вершин ребра.';
+						lang.distance = 'Расстояние';
+						lang.distanceTitle = 'Расстояние между вершинами ребра.';
+
 						lang.faces = 'Грани';
 						lang.facesTitle = 'В выбранной грани перечислены индексы ребер этой грани.';
 						lang.bodies = 'Тела';
@@ -2424,19 +2433,33 @@ class ND {
 
 					}
 					const fSegment = fParent.addFolder( name );
+					let cDistance;
 					fSegment.userData = { objectItems: true, }
 					dat.folderNameAndTitle( fSegment, name, title );
+					switch ( segmentIndex ) {
+
+						case 0://edges
+							cDistance = dat.controllerZeroStep( fSegment, { value: '', }, 'value' );
+							cDistance.domElement.querySelector( 'input' ).readOnly = true;
+							dat.controllerNameAndTitle( cDistance, lang.distance, lang.distanceTitle );
+							break;
+
+					}
 					const cSegment = fSegment.add( items, 'Items', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
 
 						if ( fChildSegment ) {
 							
-							const controller = fChildSegment.__controllers[0];
-							if ( controller.__select.selectedIndex != 0 ) {
+							fChildSegment.__controllers.forEach( ( item, i ) => {
 								
-								controller.__select.selectedIndex = 0;
-								controller.__onChange();
+								const controller = fChildSegment.__controllers[i];
+								if ( controller.__select && ( controller.__select.selectedIndex != 0 ) ) {
+									
+									controller.__select.selectedIndex = 0;
+									controller.__onChange();
+	
+								}
 
-							}
+							} );
 							fSegment.removeFolder( fChildSegment );
 							fChildSegment = undefined;
 
@@ -2474,6 +2497,14 @@ class ND {
 
 						if ( selectedIndex === -1 ) {
 
+							switch ( segmentIndex ) {
+			
+								case 0://edges
+									cDistance.setValue( '' );
+									break;
+			
+							}
+							
 							removeVerticeControls();
 							if ( prevLine ) {
 
@@ -2559,6 +2590,23 @@ class ND {
 							createIndices(segment[selectedIndex], segmentIndex);
 							line = new THREE.LineSegments(buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
 
+							switch ( segmentIndex ) {
+			
+								case 0://edges
+
+									//debug
+									if ( lineIndices.length != 2 ) {
+										
+										console.error( 'ND: Select edge. Invalid lineIndices.length = ' + lineIndices.length );
+										break;
+
+									}
+										
+									cDistance.setValue( geometry.D3.points[lineIndices[0]].distanceTo( geometry.D3.points[lineIndices[1]] ) );
+									break;
+			
+							}
+
 							//debug
 							line.userData.name = fSegment.name + ' ' + value;
 
@@ -2605,28 +2653,32 @@ class ND {
 				childFolders.forEach( folderName => {
 
 					const childFolder = fParent.__folders[folderName];
-					var controller;
-					if ( childFolder.userData && childFolder.userData.objectItems ) controller = childFolder.__controllers[0];
-					else if ( folderName === 'indices' ) {
+					childFolder.__controllers.forEach( ( item, i ) => {
+
+						var controller;
+						if ( childFolder.userData && childFolder.userData.objectItems ) controller = childFolder.__controllers[i];
+						else if ( folderName === 'indices' ) {
+							
+							//ищем controller в GuiIndices
+							Object.keys( childFolder.__folders ).forEach( folderName => {
+	
+								if ( !controller ) {
+	
+									const folder = childFolder.__folders[folderName];
+									if ( folder.userData && folder.userData.objectItems ) controller = folder.__controllers[i];
+	
+								}
+							});
+	
+						}
+						if ( controller && controller.__select && controller.__select.selectedIndex != 0 ) {
+							
+							controller.__select.selectedIndex = 0;
+							controller.__onChange();
+	
+						}
 						
-						//ищем controller в GuiIndices
-						Object.keys( childFolder.__folders ).forEach( folderName => {
-
-							if ( !controller ) {
-
-								const folder = childFolder.__folders[folderName];
-								if ( folder.userData && folder.userData.objectItems ) controller = folder.__controllers[0];
-
-							}
-						});
-
-					}
-					if ( controller && controller.__select.selectedIndex != 0 ) {
-						
-						controller.__select.selectedIndex = 0;
-						controller.__onChange();
-
-					}
+					} );
 					if ( !childFolder.customFolder )  fParent.removeFolder( childFolder );
 					
 				} );
@@ -2736,7 +2788,17 @@ class ND {
 					Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
 
 				},
-				onIntersectionOut: function () { Options.raycaster.onIntersectionOut( scene, options.renderer ); },
+				onIntersectionOut: function () {
+					
+					//когда мышка покидает объект, нужно удалить индексы ребер, граней и т.д., над которыми была мышка.
+					//В противном случае, когда выбираешь объект в dat.GUI, 
+					//автоматически веберется ребро, грань и т.д. над которыми последний раз была мышка
+					//Визуально это вызывает недоумение у пользователя
+					geometry.geometry.indices.forEach( indice => indice.selected = undefined );
+					
+					Options.raycaster.onIntersectionOut( scene, options.renderer );
+				
+				},
 				onMouseDown: function ( intersection, event ) {
 					
 					intersection.event = event;//Теперь можно выполнять разные действия в зависимости от нажатой кнопки мыши
