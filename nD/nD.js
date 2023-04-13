@@ -2449,13 +2449,17 @@ class ND {
 
 						if ( fChildSegment ) {
 							
-							const controller = fChildSegment.__controllers[0];
-							if ( controller.__select && ( controller.__select.selectedIndex != 0 ) ) {
+							fChildSegment.__controllers.forEach( ( item, i ) => {
 								
-								controller.__select.selectedIndex = 0;
-								controller.__onChange();
+								const controller = fChildSegment.__controllers[i];
+								if ( controller.__select && ( controller.__select.selectedIndex != 0 ) ) {
+									
+									controller.__select.selectedIndex = 0;
+									controller.__onChange();
+	
+								}
 
-							}
+							} );
 							fSegment.removeFolder( fChildSegment );
 							fChildSegment = undefined;
 
