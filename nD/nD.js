@@ -3532,9 +3532,18 @@ ND.gui = class {
 
 				const folder = fND.__folders[key];
 				if ( !folder.userData || ( folder.userData.objectItems === undefined ) ) return;
-				const cSegment = folder.__controllers[0], selectedItem = 0;
-				cSegment.__select.selectedIndex = selectedItem;
-				cSegment.setValue( cSegment.__select[selectedItem].innerHTML );
+//				const cSegment = folder.__controllers[0];
+				folder.__controllers.forEach( cSegment => {
+
+					if (cSegment.__select) {
+						
+						const selectedItem = 0;
+						cSegment.__select.selectedIndex = selectedItem;
+						cSegment.setValue( cSegment.__select[selectedItem].innerHTML );
+
+					}
+					
+				} );
 				
 				
 			} );
