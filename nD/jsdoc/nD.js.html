@@ -250,7 +250,7 @@ class ND {
 	 * For example if &lt;b>iAxes&lt;/b> is [1,2], then axis 1 interpret as axis 0 and axis 2 interpret as axis 1.
 	 * As result, you can rotate axes around another axis to 90 degrees.
 	 * In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.
-	 * @param {Boolean} [settings.plane=true] true - create &lt;b>vectorPlane&lt;/b>. See &lt;b>settings.vectorPlane&lt;/b> below.
+	 * @param {Boolean} [settings.plane=false] true - create &lt;b>vectorPlane&lt;/b>. See &lt;b>settings.vectorPlane&lt;/b> below.
 	 * @param {Array} [settings.vectorPlane] n-dimensional position of the panel
 	 * intersecting with the &lt;b>settings.object.geometry&lt;/b> n-dimensional graphical object. Available only if &lt;b>settings.plane&lt;/b> is true.
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
@@ -1441,6 +1441,7 @@ class ND {
 
 													const nD02 = new ND( n - 1, {
 
+														plane: true,
 														object: { geometry: {
 
 															position: positionWorld.copy(),//settings.object.geometry.position,
@@ -1454,6 +1455,7 @@ class ND {
 														arrayIntersects02 = nD02.intersection();
 													const nD12 = new ND( n - 1, {
 
+														plane: true,
 														object: { geometry: {
 
 															position: positionWorld.copy(),//settings.object.geometry.position,
@@ -1476,6 +1478,7 @@ class ND {
 
 													const nD0 = new ND( 2, {
 
+														plane: true,
 														object: { geometry: {
 
 															position: positionWorld,//settings.object.geometry.position,
@@ -2181,7 +2184,8 @@ class ND {
 
 						if (line) {
 
-							line.parent.remove(line);
+							//if (line.parent)
+								line.parent.remove(line);
 							line = undefined;
 
 						}
@@ -2210,7 +2214,12 @@ class ND {
 
 			if ( !geometry.D3 ) {
 
-				const nD = new ND( n, { object: { geometry: geometry, } } );
+				const nD = new ND( n, {
+					
+					plane: true,
+					object: { geometry: geometry, } 
+				
+				} );
 				geometry = nD.geometry;
 				
 			}
@@ -2329,8 +2338,12 @@ class ND {
 
 					vertices: 'Vertices',
 					verticesTitle: 'Vertices.',
+
 					edges: 'Edges',
 					edgesTitle: 'The selected edge lists the vertex indices of the edge.',
+					distance: 'Distance',
+					distanceTitle: 'Distance between edge vertices.',
+
 					faces: 'Faces',
 					facesTitle: 'The selected face lists the indexes of the edges of that face.',
 					bodies: 'Bodies',
@@ -2363,8 +2376,12 @@ class ND {
 
 						lang.vertices = 'Вершины';
 						lang.verticesTitle = 'Вершины.';
+
 						lang.edges = 'Ребра';
 						lang.edgesTitle = 'В выбранном ребре перечислены индексы вершин ребра.';
+						lang.distance = 'Расстояние';
+						lang.distanceTitle = 'Расстояние между вершинами ребра.';
+
 						lang.faces = 'Грани';
 						lang.facesTitle = 'В выбранной грани перечислены индексы ребер этой грани.';
 						lang.bodies = 'Тела';
@@ -2452,19 +2469,33 @@ class ND {
 
 					}
 					const fSegment = fParent.addFolder( name );
+					let cDistance;
 					fSegment.userData = { objectItems: true, }
 					dat.folderNameAndTitle( fSegment, name, title );
+					switch ( segmentIndex ) {
+
+						case 0://edges
+							cDistance = dat.controllerZeroStep( fSegment, { value: 0, }, 'value' );
+							cDistance.domElement.querySelector( 'input' ).readOnly = true;
+							dat.controllerNameAndTitle( cDistance, lang.distance, lang.distanceTitle );
+							break;
+
+					}
 					const cSegment = fSegment.add( items, 'Items', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
 
 						if ( fChildSegment ) {
 							
-							const controller = fChildSegment.__controllers[0];
-							if ( controller.__select.selectedIndex != 0 ) {
+							fChildSegment.__controllers.forEach( ( item, i ) => {
 								
-								controller.__select.selectedIndex = 0;
-								controller.__onChange();
+								const controller = fChildSegment.__controllers[i];
+								if ( controller.__select &amp;&amp; ( controller.__select.selectedIndex != 0 ) ) {
+									
+									controller.__select.selectedIndex = 0;
+									controller.__onChange();
+	
+								}
 
-							}
+							} );
 							fSegment.removeFolder( fChildSegment );
 							fChildSegment = undefined;
 
@@ -2502,6 +2533,14 @@ class ND {
 
 						if ( selectedIndex === -1 ) {
 
+							switch ( segmentIndex ) {
+			
+								case 0://edges
+									cDistance.setValue( '' );
+									break;
+			
+							}
+							
 							removeVerticeControls();
 							if ( prevLine ) {
 
@@ -2587,6 +2626,23 @@ class ND {
 							createIndices(segment[selectedIndex], segmentIndex);
 							line = new THREE.LineSegments(buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
 
+							switch ( segmentIndex ) {
+			
+								case 0://edges
+
+									//debug
+									if ( lineIndices.length != 2 ) {
+										
+										console.error( 'ND: Select edge. Invalid lineIndices.length = ' + lineIndices.length );
+										break;
+
+									}
+										
+									cDistance.setValue( geometry.D3.points[lineIndices[0]].distanceTo( geometry.D3.points[lineIndices[1]] ) );
+									break;
+			
+							}
+
 							//debug
 							line.userData.name = fSegment.name + ' ' + value;
 
@@ -2633,28 +2689,32 @@ class ND {
 				childFolders.forEach( folderName => {
 
 					const childFolder = fParent.__folders[folderName];
-					var controller;
-					if ( childFolder.userData &amp;&amp; childFolder.userData.objectItems ) controller = childFolder.__controllers[0];
-					else if ( folderName === 'indices' ) {
+					childFolder.__controllers.forEach( ( item, i ) => {
+
+						var controller;
+						if ( childFolder.userData &amp;&amp; childFolder.userData.objectItems ) controller = childFolder.__controllers[i];
+						else if ( folderName === 'indices' ) {
+							
+							//ищем controller в GuiIndices
+							Object.keys( childFolder.__folders ).forEach( folderName => {
+	
+								if ( !controller ) {
+	
+									const folder = childFolder.__folders[folderName];
+									if ( folder.userData &amp;&amp; folder.userData.objectItems ) controller = folder.__controllers[i];
+	
+								}
+							});
+	
+						}
+						if ( controller &amp;&amp; controller.__select &amp;&amp; controller.__select.selectedIndex != 0 ) {
+							
+							controller.__select.selectedIndex = 0;
+							controller.__onChange();
+	
+						}
 						
-						//ищем controller в GuiIndices
-						Object.keys( childFolder.__folders ).forEach( folderName => {
-
-							if ( !controller ) {
-
-								const folder = childFolder.__folders[folderName];
-								if ( folder.userData &amp;&amp; folder.userData.objectItems ) controller = folder.__controllers[0];
-
-							}
-						});
-
-					}
-					if ( controller &amp;&amp; controller.__select.selectedIndex != 0 ) {
-						
-						controller.__select.selectedIndex = 0;
-						controller.__onChange();
-
-					}
+					} );
 					if ( !childFolder.customFolder )  fParent.removeFolder( childFolder );
 					
 				} );
@@ -2764,7 +2824,17 @@ class ND {
 					Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
 
 				},
-				onIntersectionOut: function () { Options.raycaster.onIntersectionOut( scene, options.renderer ); },
+				onIntersectionOut: function () {
+					
+					//когда мышка покидает объект, нужно удалить индексы ребер, граней и т.д., над которыми была мышка.
+					//В противном случае, когда выбираешь объект в dat.GUI, 
+					//автоматически веберется ребро, грань и т.д. над которыми последний раз была мышка
+					//Визуально это вызывает недоумение у пользователя
+					geometry.geometry.indices.forEach( indice => indice.selected = undefined );
+					
+					Options.raycaster.onIntersectionOut( scene, options.renderer );
+				
+				},
 				onMouseDown: function ( intersection, event ) {
 					
 					intersection.event = event;//Теперь можно выполнять разные действия в зависимости от нажатой кнопки мыши
@@ -2948,12 +3018,15 @@ class ND {
 
 						for ( var i = 0; i &lt; segments.length; i++ ) {
 
-							const nd = new ND( n, { object: { geometry: {
+							const nd = new ND( n, {
 								
-								indices: settings.object.geometry.indices,
-								position: positionWorld.copy(),
-							
-							} }, indice: i, iSegments: iSegments, } ),
+								plane: true,
+								object: { geometry: {
+								
+									indices: settings.object.geometry.indices,
+									position: positionWorld.copy(),
+								
+								} }, indice: i, iSegments: iSegments, } ),
 								s = iSegments - 1;
 							var iIntersections;
 							if ( s !== 0 ) {//Не создавать iIntersections для ребер
@@ -3041,7 +3114,12 @@ class ND {
 
 							for ( var i = 0; i &lt; segment.length; i++ ) {
 	
-								const nd = new ND( n, { object: settings.object, indice: segment[i], iSegments: iSegments - 1, } );
+								const nd = new ND( n, {
+									
+									plane: true,
+									object: settings.object, indice: segment[i], iSegments: iSegments - 1,
+									
+								} );
 								if ( n > 4 ) {
 
 									if ( n === 5 ) {
@@ -3146,6 +3224,7 @@ class ND {
 
 		if ( scene ) {
 
+			//Если есть scene, обязательно должен быть options. Здесь создать options неполучится
 			options.scales.x.name = 0;
 			options.scales.y.name = 1;
 			options.scales.z.name = 2;
@@ -3282,7 +3361,7 @@ class ND {
 			}
 
 		}
-		if ( settings.plane === undefined ) settings.plane = true;
+		if ( settings.plane === undefined ) settings.plane = false;
 		if ( settings.plane ) {
 			
 			const plane = new Plane();
@@ -3651,7 +3730,7 @@ Object.defineProperty( Array.prototype, "equals", { enumerable: false } );
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Jan 03 2023 10:17:49 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Fri Apr 14 2023 09:21:18 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

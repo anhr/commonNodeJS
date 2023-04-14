@@ -222,7 +222,7 @@ class ND {
 	 * For example if <b>iAxes</b> is [1,2], then axis 1 interpret as axis 0 and axis 2 interpret as axis 1.
 	 * As result, you can rotate axes around another axis to 90 degrees.
 	 * In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.
-	 * @param {Boolean} [settings.plane=true] true - create <b>vectorPlane</b>. See <b>settings.vectorPlane</b> below.
+	 * @param {Boolean} [settings.plane=false] true - create <b>vectorPlane</b>. See <b>settings.vectorPlane</b> below.
 	 * @param {Array} [settings.vectorPlane] n-dimensional position of the panel
 	 * intersecting with the <b>settings.object.geometry</b> n-dimensional graphical object. Available only if <b>settings.plane</b> is true.
 	 * @param {THREE.Scene} [settings.scene] [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
@@ -1413,6 +1413,7 @@ class ND {
 
 													const nD02 = new ND( n - 1, {
 
+														plane: true,
 														object: { geometry: {
 
 															position: positionWorld.copy(),//settings.object.geometry.position,
@@ -1426,6 +1427,7 @@ class ND {
 														arrayIntersects02 = nD02.intersection();
 													const nD12 = new ND( n - 1, {
 
+														plane: true,
 														object: { geometry: {
 
 															position: positionWorld.copy(),//settings.object.geometry.position,
@@ -1448,6 +1450,7 @@ class ND {
 
 													const nD0 = new ND( 2, {
 
+														plane: true,
 														object: { geometry: {
 
 															position: positionWorld,//settings.object.geometry.position,
@@ -2183,7 +2186,12 @@ class ND {
 
 			if ( !geometry.D3 ) {
 
-				const nD = new ND( n, { object: { geometry: geometry, } } );
+				const nD = new ND( n, {
+					
+					plane: true,
+					object: { geometry: geometry, } 
+				
+				} );
 				geometry = nD.geometry;
 				
 			}
@@ -2982,12 +2990,15 @@ class ND {
 
 						for ( var i = 0; i < segments.length; i++ ) {
 
-							const nd = new ND( n, { object: { geometry: {
+							const nd = new ND( n, {
 								
-								indices: settings.object.geometry.indices,
-								position: positionWorld.copy(),
-							
-							} }, indice: i, iSegments: iSegments, } ),
+								plane: true,
+								object: { geometry: {
+								
+									indices: settings.object.geometry.indices,
+									position: positionWorld.copy(),
+								
+								} }, indice: i, iSegments: iSegments, } ),
 								s = iSegments - 1;
 							var iIntersections;
 							if ( s !== 0 ) {//Не создавать iIntersections для ребер
@@ -3075,7 +3086,12 @@ class ND {
 
 							for ( var i = 0; i < segment.length; i++ ) {
 	
-								const nd = new ND( n, { object: settings.object, indice: segment[i], iSegments: iSegments - 1, } );
+								const nd = new ND( n, {
+									
+									plane: true,
+									object: settings.object, indice: segment[i], iSegments: iSegments - 1,
+									
+								} );
 								if ( n > 4 ) {
 
 									if ( n === 5 ) {
@@ -3317,7 +3333,7 @@ class ND {
 			}
 
 		}
-		if ( settings.plane === undefined ) settings.plane = true;
+		if ( settings.plane === undefined ) settings.plane = false;
 		if ( settings.plane ) {
 			
 			const plane = new Plane();
