@@ -3180,6 +3180,7 @@ class ND {
 
 		if ( scene ) {
 
+			//Если есть scene, обязательно должен быть options. Здесь создать options неполучится
 			options.scales.x.name = 0;
 			options.scales.y.name = 1;
 			options.scales.z.name = 2;
