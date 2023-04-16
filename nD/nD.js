@@ -3547,7 +3547,7 @@ ND.gui = class {
 				
 				
 			} );
-			fND.domElement.style.display =  display;
+			if (object) fND.domElement.style.display =  display;
 			
 		}
 
