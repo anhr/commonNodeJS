@@ -66,6 +66,7 @@ class ND {
 	 * 	[0, 0, -0.6]//3
 	 * ]</b>,
 	 * </pre>
+	 * @param {Array} [settings.object.geometry.boRememberPosition=true] true - Remember vertex positions for higher performance. As result, new vertex positions have no effect.
 	 * @param {Array} [settings.object.geometry.indices] Array of <b>indices</b> of vertices of the n-dimensional graphical object.
 	 * Allows for vertices to be re-used across multiple segments.
 	 * <pre>
