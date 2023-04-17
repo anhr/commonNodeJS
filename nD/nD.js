@@ -1106,7 +1106,8 @@ class ND {
 						}
 
 					} else console.error('ND positionWorld get index')
-					positionPoint.positionWorld = array;
+					if (settings.object.geometry.boRememberPosition === undefined) settings.object.geometry.boRememberPosition = true;
+					if (settings.object.geometry.boRememberPosition) positionPoint.positionWorld = array;
 					settings.object.geometry.position.boPositionError = true;
 					return array;
 
