@@ -2107,7 +2107,10 @@ class ND {
 									return;
 	
 								}
-								indices.push( ...edge );
+								
+								//indices.push( ...edge );//incompatible with https://raw.githack.com/anhr/egocentricUniverse/dev/1D.html
+								edge.forEach( vertice => indices.push( vertice ) );
+								
 								if ( this.color ) {
 	
 									const color = new THREE.Color(this.color);
