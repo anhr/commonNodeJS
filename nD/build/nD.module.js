@@ -12239,7 +12239,8 @@ function ND(n) {
 						setRotationAxes();
 					}
 				} else console.error('ND positionWorld get index');
-				positionPoint.positionWorld = array;
+				if (settings.object.geometry.boRememberPosition === undefined) settings.object.geometry.boRememberPosition = true;
+				if (settings.object.geometry.boRememberPosition) positionPoint.positionWorld = array;
 				settings.object.geometry.position.boPositionError = true;
 				return array;
 			}
@@ -12289,6 +12290,7 @@ function ND(n) {
 								var i = parseInt(name);
 								if (!isNaN(i)) {
 									if (i >= target.length) return 0;
+									if (isNaN(target[i])) console.error('ND get settings.object.geometry.position[i][' + i + '] = ' + target[i]);
 									return target[i];
 								}
 								switch (name) {
@@ -12905,7 +12907,9 @@ function ND(n) {
 								console.error('ND.geometry.D3.get indices: duplicate edge index = ' + edge[0]);
 								return;
 							}
-							indices.push.apply(indices, toConsumableArray(edge));
+							edge.forEach(function (vertice) {
+								return indices.push(vertice);
+							});
 							if (this.color) {
 								(function () {
 									var hexToRgb = function hexToRgb(hex) {
