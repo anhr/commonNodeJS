@@ -1180,6 +1180,7 @@ class ND {
 									if ( !isNaN( i ) ) {
 
 										if ( i >= target.length ) return 0;
+										if ( isNaN( target[i] ) ) console.error( 'ND get settings.object.geometry.position[i][' + i + '] = ' + target[i] );
 										return target[i];
 
 									}
