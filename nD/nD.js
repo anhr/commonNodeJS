@@ -352,7 +352,7 @@ class ND {
 							}
 							
 						} );
-						if ( !detectedIndex ) {
+						if ( detectedIndex === undefined ) {
 							
 							console.error( 'ND: mouse move. Index of segment was not detected' );
 							break;
