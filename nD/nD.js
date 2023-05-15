@@ -2093,9 +2093,10 @@ class ND {
 						const edges = settings.object.geometry.indices[0];
 						for ( var i = 0; i < edges.length; i++ ) {
 	
-							const edge = edges[i].indices;
+							let edge = edges[i].indices;
 							if ( edge !== undefined ) {
 								
+								if ( edge.length === undefined ) edge = [0, 1];//for compatibility with EgocentricUniverse
 								if ( edge.length !== 2 ) {
 
 									console.error( 'ND.geometry.D3.get indices: invalid edge.length = ' + edge.length );
