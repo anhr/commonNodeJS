@@ -315,9 +315,15 @@ class ND {
 			for ( var segmentIndex = 0; segmentIndex < edges.length; segmentIndex++ ) {
 
 				const edgeCur = edges[segmentIndex];
+/*				
 				if (
 					( ( edgeCur.indices[0] === edge[0] ) && ( edgeCur.indices[1] === edge[1] ) ) ||
 					( ( edgeCur.indices[0] === edge[1] ) && ( edgeCur.indices[1] === edge[0] ) )
+				)
+*/	
+				if (
+					( ( edgeCur[0] === edge[0] ) && ( edgeCur[1] === edge[1] ) ) ||
+					( ( edgeCur[0] === edge[1] ) && ( edgeCur[1] === edge[0] ) )
 				) {
 
 					text += '\n' + lang.edgeId + ': ' + segmentIndex;
@@ -1300,10 +1306,8 @@ class ND {
 						const i = parseInt( name );
 						if (!isNaN(i)) {
 
-							const edge = edges[parseInt(name)];
-
-							if (edge.intersection) return edge;
-
+							const edge = edges[i];
+//							if (edge.intersection) return edge;
 							edge.intersection = (geometryIntersection) => {
 
 								const i = parseInt(name);
@@ -1328,7 +1332,7 @@ class ND {
 									//Когда размерность графического оъекта меньше 3
 									//и когда он создается из объета большей размерности
 									//то indices это прокси
-									if (indices.indices) indices = indices.indices;
+									//if (indices.indices) indices = indices.indices;
 
 									if (indices.length !== 2) {
 
@@ -1498,7 +1502,7 @@ class ND {
 								} else console.error('ND: settings.object.geometry.indices[]intersection. invalid name: ' + name);
 
 							};
-							//edge.indices = edges[parseInt(name)];
+//							edge.indices = edges[parseInt(name)];
 							return edge;
 
 						}
@@ -2870,11 +2874,13 @@ class ND {
 				}
 				const edge = settings.object.geometry.indices[0][iEdge];
 				edge.intersection( geometryIntersection );
-				const position = edge.indices.intersection.position;
+//				const position = edge.indices.intersection.position;
+				const position = edge.intersection.position;
 				if ( position ) {
 					
 					var boAdd = true;
-					if ( edge.indices.intersection.boVerticeOnPanel ) {
+//					if ( edge.indices.intersection.boVerticeOnPanel )
+					if ( edge.intersection.boVerticeOnPanel ) {
 
 						//Вершина на панели. В этом случае все ребра, сходящиеся к этой вершине буду выдвать одну и ту же точку пересечения
 						//Не нужно добавлять повторяющиеся точки.
