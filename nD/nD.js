@@ -420,17 +420,6 @@ class ND {
 
 				array = super(n, array).array;
 				const _this = this;
-/*				
-				if ( array.isVector ) return array;
-				if ( array instanceof Array === false ) {
-
-					if ( typeof array === 'number' ) array = [array];
-					else if ( array.array ) array = array.array;
-					else console.error( 'ND.Vector: invalid array type' );
-
-				}
-				if ( n !== undefined ) while ( array.length < n ) array.push( 0 );
-*/
 
 				//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
 				return new Proxy( array, {
@@ -442,7 +431,6 @@ class ND {
 
 							switch ( name ) {
 
-//								case "array": return array;
 								/* *
 								* @description
 								* <pre>
@@ -458,24 +446,9 @@ class ND {
 								case "point":
 									const THREE = three.THREE;
 									return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
-								/*
-								* Adds v to this vector.
-								*/
-/*
-								case "add":
-									return function ( v ) {
-
-										target.forEach( ( value, i ) => target[i] += v[i] );
-										return this;
-
-									}
-								case "index": return vectorSettings.index;
-								case "isVector": return true;
-*/
 								default: {
 
 									return _this[name];
-//									console.error( 'ND: Vector get. Invalid name: ' + name );
 								
 								}
 
@@ -888,136 +861,6 @@ class ND {
 
 								const cos = settings.object.rotation.trigonometry[index].cos, sin = settings.object.rotation.trigonometry[index].sin,
 									array = [];
-								/*
-								if ( n === 5 ) {
-
-									switch ( index ) {
-
-										case 0://0,1,2
-											array.push( [cos, -sin, 0, 0, 0] );
-											array.push( [sin, cos, 0, 0, 0] );
-											array.push( [0, 0, 1, 0, 0] );
-											array.push( [0, 0, 0, 1, 0] );
-											array.push( [0, 0, 0, 0, 1] );
-											break;
-										case 1://0,1,3
-											array.push( [cos, 0, -sin, 0, 0] );
-											array.push( [0, 1, 0, 0, 0] );
-											array.push( [sin, 0, cos, 0, 0] );
-											array.push( [0, 0, 0, 1, 0] );
-											array.push( [0, 0, 0, 0, 1] );
-											break;
-										case 2://0,1,4
-											array.push( [cos, 0, 0, -sin, 0] );
-											array.push( [0, 1, 0, 0, 0] );
-											array.push( [0, 0, 1, 0, 0] );
-											array.push( [sin, 0, 0, cos, 0] );
-											array.push( [0, 0, 0, 0, 1] );
-											break;
-										case 3://0,2,3
-											array.push( [cos, 0, 0, 0, -sin] );
-											array.push( [0, 1, 0, 0, 0] );
-											array.push( [0, 0, 1, 0, 0] );
-											array.push( [0, 0, 0, 1, 0] );
-											array.push( [sin, 0, 0, 0, cos] );
-											break;
-										case 4://0,2,4
-											array.push( [1, 0, 0, 0, 0] );
-											array.push( [0, cos, -sin, 0, 0] );
-											array.push( [0, sin, cos, 0, 0] );
-											array.push( [0, 0, 0, 1, 0] );
-											array.push( [0, 0, 0, 0, 1] );
-											break;
-										case 5://0,3,4
-											array.push( [1, 0, 0, 0, 0] );
-											array.push( [0, cos, 0, -sin, 0] );
-											array.push( [0, 0, 1, 0, 0] );
-											array.push( [0, sin, 0, cos, 0] );
-											array.push( [0, 0, 0, 0, 1] );
-											break;
-										case 6://1,2,3
-											array.push( [1, 0, 0, 0, 0] );
-											array.push( [0, cos, 0, 0, -sin] );
-											array.push( [0, 0, 1, 0, 0] );
-											array.push( [0, 0, 0, 1, 0] );
-											array.push( [0, sin, 0, 0, cos] );
-											break;
-										case 7://1,2,4
-											array.push( [1, 0, 0, 0, 0] );
-											array.push( [0, 1, 0, 0, 0] );
-											array.push( [0, 0, cos, -sin, 0] );
-											array.push( [0, 0, sin, cos, 0] );
-											array.push( [0, 0, 0, 0, 1] );
-											break;
-										case 8://1,3,4
-											array.push( [1, 0, 0, 0, 0] );
-											array.push( [0, 1, 0, 0, 0] );
-											array.push( [0, 0, cos, 0, -sin] );
-											array.push( [0, 0, 0, 1, 0] );
-											array.push( [0, 0, sin, 0, cos] );
-											break;
-										case 9://2,3,4
-											array.push( [1, 0, 0, 0, 0] );
-											array.push( [0, 1, 0, 0, 0] );
-											array.push( [0, 0, 1, 0, 0] );
-											array.push( [0, 0, 0, cos, -sin] );
-											array.push( [0, 0, 0, sin, cos] );
-											break;
-										default: console.error( 'nD: positionWorld getMatrix. n = ' + n + ' invalid index =  ' + index );
-
-									}
-
-								} else if ( n === 4 ) {
-
-									switch( index ) {
-
-										case 0://xy
-											array.push( [cos, -sin, 0, 0] );
-											array.push( [sin,  cos, 0, 0] );
-											array.push( [0,      0, 1, 0] );
-											array.push( [0,      0, 0, 1] );
-											break;
-										case 1://xz
-											array.push( [cos, 0, -sin, 0] );
-											array.push( [0,   1,    0, 0] );
-											array.push( [sin, 0,  cos, 0] );
-											array.push( [0,   0,    0, 1] );
-											break;
-										case 2://xw
-											array.push( [cos, 0, 0, -sin] );
-											array.push( [0,   1, 0,    0] );
-											array.push( [0,   0, 1,    0] );
-											array.push( [sin, 0, 0,  cos] );
-											break;
-										case 3://yz
-											array.push( [1,   0,    0, 0] );
-											array.push( [0, cos, -sin, 0] );
-											array.push( [0, sin,  cos, 0] );
-											array.push( [0,   0,    0, 1] );
-											break;
-										case 4://yw
-											array.push( [1,   0, 0,    0] );
-											array.push( [0, cos, 0, -sin] );
-											array.push( [0,   0, 1,    0] );
-											array.push( [0, sin, 0,  cos] );
-											break;
-										case 5://zw
-											array.push( [1, 0,   0,    0] );
-											array.push( [0, 1,   0,    0] );
-											array.push( [0, 0, cos, -sin] );
-											array.push( [0, 0, sin,  cos] );
-											break;
-										default: console.error( 'nD: positionWorld getMatrix. n = ' + n + ' invalid index =  ' + index );
-			
-									}
-									
-								} else if ( n === 2 ) {
-
-									//https://ru.wikipedia.org/wiki/%D0%9C%D0%B0%D1%82%D1%80%D0%B8%D1%86%D0%B0_%D0%BF%D0%BE%D0%B2%D0%BE%D1%80%D0%BE%D1%82%D0%B0
-									array.push( [cos, -sin] );
-									array.push( [sin, cos] );
-									
-								}*/
 								const tI = rotationAxes[index].tI;
 								for ( var i = 0; i < n; i++ ) {
 
@@ -1270,9 +1113,6 @@ class ND {
 					}
 					target[name] = value;
 
-					//if ( name != 'boPositionError' )
-					//	console.log('ND settings.object.geometry.position set: name = ' + name );
-
 					return true;
 
 				},
@@ -1281,6 +1121,7 @@ class ND {
 
 		}
 		settings.object.geometry.position = proxyGeometryPosition();
+
 		//indices
 
 		function setIndices() {
@@ -2041,33 +1882,13 @@ class ND {
 								
 							}
 							const edgeVertices = indices[0][edge].indices;
-/*							
-							function push( i ) {
-
-								if ( faceVertices.length > 2 ) {
-									
-									console.error( 'ND: geometry.D3.faceIndices get. Invalid face vertices count = ' + faceVertices.length );
-									return;
-
-								}
-								const vertice = new THREE.Vector3().copy( geometry.D3.points[i] );
-								vertice.i = i;
-								faceVertices.push( vertice );
-								
-							}
-*/
 							if ( faceVertices.length === 0 ) {
 
-/*								
-								push( edgeVertices[0] );
-								push( edgeVertices[1] );
-*/
 								faceVertices.push( edgeVertices[0] );
 								faceVertices.push( edgeVertices[1] );
 
 							} else {
 
-//									var boPush = false;//for debug
 								var boVertice0 = false, boVertice1 = false;
 								for ( var i = 0; i < faceVertices.length; i++ ) {
 
@@ -2076,15 +1897,10 @@ class ND {
 									else if ( faceVertice === edgeVertices[1] ) boVertice0 = true;
 									
 								}
-//									if ( !boPush ) console.error( 'ND: geometry.D3.faceIndices get. Missing push');
 								if ( !boVertice0 && !boVertice1 ) console.error( 'ND: geometry.D3.faceIndices get. Missing push');
 								else if ( boVertice0 != boVertice1 ) {
 
 									faceVertices.push( edgeVertices[boVertice0 ? 0 : 1] );
-/*									
-									if ( boVertice0 ) push( edgeVertices[0] );
-									else push( edgeVertices[1] );
-*/
 									
 								}//else вершины третьего ребра совпадают с одной оз вершин первого и второго ребра
 								
@@ -2237,7 +2053,6 @@ class ND {
 			const object = indices.length > 1 ?
 				settings3D.faces ?
 					new THREE.Mesh(buffer, new THREE.MeshLambertMaterial({
-//						color: settings3D.faces.color,
 						color: color,
 						opacity: settings3D.faces.opacity,
 						transparent: settings3D.faces.transparent,
@@ -3556,7 +3371,6 @@ ND.gui = class {
 
 				const folder = fND.__folders[key];
 				if ( !folder.userData || ( folder.userData.objectItems === undefined ) ) return;
-//				const cSegment = folder.__controllers[0];
 				folder.__controllers.forEach( cSegment => {
 
 					if (cSegment.__select) {
@@ -3634,35 +3448,6 @@ ND.VectorN = class {
 				return array[i];
 
 			},
-/*
-			set: function (target, name, value) {
-
-				const i = parseInt(name);
-				if (!isNaN(i)) {
-
-					if (i >= array.length) {
-
-						array.push(value);
-						return array.length;
-
-					}
-					array[i] = value;
-					_ND.intersection();
-					if (vectorSettings.onChange) vectorSettings.onChange();
-					return true;
-
-				}
-				switch (name) {
-
-					case 'onChange':
-						vectorSettings.onChange = value;
-						return vectorSettings.onChange;
-					default: console.error('ND: Vector set. Invalid name: ' + name);
-
-				}
-
-			}
-*/
 
 		});
 
