@@ -178,16 +178,6 @@ class Triangle extends GraphicObject {
 									if (!isNaN(i)) {
 
 										return _edges[indices.faces[_this.classSettings.faceId][i]];
-/*										
-										const edge = _edges[indices.faces[_this.classSettings.faceId][i]];
-										if ( edge.indices ) return edge.indices;//После вызова ND массив edge преобразуется в обект, коромо массив оказывается в edge.indices
-										return edge;
-*/		  
-/*										
-										const edgeId = indices.faces[_this.classSettings.faceId][i];
-										let edge = _edges[edgeId];
-										return edge;
-*/		  
 				
 									}
 									switch (name) {
@@ -571,19 +561,6 @@ class Triangle extends GraphicObject {
 			//indices.edges.push({ vertices: [1,2] });
 			//indices.edges = [];//Error: EgocentricUniverse: indices.edges set. duplicate edges
 			//indices.edges[0] = {};//Error: EgocentricUniverse: indices.edges set. Hidden method: edges[0] = {}
-			/*
-			indices.edges.forEach( ( edge, edgeIndex ) => {
-
-				//indices.edges[0] = edge;//Error: Circle: indices.edges set. Hidden method: edges[0] = {"vertices":[0,1]}
-				//indices.edges.push(edge);//Error: Circle: Edge. Duplicate proxy
-				//const edgeVertices = edge.vertices;
-				//edge.vertices = edgeVertices;
-//					const edgeVerticeId = edgeVertices[0];
-				//edgeVertices.forEach( ( vertice, i ) => console.log( 'indices.edges[' + edgeIndex + '].vertices[' + i + '] = ' + vertice ) );
-				//edgeVertices[1] = 0;//Error: Circle: edges[0].vertices[1]. Duplicate vertice index = 0
-			
-			} );
-		   */
 
 		}
 		

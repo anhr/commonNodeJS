@@ -251,7 +251,7 @@ class Sphere extends Circle
 		//сразу заменяем все грани на прокси, потому что в противном случае, когда мы создаем прокси грани в get, каждый раз,
 		//когда вызывается get, в результате может получться бесконечная вложенная конструкция и появится сообщение об ошибке:
 		//EgocentricUniverse: Face get. Duplicate proxy
-		settings.object.geometry.indices.faces.forEach( ( face, faceId ) => face.face = new Circle/*Triangle*/( this.options, {
+		settings.object.geometry.indices.faces.forEach( ( face, faceId ) => face.face = new Triangle/*Circle*/( this.options, {
 			
 			faceId: faceId,
 			settings: settings,
