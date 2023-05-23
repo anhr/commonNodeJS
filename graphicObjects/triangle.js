@@ -1,6 +1,6 @@
 /**
- * @module Circle
- * @description Circle graphical object.
+ * @module Triangle
+ * @description Triangle graphical object.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -15,15 +15,17 @@
 
 //import EgocentricUniverse from './egocentricUniverse.js';
 //import GraphicObject from './graphicObject.js';
-import Circle from './circle.js';
+//import Circle from './circle.js';
+import Utils from './utils.js';
 
 //import three from '../../commonNodeJS/master/three.js'
 import three from '../three.js'
 
-const sEdges = 'Circle';
+const sEdges = 'Triangle';
 let isEdgesIndicesProxy = false;
 
-class Triangle extends Circle {
+class Triangle extends Utils//Circle
+{
 
 	/**
 	 * Circle graphical object.
@@ -50,7 +52,7 @@ class Triangle extends Circle {
 	 **/
 	constructor( options, classSettings={} ) {
 
-		super( options, classSettings );
+		super( options, classSettings.settings );
 
 	}
 

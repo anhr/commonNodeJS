@@ -12,7 +12,7 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
-
+/*
 import ND from '../nD/nD.js';
 //import ND from '../nD/build/nD.module.js';
 //import ND from '../nD/build/nD.module.min.js';
@@ -20,6 +20,8 @@ import ND from '../nD/nD.js';
 //import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.js';
 //import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
 if (ND.default) ND = ND.default;
+*/
+import Utils from './utils.js';
 
 const debug = true;
 //const debug = false;
@@ -27,7 +29,7 @@ const debug = true;
 const sEgocentricUniverse = 'GraphicObject', sOverride = sEgocentricUniverse + ': Please override the %s method in your child class.';
 let lang;
 
-class GraphicObject {
+class GraphicObject extends Utils {
 
 	//base methods
 	
@@ -72,6 +74,7 @@ class GraphicObject {
 	 **/
 	constructor( options, classSettings ) {
 
+		super( options, classSettings.settings );
 		const egocentricUniverse = this, settings = classSettings.settings;
 		this.options = options;
 		this.settings = settings;
@@ -361,7 +364,7 @@ class GraphicObject {
 
 		}
 */   
-
+/*
 		//Project universe into 3D space
 		this.display = ( n,//universe dimension
 						settings, debugObject ) => { 
@@ -369,23 +372,13 @@ class GraphicObject {
 //			settings.scene = scene;
 			settings.options = options;
 			if (!settings.object.name) settings.object.name = lang.universe;
-/*
-			//for compability with ND
-			//fixing of the
-			//ND.geometry.D3.get indices: invalid edge.length = undefined
-			//error
-			const edges = settings.object.geometry.indices[0];
-			edges.forEach( ( edge, i ) => {
-
-				if (!( edge instanceof Array )) edges[i] = [0, 1];
-				
-			} );
-*/							
 			new ND( n, settings );
 
 			if (debugObject) settings.scene.add( debugObject );
 		
 		}
+*/
+/*
 		this.remove = ( scene ) => {
 
 			for (var i = scene.children.length - 1; i >= 0; i--) {
@@ -399,13 +392,14 @@ class GraphicObject {
 			this.settings.object.geometry.position.forEach( vertice => vertice.length = 0 );
 			
 		}
+*/
 //		if (!settings.noTest) this.project();
 		
 	}
 
 }
 
-GraphicObject.ND = ND;
+//GraphicObject.ND = ND;
 
 export default GraphicObject;
 

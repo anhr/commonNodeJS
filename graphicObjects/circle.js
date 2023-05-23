@@ -17,7 +17,7 @@
 import GraphicObject from './graphicObject.js';
 
 //import three from '../../commonNodeJS/master/three.js'
-import three from '../three.js'
+//import three from '../three.js'
 
 const sEdges = 'Circle';
 let isEdgesIndicesProxy = false;
@@ -36,7 +36,7 @@ class Circle extends GraphicObject {
 		this.settings.object.geometry.indices.faces.forEach((face, i) => console.log('indices.faces[' + i + ']. ' + JSON.stringify( face )));
 		
 	}
-
+/*
 	//Project universe into 3D space
 	project(
 		scene,
@@ -97,6 +97,7 @@ class Circle extends GraphicObject {
 		);
 
 	}
+*/
 	get verticeEdgesLengthMax() { return 2; }//нельзя добавлть новое ребро если у вершины уже 3 ребра
 	Test( vertice, strVerticeId ){
 		

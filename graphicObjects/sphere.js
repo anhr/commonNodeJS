@@ -38,64 +38,6 @@ class Sphere extends Circle
 		this.settings.object.geometry.indices.faces.forEach((face, i) => console.log('indices.faces[' + i + ']. ' + JSON.stringify( face )));
 		
 	}
-	
-	//Project universe into 3D space
-	project(
-		scene,
-		bLog = true//log positions and indices to cnosole 
-	){
-
-//		const indices = this.settings.object.geometry.indices, scene = this.scene, options = this.options;
-
-		//remove previous universe
-		this.remove( scene );
-		
-		const THREE = three.THREE;
-
-		this.settings.object.geometry.indices.faces.forEach( face => face.face.project( scene, 3,//Если размерность вселенной задать меньше 3 то исчезнут оси коодинат
-		   //false
-		) );
-		
-		if ( this.debug ) {
-
-//			if (bLog) this.log();
-			
-			const color = "lightgray", opacity = 0.2;
-				
-			const sphere = new THREE.Mesh( new FibonacciSphereGeometry(),//new THREE.SphereGeometry( 1 ),
-
-				new THREE.MeshLambertMaterial( {
-	
-					color: color,
-					opacity: opacity,
-					transparent: true,
-					side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
-	
-				} )
-	
-			);			
-			scene.add( sphere );
-
-			const plane = new THREE.Mesh( new THREE.PlaneGeometry( 2.0, 2.0 ),
-
-				new THREE.MeshLambertMaterial( {
-
-					color: color,
-					opacity: opacity,
-					transparent: true,
-					side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
-
-				} )
-
-			);
-			scene.add( plane );
-//			plane.name = name;
-			
-			if (typeof Intersections != 'undefined') new Intersections( sphere, plane );
-			
-		}
-
-	}
 	get verticeEdgesLengthMax() { return 6 }//нельзя добавлять новое ребро если у вершины уже 6 ребер
 	Test( vertice, strVerticeId ){
 		
@@ -273,6 +215,64 @@ class Sphere extends Circle
 
 		if (classSettings.bodyId === undefined) classSettings.bodyId = 0;
 		super( options, classSettings );
+
+		//Project universe into 3D space
+		this.project = (
+			scene,
+			bLog = true//log positions and indices to cnosole 
+		) => {
+
+			//		const indices = this.settings.object.geometry.indices, scene = this.scene, options = this.options;
+
+			//remove previous universe
+			this.remove(scene);
+
+			const THREE = three.THREE;
+
+			this.settings.object.geometry.indices.faces.forEach(face => face.face.project(scene, 3,//Если размерность вселенной задать меньше 3 то исчезнут оси коодинат
+				//false
+			));
+
+			if (this.debug) {
+
+				//			if (bLog) this.log();
+
+				const color = "lightgray", opacity = 0.2;
+
+				const sphere = new THREE.Mesh(new FibonacciSphereGeometry(),//new THREE.SphereGeometry( 1 ),
+
+					new THREE.MeshLambertMaterial({
+
+						color: color,
+						opacity: opacity,
+						transparent: true,
+						side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+
+					})
+
+				);
+				scene.add(sphere);
+
+				const plane = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 2.0),
+
+					new THREE.MeshLambertMaterial({
+
+						color: color,
+						opacity: opacity,
+						transparent: true,
+						side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+
+					})
+
+				);
+				scene.add(plane);
+				//			plane.name = name;
+
+				if (typeof Intersections != 'undefined') new Intersections(sphere, plane);
+
+			}
+
+		}
 
 	}
 
