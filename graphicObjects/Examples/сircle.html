@@ -41,7 +41,7 @@
 
 		new MyThree( (scene, options) => {
 
-			const universe = new Circle( options, {
+			const universe = new Circle( options, /*{
 
 				settings: {
 					
@@ -67,12 +67,10 @@
 										//vertices: [1, 2],
 										//vertices: [0, 2],
 									},//2
-									/*
 									{
 										//distance: 0.3,
 										//vertices: [2, 0],
 									},//3
-		 */
 								],
 								faces: [
 								   [
@@ -91,7 +89,7 @@
 
 				}
 
-			} );
+			}*/ );
 			//universe.settings.indices.edges.push();//Error: Edges: push edge. Invalid edge = undefined
 			universe.settings.object.geometry.position.test();
 			universe.pushEdge();

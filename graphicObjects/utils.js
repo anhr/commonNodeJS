@@ -27,18 +27,57 @@ import three from '../three.js'
 //const debug = true;
 //const debug = false;
 
+let lang;
+
 class Utils {
 
 	constructor( options, settings ) {
 
 		this.debug = true;
 
+		if (!lang) {
+
+			//Localization
+
+			const getLanguageCode = options.getLanguageCode;
+
+			lang = {
+
+				name: "Object",
+
+			};
+
+			const _languageCode = getLanguageCode();
+
+			switch (_languageCode) {
+
+				case 'ru'://Russian language
+
+					lang.name = 'Объект';
+
+					break;
+				default://Custom language
+					if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
+						break;
+
+					Object.keys(guiParams.lang).forEach(function (key) {
+
+						if (lang[key] === undefined)
+							return;
+						lang[key] = guiParams.lang[key];
+
+					});
+
+			}
+
+		}
+
 		//display graphic object to the canvas
 		this.display = (n,//space dimension
 			settings, debugObject) => {
 
 			settings.options = options;
-			if (!settings.object.name) settings.object.name = lang.universe;
+			settings.object.name = settings.object.name || lang.name;
 			new ND(n, settings);
 
 			if (debugObject) settings.scene.add(debugObject);

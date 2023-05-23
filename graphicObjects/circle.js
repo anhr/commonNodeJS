@@ -614,14 +614,14 @@ class Circle extends GraphicObject {
 	 **/
 	constructor( options, classSettings={} ) {
 
-		const settings = classSettings.settings || {};
+//		const settings = classSettings.settings || {};
 		if (classSettings.faceId === undefined) classSettings.faceId = 0;
 		
 		super( options, classSettings );
 
 		this.pushEdge = ( edge ) => {
 			
-			settings.object.geometry.indices.edges.push( edge );
+			classSettings.settings.object.geometry.indices.edges.push( edge );
 			
 		}
 

@@ -24,7 +24,7 @@ if (ND.default) ND = ND.default;
 import Utils from './utils.js';
 
 const sEgocentricUniverse = 'GraphicObject', sOverride = sEgocentricUniverse + ': Please override the %s method in your child class.';
-let lang;
+//let lang;
 
 class GraphicObject extends Utils {
 
@@ -71,13 +71,14 @@ class GraphicObject extends Utils {
 	 **/
 	constructor( options, classSettings ) {
 
+		classSettings.settings = classSettings.settings || {};
 		super( options, classSettings.settings );
 		const _this = this, settings = classSettings.settings;
 		this.options = options;
 		this.settings = settings;
 		this.classSettings = classSettings;
 //		this.debug = debug;
-
+/*
 		if (!lang) {
 
 			//Localization
@@ -114,6 +115,7 @@ class GraphicObject extends Utils {
 			}
 
 		}
+*/
 
 		settings.object = settings.object || {};
 		settings.object.geometry = settings.object.geometry || {};
