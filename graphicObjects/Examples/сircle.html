@@ -41,13 +41,13 @@
 
 		new MyThree( (scene, options) => {
 
-			const universe = new Circle( options, /*{
+			const universe = new Circle( options, {
 
 				settings: {
 					
 					object: {
 	
-						//name: 'poly line',
+						name: 'poly line',
 						//color: 'red',
 						geometry: {
 	
@@ -89,7 +89,7 @@
 
 				}
 
-			}*/ );
+			} );
 			//universe.settings.indices.edges.push();//Error: Edges: push edge. Invalid edge = undefined
 			universe.settings.object.geometry.position.test();
 			universe.pushEdge();

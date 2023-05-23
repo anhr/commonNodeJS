@@ -14,15 +14,18 @@
 */
 
 //import EgocentricUniverse from './egocentricUniverse.js';
-import GraphicObject from './graphicObject.js';
+//import GraphicObject from './graphicObject.js';
+import Utils from './utils.js';
 
 //import three from '../../commonNodeJS/master/three.js'
 //import three from '../three.js'
 
-const sEdges = 'Circle';
+const sEdges = 'Circle', sEgocentricUniverse = sEdges;//, sOverride = sEgocentricUniverse + ': Please override the %s method in your child class.';
 let isEdgesIndicesProxy = false;
+let lang;
 
-class Circle extends GraphicObject {
+class Circle extends Utils//GraphicObject
+{
 
 	_edgesSettings;
 	
@@ -614,12 +617,238 @@ class Circle extends GraphicObject {
 	 **/
 	constructor( options, classSettings={} ) {
 
-//		const settings = classSettings.settings || {};
+		//Localization
+
+		const getLanguageCode = options.getLanguageCode;
+
+		const lang = {
+
+			name: "Circle",
+
+		};
+
+		const _languageCode = getLanguageCode();
+
+		switch (_languageCode) {
+
+			case 'ru'://Russian language
+
+				lang.name = 'Окружность';
+
+				break;
+			default://Custom language
+				if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
+					break;
+
+				Object.keys(guiParams.lang).forEach(function (key) {
+
+					if (lang[key] === undefined)
+						return;
+					lang[key] = guiParams.lang[key];
+
+				});
+
+		}
+
 		if (classSettings.faceId === undefined) classSettings.faceId = 0;
 		
-		super( options, classSettings );
+//		super( options, classSettings );
+		classSettings.settings = classSettings.settings || {};
+		const settings = classSettings.settings;
+		settings.object = settings.object || {};
+		settings.object.name = settings.object.name || lang.name;
+		
+		super(options, classSettings.settings);
+		
+		const _this = this;
+		this.options = options;
+		this.settings = settings;
+		this.classSettings = classSettings;
+		
+		settings.object.geometry = settings.object.geometry || {};
+		if (settings.object.geometry.indices) {
 
-		this.pushEdge = ( edge ) => {
+			if (!settings.object.geometry.indices.isUniversyProxy) {
+
+				const indices = [];
+				Object.keys(settings.object.geometry.indices).forEach(key => indices[key] = settings.object.geometry.indices[key]);
+				settings.object.geometry.indices = indices;
+
+			}
+
+		} else settings.object.geometry.indices = {};
+		if (!settings.object.geometry.indices.isUniversyProxy) {
+
+			settings.object.geometry.indices[0] = settings.object.geometry.indices[0] || settings.object.geometry.indices.edges || [];
+			delete settings.object.geometry.indices.edges;
+			settings.object.geometry.indices[1] = settings.object.geometry.indices[1] || settings.object.geometry.indices.faces || [];
+			delete settings.object.geometry.indices.faces;
+			settings.object.geometry.indices[2] = settings.object.geometry.indices[2] || settings.object.geometry.indices.bodies || [];
+			delete settings.object.geometry.indices.bodies;
+			settings.object.geometry.indices = new Proxy(settings.object.geometry.indices ? settings.object.geometry.indices : [], {
+
+				get: function (_indices, name) {
+
+					const i = parseInt(name);
+					if (!isNaN(i)) return _indices[i];
+
+					switch (name) {
+
+						case 'isUniversyProxy': return true;
+						case 'count': return _indices.count;
+						case 'boAddIndices':
+						case 'length':
+						case 'forEach': return _indices[name];//for compatibility with ND
+						default: console.error(sEgocentricUniverse + ': indices get: invalid name: ' + name);
+
+					}
+					return _indices[name];
+
+				}
+
+			});
+
+		}
+
+		/**
+		 * @description array of Vertices.
+		 **/
+		settings.object.geometry.position = settings.object.geometry.position || new Proxy([], {
+
+			get: function (_position, name) {
+
+				const i = parseInt(name);
+				if (!isNaN(i)) {
+
+					if (i >= _position.length)
+						console.error(sEgocentricUniverse + ': position get. Invalid index = ' + i + ' position.length = ' + _position.length);
+					return _position[i];
+
+				}
+				switch (name) {
+
+					case 'push': return (vertice = []) => {
+
+						_position.push(new Proxy(vertice, {
+
+							get: (vertice, name) => {
+
+								switch (name) {
+
+									case 'edges':
+
+										if (!_this.debug) {
+
+											console.error(sEgocentricUniverse + ': vertice.edges. Set debug = true first.');
+											return;
+
+										}
+										vertice.edges = vertice.edges || new Proxy([], {
+
+											get: (edges, name) => {
+
+												switch (name) {
+
+													case 'push': return (edgeId, verticeId) => {
+
+														if (_this.debug) {
+
+															const sPush = sEgocentricUniverse + ': Vertice' + (verticeId === undefined ? '' : '[' + verticeId + ']') + '.edges.push(' + edgeId + '):';
+
+															if (edges.length >= this.verticeEdgesLengthMax) {
+
+																console.error(sPush + ' invalid edges.length = ' + edges.length);
+																return;
+
+															}
+															//find for duplicate edgeId
+															for (let j = 0; j < edges.length; j++) {
+
+																if (edges[j] === edgeId) {
+
+																	console.error(sPush + ' duplicate edgeId: ' + edgeId);
+																	return;
+
+																}
+
+															}
+
+														}
+
+														edges.push(edgeId);
+
+													}
+
+												}
+												return edges[name];
+
+											},
+										});
+										return vertice.edges;
+
+								}
+								return vertice[name];
+
+							},
+
+						}));
+
+					};
+						break;
+					//for debug
+					case 'test': return () => {
+
+						//соеденить конец последнего ребра с началом первого ребра
+						//indices.edges[indices.edges.length - 1].vertices[1] = indices.edges[0].vertices[0];
+
+						if (!_this.debug) return;
+
+						_position.forEach((vertice, verticeId) => {
+
+							const str1 = sEgocentricUniverse + ': position.test()', strVerticeId = 'position(' + verticeId + ')';
+							_this.Test(vertice, strVerticeId);
+							vertice.edges.forEach(edgeId => {
+
+								if (typeof edgeId !== "number") console.error(str1 + '. ' + strVerticeId + '. Invalid edgeId = ' + edgeId);
+
+							});
+
+						})
+					}
+						break;
+
+				}
+				return _position[name];
+
+			},
+			set: function (_position, name, value) {
+
+				const i = parseInt(name);
+				if (!isNaN(i)) {
+
+					//					console.error(sEgocentricUniverse + ': position set. Hidden method: position[' + i + '] = ' + value);
+					value.forEach((axis, j) => {
+
+						if (isNaN(axis)) console.error(sEgocentricUniverse + ': position set. position[' + i + '][' + j + '] = ' + axis);
+						else if ((_position[i].push(axis) - 1) != j)
+							console.error(sEgocentricUniverse + ': position set. position[' + i + '][' + j + '] = ' + axis + ' Invalid new axis index = ' + j);
+
+					});
+
+				}
+				return true;
+
+			}
+
+		});
+
+		//settings.count = 'count';//Error: Edges: indices.edges set. Invalid edges array: count
+		//settings.count = [{ isProxy: true }];//Error: Faces: faces[0]. Duplicate proxy
+		//settings.count = [{ edges: true }];//Error: Faces: faces[0]. Invalid face.edges instance: true
+		//settings.count = [[]];//Error: Faces: faces[0]. Invalid face instance
+		this.Indices();
+
+		this.pushEdge = (edge) => {
 			
 			classSettings.settings.object.geometry.indices.edges.push( edge );
 			
