@@ -118,43 +118,6 @@ class GraphicObject extends Utils {
 
 		}
 
-		/*не нужно если вселенную отображать с помощью ND
-		scene = new Proxy( scene, {
-
-			get: function (scene, name) {
-
-				switch (name) {
-
-					case 'addUniverse': return ( universe3D ) => {
-
-						scene.add( universe3D );
-						
-						if ( options.guiSelectPoint ) {
-							
-							if ( universe3D.name === '' ) universe3D.name = lang.universe;
-							options.guiSelectPoint.addMesh( universe3D );
-				
-						}
-						
-					}
-					case 'remove': return ( child ) => {
-
-						scene.remove( child );
-						
-						if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( child );
-						
-					}
-						
-				}
-				return scene[name];
-
-			}
-			
-		} );
-		*/		
-		
-//		this.scene = scene;
-		
 		settings.object = settings.object || {};
 		settings.object.geometry = settings.object.geometry || {};
 		if (settings.object.geometry.indices) {
@@ -185,23 +148,8 @@ class GraphicObject extends Utils {
 	
 					switch (name) {
 	
-	//					case '_indices': return _indices;
-	//					case 'edges': return _indices[0];
-	//					case 'faces': return _indices[1];
 						case 'isUniversyProxy': return true;
 						case 'count': return _indices.count;
-/*							
-							return ( error, minCount = 3 ) => {
-							if (_indices.count === undefined) _indices.count = minCount;
-							if (_indices.count < minCount) {
-					
-								console.error( error + minCount );
-								_indices.count = minCount;
-								
-							}
-							return _indices.count;
-						}
-*/	  
 						case 'boAddIndices':
 						case 'length': 
 						case 'forEach': return _indices[name];//for compatibility with ND
@@ -354,52 +302,9 @@ class GraphicObject extends Utils {
 		//settings.count = [[]];//Error: Faces: faces[0]. Invalid face instance
 		this.Indices();
 		
-//		this.log();
-/*			
-		if ( debug ) {
-			
-			settings.object.geometry.position.forEach((vertice, i) => console.log('position[' + i + ']. ' + JSON.stringify( vertice )));
-			settings.object.geometry.indices.edges.forEach((edge, i) => console.log('indices.edges[' + i + ']. ' + JSON.stringify( edge )));
-			settings.object.geometry.indices.faces.forEach((face, i) => console.log('indices.faces[' + i + ']. ' + JSON.stringify( face )));
-
-		}
-*/   
-/*
-		//Project universe into 3D space
-		this.display = ( n,//universe dimension
-						settings, debugObject ) => { 
-			
-//			settings.scene = scene;
-			settings.options = options;
-			if (!settings.object.name) settings.object.name = lang.universe;
-			new ND( n, settings );
-
-			if (debugObject) settings.scene.add( debugObject );
-		
-		}
-*/
-/*
-		this.remove = ( scene ) => {
-
-			for (var i = scene.children.length - 1; i >= 0; i--) {
-				
-				const child  = scene.children[i];
-				scene.remove( child );
-				if ( options.guiSelectPoint ) options.guiSelectPoint.removeMesh( child );
-
-			}
-			//remove previous position
-			this.settings.object.geometry.position.forEach( vertice => vertice.length = 0 );
-			
-		}
-*/
-//		if (!settings.noTest) this.project();
-		
 	}
 
 }
-
-//GraphicObject.ND = ND;
 
 export default GraphicObject;
 
