@@ -23,9 +23,6 @@ if (ND.default) ND = ND.default;
 */
 import Utils from './utils.js';
 
-const debug = true;
-//const debug = false;
-
 const sEgocentricUniverse = 'GraphicObject', sOverride = sEgocentricUniverse + ': Please override the %s method in your child class.';
 let lang;
 
@@ -75,11 +72,11 @@ class GraphicObject extends Utils {
 	constructor( options, classSettings ) {
 
 		super( options, classSettings.settings );
-		const egocentricUniverse = this, settings = classSettings.settings;
+		const _this = this, settings = classSettings.settings;
 		this.options = options;
 		this.settings = settings;
 		this.classSettings = classSettings;
-		this.debug = debug;
+//		this.debug = debug;
 
 		if (!lang) {
 
@@ -191,7 +188,7 @@ class GraphicObject extends Utils {
 										
 								case 'edges':
 										
-									if (!debug) {
+									if (!_this.debug) {
 
 										console.error(sEgocentricUniverse + ': vertice.edges. Set debug = true first.');
 										return;
@@ -205,7 +202,7 @@ class GraphicObject extends Utils {
 													
 												case 'push': return ( edgeId, verticeId ) => {
 
-													if (debug) {
+													if (_this.debug) {
 
 														const sPush = sEgocentricUniverse + ': Vertice' + (verticeId === undefined ? '' : '[' + verticeId + ']') + '.edges.push(' + edgeId + '):';
 
@@ -255,12 +252,12 @@ class GraphicObject extends Utils {
 						//соеденить конец последнего ребра с началом первого ребра
 						//indices.edges[indices.edges.length - 1].vertices[1] = indices.edges[0].vertices[0];
 
-						if (!debug) return;
+						if (!_this.debug) return;
 
 						_position.forEach( ( vertice, verticeId ) => {
 	
 							const str1 = sEgocentricUniverse + ': position.test()', strVerticeId = 'position(' + verticeId + ')';
-							egocentricUniverse.Test(vertice, strVerticeId);
+							_this.Test(vertice, strVerticeId);
 							vertice.edges.forEach( edgeId => {
 	
 								if (typeof edgeId !== "number") console.error(str1 + '. ' + strVerticeId + '. Invalid edgeId = ' + edgeId);

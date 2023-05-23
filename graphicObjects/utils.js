@@ -1,6 +1,6 @@
 /**
  * @module Utils
- * @description Base class for utilities.
+ * @description utilities class.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -24,9 +24,14 @@ if (ND.default) ND = ND.default;
 //import three from '../../commonNodeJS/master/three.js'
 import three from '../three.js'
 
+//const debug = true;
+//const debug = false;
+
 class Utils {
 
 	constructor( options, settings ) {
+
+		this.debug = true;
 
 		//display graphic object to the canvas
 		this.display = (n,//space dimension
