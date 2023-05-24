@@ -128,7 +128,7 @@ class Utils {
 			for (let i = 1; i < indices.faceEdges.length; i++) {
 
 				angle += indices.faceEdges[i].distance * delta;
-				settings.object.geometry.position[i] = new THREE.Vector3().copy(point0).applyAxisAngle(axis, angle).toArray();
+				if (settings.object.geometry.position[i].length === 0) settings.object.geometry.position[i] = new THREE.Vector3().copy(point0).applyAxisAngle(axis, angle).toArray();
 
 			}
 /*
