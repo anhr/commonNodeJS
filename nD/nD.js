@@ -1035,19 +1035,22 @@ class ND {
 									}
 									switch ( name ) {
 
+										case 'reset': return function() { delete target.positionWorld; }
+/*
+										case 'edges': return target.edges;
 										case 'positionWorld': return target.positionWorld;
-										case 'forEach': return target.forEach;
 										case 'length': return target.length;
 										case 'indices': return target.indices;
 										case 'i': return target.i;
 										case 'arguments': return target.arguments;
-										case 'reset': return function() { delete target.positionWorld; }
-										case 'edges': return target.edges;
+										case 'forEach': return target.forEach;
 										case 'index': return target.index;
 										case 'toJSON': return target.toJSON;//for compatibility with EgocentricUniverse
 										default: console.error( 'ND: settings.object.geometry.position[i] get. Invalid name: ' + name );
+*/
 
 									}
+									return target[name];
 
 								},
 								set: function ( target, name, value ) {
@@ -1349,16 +1352,19 @@ class ND {
 						}
 						switch ( name ) {
 
-							case 'push': return edges.push;
-							case 'length': return edges.length;
 							case 'intersection': return undefined;
 							case 'edges': return edges;
 							case 'isProxy': return true;
+/*								
+							case 'push': return edges.push;
+							case 'length': return edges.length;
 							case 'forEach': return edges.forEach;
 							case 'selected': return edges.selected;
 							default: console.error( 'ND: settings.object.geometry.indices getter. Invalid name: ' + name );
+*/	   
 
 						}
+						return edges[name];
 
 					},
 					set: function ( edges, prop, value ) {

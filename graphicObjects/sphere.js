@@ -30,15 +30,45 @@ class Sphere extends Circle
 
 	//Overridden methods from base class
 
+	name( getLanguageCode ) {
+
+		//Localization
+		
+		const lang = {
+
+			name: "Sphere",
+
+		};
+
+		const _languageCode = getLanguageCode();
+
+		switch (_languageCode) {
+
+			case 'ru'://Russian language
+
+				lang.name = 'Сфера';
+
+				break;
+			default://Custom language
+				if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
+					break;
+
+				Object.keys(guiParams.lang).forEach(function (key) {
+
+					if (lang[key] === undefined)
+						return;
+					lang[key] = guiParams.lang[key];
+
+				});
+
+		}
+		return lang.name;
+		
+	}
 	logSphere() {
 
 		if (!this.debug) return;
 		this.logCircle();
-/*		
-		this.settings.object.geometry.position.forEach((vertice, i) => console.log('position[' + i + ']. ' + JSON.stringify( vertice )));
-		this.settings.object.geometry.indices.edges.forEach((edge, i) => console.log('indices.edges[' + i + ']. ' + JSON.stringify( edge )));
-		this.settings.object.geometry.indices.faces.forEach((face, i) => console.log('indices.faces[' + i + ']. ' + JSON.stringify( face )));
-*/
 		this.settings.object.geometry.indices.bodies.forEach((body, i) => console.log('indices.bodies[' + i + '] = ' + JSON.stringify( body )));
 		
 	}
@@ -58,6 +88,10 @@ class Sphere extends Circle
 			delete settings.object.geometry.indices.count;
 			
 		}
+		
+		settings.object.geometry.indices[2] = settings.object.geometry.indices[2] || settings.object.geometry.indices.bodies || [];
+//		delete classSettings.settings.object.geometry.indices.bodies;
+		
 		super.Indices();
 		const position = settings.object.geometry.position;
 		const debug = this.debug;
@@ -217,6 +251,40 @@ class Sphere extends Circle
 	 **/
 	constructor( options, classSettings={} ) {
 
+/*		
+		//Localization
+
+		const getLanguageCode = options.getLanguageCode;
+
+		const lang = {
+
+			name: "Sphere",
+
+		};
+
+		const _languageCode = getLanguageCode();
+
+		switch (_languageCode) {
+
+			case 'ru'://Russian language
+
+				lang.name = 'Сфера';
+
+				break;
+			default://Custom language
+				if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
+					break;
+
+				Object.keys(guiParams.lang).forEach(function (key) {
+
+					if (lang[key] === undefined)
+						return;
+					lang[key] = guiParams.lang[key];
+
+				});
+
+		}
+*/		
 		if (classSettings.bodyId === undefined) classSettings.bodyId = 0;
 		super( options, classSettings );
 

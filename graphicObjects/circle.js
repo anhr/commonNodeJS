@@ -18,12 +18,50 @@ import Utils from './utils.js';
 
 const sEdges = 'Circle', sEgocentricUniverse = sEdges;//, sOverride = sEgocentricUniverse + ': Please override the %s method in your child class.';
 let isEdgesIndicesProxy = false;
-let lang;
+//let lang;
 
 class Circle extends Utils//GraphicObject
 {
 
 	_edgesSettings;
+
+	//base methods
+	
+	name( getLanguageCode ) {
+
+		//Localization
+		
+		const lang = {
+
+			name: "Circle",
+
+		};
+
+		const _languageCode = getLanguageCode();
+
+		switch (_languageCode) {
+
+			case 'ru'://Russian language
+
+				lang.name = 'Окружность';
+
+				break;
+			default://Custom language
+				if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
+					break;
+
+				Object.keys(guiParams.lang).forEach(function (key) {
+
+					if (lang[key] === undefined)
+						return;
+					lang[key] = guiParams.lang[key];
+
+				});
+
+		}
+		return lang.name;
+		
+	}
 	
 	//Overridden methods from base class
 /*
@@ -615,6 +653,7 @@ class Circle extends Utils//GraphicObject
 	 **/
 	constructor( options, classSettings={} ) {
 
+/*		
 		//Localization
 
 		const getLanguageCode = options.getLanguageCode;
@@ -647,6 +686,7 @@ class Circle extends Utils//GraphicObject
 				});
 
 		}
+*/  
 
 		if (classSettings.faceId === undefined) classSettings.faceId = 0;
 		
@@ -654,10 +694,10 @@ class Circle extends Utils//GraphicObject
 		classSettings.settings = classSettings.settings || {};
 		const settings = classSettings.settings;
 		settings.object = settings.object || {};
-		settings.object.name = settings.object.name || lang.name;
 		
 		super(options, classSettings.settings);
 		
+		settings.object.name = settings.object.name || this.name( options.getLanguageCode );
 		const _this = this;
 		this.options = options;
 		this.settings = settings;
@@ -678,11 +718,11 @@ class Circle extends Utils//GraphicObject
 		if (!settings.object.geometry.indices.isUniversyProxy) {
 
 			settings.object.geometry.indices[0] = settings.object.geometry.indices[0] || settings.object.geometry.indices.edges || [];
-			delete settings.object.geometry.indices.edges;
+//			delete settings.object.geometry.indices.edges;
 			settings.object.geometry.indices[1] = settings.object.geometry.indices[1] || settings.object.geometry.indices.faces || [];
-			delete settings.object.geometry.indices.faces;
-			settings.object.geometry.indices[2] = settings.object.geometry.indices[2] || settings.object.geometry.indices.bodies || [];
-			delete settings.object.geometry.indices.bodies;
+//			delete settings.object.geometry.indices.faces;
+//			settings.object.geometry.indices[2] = settings.object.geometry.indices[2] || settings.object.geometry.indices.bodies || [];
+//			delete settings.object.geometry.indices.bodies;
 			settings.object.geometry.indices = new Proxy(settings.object.geometry.indices ? settings.object.geometry.indices : [], {
 
 				get: function (_indices, name) {
@@ -693,11 +733,13 @@ class Circle extends Utils//GraphicObject
 					switch (name) {
 
 						case 'isUniversyProxy': return true;
+/*							
 						case 'count': return _indices.count;
 						case 'boAddIndices':
 						case 'length':
 						case 'forEach': return _indices[name];//for compatibility with ND
 						default: console.error(sEgocentricUniverse + ': indices get: invalid name: ' + name);
+*/	  
 
 					}
 					return _indices[name];
