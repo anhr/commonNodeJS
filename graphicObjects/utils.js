@@ -118,7 +118,20 @@ class Utils {
 				return;
 
 			}
+			const r = l / (2 * Math.PI),
+				center = new THREE.Vector2(0.0, 0.0),
+				axis = new THREE.Vector3(0, 0, 1),
+				point0 = new THREE.Vector3(0, -r, 0),
+				delta = 2 * Math.PI / l;
+			settings.object.geometry.position[0] = point0.toArray();
+			let angle = 0.0;//Угол поворота радиуса вселенной до текущей вершины
+			for (let i = 1; i < indices.faceEdges.length; i++) {
 
+				angle += indices.faceEdges[i].distance * delta;
+				settings.object.geometry.position[i] = new THREE.Vector3().copy(point0).applyAxisAngle(axis, angle).toArray();
+
+			}
+/*
 			const r = l / (2 * Math.PI),
 				center = new THREE.Vector2(0.0, 0.0),
 				axis = new THREE.Vector3(0, 0, 1),
@@ -143,6 +156,7 @@ class Utils {
 				settings.object.geometry.position[i] = point.toArray();
 
 			});
+*/			
 			settings.scene = scene;
 
 			//			if (bLog) this.log();
