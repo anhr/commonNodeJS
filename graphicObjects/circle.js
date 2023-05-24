@@ -13,11 +13,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import EgocentricUniverse from './egocentricUniverse.js';
-//import GraphicObject from './graphicObject.js';
 import Utils from './utils.js';
-
-//import three from '../../commonNodeJS/master/three.js'
 //import three from '../three.js'
 
 const sEdges = 'Circle', sEgocentricUniverse = sEdges;//, sOverride = sEgocentricUniverse + ': Please override the %s method in your child class.';
@@ -30,15 +26,17 @@ class Circle extends Utils//GraphicObject
 	_edgesSettings;
 	
 	//Overridden methods from base class
+/*
+	project(
+		scene,
+		n,//space dimension
+//			bLog = true//log positions and indices to cnosole 
+	) {
 
-	log() {
+		super.project(scene, n);
 
-		if (!this.debug) return;
-		this.settings.object.geometry.position.forEach((vertice, i) => console.log('position[' + i + ']. ' + JSON.stringify( vertice )));
-		this.settings.object.geometry.indices.edges.forEach((edge, i) => console.log('indices.edges[' + i + ']. ' + JSON.stringify( edge )));
-		this.settings.object.geometry.indices.faces.forEach((face, i) => console.log('indices.faces[' + i + ']. ' + JSON.stringify( face )));
-		
 	}
+ */
 /*
 	//Project universe into 3D space
 	project(
@@ -852,6 +850,27 @@ class Circle extends Utils//GraphicObject
 			
 			classSettings.settings.object.geometry.indices.edges.push( edge );
 			
+		}
+
+		this.logCircle = () => {
+
+			if (!_this.debug) return;
+			_this.settings.object.geometry.position.forEach((vertice, i) => console.log('position[' + i + '] = ' + JSON.stringify(vertice)));
+			_this.settings.object.geometry.indices.edges.forEach((edge, i) => console.log('indices.edges[' + i + '] = ' + JSON.stringify(edge)));
+			_this.settings.object.geometry.indices.faces.forEach((face, i) => console.log('indices.faces[' + i + '] = ' + JSON.stringify(face)));
+
+		}
+		//Project a circle into 3D space
+		this.project = (
+			scene,
+			n,//space dimension
+	//			bLog = true//log positions and indices to cnosole 
+		) => {
+	
+//			this.super.project( scene, n);
+			_this.projectUtils( scene, n);
+			_this.logCircle();
+	
 		}
 
 	}

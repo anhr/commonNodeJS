@@ -30,12 +30,16 @@ class Sphere extends Circle
 
 	//Overridden methods from base class
 
-	log() {
+	logSphere() {
 
 		if (!this.debug) return;
+		this.logCircle();
+/*		
 		this.settings.object.geometry.position.forEach((vertice, i) => console.log('position[' + i + ']. ' + JSON.stringify( vertice )));
 		this.settings.object.geometry.indices.edges.forEach((edge, i) => console.log('indices.edges[' + i + ']. ' + JSON.stringify( edge )));
 		this.settings.object.geometry.indices.faces.forEach((face, i) => console.log('indices.faces[' + i + ']. ' + JSON.stringify( face )));
+*/
+		this.settings.object.geometry.indices.bodies.forEach((body, i) => console.log('indices.bodies[' + i + '] = ' + JSON.stringify( body )));
 		
 	}
 	get verticeEdgesLengthMax() { return 6 }//нельзя добавлять новое ребро если у вершины уже 6 ребер
@@ -229,7 +233,7 @@ class Sphere extends Circle
 
 			const THREE = three.THREE;
 
-			this.settings.object.geometry.indices.faces.forEach(face => face.face.project(scene, 3,//Если размерность вселенной задать меньше 3 то исчезнут оси коодинат
+			this.settings.object.geometry.indices.faces.forEach(face => face.face.projectUtils(scene, 3,//Если размерность вселенной задать меньше 3 то исчезнут оси коодинат
 				//false
 			));
 
@@ -269,6 +273,7 @@ class Sphere extends Circle
 				//			plane.name = name;
 
 				if (typeof Intersections != 'undefined') new Intersections(sphere, plane);
+				this.logSphere();
 
 			}
 

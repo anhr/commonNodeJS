@@ -21,13 +21,9 @@ import ND from '../nD/nD.js';
 //import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
 if (ND.default) ND = ND.default;
 
-//import three from '../../commonNodeJS/master/three.js'
 import three from '../three.js'
 
-//const debug = true;
-//const debug = false;
-
-let lang;
+//let lang;
 
 class Utils {
 
@@ -35,12 +31,13 @@ class Utils {
 
 		this.debug = true;
 
+/*
 		if (!lang) {
 
 			//Localization
 
 			const getLanguageCode = options.getLanguageCode;
-
+			
 			lang = {
 
 				name: "Object",
@@ -71,6 +68,7 @@ class Utils {
 			}
 
 		}
+*/		
 
 		//display graphic object to the canvas
 		this.display = (n,//space dimension
@@ -84,11 +82,26 @@ class Utils {
 
 		}
 
+		this.remove = (scene) => {
+
+			for (var i = scene.children.length - 1; i >= 0; i--) {
+
+				const child = scene.children[i];
+				scene.remove(child);
+				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(child);
+
+			}
+			//remove previous position
+			//непонятно зачем эта строка
+//			settings.object.geometry.position.forEach(vertice => vertice.length = 0);
+
+		}
+
 		//Project a graphic object into 3D space
-		this.project = (
+		this.projectUtils = (
 			scene,
 			n = 2,//universe dimension
-//			bLog = true//log positions and indices to cnosole 
+			//			bLog = true//log positions and indices to cnosole 
 		) => {
 
 			//remove previous universe
@@ -132,7 +145,7 @@ class Utils {
 			});
 			settings.scene = scene;
 
-//			if (bLog) this.log();
+			//			if (bLog) this.log();
 
 			this.display(n, settings, this.debug ?
 				new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
@@ -145,19 +158,6 @@ class Utils {
 
 		}
 
-		this.remove = (scene) => {
-
-			for (var i = scene.children.length - 1; i >= 0; i--) {
-
-				const child = scene.children[i];
-				scene.remove(child);
-				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(child);
-
-			}
-			//remove previous position
-			settings.object.geometry.position.forEach(vertice => vertice.length = 0);
-
-		}
 	}
 
 }

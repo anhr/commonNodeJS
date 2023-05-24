@@ -41,7 +41,7 @@
 
 		new MyThree( (scene, options) => {
 
-			const universe = new Circle( options, {
+			const circle = new Circle( options, {
 
 				settings: {
 					
@@ -90,10 +90,10 @@
 				}
 
 			} );
-			//universe.settings.indices.edges.push();//Error: Edges: push edge. Invalid edge = undefined
-			universe.settings.object.geometry.position.test();
-			universe.pushEdge();
-			universe.project( scene );
+			//circle.settings.indices.edges.push();//Error: Edges: push edge. Invalid edge = undefined
+			circle.settings.object.geometry.position.test();
+			circle.pushEdge();
+			circle.project( scene );
 
 		}, {
 
