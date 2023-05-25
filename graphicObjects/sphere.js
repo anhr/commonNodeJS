@@ -22,7 +22,7 @@ import Triangle from './triangle.js';
 import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.js'
 import three from '../three.js'
 
-const sFaces = 'Sphere';
+const sSphere = 'Sphere';
 let isFacesIndicesProxy = false;
 
 class Sphere extends Circle
@@ -76,7 +76,7 @@ class Sphere extends Circle
 	Test( vertice, strVerticeId ){
 		
 		if (vertice.edges.length !== 3)//пирамида
-			console.error(sFaces + '. Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
+			console.error(sSphere + '. Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
 	Indices(){
@@ -90,12 +90,11 @@ class Sphere extends Circle
 		}
 		
 		settings.object.geometry.indices[2] = settings.object.geometry.indices[2] || settings.object.geometry.indices.bodies || [];
-//		delete classSettings.settings.object.geometry.indices.bodies;
 		
 		super.Indices();
-		const position = settings.object.geometry.position;
+//		const position = settings.object.geometry.position;
 		const debug = this.debug;
-		const sIndicesFacesSet = ': indices.faces set. ';
+//		const sIndicesFacesSet = ': indices.faces set. ';
 		
 		if (!isFacesIndicesProxy) {
 
@@ -132,7 +131,7 @@ class Sphere extends Circle
 
 																	if (_body[i] === faceId ) {
 																		
-																		console.error( sFaces + ': Duplicate body faceId = ' + faceId );
+																		console.error( sSphere + ': Duplicate body faceId = ' + faceId );
 																		return;
 
 																	}
@@ -172,10 +171,6 @@ class Sphere extends Circle
 							}
 							return _indices[2];
 						case 'faces':
-/*							
-							const bodyfaces = settings.object.geometry.indices.bodies[this.classSettings.bodyId];
-							return bodyfaces;
-*/
 							return new Proxy(settings.object.geometry.indices.bodies[this.classSettings.bodyId], {
 		
 								get: (_faces, name) => {
@@ -251,40 +246,6 @@ class Sphere extends Circle
 	 **/
 	constructor( options, classSettings={} ) {
 
-/*		
-		//Localization
-
-		const getLanguageCode = options.getLanguageCode;
-
-		const lang = {
-
-			name: "Sphere",
-
-		};
-
-		const _languageCode = getLanguageCode();
-
-		switch (_languageCode) {
-
-			case 'ru'://Russian language
-
-				lang.name = 'Сфера';
-
-				break;
-			default://Custom language
-				if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
-					break;
-
-				Object.keys(guiParams.lang).forEach(function (key) {
-
-					if (lang[key] === undefined)
-						return;
-					lang[key] = guiParams.lang[key];
-
-				});
-
-		}
-*/		
 		if (classSettings.bodyId === undefined) classSettings.bodyId = 0;
 		super( options, classSettings );
 
@@ -293,8 +254,6 @@ class Sphere extends Circle
 			scene,
 			bLog = true//log positions and indices to cnosole 
 		) => {
-
-			//		const indices = this.settings.object.geometry.indices, scene = this.scene, options = this.options;
 
 			//remove previous universe
 			this.remove(scene);
@@ -306,8 +265,6 @@ class Sphere extends Circle
 			));
 
 			if (this.debug) {
-
-				//			if (bLog) this.log();
 
 				const color = "lightgray", opacity = 0.2;
 
@@ -338,7 +295,6 @@ class Sphere extends Circle
 
 				);
 				scene.add(plane);
-				//			plane.name = name;
 
 				if (typeof Intersections != 'undefined') new Intersections(sphere, plane);
 				this.logSphere();

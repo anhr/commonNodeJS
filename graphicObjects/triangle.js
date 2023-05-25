@@ -19,10 +19,10 @@
 import Utils from './utils.js';
 
 //import three from '../../commonNodeJS/master/three.js'
-import three from '../three.js'
+//import three from '../three.js'
 
-const sEdges = 'Triangle';
-let isEdgesIndicesProxy = false;
+//const sEdges = 'Triangle';
+//let isEdgesIndicesProxy = false;
 
 class Triangle extends Utils//Circle
 {

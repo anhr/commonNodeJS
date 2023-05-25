@@ -23,52 +23,11 @@ if (ND.default) ND = ND.default;
 
 import three from '../three.js'
 
-//let lang;
-
 class Utils {
 
 	constructor( options, settings ) {
 
 		this.debug = true;
-
-/*
-		if (!lang) {
-
-			//Localization
-
-			const getLanguageCode = options.getLanguageCode;
-			
-			lang = {
-
-				name: "Object",
-
-			};
-
-			const _languageCode = getLanguageCode();
-
-			switch (_languageCode) {
-
-				case 'ru'://Russian language
-
-					lang.name = 'Объект';
-
-					break;
-				default://Custom language
-					if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
-						break;
-
-					Object.keys(guiParams.lang).forEach(function (key) {
-
-						if (lang[key] === undefined)
-							return;
-						lang[key] = guiParams.lang[key];
-
-					});
-
-			}
-
-		}
-*/		
 
 		//display graphic object to the canvas
 		this.display = (n,//space dimension
@@ -100,8 +59,7 @@ class Utils {
 		//Project a graphic object into 3D space
 		this.projectUtils = (
 			scene,
-			n = 2,//universe dimension
-			//			bLog = true//log positions and indices to cnosole 
+			n = 2,//space dimension
 		) => {
 
 			//remove previous universe
@@ -131,35 +89,8 @@ class Utils {
 				if (settings.object.geometry.position[i].length === 0) settings.object.geometry.position[i] = new THREE.Vector3().copy(point0).applyAxisAngle(axis, angle).toArray();
 
 			}
-/*
-			const r = l / (2 * Math.PI),
-				center = new THREE.Vector2(0.0, 0.0),
-				axis = new THREE.Vector3(0, 0, 1),
-				points = [
-					new THREE.Vector3(0, -r, 0),//point0,//0
-				],
-				delta = 2 * Math.PI / l;
-			let angle = 0.0;//Угол поворота радиуса вселенной до текущей вершины
-			for (let i = 1; i < indices.faceEdges.length; i++) {
 
-				angle += indices.faceEdges[i].distance * delta;
-				points.push(new THREE.Vector3().copy(points[0]).applyAxisAngle(axis, angle));
-
-			}
-
-			points.forEach((point, i) => {
-
-				//settings.object.geometry.position[i].positionWorld = undefined;//если не удалять positionWorld то вместо новых координат вершин будут браться старые
-				//Это не позволяет добавлять новые вершины в объект
-				//Никак не могу придумать как удалять positionWorld внутри ND когда у вершины устанвливаются новые координаты
-				//Сейчас вместо этого использую settings.object.geometry.boRememberPosition: false,//Не запоминать позицию вершины в settings.object.geometry.position[i].positionWorld чтобы при добавлении нового ребра заново вычислялись позицию вершин в 3D
-				settings.object.geometry.position[i] = point.toArray();
-
-			});
-*/			
 			settings.scene = scene;
-
-			//			if (bLog) this.log();
 
 			this.display(n, settings, this.debug ?
 				new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
