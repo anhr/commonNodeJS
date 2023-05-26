@@ -794,9 +794,10 @@ class Circle extends Utils
 //			n = 2,//space dimension
 		) => {
 	
-			_this.projectUtils( scene, 2 );
-//			_this.display( n, settings );
-			_this.logCircle();
+//			this.projectUtils( scene, 2 ;
+			super.project( scene, 2, settings );
+//			this.display( n, settings );
+			this.logCircle();
 	
 		}
 
