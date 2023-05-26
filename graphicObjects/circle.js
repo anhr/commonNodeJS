@@ -63,6 +63,16 @@ class Circle extends Utils
 	
 	//Overridden methods from base class
 
+	isDisplay() { return true; }
+	displayDebug( THREE, center, r ) {
+		
+		return new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
+				center.x, center.y,// Center x, y
+				r, r,// x radius, y radius
+				0.0, 2.0 * Math.PI,// Start angle, stop angle
+			).getSpacedPoints(256)), new THREE.LineBasicMaterial({ color: 'blue' }));
+		
+	}
 	get verticeEdgesLengthMax() { return 2; }//нельзя добавлть новое ребро если у вершины уже 3 ребра
 	Test( vertice, strVerticeId ){
 		
@@ -766,13 +776,26 @@ class Circle extends Utils
 			_this.settings.object.geometry.indices.faces.forEach((face, i) => console.log('indices.faces[' + i + '] = ' + JSON.stringify(face)));
 
 		}
+//		this.isDisplay = () => { return true; }
+/*		
+		this.displayDebug = ( THREE, center, r ) => {
+
+			return new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
+					center.x, center.y,// Center x, y
+					r, r,// x radius, y radius
+					0.0, 2.0 * Math.PI,// Start angle, stop angle
+				).getSpacedPoints(256)), new THREE.LineBasicMaterial({ color: 'blue' }));
+			
+		}
+*/  
 		//Project a circle into 3D space
 		this.project = (
 			scene,
-			n,//space dimension
+//			n = 2,//space dimension
 		) => {
 	
-			_this.projectUtils( scene, n);
+			_this.projectUtils( scene, 2 );
+//			_this.display( n, settings );
 			_this.logCircle();
 	
 		}

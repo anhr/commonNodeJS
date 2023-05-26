@@ -30,6 +30,40 @@ class Sphere extends Circle
 
 	//Overridden methods from base class
 
+//	isDisplay(){ return true; }
+	displayDebug( THREE, center, r, scene ) {
+
+//		const scene = classSettings.settings.scene,
+		const color = "lightgray", opacity = 0.2;
+
+		scene.add( new THREE.Mesh( new FibonacciSphereGeometry(),//new THREE.SphereGeometry( 1 ),
+
+			new THREE.MeshLambertMaterial({
+
+				color: color,
+				opacity: opacity,
+				transparent: true,
+				side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+
+			})
+
+		) );
+
+		scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2.0, 2.0),
+
+			new THREE.MeshLambertMaterial({
+
+				color: color,
+				opacity: opacity,
+				transparent: true,
+				side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+
+			})
+
+		));
+		return super.displayDebug( THREE, center, r );
+		
+	}
 	name( getLanguageCode ) {
 
 		//Localization
@@ -249,10 +283,10 @@ class Sphere extends Circle
 		if (classSettings.bodyId === undefined) classSettings.bodyId = 0;
 		super( options, classSettings );
 
-		//Project universe into 3D space
+		//Project sphere into 3D space
 		this.project = (
 			scene,
-			bLog = true//log positions and indices to cnosole 
+//			bLog = true//log positions and indices to cnosole 
 		) => {
 
 			//remove previous universe
@@ -264,8 +298,10 @@ class Sphere extends Circle
 				//false
 			));
 
+			this.projectUtils( scene, 3 );
+			
 			if (this.debug) {
-
+/*
 				const color = "lightgray", opacity = 0.2;
 
 				const sphere = new THREE.Mesh(new FibonacciSphereGeometry(),//new THREE.SphereGeometry( 1 ),
@@ -295,6 +331,7 @@ class Sphere extends Circle
 
 				);
 				scene.add(plane);
+*/				
 
 				if (typeof Intersections != 'undefined') new Intersections(sphere, plane);
 				this.logSphere();

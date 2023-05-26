@@ -21,22 +21,34 @@ import ND from '../nD/nD.js';
 //import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
 if (ND.default) ND = ND.default;
 
-import three from '../three.js'
+import three from '../three.js';
+
+const sUtils = 'Utils', sOverride = sUtils + ': Please override the %s method in your child class.';
 
 class Utils {
 
+	//base methods
+	
+	displayDebug() { console.error(sOverride.replace('%s', 'displayDebug')); }
+	isDisplay() { return false; }
+	
 	constructor( options, settings ) {
 
 		this.debug = true;
+//		this.THREE = three.THREE;
 
 		//display graphic object to the canvas
 		this.display = (n,//space dimension
-			settings, debugObject) => {
+			//settings,
+			debugObject
+		) => {
 
+			const settings = this.settings;
 			settings.options = options;
 			settings.object.name = settings.object.name || lang.name;
 			new ND(n, settings);
 
+//			const debugObject = this.displayDebug();
 			if (debugObject) settings.scene.add(debugObject);
 
 		}
@@ -59,7 +71,7 @@ class Utils {
 		//Project a graphic object into 3D space
 		this.projectUtils = (
 			scene,
-			n = 2,//space dimension
+			n,//space dimension
 		) => {
 
 			//remove previous universe
@@ -91,8 +103,12 @@ class Utils {
 			}
 
 			settings.scene = scene;
-
-			this.display(n, settings, this.debug ?
+			
+			if (this.isDisplay()) this.display( n,// settings,
+				this.debug ? this.displayDebug( THREE, center, r, scene ) : undefined );
+//			if (this.isDisplay()) this.displayDebug( THREE, center, r );
+/*						 
+			this.display(n, settings, this.debug ? 
 				new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
 					center.x, center.y,// Center x, y
 					r, r,// x radius, y radius
@@ -100,7 +116,8 @@ class Utils {
 				).getSpacedPoints(256)), new THREE.LineBasicMaterial({ color: 'blue' }))
 				: undefined
 			);
-
+*/	
+			
 		}
 
 	}
