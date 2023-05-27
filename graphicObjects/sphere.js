@@ -300,7 +300,7 @@ class Sphere extends Circle
 			));
 
 //			this.projectUtils(scene, 3);
-			this.project(scene, 3);
+			super.project( scene, 3, this.settings );
 			
 			if (this.debug) {
 /*

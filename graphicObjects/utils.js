@@ -60,14 +60,33 @@ class Utils {
 			axis = new THREE.Vector3(0, 0, 1),
 			point0 = new THREE.Vector3(0, -r, 0),
 			delta = 2 * Math.PI / l;
+		let angle = 0.0;//Угол поворота радиуса окружности до текущей вершины
+/*		
 		settings.object.geometry.position[0] = point0.toArray();
-		let angle = 0.0;//Угол поворота радиуса вселенной до текущей вершины
 		for (let i = 1; i < indices.faceEdges.length; i++) {
 
 			angle += indices.faceEdges[i].distance * delta;
 			if (settings.object.geometry.position[i].length === 0) settings.object.geometry.position[i] = new THREE.Vector3().copy(point0).applyAxisAngle(axis, angle).toArray();
 
 		}
+*/
+		indices.faceEdges.forEach( ( face, i ) => {
+			
+			if (settings.object.geometry.position[i].length === 0) {
+				
+				let point;
+				if (i === 0) point = point0;
+				else {
+	
+					angle += indices.faceEdges[i].distance * delta;
+					point = new THREE.Vector3().copy(point0).applyAxisAngle(axis, angle);
+	
+				}
+				settings.object.geometry.position[i] = point.toArray();
+
+			}
+			
+		} );
 
 		settings.scene = scene;
 
