@@ -32,7 +32,7 @@ class Utils {
 	displayDebug() { console.error(sOverride.replace('%s', 'displayDebug')); }
 	isDisplay() { return false; }
 
-		//Project a graphic object into 3D space
+	//Project of the circle or triangle into 3D space
 //		this.projectUtils =
 	project
 	(
