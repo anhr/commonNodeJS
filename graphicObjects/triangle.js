@@ -52,7 +52,7 @@ class Triangle extends Utils//Circle
 	 **/
 	constructor( options, classSettings={} ) {
 
-		super( options, classSettings.settings );
+		super( options, classSettings );
 
 	}
 

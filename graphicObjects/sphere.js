@@ -296,7 +296,7 @@ class Sphere extends Circle
 
 //			this.settings.object.geometry.indices.faces.forEach(face => face.face.projectUtils(scene, 3,//Если размерность вселенной задать меньше 3 то исчезнут оси коодинат
 			this.settings.object.geometry.indices.faces.forEach(face => face.face.project(scene, 3,//Если размерность вселенной задать меньше 3 то исчезнут оси коодинат
-				this.settings
+//				this.settings
 			));
 
 //			this.projectUtils(scene, 3);

@@ -574,20 +574,17 @@ class Circle extends Utils
 	 * </pre>
 	 **/
 	constructor( options, classSettings={} ) {
-
-		if (classSettings.faceId === undefined) classSettings.faceId = 0;
 		
 		classSettings.settings = classSettings.settings || {};
 		const settings = classSettings.settings;
 		settings.object = settings.object || {};
 		
-		super(options, classSettings.settings);
+		super( options, classSettings );
 		
 		settings.object.name = settings.object.name || this.name( options.getLanguageCode );
 		const _this = this;
 		this.options = options;
 		this.settings = settings;
-		this.classSettings = classSettings;
 		
 		settings.object.geometry = settings.object.geometry || {};
 		if (settings.object.geometry.indices) {
@@ -795,7 +792,7 @@ class Circle extends Utils
 		) => {
 	
 //			this.projectUtils( scene, 2 ;
-			super.project( scene, 2, settings );
+			super.project( scene, 2 );//, settings );
 //			this.display( n, settings );
 			this.logCircle();
 	

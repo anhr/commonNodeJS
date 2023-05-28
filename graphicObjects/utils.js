@@ -38,9 +38,11 @@ class Utils {
 	(
 		scene,
 		n,//space dimension
-		settings,
+//		settings,
 	) {
 
+		const settings = this.classSettings.settings;
+		
 		//remove previous universe
 		this.remove(scene);
 
@@ -48,7 +50,8 @@ class Utils {
 
 		//universe length
 		let l = 0;
-		indices.faceEdges.forEach(edge => l += edge.distance);
+		indices.faces[this.classSettings.faceId].forEach(edgeId => l += indices.edges[edgeId].distance );
+//		indices.faceEdges.forEach(edge => l += edge.distance);
 		if (isNaN(l)) {
 
 			console.error(sEdges + ': project(...). Invalid universe length = ' + l);
@@ -106,8 +109,11 @@ class Utils {
 
 	}
 	
-	constructor( options, settings ) {
+	constructor( options, classSettings ) {
 
+		if (classSettings.faceId === undefined) classSettings.faceId = 0;
+		this.classSettings = classSettings;
+		
 		this.debug = true;
 //		this.THREE = three.THREE;
 
