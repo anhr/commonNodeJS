@@ -768,7 +768,7 @@ class Circle extends Utils
 		this.logCircle = () => {
 
 			if (!_this.debug) return;
-			_this.settings.object.geometry.position.forEach((vertice, i) => console.log('position[' + i + '] = ' + JSON.stringify(vertice)));
+			_this.settings.object.geometry.position.forEach((vertice, i) => console.log('position[' + i + '] = ' + JSON.stringify(vertice) + ' edges = ' + JSON.stringify(vertice.edges) ));
 			_this.settings.object.geometry.indices.edges.forEach((edge, i) => console.log('indices.edges[' + i + '] = ' + JSON.stringify(edge)));
 			_this.settings.object.geometry.indices.faces.forEach((face, i) => console.log('indices.faces[' + i + '] = ' + JSON.stringify(face)));
 

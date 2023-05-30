@@ -48,13 +48,13 @@ class Utils {
 
 		const THREE = three.THREE, indices = settings.object.geometry.indices;
 
-		//universe length
+		//edges length
 		let l = 0;
-		indices.faces[this.classSettings.faceId].forEach(edgeId => l += indices.edges[edgeId].distance );
-//		indices.faceEdges.forEach(edge => l += edge.distance);
+//		indices.faces[this.classSettings.faceId].forEach(edgeId => l += indices.edges[edgeId].distance );
+		indices.faceEdges.forEach(edge => l += edge.distance);
 		if (isNaN(l)) {
 
-			console.error(sEdges + ': project(...). Invalid universe length = ' + l);
+			console.error(sUtils + ': project(...). Invalid edges length = ' + l);
 			return;
 
 		}
