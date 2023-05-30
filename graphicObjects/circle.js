@@ -16,7 +16,7 @@
 import Utils from './utils.js';
 
 const sCircle = 'Circle', sCircleUniverse = sCircle;
-let isCircleIndicesProxy = false;
+//let isCircleIndicesProxy = false;
 
 class Circle extends Utils
 {
@@ -93,170 +93,170 @@ class Circle extends Utils
 			
 		}
 
-		if (!isCircleIndicesProxy) {
+//		if (!isCircleIndicesProxy) {
 			
-			settings.object.geometry.indices = new Proxy( settings.object.geometry.indices, {
+		settings.object.geometry.indices = new Proxy( settings.object.geometry.indices, {
 
-				get: ( _indices, name ) => {
+			get: ( _indices, name ) => {
 	
-					switch (name) {
+				switch (name) {
 	
-						case 'edges': 
-							if (!_indices[0].isEdgesProxy) {
+					case 'edges': 
+						if (!_indices[0].isEdgesProxy) {
 								
-								_indices[0] = new Proxy(_indices[0] || [], {
-			
-									get: (_edges, name) => {
-					
-										const i = parseInt(name);
-										if (!isNaN(i)) {
-					
-											const edgeId = i;
-											let edge = _edges[edgeId];
-											if (!edge) {
-					
-												if (edgeId != _edges.length) console.error( sCircle + ': get indices.edges: invalid edgeId = ' + edgeId );//добавлять только то ребро, индекс которого в конце массива _edges
-												else {
-													
-													edge = {};
-													_edges.push( edge );
-					
-												}
-					
-											}
-											return edge;
-					
-										}
-										switch (name) {
-					
-											case 'isEdgesProxy': return true;
-											case 'push': return (edge={}) => {
-					
-												indices.faces[_this.classSettings.faceId].push( _edges.push(Edge({ edge: edge, edges: settings.object.geometry.indices.edges } ) ) - 1 );
-					
-											};
-					
-										}
-										return _edges[name];
-					
-									},
-					
-								});
-								indices.faceEdges.forEach( ( edge, i ) => indices.faceEdges[i] = Edge( { this: _this, edgeId: i } ) );
-
-							}
-							return _indices[0];
-						case 'faceEdges': return new Proxy(_indices[0], {
+							_indices[0] = new Proxy(_indices[0] || [], {
 			
 								get: (_edges, name) => {
-				
+					
 									const i = parseInt(name);
-									if (!isNaN(i)) return _edges[indices.faces[_this.classSettings.faceId][i]];
+									if (!isNaN(i)) {
+					
+										const edgeId = i;
+										let edge = _edges[edgeId];
+										if (!edge) {
+					
+											if (edgeId != _edges.length) console.error( sCircle + ': get indices.edges: invalid edgeId = ' + edgeId );//добавлять только то ребро, индекс которого в конце массива _edges
+											else {
+													
+												edge = {};
+												_edges.push( edge );
+					
+											}
+					
+										}
+										return edge;
+					
+									}
 									switch (name) {
-				
-										case 'isFaceEdgesProxy': return true;
-										case 'length': return indices.faces[_this.classSettings.faceId].length;
-				
+					
+										case 'isEdgesProxy': return true;
+										case 'push': return (edge={}) => {
+					
+											indices.faces[_this.classSettings.faceId].push( _edges.push(Edge({ edge: edge, edges: settings.object.geometry.indices.edges } ) ) - 1 );
+					
+										};
+					
 									}
 									return _edges[name];
-				
+					
 								},
-								set: (_edges, name, value) => {
+					
+							});
+							indices.faceEdges.forEach( ( edge, i ) => indices.faceEdges[i] = Edge( { this: _this, edgeId: i } ) );
+
+						}
+						return _indices[0];
+					case 'faceEdges': return new Proxy(_indices[0], {
+			
+							get: (_edges, name) => {
 				
-									const i = parseInt(name);
-									if (!isNaN(i)) _edges[indices.faces[_this.classSettings.faceId][i]] = value;
+								const i = parseInt(name);
+								if (!isNaN(i)) return _edges[indices.faces[_this.classSettings.faceId][i]];
+								switch (name) {
 				
-									return true;
+									case 'isFaceEdgesProxy': return true;
+									case 'length': return indices.faces[_this.classSettings.faceId].length;
 				
 								}
+								return _edges[name];
 				
-							});
-						case 'faces':
-							if (!_indices[1].isFacesProxy) {
+							},
+							set: (_edges, name, value) => {
+				
+								const i = parseInt(name);
+								if (!isNaN(i)) _edges[indices.faces[_this.classSettings.faceId][i]] = value;
+				
+								return true;
+				
+							}
+				
+						});
+					case 'faces':
+						if (!_indices[1].isFacesProxy) {
 								
-								_indices[1] = new Proxy(_indices[1] || [], {
+							_indices[1] = new Proxy(_indices[1] || [], {
 			
-									get: (_faces, name) => {
+								get: (_faces, name) => {
 
-										const i = parseInt(name);
-										if (!isNaN(i)) {
+									const i = parseInt(name);
+									if (!isNaN(i)) {
 					
-											_faces[i] = _faces[i] || [];
-											if (!_faces[i].isFaceProxy){
+										_faces[i] = _faces[i] || [];
+										if (!_faces[i].isFaceProxy){
 
-												_faces[i] = new Proxy( _faces[i], {
+											_faces[i] = new Proxy( _faces[i], {
 
-													get: (_face, name) => {
+												get: (_face, name) => {
 
-														switch (name) {
+													switch (name) {
 									
-															case 'isFaceProxy': return true;
-															case 'push': return ( edgeId ) => {
+														case 'isFaceProxy': return true;
+														case 'push': return ( edgeId ) => {
 
-																if (debug) for ( let i = 0; i < _face.length; i++ ) {
+															if (debug) for ( let i = 0; i < _face.length; i++ ) {
 
-																	if (_face[i] === edgeId ) {
+																if (_face[i] === edgeId ) {
 																		
-																		console.error( sCircle + ': Duplicate face edgeId = ' + edgeId );
-																		return;
+																	console.error( sCircle + ': Duplicate face edgeId = ' + edgeId );
+																	return;
 
-																	}
-																	
 																}
-																_face.push( edgeId );
-																const edges = _indices[0];
-																if(edges[edgeId] === undefined) edges[edgeId] = {};
 																	
 															}
-									
+															_face.push( edgeId );
+															const edges = _indices[0];
+															if(edges[edgeId] === undefined) edges[edgeId] = {};
+																	
 														}
-														return _face[name];
+									
+													}
+													return _face[name];
 														
-													},
+												},
 													
-												} );
+											} );
 												
-											}
-											return _faces[i];
-					
 										}
-										switch (name) {
+										return _faces[i];
 					
-											case 'isFacesProxy': return true;
+									}
+									switch (name) {
 					
-										}
-										return _faces[name];
+										case 'isFacesProxy': return true;
 					
-									},
+									}
+									return _faces[name];
 					
-								});
-								const edges = _indices[0];
-								_indices[1].forEach( face => face.forEach( edgeId => edges[edgeId] = edges[edgeId] || {} ) );
-								for ( let i = 0; i < edges.length; i++ ) edges[i] = edges[i] || {};
+								},
+					
+							});
+							const edges = _indices[0];
+							_indices[1].forEach( face => face.forEach( edgeId => edges[edgeId] = edges[edgeId] || {} ) );
+							for ( let i = 0; i < edges.length; i++ ) edges[i] = edges[i] || {};
 
-							}
-							return _indices[1];
+						}
+						return _indices[1];
 						
-					}
-					return _indices[name];
+				}
+				return _indices[name];
 	
-				},
-				set: (_indices, name, value) => {
+			},
+			set: (_indices, name, value) => {
 	
-					switch (name) {
+				switch (name) {
 	
-						case 'edges': _indices[0] = value; return true;
+					case 'edges': _indices[0] = value; return true;
 						
-					}
-					_indices[name] = value;
-					return true;
+				}
+				_indices[name] = value;
+				return true;
 	
-				},
+			},
 	
-			});
-			isCircleIndicesProxy = true;
+		});
+//		isCircleIndicesProxy = true;
 
-		}
+//		}
 		
 		const edgesCount = settings.object.geometry.indices[0].count || 3,//default is triangle
 			indices = settings.object.geometry.indices,
@@ -598,6 +598,10 @@ class Circle extends Utils
 			}
 
 		} else settings.object.geometry.indices = {};
+		
+		settings.object.geometry.indices[0] = settings.object.geometry.indices[0] || settings.object.geometry.indices.edges || [];
+		settings.object.geometry.indices[1] = settings.object.geometry.indices[1] || settings.object.geometry.indices.faces || [];
+/*
 		if (!settings.object.geometry.indices.isUniversyProxy) {
 
 			settings.object.geometry.indices[0] = settings.object.geometry.indices[0] || settings.object.geometry.indices.edges || [];
@@ -621,6 +625,7 @@ class Circle extends Utils
 			});
 
 		}
+*/		
 
 		/**
 		 * @description array of Vertices.
