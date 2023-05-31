@@ -124,6 +124,7 @@ class Circle extends Utils
 											}
 					
 										}
+										/*
 										if ( !edge.isProxy && !_edges.isCreateEdge ) {
 											
 											_edges.isCreateEdge = true;
@@ -131,6 +132,7 @@ class Circle extends Utils
 											delete _edges.isCreateEdge;
 
 										}
+										  */
 										return edge;
 					
 									}

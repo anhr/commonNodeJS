@@ -50,8 +50,9 @@ class Utils {
 
 		//edges length
 		let l = 0;
-		indices.faces[this.classSettings.faceId].forEach(edgeId => l += indices.edges[edgeId].distance );
-//		indices.faceEdges.forEach(edge => l += edge.distance);
+		//indices.faces[this.classSettings.faceId].forEach(edgeId => l += indices.edges[edgeId].distance );
+		//indices.faceEdges.forEach(edge => l += edge.distance);
+		this.edges.forEach(edge => l += edge.distance);
 		if (isNaN(l)) {
 
 			console.error(sUtils + ': project(...). Invalid edges length = ' + l);
@@ -106,6 +107,38 @@ class Utils {
 						: undefined
 					);
 		*/
+
+	}
+
+	get edges() {
+		
+//			return classSettings.settings.object.geometry.indices.faces[classSettings.faceId];
+		const indices = this.classSettings.settings.object.geometry.indices, face = indices.faces[this.classSettings.faceId];
+		return new Proxy( indices.edges, {
+		
+			get: ( _edges, name ) => {
+
+				const i = parseInt( name );
+				if (!isNaN(i)) return _edges[face[i]];
+				switch ( name ) {
+
+//						case 'isFaceEdgesProxy': return true;
+					case 'length': return face.length;
+
+				}
+				return _edges[name];
+
+			},
+			set: (_edges, name, value) => {
+
+				const i = parseInt(name);
+				if (!isNaN(i)) _edges[face[i]] = value;
+
+				return true;
+
+			}
+
+		});
 
 	}
 	
