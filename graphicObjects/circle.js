@@ -124,6 +124,13 @@ class Circle extends Utils
 											}
 					
 										}
+										if ( !edge.isProxy && !_edges.isCreateEdge ) {
+											
+											_edges.isCreateEdge = true;
+											edge = Edge( { this: _this, edgeId: edgeId } );
+											delete _edges.isCreateEdge;
+
+										}
 										return edge;
 					
 									}

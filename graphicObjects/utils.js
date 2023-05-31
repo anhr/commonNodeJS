@@ -50,8 +50,8 @@ class Utils {
 
 		//edges length
 		let l = 0;
-//		indices.faces[this.classSettings.faceId].forEach(edgeId => l += indices.edges[edgeId].distance );
-		indices.faceEdges.forEach(edge => l += edge.distance);
+		indices.faces[this.classSettings.faceId].forEach(edgeId => l += indices.edges[edgeId].distance );
+//		indices.faceEdges.forEach(edge => l += edge.distance);
 		if (isNaN(l)) {
 
 			console.error(sUtils + ': project(...). Invalid edges length = ' + l);
