@@ -336,6 +336,7 @@ class Circle extends Utils
 
 						}
 						return _indices[0];
+/*						
 					case 'faceEdges': return new Proxy(_indices[0], {
 			
 							get: (_edges, name) => {
@@ -361,6 +362,7 @@ class Circle extends Utils
 							}
 				
 						});
+*/						
 					case 'faces':
 						if (!_indices[1].isFacesProxy) {
 								
@@ -465,7 +467,7 @@ class Circle extends Utils
 		
 		//у треугольника ребер не должно быть меньше 3
 //		for ( let i = indices.edges.length; i < edgesCount; i++ ) indices.edges.push();
-		
+/*		
 		function Edge( edgeSettings = {} ) {
 
 			const sEdge = sCircle + ': ' + (edgeSettings.edgeId === undefined ? 'Edge' : 'edges[' + edgeSettings.edgeId + ']'),
@@ -710,7 +712,7 @@ class Circle extends Utils
 			});
 
 		}
-
+*/
 
 		if ( debug ) {
 		

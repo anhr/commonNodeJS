@@ -74,7 +74,8 @@ class Utils {
 
 		}
 */
-		indices.faceEdges.forEach( ( face, i ) => {
+//		indices.faceEdges
+		this.edges.forEach( ( edge, i ) => {
 			
 			if (settings.object.geometry.position[i].length === 0) {
 				
@@ -82,7 +83,8 @@ class Utils {
 				if (i === 0) point = point0;
 				else {
 	
-					angle += indices.faceEdges[i].distance * delta;
+//					angle += indices.faceEdges[i].distance * delta;
+					angle += edge.distance * delta;
 					point = new THREE.Vector3().copy(point0).applyAxisAngle(axis, angle);
 	
 				}
