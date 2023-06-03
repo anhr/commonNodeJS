@@ -82,8 +82,8 @@ class Circle extends Utils
 	}
 	Indices() {
 		
-		const _this = this, settings = this.settings,
-			position = settings.object.geometry.position;
+		const _this = this, settings = this.settings;
+//			position = settings.object.geometry.position;
 		const debug = this.debug;
 
 		if (settings.object.geometry.indices.count != undefined) {
@@ -111,6 +111,8 @@ class Circle extends Utils
 									const i = parseInt(name);
 									if (!isNaN(i)) {
 
+										return _edges[i];
+/*
 										const edgeId = i;
 										let edge = _edges[edgeId];
 										
@@ -270,15 +272,7 @@ class Circle extends Utils
 														console.error(sCircle + ': Duplicate edge. Vertices = ' + vertices);
 											
 												}
-/*
-											if (edgeSettings.edgeId === undefined) {
-											
-												//если вставляем новое ребро с помощью edges.push()
-												//надо последнюю вершину последнего ребра заменить на новую вершину
-												settings.object.geometry.indices.edges[settings.object.geometry.indices.edges.length - 1][1] = position.length - 1;
-											
-											}
-*/
+
 											//Добавляем индекс ребра в каждую вершину, которая используется в этом ребре.
 											//что бы потом проверить в vertices.test();
 											if (debug) {
@@ -287,23 +281,6 @@ class Circle extends Utils
 												edge.forEach(verticeId => {
 
 													position[verticeId].edges.push( edgeId, verticeId );
-/*													
-													const edges = position[verticeId].edges;
-													if (edgeId === undefined) {
-											
-														//новое ребро добавляется с помощю push
-														if (verticeId === 0)
-															//в первой вершине заменяем последнее ребро на новое ребро
-															edges[1] = newEdgeId
-														//В последнюю вершину добавляем новое ребро
-														else edges.push(newEdgeId,
-															verticeId//for debug
-														);
-											
-													} else edges.push(edgeSettings.edgeId,
-														verticeId//for debug
-													);
-*/			 
 											
 												});
 											
@@ -314,6 +291,7 @@ class Circle extends Utils
 
 										}
 										return edge;
+*/
 					
 									}
 									switch (name) {
