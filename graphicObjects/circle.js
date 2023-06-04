@@ -892,11 +892,10 @@ class Circle extends Utils
 
 						_position.forEach((vertice, verticeId) => {
 
-							const str1 = sCircleUniverse + ': position.test()', strVerticeId = 'position(' + verticeId + ')';
 							_this.Test(vertice, strVerticeId);
 							vertice.edges.forEach(edgeId => {
 
-								if (typeof edgeId !== "number") console.error(str1 + '. ' + strVerticeId + '. Invalid edgeId = ' + edgeId);
+								if (typeof edgeId !== "number") console.error(sCircleUniverse + ': position.test()', strVerticeId = 'position(' + verticeId + ')' + '. ' + strVerticeId + '. Invalid edgeId = ' + edgeId);
 
 							});
 
