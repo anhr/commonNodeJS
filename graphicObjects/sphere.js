@@ -289,6 +289,8 @@ class Sphere extends Circle
 //			bLog = true//log positions and indices to cnosole 
 		) => {
 
+			this.settings.object.geometry.position.test();
+			
 			//remove previous universe
 			this.remove(scene);
 
