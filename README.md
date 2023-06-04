@@ -40,6 +40,10 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/player/Examples/index.html).
 * getShaderMaterialPoints.js Get [THREE.Points](https://threejs.org/docs/index.html?q=Poin#api/en/objects/Points) with [THREE.ShaderMaterial](https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial) material.
 [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
+* graphic objects.
+	* circle.js Circle.
+[circle.js](https://github.com/anhr/commonNodeJS/blob/master/graphicObjects/circle.js).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/graphicObjects/Examples/circle.html).
 * guiSelectPoint.js GuiSelectPoint is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for select a point from the mesh.
 [GuiSelectPoint API](https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/index.html).
