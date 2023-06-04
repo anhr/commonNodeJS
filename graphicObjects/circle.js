@@ -461,7 +461,8 @@ class Circle extends Utils
 		this.project = (
 			scene,
 		) => {
-	
+
+			this.settings.object.geometry.position.test();
 			super.project( scene, 2 );
 			this.logCircle();
 	
