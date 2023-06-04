@@ -27,6 +27,17 @@ import Utils from './utils.js';
 class Triangle extends Utils//Circle
 {
 
+
+	//Project of the circle or triangle into 3D space
+	project
+	(
+		scene,
+		n,//space dimension
+	) {
+
+		super.project( scene, n )
+
+	}
 	/**
 	 * Circle graphical object.
 	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.

@@ -33,12 +33,10 @@ class Utils {
 	isDisplay() { return false; }
 
 	//Project of the circle or triangle into 3D space
-//		this.projectUtils =
 	project
 	(
 		scene,
 		n,//space dimension
-//		settings,
 	) {
 
 		const settings = this.classSettings.settings;
