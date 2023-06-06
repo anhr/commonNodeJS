@@ -39,12 +39,12 @@ class Utils {
 		n,//space dimension
 	) {
 
-		const settings = this.classSettings.settings;
+		const THREE = three.THREE, settings = this.classSettings.settings;
 		
 		//remove previous universe
 		this.remove(scene);
 
-		const THREE = three.THREE, indices = settings.object.geometry.indices;
+		const indices = settings.object.geometry.indices;
 
 		//edges length
 		let l = 0;
@@ -63,16 +63,6 @@ class Utils {
 			point0 = new THREE.Vector3(0, -r, 0),
 			delta = 2 * Math.PI / l;
 		let angle = 0.0;//Угол поворота радиуса окружности до текущей вершины
-/*		
-		settings.object.geometry.position[0] = point0.toArray();
-		for (let i = 1; i < indices.faceEdges.length; i++) {
-
-			angle += indices.faceEdges[i].distance * delta;
-			if (settings.object.geometry.position[i].length === 0) settings.object.geometry.position[i] = new THREE.Vector3().copy(point0).applyAxisAngle(axis, angle).toArray();
-
-		}
-*/
-//		indices.faceEdges
 		this.edges.forEach( ( edge, i ) => {
 			
 			if (settings.object.geometry.position[i].length === 0) {
@@ -96,17 +86,6 @@ class Utils {
 
 		if (this.isDisplay()) this.display(n,// settings,
 			this.debug ? this.displayDebug(THREE, center, r, scene) : undefined);
-		//			if (this.isDisplay()) this.displayDebug( THREE, center, r );
-		/*						 
-					this.display(n, settings, this.debug ? 
-						new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
-							center.x, center.y,// Center x, y
-							r, r,// x radius, y radius
-							0.0, 2.0 * Math.PI,// Start angle, stop angle
-						).getSpacedPoints(256)), new THREE.LineBasicMaterial({ color: 'blue' }))
-						: undefined
-					);
-		*/
 
 	}
 
@@ -267,7 +246,6 @@ class Utils {
 							},
 			
 						});
-
 						if (debug)
 						
 							for (let edgeCurId = ( edgeId === undefined ) ? 0 : edgeId; edgeCurId < _this.edges.length; edgeCurId++) {

@@ -13,29 +13,80 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import EgocentricUniverse from './egocentricUniverse.js';
-//import GraphicObject from './graphicObject.js';
-//import Circle from './circle.js';
 import Utils from './utils.js';
+import three from '../three.js'
 
-//import three from '../../commonNodeJS/master/three.js'
-//import three from '../three.js'
+//https://en.wikipedia.org/wiki/Tetrahedron
+const r = 1,//Unit sphere https://en.wikipedia.org/wiki/Unit_sphere radius
+	a = Math.sqrt( 8 / 3 ),//edge length
+	h = Math.sqrt( 6 ) * a / 3,//Height of pyramid
+	z = h - r,//расстояние от центра пирамиды до грани
+	scale = a / 1.7320508075688774,//= new THREE.Vector3( 0.0, -1.0, 0.0 ).distanceTo(new THREE.Vector3( 0.8660254037844388, 0.5, 0 ))
+	rCircle = Math.sqrt( r * r - z * z );//радиус окружности, которая получается от пересечения плоскости грани пирамиды со сферой https://en.wikipedia.org/wiki/Circle_of_a_sphere
 
-//const sEdges = 'Triangle';
-//let isEdgesIndicesProxy = false;
-
-class Triangle extends Utils//Circle
+class Triangle extends Utils
 {
 
+	//Project of triangle to the 3D space
+	project( scene ) {
 
-	//Project of the circle or triangle into 3D space
-	project
-	(
-		scene,
-		n,//space dimension
-	) {
+		const THREE = three.THREE;
+		const buffer = new THREE.BufferGeometry().setFromPoints( [
+			new THREE.Vector3( 0.0, -1.0, 0.0 ),
+			new THREE.Vector3( 0.8660254037844388, 0.5, 0 ),
+			new THREE.Vector3( -0.8660254037844388, 0.5, 0 ),
+		] );
+		buffer.setIndex( [0, 1, 1, 2, 2, 0] );
+		const object = new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( { color: 'white', } ) );
+		
+		object.position.z += z;
+		object.scale.multiplyScalar ( scale );
+		
+		object.updateMatrixWorld( true );
+		const attribute = object.geometry.attributes.position, points = [];
+		const settings = this.classSettings.settings;
+		this.edges.forEach( ( edge, i ) => {
+			
+			if (settings.object.geometry.position[i].length === 0) {
 
-		super.project( scene, n )
+				settings.object.geometry.position[i] = new THREE.Vector3().
+					fromBufferAttribute( attribute, i ).
+					applyMatrix4( object.matrixWorld ).
+					toArray();
+
+			}
+			
+		} );
+
+		if ( this.debug ) {
+
+			const color = "lightgray", opacity = 0.2;
+			const plane = new THREE.Mesh( new THREE.PlaneGeometry( 2.0, 2.0 ),
+	
+				new THREE.MeshLambertMaterial( {
+	
+					color: color,
+					opacity: opacity,
+					transparent: true,
+					side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+	
+				} )
+	
+			)
+			plane.position.copy( object.position );
+			scene.parent.add( plane );
+			
+			const center = new THREE.Vector2(0.0, 0.0);
+			const circle = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
+				center.x, center.y,// Center x, y
+				rCircle, rCircle,// x radius, y radius
+				0.0, 2.0 * Math.PI,// Start angle, stop angle
+			).getSpacedPoints(256)), new THREE.LineBasicMaterial({ color: 'blue' }));
+			circle.position.copy( object.position );
+			scene.parent.add( circle );
+			
+		}
+//		super.project( scene, n );
 
 	}
 	/**

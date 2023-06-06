@@ -41,7 +41,7 @@
 
 		new MyThree( (scene, options) => {
 
-			const universe = new Sphere( options,
+			const sphere = new Sphere( options,
 				{
 					
 					settings: {
@@ -73,8 +73,8 @@
 									],
 									bodies: [
 										[
-											0,
-											//1,
+											//0,
+											1,
 											//2,
 											//3
 										]
@@ -90,7 +90,7 @@
 				}
 									   
 			);
-			universe.project( scene );
+			sphere.project( scene );
 
 		}, {
 

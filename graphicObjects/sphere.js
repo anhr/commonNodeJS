@@ -34,33 +34,35 @@ class Sphere extends Circle
 	displayDebug( THREE, center, r, scene ) {
 
 //		const scene = classSettings.settings.scene,
+/*		
 		const color = "lightgray", opacity = 0.2;
 
-		scene.add( new THREE.Mesh( new FibonacciSphereGeometry(),//new THREE.SphereGeometry( 1 ),
+		scene.add( new THREE.Mesh( new FibonacciSphereGeometry( r ),//new THREE.SphereGeometry( 1 ),
 
-			new THREE.MeshLambertMaterial({
+			new THREE.MeshLambertMaterial( {
 
 				color: color,
 				opacity: opacity,
 				transparent: true,
 				side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
 
-			})
+			} )
 
 		) );
 
-		scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2.0, 2.0),
+		scene.add( new THREE.Mesh( new THREE.PlaneGeometry( 2.0, 2.0 ),
 
-			new THREE.MeshLambertMaterial({
+			new THREE.MeshLambertMaterial( {
 
 				color: color,
 				opacity: opacity,
 				transparent: true,
 				side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
 
-			})
+			} )
 
-		));
+		) );
+*/  
 		return super.displayDebug( THREE, center, r );
 		
 	}
@@ -296,16 +298,17 @@ class Sphere extends Circle
 
 			const THREE = three.THREE;
 
-//			this.settings.object.geometry.indices.faces.forEach(face => face.face.projectUtils(scene, 3,//Если размерность вселенной задать меньше 3 то исчезнут оси коодинат
-			this.settings.object.geometry.indices.faces.forEach(face => face.face.project(scene, 3,//Если размерность вселенной задать меньше 3 то исчезнут оси коодинат
-//				this.settings
+			this.settings.object.geometry.indices.faces.forEach(face => face.face.project(scene,
+				//3,//Если размерность вселенной задать меньше 3 то исчезнут оси коодинат
 			));
 
-//			this.projectUtils(scene, 3);
-			super.project( scene, 3, this.settings );
+//			super.project( scene, 3, this.settings );
+//			if (this.isDisplay()) this.display( 3, this.debug ? this.displayDebug(THREE, center, r, scene) : undefined );
+			this.settings.scene = scene;
+			this.display( 3 );
 			
 			if (this.debug) {
-/*
+
 				const color = "lightgray", opacity = 0.2;
 
 				const sphere = new THREE.Mesh(new FibonacciSphereGeometry(),//new THREE.SphereGeometry( 1 ),
@@ -321,7 +324,7 @@ class Sphere extends Circle
 
 				);
 				scene.add(sphere);
-
+/*
 				const plane = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 2.0),
 
 					new THREE.MeshLambertMaterial({
