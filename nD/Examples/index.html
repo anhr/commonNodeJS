@@ -392,7 +392,14 @@
 				dat: { guiSelectPoint: { point: guiPoint, }, },
 				//dat: false,
 				title: '5D',
-
+				scales: {
+	
+					x: { name: 0 },
+					y: { name: 1 },
+					z: { name: 2 },
+	
+				},
+	
 			} );
 			//если не выполнить эту команду, то холст будет пустой
 			treeView.setCanvas( 'article5D', myThree );
@@ -612,6 +619,13 @@
 				dat: { guiSelectPoint: { point: guiPoint, }, },
 				//dat: false,
 				title: '4D',
+				scales: {
+	
+					x: { name: 0 },
+					y: { name: 1 },
+					z: { name: 2 },
+	
+				},
 
 			} ) );
 
@@ -781,6 +795,13 @@
 				dat: { guiSelectPoint: { point: guiPoint, }, },
 				//dat: false,
 				title: '3D',
+				scales: {
+	
+					x: { name: 0 },
+					y: { name: 1 },
+					z: { name: 2 },
+	
+				},
 
 			} );
 			treeView.setCanvas( 'article3D', myThree );
@@ -906,6 +927,13 @@
 				stereoEffect: false,
 				//scales: { x: {} },
 				title: '2D',
+				scales: {
+	
+					x: { name: 0 },
+					y: { name: 1 },
+//					z: { name: 2 },
+	
+				},
 
 			} );
 			treeView.setCanvas( 'article2D', myThree );
@@ -995,6 +1023,13 @@
 				stereoEffect: false,
 				//scales: { x: {} },
 				title: '1D',
+				scales: {
+	
+					x: { name: 0 },
+//					y: { name: 1 },
+//					z: { name: 2 },
+	
+				},
 
 			} );
 			treeView.setCanvas( 'article1D', myThree );

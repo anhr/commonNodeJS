@@ -935,7 +935,7 @@ class GuiSelectPoint {
 			switch ( n ) {
 
 				case 1:
-					fRotation.domElement.style.display = none;
+					if ( fRotation ) fRotation.domElement.style.display = none;
 					break;
 				case 2:
 					fRotation.domElement.style.display = block;
