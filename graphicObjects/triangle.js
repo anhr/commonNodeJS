@@ -45,7 +45,7 @@ class Triangle extends Utils
 		object.updateMatrixWorld( true );
 		const attribute = object.geometry.attributes.position, points = [];
 		const settings = this.classSettings.settings;
-		this.edges.forEach( ( edge, i ) => {
+		this.edges().forEach( ( edge, i ) => {
 			
 			if (settings.object.geometry.position[i].length === 0) {
 

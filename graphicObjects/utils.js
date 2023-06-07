@@ -21,9 +21,10 @@ import ND from '../nD/nD.js';
 //import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
 if (ND.default) ND = ND.default;
 
-import three from '../three.js';
+//import three from '../three.js';
 
-const sUtils = 'Utils', sOverride = sUtils + ': Please override the %s method in your child class.';
+const sUtils = 'Utils', sOverride = sUtils + ': Please override the %s method in your child class.',
+	sVertices = sUtils + ': vertices';
 
 class Utils {
 
@@ -31,7 +32,7 @@ class Utils {
 	
 	displayDebug() { console.error(sOverride.replace('%s', 'displayDebug')); }
 	isDisplay() { return false; }
-
+/*
 	//Project of the circle or triangle into 3D space
 	project
 	(
@@ -88,8 +89,9 @@ class Utils {
 			this.debug ? this.displayDebug(THREE, center, r, scene) : undefined);
 
 	}
+*/	
 
-	get edges() {
+	edges = ( boCreate = true ) => {
 		
 //			return classSettings.settings.object.geometry.indices.faces[classSettings.faceId];
 		const settings = this.classSettings.settings, indices = settings.object.geometry.indices, face = indices.faces[this.classSettings.faceId],
@@ -124,9 +126,8 @@ class Utils {
 					}
 					if ( !edge.isProxy )//&& !_edges.isCreateEdge )
 					{
-						
-//											_edges.isCreateEdge = true;
-//											edge = Edge( { this: _this, edgeId: edgeId } );
+
+						if ( !boCreate ) return edge;
 						const vertices = edge.vertices || [];
 						Object.keys( edge ).forEach( key => {
 			
@@ -147,10 +148,15 @@ class Utils {
 						
 						}
 						function VerticeIdDebug(i, verticeId) {
-						
+
+/*							
+if( edgeId === face[face.length - 1] )
+	console.log(sVertices)
+ */
 							if ( (verticeId === position.length) && (//этой вершины нет списке вершин
 								( edgeId === undefined ) || //добавлять новую вершину потому что эта грань добавляется с помощью edges.push()
-								( edgeId != ( _this.edges.length - 1))//не добалять новую вершину если это последняя грань, потому что у последней грани последняя вершина совпадает с первой вершины первой грани
+//								( edgeId != ( _this.edges.length - 1))//не добалять новую вершину если это последняя грань, потому что у последней грани последняя вершина совпадает с первой вершины первой грани
+								( edgeId != face[face.length - 1] )//не добалять новую вершину если это последняя грань, потому что у последней грани последняя вершина совпадает с первой вершины первой грани
 							)
 							)
 								position.push();//{edgeId: edgeIndex});
@@ -193,7 +199,8 @@ class Utils {
 								vertices[i] = (
 									position.length === 0) ||//первая вершина первого ребра
 									((edgeId != undefined) &&//ребро из массива ребер
-										(i === 1) && (edgeId === _this.edges.length - 1)) ?//Это последняя вершина последнего ребра. Соеденить последнюю вершину последнего ребра с первой першиной первого ребра
+//										(i === 1) && (edgeId === _this.edges.length - 1)) ?//Это последняя вершина последнего ребра. Соеденить последнюю вершину последнего ребра с первой першиной первого ребра
+										(i === 1) && (edgeId === face[face.length - 1])) ?//Это последняя вершина последнего ребра. Соеденить последнюю вершину последнего ребра с первой першиной первого ребра
 									0 :
 									edgeId != undefined ?
 										position.length + (i === 0 ? -1 : 0) : //ребро из массива ребер
@@ -225,7 +232,7 @@ class Utils {
 			
 										//distance between edge vertices
 //															if (_edge.distance === undefined) _edge.distance = 2 * Math.PI / edgeSettings.faceEdges.length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной вселенной с был равен 1.0
-										if (_edge.distance === undefined) _edge.distance = 2 * Math.PI / _this.edges.length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной вселенной с был равен 1.0
+										if (_edge.distance === undefined) _edge.distance = 2 * Math.PI / _this.edges().length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной вселенной с был равен 1.0
 										return _edge.distance;
 			
 									}
@@ -248,12 +255,12 @@ class Utils {
 						});
 						if (debug)
 						
-							for (let edgeCurId = ( edgeId === undefined ) ? 0 : edgeId; edgeCurId < _this.edges.length; edgeCurId++) {
+							for (let edgeCurId = ( edgeId === undefined ) ? 0 : edgeId; edgeCurId < _this.edges().length; edgeCurId++) {
 						
 								if ( ( edgeId != undefined ) && ( edgeId === edgeCurId ) ) continue;//Не сравнивать одно и тоже ребро
 						
-								const verticesCur = _this.edges[edgeCurId];
-//													if (!verticesCur) continue;//в данном ребре еще нет вершин
+								const verticesCur = _this.edges( false )[edgeCurId];
+								if ( !Array.isArray( verticesCur ) ) continue;//в данном ребре еще нет вершин
 								const vertices = edge;
 								if (
 									(vertices[0] === verticesCur[0]) && (vertices[1] === verticesCur[1]) ||

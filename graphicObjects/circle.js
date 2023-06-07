@@ -14,6 +14,7 @@
 */
 
 import Utils from './utils.js';
+import three from '../three.js';
 
 const sCircle = 'Circle', sCircleUniverse = sCircle;
 
@@ -399,9 +400,10 @@ class Circle extends Utils
 
 						if (!_this.debug) return;
 
-						_position.forEach((vertice, verticeId) => {
+						_position.forEach( ( vertice, verticeId ) => {
 
-							_this.Test(vertice, strVerticeId);
+							const strVerticeId = 'position[' + verticeId + ']'
+							_this.Test( vertice, strVerticeId );
 							vertice.edges.forEach(edgeId => {
 
 								if (typeof edgeId !== "number") console.error(sCircleUniverse + ': position.test()', strVerticeId = 'position(' + verticeId + ')' + '. ' + strVerticeId + '. Invalid edgeId = ' + edgeId);
@@ -462,8 +464,56 @@ class Circle extends Utils
 			scene,
 		) => {
 
-			this.settings.object.geometry.position.test();
-			super.project( scene, 2 );
+//			super.project( scene, 2 );
+			const THREE = three.THREE, settings = this.classSettings.settings;
+			
+			//remove previous universe
+			this.remove(scene);
+	
+			const indices = settings.object.geometry.indices;
+	
+			//edges length
+			let l = 0;
+			//indices.faces[this.classSettings.faceId].forEach(edgeId => l += indices.edges[edgeId].distance );
+			//indices.faceEdges.forEach(edge => l += edge.distance);
+			this.edges().forEach(edge => l += edge.distance);
+			if ( isNaN( l ) || !isFinite( l ) ) {
+	
+				console.error(sCircle + ': project(...). Invalid edges length = ' + l);
+				return;
+	
+			}
+			const r = l / (2 * Math.PI),
+				center = new THREE.Vector2(0.0, 0.0),
+				axis = new THREE.Vector3(0, 0, 1),
+				point0 = new THREE.Vector3(0, -r, 0),
+				delta = 2 * Math.PI / l;
+			let angle = 0.0;//Угол поворота радиуса окружности до текущей вершины
+			this.edges().forEach( ( edge, i ) => {
+				
+				if (settings.object.geometry.position[i].length === 0) {
+					
+					let point;
+					if (i === 0) point = point0;
+					else {
+		
+	//					angle += indices.faceEdges[i].distance * delta;
+						angle += edge.distance * delta;
+						point = new THREE.Vector3().copy(point0).applyAxisAngle(axis, angle);
+		
+					}
+					settings.object.geometry.position[i] = point.toArray();
+	
+				}
+				
+			} );
+	
+			settings.scene = scene;
+	
+			settings.object.geometry.position.test();
+			
+			if (this.isDisplay()) this.display( 2, this.debug ? this.displayDebug(THREE, center, r, scene) : undefined);
+				
 			this.logCircle();
 	
 		}

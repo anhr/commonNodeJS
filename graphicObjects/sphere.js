@@ -286,12 +286,7 @@ class Sphere extends Circle
 		super( options, classSettings );
 
 		//Project sphere into 3D space
-		this.project = (
-			scene,
-//			bLog = true//log positions and indices to cnosole 
-		) => {
-
-			this.settings.object.geometry.position.test();
+		this.project = ( scene ) => {
 			
 			//remove previous universe
 			this.remove(scene);
@@ -303,7 +298,9 @@ class Sphere extends Circle
 			));
 
 //			super.project( scene, 3, this.settings );
-//			if (this.isDisplay()) this.display( 3, this.debug ? this.displayDebug(THREE, center, r, scene) : undefined );
+
+			this.settings.object.geometry.position.test();
+			
 			this.settings.scene = scene;
 			this.display( 3 );
 			
