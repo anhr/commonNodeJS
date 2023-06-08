@@ -82,7 +82,7 @@ class Circle extends Utils
 	}
 	Indices() {
 		
-		const _this = this, settings = this.settings;
+		const _this = this, settings = this.classSettings.settings;
 		const debug = this.debug;
 
 		if (settings.object.geometry.indices.count != undefined) {
@@ -289,7 +289,7 @@ class Circle extends Utils
 		settings.object.name = settings.object.name || this.name( options.getLanguageCode );
 		const _this = this;
 		this.options = options;
-		this.settings = settings;
+//		this.settings = settings;
 		
 		settings.object.geometry = settings.object.geometry || {};
 		if (settings.object.geometry.indices) {
@@ -453,9 +453,10 @@ class Circle extends Utils
 		this.logCircle = () => {
 
 			if (!_this.debug) return;
-			_this.settings.object.geometry.position.forEach( ( vertice, i ) => console.log( 'position[' + i + '] = ' + JSON.stringify(vertice) + ' edges = ' + JSON.stringify(vertice.edges) ) );
-			_this.settings.object.geometry.indices.edges.forEach( ( edge, i ) => console.log( 'indices.edges[' + i + '] = ' + JSON.stringify(edge) + ' distance = ' + edge.distance ) );
-			_this.settings.object.geometry.indices.faces.forEach( (face, i ) => console.log( 'indices.faces[' + i + '] = ' + JSON.stringify(face) ) );
+			const settings = _this.classSettings.settings;
+			settings.object.geometry.position.forEach( ( vertice, i ) => console.log( 'position[' + i + '] = ' + JSON.stringify(vertice) + ' edges = ' + JSON.stringify(vertice.edges) ) );
+			settings.object.geometry.indices.edges.forEach( ( edge, i ) => console.log( 'indices.edges[' + i + '] = ' + JSON.stringify(edge) + ' distance = ' + edge.distance ) );
+			settings.object.geometry.indices.faces.forEach( (face, i ) => console.log( 'indices.faces[' + i + '] = ' + JSON.stringify(face) ) );
 
 		}
 

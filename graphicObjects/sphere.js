@@ -105,7 +105,7 @@ class Sphere extends Circle
 
 		if (!this.debug) return;
 		this.logCircle();
-		this.settings.object.geometry.indices.bodies.forEach((body, i) => console.log('indices.bodies[' + i + '] = ' + JSON.stringify( body )));
+		this.classSettings.settings.object.geometry.indices.bodies.forEach((body, i) => console.log('indices.bodies[' + i + '] = ' + JSON.stringify( body )));
 		
 	}
 	get verticeEdgesLengthMax() { return 6 }//нельзя добавлять новое ребро если у вершины уже 6 ребер
@@ -117,7 +117,7 @@ class Sphere extends Circle
 	}
 	Indices(){
 
-		const settings = this.settings;
+		const settings = this.classSettings.settings;
 		if (settings.object.geometry.indices.count != undefined) {
 
 			settings.object.geometry.indices[1].count = settings.object.geometry.indices.count;
@@ -272,21 +272,23 @@ class Sphere extends Circle
 
 		//Project sphere into 3D space
 		this.project = ( scene ) => {
+
+			const settings = this.classSettings.settings;
 			
 			//remove previous universe
 			this.remove(scene);
 
 			const THREE = three.THREE;
 
-			this.settings.object.geometry.indices.faces.forEach(face => face.face.project(scene,
+			settings.object.geometry.indices.faces.forEach(face => face.face.project(scene,
 				//3,//Если размерность вселенной задать меньше 3 то исчезнут оси коодинат
 			));
 
 //			super.project( scene, 3, this.settings );
 
-			this.settings.object.geometry.position.test();
+			settings.object.geometry.position.test();
 			
-			this.settings.scene = scene;
+			settings.scene = scene;
 			this.display( 3 );
 			
 			if (this.debug) {

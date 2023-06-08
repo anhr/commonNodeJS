@@ -352,7 +352,7 @@ if( edgeId === face[face.length - 1] )
 			debugObject
 		) => {
 
-			const settings = this.settings;
+			const settings = this.classSettings.settings;
 			settings.options = options;
 			settings.object.name = settings.object.name || lang.name;
 			new ND(n, settings);
