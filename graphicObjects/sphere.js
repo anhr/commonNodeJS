@@ -206,6 +206,7 @@ class Sphere extends Circle
 
 							}
 							return _indices[2];
+/*							
 						case 'faces':
 							return new Proxy(settings.object.geometry.indices.bodies[this.classSettings.bodyId], {
 		
@@ -217,28 +218,12 @@ class Sphere extends Circle
 										return indices[1][_faces[i]];
 				
 									}
-/*									
-									switch (name) {
-				
-										case 'isBodyFacesProxy': return true;
-				
-									}
-*/		 
 									return _faces[name];
 				
 								},
-/*								
-								set: (_faces, name, value) => {
 				
-									const i = parseInt(name);
-									if (!isNaN(i)) _faces[indices.faces[_this.classSettings.faceId][i]] = value;
-				
-									return true;
-				
-								}
-*/		
-				
-							});							
+							});
+*/							
 
 					}
 					return _indices[name];
