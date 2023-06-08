@@ -45,16 +45,18 @@ class Triangle extends Utils
 		object.updateMatrixWorld( true );
 		const attribute = object.geometry.attributes.position, points = [];
 		const settings = this.classSettings.settings;
-		this.edges().forEach( ( edge, i ) => {
-			
-			if (settings.object.geometry.position[i].length === 0) {
+		this.edges().forEach( ( edge, edgeId ) => {
 
-				settings.object.geometry.position[i] = new THREE.Vector3().
-					fromBufferAttribute( attribute, i ).
+			edge.forEach( ( positionId, i ) => {
+
+				if (settings.object.geometry.position[positionId].length != 0) return;
+
+				settings.object.geometry.position[positionId] = new THREE.Vector3().
+					fromBufferAttribute( attribute, edgeId + i ).
 					applyMatrix4( object.matrixWorld ).
 					toArray();
-
-			}
+				
+			} )
 			
 		} );
 
