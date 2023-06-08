@@ -222,7 +222,7 @@ class Circle extends Utils
 		
 		for ( let i = face.length; i < edgesCount; i++ ) face.push( i + a );
 		
-		indices.edges;//Convert edges items to Proxy
+		indices.edges;//Convert edges to Proxy
 		
 		//у треугольника ребер не должно быть меньше 3
 //		for ( let i = indices.edges.length; i < edgesCount; i++ ) indices.edges.push();
@@ -455,8 +455,12 @@ class Circle extends Utils
 			if (!_this.debug) return;
 			const settings = _this.classSettings.settings;
 			settings.object.geometry.position.forEach( ( vertice, i ) => console.log( 'position[' + i + '] = ' + JSON.stringify(vertice) + ' edges = ' + JSON.stringify(vertice.edges) ) );
+/*			
 			settings.object.geometry.indices.edges.forEach( ( edge, i ) => console.log( 'indices.edges[' + i + '] = ' + JSON.stringify(edge) + ' distance = ' + edge.distance ) );
 			settings.object.geometry.indices.faces.forEach( (face, i ) => console.log( 'indices.faces[' + i + '] = ' + JSON.stringify(face) ) );
+*/
+			settings.object.geometry.indices[0].forEach( ( edge, i ) => console.log( 'indices.edges[' + i + '] = ' + JSON.stringify(edge) + ' distance = ' + edge.distance ) );
+			settings.object.geometry.indices[1].forEach( (face, i ) => console.log( 'indices.faces[' + i + '] = ' + JSON.stringify(face) ) );
 
 		}
 

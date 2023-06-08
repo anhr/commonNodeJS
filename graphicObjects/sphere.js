@@ -206,7 +206,6 @@ class Sphere extends Circle
 
 							}
 							return _indices[2];
-/*							
 						case 'faces':
 							return new Proxy(settings.object.geometry.indices.bodies[this.classSettings.bodyId], {
 		
@@ -223,7 +222,6 @@ class Sphere extends Circle
 								},
 				
 							});
-*/							
 
 					}
 					return _indices[name];
