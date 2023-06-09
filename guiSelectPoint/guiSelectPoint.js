@@ -877,9 +877,20 @@ class GuiSelectPoint {
 			if ( isNotSetControllers() )
 				return;
 			const mesh = getMesh();
+			const setValue = ( controller, angle ) => {
+
+				if ( ( angle < controller.__min ) || ( angle > controller.__max ) ) console.error( 'GuiSelectPoint.setRotationControllers(): Invalid angle = ' + angle + ' range. Available range from ' + controller.__min + ' to ' + controller.__max )
+				controller.setValue( angle );
+				
+			}
+/*			
 			if ( cRotations.x ) cRotations.x.setValue( mesh.rotation.x );
 			if ( cRotations.y ) cRotations.y.setValue( mesh.rotation.y );
 			if ( cRotations.z ) cRotations.z.setValue( mesh.rotation.z );
+*/   
+			if ( cRotations.x ) setValue( cRotations.x, mesh.rotation.x );
+			if ( cRotations.y ) setValue( cRotations.y, mesh.rotation.y );
+			if ( cRotations.z ) setValue( cRotations.z, mesh.rotation.z );
 
 		}
 		function visibleTraceLine( intersection, value, getMesh ) {
