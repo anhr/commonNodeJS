@@ -272,15 +272,24 @@ class Sphere extends Circle
 		this.project = ( scene ) => {
 
 			const settings = this.classSettings.settings;
+			settings.options = options;//for debug. See Triangle.project
 			
 			//remove previous universe
 			this.remove(scene);
 
 			const THREE = three.THREE;
 
-			settings.object.geometry.indices.faces.forEach(face => face.face.project(scene,
-				//3,//Если размерность вселенной задать меньше 3 то исчезнут оси коодинат
-			));
+			settings.object.geometry.indices.faces.forEach( face => {
+				
+				const rotation = new THREE.Euler();
+				switch( face.face.classSettings.faceId ) {
+
+					case 1: rotation.x = - Math.PI / 2;
+						
+				}
+				face.face.project( scene,  rotation );
+			
+			} );
 
 //			super.project( scene, 3, this.settings );
 

@@ -28,8 +28,9 @@ class Triangle extends Utils
 {
 
 	//Project of triangle to the 3D space
-	project( scene ) {
+	project( scene, rotation ) {
 
+		const settings = this.classSettings.settings;
 		const THREE = three.THREE;
 		const buffer = new THREE.BufferGeometry().setFromPoints( [
 			new THREE.Vector3( 0.0, -1.0, 0.0 ),
@@ -40,11 +41,24 @@ class Triangle extends Utils
 		const object = new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( { color: 'white', } ) );
 		
 		object.position.z += z;
+		object.rotation.copy( rotation );
 		object.scale.multiplyScalar ( scale );
-		
 		object.updateMatrixWorld( true );
+
+		if ( this.debug ) {
+			
+			scene.add( object );
+			const options = settings.options;
+			if ( options.guiSelectPoint ) {
+
+				object.name = 'triangle ' + this.classSettings.faceId;
+				options.guiSelectPoint.addMesh( object );
+
+			}
+
+		}
+		
 		const attribute = object.geometry.attributes.position, points = [];
-		const settings = this.classSettings.settings;
 		this.edges().forEach( ( edge, edgeId ) => {
 
 			edge.forEach( ( positionId, i ) => {
