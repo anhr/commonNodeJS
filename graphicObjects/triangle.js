@@ -41,13 +41,19 @@ class Triangle extends Utils
 		const object = new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( { color: 'white', } ) );
 		
 		object.position.z += z;
-		object.rotation.copy( rotation );
+if ( this.classSettings.faceId === 1 ) object.rotation.z = ( ( 2 * Math.PI ) / 3 ) * 1;//120 degree
 		object.scale.multiplyScalar ( scale );
-		object.updateMatrixWorld( true );
 
+		const group = new THREE.Group();
+		group.rotation.copy( rotation );
+		group.updateMatrixWorld( true );
+		group.add( object );
+		
+		object.updateMatrixWorld( true );
+		
 		if ( this.debug ) {
 			
-			scene.add( object );
+			scene.add( group );
 			const options = settings.options;
 			if ( options.guiSelectPoint ) {
 
@@ -90,7 +96,7 @@ class Triangle extends Utils
 	
 			)
 			plane.position.copy( object.position );
-			scene.parent.add( plane );
+			scene.add( plane );
 			
 			const center = new THREE.Vector2(0.0, 0.0);
 			const circle = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
@@ -99,7 +105,7 @@ class Triangle extends Utils
 				0.0, 2.0 * Math.PI,// Start angle, stop angle
 			).getSpacedPoints(256)), new THREE.LineBasicMaterial({ color: 'blue' }));
 			circle.position.copy( object.position );
-			scene.parent.add( circle );
+			scene.add( circle );
 			
 		}
 //		super.project( scene, n );

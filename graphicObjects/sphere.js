@@ -284,7 +284,7 @@ class Sphere extends Circle
 				const rotation = new THREE.Euler();
 				switch( face.face.classSettings.faceId ) {
 
-					case 1: rotation.x = - Math.PI / 2;
+					case 1: rotation.x = Math.PI / 2;
 						
 				}
 				face.face.project( scene,  rotation );
