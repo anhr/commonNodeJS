@@ -28,7 +28,7 @@ class Triangle extends Utils
 {
 
 	//Project of triangle to the 3D space
-	project( scene, rotation ) {
+	project( scene, rotation, rotationFace ) {
 
 		const settings = this.classSettings.settings;
 		const THREE = three.THREE;
@@ -41,7 +41,8 @@ class Triangle extends Utils
 		const object = new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( { color: 'white', } ) );
 		
 		object.position.z += z;
-if ( this.classSettings.faceId === 1 ) object.rotation.z = ( ( 2 * Math.PI ) / 3 ) * 1;//120 degree
+//if ( this.classSettings.faceId === 1 ) object.rotation.z = ( ( 2 * Math.PI ) / 3 ) * 1;//120 degree
+		object.rotation.copy( rotationFace );
 		object.scale.multiplyScalar ( scale );
 
 		const group = new THREE.Group();
@@ -96,7 +97,7 @@ if ( this.classSettings.faceId === 1 ) object.rotation.z = ( ( 2 * Math.PI ) / 3
 	
 			)
 			plane.position.copy( object.position );
-			scene.add( plane );
+			group.add( plane );
 			
 			const center = new THREE.Vector2(0.0, 0.0);
 			const circle = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
@@ -105,7 +106,7 @@ if ( this.classSettings.faceId === 1 ) object.rotation.z = ( ( 2 * Math.PI ) / 3
 				0.0, 2.0 * Math.PI,// Start angle, stop angle
 			).getSpacedPoints(256)), new THREE.LineBasicMaterial({ color: 'blue' }));
 			circle.position.copy( object.position );
-			scene.add( circle );
+			group.add( circle );
 			
 		}
 //		super.project( scene, n );

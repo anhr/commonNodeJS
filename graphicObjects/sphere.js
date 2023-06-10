@@ -281,13 +281,16 @@ class Sphere extends Circle
 
 			settings.object.geometry.indices.faces.forEach( face => {
 				
-				const rotation = new THREE.Euler();
+				const rotationGroup = new THREE.Euler(), rotationFace = new THREE.Euler();
 				switch( face.face.classSettings.faceId ) {
 
-					case 1: rotation.x = Math.PI / 2;
+					case 1:
+						rotationGroup.x = Math.PI / 2;//90 degree
+						rotationFace.z = ( 2 * Math.PI ) / 3;//120 degree;
+						break;
 						
 				}
-				face.face.project( scene,  rotation );
+				face.face.project( scene, rotationGroup, rotationFace );
 			
 			} );
 
