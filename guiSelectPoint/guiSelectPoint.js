@@ -1041,7 +1041,7 @@ class GuiSelectPoint {
 
 			if ( !mesh || mesh.userData.boFrustumPoints ) return;
 			if ( !mesh.userData.player ) mesh.userData.player = {};
-			if ( !mesh.userData.player.arrayFuncs ) {
+			if ( !mesh.userData.player.arrayFuncs && mesh.geometry ) {
 
 				const position = mesh.geometry.attributes.position;
 				mesh.userData.player.arrayFuncs = [];
@@ -1131,7 +1131,7 @@ class GuiSelectPoint {
 						displayPoints = block;
 						displayFrustumPoints = none;
 
-						if ( mesh.geometry.attributes ) {
+						if ( mesh.geometry && mesh.geometry.attributes ) {
 
 							displayfPoints = block;
 							addPoints( mesh );
