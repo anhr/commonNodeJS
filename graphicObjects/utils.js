@@ -91,7 +91,10 @@ class Utils {
 	}
 */	
 
-	edges = ( boCreate = true ) => {
+//	edges = ( boCreate = true ) =>
+	boCreate = true;
+	get edges ()
+	{
 		
 //			return classSettings.settings.object.geometry.indices.faces[classSettings.faceId];
 		const settings = this.classSettings.settings, indices = settings.object.geometry.indices, face = indices.faces[this.classSettings.faceId],
@@ -127,7 +130,7 @@ class Utils {
 					if ( !edge.isProxy )//&& !_edges.isCreateEdge )
 					{
 
-						if ( !boCreate ) return edge;
+						if ( !this.boCreate ) return edge;
 						const vertices = edge.vertices || [];
 						Object.keys( edge ).forEach( key => {
 			
@@ -232,7 +235,7 @@ if( edgeId === face[face.length - 1] )
 			
 										//distance between edge vertices
 //															if (_edge.distance === undefined) _edge.distance = 2 * Math.PI / edgeSettings.faceEdges.length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной вселенной с был равен 1.0
-										if (_edge.distance === undefined) _edge.distance = 2 * Math.PI / _this.edges().length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной вселенной с был равен 1.0
+										if (_edge.distance === undefined) _edge.distance = 2 * Math.PI / _this.edges.length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной вселенной с был равен 1.0
 										return _edge.distance;
 			
 									}
@@ -255,11 +258,14 @@ if( edgeId === face[face.length - 1] )
 						});
 						if (debug)
 						
-							for (let edgeCurId = ( edgeId === undefined ) ? 0 : edgeId; edgeCurId < _this.edges().length; edgeCurId++) {
+							for (let edgeCurId = ( edgeId === undefined ) ? 0 : edgeId; edgeCurId < _this.edges.length; edgeCurId++) {
 						
 								if ( ( edgeId != undefined ) && ( edgeId === edgeCurId ) ) continue;//Не сравнивать одно и тоже ребро
-						
-								const verticesCur = _this.edges( false )[edgeCurId];
+
+//								const verticesCur = _this.edges( false )[edgeCurId];
+								_this.boCreate = false;
+								const verticesCur = _this.edges[edgeCurId];
+								_this.boCreate = true;
 								if ( !Array.isArray( verticesCur ) ) continue;//в данном ребре еще нет вершин
 								const vertices = edge;
 								if (
@@ -342,6 +348,7 @@ if( edgeId === face[face.length - 1] )
 
 		if (classSettings.faceId === undefined) classSettings.faceId = 0;
 		this.classSettings = classSettings;
+//		this.boCreate = true;
 		
 		this.debug = true;
 //		this.THREE = three.THREE;

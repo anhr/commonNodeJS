@@ -481,7 +481,7 @@ class Circle extends Utils
 			let l = 0;
 			//indices.faces[this.classSettings.faceId].forEach(edgeId => l += indices.edges[edgeId].distance );
 			//indices.faceEdges.forEach(edge => l += edge.distance);
-			this.edges().forEach(edge => l += edge.distance);
+			this.edges.forEach(edge => l += edge.distance);
 			if ( isNaN( l ) || !isFinite( l ) ) {
 	
 				console.error(sCircle + ': project(...). Invalid edges length = ' + l);
@@ -494,7 +494,7 @@ class Circle extends Utils
 				point0 = new THREE.Vector3(0, -r, 0),
 				delta = 2 * Math.PI / l;
 			let angle = 0.0;//Угол поворота радиуса окружности до текущей вершины
-			this.edges().forEach( ( edge, i ) => {
+			this.edges.forEach( ( edge, i ) => {
 				
 				if (settings.object.geometry.position[i].length === 0) {
 					
