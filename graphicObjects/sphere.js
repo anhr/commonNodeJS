@@ -243,23 +243,83 @@ class Sphere extends Circle
 
 			settings.object.geometry.indices.faces.forEach( face => {
 				
-				const rotationGroup = new THREE.Euler(),// rotationFace = new THREE.Euler(),
-					faceEdgeFaceAngle = Math.acos( 1 / 3 ),//Face-edge-face angle. approx. 70.5288° or 1.2309594173407747 radians https://en.wikipedia.org/wiki/Tetrahedron
-					edgeEdgeAngle = 2 * Math.PI / 3;//120° or 2.0943951023931953 radians
-				switch( face.face.classSettings.faceId ) {
+				const faceEdgeFaceAngle = Math.acos( 1 / 3 ),//Face-edge-face angle. approx. 70.5288° or 1.2309594173407747 radians https://en.wikipedia.org/wiki/Tetrahedron
+					edgeEdgeAngle = 2 * Math.PI / 3,//120° or 2.0943951023931953 radians
+					
+					//каждую грань (треугольник) помещаю в пару вложенных друг в друга группы
+					group = new THREE.Group(),
+					groupFace = new THREE.Group(),
+					
+					//углы поворота первого треугольника
+					rotation1 = new THREE.Euler(
+						
+						//x
+						//наклоняю на угол, равный углу между гранями пирамиды
+						Math.PI + faceEdgeFaceAngle,//approx. 70.5288° * 2 or 4.372552070930568 radians
 
-					case 1:
-						rotationGroup.x = Math.PI + faceEdgeFaceAngle;//approx. 70.5288° * 2 or 4.372552070930568 radians
-						rotationGroup.z = Math.PI * ( 2 / 3 + 1 );//300° or 5.235987755982988 radians;
+						//y
+						0,
+
+						//z
+						//И поворачиваю так, что бы новая вершина треугольника оказалась на вершине приамиды
+//						( Math.PI / 3 )//60° or 1.0471975511965976 radians;
+//						( Math.PI / 3 ) * 5//300° or 5.235987755982988 radians;
+						Math.PI * ( 2 / 3 + 1 )//300° or 5.235987755982988 radians;
+						
+					);
+				
+				groupFace.add(group);
+				const faceId = face.face.classSettings.faceId;
+				let boProject = true;//for debug
+				switch( faceId ) {
+
+					case 0: break;//нулевой треугольник никуда не поворачиваю. Это будет основание пирамиды
+					case 1://Первый треуголник
+						//boProject = false;
+						group.rotation.copy(rotation1);
+//						group.rotation.z *= 5;//300° or 5.235987755982988 radians;
 						break;
-					case 2:
-						rotationGroup.x = Math.PI + faceEdgeFaceAngle;//approx. 70.5288° * 2
-						rotationGroup.y = edgeEdgeAngle;//120° or 2.0943951023931953 radians
-						//rotationGroup.z = Math.PI * ( 2 / 3 + 1 );//300°;
+					case 2://Второй треуголник
+						//boProject = false;
+
+						//Сначала повораяиваю как первый треугольник
+						group.rotation.copy(rotation1);
+//						group.rotation.z *= 5;//300° or 5.235987755982988 radians;
+/*						
+						group.rotation.x = Math.PI + faceEdgeFaceAngle;//approx. 70.5288° * 2 or 4.372552070930568 radians
+						group.rotation.z = Math.PI * ( 2 / 3 + 1 );//300° or 5.235987755982988 radians;
+*/	  
+
+						//А потом уже родительску группу поворачиваю на 120° по оси высоты пирамиды которая совпадает с ось z так,
+						//что бы треугольник совпал со второй гранью пирамиды
+						groupFace.rotation.z = edgeEdgeAngle;//120° or 4.1887902047863905 radians
 						break;
+					case 3://Третий треуголник
+						//boProject = false;
+
+						//Сначала повораяиваю как первый треугольник
+						group.rotation.copy(rotation1);
+//						group.rotation.z *= 5;//300° or 5.235987755982988 radians;
+
+						//А потом уже родительску группу поворачиваю на 240° по оси высоты пирамиды которая совпадает с ось z так,
+						//что бы треугольник совпал с третьей гранью пирамиды
+						groupFace.rotation.z = edgeEdgeAngle * 2;//240° or 4.1887902047863905 radians
+						break;
+					default: console.error(sSphere + '. Invalid faceId = ' + faceId);
 						
 				}
-				face.face.project( scene, rotationGroup );
+//				group.rotation.copy( rotationGroup );
+				group.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
+//				groupFace.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
+				scene.add( groupFace );
+				if ( options.guiSelectPoint ) {
+	
+					groupFace.name = 'groupFace ' + faceId;
+					options.guiSelectPoint.addMesh( groupFace );
+					
+				}
+				
+				if (boProject) face.face.project( scene, group );
 			
 			} );
 

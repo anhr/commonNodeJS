@@ -29,7 +29,7 @@ class Triangle extends Utils
 {
 
 	//Project of triangle to the 3D space
-	project( scene, rotation ) {
+	project( scene, group ) {
 
 		const settings = this.classSettings.settings, THREE = three.THREE, options = settings.options;
 		
@@ -43,13 +43,17 @@ class Triangle extends Utils
 		
 		triangle.position.z += z;
 		triangle.scale.multiplyScalar( scale );
-
+/*
 		const group = new THREE.Group();
 		group.rotation.copy( rotation );
 		group.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
-
+*/
+		//обязательно добавлять треугольник в группу
 		group.add( triangle );
+		
 		triangle.updateMatrixWorld(true);//вычисляем мировые координаты треугольника для вычисления вершин пирамиды
+		
+		//Если не хочешь видеть треуголник на холсте
 		//group.remove( triangle );
 
 		const position = settings.object.geometry.position;
@@ -97,21 +101,19 @@ class Triangle extends Utils
 				
 			});
 
-			scene.add( group );
+//			scene.add( group );
 			
 			if ( options.guiSelectPoint ) {
 
 				group.name = 'group ' + this.classSettings.faceId;
 				options.guiSelectPoint.addMesh( group );
 
-				/*
 				if (triangle.parent) {
 					
 					triangle.name = 'triangle ' + this.classSettings.faceId;
 					options.guiSelectPoint.addMesh( triangle );
 
 				}
-				*/
 
 			}
 			
