@@ -18,17 +18,18 @@ import three from '../three.js'
 
 //https://en.wikipedia.org/wiki/Tetrahedron
 const r = 1,//Unit sphere https://en.wikipedia.org/wiki/Unit_sphere radius
-	a = Math.sqrt( 8 / 3 ),//edge length
-	h = Math.sqrt( 6 ) * a / 3,//Height of pyramid
+	a = Math.sqrt(8 / 3),//edge length
+	h = Math.sqrt(6) * a / 3,//Height of pyramid
 	z = h - r,//расстояние от центра пирамиды до грани
-	scale = a / 1.7320508075688774,//= new THREE.Vector3( 0.0, -1.0, 0.0 ).distanceTo(new THREE.Vector3( 0.8660254037844388, 0.5, 0 ))
-	rCircle = Math.sqrt( r * r - z * z );//радиус окружности, которая получается от пересечения плоскости грани пирамиды со сферой https://en.wikipedia.org/wiki/Circle_of_a_sphere
+	rCircle = Math.sqrt(r * r - z * z),//радиус окружности, которая получается от пересечения плоскости грани пирамиды со сферой https://en.wikipedia.org/wiki/Circle_of_a_sphere
+	scale = a / 1.7320508075688774;//= new THREE.Vector3( 0.0, -1.0, 0.0 ).distanceTo(new THREE.Vector3( 0.8660254037844388, 0.5, 0 )) это длинна ребра до масштабирования
+//	scale = rCircle / r;
 
 class Triangle extends Utils
 {
 
 	//Project of triangle to the 3D space
-	project( scene, rotation, rotationFace ) {
+	project( scene, rotation ) {
 
 		const settings = this.classSettings.settings, THREE = three.THREE, options = settings.options;
 		
@@ -41,9 +42,17 @@ class Triangle extends Utils
 		const triangle = new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( { color: 'white', } ) );
 		
 		triangle.position.z += z;
+		triangle.scale.multiplyScalar( scale );
+
+		const groupFace = new THREE.Group();
+		groupFace.rotation.copy( rotation );
+		groupFace.updateMatrixWorld( true );//обновить groupFace.matrix и groupFace.matrixWorld после ее поворота
+
+		groupFace.add( triangle );
+		triangle.updateMatrixWorld( true );//вычисляем мировые координаты треугольника для вычисления вершин пирамиды
+/*		
 //if ( this.classSettings.faceId === 1 ) triangle.rotation.z = ( ( 2 * Math.PI ) / 3 ) * 1;//120 degree
 		triangle.rotation.copy( rotationFace );
-		triangle.scale.multiplyScalar ( scale );
 
 		const group = new THREE.Group();
 		group.rotation.copy( rotation );
@@ -51,7 +60,7 @@ class Triangle extends Utils
 		group.add( triangle );
 		
 		triangle.updateMatrixWorld( true );
-		
+
 		if ( this.debug ) {
 			
 			scene.add( group );
@@ -63,7 +72,7 @@ class Triangle extends Utils
 			}
 
 		}
-		
+*/		
 		const attribute = triangle.geometry.attributes.position, position = settings.object.geometry.position;
 		this.edges.forEach( ( edge, edgeId ) => {
 
@@ -108,8 +117,8 @@ class Triangle extends Utils
 				} );
 				
 			} );
-			const faceBuffer = new THREE.Triangle(
-				vertices[0].position, vertices[1].position, vertices[2].position
+//			const faceBuffer = new THREE.Triangle(
+//				vertices[0].position, vertices[1].position, vertices[2].position
 				/*
 				//треугольник в плоскости x, y
 				//normal = { x = 0, y = 0, z = 1 }
@@ -131,7 +140,7 @@ class Triangle extends Utils
 				new THREE.Vector3( 0, 1, 0 ),
 				new THREE.Vector3( 0, 0, 1 ),
 				*/
-			);
+//			);
 /*			
 				normal = new THREE.Vector3(),
 				midpoint =  new THREE.Vector3();
@@ -153,7 +162,7 @@ class Triangle extends Utils
 
 			}
 */   
-			const groupFace = new THREE.Group(), piDev4 = Math.PI / 2;
+//			const groupFace = new THREE.Group();//, piDev4 = Math.PI / 2;
 //			groupFace.up.copy( normal );
 //			groupFace.rotation.setFromVector3( normal );
 
@@ -190,10 +199,14 @@ class Triangle extends Utils
 			groupFace.rotation.z = Math.abs( piDev4 * normal.z );
 */   
 			scene.add( groupFace );
+			
 			if ( options.guiSelectPoint ) {
 
 				groupFace.name = 'groupFace ' + this.classSettings.faceId;
 				options.guiSelectPoint.addMesh( groupFace );
+				
+				triangle.name = 'triangle ' + this.classSettings.faceId;
+				options.guiSelectPoint.addMesh( triangle );
 
 			}
 			

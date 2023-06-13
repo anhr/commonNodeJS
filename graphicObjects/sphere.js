@@ -281,16 +281,21 @@ class Sphere extends Circle
 
 			settings.object.geometry.indices.faces.forEach( face => {
 				
-				const rotationGroup = new THREE.Euler(), rotationFace = new THREE.Euler();
+				const rotationGroup = new THREE.Euler(),// rotationFace = new THREE.Euler(),
+					faceEdgeFaceAngle = Math.acos( 1 / 3 );//Face-edge-face angle. approx. 70.5288° https://en.wikipedia.org/wiki/Tetrahedron
 				switch( face.face.classSettings.faceId ) {
 
 					case 1:
-						rotationGroup.x = Math.PI / 2;//90 degree
-						rotationFace.z = ( 2 * Math.PI ) / 3;//120 degree;
+//						rotationGroup.x = Math.PI / 2;//90°
+//						rotationGroup.x = 2 * Math.PI - faceEdgeFaceAngle * 2;//approx. 70.5288° * 2
+						rotationGroup.x = Math.PI + faceEdgeFaceAngle;//approx. 70.5288° * 2
+						//rotationGroup.z = ( ( 2 * Math.PI ) / 3 ) / 2;//120 / 2 = 60°;
+//						rotationGroup.z = ( ( 2 * Math.PI ) / 3 ) + Math.PI;//120°;
+						rotationGroup.z = Math.PI * ( 2 / 3 + 1 );//300°;
 						break;
 						
 				}
-				face.face.project( scene, rotationGroup, rotationFace );
+				face.face.project( scene, rotationGroup );//, rotationFace );
 			
 			} );
 
