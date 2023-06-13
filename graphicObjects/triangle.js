@@ -104,12 +104,14 @@ class Triangle extends Utils
 				group.name = 'group ' + this.classSettings.faceId;
 				options.guiSelectPoint.addMesh( group );
 
+				/*
 				if (triangle.parent) {
 					
 					triangle.name = 'triangle ' + this.classSettings.faceId;
 					options.guiSelectPoint.addMesh( triangle );
 
 				}
+				*/
 
 			}
 			
