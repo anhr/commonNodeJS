@@ -312,7 +312,7 @@ class Sphere extends Circle
 				group.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
 //				groupFace.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
 				scene.add( groupFace );
-				if ( options.guiSelectPoint ) {
+				if ( this.debug && options.guiSelectPoint ) {
 	
 					groupFace.name = 'groupFace ' + faceId;
 					options.guiSelectPoint.addMesh( groupFace );

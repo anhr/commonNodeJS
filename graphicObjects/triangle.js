@@ -49,12 +49,20 @@ class Triangle extends Utils
 		group.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
 */
 		//обязательно добавлять треугольник в группу
-		group.add( triangle );
+		group.add(triangle);
 		
 		triangle.updateMatrixWorld(true);//вычисляем мировые координаты треугольника для вычисления вершин пирамиды
 		
 		//Если не хочешь видеть треуголник на холсте
-		//group.remove( triangle );
+		if (!this.debug)//закоментировать это условие если хочешь всегда удалять треугольник с холста
+			group.remove(triangle);
+		
+		if (triangle.parent) {
+			
+			triangle.name = 'triangle ' + this.classSettings.faceId;
+			options.guiSelectPoint.addMesh( triangle );
+
+		}
 
 		const position = settings.object.geometry.position;
 		this.edges.forEach( ( edge, edgeId ) => {
@@ -107,13 +115,6 @@ class Triangle extends Utils
 
 				group.name = 'group ' + this.classSettings.faceId;
 				options.guiSelectPoint.addMesh( group );
-
-				if (triangle.parent) {
-					
-					triangle.name = 'triangle ' + this.classSettings.faceId;
-					options.guiSelectPoint.addMesh( triangle );
-
-				}
 
 			}
 			
