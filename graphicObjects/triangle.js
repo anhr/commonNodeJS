@@ -49,31 +49,9 @@ class Triangle extends Utils
 		groupFace.updateMatrixWorld( true );//обновить groupFace.matrix и groupFace.matrixWorld после ее поворота
 
 		groupFace.add( triangle );
-		triangle.updateMatrixWorld( true );//вычисляем мировые координаты треугольника для вычисления вершин пирамиды
-/*		
-//if ( this.classSettings.faceId === 1 ) triangle.rotation.z = ( ( 2 * Math.PI ) / 3 ) * 1;//120 degree
-		triangle.rotation.copy( rotationFace );
+		triangle.updateMatrixWorld(true);//вычисляем мировые координаты треугольника для вычисления вершин пирамиды
 
-		const group = new THREE.Group();
-		group.rotation.copy( rotation );
-		group.updateMatrixWorld( true );
-		group.add( triangle );
-		
-		triangle.updateMatrixWorld( true );
-
-		if ( this.debug ) {
-			
-			scene.add( group );
-			if ( options.guiSelectPoint ) {
-
-				triangle.name = 'triangle ' + this.classSettings.faceId;
-				options.guiSelectPoint.addMesh( triangle );
-
-			}
-
-		}
-*/		
-		const attribute = triangle.geometry.attributes.position, position = settings.object.geometry.position;
+		const position = settings.object.geometry.position;
 		this.edges.forEach( ( edge, edgeId ) => {
 
 			edge.forEach( ( positionId, i ) => {
@@ -81,7 +59,7 @@ class Triangle extends Utils
 				if ( position[positionId].length != 0 ) return;
 
 				position[positionId] = new THREE.Vector3().
-					fromBufferAttribute( attribute, edgeId + i ).
+					fromBufferAttribute( triangle.geometry.attributes.position, edgeId + i ).
 					applyMatrix4( triangle.matrixWorld ).
 					toArray();
 				
@@ -91,8 +69,8 @@ class Triangle extends Utils
 
 		if ( this.debug ) {
 
-			const edges = this.edges, vertices = [];
-			this.edges.forEach( ( edge, edgeId ) => {
+			const vertices = [];
+			this.edges.forEach( ( edge ) => {
 				
 				edge.forEach( verticeId => {
 					
@@ -116,88 +94,8 @@ class Triangle extends Utils
 					
 				} );
 				
-			} );
-//			const faceBuffer = new THREE.Triangle(
-//				vertices[0].position, vertices[1].position, vertices[2].position
-				/*
-				//треугольник в плоскости x, y
-				//normal = { x = 0, y = 0, z = 1 }
-				new THREE.Vector3( 0, 0, 0 ),
-				new THREE.Vector3( 1, 0, 0 ),
-				new THREE.Vector3( 0, 1, 0 ),
-				*/
-				/*
-				//треугольник в плоскости x, z
-				//normal = { x = 0, y = -1, z = 0 }
-				new THREE.Vector3( 0, 0, 0 ),
-				new THREE.Vector3( 1, 0, 0 ),
-				new THREE.Vector3( 0, 0, 1 ),
-				*/
-				/*
-				//треугольник в плоскости y, z
-				//normal = { x = 1, y = 0, z = 0 }
-				new THREE.Vector3( 0, 0, 0 ),
-				new THREE.Vector3( 0, 1, 0 ),
-				new THREE.Vector3( 0, 0, 1 ),
-				*/
-//			);
-/*			
-				normal = new THREE.Vector3(),
-				midpoint =  new THREE.Vector3();
-			faceBuffer.getNormal( normal );
-			
-			faceBuffer.getMidpoint( midpoint );
-			scene.add( new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3(), midpoint] ), new THREE.LineBasicMaterial({ color: 'yellow' } ) ) );
-   
-//			scene.add( new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints( [new THREE.Vector3(), normal] ), new THREE.LineBasicMaterial({ color: 'yellow' } ) ) );
-			
-			const face = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints( [faceBuffer.a, faceBuffer.b, faceBuffer.c] ),
-											new THREE.LineBasicMaterial({ color: 'red' } ) );
-			scene.add( face );
+			});
 
-			if ( options.guiSelectPoint ) {
-
-				face.name = 'face ' + this.classSettings.faceId;
-				options.guiSelectPoint.addMesh( face );
-
-			}
-*/   
-//			const groupFace = new THREE.Group();//, piDev4 = Math.PI / 2;
-//			groupFace.up.copy( normal );
-//			groupFace.rotation.setFromVector3( normal );
-
-			//Углы прямоугольного треугольника https://poschitat.online/ugly-pryamougolnogo-treugolnika
-//			const c = Math.sqrt(midpoint.x * midpoint.x + midpoint.y * midpoint.y + midpoint.z * midpoint.z );
-/*			
-			groupFace.rotation.x = Math.asin( midpoint.x / c );
-			groupFace.rotation.y = Math.asin( midpoint.y / c );
-			groupFace.rotation.z = Math.asin( midpoint.z / c );
-*/   
-/*			
-			groupFace.rotation.x = Math.asin( Math.abs( midpoint.x / c ) );
-			groupFace.rotation.y = Math.asin( Math.abs( midpoint.y / c ) );
-			groupFace.rotation.z = Math.asin( Math.abs( midpoint.z / c ) );
-*/   
-/*			
-			groupFace.rotation.x = Math.asin( Math.abs( normal.x ) );
-			groupFace.rotation.y = Math.asin( Math.abs( normal.y ) );
-			groupFace.rotation.z = Math.asin( Math.abs( normal.z ) );
-*/   
-/*			
-			groupFace.rotation.x = normal.x;
-			groupFace.rotation.y = normal.y;
-			groupFace.rotation.z = normal.z;
-*/
-/*
-			groupFace.rotation.x = Math.abs( piDev4 * normal.y );
-			groupFace.rotation.y = Math.abs( piDev4 * normal.x );
-			groupFace.rotation.z = Math.abs( piDev4 * normal.z );
-*/
-/*			
-			groupFace.rotation.x = Math.abs( piDev4 * normal.x );
-			groupFace.rotation.y = Math.abs( piDev4 * normal.y );
-			groupFace.rotation.z = Math.abs( piDev4 * normal.z );
-*/   
 			scene.add( groupFace );
 			
 			if ( options.guiSelectPoint ) {
