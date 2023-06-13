@@ -224,9 +224,6 @@ class Circle extends Utils
 		
 		indices.edges;//Convert edges to Proxy
 		
-		//у треугольника ребер не должно быть меньше 3
-//		for ( let i = indices.edges.length; i < edgesCount; i++ ) indices.edges.push();
-
 		if ( debug ) {
 		
 			//test for duplicate vertice.edges edgeId
@@ -289,7 +286,6 @@ class Circle extends Utils
 		settings.object.name = settings.object.name || this.name( options.getLanguageCode );
 		const _this = this;
 		this.options = options;
-//		this.settings = settings;
 		
 		settings.object.geometry = settings.object.geometry || {};
 		if (settings.object.geometry.indices) {
@@ -395,9 +391,6 @@ class Circle extends Utils
 					//for debug
 					case 'test': return () => {
 
-						//соеденить конец последнего ребра с началом первого ребра
-						//indices.edges[indices.edges.length - 1].vertices[1] = indices.edges[0].vertices[0];
-
 						if (!_this.debug) return;
 
 						_position.forEach( ( vertice, verticeId ) => {
@@ -455,10 +448,6 @@ class Circle extends Utils
 			if (!_this.debug) return;
 			const settings = _this.classSettings.settings;
 			settings.object.geometry.position.forEach( ( vertice, i ) => console.log( 'position[' + i + '] = ' + JSON.stringify(vertice) + ' edges = ' + JSON.stringify(vertice.edges) ) );
-/*			
-			settings.object.geometry.indices.edges.forEach( ( edge, i ) => console.log( 'indices.edges[' + i + '] = ' + JSON.stringify(edge) + ' distance = ' + edge.distance ) );
-			settings.object.geometry.indices.faces.forEach( (face, i ) => console.log( 'indices.faces[' + i + '] = ' + JSON.stringify(face) ) );
-*/
 			settings.object.geometry.indices[0].forEach( ( edge, i ) => console.log( 'indices.edges[' + i + '] = ' + JSON.stringify(edge) + ' distance = ' + edge.distance ) );
 			settings.object.geometry.indices[1].forEach( (face, i ) => console.log( 'indices.faces[' + i + '] = ' + JSON.stringify(face) ) );
 
@@ -469,7 +458,6 @@ class Circle extends Utils
 			scene,
 		) => {
 
-//			super.project( scene, 2 );
 			const THREE = three.THREE, settings = this.classSettings.settings;
 			
 			//remove previous universe
@@ -502,7 +490,6 @@ class Circle extends Utils
 					if (i === 0) point = point0;
 					else {
 		
-	//					angle += indices.faceEdges[i].distance * delta;
 						angle += edge.distance * delta;
 						point = new THREE.Vector3().copy(point0).applyAxisAngle(axis, angle);
 		

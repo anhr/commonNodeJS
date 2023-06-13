@@ -30,39 +30,8 @@ class Sphere extends Circle
 
 	//Overridden methods from base class
 
-//	isDisplay(){ return true; }
 	displayDebug( THREE, center, r, scene ) {
 
-//		const scene = classSettings.settings.scene,
-/*		
-		const color = "lightgray", opacity = 0.2;
-
-		scene.add( new THREE.Mesh( new FibonacciSphereGeometry( r ),//new THREE.SphereGeometry( 1 ),
-
-			new THREE.MeshLambertMaterial( {
-
-				color: color,
-				opacity: opacity,
-				transparent: true,
-				side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
-
-			} )
-
-		) );
-
-		scene.add( new THREE.Mesh( new THREE.PlaneGeometry( 2.0, 2.0 ),
-
-			new THREE.MeshLambertMaterial( {
-
-				color: color,
-				opacity: opacity,
-				transparent: true,
-				side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
-
-			} )
-
-		) );
-*/  
 		return super.displayDebug( THREE, center, r );
 		
 	}
@@ -128,9 +97,7 @@ class Sphere extends Circle
 		settings.object.geometry.indices[2] = settings.object.geometry.indices[2] || settings.object.geometry.indices.bodies || [];
 		
 		super.Indices();
-//		const position = settings.object.geometry.position;
 		const debug = this.debug;
-//		const sIndicesFacesSet = ': indices.faces set. ';
 		
 		if (!isFacesIndicesProxy) {
 
@@ -237,11 +204,6 @@ class Sphere extends Circle
 			indices = settings.object.geometry.indices,
 			body = indices.bodies[this.classSettings.bodyId];
 		
-		//у пирамиды граней не должно быть меньше 4
-		//for ( let i = body.length; i < facesCount; i++ ) body.push( i );
-
-		//for ( let i = settings.faces.length; i < settings.count; i++ ) settings.faces.push({});
-
 		//сразу заменяем все грани на прокси, потому что в противном случае, когда мы создаем прокси грани в get, каждый раз,
 		//когда вызывается get, в результате может получться бесконечная вложенная конструкция и появится сообщение об ошибке:
 		//EgocentricUniverse: Face get. Duplicate proxy
@@ -286,20 +248,14 @@ class Sphere extends Circle
 				switch( face.face.classSettings.faceId ) {
 
 					case 1:
-//						rotationGroup.x = Math.PI / 2;//90°
-//						rotationGroup.x = 2 * Math.PI - faceEdgeFaceAngle * 2;//approx. 70.5288° * 2
 						rotationGroup.x = Math.PI + faceEdgeFaceAngle;//approx. 70.5288° * 2
-						//rotationGroup.z = ( ( 2 * Math.PI ) / 3 ) / 2;//120 / 2 = 60°;
-//						rotationGroup.z = ( ( 2 * Math.PI ) / 3 ) + Math.PI;//120°;
 						rotationGroup.z = Math.PI * ( 2 / 3 + 1 );//300°;
 						break;
 						
 				}
-				face.face.project( scene, rotationGroup );//, rotationFace );
+				face.face.project( scene, rotationGroup );
 			
 			} );
-
-//			super.project( scene, 3, this.settings );
 
 			settings.object.geometry.position.test();
 			
@@ -310,7 +266,7 @@ class Sphere extends Circle
 
 				const color = "lightgray", opacity = 0.2;
 
-				const sphere = new THREE.Mesh(new FibonacciSphereGeometry(),//new THREE.SphereGeometry( 1 ),
+				const sphere = new THREE.Mesh(new FibonacciSphereGeometry(),
 
 					new THREE.MeshLambertMaterial({
 
@@ -323,21 +279,6 @@ class Sphere extends Circle
 
 				);
 				scene.add(sphere);
-/*
-				const plane = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 2.0),
-
-					new THREE.MeshLambertMaterial({
-
-						color: color,
-						opacity: opacity,
-						transparent: true,
-						side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
-
-					})
-
-				);
-				scene.add(plane);
-*/				
 
 				if (typeof Intersections != 'undefined') new Intersections(sphere, plane);
 				this.logSphere();

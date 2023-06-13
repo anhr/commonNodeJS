@@ -32,71 +32,11 @@ class Utils {
 	
 	displayDebug() { console.error(sOverride.replace('%s', 'displayDebug')); }
 	isDisplay() { return false; }
-/*
-	//Project of the circle or triangle into 3D space
-	project
-	(
-		scene,
-		n,//space dimension
-	) {
 
-		const THREE = three.THREE, settings = this.classSettings.settings;
-		
-		//remove previous universe
-		this.remove(scene);
-
-		const indices = settings.object.geometry.indices;
-
-		//edges length
-		let l = 0;
-		//indices.faces[this.classSettings.faceId].forEach(edgeId => l += indices.edges[edgeId].distance );
-		//indices.faceEdges.forEach(edge => l += edge.distance);
-		this.edges.forEach(edge => l += edge.distance);
-		if (isNaN(l)) {
-
-			console.error(sUtils + ': project(...). Invalid edges length = ' + l);
-			return;
-
-		}
-		const r = l / (2 * Math.PI),
-			center = new THREE.Vector2(0.0, 0.0),
-			axis = new THREE.Vector3(0, 0, 1),
-			point0 = new THREE.Vector3(0, -r, 0),
-			delta = 2 * Math.PI / l;
-		let angle = 0.0;//Угол поворота радиуса окружности до текущей вершины
-		this.edges.forEach( ( edge, i ) => {
-			
-			if (settings.object.geometry.position[i].length === 0) {
-				
-				let point;
-				if (i === 0) point = point0;
-				else {
-	
-//					angle += indices.faceEdges[i].distance * delta;
-					angle += edge.distance * delta;
-					point = new THREE.Vector3().copy(point0).applyAxisAngle(axis, angle);
-	
-				}
-				settings.object.geometry.position[i] = point.toArray();
-
-			}
-			
-		} );
-
-		settings.scene = scene;
-
-		if (this.isDisplay()) this.display(n,// settings,
-			this.debug ? this.displayDebug(THREE, center, r, scene) : undefined);
-
-	}
-*/	
-
-//	edges = ( boCreate = true ) =>
 	boCreate = true;
 	get edges ()
 	{
 		
-//			return classSettings.settings.object.geometry.indices.faces[classSettings.faceId];
 		const settings = this.classSettings.settings, indices = settings.object.geometry.indices, face = indices.faces[this.classSettings.faceId],
 			position = settings.object.geometry.position, _this = this, debug = this.debug;
 		return new Proxy( indices.edges, {
@@ -106,13 +46,10 @@ class Utils {
 				const i = parseInt( name );
 				if (!isNaN(i)) {
 					
-//					console.log(this);
-//					return _edges[face[i]];
 					const edgeId = face[i];
 					let edge = _edges[edgeId];
 										
 					//for compatibility with ND
-//					if ( indices.faces[this.classSettings.faceId].find( edgeId => edgeId === i ) === undefined )
 					if ( face.find( edgeIdcur => edgeIdcur === edgeId ) === undefined )
 						return edge;//Это ребро не входит в данную грань. Его не надо преобразовывать в массив.
 					
@@ -127,7 +64,7 @@ class Utils {
 						}
 
 					}
-					if ( !edge.isProxy )//&& !_edges.isCreateEdge )
+					if ( !edge.isProxy )
 					{
 
 						if ( !this.boCreate ) return edge;
@@ -152,17 +89,12 @@ class Utils {
 						}
 						function VerticeIdDebug(i, verticeId) {
 
-/*							
-if( edgeId === face[face.length - 1] )
-	console.log(sVertices)
- */
 							if ( (verticeId === position.length) && (//этой вершины нет списке вершин
-								( edgeId === undefined ) || //добавлять новую вершину потому что эта грань добавляется с помощью edges.push()
-//								( edgeId != ( _this.edges.length - 1))//не добалять новую вершину если это последняя грань, потому что у последней грани последняя вершина совпадает с первой вершины первой грани
-								( edgeId != face[face.length - 1] )//не добалять новую вершину если это последняя грань, потому что у последней грани последняя вершина совпадает с первой вершины первой грани
+									( edgeId === undefined ) || //добавлять новую вершину потому что эта грань добавляется с помощью edges.push()
+									( edgeId != face[face.length - 1] )//не добалять новую вершину если это последняя грань, потому что у последней грани последняя вершина совпадает с первой вершины первой грани
+								)
 							)
-							)
-								position.push();//{edgeId: edgeIndex});
+								position.push();
 						
 							if (!debug) return true;
 						
@@ -202,7 +134,6 @@ if( edgeId === face[face.length - 1] )
 								vertices[i] = (
 									position.length === 0) ||//первая вершина первого ребра
 									((edgeId != undefined) &&//ребро из массива ребер
-//										(i === 1) && (edgeId === _this.edges.length - 1)) ?//Это последняя вершина последнего ребра. Соеденить последнюю вершину последнего ребра с первой першиной первого ребра
 										(i === 1) && (edgeId === face[face.length - 1])) ?//Это последняя вершина последнего ребра. Соеденить последнюю вершину последнего ребра с первой першиной первого ребра
 									0 :
 									edgeId != undefined ?
@@ -234,7 +165,6 @@ if( edgeId === face[face.length - 1] )
 									case 'distance': {
 			
 										//distance between edge vertices
-//															if (_edge.distance === undefined) _edge.distance = 2 * Math.PI / edgeSettings.faceEdges.length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной вселенной с был равен 1.0
 										if (_edge.distance === undefined) _edge.distance = 2 * Math.PI / _this.edges.length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной вселенной с был равен 1.0
 										return _edge.distance;
 			
@@ -256,66 +186,37 @@ if( edgeId === face[face.length - 1] )
 							},
 			
 						});
-						if (debug)
-						
-							for (let edgeCurId = ( edgeId === undefined ) ? 0 : edgeId; edgeCurId < _this.edges.length; edgeCurId++) {
-						
-								if ( ( edgeId != undefined ) && ( edgeId === edgeCurId ) ) continue;//Не сравнивать одно и тоже ребро
 
-//								const verticesCur = _this.edges( false )[edgeCurId];
+						if (debug) {
+
+							for (let edgeCurId = (edgeId === undefined) ? 0 : edgeId; edgeCurId < _this.edges.length; edgeCurId++) {
+
+								if ((edgeId != undefined) && (edgeId === edgeCurId)) continue;//Не сравнивать одно и тоже ребро
+
 								_this.boCreate = false;
 								const verticesCur = _this.edges[edgeCurId];
 								_this.boCreate = true;
-								if ( !Array.isArray( verticesCur ) ) continue;//в данном ребре еще нет вершин
+								if (!Array.isArray(verticesCur)) continue;//в данном ребре еще нет вершин
 								const vertices = edge;
 								if (
 									(vertices[0] === verticesCur[0]) && (vertices[1] === verticesCur[1]) ||
 									(vertices[1] === verticesCur[0]) && (vertices[0] === verticesCur[1])
 								)
 									console.error(sCircle + ': Duplicate edge. Vertices = ' + vertices);
-						
+
 							}
-/*
-						if (edgeSettings.edgeId === undefined) {
 						
-							//если вставляем новое ребро с помощью edges.push()
-							//надо последнюю вершину последнего ребра заменить на новую вершину
-							settings.object.geometry.indices.edges[settings.object.geometry.indices.edges.length - 1][1] = position.length - 1;
-						
-						}
-*/
-						//Добавляем индекс ребра в каждую вершину, которая используется в этом ребре.
-						//что бы потом проверить в vertices.test();
-						if (debug) {
-						
-							const newEdgeId = _this.edges.length;
+							//Добавляем индекс ребра в каждую вершину, которая используется в этом ребре.
+							//что бы потом проверить в vertices.test();
 							edge.forEach(verticeId => {
 
 								position[verticeId].edges.push( edgeId, verticeId );
-/*													
-								const edges = position[verticeId].edges;
-								if (edgeId === undefined) {
-						
-									//новое ребро добавляется с помощю push
-									if (verticeId === 0)
-										//в первой вершине заменяем последнее ребро на новое ребро
-										edges[1] = newEdgeId
-									//В последнюю вершину добавляем новое ребро
-									else edges.push(newEdgeId,
-										verticeId//for debug
-									);
-						
-								} else edges.push(edgeSettings.edgeId,
-									verticeId//for debug
-								);
-*/			 
 						
 							});
 						
 						}
 						
 						_edges[edgeId] = edge;
-//											delete _edges.isCreateEdge;
 
 					}
 					return edge;
@@ -324,7 +225,6 @@ if( edgeId === face[face.length - 1] )
 				}
 				switch ( name ) {
 
-//						case 'isFaceEdgesProxy': return true;
 					case 'length': return face.length;
 
 				}
@@ -348,14 +248,11 @@ if( edgeId === face[face.length - 1] )
 
 		if (classSettings.faceId === undefined) classSettings.faceId = 0;
 		this.classSettings = classSettings;
-//		this.boCreate = true;
 		
 		this.debug = true;
-//		this.THREE = three.THREE;
 
 		//display graphic object to the canvas
 		this.display = (n,//space dimension
-			//settings,
 			debugObject
 		) => {
 
@@ -364,7 +261,6 @@ if( edgeId === face[face.length - 1] )
 			settings.object.name = settings.object.name || lang.name;
 			new ND(n, settings);
 
-//			const debugObject = this.displayDebug();
 			if (debugObject) settings.scene.add(debugObject);
 
 		}
@@ -378,9 +274,6 @@ if( edgeId === face[face.length - 1] )
 				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(child);
 
 			}
-			//remove previous position
-			//непонятно зачем эта строка
-//			settings.object.geometry.position.forEach(vertice => vertice.length = 0);
 
 		}
 

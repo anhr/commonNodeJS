@@ -44,12 +44,13 @@ class Triangle extends Utils
 		triangle.position.z += z;
 		triangle.scale.multiplyScalar( scale );
 
-		const groupFace = new THREE.Group();
-		groupFace.rotation.copy( rotation );
-		groupFace.updateMatrixWorld( true );//обновить groupFace.matrix и groupFace.matrixWorld после ее поворота
+		const group = new THREE.Group();
+		group.rotation.copy( rotation );
+		group.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
 
-		groupFace.add( triangle );
+		group.add( triangle );
 		triangle.updateMatrixWorld(true);//вычисляем мировые координаты треугольника для вычисления вершин пирамиды
+		//group.remove( triangle );
 
 		const position = settings.object.geometry.position;
 		this.edges.forEach( ( edge, edgeId ) => {
@@ -96,15 +97,19 @@ class Triangle extends Utils
 				
 			});
 
-			scene.add( groupFace );
+			scene.add( group );
 			
 			if ( options.guiSelectPoint ) {
 
-				groupFace.name = 'groupFace ' + this.classSettings.faceId;
-				options.guiSelectPoint.addMesh( groupFace );
-				
-				triangle.name = 'triangle ' + this.classSettings.faceId;
-				options.guiSelectPoint.addMesh( triangle );
+				group.name = 'group ' + this.classSettings.faceId;
+				options.guiSelectPoint.addMesh( group );
+
+				if (triangle.parent) {
+					
+					triangle.name = 'triangle ' + this.classSettings.faceId;
+					options.guiSelectPoint.addMesh( triangle );
+
+				}
 
 			}
 			
@@ -122,7 +127,7 @@ class Triangle extends Utils
 	
 			)
 			plane.position.copy( triangle.position );
-			groupFace.add( plane );
+			group.add( plane );
 			
 			const center = new THREE.Vector2(0.0, 0.0);
 			const circle = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
@@ -131,7 +136,7 @@ class Triangle extends Utils
 				0.0, 2.0 * Math.PI,// Start angle, stop angle
 			).getSpacedPoints(256)), new THREE.LineBasicMaterial({ color: 'blue' }));
 			circle.position.copy( triangle.position );
-			groupFace.add( circle );
+			group.add( circle );
 			
 		}
 //		super.project( scene, n );
