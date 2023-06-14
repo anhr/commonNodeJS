@@ -86,7 +86,8 @@ class Sphere extends Circle
 	}
 	Indices(){
 
-		const settings = this.classSettings.settings;
+		const settings = this.classSettings.settings,
+			sIndices = sSphere + '.Indices';
 		if (settings.object.geometry.indices.count != undefined) {
 
 			settings.object.geometry.indices[1].count = settings.object.geometry.indices.count;
@@ -134,7 +135,7 @@ class Sphere extends Circle
 
 																	if (_body[i] === faceId ) {
 																		
-																		console.error( sSphere + ': Duplicate body faceId = ' + faceId );
+																		console.error(sIndices + ': Duplicate body faceId = ' + faceId );
 																		return;
 
 																	}
@@ -209,27 +210,19 @@ class Sphere extends Circle
 		//сразу заменяем все грани на прокси, потому что в противном случае, когда мы создаем прокси грани в get, каждый раз,
 		//когда вызывается get, в результате может получться бесконечная вложенная конструкция и появится сообщение об ошибке:
 		//EgocentricUniverse: Face get. Duplicate proxy
+		const defaultFaces = [
+			[],//уже создано в Circle.Indices
+			[0, 3, 4],
+			[1, 4, 5],
+			[2, 3, 5]
+		];
 		settings.object.geometry.indices.faces.forEach( ( face, faceId ) => {
 			
 			//default face edges
-			
-			let faceIds;
 			const edgesCount = 3;
-			if (edgesCount != face.length)
-				switch (faceId){
-	
-					case 0: faceIds = [0, 1, 2]; break;
-					case 1: faceIds = [0, 3, 4]; break;
-					case 2: faceIds = [1, 4, 5]; break;
-					case 3: faceIds = [2, 3, 5]; break;
-					default: console.error( sSphere + '.Indices: Invalid faceId = ' + faceId );
-						
-				}
-			for ( let i = face.length; i < edgesCount; i++ ) {
-
-				face.push( faceIds[i] );
-
-			}
+			if ((faceId === 0) && (edgesCount != face.length)) console.error(sIndices + ': Duplicate default faceId = ' + faceId);//эта грань уже была создана в Circle.Indices
+			if (faceId > 3) console.error(sIndices + ': Invalid faceId = ' + faceId );
+			for ( let i = face.length; i < edgesCount; i++ ) face.push( defaultFaces[faceId][i] );
 			
 			face.face = new Triangle( this.options, {
 			
