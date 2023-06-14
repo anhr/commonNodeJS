@@ -204,15 +204,41 @@ class Sphere extends Circle
 			indices = settings.object.geometry.indices,
 			body = indices.bodies[this.classSettings.bodyId];
 		
+		for ( let i = body.length; i < facesCount; i++ ) body.push( i );
+		
 		//сразу заменяем все грани на прокси, потому что в противном случае, когда мы создаем прокси грани в get, каждый раз,
 		//когда вызывается get, в результате может получться бесконечная вложенная конструкция и появится сообщение об ошибке:
 		//EgocentricUniverse: Face get. Duplicate proxy
-		settings.object.geometry.indices.faces.forEach( ( face, faceId ) => face.face = new Triangle/*Circle*/( this.options, {
+		settings.object.geometry.indices.faces.forEach( ( face, faceId ) => {
 			
-			faceId: faceId,
-			settings: settings,
-		
-		} ));
+			//default face edges
+			
+			let faceIds;
+			const edgesCount = 3;
+			if (edgesCount != face.length)
+				switch (faceId){
+	
+					case 0: faceIds = [0, 1, 2]; break;
+					case 1: faceIds = [0, 3, 4]; break;
+					case 2: faceIds = [1, 4, 5]; break;
+					case 3: faceIds = [2, 3, 5]; break;
+					default: console.error( sSphere + '.Indices: Invalid faceId = ' + faceId );
+						
+				}
+			for ( let i = face.length; i < edgesCount; i++ ) {
+
+				face.push( faceIds[i] );
+
+			}
+			
+			face.face = new Triangle( this.options, {
+			
+				faceId: faceId,
+				settings: settings,
+			
+			} );
+			
+		});
 
 		if ( debug ) {
 		
