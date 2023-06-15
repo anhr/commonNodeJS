@@ -110,6 +110,11 @@ class Circle extends Utils
 									switch (name) {
 					
 										case 'isEdgesProxy': return true;
+										case 'vertices': return (vertices) => {
+					
+											_edges.push({ vertices: vertices });
+					
+										};
 										case 'push': return (edge={}) => {
 					
 											indices.faces[_this.classSettings.faceId].push( _edges.push({ edge: edge, edges: settings.object.geometry.indices.edges } ) - 1 );

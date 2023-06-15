@@ -210,19 +210,51 @@ class Sphere extends Circle
 		//сразу заменяем все грани на прокси, потому что в противном случае, когда мы создаем прокси грани в get, каждый раз,
 		//когда вызывается get, в результате может получться бесконечная вложенная конструкция и появится сообщение об ошибке:
 		//EgocentricUniverse: Face get. Duplicate proxy
-		const defaultFaces = [
-			[],//уже создано в Circle.Indices
-			[0, 3, 4],
-			[1, 4, 5],
-			[2, 3, 5]
+		const defaultIndices = [
+			//edges
+			[
+				//будет создано в Utils.edges
+				[],
+				[],
+				[],
+
+				[0,3],//3
+				[1,3],//4
+				[2,3],//5
+			],
+			//faces
+			[
+				[],//уже создано в Circle.Indices
+				[0, 3, 4],
+				[1, 4, 5],
+				[2, 3, 5]
+			]
 		];
+		const edges = settings.object.geometry.indices.edges, defaultEdges = defaultIndices[0], edgesLength = 6;
+		for (let edgeId = 3;//вершины первых тех ребер потом будут вычисляться в Utils.edges
+			 edgeId < edgesLength; edgeId++) {
+
+			let edge = edges[edgeId];
+			if (!edge) {
+
+				edges.vertices(defaultEdges[edgeId]);
+				continue;
+				
+			}
+			
+			//default edge vertices
+			if (!edge.vertices) edge.vertices = defaultEdges[edgeId];
+			const verticesCount = 2, vertices = edge.vertices;
+			for ( let i = vertices.length; i < verticesCount; i++ ) vertices.push( defaultEdges[edgeId][i] );
+			
+		}
 		settings.object.geometry.indices.faces.forEach( ( face, faceId ) => {
 			
 			//default face edges
 			const edgesCount = 3;
 			if ((faceId === 0) && (edgesCount != face.length)) console.error(sIndices + ': Duplicate default faceId = ' + faceId);//эта грань уже была создана в Circle.Indices
 			if (faceId > 3) console.error(sIndices + ': Invalid faceId = ' + faceId );
-			for ( let i = face.length; i < edgesCount; i++ ) face.push( defaultFaces[faceId][i] );
+			for ( let i = face.length; i < edgesCount; i++ ) face.push( defaultIndices[1][faceId][i] );
 			
 			face.face = new Triangle( this.options, {
 			
@@ -232,11 +264,6 @@ class Sphere extends Circle
 			} );
 			
 		});
-
-		if ( debug ) {
-		
-
-		}
 		
 	}
 	/**
@@ -258,34 +285,32 @@ class Sphere extends Circle
 			//remove previous universe
 			this.remove(scene);
 
-			const THREE = three.THREE;
+			const THREE = three.THREE,
+				faceEdgeFaceAngle = Math.acos( 1 / 3 ),//Face-edge-face angle. approx. 70.5288° or 1.2309594173407747 radians https://en.wikipedia.org/wiki/Tetrahedron
+				edgeEdgeAngle = 2 * Math.PI / 3,//120° or 2.0943951023931953 radians
+					
+				//углы поворота первого треугольника
+				rotation1 = new THREE.Euler(
+					
+					//x
+					//наклоняю на угол, равный углу между гранями пирамиды
+					Math.PI + faceEdgeFaceAngle,//approx. 70.5288° * 2 or 4.372552070930568 radians
+
+					//y
+					0,
+
+					//z
+					//И поворачиваю так, что бы новая вершина треугольника оказалась на вершине приамиды
+					Math.PI * ( 2 / 3 + 1 )//300° or 5.235987755982988 radians;
+					
+				);
 
 			settings.object.geometry.indices.faces.forEach( face => {
 				
-				const faceEdgeFaceAngle = Math.acos( 1 / 3 ),//Face-edge-face angle. approx. 70.5288° or 1.2309594173407747 radians https://en.wikipedia.org/wiki/Tetrahedron
-					edgeEdgeAngle = 2 * Math.PI / 3,//120° or 2.0943951023931953 radians
 					
-					//каждую грань (треугольник) помещаю в пару вложенных друг в друга группы
-					group = new THREE.Group(),
-					groupFace = new THREE.Group(),
-					
-					//углы поворота первого треугольника
-					rotation1 = new THREE.Euler(
-						
-						//x
-						//наклоняю на угол, равный углу между гранями пирамиды
-						Math.PI + faceEdgeFaceAngle,//approx. 70.5288° * 2 or 4.372552070930568 radians
-
-						//y
-						0,
-
-						//z
-						//И поворачиваю так, что бы новая вершина треугольника оказалась на вершине приамиды
-//						( Math.PI / 3 )//60° or 1.0471975511965976 radians;
-//						( Math.PI / 3 ) * 5//300° or 5.235987755982988 radians;
-						Math.PI * ( 2 / 3 + 1 )//300° or 5.235987755982988 radians;
-						
-					);
+				//каждую грань (треугольник) помещаю в пару вложенных друг в друга группы
+				const group = new THREE.Group(),
+					groupFace = new THREE.Group();
 				
 				groupFace.add(group);
 				const faceId = face.face.classSettings.faceId;
