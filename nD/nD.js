@@ -1036,18 +1036,6 @@ class ND {
 									switch ( name ) {
 
 										case 'reset': return function() { delete target.positionWorld; }
-/*
-										case 'edges': return target.edges;
-										case 'positionWorld': return target.positionWorld;
-										case 'length': return target.length;
-										case 'indices': return target.indices;
-										case 'i': return target.i;
-										case 'arguments': return target.arguments;
-										case 'forEach': return target.forEach;
-										case 'index': return target.index;
-										case 'toJSON': return target.toJSON;//for compatibility with EgocentricUniverse
-										default: console.error( 'ND: settings.object.geometry.position[i] get. Invalid name: ' + name );
-*/
 
 									}
 									return target[name];
