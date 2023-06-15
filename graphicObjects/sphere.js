@@ -238,7 +238,7 @@ class Sphere extends Circle
 			let edge = edges[edgeId];
 			if (!edge) {
 
-				edges.pushEdge(defaultEdges[edgeId]);
+				edges.pushDefault(defaultEdges[edgeId]);
 				continue;
 				
 			}
