@@ -303,7 +303,7 @@ class Circle extends Utils
 
 			}
 
-		} else settings.object.geometry.indices = {};
+		} else settings.object.geometry.indices = [];
 		
 		settings.object.geometry.indices[0] = settings.object.geometry.indices[0] || settings.object.geometry.indices.edges || [];
 		settings.object.geometry.indices[1] = settings.object.geometry.indices[1] || settings.object.geometry.indices.faces || [];
