@@ -264,12 +264,12 @@ class Circle extends Utils
 	 * @param {number} [classSettings.faceId=0] Identifier of the array of the edges ids in the <b>classSettings.settings.object.geometry.indices.faces</b> array.
 	 * @param {object} [classSettings.settings] See <b>EgocentricUniverse <a href="./module-EgocentricUniverse-EgocentricUniverse.html" target="_blank">settings</a></b> parameter.
 	 * @param {object} [classSettings.settings.object] edges object.
-	 * @param {String} [classSettings.settings.object.name='Universe'] name of universe.
+	 * @param {String} [classSettings.settings.object.name='Circle'] name of circle.
 	 * @param {String} [classSettings.settings.object.color='lime'] color of edges.
-	 * @param {object} [classSettings.settings.object.geometry] Universe geometry.
-	 * @param {object} [classSettings.settings.object.geometry.indices] Array of <b>indices</b> of vertices, edges and faces of universe.
-	 * @param {number} [classSettings.settings.object.geometry.indices.count=3] 1D Universe edges count. Default universe is triangle with 3 edges.
-	 * @param {Array} [classSettings.settings.object.geometry.indices.edges=[{}, {}, {}]] Edges array. Default edges count is <b>classSettings.settings.object.geometry.indices.count</b>.
+	 * @param {object} [classSettings.settings.object.geometry] Circle geometry.
+	 * @param {object} [classSettings.settings.object.geometry.indices] Array of <b>indices</b> of vertices, edges and faces of circle.
+	 * @param {number} [classSettings.settings.object.geometry.indices.count=3] edges count. Default circle is triangle with 3 edges.
+	 * @param {Array} [classSettings.settings.object.geometry.indices.edges=[{},{},{}]] Edges array. Default edges count is <b>classSettings.settings.object.geometry.indices.count</b>.
 	 * @param {object} [classSettings.settings.object.geometry.indices.edges.edge] Edges array item is edge.
 	 * @param {Array} [classSettings.settings.object.geometry.indices.edges.edge.vertices] Array of edge vertices indices. Every edge have two vertices.
 	 * @param {float} [classSettings.settings.object.geometry.indices.edges.edge.distance=1.0] Edge length. Distance between edge vertices.

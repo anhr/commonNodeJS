@@ -41,101 +41,76 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import EgocentricUniverse from './egocentricUniverse.js';
-import GraphicObject from './graphicObject.js';
+import Utils from './utils.js';
+import three from '../three.js';
 
-//import three from '../../commonNodeJS/master/three.js'
-import three from '../three.js'
+const sCircle = 'Circle', sCircleUniverse = sCircle;
 
-const sEdges = 'Circle';
-let isEdgesIndicesProxy = false;
-
-class Circle extends GraphicObject {
+class Circle extends Utils
+{
 
 	_edgesSettings;
+
+	//base methods
+	
+	name( getLanguageCode ) {
+
+		//Localization
+		
+		const lang = {
+
+			name: "Circle",
+
+		};
+
+		const _languageCode = getLanguageCode();
+
+		switch (_languageCode) {
+
+			case 'ru'://Russian language
+
+				lang.name = 'Окружность';
+
+				break;
+			default://Custom language
+				if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
+					break;
+
+				Object.keys(guiParams.lang).forEach(function (key) {
+
+					if (lang[key] === undefined)
+						return;
+					lang[key] = guiParams.lang[key];
+
+				});
+
+		}
+		return lang.name;
+		
+	}
 	
 	//Overridden methods from base class
 
-	log() {
-
-		if (!this.debug) return;
-		this.settings.object.geometry.position.forEach((vertice, i) => console.log('position[' + i + ']. ' + JSON.stringify( vertice )));
-		this.settings.object.geometry.indices.edges.forEach((edge, i) => console.log('indices.edges[' + i + ']. ' + JSON.stringify( edge )));
-		this.settings.object.geometry.indices.faces.forEach((face, i) => console.log('indices.faces[' + i + ']. ' + JSON.stringify( face )));
+	isDisplay() { return true; }
+	displayDebug( THREE, center, r ) {
 		
-	}
-
-	//Project universe into 3D space
-	project(
-		scene,
-		n = 2,//universe dimension
-		bLog = true//log positions and indices to cnosole 
-	) {
-
-		//remove previous universe
-		this.remove( scene );
-
-		const THREE = three.THREE, indices = this.settings.object.geometry.indices;
-			
-		//universe length
-		let l = 0;
-		indices.faceEdges.forEach( edge => l += edge.distance );
-		if (isNaN( l )){
-
-			console.error( sEdges + ': project(...). Invalid universe length = ' + l );
-			return;
-			
-		}
-
-		const r = l / ( 2 * Math.PI ),
-			center = new THREE.Vector2( 0.0, 0.0 ),
-			axis = new THREE.Vector3( 0, 0, 1 ),
-			points = [
-				new THREE.Vector3( 0, -r, 0 ),//point0,//0
-			],
-			delta = 2 * Math.PI / l;
-		let angle = 0.0;//Угол поворота радиуса вселенной до текущей вершины
-		for ( let i = 1; i &lt; indices.faceEdges.length; i++ ) {
-
-			angle += indices.faceEdges[i].distance * delta;
-			points.push( new THREE.Vector3().copy( points[0] ).applyAxisAngle( axis, angle ) );
-
-		}
-
-		points.forEach( ( point, i ) => {
-			
-			//this.settings.object.geometry.position[i].positionWorld = undefined;//если не удалять positionWorld то вместо новых координат вершин будут браться старые
-			//Это не позволяет добавлять новые вершины в объект
-			//Никак не могу придумать как удалять positionWorld внутри ND когда у вершины устанвливаются новые координаты
-			//Сейчас вместо этого использую settings.object.geometry.boRememberPosition: false,//Не запоминать позицию вершины в settings.object.geometry.position[i].positionWorld чтобы при добавлении нового ребра заново вычислялись позицию вершин в 3D
-			this.settings.object.geometry.position[i] = point.toArray();
-			
-		} );
-		this.settings.scene = scene;
-		
-		if (bLog) this.log();
-		
-		this.display( n, this.settings, this.debug ?
-			new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
+		return new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
 				center.x, center.y,// Center x, y
 				r, r,// x radius, y radius
 				0.0, 2.0 * Math.PI,// Start angle, stop angle
-			).getSpacedPoints(256)), new THREE.LineBasicMaterial({ color: 'blue' }))
-			: undefined
-		);
-
+			).getSpacedPoints(256)), new THREE.LineBasicMaterial({ color: 'blue' }));
+		
 	}
 	get verticeEdgesLengthMax() { return 2; }//нельзя добавлть новое ребро если у вершины уже 3 ребра
 	Test( vertice, strVerticeId ){
 		
 		if (vertice.edges.length !== 2)
-			console.error(sEdges + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
+			console.error(sCircle + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
 	Indices() {
 		
-		const _this = this, settings = this.settings,
-			position = settings.object.geometry.position;
+		const _this = this, settings = this.classSettings.settings;
 		const debug = this.debug;
 
 		if (settings.object.geometry.indices.count != undefined) {
@@ -145,184 +120,127 @@ class Circle extends GraphicObject {
 			
 		}
 
-		if (!isEdgesIndicesProxy) {
-			
-			settings.object.geometry.indices = new Proxy( settings.object.geometry.indices, {
+		settings.object.geometry.indices = new Proxy( settings.object.geometry.indices, {
 
-				get: ( _indices, name ) => {
+			get: ( _indices, name ) => {
 	
-					switch (name) {
+				switch (name) {
 	
-						case 'edges': 
-							if (!_indices[0].isEdgesProxy) {
+					case 'edges': 
+						if (!_indices[0].isEdgesProxy) {
 								
-								_indices[0] = new Proxy(_indices[0] || [], {
-			
-									get: (_edges, name) => {
-					
-										const i = parseInt(name);
-										if (!isNaN(i)) {
-					
-											const edgeId = i;
-											let edge = _edges[edgeId];
-											if (!edge) {
-					
-												if (edgeId != _edges.length) console.error( sEdges + ': get indices.edges: invalid edgeId = ' + edgeId );//добавлять только то ребро, индекс которого в конце массива _edges
-												else {
-													
-													edge = {};
-													_edges.push( edge );
-					
-												}
-					
-											}
-											return edge;
-					
-										}
-										switch (name) {
-					
-											case 'isEdgesProxy': return true;
-											case 'push': return (edge={}) => {
-					
-												indices.faces[_this.classSettings.faceId].push( _edges.push(Edge({ edge: edge, edges: settings.object.geometry.indices.edges } ) ) - 1 );
-					
-											};
-					
-										}
-										return _edges[name];
-					
-									},
-					
-								});
-								indices.faceEdges.forEach( ( edge, i ) => indices.faceEdges[i] = Edge( { this: _this, edgeId: i } ) );
-
-							}
-							return _indices[0];
-						case 'faceEdges': return new Proxy(_indices[0], {
+							_indices[0] = new Proxy(_indices[0] || [], {
 			
 								get: (_edges, name) => {
-				
+					
 									const i = parseInt(name);
-									if (!isNaN(i)) {
-
-										return _edges[indices.faces[_this.classSettings.faceId][i]];
-/*										
-										const edge = _edges[indices.faces[_this.classSettings.faceId][i]];
-										if ( edge.indices ) return edge.indices;//После вызова ND массив edge преобразуется в обект, коромо массив оказывается в edge.indices
-										return edge;
-*/		  
-/*										
-										const edgeId = indices.faces[_this.classSettings.faceId][i];
-										let edge = _edges[edgeId];
-										return edge;
-*/		  
-				
-									}
+									if (!isNaN(i)) return _edges[i];
 									switch (name) {
-				
-										case 'isFaceEdgesProxy': return true;
-										case 'length': return indices.faces[_this.classSettings.faceId].length;
-				
+					
+										case 'isEdgesProxy': return true;
+										case 'pushDefault': return (edge) => {
+					
+											_edges.push(edge);
+					
+										};
+										case 'push': return (edge={}) => {
+					
+											indices.faces[_this.classSettings.faceId].push( _edges.push({ edge: edge, edges: settings.object.geometry.indices.edges } ) - 1 );
+					
+										};
+					
 									}
 									return _edges[name];
-				
-								},
-								set: (_edges, name, value) => {
-				
-									const i = parseInt(name);
-									if (!isNaN(i)) _edges[indices.faces[_this.classSettings.faceId][i]] = value;
-				
-									return true;
-				
-								}
-				
-							});
-						case 'faces':
-							if (!_indices[1].isFacesProxy) {
-								
-								_indices[1] = new Proxy(_indices[1] || [], {
-			
-									get: (_faces, name) => {
-
-										const i = parseInt(name);
-										if (!isNaN(i)) {
 					
-											_faces[i] = _faces[i] || [];
-											if (!_faces[i].isFaceProxy){
+								},
+					
+							});
 
-												_faces[i] = new Proxy( _faces[i], {
+						}
+						return _indices[0];
+					case 'faces':
+						if (!_indices[1].isFacesProxy) {
+								
+							_indices[1] = new Proxy(_indices[1] || [], {
+			
+								get: (_faces, name) => {
 
-													get: (_face, name) => {
+									const i = parseInt(name);
+									if (!isNaN(i)) {
+					
+										_faces[i] = _faces[i] || [];
+										if (!_faces[i].isFaceProxy){
 
-														switch (name) {
+											_faces[i] = new Proxy( _faces[i], {
+
+												get: (_face, name) => {
+
+													switch (name) {
 									
-															case 'isFaceProxy': return true;
-															case 'push': return ( edgeId ) => {
+														case 'isFaceProxy': return true;
+														case 'push': return ( edgeId ) => {
 
-																if (debug) for ( let i = 0; i &lt; _face.length; i++ ) {
+															if (debug) for ( let i = 0; i &lt; _face.length; i++ ) {
 
-																	if (_face[i] === edgeId ) {
+																if (_face[i] === edgeId ) {
 																		
-																		console.error( sEdges + ': Duplicate face edgeId = ' + edgeId );
-																		return;
+																	console.error( sCircle + ': Duplicate face edgeId = ' + edgeId );
+																	return;
 
-																	}
-																	
 																}
-																_face.push( edgeId );
-																const edges = _indices[0];
-																if(edges[edgeId] === undefined) edges[edgeId] = {};
 																	
 															}
-									
+															_face.push( edgeId );
+															const edges = _indices[0];
+															if(edges[edgeId] === undefined) edges[edgeId] = {};
+																	
 														}
-														return _face[name];
+									
+													}
+													return _face[name];
 														
-													},
+												},
 													
-												} );
+											} );
 												
-											}
-											return _faces[i];
-					
 										}
-										switch (name) {
+										return _faces[i];
 					
-											case 'isFacesProxy': return true;
+									}
+									switch (name) {
 					
-										}
-										return _faces[name];
+										case 'isFacesProxy': return true;
 					
-									},
+									}
+									return _faces[name];
 					
-								});
-								const edges = _indices[0];
-								_indices[1].forEach( face => face.forEach( edgeId => edges[edgeId] = edges[edgeId] || {} ) );
-								for ( let i = 0; i &lt; edges.length; i++ ) edges[i] = edges[i] || {};
+								},
+					
+							});
+							const edges = _indices[0];
+							_indices[1].forEach( face => face.forEach( edgeId => edges[edgeId] = edges[edgeId] || {} ) );
+							for ( let i = 0; i &lt; edges.length; i++ ) edges[i] = edges[i] || {};
 
-							}
-							return _indices[1];
+						}
+						return _indices[1];
 						
-					}
-					return _indices[name];
+				}
+				return _indices[name];
 	
-				},
-				set: (_indices, name, value) => {
+			},
+			set: (_indices, name, value) => {
 	
-					switch (name) {
+				switch (name) {
 	
-						case 'edges': _indices[0] = value; return true;
+					case 'edges': _indices[0] = value; return true;
 						
-					}
-					_indices[name] = value;
-					return true;
+				}
+				_indices[name] = value;
+				return true;
 	
-				},
+			},
 	
-			});
-			isEdgesIndicesProxy = true;
-
-		}
+		});
 		
 		const edgesCount = settings.object.geometry.indices[0].count || 3,//default is triangle
 			indices = settings.object.geometry.indices,
@@ -337,257 +255,8 @@ class Circle extends GraphicObject {
 		
 		for ( let i = face.length; i &lt; edgesCount; i++ ) face.push( i + a );
 		
-		indices.edges;//Convert edges items to Proxy
+		indices.edges;//Convert edges to Proxy
 		
-		//у треугольника ребер не должно быть меньше 3
-//		for ( let i = indices.edges.length; i &lt; edgesCount; i++ ) indices.edges.push();
-		
-		function Edge( edgeSettings = {} ) {
-
-			const sEdge = sEdges + ': ' + (edgeSettings.edgeId === undefined ? 'Edge' : 'edges[' + edgeSettings.edgeId + ']'),
-				sVertices = sEdge + '.vertices';
-			edgeSettings.faceEdges = edgeSettings.edges || edgeSettings.this.settings.object.geometry.indices.faceEdges;
-			edgeSettings.edge = edgeSettings.edge || edgeSettings.faceEdges[edgeSettings.edgeId] || {};
-			
-			if (edgeSettings.edge.isProxy) return edgeSettings.edge;
-
-			//edge vertices
-
-			edgeSettings.edge.vertices = edgeSettings.edge.vertices || [];
-			if (debug) {
-
-				if (edgeSettings.edge instanceof Array) {
-
-					console.error(sEdge + '. Invalid edge instance');
-					return false;
-
-				}
-				if (!(edgeSettings.edge.vertices instanceof Array)) {
-
-					console.error(sEdge + '. Invalid edge.vertices instance');
-					return false;
-
-				}
-
-			}
-			function IdDebug(i) {
-
-				if (!debug) return true;
-
-				if ((i &lt; 0) || (i > 1)) {
-
-					console.error(sVertices + '. Vertices index = ' + i + ' is limit from 0 to 1');
-					return false;
-
-				}
-				return true;
-
-			}
-			function VerticeIdDebug(i, verticeId) {
-
-				if ((verticeId === position.length) &amp;&amp; (//этой вершины нет списке вершин
-					(edgeSettings.edgeId === undefined) || //добавлять новую вершину потому что эта грань добавляется с помощью edges.push()
-					(edgeSettings.edgeId != (edgeSettings.faceEdges.length - 1))//не добалять новую вершину если это последняя грань, потому что у последней грани последняя вершина совпадает с первой вершины первой грани
-				)
-				)
-					position.push();//{edgeId: edgeIndex});
-
-				if (!debug) return true;
-
-				if (!IdDebug(i)) return false;
-
-				if (isNaN(parseInt(verticeId))) {
-
-					console.error(sVertices + '[' + i + ']. Invalid vertice index = ' + verticeId);
-					return false;
-
-				}
-				if ((verticeId &lt; 0) || (verticeId >= position.length)) {
-
-					console.error(sVertices + '[' + i + ']. Vertice index = ' + verticeId + ' is limit from 0 to ' + (position.length - 1));
-					return false;
-
-				}
-				for (let index = 0; index &lt; 2; index++) {
-
-					if (index === i) continue;//не надо сравнивать самого себя
-
-					if (verticeId === edgeSettings.edge.vertices[index]) {
-
-						console.error(sVertices + '[' + i + ']. Duplicate vertice index = ' + verticeId);
-						return false;
-
-					}
-
-				};
-				return true;
-
-			}
-			for (let i = 0; i &lt; 2; i++) {//у каждого ребра 2 вершины
-
-				if (edgeSettings.edge.vertices[i] === undefined) {
-
-					edgeSettings.edge.vertices[i] = (
-						position.length === 0) ||//первая вершина первого ребра
-						((edgeSettings.edgeId != undefined) &amp;&amp;//ребро из массива ребер
-							(i === 1) &amp;&amp; (edgeSettings.edgeId === edgeSettings.faceEdges.length - 1)) ?//Это последняя вершина последнего ребра. Соеденить последнюю вершину последнего ребра с первой першиной первого ребра
-						0 :
-						edgeSettings.edgeId != undefined ?
-							position.length + (i === 0 ? -1 : 0) : //ребро из массива ребер
-							//Новое ребро добавляется при помощи edges.push()
-							i === 0 ? position.length : //первая вершина
-								0//Соеденить последнюю вершину нового ребра с первой першиной первого ребра
-						;
-
-				}
-				VerticeIdDebug(i, edgeSettings.edge.vertices[i]);
-
-			}
-			edgeSettings.faceEdges = edgeSettings.faceEdges || indices.edges;
-			if (debug)
-
-				for (let edgeCurId = (edgeSettings.edgeId === undefined) ? 0 : edgeSettings.edgeId; edgeCurId &lt; edgeSettings.faceEdges.length; edgeCurId++) {
-
-					if ((edgeSettings.edgeId != undefined) &amp;&amp; (edgeSettings.edgeId === edgeCurId)) continue;//Не сравнивать одно и тоже ребро
-
-					const edgeCur = edgeSettings.faceEdges[edgeCurId],
-						verticesCur = edgeCur.vertices;
-					if (!verticesCur) continue;//в данном ребре еще нет вершин
-					const vertices = edgeSettings.edge.vertices;
-					if (
-						(vertices[0] === verticesCur[0]) &amp;&amp; (vertices[1] === verticesCur[1]) ||
-						(vertices[1] === verticesCur[0]) &amp;&amp; (vertices[0] === verticesCur[1])
-					)
-						console.error(sEdges + ': Duplicate edge. Vertices = ' + vertices);
-
-				}
-			edgeSettings.edge.vertices = new Proxy(edgeSettings.edge.vertices, {
-
-				get: (_vertices, name) => {
-
-					const i = parseInt(name);
-					if (!isNaN(i)) {
-
-						IdDebug(i);
-
-						return _vertices[i];
-
-					}
-					switch (name) {
-
-						case 'length':
-
-							if (!debug) break;
-							if (_vertices.length > 2) console.error(sVertices + ' set. Invalid length = ' + _vertices.length);
-							break;
-
-					}
-					return _vertices[name];
-
-				},
-				set: (_vertices, name, value) => {
-
-					const i = parseInt(name);
-					if (!isNaN(i) &amp;&amp; !VerticeIdDebug(i, value))
-						return true;
-					_vertices[name] = value;
-					return true;
-
-				},
-
-			});
-
-
-			if (edgeSettings.edgeId === undefined) {
-
-				//если вставляем новое ребро с помощью edges.push()
-				//надо последнюю вершину последнего ребра заменить на новую вершину
-				settings.object.geometry.indices.edges[settings.object.geometry.indices.edges.length - 1][1] = position.length - 1;
-
-			}
-
-			//Добавляем индекс ребра в каждую вершину, которая используется в этом ребре.
-			//что бы потом проверить в vertices.test();
-			if (debug) {
-
-				const newEdgeId = edgeSettings.faceEdges.length;
-				edgeSettings.edge.vertices.forEach(verticeId => {
-
-					const edges = position[verticeId].edges;
-					if (edgeSettings.edgeId === undefined) {
-
-						//новое ребро добавляется с помощю push
-						if (verticeId === 0)
-							//в первой вершине заменяем последнее ребро на новое ребро
-							edges[1] = newEdgeId
-						//В последнюю вершину добавляем новое ребро
-						else edges.push(newEdgeId,
-							verticeId//for debug
-						);
-
-					} else edges.push(edgeSettings.edgeId,
-						verticeId//for debug
-					);
-
-				});
-
-			}
-
-			//заменяем объект edgeSettings.edge на массив edgeSettings.edge.vertices для совместимости с ND
-			//Сразу делать edgeSettings.edge как массив вершин не стал, потомучто будет неудобно делать edgeSettings.edges аргумент в конструкторе Circle
-			Object.keys( edgeSettings.edge ).forEach( key => {
-
-				if ( key !== 'vertices' ) {
-					
-					edgeSettings.edge.vertices[key] = edgeSettings.edge[key];
-					delete edgeSettings.edge[key];
-
-				}
-
-			} );
-			return new Proxy(edgeSettings.edge.vertices, {
-
-				get: (edge, name) => {
-
-					const i = parseInt(name);
-					if (!isNaN(i)) {
-
-						if (name >= edge.length)
-							console.error(sEdge + ' get. Invalid index = ' + name);
-						return edge[name];
-
-					}
-					switch (name) {
-
-						case 'isProxy': return true;
-						case 'distance': {
-
-							//distance between edge vertices
-							if (edge.distance === undefined) edge.distance = 2 * Math.PI / edgeSettings.faceEdges.length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной вселенной с был равен 1.0
-							return edge.distance;
-
-						}
-
-
-					}
-					return edge[name];
-
-				},
-				set: (edge, name, value) => {
-
-					//не понятно зачем вывел эту ошибку
-					//console.error(sEdge + ' set. Hidden method: edges[' + name + '] = ' + JSON.stringify(value) );
-
-					edge[name] = value;
-					return true;
-
-				},
-
-			});
-
-		}
-
-
 		if ( debug ) {
 		
 			//test for duplicate vertice.edges edgeId
@@ -623,12 +292,12 @@ class Circle extends GraphicObject {
 	 * @param {number} [classSettings.faceId=0] Identifier of the array of the edges ids in the &lt;b>classSettings.settings.object.geometry.indices.faces&lt;/b> array.
 	 * @param {object} [classSettings.settings] See &lt;b>EgocentricUniverse &lt;a href="./module-EgocentricUniverse-EgocentricUniverse.html" target="_blank">settings&lt;/a>&lt;/b> parameter.
 	 * @param {object} [classSettings.settings.object] edges object.
-	 * @param {String} [classSettings.settings.object.name='Universe'] name of universe.
+	 * @param {String} [classSettings.settings.object.name='Circle'] name of circle.
 	 * @param {String} [classSettings.settings.object.color='lime'] color of edges.
-	 * @param {object} [classSettings.settings.object.geometry] Universe geometry.
-	 * @param {object} [classSettings.settings.object.geometry.indices] Array of &lt;b>indices&lt;/b> of vertices, edges and faces of universe.
-	 * @param {number} [classSettings.settings.object.geometry.indices.count=3] 1D Universe edges count. Default universe is triangle with 3 edges.
-	 * @param {Array} [classSettings.settings.object.geometry.indices.edges=[{}, {}, {}]] Edges array. Default edges count is &lt;b>classSettings.settings.object.geometry.indices.count&lt;/b>.
+	 * @param {object} [classSettings.settings.object.geometry] Circle geometry.
+	 * @param {object} [classSettings.settings.object.geometry.indices] Array of &lt;b>indices&lt;/b> of vertices, edges and faces of circle.
+	 * @param {number} [classSettings.settings.object.geometry.indices.count=3] edges count. Default circle is triangle with 3 edges.
+	 * @param {Array} [classSettings.settings.object.geometry.indices.edges=[{},{},{}]] Edges array. Default edges count is &lt;b>classSettings.settings.object.geometry.indices.count&lt;/b>.
 	 * @param {object} [classSettings.settings.object.geometry.indices.edges.edge] Edges array item is edge.
 	 * @param {Array} [classSettings.settings.object.geometry.indices.edges.edge.vertices] Array of edge vertices indices. Every edge have two vertices.
 	 * @param {float} [classSettings.settings.object.geometry.indices.edges.edge.distance=1.0] Edge length. Distance between edge vertices.
@@ -640,16 +309,238 @@ class Circle extends GraphicObject {
 	 * &lt;/pre>
 	 **/
 	constructor( options, classSettings={} ) {
-
-		const settings = classSettings.settings || {};
-		if (classSettings.faceId === undefined) classSettings.faceId = 0;
+		
+		classSettings.settings = classSettings.settings || {};
+		const settings = classSettings.settings;
+		settings.object = settings.object || {};
 		
 		super( options, classSettings );
+		
+		settings.object.name = settings.object.name || this.name( options.getLanguageCode );
+		const _this = this;
+		this.options = options;
+		
+		settings.object.geometry = settings.object.geometry || {};
+		if (settings.object.geometry.indices) {
 
-		this.pushEdge = ( edge ) => {
+			if (!settings.object.geometry.indices.isUniversyProxy) {
+
+				const indices = [];
+				Object.keys(settings.object.geometry.indices).forEach(key => indices[key] = settings.object.geometry.indices[key]);
+				settings.object.geometry.indices = indices;
+
+			}
+
+		} else settings.object.geometry.indices = [];
+		
+		settings.object.geometry.indices[0] = settings.object.geometry.indices[0] || settings.object.geometry.indices.edges || [];
+		settings.object.geometry.indices[1] = settings.object.geometry.indices[1] || settings.object.geometry.indices.faces || [];
+
+		/**
+		 * @description array of Vertices.
+		 **/
+		settings.object.geometry.position = settings.object.geometry.position || new Proxy([], {
+
+			get: function (_position, name) {
+
+				const i = parseInt(name);
+				if (!isNaN(i)) {
+
+					if (i >= _position.length)
+						console.error(sCircleUniverse + ': position get. Invalid index = ' + i + ' position.length = ' + _position.length);
+					return _position[i];
+
+				}
+				switch (name) {
+
+					case 'push': return (vertice = []) => {
+
+						_position.push(new Proxy(vertice, {
+
+							get: (vertice, name) => {
+
+								switch (name) {
+
+									case 'edges':
+
+										if (!_this.debug) {
+
+											console.error(sCircleUniverse + ': vertice.edges. Set debug = true first.');
+											return;
+
+										}
+										vertice.edges = vertice.edges || new Proxy([], {
+
+											get: (edges, name) => {
+
+												switch (name) {
+
+													case 'push': return (edgeId, verticeId) => {
+
+														if (_this.debug) {
+
+															const sPush = sCircleUniverse + ': Vertice' + (verticeId === undefined ? '' : '[' + verticeId + ']') + '.edges.push(' + edgeId + '):';
+
+															if (edges.length >= this.verticeEdgesLengthMax) {
+
+																console.error(sPush + ' invalid edges.length = ' + edges.length);
+																return;
+
+															}
+															//find for duplicate edgeId
+															for (let j = 0; j &lt; edges.length; j++) {
+
+																if (edges[j] === edgeId) {
+
+																	console.error(sPush + ' duplicate edgeId: ' + edgeId);
+																	return;
+
+																}
+
+															}
+
+														}
+
+														edges.push(edgeId);
+
+													}
+
+												}
+												return edges[name];
+
+											},
+										});
+										return vertice.edges;
+
+								}
+								return vertice[name];
+
+							},
+
+						}));
+
+					};
+						break;
+					//for debug
+					case 'test': return () => {
+
+						if (!_this.debug) return;
+
+						_position.forEach( ( vertice, verticeId ) => {
+
+							const strVerticeId = 'position[' + verticeId + ']'
+							_this.Test( vertice, strVerticeId );
+							vertice.edges.forEach(edgeId => {
+
+								if (typeof edgeId !== "number") console.error(sCircleUniverse + ': position.test()', strVerticeId = 'position(' + verticeId + ')' + '. ' + strVerticeId + '. Invalid edgeId = ' + edgeId);
+
+							});
+
+						})
+					}
+						break;
+
+				}
+				return _position[name];
+
+			},
+			set: function (_position, name, value) {
+
+				const i = parseInt(name);
+				if (!isNaN(i)) {
+
+					value.forEach((axis, j) => {
+
+						if (isNaN(axis)) console.error(sCircleUniverse + ': position set. position[' + i + '][' + j + '] = ' + axis);
+						else if ((_position[i].push(axis) - 1) != j)
+							console.error(sCircleUniverse + ': position set. position[' + i + '][' + j + '] = ' + axis + ' Invalid new axis index = ' + j);
+
+					});
+
+				}
+				return true;
+
+			}
+
+		});
+
+		//settings.count = 'count';//Error: Edges: indices.edges set. Invalid edges array: count
+		//settings.count = [{ isProxy: true }];//Error: Faces: faces[0]. Duplicate proxy
+		//settings.count = [{ edges: true }];//Error: Faces: faces[0]. Invalid face.edges instance: true
+		//settings.count = [[]];//Error: Faces: faces[0]. Invalid face instance
+		this.Indices();
+
+		this.pushEdge = (edge) => {
 			
-			settings.object.geometry.indices.edges.push( edge );
+			classSettings.settings.object.geometry.indices.edges.push( edge );
 			
+		}
+
+		this.logCircle = () => {
+
+			if (!_this.debug) return;
+			const settings = _this.classSettings.settings;
+			settings.object.geometry.position.forEach( ( vertice, i ) => console.log( 'position[' + i + '] = ' + JSON.stringify(vertice) + ' edges = ' + JSON.stringify(vertice.edges) ) );
+			settings.object.geometry.indices[0].forEach( ( edge, i ) => console.log( 'indices.edges[' + i + '] = ' + JSON.stringify(edge) + ' distance = ' + edge.distance ) );
+			settings.object.geometry.indices[1].forEach( (face, i ) => console.log( 'indices.faces[' + i + '] = ' + JSON.stringify(face) ) );
+
+		}
+
+		//Project a circle into 3D space
+		this.project = (
+			scene,
+		) => {
+
+			const THREE = three.THREE, settings = this.classSettings.settings;
+			
+			//remove previous universe
+			this.remove(scene);
+	
+			const indices = settings.object.geometry.indices;
+	
+			//edges length
+			let l = 0;
+			//indices.faces[this.classSettings.faceId].forEach(edgeId => l += indices.edges[edgeId].distance );
+			//indices.faceEdges.forEach(edge => l += edge.distance);
+			this.edges.forEach(edge => l += edge.distance);
+			if ( isNaN( l ) || !isFinite( l ) ) {
+	
+				console.error(sCircle + ': project(...). Invalid edges length = ' + l);
+				return;
+	
+			}
+			const r = l / (2 * Math.PI),
+				center = new THREE.Vector2(0.0, 0.0),
+				axis = new THREE.Vector3(0, 0, 1),
+				point0 = new THREE.Vector3(0, -r, 0),
+				delta = 2 * Math.PI / l;
+			let angle = 0.0;//Угол поворота радиуса окружности до текущей вершины
+			this.edges.forEach( ( edge, i ) => {
+				
+				if (settings.object.geometry.position[i].length === 0) {
+					
+					let point;
+					if (i === 0) point = point0;
+					else {
+		
+						angle += edge.distance * delta;
+						point = new THREE.Vector3().copy(point0).applyAxisAngle(axis, angle);
+		
+					}
+					settings.object.geometry.position[i] = point.toArray();
+	
+				}
+				
+			} );
+	
+			settings.scene = scene;
+	
+			settings.object.geometry.position.test();
+			
+			if (this.isDisplay()) this.display( 2, this.debug ? this.displayDebug(THREE, center, r, scene) : undefined);
+				
+			this.logCircle();
+	
 		}
 
 	}
@@ -673,7 +564,7 @@ export default Circle;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sun May 21 2023 05:39:21 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Fri Jun 16 2023 06:09:40 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
