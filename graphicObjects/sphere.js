@@ -244,9 +244,9 @@ class Sphere extends Circle
 			}
 			
 			//default edge vertices
-			if (!edge.vertices) edge.vertices = defaultEdges[edgeId];
+			if (!edge.vertices) edge.vertices = defaultEdges[edgeId].vertices;
 			const verticesCount = 2, vertices = edge.vertices;
-			for ( let i = vertices.length; i < verticesCount; i++ ) vertices.push( defaultEdges[edgeId][i] );
+			for ( let i = vertices.length; i < verticesCount; i++ ) vertices.push( defaultEdges[edgeId].vertices[i] );
 			
 		}
 		settings.object.geometry.indices.faces.forEach( ( face, faceId ) => {
