@@ -110,9 +110,9 @@ class Circle extends Utils
 									switch (name) {
 					
 										case 'isEdgesProxy': return true;
-										case 'vertices': return (vertices) => {
+										case 'pushEdge': return (edge) => {
 					
-											_edges.push({ vertices: vertices });
+											_edges.push(edge);
 					
 										};
 										case 'push': return (edge={}) => {

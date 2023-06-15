@@ -210,34 +210,35 @@ class Sphere extends Circle
 		//сразу заменяем все грани на прокси, потому что в противном случае, когда мы создаем прокси грани в get, каждый раз,
 		//когда вызывается get, в результате может получться бесконечная вложенная конструкция и появится сообщение об ошибке:
 		//EgocentricUniverse: Face get. Duplicate proxy
-		const defaultIndices = [
-			//edges
+		const defaultIndices = {
+			
+			edges:
 			[
 				//будет создано в Utils.edges
-				[],
-				[],
-				[],
+				{},
+				{},
+				{},
 
-				[0,3],//3
-				[1,3],//4
-				[2,3],//5
+				{ vertices: [0,3] },//3
+				{ vertices: [1,3] },//4
+				{ vertices: [2,3] },//5
 			],
-			//faces
+			faces:
 			[
 				[],//уже создано в Circle.Indices
 				[0, 3, 4],
 				[1, 4, 5],
 				[2, 3, 5]
 			]
-		];
-		const edges = settings.object.geometry.indices.edges, defaultEdges = defaultIndices[0], edgesLength = 6;
+		}
+		const edges = settings.object.geometry.indices.edges, defaultEdges = defaultIndices.edges, edgesLength = 6;
 		for (let edgeId = 3;//вершины первых тех ребер потом будут вычисляться в Utils.edges
 			 edgeId < edgesLength; edgeId++) {
 
 			let edge = edges[edgeId];
 			if (!edge) {
 
-				edges.vertices(defaultEdges[edgeId]);
+				edges.pushEdge(defaultEdges[edgeId]);
 				continue;
 				
 			}
@@ -254,7 +255,7 @@ class Sphere extends Circle
 			const edgesCount = 3;
 			if ((faceId === 0) && (edgesCount != face.length)) console.error(sIndices + ': Duplicate default faceId = ' + faceId);//эта грань уже была создана в Circle.Indices
 			if (faceId > 3) console.error(sIndices + ': Invalid faceId = ' + faceId );
-			for ( let i = face.length; i < edgesCount; i++ ) face.push( defaultIndices[1][faceId][i] );
+			for ( let i = face.length; i < edgesCount; i++ ) face.push( defaultIndices.faces[faceId][i] );
 			
 			face.face = new Triangle( this.options, {
 			
