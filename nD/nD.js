@@ -2459,7 +2459,11 @@ class ND {
 
 									}
 										
-									cDistance.setValue( geometry.D3.points[lineIndices[0]].distanceTo( geometry.D3.points[lineIndices[1]] ) );
+									const position0 = geometry.geometry.position[lineIndices[0]],
+										position1 = settings.object.geometry.position[lineIndices[1]];
+									if (position0.length && position1.length) cDistance.setValue( position0.distanceTo(position1) );
+									else console.error("ND: Select edge. Invalid edge's vertices distance");
+//									cDistance.setValue( geometry.D3.points[lineIndices[0]].distanceTo( geometry.D3.points[lineIndices[1]] ) );
 									break;
 			
 							}
