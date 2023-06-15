@@ -1036,6 +1036,24 @@ class ND {
 									switch ( name ) {
 
 										case 'reset': return function() { delete target.positionWorld; }
+										case 'distanceTo': return (position) => {
+
+											if (target.length != position.length) {
+												
+												console.error('ND settings.object.geometry.position[i].distanceTo(). target.length != position.length');
+												return;
+												
+											}
+											//const distance = new three.THREE.Vector3(target[0], target[1], target[2], ).distanceTo(new three.THREE.Vector3(position[0], position[1], position[2], ));
+											let sum = 0;
+											target.forEach((axis, i) => {
+
+												const d = axis - position[i];
+												sum += d * d;
+												
+											})
+											return Math.sqrt(sum);
+										}
 
 									}
 									return target[name];
