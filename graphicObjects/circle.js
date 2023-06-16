@@ -263,7 +263,7 @@ class Circle extends Utils
 	 * @param {object} [classSettings] Circle class settings.
 	 * @param {number} [classSettings.faceId=0] Identifier of the array of the edges ids in the <b>classSettings.settings.object.geometry.indices.faces</b> array.
 	 * @param {object} [classSettings.settings] The following settings are available
-	 * @param {object} [classSettings.settings.object] edges object.
+	 * @param {object} [classSettings.settings.object] circle object.
 	 * @param {String} [classSettings.settings.object.name='Circle'] name of circle.
 	 * @param {String} [classSettings.settings.object.color='lime'] color of edges.
 	 * @param {object} [classSettings.settings.object.geometry] Circle geometry.
