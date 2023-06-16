@@ -42,7 +42,6 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 [getShaderMaterialPoints API](https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/jsdoc/index.html).
 * graphic objects.
 	* [Circle](https://github.com/anhr/commonNodeJS/blob/master/graphicObjects/circle.md).
-[circle.js](https://github.com/anhr/commonNodeJS/blob/master/graphicObjects/circle.js).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/graphicObjects/Examples/circle.html).
 	* Sphere.
 [sphere.js](https://github.com/anhr/commonNodeJS/blob/master/graphicObjects/sphere.js).
