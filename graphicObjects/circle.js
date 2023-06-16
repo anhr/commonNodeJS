@@ -259,7 +259,7 @@ class Circle extends Utils
 	}
 	/**
 	 * Circle graphical object.
-	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
+	 * @param {Options} options See <a href="../../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] Circle class settings.
 	 * @param {number} [classSettings.faceId=0] Identifier of the array of the edges ids in the <b>classSettings.settings.object.geometry.indices.faces</b> array.
 	 * @param {object} [classSettings.settings] The following settings are available
@@ -279,6 +279,7 @@ class Circle extends Utils
 	 * [[0, 2, 3]]
 	 * circle contains three edges with 0, 2 and 3 indice.
 	 * </pre>
+	 * @param {boolean} [classSettings.debug=false] Debug mode. Diagnoses your code and display detected errors in console
 	 **/
 	constructor( options, classSettings={} ) {
 		

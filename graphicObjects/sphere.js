@@ -269,15 +269,39 @@ class Sphere extends Circle
 	}
 	/**
 	 * Sphere graphical object.
-	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
+	 * @param {Options} options See <a href="../../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] Sphere class settings.
+	 * @param {number} [classSettings.bodyId=0] Identifier of the array of the faces ids in the <b>classSettings.settings.object.geometry.indices.bodies</b> array.
+	 * @param {object} [classSettings.settings] The following settings are available
+	 * @param {object} [classSettings.settings.object] Sphere object.
+	 * @param {String} [classSettings.settings.object.name='Sphere'] name of sphere.
+	 * @param {String} [classSettings.settings.object.color='lime'] color of edges.
+	 * @param {object} [classSettings.settings.object.geometry] Sphere geometry.
+	 * @param {object} [classSettings.settings.object.geometry.indices] Array of <b>indices</b> of vertices, edges, faces and bodies of sphere.
+	 * @param {number} [classSettings.settings.object.geometry.indices.count=4] facess count. Default sphere is pyramid with 4 faces.
+	 * @param {Array} [classSettings.settings.object.geometry.indices.edges=[{}, {}, {}, {vertices: [0,3]}, {vertices: [1,3]}, {vertices: [2,3]}]] Edges array. Default edges count is <b>classSettings.settings.object.geometry.indices.count</b>.
+	 * @param {object} [classSettings.settings.object.geometry.indices.edges.edge] Edges array item is edge.
+	 * @param {Array} [classSettings.settings.object.geometry.indices.edges.edge.vertices] Array of edge vertices indices. Every edge have two vertices.
+	 * @param {float} [classSettings.settings.object.geometry.indices.edges.edge.distance=1.632993154528117] Edge length. Distance between edge vertices.
+	 * @param {Array} [classSettings.settings.object.geometry.indices.faces=[[0, 1, 2], [0, 3, 4], [1, 4, 5], [2, 3, 5]]] Faces array. Every item of the <b>faces</b> array is array of edges indices for current face.
+	 * @param {Array} [classSettings.settings.object.geometry.indices.bodies=[[0, 1, 2, 3]]] Bodies array. Every item of the <b>bodies</b> array is array of facess indices for current body.
+	 * @param {boolean} [classSettings.debug=false] Debug mode. Diagnoses your code and display detected errors in console
 	 **/
 	constructor( options, classSettings={} ) {
 
 		if (classSettings.bodyId === undefined) classSettings.bodyId = 0;
 		super( options, classSettings );
 
-		//Project sphere into 3D space
+		/**
+		 * Projects a sphere to the canvas 
+		 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
+		 * @param {object} [options={}] The following options are available
+		 * @param {object} [options.center] center of the sphere
+		 * @param {float} [options.center.x=0.0] X axis of the center
+		 * @param {float} [options.center.y=0.0] Y axis of the center
+		 * @param {float} [options.center.z=0.0] z axis of the center
+		 * @param {float} [options.radius=1.0] radius of the sphere
+		 */
 		this.project = ( scene ) => {
 
 			const settings = this.classSettings.settings;

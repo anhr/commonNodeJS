@@ -252,7 +252,7 @@ class Utils {
 		if (classSettings.faceId === undefined) classSettings.faceId = 0;
 		this.classSettings = classSettings;
 		
-		this.debug = true;
+		this.debug = classSettings.debug != undefined ? classSettings.debug : false;
 
 		//display graphic object to the canvas
 		this.display = (n,//space dimension

@@ -43,13 +43,14 @@
 
 //import Edges from './edges.js';
 import Circle from './circle.js';
+import Triangle from './triangle.js';
 
 //debug
 
 import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.js'
 import three from '../three.js'
 
-const sFaces = 'Sphere';
+const sSphere = 'Sphere';
 let isFacesIndicesProxy = false;
 
 class Sphere extends Circle
@@ -57,92 +58,75 @@ class Sphere extends Circle
 
 	//Overridden methods from base class
 
-	log() {
+	displayDebug( THREE, center, r, scene ) {
 
-		if (!this.debug) return;
-		this.settings.object.geometry.position.forEach((vertice, i) => console.log('position[' + i + ']. ' + JSON.stringify( vertice )));
-		this.settings.object.geometry.indices.edges.forEach((edge, i) => console.log('indices.edges[' + i + ']. ' + JSON.stringify( edge )));
-		this.settings.object.geometry.indices.faces.forEach((face, i) => console.log('indices.faces[' + i + ']. ' + JSON.stringify( face )));
+		return super.displayDebug( THREE, center, r );
 		
 	}
-	
-	//Project universe into 3D space
-	project(
-		scene,
-		bLog = true//log positions and indices to cnosole 
-	){
+	name( getLanguageCode ) {
 
-//		const indices = this.settings.object.geometry.indices, scene = this.scene, options = this.options;
-
-		//remove previous universe
-		this.remove( scene );
+		//Localization
 		
-		const THREE = three.THREE;
+		const lang = {
 
-		this.settings.object.geometry.indices.faces.forEach( face => face.face.project( scene, 3,//Если размерность вселенной задать меньше 3 то исчезнут оси коодинат
-		   //false
-		) );
-		
-		if ( this.debug ) {
+			name: "Sphere",
 
-//			if (bLog) this.log();
-			
-			const color = "lightgray", opacity = 0.2;
-				
-			const sphere = new THREE.Mesh( new FibonacciSphereGeometry(),//new THREE.SphereGeometry( 1 ),
+		};
 
-				new THREE.MeshLambertMaterial( {
-	
-					color: color,
-					opacity: opacity,
-					transparent: true,
-					side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
-	
-				} )
-	
-			);			
-			scene.add( sphere );
+		const _languageCode = getLanguageCode();
 
-			const plane = new THREE.Mesh( new THREE.PlaneGeometry( 2.0, 2.0 ),
+		switch (_languageCode) {
 
-				new THREE.MeshLambertMaterial( {
+			case 'ru'://Russian language
 
-					color: color,
-					opacity: opacity,
-					transparent: true,
-					side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+				lang.name = 'Сфера';
 
-				} )
+				break;
+			default://Custom language
+				if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
+					break;
 
-			);
-			scene.add( plane );
-//			plane.name = name;
-			
-			if (typeof Intersections != 'undefined') new Intersections( sphere, plane );
-			
+				Object.keys(guiParams.lang).forEach(function (key) {
+
+					if (lang[key] === undefined)
+						return;
+					lang[key] = guiParams.lang[key];
+
+				});
+
 		}
+		return lang.name;
+		
+	}
+	logSphere() {
 
+		if (!this.debug) return;
+		this.logCircle();
+		this.classSettings.settings.object.geometry.indices.bodies.forEach((body, i) => console.log('indices.bodies[' + i + '] = ' + JSON.stringify( body )));
+		
 	}
 	get verticeEdgesLengthMax() { return 6 }//нельзя добавлять новое ребро если у вершины уже 6 ребер
 	Test( vertice, strVerticeId ){
 		
 		if (vertice.edges.length !== 3)//пирамида
-			console.error(sFaces + '. Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
+			console.error(sSphere + '. Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
 	Indices(){
 
-		const settings = this.settings;
+		const settings = this.classSettings.settings,
+			sIndices = sSphere + '.Indices';
 		if (settings.object.geometry.indices.count != undefined) {
 
 			settings.object.geometry.indices[1].count = settings.object.geometry.indices.count;
 			delete settings.object.geometry.indices.count;
 			
 		}
+		
+		settings.object.geometry.indices[2] = settings.object.geometry.indices[2] || settings.object.geometry.indices.bodies || [];
+		
 		super.Indices();
-		const position = settings.object.geometry.position;
 		const debug = this.debug;
-		const sIndicesFacesSet = ': indices.faces set. ';
 		
 		if (!isFacesIndicesProxy) {
 
@@ -179,7 +163,7 @@ class Sphere extends Circle
 
 																	if (_body[i] === faceId ) {
 																		
-																		console.error( sFaces + ': Duplicate body faceId = ' + faceId );
+																		console.error(sIndices + ': Duplicate body faceId = ' + faceId );
 																		return;
 
 																	}
@@ -219,10 +203,6 @@ class Sphere extends Circle
 							}
 							return _indices[2];
 						case 'faces':
-/*							
-							const bodyfaces = settings.object.geometry.indices.bodies[this.classSettings.bodyId];
-							return bodyfaces;
-*/
 							return new Proxy(settings.object.geometry.indices.bodies[this.classSettings.bodyId], {
 		
 								get: (_faces, name) => {
@@ -233,28 +213,11 @@ class Sphere extends Circle
 										return indices[1][_faces[i]];
 				
 									}
-/*									
-									switch (name) {
-				
-										case 'isBodyFacesProxy': return true;
-				
-									}
-*/		 
 									return _faces[name];
 				
 								},
-/*								
-								set: (_faces, name, value) => {
 				
-									const i = parseInt(name);
-									if (!isNaN(i)) _faces[indices.faces[_this.classSettings.faceId][i]] = value;
-				
-									return true;
-				
-								}
-*/		
-				
-							});							
+							});
 
 					}
 					return _indices[name];
@@ -270,36 +233,222 @@ class Sphere extends Circle
 			indices = settings.object.geometry.indices,
 			body = indices.bodies[this.classSettings.bodyId];
 		
-		//у пирамиды граней не должно быть меньше 4
-		//for ( let i = body.length; i &lt; facesCount; i++ ) body.push( i );
-
-		//for ( let i = settings.faces.length; i &lt; settings.count; i++ ) settings.faces.push({});
-
+		for ( let i = body.length; i &lt; facesCount; i++ ) body.push( i );
+		
 		//сразу заменяем все грани на прокси, потому что в противном случае, когда мы создаем прокси грани в get, каждый раз,
 		//когда вызывается get, в результате может получться бесконечная вложенная конструкция и появится сообщение об ошибке:
 		//EgocentricUniverse: Face get. Duplicate proxy
-		settings.object.geometry.indices.faces.forEach( ( face, faceId ) => face.face = new Circle( this.options, {
+		const defaultIndices = {
 			
-			faceId: faceId,
-			settings: settings,
-		
-		} ));
+			edges:
+			[
+				//будет создано в Utils.edges
+				{},
+				{},
+				{},
 
-		if ( debug ) {
-		
-
+				{ vertices: [0,3] },//3
+				{ vertices: [1,3] },//4
+				{ vertices: [2,3] },//5
+			],
+			faces:
+			[
+				[],//уже создано в Circle.Indices
+				[0, 3, 4],
+				[1, 4, 5],
+				[2, 3, 5]
+			]
 		}
+		const edges = settings.object.geometry.indices.edges, defaultEdges = defaultIndices.edges, edgesLength = 6;
+		for (let edgeId = 3;//вершины первых тех ребер потом будут вычисляться в Utils.edges
+			 edgeId &lt; edgesLength; edgeId++) {
+
+			let edge = edges[edgeId];
+			if (!edge) {
+
+				edges.pushDefault(defaultEdges[edgeId]);
+				continue;
+				
+			}
+			
+			//default edge vertices
+			if (!edge.vertices) edge.vertices = defaultEdges[edgeId].vertices;
+			const verticesCount = 2, vertices = edge.vertices;
+			for ( let i = vertices.length; i &lt; verticesCount; i++ ) vertices.push( defaultEdges[edgeId].vertices[i] );
+			
+		}
+		settings.object.geometry.indices.faces.forEach( ( face, faceId ) => {
+			
+			//default face edges
+			const edgesCount = 3;
+			if ((faceId === 0) &amp;&amp; (edgesCount != face.length)) console.error(sIndices + ': Duplicate default faceId = ' + faceId);//эта грань уже была создана в Circle.Indices
+			if (faceId > 3) console.error(sIndices + ': Invalid faceId = ' + faceId );
+			for ( let i = face.length; i &lt; edgesCount; i++ ) face.push( defaultIndices.faces[faceId][i] );
+			
+			face.face = new Triangle( this.options, {
+			
+				faceId: faceId,
+				settings: settings,
+			
+			} );
+			
+		});
 		
 	}
 	/**
 	 * Sphere graphical object.
-	 * @param {Options} options See &lt;a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
+	 * @param {Options} options See &lt;a href="../../../jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
 	 * @param {object} [classSettings] Sphere class settings.
+	 * @param {number} [classSettings.bodyId=0] Identifier of the array of the faces ids in the &lt;b>classSettings.settings.object.geometry.indices.bodies&lt;/b> array.
+	 * @param {object} [classSettings.settings] The following settings are available
+	 * @param {object} [classSettings.settings.object] Sphere object.
+	 * @param {String} [classSettings.settings.object.name='Sphere'] name of sphere.
+	 * @param {String} [classSettings.settings.object.color='lime'] color of edges.
+	 * @param {object} [classSettings.settings.object.geometry] Sphere geometry.
+	 * @param {object} [classSettings.settings.object.geometry.indices] Array of &lt;b>indices&lt;/b> of vertices, edges, faces and bodies of sphere.
+	 * @param {number} [classSettings.settings.object.geometry.indices.count=4] facess count. Default sphere is pyramid with 4 faces.
+	 * @param {Array} [classSettings.settings.object.geometry.indices.edges=[{}, {}, {}, {vertices: [0,3]}, {vertices: [1,3]}, {vertices: [2,3]}]] Edges array. Default edges count is &lt;b>classSettings.settings.object.geometry.indices.count&lt;/b>.
+	 * @param {object} [classSettings.settings.object.geometry.indices.edges.edge] Edges array item is edge.
+	 * @param {Array} [classSettings.settings.object.geometry.indices.edges.edge.vertices] Array of edge vertices indices. Every edge have two vertices.
+	 * @param {float} [classSettings.settings.object.geometry.indices.edges.edge.distance=1.632993154528117] Edge length. Distance between edge vertices.
+	 * @param {Array} [classSettings.settings.object.geometry.indices.faces=[[0, 1, 2], [0, 3, 4], [1, 4, 5], [2, 3, 5]]] Faces array. Every item of the &lt;b>faces&lt;/b> array is array of edges indices for current face.
+	 * @param {Array} [classSettings.settings.object.geometry.indices.bodies=[[0, 1, 2, 3]]] Bodies array. Every item of the &lt;b>bodies&lt;/b> array is array of facess indices for current body.
+	 * @param {boolean} [classSettings.debug=false] Debug mode. Diagnoses your code and display detected errors in console
 	 **/
 	constructor( options, classSettings={} ) {
 
 		if (classSettings.bodyId === undefined) classSettings.bodyId = 0;
 		super( options, classSettings );
+
+		/**
+		 * Projects a sphere to the canvas 
+		 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
+		 * @param {object} [options={}] The following options are available
+		 * @param {object} [options.center] center of the sphere
+		 * @param {float} [options.center.x=0.0] X axis of the center
+		 * @param {float} [options.center.y=0.0] Y axis of the center
+		 * @param {float} [options.center.z=0.0] z axis of the center
+		 * @param {float} [options.radius=1.0] radius of the sphere
+		 */
+		this.project = ( scene ) => {
+
+			const settings = this.classSettings.settings;
+			settings.options = options;//for debug. See Triangle.project
+			
+			//remove previous sphere
+			this.remove(scene);
+
+			const THREE = three.THREE,
+				faceEdgeFaceAngle = Math.acos( 1 / 3 ),//Face-edge-face angle. approx. 70.5288° or 1.2309594173407747 radians https://en.wikipedia.org/wiki/Tetrahedron
+				edgeEdgeAngle = 2 * Math.PI / 3,//120° or 2.0943951023931953 radians
+					
+				//углы поворота первого треугольника
+				rotation1 = new THREE.Euler(
+					
+					//x
+					//наклоняю на угол, равный углу между гранями пирамиды
+					Math.PI + faceEdgeFaceAngle,//approx. 70.5288° * 2 or 4.372552070930568 radians
+
+					//y
+					0,
+
+					//z
+					//И поворачиваю так, что бы новая вершина треугольника оказалась на вершине приамиды
+					Math.PI * ( 2 / 3 + 1 )//300° or 5.235987755982988 radians;
+					
+				);
+
+			settings.object.geometry.indices.faces.forEach( face => {
+				
+					
+				//каждую грань (треугольник) помещаю в пару вложенных друг в друга группы
+				const group = new THREE.Group(),
+					groupFace = new THREE.Group();
+				
+				groupFace.add(group);
+				const faceId = face.face.classSettings.faceId;
+				let boProject = true;//for debug
+				switch( faceId ) {
+
+					case 0: break;//нулевой треугольник никуда не поворачиваю. Это будет основание пирамиды
+					case 1://Первый треуголник
+						//boProject = false;
+						group.rotation.copy(rotation1);
+//						group.rotation.z *= 5;//300° or 5.235987755982988 radians;
+						break;
+					case 2://Второй треуголник
+						//boProject = false;
+
+						//Сначала повораяиваю как первый треугольник
+						group.rotation.copy(rotation1);
+//						group.rotation.z *= 5;//300° or 5.235987755982988 radians;
+/*						
+						group.rotation.x = Math.PI + faceEdgeFaceAngle;//approx. 70.5288° * 2 or 4.372552070930568 radians
+						group.rotation.z = Math.PI * ( 2 / 3 + 1 );//300° or 5.235987755982988 radians;
+*/	  
+
+						//А потом уже родительску группу поворачиваю на 120° по оси высоты пирамиды которая совпадает с ось z так,
+						//что бы треугольник совпал со второй гранью пирамиды
+						groupFace.rotation.z = edgeEdgeAngle;//120° or 4.1887902047863905 radians
+						break;
+					case 3://Третий треуголник
+						//boProject = false;
+
+						//Сначала повораяиваю как первый треугольник
+						group.rotation.copy(rotation1);
+//						group.rotation.z *= 5;//300° or 5.235987755982988 radians;
+
+						//А потом уже родительску группу поворачиваю на 240° по оси высоты пирамиды которая совпадает с ось z так,
+						//что бы треугольник совпал с третьей гранью пирамиды
+						groupFace.rotation.z = edgeEdgeAngle * 2;//240° or 4.1887902047863905 radians
+						break;
+					default: console.error(sSphere + '. Invalid faceId = ' + faceId);
+						
+				}
+//				group.rotation.copy( rotationGroup );
+				group.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
+//				groupFace.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
+				scene.add( groupFace );
+				if ( this.debug &amp;&amp; options.guiSelectPoint ) {
+	
+					groupFace.name = 'groupFace ' + faceId;
+					options.guiSelectPoint.addMesh( groupFace );
+					
+				}
+				
+				if (boProject) face.face.project( scene, group );
+			
+			} );
+
+			settings.object.geometry.position.test();
+			
+			settings.scene = scene;
+			this.display( 3 );
+			
+			if (this.debug) {
+
+				const color = "lightgray", opacity = 0.2;
+
+				const sphere = new THREE.Mesh(new FibonacciSphereGeometry(),
+
+					new THREE.MeshLambertMaterial({
+
+						color: color,
+						opacity: opacity,
+						transparent: true,
+						side: THREE.DoubleSide//от этого ключа зависят точки пересечения объектов
+
+					})
+
+				);
+				scene.add(sphere);
+
+				if (typeof Intersections != 'undefined') new Intersections(sphere, plane);
+				this.logSphere();
+
+			}
+
+		}
 
 	}
 
@@ -322,7 +471,7 @@ export default Sphere;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sun May 21 2023 05:46:52 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Jun 17 2023 06:50:27 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
