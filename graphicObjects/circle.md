@@ -14,4 +14,4 @@ new MyThree( (scene, options) => {
 
 }
 ```
-[Example](../Examples/circle.html).
+[Example](https://raw.githack.com/anhr/commonNodeJS/master/graphicObjects/Examples/circle.html).
