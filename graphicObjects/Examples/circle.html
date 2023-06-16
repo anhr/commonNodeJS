@@ -53,7 +53,6 @@
 	
 							indices: {
 								//count: 10,//edges count.
-								/*
 								edges: [
 									{
 										distance: 0.3,
@@ -73,8 +72,6 @@
 										//vertices: [2, 0],
 									},//3
 								],
-								*/
-								/*
 								faces: [
 								   [
 										0,
@@ -83,7 +80,6 @@
 										3,
 									]
 								],
-								*/
 	
 							}
 	
@@ -95,7 +91,7 @@
 
 			} );
 			//circle.settings.indices.edges.push();//Error: Edges: push edge. Invalid edge = undefined
-			//circle.pushEdge();
+			circle.pushEdge();
 			circle.project( scene );
 
 		}, {
@@ -115,16 +111,11 @@
 				text: { precision: 1, rect: { displayRect: false, }, }
 
 			},
-//			title: '<a href="https://github.com/anhr/egocentricUniverse" target="_blank" rel="noopener">Egocentric Universe</a>',
+			//title: '<a href="https://github.com/anhr/commonNodeJS/blob/master/graphicObjects" target="_blank" rel="noopener">Graphic Objects</a>',
 			//dat: false,
 			canvas: {
 
 				noButtonFullScreen: true,
-/*
-				fullScreen: false,
-				width: window.innerWidth / 2,
-				height: window.innerHeight / 2,
-*/				
 
 			},
 			

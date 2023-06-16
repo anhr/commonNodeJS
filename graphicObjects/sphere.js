@@ -283,7 +283,7 @@ class Sphere extends Circle
 			const settings = this.classSettings.settings;
 			settings.options = options;//for debug. See Triangle.project
 			
-			//remove previous universe
+			//remove previous sphere
 			this.remove(scene);
 
 			const THREE = three.THREE,
