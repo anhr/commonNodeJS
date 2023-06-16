@@ -272,12 +272,12 @@ class Circle extends Utils
 	 * @param {Array} [classSettings.settings.object.geometry.indices.edges=[{},{},{}]] Edges array. Default edges count is <b>classSettings.settings.object.geometry.indices.count</b>.
 	 * @param {object} [classSettings.settings.object.geometry.indices.edges.edge] Edges array item is edge.
 	 * @param {Array} [classSettings.settings.object.geometry.indices.edges.edge.vertices] Array of edge vertices indices. Every edge have two vertices.
-	 * @param {float} [classSettings.settings.object.geometry.indices.edges.edge.distance=1.0] Edge length. Distance between edge vertices.
+	 * @param {float} [classSettings.settings.object.geometry.indices.edges.edge.distance=2.732050807568877] Edge length. Distance between edge vertices.
 	 * @param {Array} [classSettings.settings.object.geometry.indices.faces=[[0, 1, 2]]] Faces array. Every item of the <b>faces</b> array is array of edges indices for current face.
 	 * <pre>
 	 * Example:
 	 * [[0, 2, 3]]
-	 * universe contains three edges with 0, 2 and 3 indice.
+	 * circle contains three edges with 0, 2 and 3 indice.
 	 * </pre>
 	 **/
 	constructor( options, classSettings={} ) {
@@ -465,7 +465,7 @@ class Circle extends Utils
 
 			const THREE = three.THREE, settings = this.classSettings.settings;
 			
-			//remove previous universe
+			//remove previous circle
 			this.remove(scene);
 	
 			const indices = settings.object.geometry.indices;
