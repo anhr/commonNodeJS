@@ -442,6 +442,10 @@ class Circle extends Utils
 		//settings.count = [[]];//Error: Faces: faces[0]. Invalid face instance
 		this.Indices();
 
+		/**
+		 * adds a new edge to the circle
+		 * @param {object} edge new edge. See <b>classSettings.settings.object.geometry.indices.edges.esge</b> of the <b>Circle</b> parameters for details
+		 */
 		this.pushEdge = (edge) => {
 			
 			classSettings.settings.object.geometry.indices.edges.push( edge );
@@ -458,10 +462,11 @@ class Circle extends Utils
 
 		}
 
-		//Project a circle into 3D space
-		this.project = (
-			scene,
-		) => {
+		/**
+		 * Projects a circle to the 3D space 
+		 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
+		 */
+		this.project = (scene) => {
 
 			const THREE = three.THREE, settings = this.classSettings.settings;
 			
