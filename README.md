@@ -43,8 +43,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 * graphic objects.
 	* [Circle](https://github.com/anhr/commonNodeJS/blob/master/graphicObjects/circle.md).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/graphicObjects/Examples/circle.html).
-	* Sphere.
-[sphere.js](https://github.com/anhr/commonNodeJS/blob/master/graphicObjects/sphere.js).
+	* [Sphere](https://github.com/anhr/commonNodeJS/blob/master/graphicObjects/Sphere.md).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/graphicObjects/Examples/sphere.html).
 * guiSelectPoint.js GuiSelectPoint is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for select a point from the mesh.
 [GuiSelectPoint API](https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html).
