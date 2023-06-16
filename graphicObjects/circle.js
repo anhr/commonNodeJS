@@ -463,12 +463,17 @@ class Circle extends Utils
 		}
 
 		/**
-		 * Projects a circle to the 3D space 
+		 * Projects a circle to the canvas 
 		 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
+		 * @param {object} [options={}] The following options are available
+		 * @param {object} [options.center={x: 0.0, y: 0.0}] center of the circle
+		 * @param {float} [options.radius=1.0] center of the circle
 		 */
-		this.project = (scene) => {
+		this.project = (scene, options ={}) => {
 
 			const THREE = three.THREE, settings = this.classSettings.settings;
+
+			options.center = options.center || {x: 0.0, y: 0.0}
 			
 			//remove previous circle
 			this.remove(scene);
@@ -486,8 +491,8 @@ class Circle extends Utils
 				return;
 	
 			}
-			const r = l / (2 * Math.PI),
-				center = new THREE.Vector2(0.0, 0.0),
+			const r = options.radius !== undefined ? options.radius : 1.0,//l / (2 * Math.PI),
+				center = new THREE.Vector2(options.center.x, options.center.y),
 				axis = new THREE.Vector3(0, 0, 1),
 				point0 = new THREE.Vector3(0, -r, 0),
 				delta = 2 * Math.PI / l;
@@ -514,7 +519,12 @@ class Circle extends Utils
 	
 			settings.object.geometry.position.test();
 			
-			if (this.isDisplay()) this.display( 2, this.debug ? this.displayDebug(THREE, center, r, scene) : undefined);
+			if (this.isDisplay()) this.display( 2, {
+				
+				debugObject: this.debug ? this.displayDebug(THREE, center, r, scene) : undefined,
+				position: [center.x, center.y],
+				
+			});
 				
 			this.logCircle();
 	

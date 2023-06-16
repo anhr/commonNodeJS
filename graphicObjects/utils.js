@@ -256,15 +256,16 @@ class Utils {
 
 		//display graphic object to the canvas
 		this.display = (n,//space dimension
-			debugObject
+			params={}
 		) => {
 
 			const settings = this.classSettings.settings;
 			settings.options = options;
 			settings.object.name = settings.object.name || lang.name;
+			if (params.position) settings.object.position = params.position;
 			new ND(n, settings);
 
-			if (debugObject) settings.scene.add(debugObject);
+			if (params.debugObject) settings.scene.add(params.debugObject);
 
 		}
 

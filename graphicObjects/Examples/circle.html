@@ -92,7 +92,12 @@
 			} );
 			//circle.settings.indices.edges.push();//Error: Edges: push edge. Invalid edge = undefined
 			circle.pushEdge();
-			circle.project( scene );
+			circle.project(scene, {
+				
+				//center: {x: 0.5, y: -0.3},
+				//radius: 0.7,
+				
+			});
 
 		}, {
 
