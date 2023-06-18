@@ -106,12 +106,17 @@
 					
 					}
 */									  
-					//debug: true,
+					debug: true,
 	 
 				}
 									   
 			);
-			sphere.project( scene );
+			sphere.project(scene, {
+				
+				center: {x: 0.5, y: -0.3, z: 0},
+				//radius: 0.7,
+				
+			});
 
 		}, {
 

@@ -29,7 +29,7 @@ class Triangle extends Utils
 {
 
 	//Project of triangle to the 3D space
-	project( scene, group ) {
+	project(scene) {
 
 		const settings = this.classSettings.settings, THREE = three.THREE, options = settings.options;
 		
@@ -44,18 +44,18 @@ class Triangle extends Utils
 		triangle.position.z += z;
 		triangle.scale.multiplyScalar( scale );
 /*
-		const group = new THREE.Group();
-		group.rotation.copy( rotation );
-		group.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
+		const scene = new THREE.Group();
+		scene.rotation.copy( rotation );
+		scene.updateMatrixWorld( true );//обновить scene.matrix и scene.matrixWorld после ее поворота
 */
 		//обязательно добавлять треугольник в группу
-		group.add(triangle);
+		scene.add(triangle);
 		
 		triangle.updateMatrixWorld(true);//вычисляем мировые координаты треугольника для вычисления вершин пирамиды
 		
 		//Если не хочешь видеть треуголник на холсте
 		if (!this.debug)//закоментировать это условие если хочешь всегда удалять треугольник с холста
-			group.remove(triangle);
+			scene.remove(triangle);
 		
 		if (triangle.parent) {
 			
@@ -109,12 +109,12 @@ class Triangle extends Utils
 				
 			});
 
-//			scene.add( group );
+//			scene.add( scene );
 			
 			if ( options.guiSelectPoint ) {
 
-				group.name = 'group ' + this.classSettings.faceId;
-				options.guiSelectPoint.addMesh( group );
+				scene.name = 'scene ' + this.classSettings.faceId;
+				options.guiSelectPoint.addMesh( scene );
 
 			}
 			
@@ -132,7 +132,7 @@ class Triangle extends Utils
 	
 			)
 			plane.position.copy( triangle.position );
-			group.add( plane );
+			scene.add( plane );
 			
 			const center = new THREE.Vector2(0.0, 0.0);
 			const circle = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(new THREE.EllipseCurve(
@@ -141,7 +141,7 @@ class Triangle extends Utils
 				0.0, 2.0 * Math.PI,// Start angle, stop angle
 			).getSpacedPoints(256)), new THREE.LineBasicMaterial({ color: 'blue' }));
 			circle.position.copy( triangle.position );
-			group.add( circle );
+			scene.add( circle );
 			
 		}
 //		super.project( scene, n );

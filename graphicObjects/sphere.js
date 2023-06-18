@@ -295,22 +295,25 @@ class Sphere extends Circle
 		/**
 		 * Projects a sphere to the canvas 
 		 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
-		 * @param {object} [options={}] The following options are available
-		 * @param {object} [options.center] center of the sphere
-		 * @param {float} [options.center.x=0.0] X axis of the center
-		 * @param {float} [options.center.y=0.0] Y axis of the center
-		 * @param {float} [options.center.z=0.0] z axis of the center
-		 * @param {float} [options.radius=1.0] radius of the sphere
+		 * @param {object} [params={}] The following parameters are available
+		 * @param {object} [params.center] center of the sphere
+		 * @param {float} [params.center.x=0.0] X axis of the center
+		 * @param {float} [params.center.y=0.0] Y axis of the center
+		 * @param {float} [params.center.z=0.0] z axis of the center
+		 * @param {float} [params.radius=1.0] radius of the sphere
 		 */
-		this.project = ( scene ) => {
+		this.project = (scene, params={}) => {
 
 			const settings = this.classSettings.settings;
 			settings.options = options;//for debug. See Triangle.project
+			params.center = params.center || {x: 0.0, y: 0.0, z: 0.0}
 			
 			//remove previous sphere
 			this.remove(scene);
 
 			const THREE = three.THREE,
+				r = params.radius !== undefined ? params.radius : 1.0,
+				center = new THREE.Vector3(params.center.x, params.center.y, params.center.z),
 				faceEdgeFaceAngle = Math.acos( 1 / 3 ),//Face-edge-face angle. approx. 70.5288° or 1.2309594173407747 radians https://en.wikipedia.org/wiki/Tetrahedron
 				edgeEdgeAngle = 2 * Math.PI / 3,//120° or 2.0943951023931953 radians
 					
@@ -336,7 +339,6 @@ class Sphere extends Circle
 				//каждую грань (треугольник) помещаю в пару вложенных друг в друга группы
 				const group = new THREE.Group(),
 					groupFace = new THREE.Group();
-				
 				groupFace.add(group);
 				const faceId = face.face.classSettings.faceId;
 				let boProject = true;//for debug
@@ -388,14 +390,20 @@ class Sphere extends Circle
 					
 				}
 				
-				if (boProject) face.face.project( scene, group );
+//				if (boProject) face.face.project( scene, group );
+				if (boProject) face.face.project( group );
 			
 			} );
 
 			settings.object.geometry.position.test();
 			
 			settings.scene = scene;
-			this.display( 3 );
+			this.display(3, {
+				
+//				debugObject: this.debug ? this.displayDebug(THREE, new THREE.Vector3(params.center.x, params.center.y), params.center.z), r, scene) : undefined,
+				position: [params.center.x, params.center.y, params.center.z],
+				
+			});
 			
 			if (this.debug) {
 

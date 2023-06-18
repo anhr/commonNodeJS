@@ -466,22 +466,22 @@ class Circle extends Utils
 		/**
 		 * Projects a circle to the canvas 
 		 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
-		 * @param {object} [options={}] The following options are available
-		 * @param {object} [options.center] center of the circle
-		 * @param {float} [options.center.x=0.0] X axis of the center
-		 * @param {float} [options.center.y=0.0] Y axis of the center
-		 * @param {float} [options.radius=1.0] radius of the circle
+		 * @param {object} [params={}] The following parameters are available
+		 * @param {object} [params.center] center of the sphere
+		 * @param {float} [params.center.x=0.0] X axis of the center
+		 * @param {float} [params.center.y=0.0] Y axis of the center
+		 * @param {float} [params.radius=1.0] radius of the sphere
 		 */
-		this.project = (scene, options ={}) => {
+		this.project = (scene, params={}) => {
 
 			const THREE = three.THREE, settings = this.classSettings.settings;
 
-			options.center = options.center || {x: 0.0, y: 0.0}
+			params.center = params.center || {x: 0.0, y: 0.0}
 			
 			//remove previous circle
 			this.remove(scene);
 	
-			const indices = settings.object.geometry.indices;
+//			const indices = settings.object.geometry.indices;
 	
 			//edges length
 			let l = 0;
@@ -494,8 +494,8 @@ class Circle extends Utils
 				return;
 	
 			}
-			const r = options.radius !== undefined ? options.radius : 1.0,//l / (2 * Math.PI),
-				center = new THREE.Vector2(options.center.x, options.center.y),
+			const r = params.radius !== undefined ? params.radius : 1.0,//l / (2 * Math.PI),
+//				center = new THREE.Vector2(params.center.x, params.center.y),
 				axis = new THREE.Vector3(0, 0, 1),
 				point0 = new THREE.Vector3(0, -r, 0),
 				delta = 2 * Math.PI / l;
@@ -524,8 +524,8 @@ class Circle extends Utils
 			
 			if (this.isDisplay()) this.display( 2, {
 				
-				debugObject: this.debug ? this.displayDebug(THREE, center, r, scene) : undefined,
-				position: [center.x, center.y],
+				debugObject: this.debug ? this.displayDebug(THREE, new THREE.Vector2(params.center.x, params.center.y), r, scene) : undefined,
+				position: [params.center.x, params.center.y],
 				
 			});
 				
