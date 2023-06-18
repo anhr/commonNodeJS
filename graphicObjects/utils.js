@@ -25,6 +25,7 @@ if (ND.default) ND = ND.default;
 
 const sUtils = 'Utils', sOverride = sUtils + ': Please override the %s method in your child class.',
 	sVertices = sUtils + ': vertices';
+let g_debug;
 
 class Utils {
 
@@ -34,6 +35,7 @@ class Utils {
 	isDisplay() { return false; }
 
 	boCreate = true;
+	get debug() { return g_debug; }
 	get edges ()
 	{
 		
@@ -252,7 +254,8 @@ class Utils {
 		if (classSettings.faceId === undefined) classSettings.faceId = 0;
 		this.classSettings = classSettings;
 		
-		this.debug = classSettings.debug != undefined ? classSettings.debug : false;
+//		this.debug = classSettings.debug != undefined ? classSettings.debug : false;
+		g_debug = classSettings.debug != undefined ? classSettings.debug : g_debug != undefined? g_debug : false;
 
 		//display graphic object to the canvas
 		this.display = (n,//space dimension
