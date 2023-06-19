@@ -525,13 +525,14 @@ class Circle extends Utils
 			settings.scene = scene;
 	
 			settings.object.geometry.position.test();
-			settings.object.position = [params.center.x, params.center.y];
+//			settings.object.position = [params.center.x, params.center.y];
 			
 			if (this.isDisplay()) this.display( 2, {
 				
 				debugObject: this.debug ? this.displayDebug(THREE, new THREE.Vector2(params.center.x, params.center.y), r, scene) : undefined,
 //				debugObject: this.debug ? this.displayDebug(THREE, new THREE.Vector2(), r) : undefined,
 //				position: [params.center.x, params.center.y],
+				position: params.center,
 				
 			});
 				

@@ -266,8 +266,14 @@ class Utils {
 			settings.options = options;
 			settings.object.name = settings.object.name || lang.name;
 //			if (params.position) settings.object.position = params.position;
-			new ND(n, settings);
+			const nd = new ND(n, settings);
+			if (params.position) {
+				
+				nd.object3D.position.x = params.position.x || 0;
+				nd.object3D.position.y = params.position.y || 0;
+				nd.object3D.position.z = params.position.z || 0;
 
+			}
 			if (params.debugObject) settings.scene.add(params.debugObject);
 
 		}

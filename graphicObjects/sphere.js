@@ -331,12 +331,15 @@ class Sphere extends Circle
 					//И поворачиваю так, что бы новая вершина треугольника оказалась на вершине приамиды
 					Math.PI * ( 2 / 3 + 1 )//300° or 5.235987755982988 radians;
 					
-				);
+				),
+				groupPosition = new THREE.Group();//сюда помещаем все грани и отладочные объекты что бы у них была одинаковая позиция
+			groupPosition.position.copy(center);
+			scene.add(groupPosition);
 
 			settings.object.geometry.indices.faces.forEach( face => {
 				
 					
-				//каждую грань (треугольник) помещаю в пару вложенных друг в друга группы
+				//каждую грань (треугольник) помещаю в пару вложенных друг в друга группы что бы было удобно их поворачивать
 				const group = new THREE.Group(),
 					groupFace = new THREE.Group();
 				groupFace.add(group);
@@ -348,29 +351,20 @@ class Sphere extends Circle
 					case 1://Первый треуголник
 						//boProject = false;
 						group.rotation.copy(rotation1);
-//						group.rotation.z *= 5;//300° or 5.235987755982988 radians;
 						break;
 					case 2://Второй треуголник
-						//boProject = false;
 
-						//Сначала повораяиваю как первый треугольник
+						//Сначала поворачиваю как первый треугольник
 						group.rotation.copy(rotation1);
-//						group.rotation.z *= 5;//300° or 5.235987755982988 radians;
-/*						
-						group.rotation.x = Math.PI + faceEdgeFaceAngle;//approx. 70.5288° * 2 or 4.372552070930568 radians
-						group.rotation.z = Math.PI * ( 2 / 3 + 1 );//300° or 5.235987755982988 radians;
-*/	  
 
 						//А потом уже родительску группу поворачиваю на 120° по оси высоты пирамиды которая совпадает с ось z так,
 						//что бы треугольник совпал со второй гранью пирамиды
 						groupFace.rotation.z = edgeEdgeAngle;//120° or 4.1887902047863905 radians
 						break;
 					case 3://Третий треуголник
-						//boProject = false;
 
 						//Сначала повораяиваю как первый треугольник
 						group.rotation.copy(rotation1);
-//						group.rotation.z *= 5;//300° or 5.235987755982988 radians;
 
 						//А потом уже родительску группу поворачиваю на 240° по оси высоты пирамиды которая совпадает с ось z так,
 						//что бы треугольник совпал с третьей гранью пирамиды
@@ -379,10 +373,9 @@ class Sphere extends Circle
 					default: console.error(sSphere + '. Invalid faceId = ' + faceId);
 						
 				}
-//				group.rotation.copy( rotationGroup );
 				group.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
-//				groupFace.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
-				scene.add( groupFace );
+//				scene.add( groupFace );
+				groupPosition.add( groupFace );
 				if ( this.debug && options.guiSelectPoint ) {
 	
 					groupFace.name = 'groupFace ' + faceId;
@@ -390,7 +383,6 @@ class Sphere extends Circle
 					
 				}
 				
-//				if (boProject) face.face.project( scene, group );
 				if (boProject) face.face.project( group );
 			
 			} );
@@ -401,7 +393,8 @@ class Sphere extends Circle
 			this.display(3, {
 				
 //				debugObject: this.debug ? this.displayDebug(THREE, new THREE.Vector3(params.center.x, params.center.y), params.center.z), r, scene) : undefined,
-				position: [params.center.x, params.center.y, params.center.z],
+//				position: [params.center.x, params.center.y, params.center.z],
+				position: params.center,
 				
 			});
 			
@@ -421,7 +414,7 @@ class Sphere extends Circle
 					})
 
 				);
-				scene.add(sphere);
+				groupPosition.add(sphere);
 
 				if (typeof Intersections != 'undefined') new Intersections(sphere, plane);
 				this.logSphere();
