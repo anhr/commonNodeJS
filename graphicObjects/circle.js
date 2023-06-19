@@ -517,15 +517,21 @@ class Circle extends Utils
 				}
 				
 			} );
-	
+
+/*Непонятно почему то если указать позицию сцены то позиция объектов на этой сцене не изменится			
+			settings.scene = scene.add(new THREE.Group());
+			settings.scene.position.copy(new THREE.Vector3(params.center.x, params.center.y));
+*/   
 			settings.scene = scene;
 	
 			settings.object.geometry.position.test();
+			settings.object.position = [params.center.x, params.center.y];
 			
 			if (this.isDisplay()) this.display( 2, {
 				
 				debugObject: this.debug ? this.displayDebug(THREE, new THREE.Vector2(params.center.x, params.center.y), r, scene) : undefined,
-				position: [params.center.x, params.center.y],
+//				debugObject: this.debug ? this.displayDebug(THREE, new THREE.Vector2(), r) : undefined,
+//				position: [params.center.x, params.center.y],
 				
 			});
 				

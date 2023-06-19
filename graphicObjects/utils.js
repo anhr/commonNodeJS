@@ -265,7 +265,7 @@ class Utils {
 			const settings = this.classSettings.settings;
 			settings.options = options;
 			settings.object.name = settings.object.name || lang.name;
-			if (params.position) settings.object.position = params.position;
+//			if (params.position) settings.object.position = params.position;
 			new ND(n, settings);
 
 			if (params.debugObject) settings.scene.add(params.debugObject);
