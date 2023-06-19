@@ -3256,6 +3256,12 @@ class ND {
 
 			},
 
+			object3D: {
+
+				get: () => { return object3D; },
+				
+			},
+
 			object: {
 
 				get: function () { return settings.object; },
