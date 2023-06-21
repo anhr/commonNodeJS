@@ -46,3 +46,4 @@ Example of using.
 </body>
 ```
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/graphicObjects/Examples/sphere.html).
+[Sphere API](https://raw.githack.com/anhr/commonNodeJS/master/graphicObjects/jsdoc/sphere/index.html)
