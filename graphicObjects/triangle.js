@@ -55,7 +55,7 @@ class Triangle extends Utils
 		triangle.updateMatrixWorld(true);//вычисляем мировые координаты треугольника для вычисления вершин пирамиды
 		
 		//Если не хочешь видеть треуголник на холсте
-		if (!this.debug)//закоментировать это условие если хочешь всегда удалять треугольник с холста
+		if (!this.debug || !Triangle.debug)//закоментировать это условие если хочешь всегда удалять треугольник с холста
 			scene.remove(triangle);
 		
 		if (triangle.parent) {
@@ -81,7 +81,7 @@ class Triangle extends Utils
 			
 		} );
 
-		if ( this.debug ) {
+		if (this.debug && Triangle.debug) {
 
 			const vertices = [];
 			this.edges.forEach( ( edge ) => {
@@ -178,5 +178,7 @@ class Triangle extends Utils
 	}
 
 }
+
+Triangle.debug = true;//Have effect only if Utils.debug is true
 
 export default Triangle;

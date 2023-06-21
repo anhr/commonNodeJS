@@ -375,7 +375,7 @@ class Sphere extends Circle
 				}
 				group.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
 				groupPosition.add( groupFace );
-				if ( this.debug && options.guiSelectPoint ) {
+				if (this.debug && options.guiSelectPoint && Triangle.debug) {
 	
 					groupFace.name = 'groupFace ' + faceId;
 					options.guiSelectPoint.addMesh( groupFace );
@@ -397,7 +397,7 @@ class Sphere extends Circle
 				
 			});
 			
-			if (this.debug) {
+			if (this.debug && Triangle.debug) {
 
 				const color = "lightgray", opacity = 0.2;
 
@@ -416,9 +416,9 @@ class Sphere extends Circle
 				groupPosition.add(sphere);
 
 				if (typeof Intersections != 'undefined') new Intersections(sphere, plane);
-				this.logSphere();
 
 			}
+			this.logSphere();
 
 		}
 
