@@ -344,7 +344,7 @@ class Sphere extends Circle
 					groupFace = new THREE.Group();
 				groupFace.add(group);
 				const faceId = face.face.classSettings.faceId;
-				let boProject = true;//for debug
+//				let boProject = true;//for debug
 				switch( faceId ) {
 
 					case 0: break;//нулевой треугольник никуда не поворачиваю. Это будет основание пирамиды
@@ -374,7 +374,6 @@ class Sphere extends Circle
 						
 				}
 				group.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
-//				scene.add( groupFace );
 				groupPosition.add( groupFace );
 				if ( this.debug && options.guiSelectPoint ) {
 	
@@ -383,7 +382,8 @@ class Sphere extends Circle
 					
 				}
 				
-				if (boProject) face.face.project(group, r);
+//				if (boProject)
+					face.face.project(group, r);
 			
 			} );
 
@@ -393,7 +393,6 @@ class Sphere extends Circle
 			this.display(3, {
 				
 //				debugObject: this.debug ? this.displayDebug(THREE, new THREE.Vector3(params.center.x, params.center.y), params.center.z), r, scene) : undefined,
-//				position: [params.center.x, params.center.y, params.center.z],
 				position: params.center,
 				
 			});
