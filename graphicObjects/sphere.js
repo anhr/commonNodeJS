@@ -383,7 +383,7 @@ class Sphere extends Circle
 					
 				}
 				
-				if (boProject) face.face.project( group );
+				if (boProject) face.face.project(group, r);
 			
 			} );
 
@@ -402,7 +402,7 @@ class Sphere extends Circle
 
 				const color = "lightgray", opacity = 0.2;
 
-				const sphere = new THREE.Mesh(new FibonacciSphereGeometry(),
+				const sphere = new THREE.Mesh(new FibonacciSphereGeometry(r),
 
 					new THREE.MeshLambertMaterial({
 

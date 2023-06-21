@@ -24,30 +24,31 @@ const r = 1,//Unit sphere https://en.wikipedia.org/wiki/Unit_sphere radius
 	rCircle = Math.sqrt(r * r - z * z),//радиус окружности, которая получается от пересечения плоскости грани пирамиды со сферой https://en.wikipedia.org/wiki/Circle_of_a_sphere
 	scale = a / 1.7320508075688774;//= new THREE.Vector3( 0.0, -1.0, 0.0 ).distanceTo(new THREE.Vector3( 0.8660254037844388, 0.5, 0 )) это длинна ребра до масштабирования
 //	scale = rCircle / r;
+let buffer;
 
 class Triangle extends Utils
 {
 
 	//Project of triangle to the 3D space
-	project(scene) {
+	project(scene, radius=1.0) {
 
 		const settings = this.classSettings.settings, THREE = three.THREE, options = settings.options;
 		
-		const buffer = new THREE.BufferGeometry().setFromPoints( [
-			new THREE.Vector3( 0.0, -1.0, 0.0 ),
-			new THREE.Vector3( 0.8660254037844388, 0.5, 0 ),
-			new THREE.Vector3( -0.8660254037844388, 0.5, 0 ),
-		] );
-		buffer.setIndex( [0, 1, 1, 2, 2, 0] );
+		if (!buffer) {
+			
+			buffer = new THREE.BufferGeometry().setFromPoints( [
+				new THREE.Vector3( 0.0, -1.0, 0.0 ),
+				new THREE.Vector3( 0.8660254037844388, 0.5, 0 ),
+				new THREE.Vector3( -0.8660254037844388, 0.5, 0 ),
+			] );
+			buffer.setIndex( [0, 1, 1, 2, 2, 0] );
+
+		}
 		const triangle = new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( { color: 'white', } ) );
 		
-		triangle.position.z += z;
-		triangle.scale.multiplyScalar( scale );
-/*
-		const scene = new THREE.Group();
-		scene.rotation.copy( rotation );
-		scene.updateMatrixWorld( true );//обновить scene.matrix и scene.matrixWorld после ее поворота
-*/
+		triangle.position.z += z * radius;
+		triangle.scale.multiplyScalar(scale * radius);
+		
 		//обязательно добавлять треугольник в группу
 		scene.add(triangle);
 		
@@ -109,8 +110,6 @@ class Triangle extends Utils
 				
 			});
 
-//			scene.add( scene );
-			
 			if ( options.guiSelectPoint ) {
 
 				scene.name = 'scene ' + this.classSettings.faceId;
@@ -132,6 +131,7 @@ class Triangle extends Utils
 	
 			)
 			plane.position.copy( triangle.position );
+			plane.scale.multiplyScalar(radius);
 			scene.add( plane );
 			
 			const center = new THREE.Vector2(0.0, 0.0);
@@ -141,6 +141,7 @@ class Triangle extends Utils
 				0.0, 2.0 * Math.PI,// Start angle, stop angle
 			).getSpacedPoints(256)), new THREE.LineBasicMaterial({ color: 'blue' }));
 			circle.position.copy( triangle.position );
+			circle.scale.multiplyScalar(radius);
 			scene.add( circle );
 			
 		}
