@@ -37,6 +37,7 @@ Example of using.
 
 		new MyThree(function (scene, options) {
 
+			//The default sphere is a pyramid	
 			new Sphere(options).project(scene);
 
 		});

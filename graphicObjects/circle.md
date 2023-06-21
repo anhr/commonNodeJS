@@ -37,6 +37,7 @@ Example of using.
 
 		new MyThree(function (scene, options) {
 
+			//The default circle is a triangle
 			new Circle(options).project(scene);
 
 		});
