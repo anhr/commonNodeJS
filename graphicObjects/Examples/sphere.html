@@ -47,8 +47,8 @@
 
 			const sphere = new Sphere( options,
 				{
-					
-/*									  
+
+					faceGroups: 1,
 					settings: {
 						
 						object: {
@@ -93,9 +93,10 @@
 										[
 											0,
 											1,
-											//2,
-											//3
-										]
+											2,
+											3,
+										],
+										//[],
 									],
 	
 								}
@@ -104,8 +105,7 @@
 	
 						}
 					
-					}
-*/									  
+					},
 					debug: true,
 	 
 				}
@@ -113,7 +113,7 @@
 			);
 			sphere.project(scene, {
 				
-				center: {x: 0.5, y: -0.3, z: -0.1},
+				//center: {x: 0.5, y: -0.3, z: -0.1},
 				//radius: 0.7,
 				
 			});

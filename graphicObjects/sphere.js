@@ -265,6 +265,26 @@ class Sphere extends Circle
 			} );
 			
 		});
+/*
+		//если число body больше одного, то вычисляем остальные body путем разделения граней нулевого body на 4 новых грани
+		//каждое ребро грани делим пополам и полученные 3 вершины соединяем ребрами
+		const bodies = settings.object.geometry.indices.bodies,
+			faces = settings.object.geometry.indices.faces;
+		for (
+			let bodyId = 1;//нулевое body уже вычеслено 
+			bodyId < bodies.length; bodyId++
+		) {
+
+			const bodyNew = bodies[bodyId],
+				face = faces[body[bodyId - 1]];
+			face.forEach(edgeId => {
+
+				const edge = edges[edgeId];
+				console.log(edgeId);
+			});
+			
+		}
+*/		
 		
 	}
 	/**
@@ -390,6 +410,49 @@ class Sphere extends Circle
 			settings.object.geometry.position.test();
 			
 			settings.scene = scene;
+			
+			//если число body больше одного, то вычисляем остальные body путем разделения граней нулевого body на 4 новых грани
+			//каждое ребро грани делим пополам и полученные 3 вершины соединяем ребрами
+			const indices = settings.object.geometry.indices,
+				bodies = indices.bodies,
+				body = bodies[this.classSettings.bodyId],
+				faces = indices.faces,
+				edges = indices.edges;
+			this.classSettings.faceGroups = this.classSettings.faceGroups || 0;
+			for (let faceId = 0; faceId < this.classSettings.faceGroups; faceId) {
+
+				const face = faces[faceId];//, edges = face.face.edges;
+				edges.forEach(edge => {
+
+					const position0 = edge.positions[0], position1 = edge.positions[1];
+edge.distance;
+					
+					//edge[0] = 5;//error: utils.js:213 Utils set. Invalid position index = 5
+//edge.positions[0];
+					
+					edges.push({ vertices: [edge[0]] });
+					const newEdge = edges[face.length - 1];
+					console.log(faces);
+				});
+				
+			}
+/*			
+			for (
+				let bodyId = 1;//нулевое body уже вычеслено 
+				bodyId < bodies.length; bodyId++
+			) {
+	
+				const bodyNew = bodies[bodyId],
+					face = faces[body[bodyId - 1]];
+				face.forEach(edgeId => {
+	
+					const edge = edges[edgeId];
+					console.log(edgeId);
+				});
+				
+			}
+*/   
+			
 			this.display(3, {
 				
 //				debugObject: this.debug ? this.displayDebug(THREE, new THREE.Vector3(params.center.x, params.center.y), params.center.z), r, scene) : undefined,

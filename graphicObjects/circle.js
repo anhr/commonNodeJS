@@ -116,8 +116,14 @@ class Circle extends Utils
 					
 										};
 										case 'push': return (edge={}) => {
-					
-											indices.faces[_this.classSettings.faceId].push( _edges.push({ edge: edge, edges: settings.object.geometry.indices.edges } ) - 1 );
+
+//											const edgesLength = _edges.push({ edge: edge, edges: settings.object.geometry.indices.edges } );
+/*											
+											const edgesLength = _edges.push(edge);
+											indices.faces[_this.classSettings.faceId].push(edgesLength - 1);
+											return edgesLength;
+*/		   
+											indices.faces[_this.classSettings.faceId].push(_edges.push(edge) - 1);
 					
 										};
 					

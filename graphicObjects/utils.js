@@ -149,6 +149,7 @@ class Utils {
 							VerticeIdDebug(i, vertices[i]);
 						
 						}
+						const positions = [];
 						edge = new Proxy( vertices, {
 
 							get: (_edge, name) => {
@@ -157,7 +158,7 @@ class Utils {
 								if (!isNaN(i)) {
 			
 									if (name >= _edge.length)
-										console.error(sEdge + ' get. Invalid index = ' + name);
+										console.error(sUtils + ' get. Invalid index = ' + name);
 									return _edge[name];
 			
 								}
@@ -168,10 +169,35 @@ class Utils {
 			
 										//distance between edge vertices
 										if (_edge.distance === undefined) _edge.distance = 2 * Math.PI / _this.edges.length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной вселенной с был равен 1.0
+/*										
+										const position0 = edge.positions[0],
+											position1 = edge.positions[1];
+*/		   
 										const position0 = settings.object.geometry.position[_edge[0]],
 											position1 = settings.object.geometry.position[_edge[1]];
 										if (position0.length && position1.length) _edge.distance = position0.distanceTo(position1);
 										return _edge.distance;
+			
+									}
+									case 'positions': {
+
+										if (positions.length === 0) {
+
+											const position = settings.object.geometry.position;
+											_edge.forEach((verticeId) => {
+												
+												const pos = position[verticeId];
+												if (pos === undefined) console.error(sUtils + ' get. Invalid position[' + verticeId + ']');
+												else positions.push(pos);
+												
+											});
+/*											
+											positions.push(position[_edge[0]]);
+											positions.push(position[_edge[1]]);
+*/		   
+
+										}
+										return positions;
 			
 									}
 			
@@ -183,8 +209,20 @@ class Utils {
 							set: (_edge, name, value) => {
 			
 								//не понятно зачем вывел эту ошибку
-								//console.error(sEdge + ' set. Hidden method: edges[' + name + '] = ' + JSON.stringify(value) );
-			
+								//console.error(sUtils + ' set. Hidden method: edges[' + name + '] = ' + JSON.stringify(value) );
+
+								const i = parseInt(value);
+								if (!isNaN(i)) {
+									
+									if (i >= settings.object.geometry.position.length) {
+										
+										console.error(sUtils + ' set. Invalid position index = ' + i);
+										return true;
+
+									}
+									positions.length = 0;
+
+								}
 								_edge[name] = value;
 								return true;
 			
