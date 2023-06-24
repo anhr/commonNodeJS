@@ -1036,6 +1036,7 @@ class ND {
 									switch ( name ) {
 
 										case 'reset': return function() { delete target.positionWorld; }
+/*currently is not using. See \commonNodeJS\master\graphicObjects\circle.js											
 										case 'distanceTo': return (position) => {
 
 											if (target.length != position.length) {
@@ -1054,6 +1055,7 @@ class ND {
 											})
 											return Math.sqrt(sum);
 										}
+*/											
 
 									}
 									return target[name];
