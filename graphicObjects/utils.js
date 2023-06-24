@@ -170,16 +170,44 @@ class Utils {
 										//distance between edge vertices
 										if (_edge.distance === undefined) _edge.distance = 2 * Math.PI / _this.edges.length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной вселенной с был равен 1.0
 /*										
-										const position0 = edge.positions[0],
-											position1 = edge.positions[1];
-*/		   
 										const position0 = settings.object.geometry.position[_edge[0]],
 											position1 = settings.object.geometry.position[_edge[1]];
 										if (position0.length && position1.length) _edge.distance = position0.distanceTo(position1);
+*/
+										const vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
+vertice0[0]
+										if (vertice0.length && vertice1.length) _edge.distance = vertice0.distanceTo(vertice1);
 										return _edge.distance;
 			
 									}
-									case 'positions': {
+									case 'vertices': return new Proxy([], {
+
+										get: (array, name) => {
+
+											const i = parseInt(name);
+											if (!isNaN(i)) {
+
+												return settings.object.geometry.position[_edge[i]];
+/*												
+												const verticeId = _edge[i], vertice = settings.object.geometry.position[verticeId];
+												if (vertice === undefined) console.error(sUtils + ': get edge vertice. Invalid edge.vertices[' + i + ']');
+												return vertice;
+*/			
+						
+											}
+											switch (name) {
+						
+												case 'length': return _edge.length;
+						
+											}
+											return array[name];
+											
+										},
+										
+									} );
+
+										
+/*										{
 
 										if (positions.length === 0) {
 
@@ -191,16 +219,12 @@ class Utils {
 												else positions.push(pos);
 												
 											});
-/*											
-											positions.push(position[_edge[0]]);
-											positions.push(position[_edge[1]]);
-*/		   
 
 										}
 										return positions;
 			
 									}
-			
+*/			
 			
 								}
 								return _edge[name];
@@ -216,7 +240,7 @@ class Utils {
 									
 									if (i >= settings.object.geometry.position.length) {
 										
-										console.error(sUtils + ' set. Invalid position index = ' + i);
+										console.error(sUtils + ':S set edge vertice. Invalid vertice index = ' + i);
 										return true;
 
 									}

@@ -424,11 +424,12 @@ class Sphere extends Circle
 				const face = faces[faceId];//, edges = face.face.edges;
 				edges.forEach(edge => {
 
-					const position0 = edge.positions[0], position1 = edge.positions[1];
-edge.distance;
+					const vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
 					
-					//edge[0] = 5;//error: utils.js:213 Utils set. Invalid position index = 5
-//edge.positions[0];
+					//const edleLength = edge.positions.length;
+					//edge[0] = 5;//error: Utils: set edge vertice. Invalid vertice index = 5
+					
+					edge.distance;
 					
 					edges.push({ vertices: [edge[0]] });
 					const newEdge = edges[face.length - 1];

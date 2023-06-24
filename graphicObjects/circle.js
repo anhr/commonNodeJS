@@ -16,7 +16,7 @@
 import Utils from './utils.js';
 import three from '../three.js';
 
-const sCircle = 'Circle', sCircleUniverse = sCircle;
+const sCircle = 'Circle';//, sCircleUniverse = sCircle;
 
 class Circle extends Utils
 {
@@ -326,7 +326,7 @@ class Circle extends Utils
 				if (!isNaN(i)) {
 
 					if (i >= _position.length)
-						console.error(sCircleUniverse + ': position get. Invalid index = ' + i + ' position.length = ' + _position.length);
+						console.error(sCircle + ': position get. Invalid index = ' + i + ' position.length = ' + _position.length);
 					return _position[i];
 
 				}
@@ -340,11 +340,29 @@ class Circle extends Utils
 
 								switch (name) {
 
+									case 'distanceTo': return (verticeTo) => {
+
+										if (vertice.length != verticeTo.length) {
+											
+											console.error(sCircle + ': settings.object.geometry.position[i].distanceTo(...). vertice.length != verticeTo.length');
+											return;
+											
+										}
+										//const distance = new three.THREE.Vector3(vertice[0], vertice[1], vertice[2], ).distanceTo(new three.THREE.Vector3(verticeTo[0], verticeTo[1], verticeTo[2], ));
+										let sum = 0;
+										vertice.forEach((axis, i) => {
+
+											const d = axis - verticeTo[i];
+											sum += d * d;
+											
+										})
+										return Math.sqrt(sum);
+									}
 									case 'edges':
 
 										if (!_this.debug) {
 
-											console.error(sCircleUniverse + ': vertice.edges. Set debug = true first.');
+											console.error(sCircle + ': vertice.edges. Set debug = true first.');
 											return;
 
 										}
@@ -358,7 +376,7 @@ class Circle extends Utils
 
 														if (_this.debug) {
 
-															const sPush = sCircleUniverse + ': Vertice' + (verticeId === undefined ? '' : '[' + verticeId + ']') + '.edges.push(' + edgeId + '):';
+															const sPush = sCircle + ': Vertice' + (verticeId === undefined ? '' : '[' + verticeId + ']') + '.edges.push(' + edgeId + '):';
 
 															if (edges.length >= this.verticeEdgesLengthMax) {
 
@@ -411,7 +429,7 @@ class Circle extends Utils
 							_this.Test( vertice, strVerticeId );
 							vertice.edges.forEach(edgeId => {
 
-								if (typeof edgeId !== "number") console.error(sCircleUniverse + ': position.test()', strVerticeId = 'position(' + verticeId + ')' + '. ' + strVerticeId + '. Invalid edgeId = ' + edgeId);
+								if (typeof edgeId !== "number") console.error(sCircle + ': position.test()', strVerticeId = 'position(' + verticeId + ')' + '. ' + strVerticeId + '. Invalid edgeId = ' + edgeId);
 
 							});
 
@@ -430,9 +448,9 @@ class Circle extends Utils
 
 					value.forEach((axis, j) => {
 
-						if (isNaN(axis)) console.error(sCircleUniverse + ': position set. position[' + i + '][' + j + '] = ' + axis);
+						if (isNaN(axis)) console.error(sCircle + ': position set. position[' + i + '][' + j + '] = ' + axis);
 						else if ((_position[i].push(axis) - 1) != j)
-							console.error(sCircleUniverse + ': position set. position[' + i + '][' + j + '] = ' + axis + ' Invalid new axis index = ' + j);
+							console.error(sCircle + ': position set. position[' + i + '][' + j + '] = ' + axis + ' Invalid new axis index = ' + j);
 
 					});
 
