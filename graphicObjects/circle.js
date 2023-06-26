@@ -74,12 +74,20 @@ class Circle extends Utils
 		
 	}
 	get verticeEdgesLengthMax() { return 2; }//нельзя добавлть новое ребро если у вершины уже 3 ребра
-	Test( vertice, strVerticeId ){
+	Test(){
+
+		const geometry = this.classSettings.settings.object.geometry;
+		geometry.position.test();
+		geometry.indices.faces.test();
+		
+	}
+	TestVertice( vertice, strVerticeId ){
 		
 		if (vertice.edges.length !== 2)
 			console.error(sCircle + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
+	TestFace( face, sFaceId ){}
 	Indices() {
 		
 		const _this = this, settings = this.classSettings.settings;
@@ -118,12 +126,14 @@ class Circle extends Utils
 										case 'push': return (edge={}) => {
 
 //											const edgesLength = _edges.push({ edge: edge, edges: settings.object.geometry.indices.edges } );
-/*											
-											const edgesLength = _edges.push(edge);
-											indices.faces[_this.classSettings.faceId].push(edgesLength - 1);
+											
+											const edgesLength = _edges.push(edge),
+												facesLength = indices.faces[_this.classSettings.faceId].push(edgesLength - 1);
+											if (settings.object.geometry.position.length != 0) 
+												//позиции вершин уже вычислены
+												this.edges[facesLength -1];//convert edge to Proxy
 											return edgesLength;
-*/		   
-											indices.faces[_this.classSettings.faceId].push(_edges.push(edge) - 1);
+//											indices.faces[_this.classSettings.faceId].push(_edges.push(edge) - 1);
 					
 										};
 					
@@ -168,9 +178,10 @@ class Circle extends Utils
 																}
 																	
 															}
-															_face.push( edgeId );
-															const edges = _indices[0];
+															const length = _face.push( edgeId ),
+																edges = _indices[0];
 															if(edges[edgeId] === undefined) edges[edgeId] = {};
+															return length;
 																	
 														}
 									
@@ -188,6 +199,7 @@ class Circle extends Utils
 									switch (name) {
 					
 										case 'isFacesProxy': return true;
+										case 'test': return () => {}
 					
 									}
 									return _faces[name];
@@ -334,7 +346,7 @@ class Circle extends Utils
 
 					case 'push': return (vertice = []) => {
 
-						_position.push(new Proxy(vertice, {
+						return _position.push(new Proxy(vertice, {
 
 							get: (vertice, name) => {
 
@@ -426,7 +438,7 @@ class Circle extends Utils
 						_position.forEach( ( vertice, verticeId ) => {
 
 							const strVerticeId = 'position[' + verticeId + ']'
-							_this.Test( vertice, strVerticeId );
+							_this.TestVertice( vertice, strVerticeId );
 							vertice.edges.forEach(edgeId => {
 
 								if (typeof edgeId !== "number") console.error(sCircle + ': position.test()', strVerticeId = 'position(' + verticeId + ')' + '. ' + strVerticeId + '. Invalid edgeId = ' + edgeId);
@@ -548,8 +560,8 @@ class Circle extends Utils
 */   
 			settings.scene = scene;
 	
-			settings.object.geometry.position.test();
-//			settings.object.position = [params.center.x, params.center.y];
+			this.Test();
+//			settings.object.geometry.position.test();
 			
 			if (this.isDisplay()) this.display( 2, {
 				

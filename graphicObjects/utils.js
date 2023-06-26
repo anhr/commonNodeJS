@@ -175,7 +175,6 @@ class Utils {
 										if (position0.length && position1.length) _edge.distance = position0.distanceTo(position1);
 */
 										const vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
-vertice0[0]
 										if (vertice0.length && vertice1.length) _edge.distance = vertice0.distanceTo(vertice1);
 										return _edge.distance;
 			

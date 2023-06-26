@@ -78,10 +78,17 @@ class Sphere extends Circle
 		
 	}
 	get verticeEdgesLengthMax() { return 6 }//нельзя добавлять новое ребро если у вершины уже 6 ребер
-	Test( vertice, strVerticeId ){
+	TestVertice( vertice, strVerticeId ){
 		
 		if (vertice.edges.length !== 3)//пирамида
 			console.error(sSphere + '. Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
+		
+	}
+	TestFace( faceId, sFaceId ){
+
+		const length = this.classSettings.settings.object.geometry.indices[1][faceId].length;
+		if (length !== 3)//пирамида
+			console.error(sSphere + '. Invalid ' + sFaceId + '.length = ' + length);
 		
 	}
 	Indices(){
@@ -177,15 +184,29 @@ class Sphere extends Circle
 						case 'faces':
 							return new Proxy(settings.object.geometry.indices.bodies[this.classSettings.bodyId], {
 		
-								get: (_faces, name) => {
+								get: (body, name) => {
 				
 									const i = parseInt(name);
 									if (!isNaN(i)) {
 				
-										return indices[1][_faces[i]];
+										return indices[1][body[i]];
 				
 									}
-									return _faces[name];
+									switch (name) {
+				
+										case 'test': return () => {
+
+											if (!this.debug) return;
+											body.forEach(faceId => {
+					
+//												this.TestFace(indices[1][faceId], 'face[' + faceId + ']');
+												this.TestFace(faceId, 'faces[' + faceId + ']');
+					
+											});
+										}
+				
+									}
+									return body[name];
 				
 								},
 				
@@ -353,6 +374,7 @@ class Sphere extends Circle
 					
 				),
 				groupPosition = new THREE.Group();//сюда помещаем все грани и отладочные объекты что бы у них была одинаковая позиция
+				
 			groupPosition.position.copy(center);
 			scene.add(groupPosition);
 
@@ -360,8 +382,7 @@ class Sphere extends Circle
 				
 					
 				//каждую грань (треугольник) помещаю в пару вложенных друг в друга группы что бы было удобно их поворачивать
-				const group = new THREE.Group(),
-					groupFace = new THREE.Group();
+				const group = new THREE.Group(), groupFace = new THREE.Group();
 				groupFace.add(group);
 				const faceId = face.face.classSettings.faceId;
 //				let boProject = true;//for debug
@@ -406,22 +427,36 @@ class Sphere extends Circle
 					face.face.project(group, r);
 			
 			} );
-
-			settings.object.geometry.position.test();
 			
 			settings.scene = scene;
 			
-			//если число body больше одного, то вычисляем остальные body путем разделения граней нулевого body на 4 новых грани
+			//add faces
+			//вычисляем новые грани путем разделения граней нулевого body на 4 новых грани
 			//каждое ребро грани делим пополам и полученные 3 вершины соединяем ребрами
 			const indices = settings.object.geometry.indices,
+				position = settings.object.geometry.position,
 				bodies = indices.bodies,
 				body = bodies[this.classSettings.bodyId],
 				faces = indices.faces,
 				edges = indices.edges;
 			this.classSettings.faceGroups = this.classSettings.faceGroups || 0;
-			for (let faceId = 0; faceId < this.classSettings.faceGroups; faceId) {
+			for (let faceId = 0; faceId < this.classSettings.faceGroups; faceId++) {
 
-				const face = faces[faceId];//, edges = face.face.edges;
+				const face = faces[faceId];
+				const edge0 = edges[face[0]];
+				const vertice0 = edge0.vertices[0], vertice1 = edge0.vertices[1];
+				if (vertice0.length != vertice1.length) {
+					
+					console.error(sSphere + '.project: Add faces. invalid edge vertices length.');
+					return;
+					
+				}
+				const verticeMid = [];
+				for (let i = 0; i < vertice0.length; i++) verticeMid.push((vertice1[i] - vertice0[i]) / 2 + vertice0[i]);
+				const edgesLength = edges.push({ vertices: [edge0[1], position.push(verticeMid) - 1] }),
+					newEdge = edges[edgesLength - 1];
+				console.log(newEdge);
+/*
 				edges.forEach(edge => {
 
 					const vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
@@ -429,12 +464,25 @@ class Sphere extends Circle
 					//const edleLength = edge.positions.length;
 					//edge[0] = 5;//error: Utils: set edge vertice. Invalid vertice index = 5
 					
-					edge.distance;
+					//edge.distance;
 					
-					edges.push({ vertices: [edge[0]] });
-					const newEdge = edges[face.length - 1];
-					console.log(faces);
+					if (vertice0.length != vertice1.length) {
+						
+						console.error(sSphere + '.project: Add faces. invalid edge vertices length.');
+						return;
+						
+					}
+					const verticeMid = [];
+					for (let i = 0; i < vertice0.length; i++) verticeMid.push((vertice1[i] - vertice0[i]) / 2 + vertice0[i]);
+//					const newEdge = edges[edges.push({ vertices: [edge[1], position.push(verticeMid) - 1] }) - 1];
+					const edgesLength = edges.push({ vertices: [edge[1], position.push(verticeMid) - 1] }),
+						newEdge = edges[edgesLength - 1];
+//					const newEdge = face.face.edges[face.face.edges.length - 1];
+//					face.face.edges.forEach(edge => {});
+//					face.face.project(new THREE.Group(), r);
+					console.log(newEdge);
 				});
+*/				
 				
 			}
 /*			
@@ -452,6 +500,12 @@ class Sphere extends Circle
 				});
 				
 			}
+*/   
+
+			this.Test();
+/*			
+			settings.object.geometry.position.test();
+			settings.object.geometry.indices.faces.test();
 */   
 			
 			this.display(3, {
