@@ -125,15 +125,15 @@ class Circle extends Utils
 										};
 										case 'push': return (edge={}) => {
 
-//											const edgesLength = _edges.push({ edge: edge, edges: settings.object.geometry.indices.edges } );
-											
+											return _edges.push(edge);
+/*											
 											const edgesLength = _edges.push(edge),
 												facesLength = indices.faces[_this.classSettings.faceId].push(edgesLength - 1);
 											if (settings.object.geometry.position.length != 0) 
 												//позиции вершин уже вычислены
 												this.edges[facesLength -1];//convert edge to Proxy
 											return edgesLength;
-//											indices.faces[_this.classSettings.faceId].push(_edges.push(edge) - 1);
+*/		   
 					
 										};
 					
@@ -501,8 +501,11 @@ class Circle extends Utils
 		 * @param {object} edge new edge. See <b>classSettings.settings.object.geometry.indices.edges.esge</b> of the <b>Circle</b> parameters for details
 		 */
 		this.pushEdge = (edge) => {
-			
-			classSettings.settings.object.geometry.indices.edges.push( edge );
+
+//			classSettings.settings.object.geometry.indices.edges.push( edge );
+			const indices = settings.object.geometry.indices,
+				edgesLength = indices.edges.push( edge );
+			indices.faces[this.classSettings.faceId].push(edgesLength - 1);
 			
 		}
 

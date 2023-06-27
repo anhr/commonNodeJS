@@ -456,7 +456,7 @@ class Sphere extends Circle
 				edge0[1] = verticeMid0;
 				edge2[0] = verticeMid2;
 				const newEdgeId = edges.push({ vertices: [edge0[1], edge2[0]] }) - 1;
-				const newEdge = edges[newEdge];
+//				const newEdge = edges[newEdge];
 				
 /*				
 				if (vertice0.length != vertice1.length) {
