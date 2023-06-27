@@ -179,6 +179,6 @@ class Triangle extends Utils
 
 }
 
-Triangle.debug = true;//Have effect only if Utils.debug is true
+//Triangle.debug = true;//Have effect only if Utils.debug is true
 
 export default Triangle;

@@ -386,6 +386,23 @@ class Circle extends Utils
 
 													case 'push': return (edgeId, verticeId) => {
 
+														if (typeof edgeId === "object") {
+
+															//find edgeId
+															const edges = settings.object.geometry.indices.edges;
+															for (let i = 0; i < edges.length; i++) {
+
+																const edge = edges[i];
+																if ((edge[0] === edgeId[0]) && (edge[1] === edgeId[1]) || (edge[0] === edgeId[1]) || (edge[1] === edgeId[0])){
+
+																	edgeId = i;
+																	break;
+																	
+																}
+																
+															}
+															
+														}
 														if (_this.debug) {
 
 															const sPush = sCircle + ': Vertice' + (verticeId === undefined ? '' : '[' + verticeId + ']') + '.edges.push(' + edgeId + '):';

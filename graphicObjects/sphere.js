@@ -442,71 +442,37 @@ class Sphere extends Circle
 			this.classSettings.faceGroups = this.classSettings.faceGroups || 0;
 			for (let faceId = 0; faceId < this.classSettings.faceGroups; faceId++) {
 
-				const face = faces[faceId];
-				const edge0 = edges[face[0]];
-				const vertice0 = edge0.vertices[0], vertice1 = edge0.vertices[1];
+				const face = faces[faceId],
+					edge0 = edges[face[0]], edge1 = edges[face[1]], edge2 = edges[face[2]];
+				const midVertice = (edge) => {
+					
+					const verticeMid = [],
+					vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
+					for (let i = 0; i < vertice0.length; i++) verticeMid.push((vertice1[i] - vertice0[i]) / 2 + vertice0[i]);
+					return position.push(verticeMid) - 1;
+
+				}
+				const verticeMid0 = midVertice(edge0), verticeMid1 = midVertice(edge1), verticeMid2 = midVertice(edge2);
+				edge0[1] = verticeMid0;
+				edge2[0] = verticeMid2;
+				const newEdgeId = edges.push({ vertices: [edge0[1], edge2[0]] }) - 1;
+				const newEdge = edges[newEdge];
+				
+/*				
 				if (vertice0.length != vertice1.length) {
 					
 					console.error(sSphere + '.project: Add faces. invalid edge vertices length.');
 					return;
 					
 				}
-				const verticeMid = [];
-				for (let i = 0; i < vertice0.length; i++) verticeMid.push((vertice1[i] - vertice0[i]) / 2 + vertice0[i]);
 				const edgesLength = edges.push({ vertices: [edge0[1], position.push(verticeMid) - 1] }),
 					newEdge = edges[edgesLength - 1];
-				console.log(newEdge);
-/*
-				edges.forEach(edge => {
-
-					const vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
-					
-					//const edleLength = edge.positions.length;
-					//edge[0] = 5;//error: Utils: set edge vertice. Invalid vertice index = 5
-					
-					//edge.distance;
-					
-					if (vertice0.length != vertice1.length) {
-						
-						console.error(sSphere + '.project: Add faces. invalid edge vertices length.');
-						return;
-						
-					}
-					const verticeMid = [];
-					for (let i = 0; i < vertice0.length; i++) verticeMid.push((vertice1[i] - vertice0[i]) / 2 + vertice0[i]);
-//					const newEdge = edges[edges.push({ vertices: [edge[1], position.push(verticeMid) - 1] }) - 1];
-					const edgesLength = edges.push({ vertices: [edge[1], position.push(verticeMid) - 1] }),
-						newEdge = edges[edgesLength - 1];
-//					const newEdge = face.face.edges[face.face.edges.length - 1];
-//					face.face.edges.forEach(edge => {});
-//					face.face.project(new THREE.Group(), r);
-					console.log(newEdge);
-				});
 */				
+				console.log('ttt');
 				
 			}
-/*			
-			for (
-				let bodyId = 1;//нулевое body уже вычеслено 
-				bodyId < bodies.length; bodyId++
-			) {
-	
-				const bodyNew = bodies[bodyId],
-					face = faces[body[bodyId - 1]];
-				face.forEach(edgeId => {
-	
-					const edge = edges[edgeId];
-					console.log(edgeId);
-				});
-				
-			}
-*/   
 
-			this.Test();
-/*			
-			settings.object.geometry.position.test();
-			settings.object.geometry.indices.faces.test();
-*/   
+			this.Test();//for debug
 			
 			this.display(3, {
 				
