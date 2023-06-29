@@ -456,6 +456,8 @@ class Sphere extends Circle
 				edge0[1] = verticeMid0;
 				edge2[0] = verticeMid2;
 				const newEdgeId = edges.push({ vertices: [edge0[1], edge2[0]] }) - 1;
+				face[1] = newEdgeId;
+				this.edges[newEdgeId];//convert edge to Proxy
 //				const newEdge = edges[newEdge];
 				
 /*				

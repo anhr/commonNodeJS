@@ -224,17 +224,21 @@ class Utils {
 								//не понятно зачем вывел эту ошибку
 								//console.error(sUtils + ' set. Hidden method: edges[' + name + '] = ' + JSON.stringify(value) );
 
-								const i = parseInt(value);
-								if (!isNaN(i)) {
+								if (name != 'i') {//for compatibility with ND
 									
-									if (i >= settings.object.geometry.position.length) {
+									const i = parseInt(value);
+									if (!isNaN(i)) {
 										
-										console.error(sUtils + ':S set edge vertice. Invalid vertice index = ' + i);
-										return true;
-
+										if (i >= settings.object.geometry.position.length) {
+											
+											console.error(sUtils + ':S set edge vertice. Invalid vertice index = ' + i);
+											return true;
+	
+										}
+										if (debug) position[i].edges.push(_edge, value);
+										positions.length = 0;
+	
 									}
-									if (debug) position[i].edges.push(_edge, value);
-									positions.length = 0;
 
 								}
 								_edge[name] = value;
