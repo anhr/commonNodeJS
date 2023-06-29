@@ -82,12 +82,14 @@ class Utils {
 		const edgesProxy = () => {
 
 			const settings = this.classSettings.settings, indices = settings.object.geometry.indices, face = indices.faces[this.classSettings.faceId],
-				position = settings.object.geometry.position, _this = this, debug = this.debug;
+//				position = settings.object.geometry.position,
+				_this = this, debug = this.debug;
 			return new Proxy(indices.edges, {
 
 				get: (_edges, name) => {
 
-					const i = parseInt(name);
+					const i = parseInt(name),
+						position = settings.object.geometry.position;
 					if (!isNaN(i)) {
 
 						const edgeId = face[i];
@@ -265,7 +267,11 @@ class Utils {
 									//не понятно зачем вывел эту ошибку
 									//console.error(sUtils + ' set. Hidden method: edges[' + name + '] = ' + JSON.stringify(value) );
 
-									if (name != 'i') {//for compatibility with ND
+/*						
+if (name === 'i')
+	console.error('i');
+ */
+									if (!isNaN(name)) {//for compatibility with ND. для проверки запустить circle.html и выбрать грань
 
 										const i = parseInt(value);
 										if (!isNaN(i)) {
