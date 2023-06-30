@@ -138,13 +138,18 @@ class Sphere extends Circle
 															case 'isBodyProxy': return true;
 															case 'push': return ( faceId ) => {
 
-																if (debug) for ( let i = 0; i < _body.length; i++ ) {
+																if (debug) {
+																	
+																	if (faceId === undefined) console.error(sIndices + ': Invalid faceId = ' + faceId );
+																	for ( let i = 0; i < _body.length; i++ ) {
 
-																	if (_body[i] === faceId ) {
+																		if (_body[i] === faceId ) {
+																			
+																			console.error(sIndices + ': Duplicate body faceId = ' + faceId );
+																			return;
+	
+																		}
 																		
-																		console.error(sIndices + ': Duplicate body faceId = ' + faceId );
-																		return;
-
 																	}
 																	
 																}
@@ -203,6 +208,13 @@ class Sphere extends Circle
 												this.TestFace(faceId, 'faces[' + faceId + ']');
 					
 											});
+										}
+										case 'push': return (face={}) => {
+
+											const faces = _indices[1];
+//											const faces = indices.faces;
+											return faces.push(face);
+												
 										}
 				
 									}
@@ -452,25 +464,30 @@ class Sphere extends Circle
 					return position.push(verticeMid) - 1;
 
 				}
-				const verticeMid0 = midVertice(edge0), verticeMid1 = midVertice(edge1), verticeMid2 = midVertice(edge2);
+				const verticeMid0 = midVertice(edge0),//position[4] = [0.40824828313652817,-0.2357022603955159,0.33333333333333326] edges = [0,6]
+					verticeMid1 = midVertice(edge1),//position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
+					verticeMid2 = midVertice(edge2);//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
+
+				//replace edge 1 of the face[0] to a new edge.
+				//new vertices:
+				//position[4] = [0.40824828313652817,-0.2357022603955159,0.33333333333333326] edges = [0,6]
+				//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
+				//
+				//new edge: indices.edges[6] = [4,6] distance = 0.8164965662730563
+				//replace indices.faces[0] = [0,1,2] to indices.faces[0] = [0,6,2]
 				edge0[1] = verticeMid0;
 				edge2[0] = verticeMid2;
-				const newEdgeId = edges.push({ vertices: [edge0[1], edge2[0]] }) - 1;
-				face[1] = newEdgeId;
-				this.edges[1];//convert edge to Proxy
-//				const newEdge = edges[newEdge];
-				
-/*				
-				if (vertice0.length != vertice1.length) {
-					
-					console.error(sSphere + '.project: Add faces. invalid edge vertices length.');
-					return;
-					
-				}
-				const edgesLength = edges.push({ vertices: [edge0[1], position.push(verticeMid) - 1] }),
-					newEdge = edges[edgesLength - 1];
-*/				
-				console.log('ttt');
+				face[1] = edges.push({ vertices: [edge0[1], edge2[0]] }) - 1;
+				this.edges[1];//converts edge to Proxy
+
+				//create a new face 4
+				//new vertice: position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
+				//New edges:
+				//indices.edges[7] = [2,6]
+				//indices.edges[8] = [5,6]
+				//new face: indices.faces[4] = [1,7,8]
+				const newFaceId = faces.push() - 1;
+				console.log(newFaceId);
 				
 			}
 
