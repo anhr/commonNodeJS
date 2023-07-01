@@ -206,7 +206,8 @@ class Sphere extends Circle
 											body.forEach(faceId => {
 					
 //												this.TestFace(indices[1][faceId], 'face[' + faceId + ']');
-												this.TestFace(faceId, 'faces[' + faceId + ']');
+//												this.TestFace(faceId, 'faces[' + faceId + ']');
+												settings.object.geometry.indices.faces[faceId].face.TestFace();
 					
 											});
 										}

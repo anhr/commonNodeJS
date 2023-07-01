@@ -33,6 +33,33 @@ class Utils {
 	
 	displayDebug() { console.error(sOverride.replace('%s', 'displayDebug')); }
 	isDisplay() { return false; }
+	TestFace(/*faceId, sFaceId*/) {
+
+		//Индексы всех вершин грани должны оборазовать замкнутое кольцо
+		const faceId = this.classSettings.faceId,
+			sFaceId = 'faces[' + faceId + ']',
+			indices = this.classSettings.settings.object.geometry.indices,
+			face = indices.faces[faceId],
+			edge0 = indices.edges[face[0]],
+			vreticeIds = [edge0[0], edge0[1]];
+		for (let edgeId = 1; edgeId < face.length; edgeId++) {
+
+			const edge = indices.edges[face[edgeId]];
+			if (edge.length != 2) {
+
+				console.error(sCircle + '.TestFace: Invalid edges[' + edgeId + '].length = ' + edge.length);
+				return;
+
+			}
+			const lastVerticeId = vreticeIds[vreticeIds.length - 1];
+			if (lastVerticeId === edge[0])
+				vreticeIds.push(edge[1]);
+			else if (lastVerticeId === edge[1])
+				vreticeIds.push(edge[0]);
+
+		}
+		if (vreticeIds[0] != vreticeIds[vreticeIds.length - 1]) console.error(sUtils + '.TestFace: The loop of the edges of the faces[' + faceId + '] is broken.');
+	}
 
 	boCreate = true;
 	get debug() { return g_debug; }

@@ -87,6 +87,7 @@ class Circle extends Utils
 			console.error(sCircle + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
+/*
 	TestFace( faceId, sFaceId ){
 
 		//Индексы всех вершин гани должны оборазовать замкнутое кольцо
@@ -112,6 +113,7 @@ class Circle extends Utils
 		}
 		if (vreticeIds[0] != vreticeIds[vreticeIds.length - 1]) console.error(sCircle + '.TestFace: The loop of the edges of the faces[' + faceId + '] is broken.');
 	}
+*/
 	Indices() {
 		
 		const _this = this, settings = this.classSettings.settings;
@@ -231,7 +233,7 @@ class Circle extends Utils
 										case 'test': return () => {
 
 											const faceId = this.classSettings.faceId;
-											this.TestFace(faceId, 'faces[' + faceId + ']');
+											this.TestFace();//faceId, 'faces[' + faceId + ']');
 										
 										}
 					
