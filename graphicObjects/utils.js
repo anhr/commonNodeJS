@@ -33,18 +33,24 @@ class Utils {
 	
 	displayDebug() { console.error(sOverride.replace('%s', 'displayDebug')); }
 	isDisplay() { return false; }
-	TestFace(/*faceId, sFaceId*/) {
+	TestFace() {
 
 		//Индексы всех вершин грани должны оборазовать замкнутое кольцо
 		const faceId = this.classSettings.faceId,
 			sFaceId = 'faces[' + faceId + ']',
+/*			
 			indices = this.classSettings.settings.object.geometry.indices,
 			face = indices.faces[faceId],
 			edge0 = indices.edges[face[0]],
+*/   
+			edges = this.edges,
+			edge0 = edges[0],
 			vreticeIds = [edge0[0], edge0[1]];
-		for (let edgeId = 1; edgeId < face.length; edgeId++) {
+//		for (let edgeId = 1; edgeId < face.length; edgeId++)
+		for (let edgeId = 1; edgeId < edges.length; edgeId++) {
 
-			const edge = indices.edges[face[edgeId]];
+//			const edge = indices.edges[face[edgeId]];
+			const edge = edges[edgeId];
 			if (edge.length != 2) {
 
 				console.error(sCircle + '.TestFace: Invalid edges[' + edgeId + '].length = ' + edge.length);
