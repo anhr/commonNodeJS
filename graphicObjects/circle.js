@@ -87,7 +87,31 @@ class Circle extends Utils
 			console.error(sCircle + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
-	TestFace( face, sFaceId ){}
+	TestFace( faceId, sFaceId ){
+
+		//Индексы всех вершин гани должны оборазовать замкнутое кольцо
+		const indices = this.classSettings.settings.object.geometry.indices,
+			face = indices.faces[faceId],
+			edge0 = indices.edges[face[0]],
+			vreticeIds = [edge0[0], edge0[1]];
+		for (let edgeId = 1; edgeId < face.length; edgeId++) {
+			
+			const edge = indices.edges[face[edgeId]];
+			if (edge.length != 2) {
+
+				console.error(sCircle + '.TestFace: Invalid edges[' + edgeId + '].length = ' + edge.length);
+				return;
+							  
+			}
+			const lastVerticeId = vreticeIds[vreticeIds.length - 1];
+			if (lastVerticeId === edge[0])
+				vreticeIds.push(edge[1]);
+			else if (lastVerticeId === edge[1])
+				vreticeIds.push(edge[0]);
+			
+		}
+		if (vreticeIds[0] != vreticeIds[vreticeIds.length - 1]) console.error(sCircle + '.TestFace: The loop of the edges of the faces[' + faceId + '] is broken.');
+	}
 	Indices() {
 		
 		const _this = this, settings = this.classSettings.settings;
@@ -126,6 +150,11 @@ class Circle extends Utils
 										case 'push': return (edge={}) => {
 
 											return _edges.push(edge);
+/*											
+											const edgesLength = _edges.push(edge);
+											this.edges[edgesLength - 1]//converts edge to Proxy
+											return edgesLength;
+*/		   
 /*											
 											const edgesLength = _edges.push(edge),
 												facesLength = indices.faces[_this.classSettings.faceId].push(edgesLength - 1);
@@ -199,7 +228,12 @@ class Circle extends Utils
 									switch (name) {
 					
 										case 'isFacesProxy': return true;
-										case 'test': return () => {}
+										case 'test': return () => {
+
+											const faceId = this.classSettings.faceId;
+											this.TestFace(faceId, 'faces[' + faceId + ']');
+										
+										}
 					
 									}
 									return _faces[name];

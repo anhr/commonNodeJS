@@ -89,6 +89,7 @@ class Sphere extends Circle
 		const length = this.classSettings.settings.object.geometry.indices[1][faceId].length;
 		if (length !== 3)//пирамида
 			console.error(sSphere + '. Invalid ' + sFaceId + '.length = ' + length);
+		super.TestFace( faceId, sFaceId );
 		
 	}
 	Indices(){
@@ -209,11 +210,21 @@ class Sphere extends Circle
 					
 											});
 										}
-										case 'push': return (face={}) => {
+										case 'push': return (face=[]) => {
 
-											const faces = _indices[1];
+											const faces = _indices[1],
 //											const faces = indices.faces;
-											return faces.push(face);
+												facesLength = faces.push(face),
+												faceId = facesLength - 1;
+												face = faces[faceId];//converts face to Proxy
+											face.face = new Triangle( this.options, {
+											
+												faceId: faceId,
+												settings: settings,
+											
+											} );
+											body.push(faceId);
+											return facesLength;
 												
 										}
 				
@@ -455,7 +466,9 @@ class Sphere extends Circle
 			for (let faceId = 0; faceId < this.classSettings.faceGroups; faceId++) {
 
 				const face = faces[faceId],
-					edge0 = edges[face[0]], edge1 = edges[face[1]], edge2 = edges[face[2]];
+					edge0Id = face[0], edge1Id = face[1], edge2Id = face[2],
+					edge0 = edges[edge0Id], edge1 = edges[edge1Id], edge2 = edges[edge2Id];
+//					edge0 = edges[face[0]], edge1 = edges[face[1]], edge2 = edges[face[2]];
 				const midVertice = (edge) => {
 					
 					const verticeMid = [],
@@ -466,7 +479,8 @@ class Sphere extends Circle
 				}
 				const verticeMid0 = midVertice(edge0),//position[4] = [0.40824828313652817,-0.2357022603955159,0.33333333333333326] edges = [0,6]
 					verticeMid1 = midVertice(edge1),//position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
-					verticeMid2 = midVertice(edge2);//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
+					verticeMid2 = midVertice(edge2),//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
+					vertice1Id = edge1[0];
 
 				//replace edge 1 of the face[0] to a new edge.
 				//new vertices:
@@ -477,7 +491,8 @@ class Sphere extends Circle
 				//replace indices.faces[0] = [0,1,2] to indices.faces[0] = [0,6,2]
 				edge0[1] = verticeMid0;
 				edge2[0] = verticeMid2;
-				face[1] = edges.push({ vertices: [edge0[1], edge2[0]] }) - 1;
+				const edge6Id = edges.push({ vertices: [edge0[1], edge2[0]] }) - 1;//indices.edges[6] = [4,6] distance = 0.8164965662730563
+				face[1] = edge6Id;
 				this.edges[1];//converts edge to Proxy
 
 				//create a new face 4
@@ -486,7 +501,75 @@ class Sphere extends Circle
 				//indices.edges[7] = [2,6]
 				//indices.edges[8] = [5,6]
 				//new face: indices.faces[4] = [1,7,8]
-				const newFaceId = faces.push() - 1;
+				let newFaceId = faces.push() - 1,
+//					newFace = settings.object.geometry.indices[1][newFaceId];
+					newFace = faces[newFaceId];
+				edge1[0] = verticeMid1;//vertice[5]
+				
+				newFace.push(edge1Id);//indices.edges[1] = [5,2] distance = 0.8164965662730563
+
+				//indices.edges[7] = [2,6] distance = 0.8164965772640586
+				let newEdgeId = newFace.push(edges.push({ vertices: [
+					edge1[1],//vertice[2]
+					verticeMid2//vertice[6]
+				] }) - 1) - 1;
+				newFace.face.edges[newEdgeId];//converts edge to Proxy
+//				this.edges[newFace[newEdgeId]];//converts edge to Proxy
+
+				//indices.edges[8] = [5,6]
+				const edge8Id = edges.push({ vertices: [
+					verticeMid1,//vertice[5]
+					verticeMid2//vertice[6]
+				] }) - 1;
+				newEdgeId = newFace.push(edge8Id) - 1;
+				newFace.face.edges[newEdgeId];//converts edge to Proxy
+				
+				//create a new face 5
+				//New edges:
+				//indices.edges[9] = [4,5]
+				//new face: indices.faces[5] = [6,8,9]
+				newFaceId = faces.push() - 1;
+				newFace = faces[newFaceId];
+				newFace.push(edge6Id);//indices.edges[6] = [5,2] distance = 0.8164965662730563
+				newFace.push(edge8Id);//indices.edges[8] = [5,6] distance = 0.8164965662730563
+
+				//indices.edges[9] = [4,5]
+				const edge9Id = edges.push({ vertices: [
+					verticeMid0,//vertice[4]
+					verticeMid1//vertice[5]
+				] }) - 1;
+				newEdgeId = newFace.push(edge9Id) - 1;
+				newFace.face.edges[newEdgeId];//converts edge to Proxy
+
+				//create a new face 6
+				//New edges:
+				//indices.edges[10] = [1,5]
+				//indices.edges[11] = [1,4]
+				//new face: indices.faces[6] = [9,10,11]
+				newFaceId = faces.push() - 1;
+				newFace = faces[newFaceId];
+				newFace.push(edge9Id);//indices.edges[9] = [4,5] distance = 0.8164965662730563
+
+				//indices.edges[10] = [1,5]
+				const edge10Id = edges.push({
+					vertices: [
+						vertice1Id,//vertice[1]
+						verticeMid1//vertice[5]
+					]
+				}) - 1;
+				newEdgeId = newFace.push(edge10Id) - 1;
+				newFace.face.edges[newEdgeId];//converts edge to Proxy
+
+				//indices.edges[11] = [1,4]
+				const edge11Id = edges.push({
+					vertices: [
+						vertice1Id,//vertice[1]
+						verticeMid0//vertice[4]
+					]
+				}) - 1;
+				newEdgeId = newFace.push(edge11Id) - 1;
+				newFace.face.edges[newEdgeId];//converts edge to Proxy
+				
 				console.log(newFaceId);
 				
 			}
