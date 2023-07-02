@@ -74,7 +74,7 @@ class Utils {
 		if (!this.edgesProxy) {
 
 			const settings = this.classSettings.settings, indices = settings.object.geometry.indices, face = indices.faces[this.classSettings.faceId],
-				//				position = settings.object.geometry.position,
+				position = settings.object.geometry.position,
 				_this = this, debug = this.debug;
 			this.edgesProxy = new Proxy(indices.edges, {
 
@@ -229,8 +229,19 @@ class Utils {
 											},
 
 										});
+										case 'verticeMid': return (verticeMidId) => {
 
-
+											if (_edge.oldVertice) return _edge[_edge.oldVertice.index];
+											const verticeMid = [],
+//											vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
+											vertice0 = position[_edge[0]], vertice1 = position[_edge[1]];
+											for (let i = 0; i < vertice0.length; i++) verticeMid.push((vertice1[i] - vertice0[i]) / 2 + vertice0[i]);
+											const verticeId = position.push(verticeMid) - 1;
+											_edge.oldVertice = { value: _edge[verticeMidId], index: verticeMidId }
+											_edge[verticeMidId] = verticeId;
+											return verticeId;
+												
+										}
 
 									}
 									return _edge[name];
