@@ -470,6 +470,7 @@ class Sphere extends Circle
 					edge0Id = face[0], edge1Id = face[1], edge2Id = face[2],
 					edge0 = edges[edge0Id], edge1 = edges[edge1Id], edge2 = edges[edge2Id];
 //					edge0 = edges[face[0]], edge1 = edges[face[1]], edge2 = edges[face[2]];
+/*				
 				const midVertice = (edge) => {
 					
 					const verticeMid = [],
@@ -478,10 +479,24 @@ class Sphere extends Circle
 					return position.push(verticeMid) - 1;
 
 				}
+*/	
+/*				
 				const verticeMid0 = midVertice(edge0),//position[4] = [0.40824828313652817,-0.2357022603955159,0.33333333333333326] edges = [0,6]
 					verticeMid1 = midVertice(edge1),//position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
 					verticeMid2 = midVertice(edge2),//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
 					vertice1Id = edge1[0];
+*/	 
+				const //vertice1Id = edge1[0],
+					verticeMid0 = edge0.verticeMid(1),//position[4] = [0.40824828313652817,-0.2357022603955159,0.33333333333333326] edges = [0,6]
+					verticeMid1 = edge1.verticeMid(0),//position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
+					verticeMid2 = edge2.verticeMid(0),//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
+					vertice1Id = edge1.oldVertice.value;
+/*				
+				const verticeMid0 = edge0.verticeMid(1),//position[4] = [0.40824828313652817,-0.2357022603955159,0.33333333333333326] edges = [0,6]
+					verticeMid1 = edge1.verticeMid(1),//position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
+					verticeMid2 = edge2.verticeMid(0),//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
+					vertice1Id = edge1.oldVertice.value;
+*/	 
 
 				//replace edge 1 of the face[0] to a new edge.
 				//new vertices:
@@ -490,8 +505,11 @@ class Sphere extends Circle
 				//
 				//new edge: indices.edges[6] = [4,6] distance = 0.8164965662730563
 				//replace indices.faces[0] = [0,1,2] to indices.faces[0] = [0,6,2]
-				edge0[1] = verticeMid0;
-				edge2[0] = verticeMid2;
+/*				
+				edge0.verticeMid = { oldVerticeId: edge0[1], verticeMidId: 1 }
+*/	
+//				edge0[1] = verticeMid0;
+//				edge2[0] = verticeMid2;
 				const edge6Id = edges.push({ vertices: [edge0[1], edge2[0]] }) - 1;//indices.edges[6] = [4,6] distance = 0.8164965662730563
 				face[1] = edge6Id;
 				this.edges[1];//converts edge to Proxy
@@ -505,7 +523,7 @@ class Sphere extends Circle
 				let newFaceId = faces.push() - 1,
 //					newFace = settings.object.geometry.indices[1][newFaceId];
 					newFace = faces[newFaceId];
-				edge1[0] = verticeMid1;//vertice[5]
+//				edge1[0] = verticeMid1;//vertice[5]
 				
 				newFace.push(edge1Id);//indices.edges[1] = [5,2] distance = 0.8164965662730563
 
