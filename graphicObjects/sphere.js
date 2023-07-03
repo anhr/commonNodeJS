@@ -467,36 +467,37 @@ class Sphere extends Circle
 			for (let faceId = 0; faceId < this.classSettings.faceGroups; faceId++) {
 
 				const face = faces[faceId],
-					edge0Id = face[0], edge1Id = face[1], edge2Id = face[2],
-					edge0 = edges[edge0Id], edge1 = edges[edge1Id], edge2 = edges[edge2Id];
-//					edge0 = edges[face[0]], edge1 = edges[face[1]], edge2 = edges[face[2]];
-/*				
-				const midVertice = (edge) => {
-					
-					const verticeMid = [],
-					vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
-					for (let i = 0; i < vertice0.length; i++) verticeMid.push((vertice1[i] - vertice0[i]) / 2 + vertice0[i]);
-					return position.push(verticeMid) - 1;
+					edge0Id = face[0], edge0 = edges[edge0Id];
+				
+				//edge1 всегда должно быть напротив вершины edge0[0]
+				//Другими словами у edge1 не должно быть вершины edge0[0]
+				let fe1 = 1,//индекс ребра, которое расположено напротив вершины edge0[0]
+					fe2 = 2,//индекс ребра, которое прилегает к ребру edge0. Дугими словами индекс ребра, у которого есть вершина с индексом edge0[0]
+					edge1Id = face[1], edge1 = edges[edge1Id],
+					edge2Id = face[2], edge2 = edges[edge2Id],
+					edge2V0Id = 0;//индекс вершины edge2, которая является общей с edge0
 
+				//Для этого ищем ребро, у которого индекс вершины совпадает с индексом вершины edge0[0]
+				if ((edge0[0] === edge1[0]) || (edge0[0] === edge1[1])){
+
+					//edge1 прилегает к edge0. Поэтому меняем местами edge1 и edge2
+					fe1 = 2; fe2 = 1;
+					edge1Id = face[fe1]; edge1 = edges[edge1Id];
+					edge2Id = face[fe2], edge2 = edges[edge2Id];
+					edge2V0Id = 1;
+				
 				}
-*/	
 /*				
-				const verticeMid0 = midVertice(edge0),//position[4] = [0.40824828313652817,-0.2357022603955159,0.33333333333333326] edges = [0,6]
-					verticeMid1 = midVertice(edge1),//position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
-					verticeMid2 = midVertice(edge2),//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
-					vertice1Id = edge1[0];
+				const //edge1Id = face[1],
+					edge2Id = face[2],
+//					edge1 = edges[edge1Id],
+					edge2 = edges[edge2Id];
 */	 
 				const //vertice1Id = edge1[0],
 					verticeMid0 = edge0.verticeMid(1),//position[4] = [0.40824828313652817,-0.2357022603955159,0.33333333333333326] edges = [0,6]
 					verticeMid1 = edge1.verticeMid(0),//position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
-					verticeMid2 = edge2.verticeMid(0),//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
+					verticeMid2 = edge2.verticeMid(edge2V0Id),//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
 					vertice1Id = edge1.oldVertice.value;
-/*				
-				const verticeMid0 = edge0.verticeMid(1),//position[4] = [0.40824828313652817,-0.2357022603955159,0.33333333333333326] edges = [0,6]
-					verticeMid1 = edge1.verticeMid(1),//position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
-					verticeMid2 = edge2.verticeMid(0),//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
-					vertice1Id = edge1.oldVertice.value;
-*/	 
 
 				//replace edge 1 of the face[0] to a new edge.
 				//new vertices:
@@ -505,14 +506,12 @@ class Sphere extends Circle
 				//
 				//new edge: indices.edges[6] = [4,6] distance = 0.8164965662730563
 				//replace indices.faces[0] = [0,1,2] to indices.faces[0] = [0,6,2]
-/*				
-				edge0.verticeMid = { oldVerticeId: edge0[1], verticeMidId: 1 }
-*/	
 //				edge0[1] = verticeMid0;
 //				edge2[0] = verticeMid2;
-				const edge6Id = edges.push({ vertices: [edge0[1], edge2[0]] }) - 1;//indices.edges[6] = [4,6] distance = 0.8164965662730563
-				face[1] = edge6Id;
-				this.edges[1];//converts edge to Proxy
+				const edge6Id = edges.push({ vertices: [edge0[1], edge2[edge2V0Id]] }) - 1;//indices.edges[6] = [4,6] distance = 0.8164965662730563
+				face[fe1] = edge6Id;
+//				this.edges[fe1];//converts edge to Proxy
+				face.face.edges[fe1];//converts edge to Proxy
 
 				//create a new face 4
 				//new vertice: position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
