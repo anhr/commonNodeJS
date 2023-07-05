@@ -45,7 +45,7 @@ class Utils {
 */   
 			edges = this.edges,
 			edge0 = edges[0],
-			vreticeIds = [edge0[0], edge0[1]];
+			verticeIds = [edge0[0], edge0[1]];
 //		for (let edgeId = 1; edgeId < face.length; edgeId++)
 		for (let edgeId = 1; edgeId < edges.length; edgeId++) {
 
@@ -57,14 +57,14 @@ class Utils {
 				return;
 
 			}
-			const lastVerticeId = vreticeIds[vreticeIds.length - 1];
+			const lastVerticeId = verticeIds[verticeIds.length - 1];
 			if (lastVerticeId === edge[0])
-				vreticeIds.push(edge[1]);
+				verticeIds.push(edge[1]);
 			else if (lastVerticeId === edge[1])
-				vreticeIds.push(edge[0]);
+				verticeIds.push(edge[0]);
 
 		}
-		if (vreticeIds[0] != vreticeIds[vreticeIds.length - 1]) console.error(sUtils + '.TestFace: The loop of the edges of the faces[' + faceId + '] is broken.');
+		if (verticeIds[0] != verticeIds[verticeIds.length - 1]) console.error(sUtils + '.TestFace: The loop of the edges of the faces[' + faceId + '] is broken.');
 	}
 
 	boCreate = true;
@@ -242,6 +242,32 @@ class Utils {
 											return verticeId;
 												
 										}
+										//returns an old edges vertices array, that was before divide face to some faces.
+										case 'old': return new Proxy([], {
+
+											get: (vertices, name) => {
+
+												const i = parseInt(name);
+												if (!isNaN(i)) {
+
+													if (_edge.oldVertice && (_edge.oldVertice.index === i)) return _edge.oldVertice.value;
+													return edge[i];
+													
+												}
+/*												
+												switch (name) {
+
+													case 'length': return edge[name];
+													default: console.error(sUtils + ': edge.vertices.old. invalid name = ' + name);
+														
+												}
+*/													
+												return edge[name];
+												
+												
+											}
+												
+										})
 
 									}
 									return _edge[name];

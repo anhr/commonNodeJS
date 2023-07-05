@@ -80,7 +80,8 @@ class Sphere extends Circle
 	get verticeEdgesLengthMax() { return 6 }//нельзя добавлять новое ребро если у вершины уже 6 ребер
 	TestVertice( vertice, strVerticeId ){
 		
-		if (vertice.edges.length !== 3)//пирамида
+		if ((vertice.edges.length !== 3)//пирамида
+			&& (vertice.edges.length !== 6))
 			console.error(sSphere + '. Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
@@ -467,18 +468,19 @@ class Sphere extends Circle
 			for (let faceId = 0; faceId < this.classSettings.faceGroups; faceId++) {
 
 				const face = faces[faceId],
-					edge0Id = face[0], edge0 = edges[edge0Id];
+					edge0Id = face[0], edge0 = edges[edge0Id], edge0Old = edge0.old;
 				
 				//edge1 всегда должно быть напротив вершины edge0[0]
 				//Другими словами у edge1 не должно быть вершины edge0[0]
 				let fe1 = 1,//индекс ребра, которое расположено напротив вершины edge0[0]
 					fe2 = 2,//индекс ребра, которое прилегает к ребру edge0. Дугими словами индекс ребра, у которого есть вершина с индексом edge0[0]
-					edge1Id = face[1], edge1 = edges[edge1Id],
+					edge1Id = face[1], edge1 = edges[edge1Id], edge1Old = edge1.old,
 					edge2Id = face[2], edge2 = edges[edge2Id],
 					edge2V0Id = 0;//индекс вершины edge2, которая является общей с edge0
 
-				//Для этого ищем ребро, у которого индекс вершины совпадает с индексом вершины edge0[0]
-				if ((edge0[0] === edge1[0]) || (edge0[0] === edge1[1])){
+				//Для этого ищем ребро, у которого индекс вершины совпадает с индексом вершины edge0Old[0]
+//				if ((edge0[0] === edge1[0]) || (edge0[0] === edge1[1]))
+				if ((edge0Old[0] === edge1Old[0]) || (edge0Old[0] === edge1Old[1])){
 
 					//edge1 прилегает к edge0. Поэтому меняем местами edge1 и edge2
 					fe1 = 2; fe2 = 1;
@@ -508,10 +510,24 @@ class Sphere extends Circle
 				//replace indices.faces[0] = [0,1,2] to indices.faces[0] = [0,6,2]
 //				edge0[1] = verticeMid0;
 //				edge2[0] = verticeMid2;
-				const edge6Id = edges.push({ vertices: [edge0[1], edge2[edge2V0Id]] }) - 1;//indices.edges[6] = [4,6] distance = 0.8164965662730563
+//				const edge6Id = edges.push({ vertices: [edge0[1], edge2[edge2V0Id]] }) - 1;//indices.edges[6] = [4,6] distance = 0.8164965662730563
+				const edge6Id = edges.push({ vertices: [edge0.verticeMid(), edge2.verticeMid()] }) - 1;//indices.edges[6] = [4,6] distance = 0.8164965662730563
 				face[fe1] = edge6Id;
 //				this.edges[fe1];//converts edge to Proxy
 				face.face.edges[fe1];//converts edge to Proxy
+
+				//иногда вершина напротив нового ребра не совпадает с вершинами остальных ребери и, как результат, грань не имеет замкнутого кольца ребер
+				//Это происходит потому, что в остальных ребрах одна вершина была заменена на вершину в середине ребра
+				//Во время замены вершины на вершину в середине ребра создается новое ребро edges[face[i]].newEdgeId, в котором одна вершина совпадает с вершиной в середине ребра
+				//а другая вершина равна замененной вершине
+				//В этом случае в грани остальные ребра надо поменять на эти новые ребра
+				if(edge0[0] != edge0Old[0]) face.forEach((edgeId, i) => {
+
+					const newEdgeId = edges[face[i]].newEdgeId;
+					if (newEdgeId != undefined) { if (fe1 != i) face[i] = newEdgeId; }
+					else console.error(sSphere +'.project: Invalid newEdgeId = ' + newEdgeId);
+
+				});
 
 				//create a new face 4
 				//new vertice: position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
@@ -577,6 +593,7 @@ class Sphere extends Circle
 				}) - 1;
 				newEdgeId = newFace.push(edge10Id) - 1;
 				newFace.face.edges[newEdgeId];//converts edge to Proxy
+				edge1.newEdgeId = edge10Id;//Этот индекс нового ребра используется когда в грани заменяется одно ребро на новое ребро и кода вершина напротив нового ребра не совпадает с вершинами оставшезхся двух ребер 
 
 				//indices.edges[11] = [1,4]
 				const edge11Id = edges.push({
@@ -587,8 +604,6 @@ class Sphere extends Circle
 				}) - 1;
 				newEdgeId = newFace.push(edge11Id) - 1;
 				newFace.face.edges[newEdgeId];//converts edge to Proxy
-				
-				console.log(newFaceId);
 				
 			}
 
