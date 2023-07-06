@@ -477,6 +477,7 @@ class Sphere extends Circle
 					edge1Id = face[1], edge1 = edges[edge1Id], edge1Old = edge1.old,
 					edge2Id = face[2], edge2 = edges[edge2Id],
 					edge2V0Id = 0;//индекс вершины edge2, которая является общей с edge0
+//const l = edge1Old.length;
 
 				//Для этого ищем ребро, у которого индекс вершины совпадает с индексом вершины edge0Old[0]
 //				if ((edge0[0] === edge1[0]) || (edge0[0] === edge1[1]))
@@ -523,9 +524,9 @@ class Sphere extends Circle
 				//В этом случае в грани остальные ребра надо поменять на эти новые ребра
 				if(edge0[0] != edge0Old[0]) face.forEach((edgeId, i) => {
 
-					const newEdgeId = edges[face[i]].newEdgeId;
+					const id = face[i], newEdgeId = edges[id].newEdgeId;
 					if (newEdgeId != undefined) { if (fe1 != i) face[i] = newEdgeId; }
-					else console.error(sSphere +'.project: Invalid newEdgeId = ' + newEdgeId);
+					else console.error(sSphere +'.project: Invalid edges[' + id + '].newEdgeId = ' + newEdgeId);
 
 				});
 
@@ -548,6 +549,7 @@ class Sphere extends Circle
 					verticeMid2//vertice[6]
 				] }) - 1) - 1;
 				newFace.face.edges[newEdgeId];//converts edge to Proxy
+				if (edge2.newEdgeId === undefined) edge2.newEdgeId = edges.length - 1;
 //				this.edges[newFace[newEdgeId]];//converts edge to Proxy
 
 				//indices.edges[8] = [5,6]

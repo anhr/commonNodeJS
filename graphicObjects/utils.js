@@ -262,7 +262,7 @@ class Utils {
 														
 												}
 */													
-												return edge[name];
+												return _edge[name];
 												
 												
 											}
