@@ -465,6 +465,24 @@ class Sphere extends Circle
 				faces = indices.faces,
 				edges = indices.edges;
 			this.classSettings.faceGroups = this.classSettings.faceGroups || 0;
+			for (let faceGroupsId = 0; faceGroupsId < this.classSettings.faceGroups; faceGroupsId++) {
+
+				edges.forEach(edge => {
+
+					//const halfEdge = edge.halfEdge;
+					//console.log(halfEdge);
+					
+				});
+/*				
+				faces.forEach(face => {
+
+					console.log(face);
+					
+				});
+*/	
+				
+			}
+/*
 			for (let faceId = 0; faceId < this.classSettings.faceGroups; faceId++) {
 
 				const face = faces[faceId],
@@ -490,12 +508,6 @@ class Sphere extends Circle
 					edge2V0Id = 1;
 				
 				}
-/*				
-				const //edge1Id = face[1],
-					edge2Id = face[2],
-//					edge1 = edges[edge1Id],
-					edge2 = edges[edge2Id];
-*/	 
 				const //vertice1Id = edge1[0],
 					verticeMid0 = edge0.verticeMid(1),//position[4] = [0.40824828313652817,-0.2357022603955159,0.33333333333333326] edges = [0,6]
 					verticeMid1 = edge1.verticeMid(0),//position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
@@ -608,6 +620,7 @@ class Sphere extends Circle
 				newFace.face.edges[newEdgeId];//converts edge to Proxy
 				
 			}
+*/
 
 			this.Test();//for debug
 			

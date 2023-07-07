@@ -44,8 +44,13 @@ class Utils {
 			edge0 = indices.edges[face[0]],
 */   
 			edges = this.edges,
-			edge0 = edges[0],
-			verticeIds = [edge0[0], edge0[1]];
+			edge0 = edges[0], edge1 = edges[1],
+			
+			//Поменять местами вершины нулевого ребра если индекса первой вершины нулевого ребра не имеется в первом ребре
+			//Это нужно чтобы цепочка вершин грани не имела разрывов
+			vertice0 = (edge0[1] === edge1[0]) || (edge0[1] === edge1[1]) ? edge0[0] : edge0[1], vertice1 = vertice0 === edge0[0] ? edge0[1] : edge0[0],
+			
+			verticeIds = [vertice0, vertice1];
 //		for (let edgeId = 1; edgeId < face.length; edgeId++)
 		for (let edgeId = 1; edgeId < edges.length; edgeId++) {
 
@@ -53,18 +58,19 @@ class Utils {
 			const edge = edges[edgeId];
 			if (edge.length != 2) {
 
-				console.error(sCircle + '.TestFace: Invalid edges[' + edgeId + '].length = ' + edge.length);
+				console.error(sUtils + '.TestFace: Invalid edges[' + edgeId + '].length = ' + edge.length);
 				return;
 
 			}
-			const lastVerticeId = verticeIds[verticeIds.length - 1];
+			let lastVerticeId = verticeIds[verticeIds.length - 1];
 			if (lastVerticeId === edge[0])
 				verticeIds.push(edge[1]);
 			else if (lastVerticeId === edge[1])
 				verticeIds.push(edge[0]);
+			else console.error(sUtils + '.TestFace: gap between ' + sFaceId + '.edges[' + edgeId + ']');
 
 		}
-		if (verticeIds[0] != verticeIds[verticeIds.length - 1]) console.error(sUtils + '.TestFace: The loop of the edges of the faces[' + faceId + '] is broken.');
+		if (verticeIds[0] != verticeIds[verticeIds.length - 1]) console.error(sUtils + '.TestFace: The loop of the edges of the ' + sFaceId + ' is broken.');
 	}
 
 	boCreate = true;
@@ -93,7 +99,7 @@ class Utils {
 
 						if (!edge) {
 
-							if (edgeId != _edges.length) console.error(sCircle + ': get indices.edges: invalid edgeId = ' + edgeId);//добавлять только то ребро, индекс которого в конце массива _edges
+							if (edgeId != _edges.length) console.error(sUtils + ': get indices.edges: invalid edgeId = ' + edgeId);//добавлять только то ребро, индекс которого в конце массива _edges
 							else {
 
 								edge = {};
@@ -229,6 +235,7 @@ class Utils {
 											},
 
 										});
+/*											
 										case 'verticeMid': return (verticeMidId) => {
 
 											if (_edge.oldVertice) return _edge[_edge.oldVertice.index];
@@ -242,6 +249,25 @@ class Utils {
 											return verticeId;
 												
 										}
+*/		  
+										case 'halfEdge':
+
+											if (_edge.halfEdgeId) return indices.edges[_edge.halfEdgeId];
+											const verticeMid = [],
+//											vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
+											vertice0 = position[_edge[0]], vertice1 = position[_edge[1]];
+											for (let i = 0; i < vertice0.length; i++) verticeMid.push((vertice1[i] - vertice0[i]) / 2 + vertice0[i]);
+											const verticeId = position.push(verticeMid) - 1;
+											_edge.halfEdgeId = indices.edges.push([verticeId, _edge[1]]) - 1;
+console.log(face);
+											return indices.edges[_edge.halfEdgeId];
+/*											
+											_edge.oldVertice = { value: _edge[verticeMidId], index: verticeMidId }
+											_edge[verticeMidId] = verticeId;
+											return verticeId;
+*/		   
+case 'newEdgeId': console.error(sUtils + ': Deprecated getter = ' + name); break;
+/*											
 										//returns an old edges vertices array, that was before divide face to some faces.
 										case 'old': return new Proxy([], {
 
@@ -254,20 +280,13 @@ class Utils {
 													return edge[i];
 													
 												}
-/*												
-												switch (name) {
-
-													case 'length': return edge[name];
-													default: console.error(sUtils + ': edge.vertices.old. invalid name = ' + name);
-														
-												}
-*/													
 												return _edge[name];
 												
 												
 											}
 												
-										})
+										});
+*/											
 
 									}
 									return _edge[name];
@@ -295,6 +314,11 @@ class Utils {
 										}
 
 									}
+switch (name) {
+
+	case 'newEdgeId': console.error(sUtils + ': Deprecated setter: ' + name); break;
+		
+}
 									_edge[name] = value;
 									return true;
 
@@ -317,7 +341,7 @@ class Utils {
 										(vertices[0] === verticesCur[0]) && (vertices[1] === verticesCur[1]) ||
 										(vertices[1] === verticesCur[0]) && (vertices[0] === verticesCur[1])
 									)
-										console.error(sCircle + ': Duplicate edge. Vertices = ' + vertices);
+										console.error(sUtils + ': Duplicate edge. Vertices = ' + vertices);
 
 								}
 
@@ -425,7 +449,7 @@ class Utils {
 
 						if (!edge) {
 
-							if (edgeId != _edges.length) console.error(sCircle + ': get indices.edges: invalid edgeId = ' + edgeId);//добавлять только то ребро, индекс которого в конце массива _edges
+							if (edgeId != _edges.length) console.error(sUtils + ': get indices.edges: invalid edgeId = ' + edgeId);//добавлять только то ребро, индекс которого в конце массива _edges
 							else {
 
 								edge = {};
@@ -612,7 +636,7 @@ class Utils {
 										(vertices[0] === verticesCur[0]) && (vertices[1] === verticesCur[1]) ||
 										(vertices[1] === verticesCur[0]) && (vertices[0] === verticesCur[1])
 									)
-										console.error(sCircle + ': Duplicate edge. Vertices = ' + vertices);
+										console.error(sUtils + ': Duplicate edge. Vertices = ' + vertices);
 
 								}
 

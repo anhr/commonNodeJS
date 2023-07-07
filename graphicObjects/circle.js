@@ -139,8 +139,14 @@ class Circle extends Utils
 			
 								get: (_edges, name) => {
 					
-									const i = parseInt(name);
-									if (!isNaN(i)) return _edges[i];
+									const edgeId = parseInt(name);
+									if (!isNaN(edgeId)) {
+										
+//										return _edges[i];
+										let edge = _edges[edgeId];
+										return edge;
+
+									}
 									switch (name) {
 					
 										case 'isEdgesProxy': return true;
@@ -151,12 +157,11 @@ class Circle extends Utils
 										};
 										case 'push': return (edge={}) => {
 
-											return _edges.push(edge);
-/*											
+//											return _edges.push(edge);
 											const edgesLength = _edges.push(edge);
-											this.edges[edgesLength - 1]//converts edge to Proxy
+//											this.edges[edgesLength - 1]//converts edge to Proxy
+											settings.object.geometry.indices.edges[edgesLength - 1]//converts edge to Proxy
 											return edgesLength;
-*/		   
 /*											
 											const edgesLength = _edges.push(edge),
 												facesLength = indices.faces[_this.classSettings.faceId].push(edgesLength - 1);
