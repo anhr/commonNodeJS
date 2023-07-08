@@ -190,6 +190,9 @@ class Utils {
 								VerticeIdDebug(i, vertices[i]);
 
 							}
+							_edges[edgeId] = vertices;
+							edge = _edges[edgeId]//converts edge to Proxy
+/*
 							const positions = [];
 							edge = new Proxy(vertices, {
 
@@ -235,21 +238,6 @@ class Utils {
 											},
 
 										});
-/*											
-										case 'verticeMid': return (verticeMidId) => {
-
-											if (_edge.oldVertice) return _edge[_edge.oldVertice.index];
-											const verticeMid = [],
-//											vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
-											vertice0 = position[_edge[0]], vertice1 = position[_edge[1]];
-											for (let i = 0; i < vertice0.length; i++) verticeMid.push((vertice1[i] - vertice0[i]) / 2 + vertice0[i]);
-											const verticeId = position.push(verticeMid) - 1;
-											_edge.oldVertice = { value: _edge[verticeMidId], index: verticeMidId }
-											_edge[verticeMidId] = verticeId;
-											return verticeId;
-												
-										}
-*/		  
 										case 'halfEdge':
 
 											if (_edge.halfEdgeId) return indices.edges[_edge.halfEdgeId];
@@ -261,32 +249,7 @@ class Utils {
 											_edge.halfEdgeId = indices.edges.push([verticeId, _edge[1]]) - 1;
 console.log(face);
 											return indices.edges[_edge.halfEdgeId];
-/*											
-											_edge.oldVertice = { value: _edge[verticeMidId], index: verticeMidId }
-											_edge[verticeMidId] = verticeId;
-											return verticeId;
-*/		   
 case 'newEdgeId': console.error(sUtils + ': Deprecated getter = ' + name); break;
-/*											
-										//returns an old edges vertices array, that was before divide face to some faces.
-										case 'old': return new Proxy([], {
-
-											get: (vertices, name) => {
-
-												const i = parseInt(name);
-												if (!isNaN(i)) {
-
-													if (_edge.oldVertice && (_edge.oldVertice.index === i)) return _edge.oldVertice.value;
-													return edge[i];
-													
-												}
-												return _edge[name];
-												
-												
-											}
-												
-										});
-*/											
 
 									}
 									return _edge[name];
@@ -325,7 +288,8 @@ switch (name) {
 								},
 
 							});
-
+*/
+/*
 							if (debug) {
 
 								for (let edgeCurId = (edgeId === undefined) ? 0 : edgeId; edgeCurId < _this.edges.length; edgeCurId++) {
@@ -354,8 +318,9 @@ switch (name) {
 								});
 
 							}
+*/							
 
-							_edges[edgeId] = edge;
+//							_edges[edgeId] = edge;
 
 						}
 						return edge;

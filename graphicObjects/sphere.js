@@ -469,8 +469,8 @@ class Sphere extends Circle
 
 				edges.forEach(edge => {
 
-					//const halfEdge = edge.halfEdge;
-					//console.log(halfEdge);
+					const halfEdge = edge.halfEdge;
+					console.log(halfEdge);
 					
 				});
 /*				
