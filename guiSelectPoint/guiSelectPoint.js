@@ -1010,6 +1010,7 @@ class GuiSelectPoint {
 				return;
 
 			}
+			if (!object.geometry) return;//Probably this is Group
 			let gp = object.geometry.attributes.position;
 			object.updateMatrixWorld();
 			for ( let i = 0; i < gp.count; i++ ) {
