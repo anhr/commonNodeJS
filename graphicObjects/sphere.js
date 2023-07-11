@@ -370,7 +370,7 @@ class Sphere extends Circle
 		 */
 		this.project = (scene, params={}) => {
 
-			const settings = this.classSettings.settings;
+			const sProject = sSphere + '.project', settings = this.classSettings.settings;
 			settings.options = options;//for debug. See Triangle.project
 			params.center = params.center || {x: 0.0, y: 0.0, z: 0.0}
 			
@@ -436,7 +436,7 @@ class Sphere extends Circle
 						//что бы треугольник совпал с третьей гранью пирамиды
 						groupFace.rotation.z = edgeEdgeAngle * 2;//240° or 4.1887902047863905 radians
 						break;
-					default: console.error(sSphere + '. Invalid faceId = ' + faceId);
+					default: console.error(sProject + ': Invalid faceId = ' + faceId);
 						
 				}
 				group.updateMatrixWorld( true );//обновить group.matrix и group.matrixWorld после ее поворота
@@ -467,19 +467,90 @@ class Sphere extends Circle
 			this.classSettings.faceGroups = this.classSettings.faceGroups || 0;
 			for (let faceGroupsId = 0; faceGroupsId < this.classSettings.faceGroups; faceGroupsId++) {
 
+				console.log('faceGroupsId' + faceGroupsId)
+				edges.forEach(edge => delete edge.halfEdgeId);
+				
+				//divide all edges to two half edges
+				edges.forEach(edge => edge.halfEdge);
+/*				
 				edges.forEach(edge => {
 
 					const halfEdge = edge.halfEdge;
 					console.log(halfEdge);
 					
 				});
-/*				
-				faces.forEach(face => {
+	*/
 
-					console.log(face);
+				//divide all faces to 4 faces
+				const newEdges = [];
+				faces.forEach((face, faceId) => {
+
+//					console.log('face = ' + face + ' faceId = ' + faceId);
+//if (faceId != 0) return;
+//return;
+					const commonVertice = (edge1, edge2) => {
+
+						if ((edge1[0] === edge2[0]) || (edge1[0] === edge2[1])) return edge1[0];
+						if ((edge1[1] === edge2[0]) || (edge1[1] === edge2[1])) return edge1[1];
+						console.error(sProject + ': no common vertices for [' + edge1 + '] and [' + edge2 + '] edges.');
+						
+					},
+						getEdgeId = (v1, v2) => {
+
+							for (let i = 0; i < newEdges.length; i++) {
+
+								const edgeId = newEdges[i], edge = edges[edgeId];
+								if (((edge[0] === v1) && (edge[1] === v2)) || ((edge[0] === v2) && (edge[1] === v1))) return edgeId;
+								
+							}
+							const edgeIndex = edges.push([v1, v2]) - 1;
+							newEdges.push(edgeIndex);
+							return edgeIndex;
+							
+						}
+					const edge0Id = face[0], edge0 = edges[edge0Id], halfEdge0Id = edge0.halfEdgeId, halfEdge0 = edges[halfEdge0Id], edge0Old = edge0.old,
+						edge1Id = face[1], edge1 = edges[edge1Id], halfEdge1Id = edge1.halfEdgeId, halfEdge1 = edges[halfEdge1Id], edge1Old = edge1.old,
+						edge2Id = face[2], edge2 = edges[edge2Id], halfEdge2Id = edge2.halfEdgeId, halfEdge2 = edges[halfEdge2Id], edge2Old = edge2.old,
+/*						
+						v0 = edge0Old[0] === edge2Old[1] ? edge0Old[0] : edge0Old[1],
+						v1 = edge0Old[1] === edge1Old[0] ? edge0Old[1] : edge0Old[0],
+						v2 = edge2Old[0] === edge1Old[1] ? edge2Old[0] : edge1Old[1],
+*/	  
+						v0 = commonVertice(edge0Old, edge2Old), v1 = commonVertice(edge0Old, edge1Old), v2 = commonVertice(edge1Old, edge2Old),
+						v4 = edge0[1], v5 = edge1[1], v6 = edge2[1],
+						edge12Id = getEdgeId(v4, v6), edge12 = edges[edge12Id],
+						edge13Id = getEdgeId(v4, v5), edge13 = edges[edge13Id],
+						edge14Id = getEdgeId(v5, v6), edge14 = edges[edge14Id];
+/*						
+						edge12Id = edges.push([v4, v6]) - 1, edge12 = edges[edge12Id],
+						edge13Id = edges.push([v4, v5]) - 1, edge13 = edges[edge13Id],
+						edge14Id = edges.push([v5, v6]) - 1, edge14 = edges[edge14Id];
+*/	  
+
+					//replace face edges
+					if (v0 !== edge0[0]) face[0] = halfEdge0Id;
+					face[1] = edge12Id;
+					if (v0 !== edge2[0]) face[2] = halfEdge2Id;
+
+					//create new faces
+					const createFace = (edgeIds, vertice) => {
+
+						const faceEdges = [edges[edgeIds[0]], edges[edgeIds[1]], edges[edgeIds[2]]];
+						const edge0 = faceEdges[0][0] === vertice ? edgeIds[0] : faceEdges[0].halfEdgeId,
+							edge1 = faceEdges[1][0] === vertice ? edgeIds[1] : faceEdges[1].halfEdgeId;
+						faces.push([edge0, edge1, edgeIds[2]]);
+						
+					}
+					createFace([edge2Id, edge1Id, edge14Id], v2);
+					createFace([edge1Id, edge0Id, edge13Id], v1);
+/*					
+					faces.push([edge2Id, halfEdge1Id, edge14Id]);//face Id = 4
+					faces.push([edge1Id, halfEdge0Id, edge13Id]);//face Id = 5
+*/						
+					faces.push([edge12Id, edge13Id, edge14Id]);//face Id = 4
+//					console.log(face);
 					
 				});
-*/	
 				
 			}
 /*
@@ -538,7 +609,7 @@ class Sphere extends Circle
 
 					const id = face[i], newEdgeId = edges[id].newEdgeId;
 					if (newEdgeId != undefined) { if (fe1 != i) face[i] = newEdgeId; }
-					else console.error(sSphere +'.project: Invalid edges[' + id + '].newEdgeId = ' + newEdgeId);
+					else console.error(sProject +'.project: Invalid edges[' + id + '].newEdgeId = ' + newEdgeId);
 
 				});
 

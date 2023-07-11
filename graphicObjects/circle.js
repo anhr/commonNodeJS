@@ -276,21 +276,6 @@ class Circle extends Utils
 															},
 
 														});
-														/*											
-																								case 'verticeMid': return (verticeMidId) => {
-														
-																									if (_edge.oldVertice) return _edge[_edge.oldVertice.index];
-																									const verticeMid = [],
-														//											vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
-																									vertice0 = position[_edge[0]], vertice1 = position[_edge[1]];
-																									for (let i = 0; i < vertice0.length; i++) verticeMid.push((vertice1[i] - vertice0[i]) / 2 + vertice0[i]);
-																									const verticeId = position.push(verticeMid) - 1;
-																									_edge.oldVertice = { value: _edge[verticeMidId], index: verticeMidId }
-																									_edge[verticeMidId] = verticeId;
-																									return verticeId;
-																										
-																								}
-														*/
 														case 'halfEdge':
 
 															if (_edge.halfEdgeId) return indices.edges[_edge.halfEdgeId];
@@ -298,36 +283,27 @@ class Circle extends Utils
 																//											vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
 																vertice0 = position[_edge[0]], vertice1 = position[_edge[1]];
 															for (let i = 0; i < vertice0.length; i++) verticeMid.push((vertice1[i] - vertice0[i]) / 2 + vertice0[i]);
+
+															//Convert this vector to a unit vector - that is, sets it equal to a vector with the same direction as this one, but length 1.
+															const vectorMid = new three.THREE.Vector3(verticeMid[0], verticeMid[1], verticeMid[2]).normalize();
+															verticeMid[0] = vectorMid.x; verticeMid[1] = vectorMid.y; verticeMid[2] = vectorMid.z;
+															
 															const verticeId = position.push(verticeMid) - 1;
 															_edge.halfEdgeId = indices.edges.push([verticeId, _edge[1]]) - 1;
-															console.log(face);
+															if (debug) {
+																
+																//Add edge to the new vertice
+																position[verticeId].edges.push(edgeId);
+
+																//remove old edge from the vertice 1
+																const position1 = position[_edge[1]]; position1.edges.splice(position1.edges.indexOf(edgeId), 1);
+
+															}
+															_edge[1] = verticeId;
 															return indices.edges[_edge.halfEdgeId];
-														/*											
-																									_edge.oldVertice = { value: _edge[verticeMidId], index: verticeMidId }
-																									_edge[verticeMidId] = verticeId;
-																									return verticeId;
-														*/
+//														case 'halfEdgeDelete':	delete _edge.halfEdgeId; break;
+														case 'old':	return [_edge[0], indices.edges[_edge.halfEdgeId][1]];
 														case 'newEdgeId': console.error(sUtils + ': Deprecated getter = ' + name); break;
-														/*											
-																								//returns an old edges vertices array, that was before divide face to some faces.
-																								case 'old': return new Proxy([], {
-														
-																									get: (vertices, name) => {
-														
-																										const i = parseInt(name);
-																										if (!isNaN(i)) {
-														
-																											if (_edge.oldVertice && (_edge.oldVertice.index === i)) return _edge.oldVertice.value;
-																											return edge[i];
-																											
-																										}
-																										return _edge[name];
-																										
-																										
-																									}
-																										
-																								});
-														*/
 
 													}
 													return _edge[name];
