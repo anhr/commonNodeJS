@@ -338,12 +338,17 @@ class Sphere extends Circle
 	 * @param {Options} options See <a href="../../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] Sphere class settings.
 	 * @param {number} [classSettings.bodyId=0] Identifier of the array of the faces ids in the <b>classSettings.settings.object.geometry.indices.bodies</b> array.
-	 * @param {number} [classSettings.faceGroups=0] Face groups level. You can define sphere's faces count.
+	 * @param {number} [classSettings.faceGroups=0] Face groups level. You can define sphere's faces count (fc) as fc = 2 ^ ((faceGroups + 1) * 2.
 	 * <pre>
 	 * Examples:
 	 * <table>
-		 <tr><td></b>faceGroups</b></td><td>faces count</td></tr>
+		 <tr><td><b>faceGroups</b></td><td>faces count</td></tr>
 		 <tr><td>0</td><td>4</td></tr>
+		 <tr><td>1</td><td>16</td></tr>
+		 <tr><td>2</td><td>64</td></tr>
+		 <tr><td>3</td><td>256</td></tr>
+		 <tr><td>4</td><td>1024</td></tr>
+		 <tr><td>5</td><td>4096</td></tr>
 		</table>
 	 * </pre>
 	 * 
