@@ -206,8 +206,6 @@ class Sphere extends Circle
 											if (!this.debug) return;
 											body.forEach(faceId => {
 					
-//												this.TestFace(indices[1][faceId], 'face[' + faceId + ']');
-//												this.TestFace(faceId, 'faces[' + faceId + ']');
 												settings.object.geometry.indices.faces[faceId].face.TestFace();
 					
 											});
@@ -215,7 +213,6 @@ class Sphere extends Circle
 										case 'push': return (face=[]) => {
 
 											const faces = _indices[1],
-//											const faces = indices.faces;
 												facesLength = faces.push(face),
 												faceId = facesLength - 1;
 												face = faces[faceId];//converts face to Proxy
@@ -311,26 +308,6 @@ class Sphere extends Circle
 			} );
 			
 		});
-/*
-		//если число body больше одного, то вычисляем остальные body путем разделения граней нулевого body на 4 новых грани
-		//каждое ребро грани делим пополам и полученные 3 вершины соединяем ребрами
-		const bodies = settings.object.geometry.indices.bodies,
-			faces = settings.object.geometry.indices.faces;
-		for (
-			let bodyId = 1;//нулевое body уже вычеслено 
-			bodyId < bodies.length; bodyId++
-		) {
-
-			const bodyNew = bodies[bodyId],
-				face = faces[body[bodyId - 1]];
-			face.forEach(edgeId => {
-
-				const edge = edges[edgeId];
-				console.log(edgeId);
-			});
-			
-		}
-*/		
 		
 	}
 	/**
@@ -424,7 +401,6 @@ class Sphere extends Circle
 				const group = new THREE.Group(), groupFace = new THREE.Group();
 				groupFace.add(group);
 				const faceId = face.face.classSettings.faceId;
-//				let boProject = true;//for debug
 				switch( faceId ) {
 
 					case 0: break;//нулевой треугольник никуда не поворачиваю. Это будет основание пирамиды
@@ -486,20 +462,12 @@ class Sphere extends Circle
 				
 				//divide all edges to two half edges
 				edges.forEach(edge => edge.halfEdge);
-/*				
-				edges.forEach(edge => {
-
-					const halfEdge = edge.halfEdge;
-					console.log(halfEdge);
-					
-				});
-	*/
 
 				//divide all faces to 4 faces
 				const newEdges = [];
 				faces.forEach((face, faceId) => {
 
-//					console.log('face = ' + face + ' faceId = ' + faceId);
+					//console.log('face = ' + face + ' faceId = ' + faceId);
 //if (faceId != 0) return;
 //return;
 					const commonVertice = (edge1, edge2) => {
@@ -522,24 +490,14 @@ class Sphere extends Circle
 							return edgeIndex;
 							
 						}
-					const edge0Id = face[0], edge0 = edges[edge0Id], halfEdge0Id = edge0.halfEdgeId, halfEdge0 = edges[halfEdge0Id], edge0Old = edge0.old,
-						edge1Id = face[1], edge1 = edges[edge1Id], halfEdge1Id = edge1.halfEdgeId, halfEdge1 = edges[halfEdge1Id], edge1Old = edge1.old,
-						edge2Id = face[2], edge2 = edges[edge2Id], halfEdge2Id = edge2.halfEdgeId, halfEdge2 = edges[halfEdge2Id], edge2Old = edge2.old,
-/*						
-						v0 = edge0Old[0] === edge2Old[1] ? edge0Old[0] : edge0Old[1],
-						v1 = edge0Old[1] === edge1Old[0] ? edge0Old[1] : edge0Old[0],
-						v2 = edge2Old[0] === edge1Old[1] ? edge2Old[0] : edge1Old[1],
-*/	  
+					const edge0Id = face[0], edge0 = edges[edge0Id], halfEdge0Id = edge0.halfEdgeId, edge0Old = edge0.old,// halfEdge0 = edges[halfEdge0Id],
+						edge1Id = face[1], edge1 = edges[edge1Id], edge1Old = edge1.old,// halfEdge1Id = edge1.halfEdgeId, halfEdge1 = edges[halfEdge1Id],
+						edge2Id = face[2], edge2 = edges[edge2Id], halfEdge2Id = edge2.halfEdgeId, edge2Old = edge2.old,// halfEdge2 = edges[halfEdge2Id],
 						v0 = commonVertice(edge0Old, edge2Old), v1 = commonVertice(edge0Old, edge1Old), v2 = commonVertice(edge1Old, edge2Old),
 						v4 = edge0[1], v5 = edge1[1], v6 = edge2[1],
-						edge12Id = getEdgeId(v4, v6), edge12 = edges[edge12Id],
-						edge13Id = getEdgeId(v4, v5), edge13 = edges[edge13Id],
-						edge14Id = getEdgeId(v5, v6), edge14 = edges[edge14Id];
-/*						
-						edge12Id = edges.push([v4, v6]) - 1, edge12 = edges[edge12Id],
-						edge13Id = edges.push([v4, v5]) - 1, edge13 = edges[edge13Id],
-						edge14Id = edges.push([v5, v6]) - 1, edge14 = edges[edge14Id];
-*/	  
+						edge12Id = getEdgeId(v4, v6),// edge12 = edges[edge12Id],
+						edge13Id = getEdgeId(v4, v5),// edge13 = edges[edge13Id],
+						edge14Id = getEdgeId(v5, v6);// edge14 = edges[edge14Id];
 
 					//replace face edges
 					if (v0 !== edge0[0]) face[0] = halfEdge0Id;
@@ -557,161 +515,16 @@ class Sphere extends Circle
 					}
 					createFace([edge2Id, edge1Id, edge14Id], v2);
 					createFace([edge1Id, edge0Id, edge13Id], v1);
-/*					
-					faces.push([edge2Id, halfEdge1Id, edge14Id]);//face Id = 4
-					faces.push([edge1Id, halfEdge0Id, edge13Id]);//face Id = 5
-*/						
 					faces.push([edge12Id, edge13Id, edge14Id]);//face Id = 4
-//					console.log(face);
 					
 				});
 				
 			}
-/*
-			for (let faceId = 0; faceId < this.classSettings.faceGroups; faceId++) {
-
-				const face = faces[faceId],
-					edge0Id = face[0], edge0 = edges[edge0Id], edge0Old = edge0.old;
-				
-				//edge1 всегда должно быть напротив вершины edge0[0]
-				//Другими словами у edge1 не должно быть вершины edge0[0]
-				let fe1 = 1,//индекс ребра, которое расположено напротив вершины edge0[0]
-					fe2 = 2,//индекс ребра, которое прилегает к ребру edge0. Дугими словами индекс ребра, у которого есть вершина с индексом edge0[0]
-					edge1Id = face[1], edge1 = edges[edge1Id], edge1Old = edge1.old,
-					edge2Id = face[2], edge2 = edges[edge2Id],
-					edge2V0Id = 0;//индекс вершины edge2, которая является общей с edge0
-//const l = edge1Old.length;
-
-				//Для этого ищем ребро, у которого индекс вершины совпадает с индексом вершины edge0Old[0]
-//				if ((edge0[0] === edge1[0]) || (edge0[0] === edge1[1]))
-				if ((edge0Old[0] === edge1Old[0]) || (edge0Old[0] === edge1Old[1])){
-
-					//edge1 прилегает к edge0. Поэтому меняем местами edge1 и edge2
-					fe1 = 2; fe2 = 1;
-					edge1Id = face[fe1]; edge1 = edges[edge1Id];
-					edge2Id = face[fe2], edge2 = edges[edge2Id];
-					edge2V0Id = 1;
-				
-				}
-				const //vertice1Id = edge1[0],
-					verticeMid0 = edge0.verticeMid(1),//position[4] = [0.40824828313652817,-0.2357022603955159,0.33333333333333326] edges = [0,6]
-					verticeMid1 = edge1.verticeMid(0),//position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
-					verticeMid2 = edge2.verticeMid(edge2V0Id),//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
-					vertice1Id = edge1.oldVertice.value;
-
-				//replace edge 1 of the face[0] to a new edge.
-				//new vertices:
-				//position[4] = [0.40824828313652817,-0.2357022603955159,0.33333333333333326] edges = [0,6]
-				//position[6] = [-0.40824828313652817,-0.23570226039551578,0.33333333333333326] edges = [0,6]
-				//
-				//new edge: indices.edges[6] = [4,6] distance = 0.8164965662730563
-				//replace indices.faces[0] = [0,1,2] to indices.faces[0] = [0,6,2]
-//				edge0[1] = verticeMid0;
-//				edge2[0] = verticeMid2;
-//				const edge6Id = edges.push({ vertices: [edge0[1], edge2[edge2V0Id]] }) - 1;//indices.edges[6] = [4,6] distance = 0.8164965662730563
-				const edge6Id = edges.push({ vertices: [edge0.verticeMid(), edge2.verticeMid()] }) - 1;//indices.edges[6] = [4,6] distance = 0.8164965662730563
-				face[fe1] = edge6Id;
-//				this.edges[fe1];//converts edge to Proxy
-				face.face.edges[fe1];//converts edge to Proxy
-
-				//иногда вершина напротив нового ребра не совпадает с вершинами остальных ребери и, как результат, грань не имеет замкнутого кольца ребер
-				//Это происходит потому, что в остальных ребрах одна вершина была заменена на вершину в середине ребра
-				//Во время замены вершины на вершину в середине ребра создается новое ребро edges[face[i]].newEdgeId, в котором одна вершина совпадает с вершиной в середине ребра
-				//а другая вершина равна замененной вершине
-				//В этом случае в грани остальные ребра надо поменять на эти новые ребра
-				if(edge0[0] != edge0Old[0]) face.forEach((edgeId, i) => {
-
-					const id = face[i], newEdgeId = edges[id].newEdgeId;
-					if (newEdgeId != undefined) { if (fe1 != i) face[i] = newEdgeId; }
-					else console.error(sProject +'.project: Invalid edges[' + id + '].newEdgeId = ' + newEdgeId);
-
-				});
-
-				//create a new face 4
-				//new vertice: position[5] = [0,0.4714045207910317,0.33333333333333326] edges = [1,8]
-				//New edges:
-				//indices.edges[7] = [2,6]
-				//indices.edges[8] = [5,6]
-				//new face: indices.faces[4] = [1,7,8]
-				let newFaceId = faces.push() - 1,
-//					newFace = settings.object.geometry.indices[1][newFaceId];
-					newFace = faces[newFaceId];
-//				edge1[0] = verticeMid1;//vertice[5]
-				
-				newFace.push(edge1Id);//indices.edges[1] = [5,2] distance = 0.8164965662730563
-
-				//indices.edges[7] = [2,6] distance = 0.8164965772640586
-				let newEdgeId = newFace.push(edges.push({ vertices: [
-					edge1[1],//vertice[2]
-					verticeMid2//vertice[6]
-				] }) - 1) - 1;
-				newFace.face.edges[newEdgeId];//converts edge to Proxy
-				if (edge2.newEdgeId === undefined) edge2.newEdgeId = edges.length - 1;
-//				this.edges[newFace[newEdgeId]];//converts edge to Proxy
-
-				//indices.edges[8] = [5,6]
-				const edge8Id = edges.push({ vertices: [
-					verticeMid1,//vertice[5]
-					verticeMid2//vertice[6]
-				] }) - 1;
-				newEdgeId = newFace.push(edge8Id) - 1;
-				newFace.face.edges[newEdgeId];//converts edge to Proxy
-				
-				//create a new face 5
-				//New edges:
-				//indices.edges[9] = [4,5]
-				//new face: indices.faces[5] = [6,8,9]
-				newFaceId = faces.push() - 1;
-				newFace = faces[newFaceId];
-				newFace.push(edge6Id);//indices.edges[6] = [5,2] distance = 0.8164965662730563
-				newFace.push(edge8Id);//indices.edges[8] = [5,6] distance = 0.8164965662730563
-
-				//indices.edges[9] = [4,5]
-				const edge9Id = edges.push({ vertices: [
-					verticeMid0,//vertice[4]
-					verticeMid1//vertice[5]
-				] }) - 1;
-				newEdgeId = newFace.push(edge9Id) - 1;
-				newFace.face.edges[newEdgeId];//converts edge to Proxy
-
-				//create a new face 6
-				//New edges:
-				//indices.edges[10] = [1,5]
-				//indices.edges[11] = [1,4]
-				//new face: indices.faces[6] = [9,10,11]
-				newFaceId = faces.push() - 1;
-				newFace = faces[newFaceId];
-				newFace.push(edge9Id);//indices.edges[9] = [4,5] distance = 0.8164965662730563
-
-				//indices.edges[10] = [1,5]
-				const edge10Id = edges.push({
-					vertices: [
-						vertice1Id,//vertice[1]
-						verticeMid1//vertice[5]
-					]
-				}) - 1;
-				newEdgeId = newFace.push(edge10Id) - 1;
-				newFace.face.edges[newEdgeId];//converts edge to Proxy
-				edge1.newEdgeId = edge10Id;//Этот индекс нового ребра используется когда в грани заменяется одно ребро на новое ребро и кода вершина напротив нового ребра не совпадает с вершинами оставшезхся двух ребер 
-
-				//indices.edges[11] = [1,4]
-				const edge11Id = edges.push({
-					vertices: [
-						vertice1Id,//vertice[1]
-						verticeMid0//vertice[4]
-					]
-				}) - 1;
-				newEdgeId = newFace.push(edge11Id) - 1;
-				newFace.face.edges[newEdgeId];//converts edge to Proxy
-				
-			}
-*/
 
 			this.Test();//for debug
 			
 			this.display(3, {
 				
-//				debugObject: this.debug ? this.displayDebug(THREE, new THREE.Vector3(params.center.x, params.center.y), params.center.z), r, scene) : undefined,
 				position: params.center,
 				
 			});

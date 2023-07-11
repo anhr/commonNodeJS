@@ -23,7 +23,6 @@ const r = 1,//Unit sphere https://en.wikipedia.org/wiki/Unit_sphere radius
 	z = h - r,//расстояние от центра пирамиды до грани
 	rCircle = Math.sqrt(r * r - z * z),//радиус окружности, которая получается от пересечения плоскости грани пирамиды со сферой https://en.wikipedia.org/wiki/Circle_of_a_sphere
 	scale = a / 1.7320508075688774;//= new THREE.Vector3( 0.0, -1.0, 0.0 ).distanceTo(new THREE.Vector3( 0.8660254037844388, 0.5, 0 )) это длинна ребра до масштабирования
-//	scale = rCircle / r;
 let buffer;
 
 class Triangle extends Utils
@@ -145,7 +144,6 @@ class Triangle extends Utils
 			scene.add( circle );
 			
 		}
-//		super.project( scene, n );
 
 	}
 	/**

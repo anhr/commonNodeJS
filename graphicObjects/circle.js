@@ -87,33 +87,6 @@ class Circle extends Utils
 			console.error(sCircle + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
-/*
-	TestFace( faceId, sFaceId ){
-
-		//Индексы всех вершин гани должны оборазовать замкнутое кольцо
-		const indices = this.classSettings.settings.object.geometry.indices,
-			face = indices.faces[faceId],
-			edge0 = indices.edges[face[0]],
-			vreticeIds = [edge0[0], edge0[1]];
-		for (let edgeId = 1; edgeId < face.length; edgeId++) {
-			
-			const edge = indices.edges[face[edgeId]];
-			if (edge.length != 2) {
-
-				console.error(sCircle + '.TestFace: Invalid edges[' + edgeId + '].length = ' + edge.length);
-				return;
-							  
-			}
-			const lastVerticeId = vreticeIds[vreticeIds.length - 1];
-			if (lastVerticeId === edge[0])
-				vreticeIds.push(edge[1]);
-			else if (lastVerticeId === edge[1])
-				vreticeIds.push(edge[0]);
-			
-		}
-		if (vreticeIds[0] != vreticeIds[vreticeIds.length - 1]) console.error(sCircle + '.TestFace: The loop of the edges of the faces[' + faceId + '] is broken.');
-	}
-*/
 	Indices() {
 		
 		const _this = this, settings = this.classSettings.settings;
@@ -142,96 +115,10 @@ class Circle extends Utils
 									const edgeId = parseInt(name);
 									if (!isNaN(edgeId)) {
 										
-//										return _edges[i];
 										let edge = _edges[edgeId];
-//										if (!edge) return edge;
 										if (edge instanceof Array && !edge.isProxy) {
 
 											const position = settings.object.geometry.position;
-/*
-//											if (!this.boCreate) return edge;
-											const vertices = edge.vertices || [],
-												position = settings.object.geometry.position;
-											Object.keys(edge).forEach(key => {
-
-												if (key !== 'vertices') vertices[key] = edge[key];
-
-											});
-											function IdDebug(i) {
-
-												if (!debug) return true;
-
-												if ((i < 0) || (i > 1)) {
-
-													console.error(sVertices + '. Vertices index = ' + i + ' is limit from 0 to 1');
-													return false;
-
-												}
-												return true;
-
-											}
-											function VerticeIdDebug(i, verticeId) {
-
-												if ((verticeId === position.length) && (//этой вершины нет списке вершин
-													(edgeId === undefined) || //добавлять новую вершину потому что эта грань добавляется с помощью edges.push()
-													(edgeId != face[face.length - 1])//не добалять новую вершину если это последняя грань, потому что у последней грани последняя вершина совпадает с первой вершины первой грани
-												)
-												)
-													position.push();
-
-												if (!debug) return true;
-
-												if (!IdDebug(i)) return false;
-
-												if (isNaN(parseInt(verticeId))) {
-
-													console.error(sVertices + '[' + i + ']. Invalid vertice index = ' + verticeId);
-													return false;
-
-												}
-												if ((verticeId < 0) || (verticeId >= position.length)) {
-
-													console.error(sVertices + '[' + i + ']. Vertice index = ' + verticeId + ' is limit from 0 to ' + (position.length - 1));
-													return false;
-
-												}
-												for (let index = 0; index < 2; index++) {
-
-													if (index === i) continue;//не надо сравнивать самого себя
-
-													if (verticeId === vertices[index]) {
-
-														console.error(sVertices + '[' + i + ']. Duplicate vertice index = ' + verticeId);
-														return false;
-
-													}
-
-												};
-												return true;
-
-											}
-											for (let i = 0; i < 2; i++) {//у каждого ребра 2 вершины
-
-												if (vertices[i] === undefined) {
-
-													vertices[i] = (
-														position.length === 0) ||//первая вершина первого ребра
-														((edgeId != undefined) &&//ребро из массива ребер
-															(i === 1) && (edgeId === face[face.length - 1])) ?//Это последняя вершина последнего ребра. Соеденить последнюю вершину последнего ребра с первой першиной первого ребра
-														0 :
-														edgeId != undefined ?
-															position.length + (i === 0 ? -1 : 0) : //ребро из массива ребер
-															//Новое ребро добавляется при помощи edges.push()
-															i === 0 ? position.length : //первая вершина
-																0//Соеденить последнюю вершину нового ребра с первой першиной первого ребра
-														;
-
-												}
-												VerticeIdDebug(i, vertices[i]);
-
-											}
-*/
-//											const positions = [];
 											edge = new Proxy(edge, {
 
 												get: (_edge, name) => {
@@ -280,7 +167,6 @@ class Circle extends Utils
 
 															if (_edge.halfEdgeId) return indices.edges[_edge.halfEdgeId];
 															const verticeMid = [],
-																//											vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
 																vertice0 = position[_edge[0]], vertice1 = position[_edge[1]];
 															for (let i = 0; i < vertice0.length; i++) verticeMid.push((vertice1[i] - vertice0[i]) / 2 + vertice0[i]);
 
@@ -301,9 +187,8 @@ class Circle extends Utils
 															}
 															_edge[1] = verticeId;
 															return indices.edges[_edge.halfEdgeId];
-//														case 'halfEdgeDelete':	delete _edge.halfEdgeId; break;
 														case 'old':	return [_edge[0], indices.edges[_edge.halfEdgeId][1]];
-														case 'newEdgeId': console.error(sUtils + ': Deprecated getter = ' + name); break;
+//														case 'newEdgeId': console.error(sUtils + ': Deprecated getter = ' + name); break;
 
 													}
 													return _edge[name];
@@ -331,11 +216,13 @@ class Circle extends Utils
 														}
 
 													}
+/*
 													switch (name) {
 
 														case 'newEdgeId': console.error(sUtils + ': Deprecated setter: ' + name); break;
 
 													}
+*/
 													_edge[name] = value;
 													return true;
 
@@ -388,19 +275,9 @@ class Circle extends Utils
 										};
 										case 'push': return (edge={}) => {
 
-//											return _edges.push(edge);
 											const edgesLength = _edges.push(edge);
-//											this.edges[edgesLength - 1]//converts edge to Proxy
 											settings.object.geometry.indices.edges[edgesLength - 1]//converts edge to Proxy
 											return edgesLength;
-/*											
-											const edgesLength = _edges.push(edge),
-												facesLength = indices.faces[_this.classSettings.faceId].push(edgesLength - 1);
-											if (settings.object.geometry.position.length != 0) 
-												//позиции вершин уже вычислены
-												this.edges[facesLength -1];//convert edge to Proxy
-											return edgesLength;
-*/		   
 					
 										};
 					
@@ -813,8 +690,6 @@ class Circle extends Utils
 	
 			//edges length
 			let l = 0;
-			//indices.faces[this.classSettings.faceId].forEach(edgeId => l += indices.edges[edgeId].distance );
-			//indices.faceEdges.forEach(edge => l += edge.distance);
 			this.edges.forEach(edge => l += edge.distance);
 			if ( isNaN( l ) || !isFinite( l ) ) {
 	
@@ -823,7 +698,6 @@ class Circle extends Utils
 	
 			}
 			const r = params.radius !== undefined ? params.radius : 1.0,//l / (2 * Math.PI),
-//				center = new THREE.Vector2(params.center.x, params.center.y),
 				axis = new THREE.Vector3(0, 0, 1),
 				point0 = new THREE.Vector3(0, -r, 0),
 				delta = 2 * Math.PI / l;
@@ -846,20 +720,13 @@ class Circle extends Utils
 				
 			} );
 
-/*Непонятно почему то если указать позицию сцены то позиция объектов на этой сцене не изменится			
-			settings.scene = scene.add(new THREE.Group());
-			settings.scene.position.copy(new THREE.Vector3(params.center.x, params.center.y));
-*/   
 			settings.scene = scene;
 	
 			this.Test();
-//			settings.object.geometry.position.test();
 			
 			if (this.isDisplay()) this.display( 2, {
 				
 				debugObject: this.debug ? this.displayDebug(THREE, new THREE.Vector2(params.center.x, params.center.y), r, scene) : undefined,
-//				debugObject: this.debug ? this.displayDebug(THREE, new THREE.Vector2(), r) : undefined,
-//				position: [params.center.x, params.center.y],
 				position: params.center,
 				
 			});
