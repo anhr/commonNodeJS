@@ -339,34 +339,11 @@ class Sphere extends Circle
 	 * @param {object} [classSettings] Sphere class settings.
 	 * @param {number} [classSettings.bodyId=0] Identifier of the array of the faces ids in the <b>classSettings.settings.object.geometry.indices.bodies</b> array.
 	 * @param {number} [classSettings.faceGroups=0] Face groups level. You can define sphere's faces count.
-	 * Examples:
 	 * <pre>
+	 * Examples:
 	 * <table>
-		 <tr><td><b>n</b> space dimension</td><td>Array index</td><td>Axis of rotation</td><td>Axis type</td><td>Note</td></tr>
-		 <tr><td>0</td><td></td><td></td><td></td><td>no rotation</td></tr>
-		 <tr><td>1</td><td></td><td></td><td></td><td>no rotation</td></tr>
-		 <tr><td>2</td><td>0</td><td></td><td></td><td>No effect for 2-dimensional space</td></tr>
-		 <tr><td></td><td>1</td><td></td><td></td><td>No effect for 2-dimensional space</td></tr>
-		 <tr><td></td><td>2</td><td>2(z)</td><td>point</td><td></td></tr>
-		 <tr><td>3</td><td>0</td><td>0(x)</td><td>line</td><td></td></tr>
-		 <tr><td></td><td>1</td><td>1(y)</td><td></td><td></td></tr>
-		 <tr><td></td><td>2</td><td>2(z)</td><td></td><td></td></tr>
-		 <tr><td>4</td><td>0</td><td>0, 1(xy)</td><td>plane</td><td></td></tr>
-		 <tr><td></td><td>1</td><td>0, 2(xz)</td><td></td><td></td></tr>
-		 <tr><td></td><td>2</td><td>0, 3(xw)</td><td></td><td></td></tr>
-		 <tr><td></td><td>3</td><td>1, 2(yz)</td><td></td><td></td></tr>
-		 <tr><td></td><td>4</td><td>1, 3(yw)</td><td></td><td></td></tr>
-		 <tr><td></td><td>5</td><td>2, 3(zw)</td><td></td><td></td></tr>
-		 <tr><td>5</td><td>0</td><td>0, 1, 2(xyz)</td><td>3D space</td><td></td></tr>
-		 <tr><td></td><td>1</td><td>0, 1, 3(xyw)</td><td></td><td></td></tr>
-		 <tr><td></td><td>2</td><td>0, 1, 4(xy4)</td><td></td><td></td></tr>
-		 <tr><td></td><td>3</td><td>0, 2, 3(xzw)</td><td></td><td></td></tr>
-		 <tr><td></td><td>4</td><td>0, 2, 4(xz4)</td><td></td><td></td></tr>
-		 <tr><td></td><td>5</td><td>0, 3, 4(xw4)</td><td></td><td></td></tr>
-		 <tr><td></td><td>6</td><td>1, 2, 3(yzw)</td><td></td><td></td></tr>
-		 <tr><td></td><td>7</td><td>1, 2, 4(yz4)</td><td></td><td></td></tr>
-		 <tr><td></td><td>8</td><td>1, 3, 4(yw4)</td><td></td><td></td></tr>
-		 <tr><td></td><td>9</td><td>2, 3, 4(zw4)</td><td></td><td></td></tr>
+		 <tr><td></b>faceGroups</b></td><td>faces count</td></tr>
+		 <tr><td>0</td><td>4</td></tr>
 		</table>
 	 * </pre>
 	 * 
