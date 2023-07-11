@@ -467,7 +467,7 @@ class Sphere extends Circle
 			this.classSettings.faceGroups = this.classSettings.faceGroups || 0;
 			for (let faceGroupsId = 0; faceGroupsId < this.classSettings.faceGroups; faceGroupsId++) {
 
-				console.log('faceGroupsId' + faceGroupsId)
+				if (this.debug) console.log('faceGroupsId' + faceGroupsId)
 				edges.forEach(edge => delete edge.halfEdgeId);
 				
 				//divide all edges to two half edges
