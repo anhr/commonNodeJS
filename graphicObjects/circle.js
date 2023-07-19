@@ -83,7 +83,7 @@ class Circle extends Utils
 	}
 	TestVertice( vertice, strVerticeId ){
 		
-		if (vertice.edges.length !== 2)
+		if (vertice.edges.length !== this.verticeEdgesLengthMax)
 			console.error(sCircle + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
@@ -595,7 +595,7 @@ class Circle extends Utils
 						}));
 
 					};
-						break;
+//						break;
 					//for debug
 					case 'test': return () => {
 
@@ -613,7 +613,7 @@ class Circle extends Utils
 
 						})
 					}
-						break;
+//						break;
 
 				}
 				return _position[name];
