@@ -556,7 +556,7 @@ class Circle extends Utils
 
 															const sPush = sCircle + ': Vertice' + (verticeId === undefined ? '' : '[' + verticeId + ']') + '.edges.push(' + edgeId + '):';
 
-															if (edges.length >= this.verticeEdgesLengthMax) {
+															if (edges.length > _this.verticeEdgesLengthMax) {
 
 																console.error(sPush + ' invalid edges.length = ' + edges.length);
 																return;
