@@ -671,8 +671,8 @@ class Circle extends Utils
 		/**
 		 * Projects a circle to the canvas 
 		 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
-		 * @param {object} [params={}] The following parameters are available
-		 * @param {object} [params.center={x: 0.0, y: 0.0}] center of the sphere
+		 * @param {object} [params] The following parameters are available
+		 * @param {object} [params.center] center of the sphere
 		 * @param {float} [params.center.x=0.0] X axis of the center
 		 * @param {float} [params.center.y=0.0] Y axis of the center
 		 * @param {float} [params.radius=1.0] radius of the sphere
