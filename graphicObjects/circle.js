@@ -446,7 +446,7 @@ class Circle extends Utils
 	 * [[0, 2, 3]]
 	 * circle contains three edges with 0, 2 and 3 indice.
 	 * </pre>
-	 * @param {boolean} [classSettings.debug=false] Debug mode. Diagnoses your code and display detected errors in console
+	 * @param {boolean} [classSettings.debug=false] true - debug mode. Diagnoses your code and display detected errors in console
 	 **/
 	constructor( options, classSettings={} ) {
 		
