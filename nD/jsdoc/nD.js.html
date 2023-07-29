@@ -343,9 +343,15 @@ class ND {
 			for ( var segmentIndex = 0; segmentIndex &lt; edges.length; segmentIndex++ ) {
 
 				const edgeCur = edges[segmentIndex];
+/*				
 				if (
 					( ( edgeCur.indices[0] === edge[0] ) &amp;&amp; ( edgeCur.indices[1] === edge[1] ) ) ||
 					( ( edgeCur.indices[0] === edge[1] ) &amp;&amp; ( edgeCur.indices[1] === edge[0] ) )
+				)
+*/	
+				if (
+					( ( edgeCur[0] === edge[0] ) &amp;&amp; ( edgeCur[1] === edge[1] ) ) ||
+					( ( edgeCur[0] === edge[1] ) &amp;&amp; ( edgeCur[1] === edge[0] ) )
 				) {
 
 					text += '\n' + lang.edgeId + ': ' + segmentIndex;
@@ -380,7 +386,7 @@ class ND {
 							}
 							
 						} );
-						if ( !detectedIndex ) {
+						if ( detectedIndex === undefined ) {
 							
 							console.error( 'ND: mouse move. Index of segment was not detected' );
 							break;
@@ -442,17 +448,6 @@ class ND {
 
 				array = super(n, array).array;
 				const _this = this;
-/*				
-				if ( array.isVector ) return array;
-				if ( array instanceof Array === false ) {
-
-					if ( typeof array === 'number' ) array = [array];
-					else if ( array.array ) array = array.array;
-					else console.error( 'ND.Vector: invalid array type' );
-
-				}
-				if ( n !== undefined ) while ( array.length &lt; n ) array.push( 0 );
-*/
 
 				//https://stackoverflow.com/questions/2449182/getter-setter-on-javascript-array
 				return new Proxy( array, {
@@ -464,7 +459,6 @@ class ND {
 
 							switch ( name ) {
 
-//								case "array": return array;
 								/* *
 								* @description
 								* &lt;pre>
@@ -480,24 +474,9 @@ class ND {
 								case "point":
 									const THREE = three.THREE;
 									return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
-								/*
-								* Adds v to this vector.
-								*/
-/*
-								case "add":
-									return function ( v ) {
-
-										target.forEach( ( value, i ) => target[i] += v[i] );
-										return this;
-
-									}
-								case "index": return vectorSettings.index;
-								case "isVector": return true;
-*/
 								default: {
 
 									return _this[name];
-//									console.error( 'ND: Vector get. Invalid name: ' + name );
 								
 								}
 
@@ -910,136 +889,6 @@ class ND {
 
 								const cos = settings.object.rotation.trigonometry[index].cos, sin = settings.object.rotation.trigonometry[index].sin,
 									array = [];
-								/*
-								if ( n === 5 ) {
-
-									switch ( index ) {
-
-										case 0://0,1,2
-											array.push( [cos, -sin, 0, 0, 0] );
-											array.push( [sin, cos, 0, 0, 0] );
-											array.push( [0, 0, 1, 0, 0] );
-											array.push( [0, 0, 0, 1, 0] );
-											array.push( [0, 0, 0, 0, 1] );
-											break;
-										case 1://0,1,3
-											array.push( [cos, 0, -sin, 0, 0] );
-											array.push( [0, 1, 0, 0, 0] );
-											array.push( [sin, 0, cos, 0, 0] );
-											array.push( [0, 0, 0, 1, 0] );
-											array.push( [0, 0, 0, 0, 1] );
-											break;
-										case 2://0,1,4
-											array.push( [cos, 0, 0, -sin, 0] );
-											array.push( [0, 1, 0, 0, 0] );
-											array.push( [0, 0, 1, 0, 0] );
-											array.push( [sin, 0, 0, cos, 0] );
-											array.push( [0, 0, 0, 0, 1] );
-											break;
-										case 3://0,2,3
-											array.push( [cos, 0, 0, 0, -sin] );
-											array.push( [0, 1, 0, 0, 0] );
-											array.push( [0, 0, 1, 0, 0] );
-											array.push( [0, 0, 0, 1, 0] );
-											array.push( [sin, 0, 0, 0, cos] );
-											break;
-										case 4://0,2,4
-											array.push( [1, 0, 0, 0, 0] );
-											array.push( [0, cos, -sin, 0, 0] );
-											array.push( [0, sin, cos, 0, 0] );
-											array.push( [0, 0, 0, 1, 0] );
-											array.push( [0, 0, 0, 0, 1] );
-											break;
-										case 5://0,3,4
-											array.push( [1, 0, 0, 0, 0] );
-											array.push( [0, cos, 0, -sin, 0] );
-											array.push( [0, 0, 1, 0, 0] );
-											array.push( [0, sin, 0, cos, 0] );
-											array.push( [0, 0, 0, 0, 1] );
-											break;
-										case 6://1,2,3
-											array.push( [1, 0, 0, 0, 0] );
-											array.push( [0, cos, 0, 0, -sin] );
-											array.push( [0, 0, 1, 0, 0] );
-											array.push( [0, 0, 0, 1, 0] );
-											array.push( [0, sin, 0, 0, cos] );
-											break;
-										case 7://1,2,4
-											array.push( [1, 0, 0, 0, 0] );
-											array.push( [0, 1, 0, 0, 0] );
-											array.push( [0, 0, cos, -sin, 0] );
-											array.push( [0, 0, sin, cos, 0] );
-											array.push( [0, 0, 0, 0, 1] );
-											break;
-										case 8://1,3,4
-											array.push( [1, 0, 0, 0, 0] );
-											array.push( [0, 1, 0, 0, 0] );
-											array.push( [0, 0, cos, 0, -sin] );
-											array.push( [0, 0, 0, 1, 0] );
-											array.push( [0, 0, sin, 0, cos] );
-											break;
-										case 9://2,3,4
-											array.push( [1, 0, 0, 0, 0] );
-											array.push( [0, 1, 0, 0, 0] );
-											array.push( [0, 0, 1, 0, 0] );
-											array.push( [0, 0, 0, cos, -sin] );
-											array.push( [0, 0, 0, sin, cos] );
-											break;
-										default: console.error( 'nD: positionWorld getMatrix. n = ' + n + ' invalid index =  ' + index );
-
-									}
-
-								} else if ( n === 4 ) {
-
-									switch( index ) {
-
-										case 0://xy
-											array.push( [cos, -sin, 0, 0] );
-											array.push( [sin,  cos, 0, 0] );
-											array.push( [0,      0, 1, 0] );
-											array.push( [0,      0, 0, 1] );
-											break;
-										case 1://xz
-											array.push( [cos, 0, -sin, 0] );
-											array.push( [0,   1,    0, 0] );
-											array.push( [sin, 0,  cos, 0] );
-											array.push( [0,   0,    0, 1] );
-											break;
-										case 2://xw
-											array.push( [cos, 0, 0, -sin] );
-											array.push( [0,   1, 0,    0] );
-											array.push( [0,   0, 1,    0] );
-											array.push( [sin, 0, 0,  cos] );
-											break;
-										case 3://yz
-											array.push( [1,   0,    0, 0] );
-											array.push( [0, cos, -sin, 0] );
-											array.push( [0, sin,  cos, 0] );
-											array.push( [0,   0,    0, 1] );
-											break;
-										case 4://yw
-											array.push( [1,   0, 0,    0] );
-											array.push( [0, cos, 0, -sin] );
-											array.push( [0,   0, 1,    0] );
-											array.push( [0, sin, 0,  cos] );
-											break;
-										case 5://zw
-											array.push( [1, 0,   0,    0] );
-											array.push( [0, 1,   0,    0] );
-											array.push( [0, 0, cos, -sin] );
-											array.push( [0, 0, sin,  cos] );
-											break;
-										default: console.error( 'nD: positionWorld getMatrix. n = ' + n + ' invalid index =  ' + index );
-			
-									}
-									
-								} else if ( n === 2 ) {
-
-									//https://ru.wikipedia.org/wiki/%D0%9C%D0%B0%D1%82%D1%80%D0%B8%D1%86%D0%B0_%D0%BF%D0%BE%D0%B2%D0%BE%D1%80%D0%BE%D1%82%D0%B0
-									array.push( [cos, -sin] );
-									array.push( [sin, cos] );
-									
-								}*/
 								const tI = rotationAxes[index].tI;
 								for ( var i = 0; i &lt; n; i++ ) {
 
@@ -1208,23 +1057,36 @@ class ND {
 									if ( !isNaN( i ) ) {
 
 										if ( i >= target.length ) return 0;
+										if ( isNaN( target[i] ) ) console.error( 'ND get settings.object.geometry.position[i][' + i + '] = ' + target[i] );
 										return target[i];
 
 									}
 									switch ( name ) {
 
-										case 'positionWorld': return target.positionWorld;
-										case 'forEach': return target.forEach;
-										case 'length': return target.length;
-										case 'indices': return target.indices;
-										case 'i': return target.i;
-										case 'arguments': return target.arguments;
 										case 'reset': return function() { delete target.positionWorld; }
-										case 'edges': return target.edges;
-										case 'index': return target.index;
-										default: console.error( 'ND: settings.object.geometry.position[i] get. Invalid name: ' + name );
+/*currently is not using. See \commonNodeJS\master\graphicObjects\circle.js											
+										case 'distanceTo': return (position) => {
+
+											if (target.length != position.length) {
+												
+												console.error('ND settings.object.geometry.position[i].distanceTo(). target.length != position.length');
+												return;
+												
+											}
+											//const distance = new three.THREE.Vector3(target[0], target[1], target[2], ).distanceTo(new three.THREE.Vector3(position[0], position[1], position[2], ));
+											let sum = 0;
+											target.forEach((axis, i) => {
+
+												const d = axis - position[i];
+												sum += d * d;
+												
+											})
+											return Math.sqrt(sum);
+										}
+*/											
 
 									}
+									return target[name];
 
 								},
 								set: function ( target, name, value ) {
@@ -1290,9 +1152,6 @@ class ND {
 					}
 					target[name] = value;
 
-					//if ( name != 'boPositionError' )
-					//	console.log('ND settings.object.geometry.position set: name = ' + name );
-
 					return true;
 
 				},
@@ -1301,6 +1160,7 @@ class ND {
 
 		}
 		settings.object.geometry.position = proxyGeometryPosition();
+
 		//indices
 
 		function setIndices() {
@@ -1324,212 +1184,223 @@ class ND {
 					get: function ( edges, name, value ) {
 
 						const i = parseInt( name );
-						if ( !isNaN( i ) )
-							return {
+						if (!isNaN(i)) {
 
-								intersection: function ( geometryIntersection ) {
+							const edge = edges[i];
+//							if (edge.intersection) return edge;
+							edge.intersection = (geometryIntersection) => {
 
-									const i = parseInt( name );
-									if ( !isNaN( i ) ) {
+								const i = parseInt(name);
+								if (!isNaN(i)) {
 
-										if ( i.toString() !== name ) {
+									if (i.toString() !== name) {
 
-											console.error( 'ND: settings.object.geometry.indices[]intersection. invalid name = ' + name );
-											return;
+										console.error('ND: settings.object.geometry.indices[]intersection. invalid name = ' + name);
+										return;
 
-										}
-										if ( edges.length === 0 ) return;//no edges
-										if ( i >= edges.length ) {
+									}
+									if (edges.length === 0) return;//no edges
+									if (i >= edges.length) {
 
-											console.error( 'ND: settings.object.geometry.indices[]intersection. invalid length: ' + edges.length );
-											this.indices = { intersection: {} };
-											return;
+										console.error('ND: settings.object.geometry.indices[]intersection. invalid length: ' + edges.length);
+										this.indices = { intersection: {} };
+										return;
 
-										}
-										var indices = edges[i];
+									}
+									var indices = edges[i];
 
-										//Когда размерность графического оъекта меньше 3
-										//и когда он создается из объета большей размерности
-										//то indices это прокси
-										if ( indices.indices ) indices = indices.indices;
+									//Когда размерность графического оъекта меньше 3
+									//и когда он создается из объета большей размерности
+									//то indices это прокси
+									//if (indices.indices) indices = indices.indices;
 
-										if ( indices.length !== 2 ) {
+									if (indices.length !== 2) {
 
-											console.error( 'ND: settings.object.geometry.indices[]intersection. indices.length = ' + indices.length );
-											return;
+										console.error('ND: settings.object.geometry.indices[]intersection. indices.length = ' + indices.length);
+										return;
 
-										}
-										if ( indices[0] === indices[1] ) {
+									}
+									if (indices[0] === indices[1]) {
 
-											console.error( 'ND: settings.object.geometry.indices[]intersection. indices[0] === indices[1] = ' + indices[0] );
-											return;
+										console.error('ND: settings.object.geometry.indices[]intersection. indices[0] === indices[1] = ' + indices[0]);
+										return;
 
-										}
-										const position0 = new Vector( positionWorld[indices[0]] ),
-											position1 = new Vector( positionWorld[indices[1]] );
-										function indicesIntersection( position ) {
+									}
+									const position0 = new Vector(positionWorld[indices[0]]),
+										position1 = new Vector(positionWorld[indices[1]]);
+									function indicesIntersection(position) {
 
-											switch ( n ) {
+										switch (n) {
 
-												case 2:
-													break;
-												default:
-													if ( !position )
-														break;
-													position.push( vectorPlane[n - 1] );
-													break;
-
-											}
-											indices.intersection = { position: position, }
-											if ( indices.intersection.position ) indices.intersection.position.iEdge = i;
-
-										}
-										switch ( n ) {
-
-											case 1:
-												if ( vectorPlane[0].between( position0[0], position1[0], true ) )
-													geometryIntersection.position.push( [vectorPlane[0]] );
-												break;
 											case 2:
-												var vector;
-												if ( vectorPlane[1].between( position0[1], position1[1], true ) ) {
+												break;
+											default:
+												if (!position)
+													break;
+												position.push(vectorPlane[n - 1]);
+												break;
 
-													const a = ( position1[1] - position0[1] ) / ( position1[0] - position0[0] ),
-														b = position0[1] - a * position0[0],
-														x = ( a === 0 ) || isNaN( a ) || ( Math.abs( a ) === Infinity ) ?
-															position1[0] :
-															( vectorPlane[1] - b ) / a;
-													if ( isNaN( x ) || ( x === undefined ) ) { console.error( 'ND.intersection: x = ' + x + ' position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0] ); }
+										}
+										indices.intersection = { position: position, }
+										if (indices.intersection.position) indices.intersection.position.iEdge = i;
 
-													//Если x почти равно position0[0] и position0[0] то будем считать что x между ними
-													const d = 1e-15;//-1.1102230246251565e-16 
-													if ( !x.between( position0[0], position1[0], true ) ) {
+									}
+									switch (n) {
 
-														if ( !( ( Math.abs( x - position0[0] ) &lt; d ) &amp;&amp; ( Math.abs( x - position0[0] ) &lt; d ) ) ) {
+										case 1:
+											if (vectorPlane[0].between(position0[0], position1[0], true))
+												geometryIntersection.position.push([vectorPlane[0]]);
+											break;
+										case 2:
+											var vector;
+											if (vectorPlane[1].between(position0[1], position1[1], true)) {
 
-															indices.intersection = {};
-															break;
+												const a = (position1[1] - position0[1]) / (position1[0] - position0[0]),
+													b = position0[1] - a * position0[0],
+													x = (a === 0) || isNaN(a) || (Math.abs(a) === Infinity) ?
+														position1[0] :
+														(vectorPlane[1] - b) / a;
+												if (isNaN(x) || (x === undefined)) { console.error('ND.intersection: x = ' + x + ' position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0]); }
 
-														}
-														//else console.log('x почти равно position0[0] и position0[0]');
+												//Если x почти равно position0[0] и position0[0] то будем считать что x между ними
+												const d = 1e-15;//-1.1102230246251565e-16 
+												if (!x.between(position0[0], position1[0], true)) {
+
+													if (!((Math.abs(x - position0[0]) &lt; d) &amp;&amp; (Math.abs(x - position0[0]) &lt; d))) {
+
+														indices.intersection = {};
+														break;
 
 													}
-													vector = [x, vectorPlane[1]];
+													//else console.log('x почти равно position0[0] и position0[0]');
 
 												}
-												indicesIntersection( vector );
-												break;
-											case 3:
+												vector = [x, vectorPlane[1]];
 
-												var pos;
+											}
+											indicesIntersection(vector);
+											break;
+										case 3:
 
-												//Если позиции вершины находится на этом расстоянии от панели, то будем считать, что она находится на панели
-												//Для проверки запустить canvas 3D с geometry Variant 1 и проигрыватель в точке t = 0.6.
-												//
-												//В примере canvas 3D с geometry.position Variant 2 вершина точно находится на панели
-												const d = 5.56e-17;
+											var pos;
 
-												if ( Math.abs( vectorPlane[n - 1] - position1[n - 1] ) &lt; d ) pos = position1;
-												else if ( Math.abs( vectorPlane[n - 1] - position0[n - 1] ) &lt; d ) pos = position0;
-												if ( pos ) {
+											//Если позиции вершины находится на этом расстоянии от панели, то будем считать, что она находится на панели
+											//Для проверки запустить canvas 3D с geometry Variant 1 и проигрыватель в точке t = 0.6.
+											//
+											//В примере canvas 3D с geometry.position Variant 2 вершина точно находится на панели
+											const d = 5.56e-17;
 
-													//Вершина находится на панели.
-													//Для проверки запустить canvas 3D и установить время проигрывателя t = 0.3 так чтобы вершина 2 пирамиды попала на панель
-													//В этом случает треугольник пересечения сведется к трем точкам с одинаковыми координатами.
-													indicesIntersection( [pos[0], pos[1]] );
-													indices.intersection.boVerticeOnPanel = true;
+											if (Math.abs(vectorPlane[n - 1] - position1[n - 1]) &lt; d) pos = position1;
+											else if (Math.abs(vectorPlane[n - 1] - position0[n - 1]) &lt; d) pos = position0;
+											if (pos) {
 
-												} else {
+												//Вершина находится на панели.
+												//Для проверки запустить canvas 3D и установить время проигрывателя t = 0.3 так чтобы вершина 2 пирамиды попала на панель
+												//В этом случает треугольник пересечения сведется к трем точкам с одинаковыми координатами.
+												indicesIntersection([pos[0], pos[1]]);
+												indices.intersection.boVerticeOnPanel = true;
 
-													const nD02 = new ND( n - 1, {
+											} else {
 
-														plane: true,
-														object: { geometry: {
+												const nD02 = new ND(n - 1, {
+
+													plane: true,
+													object: {
+														geometry: {
 
 															position: positionWorld.copy(),//settings.object.geometry.position,
 															indices: [[indices]],
 															iAxes: [1, 2],
 
-														} },
-														vectorPlane: vectorPlane.array,
+														}
+													},
+													vectorPlane: vectorPlane.array,
 
-													} ),
-														arrayIntersects02 = nD02.intersection();
-													const nD12 = new ND( n - 1, {
+												}),
+													arrayIntersects02 = nD02.intersection();
+												const nD12 = new ND(n - 1, {
 
-														plane: true,
-														object: { geometry: {
+													plane: true,
+													object: {
+														geometry: {
 
 															position: positionWorld.copy(),//settings.object.geometry.position,
 															indices: [[indices]],
 															iAxes: [0, 2],
 
-														} },
-														vectorPlane: vectorPlane.array,
+														}
+													},
+													vectorPlane: vectorPlane.array,
 
-													} ),
-														arrayIntersects12 = nD12.intersection();
-													indicesIntersection( arrayIntersects02.length &amp;&amp; arrayIntersects12.length ?
-														[arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined );
+												}),
+													arrayIntersects12 = nD12.intersection();
+												indicesIntersection(arrayIntersects02.length &amp;&amp; arrayIntersects12.length ?
+													[arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined);
 
-												}
-												break;
-											default:
+											}
+											break;
+										default:
 
-												function intersectionAxis( axis ) {
+											function intersectionAxis(axis) {
 
-													const nD0 = new ND( 2, {
+												const nD0 = new ND(2, {
 
-														plane: true,
-														object: { geometry: {
+													plane: true,
+													object: {
+														geometry: {
 
 															position: positionWorld,//settings.object.geometry.position,
 															indices: [[indices]],
 															iAxes: [axis, n - 1],
 
-														} },
-														vectorPlane: vectorPlane.array,
+														}
+													},
+													vectorPlane: vectorPlane.array,
 
-													} );
-													return nD0.intersection();
+												});
+												return nD0.intersection();
 
-												}
-												const arrayIntersections = [];
-												var boIntersect = true;
-												for ( var iIntersection = 0; iIntersection &lt; n - 1; iIntersection++ ) {
+											}
+											const arrayIntersections = [];
+											var boIntersect = true;
+											for (var iIntersection = 0; iIntersection &lt; n - 1; iIntersection++) {
 
-													const item = intersectionAxis( iIntersection );
-													if ( boIntersect &amp;&amp; ( item.length === 0 ) ) {
+												const item = intersectionAxis(iIntersection);
+												if (boIntersect &amp;&amp; (item.length === 0)) {
 
-														boIntersect = false;
-														break;
-
-													}
-													if ( item.length ) arrayIntersections.push( item[0][0] );
+													boIntersect = false;
+													break;
 
 												}
-												indicesIntersection( boIntersect ? arrayIntersections : undefined );
+												if (item.length) arrayIntersections.push(item[0][0]);
 
-										}
+											}
+											indicesIntersection(boIntersect ? arrayIntersections : undefined);
 
-									} else console.error( 'ND: settings.object.geometry.indices[]intersection. invalid name: ' + name );
+									}
 
-								},
-								indices: edges[parseInt( name )],
+								} else console.error('ND: settings.object.geometry.indices[]intersection. invalid name: ' + name);
 
 							};
+//							edge.indices = edges[parseInt(name)];
+							return edge;
+
+						}
 						switch ( name ) {
 
-							case 'push': return edges.push;
-							case 'length': return edges.length;
 							case 'intersection': return undefined;
 							case 'edges': return edges;
 							case 'isProxy': return true;
+/*								
+							case 'push': return edges.push;
+							case 'length': return edges.length;
 							case 'forEach': return edges.forEach;
 							case 'selected': return edges.selected;
 							default: console.error( 'ND: settings.object.geometry.indices getter. Invalid name: ' + name );
+*/	   
 
 						}
+						return edges[name];
 
 					},
 					set: function ( edges, prop, value ) {
@@ -2053,33 +1924,13 @@ class ND {
 								
 							}
 							const edgeVertices = indices[0][edge].indices;
-/*							
-							function push( i ) {
-
-								if ( faceVertices.length > 2 ) {
-									
-									console.error( 'ND: geometry.D3.faceIndices get. Invalid face vertices count = ' + faceVertices.length );
-									return;
-
-								}
-								const vertice = new THREE.Vector3().copy( geometry.D3.points[i] );
-								vertice.i = i;
-								faceVertices.push( vertice );
-								
-							}
-*/
 							if ( faceVertices.length === 0 ) {
 
-/*								
-								push( edgeVertices[0] );
-								push( edgeVertices[1] );
-*/
 								faceVertices.push( edgeVertices[0] );
 								faceVertices.push( edgeVertices[1] );
 
 							} else {
 
-//									var boPush = false;//for debug
 								var boVertice0 = false, boVertice1 = false;
 								for ( var i = 0; i &lt; faceVertices.length; i++ ) {
 
@@ -2088,15 +1939,10 @@ class ND {
 									else if ( faceVertice === edgeVertices[1] ) boVertice0 = true;
 									
 								}
-//									if ( !boPush ) console.error( 'ND: geometry.D3.faceIndices get. Missing push');
 								if ( !boVertice0 &amp;&amp; !boVertice1 ) console.error( 'ND: geometry.D3.faceIndices get. Missing push');
 								else if ( boVertice0 != boVertice1 ) {
 
 									faceVertices.push( edgeVertices[boVertice0 ? 0 : 1] );
-/*									
-									if ( boVertice0 ) push( edgeVertices[0] );
-									else push( edgeVertices[1] );
-*/
 									
 								}//else вершины третьего ребра совпадают с одной оз вершин первого и второго ребра
 								
@@ -2120,9 +1966,10 @@ class ND {
 						const edges = settings.object.geometry.indices[0];
 						for ( var i = 0; i &lt; edges.length; i++ ) {
 	
-							const edge = edges[i].indices;
+							let edge = edges[i];//.indices;
 							if ( edge !== undefined ) {
 								
+								if ( edge.length === undefined ) edge = [0, 1];//for compatibility with EgocentricUniverse
 								if ( edge.length !== 2 ) {
 
 									console.error( 'ND.geometry.D3.get indices: invalid edge.length = ' + edge.length );
@@ -2135,7 +1982,10 @@ class ND {
 									return;
 	
 								}
-								indices.push( ...edge );
+								
+								//indices.push( ...edge );//incompatible with https://raw.githack.com/anhr/egocentricUniverse/dev/1D.html
+								edge.forEach( vertice => indices.push( vertice ) );
+								
 								if ( this.color ) {
 	
 									const color = new THREE.Color(this.color);
@@ -2245,7 +2095,6 @@ class ND {
 			const object = indices.length > 1 ?
 				settings3D.faces ?
 					new THREE.Mesh(buffer, new THREE.MeshLambertMaterial({
-//						color: settings3D.faces.color,
 						color: color,
 						opacity: settings3D.faces.opacity,
 						transparent: settings3D.faces.transparent,
@@ -2640,7 +2489,11 @@ class ND {
 
 									}
 										
-									cDistance.setValue( geometry.D3.points[lineIndices[0]].distanceTo( geometry.D3.points[lineIndices[1]] ) );
+									const position0 = geometry.geometry.position[lineIndices[0]],
+										position1 = settings.object.geometry.position[lineIndices[1]];
+									if (position0.length &amp;&amp; position1.length) cDistance.setValue( position0.distanceTo(position1) );
+									else console.error("ND: Select edge. Invalid edge's vertices distance");
+//									cDistance.setValue( geometry.D3.points[lineIndices[0]].distanceTo( geometry.D3.points[lineIndices[1]] ) );
 									break;
 			
 							}
@@ -2882,11 +2735,13 @@ class ND {
 				}
 				const edge = settings.object.geometry.indices[0][iEdge];
 				edge.intersection( geometryIntersection );
-				const position = edge.indices.intersection.position;
+//				const position = edge.indices.intersection.position;
+				const position = edge.intersection.position;
 				if ( position ) {
 					
 					var boAdd = true;
-					if ( edge.indices.intersection.boVerticeOnPanel ) {
+//					if ( edge.indices.intersection.boVerticeOnPanel )
+					if ( edge.intersection.boVerticeOnPanel ) {
 
 						//Вершина на панели. В этом случае все ребра, сходящиеся к этой вершине буду выдвать одну и ту же точку пересечения
 						//Не нужно добавлять повторяющиеся точки.
@@ -3227,9 +3082,11 @@ class ND {
 		if ( scene ) {
 
 			//Если есть scene, обязательно должен быть options. Здесь создать options неполучится
+/*			
 			options.scales.x.name = 0;
 			options.scales.y.name = 1;
 			options.scales.z.name = 2;
+*/   
 			if ( n &lt;= 1 ) options.scales.y = undefined;
 			if ( n &lt;= 2 ) options.scales.z = undefined;
 			options.scales.text.rect = options.scales.text.rect || {}
@@ -3372,22 +3229,6 @@ class ND {
 		}
 
 		/**
-		* @description set new geometry, position and rotation of nD object
-		* See &lt;b>settings&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
-		* @param {object} object new nD object
-		* @param {object} object.geometry geometry of new nD object. See See &lt;b>settings.object.geometry&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
-		* @param {Array} object.geometry.position Array of vertices of the n-dimensional graphical object.
-		* See See &lt;b>settings.object.geometry.position&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
-		* @param {Array} [object.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
-		* See See &lt;b>settings.object.geometry.indices&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
-		* @param {Array|number} [object.position] position of the n-dimensional graphical object in n-dimensional coordinates.
-		* See See &lt;b>settings.object.position&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
-		* @param {Array|number} [object.rotation] rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
-		* See See &lt;b>settings.object.rotation&lt;/b> parameter of &lt;a href="./module-ND-ND.html" target="_blank">ND&lt;/a>.
-		* @param {Boolean} [object.update] true - update old object with new parameters.
-		*/
-		this.object = function ( object ) { console.error( 'ND: settings' ); }
-		/**
 		* @description
 		* Returns N-dimensional vector of the plane that intersects nD object.
 		*/
@@ -3427,6 +3268,12 @@ class ND {
 
 				},
 
+			},
+
+			object3D: {
+
+				get: () => { return object3D; },
+				
 			},
 
 			object: {
@@ -3562,7 +3409,6 @@ ND.gui = class {
 
 				const folder = fND.__folders[key];
 				if ( !folder.userData || ( folder.userData.objectItems === undefined ) ) return;
-//				const cSegment = folder.__controllers[0];
 				folder.__controllers.forEach( cSegment => {
 
 					if (cSegment.__select) {
@@ -3640,35 +3486,6 @@ ND.VectorN = class {
 				return array[i];
 
 			},
-/*
-			set: function (target, name, value) {
-
-				const i = parseInt(name);
-				if (!isNaN(i)) {
-
-					if (i >= array.length) {
-
-						array.push(value);
-						return array.length;
-
-					}
-					array[i] = value;
-					_ND.intersection();
-					if (vectorSettings.onChange) vectorSettings.onChange();
-					return true;
-
-				}
-				switch (name) {
-
-					case 'onChange':
-						vectorSettings.onChange = value;
-						return vectorSettings.onChange;
-					default: console.error('ND: Vector set. Invalid name: ' + name);
-
-				}
-
-			}
-*/
 
 		});
 
@@ -3741,7 +3558,7 @@ Object.defineProperty( Array.prototype, "equals", { enumerable: false } );
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon Apr 17 2023 12:37:49 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Jul 29 2023 14:04:21 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
