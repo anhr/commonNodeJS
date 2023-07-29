@@ -3201,22 +3201,6 @@ class ND {
 		}
 
 		/**
-		* @description set new geometry, position and rotation of nD object
-		* See <b>settings</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {object} object new nD object
-		* @param {object} object.geometry geometry of new nD object. See See <b>settings.object.geometry</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Array} object.geometry.position Array of vertices of the n-dimensional graphical object.
-		* See See <b>settings.object.geometry.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Array} [object.geometry.indices] Array of indices of vertices of the n-dimensional graphical object.
-		* See See <b>settings.object.geometry.indices</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Array|number} [object.position] position of the n-dimensional graphical object in n-dimensional coordinates.
-		* See See <b>settings.object.position</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Array|number} [object.rotation] rotation in radians of the n-dimensional graphical object in n-dimensional coordinates.
-		* See See <b>settings.object.rotation</b> parameter of <a href="./module-ND-ND.html" target="_blank">ND</a>.
-		* @param {Boolean} [object.update] true - update old object with new parameters.
-		*/
-		this.object = function ( object ) { console.error( 'ND: settings' ); }
-		/**
 		* @description
 		* Returns N-dimensional vector of the plane that intersects nD object.
 		*/
