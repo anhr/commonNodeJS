@@ -657,6 +657,7 @@ class GuiSelectPoint {
 
 			}
 
+			if ( !f3DObjects ) this.add();
 			f3DObjects.domElement.style.display = 'block';
 			
 			if ( !cMeshs ) {
