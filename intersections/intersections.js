@@ -17,6 +17,7 @@
 */
 
 import three from '../three.js'
+import ElementProgress from '../ElementProgress/ElementProgress.js'
 
 //debug
 //import { SpriteText } from '../SpriteText/SpriteText.js'
@@ -368,7 +369,8 @@ class Intersections {
 
 		//Progress window
 		const renderer = options.renderer || settings.renderer;
-		var elProgress, cProgress;
+//		var elProgress, cProgress;
+		let elementProgress;
 		if ( renderer ) {
 
 			const elCanvas = renderer.domElement, elContainer = elCanvas.parentElement;
@@ -380,6 +382,23 @@ class Intersections {
 			}
 			const container = "container";
 			if ( !elContainer.classList.contains( container ) ) elContainer.classList.add( container );
+			const lang = { progressTitle: 'Intersections preparing.<br>Wait please...', };
+			switch ( options.getLanguageCode() ) {
+
+				case 'ru'://Russian language
+
+					lang.progressTitle = 'Подготовка пересечений.<br>Пожалуйста подождите...';
+
+					break;
+
+			}
+			elementProgress = new ElementProgress(elContainer, step, {
+
+				sTitle: lang.progressTitle,
+				max: object.geometry.index.count,
+				
+			});
+/*			
 			elProgress = document.createElement( 'div' );
 			cProgress = document.createElement( 'input' );
 			const elTitle = document.createElement( 'div' );
@@ -408,6 +427,7 @@ class Intersections {
 			cProgress.disabled = true;
 			elProgress.appendChild( cProgress );
 			elContainer.appendChild( elProgress );
+*/   
 
 		}
 
@@ -415,12 +435,18 @@ class Intersections {
 		index = 0;
 		function step( timestamp ) {
 
+/*			
 			if ( cProgress )
 				cProgress.value = index;
+*/	
+			if (elementProgress) elementProgress.value = index;
 			if ( index >= object.geometry.index.count ) {
 
+/*				
 				if ( elProgress )
 					elProgress.remove();
+*/	 
+				elementProgress.remove();
 				boCreateIntersections = true;
 				setTimeout( function () { createIntersections(); }, 0 );//Таймаут нужен что бы установился matrixWorld объектов из collidableMeshList.
 				return;
@@ -887,10 +913,11 @@ class Intersections {
 			faces.push( new Face( index, faces.length ) );
 
 			index += 3;
-			setTimeout( function () { step(); }, 0 );
+//			setTimeout( function () { step(); }, 0 );
+			elementProgress.step();
 
 		}
-		setTimeout( function () { step(); }, 0 );
+//		setTimeout( function () { step(); }, 0 );
 
 		function equals( point1, point2 ) {
 
