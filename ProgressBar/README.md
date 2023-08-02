@@ -1,10 +1,10 @@
-# N-dimensional graphics.
+# ProgressBar.
 
-Creates an N-dimensional graphic object, checks for a collision between an n-dimensional plane and an n-dimensional graphics object and returns the (n-1)-dimensional intersection geometry if a collision was occurs.
+Creates a [progress bar element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range) on your web page.
 
-See [nD API](https://raw.githack.com/anhr/commonNodeJS/master/nD/jsdoc/index.html) for details.
-[Tesseract](https://raw.githack.com/anhr/commonNodeJS/master/nD/Examples/tesseract.html).
-[Other example](https://raw.githack.com/anhr/commonNodeJS/master/nD/Examples/index.html).
+See [ProgressBar API](https://raw.githack.com/anhr/commonNodeJS/master/ProgressBar/jsdoc/index.html) for details.
+Examples:
+[Intersects](https://raw.githack.com/anhr/commonNodeJS/master/intersections/Examples/index.html).
 
  ## Have a job for me?
 Please read [About Me](https://anhr.github.io/AboutMe/).
