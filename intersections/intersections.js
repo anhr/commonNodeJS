@@ -17,7 +17,7 @@
 */
 
 import three from '../three.js'
-import ElementProgress from '../ElementProgress/ElementProgress.js'
+import ProgressBar from '../ProgressBar/ProgressBar.js'
 
 //debug
 //import { SpriteText } from '../SpriteText/SpriteText.js'
@@ -370,7 +370,7 @@ class Intersections {
 		//Progress window
 		const renderer = options.renderer || settings.renderer;
 //		var elProgress, cProgress;
-		let elementProgress;
+		let progressBar;
 		if ( renderer ) {
 
 			const elCanvas = renderer.domElement, elContainer = elCanvas.parentElement;
@@ -392,7 +392,7 @@ class Intersections {
 					break;
 
 			}
-			elementProgress = new ElementProgress(elContainer, step, {
+			progressBar = new ProgressBar(elContainer, step, {
 
 				sTitle: lang.progressTitle,
 				max: object.geometry.index.count,
@@ -439,14 +439,14 @@ class Intersections {
 			if ( cProgress )
 				cProgress.value = index;
 */	
-			if (elementProgress) elementProgress.value = index;
+			if (progressBar) progressBar.value = index;
 			if ( index >= object.geometry.index.count ) {
 
 /*				
 				if ( elProgress )
 					elProgress.remove();
 */	 
-				elementProgress.remove();
+				progressBar.remove();
 				boCreateIntersections = true;
 				setTimeout( function () { createIntersections(); }, 0 );//Таймаут нужен что бы установился matrixWorld объектов из collidableMeshList.
 				return;
@@ -914,7 +914,7 @@ class Intersections {
 
 			index += 3;
 //			setTimeout( function () { step(); }, 0 );
-			elementProgress.step();
+			progressBar.step();
 
 		}
 //		setTimeout( function () { step(); }, 0 );

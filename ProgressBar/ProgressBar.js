@@ -1,5 +1,5 @@
 /**
- * @module ElementProgress
+ * @module ProgressBar
  * @description Creates a [progress bar element]{@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range} on your web page.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -13,7 +13,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-class ElementProgress {
+class ProgressBar {
 
 	/**
 	 * set new value of the progress bar
@@ -65,4 +65,4 @@ class ElementProgress {
 
 }
 
-export default ElementProgress;
+export default ProgressBar;
