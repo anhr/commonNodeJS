@@ -580,7 +580,7 @@ class MyThree {
 
 					options.boPlayer = true;
 					if ( options.frustumPoints !== undefined ) options.frustumPoints.updateCloudPoints();
-					if ( options.onSelectScene !== undefined ) options.onSelectScene( t );
+					if ( options.onSelectScene !== undefined ) options.onSelectScene( index, t );
 
 				},
 				options: options,

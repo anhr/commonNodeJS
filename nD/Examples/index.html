@@ -382,7 +382,7 @@
 				} );
 
 				//new time of the player event
-				options.onSelectScene = function ( t ) { _5D.vectorPlane[4] = -1 + t * 2; }
+				options.onSelectScene = function ( index, t ) { _5D.vectorPlane[4] = -1 + t * 2; }
 
 			}, {
 
@@ -605,7 +605,7 @@
 				controls.setОnChange( controls.c5Dto4D, _4D, '4Dselector' );
 
 				//new time of the player event
-				options.onSelectScene = function ( t ) {
+				options.onSelectScene = function ( index, t ) {
 					
 					_4D.vectorPlane[3] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min );
 					
@@ -785,7 +785,7 @@
 				controls.setОnChange( controls.c4Dto3D, _3D, '3Dselector' );
 
 				//new time of the player event
-				options.onSelectScene = function ( t ) { _3D.vectorPlane[2] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min ); }
+				options.onSelectScene = function ( index, t ) { _3D.vectorPlane[2] = options.scales.z.min + t * ( options.scales.z.max - options.scales.z.min ); }
 
 			}, {
 
@@ -911,7 +911,7 @@
 				controls.setОnChange( controls.c3Dto2D, _2D, '2Dselector' );
 
 				//new time of the player event
-				options.onSelectScene = function ( t ) { _2D.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min ); }
+				options.onSelectScene = function ( index, t ) { _2D.vectorPlane[1] = options.scales.y.min + t * ( options.scales.y.max - options.scales.y.min ); }
 
 			}, {
 
@@ -1008,7 +1008,7 @@
 				} );
 
 				//new time of the player event
-				options.onSelectScene = function ( t ) { if ( _1D ) _1D.vectorPlane[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min ); }
+				options.onSelectScene = function ( index, t ) { if ( _1D ) _1D.vectorPlane[0] = options.scales.x.min + t * ( options.scales.x.max - options.scales.x.min ); }
 
 			}, {
 
