@@ -118,7 +118,7 @@ class Player {
 			const t = _this.getTime();
 			Player.selectPlayScene( group, { t: t, index: index, options: settings.options } );
 			_this.setIndex( index, ( options.playerOptions.name === '' ? '' : options.playerOptions.name + ': ' ) + t );
-			if ( settings.onSelectScene ) settings.onSelectScene( index, t );
+			if ( settings.onSelectScene ) _this.selectScenePause = settings.onSelectScene( index, t );
 			if ( options.frustumPoints ) options.frustumPoints.updateCloudPoints();
 
 		}
@@ -297,6 +297,34 @@ class Player {
 
 		}
 
+		function step(timestamp) {
+
+			if (_this.selectScenePause) return;//При построении сцены был применен ProgressBar. Поэтому возврат из options.onSelectScene произошел еще до построения сцены. Нужно приостановить проигрывание, пока сцена не построится.
+			if (playing)
+				window.requestAnimationFrame(step);
+			else time = undefined;
+
+			if (time === undefined) {
+
+				time = timestamp;
+				timeNext = time + 1000 / options.playerOptions.interval;
+
+			}
+			if (isNaN(timeNext) || (timeNext === Infinity)) {
+
+				console.error('Player.animate: timeNext = ' + timeNext);
+				playing = false;
+
+			}
+
+			if (timestamp < timeNext)
+				return;
+			while (timestamp > timeNext)
+				timeNext += 1000 / options.playerOptions.interval;
+			playNext();
+
+		}
+
 		/**
 		 * User has clicked the Play ► / Pause ❚❚ button
 		 */
@@ -315,34 +343,15 @@ class Player {
 			playNext();
 			RenamePlayButtons();
 
-			function step( timestamp ) {
-
-				if ( playing )
-					window.requestAnimationFrame( step );
-				else time = undefined;
-
-				if ( time === undefined ) {
-
-					time = timestamp;
-					timeNext = time + 1000 / options.playerOptions.interval;
-
-				}
-				if ( isNaN( timeNext ) || ( timeNext === Infinity ) ) {
-
-					console.error( 'Player.animate: timeNext = ' + timeNext );
-					playing = false;
-
-				}
-
-				if ( timestamp < timeNext )
-					return;
-				while ( timestamp > timeNext )
-					timeNext += 1000 / options.playerOptions.interval;
-				playNext();
-
-			}
 			window.requestAnimationFrame( step );
 
+		}
+
+		this.continue = () => {
+
+			_this.selectScenePause = false;
+			window.requestAnimationFrame(step);
+			
 		}
 
 		/**
