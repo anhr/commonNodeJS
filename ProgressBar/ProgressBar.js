@@ -54,7 +54,12 @@ class ProgressBar {
 		/**
 		 * Execute the next step asynchronously.
 		 */
-		this.step = () => { window.setTimeout(() => { step() }, 0); }
+		this.step = () => {
+
+			window.setTimeout(() => { step() }, 0);
+			//window.requestAnimationFrame(step);//время выполнения увеличивается на треть
+
+		}
 		/**
 		 * remove progress bar from your web page.
 		 **/
