@@ -347,6 +347,15 @@ class Player {
 
 		}
 
+		/**
+		 * <pre>
+		 *Continue playing asynchronously.
+		 * Usual using if creating new scene to take long time.
+		 * Please call it from <b>settings.options.onSelectScene()</b> function after asynchronously creating of the scene.
+		 * Return true from <b>settings.options.onSelectScene()</b> function for pause of the playing.
+		 * </pre>
+		 * @see <a href="../../../../egocentricUniverse/master/jsdoc" target="_blank">example</a>
+		 */
 		this.continue = () => {
 
 			_this.selectScenePause = false;
