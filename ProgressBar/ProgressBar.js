@@ -60,6 +60,16 @@ class ProgressBar {
 		 **/
 		this.remove = () => { elProgress.remove(); };
 		this.step();
+	
+		/**
+		 * set new step function
+		 */
+		this.newStep = (value) => { step = value; }
+		
+		/**
+		 * set new title
+		 */
+		this.title = (value) => { elTitle.innerHTML = value; }
 
 	}
 
