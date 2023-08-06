@@ -1116,12 +1116,14 @@ class ND {
 				set: function ( target, name, value ) {
 
 					const i = parseInt( name );
+/*					
 					if ( !isNaN( i ) ) {
 
 						//изменилась позиция вершины
 						return true;
 
 					}
+*/	 
 					target[name] = value;
 
 					return true;
