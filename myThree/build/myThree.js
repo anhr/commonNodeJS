@@ -10186,7 +10186,7 @@ function Player(group) {
 						var t = _this.getTime();
 						Player.selectPlayScene(group, { t: t, index: index, options: settings.options });
 						_this.setIndex(index, (options.playerOptions.name === '' ? '' : options.playerOptions.name + ': ') + t);
-						if (settings.onSelectScene) settings.onSelectScene(index, t);
+						if (settings.onSelectScene) _this.selectScenePause = settings.onSelectScene(index, t);
 						if (options.frustumPoints) options.frustumPoints.updateCloudPoints();
 			}
 			setTimeout(function () {
@@ -10270,6 +10270,22 @@ function Player(group) {
 						}
 						play();
 			}
+			function step(timestamp) {
+						if (_this.selectScenePause) return;
+						if (playing) window.requestAnimationFrame(step);else time = undefined;
+						if (time === undefined) {
+									time = timestamp;
+									timeNext = time + 1000 / options.playerOptions.interval;
+						}
+						if (isNaN(timeNext) || timeNext === Infinity) {
+									console.error('Player.animate: timeNext = ' + timeNext);
+									playing = false;
+						}
+						if (timestamp < timeNext) return;
+						while (timestamp > timeNext) {
+									timeNext += 1000 / options.playerOptions.interval;
+						}playNext();
+			}
 			this.play3DObject = function () {
 						if (playing) {
 									pause();
@@ -10279,21 +10295,10 @@ function Player(group) {
 						if (options.playerOptions.max !== null && selectSceneIndex >= options.playerOptions.marks - 1) selectSceneIndex = 0;
 						playNext();
 						RenamePlayButtons();
-						function step(timestamp) {
-									if (playing) window.requestAnimationFrame(step);else time = undefined;
-									if (time === undefined) {
-												time = timestamp;
-												timeNext = time + 1000 / options.playerOptions.interval;
-									}
-									if (isNaN(timeNext) || timeNext === Infinity) {
-												console.error('Player.animate: timeNext = ' + timeNext);
-												playing = false;
-									}
-									if (timestamp < timeNext) return;
-									while (timestamp > timeNext) {
-												timeNext += 1000 / options.playerOptions.interval;
-									}playNext();
-						}
+						window.requestAnimationFrame(step);
+			};
+			this.continue = function () {
+						_this.selectScenePause = false;
 						window.requestAnimationFrame(step);
 			};
 			this.repeat = function () {
@@ -13682,11 +13687,6 @@ function GuiSelectPoint(options) {
 									lang.defaultLocalPositionTitle = 'Восстановить локальную позицию точки по умолчанию.';
 									break;
 						default:
-									if (guiParams.lang === undefined || guiParams.lang.languageCode != _languageCode) break;
-									Object.keys(guiParams.lang).forEach(function (key) {
-												if (lang[key] === undefined) return;
-												lang[key] = guiParams.lang[key];
-									});
 			}
 			var f3DObjects,
 			    fPoint,
@@ -13942,6 +13942,7 @@ function GuiSelectPoint(options) {
 									console.error('GuiSelectPoint.addMesh: Add mesh into scene first.');
 									return;
 						}
+						if (!f3DObjects) this.add();
 						f3DObjects.domElement.style.display = 'block';
 						if (!cMeshs) {
 									for (var i = 0; i < arrayMeshs.length; i++) {
@@ -14056,9 +14057,13 @@ function GuiSelectPoint(options) {
 			function setRotationControllers() {
 						if (isNotSetControllers()) return;
 						var mesh = getMesh();
-						if (cRotations.x) cRotations.x.setValue(mesh.rotation.x);
-						if (cRotations.y) cRotations.y.setValue(mesh.rotation.y);
-						if (cRotations.z) cRotations.z.setValue(mesh.rotation.z);
+						var setValue = function setValue(controller, angle) {
+									if (angle < controller.__min || angle > controller.__max) console.error('GuiSelectPoint.setRotationControllers(): Invalid angle = ' + angle + ' range. Available range from ' + controller.__min + ' to ' + controller.__max);
+									controller.setValue(angle);
+						};
+						if (cRotations.x) setValue(cRotations.x, mesh.rotation.x);
+						if (cRotations.y) setValue(cRotations.y, mesh.rotation.y);
+						if (cRotations.z) setValue(cRotations.z, mesh.rotation.z);
 			}
 			function visibleTraceLine(intersection, value, getMesh) {
 						if (!intersection || !intersection.object.userData.player || intersection.object.userData.player.arrayFuncs === undefined) return;
@@ -14091,7 +14096,7 @@ function GuiSelectPoint(options) {
 						if (boZ) n++;
 						switch (n) {
 									case 1:
-												fRotation.domElement.style.display = none;
+												if (fRotation) fRotation.domElement.style.display = none;
 												break;
 									case 2:
 												fRotation.domElement.style.display = block;
@@ -14139,6 +14144,7 @@ function GuiSelectPoint(options) {
 									}
 									return;
 						}
+						if (!object.geometry) return;
 						var gp = object.geometry.attributes.position;
 						object.updateMatrixWorld();
 						for (var _i = 0; _i < gp.count; _i++) {
@@ -14159,7 +14165,7 @@ function GuiSelectPoint(options) {
 			function createPlayerArrayFuncs(mesh) {
 						if (!mesh || mesh.userData.boFrustumPoints) return;
 						if (!mesh.userData.player) mesh.userData.player = {};
-						if (!mesh.userData.player.arrayFuncs) {
+						if (!mesh.userData.player.arrayFuncs && mesh.geometry) {
 									var position = mesh.geometry.attributes.position;
 									mesh.userData.player.arrayFuncs = [];
 									for (var i = 0; i < position.count; i++) {
@@ -14203,7 +14209,7 @@ function GuiSelectPoint(options) {
 												} else {
 															displayPoints = block;
 															displayFrustumPoints = none;
-															if (mesh.geometry.attributes) {
+															if (mesh.geometry && mesh.geometry.attributes) {
 																		addPoints(mesh);
 															}
 												}
@@ -16061,6 +16067,70 @@ function pointLight(scene) {
 };
 
 /**
+ * @module ProgressBar
+ * @description Creates a [progress bar element]{@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range} on your web page.
+ *
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+*/
+var ProgressBar = function () {
+	createClass(ProgressBar, [{
+		key: 'value',
+		set: function set$$1(value) {
+			this.setValue(value);
+		}
+	}]);
+	function ProgressBar(elParent, step) {
+		var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+		classCallCheck(this, ProgressBar);
+		var elProgress = document.createElement('div'),
+		    cProgress = document.createElement('input'),
+		    elTitle = document.createElement('div');
+		elProgress.style.position = 'absolute';
+		elProgress.style.top = 0;
+		elProgress.style.left = 0;
+		elProgress.style.backgroundColor = 'white';
+		elProgress.style.margin = '2px';
+		elProgress.style.padding = '2px';
+		elTitle.innerHTML = settings.sTitle || '';
+		elTitle.style.color = 'black';
+		elProgress.appendChild(elTitle);
+		cProgress.min = settings.min != undefined ? settings.min : "0";
+		cProgress.max = settings.max != undefined ? settings.max : "1";
+		cProgress.type = "range";
+		cProgress.disabled = true;
+		elProgress.appendChild(cProgress);
+		elParent.appendChild(elProgress);
+		this.setValue = function (value) {
+			cProgress.value = value;
+		};
+		this.step = function () {
+			window.setTimeout(function () {
+				step();
+			}, 0);
+		};
+		this.remove = function () {
+			elProgress.remove();
+		};
+		this.step();
+		this.newStep = function (value) {
+			step = value;
+		};
+		this.title = function (value) {
+			elTitle.innerHTML = value;
+		};
+	}
+	return ProgressBar;
+}();
+
+/**
  * @module Intersections
  * @description Creates an intersection lines for graphic objects.
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -16243,7 +16313,7 @@ function Intersections(object, intersectMeshList) {
 	}
 	var faces = [];
 	var renderer = options.renderer || settings.renderer;
-	var elProgress, cProgress;
+	var progressBar = void 0;
 	if (renderer) {
 		var elCanvas = renderer.domElement,
 		    elContainer = elCanvas.parentElement;
@@ -16253,36 +16323,22 @@ function Intersections(object, intersectMeshList) {
 		}
 		var container = "container";
 		if (!elContainer.classList.contains(container)) elContainer.classList.add(container);
-		elProgress = document.createElement('div');
-		cProgress = document.createElement('input');
-		var elTitle = document.createElement('div');
-		elProgress.style.position = 'absolute';
-		elProgress.style.top = 0;
-		elProgress.style.left = 0;
-		elProgress.style.backgroundColor = 'white';
-		elProgress.style.margin = '2px';
-		elProgress.style.padding = '2px';
 		var lang = { progressTitle: 'Intersections preparing.<br>Wait please...' };
 		switch (options.getLanguageCode()) {
 			case 'ru':
 				lang.progressTitle = 'Подготовка пересечений.<br>Пожалуйста подождите...';
 				break;
 		}
-		elTitle.innerHTML = lang.progressTitle;
-		elTitle.style.color = 'black';
-		elProgress.appendChild(elTitle);
-		cProgress.min = "0";
-		cProgress.max = object.geometry.index.count;
-		cProgress.type = "range";
-		cProgress.disabled = true;
-		elProgress.appendChild(cProgress);
-		elContainer.appendChild(elProgress);
+		progressBar = new ProgressBar(elContainer, step, {
+			sTitle: lang.progressTitle,
+			max: object.geometry.index.count
+		});
 	}
 	index = 0;
 	function step(timestamp) {
-		if (cProgress) cProgress.value = index;
+		if (progressBar) progressBar.value = index;
 		if (index >= object.geometry.index.count) {
-			if (elProgress) elProgress.remove();
+			progressBar.remove();
 			boCreateIntersections = true;
 			setTimeout(function () {
 				createIntersections();
@@ -16600,13 +16656,8 @@ function Intersections(object, intersectMeshList) {
 		};
 		faces.push(new Face(index, faces.length));
 		index += 3;
-		setTimeout(function () {
-			step();
-		}, 0);
+		progressBar.step();
 	}
-	setTimeout(function () {
-		step();
-	}, 0);
 	function equals(point1, point2) {
 		return point1.distanceTo(point2) <= 9.0e-10;
 	}
@@ -17034,7 +17085,7 @@ function MyThree(createXDobjects, options) {
 									onSelectScene: function onSelectScene(index, t) {
 												options.boPlayer = true;
 												if (options.frustumPoints !== undefined) options.frustumPoints.updateCloudPoints();
-												if (options.onSelectScene !== undefined) options.onSelectScene(t);
+												if (options.onSelectScene !== undefined) return options.onSelectScene(index, t);
 									},
 									options: options,
 									cameraTarget: { camera: camera },
