@@ -546,7 +546,6 @@ class StereoEffect {
 		 * Examples: "en" - English language, "ru" Russian.
 		 * See the {@link https://tools.ietf.org/html/rfc4646#section-2.1|Syntax} paragraph of RFC 4646 for details.
 		 * </pre>
-		   * @param {Object} [guiParams.lang] Object with localized language values.
 		 */
 		this.createCanvasMenuItem = function ( canvasMenu, params ) {
 

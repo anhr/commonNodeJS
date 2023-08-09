@@ -272,6 +272,7 @@ class ND {
 					lang.segmentId = 'Индекс сегмента';
 
 					break;
+				/*guiParams is not defined
 				default://Custom language
 					if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
 						break;
@@ -283,6 +284,7 @@ class ND {
 						lang[key] = guiParams.lang[key];
 
 					});
+				*/
 
 			}
 
@@ -2229,6 +2231,7 @@ class ND {
 						lang.notSelected = 'Не выбран';
 
 						break;
+					/*guiParams is not defined
 					default://Custom language
 						if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
 							break;
@@ -2240,6 +2243,7 @@ class ND {
 							lang[key] = guiParams.lang[key];
 
 						} );
+					*/
 
 				}
 				for ( var i = fParent.__controllers.length - 1; i >= 0; i-- ) { fParent.remove( fParent.__controllers[i] ); }
@@ -3354,6 +3358,7 @@ ND.gui = class {
 				lang.nDTitle = 'n-мерный объект';
 
 				break;
+			/*guiParams is not defined
 			default://Custom language
 				if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
 					break;
@@ -3365,6 +3370,7 @@ ND.gui = class {
 					lang[key] = guiParams.lang[key];
 
 				} );
+			*/
 
 		}
 		const fND = fParent.addFolder( lang.nD );

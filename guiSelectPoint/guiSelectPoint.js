@@ -214,6 +214,7 @@ class GuiSelectPoint {
 				lang.defaultLocalPositionTitle = 'Восстановить локальную позицию точки по умолчанию.';
 				break;
 			default://Custom language
+				/*guiParams is not defined
 				if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
 					break;
 
@@ -224,6 +225,7 @@ class GuiSelectPoint {
 					lang[key] = guiParams.lang[key];
 
 				} );
+				*/
 
 		}
 
