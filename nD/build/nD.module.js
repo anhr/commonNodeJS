@@ -8480,7 +8480,7 @@ function Player(group) {
 						var t = _this.getTime();
 						Player.selectPlayScene(group, { t: t, index: index, options: settings.options });
 						_this.setIndex(index, (options.playerOptions.name === '' ? '' : options.playerOptions.name + ': ') + t);
-						if (settings.onSelectScene) settings.onSelectScene(index, t);
+						if (settings.onSelectScene) _this.selectScenePause = settings.onSelectScene(index, t);
 						if (options.frustumPoints) options.frustumPoints.updateCloudPoints();
 			}
 			setTimeout(function () {
@@ -8564,6 +8564,22 @@ function Player(group) {
 						}
 						play();
 			}
+			function step(timestamp) {
+						if (_this.selectScenePause) return;
+						if (playing) window.requestAnimationFrame(step);else time = undefined;
+						if (time === undefined) {
+									time = timestamp;
+									timeNext = time + 1000 / options.playerOptions.interval;
+						}
+						if (isNaN(timeNext) || timeNext === Infinity) {
+									console.error('Player.animate: timeNext = ' + timeNext);
+									playing = false;
+						}
+						if (timestamp < timeNext) return;
+						while (timestamp > timeNext) {
+									timeNext += 1000 / options.playerOptions.interval;
+						}playNext();
+			}
 			this.play3DObject = function () {
 						if (playing) {
 									pause();
@@ -8573,21 +8589,10 @@ function Player(group) {
 						if (options.playerOptions.max !== null && selectSceneIndex >= options.playerOptions.marks - 1) selectSceneIndex = 0;
 						playNext();
 						RenamePlayButtons();
-						function step(timestamp) {
-									if (playing) window.requestAnimationFrame(step);else time = undefined;
-									if (time === undefined) {
-												time = timestamp;
-												timeNext = time + 1000 / options.playerOptions.interval;
-									}
-									if (isNaN(timeNext) || timeNext === Infinity) {
-												console.error('Player.animate: timeNext = ' + timeNext);
-												playing = false;
-									}
-									if (timestamp < timeNext) return;
-									while (timestamp > timeNext) {
-												timeNext += 1000 / options.playerOptions.interval;
-									}playNext();
-						}
+						window.requestAnimationFrame(step);
+			};
+			this.continue = function () {
+						_this.selectScenePause = false;
 						window.requestAnimationFrame(step);
 			};
 			this.repeat = function () {
@@ -11816,12 +11821,6 @@ function ND(n) {
 				lang.bodyId = 'Индекс тела';
 				lang.segmentId = 'Индекс сегмента';
 				break;
-			default:
-				if (guiParams.lang === undefined || guiParams.lang.languageCode != _languageCode) break;
-				Object.keys(guiParams.lang).forEach(function (key) {
-					if (lang[key] === undefined) return;
-					lang[key] = guiParams.lang[key];
-				});
 		}
 		var index = intersection.object.geometry.index,
 		    edge = [index.getX(intersection.indexNew), index.getY(intersection.indexNew)],
@@ -11842,7 +11841,7 @@ function ND(n) {
 		var text = '\n' + lang.pointId + ': ' + pointId;
 		for (var segmentIndex = 0; segmentIndex < edges.length; segmentIndex++) {
 			var edgeCur = edges[segmentIndex];
-			if (edgeCur.indices[0] === edge[0] && edgeCur.indices[1] === edge[1] || edgeCur.indices[0] === edge[1] && edgeCur.indices[1] === edge[0]) {
+			if (edgeCur[0] === edge[0] && edgeCur[1] === edge[1] || edgeCur[0] === edge[1] && edgeCur[1] === edge[0]) {
 				text += '\n' + lang.edgeId + ': ' + segmentIndex;
 				edges.selected = segmentIndex;
 				var detectedIndex;
@@ -11856,7 +11855,7 @@ function ND(n) {
 							}
 						}
 					});
-					if (!detectedIndex) {
+					if (detectedIndex === undefined) {
 						console.error('ND: mouse move. Index of segment was not detected');
 						break;
 					} else {
@@ -12294,29 +12293,12 @@ function ND(n) {
 									return target[i];
 								}
 								switch (name) {
-									case 'positionWorld':
-										return target.positionWorld;
-									case 'forEach':
-										return target.forEach;
-									case 'length':
-										return target.length;
-									case 'indices':
-										return target.indices;
-									case 'i':
-										return target.i;
-									case 'arguments':
-										return target.arguments;
 									case 'reset':
 										return function () {
 											delete target.positionWorld;
 										};
-									case 'edges':
-										return target.edges;
-									case 'index':
-										return target.index;
-									default:
-										console.error('ND: settings.object.geometry.position[i] get. Invalid name: ' + name);
 								}
+								return target[name];
 							},
 							set: function set$$1(target, name, value) {
 								var i = parseInt(name);
@@ -12370,7 +12352,7 @@ function ND(n) {
 			set: function set$$1(target, name, value) {
 				var i = parseInt(name);
 				if (!isNaN(i)) {
-					return true;
+					target[name].positionWorld = undefined;
 				}
 				target[name] = value;
 				return true;
@@ -12389,9 +12371,11 @@ function ND(n) {
 		if (edges && edges.isProxy) return edges;
 		return new Proxy(edges ? edges : [], {
 			get: function get$$1(edges, name, value) {
+				var _this3 = this;
 				var i = parseInt(name);
-				if (!isNaN(i)) return {
-					intersection: function intersection(geometryIntersection) {
+				if (!isNaN(i)) {
+					var edge = edges[i];
+					edge.intersection = function (geometryIntersection) {
 						var i = parseInt(name);
 						if (!isNaN(i)) {
 							var indicesIntersection = function indicesIntersection(position) {
@@ -12413,11 +12397,10 @@ function ND(n) {
 							if (edges.length === 0) return;
 							if (i >= edges.length) {
 								console.error('ND: settings.object.geometry.indices[]intersection. invalid length: ' + edges.length);
-								this.indices = { intersection: {} };
+								_this3.indices = { intersection: {} };
 								return;
 							}
 							var indices = edges[i];
-							if (indices.indices) indices = indices.indices;
 							if (indices.length !== 2) {
 								console.error('ND: settings.object.geometry.indices[]intersection. indices.length = ' + indices.length);
 								return;
@@ -12462,21 +12445,25 @@ function ND(n) {
 									} else {
 										var nD02 = new ND(n - 1, {
 											plane: true,
-											object: { geometry: {
+											object: {
+												geometry: {
 													position: positionWorld.copy(),
 													indices: [[indices]],
 													iAxes: [1, 2]
-												} },
+												}
+											},
 											vectorPlane: vectorPlane.array
 										}),
 										    arrayIntersects02 = nD02.intersection();
 										var nD12 = new ND(n - 1, {
 											plane: true,
-											object: { geometry: {
+											object: {
+												geometry: {
 													position: positionWorld.copy(),
 													indices: [[indices]],
 													iAxes: [0, 2]
-												} },
+												}
+											},
 											vectorPlane: vectorPlane.array
 										}),
 										    arrayIntersects12 = nD12.intersection();
@@ -12487,11 +12474,13 @@ function ND(n) {
 									var intersectionAxis = function intersectionAxis(axis) {
 										var nD0 = new ND(2, {
 											plane: true,
-											object: { geometry: {
+											object: {
+												geometry: {
 													position: positionWorld,
 													indices: [[indices]],
 													iAxes: [axis, n - 1]
-												} },
+												}
+											},
 											vectorPlane: vectorPlane.array
 										});
 										return nD0.intersection();
@@ -12509,27 +12498,18 @@ function ND(n) {
 									indicesIntersection(boIntersect ? arrayIntersections : undefined);
 							}
 						} else console.error('ND: settings.object.geometry.indices[]intersection. invalid name: ' + name);
-					},
-					indices: edges[parseInt(name)]
-				};
+					};
+					return edge;
+				}
 				switch (name) {
-					case 'push':
-						return edges.push;
-					case 'length':
-						return edges.length;
 					case 'intersection':
 						return undefined;
 					case 'edges':
 						return edges;
 					case 'isProxy':
 						return true;
-					case 'forEach':
-						return edges.forEach;
-					case 'selected':
-						return edges.selected;
-					default:
-						console.error('ND: settings.object.geometry.indices getter. Invalid name: ' + name);
 				}
+				return edges[name];
 			},
 			set: function set$$1(edges, prop, value) {
 				var index = parseInt(prop);
@@ -12891,14 +12871,15 @@ function ND(n) {
 				return aFaceIndices;
 			},
 			get indices() {
-				var _this3 = this;
+				var _this4 = this;
 				var indices = [],
 				    colors = [];
 				if (settings.object.geometry.indices[0].length !== 0) {
 					var _edges2 = settings.object.geometry.indices[0];
 					for (var i = 0; i < _edges2.length; i++) {
-						var edge = _edges2[i].indices;
+						var edge = _edges2[i];
 						if (edge !== undefined) {
+							if (edge.length === undefined) edge = [0, 1];
 							if (edge.length !== 2) {
 								console.error('ND.geometry.D3.get indices: invalid edge.length = ' + edge.length);
 								return;
@@ -12925,7 +12906,7 @@ function ND(n) {
 										colors.push(rgb.g);
 										colors.push(rgb.b);
 									};
-									var color = new THREE.Color(_this3.color);
+									var color = new THREE.Color(_this4.color);
 									var rgb = hexToRgb(color.getHexString());
 									push();
 									if (_edges2.length === 1) push();
@@ -13109,12 +13090,6 @@ function ND(n) {
 					lang.defaultRotationTitle = 'Восстановить вращение объекта по умолчанию';
 					lang.notSelected = 'Не выбран';
 					break;
-				default:
-					if (guiParams.lang === undefined || guiParams.lang.languageCode != _languageCode) break;
-					Object.keys(guiParams.lang).forEach(function (key) {
-						if (lang[key] === undefined) return;
-						lang[key] = guiParams.lang[key];
-					});
 			}
 			for (var i = fParent.__controllers.length - 1; i >= 0; i--) {
 				fParent.remove(fParent.__controllers[i]);
@@ -13279,7 +13254,9 @@ function ND(n) {
 									console.error('ND: Select edge. Invalid lineIndices.length = ' + lineIndices.length);
 									break;
 								}
-								cDistance.setValue(geometry.D3.points[lineIndices[0]].distanceTo(geometry.D3.points[lineIndices[1]]));
+								var position0 = geometry.geometry.position[lineIndices[0]],
+								    position1 = settings.object.geometry.position[lineIndices[1]];
+								if (position0.length && position1.length) cDistance.setValue(position0.distanceTo(position1));else console.error("ND: Select edge. Invalid edge's vertices distance");
 								break;
 						}
 						line.userData.name = fSegment.name + ' ' + value;
@@ -13443,10 +13420,10 @@ function ND(n) {
 			}
 			var edge = settings.object.geometry.indices[0][iEdge];
 			edge.intersection(geometryIntersection);
-			var position = edge.indices.intersection.position;
+			var position = edge.intersection.position;
 			if (position) {
 				var boAdd = true;
-				if (edge.indices.intersection.boVerticeOnPanel) {
+				if (edge.intersection.boVerticeOnPanel) {
 					for (var i = 0; i < geometryIntersection.position.length; i++) {
 						if (position.equals(geometryIntersection.position[i])) {
 							boAdd = false;
@@ -13672,9 +13649,6 @@ function ND(n) {
 	var THREE = three$1.THREE,
 	    scene = settings.scene;
 	if (scene) {
-		options.scales.x.name = 0;
-		options.scales.y.name = 1;
-		options.scales.z.name = 2;
 		if (n <= 1) options.scales.y = undefined;
 		if (n <= 2) options.scales.z = undefined;
 		options.scales.text.rect = options.scales.text.rect || {};
@@ -13758,9 +13732,6 @@ function ND(n) {
 		var plane = new Plane();
 		plane.createMesh();
 	}
-	this.object = function (object) {
-		console.error('ND: settings');
-	};
 	this.vectorPlane;
 	this.geometry;
 	Object.defineProperties(this, {
@@ -13780,6 +13751,11 @@ function ND(n) {
 				settings.object.position.clear();
 				projectTo3D();
 				this.intersection();
+			}
+		},
+		object3D: {
+			get: function get$$1() {
+				return object3D;
 			}
 		},
 		object: {
@@ -13842,12 +13818,6 @@ ND.gui = function () {
 			case 'ru':
 				lang.nDTitle = 'n-мерный объект';
 				break;
-			default:
-				if (guiParams.lang === undefined || guiParams.lang.languageCode != _languageCode) break;
-				Object.keys(guiParams.lang).forEach(function (key) {
-					if (lang[key] === undefined) return;
-					lang[key] = guiParams.lang[key];
-				});
 		}
 		var fND = fParent.addFolder(lang.nD);
 		dat.folderNameAndTitle(fND, lang.nD, lang.nDTitle);
