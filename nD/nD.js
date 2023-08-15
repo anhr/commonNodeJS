@@ -1406,6 +1406,7 @@ class ND {
 									( ( edge[1] === value[0] ) && ( edge[0] === value[1] ) )
 								) {
 
+									//console.error('ND.proxyEdges: Duplicate edge: ' + edge);//for http://localhost/anhr/egocentricUniverse/master/Examples/2D.html
 									value.index = i;
 									return true;
 
@@ -1699,17 +1700,22 @@ class ND {
 						
 						for ( var i = start; i < length; i++ ) {
 							
-							if ( start === 0 )
-								addItem( i + 1 );
-							else {
+							if ( start === 0 ) {
 								
-								const edge = [ positionIndices[start - 1], positionIndices[i] ];
+								if (!addItem( i + 1 )) return false;
+								
+							} else {
+								
+								const edge = [ positionIndices[start - 1], positionIndices[i] ], length = edges.length;
 								edges.push( edge );
+								if (length === edges.length) return false;//новое ребро не добавилось. Эта проверка появилась во время отладки http://localhost/anhr/egocentricUniverse/master/Examples/2D.html
+																			//Иначе будет бесконечный цикл
 								if ( levelIndices ) levelIndices.push( edge.index );
 
 							}
 		
 						}
+						return true;
 		
 					}
 					addItem();
