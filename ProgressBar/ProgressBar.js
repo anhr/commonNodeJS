@@ -51,12 +51,32 @@ class ProgressBar {
 		elProgress.appendChild( cProgress );
 		elParent.appendChild( elProgress );
 		this.setValue = (value) => { cProgress.value = value; }
+		let timeStamp = window.performance.now();
 		/**
 		 * Execute the next step asynchronously.
 		 */
-		this.step = () => {
+		this.step = (boTimeout = false) => {
 
-			window.setTimeout(() => { step() }, 0);
+			const timeCur = window.performance.now(), timeDelay = timeCur - timeStamp;
+//console.log('timeDelay = ' + timeDelay)
+			if (
+				boTimeout ||//Вызывать setTimeout только на первом шаге что бы конструктор ProgressBar завершился еще до вызова step
+				(timeDelay > 10)//или когда время между шагами превысит 0.1 секеунды
+			) {
+
+//console.log('setTimeout. boTimeout = ' + boTimeout + ', timeDelay = ' + timeDelay);
+				timeStamp = timeCur;
+				window.setTimeout(() => { step() }, 0);
+
+			}
+			//иначе функция step вызывается сразу
+			else {
+				
+//console.log('step()')
+				step();
+
+			}
+			
 			//window.requestAnimationFrame(step);//время выполнения увеличивается на треть
 
 		}
@@ -64,7 +84,7 @@ class ProgressBar {
 		 * remove progress bar from your web page.
 		 **/
 		this.remove = () => { elProgress.remove(); };
-		this.step();
+		this.step(true);
 	
 		/**
 		 * set new step function
