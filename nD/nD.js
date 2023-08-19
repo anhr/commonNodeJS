@@ -952,7 +952,8 @@ class ND {
 
 						} else {
 
-							positionPoint.forEach( ( value, j ) => array.push( positionPoint[j] + settings.object.position[j] ) );
+//							positionPoint.forEach( ( value, j ) => array.push( positionPoint[j] + settings.object.position[j] ) );
+							positionPoint.forEach( ( value, j ) => array.push( value + settings.object.position[j] ) );
 							setRotationAxes();
 
 						}
@@ -1031,8 +1032,9 @@ class ND {
 									if ( !isNaN( i ) ) {
 
 										if ( i >= target.length ) return 0;
-										if ( isNaN( target[i] ) ) console.error( 'ND get settings.object.geometry.position[i][' + i + '] = ' + target[i] );
-										return target[i];
+										const axis = target[i];
+										if ( isNaN( axis ) ) console.error( 'ND get settings.object.geometry.position[i][' + i + '] = ' + target[i] );
+										return axis;
 
 									}
 									switch ( name ) {
