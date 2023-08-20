@@ -123,11 +123,7 @@ function MyPoints( arrayFuncs, group, settings ) {
 	const pointsOptions = settings.pointsOptions;
 	settings.options = settings.options || new Options();
 	var options = settings.options;// || {};
-	if ( !options.boOptions ) {
-
-		options = new Options( options );
-
-	}
+	if ( !options.boOptions ) options = new Options( options );
 	pointsOptions.tMin = pointsOptions.tMin || 0;
 	pointsOptions.name = pointsOptions.name || '';
 	pointsOptions.position = pointsOptions.position || new THREE.Vector3( 0, 0, 0 );
