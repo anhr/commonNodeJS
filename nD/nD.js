@@ -1700,6 +1700,23 @@ class ND {
 					
 					function addItem( start = 0 ) {
 						
+						for (var i = start; i < length; i++) {
+
+							if (start === 0)
+								addItem(i + 1);
+							else {
+
+								const edge = [positionIndices[start - 1], positionIndices[i]];
+								edges.push(edge);
+								if (levelIndices) levelIndices.push(edge.index);
+
+							}
+
+						}
+						/*Это было добавлено в commit 'Update ND.js' 'устранил бесконечный цикл добавления ребра'
+						 * Но при этом стало некорректно работать intersection
+						 * Смотри пример в http://localhost/anhr/commonNodeJS/master/nD/Examples/
+						 * Что то не получается воспроизвести бесконечный цикл добавления ребра
 						for ( var i = start; i < length; i++ ) {
 							
 							if ( start === 0 ) {
@@ -1718,6 +1735,7 @@ class ND {
 		
 						}
 						return true;
+						*/
 		
 					}
 					addItem();
