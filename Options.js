@@ -634,7 +634,7 @@ class Options {
 								 */
 								constructor( scales, axisName ) {
 
-									const scale = scales[axisName];
+									let scale = scales[axisName];
 //									scale = scale || {};
 									this.isAxis = function () {
 
@@ -663,7 +663,17 @@ class Options {
 												return scale.min;
 
 											},
-											set: function ( min ) { scale.min = min; },
+											set: function ( min ) {
+		   
+												if ( !scale ) {
+			
+				   									scales[axisName] = {};
+													scale = scales[axisName];
+											
+												}
+												scale.min = min;
+			
+											},
 
 										},
 										max: {
