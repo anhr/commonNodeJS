@@ -91,6 +91,7 @@ class ProgressBar {
 		 * remove progress bar from your web page.
 		 **/
 		this.remove = () => { elProgress.parentElement.remove(); };
+  
 		this.step();
 	
 		/**
