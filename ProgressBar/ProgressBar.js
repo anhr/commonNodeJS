@@ -19,7 +19,7 @@ class ProgressBar {
 	 * set new value of the progress bar
 	 */
 	set value(value) { this.setValue(value); }
-	
+
 	/**
 	 * Creates a [progress bar element]{@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range} on your web page.
 	 * @param {HTMLElement} elParent parent element
@@ -31,25 +31,25 @@ class ProgressBar {
 	 */
 	constructor(elParent, step, settings = {}) {
 
-		const elProgress = document.createElement( 'div' ),
-			cProgress = document.createElement( 'input' ),
-			elTitle = document.createElement( 'div' );
-//		elProgress.style.position = 'absolute';
-//		elProgress.style.top = 0;
-//		elProgress.style.left = 0;
+		const elProgress = document.createElement('div'),
+			cProgress = document.createElement('input'),
+			elTitle = document.createElement('div');
+		//		elProgress.style.position = 'absolute';
+		//		elProgress.style.top = 0;
+		//		elProgress.style.left = 0;
 		elProgress.style.backgroundColor = 'white';
 		elProgress.style.margin = '2px';
 		elProgress.style.padding = '2px';
 		elTitle.innerHTML = settings.sTitle || '';
 		elTitle.style.color = 'black';
-		elProgress.appendChild( elTitle );
+		elProgress.appendChild(elTitle);
 		cProgress.min = settings.min != undefined ? settings.min : "0";
 		cProgress.max = settings.max != undefined ? settings.max : "1";
-//		cProgress.max = object.geometry.index.count;
+		//		cProgress.max = object.geometry.index.count;
 		cProgress.type = "range";
 		cProgress.disabled = true;
-		elProgress.appendChild( cProgress );
-		
+		elProgress.appendChild(cProgress);
+
 		let elcontainer;
 		const containerName = 'ProgressContainer';
 		for (let i = 0; i < elParent.children.length; i++) {
@@ -59,51 +59,31 @@ class ProgressBar {
 
 				elcontainer = child;
 				break;
-				
+
 			}
-				
+
 		}
 		if (!elcontainer) {
 
-			elcontainer = document.createElement( 'table' );
+			elcontainer = document.createElement('table');
 			elcontainer.name = containerName;
-//			elcontainer.style.display = 'flex';//https://ru.stackoverflow.com/questions/1016963/%D0%A0%D0%B0%D1%81%D0%BF%D0%BE%D0%BB%D0%BE%D0%B6%D0%B8%D1%82%D1%8C-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D1%8B-%D0%B2-%D1%81%D1%82%D0%BE%D0%BB%D0%B1%D0%B5%D1%86
+			//			elcontainer.style.display = 'flex';//https://ru.stackoverflow.com/questions/1016963/%D0%A0%D0%B0%D1%81%D0%BF%D0%BE%D0%BB%D0%BE%D0%B6%D0%B8%D1%82%D1%8C-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D1%8B-%D0%B2-%D1%81%D1%82%D0%BE%D0%BB%D0%B1%D0%B5%D1%86
 			elcontainer.style.position = 'absolute';
 			elcontainer.style.top = 0;
 			elcontainer.style.left = 0;
 			elParent.appendChild(elcontainer);
-			
+
 		}
 		const elRow = document.createElement('tr');
 		elRow.appendChild(elProgress);
 		elcontainer.appendChild(elRow);
 		this.setValue = (value) => { cProgress.value = value; }
-		let timeStamp = window.performance.now();
 		/**
 		 * Execute the next step asynchronously.
 		 */
-		this.step = (boTimeout = false) => {
+		this.step = () => {
 
-			const timeCur = window.performance.now(), timeDelay = timeCur - timeStamp;
-//console.log('timeDelay = ' + timeDelay)
-			if (
-				boTimeout ||//Вызывать setTimeout только на первом шаге что бы конструктор ProgressBar завершился еще до вызова step
-				(timeDelay > 10)//или когда время между шагами превысит 0.1 секеунды
-			) {
-
-//console.log('setTimeout. boTimeout = ' + boTimeout + ', timeDelay = ' + timeDelay);
-				timeStamp = timeCur;
-				window.setTimeout(() => { step() }, 0);
-
-			}
-			//иначе функция step вызывается сразу
-			else {
-				
-//console.log('step()')
-				step();
-
-			}
-			
+			window.setTimeout(() => { step() }, 0);
 			//window.requestAnimationFrame(step);//время выполнения увеличивается на треть
 
 		}
@@ -112,12 +92,12 @@ class ProgressBar {
 		 **/
 		this.remove = () => { elProgress.parentElement.remove(); };
 		this.step();
-	
+
 		/**
 		 * set new step function
 		 */
 		this.newStep = (value) => { step = value; }
-		
+
 		/**
 		 * set new title
 		 */
