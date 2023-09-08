@@ -34,9 +34,9 @@ class ProgressBar {
 		const elProgress = document.createElement( 'div' ),
 			cProgress = document.createElement( 'input' ),
 			elTitle = document.createElement( 'div' );
-		elProgress.style.position = 'absolute';
-		elProgress.style.top = 0;
-		elProgress.style.left = 0;
+//		elProgress.style.position = 'absolute';
+//		elProgress.style.top = 0;
+//		elProgress.style.left = 0;
 		elProgress.style.backgroundColor = 'white';
 		elProgress.style.margin = '2px';
 		elProgress.style.padding = '2px';
@@ -49,7 +49,34 @@ class ProgressBar {
 		cProgress.type = "range";
 		cProgress.disabled = true;
 		elProgress.appendChild( cProgress );
-		elParent.appendChild( elProgress );
+		
+		let elcontainer;
+		const containerName = 'ProgressContainer';
+		for (let i = 0; i < elParent.children.length; i++) {
+
+			const child = elParent.children[i];
+			if (child.name && (child.name === containerName)) {
+
+				elcontainer = child;
+				break;
+				
+			}
+				
+		}
+		if (!elcontainer) {
+
+			elcontainer = document.createElement( 'table' );
+			elcontainer.name = containerName;
+//			elcontainer.style.display = 'flex';//https://ru.stackoverflow.com/questions/1016963/%D0%A0%D0%B0%D1%81%D0%BF%D0%BE%D0%BB%D0%BE%D0%B6%D0%B8%D1%82%D1%8C-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D1%8B-%D0%B2-%D1%81%D1%82%D0%BE%D0%BB%D0%B1%D0%B5%D1%86
+			elcontainer.style.position = 'absolute';
+			elcontainer.style.top = 0;
+			elcontainer.style.left = 0;
+			elParent.appendChild(elcontainer);
+			
+		}
+		const elRow = document.createElement('tr');
+		elRow.appendChild(elProgress);
+		elcontainer.appendChild(elRow);
 		this.setValue = (value) => { cProgress.value = value; }
 		let timeStamp = window.performance.now();
 		/**

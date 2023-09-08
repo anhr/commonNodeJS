@@ -114,7 +114,7 @@ class Options {
 		setScale( 'z' );
 //		options.scales.setW = function () { _this.setW(); }
 		options.point = options.point || {};
-		options.point.size = options.point.size || 5.0;
+		if (options.point.size === undefined) options.point.size = 5.0;
 		options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
 
 		/**
@@ -634,7 +634,7 @@ class Options {
 								 */
 								constructor( scales, axisName ) {
 
-									const scale = scales[axisName];
+									let scale = scales[axisName];
 //									scale = scale || {};
 									this.isAxis = function () {
 
@@ -663,7 +663,17 @@ class Options {
 												return scale.min;
 
 											},
-											set: function ( min ) { scale.min = min; },
+											set: function ( min ) {
+		   
+												if ( !scale ) {
+			
+				   									scales[axisName] = {};
+													scale = scales[axisName];
+											
+												}
+												scale.min = min;
+			
+											},
 
 										},
 										max: {

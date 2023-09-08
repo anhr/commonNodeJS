@@ -1750,7 +1750,7 @@ class GuiSelectPoint {
 								style: {
 
 									//border: '2px solid #303030',
-									//width: '65%',
+									width: '65%',//Непонятно почему без этой строи не видно палиры в http://localhost/anhr/egocentricUniverse/master/Examples/3D.html
 									//height: elSlider.offsetHeight / 2,//'50%',
 
 								},
