@@ -83,7 +83,7 @@ class ProgressBar {
 		/**
 		 * remove progress bar from your web page.
 		 **/
-		this.remove = () => { elProgress.remove(); };
+		this.remove = () => { elProgress.parentElement.remove(); };
 		this.step(true);
 	
 		/**
