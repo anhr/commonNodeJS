@@ -2101,7 +2101,7 @@ class ND {
 						transparent: settings3D.faces.transparent,
 						side: THREE.DoubleSide
 					} ) ) :
-					new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( { color: color, } ) ) :
+					new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( settings.object.geometry.colors ? { vertexColors: true, toneMapped: false } : { color: color, } ) ) :
 				new THREE.Points( buffer, new THREE.PointsMaterial( {
 					
 					color: color,
@@ -2111,6 +2111,7 @@ class ND {
 				} ) );
 			if ( settings3D.name )
 				object.name = settings3D.name;
+			if ( settings.object.geometry.colors ) object.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( settings.object.geometry.colors, 3 ) );
 			scene.add( object );
 
 			object.userData.geometry = geometry.geometry;
