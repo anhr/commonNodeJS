@@ -674,8 +674,13 @@ class ColorPicker {
 				var percent = parseFloat( stringPercent );
 				if ( isNaN( percent ) ) {
 
+					//Сюда попадает из http://localhost/anhr/egocentricUniverse/master/Examples/3D.html
+					//Когда вместо случайного выбора вершин задаю их вручную и при этом не указываю координату w вершины
+					percent = max;
+/*					
 					console.error( 'ColorPicker.palette.hsv2rgb: stringPercent = ' + stringPercent );
 					return;
+*/	 
 					
 				}
 				if ( min !== undefined && max !== undefined )

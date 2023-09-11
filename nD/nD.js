@@ -1963,7 +1963,7 @@ class ND {
 					const indices = [], colors = [];
 					//если объект не состоит из одной вершины и имеет ребера
 					if ( settings.object.geometry.indices[0].length !== 0 ) {
-						
+
 						const edges = settings.object.geometry.indices[0];
 						for ( var i = 0; i < edges.length; i++ ) {
 	
@@ -1987,8 +1987,27 @@ class ND {
 								//indices.push( ...edge );//incompatible with https://raw.githack.com/anhr/egocentricUniverse/dev/1D.html
 								edge.forEach( vertice => indices.push( vertice ) );
 								
-								if ( this.color ) {
-	
+								if ( this.color && ( typeof this.color != "object") ) {
+
+									//одинаковый цвет для всех ребер
+/*
+									const paletteColor = () => {
+		
+
+												return settings.options.palette.toColor(
+													funcs === undefined ?
+														new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
+														w instanceof Function ?
+															w( t ) :
+															typeof w === "string" ?
+																Player.execFunc( funcs, 'w', t, optionsColor.options ) :
+																w === undefined ? new THREE.Vector4().w : w,
+													min, max );
+												return new THREE.Color(0xffffff);
+										
+											},
+										color = typeof this.color === "object" ? paletteColor() : new THREE.Color(this.color);
+*/
 									const color = new THREE.Color(this.color);
 									function hexToRgb(hex) {
 									  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -2013,6 +2032,27 @@ class ND {
 	
 							} else console.error( 'ND.geometry.D3.get indices: invalid edge. Возможно вычислены не все точки пересечения' );
 							
+						}
+						if (this.color && (typeof this.color === "object")) {
+
+							//цвет вершин
+							if ( colors.length != 0 ) console.error('ND.geometry.D3.get vrtices colors: Invalid colors.length = ' + colors.length);
+							settings.object.geometry.position.forEach( vertice => {
+
+//								pushColor( settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max ) );
+								const rgb = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max );
+								colors.push(rgb.r);
+								colors.push(rgb.g);
+								colors.push(rgb.b);
+
+/*								
+								const c = settings.options.palette.hsv2rgb( vertice.w
+//																		   , min, max
+																		  );
+*/					
+								
+							} );
+
 						}
 
 					}
@@ -2080,7 +2120,24 @@ class ND {
 			const color = settings3D.color || 'white';//0xffffff
 			geometry.D3.color = color;
 			const indices3D = geometry.D3.indices, indices = indices3D.indices, colors = indices3D.colors;
-			
+
+			if (
+				( settings.object.geometry.position[0].length > 3 ) &&//Vertice have the w coordinate
+				( typeof settings.object.color === "object" ) &&//Color of vertice from palette
+				!settings.object.geometry.colors//Vertices colors array is not exists
+			) {
+
+				settings.object.geometry.colors = indices3D.colors;
+/*				
+				settings.object.geometry.colors = [];
+				settings.object.geometry.position.forEach( vertice => {
+
+					if ( vertice.length < 4 ) console.error( 'ND: set vertice color. Invalid vertice.length = ' + vertice.length );
+					
+				} );
+*/				
+				
+			}
 			const buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
 			if ( settings3D.faces ) {
 
