@@ -40,7 +40,29 @@ class ND {
 	 * @param {object} [settings={}] The following settings are available
 	 * @param {object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
-	 * @param {String} [settings.object.color='lime'] color of N-dimensional graphic object.
+	 * @param {number|String|object} [settings.object.color='lime'] color of N-dimensional graphic object.
+	 * <pre>
+	 * number - hexadecimal color. Example: 0xffffff - white color
+	 * String - color name. Example: 'skyblue'
+	 * object - Sets the color separately for each vertice.
+	 *	You can choose one way for setting of the vertice color from two available:
+	 *	
+	 *	1. Set the fourth <b>w</b> coordinate of each vertex in a range from
+	 *		<b>settings.options.scales.w.min</b> to
+	 *		<b>settings.options.scales.w.max</b>
+	 *		
+	 *		<b>w</b> coordinate is index of palette color. See <a href="../../colorpicker/jsdoc/module-ColorPicker-ColorPicker.html#toColor" target="_blank">toColor</a> method from <b>ColorPicker</b> class.
+	 *		Example:
+	 *		settings.object.geometry.position: [
+	 *			//pyramid
+	 *			[0,-0.9428090415820634,0.33333333333333326, 1],
+	 *			[0.8164965662730563,0.4714045207910317,0.33333333333333326, 0.5],
+	 *			[-0.8164965662730563,0.4714045207910317,0.33333333333333326, 0],
+	 *			[7.32733549761259e-9,4.230438555019589e-9,-1.0, -1.0],
+	 *		],
+	 *	
+	 *	2. Set a <b>settings.object.geometry.colors</b> array. 
+	 * </pre>
 	 * @param {boolean|object} [settings.object.faces] true or object - display the n-dimensional graphical object faces instead of edges.
 	 * @param {float} [settings.object.faces.opacity=0.5] color Float in the range of 0.0 - 1.0 indicating how transparent the material is.
 	 * A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
@@ -65,6 +87,22 @@ class ND {
 	 * 	[0, -0.4, 0.8],//2
 	 * 	[0, 0, -0.6]//3
 	 * ]</b>,
+	 * </pre>
+	 * @param {Array} [settings.object.geometry.colors] Array of colors for the each vertex.
+	 * <pre>
+	 * Every vertex is associated with 3 values of the <b>colors</b> array.
+	 * Each value of the <b>colors</b> array is red or green or blue color of the particular vertex in range from 0 to 1.
+	 * 
+	 * 0 is no color.
+	 * 1 is full color.
+	 * 
+	 * For example:
+	 * settings.object.geometry.colors: [
+	 * 	1, 0, 0,//red color of the <b>position[0]</b> vertex.
+	 * 	0, 1, 0,//green color of the <b>position[1]</b> vertex.
+	 * 	0, 0, 1,//blue color of the <b>position[2]</b> vertex.
+	 * 	1, 1, 1,//white color of the <b>position[3]</b> vertex.
+	 * ],
 	 * </pre>
 	 * @param {Array} [settings.object.geometry.boRememberPosition=true] true - Remember vertex positions for higher performance. As result, new vertex positions have no effect.
 	 * @param {Array} [settings.object.geometry.indices] Array of <b>indices</b> of vertices of the n-dimensional graphical object.
