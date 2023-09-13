@@ -664,7 +664,7 @@ class Options {
 
 											},
 											set: function ( min ) {
-		   
+
 												if ( !scale ) {
 			
 				   									scales[axisName] = {};
@@ -698,7 +698,7 @@ class Options {
 
 											},
 											set: function ( name ) {
-												
+
 												if ( scale ) {
 													
 													scale.name = name;

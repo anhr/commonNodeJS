@@ -485,7 +485,19 @@ class ND {
 								*/
 								case "point":
 									const THREE = three.THREE;
-									return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
+									if ((typeof settings.object.color === "object") && (array.length >= 4))
+										return new THREE.Vector4( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ), this.get( undefined, 3 ) );//цвет каждой вершины зависить от оси w этой вершины
+									return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );//Цвет всех вершин определяется из settings.object.color или из settings.object.geometry.colors или одинаковый по умолчанию
+/*									
+									switch(array.length){
+											
+										case 3: return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );//Цвет всех вершин одинаковый
+										case 4: return new THREE.Vector4( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ), this.get( undefined, 3 ) );
+											
+									}
+									console.error( 'ND: get point. Invalid array.length = ' + array.length );
+									return;
+*/		 
 								default: {
 
 									return _this[name];
@@ -2140,7 +2152,7 @@ class ND {
 				!settings.object.geometry.colors//Vertices colors array is not exists
 			)
 				settings.object.geometry.colors = indices3D.colors;
-			const buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
+			const buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points, geometry.D3.points[0].w === undefined ? 3 : 4);
 			if ( settings3D.faces ) {
 
 				if ( settings3D.faces === true ) settings3D.faces = {};

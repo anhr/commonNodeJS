@@ -1052,7 +1052,10 @@ class GuiSelectPoint {
 				for ( var i = 0; i < position.count; i++ ) {
 
 					const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
-					vector.w = 1;
+
+					//непонятно зачем это засунул
+//					vector.w = 1;
+					
 					mesh.userData.player.arrayFuncs.push( vector );
 
 				}
@@ -1082,26 +1085,6 @@ class GuiSelectPoint {
 				if ( cCustom ) cCustom.object( mesh, dat, value === -1 );//options );
 
 				createPlayerArrayFuncs( mesh );
-/*
-				if ( mesh && !mesh.userData.boFrustumPoints ) {
-
-					if ( !mesh.userData.player ) mesh.userData.player = {};
-					if ( !mesh.userData.player.arrayFuncs ) {
-
-						const position = mesh.geometry.attributes.position;
-						mesh.userData.player.arrayFuncs = [];
-						for ( var i = 0; i < position.count; i++ ) {
-
-							const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
-							vector.w = 1;
-							mesh.userData.player.arrayFuncs.push( vector );
-
-						}
-
-					}
-
-				}
-*/
 
 				const none = 'none', block = 'block';
 				var display;
@@ -1694,7 +1677,7 @@ class GuiSelectPoint {
 
 			//Point's attribute position axes controllers
 
-			function axesGui( axisName/*axesId, onChange*/ ) {
+			function axesGui( axisName ) {
 
 				var scale, controller;
 				if ( axisName === 'w' ) {
