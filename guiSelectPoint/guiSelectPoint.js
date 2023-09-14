@@ -502,6 +502,20 @@ class GuiSelectPoint {
 			funcFolder.displayFolder( !boReadOnly );
 
 		}
+		this.setAxisControl = function ( axis, scale ) {
+
+			switch( axis ) {
+
+				case 'w': 
+					if ( scale.min != undefined ) cW.min(scale.min);
+					if ( scale.max != undefined ) cW.min(scale.max);
+					if ( scale.step != undefined ) cW.step(scale.step);
+					break;
+				default: console.error( 'GuiSelectPoint.setAxisControl. Invalid axis: '  + axis);
+					
+			}
+			
+		}
 		/**
 		 * sets axis name of the controllers
 		 * @param {String} axis axis. 'x' or 'y' or 'z'.

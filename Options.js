@@ -672,6 +672,8 @@ class Options {
 											
 												}
 												scale.min = min;
+												scale.step = Math.abs(options.scales.w.max - scale.min) / 100;
+												if (options.guiSelectPoint) options.guiSelectPoint.setAxisControl( 'w', scale );
 			
 											},
 
