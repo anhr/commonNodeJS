@@ -508,7 +508,7 @@ class GuiSelectPoint {
 
 				case 'w': 
 					if ( scale.min != undefined ) cW.min(scale.min);
-					if ( scale.max != undefined ) cW.min(scale.max);
+					if ( scale.max != undefined ) cW.max(scale.max);
 					if ( scale.step != undefined ) cW.step(scale.step);
 					break;
 				default: console.error( 'GuiSelectPoint.setAxisControl. Invalid axis: '  + axis);
