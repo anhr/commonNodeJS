@@ -310,19 +310,6 @@ class ND {
 					lang.segmentId = 'Индекс сегмента';
 
 					break;
-				/*guiParams is not defined
-				default://Custom language
-					if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
-						break;
-
-					Object.keys(guiParams.lang).forEach(function (key) {
-
-						if (lang[key] === undefined)
-							return;
-						lang[key] = guiParams.lang[key];
-
-					});
-				*/
 
 			}
 
@@ -355,12 +342,6 @@ class ND {
 			for ( var segmentIndex = 0; segmentIndex < edges.length; segmentIndex++ ) {
 
 				const edgeCur = edges[segmentIndex];
-/*				
-				if (
-					( ( edgeCur.indices[0] === edge[0] ) && ( edgeCur.indices[1] === edge[1] ) ) ||
-					( ( edgeCur.indices[0] === edge[1] ) && ( edgeCur.indices[1] === edge[0] ) )
-				)
-*/	
 				if (
 					( ( edgeCur[0] === edge[0] ) && ( edgeCur[1] === edge[1] ) ) ||
 					( ( edgeCur[0] === edge[1] ) && ( edgeCur[1] === edge[0] ) )
@@ -488,16 +469,6 @@ class ND {
 									if ((typeof settings.object.color === "object") && (array.length >= 4))
 										return new THREE.Vector4( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ), this.get( undefined, 3 ) );//цвет каждой вершины зависить от оси w этой вершины
 									return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );//Цвет всех вершин определяется из settings.object.color или из settings.object.geometry.colors или одинаковый по умолчанию
-/*									
-									switch(array.length){
-											
-										case 3: return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );//Цвет всех вершин одинаковый
-										case 4: return new THREE.Vector4( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ), this.get( undefined, 3 ) );
-											
-									}
-									console.error( 'ND: get point. Invalid array.length = ' + array.length );
-									return;
-*/		 
 								default: {
 
 									return _this[name];
@@ -637,21 +608,7 @@ class ND {
 
 						if ( target instanceof Array ) {
 
-							if ( i < target.length && ( target[i] !== undefined ) ) {
-
-								/*
-								if ( !target.boUseRotation ) {
-
-									//https://stackoverflow.com/a/57023880/5175935
-									const strFunction = ( new Error() ).stack.split( "\n" )[3].trim().split( " " )[1];
-									if ( ( strFunction !== "NumberControllerSlider.updateDisplay" ) && ( strFunction !== "NumberControllerBox.updateDisplay" ) )//пользователь изменил угол вращения из dat.GUI
-										console.error( 'ND settings.object.rotation get: use settings.object.rotation.trigonometry unstead settings.object.rotation. ' + strFunction )
-
-								}
-								*/
-								return target[i];
-
-							}
+							if ( i < target.length && ( target[i] !== undefined ) ) return target[i];
 							return 0;
 
 						}
@@ -1002,7 +959,6 @@ class ND {
 
 						} else {
 
-//							positionPoint.forEach( ( value, j ) => array.push( positionPoint[j] + settings.object.position[j] ) );
 							positionPoint.forEach( ( value, j ) => array.push( value + settings.object.position[j] ) );
 							setRotationAxes();
 
@@ -1090,26 +1046,6 @@ class ND {
 									switch ( name ) {
 
 										case 'reset': return function() { delete target.positionWorld; }
-/*currently is not using. See \commonNodeJS\master\graphicObjects\circle.js											
-										case 'distanceTo': return (position) => {
-
-											if (target.length != position.length) {
-												
-												console.error('ND settings.object.geometry.position[i].distanceTo(). target.length != position.length');
-												return;
-												
-											}
-											//const distance = new three.THREE.Vector3(target[0], target[1], target[2], ).distanceTo(new three.THREE.Vector3(position[0], position[1], position[2], ));
-											let sum = 0;
-											target.forEach((axis, i) => {
-
-												const d = axis - position[i];
-												sum += d * d;
-												
-											})
-											return Math.sqrt(sum);
-										}
-*/											
 
 									}
 									return target[name];
@@ -1214,7 +1150,6 @@ class ND {
 						if (!isNaN(i)) {
 
 							const edge = edges[i];
-//							if (edge.intersection) return edge;
 							edge.intersection = (geometryIntersection) => {
 
 								const i = parseInt(name);
@@ -1418,13 +1353,6 @@ class ND {
 							case 'intersection': return undefined;
 							case 'edges': return edges;
 							case 'isProxy': return true;
-/*								
-							case 'push': return edges.push;
-							case 'length': return edges.length;
-							case 'forEach': return edges.forEach;
-							case 'selected': return edges.selected;
-							default: console.error( 'ND: settings.object.geometry.indices getter. Invalid name: ' + name );
-*/	   
 
 						}
 						return edges[name];
@@ -1809,6 +1737,7 @@ class ND {
 		appendEdges();
 
 		if ( settings.object.geometry.indices.boAddIndices ) {
+
 			//В каждом сегменте geometry.indices[i] должно встечаться определенное количество индексов из передыдущего сегмента
 			//geometry.indices[i - 1]. В противном случае в geometry.indices[i] добавляем новый элемент, в который добавляем
 			//индексы из передыдущего сегмента geometry.indices[i - 1].
@@ -2329,19 +2258,6 @@ class ND {
 						lang.notSelected = 'Не выбран';
 
 						break;
-					/*guiParams is not defined
-					default://Custom language
-						if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
-							break;
-
-						Object.keys( guiParams.lang ).forEach( function ( key ) {
-
-							if ( lang[key] === undefined )
-								return;
-							lang[key] = guiParams.lang[key];
-
-						} );
-					*/
 
 				}
 				for ( var i = fParent.__controllers.length - 1; i >= 0; i-- ) { fParent.remove( fParent.__controllers[i] ); }
@@ -2584,8 +2500,7 @@ class ND {
 
 					} );
 					dat.controllerNameAndTitle(cSegment, '');
-					var selectedItem = 0;//, innerHTML;
-					//cSegment.__select[0].selected = true;
+					var selectedItem = 0;
 
 					const selected = segmentIndex >= 0 ? indices[segmentIndex].selected : undefined;
 					var selectedOpt;//debug
@@ -2810,12 +2725,10 @@ class ND {
 				}
 				const edge = settings.object.geometry.indices[0][iEdge];
 				edge.intersection( geometryIntersection );
-//				const position = edge.indices.intersection.position;
 				const position = edge.intersection.position;
 				if ( position ) {
 					
 					var boAdd = true;
-//					if ( edge.indices.intersection.boVerticeOnPanel )
 					if ( edge.intersection.boVerticeOnPanel ) {
 
 						//Вершина на панели. В этом случае все ребра, сходящиеся к этой вершине буду выдвать одну и ту же точку пересечения
@@ -3157,11 +3070,6 @@ class ND {
 		if ( scene ) {
 
 			//Если есть scene, обязательно должен быть options. Здесь создать options неполучится
-/*			
-			options.scales.x.name = 0;
-			options.scales.y.name = 1;
-			options.scales.z.name = 2;
-*/   
 			if ( n <= 1 ) options.scales.y = undefined;
 			if ( n <= 2 ) options.scales.z = undefined;
 			options.scales.text.rect = options.scales.text.rect || {}
@@ -3456,19 +3364,6 @@ ND.gui = class {
 				lang.nDTitle = 'n-мерный объект';
 
 				break;
-			/*guiParams is not defined
-			default://Custom language
-				if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
-					break;
-
-				Object.keys( guiParams.lang ).forEach( function ( key ) {
-
-					if ( lang[key] === undefined )
-						return;
-					lang[key] = guiParams.lang[key];
-
-				} );
-			*/
 
 		}
 		const fND = fParent.addFolder( lang.nD );

@@ -41,7 +41,6 @@ import {
 } from '../getPosition.js';
 
 import three from '../three.js'
-//import ND from '../nD/nD.js'
 
 class GuiSelectPoint {
 
@@ -214,18 +213,6 @@ class GuiSelectPoint {
 				lang.defaultLocalPositionTitle = 'Восстановить локальную позицию точки по умолчанию.';
 				break;
 			default://Custom language
-				/*guiParams is not defined
-				if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
-					break;
-
-				Object.keys( guiParams.lang ).forEach( function ( key ) {
-
-					if ( lang[key] === undefined )
-						return;
-					lang[key] = guiParams.lang[key];
-
-				} );
-				*/
 
 		}
 
@@ -399,7 +386,7 @@ class GuiSelectPoint {
 
 					if ( attributes.ca === undefined ) {
 
-						//					console.warn( 'Under constraction. цвет frustumPoints не известен потому что он вычисляется в шейдере D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master\frustumPoints\vertex.c' )
+//						console.warn( 'Under constraction. цвет frustumPoints не известен потому что он вычисляется в шейдере D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master\frustumPoints\vertex.c' )
 
 					} else {
 
@@ -909,11 +896,6 @@ class GuiSelectPoint {
 				controller.setValue( angle );
 				
 			}
-/*			
-			if ( cRotations.x ) cRotations.x.setValue( mesh.rotation.x );
-			if ( cRotations.y ) cRotations.y.setValue( mesh.rotation.y );
-			if ( cRotations.z ) cRotations.z.setValue( mesh.rotation.z );
-*/   
 			if ( cRotations.x ) setValue( cRotations.x, mesh.rotation.x );
 			if ( cRotations.y ) setValue( cRotations.y, mesh.rotation.y );
 			if ( cRotations.z ) setValue( cRotations.z, mesh.rotation.z );
@@ -926,9 +908,7 @@ class GuiSelectPoint {
 			var index = intersection.index || 0,
 				point = intersection.object.userData.player.arrayFuncs[index],
 				line = point === undefined ? undefined : point.line;
-			if (
-				( line !== undefined )// &&
-			)
+			if ( ( line !== undefined ) )
 				line.visible( value );
 			if ( !value )
 				return;
@@ -1344,18 +1324,7 @@ class GuiSelectPoint {
 				}
 				switch ( n ) {
 
-/*
-					case 1:
-						fRotation.domElement.style.display = none;
-						break;
-*/
 					case 2:
-/*						
-						fRotation.domElement.style.display = block;
-						if ( boX ) cRotations.x.domElement.parentElement.parentElement.style.display = none;
-						if ( boY ) cRotations.y.domElement.parentElement.parentElement.style.display = none;
-						if ( boZ ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
-*/
 						addRotationControllers( !boX ? 'x' : !boY ? 'y' : 'z' );
 						break;
 					case 3:
@@ -1443,7 +1412,6 @@ class GuiSelectPoint {
 			//Custom point controllers 
 
 			if ( options.dat && options.dat.guiSelectPoint && options.dat.guiSelectPoint.point ) cCustom = options.dat.guiSelectPoint.point( options, dat, fMesh );
-//			nD = new ND.gui( options, dat, fMesh );
 
 			//Camera target
 			// Может устанвливаться только если создан проигрыватель options.player,
@@ -1809,7 +1777,6 @@ class GuiSelectPoint {
 							} );
 
 				}
-//				if ( scale )
 				if ( controller )
 					dat.controllerNameAndTitle( controller, scale.name );
 				return controller;
