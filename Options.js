@@ -676,27 +676,7 @@ class Options {
 												return scale.min;
 
 											},
-											set: ( min ) => {
-
-												setScale( () => {
-
-													scale.min = min;
-//													scale.step = Math.abs( options.scales.w.max - scale.min ) / 100;
-
-												});
-/*
-												if ( !scale ) {
-			
-				   									scales[axisName] = {};
-													scale = scales[axisName];
-											
-												}
-												scale.min = min;
-												scale.step = Math.abs(options.scales.w.max - scale.min) / 100;
-												if (options.guiSelectPoint) options.guiSelectPoint.setAxisControl( 'w', scale );
-*/
-
-											},
+											set: ( min ) => { setScale( () => { scale.min = min; }); },
 
 										},
 										max: {
@@ -709,21 +689,7 @@ class Options {
 												return scale.max;
 
 											},
-											set: ( max ) => {
-												
-//												scale.max = max;
-												setScale( () => {
-
-													scale.max = max;
-//													scale.step = Math.abs( options.scales.w.min - scale.max ) / 100;
-
-												});
-/*												
-												scale.step = Math.abs( scale.min - scale.max ) / 100;
-												if ( options.guiSelectPoint) options.guiSelectPoint.setAxisControl( 'w', scale );
-*/			
-												
-											},
+											set: ( max ) => { setScale( () => { scale.max = max; }); },
 
 										},
 										name: {
