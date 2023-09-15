@@ -242,6 +242,7 @@ class GuiSelectPoint {
 				lang.defaultLocalPositionTitle = 'Восстановить локальную позицию точки по умолчанию.';
 				break;
 			default://Custom language
+				/*guiParams is not defined
 				if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
 					break;
 
@@ -252,6 +253,7 @@ class GuiSelectPoint {
 					lang[key] = guiParams.lang[key];
 
 				} );
+				*/
 
 		}
 
@@ -529,6 +531,29 @@ class GuiSelectPoint {
 
 		}
 		/**
+		 * Specify a maximum, minimum and step value for [NumberController]{@link https://github.com/dataarts/dat.gui/blob/master/API.md#NumberController}.
+		 * 
+		 * @param {String} axis axis. Currently 'w' axis is available only.
+		 * @param {object} scale The following &lt;b>NumberController&lt;/b> properties are available:
+		 * @param {object} [scale.min] Minimum allowed value.
+		 * @param {object} [scale.max] Maximum allowed value.
+		 * @param {object} [scale.step] Increment by which to change value.
+		 */
+		this.setAxisControl = function ( axis, scale ) {
+
+			switch( axis ) {
+
+				case 'w': 
+					if ( scale.min != undefined ) cW.min(scale.min);
+					if ( scale.max != undefined ) cW.max(scale.max);
+					if ( scale.step != undefined ) cW.step(scale.step);
+					break;
+				default: console.error( 'GuiSelectPoint.setAxisControl. Invalid axis: '  + axis);
+					
+			}
+			
+		}
+		/**
 		 * sets axis name of the controllers
 		 * @param {String} axis axis. 'x' or 'y' or 'z'.
 		 * @param {String} name new axis name
@@ -544,7 +569,8 @@ class GuiSelectPoint {
 			cScale.name( name );
 
 			//rotation
-			cRotations[axis].name( name );
+			const cRotation = cRotations[axis];
+			if ( cRotation.name ) cRotation.name( name );
 
 		}
 		/**Sets controllers to position, scale and rotation of the mesh.  If AxesHelper is exist, expose the mesh to the axes. */
@@ -660,8 +686,11 @@ class GuiSelectPoint {
 
 				cPoints.__onChange( -1 );
 				_this.removePoints();
+				cMeshs.__onChange( -1 );
 
 			}
+
+			if (cMeshs.__select.options.length &lt; 2) f3DObjects.domElement.style.display = 'none';
 
 		}
 
@@ -681,6 +710,9 @@ class GuiSelectPoint {
 
 			}
 
+			if ( !f3DObjects ) this.add();
+			f3DObjects.domElement.style.display = 'block';
+			
 			if ( !cMeshs ) {
 
 				//Test for duplicate item
@@ -763,6 +795,14 @@ class GuiSelectPoint {
 				cMeshs.__select[index].selected = true;
 				cMeshs.__onChange( index - 1 );
 
+			} else if ( cCustom ) {
+
+				const mesh = getMesh();
+				cCustom.object(intersectionSelected.event &amp;&amp; intersectionSelected.event.button === 0 ?
+						mesh :
+						undefined,//Пользователь нажал не левую кнопку мыши. Надо восстановить выбранный nD объект
+					dat, options);
+
 			}
 
 			this.selectPoint2 = function ( selectedMesh ) {
@@ -778,7 +818,8 @@ class GuiSelectPoint {
 				if ( !intersectionSelected.object.userData.boFrustumPoints ) {
 
 					//fPoints.open();много времени на открытие когда много точек
-					cPoints.__select[intersectionSelected.index + 1].selected = true;
+					const point = cPoints.__select[intersectionSelected.index + 1];
+					if ( point ) point.selected = true;
 
 				} else {//FrustumPoints
 
@@ -890,9 +931,20 @@ class GuiSelectPoint {
 			if ( isNotSetControllers() )
 				return;
 			const mesh = getMesh();
+			const setValue = ( controller, angle ) => {
+
+				if ( ( angle &lt; controller.__min ) || ( angle > controller.__max ) ) console.error( 'GuiSelectPoint.setRotationControllers(): Invalid angle = ' + angle + ' range. Available range from ' + controller.__min + ' to ' + controller.__max )
+				controller.setValue( angle );
+				
+			}
+/*			
 			if ( cRotations.x ) cRotations.x.setValue( mesh.rotation.x );
 			if ( cRotations.y ) cRotations.y.setValue( mesh.rotation.y );
 			if ( cRotations.z ) cRotations.z.setValue( mesh.rotation.z );
+*/   
+			if ( cRotations.x ) setValue( cRotations.x, mesh.rotation.x );
+			if ( cRotations.y ) setValue( cRotations.y, mesh.rotation.y );
+			if ( cRotations.z ) setValue( cRotations.z, mesh.rotation.z );
 
 		}
 		function visibleTraceLine( intersection, value, getMesh ) {
@@ -948,13 +1000,13 @@ class GuiSelectPoint {
 			switch ( n ) {
 
 				case 1:
-					fRotation.domElement.style.display = none;
+					if ( fRotation ) fRotation.domElement.style.display = none;
 					break;
 				case 2:
 					fRotation.domElement.style.display = block;
-					if ( boX ) cRotations.x.domElement.parentElement.parentElement.style.display = none;
-					if ( boY ) cRotations.y.domElement.parentElement.parentElement.style.display = none;
-					if ( boZ ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
+					if ( boX &amp;&amp; cRotations.x.domElement ) cRotations.x.domElement.parentElement.parentElement.style.display = none;
+					if ( boY &amp;&amp; cRotations.y.domElement ) cRotations.y.domElement.parentElement.parentElement.style.display = none;
+					if ( boZ &amp;&amp; cRotations.z.domElement ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
 					break;
 				default: console.error( 'GuiSelectPoint.updateScale: Invalid space dimension = ' + n );
 					return;
@@ -963,7 +1015,7 @@ class GuiSelectPoint {
 			
 			if ( !folders.position[axisName] ) {
 
-				console.error( 'GuiSelectPoint.updateScale: Under constraction.' );
+				if ( options.scales[axisName].isAxis() ) console.error( 'GuiSelectPoint.updateScale: Under constraction.' );
 				return;
 
 			}
@@ -1012,6 +1064,7 @@ class GuiSelectPoint {
 				return;
 
 			}
+			if (!object.geometry) return;//Probably this is Group
 			let gp = object.geometry.attributes.position;
 			object.updateMatrixWorld();
 			for ( let i = 0; i &lt; gp.count; i++ ) {
@@ -1039,6 +1092,29 @@ class GuiSelectPoint {
 
 		}
 
+		function createPlayerArrayFuncs( mesh ) {
+
+			if ( !mesh || mesh.userData.boFrustumPoints ) return;
+			if ( !mesh.userData.player ) mesh.userData.player = {};
+			if ( !mesh.userData.player.arrayFuncs &amp;&amp; mesh.geometry ) {
+
+				const position = mesh.geometry.attributes.position;
+				mesh.userData.player.arrayFuncs = [];
+				for ( var i = 0; i &lt; position.count; i++ ) {
+
+					const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
+
+					//непонятно зачем это засунул
+//					vector.w = 1;
+					
+					mesh.userData.player.arrayFuncs.push( vector );
+
+				}
+
+			}
+
+		}
+
 		/**
 		 * Adds select point GUI into dat.gui folder
 		 * @param {GUI} [folder] [dat.gui]{@link https://github.com/anhr/dat.gui} folder.
@@ -1049,6 +1125,7 @@ class GuiSelectPoint {
 			if ( !folder )
 				return;//gui не создан
 			f3DObjects = folder.addFolder( lang.meshs );
+			f3DObjects.domElement.style.display = 'none';
 			var mesh, buttonScaleDefault, buttonPositionDefault, buttonRotationDefault;
 
 			cMeshs = f3DObjects.add( { Meshs: lang.notSelected }, 'Meshs', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
@@ -1056,26 +1133,9 @@ class GuiSelectPoint {
 				value = parseInt( value );
 				mesh = getMesh();
 
-				if ( cCustom ) cCustom.object( mesh, dat, options );
+				if ( cCustom ) cCustom.object( mesh, dat, value === -1 );//options );
 
-				if ( mesh &amp;&amp; !mesh.userData.boFrustumPoints ) {
-
-					if ( !mesh.userData.player ) mesh.userData.player = {};
-					if ( !mesh.userData.player.arrayFuncs ) {
-
-						const position = mesh.geometry.attributes.position;
-						mesh.userData.player.arrayFuncs = [];
-						for ( var i = 0; i &lt; position.count; i++ ) {
-
-							const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
-							vector.w = 1;
-							mesh.userData.player.arrayFuncs.push( vector );
-
-						}
-
-					}
-
-				}
+				createPlayerArrayFuncs( mesh );
 
 				const none = 'none', block = 'block';
 				var display;
@@ -1109,7 +1169,7 @@ class GuiSelectPoint {
 						displayPoints = block;
 						displayFrustumPoints = none;
 
-						if ( mesh.geometry.attributes ) {
+						if ( mesh.geometry &amp;&amp; mesh.geometry.attributes ) {
 
 							displayfPoints = block;
 							addPoints( mesh );
@@ -1164,6 +1224,7 @@ class GuiSelectPoint {
 
 					settings: { zoomMultiplier: 1.1, },
 					getLanguageCode: getLanguageCode,
+					newBool: true,
 
 				} ) );
 			const scale = new THREE.Vector3();
@@ -1623,6 +1684,9 @@ class GuiSelectPoint {
 
 			cPoints.__onChange( -1 );
 			this.removePoints();
+			mesh.userData.player.arrayFuncs.length = 0;
+			delete mesh.userData.player.arrayFuncs;
+			createPlayerArrayFuncs( mesh );
 			addPoints( mesh );
 
 			//восстановить идентификаторы точек
@@ -1632,6 +1696,8 @@ class GuiSelectPoint {
 				displayVerticeID( mesh );
 
 			}
+
+			if ( mesh.userData.nd ) mesh.userData.nd.update();
 
 		}
 		function addPointControllers() {
@@ -1662,7 +1728,7 @@ class GuiSelectPoint {
 
 			//Point's attribute position axes controllers
 
-			function axesGui( axisName/*axesId, onChange*/ ) {
+			function axesGui( axisName ) {
 
 				var scale, controller;
 				if ( axisName === 'w' ) {
@@ -1718,7 +1784,7 @@ class GuiSelectPoint {
 								style: {
 
 									//border: '2px solid #303030',
-									//width: '65%',
+									width: '65%',//Непонятно почему без этой строи не видно палиры в http://localhost/anhr/egocentricUniverse/master/Examples/3D.html
 									//height: elSlider.offsetHeight / 2,//'50%',
 
 								},
@@ -1991,7 +2057,7 @@ export default GuiSelectPoint;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Sat Jul 02 2022 10:07:17 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Fri Sep 15 2023 09:41:05 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

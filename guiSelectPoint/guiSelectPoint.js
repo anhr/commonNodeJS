@@ -41,7 +41,6 @@ import {
 } from '../getPosition.js';
 
 import three from '../three.js'
-//import ND from '../nD/nD.js'
 
 class GuiSelectPoint {
 
@@ -214,18 +213,6 @@ class GuiSelectPoint {
 				lang.defaultLocalPositionTitle = 'Восстановить локальную позицию точки по умолчанию.';
 				break;
 			default://Custom language
-				/*guiParams is not defined
-				if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
-					break;
-
-				Object.keys( guiParams.lang ).forEach( function ( key ) {
-
-					if ( lang[key] === undefined )
-						return;
-					lang[key] = guiParams.lang[key];
-
-				} );
-				*/
 
 		}
 
@@ -399,7 +386,7 @@ class GuiSelectPoint {
 
 					if ( attributes.ca === undefined ) {
 
-						//					console.warn( 'Under constraction. цвет frustumPoints не известен потому что он вычисляется в шейдере D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master\frustumPoints\vertex.c' )
+//						console.warn( 'Under constraction. цвет frustumPoints не известен потому что он вычисляется в шейдере D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master\frustumPoints\vertex.c' )
 
 					} else {
 
@@ -501,6 +488,29 @@ class GuiSelectPoint {
 			cOpacity.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			funcFolder.displayFolder( !boReadOnly );
 
+		}
+		/**
+		 * Specify a maximum, minimum and step value for [NumberController]{@link https://github.com/dataarts/dat.gui/blob/master/API.md#NumberController}.
+		 * 
+		 * @param {String} axis axis. Currently 'w' axis is available only.
+		 * @param {object} scale The following <b>NumberController</b> properties are available:
+		 * @param {object} [scale.min] Minimum allowed value.
+		 * @param {object} [scale.max] Maximum allowed value.
+		 * @param {object} [scale.step] Increment by which to change value.
+		 */
+		this.setAxisControl = function ( axis, scale ) {
+
+			switch( axis ) {
+
+				case 'w': 
+					if ( scale.min != undefined ) cW.min(scale.min);
+					if ( scale.max != undefined ) cW.max(scale.max);
+					if ( scale.step != undefined ) cW.step(scale.step);
+					break;
+				default: console.error( 'GuiSelectPoint.setAxisControl. Invalid axis: '  + axis);
+					
+			}
+			
 		}
 		/**
 		 * sets axis name of the controllers
@@ -886,11 +896,6 @@ class GuiSelectPoint {
 				controller.setValue( angle );
 				
 			}
-/*			
-			if ( cRotations.x ) cRotations.x.setValue( mesh.rotation.x );
-			if ( cRotations.y ) cRotations.y.setValue( mesh.rotation.y );
-			if ( cRotations.z ) cRotations.z.setValue( mesh.rotation.z );
-*/   
 			if ( cRotations.x ) setValue( cRotations.x, mesh.rotation.x );
 			if ( cRotations.y ) setValue( cRotations.y, mesh.rotation.y );
 			if ( cRotations.z ) setValue( cRotations.z, mesh.rotation.z );
@@ -903,9 +908,7 @@ class GuiSelectPoint {
 			var index = intersection.index || 0,
 				point = intersection.object.userData.player.arrayFuncs[index],
 				line = point === undefined ? undefined : point.line;
-			if (
-				( line !== undefined )// &&
-			)
+			if ( ( line !== undefined ) )
 				line.visible( value );
 			if ( !value )
 				return;
@@ -1052,7 +1055,10 @@ class GuiSelectPoint {
 				for ( var i = 0; i < position.count; i++ ) {
 
 					const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
-					vector.w = 1;
+
+					//непонятно зачем это засунул
+//					vector.w = 1;
+					
 					mesh.userData.player.arrayFuncs.push( vector );
 
 				}
@@ -1082,26 +1088,6 @@ class GuiSelectPoint {
 				if ( cCustom ) cCustom.object( mesh, dat, value === -1 );//options );
 
 				createPlayerArrayFuncs( mesh );
-/*
-				if ( mesh && !mesh.userData.boFrustumPoints ) {
-
-					if ( !mesh.userData.player ) mesh.userData.player = {};
-					if ( !mesh.userData.player.arrayFuncs ) {
-
-						const position = mesh.geometry.attributes.position;
-						mesh.userData.player.arrayFuncs = [];
-						for ( var i = 0; i < position.count; i++ ) {
-
-							const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
-							vector.w = 1;
-							mesh.userData.player.arrayFuncs.push( vector );
-
-						}
-
-					}
-
-				}
-*/
 
 				const none = 'none', block = 'block';
 				var display;
@@ -1338,18 +1324,7 @@ class GuiSelectPoint {
 				}
 				switch ( n ) {
 
-/*
-					case 1:
-						fRotation.domElement.style.display = none;
-						break;
-*/
 					case 2:
-/*						
-						fRotation.domElement.style.display = block;
-						if ( boX ) cRotations.x.domElement.parentElement.parentElement.style.display = none;
-						if ( boY ) cRotations.y.domElement.parentElement.parentElement.style.display = none;
-						if ( boZ ) cRotations.z.domElement.parentElement.parentElement.style.display = none;
-*/
 						addRotationControllers( !boX ? 'x' : !boY ? 'y' : 'z' );
 						break;
 					case 3:
@@ -1437,7 +1412,6 @@ class GuiSelectPoint {
 			//Custom point controllers 
 
 			if ( options.dat && options.dat.guiSelectPoint && options.dat.guiSelectPoint.point ) cCustom = options.dat.guiSelectPoint.point( options, dat, fMesh );
-//			nD = new ND.gui( options, dat, fMesh );
 
 			//Camera target
 			// Может устанвливаться только если создан проигрыватель options.player,
@@ -1694,7 +1668,7 @@ class GuiSelectPoint {
 
 			//Point's attribute position axes controllers
 
-			function axesGui( axisName/*axesId, onChange*/ ) {
+			function axesGui( axisName ) {
 
 				var scale, controller;
 				if ( axisName === 'w' ) {
@@ -1803,7 +1777,6 @@ class GuiSelectPoint {
 							} );
 
 				}
-//				if ( scale )
 				if ( controller )
 					dat.controllerNameAndTitle( controller, scale.name );
 				return controller;

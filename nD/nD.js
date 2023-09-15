@@ -40,7 +40,29 @@ class ND {
 	 * @param {object} [settings={}] The following settings are available
 	 * @param {object} [settings.object] geometry, position and rotation of the n-dimensional graphical object.
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
-	 * @param {String} [settings.object.color='lime'] color of N-dimensional graphic object.
+	 * @param {number|String|object} [settings.object.color='lime'] color of N-dimensional graphic object.
+	 * <pre>
+	 * number - hexadecimal color. Example: 0xffffff - white color
+	 * String - color name. Example: 'skyblue'
+	 * object - Sets the color separately for each vertice.
+	 *	You can choose one way for setting of the vertice color from two available:
+	 *	
+	 *	1. Set the fourth <b>w</b> coordinate of each vertex in a range from
+	 *		<b>settings.options.scales.w.min</b> to
+	 *		<b>settings.options.scales.w.max</b>
+	 *		
+	 *		<b>w</b> coordinate is index of palette color. See <a href="../../colorpicker/jsdoc/module-ColorPicker-ColorPicker.html#toColor" target="_blank">toColor</a> method from <b>ColorPicker</b> class.
+	 *		Example:
+	 *		settings.object.geometry.position: [
+	 *			//pyramid
+	 *			[0,-0.9428090415820634,0.33333333333333326, 1],
+	 *			[0.8164965662730563,0.4714045207910317,0.33333333333333326, 0.5],
+	 *			[-0.8164965662730563,0.4714045207910317,0.33333333333333326, 0],
+	 *			[7.32733549761259e-9,4.230438555019589e-9,-1.0, -1.0],
+	 *		],
+	 *	
+	 *	2. Set a <b>settings.object.geometry.colors</b> array. 
+	 * </pre>
 	 * @param {boolean|object} [settings.object.faces] true or object - display the n-dimensional graphical object faces instead of edges.
 	 * @param {float} [settings.object.faces.opacity=0.5] color Float in the range of 0.0 - 1.0 indicating how transparent the material is.
 	 * A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
@@ -65,6 +87,22 @@ class ND {
 	 * 	[0, -0.4, 0.8],//2
 	 * 	[0, 0, -0.6]//3
 	 * ]</b>,
+	 * </pre>
+	 * @param {Array} [settings.object.geometry.colors] Array of colors for the each vertex.
+	 * <pre>
+	 * Every vertex is associated with 3 values of the <b>colors</b> array.
+	 * Each value of the <b>colors</b> array is red or green or blue color of the particular vertex in range from 0 to 1.
+	 * 
+	 * 0 is no color.
+	 * 1 is full color.
+	 * 
+	 * For example:
+	 * settings.object.geometry.colors: [
+	 * 	1, 0, 0,//red color of the <b>position[0]</b> vertex.
+	 * 	0, 1, 0,//green color of the <b>position[1]</b> vertex.
+	 * 	0, 0, 1,//blue color of the <b>position[2]</b> vertex.
+	 * 	1, 1, 1,//white color of the <b>position[3]</b> vertex.
+	 * ],
 	 * </pre>
 	 * @param {Array} [settings.object.geometry.boRememberPosition=true] true - Remember vertex positions for higher performance. As result, new vertex positions have no effect.
 	 * @param {Array} [settings.object.geometry.indices] Array of <b>indices</b> of vertices of the n-dimensional graphical object.
@@ -272,19 +310,6 @@ class ND {
 					lang.segmentId = 'Индекс сегмента';
 
 					break;
-				/*guiParams is not defined
-				default://Custom language
-					if ((guiParams.lang === undefined) || (guiParams.lang.languageCode != _languageCode))
-						break;
-
-					Object.keys(guiParams.lang).forEach(function (key) {
-
-						if (lang[key] === undefined)
-							return;
-						lang[key] = guiParams.lang[key];
-
-					});
-				*/
 
 			}
 
@@ -317,12 +342,6 @@ class ND {
 			for ( var segmentIndex = 0; segmentIndex < edges.length; segmentIndex++ ) {
 
 				const edgeCur = edges[segmentIndex];
-/*				
-				if (
-					( ( edgeCur.indices[0] === edge[0] ) && ( edgeCur.indices[1] === edge[1] ) ) ||
-					( ( edgeCur.indices[0] === edge[1] ) && ( edgeCur.indices[1] === edge[0] ) )
-				)
-*/	
 				if (
 					( ( edgeCur[0] === edge[0] ) && ( edgeCur[1] === edge[1] ) ) ||
 					( ( edgeCur[0] === edge[1] ) && ( edgeCur[1] === edge[0] ) )
@@ -447,7 +466,9 @@ class ND {
 								*/
 								case "point":
 									const THREE = three.THREE;
-									return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );
+									if ((typeof settings.object.color === "object") && (array.length >= 4))
+										return new THREE.Vector4( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ), this.get( undefined, 3 ) );//цвет каждой вершины зависить от оси w этой вершины
+									return new THREE.Vector3( this.get( undefined, 0 ), this.get( undefined, 1 ), this.get( undefined, 2 ) );//Цвет всех вершин определяется из settings.object.color или из settings.object.geometry.colors или одинаковый по умолчанию
 								default: {
 
 									return _this[name];
@@ -587,21 +608,7 @@ class ND {
 
 						if ( target instanceof Array ) {
 
-							if ( i < target.length && ( target[i] !== undefined ) ) {
-
-								/*
-								if ( !target.boUseRotation ) {
-
-									//https://stackoverflow.com/a/57023880/5175935
-									const strFunction = ( new Error() ).stack.split( "\n" )[3].trim().split( " " )[1];
-									if ( ( strFunction !== "NumberControllerSlider.updateDisplay" ) && ( strFunction !== "NumberControllerBox.updateDisplay" ) )//пользователь изменил угол вращения из dat.GUI
-										console.error( 'ND settings.object.rotation get: use settings.object.rotation.trigonometry unstead settings.object.rotation. ' + strFunction )
-
-								}
-								*/
-								return target[i];
-
-							}
+							if ( i < target.length && ( target[i] !== undefined ) ) return target[i];
 							return 0;
 
 						}
@@ -952,7 +959,6 @@ class ND {
 
 						} else {
 
-//							positionPoint.forEach( ( value, j ) => array.push( positionPoint[j] + settings.object.position[j] ) );
 							positionPoint.forEach( ( value, j ) => array.push( value + settings.object.position[j] ) );
 							setRotationAxes();
 
@@ -1040,26 +1046,6 @@ class ND {
 									switch ( name ) {
 
 										case 'reset': return function() { delete target.positionWorld; }
-/*currently is not using. See \commonNodeJS\master\graphicObjects\circle.js											
-										case 'distanceTo': return (position) => {
-
-											if (target.length != position.length) {
-												
-												console.error('ND settings.object.geometry.position[i].distanceTo(). target.length != position.length');
-												return;
-												
-											}
-											//const distance = new three.THREE.Vector3(target[0], target[1], target[2], ).distanceTo(new three.THREE.Vector3(position[0], position[1], position[2], ));
-											let sum = 0;
-											target.forEach((axis, i) => {
-
-												const d = axis - position[i];
-												sum += d * d;
-												
-											})
-											return Math.sqrt(sum);
-										}
-*/											
 
 									}
 									return target[name];
@@ -1164,7 +1150,6 @@ class ND {
 						if (!isNaN(i)) {
 
 							const edge = edges[i];
-//							if (edge.intersection) return edge;
 							edge.intersection = (geometryIntersection) => {
 
 								const i = parseInt(name);
@@ -1368,13 +1353,6 @@ class ND {
 							case 'intersection': return undefined;
 							case 'edges': return edges;
 							case 'isProxy': return true;
-/*								
-							case 'push': return edges.push;
-							case 'length': return edges.length;
-							case 'forEach': return edges.forEach;
-							case 'selected': return edges.selected;
-							default: console.error( 'ND: settings.object.geometry.indices getter. Invalid name: ' + name );
-*/	   
 
 						}
 						return edges[name];
@@ -1759,6 +1737,7 @@ class ND {
 		appendEdges();
 
 		if ( settings.object.geometry.indices.boAddIndices ) {
+
 			//В каждом сегменте geometry.indices[i] должно встечаться определенное количество индексов из передыдущего сегмента
 			//geometry.indices[i - 1]. В противном случае в geometry.indices[i] добавляем новый элемент, в который добавляем
 			//индексы из передыдущего сегмента geometry.indices[i - 1].
@@ -1963,7 +1942,7 @@ class ND {
 					const indices = [], colors = [];
 					//если объект не состоит из одной вершины и имеет ребера
 					if ( settings.object.geometry.indices[0].length !== 0 ) {
-						
+
 						const edges = settings.object.geometry.indices[0];
 						for ( var i = 0; i < edges.length; i++ ) {
 	
@@ -1987,8 +1966,9 @@ class ND {
 								//indices.push( ...edge );//incompatible with https://raw.githack.com/anhr/egocentricUniverse/dev/1D.html
 								edge.forEach( vertice => indices.push( vertice ) );
 								
-								if ( this.color ) {
-	
+								if ( this.color && ( typeof this.color != "object") ) {
+
+									//одинаковый цвет для всех ребер
 									const color = new THREE.Color(this.color);
 									function hexToRgb(hex) {
 									  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -2013,6 +1993,20 @@ class ND {
 	
 							} else console.error( 'ND.geometry.D3.get indices: invalid edge. Возможно вычислены не все точки пересечения' );
 							
+						}
+						if (this.color && (typeof this.color === "object")) {
+
+							//цвет вершин
+							if ( colors.length != 0 ) console.error('ND.geometry.D3.get vrtices colors: Invalid colors.length = ' + colors.length);
+							settings.object.geometry.position.forEach( vertice => {
+
+								const rgb = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max );
+								colors.push(rgb.r);
+								colors.push(rgb.g);
+								colors.push(rgb.b);
+
+							} );
+
 						}
 
 					}
@@ -2080,8 +2074,14 @@ class ND {
 			const color = settings3D.color || 'white';//0xffffff
 			geometry.D3.color = color;
 			const indices3D = geometry.D3.indices, indices = indices3D.indices, colors = indices3D.colors;
-			
-			const buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
+
+			if (
+				( settings.object.geometry.position[0].length > 3 ) &&//Vertice have the w coordinate
+				( typeof settings.object.color === "object" ) &&//Color of vertice from palette
+				!settings.object.geometry.colors//Vertices colors array is not exists
+			)
+				settings.object.geometry.colors = indices3D.colors;
+			const buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points, geometry.D3.points[0].w === undefined ? 3 : 4);
 			if ( settings3D.faces ) {
 
 				if ( settings3D.faces === true ) settings3D.faces = {};
@@ -2101,7 +2101,7 @@ class ND {
 						transparent: settings3D.faces.transparent,
 						side: THREE.DoubleSide
 					} ) ) :
-					new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( { color: color, } ) ) :
+					new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( settings.object.geometry.colors ? { vertexColors: true, toneMapped: false } : { color: color, } ) ) :
 				new THREE.Points( buffer, new THREE.PointsMaterial( {
 					
 					color: color,
@@ -2111,6 +2111,7 @@ class ND {
 				} ) );
 			if ( settings3D.name )
 				object.name = settings3D.name;
+			if ( settings.object.geometry.colors ) object.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( settings.object.geometry.colors, 3 ) );
 			scene.add( object );
 
 			object.userData.geometry = geometry.geometry;
@@ -2257,19 +2258,6 @@ class ND {
 						lang.notSelected = 'Не выбран';
 
 						break;
-					/*guiParams is not defined
-					default://Custom language
-						if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
-							break;
-
-						Object.keys( guiParams.lang ).forEach( function ( key ) {
-
-							if ( lang[key] === undefined )
-								return;
-							lang[key] = guiParams.lang[key];
-
-						} );
-					*/
 
 				}
 				for ( var i = fParent.__controllers.length - 1; i >= 0; i-- ) { fParent.remove( fParent.__controllers[i] ); }
@@ -2512,8 +2500,7 @@ class ND {
 
 					} );
 					dat.controllerNameAndTitle(cSegment, '');
-					var selectedItem = 0;//, innerHTML;
-					//cSegment.__select[0].selected = true;
+					var selectedItem = 0;
 
 					const selected = segmentIndex >= 0 ? indices[segmentIndex].selected : undefined;
 					var selectedOpt;//debug
@@ -2738,12 +2725,10 @@ class ND {
 				}
 				const edge = settings.object.geometry.indices[0][iEdge];
 				edge.intersection( geometryIntersection );
-//				const position = edge.indices.intersection.position;
 				const position = edge.intersection.position;
 				if ( position ) {
 					
 					var boAdd = true;
-//					if ( edge.indices.intersection.boVerticeOnPanel )
 					if ( edge.intersection.boVerticeOnPanel ) {
 
 						//Вершина на панели. В этом случае все ребра, сходящиеся к этой вершине буду выдвать одну и ту же точку пересечения
@@ -3085,11 +3070,6 @@ class ND {
 		if ( scene ) {
 
 			//Если есть scene, обязательно должен быть options. Здесь создать options неполучится
-/*			
-			options.scales.x.name = 0;
-			options.scales.y.name = 1;
-			options.scales.z.name = 2;
-*/   
 			if ( n <= 1 ) options.scales.y = undefined;
 			if ( n <= 2 ) options.scales.z = undefined;
 			options.scales.text.rect = options.scales.text.rect || {}
@@ -3384,19 +3364,6 @@ ND.gui = class {
 				lang.nDTitle = 'n-мерный объект';
 
 				break;
-			/*guiParams is not defined
-			default://Custom language
-				if ( ( guiParams.lang === undefined ) || ( guiParams.lang.languageCode != _languageCode ) )
-					break;
-
-				Object.keys( guiParams.lang ).forEach( function ( key ) {
-
-					if ( lang[key] === undefined )
-						return;
-					lang[key] = guiParams.lang[key];
-
-				} );
-			*/
 
 		}
 		const fND = fParent.addFolder( lang.nD );

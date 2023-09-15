@@ -78,13 +78,9 @@ class Options {
 			optionsCur = optionsCur || options;
 			const axisName = 'w';
 			optionsCur.scales = optionsCur.scales || {};
-//			optionsCur.scales.w = optionsCur.scales.w || {};
 			const scale = optionsCur.scales.w;
-//			scale.name = scale.name || axisName;
 			if ( !optionsCur.palette )
 				_this.setPalette( optionsCur );
-
-//			scale.min = scale.min === undefined ? 0 : scale.min;
 
 			//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
 			//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
@@ -346,17 +342,6 @@ class Options {
 								elMyGuiContainer.style.position = 'absolute';//оставляем gui в пределах canvas
 								elMyGuiContainer.style.top = '0px';
 								elMyGuiContainer.style.right = '0px';
-/*
-								dat.parent.appendChild( dat.gui.domElement );//.parentNode );
-								dat.gui.domElement.style.position = 'absolute';//оставляем gui в пределах canvas
-								dat.gui.domElement.style.top = '0px';
-								dat.gui.domElement.style.right = '0px';
-								setTimeout( function () {
-
-									dat.gui.domElement.classList.remove( 'taller-than-window' );
-
-								}, 0 );
-*/								
 
 							}
 							Object.defineProperties( this, {
@@ -623,8 +608,6 @@ class Options {
 						 */
 						constructor( scales ) {
 
-//							scales = scales || {};
-
 							class Scale {
 
 								/* *
@@ -641,6 +624,19 @@ class Options {
 										if ( !scales || ( !scales.x && !scales.y && !scales.z ) || scale ) return true;
 										return false;
 										
+									}
+									const setScale = (callBack) => {
+
+										if ( !scale ) {
+
+											scales[axisName] = {};
+											scale = scales[axisName];
+
+										}
+										callBack();
+										scale.step = Math.abs( options.scales.w.min - options.scales.w.max ) / 100;
+										if ( options.guiSelectPoint) options.guiSelectPoint.setAxisControl( 'w', scale );
+
 									}
 									Object.defineProperties( this, {
 
@@ -663,17 +659,7 @@ class Options {
 												return scale.min;
 
 											},
-											set: function ( min ) {
-		   
-												if ( !scale ) {
-			
-				   									scales[axisName] = {};
-													scale = scales[axisName];
-											
-												}
-												scale.min = min;
-			
-											},
+											set: ( min ) => { setScale( () => { scale.min = min; }); },
 
 										},
 										max: {
@@ -686,7 +672,7 @@ class Options {
 												return scale.max;
 
 											},
-											set: function ( max ) { scale.max = max; },
+											set: ( max ) => { setScale( () => { scale.max = max; }); },
 
 										},
 										name: {
@@ -698,7 +684,7 @@ class Options {
 
 											},
 											set: function ( name ) {
-												
+
 												if ( scale ) {
 													
 													scale.name = name;
@@ -962,7 +948,6 @@ class Options {
 			 **/
 			point: {
 
-//				get: function () { return options.point; },
 				get: function () {
 					return {
 
@@ -1413,32 +1398,10 @@ class Options {
 										if ( !controllers.t ) {
 
 											if ( !elTime ) return;
-											controllers.t = {
-
-//												controller: elTime,
-
-												elName: document.getElementById( 'tName' ),
-
-											}
+											controllers.t = { elName: document.getElementById( 'tName' ), }
 
 										}
 										if ( !controllers.t.controller && elTime ) controllers.t.controller = elTime;
-/*
-										if ( !controllers.t.player ) {
-
-											const buttonPrev = document.getElementById( 'prev' ),
-												buttonPlay = document.getElementById( 'play' ),
-												buttonNext = document.getElementById( 'next' );
-											if ( buttonPrev || buttonPlay || buttonNext ) {
-
-												controllers.t.player = {};
-												if ( buttonPrev ) controllers.t.player.buttonPrev = buttonPrev;
-												if ( buttonPlay ) controllers.t.player.buttonPlay = buttonPlay;
-												if ( buttonNext ) controllers.t.player.buttonNext = buttonNext;
-
-											}
-										}
-*/										
 										if ( controllers.t ) {
 
 											createController( controllers.t, 't',
@@ -1926,7 +1889,6 @@ cube.userData.raycaster = {
 						raycasterEvents: false,
 
 					} );
-					//				raycaster.stereo.addParticles( arrayParticles );
 
 				}
 
@@ -1967,12 +1929,8 @@ cube.userData.raycaster = {
 					} else {
 
 						const intersect = intersects[0], object = intersect.object;
-						if ( object.userData.raycaster && object.userData.raycaster.onIntersection ) {
-
-//							intersect.pointSpriteText = intersect.point;
-							object.userData.raycaster.onIntersection( intersect, mouse );
-							
-						} else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
+						if ( object.userData.raycaster && object.userData.raycaster.onIntersection ) object.userData.raycaster.onIntersection( intersect, mouse );
+						else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
 						intersectedObject = object;
 
 					}
