@@ -502,6 +502,15 @@ class GuiSelectPoint {
 			funcFolder.displayFolder( !boReadOnly );
 
 		}
+		/**
+		 * Specify a maximum, minimum and step value for [NumberController]{@link https://github.com/dataarts/dat.gui/blob/master/API.md#NumberController}.
+		 * 
+		 * @param {String} axis axis. Currently 'w' axis is available only.
+		 * @param {object} scale The following <b>NumberController</b> properties are available:
+		 * @param {object} [scale.min] Minimum allowed value.
+		 * @param {object} [scale.max] Maximum allowed value.
+		 * @param {object} [scale.step] Increment by which to change value.
+		 */
 		this.setAxisControl = function ( axis, scale ) {
 
 			switch( axis ) {
