@@ -2969,8 +2969,7 @@ function ColorPicker() {
 		this.hsv2rgb = function (stringPercent, min, max) {
 			var percent = parseFloat(stringPercent);
 			if (isNaN(percent)) {
-				console.error('ColorPicker.palette.hsv2rgb: stringPercent = ' + stringPercent);
-				return;
+				percent = max;
 			}
 			if (min !== undefined && max !== undefined) percent = 100 / (max - min) * (percent - min);
 			var lastPalette = arrayPalette[arrayPalette.length - 1];
@@ -10755,7 +10754,7 @@ function Options(options) {
 			setScale('y');
 			setScale('z');
 			options.point = options.point || {};
-			options.point.size = options.point.size || 5.0;
+			if (options.point.size === undefined) options.point.size = 5.0;
 			options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
 			this.setPalette = function () {
 						if (options.palette) return;
@@ -11025,6 +11024,15 @@ function Options(options) {
 																					if (!scales || !scales.x && !scales.y && !scales.z || scale) return true;
 																					return false;
 																		};
+																		var setScale = function setScale(callBack) {
+																					if (!scale) {
+																								scales[axisName] = {};
+																								scale = scales[axisName];
+																					}
+																					callBack();
+																					scale.step = Math.abs(options.scales.w.min - options.scales.w.max) / 100;
+																					if (options.guiSelectPoint) options.guiSelectPoint.setAxisControl('w', scale);
+																		};
 																		Object.defineProperties(this, {
 																					boScale: {
 																								get: function get$$1() {
@@ -11037,7 +11045,9 @@ function Options(options) {
 																											return scale.min;
 																								},
 																								set: function set$$1(min) {
-																											scale.min = min;
+																											setScale(function () {
+																														scale.min = min;
+																											});
 																								}
 																					},
 																					max: {
@@ -11046,7 +11056,9 @@ function Options(options) {
 																											return scale.max;
 																								},
 																								set: function set$$1(max) {
-																											scale.max = max;
+																											setScale(function () {
+																														scale.max = max;
+																											});
 																								}
 																					},
 																					name: {
@@ -11372,9 +11384,7 @@ function Options(options) {
 																					var elTime = document.getElementById('time');
 																					if (!controllers.t) {
 																								if (!elTime) return;
-																								controllers.t = {
-																											elName: document.getElementById('tName')
-																								};
+																								controllers.t = { elName: document.getElementById('tName') };
 																					}
 																					if (!controllers.t.controller && elTime) controllers.t.controller = elTime;
 																					if (controllers.t) {
@@ -11608,9 +11618,7 @@ function Raycaster() {
 												} else {
 															var intersect = intersects[0],
 															    object = intersect.object;
-															if (object.userData.raycaster && object.userData.raycaster.onIntersection) {
-																		object.userData.raycaster.onIntersection(intersect, mouse);
-															} else Options.raycaster.onIntersection(intersect, options, settings.scene, camera, renderer);
+															if (object.userData.raycaster && object.userData.raycaster.onIntersection) object.userData.raycaster.onIntersection(intersect, mouse);else Options.raycaster.onIntersection(intersect, options, settings.scene, camera, renderer);
 															intersectedObject = object;
 												}
 									}, false);
@@ -11909,6 +11917,7 @@ function ND(n) {
 						switch (name) {
 							case "point":
 								var _THREE = three$1.THREE;
+								if (_typeof(settings.object.color) === "object" && array.length >= 4) return new _THREE.Vector4(this.get(undefined, 0), this.get(undefined, 1), this.get(undefined, 2), this.get(undefined, 3));
 								return new _THREE.Vector3(this.get(undefined, 0), this.get(undefined, 1), this.get(undefined, 2));
 							default:
 								{
@@ -12019,9 +12028,7 @@ function ND(n) {
 				var i = parseInt(name);
 				if (!isNaN(i)) {
 					if (target instanceof Array) {
-						if (i < target.length && target[i] !== undefined) {
-							return target[i];
-						}
+						if (i < target.length && target[i] !== undefined) return target[i];
 						return 0;
 					}
 					return target;
@@ -12239,7 +12246,7 @@ function ND(n) {
 						});
 					} else {
 						positionPoint.forEach(function (value, j) {
-							return array.push(positionPoint[j] + settings.object.position[j]);
+							return array.push(value + settings.object.position[j]);
 						});
 						setRotationAxes();
 					}
@@ -12295,13 +12302,28 @@ function ND(n) {
 								var i = parseInt(name);
 								if (!isNaN(i)) {
 									if (i >= target.length) return 0;
-									if (isNaN(target[i])) console.error('ND get settings.object.geometry.position[i][' + i + '] = ' + target[i]);
-									return target[i];
+									var axis = target[i];
+									if (isNaN(axis)) console.error('ND get settings.object.geometry.position[i][' + i + '] = ' + target[i]);
+									return axis;
 								}
 								switch (name) {
 									case 'reset':
 										return function () {
 											delete target.positionWorld;
+										};
+									case 'distanceTo':
+										return function (verticeTo) {
+											var vertice = target;
+											if (vertice.length != verticeTo.length) {
+												console.error(sUniverse + ': settings.object.geometry.position[i].distanceTo(...). vertice.length != verticeTo.length');
+												return;
+											}
+											var sum = 0;
+											vertice.forEach(function (axis, i) {
+												var d = axis - verticeTo[i];
+												sum += d * d;
+											});
+											return Math.sqrt(sum);
 										};
 								}
 								return target[name];
@@ -12897,7 +12919,7 @@ function ND(n) {
 							edge.forEach(function (vertice) {
 								return indices.push(vertice);
 							});
-							if (this.color) {
+							if (this.color && _typeof(this.color) != "object") {
 								(function () {
 									var hexToRgb = function hexToRgb(hex) {
 										var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -12919,6 +12941,15 @@ function ND(n) {
 								})();
 							}
 						} else console.error('ND.geometry.D3.get indices: invalid edge. Возможно вычислены не все точки пересечения');
+					}
+					if (this.color && _typeof(this.color) === "object") {
+						if (colors.length != 0) console.error('ND.geometry.D3.get vrtices colors: Invalid colors.length = ' + colors.length);
+						settings.object.geometry.position.forEach(function (vertice) {
+							var rgb = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max);
+							colors.push(rgb.r);
+							colors.push(rgb.g);
+							colors.push(rgb.b);
+						});
 					}
 				}
 				return { indices: indices, colors: colors };
@@ -12964,7 +12995,11 @@ function ND(n) {
 		var indices3D = geometry.D3.indices,
 		    indices = indices3D.indices,
 		    colors = indices3D.colors;
-		var buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
+		if (settings.object.geometry.position[0].length > 3 &&
+		_typeof(settings.object.color) === "object" &&
+		!settings.object.geometry.colors
+		) settings.object.geometry.colors = indices3D.colors;
+		var buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points, geometry.D3.points[0].w === undefined ? 3 : 4);
 		if (settings3D.faces) {
 			if (settings3D.faces === true) settings3D.faces = {};
 			if (settings3D.faces.color === undefined) settings3D.faces.color = color;
@@ -12978,12 +13013,13 @@ function ND(n) {
 			opacity: settings3D.faces.opacity,
 			transparent: settings3D.faces.transparent,
 			side: THREE.DoubleSide
-		})) : new THREE.LineSegments(buffer, new THREE.LineBasicMaterial({ color: color })) : new THREE.Points(buffer, new THREE.PointsMaterial({
+		})) : new THREE.LineSegments(buffer, new THREE.LineBasicMaterial(settings.object.geometry.colors ? { vertexColors: true, toneMapped: false } : { color: color })) : new THREE.Points(buffer, new THREE.PointsMaterial({
 			color: color,
 			sizeAttenuation: false,
 			size: options.point.size / (options.point.sizePointsMaterial * 2)
 		}));
 		if (settings3D.name) object.name = settings3D.name;
+		if (settings.object.geometry.colors) object.geometry.setAttribute('color', new THREE.Float32BufferAttribute(settings.object.geometry.colors, 3));
 		scene.add(object);
 		object.userData.geometry = geometry.geometry;
 		object.userData.onMouseDown = function (intersection) {
