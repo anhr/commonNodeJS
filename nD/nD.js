@@ -1046,6 +1046,25 @@ class ND {
 									switch ( name ) {
 
 										case 'reset': return function() { delete target.positionWorld; }
+										case 'distanceTo': return (verticeTo) => {
+	
+											const vertice = target;
+											if (vertice.length != verticeTo.length) {
+	
+												console.error(sUniverse + ': settings.object.geometry.position[i].distanceTo(...). vertice.length != verticeTo.length');
+												return;
+	
+											}
+											//const distance = new three.THREE.Vector3(vertice[0], vertice[1], vertice[2], ).distanceTo(new three.THREE.Vector3(verticeTo[0], verticeTo[1], verticeTo[2], ));
+											let sum = 0;
+											vertice.forEach((axis, i) => {
+	
+												const d = axis - verticeTo[i];
+												sum += d * d;
+	
+											})
+											return Math.sqrt(sum);
+									}
 
 									}
 									return target[name];
@@ -2484,7 +2503,6 @@ class ND {
 										position1 = settings.object.geometry.position[lineIndices[1]];
 									if (position0.length && position1.length) cDistance.setValue( position0.distanceTo(position1) );
 									else console.error("ND: Select edge. Invalid edge's vertices distance");
-//									cDistance.setValue( geometry.D3.points[lineIndices[0]].distanceTo( geometry.D3.points[lineIndices[1]] ) );
 									break;
 			
 							}
