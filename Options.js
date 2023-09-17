@@ -12,12 +12,12 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
+/*
 //При выполнении npm run build получаю ошибку
 //(babel plugin) ReferenceError: Unknown plugin "external-helpers" specified in "base" at 1, attempted to resolve relative to "D:\\My documents\\MyProjects\\webgl\\three.js\\GitHub\\three.js\\dev\\examples\\jsm"
 //import { WEBGL } from '../../three.js/dev/examples/jsm/WebGL.js';
 
 import { WEBGL } from './WebGL.js';
-//import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
 
 //for testing open FireFox and read https://support.biodigital.com/hc/en-us/articles/218322977-How-to-turn-on-WebGL-in-my-browser#h_01EJW3MGDF7KH3PH6TG2DE13H6
 if ( WEBGL.isWebGLAvailable() === false ) {
@@ -26,22 +26,15 @@ if ( WEBGL.isWebGLAvailable() === false ) {
 	alert( WEBGL.getWebGLErrorMessage().innerHTML );
 
 }
-
+*/
 import ColorPicker from './colorpicker/colorpicker.js';
-//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
-
 import three from './three.js'
 
 //для создания пустого cookie который ничего не запоминает
 import Cookie from './cookieNodeJS/cookie.js';
-//import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 import cookie from './cookieNodeJS/cookie.js';
-//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
 import { getLanguageCode } from './lang.js';
-//import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-
 import Player from './player/player.js';
 import StereoEffect from './StereoEffect/StereoEffect.js';
 import { createController } from './controller.js'
