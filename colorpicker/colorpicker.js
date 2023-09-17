@@ -640,6 +640,10 @@ class ColorPicker {
 
 			}
 			/**
+			* @returns true
+			*/
+			this.isPalette = function () { return true; }
+			/**
 			* @returns {object[]} palette array
 			*/
 			this.getPalette = function () {

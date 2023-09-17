@@ -904,7 +904,10 @@ class Options {
 							break;
 						default: {
 
-							if ( options.palette instanceof ColorPicker.palette === false )
+							//Это условие не выполняется корректро если использовать myThree.module.js или myThree.module.min.js вместо myThree.js
+							//if ( options.palette instanceof ColorPicker.palette === false )
+	   
+							if ( !options.palette.isPalette() )
 								console.error( 'MyThree: invalid typeof options.palette: ' + typeof options.palette );
 
 						}

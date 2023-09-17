@@ -7422,61 +7422,6 @@ function getObjectPosition(object, index) {
 	return getWorldPosition(object, getObjectLocalPosition(object, index));
 }
 
-var WEBGL = {
-		isWebGLAvailable: function isWebGLAvailable() {
-				try {
-						var canvas = document.createElement('canvas');
-						return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-				} catch (e) {
-						return false;
-				}
-		},
-		isWebGL2Available: function isWebGL2Available() {
-				try {
-						var canvas = document.createElement('canvas');
-						return !!(window.WebGL2RenderingContext && canvas.getContext('webgl2'));
-				} catch (e) {
-						return false;
-				}
-		},
-		getWebGLErrorMessage: function getWebGLErrorMessage() {
-				return this.getErrorMessage(1);
-		},
-		getWebGL2ErrorMessage: function getWebGL2ErrorMessage() {
-				return this.getErrorMessage(2);
-		},
-		getErrorMessage: function getErrorMessage(version) {
-				var names = {
-						1: 'WebGL',
-						2: 'WebGL 2'
-				};
-				var contexts = {
-						1: window.WebGLRenderingContext,
-						2: window.WebGL2RenderingContext
-				};
-				var message = 'Your $0 does not seem to support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation" style="color:#000">$1</a>';
-				var element = document.createElement('div');
-				element.id = 'webglmessage';
-				element.style.fontFamily = 'monospace';
-				element.style.fontSize = '13px';
-				element.style.fontWeight = 'normal';
-				element.style.textAlign = 'center';
-				element.style.background = '#fff';
-				element.style.color = '#000';
-				element.style.padding = '1.5em';
-				element.style.width = '400px';
-				element.style.margin = '5em auto 0';
-				if (contexts[version]) {
-						message = message.replace('$0', 'graphics card');
-				} else {
-						message = message.replace('$0', 'browser');
-				}
-				message = message.replace('$1', names[version]);
-				element.innerHTML = message;
-				return element;
-		}
-};
-
 /**
  * node.js version of the synchronous download of the file.
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -8121,6 +8066,9 @@ function ColorPicker() {
 				console.error('ColorPicker.create.Palette: ' + message);
 				options.onError(message);
 		}
+		this.isPalette = function () {
+			return true;
+		};
 		this.getPalette = function () {
 			var palette = [];
 			arrayPalette.forEach(function (item) {
@@ -9195,10 +9143,6 @@ function createController(settings, controllerId, name, options) {
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-if (WEBGL.isWebGLAvailable() === false) {
-			document.body.appendChild(WEBGL.getWebGLErrorMessage());
-			alert(WEBGL.getWebGLErrorMessage().innerHTML);
-}
 var boCreateControllers;
 var Options =
 function Options(options) {
@@ -9671,7 +9615,7 @@ function Options(options) {
 																		break;
 															default:
 																		{
-																					if (options.palette instanceof ColorPicker$1.palette === false) console.error('MyThree: invalid typeof options.palette: ' + _typeof(options.palette));
+																					if (!options.palette.isPalette()) console.error('MyThree: invalid typeof options.palette: ' + _typeof(options.palette));
 																		}
 												}
 												return options.palette;
