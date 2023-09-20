@@ -634,6 +634,7 @@ class GuiSelectPoint {
 		/**
 		 * Removes a mesh from the select point GUI
 		 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for removing.
+		 * @param {boolean} [boHideF3DObjects=true] true - hide the 'Meshes' folder if no any mesh exists in the meshs dropdown menu.
 		 */
 		this.removeMesh = function ( mesh, boHideF3DObjects = true ) {
 
