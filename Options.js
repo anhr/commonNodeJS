@@ -1316,7 +1316,7 @@ class Options {
 				},
 				set: function ( guiSelectPoint ) {
 
-					if ( options.guiSelectPoint )
+					if ( options.guiSelectPoint && ( guiSelectPoint != undefined ) )
 						console.error( 'duplicate guiSelectPoint.' );
 					options.guiSelectPoint = guiSelectPoint;
 
