@@ -42,8 +42,8 @@ class ND {
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
 	 * @param {number|String|object} [settings.object.color='lime'] color of N-dimensional graphic object.
 	 * <pre>
-	 * number - hexadecimal color. Example: 0xffffff - white color
-	 * String - color name. Example: 'skyblue'
+	 * number - [Hex triplet]{@link https://en.wikipedia.org/wiki/Web_colors#Hex_triplet} color. Example: 0xffffff - white color
+	 * String - color name. See list of available color names in the <b>_colorKeywords</b> object in the [Color.js]{@link https://github.com/mrdoob/three.js/blob/dev/src/math/Color.js} file.
 	 * object - Sets the color separately for each vertice.
 	 *	You can choose one way for setting of the vertice color from two available:
 	 *	

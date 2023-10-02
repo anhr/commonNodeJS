@@ -219,12 +219,13 @@ class MyThree {
 	 * @param {object} [options.cameraTarget] camera looking at selected point during playing. See the <b>cameraTarget</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.cameraTarget.html#init" target="_blank">Player.cameraTarget.init(...)</a> function for details.
 	 * @param {object} [options.frustumPoints] Creates a <a href="../../frustumPoints/jsdoc/index.html" target="_blank">FrustumPoints</a> instance.
 	 * See <b>settings.options.frustumPoints</b> parameter of <a href="../../frustumPoints/jsdoc/FrustumPoints.html" target="_blank">FrustumPoints</a> class.
-	 * @param {MyThree.ColorPicker.palette|boolean|number} [options.palette=true] Points сolor.
+	 * @param {MyThree.ColorPicker.palette|boolean|number|String} [options.palette=true] Points сolor.
 	 * <pre>
 	 * <b>MyThree.ColorPicker.palette</b> - is <b>new ColorPicker.palette( ... )</b>
 	 * See <a href="../../colorpicker/jsdoc/index.html" target="_blank">ColorPicker</a> for details.
 	 * <b>boolean</b>: true - <b>new ColorPicker.palette( { palette: ColorPicker.paletteIndexes.BGYW } )</b>;
 	 * <b>number</b>: is <b>MyThree.ColorPicker.paletteIndexes</b>. See <a href="../../colorpicker/jsdoc/module-ColorPicker.html#~paletteIndexes" target="_blank">ColorPicker.paletteIndexes</a> for details.
+	 * <b>String<.b> - color name. See list of available color names in the <b>_colorKeywords</b> object in the [Color.js]{@link https://github.com/mrdoob/three.js/blob/dev/src/math/Color.js} file.
 	 * See <a href="../../jsdoc/Options/Options.html#setPalette" target="_blank">Options.setPalette</a>.
 	 * </pre>
 	 * @param {object} [options.canvas] <b>canvas</b> properties
