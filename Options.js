@@ -109,6 +109,7 @@ class Options {
 		/**
 		 * set the <b>palette</b> key of the <b>options</b>.
 		 * See <a href="../../colorpicker/jsdoc/module-ColorPicker-ColorPicker.html#palette" target="_blank">color palette</a>.
+		 * @param {ColorPicker.palette} [palette] new palette.
 		 */
 		this.setPalette = function ( palette ) {
 
