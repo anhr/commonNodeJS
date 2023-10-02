@@ -73,7 +73,7 @@ class Options {
 			optionsCur.scales = optionsCur.scales || {};
 			const scale = optionsCur.scales.w;
 			if ( !optionsCur.palette )
-				_this.setPalette( optionsCur );
+				_this.setPalette();// optionsCur );
 
 			//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
 			//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
@@ -110,11 +110,10 @@ class Options {
 		 * set the <b>palette</b> key of the <b>options</b>.
 		 * See <a href="../../colorpicker/jsdoc/module-ColorPicker-ColorPicker.html#palette" target="_blank">color palette</a>.
 		 */
-		this.setPalette = function () {
+		this.setPalette = function ( palette ) {
 
-			if ( options.palette )
-				return;
-			options.palette = new ColorPicker.palette();//ColorPicker.paletteIndexes.BGYW 
+			if ( palette ) options.palette = palette;
+			else if ( !options.palette ) options.palette = new ColorPicker.palette();
 
 		}
 
@@ -902,12 +901,18 @@ class Options {
 							if ( options.palette )
 								options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGYW } );
 							break;
+						case 'string':
+							const color = new three.THREE.Color(options.palette);
+							options.palette = new ColorPicker.palette( { palette: [{ percent: 0, r: color.r * 255, g: color.g * 255, b: color.b * 255, },] } );
+							break;
 						default: {
 
 							//Это условие не выполняется корректро если использовать myThree.module.js или myThree.module.min.js вместо myThree.js
 							//if ( options.palette instanceof ColorPicker.palette === false )
 	   
-							if ( !options.palette.isPalette() )
+							if ( Array.isArray( options.palette ) )
+								options.palette = new ColorPicker.palette( { palette: options.palette } );//Custom palette
+							else if ( !options.palette.isPalette() )
 								console.error( 'MyThree: invalid typeof options.palette: ' + typeof options.palette );
 
 						}
