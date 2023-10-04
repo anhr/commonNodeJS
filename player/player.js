@@ -2585,7 +2585,7 @@ var boColorWarning = true;
  * @param {object} [optionsColor.options] See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
  * @param {THREE.BufferAttribute} [optionsColor.positions] geometry.attributes.position of the new mesh.
  * @param {array} [optionsColor.colors=[]] array for mesh colors.
- * @param {boolean} [optionsColor.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud.
+ * @param {array} [optionsColor.opacity] array of opacities of each geometry position. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
  * @returns array of mesh colors.
  */
 Player.getColors = function ( arrayFuncs, optionsColor ) {
@@ -2660,8 +2660,9 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 		else optionsColor.colors.push( 1, 1, 1 );//white
 
 		//opacity
-		if ( optionsColor.opacity !== undefined ) {
+		if ( optionsColor.opacity === true ) {
 
+			//непонятно когда это понадобтся. Сейчас не определена getStandardNormalDistribution
 			var opacity = 0,
 				standardNormalDistributionZero = getStandardNormalDistribution( 0 );
 			group.children.forEach( function ( mesh ) {
@@ -2691,7 +2692,9 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 			}
 			else optionsColor.colors.push( opacity );
 
-		} else optionsColor.colors.push( 1 );
+		} else if ( optionsColor.opacity instanceof Array )
+			optionsColor.colors.push( i < optionsColor.opacity.length ? optionsColor.opacity[i] : 1 );
+			else optionsColor.colors.push( 1 );
 
 	}
 	return optionsColor.colors;
