@@ -64,6 +64,7 @@ import Options from '../Options.js'
  * </pre>
  * Example:
  * <b>new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0)</b>
+ * @param {array} [settings.pointsOptions.opacity] array of opacities of each position of the points. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
  * @param {THREE.Vector3} [settings.pointsOptions.scale=new THREE.Vector3( 1, 1, 1 )] scale of the points.
  * <pre>
  * Vector's x, y, z is scale of the points.
