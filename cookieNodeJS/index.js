@@ -146,7 +146,7 @@ function remove( name ) {
 
 	}
 	//http://ruseller.com/lessons.php?rub=28&id=593
-	var cookie_date = new Date();  // ������� ���� � �����
+	var cookie_date = new Date();
 	cookie_date.setTime( cookie_date.getTime() - 1 );
 	document.cookie = name += "=; expires=" + cookie_date.toGMTString();
 
