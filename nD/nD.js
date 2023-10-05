@@ -2095,8 +2095,13 @@ class ND {
 			const indices3D = geometry.D3.indices, indices = indices3D.indices, colors = indices3D.colors;
 
 			if (
-				( settings.object.geometry.position[0].length > 3 ) &&//Vertice have the w coordinate
-				( typeof settings.object.color === "object" ) &&//Color of vertice from palette
+				(
+					(
+						( settings.object.geometry.position[0].length > 3 ) &&//Vertice have the w coordinate
+						( typeof settings.object.color === "object" )//Color of vertice from palette
+					) || 
+					settings.object.geometry.opacity//установлена прозрачность вершин
+				) &&
 				!settings.object.geometry.colors//Vertices colors array is not exists
 			)
 				settings.object.geometry.colors = indices3D.colors;
@@ -2115,12 +2120,22 @@ class ND {
 			const object = indices.length > 1 ?
 				settings3D.faces ?
 					new THREE.Mesh(buffer, new THREE.MeshLambertMaterial({
+						
 						color: color,
 						opacity: settings3D.faces.opacity,
 						transparent: settings3D.faces.transparent,
 						side: THREE.DoubleSide
+						
 					} ) ) :
-					new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( settings.object.geometry.colors ? { vertexColors: true, toneMapped: false } : { color: color, } ) ) :
+					new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( settings.object.geometry.colors ? {
+						
+						vertexColors: true,
+						toneMapped: false,
+						transparent: settings.object.geometry.opacity ?
+							true ://установлена прозрачность вершин
+							undefined,
+					
+					} : { color: color, } ) ) :
 				new THREE.Points( buffer, new THREE.PointsMaterial( {
 					
 					color: color,
@@ -2130,7 +2145,36 @@ class ND {
 				} ) );
 			if ( settings3D.name )
 				object.name = settings3D.name;
-			if ( settings.object.geometry.colors ) object.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( settings.object.geometry.colors, 3 ) );
+			if ( settings.object.geometry.colors ) {
+
+				let colors, itemSize;
+				if (settings.object.geometry.opacity){
+
+					itemSize = 4;
+					const colorSize = itemSize - 1;
+					const itemsCount = settings.object.geometry.colors.length / colorSize;
+					if ( itemsCount != Math.trunc( itemsCount ) ) console.error( 'ND.create3DObject: Opacity. Invalid colors count = ' + itemsCount );
+					colors = [];
+					for ( let i = 0; i < itemsCount; i++ ){
+
+						const iColor = i * colorSize;
+						for ( let j = 0; j < colorSize; j++ )
+							colors.push(settings.object.geometry.colors[iColor + j])//color
+
+						//opacity
+						colors.push( i < settings.object.geometry.opacity.length ? settings.object.geometry.opacity[i] : 1 );
+						
+					}
+					
+				} else {
+					
+					colors = settings.object.geometry.colors;
+					itemSize = 3;
+
+				}
+				object.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, itemSize ) );
+
+			}
 			scene.add( object );
 
 			object.userData.geometry = geometry.geometry;
