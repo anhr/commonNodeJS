@@ -2152,15 +2152,29 @@ class ND {
 				if (settings.object.geometry.opacity){
 
 					itemSize = 4;
-					const colorSize = itemSize - 1;
-					const itemsCount = settings.object.geometry.colors.length / colorSize;
+					const colorSize = itemSize - 1,
+						itemsCount = settings.object.geometry.colors.length / colorSize;
 					if ( itemsCount != Math.trunc( itemsCount ) ) console.error( 'ND.create3DObject: Opacity. Invalid colors count = ' + itemsCount );
 					colors = [];
-					for ( let i = 0; i < itemsCount; i++ ){
+					for ( let i = 0; i < settings.object.geometry.position.length; i++ ) {
 
 						const iColor = i * colorSize;
-						for ( let j = 0; j < colorSize; j++ )
-							colors.push(settings.object.geometry.colors[iColor + j])//color
+						if (iColor < settings.object.geometry.colors.length)
+							colors.push(
+								settings.object.geometry.colors[iColor + 0],
+								settings.object.geometry.colors[iColor + 1],
+								settings.object.geometry.colors[iColor + 2]
+							);
+/*							
+							for ( let j = 0; j < colorSize; j++ )
+								colors.push(settings.object.geometry.colors[iColor + j]);
+*/		
+						else {
+							
+							const color = new THREE.Color(settings.object.color);
+							colors.push(color.r, color.g, color.b);
+							
+						}
 
 						//opacity
 						colors.push( i < settings.object.geometry.opacity.length ? settings.object.geometry.opacity[i] : 1 );
@@ -2169,8 +2183,17 @@ class ND {
 					
 				} else {
 					
-					colors = settings.object.geometry.colors;
 					itemSize = 3;
+					colors = settings.object.geometry.colors;
+					const colorSize = itemSize,
+						itemsCount = settings.object.geometry.colors.length / colorSize;
+					if ( itemsCount != Math.trunc( itemsCount ) ) console.error( 'ND.create3DObject: Opacity. Invalid colors count = ' + itemsCount );
+					for ( let i = itemsCount; i < settings.object.geometry.position.length; i++ ) {
+
+						const color = new THREE.Color(settings.object.color);
+						colors.push(color.r, color.g, color.b);
+						
+					}
 
 				}
 				object.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, itemSize ) );
