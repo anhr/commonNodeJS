@@ -104,6 +104,7 @@ class ND {
 	 * 	1, 1, 1,//white color of the <b>position[3]</b> vertex.
 	 * ],
 	 * </pre>
+	 * @param {array} [settings.object.geometry.opacity] array of opacities for the each vertex. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
 	 * @param {Array} [settings.object.geometry.boRememberPosition=true] true - Remember vertex positions for higher performance. As result, new vertex positions have no effect.
 	 * @param {Array} [settings.object.geometry.indices] Array of <b>indices</b> of vertices of the n-dimensional graphical object.
 	 * Allows for vertices to be re-used across multiple segments.
