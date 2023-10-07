@@ -121,6 +121,7 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 			( arrayFuncs,
 				{
 
+					colors: settings.pointsOptions.colors,
 					opacity: settings.pointsOptions === undefined ? undefined : settings.pointsOptions.opacity,
 					positions: geometry.attributes.position,
 					options: settings.options,

@@ -2612,57 +2612,67 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 	const length = Array.isArray( arrayFuncs ) ? arrayFuncs.length : optionsColor.positions.count;
 
 	optionsColor.colors = optionsColor.colors || [];
+	const colors = [];
 	if ( !optionsColor.options.palette )
 		optionsColor.options.setPalette();
 
 	for ( var i = 0; i < length; i++ ) {
 
-		const funcs = Array.isArray( arrayFuncs ) ? arrayFuncs[i] : undefined;
-		var vector;
-		if (
-			( funcs instanceof THREE.Vector4 ) ||//w of the funcs is color of the point
-			( optionsColor.positions && ( optionsColor.positions.itemSize === 4 ) )//w position of the positions is color of the point
-			) {
+		const iColor = 3 * i;
+		if (iColor >= optionsColor.colors.length) {
+			
+			const funcs = Array.isArray( arrayFuncs ) ? arrayFuncs[i] : undefined;
+			var vector;
+			if (
+				( funcs instanceof THREE.Vector4 ) ||//w of the funcs is color of the point
+				( optionsColor.positions && ( optionsColor.positions.itemSize === 4 ) )//w position of the positions is color of the point
+				) {
+	
+				let min, max;
+				var w = funcs.w;
+				if ( funcs.w instanceof Object && funcs.w.func ) {
+	
+					if ( funcs.w.max ) max = funcs.w.max;
+					if ( funcs.w.min ) min = funcs.w.min;
+					w = funcs.w.func;
+	
+				} else {
+	
+					optionsColor.options.setW();
+					min = optionsColor.options.scales.w.min; max = optionsColor.options.scales.w.max;
+	
+				}
+				if ( w instanceof Function && !optionsColor.options.player && boColorWarning ) {
+	
+					boColorWarning = false;
+					
+				}
+				const t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
+				var color = optionsColor.options.palette.toColor(
+					funcs === undefined ?
+						new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
+						w instanceof Function ?
+							w( t ) :
+							typeof w === "string" ?
+								Player.execFunc( funcs, 'w', t, optionsColor.options ) :
+								w === undefined ? new THREE.Vector4().w : w,
+					min, max );
+				//optionsColor.colors.push( color.r, color.g, color.b );
+				colors.push( color.r, color.g, color.b );
+	
+			} else if ( optionsColor.colors instanceof THREE.Float32BufferAttribute )
+				vector = new THREE.Vector3( 1, 1, 1 );
+//			else optionsColor.colors.push( 1, 1, 1 );//white
+			else colors.push( 1, 1, 1 );//white
 
-			let min, max;
-			var w = funcs.w;
-			if ( funcs.w instanceof Object && funcs.w.func ) {
-
-				if ( funcs.w.max ) max = funcs.w.max;
-				if ( funcs.w.min ) min = funcs.w.min;
-				w = funcs.w.func;
-
-			} else {
-
-				optionsColor.options.setW();
-				min = optionsColor.options.scales.w.min; max = optionsColor.options.scales.w.max;
-
-			}
-			if ( w instanceof Function && !optionsColor.options.player && boColorWarning ) {
-
-				boColorWarning = false;
-				
-			}
-			const t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
-			var color = optionsColor.options.palette.toColor(
-				funcs === undefined ?
-					new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
-					w instanceof Function ?
-						w( t ) :
-						typeof w === "string" ?
-							Player.execFunc( funcs, 'w', t, optionsColor.options ) :
-							w === undefined ? new THREE.Vector4().w : w,
-				min, max );
-			optionsColor.colors.push( color.r, color.g, color.b );
-
-		} else if ( optionsColor.colors instanceof THREE.Float32BufferAttribute )
-			vector = new THREE.Vector3( 1, 1, 1 );
-		else optionsColor.colors.push( 1, 1, 1 );//white
+		}
+		else colors.push( optionsColor.colors[iColor], optionsColor.colors[iColor + 1], optionsColor.colors[iColor + 2] );
 
 		//opacity
+/*		
 		if ( optionsColor.opacity === true ) {
 
-			//непонятно когда это понадобтся. Сейчас не определена getStandardNormalDistribution
+			//непонятно когда это понадобится. Сейчас не определена getStandardNormalDistribution
 			var opacity = 0,
 				standardNormalDistributionZero = getStandardNormalDistribution( 0 );
 			group.children.forEach( function ( mesh ) {
@@ -2695,8 +2705,13 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 		} else if ( optionsColor.opacity instanceof Array )
 			optionsColor.colors.push( i < optionsColor.opacity.length ? optionsColor.opacity[i] : 1 );
 			else optionsColor.colors.push( 1 );
+*/		
+		if ( optionsColor.opacity instanceof Array )
+			colors.push( i < optionsColor.opacity.length ? optionsColor.opacity[i] : 1 );
+		else colors.push( 1 );
 
 	}
+	optionsColor.colors = colors;
 	return optionsColor.colors;
 
 }
