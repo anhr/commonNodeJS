@@ -194,6 +194,7 @@ function MyPoints( arrayFuncs, group, settings ) {
 			new THREE.Float32BufferAttribute( Player.getColors( arrayFuncs,
 				{
 
+					color: settings.pointsOptions.color,
 					colors: settings.pointsOptions.colors,
 					opacity: settings.pointsOptions.opacity,
 					positions: points.geometry.attributes.position,

@@ -2663,7 +2663,12 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 			} else if ( optionsColor.colors instanceof THREE.Float32BufferAttribute )
 				vector = new THREE.Vector3( 1, 1, 1 );
 //			else optionsColor.colors.push( 1, 1, 1 );//white
-			else colors.push( 1, 1, 1 );//white
+			else if (optionsColor.color != undefined) {
+
+				const color = new THREE.Color(optionsColor.color);
+				colors.push( color.r, color.g, color.b );//white
+				
+			} else colors.push( 1, 1, 1 );//white
 
 		}
 		else colors.push( optionsColor.colors[iColor], optionsColor.colors[iColor + 1], optionsColor.colors[iColor + 2] );

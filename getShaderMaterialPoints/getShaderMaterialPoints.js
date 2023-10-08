@@ -110,7 +110,7 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 	else geometry = new THREE.BufferGeometry().setFromPoints
 		( Player.getPoints( arrayFuncs,
 			{ options: settings.options, group: group, t: tMin, } ),
-			arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4 );
+			arrayFuncs[0].vector instanceof THREE.Vector3 ? 3 : 4 );
 	const indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud( geometry ) :  undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 	if ( ( settings.pointsOptions === undefined ) || !settings.pointsOptions.boFrustumPoints ) {
 
@@ -121,6 +121,7 @@ function getShaderMaterialPoints( group, arrayFuncs, onReady, settings ) {
 			( arrayFuncs,
 				{
 
+					color: settings.pointsOptions.color,
 					colors: settings.pointsOptions.colors,
 					opacity: settings.pointsOptions === undefined ? undefined : settings.pointsOptions.opacity,
 					positions: geometry.attributes.position,
