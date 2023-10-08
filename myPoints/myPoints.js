@@ -167,7 +167,7 @@ function MyPoints( arrayFuncs, group, settings ) {
 
 			typeof arrayFuncs === 'function' ? arrayFuncs() :
 				new THREE.BufferGeometry().setFromPoints( Player.getPoints( arrayFuncs,
-					{ options: options, group: group, t: pointsOptions.tMin } ), 4 ),
+					{ options: options, group: group, t: pointsOptions.tMin } ), arrayFuncs[0].vector instanceof THREE.Vector3 === true ? 3 : 4 ),
 			new THREE.PointsMaterial( {
 				
 				size: options.point.size / options.point.sizePointsMaterial, 
@@ -175,20 +175,27 @@ function MyPoints( arrayFuncs, group, settings ) {
 				//THREE.Material: 'vertexColors' parameter is undefined.
 				//vertexColors: THREE.VertexColors,
 				vertexColors: true,
+				transparent: settings.pointsOptions.opacity ?
+					true ://установлена прозрачность вершин
+					undefined,
 			
 			} )
 
 		);
+		
 		if ( pointsOptions.frustumPoints )
 			points.userData.cloud = {
 
 				indexArray: pointsOptions.frustumPoints.pushArrayCloud( points.geometry ),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 
 			}
+		
 		points.geometry.setAttribute( 'color',
 			new THREE.Float32BufferAttribute( Player.getColors( arrayFuncs,
 				{
 
+					colors: settings.pointsOptions.colors,
+					opacity: settings.pointsOptions.opacity,
 					positions: points.geometry.attributes.position,
 					options: options,
 
