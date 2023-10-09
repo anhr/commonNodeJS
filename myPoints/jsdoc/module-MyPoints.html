@@ -1155,7 +1155,86 @@
                 </td>
             
 
-            <td class="description last">position of the points.<pre>Vector's x, y, z is position of the points.Can be as:float - position of the points.[float] - array of positions of the points.Function - position of the points is function of the t. Example:	<b>new Function( 't', 'return 0.1 + t' )</b></pre>Example:<b>new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0)</b></td>
+            <td class="description last">position of the points.<pre>Vector's x, y, z is position of the points.Can be as:float - position of the points.[float] - array of positions of the points.Function - position of the points is function of the t. Example:	<b>new Function( 't', 'return 0.1 + t' )</b></pre>Example:</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>colors</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Array of colors for the each vertex.<pre>Every vertex is associated with 3 values of the <b>colors</b> array.Each value of the <b>colors</b> array is red or green or blue color of the particular vertex in range from 0 to 1.0 is no color.1 is full color.For example:settings.object.geometry.colors: [	1, 0, 0,//red color of the <b>position[0]</b> vertex.	0, 1, 0,//green color of the <b>position[1]</b> vertex.	0, 0, 1,//blue color of the <b>position[2]</b> vertex.	1, 1, 1,//white color of the <b>position[3]</b> vertex.],Have effect only if <b>arrayFuncs</b> points are not <b>THREE.Vector4</b> type. See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>color</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'lime'
+                
+                </td>
+            
+
+            <td class="description last">color of points.<pre>String - color name. See list of available color names in the <b>_colorKeywords</b> object in the <a href="https://github.com/mrdoob/three.js/blob/dev/src/math/Color.js">Color.js</a> file.number - color <a href="https://en.wikipedia.org/wiki/Web_colors#Hex_triplet">Hex triplet</a>. Example: 0x0000ff - blue color.Have effect only if <b>settings.pointsOptions.colors</b> are not defined.<pre></td>
         </tr>
 
     
@@ -1168,6 +1247,9 @@
             <td class="type">
             
                 
+<span class="param-type">boolean</span>
+|
+
 <span class="param-type">array</span>
 
 
@@ -1192,7 +1274,7 @@
                 </td>
             
 
-            <td class="description last">array of opacities of each position of the points. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.</td>
+            <td class="description last"><pre>boolean -	If true then opacity of the point is depend from distance to all meshes points from the group with defined <b>mesh.userData.cloud</b>.	See <b>optionsColor.opacity</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.getColors.html" target="_blank">Player.getColors(...)</a>ions.getColors for details.array -	Array of opacities of each position of the points.	Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is.	A value of 0.0 indicates fully transparent, 1.0 is fully opaque.</td>
         </tr>
 
     
@@ -1271,43 +1353,6 @@
             
 
             <td class="description last">rotation of the points.<pre>Vector's x, y, z is rotation of the points.Can be as:float - rotation of the points.[float] - array of rotations of the points.Function - rotation of the points is function of the t. Example:	<b>new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' )</b></pre>Example:<b>new THREE.Vector3 ( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), 0, 0)</b></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>opacity</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">if true then opacity of the point is depend from distance to all meshes points from the group with defined <b>mesh.userData.cloud</b>.See <b>optionsColor.opacity</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.getColors.html" target="_blank">Player.getColors(...)</a>ions.getColors for details.</td>
         </tr>
 
     
@@ -1664,7 +1709,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line112">line 112</a>
+        <a href="myPoints.js.html">myPoints.js</a>, <a href="myPoints.js.html#line140">line 140</a>
     </li></ul></dd>
     
 
@@ -1716,7 +1761,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Wed Oct 04 2023 09:10:53 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon Oct 09 2023 08:26:09 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

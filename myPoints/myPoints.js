@@ -63,8 +63,38 @@ import Options from '../Options.js'
  *	<b>new Function( 't', 'return 0.1 + t' )</b>
  * </pre>
  * Example:
- * <b>new THREE.Vector3 ( new Function( 't', 'return t' ), 0, 0)</b>
- * @param {array} [settings.pointsOptions.opacity] array of opacities of each position of the points. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
+ * @param {Array} [settings.pointsOptions.colors] Array of colors for the each vertex.
+ * <pre>
+ * Every vertex is associated with 3 values of the <b>colors</b> array.
+ * Each value of the <b>colors</b> array is red or green or blue color of the particular vertex in range from 0 to 1.
+ * 
+ * 0 is no color.
+ * 1 is full color.
+ * 
+ * For example:
+ * settings.object.geometry.colors: [
+ * 	1, 0, 0,//red color of the <b>position[0]</b> vertex.
+ * 	0, 1, 0,//green color of the <b>position[1]</b> vertex.
+ * 	0, 0, 1,//blue color of the <b>position[2]</b> vertex.
+ * 	1, 1, 1,//white color of the <b>position[3]</b> vertex.
+ * ],
+ * Have effect only if <b>arrayFuncs</b> points are not <b>THREE.Vector4</b> type. See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
+ * </pre>
+ * @param {String|number} [settings.pointsOptions.color='lime'] color of points.
+ * <pre>
+ * String - color name. See list of available color names in the <b>_colorKeywords</b> object in the [Color.js]{@link https://github.com/mrdoob/three.js/blob/dev/src/math/Color.js} file.
+ * number - color [Hex triplet]{@link https://en.wikipedia.org/wiki/Web_colors#Hex_triplet}. Example: 0x0000ff - blue color.
+ * Have effect only if <b>settings.pointsOptions.colors</b> are not defined.
+ * <pre>
+ * @param {boolean|array} [settings.pointsOptions.opacity] 
+ * <pre>
+ * boolean -
+ *	If true then opacity of the point is depend from distance to all meshes points from the group with defined <b>mesh.userData.cloud</b>.
+ *	See <b>optionsColor.opacity</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.getColors.html" target="_blank">Player.getColors(...)</a>ions.getColors for details.
+ * array -
+ *	Array of opacities of each position of the points.
+ *	Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is.
+ *	A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
  * @param {THREE.Vector3} [settings.pointsOptions.scale=new THREE.Vector3( 1, 1, 1 )] scale of the points.
  * <pre>
  * Vector's x, y, z is scale of the points.
@@ -87,8 +117,6 @@ import Options from '../Options.js'
  * </pre>
  * Example:
  * <b>new THREE.Vector3 ( new Function( 't', 'return Math.PI / 2 + t * Math.PI * 2' ), 0, 0)</b>
- * @param {boolean} [settings.pointsOptions.opacity] if true then opacity of the point is depend from distance to all meshes points from the group with defined <b>mesh.userData.cloud</b>.
- * See <b>optionsColor.opacity</b> parameter of the <a href="../../player/jsdoc/module-Player-Player.getColors.html" target="_blank">Player.getColors(...)</a>ions.getColors for details.
  * @param {function} [settings.pointsOptions.onReady] Callback function that take as input the <b>new THREE.Points</b>.
  * Fires after creating of the points.
  * <pre>
