@@ -78,7 +78,6 @@ import Options from '../Options.js'
  * 	0, 0, 1,//blue color of the <b>position[2]</b> vertex.
  * 	1, 1, 1,//white color of the <b>position[3]</b> vertex.
  * ],
- * Have effect only if <b>arrayFuncs</b> points are not <b>THREE.Vector4</b> type. See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
  * </pre>
  * @param {String|number} [settings.pointsOptions.color='lime'] color of points.
  * <pre>
