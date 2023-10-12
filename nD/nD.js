@@ -62,6 +62,7 @@ class ND {
 	 *		],
 	 *	
 	 *	2. Set a <b>settings.object.geometry.colors</b> array. 
+	 * Have effect only if <b>settings.object.geometry.colors</b> are not defined.
 	 * </pre>
 	 * @param {boolean|object} [settings.object.faces] true or object - display the n-dimensional graphical object faces instead of edges.
 	 * @param {float} [settings.object.faces.opacity=0.5] color Float in the range of 0.0 - 1.0 indicating how transparent the material is.
@@ -103,6 +104,8 @@ class ND {
 	 * 	0, 0, 1,//blue color of the <b>position[2]</b> vertex.
 	 * 	1, 1, 1,//white color of the <b>position[3]</b> vertex.
 	 * ],
+	 * Have effect only if <b>settings.object.geometry.position</b> points are not <b>THREE.Vector4</b> type.
+	 * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
 	 * </pre>
 	 * @param {array} [settings.object.geometry.opacity] array of opacities for the each vertex. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
 	 * @param {Array} [settings.object.geometry.boRememberPosition=true] true - Remember vertex positions for higher performance. As result, new vertex positions have no effect.
