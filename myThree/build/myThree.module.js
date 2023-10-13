@@ -7416,61 +7416,6 @@ function getObjectPosition(object, index) {
 	return getWorldPosition(object, getObjectLocalPosition(object, index));
 }
 
-var WEBGL = {
-		isWebGLAvailable: function isWebGLAvailable() {
-				try {
-						var canvas = document.createElement('canvas');
-						return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-				} catch (e) {
-						return false;
-				}
-		},
-		isWebGL2Available: function isWebGL2Available() {
-				try {
-						var canvas = document.createElement('canvas');
-						return !!(window.WebGL2RenderingContext && canvas.getContext('webgl2'));
-				} catch (e) {
-						return false;
-				}
-		},
-		getWebGLErrorMessage: function getWebGLErrorMessage() {
-				return this.getErrorMessage(1);
-		},
-		getWebGL2ErrorMessage: function getWebGL2ErrorMessage() {
-				return this.getErrorMessage(2);
-		},
-		getErrorMessage: function getErrorMessage(version) {
-				var names = {
-						1: 'WebGL',
-						2: 'WebGL 2'
-				};
-				var contexts = {
-						1: window.WebGLRenderingContext,
-						2: window.WebGL2RenderingContext
-				};
-				var message = 'Your $0 does not seem to support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation" style="color:#000">$1</a>';
-				var element = document.createElement('div');
-				element.id = 'webglmessage';
-				element.style.fontFamily = 'monospace';
-				element.style.fontSize = '13px';
-				element.style.fontWeight = 'normal';
-				element.style.textAlign = 'center';
-				element.style.background = '#fff';
-				element.style.color = '#000';
-				element.style.padding = '1.5em';
-				element.style.width = '400px';
-				element.style.margin = '5em auto 0';
-				if (contexts[version]) {
-						message = message.replace('$0', 'graphics card');
-				} else {
-						message = message.replace('$0', 'browser');
-				}
-				message = message.replace('$1', names[version]);
-				element.innerHTML = message;
-				return element;
-		}
-};
-
 /**
  * node.js version of the synchronous download of the file.
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -8115,6 +8060,9 @@ function ColorPicker() {
 				console.error('ColorPicker.create.Palette: ' + message);
 				options.onError(message);
 		}
+		this.isPalette = function () {
+			return true;
+		};
 		this.getPalette = function () {
 			var palette = [];
 			arrayPalette.forEach(function (item) {
@@ -8129,8 +8077,7 @@ function ColorPicker() {
 		this.hsv2rgb = function (stringPercent, min, max) {
 			var percent = parseFloat(stringPercent);
 			if (isNaN(percent)) {
-				console.error('ColorPicker.palette.hsv2rgb: stringPercent = ' + stringPercent);
-				return;
+				percent = max;
 			}
 			if (min !== undefined && max !== undefined) percent = 100 / (max - min) * (percent - min);
 			var lastPalette = arrayPalette[arrayPalette.length - 1];
@@ -9190,10 +9137,6 @@ function createController(settings, controllerId, name, options) {
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-if (WEBGL.isWebGLAvailable() === false) {
-			document.body.appendChild(WEBGL.getWebGLErrorMessage());
-			alert(WEBGL.getWebGLErrorMessage().innerHTML);
-}
 var boCreateControllers;
 var Options =
 function Options(options) {
@@ -9221,7 +9164,7 @@ function Options(options) {
 			setScale('y');
 			setScale('z');
 			options.point = options.point || {};
-			options.point.size = options.point.size || 5.0;
+			if (options.point.size === undefined) options.point.size = 5.0;
 			options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
 			this.setPalette = function () {
 						if (options.palette) return;
@@ -9491,6 +9434,15 @@ function Options(options) {
 																					if (!scales || !scales.x && !scales.y && !scales.z || scale) return true;
 																					return false;
 																		};
+																		var setScale = function setScale(callBack) {
+																					if (!scale) {
+																								scales[axisName] = {};
+																								scale = scales[axisName];
+																					}
+																					callBack();
+																					scale.step = Math.abs(options.scales.w.min - options.scales.w.max) / 100;
+																					if (options.guiSelectPoint) options.guiSelectPoint.setAxisControl('w', scale);
+																		};
 																		Object.defineProperties(this, {
 																					boScale: {
 																								get: function get$$1() {
@@ -9503,7 +9455,9 @@ function Options(options) {
 																											return scale.min;
 																								},
 																								set: function set$$1(min) {
-																											scale.min = min;
+																											setScale(function () {
+																														scale.min = min;
+																											});
 																								}
 																					},
 																					max: {
@@ -9512,7 +9466,9 @@ function Options(options) {
 																											return scale.max;
 																								},
 																								set: function set$$1(max) {
-																											scale.max = max;
+																											setScale(function () {
+																														scale.max = max;
+																											});
 																								}
 																					},
 																					name: {
@@ -9653,7 +9609,7 @@ function Options(options) {
 																		break;
 															default:
 																		{
-																					if (options.palette instanceof ColorPicker$1.palette === false) console.error('MyThree: invalid typeof options.palette: ' + _typeof(options.palette));
+																					if (!options.palette.isPalette()) console.error('MyThree: invalid typeof options.palette: ' + _typeof(options.palette));
 																		}
 												}
 												return options.palette;
@@ -9838,9 +9794,7 @@ function Options(options) {
 																					var elTime = document.getElementById('time');
 																					if (!controllers.t) {
 																								if (!elTime) return;
-																								controllers.t = {
-																											elName: document.getElementById('tName')
-																								};
+																								controllers.t = { elName: document.getElementById('tName') };
 																					}
 																					if (!controllers.t.controller && elTime) controllers.t.controller = elTime;
 																					if (controllers.t) {
@@ -10074,9 +10028,7 @@ function Raycaster() {
 												} else {
 															var intersect = intersects[0],
 															    object = intersect.object;
-															if (object.userData.raycaster && object.userData.raycaster.onIntersection) {
-																		object.userData.raycaster.onIntersection(intersect, mouse);
-															} else Options.raycaster.onIntersection(intersect, options, settings.scene, camera, renderer);
+															if (object.userData.raycaster && object.userData.raycaster.onIntersection) object.userData.raycaster.onIntersection(intersect, mouse);else Options.raycaster.onIntersection(intersect, options, settings.scene, camera, renderer);
 															intersectedObject = object;
 												}
 									}, false);
@@ -11839,9 +11791,7 @@ function MyPoints(arrayFuncs, group, settings) {
 	var pointsOptions = settings.pointsOptions;
 	settings.options = settings.options || new Options();
 	var options = settings.options;
-	if (!options.boOptions) {
-		options = new Options(options);
-	}
+	if (!options.boOptions) options = new Options(options);
 	pointsOptions.tMin = pointsOptions.tMin || 0;
 	pointsOptions.name = pointsOptions.name || '';
 	pointsOptions.position = pointsOptions.position || new THREE.Vector3(0, 0, 0);
@@ -13859,6 +13809,17 @@ function GuiSelectPoint(options) {
 						cOpacity.domElement.querySelector('input').readOnly = boReadOnly;
 						funcFolder.displayFolder(!boReadOnly);
 			}
+			this.setAxisControl = function (axis, scale) {
+						switch (axis) {
+									case 'w':
+												if (scale.min != undefined) cW.min(scale.min);
+												if (scale.max != undefined) cW.max(scale.max);
+												if (scale.step != undefined) cW.step(scale.step);
+												break;
+									default:
+												console.error('GuiSelectPoint.setAxisControl. Invalid axis: ' + axis);
+						}
+			};
 			this.setAxisName = function (axis, name) {
 						cPosition[axis].name(name);
 						folders.position[axis].name = name;
@@ -14064,8 +14025,7 @@ function GuiSelectPoint(options) {
 						var index = intersection.index || 0,
 						    point = intersection.object.userData.player.arrayFuncs[index],
 						    line = point === undefined ? undefined : point.line;
-						if (line !== undefined)
-									line.visible(value);
+						if (line !== undefined) line.visible(value);
 						if (!value) return;
 						if (point.line !== undefined) return;
 						point.line = new Player$1.traceLine(options);
@@ -14164,7 +14124,6 @@ function GuiSelectPoint(options) {
 									mesh.userData.player.arrayFuncs = [];
 									for (var i = 0; i < position.count; i++) {
 												var vector = new THREE.Vector4().fromArray(mesh.geometry.attributes.position.array, i * position.itemSize);
-												vector.w = 1;
 												mesh.userData.player.arrayFuncs.push(vector);
 									}
 						}
@@ -14537,7 +14496,7 @@ function GuiSelectPoint(options) {
 									}
 									return false;
 						}
-						function axesGui(axisName                     ) {
+						function axesGui(axisName) {
 									var scale, controller;
 									if (axisName === 'w') {
 												var onChange = function onChange(value) {
@@ -14568,6 +14527,7 @@ function GuiSelectPoint(options) {
 																		ColorPicker$1.create(elSlider, {
 																					palette: options.palette,
 																					style: {
+																								width: '65%'
 																					}
 																		});
 															}
@@ -16087,9 +16047,6 @@ var ProgressBar = function () {
 		var elProgress = document.createElement('div'),
 		    cProgress = document.createElement('input'),
 		    elTitle = document.createElement('div');
-		elProgress.style.position = 'absolute';
-		elProgress.style.top = 0;
-		elProgress.style.left = 0;
 		elProgress.style.backgroundColor = 'white';
 		elProgress.style.margin = '2px';
 		elProgress.style.padding = '2px';
@@ -16101,7 +16058,26 @@ var ProgressBar = function () {
 		cProgress.type = "range";
 		cProgress.disabled = true;
 		elProgress.appendChild(cProgress);
-		elParent.appendChild(elProgress);
+		var elcontainer = void 0;
+		var containerName = 'ProgressContainer';
+		for (var i = 0; i < elParent.children.length; i++) {
+			var child = elParent.children[i];
+			if (child.name && child.name === containerName) {
+				elcontainer = child;
+				break;
+			}
+		}
+		if (!elcontainer) {
+			elcontainer = document.createElement('table');
+			elcontainer.name = containerName;
+			elcontainer.style.position = 'absolute';
+			elcontainer.style.top = 0;
+			elcontainer.style.left = 0;
+			elParent.appendChild(elcontainer);
+		}
+		var elRow = document.createElement('tr');
+		elRow.appendChild(elProgress);
+		elcontainer.appendChild(elRow);
 		this.setValue = function (value) {
 			cProgress.value = value;
 		};
@@ -16111,7 +16087,7 @@ var ProgressBar = function () {
 			}, 0);
 		};
 		this.remove = function () {
-			elProgress.remove();
+			elProgress.parentElement.remove();
 		};
 		this.step();
 		this.newStep = function (value) {

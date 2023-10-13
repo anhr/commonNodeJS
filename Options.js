@@ -12,12 +12,12 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
+/*
 //При выполнении npm run build получаю ошибку
 //(babel plugin) ReferenceError: Unknown plugin "external-helpers" specified in "base" at 1, attempted to resolve relative to "D:\\My documents\\MyProjects\\webgl\\three.js\\GitHub\\three.js\\dev\\examples\\jsm"
 //import { WEBGL } from '../../three.js/dev/examples/jsm/WebGL.js';
 
 import { WEBGL } from './WebGL.js';
-//import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
 
 //for testing open FireFox and read https://support.biodigital.com/hc/en-us/articles/218322977-How-to-turn-on-WebGL-in-my-browser#h_01EJW3MGDF7KH3PH6TG2DE13H6
 if ( WEBGL.isWebGLAvailable() === false ) {
@@ -26,22 +26,15 @@ if ( WEBGL.isWebGLAvailable() === false ) {
 	alert( WEBGL.getWebGLErrorMessage().innerHTML );
 
 }
-
+*/
 import ColorPicker from './colorpicker/colorpicker.js';
-//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
-
 import three from './three.js'
 
 //для создания пустого cookie который ничего не запоминает
 import Cookie from './cookieNodeJS/cookie.js';
-//import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 import cookie from './cookieNodeJS/cookie.js';
-//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
 import { getLanguageCode } from './lang.js';
-//import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-
 import Player from './player/player.js';
 import StereoEffect from './StereoEffect/StereoEffect.js';
 import { createController } from './controller.js'
@@ -80,7 +73,7 @@ class Options {
 			optionsCur.scales = optionsCur.scales || {};
 			const scale = optionsCur.scales.w;
 			if ( !optionsCur.palette )
-				_this.setPalette( optionsCur );
+				_this.setPalette();// optionsCur );
 
 			//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
 			//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
@@ -116,12 +109,12 @@ class Options {
 		/**
 		 * set the <b>palette</b> key of the <b>options</b>.
 		 * See <a href="../../colorpicker/jsdoc/module-ColorPicker-ColorPicker.html#palette" target="_blank">color palette</a>.
+		 * @param {ColorPicker.palette} [palette] new palette.
 		 */
-		this.setPalette = function () {
+		this.setPalette = function ( palette ) {
 
-			if ( options.palette )
-				return;
-			options.palette = new ColorPicker.palette();//ColorPicker.paletteIndexes.BGYW 
+			if ( palette ) options.palette = palette;
+			else if ( !options.palette ) options.palette = new ColorPicker.palette();
 
 		}
 
@@ -909,9 +902,18 @@ class Options {
 							if ( options.palette )
 								options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGYW } );
 							break;
+						case 'string':
+							const color = new three.THREE.Color(options.palette);
+							options.palette = new ColorPicker.palette( { palette: [{ percent: 0, r: color.r * 255, g: color.g * 255, b: color.b * 255, },] } );
+							break;
 						default: {
 
-							if ( options.palette instanceof ColorPicker.palette === false )
+							//Это условие не выполняется корректро если использовать myThree.module.js или myThree.module.min.js вместо myThree.js
+							//if ( options.palette instanceof ColorPicker.palette === false )
+	   
+							if ( Array.isArray( options.palette ) )
+								options.palette = new ColorPicker.palette( { palette: options.palette } );//Custom palette
+							else if ( !options.palette.isPalette() )
 								console.error( 'MyThree: invalid typeof options.palette: ' + typeof options.palette );
 
 						}
@@ -1320,7 +1322,7 @@ class Options {
 				},
 				set: function ( guiSelectPoint ) {
 
-					if ( options.guiSelectPoint )
+					if ( options.guiSelectPoint && ( guiSelectPoint != undefined ) )
 						console.error( 'duplicate guiSelectPoint.' );
 					options.guiSelectPoint = guiSelectPoint;
 

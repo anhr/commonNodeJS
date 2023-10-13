@@ -2585,7 +2585,7 @@ var boColorWarning = true;
  * @param {object} [optionsColor.options] See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
  * @param {THREE.BufferAttribute} [optionsColor.positions] geometry.attributes.position of the new mesh.
  * @param {array} [optionsColor.colors=[]] array for mesh colors.
- * @param {boolean} [optionsColor.opacity] if true then opacity of the point is depend from distance to all  meshes points from the group with defined mesh.userData.cloud.
+ * @param {array} [optionsColor.opacity] array of opacities of each geometry position. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
  * @returns array of mesh colors.
  */
 Player.getColors = function ( arrayFuncs, optionsColor ) {
@@ -2612,56 +2612,72 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 	const length = Array.isArray( arrayFuncs ) ? arrayFuncs.length : optionsColor.positions.count;
 
 	optionsColor.colors = optionsColor.colors || [];
+	const colors = [];
 	if ( !optionsColor.options.palette )
 		optionsColor.options.setPalette();
 
 	for ( var i = 0; i < length; i++ ) {
 
-		const funcs = Array.isArray( arrayFuncs ) ? arrayFuncs[i] : undefined;
-		var vector;
-		if (
-			( funcs instanceof THREE.Vector4 ) ||//w of the funcs is color of the point
-			( optionsColor.positions && ( optionsColor.positions.itemSize === 4 ) )//w position of the positions is color of the point
-			) {
+		const iColor = 3 * i;
+		if (iColor >= optionsColor.colors.length) {
+			
+			const funcs = Array.isArray( arrayFuncs ) ? arrayFuncs[i] : undefined;
+			var vector;
+			if (
+				( funcs instanceof THREE.Vector4 ) ||//w of the funcs is color of the point
+				( optionsColor.positions && ( optionsColor.positions.itemSize === 4 ) )//w position of the positions is color of the point
+				) {
+	
+				let min, max;
+				var w = funcs.w;
+				if ( funcs.w instanceof Object && funcs.w.func ) {
+	
+					if ( funcs.w.max ) max = funcs.w.max;
+					if ( funcs.w.min ) min = funcs.w.min;
+					w = funcs.w.func;
+	
+				} else {
+	
+					optionsColor.options.setW();
+					min = optionsColor.options.scales.w.min; max = optionsColor.options.scales.w.max;
+	
+				}
+				if ( w instanceof Function && !optionsColor.options.player && boColorWarning ) {
+	
+					boColorWarning = false;
+					
+				}
+				const t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
+				var color = optionsColor.options.palette.toColor(
+					funcs === undefined ?
+						new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
+						w instanceof Function ?
+							w( t ) :
+							typeof w === "string" ?
+								Player.execFunc( funcs, 'w', t, optionsColor.options ) :
+								w === undefined ? new THREE.Vector4().w : w,
+					min, max );
+				//optionsColor.colors.push( color.r, color.g, color.b );
+				colors.push( color.r, color.g, color.b );
+	
+			} else if ( optionsColor.colors instanceof THREE.Float32BufferAttribute )
+				vector = new THREE.Vector3( 1, 1, 1 );
+//			else optionsColor.colors.push( 1, 1, 1 );//white
+			else if (optionsColor.color != undefined) {
 
-			let min, max;
-			var w = funcs.w;
-			if ( funcs.w instanceof Object && funcs.w.func ) {
-
-				if ( funcs.w.max ) max = funcs.w.max;
-				if ( funcs.w.min ) min = funcs.w.min;
-				w = funcs.w.func;
-
-			} else {
-
-				optionsColor.options.setW();
-				min = optionsColor.options.scales.w.min; max = optionsColor.options.scales.w.max;
-
-			}
-			if ( w instanceof Function && !optionsColor.options.player && boColorWarning ) {
-
-				boColorWarning = false;
+				const color = new THREE.Color(optionsColor.color);
+				colors.push( color.r, color.g, color.b );//white
 				
-			}
-			const t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
-			var color = optionsColor.options.palette.toColor(
-				funcs === undefined ?
-					new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
-					w instanceof Function ?
-						w( t ) :
-						typeof w === "string" ?
-							Player.execFunc( funcs, 'w', t, optionsColor.options ) :
-							w === undefined ? new THREE.Vector4().w : w,
-				min, max );
-			optionsColor.colors.push( color.r, color.g, color.b );
+			} else colors.push( 1, 1, 1 );//white
 
-		} else if ( optionsColor.colors instanceof THREE.Float32BufferAttribute )
-			vector = new THREE.Vector3( 1, 1, 1 );
-		else optionsColor.colors.push( 1, 1, 1 );//white
+		}
+		else colors.push( optionsColor.colors[iColor], optionsColor.colors[iColor + 1], optionsColor.colors[iColor + 2] );
 
 		//opacity
-		if ( optionsColor.opacity !== undefined ) {
+/*		
+		if ( optionsColor.opacity === true ) {
 
+			//непонятно когда это понадобится. Сейчас не определена getStandardNormalDistribution
 			var opacity = 0,
 				standardNormalDistributionZero = getStandardNormalDistribution( 0 );
 			group.children.forEach( function ( mesh ) {
@@ -2691,9 +2707,16 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 			}
 			else optionsColor.colors.push( opacity );
 
-		} else optionsColor.colors.push( 1 );
+		} else if ( optionsColor.opacity instanceof Array )
+			optionsColor.colors.push( i < optionsColor.opacity.length ? optionsColor.opacity[i] : 1 );
+			else optionsColor.colors.push( 1 );
+*/		
+		if ( optionsColor.opacity instanceof Array )
+			colors.push( i < optionsColor.opacity.length ? optionsColor.opacity[i] : 1 );
+		else colors.push( 1 );
 
 	}
+	optionsColor.colors = colors;
 	return optionsColor.colors;
 
 }

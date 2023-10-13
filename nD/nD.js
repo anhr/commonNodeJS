@@ -42,8 +42,8 @@ class ND {
 	 * @param {String} [settings.object.name] name of n-dimensional graphical object.
 	 * @param {number|String|object} [settings.object.color='lime'] color of N-dimensional graphic object.
 	 * <pre>
-	 * number - hexadecimal color. Example: 0xffffff - white color
-	 * String - color name. Example: 'skyblue'
+	 * number - [Hex triplet]{@link https://en.wikipedia.org/wiki/Web_colors#Hex_triplet} color. Example: 0xffffff - white color
+	 * String - color name. See list of available color names in the <b>_colorKeywords</b> object in the [Color.js]{@link https://github.com/mrdoob/three.js/blob/dev/src/math/Color.js} file.
 	 * object - Sets the color separately for each vertice.
 	 *	You can choose one way for setting of the vertice color from two available:
 	 *	
@@ -62,6 +62,7 @@ class ND {
 	 *		],
 	 *	
 	 *	2. Set a <b>settings.object.geometry.colors</b> array. 
+	 * Have effect only if <b>settings.object.geometry.colors</b> are not defined.
 	 * </pre>
 	 * @param {boolean|object} [settings.object.faces] true or object - display the n-dimensional graphical object faces instead of edges.
 	 * @param {float} [settings.object.faces.opacity=0.5] color Float in the range of 0.0 - 1.0 indicating how transparent the material is.
@@ -103,7 +104,10 @@ class ND {
 	 * 	0, 0, 1,//blue color of the <b>position[2]</b> vertex.
 	 * 	1, 1, 1,//white color of the <b>position[3]</b> vertex.
 	 * ],
+	 * Have effect only if <b>settings.object.geometry.position</b> points are not <b>THREE.Vector4</b> type.
+	 * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
 	 * </pre>
+	 * @param {array} [settings.object.geometry.opacity] array of opacities for the each vertex. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
 	 * @param {Array} [settings.object.geometry.boRememberPosition=true] true - Remember vertex positions for higher performance. As result, new vertex positions have no effect.
 	 * @param {Array} [settings.object.geometry.indices] Array of <b>indices</b> of vertices of the n-dimensional graphical object.
 	 * Allows for vertices to be re-used across multiple segments.
@@ -1684,7 +1688,7 @@ class ND {
 
 				case 2:
 					
-					//перечислены индексы вершин, которые образуют грань и которые составляют замкнутую линию реьер грани.
+					//перечислены индексы вершин, которые образуют грань и которые составляют замкнутую линию ребер грани.
 					//По умолчанию для грани в виде треугольника индексы вершин совпадают с положением вершины в 
 					//settings.object.geometry.position т.е. positionIndices = [0, 1, 2]
 					if ( !positionIndices ) {
@@ -2095,8 +2099,13 @@ class ND {
 			const indices3D = geometry.D3.indices, indices = indices3D.indices, colors = indices3D.colors;
 
 			if (
-				( settings.object.geometry.position[0].length > 3 ) &&//Vertice have the w coordinate
-				( typeof settings.object.color === "object" ) &&//Color of vertice from palette
+				(
+					(
+						( settings.object.geometry.position[0].length > 3 ) &&//Vertice have the w coordinate
+						( typeof settings.object.color === "object" )//Color of vertice from palette
+					) || 
+					settings.object.geometry.opacity//установлена прозрачность вершин
+				) &&
 				!settings.object.geometry.colors//Vertices colors array is not exists
 			)
 				settings.object.geometry.colors = indices3D.colors;
@@ -2115,12 +2124,22 @@ class ND {
 			const object = indices.length > 1 ?
 				settings3D.faces ?
 					new THREE.Mesh(buffer, new THREE.MeshLambertMaterial({
+						
 						color: color,
 						opacity: settings3D.faces.opacity,
 						transparent: settings3D.faces.transparent,
 						side: THREE.DoubleSide
+						
 					} ) ) :
-					new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( settings.object.geometry.colors ? { vertexColors: true, toneMapped: false } : { color: color, } ) ) :
+					new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( settings.object.geometry.colors ? {
+						
+						vertexColors: true,
+						toneMapped: false,
+						transparent: settings.object.geometry.opacity ?
+							true ://установлена прозрачность вершин
+							undefined,
+					
+					} : { color: color, } ) ) :
 				new THREE.Points( buffer, new THREE.PointsMaterial( {
 					
 					color: color,
@@ -2130,7 +2149,59 @@ class ND {
 				} ) );
 			if ( settings3D.name )
 				object.name = settings3D.name;
-			if ( settings.object.geometry.colors ) object.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( settings.object.geometry.colors, 3 ) );
+			if ( settings.object.geometry.colors ) {
+
+				let colors, itemSize;
+				if (settings.object.geometry.opacity){
+
+					itemSize = 4;
+					const colorSize = itemSize - 1,
+						itemsCount = settings.object.geometry.colors.length / colorSize;
+					if ( itemsCount != Math.trunc( itemsCount ) ) console.error( 'ND.create3DObject: Opacity. Invalid colors count = ' + itemsCount );
+					colors = [];
+					for ( let i = 0; i < settings.object.geometry.position.length; i++ ) {
+
+						const iColor = i * colorSize;
+						if (iColor < settings.object.geometry.colors.length)
+							colors.push(
+								settings.object.geometry.colors[iColor + 0],
+								settings.object.geometry.colors[iColor + 1],
+								settings.object.geometry.colors[iColor + 2]
+							);
+/*							
+							for ( let j = 0; j < colorSize; j++ )
+								colors.push(settings.object.geometry.colors[iColor + j]);
+*/		
+						else {
+							
+							const color = new THREE.Color(settings.object.color);
+							colors.push(color.r, color.g, color.b);
+							
+						}
+
+						//opacity
+						colors.push( i < settings.object.geometry.opacity.length ? settings.object.geometry.opacity[i] : 1 );
+						
+					}
+					
+				} else {
+					
+					itemSize = 3;
+					colors = settings.object.geometry.colors;
+					const colorSize = itemSize,
+						itemsCount = settings.object.geometry.colors.length / colorSize;
+					if ( itemsCount != Math.trunc( itemsCount ) ) console.error( 'ND.create3DObject: Opacity. Invalid colors count = ' + itemsCount );
+					for ( let i = itemsCount; i < settings.object.geometry.position.length; i++ ) {
+
+						const color = new THREE.Color(settings.object.color);
+						colors.push(color.r, color.g, color.b);
+						
+					}
+
+				}
+				object.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, itemSize ) );
+
+			}
 			scene.add( object );
 
 			object.userData.geometry = geometry.geometry;

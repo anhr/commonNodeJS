@@ -29,7 +29,7 @@
             <pre class="prettyprint source linenums"><code>/**
  * options of the canvas
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -40,12 +40,12 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
+/*
 //При выполнении npm run build получаю ошибку
 //(babel plugin) ReferenceError: Unknown plugin "external-helpers" specified in "base" at 1, attempted to resolve relative to "D:\\My documents\\MyProjects\\webgl\\three.js\\GitHub\\three.js\\dev\\examples\\jsm"
 //import { WEBGL } from '../../three.js/dev/examples/jsm/WebGL.js';
 
 import { WEBGL } from './WebGL.js';
-//import { WEBGL } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/WebGL.js';
 
 //for testing open FireFox and read https://support.biodigital.com/hc/en-us/articles/218322977-How-to-turn-on-WebGL-in-my-browser#h_01EJW3MGDF7KH3PH6TG2DE13H6
 if ( WEBGL.isWebGLAvailable() === false ) {
@@ -54,29 +54,15 @@ if ( WEBGL.isWebGLAvailable() === false ) {
 	alert( WEBGL.getWebGLErrorMessage().innerHTML );
 
 }
-
+*/
 import ColorPicker from './colorpicker/colorpicker.js';
-//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
-
 import three from './three.js'
-
-//Сейчас OrbitControls загружаю динамически в Options.createOrbitControls
-//import { OrbitControls } from './OrbitControls/OrbitControls.js';
-//import { OrbitControls, createEventDispatcher } from './OrbitControls/OrbitControls.js';
-//import { OrbitControls } from '../../three.js/dev/examples/jsm/controls/OrbitControls.js';
-//import { OrbitControls } from 'https://raw.githack.com/anhr/three.js/dev/examples/jsm/controls/OrbitControls.js';
-//import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 
 //для создания пустого cookie который ничего не запоминает
 import Cookie from './cookieNodeJS/cookie.js';
-//import Cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
 
 import cookie from './cookieNodeJS/cookie.js';
-//import cookie from 'https://raw.githack.com/anhr/commonNodeJS/master/cookieNodeJS/cookie.js';
-
 import { getLanguageCode } from './lang.js';
-//import { getLanguageCode } from 'https://raw.githack.com/anhr/commonNodeJS/master/lang.js';
-
 import Player from './player/player.js';
 import StereoEffect from './StereoEffect/StereoEffect.js';
 import { createController } from './controller.js'
@@ -113,13 +99,9 @@ class Options {
 			optionsCur = optionsCur || options;
 			const axisName = 'w';
 			optionsCur.scales = optionsCur.scales || {};
-//			optionsCur.scales.w = optionsCur.scales.w || {};
 			const scale = optionsCur.scales.w;
-//			scale.name = scale.name || axisName;
 			if ( !optionsCur.palette )
-				_this.setPalette( optionsCur );
-
-//			scale.min = scale.min === undefined ? 0 : scale.min;
+				_this.setPalette();// optionsCur );
 
 			//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
 			//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
@@ -149,18 +131,18 @@ class Options {
 		setScale( 'z' );
 //		options.scales.setW = function () { _this.setW(); }
 		options.point = options.point || {};
-		options.point.size = options.point.size || 5.0;
+		if (options.point.size === undefined) options.point.size = 5.0;
 		options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
 
 		/**
 		 * set the &lt;b>palette&lt;/b> key of the &lt;b>options&lt;/b>.
 		 * See &lt;a href="../../colorpicker/jsdoc/module-ColorPicker-ColorPicker.html#palette" target="_blank">color palette&lt;/a>.
+		 * @param {ColorPicker.palette} [palette] new palette.
 		 */
-		this.setPalette = function () {
+		this.setPalette = function ( palette ) {
 
-			if ( options.palette )
-				return;
-			options.palette = new ColorPicker.palette();//ColorPicker.paletteIndexes.BGYW 
+			if ( palette ) options.palette = palette;
+			else if ( !options.palette ) options.palette = new ColorPicker.palette();
 
 		}
 
@@ -175,43 +157,15 @@ class Options {
 			if ( options.orbitControls === false )
 				return;
 
+			const settings = options.orbitControls || {};
 			_this.orbitControls = new three.OrbitControls( camera, renderer.domElement );
+			if ( settings.enableRotate !== undefined ) _this.orbitControls.enableRotate = settings.enableRotate;
 			_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
 			_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 			_this.orbitControls.update();
 
 			if ( _this.frustumPoints )
 				_this.orbitControls.addEventListener( 'change', function () { _this.frustumPoints.onChangeControls(); } );
-
-
-			//После появления класса class OrbitControls extends EventDispatcher пришлось динамически задгружать файл OrbitControls.js
-			//https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Statements/import#%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B9_%D0%B8%D0%BC%D0%BF%D0%BE%D1%80%D1%82_2
-			//Потому что EventDispatcher еще недоступен во время import { OrbitControls }
-			//
-			//В этом случае появляется ошибка
-			//[!] (babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/Options.js: 'import' and 'export' may only appear at the top level (173:3)
-			//во время создания файлов myThree\build
-			//npm run build
-			//Поэтому class OrbitControls создаю непосредственно в файле Options.js. Смотри выше.
-/*
-			import('./OrbitControls/OrbitControls.js')
-			  .then(module => {
-
-//				createEventDispatcher();
-				_this.orbitControls = new module.OrbitControls( camera, renderer.domElement );
-				_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
-				_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
-				_this.orbitControls.update();
-
-				if ( _this.frustumPoints )
-					_this.orbitControls.addEventListener( 'change', function () { _this.frustumPoints.onChangeControls(); } );
-
-
-			  })
-			  .catch(err => {
-				console.error( err.message );
-			  });
-*/
 
 		}
 
@@ -222,7 +176,7 @@ class Options {
 		 */
 		this.restoreSceneController = function ( camera, scene ) {
 
-			if ( !three.dat )//options.dat.dat
+			if ( !three.dat || ( options.dat === false ) )//options.dat.dat
 				return;
 				
 			//Localization
@@ -239,7 +193,7 @@ class Options {
 				case 'ru'://Russian language
 
 					lang.defaultButton = 'Восстановить';
-					lang.defaultTitle = 'Восстановить положение камеры и проирывателя.';
+					lang.defaultTitle = 'Восстановить положение камеры и проигрывателя.';
 
 					break;
 
@@ -251,7 +205,7 @@ class Options {
 			three.dat.controllerNameAndTitle( options.dat.gui.add( {
 				defaultF: function ( value ) {
 
-					if ( options.player ) options.player.setTime( options.playerOptions.min );
+					if ( options.player ) options.player.selectScene( options.playerOptions.selectSceneIndex );
 
 					camera.position.copy( cameraPosition );
 					scene.position.copy( scenePosition );
@@ -409,17 +363,6 @@ class Options {
 								elMyGuiContainer.style.position = 'absolute';//оставляем gui в пределах canvas
 								elMyGuiContainer.style.top = '0px';
 								elMyGuiContainer.style.right = '0px';
-/*
-								dat.parent.appendChild( dat.gui.domElement );//.parentNode );
-								dat.gui.domElement.style.position = 'absolute';//оставляем gui в пределах canvas
-								dat.gui.domElement.style.top = '0px';
-								dat.gui.domElement.style.right = '0px';
-								setTimeout( function () {
-
-									dat.gui.domElement.classList.remove( 'taller-than-window' );
-
-								}, 0 );
-*/								
 
 							}
 							Object.defineProperties( this, {
@@ -686,8 +629,6 @@ class Options {
 						 */
 						constructor( scales ) {
 
-//							scales = scales || {};
-
 							class Scale {
 
 								/* *
@@ -697,13 +638,26 @@ class Options {
 								 */
 								constructor( scales, axisName ) {
 
-									const scale = scales[axisName];
+									let scale = scales[axisName];
 //									scale = scale || {};
 									this.isAxis = function () {
 
 										if ( !scales || ( !scales.x &amp;&amp; !scales.y &amp;&amp; !scales.z ) || scale ) return true;
 										return false;
 										
+									}
+									const setScale = (callBack) => {
+
+										if ( !scale ) {
+
+											scales[axisName] = {};
+											scale = scales[axisName];
+
+										}
+										callBack();
+										scale.step = Math.abs( options.scales.w.min - options.scales.w.max ) / 100;
+										if ( options.guiSelectPoint) options.guiSelectPoint.setAxisControl( 'w', scale );
+
 									}
 									Object.defineProperties( this, {
 
@@ -726,7 +680,7 @@ class Options {
 												return scale.min;
 
 											},
-											set: function ( min ) { scale.min = min; },
+											set: ( min ) => { setScale( () => { scale.min = min; }); },
 
 										},
 										max: {
@@ -739,7 +693,7 @@ class Options {
 												return scale.max;
 
 											},
-											set: function ( max ) { scale.max = max; },
+											set: ( max ) => { setScale( () => { scale.max = max; }); },
 
 										},
 										name: {
@@ -750,7 +704,16 @@ class Options {
 												return scale.name;
 
 											},
-											set: function ( name ) { scale.name = name; },
+											set: function ( name ) {
+
+												if ( scale ) {
+													
+													scale.name = name;
+													if ( options.guiSelectPoint ) options.guiSelectPoint.setAxisName( axisName, name );
+
+												}
+												
+											},
 
 										},
 										marks: {
@@ -967,9 +930,18 @@ class Options {
 							if ( options.palette )
 								options.palette = new ColorPicker.palette();// { palette: ColorPicker.paletteIndexes.BGYW } );
 							break;
+						case 'string':
+							const color = new three.THREE.Color(options.palette);
+							options.palette = new ColorPicker.palette( { palette: [{ percent: 0, r: color.r * 255, g: color.g * 255, b: color.b * 255, },] } );
+							break;
 						default: {
 
-							if ( options.palette instanceof ColorPicker.palette === false )
+							//Это условие не выполняется корректро если использовать myThree.module.js или myThree.module.min.js вместо myThree.js
+							//if ( options.palette instanceof ColorPicker.palette === false )
+	   
+							if ( Array.isArray( options.palette ) )
+								options.palette = new ColorPicker.palette( { palette: options.palette } );//Custom palette
+							else if ( !options.palette.isPalette() )
 								console.error( 'MyThree: invalid typeof options.palette: ' + typeof options.palette );
 
 						}
@@ -1006,7 +978,6 @@ class Options {
 			 **/
 			point: {
 
-//				get: function () { return options.point; },
 				get: function () {
 					return {
 
@@ -1379,7 +1350,7 @@ class Options {
 				},
 				set: function ( guiSelectPoint ) {
 
-					if ( options.guiSelectPoint )
+					if ( options.guiSelectPoint &amp;&amp; ( guiSelectPoint != undefined ) )
 						console.error( 'duplicate guiSelectPoint.' );
 					options.guiSelectPoint = guiSelectPoint;
 
@@ -1457,32 +1428,10 @@ class Options {
 										if ( !controllers.t ) {
 
 											if ( !elTime ) return;
-											controllers.t = {
-
-//												controller: elTime,
-
-												elName: document.getElementById( 'tName' ),
-
-											}
+											controllers.t = { elName: document.getElementById( 'tName' ), }
 
 										}
 										if ( !controllers.t.controller &amp;&amp; elTime ) controllers.t.controller = elTime;
-/*
-										if ( !controllers.t.player ) {
-
-											const buttonPrev = document.getElementById( 'prev' ),
-												buttonPlay = document.getElementById( 'play' ),
-												buttonNext = document.getElementById( 'next' );
-											if ( buttonPrev || buttonPlay || buttonNext ) {
-
-												controllers.t.player = {};
-												if ( buttonPrev ) controllers.t.player.buttonPrev = buttonPrev;
-												if ( buttonPlay ) controllers.t.player.buttonPlay = buttonPlay;
-												if ( buttonNext ) controllers.t.player.buttonNext = buttonNext;
-
-											}
-										}
-*/										
 										if ( controllers.t ) {
 
 											createController( controllers.t, 't',
@@ -1587,6 +1536,18 @@ class Options {
 
 			},
 
+			/**
+			 * getter
+			 * &lt;pre>
+			 * title
+			 * &lt;/pre>
+			 **/
+			title: {
+
+				get: function () { return options.title; }
+
+			},
+
 		} ); 
 
 		//For debugging. Find a hidden keys
@@ -1685,6 +1646,12 @@ class Raycaster {
 			if ( intersection.object.userData.isInfo !== undefined &amp;&amp; !intersection.object.userData.isInfo() )
 				return;
 			var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
+			if ( spriteTextIntersection &amp;&amp; ( !intersection.pointSpriteText || ( intersection.object.userData.raycaster &amp;&amp; intersection.object.userData.raycaster.text ) ) ) {
+				
+				scene.remove( spriteTextIntersection );
+				spriteTextIntersection = undefined;
+
+			}
 			if ( spriteTextIntersection === undefined ) {
 
 				options = new Options( options );
@@ -1759,8 +1726,12 @@ class Raycaster {
 				return;//No display information about frustum point
 			if ( options.guiSelectPoint )
 				options.guiSelectPoint.select( intersection );
-			else if ( options.axesHelper )
-				options.axesHelper.exposePosition( intersection );
+			else {
+
+				if ( intersection.object.userData.onMouseDown ) intersection.object.userData.onMouseDown( intersection );
+				if ( options.axesHelper ) options.axesHelper.exposePosition( intersection );
+
+			}
 
 		}
 		const intersectedObjects = [];
@@ -1948,7 +1919,6 @@ cube.userData.raycaster = {
 						raycasterEvents: false,
 
 					} );
-					//				raycaster.stereo.addParticles( arrayParticles );
 
 				}
 
@@ -1975,7 +1945,6 @@ cube.userData.raycaster = {
 					intersects = raycaster.intersectObjects( particles );
 					if ( !intersects )
 						return;
-console.log('intersects.length='+ intersects.length);
 					if ( intersects.length === 0 ) {
 
 						if ( intersectedObject ) {
@@ -1990,12 +1959,8 @@ console.log('intersects.length='+ intersects.length);
 					} else {
 
 						const intersect = intersects[0], object = intersect.object;
-						if ( object.userData.raycaster &amp;&amp; object.userData.raycaster.onIntersection ) {
-
-							intersect.pointSpriteText = intersect.point;
-							object.userData.raycaster.onIntersection( intersect, mouse );
-							
-						} else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
+						if ( object.userData.raycaster &amp;&amp; object.userData.raycaster.onIntersection ) object.userData.raycaster.onIntersection( intersect, mouse );
+						else Options.raycaster.onIntersection( intersect, options, settings.scene, camera, renderer );
 						intersectedObject = object;
 
 					}
@@ -2014,11 +1979,9 @@ console.log('intersects.length='+ intersects.length);
 					if ( intersects &amp;&amp; ( intersects.length > 0 ) ) {
 
 						const intersect = intersects[0];
-						if ( intersect.object.userData.raycaster &amp;&amp; intersect.object.userData.raycaster.onMouseDown ) {
-
-							intersect.object.userData.raycaster.onMouseDown( intersect );
-
-						} else Options.raycaster.onMouseDown( intersect, options );
+						if ( intersect.object.userData.raycaster &amp;&amp; intersect.object.userData.raycaster.onMouseDown )
+							intersect.object.userData.raycaster.onMouseDown( intersect, event );//передаем состояние кнопок мыши
+						else Options.raycaster.onMouseDown( intersect, options );
 
 					}
 
@@ -2059,17 +2022,13 @@ console.log('intersects.length='+ intersects.length);
 						return;
 					if ( raycaster.stereo ) {
 
-						raycaster.stereo.addParticle( particle );
+						raycaster.stereo.removeParticle( particle );
 						return;
 
 					}
-					if ( isAddedToParticles( particle ) ) {
-
-						console.error( 'Duplicate particle "' + particle.name + '"' );
-						return;
-
-					}
-					particles.push( particle );
+					const index = particles.indexOf( particle );
+					if ( index === -1 ) return;
+					particles.splice( index, 1 );
 
 				};
 
@@ -2138,13 +2097,13 @@ export default Options;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Options.raycaster.html">raycaster</a></li></ul><h3>Classes</h3><ul><li><a href="Options.html">Options</a></li><li><a href="Raycaster.html">Raycaster</a></li><li><a href="Raycaster_EventListeners.html">EventListeners</a></li></ul><h3>Global</h3><ul><li><a href="global.html#a">a</a></li><li><a href="global.html#axesHelper">axesHelper</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#boOptions">boOptions</a></li><li><a href="global.html#camera">camera</a></li><li><a href="global.html#cameraTarget">cameraTarget</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#canvasMenu">canvasMenu</a></li><li><a href="global.html#controllers">controllers</a></li><li><a href="global.html#dat">dat</a></li><li><a href="global.html#elContainer">elContainer</a></li><li><a href="global.html#eventListeners">eventListeners</a></li><li><a href="global.html#frustumPoints">frustumPoints</a></li><li><a href="global.html#getLanguageCode">getLanguageCode</a></li><li><a href="global.html#guiSelectPoint">guiSelectPoint</a></li><li><a href="global.html#orbitControls">orbitControls</a></li><li><a href="global.html#palette">palette</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#playerOptions">playerOptions</a></li><li><a href="global.html#point">point</a></li><li><a href="global.html#pointLight">pointLight</a></li><li><a href="global.html#raycaster">raycaster</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scales">scales</a></li><li><a href="global.html#spriteText">spriteText</a></li><li><a href="global.html#stereoEffect">stereoEffect</a></li><li><a href="global.html#time">time</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Options.raycaster.html">raycaster</a></li></ul><h3>Classes</h3><ul><li><a href="Options.html">Options</a></li><li><a href="Raycaster.html">Raycaster</a></li><li><a href="Raycaster_EventListeners.html">EventListeners</a></li></ul><h3>Global</h3><ul><li><a href="global.html#a">a</a></li><li><a href="global.html#axesHelper">axesHelper</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#boOptions">boOptions</a></li><li><a href="global.html#camera">camera</a></li><li><a href="global.html#cameraTarget">cameraTarget</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#canvasMenu">canvasMenu</a></li><li><a href="global.html#controllers">controllers</a></li><li><a href="global.html#dat">dat</a></li><li><a href="global.html#elContainer">elContainer</a></li><li><a href="global.html#eventListeners">eventListeners</a></li><li><a href="global.html#frustumPoints">frustumPoints</a></li><li><a href="global.html#getLanguageCode">getLanguageCode</a></li><li><a href="global.html#guiSelectPoint">guiSelectPoint</a></li><li><a href="global.html#orbitControls">orbitControls</a></li><li><a href="global.html#palette">palette</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#playerOptions">playerOptions</a></li><li><a href="global.html#point">point</a></li><li><a href="global.html#pointLight">pointLight</a></li><li><a href="global.html#raycaster">raycaster</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scales">scales</a></li><li><a href="global.html#spriteText">spriteText</a></li><li><a href="global.html#stereoEffect">stereoEffect</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#title">title</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Feb 04 2022 09:48:39 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon Oct 02 2023 11:52:17 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
