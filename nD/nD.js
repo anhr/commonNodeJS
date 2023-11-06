@@ -1103,9 +1103,11 @@ class ND {
 					}
 					switch ( name ) {
 
+/*							
 						case 'push': return target.push;
 						case 'length': return target.length;
 						case 'forEach': return target.forEach;
+*/	  
 						case 'isProxy': return true;
 						case 'boPositionError': return target.boPositionError;
 						case 'target': return target;
@@ -1121,7 +1123,8 @@ class ND {
 
 							}
 						case "reset": return function () { target.forEach( item => delete item.positionWorld ); }
-						default: console.error( 'ND: settings.object.geometry.position Proxy. Invalid name: ' + name );
+//						default: console.error( 'ND: settings.object.geometry.position Proxy. Invalid name: ' + name );
+						default: return target[name];
 
 					}
 

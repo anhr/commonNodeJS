@@ -2256,61 +2256,6 @@ if (window.__myThree__.three) {
 }
 var three$1 = three;
 
-var WEBGL = {
-		isWebGLAvailable: function isWebGLAvailable() {
-				try {
-						var canvas = document.createElement('canvas');
-						return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-				} catch (e) {
-						return false;
-				}
-		},
-		isWebGL2Available: function isWebGL2Available() {
-				try {
-						var canvas = document.createElement('canvas');
-						return !!(window.WebGL2RenderingContext && canvas.getContext('webgl2'));
-				} catch (e) {
-						return false;
-				}
-		},
-		getWebGLErrorMessage: function getWebGLErrorMessage() {
-				return this.getErrorMessage(1);
-		},
-		getWebGL2ErrorMessage: function getWebGL2ErrorMessage() {
-				return this.getErrorMessage(2);
-		},
-		getErrorMessage: function getErrorMessage(version) {
-				var names = {
-						1: 'WebGL',
-						2: 'WebGL 2'
-				};
-				var contexts = {
-						1: window.WebGLRenderingContext,
-						2: window.WebGL2RenderingContext
-				};
-				var message = 'Your $0 does not seem to support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation" style="color:#000">$1</a>';
-				var element = document.createElement('div');
-				element.id = 'webglmessage';
-				element.style.fontFamily = 'monospace';
-				element.style.fontSize = '13px';
-				element.style.fontWeight = 'normal';
-				element.style.textAlign = 'center';
-				element.style.background = '#fff';
-				element.style.color = '#000';
-				element.style.padding = '1.5em';
-				element.style.width = '400px';
-				element.style.margin = '5em auto 0';
-				if (contexts[version]) {
-						message = message.replace('$0', 'graphics card');
-				} else {
-						message = message.replace('$0', 'browser');
-				}
-				message = message.replace('$1', names[version]);
-				element.innerHTML = message;
-				return element;
-		}
-};
-
 /**
  * node.js version of the synchronous download of the file.
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -2955,6 +2900,9 @@ function ColorPicker() {
 				console.error('ColorPicker.create.Palette: ' + message);
 				options.onError(message);
 		}
+		this.isPalette = function () {
+			return true;
+		};
 		this.getPalette = function () {
 			var palette = [];
 			arrayPalette.forEach(function (item) {
@@ -3070,6 +3018,7 @@ function get$1(name, defaultValue) {
 	return defaultValue;
 }
 function getObject(name, options, optionsDefault) {
+	if (optionsDefault === undefined) optionsDefault = options;
 	new defaultCookie().getObject(name, options, copyObject(name, optionsDefault));
 }
 function copyObject(name, objectDefault) {
@@ -9686,47 +9635,42 @@ Player$1.getColors = function (arrayFuncs, optionsColor) {
 			}
 			var length = Array.isArray(arrayFuncs) ? arrayFuncs.length : optionsColor.positions.count;
 			optionsColor.colors = optionsColor.colors || [];
+			var colors = [];
 			if (!optionsColor.options.palette) optionsColor.options.setPalette();
 			for (var i = 0; i < length; i++) {
-						var funcs = Array.isArray(arrayFuncs) ? arrayFuncs[i] : undefined;
-						var vector;
-						if (funcs instanceof THREE.Vector4 ||
-						optionsColor.positions && optionsColor.positions.itemSize === 4
-						) {
-												var min = void 0,
-												    max = void 0;
-												var w = funcs.w;
-												if (funcs.w instanceof Object && funcs.w.func) {
-															if (funcs.w.max) max = funcs.w.max;
-															if (funcs.w.min) min = funcs.w.min;
-															w = funcs.w.func;
-												} else {
-															optionsColor.options.setW();
-															min = optionsColor.options.scales.w.min;max = optionsColor.options.scales.w.max;
-												}
-												if (w instanceof Function && !optionsColor.options.player && boColorWarning) {
-															boColorWarning = false;
-												}
-												var t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
-												var color = optionsColor.options.palette.toColor(funcs === undefined ? new THREE.Vector4().fromBufferAttribute(optionsColor.positions, i).w : w instanceof Function ? w(t) : typeof w === "string" ? Player$1.execFunc(funcs, 'w', t, optionsColor.options) : w === undefined ? new THREE.Vector4().w : w, min, max);
-												optionsColor.colors.push(color.r, color.g, color.b);
-									} else if (optionsColor.colors instanceof THREE.Float32BufferAttribute) vector = new THREE.Vector3(1, 1, 1);else optionsColor.colors.push(1, 1, 1);
-						if (optionsColor.opacity !== undefined) {
-									var opacity = 0,
-									    standardNormalDistributionZero = getStandardNormalDistribution(0);
-									group.children.forEach(function (mesh) {
-												if (!mesh.userData.cloud) return;
-												for (var iMesh = 0; iMesh < mesh.geometry.attributes.position.count; iMesh++) {
-															var position = getObjectPosition(mesh, iMesh);
-															opacity += getStandardNormalDistribution(getWorldPosition(camera, new THREE.Vector3().fromBufferAttribute(optionsColor.positions, i)).distanceTo(position) * 5) / standardNormalDistributionZero;
-												}
-									});
-									if (debug.opacity !== undefined) opacity = debug.opacity;
-									if (optionsColor.colors instanceof THREE.Float32BufferAttribute) {
-												optionsColor.colors.setXYZW(i, vector.x, vector.y, vector.z, opacity);
-									} else optionsColor.colors.push(opacity);
-						} else optionsColor.colors.push(1);
+						var iColor = 3 * i;
+						if (iColor >= optionsColor.colors.length) {
+									var funcs = Array.isArray(arrayFuncs) ? arrayFuncs[i] : undefined;
+									var vector;
+									if (funcs instanceof THREE.Vector4 ||
+									optionsColor.positions && optionsColor.positions.itemSize === 4
+									) {
+															var min = void 0,
+															    max = void 0;
+															var w = funcs.w;
+															if (funcs.w instanceof Object && funcs.w.func) {
+																		if (funcs.w.max) max = funcs.w.max;
+																		if (funcs.w.min) min = funcs.w.min;
+																		w = funcs.w.func;
+															} else {
+																		optionsColor.options.setW();
+																		min = optionsColor.options.scales.w.min;max = optionsColor.options.scales.w.max;
+															}
+															if (w instanceof Function && !optionsColor.options.player && boColorWarning) {
+																		boColorWarning = false;
+															}
+															var t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
+															var color = optionsColor.options.palette.toColor(funcs === undefined ? new THREE.Vector4().fromBufferAttribute(optionsColor.positions, i).w : w instanceof Function ? w(t) : typeof w === "string" ? Player$1.execFunc(funcs, 'w', t, optionsColor.options) : w === undefined ? new THREE.Vector4().w : w, min, max);
+															colors.push(color.r, color.g, color.b);
+												} else if (optionsColor.colors instanceof THREE.Float32BufferAttribute) vector = new THREE.Vector3(1, 1, 1);
+									else if (optionsColor.color != undefined) {
+															var _color = new THREE.Color(optionsColor.color);
+															colors.push(_color.r, _color.g, _color.b);
+												} else colors.push(1, 1, 1);
+						} else colors.push(optionsColor.colors[iColor], optionsColor.colors[iColor + 1], optionsColor.colors[iColor + 2]);
+						if (optionsColor.opacity instanceof Array) colors.push(i < optionsColor.opacity.length ? optionsColor.opacity[i] : 1);else colors.push(1);
 			}
+			optionsColor.colors = colors;
 			return optionsColor.colors;
 };
 Player$1.traceLine =
@@ -10723,10 +10667,6 @@ StereoEffect.getTextIntersection = function (intersection, options) {
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-if (WEBGL.isWebGLAvailable() === false) {
-			document.body.appendChild(WEBGL.getWebGLErrorMessage());
-			alert(WEBGL.getWebGLErrorMessage().innerHTML);
-}
 var boCreateControllers;
 var Options =
 function Options(options) {
@@ -10742,7 +10682,7 @@ function Options(options) {
 						optionsCur = optionsCur || options;
 						optionsCur.scales = optionsCur.scales || {};
 						var scale = optionsCur.scales.w;
-						if (!optionsCur.palette) _this.setPalette(optionsCur);
+						if (!optionsCur.palette) _this.setPalette();
 			};
 			options.scales = options.scales || {};
 			var boCreateScale = !options.scales.x && !options.scales.y && !options.scales.z;
@@ -10756,9 +10696,8 @@ function Options(options) {
 			options.point = options.point || {};
 			if (options.point.size === undefined) options.point.size = 5.0;
 			options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
-			this.setPalette = function () {
-						if (options.palette) return;
-						options.palette = new ColorPicker$1.palette();
+			this.setPalette = function (palette) {
+						if (palette) options.palette = palette;else if (!options.palette) options.palette = new ColorPicker$1.palette();
 			};
 			this.createOrbitControls = function (camera, renderer, scene) {
 						if (options.orbitControls === false) return;
@@ -11197,9 +11136,14 @@ function Options(options) {
 															case 'boolean':
 																		if (options.palette) options.palette = new ColorPicker$1.palette();
 																		break;
+															case 'string':
+																		var color = new three$1.THREE.Color(options.palette);
+																		options.palette = new ColorPicker$1.palette({ palette: [{ percent: 0, r: color.r * 255, g: color.g * 255, b: color.b * 255 }] });
+																		break;
 															default:
 																		{
-																					if (options.palette instanceof ColorPicker$1.palette === false) console.error('MyThree: invalid typeof options.palette: ' + _typeof(options.palette));
+																					if (Array.isArray(options.palette)) options.palette = new ColorPicker$1.palette({ palette: options.palette });
+																					else if (!options.palette.isPalette()) console.error('MyThree: invalid typeof options.palette: ' + _typeof(options.palette));
 																		}
 												}
 												return options.palette;
@@ -11363,7 +11307,7 @@ function Options(options) {
 									return options.guiSelectPoint;
 						},
 						set: function set$$1(guiSelectPoint) {
-									if (options.guiSelectPoint) console.error('duplicate guiSelectPoint.');
+									if (options.guiSelectPoint && guiSelectPoint != undefined) console.error('duplicate guiSelectPoint.');
 									options.guiSelectPoint = guiSelectPoint;
 						}
 			}), defineProperty(_Object$definePropert, 'controllers', {
@@ -12347,12 +12291,6 @@ function ND(n) {
 					return [target[i]];
 				}
 				switch (name) {
-					case 'push':
-						return target.push;
-					case 'length':
-						return target.length;
-					case 'forEach':
-						return target.forEach;
 					case 'isProxy':
 						return true;
 					case 'boPositionError':
@@ -12374,7 +12312,7 @@ function ND(n) {
 							});
 						};
 					default:
-						console.error('ND: settings.object.geometry.position Proxy. Invalid name: ' + name);
+						return target[name];
 				}
 			},
 			set: function set$$1(target, name, value) {
@@ -12995,9 +12933,10 @@ function ND(n) {
 		var indices3D = geometry.D3.indices,
 		    indices = indices3D.indices,
 		    colors = indices3D.colors;
-		if (settings.object.geometry.position[0].length > 3 &&
-		_typeof(settings.object.color) === "object" &&
-		!settings.object.geometry.colors
+		if ((settings.object.geometry.position[0].length > 3 &&
+		_typeof(settings.object.color) === "object"
+		|| settings.object.geometry.opacity
+		) && !settings.object.geometry.colors
 		) settings.object.geometry.colors = indices3D.colors;
 		var buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points, geometry.D3.points[0].w === undefined ? 3 : 4);
 		if (settings3D.faces) {
@@ -13013,13 +12952,48 @@ function ND(n) {
 			opacity: settings3D.faces.opacity,
 			transparent: settings3D.faces.transparent,
 			side: THREE.DoubleSide
-		})) : new THREE.LineSegments(buffer, new THREE.LineBasicMaterial(settings.object.geometry.colors ? { vertexColors: true, toneMapped: false } : { color: color })) : new THREE.Points(buffer, new THREE.PointsMaterial({
+		})) : new THREE.LineSegments(buffer, new THREE.LineBasicMaterial(settings.object.geometry.colors ? {
+			vertexColors: true,
+			toneMapped: false,
+			transparent: settings.object.geometry.opacity ? true :
+			undefined
+		} : { color: color })) : new THREE.Points(buffer, new THREE.PointsMaterial({
 			color: color,
 			sizeAttenuation: false,
 			size: options.point.size / (options.point.sizePointsMaterial * 2)
 		}));
 		if (settings3D.name) object.name = settings3D.name;
-		if (settings.object.geometry.colors) object.geometry.setAttribute('color', new THREE.Float32BufferAttribute(settings.object.geometry.colors, 3));
+		if (settings.object.geometry.colors) {
+			var _colors = void 0,
+			    itemSize = void 0;
+			if (settings.object.geometry.opacity) {
+				itemSize = 4;
+				var colorSize = itemSize - 1,
+				    itemsCount = settings.object.geometry.colors.length / colorSize;
+				if (itemsCount != Math.trunc(itemsCount)) console.error('ND.create3DObject: Opacity. Invalid colors count = ' + itemsCount);
+				_colors = [];
+				for (var _i = 0; _i < settings.object.geometry.position.length; _i++) {
+					var iColor = _i * colorSize;
+					if (iColor < settings.object.geometry.colors.length) _colors.push(settings.object.geometry.colors[iColor + 0], settings.object.geometry.colors[iColor + 1], settings.object.geometry.colors[iColor + 2]);
+					else {
+							var _color = new THREE.Color(settings.object.color);
+							_colors.push(_color.r, _color.g, _color.b);
+						}
+					_colors.push(_i < settings.object.geometry.opacity.length ? settings.object.geometry.opacity[_i] : 1);
+				}
+			} else {
+				itemSize = 3;
+				_colors = settings.object.geometry.colors;
+				var _colorSize = itemSize,
+				    _itemsCount = settings.object.geometry.colors.length / _colorSize;
+				if (_itemsCount != Math.trunc(_itemsCount)) console.error('ND.create3DObject: Opacity. Invalid colors count = ' + _itemsCount);
+				for (var _i2 = _itemsCount; _i2 < settings.object.geometry.position.length; _i2++) {
+					var _color2 = new THREE.Color(settings.object.color);
+					_colors.push(_color2.r, _color2.g, _color2.b);
+				}
+			}
+			object.geometry.setAttribute('color', new THREE.Float32BufferAttribute(_colors, itemSize));
+		}
 		scene.add(object);
 		object.userData.geometry = geometry.geometry;
 		object.userData.onMouseDown = function (intersection) {

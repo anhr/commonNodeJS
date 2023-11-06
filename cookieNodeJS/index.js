@@ -116,7 +116,10 @@ function get( name, defaultValue ) {
  */
 function getObject( name, options, optionsDefault ) {
 
-	optionsDefault ||= options;
+	//uncompatible with ND build
+	//optionsDefault ||= options;
+	
+	if (optionsDefault === undefined) optionsDefault = options;
 	new defaultCookie().getObject( name, options, copyObject( name, optionsDefault ) );
 
 };
