@@ -22,7 +22,7 @@ import Options from '../Options.js'
 import PositionController from '../PositionController.js';
 import MyMath from '../myMath/myMath.js'
 
-/**
+/*
 dimention	geometry	points	edges	faces	bodyes	4D objects
 1			line		2		0
 2			triangle	3		3		1
