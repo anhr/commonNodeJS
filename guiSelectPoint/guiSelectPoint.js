@@ -594,6 +594,7 @@ class GuiSelectPoint {
 				if( cX ) cX.initialValue = positionLocal.x;
 				if( cY ) cY.initialValue = positionLocal.y;
 				if( cZ ) cZ.initialValue = positionLocal.z;
+				if( cW ) cW.initialValue = positionLocal.w;
 				
 			}
 			if( cX ) cX.setValue( positionLocal.x );
