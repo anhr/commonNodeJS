@@ -317,6 +317,14 @@ class GuiSelectPoint {
 
 		}
 		var wLimitsDefault;
+		this.setReadOnlyPosition = function ( boReadOnly ) {
+
+			if ( cX ) cX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+			if ( cY ) cY.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+			if ( cZ ) cZ.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+			if ( cW ) cW.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+
+		}
 		function setPosition( intersectionSelected ) {
 
 			const player = intersectionSelected.object.userData.player;
@@ -346,6 +354,8 @@ class GuiSelectPoint {
 			setValue( cX, positionLocal.x );
 			setValue( cY, positionLocal.y );
 			setValue( cZ, positionLocal.z );
+
+			if( intersectionSelected.object.userData.gui ) intersectionSelected.object.userData.gui.setValues( intersectionSelected.index );
 
 			const position = getObjectPosition( intersectionSelected.object, intersectionSelected.index );
 			setValue( cWorld.x, position.x );
@@ -479,11 +489,14 @@ class GuiSelectPoint {
 			dislayEl( cColor, displayControllerColor );
 			dislayEl( cOpacity, displayControllerOpacity );
 
-			const boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : false;
+			const mesh = getMesh(), boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : mesh.userData.gui && mesh.userData.gui.isLocalPositionReadOnly ? true : false;
+			_this.setReadOnlyPosition(boReadOnly);
+/*
 			if ( cX ) cX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			if ( cY ) cY.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			if ( cZ ) cZ.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			if ( cW ) cW.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+*/
 			cColor.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			cOpacity.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			funcFolder.displayFolder( !boReadOnly );
@@ -564,7 +577,7 @@ class GuiSelectPoint {
 		/**
 		 * update the values of the controllers of the world position
 		 */
-		this.update = function () {
+		this.update = function ( boSetInitialValue = false ) {
 
 			const selectedItem = cMeshs.__select.options[cMeshs.__select.options.selectedIndex];
 			if ( !selectedItem ) return;
@@ -578,9 +591,16 @@ class GuiSelectPoint {
 			if( cWorld.x ) cWorld.x.setValue( position.x );
 			if( cWorld.y ) cWorld.y.setValue( position.y );
 			if( cWorld.z ) cWorld.z.setValue( position.z );
-			if( cW ) cW.setValue( position.w );
+			if( cW && ( position instanceof THREE.Vector4 )) cW.setValue( position.w );
 
 			const positionLocal = getObjectLocalPosition( mesh, index );
+			if ( boSetInitialValue ) {
+				
+				if( cX ) cX.initialValue = positionLocal.x;
+				if( cY ) cY.initialValue = positionLocal.y;
+				if( cZ ) cZ.initialValue = positionLocal.z;
+				
+			}
 			if( cX ) cX.setValue( positionLocal.x );
 			if( cY ) cY.setValue( positionLocal.y );
 			if( cZ ) cZ.setValue( positionLocal.z );
@@ -1086,11 +1106,32 @@ class GuiSelectPoint {
 				value = parseInt( value );
 				mesh = getMesh();
 
+				const none = 'none', block = 'block';
+				if (fPoint.fCustomPoint) {
+
+					fPoint.removeFolder(fPoint.fCustomPoint);
+					delete fPoint.fCustomPoint;
+					
+				}
+				if (mesh && mesh.userData.gui) {
+					
+					fPoint.fCustomPoint = mesh.userData.gui.addControllers(fPoint);
+/*					
+					if (mesh && mesh.userData.gui.isLocalPositionReadOnly) {
+
+						if (cX) cX.domElement.querySelector( 'input' ).readOnly = true;
+						if (cY) cX.domElement.querySelector( 'input' ).readOnly = true;
+						if (cZ) cX.domElement.querySelector( 'input' ).readOnly = true;
+						
+					}
+*/	 
+
+				}
+				
 				if ( cCustom ) cCustom.object( mesh, dat, value === -1 );//options );
 
 				createPlayerArrayFuncs( mesh );
 
-				const none = 'none', block = 'block';
 				var display;
 				if ( mesh === undefined ) {
 
@@ -1365,6 +1406,7 @@ class GuiSelectPoint {
 
 				value = parseInt( value );
 				var display, position;
+				const mesh = getMesh();
 				if ( value === -1 ) {
 
 					display = 'none';
@@ -1372,11 +1414,11 @@ class GuiSelectPoint {
 				} else {
 
 					display = 'block';
-					_this.select( { object: getMesh(), index: value } );
+					_this.select( { object: mesh, index: value } );
 
 				}
 				if ( ( options.axesHelper !== false ) && ( options.axesHelper !== undefined ) )
-					options.axesHelper.exposePosition( getObjectPosition( getMesh(), value ) );
+					options.axesHelper.exposePosition( getObjectPosition( mesh, value ) );
 				displayPointControllers( display );
 
 			} );
@@ -1712,6 +1754,7 @@ class GuiSelectPoint {
 							( scale.max - scale.min ) / 100
 						).onChange( function ( value ) {
 
+							if ( isReadOnlyController( controller ) ) return;
 							onChange( value );
 
 						} );
@@ -1762,8 +1805,17 @@ class GuiSelectPoint {
 							( scale.max - scale.min ) / 100 ).
 							onChange( function ( value ) {
 
-								if ( isReadOnlyController( controller ) )
-									return;
+/*								
+								const gui = getMesh().userData.gui;
+								if ( gui ) {
+									
+									if (gui.isLocalPositionReadOnly ) return;
+									
+								} else if ( isReadOnlyController( controller ) ) return;
+//								if ( ( gui && gui.isLocalPositionReadOnly ) || isReadOnlyController( controller ) ) return;
+*/								
+								if ( isReadOnlyController( controller ) ) return;
+								
 								const points = intersection.object,
 									axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error( 'axisName:' + axisName );
 								points.geometry.attributes.position.array
