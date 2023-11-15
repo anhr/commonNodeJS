@@ -2123,6 +2123,29 @@ class ND {
 				buffer.computeVertexNormals ();
 
 			} else buffer.setIndex( indices )
+/*			
+			const lineBasicMaterialParameters = settings.object.geometry.colors ? {
+				
+				vertexColors: true,
+				toneMapped: false,
+				transparent: settings.object.geometry.opacity ?
+					true ://установлена прозрачность вершин
+					undefined,
+			
+			} : { color: color, };
+*/   
+			let lineBasicMaterialParameters;
+			if ( settings.object.geometry.colors ) {
+
+				lineBasicMaterialParameters = {
+					
+					vertexColors: true,
+					toneMapped: false,
+				
+				}
+				if ( settings.object.geometry.opacity ) lineBasicMaterialParameters.transparent = true;//установлена прозрачность вершин
+				
+			} else lineBasicMaterialParameters = { color: color, };
 			
 			const object = indices.length > 1 ?
 				settings3D.faces ?
@@ -2134,15 +2157,7 @@ class ND {
 						side: THREE.DoubleSide
 						
 					} ) ) :
-					new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( settings.object.geometry.colors ? {
-						
-						vertexColors: true,
-						toneMapped: false,
-						transparent: settings.object.geometry.opacity ?
-							true ://установлена прозрачность вершин
-							undefined,
-					
-					} : { color: color, } ) ) :
+					new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( lineBasicMaterialParameters ) ) :
 				new THREE.Points( buffer, new THREE.PointsMaterial( {
 					
 					color: color,
