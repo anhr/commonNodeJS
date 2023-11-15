@@ -94,9 +94,6 @@ class GuiSelectPoint {
 	 */
 	constructor( options, guiParams = {} ) {
 
-//если я создам константу axesHelper то не будет вызываться функции axesHelper если экземляр AxesHelper будет создан позже GuiSelectPoint
-//Теперь new AxesHelper и new GuiSelectPoint можно вызывать в любом порядке.
-//		const axesHelper = options.axesHelper,
 		const guiSelectPoint = this, THREE = three.THREE, folders = {};
 
 		if ( !options.boOptions ) {
@@ -491,12 +488,6 @@ class GuiSelectPoint {
 
 			const mesh = getMesh(), boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : mesh.userData.gui && mesh.userData.gui.isLocalPositionReadOnly ? true : false;
 			_this.setReadOnlyPosition(boReadOnly);
-/*
-			if ( cX ) cX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-			if ( cY ) cY.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-			if ( cZ ) cZ.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-			if ( cW ) cW.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-*/
 			cColor.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			cOpacity.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			funcFolder.displayFolder( !boReadOnly );
@@ -1077,9 +1068,6 @@ class GuiSelectPoint {
 
 					const vector = new THREE.Vector4().fromArray( mesh.geometry.attributes.position.array, i * position.itemSize );
 
-					//непонятно зачем это засунул
-//					vector.w = 1;
-					
 					mesh.userData.player.arrayFuncs.push( vector );
 
 				}
@@ -1805,15 +1793,6 @@ class GuiSelectPoint {
 							( scale.max - scale.min ) / 100 ).
 							onChange( function ( value ) {
 
-/*								
-								const gui = getMesh().userData.gui;
-								if ( gui ) {
-									
-									if (gui.isLocalPositionReadOnly ) return;
-									
-								} else if ( isReadOnlyController( controller ) ) return;
-//								if ( ( gui && gui.isLocalPositionReadOnly ) || isReadOnlyController( controller ) ) return;
-*/								
 								if ( isReadOnlyController( controller ) ) return;
 								
 								const points = intersection.object,
