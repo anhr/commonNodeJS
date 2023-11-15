@@ -8178,6 +8178,7 @@ function get$3(name, defaultValue) {
 	return defaultValue;
 }
 function getObject(name, options, optionsDefault) {
+	if (optionsDefault === undefined) optionsDefault = options;
 	new defaultCookie().getObject(name, options, copyObject(name, optionsDefault));
 }
 function copyObject(name, objectDefault) {
@@ -9152,7 +9153,7 @@ function Options(options) {
 						optionsCur = optionsCur || options;
 						optionsCur.scales = optionsCur.scales || {};
 						var scale = optionsCur.scales.w;
-						if (!optionsCur.palette) _this.setPalette(optionsCur);
+						if (!optionsCur.palette) _this.setPalette();
 			};
 			options.scales = options.scales || {};
 			var boCreateScale = !options.scales.x && !options.scales.y && !options.scales.z;
@@ -9166,9 +9167,8 @@ function Options(options) {
 			options.point = options.point || {};
 			if (options.point.size === undefined) options.point.size = 5.0;
 			options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
-			this.setPalette = function () {
-						if (options.palette) return;
-						options.palette = new ColorPicker$1.palette();
+			this.setPalette = function (palette) {
+						if (palette) options.palette = palette;else if (!options.palette) options.palette = new ColorPicker$1.palette();
 			};
 			this.createOrbitControls = function (camera, renderer, scene) {
 						if (options.orbitControls === false) return;
@@ -9607,9 +9607,14 @@ function Options(options) {
 															case 'boolean':
 																		if (options.palette) options.palette = new ColorPicker$1.palette();
 																		break;
+															case 'string':
+																		var color = new three$1.THREE.Color(options.palette);
+																		options.palette = new ColorPicker$1.palette({ palette: [{ percent: 0, r: color.r * 255, g: color.g * 255, b: color.b * 255 }] });
+																		break;
 															default:
 																		{
-																					if (!options.palette.isPalette()) console.error('MyThree: invalid typeof options.palette: ' + _typeof(options.palette));
+																					if (Array.isArray(options.palette)) options.palette = new ColorPicker$1.palette({ palette: options.palette });
+																					else if (!options.palette.isPalette()) console.error('MyThree: invalid typeof options.palette: ' + _typeof(options.palette));
 																		}
 												}
 												return options.palette;
@@ -9773,7 +9778,7 @@ function Options(options) {
 									return options.guiSelectPoint;
 						},
 						set: function set$$1(guiSelectPoint) {
-									if (options.guiSelectPoint) console.error('duplicate guiSelectPoint.');
+									if (options.guiSelectPoint && guiSelectPoint != undefined) console.error('duplicate guiSelectPoint.');
 									options.guiSelectPoint = guiSelectPoint;
 						}
 			}), defineProperty(_Object$definePropert, 'controllers', {
@@ -11333,47 +11338,42 @@ Player$1.getColors = function (arrayFuncs, optionsColor) {
 			}
 			var length = Array.isArray(arrayFuncs) ? arrayFuncs.length : optionsColor.positions.count;
 			optionsColor.colors = optionsColor.colors || [];
+			var colors = [];
 			if (!optionsColor.options.palette) optionsColor.options.setPalette();
 			for (var i = 0; i < length; i++) {
-						var funcs = Array.isArray(arrayFuncs) ? arrayFuncs[i] : undefined;
-						var vector;
-						if (funcs instanceof THREE.Vector4 ||
-						optionsColor.positions && optionsColor.positions.itemSize === 4
-						) {
-												var min = void 0,
-												    max = void 0;
-												var w = funcs.w;
-												if (funcs.w instanceof Object && funcs.w.func) {
-															if (funcs.w.max) max = funcs.w.max;
-															if (funcs.w.min) min = funcs.w.min;
-															w = funcs.w.func;
-												} else {
-															optionsColor.options.setW();
-															min = optionsColor.options.scales.w.min;max = optionsColor.options.scales.w.max;
-												}
-												if (w instanceof Function && !optionsColor.options.player && boColorWarning) {
-															boColorWarning = false;
-												}
-												var t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
-												var color = optionsColor.options.palette.toColor(funcs === undefined ? new THREE.Vector4().fromBufferAttribute(optionsColor.positions, i).w : w instanceof Function ? w(t) : typeof w === "string" ? Player$1.execFunc(funcs, 'w', t, optionsColor.options) : w === undefined ? new THREE.Vector4().w : w, min, max);
-												optionsColor.colors.push(color.r, color.g, color.b);
-									} else if (optionsColor.colors instanceof THREE.Float32BufferAttribute) vector = new THREE.Vector3(1, 1, 1);else optionsColor.colors.push(1, 1, 1);
-						if (optionsColor.opacity !== undefined) {
-									var opacity = 0,
-									    standardNormalDistributionZero = getStandardNormalDistribution(0);
-									group.children.forEach(function (mesh) {
-												if (!mesh.userData.cloud) return;
-												for (var iMesh = 0; iMesh < mesh.geometry.attributes.position.count; iMesh++) {
-															var position = getObjectPosition(mesh, iMesh);
-															opacity += getStandardNormalDistribution(getWorldPosition(camera, new THREE.Vector3().fromBufferAttribute(optionsColor.positions, i)).distanceTo(position) * 5) / standardNormalDistributionZero;
-												}
-									});
-									if (debug.opacity !== undefined) opacity = debug.opacity;
-									if (optionsColor.colors instanceof THREE.Float32BufferAttribute) {
-												optionsColor.colors.setXYZW(i, vector.x, vector.y, vector.z, opacity);
-									} else optionsColor.colors.push(opacity);
-						} else optionsColor.colors.push(1);
+						var iColor = 3 * i;
+						if (iColor >= optionsColor.colors.length) {
+									var funcs = Array.isArray(arrayFuncs) ? arrayFuncs[i] : undefined;
+									var vector;
+									if (funcs instanceof THREE.Vector4 ||
+									optionsColor.positions && optionsColor.positions.itemSize === 4
+									) {
+															var min = void 0,
+															    max = void 0;
+															var w = funcs.w;
+															if (funcs.w instanceof Object && funcs.w.func) {
+																		if (funcs.w.max) max = funcs.w.max;
+																		if (funcs.w.min) min = funcs.w.min;
+																		w = funcs.w.func;
+															} else {
+																		optionsColor.options.setW();
+																		min = optionsColor.options.scales.w.min;max = optionsColor.options.scales.w.max;
+															}
+															if (w instanceof Function && !optionsColor.options.player && boColorWarning) {
+																		boColorWarning = false;
+															}
+															var t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
+															var color = optionsColor.options.palette.toColor(funcs === undefined ? new THREE.Vector4().fromBufferAttribute(optionsColor.positions, i).w : w instanceof Function ? w(t) : typeof w === "string" ? Player$1.execFunc(funcs, 'w', t, optionsColor.options) : w === undefined ? new THREE.Vector4().w : w, min, max);
+															colors.push(color.r, color.g, color.b);
+												} else if (optionsColor.colors instanceof THREE.Float32BufferAttribute) vector = new THREE.Vector3(1, 1, 1);
+									else if (optionsColor.color != undefined) {
+															var _color = new THREE.Color(optionsColor.color);
+															colors.push(_color.r, _color.g, _color.b);
+												} else colors.push(1, 1, 1);
+						} else colors.push(optionsColor.colors[iColor], optionsColor.colors[iColor + 1], optionsColor.colors[iColor + 2]);
+						if (optionsColor.opacity instanceof Array) colors.push(i < optionsColor.opacity.length ? optionsColor.opacity[i] : 1);else colors.push(1);
 			}
+			optionsColor.colors = colors;
 			return optionsColor.colors;
 };
 Player$1.traceLine =
@@ -11677,11 +11677,13 @@ function getShaderMaterialPoints(group, arrayFuncs, onReady, settings) {
 		for (var i = 0; i < geometry.attributes.position.count; i++) {
 			arrayFuncs.push(new THREE.Vector3().fromBufferAttribute(geometry.attributes.position, i));
 		}
-	} else if (typeof arrayFuncs === 'function') geometry = arrayFuncs();else geometry = new THREE.BufferGeometry().setFromPoints(Player$1.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin }), arrayFuncs[0] instanceof THREE.Vector3 ? 3 : 4);
+	} else if (typeof arrayFuncs === 'function') geometry = arrayFuncs();else geometry = new THREE.BufferGeometry().setFromPoints(Player$1.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin }), arrayFuncs[0].vector instanceof THREE.Vector3 ? 3 : 4);
 	var indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud(geometry) : undefined;
 	if (settings.pointsOptions === undefined || !settings.pointsOptions.boFrustumPoints) {
 		if (!settings.options.scales.w) settings.options.scales.setW();
 		geometry.setAttribute('ca', new THREE.Float32BufferAttribute(Player$1.getColors(arrayFuncs, {
+			color: settings.pointsOptions.color,
+			colors: settings.pointsOptions.colors,
 			opacity: settings.pointsOptions === undefined ? undefined : settings.pointsOptions.opacity,
 			positions: geometry.attributes.position,
 			options: settings.options
@@ -11812,14 +11814,19 @@ function MyPoints(arrayFuncs, group, settings) {
 		options: options,
 		pointsOptions: pointsOptions
 	});else {
-		var points = new THREE.Points(typeof arrayFuncs === 'function' ? arrayFuncs() : new THREE.BufferGeometry().setFromPoints(Player$1.getPoints(arrayFuncs, { options: options, group: group, t: pointsOptions.tMin }), 4), new THREE.PointsMaterial({
+		var points = new THREE.Points(typeof arrayFuncs === 'function' ? arrayFuncs() : new THREE.BufferGeometry().setFromPoints(Player$1.getPoints(arrayFuncs, { options: options, group: group, t: pointsOptions.tMin }), arrayFuncs[0].vector instanceof THREE.Vector3 === true ? 3 : 4), new THREE.PointsMaterial({
 			size: options.point.size / options.point.sizePointsMaterial,
-			vertexColors: true
+			vertexColors: true,
+			transparent: settings.pointsOptions.opacity ? true :
+			undefined
 		}));
 		if (pointsOptions.frustumPoints) points.userData.cloud = {
 			indexArray: pointsOptions.frustumPoints.pushArrayCloud(points.geometry)
 		};
 		points.geometry.setAttribute('color', new THREE.Float32BufferAttribute(Player$1.getColors(arrayFuncs, {
+			color: settings.pointsOptions.color,
+			colors: settings.pointsOptions.colors,
+			opacity: settings.pointsOptions.opacity,
 			positions: points.geometry.attributes.position,
 			options: options
 		}), 4));
@@ -13710,6 +13717,12 @@ function GuiSelectPoint(options) {
 						return controller;
 			}
 			var wLimitsDefault;
+			this.setReadOnlyPosition = function (boReadOnly) {
+						if (cX) cX.domElement.querySelector('input').readOnly = boReadOnly;
+						if (cY) cY.domElement.querySelector('input').readOnly = boReadOnly;
+						if (cZ) cZ.domElement.querySelector('input').readOnly = boReadOnly;
+						if (cW) cW.domElement.querySelector('input').readOnly = boReadOnly;
+			};
 			function setPosition(intersectionSelected) {
 						var player = intersectionSelected.object.userData.player;
 						var boDisplayFuncFolder = 'none';
@@ -13726,6 +13739,7 @@ function GuiSelectPoint(options) {
 						setValue(cX, positionLocal.x);
 						setValue(cY, positionLocal.y);
 						setValue(cZ, positionLocal.z);
+						if (intersectionSelected.object.userData.gui) intersectionSelected.object.userData.gui.setValues(intersectionSelected.index);
 						var position = getObjectPosition(intersectionSelected.object, intersectionSelected.index);
 						setValue(cWorld.x, position.x);
 						setValue(cWorld.y, position.y);
@@ -13800,11 +13814,9 @@ function GuiSelectPoint(options) {
 						dislayEl(cW, displayControllerW);
 						dislayEl(cColor, displayControllerColor);
 						dislayEl(cOpacity, displayControllerOpacity);
-						var boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : false;
-						if (cX) cX.domElement.querySelector('input').readOnly = boReadOnly;
-						if (cY) cY.domElement.querySelector('input').readOnly = boReadOnly;
-						if (cZ) cZ.domElement.querySelector('input').readOnly = boReadOnly;
-						if (cW) cW.domElement.querySelector('input').readOnly = boReadOnly;
+						var mesh = getMesh(),
+						    boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : mesh.userData.gui && mesh.userData.gui.isLocalPositionReadOnly ? true : false;
+						_this.setReadOnlyPosition(boReadOnly);
 						cColor.domElement.querySelector('input').readOnly = boReadOnly;
 						cOpacity.domElement.querySelector('input').readOnly = boReadOnly;
 						funcFolder.displayFolder(!boReadOnly);
@@ -13845,6 +13857,7 @@ function GuiSelectPoint(options) {
 						}
 			};
 			this.update = function () {
+						var boSetInitialValue = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 						var selectedItem = cMeshs.__select.options[cMeshs.__select.options.selectedIndex];
 						if (!selectedItem) return;
 						var mesh = selectedItem.mesh;
@@ -13855,8 +13868,13 @@ function GuiSelectPoint(options) {
 						if (cWorld.x) cWorld.x.setValue(position.x);
 						if (cWorld.y) cWorld.y.setValue(position.y);
 						if (cWorld.z) cWorld.z.setValue(position.z);
-						if (cW) cW.setValue(position.w);
+						if (cW && position instanceof THREE.Vector4) cW.setValue(position.w);
 						var positionLocal = getObjectLocalPosition(mesh, index);
+						if (boSetInitialValue) {
+									if (cX) cX.initialValue = positionLocal.x;
+									if (cY) cY.initialValue = positionLocal.y;
+									if (cZ) cZ.initialValue = positionLocal.z;
+						}
 						if (cX) cX.setValue(positionLocal.x);
 						if (cY) cY.setValue(positionLocal.y);
 						if (cZ) cZ.setValue(positionLocal.z);
@@ -13880,6 +13898,7 @@ function GuiSelectPoint(options) {
 						cPoints.__select[index + 1].selected = true;
 			};
 			this.removeMesh = function (mesh) {
+						var boHideF3DObjects = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 						var index = this.getMeshIndex(mesh),
 						    selectedIndex = cMeshs.__select.selectedIndex;
 						if (index === undefined) return;
@@ -13889,7 +13908,7 @@ function GuiSelectPoint(options) {
 									_this.removePoints();
 									cMeshs.__onChange(-1);
 						}
-						if (cMeshs.__select.options.length < 2) f3DObjects.domElement.style.display = 'none';
+						if (cMeshs.__select.options.length < 2 && boHideF3DObjects) f3DObjects.domElement.style.display = 'none';
 			};
 			var arrayMeshs = [];
 			this.addMesh = function (mesh) {
@@ -14137,10 +14156,17 @@ function GuiSelectPoint(options) {
 						cMeshs = f3DObjects.add({ Meshs: lang.notSelected }, 'Meshs', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
 									value = parseInt(value);
 									mesh = getMesh();
-									if (cCustom) cCustom.object(mesh, dat, value === -1);
-									createPlayerArrayFuncs(mesh);
 									var none = 'none',
 									    block = 'block';
+									if (fPoint.fCustomPoint) {
+												fPoint.removeFolder(fPoint.fCustomPoint);
+												delete fPoint.fCustomPoint;
+									}
+									if (mesh && mesh.userData.gui) {
+												fPoint.fCustomPoint = mesh.userData.gui.addControllers(fPoint);
+									}
+									if (cCustom) cCustom.object(mesh, dat, value === -1);
+									createPlayerArrayFuncs(mesh);
 									var display;
 									if (mesh === undefined) {
 												display = none;
@@ -14321,13 +14347,14 @@ function GuiSelectPoint(options) {
 						cPoints = fPoints.add({ Points: lang.notSelected }, 'Points', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
 									value = parseInt(value);
 									var display;
+									var mesh = getMesh();
 									if (value === -1) {
 												display = 'none';
 									} else {
 												display = 'block';
-												_this.select({ object: getMesh(), index: value });
+												_this.select({ object: mesh, index: value });
 									}
-									if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition(getMesh(), value));
+									if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition(mesh, value));
 									displayPointControllers(display);
 						});
 						cPoints.__select[0].selected = true;
@@ -14519,6 +14546,7 @@ function GuiSelectPoint(options) {
 															controller = fPoint.add({
 																		value: scale.min
 															}, 'value', scale.min, scale.max, (scale.max - scale.min) / 100).onChange(function (value) {
+																		if (isReadOnlyController(controller)) return;
 																		onChange(value);
 															});
 															if (options.palette instanceof ColorPicker$1.palette) {
@@ -15106,10 +15134,10 @@ var FolderPoint = function FolderPoint(point, setSize, options) {
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
-var debug$1 = {
+var debug = {
 				notHiddingFrustumPoints: true
 };
-function getStandardNormalDistribution$1(x) {
+function getStandardNormalDistribution(x) {
 				var standardDeviation = 0.1;
 				var res = Math.exp(-0.5 * x * x / (standardDeviation * standardDeviation));
 				return res;
@@ -15213,7 +15241,7 @@ function FrustumPoints(camera, group, canvas) {
 																								var dDistanceMax = 0.035;
 																								var dx = 0.5 / (distanceTableWidth - 1);var ddx = 1.001;
 																								for (var i = 0; i < distanceTableWidth; i++) {
-																												var fDistance = getStandardNormalDistribution$1(x);
+																												var fDistance = getStandardNormalDistribution(x);
 																												x += dx;
 																												if (fDistancePrev !== undefined) {
 																																if (Math.abs(fDistancePrev - fDistance) > dDistanceMax) dx /= ddx;else dx *= ddx;
@@ -15305,7 +15333,7 @@ function FrustumPoints(camera, group, canvas) {
 												}
 								}
 								this.onChangeControls = function () {
-												if (!debug$1.notHiddingFrustumPoints) {
+												if (!debug.notHiddingFrustumPoints) {
 																if (timeoutControls === undefined) {
 																				group.remove(_points);
 																				group.remove(groupFrustumPoints);
@@ -15317,11 +15345,11 @@ function FrustumPoints(camera, group, canvas) {
 																				if (shaderMaterial.info) options.raycaster.addParticle(_points);
 																				clearTimeout(timeoutControls);
 																				timeoutControls = undefined;
-																				if (!debug$1.notMoveFrustumPoints) {
+																				if (!debug.notMoveFrustumPoints) {
 																								_this.update();
 																				}
 																}, 500);
-												} else if (!debug$1.notMoveFrustumPoints) {
+												} else if (!debug.notMoveFrustumPoints) {
 																_this.update();
 												}
 								};
