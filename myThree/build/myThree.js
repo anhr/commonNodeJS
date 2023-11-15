@@ -13880,6 +13880,7 @@ function GuiSelectPoint(options) {
 									if (cX) cX.initialValue = positionLocal.x;
 									if (cY) cY.initialValue = positionLocal.y;
 									if (cZ) cZ.initialValue = positionLocal.z;
+									if (cW) cW.initialValue = positionLocal.w;
 						}
 						if (cX) cX.setValue(positionLocal.x);
 						if (cY) cY.setValue(positionLocal.y);
@@ -16069,69 +16070,69 @@ function pointLight(scene) {
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 var ProgressBar = function () {
-	createClass(ProgressBar, [{
-		key: 'value',
-		set: function set$$1(value) {
-			this.setValue(value);
+		createClass(ProgressBar, [{
+				key: 'value',
+				set: function set$$1(value) {
+						this.setValue(value);
+				}
+		}]);
+		function ProgressBar(elParent, step) {
+				var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+				classCallCheck(this, ProgressBar);
+				var elProgress = document.createElement('div'),
+				    cProgress = document.createElement('input'),
+				    elTitle = document.createElement('div');
+				elProgress.style.backgroundColor = 'white';
+				elProgress.style.margin = '2px';
+				elProgress.style.padding = '2px';
+				elTitle.innerHTML = settings.sTitle || '';
+				elTitle.style.color = 'black';
+				elProgress.appendChild(elTitle);
+				cProgress.min = settings.min != undefined ? settings.min : "0";
+				cProgress.max = settings.max != undefined ? settings.max : "1";
+				cProgress.type = "range";
+				cProgress.disabled = true;
+				elProgress.appendChild(cProgress);
+				var elcontainer = void 0;
+				var containerName = 'ProgressContainer';
+				for (var i = 0; i < elParent.children.length; i++) {
+						var child = elParent.children[i];
+						if (child.name && child.name === containerName) {
+								elcontainer = child;
+								break;
+						}
+				}
+				if (!elcontainer) {
+						elcontainer = document.createElement('table');
+						elcontainer.name = containerName;
+						elcontainer.style.position = 'absolute';
+						elcontainer.style.top = 0;
+						elcontainer.style.left = 0;
+						elParent.appendChild(elcontainer);
+				}
+				var elRow = document.createElement('tr');
+				elRow.appendChild(elProgress);
+				elcontainer.appendChild(elRow);
+				this.setValue = function (value) {
+						cProgress.value = value;
+				};
+				this.step = function () {
+						window.setTimeout(function () {
+								step();
+						}, 0);
+				};
+				this.remove = function () {
+						elProgress.parentElement.remove();
+				};
+				this.step();
+				this.newStep = function (value) {
+						step = value;
+				};
+				this.title = function (value) {
+						elTitle.innerHTML = value;
+				};
 		}
-	}]);
-	function ProgressBar(elParent, step) {
-		var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-		classCallCheck(this, ProgressBar);
-		var elProgress = document.createElement('div'),
-		    cProgress = document.createElement('input'),
-		    elTitle = document.createElement('div');
-		elProgress.style.backgroundColor = 'white';
-		elProgress.style.margin = '2px';
-		elProgress.style.padding = '2px';
-		elTitle.innerHTML = settings.sTitle || '';
-		elTitle.style.color = 'black';
-		elProgress.appendChild(elTitle);
-		cProgress.min = settings.min != undefined ? settings.min : "0";
-		cProgress.max = settings.max != undefined ? settings.max : "1";
-		cProgress.type = "range";
-		cProgress.disabled = true;
-		elProgress.appendChild(cProgress);
-		var elcontainer = void 0;
-		var containerName = 'ProgressContainer';
-		for (var i = 0; i < elParent.children.length; i++) {
-			var child = elParent.children[i];
-			if (child.name && child.name === containerName) {
-				elcontainer = child;
-				break;
-			}
-		}
-		if (!elcontainer) {
-			elcontainer = document.createElement('table');
-			elcontainer.name = containerName;
-			elcontainer.style.position = 'absolute';
-			elcontainer.style.top = 0;
-			elcontainer.style.left = 0;
-			elParent.appendChild(elcontainer);
-		}
-		var elRow = document.createElement('tr');
-		elRow.appendChild(elProgress);
-		elcontainer.appendChild(elRow);
-		this.setValue = function (value) {
-			cProgress.value = value;
-		};
-		this.step = function () {
-			window.setTimeout(function () {
-				step();
-			}, 0);
-		};
-		this.remove = function () {
-			elProgress.parentElement.remove();
-		};
-		this.step();
-		this.newStep = function (value) {
-			step = value;
-		};
-		this.title = function (value) {
-			elTitle.innerHTML = value;
-		};
-	}
-	return ProgressBar;
+		return ProgressBar;
 }();
 
 /**
