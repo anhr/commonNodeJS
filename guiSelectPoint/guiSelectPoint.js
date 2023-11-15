@@ -314,6 +314,10 @@ class GuiSelectPoint {
 
 		}
 		var wLimitsDefault;
+		/**
+		 * Sets local position controllers to read-only
+		 * @param {boolean} boReadOnly true is read-only
+		 */
 		this.setReadOnlyPosition = function ( boReadOnly ) {
 
 			if ( cX ) cX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
