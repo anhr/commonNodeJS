@@ -96,7 +96,7 @@ class FolderPoint {
 		PCOptions.settings = PCOptions.settings || {};
 		if ( PCOptions.settings.offset === undefined ) PCOptions.settings.offset = 1;//0.1;
 		if ( PCOptions.step === undefined ) PCOptions.step = 0.01;
-		PCOptions.getLanguageCode = PCOptions.getLanguageCode || settings.getLanguageCode;
+		PCOptions.getLanguageCode = PCOptions.getLanguageCode || settings.getLanguageCode || options.getLanguageCode;
 
 		var fPoint = gui.addFolder( lang.pointSettings ),
 			fSize = fPoint.addFolder( lang.size );
