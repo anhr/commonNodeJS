@@ -103,12 +103,7 @@ class FolderPoint {
 		dat.folderNameAndTitle( fSize, lang.size, lang.sizeTitle );
 		this.display = function ( display ) { fPoint.domElement.style.display = display; }
 
-		fSize.add( new PositionController( function ( shift ) {
-
-			setSize( point.size + shift );
-
-		}, PCOptions//{ offset: 0.01, min: 0.01, max: 0.1, step: 0.01 }
-		) );
+		fSize.add( new PositionController( function ( shift ) { setSize( point.size + shift ); }, PCOptions ) );
 
 		//size
 		this.size = dat.controllerZeroStep( fSize, point, 'size', function ( value ) {
