@@ -2108,8 +2108,10 @@ class ND {
 						( typeof settings.object.color === "object" )//Color of vertice from palette
 					) || 
 					settings.object.geometry.opacity//установлена прозрачность вершин
-				) &&
-				!settings.object.geometry.colors//Vertices colors array is not exists
+				) && (
+					!settings.object.geometry.colors || //Vertices colors array is not exists
+					(settings.object.geometry.colors.length != indices3D.colors.length)//изменилось количество вершин
+				)
 			)
 				settings.object.geometry.colors = indices3D.colors;
 			const buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points, geometry.D3.points[0].w === undefined ? 3 : 4);
