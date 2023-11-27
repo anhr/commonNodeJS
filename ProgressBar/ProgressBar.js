@@ -96,13 +96,15 @@ class ProgressBar {
 
 		/**
 		 * set new step function
+		 * @param {function} stepFunction New step function. See the ProgressBar constructor's "step" parameter.
 		 */
-		this.newStep = (value) => { step = value; }
+		this.newStep = (stepFunction) => { step = stepFunction; }
 
 		/**
 		 * set new title
+		 * @param {string} newTitle
 		 */
-		this.title = (value) => { elTitle.innerHTML = value; }
+		this.title = (newTitle) => { elTitle.innerHTML = newTitle; }
 
 	}
 
