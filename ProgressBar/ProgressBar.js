@@ -78,12 +78,26 @@ class ProgressBar {
 		elRow.appendChild(elProgress);
 		elcontainer.appendChild(elRow);
 		this.setValue = (value) => { cProgress.value = value; }
+		
+		if (settings.timeoutPeriod === undefined) settings.timeoutPeriod = 0;
+		let timeoutPeriod = settings.timeoutPeriod;//таймер можно запускать через определенный период что бы экономилось время выполнения
+		
 		/**
 		 * Execute the next step asynchronously.
 		 */
 		this.step = () => {
 
-			window.setTimeout(() => { step() }, 0);
+			if (timeoutPeriod < settings.timeoutPeriod) {
+
+				timeoutPeriod++;
+				step();
+				
+			} else {
+				
+				timeoutPeriod = 0;
+				window.setTimeout(() => { step() }, 0);
+
+			}
 			//window.requestAnimationFrame(step);//время выполнения увеличивается на треть
 
 		}
