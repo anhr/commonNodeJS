@@ -28,6 +28,10 @@ class ProgressBar {
 	 * @param {string} [settings.sTitle=""] Progress bar title.
 	 * @param {number} [settings.min="0"] The lowest value in the range of permitted values.
 	 * @param {number} [settings.max="1"] The greatest value in the range of permitted values.
+	 * @param {number} [settings.timeoutPeriod=0] You can call the <b>step</b> function asynchronous or directly.
+	 * Directly calling of the <b>step</b> function decreases the execute time but your web page froze during executing.
+	 * For example if <b>timeoutPeriod</b> parameter is 3, then the <b>step</b> function will be called 3 times directly and one time asynchronous.
+	 * If <b>timeoutPeriod</b> parameter is 0, then the <b>step</b> function will be called permanently as asynchronous.
 	 */
 	constructor(elParent, step, settings = {}) {
 
@@ -43,8 +47,8 @@ class ProgressBar {
 		elTitle.innerHTML = settings.sTitle || '';
 		elTitle.style.color = 'black';
 		elProgress.appendChild(elTitle);
-		cProgress.min = settings.min != undefined ? settings.min : "0";
-		cProgress.max = settings.max != undefined ? settings.max : "1";
+		cProgress.min = settings.min != undefined ? settings.min : 0;
+		cProgress.max = settings.max != undefined ? settings.max : 1;
 		//		cProgress.max = object.geometry.index.count;
 		cProgress.type = "range";
 		cProgress.disabled = true;
@@ -110,7 +114,7 @@ class ProgressBar {
 
 		/**
 		 * set new step function
-		 * @param {function} stepFunction New step function. See the ProgressBar constructor's "step" parameter.
+		 * @param {function} stepFunction New step function. See the ProgressBar constructor's <b>step</b> parameter.
 		 */
 		this.newStep = (stepFunction) => { step = stepFunction; }
 
