@@ -1395,24 +1395,25 @@ class GuiSelectPoint {
 
 			fPoints = fMesh.addFolder( lang.points );
 
-			cPoints = fPoints.add( { Points: lang.notSelected }, 'Points', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
+			cPoints = fPoints.add( { Points: lang.notSelected }, 'Points', { [lang.notSelected]: -1 } ).onChange( function ( pointId ) {
 
-				value = parseInt( value );
+				pointId = parseInt( pointId );
 				var display, position;
 				const mesh = getMesh();
-				if ( value === -1 ) {
+				if ( pointId === -1 ) {
 
 					display = 'none';
 
 				} else {
 
 					display = 'block';
-					_this.select( { object: mesh, index: value } );
+					_this.select( { object: mesh, index: pointId } );
 
 				}
 				if ( ( options.axesHelper !== false ) && ( options.axesHelper !== undefined ) )
-					options.axesHelper.exposePosition( getObjectPosition( mesh, value ) );
+					options.axesHelper.exposePosition( getObjectPosition( mesh, pointId ) );
 				displayPointControllers( display );
+				if ( mesh && mesh.userData.gui && mesh.userData.gui.reset ) mesh.userData.gui.reset( pointId );
 
 			} );
 			cPoints.__select[0].selected = true;
