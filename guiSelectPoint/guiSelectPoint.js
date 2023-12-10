@@ -1097,6 +1097,9 @@ class GuiSelectPoint {
 			cMeshs = f3DObjects.add( { Meshs: lang.notSelected }, 'Meshs', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
 
 				value = parseInt( value );
+
+				cPoints.__onChange( -1 );//сбросить настройки точки
+				
 				mesh = getMesh();
 
 				const none = 'none', block = 'block';
@@ -1395,16 +1398,15 @@ class GuiSelectPoint {
 
 			fPoints = fMesh.addFolder( lang.points );
 
+			let oldMesh;//Нужен когда пользователь сменил выбранный графический объект и когда надо сбрость настройки вершины предыдущего горафического объекта
 			cPoints = fPoints.add( { Points: lang.notSelected }, 'Points', { [lang.notSelected]: -1 } ).onChange( function ( pointId ) {
 
 				pointId = parseInt( pointId );
 				var display, position;
-				const mesh = getMesh();
-				if ( pointId === -1 ) {
-
-					display = 'none';
-
-				} else {
+				let mesh = getMesh();
+				if ( mesh && mesh.userData.gui && mesh.userData.gui.reset ) oldMesh = mesh;
+				if ( pointId === -1 ) display = 'none';
+				else {
 
 					display = 'block';
 					_this.select( { object: mesh, index: pointId } );
@@ -1413,6 +1415,7 @@ class GuiSelectPoint {
 				if ( ( options.axesHelper !== false ) && ( options.axesHelper !== undefined ) )
 					options.axesHelper.exposePosition( getObjectPosition( mesh, pointId ) );
 				displayPointControllers( display );
+				if ( !mesh || !mesh.userData.gui || !mesh.userData.gui.reset) mesh = oldMesh;
 				if ( mesh && mesh.userData.gui && mesh.userData.gui.reset ) mesh.userData.gui.reset( pointId );
 
 			} );
