@@ -23,11 +23,16 @@ class ProgressBar {
 	/**
 	 * Creates a [progress bar element]{@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range} on your web page.
 	 * @param {HTMLElement} elParent parent element
-	 * @param {Function} step A function to be executed asynchronous during progress.
+	 * @param {Function} step The <b>step(progressBar, i)</b> function to be executed asynchronous during progress.
+	 * <pre>
+	 * parameter <b>progressBar</b>: this ProgressBar instance.
+	 * parameter <b>i</b>: current iteration index.
+	 * </pre>
 	 * @param {object} [settings={}] The following settings are available
 	 * @param {string} [settings.sTitle=""] Progress bar title.
 	 * @param {number} [settings.min=0] The lowest value in the range of permitted values.
 	 * @param {number} [settings.max=1] The greatest value in the range of permitted values.
+	 * @param {number} [settings.iterationCount] count of calling of the <b>step</b> function.
 	 * @param {number} [settings.timeoutPeriod=0] You can call the <b>step</b> function asynchronous or directly.
 	 * Directly calling of the <b>step</b> function decreases the execute time but your web page froze during executing.
 	 * For example if <b>timeoutPeriod</b> parameter is 3, then the <b>step</b> function will be called 3 times directly and one time asynchronous.
@@ -48,7 +53,7 @@ class ProgressBar {
 		elTitle.style.color = 'black';
 		elProgress.appendChild(elTitle);
 		cProgress.min = settings.min != undefined ? settings.min : 0;
-		cProgress.max = settings.max != undefined ? settings.max : 1;
+		cProgress.max = settings.max != undefined ? settings.max : settings.iterationCount != undefined ? settings.iterationCount : 1;
 		//		cProgress.max = object.geometry.index.count;
 		cProgress.type = "range";
 		cProgress.disabled = true;
@@ -85,6 +90,7 @@ class ProgressBar {
 		
 		if (settings.timeoutPeriod === undefined) settings.timeoutPeriod = 0;
 		let timeoutPeriod = settings.timeoutPeriod;//таймер можно запускать через определенный период что бы экономилось время выполнения
+		let i = settings.iterationCount != undefined ? 0 : undefined;
 		
 		/**
 		 * Execute the next step asynchronously.
@@ -99,7 +105,17 @@ class ProgressBar {
 			} else {
 				
 				timeoutPeriod = 0;
-				window.setTimeout(() => { step() }, 0);
+				window.setTimeout(() => {
+					
+					step(this, i);
+					if (i === undefined) return;
+					this.value = i;
+					i++;
+					if (i < settings.iterationCount)
+						this.step();
+					else this.remove();
+				
+				}, 0);
 
 			}
 			//window.requestAnimationFrame(step);//время выполнения увеличивается на треть
