@@ -32,7 +32,7 @@ class ProgressBar {
 	 * @param {string} [settings.sTitle=""] Progress bar title.
 	 * @param {number} [settings.min=0] The lowest value in the range of permitted values.
 	 * @param {number} [settings.max=1] The greatest value in the range of permitted values.
-	 * @param {number} [settings.iterationCount] count of calling of the <b>step</b> function.
+	 * @param {number} [settings.iterationCount] Count of calling of the <b>step</b> function.
 	 * @param {number} [settings.timeoutPeriod=0] You can call the <b>step</b> function asynchronous or directly.
 	 * Directly calling of the <b>step</b> function decreases the execute time but your web page froze during executing.
 	 * For example if <b>timeoutPeriod</b> parameter is 3, then the <b>step</b> function will be called 3 times directly and one time asynchronous.
