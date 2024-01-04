@@ -52,7 +52,8 @@ class ProgressBar {
 		elTitle.innerHTML = settings.sTitle || '';
 		elTitle.style.color = 'black';
 		elProgress.appendChild(elTitle);
-		cProgress.min = settings.min != undefined ? settings.min : 0;
+		if (settings.min === undefined) settings.min = 0;
+		cProgress.min = settings.min;
 		cProgress.max = settings.max != undefined ? settings.max : settings.iterationCount != undefined ? settings.iterationCount : 1;
 		//		cProgress.max = object.geometry.index.count;
 		cProgress.type = "range";
@@ -90,7 +91,7 @@ class ProgressBar {
 		
 		if (settings.timeoutPeriod === undefined) settings.timeoutPeriod = 0;
 		let timeoutPeriod = settings.timeoutPeriod;//таймер можно запускать через определенный период что бы экономилось время выполнения
-		let i = settings.iterationCount != undefined ? 0 : undefined;
+		let i = settings.iterationCount != undefined ? settings.min : undefined;
 		
 		/**
 		 * Execute the next step asynchronously.
