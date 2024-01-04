@@ -43,9 +43,6 @@ class ProgressBar {
 		const elProgress = document.createElement('div'),
 			cProgress = document.createElement('input'),
 			elTitle = document.createElement('div');
-		//		elProgress.style.position = 'absolute';
-		//		elProgress.style.top = 0;
-		//		elProgress.style.left = 0;
 		elProgress.style.backgroundColor = 'white';
 		elProgress.style.margin = '2px';
 		elProgress.style.padding = '2px';
@@ -55,7 +52,6 @@ class ProgressBar {
 		if (settings.min === undefined) settings.min = 0;
 		cProgress.min = settings.min;
 		cProgress.max = settings.max != undefined ? settings.max : settings.iterationCount != undefined ? settings.iterationCount : 1;
-		//		cProgress.max = object.geometry.index.count;
 		cProgress.type = "range";
 		cProgress.disabled = true;
 		elProgress.appendChild(cProgress);
@@ -77,7 +73,6 @@ class ProgressBar {
 
 			elcontainer = document.createElement('table');
 			elcontainer.name = containerName;
-			//			elcontainer.style.display = 'flex';//https://ru.stackoverflow.com/questions/1016963/%D0%A0%D0%B0%D1%81%D0%BF%D0%BE%D0%BB%D0%BE%D0%B6%D0%B8%D1%82%D1%8C-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D1%8B-%D0%B2-%D1%81%D1%82%D0%BE%D0%BB%D0%B1%D0%B5%D1%86
 			elcontainer.style.position = 'absolute';
 			elcontainer.style.top = 0;
 			elcontainer.style.left = 0;
@@ -112,7 +107,6 @@ class ProgressBar {
 			if (timeoutPeriod < settings.timeoutPeriod) {
 
 				timeoutPeriod++;
-//				step();
 				iteration();
 				
 			} else {
@@ -121,15 +115,6 @@ class ProgressBar {
 				window.setTimeout(() => {
 					
 					iteration();
-/*					
-					step(this, i);
-					if (i === undefined) return;
-					this.value = i;
-					i++;
-					if (i < settings.iterationCount)
-						this.step();
-					else this.remove();
-*/					
 				
 				}, 0);
 
