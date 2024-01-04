@@ -98,16 +98,30 @@ class ProgressBar {
 		 */
 		this.step = () => {
 
+			const iteration = () => {
+				
+				step(this, i);
+				if (i === undefined) return;
+				this.value = i;
+				i++;
+				if (i < settings.iterationCount)
+					this.step();
+				else this.remove();
+				
+			}
 			if (timeoutPeriod < settings.timeoutPeriod) {
 
 				timeoutPeriod++;
-				step();
+//				step();
+				iteration();
 				
 			} else {
 				
 				timeoutPeriod = 0;
 				window.setTimeout(() => {
 					
+					iteration();
+/*					
 					step(this, i);
 					if (i === undefined) return;
 					this.value = i;
@@ -115,6 +129,7 @@ class ProgressBar {
 					if (i < settings.iterationCount)
 						this.step();
 					else this.remove();
+*/					
 				
 				}, 0);
 
