@@ -27,6 +27,7 @@ class ProgressBar {
 	 * <pre>
 	 * parameter <b>progressBar</b>: this ProgressBar instance.
 	 * parameter <b>i</b>: current iteration index.
+	 * parameter <b>params</b>: User defined parameters that can passed from <b>params</b> of the <b><a href="#step">step</a></b> method.
 	 * </pre>
 	 * @param {object} [settings={}] The following settings are available
 	 * @param {string} [settings.sTitle=""] Progress bar title.
@@ -90,6 +91,7 @@ class ProgressBar {
 		
 		/**
 		 * Execute the next step asynchronously.
+		 * @param {Object} [params] User defined parameters that will be passed to the <b>params</b> of the <b>step</b> function of the <b>ProgressBar</b> constructor.
 		 */
 		this.step = (params) => {
 
