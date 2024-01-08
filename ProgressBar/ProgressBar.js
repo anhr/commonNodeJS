@@ -22,7 +22,7 @@ class ProgressBar {
 
 	/**
 	 * Creates a [progress bar element]{@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range} on your web page.
-	 * @param {HTMLElement} elParent parent element
+	 * @param {HTMLElement} [elParent] parent element. <b>ProgressBar</b> is not visible if <b>elParent</b> is undefined.
 	 * @param {Function} step The <b>step(progressBar, i)</b> function to be executed asynchronous during progress.
 	 * <pre>
 	 * parameter <b>progressBar</b>: this ProgressBar instance.
