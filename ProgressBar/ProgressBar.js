@@ -91,11 +91,11 @@ class ProgressBar {
 		/**
 		 * Execute the next step asynchronously.
 		 */
-		this.step = () => {
+		this.step = (params) => {
 
 			const iteration = () => {
 				
-				step(this, i);
+				step(this, i, params);
 				if (i === undefined) return;
 				this.value = i;
 				i++;
