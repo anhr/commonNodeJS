@@ -41,49 +41,54 @@ class ProgressBar {
 	 */
 	constructor(elParent, step, settings = {}) {
 
-		const elProgress = document.createElement('div'),
-			cProgress = document.createElement('input'),
+		let cProgress, elProgress, elTitle;
+		if (elParent) {
+			
 			elTitle = document.createElement('div');
-		elProgress.style.backgroundColor = 'white';
-		elProgress.style.margin = '2px';
-		elProgress.style.padding = '2px';
-		elTitle.innerHTML = settings.sTitle || '';
-		elTitle.style.color = 'black';
-		elProgress.appendChild(elTitle);
-		if (settings.min === undefined) settings.min = 0;
-		cProgress.min = settings.min;
-		cProgress.max = settings.max != undefined ? settings.max : settings.iterationCount != undefined ? settings.iterationCount : 1;
-		cProgress.type = "range";
-		cProgress.disabled = true;
-		elProgress.appendChild(cProgress);
-
-		let elcontainer;
-		const containerName = 'ProgressContainer';
-		for (let i = 0; i < elParent.children.length; i++) {
-
-			const child = elParent.children[i];
-			if (child.name && (child.name === containerName)) {
-
-				elcontainer = child;
-				break;
-
+			elProgress = document.createElement('div');
+			cProgress = document.createElement('input'),
+			elProgress.style.backgroundColor = 'white';
+			elProgress.style.margin = '2px';
+			elProgress.style.padding = '2px';
+			elTitle.innerHTML = settings.sTitle || '';
+			elTitle.style.color = 'black';
+			elProgress.appendChild(elTitle);
+			if (settings.min === undefined) settings.min = 0;
+			cProgress.min = settings.min;
+			cProgress.max = settings.max != undefined ? settings.max : settings.iterationCount != undefined ? settings.iterationCount : 1;
+			cProgress.type = "range";
+			cProgress.disabled = true;
+			elProgress.appendChild(cProgress);
+	
+			let elcontainer;
+			const containerName = 'ProgressContainer';
+			for (let i = 0; i < elParent.children.length; i++) {
+	
+				const child = elParent.children[i];
+				if (child.name && (child.name === containerName)) {
+	
+					elcontainer = child;
+					break;
+	
+				}
+	
 			}
+			if (!elcontainer) {
+	
+				elcontainer = document.createElement('table');
+				elcontainer.name = containerName;
+				elcontainer.style.position = 'absolute';
+				elcontainer.style.top = 0;
+				elcontainer.style.left = 0;
+				elParent.appendChild(elcontainer);
+	
+			}
+			const elRow = document.createElement('tr');
+			elRow.appendChild(elProgress);
+			elcontainer.appendChild(elRow);
 
 		}
-		if (!elcontainer) {
-
-			elcontainer = document.createElement('table');
-			elcontainer.name = containerName;
-			elcontainer.style.position = 'absolute';
-			elcontainer.style.top = 0;
-			elcontainer.style.left = 0;
-			elParent.appendChild(elcontainer);
-
-		}
-		const elRow = document.createElement('tr');
-		elRow.appendChild(elProgress);
-		elcontainer.appendChild(elRow);
-		this.setValue = (value) => { cProgress.value = value; }
+		this.setValue = (value) => { if (cProgress) cProgress.value = value; }
 		
 		if (settings.timeoutPeriod === undefined) settings.timeoutPeriod = 0;
 		let timeoutPeriod = settings.timeoutPeriod;//таймер можно запускать через определенный период что бы экономилось время выполнения
@@ -127,7 +132,7 @@ class ProgressBar {
 		/**
 		 * remove progress bar from your web page.
 		 **/
-		this.remove = () => { elProgress.parentElement.remove(); };
+		this.remove = () => { if (elProgress) elProgress.parentElement.remove(); };
   
 		this.step();
 
