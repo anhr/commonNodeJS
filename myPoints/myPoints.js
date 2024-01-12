@@ -121,7 +121,10 @@ import Options from '../Options.js'
  * Fires after creating of the points.
  * <pre>
  * function( points )
- *	<b>points</b> - [Points]{@link https://threejs.org/docs/index.html?q=Poin#api/en/objects/Points}
+ *	<b>points</b> - [Points]{@link https://threejs.org/docs/index.html?q=Poin#api/en/objects/Points}.
+ *	Call the <b>points.userData.opacity(opacity)</b> function if you want to change the opacity of the points.
+ *		The <b>opacity</b> parameter is float in the range of 0.0 - 1.0 indicating how transparent the points is.
+ *		A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
  * </pre>
  * @param {object} [settings.pointsOptions.raycaster] Followed [raycaster]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster} options is available.
  * @param {Function(intersection, mouse)} [settings.pointsOptions.raycaster.onIntersection] Callback function that take as input the <b>[intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject} </b>, and <b>mouse position</b>.
