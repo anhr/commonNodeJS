@@ -318,6 +318,14 @@ function MyPoints( arrayFuncs, group, settings ) {
 		setRotations();
 		group.add( points );
 
+		points.userData.opacity = (opacity) => {
+
+			const ca = points.geometry.attributes.ca, array = ca.array;
+			for (let i = 0; i < ca.count; i++) array[ca.itemSize * i + 3] = opacity;
+			ca.needsUpdate = true;
+			
+		}
+
 		if ( pointsOptions.boFrustumPoints ) points.userData.boFrustumPoints = pointsOptions.boFrustumPoints;
 		if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( points );
 		if ( options.eventListeners ) options.eventListeners.addParticle( points );
