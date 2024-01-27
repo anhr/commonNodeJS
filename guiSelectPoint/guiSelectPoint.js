@@ -1618,12 +1618,13 @@ class GuiSelectPoint {
 			}
 
 		}
-		/**
+		/* *
 		 * Sets a color attribute.
 		 * @param {Object} attributes [geometry.attributes]{@link https://threejs.org/docs/index.html?q=geometry#api/en/core/BufferGeometry.attributes} of the mesh
 		 * @param {number} i index of the color
 		 * @param {THREE.Color} color new [color]{@link https://threejs.org/docs/index.html?q=Colo#api/en/math/Color}
 		 */
+/*		
 		this.setColorAttribute = function ( attributes, i, color ) {
 
 			if ( typeof color === "string" )
@@ -1637,6 +1638,7 @@ class GuiSelectPoint {
 			colorAttribute.needsUpdate = true;
 
 		}
+*/		
 		/**Removes all points from points list control. */
 		this.removePoints = function () {
 
@@ -1730,7 +1732,8 @@ class GuiSelectPoint {
 						if ( options.palette ) {
 
 							const color = options.palette.toColor( value, controller.__min, controller.__max );
-							_this.setColorAttribute( attributes, i, color );
+//							_this.setColorAttribute( attributes, i, color );
+							Player.setColorAttribute( attributes, i, color );
 
 						}
 						attributes.position.setW( i, value );
@@ -1834,12 +1837,20 @@ class GuiSelectPoint {
 			}, 'color' ).
 				onChange( function ( value ) {
 
+					//for testing
+					//Go to http://localhost/anhr/commonNodeJS/master/player/Examples/
+					//Select '3 Ponts' 3D object
+					//Select a point
+					//Open 'Point's local position'
+					//Change 'color'
+					
 					if ( isReadOnlyController( cColor ) )
 						return;
 					if ( cColor.userData === undefined )
 						return;
 					var intersection = cColor.userData.intersection;
-					_this.setColorAttribute( intersection.object.geometry.attributes, intersection.index, value );
+//					_this.setColorAttribute( intersection.object.geometry.attributes, intersection.index, value );
+					Player.setColorAttribute( intersection.object.geometry.attributes, intersection.index, value );
 
 				} );
 			dat.controllerNameAndTitle( cColor, options.scales.w ? options.scales.w.name : lang.color );
