@@ -323,7 +323,7 @@ function MyPoints( arrayFuncs, group, settings ) {
 
 		points.userData.opacity = (opacity) => {
 
-			const ca = points.geometry.attributes.ca, array = ca.array;
+			const ca = points.geometry.attributes.ca ? points.geometry.attributes.ca : points.geometry.attributes.color, array = ca.array;
 			for (let i = 0; i < ca.count; i++) array[ca.itemSize * i + 3] = opacity;
 			ca.needsUpdate = true;
 			
