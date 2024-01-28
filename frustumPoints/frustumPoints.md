@@ -166,7 +166,7 @@ const arrayFuncs = [
 		0//w. Palette index. Default range from 0 to 1. See https://github.com/anhr/commonNodeJS/tree/master/colorpicker
 	]
 ];
-MyPoints( arrayFuncs, scene, { pointsOptions: { frustumPoints: options.frustumPoints, } } );
+new MyPoints( arrayFuncs, scene, { pointsOptions: { frustumPoints: options.frustumPoints, } } );
 ```
 Now you can see two points on your canvas.
 
@@ -271,7 +271,7 @@ const arrayFuncs = [
 
 	}
 ];
-MyPoints( arrayFuncs, scene, {
+new MyPoints( arrayFuncs, scene, {
 
 		pointsOptions: {
 
@@ -488,7 +488,7 @@ The following code is the result of this tutorial.
 
 				}
 			];
-			MyPoints( arrayFuncs, scene, {
+			new MyPoints( arrayFuncs, scene, {
 
 					pointsOptions: {
 
