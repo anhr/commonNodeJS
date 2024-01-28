@@ -2241,6 +2241,24 @@ Player.setColorAttribute = function ( attributes, i, color ) {
 
 }
 
+Player.setPositionAttribute = (position, i, object, settings) => {
+
+	const vertice = position[i], attributes = object.geometry.attributes, itemSize = attributes.position.itemSize;
+	for (let j = 0; j &lt; itemSize; j++) 
+		attributes.position.array [j + i * itemSize] = vertice[j];
+	Player.setColorAttribute( attributes, i, settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max) );
+/*																										 
+	const attributes = object.geometry.attributes, colorAttribute = attributes.color || attributes.ca;
+	if (!colorAttribute) return;
+	const color = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max);
+	colorAttribute.setX( i, color.r );
+	colorAttribute.setY( i, color.g );
+	colorAttribute.setZ( i, color.b );
+	colorAttribute.needsUpdate = true;
+*/	
+	
+}
+
 /** @namespace
  * @description Get array of THREE.Vector4 points.
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs &lt;b>points.geometry.attributes.position&lt;/b> array
@@ -2640,57 +2658,72 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 	const length = Array.isArray( arrayFuncs ) ? arrayFuncs.length : optionsColor.positions.count;
 
 	optionsColor.colors = optionsColor.colors || [];
+	const colors = [];
 	if ( !optionsColor.options.palette )
 		optionsColor.options.setPalette();
 
 	for ( var i = 0; i &lt; length; i++ ) {
 
-		const funcs = Array.isArray( arrayFuncs ) ? arrayFuncs[i] : undefined;
-		var vector;
-		if (
-			( funcs instanceof THREE.Vector4 ) ||//w of the funcs is color of the point
-			( optionsColor.positions &amp;&amp; ( optionsColor.positions.itemSize === 4 ) )//w position of the positions is color of the point
-			) {
+		const iColor = 3 * i;
+		if (iColor >= optionsColor.colors.length) {
+			
+			const funcs = Array.isArray( arrayFuncs ) ? arrayFuncs[i] : undefined;
+			var vector;
+			if (
+				( funcs instanceof THREE.Vector4 ) ||//w of the funcs is color of the point
+				( optionsColor.positions &amp;&amp; ( optionsColor.positions.itemSize === 4 ) )//w position of the positions is color of the point
+				) {
+	
+				let min, max;
+				var w = funcs.w;
+				if ( funcs.w instanceof Object &amp;&amp; funcs.w.func ) {
+	
+					if ( funcs.w.max ) max = funcs.w.max;
+					if ( funcs.w.min ) min = funcs.w.min;
+					w = funcs.w.func;
+	
+				} else {
+	
+					optionsColor.options.setW();
+					min = optionsColor.options.scales.w.min; max = optionsColor.options.scales.w.max;
+	
+				}
+				if ( w instanceof Function &amp;&amp; !optionsColor.options.player &amp;&amp; boColorWarning ) {
+	
+					boColorWarning = false;
+					
+				}
+				const t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
+				var color = optionsColor.options.palette.toColor(
+					funcs === undefined ?
+						new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
+						w instanceof Function ?
+							w( t ) :
+							typeof w === "string" ?
+								Player.execFunc( funcs, 'w', t, optionsColor.options ) :
+								w === undefined ? new THREE.Vector4().w : w,
+					min, max );
+				//optionsColor.colors.push( color.r, color.g, color.b );
+				colors.push( color.r, color.g, color.b );
+	
+			} else if ( optionsColor.colors instanceof THREE.Float32BufferAttribute )
+				vector = new THREE.Vector3( 1, 1, 1 );
+//			else optionsColor.colors.push( 1, 1, 1 );//white
+			else if (optionsColor.color != undefined) {
 
-			let min, max;
-			var w = funcs.w;
-			if ( funcs.w instanceof Object &amp;&amp; funcs.w.func ) {
-
-				if ( funcs.w.max ) max = funcs.w.max;
-				if ( funcs.w.min ) min = funcs.w.min;
-				w = funcs.w.func;
-
-			} else {
-
-				optionsColor.options.setW();
-				min = optionsColor.options.scales.w.min; max = optionsColor.options.scales.w.max;
-
-			}
-			if ( w instanceof Function &amp;&amp; !optionsColor.options.player &amp;&amp; boColorWarning ) {
-
-				boColorWarning = false;
+				const color = new THREE.Color(optionsColor.color);
+				colors.push( color.r, color.g, color.b );//white
 				
-			}
-			const t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
-			var color = optionsColor.options.palette.toColor(
-				funcs === undefined ?
-					new THREE.Vector4().fromBufferAttribute( optionsColor.positions, i ).w :
-					w instanceof Function ?
-						w( t ) :
-						typeof w === "string" ?
-							Player.execFunc( funcs, 'w', t, optionsColor.options ) :
-							w === undefined ? new THREE.Vector4().w : w,
-				min, max );
-			optionsColor.colors.push( color.r, color.g, color.b );
+			} else colors.push( 1, 1, 1 );//white
 
-		} else if ( optionsColor.colors instanceof THREE.Float32BufferAttribute )
-			vector = new THREE.Vector3( 1, 1, 1 );
-		else optionsColor.colors.push( 1, 1, 1 );//white
+		}
+		else colors.push( optionsColor.colors[iColor], optionsColor.colors[iColor + 1], optionsColor.colors[iColor + 2] );
 
 		//opacity
+/*		
 		if ( optionsColor.opacity === true ) {
 
-			//непонятно когда это понадобтся. Сейчас не определена getStandardNormalDistribution
+			//непонятно когда это понадобится. Сейчас не определена getStandardNormalDistribution
 			var opacity = 0,
 				standardNormalDistributionZero = getStandardNormalDistribution( 0 );
 			group.children.forEach( function ( mesh ) {
@@ -2723,8 +2756,13 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 		} else if ( optionsColor.opacity instanceof Array )
 			optionsColor.colors.push( i &lt; optionsColor.opacity.length ? optionsColor.opacity[i] : 1 );
 			else optionsColor.colors.push( 1 );
+*/		
+		if ( optionsColor.opacity instanceof Array )
+			colors.push( i &lt; optionsColor.opacity.length ? optionsColor.opacity[i] : 1 );
+		else colors.push( 1 );
 
 	}
+	optionsColor.colors = colors;
 	return optionsColor.colors;
 
 }
@@ -3225,7 +3263,7 @@ export default Player;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Wed Oct 04 2023 09:03:44 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sun Jan 28 2024 12:20:12 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -477,7 +477,7 @@ import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 ```
 Now you can use <b>MyPoints</b> in your javascript code. Please call <b>MyPoints</b> after creating of <b>renderer</b> for your future code. Example:
 ```
-MyPoints( arrayFuncs, scene, {
+new MyPoints( arrayFuncs, scene, {
 
 	Player: Player,
 	options: options,
@@ -510,7 +510,7 @@ const options = new Options(
 ```
 Edit <b>MyPoints</b>.
 ```
-MyPoints( arrayFuncs, scene, {
+new MyPoints( arrayFuncs, scene, {
 
 	options: options,
 	pointsOptions: {
@@ -525,7 +525,7 @@ MyPoints( arrayFuncs, scene, {
 If you want to see the sizes of the points is depend from distance to camera,
 please add <b>shaderMaterial: false</b> into <b>pointsOptions</b> of the <b>MyPoints</b> for it.
 ```
-MyPoints( arrayFuncs, scene, {
+new MyPoints( arrayFuncs, scene, {
 
 	options: options,
 	pointsOptions: {
@@ -541,7 +541,7 @@ MyPoints( arrayFuncs, scene, {
 ATTENTION!!! Now positions of the points of the first ticks is not valid because you have ran player before creating of the Points.
 For resolving of the problem please remove <b>options.player.play3DObject();</b> and include it inside of the <b>MyPoints</b>.
 ```
-MyPoints( arrayFuncs, scene, {
+new MyPoints( arrayFuncs, scene, {
 
 	options: options,
 	pointsOptions: {
@@ -1305,7 +1305,7 @@ The following code is the result of this tutorial.
 			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene } );
 			//options.eventListeners.addParticle( points );
 
-			MyPoints( arrayFuncs, scene, {
+			new MyPoints( arrayFuncs, scene, {
 
 				options: options,
 				pointsOptions: {
