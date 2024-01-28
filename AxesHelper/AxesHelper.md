@@ -231,7 +231,7 @@ import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 ```
 Now you can use <b>MyPoints</b> in your javascript code.
 ```
-MyPoints( [
+new MyPoints( [
 	[],//first point. Zero position. White color.
 	[ -0.5, 0.5, 0.5 ],//second point. White color.
 ], scene, { options: options } );
@@ -239,7 +239,7 @@ MyPoints( [
 Please call <b>MyPoints</b> after creating of <b>renderer</b> and <b>options.eventListeners</b>
 if you want to use the <b>pointsOptions.shaderMaterial = false</b> key.
 ```
-MyPoints( [
+new MyPoints( [
 	[],//first point. Zero position. White color.
 	[ -0.5, 0.5, 0.5 ],//second point. White color.
 ], scene, {
@@ -308,7 +308,7 @@ const arrayFuncs = [
 ```
 and add <b>cameraTarget</b> to second point of <b>MyPoints</b>
 ```
-MyPoints( [
+new MyPoints( [
 	[],//first point. Zero position. White color.
 	{
 
@@ -321,7 +321,7 @@ MyPoints( [
 Please create <b>MyPoints</b> before <b>Player.selectPlayScene( scene, { options: options } );</b> line
 if you want to use the <b>pointsOptions.shaderMaterial = false</b> key.
 ```
-MyPoints( [
+new MyPoints( [
 	[],//first point. Zero position. White color.
 	{
 
@@ -398,7 +398,7 @@ groupMove.add( points );
 ```
 Remove <b>MyPoints</b> from scene and add it into <b>groupMove</b>.
 ```
-MyPoints( [
+new MyPoints( [
 	[],//first point. Zero position. White color.
 	{
 
@@ -563,7 +563,7 @@ The following code is the result of this tutorial.
 			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene } );
 			options.eventListeners.addParticle( points );
 
-			MyPoints( [
+			new MyPoints( [
 				[],//first point. Zero position. White color.
 				{
 
