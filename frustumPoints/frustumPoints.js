@@ -835,7 +835,7 @@ class FrustumPoints
 				//Сюда попадает по второму разу если вызвать stereoEffect.gui(...)
 				_points = false;
 
-				MyPoints( function () {
+				new MyPoints( function () {
 
 					var geometry = new THREE.BufferGeometry(),
 						geometryLength = ( zEnd - zStart + 1 ) * xCount * yCount;
