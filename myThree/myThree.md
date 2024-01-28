@@ -85,7 +85,7 @@ new MyThree( function ( group, options ) {
 		[],//first point. Zero position. White color.
 		[-0.5, 0.5, 0.5],//second point. White color.
 	];
-	MyThree.MyPoints( arrayFuncs, group, { options: options } );
+	new MyThree.MyPoints( arrayFuncs, group, { options: options } );
 
 } );
 ```
@@ -122,7 +122,7 @@ new MyThree( function ( group, options ) {
 			0.5//z
 		],//second point. White color.
 	];
-	MyThree.MyPoints( arrayFuncs, group, { options: options } );
+	new MyThree.MyPoints( arrayFuncs, group, { options: options } );
 
 }, {
 
@@ -185,7 +185,7 @@ The following code is the result of this tutorial.
 					0.5//z
 				],//second point. White color.
 			];
-			MyThree.MyPoints( arrayFuncs, group, { options: options } );
+			new MyThree.MyPoints( arrayFuncs, group, { options: options } );
 
 		}, {
 
