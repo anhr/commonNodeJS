@@ -111,7 +111,7 @@ const arrayFuncs = [
 	[],//first point. Zero position. White color.
 	[ 0.5, 0.5, 0.5 ],//second point. White color.
 ];
-MyPoints( arrayFuncs, scene );
+new MyPoints( arrayFuncs, scene );
 ```
 You can see two small white points on your canvas.
 
@@ -128,7 +128,7 @@ const arrayFuncs = [
 		0.5//w - color of the point is green
 	]//second point
 ];
-MyPoints( arrayFuncs, scene, {
+new MyPoints( arrayFuncs, scene, {
 
 	options: {
 
@@ -148,7 +148,7 @@ import ColorPicker from './commonNodeJS/master/colorpicker/colorpicker.js';
 Create a palette. For example [ColorPicker.paletteIndexes.bidirectional](https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/Example/index.html#Bidirectional) palette
 and add new <b>palette</b> into <b>settings.options</b> parameter of <b>MyPoints</b>
 ```
-MyPoints( arrayFuncs, scene, {
+new MyPoints( arrayFuncs, scene, {
 
 	options: {
 
@@ -183,7 +183,7 @@ const eventListeners = new Options.raycaster.EventListeners( camera, renderer, {
 Add new <b>raycaster</b> key into <b>settings.options</b> and  <b>settings.pointsOptions</b> parameters of <b>MyPoints</b>.
 ```
 //const cursor = renderer.domElement.style.cursor;
-MyPoints( arrayFuncs, scene, {
+new MyPoints( arrayFuncs, scene, {
 
 	options: {
 		point: { size: 25 },
@@ -324,7 +324,7 @@ The following code is the result of this tutorial.
 				]//second point
 			];
 			//const cursor = renderer.domElement.style.cursor;
-			MyPoints( arrayFuncs, scene, {
+			new MyPoints( arrayFuncs, scene, {
 
 				options: {
 					point: { size: 25 },
