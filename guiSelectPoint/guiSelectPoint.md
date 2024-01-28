@@ -144,7 +144,7 @@ import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 ```
 Add <b>MyPoints</b> after creating of <b>GuiSelectPoint</b>.
 ```
-MyPoints( [
+new MyPoints( [
 	[],//first point. Zero position. White color.
 	[0.5, 0.5, 0.5],//second point. White color.
 ], scene, {
@@ -235,7 +235,7 @@ The following code is the result of this tutorial.
 			scene.add( points );
 			options.guiSelectPoint.addMesh( points );
 
-			MyPoints( [
+			new MyPoints( [
 				[],//first point. Zero position. White color.
 				[0.5, 0.5, 0.5],//second point. White color.
 			], scene, {
