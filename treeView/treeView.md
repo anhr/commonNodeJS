@@ -111,7 +111,7 @@ MyThree.three.THREE = THREE;
 ```
 new TreeView().setCanvas( 'articleCanvas', new MyThree( function ( scene, options ) {
 
-	MyThree.MyPoints(
+	new MyThree.MyPoints(
 
 		[
 			[],
@@ -218,7 +218,7 @@ The following code is the result of this tutorial.
 		//import TreeView from './commonNodeJS/master/treeView/treeView.js';
 		new MyThree.TreeView().setCanvas( 'articleCanvas', new MyThree( function ( scene, options ) {
 
-			MyThree.MyPoints(
+			new MyThree.MyPoints(
 
 				[
 					[],
