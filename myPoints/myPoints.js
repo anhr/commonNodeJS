@@ -321,6 +321,23 @@ function MyPoints( arrayFuncs, group, settings ) {
 		setRotations();
 		group.add( points );
 
+		points.userData.setPositionAttribute = (position, i) => {
+
+			Player.setPositionAttribute(position, i, points, settings);
+/*			
+			const vertice = position[i], object = points, itemSize = object.geometry.attributes.position.itemSize;
+			for (let j = 0; j < itemSize; j++) 
+				object.geometry.attributes.position.array [j + i * itemSize] = vertice[j];
+			const attributes = object.geometry.attributes, colorAttribute = attributes.color || attributes.ca;
+			if (!colorAttribute) return;
+			const color = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max);
+			colorAttribute.setX( i, color.r );
+			colorAttribute.setY( i, color.g );
+			colorAttribute.setZ( i, color.b );
+			colorAttribute.needsUpdate = true;
+*/			
+			
+		}
 		points.userData.opacity = (opacity) => {
 
 			const ca = points.geometry.attributes.ca ? points.geometry.attributes.ca : points.geometry.attributes.color, array = ca.array;

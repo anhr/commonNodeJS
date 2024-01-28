@@ -2213,6 +2213,24 @@ Player.setColorAttribute = function ( attributes, i, color ) {
 
 }
 
+Player.setPositionAttribute = (position, i, object, settings) => {
+
+	const vertice = position[i], attributes = object.geometry.attributes, itemSize = attributes.position.itemSize;
+	for (let j = 0; j < itemSize; j++) 
+		attributes.position.array [j + i * itemSize] = vertice[j];
+	Player.setColorAttribute( attributes, i, settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max) );
+/*																										 
+	const attributes = object.geometry.attributes, colorAttribute = attributes.color || attributes.ca;
+	if (!colorAttribute) return;
+	const color = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max);
+	colorAttribute.setX( i, color.r );
+	colorAttribute.setY( i, color.g );
+	colorAttribute.setZ( i, color.b );
+	colorAttribute.needsUpdate = true;
+*/	
+	
+}
+
 /** @namespace
  * @description Get array of THREE.Vector4 points.
  * @param {THREE.Vector4|THREE.Vector3|THREE.Vector2|object|array} arrayFuncs <b>points.geometry.attributes.position</b> array
