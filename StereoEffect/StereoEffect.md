@@ -118,7 +118,7 @@ import MyPoints from './commonNodeJS/master/myPoints/myPoints.js';
 ```
 Now you can use <b>MyPoints</b> in your javascript code. Please add <b>MyPoints</b> after creating of <b>renderer</b>.
 ```
-MyPoints( [
+new MyPoints( [
 	[],//first point. Zero position. White color.
 	[ 0.5, 0.5, 0.5 ],//second point. White color.
 ], scene );
@@ -188,7 +188,7 @@ const eventListeners = new Options.raycaster.EventListeners( camera, renderer, {
 * Define of the actions for objects in the 3d space the mouse is over.
 For example edit the <b>MyPoints</b> so that the cursor is changing to "pointer" of mouse is over point and displays an alert if user click over point.
 ```
-MyPoints( [
+new MyPoints( [
 		[],//first point. Zero position. White color.
 		[ 0.5, 0.5, 0.5 ],//second point. White color.
 	], scene, {
@@ -319,7 +319,7 @@ The following code is the result of this tutorial.
 			const eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
 			//const cursor = renderer.domElement.style.cursor;
 
-			MyPoints( [
+			new MyPoints( [
 					[],//first point. Zero position. White color.
 					[ 0.5, 0.5, 0.5 ],//second point. White color.
 				], scene, {
