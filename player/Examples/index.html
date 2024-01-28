@@ -410,7 +410,7 @@
 			} else if ( typeof MyPoints !== 'undefined' ) {
 
 				console.log( 'Using MyPoints method for creating of the points.' );
-				MyPoints( arrayFuncs, scene, {
+				new MyPoints( arrayFuncs, scene, {
 
 						options: options,
 
@@ -420,7 +420,7 @@
 						//shaderMaterial: false,
 
 				} );
-				MyPoints( [
+				new MyPoints( [
 						//new THREE.Vector4( 0.3, 0.3, 0.3, 0.3 ),
 						{
 
