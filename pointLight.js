@@ -115,7 +115,7 @@ class pointLight {
 
 				if ( value ) {
 
-					MyPoints( light.position, group, { pointsOptions: {
+					new MyPoints( light.position, group, { pointsOptions: {
 
 						onReady( points ) { lightSource = points; }
 
