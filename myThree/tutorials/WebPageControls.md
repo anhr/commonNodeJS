@@ -62,7 +62,7 @@ You will use my [library](https://github.com/anhr/commonNodeJS) in this tutorial
 
 		new MyThree( function ( group, options ) {
 
-			MyThree.MyPoints(
+			new MyThree.MyPoints(
 				[
 					{
 
@@ -216,7 +216,7 @@ Please add the following tags to your web page for display and edit of your "Tri
 ```
 Also add <b>controllers: {},</b> key into point, named as "Trigonometric functions".
 ```
-MyThree.MyPoints(
+new MyThree.MyPoints(
 	[
 		{
 
@@ -282,7 +282,7 @@ For example add tags for point, named as "Line".
 And add <b>controllers</b> key into this point.
 
 ```
-MyThree.MyPoints(
+new MyThree.MyPoints(
 	[
 		{
 
@@ -449,7 +449,7 @@ The following code is the result of this tutorial.
 
 		new MyThree( function ( group, options ) {
 
-			MyThree.MyPoints(
+			new MyThree.MyPoints(
 				[
 					{
 
