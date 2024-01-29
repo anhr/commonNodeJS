@@ -2219,15 +2219,6 @@ Player.setPositionAttribute = (position, i, object, settings) => {
 	for (let j = 0; j < itemSize; j++) 
 		attributes.position.array [j + i * itemSize] = vertice[j];
 	Player.setColorAttribute( attributes, i, settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max) );
-/*																										 
-	const attributes = object.geometry.attributes, colorAttribute = attributes.color || attributes.ca;
-	if (!colorAttribute) return;
-	const color = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max);
-	colorAttribute.setX( i, color.r );
-	colorAttribute.setY( i, color.g );
-	colorAttribute.setZ( i, color.b );
-	colorAttribute.needsUpdate = true;
-*/	
 	
 }
 

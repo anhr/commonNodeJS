@@ -16,8 +16,9 @@ import Player from '../player/player.js';
 import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMaterialPoints.js';
 import three from '../three.js'
 import Options from '../Options.js'
+import myObject from '../myObject.js'
 
-class MyPoints {
+class MyPoints extends myObject {
 
 	/**
 	 * Creating the new [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} and adding it into group.
@@ -144,6 +145,10 @@ class MyPoints {
 	 */
 	constructor(arrayFuncs, group, settings) {
 
+		super(settings);
+
+		const _this = this;
+		
 		const THREE = three.THREE;
 
 		group = group || three.scene;
@@ -323,21 +328,10 @@ class MyPoints {
 			setRotations();
 			group.add(points);
 
-			points.userData.setPositionAttribute = (position, i) => {
+			points.userData.setPositionAttribute = (i, object) => {
 
-				Player.setPositionAttribute(position, i, points, settings);
-				/*			
-							const vertice = position[i], object = points, itemSize = object.geometry.attributes.position.itemSize;
-							for (let j = 0; j < itemSize; j++) 
-								object.geometry.attributes.position.array [j + i * itemSize] = vertice[j];
-							const attributes = object.geometry.attributes, colorAttribute = attributes.color || attributes.ca;
-							if (!colorAttribute) return;
-							const color = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max);
-							colorAttribute.setX( i, color.r );
-							colorAttribute.setY( i, color.g );
-							colorAttribute.setZ( i, color.b );
-							colorAttribute.needsUpdate = true;
-				*/
+//				Player.setPositionAttribute(position, i, points, settings);
+				_this.setPositionAttribute( i, object, points );
 
 			}
 			points.userData.opacity = (opacity) => {

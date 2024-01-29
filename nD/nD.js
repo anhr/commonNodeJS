@@ -21,6 +21,7 @@ import three from '../three.js'
 import Options from '../Options.js'
 import PositionController from '../PositionController.js';
 import MyMath from '../myMath/myMath.js'
+import myObject from '../myObject.js'
 
 /*
 dimention	geometry	points	edges	faces	bodyes	4D objects
@@ -30,7 +31,7 @@ dimention	geometry	points	edges	faces	bodyes	4D objects
 4			pentatope	5		10		10		5		1
 */
 
-class ND {
+class ND extends myObject {
 
 	/**
 	 * N-dimensional graphics.
@@ -281,6 +282,7 @@ class ND {
 	 */
 	constructor( n, settings = {} ) {
 
+		super( settings );
 		const options = settings.options, _ND = this;
 		settings.object = settings.object || {};
 		settings.object.raycaster = settings.object.raycaster || {};
@@ -2188,10 +2190,6 @@ class ND {
 								settings.object.geometry.colors[iColor + 1],
 								settings.object.geometry.colors[iColor + 2]
 							);
-/*							
-							for ( let j = 0; j < colorSize; j++ )
-								colors.push(settings.object.geometry.colors[iColor + j]);
-*/		
 						else {
 							
 							const color = new THREE.Color(settings.object.color);
@@ -2224,19 +2222,9 @@ class ND {
 			}
 			scene.add( object );
 
-			object.userData.setPositionAttribute = (position, i) => {
+			object.userData.setPositionAttribute = ( i ) => {
 
-				//Player.setPositionAttribute(position, i, object, settings);
-				const vertice = position[i], itemSize = object.geometry.attributes.position.itemSize;
-				for (let j = 0; j < itemSize; j++) 
-					object.geometry.attributes.position.array [j + i * itemSize] = vertice[j];
-				const attributes = object.geometry.attributes, colorAttribute = attributes.color || attributes.ca;
-				if (!colorAttribute) return;
-				const color = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max);
-				colorAttribute.setX( i, color.r );
-				colorAttribute.setY( i, color.g );
-				colorAttribute.setZ( i, color.b );
-				colorAttribute.needsUpdate = true;
+				_ND.setPositionAttribute( i );
 				
 			}
 			object.userData.geometry = geometry.geometry;
