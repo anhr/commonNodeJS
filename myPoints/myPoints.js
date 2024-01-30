@@ -147,6 +147,8 @@ class MyPoints extends myObject {
 
 		super(settings);
 
+		//for for compatibility with ND
+		//Что бы можно было менять позицию и цвет вершины
 		settings.object.geometry = settings.object.geometry || {};
 		settings.object.geometry.position = settings.object.geometry.position || arrayFuncs;
 
