@@ -189,11 +189,7 @@ class MyPoints extends myObject {
 
 		if (pointsOptions.shaderMaterial !== false)
 			getShaderMaterialPoints(group, arrayFuncs,// Player,
-				function (points) {
-
-					Points(points);
-
-				}, {
+				function (points) { Points(points); }, {
 
 				options: options,
 				pointsOptions: pointsOptions,
@@ -244,6 +240,7 @@ class MyPoints extends myObject {
 		}
 		function Points(points) {
 
+			_this.object3D = points;
 			points.name = pointsOptions.name;//'Wave';
 			if (pointsOptions.pointIndexes !== undefined)
 				points.userData.pointIndexes = function (pointIndex) { return pointsOptions.pointIndexes(pointIndex); }
@@ -328,10 +325,10 @@ class MyPoints extends myObject {
 			setRotations();
 			group.add(points);
 
-			points.userData.setPositionAttribute = (i, object) => {
+			points.userData.setPositionAttribute = ( i ) => {
 
 //				Player.setPositionAttribute(position, i, points, settings);
-				_this.setPositionAttribute( i, object, points );
+				_this.setPositionAttribute( i );
 
 			}
 			points.userData.opacity = (opacity) => {

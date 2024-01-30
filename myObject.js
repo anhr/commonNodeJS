@@ -25,10 +25,9 @@ class myObject {
 		 * @returns true - success
 		 * <p>false - colorAttribute was not detected.</p>
 		 */
-		this.setColorAttribute = ( i, object, object3D, color ) => {
+		this.setColorAttribute = ( i, color ) => {
 
-			object = object || settings.object;
-			object3D = object3D || _this.object3D;
+			const object = settings.object, object3D = _this.object3D;
 			color = color || settings.options.palette.toColor(object.geometry.position[i].w, settings.options.scales.w.min, settings.options.scales.w.max);
 			if ( typeof color === "string" )
 				color = new THREE.Color( color );
@@ -42,15 +41,13 @@ class myObject {
 			return true;
 		
 		}
-		this.setPositionAttribute = ( i, object, object3D ) => {
+		this.setPositionAttribute = ( i ) => {
 
-			object = object || settings.object;
-			object3D = object3D || _this.object3D;
-			const position = object.geometry.position;
+			const object = settings.object, object3D = _this.object3D, position = object.geometry.position;
 			const vertice = position[i], itemSize = object3D.geometry.attributes.position.itemSize;
 			for (let j = 0; j < itemSize; j++) 
 				object3D.geometry.attributes.position.array [j + i * itemSize] = vertice[j];
-			this.setColorAttribute( i, object, object3D );
+			this.setColorAttribute( i );
 			
 		}
 		
