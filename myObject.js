@@ -13,6 +13,8 @@
  * 
 */
 
+import three from './three.js'
+
 class myObject {
 
 	constructor( settings ) {
@@ -32,7 +34,7 @@ class myObject {
 			const object = settings.object, object3D = _this.object3D;
 			color = color || settings.options.palette.toColor(object.geometry.position[i].w, settings.options.scales.w.min, settings.options.scales.w.max);
 			if ( typeof color === "string" )
-				color = new THREE.Color( color );
+				color = new three.THREE.Color( color );
 			const attributes = object3D.geometry.attributes, colorAttribute = attributes.color || attributes.ca;
 			if ( colorAttribute === undefined )
 				return false;
