@@ -1731,9 +1731,11 @@ class GuiSelectPoint {
 						}
 						if ( options.palette ) {
 
+/*							
 							const color = options.palette.toColor( value, controller.__min, controller.__max );
-//							_this.setColorAttribute( attributes, i, color );
 							Player.setColorAttribute( attributes, i, color );
+*/							
+							intersection.object.userData.myObject.setColorAttribute( i );
 
 						}
 						attributes.position.setW( i, value );

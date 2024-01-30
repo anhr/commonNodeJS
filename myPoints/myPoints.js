@@ -330,7 +330,8 @@ class MyPoints extends myObject {
 			setRotations();
 			group.add(points);
 
-			points.userData.setPositionAttribute = ( i ) => { _this.setPositionAttribute( i ); }
+//			points.userData.setPositionAttribute = ( i ) => { _this.setPositionAttribute( i ); }
+			points.userData.myObject = _this;
 			points.userData.opacity = (opacity) => {
 
 				const ca = points.geometry.attributes.ca ? points.geometry.attributes.ca : points.geometry.attributes.color, array = ca.array;

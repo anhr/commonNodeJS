@@ -2222,11 +2222,8 @@ class ND extends myObject {
 			}
 			scene.add( object );
 
-			object.userData.setPositionAttribute = ( i ) => {
-
-				_ND.setPositionAttribute( i );
-				
-			}
+//			object.userData.setPositionAttribute = ( i ) => { _ND.setPositionAttribute( i ); }
+			object.userData.myObject = _ND;
 			object.userData.geometry = geometry.geometry;
 			object.userData.onMouseDown = function ( intersection ) {
 
