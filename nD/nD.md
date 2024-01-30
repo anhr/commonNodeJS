@@ -129,7 +129,7 @@ if ( ND.default ) ND = ND.default;
 ```
 
 Now you can use <b>ND</b> in your javascript code for creating an N-dimensional graphic object. For example [tesseract](https://en.wikipedia.org/wiki/tesseract).
-* Greate tesseract.
+* Create tesseract.
 
 Add <b>var _4D</b> before <b>init</b> function.
 ```
