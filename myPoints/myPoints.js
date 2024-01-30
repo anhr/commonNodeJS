@@ -147,6 +147,9 @@ class MyPoints extends myObject {
 
 		super(settings);
 
+		settings.object.geometry = settings.object.geometry || {};
+		settings.object.geometry.position = settings.object.geometry.position || arrayFuncs;
+
 		const _this = this;
 		
 		const THREE = three.THREE;

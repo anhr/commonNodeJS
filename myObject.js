@@ -18,6 +18,8 @@ class myObject {
 	constructor( settings ) {
 
 		const _this = this;
+
+		settings.object = settings.object || {};
 		
 		/** Set color attribute
 		 * @param {number} i index of the color in the color attribute array.
