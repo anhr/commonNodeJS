@@ -54,6 +54,7 @@ class myObject {
 				vertice = position[i], itemSize = object3D.geometry.attributes.position.itemSize;
 			for (let j = 0; j < itemSize; j++) 
 				attributes.position.array [j + i * itemSize] = vertice[j];
+			//отказался от применения this.setColorAttribute потому что в этом случае для каждого 3D объекта нужно создавать myObject, а это нецелесообразно делать во всех приложениях
 //			this.setColorAttribute( i );
 			const w = settings.options.scales.w;
 			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(settings.object.geometry.position[i].w, w.min, w.max));
