@@ -1729,15 +1729,7 @@ class GuiSelectPoint {
 							return;//Точка не имеет цвета. Например это вершина куба. Надо скрыть оган управления координатой w
 
 						}
-						if ( options.palette ) {
-
-/*							
-							const color = options.palette.toColor( value, controller.__min, controller.__max );
-							Player.setColorAttribute( attributes, i, color );
-*/							
-							intersection.object.userData.myObject.setColorAttribute( i );
-
-						}
+						if ( options.palette ) Player.setColorAttribute( attributes, i, options.palette.toColor( value, controller.__min, controller.__max ) );
 						attributes.position.setW( i, value );
 
 						if ( options.frustumPoints )
@@ -1841,8 +1833,8 @@ class GuiSelectPoint {
 
 					//for testing
 					//Go to http://localhost/anhr/commonNodeJS/master/player/Examples/
-					//Select '3 Ponts' 3D object
-					//Select a point
+					//Select 3 Ponts' 3D object
+					//Select a point 2
 					//Open 'Point's local position'
 					//Change 'color'
 					
@@ -1851,7 +1843,6 @@ class GuiSelectPoint {
 					if ( cColor.userData === undefined )
 						return;
 					var intersection = cColor.userData.intersection;
-//					_this.setColorAttribute( intersection.object.geometry.attributes, intersection.index, value );
 					Player.setColorAttribute( intersection.object.geometry.attributes, intersection.index, value );
 
 				} );

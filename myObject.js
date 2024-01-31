@@ -14,6 +14,7 @@
 */
 
 import three from './three.js'
+import Player from './player/player.js'
 
 class myObject {
 
@@ -31,6 +32,13 @@ class myObject {
 		 */
 		this.setColorAttribute = ( i, color ) => {
 
+			const w = settings.options.scales.w;
+			return Player.setColorAttribute(
+				_this.object3D.geometry.attributes,
+				i,
+				color || settings.options.palette.toColor(settings.object.geometry.position[i].w, w.min, w.max)
+			);
+/*			
 			const object = settings.object, object3D = _this.object3D;
 			color = color || settings.options.palette.toColor(object.geometry.position[i].w, settings.options.scales.w.min, settings.options.scales.w.max);
 			if ( typeof color === "string" )
@@ -43,6 +51,7 @@ class myObject {
 			colorAttribute.setZ( i, color.b );
 			colorAttribute.needsUpdate = true;
 			return true;
+*/			
 		
 		}
 		this.setPositionAttribute = ( i ) => {
