@@ -24,21 +24,15 @@ class myObject {
 
 		settings.object = settings.object || {};
 		
-		/** Set color attribute
+		/* * Set color attribute
 		 * @param {number} i index of the color in the color attribute array.
 		 * @param {THREE.Color|string} color color.
 		 * @returns true - success
 		 * <p>false - colorAttribute was not detected.</p>
 		 */
+/*			
 		this.setColorAttribute = ( i, color ) => {
 
-			const w = settings.options.scales.w;
-			return Player.setColorAttribute(
-				_this.object3D.geometry.attributes,
-				i,
-				color || settings.options.palette.toColor(settings.object.geometry.position[i].w, w.min, w.max)
-			);
-/*			
 			const object = settings.object, object3D = _this.object3D;
 			color = color || settings.options.palette.toColor(object.geometry.position[i].w, settings.options.scales.w.min, settings.options.scales.w.max);
 			if ( typeof color === "string" )
@@ -51,16 +45,18 @@ class myObject {
 			colorAttribute.setZ( i, color.b );
 			colorAttribute.needsUpdate = true;
 			return true;
-*/			
 		
 		}
+*/			
 		this.setPositionAttribute = ( i ) => {
 
-			const object = settings.object, object3D = _this.object3D, position = object.geometry.position;
-			const vertice = position[i], itemSize = object3D.geometry.attributes.position.itemSize;
+			const object = settings.object, object3D = _this.object3D, attributes = object3D.geometry.attributes, position = object.geometry.position,
+				vertice = position[i], itemSize = object3D.geometry.attributes.position.itemSize;
 			for (let j = 0; j < itemSize; j++) 
-				object3D.geometry.attributes.position.array [j + i * itemSize] = vertice[j];
-			this.setColorAttribute( i );
+				attributes.position.array [j + i * itemSize] = vertice[j];
+//			this.setColorAttribute( i );
+			const w = settings.options.scales.w;
+			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(settings.object.geometry.position[i].w, w.min, w.max));
 			
 		}
 		
