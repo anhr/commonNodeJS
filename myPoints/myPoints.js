@@ -26,7 +26,7 @@ class MyPoints extends myObject {
 	 * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
 	 * @param {THREE.Group} [group] [Group]{@link https://threejs.org/docs/index.html?q=grou#api/en/objects/Group} for new points.
 	 * Default is <b><a href="../../jsdoc/three/Three.html" target="_blank">three</a>.scene</b>
-	 * @param {object} [settings] the following settings are available
+	 * @param {object} [settings={}] the following settings are available
 	 * @param {object|Options} [settings.options=new Options()] the following options are available.
 	 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
 	 * @param {Object} [settings.options.point] point options.
