@@ -13,7 +13,7 @@
  * 
 */
 
-import three from './three.js'
+//import three from './three.js'
 import Player from './player/player.js'
 
 class myObject {
