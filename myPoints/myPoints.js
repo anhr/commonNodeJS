@@ -162,7 +162,7 @@ class MyPoints extends myObject {
 		if ((typeof arrayFuncs !== 'function') && (arrayFuncs.length === 0))
 			arrayFuncs.push(new THREE.Vector3());
 
-		settings = settings || {};
+//		settings = settings || {};
 
 		settings.pointsOptions = settings.pointsOptions || {};
 		const pointsOptions = settings.pointsOptions;
@@ -194,8 +194,7 @@ class MyPoints extends myObject {
 		Player.assign();
 
 		if (pointsOptions.shaderMaterial !== false)
-			getShaderMaterialPoints(group, arrayFuncs,// Player,
-				function (points) { Points(points); }, {
+			getShaderMaterialPoints(group, arrayFuncs,function (points) { Points(points); }, {
 
 				options: options,
 				pointsOptions: pointsOptions,

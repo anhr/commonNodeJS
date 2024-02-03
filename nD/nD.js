@@ -280,7 +280,7 @@ class ND extends myObject {
 	 * @see [4D-Shapes]{@link https://artemonigiri.github.io/4D-Shapes/}
 	 * @see [The Regular Polychora]{@link https://www.qfbox.info/4d/regular}
 	 */
-	constructor( n, settings = {} ) {
+	constructor( n, settings ) {
 
 		super( settings );
 		const options = settings.options, _ND = this;

@@ -18,20 +18,17 @@ import Player from './player/player.js'
 
 class myObject {
 
-	constructor( settings, vertices ) {
+	constructor( settings={}, vertices ) {
 
 		const _this = this;
 
 		settings.object = settings.object || {};
+		settings.object.geometry = settings.object.geometry || {};
 
-		if (vertices) {
-			
+		if (vertices)
 			//for for compatibility with ND
 			//Что бы можно было менять позицию и цвет вершины
-			settings.object.geometry = settings.object.geometry || {};
 			settings.object.geometry.position = settings.object.geometry.position || vertices;
-
-		}
 		
 		/* * Set color attribute
 		 * @param {number} i index of the color in the color attribute array.
