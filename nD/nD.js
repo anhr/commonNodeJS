@@ -284,7 +284,7 @@ class ND extends myObject {
 
 		super( settings );
 		const options = settings.options, _ND = this;
-		settings.object = settings.object || {};
+//		settings.object = settings.object || {};
 		settings.object.raycaster = settings.object.raycaster || {};
 		settings.object.raycaster.text = settings.object.raycaster.text || function( intersection ) {
 
