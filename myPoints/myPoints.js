@@ -146,12 +146,6 @@ class MyPoints extends myObject {
 	constructor(arrayFuncs, group, settings) {
 
 		super(settings, arrayFuncs);
-/*
-		//for for compatibility with ND
-		//Что бы можно было менять позицию и цвет вершины
-		settings.object.geometry = settings.object.geometry || {};
-		settings.object.geometry.position = settings.object.geometry.position || arrayFuncs;
-*/		
 
 		const _this = this;
 		
