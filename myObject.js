@@ -53,9 +53,28 @@ class myObject {
 			return true;
 		
 		}
-*/			
+*/
+		this.setPositionAttributeFromPoint = ( i, attributes ) => {
+
+			const vertice = settings.object.geometry.position[i],
+				itemSize = attributes.position.itemSize;
+			for (let j = 0; j < itemSize; j++) 
+				attributes.position.array [j + i * itemSize] = vertice[j];
+
+//			attributes.position.needsUpdate = true;
+
+			if (attributes.position.itemSize < 4) return;
+
+			//отказался от применения this.setColorAttribute потому что в этом случае для каждого 3D объекта нужно создавать myObject, а это нецелесообразно делать во всех приложениях
+//			this.setColorAttribute( i );
+			const w = settings.options.scales.w;
+			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(settings.object.geometry.position[i].w, w.min, w.max));
+			
+		}
 		this.setPositionAttribute = ( i ) => {
 
+			this.setPositionAttributeFromPoint( i, _this.object3D.geometry.attributes );
+/*			
 			const object = settings.object, object3D = _this.object3D, attributes = object3D.geometry.attributes, position = object.geometry.position,
 				vertice = position[i], itemSize = object3D.geometry.attributes.position.itemSize;
 			for (let j = 0; j < itemSize; j++) 
@@ -69,6 +88,7 @@ class myObject {
 //			this.setColorAttribute( i );
 			const w = settings.options.scales.w;
 			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(settings.object.geometry.position[i].w, w.min, w.max));
+*/			
 			
 		}
 		
