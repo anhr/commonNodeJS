@@ -1,0 +1,236 @@
+<html>
+<head>
+	<title>2D Universe</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<meta name="author" content="Andrej Hristoliubov https://github.com/anhr">
+	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
+	<link type="text/css" rel="stylesheet" href="../../../three.js/dev/examples/main.css">
+
+	<!--
+	<script src="../../../three.js/dev/build/three.js"></script>
+	<script src="../../../three.js/dev/build/three.min.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>
+	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>
+	<script src="https://threejs.org/build/three.js"></script>
+	<script src="https://threejs.org/build/three.min.js"></script>
+	-->
+</head>
+<body>
+	<script nomodule>alert('Fatal error: Your browser do not support modular JavaScript code.');</script>
+	<div id="info">
+		<a href="https://github.com/anhr/egocentricUniverse" target="_blank" rel="noopener">2D Universe</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from '../../../three.js/dev/build/three.module.js';
+		//import * as THREE from 'https://threejs.org/build/three.module.js';
+		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
+
+		import MyThree from '../../../commonNodeJS/master/myThree/myThree.js';
+		//import MyThree from '../../../commonNodeJS/master/myThree/build/myThree.module.js';
+		//import MyThree from '../../../commonNodeJS/master/myThree/build/myThree.module.min.js';
+		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/myThree.js';
+		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/myThree.module.js';
+		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/myThree.module.min.js';
+		MyThree.three.THREE = THREE;
+
+		import Universe2D from '../universe2D.js';
+
+
+		new MyThree( (scene, options) => {
+
+			/*
+			//divide sphere to segments
+			const anglesCount = 1000, angle = Math.PI * 2 / anglesCount, angles = [];
+			for (let angleId = 0; angleId < anglesCount; angleId++) angles.push([angle * angleId, angle * angleId * angleId]);
+			*/
+			
+			const universe = new Universe2D(options,
+			{
+
+				/*
+				intersection: {
+
+					position: -0.5,
+					//color: 'red',
+
+				},
+				*/
+				edges: {
+
+					//project: false,//Doesn't project edges onto canvas
+					creationMethod: Universe2D.edgesCreationMethod.Random,
+					
+				},
+				//edges: false,
+				projectParams:{
+					
+					scene: scene,
+					/*
+					params: {
+						
+						//center: {x: 0.5, y: 0.3},
+					
+					}
+					 */
+					
+				},
+				//t: 0.5,
+				debug: {
+
+					probabilityDensity: false,
+					
+				},
+				//debug: false,
+				settings: {
+					
+					object: {
+	
+						//name: 'edges',
+						//color: 'red',
+						geometry: {
+
+							/*
+							//5 vertices
+							//debug error: Universe: edges[8]. Duplicate edge[0,3]
+							angles: [
+								[Math.PI * 0 * 1 / 3, Math.PI * 0 * 2 / 3],//vertice[0] = [0,0,1]
+								[Math.PI * 2 * 1 / 3, Math.PI * 0 * 2 / 3],//vertice[1] = [0.8660254037844387,0,-0.4999999999999998]
+								[
+									Math.PI * 2 * 1 / 3,
+									Math.PI * 1 * 2 / 3
+								],//vertice[2] = [-0.4330127018922192,0.7500000000000001,-0.4999999999999998]
+								[Math.PI * 2 * 1 / 3, Math.PI * 2 * 2 / 3],//vertice[3] = [-0.43301270189221974,-0.7499999999999998,-0.4999999999999998]
+								[Math.PI * 3 * 1 / 3, Math.PI * 2 * 2 / 3],//vertice[4] = 
+							],
+							*/
+							angles: [
+								[],//[0, 0],//
+								[
+									Math.PI / 2,//Latitude
+									0//Longitude
+								],//
+								[0, Math.PI / 2],//
+							],
+							angles: [
+								[],//[0, 0],//
+								[
+									Math.PI / 2,//Latitude
+									//- Math.PI / 2,//Latitude if Universe.rotateLatitude = 0; then error: universe.js:924 Universe: Angle[0] = -3.141592653589793 of the vertice 1 is out of range from -1.5707963267948966 to 1.5707963267948966
+									//Math.PI,//Latitude out of range
+									//0//Longitude
+									//Math.PI * 2//Longitude out of range
+								],//
+								[0, Math.PI / 2],//
+							],
+							//cube. Please set indices.edges for cube
+							angles: [
+								[
+									Math.PI * 1 / 4,//Latitude
+									Math.PI * 1 / 4,//Longitude
+								],
+								[Math.PI * 1 / 4,   Math.PI * 3 / 4],
+								[Math.PI * 1 / 4, - Math.PI * 3 / 4],
+								[Math.PI * 1 / 4, - Math.PI * 1 / 4],
+								
+								[- Math.PI * 1 / 4, - Math.PI * 1 / 4],
+								[- Math.PI * 1 / 4,   Math.PI * 1 / 4],
+								[- Math.PI * 1 / 4,   Math.PI * 3 / 4],
+								[- Math.PI * 1 / 4, - Math.PI * 3 / 4],
+							],
+							//pyramid
+							angles: [
+								//[],
+								[
+									Math.PI / 2,//Latitude
+									//Math.PI * 2,//0//Longitude
+									0//Longitude
+								],//vertice[0] = [0,1,0]
+								[-Math.PI / 6, Math.PI * 2 * 0 / 3],//vertice[1] = [-0.8660254037844387,-0.4999999999999998,0]
+								[-Math.PI / 6, Math.PI * 2 * 1 / 3],//vertice[2] = [0.4330127018922192,-0.4999999999999998,-0.7500000000000001]
+								[-Math.PI / 6, -Math.PI * 2 * 1 / 3],//vertice[2] = [0.4330127018922192,-0.4999999999999998,-0.7500000000000001]
+							],
+							//angles: { count: 1000, },
+							//angles: angles,
+							/*
+							colors: [
+								1, 0, 0,//red
+								0, 1, 0,//green
+								0, 0, 1,//blue
+								//1, 1, 1,//white
+								//0, 0, 1,	0, 0.6, 1
+							],
+							*/
+							/*
+							indices: {
+
+								edges: { count: 6, },
+								//edges: [ [0,1], [1,2], [2,0], [0,3], [1,3], [2,3] ],//pyramid
+								//cube
+								edges: [
+									[0,1], [1,2], [2,3], [3,0],
+									[4,5], [5,6], [6,7], [7,4],
+									[0,5], [1,6], [2,7], [3,4],
+								],
+								
+							}
+							*/
+						
+						}
+
+					}
+				
+				},
+				
+				
+			});
+/*			
+			universe.project( scene, {
+				
+				//center: {x: 0.5, y: 0.3},
+			
+			});
+*/   
+
+
+		}, {
+
+			//axesHelper: false,
+			//orbitControls: { enableRotate: false, },
+			//dat: { guiSelectPoint: { point: (options, dat, fMesh) => { return new Sphere.ND.gui(options, dat, fMesh); }, }, },
+			dat: { guiSelectPoint: { point: (options, dat, fMesh) => { return new Universe2D.ND.gui(options, dat, fMesh); }, }, },
+			//camera: { position: new THREE.Vector3( 0, 0, 2 ) },
+			//stereoEffect: false,
+			//canvasMenu: false,
+			scales: {
+
+				//x: {},
+				//y: {},
+				//posAxesIntersection: new THREE.Vector3( -1, -1, -1 ),
+				text: { precision: 1, rect: { displayRect: false, }, }
+
+			},
+			//dat: false,
+			canvas: {
+
+				noButtonFullScreen: true,
+
+			},
+			//point: { size: 0.0 },
+			playerOptions: {
+				
+				max: Infinity,
+				interval: 100,
+				
+			},
+
+		});
+
+	</script>
+</body>
+</html>
