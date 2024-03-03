@@ -1,6 +1,6 @@
 /**
- * @module Universe
- * @description Base class for n dimensional universe.
+ * @module HuperSphere
+ * @description Base class for n dimensional hupersphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -37,11 +37,11 @@ import ProgressBar from '../ProgressBar/ProgressBar.js'
 //import WebGPU from '../../../WebGPU/master/WebGPU.js';
 import PositionController from '../PositionController.js';
 
-const sUniverse = 'Universe', sOverride = sUniverse + ': Please override the %s method in your child class.',
+const sHuperSphere = 'HuperSphere', sOverride = sHuperSphere + ': Please override the %s method in your child class.',
 	π = Math.PI;
 //	verticeEdges = true;//Эту константу добавил на случай если захочу не включать индексы ребер в вершину если classSettings.debug != true
 
-class Universe {
+class HuperSphere {
 
 	#verticeEdgesLength;
 	
@@ -68,14 +68,14 @@ class Universe {
 	}
 	color() { if (this.classSettings.settings.object.color === undefined) this.classSettings.settings.object.color = 'lime'; }
 	name() { console.error(sOverride.replace('%s', 'name')); }
-	logUniverse() {
+	logHuperSphere() {
 
 		if (!this.classSettings.debug) return;
 		console.log(this.cookieName);
 		let i = 0, progressBarValue = 0,
 			log = 0;//position log
 		const settings = this.classSettings.settings, geometry = settings.object.geometry, position = geometry.position, edges = geometry.indices.edges,
-			sLogUniverse = sUniverse + ': logUniverse()',
+			sLogHuperSphere = sHuperSphere + ': logHuperSphere()',
 			progressBar = new ProgressBar(settings.options.renderer.domElement.parentElement, () => {
 
 				switch (log){
@@ -87,7 +87,7 @@ class Universe {
 						const edge = edges[i];
 						console.log('edges[' + i + '] = ' + JSON.stringify(edge))
 						break;
-					default: console.error(sLogUniverse + '. Invalid log = ' + log);
+					default: console.error(sLogHuperSphere + '. Invalid log = ' + log);
 				}
 				progressBar.value = progressBarValue;
 				progressBarValue++;
@@ -111,7 +111,7 @@ class Universe {
 							
 						} else progressBar.step();
 						break;
-					default: console.error(sLogUniverse + '. Invalid log = ' + log);
+					default: console.error(sLogHuperSphere + '. Invalid log = ' + log);
 				}
 				
 			}, {
@@ -139,7 +139,7 @@ class Universe {
 		if (!this.boTestVertice) return;
 		if (this.classSettings.edges === false) return;
 		if (vertice.edges.length < (this.verticeEdgesLength - 1))//Допускается количество ребер на одно меньше максимального значения потому что при опреденном количестве вершин для некоротых вершин не хватает противоположных вершин
-			console.error(sUniverse + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
+			console.error(sHuperSphere + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
 	angles2Vertice(angles) {
@@ -197,9 +197,9 @@ class Universe {
 			const vertice2angles = this.vertice2angles(vertice),
 				angles2vertice = a2v(vertice2angles);
 			const value = vertice;
-			if (angles2vertice.length != value.length) console.error(sUniverse + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
+			if (angles2vertice.length != value.length) console.error(sHuperSphere + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
 			const d = 6e-16;
-			angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sUniverse + ': Set vertice failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
+			angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHuperSphere + ': Set vertice failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
 			
 		}
 		
@@ -209,7 +209,7 @@ class Universe {
 	vertice2angles(vertice) {
 
 		//Сейчас эта функция используется для вычисления middle vertice
-		//if (!this.classSettings.debug) console.warn(sUniverse + ': Use vertice2angles in debug version only');
+		//if (!this.classSettings.debug) console.warn(sHuperSphere + ': Use vertice2angles in debug version only');
 		
 		//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
 		//тангенс — отношение стороны противолежащего катета vertice[1] к стороне прилежащегоvertice[0], (tg или tan);
@@ -298,18 +298,18 @@ class Universe {
 	/**
 	 * Base class for n dimensional universe.
 	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
-	 * @param {object} [classSettings] <b>Universe</b> class settings.
-	 * @param {object} [classSettings.intersection] Universe intersection.
+	 * @param {object} [classSettings] <b>HuperSphere</b> class settings.
+	 * @param {object} [classSettings.intersection] HuperSphere intersection.
 	 * <pre>
-	 *	For 1D universe intersector is line.
-	 *	For 2D universe intersector is plane.
-	 *	For 1D universe intersector is sphere.
+	 *	For Circle intersector is line.
+	 *	For Sphere intersector is plane.
+	 *	For HuperSphere intersector is sphere.
 	 * </pre>
 	 * @param {float} [classSettings.intersection.position=0.0] Position of the intersector.
 	 * <pre>
-	 *	For 1D universe <b>position</b> is Y coordinate of the intersection line.
-	 *	For 2D universe <b>position</b> is Z coordinate of the intersection plane.
-	 *	For 3D universe <b>position</b> is radius of the intersection sphere.
+	 *	For Circle <b>position</b> is Y coordinate of the intersection line.
+	 *	For Sphere <b>position</b> is Z coordinate of the intersection plane.
+	 *	For HuperSphere <b>position</b> is radius of the intersection sphere.
 	 * </pre>
 	 * @param {number|string} [classSettings.intersection.color=0x0000FF] Color of the intersector. Example: 'red'.
 	 * @param {object} [classSettings.projectParams] Parameters of project the universe onto the canvas.
@@ -319,29 +319,29 @@ class Universe {
 	 * @param {float} [classSettings.projectParams.params.center.x=0.0] X axis of the center
 	 * @param {float} [classSettings.projectParams.params.center.y=0.0] Y axis of the center
 	 * @param {float} [classSettings.projectParams.params.center.z=0.0] Y axis of the center
-	 * @param {float} [classSettings.t=1.0] Universe start time. Time is the radius of the Universe.
-	 * @param {boolean|object} [classSettings.edges={}] Universe edges
+	 * @param {float} [classSettings.t=1.0] HuperSphere start time. Time is the radius of the HuperSphere.
+	 * @param {boolean|object} [classSettings.edges={}] HuperSphere edges
 	 * <pre>
 	 *	false - Doesn't create edges to reduce the creation time of the universe
 	 * </pre>
 	 * @param {boolean} [classSettings.edges.project=true] false - Doesn't project edges onto canvas
-	 * @param {enum} [classSettings.edges.creationMethod=edgesCreationMethod.NearestVertice] method for creating edges. See <a href="./module-Universe-Universe.html#.edgesCreationMethod" target="_blank">edgesCreationMethod</a>
+	 * @param {enum} [classSettings.edges.creationMethod=edgesCreationMethod.NearestVertice] method for creating edges. See <a href="./module-HuperSphere-HuperSphere.html#.edgesCreationMethod" target="_blank">edgesCreationMethod</a>
 	 * @param {object} [classSettings.settings] The following settings are available
-	 * @param {object} [classSettings.settings.object] Universe object.
+	 * @param {object} [classSettings.settings.object] HuperSphere object.
 	 * @param {String} [classSettings.settings.object.name] name of universe.
 	 * @param {String|number} [classSettings.settings.object.color='lime'] color of edges or vertices.
 	 * <pre>
 	 * String - color name. See list of available color names in the <b>_colorKeywords</b> object in the [Color.js]{@link https://github.com/mrdoob/three.js/blob/dev/src/math/Color.js} file.
 	 * number - color [Hex triplet]{@link https://en.wikipedia.org/wiki/Web_colors#Hex_triplet}. Example: 0x0000ff - blue color.
 	 * <pre>
-	 * @param {object} [classSettings.settings.object.geometry] Universe geometry.
+	 * @param {object} [classSettings.settings.object.geometry] HuperSphere geometry.
 	 * @param {array|object} [classSettings.settings.object.geometry.angles] n-dimensional universe vertice angles.
 	 * <pre>
 	 * array - array of vertex angles.
 	 *	Every item of array is n-dimensional array of vertex angles.
 	 *	
-	 *	All the vertices of the <b><a href="module-Universe1D.html" target="_blank">Universe1D</a></b> form a circle.
-	 *	For <b><a href="module-Universe1D.html" target="_blank">Universe1D</a></b> every vertice is array of one angle.
+	 *	All the vertices of the <b><a href="module-HuperSphere1D.html" target="_blank">Circle</a></b> form a circle.
+	 *	For <b><a href="module-Circle.html" target="_blank">Circle</a></b> every vertice is array of one angle.
 	 *		Vertex angle is the longitude of the circle of the universe in the range from <b>- π</b> to <b>π</b>.
 	 *		Vertex angle is angle of rotation around of <b>Z</b> axis in 3D space.
 	 *		Angle is begin from <b>X = 0, Y = 1</b>.
@@ -349,22 +349,22 @@ class Universe {
 				Math.cos(θ),//x
 				Math.sin(θ)//y
 			]</b> array. <b>θ</b> is vertex angle.
-	 *		Example of 1D universe with three vertices is triangle:
+	 *		Example of Circle with three vertices is triangle:
 	 *		<b>classSettings.settings.object.geometry.angles: angles: [
 	 *			[],                 //vertice[0] = [0                   ,1]
 	 *			[Math.PI * 2 / 3],  //vertice[1] = [0.8660254037844387	,-0.4999999999999998]
 	 *			[- Math.PI * 2 / 3] //vertice[2] = [-0.8660254037844387	,-0.4999999999999998]
 	 *		]</b>,
 	 *		
-	 *	All the vertices of the <b><a href="module-Universe2D.html" target="_blank">Universe2D</a></b> form a sphere.
-	 *	For <b><a href="module-Universe2D.html" target="_blank">Universe2D</a></b> every vertice is array of two angles.
+	 *	All the vertices of the <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> form a sphere.
+	 *	For <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> every vertice is array of two angles.
 	 *		The first vertex angle is the latitude of the sphere of the universe in the range from <b>- π / 2</b> to <b>π / 2</b>.
 	 *		Zero latitude is located at the equator.
 	 *		
 	 *		The second vertex angle is the longitude of the sphere of the universe in the range from <b>- π</b> to <b>π</b>.
 	 *		The second vertex angle is angle of rotation of the cross section around of <b>Y</b> axis.
 	 *		
-	 *		Example of 2D universe with 4 vertices is pyramid:
+	 *		Example of Sphere with 4 vertices is pyramid:
 	 *		<b>classSettings.settings.object.geometry.angles: [
 	 *		
 	 *			[ Math.PI / 2,  0                  ],//vertice[0] = [ 0                 , 1  , 0   ]
@@ -374,8 +374,8 @@ class Universe {
 	 *			
 	 *		]</b>,
 	 *		
-	 *	All the vertices of the <a href="module-Universe3D.html" target="_blank">Universe3D</a></b> form a [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
-	 *	For <b><a href="module-Universe3D.html" target="_blank">Universe3D</a></b> every vertice is array of three angles.
+	 *	All the vertices of the <a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> form a [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+	 *	For <b><a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> every vertice is array of three angles.
 	 *		The first vertex angle is the altitude of the hupersphere of the universe in the range from <b>0</b> to <b>π / 2</b>.
 	 *		Zero altitude is located at the center of the hupersphere.
 	 *		
@@ -385,7 +385,7 @@ class Universe {
 	 *		The third vertex angle is the longitude of the hupersphere of the universe in the range from <b>- π</b> to <b>π</b>.
 	 *		The third vertex angle is angle of rotation of the cross section around of <b>Y</b> axis.
 	 *		
-	 *		Example of 3D universe with 5 vertices is [pentahedroid]{@link https://en.wikipedia.org/wiki/5-cell}:
+	 *		Example of HuperSphere with 5 vertices is [pentahedroid]{@link https://en.wikipedia.org/wiki/5-cell}:
 	 *		<b>classSettings.settings.object.geometry.angles: [
 	 *			[],
 	 *			[Math.PI / 2, Math.PI / 2],
@@ -402,13 +402,13 @@ class Universe {
 	 * @param {number} [classSettings.settings.object.geometry.angles.count=3|4|5] Count of vertices with random position.
 	 * <pre>
 	 * Default values:
-	 *	3 for <b><a href="module-Universe1D.html" target="_blank">Universe1D</a></b> - triangle.
-	 *	4 for <b><a href="module-Universe2D.html" target="_blank">Universe2D</a></b> - pyramid.
-	 *	5 for <b><a href="module-Universe3D.html" target="_blank">Universe3D</a></b> - [pentahedroid]{@link https://en.wikipedia.org/wiki/5-cell}.
+	 *	3 for <b><a href="module-Circle.html" target="_blank">Circle</a></b> - triangle.
+	 *	4 for <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> - pyramid.
+	 *	5 for <b><a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> - [pentahedroid]{@link https://en.wikipedia.org/wiki/5-cell}.
 	 * </pre>
 	 * @param {array} [classSettings.settings.object.geometry.opacity] array of opacities of each vertice. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
 	 * @param {object} [classSettings.settings.object.geometry.indices] Array of <b>indices</b> of edges of universe.
-	 * @param {array|object} [classSettings.settings.object.geometry.indices.edges] Universe edges.
+	 * @param {array|object} [classSettings.settings.object.geometry.indices.edges] HuperSphere edges.
 	 * <pre>
 	 * array - array of edges.
 	 *	Every edge is array of indices of vertices from
@@ -516,7 +516,7 @@ class Universe {
 				for (let i = 0; i < (_this.dimension - 1); i++) unverseValue *= 2 * r;
 
 			}
-			if (unverseValue != sectorsValue) console.error(sUniverse + ': Unverse value = ' + unverseValue + '. Sectors value = ' + sectorsValue);
+			if (unverseValue != sectorsValue) console.error(sHuperSphere + ': Unverse value = ' + unverseValue + '. Sectors value = ' + sectorsValue);
 		
 		}
 		settings.object.geometry.angles = settings.object.geometry.angles || this.defaultAngles();
@@ -572,7 +572,7 @@ class Universe {
 								if (verticeAngles[angleId] != angle) {
 
 									const range = angles.ranges[angleId];
-									if((angle < range.min) || (angle > range.max)) console.error(sUniverse + ': Set angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
+									if((angle < range.min) || (angle > range.max)) console.error(sHuperSphere + ': Set angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
 									
 									verticeAngles[angleId] = angle;
 									//если тут обновлять вселенную, то будет тратиться лишнее время, когда одновременно изменяется несколько вершин
@@ -603,7 +603,7 @@ class Universe {
 						for (let angleId = 0; angleId < verticeAngles.length; angleId++) {
 							
 							const angle = verticeAngles[angleId], range = angles.ranges[angleId];
-							if((angle < range.min) || (angle > range.max)) console.error(sUniverse + ': Vertice angle[' + angleId + '] = ' + angle + ' is out of range from ' + range.min + ' to ' + range.max);
+							if((angle < range.min) || (angle > range.max)) console.error(sHuperSphere + ': Vertice angle[' + angleId + '] = ' + angle + ' is out of range from ' + range.min + ' to ' + range.max);
 
 						}
 						angles.push(verticeAngles);
@@ -632,7 +632,7 @@ class Universe {
 						else _this.project();
 						return true;
 					case 'length':
-						console.warn(sUniverse + ': set geometry.angles.length. Use guiLength instead')
+						console.warn(sHuperSphere + ': set geometry.angles.length. Use guiLength instead')
 						return true;
 						
 				}
@@ -673,14 +673,14 @@ class Universe {
 					range.min = this.altitudeRange.min;//0;
 					range.max = this.altitudeRange.max;//π / 2;
 					break;
-				default: console.error(sUniverse + ': vertice angles ranges. Invalid angleId = ' + angleId);
+				default: console.error(sHuperSphere + ': vertice angles ranges. Invalid angleId = ' + angleId);
 					
 			}
 			angles.ranges.push(range);
 
 		}
 		
-		//angles[0][0] = 10;//error universe.js:548 Universe: Set angle[0] = 10 of the vertice 0 is out of range from -1.5707963267948966 to 1.5707963267948966
+		//angles[0][0] = 10;//error universe.js:548 HuperSphere: Set angle[0] = 10 of the vertice 0 is out of range from -1.5707963267948966 to 1.5707963267948966
 		if (angles.count != undefined)
 			for (let i = angles.length; i < angles.count; i++) angles.pushRandomAngle();
 		settings.object.geometry.position = new Proxy(angles, {
@@ -690,19 +690,19 @@ class Universe {
 				const i = parseInt(name);
 				if (!isNaN(i)) {
 
-					if (i > _position.length) console.error(sUniverse + ': position get. Invalid index = ' + i + ' position.length = ' + _position.length);
+					if (i > _position.length) console.error(sHuperSphere + ': position get. Invalid index = ' + i + ' position.length = ' + _position.length);
 					else if (i === _position.length)
 						settings.object.geometry.angles.pushRandomAngle();
 					const _vertice = _position[i];
 					const angle2Vertice = () => {
 
 						const vertice = _this.angles2Vertice(_vertice), r = classSettings.t;
-						//Эта проверка не проходит для Universe3D
+						//Эта проверка не проходит для HuperSphere3D
 						if (classSettings.debug) {
 
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
-							if (Math.abs((sum - r)) > 4.5e-16) console.error(sUniverse + ': Invalid vertice[' + i + '] sum = ' + sum);
+							if (Math.abs((sum - r)) > 4.5e-16) console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
 							
 						}
 						vertice.forEach((axis, i) => vertice[i] *= r);
@@ -733,7 +733,7 @@ class Universe {
 
 									if (verticeTo.length != vertice.length) {
 
-										console.error(sUniverse + ': vertice.distanceTo. Invalid vertice.length.');
+										console.error(sHuperSphere + ': vertice.distanceTo. Invalid vertice.length.');
 										return;
 										
 									}
@@ -752,7 +752,7 @@ class Universe {
 
 												case 'push': return (edgeId, verticeId) => {
 
-													const sPush = sUniverse + ': Vertice' + (verticeId === undefined ? '' : '[' + verticeId + ']') + '.edges.push(' + edgeId + '):';
+													const sPush = sHuperSphere + ': Vertice' + (verticeId === undefined ? '' : '[' + verticeId + ']') + '.edges.push(' + edgeId + '):';
 
 													if (edges.length >= _this.verticeEdgesLength) {
 
@@ -829,7 +829,7 @@ class Universe {
 							const verticeId = parseInt(name);
 							if (isNaN(verticeId)) {
 
-								console.error(sUniverse + ': Get vertice angles failed. Invalid verticeId = ' + verticeId);
+								console.error(sHuperSphere + ': Get vertice angles failed. Invalid verticeId = ' + verticeId);
 								return;
 								
 							}
@@ -885,7 +885,7 @@ class Universe {
 													const edge = settings.object.geometry.indices.edges[verticeEdges[i]];
 													if (verticeId === edge[0]) return edge[1];
 													if (verticeId === edge[1]) return edge[0];
-													console.error(sUniverse + ': Get oppositeVerticesId failed.');
+													console.error(sHuperSphere + ': Get oppositeVerticesId failed.');
 													return;
 													
 												}
@@ -910,7 +910,7 @@ class Universe {
 							if (!isNaN(i)) {
 								
 								const verticeAngles = angles[i];
-								if (classSettings.debug && ((verticeAngles.length != (_this.dimension - 1)) || (value.length != (_this.dimension - 1)))) console.error(sUniverse + ': Set vertice[' + i + '] angles failed. Invalid angles count.')
+								if (classSettings.debug && ((verticeAngles.length != (_this.dimension - 1)) || (value.length != (_this.dimension - 1)))) console.error(sHuperSphere + ': Set vertice[' + i + '] angles failed. Invalid angles count.')
 								for(let j = 0; j < value.length; j++) verticeAngles[j] = value[j];
 
 							} else angles[name] = value;
@@ -919,7 +919,7 @@ class Universe {
 						}
 					});
 					case 'count': return _position.count === undefined ? _position.length : _position.count;
-					case 'push': return (position) => { console.error(sUniverse + ': deprecated push vertice. Use "settings.object.geometry.angles.pushRandomAngle()" instead.'); };
+					case 'push': return (position) => { console.error(sHuperSphere + ': deprecated push vertice. Use "settings.object.geometry.angles.pushRandomAngle()" instead.'); };
 
 					//for debug
 					case 'test': return () => {
@@ -931,14 +931,14 @@ class Universe {
 							for (let angleId = 0; angleId < verticeAngles.length; angleId++) {
 
 								const angle = verticeAngles[angleId], range = angles.ranges[angleId];
-								if((angle < range.min) || (angle > range.max)) console.error(sUniverse + ': ' + range.angleName + ' angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
+								if((angle < range.min) || (angle > range.max)) console.error(sHuperSphere + ': ' + range.angleName + ' angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
 								
 							}
 							const vertice = settings.object.geometry.position[verticeId], strVerticeId = 'vertice[' + verticeId + ']'
 							_this.TestVertice(vertice, strVerticeId);
 							vertice.edges.forEach(edgeId => {
 
-								if (typeof edgeId !== "number") console.error(sUniverse + ': position.test()', strVerticeId = 'position(' + verticeId + ')' + '. ' + strVerticeId + '. Invalid edgeId = ' + edgeId);
+								if (typeof edgeId !== "number") console.error(sHuperSphere + ': position.test()', strVerticeId = 'position(' + verticeId + ')' + '. ' + strVerticeId + '. Invalid edgeId = ' + edgeId);
 
 							});
 
@@ -957,14 +957,14 @@ class Universe {
 
 					if (value instanceof Array === true) {//для совместимости с Player.getPoints. Туда попадает когда хочу вывести на холст точки вместо ребер и использую дя этого MyPoints вместо ND
 
-						console.warn(sUniverse + ': Set vertice was deprecated. Use set angle instead.')
+						console.warn(sHuperSphere + ': Set vertice was deprecated. Use set angle instead.')
 						const angles = this.vertice2angles(value);
 						if(classSettings.debug) {
 
 							const angles2vertice = this.angles2Vertice(angles);
-							if (angles2vertice.length != value.length) console.error(sUniverse + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
+							if (angles2vertice.length != value.length) console.error(sHuperSphere + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
 							const d = 0;
-							angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sUniverse + ': Set vertice failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
+							angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHuperSphere + ': Set vertice failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
 							
 						}
 						settings.object.geometry.position[i].angles(angles);
@@ -1044,7 +1044,7 @@ class Universe {
 						const sPushEdge = ': Push edge. '
 						if ((vertice0Id >= position.length) || (vertice1Id >= position.length)) {
 
-							console.error(sUniverse + sPushEdge + 'edge[' + vertice0Id + ', ' + vertice1Id + ']. Invalid vertice range from 0 to ' + (position.length - 1));
+							console.error(sHuperSphere + sPushEdge + 'edge[' + vertice0Id + ', ' + vertice1Id + ']. Invalid vertice range from 0 to ' + (position.length - 1));
 							return;
 
 						}
@@ -1054,9 +1054,9 @@ class Universe {
 						setVertice(edge, 1, vertice1Id);
 						if (classSettings.debug) {
 							
-							if (edge.length != 2) console.error(sUniverse + sPushEdge + 'Invalid edge.length = ' + edge.length);
-							else if (edge[0] === edge[1]) console.error(sUniverse + sPushEdge + 'edge = [' + edge + '] Duplicate vertices.');
-							_edges.forEach((edgeCur, i) => { if (((edgeCur[0] === edge[0]) && (edgeCur[1] === edge[1])) || ((edgeCur[0] === edge[1]) && (edgeCur[1] === edge[0]))) console.error(sUniverse + sPushEdge + 'edges[' + i + ']. Duplicate edge[' + edge + ']') });
+							if (edge.length != 2) console.error(sHuperSphere + sPushEdge + 'Invalid edge.length = ' + edge.length);
+							else if (edge[0] === edge[1]) console.error(sHuperSphere + sPushEdge + 'edge = [' + edge + '] Duplicate vertices.');
+							_edges.forEach((edgeCur, i) => { if (((edgeCur[0] === edge[0]) && (edgeCur[1] === edge[1])) || ((edgeCur[0] === edge[1]) && (edgeCur[1] === edge[0]))) console.error(sHuperSphere + sPushEdge + 'edges[' + i + ']. Duplicate edge[' + edge + ']') });
 
 						}
 
@@ -1174,7 +1174,7 @@ class Universe {
 
 			}
 			this.remove(scene);
-			this.removeUniverse = () => {
+			this.removeHuperSphere = () => {
 
 				const object = _this.object();
 				if (nd) nd = undefined;
@@ -1247,7 +1247,7 @@ class Universe {
 					settings.object.geometry.indices = settings.object.geometry.indices || {}
 					settings.object.geometry.indices.edges = settings.object.geometry.indices.edges || {}
 */					
-					return this.newUniverse(
+					return this.newHuperSphere(
 						classSettings.settings.options,
 						{
 	
@@ -1257,7 +1257,7 @@ class Universe {
 							edges: settings.edges === undefined? {
 	
 								project: true,//Если линия создается в виде ребер, то отображать ребра на холсте
-								creationMethod: Universe.edgesCreationMethod.Random,
+								creationMethod: HuperSphere.edgesCreationMethod.Random,
 	
 							} : settings.edges,
 							projectParams: { scene: classSettings.projectParams.scene, },
@@ -1358,7 +1358,7 @@ class Universe {
 										
 										const opt = document.createElement('option'),
 											edge = edges[edgeId];
-										opt.innerHTML = '(' + edgeId + ') ' + verticeId + ', ' + (edge[0] === verticeId ? edge[1] : edge[1] === verticeId ? edge[0] : console.error(sUniverse + ': Vertice edges GUI. Invalid edge vertices: ' + edge));
+										opt.innerHTML = '(' + edgeId + ') ' + verticeId + ', ' + (edge[0] === verticeId ? edge[1] : edge[1] === verticeId ? edge[0] : console.error(sHuperSphere + ': Vertice edges GUI. Invalid edge vertices: ' + edge));
 										opt.setAttribute('value', edgeId);
 										aAngleControls.cEdges.__select.appendChild(opt);
 										
@@ -1576,7 +1576,7 @@ class Universe {
 									_display(aAngleControls.fOppositeVertice.domElement, edgeId === -1 ? false : true);
 									aAngleControls.removeArc = () => {
 
-										if (aAngleControls.arc && aAngleControls.arc.removeUniverse) aAngleControls.arc.removeUniverse();
+										if (aAngleControls.arc && aAngleControls.arc.removeHuperSphere) aAngleControls.arc.removeHuperSphere();
 										aAngleControls.arc = undefined;
 
 									}
@@ -1598,9 +1598,9 @@ class Universe {
 										
 										const sChangeVerticeEdge = ': Change vertice edge. ',
 											edge = edges[edgeId],
-											oppositeVerticeId = edge[0] === aAngleControls.verticeId ? edge[1] : edge[1] === aAngleControls.verticeId ? edge[0] : console.error(sUniverse + sChangeVerticeEdge + 'Invalid edge vertices: ' + edge),
+											oppositeVerticeId = edge[0] === aAngleControls.verticeId ? edge[1] : edge[1] === aAngleControls.verticeId ? edge[0] : console.error(sHuperSphere + sChangeVerticeEdge + 'Invalid edge vertices: ' + edge),
 											oppositeVerticeAngles = position[oppositeVerticeId].angles;
-										if (oppositeVerticeAngles.length != aEdgeAngleControls.length) console.error(sUniverse + sChangeVerticeEdge + 'Invalid opposite vertice angles length = ' + oppositeVerticeAngles.length);
+										if (oppositeVerticeAngles.length != aEdgeAngleControls.length) console.error(sHuperSphere + sChangeVerticeEdge + 'Invalid opposite vertice angles length = ' + oppositeVerticeAngles.length);
 										aEdgeAngleControls.verticeId = oppositeVerticeId;
 										edgeAnglesDefault.length = 0;
 										for (let i = 0; i < oppositeVerticeAngles.length; i++){
@@ -1818,7 +1818,7 @@ class Universe {
 									pushVertice = (vertice) => {
 
 										if (itemSize === undefined) itemSize = vertice.length;
-										else if (itemSize != vertice.length) console.error(sUniverse + ': Middle vertice GUI. Invalid itemSize = ' + itemSize);
+										else if (itemSize != vertice.length) console.error(sHuperSphere + ': Middle vertice GUI. Invalid itemSize = ' + itemSize);
 										vertice.forEach(axis => vertices.push(axis))
 
 										//Каждая вершина должна иметь не меньше 3 координат что бы не поучить ошибку:
@@ -1904,7 +1904,7 @@ class Universe {
 									
 									if (!boPlanes) {
 										
-										if (aAngleControls.planes) aAngleControls.planes.forEach((plane) => plane.removeUniverse())
+										if (aAngleControls.planes) aAngleControls.planes.forEach((plane) => plane.removeHuperSphere())
 										aAngleControls.planes = undefined;
 										return;
 
@@ -1930,7 +1930,7 @@ class Universe {
 											case altitudeId:
 												start = -π; stop = π;//, step = 2;
 												break;
-											default: console.error(sUniverse + ': Planes of rotation of angles. Invalid verticeAngleId = ' + verticeAngleId);
+											default: console.error(sHuperSphere + ': Planes of rotation of angles. Invalid verticeAngleId = ' + verticeAngleId);
 
 										}
 										for (let i = start; i <= stop; i = i + (π / 20))
@@ -1942,7 +1942,7 @@ class Universe {
 											for (let verticeAngleId = 0; verticeAngleId < vertice.length; verticeAngleId++) planeAngle.push(vertice[verticeAngleId]);
 											planeAngle[verticeAngleId] = i;
 
-											if (this.classSettings.debug) console.log(sUniverse + ': ' + settings.object.geometry.angles.ranges[verticeAngleId].angleName + '. VerticeId = ' + planeAngles.length);
+											if (this.classSettings.debug) console.log(sHuperSphere + ': ' + settings.object.geometry.angles.ranges[verticeAngleId].angleName + '. VerticeId = ' + planeAngles.length);
 											planeAngles[planeVerticeId++] = this.vertice2angles(this.angles2Vertice(planeAngle));
 
 										}
@@ -2232,7 +2232,7 @@ class Universe {
 								if (classSettings.debug) {
 									
 									classSettings.debug.logTimestamp('Copy vertices. ', timestamp);
-									this.logUniverse();
+									this.logHuperSphere();
 
 								}
 								options.player.continue();
@@ -2267,14 +2267,14 @@ class Universe {
 				//default vertices
 				if (this.verticesCountMin === undefined) {
 
-					console.error(sUniverse + ': Please define verticesCountMin in your child class.');
+					console.error(sHuperSphere + ': Please define verticesCountMin in your child class.');
 					break;
 
 				}
 				const count = position.count === undefined ? this.verticesCountMin : position.count;
 				if (count < 2) {
 
-					console.error(sUniverse + ': Invalid classSettings.settings.object.geometry.position.count < 2');
+					console.error(sHuperSphere + ': Invalid classSettings.settings.object.geometry.position.count < 2');
 					return;
 
 				}
@@ -2305,7 +2305,7 @@ class Universe {
 
 					})
 					const sectorValueName = _this.probabilityDensity.sectorValueName;
-					if (!sectorValueName) console.error(sUniverse + ': Invalid sectorValueName = ' + sectorValueName);
+					if (!sectorValueName) console.error(sHuperSphere + ': Invalid sectorValueName = ' + sectorValueName);
 					console.table(table, ['count', 'hb', 'ht', 'height',
 						sectorValueName,
 						'density']);
@@ -2420,7 +2420,7 @@ class Universe {
 								//Возможно был пройден полный круг поиска противолположной вершины и ничего найдено не было
 								if (verticeId != oppositeVerticeId) edges.push([verticeId, oppositeVerticeId]);
 
-								//else console.log(sUniverse + '.pushEdges. Opposite vertice was not found.')
+								//else console.log(sHuperSphere + '.pushEdges. Opposite vertice was not found.')
 
 								nextVertice();
 
@@ -2432,7 +2432,7 @@ class Universe {
 
 							});
 							break;
-						default: console.error(sUniverse + ': pushEdges. Invalid classSettings.edges.creationMethod = ' + classSettings.edges.creationMethod);
+						default: console.error(sHuperSphere + ': pushEdges. Invalid classSettings.edges.creationMethod = ' + classSettings.edges.creationMethod);
 
 					}
 
@@ -2447,7 +2447,7 @@ class Universe {
 				break;
 				
 			case 1: indices.edges.pushEdges(); break;//push edges. сначала добавляются ребра а потом уже создаются вершины для них
-			default: console.error(sUniverse + ': Unknown mode: ' + classSettings.mode); return;
+			default: console.error(sHuperSphere + ': Unknown mode: ' + classSettings.mode); return;
 				
 		}
 
@@ -2500,11 +2500,11 @@ class Universe {
 	
 			}
 
-			const fUniverse = options.dat.gui.addFolder(this.name( getLanguageCode )), dat = three.dat;
+			const fHuperSphere = options.dat.gui.addFolder(this.name( getLanguageCode )), dat = three.dat;
 			
 			//vertices
 
-			const fVertices = fUniverse.addFolder(lang.vertices);
+			const fVertices = fHuperSphere.addFolder(lang.vertices);
 			fVertices.add( new PositionController((shift) => { cVerticesCount.setValue(angles.length + shift); },
 				{ settings: { offset: 1, }, min: 1, max: 1000, step: 1, getLanguageCode: options.getLanguageCode}));
 			
@@ -2528,7 +2528,7 @@ class Universe {
 			
 			const objectEdges = { boEdges: ((typeof classSettings.edges) === 'object') || (classSettings.edges === true) ? true : false},
 				setCockie = () => { options.dat.cookie.setObject(_this.cookieName, { edges: classSettings.edges, edgesOld: edgesOld, }); };
-			cEdges = fUniverse.add( objectEdges, 'boEdges' ).onChange((boEdges) => {
+			cEdges = fHuperSphere.add( objectEdges, 'boEdges' ).onChange((boEdges) => {
 
 					if (boEdges) {
 						
@@ -2547,7 +2547,7 @@ class Universe {
 					setCockie();
 				
 				} );
-			const fEdge = fUniverse.addFolder(lang.edge),
+			const fEdge = fHuperSphere.addFolder(lang.edge),
 				objectEdge = { boProject: ((typeof classSettings.edges) === 'object') ? classSettings.edges.project : false},
 				cProject = fEdge.add( objectEdge, 'boProject' ).onChange((boProject) => {
 
@@ -2582,14 +2582,14 @@ Object.freeze(edgesCreationMethod);
  * NearestVertice: Vertices of the edge have nearest position.
  * </pre>
  * */
-Universe.edgesCreationMethod = edgesCreationMethod;
+HuperSphere.edgesCreationMethod = edgesCreationMethod;
 
 /**
  * <a href="../../../commonNodeJS/master/nD/jsdoc/" target="_blank">ND</a>
  * */
-Universe.ND = ND;
+HuperSphere.ND = ND;
 
-export default Universe;
+export default HuperSphere;
 
 const _display = (element, boDisplay) => { element.style.display = boDisplay === false ? 'none' : 'block'; }
 

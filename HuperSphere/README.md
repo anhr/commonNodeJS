@@ -4,9 +4,9 @@ Under construction
 
 Examples:
 
-[1D universe](https://raw.githack.com/anhr/egocentricUniverse/master/Examples/1D.html).
-[2D universe](https://raw.githack.com/anhr/egocentricUniverse/master/Examples/2D.html).
-[3D universe](https://raw.githack.com/anhr/egocentricUniverse/master/Examples/3D.html).
+[Circle](https://raw.githack.com/anhr/egocentricUniverse/master/Examples/circle.html).
+[Sphere](https://raw.githack.com/anhr/egocentricUniverse/master/Examples/sphere.html).
+[HuperSphere](https://raw.githack.com/anhr/egocentricUniverse/master/Examples/huperSphere.html).
 
  ## Have a job for me?
 Please read [About Me](https://anhr.github.io/AboutMe/).

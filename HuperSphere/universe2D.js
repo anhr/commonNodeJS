@@ -49,7 +49,7 @@ class Universe2D extends Universe1D {
 		}
 
 	}
-	newUniverse(options, classSettings) { return new Universe2D(options, classSettings); }
+	newHuperSphere(options, classSettings) { return new Universe2D(options, classSettings); }
 	get cookieName(){ return '2DUniverse' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
 	get probabilityDensity() {
 
@@ -91,7 +91,7 @@ class Universe2D extends Universe1D {
 		
 		const lang = {
 
-			name: "2D universe",
+			name: "HuperSphere",
 
 		};
 
@@ -101,7 +101,7 @@ class Universe2D extends Universe1D {
 
 			case 'ru'://Russian language
 
-				lang.name = 'Двумерная вселенная';
+				lang.name = 'Сфера';
 
 				break;
 

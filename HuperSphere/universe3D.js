@@ -54,7 +54,7 @@ class Universe3D extends Universe2D {
 		}
 		
 	}
-	newUniverse(options, classSettings) { return new Universe3D(options, classSettings); }
+	newHuperSphere(options, classSettings) { return new Universe3D(options, classSettings); }
 	get cookieName() { return '3DUniverse' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
 	get altitudeRange() { return {
 		angleName: 'Altitude',
@@ -128,7 +128,7 @@ class Universe3D extends Universe2D {
 		
 		const lang = {
 
-			name: "3D universe",
+			name: "Hupersphere",
 
 		};
 
@@ -138,7 +138,7 @@ class Universe3D extends Universe2D {
 
 			case 'ru'://Russian language
 
-				lang.name = 'Трехмерная вселенная';
+				lang.name = 'Гиперсфера';
 
 				break;
 

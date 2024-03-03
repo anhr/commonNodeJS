@@ -1,7 +1,7 @@
 /**
- * @module Universe1D
- * @description 1 dimensional universe.
- * All the vertices of the Universe1D form a circle.
+ * @module Circle
+ * @description 1 dimensional hupersphere.
+ * All the vertices form a circle.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -15,12 +15,12 @@
 */
 
 
-import Universe from './universe.js';
+import HuperSphere from './huperSphere.js';
 import three from '../three.js'
 
-const sUniverse1D = 'Universe1D';
+const sCircle = 'Circle';
 
-class Universe1D extends Universe {
+class Circle extends HuperSphere {
 
 	//base methods
 
@@ -34,7 +34,7 @@ class Universe1D extends Universe {
 		}
 
 	}
-	newUniverse(options, classSettings) { return new Universe1D(options, classSettings); }
+	newHuperSphere(options, classSettings) { return new Circle(options, classSettings); }
 	get cookieName(){ return '1DUniverse' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
 	get probabilityDensity(){
 		
@@ -70,7 +70,7 @@ class Universe1D extends Universe {
 		
 		const lang = {
 
-			name: "1D universe",
+			name: "Circle",
 
 		};
 
@@ -80,7 +80,7 @@ class Universe1D extends Universe {
 
 			case 'ru'://Russian language
 
-				lang.name = 'Одномерная вселенная';
+				lang.name = 'Окружность';
 
 				break;
 
@@ -88,10 +88,10 @@ class Universe1D extends Universe {
 		return lang.name;
 		
 	}
-	logUniverse1D() {
+	logCircle() {
 
 		if (!this.classSettings.debug) return;
-		this.logUniverse();
+		this.logHuperSphere();
 		
 	}
 
@@ -128,17 +128,17 @@ class Universe1D extends Universe {
 	get verticesCountMin() { return 3; }
 
 	/**
-	 * 1 dimensional universe.
-	 * All the vertices of the Universe1D form a circle.
+	 * 1 dimensional hupersphere.
+	 * All the vertices form a circle.
 	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
-	 * @param {object} [classSettings] <b>Universe1D</b> class settings. See <a href="./module-Universe-Universe.html" target="_blank">Universe classSettings</a>.
+	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.
 	 **/
 	constructor(options, classSettings) {
 
 		super(options, classSettings);
-		this.logUniverse1D();
+		this.logCircle();
 
 	}
 
 }
-export default Universe1D;
+export default Circle;
