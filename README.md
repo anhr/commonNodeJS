@@ -48,7 +48,9 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 * guiSelectPoint.js GuiSelectPoint is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for select a point from the mesh.
 [GuiSelectPoint API](https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/index.html).
-* [HuperSphere](https://en.wikipedia.org/wiki/N-sphere).
+* [HuperSphere](https://en.wikipedia.org/wiki/N-sphere). [HuperSphere API](https://raw.githack.com/anhr/commonNodeJS/master/HuperSphere/jsdoc/index.html)
+	* Examples:
+	 * [Circle](https://raw.githack.com/anhr/commonNodeJS/master/HuperSphere/Examples/circle.html)
 * Intersections. A class for create an intersection lines for graphic objects.
 [github](../../tree/master/intersections).
 [intersections API](https://raw.githack.com/anhr/commonNodeJS/master/intersections/jsdoc/index.html).
