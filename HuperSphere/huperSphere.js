@@ -493,6 +493,7 @@ class HuperSphere {
 				*/
 			
 		];
+		classSettings.debug = classSettings.debug || {};
 		const probabilityDensity = classSettings.debug.probabilityDensity;
 		if (probabilityDensity) {
 			
