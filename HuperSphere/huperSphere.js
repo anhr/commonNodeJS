@@ -1628,14 +1628,15 @@ class HuperSphere {
 										aAngleControls.cross.position.copy(oppositeVertice);
 										if (aAngleControls.cross.position.z === undefined) aAngleControls.cross.position.z = 0;
 										aAngleControls.oppositeVerticeId = oppositeVerticeId;
-										
+										aAngleControls.MAX_POINTS = 1 + 2 * 2 * 2 * 2;// * 2 * 2 * 2;//17;//количество вершин дуги когда угол между крайними вершинами дуги 180 градусов. https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
+
 										//Create arc between edge's vertices i.e between vertice and opposite vertice.
 										aAngleControls.createArc = () => {
 
 											let verticeId = 0;
-											const MAX_POINTS = 1 + 2 * 2 * 2 * 2;// * 2 * 2 * 2;//17;//количество вершин дуги когда угол между крайними вершинами дуги 180 градусов. https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
-											//for (let i = 0; i < maxLevel - 1; i++) MAX_POINTS *= 2;
-											//MAX_POINTS++;
+//											const MAX_POINTS = 1 + 2 * 2 * 2 * 2;// * 2 * 2 * 2;//17;//количество вершин дуги когда угол между крайними вершинами дуги 180 градусов. https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
+											//for (let i = 0; i < maxLevel - 1; i++) aAngleControls.MAX_POINTS *= 2;
+											//aAngleControls.MAX_POINTS++;
 											const arcAngles = [],//массив вершин в полярной системе координат, которые образуют дугу
 												//если не копировать каждый угол в отделности, то в новой вершине останутся старые ребра
 												copyVertice = (vertice) => {
@@ -1654,7 +1655,7 @@ class HuperSphere {
 												cd = 1 / Math.sin(d),//Поправка для координат вершин что бы они равномерно располагались по дуге
 												vertice = position[aAngleControls.verticeId], oppositeVertice = position[aAngleControls.oppositeVerticeId],
 												distance = vertice.arcTo(oppositeVertice),
-												arcCount = distance * ( MAX_POINTS - 1 ) / π;
+												arcCount = distance * (aAngleControls.MAX_POINTS - 1) / π;
 											//Не получилось равномерно разделить дугу на части.
 											//Если начало и конец дуги расположены напротив друг друга на окружности или на сфере или на 4D hypersphere
 											//то все вершины стягиваются к началу и концу дуги за исключением вершины, расположенной посередине дуги
@@ -1738,31 +1739,36 @@ class HuperSphere {
 																
 															} else {
 
-																const arcEdges = [];
-																for (let i = 0; i < (MAX_POINTS - 1); i++) arcEdges.push([i, i + 1]);
-																aAngleControls.arc = this.line({
-					
-																	cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек вселенной
-																	//edges: false,
-																	object : {
-																		
-																		name: lang.arc,
-																		geometry: {
-										
-																			MAX_POINTS: MAX_POINTS,
-																			angles: arcAngles,
-																			//opacity: 0.3,
-																			indices: {
-										
-																				edges: arcEdges,
-					
-																			}
-																			
-																		}
-					
-																	},
+																if (this.child) this.child.arc(aAngleControls, lang, arcAngles);
+																else {
 																	
-																});
+																	const arcEdges = [];
+																	for (let i = 0; i < (aAngleControls.MAX_POINTS - 1); i++) arcEdges.push([i, i + 1]);
+																	aAngleControls.arc = this.line({
+						
+																		cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек вселенной
+																		//edges: false,
+																		object : {
+																			
+																			name: lang.arc,
+																			geometry: {
+											
+																				MAX_POINTS: aAngleControls.MAX_POINTS,
+																				angles: arcAngles,
+																				//opacity: 0.3,
+																				indices: {
+											
+																					edges: arcEdges,
+						
+																				}
+																				
+																			}
+						
+																		},
+																		
+																	});
+
+																}
 																
 															}
 															console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object().geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object().geometry.drawRange.count + ' Vertices count = ' + verticeId);
