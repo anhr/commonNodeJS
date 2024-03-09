@@ -35,7 +35,7 @@ class Circle extends HuperSphere {
 
 	}
 	newHuperSphere(options, classSettings) { return new Circle(options, classSettings); }
-	get cookieName(){ return '1DUniverse' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
+	get cookieName(){ return 'Circle' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
 	get probabilityDensity(){
 		
 		return {

@@ -1,7 +1,7 @@
 /**
- * @module Universe2D
- * @description 2 dimensional universe.
- * All the vertices of the Universe2D form a sphere.
+ * @module Sphere
+ * @description 2 dimensional hupersphere.
+ * All the vertices form a sphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -15,14 +15,13 @@
 */
 
 
-import Universe1D from './universe1D.js';
-//import ProgressBar from '../../commonNodeJS/master/ProgressBar/ProgressBar.js'
-import three from '../../commonNodeJS/master/three.js'
+import Circle from './Circle.js';
+import three from '../three.js'
 
-const sUniverse2D = 'Universe2D',
+const sSphere = 'Sphere',
 	π = Math.PI;
 
-class Universe2D extends Universe1D {
+class Sphere extends Circle {
 
 	//base methods
 
@@ -33,7 +32,7 @@ class Universe2D extends Universe1D {
 
 			case latitudeId: planeGeometry(longitudeId); break;
 			case longitudeId: planeGeometry( latitudeId); break;
-			default: console.error(sUniverse2D + ': Update planes. Invalid changedAngleId = ' + changedAngleId);
+			default: console.error(sSphere + ': Update planes. Invalid changedAngleId = ' + changedAngleId);
 				
 		}
 		
@@ -49,8 +48,8 @@ class Universe2D extends Universe1D {
 		}
 
 	}
-	newHuperSphere(options, classSettings) { return new Universe2D(options, classSettings); }
-	get cookieName(){ return '2DUniverse' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
+	newHuperSphere(options, classSettings) { return new Sphere(options, classSettings); }
+	get cookieName() { return 'Sphere' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
 	get probabilityDensity() {
 
 		return {
@@ -109,10 +108,10 @@ class Universe2D extends Universe1D {
 		return lang.name;
 		
 	}
-	logUniverse2D() {
+	logSphere() {
 
 		if (!this.classSettings.debug) return;
-		this.logUniverse();
+		this.logHuperSphere();
 		
 	}
 
@@ -135,17 +134,17 @@ class Universe2D extends Universe1D {
 	get verticesCountMin() { return 4; }
 
 	/**
-	 * 2 dimensional universe.
-	 * All the vertices of the Universe2D form a sphere.
+	 * 2 dimensional hupersphere.
+	 * All the vertices form a sphere.
 	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
-	 * @param {object} [classSettings] <b>Universe1D</b> class settings. See <a href="./module-Universe-Universe.html" target="_blank">Universe classSettings</a>.
+	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.
 	 **/
 	constructor(options, classSettings) {
 
-		classSettings.continue = () => this.logUniverse2D();
+		classSettings.continue = () => this.logSphere();
 		super(options, classSettings);
 
 	}
 
 }
-export default Universe2D;
+export default Sphere;

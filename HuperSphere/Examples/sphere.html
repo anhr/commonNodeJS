@@ -7,11 +7,11 @@
 
 	<meta name="author" content="Andrej Hristoliubov https://github.com/anhr">
 	<!--<link type="text/css" rel="stylesheet" href="https://threejs.org/examples/main.css">-->
-	<link type="text/css" rel="stylesheet" href="../../../three.js/dev/examples/main.css">
+	<link type="text/css" rel="stylesheet" href="../../../../three.js/dev/examples/main.css">
 
 	<!--
-	<script src="../../../three.js/dev/build/three.js"></script>
-	<script src="../../../three.js/dev/build/three.min.js"></script>
+	<script src="../../../../three.js/dev/build/three.js"></script>
+	<script src="../../../../three.js/dev/build/three.min.js"></script>
 	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>
 	<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>
 	<script src="https://threejs.org/build/three.js"></script>
@@ -27,19 +27,19 @@
 
 	<script type="module">
 
-		import * as THREE from '../../../three.js/dev/build/three.module.js';
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
 		//import * as THREE from 'https://threejs.org/build/three.module.js';
 		//import * as THREE from 'https://raw.githack.com/anhr/three.js/dev/build/three.module.js';
 
-		import MyThree from '../../../commonNodeJS/master/myThree/myThree.js';
-		//import MyThree from '../../../commonNodeJS/master/myThree/build/myThree.module.js';
-		//import MyThree from '../../../commonNodeJS/master/myThree/build/myThree.module.min.js';
+		import MyThree from '../../myThree/myThree.js';
+		//import MyThree from '../../myThree/build/myThree.module.js';
+		//import MyThree from '../../myThree/build/myThree.module.min.js';
 		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/myThree.js';
 		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/myThree.module.js';
 		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/myThree.module.min.js';
 		MyThree.three.THREE = THREE;
 
-		import Universe2D from '../universe2D.js';
+		import Sphere from '../sphere.js';
 
 
 		new MyThree( (scene, options) => {
@@ -50,7 +50,7 @@
 			for (let angleId = 0; angleId < anglesCount; angleId++) angles.push([angle * angleId, angle * angleId * angleId]);
 			*/
 			
-			const universe = new Universe2D(options,
+			const universe = new Sphere(options,
 			{
 
 				/*
@@ -64,7 +64,7 @@
 				edges: {
 
 					//project: false,//Doesn't project edges onto canvas
-					creationMethod: Universe2D.edgesCreationMethod.Random,
+					creationMethod: Sphere.edgesCreationMethod.Random,
 					
 				},
 				//edges: false,
@@ -203,7 +203,7 @@
 			//axesHelper: false,
 			//orbitControls: { enableRotate: false, },
 			//dat: { guiSelectPoint: { point: (options, dat, fMesh) => { return new Sphere.ND.gui(options, dat, fMesh); }, }, },
-			dat: { guiSelectPoint: { point: (options, dat, fMesh) => { return new Universe2D.ND.gui(options, dat, fMesh); }, }, },
+			dat: { guiSelectPoint: { point: (options, dat, fMesh) => { return new Sphere.ND.gui(options, dat, fMesh); }, }, },
 			//camera: { position: new THREE.Vector3( 0, 0, 2 ) },
 			//stereoEffect: false,
 			//canvasMenu: false,
