@@ -2087,9 +2087,10 @@ class ND extends myObject {
 
 		function create3DObject( geometry, settings3D = {} ) {
 
+			let nD;
 			if ( !geometry.D3 ) {
 
-				const nD = new ND( n, {
+				nD = new ND( n, {
 					
 					plane: true,
 					object: { geometry: geometry, } 
@@ -2097,7 +2098,7 @@ class ND extends myObject {
 				} );
 				geometry = nD.geometry;
 				
-			}
+			} else nD = _ND;
 			if ( geometry.position.length === 0 ) return;
 			const color = settings3D.color || 'white';//0xffffff
 			geometry.D3.color = color;
@@ -2116,16 +2117,18 @@ class ND extends myObject {
 				)
 			)
 				settings.object.geometry.colors = indices3D.colors;
-			
-			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
+
 			const pointLength = geometry.D3.points[0].w === undefined ? 3 : 4,
-				buffer = new THREE.BufferGeometry(),
-				MAX_POINTS = settings.object.geometry.MAX_POINTS,
-				pointsLength = geometry.D3.points.length,
-				positions = new Float32Array( ( MAX_POINTS === undefined ? pointsLength : MAX_POINTS) * pointLength );
+				buffer = new THREE.BufferGeometry();
+
+			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
+			const MAX_POINTS = settings.object.geometry.MAX_POINTS,
+				pointsLength = geometry.D3.points.length;
 			if ( MAX_POINTS != undefined ) buffer.setDrawRange( 0, pointsLength * 2 - 1);// * pointLength );//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
-			buffer.setAttribute( 'position', new THREE.BufferAttribute( positions, pointLength ) );
-			for( let i = 0; i < geometry.D3.points.length; i++ ) _ND.setPositionAttributeFromPoint( i, buffer.attributes );
+//			if ( MAX_POINTS != undefined ) buffer.setDrawRange( 0, pointsLength );
+			const positions = new Float32Array( ( MAX_POINTS === undefined ? pointsLength : MAX_POINTS) * pointLength );
+			buffer.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, pointLength ) );
+			for( let i = 0; i < geometry.D3.points.length; i++ ) nD.setPositionAttributeFromPoint( i, buffer.attributes );
 //			buffer.setFromPoints( geometry.D3.points, pointLength );
 //			const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points, pointLength );
 			
@@ -2235,7 +2238,7 @@ class ND extends myObject {
 			scene.add( object );
 
 //			object.userData.setPositionAttribute = ( i ) => { _ND.setPositionAttribute( i ); }
-			object.userData.myObject = _ND;
+			object.userData.myObject = nD;//_ND;
 			object.userData.geometry = geometry.geometry;
 			object.userData.onMouseDown = function ( intersection ) {
 

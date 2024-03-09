@@ -56,7 +56,8 @@ class myObject {
 */
 		this.setPositionAttributeFromPoint = ( i, attributes ) => {
 
-			const vertice = settings.object.geometry.position[i],
+			const position = settings.object.geometry.position[i],
+				vertice = position.positionWorld || position,
 				itemSize = attributes.position.itemSize;
 			for (let j = 0; j < itemSize; j++) 
 				attributes.position.array [j + i * itemSize] = vertice[j];
