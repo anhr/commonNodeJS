@@ -325,7 +325,7 @@ class HuperSphere {
 	 *	false - Doesn't create edges to reduce the creation time of the universe
 	 * </pre>
 	 * @param {boolean} [classSettings.edges.project=true] false - Doesn't project edges onto canvas
-	 * @param {enum} [classSettings.edges.creationMethod=edgesCreationMethod.NearestVertice] method for creating edges. See <a href="./module-HuperSphere-HuperSphere.html#.edgesCreationMethod" target="_blank">edgesCreationMethod</a>
+	 * @param {enum} [classSettings.edges.creationMethod=edgesCreationMethod.Random] method for creating edges. See <a href="./module-HuperSphere-HuperSphere.html#.edgesCreationMethod" target="_blank">edgesCreationMethod</a>
 	 * @param {object} [classSettings.settings] The following settings are available
 	 * @param {object} [classSettings.settings.object] HuperSphere object.
 	 * @param {String} [classSettings.settings.object.name] name of universe.
@@ -2340,7 +2340,7 @@ class HuperSphere {
 
 					}
 
-					if (classSettings.edges.creationMethod === undefined) classSettings.edges.creationMethod = edgesCreationMethod.NearestVertice;
+					if (classSettings.edges.creationMethod === undefined) classSettings.edges.creationMethod = edgesCreationMethod.Random;//.NearestVertice;
 					switch (classSettings.edges.creationMethod) {
 
 						case edgesCreationMethod.Random:
