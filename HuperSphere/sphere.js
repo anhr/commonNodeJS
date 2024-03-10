@@ -15,7 +15,7 @@
 */
 
 
-import Circle from './Circle.js';
+import Circle from './circle.js';
 import three from '../three.js'
 
 const sSphere = 'Sphere',
