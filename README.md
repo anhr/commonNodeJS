@@ -52,6 +52,7 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 	* Examples:
 	 * [Circle](https://raw.githack.com/anhr/commonNodeJS/master/HuperSphere/Examples/circle.html)
 	 * [Sphere](https://raw.githack.com/anhr/commonNodeJS/master/HuperSphere/Examples/sphere.html)
+	 * [Sphere](https://raw.githack.com/anhr/commonNodeJS/master/HuperSphere/Examples/huperSphere.html)
 * Intersections. A class for create an intersection lines for graphic objects.
 [github](../../tree/master/intersections).
 [intersections API](https://raw.githack.com/anhr/commonNodeJS/master/intersections/jsdoc/index.html).
