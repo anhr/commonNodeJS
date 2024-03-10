@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: universe2D.js</title>
+    <title>JSDoc: Source: sphere.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: universe2D.js</h1>
+    <h1 class="page-title">Source: sphere.js</h1>
 
     
 
@@ -27,9 +27,9 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @module Universe2D
- * @description 2 dimensional universe.
- * All the vertices of the Universe2D form a sphere.
+ * @module Sphere
+ * @description 2 dimensional hupersphere.
+ * All the vertices form a sphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -43,14 +43,26 @@
 */
 
 
-import Universe1D from './universe1D.js';
-//import ProgressBar from '../../commonNodeJS/master/ProgressBar/ProgressBar.js'
-import three from '../../commonNodeJS/master/three.js'
+import Circle from './circle.js';
+import three from '../three.js'
 
-const sUniverse2D = 'Universe2D',
+const sSphere = 'Sphere',
 	π = Math.PI;
 
-class Universe2D extends Universe1D {
+class Sphere extends Circle {
+
+	/**
+	 * 2 dimensional hupersphere.
+	 * All the vertices form a sphere.
+	 * @param {Options} options See &lt;a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
+	 * @param {object} [classSettings] &lt;b>Circle&lt;/b> class settings. See &lt;a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings&lt;/a>.
+	 **/
+	constructor(options, classSettings) {
+
+		classSettings.continue = () => this.logSphere();
+		super(options, classSettings);
+
+	}
 
 	//base methods
 
@@ -61,7 +73,7 @@ class Universe2D extends Universe1D {
 
 			case latitudeId: planeGeometry(longitudeId); break;
 			case longitudeId: planeGeometry( latitudeId); break;
-			default: console.error(sUniverse2D + ': Update planes. Invalid changedAngleId = ' + changedAngleId);
+			default: console.error(sSphere + ': Update planes. Invalid changedAngleId = ' + changedAngleId);
 				
 		}
 		
@@ -77,8 +89,8 @@ class Universe2D extends Universe1D {
 		}
 
 	}
-	newHuperSphere(options, classSettings) { return new Universe2D(options, classSettings); }
-	get cookieName(){ return '2DUniverse' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
+	newHuperSphere(options, classSettings) { return new Sphere(options, classSettings); }
+	get cookieName() { return 'Sphere' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
 	get probabilityDensity() {
 
 		return {
@@ -137,10 +149,10 @@ class Universe2D extends Universe1D {
 		return lang.name;
 		
 	}
-	logUniverse2D() {
+	logSphere() {
 
 		if (!this.classSettings.debug) return;
-		this.logUniverse();
+		this.logHuperSphere();
 		
 	}
 
@@ -162,21 +174,8 @@ class Universe2D extends Universe1D {
 	get dimension() { return 3; }//space dimension
 	get verticesCountMin() { return 4; }
 
-	/**
-	 * 2 dimensional universe.
-	 * All the vertices of the Universe2D form a sphere.
-	 * @param {Options} options See &lt;a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
-	 * @param {object} [classSettings] &lt;b>Universe1D&lt;/b> class settings. See &lt;a href="./module-Universe-Universe.html" target="_blank">Universe classSettings&lt;/a>.
-	 **/
-	constructor(options, classSettings) {
-
-		classSettings.continue = () => this.logUniverse2D();
-		super(options, classSettings);
-
-	}
-
 }
-export default Universe2D;
+export default Sphere;
 </code></pre>
         </article>
     </section>
@@ -187,13 +186,13 @@ export default Universe2D;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HuperSphere.html">HuperSphere</a></li><li><a href="module-Universe2D.html">Universe2D</a></li><li><a href="module-Universe3D.html">Universe3D</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HuperSphere-HuperSphere.html">HuperSphere</a></li><li><a href="module-Universe2D-Universe2D.html">Universe2D</a></li><li><a href="module-Universe3D-Universe3D.html">Universe3D</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HuperSphere.html">HuperSphere</a></li><li><a href="module-HuperSphere3D.html">HuperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HuperSphere3D-HuperSphere3D.html">HuperSphere3D</a></li><li><a href="module-HuperSphere-HuperSphere.html">HuperSphere</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon Mar 04 2024 07:22:09 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sun Mar 10 2024 11:43:48 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

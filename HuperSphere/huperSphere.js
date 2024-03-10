@@ -45,7 +45,7 @@ class HuperSphere {
 
 	/**
 	 * Base class for n dimensional universe.
-	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
+	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>HuperSphere</b> class settings.
 	 * @param {object} [classSettings.intersection] HuperSphere intersection.
 	 * <pre>

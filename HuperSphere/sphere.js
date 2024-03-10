@@ -26,7 +26,7 @@ class Sphere extends Circle {
 	/**
 	 * 2 dimensional hupersphere.
 	 * All the vertices form a sphere.
-	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
+	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.
 	 **/
 	constructor(options, classSettings) {
