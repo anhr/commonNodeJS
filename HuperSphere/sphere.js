@@ -1,6 +1,6 @@
 /**
  * @module Sphere
- * @description 2 dimensional hupersphere.
+ * @description 2 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
  * All the vertices form a sphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -24,7 +24,7 @@ const sSphere = 'Sphere',
 class Sphere extends Circle {
 
 	/**
-	 * 2 dimensional hupersphere.
+	 * 2 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * All the vertices form a sphere.
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.

@@ -1,6 +1,6 @@
 /**
  * @module HuperSphere
- * @description Base class for n dimensional hupersphere.
+ * @description Base class for n dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -44,7 +44,7 @@ const sHuperSphere = 'HuperSphere', sOverride = sHuperSphere + ': Please overrid
 class HuperSphere {
 
 	/**
-	 * Base class for n dimensional universe.
+	 * Base class for n dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>HuperSphere</b> class settings.
 	 * @param {object} [classSettings.intersection] HuperSphere intersection.
@@ -60,37 +60,37 @@ class HuperSphere {
 	 *	For HuperSphere <b>position</b> is radius of the intersection sphere.
 	 * </pre>
 	 * @param {number|string} [classSettings.intersection.color=0x0000FF] Color of the intersector. Example: 'red'.
-	 * @param {object} [classSettings.projectParams] Parameters of project the universe onto the canvas.
+	 * @param {object} [classSettings.projectParams] Parameters of project the hupersphere onto the canvas.
 	 * @param {THREE.Scene} classSettings.projectParams.scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
 	 * @param {object} [classSettings.projectParams.params={}] The following parameters are available
-	 * @param {object} [classSettings.projectParams.params.center={x: 0.0, y: 0.0, z: 0.0}] center of the universe
+	 * @param {object} [classSettings.projectParams.params.center={x: 0.0, y: 0.0, z: 0.0}] center of the hupersphere
 	 * @param {float} [classSettings.projectParams.params.center.x=0.0] X axis of the center
 	 * @param {float} [classSettings.projectParams.params.center.y=0.0] Y axis of the center
 	 * @param {float} [classSettings.projectParams.params.center.z=0.0] Y axis of the center
 	 * @param {float} [classSettings.t=1.0] HuperSphere start time. Time is the radius of the HuperSphere.
 	 * @param {boolean|object} [classSettings.edges={}] HuperSphere edges
 	 * <pre>
-	 *	false - Doesn't create edges to reduce the creation time of the universe
+	 *	false - Doesn't create edges to reduce the creation time of the hupersphere
 	 * </pre>
 	 * @param {boolean} [classSettings.edges.project=true] false - Doesn't project edges onto canvas
 	 * @param {enum} [classSettings.edges.creationMethod=edgesCreationMethod.Random] method for creating edges. See <a href="./module-HuperSphere-HuperSphere.html#.edgesCreationMethod" target="_blank">edgesCreationMethod</a>
 	 * @param {object} [classSettings.settings] The following settings are available
 	 * @param {object} [classSettings.settings.object] HuperSphere object.
-	 * @param {String} [classSettings.settings.object.name] name of universe.
+	 * @param {String} [classSettings.settings.object.name] name of hupersphere.
 	 * @param {String|number} [classSettings.settings.object.color='lime'] color of edges or vertices.
 	 * <pre>
 	 * String - color name. See list of available color names in the <b>_colorKeywords</b> object in the [Color.js]{@link https://github.com/mrdoob/three.js/blob/dev/src/math/Color.js} file.
 	 * number - color [Hex triplet]{@link https://en.wikipedia.org/wiki/Web_colors#Hex_triplet}. Example: 0x0000ff - blue color.
 	 * <pre>
 	 * @param {object} [classSettings.settings.object.geometry] HuperSphere geometry.
-	 * @param {array|object} [classSettings.settings.object.geometry.angles] n-dimensional universe vertice angles.
+	 * @param {array|object} [classSettings.settings.object.geometry.angles] n-dimensional hupersphere vertice angles.
 	 * <pre>
 	 * array - array of vertex angles.
 	 *	Every item of array is n-dimensional array of vertex angles.
 	 *	
 	 *	All the vertices of the <b><a href="module-HuperSphere1D.html" target="_blank">Circle</a></b> form a circle.
 	 *	For <b><a href="module-Circle.html" target="_blank">Circle</a></b> every vertice is array of one angle.
-	 *		Vertex angle is the longitude of the circle of the universe in the range from <b>- π</b> to <b>π</b>.
+	 *		Vertex angle is the longitude of the circle of the hupersphere in the range from <b>- π</b> to <b>π</b>.
 	 *		Vertex angle is angle of rotation around of <b>Z</b> axis in 3D space.
 	 *		Angle is begin from <b>X = 0, Y = 1</b>.
 	 *		Every vertex is <b>[
@@ -106,10 +106,10 @@ class HuperSphere {
 	 *		
 	 *	All the vertices of the <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> form a sphere.
 	 *	For <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> every vertice is array of two angles.
-	 *		The first vertex angle is the latitude of the sphere of the universe in the range from <b>- π / 2</b> to <b>π / 2</b>.
+	 *		The first vertex angle is the latitude of the sphere of the hupersphere in the range from <b>- π / 2</b> to <b>π / 2</b>.
 	 *		Zero latitude is located at the equator.
 	 *		
-	 *		The second vertex angle is the longitude of the sphere of the universe in the range from <b>- π</b> to <b>π</b>.
+	 *		The second vertex angle is the longitude of the sphere of the hupersphere in the range from <b>- π</b> to <b>π</b>.
 	 *		The second vertex angle is angle of rotation of the cross section around of <b>Y</b> axis.
 	 *		
 	 *		Example of Sphere with 4 vertices is pyramid:
@@ -124,13 +124,13 @@ class HuperSphere {
 	 *		
 	 *	All the vertices of the <a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> form a [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 *	For <b><a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> every vertice is array of three angles.
-	 *		The first vertex angle is the altitude of the hupersphere of the universe in the range from <b>0</b> to <b>π / 2</b>.
+	 *		The first vertex angle is the altitude of the hupersphere of the hupersphere in the range from <b>0</b> to <b>π / 2</b>.
 	 *		Zero altitude is located at the center of the hupersphere.
 	 *		
-	 *		The second vertex angle is the latitude of the hupersphere of the universe in the range from <b>- π / 2</b> to <b>π / 2</b>.
+	 *		The second vertex angle is the latitude of the hupersphere of the hupersphere in the range from <b>- π / 2</b> to <b>π / 2</b>.
 	 *		Zero latitude is located at the equator.
 	 *		
-	 *		The third vertex angle is the longitude of the hupersphere of the universe in the range from <b>- π</b> to <b>π</b>.
+	 *		The third vertex angle is the longitude of the hupersphere of the hupersphere in the range from <b>- π</b> to <b>π</b>.
 	 *		The third vertex angle is angle of rotation of the cross section around of <b>Y</b> axis.
 	 *		
 	 *		Example of HuperSphere with 5 vertices is [pentahedroid]{@link https://en.wikipedia.org/wiki/5-cell}:
@@ -155,7 +155,7 @@ class HuperSphere {
 	 *	5 for <b><a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> - [pentahedroid]{@link https://en.wikipedia.org/wiki/5-cell}.
 	 * </pre>
 	 * @param {array} [classSettings.settings.object.geometry.opacity] array of opacities of each vertice. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
-	 * @param {object} [classSettings.settings.object.geometry.indices] Array of <b>indices</b> of edges of universe.
+	 * @param {object} [classSettings.settings.object.geometry.indices] Array of <b>indices</b> of edges of hupersphere.
 	 * @param {array|object} [classSettings.settings.object.geometry.indices.edges] HuperSphere edges.
 	 * <pre>
 	 * array - array of edges.
@@ -170,7 +170,7 @@ class HuperSphere {
 	 *	true - Diagnoses your code and display detected errors to console.
 	 *	object - Diagnoses your code and display detected errors to console.
 	 * </pre>
-	 * @param {boolean|Array} [classSettings.debug.probabilityDensity=[]] Probability density of distribution of vertices over the surface of the universe.
+	 * @param {boolean|Array} [classSettings.debug.probabilityDensity=[]] Probability density of distribution of vertices over the surface of the hupersphere.
 	 * <pre>
 	 *	false - do not calculate probability density.
 	 *	[] - calculate probability density.
@@ -182,9 +182,9 @@ class HuperSphere {
 	 * and display detected errors to console.
 	 * </pre>
 	 * @param {boolean} [classSettings.debug.middleVertice=true] Log middle vertice.
-	 * @param {function} [classSettings.continue] Callback function that called after universe edges was created.
-	 * @param {boolean} [classSettings.boRemove] false - do not delete the previous universe while projecting a new universe on scene.
-	 * @param {boolean} [classSettings.boGui] false - do not include universe GUI.
+	 * @param {function} [classSettings.continue] Callback function that called after hupersphere edges was created.
+	 * @param {boolean} [classSettings.boRemove] false - do not delete the previous hupersphere while projecting a new hupersphere on scene.
+	 * @param {boolean} [classSettings.boGui] false - do not include hupersphere GUI.
 	 **/
 	constructor(options, classSettings = {}) {
 
@@ -429,7 +429,7 @@ class HuperSphere {
 
 		}
 
-		//angles[0][0] = 10;//error universe.js:548 HuperSphere: Set angle[0] = 10 of the vertice 0 is out of range from -1.5707963267948966 to 1.5707963267948966
+		//angles[0][0] = 10;//error huperSphere.js:548 HuperSphere: Set angle[0] = 10 of the vertice 0 is out of range from -1.5707963267948966 to 1.5707963267948966
 		if (angles.count != undefined)
 			for (let i = angles.length; i < angles.count; i++) angles.pushRandomAngle();
 		settings.object.geometry.position = new Proxy(angles, {
@@ -860,10 +860,10 @@ class HuperSphere {
 		//Эту функцию надо содать до вызова this.pushEdges(); потому что когда используется MyPoints для вывода на холст вершин вместо ребер,
 		//вызывается this.project вместо this.pushEdges()
 		/**
-		 * Projects the universe onto the canvas 
+		 * Projects the hupersphere onto the canvas 
 		 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
 		 * @param {object} [params={}] The following parameters are available
-		 * @param {object} [params.center={x: 0.0, y: 0.0, z: 0.0}] center of the universe
+		 * @param {object} [params.center={x: 0.0, y: 0.0, z: 0.0}] center of the hupersphere
 		 * @param {float} [params.center.x=0.0] X axis of the center
 		 * @param {float} [params.center.y=0.0] Y axis of the center
 		 * @param {float} [params.center.z=0.0] Z axis of the center
@@ -909,7 +909,7 @@ class HuperSphere {
 
 			}
 
-			//remove previous universe
+			//remove previous hupersphere
 			this.remove = (scene) => {
 
 				if (classSettings.boRemove === false) return;

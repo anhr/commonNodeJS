@@ -50,7 +50,7 @@
 
 
 <div class="description">
-    Base class for n dimensional universe.
+    Base class for n dimensional <a href="https://en.wikipedia.org/wiki/N-sphere">hupersphere</a>.
 </div>
 
 
@@ -353,7 +353,7 @@
                 </td>
             
 
-            <td class="description last">Parameters of project the universe onto the canvas.
+            <td class="description last">Parameters of project the hupersphere onto the canvas.
                 <h6>Properties</h6>
                 
 
@@ -512,7 +512,7 @@
                 </td>
             
 
-            <td class="description last">center of the universe
+            <td class="description last">center of the hupersphere
                 <h6>Properties</h6>
                 
 
@@ -754,7 +754,7 @@
                 </td>
             
 
-            <td class="description last">HuperSphere edges<pre>	false - Doesn't create edges to reduce the creation time of the universe</pre>
+            <td class="description last">HuperSphere edges<pre>	false - Doesn't create edges to reduce the creation time of the hupersphere</pre>
                 <h6>Properties</h6>
                 
 
@@ -1013,7 +1013,7 @@
                 </td>
             
 
-            <td class="description last">name of universe.</td>
+            <td class="description last">name of hupersphere.</td>
         </tr>
 
     
@@ -1149,10 +1149,10 @@
 
             
 
-            <td class="description last">n-dimensional universe vertice angles.<pre>array - array of vertex angles.	Every item of array is n-dimensional array of vertex angles.		All the vertices of the <b><a href="module-HuperSphere1D.html" target="_blank">Circle</a></b> form a circle.	For <b><a href="module-Circle.html" target="_blank">Circle</a></b> every vertice is array of one angle.		Vertex angle is the longitude of the circle of the universe in the range from <b>- π</b> to <b>π</b>.		Vertex angle is angle of rotation around of <b>Z</b> axis in 3D space.		Angle is begin from <b>X = 0, Y = 1</b>.		Every vertex is <b>[
+            <td class="description last">n-dimensional hupersphere vertice angles.<pre>array - array of vertex angles.	Every item of array is n-dimensional array of vertex angles.		All the vertices of the <b><a href="module-HuperSphere1D.html" target="_blank">Circle</a></b> form a circle.	For <b><a href="module-Circle.html" target="_blank">Circle</a></b> every vertice is array of one angle.		Vertex angle is the longitude of the circle of the hupersphere in the range from <b>- π</b> to <b>π</b>.		Vertex angle is angle of rotation around of <b>Z</b> axis in 3D space.		Angle is begin from <b>X = 0, Y = 1</b>.		Every vertex is <b>[
 				Math.cos(θ),//x
 				Math.sin(θ)//y
-			]</b> array. <b>θ</b> is vertex angle.		Example of Circle with three vertices is triangle:		<b>classSettings.settings.object.geometry.angles: angles: [			[],                 //vertice[0] = [0                   ,1]			[Math.PI * 2 / 3],  //vertice[1] = [0.8660254037844387	,-0.4999999999999998]			[- Math.PI * 2 / 3] //vertice[2] = [-0.8660254037844387	,-0.4999999999999998]		]</b>,			All the vertices of the <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> form a sphere.	For <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> every vertice is array of two angles.		The first vertex angle is the latitude of the sphere of the universe in the range from <b>- π / 2</b> to <b>π / 2</b>.		Zero latitude is located at the equator.				The second vertex angle is the longitude of the sphere of the universe in the range from <b>- π</b> to <b>π</b>.		The second vertex angle is angle of rotation of the cross section around of <b>Y</b> axis.				Example of Sphere with 4 vertices is pyramid:		<b>classSettings.settings.object.geometry.angles: [					[ Math.PI / 2,  0                  ],//vertice[0] = [ 0                 , 1  , 0   ]			[-Math.PI / 6,  Math.PI * 2 * 0 / 3],//vertice[1] = [-0.8660254037844387,-0.5, 0   ]			[-Math.PI / 6,  Math.PI * 2 * 1 / 3],//vertice[2] = [ 0.4330127018922192,-0.5,-0.75]			[-Math.PI / 6, -Math.PI * 2 * 1 / 3,//vertice[3] = [ 0.4330127018922195,-0.5, 0.75]					]</b>,			All the vertices of the <a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> form a <a href="https://en.wikipedia.org/wiki/N-sphere">hupersphere</a>.	For <b><a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> every vertice is array of three angles.		The first vertex angle is the altitude of the hupersphere of the universe in the range from <b>0</b> to <b>π / 2</b>.		Zero altitude is located at the center of the hupersphere.				The second vertex angle is the latitude of the hupersphere of the universe in the range from <b>- π / 2</b> to <b>π / 2</b>.		Zero latitude is located at the equator.				The third vertex angle is the longitude of the hupersphere of the universe in the range from <b>- π</b> to <b>π</b>.		The third vertex angle is angle of rotation of the cross section around of <b>Y</b> axis.				Example of HuperSphere with 5 vertices is <a href="https://en.wikipedia.org/wiki/5-cell">pentahedroid</a>:		<b>classSettings.settings.object.geometry.angles: [			[],			[Math.PI / 2, Math.PI / 2],			[				  Math.PI / 2,//Altitude				- Math.PI / 6,//Latitude				  Math.PI * 0,//Longitude			],			[Math.PI / 2, - Math.PI / 6,   Math.PI * 2 * 1 / 3],			[Math.PI / 2, - Math.PI / 6, - Math.PI * 2 * 1 / 3],
+			]</b> array. <b>θ</b> is vertex angle.		Example of Circle with three vertices is triangle:		<b>classSettings.settings.object.geometry.angles: angles: [			[],                 //vertice[0] = [0                   ,1]			[Math.PI * 2 / 3],  //vertice[1] = [0.8660254037844387	,-0.4999999999999998]			[- Math.PI * 2 / 3] //vertice[2] = [-0.8660254037844387	,-0.4999999999999998]		]</b>,			All the vertices of the <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> form a sphere.	For <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> every vertice is array of two angles.		The first vertex angle is the latitude of the sphere of the hupersphere in the range from <b>- π / 2</b> to <b>π / 2</b>.		Zero latitude is located at the equator.				The second vertex angle is the longitude of the sphere of the hupersphere in the range from <b>- π</b> to <b>π</b>.		The second vertex angle is angle of rotation of the cross section around of <b>Y</b> axis.				Example of Sphere with 4 vertices is pyramid:		<b>classSettings.settings.object.geometry.angles: [					[ Math.PI / 2,  0                  ],//vertice[0] = [ 0                 , 1  , 0   ]			[-Math.PI / 6,  Math.PI * 2 * 0 / 3],//vertice[1] = [-0.8660254037844387,-0.5, 0   ]			[-Math.PI / 6,  Math.PI * 2 * 1 / 3],//vertice[2] = [ 0.4330127018922192,-0.5,-0.75]			[-Math.PI / 6, -Math.PI * 2 * 1 / 3,//vertice[3] = [ 0.4330127018922195,-0.5, 0.75]					]</b>,			All the vertices of the <a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> form a <a href="https://en.wikipedia.org/wiki/N-sphere">hupersphere</a>.	For <b><a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> every vertice is array of three angles.		The first vertex angle is the altitude of the hupersphere of the hupersphere in the range from <b>0</b> to <b>π / 2</b>.		Zero altitude is located at the center of the hupersphere.				The second vertex angle is the latitude of the hupersphere of the hupersphere in the range from <b>- π / 2</b> to <b>π / 2</b>.		Zero latitude is located at the equator.				The third vertex angle is the longitude of the hupersphere of the hupersphere in the range from <b>- π</b> to <b>π</b>.		The third vertex angle is angle of rotation of the cross section around of <b>Y</b> axis.				Example of HuperSphere with 5 vertices is <a href="https://en.wikipedia.org/wiki/5-cell">pentahedroid</a>:		<b>classSettings.settings.object.geometry.angles: [			[],			[Math.PI / 2, Math.PI / 2],			[				  Math.PI / 2,//Altitude				- Math.PI / 6,//Latitude				  Math.PI * 0,//Longitude			],			[Math.PI / 2, - Math.PI / 6,   Math.PI * 2 * 1 / 3],			[Math.PI / 2, - Math.PI / 6, - Math.PI * 2 * 1 / 3],
 			]</b>,object - see below:</pre>
                 <h6>Properties</h6>
                 
@@ -1288,7 +1288,7 @@
 
             
 
-            <td class="description last">Array of <b>indices</b> of edges of universe.
+            <td class="description last">Array of <b>indices</b> of edges of hupersphere.
                 <h6>Properties</h6>
                 
 
@@ -1549,7 +1549,7 @@
                 </td>
             
 
-            <td class="description last">Probability density of distribution of vertices over the surface of the universe.<pre>	false - do not calculate probability density.	[] - calculate probability density.</pre></td>
+            <td class="description last">Probability density of distribution of vertices over the surface of the hupersphere.<pre>	false - do not calculate probability density.	[] - calculate probability density.</pre></td>
         </tr>
 
     
@@ -1671,7 +1671,7 @@
                 </td>
             
 
-            <td class="description last">Callback function that called after universe edges was created.</td>
+            <td class="description last">Callback function that called after hupersphere edges was created.</td>
         </tr>
 
     
@@ -1708,7 +1708,7 @@
                 </td>
             
 
-            <td class="description last">false - do not delete the previous universe while projecting a new universe on scene.</td>
+            <td class="description last">false - do not delete the previous hupersphere while projecting a new hupersphere on scene.</td>
         </tr>
 
     
@@ -1745,7 +1745,7 @@
                 </td>
             
 
-            <td class="description last">false - do not include universe GUI.</td>
+            <td class="description last">false - do not include hupersphere GUI.</td>
         </tr>
 
     
@@ -1985,7 +1985,7 @@
 
 
 <div class="description">
-    Projects the universe onto the canvas
+    Projects the hupersphere onto the canvas
 </div>
 
 
@@ -2154,7 +2154,7 @@
                 </td>
             
 
-            <td class="description last">center of the universe
+            <td class="description last">center of the hupersphere
                 <h6>Properties</h6>
                 
 
@@ -2401,7 +2401,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sun Mar 10 2024 11:43:48 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sun Mar 10 2024 12:00:27 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

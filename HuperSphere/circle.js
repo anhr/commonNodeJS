@@ -1,6 +1,6 @@
 /**
  * @module Circle
- * @description 1 dimensional hupersphere.
+ * @description 1 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
  * All the vertices form a circle.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -23,7 +23,7 @@ const sCircle = 'Circle';
 class Circle extends HuperSphere {
 
 	/**
-	 * 1 dimensional hupersphere.
+	 * 1 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * All the vertices form a circle.
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.

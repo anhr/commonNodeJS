@@ -1,6 +1,6 @@
 /**
  * @module HuperSphere3D
- * @description 3 dimensional hupersphere.
+ * @description 3 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
  * All the vertices form a [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -25,7 +25,7 @@ const sHuperSphere3D = 'HuperSphere3D',
 class HuperSphere3D extends Sphere {
 
 	/**
-	 * 3 dimensional hupersphere.
+	 * 3 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * All the vertices form a [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>Universe1D</b> class settings. See <a href="./module-Universe-Universe.html" target="_blank">Universe classSettings</a>.
