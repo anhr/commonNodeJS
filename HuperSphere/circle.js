@@ -22,6 +22,19 @@ const sCircle = 'Circle';
 
 class Circle extends HuperSphere {
 
+	/**
+	 * 1 dimensional hupersphere.
+	 * All the vertices form a circle.
+	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
+	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.
+	 **/
+	constructor(options, classSettings) {
+
+		super(options, classSettings);
+		this.logCircle();
+
+	}
+
 	//base methods
 
 	planesGeometry(){}
@@ -126,19 +139,6 @@ class Circle extends HuperSphere {
 	get verticeEdgesLengthMax() { return 2; }//нельзя добавлть новое ребро если у вершины уже 2 ребра
 	get dimension() { return 2; }//space dimension
 	get verticesCountMin() { return 3; }
-
-	/**
-	 * 1 dimensional hupersphere.
-	 * All the vertices form a circle.
-	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
-	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.
-	 **/
-	constructor(options, classSettings) {
-
-		super(options, classSettings);
-		this.logCircle();
-
-	}
 
 }
 export default Circle;

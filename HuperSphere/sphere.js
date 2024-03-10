@@ -23,6 +23,19 @@ const sSphere = 'Sphere',
 
 class Sphere extends Circle {
 
+	/**
+	 * 2 dimensional hupersphere.
+	 * All the vertices form a sphere.
+	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
+	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.
+	 **/
+	constructor(options, classSettings) {
+
+		classSettings.continue = () => this.logSphere();
+		super(options, classSettings);
+
+	}
+
 	//base methods
 
 	planesGeometry(changedAngleId, aAngleControls, planeGeometry, longitudeId){
@@ -132,19 +145,6 @@ class Sphere extends Circle {
 	get verticeEdgesLengthMax() { return 3/*6*/; }//нельзя добавлть новое ребро если у вершины уже 6 ребра
 	get dimension() { return 3; }//space dimension
 	get verticesCountMin() { return 4; }
-
-	/**
-	 * 2 dimensional hupersphere.
-	 * All the vertices form a sphere.
-	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
-	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.
-	 **/
-	constructor(options, classSettings) {
-
-		classSettings.continue = () => this.logSphere();
-		super(options, classSettings);
-
-	}
 
 }
 export default Sphere;

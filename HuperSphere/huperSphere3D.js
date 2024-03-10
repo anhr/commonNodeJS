@@ -1,7 +1,7 @@
 /**
- * @module Universe3D
- * @description 3 dimensional universe.
- * All the vertices of the Universe3D form a [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+ * @module HuperSphere3D
+ * @description 3 dimensional hupersphere.
+ * All the vertices form a [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -15,15 +15,27 @@
 */
 
 
-//import Universe from './universe.js';
-import Universe2D from './universe2D.js';
-import three from '../../commonNodeJS/master/three.js'
-import FibonacciSphereGeometry from '../../commonNodeJS/master/FibonacciSphere/FibonacciSphereGeometry.js'
+import Sphere from './sphere.js';
+import three from '../three.js'
+import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.js'
 
-const sUniverse3D = 'Universe3D',
+const sHuperSphere3D = 'HuperSphere3D',
 	π = Math.PI;
 
-class Universe3D extends Universe2D {
+class HuperSphere3D extends Sphere {
+
+	/**
+	 * 3 dimensional hupersphere.
+	 * All the vertices form a [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
+	 * @param {object} [classSettings] <b>Universe1D</b> class settings. See <a href="./module-Universe-Universe.html" target="_blank">Universe classSettings</a>.
+	 **/
+	constructor(options, classSettings) {
+
+		super(options, classSettings);
+		this.logHuperSphere();
+
+	}
 
 	//base methods
 
@@ -40,7 +52,7 @@ class Universe3D extends Universe2D {
 			case longitudeId:
 				planeGeometry(altitudeId);
 				super.planesGeometry(changedAngleId, aAngleControls, planeGeometry, longitudeId); break;
-			default: console.error(sUniverse3D + ': Update planes. Invalid changedAngleId = ' + changedAngleId);
+			default: console.error(sHuperSphere3D + ': Update planes. Invalid changedAngleId = ' + changedAngleId);
 				
 		}
 		
@@ -54,7 +66,7 @@ class Universe3D extends Universe2D {
 		}
 		
 	}
-	newHuperSphere(options, classSettings) { return new Universe3D(options, classSettings); }
+	newHuperSphere(options, classSettings) { return new HuperSphere3D(options, classSettings); }
 	get cookieName() { return '3DUniverse' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
 	get altitudeRange() { return {
 		angleName: 'Altitude',
@@ -185,18 +197,5 @@ class Universe3D extends Universe2D {
 	get dimension() { return 4; }//space dimension
 	get verticesCountMin() { return 4; }
 
-	/**
-	 * 3 dimensional universe.
-	 * All the vertices of the Universe3D form a [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
-	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
-	 * @param {object} [classSettings] <b>Universe1D</b> class settings. See <a href="./module-Universe-Universe.html" target="_blank">Universe classSettings</a>.
-	 **/
-	constructor(options, classSettings) {
-
-		super(options, classSettings);
-		this.logUniverse();
-
-	}
-
 }
-export default Universe3D;
+export default HuperSphere3D;
