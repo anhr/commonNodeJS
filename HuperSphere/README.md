@@ -1,6 +1,4 @@
-﻿# Egocentric Universe
-
-Under construction
+﻿# [HuperSphere](https://en.wikipedia.org/wiki/N-sphere)
 
 Examples:
 
