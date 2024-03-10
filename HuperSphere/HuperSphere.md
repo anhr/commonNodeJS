@@ -1,5 +1,1 @@
-# EgocentricUniverse.
-
-Under construction.
-
-Egocentric universe.
+# [HuperSphere](https://en.wikipedia.org/wiki/N-sphere).
