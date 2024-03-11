@@ -222,7 +222,7 @@ class HuperSphere {
 		settings.object.geometry = settings.object.geometry || {};
 
 		//for debug
-		//для 2D вселенной это плотность вероятности распределения вершин по поверхности сферы в зависимости от третьей координаты вершины z = vertice.[2]
+		//для 2D гиперсферы это плотность вероятности распределения вершин по поверхности сферы в зависимости от третьей координаты вершины z = vertice.[2]
 		//Плотности разбил на несколько диапазонов в зависимости от третьей координаты вершины z = vertice.[2]
 		//Разбил сферу на sc = 5 сегментов от 0 до 4.
 		//Границы сегментов вычисляю по фомулам:
@@ -324,8 +324,8 @@ class HuperSphere {
 									if ((angle < range.min) || (angle > range.max)) console.error(sHuperSphere + ': Set angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
 
 									verticeAngles[angleId] = angle;
-									//если тут обновлять вселенную, то будет тратиться лишнее время, когда одновременно изменяется несколько вершин
-									//Сейчас я сначала изменяю все вершины, а потом обновляю вселенную
+									//если тут обновлять гиперсферу, то будет тратиться лишнее время, когда одновременно изменяется несколько вершин
+									//Сейчас я сначала изменяю все вершины, а потом обновляю гиперсферу
 									//_this.update(verticeId);
 
 								}
@@ -595,9 +595,9 @@ class HuperSphere {
 											//https://wiki5.ru/wiki/Mean_of_circular_quantities#Mean_of_angles Среднее значение углов
 
 											//массив для хранения сумм декартовых координат прпотивоположных вершин
-											//для 1D вселенной это: aSum[0] = x, aSum[1] = y.
-											//для 2D вселенной это: aSum[0] = x, aSum[1] = y, aSum[2] = z.
-											//для 3D вселенной это: aSum[0] = x, aSum[1] = y, aSum[2] = z, aSum[3] = w.
+											//для 1D гиперсферы это: aSum[0] = x, aSum[1] = y.
+											//для 2D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z.
+											//для 3D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z, aSum[3] = w.
 											const aSum = [];
 											for (let i = 0; i < _this.dimension; i++) aSum.push(0.0);
 
@@ -1119,7 +1119,7 @@ class HuperSphere {
 
 								//если оставить эту линию то если угол выходит за пределы допустимого,
 								//то этот угол автоматически возвращается в пределы допустимого с помощью органа управления gui
-								//Но это не отображается на изображении вселенной
+								//Но это не отображается на изображении гиперсферы
 								//_this.isUpdate = false;
 
 								for (let i = 0; i < verticeAngles.length; i++) {
@@ -1457,9 +1457,9 @@ class HuperSphere {
 													if (level <= maxLevel) {
 
 														//если не делать это преобразование,
-														//то когда начало и конец дуги на ходятся на противоположных концах вселенной,
+														//то когда начало и конец дуги на ходятся на противоположных концах гиперсферы,
 														//средняя точка попадает в центр окружности или сферы или гиперсферы,
-														//а это находится вне вселенной.
+														//а это находится вне гиперсферы.
 														//В этом случае все вершины дуги, кроме средней вершины, стягиваются к началу или концу дуги.
 														const halfVertice = _this.angles2Vertice(_this.vertice2angles(arcVerice));
 
@@ -1494,7 +1494,7 @@ class HuperSphere {
 																	for (let i = 0; i < (aAngleControls.MAX_POINTS - 1); i++) arcEdges.push([i, i + 1]);
 																	aAngleControls.arc = this.line({
 
-																		cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек вселенной
+																		cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек гиперсферы
 																		//edges: false,
 																		object: {
 
@@ -1723,7 +1723,7 @@ class HuperSphere {
 										}
 										aAngleControls.planes[verticeAngleId] = this.line({
 
-											cookieName: 'plane_' + verticeAngleId,//если не задать cookieName, то настройки дуги будут браться из настроек вселенной
+											cookieName: 'plane_' + verticeAngleId,//если не задать cookieName, то настройки дуги будут браться из настроек гиперсферы
 											object: {
 
 												name: angleName,
@@ -1837,7 +1837,7 @@ class HuperSphere {
 						let points = settings.object.geometry.position;
 
 						//for debug
-						//Выводим углы вместо вершин. Нужно для отладки равномерного распределения верши во вселенной
+						//Выводим углы вместо вершин. Нужно для отладки равномерного распределения вершин в гиперсфре
 						//См. randomPosition()
 						/*
 						points = [];
@@ -2036,7 +2036,7 @@ class HuperSphere {
 
 				if (probabilityDensity) {
 
-					//для 2D вселенной это плотность вероятности распределения вершин по поверхости сферы в зависимости от третьей координаты вершины z = vertice.[2]
+					//для 2D гиперсферы это плотность вероятности распределения вершин по поверхости сферы в зависимости от третьей координаты вершины z = vertice.[2]
 					//Плотности разбил на несколько диапазонов в зависимости от третьей координаты вершины z = vertice.[2]
 					//Разбил сферу на sc = 5 сегментов от 0 до 4.
 					//Границы сегментов вычисляю по фомулам:
@@ -2491,7 +2491,7 @@ class HuperSphere {
 		
 		//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
 		//тангенс — отношение стороны противолежащего катета vertice[1] к стороне прилежащегоvertice[0], (tg или tan);
-		const x = [],//для разных размерностей вселенной координаты вершины расположены в разном порядке в соответствии с this.axes.indices
+		const x = [],//для разных размерностей гиперсферы координаты вершины расположены в разном порядке в соответствии с this.axes.indices
 			n = this.dimension - 1, φ = [], atan2 = Math.atan2, sqrt = Math.sqrt;
 
 		for (let index = 0; index < vertice.length; index++) x.push(vertice[this.axes.indices[index]]);
@@ -2520,7 +2520,7 @@ class HuperSphere {
 		const longitudeId = φ.length - 1, latitudeId = longitudeId - 1, altitudeId = latitudeId - 1,
 			ranges = this.classSettings.settings.object.geometry.angles.ranges;
 		let latitude = φ[latitudeId], longitude = φ[longitudeId], altitude = φ[altitudeId];
-		if (altitude != undefined) {//у одномерной и двумерной вселенной нет высоты
+		if (altitude != undefined) {//у одномерной и двумернй гиперсферы нет высоты
 
 			const altitudeRange = ranges[altitudeId];
 			if (altitude > altitudeRange.max) {//π / 2
@@ -2547,7 +2547,7 @@ class HuperSphere {
 			φ[altitudeId] = altitude;
 			
 		}
-		if (latitude != undefined) {//у одномерной вселенной нет широты
+		if (latitude != undefined) {//у одномерной гиперсферы нет широты
 			
 			const latitudeRange = ranges[latitudeId];//, longitudeRange = ranges[longitudeId];
 			if (latitude > latitudeRange.max) {//π / 2

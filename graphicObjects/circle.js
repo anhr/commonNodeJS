@@ -137,7 +137,7 @@ class Circle extends Utils
 														case 'distance': {
 
 															//distance between edge vertices
-															if (_edge.distance === undefined) _edge.distance = 2 * Math.PI / _this.edges.length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной вселенной с был равен 1.0
+															if (_edge.distance === undefined) _edge.distance = 2 * Math.PI / _this.edges.length;//1.0;//выбрал длинну ребра так, что бы радиус одномерной гиперсферы с был равен 1.0
 															const vertice0 = edge.vertices[0], vertice1 = edge.vertices[1];
 															if (vertice0.length && vertice1.length) _edge.distance = vertice0.distanceTo(vertice1);
 															return _edge.distance;
