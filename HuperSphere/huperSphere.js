@@ -2592,7 +2592,7 @@ Object.freeze(edgesCreationMethod);
 HuperSphere.edgesCreationMethod = edgesCreationMethod;
 
 /**
- * <a href="../../../commonNodeJS/master/nD/jsdoc/" target="_blank">ND</a>
+ * <a href="../../../master/nD/jsdoc/" target="_blank">ND</a>
  * */
 HuperSphere.ND = ND;
 
