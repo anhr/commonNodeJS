@@ -27,7 +27,7 @@ class HuperSphere3D extends Sphere {
 	/**
 	 * 3 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * All the vertices form a [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
-	 * @param {Options} options See <a href="../../../commonNodeJS/master/jsdoc/Options/Options.html" target="_blank">Options</a>.
+	 * @param {Options} options See <a href="../../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>Universe1D</b> class settings. See <a href="./module-Universe-Universe.html" target="_blank">Universe classSettings</a>.
 	 **/
 	constructor(options, classSettings) {
