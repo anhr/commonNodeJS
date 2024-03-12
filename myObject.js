@@ -66,6 +66,7 @@ class myObject {
 
 			if (attributes.position.itemSize < 4) return;
 
+			//Меняем цвет дуги между двумя вершинами в гиперсфере
 			//отказался от применения this.setColorAttribute потому что в этом случае для каждого 3D объекта нужно создавать myObject, а это нецелесообразно делать во всех приложениях
 //			this.setColorAttribute( i );
 			const w = settings.options.scales.w;
