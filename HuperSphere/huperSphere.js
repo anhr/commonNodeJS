@@ -88,7 +88,7 @@ class HuperSphere {
 	 * array - array of vertex angles.
 	 *	Every item of array is n-dimensional array of vertex angles.
 	 *	
-	 *	All the vertices of the <b><a href="module-HuperSphere1D.html" target="_blank">Circle</a></b> form a circle.
+	 *	All the vertices of the <b><a href="module-Circle.html" target="_blank">Circle</a></b> form a circle.
 	 *	For <b><a href="module-Circle.html" target="_blank">Circle</a></b> every vertice is array of one angle.
 	 *		Vertex angle is the longitude of the circle of the hupersphere in the range from <b>- π</b> to <b>π</b>.
 	 *		Vertex angle is angle of rotation around of <b>Z</b> axis in 3D space.
