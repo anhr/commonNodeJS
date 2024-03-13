@@ -196,11 +196,16 @@ class MyPoints extends myObject {
 			});
 		else {
 
-			const points = new THREE.Points(
+			let buffer;
+			if ( typeof arrayFuncs === 'function' ) buffer = arrayFuncs();
+			else {
 
-				typeof arrayFuncs === 'function' ? arrayFuncs() :
-					new THREE.BufferGeometry().setFromPoints(Player.getPoints(arrayFuncs,
-						{ options: options, group: group, t: pointsOptions.tMin }), arrayFuncs[0].vector instanceof THREE.Vector3 === true ? 3 : 4),
+				const points = Player.getPoints(arrayFuncs, { options: options, group: group, t: pointsOptions.tMin });
+				this.getPoint = (i) => { return points[i]; }
+				buffer = this.setPositionAttributeFromPoints( points );
+
+			}
+			const points = new THREE.Points( buffer,
 				new THREE.PointsMaterial({
 
 					size: options.point.size / options.point.sizePointsMaterial,

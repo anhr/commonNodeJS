@@ -13,7 +13,7 @@
  * 
 */
 
-//import three from './three.js'
+import three from './three.js'
 import Player from './player/player.js'
 
 class myObject {
@@ -54,16 +54,33 @@ class myObject {
 		
 		}
 */
+		this.setPositionAttributeFromPoints = (points) => {
+			
+			const THREE = three.THREE, buffer = new THREE.BufferGeometry(),
+				pointLength = points[0].w === undefined ? 3 : 4;
+
+			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
+			const MAX_POINTS = settings.object.geometry.MAX_POINTS,
+				pointsLength = points.length;
+			if ( MAX_POINTS != undefined ) buffer.setDrawRange( 0, pointsLength * 2 - 1);// * pointLength );//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
+			const positions = new Float32Array( pointsLength * pointLength );
+			buffer.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, pointLength ) );
+			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint( i, buffer.attributes );
+			return buffer;
+			
+		}
 		this.setPositionAttributeFromPoint = ( i, attributes ) => {
 
-			const position = settings.object.geometry.position[i],
+/*			
+			const position = points ? points[i] : settings.object.geometry.position[i],
 				vertice = position.positionWorld || position,
+*/				
+			const vertice = _this.getPoint(i),
 				itemSize = attributes.position.itemSize;
-			for (let j = 0; j < itemSize; j++) 
-				attributes.position.array [j + i * itemSize] = vertice[j];
-
-//			attributes.position.needsUpdate = true;
-
+			attributes.position.array [0 + i * itemSize] = vertice.x;
+			if (itemSize > 1) attributes.position.array [1 + i * itemSize] = vertice.y;
+			if (itemSize > 2) attributes.position.array [2 + i * itemSize] = vertice.z;
+			if (itemSize > 3) attributes.position.array [3 + i * itemSize] = vertice.w;
 			if (attributes.position.itemSize < 4) return;
 
 			//Меняем цвет дуги между двумя вершинами в гиперсфере
@@ -76,21 +93,6 @@ class myObject {
 		this.setPositionAttribute = ( i ) => {
 
 			this.setPositionAttributeFromPoint( i, _this.object3D.geometry.attributes );
-/*			
-			const object = settings.object, object3D = _this.object3D, attributes = object3D.geometry.attributes, position = object.geometry.position,
-				vertice = position[i], itemSize = object3D.geometry.attributes.position.itemSize;
-			for (let j = 0; j < itemSize; j++) 
-				attributes.position.array [j + i * itemSize] = vertice[j];
-
-//			attributes.position.needsUpdate = true;
-
-			if (attributes.position.itemSize < 4) return;
-
-			//отказался от применения this.setColorAttribute потому что в этом случае для каждого 3D объекта нужно создавать myObject, а это нецелесообразно делать во всех приложениях
-//			this.setColorAttribute( i );
-			const w = settings.options.scales.w;
-			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(settings.object.geometry.position[i].w, w.min, w.max));
-*/			
 			
 		}
 		

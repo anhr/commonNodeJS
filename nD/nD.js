@@ -2118,19 +2118,13 @@ class ND extends myObject {
 			)
 				settings.object.geometry.colors = indices3D.colors;
 
-			const pointLength = geometry.D3.points[0].w === undefined ? 3 : 4,
-				buffer = new THREE.BufferGeometry();
+			nD.getPoint = (i) => { 
 
-			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
-			const MAX_POINTS = settings.object.geometry.MAX_POINTS,
-				pointsLength = geometry.D3.points.length;
-			if ( MAX_POINTS != undefined ) buffer.setDrawRange( 0, pointsLength * 2 - 1);// * pointLength );//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
-//			if ( MAX_POINTS != undefined ) buffer.setDrawRange( 0, pointsLength );
-			const positions = new Float32Array( ( MAX_POINTS === undefined ? pointsLength : MAX_POINTS) * pointLength );
-			buffer.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, pointLength ) );
-			for( let i = 0; i < geometry.D3.points.length; i++ ) nD.setPositionAttributeFromPoint( i, buffer.attributes );
-//			buffer.setFromPoints( geometry.D3.points, pointLength );
-//			const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points, pointLength );
+				const position = geometry.D3.points[i];//settings.object.geometry.position[i];
+				return position.positionWorld || position;
+				
+			}
+			const buffer = nD.setPositionAttributeFromPoints( geometry.D3.points );
 			
 			if ( settings3D.faces ) {
 
