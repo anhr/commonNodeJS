@@ -53,7 +53,7 @@
 		import ColorPicker from '../../colorpicker/colorpicker.js';
 		//import ColorPicker from 'https://raw.githack.com/anhr/commonNodeJS/master/colorpicker/colorpicker.js';
 
-		//import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
+		import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
 		//import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 
 		import MyPoints from '../../myPoints/myPoints.js';
@@ -379,7 +379,7 @@
 			if ( typeof getShaderMaterialPoints !== 'undefined' ) {
 
 				console.log( 'Using getShaderMaterialPoints method for creating of the points.' );
-				getShaderMaterialPoints( scene, arrayFuncs,
+				new getShaderMaterialPoints( scene, arrayFuncs,
 					function ( points ) {
 
 						scene.add( points );

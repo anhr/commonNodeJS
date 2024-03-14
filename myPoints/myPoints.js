@@ -188,7 +188,7 @@ class MyPoints extends myObject {
 		Player.assign();
 
 		if (pointsOptions.shaderMaterial !== false)
-			getShaderMaterialPoints(group, arrayFuncs,function (points) { Points(points); }, {
+			new getShaderMaterialPoints(group, arrayFuncs,function (points) { Points(points); }, {
 
 				options: options,
 				pointsOptions: pointsOptions,

@@ -35,10 +35,10 @@
 		import FrustumPoints from '../frustumPoints.js';
 		//import FrustumPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/frustumPoints/frustumPoints.js';
 
-		import MyPoints from '../../myPoints/myPoints.js';
+		//import MyPoints from '../../myPoints/myPoints.js';
 		//import MyPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/myPoints/myPoints.js';
 
-		//import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
+		import getShaderMaterialPoints from '../../getShaderMaterialPoints/getShaderMaterialPoints.js';
 		//import getShaderMaterialPoints from 'https://raw.githack.com/anhr/commonNodeJS/master/getShaderMaterialPoints/getShaderMaterialPoints.js';
 
 		import Player from '../../player/player.js';
@@ -145,7 +145,7 @@
 				} );
 			else if ( typeof getShaderMaterialPoints !== 'undefined' ) {
 
-				getShaderMaterialPoints( scene, arrayFuncs,
+				new getShaderMaterialPoints( scene, arrayFuncs,
 					function ( points ) {
 
 						scene.add( points );
