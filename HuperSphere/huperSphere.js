@@ -340,6 +340,26 @@ class HuperSphere {
 				}
 				switch (name) {
 
+/*						
+					//Angles range
+					case 'ranges': return [
+						{
+							angleName: 'Longitude',
+							min: - π,
+							max:   π,
+						},
+						{
+							angleName: 'Latitude',
+							min: 0 + this.rotateLatitude,//- π / 2;
+							max: π + this.rotateLatitude,//π / 2;
+						},
+						{
+							angleName: this.altitudeRange.angleName,//'Altitude';
+							min: this.altitudeRange.min,//0;
+							max: this.altitudeRange.max,//π / 2;
+						}
+					];
+*/					
 					case 'pushRandomAngle': return () => {
 
 						const verticeAngles = [];
@@ -401,6 +421,24 @@ class HuperSphere {
 		const angles = settings.object.geometry.angles;
 
 		//Angles range
+		angles.ranges = [
+			{
+				angleName: 'Longitude',
+				min: - π,
+				max:   π,
+			},
+			{
+				angleName: 'Latitude',
+				min: 0 + this.rotateLatitude,//- π / 2;
+				max: π + this.rotateLatitude,//π / 2;
+			},
+			{
+				angleName: this.altitudeRange.angleName,//'Altitude';
+				min: this.altitudeRange.min,//0;
+				max: this.altitudeRange.max,//π / 2;
+			}
+		];
+/*		
 		angles.ranges = [];
 		for (let angleId = 0; angleId < this.dimension - 1; angleId++) {
 
@@ -428,6 +466,9 @@ class HuperSphere {
 			angles.ranges.push(range);
 
 		}
+*/		
+		
+		angles.forEach(verticeAngles => this.angles2Vertice(verticeAngles));
 
 		//angles[0][0] = 10;//error huperSphere.js:548 HuperSphere: Set angle[0] = 10 of the vertice 0 is out of range from -1.5707963267948966 to 1.5707963267948966
 		if (angles.count != undefined)

@@ -25,6 +25,10 @@ class myObject {
 		settings.object = settings.object || {};
 		settings.object.geometry = settings.object.geometry || {};
 
+		const THREE = three.THREE;
+
+		settings.options.buffer = new THREE.BufferGeometry();
+
 		if (vertices)
 			//for for compatibility with ND
 			//Что бы можно было менять позицию и цвет вершины
@@ -56,8 +60,8 @@ class myObject {
 */
 		this.setPositionAttributeFromPoints = (points) => {
 			
-			const THREE = three.THREE, buffer = new THREE.BufferGeometry(),
-				pointLength = points[0].w === undefined ? 3 : 4;
+			const pointLength = points[0].w === undefined ? 3 : 4,
+				buffer = settings.options.buffer;
 
 			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
 			const MAX_POINTS = settings.object.geometry.MAX_POINTS,
