@@ -442,7 +442,7 @@ import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoin
 ```
 Please remove <b>options.player.play3DObject();</b> line and include it into <b>getShaderMaterialPoints</b> parameters.
 ```
-getShaderMaterialPoints( scene, arrayFuncs,
+new getShaderMaterialPoints( scene, arrayFuncs,
 	function ( points ) {
 
 		scene.add( points );
@@ -639,7 +639,7 @@ line after <b>scene.add( points );</b> and after creating of <b>new GuiSelectPoi
 add <b>options.guiSelectPoint.addMesh( points );</b>
 line into <b>onReady</b> callback function of <b>getShaderMaterialPoints</b>.
 ```
-getShaderMaterialPoints( scene, arrayFuncs,
+new getShaderMaterialPoints( scene, arrayFuncs,
 	function ( points ) {
 
 		scene.add( points );
@@ -1248,7 +1248,7 @@ The following code is the result of this tutorial.
 			}
 			*/
 			/*
-			getShaderMaterialPoints( scene, arrayFuncs,
+			new getShaderMaterialPoints( scene, arrayFuncs,
 				function ( points ) {
 
 					scene.add( points );
