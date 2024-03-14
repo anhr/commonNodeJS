@@ -107,7 +107,7 @@ import getShaderMaterialPoints from './commonNodeJS/master/getShaderMaterialPoin
 ```
 Now you can use <b>getShaderMaterialPoints</b> in your javascript code. Example:
 ```
-getShaderMaterialPoints( scene, [
+new getShaderMaterialPoints( scene, [
 	[],//first point. Zero position. White color.
 	[0.5, 0.5, 0.5],//second point. White color.
 ], function ( points ) { scene.add( points ); } );
@@ -170,7 +170,7 @@ The following code is the result of this tutorial.
 
 			scene = new THREE.Scene();
 
-			getShaderMaterialPoints( scene, [
+			new getShaderMaterialPoints( scene, [
 				[],//first point. Zero position. White color.
 				[0.5, 0.5, 0.5],//second point. White color.
 			], function ( points ) { scene.add( points ); } );
