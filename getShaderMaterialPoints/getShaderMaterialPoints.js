@@ -64,7 +64,7 @@ const currentScriptPath = getCurrentScriptPath(),
 class getShaderMaterialPoints extends myObject {
 
 	/**
-	 * get THREE.Points with THREE.ShaderMaterial material
+	 * get [THREE.Points]{@link https://threejs.org/docs/index.html?q=Points#api/en/objects/Points} with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html?q=ShaderMaterial#api/en/materials/ShaderMaterial} material
 	 * @param {THREE.Group|THREE.Scene} group [THREE.Group]{@link https://threejs.org/docs/index.html?q=group#api/en/objects/Group} or [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * @param {array} arrayFuncs <b>points.geometry.attributes.position</b> array.
 	 * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.
