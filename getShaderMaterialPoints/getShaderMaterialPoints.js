@@ -109,11 +109,19 @@ class getShaderMaterialPoints extends myObject {
 
 		} else if (typeof arrayFuncs === 'function')
 			geometry = arrayFuncs();
-		else geometry = new THREE.BufferGeometry().setFromPoints
-			(Player.getPoints(arrayFuncs,
-				{ options: settings.options, group: group, t: tMin, }),
+		else {
+
+			const points = Player.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin, });
+			this.getPoint = (i) => { return points[i]; }
+			geometry = this.setPositionAttributeFromPoints( points );
+/*			
+			geometry = new THREE.BufferGeometry().setFromPoints
+			(Player.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin, }),
 				arrayFuncs instanceof Array ? arrayFuncs[0].vector instanceof THREE.Vector3 ? 3 : 4 :
 					arrayFuncs instanceof THREE.Vector3 ? 3 : 4);
+*/					
+
+		}
 		const indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud(geometry) : undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 		if ((settings.pointsOptions === undefined) || !settings.pointsOptions.boFrustumPoints) {
 
