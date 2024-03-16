@@ -36,6 +36,7 @@ import three from '../three.js'
 import ProgressBar from '../ProgressBar/ProgressBar.js'
 //import WebGPU from '../../../WebGPU/master/WebGPU.js';
 import PositionController from '../PositionController.js';
+import MyObject from '../myObject.js'
 
 const sHuperSphere = 'HuperSphere', sOverride = sHuperSphere + ': Please override the %s method in your child class.',
 	π = Math.PI;
@@ -467,8 +468,12 @@ class HuperSphere {
 
 		}
 */		
-		
-		angles.forEach(verticeAngles => this.angles2Vertice(verticeAngles));
+
+		/*
+		const myObject = new MyObject(settings);
+		myObject.createPositionAttribute(4, angles.length);
+		angles.forEach((verticeAngles, i) => myObject.setPositionAttributeFromPoint(i, this.angles2Vertice(verticeAngles)));
+		*/
 
 		//angles[0][0] = 10;//error huperSphere.js:548 HuperSphere: Set angle[0] = 10 of the vertice 0 is out of range from -1.5707963267948966 to 1.5707963267948966
 		if (angles.count != undefined)

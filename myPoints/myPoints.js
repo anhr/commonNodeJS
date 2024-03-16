@@ -16,9 +16,9 @@ import Player from '../player/player.js';
 import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMaterialPoints.js';
 import three from '../three.js'
 import Options from '../Options.js'
-import myObject from '../myObject.js'
+import MyObject from '../myObject.js'
 
-class MyPoints extends myObject {
+class MyPoints extends MyObject {
 
 	/**
 	 * Creating the new [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} and adding it into group.

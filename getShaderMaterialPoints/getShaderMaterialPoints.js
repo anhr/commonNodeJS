@@ -14,7 +14,7 @@
 import three from '../three.js'
 import Player from '../player/player.js';
 import Options from '../Options.js'
-import myObject from '../myObject.js'
+import MyObject from '../myObject.js'
 
 //Thanks to https://stackoverflow.com/a/27369985/5175935
 //Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
@@ -61,7 +61,7 @@ const currentScriptPath = getCurrentScriptPath(),
 
 	};
 
-class getShaderMaterialPoints extends myObject {
+class getShaderMaterialPoints extends MyObject {
 
 	/**
 	 * get [THREE.Points]{@link https://threejs.org/docs/index.html?q=Points#api/en/objects/Points} with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html?q=ShaderMaterial#api/en/materials/ShaderMaterial} material

@@ -16,7 +16,7 @@
 import three from './three.js'
 import Player from './player/player.js'
 
-class myObject {
+class MyObject {
 
 	constructor( settings={}, vertices ) {
 
@@ -27,7 +27,7 @@ class myObject {
 
 		const THREE = three.THREE;
 
-		settings.options.buffer = new THREE.BufferGeometry();
+		const buffer = new THREE.BufferGeometry();
 
 		if (vertices)
 			//for for compatibility with ND
@@ -58,8 +58,26 @@ class myObject {
 		
 		}
 */
+		this.createPositionAttribute = (pointLength, pointsLength) => {
+
+//			const buffer = settings.options.buffer;
+
+			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
+			const MAX_POINTS = settings.object.geometry.MAX_POINTS;
+//				pointsLength = points.length;
+			if (MAX_POINTS != undefined) buffer.setDrawRange(0, pointsLength * 2 - 1);// * pointLength );//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
+			const positions = new Float32Array(pointsLength * pointLength);
+			buffer.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
+			if (pointLength < 4) return;
+
+			//color
+			const colors = new Float32Array(pointsLength * pointLength);
+			buffer.setAttribute('ca', new THREE.Float32BufferAttribute(colors, pointLength));
+
+		}
 		this.setPositionAttributeFromPoints = (points) => {
-			
+
+/*
 			const pointLength = points[0].w === undefined ? 3 : 4,
 				buffer = settings.options.buffer;
 
@@ -69,18 +87,22 @@ class myObject {
 			if ( MAX_POINTS != undefined ) buffer.setDrawRange( 0, pointsLength * 2 - 1);// * pointLength );//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
 			const positions = new Float32Array( pointsLength * pointLength );
 			buffer.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, pointLength ) );
-			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint( i, buffer.attributes );
+*/
+			this.createPositionAttribute(points[0].w === undefined ? 3 : 4, points.length);
+//			const buffer = settings.options.buffer;
+			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);//, buffer.attributes);
 			return buffer;
 			
 		}
-		this.setPositionAttributeFromPoint = ( i, attributes ) => {
+		this.setPositionAttributeFromPoint = (i, vertice/*, attributes*/) => {
 
+			const attributes = buffer.attributes;
 /*			
 			const position = points ? points[i] : settings.object.geometry.position[i],
 				vertice = position.positionWorld || position,
 */				
-			const vertice = _this.getPoint(i),
-				itemSize = attributes.position.itemSize;
+			vertice = vertice || _this.getPoint(i);
+			const itemSize = attributes.position.itemSize;
 			attributes.position.array [0 + i * itemSize] = vertice.x;
 			if (itemSize > 1) attributes.position.array [1 + i * itemSize] = vertice.y;
 			if (itemSize > 2) attributes.position.array [2 + i * itemSize] = vertice.z;
@@ -91,7 +113,8 @@ class myObject {
 			//отказался от применения this.setColorAttribute потому что в этом случае для каждого 3D объекта нужно создавать myObject, а это нецелесообразно делать во всех приложениях
 //			this.setColorAttribute( i );
 			const w = settings.options.scales.w;
-			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(settings.object.geometry.position[i].w, w.min, w.max));
+//			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(settings.object.geometry.position[i].w, w.min, w.max));
+			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(vertice.w, w.min, w.max));
 			
 		}
 		this.setPositionAttribute = ( i ) => {
@@ -103,4 +126,4 @@ class myObject {
 	}
 
 }
-export default myObject;
+export default MyObject;

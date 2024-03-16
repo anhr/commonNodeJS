@@ -21,7 +21,7 @@ import three from '../three.js'
 import Options from '../Options.js'
 import PositionController from '../PositionController.js';
 import MyMath from '../myMath/myMath.js'
-import myObject from '../myObject.js'
+import MyObject from '../myObject.js'
 
 /*
 dimention	geometry	points	edges	faces	bodyes	4D objects
@@ -31,7 +31,7 @@ dimention	geometry	points	edges	faces	bodyes	4D objects
 4			pentatope	5		10		10		5		1
 */
 
-class ND extends myObject {
+class ND extends MyObject {
 
 	/**
 	 * N-dimensional graphics.
