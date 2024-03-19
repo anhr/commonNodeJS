@@ -68,7 +68,7 @@ class HuperSphere {
 	 * @param {float} [classSettings.projectParams.params.center.x=0.0] X axis of the center
 	 * @param {float} [classSettings.projectParams.params.center.y=0.0] Y axis of the center
 	 * @param {float} [classSettings.projectParams.params.center.z=0.0] Y axis of the center
-	 * @param {float} [classSettings.t=1.0] HuperSphere start time. Time is the radius of the HuperSphere.
+	 * @param {float} [classSettings.r=1.0] HuperSphere radius.
 	 * @param {boolean|object} [classSettings.edges={}] HuperSphere edges
 	 * <pre>
 	 *	false - Doesn't create edges to reduce the creation time of the hupersphere
@@ -210,7 +210,7 @@ class HuperSphere {
 		if (classSettings.edges != false) classSettings.edges = classSettings.edges || {};
 		if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
-		if (classSettings.t === undefined) classSettings.t = 1.0;
+		if (classSettings.r === undefined) classSettings.r = 1.0;
 		classSettings.settings = classSettings.settings || {};
 		const settings = classSettings.settings;
 		settings.options = options;
@@ -247,14 +247,14 @@ class HuperSphere {
 		if (probabilityDensity) {
 
 			for (let i = 0; i < 5; i++) probabilityDensity.push({ count: 0, });
-			probabilityDensity.options = { d: classSettings.t * 2, };
+			probabilityDensity.options = { d: classSettings.r * 2, };
 			probabilityDensity.options.sc = probabilityDensity.length;//Количество сегментов
 			probabilityDensity.options.hs = probabilityDensity.options.d / probabilityDensity.options.sc;//Высота сегмента
 			let sectorsValue = 0;
 			probabilityDensity.forEach((sector, i) => {
 
-				sector.hb = probabilityDensity.options.hs * i - classSettings.t;//Нижняя граница сегмента
-				sector.ht = probabilityDensity.options.hs * (i + 1) - classSettings.t;//Верхняя граница сегмента
+				sector.hb = probabilityDensity.options.hs * i - classSettings.r;//Нижняя граница сегмента
+				sector.ht = probabilityDensity.options.hs * (i + 1) - classSettings.r;//Верхняя граница сегмента
 				sectorsValue += _this.probabilityDensity.sectorValue(probabilityDensity, i);
 
 			});
@@ -262,7 +262,7 @@ class HuperSphere {
 			if (unverseValue === undefined) {
 
 				unverseValue = π;
-				const r = classSettings.t;//probabilityDensity.options.r;
+				const r = classSettings.r;//probabilityDensity.options.r;
 				for (let i = 0; i < (_this.dimension - 1); i++) unverseValue *= 2 * r;
 
 			}
@@ -491,7 +491,7 @@ class HuperSphere {
 					const _vertice = _position[i];
 					const angle2Vertice = () => {
 
-						const vertice = _this.angles2Vertice(_vertice), r = classSettings.t;
+						const vertice = _this.angles2Vertice(_vertice), r = classSettings.r;
 						//Эта проверка не проходит для HuperSphere3D
 						if (classSettings.debug) {
 

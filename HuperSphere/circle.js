@@ -56,7 +56,7 @@ class Circle extends HuperSphere {
 			sectorValueName: 'sectorLength',
 			sectorValue: (probabilityDensity, i) => {
 				
-				const sector = probabilityDensity[i], r = this.classSettings.t, hb = sector.hb, ht = sector.ht,
+				const sector = probabilityDensity[i], r = this.classSettings.r, hb = sector.hb, ht = sector.ht,
 					angle = (hb) => {
 
 						const M = Math.sqrt(r * r - hb * hb);//Прилежащий катет прямоугольного треугольника
@@ -114,16 +114,16 @@ class Circle extends HuperSphere {
 			classSettings = this.classSettings,
 			settings = classSettings.settings,
 			options = settings.options,
-			t = classSettings.t,
+			r = classSettings.r,
 			ip = classSettings.intersection.position,//координата сечения
 			mesh = new THREE.Line( new THREE.BufferGeometry().setFromPoints( [
-				new THREE.Vector3( options.scales.x.min * t, 0, 0 ), new THREE.Vector3( options.scales.x.max * t, 0, 0 )
+				new THREE.Vector3( options.scales.x.min * r, 0, 0 ), new THREE.Vector3( options.scales.x.max * r, 0, 0 )
 			] ), new THREE.LineBasicMaterial( { color: color } ) ),
 			vectors = settings.object.geometry.position;
-		mesh.position.copy(new THREE.Vector3(0, ip * t, 0));
+		mesh.position.copy(new THREE.Vector3(0, ip * r, 0));
 
 		//длинна дуги
-		const angle = (leg) => Math.asin(leg / t),
+		const angle = (leg) => Math.asin(leg / r),
 			ai = angle(ip);//угол наклона точки пересечения окружности с линией сечения
 		vectors.forEach(vector => {
 

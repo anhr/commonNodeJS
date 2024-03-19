@@ -79,8 +79,8 @@ class HuperSphere3D extends Sphere {
 	setW() {
 
 		const classSettings = this.classSettings, w = classSettings.settings.options.scales.w;
-		w.max = classSettings.t;
-		w.min = this.altitudeRange.min === 0 ? 0 : -classSettings.t;
+		w.max = classSettings.r;
+		w.min = this.altitudeRange.min === 0 ? 0 : -classSettings.r;
 		
 	};
 	get probabilityDensity() {
@@ -91,7 +91,7 @@ class HuperSphere3D extends Sphere {
 			sectorValueName: 'sectorVolume',
 			sectorValue: (probabilityDensity, i) => {
 
-				const sector = probabilityDensity[i], r = this.classSettings.t, hb = sector.hb, ht = sector.ht;
+				const sector = probabilityDensity[i], r = this.classSettings.r, hb = sector.hb, ht = sector.ht;
 				
 				//объем сегмента
 				//https://en.wikipedia.org/wiki/Sphere
@@ -104,7 +104,7 @@ class HuperSphere3D extends Sphere {
 				
 				//https://www.sjsu.edu/faculty/watkins/ndim.htm
 				//Dimension = 4. Bounding Area = 2ππRRR
-				const r = _this.classSettings.t;
+				const r = _this.classSettings.r;
 				return 2 * Math.PI * Math.PI * r * r * r//Bounding Area
 
 			}
@@ -163,7 +163,7 @@ class HuperSphere3D extends Sphere {
 
 		const THREE = three.THREE,
 			classSettings = this.classSettings,
-			mesh = new THREE.Mesh(new FibonacciSphereGeometry(((classSettings.intersection.position + 1) / 2) * classSettings.t, 320),
+			mesh = new THREE.Mesh(new FibonacciSphereGeometry(((classSettings.intersection.position + 1) / 2) * classSettings.r, 320),
 				//new THREE.MeshBasicMaterial( { color: color, wireframe: true } )//сетка
 				new THREE.MeshLambertMaterial( {//полупрозрачные грани
 
