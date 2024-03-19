@@ -1021,6 +1021,7 @@ class ND extends MyObject {
 					const i = parseInt( name );
 					if ( !isNaN( i ) ) {
 
+						const positionId = i;
 						if ( settings.object.geometry.position.boPositionError ) {
 
 							//срабатывает когда меняется позиция вершины.
@@ -1082,6 +1083,7 @@ class ND extends MyObject {
 									target[name] = value;
 									if ( !isNaN( i ) ) {
 
+//										_ND.bufferGeometry.userData.position[positionId][i] = value;
 										target.positionWorld = undefined;
 										if ( _prevLine.prevLine ) {
 											
@@ -1908,10 +1910,14 @@ class ND extends MyObject {
 				//Returns a points of projection
 				get points() {
 
+					return _ND.bufferGeometry.userData.position;
+/*					
+					//Точки надо брать из this.bufferGeometry
 					const points = [];
 					for ( var i = 0; i < geometry.position.length; i++ )
 						points.push( geometry.position[i].point );
 					return points;
+*/					
 
 				},
 				//returns indices of the faces vertices
@@ -2045,6 +2051,11 @@ class ND extends MyObject {
 			},
 
 		}
+		const points = [];
+		for ( var i = 0; i < geometry.position.length; i++ )
+			points.push( geometry.position[i].point );
+		this.getPoint = (i) => { return points[i]; }
+		this.setPositionAttributeFromPoints( points );
 
 		vectorPlane = vectorPlane || new Vector( settings.vectorPlane );
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
@@ -2118,6 +2129,7 @@ class ND extends MyObject {
 			)
 				settings.object.geometry.colors = indices3D.colors;
 
+/*			
 			nD.getPoint = (i) => { 
 
 				const position = geometry.D3.points[i];//settings.object.geometry.position[i];
@@ -2125,6 +2137,8 @@ class ND extends MyObject {
 				
 			}
 			const buffer = nD.setPositionAttributeFromPoints( geometry.D3.points );
+*/			
+			const buffer = nD.bufferGeometry;
 			
 			if ( settings3D.faces ) {
 
@@ -2558,6 +2572,7 @@ class ND extends MyObject {
 						} else {
 							
 							const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points );
+//							const buffer = _ND.bufferGeometry;
 							const lineIndices = [];
 							function createIndices( item, level ) {
 	

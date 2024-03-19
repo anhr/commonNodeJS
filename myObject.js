@@ -16,6 +16,8 @@
 import three from './three.js'
 import Player from './player/player.js'
 
+const sMyObject = 'MyObject';
+
 class MyObject {
 
 	constructor( settings={}, vertices ) {
@@ -25,9 +27,56 @@ class MyObject {
 		settings.object = settings.object || {};
 		settings.object.geometry = settings.object.geometry || {};
 
+		settings.object.geometry.position = new Proxy(settings.object.geometry.position, {
+
+			get: (positions, name) => {
+				
+				const positionId = parseInt(name);
+				if (!isNaN(positionId)) {
+					
+					return new Proxy(positions[positionId], {
+
+/*						
+						get: (position, name) => {
+							
+							const axisId = parseInt(name);
+							if (!isNaN(axisId)) {
+								
+								return position[axisId];
+							
+							}
+							return position[name];
+							
+						},
+*/						
+						set: (position, name, value) => {
+
+							const axisId = parseInt(name);
+							if (!isNaN(axisId)) {
+
+								position[axisId] = value;
+								_this.bufferGeometry.userData.position[positionId][axisId] = value;
+								return true;
+								
+							}
+							position[name] = value;
+							return true;
+							
+						}
+						
+					});
+
+				
+				}
+				return positions[name];
+				
+			},
+			
+		});
+
 		const THREE = three.THREE;
 
-		const buffer = new THREE.BufferGeometry();
+		this.bufferGeometry = new THREE.BufferGeometry();
 
 		if (vertices)
 			//for for compatibility with ND
@@ -65,14 +114,95 @@ class MyObject {
 			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
 			const MAX_POINTS = settings.object.geometry.MAX_POINTS;
 //				pointsLength = points.length;
-			if (MAX_POINTS != undefined) buffer.setDrawRange(0, pointsLength * 2 - 1);// * pointLength );//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
+			if (MAX_POINTS != undefined) this.bufferGeometry.setDrawRange(0, pointsLength * 2 - 1);// * pointLength );//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
 			const positions = new Float32Array(pointsLength * pointLength);
-			buffer.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
+			this.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
+			this.bufferGeometry.userData.position = new Proxy(_this.bufferGeometry.attributes.position, {
+	
+				get: (position, name) => {
+	
+					const positionId = parseInt(name);
+					if (!isNaN(positionId)) {
+
+						return new Proxy(position.array, {
+
+							get: (array, name) => {
+								
+								const axisId = parseInt(name);
+								if (!isNaN(axisId)) {}
+								switch (name) {
+				
+									case 'x': return array[positionId * position.itemSize + 0];
+									case 'y': return array[positionId * position.itemSize + 1];
+									case 'z': return array[positionId * position.itemSize + 2];
+									case 'w': {
+
+										if (position.itemSize < 4) console.error(sMyObject + ': get this.bufferGeometry.userData.position[' + positionId + ']. Invalid vector axis: ' + name);
+										return array[positionId * position.itemSize + 3];
+
+									}
+				
+								}
+								console.error(sMyObject + ': get this.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
+								
+							},
+							set: (array, name, value) => {
+
+								const axisId = parseInt(name);
+								if (!isNaN(axisId)) {
+
+									array[positionId * position.itemSize + axisId] = value;
+//									position.needsUpdate = true;
+									return true;
+									
+								}
+								console.error(sMyObject + ': set this.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
+								return true;
+								
+							}
+							
+						});
+
+/*						
+						const vector = position.itemSize === 4 ? new THREE.Vector4() : position.itemSize === 3 ? new THREE.Vector3() : undefined;
+						vector.fromBufferAttribute(position, positionId);
+//						return vector;
+						return new Proxy(vector, {
+
+							set: (vector, name, value) => {
+
+								const axisId = parseInt(name);
+								if (!isNaN(axisId)) {
+
+									const position = _this.bufferGeometry.attributes.position;
+									position.array[positionId * position.itemSize + axisId] = value;
+//									position.needsUpdate = true;
+									
+								}
+								return true;
+								
+							}
+							
+						});
+*/						
+	
+					}
+					switch (name) {
+	
+						case 'length': return position.count;
+	
+					}
+					console.error(sMyObject + ': get this.bufferGeometry.userData.position. Invalid name: ' + name);
+					return position[name];
+	
+				}
+	
+			});			
 			if (pointLength < 4) return;
 
 			//color
 			const colors = new Float32Array(pointsLength * pointLength);
-			buffer.setAttribute('ca', new THREE.Float32BufferAttribute(colors, pointLength));
+			this.bufferGeometry.setAttribute('ca', new THREE.Float32BufferAttribute(colors, pointLength));
 
 		}
 		this.setPositionAttributeFromPoints = (points) => {
@@ -91,12 +221,12 @@ class MyObject {
 			this.createPositionAttribute(points[0].w === undefined ? 3 : 4, points.length);
 //			const buffer = settings.options.buffer;
 			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);//, buffer.attributes);
-			return buffer;
+			//return this.bufferGeometry;
 			
 		}
 		this.setPositionAttributeFromPoint = (i, vertice/*, attributes*/) => {
 
-			const attributes = buffer.attributes;
+			const attributes = this.bufferGeometry.attributes;
 /*			
 			const position = points ? points[i] : settings.object.geometry.position[i],
 				vertice = position.positionWorld || position,
