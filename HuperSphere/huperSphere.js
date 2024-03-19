@@ -422,6 +422,7 @@ class HuperSphere {
 		const angles = settings.object.geometry.angles;
 
 		//Angles range
+/*Не работает с Circle		
 		angles.ranges = [
 			{
 				angleName: 'Longitude',
@@ -439,7 +440,7 @@ class HuperSphere {
 				max: this.altitudeRange.max,//π / 2;
 			}
 		];
-/*		
+*/		
 		angles.ranges = [];
 		for (let angleId = 0; angleId < this.dimension - 1; angleId++) {
 
@@ -467,7 +468,6 @@ class HuperSphere {
 			angles.ranges.push(range);
 
 		}
-*/		
 
 		/*
 		const myObject = new MyObject(settings);
