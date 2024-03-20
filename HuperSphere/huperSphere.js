@@ -1830,7 +1830,6 @@ class HuperSphere {
 						else {
 
 							if ((settings.object.geometry.position[0].length > 3) && (!settings.object.color)) settings.object.color = {};//Color of vertice from palette
-							settings.bufferGeometry = myObject.bufferGeometry;
 							nd = new ND(this.dimension, settings);
 
 							params.center = params.center || {}

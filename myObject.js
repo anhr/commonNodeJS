@@ -77,6 +77,7 @@ class MyObject {
 		const THREE = three.THREE;
 
 		this.bufferGeometry = new THREE.BufferGeometry();
+		settings.bufferGeometry = this.bufferGeometry;
 
 		if (vertices)
 			//for for compatibility with ND
@@ -232,8 +233,10 @@ class MyObject {
 				vertice = position.positionWorld || position,
 */				
 			vertice = vertice || _this.getPoint(i);
-			const itemSize = attributes.position.itemSize;
-			                  attributes.position.array [0 + i * itemSize] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
+			const itemSize = attributes.position.itemSize,
+				x = vertice.x != undefined ? vertice.x : vertice[0];
+			if (x === undefined) console.error(sMyObject + '.setPositionAttributeFromPoint. Invalid x = ' + x)
+			                  attributes.position.array [0 + i * itemSize] = x;
 			if (itemSize > 1) attributes.position.array [1 + i * itemSize] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) attributes.position.array [2 + i * itemSize] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
 			if (itemSize > 3) attributes.position.array [3 + i * itemSize] = vertice.w != undefined ? vertice.w : vertice[3] != undefined ? vertice[3] : 0;
@@ -247,9 +250,9 @@ class MyObject {
 			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(vertice.w, w.min, w.max));
 			
 		}
-		this.setPositionAttribute = ( i ) => {
+		this.setPositionAttribute = (i) => {
 
-			this.setPositionAttributeFromPoint( i, _this.object3D.geometry.attributes );
+			this.setPositionAttributeFromPoint(i);// , _this.object3D.geometry.attributes);
 			
 		}
 		
