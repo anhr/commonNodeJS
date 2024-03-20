@@ -1,6 +1,6 @@
 /**
  * @module Circle
- * @description 1 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+ * @description 1 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
  * All the vertices form a circle.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -15,18 +15,18 @@
 */
 
 
-import HuperSphere from './huperSphere.js';
+import Hypersphere from './hypersphere.js';
 import three from '../three.js'
 
 const sCircle = 'Circle';
 
-class Circle extends HuperSphere {
+class Circle extends Hypersphere {
 
 	/**
-	 * 1 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+	 * 1 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * All the vertices form a circle.
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
-	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.
+	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-Hypersphere-Hypersphere.html" target="_blank">Hypersphere classSettings</a>.
 	 **/
 	constructor(options, classSettings) {
 
@@ -47,7 +47,7 @@ class Circle extends HuperSphere {
 		}
 
 	}
-	newHuperSphere(options, classSettings) { return new Circle(options, classSettings); }
+	newHypersphere(options, classSettings) { return new Circle(options, classSettings); }
 	get cookieName(){ return 'Circle' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
 	get probabilityDensity(){
 		
@@ -104,7 +104,7 @@ class Circle extends HuperSphere {
 	logCircle() {
 
 		if (!this.classSettings.debug) return;
-		this.logHuperSphere();
+		this.logHypersphere();
 		
 	}
 

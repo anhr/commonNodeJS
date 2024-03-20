@@ -168,11 +168,7 @@ class MyObject {
 			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(vertice.w, w.min, w.max));
 			
 		}
-		this.setPositionAttribute = (i) => {
-
-			this.setPositionAttributeFromPoint(i);
-			
-		}
+		this.setPositionAttribute = (i) => { this.setPositionAttributeFromPoint(i); }
 		
 	}
 

@@ -1,7 +1,7 @@
 /**
- * @module HuperSphere3D
- * @description 3 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
- * All the vertices form a [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+ * @module Hypersphere3D
+ * @description 3 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+ * All the vertices form a [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -19,21 +19,21 @@ import Sphere from './sphere.js';
 import three from '../three.js'
 import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.js'
 
-const sHuperSphere3D = 'HuperSphere3D',
+const sHypersphere3D = 'Hypersphere3D',
 	π = Math.PI;
 
-class HuperSphere3D extends Sphere {
+class Hypersphere3D extends Sphere {
 
 	/**
-	 * 3 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
-	 * All the vertices form a [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+	 * 3 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+	 * All the vertices form a [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
-	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.
+	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-Hypersphere-Hypersphere.html" target="_blank">Hypersphere classSettings</a>.
 	 **/
 	constructor(options, classSettings) {
 
 		super(options, classSettings);
-		this.logHuperSphere();
+		this.logHypersphere();
 
 	}
 
@@ -52,7 +52,7 @@ class HuperSphere3D extends Sphere {
 			case longitudeId:
 				planeGeometry(altitudeId);
 				super.planesGeometry(changedAngleId, aAngleControls, planeGeometry, longitudeId); break;
-			default: console.error(sHuperSphere3D + ': Update planes. Invalid changedAngleId = ' + changedAngleId);
+			default: console.error(sHypersphere3D + ': Update planes. Invalid changedAngleId = ' + changedAngleId);
 				
 		}
 		
@@ -66,7 +66,7 @@ class HuperSphere3D extends Sphere {
 		}
 		
 	}
-	newHuperSphere(options, classSettings) { return new HuperSphere3D(options, classSettings); }
+	newHypersphere(options, classSettings) { return new Hypersphere3D(options, classSettings); }
 	get cookieName() { return '3DUniverse' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
 	get altitudeRange() { return {
 		angleName: 'Altitude',
@@ -140,7 +140,7 @@ class HuperSphere3D extends Sphere {
 		
 		const lang = {
 
-			name: "Hupersphere",
+			name: "Hypersphere",
 
 		};
 
@@ -198,4 +198,4 @@ class HuperSphere3D extends Sphere {
 	get verticesCountMin() { return 4; }
 
 }
-export default HuperSphere3D;
+export default Hypersphere3D;
