@@ -55,7 +55,7 @@ class MyObject {
 							if (!isNaN(axisId)) {
 
 								position[axisId] = value;
-								_this.bufferGeometry.userData.position[positionId][axisId] = value;
+								settings.bufferGeometry.userData.position[positionId][axisId] = value;
 								return true;
 								
 							}
@@ -76,7 +76,8 @@ class MyObject {
 
 		const THREE = three.THREE;
 
-		this.bufferGeometry = new THREE.BufferGeometry();
+		settings.bufferGeometry = new THREE.BufferGeometry();
+		this.bufferGeometry = settings.bufferGeometry;
 
 		if (vertices)
 			//for for compatibility with ND
@@ -114,10 +115,10 @@ class MyObject {
 			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
 			const MAX_POINTS = settings.object.geometry.MAX_POINTS;
 //				pointsLength = points.length;
-			if (MAX_POINTS != undefined) this.bufferGeometry.setDrawRange(0, pointsLength * 2 - 1);// * pointLength );//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
+			if (MAX_POINTS != undefined) settings.bufferGeometry.setDrawRange(0, pointsLength * 2 - 1);// * pointLength );//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
 			const positions = new Float32Array(pointsLength * pointLength);
-			this.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
-			this.bufferGeometry.userData.position = new Proxy(_this.bufferGeometry.attributes.position, {
+			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
+			settings.bufferGeometry.userData.position = new Proxy(settings.bufferGeometry.attributes.position, {
 	
 				get: (position, name) => {
 	
@@ -137,13 +138,13 @@ class MyObject {
 									case 'z': return array[positionId * position.itemSize + 2];
 									case 'w': {
 
-										if (position.itemSize < 4) console.error(sMyObject + ': get this.bufferGeometry.userData.position[' + positionId + ']. Invalid vector axis: ' + name);
+										if (position.itemSize < 4) console.error(sMyObject + ': get settings.bufferGeometry.userData.position[' + positionId + ']. Invalid vector axis: ' + name);
 										return array[positionId * position.itemSize + 3];
 
 									}
 				
 								}
-								console.error(sMyObject + ': get this.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
+								console.error(sMyObject + ': get settings.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
 								
 							},
 							set: (array, name, value) => {
@@ -156,7 +157,7 @@ class MyObject {
 									return true;
 									
 								}
-								console.error(sMyObject + ': set this.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
+								console.error(sMyObject + ': set settings.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
 								return true;
 								
 							}
@@ -174,7 +175,7 @@ class MyObject {
 								const axisId = parseInt(name);
 								if (!isNaN(axisId)) {
 
-									const position = _this.bufferGeometry.attributes.position;
+									const position = settings.bufferGeometry.attributes.position;
 									position.array[positionId * position.itemSize + axisId] = value;
 //									position.needsUpdate = true;
 									
@@ -192,7 +193,7 @@ class MyObject {
 						case 'length': return position.count;
 	
 					}
-					console.error(sMyObject + ': get this.bufferGeometry.userData.position. Invalid name: ' + name);
+					console.error(sMyObject + ': get settings.bufferGeometry.userData.position. Invalid name: ' + name);
 					return position[name];
 	
 				}
@@ -202,7 +203,7 @@ class MyObject {
 
 			//color
 			const colors = new Float32Array(pointsLength * pointLength);
-			this.bufferGeometry.setAttribute('ca', new THREE.Float32BufferAttribute(colors, pointLength));
+			settings.bufferGeometry.setAttribute('ca', new THREE.Float32BufferAttribute(colors, pointLength));
 
 		}
 		this.setPositionAttributeFromPoints = (points) => {
@@ -221,12 +222,12 @@ class MyObject {
 			this.createPositionAttribute(points[0].w === undefined ? 3 : 4, points.length);
 //			const buffer = settings.options.buffer;
 			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);//, buffer.attributes);
-			//return this.bufferGeometry;
+			//return settings.bufferGeometry;
 			
 		}
 		this.setPositionAttributeFromPoint = (i, vertice/*, attributes*/) => {
 
-			const attributes = this.bufferGeometry.attributes;
+			const attributes = settings.bufferGeometry.attributes;
 /*			
 			const position = points ? points[i] : settings.object.geometry.position[i],
 				vertice = position.positionWorld || position,
