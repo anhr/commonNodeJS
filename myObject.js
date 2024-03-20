@@ -233,10 +233,10 @@ class MyObject {
 */				
 			vertice = vertice || _this.getPoint(i);
 			const itemSize = attributes.position.itemSize;
-			attributes.position.array [0 + i * itemSize] = vertice.x;
-			if (itemSize > 1) attributes.position.array [1 + i * itemSize] = vertice.y;
-			if (itemSize > 2) attributes.position.array [2 + i * itemSize] = vertice.z;
-			if (itemSize > 3) attributes.position.array [3 + i * itemSize] = vertice.w;
+			                  attributes.position.array [0 + i * itemSize] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
+			if (itemSize > 1) attributes.position.array [1 + i * itemSize] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
+			if (itemSize > 2) attributes.position.array [2 + i * itemSize] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
+			if (itemSize > 3) attributes.position.array [3 + i * itemSize] = vertice.w != undefined ? vertice.w : vertice[3] != undefined ? vertice[3] : 0;
 			if (attributes.position.itemSize < 4) return;
 
 			//Меняем цвет дуги между двумя вершинами в гиперсфере

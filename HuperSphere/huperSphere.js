@@ -469,12 +469,6 @@ class HuperSphere {
 
 		}
 
-		/*
-		const myObject = new MyObject(settings);
-		myObject.createPositionAttribute(4, angles.length);
-		angles.forEach((verticeAngles, i) => myObject.setPositionAttributeFromPoint(i, this.angles2Vertice(verticeAngles)));
-		*/
-
 		//angles[0][0] = 10;//error huperSphere.js:548 HuperSphere: Set angle[0] = 10 of the vertice 0 is out of range from -1.5707963267948966 to 1.5707963267948966
 		if (angles.count != undefined)
 			for (let i = angles.length; i < angles.count; i++) angles.pushRandomAngle();
@@ -773,6 +767,10 @@ class HuperSphere {
 
 		});
 		const position = settings.object.geometry.position;
+
+		const myObject = new MyObject(settings);
+		myObject.createPositionAttribute(4, angles.length);
+		angles.forEach((verticeAngles, i) => myObject.setPositionAttributeFromPoint(i, this.angles2Vertice(verticeAngles)));
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
 		if (!(settings.object.geometry.indices instanceof Array)) {
@@ -1832,6 +1830,7 @@ class HuperSphere {
 						else {
 
 							if ((settings.object.geometry.position[0].length > 3) && (!settings.object.color)) settings.object.color = {};//Color of vertice from palette
+							settings.bufferGeometry = myObject.bufferGeometry;
 							nd = new ND(this.dimension, settings);
 
 							params.center = params.center || {}
