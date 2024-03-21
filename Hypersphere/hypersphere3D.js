@@ -67,7 +67,7 @@ class Hypersphere3D extends Sphere {
 		
 	}
 	newHypersphere(options, classSettings) { return new Hypersphere3D(options, classSettings); }
-	get cookieName() { return '3DUniverse' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
+	get cookieName() { return 'Hypersphere' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
 	get altitudeRange() { return {
 		angleName: 'Altitude',
 

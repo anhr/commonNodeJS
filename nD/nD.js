@@ -2034,8 +2034,9 @@ class ND extends MyObject {
 		const points = [];
 		for ( var i = 0; i < geometry.position.length; i++ )
 			points.push( geometry.position[i].point );
+
 		this.getPoint = (i) => { return points[i]; }
-		this.setPositionAttributeFromPoints( points );
+		if (!settings.bufferGeometry) this.setPositionAttributeFromPoints( points );
 
 		vectorPlane = vectorPlane || new Vector( settings.vectorPlane );
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );

@@ -69,8 +69,12 @@ class MyObject {
 
 		const THREE = three.THREE;
 
-		this.bufferGeometry = new THREE.BufferGeometry();
-		settings.bufferGeometry = this.bufferGeometry;
+		if (!settings.bufferGeometry) {
+			
+			this.bufferGeometry = new THREE.BufferGeometry();
+			settings.bufferGeometry = this.bufferGeometry;
+
+		} else this.bufferGeometry = settings.bufferGeometry;
 
 		if (vertices)
 			//for for compatibility with ND
