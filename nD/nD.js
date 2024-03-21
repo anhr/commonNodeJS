@@ -844,7 +844,7 @@ class ND extends MyObject {
 		}
 		const positionWorld = new Proxy( settings.object.geometry.position ? settings.object.geometry.position : [], {
 	
-			get: function ( target, name ) {
+			get: function ( position, name ) {
 
 				const i = parseInt( name );
 				if ( !isNaN( i ) ) {
@@ -978,11 +978,13 @@ class ND extends MyObject {
 				}
 				switch ( name ) {
 
+/*
 					case 'push': return settings.object.geometry.position.push;
 					case 'length': return settings.object.geometry.position.length;
 					case 'forEach': return settings.object.geometry.position.forEach;
-					case 'isProxy': return true;
 					case 'target': return;// target; Если вершинрнуть target, то неверно сработает if ( settings.object.geometry.position.target ) и позиция intersection будет неверна
+*/
+					case 'isProxy': return true;
 					case 'copy': 
 						return function () {
 
@@ -998,9 +1000,10 @@ class ND extends MyObject {
 							return v;
 		
 						}
-					default: console.error( 'ND: positionWorld Proxy. Invalid name: ' + name );
+//					default: console.error( 'ND: positionWorld Proxy. Invalid name: ' + name );
 
 				}
+				return position[name];
 
 			},
 			
@@ -2036,7 +2039,8 @@ class ND extends MyObject {
 			points.push( geometry.position[i].point );
 
 		this.getPoint = (i) => { return points[i]; }
-		if (!settings.bufferGeometry) this.setPositionAttributeFromPoints( points );
+//		if (!settings.bufferGeometry)
+			this.setPositionAttributeFromPoints( points );
 
 		vectorPlane = vectorPlane || new Vector( settings.vectorPlane );
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
@@ -2861,20 +2865,23 @@ class ND extends MyObject {
 						}
 						switch ( name ) {
 
+/*								
 							case 'push': return target.push;
 							case 'length': return target.length;
 							case 'forEach': return target.forEach;
-							case 'isProxy': return true;
 							case 'target': return target;
+*/							
+							case 'isProxy': return true;
 							case "reset":
 								return function () {
 	
 									target.forEach( item => item.positionWorld = undefined );
 	
 								}
-							default: console.error( 'ND: settings.object.geometry.position Proxy. Invalid name: ' + name );
+//							default: console.error( 'ND: settings.object.geometry.position Proxy. Invalid name: ' + name );
 		
 						}
+						return target[name];
 		
 					},
 					set: function ( target, name, value ) {

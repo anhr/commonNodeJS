@@ -27,6 +27,11 @@ class MyObject {
 		settings.object = settings.object || {};
 		settings.object.geometry = settings.object.geometry || {};
 
+		if (vertices)
+			//for for compatibility with ND
+			//Что бы можно было менять позицию и цвет вершины
+			settings.object.geometry.position = settings.object.geometry.position || vertices;
+
 		if (!settings.object.geometry.position.isMyObjectPositionProxy)
 			settings.object.geometry.position = new Proxy(settings.object.geometry.position, {
 	
@@ -75,11 +80,6 @@ class MyObject {
 			settings.bufferGeometry = this.bufferGeometry;
 
 		} else this.bufferGeometry = settings.bufferGeometry;
-
-		if (vertices)
-			//for for compatibility with ND
-			//Что бы можно было менять позицию и цвет вершины
-			settings.object.geometry.position = settings.object.geometry.position || vertices;
 		
 		this.createPositionAttribute = (pointLength, pointsLength) => {
 
@@ -155,8 +155,17 @@ class MyObject {
 		}
 		this.setPositionAttributeFromPoints = (points) => {
 
-			this.createPositionAttribute(points[0].w === undefined ? 3 : 4, points.length);
-			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);//, buffer.attributes);
+			if (!this.bufferGeometry.attributes.position) {
+				
+				this.createPositionAttribute(points[0].w === undefined ? 3 : 4, points.length);
+				for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);
+/*не помогает				
+				this.bufferGeometry.attributes.position.needsUpdate = true;
+				if (this.bufferGeometry.attributes.ca) this.bufferGeometry.attributes.ca.needsUpdate = true;
+*/				
+				
+			}
+			return this.bufferGeometry;
 			
 		}
 		this.setPositionAttributeFromPoint = (i, vertice/*, attributes*/) => {

@@ -768,9 +768,17 @@ class Hypersphere {
 		});
 		const position = settings.object.geometry.position;
 
-		const myObject = new MyObject(settings);
-		myObject.createPositionAttribute(4, angles.length);
-		angles.forEach((verticeAngles, i) => myObject.setPositionAttributeFromPoint(i, this.angles2Vertice(verticeAngles)));
+		if (!settings.bufferGeometry) {
+			
+			const myObject = new MyObject(settings);
+	/*		
+			myObject.getPoint = (i) => { return this.angles2Vertice(angles[i]); }
+			myObject.setPositionAttributeFromPoints(angles);
+	*/		
+			myObject.createPositionAttribute(4, angles.length);
+			angles.forEach((verticeAngles, i) => myObject.setPositionAttributeFromPoint(i, this.angles2Vertice(verticeAngles)));
+
+		}
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
 		if (!(settings.object.geometry.indices instanceof Array)) {
