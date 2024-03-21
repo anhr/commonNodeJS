@@ -307,7 +307,7 @@ class Hypersphere {
 							switch (name) {
 
 								case 'length': return _this.dimension - 1;
-								case 'length': return _this.dimension - 1;
+//								case 'length': return _this.dimension - 1;
 
 							}
 							return verticeAngles[name];

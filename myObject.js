@@ -27,39 +27,45 @@ class MyObject {
 		settings.object = settings.object || {};
 		settings.object.geometry = settings.object.geometry || {};
 
-		settings.object.geometry.position = new Proxy(settings.object.geometry.position, {
-
-			get: (positions, name) => {
-				
-				const positionId = parseInt(name);
-				if (!isNaN(positionId)) {
+		if (!settings.object.geometry.position.isMyObjectPositionProxy)
+			settings.object.geometry.position = new Proxy(settings.object.geometry.position, {
+	
+				get: (positions, name) => {
 					
-					return new Proxy(positions[positionId], {
-
-						set: (position, name, value) => {
-
-							const axisId = parseInt(name);
-							if (!isNaN(axisId)) {
-
-								position[axisId] = value;
-								_this.bufferGeometry.userData.position[positionId][axisId] = value;
+					const positionId = parseInt(name);
+					if (!isNaN(positionId)) {
+						
+						return new Proxy(positions[positionId], {
+	
+							set: (position, name, value) => {
+	
+								const axisId = parseInt(name);
+								if (!isNaN(axisId)) {
+	
+									position[axisId] = value;
+									_this.bufferGeometry.userData.position[positionId][axisId] = value;
+									return true;
+									
+								}
+								position[name] = value;
 								return true;
 								
 							}
-							position[name] = value;
-							return true;
 							
-						}
-						
-					});
-
+						});
+	
+					
+					}
+					switch (name) {
+	
+						case 'isMyObjectPositionProxy': return true;
+	
+					}
+					return positions[name];
+					
+				},
 				
-				}
-				return positions[name];
-				
-			},
-			
-		});
+			});
 
 		const THREE = three.THREE;
 
