@@ -155,14 +155,14 @@ class MyObject {
 		}
 		this.setPositionAttributeFromPoints = (points) => {
 
+/*			
+			this.createPositionAttribute(points[0].w === undefined ? 3 : 4, points.length);
+			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);
+*/			
 			if (!this.bufferGeometry.attributes.position) {
 				
 				this.createPositionAttribute(points[0].w === undefined ? 3 : 4, points.length);
 				for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);
-/*не помогает				
-				this.bufferGeometry.attributes.position.needsUpdate = true;
-				if (this.bufferGeometry.attributes.ca) this.bufferGeometry.attributes.ca.needsUpdate = true;
-*/				
 				
 			}
 			return this.bufferGeometry;
