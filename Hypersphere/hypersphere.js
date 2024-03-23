@@ -771,12 +771,12 @@ class Hypersphere {
 		if (!settings.bufferGeometry) {
 			
 			const myObject = new MyObject(settings);
-	/*		
 			myObject.getPoint = (i) => { return this.angles2Vertice(angles[i]); }
-			myObject.setPositionAttributeFromPoints(angles);
-	*/		
+			myObject.setPositionAttributeFromPoints(angles, this.angles2Vertice(angles[0]).length);
+			/*
 			myObject.createPositionAttribute(4, angles.length);
 			angles.forEach((verticeAngles, i) => myObject.setPositionAttributeFromPoint(i, this.angles2Vertice(verticeAngles)));
+			*/
 
 		}
 
@@ -1921,7 +1921,7 @@ class Hypersphere {
 									intersection(points);
 
 								},
-								//shaderMaterial: false,
+								shaderMaterial: false,
 
 							},
 							options: settings.options,

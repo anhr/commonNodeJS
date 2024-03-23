@@ -145,15 +145,17 @@ class MyObject {
 	
 				}
 	
-			});			
+			});
+/*сейчас каждый графический объект аттрибут цвета создает самостоятельно. Например а ND аттрибут цвета имеет имя 'color' а в getShaderMaterialPoints имя 'ca'
 			if (pointLength < 4) return;
 
 			//color
 			const colors = new Float32Array(pointsLength * pointLength);
 			this.bufferGeometry.setAttribute('ca', new THREE.Float32BufferAttribute(colors, pointLength));
+*/			
 
 		}
-		this.setPositionAttributeFromPoints = (points) => {
+		this.setPositionAttributeFromPoints = (points, pointLength) => {
 
 /*			
 			this.createPositionAttribute(points[0].w === undefined ? 3 : 4, points.length);
@@ -161,7 +163,7 @@ class MyObject {
 */			
 			if (!this.bufferGeometry.attributes.position) {
 				
-				this.createPositionAttribute(points[0].w === undefined ? 3 : 4, points.length);
+				this.createPositionAttribute(pointLength != undefined ? pointLength : points[0].w === undefined ? 3 : 4, points.length);
 				for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);
 				
 			}
