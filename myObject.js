@@ -69,6 +69,21 @@ class MyObject {
 					return positions[name];
 					
 				},
+				set: (positions, name, value) => {
+					
+					const positionId = parseInt(name);
+					if (!isNaN(positionId)) {
+
+						const vertice = value, position = settings.object.geometry.position[positionId];
+						if (position.length != vertice.length) console.error(sMyObject + ': set positions[' + positionId + ']. Invalid vertice.length = ' + vertice.length);
+						vertice.forEach((axis, i) => position[i] = axis);
+						return true;
+						
+					}
+					positions[name] = value;
+					return true;
+					
+				}
 				
 			});
 
@@ -170,10 +185,12 @@ class MyObject {
 			return this.bufferGeometry;
 			
 		}
-		this.setPositionAttributeFromPoint = (i, vertice/*, attributes*/) => {
+		this.setPositionAttributeFromPoint = (i, vertice) => {
 
 			const attributes = this.bufferGeometry.attributes;
 			vertice = vertice || _this.getPoint(i);
+			settings.object.geometry.position[i] = vertice;
+/*		
 			const itemSize = attributes.position.itemSize,
 				x = vertice.x != undefined ? vertice.x : vertice[0];
 			if (x === undefined) console.error(sMyObject + '.setPositionAttributeFromPoint. Invalid x = ' + x)
@@ -181,6 +198,7 @@ class MyObject {
 			if (itemSize > 1) attributes.position.array [1 + i * itemSize] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) attributes.position.array [2 + i * itemSize] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
 			if (itemSize > 3) attributes.position.array [3 + i * itemSize] = vertice.w != undefined ? vertice.w : vertice[3] != undefined ? vertice[3] : 0;
+*/			
 			if (attributes.position.itemSize < 4) return;
 
 			//Меняем цвет дуги между двумя вершинами в гиперсфере

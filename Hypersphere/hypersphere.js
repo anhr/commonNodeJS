@@ -325,6 +325,21 @@ class Hypersphere {
 									if ((angle < range.min) || (angle > range.max)) console.error(sHypersphere + ': Set angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
 
 									verticeAngles[angleId] = angle;
+//									settings.object.geometry.position.angles[verticeId] = verticeAngles;
+									settings.object.geometry.position[verticeId] = _this.angles2Vertice(verticeAngles);
+
+/*									
+									const position = settings.object.geometry.position[verticeId];
+									const vertice = _this.angles2Vertice(verticeAngles);
+									if (position.length != vertice.length) console.error(sHypersphere + ': set vertice angles. Invalid vertice.length = ' + vertice.length);
+									
+									//Нельзя просто приравнять новое значение settings.object.geometry.position[verticeId]
+									//потому что так не удается попасть в MyObject set settings.object.geometry.position[i]
+									//Поэтому обновляю каждую ось вершины отдельно.
+									//Лень было устранять эту проблему
+									vertice.forEach((axis, i) => position[i] = axis);
+*/									
+									
 									//если тут обновлять гиперсферу, то будет тратиться лишнее время, когда одновременно изменяется несколько вершин
 									//Сейчас я сначала изменяю все вершины, а потом обновляю гиперсферу
 									//_this.update(verticeId);
@@ -738,6 +753,7 @@ class Hypersphere {
 				return _position[name];
 
 			},
+/*			
 			//set settings.object.geometry.position
 			set: (_position, name, value) => {
 
@@ -764,6 +780,7 @@ class Hypersphere {
 				return true;
 
 			}
+*/			
 
 		});
 		const position = settings.object.geometry.position;
@@ -1002,11 +1019,14 @@ class Hypersphere {
 			this.update = (verticeId, changedAngleId) => {
 
 				if (!this.isUpdate) return;
-				const points = nd && (nd.object3D.visible === true) ? nd.object3D : myPoints,
-					vertice = settings.object.geometry.position[verticeId],
+				const points = nd && (nd.object3D.visible === true) ? nd.object3D : myPoints;
+
+/*				
+				const vertice = settings.object.geometry.position[verticeId],
 					itemSize = points.geometry.attributes.position.itemSize;
 				if (verticeId != undefined) for (let axesId = 0; axesId < itemSize; axesId++)
 					points.geometry.attributes.position.array[axesId + verticeId * itemSize] = vertice[axesId] != undefined ? vertice[axesId] : 0.0;
+*/				
 				points.geometry.attributes.position.needsUpdate = true;
 				if (settings.options.axesHelper)
 					settings.options.axesHelper.updateAxes();
@@ -2533,7 +2553,23 @@ class Hypersphere {
 			
 		}
 		
-		return vertice;
+		return new Proxy(vertice, {
+	
+			get: (vertice, name) => {
+				
+				switch (name) {
+
+					case 'x': return vertice[0];
+					case 'y': return vertice[1];
+					case 'z': return vertice[2];
+					case 'w': return vertice[3];
+
+				}
+				return vertice[name];
+				
+			},
+			
+		});
 
 	}
 	vertice2angles(vertice) {
