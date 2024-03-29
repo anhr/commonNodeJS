@@ -27,7 +27,7 @@ class MyObject {
 		settings.object = settings.object || {};
 		settings.object.geometry = settings.object.geometry || {};
 
-		settings.object.geometry.position = new Proxy(settings.object.geometry.position, {
+		settings.object.geometry.position = new Proxy(settings.object.geometry.position || [], {
 
 			get: (positions, name) => {
 				
@@ -138,13 +138,19 @@ class MyObject {
 									case 'z': return array[positionId * position.itemSize + 2];
 									case 'w': {
 
-										if (position.itemSize < 4) console.error(sMyObject + ': get settings.bufferGeometry.userData.position[' + positionId + ']. Invalid vector axis: ' + name);
+										if (position.itemSize < 4) {
+											
+//											console.error(sMyObject + ': get settings.bufferGeometry.userData.position[' + positionId + ']. Invalid vector axis: ' + name);
+											return;
+
+										}
 										return array[positionId * position.itemSize + 3];
 
 									}
 				
 								}
-								console.error(sMyObject + ': get settings.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
+								return array[name];
+//								console.error(sMyObject + ': get settings.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
 								
 							},
 							set: (array, name, value) => {

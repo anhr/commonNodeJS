@@ -42,7 +42,7 @@ const sHuperSphere = 'HuperSphere', sOverride = sHuperSphere + ': Please overrid
 	π = Math.PI;
 //	verticeEdges = true;//Эту константу добавил на случай если захочу не включать индексы ребер в вершину если classSettings.debug != true
 
-class HuperSphere {
+class HuperSphere extends MyObject {
 
 	/**
 	 * Base class for n dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
@@ -189,6 +189,7 @@ class HuperSphere {
 	 **/
 	constructor(options, classSettings = {}) {
 
+		super( classSettings.settings );
 		const _this = this, THREE = three.THREE;
 		if (classSettings.debug === true) classSettings.debug = {};
 		if (classSettings.debug) {
@@ -485,7 +486,8 @@ class HuperSphere {
 					const _vertice = _position[i];
 					const angle2Vertice = () => {
 
-						const vertice = _this.angles2Vertice(_vertice), r = classSettings.r;
+						const vertice = _this.angles2Vertice(i),//_vertice)
+							r = classSettings.r;
 						//Эта проверка не проходит для HuperSphere3D
 						if (classSettings.debug) {
 
@@ -768,9 +770,21 @@ class HuperSphere {
 		});
 		const position = settings.object.geometry.position;
 
+/*		
 		const myObject = new MyObject(settings);
 		myObject.createPositionAttribute(4, angles.length);
 		angles.forEach((verticeAngles, i) => myObject.setPositionAttributeFromPoint(i, this.angles2Vertice(verticeAngles)));
+*/		
+/*		
+		this.createPositionAttribute(4, angles.length);
+		angles.forEach((verticeAngles, i) => this.setPositionAttributeFromPoint(i, this.angles2Vertice(verticeAngles)));
+*/		
+		this.getPoint = (i) => {
+			
+			return this.angles2Vertice(angles[i], true);
+		
+		}
+		this.setPositionAttributeFromPoints(angles);
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
 		if (!(settings.object.geometry.indices instanceof Array)) {
@@ -1830,7 +1844,7 @@ class HuperSphere {
 						else {
 
 							if ((settings.object.geometry.position[0].length > 3) && (!settings.object.color)) settings.object.color = {};//Color of vertice from palette
-							settings.bufferGeometry = myObject.bufferGeometry;
+//							settings.bufferGeometry = myObject.bufferGeometry;
 							nd = new ND(this.dimension, settings);
 
 							params.center = params.center || {}
@@ -2465,8 +2479,25 @@ class HuperSphere {
 			console.error(sHuperSphere + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
-	angles2Vertice(angles) {
+	angles2Vertice(angles, boTo) {
 
+		if (!boTo) {
+
+			if (typeof angles != "number")
+				console.error('angles2Vertice: Use anglesId instead angles');
+			else {
+
+				const vertice = [], position = this.bufferGeometry.userData.position[angles];
+				vertice.push(position.x);
+				vertice.push(position.y);
+				vertice.push(position.z);
+				const w = position.w;
+				if (w != undefined) vertice.push(w);
+				return vertice;
+
+			}
+
+		}
 		const a2v = (angles) => {
 
 			//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
