@@ -212,7 +212,7 @@ class MyObject {
 			settings.bufferGeometry.setAttribute('ca', new THREE.Float32BufferAttribute(colors, pointLength));
 
 		}
-		this.setPositionAttributeFromPoints = (points) => {
+		this.setPositionAttributeFromPoints = (points, pointLength) => {
 
 /*
 			const pointLength = points[0].w === undefined ? 3 : 4,
@@ -225,7 +225,7 @@ class MyObject {
 			const positions = new Float32Array( pointsLength * pointLength );
 			buffer.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, pointLength ) );
 */
-			this.createPositionAttribute(points[0].w === undefined ? 3 : 4, points.length);
+			this.createPositionAttribute(pointLength != undefined ? pointLength : points[0].w === undefined ? 3 : 4, points.length);
 //			const buffer = settings.options.buffer;
 			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);//, buffer.attributes);
 			//return settings.bufferGeometry;

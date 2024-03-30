@@ -493,7 +493,7 @@ class HuperSphere extends MyObject {
 
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
-							if (Math.abs((sum - r)) > 4.5e-16) console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
+							if (Math.abs((sum - r)) > 3.5e-8) console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
 
 						}
 						vertice.forEach((axis, i) => vertice[i] *= r);
@@ -784,7 +784,7 @@ class HuperSphere extends MyObject {
 			return this.angles2Vertice(angles[i], true);
 		
 		}
-		this.setPositionAttributeFromPoints(angles);
+		this.setPositionAttributeFromPoints(angles, 4);
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
 		if (!(settings.object.geometry.indices instanceof Array)) {
