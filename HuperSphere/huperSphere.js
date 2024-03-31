@@ -1004,9 +1004,11 @@ class HuperSphere extends MyObject {
 			this.update = (verticeId, changedAngleId) => {
 
 				if (!this.isUpdate) return;
-				const points = nd && (nd.object3D.visible === true) ? nd.object3D : myPoints,
-					vertice = settings.object.geometry.position[verticeId],
-					itemSize = points.geometry.attributes.position.itemSize;
+				const points = nd && (nd.object3D.visible === true) ? nd.object3D : myPoints;
+				this.bufferGeometry.userData.isReady = false;
+				const vertice = settings.object.geometry.position[verticeId];
+				this.bufferGeometry.userData.isReady = true;
+				const itemSize = points.geometry.attributes.position.itemSize;
 				if (verticeId != undefined) for (let axesId = 0; axesId < itemSize; axesId++)
 					points.geometry.attributes.position.array[axesId + verticeId * itemSize] = vertice[axesId] != undefined ? vertice[axesId] : 0.0;
 				points.geometry.attributes.position.needsUpdate = true;

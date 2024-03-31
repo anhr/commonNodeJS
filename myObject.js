@@ -125,9 +125,10 @@ class MyObject {
 					const positionId = parseInt(name);
 					if (!isNaN(positionId)) {
 
-						const positionOffset = positionId * position.itemSize, vertice = [], array = position.array;
+						const positionOffset = positionId * position.itemSize,// vertice = [],
+							array = position.array;
 //						for (let axisId = 0; axisId < position.itemSize; axisId++) vertice.push(0);//array[positionOffset + axisId]);
-						const positionItem = new Proxy(vertice, {
+						const positionItem = new Proxy([], {
 
 							get: (vertice, name) => {
 								
