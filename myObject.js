@@ -125,12 +125,15 @@ class MyObject {
 					const positionId = parseInt(name);
 					if (!isNaN(positionId)) {
 
-						return new Proxy(position.array, {
+						const positionOffset = positionId * position.itemSize, vertice = [], array = position.array;
+						for (let axisId = 0; axisId < position.itemSize; axisId++) vertice.push(array[positionOffset + axisId]);
+						return new Proxy(vertice, {
 
-							get: (array, name) => {
+							get: (vertice, name) => {
 								
-console.log('name: ' + name)
-								const positionOffset = positionId * position.itemSize, axisId = parseInt(name);
+//console.log('name: ' + name)
+/*								
+								const axisId = parseInt(name);
 								if (!isNaN(axisId)) {
 
 									if (axisId >= position.itemSize) {
@@ -142,14 +145,17 @@ console.log('name: ' + name)
 									return array[positionOffset + axisId];
 									
 								}
+*/								
 								switch (name) {
 
+/*										
 									case 'forEach': return (item) => {
 
 										for (let axisId = 0; axisId < position.itemSize; axisId++) item(array[positionOffset + axisId], axisId);
 											
 									}
 									case 'length': return position.itemSize;
+*/									
 									case 'x': return array[positionOffset + 0];
 									case 'y': return array[positionOffset + 1];
 									case 'z': return array[positionOffset + 2];
@@ -166,7 +172,7 @@ console.log('name: ' + name)
 									}
 				
 								}
-								return array[name];
+								return vertice[name];
 //								console.error(sMyObject + ': get settings.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
 								
 							},
@@ -175,12 +181,13 @@ console.log('name: ' + name)
 								const axisId = parseInt(name);
 								if (!isNaN(axisId)) {
 
-									array[positionId * position.itemSize + axisId] = value;
+									array[positionOffset + axisId] = value;
 //									position.needsUpdate = true;
 									return true;
 									
 								}
-								console.error(sMyObject + ': set settings.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
+//								console.error(sMyObject + ': set settings.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
+								array[name] = value;
 								return true;
 								
 							}

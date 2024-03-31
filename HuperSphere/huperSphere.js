@@ -2480,6 +2480,8 @@ class HuperSphere extends MyObject {
 if (typeof anglesId != "number") console.error('angles2Vertice: Use anglesId instead angles');
 		if (this.bufferGeometry.userData.isReady) {
 
+			return this.bufferGeometry.userData.position[anglesId];
+/*			
 			const vertice = [], position = this.bufferGeometry.userData.position[anglesId];
 			vertice.push(position.x);
 			vertice.push(position.y);
@@ -2487,6 +2489,7 @@ if (typeof anglesId != "number") console.error('angles2Vertice: Use anglesId ins
 			const w = position.w;
 			if (w != undefined) vertice.push(w);
 			return vertice;
+*/			
 
 		}
 		const angles = this.classSettings.settings.object.geometry.angles[anglesId],
