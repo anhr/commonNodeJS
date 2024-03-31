@@ -493,7 +493,7 @@ class HuperSphere extends MyObject {
 
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
-							if (Math.abs((sum - r)) > 3.5e-8) console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
+							if (Math.abs((sum - r)) > 5.5e-8) console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
 
 						}
 						vertice.forEach((axis, i) => vertice[i] *= r);
@@ -2479,22 +2479,11 @@ class HuperSphere extends MyObject {
 	}
 	angles2Vertice(anglesId) {
 
-if (typeof anglesId != "number") console.error('angles2Vertice: Use anglesId instead angles');
-		if (this.bufferGeometry.userData.isReady) {
-
+//if (typeof anglesId != "number") console.error('angles2Vertice: Use anglesId instead angles');
+		const isAnglesId = typeof anglesId === "number";
+		if (this.bufferGeometry.userData.isReady && isAnglesId)
 			return this.bufferGeometry.userData.position[anglesId];
-/*			
-			const vertice = [], position = this.bufferGeometry.userData.position[anglesId];
-			vertice.push(position.x);
-			vertice.push(position.y);
-			vertice.push(position.z);
-			const w = position.w;
-			if (w != undefined) vertice.push(w);
-			return vertice;
-*/			
-
-		}
-		const angles = this.classSettings.settings.object.geometry.angles[anglesId],
+		const angles = isAnglesId ? this.classSettings.settings.object.geometry.angles[anglesId] : anglesId,
 			a2v = (angles) => {
 
 			//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
