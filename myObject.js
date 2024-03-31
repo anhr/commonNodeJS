@@ -125,11 +125,11 @@ class MyObject {
 					const positionId = parseInt(name);
 					if (!isNaN(positionId)) {
 
-						const positionItem = new Proxy(position.array, {
+						return new Proxy(position.array, {
 
 							get: (array, name) => {
 								
-//console.log('name: ' + name)
+console.log('name: ' + name)
 								const positionOffset = positionId * position.itemSize, axisId = parseInt(name);
 								if (!isNaN(axisId)) {
 
@@ -147,13 +147,6 @@ class MyObject {
 									case 'forEach': return (item) => {
 
 										for (let axisId = 0; axisId < position.itemSize; axisId++) item(array[positionOffset + axisId], axisId);
-											
-									}
-									case 'toJSON': return (item) => {
-
-										let res = '[';
-										positionItem.forEach(axis => { res += axis + ', ' })
-										return res.substring(0, res.length-2) + ']';
 											
 									}
 									case 'length': return position.itemSize;
@@ -193,7 +186,6 @@ class MyObject {
 							}
 							
 						});
-						return positionItem;
 
 /*						
 						const vector = position.itemSize === 4 ? new THREE.Vector4() : position.itemSize === 3 ? new THREE.Vector3() : undefined;
