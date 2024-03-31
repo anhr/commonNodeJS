@@ -125,17 +125,41 @@ class MyObject {
 					const positionId = parseInt(name);
 					if (!isNaN(positionId)) {
 
-						return new Proxy(position.array, {
+						const positionItem = new Proxy(position.array, {
 
 							get: (array, name) => {
 								
-								const axisId = parseInt(name);
-								if (!isNaN(axisId)) {}
+//console.log('name: ' + name)
+								const positionOffset = positionId * position.itemSize, axisId = parseInt(name);
+								if (!isNaN(axisId)) {
+
+									if (axisId >= position.itemSize) {
+										
+										console.error(sMyObject + ': get position axis failed. Invalid axisId = ' + axisId);
+										return;
+
+									}
+									return array[positionOffset + axisId];
+									
+								}
 								switch (name) {
-				
-									case 'x': return array[positionId * position.itemSize + 0];
-									case 'y': return array[positionId * position.itemSize + 1];
-									case 'z': return array[positionId * position.itemSize + 2];
+
+									case 'forEach': return (item) => {
+
+										for (let axisId = 0; axisId < position.itemSize; axisId++) item(array[positionOffset + axisId], axisId);
+											
+									}
+									case 'toJSON': return (item) => {
+
+										let res = '[';
+										positionItem.forEach(axis => { res += axis + ', ' })
+										return res.substring(0, res.length-2) + ']';
+											
+									}
+									case 'length': return position.itemSize;
+									case 'x': return array[positionOffset + 0];
+									case 'y': return array[positionOffset + 1];
+									case 'z': return array[positionOffset + 2];
 									case 'w': {
 
 										if (position.itemSize < 4) {
@@ -144,7 +168,7 @@ class MyObject {
 											return;
 
 										}
-										return array[positionId * position.itemSize + 3];
+										return array[positionOffset + 3];
 
 									}
 				
@@ -169,6 +193,7 @@ class MyObject {
 							}
 							
 						});
+						return positionItem;
 
 /*						
 						const vector = position.itemSize === 4 ? new THREE.Vector4() : position.itemSize === 3 ? new THREE.Vector3() : undefined;
@@ -228,6 +253,7 @@ class MyObject {
 			this.createPositionAttribute(pointLength != undefined ? pointLength : points[0].w === undefined ? 3 : 4, points.length);
 //			const buffer = settings.options.buffer;
 			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);//, buffer.attributes);
+			this.bufferGeometry.userData.isReady = true;
 			//return settings.bufferGeometry;
 			
 		}

@@ -779,11 +779,7 @@ class HuperSphere extends MyObject {
 		this.createPositionAttribute(4, angles.length);
 		angles.forEach((verticeAngles, i) => this.setPositionAttributeFromPoint(i, this.angles2Vertice(verticeAngles)));
 */		
-		this.getPoint = (i) => {
-			
-			return this.angles2Vertice(angles[i], true);
-		
-		}
+		this.getPoint = (i) => { return this.angles2Vertice(i); }
 		this.setPositionAttributeFromPoints(angles, 4);
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
@@ -2479,26 +2475,25 @@ class HuperSphere extends MyObject {
 			console.error(sHuperSphere + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
-	angles2Vertice(angles, boTo) {
+	angles2Vertice(anglesId) {
 
-		if (!boTo) {
+if (typeof anglesId != "number") console.error('angles2Vertice: Use anglesId instead angles');
+		if (this.bufferGeometry.userData.isReady) {
 
-			if (typeof angles != "number")
-				console.error('angles2Vertice: Use anglesId instead angles');
-			else {
-
-				const vertice = [], position = this.bufferGeometry.userData.position[angles];
-				vertice.push(position.x);
-				vertice.push(position.y);
-				vertice.push(position.z);
-				const w = position.w;
-				if (w != undefined) vertice.push(w);
-				return vertice;
-
-			}
+			return this.bufferGeometry.userData.position[anglesId];
+/*			
+			const vertice = [], position = this.bufferGeometry.userData.position[anglesId];
+			vertice.push(position.x);
+			vertice.push(position.y);
+			vertice.push(position.z);
+			const w = position.w;
+			if (w != undefined) vertice.push(w);
+			return vertice;
+*/			
 
 		}
-		const a2v = (angles) => {
+		const angles = this.classSettings.settings.object.geometry.angles[anglesId],
+			a2v = (angles) => {
 
 			//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
 			const n = this.dimension, φ = [],//angles,
