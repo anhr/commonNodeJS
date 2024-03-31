@@ -126,13 +126,12 @@ class MyObject {
 					if (!isNaN(positionId)) {
 
 						const positionOffset = positionId * position.itemSize, vertice = [], array = position.array;
-						for (let axisId = 0; axisId < position.itemSize; axisId++) vertice.push(array[positionOffset + axisId]);
-						return new Proxy(vertice, {
+//						for (let axisId = 0; axisId < position.itemSize; axisId++) vertice.push(0);//array[positionOffset + axisId]);
+						const positionItem = new Proxy(vertice, {
 
 							get: (vertice, name) => {
 								
 //console.log('name: ' + name)
-/*								
 								const axisId = parseInt(name);
 								if (!isNaN(axisId)) {
 
@@ -145,17 +144,21 @@ class MyObject {
 									return array[positionOffset + axisId];
 									
 								}
-*/								
 								switch (name) {
 
-/*										
 									case 'forEach': return (item) => {
 
 										for (let axisId = 0; axisId < position.itemSize; axisId++) item(array[positionOffset + axisId], axisId);
 											
 									}
 									case 'length': return position.itemSize;
-*/									
+									case 'toJSON': return (item) => {
+
+										let res = '[';
+										positionItem.forEach(axis => { res += axis + ', ' })
+										return res.substring(0, res.length-2) + ']';
+											
+									}
 									case 'x': return array[positionOffset + 0];
 									case 'y': return array[positionOffset + 1];
 									case 'z': return array[positionOffset + 2];
@@ -176,7 +179,7 @@ class MyObject {
 //								console.error(sMyObject + ': get settings.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
 								
 							},
-							set: (array, name, value) => {
+							set: (vertice, name, value) => {
 
 								const axisId = parseInt(name);
 								if (!isNaN(axisId)) {
@@ -187,12 +190,13 @@ class MyObject {
 									
 								}
 //								console.error(sMyObject + ': set settings.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
-								array[name] = value;
+								vertice[name] = value;
 								return true;
 								
 							}
 							
 						});
+						return positionItem;
 
 /*						
 						const vector = position.itemSize === 4 ? new THREE.Vector4() : position.itemSize === 3 ? new THREE.Vector3() : undefined;
