@@ -258,7 +258,7 @@ class MyObject {
 //			const buffer = settings.options.buffer;
 			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);//, buffer.attributes);
 			this.bufferGeometry.userData.isReady = true;
-			//return settings.bufferGeometry;
+			return settings.bufferGeometry;
 			
 		}
 		this.setPositionAttributeFromPoint = (i, vertice/*, attributes*/) => {
