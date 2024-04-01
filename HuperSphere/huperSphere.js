@@ -182,7 +182,8 @@ class HuperSphere extends MyObject {
 	 * and Polar Coordinates to Cartesian Coordinates
 	 * and display detected errors to console.
 	 * </pre>
-	 * @param {boolean} [classSettings.debug.middleVertice=true] Log middle vertice.
+	 * @param {boolean} [classSettings.debug.middleVertice=true] Middle vertice log.
+	 * @param {boolean} [classSettings.debug.log=true] Vertices and edges log.
 	 * @param {function} [classSettings.continue] Callback function that called after hupersphere edges was created.
 	 * @param {boolean} [classSettings.boRemove] false - do not delete the previous hupersphere while projecting a new hupersphere on scene.
 	 * @param {boolean} [classSettings.boGui] false - do not include hupersphere GUI.
@@ -2417,7 +2418,7 @@ class HuperSphere extends MyObject {
 			progressBar = new ProgressBar(settings.options.renderer.domElement.parentElement, () => {
 
 				switch (log){
-					case 0://position log
+					case 0://vertices log
 						const vertice = position[i];
 						console.log('vertice[' + i + '] = ' + JSON.stringify(vertice) + ' angles = ' + JSON.stringify(vertice.angles) + ' edges = ' + JSON.stringify(vertice.edges));
 						break;
