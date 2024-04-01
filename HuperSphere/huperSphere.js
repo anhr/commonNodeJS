@@ -1755,9 +1755,12 @@ class HuperSphere extends MyObject {
 											planeAngle[verticeAngleId] = i;
 
 											if (this.classSettings.debug) console.log(sHuperSphere + ': ' + settings.object.geometry.angles.ranges[verticeAngleId].angleName + '. VerticeId = ' + planeAngles.length);
+											planeAngles[planeVerticeId++] = this.vertice2angles(this.angles2Vertice(planeAngle));
+/*											
 											if (plane === undefined)
 												planeAngles[planeVerticeId++] = this.vertice2angles(this.angles2Vertice(planeAngle));
 											else planeAngles[planeVerticeId++] = plane.vertice2angles(plane.angles2Vertice(planeAngle));
+*/											
 
 										}
 										if (plane) plane.object().geometry.attributes.position.needsUpdate = true;
