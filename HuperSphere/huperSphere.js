@@ -411,7 +411,8 @@ class HuperSphere extends MyObject {
 				if (!isNaN(i)) {
 
 					aAngles[i] = value;
-					_this.object().userData.myObject.setPositionAttribute(i, _this.angles2Vertice(value));
+//					_this.object().userData.myObject.setPositionAttribute(i, _this.angles2Vertice(value));
+					_this.object().userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
 
 				}
 				else aAngles[name] = value;
