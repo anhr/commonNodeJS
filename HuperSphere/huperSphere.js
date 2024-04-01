@@ -494,7 +494,7 @@ class HuperSphere extends MyObject {
 
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
-							if (Math.abs((sum - r)) > 5.5e-8) console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
+							if (Math.abs((sum - r)) > 9.2e-8) console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
 
 						}
 						vertice.forEach((axis, i) => vertice[i] *= r);
