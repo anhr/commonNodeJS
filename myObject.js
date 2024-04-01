@@ -284,9 +284,9 @@ class MyObject {
 			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(vertice.w, w.min, w.max));
 			
 		}
-		this.setPositionAttribute = ( i ) => {
+		this.setPositionAttribute = (i, vertice) => {
 
-			this.setPositionAttributeFromPoint( i, _this.object3D.geometry.attributes );
+			this.setPositionAttributeFromPoint(i, vertice);//, _this.object3D.geometry.attributes );
 			
 		}
 		

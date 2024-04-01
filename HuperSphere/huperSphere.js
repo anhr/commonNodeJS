@@ -411,7 +411,7 @@ class HuperSphere extends MyObject {
 				if (!isNaN(i)) {
 
 					aAngles[i] = value;
-					_this.object().userData.myObject.setPositionAttribute(i);
+					_this.object().userData.myObject.setPositionAttribute(i, _this.angles2Vertice(value));
 
 				}
 				else aAngles[name] = value;
@@ -1754,7 +1754,9 @@ class HuperSphere extends MyObject {
 											planeAngle[verticeAngleId] = i;
 
 											if (this.classSettings.debug) console.log(sHuperSphere + ': ' + settings.object.geometry.angles.ranges[verticeAngleId].angleName + '. VerticeId = ' + planeAngles.length);
-											planeAngles[planeVerticeId++] = this.vertice2angles(this.angles2Vertice(planeAngle));
+											if (plane === undefined)
+												planeAngles[planeVerticeId++] = this.vertice2angles(this.angles2Vertice(planeAngle));
+											else planeAngles[planeVerticeId++] = plane.vertice2angles(plane.angles2Vertice(planeAngle));
 
 										}
 										if (plane) plane.object().geometry.attributes.position.needsUpdate = true;
@@ -1770,11 +1772,7 @@ class HuperSphere extends MyObject {
 										if (!aAngleControls.planes) {
 
 											aAngleControls.planes = [];
-											aAngleControls.planes.update = (changedAngleId) => {
-
-												this.planesGeometry(changedAngleId, aAngleControls, planeGeometry, longitudeId);
-
-											}
+											aAngleControls.planes.update = (changedAngleId) => { this.planesGeometry(changedAngleId, aAngleControls, planeGeometry, longitudeId); }
 
 										}
 										aAngleControls.planes[verticeAngleId] = this.line({
