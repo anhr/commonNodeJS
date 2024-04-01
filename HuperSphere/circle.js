@@ -31,7 +31,8 @@ class Circle extends HuperSphere {
 	constructor(options, classSettings) {
 
 		super(options, classSettings);
-		this.logCircle();
+//		this.logCircle();
+		this.logHuperSphere();
 
 	}
 
@@ -101,12 +102,14 @@ class Circle extends HuperSphere {
 		return lang.name;
 		
 	}
+/*	
 	logCircle() {
 
 		if (!this.classSettings.debug) return;
 		this.logHuperSphere();
 		
 	}
+*/	
 
 	intersection(color) {
 

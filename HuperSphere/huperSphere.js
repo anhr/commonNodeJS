@@ -191,6 +191,7 @@ class HuperSphere extends MyObject {
 
 		super( classSettings.settings );
 		const _this = this, THREE = three.THREE;
+		if (classSettings.debug === undefined) classSettings.debug = true;
 		if (classSettings.debug === true) classSettings.debug = {};
 		if (classSettings.debug) {
 
@@ -243,7 +244,7 @@ class HuperSphere extends MyObject {
 			*/
 
 		];
-		classSettings.debug = classSettings.debug || {};
+//		classSettings.debug = classSettings.debug || {};
 		const probabilityDensity = classSettings.debug.probabilityDensity;
 		if (probabilityDensity) {
 
@@ -494,7 +495,7 @@ class HuperSphere extends MyObject {
 
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
-							if (Math.abs((sum - r)) > 9.2e-8) console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
+							if (Math.abs((sum - r)) > 9.5e-8) console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
 
 						}
 						vertice.forEach((axis, i) => vertice[i] *= r);
@@ -2407,7 +2408,7 @@ class HuperSphere extends MyObject {
 	name() { console.error(sOverride.replace('%s', 'name')); }
 	logHuperSphere() {
 
-		if (!this.classSettings.debug) return;
+		if (!this.classSettings.debug || (this.classSettings.debug.log === false)) return;
 		console.log(this.cookieName);
 		let i = 0, progressBarValue = 0,
 			log = 0;//position log

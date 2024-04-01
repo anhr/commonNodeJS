@@ -31,7 +31,7 @@ class Sphere extends Circle {
 	 **/
 	constructor(options, classSettings) {
 
-		classSettings.continue = () => this.logSphere();
+//		classSettings.continue = () => this.logSphere();
 		super(options, classSettings);
 
 	}

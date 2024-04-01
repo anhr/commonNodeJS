@@ -33,7 +33,7 @@ class HuperSphere3D extends Sphere {
 	constructor(options, classSettings) {
 
 		super(options, classSettings);
-		this.logHuperSphere();
+//		this.logHuperSphere();
 
 	}
 
