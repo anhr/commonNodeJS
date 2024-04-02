@@ -36,19 +36,6 @@ class MyObject {
 					
 					return new Proxy(positions[positionId], {
 
-/*						
-						get: (position, name) => {
-							
-							const axisId = parseInt(name);
-							if (!isNaN(axisId)) {
-								
-								return position[axisId];
-							
-							}
-							return position[name];
-							
-						},
-*/						
 						set: (position, name, value) => {
 
 							const axisId = parseInt(name);
@@ -84,38 +71,11 @@ class MyObject {
 			//Что бы можно было менять позицию и цвет вершины
 			settings.object.geometry.position = settings.object.geometry.position || vertices;
 		
-		/* * Set color attribute
-		 * @param {number} i index of the color in the color attribute array.
-		 * @param {THREE.Color|string} color color.
-		 * @returns true - success
-		 * <p>false - colorAttribute was not detected.</p>
-		 */
-/*			
-		this.setColorAttribute = ( i, color ) => {
-
-			const object = settings.object, object3D = _this.object3D;
-			color = color || settings.options.palette.toColor(object.geometry.position[i].w, settings.options.scales.w.min, settings.options.scales.w.max);
-			if ( typeof color === "string" )
-				color = new three.THREE.Color( color );
-			const attributes = object3D.geometry.attributes, colorAttribute = attributes.color || attributes.ca;
-			if ( colorAttribute === undefined )
-				return false;
-			colorAttribute.setX( i, color.r );
-			colorAttribute.setY( i, color.g );
-			colorAttribute.setZ( i, color.b );
-			colorAttribute.needsUpdate = true;
-			return true;
-		
-		}
-*/
 		this.createPositionAttribute = (pointLength, pointsLength) => {
-
-//			const buffer = settings.options.buffer;
 
 			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
 			const MAX_POINTS = settings.object.geometry.MAX_POINTS;
-//				pointsLength = points.length;
-			if (MAX_POINTS != undefined) settings.bufferGeometry.setDrawRange(0, pointsLength * 2 - 1);// * pointLength );//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
+			if (MAX_POINTS != undefined) settings.bufferGeometry.setDrawRange(0, pointsLength * 2 - 1);//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
 			const positions = new Float32Array(pointsLength * pointLength);
 			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
 			settings.bufferGeometry.userData.position = new Proxy(settings.bufferGeometry.attributes.position, {
@@ -125,14 +85,11 @@ class MyObject {
 					const positionId = parseInt(name);
 					if (!isNaN(positionId)) {
 
-						const positionOffset = positionId * position.itemSize,// vertice = [],
-							array = position.array;
-//						for (let axisId = 0; axisId < position.itemSize; axisId++) vertice.push(0);//array[positionOffset + axisId]);
+						const positionOffset = positionId * position.itemSize, array = position.array;
 						const positionItem = new Proxy([], {
 
 							get: (vertice, name) => {
 								
-//console.log('name: ' + name)
 								const axisId = parseInt(name);
 								if (!isNaN(axisId)) {
 
@@ -165,19 +122,13 @@ class MyObject {
 									case 'z': return array[positionOffset + 2];
 									case 'w': {
 
-										if (position.itemSize < 4) {
-											
-//											console.error(sMyObject + ': get settings.bufferGeometry.userData.position[' + positionId + ']. Invalid vector axis: ' + name);
-											return;
-
-										}
+										if (position.itemSize < 4) return;
 										return array[positionOffset + 3];
 
 									}
 				
 								}
 								return vertice[name];
-//								console.error(sMyObject + ': get settings.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
 								
 							},
 							set: (vertice, name, value) => {
@@ -186,11 +137,9 @@ class MyObject {
 								if (!isNaN(axisId)) {
 
 									array[positionOffset + axisId] = value;
-//									position.needsUpdate = true;
 									return true;
 									
 								}
-//								console.error(sMyObject + ': set settings.bufferGeometry.userData.position[' + positionId + ']. Invalid name: ' + name);
 								vertice[name] = value;
 								return true;
 								
@@ -198,29 +147,6 @@ class MyObject {
 							
 						});
 						return positionItem;
-
-/*						
-						const vector = position.itemSize === 4 ? new THREE.Vector4() : position.itemSize === 3 ? new THREE.Vector3() : undefined;
-						vector.fromBufferAttribute(position, positionId);
-//						return vector;
-						return new Proxy(vector, {
-
-							set: (vector, name, value) => {
-
-								const axisId = parseInt(name);
-								if (!isNaN(axisId)) {
-
-									const position = settings.bufferGeometry.attributes.position;
-									position.array[positionId * position.itemSize + axisId] = value;
-//									position.needsUpdate = true;
-									
-								}
-								return true;
-								
-							}
-							
-						});
-*/						
 	
 					}
 					switch (name) {
@@ -243,31 +169,15 @@ class MyObject {
 		}
 		this.setPositionAttributeFromPoints = (points, pointLength) => {
 
-/*
-			const pointLength = points[0].w === undefined ? 3 : 4,
-				buffer = settings.options.buffer;
-
-			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
-			const MAX_POINTS = settings.object.geometry.MAX_POINTS,
-				pointsLength = points.length;
-			if ( MAX_POINTS != undefined ) buffer.setDrawRange( 0, pointsLength * 2 - 1);// * pointLength );//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
-			const positions = new Float32Array( pointsLength * pointLength );
-			buffer.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, pointLength ) );
-*/
 			this.createPositionAttribute(pointLength != undefined ? pointLength : points[0].w === undefined ? 3 : 4, points.length);
-//			const buffer = settings.options.buffer;
-			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);//, buffer.attributes);
+			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);
 			this.bufferGeometry.userData.isReady = true;
 			return settings.bufferGeometry;
 			
 		}
-		this.setPositionAttributeFromPoint = (i, vertice/*, attributes*/) => {
+		this.setPositionAttributeFromPoint = (i, vertice) => {
 
 			const attributes = settings.bufferGeometry.attributes;
-/*			
-			const position = points ? points[i] : settings.object.geometry.position[i],
-				vertice = position.positionWorld || position,
-*/				
 			vertice = vertice || _this.getPoint(i);
 			const itemSize = attributes.position.itemSize;
 			                  attributes.position.array [0 + i * itemSize] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
@@ -276,21 +186,10 @@ class MyObject {
 			if (itemSize > 3) attributes.position.array [3 + i * itemSize] = vertice.w != undefined ? vertice.w : vertice[3] != undefined ? vertice[3] : 0;
 			if (attributes.position.itemSize < 4) return;
 
-			//Меняем цвет дуги между двумя вершинами в гиперсфере
-			//отказался от применения this.setColorAttribute потому что в этом случае для каждого 3D объекта нужно создавать myObject, а это нецелесообразно делать во всех приложениях
-//			this.setColorAttribute( i );
 			const w = settings.options.scales.w;
-//			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(settings.object.geometry.position[i].w, w.min, w.max));
 			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(vertice.w, w.min, w.max));
 			
 		}
-/*use this.setPositionAttributeFromPoint instead
-		this.setPositionAttribute = (i, vertice) => {
-
-			this.setPositionAttributeFromPoint(i, vertice);//, _this.object3D.geometry.attributes );
-			
-		}
-*/		
 		
 	}
 

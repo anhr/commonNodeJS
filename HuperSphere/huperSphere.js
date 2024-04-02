@@ -245,7 +245,6 @@ class HuperSphere extends MyObject {
 			*/
 
 		];
-//		classSettings.debug = classSettings.debug || {};
 		const probabilityDensity = classSettings.debug.probabilityDensity;
 		if (probabilityDensity) {
 
@@ -265,7 +264,7 @@ class HuperSphere extends MyObject {
 			if (unverseValue === undefined) {
 
 				unverseValue = π;
-				const r = classSettings.r;//probabilityDensity.options.r;
+				const r = classSettings.r;
 				for (let i = 0; i < (_this.dimension - 1); i++) unverseValue *= 2 * r;
 
 			}
@@ -344,26 +343,6 @@ class HuperSphere extends MyObject {
 				}
 				switch (name) {
 
-/*						
-					//Angles range
-					case 'ranges': return [
-						{
-							angleName: 'Longitude',
-							min: - π,
-							max:   π,
-						},
-						{
-							angleName: 'Latitude',
-							min: 0 + this.rotateLatitude,//- π / 2;
-							max: π + this.rotateLatitude,//π / 2;
-						},
-						{
-							angleName: this.altitudeRange.angleName,//'Altitude';
-							min: this.altitudeRange.min,//0;
-							max: this.altitudeRange.max,//π / 2;
-						}
-					];
-*/					
 					case 'pushRandomAngle': return () => {
 
 						const verticeAngles = [];
@@ -413,7 +392,6 @@ class HuperSphere extends MyObject {
 				if (!isNaN(i)) {
 
 					aAngles[i] = value;
-//					_this.object().userData.myObject.setPositionAttribute(i, _this.angles2Vertice(value));
 					_this.object().userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
 
 				}
@@ -426,25 +404,6 @@ class HuperSphere extends MyObject {
 		const angles = settings.object.geometry.angles;
 
 		//Angles range
-/*Не работает с Circle		
-		angles.ranges = [
-			{
-				angleName: 'Longitude',
-				min: - π,
-				max:   π,
-			},
-			{
-				angleName: 'Latitude',
-				min: 0 + this.rotateLatitude,//- π / 2;
-				max: π + this.rotateLatitude,//π / 2;
-			},
-			{
-				angleName: this.altitudeRange.angleName,//'Altitude';
-				min: this.altitudeRange.min,//0;
-				max: this.altitudeRange.max,//π / 2;
-			}
-		];
-*/		
 		angles.ranges = [];
 		for (let angleId = 0; angleId < this.dimension - 1; angleId++) {
 
@@ -496,7 +455,8 @@ class HuperSphere extends MyObject {
 
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
-							if (Math.abs((sum - r)) > 9.5e-8) console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
+							if (Math.abs((sum - r)) > 9.5e-8)
+								console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
 
 						}
 						vertice.forEach((axis, i) => vertice[i] *= r);
@@ -773,15 +733,6 @@ class HuperSphere extends MyObject {
 		});
 		const position = settings.object.geometry.position;
 
-/*		
-		const myObject = new MyObject(settings);
-		myObject.createPositionAttribute(4, angles.length);
-		angles.forEach((verticeAngles, i) => myObject.setPositionAttributeFromPoint(i, this.angles2Vertice(verticeAngles)));
-*/		
-/*		
-		this.createPositionAttribute(4, angles.length);
-		angles.forEach((verticeAngles, i) => this.setPositionAttributeFromPoint(i, this.angles2Vertice(verticeAngles)));
-*/		
 		this.getPoint = (i) => { return this.angles2Vertice(i); }
 		this.setPositionAttributeFromPoints(angles, 4);
 
@@ -833,14 +784,6 @@ class HuperSphere extends MyObject {
 					case 'setVertices': return () => {
 
 						if (_edges.length > 0) _this.boTestVertice = false;
-						/*пока что это не нужно
-						_edges.forEach((edge, edgeId) => {
-
-							setVertice(edge, undefined, edge[0], edgeId);
-							setVertice(edge, undefined, edge[1], edgeId);
-							
-						})
-						*/
 
 					}
 					case 'push': return (edge = []) => {
@@ -1042,7 +985,7 @@ class HuperSphere extends MyObject {
 
 					if (aAngleControls.arc) aAngleControls.createArc();
 
-					if (aAngleControls.planes) aAngleControls.planes.update(changedAngleId);//vertice);
+					if (aAngleControls.planes) aAngleControls.planes.update(changedAngleId);
 
 				}
 
@@ -1051,10 +994,6 @@ class HuperSphere extends MyObject {
 
 				this.line = (settings) => {
 
-					/*					
-										settings.object.geometry.indices = settings.object.geometry.indices || {}
-										settings.object.geometry.indices.edges = settings.object.geometry.indices.edges || {}
-					*/
 					return this.newHuperSphere(
 						classSettings.settings.options,
 						{
@@ -1069,14 +1008,6 @@ class HuperSphere extends MyObject {
 
 							} : settings.edges,
 							projectParams: { scene: classSettings.projectParams.scene, },
-							/*							
-														debug: {
-								
-															probabilityDensity: false,
-								
-														},
-														//debug: false,
-							*/
 							debug: classSettings.debug,
 							settings: {
 
@@ -1091,13 +1022,6 @@ class HuperSphere extends MyObject {
 										opacity: settings.object.geometry.opacity,
 										indices: {
 
-											/*
-											edges: {
-											
-												count: 3,
-										
-											}
-											*/
 											edges: settings.object.geometry.indices.edges,
 
 										}
@@ -1441,9 +1365,6 @@ class HuperSphere extends MyObject {
 										aAngleControls.createArc = () => {
 
 											let verticeId = 0;
-											//											const MAX_POINTS = 1 + 2 * 2 * 2 * 2;// * 2 * 2 * 2;//17;//количество вершин дуги когда угол между крайними вершинами дуги 180 градусов. https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
-											//for (let i = 0; i < maxLevel - 1; i++) aAngleControls.MAX_POINTS *= 2;
-											//aAngleControls.MAX_POINTS++;
 											const arcAngles = [],//массив вершин в полярной системе координат, которые образуют дугу
 												//если не копировать каждый угол в отделности, то в новой вершине останутся старые ребра
 												copyVertice = (vertice) => {
@@ -1479,7 +1400,6 @@ class HuperSphere extends MyObject {
 												maxLevel++;
 
 											}
-											//console.log('vertice.angles[0] = ' + vertice.angles[0] + ' oppositeVertice.angles[0] = ' + oppositeVertice.angles[0] + ' distance = ' + distance + ' maxLevel = ' + maxLevel + (aAngleControls.arc ? ( ' position.count = ' + aAngleControls.arc.object().geometry.attributes.position.count): ''));
 											let level = 1;//текущий уровень деления дуги
 											copyVertice(vertice);
 											let i = 0;
@@ -1579,7 +1499,6 @@ class HuperSphere extends MyObject {
 
 															}
 															console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object().geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object().geometry.drawRange.count + ' Vertices count = ' + verticeId);
-															//console.log('array =' + aAngleControls.arc.object().geometry.attributes.position.array);
 															const distance = position[aAngleControls.verticeId].arcTo(position[aAngleControls.oppositeVerticeId]);
 															if (classSettings.debug) {
 
@@ -1732,24 +1651,18 @@ class HuperSphere extends MyObject {
 										planeAngles ||= plane.classSettings.settings.object.geometry.angles;
 										let planeVerticeId = 0;
 
-										let start, stop;//, step;
+										let start, stop;
 										switch (verticeAngleId) {
 
 											case latitudeId:
-											/*
-											start = - π / 2; stop = π / 2;//, step = 1;
-											break;
-											*/
 											case longitudeId:
 											case altitudeId:
-												start = -π; stop = π;//, step = 2;
+												start = -π; stop = π;
 												break;
 											default: console.error(sHuperSphere + ': Planes of rotation of angles. Invalid verticeAngleId = ' + verticeAngleId);
 
 										}
-										for (let i = start; i <= stop; i = i + (π / 20))
-										//for (let i = -π; i <= π; i = i + (π / 20))
-										{
+										for (let i = start; i <= stop; i = i + (π / 20)) {
 
 											const planeAngle = [];
 											const vertice = position.angles[aAngleControls.verticeId];
@@ -1758,11 +1671,6 @@ class HuperSphere extends MyObject {
 
 											if (this.classSettings.debug) console.log(sHuperSphere + ': ' + settings.object.geometry.angles.ranges[verticeAngleId].angleName + '. VerticeId = ' + planeAngles.length);
 											planeAngles[planeVerticeId++] = this.vertice2angles(this.angles2Vertice(planeAngle));
-/*											
-											if (plane === undefined)
-												planeAngles[planeVerticeId++] = this.vertice2angles(this.angles2Vertice(planeAngle));
-											else planeAngles[planeVerticeId++] = plane.vertice2angles(plane.angles2Vertice(planeAngle));
-*/											
 
 										}
 										if (plane) plane.object().geometry.attributes.position.needsUpdate = true;
@@ -1846,7 +1754,6 @@ class HuperSphere extends MyObject {
 						else {
 
 							if ((settings.object.geometry.position[0].length > 3) && (!settings.object.color)) settings.object.color = {};//Color of vertice from palette
-//							settings.bufferGeometry = myObject.bufferGeometry;
 							nd = new ND(this.dimension, settings);
 
 							params.center = params.center || {}
@@ -2236,8 +2143,6 @@ class HuperSphere extends MyObject {
 								//Возможно был пройден полный круг поиска противолположной вершины и ничего найдено не было
 								if (verticeId != oppositeVerticeId) edges.push([verticeId, oppositeVerticeId]);
 
-								//else console.log(sHuperSphere + '.pushEdges. Opposite vertice was not found.')
-
 								nextVertice();
 
 							}, {
@@ -2483,7 +2388,6 @@ class HuperSphere extends MyObject {
 	}
 	angles2Vertice(anglesId) {
 
-//if (typeof anglesId != "number") console.error('angles2Vertice: Use anglesId instead angles');
 		const isAnglesId = typeof anglesId === "number";
 		if (this.bufferGeometry.userData.isReady && isAnglesId)
 			return this.bufferGeometry.userData.position[anglesId];
@@ -2494,7 +2398,6 @@ class HuperSphere extends MyObject {
 			const n = this.dimension, φ = [],//angles,
 				x = [], cos = Math.cos, sin = Math.sin;
 			//нужно для того, чтобы начало координат широты находилось на экваторе
-			//angles.forEach((angle, i) => φ.push(angle - this.getRotateLatitude(i)));//Почемуто не получается скопировать углы если по умолчанию угол не задан
 			for (let i = 0; i < angles.length; i++) {
 
 				const rotateLatitude = this.getRotateLatitude(i);
@@ -2551,9 +2454,6 @@ class HuperSphere extends MyObject {
 
 	}
 	vertice2angles(vertice) {
-
-		//Сейчас эта функция используется для вычисления middle vertice
-		//if (!this.classSettings.debug) console.warn(sHuperSphere + ': Use vertice2angles in debug version only');
 		
 		//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
 		//тангенс — отношение стороны противолежащего катета vertice[1] к стороне прилежащегоvertice[0], (tg или tan);
@@ -2590,19 +2490,6 @@ class HuperSphere extends MyObject {
 
 			const altitudeRange = ranges[altitudeId];
 			if (altitude > altitudeRange.max) {//π / 2
-				
-				//altitude = π - altitude;
-
-/*				
-				//широту развернуть на 180 градусов
-				if (latitude > 0) latitude -= π / 2;
-				else if (latitude < 0) latitude += π / 2;
-*/
-/*
-				//долготу развернуть на 180 градусов
-				if (longitude > 0) longitude -= π;
-				else if (longitude < 0) longitude += π;
-*/				
 				
 			} else if (altitude < altitudeRange.min) {//0
 				
@@ -2665,4 +2552,3 @@ HuperSphere.ND = ND;
 export default HuperSphere;
 
 const _display = (element, boDisplay) => { element.style.display = boDisplay === false ? 'none' : 'block'; }
-
