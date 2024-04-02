@@ -954,10 +954,13 @@ class HuperSphere extends MyObject {
 				this.bufferGeometry.userData.isReady = false;
 				const vertice = settings.object.geometry.position[verticeId];
 				this.bufferGeometry.userData.isReady = true;
+				this.setPositionAttributeFromPoint(verticeId, vertice);
+/*				
 				const itemSize = points.geometry.attributes.position.itemSize;
 				if (verticeId != undefined) for (let axesId = 0; axesId < itemSize; axesId++)
 					points.geometry.attributes.position.array[axesId + verticeId * itemSize] = vertice[axesId] != undefined ? vertice[axesId] : 0.0;
 				points.geometry.attributes.position.needsUpdate = true;
+*/
 				if (settings.options.axesHelper)
 					settings.options.axesHelper.updateAxes();
 				const guiSelectPoint = settings.options.guiSelectPoint;
