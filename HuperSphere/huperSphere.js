@@ -455,11 +455,11 @@ class HuperSphere extends MyObject {
 
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
-							if (Math.abs((sum - r)) > 9.5e-8)
+							if (Math.abs((Math.sqrt(sum) - r)) > 9.5e-8)
 								console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
 
 						}
-						vertice.forEach((axis, i) => vertice[i] *= r);
+//						vertice.forEach((axis, i) => vertice[i] *= r);
 						return vertice;
 
 					}
@@ -1008,6 +1008,7 @@ class HuperSphere extends MyObject {
 
 							} : settings.edges,
 							projectParams: { scene: classSettings.projectParams.scene, },
+							r: classSettings.r,
 							debug: classSettings.debug,
 							settings: {
 
@@ -2449,7 +2450,8 @@ class HuperSphere extends MyObject {
 			angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHuperSphere + ': Set vertice failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
 			
 		}
-		
+
+		vertice.forEach((axis, i) => vertice[i] *= this.classSettings.r);
 		return vertice;
 
 	}
