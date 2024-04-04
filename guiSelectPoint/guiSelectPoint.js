@@ -1786,7 +1786,7 @@ class GuiSelectPoint {
 								
 								const points = intersection.object,
 									axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error( 'axisName:' + axisName );
-								if (points.userData.myObject)
+								if (points.userData.myObject && points.userData.myObject.bufferGeometry.userData.position)
 									points.userData.myObject.bufferGeometry.userData.position[intersection.index][axesId] = value;
 								else points.geometry.attributes.position.array[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
 								points.geometry.attributes.position.needsUpdate = true;
