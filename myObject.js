@@ -27,40 +27,46 @@ class MyObject {
 		settings.object = settings.object || {};
 		settings.object.geometry = settings.object.geometry || {};
 
-		settings.object.geometry.position = new Proxy(settings.object.geometry.position || [], {
-
-			get: (positions, name) => {
-				
-				const positionId = parseInt(name);
-				if (!isNaN(positionId)) {
+		if (!settings.object.geometry.position || !settings.object.geometry.position.isPositionProxy)
+			settings.object.geometry.position = new Proxy(settings.object.geometry.position || [], {
+	
+				get: (positions, name) => {
 					
-					return new Proxy(positions[positionId], {
-
-						set: (position, name, value) => {
-
-							const axisId = parseInt(name);
-							if (!isNaN(axisId)) {
-
-								position[axisId] = value;
-								settings.bufferGeometry.userData.position[positionId][axisId] = value;
+					const positionId = parseInt(name);
+					if (!isNaN(positionId)) {
+						
+						return new Proxy(positions[positionId], {
+	
+							set: (position, name, value) => {
+	
+								const axisId = parseInt(name);
+								if (!isNaN(axisId)) {
+	
+									position[axisId] = value;
+									settings.bufferGeometry.userData.position[positionId][axisId] = value;
+									return true;
+									
+								}
+								position[name] = value;
 								return true;
 								
 							}
-							position[name] = value;
-							return true;
 							
-						}
-						
-					});
-
+						});
+	
+					
+					}
+					switch (name) {
+	
+						case 'isPositionProxy': return true;
+	
+					}
+					return positions[name];
+					
+				},
 				
-				}
-				return positions[name];
-				
-			},
-			
-		});
-
+			});
+	
 		const THREE = three.THREE;
 
 		settings.bufferGeometry = new THREE.BufferGeometry();
@@ -133,6 +139,7 @@ class MyObject {
 							},
 							set: (vertice, name, value) => {
 
+								//edit vertice in http://localhost/anhr/commonNodeJS/master/nD/Examples/ for testing
 								const axisId = parseInt(name);
 								if (!isNaN(axisId)) {
 

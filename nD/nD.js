@@ -979,9 +979,6 @@ class ND extends MyObject {
 				}
 				switch ( name ) {
 
-					case 'push': return settings.object.geometry.position.push;
-					case 'length': return settings.object.geometry.position.length;
-					case 'forEach': return settings.object.geometry.position.forEach;
 					case 'isProxy': return true;
 					case 'target': return;// target; Если вершинрнуть target, то неверно сработает if ( settings.object.geometry.position.target ) и позиция intersection будет неверна
 					case 'copy': 
@@ -999,9 +996,15 @@ class ND extends MyObject {
 							return v;
 		
 						}
+/*						
+					case 'push': return settings.object.geometry.position.push;
+					case 'length': return settings.object.geometry.position.length;
+					case 'forEach': return settings.object.geometry.position.forEach;
 					default: console.error( 'ND: positionWorld Proxy. Invalid name: ' + name );
+*/					
 
 				}
+				return settings.object.geometry.position[name];
 
 			},
 			
@@ -2893,18 +2896,17 @@ class ND extends MyObject {
 				geometryIntersection.position = new Proxy( geometryIntersection.position, {
 		
 					get: function ( target, name, args ) {
-		
+
+/*						
 						const i = parseInt( name );
 						if ( !isNaN( i ) ) {
 		
 							return  target[i];
 		
 						}
+*/						
 						switch ( name ) {
 
-							case 'push': return target.push;
-							case 'length': return target.length;
-							case 'forEach': return target.forEach;
 							case 'isProxy': return true;
 							case 'target': return target;
 							case "reset":
@@ -2913,9 +2915,15 @@ class ND extends MyObject {
 									target.forEach( item => item.positionWorld = undefined );
 	
 								}
+/*								
+							case 'push': return target.push;
+							case 'length': return target.length;
+							case 'forEach': return target.forEach;
 							default: console.error( 'ND: settings.object.geometry.position Proxy. Invalid name: ' + name );
+*/									
 		
 						}
+						return  target[name];
 		
 					},
 					set: function ( target, name, value ) {

@@ -1738,11 +1738,7 @@ class GuiSelectPoint {
 					}
 					if ( ( scale.min !== undefined ) && ( scale.max !== undefined ) ) {
 
-						controller = fPoint.add( {
-
-							value: scale.min,
-
-						}, 'value',
+						controller = fPoint.add( { value: scale.min, }, 'value',
 							scale.min,
 							scale.max,
 							( scale.max - scale.min ) / 100
@@ -1773,27 +1769,14 @@ class GuiSelectPoint {
 						}
 
 					} else
-						controller = fPoint.add( {
-
-							value: 0,
-
-						}, 'value'
-						).onChange( function ( value ) {
-
-							onChange( value );
-
-						} );
+						controller = fPoint.add( { value: 0, }, 'value' ).onChange( function ( value ) { onChange( value ); } );
 
 				} else {
 
 					scale = ( options.axesHelper === undefined ) || ( options.axesHelper === false ) ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
 						options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
 					if ( scale.isAxis() )
-						controller = fPoint.add( {
-
-							value: scale.min,
-
-						}, 'value',
+						controller = fPoint.add( { value: scale.min, }, 'value',
 							scale.min,
 							scale.max,
 							( scale.max - scale.min ) / 100 ).
@@ -1803,8 +1786,9 @@ class GuiSelectPoint {
 								
 								const points = intersection.object,
 									axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error( 'axisName:' + axisName );
-								points.geometry.attributes.position.array
-								[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
+								if (points.userData.myObject)
+									points.userData.myObject.bufferGeometry.userData.position[intersection.index][axesId] = value;
+								else points.geometry.attributes.position.array[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
 								points.geometry.attributes.position.needsUpdate = true;
 
 								exposePosition( intersection.index );
