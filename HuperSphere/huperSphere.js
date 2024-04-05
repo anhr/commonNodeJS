@@ -448,13 +448,14 @@ class HuperSphere extends MyObject {
 					const _vertice = _position[i];
 					const angle2Vertice = () => {
 
-						const vertice = _this.angles2Vertice(i),//_vertice)
-							r = classSettings.r;
+						const vertice = _this.angles2Vertice(i);//_vertice)
+//							r = classSettings.r;
 						//Эта проверка не проходит для HuperSphere3D
 						if (classSettings.debug) {
 
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
+							const r = classSettings.r;
 							if (Math.abs((Math.sqrt(sum) - r)) > 9.5e-8)
 								console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
 
@@ -967,7 +968,8 @@ class HuperSphere extends MyObject {
 				if (guiSelectPoint) {
 
 					guiSelectPoint.setReadOnlyPosition(false);
-					settings.options.guiSelectPoint.update(true);
+//					settings.options.guiSelectPoint.update(true);
+					guiSelectPoint.update(true);
 					guiSelectPoint.setReadOnlyPosition(true);
 					const setControl = (control) => {
 
@@ -1834,6 +1836,7 @@ class HuperSphere extends MyObject {
 								color: settings.object.color,
 								colors: settings.object.geometry.colors,
 								opacity: settings.object.geometry.opacity,
+								bufferGeometry: settings.bufferGeometry,
 								onReady: (points) => {
 
 									myPoints = points;
