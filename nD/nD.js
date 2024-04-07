@@ -2035,16 +2035,6 @@ class ND extends MyObject {
 
 							//цвет вершин
 							if ( colors.length != 0 ) console.error('ND.geometry.D3.get vrtices colors: Invalid colors.length = ' + colors.length);
-							const position = settings.object.geometry.position, scalesW = settings.options.scales.w;
-							for ( let positionId = 0; positionId < position.length; positionId++ ) {
-
-								const rgb = settings.options.palette.toColor(position[positionId].w, scalesW.min, scalesW.max );
-								colors.push(rgb.r);
-								colors.push(rgb.g);
-								colors.push(rgb.b);
-								
-							}
-/*Непонятно почему это не работает
 							settings.object.geometry.position.forEach( vertice => {
 
 								const rgb = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max );
@@ -2053,7 +2043,6 @@ class ND extends MyObject {
 								colors.push(rgb.b);
 
 							} );
-*/							
 
 						}
 

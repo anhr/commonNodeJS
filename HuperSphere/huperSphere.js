@@ -675,6 +675,7 @@ class HuperSphere extends MyObject {
 						}
 					});
 					case 'count': return _position.count === undefined ? _position.length : _position.count;
+					case 'forEach': return (item) => { for (let verticeId = 0; verticeId < position.length; verticeId++) item(position[verticeId], verticeId); }
 					case 'length': return _position.length;
 					case 'push': return (position) => { console.error(sHuperSphere + ': deprecated push vertice. Use "settings.object.geometry.angles.pushRandomAngle()" instead.'); };
 
