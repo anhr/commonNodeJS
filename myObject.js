@@ -69,7 +69,7 @@ class MyObject {
 	
 		const THREE = three.THREE;
 
-		settings.bufferGeometry = new THREE.BufferGeometry();
+		if (!settings.bufferGeometry) settings.bufferGeometry = new THREE.BufferGeometry();
 		this.bufferGeometry = settings.bufferGeometry;
 
 		if (vertices)
@@ -176,9 +176,13 @@ class MyObject {
 		}
 		this.setPositionAttributeFromPoints = (points, pointLength) => {
 
-			this.createPositionAttribute(pointLength != undefined ? pointLength : points[0].w === undefined ? 3 : 4, points.length);
-			for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);
-			this.bufferGeometry.userData.isReady = true;
+			if (!settings.bufferGeometry.userData.isReady) {
+				
+				this.createPositionAttribute(pointLength != undefined ? pointLength : points[0].w === undefined ? 3 : 4, points.length);
+				for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);
+				this.bufferGeometry.userData.isReady = true;
+
+			}
 			return settings.bufferGeometry;
 			
 		}
@@ -190,11 +194,12 @@ class MyObject {
 			                  attributes.position.array [0 + i * itemSize] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
 			if (itemSize > 1) attributes.position.array [1 + i * itemSize] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) attributes.position.array [2 + i * itemSize] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
-			if (itemSize > 3) attributes.position.array [3 + i * itemSize] = vertice.w != undefined ? vertice.w : vertice[3] != undefined ? vertice[3] : 0;
+			const w = vertice.w != undefined ? vertice.w : vertice[3] != undefined ? vertice[3] : 0;
+			if (itemSize > 3) attributes.position.array [3 + i * itemSize] = w;
 			if (attributes.position.itemSize < 4) return;
 
-			const w = settings.options.scales.w;
-			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(vertice.w, w.min, w.max));
+			const wScale = settings.options.scales.w;
+			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(w, wScale.min, wScale.max));
 			
 		}
 		

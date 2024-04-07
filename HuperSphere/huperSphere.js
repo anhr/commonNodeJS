@@ -435,10 +435,11 @@ class HuperSphere extends MyObject {
 		//angles[0][0] = 10;//error huperSphere.js:548 HuperSphere: Set angle[0] = 10 of the vertice 0 is out of range from -1.5707963267948966 to 1.5707963267948966
 		if (angles.count != undefined)
 			for (let i = angles.length; i < angles.count; i++) angles.pushRandomAngle();
-		settings.object.geometry.position = new Proxy(angles, {
+		settings.object.geometry.position = new Proxy(settings.object.geometry.position, {
 
-			get: (_position, name) => {
+			get: (target, name) => {
 
+				const _position = angles;
 				const i = parseInt(name);
 				if (!isNaN(i)) {
 
@@ -674,6 +675,7 @@ class HuperSphere extends MyObject {
 						}
 					});
 					case 'count': return _position.count === undefined ? _position.length : _position.count;
+					case 'length': return _position.length;
 					case 'push': return (position) => { console.error(sHuperSphere + ': deprecated push vertice. Use "settings.object.geometry.angles.pushRandomAngle()" instead.'); };
 
 					//for debug
@@ -701,12 +703,14 @@ class HuperSphere extends MyObject {
 					}
 
 				}
-				return _position[name];
+//				return _position[name];
+				return target[name];//Обращение к settings.object.geometry.position Proxy низшего уровня
 
 			},
 			//set settings.object.geometry.position
-			set: (_position, name, value) => {
+			set: (target, name, value) => {
 
+				const _position = angles;
 				const i = parseInt(name);
 				if (!isNaN(i)) {
 
