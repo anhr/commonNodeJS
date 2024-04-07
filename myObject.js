@@ -168,10 +168,11 @@ class MyObject {
 	
 			});			
 			if (pointLength < 4) return;
-
+/*
 			//color
 			const colors = new Float32Array(pointsLength * pointLength);
 			settings.bufferGeometry.setAttribute('ca', new THREE.Float32BufferAttribute(colors, pointLength));
+*/			
 
 		}
 		this.setPositionAttributeFromPoints = (points, pointLength) => {
