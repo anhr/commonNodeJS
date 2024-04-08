@@ -1849,7 +1849,7 @@ class HuperSphere extends MyObject {
 									intersection(points);
 
 								},
-								//shaderMaterial: false,
+								shaderMaterial: false,
 
 							},
 							options: settings.options,

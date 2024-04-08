@@ -227,7 +227,7 @@ class MyPoints extends MyObject {
 					indexArray: pointsOptions.frustumPoints.pushArrayCloud(points.geometry),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 
 				}
-
+/*
 			points.geometry.setAttribute('color',
 				new THREE.Float32BufferAttribute(Player.getColors(arrayFuncs,
 					{
@@ -239,6 +239,7 @@ class MyPoints extends MyObject {
 						options: options,
 
 					}), 4));
+*/					
 			Points(points);
 
 		}

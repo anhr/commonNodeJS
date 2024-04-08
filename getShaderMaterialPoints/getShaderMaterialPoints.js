@@ -132,8 +132,9 @@ class getShaderMaterialPoints extends MyObject {
 
 			//если не делать эту проверку, то будет неправильный цвет точки, если не задана палитра и шкала w
 			if (!settings.options.scales.w) settings.options.scales.setW();
-
-			geometry.setAttribute('ca', new THREE.Float32BufferAttribute(Player.getColors
+			geometry.setAttribute(
+				'color',//'ca',
+				new THREE.Float32BufferAttribute(Player.getColors
 				(arrayFuncs,
 					{
 
