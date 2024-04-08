@@ -2197,7 +2197,6 @@ class ND extends MyObject {
 				} ) );
 			if ( settings3D.name )
 				object.name = settings3D.name;
-/*
 			if ( settings.object.geometry.colors ) {
 
 				let colors, itemSize;
@@ -2247,7 +2246,7 @@ class ND extends MyObject {
 				object.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, itemSize ) );
 
 			}
-*/
+			
 			scene.add( object );
 
 //			object.userData.setPositionAttribute = ( i ) => { _ND.setPositionAttribute( i ); }

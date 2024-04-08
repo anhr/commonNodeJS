@@ -200,6 +200,17 @@ class MyObject {
 			if (itemSize > 3) attributes.position.array [3 + i * itemSize] = w;
 			if (attributes.position.itemSize < 4) return;
 
+			const color = settings.object.color;
+			if ((color != undefined) && (typeof color != 'object')) {
+
+				const rgb = new THREE.Color(color), mul = 255, itemSize = attributes.color.itemSize;
+				attributes.color.array [0 + i * itemSize] = rgb.r * mul;
+				attributes.color.array [1 + i * itemSize] = rgb.g * mul;
+				attributes.color.array [2 + i * itemSize] = rgb.b * mul;
+				if (itemSize > 3) attributes.color.array [3 + i * itemSize] = 1;
+				return;
+				
+			}
 			const wScale = settings.options.scales.w;
 			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(w, wScale.min, wScale.max));
 			
