@@ -67,7 +67,7 @@ class HuperSphere extends MyObject {
 	 * @param {object} [classSettings.projectParams.params.center={x: 0.0, y: 0.0, z: 0.0}] center of the hupersphere
 	 * @param {float} [classSettings.projectParams.params.center.x=0.0] X axis of the center
 	 * @param {float} [classSettings.projectParams.params.center.y=0.0] Y axis of the center
-	 * @param {float} [classSettings.projectParams.params.center.z=0.0] Y axis of the center
+	 * @param {float} [classSettings.projectParams.params.center.z=0.0] Z axis of the center
 	 * @param {float} [classSettings.r=1.0] HuperSphere radius.
 	 * @param {boolean|object} [classSettings.edges={}] HuperSphere edges
 	 * <pre>
