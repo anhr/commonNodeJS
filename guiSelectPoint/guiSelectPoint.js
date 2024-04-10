@@ -284,15 +284,20 @@ class GuiSelectPoint {
 			//Возможно не надо делать такую глубокую проверку. Не тестировал
 			if(
 				mesh.userData.player &&
-				mesh.userData.player.arrayFuncs &&
-				mesh.userData.player.arrayFuncs[selectedPointIndex] &&
-				mesh.userData.player.arrayFuncs[selectedPointIndex].controllers
+				mesh.userData.player.arrayFuncs
 			) {
 
-				const controllers = mesh.userData.player.arrayFuncs[selectedPointIndex].controllers;
-				if ( controllers.x && controllers.x.controller ) controllers.x.controller.value = position.x;
-				if ( controllers.y && controllers.y.controller ) controllers.y.controller.value = position.y;
-				if ( controllers.z && controllers.z.controller ) controllers.z.controller.value = position.z;
+				const selectedPoint = mesh.userData.player.arrayFuncs[selectedPointIndex]
+				if(
+					selectedPoint &&
+					selectedPoint.controllers
+				) {
+					
+					const controllers = mesh.userData.player.arrayFuncs[selectedPointIndex].controllers;
+					if ( controllers.x && controllers.x.controller ) controllers.x.controller.value = position.x;
+					if ( controllers.y && controllers.y.controller ) controllers.y.controller.value = position.y;
+					if ( controllers.z && controllers.z.controller ) controllers.z.controller.value = position.z;
+				}
 
 			}
 
