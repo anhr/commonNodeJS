@@ -1551,8 +1551,7 @@ class HuperSphere extends MyObject {
 								});
 								aAngleControls.cEdges.__select[0].selected = true;
 								dat.controllerNameAndTitle(aAngleControls.cEdges, lang.edges, lang.edgesTitle);
-								const aEdgeAngleControls = [],
-									edgeAnglesDefault = [];
+								const aEdgeAngleControls = [], edgeAnglesDefault = [];
 								aAngleControls.fOppositeVertice = fAdvansed.addFolder(lang.oppositeVertice);
 								_display(aAngleControls.fOppositeVertice.domElement, false);
 								createAnglesControls(aAngleControls.fOppositeVertice, aEdgeAngleControls, edgeAnglesDefault);
@@ -1841,7 +1840,7 @@ class HuperSphere extends MyObject {
 								color: settings.object.color,
 								colors: settings.object.geometry.colors,
 								opacity: settings.object.geometry.opacity,
-								bufferGeometry: settings.bufferGeometry,
+//								bufferGeometry: settings.bufferGeometry,
 								onReady: (points) => {
 
 									myPoints = points;
@@ -1854,6 +1853,7 @@ class HuperSphere extends MyObject {
 							},
 							options: settings.options,
 							object: settings.object,
+							bufferGeometry: settings.bufferGeometry,
 
 						});
 

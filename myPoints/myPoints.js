@@ -192,6 +192,8 @@ class MyPoints extends MyObject {
 
 				options: options,
 				pointsOptions: pointsOptions,
+				object: { geometry: { position: settings.object.geometry.position } },
+				bufferGeometry: settings.bufferGeometry,
 
 			});
 		else {

@@ -1109,20 +1109,7 @@ class GuiSelectPoint {
 					delete fPoint.fCustomPoint;
 					
 				}
-				if (mesh && mesh.userData.gui) {
-					
-					fPoint.fCustomPoint = mesh.userData.gui.addControllers(fPoint);
-/*					
-					if (mesh && mesh.userData.gui.isLocalPositionReadOnly) {
-
-						if (cX) cX.domElement.querySelector( 'input' ).readOnly = true;
-						if (cY) cX.domElement.querySelector( 'input' ).readOnly = true;
-						if (cZ) cX.domElement.querySelector( 'input' ).readOnly = true;
-						
-					}
-*/	 
-
-				}
+				if (mesh && mesh.userData.gui) { fPoint.fCustomPoint = mesh.userData.gui.addControllers(fPoint); }
 				
 				if ( cCustom ) cCustom.object( mesh, dat, value === -1 );//options );
 
@@ -1786,9 +1773,10 @@ class GuiSelectPoint {
 								
 								const points = intersection.object,
 									axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error( 'axisName:' + axisName );
+/*								
 								if (points.userData.myObject && points.userData.myObject.bufferGeometry.userData.position)
 									points.userData.myObject.bufferGeometry.userData.position[intersection.index][axesId] = value;
-								else points.geometry.attributes.position.array[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
+								else */points.geometry.attributes.position.array[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
 								points.geometry.attributes.position.needsUpdate = true;
 
 								exposePosition( intersection.index );
