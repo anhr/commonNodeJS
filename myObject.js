@@ -215,6 +215,7 @@ class MyObject {
 			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(w, wScale.min, wScale.max));
 			
 		}
+//		this.isPositionControllerReadOnly = settings.isPositionControllerReadOnly;// false;
 		
 	}
 

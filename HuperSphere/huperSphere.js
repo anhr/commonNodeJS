@@ -961,6 +961,8 @@ class HuperSphere extends MyObject {
 				const vertice = settings.object.geometry.position[verticeId];
 				this.bufferGeometry.userData.isReady = true;
 				this.setPositionAttributeFromPoint(verticeId, vertice);
+				this.bufferGeometry.attributes.position.needsUpdate = true;
+				this.bufferGeometry.attributes.color.needsUpdate = true;
 /*				
 				const itemSize = points.geometry.attributes.position.itemSize;
 				if (verticeId != undefined) for (let axesId = 0; axesId < itemSize; axesId++)
@@ -972,10 +974,11 @@ class HuperSphere extends MyObject {
 				const guiSelectPoint = settings.options.guiSelectPoint;
 				if (guiSelectPoint) {
 
-					guiSelectPoint.setReadOnlyPosition(false);
+//					guiSelectPoint.setReadOnlyPosition(false);
 //					settings.options.guiSelectPoint.update(true);
 					guiSelectPoint.update(true);
-					guiSelectPoint.setReadOnlyPosition(true);
+//					guiSelectPoint.setReadOnlyPosition(true);
+					guiSelectPoint.exposePosition();
 					const setControl = (control) => {
 
 						if (!control || !control.getValue()) return;
@@ -1173,6 +1176,8 @@ class HuperSphere extends MyObject {
 							},
 							addControllers: (fParent) => {
 
+								settings.options.guiSelectPoint.setReadOnlyPosition(true);
+								
 								//Localization
 
 								const getLanguageCode = options.getLanguageCode;
@@ -1854,6 +1859,7 @@ class HuperSphere extends MyObject {
 							options: settings.options,
 							object: settings.object,
 							bufferGeometry: settings.bufferGeometry,
+							isPositionControllerReadOnly: true,
 
 						});
 

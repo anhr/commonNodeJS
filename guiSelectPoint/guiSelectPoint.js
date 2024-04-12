@@ -302,6 +302,7 @@ class GuiSelectPoint {
 			}
 
 		}
+		this.exposePosition = exposePosition;
 		function setValue( controller, v ) {
 
 			if ( !controller )
@@ -1678,6 +1679,7 @@ class GuiSelectPoint {
 
 			function isReadOnlyController( controller ) {
 
+				if ( controller.boSetValue ) return true;
 				if ( controller.domElement.querySelector( 'input' ).readOnly ) {
 
 					if ( controller.getValue() !== controller.initialValue ) {
@@ -1774,10 +1776,13 @@ class GuiSelectPoint {
 							( scale.max - scale.min ) / 100 ).
 							onChange( function ( value ) {
 
+								const points = intersection.object;
+
+//								if ( ( points.userData.myObject && points.userData.myObject.isPositionControllerReadOnly ) || isReadOnlyController( controller ) ) return;
+//								if ( controller.boSetValue || isReadOnlyController( controller ) ) return;
 								if ( isReadOnlyController( controller ) ) return;
 								
-								const points = intersection.object,
-									axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error( 'axisName:' + axisName );
+								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error( 'axisName:' + axisName );
 /*								
 								if (points.userData.myObject && points.userData.myObject.bufferGeometry.userData.position)
 									points.userData.myObject.bufferGeometry.userData.position[intersection.index][axesId] = value;
