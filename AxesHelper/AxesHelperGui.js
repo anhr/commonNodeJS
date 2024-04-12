@@ -72,6 +72,7 @@ export default function AxesHelperGui( options, gui ) {
 
 	const scalesDefault = JSON.parse( JSON.stringify( options.scales ) ),
 		groupAxesHelper = options.axesHelper.getGroup();
+	scalesDefault.posAxesIntersection = new THREE.Vector3().copy(options.scales.posAxesIntersection);
 	Object.freeze( scalesDefault );
 
 	options = options || {};
