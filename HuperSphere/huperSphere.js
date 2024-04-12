@@ -1671,8 +1671,11 @@ class HuperSphere extends MyObject {
 
 											case latitudeId:
 											case longitudeId:
-											case altitudeId:
 												start = -π; stop = π;
+												break;
+											case altitudeId:
+												const altitudeRange = settings.object.geometry.angles.ranges[verticeAngleId];
+												start = altitudeRange.min; stop = altitudeRange.max;
 												break;
 											default: console.error(sHuperSphere + ': Planes of rotation of angles. Invalid verticeAngleId = ' + verticeAngleId);
 
