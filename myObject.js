@@ -77,7 +77,7 @@ class MyObject {
 			//Что бы можно было менять позицию и цвет вершины
 			settings.object.geometry.position = settings.object.geometry.position || vertices;
 		
-		this.createPositionAttribute = (pointLength, pointsLength) => {
+		const createPositionAttribute = (pointLength, pointsLength) => {
 
 			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
 			const MAX_POINTS = settings.object.geometry.MAX_POINTS;
@@ -180,7 +180,7 @@ class MyObject {
 
 			if (!settings.bufferGeometry.userData.isReady) {
 				
-				this.createPositionAttribute(pointLength != undefined ? pointLength : points[0].w === undefined ? 3 : 4, points.length);
+				createPositionAttribute(pointLength != undefined ? pointLength : points[0].w === undefined ? 3 : 4, points.length);
 				for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);
 				this.bufferGeometry.userData.isReady = true;
 
