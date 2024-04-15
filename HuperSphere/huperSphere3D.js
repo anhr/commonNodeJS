@@ -121,9 +121,12 @@ class HuperSphere3D extends Sphere {
 		//Altitude
 		//добиваемся равномерного распределения вершин в объеме шара
 		//исчезло уплотнение в ядре шара
+		verticeAngles.push(Math.acos(Math.random() * (Math.random() > 0.5 ? 1: -1)));
+/*		
 		if (this.altitudeRange.min === 0)
 			verticeAngles.push(Math.acos(Math.random()));//по краям зеленая в центре белые равномерное распределение
 		else verticeAngles.push(Math.acos(Math.random() * (Math.random() > 0.5 ? 1: -1)));
+*/		
 		
 		
 		//добиваемся равномерного распределения вершин в объеме шара
