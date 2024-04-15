@@ -392,7 +392,8 @@ class HuperSphere extends MyObject {
 				if (!isNaN(i)) {
 
 					aAngles[i] = value;
-					_this.object().userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
+					const object = _this.object();
+					if (object) object.userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
 
 				}
 				else aAngles[name] = value;
@@ -686,12 +687,28 @@ class HuperSphere extends MyObject {
 
 						_position.forEach((verticeAngles, verticeId) => {
 
+							/*
+							//for testing please uncommet the "//test for angles range" in the http://localhost/anhr/commonNodeJS/master/HuperSphere/Examples/huperSphere.html page
+							let sLog = 'vertice[' + verticeId + '] angles test:\n   verticeAngles[';
+							verticeAngles.forEach(angle => sLog = sLog + angle + ', ');
+							sLog = sLog + ']\nnormalizedAngles['
+							_this.normalizeVerticeAngles(verticeAngles).forEach(angle => sLog = sLog + angle + ', ');
+							console.log(sLog + ']');
+							*/
+							
 							for (let angleId = 0; angleId < verticeAngles.length; angleId++) {
 
-								const angle = verticeAngles[angleId], range = angles.ranges[angleId];
-								if ((angle < range.min) || (angle > range.max)) console.error(sHuperSphere + ': ' + range.angleName + ' angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
+								const angle = verticeAngles[angleId];
+								const range = angles.ranges[angleId];
+								if ((angle < range.min) || (angle > range.max)) {
+									
+									console.error(sHuperSphere + ': ' + range.angleName + ' angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
+									_position[verticeId] = _this.normalizeVerticeAngles(verticeAngles);
+
+								}
 
 							}
+							
 							const vertice = settings.object.geometry.position[verticeId], strVerticeId = 'vertice[' + verticeId + ']'
 							_this.TestVertice(vertice, strVerticeId);
 							vertice.edges.forEach(edgeId => {
@@ -1143,12 +1160,13 @@ class HuperSphere extends MyObject {
 
 										}
 
-										alert(lang.error.replace('%s', angle).
+										const sError = lang.error.replace('%s', angle).
 											replace('%n', cAngle.__li.querySelector(".property-name").innerHTML).
 											replace('%v', verticeId).
 											replace('%min', min).
-											replace('%max', max)
-										);
+											replace('%max', max);
+										console.error(sError);
+										alert(sError);
 
 									}
 									anglesDefault.push(angle);
@@ -1687,8 +1705,8 @@ class HuperSphere extends MyObject {
 											for (let verticeAngleId = 0; verticeAngleId < vertice.length; verticeAngleId++) planeAngle.push(vertice[verticeAngleId]);
 											planeAngle[verticeAngleId] = i;
 
-											if (this.classSettings.debug) console.log(sHuperSphere + ': ' + settings.object.geometry.angles.ranges[verticeAngleId].angleName + '. VerticeId = ' + planeAngles.length);
-											planeAngles[planeVerticeId++] = this.vertice2angles(this.angles2Vertice(planeAngle));
+											//if (this.classSettings.debug) console.log(sHuperSphere + ': ' + settings.object.geometry.angles.ranges[verticeAngleId].angleName + '. VerticeId = ' + planeAngles.length);
+											planeAngles[planeVerticeId++] = this.normalizeVerticeAngles(planeAngle);
 
 										}
 										if (plane) plane.object().geometry.attributes.position.needsUpdate = true;
@@ -2020,7 +2038,7 @@ class HuperSphere extends MyObject {
 				if (count < 2) {
 
 					console.error(sHuperSphere + ': Invalid classSettings.settings.object.geometry.position.count < 2');
-					return;
+					//return;
 
 				}
 
@@ -2468,7 +2486,7 @@ class HuperSphere extends MyObject {
 			const value = vertice;
 			if (angles2vertice.length != value.length) console.error(sHuperSphere + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
 			const d = 6e-16;
-			angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHuperSphere + ': Set vertice failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
+			angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHuperSphere + ': Set vertices[' + anglesId + '] failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
 			
 		}
 
@@ -2545,9 +2563,28 @@ class HuperSphere extends MyObject {
 
 		}
 		
+/*				
+		if (n === 3) {
+
+			const AltitudeRange = this.classSettings.settings.object.geometry.angles.ranges[0],
+				angleAltitude = φ[0];
+			if (angleAltitude > AltitudeRange.max) {
+
+				φ[0] = angleAltitude - π;
+				φ[1] = -φ[1];//Latitude
+
+				//Longitude
+				if (φ[2] > 0) φ[2] =- π;
+				else φ[2] =+ π;
+
+			} else if (angleAltitude < AltitudeRange.min) console.error('Under constraction')
+
+		}
+*/
 		return φ;
 
 	}
+	normalizeVerticeAngles(verticeAngles){ return this.vertice2angles(this.angles2Vertice(verticeAngles)); }
 
 }
 

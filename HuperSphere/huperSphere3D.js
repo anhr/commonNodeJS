@@ -71,16 +71,16 @@ class HuperSphere3D extends Sphere {
 	get altitudeRange() { return {
 		angleName: 'Altitude',
 
-		//не удается загнать все углы высоты в заданный диапазон
-		min: 0, max: π / 2,//Высота меняется в диапазоне 90 градусов. В центре гиперсферы вершины белого и по краям синего цвета
-		
-		//min: -π, max: π,//Высота меняется в диапазоне 360 градусов. В центре гиперсферы вершины белого и синего цвета
+		//min: 0, max: π / 2,//Высота меняется в диапазоне 90 градусов. В центре гиперсферы вершины белого и по краям синего цвета
+		//min: - π / 2, max: π / 2,
+		min: 0, max: π,//Высота меняется в диапазоне 0 180 градусов. В центре гиперсферы вершины белого и  синего цвета по краям зеленого
 	}}
 	setW() {
 
 		const classSettings = this.classSettings, w = classSettings.settings.options.scales.w;
 		w.max = classSettings.r;
-		w.min = this.altitudeRange.min === 0 ? 0 : -classSettings.r;
+		//w.min = this.altitudeRange.min === 0 ? 0 : -classSettings.r;
+		w.min = -classSettings.r;
 		
 	};
 	get probabilityDensity() {
