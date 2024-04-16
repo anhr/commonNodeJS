@@ -602,17 +602,22 @@ class HuperSphere extends MyObject {
 
 											//https://wiki5.ru/wiki/Mean_of_circular_quantities#Mean_of_angles Среднее значение углов
 
-											//массив для хранения сумм декартовых координат прпотивоположных вершин
+											//массив для хранения сумм декартовых координат противоположных вершин
 											//для 1D гиперсферы это: aSum[0] = x, aSum[1] = y.
 											//для 2D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z.
 											//для 3D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z, aSum[3] = w.
 											const aSum = [];
-											for (let i = 0; i < _this.dimension; i++) aSum.push(0.0);
+											//for (let i = 0; i < _this.dimension; i++) aSum.push(0.0);
 
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
 												const oppositeVertice = position[oppositeAngleId];
-												oppositeVertice.forEach((axis, i) => aSum[i] += axis);
+												oppositeVertice.forEach((axis, i) => {
+
+													if (aSum[i] === undefined) aSum[i] = 0;
+													aSum[i] += axis
+												
+												});
 
 											});
 											const muddleVertice = _this.vertice2angles(aSum);
@@ -1380,7 +1385,7 @@ class HuperSphere extends MyObject {
 										//рисуем крестик на противоположной вершине выбранного ребра
 										aAngleControls.removeCross();
 										vertices.length = 0;
-										itemSize = undefined;
+//										itemSize = undefined;
 										const oppositeVertice = position[oppositeVerticeId],
 											crossSize = 0.05;
 										pushVertice([0, 0, crossSize]);
@@ -1579,13 +1584,16 @@ class HuperSphere extends MyObject {
 								_display(aAngleControls.fOppositeVertice.domElement, false);
 								createAnglesControls(aAngleControls.fOppositeVertice, aEdgeAngleControls, edgeAnglesDefault);
 
-								let itemSize;
-								const vertices = [],
+								const itemSize = this.bufferGeometry.attributes.position.itemSize,
+									vertices = [],
 									pushVertice = (vertice) => {
 
+/*										
 										if (itemSize === undefined) itemSize = vertice.length;
 										else if (itemSize != vertice.length) console.error(sHuperSphere + ': Middle vertice GUI. Invalid itemSize = ' + itemSize);
+*/										
 										vertice.forEach(axis => vertices.push(axis))
+										for (let i = vertice.length; i < itemSize; i++) vertices.push(0);
 
 										//Каждая вершина должна иметь не меньше 3 координат что бы не поучить ошибку:
 										//THREE.BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values. 
@@ -1612,7 +1620,7 @@ class HuperSphere extends MyObject {
 										const verticeId = aAngleControls.verticeId,
 											angles = position.angles[verticeId];
 										vertices.length = 0;
-										itemSize = undefined;
+//										itemSize = undefined;
 										angles.edges.forEach(edgeId => {
 
 											const edge = geometry.indices.edges[edgeId];
@@ -1644,7 +1652,7 @@ class HuperSphere extends MyObject {
 											oppositeVerticesId = angles.oppositeVerticesId,
 											middleVertice = _this.angles2Vertice(angles.middleVertice(oppositeVerticesId));
 										vertices.length = 0;
-										itemSize = undefined;
+//										itemSize = undefined;
 										oppositeVerticesId.forEach(oppositeVerticeId => {
 
 											pushVertice(middleVertice);
