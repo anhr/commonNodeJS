@@ -284,7 +284,6 @@ class ND extends MyObject {
 
 		super( settings );
 		const options = settings.options, _ND = this;
-//		settings.object = settings.object || {};
 		settings.object.raycaster = settings.object.raycaster || {};
 		settings.object.raycaster.text = settings.object.raycaster.text || function( intersection ) {
 
@@ -996,12 +995,6 @@ class ND extends MyObject {
 							return v;
 		
 						}
-/*						
-					case 'push': return settings.object.geometry.position.push;
-					case 'length': return settings.object.geometry.position.length;
-					case 'forEach': return settings.object.geometry.position.forEach;
-					default: console.error( 'ND: positionWorld Proxy. Invalid name: ' + name );
-*/					
 
 				}
 				return settings.object.geometry.position[name];
@@ -1110,11 +1103,6 @@ class ND extends MyObject {
 					}
 					switch ( name ) {
 
-/*							
-						case 'push': return target.push;
-						case 'length': return target.length;
-						case 'forEach': return target.forEach;
-*/	  
 						case 'isProxy': return true;
 						case 'boPositionError': return target.boPositionError;
 						case 'target': return target;
@@ -1130,7 +1118,6 @@ class ND extends MyObject {
 
 							}
 						case "reset": return function () { target.forEach( item => delete item.positionWorld ); }
-//						default: console.error( 'ND: settings.object.geometry.position Proxy. Invalid name: ' + name );
 						default: return target[name];
 
 					}
@@ -1377,7 +1364,6 @@ class ND extends MyObject {
 								} else console.error('ND: settings.object.geometry.indices[]intersection. invalid name: ' + name);
 
 							};
-//							edge.indices = edges[parseInt(name)];
 							return edge;
 
 						}
@@ -1911,18 +1897,7 @@ class ND extends MyObject {
 			D3: {
 				
 				//Returns a points of projection
-				get points() {
-
-					return _ND.bufferGeometry.userData.position;
-/*					
-					//Точки надо брать из this.bufferGeometry
-					const points = [];
-					for ( var i = 0; i < geometry.position.length; i++ )
-						points.push( geometry.position[i].point );
-					return points;
-*/					
-
-				},
+				get points() { return _ND.bufferGeometry.userData.position; },
 				//returns indices of the faces vertices
 				get faceIndices() {
 
@@ -2132,15 +2107,6 @@ class ND extends MyObject {
 			)
 				settings.object.geometry.colors = indices3D.colors;
 
-/*			
-			nD.getPoint = (i) => { 
-
-				const position = geometry.D3.points[i];//settings.object.geometry.position[i];
-				return position.positionWorld || position;
-				
-			}
-			const buffer = nD.setPositionAttributeFromPoints( geometry.D3.points );
-*/			
 			const buffer = nD.bufferGeometry;
 			
 			if ( settings3D.faces ) {
@@ -2153,17 +2119,6 @@ class ND extends MyObject {
 				buffer.computeVertexNormals ();
 
 			} else buffer.setIndex( indices )
-/*			
-			const lineBasicMaterialParameters = settings.object.geometry.colors ? {
-				
-				vertexColors: true,
-				toneMapped: false,
-				transparent: settings.object.geometry.opacity ?
-					true ://установлена прозрачность вершин
-					undefined,
-			
-			} : { color: color, };
-*/   
 			let lineBasicMaterialParameters;
 			if ( settings.object.geometry.colors ) {
 
@@ -2249,8 +2204,7 @@ class ND extends MyObject {
 			
 			scene.add( object );
 
-//			object.userData.setPositionAttribute = ( i ) => { _ND.setPositionAttribute( i ); }
-			object.userData.myObject = nD;//_ND;
+			object.userData.myObject = nD;
 			object.userData.geometry = geometry.geometry;
 			object.userData.onMouseDown = function ( intersection ) {
 
@@ -2312,11 +2266,8 @@ class ND extends MyObject {
 						fParent.parent.fCustom = undefined;
 						
 					}				
-					if ( !gui && geometry.geometry.gui/* && !geometry.geometry.gui.isCreated()*/ ) {
-	
-						fParent.parent.fCustom = geometry.geometry.gui( fParent, dat, /*object.userData.nd, */settings.options, _ND );
-						
-					}
+					if ( !gui && geometry.geometry.gui )
+						fParent.parent.fCustom = geometry.geometry.gui( fParent, dat, settings.options, _ND );
 
 				}
 
@@ -2576,7 +2527,6 @@ class ND extends MyObject {
 						} else {
 							
 							const buffer = new THREE.BufferGeometry().setFromPoints( geometry.D3.points );
-//							const buffer = _ND.bufferGeometry;
 							const lineIndices = [];
 							function createIndices( item, level ) {
 	
@@ -2898,14 +2848,6 @@ class ND extends MyObject {
 		
 					get: function ( target, name, args ) {
 
-/*						
-						const i = parseInt( name );
-						if ( !isNaN( i ) ) {
-		
-							return  target[i];
-		
-						}
-*/						
 						switch ( name ) {
 
 							case 'isProxy': return true;
@@ -2916,12 +2858,6 @@ class ND extends MyObject {
 									target.forEach( item => item.positionWorld = undefined );
 	
 								}
-/*								
-							case 'push': return target.push;
-							case 'length': return target.length;
-							case 'forEach': return target.forEach;
-							default: console.error( 'ND: settings.object.geometry.position Proxy. Invalid name: ' + name );
-*/									
 		
 						}
 						return  target[name];

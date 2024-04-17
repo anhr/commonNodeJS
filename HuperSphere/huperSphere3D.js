@@ -30,12 +30,7 @@ class HuperSphere3D extends Sphere {
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.
 	 **/
-	constructor(options, classSettings) {
-
-		super(options, classSettings);
-//		this.logHuperSphere();
-
-	}
+	constructor(options, classSettings) { super(options, classSettings); }
 
 	//base methods
 
@@ -70,16 +65,12 @@ class HuperSphere3D extends Sphere {
 	get cookieName() { return '3DUniverse' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
 	get altitudeRange() { return {
 		angleName: 'Altitude',
-
-		//min: 0, max: π / 2,//Высота меняется в диапазоне 90 градусов. В центре гиперсферы вершины белого и по краям синего цвета
-		//min: - π / 2, max: π / 2,
 		min: 0, max: π,//Высота меняется в диапазоне 0 180 градусов. В центре гиперсферы вершины белого и  синего цвета по краям зеленого
 	}}
 	setW() {
 
 		const classSettings = this.classSettings, w = classSettings.settings.options.scales.w;
 		w.max = classSettings.r;
-		//w.min = this.altitudeRange.min === 0 ? 0 : -classSettings.r;
 		w.min = -classSettings.r;
 		
 	};
@@ -122,12 +113,6 @@ class HuperSphere3D extends Sphere {
 		//добиваемся равномерного распределения вершин в объеме шара
 		//исчезло уплотнение в ядре шара
 		verticeAngles.push(Math.acos(Math.random() * (Math.random() > 0.5 ? 1: -1)));
-/*		
-		if (this.altitudeRange.min === 0)
-			verticeAngles.push(Math.acos(Math.random()));//по краям зеленая в центре белые равномерное распределение
-		else verticeAngles.push(Math.acos(Math.random() * (Math.random() > 0.5 ? 1: -1)));
-*/		
-		
 		
 		//добиваемся равномерного распределения вершин в объеме шара
 		//исчезло уплотнение на оси через полюса по оси i

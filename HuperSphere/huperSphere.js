@@ -40,7 +40,6 @@ import MyObject from '../myObject.js'
 
 const sHuperSphere = 'HuperSphere', sOverride = sHuperSphere + ': Please override the %s method in your child class.',
 	π = Math.PI;
-//	verticeEdges = true;//Эту константу добавил на случай если захочу не включать индексы ребер в вершину если classSettings.debug != true
 
 class HuperSphere extends MyObject {
 
@@ -296,13 +295,6 @@ class HuperSphere extends MyObject {
 
 								if (angleId >= verticeAngles.length) return 0.0;
 								let angle = verticeAngles[angleId];
-
-								/*
-								//Normalize angle to value from -π to π
-								while (angle > π) angle -= 2 * π;
-								while (angle < - π) angle += 2 * π;
-								*/
-
 								return angle;
 
 							}
@@ -450,8 +442,7 @@ class HuperSphere extends MyObject {
 					const _vertice = _position[i];
 					const angle2Vertice = () => {
 
-						const vertice = _this.angles2Vertice(i);//_vertice)
-//							r = classSettings.r;
+						const vertice = _this.angles2Vertice(i);
 						//Эта проверка не проходит для HuperSphere3D
 						if (classSettings.debug) {
 
@@ -462,7 +453,6 @@ class HuperSphere extends MyObject {
 								console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
 
 						}
-//						vertice.forEach((axis, i) => vertice[i] *= r);
 						return vertice;
 
 					}
@@ -726,7 +716,6 @@ class HuperSphere extends MyObject {
 					}
 
 				}
-//				return _position[name];
 				return target[name];//Обращение к settings.object.geometry.position Proxy низшего уровня
 
 			},
@@ -985,21 +974,12 @@ class HuperSphere extends MyObject {
 				this.setPositionAttributeFromPoint(verticeId, vertice);
 				this.bufferGeometry.attributes.position.needsUpdate = true;
 				this.bufferGeometry.attributes.color.needsUpdate = true;
-/*				
-				const itemSize = points.geometry.attributes.position.itemSize;
-				if (verticeId != undefined) for (let axesId = 0; axesId < itemSize; axesId++)
-					points.geometry.attributes.position.array[axesId + verticeId * itemSize] = vertice[axesId] != undefined ? vertice[axesId] : 0.0;
-				points.geometry.attributes.position.needsUpdate = true;
-*/
 				if (settings.options.axesHelper)
 					settings.options.axesHelper.updateAxes();
 				const guiSelectPoint = settings.options.guiSelectPoint;
 				if (guiSelectPoint) {
 
-//					guiSelectPoint.setReadOnlyPosition(false);
-//					settings.options.guiSelectPoint.update(true);
 					guiSelectPoint.update(true);
-//					guiSelectPoint.setReadOnlyPosition(true);
 					guiSelectPoint.exposePosition();
 					const setControl = (control) => {
 
@@ -1588,10 +1568,6 @@ class HuperSphere extends MyObject {
 									vertices = [],
 									pushVertice = (vertice) => {
 
-/*										
-										if (itemSize === undefined) itemSize = vertice.length;
-										else if (itemSize != vertice.length) console.error(sHuperSphere + ': Middle vertice GUI. Invalid itemSize = ' + itemSize);
-*/										
 										vertice.forEach(axis => vertices.push(axis))
 										for (let i = vertice.length; i < itemSize; i++) vertices.push(0);
 
@@ -1620,7 +1596,6 @@ class HuperSphere extends MyObject {
 										const verticeId = aAngleControls.verticeId,
 											angles = position.angles[verticeId];
 										vertices.length = 0;
-//										itemSize = undefined;
 										angles.edges.forEach(edgeId => {
 
 											const edge = geometry.indices.edges[edgeId];
@@ -1652,7 +1627,6 @@ class HuperSphere extends MyObject {
 											oppositeVerticesId = angles.oppositeVerticesId,
 											middleVertice = _this.angles2Vertice(angles.middleVertice(oppositeVerticesId));
 										vertices.length = 0;
-//										itemSize = undefined;
 										oppositeVerticesId.forEach(oppositeVerticeId => {
 
 											pushVertice(middleVertice);
@@ -1874,7 +1848,6 @@ class HuperSphere extends MyObject {
 								color: settings.object.color,
 								colors: settings.object.geometry.colors,
 								opacity: settings.object.geometry.opacity,
-//								bufferGeometry: settings.bufferGeometry,
 								onReady: (points) => {
 
 									myPoints = points;
@@ -2571,24 +2544,6 @@ class HuperSphere extends MyObject {
 
 		}
 		
-/*				
-		if (n === 3) {
-
-			const AltitudeRange = this.classSettings.settings.object.geometry.angles.ranges[0],
-				angleAltitude = φ[0];
-			if (angleAltitude > AltitudeRange.max) {
-
-				φ[0] = angleAltitude - π;
-				φ[1] = -φ[1];//Latitude
-
-				//Longitude
-				if (φ[2] > 0) φ[2] =- π;
-				else φ[2] =+ π;
-
-			} else if (angleAltitude < AltitudeRange.min) console.error('Under constraction')
-
-		}
-*/
 		return φ;
 
 	}

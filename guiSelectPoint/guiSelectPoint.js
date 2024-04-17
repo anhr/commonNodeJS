@@ -1329,10 +1329,6 @@ class GuiSelectPoint {
 				function addRotationControllers( name ) {
 
 					const scale = options.scales[name];
-/*					
-					if ( !scale.isAxis() )
-						return;
-*/
 					cRotations[name] = fRotation.add( new THREE.Vector3(), name, 0, Math.PI * 2, 0.01 ).
 						onChange( function ( value ) {
 
@@ -1499,7 +1495,6 @@ class GuiSelectPoint {
 
 						}
 						if ( point.cameraTarget ) point.cameraTarget.boLook = boLook;
-						//					if ( Player.player ) Player.player.selectScene();
 						if ( options.player ) options.player.selectScene();
 						if ( options.cameraGui ) options.cameraGui.look( boLook );
 						if ( boLook ) {
@@ -1611,27 +1606,6 @@ class GuiSelectPoint {
 			}
 
 		}
-		/* *
-		 * Sets a color attribute.
-		 * @param {Object} attributes [geometry.attributes]{@link https://threejs.org/docs/index.html?q=geometry#api/en/core/BufferGeometry.attributes} of the mesh
-		 * @param {number} i index of the color
-		 * @param {THREE.Color} color new [color]{@link https://threejs.org/docs/index.html?q=Colo#api/en/math/Color}
-		 */
-/*		
-		this.setColorAttribute = function ( attributes, i, color ) {
-
-			if ( typeof color === "string" )
-				color = new THREE.Color( color );
-			const colorAttribute = attributes.color || attributes.ca;
-			if ( colorAttribute === undefined )
-				return;
-			colorAttribute.setX( i, color.r );
-			colorAttribute.setY( i, color.g );
-			colorAttribute.setZ( i, color.b );
-			colorAttribute.needsUpdate = true;
-
-		}
-*/		
 		/**Removes all points from points list control. */
 		this.removePoints = function () {
 
@@ -1778,15 +1752,11 @@ class GuiSelectPoint {
 
 								const points = intersection.object;
 
-//								if ( ( points.userData.myObject && points.userData.myObject.isPositionControllerReadOnly ) || isReadOnlyController( controller ) ) return;
-//								if ( controller.boSetValue || isReadOnlyController( controller ) ) return;
 								if ( isReadOnlyController( controller ) ) return;
 								
-								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error( 'axisName:' + axisName );
-/*								
-								if (points.userData.myObject && points.userData.myObject.bufferGeometry.userData.position)
-									points.userData.myObject.bufferGeometry.userData.position[intersection.index][axesId] = value;
-								else */points.geometry.attributes.position.array[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
+								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName);
+
+								points.geometry.attributes.position.array[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
 								points.geometry.attributes.position.needsUpdate = true;
 
 								exposePosition( intersection.index );

@@ -36,7 +36,6 @@ const getCurrentScriptPath = function () {
 		path = script.substring( 0, script.lastIndexOf( '/' ) );
 	return path;
 };
-//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
 const currentScriptPath = getCurrentScriptPath(),
 	_vertex_text = {
 
@@ -83,7 +82,6 @@ class getShaderMaterialPoints extends MyObject {
 	*/
 	constructor(group, arrayFuncs, onReady, settings = {}) {
 
-		//settings = settings || {};
 		super(settings, arrayFuncs);
 
 		const THREE = three.THREE, tMin = settings.pointsOptions === undefined ?
@@ -117,13 +115,8 @@ class getShaderMaterialPoints extends MyObject {
 				
 				const points = Player.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin, });
 				this.getPoint = (i) => { return points[i]; }
-				geometry = this.setPositionAttributeFromPoints( points );
-	/*			
-				geometry = new THREE.BufferGeometry().setFromPoints
-				(Player.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin, }),
-					arrayFuncs instanceof Array ? arrayFuncs[0].vector instanceof THREE.Vector3 ? 3 : 4 :
-						arrayFuncs instanceof THREE.Vector3 ? 3 : 4);
-	*/					
+				geometry = this.setPositionAttributeFromPoints(points);
+
 			}
 
 		}
@@ -133,7 +126,7 @@ class getShaderMaterialPoints extends MyObject {
 			//если не делать эту проверку, то будет неправильный цвет точки, если не задана палитра и шкала w
 			if (!settings.options.scales.w) settings.options.scales.setW();
 			geometry.setAttribute(
-				'color',//'ca',
+				'color',
 				new THREE.Float32BufferAttribute(Player.getColors
 				(arrayFuncs,
 					{

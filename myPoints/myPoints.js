@@ -156,12 +156,10 @@ class MyPoints extends MyObject {
 		if ((typeof arrayFuncs !== 'function') && (arrayFuncs.length === 0))
 			arrayFuncs.push(new THREE.Vector3());
 
-//		settings = settings || {};
-
 		settings.pointsOptions = settings.pointsOptions || {};
 		const pointsOptions = settings.pointsOptions;
 		settings.options = settings.options || new Options();
-		var options = settings.options;// || {};
+		var options = settings.options;
 		if (!options.boOptions) options = new Options(options);
 		pointsOptions.tMin = pointsOptions.tMin || 0;
 		pointsOptions.name = pointsOptions.name || '';
@@ -229,19 +227,6 @@ class MyPoints extends MyObject {
 					indexArray: pointsOptions.frustumPoints.pushArrayCloud(points.geometry),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 
 				}
-/*
-			points.geometry.setAttribute('color',
-				new THREE.Float32BufferAttribute(Player.getColors(arrayFuncs,
-					{
-
-						color: settings.pointsOptions.color,
-						colors: settings.pointsOptions.colors,
-						opacity: settings.pointsOptions.opacity,
-						positions: points.geometry.attributes.position,
-						options: options,
-
-					}), 4));
-*/					
 			Points(points);
 
 		}
