@@ -762,7 +762,7 @@ class HuperSphere extends MyObject {
 		const position = settings.object.geometry.position;
 
 		this.getPoint = (i) => { return this.angles2Vertice(i); }
-		this.setPositionAttributeFromPoints(angles, 4);
+		this.setPositionAttributeFromPoints(angles, this.dimension > 2 ? this.dimension : 3);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
 		if (!(settings.object.geometry.indices instanceof Array)) {

@@ -101,7 +101,7 @@ class MyObject {
 
 									if (axisId >= position.itemSize) {
 										
-										console.error(sMyObject + ': get position axis failed. Invalid axisId = ' + axisId);
+										//console.error(sMyObject + ': get position axis failed. Invalid axisId = ' + axisId);
 										return;
 
 									}
