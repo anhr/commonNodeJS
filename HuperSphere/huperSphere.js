@@ -339,6 +339,7 @@ class HuperSphere extends MyObject {
 
 						const verticeAngles = [];
 						_this.pushRandomAngle(verticeAngles);
+//						_this.classSettings.settings.bufferGeometry.userData.isReady = false;
 						angles.push(verticeAngles);
 
 					}
@@ -365,8 +366,22 @@ class HuperSphere extends MyObject {
 				switch (name) {
 
 					case 'guiLength'://изменилось количество вершин
-						for (let i = aAngles.length; i < value; i++) angles.pushRandomAngle();//add vertices
-						aAngles.length = value;//remove vrtices
+						if (value < 2) return true;
+						for (let i = aAngles.length; i < value; i++) {
+							
+							angles.pushRandomAngle();//add vertices
+
+						}
+						aAngles.length = value;//remove vertice
+
+						//update buffer
+						this.bufferGeometry.userData.isReady = false;
+						this.setPositionAttributeFromPoints(angles);
+/*
+						_this.angles2Vertice(angles.length - 1);
+						this.bufferGeometry.userData.isReady = true;
+*/							
+						aAngles.length = value;//remove vertices
 						if (classSettings.edges) {//Для экономии времени не добавляю ребра если на холст вывожу только вершины
 
 							_this.removeMesh();
@@ -750,8 +765,9 @@ class HuperSphere extends MyObject {
 		});
 		const position = settings.object.geometry.position;
 
+		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (i) => { return this.angles2Vertice(i); }
-		this.setPositionAttributeFromPoints(angles, this.dimension > 2 ? this.dimension : 3);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
+		this.setPositionAttributeFromPoints(angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
 		if (!(settings.object.geometry.indices instanceof Array)) {
@@ -2410,8 +2426,12 @@ class HuperSphere extends MyObject {
 	angles2Vertice(anglesId) {
 
 		const isAnglesId = typeof anglesId === "number";
-		if (this.bufferGeometry.userData.isReady && isAnglesId)
+		if (this.bufferGeometry.userData.isReady && isAnglesId) {
+
+			if (anglesId >= this.bufferGeometry.userData.position.length) console.error(sHuperSphere + '.angles2Vertice: Invalid anglesId = ' + anglesId);
 			return this.bufferGeometry.userData.position[anglesId];
+
+		}
 		const angles = isAnglesId ? this.classSettings.settings.object.geometry.angles[anglesId] : anglesId,
 			a2v = (angles) => {
 

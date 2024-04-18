@@ -180,7 +180,11 @@ class MyObject {
 
 			if (!settings.bufferGeometry.userData.isReady) {
 				
-				createPositionAttribute(pointLength != undefined ? pointLength : points[0].w === undefined ? 3 : 4, points.length);
+				createPositionAttribute(
+					pointLength != undefined ? pointLength :
+						this.pointLength ? this.pointLength() :
+							points[0].w === undefined ? 3 : 4,
+					points.length);
 				for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);
 				this.bufferGeometry.userData.isReady = true;
 
