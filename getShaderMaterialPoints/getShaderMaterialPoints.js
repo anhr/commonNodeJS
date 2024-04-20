@@ -121,6 +121,7 @@ class getShaderMaterialPoints extends MyObject {
 
 		}
 		const indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud(geometry) : undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
+/*
 		if ((settings.pointsOptions === undefined) || !settings.pointsOptions.boFrustumPoints) {
 
 			//если не делать эту проверку, то будет неправильный цвет точки, если не задана палитра и шкала w
@@ -141,6 +142,7 @@ class getShaderMaterialPoints extends MyObject {
 				4));
 
 		}
+*/		
 
 		const texture = new THREE.TextureLoader().load(currentScriptPath + "/textures/point.png",
 			function (texture) { }, function () { }, function () { console.error('THREE.TextureLoader: error'); });
@@ -313,7 +315,7 @@ class getShaderMaterialPoints extends MyObject {
 				points.material.uniforms.palette.value.needsUpdate = true;
 			if (points.material.uniforms.cloudPoints !== undefined)
 				points.material.uniforms.cloudPoints.value.needsUpdate = true;
-			Player.selectMeshPlayScene(points, { options: settings.options });
+			//Player.selectMeshPlayScene(points, { options: settings.options });
 			//Что бы камера смотрела на выбранную точку сразу после запуска приложения
 			const cameraTarget = settings.options.playerOptions.cameraTarget.get(settings.options);
 			if (cameraTarget && cameraTarget.setCameraPosition) cameraTarget.setCameraPosition();

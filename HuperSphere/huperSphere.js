@@ -154,6 +154,7 @@ class HuperSphere extends MyObject {
 	 *	4 for <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> - pyramid.
 	 *	5 for <b><a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> - [pentahedroid]{@link https://en.wikipedia.org/wiki/5-cell}.
 	 * </pre>
+	 * @param {array} [classSettings.settings.object.geometry.colors] array of Colors of vertices
 	 * @param {array} [classSettings.settings.object.geometry.opacity] array of opacities of each vertice. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
 	 * @param {object} [classSettings.settings.object.geometry.indices] Array of <b>indices</b> of edges of hupersphere.
 	 * @param {array|object} [classSettings.settings.object.geometry.indices.edges] HuperSphere edges.

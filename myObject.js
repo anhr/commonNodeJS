@@ -167,13 +167,12 @@ class MyObject {
 				}
 	
 			});			
-			if (pointLength < 4) return;
+//			if (pointLength < 4) return;
 
 			//color
 			if (_this.setW) _this.setW();
 			const colors = new Float32Array(pointsLength * pointLength);
-			settings.bufferGeometry.setAttribute('color',//'ca',
-												 new THREE.Float32BufferAttribute(colors, pointLength));
+			settings.bufferGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, pointLength));
 
 		}
 		this.setPositionAttributeFromPoints = (points, pointLength) => {
@@ -194,29 +193,58 @@ class MyObject {
 		}
 		this.setPositionAttributeFromPoint = (i, vertice) => {
 
+			//Position attribute
+			
 			const attributes = settings.bufferGeometry.attributes;
 			vertice = vertice || _this.getPoint(i);
 			const itemSize = attributes.position.itemSize;
-			                  attributes.position.array [0 + i * itemSize] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
-			if (itemSize > 1) attributes.position.array [1 + i * itemSize] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
-			if (itemSize > 2) attributes.position.array [2 + i * itemSize] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
+			let positionId = i * itemSize;
+			                  attributes.position.array [positionId++] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
+			if (itemSize > 1) attributes.position.array [positionId++] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
+			if (itemSize > 2) attributes.position.array [positionId++] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
 			const w = vertice.w != undefined ? vertice.w : vertice[3] != undefined ? vertice[3] : 0;
-			if (itemSize > 3) attributes.position.array [3 + i * itemSize] = w;
-			if (attributes.position.itemSize < 4) return;
+			if (itemSize > 3) attributes.position.array [positionId] = w;
+//			if (attributes.position.itemSize < 4) return;
 
-			const color = settings.object.color;
-			if ((color != undefined) && (typeof color != 'object')) {
+			//Color attribute
+			
+//			itemSize = attributes.color.itemSize;
+			const mul = 255, colors = settings.object.geometry.colors;
+			let colorId = i * attributes.color.itemSize,
+				colorsId = i * 3;
+			if (colors && colors[colorId] != undefined) {
 
-				const rgb = new THREE.Color(color), mul = 255, itemSize = attributes.color.itemSize;
-				attributes.color.array [0 + i * itemSize] = rgb.r * mul;
-				attributes.color.array [1 + i * itemSize] = rgb.g * mul;
-				attributes.color.array [2 + i * itemSize] = rgb.b * mul;
-				if (itemSize > 3) attributes.color.array [3 + i * itemSize] = 1;
-				return;
+				attributes.color.array[colorId++] = colors[colorsId++] * mul;
+				attributes.color.array[colorId++] = colors[colorsId++] * mul;
+				attributes.color.array[colorId++] = colors[colorsId++] * mul;
 				
+			} else {
+				
+				const color = settings.object.color;
+				if ((color != undefined) && (typeof color != 'object')) {
+	
+					const rgb = new THREE.Color(color);
+					attributes.color.array [colorId++] = rgb.r * mul;
+					attributes.color.array [colorId++] = rgb.g * mul;
+					attributes.color.array [colorId++] = rgb.b * mul;
+					
+				} else {
+					
+					const wScale = settings.options.scales.w;
+					Player.setColorAttribute(attributes, i, settings.options.palette.toColor(w, wScale.min, wScale.max));
+					colorId += attributes.color.itemSize - 1;
+					
+				}
+
 			}
-			const wScale = settings.options.scales.w;
-			Player.setColorAttribute(attributes, i, settings.options.palette.toColor(w, wScale.min, wScale.max));
+
+			//opacity
+			if (attributes.color.itemSize > 3) {
+				
+				const opacity = settings.object.geometry.opacity;
+				attributes.color.array[colorId] = opacity ? opacity[i] != undefined ? opacity[i] : 1 : 1;
+
+			}
 			
 		}
 		
