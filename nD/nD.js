@@ -2040,6 +2040,34 @@ class ND extends MyObject {
 
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
 
+		this.opacity = ( object3D, transparent, opacity ) => {
+
+			_ND.verticesOpacity( transparent, opacity );
+/*			
+			const color = object3D.geometry.attributes.color;
+			if ( color && ( color.itemSize > 3 ) ) {
+
+				if ( color.itemSize != 4 ) console.error('ND.opacity: Invalid color.itemSize = ' + color.itemSize);
+				const array = color.array;
+				for ( let i = 0; i < color.count; i++ ) {
+	
+					const verticeOpacity = settings.object.geometry.opacity ? settings.object.geometry.opacity[i] : undefined;
+					array[color.itemSize * i + 3] = transparent ? opacity : verticeOpacity === undefined ? 1 : verticeOpacity;
+	
+				}
+				color.needsUpdate = true;
+
+			} else {
+				
+				object3D.material.transparent = transparent;
+				object3D.material.opacity = transparent ? opacity : 1;
+				object3D.material.needsUpdate = true;//for THREE.REVISION = "145dev"
+				
+			}
+*/			
+	
+		}
+
 		//The user has selected a segment of nD object
 		const selectSegment = {
 
@@ -2064,9 +2092,23 @@ class ND extends MyObject {
 				else {
 
 					if (!item.parent) parentObject.add(item);
+					_ND.opacity( item, transparent, opacity );
+/*					
 					item.material.transparent = transparent;
 					item.material.opacity = transparent ? opacity : 1;
 					item.material.needsUpdate = true;//for THREE.REVISION = "145dev"
+*/						
+/*					
+					const color = item.geometry.attributes.color, array = color.array;
+					for (let i = 0; i < color.count; i++) {
+	
+						const verticeOpacity = settings.object.geometry.opacity[i];
+						array[color.itemSize * i + 3] = transparent ? opacity : verticeOpacity === undefined ? 1 : verticeOpacity;
+	
+					}
+					color.needsUpdate = true;
+*/						
+					
 
 				}
 

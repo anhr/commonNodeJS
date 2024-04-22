@@ -321,9 +321,17 @@ class MyPoints extends MyObject {
 			points.userData.myObject = _this;
 			points.userData.opacity = (opacity) => {
 
+				_this.verticesOpacity(false, opacity);
+/*				
 				const ca = points.geometry.attributes.ca ? points.geometry.attributes.ca : points.geometry.attributes.color, array = ca.array;
-				for (let i = 0; i < ca.count; i++) array[ca.itemSize * i + 3] = opacity;
+				for (let i = 0; i < ca.count; i++) {
+
+					const pointOpacity = settings.object.geometry.opacity[i];
+					array[ca.itemSize * i + 3] = pointOpacity === undefined ? opacity : pointOpacity;
+
+				}
 				ca.needsUpdate = true;
+*/				
 
 			}
 

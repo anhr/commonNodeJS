@@ -175,17 +175,18 @@ class MyObject {
 			settings.bufferGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, pointLength));
 
 		}
-		this.setPositionAttributeFromPoints = (points, pointLength) => {
+		this.setPositionAttributeFromPoints = (points, /*pointLength*/boCreatePositionAttribute) => {
 
-			if (!settings.bufferGeometry.userData.isReady) {
+//			if (!settings.bufferGeometry.userData.isReady)
+			if (boCreatePositionAttribute) delete settings.bufferGeometry.attributes.position;
+			if (!settings.bufferGeometry.attributes.position) {
 				
 				createPositionAttribute(
-					pointLength != undefined ? pointLength :
-						this.pointLength ? this.pointLength() :
-							points[0].w === undefined ? 3 : 4,
+					this.pointLength ? this.pointLength() :
+						points[0].w === undefined ? 3 : 4,
 					points.length);
 				for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);
-				this.bufferGeometry.userData.isReady = true;
+//				this.bufferGeometry.userData.isReady = true;
 
 			}
 			return settings.bufferGeometry;
@@ -229,9 +230,13 @@ class MyObject {
 					attributes.color.array [colorId++] = rgb.b * mul;
 					
 				} else {
-					
-					const wScale = settings.options.scales.w;
-					Player.setColorAttribute(attributes, i, settings.options.palette.toColor(w, wScale.min, wScale.max));
+
+					if (settings.options) {
+						
+						const wScale = settings.options.scales.w;
+						Player.setColorAttribute(attributes, i, settings.options.palette.toColor(w, wScale.min, wScale.max));
+
+					}
 					colorId += attributes.color.itemSize - 1;
 					
 				}
@@ -246,6 +251,35 @@ class MyObject {
 
 			}
 			
+		}
+		this.verticesOpacity = ( transparent, opacity ) => {
+			
+			const color = settings.bufferGeometry.attributes.color;
+			if ( color && ( color.itemSize > 3 ) ) {
+
+				if ( color.itemSize != 4 ) console.error('ND.opacity: Invalid color.itemSize = ' + color.itemSize);
+				const array = color.array;
+				for ( let i = 0; i < color.count; i++ ) {
+	
+					const verticeOpacity = settings.object.geometry.opacity ? settings.object.geometry.opacity[i] : undefined;
+					array[color.itemSize * i + 3] = transparent ? opacity : verticeOpacity === undefined ? 1 : verticeOpacity;
+	
+				}
+				color.needsUpdate = true;
+
+			} else {
+
+				const object3D = _this.object3D;
+				if (object3D) {
+					
+					object3D.material.transparent = transparent;
+					object3D.material.opacity = transparent ? opacity : 1;
+					object3D.material.needsUpdate = true;//for THREE.REVISION = "145dev"
+
+				} else console.error(sMyObject + '.verticesOpacity: Invalid object3D');
+				
+			}
+	
 		}
 		
 	}

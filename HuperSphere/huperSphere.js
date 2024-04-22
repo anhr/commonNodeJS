@@ -320,6 +320,8 @@ class HuperSphere extends MyObject {
 									if ((angle < range.min) || (angle > range.max)) console.error(sHuperSphere + ': Set angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
 
 									verticeAngles[angleId] = angle;
+									_this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
+//									_this.getPoint(verticeId);//обновляем geometry.attributes
 									//если тут обновлять гиперсферу, то будет тратиться лишнее время, когда одновременно изменяется несколько вершин
 									//Сейчас я сначала изменяю все вершины, а потом обновляю гиперсферу
 									//_this.update(verticeId);
@@ -376,8 +378,8 @@ class HuperSphere extends MyObject {
 						aAngles.length = value;//remove vertice
 
 						//update buffer
-						this.bufferGeometry.userData.isReady = false;
-						this.setPositionAttributeFromPoints(angles);
+//						this.bufferGeometry.userData.isReady = false;
+						this.setPositionAttributeFromPoints(angles, true);
 /*
 						_this.angles2Vertice(angles.length - 1);
 						this.bufferGeometry.userData.isReady = true;
@@ -767,7 +769,72 @@ class HuperSphere extends MyObject {
 		const position = settings.object.geometry.position;
 
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
-		this.getPoint = (i) => { return this.angles2Vertice(i); }
+		this.getPoint = (anglesId) => {
+			
+//			return this.angles2Vertice(anglesId);
+			const angles = this.classSettings.settings.object.geometry.angles[anglesId],
+				a2v = (angles) => {
+	
+				//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
+				const n = this.dimension, φ = [],//angles,
+					x = [], cos = Math.cos, sin = Math.sin;
+				//нужно для того, чтобы начало координат широты находилось на экваторе
+				for (let i = 0; i < angles.length; i++) {
+	
+					const rotateLatitude = this.getRotateLatitude(i);
+					φ.push((rotateLatitude === 0 ? 1 : - 1) * angles[i] - rotateLatitude);//Для широты меняем знак угола что бы положительная широта была в северном полушарии
+	
+				}
+	
+				//добавляем оси
+				
+				for (let index = 0; index < n; index++) {
+	
+					let axis = 1.0;
+					const i = this.axes.indices[index],
+						mulCount = //количество множителей для данной оси
+						i < (n - 1) ?
+							i + 1: //на один больше порядкового номера оси
+							i;//или равно порядковому номеру оси если это последняя ось
+					for (let j = 0; j < mulCount; j++) {
+	
+						if(j === (mulCount - 1)){
+	
+							//Это последний множитель для текущей оси
+							if (i != (n - 1)) {
+								
+								//Это не последняя ось
+								axis *= cos(φ[j]);
+								continue;
+	
+							}
+							
+						}
+						axis *= sin(φ[j]);
+	
+					}
+					x.push(axis);
+	
+				}
+				return x;
+	
+			}
+			const vertice = a2v(angles);
+			if (this.classSettings.debug && this.classSettings.debug.testVertice){
+	
+				const vertice2angles = this.vertice2angles(vertice),
+					angles2vertice = a2v(vertice2angles);
+				const value = vertice;
+				if (angles2vertice.length != value.length) console.error(sHuperSphere + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
+				const d = 6e-16;
+				angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHuperSphere + ': Set vertices[' + anglesId + '] failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
+				
+			}
+	
+			vertice.forEach((axis, i) => vertice[i] *= this.classSettings.r);
+			return vertice;
+		
+		}
 		this.setPositionAttributeFromPoints(angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
@@ -916,22 +983,25 @@ class HuperSphere extends MyObject {
 			const aAngleControls = [];
 
 			this.objectOpacity = 0.3;
+/*			
 			this.opacityObject3D = (object3D, transparent, opacity = this.objectOpacity) => {
 
-				object3D.material.transparent = transparent;
-				object3D.material.opacity = transparent ? opacity : 1;
-				object3D.material.needsUpdate = true;//for THREE.REVISION = "145dev"
+				const color = object3D.geometry.attributes.color, array = color.array;
+				for (let i = 0; i < color.count; i++) {
 
-			}
-			this.opacity = (transparent = true, opacity = this.objectOpacity) => {
-
-				if (!nd) {
-
-					myPoints.userData.opacity(transparent ? opacity : 1);
-					return;
+					const verticeOpacity = settings.object.geometry.opacity[i];
+					array[color.itemSize * i + 3] = transparent ? opacity : verticeOpacity === undefined ? 1 : verticeOpacity;
 
 				}
-				this.opacityObject3D(nd.object3D, transparent, opacity);
+				color.needsUpdate = true;
+
+			}
+*/			
+			this.opacity = (transparent = true, opacity = this.objectOpacity) => {
+
+				if (!nd) myPoints.userData.opacity(transparent ? opacity : 1);
+				else nd.opacity(nd.object3D, transparent, opacity);
+//				else this.opacityObject3D(nd.object3D, transparent, opacity);
 
 			}
 
@@ -985,9 +1055,9 @@ class HuperSphere extends MyObject {
 
 				if (!this.isUpdate) return;
 				const points = nd && (nd.object3D.visible === true) ? nd.object3D : myPoints;
-				this.bufferGeometry.userData.isReady = false;
+//				this.bufferGeometry.userData.isReady = false;
 				const vertice = settings.object.geometry.position[verticeId];
-				this.bufferGeometry.userData.isReady = true;
+//				this.bufferGeometry.userData.isReady = true;
 				this.setPositionAttributeFromPoint(verticeId, vertice);
 				this.bufferGeometry.attributes.position.needsUpdate = true;
 				this.bufferGeometry.attributes.color.needsUpdate = true;
@@ -2426,12 +2496,13 @@ class HuperSphere extends MyObject {
 	}
 	angles2Vertice(anglesId) {
 
+/*		
 		const isAnglesId = typeof anglesId === "number";
 		if (this.bufferGeometry.userData.isReady && isAnglesId) {
-
-			if (anglesId >= this.bufferGeometry.userData.position.length) console.error(sHuperSphere + '.angles2Vertice: Invalid anglesId = ' + anglesId);
-			return this.bufferGeometry.userData.position[anglesId];
-
+*/
+		if (anglesId >= this.bufferGeometry.userData.position.length) console.error(sHuperSphere + '.angles2Vertice: Invalid anglesId = ' + anglesId);
+		return this.bufferGeometry.userData.position[anglesId];
+/*
 		}
 		const angles = isAnglesId ? this.classSettings.settings.object.geometry.angles[anglesId] : anglesId,
 			a2v = (angles) => {
@@ -2494,6 +2565,7 @@ class HuperSphere extends MyObject {
 
 		vertice.forEach((axis, i) => vertice[i] *= this.classSettings.r);
 		return vertice;
+*/	
 
 	}
 	vertice2angles(vertice) {
