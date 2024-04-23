@@ -772,7 +772,7 @@ class HuperSphere extends MyObject {
 		this.getPoint = (anglesId) => {
 			
 //			return this.angles2Vertice(anglesId);
-			const angles = this.classSettings.settings.object.geometry.angles[anglesId],
+			const angles = typeof anglesId === "number" ? this.classSettings.settings.object.geometry.angles[anglesId] : anglesId,
 				a2v = (angles) => {
 	
 				//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
@@ -1791,8 +1791,7 @@ class HuperSphere extends MyObject {
 									}
 									for (let verticeAngleId = 0; verticeAngleId < vertice.length; verticeAngleId++) {
 
-										const planeAngles = [],
-											angleName = settings.object.geometry.angles.ranges[verticeAngleId].angleName;
+										const planeAngles = [], angleName = settings.object.geometry.angles.ranges[verticeAngleId].angleName;
 										planeGeometry(verticeAngleId, planeAngles);
 										const planeEdges = [];
 										for (let i = 0; i < (planeAngles.length - 1); i++) planeEdges.push([i, i + 1]);
@@ -2506,12 +2505,16 @@ class HuperSphere extends MyObject {
 
 /*		
 		const isAnglesId = typeof anglesId === "number";
-		if (this.bufferGeometry.userData.isReady && isAnglesId) {
-*/
-		if (anglesId >= this.bufferGeometry.userData.position.length) console.error(sHuperSphere + '.angles2Vertice: Invalid anglesId = ' + anglesId);
-		return this.bufferGeometry.userData.position[anglesId];
-/*
+		if (this.bufferGeometry.userData.isReady && isAnglesId)
+*/		
+		if (typeof anglesId === "number") {
+			
+			if (anglesId >= this.bufferGeometry.userData.position.length) console.error(sHuperSphere + '.angles2Vertice: Invalid anglesId = ' + anglesId);
+			return this.bufferGeometry.userData.position[anglesId];
+			
 		}
+		return this.getPoint(anglesId);
+/*
 		const angles = isAnglesId ? this.classSettings.settings.object.geometry.angles[anglesId] : anglesId,
 			a2v = (angles) => {
 
