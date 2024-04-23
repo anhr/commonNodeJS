@@ -1199,6 +1199,13 @@ class HuperSphere extends MyObject {
 
 									});
 
+									//Не нужно показывать список ребер, выреление ребер и среднюю вершину для этой вершины если у вершины нет ребер
+									//У вершины нет ребер если пользователь убрал галочку в 'Ребра' в настройках гиперсферы
+									const boDisplay = verticeAngles.edges.length === 0 ? false : true;
+									_display(aAngleControls.cEdges.domElement.parentElement.parentElement, boDisplay);
+									_display(aAngleControls.cHighlightEdges.domElement.parentElement.parentElement, boDisplay);
+									_display(aAngleControls.cMiddleVertice.domElement.parentElement.parentElement, boDisplay);
+
 								}
 
 								aAngleControls.verticeId = verticeId;
@@ -1403,7 +1410,8 @@ class HuperSphere extends MyObject {
 									return fAngles;
 
 								}
-								const fAngles = createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
+//								const fAngles = createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
+								createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
 
 
 								//Edges
