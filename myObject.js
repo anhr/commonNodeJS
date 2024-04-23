@@ -196,28 +196,26 @@ class MyObject {
 
 			//Position attribute
 			
-			const attributes = settings.bufferGeometry.attributes;
+			const attributes = settings.bufferGeometry.attributes, position = attributes.position, itemSize = position.itemSize;
 			vertice = vertice || _this.getPoint(i);
-			const itemSize = attributes.position.itemSize;
-			let positionId = i * itemSize;
-			                  attributes.position.array [positionId++] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
-			if (itemSize > 1) attributes.position.array [positionId++] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
-			if (itemSize > 2) attributes.position.array [positionId++] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
+			let positionId = i * itemSize, array = position.array;
+			                  array [positionId++] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
+			if (itemSize > 1) array [positionId++] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
+			if (itemSize > 2) array [positionId++] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
 			const w = vertice.w != undefined ? vertice.w : vertice[3] != undefined ? vertice[3] : 0;
 			if (itemSize > 3) attributes.position.array [positionId] = w;
 //			if (attributes.position.itemSize < 4) return;
 
 			//Color attribute
 			
-//			itemSize = attributes.color.itemSize;
 			const mul = 255, colors = settings.object.geometry.colors;
-			let colorId = i * attributes.color.itemSize,
-				colorsId = i * 3;
+			let colorId = i * attributes.color.itemSize, colorsId = i * 3;
+			array = attributes.color.array;
 			if (colors && colors[colorId] != undefined) {
 
-				attributes.color.array[colorId++] = colors[colorsId++] * mul;
-				attributes.color.array[colorId++] = colors[colorsId++] * mul;
-				attributes.color.array[colorId++] = colors[colorsId++] * mul;
+				array[colorId++] = colors[colorsId++] * mul;
+				array[colorId++] = colors[colorsId++] * mul;
+				array[colorId++] = colors[colorsId++] * mul;
 				
 			} else {
 				
@@ -225,9 +223,9 @@ class MyObject {
 				if ((color != undefined) && (typeof color != 'object')) {
 	
 					const rgb = new THREE.Color(color);
-					attributes.color.array [colorId++] = rgb.r * mul;
-					attributes.color.array [colorId++] = rgb.g * mul;
-					attributes.color.array [colorId++] = rgb.b * mul;
+					array [colorId++] = rgb.r * mul;
+					array [colorId++] = rgb.g * mul;
+					array [colorId++] = rgb.b * mul;
 					
 				} else {
 
@@ -247,7 +245,7 @@ class MyObject {
 			if (attributes.color.itemSize > 3) {
 				
 				const opacity = settings.object.geometry.opacity;
-				attributes.color.array[colorId] = opacity ? opacity[i] != undefined ? opacity[i] : 1 : 1;
+				array[colorId] = opacity ? opacity[i] != undefined ? opacity[i] : 1 : 1;
 
 			}
 			
