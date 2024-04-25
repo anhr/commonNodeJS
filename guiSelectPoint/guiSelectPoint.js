@@ -389,6 +389,7 @@ class GuiSelectPoint {
 			} else {
 
 				function isWObject() { return ( typeof func.w === 'object' ) && ( func.w instanceof THREE.Color === false ); }
+				const mesh = getMesh(), verticeColor = mesh.userData.myObject ? mesh.userData.myObject.verticeColor(intersectionSelected.index) : undefined;
 				var color = ( func === undefined ) || ( !attributes.color && !attributes.ca ) ?
 					undefined :
 					Array.isArray( func.w ) || ( typeof func.w === "function" ) ?
@@ -397,7 +398,9 @@ class GuiSelectPoint {
 							Player.execFunc( func.w, 'func', options.time, options ) :
 							typeof func.w === "string" ?
 								Player.execFunc( func, 'w', options.time, options ) :
-								func.w;
+								verticeColor != undefined ?
+									verticeColor:
+									func.w;
 
 				if ( color === undefined ) {
 
@@ -417,6 +420,7 @@ class GuiSelectPoint {
 
 				}
 
+				if ( Array.isArray(color) ) color = new THREE.Color( color[0], color[1], color[2] );
 				if ( color instanceof THREE.Color ) {
 
 					displayControllerW = none;

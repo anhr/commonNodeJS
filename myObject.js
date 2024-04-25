@@ -192,6 +192,40 @@ class MyObject {
 			return settings.bufferGeometry;
 			
 		}
+		this.verticeColor = (i, mul = 1, vertice) => {
+
+			const colors = settings.object.geometry.colors;
+			const colorsId = i * 3;
+			if (colors && colors[colorsId] != undefined) return [colors[colorsId] * mul, colors[colorsId + 1] * mul, colors[colorsId +2] * mul];
+			const color = settings.object.color;
+			if ((color != undefined) && (typeof color != 'object')) {
+
+				const rgb = new THREE.Color(color);
+				return [rgb.r * mul, rgb.g * mul, rgb.b * mul, ];
+/*				
+				rgb.r *= mul;
+				rgb.g *= mul;
+				rgb.b *= mul;
+				return rgb;
+*/				
+				
+			}
+			if (vertice) return vertice.w;
+			if (!_this.getPoint) {
+
+				const position = _this.bufferGeometry.attributes.position;
+				if (position.itemSize != 4) {
+					
+					console.error(sMyObject + '.verticeColor: Invalid position.itemSize = ' + position.itemSize);
+					return [mul, mul, mul];
+
+				}
+				return new THREE.Vector4().fromBufferAttribute(position, i).w;
+				
+			}
+			return _this.getPoint(i).w;
+		
+		}
 		this.setPositionAttributeFromPoint = (i, vertice) => {
 
 			//Position attribute
@@ -202,15 +236,33 @@ class MyObject {
 			                  array [positionId++] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
 			if (itemSize > 1) array [positionId++] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) array [positionId++] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
-			const w = vertice.w != undefined ? vertice.w : vertice[3] != undefined ? vertice[3] : 0;
-			if (itemSize > 3) attributes.position.array [positionId] = w;
+//			const w = vertice.w != undefined ? vertice.w : vertice[3] != undefined ? vertice[3] : 0;
+			const w = vertice.w;
+			if (itemSize > 3) array [positionId] = w;
 //			if (attributes.position.itemSize < 4) return;
 
 			//Color attribute
 			
-			const mul = 255, colors = settings.object.geometry.colors;
-			let colorId = i * attributes.color.itemSize, colorsId = i * 3;
+			let colorId = i * attributes.color.itemSize;
 			array = attributes.color.array;
+			const verticeColor = _this.verticeColor(i, 255, vertice);
+			if (typeof verticeColor === 'number'){
+
+				if (settings.options) {
+					
+					const wScale = settings.options.scales.w;
+					Player.setColorAttribute(attributes, i, settings.options.palette.toColor(w, wScale.min, wScale.max));
+
+				}
+				colorId += attributes.color.itemSize - 1;
+				
+			} else if (Array.isArray(verticeColor))
+				verticeColor.forEach(item => array[colorId++] = item);
+			else console.error(sMyObject + '.setPositionAttributeFromPoint: Invalid verticeColor = ' + verticeColor);
+/*
+			const mul = 255;
+			const colors = settings.object.geometry.colors;
+			let colorsId = i * 3;
 			if (colors && colors[colorId] != undefined) {
 
 				array[colorId++] = colors[colorsId++] * mul;
@@ -240,6 +292,7 @@ class MyObject {
 				}
 
 			}
+*/			
 
 			//opacity
 			if (attributes.color.itemSize > 3) {

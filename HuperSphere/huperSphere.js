@@ -832,7 +832,24 @@ class HuperSphere extends MyObject {
 			}
 	
 			vertice.forEach((axis, i) => vertice[i] *= this.classSettings.r);
-			return vertice;
+//			return vertice;
+			return new Proxy(vertice, {
+
+				get: (vertice, name) => {
+
+					switch (name) {
+
+						case 'x': return vertice[0];
+						case 'y': return vertice[1];
+						case 'z': return vertice[2];
+						case 'w': return vertice[3] != undefined ? vertice[3] : 0;
+
+					}
+					return vertice[name];
+
+				},
+
+			});
 		
 		}
 		this.setPositionAttributeFromPoints(angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined

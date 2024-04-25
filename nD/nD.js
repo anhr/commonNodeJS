@@ -2134,7 +2134,7 @@ class ND extends MyObject {
 			const color = settings3D.color || 'white';//0xffffff
 			geometry.D3.color = color;
 			const indices3D = geometry.D3.indices, indices = indices3D.indices, colors = indices3D.colors;
-
+/*не помню зачем это
 			if (
 				(
 					(
@@ -2148,6 +2148,7 @@ class ND extends MyObject {
 				)
 			)
 				settings.object.geometry.colors = indices3D.colors;
+*/				
 
 			const buffer = nD.bufferGeometry;
 			
