@@ -210,8 +210,9 @@ class MyObject {
 */				
 				
 			}
-			if (vertice) return vertice.w;
-			if (!_this.getPoint) {
+			let w
+			if (vertice) w = vertice.w;
+			else if (!_this.getPoint) {
 
 				const position = _this.bufferGeometry.attributes.position;
 				if (position.itemSize != 4) {
@@ -220,10 +221,18 @@ class MyObject {
 					return [mul, mul, mul];
 
 				}
-				return new THREE.Vector4().fromBufferAttribute(position, i).w;
+				w = new THREE.Vector4().fromBufferAttribute(position, i).w;
 				
 			}
-			return _this.getPoint(i).w;
+			else w = _this.getPoint(i).w;
+			if (w === undefined) {
+
+				//Вершина не имеет 4 координаты. Установить цвет вершины по умолчанию
+				const rgb = new THREE.Color(_this.color());
+				return [rgb.r * mul, rgb.g * mul, rgb.b * mul, ];
+				
+			}
+			return w;
 		
 		}
 		this.setPositionAttributeFromPoint = (i, vertice) => {

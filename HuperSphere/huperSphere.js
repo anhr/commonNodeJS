@@ -842,7 +842,8 @@ class HuperSphere extends MyObject {
 						case 'x': return vertice[0];
 						case 'y': return vertice[1];
 						case 'z': return vertice[2];
-						case 'w': return vertice[3] != undefined ? vertice[3] : 0;
+						case 'w': return vertice[3];
+//						case 'w': return vertice[3] != undefined ? vertice[3] : 0;
 
 					}
 					return vertice[name];
@@ -2443,6 +2444,14 @@ class HuperSphere extends MyObject {
 		
 	}
 	color() { if (this.classSettings.settings.object.color === undefined) this.classSettings.settings.object.color = 'lime'; }
+/*	
+	color() {
+
+		const color = this.classSettings.settings.object.color;
+		return (color != undefined) ? color : 'lime';
+	
+	}
+*/	
 	name() { console.error(sOverride.replace('%s', 'name')); }
 	logHuperSphere() {
 
