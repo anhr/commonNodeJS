@@ -2133,8 +2133,9 @@ class ND extends MyObject {
 			if ( geometry.position.length === 0 ) return;
 			const color = settings3D.color || 'white';//0xffffff
 			geometry.D3.color = color;
-			const indices3D = geometry.D3.indices, indices = indices3D.indices, colors = indices3D.colors;
+			const indices3D = geometry.D3.indices, indices = indices3D.indices;
 /*не помню зачем это
+			const colors = indices3D.colors;
 			if (
 				(
 					(
@@ -2195,6 +2196,7 @@ class ND extends MyObject {
 				} ) );
 			if ( settings3D.name )
 				object.name = settings3D.name;
+/*			
 			if ( settings.object.geometry.colors ) {
 
 				let colors, itemSize;
@@ -2244,6 +2246,7 @@ class ND extends MyObject {
 				object.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, itemSize ) );
 
 			}
+*/			
 			
 			scene.add( object );
 
