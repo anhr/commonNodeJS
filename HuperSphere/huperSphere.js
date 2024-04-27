@@ -2426,6 +2426,8 @@ class HuperSphere extends MyObject {
 	rotateLatitude = - π / 2;//Поворачиваем широту на 90 градусов что бы начало координат широты находилось на экваторе;
 	getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
 	
+	get defaultColor() { return 'lime'; }
+
 	get verticeEdgesLength() { return this.#verticeEdgesLength; }
 	set verticeEdgesLength(length) {
 
@@ -2443,8 +2445,8 @@ class HuperSphere extends MyObject {
 		verticeAngles.push(Math.random() * (longitudeRange.max - longitudeRange.min) + longitudeRange.min);
 		
 	}
-	color() { if (this.classSettings.settings.object.color === undefined) this.classSettings.settings.object.color = 'lime'; }
 /*	
+//	color() { if (this.classSettings.settings.object.color === undefined) this.classSettings.settings.object.color = 'lime'; }
 	color() {
 
 		const color = this.classSettings.settings.object.color;
