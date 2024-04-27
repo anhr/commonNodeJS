@@ -1170,7 +1170,7 @@ class ND extends MyObject {
 						if (!isNaN(i)) {
 
 							const edge = edges[i];
-							edge.intersection = (geometryIntersection, color) => {
+							edge.intersection = ( geometryIntersection/*, color*/ ) => {
 
 								const i = parseInt(name);
 								if (!isNaN(i)) {
@@ -1296,7 +1296,7 @@ class ND extends MyObject {
 															iAxes: [1, 2],
 
 														},
-														color: color,
+//														color: color,
 														
 													},
 													vectorPlane: vectorPlane.array,
@@ -1315,7 +1315,7 @@ class ND extends MyObject {
 															iAxes: [0, 2],
 
 														},
-														color: color,
+//														color: color,
 													
 													},
 													vectorPlane: vectorPlane.array,
@@ -1343,7 +1343,7 @@ class ND extends MyObject {
 															iAxes: [axis, n - 1],
 
 														},
-														color: color,
+//														color: color,
 													
 													},
 													vectorPlane: vectorPlane.array,
@@ -2876,7 +2876,7 @@ class ND extends MyObject {
 
 				}
 				const edge = settings.object.geometry.indices[0][iEdge];
-				edge.intersection( geometryIntersection, settings.object.color );
+				edge.intersection( geometryIntersection );//, settings.object.color );
 				const position = edge.intersection.position;
 				if ( position ) {
 					
@@ -3015,7 +3015,7 @@ class ND extends MyObject {
 										position: positionWorld.copy(),
 									
 									},
-									color: 'white',
+//									color: 'white',
 										 
 								}, indice: i, iSegments: iSegments, } ),
 								s = iSegments - 1;
