@@ -341,8 +341,16 @@ class MyObject {
 			}
 	
 		}
+	//	this.color() { if (this.classSettings.settings.object.color === undefined) this.classSettings.settings.object.color = 'lime'; }
+		this.color = () => {
+	
+			const color = settings.object.color;
+			return (color != undefined) ? color : this.defaultColor;//'lime';
+		
+		}
 		
 	}
+	get defaultColor() { return 'white'; }
 
 }
 export default MyObject;

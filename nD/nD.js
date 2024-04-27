@@ -1170,7 +1170,7 @@ class ND extends MyObject {
 						if (!isNaN(i)) {
 
 							const edge = edges[i];
-							edge.intersection = (geometryIntersection) => {
+							edge.intersection = (geometryIntersection, color) => {
 
 								const i = parseInt(name);
 								if (!isNaN(i)) {
@@ -1288,13 +1288,16 @@ class ND extends MyObject {
 
 													plane: true,
 													object: {
+														
 														geometry: {
 
 															position: positionWorld.copy(),//settings.object.geometry.position,
 															indices: [[indices]],
 															iAxes: [1, 2],
 
-														}
+														},
+														color: color,
+														
 													},
 													vectorPlane: vectorPlane.array,
 
@@ -1304,13 +1307,16 @@ class ND extends MyObject {
 
 													plane: true,
 													object: {
+														
 														geometry: {
 
 															position: positionWorld.copy(),//settings.object.geometry.position,
 															indices: [[indices]],
 															iAxes: [0, 2],
 
-														}
+														},
+														color: color,
+													
 													},
 													vectorPlane: vectorPlane.array,
 
@@ -1329,13 +1335,16 @@ class ND extends MyObject {
 
 													plane: true,
 													object: {
+														
 														geometry: {
 
 															position: positionWorld,//settings.object.geometry.position,
 															indices: [[indices]],
 															iAxes: [axis, n - 1],
 
-														}
+														},
+														color: color,
+													
 													},
 													vectorPlane: vectorPlane.array,
 
@@ -2124,13 +2133,13 @@ class ND extends MyObject {
 				nD = new ND( n, {
 					
 					plane: true,
-					object: { geometry: geometry, } 
+					object: { geometry: geometry, color: settings3D.color, },
 				
 				} );
 				geometry = nD.geometry;
 				
 			} else nD = _ND;
-			if ( geometry.position.length === 0 ) return;
+			if (geometry.position.length === 0) return;
 			const color = settings3D.color || 'white';//0xffffff
 			geometry.D3.color = color;
 			const indices3D = geometry.D3.indices, indices = indices3D.indices;
@@ -2164,6 +2173,15 @@ class ND extends MyObject {
 
 			} else buffer.setIndex( indices )
 			let lineBasicMaterialParameters;
+			
+			lineBasicMaterialParameters = {
+				
+				vertexColors: true,
+				toneMapped: false,
+			
+			}
+			if ( settings.object.geometry.opacity ) lineBasicMaterialParameters.transparent = true;//установлена прозрачность вершин
+/*			
 			if ( settings.object.geometry.colors ) {
 
 				lineBasicMaterialParameters = {
@@ -2175,6 +2193,7 @@ class ND extends MyObject {
 				if ( settings.object.geometry.opacity ) lineBasicMaterialParameters.transparent = true;//установлена прозрачность вершин
 				
 			} else lineBasicMaterialParameters = { color: color, };
+*/			
 			
 			const object = indices.length > 1 ?
 				settings3D.faces ?
@@ -2857,7 +2876,7 @@ class ND extends MyObject {
 
 				}
 				const edge = settings.object.geometry.indices[0][iEdge];
-				edge.intersection( geometryIntersection );
+				edge.intersection( geometryIntersection, settings.object.color );
 				const position = edge.intersection.position;
 				if ( position ) {
 					
@@ -2992,10 +3011,13 @@ class ND extends MyObject {
 								plane: true,
 								object: { geometry: {
 								
-									indices: settings.object.geometry.indices,
-									position: positionWorld.copy(),
-								
-								} }, indice: i, iSegments: iSegments, } ),
+										indices: settings.object.geometry.indices,
+										position: positionWorld.copy(),
+									
+									},
+									color: 'white',
+										 
+								}, indice: i, iSegments: iSegments, } ),
 								s = iSegments - 1;
 							var iIntersections;
 							if ( s !== 0 ) {//Не создавать iIntersections для ребер
@@ -3182,7 +3204,7 @@ class ND extends MyObject {
 
 				}
 				if ( geometryIntersection.position.length )
-					objectIntersect = create3DObject( geometryIntersection, { name: 'Intersection' } );
+					objectIntersect = create3DObject( geometryIntersection, { name: 'Intersection', color: 'white' } );
 
 			}
 			return geometryIntersection.position;
@@ -3231,7 +3253,7 @@ class ND extends MyObject {
 				
 				name: settings.object.name,
 				faces: settings.object.faces,
-				color: settings.object.color || 'lime',//0x00ff00,//'green'
+				color: settings.object.color || _ND.defaultColor,//'lime',//0x00ff00,//'green'
 			
 			} );
 
@@ -3454,6 +3476,7 @@ class ND extends MyObject {
 		} );
 
 	}
+	get defaultColor() { return 'lime'; }
 
 }
 
