@@ -171,8 +171,8 @@ class MyObject {
 
 			//color
 			if (_this.setW) _this.setW();
-			const colors = new Float32Array(pointsLength * pointLength);
-			settings.bufferGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, pointLength));
+			const itemSize = settings.object.geometry.opacity ? 4 : 3, colors = new Float32Array(pointsLength * itemSize);
+			settings.bufferGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, itemSize));
 
 		}
 		this.setPositionAttributeFromPoints = (points, /*pointLength*/boCreatePositionAttribute) => {
@@ -305,27 +305,48 @@ class MyObject {
 
 			//opacity
 			if (attributes.color.itemSize > 3) {
-				
+
+				this.verticeOpacity(i);
+/*				
 				const opacity = settings.object.geometry.opacity;
 				array[colorId] = opacity ? opacity[i] != undefined ? opacity[i] : 1 : 1;
+*/				
 
 			}
 			
+		}
+		this.verticeOpacity = (i, transparent, opacity) => {
+
+			const color = settings.bufferGeometry.attributes.color;
+			if (color.itemSize != 4) {
+
+				console.error(sMyObject + '.verticeOpacity: Invalid color.itemSize = ' + color.itemSize);
+				return;
+
+			}
+			const array = color.array;
+			const verticeOpacity = settings.object.geometry.opacity ? settings.object.geometry.opacity[i] : undefined;
+			array[color.itemSize * i + 3] = transparent ? opacity : verticeOpacity === undefined ? 1 : verticeOpacity;
+			color.needsUpdate = true;
+
 		}
 		this.verticesOpacity = ( transparent, opacity ) => {
 			
 			const color = settings.bufferGeometry.attributes.color;
 			if ( color && ( color.itemSize > 3 ) ) {
 
-				if ( color.itemSize != 4 ) console.error('ND.opacity: Invalid color.itemSize = ' + color.itemSize);
-				const array = color.array;
+//				if (color.itemSize != 4) console.error(sMyObject + '.verticesOpacity: Invalid color.itemSize = ' + color.itemSize);
+//				const array = color.array;
 				for ( let i = 0; i < color.count; i++ ) {
-	
+
+					this.verticeOpacity(i, transparent, opacity);
+/*
 					const verticeOpacity = settings.object.geometry.opacity ? settings.object.geometry.opacity[i] : undefined;
 					array[color.itemSize * i + 3] = transparent ? opacity : verticeOpacity === undefined ? 1 : verticeOpacity;
+*/
 	
 				}
-				color.needsUpdate = true;
+//				color.needsUpdate = true;
 
 			} else {
 
@@ -351,6 +372,17 @@ class MyObject {
 		
 	}
 	get defaultColor() { return 'white'; }
+	get isOpacity() {
+
+		if (this.bufferGeometry.attributes.color.itemSize > 3) {
+			
+			if (!this.object3D.material.transparent) console.error(sMyObject + '.isOpacity: invalid this.object3D.material.transparent = ' + this.object3D.material.transparent);
+			return true;
+
+		}
+		return false;
+	
+	}
 
 }
 export default MyObject;

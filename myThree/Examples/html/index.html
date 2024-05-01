@@ -63,6 +63,8 @@
 		//	from origin 'http://localhost' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
 		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/myThree.js';
 
+		import ND from '../../../nD/nD.js';
+
 		if ( MyThree.default ) MyThree = MyThree.default;
 		MyThree.three.THREE = THREE;
 		const tMin = 0;
@@ -70,6 +72,36 @@
 		new MyThree( function ( group, options ) {
 
 			var arrayFuncs;
+
+			//ND
+			new ND(3, {
+
+				object: {
+
+					name: 'ND',
+					position: [-0.4, -0.4],
+					//rotation: [Math.PI / 5, 1, 2.16, 3, 4, 5],
+					//rotation: [0, 0, 1, 0, 1.1, 1.2],
+					geometry: {
+
+						position: [
+
+							[   0,  0.3, 0  , 0],
+							[ 0.3, -0.3, 0  ],
+							[-0.3, -0.3, 0  ],
+							[ 0.3, -0.3, 0.3],
+						],
+						opacity: [0.3],
+
+					}
+
+				},
+				//boDisplayVerticeID: true,
+				scene: group,
+				options: options,
+				//onIntersection: function ( geometryIntersection ) {}
+
+			});
 
 			//Points
 
@@ -117,7 +149,7 @@
 			new MyThree.MyPoints( arrayFuncs, group, {
 
 				options: options,
-
+				object: { geometry: { opacity: [1, 1, 0.3] } },
 				pointsOptions: {
 
 					name: 'MyThree.MyPoints',
@@ -167,6 +199,7 @@
 			
 					size: options.point.size,
 					vertexColors: true,//THREE.VertexColors//VertexColor parameter not working in v.0.142.0 but works in v0.140.2 or below https://discourse.threejs.org/t/vertexcolor-parameter-not-working-in-v-0-142-0-but-works-in-v0-140-2-or-below/40607
+					transparent: true,
 		
 				} ) );
 

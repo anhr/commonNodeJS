@@ -42,6 +42,8 @@ import {
 
 import three from '../three.js'
 
+const none = 'none', block = 'block';
+
 class GuiSelectPoint {
 
 	/**
@@ -240,6 +242,13 @@ class GuiSelectPoint {
 		if ( options.frustumPoints )
 			cFrustumPoints = new options.frustumPoints.guiSelectPoint();
 		//сейчас exposePosition вызывается только один раз из this.setMesh
+		function getLiEl(controller) {
+
+			var el = controller.domElement;
+			while (el.tagName.toUpperCase() !== "LI") el = el.parentElement;
+			return el;
+
+		}
 		function dislayEl( controller, displayController ) {
 
 			if ( controller === undefined )
@@ -250,9 +259,19 @@ class GuiSelectPoint {
 				displayController = 'none';
 			else if ( typeof displayController !== "string" )
 				displayController = 'block';
+/*
 			var el = controller.domElement;
 			while ( el.tagName.toUpperCase() !== "LI" ) el = el.parentElement;
 			el.style.display = displayController;
+*/
+			getLiEl(controller).style.display = displayController;
+
+		}
+		function isDislayEl( controller ) {
+
+			if ( controller === undefined )
+				return;
+			return getLiEl(controller).style.display === none ? false : true;
 
 		}
 		function exposePosition( selectedPointIndex ) {
@@ -369,8 +388,7 @@ class GuiSelectPoint {
 			setValue( cWorld.y, position.y );
 			setValue( cWorld.z, position.z );
 
-			var displayControllerW, displayControllerColor, displayControllerOpacity;
-			const none = 'none', block = 'block';
+			var displayControllerW, displayControllerColor;//, displayControllerOpacity;
 			if ( intersection.object.userData.player && ( typeof intersection.object.userData.player.arrayFuncs === "function" ) ) {
 
 				//Сюда попадает когда пользователь выбироает точку в frustumPoints
@@ -384,7 +402,7 @@ class GuiSelectPoint {
 
 				displayControllerW = none;
 				displayControllerColor = none;
-				displayControllerOpacity = none;
+//				displayControllerOpacity = none;
 
 			} else {
 
@@ -425,13 +443,13 @@ class GuiSelectPoint {
 
 					displayControllerW = none;
 					displayControllerColor = block;
-					displayControllerOpacity = block;
+//					displayControllerOpacity = block;
 
 					//color
 					if ( intersectionSelected.object.userData.player.arrayFuncs === undefined ) {
 
 						displayControllerColor = none;
-						displayControllerOpacity = none;
+//						displayControllerOpacity = none;
 
 					} else {
 
@@ -446,7 +464,7 @@ class GuiSelectPoint {
 
 							setValue( cOpacity, opasity );
 
-						} else displayControllerOpacity = none;
+						}// else displayControllerOpacity = none;
 						cOpacity.userData = { intersection: intersectionSelected, };
 
 					}
@@ -491,16 +509,24 @@ class GuiSelectPoint {
 
 					}
 					displayControllerColor = none;
-					displayControllerOpacity = none;
+//					displayControllerOpacity = none;
 
 				}
 
 			}
 			dislayEl( cW, displayControllerW );
 			dislayEl( cColor, displayControllerColor );
-			dislayEl( cOpacity, displayControllerOpacity );
 
-			const mesh = getMesh(), boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : mesh.userData.gui && mesh.userData.gui.isLocalPositionReadOnly ? true : false;
+			const mesh = getMesh(), boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : mesh.userData.gui && mesh.userData.gui.isLocalPositionReadOnly ? true : false,
+				boOpacity = ( mesh.userData.myObject && mesh.userData.myObject.isOpacity ) || ( mesh.material.transparent && mesh.material.vertexColors),
+				attributeColor = mesh.geometry.attributes.color;
+			dislayEl( cOpacity, boOpacity ? block : none );
+			if ( boOpacity ) {
+
+				cOpacity.initialValue = attributeColor.array[intersectionSelected.index * attributeColor.itemSize + 3];
+				cOpacity.setValue( cOpacity.initialValue );
+
+			}
 			_this.setReadOnlyPosition(boReadOnly);
 			cColor.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			cOpacity.domElement.querySelector( 'input' ).readOnly = boReadOnly;
@@ -1812,6 +1838,30 @@ class GuiSelectPoint {
 
 					if ( isReadOnlyController( cOpacity ) )
 						return;
+					const mesh = getMesh();
+					if (mesh.userData.myObject) {
+						
+						mesh.userData.myObject.verticeOpacity(intersection.index, true, opasity);
+						return;
+
+					}
+					if (!mesh.material.transparent) {
+
+						console.error( 'GuiSelectPoint: cOpacity.onChange. Invalid mesh.material.transparent = ' + mesh.material.transparent);
+						return;
+						
+					}
+					if (!mesh.material.vertexColors) {
+
+						console.error( 'GuiSelectPoint: cOpacity.onChange. Invalid mesh.material.vertexColors = ' + mesh.material.vertexColors);
+						return;
+						
+					}
+					const color = mesh.geometry.attributes.color;
+					if (color.itemSize < 4) return;
+					color.array[3 + intersection.index * color.itemSize] = opasity;
+					color.needsUpdate = true;
+/*					
 					if ( cColor.userData === undefined )
 						return;
 					const intersection = cColor.userData.intersection;
@@ -1821,6 +1871,7 @@ class GuiSelectPoint {
 					points.geometry.attributes.ca.array
 					[3 + intersection.index * points.geometry.attributes.ca.itemSize] = opasity;
 					points.geometry.attributes.ca.needsUpdate = true;
+*/					
 
 				} );
 			dat.controllerNameAndTitle( cOpacity, lang.opacity, lang.opacityTitle );
@@ -1890,17 +1941,14 @@ class GuiSelectPoint {
 
 						}
 						const float = parseFloat( positionDefault.w );
-						if ( float === positionDefault.w )
-							setValue( cW, positionDefault.w );
-						else console.error( 'Restore default local position: Invalid W axis.' );
+						if ( float === positionDefault.w ) {
 
-					} else {
+							if (isDislayEl( cW )) setValue( cW, positionDefault.w );
+							
+						} else console.error( 'Restore default local position: Invalid W axis.' );
 
-						cColor.setValue( cColor.initialValue );
-						cOpacity.setValue( cOpacity.initialValue );
-
-					}
-
+					} else cColor.setValue( cColor.initialValue );
+					if (isDislayEl(cOpacity)) cOpacity.setValue( cOpacity.initialValue );
 
 				},
 
