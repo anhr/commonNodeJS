@@ -395,7 +395,7 @@ class GuiSelectPoint {
 				//console.error( 'arrayFuncs === "function" under constraction' );
 
 			}
-			var opasity;
+//			var opasity;
 			const func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined,
 				attributes = intersectionSelected.object.geometry.attributes;
 			if ( attributes.position.itemSize < 4 ) {
@@ -419,7 +419,7 @@ class GuiSelectPoint {
 								verticeColor != undefined ?
 									verticeColor:
 									func.w;
-
+/*
 				if ( color === undefined ) {
 
 					if ( attributes.ca === undefined ) {
@@ -437,7 +437,7 @@ class GuiSelectPoint {
 					}
 
 				}
-
+*/
 				if ( Array.isArray(color) ) color = new THREE.Color( color[0], color[1], color[2] );
 				if ( color instanceof THREE.Color ) {
 
@@ -460,11 +460,13 @@ class GuiSelectPoint {
 						cColor.initialValue = strColor;
 						cColor.setValue( strColor );
 						cColor.userData = { intersection: intersectionSelected, };
+/*
 						if ( opasity !== undefined ) {
 
 							setValue( cOpacity, opasity );
 
 						}// else displayControllerOpacity = none;
+*/
 						cOpacity.userData = { intersection: intersectionSelected, };
 
 					}
@@ -523,6 +525,7 @@ class GuiSelectPoint {
 			dislayEl( cOpacity, boOpacity ? block : none );
 			if ( boOpacity ) {
 
+				if ( attributeColor.itemSize != 4 ) console.error( 'GuiSelectPoint.setPosition: Invalid mesh.geometry.attributes.color.itemSize = ' + attributeColor.itemSize);
 				cOpacity.initialValue = attributeColor.array[intersectionSelected.index * attributeColor.itemSize + 3];
 				cOpacity.setValue( cOpacity.initialValue );
 
@@ -1914,7 +1917,23 @@ class GuiSelectPoint {
 				defaultF: function () {
 
 					const positionDefault = intersection.object.userData.player.arrayFuncs[intersection.index],
-						t = options.time;
+						t = options.time,
+						setDefaultValue = ( control, value ) => {
+							
+							control.setValue(
+								typeof value === "function" ?
+									value( t, options.a, options.b ) :
+									typeof value === "string" ?
+										Player.execFunc( { w: value } , 'w', options.time, options ) :
+										value
+							);
+							
+						};
+					setDefaultValue( cX, positionDefault.x );
+					setDefaultValue( cY, positionDefault.y );
+					setDefaultValue( cZ, positionDefault.z === undefined ? 0 ://default Z axis of 2D point is 0
+							positionDefault.z );
+/*					
 					cX.setValue( typeof positionDefault.x === "function" ?
 						positionDefault.x( t, options.a, options.b ) : positionDefault.x );
 					cY.setValue( typeof positionDefault.y === "function" ?
@@ -1923,7 +1942,10 @@ class GuiSelectPoint {
 						positionDefault.z( t, options.a, options.b ) :
 						positionDefault.z === undefined ? 0 ://default Z axis of 2D point is 0
 							positionDefault.z );
+*/						
 
+					if (isDislayEl(cOpacity)) cOpacity.setValue( cOpacity.initialValue );
+					
 					if ( positionDefault.w !== undefined ) {
 
 						if ( positionDefault.w.r !== undefined )
@@ -1945,10 +1967,14 @@ class GuiSelectPoint {
 
 							if (isDislayEl( cW )) setValue( cW, positionDefault.w );
 							
+						} else if ( typeof positionDefault.w  === "string") {
+							
+							setValue( cW, Player.execFunc( positionDefault , 'w', options.time, options ) );
+							return;
+							
 						} else console.error( 'Restore default local position: Invalid W axis.' );
 
 					} else cColor.setValue( cColor.initialValue );
-					if (isDislayEl(cOpacity)) cOpacity.setValue( cOpacity.initialValue );
 
 				},
 
