@@ -73,6 +73,31 @@
 
 			var arrayFuncs;
 
+			//LineSegments
+			const buffer = new THREE.BufferGeometry().setFromPoints( [
+				new THREE.Vector3( 0.25, -0.75, 0.0 ),
+				new THREE.Vector3( 0.5, -0.25, 0.25 ),
+				new THREE.Vector3( 0.1, -0.25, 0 ),
+			] );
+			buffer.setIndex( [0, 1, 1, 2, 2, 0] );
+			const lineSegments = new THREE.LineSegments( buffer, new THREE.LineBasicMaterial( {
+				
+				//color: 'red',
+				vertexColors: true,
+				//toneMapped: false,
+			
+			} ) );
+			lineSegments.name = 'THREE.LineSegments';
+			lineSegments.geometry.setAttribute( 'color',
+				new THREE.Float32BufferAttribute( [
+							1, 0, 0,//red color of the position[0].
+							0, 1, 0,//green color of the position[1].
+							0, 0, 1,//blue color of the position[2].
+							//1, 1, 1,//white color of the position[3].
+						], 3 ) );
+			group.add( lineSegments );
+			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( lineSegments );
+
 			//ND
 			new ND(3, {
 
@@ -91,7 +116,14 @@
 							[-0.3, -0.3, 0  ],
 							[ 0.3, -0.3, 0.3],
 						],
-						opacity: [0.3],
+						//opacity: [0.3],
+						colors: [
+							1, 0, 0,//red color of the position[0] vertex.
+							0, 1, 0,//green color of the position[1] vertex.
+							0, 0, 1,//blue color of the position[2] vertex.
+							1, 1, 1,//white color of the position[3] vertex.
+						],
+						//indices: [[[0, 1]]],
 
 					}
 
@@ -167,7 +199,21 @@
 				}
 
 			} );
+/*
+			new MyThree.MyPoints( [[],[1]], group, {
 
+				options: options,
+				//object: { geometry: { opacity: [1, 1, 0.3] } },
+				pointsOptions: {
+
+					name: 'MyPoints Vector3',
+					//tMin: tMin,
+					//shaderMaterial: false,
+
+				}
+
+			} );
+*/
 			//See https://github.com/anhr/myThreejs#arrayfuncs-item for details
 			arrayFuncs = [
 				{

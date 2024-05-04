@@ -351,171 +351,175 @@ class GuiSelectPoint {
 			if ( cW ) cW.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 
 		}
-		function setPosition( intersectionSelected ) {
+		function setPosition(intersectionSelected) {
 
 			const player = intersectionSelected.object.userData.player;
 
 			var boDisplayFuncFolder = 'none';
-			if ( player && player.arrayFuncs ) {
+			if (player && player.arrayFuncs) {
 
-				funcFolder.setFunction( player.arrayFuncs[intersectionSelected.index] );
+				funcFolder.setFunction(player.arrayFuncs[intersectionSelected.index]);
 				boDisplayFuncFolder = 'block';
 
 			}
-			funcFolder.displayFolder( boDisplayFuncFolder );
+			funcFolder.displayFolder(boDisplayFuncFolder);
 			/*Для установки cCameraTarget после выбора точки. Если это оставить то неправильно учтанавливается галочка cCameraTarget если:
 			1 устанвить cCameraTarget для выбранной точки
 			2 запустить плеер
 			3 уброать cCameraTarget
 			4 запустить плеер. Снова установиться cCameraTarget
 			*/
-			if ( cCameraTarget ) {
+			if (cCameraTarget) {
 
-				options.playerOptions.cameraTarget.changeTarget( intersectionSelected.object, intersectionSelected.index );
+				options.playerOptions.cameraTarget.changeTarget(intersectionSelected.object, intersectionSelected.index);
 				cCameraTarget.updateDisplay();
 
 			}
 
-			const positionLocal = getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
-			setValue( cX, positionLocal.x );
-			setValue( cY, positionLocal.y );
-			setValue( cZ, positionLocal.z );
+			const positionLocal = getObjectLocalPosition(intersectionSelected.object, intersectionSelected.index);
+			setValue(cX, positionLocal.x);
+			setValue(cY, positionLocal.y);
+			setValue(cZ, positionLocal.z);
 
-			if( intersectionSelected.object.userData.gui ) intersectionSelected.object.userData.gui.setValues( intersectionSelected.index );
+			if (intersectionSelected.object.userData.gui) intersectionSelected.object.userData.gui.setValues(intersectionSelected.index);
 
-			const position = getObjectPosition( intersectionSelected.object, intersectionSelected.index );
-			setValue( cWorld.x, position.x );
-			setValue( cWorld.y, position.y );
-			setValue( cWorld.z, position.z );
+			const position = getObjectPosition(intersectionSelected.object, intersectionSelected.index);
+			setValue(cWorld.x, position.x);
+			setValue(cWorld.y, position.y);
+			setValue(cWorld.z, position.z);
 
 			var displayControllerW, displayControllerColor;//, displayControllerOpacity;
-			if ( intersection.object.userData.player && ( typeof intersection.object.userData.player.arrayFuncs === "function" ) ) {
+			if (intersection.object.userData.player && (typeof intersection.object.userData.player.arrayFuncs === "function")) {
 
 				//Сюда попадает когда пользователь выбироает точку в frustumPoints
 				//console.error( 'arrayFuncs === "function" under constraction' );
 
 			}
-//			var opasity;
+			//			var opasity;
 			const func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined,
 				attributes = intersectionSelected.object.geometry.attributes;
-			if ( attributes.position.itemSize < 4 ) {
+			//			if ( attributes.position.itemSize < 4 )
+			if (!attributes.color) {
 
 				displayControllerW = none;
 				displayControllerColor = none;
-//				displayControllerOpacity = none;
+				//				displayControllerOpacity = none;
 
 			} else {
 
-				function isWObject() { return ( typeof func.w === 'object' ) && ( func.w instanceof THREE.Color === false ); }
-				const mesh = getMesh(), verticeColor = mesh.userData.myObject ? mesh.userData.myObject.verticeColor(intersectionSelected.index) : undefined;
-				var color = ( func === undefined ) || ( !attributes.color && !attributes.ca ) ?
-					undefined :
-					Array.isArray( func.w ) || ( typeof func.w === "function" ) ?
-						Player.execFunc( func, 'w', options.time, options ) :
-						isWObject() ?
-							Player.execFunc( func.w, 'func', options.time, options ) :
-							typeof func.w === "string" ?
-								Player.execFunc( func, 'w', options.time, options ) :
-								verticeColor != undefined ?
-									verticeColor:
-									func.w;
-/*
-				if ( color === undefined ) {
-
-					if ( attributes.ca === undefined ) {
-
-//						console.warn( 'Under constraction. цвет frustumPoints не известен потому что он вычисляется в шейдере D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master\frustumPoints\vertex.c' )
-
-					} else {
-
-						const vColor = new THREE.Vector4().fromArray(
-							attributes.ca.array,
-							intersectionSelected.index * attributes.ca.itemSize );
-						color = new THREE.Color( vColor.x, vColor.y, vColor.z );
-						opasity = vColor.w;
-
-					}
-
+				const setColorControl = (color) => {
+					
+					const strColor = '#' + color.getHexString();
+					//Сначала надо установить initialValue потому что для FrustumPoints я устанвил readOnly для cColor.
+					//В этом случае я не могу отобразить цвет следующей точки FrustumPoints потому что в режиме readOnly
+					//при изменении цвета восстанвливается старый цвет из initialValue.
+					cColor.initialValue = strColor;
+					cColor.userData = { intersection: intersectionSelected, };
+					cColor.setValue(strColor);
+					
 				}
-*/
-				if ( Array.isArray(color) ) color = new THREE.Color( color[0], color[1], color[2] );
-				if ( color instanceof THREE.Color ) {
+				if (attributes.position.itemSize < 4) {
 
-					displayControllerW = none;
-					displayControllerColor = block;
-//					displayControllerOpacity = block;
-
-					//color
-					if ( intersectionSelected.object.userData.player.arrayFuncs === undefined ) {
-
-						displayControllerColor = none;
-//						displayControllerOpacity = none;
-
-					} else {
-
-						const strColor = '#' + color.getHexString();
-						//Сначала надо установить initialValue потому что для FrustumPoints я устанвил readOnly для cColor.
-						//В этом случае я не могу отобразить цвет следующей точки FrustumPoints потому что в режиме readOnly
-						//при изменении цвета восстанвливается старый цвет из initialValue.
-						cColor.initialValue = strColor;
-						cColor.setValue( strColor );
-						cColor.userData = { intersection: intersectionSelected, };
-/*
-						if ( opasity !== undefined ) {
-
-							setValue( cOpacity, opasity );
-
-						}// else displayControllerOpacity = none;
-*/
-						cOpacity.userData = { intersection: intersectionSelected, };
+					if ( intersectionSelected.object.material.vertexColors === true ) {
+						
+						displayControllerW = none;
+						displayControllerColor = block;
+						setColorControl( new THREE.Color().fromBufferAttribute(attributes.color, intersectionSelected.index) );
+//						cColor.setValue( '#' + new THREE.Color().fromBufferAttribute(attributes.color, intersectionSelected.index).getHexString() );
 
 					}
-
+					
 				} else {
 
-					if ( cW === undefined )
+					function isWObject() { return (typeof func.w === 'object') && (func.w instanceof THREE.Color === false); }
+					const mesh = getMesh(), verticeColor = mesh.userData.myObject ? mesh.userData.myObject.verticeColor(intersectionSelected.index) : undefined;
+					var color = (func === undefined) || (!attributes.color && !attributes.ca) ?
+						undefined :
+						Array.isArray(func.w) || (typeof func.w === "function") ?
+							Player.execFunc(func, 'w', options.time, options) :
+							isWObject() ?
+								Player.execFunc(func.w, 'func', options.time, options) :
+								typeof func.w === "string" ?
+									Player.execFunc(func, 'w', options.time, options) :
+									verticeColor != undefined ?
+										verticeColor :
+										func.w;
+					if (Array.isArray(color)) color = new THREE.Color(color[0], color[1], color[2]);
+					if (color instanceof THREE.Color) {
+
 						displayControllerW = none;
-					else {
+						displayControllerColor = block;
+						//					displayControllerOpacity = block;
 
-						if ( color === undefined )
-							displayControllerW = none;
-						else {
+						//color
+						if (intersectionSelected.object.userData.player.arrayFuncs === undefined) {
 
-							if ( !wLimitsDefault ) {
+							displayControllerColor = none;
+							//						displayControllerOpacity = none;
 
-								wLimitsDefault = {
+						} else {
 
-									min: cW.__min,
-									max: cW.__max,
-
-								}
-
-							}
-							if ( isWObject() ) {
-
-								cW.min( func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min );
-								cW.max( func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max );
-								if ( ( cW.__min !== 'undefined' ) && ( cW.__max !== 'undefined' ) )
-									cW.step( ( cW.__max - cW.__min ) / 100 )
-
-							} else {
-
-								cW.min( wLimitsDefault.min );
-								cW.max( wLimitsDefault.max );
-
-							}
-							setValue( cW, color );
-							displayControllerW = block;
+							setColorControl(color);
+/*							
+							const strColor = '#' + color.getHexString();
+							//Сначала надо установить initialValue потому что для FrustumPoints я устанвил readOnly для cColor.
+							//В этом случае я не могу отобразить цвет следующей точки FrustumPoints потому что в режиме readOnly
+							//при изменении цвета восстанвливается старый цвет из initialValue.
+							cColor.initialValue = strColor;
+							cColor.setValue(strColor);
+							cColor.userData = { intersection: intersectionSelected, };
+*/							
+							cOpacity.userData = { intersection: intersectionSelected, };
 
 						}
 
+					} else {
+
+						if (cW === undefined)
+							displayControllerW = none;
+						else {
+
+							if (color === undefined)
+								displayControllerW = none;
+							else {
+
+								if (!wLimitsDefault) {
+
+									wLimitsDefault = {
+
+										min: cW.__min,
+										max: cW.__max,
+
+									}
+
+								}
+								if (isWObject()) {
+
+									cW.min(func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min);
+									cW.max(func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max);
+									if ((cW.__min !== 'undefined') && (cW.__max !== 'undefined'))
+										cW.step((cW.__max - cW.__min) / 100)
+
+								} else {
+
+									cW.min(wLimitsDefault.min);
+									cW.max(wLimitsDefault.max);
+
+								}
+								setValue(cW, color);
+								displayControllerW = block;
+
+							}
+
+						}
+						displayControllerColor = none;
+						//					displayControllerOpacity = none;
+
 					}
-					displayControllerColor = none;
-//					displayControllerOpacity = none;
 
 				}
 
-			}
+		}
 			dislayEl( cW, displayControllerW );
 			dislayEl( cColor, displayControllerColor );
 
@@ -1809,11 +1813,7 @@ class GuiSelectPoint {
 			cY = axesGui( 'y' );
 			cZ = axesGui( 'z' );
 			cW = axesGui( 'w' );
-			cColor = fPoint.addColor( {
-
-				color: '#FFFFFF',
-
-			}, 'color' ).
+			cColor = fPoint.addColor( { color: '#FFFFFF', }, 'color' ).
 				onChange( function ( value ) {
 
 					//for testing
@@ -1823,20 +1823,14 @@ class GuiSelectPoint {
 					//Open 'Point's local position'
 					//Change 'color'
 					
-					if ( isReadOnlyController( cColor ) )
-						return;
-					if ( cColor.userData === undefined )
-						return;
+					if ( isReadOnlyController( cColor ) ) return;
+					if ( cColor.userData === undefined ) return;
 					var intersection = cColor.userData.intersection;
 					Player.setColorAttribute( intersection.object.geometry.attributes, intersection.index, value );
 
 				} );
 			dat.controllerNameAndTitle( cColor, options.scales.w ? options.scales.w.name : lang.color );
-			cOpacity = fPoint.add( {
-
-				opasity: 1,
-
-			}, 'opasity', 0, 1, 0.01 ).
+			cOpacity = fPoint.add( { opasity: 1, }, 'opasity', 0, 1, 0.01 ).
 				onChange( function ( opasity ) {
 
 					if ( isReadOnlyController( cOpacity ) )
@@ -1884,7 +1878,7 @@ class GuiSelectPoint {
 				visibleTraceLine( intersection, value, getMesh );
 
 			} );
-			dat.controllerNameAndTitle( cTrace, lang.trace, lang.traceTitle ); guiParams
+			dat.controllerNameAndTitle( cTrace, lang.trace, lang.traceTitle ); //guiParams
 			dislayEl( cTrace, options.player );
 
 			if ( guiParams.pointControls ) {

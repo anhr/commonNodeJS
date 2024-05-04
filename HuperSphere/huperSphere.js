@@ -1957,7 +1957,7 @@ class HuperSphere extends MyObject {
 							pointsOptions: {
 
 								name: settings.object.name,
-								color: settings.object.color,
+								color: this.color(),//settings.object.color,
 								colors: settings.object.geometry.colors,
 								opacity: settings.object.geometry.opacity,
 								onReady: (points) => {

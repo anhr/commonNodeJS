@@ -197,6 +197,7 @@ class MyObject {
 			const colors = settings.object.geometry.colors;
 			const colorsId = i * 3;
 			if (colors && colors[colorsId] != undefined) return [colors[colorsId] * mul, colors[colorsId + 1] * mul, colors[colorsId +2] * mul];
+//			const color = settings.object.color != undefined ? settings.object.color : _this.color();
 			const color = settings.object.color;
 			if ((color != undefined) && (typeof color != 'object')) {
 
@@ -210,15 +211,25 @@ class MyObject {
 */				
 				
 			}
+			//Вершина не имеет 4 координаты. Установить цвет вершины по умолчанию
+			const getDefaultColor = () => {
+				
+				const rgb = new THREE.Color(_this.color());
+				return [rgb.r * mul, rgb.g * mul, rgb.b * mul, ];
+				
+			}
 			let w
 			if (vertice) w = vertice.w;
 			else if (!_this.getPoint) {
 
 				const position = _this.bufferGeometry.attributes.position;
 				if (position.itemSize != 4) {
-					
+
+					return getDefaultColor();
+/*					
 					console.error(sMyObject + '.verticeColor: Invalid position.itemSize = ' + position.itemSize);
 					return [mul, mul, mul];
+*/					
 
 				}
 				w = new THREE.Vector4().fromBufferAttribute(position, i).w;
@@ -227,9 +238,12 @@ class MyObject {
 			else w = _this.getPoint(i).w;
 			if (w === undefined) {
 
+				return getDefaultColor();
+/*				
 				//Вершина не имеет 4 координаты. Установить цвет вершины по умолчанию
 				const rgb = new THREE.Color(_this.color());
 				return [rgb.r * mul, rgb.g * mul, rgb.b * mul, ];
+*/				
 				
 			}
 			return w;
@@ -254,7 +268,8 @@ class MyObject {
 			
 			let colorId = i * attributes.color.itemSize;
 			array = attributes.color.array;
-			const verticeColor = _this.verticeColor(i, 255, vertice);
+			const verticeColor = _this.verticeColor(i, 1,//255,
+													vertice);
 			if (typeof verticeColor === 'number'){
 
 				if (settings.options) {
@@ -365,7 +380,7 @@ class MyObject {
 	//	this.color() { if (this.classSettings.settings.object.color === undefined) this.classSettings.settings.object.color = 'lime'; }
 		this.color = () => {
 	
-			const color = settings.object.color;
+			const color = settings.object.color != undefined ? settings.object.color : settings.pointsOptions != undefined ? settings.pointsOptions.color : undefined;
 			return (color != undefined) ? color : this.defaultColor;//'lime';
 		
 		}

@@ -346,6 +346,7 @@ class MyPoints extends MyObject {
 		}
 
 	}
+//	get defaultColor() { return 'white'; }
 
 }
 export default MyPoints;
