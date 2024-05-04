@@ -68,7 +68,6 @@ import MyObject from '../myObject.js'
 
 const sHuperSphere = 'HuperSphere', sOverride = sHuperSphere + ': Please override the %s method in your child class.',
 	π = Math.PI;
-//	verticeEdges = true;//Эту константу добавил на случай если захочу не включать индексы ребер в вершину если classSettings.debug != true
 
 class HuperSphere extends MyObject {
 
@@ -110,6 +109,17 @@ class HuperSphere extends MyObject {
 	 * &lt;pre>
 	 * String - color name. See list of available color names in the &lt;b>_colorKeywords&lt;/b> object in the [Color.js]{@link https://github.com/mrdoob/three.js/blob/dev/src/math/Color.js} file.
 	 * number - color [Hex triplet]{@link https://en.wikipedia.org/wiki/Web_colors#Hex_triplet}. Example: 0x0000ff - blue color.
+	 * Default color is lime for &lt;a href="./module-Circle-Circle.html" target="_blank">Circle&lt;/a> and &lt;a href="./module-Sphere-Sphere.html" target="_blank">Sphere&lt;/a>.
+	 * Default color of vertice of the &lt;a href="./module-HuperSphere3D-HuperSphere3D.html" target="_blank">Hypersphere3D&lt;/a> is depends from the altitude angle of the vertice according the &lt;a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">options.palette&lt;/a> parameter.
+	 * See &lt;b>classSettings.settings.object.geometry.angles&lt;/b> for details. For example if &lt;b>options.palette&lt;/b> is &lt;b>MyThree.ColorPicker.paletteIndexes.BGYW&lt;/b>, then:
+	 * &lt;table>
+		 &lt;tr>&lt;td>Vertice Altitude&lt;/td>&lt;td>Vertice Color&lt;/td>&lt;/tr>
+		 &lt;tr>&lt;td>0&lt;/td>&lt;td>white&lt;/td>&lt;/tr>
+		 &lt;tr>&lt;td>π / 2&lt;/td>&lt;td>lime&lt;/td>&lt;/tr>
+		 &lt;tr>&lt;td>π&lt;/td>&lt;td>blue&lt;/td>&lt;/tr>
+		&lt;/table>
+	 * &lt;b>MyThree.ColorPicker.paletteIndexes.BGYW&lt;/b> palette parameter is default.
+	 * Note: You can define color of the each vertice separately in the &lt;b>classSettings.settings.object.geometry.colors&lt;/b> parameter.
 	 * &lt;pre>
 	 * @param {object} [classSettings.settings.object.geometry] HuperSphere geometry.
 	 * @param {array|object} [classSettings.settings.object.geometry.angles] n-dimensional hupersphere vertice angles.
@@ -183,6 +193,17 @@ class HuperSphere extends MyObject {
 	 *	4 for &lt;b>&lt;a href="module-Sphere.html" target="_blank">Sphere&lt;/a>&lt;/b> - pyramid.
 	 *	5 for &lt;b>&lt;a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D&lt;/a>&lt;/b> - [pentahedroid]{@link https://en.wikipedia.org/wiki/5-cell}.
 	 * &lt;/pre>
+	 * @param {array} [classSettings.settings.object.geometry.colors] array of colors of vertices.
+	 * &lt;pre>
+ 	 * Color of the each vertice is group of three (RGB) items of the colors array in range from 0 to 1. See [THREE.Color]{@link https://threejs.org/docs/?q=Color#api/en/math/Color} for details.
+	 * Example:
+	 * [
+	 * 	1, 0, 0,//First vertice is red.
+	 * 	0, 1, 0,//Second vertice green.
+	 * 	0, 0, 1,//Third vertice blue.
+	 * ]
+	 * &lt;/pre>
+	 * Note: Color of vertice is defined in the &lt;b>classSettings.settings.object.color&lt;/b> parameter if it not exists in the colors array.
 	 * @param {array} [classSettings.settings.object.geometry.opacity] array of opacities of each vertice. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
 	 * @param {object} [classSettings.settings.object.geometry.indices] Array of &lt;b>indices&lt;/b> of edges of hupersphere.
 	 * @param {array|object} [classSettings.settings.object.geometry.indices.edges] HuperSphere edges.
@@ -324,13 +345,6 @@ class HuperSphere extends MyObject {
 
 								if (angleId >= verticeAngles.length) return 0.0;
 								let angle = verticeAngles[angleId];
-
-								/*
-								//Normalize angle to value from -π to π
-								while (angle > π) angle -= 2 * π;
-								while (angle &lt; - π) angle += 2 * π;
-								*/
-
 								return angle;
 
 							}
@@ -355,6 +369,8 @@ class HuperSphere extends MyObject {
 									if ((angle &lt; range.min) || (angle > range.max)) console.error(sHuperSphere + ': Set angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
 
 									verticeAngles[angleId] = angle;
+									_this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
+//									_this.getPoint(verticeId);//обновляем geometry.attributes
 									//если тут обновлять гиперсферу, то будет тратиться лишнее время, когда одновременно изменяется несколько вершин
 									//Сейчас я сначала изменяю все вершины, а потом обновляю гиперсферу
 									//_this.update(verticeId);
@@ -375,6 +391,7 @@ class HuperSphere extends MyObject {
 
 						const verticeAngles = [];
 						_this.pushRandomAngle(verticeAngles);
+//						_this.classSettings.settings.bufferGeometry.userData.isReady = false;
 						angles.push(verticeAngles);
 
 					}
@@ -401,8 +418,22 @@ class HuperSphere extends MyObject {
 				switch (name) {
 
 					case 'guiLength'://изменилось количество вершин
-						for (let i = aAngles.length; i &lt; value; i++) angles.pushRandomAngle();//add vertices
-						aAngles.length = value;//remove vrtices
+						if (value &lt; 2) return true;
+						for (let i = aAngles.length; i &lt; value; i++) {
+							
+							angles.pushRandomAngle();//add vertices
+
+						}
+						aAngles.length = value;//remove vertice
+
+						//update buffer
+//						this.bufferGeometry.userData.isReady = false;
+						this.setPositionAttributeFromPoints(angles, true);
+/*
+						_this.angles2Vertice(angles.length - 1);
+						this.bufferGeometry.userData.isReady = true;
+*/							
+						aAngles.length = value;//remove vertices
 						if (classSettings.edges) {//Для экономии времени не добавляю ребра если на холст вывожу только вершины
 
 							_this.removeMesh();
@@ -420,7 +451,8 @@ class HuperSphere extends MyObject {
 				if (!isNaN(i)) {
 
 					aAngles[i] = value;
-					_this.object().userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
+					const object = _this.object();
+					if (object) object.userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
 
 				}
 				else aAngles[name] = value;
@@ -477,8 +509,7 @@ class HuperSphere extends MyObject {
 					const _vertice = _position[i];
 					const angle2Vertice = () => {
 
-						const vertice = _this.angles2Vertice(i);//_vertice)
-//							r = classSettings.r;
+						const vertice = _this.angles2Vertice(i);
 						//Эта проверка не проходит для HuperSphere3D
 						if (classSettings.debug) {
 
@@ -489,7 +520,6 @@ class HuperSphere extends MyObject {
 								console.error(sHuperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
 
 						}
-//						vertice.forEach((axis, i) => vertice[i] *= r);
 						return vertice;
 
 					}
@@ -629,17 +659,22 @@ class HuperSphere extends MyObject {
 
 											//https://wiki5.ru/wiki/Mean_of_circular_quantities#Mean_of_angles Среднее значение углов
 
-											//массив для хранения сумм декартовых координат прпотивоположных вершин
+											//массив для хранения сумм декартовых координат противоположных вершин
 											//для 1D гиперсферы это: aSum[0] = x, aSum[1] = y.
 											//для 2D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z.
 											//для 3D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z, aSum[3] = w.
 											const aSum = [];
-											for (let i = 0; i &lt; _this.dimension; i++) aSum.push(0.0);
+											//for (let i = 0; i &lt; _this.dimension; i++) aSum.push(0.0);
 
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
 												const oppositeVertice = position[oppositeAngleId];
-												oppositeVertice.forEach((axis, i) => aSum[i] += axis);
+												oppositeVertice.forEach((axis, i) => {
+
+													if (aSum[i] === undefined) aSum[i] = 0;
+													aSum[i] += axis
+												
+												});
 
 											});
 											const muddleVertice = _this.vertice2angles(aSum);
@@ -714,12 +749,28 @@ class HuperSphere extends MyObject {
 
 						_position.forEach((verticeAngles, verticeId) => {
 
+							/*
+							//for testing please uncommet the "//test for angles range" in the http://localhost/anhr/commonNodeJS/master/HuperSphere/Examples/huperSphere.html page
+							let sLog = 'vertice[' + verticeId + '] angles test:\n   verticeAngles[';
+							verticeAngles.forEach(angle => sLog = sLog + angle + ', ');
+							sLog = sLog + ']\nnormalizedAngles['
+							_this.normalizeVerticeAngles(verticeAngles).forEach(angle => sLog = sLog + angle + ', ');
+							console.log(sLog + ']');
+							*/
+							
 							for (let angleId = 0; angleId &lt; verticeAngles.length; angleId++) {
 
-								const angle = verticeAngles[angleId], range = angles.ranges[angleId];
-								if ((angle &lt; range.min) || (angle > range.max)) console.error(sHuperSphere + ': ' + range.angleName + ' angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
+								const angle = verticeAngles[angleId];
+								const range = angles.ranges[angleId];
+								if ((angle &lt; range.min) || (angle > range.max)) {
+									
+									console.error(sHuperSphere + ': ' + range.angleName + ' angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
+									_position[verticeId] = _this.normalizeVerticeAngles(verticeAngles);
+
+								}
 
 							}
+							
 							const vertice = settings.object.geometry.position[verticeId], strVerticeId = 'vertice[' + verticeId + ']'
 							_this.TestVertice(vertice, strVerticeId);
 							vertice.edges.forEach(edgeId => {
@@ -732,7 +783,6 @@ class HuperSphere extends MyObject {
 					}
 
 				}
-//				return _position[name];
 				return target[name];//Обращение к settings.object.geometry.position Proxy низшего уровня
 
 			},
@@ -767,8 +817,92 @@ class HuperSphere extends MyObject {
 		});
 		const position = settings.object.geometry.position;
 
-		this.getPoint = (i) => { return this.angles2Vertice(i); }
-		this.setPositionAttributeFromPoints(angles, 4);
+		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
+		this.getPoint = (anglesId) => {
+			
+//			return this.angles2Vertice(anglesId);
+			const angles = typeof anglesId === "number" ? this.classSettings.settings.object.geometry.angles[anglesId] : anglesId,
+				a2v = (angles) => {
+	
+				//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
+				const n = this.dimension, φ = [],//angles,
+					x = [], cos = Math.cos, sin = Math.sin;
+				//нужно для того, чтобы начало координат широты находилось на экваторе
+				for (let i = 0; i &lt; angles.length; i++) {
+	
+					const rotateLatitude = this.getRotateLatitude(i);
+					φ.push((rotateLatitude === 0 ? 1 : - 1) * angles[i] - rotateLatitude);//Для широты меняем знак угола что бы положительная широта была в северном полушарии
+	
+				}
+	
+				//добавляем оси
+				
+				for (let index = 0; index &lt; n; index++) {
+	
+					let axis = 1.0;
+					const i = this.axes.indices[index],
+						mulCount = //количество множителей для данной оси
+						i &lt; (n - 1) ?
+							i + 1: //на один больше порядкового номера оси
+							i;//или равно порядковому номеру оси если это последняя ось
+					for (let j = 0; j &lt; mulCount; j++) {
+	
+						if(j === (mulCount - 1)){
+	
+							//Это последний множитель для текущей оси
+							if (i != (n - 1)) {
+								
+								//Это не последняя ось
+								axis *= cos(φ[j]);
+								continue;
+	
+							}
+							
+						}
+						axis *= sin(φ[j]);
+	
+					}
+					x.push(axis);
+	
+				}
+				return x;
+	
+			}
+			const vertice = a2v(angles);
+			if (this.classSettings.debug &amp;&amp; this.classSettings.debug.testVertice){
+	
+				const vertice2angles = this.vertice2angles(vertice),
+					angles2vertice = a2v(vertice2angles);
+				const value = vertice;
+				if (angles2vertice.length != value.length) console.error(sHuperSphere + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
+				const d = 6e-16;
+				angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHuperSphere + ': Set vertices[' + anglesId + '] failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
+				
+			}
+	
+			vertice.forEach((axis, i) => vertice[i] *= this.classSettings.r);
+//			return vertice;
+			return new Proxy(vertice, {
+
+				get: (vertice, name) => {
+
+					switch (name) {
+
+						case 'x': return vertice[0];
+						case 'y': return vertice[1];
+						case 'z': return vertice[2];
+						case 'w': return vertice[3];
+//						case 'w': return vertice[3] != undefined ? vertice[3] : 0;
+
+					}
+					return vertice[name];
+
+				},
+
+			});
+		
+		}
+		this.setPositionAttributeFromPoints(angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
 		if (!(settings.object.geometry.indices instanceof Array)) {
@@ -916,22 +1050,25 @@ class HuperSphere extends MyObject {
 			const aAngleControls = [];
 
 			this.objectOpacity = 0.3;
+/*			
 			this.opacityObject3D = (object3D, transparent, opacity = this.objectOpacity) => {
 
-				object3D.material.transparent = transparent;
-				object3D.material.opacity = transparent ? opacity : 1;
-				object3D.material.needsUpdate = true;//for THREE.REVISION = "145dev"
+				const color = object3D.geometry.attributes.color, array = color.array;
+				for (let i = 0; i &lt; color.count; i++) {
 
-			}
-			this.opacity = (transparent = true, opacity = this.objectOpacity) => {
-
-				if (!nd) {
-
-					myPoints.userData.opacity(transparent ? opacity : 1);
-					return;
+					const verticeOpacity = settings.object.geometry.opacity[i];
+					array[color.itemSize * i + 3] = transparent ? opacity : verticeOpacity === undefined ? 1 : verticeOpacity;
 
 				}
-				this.opacityObject3D(nd.object3D, transparent, opacity);
+				color.needsUpdate = true;
+
+			}
+*/			
+			this.opacity = (transparent = true, opacity = this.objectOpacity) => {
+
+				if (!nd) myPoints.userData.opacity(transparent ? opacity : 1);
+				else nd.opacity(nd.object3D, transparent, opacity);
+//				else this.opacityObject3D(nd.object3D, transparent, opacity);
 
 			}
 
@@ -985,25 +1122,19 @@ class HuperSphere extends MyObject {
 
 				if (!this.isUpdate) return;
 				const points = nd &amp;&amp; (nd.object3D.visible === true) ? nd.object3D : myPoints;
-				this.bufferGeometry.userData.isReady = false;
+//				this.bufferGeometry.userData.isReady = false;
 				const vertice = settings.object.geometry.position[verticeId];
-				this.bufferGeometry.userData.isReady = true;
+//				this.bufferGeometry.userData.isReady = true;
 				this.setPositionAttributeFromPoint(verticeId, vertice);
-/*				
-				const itemSize = points.geometry.attributes.position.itemSize;
-				if (verticeId != undefined) for (let axesId = 0; axesId &lt; itemSize; axesId++)
-					points.geometry.attributes.position.array[axesId + verticeId * itemSize] = vertice[axesId] != undefined ? vertice[axesId] : 0.0;
-				points.geometry.attributes.position.needsUpdate = true;
-*/
+				this.bufferGeometry.attributes.position.needsUpdate = true;
+				this.bufferGeometry.attributes.color.needsUpdate = true;
 				if (settings.options.axesHelper)
 					settings.options.axesHelper.updateAxes();
 				const guiSelectPoint = settings.options.guiSelectPoint;
 				if (guiSelectPoint) {
 
-					guiSelectPoint.setReadOnlyPosition(false);
-//					settings.options.guiSelectPoint.update(true);
 					guiSelectPoint.update(true);
-					guiSelectPoint.setReadOnlyPosition(true);
+					guiSelectPoint.exposePosition();
 					const setControl = (control) => {
 
 						if (!control || !control.getValue()) return;
@@ -1135,6 +1266,13 @@ class HuperSphere extends MyObject {
 
 									});
 
+									//Не нужно показывать список ребер, выреление ребер и среднюю вершину для этой вершины если у вершины нет ребер
+									//У вершины нет ребер если пользователь убрал галочку в 'Ребра' в настройках гиперсферы
+									const boDisplay = verticeAngles.edges.length === 0 ? false : true;
+									_display(aAngleControls.cEdges.domElement.parentElement.parentElement, boDisplay);
+									_display(aAngleControls.cHighlightEdges.domElement.parentElement.parentElement, boDisplay);
+									_display(aAngleControls.cMiddleVertice.domElement.parentElement.parentElement, boDisplay);
+
 								}
 
 								aAngleControls.verticeId = verticeId;
@@ -1168,12 +1306,13 @@ class HuperSphere extends MyObject {
 
 										}
 
-										alert(lang.error.replace('%s', angle).
+										const sError = lang.error.replace('%s', angle).
 											replace('%n', cAngle.__li.querySelector(".property-name").innerHTML).
 											replace('%v', verticeId).
 											replace('%min', min).
-											replace('%max', max)
-										);
+											replace('%max', max);
+										console.error(sError);
+										alert(sError);
 
 									}
 									anglesDefault.push(angle);
@@ -1201,6 +1340,8 @@ class HuperSphere extends MyObject {
 							},
 							addControllers: (fParent) => {
 
+								settings.options.guiSelectPoint.setReadOnlyPosition(true);
+								
 								//Localization
 
 								const getLanguageCode = options.getLanguageCode;
@@ -1336,7 +1477,8 @@ class HuperSphere extends MyObject {
 									return fAngles;
 
 								}
-								const fAngles = createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
+//								const fAngles = createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
+								createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
 
 
 								//Edges
@@ -1385,7 +1527,7 @@ class HuperSphere extends MyObject {
 										//рисуем крестик на противоположной вершине выбранного ребра
 										aAngleControls.removeCross();
 										vertices.length = 0;
-										itemSize = undefined;
+//										itemSize = undefined;
 										const oppositeVertice = position[oppositeVerticeId],
 											crossSize = 0.05;
 										pushVertice([0, 0, crossSize]);
@@ -1579,19 +1721,17 @@ class HuperSphere extends MyObject {
 								});
 								aAngleControls.cEdges.__select[0].selected = true;
 								dat.controllerNameAndTitle(aAngleControls.cEdges, lang.edges, lang.edgesTitle);
-								const aEdgeAngleControls = [],
-									edgeAnglesDefault = [];
+								const aEdgeAngleControls = [], edgeAnglesDefault = [];
 								aAngleControls.fOppositeVertice = fAdvansed.addFolder(lang.oppositeVertice);
 								_display(aAngleControls.fOppositeVertice.domElement, false);
 								createAnglesControls(aAngleControls.fOppositeVertice, aEdgeAngleControls, edgeAnglesDefault);
 
-								let itemSize;
-								const vertices = [],
+								const itemSize = this.bufferGeometry.attributes.position.itemSize,
+									vertices = [],
 									pushVertice = (vertice) => {
 
-										if (itemSize === undefined) itemSize = vertice.length;
-										else if (itemSize != vertice.length) console.error(sHuperSphere + ': Middle vertice GUI. Invalid itemSize = ' + itemSize);
 										vertice.forEach(axis => vertices.push(axis))
+										for (let i = vertice.length; i &lt; itemSize; i++) vertices.push(0);
 
 										//Каждая вершина должна иметь не меньше 3 координат что бы не поучить ошибку:
 										//THREE.BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values. 
@@ -1618,7 +1758,6 @@ class HuperSphere extends MyObject {
 										const verticeId = aAngleControls.verticeId,
 											angles = position.angles[verticeId];
 										vertices.length = 0;
-										itemSize = undefined;
 										angles.edges.forEach(edgeId => {
 
 											const edge = geometry.indices.edges[edgeId];
@@ -1650,7 +1789,6 @@ class HuperSphere extends MyObject {
 											oppositeVerticesId = angles.oppositeVerticesId,
 											middleVertice = _this.angles2Vertice(angles.middleVertice(oppositeVerticesId));
 										vertices.length = 0;
-										itemSize = undefined;
 										oppositeVerticesId.forEach(oppositeVerticeId => {
 
 											pushVertice(middleVertice);
@@ -1695,8 +1833,11 @@ class HuperSphere extends MyObject {
 
 											case latitudeId:
 											case longitudeId:
-											case altitudeId:
 												start = -π; stop = π;
+												break;
+											case altitudeId:
+												const altitudeRange = settings.object.geometry.angles.ranges[verticeAngleId];
+												start = altitudeRange.min; stop = altitudeRange.max;
 												break;
 											default: console.error(sHuperSphere + ': Planes of rotation of angles. Invalid verticeAngleId = ' + verticeAngleId);
 
@@ -1708,8 +1849,8 @@ class HuperSphere extends MyObject {
 											for (let verticeAngleId = 0; verticeAngleId &lt; vertice.length; verticeAngleId++) planeAngle.push(vertice[verticeAngleId]);
 											planeAngle[verticeAngleId] = i;
 
-											if (this.classSettings.debug) console.log(sHuperSphere + ': ' + settings.object.geometry.angles.ranges[verticeAngleId].angleName + '. VerticeId = ' + planeAngles.length);
-											planeAngles[planeVerticeId++] = this.vertice2angles(this.angles2Vertice(planeAngle));
+											//if (this.classSettings.debug) console.log(sHuperSphere + ': ' + settings.object.geometry.angles.ranges[verticeAngleId].angleName + '. VerticeId = ' + planeAngles.length);
+											planeAngles[planeVerticeId++] = this.normalizeVerticeAngles(planeAngle);
 
 										}
 										if (plane) plane.object().geometry.attributes.position.needsUpdate = true;
@@ -1717,8 +1858,7 @@ class HuperSphere extends MyObject {
 									}
 									for (let verticeAngleId = 0; verticeAngleId &lt; vertice.length; verticeAngleId++) {
 
-										const planeAngles = [],
-											angleName = settings.object.geometry.angles.ranges[verticeAngleId].angleName;
+										const planeAngles = [], angleName = settings.object.geometry.angles.ranges[verticeAngleId].angleName;
 										planeGeometry(verticeAngleId, planeAngles);
 										const planeEdges = [];
 										for (let i = 0; i &lt; (planeAngles.length - 1); i++) planeEdges.push([i, i + 1]);
@@ -1866,10 +2006,9 @@ class HuperSphere extends MyObject {
 							pointsOptions: {
 
 								name: settings.object.name,
-								color: settings.object.color,
+								color: this.color(),//settings.object.color,
 								colors: settings.object.geometry.colors,
 								opacity: settings.object.geometry.opacity,
-								bufferGeometry: settings.bufferGeometry,
 								onReady: (points) => {
 
 									myPoints = points;
@@ -1877,10 +2016,13 @@ class HuperSphere extends MyObject {
 									intersection(points);
 
 								},
-								shaderMaterial: false,
+								//shaderMaterial: false,
 
 							},
 							options: settings.options,
+							object: settings.object,
+							bufferGeometry: settings.bufferGeometry,
+							isPositionControllerReadOnly: true,
 
 						});
 
@@ -2038,7 +2180,7 @@ class HuperSphere extends MyObject {
 				if (count &lt; 2) {
 
 					console.error(sHuperSphere + ': Invalid classSettings.settings.object.geometry.position.count &lt; 2');
-					return;
+					//return;
 
 				}
 
@@ -2333,6 +2475,8 @@ class HuperSphere extends MyObject {
 	rotateLatitude = - π / 2;//Поворачиваем широту на 90 градусов что бы начало координат широты находилось на экваторе;
 	getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
 	
+	get defaultColor() { return 'lime'; }
+
 	get verticeEdgesLength() { return this.#verticeEdgesLength; }
 	set verticeEdgesLength(length) {
 
@@ -2350,7 +2494,15 @@ class HuperSphere extends MyObject {
 		verticeAngles.push(Math.random() * (longitudeRange.max - longitudeRange.min) + longitudeRange.min);
 		
 	}
-	color() { if (this.classSettings.settings.object.color === undefined) this.classSettings.settings.object.color = 'lime'; }
+/*	
+//	color() { if (this.classSettings.settings.object.color === undefined) this.classSettings.settings.object.color = 'lime'; }
+	color() {
+
+		const color = this.classSettings.settings.object.color;
+		return (color != undefined) ? color : 'lime';
+	
+	}
+*/	
 	name() { console.error(sOverride.replace('%s', 'name')); }
 	logHuperSphere() {
 
@@ -2428,9 +2580,18 @@ class HuperSphere extends MyObject {
 	}
 	angles2Vertice(anglesId) {
 
+/*		
 		const isAnglesId = typeof anglesId === "number";
 		if (this.bufferGeometry.userData.isReady &amp;&amp; isAnglesId)
+*/		
+		if (typeof anglesId === "number") {
+			
+			if (anglesId >= this.bufferGeometry.userData.position.length) console.error(sHuperSphere + '.angles2Vertice: Invalid anglesId = ' + anglesId);
 			return this.bufferGeometry.userData.position[anglesId];
+			
+		}
+		return this.getPoint(anglesId);
+/*
 		const angles = isAnglesId ? this.classSettings.settings.object.geometry.angles[anglesId] : anglesId,
 			a2v = (angles) => {
 
@@ -2486,12 +2647,13 @@ class HuperSphere extends MyObject {
 			const value = vertice;
 			if (angles2vertice.length != value.length) console.error(sHuperSphere + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
 			const d = 6e-16;
-			angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHuperSphere + ': Set vertice failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
+			angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHuperSphere + ': Set vertices[' + anglesId + '] failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
 			
 		}
 
 		vertice.forEach((axis, i) => vertice[i] *= this.classSettings.r);
 		return vertice;
+*/	
 
 	}
 	vertice2angles(vertice) {
@@ -2566,6 +2728,7 @@ class HuperSphere extends MyObject {
 		return φ;
 
 	}
+	normalizeVerticeAngles(verticeAngles){ return this.vertice2angles(this.angles2Vertice(verticeAngles)); }
 
 }
 
@@ -2609,7 +2772,7 @@ const _display = (element, boDisplay) => { element.style.display = boDisplay ===
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon Apr 08 2024 13:59:41 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sun May 05 2024 05:44:23 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

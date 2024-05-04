@@ -81,6 +81,17 @@ class HuperSphere extends MyObject {
 	 * <pre>
 	 * String - color name. See list of available color names in the <b>_colorKeywords</b> object in the [Color.js]{@link https://github.com/mrdoob/three.js/blob/dev/src/math/Color.js} file.
 	 * number - color [Hex triplet]{@link https://en.wikipedia.org/wiki/Web_colors#Hex_triplet}. Example: 0x0000ff - blue color.
+	 * Default color is lime for <a href="./module-Circle-Circle.html" target="_blank">Circle</a> and <a href="./module-Sphere-Sphere.html" target="_blank">Sphere</a>.
+	 * Default color of vertice of the <a href="./module-HuperSphere3D-HuperSphere3D.html" target="_blank">Hypersphere3D</a> is depends from the altitude angle of the vertice according the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">options.palette</a> parameter.
+	 * See <b>classSettings.settings.object.geometry.angles</b> for details. For example if <b>options.palette</b> is <b>MyThree.ColorPicker.paletteIndexes.BGYW</b>, then:
+	 * <table>
+		 <tr><td>Vertice Altitude</td><td>Vertice Color</td></tr>
+		 <tr><td>0</td><td>white</td></tr>
+		 <tr><td>π / 2</td><td>lime</td></tr>
+		 <tr><td>π</td><td>blue</td></tr>
+		</table>
+	 * <b>MyThree.ColorPicker.paletteIndexes.BGYW</b> palette parameter is default.
+	 * Note: You can define color of the each vertice separately in the <b>classSettings.settings.object.geometry.colors</b> parameter.
 	 * <pre>
 	 * @param {object} [classSettings.settings.object.geometry] HuperSphere geometry.
 	 * @param {array|object} [classSettings.settings.object.geometry.angles] n-dimensional hupersphere vertice angles.
@@ -154,7 +165,17 @@ class HuperSphere extends MyObject {
 	 *	4 for <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> - pyramid.
 	 *	5 for <b><a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> - [pentahedroid]{@link https://en.wikipedia.org/wiki/5-cell}.
 	 * </pre>
-	 * @param {array} [classSettings.settings.object.geometry.colors] array of Colors of vertices
+	 * @param {array} [classSettings.settings.object.geometry.colors] array of colors of vertices.
+	 * <pre>
+ 	 * Color of the each vertice is group of three (RGB) items of the colors array in range from 0 to 1. See [THREE.Color]{@link https://threejs.org/docs/?q=Color#api/en/math/Color} for details.
+	 * Example:
+	 * [
+	 * 	1, 0, 0,//First vertice is red.
+	 * 	0, 1, 0,//Second vertice green.
+	 * 	0, 0, 1,//Third vertice blue.
+	 * ]
+	 * </pre>
+	 * Note: Color of vertice is defined in the <b>classSettings.settings.object.color</b> parameter if it not exists in the colors array.
 	 * @param {array} [classSettings.settings.object.geometry.opacity] array of opacities of each vertice. Each item of array is float value in the range of 0.0 - 1.0 indicating how transparent the material is. A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
 	 * @param {object} [classSettings.settings.object.geometry.indices] Array of <b>indices</b> of edges of hupersphere.
 	 * @param {array|object} [classSettings.settings.object.geometry.indices.edges] HuperSphere edges.
