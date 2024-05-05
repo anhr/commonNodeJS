@@ -192,62 +192,46 @@ class MyObject {
 			return settings.bufferGeometry;
 			
 		}
-		this.verticeColor = (i, mul = 1, vertice) => {
+		this.verticeColor = (i, vertice) => {
 
 			const colors = settings.object.geometry.colors;
 			const colorsId = i * 3;
-			if (colors && colors[colorsId] != undefined) return [colors[colorsId] * mul, colors[colorsId + 1] * mul, colors[colorsId +2] * mul];
-//			const color = settings.object.color != undefined ? settings.object.color : _this.color();
+			if (colors && colors[colorsId] != undefined)
+				return [colors[colorsId], colors[colorsId + 1], colors[colorsId + 2]];
+			//					return [colors[colorsId] * mul, colors[colorsId + 1] * mul, colors[colorsId + 2] * mul];
 			const color = settings.object.color;
 			if ((color != undefined) && (typeof color != 'object')) {
 
-				const rgb = new THREE.Color(color);
-				return [rgb.r * mul, rgb.g * mul, rgb.b * mul, ];
-/*				
-				rgb.r *= mul;
-				rgb.g *= mul;
-				rgb.b *= mul;
-				return rgb;
-*/				
-				
+				return new THREE.Color(_this.color());
+				/*					
+									const rgb = new THREE.Color(color);
+									return [rgb.r * mul, rgb.g * mul, rgb.b * mul,];
+				*/
+
 			}
 			//Вершина не имеет 4 координаты. Установить цвет вершины по умолчанию
 			const getDefaultColor = () => {
-				
-				const rgb = new THREE.Color(_this.color());
-				return [rgb.r * mul, rgb.g * mul, rgb.b * mul, ];
-				
+
+				return new THREE.Color(_this.color());
+				/*
+								const rgb = new THREE.Color(_this.color());
+								return [rgb.r * mul, rgb.g * mul, rgb.b * mul, ];
+				*/
+
 			}
 			let w
 			if (vertice) w = vertice.w;
 			else if (!_this.getPoint) {
 
 				const position = _this.bufferGeometry.attributes.position;
-				if (position.itemSize != 4) {
-
-					return getDefaultColor();
-/*					
-					console.error(sMyObject + '.verticeColor: Invalid position.itemSize = ' + position.itemSize);
-					return [mul, mul, mul];
-*/					
-
-				}
+				if (position.itemSize != 4) return getDefaultColor();
 				w = new THREE.Vector4().fromBufferAttribute(position, i).w;
-				
+
 			}
 			else w = _this.getPoint(i).w;
-			if (w === undefined) {
-
-				return getDefaultColor();
-/*				
-				//Вершина не имеет 4 координаты. Установить цвет вершины по умолчанию
-				const rgb = new THREE.Color(_this.color());
-				return [rgb.r * mul, rgb.g * mul, rgb.b * mul, ];
-*/				
-				
-			}
+			if (w === undefined) return getDefaultColor();
 			return w;
-		
+
 		}
 		this.setPositionAttributeFromPoint = (i, vertice) => {
 
@@ -268,8 +252,7 @@ class MyObject {
 			
 			let colorId = i * attributes.color.itemSize;
 			array = attributes.color.array;
-			const verticeColor = _this.verticeColor(i, 1,//255,
-													vertice);
+			const verticeColor = this.verticeColor(i, vertice);
 			if (typeof verticeColor === 'number'){
 
 				if (settings.options) {
@@ -280,8 +263,14 @@ class MyObject {
 				}
 				colorId += attributes.color.itemSize - 1;
 				
-			} else if (Array.isArray(verticeColor))
-				verticeColor.forEach(item => array[colorId++] = item);
+			} else if (Array.isArray(verticeColor)) verticeColor.forEach(item => array[colorId++] = item);
+			else if (verticeColor instanceof THREE.Color) {
+
+				array [colorId++] = verticeColor.r;
+				array [colorId++] = verticeColor.g;
+				array [colorId++] = verticeColor.b;
+				
+			}
 			else console.error(sMyObject + '.setPositionAttributeFromPoint: Invalid verticeColor = ' + verticeColor);
 /*
 			const mul = 255;

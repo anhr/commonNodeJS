@@ -1941,7 +1941,8 @@ class GuiSelectPoint {
 							positionDefault.z );
 */						
 
-					if (isDislayEl(cOpacity)) cOpacity.setValue( cOpacity.initialValue );
+					if ( isDislayEl( cOpacity) ) cOpacity.setValue( cOpacity.initialValue );
+					if ( isDislayEl( cColor) && !cColor.domElement.querySelector( 'input' ).readOnly ) cColor.setValue( cColor.initialValue );
 					
 					if ( positionDefault.w !== undefined ) {
 
@@ -1962,7 +1963,7 @@ class GuiSelectPoint {
 						const float = parseFloat( positionDefault.w );
 						if ( float === positionDefault.w ) {
 
-							if (isDislayEl( cW )) setValue( cW, positionDefault.w );
+							if ( isDislayEl( cW ) ) setValue( cW, positionDefault.w );
 							
 						} else if ( typeof positionDefault.w  === "string") {
 							
