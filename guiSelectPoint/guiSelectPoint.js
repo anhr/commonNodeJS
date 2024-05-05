@@ -420,7 +420,10 @@ class GuiSelectPoint {
 				}
 				if (attributes.position.itemSize < 4) {
 
-					if ( intersectionSelected.object.material.vertexColors === true ) {
+					if (
+						intersectionSelected.object.material.vertexColors === true ||
+						(intersectionSelected.object.material instanceof THREE.ShaderMaterial === true)
+					) {
 						
 						displayControllerW = none;
 						displayControllerColor = block;
@@ -519,7 +522,7 @@ class GuiSelectPoint {
 
 				}
 
-		}
+			}
 			dislayEl( cW, displayControllerW );
 			dislayEl( cColor, displayControllerColor );
 
