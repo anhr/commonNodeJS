@@ -1130,7 +1130,6 @@ class ND extends MyObject {
 
 						//изменилась позиция вершины
 						target[name].positionWorld = undefined;
-						//return true;
 
 					}
 					target[name] = value;
@@ -1296,7 +1295,6 @@ class ND extends MyObject {
 															iAxes: [1, 2],
 
 														},
-//														color: color,
 														
 													},
 													vectorPlane: vectorPlane.array,
@@ -1315,7 +1313,6 @@ class ND extends MyObject {
 															iAxes: [0, 2],
 
 														},
-//														color: color,
 													
 													},
 													vectorPlane: vectorPlane.array,
@@ -1343,7 +1340,6 @@ class ND extends MyObject {
 															iAxes: [axis, n - 1],
 
 														},
-//														color: color,
 													
 													},
 													vectorPlane: vectorPlane.array,
@@ -2049,33 +2045,7 @@ class ND extends MyObject {
 
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
 
-		this.opacity = ( object3D, transparent, opacity ) => {
-
-			_ND.verticesOpacity( transparent, opacity );
-/*			
-			const color = object3D.geometry.attributes.color;
-			if ( color && ( color.itemSize > 3 ) ) {
-
-				if ( color.itemSize != 4 ) console.error('ND.opacity: Invalid color.itemSize = ' + color.itemSize);
-				const array = color.array;
-				for ( let i = 0; i < color.count; i++ ) {
-	
-					const verticeOpacity = settings.object.geometry.opacity ? settings.object.geometry.opacity[i] : undefined;
-					array[color.itemSize * i + 3] = transparent ? opacity : verticeOpacity === undefined ? 1 : verticeOpacity;
-	
-				}
-				color.needsUpdate = true;
-
-			} else {
-				
-				object3D.material.transparent = transparent;
-				object3D.material.opacity = transparent ? opacity : 1;
-				object3D.material.needsUpdate = true;//for THREE.REVISION = "145dev"
-				
-			}
-*/			
-	
-		}
+		this.opacity = ( object3D, transparent, opacity ) => { _ND.verticesOpacity( transparent, opacity ); }
 
 		//The user has selected a segment of nD object
 		const selectSegment = {
@@ -2085,8 +2055,7 @@ class ND extends MyObject {
 
 						if (line) {
 
-							//if (line.parent)
-								line.parent.remove(line);
+							line.parent.remove(line);
 							line = undefined;
 
 						}
@@ -2102,22 +2071,6 @@ class ND extends MyObject {
 
 					if (!item.parent) parentObject.add(item);
 					_ND.opacity( item, transparent, opacity );
-/*					
-					item.material.transparent = transparent;
-					item.material.opacity = transparent ? opacity : 1;
-					item.material.needsUpdate = true;//for THREE.REVISION = "145dev"
-*/						
-/*					
-					const color = item.geometry.attributes.color, array = color.array;
-					for (let i = 0; i < color.count; i++) {
-	
-						const verticeOpacity = settings.object.geometry.opacity[i];
-						array[color.itemSize * i + 3] = transparent ? opacity : verticeOpacity === undefined ? 1 : verticeOpacity;
-	
-					}
-					color.needsUpdate = true;
-*/						
-					
 
 				}
 
@@ -2143,22 +2096,6 @@ class ND extends MyObject {
 			const color = settings3D.color || 'white';//0xffffff
 			geometry.D3.color = color;
 			const indices3D = geometry.D3.indices, indices = indices3D.indices;
-/*не помню зачем это
-			const colors = indices3D.colors;
-			if (
-				(
-					(
-						( settings.object.geometry.position[0].length > 3 ) &&//Vertice have the w coordinate
-						( typeof settings.object.color === "object" )//Color of vertice from palette
-					) || 
-					settings.object.geometry.opacity//установлена прозрачность вершин
-				) && (
-					!settings.object.geometry.colors || //Vertices colors array is not exists
-					(settings.object.geometry.colors.length != indices3D.colors.length)//изменилось количество вершин
-				)
-			)
-				settings.object.geometry.colors = indices3D.colors;
-*/				
 
 			const buffer = nD.bufferGeometry;
 			
@@ -2181,19 +2118,6 @@ class ND extends MyObject {
 			
 			}
 			if ( settings.object.geometry.opacity ) lineBasicMaterialParameters.transparent = true;//установлена прозрачность вершин
-/*			
-			if ( settings.object.geometry.colors ) {
-
-				lineBasicMaterialParameters = {
-					
-					vertexColors: true,
-					toneMapped: false,
-				
-				}
-				if ( settings.object.geometry.opacity ) lineBasicMaterialParameters.transparent = true;//установлена прозрачность вершин
-				
-			} else lineBasicMaterialParameters = { color: color, };
-*/			
 			
 			const object = indices.length > 1 ?
 				settings3D.faces ?
@@ -2215,57 +2139,6 @@ class ND extends MyObject {
 				} ) );
 			if ( settings3D.name )
 				object.name = settings3D.name;
-/*			
-			if ( settings.object.geometry.colors ) {
-
-				let colors, itemSize;
-				if (settings.object.geometry.opacity){
-
-					itemSize = 4;
-					const colorSize = itemSize - 1,
-						itemsCount = settings.object.geometry.colors.length / colorSize;
-					if ( itemsCount != Math.trunc( itemsCount ) ) console.error( 'ND.create3DObject: Opacity. Invalid colors count = ' + itemsCount );
-					colors = [];
-					for ( let i = 0; i < settings.object.geometry.position.length; i++ ) {
-
-						const iColor = i * colorSize;
-						if (iColor < settings.object.geometry.colors.length)
-							colors.push(
-								settings.object.geometry.colors[iColor + 0],
-								settings.object.geometry.colors[iColor + 1],
-								settings.object.geometry.colors[iColor + 2]
-							);
-						else {
-							
-							const color = new THREE.Color(settings.object.color);
-							colors.push(color.r, color.g, color.b);
-							
-						}
-
-						//opacity
-						colors.push( i < settings.object.geometry.opacity.length ? settings.object.geometry.opacity[i] : 1 );
-						
-					}
-					
-				} else {
-					
-					itemSize = 3;
-					colors = settings.object.geometry.colors;
-					const colorSize = itemSize,
-						itemsCount = settings.object.geometry.colors.length / colorSize;
-					if ( itemsCount != Math.trunc( itemsCount ) ) console.error( 'ND.create3DObject: Opacity. Invalid colors count = ' + itemsCount );
-					for ( let i = itemsCount; i < settings.object.geometry.position.length; i++ ) {
-
-						const color = new THREE.Color(settings.object.color);
-						colors.push(color.r, color.g, color.b);
-						
-					}
-
-				}
-				object.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, itemSize ) );
-
-			}
-*/			
 			
 			scene.add( object );
 

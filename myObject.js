@@ -167,7 +167,6 @@ class MyObject {
 				}
 	
 			});			
-//			if (pointLength < 4) return;
 
 			//color
 			if (_this.setW) _this.setW();
@@ -175,9 +174,8 @@ class MyObject {
 			settings.bufferGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, itemSize));
 
 		}
-		this.setPositionAttributeFromPoints = (points, /*pointLength*/boCreatePositionAttribute) => {
+		this.setPositionAttributeFromPoints = (points, boCreatePositionAttribute) => {
 
-//			if (!settings.bufferGeometry.userData.isReady)
 			if (boCreatePositionAttribute) delete settings.bufferGeometry.attributes.position;
 			if (!settings.bufferGeometry.attributes.position) {
 				
@@ -186,7 +184,6 @@ class MyObject {
 						points[0].w === undefined ? 3 : 4,
 					points.length);
 				for( let i = 0; i < points.length; i++ ) this.setPositionAttributeFromPoint(i);
-//				this.bufferGeometry.userData.isReady = true;
 
 			}
 			return settings.bufferGeometry;
@@ -198,27 +195,10 @@ class MyObject {
 			const colorsId = i * 3;
 			if (colors && colors[colorsId] != undefined)
 				return [colors[colorsId], colors[colorsId + 1], colors[colorsId + 2]];
-			//					return [colors[colorsId] * mul, colors[colorsId + 1] * mul, colors[colorsId + 2] * mul];
 			const color = settings.object.color;
-			if ((color != undefined) && (typeof color != 'object')) {
-
-				return new THREE.Color(_this.color());
-				/*					
-									const rgb = new THREE.Color(color);
-									return [rgb.r * mul, rgb.g * mul, rgb.b * mul,];
-				*/
-
-			}
+			if ((color != undefined) && (typeof color != 'object')) { return new THREE.Color(_this.color()); }
 			//Вершина не имеет 4 координаты. Установить цвет вершины по умолчанию
-			const getDefaultColor = () => {
-
-				return new THREE.Color(_this.color());
-				/*
-								const rgb = new THREE.Color(_this.color());
-								return [rgb.r * mul, rgb.g * mul, rgb.b * mul, ];
-				*/
-
-			}
+			const getDefaultColor = () => { return new THREE.Color(_this.color()); }
 			let w
 			if (vertice) w = vertice.w;
 			else if (!_this.getPoint) {
@@ -243,10 +223,8 @@ class MyObject {
 			                  array [positionId++] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
 			if (itemSize > 1) array [positionId++] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) array [positionId++] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
-//			const w = vertice.w != undefined ? vertice.w : vertice[3] != undefined ? vertice[3] : 0;
 			const w = vertice.w;
 			if (itemSize > 3) array [positionId] = w;
-//			if (attributes.position.itemSize < 4) return;
 
 			//Color attribute
 			
@@ -272,51 +250,9 @@ class MyObject {
 				
 			}
 			else console.error(sMyObject + '.setPositionAttributeFromPoint: Invalid verticeColor = ' + verticeColor);
-/*
-			const mul = 255;
-			const colors = settings.object.geometry.colors;
-			let colorsId = i * 3;
-			if (colors && colors[colorId] != undefined) {
-
-				array[colorId++] = colors[colorsId++] * mul;
-				array[colorId++] = colors[colorsId++] * mul;
-				array[colorId++] = colors[colorsId++] * mul;
-				
-			} else {
-				
-				const color = settings.object.color;
-				if ((color != undefined) && (typeof color != 'object')) {
-	
-					const rgb = new THREE.Color(color);
-					array [colorId++] = rgb.r * mul;
-					array [colorId++] = rgb.g * mul;
-					array [colorId++] = rgb.b * mul;
-					
-				} else {
-
-					if (settings.options) {
-						
-						const wScale = settings.options.scales.w;
-						Player.setColorAttribute(attributes, i, settings.options.palette.toColor(w, wScale.min, wScale.max));
-
-					}
-					colorId += attributes.color.itemSize - 1;
-					
-				}
-
-			}
-*/			
 
 			//opacity
-			if (attributes.color.itemSize > 3) {
-
-				this.verticeOpacity(i);
-/*				
-				const opacity = settings.object.geometry.opacity;
-				array[colorId] = opacity ? opacity[i] != undefined ? opacity[i] : 1 : 1;
-*/				
-
-			}
+			if (attributes.color.itemSize > 3) this.verticeOpacity(i);
 			
 		}
 		this.verticeOpacity = (i, transparent, opacity) => {
@@ -339,18 +275,7 @@ class MyObject {
 			const color = settings.bufferGeometry.attributes.color;
 			if ( color && ( color.itemSize > 3 ) ) {
 
-//				if (color.itemSize != 4) console.error(sMyObject + '.verticesOpacity: Invalid color.itemSize = ' + color.itemSize);
-//				const array = color.array;
-				for ( let i = 0; i < color.count; i++ ) {
-
-					this.verticeOpacity(i, transparent, opacity);
-/*
-					const verticeOpacity = settings.object.geometry.opacity ? settings.object.geometry.opacity[i] : undefined;
-					array[color.itemSize * i + 3] = transparent ? opacity : verticeOpacity === undefined ? 1 : verticeOpacity;
-*/
-	
-				}
-//				color.needsUpdate = true;
+				for ( let i = 0; i < color.count; i++ ) { this.verticeOpacity(i, transparent, opacity); }
 
 			} else {
 
@@ -366,7 +291,6 @@ class MyObject {
 			}
 	
 		}
-	//	this.color() { if (this.classSettings.settings.object.color === undefined) this.classSettings.settings.object.color = 'lime'; }
 		this.color = () => {
 	
 			const color = settings.object.color != undefined ? settings.object.color : settings.pointsOptions != undefined ? settings.pointsOptions.color : undefined;

@@ -364,12 +364,6 @@ class GuiSelectPoint {
 			readOnlyEl( cY, boReadOnly );
 			readOnlyEl( cZ, boReadOnly );
 			readOnlyEl( cW, boReadOnly );
-/*
-			if ( cX ) cX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-			if ( cY ) cY.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-			if ( cZ ) cZ.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-			if ( cW ) cW.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-*/
 
 		}
 		function setPosition(intersectionSelected) {
@@ -416,15 +410,12 @@ class GuiSelectPoint {
 				//console.error( 'arrayFuncs === "function" under constraction' );
 
 			}
-			//			var opasity;
 			const func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined,
 				attributes = intersectionSelected.object.geometry.attributes;
-			//			if ( attributes.position.itemSize < 4 )
 			if (!attributes.color) {
 
 				displayControllerW = none;
 				displayControllerColor = none;
-				//				displayControllerOpacity = none;
 
 			} else {
 
@@ -449,7 +440,6 @@ class GuiSelectPoint {
 						displayControllerW = none;
 						displayControllerColor = block;
 						setColorControl( new THREE.Color().fromBufferAttribute(attributes.color, intersectionSelected.index) );
-//						cColor.setValue( '#' + new THREE.Color().fromBufferAttribute(attributes.color, intersectionSelected.index).getHexString() );
 
 					}
 					
@@ -473,26 +463,15 @@ class GuiSelectPoint {
 
 						displayControllerW = none;
 						displayControllerColor = block;
-						//					displayControllerOpacity = block;
 
 						//color
 						if (intersectionSelected.object.userData.player.arrayFuncs === undefined) {
 
 							displayControllerColor = none;
-							//						displayControllerOpacity = none;
 
 						} else {
 
 							setColorControl(color);
-/*							
-							const strColor = '#' + color.getHexString();
-							//Сначала надо установить initialValue потому что для FrustumPoints я устанвил readOnly для cColor.
-							//В этом случае я не могу отобразить цвет следующей точки FrustumPoints потому что в режиме readOnly
-							//при изменении цвета восстанвливается старый цвет из initialValue.
-							cColor.initialValue = strColor;
-							cColor.setValue(strColor);
-							cColor.userData = { intersection: intersectionSelected, };
-*/							
 							cOpacity.userData = { intersection: intersectionSelected, };
 
 						}
@@ -537,7 +516,6 @@ class GuiSelectPoint {
 
 						}
 						displayControllerColor = none;
-						//					displayControllerOpacity = none;
 
 					}
 
@@ -561,10 +539,6 @@ class GuiSelectPoint {
 			_this.setReadOnlyPosition(boReadOnly);
 			readOnlyEl( cColor, boReadOnly );
 			readOnlyEl( cOpacity, boReadOnly );
-/*			
-			cColor.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-			cOpacity.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-*/			
 			funcFolder.displayFolder( !boReadOnly );
 
 		}
@@ -888,9 +862,7 @@ class GuiSelectPoint {
 						undefined :
 						mesh.userData.player.arrayFuncs[intersectionSelected.index].line;//You can not trace points if you do not defined the mesh.userData.player.arrayFuncs
 				if ( cTrace )
-					cTrace.setValue( ( line === undefined )
-						//					|| ( typeof line.isVisible === 'undefined' ) ?//не создан player
-						?
+					cTrace.setValue( ( line === undefined ) ?
 						false : line.isVisible() )
 
 				cRestoreDefaultLocalPosition.domElement.parentElement.parentElement.style.display =
@@ -1886,17 +1858,6 @@ class GuiSelectPoint {
 					if (color.itemSize < 4) return;
 					color.array[3 + intersection.index * color.itemSize] = opasity;
 					color.needsUpdate = true;
-/*					
-					if ( cColor.userData === undefined )
-						return;
-					const intersection = cColor.userData.intersection;
-					const points = intersection.object;
-					if ( points.geometry.attributes.ca === undefined )
-						return;//no opasity
-					points.geometry.attributes.ca.array
-					[3 + intersection.index * points.geometry.attributes.ca.itemSize] = opasity;
-					points.geometry.attributes.ca.needsUpdate = true;
-*/					
 
 				} );
 			dat.controllerNameAndTitle( cOpacity, lang.opacity, lang.opacityTitle );
@@ -1925,7 +1886,6 @@ class GuiSelectPoint {
 					return;
 				const controller = dat.controllerZeroStep( fPointWorld, { value: scale.min, }, 'value' );
 				readOnlyEl( controller, true );
-//				controller.domElement.querySelector( 'input' ).readOnly = true;
 				dat.controllerNameAndTitle( controller, scale.name );
 				return controller;
 
@@ -1957,16 +1917,6 @@ class GuiSelectPoint {
 					setDefaultValue( cY, positionDefault.y );
 					setDefaultValue( cZ, positionDefault.z === undefined ? 0 ://default Z axis of 2D point is 0
 							positionDefault.z );
-/*					
-					cX.setValue( typeof positionDefault.x === "function" ?
-						positionDefault.x( t, options.a, options.b ) : positionDefault.x );
-					cY.setValue( typeof positionDefault.y === "function" ?
-						positionDefault.y( t, options.a, options.b ) : positionDefault.y );
-					cZ.setValue( typeof positionDefault.z === "function" ?
-						positionDefault.z( t, options.a, options.b ) :
-						positionDefault.z === undefined ? 0 ://default Z axis of 2D point is 0
-							positionDefault.z );
-*/						
 
 					if ( isDislayEl( cOpacity ) ) cOpacity.setValue( cOpacity.initialValue );
 					if ( isDislayEl( cColor ) && !isReadOnlyEl( cColor ) ) cColor.setValue( cColor.initialValue );

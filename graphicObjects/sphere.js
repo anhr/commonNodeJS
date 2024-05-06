@@ -438,8 +438,7 @@ class Sphere extends Circle
 					
 				}
 				
-//				if (boProject)
-					face.face.project(group, r);
+				face.face.project(group, r);
 			
 			} );
 			

@@ -614,7 +614,6 @@ class Player {
 								RenameRepeatButtons( buttons.buttonRepeat.title === lang.repeatOn );
 
 							}
-//							_repeat = repeat;
 							var title, color;
 							if ( player.getSettings().repeat ) {
 
@@ -637,13 +636,12 @@ class Player {
 							return group;
 
 						}
-//						_getGroup = getGroup;
 
 						return buttons;
 
 					},
 
-				}, 'playRate' );//, 1, 25, 1 );
+				}, 'playRate' );
 				player.PlayController = this;
 				this.lang = lang;
 				
@@ -848,7 +846,7 @@ class Player {
 				}
 
 				//Ticks per seconds.
-				scaleControllers.interval = scaleControllers.folder.add( settings.options.playerOptions/*timeSettings*/, 'interval', 1, 25, 1 ).onChange( function ( value ) {
+				scaleControllers.interval = scaleControllers.folder.add( settings.options.playerOptions, 'interval', 1, 25, 1 ).onChange( function ( value ) {
 
 					setSettings();
 
@@ -1142,7 +1140,6 @@ class Player {
 
 					if ( !pointerdown )
 						return;
-//					player.selectScene( ( _timeSettings.marks - 1 ) * e.offsetX / elSlider.clientWidth );
 					player.selectScene( ( options.playerOptions.marks - 1 ) * e.offsetX / elSlider.clientWidth );
 
 				} );
@@ -1653,7 +1650,6 @@ class Ids {
 				const id = axisName + controllerId;
 				return {
 
-//					controllerId: id,
 					get controllerId() { return this.boUsed ? undefined : id; },
 					get elController() { return document.getElementById( this.controllerId ); },
 
@@ -2016,7 +2012,6 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 						const controller = axisControllers.worldPosition.controller;
 						
-//						controller.onchange( { currentTarget: { value: value } } );
 						controller.innerHTML = getObjectPosition( mesh, index )[axisName];
 
 					}
@@ -2063,31 +2058,6 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 					addKey( position );
 					addKey( 'worldPosition' );
 
-					//function text
-
-/*
-					var axisControllers = func.controllers[axisName];
-
-					if ( !axisControllers ) {
-
-						if ( ids[axisName].func.elController ) {
-
-							func.controllers[axisName] = {
-
-								func: {
-
-									controller: ids[axisName].func.elController,
-									elName: ids[axisName].elName ? ids[axisName].elName : false,
-
-								}
-
-							}
-							axisControllers = func.controllers[axisName];
-
-						}
-
-					}
-*/
 					createController( axisControllers.func, ids[axisName].func.controllerId, function () { return options.scales[axisName].name + ' = f(t)'; }, {
 
 						value: func[axisName],
@@ -2648,12 +2618,10 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 								Player.execFunc( funcs, 'w', t, optionsColor.options ) :
 								w === undefined ? new THREE.Vector4().w : w,
 					min, max );
-				//optionsColor.colors.push( color.r, color.g, color.b );
 				colors.push( color.r, color.g, color.b );
 	
 			} else if ( optionsColor.colors instanceof THREE.Float32BufferAttribute )
 				vector = new THREE.Vector3( 1, 1, 1 );
-//			else optionsColor.colors.push( 1, 1, 1 );//white
 			else if (optionsColor.color != undefined) {
 
 				const color = new THREE.Color(optionsColor.color);
@@ -2665,43 +2633,6 @@ Player.getColors = function ( arrayFuncs, optionsColor ) {
 		else colors.push( optionsColor.colors[iColor], optionsColor.colors[iColor + 1], optionsColor.colors[iColor + 2] );
 
 		//opacity
-/*		
-		if ( optionsColor.opacity === true ) {
-
-			//непонятно когда это понадобится. Сейчас не определена getStandardNormalDistribution
-			var opacity = 0,
-				standardNormalDistributionZero = getStandardNormalDistribution( 0 );
-			group.children.forEach( function ( mesh ) {
-
-				if ( !mesh.userData.cloud )
-					return;
-				for ( var iMesh = 0; iMesh < mesh.geometry.attributes.position.count; iMesh++ ) {
-
-					var position = getObjectPosition( mesh, iMesh );
-					opacity += getStandardNormalDistribution(
-						getWorldPosition(
-							camera, new THREE.Vector3().fromBufferAttribute( optionsColor.positions, i )
-						).distanceTo( position ) * 5
-					) / standardNormalDistributionZero;
-
-				}
-
-			} );
-
-			if ( debug.opacity !== undefined )
-				opacity = debug.opacity;
-
-			if ( optionsColor.colors instanceof THREE.Float32BufferAttribute ) {
-
-				optionsColor.colors.setXYZW( i, vector.x, vector.y, vector.z, opacity );
-
-			}
-			else optionsColor.colors.push( opacity );
-
-		} else if ( optionsColor.opacity instanceof Array )
-			optionsColor.colors.push( i < optionsColor.opacity.length ? optionsColor.opacity[i] : 1 );
-			else optionsColor.colors.push( 1 );
-*/		
 		if ( optionsColor.opacity instanceof Array )
 			colors.push( i < optionsColor.opacity.length ? optionsColor.opacity[i] : 1 );
 		else colors.push( 1 );
