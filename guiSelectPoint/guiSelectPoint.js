@@ -249,6 +249,9 @@ class GuiSelectPoint {
 			return el;
 
 		}
+
+		//dislay element
+
 		function dislayEl( controller, displayController ) {
 
 			if ( controller === undefined )
@@ -259,11 +262,6 @@ class GuiSelectPoint {
 				displayController = 'none';
 			else if ( typeof displayController !== "string" )
 				displayController = 'block';
-/*
-			var el = controller.domElement;
-			while ( el.tagName.toUpperCase() !== "LI" ) el = el.parentElement;
-			el.style.display = displayController;
-*/
 			getLiEl(controller).style.display = displayController;
 
 		}
@@ -274,6 +272,23 @@ class GuiSelectPoint {
 			return getLiEl(controller).style.display === none ? false : true;
 
 		}
+
+		//readOnly controller
+
+		const getInputEl =  ( controller ) => { return controller ? controller.domElement.querySelector( 'input' ) : undefined; }
+		const readOnlyEl = ( controller, boReadOnly ) => {
+
+			const element = getInputEl( controller );
+			if ( element ) element.readOnly = boReadOnly;
+		
+		}
+		const isReadOnlyEl = ( controller ) => {
+			
+			const element = getInputEl( controller );
+			if ( element ) return element.readOnly;
+		
+		}
+
 		function exposePosition( selectedPointIndex ) {
 
 			if ( selectedPointIndex === undefined )
@@ -326,7 +341,7 @@ class GuiSelectPoint {
 
 			if ( !controller )
 				return;
-			const input = controller.domElement.querySelector( 'input' ),
+			const input = getInputEl( controller ),//controller.domElement.querySelector( 'input' ),
 				readOnly = input.readOnly;
 			input.readOnly = false;
 			controller.object[controller.property] = v;
@@ -345,10 +360,16 @@ class GuiSelectPoint {
 		 */
 		this.setReadOnlyPosition = function ( boReadOnly ) {
 
+			readOnlyEl( cX, boReadOnly );
+			readOnlyEl( cY, boReadOnly );
+			readOnlyEl( cZ, boReadOnly );
+			readOnlyEl( cW, boReadOnly );
+/*
 			if ( cX ) cX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			if ( cY ) cY.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			if ( cZ ) cZ.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			if ( cW ) cW.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+*/
 
 		}
 		function setPosition(intersectionSelected) {
@@ -538,8 +559,12 @@ class GuiSelectPoint {
 
 			}
 			_this.setReadOnlyPosition(boReadOnly);
+			readOnlyEl( cColor, boReadOnly );
+			readOnlyEl( cOpacity, boReadOnly );
+/*			
 			cColor.domElement.querySelector( 'input' ).readOnly = boReadOnly;
 			cOpacity.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+*/			
 			funcFolder.displayFolder( !boReadOnly );
 
 		}
@@ -1694,7 +1719,7 @@ class GuiSelectPoint {
 			function isReadOnlyController( controller ) {
 
 				if ( controller.boSetValue ) return true;
-				if ( controller.domElement.querySelector( 'input' ).readOnly ) {
+				if ( isReadOnlyEl( controller ) ) {
 
 					if ( controller.getValue() !== controller.initialValue ) {
 
@@ -1899,7 +1924,8 @@ class GuiSelectPoint {
 				if ( !scale.isAxis() )
 					return;
 				const controller = dat.controllerZeroStep( fPointWorld, { value: scale.min, }, 'value' );
-				controller.domElement.querySelector( 'input' ).readOnly = true;
+				readOnlyEl( controller, true );
+//				controller.domElement.querySelector( 'input' ).readOnly = true;
 				dat.controllerNameAndTitle( controller, scale.name );
 				return controller;
 
@@ -1917,6 +1943,7 @@ class GuiSelectPoint {
 						t = options.time,
 						setDefaultValue = ( control, value ) => {
 							
+							if ( !control ) return;
 							control.setValue(
 								typeof value === "function" ?
 									value( t, options.a, options.b ) :
@@ -1941,8 +1968,8 @@ class GuiSelectPoint {
 							positionDefault.z );
 */						
 
-					if ( isDislayEl( cOpacity) ) cOpacity.setValue( cOpacity.initialValue );
-					if ( isDislayEl( cColor) && !cColor.domElement.querySelector( 'input' ).readOnly ) cColor.setValue( cColor.initialValue );
+					if ( isDislayEl( cOpacity ) ) cOpacity.setValue( cOpacity.initialValue );
+					if ( isDislayEl( cColor ) && !isReadOnlyEl( cColor ) ) cColor.setValue( cColor.initialValue );
 					
 					if ( positionDefault.w !== undefined ) {
 
