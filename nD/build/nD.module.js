@@ -11730,6 +11730,246 @@ var Matrix2 = new Proxy([], {
 var MyMath = { Matrix: Matrix };
 
 /**
+ * @module myObject
+ * @description base class for my threejs objects
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+*/
+var sMyObject = 'MyObject';
+var MyObject = function () {
+	function MyObject() {
+		var _this2 = this;
+		var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+		var vertices = arguments[1];
+		classCallCheck(this, MyObject);
+		var _this = this;
+		settings.object = settings.object || {};
+		settings.object.geometry = settings.object.geometry || {};
+		if (!settings.object.geometry.position || !settings.object.geometry.position.isPositionProxy) settings.object.geometry.position = new Proxy(settings.object.geometry.position || [], {
+			get: function get$$1(positions, name) {
+				var positionId = parseInt(name);
+				if (!isNaN(positionId)) {
+					return new Proxy(positions[positionId], {
+						set: function set$$1(position, name, value) {
+							var axisId = parseInt(name);
+							if (!isNaN(axisId)) {
+								position[axisId] = value;
+								settings.bufferGeometry.userData.position[positionId][axisId] = value;
+								return true;
+							}
+							position[name] = value;
+							return true;
+						}
+					});
+				}
+				switch (name) {
+					case 'isPositionProxy':
+						return true;
+				}
+				return positions[name];
+			}
+		});
+		var THREE = three$1.THREE;
+		if (!settings.bufferGeometry) settings.bufferGeometry = new THREE.BufferGeometry();
+		this.bufferGeometry = settings.bufferGeometry;
+		if (vertices)
+			settings.object.geometry.position = settings.object.geometry.position || vertices;
+		var createPositionAttribute = function createPositionAttribute(pointLength, pointsLength) {
+			var MAX_POINTS = settings.object.geometry.MAX_POINTS;
+			if (MAX_POINTS != undefined) settings.bufferGeometry.setDrawRange(0, pointsLength * 2 - 1);
+			var positions = new Float32Array(pointsLength * pointLength);
+			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
+			settings.bufferGeometry.userData.position = new Proxy(settings.bufferGeometry.attributes.position, {
+				get: function get$$1(position, name) {
+					var positionId = parseInt(name);
+					if (!isNaN(positionId)) {
+						var positionOffset = positionId * position.itemSize,
+						    array = position.array;
+						var positionItem = new Proxy([], {
+							get: function get$$1(vertice, name) {
+								var axisId = parseInt(name);
+								if (!isNaN(axisId)) {
+									if (axisId >= position.itemSize) {
+										return;
+									}
+									return array[positionOffset + axisId];
+								}
+								switch (name) {
+									case 'forEach':
+										return function (item) {
+											for (var _axisId = 0; _axisId < position.itemSize; _axisId++) {
+												item(array[positionOffset + _axisId], _axisId);
+											}
+										};
+									case 'length':
+										return position.itemSize;
+									case 'toJSON':
+										return function (item) {
+											var res = '[';
+											positionItem.forEach(function (axis) {
+												res += axis + ', ';
+											});
+											return res.substring(0, res.length - 2) + ']';
+										};
+									case 'x':
+										return array[positionOffset + 0];
+									case 'y':
+										return array[positionOffset + 1];
+									case 'z':
+										return array[positionOffset + 2];
+									case 'w':
+										{
+											if (position.itemSize < 4) return;
+											return array[positionOffset + 3];
+										}
+								}
+								return vertice[name];
+							},
+							set: function set$$1(vertice, name, value) {
+								var axisId = parseInt(name);
+								if (!isNaN(axisId)) {
+									array[positionOffset + axisId] = value;
+									return true;
+								}
+								vertice[name] = value;
+								return true;
+							}
+						});
+						return positionItem;
+					}
+					switch (name) {
+						case 'length':
+							return position.count;
+					}
+					console.error(sMyObject + ': get settings.bufferGeometry.userData.position. Invalid name: ' + name);
+					return position[name];
+				}
+			});
+			if (_this.setW) _this.setW();
+			var itemSize = settings.object.geometry.opacity ? 4 : 3,
+			    colors = new Float32Array(pointsLength * itemSize);
+			settings.bufferGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, itemSize));
+		};
+		this.setPositionAttributeFromPoints = function (points,                boCreatePositionAttribute) {
+			if (boCreatePositionAttribute) delete settings.bufferGeometry.attributes.position;
+			if (!settings.bufferGeometry.attributes.position) {
+				createPositionAttribute(_this2.pointLength ? _this2.pointLength() : points[0].w === undefined ? 3 : 4, points.length);
+				for (var i = 0; i < points.length; i++) {
+					_this2.setPositionAttributeFromPoint(i);
+				}
+			}
+			return settings.bufferGeometry;
+		};
+		this.verticeColor = function (i, vertice) {
+			var colors = settings.object.geometry.colors;
+			var colorsId = i * 3;
+			if (colors && colors[colorsId] != undefined) return [colors[colorsId], colors[colorsId + 1], colors[colorsId + 2]];
+			var color = settings.object.color;
+			if (color != undefined && (typeof color === 'undefined' ? 'undefined' : _typeof(color)) != 'object') {
+				return new THREE.Color(_this.color());
+			}
+			var getDefaultColor = function getDefaultColor() {
+				return new THREE.Color(_this.color());
+			};
+			var w = void 0;
+			if (vertice) w = vertice.w;else if (!_this.getPoint) {
+				var position = _this.bufferGeometry.attributes.position;
+				if (position.itemSize != 4) return getDefaultColor();
+				w = new THREE.Vector4().fromBufferAttribute(position, i).w;
+			} else w = _this.getPoint(i).w;
+			if (w === undefined) return getDefaultColor();
+			return w;
+		};
+		this.setPositionAttributeFromPoint = function (i, vertice) {
+			var attributes = settings.bufferGeometry.attributes,
+			    position = attributes.position,
+			    itemSize = position.itemSize;
+			vertice = vertice || _this.getPoint(i);
+			var positionId = i * itemSize,
+			    array = position.array;
+			array[positionId++] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
+			if (itemSize > 1) array[positionId++] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
+			if (itemSize > 2) array[positionId++] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
+			var w = vertice.w;
+			if (itemSize > 3) array[positionId] = w;
+			var colorId = i * attributes.color.itemSize;
+			array = attributes.color.array;
+			var verticeColor = _this2.verticeColor(i, vertice);
+			if (typeof verticeColor === 'number') {
+				if (settings.options) {
+					var wScale = settings.options.scales.w;
+					Player$1.setColorAttribute(attributes, i, settings.options.palette.toColor(w, wScale.min, wScale.max));
+				}
+				colorId += attributes.color.itemSize - 1;
+			} else if (Array.isArray(verticeColor)) verticeColor.forEach(function (item) {
+				return array[colorId++] = item;
+			});else if (verticeColor instanceof THREE.Color) {
+				array[colorId++] = verticeColor.r;
+				array[colorId++] = verticeColor.g;
+				array[colorId++] = verticeColor.b;
+			} else console.error(sMyObject + '.setPositionAttributeFromPoint: Invalid verticeColor = ' + verticeColor);
+			if (attributes.color.itemSize > 3) {
+				_this2.verticeOpacity(i);
+			}
+		};
+		this.verticeOpacity = function (i, transparent, opacity) {
+			var color = settings.bufferGeometry.attributes.color;
+			if (color.itemSize != 4) {
+				console.error(sMyObject + '.verticeOpacity: Invalid color.itemSize = ' + color.itemSize);
+				return;
+			}
+			var array = color.array;
+			var verticeOpacity = settings.object.geometry.opacity ? settings.object.geometry.opacity[i] : undefined;
+			array[color.itemSize * i + 3] = transparent ? opacity : verticeOpacity === undefined ? 1 : verticeOpacity;
+			color.needsUpdate = true;
+		};
+		this.verticesOpacity = function (transparent, opacity) {
+			var color = settings.bufferGeometry.attributes.color;
+			if (color && color.itemSize > 3) {
+				for (var i = 0; i < color.count; i++) {
+					_this2.verticeOpacity(i, transparent, opacity);
+				}
+			} else {
+				var object3D = _this.object3D;
+				if (object3D) {
+					object3D.material.transparent = transparent;
+					object3D.material.opacity = transparent ? opacity : 1;
+					object3D.material.needsUpdate = true;
+				} else console.error(sMyObject + '.verticesOpacity: Invalid object3D');
+			}
+		};
+		this.color = function () {
+			var color = settings.object.color != undefined ? settings.object.color : settings.pointsOptions != undefined ? settings.pointsOptions.color : undefined;
+			return color != undefined ? color : _this2.defaultColor;
+		};
+	}
+	createClass(MyObject, [{
+		key: 'defaultColor',
+		get: function get$$1() {
+			return 'white';
+		}
+	}, {
+		key: 'isOpacity',
+		get: function get$$1() {
+			if (this.bufferGeometry.attributes.color.itemSize > 3) {
+				if (!this.object3D.material.transparent) console.error(sMyObject + '.isOpacity: invalid this.object3D.material.transparent = ' + this.object3D.material.transparent);
+				return true;
+			}
+			return false;
+		}
+	}]);
+	return MyObject;
+}();
+
+/**
  * @module ND
  * @description N-dimensional graphics
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -11747,2074 +11987,2035 @@ var MyMath = { Matrix: Matrix };
  * @see [4D-Shapes]{@link https://artemonigiri.github.io/4D-Shapes/}
  * @see [The Regular Polychora]{@link https://www.qfbox.info/4d/regular}
 */
-var ND =
-function ND(n) {
-	var settings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-	classCallCheck(this, ND);
-	var options = settings.options,
-	    _ND = this;
-	settings.object = settings.object || {};
-	settings.object.raycaster = settings.object.raycaster || {};
-	settings.object.raycaster.text = settings.object.raycaster.text || function (intersection) {
-		var getLanguageCode = settings.options.getLanguageCode;
-		var lang = {
-			pointId: "point Id",
-			edgeId: "edge Id",
-			faceId: "face Id",
-			bodyId: "body Id",
-			segmentId: "segment Id"
-		};
-		var _languageCode = getLanguageCode();
-		switch (_languageCode) {
-			case 'ru':
-				lang.pointId = 'Индекс точки';
-				lang.edgeId = 'Индекс ребра';
-				lang.faceId = 'Индекс грани';
-				lang.bodyId = 'Индекс тела';
-				lang.segmentId = 'Индекс сегмента';
-				break;
-		}
-		var index = intersection.object.geometry.index,
-		    edge = [index.getX(intersection.indexNew), index.getY(intersection.indexNew)],
-		    indices = intersection.object.userData.geometry.indices;
-		edges = indices[0];
-		var minDistance = Infinity,
-		    pointId;
-		function distance(i) {
-			var pointIndex = edge[i],
-			    distance = intersection.point.distanceTo(new THREE.Vector3().fromBufferAttribute(intersection.object.geometry.attributes.position, pointIndex));
-			if (minDistance > distance) {
-				minDistance = distance;
-				pointId = pointIndex;
-			}
-		}
-		distance(0);
-		distance(1);
-		var text = '\n' + lang.pointId + ': ' + pointId;
-		for (var segmentIndex = 0; segmentIndex < edges.length; segmentIndex++) {
-			var edgeCur = edges[segmentIndex];
-			if (edgeCur[0] === edge[0] && edgeCur[1] === edge[1] || edgeCur[0] === edge[1] && edgeCur[1] === edge[0]) {
-				text += '\n' + lang.edgeId + ': ' + segmentIndex;
-				edges.selected = segmentIndex;
-				var detectedIndex;
-				for (var indicesSegment = 1; indicesSegment < indices.length; indicesSegment++) {
-					var _segment = indices[indicesSegment];
-					_segment.forEach(function (segmentItem, segmentIndexCur) {
-						for (var i = 0; i < segmentItem.length; i++) {
-							if (segmentItem[i] === segmentIndex) {
-								detectedIndex = segmentIndexCur;
-								break;
-							}
-						}
-					});
-					if (detectedIndex === undefined) {
-						console.error('ND: mouse move. Index of segment was not detected');
-						break;
-					} else {
-						segmentIndex = detectedIndex;
-						var segmentName;
-						switch (indicesSegment) {
-							case 1:
-								segmentName = lang.faceId;break;
-							case 2:
-								segmentName = lang.bodyId;break;
-							default:
-								segmentName = lang.segmentId;
-						}
-						text += '\n' + segmentName + ': ' + segmentIndex;
-						_segment.selected = segmentIndex;
-					}
-				}
-				var segment = indices[indices.length - 1][segmentIndex];
-				break;
-			}
-		}
-		return text;
-	};
-	settings.object.name = settings.object.name || 'Object';
-	if (settings.object.aObjects) settings.object.aObjects.nD = this;
-	settings.object.geometry = settings.object.geometry || {};
-	if (settings.object.geometry instanceof Array) {
-		var position = settings.object.geometry;
-		settings.object.geometry = { position: position };
-	}
-	settings.object.geometry.position = settings.object.geometry.position || [];
-	var Vector = function (_ND$VectorN) {
-		inherits(Vector, _ND$VectorN);
-		function Vector() {
-			var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-			var _this2, _ret;
-			var vectorSettings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-			classCallCheck(this, Vector);
-			array = (_this2 = possibleConstructorReturn(this, (Vector.__proto__ || Object.getPrototypeOf(Vector)).call(this, n, array)), _this2).array;
-			var _this = _this2;
-			return _ret = new Proxy(array, {
-				get: function get$$1(target, name) {
-					var i = parseInt(name);
-					if (isNaN(i)) {
-						switch (name) {
-							case "point":
-								var _THREE = three$1.THREE;
-								if (_typeof(settings.object.color) === "object" && array.length >= 4) return new _THREE.Vector4(this.get(undefined, 0), this.get(undefined, 1), this.get(undefined, 2), this.get(undefined, 3));
-								return new _THREE.Vector3(this.get(undefined, 0), this.get(undefined, 1), this.get(undefined, 2));
-							default:
-								{
-									return _this[name];
-								}
-						}
-						return;
-					}
-					if (i >= n) return 0;
-					if (array.length > n && settings.object.geometry.iAxes && i < settings.object.geometry.iAxes.length) i = settings.object.geometry.iAxes[i];
-					return array[i];
-				},
-				set: function set$$1(target, name, value) {
-					var i = parseInt(name);
-					if (!isNaN(i)) {
-						if (i >= array.length) {
-							array.push(value);
-							return array.length;
-						}
-						array[i] = value;
-						_ND.intersection();
-						if (vectorSettings.onChange) vectorSettings.onChange();
-						return true;
-					}
-					switch (name) {
-						case 'onChange':
-							vectorSettings.onChange = value;
-							return vectorSettings.onChange;
-						default:
-							console.error('ND: Vector set. Invalid name: ' + name);
-					}
-				}
-			}), possibleConstructorReturn(_this2, _ret);
-		}
-		createClass(Vector, [{
-			key: 'push',
-			value: function push(value) {
-				console.error('ND.Vector.push() unavailable');
-			}
-		}, {
-			key: 'pop',
-			value: function pop() {
-				console.error('ND.Vector.pop() unavailable');
-			}
-		}]);
-		return Vector;
-	}(ND.VectorN);
-	function update() {
-		_ND.intersection();
-		object3D.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints(geometry.D3.points).attributes.position.array;
-		object3D.geometry.attributes.position.needsUpdate = true;
-		if (options.guiSelectPoint) options.guiSelectPoint.update();
-		object3D.children.forEach(function (child) {
-			if (child.type === 'Sprite') child.position.copy(geometry.D3.points[child.userData.pointID]);
-		});
-	}
-	function proxyPosition() {
-		if (settings.object.position && settings.object.position.isProxy) return settings.object.position;
-		return new Proxy(settings.object.position ? settings.object.position instanceof Array ? settings.object.position : [settings.object.position] : [], {
-			get: function get$$1(target, name, args) {
-				var i = parseInt(name);
-				if (!isNaN(i)) {
-					if (target instanceof Array) {
-						if (i < target.length && target[i] !== undefined) return target[i];
-						return 0;
-					}
-					return target;
-				}
-				switch (name) {
-					case 'isProxy':
-						return true;
-					case 'folders':
-						target.folders = target.folders || [];
-						return target.folders;
-					case 'arguments':
-						return;
-					case 'clear':
-						return function () {
-							target.forEach(function (pos, i) {
-								return target[i] = 0;
-							});
-						};
-					case 'forEach':
-						return target.forEach;
-					case 'length':
-						return target.length;
-					default:
-						console.error('ND: settings.object.position Proxy. Invalid name: ' + name);
-				}
-			},
-			set: function set$$1(target, name, value) {
-				target[name] = value;
-				settings.object.geometry.position.reset();
-				var input = target.folders[name].cPosition.domElement.querySelector('input');
-				if (parseFloat(input.value) !== value) {
-					input.value = value;
-					update();
-				}
-				return true;
-			}
-		});
-	}
-	settings.object.position = proxyPosition();
-	function proxyRotation() {
-		if (settings.object.rotation && settings.object.rotation.isProxy) return settings.object.rotation;
-		return new Proxy(settings.object.rotation ? settings.object.rotation instanceof Array ? settings.object.rotation : [settings.object.rotation] : [], {
-			get: function get$$1(target, name, args) {
-				var i = parseInt(name);
-				if (!isNaN(i)) {
-					if (target instanceof Array) {
-						if (i < target.length && target[i] !== undefined) return target[i];
-						return 0;
-					}
-					return target;
-				}
-				switch (name) {
-					case 'isProxy':
-						return true;
-					case 'boUseRotation':
-						return target.boUseRotation;
-					case 'folders':
-						target.folders = target.folders || [];
-						return target.folders;
-					case 'trigonometry':
-						if (!target.trigonometry) {
-							target.trigonometry = new Proxy([], {
-								get: function get$$1(target, name, args) {
-									var i = parseInt(name);
-									if (!isNaN(i)) {
-										if (!target[i]) {
-											settings.object.rotation.boUseRotation = true;
-											var angle = settings.object.rotation[i];
-											settings.object.rotation.boUseRotation = false;
-											target[i] = { sin: Math.sin(angle), cos: Math.cos(angle) };
-										}
-										return target[i];
-									}
-									switch (name) {
-										default:
-											console.error('ND: settings.object.rotation Proxy. Invalid name: ' + name);
-									}
-								},
-								set: function set$$1(target, name, value) {
-									target[name] = value;
-									if (isNaN(parseInt(name))) return true;
-									return true;
-								}
-							});
-						}
-						return target.trigonometry;
-					case 'isRotation':
-						return function () {
-							target.boUseRotation = true;
-							var boRotation = false;
-							for (var j = 0; j < n; j++) {
-								if (settings.object.rotation[j] !== 0) {
-									boRotation = true;
-									break;
-								}
-							}
-							target.boUseRotation = false;
-							return boRotation;
-						};
-					case 'clear':
-						return function () {
-							target.forEach(function (angle, i) {
-								return target[i] = 0;
-							});
-							target.trigonometry = undefined;
-						};
-					case 'arguments':
-						return;
-					case 'forEach':
-						return target.forEach;
-					case 'length':
-						return target.length;
-					default:
-						console.error('ND: settings.object.rotation Proxy. Invalid name: ' + name);
-				}
-			},
-			set: function set$$1(target, name, value) {
-				target[name] = value;
-				if (isNaN(parseInt(name))) return true;
-				settings.object.rotation.trigonometry[name].cos = Math.cos(value);
-				settings.object.rotation.trigonometry[name].sin = Math.sin(value);
-				settings.object.geometry.position.reset();
-				if (target.folders) {
-					var input = target.folders[name].cRotation.domElement.querySelector('input');
-					if (parseFloat(input.value) !== value) {
-						input.value = value;
-					}
-				}
-				update();
-				return true;
-			}
-		});
-	}
-	if (!settings.object.rotation || !settings.object.rotation.isProxy) {
-		settings.object.rotation = proxyRotation();
-		settings.object.rotation.boUseRotation = false;
-	}
-	if (settings.object.geometry.position.target) settings.object.geometry.position = settings.object.geometry.position.target;
-	settings.object.geometry.position.boPositionError = true;
-	var rotationAxes = [[]];
-	function setRotationAxes() {
-		if (n < 2) return;
-		if (rotationAxes[0].length != 0) return;
-		if (n === 2) rotationAxes[0].push(2);
-		else for (var j = 0; j < n - 2; j++) {
-				rotationAxes[0].push(j);
-			}rotationAxes[0].tI = [0, 1];
-		var iLastColumn = rotationAxes[0].length - 1;
-		var boLastRow = false;
-		var _loop = function _loop() {
-			var iLastRow = rotationAxes.length - 1,
-			    lastRow = rotationAxes[iLastRow],
-			    row = [];
-			for (j = iLastColumn; j >= 0; j--) {
-				var prevColumn = lastRow[j];
-				if (j === iLastColumn) iAxis = prevColumn + 1;
-				else iAxis = prevColumn;
-				if (iAxis >= n) {
-					var _ret3 = function () {
-						var createRow = function createRow(j) {
-							if (j <= 0) return false;
-							var prevRowColumn = lastRow[j - 1] + 1;
-							if (prevRowColumn >= lastRow[j]) return createRow(j - 1);
-							row[j - 1] = prevRowColumn;
-							row[j] = row[j - 1] + 1;
-							for (var k = j + 1; k <= iLastColumn; k++) {
-								row[k] = row[k - 1] + 1;
-							}
-							j = j - 2;
-							while (j >= 0) {
-								row[j] = lastRow[j];
-								j--;
-							}
-							return true;
-						};
-						boLastRow = !createRow(j);
-						return 'break';
-					}();
-					if (_ret3 === 'break') break;
-				} else row[j] = iAxis;
-			}
-			if (!boLastRow) {
-				row.tI = [lastRow.tI[0]];
-				tI1 = lastRow.tI[1] + 1;
-				if (tI1 >= n) {
-					row.tI[0]++;
-					tI1 = row.tI[0] + 1;
-				}
-				row.tI[1] = tI1;
-				if (row.length === 0) {
-					console.error('ND positionWorld get: row is empty');
-					return 'break';
-				}
-				rotationAxes.push(row);
-				if (iLastRow === rotationAxes.length - 1) {
-					console.error('ND positionWorld get: row is not added');
-					return 'break';
-				}
-			}
-		};
-		while (!boLastRow) {
-			var j;
-			var iAxis;
-			var tI1;
-			var _ret2 = _loop();
-			if (_ret2 === 'break') break;
-		}
-	}
-	var positionWorld = new Proxy(settings.object.geometry.position ? settings.object.geometry.position : [], {
-		get: function get$$1(target, name) {
-			var i = parseInt(name);
-			if (!isNaN(i)) {
-				settings.object.geometry.position.boPositionError = false;
-				var positionPoint = settings.object.geometry.position[i];
-				if (positionPoint.positionWorld) {
-					settings.object.geometry.position.boPositionError = true;
-					return positionPoint.positionWorld;
-				}
-				var array = [];
-				if (positionPoint !== undefined) {
-					if (!(settings.object.position instanceof Array)) {
-						console.error('ND positionWorld get: settings.object.position is not array');
-						settings.object.position = [settings.object.position];
-					}
-					if (settings.object.rotation.isRotation()) {
-						var getMatrix = function getMatrix(index) {
-							var cos = settings.object.rotation.trigonometry[index].cos,
-							    sin = settings.object.rotation.trigonometry[index].sin,
-							    array = [];
-							var tI = rotationAxes[index].tI;
-							for (var i = 0; i < n; i++) {
-								var _row = [];
-								for (var j = 0; j < n; j++) {
-									if (n === 3) {
-										var iR = n - i - 1,
-										    jR = n - j - 1;
-										if (iR === tI[0] && jR === tI[0]) _row.push(cos);else if (iR === tI[0] && jR === tI[1]) _row.push(sin);else if (iR === tI[1] && jR === tI[0]) _row.push(-sin);else if (iR === tI[1] && jR === tI[1]) _row.push(cos);else if (iR === jR) _row.push(1);else _row.push(0);
-									} else {
-										if (i === tI[0] && j === tI[0]) _row.push(cos);else if (i === tI[0] && j === tI[1]) _row.push(-sin);else if (i === tI[1] && j === tI[0]) _row.push(sin);else if (i === tI[1] && j === tI[1]) _row.push(cos);else if (i === j) _row.push(1);else _row.push(0);
-									}
-								}
-								array.push(_row);
-							}
-							return new MyMath.Matrix(array);
-						};
-						var m3;
-						setRotationAxes();
-						if (n === 2) m3 = getMatrix(0);
-						for (var j = 0; j < rotationAxes.length; j++) {
-							var m = getMatrix(j);
-							if (m3) m3 = m3.multiply(m);
-							else m3 = m;
-						}
-						var position = [];
-						for (var j = 0; j < n; j++) {
-							position.push(positionPoint[j]);
-						}var p = m3.multiply(position);
-						p.forEach(function (value, i) {
-							if (value !== undefined) {
-								array.push(value + settings.object.position[i]);
-							} else console.error('ND: positionWorld get: invalig array item = ' + value);
-						});
-					} else {
-						positionPoint.forEach(function (value, j) {
-							return array.push(value + settings.object.position[j]);
-						});
-						setRotationAxes();
-					}
-				} else console.error('ND positionWorld get index');
-				if (settings.object.geometry.boRememberPosition === undefined) settings.object.geometry.boRememberPosition = true;
-				if (settings.object.geometry.boRememberPosition) positionPoint.positionWorld = array;
-				settings.object.geometry.position.boPositionError = true;
-				return array;
-			}
-			switch (name) {
-				case 'push':
-					return settings.object.geometry.position.push;
-				case 'length':
-					return settings.object.geometry.position.length;
-				case 'forEach':
-					return settings.object.geometry.position.forEach;
-				case 'isProxy':
-					return true;
-				case 'target':
-					return;
-				case 'copy':
-					return function () {
-						var v = [];
-						settings.object.geometry.position.boPositionError = false;
-						settings.object.geometry.position.forEach(function (value, i) {
-							v[i] = positionWorld[i];
-							settings.object.geometry.position.boPositionError = false;
-						});
-						settings.object.geometry.position.boPositionError = true;
-						return v;
-					};
-				default:
-					console.error('ND: positionWorld Proxy. Invalid name: ' + name);
-			}
-		}
-	});
-	var _prevLine = {};
-	function proxyGeometryPosition() {
-		if (settings.object.geometry.position && settings.object.geometry.position.isProxy) return settings.object.geometry.position;
-		return new Proxy(settings.object.geometry.position ? settings.object.geometry.position : [], {
-			get: function get$$1(target, name, args) {
-				var i = parseInt(name);
-				if (!isNaN(i)) {
-					if (settings.object.geometry.position.boPositionError) {
-					}
-					if (i >= target.length) {
-						console.error('ND get settings.object.geometry.position: invalid index = ' + i);
-						return;
-					}
-					if (target[i] instanceof Array) {
-						return new Proxy(target[i], {
-							get: function get$$1(target, name, args) {
-								var i = parseInt(name);
-								if (!isNaN(i)) {
-									if (i >= target.length) return 0;
-									var axis = target[i];
-									if (isNaN(axis)) console.error('ND get settings.object.geometry.position[i][' + i + '] = ' + target[i]);
-									return axis;
-								}
-								switch (name) {
-									case 'reset':
-										return function () {
-											delete target.positionWorld;
-										};
-									case 'distanceTo':
-										return function (verticeTo) {
-											var vertice = target;
-											if (vertice.length != verticeTo.length) {
-												console.error(sUniverse + ': settings.object.geometry.position[i].distanceTo(...). vertice.length != verticeTo.length');
-												return;
-											}
-											var sum = 0;
-											vertice.forEach(function (axis, i) {
-												var d = axis - verticeTo[i];
-												sum += d * d;
-											});
-											return Math.sqrt(sum);
-										};
-								}
-								return target[name];
-							},
-							set: function set$$1(target, name, value) {
-								var i = parseInt(name);
-								target[name] = value;
-								if (!isNaN(i)) {
-									target.positionWorld = undefined;
-									if (_prevLine.prevLine) {
-										_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints(geometry.D3.points).attributes.position.array;
-										_prevLine.prevLine.geometry.attributes.position.needsUpdate = true;
-									}
-									update();
-								}
-								return true;
-							}
-						});
-					}
-					console.error('ND: get settings.object.geometry.position is not array.');
-					return [target[i]];
-				}
-				switch (name) {
-					case 'isProxy':
-						return true;
-					case 'boPositionError':
-						return target.boPositionError;
-					case 'target':
-						return target;
-					case "clone":
-						return function (i) {
-							var v = [];
-							target[i].forEach(function (value, j) {
-								return v[j] = target[i][j];
-							});
-							return v;
-						};
-					case "reset":
-						return function () {
-							target.forEach(function (item) {
-								return delete item.positionWorld;
-							});
-						};
-					default:
-						return target[name];
-				}
-			},
-			set: function set$$1(target, name, value) {
-				var i = parseInt(name);
-				if (!isNaN(i)) {
-					target[name].positionWorld = undefined;
-				}
-				target[name] = value;
-				return true;
-			}
-		});
-	}
-	settings.object.geometry.position = proxyGeometryPosition();
-	function setIndices() {
-		if (settings.object.geometry.indices) return;
-		settings.object.geometry.indices = [];
-		settings.object.geometry.indices.boAddIndices = true;
-	}
-	setIndices();
-	function proxyEdges(newEdges) {
-		edges = newEdges || edges;
-		if (edges && edges.isProxy) return edges;
-		return new Proxy(edges ? edges : [], {
-			get: function get$$1(edges, name, value) {
-				var _this3 = this;
-				var i = parseInt(name);
-				if (!isNaN(i)) {
-					var edge = edges[i];
-					edge.intersection = function (geometryIntersection) {
-						var i = parseInt(name);
-						if (!isNaN(i)) {
-							var indicesIntersection = function indicesIntersection(position) {
-								switch (n) {
-									case 2:
-										break;
-									default:
-										if (!position) break;
-										position.push(vectorPlane[n - 1]);
-										break;
-								}
-								indices.intersection = { position: position };
-								if (indices.intersection.position) indices.intersection.position.iEdge = i;
-							};
-							if (i.toString() !== name) {
-								console.error('ND: settings.object.geometry.indices[]intersection. invalid name = ' + name);
-								return;
-							}
-							if (edges.length === 0) return;
-							if (i >= edges.length) {
-								console.error('ND: settings.object.geometry.indices[]intersection. invalid length: ' + edges.length);
-								_this3.indices = { intersection: {} };
-								return;
-							}
-							var indices = edges[i];
-							if (indices.length !== 2) {
-								console.error('ND: settings.object.geometry.indices[]intersection. indices.length = ' + indices.length);
-								return;
-							}
-							if (indices[0] === indices[1]) {
-								console.error('ND: settings.object.geometry.indices[]intersection. indices[0] === indices[1] = ' + indices[0]);
-								return;
-							}
-							var position0 = new Vector(positionWorld[indices[0]]),
-							    position1 = new Vector(positionWorld[indices[1]]);
-							switch (n) {
-								case 1:
-									if (vectorPlane[0].between(position0[0], position1[0], true)) geometryIntersection.position.push([vectorPlane[0]]);
-									break;
-								case 2:
-									var vector;
-									if (vectorPlane[1].between(position0[1], position1[1], true)) {
-										var a = (position1[1] - position0[1]) / (position1[0] - position0[0]),
-										    b = position0[1] - a * position0[0],
-										    x = a === 0 || isNaN(a) || Math.abs(a) === Infinity ? position1[0] : (vectorPlane[1] - b) / a;
-										if (isNaN(x) || x === undefined) {
-											console.error('ND.intersection: x = ' + x + ' position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0]);
-										}
-										var _d = 1e-15;
-										if (!x.between(position0[0], position1[0], true)) {
-											if (!(Math.abs(x - position0[0]) < _d && Math.abs(x - position0[0]) < _d)) {
-												indices.intersection = {};
-												break;
-											}
-										}
-										vector = [x, vectorPlane[1]];
-									}
-									indicesIntersection(vector);
-									break;
-								case 3:
-									var pos;
-									var d = 5.56e-17;
-									if (Math.abs(vectorPlane[n - 1] - position1[n - 1]) < d) pos = position1;else if (Math.abs(vectorPlane[n - 1] - position0[n - 1]) < d) pos = position0;
-									if (pos) {
-										indicesIntersection([pos[0], pos[1]]);
-										indices.intersection.boVerticeOnPanel = true;
-									} else {
-										var nD02 = new ND(n - 1, {
-											plane: true,
-											object: {
-												geometry: {
-													position: positionWorld.copy(),
-													indices: [[indices]],
-													iAxes: [1, 2]
-												}
-											},
-											vectorPlane: vectorPlane.array
-										}),
-										    arrayIntersects02 = nD02.intersection();
-										var nD12 = new ND(n - 1, {
-											plane: true,
-											object: {
-												geometry: {
-													position: positionWorld.copy(),
-													indices: [[indices]],
-													iAxes: [0, 2]
-												}
-											},
-											vectorPlane: vectorPlane.array
-										}),
-										    arrayIntersects12 = nD12.intersection();
-										indicesIntersection(arrayIntersects02.length && arrayIntersects12.length ? [arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined);
-									}
-									break;
-								default:
-									var intersectionAxis = function intersectionAxis(axis) {
-										var nD0 = new ND(2, {
-											plane: true,
-											object: {
-												geometry: {
-													position: positionWorld,
-													indices: [[indices]],
-													iAxes: [axis, n - 1]
-												}
-											},
-											vectorPlane: vectorPlane.array
-										});
-										return nD0.intersection();
-									};
-									var arrayIntersections = [];
-									var boIntersect = true;
-									for (var iIntersection = 0; iIntersection < n - 1; iIntersection++) {
-										var item = intersectionAxis(iIntersection);
-										if (boIntersect && item.length === 0) {
-											boIntersect = false;
-											break;
-										}
-										if (item.length) arrayIntersections.push(item[0][0]);
-									}
-									indicesIntersection(boIntersect ? arrayIntersections : undefined);
-							}
-						} else console.error('ND: settings.object.geometry.indices[]intersection. invalid name: ' + name);
-					};
-					return edge;
-				}
-				switch (name) {
-					case 'intersection':
-						return undefined;
-					case 'edges':
-						return edges;
-					case 'isProxy':
-						return true;
-				}
-				return edges[name];
-			},
-			set: function set$$1(edges, prop, value) {
-				var index = parseInt(prop);
-				if (isNaN(index)) {
-					switch (prop) {
-						case 'length':
-							break;
-						case 'edges':
-							settings.object.geometry.indices[0] = proxyEdges(value);break;
-						case 'selected':
-							edges.selected = value;break;
-						default:
-							console.error('ND settings.object.geometry.indices[0].set: invalid prop: ' + prop);
-					}
-					return true;
-				}
-				if (value instanceof Array) {
-					for (var i = 0; i < edges.length; i++) {
-						var edge = edges[i];
-						if (edge[0] === value[0] && edge[1] === value[1] || edge[1] === value[0] && edge[0] === value[1]) {
-							value.index = i;
-							return true;
-						}
-					}
-					edges[index] = value;
-					value.index = index;
-					return true;
-				}
-				var indices = value;
-				if (indices.length !== 2) {
-					console.error('ND: settings.object.geometry.indices.push invalid indices.length = ' + indices.length);
-					return true;
-				}
-				for (var i = 0; i < edges.length; i++) {
-					var edgeIndices = edges[i];
-					if (edgeIndices[0] === indices[0] && edgeIndices[1] === indices[1]) {
-						console.error('ND: settings.object.geometry.indices.push under constraction');
-						return;
-					}
-					if (edgeIndices[0] === indices[1] && edgeIndices[1] === indices[0]) {
-						console.error('ND: settings.object.geometry.indices.push under constraction');
-						indices[0] = settings.object.geometry.indices[i].indices[0];
-						indices[1] = settings.object.geometry.indices[i].indices[1];
-						return;
-					}
-				}
-				edges[index] = value;
-				return true;
-			}
-		});
-	}
-	var edges;
-	function setEdges() {
-		edges = settings.object.geometry.indices[0];
-		var boArray = edges instanceof Array;
-		if (!settings.object.geometry.indices[0] || boArray) {
-			var indices = settings.object.geometry.indices;
-			if (boArray) {
-				if (!indices[0].isProxy) indices[0] = proxyEdges();
-			} else indices.push(proxyEdges());
-		}
-	}
-	setEdges();
-	function addEdge(indices) {
-		if (settings.object.geometry.position.length < 2) return;
-		switch (n) {
-			case 1:
-				var _edges = settings.object.geometry.indices[0];
-				if (settings.object.geometry.position) {
-					indices = [];
-					positionWorld.forEach(function (indice, i) {
-						indices.push(i);
-					});
-					_edges.push(indices);
-				}
-				break;
-			default:
-				console.error('ND: default edges failed! n = ' + n);
-		}
-	}
-	function proxySegments() {
-		return new Proxy([], {
-			get: function get$$1(target, name) {
-				var i = parseInt(name);
-				if (!isNaN(i)) return target[i];
-				switch (name) {
-					case 'push':
-						return target.push;
-					case 'length':
-						return target.length;
-					case 'isProxy':
-						return true;
-					case 'forEach':
-						return target.forEach;
-					case 'selected':
-						return target.selected;
-					default:
-						console.error('ND: settings.object.geometry.indices[' + name + ']. Invalid name: ' + name);
-				}
-			},
-			set: function set$$1(target, name, value) {
-				var index = parseInt(name);
-				if (isNaN(index)) {
-					switch (name) {
-						case 'length':
-							break;
-						case 'selected':
-							target.selected = value;break;
-						default:
-							console.error('ND settings.object.geometry.indices[' + name + ']: invalid name: ' + name);
-							return false;
-					}
-					return true;
-				}
-				if (value instanceof Array === false) {
-					console.error('ND settings.object.geometry.indices[' + l + ']: invalid name: ' + name);
-					return false;
-				}
-				for (var i = value.length - 1; i >= 0; i--) {
-					for (var j = i - 1; j >= 0; j--) {
-						if (value[i] === value[j]) {
-							console.error('nD proxySegments() set: duplicate index = ' + value[i]);
-							value.splice(i, 1);
-							continue;
-						}
-					}
-				}
-				for (var i = 0; i < target.length; i++) {
-					var segment = target[i],
-					    aDetected = [];
-					if (segment.length !== value.length) continue;
-					for (var j = 0; j < segment.length; j++) {
-						aDetected[j] = false;
-						for (var k = 0; k < value.length; k++) {
-							if (segment[j] === value[k]) {
-								aDetected[j] = true;
-								break;
-							}
-						}
-					}
-					var boDetected = true;
-					for (var j = 0; j < aDetected.length; j++) {
-						if (!aDetected[j]) {
-							boDetected = false;
-							break;
-						}
-					}
-					if (boDetected) {
-						value.index = i;
-						return true;
-					}
-				}
-				target[index] = value;
-				value.index = index;
-				return true;
-			}
-		});
-	}
-	function addEdges(level, geometry) {
-		var positionIndices = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-		var levelIndices = arguments[3];
-		if (positionIndices.length === 0) positionWorld.forEach(function (position, i) {
-			positionIndices.push(i);
-		});
-		geometry = geometry || settings.object.geometry;
-		if (!geometry.indices[0]) geometry.indices[0] = [];
-		var edges = geometry.indices[0];
-		if (n === 2 && geometry.position.length === 2) {
-			edges.push([0, 1]);
-			return;
-		}
-		if (level === undefined) return;
-		if (level > 2) {
-			var _loop2 = function _loop2() {
-				var posIndices = [];
-				positionIndices.forEach(function (indice, j) {
-					if (positionIndices[i] !== positionIndices[j]) posIndices.push(positionIndices[j]);
-				});
-				var lIndices = [];
-				addEdges(level - 1, undefined, posIndices, lIndices);
-				if (lIndices.length) {
-					var _l = level - 2;
-					if (_l === 0) console.error('ND addEdges: invalid l = ' + 1);
-					settings.object.geometry.indices[_l] = settings.object.geometry.indices[_l] === undefined ? proxySegments() : settings.object.geometry.indices[_l];
-					settings.object.geometry.indices[_l].push(lIndices);
-					if (levelIndices) levelIndices.push(lIndices.index);
-				}
-			};
-			for (var i = 0; i < positionIndices.length; i++) {
-				_loop2();
-			}
-		}
-		switch (level) {
-			case 2:
-				if (!positionIndices) {
-					positionIndices = [];
-					settings.object.geometry.position.forEach(function (item, i) {
-						positionIndices.push(i);
-					});
-				}
-				var length = positionIndices.length;
-				var _addItem = function _addItem() {
-					var start = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-					for (var i = start; i < length; i++) {
-						if (start === 0) _addItem(i + 1);else {
-							var edge = [positionIndices[start - 1], positionIndices[i]];
-							edges.push(edge);
-							if (levelIndices) levelIndices.push(edge.index);
-						}
-					}
-				};
-				_addItem();
-				break;
-		}
-	}
-	function appendEdges() {
-		switch (n) {
-			case 1:
-				addEdge();
-				break;
-			default:
-				if (settings.object.geometry.indices[0].length === 0) addEdges(n);
-		}
-	}
-	appendEdges();
-	if (settings.object.geometry.indices.boAddIndices) {
-		var indices = settings.object.geometry.indices;
-		for (var i = 1; i < indices.length; i++) {
-			var indice = indices[i];
-			var arrayIndices = [];
-			var max = 0;
-			for (var j = 0; j < indice.length; j++) {
-				var segment = indice[j];
-				for (var k = 0; k < segment.length; k++) {
-					var index = segment[k];
-					if (arrayIndices[index] === undefined) arrayIndices[index] = 0;
-					arrayIndices[index]++;
-					if (arrayIndices[index] > max) max = arrayIndices[index];
-				}
-			}
-			var arraySegment = [];
-			for (var j = 0; j < arrayIndices.length; j++) {
-				if (arrayIndices[j] < max) arraySegment.push(j);
-			}
-			if (arraySegment.length > 0) indice.push(arraySegment);
-		}
-	}
-	var vectorPlane;
-	var geometry = {
-		get position() {
-			return new Proxy(this, {
-				get: function get$$1(target, name) {
-					switch (name) {
-						case 'length':
-							return settings.object.geometry.position.length;
-					}
-					var i = parseInt(name);
-					if (isNaN(i)) {
-						console.error('ND.geometry.position: invalid name: ' + name);
-						return;
-					}
-					return new Vector(positionWorld[i]);
-				}
-			});
-		},
-		get copy() {
-			var copySettings = {
-				geometry: { position: [], indices: [] },
-				position: [],
-				rotation: [],
-				aObjects: settings.object.aObjects,
-				name: settings.object.name
-			};
-			settings.object.geometry.position.forEach(function (vertice) {
-				var copy = [];
-				vertice.forEach(function (axis) {
-					return copy.push(axis);
-				});
-				copySettings.geometry.position.push(copy);
-			});
-			settings.object.geometry.indices.forEach(function (indexes) {
-				var copy = [];
-				indexes.forEach(function (arrayIndex) {
-					var copyArrayIndex = [];
-					if (arrayIndex.indices) arrayIndex = arrayIndex.indices;
-					arrayIndex.forEach(function (index) {
-						return copyArrayIndex.push(index);
-					});
-					copy.push(copyArrayIndex);
-				});
-				copySettings.geometry.indices.push(copy);
-			});
-			function copyItem(array) {
-				var copy = [];
-				array.forEach(function (item) {
-					copy.push(item);
-				});
-				return copy;
-			}
-			copySettings.position = copyItem(settings.object.position);
-			settings.object.rotation.boUseRotation = true;
-			copySettings.rotation = copyItem(settings.object.rotation);
-			settings.object.rotation.boUseRotation = false;
-			return copySettings;
-		},
-		get geometry() {
-			return settings.object.geometry;
-		},
-		set geometry(geometry) {
-			settings.object.geometry.position = geometry.position;
-			if (geometry.indices) {
-				settings.object.geometry.indices.length = 1;
-				for (var i = 0; i < geometry.indices.length; i++) {
-					if (i === 0) {
-						settings.object.geometry.indices[0].edges.length = 0;
-						geometry.indices[0].forEach(function (edge) {
-							return settings.object.geometry.indices[0].edges.push(edge.indices === undefined ? edge : edge.indices);
-						});
-					} else settings.object.geometry.indices[i] = geometry.indices[i];
-				}
-			} else delete settings.object.geometry.indices;
-		},
-		D3: {
-			get points() {
-				var points = [];
-				for (var i = 0; i < geometry.position.length; i++) {
-					points.push(geometry.position[i].point);
-				}return points;
-			},
-			get faceIndices() {
-				var aFaceIndices = [];
-				var indices = settings.object.geometry.indices;
-				if (indices.length < 2) return aFaceIndices;
-				indices[1].forEach(function (face) {
-					var faceVertices = [];
-					face.forEach(function (edge, iEdge) {
-						if (iEdge > 2) {
-							console.error('ND: geometry.D3.faceIndices get. invalid face edges count.');
-							return;
-						}
-						var edgeVertices = indices[0][edge].indices;
-						if (faceVertices.length === 0) {
-							faceVertices.push(edgeVertices[0]);
-							faceVertices.push(edgeVertices[1]);
-						} else {
-							var boVertice0 = false,
-							    boVertice1 = false;
-							for (var i = 0; i < faceVertices.length; i++) {
-								var faceVertice = faceVertices[i];
-								if (faceVertice === edgeVertices[0]) boVertice1 = true;else if (faceVertice === edgeVertices[1]) boVertice0 = true;
-							}
-							if (!boVertice0 && !boVertice1) console.error('ND: geometry.D3.faceIndices get. Missing push');else if (boVertice0 != boVertice1) {
-								faceVertices.push(edgeVertices[boVertice0 ? 0 : 1]);
-							}
-						}
-					});
-					if (faceVertices.length === 3) aFaceIndices.push(faceVertices[0], faceVertices[1], faceVertices[2]);else console.error('ND: PolyhedronGeometry: subdivide. Invalid face vertices count');
-				});
-				return aFaceIndices;
-			},
-			get indices() {
-				var _this4 = this;
-				var indices = [],
-				    colors = [];
-				if (settings.object.geometry.indices[0].length !== 0) {
-					var _edges2 = settings.object.geometry.indices[0];
-					for (var i = 0; i < _edges2.length; i++) {
-						var edge = _edges2[i];
-						if (edge !== undefined) {
-							if (edge.length === undefined) edge = [0, 1];
-							if (edge.length !== 2) {
-								console.error('ND.geometry.D3.get indices: invalid edge.length = ' + edge.length);
-								return;
-							}
-							if (edge[0] === edge[1]) {
-								console.error('ND.geometry.D3.get indices: duplicate edge index = ' + edge[0]);
-								return;
-							}
-							edge.forEach(function (vertice) {
-								return indices.push(vertice);
-							});
-							if (this.color && _typeof(this.color) != "object") {
-								(function () {
-									var hexToRgb = function hexToRgb(hex) {
-										var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-										return result ? {
-											r: parseInt(result[1], 16),
-											g: parseInt(result[2], 16),
-											b: parseInt(result[3], 16)
-										} : null;
-									};
-									var push = function push() {
-										colors.push(rgb.r);
-										colors.push(rgb.g);
-										colors.push(rgb.b);
-									};
-									var color = new THREE.Color(_this4.color);
-									var rgb = hexToRgb(color.getHexString());
-									push();
-									if (_edges2.length === 1) push();
-								})();
-							}
-						} else console.error('ND.geometry.D3.get indices: invalid edge. Возможно вычислены не все точки пересечения');
-					}
-					if (this.color && _typeof(this.color) === "object") {
-						if (colors.length != 0) console.error('ND.geometry.D3.get vrtices colors: Invalid colors.length = ' + colors.length);
-						settings.object.geometry.position.forEach(function (vertice) {
-							var rgb = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max);
-							colors.push(rgb.r);
-							colors.push(rgb.g);
-							colors.push(rgb.b);
-						});
-					}
-				}
-				return { indices: indices, colors: colors };
-			}
-		}
-	};
-	vectorPlane = vectorPlane || new Vector(settings.vectorPlane);
-	if (!vectorPlane || !vectorPlane.point) vectorPlane = new Vector(vectorPlane);
-	var objectIntersect;
-	var selectSegment = {
-		line: undefined,
-		removeLine: function removeLine(line) {
-			if (line) {
-				line.parent.remove(line);
-				line = undefined;
-			}
-			return line;
-		},
-		opacityDefault: 0.3,
-		opacityItem: function opacityItem(item, parentObject, transparent) {
-			var opacity = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : selectSegment.opacityDefault;
-			if (!item.material) return;
-			if (transparent && opacity === 0 && Object.is(item.parent, parentObject)) parentObject.remove(item);else {
-				if (!item.parent) parentObject.add(item);
-				item.material.transparent = transparent;
-				item.material.opacity = transparent ? opacity : 1;
-				item.material.needsUpdate = true;
-			}
-		}
-	};
-	function create3DObject(geometry) {
-		var settings3D = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-		if (!geometry.D3) {
-			var nD = new ND(n, {
-				plane: true,
-				object: { geometry: geometry }
-			});
-			geometry = nD.geometry;
-		}
-		if (geometry.position.length === 0) return;
-		var color = settings3D.color || 'white';
-		geometry.D3.color = color;
-		var indices3D = geometry.D3.indices,
-		    indices = indices3D.indices,
-		    colors = indices3D.colors;
-		if ((settings.object.geometry.position[0].length > 3 &&
-		_typeof(settings.object.color) === "object"
-		|| settings.object.geometry.opacity
-		) && !settings.object.geometry.colors
-		) settings.object.geometry.colors = indices3D.colors;
-		var buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points, geometry.D3.points[0].w === undefined ? 3 : 4);
-		if (settings3D.faces) {
-			if (settings3D.faces === true) settings3D.faces = {};
-			if (settings3D.faces.color === undefined) settings3D.faces.color = color;
-			if (settings3D.faces.opacity === undefined) settings3D.faces.opacity = 0.5;
-			if (settings3D.faces.transparent === undefined) settings3D.faces.transparent = true;
-			buffer.setIndex(geometry.D3.faceIndices);
-			buffer.computeVertexNormals();
-		} else buffer.setIndex(indices);
-		var object = indices.length > 1 ? settings3D.faces ? new THREE.Mesh(buffer, new THREE.MeshLambertMaterial({
-			color: color,
-			opacity: settings3D.faces.opacity,
-			transparent: settings3D.faces.transparent,
-			side: THREE.DoubleSide
-		})) : new THREE.LineSegments(buffer, new THREE.LineBasicMaterial(settings.object.geometry.colors ? {
-			vertexColors: true,
-			toneMapped: false,
-			transparent: settings.object.geometry.opacity ? true :
-			undefined
-		} : { color: color })) : new THREE.Points(buffer, new THREE.PointsMaterial({
-			color: color,
-			sizeAttenuation: false,
-			size: options.point.size / (options.point.sizePointsMaterial * 2)
-		}));
-		if (settings3D.name) object.name = settings3D.name;
-		if (settings.object.geometry.colors) {
-			var _colors = void 0,
-			    itemSize = void 0;
-			if (settings.object.geometry.opacity) {
-				itemSize = 4;
-				var colorSize = itemSize - 1,
-				    itemsCount = settings.object.geometry.colors.length / colorSize;
-				if (itemsCount != Math.trunc(itemsCount)) console.error('ND.create3DObject: Opacity. Invalid colors count = ' + itemsCount);
-				_colors = [];
-				for (var _i = 0; _i < settings.object.geometry.position.length; _i++) {
-					var iColor = _i * colorSize;
-					if (iColor < settings.object.geometry.colors.length) _colors.push(settings.object.geometry.colors[iColor + 0], settings.object.geometry.colors[iColor + 1], settings.object.geometry.colors[iColor + 2]);
-					else {
-							var _color = new THREE.Color(settings.object.color);
-							_colors.push(_color.r, _color.g, _color.b);
-						}
-					_colors.push(_i < settings.object.geometry.opacity.length ? settings.object.geometry.opacity[_i] : 1);
-				}
-			} else {
-				itemSize = 3;
-				_colors = settings.object.geometry.colors;
-				var _colorSize = itemSize,
-				    _itemsCount = settings.object.geometry.colors.length / _colorSize;
-				if (_itemsCount != Math.trunc(_itemsCount)) console.error('ND.create3DObject: Opacity. Invalid colors count = ' + _itemsCount);
-				for (var _i2 = _itemsCount; _i2 < settings.object.geometry.position.length; _i2++) {
-					var _color2 = new THREE.Color(settings.object.color);
-					_colors.push(_color2.r, _color2.g, _color2.b);
-				}
-			}
-			object.geometry.setAttribute('color', new THREE.Float32BufferAttribute(_colors, itemSize));
-		}
-		scene.add(object);
-		object.userData.geometry = geometry.geometry;
-		object.userData.onMouseDown = function (intersection) {
-			var indices = geometry.geometry.indices,
-			    segmentIndex = 0,
-			segment = indices[segmentIndex],
-			    selectedIndex = segment.selected;
-			selectSegment.line = selectSegment.removeLine(selectSegment.line);
-			var opacityDefault = intersection.event && intersection.event.button === 0 ? selectSegment.opacityDefault : 1,
-			    parentObject = object;
-			function opacity() {
-				var transparent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-				var opacity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : opacityDefault;
-				scene.children.forEach(function (item) {
-					return selectSegment.opacityItem(item, parentObject, transparent, opacity);
-				});
-			}
-			opacity();
-			var buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
-			var lineIndices = [];
-			function createIndices(item, level) {
-				if (level > 0) {
-					level--;
-					for (var i = 0; i < item.length; i++) {
-						createIndices(indices[level][item[i]], level);
-					}return;
-				}
-				var itemIndices = item.indices || item;
-				if (itemIndices.length !== 2) console.error('ND: createIndices. Invalid itemIndices.length = ' + itemIndices.length);
-				var boDetected = false;
-				for (var lineIndicesIndex = 0; lineIndicesIndex < lineIndices.length; lineIndicesIndex += 2) {
-					if (lineIndices[lineIndicesIndex] === itemIndices[0] && lineIndices[lineIndicesIndex + 1] === itemIndices[1]) {
-						boDetected = true;
-						break;
-					}
-				}
-				if (!boDetected) itemIndices.forEach(function (i) {
-					lineIndices.push(i);
-				});
-			}
-			createIndices(segment[selectedIndex], segmentIndex);
-			selectSegment.line = new THREE.LineSegments(buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
-			parentObject.add(selectSegment.line);
-		};
-		object.userData.nd = function (fParent, dat) {
-			var gui = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-			var boUpdate = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-			if (!object.userData.nd.update) object.userData.nd.update = function () {
-				object.userData.nd(fParent, dat, gui, true);
-			};
-			if (!boUpdate) {
-				if (fParent.parent.fCustom) {
-					fParent.parent.fCustom.parent.removeFolder(fParent.parent.fCustom);
-					fParent.parent.fCustom = undefined;
-				}
-				if (!gui && geometry.geometry.gui                                           ) {
-						fParent.parent.fCustom = geometry.geometry.gui(fParent, dat,                         settings.options, _ND);
-					}
-			}
-			var getLanguageCode = options.getLanguageCode;
+var ND = function (_MyObject) {
+	inherits(ND, _MyObject);
+	function ND(n, settings) {
+		classCallCheck(this, ND);
+		var _this2 = possibleConstructorReturn(this, (ND.__proto__ || Object.getPrototypeOf(ND)).call(this, settings));
+		var options = settings.options,
+		    _ND = _this2;
+		settings.object.raycaster = settings.object.raycaster || {};
+		settings.object.raycaster.text = settings.object.raycaster.text || function (intersection) {
+			var getLanguageCode = settings.options.getLanguageCode;
 			var lang = {
-				vertices: 'Vertices',
-				verticesTitle: 'Vertices.',
-				edges: 'Edges',
-				edgesTitle: 'The selected edge lists the vertex indices of the edge.',
-				distance: 'Distance',
-				distanceTitle: 'Distance between edge vertices.',
-				faces: 'Faces',
-				facesTitle: 'The selected face lists the indexes of the edges of that face.',
-				bodies: 'Bodies',
-				bodiesTitle: 'The selected body lists the indexes of the faces of this body.',
-				objects: 'Objects',
-				objectsTitle: 'The selected object lists the indexes of the objects that this object consists of. It can be indexes of bodies.',
-				position: 'Position',
-				rotation: 'Rotation',
-				rotationPointTitle: 'Rotation point',
-				rotationAxisTitle: 'Rotation axis',
-				rotationPlaneTitle: 'Axes of plane of rotation.',
-				rotationSpaceTitle: 'Axes of space of rotation.',
-				rotationnDSpaceTitle: 'Axes of multi dimensional space of rotation.',
-				defaultButton: 'Default',
-				defaultPositionTitle: 'Restore default position',
-				defaultRotationTitle: 'Restore default rotation',
-				notSelected: 'Not selected'
+				pointId: "point Id",
+				edgeId: "edge Id",
+				faceId: "face Id",
+				bodyId: "body Id",
+				segmentId: "segment Id"
 			};
 			var _languageCode = getLanguageCode();
 			switch (_languageCode) {
 				case 'ru':
-					lang.vertices = 'Вершины';
-					lang.verticesTitle = 'Вершины.';
-					lang.edges = 'Ребра';
-					lang.edgesTitle = 'В выбранном ребре перечислены индексы вершин ребра.';
-					lang.distance = 'Расстояние';
-					lang.distanceTitle = 'Расстояние между вершинами ребра.';
-					lang.faces = 'Грани';
-					lang.facesTitle = 'В выбранной грани перечислены индексы ребер этой грани.';
-					lang.bodies = 'Тела';
-					lang.bodiesTitle = 'В выбранном теле перечислены индексы граней этого тела.';
-					lang.objects = 'Объекты';
-					lang.objectsTitle = 'В выбранном объекте перечислены индексы объектов, из которого состоит этот объект. Это могут быть индексы тел.';
-					lang.position = 'Позиция';
-					lang.rotation = 'Вращение';
-					lang.rotationPointTitle = 'Точка вращения.';
-					lang.rotationAxisTitle = 'Ось вращения.';
-					lang.rotationPlaneTitle = 'Оси плоскости вращения.';
-					lang.rotationSpaceTitle = 'Оси пространства вращения.';
-					lang.rotationnDSpaceTitle = 'Оси многомерного пространства вращения..';
-					lang.defaultButton = 'Восстановить';
-					lang.defaultPositionTitle = 'Восстановить позицию объекта по умолчанию';
-					lang.defaultRotationTitle = 'Восстановить вращение объекта по умолчанию';
-					lang.notSelected = 'Не выбран';
+					lang.pointId = 'Индекс точки';
+					lang.edgeId = 'Индекс ребра';
+					lang.faceId = 'Индекс грани';
+					lang.bodyId = 'Индекс тела';
+					lang.segmentId = 'Индекс сегмента';
 					break;
 			}
-			for (var i = fParent.__controllers.length - 1; i >= 0; i--) {
-				fParent.remove(fParent.__controllers[i]);
+			var index = intersection.object.geometry.index,
+			    edge = [index.getX(intersection.indexNew), index.getY(intersection.indexNew)],
+			    indices = intersection.object.userData.geometry.indices;
+			edges = indices[0];
+			var minDistance = Infinity,
+			    pointId;
+			function distance(i) {
+				var pointIndex = edge[i],
+				    distance = intersection.point.distanceTo(new THREE.Vector3().fromBufferAttribute(intersection.object.geometry.attributes.position, pointIndex));
+				if (minDistance > distance) {
+					minDistance = distance;
+					pointId = pointIndex;
+				}
 			}
-			var indices = geometry.geometry.indices,
-			    segmentIndex = indices.length - 1;
-			function addController(segmentIndex,
-			fParent, segmentItems,
-			prevLine
-			) {
-				_prevLine.prevLine = prevLine;
-				var segment;
-				if (segmentItems) {
-					var _addItem2 = function _addItem2(item, i) {
-						item.i = i;
-						segment.push(item);
-					};
-					segment = [];
-					if (segmentIndex === -1) {
-						if (segmentItems.forEach) segmentItems.forEach(function (i) {
-							return _addItem2(geometry.geometry.position[i], i);
-						});else segmentItems.indices.forEach(function (i) {
-							return _addItem2(geometry.geometry.position[i], i);
-						});
-					} else {
-						var _index = indices[segmentIndex];
-						segmentItems.forEach(function (i) {
-							return _addItem2(_index[i].indices ? _index[i].indices : _index[i], i);
-						});
-					}
-				} else segment = indices[segmentIndex];
-				var items = { Items: [lang.notSelected] };
-				var fChildSegment, line;
-				var name, title;
-				switch (segmentIndex) {
-					case -1:
-						name = lang.vertices;title = lang.verticesTitle;break;
-					case 0:
-						name = lang.edges;title = lang.edgesTitle;break;
-					case 1:
-						name = lang.faces;title = lang.facesTitle;break;
-					case 2:
-						name = lang.bodies;title = lang.bodiesTitle;break;
-					default:
-						name = lang.objects;title = lang.objectsTitle;
-				}
-				var fSegment = fParent.addFolder(name);
-				var cDistance = void 0;
-				fSegment.userData = { objectItems: true };
-				dat.folderNameAndTitle(fSegment, name, title);
-				switch (segmentIndex) {
-					case 0:
-						cDistance = dat.controllerZeroStep(fSegment, { value: 0 }, 'value');
-						cDistance.domElement.querySelector('input').readOnly = true;
-						dat.controllerNameAndTitle(cDistance, lang.distance, lang.distanceTitle);
-						break;
-				}
-				var cSegment = fSegment.add(items, 'Items', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
-					if (fChildSegment) {
-						fChildSegment.__controllers.forEach(function (item, i) {
-							var controller = fChildSegment.__controllers[i];
-							if (controller.__select && controller.__select.selectedIndex != 0) {
-								controller.__select.selectedIndex = 0;
-								controller.__onChange();
+			distance(0);
+			distance(1);
+			var text = '\n' + lang.pointId + ': ' + pointId;
+			for (var segmentIndex = 0; segmentIndex < edges.length; segmentIndex++) {
+				var edgeCur = edges[segmentIndex];
+				if (edgeCur[0] === edge[0] && edgeCur[1] === edge[1] || edgeCur[0] === edge[1] && edgeCur[1] === edge[0]) {
+					text += '\n' + lang.edgeId + ': ' + segmentIndex;
+					edges.selected = segmentIndex;
+					var detectedIndex;
+					for (var indicesSegment = 1; indicesSegment < indices.length; indicesSegment++) {
+						var _segment = indices[indicesSegment];
+						_segment.forEach(function (segmentItem, segmentIndexCur) {
+							for (var i = 0; i < segmentItem.length; i++) {
+								if (segmentItem[i] === segmentIndex) {
+									detectedIndex = segmentIndexCur;
+									break;
+								}
 							}
 						});
-						fSegment.removeFolder(fChildSegment);
-						fChildSegment = undefined;
-					}
-					var selectedIndex = cSegment.__select.selectedIndex - 1;
-					line = selectSegment.removeLine(line);
-					var parentObject = object;
-					function opacity() {
-						var transparent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-						var opacity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : selectSegment.opacityDefault;
-						scene.children.forEach(function (item) {
-							return selectSegment.opacityItem(item, parentObject, transparent, opacity);
-						});
-					}
-					function getOpacity() {
-						return -0.1 * segmentIndex + selectSegment.opacityDefault;
-					}
-					function removeVerticeControls() {
-						if (segmentIndex !== -1) return;
-						for (var i = fSegment.__controllers.length - 1; i >= 0; i--) {
-							var controller = fSegment.__controllers[i];
-							if (Object.is(cSegment, controller)) continue;
-							fSegment.remove(controller);
+						if (detectedIndex === undefined) {
+							console.error('ND: mouse move. Index of segment was not detected');
+							break;
+						} else {
+							segmentIndex = detectedIndex;
+							var segmentName;
+							switch (indicesSegment) {
+								case 1:
+									segmentName = lang.faceId;break;
+								case 2:
+									segmentName = lang.bodyId;break;
+								default:
+									segmentName = lang.segmentId;
+							}
+							text += '\n' + segmentName + ': ' + segmentIndex;
+							_segment.selected = segmentIndex;
 						}
 					}
-					if (selectedIndex === -1) {
-						switch (segmentIndex) {
-							case 0:
-								cDistance.setValue('');
-								break;
-						}
-						removeVerticeControls();
-						if (prevLine) {
-							selectSegment.opacityItem(prevLine, parentObject, false);
-							if (prevLine.userData.prevLine) selectSegment.opacityItem(prevLine.userData.prevLine, parentObject, true, getOpacity());else opacity(true);
+					var segment = indices[indices.length - 1][segmentIndex];
+					break;
+				}
+			}
+			return text;
+		};
+		settings.object.name = settings.object.name || 'Object';
+		if (settings.object.aObjects) settings.object.aObjects.nD = _this2;
+		settings.object.geometry = settings.object.geometry || {};
+		if (settings.object.geometry instanceof Array) {
+			var position = settings.object.geometry;
+			settings.object.geometry = { position: position };
+		}
+		settings.object.geometry.position = settings.object.geometry.position || [];
+		var Vector = function (_ND$VectorN) {
+			inherits(Vector, _ND$VectorN);
+			function Vector() {
+				var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+				var _this3, _ret;
+				var vectorSettings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+				classCallCheck(this, Vector);
+				array = (_this3 = possibleConstructorReturn(this, (Vector.__proto__ || Object.getPrototypeOf(Vector)).call(this, n, array)), _this3).array;
+				var _this = _this3;
+				return _ret = new Proxy(array, {
+					get: function get$$1(target, name) {
+						var i = parseInt(name);
+						if (isNaN(i)) {
+							switch (name) {
+								case "point":
+									var _THREE = three$1.THREE;
+									if (_typeof(settings.object.color) === "object" && array.length >= 4) return new _THREE.Vector4(this.get(undefined, 0), this.get(undefined, 1), this.get(undefined, 2), this.get(undefined, 3));
+									return new _THREE.Vector3(this.get(undefined, 0), this.get(undefined, 1), this.get(undefined, 2));
+								default:
+									{
+										return _this[name];
+									}
+							}
 							return;
 						}
-						opacity(false);
-						return;
-					}
-					if (prevLine) {
-						opacity(true, 0);
-						selectSegment.opacityItem(prevLine, parentObject, true, getOpacity());
-						if (prevLine.userData.prevLine) selectSegment.opacityItem(prevLine.userData.prevLine, parentObject, true, 0);
-					} else opacity();
-					if (segmentIndex === -1) {
-						removeVerticeControls();
-						var vertice = settings.object.geometry.position[segment[selectedIndex].i];
-						for (var i = 0; i < vertice.length; i++) {
-							switch (i) {
-								case 0:
-								case 1:
-								case 2:
-									var axis;
-									switch (i) {
-										case 0:
-											axis = options.scales.x;break;
-										case 1:
-											axis = options.scales.y;break;
-										case 2:
-											axis = options.scales.z;break;
-									}
-									fSegment.add(vertice, i, axis.min, axis.max, (axis.max - axis.min) / 100);
-									break;
-								default:
-									dat.controllerZeroStep(fSegment, vertice, i);
+						if (i >= n) return 0;
+						if (array.length > n && settings.object.geometry.iAxes && i < settings.object.geometry.iAxes.length) i = settings.object.geometry.iAxes[i];
+						return array[i];
+					},
+					set: function set$$1(target, name, value) {
+						var i = parseInt(name);
+						if (!isNaN(i)) {
+							if (i >= array.length) {
+								array.push(value);
+								return array.length;
 							}
+							array[i] = value;
+							_ND.intersection();
+							if (vectorSettings.onChange) vectorSettings.onChange();
+							return true;
 						}
-					} else {
-						var _createIndices = function _createIndices(item, level) {
-							if (level > 0) {
-								level--;
-								for (var i = 0; i < item.length; i++) {
-									_createIndices(indices[level][item[i]], level);
-								}return;
-							}
-							var itemIndices = item.indices || item;
-							if (itemIndices.length !== 2) console.error('ND: createIndices. Invalid itemIndices.length = ' + itemIndices.length);
-							var boDetected = false;
-							for (var lineIndicesIndex = 0; lineIndicesIndex < lineIndices.length; lineIndicesIndex += 2) {
-								if (lineIndices[lineIndicesIndex] === itemIndices[0] && lineIndices[lineIndicesIndex + 1] === itemIndices[1]) {
-									boDetected = true;
-									break;
-								}
-							}
-							if (!boDetected) itemIndices.forEach(function (i) {
-								lineIndices.push(i);
-							});
-						};
-						var _buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
-						var lineIndices = [];
-						_createIndices(segment[selectedIndex], segmentIndex);
-						line = new THREE.LineSegments(_buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
-						switch (segmentIndex) {
-							case 0:
-								if (lineIndices.length != 2) {
-									console.error('ND: Select edge. Invalid lineIndices.length = ' + lineIndices.length);
-									break;
-								}
-								var position0 = geometry.geometry.position[lineIndices[0]],
-								    position1 = settings.object.geometry.position[lineIndices[1]];
-								if (position0.length && position1.length) cDistance.setValue(position0.distanceTo(position1));else console.error("ND: Select edge. Invalid edge's vertices distance");
-								break;
-						}
-						line.userData.name = fSegment.name + ' ' + value;
-						parentObject.add(line);
-					}
-					if (prevLine && line) line.userData.prevLine = prevLine;
-					if (segmentIndex >= 0) fChildSegment = addController(segmentIndex - 1, fSegment, segment[selectedIndex], line);
-				});
-				dat.controllerNameAndTitle(cSegment, '');
-				var selectedItem = 0;
-				var selected = segmentIndex >= 0 ? indices[segmentIndex].selected : undefined;
-				var selectedOpt;
-				for (var i = 0; i < segment.length; i++) {
-					var item = segment[i],
-					    opt = document.createElement('option'),
-					    itemIndex = item.index != undefined ? item.index : item.i != undefined ? item.i : i;
-					opt.innerHTML = '(' + (item.i === undefined ? i : item.i) + ') ' + (segmentIndex === -1 ? '' : (item.indices ? item.indices : item).toString());
-					opt.item = item;
-					if (selected != undefined && selected === itemIndex) {
-						selectedOpt = opt;
-						selectedItem = i + 1;
-					}
-					cSegment.__select.appendChild(opt);
-				}
-				if (selected && !selectedOpt) console.error('ND: addController. Selected item was not detected');
-				cSegment.__select[selectedItem].selected = true;
-				if (selectedItem != 0) {
-					cSegment.__select.selectedIndex = selectedItem;
-					cSegment.setValue(cSegment.__select[selectedItem].innerHTML);
-				}
-				return fSegment;
-			}
-			var childFolders = Object.keys(fParent.__folders);
-			childFolders.forEach(function (folderName) {
-				var childFolder = fParent.__folders[folderName];
-				childFolder.__controllers.forEach(function (item, i) {
-					var controller;
-					if (childFolder.userData && childFolder.userData.objectItems) controller = childFolder.__controllers[i];else if (folderName === 'indices') {
-						Object.keys(childFolder.__folders).forEach(function (folderName) {
-							if (!controller) {
-								var folder = childFolder.__folders[folderName];
-								if (folder.userData && folder.userData.objectItems) controller = folder.__controllers[i];
-							}
-						});
-					}
-					if (controller && controller.__select && controller.__select.selectedIndex != 0) {
-						controller.__select.selectedIndex = 0;
-						controller.__onChange();
-					}
-				});
-				if (!childFolder.customFolder) fParent.removeFolder(childFolder);
-			});
-			var fPosition = fParent.addFolder(lang.position),
-			    fRotation = n < 2 ? undefined : fParent.addFolder(lang.rotation);
-			function rotation(i) {
-				if (rotationAxes[i].length === 0) return;
-				settings.object.rotation.boUseRotation = true;
-				settings.object.rotation.folders[i] = {
-					cRotation: fRotation.add(settings.object.rotation, i, 0, Math.PI * 2, 0.01).onChange(function (value) {
-						update();
-					}),
-					default: settings.object.rotation[i]
-				};
-				var name = '',
-				    title = '';
-				rotationAxes[i].forEach(function (axis) {
-					return name = name + (name.length === 0 ? '' : ',') + axis;
-				});
-				switch (n) {
-					case 2:
-						title = lang.rotationPointTitle;break;
-					case 3:
-						title = lang.rotationAxisTitle;break;
-					case 4:
-						title = lang.rotationPlaneTitle;break;
-					case 5:
-						title = lang.rotationSpaceTitle;break;
-					default:
-						title = lang.rotationnDSpaceTitle;break;
-				}
-				dat.controllerNameAndTitle(settings.object.rotation.folders[i].cRotation, n === 2 ? '2' : name, title);
-				settings.object.rotation.boUseRotation = false;
-			}
-			var _loop3 = function _loop3() {
-				var axisName = i;
-				{
-					var f = fPosition.addFolder(axisName);
-					settings.object.position.folders[i] = {
-						positionController: new PositionController(function (shift) {
-							settings.object.position[axisName] += shift;
-						}, { getLanguageCode: options.getLanguageCode }),
-						default: settings.object.position[i]
-					};
-					f.add(settings.object.position.folders[i].positionController);
-					settings.object.position.folders[i].cPosition = dat.controllerZeroStep(f, settings.object.position, i, function (value) {
-						update();
-					});
-					dat.controllerNameAndTitle(settings.object.position.folders[i].cPosition, axisName);
-				}
-			};
-			for (var i = 0; i < n; i++) {
-				_loop3();
-			}
-			if (n === 2) rotation(0);
-			else rotationAxes.forEach(function (item, i) {
-					return rotation(i);
-				});
-			var buttonPositionDefault = fPosition.add({
-				defaultF: function defaultF(value) {
-					settings.object.position.folders.forEach(function (item) {
-						return item.cPosition.setValue(item.default);
-					});
-				}
-			}, 'defaultF');
-			dat.controllerNameAndTitle(buttonPositionDefault, lang.defaultButton, lang.defaultPositionTitle);
-			if (fRotation) {
-				var buttonRotationDefault = fRotation.add({
-					defaultF: function defaultF(value) {
-						settings.object.rotation.folders.forEach(function (item) {
-							return item.cRotation.setValue(item.default);
-						});
-					}
-				}, 'defaultF');
-				dat.controllerNameAndTitle(buttonRotationDefault, lang.defaultButton, lang.defaultRotationTitle);
-			}
-			addController(segmentIndex, fParent);
-		};
-		if (options.guiSelectPoint) options.guiSelectPoint.addMesh(object);
-		object.userData.raycaster = {
-			onIntersection: function onIntersection(intersection, mouse) {
-				intersection.indexNew = intersection.index;
-				delete intersection.index;
-				Options.raycaster.onIntersection(intersection, options, scene, options.camera, options.renderer);
-			},
-			onIntersectionOut: function onIntersectionOut() {
-				geometry.geometry.indices.forEach(function (indice) {
-					return indice.selected = undefined;
-				});
-				Options.raycaster.onIntersectionOut(scene, options.renderer);
-			},
-			onMouseDown: function onMouseDown(intersection, event) {
-				intersection.event = event;
-				Options.raycaster.onMouseDown(intersection, options);
-			},
-			text: settings.object.raycaster ? settings.object.raycaster.text : undefined
-		};
-		if (options.eventListeners) options.eventListeners.addParticle(object);
-		return object;
-	}
-	this.intersection = function () {
-		var geometryIntersection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { position: [], indices: [[]] };
-		var iIntersections = arguments[1];
-		if (settings.plane === false) return;
-		function intersection(iEdge, aEdge) {
-			for (var i = 0; i < geometryIntersection.position.length; i++) {
-				if (geometryIntersection.position[i].iEdge === iEdge) {
-					if (aEdge && aEdge.length < 2
-					) aEdge.push(i);
-					return;
-				}
-			}
-			var edge = settings.object.geometry.indices[0][iEdge];
-			edge.intersection(geometryIntersection);
-			var position = edge.intersection.position;
-			if (position) {
-				var boAdd = true;
-				if (edge.intersection.boVerticeOnPanel) {
-					for (var i = 0; i < geometryIntersection.position.length; i++) {
-						if (position.equals(geometryIntersection.position[i])) {
-							boAdd = false;
-							aEdge.boVerticeOnPanel = true;
-							break;
-						}
-					}
-				}
-				if (boAdd) {
-					geometryIntersection.position.push(position);
-					if (aEdge) aEdge.push(geometryIntersection.position.length - 1);
-				}
-			}
-		}
-		if (!geometryIntersection.position.isProxy) geometryIntersection.position = new Proxy(geometryIntersection.position, {
-			get: function get$$1(target, name, args) {
-				var i = parseInt(name);
-				if (!isNaN(i)) {
-					return target[i];
-				}
-				switch (name) {
-					case 'push':
-						return target.push;
-					case 'length':
-						return target.length;
-					case 'forEach':
-						return target.forEach;
-					case 'isProxy':
-						return true;
-					case 'target':
-						return target;
-					case "reset":
-						return function () {
-							target.forEach(function (item) {
-								return item.positionWorld = undefined;
-							});
-						};
-					default:
-						console.error('ND: settings.object.geometry.position Proxy. Invalid name: ' + name);
-				}
-			},
-			set: function set$$1(target, name, value) {
-				var i = parseInt(name);
-				if (isNaN(i)) {
-					if (name === "boPositionError") {
-						target[name] = value;
-						return true;
-					}
-					return target[name];
-				}
-				if (i >= target.length) {
-					var boDuplicate = false;
-					for (var j = 0; j < i; j++) {
-						boDuplicate = true;
-						for (var k = 0; k < target[j].length; k++) {
-							if (target[j][k] !== value[k]) {
-								boDuplicate = false;
-								break;
-							}
-						}
-						if (boDuplicate) break;
-					}
-					if (!boDuplicate) target.push(value);
-					return target.length;
-				}
-				target[i] = value;
-				return true;
-			}
-		});
-		switch (n) {
-			case 1:
-				if (settings.object.geometry.indices.length !== 1) console.error('ND.intersection: under constraction. Это не линия.');
-				var edge = settings.object.geometry.indices[0][0];
-				edge.intersection(geometryIntersection);
-				break;
-			case 2:
-				var iFaces = settings.object.geometry.indices[1];
-				if (iFaces) settings.object.geometry.indices[1].forEach(function (iFace) {
-					iFace.forEach(function (iEdge) {
-						intersection(iEdge);
-					});
-				});else {
-					for (var i = 0; i < settings.object.geometry.indices[0].length; i++) {
-						intersection(i);
-					}
-					addEdges(undefined, geometryIntersection);
-				}
-				break;
-			default:
-				{
-					var iSegments = settings.iSegments || n - 2,
-					segments;
-					while (iSegments >= 0) {
-						segments = settings.object.geometry.indices[iSegments];
-						if (segments) break;
-						iSegments--;
-					}
-					if (settings.indice === undefined) {
-						for (var i = 0; i < segments.length; i++) {
-							var nd = new ND(n, {
-								plane: true,
-								object: { geometry: {
-										indices: settings.object.geometry.indices,
-										position: positionWorld.copy()
-									} }, indice: i, iSegments: iSegments }),
-							    s = iSegments - 1;
-							var iIntersections;
-							if (s !== 0) {
-								iIntersections = [];
-							}
-							nd.intersection(geometryIntersection, iIntersections);
-							if (iIntersections && iIntersections.length) {
-								geometryIntersection.indices[s] = geometryIntersection.indices[s] || proxySegments();
-								geometryIntersection.indices[s].push(iIntersections);
-							}
-						}
-						var _edges3 = geometryIntersection.indices[0];
-						var vertices = [];
-						for (var i = _edges3.length - 1; i >= 0; i--) {
-							var _edge = _edges3[i];
-							if (_edge.boVerticeOnPanel && _edge.length === 1) {
-								vertices.push(_edge[0]);
-								_edges3.splice(i, 1);
-							}
-						}
-						switch (vertices.length) {
-							case 0:
-							case 1:
-								break;
-							case 2:
-								_edges3.push(vertices);
-								break;
+						switch (name) {
+							case 'onChange':
+								vectorSettings.onChange = value;
+								return vectorSettings.onChange;
 							default:
-								console.error('ND.intersection: invalid edge.');
+								console.error('ND: Vector set. Invalid name: ' + name);
 						}
-						if (_edges3.length > 1) {
-							for (var i = 0; i < geometryIntersection.position.length; i++) {
-								var verticesCount = 0;
-								for (var j = 0; j < _edges3.length; j++) {
-									var _edge2 = _edges3[j];
-									for (var k = 0; k < _edge2.length; k++) {
-										if (_edge2[k] === i) verticesCount++;
-									}
-								}
-								if (verticesCount < 2) {
-									if (verticesCount === 0) console.error('ND.intersection: Invalid verticesCount = ' + verticesCount);else vertices.push(i);
-								}
-							}
-							if (vertices.length > 0) {
-								if (vertices.length != 2) console.error('ND.intersection: invalid edge.');else _edges3.push(vertices);
-							}
+					}
+				}), possibleConstructorReturn(_this3, _ret);
+			}
+			createClass(Vector, [{
+				key: 'push',
+				value: function push(value) {
+					console.error('ND.Vector.push() unavailable');
+				}
+			}, {
+				key: 'pop',
+				value: function pop() {
+					console.error('ND.Vector.pop() unavailable');
+				}
+			}]);
+			return Vector;
+		}(ND.VectorN);
+		function update() {
+			_ND.intersection();
+			object3D.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints(geometry.D3.points).attributes.position.array;
+			object3D.geometry.attributes.position.needsUpdate = true;
+			if (options.guiSelectPoint) options.guiSelectPoint.update();
+			object3D.children.forEach(function (child) {
+				if (child.type === 'Sprite') child.position.copy(geometry.D3.points[child.userData.pointID]);
+			});
+		}
+		function proxyPosition() {
+			if (settings.object.position && settings.object.position.isProxy) return settings.object.position;
+			return new Proxy(settings.object.position ? settings.object.position instanceof Array ? settings.object.position : [settings.object.position] : [], {
+				get: function get$$1(target, name, args) {
+					var i = parseInt(name);
+					if (!isNaN(i)) {
+						if (target instanceof Array) {
+							if (i < target.length && target[i] !== undefined) return target[i];
+							return 0;
 						}
-					} else {
-						var segment = segments[settings.indice];
-						if (iSegments > 1) {
-							for (var i = 0; i < segment.length; i++) {
-								var _nd = new ND(n, {
-									plane: true,
-									object: settings.object, indice: segment[i], iSegments: iSegments - 1
+						return target;
+					}
+					switch (name) {
+						case 'isProxy':
+							return true;
+						case 'folders':
+							target.folders = target.folders || [];
+							return target.folders;
+						case 'arguments':
+							return;
+						case 'clear':
+							return function () {
+								target.forEach(function (pos, i) {
+									return target[i] = 0;
 								});
-								if (n > 4) {
-									if (n === 5) {
-										var iIntersect = [];
-										_nd.intersection(geometryIntersection, iIntersect);
-										if (iIntersect.length) {
-											if (iIntersect.length === 1) {
-												iIntersect = iIntersect[0];
-												iIntersections.push(iIntersect);
-											} else {
-												var ind = n - 4;
-												geometryIntersection.indices[ind] = geometryIntersection.indices[ind] || proxySegments();
-												geometryIntersection.indices[ind].push(iIntersect);
-												if (iIntersections) iIntersections.push(iIntersect.index);
+							};
+						case 'forEach':
+							return target.forEach;
+						case 'length':
+							return target.length;
+						default:
+							console.error('ND: settings.object.position Proxy. Invalid name: ' + name);
+					}
+				},
+				set: function set$$1(target, name, value) {
+					target[name] = value;
+					settings.object.geometry.position.reset();
+					var input = target.folders[name].cPosition.domElement.querySelector('input');
+					if (parseFloat(input.value) !== value) {
+						input.value = value;
+						update();
+					}
+					return true;
+				}
+			});
+		}
+		settings.object.position = proxyPosition();
+		function proxyRotation() {
+			if (settings.object.rotation && settings.object.rotation.isProxy) return settings.object.rotation;
+			return new Proxy(settings.object.rotation ? settings.object.rotation instanceof Array ? settings.object.rotation : [settings.object.rotation] : [], {
+				get: function get$$1(target, name, args) {
+					var i = parseInt(name);
+					if (!isNaN(i)) {
+						if (target instanceof Array) {
+							if (i < target.length && target[i] !== undefined) return target[i];
+							return 0;
+						}
+						return target;
+					}
+					switch (name) {
+						case 'isProxy':
+							return true;
+						case 'boUseRotation':
+							return target.boUseRotation;
+						case 'folders':
+							target.folders = target.folders || [];
+							return target.folders;
+						case 'trigonometry':
+							if (!target.trigonometry) {
+								target.trigonometry = new Proxy([], {
+									get: function get$$1(target, name, args) {
+										var i = parseInt(name);
+										if (!isNaN(i)) {
+											if (!target[i]) {
+												settings.object.rotation.boUseRotation = true;
+												var angle = settings.object.rotation[i];
+												settings.object.rotation.boUseRotation = false;
+												target[i] = { sin: Math.sin(angle), cos: Math.cos(angle) };
 											}
+											return target[i];
 										}
-									} else console.error('ND.intersection: n = ' + n + ' under constraction');
-								} else _nd.intersection(geometryIntersection, iIntersections);
-							}
-						} else {
-							var _edge3 = [];
-							if (segment.indices) segment = segment.indices;
-							for (var i = 0; i < segment.length; i++) {
-								intersection(segment[i], _edge3);
-							}
-							if (_edge3.length > 0) {
-								if (_edge3.length !== 2 || _edge3[0] === _edge3[1]) {
-									if (!_edge3.boVerticeOnPanel) {
-										var error = 'ND.intersection: invalid edge';
-										console.error(error);
-										return;
+										switch (name) {
+											default:
+												console.error('ND: settings.object.rotation Proxy. Invalid name: ' + name);
+										}
+									},
+									set: function set$$1(target, name, value) {
+										target[name] = value;
+										if (isNaN(parseInt(name))) return true;
+										return true;
 									}
-								}
-								var intersectionEdges = geometryIntersection.indices[0];
-								var duplicateEdge = false;
-								for (var i = 0; i < intersectionEdges.length; i++) {
-									var intersectionEdge = intersectionEdges[i];
-									if (intersectionEdge[0] === _edge3[0] && intersectionEdge[1] === _edge3[1] || intersectionEdge[0] === _edge3[1] && intersectionEdge[1] === _edge3[0]) {
-										duplicateEdge = true;
-										if (iIntersections) iIntersections.push(i);
+								});
+							}
+							return target.trigonometry;
+						case 'isRotation':
+							return function () {
+								target.boUseRotation = true;
+								var boRotation = false;
+								for (var j = 0; j < n; j++) {
+									if (settings.object.rotation[j] !== 0) {
+										boRotation = true;
 										break;
 									}
 								}
-								if (!duplicateEdge) {
-									if (iIntersections) iIntersections.push(intersectionEdges.length);
-									intersectionEdges.push(_edge3);
+								target.boUseRotation = false;
+								return boRotation;
+							};
+						case 'clear':
+							return function () {
+								target.forEach(function (angle, i) {
+									return target[i] = 0;
+								});
+								target.trigonometry = undefined;
+							};
+						case 'arguments':
+							return;
+						case 'forEach':
+							return target.forEach;
+						case 'length':
+							return target.length;
+						default:
+							console.error('ND: settings.object.rotation Proxy. Invalid name: ' + name);
+					}
+				},
+				set: function set$$1(target, name, value) {
+					target[name] = value;
+					if (isNaN(parseInt(name))) return true;
+					settings.object.rotation.trigonometry[name].cos = Math.cos(value);
+					settings.object.rotation.trigonometry[name].sin = Math.sin(value);
+					settings.object.geometry.position.reset();
+					if (target.folders) {
+						var input = target.folders[name].cRotation.domElement.querySelector('input');
+						if (parseFloat(input.value) !== value) {
+							input.value = value;
+						}
+					}
+					update();
+					return true;
+				}
+			});
+		}
+		if (!settings.object.rotation || !settings.object.rotation.isProxy) {
+			settings.object.rotation = proxyRotation();
+			settings.object.rotation.boUseRotation = false;
+		}
+		if (settings.object.geometry.position.target) settings.object.geometry.position = settings.object.geometry.position.target;
+		settings.object.geometry.position.boPositionError = true;
+		var rotationAxes = [[]];
+		function setRotationAxes() {
+			if (n < 2) return;
+			if (rotationAxes[0].length != 0) return;
+			if (n === 2) rotationAxes[0].push(2);
+			else for (var j = 0; j < n - 2; j++) {
+					rotationAxes[0].push(j);
+				}rotationAxes[0].tI = [0, 1];
+			var iLastColumn = rotationAxes[0].length - 1;
+			var boLastRow = false;
+			var _loop = function _loop() {
+				var iLastRow = rotationAxes.length - 1,
+				    lastRow = rotationAxes[iLastRow],
+				    row = [];
+				for (j = iLastColumn; j >= 0; j--) {
+					var prevColumn = lastRow[j];
+					if (j === iLastColumn) iAxis = prevColumn + 1;
+					else iAxis = prevColumn;
+					if (iAxis >= n) {
+						var _ret3 = function () {
+							var createRow = function createRow(j) {
+								if (j <= 0) return false;
+								var prevRowColumn = lastRow[j - 1] + 1;
+								if (prevRowColumn >= lastRow[j]) return createRow(j - 1);
+								row[j - 1] = prevRowColumn;
+								row[j] = row[j - 1] + 1;
+								for (var k = j + 1; k <= iLastColumn; k++) {
+									row[k] = row[k - 1] + 1;
 								}
+								j = j - 2;
+								while (j >= 0) {
+									row[j] = lastRow[j];
+									j--;
+								}
+								return true;
+							};
+							boLastRow = !createRow(j);
+							return 'break';
+						}();
+						if (_ret3 === 'break') break;
+					} else row[j] = iAxis;
+				}
+				if (!boLastRow) {
+					row.tI = [lastRow.tI[0]];
+					tI1 = lastRow.tI[1] + 1;
+					if (tI1 >= n) {
+						row.tI[0]++;
+						tI1 = row.tI[0] + 1;
+					}
+					row.tI[1] = tI1;
+					if (row.length === 0) {
+						console.error('ND positionWorld get: row is empty');
+						return 'break';
+					}
+					rotationAxes.push(row);
+					if (iLastRow === rotationAxes.length - 1) {
+						console.error('ND positionWorld get: row is not added');
+						return 'break';
+					}
+				}
+			};
+			while (!boLastRow) {
+				var j;
+				var iAxis;
+				var tI1;
+				var _ret2 = _loop();
+				if (_ret2 === 'break') break;
+			}
+		}
+		var positionWorld = new Proxy(settings.object.geometry.position ? settings.object.geometry.position : [], {
+			get: function get$$1(target, name) {
+				var i = parseInt(name);
+				if (!isNaN(i)) {
+					settings.object.geometry.position.boPositionError = false;
+					var positionPoint = settings.object.geometry.position[i];
+					if (positionPoint.positionWorld) {
+						settings.object.geometry.position.boPositionError = true;
+						return positionPoint.positionWorld;
+					}
+					var array = [];
+					if (positionPoint !== undefined) {
+						if (!(settings.object.position instanceof Array)) {
+							console.error('ND positionWorld get: settings.object.position is not array');
+							settings.object.position = [settings.object.position];
+						}
+						if (settings.object.rotation.isRotation()) {
+							var getMatrix = function getMatrix(index) {
+								var cos = settings.object.rotation.trigonometry[index].cos,
+								    sin = settings.object.rotation.trigonometry[index].sin,
+								    array = [];
+								var tI = rotationAxes[index].tI;
+								for (var i = 0; i < n; i++) {
+									var _row = [];
+									for (var j = 0; j < n; j++) {
+										if (n === 3) {
+											var iR = n - i - 1,
+											    jR = n - j - 1;
+											if (iR === tI[0] && jR === tI[0]) _row.push(cos);else if (iR === tI[0] && jR === tI[1]) _row.push(sin);else if (iR === tI[1] && jR === tI[0]) _row.push(-sin);else if (iR === tI[1] && jR === tI[1]) _row.push(cos);else if (iR === jR) _row.push(1);else _row.push(0);
+										} else {
+											if (i === tI[0] && j === tI[0]) _row.push(cos);else if (i === tI[0] && j === tI[1]) _row.push(-sin);else if (i === tI[1] && j === tI[0]) _row.push(sin);else if (i === tI[1] && j === tI[1]) _row.push(cos);else if (i === j) _row.push(1);else _row.push(0);
+										}
+									}
+									array.push(_row);
+								}
+								return new MyMath.Matrix(array);
+							};
+							var m3;
+							setRotationAxes();
+							if (n === 2) m3 = getMatrix(0);
+							for (var j = 0; j < rotationAxes.length; j++) {
+								var m = getMatrix(j);
+								if (m3) m3 = m3.multiply(m);
+								else m3 = m;
+							}
+							var position = [];
+							for (var j = 0; j < n; j++) {
+								position.push(positionPoint[j]);
+							}var p = m3.multiply(position);
+							p.forEach(function (value, i) {
+								if (value !== undefined) {
+									array.push(value + settings.object.position[i]);
+								} else console.error('ND: positionWorld get: invalig array item = ' + value);
+							});
+						} else {
+							positionPoint.forEach(function (value, j) {
+								return array.push(value + settings.object.position[j]);
+							});
+							setRotationAxes();
+						}
+					} else console.error('ND positionWorld get index');
+					if (settings.object.geometry.boRememberPosition === undefined) settings.object.geometry.boRememberPosition = true;
+					if (settings.object.geometry.boRememberPosition) positionPoint.positionWorld = array;
+					settings.object.geometry.position.boPositionError = true;
+					return array;
+				}
+				switch (name) {
+					case 'isProxy':
+						return true;
+					case 'target':
+						return;
+					case 'copy':
+						return function () {
+							var v = [];
+							settings.object.geometry.position.boPositionError = false;
+							settings.object.geometry.position.forEach(function (value, i) {
+								v[i] = positionWorld[i];
+								settings.object.geometry.position.boPositionError = false;
+							});
+							settings.object.geometry.position.boPositionError = true;
+							return v;
+						};
+				}
+				return settings.object.geometry.position[name];
+			}
+		});
+		var _prevLine = {};
+		function proxyGeometryPosition() {
+			if (settings.object.geometry.position && settings.object.geometry.position.isProxy) return settings.object.geometry.position;
+			return new Proxy(settings.object.geometry.position ? settings.object.geometry.position : [], {
+				get: function get$$1(target, name, args) {
+					var i = parseInt(name);
+					if (!isNaN(i)) {
+						if (settings.object.geometry.position.boPositionError) {
+						}
+						if (i >= target.length) {
+							console.error('ND get settings.object.geometry.position: invalid index = ' + i);
+							return;
+						}
+						if (target[i] instanceof Array) {
+							return new Proxy(target[i], {
+								get: function get$$1(target, name, args) {
+									var i = parseInt(name);
+									if (!isNaN(i)) {
+										if (i >= target.length) return 0;
+										var axis = target[i];
+										if (isNaN(axis)) console.error('ND get settings.object.geometry.position[i][' + i + '] = ' + target[i]);
+										return axis;
+									}
+									switch (name) {
+										case 'reset':
+											return function () {
+												delete target.positionWorld;
+											};
+										case 'distanceTo':
+											return function (verticeTo) {
+												var vertice = target;
+												if (vertice.length != verticeTo.length) {
+													console.error(sUniverse + ': settings.object.geometry.position[i].distanceTo(...). vertice.length != verticeTo.length');
+													return;
+												}
+												var sum = 0;
+												vertice.forEach(function (axis, i) {
+													var d = axis - verticeTo[i];
+													sum += d * d;
+												});
+												return Math.sqrt(sum);
+											};
+									}
+									return target[name];
+								},
+								set: function set$$1(target, name, value) {
+									var i = parseInt(name);
+									target[name] = value;
+									if (!isNaN(i)) {
+										target.positionWorld = undefined;
+										if (_prevLine.prevLine) {
+											_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints(geometry.D3.points).attributes.position.array;
+											_prevLine.prevLine.geometry.attributes.position.needsUpdate = true;
+										}
+										update();
+									}
+									return true;
+								}
+							});
+						}
+						console.error('ND: get settings.object.geometry.position is not array.');
+						return [target[i]];
+					}
+					switch (name) {
+						case 'isProxy':
+							return true;
+						case 'boPositionError':
+							return target.boPositionError;
+						case 'target':
+							return target;
+						case "clone":
+							return function (i) {
+								var v = [];
+								target[i].forEach(function (value, j) {
+									return v[j] = target[i][j];
+								});
+								return v;
+							};
+						case "reset":
+							return function () {
+								target.forEach(function (item) {
+									return delete item.positionWorld;
+								});
+							};
+						default:
+							return target[name];
+					}
+				},
+				set: function set$$1(target, name, value) {
+					var i = parseInt(name);
+					if (!isNaN(i)) {
+						target[name].positionWorld = undefined;
+					}
+					target[name] = value;
+					return true;
+				}
+			});
+		}
+		settings.object.geometry.position = proxyGeometryPosition();
+		function setIndices() {
+			if (settings.object.geometry.indices) return;
+			settings.object.geometry.indices = [];
+			settings.object.geometry.indices.boAddIndices = true;
+		}
+		setIndices();
+		function proxyEdges(newEdges) {
+			edges = newEdges || edges;
+			if (edges && edges.isProxy) return edges;
+			return new Proxy(edges ? edges : [], {
+				get: function get$$1(edges, name, value) {
+					var _this4 = this;
+					var i = parseInt(name);
+					if (!isNaN(i)) {
+						var edge = edges[i];
+						edge.intersection = function (geometryIntersection            ) {
+							var i = parseInt(name);
+							if (!isNaN(i)) {
+								var indicesIntersection = function indicesIntersection(position) {
+									switch (n) {
+										case 2:
+											break;
+										default:
+											if (!position) break;
+											position.push(vectorPlane[n - 1]);
+											break;
+									}
+									indices.intersection = { position: position };
+									if (indices.intersection.position) indices.intersection.position.iEdge = i;
+								};
+								if (i.toString() !== name) {
+									console.error('ND: settings.object.geometry.indices[]intersection. invalid name = ' + name);
+									return;
+								}
+								if (edges.length === 0) return;
+								if (i >= edges.length) {
+									console.error('ND: settings.object.geometry.indices[]intersection. invalid length: ' + edges.length);
+									_this4.indices = { intersection: {} };
+									return;
+								}
+								var indices = edges[i];
+								if (indices.length !== 2) {
+									console.error('ND: settings.object.geometry.indices[]intersection. indices.length = ' + indices.length);
+									return;
+								}
+								if (indices[0] === indices[1]) {
+									console.error('ND: settings.object.geometry.indices[]intersection. indices[0] === indices[1] = ' + indices[0]);
+									return;
+								}
+								var position0 = new Vector(positionWorld[indices[0]]),
+								    position1 = new Vector(positionWorld[indices[1]]);
+								switch (n) {
+									case 1:
+										if (vectorPlane[0].between(position0[0], position1[0], true)) geometryIntersection.position.push([vectorPlane[0]]);
+										break;
+									case 2:
+										var vector;
+										if (vectorPlane[1].between(position0[1], position1[1], true)) {
+											var a = (position1[1] - position0[1]) / (position1[0] - position0[0]),
+											    b = position0[1] - a * position0[0],
+											    x = a === 0 || isNaN(a) || Math.abs(a) === Infinity ? position1[0] : (vectorPlane[1] - b) / a;
+											if (isNaN(x) || x === undefined) {
+												console.error('ND.intersection: x = ' + x + ' position1[0] = ' + position1[0] + ' position0[0] = ' + position0[0]);
+											}
+											var _d = 1e-15;
+											if (!x.between(position0[0], position1[0], true)) {
+												if (!(Math.abs(x - position0[0]) < _d && Math.abs(x - position0[0]) < _d)) {
+													indices.intersection = {};
+													break;
+												}
+											}
+											vector = [x, vectorPlane[1]];
+										}
+										indicesIntersection(vector);
+										break;
+									case 3:
+										var pos;
+										var d = 5.56e-17;
+										if (Math.abs(vectorPlane[n - 1] - position1[n - 1]) < d) pos = position1;else if (Math.abs(vectorPlane[n - 1] - position0[n - 1]) < d) pos = position0;
+										if (pos) {
+											indicesIntersection([pos[0], pos[1]]);
+											indices.intersection.boVerticeOnPanel = true;
+										} else {
+											var nD02 = new ND(n - 1, {
+												plane: true,
+												object: {
+													geometry: {
+														position: positionWorld.copy(),
+														indices: [[indices]],
+														iAxes: [1, 2]
+													}
+												},
+												vectorPlane: vectorPlane.array
+											}),
+											    arrayIntersects02 = nD02.intersection();
+											var nD12 = new ND(n - 1, {
+												plane: true,
+												object: {
+													geometry: {
+														position: positionWorld.copy(),
+														indices: [[indices]],
+														iAxes: [0, 2]
+													}
+												},
+												vectorPlane: vectorPlane.array
+											}),
+											    arrayIntersects12 = nD12.intersection();
+											indicesIntersection(arrayIntersects02.length && arrayIntersects12.length ? [arrayIntersects12[0][0], arrayIntersects02[0][0]] : undefined);
+										}
+										break;
+									default:
+										var intersectionAxis = function intersectionAxis(axis) {
+											var nD0 = new ND(2, {
+												plane: true,
+												object: {
+													geometry: {
+														position: positionWorld,
+														indices: [[indices]],
+														iAxes: [axis, n - 1]
+													}
+												},
+												vectorPlane: vectorPlane.array
+											});
+											return nD0.intersection();
+										};
+										var arrayIntersections = [];
+										var boIntersect = true;
+										for (var iIntersection = 0; iIntersection < n - 1; iIntersection++) {
+											var item = intersectionAxis(iIntersection);
+											if (boIntersect && item.length === 0) {
+												boIntersect = false;
+												break;
+											}
+											if (item.length) arrayIntersections.push(item[0][0]);
+										}
+										indicesIntersection(boIntersect ? arrayIntersections : undefined);
+								}
+							} else console.error('ND: settings.object.geometry.indices[]intersection. invalid name: ' + name);
+						};
+						return edge;
+					}
+					switch (name) {
+						case 'intersection':
+							return undefined;
+						case 'edges':
+							return edges;
+						case 'isProxy':
+							return true;
+					}
+					return edges[name];
+				},
+				set: function set$$1(edges, prop, value) {
+					var index = parseInt(prop);
+					if (isNaN(index)) {
+						switch (prop) {
+							case 'length':
+								break;
+							case 'edges':
+								settings.object.geometry.indices[0] = proxyEdges(value);break;
+							case 'selected':
+								edges.selected = value;break;
+							default:
+								console.error('ND settings.object.geometry.indices[0].set: invalid prop: ' + prop);
+						}
+						return true;
+					}
+					if (value instanceof Array) {
+						for (var i = 0; i < edges.length; i++) {
+							var edge = edges[i];
+							if (edge[0] === value[0] && edge[1] === value[1] || edge[1] === value[0] && edge[0] === value[1]) {
+								value.index = i;
+								return true;
+							}
+						}
+						edges[index] = value;
+						value.index = index;
+						return true;
+					}
+					var indices = value;
+					if (indices.length !== 2) {
+						console.error('ND: settings.object.geometry.indices.push invalid indices.length = ' + indices.length);
+						return true;
+					}
+					for (var i = 0; i < edges.length; i++) {
+						var edgeIndices = edges[i];
+						if (edgeIndices[0] === indices[0] && edgeIndices[1] === indices[1]) {
+							console.error('ND: settings.object.geometry.indices.push under constraction');
+							return;
+						}
+						if (edgeIndices[0] === indices[1] && edgeIndices[1] === indices[0]) {
+							console.error('ND: settings.object.geometry.indices.push under constraction');
+							indices[0] = settings.object.geometry.indices[i].indices[0];
+							indices[1] = settings.object.geometry.indices[i].indices[1];
+							return;
+						}
+					}
+					edges[index] = value;
+					return true;
+				}
+			});
+		}
+		var edges;
+		function setEdges() {
+			edges = settings.object.geometry.indices[0];
+			var boArray = edges instanceof Array;
+			if (!settings.object.geometry.indices[0] || boArray) {
+				var indices = settings.object.geometry.indices;
+				if (boArray) {
+					if (!indices[0].isProxy) indices[0] = proxyEdges();
+				} else indices.push(proxyEdges());
+			}
+		}
+		setEdges();
+		function addEdge(indices) {
+			if (settings.object.geometry.position.length < 2) return;
+			switch (n) {
+				case 1:
+					var _edges = settings.object.geometry.indices[0];
+					if (settings.object.geometry.position) {
+						indices = [];
+						positionWorld.forEach(function (indice, i) {
+							indices.push(i);
+						});
+						_edges.push(indices);
+					}
+					break;
+				default:
+					console.error('ND: default edges failed! n = ' + n);
+			}
+		}
+		function proxySegments() {
+			return new Proxy([], {
+				get: function get$$1(target, name) {
+					var i = parseInt(name);
+					if (!isNaN(i)) return target[i];
+					switch (name) {
+						case 'push':
+							return target.push;
+						case 'length':
+							return target.length;
+						case 'isProxy':
+							return true;
+						case 'forEach':
+							return target.forEach;
+						case 'selected':
+							return target.selected;
+						default:
+							console.error('ND: settings.object.geometry.indices[' + name + ']. Invalid name: ' + name);
+					}
+				},
+				set: function set$$1(target, name, value) {
+					var index = parseInt(name);
+					if (isNaN(index)) {
+						switch (name) {
+							case 'length':
+								break;
+							case 'selected':
+								target.selected = value;break;
+							default:
+								console.error('ND settings.object.geometry.indices[' + name + ']: invalid name: ' + name);
+								return false;
+						}
+						return true;
+					}
+					if (value instanceof Array === false) {
+						console.error('ND settings.object.geometry.indices[' + l + ']: invalid name: ' + name);
+						return false;
+					}
+					for (var i = value.length - 1; i >= 0; i--) {
+						for (var j = i - 1; j >= 0; j--) {
+							if (value[i] === value[j]) {
+								console.error('nD proxySegments() set: duplicate index = ' + value[i]);
+								value.splice(i, 1);
+								continue;
 							}
 						}
 					}
+					for (var i = 0; i < target.length; i++) {
+						var segment = target[i],
+						    aDetected = [];
+						if (segment.length !== value.length) continue;
+						for (var j = 0; j < segment.length; j++) {
+							aDetected[j] = false;
+							for (var k = 0; k < value.length; k++) {
+								if (segment[j] === value[k]) {
+									aDetected[j] = true;
+									break;
+								}
+							}
+						}
+						var boDetected = true;
+						for (var j = 0; j < aDetected.length; j++) {
+							if (!aDetected[j]) {
+								boDetected = false;
+								break;
+							}
+						}
+						if (boDetected) {
+							value.index = i;
+							return true;
+						}
+					}
+					target[index] = value;
+					value.index = index;
+					return true;
 				}
+			});
 		}
-		if (settings.onIntersection) settings.onIntersection(geometryIntersection);
-		if (scene) {
-			if (objectIntersect) {
-				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(objectIntersect);
-				scene.remove(objectIntersect);
-				if (options.eventListeners) options.eventListeners.removeParticle(objectIntersect);
+		function addEdges(level, geometry) {
+			var positionIndices = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+			var levelIndices = arguments[3];
+			if (positionIndices.length === 0) positionWorld.forEach(function (position, i) {
+				positionIndices.push(i);
+			});
+			geometry = geometry || settings.object.geometry;
+			if (!geometry.indices[0]) geometry.indices[0] = [];
+			var edges = geometry.indices[0];
+			if (n === 2 && geometry.position.length === 2) {
+				edges.push([0, 1]);
+				return;
 			}
-			if (geometryIntersection.position.length) objectIntersect = create3DObject(geometryIntersection, { name: 'Intersection' });
-		}
-		return geometryIntersection.position;
-	};
-	var THREE = three$1.THREE,
-	    scene = settings.scene;
-	if (scene) {
-		if (n <= 1) options.scales.y = undefined;
-		if (n <= 2) options.scales.z = undefined;
-		options.scales.text.rect = options.scales.text.rect || {};
-		options.scales.text.rect.displayRect = false;
-		options.scales.text.precision = 2;
-	}
-	var object3D;
-	function projectTo3D() {
-		if (!scene) return;
-		if (object3D) {
-			for (var i = object3D.children.length - 1; i >= 0; i--) {
-				var child = object3D.children[i];
-				if (child instanceof THREE.Sprite) {
-					object3D.remove(child);
-					if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(child);
+			if (level === undefined) return;
+			if (level > 2) {
+				var _loop2 = function _loop2() {
+					var posIndices = [];
+					positionIndices.forEach(function (indice, j) {
+						if (positionIndices[i] !== positionIndices[j]) posIndices.push(positionIndices[j]);
+					});
+					var lIndices = [];
+					addEdges(level - 1, undefined, posIndices, lIndices);
+					if (lIndices.length) {
+						var _l = level - 2;
+						if (_l === 0) console.error('ND addEdges: invalid l = ' + 1);
+						settings.object.geometry.indices[_l] = settings.object.geometry.indices[_l] === undefined ? proxySegments() : settings.object.geometry.indices[_l];
+						settings.object.geometry.indices[_l].push(lIndices);
+						if (levelIndices) levelIndices.push(lIndices.index);
+					}
+				};
+				for (var i = 0; i < positionIndices.length; i++) {
+					_loop2();
 				}
 			}
-			scene.remove(object3D);
-			if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(object3D);
-			options.eventListeners.removeParticle(object3D);
-			object3D = undefined;
+			switch (level) {
+				case 2:
+					if (!positionIndices) {
+						positionIndices = [];
+						settings.object.geometry.position.forEach(function (item, i) {
+							positionIndices.push(i);
+						});
+					}
+					var length = positionIndices.length;
+					var _addItem = function _addItem() {
+						var start = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+						for (var i = start; i < length; i++) {
+							if (start === 0) _addItem(i + 1);else {
+								var edge = [positionIndices[start - 1], positionIndices[i]];
+								edges.push(edge);
+								if (levelIndices) levelIndices.push(edge.index);
+							}
+						}
+					};
+					_addItem();
+					break;
+			}
 		}
-		object3D = create3DObject(geometry, {
-			name: settings.object.name,
-			faces: settings.object.faces,
-			color: settings.object.color || 'lime'
-		});
-	}
-	projectTo3D();
-	var Plane = function Plane() {
-		classCallCheck(this, Plane);
-		var mesh;
-		this.createMesh = function () {
-			if (!scene) return;
-			var color = 0x0000FF;
+		function appendEdges() {
 			switch (n) {
 				case 1:
-					options.point.size = (options.scales.x.max - options.scales.x.min) * 500;
-					mesh = new THREE.Points(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0)], 3), new THREE.PointsMaterial({
-						color: color,
-						sizeAttenuation: false
-					}));
-					break;
-				case 2:
-					mesh = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(options.scales.x.min, 0, 0), new THREE.Vector3(options.scales.x.max, 0, 0)]), new THREE.LineBasicMaterial({ color: color }));
-					break;
-				case 3:
-					mesh = new THREE.GridHelper(2, 10, color, color);
-					mesh.rotation.x = Math.PI / 2;
+					addEdge();
 					break;
 				default:
-					{
-						return;
-					}
+					if (settings.object.geometry.indices[0].length === 0) addEdges(n);
 			}
-			mesh.name = 'Plane';
-			scene.add(mesh);
-			if (options.guiSelectPoint) options.guiSelectPoint.addMesh(mesh);
-			mesh.position.copy(vectorPlane.point);
-			mesh.userData.raycaster = {
+		}
+		appendEdges();
+		if (settings.object.geometry.indices.boAddIndices) {
+			var indices = settings.object.geometry.indices;
+			for (var i = 1; i < indices.length; i++) {
+				var indice = indices[i];
+				var arrayIndices = [];
+				var max = 0;
+				for (var j = 0; j < indice.length; j++) {
+					var segment = indice[j];
+					for (var k = 0; k < segment.length; k++) {
+						var index = segment[k];
+						if (arrayIndices[index] === undefined) arrayIndices[index] = 0;
+						arrayIndices[index]++;
+						if (arrayIndices[index] > max) max = arrayIndices[index];
+					}
+				}
+				var arraySegment = [];
+				for (var j = 0; j < arrayIndices.length; j++) {
+					if (arrayIndices[j] < max) arraySegment.push(j);
+				}
+				if (arraySegment.length > 0) indice.push(arraySegment);
+			}
+		}
+		var vectorPlane;
+		var geometry = {
+			get position() {
+				return new Proxy(this, {
+					get: function get$$1(target, name) {
+						switch (name) {
+							case 'length':
+								return settings.object.geometry.position.length;
+						}
+						var i = parseInt(name);
+						if (isNaN(i)) {
+							console.error('ND.geometry.position: invalid name: ' + name);
+							return;
+						}
+						return new Vector(positionWorld[i]);
+					}
+				});
+			},
+			get copy() {
+				var copySettings = {
+					geometry: { position: [], indices: [] },
+					position: [],
+					rotation: [],
+					aObjects: settings.object.aObjects,
+					name: settings.object.name
+				};
+				settings.object.geometry.position.forEach(function (vertice) {
+					var copy = [];
+					vertice.forEach(function (axis) {
+						return copy.push(axis);
+					});
+					copySettings.geometry.position.push(copy);
+				});
+				settings.object.geometry.indices.forEach(function (indexes) {
+					var copy = [];
+					indexes.forEach(function (arrayIndex) {
+						var copyArrayIndex = [];
+						if (arrayIndex.indices) arrayIndex = arrayIndex.indices;
+						arrayIndex.forEach(function (index) {
+							return copyArrayIndex.push(index);
+						});
+						copy.push(copyArrayIndex);
+					});
+					copySettings.geometry.indices.push(copy);
+				});
+				function copyItem(array) {
+					var copy = [];
+					array.forEach(function (item) {
+						copy.push(item);
+					});
+					return copy;
+				}
+				copySettings.position = copyItem(settings.object.position);
+				settings.object.rotation.boUseRotation = true;
+				copySettings.rotation = copyItem(settings.object.rotation);
+				settings.object.rotation.boUseRotation = false;
+				return copySettings;
+			},
+			get geometry() {
+				return settings.object.geometry;
+			},
+			set geometry(geometry) {
+				settings.object.geometry.position = geometry.position;
+				if (geometry.indices) {
+					settings.object.geometry.indices.length = 1;
+					for (var i = 0; i < geometry.indices.length; i++) {
+						if (i === 0) {
+							settings.object.geometry.indices[0].edges.length = 0;
+							geometry.indices[0].forEach(function (edge) {
+								return settings.object.geometry.indices[0].edges.push(edge.indices === undefined ? edge : edge.indices);
+							});
+						} else settings.object.geometry.indices[i] = geometry.indices[i];
+					}
+				} else delete settings.object.geometry.indices;
+			},
+			D3: {
+				get points() {
+					return _ND.bufferGeometry.userData.position;
+				},
+				get faceIndices() {
+					var aFaceIndices = [];
+					var indices = settings.object.geometry.indices;
+					if (indices.length < 2) return aFaceIndices;
+					indices[1].forEach(function (face) {
+						var faceVertices = [];
+						face.forEach(function (edge, iEdge) {
+							if (iEdge > 2) {
+								console.error('ND: geometry.D3.faceIndices get. invalid face edges count.');
+								return;
+							}
+							var edgeVertices = indices[0][edge].indices;
+							if (faceVertices.length === 0) {
+								faceVertices.push(edgeVertices[0]);
+								faceVertices.push(edgeVertices[1]);
+							} else {
+								var boVertice0 = false,
+								    boVertice1 = false;
+								for (var i = 0; i < faceVertices.length; i++) {
+									var faceVertice = faceVertices[i];
+									if (faceVertice === edgeVertices[0]) boVertice1 = true;else if (faceVertice === edgeVertices[1]) boVertice0 = true;
+								}
+								if (!boVertice0 && !boVertice1) console.error('ND: geometry.D3.faceIndices get. Missing push');else if (boVertice0 != boVertice1) {
+									faceVertices.push(edgeVertices[boVertice0 ? 0 : 1]);
+								}
+							}
+						});
+						if (faceVertices.length === 3) aFaceIndices.push(faceVertices[0], faceVertices[1], faceVertices[2]);else console.error('ND: PolyhedronGeometry: subdivide. Invalid face vertices count');
+					});
+					return aFaceIndices;
+				},
+				get indices() {
+					var _this5 = this;
+					var indices = [],
+					    colors = [];
+					if (settings.object.geometry.indices[0].length !== 0) {
+						var _edges2 = settings.object.geometry.indices[0];
+						for (var i = 0; i < _edges2.length; i++) {
+							var edge = _edges2[i];
+							if (edge !== undefined) {
+								if (edge.length === undefined) edge = [0, 1];
+								if (edge.length !== 2) {
+									console.error('ND.geometry.D3.get indices: invalid edge.length = ' + edge.length);
+									return;
+								}
+								if (edge[0] === edge[1]) {
+									console.error('ND.geometry.D3.get indices: duplicate edge index = ' + edge[0]);
+									return;
+								}
+								edge.forEach(function (vertice) {
+									return indices.push(vertice);
+								});
+								if (this.color && _typeof(this.color) != "object") {
+									(function () {
+										var hexToRgb = function hexToRgb(hex) {
+											var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+											return result ? {
+												r: parseInt(result[1], 16),
+												g: parseInt(result[2], 16),
+												b: parseInt(result[3], 16)
+											} : null;
+										};
+										var push = function push() {
+											colors.push(rgb.r);
+											colors.push(rgb.g);
+											colors.push(rgb.b);
+										};
+										var color = new THREE.Color(_this5.color);
+										var rgb = hexToRgb(color.getHexString());
+										push();
+										if (_edges2.length === 1) push();
+									})();
+								}
+							} else console.error('ND.geometry.D3.get indices: invalid edge. Возможно вычислены не все точки пересечения');
+						}
+						if (this.color && _typeof(this.color) === "object") {
+							if (colors.length != 0) console.error('ND.geometry.D3.get vrtices colors: Invalid colors.length = ' + colors.length);
+							settings.object.geometry.position.forEach(function (vertice) {
+								var rgb = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max);
+								colors.push(rgb.r);
+								colors.push(rgb.g);
+								colors.push(rgb.b);
+							});
+						}
+					}
+					return { indices: indices, colors: colors };
+				}
+			}
+		};
+		var points = [];
+		for (var i = 0; i < geometry.position.length; i++) {
+			points.push(geometry.position[i].point);
+		}_this2.getPoint = function (i) {
+			return points[i];
+		};
+		_this2.setPositionAttributeFromPoints(points);
+		vectorPlane = vectorPlane || new Vector(settings.vectorPlane);
+		if (!vectorPlane || !vectorPlane.point) vectorPlane = new Vector(vectorPlane);
+		var objectIntersect;
+		_this2.opacity = function (object3D, transparent, opacity) {
+			_ND.verticesOpacity(transparent, opacity);
+		};
+		var selectSegment = {
+			line: undefined,
+			removeLine: function removeLine(line) {
+				if (line) {
+					line.parent.remove(line);
+					line = undefined;
+				}
+				return line;
+			},
+			opacityDefault: 0.3,
+			opacityItem: function opacityItem(item, parentObject, transparent) {
+				var opacity = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : selectSegment.opacityDefault;
+				if (!item.material) return;
+				if (transparent && opacity === 0 && Object.is(item.parent, parentObject)) parentObject.remove(item);else {
+					if (!item.parent) parentObject.add(item);
+					_ND.opacity(item, transparent, opacity);
+				}
+			}
+		};
+		function create3DObject(geometry) {
+			var settings3D = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+			var nD = void 0;
+			if (!geometry.D3) {
+				nD = new ND(n, {
+					plane: true,
+					object: { geometry: geometry, color: settings3D.color }
+				});
+				geometry = nD.geometry;
+			} else nD = _ND;
+			if (geometry.position.length === 0) return;
+			var color = settings3D.color || 'white';
+			geometry.D3.color = color;
+			var indices3D = geometry.D3.indices,
+			    indices = indices3D.indices;
+			var buffer = nD.bufferGeometry;
+			if (settings3D.faces) {
+				if (settings3D.faces === true) settings3D.faces = {};
+				if (settings3D.faces.color === undefined) settings3D.faces.color = color;
+				if (settings3D.faces.opacity === undefined) settings3D.faces.opacity = 0.5;
+				if (settings3D.faces.transparent === undefined) settings3D.faces.transparent = true;
+				buffer.setIndex(geometry.D3.faceIndices);
+				buffer.computeVertexNormals();
+			} else buffer.setIndex(indices);
+			var lineBasicMaterialParameters = void 0;
+			lineBasicMaterialParameters = {
+				vertexColors: true,
+				toneMapped: false
+			};
+			if (settings.object.geometry.opacity) lineBasicMaterialParameters.transparent = true;
+			var object = indices.length > 1 ? settings3D.faces ? new THREE.Mesh(buffer, new THREE.MeshLambertMaterial({
+				color: color,
+				opacity: settings3D.faces.opacity,
+				transparent: settings3D.faces.transparent,
+				side: THREE.DoubleSide
+			})) : new THREE.LineSegments(buffer, new THREE.LineBasicMaterial(lineBasicMaterialParameters)) : new THREE.Points(buffer, new THREE.PointsMaterial({
+				color: color,
+				sizeAttenuation: false,
+				size: options.point.size / (options.point.sizePointsMaterial * 2)
+			}));
+			if (settings3D.name) object.name = settings3D.name;
+			scene.add(object);
+			object.userData.myObject = nD;
+			object.userData.geometry = geometry.geometry;
+			object.userData.onMouseDown = function (intersection) {
+				var indices = geometry.geometry.indices,
+				    segmentIndex = 0,
+				segment = indices[segmentIndex],
+				    selectedIndex = segment.selected;
+				selectSegment.line = selectSegment.removeLine(selectSegment.line);
+				var opacityDefault = intersection.event && intersection.event.button === 0 ? selectSegment.opacityDefault : 1,
+				    parentObject = object;
+				function opacity() {
+					var transparent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+					var opacity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : opacityDefault;
+					scene.children.forEach(function (item) {
+						return selectSegment.opacityItem(item, parentObject, transparent, opacity);
+					});
+				}
+				opacity();
+				var buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
+				var lineIndices = [];
+				function createIndices(item, level) {
+					if (level > 0) {
+						level--;
+						for (var i = 0; i < item.length; i++) {
+							createIndices(indices[level][item[i]], level);
+						}return;
+					}
+					var itemIndices = item.indices || item;
+					if (itemIndices.length !== 2) console.error('ND: createIndices. Invalid itemIndices.length = ' + itemIndices.length);
+					var boDetected = false;
+					for (var lineIndicesIndex = 0; lineIndicesIndex < lineIndices.length; lineIndicesIndex += 2) {
+						if (lineIndices[lineIndicesIndex] === itemIndices[0] && lineIndices[lineIndicesIndex + 1] === itemIndices[1]) {
+							boDetected = true;
+							break;
+						}
+					}
+					if (!boDetected) itemIndices.forEach(function (i) {
+						lineIndices.push(i);
+					});
+				}
+				createIndices(segment[selectedIndex], segmentIndex);
+				selectSegment.line = new THREE.LineSegments(buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
+				parentObject.add(selectSegment.line);
+			};
+			object.userData.nd = function (fParent, dat) {
+				var gui = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+				var boUpdate = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+				if (!object.userData.nd.update) object.userData.nd.update = function () {
+					object.userData.nd(fParent, dat, gui, true);
+				};
+				if (!boUpdate) {
+					if (fParent.parent.fCustom) {
+						fParent.parent.fCustom.parent.removeFolder(fParent.parent.fCustom);
+						fParent.parent.fCustom = undefined;
+					}
+					if (!gui && geometry.geometry.gui) fParent.parent.fCustom = geometry.geometry.gui(fParent, dat, settings.options, _ND);
+				}
+				var getLanguageCode = options.getLanguageCode;
+				var lang = {
+					vertices: 'Vertices',
+					verticesTitle: 'Vertices.',
+					edges: 'Edges',
+					edgesTitle: 'The selected edge lists the vertex indices of the edge.',
+					distance: 'Distance',
+					distanceTitle: 'Distance between edge vertices.',
+					faces: 'Faces',
+					facesTitle: 'The selected face lists the indexes of the edges of that face.',
+					bodies: 'Bodies',
+					bodiesTitle: 'The selected body lists the indexes of the faces of this body.',
+					objects: 'Objects',
+					objectsTitle: 'The selected object lists the indexes of the objects that this object consists of. It can be indexes of bodies.',
+					position: 'Position',
+					rotation: 'Rotation',
+					rotationPointTitle: 'Rotation point',
+					rotationAxisTitle: 'Rotation axis',
+					rotationPlaneTitle: 'Axes of plane of rotation.',
+					rotationSpaceTitle: 'Axes of space of rotation.',
+					rotationnDSpaceTitle: 'Axes of multi dimensional space of rotation.',
+					defaultButton: 'Default',
+					defaultPositionTitle: 'Restore default position',
+					defaultRotationTitle: 'Restore default rotation',
+					notSelected: 'Not selected'
+				};
+				var _languageCode = getLanguageCode();
+				switch (_languageCode) {
+					case 'ru':
+						lang.vertices = 'Вершины';
+						lang.verticesTitle = 'Вершины.';
+						lang.edges = 'Ребра';
+						lang.edgesTitle = 'В выбранном ребре перечислены индексы вершин ребра.';
+						lang.distance = 'Расстояние';
+						lang.distanceTitle = 'Расстояние между вершинами ребра.';
+						lang.faces = 'Грани';
+						lang.facesTitle = 'В выбранной грани перечислены индексы ребер этой грани.';
+						lang.bodies = 'Тела';
+						lang.bodiesTitle = 'В выбранном теле перечислены индексы граней этого тела.';
+						lang.objects = 'Объекты';
+						lang.objectsTitle = 'В выбранном объекте перечислены индексы объектов, из которого состоит этот объект. Это могут быть индексы тел.';
+						lang.position = 'Позиция';
+						lang.rotation = 'Вращение';
+						lang.rotationPointTitle = 'Точка вращения.';
+						lang.rotationAxisTitle = 'Ось вращения.';
+						lang.rotationPlaneTitle = 'Оси плоскости вращения.';
+						lang.rotationSpaceTitle = 'Оси пространства вращения.';
+						lang.rotationnDSpaceTitle = 'Оси многомерного пространства вращения..';
+						lang.defaultButton = 'Восстановить';
+						lang.defaultPositionTitle = 'Восстановить позицию объекта по умолчанию';
+						lang.defaultRotationTitle = 'Восстановить вращение объекта по умолчанию';
+						lang.notSelected = 'Не выбран';
+						break;
+				}
+				for (var i = fParent.__controllers.length - 1; i >= 0; i--) {
+					fParent.remove(fParent.__controllers[i]);
+				}
+				var indices = geometry.geometry.indices,
+				    segmentIndex = indices.length - 1;
+				function addController(segmentIndex,
+				fParent, segmentItems,
+				prevLine
+				) {
+					_prevLine.prevLine = prevLine;
+					var segment;
+					if (segmentItems) {
+						var _addItem2 = function _addItem2(item, i) {
+							item.i = i;
+							segment.push(item);
+						};
+						segment = [];
+						if (segmentIndex === -1) {
+							if (segmentItems.forEach) segmentItems.forEach(function (i) {
+								return _addItem2(geometry.geometry.position[i], i);
+							});else segmentItems.indices.forEach(function (i) {
+								return _addItem2(geometry.geometry.position[i], i);
+							});
+						} else {
+							var _index = indices[segmentIndex];
+							segmentItems.forEach(function (i) {
+								return _addItem2(_index[i].indices ? _index[i].indices : _index[i], i);
+							});
+						}
+					} else segment = indices[segmentIndex];
+					var items = { Items: [lang.notSelected] };
+					var fChildSegment, line;
+					var name, title;
+					switch (segmentIndex) {
+						case -1:
+							name = lang.vertices;title = lang.verticesTitle;break;
+						case 0:
+							name = lang.edges;title = lang.edgesTitle;break;
+						case 1:
+							name = lang.faces;title = lang.facesTitle;break;
+						case 2:
+							name = lang.bodies;title = lang.bodiesTitle;break;
+						default:
+							name = lang.objects;title = lang.objectsTitle;
+					}
+					var fSegment = fParent.addFolder(name);
+					var cDistance = void 0;
+					fSegment.userData = { objectItems: true };
+					dat.folderNameAndTitle(fSegment, name, title);
+					switch (segmentIndex) {
+						case 0:
+							cDistance = dat.controllerZeroStep(fSegment, { value: 0 }, 'value');
+							cDistance.domElement.querySelector('input').readOnly = true;
+							dat.controllerNameAndTitle(cDistance, lang.distance, lang.distanceTitle);
+							break;
+					}
+					var cSegment = fSegment.add(items, 'Items', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
+						if (fChildSegment) {
+							fChildSegment.__controllers.forEach(function (item, i) {
+								var controller = fChildSegment.__controllers[i];
+								if (controller.__select && controller.__select.selectedIndex != 0) {
+									controller.__select.selectedIndex = 0;
+									controller.__onChange();
+								}
+							});
+							fSegment.removeFolder(fChildSegment);
+							fChildSegment = undefined;
+						}
+						var selectedIndex = cSegment.__select.selectedIndex - 1;
+						line = selectSegment.removeLine(line);
+						var parentObject = object;
+						function opacity() {
+							var transparent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+							var opacity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : selectSegment.opacityDefault;
+							scene.children.forEach(function (item) {
+								return selectSegment.opacityItem(item, parentObject, transparent, opacity);
+							});
+						}
+						function getOpacity() {
+							return -0.1 * segmentIndex + selectSegment.opacityDefault;
+						}
+						function removeVerticeControls() {
+							if (segmentIndex !== -1) return;
+							for (var i = fSegment.__controllers.length - 1; i >= 0; i--) {
+								var controller = fSegment.__controllers[i];
+								if (Object.is(cSegment, controller)) continue;
+								fSegment.remove(controller);
+							}
+						}
+						if (selectedIndex === -1) {
+							switch (segmentIndex) {
+								case 0:
+									cDistance.setValue('');
+									break;
+							}
+							removeVerticeControls();
+							if (prevLine) {
+								selectSegment.opacityItem(prevLine, parentObject, false);
+								if (prevLine.userData.prevLine) selectSegment.opacityItem(prevLine.userData.prevLine, parentObject, true, getOpacity());else opacity(true);
+								return;
+							}
+							opacity(false);
+							return;
+						}
+						if (prevLine) {
+							opacity(true, 0);
+							selectSegment.opacityItem(prevLine, parentObject, true, getOpacity());
+							if (prevLine.userData.prevLine) selectSegment.opacityItem(prevLine.userData.prevLine, parentObject, true, 0);
+						} else opacity();
+						if (segmentIndex === -1) {
+							removeVerticeControls();
+							var vertice = settings.object.geometry.position[segment[selectedIndex].i];
+							for (var i = 0; i < vertice.length; i++) {
+								switch (i) {
+									case 0:
+									case 1:
+									case 2:
+										var axis;
+										switch (i) {
+											case 0:
+												axis = options.scales.x;break;
+											case 1:
+												axis = options.scales.y;break;
+											case 2:
+												axis = options.scales.z;break;
+										}
+										fSegment.add(vertice, i, axis.min, axis.max, (axis.max - axis.min) / 100);
+										break;
+									default:
+										dat.controllerZeroStep(fSegment, vertice, i);
+								}
+							}
+						} else {
+							var _createIndices = function _createIndices(item, level) {
+								if (level > 0) {
+									level--;
+									for (var i = 0; i < item.length; i++) {
+										_createIndices(indices[level][item[i]], level);
+									}return;
+								}
+								var itemIndices = item.indices || item;
+								if (itemIndices.length !== 2) console.error('ND: createIndices. Invalid itemIndices.length = ' + itemIndices.length);
+								var boDetected = false;
+								for (var lineIndicesIndex = 0; lineIndicesIndex < lineIndices.length; lineIndicesIndex += 2) {
+									if (lineIndices[lineIndicesIndex] === itemIndices[0] && lineIndices[lineIndicesIndex + 1] === itemIndices[1]) {
+										boDetected = true;
+										break;
+									}
+								}
+								if (!boDetected) itemIndices.forEach(function (i) {
+									lineIndices.push(i);
+								});
+							};
+							var _buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points);
+							var lineIndices = [];
+							_createIndices(segment[selectedIndex], segmentIndex);
+							line = new THREE.LineSegments(_buffer.setIndex(lineIndices), new THREE.LineBasicMaterial({ color: object.material.color }));
+							switch (segmentIndex) {
+								case 0:
+									if (lineIndices.length != 2) {
+										console.error('ND: Select edge. Invalid lineIndices.length = ' + lineIndices.length);
+										break;
+									}
+									var position0 = geometry.geometry.position[lineIndices[0]],
+									    position1 = settings.object.geometry.position[lineIndices[1]];
+									if (position0.length && position1.length) cDistance.setValue(position0.distanceTo(position1));else console.error("ND: Select edge. Invalid edge's vertices distance");
+									break;
+							}
+							line.userData.name = fSegment.name + ' ' + value;
+							parentObject.add(line);
+						}
+						if (prevLine && line) line.userData.prevLine = prevLine;
+						if (segmentIndex >= 0) fChildSegment = addController(segmentIndex - 1, fSegment, segment[selectedIndex], line);
+					});
+					dat.controllerNameAndTitle(cSegment, '');
+					var selectedItem = 0;
+					var selected = segmentIndex >= 0 ? indices[segmentIndex].selected : undefined;
+					var selectedOpt;
+					for (var i = 0; i < segment.length; i++) {
+						var item = segment[i],
+						    opt = document.createElement('option'),
+						    itemIndex = item.index != undefined ? item.index : item.i != undefined ? item.i : i;
+						opt.innerHTML = '(' + (item.i === undefined ? i : item.i) + ') ' + (segmentIndex === -1 ? '' : (item.indices ? item.indices : item).toString());
+						opt.item = item;
+						if (selected != undefined && selected === itemIndex) {
+							selectedOpt = opt;
+							selectedItem = i + 1;
+						}
+						cSegment.__select.appendChild(opt);
+					}
+					if (selected && !selectedOpt) console.error('ND: addController. Selected item was not detected');
+					cSegment.__select[selectedItem].selected = true;
+					if (selectedItem != 0) {
+						cSegment.__select.selectedIndex = selectedItem;
+						cSegment.setValue(cSegment.__select[selectedItem].innerHTML);
+					}
+					return fSegment;
+				}
+				var childFolders = Object.keys(fParent.__folders);
+				childFolders.forEach(function (folderName) {
+					var childFolder = fParent.__folders[folderName];
+					childFolder.__controllers.forEach(function (item, i) {
+						var controller;
+						if (childFolder.userData && childFolder.userData.objectItems) controller = childFolder.__controllers[i];else if (folderName === 'indices') {
+							Object.keys(childFolder.__folders).forEach(function (folderName) {
+								if (!controller) {
+									var folder = childFolder.__folders[folderName];
+									if (folder.userData && folder.userData.objectItems) controller = folder.__controllers[i];
+								}
+							});
+						}
+						if (controller && controller.__select && controller.__select.selectedIndex != 0) {
+							controller.__select.selectedIndex = 0;
+							controller.__onChange();
+						}
+					});
+					if (!childFolder.customFolder) fParent.removeFolder(childFolder);
+				});
+				var fPosition = fParent.addFolder(lang.position),
+				    fRotation = n < 2 ? undefined : fParent.addFolder(lang.rotation);
+				function rotation(i) {
+					if (rotationAxes[i].length === 0) return;
+					settings.object.rotation.boUseRotation = true;
+					settings.object.rotation.folders[i] = {
+						cRotation: fRotation.add(settings.object.rotation, i, 0, Math.PI * 2, 0.01).onChange(function (value) {
+							update();
+						}),
+						default: settings.object.rotation[i]
+					};
+					var name = '',
+					    title = '';
+					rotationAxes[i].forEach(function (axis) {
+						return name = name + (name.length === 0 ? '' : ',') + axis;
+					});
+					switch (n) {
+						case 2:
+							title = lang.rotationPointTitle;break;
+						case 3:
+							title = lang.rotationAxisTitle;break;
+						case 4:
+							title = lang.rotationPlaneTitle;break;
+						case 5:
+							title = lang.rotationSpaceTitle;break;
+						default:
+							title = lang.rotationnDSpaceTitle;break;
+					}
+					dat.controllerNameAndTitle(settings.object.rotation.folders[i].cRotation, n === 2 ? '2' : name, title);
+					settings.object.rotation.boUseRotation = false;
+				}
+				var _loop3 = function _loop3() {
+					var axisName = i;
+					{
+						var f = fPosition.addFolder(axisName);
+						settings.object.position.folders[i] = {
+							positionController: new PositionController(function (shift) {
+								settings.object.position[axisName] += shift;
+							}, { getLanguageCode: options.getLanguageCode }),
+							default: settings.object.position[i]
+						};
+						f.add(settings.object.position.folders[i].positionController);
+						settings.object.position.folders[i].cPosition = dat.controllerZeroStep(f, settings.object.position, i, function (value) {
+							update();
+						});
+						dat.controllerNameAndTitle(settings.object.position.folders[i].cPosition, axisName);
+					}
+				};
+				for (var i = 0; i < n; i++) {
+					_loop3();
+				}
+				if (n === 2) rotation(0);
+				else rotationAxes.forEach(function (item, i) {
+						return rotation(i);
+					});
+				var buttonPositionDefault = fPosition.add({
+					defaultF: function defaultF(value) {
+						settings.object.position.folders.forEach(function (item) {
+							return item.cPosition.setValue(item.default);
+						});
+					}
+				}, 'defaultF');
+				dat.controllerNameAndTitle(buttonPositionDefault, lang.defaultButton, lang.defaultPositionTitle);
+				if (fRotation) {
+					var buttonRotationDefault = fRotation.add({
+						defaultF: function defaultF(value) {
+							settings.object.rotation.folders.forEach(function (item) {
+								return item.cRotation.setValue(item.default);
+							});
+						}
+					}, 'defaultF');
+					dat.controllerNameAndTitle(buttonRotationDefault, lang.defaultButton, lang.defaultRotationTitle);
+				}
+				addController(segmentIndex, fParent);
+			};
+			if (options.guiSelectPoint) options.guiSelectPoint.addMesh(object);
+			object.userData.raycaster = {
 				onIntersection: function onIntersection(intersection, mouse) {
+					intersection.indexNew = intersection.index;
 					delete intersection.index;
 					Options.raycaster.onIntersection(intersection, options, scene, options.camera, options.renderer);
 				},
 				onIntersectionOut: function onIntersectionOut() {
+					geometry.geometry.indices.forEach(function (indice) {
+						return indice.selected = undefined;
+					});
 					Options.raycaster.onIntersectionOut(scene, options.renderer);
 				},
-				onMouseDown: function onMouseDown(intersection) {
+				onMouseDown: function onMouseDown(intersection, event) {
+					intersection.event = event;
 					Options.raycaster.onMouseDown(intersection, options);
-				}
+				},
+				text: settings.object.raycaster ? settings.object.raycaster.text : undefined
 			};
-			options.eventListeners.addParticle(mesh);
-			vectorPlane.onChange = function () {
+			if (options.eventListeners) options.eventListeners.addParticle(object);
+			return object;
+		}
+		_this2.intersection = function () {
+			var geometryIntersection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { position: [], indices: [[]] };
+			var iIntersections = arguments[1];
+			if (settings.plane === false) return;
+			function intersection(iEdge, aEdge) {
+				for (var i = 0; i < geometryIntersection.position.length; i++) {
+					if (geometryIntersection.position[i].iEdge === iEdge) {
+						if (aEdge && aEdge.length < 2
+						) aEdge.push(i);
+						return;
+					}
+				}
+				var edge = settings.object.geometry.indices[0][iEdge];
+				edge.intersection(geometryIntersection);
+				var position = edge.intersection.position;
+				if (position) {
+					var boAdd = true;
+					if (edge.intersection.boVerticeOnPanel) {
+						for (var i = 0; i < geometryIntersection.position.length; i++) {
+							if (position.equals(geometryIntersection.position[i])) {
+								boAdd = false;
+								aEdge.boVerticeOnPanel = true;
+								break;
+							}
+						}
+					}
+					if (boAdd) {
+						geometryIntersection.position.push(position);
+						if (aEdge) aEdge.push(geometryIntersection.position.length - 1);
+					}
+				}
+			}
+			if (!geometryIntersection.position.isProxy) geometryIntersection.position = new Proxy(geometryIntersection.position, {
+				get: function get$$1(target, name, args) {
+					switch (name) {
+						case 'isProxy':
+							return true;
+						case 'target':
+							return target;
+						case "reset":
+							return function () {
+								target.forEach(function (item) {
+									return item.positionWorld = undefined;
+								});
+							};
+					}
+					return target[name];
+				},
+				set: function set$$1(target, name, value) {
+					var i = parseInt(name);
+					if (isNaN(i)) {
+						if (name === "boPositionError") {
+							target[name] = value;
+							return true;
+						}
+						return target[name];
+					}
+					if (i >= target.length) {
+						var boDuplicate = false;
+						for (var j = 0; j < i; j++) {
+							boDuplicate = true;
+							for (var k = 0; k < target[j].length; k++) {
+								if (target[j][k] !== value[k]) {
+									boDuplicate = false;
+									break;
+								}
+							}
+							if (boDuplicate) break;
+						}
+						if (!boDuplicate) target.push(value);
+						return target.length;
+					}
+					target[i] = value;
+					return true;
+				}
+			});
+			switch (n) {
+				case 1:
+					if (settings.object.geometry.indices.length !== 1) console.error('ND.intersection: under constraction. Это не линия.');
+					var edge = settings.object.geometry.indices[0][0];
+					edge.intersection(geometryIntersection);
+					break;
+				case 2:
+					var iFaces = settings.object.geometry.indices[1];
+					if (iFaces) settings.object.geometry.indices[1].forEach(function (iFace) {
+						iFace.forEach(function (iEdge) {
+							intersection(iEdge);
+						});
+					});else {
+						for (var i = 0; i < settings.object.geometry.indices[0].length; i++) {
+							intersection(i);
+						}
+						addEdges(undefined, geometryIntersection);
+					}
+					break;
+				default:
+					{
+						var iSegments = settings.iSegments || n - 2,
+						segments;
+						while (iSegments >= 0) {
+							segments = settings.object.geometry.indices[iSegments];
+							if (segments) break;
+							iSegments--;
+						}
+						if (settings.indice === undefined) {
+							for (var i = 0; i < segments.length; i++) {
+								var nd = new ND(n, {
+									plane: true,
+									object: { geometry: {
+											indices: settings.object.geometry.indices,
+											position: positionWorld.copy()
+										}
+									}, indice: i, iSegments: iSegments }),
+								    s = iSegments - 1;
+								var iIntersections;
+								if (s !== 0) {
+									iIntersections = [];
+								}
+								nd.intersection(geometryIntersection, iIntersections);
+								if (iIntersections && iIntersections.length) {
+									geometryIntersection.indices[s] = geometryIntersection.indices[s] || proxySegments();
+									geometryIntersection.indices[s].push(iIntersections);
+								}
+							}
+							var _edges3 = geometryIntersection.indices[0];
+							var vertices = [];
+							for (var i = _edges3.length - 1; i >= 0; i--) {
+								var _edge = _edges3[i];
+								if (_edge.boVerticeOnPanel && _edge.length === 1) {
+									vertices.push(_edge[0]);
+									_edges3.splice(i, 1);
+								}
+							}
+							switch (vertices.length) {
+								case 0:
+								case 1:
+									break;
+								case 2:
+									_edges3.push(vertices);
+									break;
+								default:
+									console.error('ND.intersection: invalid edge.');
+							}
+							if (_edges3.length > 1) {
+								for (var i = 0; i < geometryIntersection.position.length; i++) {
+									var verticesCount = 0;
+									for (var j = 0; j < _edges3.length; j++) {
+										var _edge2 = _edges3[j];
+										for (var k = 0; k < _edge2.length; k++) {
+											if (_edge2[k] === i) verticesCount++;
+										}
+									}
+									if (verticesCount < 2) {
+										if (verticesCount === 0) console.error('ND.intersection: Invalid verticesCount = ' + verticesCount);else vertices.push(i);
+									}
+								}
+								if (vertices.length > 0) {
+									if (vertices.length != 2) console.error('ND.intersection: invalid edge.');else _edges3.push(vertices);
+								}
+							}
+						} else {
+							var segment = segments[settings.indice];
+							if (iSegments > 1) {
+								for (var i = 0; i < segment.length; i++) {
+									var _nd = new ND(n, {
+										plane: true,
+										object: settings.object, indice: segment[i], iSegments: iSegments - 1
+									});
+									if (n > 4) {
+										if (n === 5) {
+											var iIntersect = [];
+											_nd.intersection(geometryIntersection, iIntersect);
+											if (iIntersect.length) {
+												if (iIntersect.length === 1) {
+													iIntersect = iIntersect[0];
+													iIntersections.push(iIntersect);
+												} else {
+													var ind = n - 4;
+													geometryIntersection.indices[ind] = geometryIntersection.indices[ind] || proxySegments();
+													geometryIntersection.indices[ind].push(iIntersect);
+													if (iIntersections) iIntersections.push(iIntersect.index);
+												}
+											}
+										} else console.error('ND.intersection: n = ' + n + ' under constraction');
+									} else _nd.intersection(geometryIntersection, iIntersections);
+								}
+							} else {
+								var _edge3 = [];
+								if (segment.indices) segment = segment.indices;
+								for (var i = 0; i < segment.length; i++) {
+									intersection(segment[i], _edge3);
+								}
+								if (_edge3.length > 0) {
+									if (_edge3.length !== 2 || _edge3[0] === _edge3[1]) {
+										if (!_edge3.boVerticeOnPanel) {
+											var error = 'ND.intersection: invalid edge';
+											console.error(error);
+											return;
+										}
+									}
+									var intersectionEdges = geometryIntersection.indices[0];
+									var duplicateEdge = false;
+									for (var i = 0; i < intersectionEdges.length; i++) {
+										var intersectionEdge = intersectionEdges[i];
+										if (intersectionEdge[0] === _edge3[0] && intersectionEdge[1] === _edge3[1] || intersectionEdge[0] === _edge3[1] && intersectionEdge[1] === _edge3[0]) {
+											duplicateEdge = true;
+											if (iIntersections) iIntersections.push(i);
+											break;
+										}
+									}
+									if (!duplicateEdge) {
+										if (iIntersections) iIntersections.push(intersectionEdges.length);
+										intersectionEdges.push(_edge3);
+									}
+								}
+							}
+						}
+					}
+			}
+			if (settings.onIntersection) settings.onIntersection(geometryIntersection);
+			if (scene) {
+				if (objectIntersect) {
+					if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(objectIntersect);
+					scene.remove(objectIntersect);
+					if (options.eventListeners) options.eventListeners.removeParticle(objectIntersect);
+				}
+				if (geometryIntersection.position.length) objectIntersect = create3DObject(geometryIntersection, { name: 'Intersection', color: 'white' });
+			}
+			return geometryIntersection.position;
+		};
+		var THREE = three$1.THREE,
+		    scene = settings.scene;
+		if (scene) {
+			if (n <= 1) options.scales.y = undefined;
+			if (n <= 2) options.scales.z = undefined;
+			options.scales.text.rect = options.scales.text.rect || {};
+			options.scales.text.rect.displayRect = false;
+			options.scales.text.precision = 2;
+		}
+		var object3D;
+		function projectTo3D() {
+			if (!scene) return;
+			if (object3D) {
+				for (var i = object3D.children.length - 1; i >= 0; i--) {
+					var child = object3D.children[i];
+					if (child instanceof THREE.Sprite) {
+						object3D.remove(child);
+						if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(child);
+					}
+				}
+				scene.remove(object3D);
+				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(object3D);
+				options.eventListeners.removeParticle(object3D);
+				object3D = undefined;
+			}
+			object3D = create3DObject(geometry, {
+				name: settings.object.name,
+				faces: settings.object.faces,
+				color: settings.object.color || _ND.defaultColor
+			});
+		}
+		projectTo3D();
+		var Plane = function Plane() {
+			classCallCheck(this, Plane);
+			var mesh;
+			this.createMesh = function () {
+				if (!scene) return;
+				var color = 0x0000FF;
+				switch (n) {
+					case 1:
+						options.point.size = (options.scales.x.max - options.scales.x.min) * 500;
+						mesh = new THREE.Points(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0)], 3), new THREE.PointsMaterial({
+							color: color,
+							sizeAttenuation: false
+						}));
+						break;
+					case 2:
+						mesh = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(options.scales.x.min, 0, 0), new THREE.Vector3(options.scales.x.max, 0, 0)]), new THREE.LineBasicMaterial({ color: color }));
+						break;
+					case 3:
+						mesh = new THREE.GridHelper(2, 10, color, color);
+						mesh.rotation.x = Math.PI / 2;
+						break;
+					default:
+						{
+							return;
+						}
+				}
+				mesh.name = 'Plane';
+				scene.add(mesh);
+				if (options.guiSelectPoint) options.guiSelectPoint.addMesh(mesh);
 				mesh.position.copy(vectorPlane.point);
-				mesh.updateMatrix();
+				mesh.userData.raycaster = {
+					onIntersection: function onIntersection(intersection, mouse) {
+						delete intersection.index;
+						Options.raycaster.onIntersection(intersection, options, scene, options.camera, options.renderer);
+					},
+					onIntersectionOut: function onIntersectionOut() {
+						Options.raycaster.onIntersectionOut(scene, options.renderer);
+					},
+					onMouseDown: function onMouseDown(intersection) {
+						Options.raycaster.onMouseDown(intersection, options);
+					}
+				};
+				options.eventListeners.addParticle(mesh);
+				vectorPlane.onChange = function () {
+					mesh.position.copy(vectorPlane.point);
+					mesh.updateMatrix();
+				};
 			};
 		};
-	};
-	if (settings.plane === undefined) settings.plane = false;
-	if (settings.plane) {
-		var plane = new Plane();
-		plane.createMesh();
-	}
-	this.vectorPlane;
-	this.geometry;
-	Object.defineProperties(this, {
-		vectorPlane: {
-			get: function get$$1() {
-				return vectorPlane;
-			}
-		},
-		geometry: {
-			get: function get$$1() {
-				return geometry;
-			},
-			set: function set$$1(geometryNew) {
-				geometry.geometry = geometryNew;
-				settings.object.name = 'Object';
-				settings.object.rotation.clear();
-				settings.object.position.clear();
-				projectTo3D();
-				this.intersection();
-			}
-		},
-		object3D: {
-			get: function get$$1() {
-				return object3D;
-			}
-		},
-		object: {
-			get: function get$$1() {
-				return settings.object;
-			},
-			set: function set$$1(object) {
-				if (!object) {
-					console.error('ND.object set: invalid object');
-					return;
-				}
-				if (!object.update) settings.object = object;
-				var p = object.position;
-				if (p) settings.object.position = [].concat(toConsumableArray(p));
-				var r = object.rotation;
-				if (r) {
-					if (r instanceof Array) settings.object.rotation = [].concat(toConsumableArray(r));else settings.object.rotation = r;
-				}
-				settings.object.name = settings.object.name || 'Object';
-				if (object.geometry.indices) {
-					var _indices = [];
-					object.geometry.indices.forEach(function (array) {
-						var item = [];
-						_indices.push(item);
-						array.forEach(function (index) {
-							if (index.indices) item.push(index.indices);else item.push(index);
-						});
-					});
-					settings.object.geometry.indices = _indices;
-				}
-				setIndices();
-				setEdges();
-				if (!settings.object.geometry.indices[0].isProxy) settings.object.geometry.indices[0] = proxyEdges(object.geometry.indices[0]);
-				settings.object.position = proxyPosition();
-				settings.object.rotation = proxyRotation();
-				settings.object.geometry.position = proxyGeometryPosition();
-				settings.object.geometry.position.reset();
-				appendEdges();
-				if (object.update) {
-					object3D.geometry.setFromPoints(geometry.D3.points).setIndex(geometry.D3.indices.indices);
-					if (settings.options && settings.options.guiSelectPoint) settings.options.guiSelectPoint.updatePoints();
-					return;
-				}
-				projectTo3D();
-				this.intersection();
-			}
+		if (settings.plane === undefined) settings.plane = false;
+		if (settings.plane) {
+			var plane = new Plane();
+			plane.createMesh();
 		}
-	});
-};
+		_this2.vectorPlane;
+		_this2.geometry;
+		Object.defineProperties(_this2, {
+			vectorPlane: {
+				get: function get$$1() {
+					return vectorPlane;
+				}
+			},
+			geometry: {
+				get: function get$$1() {
+					return geometry;
+				},
+				set: function set$$1(geometryNew) {
+					geometry.geometry = geometryNew;
+					settings.object.name = 'Object';
+					settings.object.rotation.clear();
+					settings.object.position.clear();
+					projectTo3D();
+					this.intersection();
+				}
+			},
+			object3D: {
+				get: function get$$1() {
+					return object3D;
+				}
+			},
+			object: {
+				get: function get$$1() {
+					return settings.object;
+				},
+				set: function set$$1(object) {
+					if (!object) {
+						console.error('ND.object set: invalid object');
+						return;
+					}
+					if (!object.update) settings.object = object;
+					var p = object.position;
+					if (p) settings.object.position = [].concat(toConsumableArray(p));
+					var r = object.rotation;
+					if (r) {
+						if (r instanceof Array) settings.object.rotation = [].concat(toConsumableArray(r));else settings.object.rotation = r;
+					}
+					settings.object.name = settings.object.name || 'Object';
+					if (object.geometry.indices) {
+						var _indices = [];
+						object.geometry.indices.forEach(function (array) {
+							var item = [];
+							_indices.push(item);
+							array.forEach(function (index) {
+								if (index.indices) item.push(index.indices);else item.push(index);
+							});
+						});
+						settings.object.geometry.indices = _indices;
+					}
+					setIndices();
+					setEdges();
+					if (!settings.object.geometry.indices[0].isProxy) settings.object.geometry.indices[0] = proxyEdges(object.geometry.indices[0]);
+					settings.object.position = proxyPosition();
+					settings.object.rotation = proxyRotation();
+					settings.object.geometry.position = proxyGeometryPosition();
+					settings.object.geometry.position.reset();
+					appendEdges();
+					if (object.update) {
+						object3D.geometry.setFromPoints(geometry.D3.points).setIndex(geometry.D3.indices.indices);
+						if (settings.options && settings.options.guiSelectPoint) settings.options.guiSelectPoint.updatePoints();
+						return;
+					}
+					projectTo3D();
+					this.intersection();
+				}
+			}
+		});
+		return _this2;
+	}
+	createClass(ND, [{
+		key: 'defaultColor',
+		get: function get$$1() {
+			return 'lime';
+		}
+	}]);
+	return ND;
+}(MyObject);
 ND.gui = function () {
 	function _class(options, dat, fParent) {
 		classCallCheck(this, _class);
