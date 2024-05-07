@@ -10556,7 +10556,7 @@ function Player(group) {
 												});
 												dat.controllerNameAndTitle(scaleControllers.marks, axes.marksName === undefined ? lang.marks : axes.marksName, axes.marksTitle === undefined ? lang.marksTitle : axes.marksTitle);
 									}
-									scaleControllers.interval = scaleControllers.folder.add(settings.options.playerOptions                 , 'interval', 1, 25, 1).onChange(function (value) {
+									scaleControllers.interval = scaleControllers.folder.add(settings.options.playerOptions, 'interval', 1, 25, 1).onChange(function (value) {
 												setSettings();
 									});
 									dat.controllerNameAndTitle(scaleControllers.interval, lang.interval, lang.intervalTitle);
@@ -11371,11 +11371,10 @@ Player$1.getColors = function (arrayFuncs, optionsColor) {
 															var t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
 															var color = optionsColor.options.palette.toColor(funcs === undefined ? new THREE.Vector4().fromBufferAttribute(optionsColor.positions, i).w : w instanceof Function ? w(t) : typeof w === "string" ? Player$1.execFunc(funcs, 'w', t, optionsColor.options) : w === undefined ? new THREE.Vector4().w : w, min, max);
 															colors.push(color.r, color.g, color.b);
-												} else if (optionsColor.colors instanceof THREE.Float32BufferAttribute) vector = new THREE.Vector3(1, 1, 1);
-									else if (optionsColor.color != undefined) {
-															var _color = new THREE.Color(optionsColor.color);
-															colors.push(_color.r, _color.g, _color.b);
-												} else colors.push(1, 1, 1);
+												} else if (optionsColor.colors instanceof THREE.Float32BufferAttribute) vector = new THREE.Vector3(1, 1, 1);else if (optionsColor.color != undefined) {
+												var _color = new THREE.Color(optionsColor.color);
+												colors.push(_color.r, _color.g, _color.b);
+									} else colors.push(1, 1, 1);
 						} else colors.push(optionsColor.colors[iColor], optionsColor.colors[iColor + 1], optionsColor.colors[iColor + 2]);
 						if (optionsColor.opacity instanceof Array) colors.push(i < optionsColor.opacity.length ? optionsColor.opacity[i] : 1);else colors.push(1);
 			}
@@ -11622,6 +11621,244 @@ Player$1.assign = function () {
 };
 
 /**
+ * @module myObject
+ * @description base class for my threejs objects
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+*/
+var sMyObject = 'MyObject';
+var MyObject = function () {
+	function MyObject() {
+		var _this2 = this;
+		var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+		var vertices = arguments[1];
+		classCallCheck(this, MyObject);
+		var _this = this;
+		settings.object = settings.object || {};
+		settings.object.geometry = settings.object.geometry || {};
+		if (!settings.object.geometry.position || !settings.object.geometry.position.isPositionProxy) settings.object.geometry.position = new Proxy(settings.object.geometry.position || [], {
+			get: function get$$1(positions, name) {
+				var positionId = parseInt(name);
+				if (!isNaN(positionId)) {
+					return new Proxy(positions[positionId], {
+						set: function set$$1(position, name, value) {
+							var axisId = parseInt(name);
+							if (!isNaN(axisId)) {
+								position[axisId] = value;
+								settings.bufferGeometry.userData.position[positionId][axisId] = value;
+								return true;
+							}
+							position[name] = value;
+							return true;
+						}
+					});
+				}
+				switch (name) {
+					case 'isPositionProxy':
+						return true;
+				}
+				return positions[name];
+			}
+		});
+		var THREE = three$1.THREE;
+		if (!settings.bufferGeometry) settings.bufferGeometry = new THREE.BufferGeometry();
+		this.bufferGeometry = settings.bufferGeometry;
+		if (vertices)
+			settings.object.geometry.position = settings.object.geometry.position || vertices;
+		var createPositionAttribute = function createPositionAttribute(pointLength, pointsLength) {
+			var MAX_POINTS = settings.object.geometry.MAX_POINTS;
+			if (MAX_POINTS != undefined) settings.bufferGeometry.setDrawRange(0, pointsLength * 2 - 1);
+			var positions = new Float32Array(pointsLength * pointLength);
+			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
+			settings.bufferGeometry.userData.position = new Proxy(settings.bufferGeometry.attributes.position, {
+				get: function get$$1(position, name) {
+					var positionId = parseInt(name);
+					if (!isNaN(positionId)) {
+						var positionOffset = positionId * position.itemSize,
+						    array = position.array;
+						var positionItem = new Proxy([], {
+							get: function get$$1(vertice, name) {
+								var axisId = parseInt(name);
+								if (!isNaN(axisId)) {
+									if (axisId >= position.itemSize) {
+										return;
+									}
+									return array[positionOffset + axisId];
+								}
+								switch (name) {
+									case 'forEach':
+										return function (item) {
+											for (var _axisId = 0; _axisId < position.itemSize; _axisId++) {
+												item(array[positionOffset + _axisId], _axisId);
+											}
+										};
+									case 'length':
+										return position.itemSize;
+									case 'toJSON':
+										return function (item) {
+											var res = '[';
+											positionItem.forEach(function (axis) {
+												res += axis + ', ';
+											});
+											return res.substring(0, res.length - 2) + ']';
+										};
+									case 'x':
+										return array[positionOffset + 0];
+									case 'y':
+										return array[positionOffset + 1];
+									case 'z':
+										return array[positionOffset + 2];
+									case 'w':
+										{
+											if (position.itemSize < 4) return;
+											return array[positionOffset + 3];
+										}
+								}
+								return vertice[name];
+							},
+							set: function set$$1(vertice, name, value) {
+								var axisId = parseInt(name);
+								if (!isNaN(axisId)) {
+									array[positionOffset + axisId] = value;
+									return true;
+								}
+								vertice[name] = value;
+								return true;
+							}
+						});
+						return positionItem;
+					}
+					switch (name) {
+						case 'length':
+							return position.count;
+					}
+					console.error(sMyObject + ': get settings.bufferGeometry.userData.position. Invalid name: ' + name);
+					return position[name];
+				}
+			});
+			if (_this.setW) _this.setW();
+			var itemSize = settings.object.geometry.opacity ? 4 : 3,
+			    colors = new Float32Array(pointsLength * itemSize);
+			settings.bufferGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, itemSize));
+		};
+		this.setPositionAttributeFromPoints = function (points, boCreatePositionAttribute) {
+			if (boCreatePositionAttribute) delete settings.bufferGeometry.attributes.position;
+			if (!settings.bufferGeometry.attributes.position) {
+				createPositionAttribute(_this2.pointLength ? _this2.pointLength() : points[0].w === undefined ? 3 : 4, points.length);
+				for (var i = 0; i < points.length; i++) {
+					_this2.setPositionAttributeFromPoint(i);
+				}
+			}
+			return settings.bufferGeometry;
+		};
+		this.verticeColor = function (i, vertice) {
+			var colors = settings.object.geometry.colors;
+			var colorsId = i * 3;
+			if (colors && colors[colorsId] != undefined) return [colors[colorsId], colors[colorsId + 1], colors[colorsId + 2]];
+			var color = settings.object.color;
+			if (color != undefined && (typeof color === 'undefined' ? 'undefined' : _typeof(color)) != 'object') {
+				return new THREE.Color(_this.color());
+			}
+			var getDefaultColor = function getDefaultColor() {
+				return new THREE.Color(_this.color());
+			};
+			var w = void 0;
+			if (vertice) w = vertice.w;else if (!_this.getPoint) {
+				var position = _this.bufferGeometry.attributes.position;
+				if (position.itemSize != 4) return getDefaultColor();
+				w = new THREE.Vector4().fromBufferAttribute(position, i).w;
+			} else w = _this.getPoint(i).w;
+			if (w === undefined) return getDefaultColor();
+			return w;
+		};
+		this.setPositionAttributeFromPoint = function (i, vertice) {
+			var attributes = settings.bufferGeometry.attributes,
+			    position = attributes.position,
+			    itemSize = position.itemSize;
+			vertice = vertice || _this.getPoint(i);
+			var positionId = i * itemSize,
+			    array = position.array;
+			array[positionId++] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
+			if (itemSize > 1) array[positionId++] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
+			if (itemSize > 2) array[positionId++] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
+			var w = vertice.w;
+			if (itemSize > 3) array[positionId] = w;
+			var colorId = i * attributes.color.itemSize;
+			array = attributes.color.array;
+			var verticeColor = _this2.verticeColor(i, vertice);
+			if (typeof verticeColor === 'number') {
+				if (settings.options) {
+					var wScale = settings.options.scales.w;
+					Player$1.setColorAttribute(attributes, i, settings.options.palette.toColor(w, wScale.min, wScale.max));
+				}
+				colorId += attributes.color.itemSize - 1;
+			} else if (Array.isArray(verticeColor)) verticeColor.forEach(function (item) {
+				return array[colorId++] = item;
+			});else if (verticeColor instanceof THREE.Color) {
+				array[colorId++] = verticeColor.r;
+				array[colorId++] = verticeColor.g;
+				array[colorId++] = verticeColor.b;
+			} else console.error(sMyObject + '.setPositionAttributeFromPoint: Invalid verticeColor = ' + verticeColor);
+			if (attributes.color.itemSize > 3) _this2.verticeOpacity(i);
+		};
+		this.verticeOpacity = function (i, transparent, opacity) {
+			var color = settings.bufferGeometry.attributes.color;
+			if (color.itemSize != 4) {
+				console.error(sMyObject + '.verticeOpacity: Invalid color.itemSize = ' + color.itemSize);
+				return;
+			}
+			var array = color.array;
+			var verticeOpacity = settings.object.geometry.opacity ? settings.object.geometry.opacity[i] : undefined;
+			array[color.itemSize * i + 3] = transparent ? opacity : verticeOpacity === undefined ? 1 : verticeOpacity;
+			color.needsUpdate = true;
+		};
+		this.verticesOpacity = function (transparent, opacity) {
+			var color = settings.bufferGeometry.attributes.color;
+			if (color && color.itemSize > 3) {
+				for (var i = 0; i < color.count; i++) {
+					_this2.verticeOpacity(i, transparent, opacity);
+				}
+			} else {
+				var object3D = _this.object3D;
+				if (object3D) {
+					object3D.material.transparent = transparent;
+					object3D.material.opacity = transparent ? opacity : 1;
+					object3D.material.needsUpdate = true;
+				} else console.error(sMyObject + '.verticesOpacity: Invalid object3D');
+			}
+		};
+		this.color = function () {
+			var color = settings.object.color != undefined ? settings.object.color : settings.pointsOptions != undefined ? settings.pointsOptions.color : undefined;
+			return color != undefined ? color : _this2.defaultColor;
+		};
+	}
+	createClass(MyObject, [{
+		key: 'defaultColor',
+		get: function get$$1() {
+			return 'white';
+		}
+	}, {
+		key: 'isOpacity',
+		get: function get$$1() {
+			if (this.bufferGeometry.attributes.color.itemSize > 3) {
+				if (!this.object3D.material.transparent) console.error(sMyObject + '.isOpacity: invalid this.object3D.material.transparent = ' + this.object3D.material.transparent);
+				return true;
+			}
+			return false;
+		}
+	}]);
+	return MyObject;
+}();
+
+/**
  * @module getShaderMaterialPoints
  * @description get THREE.Points with THREE.ShaderMaterial material
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -11668,114 +11905,117 @@ var _fragment_text = {
 		}
 	}
 };
-function getShaderMaterialPoints(group, arrayFuncs, onReady, settings) {
-	settings = settings || {};
-	var geometry;
-	var THREE = three$1.THREE,
-	    tMin = settings.pointsOptions === undefined ? settings.tMin === undefined ? 0 : settings.tMin : settings.pointsOptions.tMin === undefined ? 0 : settings.pointsOptions.tMin;
-	settings.options = settings.options || new Options();
-	settings.pointsOptions = settings.pointsOptions || {};
-	Player$1.assign();
-	var geometry;
-	if (arrayFuncs instanceof THREE.BufferGeometry) {
-		geometry = arrayFuncs;
-		arrayFuncs = [];
-		for (var i = 0; i < geometry.attributes.position.count; i++) {
-			arrayFuncs.push(new THREE.Vector3().fromBufferAttribute(geometry.attributes.position, i));
-		}
-	} else if (typeof arrayFuncs === 'function') geometry = arrayFuncs();else geometry = new THREE.BufferGeometry().setFromPoints(Player$1.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin }), arrayFuncs[0].vector instanceof THREE.Vector3 ? 3 : 4);
-	var indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud(geometry) : undefined;
-	if (settings.pointsOptions === undefined || !settings.pointsOptions.boFrustumPoints) {
-		if (!settings.options.scales.w) settings.options.scales.setW();
-		geometry.setAttribute('ca', new THREE.Float32BufferAttribute(Player$1.getColors(arrayFuncs, {
-			color: settings.pointsOptions.color,
-			colors: settings.pointsOptions.colors,
-			opacity: settings.pointsOptions === undefined ? undefined : settings.pointsOptions.opacity,
-			positions: geometry.attributes.position,
-			options: settings.options
-		}), 4));
-	}
-	var texture = new THREE.TextureLoader().load(currentScriptPath$1 + "/textures/point.png", function (texture) {}, function () {}, function () {
-		console.error('THREE.TextureLoader: error');
-	});
-	texture.wrapS = THREE.RepeatWrapping;
-	texture.wrapT = THREE.RepeatWrapping;
-	var uniforms = {
-		pointTexture: { value: texture },
-		pointSize: {
-			value: settings.pointsOptions !== undefined && settings.pointsOptions.shaderMaterial !== undefined && settings.pointsOptions.shaderMaterial.point !== undefined ? settings.pointsOptions.shaderMaterial.point.size : settings.options.point.size
-		}
-	};
-	var cloud;
-	if (settings.pointsOptions !== undefined && settings.pointsOptions.uniforms !== undefined) cloud = settings.pointsOptions.uniforms(uniforms);
-	function loadShaderText(onload, path) {
-		var shaderText = {};
-		function ShaderLoader(vertex_url, fragment_url, onLoad, options) {
-			options = options || {};
-			var vertex_text = _vertex_text.getItem(vertex_url);
-			function loadFragment() {
-				var fragment_text = _fragment_text.getItem(fragment_url);
-				if (!fragment_text) {
-					var fragment_loader = new THREE.FileLoader(THREE.DefaultLoadingManager);
-					fragment_loader.setResponseType('text');
-					fragment_loader.load(fragment_url, function (fragment_text) {
-						_fragment_text.setItem(fragment_url, fragment_text);
-						onLoad(vertex_text, fragment_text);
-					}, options.onProgress, options.onError);
-				} else onLoad(vertex_text, fragment_text);
+var getShaderMaterialPoints = function (_MyObject) {
+	inherits(getShaderMaterialPoints, _MyObject);
+	function getShaderMaterialPoints(group, arrayFuncs, onReady) {
+		var settings = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+		classCallCheck(this, getShaderMaterialPoints);
+		var _this = possibleConstructorReturn(this, (getShaderMaterialPoints.__proto__ || Object.getPrototypeOf(getShaderMaterialPoints)).call(this, settings, arrayFuncs));
+		var THREE = three$1.THREE,
+		    tMin = settings.pointsOptions === undefined ? settings.tMin === undefined ? 0 : settings.tMin : settings.pointsOptions.tMin === undefined ? 0 : settings.pointsOptions.tMin;
+		settings.options = settings.options || new Options();
+		settings.pointsOptions = settings.pointsOptions || {};
+		Player$1.assign();
+		var geometry;
+		if (arrayFuncs instanceof THREE.BufferGeometry) {
+			geometry = arrayFuncs;
+			arrayFuncs = [];
+			for (var i = 0; i < geometry.attributes.position.count; i++) {
+				arrayFuncs.push(new THREE.Vector3().fromBufferAttribute(geometry.attributes.position, i));
 			}
-			if (!vertex_text) {
-				var vertex_loader = new THREE.FileLoader(THREE.DefaultLoadingManager);
-				vertex_loader.setResponseType('text');
-				vertex_loader.load(vertex_url, function (vertex_text_new) {
-					_vertex_text.setItem(vertex_url, vertex_text_new);
-					vertex_text = vertex_text_new;
-					loadFragment();
-				}, options.onProgress, options.onError);
-			} else {
-				loadFragment();
+		} else if (typeof arrayFuncs === 'function') geometry = arrayFuncs();else {
+			if (settings.pointsOptions.bufferGeometry) geometry = settings.pointsOptions.bufferGeometry;else {
+				var points = Player$1.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin });
+				_this.getPoint = function (i) {
+					return points[i];
+				};
+				geometry = _this.setPositionAttributeFromPoints(points);
 			}
 		}
-		path = path || {};
-		path.vertex = path.vertex || currentScriptPath$1 + "/getShaderMaterialPoints/vertex.c";
-		path.fragment = path.fragment || currentScriptPath$1 + "/getShaderMaterialPoints/fragment.c";
-		ShaderLoader(path.vertex, path.fragment, function (vertex, fragment) {
-			shaderText.vertex = vertex;
-			shaderText.fragment = fragment;
-			onload(shaderText);
-		}, {
-			onError: function onError(event) {
-				console.error(event.srcElement.responseURL + ' status = ' + event.srcElement.status + ' ' + event.srcElement.statusText);
-			}
+		var indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud(geometry) : undefined;
+		var texture = new THREE.TextureLoader().load(currentScriptPath$1 + "/textures/point.png", function (texture) {}, function () {}, function () {
+			console.error('THREE.TextureLoader: error');
 		});
-	}
-	loadShaderText(function (shaderText) {
-		if (cloud !== undefined) {
-			cloud.editShaderText(shaderText);
-		}
-		var points = new THREE.Points(geometry, new THREE.ShaderMaterial({
-			uniforms: uniforms,
-			vertexShader: shaderText.vertex,
-			fragmentShader: shaderText.fragment,
-			transparent: true
-		}));
-		points.userData.shaderMaterial = settings.pointsOptions === undefined ? settings.shaderMaterial : settings.pointsOptions.shaderMaterial;
-		if (settings.options.saveMeshDefault !== undefined) settings.options.saveMeshDefault(points);
-		if (settings.pointsOptions && settings.pointsOptions.frustumPoints) points.userData.cloud = { indexArray: indexArrayCloud };
-		points.userData.shaderMaterial = settings.pointsOptions === undefined ? settings.shaderMaterial : settings.pointsOptions.shaderMaterial;
-		onReady(points);
-		if (points.userData.boFrustumPoints) {
-			settings.pointsOptions.group.children.forEach(function (mesh) {
-				settings.options.frustumPoints.updateCloudPoint(mesh);
+		texture.wrapS = THREE.RepeatWrapping;
+		texture.wrapT = THREE.RepeatWrapping;
+		var uniforms = {
+			pointTexture: { value: texture },
+			pointSize: {
+				value: settings.pointsOptions !== undefined && settings.pointsOptions.shaderMaterial !== undefined && settings.pointsOptions.shaderMaterial.point !== undefined ? settings.pointsOptions.shaderMaterial.point.size : settings.options.point.size
+			}
+		};
+		var cloud;
+		if (settings.pointsOptions !== undefined && settings.pointsOptions.uniforms !== undefined) cloud = settings.pointsOptions.uniforms(uniforms);
+		function loadShaderText(onload, path) {
+			var shaderText = {};
+			function ShaderLoader(vertex_url, fragment_url, onLoad, options) {
+				options = options || {};
+				var vertex_text = _vertex_text.getItem(vertex_url);
+				function loadFragment() {
+					var fragment_text = _fragment_text.getItem(fragment_url);
+					if (!fragment_text) {
+						var fragment_loader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+						fragment_loader.setResponseType('text');
+						fragment_loader.load(fragment_url, function (fragment_text) {
+							_fragment_text.setItem(fragment_url, fragment_text);
+							onLoad(vertex_text, fragment_text);
+						}, options.onProgress, options.onError);
+					} else onLoad(vertex_text, fragment_text);
+				}
+				if (!vertex_text) {
+					var vertex_loader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+					vertex_loader.setResponseType('text');
+					vertex_loader.load(vertex_url, function (vertex_text_new) {
+						_vertex_text.setItem(vertex_url, vertex_text_new);
+						vertex_text = vertex_text_new;
+						loadFragment();
+					}, options.onProgress, options.onError);
+				} else {
+					loadFragment();
+				}
+			}
+			path = path || {};
+			path.vertex = path.vertex || currentScriptPath$1 + "/getShaderMaterialPoints/vertex.c";
+			path.fragment = path.fragment || currentScriptPath$1 + "/getShaderMaterialPoints/fragment.c";
+			ShaderLoader(path.vertex, path.fragment, function (vertex, fragment) {
+				shaderText.vertex = vertex;
+				shaderText.fragment = fragment;
+				onload(shaderText);
+			}, {
+				onError: function onError(event) {
+					console.error(event.srcElement.responseURL + ' status = ' + event.srcElement.status + ' ' + event.srcElement.statusText);
+				}
 			});
 		}
-		if (points.material.uniforms.palette !== undefined) points.material.uniforms.palette.value.needsUpdate = true;
-		if (points.material.uniforms.cloudPoints !== undefined) points.material.uniforms.cloudPoints.value.needsUpdate = true;
-		Player$1.selectMeshPlayScene(points, { options: settings.options });
-		var cameraTarget = settings.options.playerOptions.cameraTarget.get(settings.options);
-		if (cameraTarget && cameraTarget.setCameraPosition) cameraTarget.setCameraPosition();
-	}, settings.pointsOptions === undefined ? undefined : settings.pointsOptions.path);
-}
+		loadShaderText(function (shaderText) {
+			if (cloud !== undefined) {
+				cloud.editShaderText(shaderText);
+			}
+			var points = new THREE.Points(geometry, new THREE.ShaderMaterial({
+				uniforms: uniforms,
+				vertexShader: shaderText.vertex,
+				fragmentShader: shaderText.fragment,
+				transparent: true
+			}));
+			points.userData.shaderMaterial = settings.pointsOptions === undefined ? settings.shaderMaterial : settings.pointsOptions.shaderMaterial;
+			if (settings.options.saveMeshDefault !== undefined) settings.options.saveMeshDefault(points);
+			if (settings.pointsOptions && settings.pointsOptions.frustumPoints) points.userData.cloud = { indexArray: indexArrayCloud };
+			points.userData.shaderMaterial = settings.pointsOptions === undefined ? settings.shaderMaterial : settings.pointsOptions.shaderMaterial;
+			onReady(points);
+			if (points.userData.boFrustumPoints) {
+				settings.pointsOptions.group.children.forEach(function (mesh) {
+					settings.options.frustumPoints.updateCloudPoint(mesh);
+				});
+			}
+			if (points.material.uniforms.palette !== undefined) points.material.uniforms.palette.value.needsUpdate = true;
+			if (points.material.uniforms.cloudPoints !== undefined) points.material.uniforms.cloudPoints.value.needsUpdate = true;
+			var cameraTarget = settings.options.playerOptions.cameraTarget.get(settings.options);
+			if (cameraTarget && cameraTarget.setCameraPosition) cameraTarget.setCameraPosition();
+		}, settings.pointsOptions === undefined ? undefined : settings.pointsOptions.path);
+		return _this;
+	}
+	return getShaderMaterialPoints;
+}(MyObject);
 
 /**
  * @module MyPoints
@@ -11790,127 +12030,141 @@ function getShaderMaterialPoints(group, arrayFuncs, onReady, settings) {
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
-function MyPoints(arrayFuncs, group, settings) {
-	var THREE = three$1.THREE;
-	group = group || three$1.scene;
-	if (typeof arrayFuncs !== 'function' && arrayFuncs.length === 0) arrayFuncs.push(new THREE.Vector3());
-	settings = settings || {};
-	settings.pointsOptions = settings.pointsOptions || {};
-	var pointsOptions = settings.pointsOptions;
-	settings.options = settings.options || new Options();
-	var options = settings.options;
-	if (!options.boOptions) options = new Options(options);
-	pointsOptions.tMin = pointsOptions.tMin || 0;
-	pointsOptions.name = pointsOptions.name || '';
-	pointsOptions.position = pointsOptions.position || new THREE.Vector3(0, 0, 0);
-	pointsOptions.scale = pointsOptions.scale || new THREE.Vector3(1, 1, 1);
-	pointsOptions.rotation = pointsOptions.rotation || new THREE.Vector3();
-	pointsOptions.group = group;
-	if (pointsOptions.name !== '' && pointsOptions.elements) {
-		if (pointsOptions.elements.pointsName === null) console.warn('MyPoints: Points name element is not exists');
-		if (!pointsOptions.elements.pointsName) pointsOptions.elements.pointsName = 'pointsName';
-		var elPointsName = typeof pointsOptions.elements.pointsName === "string" ? document.getElementById(pointsOptions.elements.pointsName) : pointsOptions.elements.pointsName;
-		if (elPointsName) elPointsName.innerHTML = pointsOptions.name;else console.warn('MyPoints: Element with id: "' + pointsOptions.elements.pointsName + '" is not exists');
-	}
-	Player$1.assign();
-	if (pointsOptions.shaderMaterial !== false) getShaderMaterialPoints(group, arrayFuncs,
-	function (points) {
-		Points(points);
-	}, {
-		options: options,
-		pointsOptions: pointsOptions
-	});else {
-		var points = new THREE.Points(typeof arrayFuncs === 'function' ? arrayFuncs() : new THREE.BufferGeometry().setFromPoints(Player$1.getPoints(arrayFuncs, { options: options, group: group, t: pointsOptions.tMin }), arrayFuncs[0].vector instanceof THREE.Vector3 === true ? 3 : 4), new THREE.PointsMaterial({
-			size: options.point.size / options.point.sizePointsMaterial,
-			vertexColors: true,
-			transparent: settings.pointsOptions.opacity ? true :
-			undefined
-		}));
-		if (pointsOptions.frustumPoints) points.userData.cloud = {
-			indexArray: pointsOptions.frustumPoints.pushArrayCloud(points.geometry)
-		};
-		points.geometry.setAttribute('color', new THREE.Float32BufferAttribute(Player$1.getColors(arrayFuncs, {
-			color: settings.pointsOptions.color,
-			colors: settings.pointsOptions.colors,
-			opacity: settings.pointsOptions.opacity,
-			positions: points.geometry.attributes.position,
-			options: options
-		}), 4));
-		Points(points);
-	}
-	function Points(points) {
-		points.name = pointsOptions.name;
-		if (pointsOptions.pointIndexes !== undefined) points.userData.pointIndexes = function (pointIndex) {
-			return pointsOptions.pointIndexes(pointIndex);
-		};
-		if (pointsOptions.pointName !== undefined) points.userData.pointName = function (pointIndex) {
-			return pointsOptions.pointName(pointIndex);
-		};
-		if (pointsOptions.controllers !== undefined) {
-			points.userData.addControllers = pointsOptions.addControllers;
-			points.userData.controllers = function ()                   {
-				return pointsOptions.controllers();
-			};
-		}
-		if (settings.pointsOptions.raycaster) points.userData.raycaster = settings.pointsOptions.raycaster;
-		var arrayFuncsPlayer;
-		if (arrayFuncs instanceof THREE.BufferGeometry) {
-			arrayFuncsPlayer = [];
-			for (var i = 0; i < arrayFuncs.attributes.position.count; i++) {
-				arrayFuncsPlayer.push(new THREE.Vector3().fromBufferAttribute(arrayFuncs.attributes.position, i));
-			}
-		} else arrayFuncsPlayer = arrayFuncs;
-		points.userData.player = {
-			arrayFuncs: arrayFuncsPlayer,
-			selectPlayScene: function selectPlayScene(t) {
-				setPositions(t);
-				setScales(t);
-				setRotations(t);
-			}
-		};
-		function setPositions(t) {
-			t = t || pointsOptions.tMin;
-			function setPosition(axisName) {
-				points.position[axisName] = typeof pointsOptions.position[axisName] === "function" ? pointsOptions.position[axisName](t, options.a, options.b) : pointsOptions.position[axisName];
-			}
-			setPosition('x');
-			setPosition('y');
-			setPosition('z');
-		}
-		setPositions();
-		function setScales(t) {
-			t = t || pointsOptions.tMin;
-			function setScale(axisName) {
-				points.scale[axisName] = typeof pointsOptions.scale[axisName] === "function" ? pointsOptions.scale[axisName](t, options.a, options.b) : pointsOptions.scale[axisName];
-			}
-			setScale('x');
-			setScale('y');
-			setScale('z');
-		}
-		setScales();
-		function setRotations(t) {
-			t = t || pointsOptions.tMin;
-			function setRotation(axisName) {
-				points.rotation[axisName] = typeof pointsOptions.rotation[axisName] === "function" ? pointsOptions.rotation[axisName](t, options.a, options.b) : pointsOptions.rotation[axisName];
-				while (points.rotation[axisName] < 0) {
-					points.rotation[axisName] += Math.PI * 2;
-				}while (points.rotation[axisName] > Math.PI * 2) {
-					points.rotation[axisName] -= Math.PI * 2;
+var MyPoints = function (_MyObject) {
+				inherits(MyPoints, _MyObject);
+				function MyPoints(arrayFuncs, group, settings) {
+								classCallCheck(this, MyPoints);
+								var _this2 = possibleConstructorReturn(this, (MyPoints.__proto__ || Object.getPrototypeOf(MyPoints)).call(this, settings, arrayFuncs));
+								var _this = _this2;
+								var THREE = three$1.THREE;
+								group = group || three$1.scene;
+								if (typeof arrayFuncs !== 'function' && arrayFuncs.length === 0) arrayFuncs.push(new THREE.Vector3());
+								settings.pointsOptions = settings.pointsOptions || {};
+								var pointsOptions = settings.pointsOptions;
+								settings.options = settings.options || new Options();
+								var options = settings.options;
+								if (!options.boOptions) options = new Options(options);
+								pointsOptions.tMin = pointsOptions.tMin || 0;
+								pointsOptions.name = pointsOptions.name || '';
+								pointsOptions.position = pointsOptions.position || new THREE.Vector3(0, 0, 0);
+								pointsOptions.scale = pointsOptions.scale || new THREE.Vector3(1, 1, 1);
+								pointsOptions.rotation = pointsOptions.rotation || new THREE.Vector3();
+								pointsOptions.group = group;
+								if (pointsOptions.name !== '' && pointsOptions.elements) {
+												if (pointsOptions.elements.pointsName === null) console.warn('MyPoints: Points name element is not exists');
+												if (!pointsOptions.elements.pointsName) pointsOptions.elements.pointsName = 'pointsName';
+												var elPointsName = typeof pointsOptions.elements.pointsName === "string" ? document.getElementById(pointsOptions.elements.pointsName) : pointsOptions.elements.pointsName;
+												if (elPointsName) elPointsName.innerHTML = pointsOptions.name;else console.warn('MyPoints: Element with id: "' + pointsOptions.elements.pointsName + '" is not exists');
+								}
+								Player$1.assign();
+								if (pointsOptions.shaderMaterial !== false) new getShaderMaterialPoints(group, arrayFuncs, function (points) {
+												Points(points);
+								}, {
+												options: options,
+												pointsOptions: pointsOptions,
+												object: { geometry: { position: settings.object.geometry.position, opacity: settings.object.geometry.opacity } },
+												bufferGeometry: settings.bufferGeometry
+								});else {
+												var buffer = void 0;
+												if (typeof arrayFuncs === 'function') buffer = arrayFuncs();else {
+																var _points = Player$1.getPoints(arrayFuncs, { options: options, group: group, t: pointsOptions.tMin });
+																_this2.getPoint = function (i) {
+																				return _points[i];
+																};
+																buffer = _this2.setPositionAttributeFromPoints(_points);
+												}
+												var points = new THREE.Points(buffer, new THREE.PointsMaterial({
+																size: options.point.size / options.point.sizePointsMaterial,
+																vertexColors: true,
+																transparent: settings.pointsOptions.opacity ? true :
+																undefined
+												}));
+												if (pointsOptions.frustumPoints) points.userData.cloud = {
+																indexArray: pointsOptions.frustumPoints.pushArrayCloud(points.geometry)
+												};
+												Points(points);
+								}
+								function Points(points) {
+												_this.object3D = points;
+												points.name = pointsOptions.name;
+												if (pointsOptions.pointIndexes !== undefined) points.userData.pointIndexes = function (pointIndex) {
+																return pointsOptions.pointIndexes(pointIndex);
+												};
+												if (pointsOptions.pointName !== undefined) points.userData.pointName = function (pointIndex) {
+																return pointsOptions.pointName(pointIndex);
+												};
+												if (pointsOptions.controllers !== undefined) {
+																points.userData.addControllers = pointsOptions.addControllers;
+																points.userData.controllers = function ()                   {
+																				return pointsOptions.controllers();
+																};
+												}
+												if (settings.pointsOptions.raycaster) points.userData.raycaster = settings.pointsOptions.raycaster;
+												var arrayFuncsPlayer;
+												if (arrayFuncs instanceof THREE.BufferGeometry) {
+																arrayFuncsPlayer = [];
+																for (var i = 0; i < arrayFuncs.attributes.position.count; i++) {
+																				arrayFuncsPlayer.push(new THREE.Vector3().fromBufferAttribute(arrayFuncs.attributes.position, i));
+																}
+												} else arrayFuncsPlayer = arrayFuncs;
+												points.userData.player = {
+																arrayFuncs: arrayFuncsPlayer,
+																selectPlayScene: function selectPlayScene(t) {
+																				setPositions(t);
+																				setScales(t);
+																				setRotations(t);
+																}
+												};
+												function setPositions(t) {
+																t = t || pointsOptions.tMin;
+																function setPosition(axisName) {
+																				points.position[axisName] = typeof pointsOptions.position[axisName] === "function" ? pointsOptions.position[axisName](t, options.a, options.b) : pointsOptions.position[axisName];
+																}
+																setPosition('x');
+																setPosition('y');
+																setPosition('z');
+												}
+												setPositions();
+												function setScales(t) {
+																t = t || pointsOptions.tMin;
+																function setScale(axisName) {
+																				points.scale[axisName] = typeof pointsOptions.scale[axisName] === "function" ? pointsOptions.scale[axisName](t, options.a, options.b) : pointsOptions.scale[axisName];
+																}
+																setScale('x');
+																setScale('y');
+																setScale('z');
+												}
+												setScales();
+												function setRotations(t) {
+																t = t || pointsOptions.tMin;
+																function setRotation(axisName) {
+																				points.rotation[axisName] = typeof pointsOptions.rotation[axisName] === "function" ? pointsOptions.rotation[axisName](t, options.a, options.b) : pointsOptions.rotation[axisName];
+																				while (points.rotation[axisName] < 0) {
+																								points.rotation[axisName] += Math.PI * 2;
+																				}while (points.rotation[axisName] > Math.PI * 2) {
+																								points.rotation[axisName] -= Math.PI * 2;
+																				}
+																}
+																setRotation('x');
+																setRotation('y');
+																setRotation('z');
+												}
+												setRotations();
+												group.add(points);
+												points.userData.myObject = _this;
+												points.userData.opacity = function (opacity) {
+																_this.verticesOpacity(false, opacity);
+												};
+												if (pointsOptions.boFrustumPoints) points.userData.boFrustumPoints = pointsOptions.boFrustumPoints;
+												if (options.guiSelectPoint) options.guiSelectPoint.addMesh(points);
+												if (options.eventListeners) options.eventListeners.addParticle(points);
+												if (pointsOptions.onReady !== undefined) pointsOptions.onReady(points);
+												if (!points.userData.boFrustumPoints && options.raycaster && options.raycaster.addParticle) options.raycaster.addParticle(points);
+								}
+								return _this2;
 				}
-			}
-			setRotation('x');
-			setRotation('y');
-			setRotation('z');
-		}
-		setRotations();
-		group.add(points);
-		if (pointsOptions.boFrustumPoints) points.userData.boFrustumPoints = pointsOptions.boFrustumPoints;
-		if (options.guiSelectPoint) options.guiSelectPoint.addMesh(points);
-		if (options.eventListeners) options.eventListeners.addParticle(points);
-		if (pointsOptions.onReady !== undefined) pointsOptions.onReady(points);
-		if (!points.userData.boFrustumPoints && options.raycaster && options.raycaster.addParticle) options.raycaster.addParticle(points);
-	}
-}
+				return MyPoints;
+}(MyObject);
 
 /**
  * @module DropdownMenu
@@ -12937,6 +13191,7 @@ function AxesHelperGui(options, gui) {
 	    dat = three$1.dat;
 	var scalesDefault = JSON.parse(JSON.stringify(options.scales)),
 	    groupAxesHelper = options.axesHelper.getGroup();
+	scalesDefault.posAxesIntersection = new THREE.Vector3().copy(options.scales.posAxesIntersection);
 	Object.freeze(scalesDefault);
 	options = options || {};
 	var lang = {
@@ -13560,6 +13815,8 @@ function functionsFolder(fParent, onFinishChange, options, vector) {
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
+var none = 'none';
+var block = 'block';
 var GuiSelectPoint =
 function GuiSelectPoint(options) {
 			var guiParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -13685,14 +13942,32 @@ function GuiSelectPoint(options) {
 						}
 			}
 			if (options.frustumPoints) cFrustumPoints = new options.frustumPoints.guiSelectPoint();
-			function dislayEl(controller, displayController) {
-						if (controller === undefined) return;
-						if (typeof displayController === "boolean") displayController = displayController ? 'block' : 'none';else if (displayController === undefined) displayController = 'none';else if (typeof displayController !== "string") displayController = 'block';
+			function getLiEl(controller) {
 						var el = controller.domElement;
 						while (el.tagName.toUpperCase() !== "LI") {
 									el = el.parentElement;
-						}el.style.display = displayController;
+						}return el;
 			}
+			function dislayEl(controller, displayController) {
+						if (controller === undefined) return;
+						if (typeof displayController === "boolean") displayController = displayController ? 'block' : 'none';else if (displayController === undefined) displayController = 'none';else if (typeof displayController !== "string") displayController = 'block';
+						getLiEl(controller).style.display = displayController;
+			}
+			function isDislayEl(controller) {
+						if (controller === undefined) return;
+						return getLiEl(controller).style.display === none ? false : true;
+			}
+			var getInputEl = function getInputEl(controller) {
+						return controller ? controller.domElement.querySelector('input') : undefined;
+			};
+			var readOnlyEl = function readOnlyEl(controller, boReadOnly) {
+						var element = getInputEl(controller);
+						if (element) element.readOnly = boReadOnly;
+			};
+			var isReadOnlyEl = function isReadOnlyEl(controller) {
+						var element = getInputEl(controller);
+						if (element) return element.readOnly;
+			};
 			function exposePosition(selectedPointIndex) {
 						if (selectedPointIndex === undefined) selectedPointIndex = guiSelectPoint.getSelectedPointIndex();
 						if (selectedPointIndex === -1) return;
@@ -13703,17 +13978,21 @@ function GuiSelectPoint(options) {
 						if (cWorld.x) cWorld.x.setValue(position.x);
 						if (cWorld.y) cWorld.y.setValue(position.y);
 						if (cWorld.z) cWorld.z.setValue(position.z);
-						if (mesh.userData.player && mesh.userData.player.arrayFuncs && mesh.userData.player.arrayFuncs[selectedPointIndex] && mesh.userData.player.arrayFuncs[selectedPointIndex].controllers) {
-									var controllers = mesh.userData.player.arrayFuncs[selectedPointIndex].controllers;
-									if (controllers.x && controllers.x.controller) controllers.x.controller.value = position.x;
-									if (controllers.y && controllers.y.controller) controllers.y.controller.value = position.y;
-									if (controllers.z && controllers.z.controller) controllers.z.controller.value = position.z;
+						if (mesh.userData.player && mesh.userData.player.arrayFuncs) {
+									var selectedPoint = mesh.userData.player.arrayFuncs[selectedPointIndex];
+									if (selectedPoint && selectedPoint.controllers) {
+												var controllers = mesh.userData.player.arrayFuncs[selectedPointIndex].controllers;
+												if (controllers.x && controllers.x.controller) controllers.x.controller.value = position.x;
+												if (controllers.y && controllers.y.controller) controllers.y.controller.value = position.y;
+												if (controllers.z && controllers.z.controller) controllers.z.controller.value = position.z;
+									}
 						}
 			}
+			this.exposePosition = exposePosition;
 			function setValue(controller, v) {
 						if (!controller) return;
-						var input = controller.domElement.querySelector('input'),
-						    readOnly = input.readOnly;
+						var input = getInputEl(controller),
+						readOnly = input.readOnly;
 						input.readOnly = false;
 						controller.object[controller.property] = v;
 						if (controller.__onChange) controller.__onChange.call(controller, v);
@@ -13724,10 +14003,10 @@ function GuiSelectPoint(options) {
 			}
 			var wLimitsDefault;
 			this.setReadOnlyPosition = function (boReadOnly) {
-						if (cX) cX.domElement.querySelector('input').readOnly = boReadOnly;
-						if (cY) cY.domElement.querySelector('input').readOnly = boReadOnly;
-						if (cZ) cZ.domElement.querySelector('input').readOnly = boReadOnly;
-						if (cW) cW.domElement.querySelector('input').readOnly = boReadOnly;
+						readOnlyEl(cX, boReadOnly);
+						readOnlyEl(cY, boReadOnly);
+						readOnlyEl(cZ, boReadOnly);
+						readOnlyEl(cW, boReadOnly);
 			};
 			function setPosition(intersectionSelected) {
 						var player = intersectionSelected.object.userData.player;
@@ -13750,81 +14029,84 @@ function GuiSelectPoint(options) {
 						setValue(cWorld.x, position.x);
 						setValue(cWorld.y, position.y);
 						setValue(cWorld.z, position.z);
-						var displayControllerW, displayControllerColor, displayControllerOpacity;
-						var none = 'none',
-						    block = 'block';
+						var displayControllerW, displayControllerColor;
 						if (intersection.object.userData.player && typeof intersection.object.userData.player.arrayFuncs === "function") {
 						}
-						var opasity;
 						var func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined,
 						    attributes = intersectionSelected.object.geometry.attributes;
-						if (attributes.position.itemSize < 4) {
+						if (!attributes.color) {
 									displayControllerW = none;
 									displayControllerColor = none;
-									displayControllerOpacity = none;
 						} else {
-									var isWObject = function isWObject() {
-												return _typeof(func.w) === 'object' && func.w instanceof THREE.Color === false;
+									var setColorControl = function setColorControl(color) {
+												var strColor = '#' + color.getHexString();
+												cColor.initialValue = strColor;
+												cColor.userData = { intersection: intersectionSelected };
+												cColor.setValue(strColor);
 									};
-									var color = func === undefined || !attributes.color && !attributes.ca ? undefined : Array.isArray(func.w) || typeof func.w === "function" ? Player$1.execFunc(func, 'w', options.time, options) : isWObject() ? Player$1.execFunc(func.w, 'func', options.time, options) : typeof func.w === "string" ? Player$1.execFunc(func, 'w', options.time, options) : func.w;
-									if (color === undefined) {
-												if (attributes.ca === undefined) {
-												} else {
-															var vColor = new THREE.Vector4().fromArray(attributes.ca.array, intersectionSelected.index * attributes.ca.itemSize);
-															color = new THREE.Color(vColor.x, vColor.y, vColor.z);
-															opasity = vColor.w;
-												}
-									}
-									if (color instanceof THREE.Color) {
-												displayControllerW = none;
-												displayControllerColor = block;
-												displayControllerOpacity = block;
-												if (intersectionSelected.object.userData.player.arrayFuncs === undefined) {
-															displayControllerColor = none;
-															displayControllerOpacity = none;
-												} else {
-															var strColor = '#' + color.getHexString();
-															cColor.initialValue = strColor;
-															cColor.setValue(strColor);
-															cColor.userData = { intersection: intersectionSelected };
-															if (opasity !== undefined) {
-																		setValue(cOpacity, opasity);
-															} else displayControllerOpacity = none;
-															cOpacity.userData = { intersection: intersectionSelected };
+									if (attributes.position.itemSize < 4) {
+												if (intersectionSelected.object.material.vertexColors === true || intersectionSelected.object.material instanceof THREE.ShaderMaterial === true) {
+															displayControllerW = none;
+															displayControllerColor = block;
+															setColorControl(new THREE.Color().fromBufferAttribute(attributes.color, intersectionSelected.index));
 												}
 									} else {
-												if (cW === undefined) displayControllerW = none;else {
-															if (color === undefined) displayControllerW = none;else {
-																		if (!wLimitsDefault) {
-																					wLimitsDefault = {
-																								min: cW.__min,
-																								max: cW.__max
-																					};
-																		}
-																		if (isWObject()) {
-																					cW.min(func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min);
-																					cW.max(func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max);
-																					if (cW.__min !== 'undefined' && cW.__max !== 'undefined') cW.step((cW.__max - cW.__min) / 100);
-																		} else {
-																					cW.min(wLimitsDefault.min);
-																					cW.max(wLimitsDefault.max);
-																		}
-																		setValue(cW, color);
-																		displayControllerW = block;
+												var isWObject = function isWObject() {
+															return _typeof(func.w) === 'object' && func.w instanceof THREE.Color === false;
+												};
+												var _mesh = getMesh(),
+												    verticeColor = _mesh.userData.myObject ? _mesh.userData.myObject.verticeColor(intersectionSelected.index) : undefined;
+												var color = func === undefined || !attributes.color && !attributes.ca ? undefined : Array.isArray(func.w) || typeof func.w === "function" ? Player$1.execFunc(func, 'w', options.time, options) : isWObject() ? Player$1.execFunc(func.w, 'func', options.time, options) : typeof func.w === "string" ? Player$1.execFunc(func, 'w', options.time, options) : verticeColor != undefined ? verticeColor : func.w;
+												if (Array.isArray(color)) color = new THREE.Color(color[0], color[1], color[2]);
+												if (color instanceof THREE.Color) {
+															displayControllerW = none;
+															displayControllerColor = block;
+															if (intersectionSelected.object.userData.player.arrayFuncs === undefined) {
+																		displayControllerColor = none;
+															} else {
+																		setColorControl(color);
+																		cOpacity.userData = { intersection: intersectionSelected };
 															}
+												} else {
+															if (cW === undefined) displayControllerW = none;else {
+																		if (color === undefined) displayControllerW = none;else {
+																					if (!wLimitsDefault) {
+																								wLimitsDefault = {
+																											min: cW.__min,
+																											max: cW.__max
+																								};
+																					}
+																					if (isWObject()) {
+																								cW.min(func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min);
+																								cW.max(func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max);
+																								if (cW.__min !== 'undefined' && cW.__max !== 'undefined') cW.step((cW.__max - cW.__min) / 100);
+																					} else {
+																								cW.min(wLimitsDefault.min);
+																								cW.max(wLimitsDefault.max);
+																					}
+																					setValue(cW, color);
+																					displayControllerW = block;
+																		}
+															}
+															displayControllerColor = none;
 												}
-												displayControllerColor = none;
-												displayControllerOpacity = none;
 									}
 						}
 						dislayEl(cW, displayControllerW);
 						dislayEl(cColor, displayControllerColor);
-						dislayEl(cOpacity, displayControllerOpacity);
 						var mesh = getMesh(),
-						    boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : mesh.userData.gui && mesh.userData.gui.isLocalPositionReadOnly ? true : false;
+						    boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : mesh.userData.gui && mesh.userData.gui.isLocalPositionReadOnly ? true : false,
+						    boOpacity = mesh.userData.myObject && mesh.userData.myObject.isOpacity || mesh.material.transparent && mesh.material.vertexColors,
+						    attributeColor = mesh.geometry.attributes.color;
+						dislayEl(cOpacity, boOpacity ? block : none);
+						if (boOpacity) {
+									if (attributeColor.itemSize != 4) console.error('GuiSelectPoint.setPosition: Invalid mesh.geometry.attributes.color.itemSize = ' + attributeColor.itemSize);
+									cOpacity.initialValue = attributeColor.array[intersectionSelected.index * attributeColor.itemSize + 3];
+									cOpacity.setValue(cOpacity.initialValue);
+						}
 						_this.setReadOnlyPosition(boReadOnly);
-						cColor.domElement.querySelector('input').readOnly = boReadOnly;
-						cOpacity.domElement.querySelector('input').readOnly = boReadOnly;
+						readOnlyEl(cColor, boReadOnly);
+						readOnlyEl(cOpacity, boReadOnly);
 						funcFolder.displayFolder(!boReadOnly);
 			}
 			this.setAxisControl = function (axis, scale) {
@@ -13985,8 +14267,7 @@ function GuiSelectPoint(options) {
 									setPosition(intersectionSelected);
 									var mesh = getMesh();
 									var line = !mesh.userData.player || mesh.userData.player.arrayFuncs === undefined || typeof intersection.object.userData.player.arrayFuncs === "function" ? undefined : mesh.userData.player.arrayFuncs[intersectionSelected.index].line;
-									if (cTrace) cTrace.setValue(line === undefined ?
-									false : line.isVisible());
+									if (cTrace) cTrace.setValue(line === undefined ? false : line.isVisible());
 									cRestoreDefaultLocalPosition.domElement.parentElement.parentElement.style.display = !intersection.object.userData.player || intersection.object.userData.player.arrayFuncs === undefined ? 'none' : block;
 						};
 						this.selectPoint2(undefined);
@@ -14162,6 +14443,7 @@ function GuiSelectPoint(options) {
 						var mesh, buttonScaleDefault, buttonPositionDefault, buttonRotationDefault;
 						cMeshs = f3DObjects.add({ Meshs: lang.notSelected }, 'Meshs', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
 									value = parseInt(value);
+									cPoints.__onChange(-1);
 									mesh = getMesh();
 									var none = 'none',
 									    block = 'block';
@@ -14351,18 +14633,20 @@ function GuiSelectPoint(options) {
 						}
 						addRotationFolder();
 						fPoints = fMesh.addFolder(lang.points);
-						cPoints = fPoints.add({ Points: lang.notSelected }, 'Points', defineProperty({}, lang.notSelected, -1)).onChange(function (value) {
-									value = parseInt(value);
+						var oldMesh = void 0;
+						cPoints = fPoints.add({ Points: lang.notSelected }, 'Points', defineProperty({}, lang.notSelected, -1)).onChange(function (pointId) {
+									pointId = parseInt(pointId);
 									var display;
 									var mesh = getMesh();
-									if (value === -1) {
-												display = 'none';
-									} else {
+									if (mesh && mesh.userData.gui && mesh.userData.gui.reset) oldMesh = mesh;
+									if (pointId === -1) display = 'none';else {
 												display = 'block';
-												_this.select({ object: mesh, index: value });
+												_this.select({ object: mesh, index: pointId });
 									}
-									if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition(mesh, value));
+									if (options.axesHelper !== false && options.axesHelper !== undefined) options.axesHelper.exposePosition(getObjectPosition(mesh, pointId));
 									displayPointControllers(display);
+									if (!mesh || !mesh.userData.gui || !mesh.userData.gui.reset) mesh = oldMesh;
+									if (mesh && mesh.userData.gui && mesh.userData.gui.reset) mesh.userData.gui.reset(pointId);
 						});
 						cPoints.__select[0].selected = true;
 						dat.controllerNameAndTitle(cPoints, lang.select);
@@ -14405,9 +14689,9 @@ function GuiSelectPoint(options) {
 															var index = mesh.userData.boFrustumPoints ? cFrustumPoints.getSelectedIndex() : cPoints.__select.options.selectedIndex - 1,
 															    point = typeof mesh.userData.player.arrayFuncs === "function" ? new THREE.Vector3().fromArray(mesh.userData.player.arrayFuncs().attributes.position.array, index * 3) : mesh.userData.player.arrayFuncs !== undefined ? mesh.userData.player.arrayFuncs[index] : new THREE.Vector3().fromArray(mesh.geometry.attributes.position.array, index * 3);
 															for (var i = 0; i < cMeshs.__select.options.length; i++) {
-																		var _mesh = cMeshs.__select.options[i].mesh;
-																		if (!_mesh || !_mesh.userData.player || !_mesh.userData.player.arrayFuncs) continue;
-																		var arrayFuncs = _mesh.userData.player.arrayFuncs;
+																		var _mesh2 = cMeshs.__select.options[i].mesh;
+																		if (!_mesh2 || !_mesh2.userData.player || !_mesh2.userData.player.arrayFuncs) continue;
+																		var arrayFuncs = _mesh2.userData.player.arrayFuncs;
 																		for (var j = 0; j < arrayFuncs.length; j++) {
 																					if (arrayFuncs[j].cameraTarget) arrayFuncs[j].cameraTarget.boLook = false;
 																		}
@@ -14458,12 +14742,12 @@ function GuiSelectPoint(options) {
 						dat.controllerNameAndTitle(f3DObjects.add({
 									defaultF: function defaultF(value) {
 												for (var i = 0; i < cMeshs.__select.options.length; i++) {
-															var _mesh2 = cMeshs.__select.options[i].mesh;
-															if (!_mesh2) continue;
-															_mesh2.scale.copy(_mesh2.userData.default.scale);
-															_mesh2.position.copy(_mesh2.userData.default.position);
-															_mesh2.rotation.copy(_mesh2.userData.default.rotation);
-															_mesh2.needsUpdate = true;
+															var _mesh3 = cMeshs.__select.options[i].mesh;
+															if (!_mesh3) continue;
+															_mesh3.scale.copy(_mesh3.userData.default.scale);
+															_mesh3.position.copy(_mesh3.userData.default.position);
+															_mesh3.rotation.copy(_mesh3.userData.default.rotation);
+															_mesh3.needsUpdate = true;
 												}
 												setScaleControllers();
 												setPositionControllers();
@@ -14477,15 +14761,6 @@ function GuiSelectPoint(options) {
 									this.addMesh(arrayMeshs[arrayMeshs.length - 1]);
 									arrayMeshs.pop();
 						}
-			};
-			this.setColorAttribute = function (attributes, i, color) {
-						if (typeof color === "string") color = new THREE.Color(color);
-						var colorAttribute = attributes.color || attributes.ca;
-						if (colorAttribute === undefined) return;
-						colorAttribute.setX(i, color.r);
-						colorAttribute.setY(i, color.g);
-						colorAttribute.setZ(i, color.b);
-						colorAttribute.needsUpdate = true;
 			};
 			this.removePoints = function () {
 						cPoints.domElement.querySelectorAll('select option').forEach(function (option) {
@@ -14517,7 +14792,8 @@ function GuiSelectPoint(options) {
 			};
 			function addPointControllers() {
 						function isReadOnlyController(controller) {
-									if (controller.domElement.querySelector('input').readOnly) {
+									if (controller.boSetValue) return true;
+									if (isReadOnlyEl(controller)) {
 												if (controller.getValue() !== controller.initialValue) {
 															if (controller.boSetValue === undefined) {
 																		controller.boSetValue = true;
@@ -14540,19 +14816,14 @@ function GuiSelectPoint(options) {
 																		console.error('guiSelectPoint.addPointControllers().axesGui().controller.onChange(): attributes.position.itemSize = ' + attributes.position.itemSize);
 																		return;
 															}
-															if (options.palette) {
-																		var color = options.palette.toColor(value, controller.__min, controller.__max);
-																		_this.setColorAttribute(attributes, i, color);
-															}
+															if (options.palette) Player$1.setColorAttribute(attributes, i, options.palette.toColor(value, controller.__min, controller.__max));
 															attributes.position.setW(i, value);
 															if (options.frustumPoints) options.frustumPoints.updateCloudPointItem(intersection.object, intersection.index);
 												};
 												options.scales.setW();
 												scale = options.scales.w;
 												if (scale.min !== undefined && scale.max !== undefined) {
-															controller = fPoint.add({
-																		value: scale.min
-															}, 'value', scale.min, scale.max, (scale.max - scale.min) / 100).onChange(function (value) {
+															controller = fPoint.add({ value: scale.min }, 'value', scale.min, scale.max, (scale.max - scale.min) / 100).onChange(function (value) {
 																		if (isReadOnlyController(controller)) return;
 																		onChange(value);
 															});
@@ -14566,20 +14837,16 @@ function GuiSelectPoint(options) {
 																					}
 																		});
 															}
-												} else controller = fPoint.add({
-															value: 0
-												}, 'value').onChange(function (value) {
+												} else controller = fPoint.add({ value: 0 }, 'value').onChange(function (value) {
 															onChange(value);
 												});
 									} else {
 												scale = options.axesHelper === undefined || options.axesHelper === false ? options.scales[axisName] :
 												options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
-												if (scale.isAxis()) controller = fPoint.add({
-															value: scale.min
-												}, 'value', scale.min, scale.max, (scale.max - scale.min) / 100).onChange(function (value) {
+												if (scale.isAxis()) controller = fPoint.add({ value: scale.min }, 'value', scale.min, scale.max, (scale.max - scale.min) / 100).onChange(function (value) {
+															var points = intersection.object;
 															if (isReadOnlyController(controller)) return;
-															var points = intersection.object,
-															    axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName);
+															var axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName);
 															points.geometry.attributes.position.array[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
 															points.geometry.attributes.position.needsUpdate = true;
 															exposePosition(intersection.index);
@@ -14593,31 +14860,39 @@ function GuiSelectPoint(options) {
 						cY = axesGui('y');
 						cZ = axesGui('z');
 						cW = axesGui('w');
-						cColor = fPoint.addColor({
-									color: '#FFFFFF'
-						}, 'color').onChange(function (value) {
+						cColor = fPoint.addColor({ color: '#FFFFFF' }, 'color').onChange(function (value) {
 									if (isReadOnlyController(cColor)) return;
 									if (cColor.userData === undefined) return;
 									var intersection = cColor.userData.intersection;
-									_this.setColorAttribute(intersection.object.geometry.attributes, intersection.index, value);
+									Player$1.setColorAttribute(intersection.object.geometry.attributes, intersection.index, value);
 						});
 						dat.controllerNameAndTitle(cColor, options.scales.w ? options.scales.w.name : lang.color);
-						cOpacity = fPoint.add({
-									opasity: 1
-						}, 'opasity', 0, 1, 0.01).onChange(function (opasity) {
+						cOpacity = fPoint.add({ opasity: 1 }, 'opasity', 0, 1, 0.01).onChange(function (opasity) {
 									if (isReadOnlyController(cOpacity)) return;
-									if (cColor.userData === undefined) return;
-									var intersection = cColor.userData.intersection;
-									var points = intersection.object;
-									if (points.geometry.attributes.ca === undefined) return;
-									points.geometry.attributes.ca.array[3 + intersection.index * points.geometry.attributes.ca.itemSize] = opasity;
-									points.geometry.attributes.ca.needsUpdate = true;
+									var mesh = getMesh();
+									if (mesh.userData.myObject) {
+												mesh.userData.myObject.verticeOpacity(intersection.index, true, opasity);
+												return;
+									}
+									if (!mesh.material.transparent) {
+												console.error('GuiSelectPoint: cOpacity.onChange. Invalid mesh.material.transparent = ' + mesh.material.transparent);
+												return;
+									}
+									if (!mesh.material.vertexColors) {
+												console.error('GuiSelectPoint: cOpacity.onChange. Invalid mesh.material.vertexColors = ' + mesh.material.vertexColors);
+												return;
+									}
+									var color = mesh.geometry.attributes.color;
+									if (color.itemSize < 4) return;
+									color.array[3 + intersection.index * color.itemSize] = opasity;
+									color.needsUpdate = true;
 						});
 						dat.controllerNameAndTitle(cOpacity, lang.opacity, lang.opacityTitle);
 						cTrace = fPoint.add({ trace: false }, 'trace').onChange(function (value) {
 									visibleTraceLine(intersection, value, getMesh);
 						});
-						dat.controllerNameAndTitle(cTrace, lang.trace, lang.traceTitle);dislayEl(cTrace, options.player);
+						dat.controllerNameAndTitle(cTrace, lang.trace, lang.traceTitle);
+						dislayEl(cTrace, options.player);
 						if (guiParams.pointControls) {
 									guiParams.pointControls(fPoint, dislayEl, getMesh, intersection);
 						}
@@ -14625,7 +14900,7 @@ function GuiSelectPoint(options) {
 									var scale = options.axesHelper === undefined || options.axesHelper === false ? options.scales[axisName] : options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
 									if (!scale.isAxis()) return;
 									var controller = dat.controllerZeroStep(fPointWorld, { value: scale.min }, 'value');
-									controller.domElement.querySelector('input').readOnly = true;
+									readOnlyEl(controller, true);
 									dat.controllerNameAndTitle(controller, scale.name);
 									return controller;
 						}
@@ -14635,11 +14910,17 @@ function GuiSelectPoint(options) {
 						cRestoreDefaultLocalPosition = fPoint.add({
 									defaultF: function defaultF() {
 												var positionDefault = intersection.object.userData.player.arrayFuncs[intersection.index],
-												    t = options.time;
-												cX.setValue(typeof positionDefault.x === "function" ? positionDefault.x(t, options.a, options.b) : positionDefault.x);
-												cY.setValue(typeof positionDefault.y === "function" ? positionDefault.y(t, options.a, options.b) : positionDefault.y);
-												cZ.setValue(typeof positionDefault.z === "function" ? positionDefault.z(t, options.a, options.b) : positionDefault.z === undefined ? 0 :
+												    t = options.time,
+												    setDefaultValue = function setDefaultValue(control, value) {
+															if (!control) return;
+															control.setValue(typeof value === "function" ? value(t, options.a, options.b) : typeof value === "string" ? Player$1.execFunc({ w: value }, 'w', options.time, options) : value);
+												};
+												setDefaultValue(cX, positionDefault.x);
+												setDefaultValue(cY, positionDefault.y);
+												setDefaultValue(cZ, positionDefault.z === undefined ? 0 :
 												positionDefault.z);
+												if (isDislayEl(cOpacity)) cOpacity.setValue(cOpacity.initialValue);
+												if (isDislayEl(cColor) && !isReadOnlyEl(cColor)) cColor.setValue(cColor.initialValue);
 												if (positionDefault.w !== undefined) {
 															if (positionDefault.w.r !== undefined) cColor.setValue('#' + new THREE.Color(positionDefault.w.r, positionDefault.w.g, positionDefault.w.b).getHexString());else if (typeof positionDefault.w === "function") {
 																		setValue(cW, positionDefault.w(t));
@@ -14649,11 +14930,13 @@ function GuiSelectPoint(options) {
 																		return;
 															}
 															var float = parseFloat(positionDefault.w);
-															if (float === positionDefault.w) setValue(cW, positionDefault.w);else console.error('Restore default local position: Invalid W axis.');
-												} else {
-															cColor.setValue(cColor.initialValue);
-															cOpacity.setValue(cOpacity.initialValue);
-												}
+															if (float === positionDefault.w) {
+																		if (isDislayEl(cW)) setValue(cW, positionDefault.w);
+															} else if (typeof positionDefault.w === "string") {
+																		setValue(cW, Player$1.execFunc(positionDefault, 'w', options.time, options));
+																		return;
+															} else console.error('Restore default local position: Invalid W axis.');
+												} else cColor.setValue(cColor.initialValue);
 									}
 						}, 'defaultF');
 						dat.controllerNameAndTitle(cRestoreDefaultLocalPosition, lang.defaultButton, lang.defaultLocalPositionTitle);
@@ -15103,7 +15386,7 @@ var FolderPoint = function FolderPoint(point, setSize, options) {
 		PCOptions.settings = PCOptions.settings || {};
 		if (PCOptions.settings.offset === undefined) PCOptions.settings.offset = 1;
 		if (PCOptions.step === undefined) PCOptions.step = 0.01;
-		PCOptions.getLanguageCode = PCOptions.getLanguageCode || settings.getLanguageCode;
+		PCOptions.getLanguageCode = PCOptions.getLanguageCode || settings.getLanguageCode || options.getLanguageCode;
 		var fPoint = gui.addFolder(lang.pointSettings),
 		    fSize = fPoint.addFolder(lang.size);
 		dat.folderNameAndTitle(fSize, lang.size, lang.sizeTitle);
@@ -15112,8 +15395,7 @@ var FolderPoint = function FolderPoint(point, setSize, options) {
 		};
 		fSize.add(new PositionController(function (shift) {
 				setSize(point.size + shift);
-		}, PCOptions
-		));
+		}, PCOptions));
 		this.size = dat.controllerZeroStep(fSize, point, 'size', function (value) {
 				setSize(value);
 		});
@@ -15528,7 +15810,7 @@ function FrustumPoints(camera, group, canvas) {
 												var cameraPositionDefault = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z);
 												var cameraQuaternionDefault = new THREE.Vector4(camera.quaternion.x, camera.quaternion.y, camera.quaternion.z, camera.quaternion.w);
 												_points = false;
-												MyPoints(function () {
+												new MyPoints(function () {
 																var geometry = new THREE.BufferGeometry(),
 																    geometryLength = (zEnd - zStart + 1) * xCount * yCount;
 																array = new Float32Array(geometryLength * itemSize);
@@ -16016,7 +16298,7 @@ function pointLight(scene) {
 						var lightSource;
 						dat.controllerNameAndTitle(fLight.add({ display: false }, 'display').onChange(function (value) {
 									if (value) {
-												MyPoints(light.position, group, { pointsOptions: {
+												new MyPoints(light.position, group, { pointsOptions: {
 																		onReady: function onReady(points) {
 																					lightSource = points;
 																		}
@@ -16070,69 +16352,91 @@ function pointLight(scene) {
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 var ProgressBar = function () {
-		createClass(ProgressBar, [{
-				key: 'value',
-				set: function set$$1(value) {
-						this.setValue(value);
-				}
-		}]);
-		function ProgressBar(elParent, step) {
-				var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-				classCallCheck(this, ProgressBar);
-				var elProgress = document.createElement('div'),
-				    cProgress = document.createElement('input'),
-				    elTitle = document.createElement('div');
-				elProgress.style.backgroundColor = 'white';
-				elProgress.style.margin = '2px';
-				elProgress.style.padding = '2px';
-				elTitle.innerHTML = settings.sTitle || '';
-				elTitle.style.color = 'black';
-				elProgress.appendChild(elTitle);
-				cProgress.min = settings.min != undefined ? settings.min : "0";
-				cProgress.max = settings.max != undefined ? settings.max : "1";
-				cProgress.type = "range";
-				cProgress.disabled = true;
-				elProgress.appendChild(cProgress);
-				var elcontainer = void 0;
-				var containerName = 'ProgressContainer';
-				for (var i = 0; i < elParent.children.length; i++) {
-						var child = elParent.children[i];
-						if (child.name && child.name === containerName) {
-								elcontainer = child;
-								break;
-						}
-				}
-				if (!elcontainer) {
-						elcontainer = document.createElement('table');
-						elcontainer.name = containerName;
-						elcontainer.style.position = 'absolute';
-						elcontainer.style.top = 0;
-						elcontainer.style.left = 0;
-						elParent.appendChild(elcontainer);
-				}
-				var elRow = document.createElement('tr');
-				elRow.appendChild(elProgress);
-				elcontainer.appendChild(elRow);
-				this.setValue = function (value) {
-						cProgress.value = value;
-				};
-				this.step = function () {
-						window.setTimeout(function () {
-								step();
-						}, 0);
-				};
-				this.remove = function () {
-						elProgress.parentElement.remove();
-				};
-				this.step();
-				this.newStep = function (value) {
-						step = value;
-				};
-				this.title = function (value) {
-						elTitle.innerHTML = value;
-				};
+	createClass(ProgressBar, [{
+		key: 'value',
+		set: function set$$1(value) {
+			this.setValue(value);
 		}
-		return ProgressBar;
+	}]);
+	function ProgressBar(elParent, step) {
+		var _this = this;
+		var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+		classCallCheck(this, ProgressBar);
+		var cProgress = void 0,
+		    elProgress = void 0,
+		    elTitle = void 0;
+		if (elParent) {
+			elTitle = document.createElement('div');
+			elProgress = document.createElement('div');
+			cProgress = document.createElement('input'), elProgress.style.backgroundColor = 'white';
+			elProgress.style.margin = '2px';
+			elProgress.style.padding = '2px';
+			elTitle.innerHTML = settings.sTitle || '';
+			elTitle.style.color = 'black';
+			elProgress.appendChild(elTitle);
+			if (settings.min === undefined) settings.min = 0;
+			cProgress.min = settings.min;
+			cProgress.max = settings.max != undefined ? settings.max : settings.iterationCount != undefined ? settings.iterationCount : 1;
+			cProgress.type = "range";
+			cProgress.disabled = true;
+			elProgress.appendChild(cProgress);
+			var elcontainer = void 0;
+			var containerName = 'ProgressContainer';
+			for (var _i = 0; _i < elParent.children.length; _i++) {
+				var child = elParent.children[_i];
+				if (child.name && child.name === containerName) {
+					elcontainer = child;
+					break;
+				}
+			}
+			if (!elcontainer) {
+				elcontainer = document.createElement('table');
+				elcontainer.name = containerName;
+				elcontainer.style.position = 'absolute';
+				elcontainer.style.top = 0;
+				elcontainer.style.left = 0;
+				elParent.appendChild(elcontainer);
+			}
+			var elRow = document.createElement('tr');
+			elRow.appendChild(elProgress);
+			elcontainer.appendChild(elRow);
+		}
+		this.setValue = function (value) {
+			if (cProgress) cProgress.value = value;
+		};
+		if (settings.timeoutPeriod === undefined) settings.timeoutPeriod = 0;
+		var timeoutPeriod = settings.timeoutPeriod;
+		var i = settings.iterationCount != undefined ? settings.min : undefined;
+		this.step = function (params) {
+			var iteration = function iteration() {
+				step(_this, i, params);
+				if (i === undefined) return;
+				_this.value = i;
+				i++;
+				if (i < settings.iterationCount) _this.step();else _this.remove();
+			};
+			if (timeoutPeriod < settings.timeoutPeriod) {
+				timeoutPeriod++;
+				iteration();
+			} else {
+				timeoutPeriod = 0;
+				window.setTimeout(function () {
+					iteration();
+				}, 0);
+			}
+		};
+		this.remove = function () {
+			if (elProgress) elProgress.parentElement.remove();
+		};
+		this.step();
+		this.newStep = function (stepFunction) {
+			step = stepFunction;
+		};
+		this.title = function (newTitle) {
+			elTitle.innerHTML = newTitle;
+		};
+	}
+	return ProgressBar;
 }();
 
 /**
@@ -17312,6 +17616,7 @@ function MyThree(createXDobjects, options) {
 			if (params === undefined) return;
 			myThreejs.create(params.createXDobjects, params.options);
 };
+MyThree.release = 'v1.3';
 var lang$2 = {
 			defaultButton: 'Default',
 			settings: 'Settings',

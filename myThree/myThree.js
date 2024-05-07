@@ -1039,6 +1039,8 @@ class MyThree {
 
 }
 
+MyThree.release = 'v1.3';
+
 //Localization
 
 const lang = {

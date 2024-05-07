@@ -1,5 +1,6 @@
 ﻿attribute float size;
-attribute vec4 ca;
+//attribute vec4 ca;
+attribute vec4 color;
 varying vec4 vColor;
 //uniform vec3 pointsPosition;
 uniform float pointSize;
@@ -10,7 +11,8 @@ void main() {
 //vec4 cloudPoint = texture2D( cloudPoints, vec2( 1, 0 ) );
 //vec4 cloudPoint = texture2D( pointTexture, pointCoord );
 
-	vColor = ca;
+//	vColor = ca;
+	vColor = color;
 //vColor = vec4( 1.0, 0.0, 1.0, 1.0 );
 //printf("GL Vendor : %s\n", "vendor");
 
