@@ -852,8 +852,14 @@ class HuperSphere extends MyObject {
 
 						case 'x': return vertice[0];
 						case 'y': return vertice[1];
-						case 'z': return vertice[2];
+						case '2':
+						case 'z':
+							const axisZ = vertice[2];
+							return axisZ != undefined ? axisZ : 0;//В двумерной гиперсфере (окружности) координата Z = 0
 						case 'w': return vertice[3];
+						case 'length':
+							const length = vertice[3];
+							return length > 2 ? length : 3;
 
 					}
 					return vertice[name];
@@ -1583,6 +1589,7 @@ class HuperSphere extends MyObject {
 															if (aAngleControls.arc) {
 
 																const geometry = aAngleControls.arc.object().geometry;
+																if (geometry.attributes.position.count < verticeId) console.error(sHuperSphere + '.aAngleControls.createArc: Invalid geometry.attributes.position.count = ' + geometry.attributes.position.count);
 																geometry.setDrawRange(0, verticeId * 2 - 1);//geometry.attributes.position.itemSize);//Непонятно почему draw count так вычисляется. Еще смотри class ND.constructor.create3DObject
 																console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object().geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object().geometry.drawRange.count + ' Vertices count = ' + verticeId);
 																geometry.attributes.position.needsUpdate = true;
