@@ -1498,7 +1498,6 @@ class HuperSphere extends MyObject {
 												//если не копировать каждый угол в отделности, то в новой вершине останутся старые ребра
 												copyVertice = (vertice) => {
 
-const verticeLength = vertice.length;
 													const verticeAngles = _this.vertice2angles(vertice)
 													if (aAngleControls.arc) {
 
