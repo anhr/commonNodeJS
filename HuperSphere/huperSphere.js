@@ -858,7 +858,7 @@ class HuperSphere extends MyObject {
 							return axisZ != undefined ? axisZ : 0;//В двумерной гиперсфере (окружности) координата Z = 0
 						case 'w': return vertice[3];
 						case 'length':
-							const length = vertice[3];
+							const length = vertice.length;
 							return length > 2 ? length : 3;
 
 					}
@@ -1498,6 +1498,7 @@ class HuperSphere extends MyObject {
 												//если не копировать каждый угол в отделности, то в новой вершине останутся старые ребра
 												copyVertice = (vertice) => {
 
+const verticeLength = vertice.length;
 													const verticeAngles = _this.vertice2angles(vertice)
 													if (aAngleControls.arc) {
 
@@ -1593,6 +1594,7 @@ class HuperSphere extends MyObject {
 																geometry.setDrawRange(0, verticeId * 2 - 1);//geometry.attributes.position.itemSize);//Непонятно почему draw count так вычисляется. Еще смотри class ND.constructor.create3DObject
 																console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object().geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object().geometry.drawRange.count + ' Vertices count = ' + verticeId);
 																geometry.attributes.position.needsUpdate = true;
+																geometry.attributes.color.needsUpdate = true;
 
 															} else {
 
@@ -2544,6 +2546,13 @@ class HuperSphere extends MyObject {
 		//тангенс — отношение стороны противолежащего катета vertice[1] к стороне прилежащегоvertice[0], (tg или tan);
 		const x = [],//для разных размерностей гиперсферы координаты вершины расположены в разном порядке в соответствии с this.axes.indices
 			n = this.dimension - 1, φ = [], atan2 = Math.atan2, sqrt = Math.sqrt;
+
+		if (vertice.length <= n) {
+
+			console.error(sHuperSphere + ': vertice2angles. Invalid vertice.length = ' + vertice.length);
+			return;
+			
+		}
 
 		for (let index = 0; index < vertice.length; index++) x.push(vertice[this.axes.indices[index]]);
 
