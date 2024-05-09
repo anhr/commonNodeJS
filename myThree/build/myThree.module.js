@@ -11670,7 +11670,7 @@ var MyObject = function () {
 		var createPositionAttribute = function createPositionAttribute(pointLength, pointsLength) {
 			var MAX_POINTS = settings.object.geometry.MAX_POINTS;
 			if (MAX_POINTS != undefined) settings.bufferGeometry.setDrawRange(0, pointsLength * 2 - 1);
-			var positions = new Float32Array(pointsLength * pointLength);
+			var positions = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * pointLength);
 			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
 			settings.bufferGeometry.userData.position = new Proxy(settings.bufferGeometry.attributes.position, {
 				get: function get$$1(position, name) {
@@ -11740,7 +11740,7 @@ var MyObject = function () {
 			});
 			if (_this.setW) _this.setW();
 			var itemSize = settings.object.geometry.opacity ? 4 : 3,
-			    colors = new Float32Array(pointsLength * itemSize);
+			    colors = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * itemSize);
 			settings.bufferGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, itemSize));
 		};
 		this.setPositionAttributeFromPoints = function (points, boCreatePositionAttribute) {

@@ -8841,7 +8841,7 @@ function Player(group) {
 												});
 												dat.controllerNameAndTitle(scaleControllers.marks, axes.marksName === undefined ? lang.marks : axes.marksName, axes.marksTitle === undefined ? lang.marksTitle : axes.marksTitle);
 									}
-									scaleControllers.interval = scaleControllers.folder.add(settings.options.playerOptions                 , 'interval', 1, 25, 1).onChange(function (value) {
+									scaleControllers.interval = scaleControllers.folder.add(settings.options.playerOptions, 'interval', 1, 25, 1).onChange(function (value) {
 												setSettings();
 									});
 									dat.controllerNameAndTitle(scaleControllers.interval, lang.interval, lang.intervalTitle);
@@ -9656,11 +9656,10 @@ Player$1.getColors = function (arrayFuncs, optionsColor) {
 															var t = optionsColor.options.playerOptions ? optionsColor.options.playerOptions.min : 0;
 															var color = optionsColor.options.palette.toColor(funcs === undefined ? new THREE.Vector4().fromBufferAttribute(optionsColor.positions, i).w : w instanceof Function ? w(t) : typeof w === "string" ? Player$1.execFunc(funcs, 'w', t, optionsColor.options) : w === undefined ? new THREE.Vector4().w : w, min, max);
 															colors.push(color.r, color.g, color.b);
-												} else if (optionsColor.colors instanceof THREE.Float32BufferAttribute) vector = new THREE.Vector3(1, 1, 1);
-									else if (optionsColor.color != undefined) {
-															var _color = new THREE.Color(optionsColor.color);
-															colors.push(_color.r, _color.g, _color.b);
-												} else colors.push(1, 1, 1);
+												} else if (optionsColor.colors instanceof THREE.Float32BufferAttribute) vector = new THREE.Vector3(1, 1, 1);else if (optionsColor.color != undefined) {
+												var _color = new THREE.Color(optionsColor.color);
+												colors.push(_color.r, _color.g, _color.b);
+									} else colors.push(1, 1, 1);
 						} else colors.push(optionsColor.colors[iColor], optionsColor.colors[iColor + 1], optionsColor.colors[iColor + 2]);
 						if (optionsColor.opacity instanceof Array) colors.push(i < optionsColor.opacity.length ? optionsColor.opacity[i] : 1);else colors.push(1);
 			}
@@ -11785,7 +11784,7 @@ var MyObject = function () {
 		var createPositionAttribute = function createPositionAttribute(pointLength, pointsLength) {
 			var MAX_POINTS = settings.object.geometry.MAX_POINTS;
 			if (MAX_POINTS != undefined) settings.bufferGeometry.setDrawRange(0, pointsLength * 2 - 1);
-			var positions = new Float32Array(pointsLength * pointLength);
+			var positions = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * pointLength);
 			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
 			settings.bufferGeometry.userData.position = new Proxy(settings.bufferGeometry.attributes.position, {
 				get: function get$$1(position, name) {
@@ -11855,10 +11854,10 @@ var MyObject = function () {
 			});
 			if (_this.setW) _this.setW();
 			var itemSize = settings.object.geometry.opacity ? 4 : 3,
-			    colors = new Float32Array(pointsLength * itemSize);
+			    colors = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * itemSize);
 			settings.bufferGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, itemSize));
 		};
-		this.setPositionAttributeFromPoints = function (points,                boCreatePositionAttribute) {
+		this.setPositionAttributeFromPoints = function (points, boCreatePositionAttribute) {
 			if (boCreatePositionAttribute) delete settings.bufferGeometry.attributes.position;
 			if (!settings.bufferGeometry.attributes.position) {
 				createPositionAttribute(_this2.pointLength ? _this2.pointLength() : points[0].w === undefined ? 3 : 4, points.length);
@@ -11916,9 +11915,7 @@ var MyObject = function () {
 				array[colorId++] = verticeColor.g;
 				array[colorId++] = verticeColor.b;
 			} else console.error(sMyObject + '.setPositionAttributeFromPoint: Invalid verticeColor = ' + verticeColor);
-			if (attributes.color.itemSize > 3) {
-				_this2.verticeOpacity(i);
-			}
+			if (attributes.color.itemSize > 3) _this2.verticeOpacity(i);
 		};
 		this.verticeOpacity = function (i, transparent, opacity) {
 			var color = settings.bufferGeometry.attributes.color;
