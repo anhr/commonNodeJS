@@ -15,12 +15,17 @@
 
 
 import ND from '../nD/nD.js';
+//Эти строки не позволяют выполнить команду npm run build
 //import ND from '../nD/build/nD.module.js';
 //import ND from '../nD/build/nD.module.min.js';
 //import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/nD.js';
 //import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.js';
 //import ND from 'https://raw.githack.com/anhr/commonNodeJS/master/nD/build/nD.module.min.js';
-if (ND.default) ND = ND.default;
+
+//если использовать эту строку, появится ошибка:
+//Error: Illegal reassignment to import 'ND'
+//При выполнении npm run build
+//if (ND.default) ND = ND.default;
 
 //Когда хочу вывести на холст точки вместо ребер то использую MyPoints вместо ND
 //При этом ребра не создаются что дает экономию времени
@@ -211,7 +216,10 @@ class HuperSphere extends MyObject {
 	 **/
 	constructor(options, classSettings = {}) {
 
+		classSettings.settings = classSettings.settings || {};
 		super( classSettings.settings );
+		//this.rotateLatitude = 0;
+		this.rotateLatitude = - π / 2;//Поворачиваем широту на 90 градусов что бы начало координат широты находилось на экваторе;
 		const _this = this, THREE = three.THREE;
 		if (classSettings.debug === undefined) classSettings.debug = true;
 		if (classSettings.debug === true) classSettings.debug = {};
@@ -869,6 +877,7 @@ class HuperSphere extends MyObject {
 			});
 		
 		}
+		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
 		this.setPositionAttributeFromPoints(angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
@@ -1029,20 +1038,6 @@ class HuperSphere extends MyObject {
 				if (!object) return;
 				scene.remove(object);
 				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(object);
-
-			}
-
-			//remove previous hupersphere
-			this.remove = (scene) => {
-
-				if (classSettings.boRemove === false) return;
-				for (var i = scene.children.length - 1; i >= 0; i--) {
-
-					const child = scene.children[i];
-					this.remove(child);
-					removeObject(child);
-
-				}
 
 			}
 			this.remove(scene);
@@ -1775,7 +1770,7 @@ class HuperSphere extends MyObject {
 									const planeGeometry = (verticeAngleId, planeAngles) => {
 
 										const plane = aAngleControls.planes ? aAngleControls.planes[verticeAngleId] : undefined;
-										planeAngles ||= plane.classSettings.settings.object.geometry.angles;
+										planeAngles = planeAngles || plane.classSettings.settings.object.geometry.angles;
 										let planeVerticeId = 0;
 
 										let start, stop;
@@ -2168,8 +2163,20 @@ class HuperSphere extends MyObject {
 					classSettings.debug.logTimestamp('Push positions. ');
 
 				}
-				this.#verticeEdgesLength = this.verticeEdgesLengthMax;
 
+				//remove previous hupersphere
+				this.remove = (scene) => {
+	
+					if (classSettings.boRemove === false) return;
+					for (var i = scene.children.length - 1; i >= 0; i--) {
+	
+						const child = scene.children[i];
+						this.remove(child);
+						removeObject(child);
+	
+					}
+	
+				}
 				this.pushEdges = () => {
 
 					const geometry = this.classSettings.settings.object.geometry, edges = geometry.indices.edges, position = geometry.position;
@@ -2290,6 +2297,7 @@ class HuperSphere extends MyObject {
 					}
 
 				}
+				this._verticeEdgesLength = this.verticeEdgesLengthMax;
 
 				if (
 					classSettings.edges &&
@@ -2416,22 +2424,20 @@ class HuperSphere extends MyObject {
 			dat.controllerNameAndTitle(cProject, lang.project, lang.projectTitle);
 
 		}
+		this._verticeEdgesLength;
+		this.boTestVertice = true;
 
 	}
 
-	#verticeEdgesLength;
 	
-	//rotateLatitude = 0;
-	rotateLatitude = - π / 2;//Поворачиваем широту на 90 градусов что бы начало координат широты находилось на экваторе;
-	getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
 	
 	get defaultColor() { return 'lime'; }
 
-	get verticeEdgesLength() { return this.#verticeEdgesLength; }
+	get verticeEdgesLength() { return this._verticeEdgesLength; }
 	set verticeEdgesLength(length) {
 
-		this.#verticeEdgesLength = length;
-		this.removeMesh();
+		this._verticeEdgesLength = length;
+		if (this.removeMesh) this.removeMesh();
 		this.pushEdges();
 
 	}
@@ -2519,7 +2525,6 @@ class HuperSphere extends MyObject {
 		if (geometry.indices.faces) geometry.indices.faces.test();
 		
 	}
-	boTestVertice = true;
 	TestVertice(vertice, strVerticeId){
 
 		if (!this.boTestVertice) return;
