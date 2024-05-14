@@ -317,23 +317,8 @@ class MyPoints extends MyObject {
 			setRotations();
 			group.add(points);
 
-//			points.userData.setPositionAttribute = ( i ) => { _this.setPositionAttribute( i ); }
 			points.userData.myObject = _this;
-			points.userData.opacity = (opacity) => {
-
-				_this.verticesOpacity(false, opacity);
-/*				
-				const ca = points.geometry.attributes.ca ? points.geometry.attributes.ca : points.geometry.attributes.color, array = ca.array;
-				for (let i = 0; i < ca.count; i++) {
-
-					const pointOpacity = settings.object.geometry.opacity[i];
-					array[ca.itemSize * i + 3] = pointOpacity === undefined ? opacity : pointOpacity;
-
-				}
-				ca.needsUpdate = true;
-*/				
-
-			}
+			points.userData.opacity = (opacity) => { _this.verticesOpacity(false, opacity); }
 
 			if (pointsOptions.boFrustumPoints) points.userData.boFrustumPoints = pointsOptions.boFrustumPoints;
 			if (options.guiSelectPoint) options.guiSelectPoint.addMesh(points);
