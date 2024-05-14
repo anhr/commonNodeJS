@@ -1040,6 +1040,20 @@ class HuperSphere extends MyObject {
 				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(object);
 
 			}
+
+			//remove previous hupersphere
+			this.remove = (scene) => {
+
+				if (classSettings.boRemove === false) return;
+				for (var i = scene.children.length - 1; i >= 0; i--) {
+
+					const child = scene.children[i];
+					this.remove(child);
+					removeObject(child);
+
+				}
+
+			}
 			this.remove(scene);
 			this.removeHuperSphere = () => {
 
@@ -2162,20 +2176,6 @@ class HuperSphere extends MyObject {
 					console.log('');
 					classSettings.debug.logTimestamp('Push positions. ');
 
-				}
-
-				//remove previous hupersphere
-				this.remove = (scene) => {
-	
-					if (classSettings.boRemove === false) return;
-					for (var i = scene.children.length - 1; i >= 0; i--) {
-	
-						const child = scene.children[i];
-						this.remove(child);
-						removeObject(child);
-	
-					}
-	
 				}
 				this.pushEdges = () => {
 
