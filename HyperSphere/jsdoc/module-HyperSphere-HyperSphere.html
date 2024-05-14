@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: HuperSphere</title>
+    <title>JSDoc: Class: HyperSphere</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: HuperSphere</h1>
+    <h1 class="page-title">Class: HyperSphere</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-HuperSphere.html">HuperSphere</a>~</span>HuperSphere<span class="signature">(options, classSettings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-HyperSphere.html">HyperSphere</a>~</span>HyperSphere<span class="signature">(options, classSettings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -42,7 +42,7 @@
     
 
     
-    <h4 class="name" id="HuperSphere"><span class="type-signature"></span>new HuperSphere<span class="signature">(options, classSettings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="HyperSphere"><span class="type-signature"></span>new HyperSphere<span class="signature">(options, classSettings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -50,7 +50,7 @@
 
 
 <div class="description">
-    Base class for n dimensional <a href="https://en.wikipedia.org/wiki/N-sphere">hupersphere</a>.
+    Base class for n dimensional <a href="https://en.wikipedia.org/wiki/N-sphere">hypersphere</a>.
 </div>
 
 
@@ -145,7 +145,7 @@
 
             
 
-            <td class="description last"><b>HuperSphere</b> class settings.
+            <td class="description last"><b>HyperSphere</b> class settings.
                 <h6>Properties</h6>
                 
 
@@ -205,7 +205,7 @@
                 </td>
             
 
-            <td class="description last">HuperSphere intersection.<pre>	For Circle intersector is line.	For Sphere intersector is plane.	For HuperSphere intersector is sphere.</pre>
+            <td class="description last">HyperSphere intersection.<pre>	For Circle intersector is line.	For Sphere intersector is plane.	For HyperSphere intersector is sphere.</pre>
                 <h6>Properties</h6>
                 
 
@@ -267,7 +267,7 @@
                 </td>
             
 
-            <td class="description last">Position of the intersector.<pre>	For Circle <b>position</b> is Y coordinate of the intersection line.	For Sphere <b>position</b> is Z coordinate of the intersection plane.	For HuperSphere <b>position</b> is radius of the intersection sphere.</pre></td>
+            <td class="description last">Position of the intersector.<pre>	For Circle <b>position</b> is Y coordinate of the intersection line.	For Sphere <b>position</b> is Z coordinate of the intersection plane.	For HyperSphere <b>position</b> is radius of the intersection sphere.</pre></td>
         </tr>
 
     
@@ -353,7 +353,7 @@
                 </td>
             
 
-            <td class="description last">Parameters of project the hupersphere onto the canvas.
+            <td class="description last">Parameters of project the hypersphere onto the canvas.
                 <h6>Properties</h6>
                 
 
@@ -512,7 +512,7 @@
                 </td>
             
 
-            <td class="description last">center of the hupersphere
+            <td class="description last">center of the hypersphere
                 <h6>Properties</h6>
                 
 
@@ -712,7 +712,7 @@
                 </td>
             
 
-            <td class="description last">HuperSphere radius.</td>
+            <td class="description last">HyperSphere radius.</td>
         </tr>
 
     
@@ -754,7 +754,7 @@
                 </td>
             
 
-            <td class="description last">HuperSphere edges<pre>	false - Doesn't create edges to reduce the creation time of the hupersphere</pre>
+            <td class="description last">HyperSphere edges<pre>	false - Doesn't create edges to reduce the creation time of the hypersphere</pre>
                 <h6>Properties</h6>
                 
 
@@ -855,7 +855,7 @@
                 </td>
             
 
-            <td class="description last">method for creating edges. See <a href="./module-HuperSphere-HuperSphere.html#.edgesCreationMethod" target="_blank">edgesCreationMethod</a></td>
+            <td class="description last">method for creating edges. See <a href="./module-HyperSphere-HyperSphere.html#.edgesCreationMethod" target="_blank">edgesCreationMethod</a></td>
         </tr>
 
     
@@ -953,7 +953,7 @@
 
             
 
-            <td class="description last">HuperSphere object.
+            <td class="description last">HyperSphere object.
                 <h6>Properties</h6>
                 
 
@@ -1013,7 +1013,7 @@
                 </td>
             
 
-            <td class="description last">name of hupersphere.</td>
+            <td class="description last">name of hypersphere.</td>
         </tr>
 
     
@@ -1055,7 +1055,7 @@
                 </td>
             
 
-            <td class="description last">color of edges or vertices.<pre>String - color name. See list of available color names in the <b>_colorKeywords</b> object in the <a href="https://github.com/mrdoob/three.js/blob/dev/src/math/Color.js">Color.js</a> file.number - color <a href="https://en.wikipedia.org/wiki/Web_colors#Hex_triplet">Hex triplet</a>. Example: 0x0000ff - blue color.Default color is lime for <a href="./module-Circle-Circle.html" target="_blank">Circle</a> and <a href="./module-Sphere-Sphere.html" target="_blank">Sphere</a>.Default color of vertice of the <a href="./module-HuperSphere3D-HuperSphere3D.html" target="_blank">Hypersphere3D</a> is depends from the altitude angle of the vertice according the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">options.palette</a> parameter.See <b>classSettings.settings.object.geometry.angles</b> for details. For example if <b>options.palette</b> is <b>MyThree.ColorPicker.paletteIndexes.BGYW</b>, then:<table>
+            <td class="description last">color of edges or vertices.<pre>String - color name. See list of available color names in the <b>_colorKeywords</b> object in the <a href="https://github.com/mrdoob/three.js/blob/dev/src/math/Color.js">Color.js</a> file.number - color <a href="https://en.wikipedia.org/wiki/Web_colors#Hex_triplet">Hex triplet</a>. Example: 0x0000ff - blue color.Default color is lime for <a href="./module-Circle-Circle.html" target="_blank">Circle</a> and <a href="./module-Sphere-Sphere.html" target="_blank">Sphere</a>.Default color of vertice of the <a href="./module-HyperSphere3D-HyperSphere3D.html" target="_blank">Hypersphere3D</a> is depends from the altitude angle of the vertice according the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">options.palette</a> parameter.See <b>classSettings.settings.object.geometry.angles</b> for details. For example if <b>options.palette</b> is <b>MyThree.ColorPicker.paletteIndexes.BGYW</b>, then:<table>
 		 <tr><td>Vertice Altitude</td><td>Vertice Color</td></tr>
 		 <tr><td>0</td><td>white</td></tr>
 		 <tr><td>π / 2</td><td>lime</td></tr>
@@ -1097,7 +1097,7 @@
                 </td>
             
 
-            <td class="description last">HuperSphere geometry.
+            <td class="description last">HyperSphere geometry.
                 <h6>Properties</h6>
                 
 
@@ -1154,10 +1154,10 @@
 
             
 
-            <td class="description last">n-dimensional hupersphere vertice angles.<pre>array - array of vertex angles.	Every item of array is n-dimensional array of vertex angles.		All the vertices of the <b><a href="module-Circle.html" target="_blank">Circle</a></b> form a circle.	For <b><a href="module-Circle.html" target="_blank">Circle</a></b> every vertice is array of one angle.		Vertex angle is the longitude of the circle of the hupersphere in the range from <b>- π</b> to <b>π</b>.		Vertex angle is angle of rotation around of <b>Z</b> axis in 3D space.		Angle is begin from <b>X = 0, Y = 1</b>.		Every vertex is <b>[
+            <td class="description last">n-dimensional hypersphere vertice angles.<pre>array - array of vertex angles.	Every item of array is n-dimensional array of vertex angles.		All the vertices of the <b><a href="module-Circle.html" target="_blank">Circle</a></b> form a circle.	For <b><a href="module-Circle.html" target="_blank">Circle</a></b> every vertice is array of one angle.		Vertex angle is the longitude of the circle of the hypersphere in the range from <b>- π</b> to <b>π</b>.		Vertex angle is angle of rotation around of <b>Z</b> axis in 3D space.		Angle is begin from <b>X = 0, Y = 1</b>.		Every vertex is <b>[
 				Math.cos(θ),//x
 				Math.sin(θ)//y
-			]</b> array. <b>θ</b> is vertex angle.		Example of Circle with three vertices is triangle:		<b>classSettings.settings.object.geometry.angles: angles: [			[],                 //vertice[0] = [0                   ,1]			[Math.PI * 2 / 3],  //vertice[1] = [0.8660254037844387	,-0.4999999999999998]			[- Math.PI * 2 / 3] //vertice[2] = [-0.8660254037844387	,-0.4999999999999998]		]</b>,			All the vertices of the <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> form a sphere.	For <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> every vertice is array of two angles.		The first vertex angle is the latitude of the sphere of the hupersphere in the range from <b>- π / 2</b> to <b>π / 2</b>.		Zero latitude is located at the equator.				The second vertex angle is the longitude of the sphere of the hupersphere in the range from <b>- π</b> to <b>π</b>.		The second vertex angle is angle of rotation of the cross section around of <b>Y</b> axis.				Example of Sphere with 4 vertices is pyramid:		<b>classSettings.settings.object.geometry.angles: [					[ Math.PI / 2,  0                  ],//vertice[0] = [ 0                 , 1  , 0   ]			[-Math.PI / 6,  Math.PI * 2 * 0 / 3],//vertice[1] = [-0.8660254037844387,-0.5, 0   ]			[-Math.PI / 6,  Math.PI * 2 * 1 / 3],//vertice[2] = [ 0.4330127018922192,-0.5,-0.75]			[-Math.PI / 6, -Math.PI * 2 * 1 / 3,//vertice[3] = [ 0.4330127018922195,-0.5, 0.75]					]</b>,			All the vertices of the <a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> form a <a href="https://en.wikipedia.org/wiki/N-sphere">hupersphere</a>.	For <b><a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> every vertice is array of three angles.		The first vertex angle is the altitude of the hupersphere of the hupersphere in the range from <b>0</b> to <b>π / 2</b>.		Zero altitude is located at the center of the hupersphere.				The second vertex angle is the latitude of the hupersphere of the hupersphere in the range from <b>- π / 2</b> to <b>π / 2</b>.		Zero latitude is located at the equator.				The third vertex angle is the longitude of the hupersphere of the hupersphere in the range from <b>- π</b> to <b>π</b>.		The third vertex angle is angle of rotation of the cross section around of <b>Y</b> axis.				Example of HuperSphere with 5 vertices is <a href="https://en.wikipedia.org/wiki/5-cell">pentahedroid</a>:		<b>classSettings.settings.object.geometry.angles: [			[],			[Math.PI / 2, Math.PI / 2],			[				  Math.PI / 2,//Altitude				- Math.PI / 6,//Latitude				  Math.PI * 0,//Longitude			],			[Math.PI / 2, - Math.PI / 6,   Math.PI * 2 * 1 / 3],			[Math.PI / 2, - Math.PI / 6, - Math.PI * 2 * 1 / 3],
+			]</b> array. <b>θ</b> is vertex angle.		Example of Circle with three vertices is triangle:		<b>classSettings.settings.object.geometry.angles: angles: [			[],                 //vertice[0] = [0                   ,1]			[Math.PI * 2 / 3],  //vertice[1] = [0.8660254037844387	,-0.4999999999999998]			[- Math.PI * 2 / 3] //vertice[2] = [-0.8660254037844387	,-0.4999999999999998]		]</b>,			All the vertices of the <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> form a sphere.	For <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> every vertice is array of two angles.		The first vertex angle is the latitude of the sphere of the hypersphere in the range from <b>- π / 2</b> to <b>π / 2</b>.		Zero latitude is located at the equator.				The second vertex angle is the longitude of the sphere of the hypersphere in the range from <b>- π</b> to <b>π</b>.		The second vertex angle is angle of rotation of the cross section around of <b>Y</b> axis.				Example of Sphere with 4 vertices is pyramid:		<b>classSettings.settings.object.geometry.angles: [					[ Math.PI / 2,  0                  ],//vertice[0] = [ 0                 , 1  , 0   ]			[-Math.PI / 6,  Math.PI * 2 * 0 / 3],//vertice[1] = [-0.8660254037844387,-0.5, 0   ]			[-Math.PI / 6,  Math.PI * 2 * 1 / 3],//vertice[2] = [ 0.4330127018922192,-0.5,-0.75]			[-Math.PI / 6, -Math.PI * 2 * 1 / 3,//vertice[3] = [ 0.4330127018922195,-0.5, 0.75]					]</b>,			All the vertices of the <a href="module-HyperSphere3D.html" target="_blank">HyperSphere3D</a></b> form a <a href="https://en.wikipedia.org/wiki/N-sphere">hypersphere</a>.	For <b><a href="module-HyperSphere3D.html" target="_blank">HyperSphere3D</a></b> every vertice is array of three angles.		The first vertex angle is the altitude of the hypersphere of the hypersphere in the range from <b>0</b> to <b>π / 2</b>.		Zero altitude is located at the center of the hypersphere.				The second vertex angle is the latitude of the hypersphere of the hypersphere in the range from <b>- π / 2</b> to <b>π / 2</b>.		Zero latitude is located at the equator.				The third vertex angle is the longitude of the hypersphere of the hypersphere in the range from <b>- π</b> to <b>π</b>.		The third vertex angle is angle of rotation of the cross section around of <b>Y</b> axis.				Example of HyperSphere with 5 vertices is <a href="https://en.wikipedia.org/wiki/5-cell">pentahedroid</a>:		<b>classSettings.settings.object.geometry.angles: [			[],			[Math.PI / 2, Math.PI / 2],			[				  Math.PI / 2,//Altitude				- Math.PI / 6,//Latitude				  Math.PI * 0,//Longitude			],			[Math.PI / 2, - Math.PI / 6,   Math.PI * 2 * 1 / 3],			[Math.PI / 2, - Math.PI / 6, - Math.PI * 2 * 1 / 3],
 			]</b>,object - see below:</pre>
                 <h6>Properties</h6>
                 
@@ -1220,7 +1220,7 @@
                 </td>
             
 
-            <td class="description last">Count of vertices with random position.<pre>Default values:	3 for <b><a href="module-Circle.html" target="_blank">Circle</a></b> - triangle.	4 for <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> - pyramid.	5 for <b><a href="module-HuperSphere3D.html" target="_blank">HuperSphere3D</a></b> - <a href="https://en.wikipedia.org/wiki/5-cell">pentahedroid</a>.</pre></td>
+            <td class="description last">Count of vertices with random position.<pre>Default values:	3 for <b><a href="module-Circle.html" target="_blank">Circle</a></b> - triangle.	4 for <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> - pyramid.	5 for <b><a href="module-HyperSphere3D.html" target="_blank">HyperSphere3D</a></b> - <a href="https://en.wikipedia.org/wiki/5-cell">pentahedroid</a>.</pre></td>
         </tr>
 
     
@@ -1326,7 +1326,7 @@
 
             
 
-            <td class="description last">Array of <b>indices</b> of edges of hupersphere.
+            <td class="description last">Array of <b>indices</b> of edges of hypersphere.
                 <h6>Properties</h6>
                 
 
@@ -1383,7 +1383,7 @@
 
             
 
-            <td class="description last">HuperSphere edges.<pre>array - array of edges.	Every edge is array of indices of vertices from	<b>classSettings.settings.object.geometry.position</b>	Example: <b>[[0,1], [1,2], [2,0]],//triangle</b>object - see below:</pre>
+            <td class="description last">HyperSphere edges.<pre>array - array of edges.	Every edge is array of indices of vertices from	<b>classSettings.settings.object.geometry.position</b>	Example: <b>[[0,1], [1,2], [2,0]],//triangle</b>object - see below:</pre>
                 <h6>Properties</h6>
                 
 
@@ -1587,7 +1587,7 @@
                 </td>
             
 
-            <td class="description last">Probability density of distribution of vertices over the surface of the hupersphere.<pre>	false - do not calculate probability density.	[] - calculate probability density.</pre></td>
+            <td class="description last">Probability density of distribution of vertices over the surface of the hypersphere.<pre>	false - do not calculate probability density.	[] - calculate probability density.</pre></td>
         </tr>
 
     
@@ -1748,7 +1748,7 @@
                 </td>
             
 
-            <td class="description last">Callback function that called after hupersphere edges was created.</td>
+            <td class="description last">Callback function that called after hypersphere edges was created.</td>
         </tr>
 
     
@@ -1785,7 +1785,7 @@
                 </td>
             
 
-            <td class="description last">false - do not delete the previous hupersphere while projecting a new hupersphere on scene.</td>
+            <td class="description last">false - do not delete the previous hypersphere while projecting a new hypersphere on scene.</td>
         </tr>
 
     
@@ -1822,7 +1822,7 @@
                 </td>
             
 
-            <td class="description last">false - do not include hupersphere GUI.</td>
+            <td class="description last">false - do not include hypersphere GUI.</td>
         </tr>
 
     
@@ -1870,7 +1870,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="huperSphere.js.html">huperSphere.js</a>, <a href="huperSphere.js.html#line212">line 212</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line217">line 217</a>
     </li></ul></dd>
     
 
@@ -1964,7 +1964,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="huperSphere.js.html">huperSphere.js</a>, <a href="huperSphere.js.html#line2721">line 2721</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line2646">line 2646</a>
     </li></ul></dd>
     
 
@@ -2026,7 +2026,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="huperSphere.js.html">huperSphere.js</a>, <a href="huperSphere.js.html#line2726">line 2726</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line2651">line 2651</a>
     </li></ul></dd>
     
 
@@ -2062,7 +2062,7 @@
 
 
 <div class="description">
-    Projects the hupersphere onto the canvas
+    Projects the hypersphere onto the canvas
 </div>
 
 
@@ -2231,7 +2231,7 @@
                 </td>
             
 
-            <td class="description last">center of the hupersphere
+            <td class="description last">center of the hypersphere
                 <h6>Properties</h6>
                 
 
@@ -2426,7 +2426,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="huperSphere.js.html">huperSphere.js</a>, <a href="huperSphere.js.html#line1011">line 1011</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1017">line 1017</a>
     </li></ul></dd>
     
 
@@ -2472,13 +2472,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HuperSphere.html">HuperSphere</a></li><li><a href="module-HuperSphere3D.html">HuperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HuperSphere3D-HuperSphere3D.html">HuperSphere3D</a></li><li><a href="module-HuperSphere-HuperSphere.html">HuperSphere</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sun May 05 2024 05:44:23 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue May 14 2024 11:54:15 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
