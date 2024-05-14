@@ -852,7 +852,7 @@ class HyperSphere extends MyObject {
 			}
 	
 			vertice.forEach((axis, i) => vertice[i] *= this.classSettings.r);
-			return new Proxy(vertice, {
+			const proxyVertice = new Proxy(vertice, {
 
 				get: (vertice, name) => {
 
@@ -868,6 +868,7 @@ class HyperSphere extends MyObject {
 						case 'length':
 							const length = vertice.length;
 							return length > 2 ? length : 3;
+						case 'forEach': return (item) => { for (let verticeId = 0; verticeId < proxyVertice.length; verticeId++) item(proxyVertice[verticeId], verticeId); }
 
 					}
 					return vertice[name];
@@ -875,6 +876,7 @@ class HyperSphere extends MyObject {
 				},
 
 			});
+			return proxyVertice;
 		
 		}
 		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
