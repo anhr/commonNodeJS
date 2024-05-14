@@ -1,6 +1,6 @@
 /**
  * @module Sphere
- * @description 2 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+ * @description 2 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
  * All the vertices form a sphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -24,10 +24,10 @@ const sSphere = 'Sphere',
 class Sphere extends Circle {
 
 	/**
-	 * 2 dimensional [hupersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+	 * 2 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * All the vertices form a sphere.
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
-	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HuperSphere-HuperSphere.html" target="_blank">HuperSphere classSettings</a>.
+	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
 	 **/
 	constructor(options, classSettings) {
 
@@ -60,7 +60,7 @@ class Sphere extends Circle {
 		}
 
 	}
-	newHuperSphere(options, classSettings) { return new Sphere(options, classSettings); }
+	newHyperSphere(options, classSettings) { return new Sphere(options, classSettings); }
 	get cookieName() { return 'Sphere' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
 	get probabilityDensity() {
 
@@ -102,7 +102,7 @@ class Sphere extends Circle {
 		
 		const lang = {
 
-			name: "HuperSphere",
+			name: "HyperSphere",
 
 		};
 
@@ -123,7 +123,7 @@ class Sphere extends Circle {
 	logSphere() {
 
 		if (!this.classSettings.debug) return;
-		this.logHuperSphere();
+		this.logHyperSphere();
 		
 	}
 

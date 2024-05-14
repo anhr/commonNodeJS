@@ -48,11 +48,11 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 * guiSelectPoint.js GuiSelectPoint is [dat.gui](https://github.com/dataarts/dat.gui) based graphical user interface for select a point from the mesh.
 [GuiSelectPoint API](https://raw.githack.com/anhr/commonNodeJS/master/guiSelectPoint/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/AxesHelper/Examples/index.html).
-* [HuperSphere](https://en.wikipedia.org/wiki/N-sphere). [README.md](https://github.com/anhr/commonNodeJS/tree/master/HuperSphere).[HuperSphere API](https://raw.githack.com/anhr/commonNodeJS/master/HuperSphere/jsdoc/index.html).
+* [HyperSphere](https://en.wikipedia.org/wiki/N-sphere). [README.md](https://github.com/anhr/commonNodeJS/tree/master/HyperSphere).[HyperSphere API](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/jsdoc/index.html).
 	Examples:
-	[Circle](https://raw.githack.com/anhr/commonNodeJS/master/HuperSphere/Examples/circle.html), 
-	[Sphere](https://raw.githack.com/anhr/commonNodeJS/master/HuperSphere/Examples/sphere.html), 
-	[HuperSphere](https://raw.githack.com/anhr/commonNodeJS/master/HuperSphere/Examples/huperSphere.html)
+	[Circle](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/Examples/circle.html), 
+	[Sphere](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/Examples/sphere.html), 
+	[HyperSphere](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html)
 * Intersections. A class for create an intersection lines for graphic objects.
 [github](../../tree/master/intersections).
 [intersections API](https://raw.githack.com/anhr/commonNodeJS/master/intersections/jsdoc/index.html).
