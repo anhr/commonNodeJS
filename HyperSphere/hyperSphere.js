@@ -243,6 +243,42 @@ class HyperSphere extends MyObject {
 		if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
 		if (classSettings.r === undefined) classSettings.r = 1.0;
+/*		
+		classSettings = new Proxy(classSettings, {
+
+			get: (classSettings, name) => {
+
+				switch (name) {
+
+					case 'r': {
+
+						if (typeof classSettings.r === "function") {
+
+							return classSettings.r();
+							
+						}
+						return classSettings.r;
+
+					}
+
+				}
+				return classSettings[name];
+				
+			}
+			
+		});
+*/		
+		{//Скрываю r
+			
+			let r = classSettings.r;
+			Object.defineProperty(classSettings, 'r', { get: function() {
+				
+				if (typeof r === "function") return r();
+				return r;
+			
+			}, });
+
+		}
 		classSettings.settings = classSettings.settings || {};
 		const settings = classSettings.settings;
 		settings.options = options;
