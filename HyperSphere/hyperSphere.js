@@ -244,30 +244,6 @@ class HyperSphere extends MyObject {
 
 		if (classSettings.r === undefined) classSettings.r = 1;
 /*		
-		classSettings = new Proxy(classSettings, {
-
-			get: (classSettings, name) => {
-
-				switch (name) {
-
-					case 'r': {
-
-						if (typeof classSettings.r === "function") {
-
-							return classSettings.r();
-							
-						}
-						return classSettings.r;
-
-					}
-
-				}
-				return classSettings[name];
-				
-			}
-			
-		});
-*/		
 		{//Скрываю r
 			
 			let r = classSettings.r;
@@ -293,6 +269,7 @@ class HyperSphere extends MyObject {
 			});
 
 		}
+*/		
 		options.onSelectScene = (index, t) => {
 
 			classSettings.r = t;
