@@ -82,7 +82,6 @@ class MyObject {
 			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
 			const MAX_POINTS = settings.object.geometry.MAX_POINTS;
 			if (MAX_POINTS != undefined) settings.bufferGeometry.setDrawRange(0, pointsLength * 2 - 1);//Непонятно почему draw count так вычисляется. Еще смотри class Universe.constructor.project.projectGeometry.gui.addControllers.aAngleControls.createArc
-//			const positions = new Float32Array(pointsLength * pointLength);
 			const positions = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * pointLength);
 			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
 			settings.bufferGeometry.userData.position = new Proxy(settings.bufferGeometry.attributes.position, {

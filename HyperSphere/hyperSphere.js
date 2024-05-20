@@ -272,7 +272,7 @@ class HyperSphere extends MyObject {
 */		
 		options.onSelectScene = (index, t) => {
 
-			classSettings.r = t;
+//			classSettings.r = t;
 			if (this.middleVertices) this.middleVertices(index, t);
 		
 		}
