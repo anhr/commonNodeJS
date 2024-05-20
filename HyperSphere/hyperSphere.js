@@ -242,7 +242,7 @@ class HyperSphere extends MyObject {
 		if (classSettings.edges != false) classSettings.edges = classSettings.edges || {};
 		if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
-		if (classSettings.r === undefined) classSettings.r = 1.0;
+		if (classSettings.r === undefined) classSettings.r = 1;
 /*		
 		classSettings = new Proxy(classSettings, {
 
@@ -271,13 +271,33 @@ class HyperSphere extends MyObject {
 		{//Скрываю r
 			
 			let r = classSettings.r;
-			Object.defineProperty(classSettings, 'r', { get: function() {
+			Object.defineProperty(classSettings, 'r', {
 				
-				if (typeof r === "function") return r();
-				return r;
+				get: () => {
+				
+					if (typeof r === "function") return r();
+					return r;
 			
-			}, });
+				},
+				set: (newR) => {
 
+					if (r != newR) {
+						
+						r = newR;
+						_this.setPositionAttributeFromPoints(angles, true);
+
+					}
+				
+				}
+				
+			});
+
+		}
+		options.onSelectScene = (index, t) => {
+
+			classSettings.r = t;
+			if (this.middleVertices) this.middleVertices(index, t);
+		
 		}
 		classSettings.settings = classSettings.settings || {};
 		const settings = classSettings.settings;
@@ -518,6 +538,11 @@ class HyperSphere extends MyObject {
 					const _vertice = _position[i];
 					const angle2Vertice = () => {
 
+/*						
+//Это надо перенести в parent.userData.t
+const parent = _this.object ? _this.object().parent : undefined, t = parent ? parent.userData.t : undefined;
+if (t != undefined) classSettings.r = t;
+*/
 						const vertice = _this.angles2Vertice(i);
 						//Эта проверка не проходит для HyperSphere3D
 						if (classSettings.debug) {
@@ -526,7 +551,7 @@ class HyperSphere extends MyObject {
 							vertice.forEach(axis => sum += axis * axis);
 							const r = classSettings.r;
 							if (Math.abs((Math.sqrt(sum) - r)) > 9.5e-8)
-								console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum);
+								console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
 
 						}
 						return vertice;
@@ -2032,7 +2057,7 @@ class HyperSphere extends MyObject {
 
 			//шаг проигрывателя player
 			//Вычислем middle vertices
-			options.onSelectScene = (index, t) => {
+			this.middleVertices = (index, t) => {
 
 				if (index === 0) return;
 				const geometry = settings.object.geometry, position = geometry.position, edges = geometry.indices.edges;
@@ -2155,6 +2180,7 @@ class HyperSphere extends MyObject {
 				return true;//player pause
 
 			}
+//			options.onSelectScene = (index, t) => { this.middleVertices(index, t) }
 
 			if (classSettings.debug)
 				classSettings.debug.logTimestamp('Project. ');
