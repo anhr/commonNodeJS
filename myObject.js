@@ -27,7 +27,7 @@ class MyObject {
 		settings.object = settings.object || {};
 		settings.object.geometry = settings.object.geometry || {};
 
-//		this.isColorFromPositionW = settings.object.isColorFromPositionW;
+		this.isColorFromPositionW = settings.object.isColorFromPositionW;
 
 		if (!settings.object.geometry.position || !settings.object.geometry.position.isPositionProxy)
 			settings.object.geometry.position = new Proxy(settings.object.geometry.position || [], {

@@ -1999,7 +1999,7 @@ class HyperSphere extends MyObject {
 
 						}
 
-//						settings.object.isColorFromPositionW = classSettings.rRange.isColorFromPositionW;
+						settings.object.isColorFromPositionW = classSettings.rRange.isColorFromPositionW;
 						new MyPoints(points, scene, {
 
 							pointsOptions: {
