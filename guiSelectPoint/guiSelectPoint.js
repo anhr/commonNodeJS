@@ -1730,7 +1730,8 @@ class GuiSelectPoint {
 
 						}
 						if ( options.palette ) Player.setColorAttribute( attributes, i, options.palette.toColor( value, controller.__min, controller.__max ) );
-						if ( !intersection.object.userData.myObject || ( intersection.object.userData.myObject.isColorFromPositionW != false ) )
+//						if ( !intersection.object.userData.myObject || ( intersection.object.userData.myObject.isColorFromPositionW != false ) )
+						if ( options.scales.w.isColor != false )
 							attributes.position.setW( i, value );
 
 						if ( options.frustumPoints )
