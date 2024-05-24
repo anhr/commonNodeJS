@@ -27,6 +27,8 @@ class MyObject {
 		settings.object = settings.object || {};
 		settings.object.geometry = settings.object.geometry || {};
 
+		this.isColorFromPositionW = settings.object.isColorFromPositionW;
+
 		if (!settings.object.geometry.position || !settings.object.geometry.position.isPositionProxy)
 			settings.object.geometry.position = new Proxy(settings.object.geometry.position || [], {
 	
@@ -196,7 +198,8 @@ class MyObject {
 			if (colors && colors[colorsId] != undefined)
 				return [colors[colorsId], colors[colorsId + 1], colors[colorsId + 2]];
 			const color = settings.object.color;
-			if ((color != undefined) && (typeof color != 'object')) { return new THREE.Color(_this.color()); }
+			if (typeof color === "function") return color();
+			if ((color != undefined) && (typeof color != 'object')) return new THREE.Color(_this.color());
 			//Вершина не имеет 4 координаты. Установить цвет вершины по умолчанию
 			const getDefaultColor = () => { return new THREE.Color(_this.color()); }
 			let w
@@ -236,7 +239,7 @@ class MyObject {
 				if (settings.options) {
 					
 					const wScale = settings.options.scales.w;
-					Player.setColorAttribute(attributes, i, settings.options.palette.toColor(w, wScale.min, wScale.max));
+					Player.setColorAttribute(attributes, i, settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 
 				}
 				colorId += attributes.color.itemSize - 1;
@@ -294,7 +297,9 @@ class MyObject {
 		this.color = () => {
 	
 			const color = settings.object.color != undefined ? settings.object.color : settings.pointsOptions != undefined ? settings.pointsOptions.color : undefined;
-			return (color != undefined) ? color : this.defaultColor;//'lime';
+			return (color != undefined) ? 
+				(typeof color === "function") ? color() : color :
+				this.defaultColor;//'lime';
 		
 		}
 		

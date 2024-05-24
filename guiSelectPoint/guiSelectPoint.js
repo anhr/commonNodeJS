@@ -793,11 +793,6 @@ class GuiSelectPoint {
 		this.select = function ( intersectionSelected ) {
 
 			const position = getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
-			if ( f3DObjects === undefined ) {
-
-				console.error( 'Не знаю как сюда попасть' );
-
-			}
 
 			//f3DObjects.close();//если тут не закрывать папку, то ингода прорпадает скроллинг окна dat.GUI
 			//for testing:
@@ -1735,7 +1730,7 @@ class GuiSelectPoint {
 
 						}
 						if ( options.palette ) Player.setColorAttribute( attributes, i, options.palette.toColor( value, controller.__min, controller.__max ) );
-						attributes.position.setW( i, value );
+						if ( !intersection.object.userData.myObject || ( intersection.object.userData.myObject.isColorFromPositionW != false ) ) attributes.position.setW( i, value );
 
 						if ( options.frustumPoints )
 							options.frustumPoints.updateCloudPointItem( intersection.object, intersection.index );

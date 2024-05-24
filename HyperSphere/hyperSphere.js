@@ -243,6 +243,9 @@ class HyperSphere extends MyObject {
 		if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
 		if (classSettings.r === undefined) classSettings.r = 1;
+		classSettings.rRange = classSettings.rRange || {};
+		if (classSettings.rRange.min === undefined) classSettings.rRange.min = -1;
+		if (classSettings.rRange.max === undefined) classSettings.rRange.max = 1;
 /*		
 		{//Скрываю r
 			
@@ -515,11 +518,6 @@ class HyperSphere extends MyObject {
 					const _vertice = _position[i];
 					const angle2Vertice = () => {
 
-/*						
-//Это надо перенести в parent.userData.t
-const parent = _this.object ? _this.object().parent : undefined, t = parent ? parent.userData.t : undefined;
-if (t != undefined) classSettings.r = t;
-*/
 						const vertice = _this.angles2Vertice(i);
 						//Эта проверка не проходит для HyperSphere3D
 						if (classSettings.debug) {
@@ -1992,7 +1990,8 @@ if (t != undefined) classSettings.r = t;
 
 						if (
 							(classSettings.settings.object.color != undefined) &&
-							(typeof classSettings.settings.object.color != "object")
+							(typeof classSettings.settings.object.color != "object") &&
+							(typeof classSettings.settings.object.color != "function")
 						) {
 
 							const color = new three.THREE.Color(classSettings.settings.object.color);
@@ -2000,6 +1999,7 @@ if (t != undefined) classSettings.r = t;
 
 						}
 
+						settings.object.isColorFromPositionW = classSettings.rRange.isColorFromPositionW;
 						new MyPoints(points, scene, {
 
 							pointsOptions: {

@@ -70,8 +70,8 @@ class HyperSphere3D extends Sphere {
 	setW() {
 
 		const classSettings = this.classSettings, w = classSettings.settings.options.scales.w;
-		w.max = classSettings.r;
-		w.min = -classSettings.r;
+		w.max = classSettings.rRange.max;
+		w.min = classSettings.rRange.min;
 		
 	};
 	get probabilityDensity() {
