@@ -639,11 +639,8 @@ class Options {
 										 * returns true if <b>scale</b> was converted by <b>new Scale( scale );</b>
 										 * </pre>
 										 **/
-										boScale: {
-
-											get: function () { return true; },
-
-										},
+										boScale: { get: function () { return true; }, },
+										isColor : { get: function () { return scale ? scale.isColor : undefined; }, },
 										min: {
 
 											get: function () {

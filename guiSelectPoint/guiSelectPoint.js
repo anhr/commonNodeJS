@@ -1749,7 +1749,7 @@ class GuiSelectPoint {
 							onChange( value );
 
 						} );
-						if ( options.palette instanceof ColorPicker.palette ) {
+						if ( ( options.scales.w.isColor != false ) && ( options.palette instanceof ColorPicker.palette ) ) {
 
 							controller.domElement.querySelector( '.slider-fg' ).style.height = '40%';
 							const elSlider = controller.domElement.querySelector( '.slider' );
