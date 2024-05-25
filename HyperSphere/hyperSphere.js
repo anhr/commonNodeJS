@@ -243,36 +243,11 @@ class HyperSphere extends MyObject {
 		if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
 		if (classSettings.r === undefined) classSettings.r = 1;
+
 		classSettings.rRange = classSettings.rRange || {};
 		if (classSettings.rRange.min === undefined) classSettings.rRange.min = -1;
 		if (classSettings.rRange.max === undefined) classSettings.rRange.max = 1;
-/*		
-		{//Скрываю r
-			
-			let r = classSettings.r;
-			Object.defineProperty(classSettings, 'r', {
-				
-				get: () => {
-				
-					if (typeof r === "function") return r();
-					return r;
-			
-				},
-				set: (newR) => {
 
-					if (r != newR) {
-						
-						r = newR;
-						_this.setPositionAttributeFromPoints(angles, true);
-
-					}
-				
-				}
-				
-			});
-
-		}
-*/		
 		options.onSelectScene = (index, t) => {
 
 //			classSettings.r = t;
