@@ -60,6 +60,11 @@
 					
 				},
 				*/
+				onSelectScene: (hyperSphere, index, t) => {
+					
+					if (hyperSphere.middleVertices) hyperSphere.middleVertices(index, t);
+
+				},
 				edges: {
 
 					project: false,//Doesn't project edges onto canvas

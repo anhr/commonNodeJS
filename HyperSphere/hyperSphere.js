@@ -251,7 +251,8 @@ class HyperSphere extends MyObject {
 		options.onSelectScene = (index, t) => {
 
 //			classSettings.r = t;
-			if (this.middleVertices) this.middleVertices(index, t);
+//			if (this.middleVertices) this.middleVertices(index, t);
+			if (classSettings.onSelectScene) classSettings.onSelectScene(this, index, t);
 		
 		}
 		classSettings.settings = classSettings.settings || {};
@@ -1128,6 +1129,11 @@ class HyperSphere extends MyObject {
 
 					if (aAngleControls.planes) aAngleControls.planes.update(changedAngleId);
 
+					const position = settings.bufferGeometry.userData.position[verticeId];
+					let r = 0;
+					position.forEach(axis => r += axis * axis);
+					aAngleControls.cRadius.setValue(Math.sqrt(r));
+
 				}
 
 			}
@@ -1341,6 +1347,9 @@ class HyperSphere extends MyObject {
 									planes: 'Planes',
 									planesTitle: 'Planes of rotation of angles.',
 
+									radius: 'Radius',
+									radiusTitle: 'Hypersphere radius.',
+									
 									defaultButton: 'Default',
 									defaultAnglesTitle: 'Restore default angles.',
 
@@ -1376,6 +1385,9 @@ class HyperSphere extends MyObject {
 										lang.planes = 'Плоскости';
 										lang.planesTitle = 'Плоскости вращения углов.';
 
+										lang.radius = 'Радиус';
+										lang.radiusTitle = 'Радиус гиперсферы.';
+										
 										lang.defaultButton = 'Восстановить';
 										lang.defaultAnglesTitle = 'Восстановить углы по умолчанию';
 
@@ -1451,6 +1463,18 @@ class HyperSphere extends MyObject {
 								}
 								createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
 
+								//Vertice color
+								if (options.scales.w.isColor === false) {
+
+									//цвет вершины зависит от времени проигрывателя
+									aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player.getTime(), }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).onChange((verticeRadius) => {
+
+										console.log('verticeRadius = ' + verticeRadius);
+
+									});
+									dat.controllerNameAndTitle(aAngleControls.cRadius, lang.radius, lang.radiusTitle);
+									
+								}
 
 								//Edges
 

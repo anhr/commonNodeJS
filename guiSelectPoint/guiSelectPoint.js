@@ -478,38 +478,42 @@ class GuiSelectPoint {
 
 					} else {
 
-						if (cW === undefined)
+						if ( cW === undefined )
 							displayControllerW = none;
 						else {
 
-							if (color === undefined)
+							if ( color === undefined )
 								displayControllerW = none;
 							else {
+								
+								if ( options.scales.w.isColor != false ) {
 
-								if (!wLimitsDefault) {
-
-									wLimitsDefault = {
-
-										min: cW.__min,
-										max: cW.__max,
-
+									if (!wLimitsDefault) {
+	
+										wLimitsDefault = {
+	
+											min: cW.__min,
+											max: cW.__max,
+	
+										}
+	
 									}
+									if (isWObject()) {
+	
+										cW.min(func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min);
+										cW.max(func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max);
+										if ((cW.__min !== 'undefined') && (cW.__max !== 'undefined'))
+											cW.step((cW.__max - cW.__min) / 100)
+	
+									} else {
+	
+										cW.min(wLimitsDefault.min);
+										cW.max(wLimitsDefault.max);
+	
+									}
+									setValue(cW, color);
 
 								}
-								if (isWObject()) {
-
-									cW.min(func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min);
-									cW.max(func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max);
-									if ((cW.__min !== 'undefined') && (cW.__max !== 'undefined'))
-										cW.step((cW.__max - cW.__min) / 100)
-
-								} else {
-
-									cW.min(wLimitsDefault.min);
-									cW.max(wLimitsDefault.max);
-
-								}
-								setValue(cW, color);
 								displayControllerW = block;
 
 							}
