@@ -1015,6 +1015,19 @@ class HyperSphere extends MyObject {
 		});
 		indices.edges.setVertices();
 
+		this.getPositionItem = (position, name) => {
+
+			switch (name) {
+
+				case 'radius': 
+					let r = 0;
+					position.forEach(axis => r += axis * axis);
+					return Math.sqrt(r);
+
+			}
+
+		}
+
 		//Эту функцию надо содать до вызова this.pushEdges(); потому что когда используется MyPoints для вывода на холст вершин вместо ребер,
 		//вызывается this.project вместо this.pushEdges()
 		/**
@@ -1130,9 +1143,12 @@ class HyperSphere extends MyObject {
 					if (aAngleControls.planes) aAngleControls.planes.update(changedAngleId);
 
 					const position = settings.bufferGeometry.userData.position[verticeId];
+/*					
 					let r = 0;
 					position.forEach(axis => r += axis * axis);
 					aAngleControls.cRadius.setValue(Math.sqrt(r));
+*/					
+					aAngleControls.cRadius.setValue(position.radius);
 
 				}
 

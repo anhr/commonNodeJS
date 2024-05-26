@@ -136,6 +136,12 @@ class MyObject {
 									}
 				
 								}
+								if (_this.getPositionItem) {
+
+									const res = _this.getPositionItem(positionItem, name);
+									if (res != undefined) return res;
+
+								}
 								return vertice[name];
 								
 							},
