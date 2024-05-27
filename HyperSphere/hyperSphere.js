@@ -2134,11 +2134,7 @@ class HyperSphere extends MyObject {
 
 								progressBar.remove();
 
-								if (classSettings.debug) {
-
-									classSettings.debug.logTimestamp('Play step. ', timestamp);
-
-								}
+								if (classSettings.debug) classSettings.debug.logTimestamp('Play step. ', timestamp);
 
 								this.isUpdate = false;//для ускорения
 								for (verticeId = 0; verticeId < position.length; verticeId++)

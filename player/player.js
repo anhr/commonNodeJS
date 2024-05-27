@@ -1880,9 +1880,12 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 	function setColorAttibute( value, mesh, index , color ){
 
-		//не менять цвет точки если позиция состоит из 3 значений
-		//такая ситуация имеется в геометрических фигурах. Например в кубе
-		if ( mesh.geometry.attributes.position.itemSize < 4 ) return;
+		if ( 
+			//не менять цвет точки если позиция состоит из 3 значений
+			//такая ситуация имеется в геометрических фигурах. Например в кубе
+			( mesh.geometry.attributes.position.itemSize < 4 ) ||
+			( options.scales.w.isColor === false )//цвет точки не зависит от координаты w точки
+		) return;
 
 		if ( options.palette )
 			color = options.palette.toColor( value, options.scales.w.min, options.scales.w.max );
@@ -2163,7 +2166,7 @@ Player.setColorAttribute = function ( attributes, i, color ) {
 
 	if ( typeof color === "string" )
 		color = new THREE.Color( color );
-	const colorAttribute = attributes.color || attributes.ca;
+	const colorAttribute = attributes.color;// || attributes.ca;
 	if ( colorAttribute === undefined )
 		return false;
 	colorAttribute.setX( i, color.r );
