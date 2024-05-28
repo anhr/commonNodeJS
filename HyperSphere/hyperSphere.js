@@ -1479,18 +1479,18 @@ class HyperSphere extends MyObject {
 								}
 								createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
 
-								//Vertice color
-								if (options.scales.w.isColor === false) {
+								//vertice radius
+//								if (options.scales.w.isColor === false) {
 
-									//цвет вершины зависит от времени проигрывателя
-									aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player.getTime(), }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).onChange((verticeRadius) => {
+								//радиус вершины зависит от времени проигрывателя
+								aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player.getTime(), }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).onChange((verticeRadius) => {
 
-										console.log('verticeRadius = ' + verticeRadius);
+									console.log('verticeRadius = ' + verticeRadius);
 
-									});
-									dat.controllerNameAndTitle(aAngleControls.cRadius, lang.radius, lang.radiusTitle);
+								});
+								dat.controllerNameAndTitle(aAngleControls.cRadius, lang.radius, lang.radiusTitle);
 									
-								}
+//								}
 
 								//Edges
 

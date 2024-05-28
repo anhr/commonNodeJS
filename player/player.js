@@ -1764,6 +1764,22 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 		if ( t === undefined )
 			console.error( 'setPosition: t = ' + t );
 
+		if ( mesh.userData.myObject ) {
+
+			arrayFuncs.forEach( (funcs, i) => {
+				
+				const vertice = {};
+				function setPosition( axisName ) { vertice[axisName] = Player.execFunc( funcs, axisName, t, options ); }
+				setPosition( 'x' );
+				setPosition( 'y' );
+				setPosition( 'z' );
+				setPosition( 'w' );
+				mesh.userData.myObject.setPositionAttributeFromPoint(i, vertice);
+
+			} );
+			return;
+			
+		}
 		var min, max;
 		if ( options && ( options.scales.w !== undefined ) ) {
 
@@ -1883,8 +1899,8 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 		if ( 
 			//не менять цвет точки если позиция состоит из 3 значений
 			//такая ситуация имеется в геометрических фигурах. Например в кубе
-			( mesh.geometry.attributes.position.itemSize < 4 ) ||
-			( options.scales.w.isColor === false )//цвет точки не зависит от координаты w точки
+			( mesh.geometry.attributes.position.itemSize < 4 )// ||
+			//( options.scales.w.isColor === false )//цвет точки не зависит от координаты w точки
 		) return;
 
 		if ( options.palette )
