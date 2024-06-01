@@ -1764,8 +1764,9 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 		if ( t === undefined )
 			console.error( 'setPosition: t = ' + t );
 
-		if ( mesh.userData.myObject ) {
+		if ( mesh.userData.myObject && mesh.userData.myObject.isSetPosition ) {
 
+/*Позиция точек уже вычислена			
 			arrayFuncs.forEach( (funcs, i) => {
 				
 				const vertice = {};
@@ -1778,6 +1779,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 			} );
 			return;
+*/			
 			
 		}
 		var min, max;
@@ -1792,100 +1794,103 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 		}
 
-		for ( var i = 0; i < arrayFuncs.length; i++ ) {
+		if ( !mesh.userData.myObject || !mesh.userData.myObject.isSetPosition ) {
+			for (var i = 0; i < arrayFuncs.length; i++) {
 
-			var funcs = arrayFuncs[i], needsUpdate = false;
-			function setPosition( axisName, fnName ) {
+				var funcs = arrayFuncs[i], needsUpdate = false;
+				function setPosition(axisName, fnName) {
 
-				var value = Player.execFunc( funcs, axisName, t, options );// a, b );
-				if ( value !== undefined ) {
+					var value = Player.execFunc(funcs, axisName, t, options);// a, b );
+					if (value !== undefined) {
 
-					attributes.position[fnName]( i, value );
+						attributes.position[fnName](i, value);
+						needsUpdate = true;
+
+					}
+
+				}
+				setPosition('x', 'setX');
+				setPosition('y', 'setY');
+				setPosition('z', 'setZ');
+				setPosition('w', 'setW');
+
+				//если тут поставить var то цвет точки, которая определена как THREE.Vector3 будет равет цвету предыдущей точки
+				//потому что перемнные типа var видны снаружи блока {}
+				let color;
+
+				function getColor() {
+
+					if (mesh.userData.player.palette)
+						color = mesh.userData.player.palette.toColor(value, min, max);
+					else if (options.palette)
+						color = options.palette.toColor(value, min, max);
+					else {
+
+						const c = { r: 255, g: 255, b: 255 };
+						color = new THREE.Color("rgb(" + c.r + ", " + c.g + ", " + c.b + ")");
+						return color;
+
+					}
+
+				}
+
+				if (typeof funcs.w === "function") {
+
+					var value = funcs.w(t, a, b);
+					if (options.scales.w) {
+
+						min = options.scales.w.min;
+						max = options.scales.w.max;
+
+					} else {
+
+						console.warn('Player.selectMeshPlayScene: Кажется эти экстремумы заданы неверно');
+						min = 0;
+						max = 100;
+
+					}
+					if (attributes.position.itemSize >= 4)
+						attributes.position.setW(i, value);
 					needsUpdate = true;
 
-				}
-
-			}
-			setPosition( 'x', 'setX' );
-			setPosition( 'y', 'setY' );
-			setPosition( 'z', 'setZ' );
-			setPosition( 'w', 'setW' );
-
-			//если тут поставить var то цвет точки, которая определена как THREE.Vector3 будет равет цвету предыдущей точки
-			//потому что перемнные типа var видны снаружи блока {}
-			let color;
-
-			function getColor() {
-
-				if ( mesh.userData.player.palette )
-					color = mesh.userData.player.palette.toColor( value, min, max );
-				else if ( options.palette )
-					color = options.palette.toColor( value, min, max );
-				else {
-
-					const c = { r: 255, g: 255, b: 255 };
-					color = new THREE.Color( "rgb(" + c.r + ", " + c.g + ", " + c.b + ")" );
-					return color;
-
-				}
-
-			}
-
-			if ( typeof funcs.w === "function" ) {
-
-				var value = funcs.w( t, a, b );
-				if ( options.scales.w ) {
-
-					min = options.scales.w.min;
-					max = options.scales.w.max;
-
-				} else {
-
-					console.warn( 'Player.selectMeshPlayScene: Кажется эти экстремумы заданы неверно' );
-					min = 0;
-					max = 100;
-
-				}
-				if ( attributes.position.itemSize >= 4 )
-					attributes.position.setW( i, value );
-				needsUpdate = true;
-
-				getColor();
-
-			} else if ( typeof funcs.w === "object" ) {
-
-				if ( funcs.w instanceof THREE.Color )
-					color = funcs.w;
-				else {
-
-					var value = Player.execFunc( funcs, 'w', t, options );
-					if ( funcs.w.min !== undefined ) min = funcs.w.min;
-					if ( funcs.w.max !== undefined ) max = funcs.w.max;
 					getColor();
 
+				} else if (typeof funcs.w === "object") {
+
+					if (funcs.w instanceof THREE.Color)
+						color = funcs.w;
+					else {
+
+						var value = Player.execFunc(funcs, 'w', t, options);
+						if (funcs.w.min !== undefined) min = funcs.w.min;
+						if (funcs.w.max !== undefined) max = funcs.w.max;
+						getColor();
+
+					}
+
 				}
+				color = setColorAttibute(
+					funcs.w === undefined ?
+						new THREE.Vector4().w :
+						typeof funcs.w === "number" ? funcs.w : Player.execFunc(funcs, 'w', t, options),
+					mesh, i, color);
+				if (needsUpdate)
+					attributes.position.needsUpdate = true;
+
+				if (funcs.trace && !funcs.line) {
+
+					funcs.line = new Player.traceLine(options);
+					funcs.trace = false;
+
+				}
+				if (funcs.line && funcs.line.addPoint)
+					funcs.line.addPoint(mesh, i, color);
+				if (funcs.cameraTarget && (funcs.cameraTarget.boLook === true))
+					options.playerOptions.cameraTarget.changeTarget(mesh, i, options);
 
 			}
-			color = setColorAttibute(
-				funcs.w === undefined ?
-					new THREE.Vector4().w :
-					typeof funcs.w === "number" ? funcs.w : Player.execFunc( funcs, 'w', t, options ),
-				mesh, i, color );
-			if ( needsUpdate )
-				attributes.position.needsUpdate = true;
 
-			if ( funcs.trace && !funcs.line ) {
-
-				funcs.line = new Player.traceLine( options );
-				funcs.trace = false;
-
-			}
-			if ( funcs.line && funcs.line.addPoint )
-				funcs.line.addPoint( mesh, i, color );
-			if ( funcs.cameraTarget && ( funcs.cameraTarget.boLook === true ) )
-				options.playerOptions.cameraTarget.changeTarget( mesh, i, options );
-
-		};
+		}
 
 	}
 	setAttributes( options ? options.a : 1, options ? options.b : 0 );
@@ -2923,27 +2928,32 @@ Player.selectPlayScene = function ( group, settings = {} ) {
 		index = settings.index !== undefined ? settings.index : undefined,
 		options = settings.options || new Options();
 	group.userData.t = t;
-	Player.selectMeshPlayScene( group, { t: t, options: options } );
-	function selectMeshPlayScene( group ) {
-
-		group.children.forEach( function ( mesh ) {
-
-			if ( mesh instanceof THREE.Group ) selectMeshPlayScene( mesh );
-			else Player.selectMeshPlayScene( mesh, { t: t, options: options } );
-
-		} );
-
+	options.player.endSelect = () => {
+		
+		Player.selectMeshPlayScene( group, { t: t, options: options } );
+		function selectMeshPlayScene( group ) {
+	
+			group.children.forEach( function ( mesh ) {
+	
+				if ( mesh instanceof THREE.Group ) selectMeshPlayScene( mesh );
+				else Player.selectMeshPlayScene( mesh, { t: t, options: options } );
+	
+			} );
+	
+		}
+		selectMeshPlayScene( group );
+		options.playerOptions.cameraTarget.setCameraTarget( options );
+		const cameraTarget = options.playerOptions.cameraTarget.get();
+	
+		//если index === undefined значит пользователь нажал кнопку 'Default' для восстановления положения камеры.
+		//Значит надо вызвать camera.userData.default.setDefault()
+		//
+		//если index !== undefined значит проигрыватель вызывает очередной кадр и не нужно перемещать камеру в исходное положение
+		//приуслвии что не выбрана ни одна точка как cameraTarget
+		if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition( index === undefined );
+		
 	}
-	selectMeshPlayScene( group );
-	options.playerOptions.cameraTarget.setCameraTarget( options );
-	const cameraTarget = options.playerOptions.cameraTarget.get();
-
-	//если index === undefined значит пользователь нажал кнопку 'Default' для восстановления положения камеры.
-	//Значит надо вызвать camera.userData.default.setDefault()
-	//
-	//если index !== undefined значит проигрыватель вызывает очередной кадр и не нужно перемещать камеру в исходное положение
-	//приуслвии что не выбрана ни одна точка как cameraTarget
-	if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition( index === undefined );
+	if ( !group.userData.endSelect ) options.player.endSelect();
 
 }
 var THREE;

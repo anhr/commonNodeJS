@@ -27,6 +27,8 @@ class MyObject {
 		settings.object = settings.object || {};
 		settings.object.geometry = settings.object.geometry || {};
 
+		this.isSetPosition = settings.isSetPosition;
+
 //		this.isColorFromPositionW = settings.object.isColorFromPositionW;
 
 		if (!settings.object.geometry.position || !settings.object.geometry.position.isPositionProxy)
@@ -310,6 +312,7 @@ class MyObject {
 		}
 		
 	}
+//	get isSetPosition() { return false; }
 	get defaultColor() { return 'white'; }
 	get isOpacity() {
 

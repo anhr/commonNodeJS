@@ -247,7 +247,7 @@ class HyperSphere extends MyObject {
 		classSettings.rRange = classSettings.rRange || {};
 		if (classSettings.rRange.min === undefined) classSettings.rRange.min = -1;
 		if (classSettings.rRange.max === undefined) classSettings.rRange.max = 1;
-
+/*
 		options.onSelectScene = (index, t) => {
 
 //			classSettings.r = t;
@@ -255,6 +255,7 @@ class HyperSphere extends MyObject {
 			if (classSettings.onSelectScene) classSettings.onSelectScene(this, index, t);
 		
 		}
+*/		
 		classSettings.settings = classSettings.settings || {};
 		const settings = classSettings.settings;
 		settings.options = options;
@@ -500,8 +501,9 @@ class HyperSphere extends MyObject {
 
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
-							const r = classSettings.r;
-							if (Math.abs((Math.sqrt(sum) - r)) > 9.5e-8)
+							const r = this.oldR != undefined ? this.oldR : classSettings.r;
+							sum = Math.sqrt(sum);
+							if (Math.abs(sum - r) > 9.5e-8)
 								console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
 
 						}
@@ -2037,6 +2039,7 @@ class HyperSphere extends MyObject {
 							object: settings.object,
 							bufferGeometry: settings.bufferGeometry,
 							isPositionControllerReadOnly: true,
+							isSetPosition: settings.isSetPosition,
 
 						});
 
@@ -2049,16 +2052,17 @@ class HyperSphere extends MyObject {
 
 			//шаг проигрывателя player
 			//Вычислем middle vertices
-			this.middleVertices = (index, t) => {
+			this.middleVertices = (/*index,*/ t) => {
 
-				if (index === 0) return;
+//				if (index === 0) return;не вычисляется средняя точка когда проигрыватель в начале
 				const geometry = settings.object.geometry, position = geometry.position, edges = geometry.indices.edges;
 				if (edges.length === 0) {
 
 					//Create edges
 					this.onSelectScene = () => {
 
-						options.onSelectScene(index, t);
+						//Непонятно как сюда попадает
+						options.onSelectScene(/*index,*/ t);
 						delete this.onSelectScene;
 
 					}
@@ -2136,6 +2140,7 @@ class HyperSphere extends MyObject {
 
 								if (classSettings.debug) classSettings.debug.logTimestamp('Play step. ', timestamp);
 
+								this.oldR = undefined;
 								this.isUpdate = false;//для ускорения
 								for (verticeId = 0; verticeId < position.length; verticeId++)
 									position.angles[verticeId] = vertices[verticeId];//Обновление текущей вершины без обновления холста для экономии времени
@@ -2150,6 +2155,7 @@ class HyperSphere extends MyObject {
 									this.logHyperSphere();
 
 								}
+								options.player.endSelect();
 								options.player.continue();
 								return true;
 
