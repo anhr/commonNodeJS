@@ -2027,6 +2027,7 @@ class ND extends MyObject {
 						}
 
 					}
+					if ( _ND.setDrawRange ) _ND.setDrawRange( 0, indices.length );
 					return { indices: indices, colors: colors, };
 
 				},

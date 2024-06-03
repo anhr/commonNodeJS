@@ -2594,8 +2594,19 @@ class HyperSphere extends MyObject {
 	angles2Vertice(anglesId) {
 
 		if (typeof anglesId === "number") {
-			
-			if (anglesId >= this.bufferGeometry.userData.position.length) console.error(sHyperSphere + '.angles2Vertice: Invalid anglesId = ' + anglesId);
+
+			if (this.classSettings.debug) {
+				
+				if (anglesId >= this.bufferGeometry.userData.position.length) console.error(sHyperSphere + '.angles2Vertice: Invalid anglesId = ' + anglesId);
+				//Пока что не вижу случая, когда надо получить position за пределами this.bufferGeometry.drawRange
+				else {
+
+					const count = this.bufferGeometry.drawRange.count, start = this.bufferGeometry.drawRange.start;
+					if ((anglesId >= (count + start)) || (anglesId < start)) console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + ' is out of range from ' + start + ' to ' + (count + start));
+
+				}
+
+			}
 			return this.bufferGeometry.userData.position[anglesId];
 			
 		}

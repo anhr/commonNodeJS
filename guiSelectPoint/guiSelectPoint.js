@@ -1091,7 +1091,18 @@ class GuiSelectPoint {
 
 		function addPoints( mesh ) {
 
-			for ( var iPosition = 0; iPosition < mesh.geometry.attributes.position.count; iPosition++ ) {
+			//https://threejs.org/docs/index.html?q=buffer#api/en/core/BufferGeometry.setDrawRange
+			const count = mesh.geometry.userData.drawRange ?
+				mesh.geometry.userData.drawRange().count ://Во вселенной задал диапазон видимых вершин
+				mesh.geometry.index === null ?
+					 //геометрия не индексирована. Значит mesh.geometry.drawRange.count указывает на количество видимых вершин
+					 (mesh.geometry.drawRange.count + mesh.geometry.drawRange.start) > mesh.geometry.attributes.position.count ?
+						 mesh.geometry.attributes.position.count ://диапазон вершин больше количества вершин
+						 mesh.geometry.drawRange.count + mesh.geometry.drawRange.start//добавлять только вершины, которые вошли в заданный диапазон
+					 :
+					 //геометрия индексирована. mesh.geometry.drawRange.count указывает на количество индексов, которые нужно рисовать
+					 mesh.geometry.attributes.position.count;//По умолчанию все вершины видно
+			for ( var iPosition = mesh.geometry.drawRange.start; iPosition < count; iPosition++ ) {
 
 				const opt = document.createElement( 'option' ),
 					name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
