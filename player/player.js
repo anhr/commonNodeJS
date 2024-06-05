@@ -2927,6 +2927,7 @@ Player.selectPlayScene = function ( group, settings = {} ) {
 	const t = settings.t !== undefined ? settings.t : 0,
 		index = settings.index !== undefined ? settings.index : undefined,
 		options = settings.options || new Options();
+	group.userData.index = index;
 	group.userData.t = t;
 	options.player.endSelect = () => {
 		

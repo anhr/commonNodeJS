@@ -232,6 +232,29 @@ class HyperSphere extends MyObject {
 			if (classSettings.debug.middleVertice != false) classSettings.debug.middleVertice = true;
 
 		}
+		if (classSettings.projectParams.scene)
+			classSettings.projectParams.scene.userData = new Proxy(classSettings.projectParams.scene.userData, {
+	
+				set: (userData, name, value) => {
+	
+					switch (name) {
+	
+						case 't':
+	/*						
+							universeSettings.playerIndex = userData.index;
+							universeSettings.r = value;
+	*/						
+							if (classSettings.onSelectScene) classSettings.onSelectScene(this, userData.index, value);//время равно радиусу вселенной
+							break;
+							
+					}
+					userData[name] = value;
+					return true;
+	
+				}
+				
+			});
+		
 		this.classSettings = classSettings;
 
 		const cookieOptions = {};
@@ -362,7 +385,10 @@ class HyperSphere extends MyObject {
 									if ((angle < range.min) || (angle > range.max)) console.error(sHyperSphere + ': Set angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
 
 									verticeAngles[angleId] = angle;
-									_this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
+
+									//если тут обновлять вершину то каждая вершина будет обноляться несколько раз в зависимости от количества углов. Сейчас вершина обновляется после обновления всех углов вершины
+									//_this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
+									
 									//если тут обновлять гиперсферу, то будет тратиться лишнее время, когда одновременно изменяется несколько вершин
 									//Сейчас я сначала изменяю все вершины, а потом обновляю гиперсферу
 									//_this.update(verticeId);
@@ -640,7 +666,7 @@ class HyperSphere extends MyObject {
 
 									switch (name) {
 
-										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId) => {
+										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, playerIndex) => {
 
 											//find middle vertice between opposite vertices
 
@@ -654,7 +680,7 @@ class HyperSphere extends MyObject {
 
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
-												const oppositeVertice = position[oppositeAngleId];
+												const oppositeVertice = settings.object.geometry.playerAngles ? settings.object.geometry.playerAngles[playerIndex - 1][oppositeAngleId] : position[oppositeAngleId];
 												oppositeVertice.forEach((axis, i) => {
 
 													if (aSum[i] === undefined) aSum[i] = 0;
@@ -711,17 +737,19 @@ class HyperSphere extends MyObject {
 						},
 						set: (angles, name, value) => {
 
-							const i = parseInt(name);
-							if (!isNaN(i)) {
+							const verticeId = parseInt(name);
+							if (!isNaN(verticeId)) {
 
-								const verticeAngles = angles[i];
-								if (classSettings.debug && ((verticeAngles.length != (_this.dimension - 1)) || (value.length != (_this.dimension - 1)))) console.error(sHyperSphere + ': Set vertice[' + i + '] angles failed. Invalid angles count.')
+								const verticeAngles = angles[verticeId];
+								if (classSettings.debug && ((verticeAngles.length != (_this.dimension - 1)) || (value.length != (_this.dimension - 1)))) console.error(sHyperSphere + ': Set vertice[' + verticeId + '] angles failed. Invalid angles count.')
 								for (let j = 0; j < value.length; j++) verticeAngles[j] = value[j];
+								this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
 
 							} else angles[name] = value;
 							return true;
 
 						}
+						
 					});
 					case 'count': return _position.count === undefined ? _position.length : _position.count;
 					case 'forEach': return (item) => { for (let verticeId = 0; verticeId < position.length; verticeId++) item(position[verticeId], verticeId); }
@@ -2052,9 +2080,9 @@ class HyperSphere extends MyObject {
 
 			//шаг проигрывателя player
 			//Вычислем middle vertices
-			this.middleVertices = (/*index,*/ t) => {
+			this.middleVertices = (playerIndex, t) => {
 
-//				if (index === 0) return;не вычисляется средняя точка когда проигрыватель в начале
+				if (playerIndex === 0) return;//не вычисляется средняя точка когда проигрыватель в начале
 				const geometry = settings.object.geometry, position = geometry.position, edges = geometry.indices.edges;
 				if (edges.length === 0) {
 
@@ -2132,7 +2160,7 @@ class HyperSphere extends MyObject {
 						progressBar.value = verticeId;
 						const stepItem = () => {
 
-							vertices.push(position.angles[verticeId].middleVertice());
+							vertices.push(position.angles[verticeId].middleVertice(undefined, playerIndex));
 							verticeId += 1;
 							if (verticeId >= position.length) {
 
@@ -2141,9 +2169,14 @@ class HyperSphere extends MyObject {
 								if (classSettings.debug) classSettings.debug.logTimestamp('Play step. ', timestamp);
 
 								this.oldR = undefined;
+								
+								//Обновление текущей вершины без обновления холста для экономии времени
 								this.isUpdate = false;//для ускорения
-								for (verticeId = 0; verticeId < position.length; verticeId++)
-									position.angles[verticeId] = vertices[verticeId];//Обновление текущей вершины без обновления холста для экономии времени
+								
+								if (geometry.playerAngles)
+									for (verticeId = 0; verticeId < position.length; verticeId++) geometry.playerAngles[playerIndex][verticeId] = vertices[verticeId];
+								else for (verticeId = 0; verticeId < position.length; verticeId++) position.angles[verticeId] = vertices[verticeId];
+
 								this.isUpdate = true;
 
 								//обновляю позицию первой вершины что бы обновить холст
