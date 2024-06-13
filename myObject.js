@@ -31,8 +31,9 @@ class MyObject {
 
 //		this.isColorFromPositionW = settings.object.isColorFromPositionW;
 
-		if (!settings.object.geometry.position || !settings.object.geometry.position.isPositionProxy)
-			settings.object.geometry.position = new Proxy(settings.object.geometry.position || [], {
+		const geometryPosition = settings.object.geometry.position;
+		if (!geometryPosition || !geometryPosition.isPositionProxy)
+			settings.object.geometry.position = new Proxy(geometryPosition || [], {
 	
 				get: (positions, name) => {
 					
@@ -106,7 +107,9 @@ class MyObject {
 					const positionId = parseInt(name);
 					if (!isNaN(positionId)) {
 
-						const positionOffset = positionId * position.itemSize, array = position.array;
+						const playerIndex = settings.bufferGeometry.userData.playerIndex,
+							positionOffset = (playerIndex != undefined ? playerIndex * settings.object.geometry.playerAngles[0].length * position.itemSize : 0) + positionId * position.itemSize,
+							array = position.array;
 						const positionItem = new Proxy([], {
 
 							get: (vertice, name) => {
@@ -235,18 +238,26 @@ class MyObject {
 			return w;
 
 		}
-		this.setPositionAttributeFromPoint = (i, vertice) => {
+		this.setPositionAttributeFromPoint = (i, vertice, playerIndex) => {
 
 			//Position attribute
 			
 			const attributes = settings.bufferGeometry.attributes, position = attributes.position, itemSize = position.itemSize;
-			vertice = vertice || _this.getPoint(i);
-			let positionId = i * itemSize, array = position.array;
+			vertice = vertice || _this.getPoint(i, playerIndex);
+			let positionId = i * itemSize + (playerIndex === undefined ? 0 : settings.object.geometry.angles.length * playerIndex * itemSize), array = position.array;
 			                  array [positionId++] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
 			if (itemSize > 1) array [positionId++] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) array [positionId++] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
 			const w = vertice.w;
 			if (itemSize > 3) array [positionId] = w;
+
+			const drawRange = settings.bufferGeometry.drawRange;
+			if ((drawRange.start + drawRange.count * itemSize) < positionId) {
+				
+				drawRange.count = (positionId - drawRange.start + 1) / itemSize;
+				if (!Number.isInteger(drawRange.count)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
+
+			}
 
 			//Color attribute
 			
