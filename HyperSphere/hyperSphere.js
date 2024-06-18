@@ -2235,17 +2235,23 @@ class HyperSphere extends MyObject {
 					});
 
 				}
-				const vertices = [],
+				const playerAngles = geometry.playerAngles,
+					vertices = playerAngles ? undefined : [],
+//					vertices = [],
 					timestamp = classSettings.debug ? window.performance.now() : undefined,
-					playerAngles = geometry.playerAngles,
 					timeAnglesSrc  = playerAngles ? playerAngles[playerIndex - 1] : position.angles,
 					step = () => {
 
 						progressBar.value = verticeId;
 						const stepItem = () => {
 
-							vertices.push(position.angles[verticeId].middleVertice(undefined, playerIndex));
-//							vertices.push(timeAnglesSrc[verticeId].middleVertice(position.angles[verticeId].oppositeVerticesId, playerIndex));
+							const vertice = position.angles[verticeId].middleVertice(undefined, playerIndex)
+							if (vertices) {
+								
+								vertices.push(vertice);
+	//							vertices.push(timeAnglesSrc[verticeId].middleVertice(position.angles[verticeId].oppositeVerticesId, playerIndex));
+
+							}
 							verticeId += 1;
 							if (verticeId >= position.length) {
 
@@ -2258,10 +2264,12 @@ class HyperSphere extends MyObject {
 								//Обновление текущей вершины без обновления холста для экономии времени
 								this.isUpdate = false;//для ускорения
 								if (playerAngles) {
-									
+
+/*									
 									const timeAnglesDest = playerAngles[playerIndex];
 									for (verticeId = 0; verticeId < vertices.length; verticeId++)
 										timeAnglesDest[verticeId] = vertices[verticeId];
+*/										
 									this.bufferGeometry.attributes.position.needsUpdate = true;
 
 								} else {
