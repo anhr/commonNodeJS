@@ -79,7 +79,13 @@ class HyperSphere extends MyObject {
 	 * </pre>
 	 * @param {boolean} [classSettings.edges.project=true] false - Doesn't project edges onto canvas
 	 * @param {enum} [classSettings.edges.creationMethod=edgesCreationMethod.Random] method for creating edges. See <a href="./module-HyperSphere-HyperSphere.html#.edgesCreationMethod" target="_blank">edgesCreationMethod</a>
-	 * @param {Function} [classSettings.onSelectScene] Callback function that called after <b>Player</b> time was changed. See <a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">onSelectScene</a> type definition.
+	 * @param {Function} [classSettings.onSelectScene] Callback function that called after <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> time was changed.
+	 * <pre>
+	 * parameter <b>hyperSphere</b> <a href="../../HyperSphere/jsdoc/" target="_blank">HyperSphere</a> object.
+	 * parameter <b>playerIndex</b> <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index.
+	 * parameter <b>t</b> current time.
+	 * Also see <a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">onSelectScene</a> type definition.
+	 * </pre>
 	 * @param {object} [classSettings.settings] The following settings are available
 	 * @param {object} [classSettings.settings.object] HyperSphere object.
 	 * @param {String} [classSettings.settings.object.name] name of hypersphere.
