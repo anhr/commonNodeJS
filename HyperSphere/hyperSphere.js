@@ -79,6 +79,7 @@ class HyperSphere extends MyObject {
 	 * </pre>
 	 * @param {boolean} [classSettings.edges.project=true] false - Doesn't project edges onto canvas
 	 * @param {enum} [classSettings.edges.creationMethod=edgesCreationMethod.Random] method for creating edges. See <a href="./module-HyperSphere-HyperSphere.html#.edgesCreationMethod" target="_blank">edgesCreationMethod</a>
+	 * @param {Function} [classSettings.onSelectScene] Callback function that called after <b>Player</b> time was changed. See <a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">onSelectScene</a> type definition.
 	 * @param {object} [classSettings.settings] The following settings are available
 	 * @param {object} [classSettings.settings.object] HyperSphere object.
 	 * @param {String} [classSettings.settings.object.name] name of hypersphere.
@@ -210,7 +211,7 @@ class HyperSphere extends MyObject {
 	 * </pre>
 	 * @param {boolean} [classSettings.debug.middleVertice=true] Middle vertice log.
 	 * @param {boolean} [classSettings.debug.log=true] Vertices and edges log.
-	 * @param {function} [classSettings.continue] Callback function that called after hypersphere edges was created.
+	 * @param {Function} [classSettings.continue] Callback function that called after hypersphere edges was created.
 	 * @param {boolean} [classSettings.boRemove] false - do not delete the previous hypersphere while projecting a new hypersphere on scene.
 	 * @param {boolean} [classSettings.boGui] false - do not include hypersphere GUI.
 	 **/
