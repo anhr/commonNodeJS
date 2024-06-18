@@ -108,7 +108,8 @@ class MyObject {
 					if (!isNaN(positionId)) {
 
 						const playerIndex = settings.bufferGeometry.userData.playerIndex,
-							positionOffset = (playerIndex != undefined ? playerIndex * settings.object.geometry.playerAngles[0].length * position.itemSize : 0) + positionId * position.itemSize,
+//							positionOffset = (playerIndex != undefined ? playerIndex * settings.object.geometry.playerAngles[0].length * position.itemSize : 0) + positionId * position.itemSize,
+							positionOffset = (settings.object.geometry.playerAngles != undefined ? playerIndex * settings.object.geometry.playerAngles[0].length * position.itemSize : 0) + positionId * position.itemSize,
 							array = position.array;
 						const positionItem = new Proxy([], {
 
@@ -242,9 +243,9 @@ class MyObject {
 
 			//Position attribute
 			
-			const attributes = settings.bufferGeometry.attributes, position = attributes.position, itemSize = position.itemSize;
+			const attributes = settings.bufferGeometry.attributes, position = attributes.position, anglesLength = settings.object.geometry.angles.length;
 			vertice = vertice || _this.getPoint(i, playerIndex);
-			let positionId = i * itemSize + (playerIndex === undefined ? 0 : settings.object.geometry.angles.length * playerIndex * itemSize), array = position.array;
+			let itemSize = position.itemSize, positionId = i * itemSize + (playerIndex === undefined ? 0 : anglesLength * playerIndex * itemSize), array = position.array;
 			                  array [positionId++] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
 			if (itemSize > 1) array [positionId++] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) array [positionId++] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
@@ -253,15 +254,17 @@ class MyObject {
 
 			const drawRange = settings.bufferGeometry.drawRange;
 			if ((drawRange.start + drawRange.count * itemSize) < positionId) {
-				
-				drawRange.count = (positionId - drawRange.start + 1) / itemSize;
+
+				settings.bufferGeometry.setDrawRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
+//				drawRange.count = (positionId - drawRange.start + 1) / itemSize;
 				if (!Number.isInteger(drawRange.count)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
 
 			}
 
 			//Color attribute
-			
-			let colorId = i * attributes.color.itemSize;
+
+			itemSize = attributes.color.itemSize;
+			let colorId = i * itemSize + (playerIndex === undefined ? 0 : anglesLength * playerIndex * itemSize);
 			array = attributes.color.array;
 			const verticeColor = this.verticeColor(i, vertice);
 			if (typeof verticeColor === 'number'){
@@ -269,7 +272,7 @@ class MyObject {
 				if (settings.options) {
 					
 					const wScale = settings.options.scales.w;
-					Player.setColorAttribute(attributes, i, settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
+					Player.setColorAttribute(attributes, i + (playerIndex === undefined ? 0 : anglesLength * playerIndex), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 
 				}
 				colorId += attributes.color.itemSize - 1;

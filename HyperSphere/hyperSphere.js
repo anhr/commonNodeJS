@@ -368,7 +368,56 @@ class HyperSphere extends MyObject {
 							switch (name) {
 
 								case 'length': return _this.dimension - 1;
-								case 'length': return _this.dimension - 1;
+/*									
+								case 'middleVertice': return (oppositeVerticesId, playerIndex) => {
+
+									//find middle vertice between opposite vertices
+
+									//https://wiki5.ru/wiki/Mean_of_circular_quantities#Mean_of_angles Среднее значение углов
+
+									//массив для хранения сумм декартовых координат противоположных вершин
+									//для 1D гиперсферы это: aSum[0] = x, aSum[1] = y.
+									//для 2D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z.
+									//для 3D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z, aSum[3] = w.
+									const aSum = [];
+
+									oppositeVerticesId.forEach(oppositeAngleId => {
+
+										const playerPosition = settings.object.geometry.playerPosition,
+											oppositeVertice = playerPosition ? playerPosition[playerIndex - 1][oppositeAngleId] : position[oppositeAngleId];
+										oppositeVertice.forEach((axis, i) => {
+
+											if (aSum[i] === undefined) aSum[i] = 0;
+											aSum[i] += axis
+										
+										});
+
+									});
+
+									const muddleVertice = _this.vertice2angles(aSum);
+									if (classSettings.debug && classSettings.debug.middleVertice) {
+
+										console.log('opposite vertices:');
+										oppositeVerticesId.forEach(oppositeVerticeId => {
+
+											const verticeAngles = position[oppositeVerticeId].angles;
+											console.log('vertice[' + oppositeVerticeId + '] anlges: ' + JSON.stringify(verticeAngles));
+
+										});
+										console.log('Middle vertice angles: ' + JSON.stringify(muddleVertice));
+
+									}
+									const geometry = settings.object.geometry;
+									if (geometry.playerAngles) {
+	
+//												if (!geometry.playerAngles[playerIndex]) geometry.playerAngles[playerIndex] = [];
+										geometry.playerAngles[playerIndex].push(muddleVertice);
+										
+									}
+									return muddleVertice;
+
+								}
+*/									
 
 							}
 							return verticeAngles[name];
@@ -425,6 +474,7 @@ class HyperSphere extends MyObject {
 
 					}
 					case 'guiLength': return angles.length;
+//					case 'forEach': return (item) => { for (let verticeId = 0; verticeId < angles.length; verticeId++) item(settings.object.geometry.angles[verticeId], verticeId); }
 
 				}
 				return angles[name];
@@ -681,10 +731,6 @@ class HyperSphere extends MyObject {
 
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
-/*												
-												const playerAngles = settings.object.geometry.playerAngles,
-													oppositeVertice = playerAngles ? playerAngles[playerIndex - 1][oppositeAngleId] : position[oppositeAngleId];
-*/													
 												const playerPosition = settings.object.geometry.playerPosition,
 													oppositeVertice = playerPosition ? playerPosition[playerIndex - 1][oppositeAngleId] : position[oppositeAngleId];
 												oppositeVertice.forEach((axis, i) => {
@@ -696,16 +742,6 @@ class HyperSphere extends MyObject {
 
 											});
 
-/*											
-											//изменить длинну вектора если изменился радиус гиперсферы
-											if (this.oldR != undefined && (this.oldR != classSettings.r)) {
-
-												const k =  classSettings.r / this.oldR;
-												for (let i = 0; i < aSum.length; i++) aSum[i] *= k;
-												
-											}
-*/											
-											
 											const muddleVertice = _this.vertice2angles(aSum);
 											if (classSettings.debug && classSettings.debug.middleVertice) {
 
@@ -737,6 +773,11 @@ class HyperSphere extends MyObject {
 												const i = parseInt(name);
 												if (!isNaN(i)) {
 
+/*													
+													const edge = settings.object.geometry.indices.edges[
+														verticeEdges[i] + 0,
+														classSettings.projectParams.scene.userData.index * settings.object.geometry.angles.length];
+*/														
 													const edge = settings.object.geometry.indices.edges[verticeEdges[i]];
 													if (verticeId === edge[0]) return edge[1];
 													if (verticeId === edge[1]) return edge[0];
@@ -778,9 +819,9 @@ class HyperSphere extends MyObject {
 					case 'count': return _position.count === undefined ? _position.length : _position.count;
 					case 'forEach': return (item) => {
 
-						const pos = settings.object.geometry.playerPosition ? settings.object.geometry.playerPosition[classSettings.playerIndex] : position;
+//						const pos = settings.object.geometry.playerPosition ? settings.object.geometry.playerPosition[classSettings.playerIndex] : position;
+						const pos = settings.object.geometry.playerPosition ? settings.object.geometry.playerPosition[settings.bufferGeometry.userData.playerIndex] : position;
 						for (let verticeId = 0; verticeId < pos.length; verticeId++) item(pos[verticeId], verticeId);
-//						for (let verticeId = 0; verticeId < position.length; verticeId++) item(position[verticeId], verticeId);
 					
 					}
 					case 'length': return _position.length;
@@ -2189,12 +2230,15 @@ class HyperSphere extends MyObject {
 				}
 				const vertices = [],
 					timestamp = classSettings.debug ? window.performance.now() : undefined,
+					playerAngles = geometry.playerAngles,
+					timeAnglesSrc  = playerAngles ? playerAngles[playerIndex - 1] : position.angles,
 					step = () => {
 
 						progressBar.value = verticeId;
 						const stepItem = () => {
 
 							vertices.push(position.angles[verticeId].middleVertice(undefined, playerIndex));
+//							vertices.push(timeAnglesSrc[verticeId].middleVertice(position.angles[verticeId].oppositeVerticesId, playerIndex));
 							verticeId += 1;
 							if (verticeId >= position.length) {
 
@@ -2206,13 +2250,19 @@ class HyperSphere extends MyObject {
 
 								//Обновление текущей вершины без обновления холста для экономии времени
 								this.isUpdate = false;//для ускорения
-/*								
-								if (geometry.playerAngles != undefined) for (verticeId = 0; verticeId < position.length; verticeId++)
-									geometry.playerPosition[this.classSettings.playerIndex].angles[verticeId] = vertices[verticeId];
-//									position.angles[verticeId] = vertices[verticeId];
-*/
-								if (geometry.playerAngles === undefined) for (verticeId = 0; verticeId < position.length; verticeId++)
-									position.angles[verticeId] = vertices[verticeId];
+								if (playerAngles) {
+									
+									const timeAnglesDest = playerAngles[playerIndex];
+									for (verticeId = 0; verticeId < vertices.length; verticeId++)
+										timeAnglesDest[verticeId] = vertices[verticeId];
+									this.bufferGeometry.attributes.position.needsUpdate = true;
+
+								} else {
+
+									for (verticeId = 0; verticeId < position.length; verticeId++)
+										position.angles[verticeId] = vertices[verticeId];
+									
+								}
 
 								this.isUpdate = true;
 
@@ -2677,13 +2727,14 @@ class HyperSphere extends MyObject {
 				}
 
 			}
-			if (playerIndex === undefined) playerIndex = this.classSettings.playerIndex;
-			if (playerIndex) {
-
-				anglesId += playerIndex * this.bufferGeometry.attributes.position.itemSize * this.classSettings.settings.object.geometry.playerAngles[0].length;
-				
-			}
-			return this.bufferGeometry.userData.position[anglesId];
+//			if (playerIndex === undefined) playerIndex = this.classSettings.playerIndex;
+			const userData = this.classSettings.settings.bufferGeometry.userData, playerIndexCur = userData.playerIndex;
+			if (playerIndex === undefined) playerIndex = playerIndexCur;
+			if (playerIndex) anglesId += playerIndex * this.bufferGeometry.attributes.position.itemSize * this.classSettings.settings.object.geometry.playerAngles[0].length;
+			userData.playerIndex = playerIndex;
+			const vertice = this.bufferGeometry.userData.position[anglesId];
+			userData.playerIndex = playerIndexCur;
+			return vertice;
 			
 		}
 		return this.getPoint(anglesId);
