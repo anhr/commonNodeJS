@@ -20,9 +20,12 @@ const sMyObject = 'MyObject';
 
 class MyObject {
 
-	constructor( settings={}, vertices ) {
+	constructor(settings={}, vertices) {
 
 		const _this = this;
+
+//		if (settings.guiPoints) this.guiPoints = (cPoints) => { settings.guiPoints(cPoints); }
+		if (settings.guiPoints) this.guiPoints = settings.guiPoints;
 
 		settings.object = settings.object || {};
 		settings.object.geometry = settings.object.geometry || {};
@@ -243,14 +246,14 @@ class MyObject {
 
 			//Position attribute
 			
-			const attributes = settings.bufferGeometry.attributes, position = attributes.position, anglesLength = settings.object.geometry.angles.length;
+			const attributes = settings.bufferGeometry.attributes, position = attributes.position, anglesLength = (playerIndex === undefined) ? undefined : settings.object.geometry.angles.length;
 			vertice = vertice || _this.getPoint(i, playerIndex);
 			let itemSize = position.itemSize, positionId = i * itemSize + (playerIndex === undefined ? 0 : anglesLength * playerIndex * itemSize), array = position.array;
-			                  array [positionId++] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
-			if (itemSize > 1) array [positionId++] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
-			if (itemSize > 2) array [positionId++] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
+			                  array [positionId] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
+			if (itemSize > 1) array [++positionId] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
+			if (itemSize > 2) array [++positionId] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
 			const w = vertice.w;
-			if (itemSize > 3) array [positionId] = w;
+			if (itemSize > 3) array [++positionId] = w;
 
 			const drawRange = settings.bufferGeometry.drawRange;
 			if ((drawRange.start + drawRange.count * itemSize) < positionId) {

@@ -2141,6 +2141,7 @@ class HyperSphere extends MyObject {
 									intersection(points);
 
 								},
+								guiPoints: settings.guiPoints,
 								//shaderMaterial: false,
 
 							},
@@ -2149,6 +2150,7 @@ class HyperSphere extends MyObject {
 							bufferGeometry: settings.bufferGeometry,
 							isPositionControllerReadOnly: true,
 							isSetPosition: settings.isSetPosition,
+							guiPoints: settings.guiPoints,
 
 						});
 

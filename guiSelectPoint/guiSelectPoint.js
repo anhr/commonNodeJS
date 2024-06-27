@@ -321,7 +321,8 @@ class GuiSelectPoint {
 				mesh.userData.player.arrayFuncs
 			) {
 
-				const selectedPoint = mesh.userData.player.arrayFuncs[selectedPointIndex]
+				const selectedPoint = mesh.userData.player.arrayFuncs[mesh.userData.myObject && mesh.userData.myObject.guiPoints ?
+					mesh.userData.myObject.guiPoints.seletedIndex(selectedPointIndex) : selectedPointIndex]
 				if(
 					selectedPoint &&
 					selectedPoint.controllers
@@ -373,7 +374,8 @@ class GuiSelectPoint {
 			var boDisplayFuncFolder = 'none';
 			if (player && player.arrayFuncs) {
 
-				funcFolder.setFunction(player.arrayFuncs[intersectionSelected.index]);
+				const mesh = getMesh();
+				funcFolder.setFunction(player.arrayFuncs[mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.seletedIndex(intersectionSelected.index) : intersectionSelected.index]);
 				boDisplayFuncFolder = 'block';
 
 			}
@@ -838,7 +840,8 @@ class GuiSelectPoint {
 				if ( !intersectionSelected.object.userData.boFrustumPoints ) {
 
 					//fPoints.open();много времени на открытие когда много точек
-					const point = cPoints.__select[intersectionSelected.index + 1];
+					const guiPoints = intersectionSelected.object.userData.myObject ? intersectionSelected.object.userData.myObject.guiPoints : undefined,
+						point = cPoints.__select[guiPoints ? cPoints.__select.selectedIndex : intersectionSelected.index + 1];
 					if ( point ) point.selected = true;
 
 				} else {//FrustumPoints
@@ -900,9 +903,13 @@ class GuiSelectPoint {
 				return selectedPointIndex;//options.dat !== true and gui === undefined. Do not use dat.gui
 
 			}
-			if ( !getMesh() ) return -1; //не выбран 3d объект.
+			const mesh = getMesh();
+			if ( !mesh ) return -1; //не выбран 3d объект.
+/*			
 			const index = cPoints.__select.selectedOptions[0].index;
 			return index - 1;
+*/
+			return mesh.userData.myObject && mesh.userData.myObject.guiPoints ? cPoints.getValue() : cPoints.__select.selectedOptions[0].index - 1;
 
 		}
 		function getMesh() {
@@ -1102,7 +1109,8 @@ class GuiSelectPoint {
 					 :
 					 //геометрия индексирована. mesh.geometry.drawRange.count указывает на количество индексов, которые нужно рисовать
 					 mesh.geometry.attributes.position.count;//По умолчанию все вершины видно
-			for ( var iPosition = mesh.geometry.drawRange.start; iPosition < count; iPosition++ ) {
+			if (mesh.userData.myObject && mesh.userData.myObject.guiPoints) mesh.userData.myObject.guiPoints.create(cPoints);
+			else for ( var iPosition = mesh.geometry.drawRange.start; iPosition < count; iPosition++ ) {
 
 				const opt = document.createElement( 'option' ),
 					name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
@@ -1435,9 +1443,34 @@ class GuiSelectPoint {
 			fPoints = fMesh.addFolder( lang.points );
 
 			let oldMesh;//Нужен когда пользователь сменил выбранный графический объект и когда надо сбрость настройки вершины предыдущего горафического объекта
-			cPoints = fPoints.add( { Points: lang.notSelected }, 'Points', { [lang.notSelected]: -1 } ).onChange( function ( pointId ) {
+			cPoints = fPoints.add( { Points: lang.notSelected }, 'Points', { [lang.notSelected]: -1 } );
+/*			
+			cPoints.domElement.onmousedown = () => {
 
+//				event.returnValue = false;
+				console.log('opt.domElement.onmousedown. event.offsetX = ' + event.offsetX);
+			}
+*/			
+			cPoints.onChange( function ( pointId ) {
+
+/*				
+				const value = cPoints.__select[cPoints.__select.selectedIndex].getAttribute('value');
+				if ( value === null ) {
+
+					console.error('GuiSelectPoint: cPoints.onChange. Under constraction');//выбрать все точки для текущего времени проигрывателя
+					return;
+					
+				}
+*/				
 				pointId = parseInt( pointId );
+				if (isNaN(pointId)){
+
+					const onchange = this.__select[this.__select.selectedIndex].onchange;
+					if(onchange) onchange();
+					else console.error('GuiSelectPoint: cPoints.onChange. Under constraction');//во вселенной выбрать все точки для текущего времени проигрывателя
+					return;
+					
+				}
 				var display, position;
 				let mesh = getMesh();
 				if ( mesh && mesh.userData.gui && mesh.userData.gui.reset ) oldMesh = mesh;
