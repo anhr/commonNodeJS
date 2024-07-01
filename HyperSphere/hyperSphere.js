@@ -1347,12 +1347,13 @@ class HyperSphere extends MyObject {
 						object.userData.gui = {
 
 							get isLocalPositionReadOnly() { return true; },
-							setValues: (verticeId) => {
+							setValues: (verticeId, anglesCur) => {
 
 								//пользователь выбрал вершину
 
 								anglesDefault.length = 0;
-								const verticeAngles = angles[verticeId];
+								if (!anglesCur) anglesCur = angles;
+								const verticeAngles = anglesCur[verticeId];
 
 								for (let i = (aAngleControls.cEdges.__select.length - 1); i > 0; i--)
 									aAngleControls.cEdges.__select.remove(i);

@@ -393,14 +393,16 @@ class GuiSelectPoint {
 
 			}
 
-			const positionLocal = getObjectLocalPosition(intersectionSelected.object, intersectionSelected.index);
+//			const positionLocal = getObjectLocalPosition(intersectionSelected.object, intersectionSelected.index);
+			const positionLocal = _this.getObjectLocalPosition(intersectionSelected);
 			setValue(cX, positionLocal.x);
 			setValue(cY, positionLocal.y);
 			setValue(cZ, positionLocal.z);
 
-			if (intersectionSelected.object.userData.gui) intersectionSelected.object.userData.gui.setValues(intersectionSelected.index);
+			const myObject = intersectionSelected.object.userData.myObject;
+			if (intersectionSelected.object.userData.gui) intersectionSelected.object.userData.gui.setValues(intersectionSelected.index, myObject? myObject.guiPoints.timeAngles : undefined);
 
-			const position = getObjectPosition(intersectionSelected.object, intersectionSelected.index);
+			const position = _this.getObjectPosition(intersectionSelected.object, intersectionSelected.index);
 			setValue(cWorld.x, position.x);
 			setValue(cWorld.y, position.y);
 			setValue(cWorld.z, position.z);
@@ -792,13 +794,33 @@ class GuiSelectPoint {
 			displayVerticeID( mesh );
 
 		}
+		this.getObjectLocalPosition = (intersectionSelected) => {
+			
+			const mesh = getMesh();
+			return getObjectLocalPosition( intersectionSelected.object,
+				(mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + intersectionSelected.index );
+			
+		}
+		this.getObjectPosition = (object, index) => {
+			
+			const mesh = getMesh();
+			return getObjectPosition( object,
+				(mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + index );
+			
+		}
 		/**
 		 * User has selected a point
 		 * @param {Object} intersectionSelected See [intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}
 		 */
 		this.select = function ( intersectionSelected ) {
 
-			const position = getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
+/*			
+			const mesh = getMesh();
+//			if (mesh.userData.myObject && mesh.userData.myObject.guiPoints) intersectionSelected.index += mesh.userData.myObject.guiPoints.positionOffset;
+			const position = getObjectLocalPosition( intersectionSelected.object,
+				(mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + intersectionSelected.index );
+*/				
+			const position = this.getObjectLocalPosition(intersectionSelected);
 
 			//f3DObjects.close();//если тут не закрывать папку, то ингода прорпадает скроллинг окна dat.GUI
 			//for testing:
@@ -840,8 +862,11 @@ class GuiSelectPoint {
 				if ( !intersectionSelected.object.userData.boFrustumPoints ) {
 
 					//fPoints.open();много времени на открытие когда много точек
+/*					
 					const guiPoints = intersectionSelected.object.userData.myObject ? intersectionSelected.object.userData.myObject.guiPoints : undefined,
 						point = cPoints.__select[guiPoints ? cPoints.__select.selectedIndex : intersectionSelected.index + 1];
+*/						
+					const point = cPoints.__select[intersectionSelected.index + 1];
 					if ( point ) point.selected = true;
 
 				} else {//FrustumPoints
@@ -1109,7 +1134,7 @@ class GuiSelectPoint {
 					 :
 					 //геометрия индексирована. mesh.geometry.drawRange.count указывает на количество индексов, которые нужно рисовать
 					 mesh.geometry.attributes.position.count;//По умолчанию все вершины видно
-			if (mesh.userData.myObject && mesh.userData.myObject.guiPoints) mesh.userData.myObject.guiPoints.create(cPoints);
+			if (mesh.userData.myObject && mesh.userData.myObject.guiPoints) mesh.userData.myObject.guiPoints.create( fPoints, cPoints );
 			else for ( var iPosition = mesh.geometry.drawRange.start; iPosition < count; iPosition++ ) {
 
 				const opt = document.createElement( 'option' ),
@@ -1482,7 +1507,9 @@ class GuiSelectPoint {
 
 				}
 				if ( ( options.axesHelper !== false ) && ( options.axesHelper !== undefined ) )
-					options.axesHelper.exposePosition( getObjectPosition( mesh, pointId ) );
+					options.axesHelper.exposePosition( getObjectPosition(
+						mesh, ( ( pointId != -1 ) && mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0 ) + pointId
+					) );
 				displayPointControllers( display );
 				if ( !mesh || !mesh.userData.gui || !mesh.userData.gui.reset) mesh = oldMesh;
 				if ( mesh && mesh.userData.gui && mesh.userData.gui.reset ) mesh.userData.gui.reset( pointId );
@@ -1836,9 +1863,13 @@ class GuiSelectPoint {
 
 								if ( isReadOnlyController( controller ) ) return;
 								
-								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName);
+								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName),
+									myObject = points.userData.myObject, guiPoints = myObject ? myObject.guiPoints : undefined;
 
-								points.geometry.attributes.position.array[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
+								points.geometry.attributes.position.array[
+									axesId + ((guiPoints ? guiPoints.positionOffset : 0) + intersection.index) *
+									points.geometry.attributes.position.itemSize
+								] = value;
 								points.geometry.attributes.position.needsUpdate = true;
 
 								exposePosition( intersection.index );
