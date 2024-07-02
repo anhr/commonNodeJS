@@ -1385,7 +1385,8 @@ Player.cameraTarget = class {
 
 			//Update cameraTarget
 			const func = !mesh.userData.player || ( typeof mesh.userData.player.arrayFuncs === "function" ) ? {} :
-				mesh.userData.player.arrayFuncs[mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.seletedIndex(i) : i];
+//				mesh.userData.player.arrayFuncs[mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.seletedIndex(i) : i];
+				mesh.userData.player.arrayFuncs[mesh.userData.myObject.guiPoints.seletedIndex(i)];
 			if ( !func.cameraTarget )
 				func.cameraTarget = { boLook: false };
 			setCameraTarget( func.cameraTarget );

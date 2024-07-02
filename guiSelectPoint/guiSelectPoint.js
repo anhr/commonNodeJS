@@ -321,8 +321,11 @@ class GuiSelectPoint {
 				mesh.userData.player.arrayFuncs
 			) {
 
+/*				
 				const selectedPoint = mesh.userData.player.arrayFuncs[mesh.userData.myObject && mesh.userData.myObject.guiPoints ?
 					mesh.userData.myObject.guiPoints.seletedIndex(selectedPointIndex) : selectedPointIndex]
+*/
+				const selectedPoint = mesh.userData.player.arrayFuncs[mesh.userData.myObject.guiPoints.seletedIndex(selectedPointIndex)];
 				if(
 					selectedPoint &&
 					selectedPoint.controllers
@@ -375,7 +378,8 @@ class GuiSelectPoint {
 			if (player && player.arrayFuncs) {
 
 				const mesh = getMesh();
-				funcFolder.setFunction(player.arrayFuncs[mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.seletedIndex(intersectionSelected.index) : intersectionSelected.index]);
+//				funcFolder.setFunction(player.arrayFuncs[mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.seletedIndex(intersectionSelected.index) : intersectionSelected.index]);
+				funcFolder.setFunction(player.arrayFuncs[mesh.userData.myObject.guiPoints.seletedIndex(intersectionSelected.index)]);
 				boDisplayFuncFolder = 'block';
 
 			}
@@ -738,6 +742,27 @@ class GuiSelectPoint {
 				return;
 
 			}
+
+			mesh.userData.myObject ||= {};
+			mesh.userData.myObject.guiPoints ||= {
+
+				seletedIndex: (guiIndexStr) => { return guiIndexStr; },
+				create: (fPoints, cPoints, count) => {
+
+					for ( var iPosition = mesh.geometry.drawRange.start; iPosition < count; iPosition++ ) {
+		
+						const opt = document.createElement( 'option' ),
+							name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
+						opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
+						opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
+						cPoints.__select.appendChild( opt );
+		
+					}
+					
+				}
+
+				
+			};
 
 			if ( !f3DObjects ) this.add();
 			f3DObjects.domElement.style.display = 'block';
@@ -1134,6 +1159,8 @@ class GuiSelectPoint {
 					 :
 					 //геометрия индексирована. mesh.geometry.drawRange.count указывает на количество индексов, которые нужно рисовать
 					 mesh.geometry.attributes.position.count;//По умолчанию все вершины видно
+			mesh.userData.myObject.guiPoints.create( fPoints, cPoints, count );
+/*			
 			if (mesh.userData.myObject && mesh.userData.myObject.guiPoints) mesh.userData.myObject.guiPoints.create( fPoints, cPoints );
 			else for ( var iPosition = mesh.geometry.drawRange.start; iPosition < count; iPosition++ ) {
 
@@ -1144,6 +1171,7 @@ class GuiSelectPoint {
 				cPoints.__select.appendChild( opt );
 
 			}
+*/			
 
 		}
 
