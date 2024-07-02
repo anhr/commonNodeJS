@@ -344,7 +344,7 @@ class MyObject {
 	get defaultColor() { return 'white'; }
 	get isOpacity() {
 
-		if (this.bufferGeometry.attributes.color.itemSize > 3) {
+		if (this.bufferGeometry.attributes.color && (this.bufferGeometry.attributes.color.itemSize > 3)) {
 			
 			if (!this.object3D.material.transparent) console.error(sMyObject + '.isOpacity: invalid this.object3D.material.transparent = ' + this.object3D.material.transparent);
 			return true;

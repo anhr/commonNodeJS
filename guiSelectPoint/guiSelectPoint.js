@@ -403,8 +403,12 @@ class GuiSelectPoint {
 			setValue(cY, positionLocal.y);
 			setValue(cZ, positionLocal.z);
 
+/*			
 			const myObject = intersectionSelected.object.userData.myObject;
 			if (intersectionSelected.object.userData.gui) intersectionSelected.object.userData.gui.setValues(intersectionSelected.index, myObject? myObject.guiPoints.timeAngles : undefined);
+*/			
+			if (intersectionSelected.object.userData.gui)
+				intersectionSelected.object.userData.gui.setValues(intersectionSelected.index, intersectionSelected.object.userData.myObject.guiPoints.timeAngles);
 
 			const position = _this.getObjectPosition(intersectionSelected.object, intersectionSelected.index);
 			setValue(cWorld.x, position.x);
@@ -743,7 +747,12 @@ class GuiSelectPoint {
 
 			}
 
-			mesh.userData.myObject ||= {};
+			mesh.userData.myObject ||= {
+
+				verticeColor: () => {},
+				verticeOpacity: () => {},
+				
+			};
 			mesh.userData.myObject.guiPoints ||= {
 
 				seletedIndex: (guiIndexStr) => { return guiIndexStr; },
@@ -759,8 +768,9 @@ class GuiSelectPoint {
 		
 					}
 					
-				}
-
+				},
+				positionOffset: 0,
+				getValue: (cPoints) => { return cPoints.__select.selectedOptions[0].index - 1; },
 				
 			};
 
@@ -830,7 +840,8 @@ class GuiSelectPoint {
 			
 			const mesh = getMesh();
 			return getObjectPosition( object,
-				(mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + index );
+				mesh.userData.myObject.guiPoints.positionOffset + index);
+//				(mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + index );
 			
 		}
 		/**
@@ -959,7 +970,8 @@ class GuiSelectPoint {
 			const index = cPoints.__select.selectedOptions[0].index;
 			return index - 1;
 */
-			return mesh.userData.myObject && mesh.userData.myObject.guiPoints ? cPoints.getValue() : cPoints.__select.selectedOptions[0].index - 1;
+//			return mesh.userData.myObject && mesh.userData.myObject.guiPoints ? cPoints.getValue() : cPoints.__select.selectedOptions[0].index - 1;
+			return mesh.userData.myObject.guiPoints.getValue(cPoints);
 
 		}
 		function getMesh() {
@@ -1536,7 +1548,8 @@ class GuiSelectPoint {
 				}
 				if ( ( options.axesHelper !== false ) && ( options.axesHelper !== undefined ) )
 					options.axesHelper.exposePosition( getObjectPosition(
-						mesh, ( ( pointId != -1 ) && mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0 ) + pointId
+//						mesh, ((pointId != -1) && mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + pointId
+						mesh, ((pointId != -1) ? mesh.userData.myObject.guiPoints.positionOffset : 0) + pointId
 					) );
 				displayPointControllers( display );
 				if ( !mesh || !mesh.userData.gui || !mesh.userData.gui.reset) mesh = oldMesh;
@@ -1891,11 +1904,12 @@ class GuiSelectPoint {
 
 								if ( isReadOnlyController( controller ) ) return;
 								
-								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName),
-									myObject = points.userData.myObject, guiPoints = myObject ? myObject.guiPoints : undefined;
+								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName);
+//									myObject = points.userData.myObject, guiPoints = myObject ? myObject.guiPoints : undefined;
 
 								points.geometry.attributes.position.array[
-									axesId + ((guiPoints ? guiPoints.positionOffset : 0) + intersection.index) *
+//									axesId + ((guiPoints ? guiPoints.positionOffset : 0) + intersection.index) *
+									axesId + points.userData.myObject.guiPoints.positionOffset + intersection.index *
 									points.geometry.attributes.position.itemSize
 								] = value;
 								points.geometry.attributes.position.needsUpdate = true;
