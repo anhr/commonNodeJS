@@ -1544,6 +1544,7 @@ class HyperSphere extends MyObject {
 										const cAngle = fAngles.add({ angle: 0, }, 'angle', range.min, range.max, 2 * π / 360).onChange((angle) => {
 
 											angles[aAngleControls.verticeId][i] = angle;
+											_this.setPositionAttributeFromPoint(aAngleControls.verticeId);
 											_this.update(aAngleControls.verticeId, i);
 
 										});
