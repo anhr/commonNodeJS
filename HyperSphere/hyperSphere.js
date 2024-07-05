@@ -1538,17 +1538,21 @@ class HyperSphere extends MyObject {
 
 									const fAngles = fParent.addFolder(lang.angles);
 									dat.folderNameAndTitle(fAngles, lang.angles, lang.anglesTitle);
-									for (let i = 0; i < (_this.dimension - 1); i++) {
+									for (let angleId = 0; angleId < (_this.dimension - 1); angleId++) {
 
-										const range = angles.ranges[i];
+										const range = angles.ranges[angleId];
 										const cAngle = fAngles.add({ angle: 0, }, 'angle', range.min, range.max, 2 * π / 360).onChange((angle) => {
 
-											angles[aAngleControls.verticeId][i] = angle;
+											_this.object().userData.myObject.guiPoints.onChangeAngle(aAngleControls.verticeId, angleId, angle);
+//											settings.guiPoints.onChangeAngle(aAngleControls.verticeId, angleId, angle);
+/*											
+											angles[aAngleControls.verticeId][angleId] = angle;
 											_this.setPositionAttributeFromPoint(aAngleControls.verticeId);
-											_this.update(aAngleControls.verticeId, i);
+*/											
+											_this.update(aAngleControls.verticeId, angleId);
 
 										});
-										const name = (i) => {
+										const name = (angleId) => {
 
 											//Localization
 
@@ -1570,10 +1574,10 @@ class HyperSphere extends MyObject {
 													break;
 
 											}
-											return lang[i + 4 - _this.dimension];
+											return lang[angleId + 4 - _this.dimension];
 
 										}
-										dat.controllerNameAndTitle(cAngle, name(i));
+										dat.controllerNameAndTitle(cAngle, name(angleId));
 
 										aAngleControls.push(cAngle);
 

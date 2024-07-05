@@ -771,6 +771,16 @@ class GuiSelectPoint {
 				},
 				positionOffset: 0,
 				getValue: (cPoints) => { return cPoints.__select.selectedOptions[0].index - 1; },
+				onChangeAngle: (verticeId, angleId, angle) => {
+
+/*					
+					const verticeAngles = playerAngles[playerIndex][verticeId];
+					if (verticeAngles[angleId] === angle) return;
+					verticeAngles[angleId] = angle;
+					_this.hyperSphere.setPositionAttributeFromPoint(verticeId, undefined, playerIndex);
+*/					
+					
+				}
 				
 			};
 
