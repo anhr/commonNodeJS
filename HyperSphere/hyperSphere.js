@@ -531,7 +531,8 @@ class HyperSphere extends MyObject {
 			}
 
 		});
-		const angles = settings.object.geometry.angles;
+		let angles = settings.object.geometry.angles;
+		Object.defineProperty(this, "angles", { set (value) { angles = value; } });		
 
 		//Angles range
 		angles.ranges = [];
@@ -1545,6 +1546,7 @@ class HyperSphere extends MyObject {
 
 //											_this.object().userData.myObject.guiPoints.onChangeAngle(aAngleControls.verticeId, angleId, angle);
 //											settings.guiPoints.onChangeAngle(aAngleControls.verticeId, angleId, angle);
+const ttt = angles[0];
 											const guiPoints = _this.object().userData.myObject.guiPoints,
 												verticeAngles = (guiPoints.timeAngles || angles)[aAngleControls.verticeId];
 											if (verticeAngles[angleId] === angle) return;
