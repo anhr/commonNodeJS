@@ -1543,12 +1543,18 @@ class HyperSphere extends MyObject {
 										const range = angles.ranges[angleId];
 										const cAngle = fAngles.add({ angle: 0, }, 'angle', range.min, range.max, 2 * π / 360).onChange((angle) => {
 
-											_this.object().userData.myObject.guiPoints.onChangeAngle(aAngleControls.verticeId, angleId, angle);
+//											_this.object().userData.myObject.guiPoints.onChangeAngle(aAngleControls.verticeId, angleId, angle);
 //											settings.guiPoints.onChangeAngle(aAngleControls.verticeId, angleId, angle);
+											const guiPoints = _this.object().userData.myObject.guiPoints,
+												verticeAngles = (guiPoints.timeAngles || angles)[aAngleControls.verticeId];
+											if (verticeAngles[angleId] === angle) return;
+											verticeAngles[angleId] = angle;
+											_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.playerIndex);
 /*											
 											angles[aAngleControls.verticeId][angleId] = angle;
 											_this.setPositionAttributeFromPoint(aAngleControls.verticeId);
 */											
+											
 											_this.update(aAngleControls.verticeId, angleId);
 
 										});
