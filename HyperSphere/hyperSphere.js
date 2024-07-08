@@ -531,46 +531,50 @@ class HyperSphere extends MyObject {
 			}
 
 		});
-		let angles = settings.object.geometry.angles;
-		Object.defineProperty(this, "angles", { set (value) { angles = value; } });		
-
-		//Angles range
-		angles.ranges = [];
-		for (let angleId = 0; angleId < this.dimension - 1; angleId++) {
-
-			const range = {}
-			switch (this.dimension - 2 - angleId) {
-
-				case 0:
-					range.angleName = 'Longitude';
-					range.min = - π;
-					range.max = π;
-					break;
-				case 1:
-					range.angleName = 'Latitude';
-					range.min = 0 + this.rotateLatitude;//- π / 2;
-					range.max = π + this.rotateLatitude;//π / 2;
-					break;
-				case 2:
-					range.angleName = this.altitudeRange.angleName;//'Altitude';
-					range.min = this.altitudeRange.min;//0;
-					range.max = this.altitudeRange.max;//π / 2;
-					break;
-				default: console.error(sHyperSphere + ': vertice angles ranges. Invalid angleId = ' + angleId);
-
+		{//hide angles
+			
+			const angles = settings.object.geometry.angles;
+	//		Object.defineProperty(this, "angles", { set (value) { angles = value; } });		
+	
+			//Angles range
+			angles.ranges = [];
+			for (let angleId = 0; angleId < this.dimension - 1; angleId++) {
+	
+				const range = {}
+				switch (this.dimension - 2 - angleId) {
+	
+					case 0:
+						range.angleName = 'Longitude';
+						range.min = - π;
+						range.max = π;
+						break;
+					case 1:
+						range.angleName = 'Latitude';
+						range.min = 0 + this.rotateLatitude;//- π / 2;
+						range.max = π + this.rotateLatitude;//π / 2;
+						break;
+					case 2:
+						range.angleName = this.altitudeRange.angleName;//'Altitude';
+						range.min = this.altitudeRange.min;//0;
+						range.max = this.altitudeRange.max;//π / 2;
+						break;
+					default: console.error(sHyperSphere + ': vertice angles ranges. Invalid angleId = ' + angleId);
+	
+				}
+				angles.ranges.push(range);
+	
 			}
-			angles.ranges.push(range);
+	
+			//angles[0][0] = 10;//error hyperSphere.js:548 HyperSphere: Set angle[0] = 10 of the vertice 0 is out of range from -1.5707963267948966 to 1.5707963267948966
+			if (angles.count != undefined)
+				for (let i = angles.length; i < angles.count; i++) angles.pushRandomAngle();
 
 		}
-
-		//angles[0][0] = 10;//error hyperSphere.js:548 HyperSphere: Set angle[0] = 10 of the vertice 0 is out of range from -1.5707963267948966 to 1.5707963267948966
-		if (angles.count != undefined)
-			for (let i = angles.length; i < angles.count; i++) angles.pushRandomAngle();
 		settings.object.geometry.position = new Proxy(settings.object.geometry.position, {
 
 			get: (target, name) => {
 
-				const _position = angles;
+				const _position = settings.object.geometry.angles;
 				const i = parseInt(name);
 				if (!isNaN(i)) {
 
@@ -586,7 +590,8 @@ class HyperSphere extends MyObject {
 
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
-							const r = settings.object.geometry.playerAngles ? settings.object.geometry.playerAngles[0].player.t : this.oldR != undefined ? this.oldR : classSettings.r;
+//							const r = settings.object.geometry.playerAngles ? settings.object.geometry.playerAngles[0].player.t : this.oldR != undefined ? this.oldR : classSettings.r;
+							const r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.t : this.oldR != undefined ? this.oldR : classSettings.r;
 							sum = Math.sqrt(sum);
 							if (Math.abs(sum - r) > 9.5e-8)
 								console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
@@ -853,7 +858,7 @@ class HyperSphere extends MyObject {
 							for (let angleId = 0; angleId < verticeAngles.length; angleId++) {
 
 								const angle = verticeAngles[angleId];
-								const range = angles.ranges[angleId];
+								const range = settings.object.geometry.angles.ranges[angleId];
 								if ((angle < range.min) || (angle > range.max)) {
 									
 									console.error(sHyperSphere + ': ' + range.angleName + ' angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
@@ -881,7 +886,7 @@ class HyperSphere extends MyObject {
 			//set settings.object.geometry.position
 			set: (target, name, value) => {
 
-				const _position = angles;
+				const _position = settings.object.geometry.angles;
 				const i = parseInt(name);
 				if (!isNaN(i)) {
 
@@ -1004,7 +1009,7 @@ class HyperSphere extends MyObject {
 		
 		}
 		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
-		this.setPositionAttributeFromPoints(angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
+		this.setPositionAttributeFromPoints(settings.object.geometry.angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
 		if (!(settings.object.geometry.indices instanceof Array)) {
@@ -1353,7 +1358,7 @@ class HyperSphere extends MyObject {
 								//пользователь выбрал вершину
 
 								anglesDefault.length = 0;
-								if (!anglesCur) anglesCur = angles;
+								if (!anglesCur) anglesCur = settings.object.geometry.angles;
 								const verticeAngles = anglesCur[verticeId];
 
 								for (let i = (aAngleControls.cEdges.__select.length - 1); i > 0; i--)
@@ -1541,8 +1546,9 @@ class HyperSphere extends MyObject {
 									dat.folderNameAndTitle(fAngles, lang.angles, lang.anglesTitle);
 									for (let angleId = 0; angleId < (_this.dimension - 1); angleId++) {
 
-										const range = angles.ranges[angleId];
-										const cAngle = fAngles.add({ angle: 0, }, 'angle', range.min, range.max, 2 * π / 360).onChange((angle) => {
+										const angles = settings.object.geometry.angles,
+											range = angles.ranges[angleId],
+											cAngle = fAngles.add({ angle: 0, }, 'angle', range.min, range.max, 2 * π / 360).onChange((angle) => {
 
 //											_this.object().userData.myObject.guiPoints.onChangeAngle(aAngleControls.verticeId, angleId, angle);
 //											settings.guiPoints.onChangeAngle(aAngleControls.verticeId, angleId, angle);
@@ -2634,7 +2640,7 @@ const ttt = angles[0];
 				{ settings: { offset: 1, }, min: 1, max: 1000, step: 1, getLanguageCode: options.getLanguageCode }));
 
 			//Vertices count
-			const cVerticesCount = dat.controllerZeroStep(fVertices, angles, 'guiLength');
+			const cVerticesCount = dat.controllerZeroStep(fVertices, settings.object.geometry.angles, 'guiLength');
 			dat.controllerNameAndTitle(cVerticesCount, lang.verticesCount, lang.verticesCountTitle);
 
 			//vertice edges
