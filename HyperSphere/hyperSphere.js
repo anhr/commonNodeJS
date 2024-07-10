@@ -340,6 +340,7 @@ class HyperSphere extends MyObject {
 
 		}
 		settings.object.geometry.angles = settings.object.geometry.angles || this.defaultAngles();
+/*		
 		{//hide geometryAngles
 
 			const geometryAngles = settings.object.geometry.angles;
@@ -352,7 +353,18 @@ class HyperSphere extends MyObject {
 			}
 
 		}
-
+*/		
+		const anglesObject2Array = () => {
+			
+			const geometryAngles = settings.object.geometry.angles;
+			if (geometryAngles instanceof Array) return;
+			const angles = [];
+			Object.keys(geometryAngles).forEach((key) => angles[key] = geometryAngles[key]);
+			settings.object.geometry.angles = angles;
+			
+		}
+		(classSettings.anglesObject2Array || anglesObject2Array)();
+		
 		settings.object.geometry.angles = new Proxy(settings.object.geometry.angles || this.defaultAngles(), {
 
 			get: (angles, name) => {

@@ -134,10 +134,11 @@ class Player {
 
 		/**
 		 * get time
+		 * @param {number} [playerIndex] Index of the time. Default is time index of the selected scene.
 		 */
-		this.getTime = function () {
+		this.getTime = function (playerIndex) {
 
-			const playerOptions = options.playerOptions, t = playerOptions.min + selectSceneIndex * playerOptions.dt;
+			const playerOptions = options.playerOptions, t = playerOptions.min + (playerIndex != undefined ? playerIndex : selectSceneIndex) * playerOptions.dt;
 			if ( isNaN( t ) ) console.error( 'Player.getTime(): t = ' + t );
 			if ( ( playerOptions.max !== null ) && ( t > playerOptions.max ) )
 				console.error( 'Player.getTime(): t = ' + t + ' playerOptions.max = ' + playerOptions.max );
@@ -1766,24 +1767,12 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 		if ( t === undefined )
 			console.error( 'setPosition: t = ' + t );
 
+/*
 		if ( mesh.userData.myObject && mesh.userData.myObject.isSetPosition ) {
 
-/*Позиция точек уже вычислена			
-			arrayFuncs.forEach( (funcs, i) => {
-				
-				const vertice = {};
-				function setPosition( axisName ) { vertice[axisName] = Player.execFunc( funcs, axisName, t, options ); }
-				setPosition( 'x' );
-				setPosition( 'y' );
-				setPosition( 'z' );
-				setPosition( 'w' );
-				mesh.userData.myObject.setPositionAttributeFromPoint(i, vertice);
-
-			} );
-			return;
-*/			
 			
 		}
+*/
 		var min, max;
 		if ( options && ( options.scales.w !== undefined ) ) {
 
