@@ -134,7 +134,7 @@ class Player {
 
 		/**
 		 * get time
-		 * @param {number} [playerIndex] Index of the time. Default is time index of the selected scene.
+		 * @param {number} [playerIndex] Index of the time. The default is the time index of the selected scene.
 		 */
 		this.getTime = function (playerIndex) {
 
