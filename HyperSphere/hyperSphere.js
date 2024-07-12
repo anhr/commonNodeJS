@@ -494,6 +494,23 @@ class HyperSphere extends MyObject {
 					}
 					case 'guiLength': return angles.length;
 //					case 'forEach': return (item) => { for (let verticeId = 0; verticeId < angles.length; verticeId++) item(settings.object.geometry.angles[verticeId], verticeId); }
+					case 'player': return this.anglesPlayer();
+/*						
+						return new Proxy({}, {
+						
+						get: (player, name) => {
+
+							switch (name) {
+
+								case 't': return classSettings.settings.options.player.getTime();//playerIndex);
+									
+							}
+							return player[name];
+							
+						},
+						
+					});
+*/						
 
 				}
 				return angles[name];
@@ -543,6 +560,24 @@ class HyperSphere extends MyObject {
 			}
 
 		});
+		this.anglesPlayer = (playerIndex) => {
+
+			return new Proxy({}, {
+						
+						get: (player, name) => {
+
+							switch (name) {
+
+								case 't': return classSettings.settings.options.player.getTime(playerIndex);
+									
+							}
+							return player[name];
+							
+						},
+						
+					});
+			
+		}
 		{//hide angles
 			
 			const angles = settings.object.geometry.angles;
@@ -602,8 +637,8 @@ class HyperSphere extends MyObject {
 
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
-//							const r = settings.object.geometry.playerAngles ? settings.object.geometry.playerAngles[0].player.t : this.oldR != undefined ? this.oldR : classSettings.r;
-							const r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.t : this.oldR != undefined ? this.oldR : classSettings.r;
+//							const r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.t : this.oldR != undefined ? this.oldR : classSettings.r;
+							const r = settings.object.geometry.angles.player.t;
 							sum = Math.sqrt(sum);
 							if (Math.abs(sum - r) > 9.5e-8)
 								console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
