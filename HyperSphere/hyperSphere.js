@@ -929,9 +929,9 @@ class HyperSphere extends MyObject {
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (anglesId, playerIndex) => {
 			
-			const geometry = this.classSettings.settings.object.geometry,
+			const geometry = this.classSettings.settings.object.geometry, playerAngles = geometry.playerAngles,
 				angles = typeof anglesId === "number" ?
-					playerIndex != undefined ? geometry.playerAngles[playerIndex][anglesId] :
+					((playerIndex != undefined) && playerAngles) ? playerAngles[playerIndex][anglesId] :
 						geometry.angles[anglesId] :
 					anglesId,
 				a2v = (angles) => {
@@ -991,8 +991,9 @@ class HyperSphere extends MyObject {
 				angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHyperSphere + ': Set vertices[' + anglesId + '] failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
 				
 			}
-	
-			vertice.forEach((axis, i) => vertice[i] *= this.classSettings.r);
+			const t = this.classSettings.settings.options.player.getTime(playerIndex);
+			vertice.forEach((axis, i) => vertice[i] *= t);
+//			vertice.forEach((axis, i) => vertice[i] *= this.classSettings.r);
 			const proxyVertice = new Proxy(vertice, {
 
 				get: (vertice, name) => {
