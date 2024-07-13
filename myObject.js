@@ -115,7 +115,7 @@ class MyObject {
 //							positionOffset = (settings.object.geometry.playerAngles != undefined ? playerIndex * settings.object.geometry.playerAngles[0].length * position.itemSize : 0) + positionId * position.itemSize,
 							positionOffset = (playerIndex * settings.object.geometry.angles.length + positionId) * position.itemSize,
 							array = position.array;
-						const positionItem = new Proxy([], {
+						const vertice = new Proxy([], {
 
 							get: (vertice, name) => {
 								
@@ -182,7 +182,7 @@ class MyObject {
 							}
 							
 						});
-						return positionItem;
+						return vertice;
 	
 					}
 					switch (name) {

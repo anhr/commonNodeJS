@@ -568,6 +568,7 @@ class HyperSphere extends MyObject {
 
 							switch (name) {
 
+								case 'id': return playerIndex;
 								case 't': return classSettings.settings.options.player.getTime(playerIndex);
 									
 							}
@@ -628,7 +629,7 @@ class HyperSphere extends MyObject {
 					if (i > _position.length) console.error(sHyperSphere + ': position get. Invalid index = ' + i + ' position.length = ' + _position.length);
 					else if (i === _position.length)
 						settings.object.geometry.angles.pushRandomAngle();
-					const _vertice = _position[i], playerIndex = 0;
+					const _vertice = _position[i], playerIndex = settings.object.geometry.angles.player.id;
 					const angle2Vertice = () => {
 
 						const vertice = _this.angles2Vertice(i, playerIndex);
@@ -2870,7 +2871,7 @@ const ttt = angles[0];
 //			if (playerIndex === undefined) playerIndex = this.classSettings.playerIndex;
 			const userData = this.classSettings.settings.bufferGeometry.userData, playerIndexCur = userData.playerIndex;
 			if (playerIndex === undefined) playerIndex = playerIndexCur;
-			if (playerIndex) anglesId += playerIndex * this.bufferGeometry.attributes.position.itemSize * this.classSettings.settings.object.geometry.playerAngles[0].length;
+//			if (playerIndex) anglesId += playerIndex * this.bufferGeometry.attributes.position.itemSize * this.classSettings.settings.object.geometry.playerAngles[0].length;
 			userData.playerIndex = playerIndex;
 			const vertice = this.bufferGeometry.userData.position[anglesId];
 			userData.playerIndex = playerIndexCur;
