@@ -77,7 +77,18 @@ class MyObject {
 	
 		const THREE = three.THREE;
 
-		if (!settings.bufferGeometry) settings.bufferGeometry = new THREE.BufferGeometry();
+		if (!settings.bufferGeometry) {
+			
+			settings.bufferGeometry = new THREE.BufferGeometry();
+			Object.defineProperty(settings.bufferGeometry.userData, 'playerIndex', {
+				
+				get: () => { return 0; },
+				set: (playerIndexNew) => {  },//ignore playerIndexNew
+				configurable: true,//https://stackoverflow.com/a/25518045/5175935
+				
+			});
+			
+		}
 		this.bufferGeometry = settings.bufferGeometry;
 
 		if (vertices)
@@ -115,7 +126,7 @@ class MyObject {
 //							positionOffset = (settings.object.geometry.playerAngles != undefined ? playerIndex * settings.object.geometry.playerAngles[0].length * position.itemSize : 0) + positionId * position.itemSize,
 							positionOffset = (playerIndex * settings.object.geometry.angles.length + positionId) * position.itemSize,
 							array = position.array;
-						const vertice = new Proxy([], {
+						const verticeProxy = new Proxy([], {
 
 							get: (vertice, name) => {
 								
@@ -142,7 +153,7 @@ class MyObject {
 									case 'toJSON': return (item) => {
 
 										let res = '[';
-										positionItem.forEach(axis => { res += axis + ', ' })
+										vertice.forEach(axis => { res += axis + ', ' })
 										return res.substring(0, res.length-2) + ']';
 											
 									}
@@ -159,7 +170,7 @@ class MyObject {
 								}
 								if (_this.getPositionItem) {
 
-									const res = _this.getPositionItem(positionItem, name);
+									const res = _this.getPositionItem(verticeProxy, name);
 									if (res != undefined) return res;
 
 								}
@@ -182,7 +193,7 @@ class MyObject {
 							}
 							
 						});
-						return vertice;
+						return verticeProxy;
 	
 					}
 					switch (name) {

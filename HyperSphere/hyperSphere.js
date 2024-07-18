@@ -247,6 +247,7 @@ class HyperSphere extends MyObject {
 					switch (name) {
 	
 						case 't':
+							classSettings.settings.bufferGeometry.userData.playerIndex = userData.index;
 							if (classSettings.onSelectScene) classSettings.onSelectScene(this, userData.index, value);//время равно радиусу вселенной
 							break;
 							
@@ -564,19 +565,20 @@ class HyperSphere extends MyObject {
 
 			return new Proxy({}, {
 						
-						get: (player, name) => {
+				get: (player, name) => {
 
-							switch (name) {
+					switch (name) {
 
-								case 'id': return playerIndex;
-								case 't': return classSettings.settings.options.player.getTime(playerIndex);
-									
-							}
-							return player[name];
+//						case 'id': return playerIndex != undefined ? playerIndex : classSettings.settings.bufferGeometry.userData.playerIndex;
+						case 'id': return playerIndex != undefined ? playerIndex : classSettings.settings.options.player.getTimeId();
+						case 't': return classSettings.settings.options.player.getTime(playerIndex);
 							
-						},
-						
-					});
+					}
+					return player[name];
+					
+				},
+				
+			});
 			
 		}
 		{//hide angles
@@ -636,11 +638,17 @@ class HyperSphere extends MyObject {
 						//Эта проверка не проходит для HyperSphere3D
 						if (classSettings.debug) {
 
+/*							
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
+							sum = Math.sqrt(sum);
 //							const r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.t : this.oldR != undefined ? this.oldR : classSettings.r;
 							const r = settings.object.geometry.angles.player.t;
-							sum = Math.sqrt(sum);
+*/							
+							const sum = vertice.radius,
+//								r = this.oldR != undefined ? this.oldR : settings.object.geometry.angles.player.t;
+								r = this.oldR != undefined ? this.oldR : classSettings.r;
+//								r = settings.object.geometry.angles.player.t;
 							if (Math.abs(sum - r) > 9.5e-8)
 								console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
 
@@ -734,7 +742,13 @@ class HyperSphere extends MyObject {
 								case 'y': return vertice[1];
 								case 'z': return vertice[2];
 								case 'w': return vertice[3];//для совместимости с Player.getColors. Туда попадает когда хочу вывести на холст точки вместо ребер и использую для этого MyPoints вместо ND
+								case 'toJSON': return (item) => {
 
+									let res = '[';
+									vertice.forEach(axis => { res += axis + ', ' })
+									return res.substring(0, res.length-2) + ']';
+										
+								}
 
 							}
 							if (!isNaN(parseInt(name))) return vertice[name] === undefined ? 0 : vertice[name];
@@ -1181,13 +1195,13 @@ class HyperSphere extends MyObject {
 		});
 		indices.edges.setVertices();
 
-		this.getPositionItem = (position, name) => {
+		this.getPositionItem = (vertice, name) => {
 
 			switch (name) {
 
 				case 'radius': 
 					let r = 0;
-					position.forEach(axis => r += axis * axis);
+					vertice.forEach(axis => r += axis * axis);
 					return Math.sqrt(r);
 
 			}
@@ -2792,7 +2806,7 @@ const ttt = angles[0];
 				switch (log){
 					case 0://vertices log
 						const vertice = position[i];
-						console.log('vertice[' + i + '] = ' + JSON.stringify(vertice) + ' angles = ' + JSON.stringify(vertice.angles) + ' edges = ' + JSON.stringify(vertice.edges));
+						console.log('vertice[' + i + '] = ' + JSON.stringify(vertice) + ' angles = ' + JSON.stringify(vertice.angles) + ' edges = ' + JSON.stringify(vertice.edges) + ' r = ' + vertice.radius);
 						break;
 					case 1://edges log
 						const edge = edges[i];

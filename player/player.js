@@ -133,6 +133,11 @@ class Player {
 		const _this = this;
 
 		/**
+		 * get time id
+		 */
+		this.getTimeId = function () { return selectSceneIndex; }
+		
+		/**
 		 * get time
 		 * @param {number} [playerIndex] Index of the time. The default is the time index of the selected scene.
 		 */
