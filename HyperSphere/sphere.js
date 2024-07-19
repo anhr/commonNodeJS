@@ -29,11 +29,7 @@ class Sphere extends Circle {
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
 	 **/
-	constructor(options, classSettings) {
-
-		super(options, classSettings);
-
-	}
+	constructor(options, classSettings) { super(options, classSettings); }
 
 	//base methods
 

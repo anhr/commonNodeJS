@@ -270,6 +270,8 @@ class HyperSphere extends MyObject {
 		if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
 		if (classSettings.r === undefined) classSettings.r = 1;
+		//Нельзя менять радиус гиперсферы
+		Object.defineProperty( classSettings, "r", { writable: false, });//classSettings.r freeze. https://stackoverflow.com/a/10843598/5175935
 
 		classSettings.rRange = classSettings.rRange || {};
 		if (classSettings.rRange.min === undefined) classSettings.rRange.min = -1;
@@ -563,7 +565,7 @@ class HyperSphere extends MyObject {
 		});
 		this.anglesPlayer = (playerIndex) => {
 
-			return new Proxy({}, {
+			const playerProxy = new Proxy({}, {
 						
 				get: (player, name) => {
 
@@ -572,6 +574,7 @@ class HyperSphere extends MyObject {
 //						case 'id': return playerIndex != undefined ? playerIndex : classSettings.settings.bufferGeometry.userData.playerIndex;
 						case 'id': return playerIndex != undefined ? playerIndex : classSettings.settings.options.player.getTimeId();
 						case 't': return classSettings.settings.options.player.getTime(playerIndex);
+						case 'r': return playerProxy.t * classSettings.r;
 							
 					}
 					return player[name];
@@ -579,6 +582,7 @@ class HyperSphere extends MyObject {
 				},
 				
 			});
+			return playerProxy;
 			
 		}
 		{//hide angles
@@ -980,8 +984,11 @@ class HyperSphere extends MyObject {
 		this.getPoint = (anglesId, playerIndex) => {
 			
 			const geometry = this.classSettings.settings.object.geometry, playerAngles = geometry.playerAngles,
+				timeAngles = playerAngles ? playerAngles[playerIndex] : undefined,
+				player = timeAngles ? timeAngles.player : undefined,
+				r = player ? player.r : classSettings.r,
 				angles = typeof anglesId === "number" ?
-					((playerIndex != undefined) && playerAngles) ? playerAngles[playerIndex][anglesId] :
+					((playerIndex != undefined) && playerAngles) ? timeAngles[anglesId] :
 						geometry.angles[anglesId] :
 					anglesId,
 				a2v = (angles) => {
@@ -1001,7 +1008,8 @@ class HyperSphere extends MyObject {
 				
 				for (let index = 0; index < n; index++) {
 	
-					let axis = 1.0;
+//					let axis = 1.0;
+					let axis = r;
 					const i = this.axes.indices[index],
 						mulCount = //количество множителей для данной оси
 						i < (n - 1) ?
@@ -1041,9 +1049,11 @@ class HyperSphere extends MyObject {
 				angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHyperSphere + ': Set vertices[' + anglesId + '] failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
 				
 			}
+/*			
 			const t = this.classSettings.settings.options.player.getTime(playerIndex);
 			vertice.forEach((axis, i) => vertice[i] *= t);
 //			vertice.forEach((axis, i) => vertice[i] *= this.classSettings.r);
+*/
 			const proxyVertice = new Proxy(vertice, {
 
 				get: (vertice, name) => {
