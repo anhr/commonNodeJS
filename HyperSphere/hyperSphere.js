@@ -651,7 +651,7 @@ class HyperSphere extends MyObject {
 */							
 							const sum = vertice.radius,
 //								r = this.oldR != undefined ? this.oldR : settings.object.geometry.angles.player.t;
-								r = this.oldR != undefined ? this.oldR : classSettings.r;
+								r = this.oldR != undefined ? this.oldR : this.timeRadius;//classSettings.r;
 //								r = settings.object.geometry.angles.player.t;
 							if (Math.abs(sum - r) > 9.5e-8)
 								console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
@@ -986,7 +986,7 @@ class HyperSphere extends MyObject {
 			const geometry = this.classSettings.settings.object.geometry, playerAngles = geometry.playerAngles,
 				timeAngles = playerAngles ? playerAngles[playerIndex] : undefined,
 				player = timeAngles ? timeAngles.player : undefined,
-				r = player ? player.r : classSettings.r,
+				r = player ? player.r : this.timeRadius,//classSettings.r * settings.options.player.getTime(),
 				angles = typeof anglesId === "number" ?
 					((playerIndex != undefined) && playerAngles) ? timeAngles[anglesId] :
 						geometry.angles[anglesId] :
@@ -2772,9 +2772,8 @@ const ttt = angles[0];
 
 	}
 
-	
-	
 	get defaultColor() { return 'lime'; }
+	get timeRadius() { return this.classSettings.r * this.classSettings.settings.options.player.getTime(); }
 
 	get verticeEdgesLength() { return this._verticeEdgesLength; }
 	set verticeEdgesLength(length) {
