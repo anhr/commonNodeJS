@@ -635,7 +635,8 @@ class HyperSphere extends MyObject {
 					if (i > _position.length) console.error(sHyperSphere + ': position get. Invalid index = ' + i + ' position.length = ' + _position.length);
 					else if (i === _position.length)
 						settings.object.geometry.angles.pushRandomAngle();
-					const _vertice = _position[i], playerIndex = settings.object.geometry.angles.player.id;
+					const _vertice = _position[i], anglesPlayer = settings.object.geometry.angles.player,
+						playerIndex = anglesPlayer.id, r = anglesPlayer.r;
 					const angle2Vertice = () => {
 
 						const vertice = _this.angles2Vertice(i, playerIndex);
@@ -649,9 +650,10 @@ class HyperSphere extends MyObject {
 //							const r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.t : this.oldR != undefined ? this.oldR : classSettings.r;
 							const r = settings.object.geometry.angles.player.t;
 */							
-							const sum = vertice.radius,
+							const sum = vertice.radius;
 //								r = this.oldR != undefined ? this.oldR : settings.object.geometry.angles.player.t;
-								r = this.oldR != undefined ? this.oldR : this.timeRadius;//classSettings.r;
+//								r = this.oldR != undefined ? this.oldR : this.timeRadius;//classSettings.r;
+//								r = this.oldR != undefined ? this.oldR : classSettings.r * classSettings.settings.options.player.getTime();
 //								r = settings.object.geometry.angles.player.t;
 							if (Math.abs(sum - r) > 9.5e-8)
 								console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
@@ -2334,7 +2336,7 @@ const ttt = angles[0];
 					vertices = playerAngles ? undefined : [],
 //					vertices = [],
 					timestamp = classSettings.debug ? window.performance.now() : undefined,
-					timeAnglesSrc  = playerAngles ? playerAngles[playerIndex - 1] : position.angles,
+//					timeAnglesSrc  = playerAngles ? playerAngles[playerIndex - 1] : position.angles,
 					step = () => {
 
 						progressBar.value = verticeId;
@@ -2409,8 +2411,6 @@ const ttt = angles[0];
 
 								if (classSettings.debug) classSettings.debug.logTimestamp('Play step. ', timestamp);
 
-								this.oldR = undefined;
-
 								//Обновление текущей вершины без обновления холста для экономии времени
 								this.isUpdate = false;//для ускорения
 								if (playerAngles) {
@@ -2440,6 +2440,7 @@ const ttt = angles[0];
 									this.logHyperSphere();
 
 								}
+								else this.oldR = undefined;
 								options.player.endSelect();
 								options.player.continue();
 								return true;
@@ -2773,7 +2774,7 @@ const ttt = angles[0];
 	}
 
 	get defaultColor() { return 'lime'; }
-	get timeRadius() { return this.classSettings.r * this.classSettings.settings.options.player.getTime(); }
+//	get timeRadius() { return this.classSettings.r * this.classSettings.settings.options.player.getTime(); }
 
 	get verticeEdgesLength() { return this._verticeEdgesLength; }
 	set verticeEdgesLength(length) {
@@ -2840,6 +2841,7 @@ const ttt = angles[0];
 						if (i >= edges.length) {
 							
 							progressBar.remove();
+							this.oldR = undefined;
 							if (this.classSettings.debug)
 								this.classSettings.debug.logTimestamp('Geometry log. ');
 							
