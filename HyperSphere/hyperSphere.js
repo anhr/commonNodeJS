@@ -819,7 +819,8 @@ class HyperSphere extends MyObject {
 
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
-												const oppositeVertice = playerPosition ? playerPosition[playerIndex - 1][oppositeAngleId] : position[oppositeAngleId];
+//												const oppositeVertice = playerPosition ? playerPosition[playerIndex - 1][oppositeAngleId] : position[oppositeAngleId];
+												const oppositeVertice = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, playerIndex);
 												oppositeVertice.forEach((axis, i) => {
 
 													if (aSum[i] === undefined) aSum[i] = 0;
@@ -983,6 +984,8 @@ class HyperSphere extends MyObject {
 
 		});
 		const position = settings.object.geometry.position;
+		classSettings.overriddenProperties ||= {};
+		classSettings.overriddenProperties.oppositeVertice ||= (oppositeAngleId) => { return position[oppositeAngleId]; }
 
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (anglesId, playerIndex) => {
