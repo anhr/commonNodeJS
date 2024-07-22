@@ -788,7 +788,8 @@ class HyperSphere extends MyObject {
 					case 'count': return _position.count === undefined ? _position.length : _position.count;
 					case 'forEach': return (item) => {
 
-						const pos = settings.object.geometry.playerPosition ? settings.object.geometry.playerPosition[settings.bufferGeometry.userData.playerIndex] : position;
+//						const pos = settings.object.geometry.playerPosition ? settings.object.geometry.playerPosition[settings.bufferGeometry.userData.playerIndex] : position;
+						const pos = classSettings.overriddenProperties.position;
 						for (let verticeId = 0; verticeId < pos.length; verticeId++) item(pos[verticeId], verticeId);
 					
 					}
@@ -871,6 +872,7 @@ class HyperSphere extends MyObject {
 		const position = settings.object.geometry.position;
 		classSettings.overriddenProperties ||= {};
 		classSettings.overriddenProperties.oppositeVertice ||= (oppositeAngleId) => { return position[oppositeAngleId]; }
+		if (!classSettings.overriddenProperties.position) Object.defineProperty(classSettings.overriddenProperties, 'position', { get: () => { return position; }, });
 
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (anglesId, playerIndex) => {
