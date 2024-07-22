@@ -227,6 +227,8 @@ class HyperSphere extends MyObject {
 	 * parameter <b>playerIndex</b> <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is current time identifier.
 	 * </pre>
 	 * @param {Array} [classSettings.overriddenProperties.position] Returns an array of vertice positions.
+	 * @param {Array} [classSettings.overriddenProperties.position0] Returns an array of vertice positions for the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a>'s start time.
+	 * See <b>settings.options.playerOptions.min</b> of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a>.
 	 **/
 	constructor(options, classSettings = {}) {
 
