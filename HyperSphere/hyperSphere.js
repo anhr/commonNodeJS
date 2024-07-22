@@ -226,6 +226,7 @@ class HyperSphere extends MyObject {
 	 * parameter <b>oppositeAngleId</b> opposite vertice identifier.
 	 * parameter <b>playerIndex</b> <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is current time identifier.
 	 * </pre>
+	 * @param {Array} [classSettings.overriddenProperties.position] Returns an array of vertice positions.
 	 **/
 	constructor(options, classSettings = {}) {
 
