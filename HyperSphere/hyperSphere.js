@@ -224,6 +224,7 @@ class HyperSphere extends MyObject {
 	constructor(options, classSettings = {}) {
 
 		classSettings.settings = classSettings.settings || {};
+		classSettings.settings.options = options;
 		super( classSettings.settings );
 		//this.rotateLatitude = 0;
 		this.rotateLatitude = - π / 2;//Поворачиваем широту на 90 градусов что бы начало координат широты находилось на экваторе;
@@ -287,7 +288,7 @@ class HyperSphere extends MyObject {
 */		
 		classSettings.settings = classSettings.settings || {};
 		const settings = classSettings.settings;
-		settings.options = options;
+//		settings.options = options;
 		settings.object = settings.object || {};
 		settings.object.name = settings.object.name || this.name(options.getLanguageCode);
 
@@ -647,10 +648,11 @@ class HyperSphere extends MyObject {
 							let sum = 0;
 							vertice.forEach(axis => sum += axis * axis);
 							sum = Math.sqrt(sum);
-//							const r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.t : this.oldR != undefined ? this.oldR : classSettings.r;
-							const r = settings.object.geometry.angles.player.t;
 */							
-							const sum = vertice.radius;
+							const sum = vertice.radius,
+//								r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.t : this.oldR != undefined ? this.oldR : classSettings.r;
+								r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.r : classSettings.r;
+//								r = settings.object.geometry.angles.player.t;
 //								r = this.oldR != undefined ? this.oldR : settings.object.geometry.angles.player.t;
 //								r = this.oldR != undefined ? this.oldR : this.timeRadius;//classSettings.r;
 //								r = this.oldR != undefined ? this.oldR : classSettings.r * classSettings.settings.options.player.getTime();
@@ -988,7 +990,8 @@ class HyperSphere extends MyObject {
 			const geometry = this.classSettings.settings.object.geometry, playerAngles = geometry.playerAngles,
 				timeAngles = playerAngles ? playerAngles[playerIndex] : undefined,
 				player = timeAngles ? timeAngles.player : undefined,
-				r = player ? player.r : this.timeRadius,//classSettings.r * settings.options.player.getTime(),
+//				r = player ? player.r : this.timeRadius,
+				r = player ? player.r : classSettings.r,// * settings.options.player.getTime(),
 				angles = typeof anglesId === "number" ?
 					((playerIndex != undefined) && playerAngles) ? timeAngles[anglesId] :
 						geometry.angles[anglesId] :
@@ -2336,68 +2339,14 @@ const ttt = angles[0];
 					vertices = playerAngles ? undefined : [],
 //					vertices = [],
 					timestamp = classSettings.debug ? window.performance.now() : undefined,
-//					timeAnglesSrc  = playerAngles ? playerAngles[playerIndex - 1] : position.angles,
+					timeAnglesSrc  = playerAngles ? playerAngles[playerIndex - 1] : position.angles,
 					step = () => {
 
 						progressBar.value = verticeId;
 						const stepItem = () => {
 
-/*							
-							const middleVertice = (verticeId) => {
-
-//								const o = position.angles[0].oppositeVerticesId;
-//								const vertice = playerAngles ? playerAngles[playerIndex - 1][verticeId] : position.angles[verticeId],
-								const vertice = playerPosition ? playerPosition[playerIndex - 1].angles[verticeId] : position.angles[verticeId],
-									oppositeVerticesId = vertice.oppositeVerticesId;
-								//find middle vertice between opposite vertices
-	
-								//https://wiki5.ru/wiki/Mean_of_circular_quantities#Mean_of_angles Среднее значение углов
-	
-								//массив для хранения сумм декартовых координат противоположных вершин
-								//для 1D гиперсферы это: aSum[0] = x, aSum[1] = y.
-								//для 2D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z.
-								//для 3D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z, aSum[3] = w.
-								const aSum = [];
-	
-								oppositeVerticesId.forEach(oppositeAngleId => {
-	
-									const playerPosition = settings.object.geometry.playerPosition,
-										oppositeVertice = playerPosition ? playerPosition[playerIndex - 1][oppositeAngleId] : position[oppositeAngleId];
-									oppositeVertice.forEach((axis, i) => {
-	
-										if (aSum[i] === undefined) aSum[i] = 0;
-										aSum[i] += axis
-									
-									});
-	
-								});
-	
-								const muddleVertice = _this.vertice2angles(aSum);
-								if (classSettings.debug && classSettings.debug.middleVertice) {
-	
-									console.log('opposite vertices:');
-									oppositeVerticesId.forEach(oppositeVerticeId => {
-	
-										const verticeAngles = position[oppositeVerticeId].angles;
-										console.log('vertice[' + oppositeVerticeId + '] anlges: ' + JSON.stringify(verticeAngles));
-	
-									});
-									console.log('Middle vertice angles: ' + JSON.stringify(muddleVertice));
-	
-								}
-								const geometry = settings.object.geometry;
-								if (geometry.playerAngles) {
-	
-	//												if (!geometry.playerAngles[playerIndex]) geometry.playerAngles[playerIndex] = [];
-									geometry.playerAngles[playerIndex].push(muddleVertice);
-									
-								}
-								return muddleVertice;
-	
-							}
-							const vertice = middleVertice(verticeId);
-*/							
-							const vertice = (playerPosition ?  playerPosition[playerIndex - 1]: position).angles[verticeId].middleVertice(undefined, playerIndex);
+//							const vertice = (playerPosition ?  playerPosition[playerIndex - 1]: position).angles[verticeId].middleVertice(undefined, playerIndex);
+							const vertice = (playerPosition ?  playerPosition[0]: position).angles[verticeId].middleVertice(undefined, playerIndex);
 							if (vertices) {
 								
 								vertices.push(vertice);
