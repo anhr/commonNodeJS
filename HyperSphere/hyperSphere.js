@@ -220,6 +220,12 @@ class HyperSphere extends MyObject {
 	 * @param {Function} [classSettings.continue] Callback function that called after hypersphere edges was created.
 	 * @param {boolean} [classSettings.boRemove] false - do not delete the previous hypersphere while projecting a new hypersphere on scene.
 	 * @param {boolean} [classSettings.boGui] false - do not include hypersphere GUI.
+	 * @param {object} [classSettings.overriddenProperties] Overridden properties. The following properties can be override:
+	 * @param {Function} [classSettings.overriddenProperties.oppositeVertice] Returns the opposite vertice.
+	 * <pre>
+	 * parameter <b>oppositeAngleId</b> opposite vertice identifier.
+	 * parameter <b>playerIndex</b> <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is current time identifier.
+	 * </pre>
 	 **/
 	constructor(options, classSettings = {}) {
 
