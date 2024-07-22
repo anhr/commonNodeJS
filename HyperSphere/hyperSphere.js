@@ -874,6 +874,7 @@ class HyperSphere extends MyObject {
 		classSettings.overriddenProperties ||= {};
 		classSettings.overriddenProperties.oppositeVertice ||= (oppositeAngleId) => { return position[oppositeAngleId]; }
 		if (!classSettings.overriddenProperties.position) Object.defineProperty(classSettings.overriddenProperties, 'position', { get: () => { return position; }, });
+		if (!classSettings.overriddenProperties.position0) Object.defineProperty(classSettings.overriddenProperties, 'position0', { get: () => { return position; }, });
 
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (anglesId, playerIndex) => {
@@ -2201,7 +2202,7 @@ class HyperSphere extends MyObject {
 
 				}
 				const playerAngles = geometry.playerAngles,
-					playerPosition = geometry.playerPosition,
+//					playerPosition = geometry.playerPosition,
 					vertices = playerAngles ? undefined : [],
 					timestamp = classSettings.debug ? window.performance.now() : undefined,
 					step = () => {
@@ -2209,7 +2210,8 @@ class HyperSphere extends MyObject {
 						progressBar.value = verticeId;
 						const stepItem = () => {
 
-							const vertice = (playerPosition ?  playerPosition[0]: position).angles[verticeId].middleVertice(undefined, playerIndex);
+//							const vertice = (playerPosition ?  playerPosition[0]: position).angles[verticeId].middleVertice(undefined, playerIndex);
+							const vertice = classSettings.overriddenProperties.position0.angles[verticeId].middleVertice(undefined, playerIndex);
 							if (vertices) vertices.push(vertice);
 							verticeId += 1;
 							if (verticeId >= position.length) {
