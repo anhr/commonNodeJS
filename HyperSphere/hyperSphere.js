@@ -229,6 +229,11 @@ class HyperSphere extends MyObject {
 	 * @param {Array} [classSettings.overriddenProperties.position] Returns an array of vertice positions.
 	 * @param {Array} [classSettings.overriddenProperties.position0] Returns an array of vertice positions for the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a>'s start time.
 	 * See <b>settings.options.playerOptions.min</b> of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a>.
+	 * @param {Function} [classSettings.overriddenProperties.updateVertices] Update vertices.
+	 * <pre>
+	 * parameter <b>vertices</b> Array of new vertices angles.
+	 * </pre>
+	 * @param {Function} [classSettings.overriddenProperties.vertices] Returns an empty array of vertices.
 	 **/
 	constructor(options, classSettings = {}) {
 
