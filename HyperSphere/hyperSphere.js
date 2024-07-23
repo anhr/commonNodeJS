@@ -877,6 +877,14 @@ class HyperSphere extends MyObject {
 		classSettings.overriddenProperties.oppositeVertice ||= (oppositeAngleId) => { return position[oppositeAngleId]; }
 		if (!classSettings.overriddenProperties.position) Object.defineProperty(classSettings.overriddenProperties, 'position', { get: () => { return position; }, });
 		if (!classSettings.overriddenProperties.position0) Object.defineProperty(classSettings.overriddenProperties, 'position0', { get: () => { return position; }, });
+		classSettings.overriddenProperties.updateVertices ||= (vertices) => {
+
+			if (vertices.length != position.length) console.error(sHyperSphere + ': classSettings.overriddenProperties.updateVertices(). Invalid vertices.length = ' + vertices.length);
+			for (let verticeId = 0; verticeId < position.length; verticeId++)
+				position.angles[verticeId] = vertices[verticeId];
+		
+		}
+		classSettings.overriddenProperties.vertices ||= () => { return []; }
 
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (anglesId, playerIndex) => {
@@ -2203,9 +2211,10 @@ class HyperSphere extends MyObject {
 					});
 
 				}
-				const playerAngles = geometry.playerAngles,
+				const //playerAngles = geometry.playerAngles,
 //					playerPosition = geometry.playerPosition,
-					vertices = playerAngles ? undefined : [],
+//					vertices = playerAngles ? undefined : [],
+					vertices = classSettings.overriddenProperties.vertices(),
 					timestamp = classSettings.debug ? window.performance.now() : undefined,
 					step = () => {
 
@@ -2224,6 +2233,8 @@ class HyperSphere extends MyObject {
 
 								//Обновление текущей вершины без обновления холста для экономии времени
 								this.isUpdate = false;//для ускорения
+								classSettings.overriddenProperties.updateVertices(vertices);
+/*								
 								if (playerAngles) this.bufferGeometry.attributes.position.needsUpdate = true;
 								else {
 
@@ -2231,6 +2242,7 @@ class HyperSphere extends MyObject {
 										position.angles[verticeId] = vertices[verticeId];
 									
 								}
+*/								
 
 								this.isUpdate = true;
 
