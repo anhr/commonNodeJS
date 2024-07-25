@@ -556,7 +556,8 @@ class HyperSphere extends MyObject {
 						const vertice = _this.angles2Vertice(i, playerIndex);
 						if (classSettings.debug) {
 
-							const sum = vertice.radius, r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.r : classSettings.r;
+//							const sum = vertice.radius, r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.r : classSettings.r;
+							const sum = vertice.radius, r = classSettings.overriddenProperties.r();
 							if (Math.abs(sum - r) > 9.5e-8)
 								console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
 
@@ -729,7 +730,7 @@ class HyperSphere extends MyObject {
 
 											});
 
-											const muddleVertice = _this.vertice2angles(aSum);
+											const middleVertice = _this.vertice2angles(aSum);
 											if (classSettings.debug && classSettings.debug.middleVertice) {
 
 												console.log('opposite vertices:');
@@ -739,12 +740,13 @@ class HyperSphere extends MyObject {
 													console.log('vertice[' + oppositeVerticeId + '] anlges: ' + JSON.stringify(verticeAngles));
 
 												});
-												console.log('Middle vertice angles: ' + JSON.stringify(muddleVertice));
+												console.log('Middle vertice angles: ' + JSON.stringify(middleVertice));
 
 											}
 											const geometry = settings.object.geometry;
-											if (geometry.playerAngles) geometry.playerAngles[playerIndex].push(muddleVertice);
-											return muddleVertice;
+//											if (geometry.playerAngles) geometry.playerAngles[playerIndex].push(middleVertice);
+											classSettings.overriddenProperties.pushMiddleVertice(playerIndex, middleVertice);
+											return middleVertice;
 
 										}
 										//идентификаторы всех вершин, которые связаны с текущей вершиной через ребра
@@ -878,6 +880,7 @@ class HyperSphere extends MyObject {
 
 		});
 		const position = settings.object.geometry.position;
+		
 		classSettings.overriddenProperties ||= {};
 		classSettings.overriddenProperties.oppositeVertice ||= (oppositeAngleId) => { return position[oppositeAngleId]; }
 		if (!classSettings.overriddenProperties.position) Object.defineProperty(classSettings.overriddenProperties, 'position', { get: () => { return position; }, });
@@ -890,11 +893,17 @@ class HyperSphere extends MyObject {
 		
 		}
 		classSettings.overriddenProperties.vertices ||= () => { return []; }
-
+//		if (!classSettings.overriddenProperties.r) Object.defineProperty(classSettings.overriddenProperties, 'r', { get: () => { return classSettings.r; }, });
+		classSettings.overriddenProperties.r ||= (playerIndex) => { return classSettings.r; }
+//		classSettings.overriddenProperties.timeR ||= (playerIndex) => { return classSettings.r; }
+		classSettings.overriddenProperties.pushMiddleVertice ||= () => {}
+		classSettings.overriddenProperties.angles ||= (anglesId) => { return classSettings.settings.object.geometry.angles[anglesId]; }
+		
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (anglesId, playerIndex) => {
-			
-			const geometry = this.classSettings.settings.object.geometry, playerAngles = geometry.playerAngles,
+
+/*			
+			const geometry = classSettings.settings.object.geometry, playerAngles = geometry.playerAngles,
 				timeAngles = playerAngles ? playerAngles[playerIndex] : undefined,
 				player = timeAngles ? timeAngles.player : undefined,
 				r = player ? player.r : classSettings.r,
@@ -902,6 +911,10 @@ class HyperSphere extends MyObject {
 					((playerIndex != undefined) && playerAngles) ? timeAngles[anglesId] :
 						geometry.angles[anglesId] :
 					anglesId,
+*/					
+//			const r = classSettings.overriddenProperties.timeR(playerIndex),
+			const r = classSettings.overriddenProperties.r(playerIndex),
+				angles = typeof anglesId === "number" ? classSettings.overriddenProperties.angles(anglesId, playerIndex) : anglesId,
 				a2v = (angles) => {
 	
 				//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
