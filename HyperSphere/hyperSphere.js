@@ -550,8 +550,8 @@ class HyperSphere extends MyObject {
 					else if (i === _position.length)
 						settings.object.geometry.angles.pushRandomAngle();
 					const _vertice = _position[i], anglesPlayer = settings.object.geometry.angles.player,
-						playerIndex = anglesPlayer.id, r = anglesPlayer.r;
-					const angle2Vertice = () => {
+						playerIndex = anglesPlayer.id,// r = anglesPlayer.r;
+						angle2Vertice = () => {
 
 						const vertice = _this.angles2Vertice(i, playerIndex);
 						if (classSettings.debug) {
