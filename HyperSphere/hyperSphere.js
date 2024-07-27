@@ -82,7 +82,7 @@ class HyperSphere extends MyObject {
 	 * @param {Function} [classSettings.onSelectScene] Callback function that called after <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> time was changed.
 	 * <pre>
 	 * parameter <b>hyperSphere</b> <a href="../../HyperSphere/jsdoc/" target="_blank">HyperSphere</a> object.
-	 * parameter <b>playerIndex</b> <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index.
+	 * parameter <b>timeId</b> <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index.
 	 * parameter <b>t</b> current time.
 	 * Also see <a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">onSelectScene</a> type definition.
 	 * </pre>
@@ -224,7 +224,7 @@ class HyperSphere extends MyObject {
 	 * @param {Function} [classSettings.overriddenProperties.oppositeVertice] Returns the opposite vertice.
 	 * <pre>
 	 * parameter <b>oppositeAngleId</b>. Opposite vertice identifier.
-	 * parameter <b>playerIndex</b>. <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is current time identifier.
+	 * parameter <b>timeId</b>. <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is current time identifier.
 	 * </pre>
 	 * @param {Array} [classSettings.overriddenProperties.position] Returns an array of vertice positions.
 	 * @param {Array} [classSettings.overriddenProperties.position0] Returns an array of vertice positions for the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a>'s start time.
@@ -236,17 +236,17 @@ class HyperSphere extends MyObject {
 	 * @param {Function} [classSettings.overriddenProperties.vertices] Returns an empty array of vertices.
 	 * @param {Function} [classSettings.overriddenProperties.r] Returns a hypersphere radius.
 	 * <pre>
-	 * parameter <b>playerIndex</b>. <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is time identifier.
+	 * parameter <b>timeId</b>. <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is time identifier.
 	 * </pre>
 	 * @param {Function} [classSettings.overriddenProperties.pushMiddleVertice] pushes a middle vertice into time angles array.
 	 * <pre>
-	 * parameter <b>playerIndex</b>. <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is time identifier.
+	 * parameter <b>timeId</b>. <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is time identifier.
 	 * parameter <b>middleVertice</b>. Array of the middle vertice angles to push.
 	 * </pre>
 	 * @param {Function} [classSettings.overriddenProperties.angles] Returns a vertice angles array.
 	 * <pre>
 	 * parameter <b>anglesId</b>. Vertice identifier.
-	 * parameter <b>playerIndex</b>. <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is time identifier.
+	 * parameter <b>timeId</b>. <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is time identifier.
 	 * </pre>
 	 **/
 	constructor(options, classSettings = {}) {
@@ -275,7 +275,7 @@ class HyperSphere extends MyObject {
 					switch (name) {
 	
 						case 't':
-							classSettings.settings.bufferGeometry.userData.playerIndex = userData.index;
+							classSettings.settings.bufferGeometry.userData.timeId = userData.index;
 							if (classSettings.onSelectScene) classSettings.onSelectScene(this, userData.index, value);//время равно радиусу вселенной
 							break;
 							
@@ -493,7 +493,7 @@ class HyperSphere extends MyObject {
 			}
 
 		});
-		this.anglesPlayer = (playerIndex) => {
+		this.anglesPlayer = (timeId) => {
 
 			const playerProxy = new Proxy({}, {
 						
@@ -501,8 +501,8 @@ class HyperSphere extends MyObject {
 
 					switch (name) {
 
-						case 'id': return playerIndex != undefined ? playerIndex : classSettings.settings.options.player.getTimeId();
-						case 't': return classSettings.settings.options.player.getTime(playerIndex);
+						case 'id': return timeId != undefined ? timeId : classSettings.settings.options.player.getTimeId();
+						case 't': return classSettings.settings.options.player.getTime(timeId);
 						case 'r': return playerProxy.t * classSettings.r;
 							
 					}
@@ -564,10 +564,10 @@ class HyperSphere extends MyObject {
 					else if (i === _position.length)
 						settings.object.geometry.angles.pushRandomAngle();
 					const _vertice = _position[i], anglesPlayer = settings.object.geometry.angles.player,
-						playerIndex = anglesPlayer.id,// r = anglesPlayer.r;
+						timeId = anglesPlayer.id,// r = anglesPlayer.r;
 						angle2Vertice = () => {
 
-						const vertice = _this.angles2Vertice(i, playerIndex);
+						const vertice = _this.angles2Vertice(i, timeId);
 						if (classSettings.debug) {
 
 //							const sum = vertice.radius, r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.r : classSettings.r;
@@ -720,7 +720,7 @@ class HyperSphere extends MyObject {
 
 									switch (name) {
 
-										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, playerIndex) => {
+										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId) => {
 
 											//find middle vertice between opposite vertices
 
@@ -734,7 +734,7 @@ class HyperSphere extends MyObject {
 
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
-												const oppositeVertice = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, playerIndex);
+												const oppositeVertice = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, timeId);
 												oppositeVertice.forEach((axis, i) => {
 
 													if (aSum[i] === undefined) aSum[i] = 0;
@@ -758,8 +758,8 @@ class HyperSphere extends MyObject {
 
 											}
 											const geometry = settings.object.geometry;
-//											if (geometry.playerAngles) geometry.playerAngles[playerIndex].push(middleVertice);
-											classSettings.overriddenProperties.pushMiddleVertice(playerIndex, middleVertice);
+//											if (geometry.playerAngles) geometry.playerAngles[timeId].push(middleVertice);
+											classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 											return middleVertice;
 
 										}
@@ -812,7 +812,7 @@ class HyperSphere extends MyObject {
 					case 'count': return _position.count === undefined ? _position.length : _position.count;
 					case 'forEach': return (item) => {
 
-//						const pos = settings.object.geometry.playerPosition ? settings.object.geometry.playerPosition[settings.bufferGeometry.userData.playerIndex] : position;
+//						const pos = settings.object.geometry.playerPosition ? settings.object.geometry.playerPosition[settings.bufferGeometry.userData.timeId] : position;
 						const pos = classSettings.overriddenProperties.position;
 						for (let verticeId = 0; verticeId < pos.length; verticeId++) item(pos[verticeId], verticeId);
 					
@@ -908,27 +908,27 @@ class HyperSphere extends MyObject {
 		}
 		classSettings.overriddenProperties.vertices ||= () => { return []; }
 //		if (!classSettings.overriddenProperties.r) Object.defineProperty(classSettings.overriddenProperties, 'r', { get: () => { return classSettings.r; }, });
-		classSettings.overriddenProperties.r ||= (playerIndex) => { return classSettings.r; }
-//		classSettings.overriddenProperties.timeR ||= (playerIndex) => { return classSettings.r; }
+		classSettings.overriddenProperties.r ||= (timeId) => { return classSettings.r; }
+//		classSettings.overriddenProperties.timeR ||= (timeId) => { return classSettings.r; }
 		classSettings.overriddenProperties.pushMiddleVertice ||= () => {}
 		classSettings.overriddenProperties.angles ||= (anglesId) => { return classSettings.settings.object.geometry.angles[anglesId]; }
 		
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
-		this.getPoint = (anglesId, playerIndex) => {
+		this.getPoint = (anglesId, timeId) => {
 
 /*			
 			const geometry = classSettings.settings.object.geometry, playerAngles = geometry.playerAngles,
-				timeAngles = playerAngles ? playerAngles[playerIndex] : undefined,
+				timeAngles = playerAngles ? playerAngles[timeId] : undefined,
 				player = timeAngles ? timeAngles.player : undefined,
 				r = player ? player.r : classSettings.r,
 				angles = typeof anglesId === "number" ?
-					((playerIndex != undefined) && playerAngles) ? timeAngles[anglesId] :
+					((timeId != undefined) && playerAngles) ? timeAngles[anglesId] :
 						geometry.angles[anglesId] :
 					anglesId,
 */					
-//			const r = classSettings.overriddenProperties.timeR(playerIndex),
-			const r = classSettings.overriddenProperties.r(playerIndex),
-				angles = typeof anglesId === "number" ? classSettings.overriddenProperties.angles(anglesId, playerIndex) : anglesId,
+//			const r = classSettings.overriddenProperties.timeR(timeId),
+			const r = classSettings.overriddenProperties.r(timeId),
+				angles = typeof anglesId === "number" ? classSettings.overriddenProperties.angles(anglesId, timeId) : anglesId,
 				a2v = (angles) => {
 	
 				//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
@@ -1554,7 +1554,7 @@ class HyperSphere extends MyObject {
 												verticeAngles = (guiPoints.timeAngles || angles)[aAngleControls.verticeId];
 											if (verticeAngles[angleId] === angle) return;
 											verticeAngles[angleId] = angle;
-											_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.playerIndex);
+											_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);
 											
 											_this.update(aAngleControls.verticeId, angleId);
 
@@ -2170,9 +2170,9 @@ class HyperSphere extends MyObject {
 
 			//шаг проигрывателя player
 			//Вычислем middle vertices
-			this.middleVertices = (playerIndex, t) => {
+			this.middleVertices = (timeId, t) => {
 
-				if (playerIndex === 0) return;//не вычисляется средняя точка когда проигрыватель в начале
+				if (timeId === 0) return;//не вычисляется средняя точка когда проигрыватель в начале
 				const geometry = settings.object.geometry, position = geometry.position, edges = geometry.indices.edges;
 				if (edges.length === 0) {
 
@@ -2253,8 +2253,8 @@ class HyperSphere extends MyObject {
 						progressBar.value = verticeId;
 						const stepItem = () => {
 
-//							const vertice = (playerPosition ?  playerPosition[0]: position).angles[verticeId].middleVertice(undefined, playerIndex);
-							const vertice = classSettings.overriddenProperties.position0.angles[verticeId].middleVertice(undefined, playerIndex);
+//							const vertice = (playerPosition ?  playerPosition[0]: position).angles[verticeId].middleVertice(undefined, timeId);
+							const vertice = classSettings.overriddenProperties.position0.angles[verticeId].middleVertice(undefined, timeId);
 							if (vertices) vertices.push(vertice);
 							verticeId += 1;
 							if (verticeId >= position.length) {
@@ -2713,7 +2713,7 @@ class HyperSphere extends MyObject {
 			console.error(sHyperSphere + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
-	angles2Vertice(anglesId, playerIndex) {
+	angles2Vertice(anglesId, timeId) {
 
 		if (typeof anglesId === "number") {
 
@@ -2729,11 +2729,11 @@ class HyperSphere extends MyObject {
 				}
 
 			}
-			const userData = this.classSettings.settings.bufferGeometry.userData, playerIndexCur = userData.playerIndex;
-			if (playerIndex === undefined) playerIndex = playerIndexCur;
-			userData.playerIndex = playerIndex;
+			const userData = this.classSettings.settings.bufferGeometry.userData, playerIndexCur = userData.timeId;
+			if (timeId === undefined) timeId = playerIndexCur;
+			userData.timeId = timeId;
 			const vertice = this.bufferGeometry.userData.position[anglesId];
-			userData.playerIndex = playerIndexCur;
+			userData.timeId = playerIndexCur;
 			return vertice;
 			
 		}

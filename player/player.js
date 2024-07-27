@@ -139,11 +139,11 @@ class Player {
 		
 		/**
 		 * get time
-		 * @param {number} [playerIndex] Index of the time. The default is the time index of the selected scene.
+		 * @param {number} [timeId] Index of the time. The default is the time index of the selected scene.
 		 */
-		this.getTime = function (playerIndex) {
+		this.getTime = function (timeId) {
 
-			const playerOptions = options.playerOptions, t = playerOptions.min + (playerIndex != undefined ? playerIndex : selectSceneIndex) * playerOptions.dt;
+			const playerOptions = options.playerOptions, t = playerOptions.min + (timeId != undefined ? timeId : selectSceneIndex) * playerOptions.dt;
 			if ( isNaN( t ) ) console.error( 'Player.getTime(): t = ' + t );
 			if ( ( playerOptions.max !== null ) && ( t > playerOptions.max ) )
 				console.error( 'Player.getTime(): t = ' + t + ' playerOptions.max = ' + playerOptions.max );
