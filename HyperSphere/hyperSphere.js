@@ -234,6 +234,20 @@ class HyperSphere extends MyObject {
 	 * parameter <b>vertices</b>. Array of new vertices angles.
 	 * </pre>
 	 * @param {Function} [classSettings.overriddenProperties.vertices] Returns an empty array of vertices.
+	 * @param {Function} [classSettings.overriddenProperties.r] Returns a hypersphere radius.
+	 * <pre>
+	 * parameter <b>playerIndex</b>. <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is time identifier.
+	 * </pre>
+	 * @param {Function} [classSettings.overriddenProperties.pushMiddleVertice] pushes a middle vertice into time angles array.
+	 * <pre>
+	 * parameter <b>playerIndex</b>. <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is time identifier.
+	 * parameter <b>middleVertice</b>. Array of the middle vertice angles to push.
+	 * </pre>
+	 * @param {Function} [classSettings.overriddenProperties.angles] Returns a vertice angles array.
+	 * <pre>
+	 * parameter <b>anglesId</b>. Vertice identifier.
+	 * parameter <b>playerIndex</b>. <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is time identifier.
+	 * </pre>
 	 **/
 	constructor(options, classSettings = {}) {
 
