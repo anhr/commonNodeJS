@@ -571,7 +571,7 @@ class HyperSphere extends MyObject {
 						if (classSettings.debug) {
 
 //							const sum = vertice.radius, r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.r : classSettings.r;
-							const sum = vertice.radius, r = classSettings.overriddenProperties.r();
+							const sum = vertice.radius, r = classSettings.overriddenProperties.r(timeId);
 							if (Math.abs(sum - r) > 9.5e-8)
 								console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
 
