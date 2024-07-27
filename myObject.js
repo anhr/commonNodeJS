@@ -80,12 +80,21 @@ class MyObject {
 		if (!settings.bufferGeometry) {
 			
 			settings.bufferGeometry = new THREE.BufferGeometry();
-			Object.defineProperty(settings.bufferGeometry.userData, 'playerIndex', {
+/*
+			Object.defineProperty(settings.bufferGeometry.userData, 'timeId', {
 				
 				get: () => { return 0; },
 				set: (playerIndexNew) => {  },//ignore playerIndexNew
 				configurable: true,//https://stackoverflow.com/a/25518045/5175935
 				
+			});
+*/
+			Object.defineProperty(settings.bufferGeometry.userData, 'timeId', {
+
+				get: () => { return 0; },
+				set: (timeIdNew) => { },//ignore timeIdNew
+				configurable: true,//https://stackoverflow.com/a/25518045/5175935
+
 			});
 			
 		}
@@ -122,9 +131,9 @@ class MyObject {
 					const positionId = parseInt(name);
 					if (!isNaN(positionId)) {
 
-						const playerIndex = settings.bufferGeometry.userData.playerIndex,
-//							positionOffset = (settings.object.geometry.playerAngles != undefined ? playerIndex * settings.object.geometry.playerAngles[0].length * position.itemSize : 0) + positionId * position.itemSize,
-							positionOffset = (playerIndex * settings.object.geometry.angles.length + positionId) * position.itemSize,
+						const timeId = settings.bufferGeometry.userData.timeId,
+//							positionOffset = (settings.object.geometry.playerAngles != undefined ? timeId * settings.object.geometry.playerAngles[0].length * position.itemSize : 0) + positionId * position.itemSize,
+							positionOffset = (timeId * settings.object.geometry.angles.length + positionId) * position.itemSize,
 							array = position.array;
 						const verticeProxy = new Proxy([], {
 
@@ -223,8 +232,8 @@ class MyObject {
 					this.pointLength ? this.pointLength() :
 						points[0].w === undefined ? 3 : 4,
 					points.length);
-				for (let playerIndex = 0; playerIndex < getPlayerAnglesLength(); playerIndex++)
-					for (let i = 0; i < points.length; i++) this.setPositionAttributeFromPoint(i, undefined, playerIndex);
+				for (let timeId = 0; timeId < getPlayerAnglesLength(); timeId++)
+					for (let i = 0; i < points.length; i++) this.setPositionAttributeFromPoint(i, undefined, timeId);
 
 			}
 			return settings.bufferGeometry;
@@ -255,13 +264,13 @@ class MyObject {
 			return w;
 
 		}
-		this.setPositionAttributeFromPoint = (i, vertice, playerIndex) => {
+		this.setPositionAttributeFromPoint = (i, vertice, timeId) => {
 
 			//Position attribute
 			
-			const attributes = settings.bufferGeometry.attributes, position = attributes.position, anglesLength = (playerIndex === undefined) ? undefined : settings.object.geometry.angles.length;
-			vertice = vertice || _this.getPoint(i, playerIndex);
-			let itemSize = position.itemSize, positionId = i * itemSize + (playerIndex === undefined ? 0 : anglesLength * playerIndex * itemSize), array = position.array;
+			const attributes = settings.bufferGeometry.attributes, position = attributes.position, anglesLength = (timeId === undefined) ? undefined : settings.object.geometry.angles.length;
+			vertice = vertice || _this.getPoint(i, timeId);
+			let itemSize = position.itemSize, positionId = i * itemSize + (timeId === undefined ? 0 : anglesLength * timeId * itemSize), array = position.array;
 			                  array [positionId] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
 			if (itemSize > 1) array [++positionId] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) array [++positionId] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
@@ -280,7 +289,7 @@ class MyObject {
 			//Color attribute
 
 			itemSize = attributes.color.itemSize;
-			let colorId = i * itemSize + (playerIndex === undefined ? 0 : anglesLength * playerIndex * itemSize);
+			let colorId = i * itemSize + (timeId === undefined ? 0 : anglesLength * timeId * itemSize);
 			array = attributes.color.array;
 			const verticeColor = this.verticeColor(i, vertice);
 			if (typeof verticeColor === 'number'){
@@ -288,7 +297,7 @@ class MyObject {
 				if (settings.options) {
 					
 					const wScale = settings.options.scales.w;
-					Player.setColorAttribute(attributes, i + (playerIndex === undefined ? 0 : anglesLength * playerIndex), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
+					Player.setColorAttribute(attributes, i + (timeId === undefined ? 0 : anglesLength * timeId), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 
 				}
 				colorId += attributes.color.itemSize - 1;
