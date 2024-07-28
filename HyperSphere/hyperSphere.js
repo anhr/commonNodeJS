@@ -556,29 +556,50 @@ class HyperSphere extends MyObject {
 
 			get: (target, name) => {
 
-				const _position = settings.object.geometry.angles;
-				const i = parseInt(name);
+//				const _position = settings.object.geometry.angles;
+				let _position = settings.object.geometry.angles;;
+				let i = parseInt(name);
 				if (!isNaN(i)) {
 
-					if (i > _position.length) console.error(sHyperSphere + ': position get. Invalid index = ' + i + ' position.length = ' + _position.length);
-					else if (i === _position.length)
-						settings.object.geometry.angles.pushRandomAngle();
-					const _vertice = _position[i], anglesPlayer = settings.object.geometry.angles.player,
-						timeId = anglesPlayer.id,// r = anglesPlayer.r;
-						angle2Vertice = () => {
+					if (settings.object.geometry.timeAngles) {
 
-						const vertice = _this.angles2Vertice(i, timeId);
-						if (classSettings.debug) {
+						const timeAngles = settings.object.geometry.timeAngles;
+						let timeAnglesId = 0, positionId = timeAngles[timeAnglesId].length;
+						while(i >= positionId) {
 
-//							const sum = vertice.radius, r = settings.object.geometry.playerAngles ? settings.object.geometry.angles.player.r : classSettings.r;
-							const sum = vertice.radius, r = classSettings.overriddenProperties.r(timeId);
-							if (Math.abs(sum - r) > 9.5e-8)
-								console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
-
+							timeAnglesId++;
+							positionId += timeAngles[timeAnglesId].length;
+							
 						}
-						return vertice;
+						_position = timeAngles[timeAnglesId];
+						i -= positionId - timeAngles[timeAnglesId].length;
+						
+					} else {
+
+						if (i > _position.length) console.error(sHyperSphere + ': position get. Invalid index = ' + i + ' position.length = ' + _position.length);
+						else if (i === _position.length)
+							settings.object.geometry.angles.pushRandomAngle();
 
 					}
+					const _vertice = _position[i],
+						//anglesPlayer = settings.object.geometry.angles.player,
+						//timeId = anglesPlayer.id,
+						timeId = _position.player.id,
+						// r = anglesPlayer.r;
+						angle2Vertice = () => {
+
+							const vertice = _this.angles2Vertice(i, timeId);
+							if (classSettings.debug) {
+	
+	//							const sum = vertice.radius, r = settings.object.geometry.timeAngles ? settings.object.geometry.angles.player.r : classSettings.r;
+								const sum = vertice.radius, r = classSettings.overriddenProperties.r(timeId);
+								if (Math.abs(sum - r) > 9.5e-8)
+									console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
+	
+							}
+							return vertice;
+	
+						}
 					return new Proxy(angle2Vertice(), {
 
 						get: (vertice, name) => {
@@ -758,7 +779,7 @@ class HyperSphere extends MyObject {
 
 											}
 											const geometry = settings.object.geometry;
-//											if (geometry.playerAngles) geometry.playerAngles[timeId].push(middleVertice);
+//											if (geometry.timeAngles) geometry.timeAngles[timeId].push(middleVertice);
 											classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 											return middleVertice;
 
@@ -917,12 +938,12 @@ class HyperSphere extends MyObject {
 		this.getPoint = (anglesId, timeId) => {
 
 /*			
-			const geometry = classSettings.settings.object.geometry, playerAngles = geometry.playerAngles,
-				timeAngles = playerAngles ? playerAngles[timeId] : undefined,
+			const geometry = classSettings.settings.object.geometry, timeAngles = geometry.timeAngles,
+				timeAngles = timeAngles ? timeAngles[timeId] : undefined,
 				player = timeAngles ? timeAngles.player : undefined,
 				r = player ? player.r : classSettings.r,
 				angles = typeof anglesId === "number" ?
-					((timeId != undefined) && playerAngles) ? timeAngles[anglesId] :
+					((timeId != undefined) && timeAngles) ? timeAngles[anglesId] :
 						geometry.angles[anglesId] :
 					anglesId,
 */					
@@ -2243,9 +2264,9 @@ class HyperSphere extends MyObject {
 					});
 
 				}
-				const //playerAngles = geometry.playerAngles,
+				const //timeAngles = geometry.timeAngles,
 //					playerPosition = geometry.playerPosition,
-//					vertices = playerAngles ? undefined : [],
+//					vertices = timeAngles ? undefined : [],
 					vertices = classSettings.overriddenProperties.vertices(),
 					timestamp = classSettings.debug ? window.performance.now() : undefined,
 					step = () => {
@@ -2267,7 +2288,7 @@ class HyperSphere extends MyObject {
 								this.isUpdate = false;//для ускорения
 								classSettings.overriddenProperties.updateVertices(vertices);
 /*								
-								if (playerAngles) this.bufferGeometry.attributes.position.needsUpdate = true;
+								if (timeAngles) this.bufferGeometry.attributes.position.needsUpdate = true;
 								else {
 
 									for (verticeId = 0; verticeId < position.length; verticeId++)

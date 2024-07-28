@@ -132,7 +132,7 @@ class MyObject {
 					if (!isNaN(positionId)) {
 
 						const timeId = settings.bufferGeometry.userData.timeId,
-//							positionOffset = (settings.object.geometry.playerAngles != undefined ? timeId * settings.object.geometry.playerAngles[0].length * position.itemSize : 0) + positionId * position.itemSize,
+//							positionOffset = (settings.object.geometry.timeAngles != undefined ? timeId * settings.object.geometry.timeAngles[0].length * position.itemSize : 0) + positionId * position.itemSize,
 							positionOffset = (timeId * settings.object.geometry.angles.length + positionId) * position.itemSize,
 							array = position.array;
 						const verticeProxy = new Proxy([], {
