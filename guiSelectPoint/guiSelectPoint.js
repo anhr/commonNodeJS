@@ -834,7 +834,7 @@ class GuiSelectPoint {
 			
 			const mesh = getMesh();
 			return getObjectLocalPosition( intersectionSelected.object,
-				(mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + intersectionSelected.index );
+				(mesh && mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + intersectionSelected.index );
 			
 		}
 		this.getObjectPosition = (object, index) => {
