@@ -254,6 +254,11 @@ class HyperSphere extends MyObject {
 		classSettings.settings = classSettings.settings || {};
 		classSettings.settings.options = options;
 		super( classSettings.settings );
+		Object.defineProperty(classSettings.settings.bufferGeometry.userData, 'positionBlockLength', {
+
+			get: () => { return classSettings.settings.object.geometry.angles.length; },
+
+		});
 		this.rotateLatitude = - π / 2;//Поворачиваем широту на 90 градусов что бы начало координат широты находилось на экваторе;
 		const _this = this, THREE = three.THREE;
 		if (classSettings.debug === undefined) classSettings.debug = true;

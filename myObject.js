@@ -80,15 +80,6 @@ class MyObject {
 		if (!settings.bufferGeometry) {
 			
 			settings.bufferGeometry = new THREE.BufferGeometry();
-/*
-			Object.defineProperty(settings.bufferGeometry.userData, 'timeId', {
-				
-				get: () => { return 0; },
-				set: (playerIndexNew) => {  },//ignore playerIndexNew
-				configurable: true,//https://stackoverflow.com/a/25518045/5175935
-				
-			});
-*/
 			Object.defineProperty(settings.bufferGeometry.userData, 'timeId', {
 
 				get: () => { return 0; },
@@ -269,9 +260,15 @@ class MyObject {
 
 			//Position attribute
 			
-			const attributes = settings.bufferGeometry.attributes, position = attributes.position, anglesLength = (timeId === undefined) ? undefined : settings.object.geometry.angles.length;
+			const attributes = settings.bufferGeometry.attributes, position = attributes.position,
+//				anglesLength = (timeId === undefined) ? undefined : settings.object.geometry.angles.length;
+				userData = settings.bufferGeometry.userData,
+				positionBlockLength = (timeId === undefined) ? undefined : userData.positionBlockLength === undefined ? 0 : userData.positionBlockLength;
 			vertice = vertice || _this.getPoint(i, timeId);
-			let itemSize = position.itemSize, positionId = i * itemSize + (timeId === undefined ? 0 : anglesLength * timeId * itemSize), array = position.array;
+			let itemSize = position.itemSize, positionId = i * itemSize + (timeId === undefined ? 0 :
+//					anglesLength * timeId * itemSize),
+					positionBlockLength * timeId * itemSize),
+				array = position.array;
 			                  array [positionId] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
 			if (itemSize > 1) array [++positionId] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) array [++positionId] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
@@ -290,7 +287,8 @@ class MyObject {
 			//Color attribute
 
 			itemSize = attributes.color.itemSize;
-			let colorId = i * itemSize + (timeId === undefined ? 0 : anglesLength * timeId * itemSize);
+//			let colorId = i * itemSize + (timeId === undefined ? 0 : anglesLength * timeId * itemSize);
+			let colorId = i * itemSize + (timeId === undefined ? 0 : positionBlockLength * timeId * itemSize);
 			array = attributes.color.array;
 			const verticeColor = this.verticeColor(i, vertice);
 			if (typeof verticeColor === 'number'){
@@ -298,7 +296,8 @@ class MyObject {
 				if (settings.options) {
 					
 					const wScale = settings.options.scales.w;
-					Player.setColorAttribute(attributes, i + (timeId === undefined ? 0 : anglesLength * timeId), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
+//					Player.setColorAttribute(attributes, i + (timeId === undefined ? 0 : anglesLength * timeId), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
+					Player.setColorAttribute(attributes, i + (timeId === undefined ? 0 : positionBlockLength * timeId), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 
 				}
 				colorId += attributes.color.itemSize - 1;
