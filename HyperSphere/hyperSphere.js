@@ -938,7 +938,8 @@ class HyperSphere extends MyObject {
 //		classSettings.overriddenProperties.timeR ||= (timeId) => { return classSettings.r; }
 		classSettings.overriddenProperties.pushMiddleVertice ||= () => {}
 		classSettings.overriddenProperties.angles ||= (anglesId) => { return classSettings.settings.object.geometry.angles[anglesId]; }
-		
+		classSettings.overriddenProperties.verticeAngles ||= (anglesCur, verticeId) => { return anglesCur[verticeId]; }
+
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (anglesId, timeId) => {
 
@@ -1385,7 +1386,8 @@ class HyperSphere extends MyObject {
 
 								anglesDefault.length = 0;
 								if (!anglesCur) anglesCur = settings.object.geometry.angles;
-								const verticeAngles = anglesCur[verticeId];
+//								const verticeAngles = anglesCur[verticeId];
+								const verticeAngles = classSettings.overriddenProperties.verticeAngles(anglesCur, verticeId);
 
 								for (let i = (aAngleControls.cEdges.__select.length - 1); i > 0; i--)
 									aAngleControls.cEdges.__select.remove(i);
@@ -1413,7 +1415,7 @@ class HyperSphere extends MyObject {
 
 								}
 
-								aAngleControls.verticeId = verticeId;
+								aAngleControls.verticeId = classSettings.settings.guiPoints && (classSettings.settings.guiPoints.verticeId != undefined) ? classSettings.settings.guiPoints.verticeId : verticeId;
 
 								//если оставить эту линию то если угол выходит за пределы допустимого,
 								//то этот угол автоматически возвращается в пределы допустимого с помощью органа управления gui
@@ -1577,7 +1579,8 @@ class HyperSphere extends MyObject {
 											cAngle = fAngles.add({ angle: 0, }, 'angle', range.min, range.max, 2 * π / 360).onChange((angle) => {
 
 											const guiPoints = _this.object().userData.myObject.guiPoints,
-												verticeAngles = (guiPoints.timeAngles || angles)[aAngleControls.verticeId];
+//												verticeAngles = (guiPoints.timeAngles || angles)[aAngleControls.verticeId];
+												verticeAngles = classSettings.overriddenProperties.verticeAngles(guiPoints.timeAngles || angles, aAngleControls.verticeId);
 											if (verticeAngles[angleId] === angle) return;
 											verticeAngles[angleId] = angle;
 											_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);

@@ -874,7 +874,7 @@ class GuiSelectPoint {
 			if ( cMeshs.__select[index].selected === false ) {
 
 				cMeshs.__select[index].selected = true;
-				cMeshs.__onChange( index - 1 );
+				cMeshs.__onChange( index - 1, intersectionSelected );
 
 			} else if ( cCustom ) {
 
@@ -1159,7 +1159,7 @@ class GuiSelectPoint {
 
 		}
 
-		function addPoints( mesh ) {
+		function addPoints( mesh, intersectionSelected ) {
 
 			//https://threejs.org/docs/index.html?q=buffer#api/en/core/BufferGeometry.setDrawRange
 			const count = mesh.geometry.userData.drawRange ?
@@ -1172,7 +1172,7 @@ class GuiSelectPoint {
 					 :
 					 //геометрия индексирована. mesh.geometry.drawRange.count указывает на количество индексов, которые нужно рисовать
 					 mesh.geometry.attributes.position.count;//По умолчанию все вершины видно
-			mesh.userData.myObject.guiPoints.create( fPoints, cPoints, count );
+			mesh.userData.myObject.guiPoints.create( fPoints, cPoints, count, intersectionSelected );
 /*			
 			if (mesh.userData.myObject && mesh.userData.myObject.guiPoints) mesh.userData.myObject.guiPoints.create( fPoints, cPoints );
 			else for ( var iPosition = mesh.geometry.drawRange.start; iPosition < count; iPosition++ ) {
@@ -1221,7 +1221,7 @@ class GuiSelectPoint {
 			f3DObjects.domElement.style.display = 'none';
 			var mesh, buttonScaleDefault, buttonPositionDefault, buttonRotationDefault;
 
-			cMeshs = f3DObjects.add( { Meshs: lang.notSelected }, 'Meshs', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
+			cMeshs = f3DObjects.add( { Meshs: lang.notSelected }, 'Meshs', { [lang.notSelected]: -1 } ).onChange( function ( value, intersectionSelected ) {
 
 				value = parseInt( value );
 
@@ -1276,7 +1276,7 @@ class GuiSelectPoint {
 						if ( mesh.geometry && mesh.geometry.attributes ) {
 
 							displayfPoints = block;
-							addPoints( mesh );
+							addPoints( mesh, intersectionSelected );
 
 						}
 
