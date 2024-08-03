@@ -566,18 +566,18 @@ class HyperSphere extends MyObject {
 				let i = parseInt(name);
 				if (!isNaN(i)) {
 
-					if (settings.object.geometry.timeAngles) {
+					if (settings.object.geometry.timesAngles) {
 
-						const timeAngles = settings.object.geometry.timeAngles;
-						let timeAnglesId = 0, positionId = timeAngles[timeAnglesId].length;
+						const timesAngles = settings.object.geometry.timesAngles;
+						let timeAnglesId = 0, positionId = timesAngles[timeAnglesId].length;
 						while(i >= positionId) {
 
 							timeAnglesId++;
-							positionId += timeAngles[timeAnglesId].length;
+							positionId += timesAngles[timeAnglesId].length;
 							
 						}
-						_position = timeAngles[timeAnglesId];
-						i -= positionId - timeAngles[timeAnglesId].length;
+						_position = timesAngles[timeAnglesId];
+						i -= positionId - timesAngles[timeAnglesId].length;
 						
 					} else {
 
@@ -596,7 +596,7 @@ class HyperSphere extends MyObject {
 							const vertice = _this.angles2Vertice(i, timeId);
 							if (classSettings.debug) {
 	
-	//							const sum = vertice.radius, r = settings.object.geometry.timeAngles ? settings.object.geometry.angles.player.r : classSettings.r;
+	//							const sum = vertice.radius, r = settings.object.geometry.timesAngles ? settings.object.geometry.angles.player.r : classSettings.r;
 								const sum = vertice.radius, r = classSettings.overriddenProperties.r(timeId);
 								if (Math.abs(sum - r) > 9.5e-8)
 									console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
@@ -784,7 +784,7 @@ class HyperSphere extends MyObject {
 
 											}
 											const geometry = settings.object.geometry;
-//											if (geometry.timeAngles) geometry.timeAngles[timeId].push(middleVertice);
+//											if (geometry.timesAngles) geometry.timesAngles[timeId].push(middleVertice);
 											classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 											return middleVertice;
 
@@ -944,12 +944,12 @@ class HyperSphere extends MyObject {
 		this.getPoint = (anglesId, timeId) => {
 
 /*			
-			const geometry = classSettings.settings.object.geometry, timeAngles = geometry.timeAngles,
-				timeAngles = timeAngles ? timeAngles[timeId] : undefined,
-				player = timeAngles ? timeAngles.player : undefined,
+			const geometry = classSettings.settings.object.geometry, timesAngles = geometry.timesAngles,
+				timesAngles = timesAngles ? timesAngles[timeId] : undefined,
+				player = timesAngles ? timesAngles.player : undefined,
 				r = player ? player.r : classSettings.r,
 				angles = typeof anglesId === "number" ?
-					((timeId != undefined) && timeAngles) ? timeAngles[anglesId] :
+					((timeId != undefined) && timesAngles) ? timesAngles[anglesId] :
 						geometry.angles[anglesId] :
 					anglesId,
 */					
@@ -2272,7 +2272,7 @@ class HyperSphere extends MyObject {
 					});
 
 				}
-				const //timeAngles = geometry.timeAngles,
+				const //timesAngles = geometry.timesAngles,
 //					playerPosition = geometry.playerPosition,
 //					vertices = timeAngles ? undefined : [],
 					vertices = classSettings.overriddenProperties.vertices(),
