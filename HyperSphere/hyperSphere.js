@@ -568,6 +568,7 @@ class HyperSphere extends MyObject {
 
 					if (settings.object.geometry.timesAngles) {
 
+/*						
 						const timesAngles = settings.object.geometry.timesAngles;
 						let timeAnglesId = 0, positionId = timesAngles[timeAnglesId].length;
 						while(i >= positionId) {
@@ -578,6 +579,7 @@ class HyperSphere extends MyObject {
 						}
 						_position = timesAngles[timeAnglesId];
 						i -= positionId - timesAngles[timeAnglesId].length;
+*/						
 						
 					} else {
 
