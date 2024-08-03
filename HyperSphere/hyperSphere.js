@@ -562,7 +562,7 @@ class HyperSphere extends MyObject {
 			get: (target, name) => {
 
 //				const _position = settings.object.geometry.angles;
-				let _position = settings.object.geometry.angles;;
+				let _position = settings.object.geometry.angles;
 				let i = parseInt(name);
 				if (!isNaN(i)) {
 
