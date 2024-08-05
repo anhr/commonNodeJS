@@ -1000,6 +1000,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 			( intersection.object.userData.player.arrayFuncs !== undefined ) 
 		),
 		funcs = !isArrayFuncs ? undefined : intersection.object.userData.player.arrayFuncs,
+		funcsIndex = () => { return funcs.intersection ? funcs.intersection(intersection.index) : funcs[intersection.index]; },
 		func = ( funcs === undefined ) || ( typeof funcs === "function" ) ? undefined : funcs.intersection ? funcs.intersection(intersection.index) : funcs[intersection.index],
 		pointName = isArrayFuncs && func ? func.name : undefined,
 		color = !isArrayFuncs || ( func === undefined ) ?
@@ -1017,6 +1018,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 		//text
 		lang.mesh + ': ' + ( intersection.object.name === '' ? intersection.object.type : intersection.object.name ) +
 		( pointName === undefined ? '' : '\n'+ lang.pointName + ': ' + pointName ) +
+		'\nID: ' + intersection.index + 
 		( ( !boXYZ && !scales.x ) || ( scales.x && !scales.x.isAxis() ) ? '' :
 			'\n' + ( ( scales.x && scales.x.name ) || ( scales.x.name === 0 ) ? scales.x.name : 'X' ) + ': ' + position.x ) +
 		( ( !boXYZ && !scales.y ) || ( scales.y && !scales.y.isAxis() ) ? '' :
@@ -1026,8 +1028,8 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 		(//w
 			!isArrayFuncs ?
 				'' :
-				funcs[intersection.index] instanceof THREE.Vector4 ||
-					funcs[intersection.index] instanceof THREE.Vector3 ||
+				funcsIndex() instanceof THREE.Vector4 ||
+					funcsIndex() instanceof THREE.Vector3 ||
 					typeof funcs === "function" ?
 					color instanceof THREE.Color ?
 						'\n' + lang.color + ': ' + new THREE.Color( color.r, color.g, color.b ).getHexString() :

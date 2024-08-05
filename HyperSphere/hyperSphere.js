@@ -359,6 +359,7 @@ class HyperSphere extends MyObject {
 
 		}
 		settings.object.geometry.angles = settings.object.geometry.angles || this.defaultAngles();
+//		if (!settings.object.geometry.angles) settings.object.geometry.angles = this.defaultAngles();
 		const anglesObject2Array = () => {
 			
 			const geometryAngles = settings.object.geometry.angles;
@@ -377,6 +378,7 @@ class HyperSphere extends MyObject {
 				const verticeId = parseInt(name);
 				if (!isNaN(verticeId)) {
 
+					const length = _this.dimension - 1;
 					return new Proxy(angles[verticeId], {
 
 						get: (verticeAngles, name) => {
@@ -391,7 +393,12 @@ class HyperSphere extends MyObject {
 							}
 							switch (name) {
 
-								case 'length': return _this.dimension - 1;
+								case 'length': return length;//_this.dimension - 1;
+								case 'forEach': return (item) => {
+								
+									for (let axisId = 0; axisId < length; axisId++) item(verticeAngles[axisId] != undefined ? verticeAngles[axisId] : 0, axisId);
+
+								}
 
 							}
 							return verticeAngles[name];
@@ -1179,6 +1186,33 @@ class HyperSphere extends MyObject {
 
 		}
 
+		this.axisName = (angleId) => {
+
+			//Localization
+
+			const lang = [
+
+				'Altitude',
+				'Latitude',
+				'Longitude',
+
+			]
+
+			switch (options.getLanguageCode()) {
+
+				case 'ru'://Russian language
+
+					lang[0] = 'Высота';
+					lang[1] = 'Широта';
+					lang[2] = 'Долгота';
+					break;
+
+			}
+			return lang[angleId + 4 - _this.dimension];
+
+		}
+
+
 		//Эту функцию надо содать до вызова this.pushEdges(); потому что когда используется MyPoints для вывода на холст вершин вместо ребер,
 		//вызывается this.project вместо this.pushEdges()
 		/**
@@ -1590,6 +1624,7 @@ class HyperSphere extends MyObject {
 											_this.update(aAngleControls.verticeId, angleId);
 
 										});
+/*
 										const name = (angleId) => {
 
 											//Localization
@@ -1616,8 +1651,10 @@ class HyperSphere extends MyObject {
 
 										}
 										dat.controllerNameAndTitle(cAngle, name(angleId));
+*/
+										dat.controllerNameAndTitle(cAngle, this.axisName(angleId));
 
-										aAngleControls.push(cAngle);
+										aAngleControls.push(cAngle); 
 
 									}
 
@@ -2175,6 +2212,28 @@ class HyperSphere extends MyObject {
 								onReady: (points) => {
 
 									myPoints = points;
+									myPoints.userData.raycaster = { text: (intersection) => {
+
+										const timesAngles = classSettings.settings.object.geometry.timesAngles;
+										let index = 0;
+										for (let i = 0; i < timesAngles.length; i++) {
+
+											const timeAngles = timesAngles[i];
+											index += timeAngles.length;
+											if (index > intersection.index) {
+
+//												index -= intersection.index - 1;
+												index = intersection.index - index + timeAngles.length;
+												const vertice = timeAngles[index];
+												let text = '\nAngles:';
+												vertice.forEach((axisAngle, angleId) => { text += '\n' + this.axisName(angleId) + ': ' + axisAngle})
+												return text;
+												
+											}
+											
+										}
+									
+									}, }
 									gui(myPoints);
 									intersection(points);
 
