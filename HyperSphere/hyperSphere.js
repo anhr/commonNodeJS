@@ -948,6 +948,8 @@ class HyperSphere extends MyObject {
 		classSettings.overriddenProperties.pushMiddleVertice ||= () => {}
 		classSettings.overriddenProperties.angles ||= (anglesId) => { return classSettings.settings.object.geometry.angles[anglesId]; }
 		classSettings.overriddenProperties.verticeAngles ||= (anglesCur, verticeId) => { return anglesCur[verticeId]; }
+		classSettings.overriddenProperties.verticeText ||= (intersection, text) => { return text(classSettings.settings.object.geometry.angles, intersection.index); }
+		classSettings.overriddenProperties.text ||= () => { return ''; }
 
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (anglesId, timeId) => {
@@ -1212,6 +1214,84 @@ class HyperSphere extends MyObject {
 
 		}
 
+		//Localization
+
+		const getLanguageCode = options.getLanguageCode;
+
+		const lang = {
+
+			advansed: 'Advansed',
+
+			angles: 'Angles',
+			anglesTitle: 'Polar coordinates.',
+
+			angle: 'Angle',
+
+			edges: 'Edges',
+			edgesTitle: 'Edges indexes of the vertice',
+			oppositeVertice: 'Opposite vertice',
+
+			highlightEdges: 'Highlight',
+			highlightEdgesTitle: 'Highlight edges of the vertice.',
+
+			middleVertice: 'Middle vertice',
+			middleVerticeTitle: 'Find middle vertice between opposite vertices.',
+
+			plane: 'Plane',
+			planes: 'Planes',
+			planesTitle: 'Planes of rotation of angles.',
+
+			radius: 'Radius',
+			radiusTitle: 'Hypersphere radius.',
+
+			defaultButton: 'Default',
+			defaultAnglesTitle: 'Restore default angles.',
+
+			notSelected: 'not selected',
+			arc: 'Arc',
+
+		};
+
+		const _languageCode = getLanguageCode();
+
+		switch (_languageCode) {
+
+			case 'ru'://Russian language
+
+				lang.advansed = 'Дополнительно';
+
+				lang.angles = 'Углы';
+				lang.anglesTitle = 'Полярные координаты.';
+
+				lang.angle = 'Угол';
+
+				lang.edges = 'Ребра';
+				lang.edgesTitle = 'Индексы ребер, имеющих эту вершину';
+				lang.oppositeVertice = 'Противоположная вершина';
+
+				lang.highlightEdges = 'Выделить';
+				lang.highlightEdgesTitle = 'Выделить ребра этой вершины.';
+
+				lang.middleVertice = 'Средняя';
+				lang.middleVerticeTitle = 'Найти среднюю вершину между противоположными вершинами.';
+
+				lang.plane = 'Плоскость';
+				lang.planes = 'Плоскости';
+				lang.planesTitle = 'Плоскости вращения углов.';
+
+				lang.radius = 'Радиус';
+				lang.radiusTitle = 'Радиус гиперсферы.';
+
+				lang.defaultButton = 'Восстановить';
+				lang.defaultAnglesTitle = 'Восстановить углы по умолчанию';
+
+				lang.notSelected = 'Не выбрано';
+				lang.arc = 'Дуга';
+
+				break;
+			default://Custom language
+
+		}
 
 		//Эту функцию надо содать до вызова this.pushEdges(); потому что когда используется MyPoints для вывода на холст вершин вместо ребер,
 		//вызывается this.project вместо this.pushEdges()
@@ -1517,85 +1597,6 @@ class HyperSphere extends MyObject {
 							addControllers: (fParent) => {
 
 								settings.options.guiSelectPoint.setReadOnlyPosition(true);
-								
-								//Localization
-
-								const getLanguageCode = options.getLanguageCode;
-
-								const lang = {
-
-									advansed: 'Advansed',
-
-									angles: 'Angles',
-									anglesTitle: 'Polar coordinates.',
-
-									angle: 'Angle',
-
-									edges: 'Edges',
-									edgesTitle: 'Edges indexes of the vertice',
-									oppositeVertice: 'Opposite vertice',
-
-									highlightEdges: 'Highlight',
-									highlightEdgesTitle: 'Highlight edges of the vertice.',
-
-									middleVertice: 'Middle vertice',
-									middleVerticeTitle: 'Find middle vertice between opposite vertices.',
-
-									plane: 'Plane',
-									planes: 'Planes',
-									planesTitle: 'Planes of rotation of angles.',
-
-									radius: 'Radius',
-									radiusTitle: 'Hypersphere radius.',
-									
-									defaultButton: 'Default',
-									defaultAnglesTitle: 'Restore default angles.',
-
-									notSelected: 'not selected',
-									arc: 'Arc',
-
-								};
-
-								const _languageCode = getLanguageCode();
-
-								switch (_languageCode) {
-
-									case 'ru'://Russian language
-
-										lang.advansed = 'Дополнительно';
-
-										lang.angles = 'Углы';
-										lang.anglesTitle = 'Полярные координаты.';
-
-										lang.angle = 'Угол';
-
-										lang.edges = 'Ребра';
-										lang.edgesTitle = 'Индексы ребер, имеющих эту вершину';
-										lang.oppositeVertice = 'Противоположная вершина';
-
-										lang.highlightEdges = 'Выделить';
-										lang.highlightEdgesTitle = 'Выделить ребра этой вершины.';
-
-										lang.middleVertice = 'Средняя';
-										lang.middleVerticeTitle = 'Найти среднюю вершину между противоположными вершинами.';
-
-										lang.plane = 'Плоскость';
-										lang.planes = 'Плоскости';
-										lang.planesTitle = 'Плоскости вращения углов.';
-
-										lang.radius = 'Радиус';
-										lang.radiusTitle = 'Радиус гиперсферы.';
-										
-										lang.defaultButton = 'Восстановить';
-										lang.defaultAnglesTitle = 'Восстановить углы по умолчанию';
-
-										lang.notSelected = 'Не выбрано';
-										lang.arc = 'Дуга';
-
-										break;
-									default://Custom language
-
-								}
 								const geometry = settings.object.geometry,
 									position = geometry.position,
 									edges = geometry.indices.edges,
@@ -2214,7 +2215,19 @@ class HyperSphere extends MyObject {
 									myPoints = points;
 									myPoints.userData.raycaster = { text: (intersection) => {
 
-										const timesAngles = classSettings.settings.object.geometry.timesAngles;
+										return classSettings.overriddenProperties.verticeText(intersection, (angles, index) => {
+
+											const tab = '  ';
+											let text = '\n' + lang.angles + ':'
+												+ classSettings.overriddenProperties.text(tab, angles, lang)
+												+ '\n' + tab + 'vertice Id: ' + index
+											angles[index].forEach((axisAngle, angleId) => { text += '\n' + tab + this.axisName(angleId) + ': ' + axisAngle})
+											return text;
+											
+										});
+
+/*										
+										const timesAngles = classSettings.settings.object.geometry.timesAngles || classSettings.settings.object.geometry.angles;
 										let index = 0;
 										for (let i = 0; i < timesAngles.length; i++) {
 
@@ -2224,14 +2237,17 @@ class HyperSphere extends MyObject {
 
 //												index -= intersection.index - 1;
 												index = intersection.index - index + timeAngles.length;
-												const vertice = timeAngles[index];
-												let text = '\nAngles:';
-												vertice.forEach((axisAngle, angleId) => { text += '\n' + this.axisName(angleId) + ': ' + axisAngle})
+												const vertice = timeAngles[index], tab = '  ';
+												let text = '\n' + lang.angles + ':'
+													+ classSettings.overriddenProperties.text(tab, timeAngles, lang)
+													+ '\n' + tab + 'vertice Id: ' + index
+												vertice.forEach((axisAngle, angleId) => { text += '\n' + tab + this.axisName(angleId) + ': ' + axisAngle})
 												return text;
 												
 											}
 											
 										}
+*/										
 									
 									}, }
 									gui(myPoints);
