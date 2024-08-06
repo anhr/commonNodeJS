@@ -248,6 +248,17 @@ class HyperSphere extends MyObject {
 	 * parameter <b>anglesId</b>. Vertice identifier.
 	 * parameter <b>timeId</b>. <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> index is time identifier.
 	 * </pre>
+	 * @param {Function} [classSettings.overriddenProperties.verticeAngles] Returns a vertice angles.
+	 * <pre>
+	 * parameter <b>anglesCur</b>. Array of the vertice angles.
+	 * parameter <b>verticeId</b>. Vertice index.
+	 * </pre>
+	 * @param {Function} [classSettings.overriddenProperties.verticeText] Returns a vertice text if user is move mouse over vertice.
+	 * <pre>
+	 * parameter <b>intersection</b>.
+	 * parameter <b>text</b>. Callback function, what returns a vertice text.
+	 * </pre>
+	 * @param {Function} [classSettings.overriddenProperties.text] Returns a part of the vertice text.
 	 **/
 	constructor(options, classSettings = {}) {
 
