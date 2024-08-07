@@ -1018,7 +1018,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 		//text
 		lang.mesh + ': ' + ( intersection.object.name === '' ? intersection.object.type : intersection.object.name ) +
 		( pointName === undefined ? '' : '\n'+ lang.pointName + ': ' + pointName ) +
-		'\nID: ' + intersection.index + 
+		( intersection.index === undefined ? '' : '\nID: ' + intersection.index) + 
 		( ( !boXYZ && !scales.x ) || ( scales.x && !scales.x.isAxis() ) ? '' :
 			'\n' + ( ( scales.x && scales.x.name ) || ( scales.x.name === 0 ) ? scales.x.name : 'X' ) + ': ' + position.x ) +
 		( ( !boXYZ && !scales.y ) || ( scales.y && !scales.y.isAxis() ) ? '' :

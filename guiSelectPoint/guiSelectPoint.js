@@ -1148,7 +1148,8 @@ class GuiSelectPoint {
 			if (!object.geometry) return;//Probably this is Group
 			let gp = object.geometry.attributes.position;
 			object.updateMatrixWorld();
-			for ( let i = 0; i < gp.count; i++ ) {
+			const drawRange = object.geometry.drawRange, count = (drawRange.count === Infinity) ? gp.count : drawRange.start + drawRange.count;
+			for ( let i = drawRange.start; i < count; i++ ) {
 
 				let p = new THREE.Vector3().fromBufferAttribute( gp, i ); // set p from `position`
 				//						object.localToWorld(p); // p has wordl coords

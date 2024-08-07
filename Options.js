@@ -1611,9 +1611,11 @@ class Raycaster {
 		 */
 		this.onIntersection = function ( intersection, options, scene, camera, renderer ) {
 
+			const drawRange = intersection.object.geometry.drawRange;
+			if ((intersection.index < drawRange.start) || ((drawRange.count != Infinity) && (intersection.index >= (drawRange.start + drawRange.count)))) return false;
 			const canvas = renderer.domElement;
 			if ( intersection.object.userData.isInfo !== undefined && !intersection.object.userData.isInfo() )
-				return;
+				return false;
 			var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
 			if ( spriteTextIntersection && ( !intersection.pointSpriteText || ( intersection.object.userData.raycaster && intersection.object.userData.raycaster.text ) ) ) {
 				
@@ -1653,6 +1655,7 @@ class Raycaster {
 				renderer.domElement.style.cursor = 'pointer';
 
 			} else if ( intersection.pointSpriteText ) spriteTextIntersection.position.copy( intersection.pointSpriteText );
+			return true;
 
 		}
 
@@ -1730,8 +1733,11 @@ class Raycaster {
 
 			}
 			getIntersects();
-			intersects.forEach( function ( intersection ) {
+//			intersects.forEach( function ( intersection )
+			for (let i = 0; i < intersects.length; i++){
 
+				const intersection = intersects[i];
+				
 				//Когда создаем SpriteText с информацией об объекте, на которую наведена мышка,
 				//иногда этот текст загораживается объектами, которые расположены ближе к камере
 				//Для решения проблемы текст надо перенести ближе к камере
@@ -1771,11 +1777,11 @@ class Raycaster {
 
 					if ( !settings.scene )
 						console.error( 'THREE.Raycaster.setStereoEffect(): settings.scene = ' + settings.scene );
-					else Options.raycaster.onIntersection( intersection, settings.options, settings.scene, settings.camera, renderer );
+					else if (Options.raycaster.onIntersection( intersection, settings.options, settings.scene, settings.camera, renderer )) return;
 
 				}
 
-			} );
+			}
 			intersectedObjects.forEach( function ( intersectedObject ) {
 
 				var boDetected = false;
