@@ -1702,7 +1702,7 @@ class GuiSelectPoint {
 			//Points world position
 			fPointWorld = fPoints.addFolder( lang.pointWorld );
 			dat.folderNameAndTitle( fPointWorld, lang.pointWorld, lang.pointWorldTitle );
-			fPointWorld.open();
+			//fPointWorld.open();
 
 			displayPointControllers( 'none' );
 
