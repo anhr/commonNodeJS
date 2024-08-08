@@ -859,18 +859,23 @@ class GuiSelectPoint {
 
 		}
 		this.getObjectLocalPosition = (intersectionSelected) => {
-			
+
+			return getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
+/*			
 			const mesh = getMesh();
 			return getObjectLocalPosition( intersectionSelected.object,
 				(mesh && mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + intersectionSelected.index );
+*/				
 			
 		}
 		this.getObjectPosition = (object, index) => {
-			
+
+			return getObjectPosition( object, index);
+/*			
 			const mesh = getMesh();
 			return getObjectPosition( object,
 				mesh.userData.myObject.guiPoints.positionOffset + index);
-//				(mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + index );
+*/				
 			
 		}
 		/**

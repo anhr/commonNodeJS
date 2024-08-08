@@ -22,8 +22,15 @@ import three from './three.js'
  */
 export function getObjectLocalPosition( object, index ) {
 
-	const THREE = three.THREE;
-	const attributesPosition = object.geometry.attributes.position,
+	const drawRange = object.geometry.drawRange;
+	if ( (drawRange.count != Infinity) && ( ( index < drawRange.start ) || ( index >= ( drawRange.start + drawRange.count ) ) ) ) {
+		
+		console.error( 'getObjectLocalPosition: Invalid range of the index = ' + index );
+		return;
+
+	}
+	const THREE = three.THREE,
+		attributesPosition = object.geometry.attributes.position,
 		position = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
 	position.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
 	return position;
