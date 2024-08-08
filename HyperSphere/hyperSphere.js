@@ -1684,12 +1684,71 @@ class HyperSphere extends MyObject {
 								createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
 
 								//радиус вершины зависит от времени проигрывателя
+								const getInputEl =  ( controller ) => { return controller ? controller.domElement.querySelector( 'input' ) : undefined; },
+									readOnlyEl = ( controller, boReadOnly ) => {
+						
+									const element = getInputEl( controller );
+									if ( element ) element.readOnly = boReadOnly;
+								
+								},
+									isReadOnlyEl = ( controller ) => {
+									
+									const element = getInputEl( controller );
+									if ( element ) return element.readOnly;
+								
+								},
+									setValue = ( controller, v ) => {
+						
+									if ( !controller )
+										return;
+									const input = getInputEl( controller ),//controller.domElement.querySelector( 'input' ),
+										readOnly = input.readOnly;
+									input.readOnly = false;
+									controller.object[controller.property] = v;
+									if ( controller.__onChange )
+										controller.__onChange.call( controller, v );
+									controller.initialValue = v;
+									controller.updateDisplay();
+									input.readOnly = readOnly;
+									return controller;
+						
+								},
+									isReadOnlyController = ( controller ) => {
+					
+									if ( controller.boSetValue ) return true;
+									if ( isReadOnlyEl( controller ) ) {
+					
+										if ( controller.getValue() !== controller.initialValue ) {
+					
+											if ( controller.boSetValue === undefined ) {
+					
+												controller.boSetValue = true;
+												setValue( controller, controller.initialValue );
+												controller.boSetValue = undefined;
+												controller.initialValue = controller.getValue();//Эта строка нужна в случае когда новое зачения невозможно установиь точно таким же, как initialValue
+												//Иначе перепонится стек
+					
+											}
+					
+										}
+										return true;
+					
+									}
+									return false;
+					
+								}
 								aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player.getTime(), }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).onChange((verticeRadius) => {
 
+									if (isReadOnlyController(aAngleControls.cRadius)) return;
 									console.log('verticeRadius = ' + verticeRadius);
 
 								});
 								dat.controllerNameAndTitle(aAngleControls.cRadius, lang.radius, lang.radiusTitle);
+								readOnlyEl(aAngleControls.cRadius, true);
+/*								
+								aAngleControls.cRadius.domElement.querySelector('input').readOnly = true;
+								aAngleControls.cRadius.domElement.querySelector('.slider').readOnly = true;
+*/								
 									
 								//Edges
 
