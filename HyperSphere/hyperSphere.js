@@ -1605,7 +1605,7 @@ class HyperSphere extends MyObject {
 								if (aAngleControls.removeArc) aAngleControls.removeArc();
 
 							},
-							addControllers: (fParent) => {
+							addControllers: (fParent, readOnly) => {
 
 								settings.options.guiSelectPoint.setReadOnlyPosition(true);
 								const geometry = settings.object.geometry,
@@ -1684,6 +1684,7 @@ class HyperSphere extends MyObject {
 								createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
 
 								//радиус вершины зависит от времени проигрывателя
+/*									
 								const getInputEl =  ( controller ) => { return controller ? controller.domElement.querySelector( 'input' ) : undefined; },
 									readOnlyEl = ( controller, boReadOnly ) => {
 						
@@ -1713,17 +1714,17 @@ class HyperSphere extends MyObject {
 									return controller;
 						
 								},
-									isReadOnlyController = ( controller ) => {
+								const isReadOnlyController = ( controller ) => {
 					
 									if ( controller.boSetValue ) return true;
-									if ( isReadOnlyEl( controller ) ) {
+									if ( readOnly.isReadOnlyEl( controller ) ) {
 					
 										if ( controller.getValue() !== controller.initialValue ) {
 					
 											if ( controller.boSetValue === undefined ) {
 					
 												controller.boSetValue = true;
-												setValue( controller, controller.initialValue );
+												readOnly.setValue( controller, controller.initialValue );
 												controller.boSetValue = undefined;
 												controller.initialValue = controller.getValue();//Эта строка нужна в случае когда новое зачения невозможно установиь точно таким же, как initialValue
 												//Иначе перепонится стек
@@ -1737,14 +1738,15 @@ class HyperSphere extends MyObject {
 									return false;
 					
 								}
+*/										
 								aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player.getTime(), }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).onChange((verticeRadius) => {
 
-									if (isReadOnlyController(aAngleControls.cRadius)) return;
+									if (readOnly.isReadOnlyController(aAngleControls.cRadius)) return;
 									console.log('verticeRadius = ' + verticeRadius);
 
 								});
 								dat.controllerNameAndTitle(aAngleControls.cRadius, lang.radius, lang.radiusTitle);
-								readOnlyEl(aAngleControls.cRadius, true);
+								readOnly.readOnlyEl(aAngleControls.cRadius, true);
 /*								
 								aAngleControls.cRadius.domElement.querySelector('input').readOnly = true;
 								aAngleControls.cRadius.domElement.querySelector('.slider').readOnly = true;

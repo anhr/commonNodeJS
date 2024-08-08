@@ -275,18 +275,42 @@ class GuiSelectPoint {
 
 		//readOnly controller
 
-		const getInputEl =  ( controller ) => { return controller ? controller.domElement.querySelector( 'input' ) : undefined; }
-		const readOnlyEl = ( controller, boReadOnly ) => {
+		const getInputEl =  ( controller ) => { return controller ? controller.domElement.querySelector( 'input' ) : undefined; },
+			readOnlyEl = ( controller, boReadOnly ) => {
 
 			const element = getInputEl( controller );
 			if ( element ) element.readOnly = boReadOnly;
 		
-		}
-		const isReadOnlyEl = ( controller ) => {
+		},
+			isReadOnlyEl = ( controller ) => {
 			
 			const element = getInputEl( controller );
 			if ( element ) return element.readOnly;
 		
+		},
+			isReadOnlyController = (controller) => {
+
+			if (controller.boSetValue) return true;
+			if (isReadOnlyEl(controller)) {
+
+				if (controller.getValue() !== controller.initialValue) {
+
+					if (controller.boSetValue === undefined) {
+
+						controller.boSetValue = true;
+						setValue(controller, controller.initialValue);
+						controller.boSetValue = undefined;
+						controller.initialValue = controller.getValue();//Эта строка нужна в случае когда новое зачения невозможно установиь точно таким же, как initialValue
+						//Иначе перепонится стек
+
+					}
+
+				}
+				return true;
+
+			}
+			return false;
+
 		}
 
 		function exposePosition( selectedPointIndex ) {
@@ -1241,7 +1265,15 @@ class GuiSelectPoint {
 					delete fPoint.fCustomPoint;
 					
 				}
-				if (mesh && mesh.userData.gui) { fPoint.fCustomPoint = mesh.userData.gui.addControllers(fPoint); }
+				if ( mesh && mesh.userData.gui ) { fPoint.fCustomPoint = mesh.userData.gui.addControllers( fPoint, {
+					
+//					getInputEl: getInputEl,
+					readOnlyEl: readOnlyEl,
+//					isReadOnlyEl: isReadOnlyEl,
+//					setValue: setValue,
+					isReadOnlyController: isReadOnlyController,
+				
+				} ); }
 				
 				if ( cCustom ) cCustom.object( mesh, dat, value === -1 );//options );
 
@@ -1804,31 +1836,6 @@ class GuiSelectPoint {
 
 		}
 		function addPointControllers() {
-
-			function isReadOnlyController( controller ) {
-
-				if ( controller.boSetValue ) return true;
-				if ( isReadOnlyEl( controller ) ) {
-
-					if ( controller.getValue() !== controller.initialValue ) {
-
-						if ( controller.boSetValue === undefined ) {
-
-							controller.boSetValue = true;
-							setValue( controller, controller.initialValue );
-							controller.boSetValue = undefined;
-							controller.initialValue = controller.getValue();//Эта строка нужна в случае когда новое зачения невозможно установиь точно таким же, как initialValue
-							//Иначе перепонится стек
-
-						}
-
-					}
-					return true;
-
-				}
-				return false;
-
-			}
 
 			//Point's attribute position axes controllers
 
