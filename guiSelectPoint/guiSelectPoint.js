@@ -422,7 +422,11 @@ class GuiSelectPoint {
 				//console.error( 'arrayFuncs === "function" under constraction' );
 
 			}
-			const func = player && player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined,
+			const func = player && player.arrayFuncs ? 
+					player.arrayFuncs.intersection ?
+						player.arrayFuncs.intersection(intersectionSelected.index) :
+						player.arrayFuncs[intersectionSelected.index] :
+					undefined,
 				attributes = intersectionSelected.object.geometry.attributes;
 			if (!attributes.color) {
 
@@ -918,13 +922,12 @@ class GuiSelectPoint {
 					guiParams.setIntersection( intersectionSelected );
 				setPosition( intersectionSelected );
 
-				const mesh = getMesh();
-				const line =
-					!mesh.userData.player ||
+				const mesh = getMesh(), arrayFuncs = mesh.userData.player.arrayFuncs,
+					line = !mesh.userData.player ||
 						( mesh.userData.player.arrayFuncs === undefined ) ||
 						( typeof intersection.object.userData.player.arrayFuncs === "function" ) ?
 						undefined :
-						mesh.userData.player.arrayFuncs[intersectionSelected.index].line;//You can not trace points if you do not defined the mesh.userData.player.arrayFuncs
+						(arrayFuncs.intersection ? arrayFuncs.intersection(intersectionSelected.index) : arrayFuncs[intersectionSelected.index]).line;//You can not trace points if you do not defined the mesh.userData.player.arrayFuncs
 				if ( cTrace )
 					cTrace.setValue( ( line === undefined ) ?
 						false : line.isVisible() )
@@ -1034,8 +1037,9 @@ class GuiSelectPoint {
 
 			if ( !intersection || !intersection.object.userData.player || intersection.object.userData.player.arrayFuncs === undefined )
 				return;
+			const arrayFuncs = intersection.object.userData.player.arrayFuncs;
 			var index = intersection.index || 0,
-				point = intersection.object.userData.player.arrayFuncs[index],
+				point = arrayFuncs.intersection ? arrayFuncs.intersection(index) : arrayFuncs[index],
 				line = point === undefined ? undefined : point.line;
 			if ( ( line !== undefined ) )
 				line.visible( value );
