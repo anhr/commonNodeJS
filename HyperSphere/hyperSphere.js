@@ -1382,12 +1382,12 @@ class HyperSphere extends MyObject {
 			if (this.setW) this.setW();
 
 			this.isUpdate = true;
-			this.update = (verticeId, changedAngleId) => {
+			this.update = (verticeId, changedAngleId, timeId) => {
 
 				if (!this.isUpdate) return;
 				const points = nd && (nd.object3D.visible === true) ? nd.object3D : myPoints;
 				const vertice = settings.object.geometry.position[verticeId];
-				this.setPositionAttributeFromPoint(verticeId, vertice);
+				this.setPositionAttributeFromPoint(verticeId, vertice, timeId);
 				this.bufferGeometry.attributes.position.needsUpdate = true;
 				this.bufferGeometry.attributes.color.needsUpdate = true;
 				if (settings.options.axesHelper)
@@ -1626,16 +1626,15 @@ class HyperSphere extends MyObject {
 											range = angles.ranges[angleId],
 											cAngle = fAngles.add({ angle: 0, }, 'angle', range.min, range.max, 2 * π / 360).onChange((angle) => {
 
-											const guiPoints = _this.object().userData.myObject.guiPoints,
-//												verticeAngles = (guiPoints.timeAngles || angles)[aAngleControls.verticeId];
-												verticeAngles = classSettings.overriddenProperties.verticeAngles(guiPoints.timeAngles || angles, aAngleControls.verticeId);
-											if (verticeAngles[angleId] === angle) return;
-											verticeAngles[angleId] = angle;
-											_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);
-											
-											_this.update(aAngleControls.verticeId, angleId);
-
-										});
+												const guiPoints = _this.object().userData.myObject.guiPoints,
+	//												verticeAngles = (guiPoints.timeAngles || angles)[aAngleControls.verticeId];
+													verticeAngles = classSettings.overriddenProperties.verticeAngles(guiPoints.timeAngles || angles, aAngleControls.verticeId);
+												if (verticeAngles[angleId] === angle) return;
+												verticeAngles[angleId] = angle;
+												_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);
+												_this.update(aAngleControls.verticeId, angleId, guiPoints.timeId);
+	
+											});
 /*
 										const name = (angleId) => {
 

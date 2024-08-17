@@ -256,19 +256,43 @@ class MyObject {
 			return w;
 
 		}
+		this.getPositionData = (i, timeId) => {
+
+			if (timeId === undefined) timeId = 0;
+			const userData = settings.bufferGeometry.userData,
+//				positionBlockLength = (timeId === undefined) ? undefined : userData.positionBlockLength === undefined ? 0 : userData.positionBlockLength,
+				positionBlockLength = userData.positionBlockLength === undefined ? 0 : userData.positionBlockLength,
+				itemSize = settings.bufferGeometry.attributes.position.itemSize,
+				verticeId = positionBlockLength * timeId + i;
+			return {
+
+				verticeId: verticeId,
+				itemSize: itemSize,
+				positionBlockLength: positionBlockLength,
+//				positionId: i * itemSize + (timeId === undefined ? 0 : positionBlockLength * timeId * itemSize),
+				positionId: verticeId * itemSize,
+
+			}
+			
+		}
 		this.setPositionAttributeFromPoint = (i, vertice, timeId) => {
 
 			//Position attribute
 			
+			vertice = vertice || _this.getPoint(i, timeId);
+/*			
 			const attributes = settings.bufferGeometry.attributes, position = attributes.position,
 //				anglesLength = (timeId === undefined) ? undefined : settings.object.geometry.angles.length;
 				userData = settings.bufferGeometry.userData,
 				positionBlockLength = (timeId === undefined) ? undefined : userData.positionBlockLength === undefined ? 0 : userData.positionBlockLength;
-			vertice = vertice || _this.getPoint(i, timeId);
 			let itemSize = position.itemSize, positionId = i * itemSize + (timeId === undefined ? 0 :
 //					anglesLength * timeId * itemSize),
 					positionBlockLength * timeId * itemSize),
 				array = position.array;
+*/
+			const attributes = settings.bufferGeometry.attributes, positionData = this.getPositionData(i, timeId),
+				positionBlockLength = positionData.positionBlockLength;
+			let itemSize = positionData.itemSize, positionId = positionData.positionId, array = attributes.position.array;
 			                  array [positionId] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
 			if (itemSize > 1) array [++positionId] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) array [++positionId] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;

@@ -860,12 +860,9 @@ class GuiSelectPoint {
 		}
 		this.getObjectLocalPosition = (intersectionSelected) => {
 
-			return getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
-/*			
-			const mesh = getMesh();
-			return getObjectLocalPosition( intersectionSelected.object,
-				(mesh && mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + intersectionSelected.index );
-*/				
+			const positionData = intersectionSelected.object.userData.myObject.getPositionData( intersectionSelected.index,  intersectionSelected.object.userData.myObject.guiPoints.timeId );
+			return getObjectLocalPosition( intersectionSelected.object, positionData.verticeId );
+//			return getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
 			
 		}
 		this.getObjectPosition = (object, index) => {
@@ -890,7 +887,7 @@ class GuiSelectPoint {
 			const position = getObjectLocalPosition( intersectionSelected.object,
 				(mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + intersectionSelected.index );
 */				
-			const position = this.getObjectLocalPosition(intersectionSelected);
+//			const position = this.getObjectLocalPosition(intersectionSelected);
 
 			//f3DObjects.close();//если тут не закрывать папку, то ингода прорпадает скроллинг окна dat.GUI
 			//for testing:
