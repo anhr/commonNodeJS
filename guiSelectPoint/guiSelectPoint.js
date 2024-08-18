@@ -422,13 +422,16 @@ class GuiSelectPoint {
 			}
 
 //			const positionLocal = getObjectLocalPosition(intersectionSelected.object, intersectionSelected.index);
+/*			
+			const myObject = intersectionSelected.object.userData.myObject;
+			if (myObject.guiPoints && myObject.guiPoints.verticeId) intersectionSelected.index = myObject.guiPoints.verticeId;
+*/			
 			const positionLocal = _this.getObjectLocalPosition(intersectionSelected);
 			setValue(cX, positionLocal.x);
 			setValue(cY, positionLocal.y);
 			setValue(cZ, positionLocal.z);
 
 /*			
-			const myObject = intersectionSelected.object.userData.myObject;
 			if (intersectionSelected.object.userData.gui) intersectionSelected.object.userData.gui.setValues(intersectionSelected.index, myObject? myObject.guiPoints.timeAngles : undefined);
 */			
 			if (intersectionSelected.object.userData.gui)
@@ -1919,14 +1922,17 @@ class GuiSelectPoint {
 
 								if ( isReadOnlyController( controller ) ) return;
 								
-								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName);
-//									myObject = points.userData.myObject, guiPoints = myObject ? myObject.guiPoints : undefined;
-
+								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName),
+									myObject = points.userData.myObject,
+									positionData = myObject.getPositionData(intersection.index);
+									//guiPoints = myObject ? myObject.guiPoints : undefined;
+								points.geometry.attributes.position.array[axesId + positionData.positionId] = value;
+/*
 								points.geometry.attributes.position.array[
-//									axesId + ((guiPoints ? guiPoints.positionOffset : 0) + intersection.index) *
-									axesId + points.userData.myObject.guiPoints.positionOffset + intersection.index *
+									axesId + myObject.guiPoints.positionOffset + intersection.index *
 									points.geometry.attributes.position.itemSize
 								] = value;
+*/								
 								points.geometry.attributes.position.needsUpdate = true;
 
 								exposePosition( intersection.index );

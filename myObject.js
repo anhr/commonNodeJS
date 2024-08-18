@@ -258,7 +258,17 @@ class MyObject {
 		}
 		this.getPositionData = (i, timeId) => {
 
+			//Во вселенной, когда пользователь щелкает по вершине, то индекс вершины i будет равен положению вершины в attributes.position
+			//а должен быть равен индексу вершины для текущего времени.
+			if (_this.guiPoints && _this.guiPoints.verticeId) {
+				
+				i = _this.guiPoints.verticeId;
+				timeId = _this.guiPoints.timeId;
+
+			}
+			
 			if (timeId === undefined) timeId = 0;
+			if (i === undefined) console.error(sMyObject + '.getPositionData. Invalid i = ' + i);
 			const userData = settings.bufferGeometry.userData,
 //				positionBlockLength = (timeId === undefined) ? undefined : userData.positionBlockLength === undefined ? 0 : userData.positionBlockLength,
 				positionBlockLength = userData.positionBlockLength === undefined ? 0 : userData.positionBlockLength,
