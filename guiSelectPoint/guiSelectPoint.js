@@ -863,7 +863,9 @@ class GuiSelectPoint {
 		}
 		this.getObjectLocalPosition = (intersectionSelected) => {
 
-			const positionData = intersectionSelected.object.userData.myObject.getPositionData( intersectionSelected.index,  intersectionSelected.object.userData.myObject.guiPoints.timeId );
+			const myObject = intersectionSelected.object.userData.myObject,
+//				positionData = myObject.getPositionData ? myObject.getPositionData( intersectionSelected.index,  myObject.guiPoints.timeId ) : { verticeId: intersectionSelected.index };
+				positionData = myObject.getPositionData( intersectionSelected.index,  myObject.guiPoints.timeId );
 			return getObjectLocalPosition( intersectionSelected.object, positionData.verticeId );
 //			return getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
 			
@@ -884,6 +886,8 @@ class GuiSelectPoint {
 		 */
 		this.select = function ( intersectionSelected ) {
 
+			const myObject = intersectionSelected.object.userData.myObject;
+			if ( !myObject.getPositionData ) myObject.getPositionData = ( index ) => { return { verticeId: index, positionId: index } }
 /*			
 			const mesh = getMesh();
 //			if (mesh.userData.myObject && mesh.userData.myObject.guiPoints) intersectionSelected.index += mesh.userData.myObject.guiPoints.positionOffset;
@@ -1922,17 +1926,13 @@ class GuiSelectPoint {
 
 								if ( isReadOnlyController( controller ) ) return;
 								
-								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName),
+								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName);
+/*									
 									myObject = points.userData.myObject,
-									positionData = myObject.getPositionData(intersection.index);
-									//guiPoints = myObject ? myObject.guiPoints : undefined;
+									positionData = myObject.getPositionData ? myObject.getPositionData(intersection.index) : { positionId: intersection.index };
 								points.geometry.attributes.position.array[axesId + positionData.positionId] = value;
-/*
-								points.geometry.attributes.position.array[
-									axesId + myObject.guiPoints.positionOffset + intersection.index *
-									points.geometry.attributes.position.itemSize
-								] = value;
-*/								
+*/
+								points.geometry.attributes.position.array[axesId + points.userData.myObject.getPositionData(intersection.index).positionId] = value;
 								points.geometry.attributes.position.needsUpdate = true;
 
 								exposePosition( intersection.index );

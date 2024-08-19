@@ -1426,7 +1426,7 @@ class HyperSphere extends MyObject {
 			}
 			this.projectGeometry = () => {
 
-				this.line = (settings) => {
+				this.line = (settings, r = 1) => {
 
 					return this.newHyperSphere(
 						classSettings.settings.options,
@@ -1442,7 +1442,7 @@ class HyperSphere extends MyObject {
 
 							} : settings.edges,
 							projectParams: { scene: classSettings.projectParams.scene, },
-							r: classSettings.r,
+							r: r * classSettings.r,
 							debug: classSettings.debug,
 							settings: {
 
@@ -2156,7 +2156,7 @@ class HyperSphere extends MyObject {
 
 											},
 
-										});
+										}, position.angles.player.t);
 										const plane = aAngleControls.planes[verticeAngleId];
 										plane.opacity();
 
