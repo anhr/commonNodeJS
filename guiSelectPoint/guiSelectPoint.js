@@ -887,7 +887,8 @@ class GuiSelectPoint {
 		this.select = function ( intersectionSelected ) {
 
 			const myObject = intersectionSelected.object.userData.myObject;
-			if ( !myObject.getPositionData ) myObject.getPositionData = ( index ) => { return { verticeId: index, positionId: index } }
+			if ( !myObject.getPositionData ) 
+				myObject.getPositionData = ( index ) => { return { verticeId: index, positionId: index * intersectionSelected.object.geometry.attributes.position.itemSize } }
 /*			
 			const mesh = getMesh();
 //			if (mesh.userData.myObject && mesh.userData.myObject.guiPoints) intersectionSelected.index += mesh.userData.myObject.guiPoints.positionOffset;
