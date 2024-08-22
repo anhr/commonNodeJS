@@ -66,5 +66,5 @@ Example of using:
 
 [Intersects](https://raw.githack.com/anhr/commonNodeJS/master/intersections/jsdoc/index.html).
 
-[Egocentric Universe](https://github.com/anhr/egocentricUniverse).
+[Universe](https://github.com/anhr/universe).
 
