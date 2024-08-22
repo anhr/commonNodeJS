@@ -292,7 +292,8 @@ class HyperSphere extends MyObject {
 	
 						case 't':
 							classSettings.settings.bufferGeometry.userData.timeId = userData.index;
-							if (classSettings.onSelectScene) classSettings.onSelectScene(this, userData.index, value);//время равно радиусу вселенной
+//сейчас это вызывается из options.onSelectScene
+//							if (classSettings.onSelectScene) classSettings.onSelectScene(this, userData.index, value);//время равно радиусу вселенной
 							break;
 							
 					}
