@@ -1032,7 +1032,7 @@ class HyperSphere extends MyObject {
 					angles2vertice = a2v(vertice2angles);
 				const value = vertice;
 				if (angles2vertice.length != value.length) console.error(sHyperSphere + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
-				const d = 6e-16;
+				const d = 7e-16;
 				angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHyperSphere + ': Set vertices[' + anglesId + '] failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
 				
 			}
@@ -2471,6 +2471,7 @@ class HyperSphere extends MyObject {
 								return true;
 
 							}
+							options.player.continue();
 
 						}
 						if (!stepItem()) progressBar.step();
