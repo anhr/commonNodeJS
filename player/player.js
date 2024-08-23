@@ -360,7 +360,7 @@ class Player {
 		 * Please call it from <b>settings.options.onSelectScene()</b> function after asynchronously creating of the scene.
 		 * Return true from <b>settings.options.onSelectScene()</b> function for pause of the playing.
 		 * </pre>
-		 * @see <a href="../../../../egocentricUniverse/master/jsdoc" target="_blank">example</a>
+		 * @see <a href="../../../../universe/main/jsdoc/" target="_blank">example</a>
 		 */
 		this.continue = () => {
 
