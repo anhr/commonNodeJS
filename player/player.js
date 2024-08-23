@@ -2925,7 +2925,7 @@ Player.selectPlayScene = function ( group, settings = {} ) {
 		options = settings.options || new Options();
 	group.userData.index = index;
 	group.userData.t = t;
-	options.player.endSelect = () => {
+	if (typeof options.player === "object") options.player.endSelect = () => {
 		
 		Player.selectMeshPlayScene( group, { t: t, options: options } );
 		function selectMeshPlayScene( group ) {
@@ -2950,7 +2950,7 @@ Player.selectPlayScene = function ( group, settings = {} ) {
 		if ( cameraTarget && cameraTarget.setCameraPosition ) cameraTarget.setCameraPosition( index === undefined );
 		
 	}
-	if ( !group.userData.endSelect ) options.player.endSelect();
+	if ( !group.userData.endSelect && (typeof options.player === "object")) options.player.endSelect();
 
 }
 var THREE;
