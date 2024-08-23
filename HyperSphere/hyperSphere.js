@@ -2471,7 +2471,7 @@ class HyperSphere extends MyObject {
 								return true;
 
 							}
-							options.player.continue();
+							//options.player.continue();
 
 						}
 						if (!stepItem()) progressBar.step();
