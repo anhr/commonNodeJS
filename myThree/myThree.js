@@ -582,6 +582,7 @@ class MyThree {
 					options.boPlayer = true;
 					if ( options.frustumPoints !== undefined ) options.frustumPoints.updateCloudPoints();
 					if ( options.onSelectScene !== undefined ) return options.onSelectScene( index, t );
+					return true;//Сдедующий шаг проигрывателя выполняется только после посторения всех вершин без временной задержки
 
 				},
 				options: options,
