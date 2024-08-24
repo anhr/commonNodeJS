@@ -115,7 +115,7 @@ class Player {
 		function onSelectScene( index ) {
 
 			index = index || 0;
-			const t = _this.getTime();
+			const t = _this.getTime(index);
 			Player.selectPlayScene( group, { t: t, index: index, options: settings.options } );
 			_this.setIndex( index, ( options.playerOptions.name === '' ? '' : options.playerOptions.name + ': ' ) + t );
 			if ( settings.onSelectScene ) _this.selectScenePause = settings.onSelectScene( index, t );
@@ -164,6 +164,12 @@ class Player {
 
 		}
 
+		//массив индексов проигрывателя selectSceneIndex для функции onSelectScene
+		//Этот массив заполняется когда пользователь нажал на scrollBar проигрывателя и когда очередной шаг проигрывателя выпоняется ассинхронно
+		//В этом случае вызывается сразу несколько onSelectScene с разными индексами проигрывателя selectSceneIndex
+		//Для того, что бы несколько onSelectScene не выполнялись одновременно сначала выполняется первый onSelectScene, а затем выпоняются остальные только когда выполнится предыдущий onSelectScene
+		const aSelectSceneIndex = [];
+
 		/**
 		 * select scene for playing
 		 * @param {number} index Index of the scene. Range from 0 to options.playerOptions.marks - 1
@@ -199,7 +205,11 @@ class Player {
 				if ( selectSceneIndex < index )
 					selectSceneIndex++;
 				else selectSceneIndex--;
-				onSelectScene( selectSceneIndex );
+				if (this.selectScenePause === true) 
+					//Пользователь нажал scrollBar проигрывателя и когда очередной шаг проигрывателя выпоняется ассинхронно
+					//В этом случае сдедующий onSelectScene выполняется только когда выполнится предыдущий onSelectScene
+					aSelectSceneIndex.push( selectSceneIndex );
+				else onSelectScene( selectSceneIndex );
 
 			}
 			return true;
@@ -364,6 +374,12 @@ class Player {
 		 */
 		this.continue = () => {
 
+			if (aSelectSceneIndex.length > 0) {
+
+				onSelectScene(aSelectSceneIndex.shift());
+				return;
+				
+			}
 			_this.selectScenePause = false;
 			window.requestAnimationFrame(step);
 			

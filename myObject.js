@@ -231,14 +231,14 @@ class MyObject {
 			return settings.bufferGeometry;
 			
 		}
-		this.verticeColor = (i, vertice) => {
+		this.verticeColor = (i, vertice, timeId) => {
 
 			const colors = settings.object.geometry.colors;
 			const colorsId = i * 3;
 			if (colors && colors[colorsId] != undefined)
 				return [colors[colorsId], colors[colorsId + 1], colors[colorsId + 2]];
 			const color = settings.object.color;
-			if (typeof color === "function") return color();
+			if (typeof color === "function") return color(timeId);
 			if ((color != undefined) && (typeof color != 'object')) return new THREE.Color(_this.color());
 			//Вершина не имеет 4 координаты. Установить цвет вершины по умолчанию
 			const getDefaultColor = () => { return new THREE.Color(_this.color()); }
@@ -324,7 +324,7 @@ class MyObject {
 //			let colorId = i * itemSize + (timeId === undefined ? 0 : anglesLength * timeId * itemSize);
 			let colorId = i * itemSize + (timeId === undefined ? 0 : positionBlockLength * timeId * itemSize);
 			array = attributes.color.array;
-			const verticeColor = this.verticeColor(i, vertice);
+			const verticeColor = this.verticeColor(i, vertice, timeId);
 			if (typeof verticeColor === 'number'){
 
 				if (settings.options) {
