@@ -333,10 +333,11 @@ class Player {
 
 			}
 
-			if (timestamp < timeNext)
+			if ( (timestamp < timeNext) || !playing )
 				return;
-			while (timestamp > timeNext)
-				timeNext += 1000 / options.playerOptions.interval;
+			const d = 1000 / options.playerOptions.interval;
+			if (d > 0) while (timestamp > timeNext)
+				timeNext += d;
 			playNext();
 
 		}
@@ -873,11 +874,26 @@ class Player {
 				}
 
 				//Ticks per seconds.
-				scaleControllers.interval = scaleControllers.folder.add( settings.options.playerOptions, 'interval', 1, 25, 1 ).onChange( function ( value ) {
+				settings.options.playerOptions.intervalOptions ||= {};
+				const intervalOptions = settings.options.playerOptions.intervalOptions;
+				intervalOptions.min = intervalOptions.min != undefined ? intervalOptions.min : settings.options.playerOptions.interval < 1 ? settings.options.playerOptions.interval : 1;
+				intervalOptions.max = intervalOptions.max === null ? Infinity : //Во время JSON преобразования Infinity превращается в null. Поэтому восстанавливаю обратно
+					intervalOptions.max != undefined ? intervalOptions.max : settings.options.playerOptions.interval > 25 ? settings.options.playerOptions.interval : 25;
+/*				
+				intervalOptions.max = intervalOptions.max != undefined ? intervalOptions.max :
+					intervalOptions.max != null ? 25 : Infinity;//Во время JSON преобразования Infinity превращается в null. Поэтому восстанавливаю обратно
+*/					
+				if (intervalOptions.max === Infinity)
+					scaleControllers.interval = scaleControllers.folder.add( settings.options.playerOptions, 'interval' ).onChange( function ( value ) {
 
-					setSettings();
+						setSettings();
 
-				} );
+					} );
+				else scaleControllers.interval = scaleControllers.folder.add( settings.options.playerOptions, 'interval', intervalOptions.min, intervalOptions.max, 1 ).onChange( function ( value ) {
+
+						setSettings();
+	
+					} );
 				dat.controllerNameAndTitle( scaleControllers.interval, lang.interval, lang.intervalTitle );
 
 				//Default button
