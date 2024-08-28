@@ -461,7 +461,7 @@ class Player {
 					lang.marksTitle = 'Количество кадров проигрывателя';
 
 					lang.interval = 'Темп',
-						lang.intervalTitle = 'Скорость смены кадров в секунду.';
+					lang.intervalTitle = 'Скорость смены кадров в секунду.';
 
 					lang.time = 'Время';
 
@@ -760,15 +760,20 @@ class Player {
 
 			}
 			setMax();
-			const axesDefault = JSON.parse( JSON.stringify( options.playerOptions ) ),
+//			const axesDefault = JSON.parse( JSON.stringify( options.playerOptions ) ),//JSON преобразует Infinity в null. Поэтому неверно запоминается options.playerOptions.interval = Infinity
+			const axesDefault = {},
 				lang = getLang( {
 
 					getLanguageCode: getLanguageCode,
 
 				} );
+			Object.keys( options.playerOptions ).forEach( ( key ) => { axesDefault[key] = options.playerOptions[key]; } );
 			Object.freeze( axesDefault );
-			const max = options.playerOptions.max, marks = options.playerOptions.marks;
-			cookie.getObject( cookieName, options.playerOptions, options.playerOptions );
+			const max = options.playerOptions.max, marks = options.playerOptions.marks;// interval = options.playerOptions.interval,
+//				playerOptionsDefault = {};
+//			Object.keys( options.playerOptions ).forEach( ( key ) => { playerOptionsDefault[key] = options.playerOptions[key]; } );
+			cookie.getObject( cookieName, options.playerOptions, axesDefault );
+//			if (interval === Infinity) options.playerOptions.interval = interval;//При копировании объекта свойство со значением Infinity превращается в null а затем я это переделываю в 1. Здесь я возвращаю значение interval = Infinity
 			if ( ( max === null ) || ( max === Infinity ) ||
 				( options.playerOptions.max === null )//раньше на веб странице плеер был настроен на бесконечное проигрыванияе а сейчас проигрывание ограничено по времени
 			) {
@@ -919,6 +924,12 @@ class Player {
 
 						axes.interval = axesDefault.interval;
 						scaleControllers.interval.setValue( axes.interval );
+						if ( ( axesDefault.interval > scaleControllers.interval.__max ) || ( axesDefault.interval < scaleControllers.interval.__min )) {
+							
+							scaleControllers.interval.domElement.childNodes[0].childNodes[0].value = axesDefault.interval;
+							axes.interval = axesDefault.interval;
+
+						}
 
 						setSettings();
 

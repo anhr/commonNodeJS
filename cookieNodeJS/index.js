@@ -202,7 +202,15 @@ class defaultCookie {
 				//options[key] = optionsDefault[key];
 				//copy key
 				var option = optionsDefault[key];
-				if ((option !== undefined) && (typeof option !== 'function'))
+				if (
+					(option !== undefined) &&
+					(typeof option !== 'function') &&
+					
+					//Ключь со значением Infinity превращается в null во время JSON преобразования.
+					//Для проверки надо установить options.playerOptions.interval = Infinity
+					//Поэтому оставляем старое значение options[key] = Infinity
+					(option != null)
+				)
 					options[key] = JSON.parse(JSON.stringify(option));
 
 			});

@@ -235,7 +235,7 @@ class Options {
 					if ( playerOptions.max === null ) playerOptions.dt = playerOptions.dt || 0.1;
 					else playerOptions.dt = ( playerOptions.max - playerOptions.min ) / ( playerOptions.marks - 1 );
 					playerOptions.repeat = playerOptions.repeat || false;
-					playerOptions.interval = playerOptions.interval || 1;//25;
+					playerOptions.interval = playerOptions.interval != undefined ? playerOptions.interval : 1;
 					playerOptions.zoomMultiplier = playerOptions.zoomMultiplier || 1.1;
 					playerOptions.offset = playerOptions.offset || 0.1;
 					playerOptions.name = playerOptions.name || '';

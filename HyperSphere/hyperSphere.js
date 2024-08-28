@@ -262,6 +262,13 @@ class HyperSphere extends MyObject {
 	 **/
 	constructor(options, classSettings = {}) {
 
+		options.onSelectScene = (index, t) => {
+
+			if (classSettings.onSelectScene) return classSettings.onSelectScene(this, index, t);
+			else return this.onSelectScene.copyAngles(index, t);
+			return true;//Сдедующий шаг проигрывателя выполняется только после посторения всех вершин без временной задержки
+		
+		}
 		classSettings.settings = classSettings.settings || {};
 		classSettings.settings.options = options;
 		super( classSettings.settings );
