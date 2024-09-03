@@ -3082,6 +3082,7 @@ function assign( ) {
 
 		raycast: function ( raycaster, intersects ) {
 
+console.log('raycast.');
 			const _inverseMatrix = new THREE.Matrix4();
 			const _ray = new THREE.Ray();
 			const _sphere = new THREE.Sphere();
@@ -3089,7 +3090,7 @@ function assign( ) {
 			function testPoint( point, index, localThresholdSq, matrixWorld, raycaster, intersects, object ) {
 
 				const rayPointDistanceSq = _ray.distanceSqToPoint( point );
-
+//console.log('testPoint. index = ' + index);
 				if ( rayPointDistanceSq < localThresholdSq ) {
 
 					const intersectPoint = new THREE.Vector3();
