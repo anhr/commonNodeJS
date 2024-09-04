@@ -3082,7 +3082,7 @@ function assign( ) {
 
 		raycast: function ( raycaster, intersects ) {
 
-console.log('raycast.');
+//console.log('raycast.');
 			const _inverseMatrix = new THREE.Matrix4();
 			const _ray = new THREE.Ray();
 			const _sphere = new THREE.Sphere();
@@ -3129,8 +3129,10 @@ console.log('raycast.');
 			_sphere.applyMatrix4( matrixWorld );
 			_sphere.radius += threshold;
 
+//console.log('raycast. raycaster.ray: ' + JSON.stringify(raycaster.ray));
 			if ( raycaster.ray.intersectsSphere( _sphere ) === false ) return;
 
+//console.log('raycast. intersectsSphere');
 			//
 
 			_inverseMatrix.copy( matrixWorld ).invert();
