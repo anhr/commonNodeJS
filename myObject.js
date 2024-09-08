@@ -200,6 +200,7 @@ class MyObject {
 					switch (name) {
 	
 						case 'length': return position.count;
+						case 'itemSize': return position.itemSize;
 	
 					}
 					console.error(sMyObject + ': get settings.bufferGeometry.userData.position. Invalid name: ' + name);

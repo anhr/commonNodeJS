@@ -3018,7 +3018,15 @@ function assign( ) {
 
 		setFromPoints: function ( points, itemSize ) {
 
-			itemSize = itemSize || 3;
+			itemSize = itemSize ||
+				
+				//for testing:
+				//Open http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
+				//Set HyperSphere.classSettings.edges is not false - отображать ребра
+				//Take one step of the player →
+				points.itemSize ||
+				
+				3;
 			var position = [];
 
 			for ( var i = 0, l = points.length; i < l; i++ ) {
