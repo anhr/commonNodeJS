@@ -530,7 +530,7 @@ class ND extends MyObject {
 		function update() {
 			
 			_ND.intersection();
-			object3D.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
+//			object3D.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
 			object3D.geometry.attributes.position.needsUpdate = true;
 			if (options.guiSelectPoint) options.guiSelectPoint.update();
 			object3D.children.forEach( child => {
