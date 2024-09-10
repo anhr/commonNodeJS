@@ -2027,8 +2027,7 @@ class ND extends MyObject {
 						}
 
 					}
-//не помню зачем это
-//					if ( _ND.setDrawRange ) _ND.setDrawRange( 0, indices.length );
+					if ( _ND.setDrawRange ) _ND.setDrawRange( 0, indices.length );//Если тут не установить drawRange, то будут отбражаться не все ребра в http://localhost/anhr/universe/main/hyperSphere/Examples/ 
 					return { indices: indices, colors: colors, };
 
 				},
