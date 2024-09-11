@@ -98,7 +98,7 @@ class MyObject {
 
 		this.setDrawRange = (start, count) => { settings.bufferGeometry.setDrawRange(start, count); }
 //		const getPlayerAnglesLength = () => { return (settings.object.geometry.playerAnglesLength != undefined ? settings.object.geometry.playerAnglesLength : 1);}
-		const getPlayerAnglesLength = () => { return (settings.object.geometry.timesAngles != undefined ? settings.object.geometry.timesAngles.length : 1);}
+		const getPlayerTimesLength = () => { return (settings.object.geometry.times != undefined ? settings.object.geometry.times.length : 1);}
 		const createPositionAttribute = (pointLength, pointsLength) => {
 
 			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
@@ -108,7 +108,7 @@ class MyObject {
 				pointLength * pointsLength * settings.object.geometry.rCount :
 				settings.object.geometry.MAX_POINTS;
 			if (MAX_POINTS != undefined) settings.bufferGeometry.setDrawRange(0, isRCount ?
-				  pointsLength * getPlayerAnglesLength()://зарезервировано место для вершин вселенной с разным радиусом
+				  pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
 //				  pointsLength://зарезервировано место для вершин вселенной с разным радиусом
 				  //Имеются ребра. В этом случае settings.bufferGeometry.drawRange.count определяет количество отображаемых ребер
 				  //Сейчас ребра еще не созданы. Поэтому settings.bufferGeometry.drawRange будет установлено после вызова this.setDrawRange
@@ -227,7 +227,7 @@ class MyObject {
 					this.pointLength ? this.pointLength() :
 						points[0].w === undefined ? 3 : 4,
 					points.length);
-				for (let timeId = 0; timeId < getPlayerAnglesLength(); timeId++)
+				for (let timeId = 0; timeId < getPlayerTimesLength(); timeId++)
 					for (let i = 0; i < points.length; i++) this.setPositionAttributeFromPoint(i, undefined, timeId);
 
 			}
