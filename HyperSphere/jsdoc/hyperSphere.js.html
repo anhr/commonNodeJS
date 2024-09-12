@@ -205,6 +205,12 @@ class HyperSphere extends MyObject {
 	 *	4 for &lt;b>&lt;a href="module-Sphere.html" target="_blank">Sphere&lt;/a>&lt;/b> - pyramid.
 	 *	5 for &lt;b>&lt;a href="module-HyperSphere3D.html" target="_blank">HyperSphere3D&lt;/a>&lt;/b> - [pentahedroid]{@link https://en.wikipedia.org/wiki/5-cell}.
 	 * &lt;/pre>
+	 * @param {array} [classSettings.settings.object.geometry.times] array of vertices angles for different player &lt;a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player&lt;/a> times. See &lt;b>angles&lt;/b> above.
+	 * &lt;pre>
+	 * See &lt;a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">Player.onSelectScene&lt;/a> for details.
+	 * Every item of the array is array of vertices angles for current &lt;b>Player&lt;/b> time.
+	 * &lt;b>times&lt;/b> have priority before &lt;b>angles&lt;/b>.
+	 * &lt;/pre>
 	 * @param {array} [classSettings.settings.object.geometry.colors] array of colors of vertices.
 	 * &lt;pre>
  	 * Color of the each vertice is group of three (RGB) items of the colors array in range from 0 to 1. See [THREE.Color]{@link https://threejs.org/docs/?q=Color#api/en/math/Color} for details.
@@ -290,6 +296,13 @@ class HyperSphere extends MyObject {
 	 **/
 	constructor(options, classSettings = {}) {
 
+		options.onSelectScene = (index, t) => {
+
+			if (classSettings.onSelectScene) return classSettings.onSelectScene(this, index, t);
+			else return this.onSelectScene.copyAngles(index, t);
+			return true;//Сдедующий шаг проигрывателя выполняется только после посторения всех вершин без временной задержки
+		
+		}
 		classSettings.settings = classSettings.settings || {};
 		classSettings.settings.options = options;
 		super( classSettings.settings );
@@ -320,7 +333,8 @@ class HyperSphere extends MyObject {
 	
 						case 't':
 							classSettings.settings.bufferGeometry.userData.timeId = userData.index;
-							if (classSettings.onSelectScene) classSettings.onSelectScene(this, userData.index, value);//время равно радиусу вселенной
+//сейчас это вызывается из options.onSelectScene
+//							if (classSettings.onSelectScene) classSettings.onSelectScene(this, userData.index, value);//время равно радиусу вселенной
 							break;
 							
 					}
@@ -1059,7 +1073,7 @@ class HyperSphere extends MyObject {
 					angles2vertice = a2v(vertice2angles);
 				const value = vertice;
 				if (angles2vertice.length != value.length) console.error(sHyperSphere + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
-				const d = 6e-16;
+				const d = 7e-16;
 				angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHyperSphere + ': Set vertices[' + anglesId + '] failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
 				
 			}
@@ -1410,12 +1424,12 @@ class HyperSphere extends MyObject {
 			if (this.setW) this.setW();
 
 			this.isUpdate = true;
-			this.update = (verticeId, changedAngleId) => {
+			this.update = (verticeId, changedAngleId, timeId) => {
 
 				if (!this.isUpdate) return;
 				const points = nd &amp;&amp; (nd.object3D.visible === true) ? nd.object3D : myPoints;
 				const vertice = settings.object.geometry.position[verticeId];
-				this.setPositionAttributeFromPoint(verticeId, vertice);
+				this.setPositionAttributeFromPoint(verticeId, vertice, timeId);
 				this.bufferGeometry.attributes.position.needsUpdate = true;
 				this.bufferGeometry.attributes.color.needsUpdate = true;
 				if (settings.options.axesHelper)
@@ -1454,7 +1468,7 @@ class HyperSphere extends MyObject {
 			}
 			this.projectGeometry = () => {
 
-				this.line = (settings) => {
+				this.line = (settings, r = 1) => {
 
 					return this.newHyperSphere(
 						classSettings.settings.options,
@@ -1470,7 +1484,7 @@ class HyperSphere extends MyObject {
 
 							} : settings.edges,
 							projectParams: { scene: classSettings.projectParams.scene, },
-							r: classSettings.r,
+							r: r * classSettings.r,
 							debug: classSettings.debug,
 							settings: {
 
@@ -1633,7 +1647,7 @@ class HyperSphere extends MyObject {
 								if (aAngleControls.removeArc) aAngleControls.removeArc();
 
 							},
-							addControllers: (fParent) => {
+							addControllers: (fParent, readOnly) => {
 
 								settings.options.guiSelectPoint.setReadOnlyPosition(true);
 								const geometry = settings.object.geometry,
@@ -1654,16 +1668,15 @@ class HyperSphere extends MyObject {
 											range = angles.ranges[angleId],
 											cAngle = fAngles.add({ angle: 0, }, 'angle', range.min, range.max, 2 * π / 360).onChange((angle) => {
 
-											const guiPoints = _this.object().userData.myObject.guiPoints,
-//												verticeAngles = (guiPoints.timeAngles || angles)[aAngleControls.verticeId];
-												verticeAngles = classSettings.overriddenProperties.verticeAngles(guiPoints.timeAngles || angles, aAngleControls.verticeId);
-											if (verticeAngles[angleId] === angle) return;
-											verticeAngles[angleId] = angle;
-											_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);
-											
-											_this.update(aAngleControls.verticeId, angleId);
-
-										});
+												const guiPoints = _this.object().userData.myObject.guiPoints,
+	//												verticeAngles = (guiPoints.timeAngles || angles)[aAngleControls.verticeId];
+													verticeAngles = classSettings.overriddenProperties.verticeAngles(guiPoints.timeAngles || angles, aAngleControls.verticeId);
+												if (verticeAngles[angleId] === angle) return;
+												verticeAngles[angleId] = angle;
+												_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);
+												_this.update(aAngleControls.verticeId, angleId, guiPoints.timeId);
+	
+											});
 /*
 										const name = (angleId) => {
 
@@ -1712,12 +1725,73 @@ class HyperSphere extends MyObject {
 								createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
 
 								//радиус вершины зависит от времени проигрывателя
+/*									
+								const getInputEl =  ( controller ) => { return controller ? controller.domElement.querySelector( 'input' ) : undefined; },
+									readOnlyEl = ( controller, boReadOnly ) => {
+						
+									const element = getInputEl( controller );
+									if ( element ) element.readOnly = boReadOnly;
+								
+								},
+									isReadOnlyEl = ( controller ) => {
+									
+									const element = getInputEl( controller );
+									if ( element ) return element.readOnly;
+								
+								},
+									setValue = ( controller, v ) => {
+						
+									if ( !controller )
+										return;
+									const input = getInputEl( controller ),//controller.domElement.querySelector( 'input' ),
+										readOnly = input.readOnly;
+									input.readOnly = false;
+									controller.object[controller.property] = v;
+									if ( controller.__onChange )
+										controller.__onChange.call( controller, v );
+									controller.initialValue = v;
+									controller.updateDisplay();
+									input.readOnly = readOnly;
+									return controller;
+						
+								},
+								const isReadOnlyController = ( controller ) => {
+					
+									if ( controller.boSetValue ) return true;
+									if ( readOnly.isReadOnlyEl( controller ) ) {
+					
+										if ( controller.getValue() !== controller.initialValue ) {
+					
+											if ( controller.boSetValue === undefined ) {
+					
+												controller.boSetValue = true;
+												readOnly.setValue( controller, controller.initialValue );
+												controller.boSetValue = undefined;
+												controller.initialValue = controller.getValue();//Эта строка нужна в случае когда новое зачения невозможно установиь точно таким же, как initialValue
+												//Иначе перепонится стек
+					
+											}
+					
+										}
+										return true;
+					
+									}
+									return false;
+					
+								}
+*/										
 								aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player.getTime(), }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).onChange((verticeRadius) => {
 
+									if (readOnly.isReadOnlyController(aAngleControls.cRadius)) return;
 									console.log('verticeRadius = ' + verticeRadius);
 
 								});
 								dat.controllerNameAndTitle(aAngleControls.cRadius, lang.radius, lang.radiusTitle);
+								readOnly.readOnlyEl(aAngleControls.cRadius, true);
+/*								
+								aAngleControls.cRadius.domElement.querySelector('input').readOnly = true;
+								aAngleControls.cRadius.domElement.querySelector('.slider').readOnly = true;
+*/								
 									
 								//Edges
 
@@ -2124,7 +2198,7 @@ class HyperSphere extends MyObject {
 
 											},
 
-										});
+										}, position.angles.player.t);
 										const plane = aAngleControls.planes[verticeAngleId];
 										plane.opacity();
 
@@ -2438,6 +2512,7 @@ class HyperSphere extends MyObject {
 								return true;
 
 							}
+							//options.player.continue();
 
 						}
 						if (!stepItem()) progressBar.step();
@@ -3008,7 +3083,7 @@ const _display = (element, boDisplay) => { element.style.display = boDisplay ===
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Aug 06 2024 10:52:50 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Sep 12 2024 07:31:04 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

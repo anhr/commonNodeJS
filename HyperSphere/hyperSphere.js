@@ -177,6 +177,12 @@ class HyperSphere extends MyObject {
 	 *	4 for <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> - pyramid.
 	 *	5 for <b><a href="module-HyperSphere3D.html" target="_blank">HyperSphere3D</a></b> - [pentahedroid]{@link https://en.wikipedia.org/wiki/5-cell}.
 	 * </pre>
+	 * @param {array} [classSettings.settings.object.geometry.times] array of vertices angles for different player <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> times. See <b>angles</b> above.
+	 * <pre>
+	 * See <a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">Player.onSelectScene</a> for details.
+	 * Every item of the array is array of vertices angles for current <b>Player</b> time.
+	 * <b>times</b> have priority before <b>angles</b>.
+	 * </pre>
 	 * @param {array} [classSettings.settings.object.geometry.colors] array of colors of vertices.
 	 * <pre>
  	 * Color of the each vertice is group of three (RGB) items of the colors array in range from 0 to 1. See [THREE.Color]{@link https://threejs.org/docs/?q=Color#api/en/math/Color} for details.
