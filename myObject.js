@@ -293,16 +293,6 @@ class MyObject {
 			//Position attribute
 			
 			vertice = vertice || _this.getPoint(i, timeId);
-/*			
-			const attributes = settings.bufferGeometry.attributes, position = attributes.position,
-//				anglesLength = (timeId === undefined) ? undefined : settings.object.geometry.angles.length;
-				userData = settings.bufferGeometry.userData,
-				positionBlockLength = (timeId === undefined) ? undefined : userData.positionBlockLength === undefined ? 0 : userData.positionBlockLength;
-			let itemSize = position.itemSize, positionId = i * itemSize + (timeId === undefined ? 0 :
-//					anglesLength * timeId * itemSize),
-					positionBlockLength * timeId * itemSize),
-				array = position.array;
-*/
 			const attributes = settings.bufferGeometry.attributes, positionData = this.getPositionData(i, timeId),
 				positionBlockLength = positionData.positionBlockLength;
 			let itemSize = positionData.itemSize, positionId = positionData.positionId, array = attributes.position.array;
