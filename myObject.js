@@ -227,8 +227,19 @@ class MyObject {
 					this.pointLength ? this.pointLength() :
 						points[0].w === undefined ? 3 : 4,
 					points.length);
-				for (let timeId = 0; timeId < getPlayerTimesLength(); timeId++)
-					for (let i = 0; i < points.length; i++) this.setPositionAttributeFromPoint(i, undefined, timeId);
+				const boLog = (this.classSettings.debug != undefined) && (this.classSettings.debug.log != false);
+				for (let timeId = 0; timeId < getPlayerTimesLength(); timeId++) {
+					
+					if (boLog) console.log('timeId = ' + timeId);
+					for (let i = 0; i < points.length; i++) {
+
+						const vertice = this.setPositionAttributeFromPoint(i, undefined, timeId);
+						if (boLog) console.log('\tvertice[' + i + '] = ' + JSON.stringify(vertice));
+
+					}
+					if (boLog) console.log('');
+
+				}
 
 			}
 			return settings.bufferGeometry;
@@ -341,6 +352,8 @@ class MyObject {
 
 			//opacity
 			if (attributes.color.itemSize > 3) this.verticeOpacity(i);
+
+			return vertice;
 			
 		}
 		this.verticeOpacity = (i, transparent, opacity) => {

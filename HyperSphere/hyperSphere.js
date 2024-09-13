@@ -976,20 +976,13 @@ class HyperSphere extends MyObject {
 		classSettings.overriddenProperties.verticeText ||= (intersection, text) => { return text(classSettings.settings.object.geometry.angles, intersection.index); }
 		classSettings.overriddenProperties.text ||= () => { return ''; }
 
+		//нужно для classSettings.settings.object.geometry.times в проекте universe
+		//В этом случае нужно знать количество углов вершины еще до того как будет получена Universe.hyperSphere.dimension
+		classSettings.dimension = this.dimension;
+
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (anglesId, timeId) => {
 
-/*			
-			const geometry = classSettings.settings.object.geometry, timesAngles = geometry.timesAngles,
-				timesAngles = timesAngles ? timesAngles[timeId] : undefined,
-				player = timesAngles ? timesAngles.player : undefined,
-				r = player ? player.r : classSettings.r,
-				angles = typeof anglesId === "number" ?
-					((timeId != undefined) && timesAngles) ? timesAngles[anglesId] :
-						geometry.angles[anglesId] :
-					anglesId,
-*/					
-//			const r = classSettings.overriddenProperties.timeR(timeId),
 			const r = classSettings.overriddenProperties.r(timeId),
 				angles = typeof anglesId === "number" ? classSettings.overriddenProperties.angles(anglesId, timeId) : anglesId,
 				a2v = (angles) => {
@@ -1038,6 +1031,7 @@ class HyperSphere extends MyObject {
 				return x;
 	
 			}
+			//angles.forEach((angle, i) => { console.log('angle[' + i + '] = ' + angle) })
 			const vertice = a2v(angles);
 			if (this.classSettings.debug && this.classSettings.debug.testVertice){
 	
