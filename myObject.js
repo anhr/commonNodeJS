@@ -227,7 +227,7 @@ class MyObject {
 					this.pointLength ? this.pointLength() :
 						points[0].w === undefined ? 3 : 4,
 					points.length);
-				const boLog = (this.classSettings.debug != undefined) && (this.classSettings.debug.log != false);
+				const boLog = this.classSettings && (this.classSettings.debug != undefined) && (this.classSettings.debug.log != false);
 				for (let timeId = 0; timeId < getPlayerTimesLength(); timeId++) {
 					
 					if (boLog) console.log('timeId = ' + timeId);
