@@ -598,7 +598,8 @@ class HyperSphere extends MyObject {
 				let i = parseInt(name);
 				if (!isNaN(i)) {
 
-					if (settings.object.geometry.timesAngles) {
+//					if (settings.object.geometry.timesAngles)
+					if (settings.object.geometry.times){
 
 /*						
 						const timesAngles = settings.object.geometry.timesAngles;
