@@ -344,7 +344,9 @@ class ND extends MyObject {
 			var text = '\n' + lang.pointId + ': ' + pointId;
 			
 			//Find edge index
-			for ( var segmentIndex = 0; segmentIndex < edges.length; segmentIndex++ ) {
+			const drawRange = settings.bufferGeometry.drawRange;
+//			for ( var segmentIndex = 0; segmentIndex < edges.length; segmentIndex++ )
+			for ( var segmentIndex = drawRange.start; segmentIndex < (drawRange === Infinity) ? edges.length : (drawRange.start + drawRange.count) / 2; segmentIndex++ ) {
 
 				const edgeCur = edges[segmentIndex];
 				if (

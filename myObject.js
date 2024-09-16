@@ -24,7 +24,10 @@ class MyObject {
 
 		const _this = this;
 
-//		if (settings.guiPoints) this.guiPoints = (cPoints) => { settings.guiPoints(cPoints); }
+		//иммитация наследования классов
+		settings.overriddenProperties ||= {};
+		settings.overriddenProperties.setDrawRange ||= (start, count) => {}
+		
 		if (settings.guiPoints) this.guiPoints = settings.guiPoints;
 
 		settings.object = settings.object || {};
@@ -96,8 +99,8 @@ class MyObject {
 			//Что бы можно было менять позицию и цвет вершины
 			settings.object.geometry.position = settings.object.geometry.position || vertices;
 
-		this.setDrawRange = (start, count) => { settings.bufferGeometry.setDrawRange(start, count); }
-//		const getPlayerAnglesLength = () => { return (settings.object.geometry.playerAnglesLength != undefined ? settings.object.geometry.playerAnglesLength : 1);}
+		this.setDrawRange = (start, count) => { settings.overriddenProperties.setDrawRange(start, count); }
+//		this.setDrawRange = (start, count) => { settings.bufferGeometry.setDrawRange(start, count); }
 		const getPlayerTimesLength = () => { return (settings.object.geometry.times != undefined ? settings.object.geometry.times.length : 1);}
 		const createPositionAttribute = (pointLength, pointsLength) => {
 
