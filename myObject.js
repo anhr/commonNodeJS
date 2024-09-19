@@ -172,6 +172,30 @@ class MyObject {
 										return array[positionOffset + 3];
 
 									}
+									case 'vector':
+										const vector = vertice.vector;
+										if (vector) {
+
+											console.error('Under constraction');
+											return vector;
+											
+										}
+										{//hide vertice
+											//для совместимости с Player.getPoints.
+											//Открыть вселенную http://localhost/anhr/universe/main/hyperSphere/Examples/ с отображением ребер classSettings.edges.project != false
+											//Сделать один шаг проигрывателя. Появятся ребра для вселенной с новым временем.
+											//Убрать галочку "Гиперсфера.Вершины.Ребро.Отображать"classSettings.edges.project = false что бы реьа заменить на вершины
+											const vertice = verticeProxy;
+											switch(vertice.length){
+
+												case 3: return new THREE.Vector3(vertice[0], vertice[1], vertice[2]);
+												case 4: return new THREE.Vector4(vertice[0], vertice[1], vertice[2], vertice[3]);
+													
+											}
+											console.error(sMyObject + ': get vertice.vector failed. Invalid vertice.length = ' + vertice.length);
+											
+										}
+										return vertice[name];
 				
 								}
 								if (_this.getPositionItem) {
