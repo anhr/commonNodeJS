@@ -427,7 +427,18 @@ class ND extends MyObject {
 			settings.object.geometry = { position: position, }
 
 		}
-		settings.object.geometry.position = settings.object.geometry.position || [];
+
+		//Эту строку нельзя использовать потому что во вселенной будет ошибка
+		//TypeError: classSettings.overriddenProperties.position0.angles[verticeId].middleVertice is not a function
+		//если:
+		//Открыть http://localhost/anhr/universe/main/hyperSphere/Examples/ что бы не было видно ребер classSettings.edges.project = false
+		//Сделать один шаг проигрывателя: нажать →
+		//Сделать ребра видимыми: Поставить галочку Гиперсфера\Ребро\Отображать. Появятся ребра
+		//Сделать один шаг проигрывателя: нажать →
+		//Это происходить потому что когда проигрыватель находится не в начально моложении timeId > 0, то в settings.object.geometry.position попадают вершины не из начального времени
+		//settings.object.geometry.position = settings.object.geometry.position || [];
+		
+		if (!settings.object.geometry.position) settings.object.geometry.position = [];
 
 		class Vector extends ND.VectorN {
 
@@ -1011,8 +1022,23 @@ class ND extends MyObject {
 
 		function proxyGeometryPosition() {
 
-			if ( settings.object.geometry.position && settings.object.geometry.position.isProxy ) return settings.object.geometry.position;
-			return new Proxy( settings.object.geometry.position ? settings.object.geometry.position : [], {
+			const geometry = settings.object.geometry;
+			if ( geometry.position && geometry.position.isProxy ) return geometry.position;
+			const playerPosition = geometry.playerPosition, position = playerPosition ? geometry.playerPosition[0] : geometry.position ? geometry.position : [];
+			return new Proxy(
+				
+				//Эту строку нельзя использовать потому что во вселенной будет ошибка
+				//TypeError: classSettings.overriddenProperties.position0.angles[verticeId].middleVertice is not a function
+				//если:
+				//Открыть http://localhost/anhr/universe/main/hyperSphere/Examples/ что бы не было видно ребер classSettings.edges.project = false
+				//Сделать один шаг проигрывателя: нажать →
+				//Сделать ребра видимыми: Поставить галочку Гиперсфера\Ребро\Отображать. Появятся ребра
+				//Сделать один шаг проигрывателя: нажать →
+				//Это происходить потому что когда проигрыватель находится не в начально моложении timeId > 0, то в settings.object.geometry.position попадают вершины не из начального времени
+				//settings.object.geometry.position ? settings.object.geometry.position : [],
+				
+				position,
+				{
 
 				get: function ( target, name, args ) {
 

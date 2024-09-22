@@ -35,11 +35,12 @@ class MyObject {
 
 		this.isSetPosition = settings.isSetPosition;
 
-//		this.isColorFromPositionW = settings.object.isColorFromPositionW;
+		const timeId = settings.options.player.getTimeId(), geometry = settings.object.geometry,
+			geometryPosition = geometry.position;
+		if ((timeId === 0) && (!geometryPosition || !geometryPosition.isPositionProxy)) {
 
-		const geometryPosition = settings.object.geometry.position;
-		if (!geometryPosition || !geometryPosition.isPositionProxy)
-			settings.object.geometry.position = new Proxy(geometryPosition || [], {
+//if (geometryPosition) console.log(geometry.position.isPositionProxy);
+			geometry.position = new Proxy(geometryPosition || [], {
 	
 				get: (positions, name) => {
 					
@@ -77,6 +78,8 @@ class MyObject {
 				},
 				
 			});
+
+		}
 	
 		const THREE = three.THREE;
 
