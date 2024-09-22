@@ -100,7 +100,17 @@ class MyObject {
 		if (vertices)
 			//for for compatibility with ND
 			//Что бы можно было менять позицию и цвет вершины
-			settings.object.geometry.position = settings.object.geometry.position || vertices;
+			if (!settings.object.geometry.position) settings.object.geometry.position = vertices;
+		
+		//Эту строку нельзя использовать потому что во вселенной будет ошибка
+		//TypeError: classSettings.overriddenProperties.position0.angles[verticeId].middleVertice is not a function
+		//если:
+		//Открыть http://localhost/anhr/universe/main/hyperSphere/Examples/ что бы не было видно ребер classSettings.edges.project = true
+		//Сделать один шаг проигрывателя: нажать →
+		//Сделать ребра невидимыми: Поставить галочку Гиперсфера\Ребро\Отображать.
+		//Сделать один шаг проигрывателя: нажать →
+		//Это происходить потому что когда проигрыватель находится не в начальном положении timeId > 0, то в settings.object.geometry.position попадают вершины не из начального времени
+		//			settings.object.geometry.position = settings.object.geometry.position || vertices;
 
 		this.setDrawRange = (start, count) => { settings.overriddenProperties.setDrawRange(start, count); }
 //		this.setDrawRange = (start, count) => { settings.bufferGeometry.setDrawRange(start, count); }

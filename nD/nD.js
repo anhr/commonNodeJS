@@ -433,9 +433,9 @@ class ND extends MyObject {
 		//если:
 		//Открыть http://localhost/anhr/universe/main/hyperSphere/Examples/ что бы не было видно ребер classSettings.edges.project = false
 		//Сделать один шаг проигрывателя: нажать →
-		//Сделать ребра видимыми: Поставить галочку Гиперсфера\Ребро\Отображать. Появятся ребра
+		//Сделать ребра видимыми: Поставить галочку Гиперсфера\Ребро\Отображать.
 		//Сделать один шаг проигрывателя: нажать →
-		//Это происходить потому что когда проигрыватель находится не в начально моложении timeId > 0, то в settings.object.geometry.position попадают вершины не из начального времени
+		//Это происходить потому что когда проигрыватель находится не в начальном положении timeId > 0, то в settings.object.geometry.position попадают вершины не из начального времени
 		//settings.object.geometry.position = settings.object.geometry.position || [];
 		
 		if (!settings.object.geometry.position) settings.object.geometry.position = [];
@@ -1032,9 +1032,9 @@ class ND extends MyObject {
 				//если:
 				//Открыть http://localhost/anhr/universe/main/hyperSphere/Examples/ что бы не было видно ребер classSettings.edges.project = false
 				//Сделать один шаг проигрывателя: нажать →
-				//Сделать ребра видимыми: Поставить галочку Гиперсфера\Ребро\Отображать. Появятся ребра
+				//Сделать ребра видимыми: Поставить галочку Гиперсфера\Ребро\Отображать.
 				//Сделать один шаг проигрывателя: нажать →
-				//Это происходить потому что когда проигрыватель находится не в начально моложении timeId > 0, то в settings.object.geometry.position попадают вершины не из начального времени
+				//Это происходить потому что когда проигрыватель находится не в начальном положении timeId > 0, то в settings.object.geometry.position попадают вершины не из начального времени
 				//settings.object.geometry.position ? settings.object.geometry.position : [],
 				
 				position,
