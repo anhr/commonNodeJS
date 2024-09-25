@@ -2262,7 +2262,25 @@ class HyperSphere extends MyObject {
 
 					} else {
 
-						let points = settings.object.geometry.position;
+					let points = settings.object.geometry.position;
+/*
+const points = [], geometry = settings.object.geometry, attributesPosition = settings.bufferGeometry.attributes.position, itemSize = attributesPosition.itemSize;
+for (let verticeId = 0; verticeId < settings.bufferGeometry.drawRange.count; verticeId++) {
+	
+	points.push((itemSize === 4 ? new THREE.Vector4 :  new THREE.Vector3).fromBufferAttribute(attributesPosition, verticeId));
+//	points.push(settings.bufferGeometry.userData.position[verticeId]);
+
+}
+*/
+/*						
+for (let i = 0; i < geometry.times.length; i++) {
+	
+	const position = geometry.playerPosition[i];
+	position.forEach(vertice => points.push(vertice));
+
+}
+*/
+//geometry.times.forEach(timePosition => timePosition.forEach(vertice => console.log(vertice.edges)));
 
 						//for debug
 						//Выводим углы вместо вершин. Нужно для отладки равномерного распределения вершин в гиперсфре
