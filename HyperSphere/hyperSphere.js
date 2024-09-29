@@ -2262,16 +2262,13 @@ class HyperSphere extends MyObject {
 
 					} else {
 
-					let points = settings.object.geometry.position;
-/*
-const points = [], geometry = settings.object.geometry, attributesPosition = settings.bufferGeometry.attributes.position, itemSize = attributesPosition.itemSize;
-for (let verticeId = 0; verticeId < settings.bufferGeometry.drawRange.count; verticeId++) {
-	
-	points.push((itemSize === 4 ? new THREE.Vector4 :  new THREE.Vector3).fromBufferAttribute(attributesPosition, verticeId));
-//	points.push(settings.bufferGeometry.userData.position[verticeId]);
-
-}
-*/
+//					const points = settings.object.geometry.position;
+					const points = undefined;
+/*						
+					const points = [],// geometry = settings.object.geometry,
+						attributesPosition = settings.bufferGeometry.attributes.position, itemSize = attributesPosition.itemSize;
+					for (let verticeId = 0; verticeId < settings.bufferGeometry.drawRange.count; verticeId++) points.push((itemSize === 4 ? new THREE.Vector4 :  new THREE.Vector3).fromBufferAttribute(attributesPosition, verticeId));
+*/					
 /*						
 for (let i = 0; i < geometry.times.length; i++) {
 	
@@ -2300,7 +2297,7 @@ for (let i = 0; i < geometry.times.length; i++) {
 							classSettings.settings.options.setPalette(new ColorPicker.palette({ palette: [{ percent: 0, r: color.r * 255, g: color.g * 255, b: color.b * 255, },] }));
 
 						}
-
+//settings.overriddenProperties.setDrawRange(settings.bufferGeometry.drawRange.start, Infinity);console.error('Under constraction')
 						new MyPoints(points, scene, {
 
 							pointsOptions: {
@@ -2312,6 +2309,7 @@ for (let i = 0; i < geometry.times.length; i++) {
 								onReady: (points) => {
 
 									myPoints = points;
+//									myPoints.material.needsUpdate = true;//for THREE.REVISION = "145dev"
 									myPoints.userData.raycaster = { text: (intersection) => {
 
 										return classSettings.overriddenProperties.verticeText(intersection, (angles, index) => {
@@ -2654,8 +2652,11 @@ for (let i = 0; i < geometry.times.length; i++) {
 												if (this.classSettings.projectParams) this.project(this.classSettings.projectParams.scene, this.classSettings.projectParams.params);
 												if (times && classSettings.edges.project) {
 
+													this.setEdgesRange();
+/*													
 													const drawRange = settings.bufferGeometry.drawRange;
 													settings.bufferGeometry.setDrawRange(drawRange.start, edges.timeEdgesCount * 2 - drawRange.start);
+*/													
 
 												}
 												boCompleted = true;

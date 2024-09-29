@@ -153,7 +153,11 @@ class MyPoints extends MyObject {
 
 		group = group || three.scene;
 
-		if ((typeof arrayFuncs !== 'function') && (arrayFuncs.length === 0))
+		if ((arrayFuncs === undefined) && !settings.bufferGeometry.attributes.position) console.error('MyPoints: Vertices was not defined')
+		if (
+			(arrayFuncs != undefined) &&//вершины заданы в settings.bufferGeometry
+			(typeof arrayFuncs != 'function') && (arrayFuncs.length === 0)
+		)
 			arrayFuncs.push(new THREE.Vector3());
 
 		settings.pointsOptions = settings.pointsOptions || {};

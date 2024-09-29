@@ -113,7 +113,7 @@ class getShaderMaterialPoints extends MyObject {
 				geometry = settings.pointsOptions.bufferGeometry;
 			else {
 				
-				const points = Player.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin, });
+				const points = arrayFuncs != undefined ? Player.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin, }) : undefined;
 				this.getPoint = (i) => { return points[i]; }
 				geometry = this.setPositionAttributeFromPoints(points);
 

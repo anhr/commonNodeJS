@@ -112,6 +112,20 @@ class MyObject {
 		//Это происходить потому что когда проигрыватель находится не в начальном положении timeId > 0, то в settings.object.geometry.position попадают вершины не из начального времени
 		//			settings.object.geometry.position = settings.object.geometry.position || vertices;
 
+		this.setVerticesRange = (start, count) => {
+			
+//			settings.overriddenProperties.setVerticesRange(start, count);
+			const bufferGeometry = settings.bufferGeometry, position = bufferGeometry.attributes.position;
+//			bufferGeometry.setDrawRange(start, count * ((position && (bufferGeometry.index != null)) ? position.itemSize : 1));//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
+			this.setDrawRange(start, count * ((position && (bufferGeometry.index != null)) ? position.itemSize : 1));//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
+			
+		}
+		this.setEdgesRange = () => {
+
+			const drawRange = settings.bufferGeometry.drawRange;
+			this.setDrawRange(drawRange.start, settings.object.geometry.indices[0].timeEdgesCount * 2 * (settings.options.player.getTimeId() + 1) - drawRange.start);
+		
+		}
 		this.setDrawRange = (start, count) => { settings.overriddenProperties.setDrawRange(start, count); }
 //		this.setDrawRange = (start, count) => { settings.bufferGeometry.setDrawRange(start, count); }
 		const getPlayerTimesLength = () => { return (settings.object.geometry.times != undefined ? settings.object.geometry.times.length : 1);}
@@ -123,6 +137,14 @@ class MyObject {
 				//Это случается когда во вселенной вычисляется очередной шаг по времени. Тоесть пользователь нажал ► или →
 				pointLength * pointsLength * settings.object.geometry.rCount :
 				settings.object.geometry.MAX_POINTS;
+			if (MAX_POINTS != undefined) this.setVerticesRange(0, isRCount ?
+				  pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
+//				  pointsLength://зарезервировано место для вершин вселенной с разным радиусом
+				  //Имеются ребра. В этом случае settings.bufferGeometry.drawRange.count определяет количество отображаемых ребер
+				  //Сейчас ребра еще не созданы. Поэтому settings.bufferGeometry.drawRange будет установлено после вызова this.setDrawRange
+				  Infinity//pointsLength * 2 - 1
+				  );
+/*			
 			if (MAX_POINTS != undefined) settings.bufferGeometry.setDrawRange(0, isRCount ?
 				  pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
 //				  pointsLength://зарезервировано место для вершин вселенной с разным радиусом
@@ -130,6 +152,7 @@ class MyObject {
 				  //Сейчас ребра еще не созданы. Поэтому settings.bufferGeometry.drawRange будет установлено после вызова this.setDrawRange
 				  Infinity//pointsLength * 2 - 1
 				  );
+*/				  
 			if (isRCount) settings.bufferGeometry.userData.drawRange = () => { return settings.bufferGeometry.drawRange; }
 			const positions = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * pointLength);
 			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
@@ -354,13 +377,22 @@ class MyObject {
 			if (itemSize > 3) array [++positionId] = w;
 
 			const drawRange = settings.bufferGeometry.drawRange;
-			if ((drawRange.start + drawRange.count * itemSize) < positionId) {
+			if ((drawRange.count === Infinity) || ((drawRange.start + drawRange.count * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)) {
+
+				this.setVerticesRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
+//				drawRange.count = (positionId - drawRange.start + 1) / itemSize;
+				if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
+
+			}
+/*			
+			if ((drawRange.count === Infinity) || ((drawRange.start + drawRange.count * itemSize) < positionId)) {
 
 				settings.bufferGeometry.setDrawRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
 //				drawRange.count = (positionId - drawRange.start + 1) / itemSize;
 				if (!Number.isInteger(drawRange.count)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
 
 			}
+*/			
 
 			//Color attribute
 
