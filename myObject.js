@@ -138,21 +138,21 @@ class MyObject {
 				pointLength * pointsLength * settings.object.geometry.rCount :
 				settings.object.geometry.MAX_POINTS;
 			if (MAX_POINTS != undefined) this.setVerticesRange(0, isRCount ?
-				  pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
-//				  pointsLength://зарезервировано место для вершин вселенной с разным радиусом
-				  //Имеются ребра. В этом случае settings.bufferGeometry.drawRange.count определяет количество отображаемых ребер
-				  //Сейчас ребра еще не созданы. Поэтому settings.bufferGeometry.drawRange будет установлено после вызова this.setDrawRange
-				  Infinity//pointsLength * 2 - 1
-				  );
+				pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
+//				pointsLength://зарезервировано место для вершин вселенной с разным радиусом
+				//Имеются ребра. В этом случае settings.bufferGeometry.drawRange.count определяет количество отображаемых ребер
+				//Сейчас ребра еще не созданы. Поэтому settings.bufferGeometry.drawRange будет установлено после вызова this.setDrawRange
+				Infinity//pointsLength * 2 - 1
+				);
 /*			
 			if (MAX_POINTS != undefined) settings.bufferGeometry.setDrawRange(0, isRCount ?
-				  pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
-//				  pointsLength://зарезервировано место для вершин вселенной с разным радиусом
-				  //Имеются ребра. В этом случае settings.bufferGeometry.drawRange.count определяет количество отображаемых ребер
-				  //Сейчас ребра еще не созданы. Поэтому settings.bufferGeometry.drawRange будет установлено после вызова this.setDrawRange
-				  Infinity//pointsLength * 2 - 1
+				pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
+//				pointsLength://зарезервировано место для вершин вселенной с разным радиусом
+				//Имеются ребра. В этом случае settings.bufferGeometry.drawRange.count определяет количество отображаемых ребер
+				//Сейчас ребра еще не созданы. Поэтому settings.bufferGeometry.drawRange будет установлено после вызова this.setDrawRange
+				Infinity//pointsLength * 2 - 1
 				  );
-*/				  
+*/
 			if (isRCount) settings.bufferGeometry.userData.drawRange = () => { return settings.bufferGeometry.drawRange; }
 			const positions = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * pointLength);
 			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
