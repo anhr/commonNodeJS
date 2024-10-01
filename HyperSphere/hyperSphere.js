@@ -1392,10 +1392,10 @@ class HyperSphere extends MyObject {
 
 			if (this.setW) this.setW();
 
-			this.isUpdate = true;
+//			this.isUpdate = true;
 			this.update = (verticeId, changedAngleId, timeId) => {
 
-				if (!this.isUpdate) return;
+//				if (!this.isUpdate) return;
 				const points = nd && (nd.object3D.visible === true) ? nd.object3D : myPoints;
 				const vertice = settings.object.geometry.position[verticeId];
 				this.setPositionAttributeFromPoint(verticeId, vertice, timeId);
@@ -2468,12 +2468,12 @@ for (let i = 0; i < geometry.times.length; i++) {
 								if (classSettings.debug) classSettings.debug.logTimestamp('Play step. ', timestamp);
 
 								//Обновление текущей вершины без обновления холста для экономии времени
-								this.isUpdate = false;//для ускорения
+//								this.isUpdate = false;//для ускорения
 								classSettings.overriddenProperties.updateVertices(vertices);
-								this.isUpdate = true;
+//								this.isUpdate = true;
 
 								//обновляю позицию первой вершины что бы обновить холст
-								position[0][0] = position[0][0];
+//								position[0][0] = position[0][0];
 
 								if (classSettings.debug) {
 
