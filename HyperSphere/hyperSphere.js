@@ -967,7 +967,8 @@ class HyperSphere extends MyObject {
 			if (vertices.length != position.length) console.error(sHyperSphere + ': classSettings.overriddenProperties.updateVertices(). Invalid vertices.length = ' + vertices.length);
 			for (let verticeId = 0; verticeId < position.length; verticeId++)
 				position.angles[verticeId] = vertices[verticeId];
-		
+			this.bufferGeometry.attributes.position.needsUpdate = true;
+			
 		}
 		overriddenProperties.vertices ||= () => { return []; }
 		overriddenProperties.r ||= (timeId) => { return classSettings.r; }
@@ -2469,16 +2470,6 @@ for (let i = 0; i < geometry.times.length; i++) {
 								//Обновление текущей вершины без обновления холста для экономии времени
 								this.isUpdate = false;//для ускорения
 								classSettings.overriddenProperties.updateVertices(vertices);
-/*								
-								if (timeAngles) this.bufferGeometry.attributes.position.needsUpdate = true;
-								else {
-
-									for (verticeId = 0; verticeId < position.length; verticeId++)
-										position.angles[verticeId] = vertices[verticeId];
-									
-								}
-*/								
-
 								this.isUpdate = true;
 
 								//обновляю позицию первой вершины что бы обновить холст
