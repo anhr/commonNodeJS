@@ -1696,9 +1696,17 @@ class Raycaster {
 
 			if ( ( intersection.object.userData.isInfo !== undefined ) && !intersection.object.userData.isInfo() )
 				return;//No display information about frustum point
-			if ( options.guiSelectPoint )
+			if ( options.guiSelectPoint ) {
+				
 				options.guiSelectPoint.select( intersection );
-			else {
+
+				//если не удалить guiPoints.verticeId, то будет неверно изменяться позиция вершины
+				//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
+				//Щелчком мыши выбрать вершину
+				//Сделать один шаг проигрывателя, нажав →
+				delete intersection.object.userData.myObject.guiPoints.verticeId;
+				
+			} else {
 
 				if ( intersection.object.userData.onMouseDown ) intersection.object.userData.onMouseDown( intersection );
 				if ( options.axesHelper ) options.axesHelper.exposePosition( intersection );

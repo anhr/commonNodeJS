@@ -1397,8 +1397,10 @@ class HyperSphere extends MyObject {
 
 //				if (!this.isUpdate) return;
 				const points = nd && (nd.object3D.visible === true) ? nd.object3D : myPoints;
+				/*
 				const vertice = settings.object.geometry.position[verticeId];
 				this.setPositionAttributeFromPoint(verticeId, vertice, timeId);
+				*/
 				this.bufferGeometry.attributes.position.needsUpdate = true;
 				this.bufferGeometry.attributes.color.needsUpdate = true;
 				if (settings.options.axesHelper)
