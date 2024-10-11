@@ -787,8 +787,8 @@ class GuiSelectPoint {
 			mesh.userData.myObject.guiPoints ||= {
 
 				seletedIndex: (guiIndexStr) => { return guiIndexStr; },
-//				getVerticeId: (index) => { return index; },
-				getVerticeId: () => {},
+				getVerticeId: (index) => { return index; },
+//				getVerticeId: () => {},
 				create: (fPoints, cPoints, count) => {
 
 					for ( var iPosition = mesh.geometry.drawRange.start; iPosition < count; iPosition++ ) {
