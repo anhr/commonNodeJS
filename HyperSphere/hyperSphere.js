@@ -1524,6 +1524,14 @@ class HyperSphere extends MyObject {
 
 								//пользователь выбрал вершину
 
+/*бесконечный цикл
+								const guiPoints = settings.guiPoints;
+								guiPoints.verticeId = 0;
+								guiPoints.getVerticeId(parseInt(verticeId));
+								verticeId = guiPoints.verticeId;
+*/								
+								verticeId = parseInt(verticeId);
+
 								anglesDefault.length = 0;
 								if (!anglesCur) anglesCur = settings.object.geometry.angles;
 //								const verticeAngles = anglesCur[verticeId];

@@ -787,6 +787,7 @@ class GuiSelectPoint {
 			mesh.userData.myObject.guiPoints ||= {
 
 				seletedIndex: (guiIndexStr) => { return guiIndexStr; },
+//				getVerticeId: (index) => { return index; },
 				getVerticeId: () => {},
 				create: (fPoints, cPoints, count) => {
 
@@ -925,7 +926,8 @@ class GuiSelectPoint {
 
 			}
 
-			myObject.guiPoints.getVerticeId(intersectionSelected.index);
+			myObject.guiPoints.verticeId = intersectionSelected.index;
+			intersectionSelected.index = myObject.guiPoints.getVerticeId(intersectionSelected.index);
 			this.selectPoint2 = function ( selectedMesh ) {
 
 				if ( ( intersectionSelected.index === undefined ) || isNaN( intersectionSelected.index ) )
