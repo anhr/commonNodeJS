@@ -926,7 +926,7 @@ class GuiSelectPoint {
 
 			}
 
-			myObject.guiPoints.verticeId = intersectionSelected.index;
+//			myObject.guiPoints.verticeId = intersectionSelected.index;
 			intersectionSelected.index = myObject.guiPoints.getVerticeId(intersectionSelected.index);
 			this.selectPoint2 = function ( selectedMesh ) {
 
@@ -1233,7 +1233,7 @@ class GuiSelectPoint {
 
 		function createPlayerArrayFuncs( mesh ) {
 
-			if ( !mesh || mesh.userData.boFrustumPoints ) return;
+			if ( !mesh || mesh.userData.boFrustumPoints  || ( mesh.userData.player.boArrayFuncs === false ) ) return;
 			if ( !mesh.userData.player ) mesh.userData.player = {};
 			if ( !mesh.userData.player.arrayFuncs && mesh.geometry ) {
 

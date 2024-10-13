@@ -863,6 +863,11 @@ class HyperSphere extends MyObject {
 								if (classSettings.debug && ((verticeAngles.length != (_this.dimension - 1)) || (value.length != (_this.dimension - 1)))) console.error(sHyperSphere + ': Set vertice[' + verticeId + '] angles failed. Invalid angles count.')
 								for (let j = 0; j < value.length; j++) verticeAngles[j] = value[j];
 								this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
+/*								
+								const object = this.object();
+								if (object.userData.player.arrayFuncs)
+									object.userData.player.arrayFuncs[verticeId].fromBufferAttribute(object.geometry.attributes.position, verticeId);
+*/									
 
 							} else angles[name] = value;
 							return true;
@@ -1485,6 +1490,46 @@ class HyperSphere extends MyObject {
 				}
 				const intersection = (parent) => {
 
+					{//hide userData
+						
+						const userData = this.object().userData;
+						userData.player.boArrayFuncs = false;//не создавать массив userData.player.arrayFuncs потому что точки объекта буду получать из this.object().geometry.attributes.position
+						userData.player.arrayFuncs = new Proxy([], {
+
+							get: (arrayFuncs, name) => {
+
+								const verticeId = parseInt(name);
+								if (!isNaN(verticeId)) {
+
+									const position = this.object().geometry.attributes.position;
+									return (
+										position.itemSize === 4 ?
+											new THREE.Vector4() :
+											position.itemSize === 3 ?
+												new THREE.Vector3() :
+												undefined//console.error(sHyperSphere + ': get arrayFuncs item failed! Invalid position.itemSize = ' + position.itemSize)
+									).fromBufferAttribute(position, verticeId);
+									
+								}
+								return arrayFuncs[name];
+								
+							},
+							
+						});
+/*						
+						userData.player = new Proxy(userData.player, {
+
+							set: (player, name, value) => {
+	
+								player[name] = value;
+								return true;
+								
+							}
+							
+						});
+*/						
+						
+					}
 					if (!classSettings.intersection) return;
 
 					if (classSettings.intersection.position === undefined) classSettings.intersection.position = 0;

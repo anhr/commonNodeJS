@@ -1698,9 +1698,11 @@ class Raycaster {
 				return;//No display information about frustum point
 			if ( options.guiSelectPoint ) {
 				
+				intersection.object.userData.myObject.guiPoints.verticeId = intersection.index;
+				
 				options.guiSelectPoint.select( intersection );
 
-				//если не удалить guiPoints.verticeId, то будет неверно изменяться позиция вершины
+				//если не удалить guiPoints.verticeId, то будет неверно изменяться позиция вершины во вселенной
 				//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
 				//Щелчком мыши выбрать вершину
 				//Сделать один шаг проигрывателя, нажав →
