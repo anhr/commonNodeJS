@@ -341,6 +341,7 @@ class MyObject {
 				timeId = _this.guiPoints.timeId;
 
 			}
+			i = parseInt(i);
 			
 			if (timeId === undefined) timeId = 0;
 			if (i === undefined) console.error(sMyObject + '.getPositionData. Invalid i = ' + i);

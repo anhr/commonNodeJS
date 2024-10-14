@@ -652,11 +652,7 @@ class GuiSelectPoint {
 			for ( var i = 0; i < cMeshs.__select.length; i++ ) {
 
 				var option = cMeshs.__select[i];
-				if ( option.selected && Object.is( option.mesh, intersectionSelected.object ) ) {
-
-					setPosition( intersectionSelected );
-
-				}
+				if ( option.selected && Object.is( option.mesh, intersectionSelected.object ) ) setPosition( intersectionSelected );
 
 			}
 
