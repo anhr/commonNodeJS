@@ -1589,11 +1589,17 @@ class HyperSphere extends MyObject {
 								if (verticeAngles.edges) {
 
 									const edges = settings.object.geometry.indices.edges;
+									const timeVerticeId = settings.guiPoints ? settings.guiPoints.getVerticeId(parseInt(verticeId)) : verticeId;
 									verticeAngles.edges.forEach(edgeId => {
 
 										const opt = document.createElement('option'),
 											edge = edges[edgeId];
-										opt.innerHTML = '(' + edgeId + ') ' + verticeId + ', ' + (edge[0] === verticeId ? edge[1] : edge[1] === verticeId ? edge[0] : console.error(sHyperSphere + ': Vertice edges GUI. Invalid edge vertices: ' + edge));
+										opt.innerHTML = '(' + edgeId + ') ' + timeVerticeId + ', ' + (
+											edge[0] === timeVerticeId ?
+												edge[1] : edge[1] === timeVerticeId ?
+													edge[0] :
+													console.error(sHyperSphere + ': Vertice edges GUI. Invalid edge vertices: ' + edge)
+										);
 										opt.setAttribute('value', edgeId);
 										aAngleControls.cEdges.__select.appendChild(opt);
 

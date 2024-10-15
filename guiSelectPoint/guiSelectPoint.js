@@ -923,7 +923,7 @@ class GuiSelectPoint {
 			}
 
 //			myObject.guiPoints.verticeId = intersectionSelected.index;
-			intersectionSelected.index = myObject.guiPoints.getVerticeId(intersectionSelected.index);
+//			intersectionSelected.index = myObject.guiPoints.getVerticeId(intersectionSelected.index);
 			this.selectPoint2 = function ( selectedMesh ) {
 
 				if ( ( intersectionSelected.index === undefined ) || isNaN( intersectionSelected.index ) )
@@ -1591,6 +1591,7 @@ class GuiSelectPoint {
 				else {
 
 					display = 'block';
+//					delete mesh.userData.myObject.guiPoints.verticeId;
 					_this.select( { object: mesh, index: pointId } );
 
 				}
