@@ -434,8 +434,13 @@ class GuiSelectPoint {
 /*			
 			if (intersectionSelected.object.userData.gui) intersectionSelected.object.userData.gui.setValues(intersectionSelected.index, myObject? myObject.guiPoints.timeAngles : undefined);
 */			
-			if (intersectionSelected.object.userData.gui)
-				intersectionSelected.object.userData.gui.setValues(intersectionSelected.index, intersectionSelected.object.userData.myObject.guiPoints.timeAngles);
+			if (intersectionSelected.object.userData.gui) {
+
+				const guiPoints = intersectionSelected.object.userData.myObject.guiPoints;
+				guiPoints.getVerticeId(intersectionSelected.index);
+				intersectionSelected.object.userData.gui.setValues(intersectionSelected.index, guiPoints.timeAngles);
+
+			}
 
 			const position = _this.getObjectPosition(intersectionSelected.object, intersectionSelected.index);
 			setValue(cWorld.x, position.x);
