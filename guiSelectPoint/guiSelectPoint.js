@@ -788,8 +788,8 @@ class GuiSelectPoint {
 			mesh.userData.myObject.guiPoints ||= {
 
 				seletedIndex: (guiIndexStr) => { return guiIndexStr; },
+				setControllers: (index) => {},
 				getVerticeId: (index) => { return index; },
-//				getVerticeId: () => {},
 				create: (fPoints, cPoints, count) => {
 
 					for ( var iPosition = mesh.geometry.drawRange.start; iPosition < count; iPosition++ ) {
@@ -917,13 +917,24 @@ class GuiSelectPoint {
 				cMeshs.__select[index].selected = true;
 				cMeshs.__onChange( index - 1, intersectionSelected );
 
-			} else if ( cCustom ) {
+			} else {
 
-				const mesh = getMesh();
-				cCustom.object(intersectionSelected.event && intersectionSelected.event.button === 0 ?
-						mesh :
-						undefined,//Пользователь нажал не левую кнопку мыши. Надо восстановить выбранный nD объект
-					dat, options);
+				myObject.guiPoints.setControllers(intersectionSelected.index);
+/*				
+				guiPoints.getVerticeId(intersectionSelected.index);
+//				guiPoints.cTimes.__onChange(timeIdSelected);
+				guiPoints.cTimes.__select[(guiPoints.timeId != undefined ? guiPoints.timeId : 0) + 1].selected = true;
+*/				
+				
+				if ( cCustom ) {
+
+					const mesh = getMesh();
+					cCustom.object(intersectionSelected.event && intersectionSelected.event.button === 0 ?
+							mesh :
+							undefined,//Пользователь нажал не левую кнопку мыши. Надо восстановить выбранный nD объект
+						dat, options);
+
+				}
 
 			}
 
