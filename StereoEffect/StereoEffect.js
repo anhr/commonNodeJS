@@ -1013,7 +1013,6 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 	const boXYZ = !scales.x &&  !scales.y &&  !scales.z;
 	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
 	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
-	const tab = '  ';
 	return new SpriteText(
 
 		//text
@@ -1021,11 +1020,11 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 		( pointName === undefined ? '' : '\n'+ lang.pointName + ': ' + pointName ) +
 		( intersection.index === undefined ? '' : '\nID: ' + intersection.index) + 
 		( ( !boXYZ && !scales.x ) || ( scales.x && !scales.x.isAxis() ) ? '' :
-			'\n' + tab + ( ( scales.x && scales.x.name ) || ( scales.x.name === 0 ) ? scales.x.name : 'X' ) + ': ' + position.x ) +
+			'\n\t' + ( ( scales.x && scales.x.name ) || ( scales.x.name === 0 ) ? scales.x.name : 'X' ) + ': ' + position.x ) +
 		( ( !boXYZ && !scales.y ) || ( scales.y && !scales.y.isAxis() ) ? '' :
-			'\n' + tab + ( ( scales.y && scales.y.name ) || ( scales.y.name === 0 ) ? scales.y.name : 'Y' ) + ': ' + position.y ) +
+			'\n\t' + ( ( scales.y && scales.y.name ) || ( scales.y.name === 0 ) ? scales.y.name : 'Y' ) + ': ' + position.y ) +
 		( ( !boXYZ && !scales.z ) || ( scales.z && !scales.z.isAxis() ) ? '' :
-			'\n' + tab + ( ( scales.z && scales.z.name ) || ( scales.z.name === 0 ) ? scales.z.name : 'Z' ) + ': ' + position.z ) + 
+			'\n\t' + ( ( scales.z && scales.z.name ) || ( scales.z.name === 0 ) ? scales.z.name : 'Z' ) + ': ' + position.z ) + 
 		(//w
 			!isArrayFuncs ?
 				'' :
@@ -1034,7 +1033,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 					typeof funcs === "function" ?
 					color instanceof THREE.Color ?
 						'\n' + lang.color + ': ' + new THREE.Color( color.r, color.g, color.b ).getHexString() :
-						position.w !== undefined ? '\n' + tab + ( scales.w && scales.w.name ? scales.w.name : 'W' ) + ': ' + position.w : '' :
+						position.w !== undefined ? '\n\t' + ( scales.w && scales.w.name ? scales.w.name : 'W' ) + ': ' + position.w : '' :
 					''
 
 		) +

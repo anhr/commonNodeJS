@@ -70,6 +70,8 @@ import three from '../three.js'
  */
 export function SpriteText( text, position,	options = {} ) {
 
+	text = text.replaceAll( '\t', '  ' );
+	
 	const THREE = three.THREE;
 
 	position = position || new THREE.Vector3( 0, 0, 0 );

@@ -2376,39 +2376,15 @@ for (let i = 0; i < geometry.times.length; i++) {
 
 										return classSettings.overriddenProperties.verticeText(intersection, (angles, index) => {
 
-											const tab = '  ';
 											let text = //'\n' + lang.angles + ':'
 												classSettings.overriddenProperties.text(/*tab*/'', angles, lang)
-												+ '\n' + /*tab + */'vertice Id: ' + index
+												+ '\n' + 'vertice Id: ' + index
 												+ '\n' + lang.angles + ':'
-											angles[index].forEach((axisAngle, angleId) => { text += '\n' + tab + this.axisName(angleId) + ': ' + axisAngle})
+											angles[index].forEach((axisAngle, angleId) => { text += '\n\t' + this.axisName(angleId) + ': ' + axisAngle})
 											return text;
 											
 										});
 
-/*										
-										const timesAngles = classSettings.settings.object.geometry.timesAngles || classSettings.settings.object.geometry.angles;
-										let index = 0;
-										for (let i = 0; i < timesAngles.length; i++) {
-
-											const timeAngles = timesAngles[i];
-											index += timeAngles.length;
-											if (index > intersection.index) {
-
-//												index -= intersection.index - 1;
-												index = intersection.index - index + timeAngles.length;
-												const vertice = timeAngles[index], tab = '  ';
-												let text = '\n' + lang.angles + ':'
-													+ classSettings.overriddenProperties.text(tab, timeAngles, lang)
-													+ '\n' + tab + 'vertice Id: ' + index
-												vertice.forEach((axisAngle, angleId) => { text += '\n' + tab + this.axisName(angleId) + ': ' + axisAngle})
-												return text;
-												
-											}
-											
-										}
-*/										
-									
 									}, }
 									gui(myPoints);
 									intersection(points);
