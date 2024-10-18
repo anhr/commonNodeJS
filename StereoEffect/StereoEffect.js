@@ -1013,18 +1013,19 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 	const boXYZ = !scales.x &&  !scales.y &&  !scales.z;
 	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
 	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
+	const tab = '  ';
 	return new SpriteText(
 
 		//text
-		lang.mesh + ': ' + ( intersection.object.name === '' ? intersection.object.type : intersection.object.name ) +
+		/*lang.mesh + ': ' + */( intersection.object.name === '' ? intersection.object.type : intersection.object.name ) +
 		( pointName === undefined ? '' : '\n'+ lang.pointName + ': ' + pointName ) +
 		( intersection.index === undefined ? '' : '\nID: ' + intersection.index) + 
 		( ( !boXYZ && !scales.x ) || ( scales.x && !scales.x.isAxis() ) ? '' :
-			'\n' + ( ( scales.x && scales.x.name ) || ( scales.x.name === 0 ) ? scales.x.name : 'X' ) + ': ' + position.x ) +
+			'\n' + tab + ( ( scales.x && scales.x.name ) || ( scales.x.name === 0 ) ? scales.x.name : 'X' ) + ': ' + position.x ) +
 		( ( !boXYZ && !scales.y ) || ( scales.y && !scales.y.isAxis() ) ? '' :
-			'\n' + ( ( scales.y && scales.y.name ) || ( scales.y.name === 0 ) ? scales.y.name : 'Y' ) + ': ' + position.y ) +
+			'\n' + tab + ( ( scales.y && scales.y.name ) || ( scales.y.name === 0 ) ? scales.y.name : 'Y' ) + ': ' + position.y ) +
 		( ( !boXYZ && !scales.z ) || ( scales.z && !scales.z.isAxis() ) ? '' :
-			'\n' + ( ( scales.z && scales.z.name ) || ( scales.z.name === 0 ) ? scales.z.name : 'Z' ) + ': ' + position.z ) + 
+			'\n' + tab + ( ( scales.z && scales.z.name ) || ( scales.z.name === 0 ) ? scales.z.name : 'Z' ) + ': ' + position.z ) + 
 		(//w
 			!isArrayFuncs ?
 				'' :
@@ -1033,7 +1034,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 					typeof funcs === "function" ?
 					color instanceof THREE.Color ?
 						'\n' + lang.color + ': ' + new THREE.Color( color.r, color.g, color.b ).getHexString() :
-						position.w !== undefined ? '\n' + ( scales.w && scales.w.name ? scales.w.name : 'W' ) + ': ' + position.w : '' :
+						position.w !== undefined ? '\n' + tab + ( scales.w && scales.w.name ? scales.w.name : 'W' ) + ': ' + position.w : '' :
 					''
 
 		) +
@@ -1049,7 +1050,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 				).w
 		) +
 		(//Custom text
-			intersection.object.userData.raycaster && intersection.object.userData.raycaster.text ? intersection.object.userData.raycaster.text( intersection/*, intersection.object.userData.raycaster.points*/ ) : ''
+			intersection.object.userData.raycaster && intersection.object.userData.raycaster.text ? intersection.object.userData.raycaster.text( intersection ) : ''
 		),
 		intersection.pointSpriteText ? intersection.pointSpriteText : intersection.point,//position,
 		options.spriteOptions

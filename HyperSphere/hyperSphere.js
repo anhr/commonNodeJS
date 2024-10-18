@@ -2377,9 +2377,10 @@ for (let i = 0; i < geometry.times.length; i++) {
 										return classSettings.overriddenProperties.verticeText(intersection, (angles, index) => {
 
 											const tab = '  ';
-											let text = '\n' + lang.angles + ':'
-												+ classSettings.overriddenProperties.text(tab, angles, lang)
-												+ '\n' + tab + 'vertice Id: ' + index
+											let text = //'\n' + lang.angles + ':'
+												classSettings.overriddenProperties.text(/*tab*/'', angles, lang)
+												+ '\n' + /*tab + */'vertice Id: ' + index
+												+ '\n' + lang.angles + ':'
 											angles[index].forEach((axisAngle, angleId) => { text += '\n' + tab + this.axisName(angleId) + ': ' + axisAngle})
 											return text;
 											
