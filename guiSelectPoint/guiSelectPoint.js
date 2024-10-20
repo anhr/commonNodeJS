@@ -920,11 +920,6 @@ class GuiSelectPoint {
 			} else {
 
 				myObject.guiPoints.setControllers(intersectionSelected.index);
-/*				
-				guiPoints.getVerticeId(intersectionSelected.index);
-//				guiPoints.cTimes.__onChange(timeIdSelected);
-				guiPoints.cTimes.__select[(guiPoints.timeId != undefined ? guiPoints.timeId : 0) + 1].selected = true;
-*/				
 				
 				if ( cCustom ) {
 
@@ -1338,8 +1333,10 @@ class GuiSelectPoint {
 
 						if ( mesh.geometry && mesh.geometry.attributes ) {
 
-							displayfPoints = block;
+							displayfPoints =  block;
 							addPoints( mesh, intersectionSelected );
+							if (mesh.userData.myObject && mesh.userData.myObject.guiPoints && mesh.userData.myObject.guiPoints.pointsStyleDisplay)
+								displayPoints = mesh.userData.myObject.guiPoints.pointsStyleDisplay;
 
 						}
 
