@@ -377,22 +377,13 @@ class MyObject {
 			if (itemSize > 3) array [++positionId] = w;
 
 			const drawRange = settings.bufferGeometry.drawRange;
-			if ((drawRange.count === Infinity) || ((drawRange.start + drawRange.count * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)) {
+//			if ((drawRange.count === Infinity) || ((drawRange.start + drawRange.count * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId))
+			if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
 
 				this.setVerticesRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
-//				drawRange.count = (positionId - drawRange.start + 1) / itemSize;
 				if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
 
 			}
-/*			
-			if ((drawRange.count === Infinity) || ((drawRange.start + drawRange.count * itemSize) < positionId)) {
-
-				settings.bufferGeometry.setDrawRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
-//				drawRange.count = (positionId - drawRange.start + 1) / itemSize;
-				if (!Number.isInteger(drawRange.count)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
-
-			}
-*/			
 
 			//Color attribute
 
