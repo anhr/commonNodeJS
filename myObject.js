@@ -27,6 +27,7 @@ class MyObject {
 		//иммитация наследования классов
 		settings.overriddenProperties ||= {};
 		settings.overriddenProperties.setDrawRange ||= (start, count) => {}
+		settings.overriddenProperties.getPlayerTimesLength = () => { return 1; }
 		
 		if (settings.guiPoints) this.guiPoints = settings.guiPoints;
 
@@ -125,8 +126,8 @@ class MyObject {
 		
 		}
 		this.setDrawRange = (start, count) => { settings.overriddenProperties.setDrawRange(start, count); }
-//		this.setDrawRange = (start, count) => { settings.bufferGeometry.setDrawRange(start, count); }
-		const getPlayerTimesLength = () => { return (settings.object.geometry.times != undefined ? settings.object.geometry.times.length : 1);}
+//		const getPlayerTimesLength = () => { return (settings.object.geometry.times != undefined ? settings.object.geometry.times.length : 1); }
+		const getPlayerTimesLength = () => { return settings.overriddenProperties.getPlayerTimesLength(); }
 		const createPositionAttribute = (pointLength, pointsLength) => {
 
 			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
