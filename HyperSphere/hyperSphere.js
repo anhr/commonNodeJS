@@ -1493,6 +1493,7 @@ class HyperSphere extends MyObject {
 					{//hide userData
 						
 						const userData = this.object().userData;
+						userData.player = userData.player || {};//for ND
 						userData.player.boArrayFuncs = false;//не создавать массив userData.player.arrayFuncs потому что точки объекта буду получать из this.object().geometry.attributes.position
 						userData.player.arrayFuncs = new Proxy([], {
 

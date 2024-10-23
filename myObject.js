@@ -119,14 +119,17 @@ class MyObject {
 			this.setDrawRange(start, count * ((position && (bufferGeometry.index != null)) ? position.itemSize : 1));//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
 			
 		}
-		this.setEdgesRange = () => {
+		this.setEdgesRange = (start = 0, timeId) => {
 
 			const drawRange = settings.bufferGeometry.drawRange;
-			this.setDrawRange(drawRange.start, settings.object.geometry.indices[0].timeEdgesCount * 2 * (settings.options.player.getTimeId() + 1) - drawRange.start);
+			start = start != undefined ? start : drawRange.start;
+//			this.setDrawRange(drawRange.start, settings.object.geometry.indices[0].timeEdgesCount * 2 * (settings.options.player.getTimeId() + 1) - drawRange.start);
+			const timeEdgesLength = settings.object.geometry.indices[0].timeEdgesCount * 2;
+//			this.setDrawRange(timeEdgesLength * start, timeEdgesLength * (((timeId != undefined) ? timeId : settings.options.player.getTimeId()) + 1 - start));
+			this.setDrawRange(timeEdgesLength * start, timeEdgesLength * (((timeId != undefined) ? timeId : settings.options.player.getTimeId() + 1) - start));
 		
 		}
 		this.setDrawRange = (start, count) => { settings.overriddenProperties.setDrawRange(start, count); }
-//		const getPlayerTimesLength = () => { return (settings.object.geometry.times != undefined ? settings.object.geometry.times.length : 1); }
 		const getPlayerTimesLength = () => { return settings.overriddenProperties.getPlayerTimesLength(); }
 		const createPositionAttribute = (pointLength, pointsLength) => {
 
