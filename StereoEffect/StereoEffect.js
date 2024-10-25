@@ -756,12 +756,7 @@ function assign() {
 					return;//User has not moved mouse
 
 				optionsIntersection = optionsIntersection || settings;
-				function isIntersection() {
-
-//					intersects = Options.raycaster.intersectionsInOut( particles, raycaster, renderer, mouse, settings );
-					Options.raycaster.intersectionsInOut( particles, raycaster, renderer, mouse, settings );
-
-				}
+				function isIntersection() { Options.raycaster.intersectionsInOut( particles, raycaster, renderer, mouse, settings ); }
 				if ( parseInt( stereoEffect.settings.spatialMultiplex ) !== spatialMultiplexsIndexs.Mono ) {
 
 					const mouseCur = mouse;

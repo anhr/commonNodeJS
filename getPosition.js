@@ -22,6 +22,8 @@ import three from './three.js'
  */
 export function getObjectLocalPosition( object, index ) {
 
+	const getPositionId = object.userData.myObject.guiPoints.getPositionId;
+	if (getPositionId) index = getPositionId(index);
 	const drawRange = object.geometry.drawRange;
 	if ( (drawRange.count != Infinity) && ( ( index < drawRange.start ) || ( index >= ( drawRange.start + drawRange.count ) ) ) ) {
 		
@@ -95,6 +97,7 @@ export function getObjectPosition( object, index ) {
 	if ( index === undefined )
 		return object.position;
 	return getWorldPosition( object, getObjectLocalPosition( object, index ) )
+//	return getWorldPosition( object, getObjectLocalPosition( object, object.userData.myObject.guiPoints.getPositionId(index) ) )
 
 }
 

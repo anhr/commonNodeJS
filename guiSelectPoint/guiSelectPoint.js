@@ -789,6 +789,7 @@ class GuiSelectPoint {
 
 				seletedIndex: (guiIndexStr) => { return guiIndexStr; },
 				setControllers: (index) => {},
+				getPositionId: (index) => { return index; },
 				getVerticeId: (index) => { return index; },
 				create: (fPoints, cPoints, count) => {
 
@@ -865,12 +866,13 @@ class GuiSelectPoint {
 
 		}
 		this.getObjectLocalPosition = (intersectionSelected) => {
-
+/*
 			const myObject = intersectionSelected.object.userData.myObject,
 //				positionData = myObject.getPositionData ? myObject.getPositionData( intersectionSelected.index,  myObject.guiPoints.timeId ) : { verticeId: intersectionSelected.index };
 				positionData = myObject.getPositionData( intersectionSelected.index,  myObject.guiPoints.timeId );
 			return getObjectLocalPosition( intersectionSelected.object, positionData.verticeId );
-//			return getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
+*/			
+			return getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
 			
 		}
 		this.getObjectPosition = (object, index) => {
@@ -1604,14 +1606,13 @@ class GuiSelectPoint {
 				else {
 
 					display = 'block';
-//					delete mesh.userData.myObject.guiPoints.verticeId;
 					_this.select( { object: mesh, index: pointId } );
+//					_this.select( { object: mesh, index: mesh.userData.myObject.guiPoints.getPositionId(pointId) } );
 
 				}
 				if ( ( options.axesHelper !== false ) && ( options.axesHelper !== undefined ) )
 					options.axesHelper.exposePosition( getObjectPosition(
-//						mesh, ((pointId != -1) && mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + pointId
-						mesh, ((pointId != -1) ? mesh.userData.myObject.guiPoints.positionOffset : 0) + pointId
+						mesh, pointId//((pointId != -1) ? mesh.userData.myObject.guiPoints.positionOffset : 0) + pointId
 					) );
 				displayPointControllers( display );
 				if ( !mesh || !mesh.userData.gui || !mesh.userData.gui.reset) mesh = oldMesh;

@@ -1611,6 +1611,9 @@ class Raycaster {
 		 */
 		this.onIntersection = function ( intersection, options, scene, camera, renderer ) {
 
+			//во вселенной запретить выводить сообщение об ошибке, когда пользователь проводит мышку над вершиной.
+			intersection.object.userData.myObject.guiPoints.boMouseOver = true;
+			
 			const drawRange = intersection.object.geometry.drawRange;
 			if ((intersection.index < drawRange.start) || ((drawRange.count != Infinity) && (intersection.index >= (drawRange.start + drawRange.count)))) return false;
 			const canvas = renderer.domElement;
@@ -1681,6 +1684,8 @@ class Raycaster {
 
 			} while ( spriteTextIntersection !== undefined )
 
+			//во вселенной разрешить выводить сообщение об ошибке, когда пользователь проводит мышку над вершиной.
+			intersectedObjects.forEach( ( intersectedObject ) => { delete intersectedObject.object.userData.myObject.guiPoints.boMouseOver; } );
 			renderer.domElement.style.cursor = cursor;
 
 		}
@@ -1779,11 +1784,9 @@ class Raycaster {
 					intersection &&
 					intersection.object.userData.raycaster &&
 					intersection.object.userData.raycaster.onIntersection
-				) {
-
-					intersection.object.userData.raycaster.onIntersection( intersection, mouse );
-
-				} else {
+				) 
+				intersection.object.userData.raycaster.onIntersection( intersection, mouse );
+				else {
 
 					if ( !settings.scene )
 						console.error( 'THREE.Raycaster.setStereoEffect(): settings.scene = ' + settings.scene );
