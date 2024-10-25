@@ -804,7 +804,7 @@ class GuiSelectPoint {
 					}
 					
 				},
-				positionOffset: 0,
+//				positionOffset: 0,
 				getValue: (cPoints) => { return cPoints.__select.selectedOptions[0].index - 1; },
 				onChangeAngle: (verticeId, angleId, angle) => { }
 				
