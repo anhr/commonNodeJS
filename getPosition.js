@@ -22,14 +22,23 @@ import three from './three.js'
  */
 export function getObjectLocalPosition( object, index ) {
 
-	const getPositionId = object.userData.myObject.guiPoints.getPositionId;
+	const getPositionId = object.userData.myObject ? object.userData.myObject.guiPoints.getPositionId : undefined;
 	if (getPositionId) index = getPositionId(index);
 	const drawRange = object.geometry.drawRange;
-	if ( (drawRange.count != Infinity) && ( ( index < drawRange.start ) || ( index >= ( drawRange.start + drawRange.count ) ) ) ) {
+	if ( object.geometry.index === null ) {
 		
-		console.error( 'getObjectLocalPosition: Invalid range of the index = ' + index );
-		return;
-
+		//Отображаются вершины
+		if ( ( drawRange.count != Infinity ) && ( ( index < drawRange.start ) || ( index >= ( drawRange.start + drawRange.count ) ) ) ) {
+			
+			console.error( 'getObjectLocalPosition: Invalid range of the index = ' + index );
+			return;
+	
+		}
+	
+	} else {
+		
+		//Отображаются ребра. Индекс вершины index не в ходит в диапазон видимых ребер drawRange
+	
 	}
 	const THREE = three.THREE,
 		attributesPosition = object.geometry.attributes.position,

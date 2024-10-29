@@ -891,6 +891,16 @@ class GuiSelectPoint {
 		 */
 		this.select = function ( intersectionSelected ) {
 
+			let intersectionSelectedIndex = intersectionSelected.index;
+			if ( (intersectionSelectedIndex === undefined) || isNaN( intersectionSelectedIndex ) ) {
+
+				//Пользователь нажал мышкой на LineSegments
+				const geometryIndex = intersectionSelected.object.geometry.index;
+				intersectionSelectedIndex =  geometryIndex.getX(intersectionSelected.indexNew);
+				intersectionSelected.object.userData.myObject.guiPoints.verticeId = intersectionSelectedIndex;
+				intersectionSelected.index = intersectionSelectedIndex;
+
+			}
 			const myObject = intersectionSelected.object.userData.myObject;
 			if ( !myObject.getPositionData ) 
 				myObject.getPositionData = ( index ) => { return { verticeId: index, positionId: index * intersectionSelected.object.geometry.attributes.position.itemSize } }
@@ -935,14 +945,22 @@ class GuiSelectPoint {
 
 			}
 
-//			myObject.guiPoints.verticeId = intersectionSelected.index;
-//			intersectionSelected.index = myObject.guiPoints.getVerticeId(intersectionSelected.index);
 			this.selectPoint2 = function ( selectedMesh ) {
 
-				if ( ( intersectionSelected.index === undefined ) || isNaN( intersectionSelected.index ) )
-					return;
+/*				
+				let intersectionSelectedIndex = intersectionSelected.index;
+				if ( (intersectionSelectedIndex === undefined) || isNaN( intersectionSelectedIndex ) ) {
 
-				//сделал эту проверку потому что не могу придумать как удалить intersectionSelected.index когда пользователь врусную сменил mesh
+					const geometryIndex = intersectionSelected.object.geometry.index;
+					if ( geometryIndex === null ) return;
+					//Пользователь нажал мышкой на LineSegments
+					intersectionSelectedIndex =  geometryIndex.getX(intersectionSelected.indexNew);
+					intersectionSelected.index = intersectionSelectedIndex;
+
+				}
+*/				
+
+				//сделал эту проверку потому что не могу придумать как удалить intersectionSelectedIndex когда пользователь вручную сменил mesh
 				if ( ( selectedMesh !== undefined ) && !Object.is( intersectionSelected.object, selectedMesh ) )
 					return;//Сначала пользователь выбрал точку с помошщью мыши
 				//Потом сменил Meshes/Select
@@ -954,12 +972,12 @@ class GuiSelectPoint {
 					const guiPoints = intersectionSelected.object.userData.myObject ? intersectionSelected.object.userData.myObject.guiPoints : undefined,
 						point = cPoints.__select[guiPoints ? cPoints.__select.selectedIndex : intersectionSelected.index + 1];
 */						
-					const point = cPoints.__select[intersectionSelected.index + 1];
+					const point = cPoints.__select[intersectionSelectedIndex + 1];
 					if ( point ) point.selected = true;
 
 				} else {//FrustumPoints
 
-					cFrustumPoints.pointIndexes( intersectionSelected.object.userData.pointIndexes( intersectionSelected.index ) );
+					cFrustumPoints.pointIndexes( intersectionSelected.object.userData.pointIndexes( intersectionSelectedIndex ) );
 
 				}
 				const block = 'block';
@@ -974,7 +992,7 @@ class GuiSelectPoint {
 						( mesh.userData.player.arrayFuncs === undefined ) ||
 						( typeof intersection.object.userData.player.arrayFuncs === "function" ) ?
 						undefined :
-						(arrayFuncs.intersection ? arrayFuncs.intersection(intersectionSelected.index) : arrayFuncs[intersectionSelected.index]).line;//You can not trace points if you do not defined the mesh.userData.player.arrayFuncs
+						( arrayFuncs.intersection ? arrayFuncs.intersection( intersectionSelectedIndex ) : arrayFuncs[intersectionSelectedIndex] ).line;//You can not trace points if you do not defined the mesh.userData.player.arrayFuncs
 				if ( cTrace )
 					cTrace.setValue( ( line === undefined ) ?
 						false : line.isVisible() )
@@ -1242,7 +1260,7 @@ class GuiSelectPoint {
 
 		function createPlayerArrayFuncs( mesh ) {
 
-			if ( !mesh || mesh.userData.boFrustumPoints  || ( mesh.userData.player.boArrayFuncs === false ) ) return;
+			if ( !mesh || mesh.userData.boFrustumPoints  || ( mesh.userData.player && mesh.userData.player.boArrayFuncs === false ) ) return;
 			if ( !mesh.userData.player ) mesh.userData.player = {};
 			if ( !mesh.userData.player.arrayFuncs && mesh.geometry ) {
 
