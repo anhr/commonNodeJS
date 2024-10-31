@@ -323,7 +323,9 @@ class HyperSphere extends MyObject {
 		if (options.dat) options.dat.cookie.getObject(this.cookieName, cookieOptions);
 
 		let edgesOld = cookieOptions.edgesOld || { project: true, };
-		classSettings.edges = cookieOptions.edges === false ? false : cookieOptions.edges || classSettings.edges;
+		classSettings.overriddenProperties.edges ||= () => { return false; };
+//		classSettings.edges = cookieOptions.edges === false ? false : cookieOptions.edges || classSettings.edges;
+		classSettings.edges = cookieOptions.edges === false ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
 		if (classSettings.edges != false) classSettings.edges = classSettings.edges || {};
 		if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
@@ -2856,18 +2858,6 @@ for (let i = 0; i < geometry.times.length; i++) {
 
 			const objectEdges = { boEdges: ((typeof classSettings.edges) === 'object') || (classSettings.edges === true) ? true : false },
 				setCockie = () => { options.dat.cookie.setObject(_this.cookieName, { edges: classSettings.edges, edgesOld: edgesOld, }); };
-			const fEdge = fHyperSphere.addFolder(lang.edge),
-				objectEdge = { boProject: ((typeof classSettings.edges) === 'object') ? classSettings.edges.project : false },
-				cProject = fEdge.add(objectEdge, 'boProject').onChange((boProject) => {
-
-					if (classSettings.edges.project === boProject) return;
-					classSettings.edges.project = boProject;
-					_this.projectGeometry();
-					setCockie();
-
-				}),
-				displayEdge = () => { _display(fEdge.domElement, classSettings.edges); };
-			displayEdge();
 			cEdges = fHyperSphere.add(objectEdges, 'boEdges').onChange((boEdges) => {
 
 				if (boEdges) {
@@ -2887,8 +2877,21 @@ for (let i = 0; i < geometry.times.length; i++) {
 				setCockie();
 
 			});
-			classSettings.overriddenProperties.edges ||= () => { return cookieOptions === false ? false : cookieOptions.edges || classSettings.edges; }
-			classSettings.edges = classSettings.overriddenProperties.edges(cEdges);
+			const fEdge = fHyperSphere.addFolder(lang.edge),
+				objectEdge = { boProject: ((typeof classSettings.edges) === 'object') ? classSettings.edges.project : false },
+				cProject = fEdge.add(objectEdge, 'boProject').onChange((boProject) => {
+
+					if (classSettings.edges.project === boProject) return;
+					classSettings.edges.project = boProject;
+					_this.projectGeometry();
+					setCockie();
+
+				}),
+				displayEdge = () => { _display(fEdge.domElement, classSettings.edges); };
+			displayEdge();
+			classSettings.overriddenProperties.setEdges ||= () => { return cookieOptions === false ? false : cookieOptions.edges || classSettings.edges; }
+//			classSettings.edges = classSettings.overriddenProperties.edges(cEdges);
+			classSettings.overriddenProperties.setEdges(cEdges);
 			dat.controllerNameAndTitle(cEdges, lang.edges, lang.edgesTitle);
 			dat.controllerNameAndTitle(cProject, lang.project, lang.projectTitle);
 

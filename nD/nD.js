@@ -1421,7 +1421,8 @@ class ND extends MyObject {
 								case 'length': break;
 								case 'edges': settings.object.geometry.indices[0] = proxyEdges( value ); break;
 								case 'selected': edges.selected = value; break;
-								default: console.error( 'ND settings.object.geometry.indices[0].set: invalid prop: ' + prop );
+								default: edges[prop] = value;
+//								default: console.error( 'ND settings.object.geometry.indices[0].set: invalid prop: ' + prop );
 
 							}
 							return true;
