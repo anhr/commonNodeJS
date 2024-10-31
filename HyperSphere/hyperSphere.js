@@ -2852,10 +2852,22 @@ for (let i = 0; i < geometry.times.length; i++) {
 
 			//edges
 
-			classSettings.edges = cookieOptions === false ? false : cookieOptions.edges || classSettings.edges;
+//			classSettings.edges = cookieOptions === false ? false : cookieOptions.edges || classSettings.edges;
 
 			const objectEdges = { boEdges: ((typeof classSettings.edges) === 'object') || (classSettings.edges === true) ? true : false },
 				setCockie = () => { options.dat.cookie.setObject(_this.cookieName, { edges: classSettings.edges, edgesOld: edgesOld, }); };
+			const fEdge = fHyperSphere.addFolder(lang.edge),
+				objectEdge = { boProject: ((typeof classSettings.edges) === 'object') ? classSettings.edges.project : false },
+				cProject = fEdge.add(objectEdge, 'boProject').onChange((boProject) => {
+
+					if (classSettings.edges.project === boProject) return;
+					classSettings.edges.project = boProject;
+					_this.projectGeometry();
+					setCockie();
+
+				}),
+				displayEdge = () => { _display(fEdge.domElement, classSettings.edges); };
+			displayEdge();
 			cEdges = fHyperSphere.add(objectEdges, 'boEdges').onChange((boEdges) => {
 
 				if (boEdges) {
@@ -2875,18 +2887,8 @@ for (let i = 0; i < geometry.times.length; i++) {
 				setCockie();
 
 			});
-			const fEdge = fHyperSphere.addFolder(lang.edge),
-				objectEdge = { boProject: ((typeof classSettings.edges) === 'object') ? classSettings.edges.project : false },
-				cProject = fEdge.add(objectEdge, 'boProject').onChange((boProject) => {
-
-					if (classSettings.edges.project === boProject) return;
-					classSettings.edges.project = boProject;
-					_this.projectGeometry();
-					setCockie();
-
-				}),
-				displayEdge = () => { _display(fEdge.domElement, classSettings.edges); };
-			displayEdge();
+			classSettings.overriddenProperties.edges ||= () => { return cookieOptions === false ? false : cookieOptions.edges || classSettings.edges; }
+			classSettings.edges = classSettings.overriddenProperties.edges(cEdges);
 			dat.controllerNameAndTitle(cEdges, lang.edges, lang.edgesTitle);
 			dat.controllerNameAndTitle(cProject, lang.project, lang.projectTitle);
 
