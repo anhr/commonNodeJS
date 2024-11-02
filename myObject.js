@@ -36,7 +36,7 @@ class MyObject {
 
 		this.isSetPosition = settings.isSetPosition;
 
-		const timeId = settings.options.player.getTimeId(), geometry = settings.object.geometry,
+		const timeId = settings.options ? settings.options.player.getTimeId() : 0, geometry = settings.object.geometry,
 			geometryPosition = geometry.position;
 		if ((timeId === 0) && (!geometryPosition || !geometryPosition.isPositionProxy)) {
 

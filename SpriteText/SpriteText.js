@@ -70,6 +70,7 @@ import three from '../three.js'
  */
 export function SpriteText( text, position,	options = {} ) {
 
+	if ( typeof text === 'number' ) text = text.toString();
 	text = text.replaceAll( '\t', '  ' );
 	
 	const THREE = three.THREE;
