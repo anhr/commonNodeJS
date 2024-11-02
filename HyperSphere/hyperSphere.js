@@ -326,6 +326,7 @@ class HyperSphere extends MyObject {
 		classSettings.overriddenProperties.edges ||= () => { return false; };
 //		classSettings.edges = cookieOptions.edges === false ? false : cookieOptions.edges || classSettings.edges;
 		classSettings.edges = cookieOptions.edges === false ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
+		classSettings.edges = classSettings.edges === false ? classSettings.overriddenProperties.edges() : classSettings.edges;
 		if (classSettings.edges != false) classSettings.edges = classSettings.edges || {};
 		if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
@@ -2858,6 +2859,7 @@ for (let i = 0; i < geometry.times.length; i++) {
 
 			const objectEdges = { boEdges: ((typeof classSettings.edges) === 'object') || (classSettings.edges === true) ? true : false },
 				setCockie = () => { options.dat.cookie.setObject(_this.cookieName, { edges: classSettings.edges, edgesOld: edgesOld, }); };
+			classSettings.overriddenProperties.isEdgesOnly ||= () => { return false; }
 			cEdges = fHyperSphere.add(objectEdges, 'boEdges').onChange((boEdges) => {
 
 				if (boEdges) {
@@ -2867,6 +2869,12 @@ for (let i = 0; i < geometry.times.length; i++) {
 
 				} else {
 
+					if (classSettings.overriddenProperties.isEdgesOnly()) {
+
+						cEdges.setValue(true);
+						return;
+
+					}
 					edgesOld = classSettings.edges;
 					classSettings.edges = false;
 
@@ -2889,9 +2897,9 @@ for (let i = 0; i < geometry.times.length; i++) {
 				}),
 				displayEdge = () => { _display(fEdge.domElement, classSettings.edges); };
 			displayEdge();
-			classSettings.overriddenProperties.setEdges ||= () => { return cookieOptions === false ? false : cookieOptions.edges || classSettings.edges; }
+//			classSettings.overriddenProperties.setEdges ||= () => { return cookieOptions === false ? false : cookieOptions.edges || classSettings.edges; }
 //			classSettings.edges = classSettings.overriddenProperties.edges(cEdges);
-			classSettings.overriddenProperties.setEdges(cEdges);
+//			classSettings.overriddenProperties.setEdges(cEdges);
 			dat.controllerNameAndTitle(cEdges, lang.edges, lang.edgesTitle);
 			dat.controllerNameAndTitle(cProject, lang.project, lang.projectTitle);
 
