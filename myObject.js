@@ -116,7 +116,9 @@ class MyObject {
 		this.setVerticesRange = (start, count) => {
 			
 			const bufferGeometry = settings.bufferGeometry, position = bufferGeometry.attributes.position;
-			this.setDrawRange(start, count * ((position && (bufferGeometry.index != null)) ? position.itemSize : 1));//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
+//			this.setDrawRange(start, count * ((position && (bufferGeometry.index != null)) ? position.itemSize : 1));//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
+			const itemSize = ((position && (bufferGeometry.index != null)) ? position.itemSize : 1);
+			this.setDrawRange(start * itemSize, count * itemSize);//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
 			
 		}
 		this.setEdgesRange = (start = 0, timeId) => {
