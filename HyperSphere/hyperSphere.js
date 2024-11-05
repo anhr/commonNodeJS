@@ -1280,6 +1280,9 @@ class HyperSphere extends MyObject {
 			notSelected: 'not selected',
 			arc: 'Arc',
 
+			pointId: "Point Id",
+			edgeId: "Edge Id",
+
 		};
 
 		const _languageCode = getLanguageCode();
@@ -1317,6 +1320,9 @@ class HyperSphere extends MyObject {
 
 				lang.notSelected = 'Не выбрано';
 				lang.arc = 'Дуга';
+
+				lang.pointId = 'Индекс вершины';
+				lang.edgeId = 'Индекс ребра';
 
 				break;
 			default://Custom language
@@ -1454,7 +1460,7 @@ class HyperSphere extends MyObject {
 
 							let text = //'\n' + lang.angles + ':'
 								classSettings.overriddenProperties.text(/*tab*/'', angles, lang)
-								+ '\n' + 'vertice Id: ' + index
+								+ '\n' + lang.pointId + ': ' + index
 								+ '\n' + lang.angles + ':'
 							angles[index].forEach((axisAngle, angleId) => { text += '\n\t' + this.axisName(angleId) + ': ' + axisAngle })
 							return text;
