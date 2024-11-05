@@ -323,7 +323,7 @@ class HyperSphere extends MyObject {
 		if (options.dat) options.dat.cookie.getObject(this.cookieName, cookieOptions);
 
 		let edgesOld = cookieOptions.edgesOld || { project: true, };
-		classSettings.overriddenProperties.edges ||= () => { return false; };
+		if (classSettings.overriddenProperties) classSettings.overriddenProperties.edges ||= () => { return false; };
 //		classSettings.edges = cookieOptions.edges === false ? false : cookieOptions.edges || classSettings.edges;
 		classSettings.edges = cookieOptions.edges === false ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
 		classSettings.edges = classSettings.edges === false ? classSettings.overriddenProperties.edges() : classSettings.edges;
@@ -983,7 +983,12 @@ class HyperSphere extends MyObject {
 		overriddenProperties.pushMiddleVertice ||= () => {}
 		overriddenProperties.angles ||= (anglesId) => { return classSettings.settings.object.geometry.angles[anglesId]; }
 		overriddenProperties.verticeAngles ||= (anglesCur, verticeId) => { return anglesCur[verticeId]; }
-		overriddenProperties.verticeText ||= (intersection, text) => { return text(classSettings.settings.object.geometry.angles, intersection.index); }
+		overriddenProperties.verticeText ||= (intersection, text) => {
+			
+//			return text(classSettings.settings.object.geometry.angles, intersection.index);
+			return text(classSettings.settings.object.geometry.angles,  this.searchNearestEdgeVerticeId(intersection.index, intersection));
+		
+		}
 		overriddenProperties.text ||= () => { return ''; }
 		overriddenProperties.onSelectSceneEndSetDrawRange ||= (timeId) => {}
 
@@ -1453,6 +1458,28 @@ class HyperSphere extends MyObject {
 			}
 			this.projectGeometry = () => {
 
+				this.searchNearestEdgeVerticeId = (verticeId, intersection) => {
+
+					if (!classSettings.edges.project) return verticeId;
+					const array = intersection.object.geometry.index.array, edge = [array[intersection.index], array[intersection.index + 1]]
+					let minDistance = Infinity;//, pointId;
+					const distance = ( i ) => {
+		
+						const pointIndex = edge[i],
+							distance = intersection.point.distanceTo( new THREE.Vector3().fromBufferAttribute( intersection.object.geometry.attributes.position, pointIndex ) );
+						if ( minDistance > distance  ) {
+			
+							minDistance = distance;
+							verticeId = pointIndex;
+							
+						}
+						
+					}
+					distance ( 0 );
+					distance ( 1 );
+					return verticeId;
+					
+				}
 				const raycaster = {
 					text: (intersection) => {
 
