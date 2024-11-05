@@ -1447,6 +1447,22 @@ class HyperSphere extends MyObject {
 			}
 			this.projectGeometry = () => {
 
+				const raycaster = {
+					text: (intersection) => {
+
+						return classSettings.overriddenProperties.verticeText(intersection, (angles, index) => {
+
+							let text = //'\n' + lang.angles + ':'
+								classSettings.overriddenProperties.text(/*tab*/'', angles, lang)
+								+ '\n' + 'vertice Id: ' + index
+								+ '\n' + lang.angles + ':'
+							angles[index].forEach((axisAngle, angleId) => { text += '\n\t' + this.axisName(angleId) + ': ' + axisAngle })
+							return text;
+
+						});
+
+					},
+				}
 				this.line = (settings, r = 1) => {
 
 					return this.newHyperSphere(
@@ -2282,6 +2298,25 @@ class HyperSphere extends MyObject {
 							if ((settings.object.geometry.position[0].length > 3) && (!settings.object.color)) settings.object.color = {};//Color of vertice from palette
 							nd = new ND(this.dimension, settings);
 
+							nd.object3D.userData.raycaster = raycaster;
+/*
+							nd.object3D.userData.raycaster = {
+								text: (intersection) => {
+
+								return classSettings.overriddenProperties.verticeText(intersection, (angles, index) => {
+
+									let text = //'\n' + lang.angles + ':'
+										classSettings.overriddenProperties.text(/'', angles, lang)
+										+ '\n' + 'vertice Id: ' + index
+										+ '\n' + lang.angles + ':'
+									angles[index].forEach((axisAngle, angleId) => { text += '\n\t' + this.axisName(angleId) + ': ' + axisAngle})
+									return text;
+									
+								});
+
+							}, }
+*/
+							
 							params.center = params.center || {}
 							nd.object3D.position.x = params.center.x || 0;
 							nd.object3D.position.y = params.center.y || 0;
@@ -2376,12 +2411,14 @@ for (let i = 0; i < geometry.times.length; i++) {
 
 									myPoints = points;
 //									myPoints.material.needsUpdate = true;//for THREE.REVISION = "145dev"
+									myPoints.userData.raycaster = raycaster;
+/*
 									myPoints.userData.raycaster = { text: (intersection) => {
 
 										return classSettings.overriddenProperties.verticeText(intersection, (angles, index) => {
 
 											let text = //'\n' + lang.angles + ':'
-												classSettings.overriddenProperties.text(/*tab*/'', angles, lang)
+												classSettings.overriddenProperties.text('', angles, lang)
 												+ '\n' + 'vertice Id: ' + index
 												+ '\n' + lang.angles + ':'
 											angles[index].forEach((axisAngle, angleId) => { text += '\n\t' + this.axisName(angleId) + ': ' + axisAngle})
@@ -2390,6 +2427,7 @@ for (let i = 0; i < geometry.times.length; i++) {
 										});
 
 									}, }
+*/
 									gui(myPoints);
 									intersection(points);
 

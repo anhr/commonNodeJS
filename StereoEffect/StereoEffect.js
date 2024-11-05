@@ -1006,7 +1006,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 
 	if ( intersection.object.userData.onIntersection ) intersection.object.userData.onIntersection();
 	const boXYZ = !scales.x &&  !scales.y &&  !scales.z;
-	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
+//	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
 	options.spriteOptions.name = Options.findSpriteTextIntersection.spriteTextIntersectionName;
 	return new SpriteText(
 
