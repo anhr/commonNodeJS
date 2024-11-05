@@ -287,7 +287,6 @@ class ND extends MyObject {
 		settings.object.raycaster = settings.object.raycaster || {};
 		settings.object.raycaster.text = settings.object.raycaster.text || function( intersection ) {
 
-
 			//Localization
 
 			const getLanguageCode = settings.options.getLanguageCode;
