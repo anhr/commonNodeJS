@@ -407,7 +407,7 @@ class HyperSphere extends MyObject {
 				if (!isNaN(verticeId)) {
 
 					const length = _this.dimension - 1;
-					return new Proxy(angles[verticeId], {
+					return new Proxy(angles[/*this.searchNearestEdgeVerticeId(verticeId)*/verticeId], {
 
 						get: (verticeAngles, name) => {
 
@@ -1086,6 +1086,29 @@ class HyperSphere extends MyObject {
 			return proxyVertice;
 		
 		}
+
+		this.searchNearestEdgeVerticeId = (verticeId, intersection) => {
+
+			if (!classSettings.edges.project) return verticeId;
+			const array = intersection ? intersection.object.geometry.index.array : undefined, edge = array ? [array[intersection.index], array[intersection.index + 1]] : [];
+			let minDistance = Infinity;//, pointId;
+			const distance = (i) => {
+
+				const pointIndex = edge[i],
+					distance = intersection.point.distanceTo(new THREE.Vector3().fromBufferAttribute(intersection.object.geometry.attributes.position, pointIndex));
+				if (minDistance > distance) {
+
+					minDistance = distance;
+					verticeId = pointIndex;
+
+				}
+
+			}
+			distance(0);
+			distance(1);
+			return verticeId;
+
+		}
 		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
 		this.setPositionAttributeFromPoints(settings.object.geometry.angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 
@@ -1457,29 +1480,6 @@ class HyperSphere extends MyObject {
 
 			}
 			this.projectGeometry = () => {
-
-				this.searchNearestEdgeVerticeId = (verticeId, intersection) => {
-
-					if (!classSettings.edges.project) return verticeId;
-					const array = intersection.object.geometry.index.array, edge = [array[intersection.index], array[intersection.index + 1]]
-					let minDistance = Infinity;//, pointId;
-					const distance = ( i ) => {
-		
-						const pointIndex = edge[i],
-							distance = intersection.point.distanceTo( new THREE.Vector3().fromBufferAttribute( intersection.object.geometry.attributes.position, pointIndex ) );
-						if ( minDistance > distance  ) {
-			
-							minDistance = distance;
-							verticeId = pointIndex;
-							
-						}
-						
-					}
-					distance ( 0 );
-					distance ( 1 );
-					return verticeId;
-					
-				}
 				const raycaster = {
 					text: (intersection) => {
 
@@ -1618,6 +1618,7 @@ class HyperSphere extends MyObject {
 						object.userData.gui = {
 
 							get isLocalPositionReadOnly() { return true; },
+							get hyperSphere() { return _this; },
 							setValues: (verticeId, anglesCur) => {
 
 								//пользователь выбрал вершину

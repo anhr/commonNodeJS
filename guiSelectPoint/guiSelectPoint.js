@@ -431,14 +431,14 @@ class GuiSelectPoint {
 			setValue(cY, positionLocal.y);
 			setValue(cZ, positionLocal.z);
 
-/*			
-			if (intersectionSelected.object.userData.gui) intersectionSelected.object.userData.gui.setValues(intersectionSelected.index, myObject? myObject.guiPoints.timeAngles : undefined);
-*/			
+			const gui = intersectionSelected.object.userData.gui;
+			let intersectionSelectedIndex = gui.hyperSphere.searchNearestEdgeVerticeId(intersectionSelected.index, intersectionSelected);
 			if (intersectionSelected.object.userData.gui) {
 
 				const guiPoints = intersectionSelected.object.userData.myObject.guiPoints;
 				guiPoints.getVerticeId(intersectionSelected.index);
-				intersectionSelected.object.userData.gui.setValues(intersectionSelected.index, guiPoints.timeAngles);
+//				intersectionSelected.object.userData.gui.setValues(intersectionSelected.index, guiPoints.timeAngles);
+				gui.setValues(intersectionSelectedIndex, guiPoints.timeAngles);
 
 			}
 
@@ -494,7 +494,10 @@ class GuiSelectPoint {
 				} else {
 
 					function isWObject() { return (typeof func.w === 'object') && (func.w instanceof THREE.Color === false); }
-					const mesh = getMesh(), verticeColor = mesh.userData.myObject ? mesh.userData.myObject.verticeColor(intersectionSelected.index) : undefined;
+					const mesh = getMesh(), verticeColor = mesh.userData.myObject ?
+//						mesh.userData.myObject.verticeColor(intersectionSelected.index) :
+						mesh.userData.myObject.verticeColor(intersectionSelectedIndex) :
+						undefined;
 					var color = (func === undefined) || (!attributes.color && !attributes.ca) ?
 						undefined :
 						Array.isArray(func.w) || (typeof func.w === "function") ?
@@ -1624,7 +1627,10 @@ class GuiSelectPoint {
 				else {
 
 					display = 'block';
-					_this.select( { object: mesh, index: pointId } );
+					const attributesPosition = mesh.geometry.attributes.position,
+						point = new THREE.Vector3().fromBufferAttribute(attributesPosition, pointId);
+//						point = (attributesPosition.itemSize === 4 ? new THREE.Vector4 :  new THREE.Vector3).fromBufferAttribute(attributesPosition, pointId);
+					_this.select( { object: mesh, index: pointId, point: point } );
 //					_this.select( { object: mesh, index: mesh.userData.myObject.guiPoints.getPositionId(pointId) } );
 
 				}
