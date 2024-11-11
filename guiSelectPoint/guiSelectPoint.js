@@ -432,11 +432,13 @@ class GuiSelectPoint {
 			setValue(cZ, positionLocal.z);
 
 			const gui = intersectionSelected.object.userData.gui;
-			let intersectionSelectedIndex = gui.hyperSphere.searchNearestEdgeVerticeId(intersectionSelected.index, intersectionSelected);
+			intersectionSelected.index = gui.hyperSphere.searchNearestEdgeVerticeId(intersectionSelected.index, intersectionSelected);
+			const intersectionSelectedIndex = intersectionSelected.index;
 			if (intersectionSelected.object.userData.gui) {
 
 				const guiPoints = intersectionSelected.object.userData.myObject.guiPoints;
-				guiPoints.getVerticeId(intersectionSelected.index);
+//				guiPoints.getVerticeId(intersectionSelected.index);
+				guiPoints.getVerticeId(intersectionSelectedIndex);
 //				intersectionSelected.object.userData.gui.setValues(intersectionSelected.index, guiPoints.timeAngles);
 				gui.setValues(intersectionSelectedIndex, guiPoints.timeAngles);
 
