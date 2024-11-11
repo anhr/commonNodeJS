@@ -896,6 +896,7 @@ class GuiSelectPoint {
 		 */
 		this.select = function ( intersectionSelected ) {
 
+			intersection = undefined;
 			let intersectionSelectedIndex = intersectionSelected.index;
 			if ( (intersectionSelectedIndex === undefined) || isNaN( intersectionSelectedIndex ) ) {
 
@@ -936,7 +937,11 @@ class GuiSelectPoint {
 
 			} else {
 
-				myObject.guiPoints.setControllers(intersectionSelected.index);
+//				intersectionSelected.index = intersectionSelected.object.userData.gui.hyperSphere.searchNearestEdgeVerticeId(intersectionSelected.index, intersectionSelected);
+//				myObject.guiPoints.getVerticeId(intersectionSelected.index);
+				myObject.guiPoints.setIntersection(intersectionSelected);
+				myObject.guiPoints.changeControllers();
+//				myObject.guiPoints.setControllers(intersectionSelected.index);
 				
 				if ( cCustom ) {
 
