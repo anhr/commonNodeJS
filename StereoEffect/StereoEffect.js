@@ -986,8 +986,12 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 	if ( spriteText )
 		return spriteText;
 		
-	const THREE = three.THREE;
-	const position = getObjectPosition( intersection.object, intersection.index ),
+	const THREE = three.THREE,
+		myObject = intersection.object.userData.myObject,
+		guiPoints = myObject ? myObject.guiPoints : undefined,
+		searchNearestEdgeVerticeId = guiPoints.searchNearestEdgeVerticeId,
+		verticeId = searchNearestEdgeVerticeId ? searchNearestEdgeVerticeId( intersection.index, intersection ) : undefined,
+		position = getObjectPosition( intersection.object, verticeId != undefined ? verticeId : intersection.index ),
 		scales = options.scales || {},
 		isArrayFuncs = (
 			( intersection.index !== undefined ) &&
@@ -1013,7 +1017,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 		//text
 		/*lang.mesh + ': ' + */( intersection.object.name === '' ? intersection.object.type : intersection.object.name ) +
 		( pointName === undefined ? '' : '\n'+ lang.pointName + ': ' + pointName ) +
-		( intersection.index === undefined ? '' : '\nID: ' + intersection.index) + 
+		( intersection.index === undefined ? '' : '\nID: ' + ( verticeId != undefined ? verticeId : intersection.index ) ) + 
 		( ( !boXYZ && !scales.x ) || ( scales.x && !scales.x.isAxis() ) ? '' :
 			'\n\t' + ( ( scales.x && scales.x.name ) || ( scales.x.name === 0 ) ? scales.x.name : 'X' ) + ': ' + position.x ) +
 		( ( !boXYZ && !scales.y ) || ( scales.y && !scales.y.isAxis() ) ? '' :
