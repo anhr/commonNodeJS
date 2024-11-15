@@ -1307,6 +1307,8 @@ class GuiSelectPoint {
 
 				cPoints.__onChange( -1 );//сбросить настройки точки
 				
+				if (mesh && mesh.userData.myObject.guiPoints.resetControllers) mesh.userData.myObject.guiPoints.resetControllers();
+				
 				mesh = getMesh();
 
 				const none = 'none', block = 'block';
