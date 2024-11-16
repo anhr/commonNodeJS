@@ -3379,7 +3379,11 @@ class ND extends MyObject {
 		} );
 
 	}
+
+	//Overridden methods from base class
+
 	get defaultColor() { return 'lime'; }
+	positionOffset(position, positionId) { return positionId * position.itemSize; }
 
 }
 

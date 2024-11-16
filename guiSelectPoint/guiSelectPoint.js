@@ -432,7 +432,7 @@ class GuiSelectPoint {
 			setValue(cZ, positionLocal.z);
 
 			const gui = intersectionSelected.object.userData.gui;
-			intersectionSelected.index = gui.hyperSphere.searchNearestEdgeVerticeId(intersectionSelected.index, intersectionSelected);
+			if (gui) intersectionSelected.index = gui.hyperSphere.searchNearestEdgeVerticeId(intersectionSelected.index, intersectionSelected);
 			const intersectionSelectedIndex = intersectionSelected.index;
 			if (intersectionSelected.object.userData.gui) {
 
@@ -583,8 +583,8 @@ class GuiSelectPoint {
 			dislayEl( cColor, displayControllerColor );
 
 			const mesh = getMesh(), boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : mesh.userData.gui && mesh.userData.gui.isLocalPositionReadOnly ? true : false,
-				boOpacity = ( mesh.userData.myObject && mesh.userData.myObject.isOpacity ) || ( mesh.material.transparent && mesh.material.vertexColors),
-				attributeColor = mesh.geometry.attributes.color;
+				attributeColor = mesh.geometry.attributes.color,
+				boOpacity = ( attributeColor.itemSize === 4 ) && ( ( mesh.userData.myObject && mesh.userData.myObject.isOpacity ) || ( mesh.material.transparent && mesh.material.vertexColors ) );
 			dislayEl( cOpacity, boOpacity ? block : none );
 			if ( boOpacity ) {
 
@@ -937,11 +937,8 @@ class GuiSelectPoint {
 
 			} else {
 
-//				intersectionSelected.index = intersectionSelected.object.userData.gui.hyperSphere.searchNearestEdgeVerticeId(intersectionSelected.index, intersectionSelected);
-//				myObject.guiPoints.getVerticeId(intersectionSelected.index);
-				myObject.guiPoints.setIntersection(intersectionSelected);
-				myObject.guiPoints.changeControllers();
-//				myObject.guiPoints.setControllers(intersectionSelected.index);
+				if (myObject.guiPoints.setIntersection) myObject.guiPoints.setIntersection(intersectionSelected);
+				if (myObject.guiPoints.changeControllers) myObject.guiPoints.changeControllers();
 				
 				if ( cCustom ) {
 

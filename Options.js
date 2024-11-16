@@ -1312,11 +1312,7 @@ class Options {
 			 **/
 			guiSelectPoint: {
 
-				get: function () {
-
-					return options.guiSelectPoint;
-
-				},
+				get: function () { return options.guiSelectPoint; },
 				set: function ( guiSelectPoint ) {
 
 					if ( options.guiSelectPoint && ( guiSelectPoint != undefined ) )

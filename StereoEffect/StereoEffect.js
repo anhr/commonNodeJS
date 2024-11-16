@@ -989,7 +989,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 	const THREE = three.THREE,
 		myObject = intersection.object.userData.myObject,
 		guiPoints = myObject ? myObject.guiPoints : undefined,
-		searchNearestEdgeVerticeId = guiPoints.searchNearestEdgeVerticeId,
+		searchNearestEdgeVerticeId = guiPoints ? guiPoints.searchNearestEdgeVerticeId : undefined,
 		verticeId = searchNearestEdgeVerticeId ? searchNearestEdgeVerticeId( intersection.index, intersection ) : undefined,
 		position = getObjectPosition( intersection.object, verticeId != undefined ? verticeId : intersection.index ),
 		scales = options.scales || {},

@@ -167,9 +167,12 @@ class MyObject {
 					const positionId = parseInt(name);
 					if (!isNaN(positionId)) {
 
+/*						
 						const timeId = settings.bufferGeometry.userData.timeId,
 //							positionOffset = (settings.object.geometry.timesAngles != undefined ? timeId * settings.object.geometry.timesAngles[0].length * position.itemSize : 0) + positionId * position.itemSize,
 							positionOffset = (timeId * settings.object.geometry.angles.length + positionId) * position.itemSize,
+*/
+						const positionOffset = this.positionOffset(position, positionId),
 							array = position.array;
 						const verticeProxy = new Proxy([], {
 
@@ -470,6 +473,9 @@ class MyObject {
 		}
 		
 	}
+	
+	//base methods
+
 //	get isSetPosition() { return false; }
 	get defaultColor() { return 'white'; }
 	get isOpacity() {
@@ -482,6 +488,12 @@ class MyObject {
 		}
 		return false;
 	
+	}
+	positionOffset(position, positionId) {
+
+		const settings = this.classSettings.settings;
+		return (settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId) * position.itemSize;
+		
 	}
 
 }
