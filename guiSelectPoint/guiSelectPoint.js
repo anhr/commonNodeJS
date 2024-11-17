@@ -979,7 +979,8 @@ class GuiSelectPoint {
 					const guiPoints = intersectionSelected.object.userData.myObject ? intersectionSelected.object.userData.myObject.guiPoints : undefined,
 						point = cPoints.__select[guiPoints ? cPoints.__select.selectedIndex : intersectionSelected.index + 1];
 */						
-					const point = cPoints.__select[intersectionSelectedIndex + 1];
+					const myObject = intersectionSelected.object.userData.myObject, guiPoints = myObject ? myObject.guiPoints : undefined, verticeId = guiPoints ? guiPoints.verticeId : undefined,
+						point = cPoints.__select[(verticeId? verticeId : intersectionSelectedIndex) + 1];
 					if ( point ) point.selected = true;
 
 				} else {//FrustumPoints

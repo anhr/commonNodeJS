@@ -1698,7 +1698,9 @@ class Raycaster {
 				return;//No display information about frustum point
 			if ( options.guiSelectPoint ) {
 				
-				intersection.object.userData.myObject.guiPoints.verticeId = intersection.index;
+//				intersection.object.userData.myObject.guiPoints.verticeId = intersection.index;
+				const guiPoints = intersection.object.userData.myObject.guiPoints, searchNearestEdgeVerticeId = guiPoints.searchNearestEdgeVerticeId;
+				guiPoints.verticeId = searchNearestEdgeVerticeId ? searchNearestEdgeVerticeId(intersection.index, intersection) : intersection.index;
 				
 				options.guiSelectPoint.select( intersection );
 
@@ -1706,7 +1708,7 @@ class Raycaster {
 				//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
 				//Щелчком мыши выбрать вершину
 				//Сделать один шаг проигрывателя, нажав →
-				delete intersection.object.userData.myObject.guiPoints.verticeId;
+				delete guiPoints.verticeId;
 				
 			} else {
 

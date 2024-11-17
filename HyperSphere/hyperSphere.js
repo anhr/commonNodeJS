@@ -2332,24 +2332,9 @@ class HyperSphere extends MyObject {
 							if ((settings.object.geometry.position[0].length > 3) && (!settings.object.color)) settings.object.color = {};//Color of vertice from palette
 							nd = new ND(this.dimension, settings);
 
+							nd.guiPoints.searchNearestEdgeVerticeId = this.searchNearestEdgeVerticeId;
+
 							nd.object3D.userData.raycaster = raycaster;
-/*
-							nd.object3D.userData.raycaster = {
-								text: (intersection) => {
-
-								return classSettings.overriddenProperties.verticeText(intersection, (angles, index) => {
-
-									let text = //'\n' + lang.angles + ':'
-										classSettings.overriddenProperties.text(/'', angles, lang)
-										+ '\n' + 'vertice Id: ' + index
-										+ '\n' + lang.angles + ':'
-									angles[index].forEach((axisAngle, angleId) => { text += '\n\t' + this.axisName(angleId) + ': ' + axisAngle})
-									return text;
-									
-								});
-
-							}, }
-*/
 							
 							params.center = params.center || {}
 							nd.object3D.position.x = params.center.x || 0;
