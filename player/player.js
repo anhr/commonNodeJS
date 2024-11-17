@@ -1440,9 +1440,13 @@ Player.cameraTarget = class {
 			//Update cameraTarget
 			const func = !mesh.userData.player || ( typeof mesh.userData.player.arrayFuncs === "function" ) ? {} :
 				mesh.userData.player.arrayFuncs[mesh.userData.myObject.guiPoints.seletedIndex(i)];
-			if ( !func.cameraTarget )
-				func.cameraTarget = { boLook: false };
-			setCameraTarget( func.cameraTarget );
+			if ( func != undefined ) {
+				
+				if ( !func.cameraTarget )
+					func.cameraTarget = { boLook: false };
+				setCameraTarget( func.cameraTarget );
+
+			}
 
 			_options = _options || options;
 			const cameraTarget = _options.playerOptions.cameraTarget.get( _options );

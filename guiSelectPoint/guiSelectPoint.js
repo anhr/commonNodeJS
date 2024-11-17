@@ -584,7 +584,15 @@ class GuiSelectPoint {
 
 			const mesh = getMesh(), boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : mesh.userData.gui && mesh.userData.gui.isLocalPositionReadOnly ? true : false,
 				attributeColor = mesh.geometry.attributes.color,
-				boOpacity = ( attributeColor.itemSize === 4 ) && ( ( mesh.userData.myObject && mesh.userData.myObject.isOpacity ) || ( mesh.material.transparent && mesh.material.vertexColors ) );
+				boOpacity = attributeColor ?
+					(
+						( attributeColor.itemSize === 4 ) &&
+							(
+								( mesh.userData.myObject && mesh.userData.myObject.isOpacity ) ||
+								( mesh.material.transparent && mesh.material.vertexColors )
+							)
+					) :
+					false;
 			dislayEl( cOpacity, boOpacity ? block : none );
 			if ( boOpacity ) {
 
@@ -1000,7 +1008,9 @@ class GuiSelectPoint {
 						( mesh.userData.player.arrayFuncs === undefined ) ||
 						( typeof intersection.object.userData.player.arrayFuncs === "function" ) ?
 						undefined :
-						( arrayFuncs.intersection ? arrayFuncs.intersection( intersectionSelectedIndex ) : arrayFuncs[intersectionSelectedIndex] ).line;//You can not trace points if you do not defined the mesh.userData.player.arrayFuncs
+						intersectionSelectedIndex != undefined ?
+							( arrayFuncs.intersection ? arrayFuncs.intersection( intersectionSelectedIndex ) : arrayFuncs[intersectionSelectedIndex] ).line ://You can not trace points if you do not defined the mesh.userData.player.arrayFuncs
+							undefined;
 				if ( cTrace )
 					cTrace.setValue( ( line === undefined ) ?
 						false : line.isVisible() )
