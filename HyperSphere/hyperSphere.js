@@ -278,6 +278,7 @@ class HyperSphere extends MyObject {
 		classSettings.settings = classSettings.settings || {};
 		classSettings.settings.options = options;
 		super( classSettings.settings );
+//		if (classSettings.settings.object.geometry.rCount === undefined) classSettings.settings.object.geometry.rCount = 1;
 		Object.defineProperty(classSettings.settings.bufferGeometry.userData, 'positionBlockLength', {
 
 			get: () => { return classSettings.settings.object.geometry.angles.length; },

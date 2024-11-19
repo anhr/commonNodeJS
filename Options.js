@@ -1701,6 +1701,13 @@ class Raycaster {
 //				intersection.object.userData.myObject.guiPoints.verticeId = intersection.index;
 				const guiPoints = intersection.object.userData.myObject.guiPoints, searchNearestEdgeVerticeId = guiPoints.searchNearestEdgeVerticeId;
 				guiPoints.verticeId = searchNearestEdgeVerticeId ? searchNearestEdgeVerticeId(intersection.index, intersection) : intersection.index;
+
+				//Заменить индекс ребра на индекс ближайшего конца ребра в гиперсфере
+				//Если убрать эту строку, то неправильно отображается гиперсфера если с помощью мыши выбрать ребро
+				//Для теста открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
+				//Отобразить ребра
+				//Щелкнуть мышом по ребру
+				if ( ( guiPoints.isSetIntersectionIndex != false ) && ( guiPoints.verticeId != undefined ) ) intersection.index = guiPoints.verticeId;
 				
 				options.guiSelectPoint.select( intersection );
 

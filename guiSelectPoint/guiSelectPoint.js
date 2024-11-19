@@ -1261,18 +1261,7 @@ class GuiSelectPoint {
 					 //геометрия индексирована. mesh.geometry.drawRange.count указывает на количество индексов, которые нужно рисовать
 					 mesh.geometry.attributes.position.count;//По умолчанию все вершины видно
 			mesh.userData.myObject.guiPoints.create( fPoints, cPoints, count, intersectionSelected );
-/*			
-			if (mesh.userData.myObject && mesh.userData.myObject.guiPoints) mesh.userData.myObject.guiPoints.create( fPoints, cPoints );
-			else for ( var iPosition = mesh.geometry.drawRange.start; iPosition < count; iPosition++ ) {
-
-				const opt = document.createElement( 'option' ),
-					name = mesh.userData.player && mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
-				opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
-				opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
-				cPoints.__select.appendChild( opt );
-
-			}
-*/			
+//			intersectionSelected.index = mesh.userData.myObject.guiPoints.searchNearestEdgeVerticeId( intersectionSelected.index, intersectionSelected );
 
 		}
 
@@ -1336,7 +1325,7 @@ class GuiSelectPoint {
 				
 				} ); }
 				
-				if ( cCustom ) cCustom.object( mesh, dat, value === -1 );//options );
+				if ( cCustom ) cCustom.object( mesh, dat, value === -1 );
 
 				createPlayerArrayFuncs( mesh );
 
