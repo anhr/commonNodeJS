@@ -812,7 +812,7 @@ class HyperSphere extends MyObject {
 											const middleVertice = _this.vertice2angles(aSum);
 											if (classSettings.debug && classSettings.debug.middleVertice) {
 
-												console.log('opposite vertices:');
+												console.log('opposite to vertice[' + verticeId + '] vertices:');
 												oppositeVerticesId.forEach(oppositeVerticeId => {
 
 													const verticeAngles = position[oppositeVerticeId].angles;
@@ -1093,10 +1093,12 @@ class HyperSphere extends MyObject {
 			if (!classSettings.edges.project) return verticeId;
 			const array = intersection ? intersection.object.geometry.index.array : undefined, edge = array ? [array[intersection.index], array[intersection.index + 1]] : [];
 			let minDistance = Infinity;//, pointId;
-			const distance = (i) => {
-
+			const position = intersection.object.geometry.attributes.position,
+				point = intersection.point ? intersection.point : new THREE.Vector3().fromBufferAttribute(position, intersection.index),
+				distance = (i) => {
+				
 				const pointIndex = edge[i],
-					distance = intersection.point.distanceTo(new THREE.Vector3().fromBufferAttribute(intersection.object.geometry.attributes.position, pointIndex));
+					distance = point.distanceTo(new THREE.Vector3().fromBufferAttribute(position, pointIndex));
 				if (minDistance > distance) {
 
 					minDistance = distance;
@@ -2619,7 +2621,13 @@ for (let i = 0; i < geometry.times.length; i++) {
 			bufferGeometry.setDrawRange(drawRange.start, (settings.object.geometry.indices[0].timeEdgesCount * (timeId + 1) * 2) - drawRange.start);
 */			
 			
+			//Если не установить это значение, то будет неверно устанавливаться значение w в 
+//			options.scales.w.isChangeColor = false;
+//			options.scales.w.isColor = false;
 			options.player.endSelect();
+//			options.scales.w.isChangeColor = true;
+//			options.scales.w.isColor = true;
+			
 			options.player.continue();
 			
 		}

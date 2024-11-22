@@ -640,10 +640,23 @@ class Options {
 										 * </pre>
 										 **/
 										boScale: { get: function () { return true; }, },
-										isColor : { get: function () { return scale ? scale.isColor : undefined; }, },
+/*										
+										isChangeColor : {
+											
+											get: () => { return scale ? scale.isChangeColor : undefined; },
+											set: ( isChangeColor ) => { scale.isChangeColor = isChangeColor; },
+										
+										},
+*/										
+										isColor : {
+											
+											get: () => { return scale ? scale.isColor : undefined; },
+											set: ( isColor ) => { scale.isColor = isColor; },
+										
+										},
 										min: {
 
-											get: function () {
+											get: () => {
 
 												if ( !scale || !scale.min ) return axisName === 'w' ? 0 : -1;
 												return scale.min;

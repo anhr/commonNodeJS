@@ -2215,6 +2215,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 			object: mesh,
 			index: selectedPointIndex,
+//			point: new THREE.Vector3().fromBufferAttribute(mesh.geometry.attributes.position, selectedPointIndex),
 
 		} );
 
