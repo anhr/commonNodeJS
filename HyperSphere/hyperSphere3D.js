@@ -72,7 +72,13 @@ class HyperSphere3D extends Sphere {
 		const classSettings = this.classSettings, w = classSettings.settings.options.scales.w;
 		w.max = classSettings.rRange.max;
 		w.min = classSettings.rRange.min;
-		//Если не установить это значение, то будет неверно устанавливаться значение w в 
+		
+		//Если не установить это значение, то будет неверно устанавливаться значение w в geometry.attributes.position
+		//потому что в гиперсфере w в geometry.attributes.position это не цвет вершины, а координата
+		//Для проверки открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
+		//Выбрать вершину
+		//сделать шаг проигрывтеля →
+		//Исчезнет ошибка HyperSphere: Invalid vertice[2] sum = 0.6560590267181396. r = 1
 		w.isColor = false;
 //		w.isChangeColor = false;
 		

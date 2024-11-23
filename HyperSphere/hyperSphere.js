@@ -1801,7 +1801,12 @@ class HyperSphere extends MyObject {
 									//Restore default angles.
 									const cRestoreDefaultAngles = fAngles.add({
 
-										defaultF: () => { aAngleControls.forEach((cAngle, i) => cAngle.setValue(anglesDefault[i])); },
+										defaultF: () => {
+											
+											aAngleControls.forEach((cAngle, i) => cAngle.setValue(anglesDefault[i]));
+											settings.options.guiSelectPoint.update(true);
+										
+										},
 
 									}, 'defaultF');
 									dat.controllerNameAndTitle(cRestoreDefaultAngles, lang.defaultButton, lang.defaultAnglesTitle);
