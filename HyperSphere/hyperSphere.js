@@ -1681,7 +1681,22 @@ class HyperSphere extends MyObject {
 								for (let i = 0; i < verticeAngles.length; i++) {
 
 									const angle = verticeAngles[i], cAngle = aAngleControls[i], min = cAngle.__min, max = cAngle.__max;
+
+									//Не изменять позицию вершины когда устанавливаются углы вершины потому
+									//что вычисление позиции вершины в зависимости от ее углов приводит к небольшим погрешностям,
+									//которые приводят к повлению ошибки
+									//Для проверки закоментитвать строку ниже.
+									//Открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
+									//Сделать один шаг проигрывателя →
+									//Выбрать вершину 3
+									//Сделать один шаг проигрывателя →
+									//Появится ошибка:
+									//HyperSphere: Invalid vertice[2] sum = 0.999078566893569. r = 1
+									cAngle.boSetPosition = false;
+									
 									cAngle.setValue(angle);
+									delete cAngle.boSetPosition;
+									
 									if ((angle < min) || (angle > max)) {
 
 										//Localization
@@ -1760,7 +1775,7 @@ class HyperSphere extends MyObject {
 													verticeAngles = classSettings.overriddenProperties.verticeAngles(guiPoints.timeAngles || angles, aAngleControls.verticeId);
 												if (verticeAngles[angleId] === angle) return;
 												verticeAngles[angleId] = angle;
-												_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);
+												if (cAngle.boSetPosition != false) _this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);
 												_this.update(aAngleControls.verticeId, angleId, guiPoints.timeId);
 	
 											});
