@@ -1964,8 +1964,8 @@ class GuiSelectPoint {
 					if ( scale.isAxis() )
 						controller = fPoint.add( { value: scale.min, }, 'value',
 							scale.min,
-							scale.max,
-							( scale.max - scale.min ) / 100 ).
+							scale.max ).
+//							( scale.max - scale.min ) / 100 ).
 							onChange( function ( value ) {
 
 								const points = intersection.object;

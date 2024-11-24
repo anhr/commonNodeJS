@@ -1692,7 +1692,7 @@ class HyperSphere extends MyObject {
 									//Сделать один шаг проигрывателя →
 									//Появится ошибка:
 									//HyperSphere: Invalid vertice[2] sum = 0.999078566893569. r = 1
-									cAngle.boSetPosition = false;
+//									cAngle.boSetPosition = false;
 									
 									cAngle.setValue(angle);
 									delete cAngle.boSetPosition;
@@ -1770,12 +1770,12 @@ class HyperSphere extends MyObject {
 											range = angles.ranges[angleId],
 											cAngle = fAngles.add({ angle: 0, }, 'angle', range.min, range.max, 2 * π / 360).onChange((angle) => {
 
+												if (cAngle.boSetPosition === false) return;
 												const guiPoints = _this.object().userData.myObject.guiPoints,
-	//												verticeAngles = (guiPoints.timeAngles || angles)[aAngleControls.verticeId];
 													verticeAngles = classSettings.overriddenProperties.verticeAngles(guiPoints.timeAngles || angles, aAngleControls.verticeId);
 												if (verticeAngles[angleId] === angle) return;
 												verticeAngles[angleId] = angle;
-												if (cAngle.boSetPosition != false) _this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);
+												_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);
 												_this.update(aAngleControls.verticeId, angleId, guiPoints.timeId);
 	
 											});
