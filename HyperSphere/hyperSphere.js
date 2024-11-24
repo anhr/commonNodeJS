@@ -1091,6 +1091,7 @@ class HyperSphere extends MyObject {
 		this.searchNearestEdgeVerticeId = (verticeId, intersection) => {
 
 			if (!classSettings.edges.project) return verticeId;
+			if (intersection.nearestEdgeVerticeId != undefined) return intersection.nearestEdgeVerticeId;
 			const array = intersection ? intersection.object.geometry.index.array : undefined, edge = array ? [array[intersection.index], array[intersection.index + 1]] : [];
 			let minDistance = Infinity;//, pointId;
 			const position = intersection.object.geometry.attributes.position,
@@ -1109,6 +1110,7 @@ class HyperSphere extends MyObject {
 			}
 			distance(0);
 			distance(1);
+			intersection.nearestEdgeVerticeId = verticeId;
 			return verticeId;
 
 		}
