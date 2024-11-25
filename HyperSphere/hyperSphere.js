@@ -1103,15 +1103,14 @@ class HyperSphere extends MyObject {
 				if (minDistance > distance) {
 
 					minDistance = distance;
-					verticeId = pointIndex;
+					intersection.nearestEdgeVerticeId = pointIndex;
 
 				}
 
 			}
 			distance(0);
 			distance(1);
-			intersection.nearestEdgeVerticeId = verticeId;
-			return verticeId;
+			return intersection.nearestEdgeVerticeId;
 
 		}
 		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
