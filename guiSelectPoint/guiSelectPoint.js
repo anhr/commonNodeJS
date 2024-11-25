@@ -564,9 +564,9 @@ class GuiSelectPoint {
 										cW.max(wLimitsDefault.max);
 	
 									}
-									setValue(cW, color);
 
 								}
+								setValue(cW, color);
 								displayControllerW = block;
 
 							}
