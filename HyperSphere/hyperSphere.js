@@ -770,6 +770,7 @@ class HyperSphere extends MyObject {
 							switch (name) {
 
 								case 'length': return angles.length;
+								case 'player': return angles.player;
 
 							}
 							const verticeId = parseInt(name);
