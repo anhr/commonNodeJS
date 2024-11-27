@@ -1503,8 +1503,19 @@ class HyperSphere extends MyObject {
 				}
 				this.line = (settings, r = 1) => {
 
+					const options = classSettings.settings.options;
 					return this.newHyperSphere(
-						classSettings.settings.options,
+//						classSettings.settings.options,
+						//Если не делать копию classSettings.settings.options, то изменится classSettings.settings.options.scales.w.min и max,
+						//что приведет к неправильному цвету вершины в universe при ее ручном изменении
+						{
+
+							player: options.player,
+							getLanguageCode: options.getLanguageCode,
+							guiSelectPoint: options.guiSelectPoint,
+							renderer: options.renderer,
+							
+						},
 						{
 
 							cookieName: settings.cookieName,
@@ -2232,7 +2243,6 @@ class HyperSphere extends MyObject {
 								//Planes of rotation of angles.
 
 								aAngleControls.cPlanes = fAdvansed.add({ boPlanes: false }, 'boPlanes').onChange((boPlanes) => {
-
 
 									if (!boPlanes) {
 

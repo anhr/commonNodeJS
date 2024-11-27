@@ -3119,11 +3119,13 @@ class ND extends MyObject {
 		if ( scene ) {
 
 			//Если есть scene, обязательно должен быть options. Здесь создать options неполучится
-			if ( n <= 1 ) options.scales.y = undefined;
-			if ( n <= 2 ) options.scales.z = undefined;
-			options.scales.text.rect = options.scales.text.rect || {}
-			options.scales.text.rect.displayRect = false;
-			options.scales.text.precision = 2;
+			const scales = options.scales;
+			if ( n <= 1 ) scales.y = undefined;
+			if ( n <= 2 ) scales.z = undefined;
+			scales.text ||= {};
+			scales.text.rect ||=  {};
+			scales.text.rect.displayRect = false;
+			scales.text.precision = 2;
 
 		}
 

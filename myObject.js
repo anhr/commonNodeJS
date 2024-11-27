@@ -318,9 +318,18 @@ class MyObject {
 		this.verticeColor = (i, vertice, timeId) => {
 
 			const colors = settings.object.geometry.colors;
+/*			
 			const colorsId = i * 3;
 			if (colors && colors[colorsId] != undefined)
 				return [colors[colorsId], colors[colorsId + 1], colors[colorsId + 2]];
+*/				
+			if (colors) {
+				
+				const colorsId = i * 3;
+				if (colors[colorsId] != undefined)
+					return [colors[colorsId], colors[colorsId + 1], colors[colorsId + 2]];
+				
+			}
 			const color = settings.object.color;
 			if (typeof color === "function") return color(timeId);
 			if ((color != undefined) && (typeof color != 'object')) return new THREE.Color(_this.color());
