@@ -408,7 +408,7 @@ class HyperSphere extends MyObject {
 				if (!isNaN(verticeId)) {
 
 					const length = _this.dimension - 1;
-					return new Proxy(angles[/*this.searchNearestEdgeVerticeId(verticeId)*/verticeId], {
+					return new Proxy(angles[verticeId], {
 
 						get: (verticeAngles, name) => {
 
@@ -2224,7 +2224,7 @@ class HyperSphere extends MyObject {
 */											
 											angles = classSettings.overriddenProperties.position0.angles[verticeId],
 											oppositeVerticesId = angles.oppositeVerticesId,
-											middleVertice = angles.middleVertice(oppositeVerticesId, options.player.getTimeId(), false);
+											middleVertice = angles.middleVertice(oppositeVerticesId, options.player.getTimeId() + 1, false);
 										vertices.length = 0;
 										oppositeVerticesId.forEach(oppositeVerticeId => {
 
@@ -3058,7 +3058,8 @@ for (let i = 0; i < geometry.times.length; i++) {
 				switch (log){
 					case 0://position log
 						if (i === position.length) {
-							
+
+							if (this.classSettings.debug.edges === false) break;
 							log++;//edges log
 							i = 0;
 
