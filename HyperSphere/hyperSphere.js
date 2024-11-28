@@ -786,7 +786,7 @@ class HyperSphere extends MyObject {
 
 									switch (name) {
 
-										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId) => {
+										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId, boPushMiddleVertice = true) => {
 
 											//find middle vertice between opposite vertices
 
@@ -824,8 +824,7 @@ class HyperSphere extends MyObject {
 
 											}
 											const geometry = settings.object.geometry;
-//											if (geometry.timesAngles) geometry.timesAngles[timeId].push(middleVertice);
-											classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
+											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 											return middleVertice;
 
 										}
@@ -2218,9 +2217,14 @@ class HyperSphere extends MyObject {
 									if (boMiddleVertice) {
 
 										const verticeId = aAngleControls.verticeId,
+/*											
 											angles = position.angles[verticeId],
 											oppositeVerticesId = angles.oppositeVerticesId,
 											middleVertice = _this.angles2Vertice(angles.middleVertice(oppositeVerticesId));
+*/											
+											angles = classSettings.overriddenProperties.position0.angles[verticeId],
+											oppositeVerticesId = angles.oppositeVerticesId,
+											middleVertice = angles.middleVertice(oppositeVerticesId, options.player.getTimeId(), false);
 										vertices.length = 0;
 										oppositeVerticesId.forEach(oppositeVerticeId => {
 
