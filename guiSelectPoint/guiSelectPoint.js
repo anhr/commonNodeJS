@@ -1636,7 +1636,18 @@ class GuiSelectPoint {
 					const attributesPosition = mesh.geometry.attributes.position,
 						point = new THREE.Vector3().fromBufferAttribute(attributesPosition, pointId);
 //						point = (attributesPosition.itemSize === 4 ? new THREE.Vector4 :  new THREE.Vector3).fromBufferAttribute(attributesPosition, pointId);
-					_this.select( { object: mesh, index: pointId, point: point } );
+					_this.select( {
+						
+						object: mesh,
+						index: pointId,
+						point: point,
+						nearestEdgeVerticeId: pointId,//если не задать это значение, то index будет интерпретироваться как индекс ребра и программа в ребре будет искать индекс вершины, ближайшей к point
+						//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
+						//Сделать один шаг проигрывателя →
+						//С помошю gui выбрать вершину
+						//Выбрать "Средняя" для вычисления среднего зачения этой вершины исходя из положения противоположных вершин: opposite vertices
+						
+					} );
 //					_this.select( { object: mesh, index: mesh.userData.myObject.guiPoints.getPositionId(pointId) } );
 
 				}
