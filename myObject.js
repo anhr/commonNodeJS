@@ -215,6 +215,8 @@ class MyObject {
 										return array[positionOffset + 3];
 
 									}
+									case 'angles': return settings.object.geometry.times[settings.bufferGeometry.userData.timeId][positionId];
+									case 'edges':  return settings.object.geometry.times[0][positionId].edges;
 									case 'vector':
 										const vector = vertice.vector;
 										if (vector) {

@@ -821,7 +821,7 @@ class HyperSphere extends MyObject {
 													console.log('vertice[' + oppositeVerticeId + '] anlges: ' + JSON.stringify(verticeAngles));
 
 												});
-												console.log('Middle vertice angles: ' + JSON.stringify(middleVertice));
+												console.log('Middle vertice ' + JSON.stringify(_this.angles2Vertice(middleVertice, timeId)) + ' angles: ' + JSON.stringify(middleVertice));
 
 											}
 											const geometry = settings.object.geometry;
@@ -2217,15 +2217,15 @@ class HyperSphere extends MyObject {
 									_this.opacity(boMiddleVertice);
 									if (boMiddleVertice) {
 
+										//непонятно зачем эта строка
+										if (classSettings.settings.guiPoints) delete classSettings.settings.guiPoints.timeId;
+										
 										const verticeId = aAngleControls.verticeId,
-/*											
-											angles = position.angles[verticeId],
-											oppositeVerticesId = angles.oppositeVerticesId,
-											middleVertice = _this.angles2Vertice(angles.middleVertice(oppositeVerticesId));
-*/											
 											angles = classSettings.overriddenProperties.position0.angles[verticeId],
 											oppositeVerticesId = angles.oppositeVerticesId,
-											middleVertice = angles.middleVertice(oppositeVerticesId, options.player.getTimeId() + 1, false);
+											timeId = options.player.getTimeId(),
+//											timeId = classSettings.settings.guiPoints.timeId,
+											middleVertice = _this.angles2Vertice(angles.middleVertice(oppositeVerticesId, timeId + 1, false), timeId);
 										vertices.length = 0;
 										oppositeVerticesId.forEach(oppositeVerticeId => {
 
@@ -2635,9 +2635,12 @@ for (let i = 0; i < geometry.times.length; i++) {
 						if (!stepItem()) progressBar.step();
 
 					};
+//				classSettings.settings.guiPoints.timeId = timeId;
+				const sTakeMiddleVertices = 'Take middle vertices';
+				if (classSettings.debug.log != false) console.log('\ntimeId = ' + timeId + '. ' + sTakeMiddleVertices + '.')
 				progressBar = new ProgressBar(options.renderer.domElement.parentElement, step, {
 
-					sTitle: 't = ' + t + '<br> Take middle vertices',
+					sTitle: 't = ' + t + '<br> ' + sTakeMiddleVertices,
 					max: position.length - 1,
 
 				});
@@ -3060,7 +3063,12 @@ for (let i = 0; i < geometry.times.length; i++) {
 					case 0://position log
 						if (i === position.length) {
 
-							if (this.classSettings.debug.edges === false) break;
+							if (this.classSettings.debug.edges === false) {
+								
+								progressBar.remove();
+								break;
+
+							}
 							log++;//edges log
 							i = 0;
 
@@ -3131,7 +3139,7 @@ for (let i = 0; i < geometry.times.length; i++) {
 			return vertice;
 			
 		}
-		return this.getPoint(anglesId);
+		return this.getPoint(anglesId, timeId);
 
 	}
 	vertice2angles(vertice) {
