@@ -278,6 +278,15 @@ class HyperSphere extends MyObject {
 		}
 		classSettings.settings = classSettings.settings || {};
 		classSettings.settings.options = options;
+		classSettings.settings.guiPoints.setIntersectionProperties = (intersection) => {
+			
+			intersection.nearestEdgeVerticeId = intersection.index;//если не задать это значение, то index будет интерпретироваться как индекс ребра и программа в ребре будет искать индекс вершины, ближайшей к point
+			//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
+			//Сделать один шаг проигрывателя →
+			//С помошю gui выбрать вершину
+			//Выбрать "Средняя" для вычисления среднего зачения этой вершины исходя из положения противоположных вершин: opposite vertices
+							
+		};
 		super( classSettings.settings );
 //		if (classSettings.settings.object.geometry.rCount === undefined) classSettings.settings.object.geometry.rCount = 1;
 		Object.defineProperty(classSettings.settings.bufferGeometry.userData, 'positionBlockLength', {
