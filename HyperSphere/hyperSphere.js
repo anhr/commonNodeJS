@@ -278,7 +278,7 @@ class HyperSphere extends MyObject {
 		}
 		classSettings.settings = classSettings.settings || {};
 		classSettings.settings.options = options;
-		classSettings.settings.guiPoints.setIntersectionProperties = (intersection) => {
+		if (classSettings.settings.guiPoints) classSettings.settings.guiPoints.setIntersectionProperties = (intersection) => {
 			
 			intersection.nearestEdgeVerticeId = intersection.index;//если не задать это значение, то index будет интерпретироваться как индекс ребра и программа в ребре будет искать индекс вершины, ближайшей к point
 			//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
@@ -2227,14 +2227,24 @@ class HyperSphere extends MyObject {
 									if (boMiddleVertice) {
 
 										//непонятно зачем эта строка
-										if (classSettings.settings.guiPoints) delete classSettings.settings.guiPoints.timeId;
+//										if (classSettings.settings.guiPoints) delete classSettings.settings.guiPoints.timeId;
 										
 										const verticeId = aAngleControls.verticeId,
 											angles = classSettings.overriddenProperties.position0.angles[verticeId],
 											oppositeVerticesId = angles.oppositeVerticesId,
-											timeId = options.player.getTimeId(),
-//											timeId = classSettings.settings.guiPoints.timeId,
-											middleVertice = _this.angles2Vertice(angles.middleVertice(oppositeVerticesId, timeId + 1, false), timeId);
+//											timeId = options.player.getTimeId(),
+											settings = classSettings.settings,
+											timeId = settings.guiPoints.timeId,
+											middleVertice = _this.angles2Vertice(angles.middleVertice(oppositeVerticesId, timeId + 1, false), timeId),
+											userData = settings.bufferGeometry.userData;
+//											timeIdOld = userData.timeId;//Последнее время проигрывателя.
+										
+										userData.selectedTimeId = timeId;//Для корректной работы position[oppositeVerticeId] когда во вселенной пользователь выбрал вершину не на последнем времени проигрывателя.
+										//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
+										//Сделать два шага проигрывателя, нажав →
+										//Выбрать вершину не на последнем шаге проигрывателя
+										//Вычислить средее значение вершины, пометив пункт "Средняя"
+										
 										vertices.length = 0;
 										oppositeVerticesId.forEach(oppositeVerticeId => {
 
@@ -2242,6 +2252,8 @@ class HyperSphere extends MyObject {
 											pushVertice(position[oppositeVerticeId]);
 
 										});
+//										userData.timeId = timeIdOld;
+										delete userData.selectedTimeId;
 										middleVerticeEdges = addObject2Scene(vertices, 'blue');
 
 									} else {
