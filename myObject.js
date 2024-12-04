@@ -118,20 +118,24 @@ class MyObject {
 			const bufferGeometry = settings.bufferGeometry, position = bufferGeometry.attributes.position;
 //			this.setDrawRange(start, count * ((position && (bufferGeometry.index != null)) ? position.itemSize : 1));//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
 			const itemSize = ((position && (bufferGeometry.index != null)) ? position.itemSize : 1);
-			this.setDrawRange(start * itemSize, count * itemSize);//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
+			this.setDrawRange(start * itemSize, count * itemSize, bufferGeometry.drawRange.types.vertices);//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
 			
 		}
 		this.setEdgesRange = (start = 0, timeId) => {
 
 			const drawRange = settings.bufferGeometry.drawRange;
 			start = start != undefined ? start : drawRange.start;
-//			this.setDrawRange(drawRange.start, settings.object.geometry.indices[0].timeEdgesCount * 2 * (settings.options.player.getTimeId() + 1) - drawRange.start);
 			const timeEdgesLength = settings.object.geometry.indices[0].timeEdgesCount * 2;
-//			this.setDrawRange(timeEdgesLength * start, timeEdgesLength * (((timeId != undefined) ? timeId : settings.options.player.getTimeId()) + 1 - start));
-			this.setDrawRange(timeEdgesLength * start, timeEdgesLength * (((timeId != undefined) ? timeId : settings.options.player.getTimeId() + 1) - start));
+			this.setDrawRange(timeEdgesLength * start, timeEdgesLength * (((timeId != undefined) ? timeId : settings.options.player.getTimeId() + 1) - start), drawRange.types.edges);
 		
 		}
-		this.setDrawRange = (start, count) => { settings.overriddenProperties.setDrawRange(start, count); }
+		this.setDrawRange = (start, count, type) => {
+			
+			if (type != undefined) settings.bufferGeometry.drawRange.type = type;
+			else console.error(sMyObject + ': setDrawRange(...). Invalid type = ' + type);
+			settings.overriddenProperties.setDrawRange(start, count);
+		
+		}
 		const getPlayerTimesLength = () => { return settings.overriddenProperties.getPlayerTimesLength(); }
 		const createPositionAttribute = (pointLength, pointsLength) => {
 
@@ -141,9 +145,15 @@ class MyObject {
 				//Это случается когда во вселенной вычисляется очередной шаг по времени. Тоесть пользователь нажал ► или →
 				pointLength * pointsLength * settings.object.geometry.rCount :
 				settings.object.geometry.MAX_POINTS;
+
+			//Для отладки
+			settings.bufferGeometry.drawRange.types = { vertices: 0, edges: 1 };
+			//settings.bufferGeometry.drawRange.type = settings.bufferGeometry.drawRange.types.vertices Установлен диапазон видимых вершин
+			//settings.bufferGeometry.drawRange.type = settings.bufferGeometry.drawRange.types.edges Установлен диапазон видимых ребер
+			
 			if (MAX_POINTS != undefined) this.setVerticesRange(0, isRCount ?
-				pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
-//				pointsLength://зарезервировано место для вершин вселенной с разным радиусом
+				pointLength * pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
+//				pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
 				//Имеются ребра. В этом случае settings.bufferGeometry.drawRange.count определяет количество отображаемых ребер
 				//Сейчас ребра еще не созданы. Поэтому settings.bufferGeometry.drawRange будет установлено после вызова this.setDrawRange
 				Infinity//pointsLength * 2 - 1

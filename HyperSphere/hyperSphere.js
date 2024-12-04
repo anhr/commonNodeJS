@@ -2607,18 +2607,15 @@ for (let i = 0; i < geometry.times.length; i++) {
 					});
 
 				}
-				const //timesAngles = geometry.timesAngles,
-//					playerPosition = geometry.playerPosition,
-//					vertices = timeAngles ? undefined : [],
-					vertices = classSettings.overriddenProperties.vertices(),
+				const overriddenProperties = classSettings.overriddenProperties,
+					vertices = overriddenProperties.vertices(),
 					timestamp = classSettings.debug ? window.performance.now() : undefined,
 					step = () => {
 
 						progressBar.value = verticeId;
 						const stepItem = () => {
 
-//							const vertice = (playerPosition ?  playerPosition[0]: position).angles[verticeId].middleVertice(undefined, timeId);
-							const vertice = classSettings.overriddenProperties.position0.angles[verticeId].middleVertice(undefined, timeId);
+							const vertice = overriddenProperties.position0.angles[verticeId].middleVertice(undefined, timeId);
 							if (vertices) vertices.push(vertice);
 							verticeId += 1;
 							if (verticeId >= position.length) {
@@ -2628,12 +2625,7 @@ for (let i = 0; i < geometry.times.length; i++) {
 								if (classSettings.debug) classSettings.debug.logTimestamp('Play step. ', timestamp);
 
 								//Обновление текущей вершины без обновления холста для экономии времени
-//								this.isUpdate = false;//для ускорения
-								classSettings.overriddenProperties.updateVertices(vertices);
-//								this.isUpdate = true;
-
-								//обновляю позицию первой вершины что бы обновить холст
-//								position[0][0] = position[0][0];
+								overriddenProperties.updateVertices(vertices);
 
 								if (classSettings.debug) {
 
@@ -2643,10 +2635,6 @@ for (let i = 0; i < geometry.times.length; i++) {
 								}
 								else this.oldR = undefined;
 								this.onSelectSceneEnd(timeId);
-/*								
-								options.player.endSelect();
-								options.player.continue();
-*/								
 								return true;
 
 							}
@@ -2655,10 +2643,16 @@ for (let i = 0; i < geometry.times.length; i++) {
 						}
 						if (!stepItem()) progressBar.step();
 
-					};
-//				classSettings.settings.guiPoints.timeId = timeId;
-				const sTakeMiddleVertices = 'Take middle vertices';
+					},
+					bufferGeometry = classSettings.settings.bufferGeometry,
+					drawRange = bufferGeometry.drawRange,
+					sTakeMiddleVertices = 'Take middle vertices';
 				if (classSettings.debug.log != false) console.log('\ntimeId = ' + timeId + '. ' + sTakeMiddleVertices + '.')
+
+				//Установить drawRange что бы не появлялась ошибка
+				//HyperSphere.angles2Vertice: anglesId = 2. positionId = 28 is out of range from 0 to 24
+				this.setVerticesRange(drawRange.start, ((drawRange.start + drawRange.count) / bufferGeometry.attributes.position.itemSize) + position.length);
+				
 				progressBar = new ProgressBar(options.renderer.domElement.parentElement, step, {
 
 					sTitle: 't = ' + t + '<br> ' + sTakeMiddleVertices,
@@ -3146,8 +3140,14 @@ for (let i = 0; i < geometry.times.length; i++) {
 				//Пока что не вижу случая, когда надо получить position за пределами this.bufferGeometry.drawRange
 				else {
 
-					const count = this.bufferGeometry.drawRange.count, start = this.bufferGeometry.drawRange.start;
-					if ((anglesId >= (count + start)) || (anglesId < start)) console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + ' is out of range from ' + start + ' to ' + (count + start));
+					const drawRange = this.bufferGeometry.drawRange;
+					if (drawRange.type === drawRange.types.vertices) {
+						
+						const count = this.bufferGeometry.drawRange.count, start = this.bufferGeometry.drawRange.start,
+							positionId = this.positionOffset(this.bufferGeometry.attributes.position, anglesId);
+						if ((positionId >= (count + start)) || (positionId < start)) console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + '. positionId = ' + positionId + ' is out of range from ' + start + ' to ' + (count + start));
+
+					}
 
 				}
 
