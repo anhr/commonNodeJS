@@ -604,7 +604,7 @@ class HyperSphere extends MyObject {
 				for (let i = angles.length; i < angles.count; i++) angles.pushRandomAngle();
 
 		}
-		settings.object.geometry.position = new Proxy(settings.object.geometry.position, {
+		settings.object.geometry.position = new Proxy(settings.object.geometry.position || [], {
 
 			get: (target, name) => {
 
