@@ -116,8 +116,12 @@ class MyObject {
 		this.setVerticesRange = (start, count) => {
 			
 			const bufferGeometry = settings.bufferGeometry, position = bufferGeometry.attributes.position;
-//			this.setDrawRange(start, count * ((position && (bufferGeometry.index != null)) ? position.itemSize : 1));//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
+			
+			//Когда bufferGeometry.index != null, и отображаются вершины,
+			//то в drawRange задается диапазон видимых вершин без учета размера каждой вершины bufferGeometry.attributes.positionю.itemSize
 			const itemSize = ((position && (bufferGeometry.index != null)) ? position.itemSize : 1);
+//			const itemSize = (position ? position.itemSize : 1);
+			
 			this.setDrawRange(start * itemSize, count * itemSize, bufferGeometry.drawRange.types.vertices);//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
 			
 		}
@@ -130,9 +134,14 @@ class MyObject {
 		
 		}
 		this.setDrawRange = (start, count, type) => {
-			
-			if (type != undefined) settings.bufferGeometry.drawRange.type = type;
-			else console.error(sMyObject + ': setDrawRange(...). Invalid type = ' + type);
+
+			if (settings.debug) {
+				
+				if (type != undefined) settings.bufferGeometry.drawRange.type = type;
+				else console.error(sMyObject + ': setDrawRange(...). Invalid type = ' + type);
+				if (!Number.isInteger(start) || ((count != Infinity) && !Number.isInteger(count))) console.error(sMyObject + ': setDrawRange(...). Invalid drawRange = { start: ' + start + ', count: ' + count + ' }');
+				
+			}
 			settings.overriddenProperties.setDrawRange(start, count);
 		
 		}

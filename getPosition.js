@@ -24,26 +24,35 @@ export function getObjectLocalPosition( object, index ) {
 
 	const getPositionId = object.userData.myObject ? object.userData.myObject.guiPoints.getPositionId : undefined;
 	if (getPositionId) index = getPositionId(index);
-	const drawRange = object.geometry.drawRange;
+	const THREE = three.THREE,
+		geometry = object.geometry,
+		attributesPosition = geometry.attributes.position,
+		itemSize = attributesPosition.itemSize,
+		position = itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3(),
+		drawRange = object.geometry.drawRange,
+		offset = index * itemSize;
 	if ( object.geometry.index === null ) {
 		
 		//Отображаются вершины
-		if ( ( drawRange.count != Infinity ) && ( ( index < drawRange.start ) || ( index >= ( drawRange.start + drawRange.count ) ) ) ) {
+		let sError;
+		if ( geometry.index === null ) {
+			if ( ( drawRange.count != Infinity ) && ( ( index < drawRange.start ) || ( index >= ( drawRange.start + drawRange.count ) ) ) )
+				sError = '';
+		} else if ( ( drawRange.count != Infinity ) && ( ( offset < drawRange.start ) || ( offset >= ( drawRange.start + drawRange.count ) ) ) ){
 			
-			console.error( 'getObjectLocalPosition: Invalid range of the index = ' + index );
-			return;
+//			console.error( 'getObjectLocalPosition: index = ' + index + '. offset = ' + offset + ' is out of range = { start: ' + drawRange.start + ', count: ' + drawRange.count + ' }' );
+//			return;
+			sError = '. offset = ' + offset;
 	
 		}
+		if ( sError != undefined ) console.error( 'getObjectLocalPosition: index = ' + index + sError + ' is out of range = { start: ' + drawRange.start + ', count: ' + drawRange.count + ' }' );
 	
 	} else {
 		
 		//Отображаются ребра. Индекс вершины index не в ходит в диапазон видимых ребер drawRange
 	
 	}
-	const THREE = three.THREE,
-		attributesPosition = object.geometry.attributes.position,
-		position = attributesPosition.itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3();
-	position.fromArray( attributesPosition.array, index * attributesPosition.itemSize );
+	position.fromArray( attributesPosition.array, offset );
 	return position;
 
 }

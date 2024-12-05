@@ -277,6 +277,7 @@ class HyperSphere extends MyObject {
 		
 		}
 		classSettings.settings = classSettings.settings || {};
+		if (classSettings.debug) classSettings.settings.debug = classSettings.debug;
 		classSettings.settings.options = options;
 		if (classSettings.settings.guiPoints) classSettings.settings.guiPoints.setIntersectionProperties = (intersection) => {
 			
@@ -2651,7 +2652,8 @@ for (let i = 0; i < geometry.times.length; i++) {
 
 				//Установить drawRange что бы не появлялась ошибка
 				//HyperSphere.angles2Vertice: anglesId = 2. positionId = 28 is out of range from 0 to 24
-				this.setVerticesRange(drawRange.start, ((drawRange.start + drawRange.count) / bufferGeometry.attributes.position.itemSize) + position.length);
+				this.setVerticesRange(drawRange.start,
+					((drawRange.start + drawRange.count) / (bufferGeometry.index != null ? bufferGeometry.attributes.position.itemSize : 1)) + position.length);
 				
 				progressBar = new ProgressBar(options.renderer.domElement.parentElement, step, {
 
@@ -3140,12 +3142,27 @@ for (let i = 0; i < geometry.times.length; i++) {
 				//Пока что не вижу случая, когда надо получить position за пределами this.bufferGeometry.drawRange
 				else {
 
-					const drawRange = this.bufferGeometry.drawRange;
+					const bufferGeometry = this.bufferGeometry, drawRange = bufferGeometry.drawRange;
 					if (drawRange.type === drawRange.types.vertices) {
 						
-						const count = this.bufferGeometry.drawRange.count, start = this.bufferGeometry.drawRange.start,
-							positionId = this.positionOffset(this.bufferGeometry.attributes.position, anglesId);
-						if ((positionId >= (count + start)) || (positionId < start)) console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + '. positionId = ' + positionId + ' is out of range from ' + start + ' to ' + (count + start));
+						const count = bufferGeometry.drawRange.count, start = bufferGeometry.drawRange.start,
+							offset = this.positionOffset(this.bufferGeometry.attributes.position, anglesId);
+						let sError;
+						if (bufferGeometry.index === null) {
+
+							const positionId = offset / bufferGeometry.attributes.position.itemSize;
+							if ((positionId >= (count + start)) || (positionId < start))
+								sError = '';
+//								console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + '. positionId = ' + positionId + ' is out of range from ' + start + ' to ' + (count + start));
+							
+						} else {
+							
+							if ((offset >= (count + start)) || (offset < start))
+								sError = '. offset = ' + offset;
+//								console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + '. positionId = ' + positionId + ' is out of range from ' + start + ' to ' + (count + start));
+
+						}
+						if ( sError != undefined ) console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + sError + ' is out of range from ' + start + ' to ' + (count + start));
 
 					}
 
