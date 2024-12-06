@@ -1641,6 +1641,10 @@ class GuiSelectPoint {
 						object: mesh,
 						index: pointId,
 						point: point,
+						nearestEdgeVerticeId: pointId,//если не задать это значение, то index будет интерпретироваться как индекс ребра и программа в ребре будет искать индекс вершины, ближайшей к point
+						//Для проверки открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
+						//С помошю gui выбрать вершину
+						//С помошю gui поменять углы вершины
 						
 					}
 					const setIntersectionProperties = mesh.userData.myObject.guiPoints.setIntersectionProperties;
