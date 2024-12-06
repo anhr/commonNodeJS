@@ -2233,9 +2233,9 @@ class HyperSphere extends MyObject {
 										const verticeId = aAngleControls.verticeId,
 											angles = classSettings.overriddenProperties.position0.angles[verticeId],
 											oppositeVerticesId = angles.oppositeVerticesId,
-//											timeId = options.player.getTimeId(),
 											settings = classSettings.settings,
-											timeId = settings.guiPoints.timeId,
+//											timeId = options.player.getTimeId(),
+											timeId = settings.guiPoints ? settings.guiPoints.timeId : options.player.getTimeId(),
 											middleVertice = _this.angles2Vertice(angles.middleVertice(oppositeVerticesId, timeId + 1, false), timeId),
 											userData = settings.bufferGeometry.userData;
 //											timeIdOld = userData.timeId;//Последнее время проигрывателя.
