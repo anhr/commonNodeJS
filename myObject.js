@@ -234,7 +234,16 @@ class MyObject {
 										return array[positionOffset + 3];
 
 									}
-									case 'angles': return settings.object.geometry.times[settings.bufferGeometry.userData.timeId][positionId];
+
+									//для вывода углов на консоль
+									//Если оставить эту строку, то будет исключение в строке
+									//return new Proxy(timeAngles[verticeId]
+									//в файле hyperSphere.js потому что в массиве timeAngles нет углов с индексом verticeId
+									//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
+									//Нажать ► проигрывателя
+//									case 'angles': return settings.object.geometry.times[settings.bufferGeometry.userData.timeId][positionId];
+									case 'angles': return settings.object.geometry.times[vertice.timeId][positionId];
+										
 									case 'edges':  return settings.object.geometry.times[0][positionId].edges;
 									case 'vector':
 										const vector = vertice.vector;

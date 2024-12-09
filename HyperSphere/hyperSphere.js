@@ -748,6 +748,7 @@ class HyperSphere extends MyObject {
 									return res.substring(0, res.length-2) + ']';
 										
 								}
+								case 'timeId': return timeId;
 
 							}
 							if (!isNaN(parseInt(name))) return vertice[name] === undefined ? 0 : vertice[name];
@@ -3065,7 +3066,7 @@ for (let i = 0; i < geometry.times.length; i++) {
 				switch (log){
 					case 0://vertices log
 						const vertice = position[i];
-						console.log('vertice[' + i + '] = ' + JSON.stringify(vertice) + ' angles = ' + JSON.stringify(vertice.angles) + ' edges = ' + JSON.stringify(vertice.edges) + ' r = ' + vertice.radius);
+						console.log('vertice[' + i + '] = ' + JSON.stringify(vertice) + ', timeId = ' + vertice.timeId + ', angles = ' + JSON.stringify(vertice.angles) + ' edges = ' + JSON.stringify(vertice.edges) + ' r = ' + vertice.radius);
 						break;
 					case 1://edges log
 						const edge = edges[i];
