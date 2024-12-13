@@ -49,7 +49,7 @@ import three from '../three.js'
 import Options from '../Options.js'
 import PositionController from '../PositionController.js';
 import MyMath from '../myMath/myMath.js'
-import myObject from '../myObject.js'
+import MyObject from '../myObject.js'
 
 /*
 dimention	geometry	points	edges	faces	bodyes	4D objects
@@ -59,7 +59,7 @@ dimention	geometry	points	edges	faces	bodyes	4D objects
 4			pentatope	5		10		10		5		1
 */
 
-class ND extends myObject {
+class ND extends MyObject {
 
 	/**
 	 * N-dimensional graphics.
@@ -303,19 +303,18 @@ class ND extends myObject {
 	 * Uses only if &lt;b>scene&lt;/b> is defined.
 	 * @param {Event} [settings.onIntersection] Plane and object intersection event.
 	 * The &lt;b>onIntersection&lt;/b> function parameter is the (n-1)-dimensional geometry of the intersection if a collision occurred, or undefined if a collision did not occur.
+	 * @param {Boolean} [settings.isRaycaster=true] false - Ignoring of the plane and object intersection event or accept of the event if &lt;b>isRaycaster&lt;/b> is true or undefined
 	 * @see [4D Geometry Viewer]{@link https://github.com/anhr/humke-4d-geometry}
 	 * @see [Tesseract]{@link https://ciechanow.ski/tesseract/}
 	 * @see [4D-Shapes]{@link https://artemonigiri.github.io/4D-Shapes/}
 	 * @see [The Regular Polychora]{@link https://www.qfbox.info/4d/regular}
 	 */
-	constructor( n, settings = {} ) {
+	constructor( n, settings ) {
 
 		super( settings );
 		const options = settings.options, _ND = this;
-		settings.object = settings.object || {};
 		settings.object.raycaster = settings.object.raycaster || {};
 		settings.object.raycaster.text = settings.object.raycaster.text || function( intersection ) {
-
 
 			//Localization
 
@@ -373,7 +372,10 @@ class ND extends myObject {
 			var text = '\n' + lang.pointId + ': ' + pointId;
 			
 			//Find edge index
-			for ( var segmentIndex = 0; segmentIndex &lt; edges.length; segmentIndex++ ) {
+			const drawRange = settings.bufferGeometry.drawRange;
+//			for ( var segmentIndex = 0; segmentIndex &lt; edges.length; segmentIndex++ )
+//			for ( var segmentIndex = drawRange.start; segmentIndex &lt; (drawRange === Infinity) ? edges.length : (drawRange.start + drawRange.count) / 2; segmentIndex++ ) {
+			for ( var segmentIndex = drawRange.start; segmentIndex &lt; ( ( drawRange === Infinity) ? edges.length : drawRange.start + drawRange.count ); segmentIndex++ ) {
 
 				const edgeCur = edges[segmentIndex];
 				if (
@@ -454,7 +456,18 @@ class ND extends myObject {
 			settings.object.geometry = { position: position, }
 
 		}
-		settings.object.geometry.position = settings.object.geometry.position || [];
+
+		//Эту строку нельзя использовать потому что во вселенной будет ошибка
+		//TypeError: classSettings.overriddenProperties.position0.angles[verticeId].middleVertice is not a function
+		//если:
+		//Открыть http://localhost/anhr/universe/main/hyperSphere/Examples/ что бы не было видно ребер classSettings.edges.project = false
+		//Сделать один шаг проигрывателя: нажать →
+		//Сделать ребра видимыми: Поставить галочку Гиперсфера\Ребро\Отображать.
+		//Сделать один шаг проигрывателя: нажать →
+		//Это происходить потому что когда проигрыватель находится не в начальном положении timeId > 0, то в settings.object.geometry.position попадают вершины не из начального времени
+		//settings.object.geometry.position = settings.object.geometry.position || [];
+		
+		if (!settings.object.geometry.position) settings.object.geometry.position = [];
 
 		class Vector extends ND.VectorN {
 
@@ -559,7 +572,7 @@ class ND extends myObject {
 		function update() {
 			
 			_ND.intersection();
-			object3D.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
+//			object3D.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
 			object3D.geometry.attributes.position.needsUpdate = true;
 			if (options.guiSelectPoint) options.guiSelectPoint.update();
 			object3D.children.forEach( child => {
@@ -1007,9 +1020,6 @@ class ND extends myObject {
 				}
 				switch ( name ) {
 
-					case 'push': return settings.object.geometry.position.push;
-					case 'length': return settings.object.geometry.position.length;
-					case 'forEach': return settings.object.geometry.position.forEach;
 					case 'isProxy': return true;
 					case 'target': return;// target; Если вершинрнуть target, то неверно сработает if ( settings.object.geometry.position.target ) и позиция intersection будет неверна
 					case 'copy': 
@@ -1027,9 +1037,9 @@ class ND extends myObject {
 							return v;
 		
 						}
-					default: console.error( 'ND: positionWorld Proxy. Invalid name: ' + name );
 
 				}
+				return settings.object.geometry.position[name];
 
 			},
 			
@@ -1041,14 +1051,30 @@ class ND extends myObject {
 
 		function proxyGeometryPosition() {
 
-			if ( settings.object.geometry.position &amp;&amp; settings.object.geometry.position.isProxy ) return settings.object.geometry.position;
-			return new Proxy( settings.object.geometry.position ? settings.object.geometry.position : [], {
+			const geometry = settings.object.geometry;
+			if ( geometry.position &amp;&amp; geometry.position.isProxy ) return geometry.position;
+			const playerPosition = geometry.playerPosition, position = playerPosition ? geometry.playerPosition[0] : geometry.position ? geometry.position : [];
+			return new Proxy(
+				
+				//Эту строку нельзя использовать потому что во вселенной будет ошибка
+				//TypeError: classSettings.overriddenProperties.position0.angles[verticeId].middleVertice is not a function
+				//если:
+				//Открыть http://localhost/anhr/universe/main/hyperSphere/Examples/ что бы не было видно ребер classSettings.edges.project = false
+				//Сделать один шаг проигрывателя: нажать →
+				//Сделать ребра видимыми: Поставить галочку Гиперсфера\Ребро\Отображать.
+				//Сделать один шаг проигрывателя: нажать →
+				//Это происходить потому что когда проигрыватель находится не в начальном положении timeId > 0, то в settings.object.geometry.position попадают вершины не из начального времени
+				//settings.object.geometry.position ? settings.object.geometry.position : [],
+				
+				position,
+				{
 
 				get: function ( target, name, args ) {
 
 					const i = parseInt( name );
 					if ( !isNaN( i ) ) {
 
+						const positionId = i;
 						if ( settings.object.geometry.position.boPositionError ) {
 
 							//срабатывает когда меняется позиция вершины.
@@ -1110,6 +1136,7 @@ class ND extends myObject {
 									target[name] = value;
 									if ( !isNaN( i ) ) {
 
+//										_ND.bufferGeometry.userData.position[positionId][i] = value;
 										target.positionWorld = undefined;
 										if ( _prevLine.prevLine ) {
 											
@@ -1133,11 +1160,6 @@ class ND extends myObject {
 					}
 					switch ( name ) {
 
-/*							
-						case 'push': return target.push;
-						case 'length': return target.length;
-						case 'forEach': return target.forEach;
-*/	  
 						case 'isProxy': return true;
 						case 'boPositionError': return target.boPositionError;
 						case 'target': return target;
@@ -1153,7 +1175,6 @@ class ND extends myObject {
 
 							}
 						case "reset": return function () { target.forEach( item => delete item.positionWorld ); }
-//						default: console.error( 'ND: settings.object.geometry.position Proxy. Invalid name: ' + name );
 						default: return target[name];
 
 					}
@@ -1166,7 +1187,6 @@ class ND extends myObject {
 
 						//изменилась позиция вершины
 						target[name].positionWorld = undefined;
-						//return true;
 
 					}
 					target[name] = value;
@@ -1206,7 +1226,7 @@ class ND extends myObject {
 						if (!isNaN(i)) {
 
 							const edge = edges[i];
-							edge.intersection = (geometryIntersection) => {
+							edge.intersection = ( geometryIntersection/*, color*/ ) => {
 
 								const i = parseInt(name);
 								if (!isNaN(i)) {
@@ -1324,13 +1344,15 @@ class ND extends myObject {
 
 													plane: true,
 													object: {
+														
 														geometry: {
 
 															position: positionWorld.copy(),//settings.object.geometry.position,
 															indices: [[indices]],
 															iAxes: [1, 2],
 
-														}
+														},
+														
 													},
 													vectorPlane: vectorPlane.array,
 
@@ -1340,13 +1362,15 @@ class ND extends myObject {
 
 													plane: true,
 													object: {
+														
 														geometry: {
 
 															position: positionWorld.copy(),//settings.object.geometry.position,
 															indices: [[indices]],
 															iAxes: [0, 2],
 
-														}
+														},
+													
 													},
 													vectorPlane: vectorPlane.array,
 
@@ -1365,13 +1389,15 @@ class ND extends myObject {
 
 													plane: true,
 													object: {
+														
 														geometry: {
 
 															position: positionWorld,//settings.object.geometry.position,
 															indices: [[indices]],
 															iAxes: [axis, n - 1],
 
-														}
+														},
+													
 													},
 													vectorPlane: vectorPlane.array,
 
@@ -1400,7 +1426,6 @@ class ND extends myObject {
 								} else console.error('ND: settings.object.geometry.indices[]intersection. invalid name: ' + name);
 
 							};
-//							edge.indices = edges[parseInt(name)];
 							return edge;
 
 						}
@@ -1424,7 +1449,8 @@ class ND extends myObject {
 								case 'length': break;
 								case 'edges': settings.object.geometry.indices[0] = proxyEdges( value ); break;
 								case 'selected': edges.selected = value; break;
-								default: console.error( 'ND settings.object.geometry.indices[0].set: invalid prop: ' + prop );
+								default: edges[prop] = value;
+//								default: console.error( 'ND settings.object.geometry.indices[0].set: invalid prop: ' + prop );
 
 							}
 							return true;
@@ -1934,14 +1960,7 @@ class ND extends myObject {
 			D3: {
 				
 				//Returns a points of projection
-				get points() {
-
-					const points = [];
-					for ( var i = 0; i &lt; geometry.position.length; i++ )
-						points.push( geometry.position[i].point );
-					return points;
-
-				},
+				get points() { return _ND.bufferGeometry.userData.position; },
 				//returns indices of the faces vertices
 				get faceIndices() {
 
@@ -2066,6 +2085,7 @@ class ND extends myObject {
 						}
 
 					}
+					if ( _ND.setDrawRange ) _ND.setDrawRange( 0, indices.length, _ND.bufferGeometry.drawRange.types.edges );//Если тут не установить drawRange, то будут отбражаться не все ребра в http://localhost/anhr/universe/main/hyperSphere/Examples/ 
 					return { indices: indices, colors: colors, };
 
 				},
@@ -2073,11 +2093,18 @@ class ND extends myObject {
 			},
 
 		}
+		const points = [];
+		for ( var i = 0; i &lt; geometry.position.length; i++ )
+			points.push( geometry.position[i].point );
+		this.getPoint = (i) => { return points[i]; }
+		this.setPositionAttributeFromPoints( points );
 
 		vectorPlane = vectorPlane || new Vector( settings.vectorPlane );
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
 
 		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
+
+		this.opacity = ( object3D, transparent, opacity ) => { _ND.verticesOpacity( transparent, opacity ); }
 
 		//The user has selected a segment of nD object
 		const selectSegment = {
@@ -2087,8 +2114,7 @@ class ND extends myObject {
 
 						if (line) {
 
-							//if (line.parent)
-								line.parent.remove(line);
+							line.parent.remove(line);
 							line = undefined;
 
 						}
@@ -2103,9 +2129,7 @@ class ND extends myObject {
 				else {
 
 					if (!item.parent) parentObject.add(item);
-					item.material.transparent = transparent;
-					item.material.opacity = transparent ? opacity : 1;
-					item.material.needsUpdate = true;//for THREE.REVISION = "145dev"
+					_ND.opacity( item, transparent, opacity );
 
 				}
 
@@ -2115,36 +2139,25 @@ class ND extends myObject {
 
 		function create3DObject( geometry, settings3D = {} ) {
 
+			let nD;
 			if ( !geometry.D3 ) {
 
-				const nD = new ND( n, {
+				nD = new ND( n, {
 					
 					plane: true,
-					object: { geometry: geometry, } 
+					object: { geometry: geometry, color: settings3D.color, },
 				
 				} );
 				geometry = nD.geometry;
 				
-			}
-			if ( geometry.position.length === 0 ) return;
+			} else nD = _ND;
+			if (geometry.position.length === 0) return;
 			const color = settings3D.color || 'white';//0xffffff
 			geometry.D3.color = color;
-			const indices3D = geometry.D3.indices, indices = indices3D.indices, colors = indices3D.colors;
+			const indices3D = geometry.D3.indices, indices = indices3D.indices;
 
-			if (
-				(
-					(
-						( settings.object.geometry.position[0].length > 3 ) &amp;&amp;//Vertice have the w coordinate
-						( typeof settings.object.color === "object" )//Color of vertice from palette
-					) || 
-					settings.object.geometry.opacity//установлена прозрачность вершин
-				) &amp;&amp; (
-					!settings.object.geometry.colors || //Vertices colors array is not exists
-					(settings.object.geometry.colors.length != indices3D.colors.length)//изменилось количество вершин
-				)
-			)
-				settings.object.geometry.colors = indices3D.colors;
-			const buffer = new THREE.BufferGeometry().setFromPoints(geometry.D3.points, geometry.D3.points[0].w === undefined ? 3 : 4);
+			const buffer = nD.bufferGeometry;
+			
 			if ( settings3D.faces ) {
 
 				if ( settings3D.faces === true ) settings3D.faces = {};
@@ -2154,30 +2167,16 @@ class ND extends myObject {
 				buffer.setIndex( geometry.D3.faceIndices );
 				buffer.computeVertexNormals ();
 
-			} else buffer.setIndex( indices )
-/*			
-			const lineBasicMaterialParameters = settings.object.geometry.colors ? {
+			} else if ( buffer.index === null ) buffer.setIndex( indices )
+			let lineBasicMaterialParameters;
+			
+			lineBasicMaterialParameters = {
 				
 				vertexColors: true,
 				toneMapped: false,
-				transparent: settings.object.geometry.opacity ?
-					true ://установлена прозрачность вершин
-					undefined,
 			
-			} : { color: color, };
-*/   
-			let lineBasicMaterialParameters;
-			if ( settings.object.geometry.colors ) {
-
-				lineBasicMaterialParameters = {
-					
-					vertexColors: true,
-					toneMapped: false,
-				
-				}
-				if ( settings.object.geometry.opacity ) lineBasicMaterialParameters.transparent = true;//установлена прозрачность вершин
-				
-			} else lineBasicMaterialParameters = { color: color, };
+			}
+			if ( settings.object.geometry.opacity ) lineBasicMaterialParameters.transparent = true;//установлена прозрачность вершин
 			
 			const object = indices.length > 1 ?
 				settings3D.faces ?
@@ -2199,62 +2198,10 @@ class ND extends myObject {
 				} ) );
 			if ( settings3D.name )
 				object.name = settings3D.name;
-			if ( settings.object.geometry.colors ) {
-
-				let colors, itemSize;
-				if (settings.object.geometry.opacity){
-
-					itemSize = 4;
-					const colorSize = itemSize - 1,
-						itemsCount = settings.object.geometry.colors.length / colorSize;
-					if ( itemsCount != Math.trunc( itemsCount ) ) console.error( 'ND.create3DObject: Opacity. Invalid colors count = ' + itemsCount );
-					colors = [];
-					for ( let i = 0; i &lt; settings.object.geometry.position.length; i++ ) {
-
-						const iColor = i * colorSize;
-						if (iColor &lt; settings.object.geometry.colors.length)
-							colors.push(
-								settings.object.geometry.colors[iColor + 0],
-								settings.object.geometry.colors[iColor + 1],
-								settings.object.geometry.colors[iColor + 2]
-							);
-						else {
-							
-							const color = new THREE.Color(settings.object.color);
-							colors.push(color.r, color.g, color.b);
-							
-						}
-
-						//opacity
-						colors.push( i &lt; settings.object.geometry.opacity.length ? settings.object.geometry.opacity[i] : 1 );
-						
-					}
-					
-				} else {
-					
-					itemSize = 3;
-					colors = settings.object.geometry.colors;
-					const colorSize = itemSize,
-						itemsCount = settings.object.geometry.colors.length / colorSize;
-					if ( itemsCount != Math.trunc( itemsCount ) ) console.error( 'ND.create3DObject: Opacity. Invalid colors count = ' + itemsCount );
-					for ( let i = itemsCount; i &lt; settings.object.geometry.position.length; i++ ) {
-
-						const color = new THREE.Color(settings.object.color);
-						colors.push(color.r, color.g, color.b);
-						
-					}
-
-				}
-				object.geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, itemSize ) );
-
-			}
+			
 			scene.add( object );
 
-			object.userData.setPositionAttribute = ( i ) => {
-
-				_ND.setPositionAttribute( i );
-				
-			}
+			object.userData.myObject = nD;
 			object.userData.geometry = geometry.geometry;
 			object.userData.onMouseDown = function ( intersection ) {
 
@@ -2316,11 +2263,8 @@ class ND extends myObject {
 						fParent.parent.fCustom = undefined;
 						
 					}				
-					if ( !gui &amp;&amp; geometry.geometry.gui/* &amp;&amp; !geometry.geometry.gui.isCreated()*/ ) {
-	
-						fParent.parent.fCustom = geometry.geometry.gui( fParent, dat, /*object.userData.nd, */settings.options, _ND );
-						
-					}
+					if ( !gui &amp;&amp; geometry.geometry.gui )
+						fParent.parent.fCustom = geometry.geometry.gui( fParent, dat, settings.options, _ND );
 
 				}
 
@@ -2785,52 +2729,55 @@ class ND extends myObject {
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
 
 			//raycaster
-
-			object.userData.raycaster = {
-
-				onIntersection: function ( intersection, mouse ) {
-
-					intersection.indexNew = intersection.index;
-					//если убрать строку ниже, то будет ошибка
-					//Cannot read properties of undefined (reading 'cameraTarget')
-					//в строке
-					//if (!func.cameraTarget)
-					//в функции this.changeTarget класса Player.cameraTarget в файле player.js
-					//
-					//Но зато будут видны иденксы точек, ребер, граней и т.д. если навести мышку на многомерную фигуру
-					//
-					//Лень разбираться почему так сделал.
-					//Для решения проблемы создаю новую переменную intersection.indexNew. Смотри строку выше.
-					//
-					//Для тестирования запусить http://localhost/anhr/commonNodeJS/master/nD/Examples/
-					//На холсте 5D щелкнуть мышкой на Object или Intersection.
-					delete intersection.index;
-
-					Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
-
-				},
-				onIntersectionOut: function () {
-					
-					//когда мышка покидает объект, нужно удалить индексы ребер, граней и т.д., над которыми была мышка.
-					//В противном случае, когда выбираешь объект в dat.GUI, 
-					//автоматически веберется ребро, грань и т.д. над которыми последний раз была мышка
-					//Визуально это вызывает недоумение у пользователя
-					geometry.geometry.indices.forEach( indice => indice.selected = undefined );
-					
-					Options.raycaster.onIntersectionOut( scene, options.renderer );
+			if (settings.isRaycaster != false) {
 				
-				},
-				onMouseDown: function ( intersection, event ) {
+				object.userData.raycaster = {
+	
+					onIntersection: function ( intersection, mouse ) {
+	
+						intersection.indexNew = intersection.index;
+						//если убрать строку ниже, то будет ошибка
+						//Cannot read properties of undefined (reading 'cameraTarget')
+						//в строке
+						//if (!func.cameraTarget)
+						//в функции this.changeTarget класса Player.cameraTarget в файле player.js
+						//
+						//Но зато будут видны иденксы точек, ребер, граней и т.д. если навести мышку на многомерную фигуру
+						//
+						//Лень разбираться почему так сделал.
+						//Для решения проблемы создаю новую переменную intersection.indexNew. Смотри строку выше.
+						//
+						//Для тестирования запусить http://localhost/anhr/commonNodeJS/master/nD/Examples/
+						//На холсте 5D щелкнуть мышкой на Object или Intersection.
+						delete intersection.index;
+	
+						Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
+	
+					},
+					onIntersectionOut: function () {
+						
+						//когда мышка покидает объект, нужно удалить индексы ребер, граней и т.д., над которыми была мышка.
+						//В противном случае, когда выбираешь объект в dat.GUI, 
+						//автоматически веберется ребро, грань и т.д. над которыми последний раз была мышка
+						//Визуально это вызывает недоумение у пользователя
+						geometry.geometry.indices.forEach( indice => indice.selected = undefined );
+						
+						Options.raycaster.onIntersectionOut( scene, options.renderer );
 					
-					intersection.event = event;//Теперь можно выполнять разные действия в зависимости от нажатой кнопки мыши
-					Options.raycaster.onMouseDown( intersection, options );
-				
-				},
-				text: settings.object.raycaster ? settings.object.raycaster.text : undefined,
-
+					},
+					onMouseDown: function ( intersection, event ) {
+						
+						intersection.event = event;//Теперь можно выполнять разные действия в зависимости от нажатой кнопки мыши
+						Options.raycaster.onMouseDown( intersection, options );
+					
+					},
+					text: settings.object.raycaster ? settings.object.raycaster.text : undefined,
+	
+				}
+				if ( options.eventListeners ) options.eventListeners.addParticle( object );
+	
 			}
-			if ( options.eventListeners ) options.eventListeners.addParticle( object );
-
+	
 			return object;
 
 		}
@@ -2864,7 +2811,7 @@ class ND extends myObject {
 
 				}
 				const edge = settings.object.geometry.indices[0][iEdge];
-				edge.intersection( geometryIntersection );
+				edge.intersection( geometryIntersection );//, settings.object.color );
 				const position = edge.intersection.position;
 				if ( position ) {
 					
@@ -2900,18 +2847,9 @@ class ND extends myObject {
 				geometryIntersection.position = new Proxy( geometryIntersection.position, {
 		
 					get: function ( target, name, args ) {
-		
-						const i = parseInt( name );
-						if ( !isNaN( i ) ) {
-		
-							return  target[i];
-		
-						}
+
 						switch ( name ) {
 
-							case 'push': return target.push;
-							case 'length': return target.length;
-							case 'forEach': return target.forEach;
 							case 'isProxy': return true;
 							case 'target': return target;
 							case "reset":
@@ -2920,9 +2858,9 @@ class ND extends myObject {
 									target.forEach( item => item.positionWorld = undefined );
 	
 								}
-							default: console.error( 'ND: settings.object.geometry.position Proxy. Invalid name: ' + name );
 		
 						}
+						return  target[name];
 		
 					},
 					set: function ( target, name, value ) {
@@ -3008,10 +2946,13 @@ class ND extends myObject {
 								plane: true,
 								object: { geometry: {
 								
-									indices: settings.object.geometry.indices,
-									position: positionWorld.copy(),
-								
-								} }, indice: i, iSegments: iSegments, } ),
+										indices: settings.object.geometry.indices,
+										position: positionWorld.copy(),
+									
+									},
+//									color: 'white',
+										 
+								}, indice: i, iSegments: iSegments, } ),
 								s = iSegments - 1;
 							var iIntersections;
 							if ( s !== 0 ) {//Не создавать iIntersections для ребер
@@ -3198,7 +3139,7 @@ class ND extends myObject {
 
 				}
 				if ( geometryIntersection.position.length )
-					objectIntersect = create3DObject( geometryIntersection, { name: 'Intersection' } );
+					objectIntersect = create3DObject( geometryIntersection, { name: 'Intersection', color: 'white' } );
 
 			}
 			return geometryIntersection.position;
@@ -3210,11 +3151,13 @@ class ND extends myObject {
 		if ( scene ) {
 
 			//Если есть scene, обязательно должен быть options. Здесь создать options неполучится
-			if ( n &lt;= 1 ) options.scales.y = undefined;
-			if ( n &lt;= 2 ) options.scales.z = undefined;
-			options.scales.text.rect = options.scales.text.rect || {}
-			options.scales.text.rect.displayRect = false;
-			options.scales.text.precision = 2;
+			const scales = options.scales;
+			if ( n &lt;= 1 ) scales.y = undefined;
+			if ( n &lt;= 2 ) scales.z = undefined;
+			scales.text ||= {};
+			scales.text.rect ||=  {};
+			scales.text.rect.displayRect = false;
+			scales.text.precision = 2;
 
 		}
 
@@ -3247,7 +3190,7 @@ class ND extends myObject {
 				
 				name: settings.object.name,
 				faces: settings.object.faces,
-				color: settings.object.color || 'lime',//0x00ff00,//'green'
+				color: settings.object.color || _ND.defaultColor,//'lime',//0x00ff00,//'green'
 			
 			} );
 
@@ -3471,6 +3414,11 @@ class ND extends myObject {
 
 	}
 
+	//Overridden methods from base class
+
+	get defaultColor() { return 'lime'; }
+	positionOffset(position, positionId) { return positionId * position.itemSize; }
+
 }
 
 ND.gui = class {
@@ -3670,7 +3618,7 @@ Object.defineProperty( Array.prototype, "equals", { enumerable: false } );
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Jan 30 2024 07:18:10 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Fri Dec 13 2024 09:11:14 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
