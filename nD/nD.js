@@ -2700,52 +2700,55 @@ class ND extends MyObject {
 			if ( options.guiSelectPoint ) options.guiSelectPoint.addMesh( object );
 
 			//raycaster
-
-			object.userData.raycaster = {
-
-				onIntersection: function ( intersection, mouse ) {
-
-					intersection.indexNew = intersection.index;
-					//если убрать строку ниже, то будет ошибка
-					//Cannot read properties of undefined (reading 'cameraTarget')
-					//в строке
-					//if (!func.cameraTarget)
-					//в функции this.changeTarget класса Player.cameraTarget в файле player.js
-					//
-					//Но зато будут видны иденксы точек, ребер, граней и т.д. если навести мышку на многомерную фигуру
-					//
-					//Лень разбираться почему так сделал.
-					//Для решения проблемы создаю новую переменную intersection.indexNew. Смотри строку выше.
-					//
-					//Для тестирования запусить http://localhost/anhr/commonNodeJS/master/nD/Examples/
-					//На холсте 5D щелкнуть мышкой на Object или Intersection.
-					delete intersection.index;
-
-					Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
-
-				},
-				onIntersectionOut: function () {
-					
-					//когда мышка покидает объект, нужно удалить индексы ребер, граней и т.д., над которыми была мышка.
-					//В противном случае, когда выбираешь объект в dat.GUI, 
-					//автоматически веберется ребро, грань и т.д. над которыми последний раз была мышка
-					//Визуально это вызывает недоумение у пользователя
-					geometry.geometry.indices.forEach( indice => indice.selected = undefined );
-					
-					Options.raycaster.onIntersectionOut( scene, options.renderer );
+			if (settings.isRaycaster != false) {
 				
-				},
-				onMouseDown: function ( intersection, event ) {
+				object.userData.raycaster = {
+	
+					onIntersection: function ( intersection, mouse ) {
+	
+						intersection.indexNew = intersection.index;
+						//если убрать строку ниже, то будет ошибка
+						//Cannot read properties of undefined (reading 'cameraTarget')
+						//в строке
+						//if (!func.cameraTarget)
+						//в функции this.changeTarget класса Player.cameraTarget в файле player.js
+						//
+						//Но зато будут видны иденксы точек, ребер, граней и т.д. если навести мышку на многомерную фигуру
+						//
+						//Лень разбираться почему так сделал.
+						//Для решения проблемы создаю новую переменную intersection.indexNew. Смотри строку выше.
+						//
+						//Для тестирования запусить http://localhost/anhr/commonNodeJS/master/nD/Examples/
+						//На холсте 5D щелкнуть мышкой на Object или Intersection.
+						delete intersection.index;
+	
+						Options.raycaster.onIntersection( intersection, options, scene, options.camera, options.renderer );
+	
+					},
+					onIntersectionOut: function () {
+						
+						//когда мышка покидает объект, нужно удалить индексы ребер, граней и т.д., над которыми была мышка.
+						//В противном случае, когда выбираешь объект в dat.GUI, 
+						//автоматически веберется ребро, грань и т.д. над которыми последний раз была мышка
+						//Визуально это вызывает недоумение у пользователя
+						geometry.geometry.indices.forEach( indice => indice.selected = undefined );
+						
+						Options.raycaster.onIntersectionOut( scene, options.renderer );
 					
-					intersection.event = event;//Теперь можно выполнять разные действия в зависимости от нажатой кнопки мыши
-					Options.raycaster.onMouseDown( intersection, options );
-				
-				},
-				text: settings.object.raycaster ? settings.object.raycaster.text : undefined,
-
+					},
+					onMouseDown: function ( intersection, event ) {
+						
+						intersection.event = event;//Теперь можно выполнять разные действия в зависимости от нажатой кнопки мыши
+						Options.raycaster.onMouseDown( intersection, options );
+					
+					},
+					text: settings.object.raycaster ? settings.object.raycaster.text : undefined,
+	
+				}
+				if ( options.eventListeners ) options.eventListeners.addParticle( object );
+	
 			}
-			if ( options.eventListeners ) options.eventListeners.addParticle( object );
-
+	
 			return object;
 
 		}
