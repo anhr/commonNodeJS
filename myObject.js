@@ -146,6 +146,16 @@ class MyObject {
 		
 		}
 		const getPlayerTimesLength = () => { return settings.overriddenProperties.getPlayerTimesLength(); }
+
+		//Для отладки
+		const setDrawRangeTypes = () => {
+
+			settings.bufferGeometry.drawRange.types = { vertices: 0, edges: 1 };
+			//settings.bufferGeometry.drawRange.type = settings.bufferGeometry.drawRange.types.vertices Установлен диапазон видимых вершин
+			//settings.bufferGeometry.drawRange.type = settings.bufferGeometry.drawRange.types.edges Установлен диапазон видимых ребер
+
+		}
+
 		const createPositionAttribute = (pointLength, pointsLength) => {
 
 			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
@@ -155,10 +165,13 @@ class MyObject {
 				pointLength * pointsLength * settings.object.geometry.rCount :
 				settings.object.geometry.MAX_POINTS;
 
+			setDrawRangeTypes();
+/*
 			//Для отладки
 			settings.bufferGeometry.drawRange.types = { vertices: 0, edges: 1 };
 			//settings.bufferGeometry.drawRange.type = settings.bufferGeometry.drawRange.types.vertices Установлен диапазон видимых вершин
 			//settings.bufferGeometry.drawRange.type = settings.bufferGeometry.drawRange.types.edges Установлен диапазон видимых ребер
+*/
 			
 			if (MAX_POINTS != undefined) this.setVerticesRange(0, isRCount ?
 				pointLength * pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
@@ -320,8 +333,22 @@ class MyObject {
 		}
 		this.setPositionAttributeFromPoints = (points, boCreatePositionAttribute) => {
 
-			if (boCreatePositionAttribute) delete settings.bufferGeometry.attributes.position;
-			if (!settings.bufferGeometry.attributes.position) {
+			const bufferAttributes = settings.bufferAttributes, bufferGeometry = settings.bufferGeometry;
+			if (bufferAttributes) {
+
+				Object.keys(bufferAttributes).forEach((key) => {
+
+					if (bufferGeometry.attributes[key]) console.error(sMyObject + '.setPositionAttributeFromPoints: Duplicated attribute: ' + key);
+					bufferGeometry.setAttribute(key, bufferAttributes[key]);
+					
+				} );
+				settings.overriddenProperties.setTracesIndices(bufferGeometry);
+				setDrawRangeTypes();
+				return;
+				
+			}
+			if (boCreatePositionAttribute) delete bufferGeometry.attributes.position;
+			if (!bufferGeometry.attributes.position) {
 				
 				createPositionAttribute(
 					this.pointLength ? this.pointLength() :
@@ -342,7 +369,7 @@ class MyObject {
 				}
 
 			}
-			return settings.bufferGeometry;
+			return bufferGeometry;
 			
 		}
 		this.verticeColor = (i, vertice, timeId) => {

@@ -2138,7 +2138,7 @@ class ND extends MyObject {
 				buffer.setIndex( geometry.D3.faceIndices );
 				buffer.computeVertexNormals ();
 
-			} else buffer.setIndex( indices )
+			} else if ( buffer.index === null ) buffer.setIndex( indices )
 			let lineBasicMaterialParameters;
 			
 			lineBasicMaterialParameters = {

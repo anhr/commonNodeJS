@@ -368,10 +368,7 @@ class HyperSphere extends MyObject {
 		//Нижняя граница сегмента hb = hs * i - r
 		//Верхняя граница сегмента ht = hs * (i + 1) - r
 		//где r = 1 - радиус сферыб d = 2 * r = 2 - диаметр сферы, i - индекс сегмента
-		if (classSettings.debug && (classSettings.debug.probabilityDensity != false)) classSettings.debug.probabilityDensity = [
-
-
-		];
+		if (classSettings.debug && (classSettings.debug.probabilityDensity != false)) classSettings.debug.probabilityDensity = [];
 		const probabilityDensity = classSettings.debug.probabilityDensity;
 		if (probabilityDensity) {
 
@@ -2816,6 +2813,7 @@ for (let i = 0; i < geometry.times.length; i++) {
 */													
 
 												}
+												if (classSettings.overriddenProperties.project) classSettings.overriddenProperties.project();
 												boCompleted = true;
 												return;// true;
 
