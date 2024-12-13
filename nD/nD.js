@@ -275,6 +275,7 @@ class ND extends MyObject {
 	 * Uses only if <b>scene</b> is defined.
 	 * @param {Event} [settings.onIntersection] Plane and object intersection event.
 	 * The <b>onIntersection</b> function parameter is the (n-1)-dimensional geometry of the intersection if a collision occurred, or undefined if a collision did not occur.
+	 * @param {Event} [settings.isRaycaster=undefined] false - Ignoring of the plane and object intersection event or accept of the event if <b>isRaycaster<b> is true or undefined
 	 * @see [4D Geometry Viewer]{@link https://github.com/anhr/humke-4d-geometry}
 	 * @see [Tesseract]{@link https://ciechanow.ski/tesseract/}
 	 * @see [4D-Shapes]{@link https://artemonigiri.github.io/4D-Shapes/}
