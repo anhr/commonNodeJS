@@ -270,6 +270,7 @@ class HyperSphere extends MyObject {
 	constructor(options, classSettings = {}) {
 
 		classSettings.onSelectScene ||= (hyperSphere, timeId, t) => { if (this.middleVertices) return this.middleVertices(timeId, t); }
+/*		
 		options.onSelectScene = (index, t) => {
 
 			if (classSettings.onSelectScene) return classSettings.onSelectScene(this, index, t);
@@ -278,6 +279,7 @@ class HyperSphere extends MyObject {
 			return true;//Сдедующий шаг проигрывателя выполняется только после посторения всех вершин без временной задержки
 		
 		}
+*/			
 		classSettings.settings = classSettings.settings || {};
 		if (classSettings.debug) classSettings.settings.debug = classSettings.debug;
 		classSettings.settings.options = options;
