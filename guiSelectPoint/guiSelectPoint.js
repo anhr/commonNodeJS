@@ -1334,7 +1334,7 @@ class GuiSelectPoint {
 
 					display = none;
 					mesh = undefined;
-					if ( options.axesHelper !== undefined )
+					if (( options.axesHelper !== undefined ) && ( options.axesHelper !== false ))
 						options.axesHelper.exposePosition( getObjectPosition( getMesh(), value ) );
 
 				} else {
