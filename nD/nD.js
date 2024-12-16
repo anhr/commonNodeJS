@@ -2057,8 +2057,11 @@ class ND extends MyObject {
 						}
 
 					}
+//					const indicesAndColors = _ND.indicesAndColors(this.color), indices = indicesAndColors.indices, colors = indicesAndColors.colors;
+					_ND.bufferGeometry.setIndex(indices);
 					if ( _ND.setDrawRange ) _ND.setDrawRange( 0, indices.length, _ND.bufferGeometry.drawRange.types.edges );//Если тут не установить drawRange, то будут отбражаться не все ребра в http://localhost/anhr/universe/main/hyperSphere/Examples/ 
 					return { indices: indices, colors: colors, };
+//					return indicesAndColors;
 
 				},
 

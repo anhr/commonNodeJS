@@ -519,6 +519,8 @@ class HyperSphere extends MyObject {
 
 							_this.removeMesh();
 							_this.pushEdges();
+//							const indicesAndColors = _this.indicesAndColors();
+//							_this.bufferGeometry.setIndex(indicesAndColors.indices);
 
 						}
 						else _this.project();

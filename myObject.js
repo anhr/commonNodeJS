@@ -145,6 +145,82 @@ class MyObject {
 			settings.overriddenProperties.setDrawRange(start, count);
 		
 		}
+/*		
+		this.indicesAndColors = (thisColor) => {
+
+			const edges = settings.object.geometry.indices[0];
+			
+			//если объект состоит из одной вершины или не имеет ребера
+			if (edges.length === 0) return;
+
+			const indices = [], colors = [], sError = sMyObject + ' indicesAndColors: ';
+			for (var i = 0; i < edges.length; i++) {
+
+				let edge = edges[i];
+				if (edge !== undefined) {
+					
+					if (edge.length === undefined) edge = [0, 1];//for compatibility with EgocentricUniverse
+					if (edge.length !== 2) {
+
+						console.error(sError + 'invalid edge.length = ' + edge.length);
+						return;
+
+					}
+					if (edge[0] === edge[1]) {
+
+						console.error(sError + 'duplicate edge index = ' + edge[0]);
+						return;
+
+					}
+					
+					edge.forEach(vertice => indices.push(vertice));
+					
+					if (thisColor && (typeof thisColor != "object")) {
+
+						//одинаковый цвет для всех ребер
+						const color = new THREE.Color(thisColor);
+						function hexToRgb(hex) {
+						  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+						  return result ? {
+							r: parseInt(result[1], 16),
+							g: parseInt(result[2], 16),
+							b: parseInt(result[3], 16)
+						  } : null;
+						}
+						const rgb = hexToRgb(color.getHexString());
+						function push() {
+							
+							colors.push(rgb.r);
+							colors.push(rgb.g);
+							colors.push(rgb.b);
+
+						}
+						push();
+						if (edges.length === 1) push();//Это линия. Надо установить цвет конца
+
+					}
+
+				} else console.error(sError + 'invalid edge. Возможно вычислены не все точки пересечения');
+				
+			}
+			if (thisColor && (typeof thisColor === "object")) {
+
+				//цвет вершин
+				if (colors.length != 0) console.error(sError + 'Invalid colors.length = ' + colors.length);
+				settings.object.geometry.position.forEach(vertice => {
+
+					const rgb = settings.options.palette.toColor(vertice.w, settings.options.scales.w.min, settings.options.scales.w.max );
+					colors.push(rgb.r);
+					colors.push(rgb.g);
+					colors.push(rgb.b);
+
+				} );
+
+			}
+			return { indices: indices, colors: colors }
+	
+		}
+*/		
 		const getPlayerTimesLength = () => { return settings.overriddenProperties.getPlayerTimesLength(); }
 
 		//Для отладки
