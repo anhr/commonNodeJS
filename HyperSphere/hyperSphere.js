@@ -508,11 +508,8 @@ class HyperSphere extends MyObject {
 
 					case 'guiLength'://изменилось количество вершин
 						if (value < 2) return true;
-						for (let i = aAngles.length; i < value; i++) {
-							
-							angles.pushRandomAngle();//add vertices
-
-						}
+						const angles = settings.object.geometry.angles;
+						for (let i = aAngles.length; i < value; i++) angles.pushRandomAngle();//add vertices
 						aAngles.length = value;//remove vertice
 
 						//update buffer
@@ -2807,15 +2804,8 @@ for (let i = 0; i < geometry.times.length; i++) {
 
 												}
 												if (this.classSettings.projectParams) this.project(this.classSettings.projectParams.scene, this.classSettings.projectParams.params);
-												if (times && classSettings.edges.project) {
-
+												if (times && classSettings.edges.project)
 													this.setEdgesRange();
-/*													
-													const drawRange = settings.bufferGeometry.drawRange;
-													settings.bufferGeometry.setDrawRange(drawRange.start, edges.timeEdgesCount * 2 - drawRange.start);
-*/													
-
-												}
 												if (classSettings.overriddenProperties.project) classSettings.overriddenProperties.project();
 												boCompleted = true;
 												return;// true;
@@ -2961,7 +2951,7 @@ for (let i = 0; i < geometry.times.length; i++) {
 			//vertices
 
 			const fVertices = fHyperSphere.addFolder(lang.vertices);
-			fVertices.add(new PositionController((shift) => { cVerticesCount.setValue(angles.length + shift); },
+			fVertices.add(new PositionController((shift) => { cVerticesCount.setValue(settings.object.geometry.angles.length + shift); },
 				{ settings: { offset: 1, }, min: 1, max: 1000, step: 1, getLanguageCode: options.getLanguageCode }));
 
 			//Vertices count
