@@ -2948,7 +2948,18 @@ for (let i = 0; i < geometry.times.length; i++) {
 
 			}
 
-			const fHyperSphere = options.dat.gui.addFolder(this.name(getLanguageCode)), dat = three.dat;
+			const folders = options.dat.gui.__folders;
+			let fParent;
+			Object.keys(folders).forEach((key) => {
+
+				const folder = folders[key], id = folder.id;
+				if (id && (id === 'fOptions')) fParent = folder;
+
+			});
+			const fHyperSphere = fParent.addFolder(this.name(getLanguageCode)), dat = three.dat;
+//			const fHyperSphere = options.dat.gui.addFolder(this.name(getLanguageCode)), dat = three.dat;
+			const addSettingsFolder = classSettings.overriddenProperties.addSettingsFolder;
+			if (addSettingsFolder) addSettingsFolder(fParent, getLanguageCode);
 
 			//vertices
 

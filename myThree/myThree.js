@@ -602,6 +602,7 @@ class MyThree {
 			if ( options.dat.gui ) {
 
 				fOptions = options.dat.gui.addFolder( lang.settings );
+				fOptions.id = 'fOptions';//for hyperSphere
 				if ( options.player )
 					options.player.gui( fOptions );
 
