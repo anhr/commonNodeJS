@@ -68,6 +68,8 @@ I use <b>FrustumPoints</b> for displaying of the clouds around points.
 	* matrix.js A matrix (plural matrices) is a rectangular array or table of numbers, arranged in rows and columns, which is used to represent a mathematical object or a property of such an object.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/myMath/matrix).
 [Matrix API](https://raw.githack.com/anhr/commonNodeJS/master/myMath/matrix/jsdoc/index.html).
+* myObject.js [MyObject](https://github.com/anhr/commonNodeJS/blob/master/myObject.js) Base class for my threejs objects.
+[MyObject API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/MyObject/index.html).
 * myPoints.js Array of my points.
 [README.md](https://github.com/anhr/commonNodeJS/tree/master/myPoints).
 [myPoints API](https://raw.githack.com/anhr/commonNodeJS/master/myPoints/jsdoc/index.html).
