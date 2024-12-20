@@ -31,6 +31,11 @@ dimention	geometry	points	edges	faces	bodyes	4D objects
 4			pentatope	5		10		10		5		1
 */
 
+/**
+ * N-dimensional graphics. Extends <a href="../../jsdoc/MyObject/module-myObject-MyObject.html" target="_blank">MyObject</a>.
+ * @class
+ * @extends MyObject
+ */
 class ND extends MyObject {
 
 	/**
@@ -52,7 +57,7 @@ class ND extends MyObject {
 	 *		<b>settings.options.scales.w.min</b> to
 	 *		<b>settings.options.scales.w.max</b>
 	 *		
-	 *		<b>w</b> coordinate is index of palette color. See <a href="../../colorpicker/jsdoc/module-ColorPicker-ColorPicker.html#toColor" target="_blank">toColor</a> method from <b>ColorPicker</b> class.
+	 *		<b>w</b> coordinate is index of palette color. See  method from <b>ColorPicker</b> class.
 	 *		Example:
 	 *		settings.object.geometry.position: [
 	 *			//pyramid

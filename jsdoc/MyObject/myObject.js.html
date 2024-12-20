@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: myObject.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: myObject.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @module myObject
  * @description base class for my threejs objects.
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -20,15 +48,15 @@ const sMyObject = 'MyObject';
 
 /**
  * @class Base class for my threejs objects.
- * <pre>
- * Examples of child classes: <a href="../../nD/jsdoc/module-ND-ND.html" target="_blank">ND</a>, <a href="../../myPoints/jsdoc/module-MyPoints-MyPoints.html" target="_blank">MyPoints</a>.
- * </pre>
+ * &lt;pre>
+ * Examples of child classes: &lt;a href="../../nD/jsdoc/module-ND-ND.html" target="_blank">ND&lt;/a>, &lt;a href="../../myPoints/jsdoc/module-MyPoints-MyPoints.html" target="_blank">MyPoints&lt;/a>.
+ * &lt;/pre>
  */
 class MyObject {
 
 	/**
 	 * 
-	 * @param {object} settings See child class (<a href="../../nD/jsdoc/module-ND-ND.html" target="_blank">ND</a>, <a href="../../myPoints/jsdoc/module-MyPoints-MyPoints.html" target="_blank">MyPoints</a>) <b>settings.
+	 * @param {object} settings See child class (&lt;a href="../../nD/jsdoc/module-ND-ND.html" target="_blank">ND&lt;/a>, &lt;a href="../../myPoints/jsdoc/module-MyPoints-MyPoints.html" target="_blank">MyPoints&lt;/a>) &lt;b>settings.
 	 * @param {any} vertices
 	 */
 	constructor(settings={}, vertices) {
@@ -49,7 +77,7 @@ class MyObject {
 
 		const timeId = settings.options ? settings.options.player.getTimeId() : 0, geometry = settings.object.geometry,
 			geometryPosition = geometry.position;
-		if ((timeId === 0) && (!geometryPosition || !geometryPosition.isPositionProxy)) {
+		if ((timeId === 0) &amp;&amp; (!geometryPosition || !geometryPosition.isPositionProxy)) {
 
 //if (geometryPosition) console.log(geometry.position.isPositionProxy);
 			geometry.position = new Proxy(geometryPosition || [], {
@@ -138,7 +166,7 @@ class MyObject {
 			
 			//Когда bufferGeometry.index != null, и отображаются вершины,
 			//то в drawRange задается диапазон видимых вершин без учета размера каждой вершины bufferGeometry.attributes.positionю.itemSize
-			const itemSize = ((position && (bufferGeometry.index != null)) ? position.itemSize : 1);
+			const itemSize = ((position &amp;&amp; (bufferGeometry.index != null)) ? position.itemSize : 1);
 //			const itemSize = (position ? position.itemSize : 1);
 			
 			this.setDrawRange(start * itemSize, count * itemSize, bufferGeometry.drawRange.types.vertices);//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
@@ -147,7 +175,7 @@ class MyObject {
 		/**
 		 * Determines the part of edges of the child graphical object geometry to render. See [BufferGeometry.drawRange]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.drawRange}.
 		 * @param {number} [start=0] Identifier of the start edge to render.
-		 * @param {number} [timeId] Time identifier of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player</a> that determines of the end edge to render.
+		 * @param {number} [timeId] Time identifier of the &lt;a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player&lt;/a> that determines of the end edge to render.
 		 */
 		this.setEdgesRange = (start = 0, timeId) => {
 
@@ -169,7 +197,7 @@ class MyObject {
 				
 				if (type != undefined) settings.bufferGeometry.drawRange.type = type;
 				else console.error(sMyObject + ': setDrawRange(...). Invalid type = ' + type);
-				if (!Number.isInteger(start) || ((count != Infinity) && !Number.isInteger(count))) console.error(sMyObject + ': setDrawRange(...). Invalid drawRange = { start: ' + start + ', count: ' + count + ' }');
+				if (!Number.isInteger(start) || ((count != Infinity) &amp;&amp; !Number.isInteger(count))) console.error(sMyObject + ': setDrawRange(...). Invalid drawRange = { start: ' + start + ', count: ' + count + ' }');
 				
 			}
 			settings.overriddenProperties.setDrawRange(start, count);
@@ -241,7 +269,7 @@ class MyObject {
 
 									case 'forEach': return (item) => {
 
-										for (let axisId = 0; axisId < position.itemSize; axisId++) item(array[positionOffset + axisId], axisId);
+										for (let axisId = 0; axisId &lt; position.itemSize; axisId++) item(array[positionOffset + axisId], axisId);
 											
 									}
 									case 'length': return position.itemSize;
@@ -257,7 +285,7 @@ class MyObject {
 									case 'z': return array[positionOffset + 2];
 									case 'w': {
 
-										if (position.itemSize < 4) return;
+										if (position.itemSize &lt; 4) return;
 										return array[positionOffset + 3];
 
 									}
@@ -344,7 +372,7 @@ class MyObject {
 
 		}
 		/**
-		 * Sets the [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} position attribute from <b>points</b> array.
+		 * Sets the [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} position attribute from &lt;b>points&lt;/b> array.
 		 * @param {Array} points Points array.
 		 * @param {boolean} boCreatePositionAttribute true - replace old position attribute to new if it exists.
 		 */
@@ -371,11 +399,11 @@ class MyObject {
 					this.pointLength ? this.pointLength() :
 						points[0].w === undefined ? 3 : 4,
 					points.length);
-				const boLog = this.classSettings && (this.classSettings.debug != undefined) && (this.classSettings.debug.log != false);
-				for (let timeId = 0; timeId < getPlayerTimesLength(); timeId++) {
+				const boLog = this.classSettings &amp;&amp; (this.classSettings.debug != undefined) &amp;&amp; (this.classSettings.debug.log != false);
+				for (let timeId = 0; timeId &lt; getPlayerTimesLength(); timeId++) {
 					
 					if (boLog) console.log('timeId = ' + timeId);
-					for (let i = 0; i < points.length; i++) {
+					for (let i = 0; i &lt; points.length; i++) {
 
 						const vertice = this.setPositionAttributeFromPoint(i, undefined, timeId);
 						if (boLog) console.log('\tvertice[' + i + '] = ' + JSON.stringify(vertice));
@@ -393,7 +421,7 @@ class MyObject {
 		 * Vertice color.
 		 * @param {number} i Vertice identifier.
 		 * @param {Array} vertice Vertice axis array.
-		 * @param {number} timeId Time identifier of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player</a> that determines current vertice color.
+		 * @param {number} timeId Time identifier of the &lt;a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player&lt;/a> that determines current vertice color.
 		 */
 		this.verticeColor = (i, vertice, timeId) => {
 
@@ -407,7 +435,7 @@ class MyObject {
 			}
 			const color = settings.object.color;
 			if (typeof color === "function") return color(timeId);
-			if ((color != undefined) && (typeof color != 'object')) return new THREE.Color(_this.color());
+			if ((color != undefined) &amp;&amp; (typeof color != 'object')) return new THREE.Color(_this.color());
 			//Вершина не имеет 4 координаты. Установить цвет вершины по умолчанию
 			const getDefaultColor = () => { return new THREE.Color(_this.color()); }
 			let w
@@ -426,21 +454,21 @@ class MyObject {
 		}
 		/**
 		 * Gets a position data.
-		 * @param {number} i Vertice identifier for <b>timeId</b> = 0.
-		 * @param {number} timeId Time identifier of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player</a> that determines current position data.
+		 * @param {number} i Vertice identifier for &lt;b>timeId&lt;/b> = 0.
+		 * @param {number} timeId Time identifier of the &lt;a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player&lt;/a> that determines current position data.
 		 * @return position data object. Object properties:
-		 * <pre>
-		 *   verticeId: Vertice identifier for current <b>timeId</b>.
+		 * &lt;pre>
+		 *   verticeId: Vertice identifier for current &lt;b>timeId&lt;/b>.
 		 *   itemSize: Size of the position axis array.
 		 *   positionBlockLength: Positions count for current time.
-		 *   positionId: <b>verticeId</b> * <b>itemSize</b>.
-		 * <pre>
+		 *   positionId: &lt;b>verticeId&lt;/b> * &lt;b>itemSize&lt;/b>.
+		 * &lt;pre>
 		 */
 		this.getPositionData = (i, timeId) => {
 
 			//Во вселенной, когда пользователь щелкает по вершине, то индекс вершины i будет равен положению вершины в attributes.position
 			//а должен быть равен индексу вершины для текущего времени.
-			if (_this.guiPoints && _this.guiPoints.verticeId) {
+			if (_this.guiPoints &amp;&amp; _this.guiPoints.verticeId) {
 				
 				i = _this.guiPoints.verticeId;
 				timeId = _this.guiPoints.timeId;
@@ -465,10 +493,10 @@ class MyObject {
 			
 		}
 		/**
-		 * Sets the [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} position attribute from <b>vertice</b>.
-		 * @param {number} i Vertice identifier for <b>timeId</b> = 0.
-		 * @param {Array} [vertice] Vertice axis array for current <b>timeId</b>.
-		 * @param {number} timeId Time identifier of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player</a> that determines current vertice.
+		 * Sets the [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} position attribute from &lt;b>vertice&lt;/b>.
+		 * @param {number} i Vertice identifier for &lt;b>timeId&lt;/b> = 0.
+		 * @param {Array} [vertice] Vertice axis array for current &lt;b>timeId&lt;/b>.
+		 * @param {number} timeId Time identifier of the &lt;a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player&lt;/a> that determines current vertice.
 		 */
 		this.setPositionAttributeFromPoint = (i, vertice, timeId) => {
 
@@ -485,11 +513,11 @@ class MyObject {
 			if (itemSize > 3) array [++positionId] = w;
 
 			const drawRange = settings.bufferGeometry.drawRange;
-//			if ((drawRange.count === Infinity) || ((drawRange.start + drawRange.count * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId))
-			if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
+//			if ((drawRange.count === Infinity) || ((drawRange.start + drawRange.count * ((settings.bufferGeometry.index === null) ? itemSize : 1)) &lt; positionId))
+			if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) &lt; positionId)){
 
 				this.setVerticesRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
-				if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
+				if (!Number.isInteger(drawRange.count) &amp;&amp; (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
 
 			}
 
@@ -556,9 +584,9 @@ class MyObject {
 		this.verticesOpacity = (transparent, opacity) => {
 			
 			const color = settings.bufferGeometry.attributes.color;
-			if ( color && ( color.itemSize > 3 ) ) {
+			if ( color &amp;&amp; ( color.itemSize > 3 ) ) {
 
-				for ( let i = 0; i < color.count; i++ ) { this.verticeOpacity(i, transparent, opacity); }
+				for ( let i = 0; i &lt; color.count; i++ ) { this.verticeOpacity(i, transparent, opacity); }
 
 			} else {
 
@@ -575,7 +603,7 @@ class MyObject {
 	
 		}
 		/**
-		 * @return The child graphical object color or <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player</a> time if graphical object color is not defined.
+		 * @return The child graphical object color or &lt;a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player&lt;/a> time if graphical object color is not defined.
 		 */
 		this.color = () => {
 	
@@ -597,11 +625,11 @@ class MyObject {
 	 */
 	get defaultColor() { return 'white'; }
 	/**
-	 * Returns <b>true</b> if a child graphical object can be transparent.
+	 * Returns &lt;b>true&lt;/b> if a child graphical object can be transparent.
 	 */
 	get isOpacity() {
 
-		if (this.bufferGeometry.attributes.color && (this.bufferGeometry.attributes.color.itemSize > 3)) {
+		if (this.bufferGeometry.attributes.color &amp;&amp; (this.bufferGeometry.attributes.color.itemSize > 3)) {
 			
 			if (!this.object3D.material.transparent) console.error(sMyObject + '.isOpacity: invalid this.object3D.material.transparent = ' + this.object3D.material.transparent);
 			return true;
@@ -612,9 +640,9 @@ class MyObject {
 	}
 	/**
 	 * 
-	 * @param {object} position [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} <b>position</b> attribute of the child graphical object.
+	 * @param {object} position [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} &lt;b>position&lt;/b> attribute of the child graphical object.
 	 * @param {number} positionId Position identifier.
-	 * @returns Offset of the position in the <b>position</b> attribute.
+	 * @returns Offset of the position in the &lt;b>position&lt;/b> attribute.
 	 */
 	positionOffset(position, positionId) {
 
@@ -625,3 +653,26 @@ class MyObject {
 
 }
 export default MyObject;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-myObject.html">myObject</a></li></ul><h3>Classes</h3><ul><li><a href="module-myObject-MyObject.html">MyObject</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Fri Dec 20 2024 08:22:08 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
