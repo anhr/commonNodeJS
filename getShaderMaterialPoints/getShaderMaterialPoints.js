@@ -60,10 +60,16 @@ const currentScriptPath = getCurrentScriptPath(),
 
 	};
 
+/**
+ * Gets [THREE.Points]{@link https://threejs.org/docs/index.html?q=Points#api/en/objects/Points} with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html?q=ShaderMaterial#api/en/materials/ShaderMaterial} material.
+ * Extends <a href="../../jsdoc/MyObject/module-myObject-MyObject.html" target="_blank">MyObject</a>.
+ * @class
+ * @extends MyObject
+ */
 class getShaderMaterialPoints extends MyObject {
 
 	/**
-	 * get [THREE.Points]{@link https://threejs.org/docs/index.html?q=Points#api/en/objects/Points} with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html?q=ShaderMaterial#api/en/materials/ShaderMaterial} material
+	 * Gets [THREE.Points]{@link https://threejs.org/docs/index.html?q=Points#api/en/objects/Points} with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html?q=ShaderMaterial#api/en/materials/ShaderMaterial} material
 	 * @param {THREE.Group|THREE.Scene} group [THREE.Group]{@link https://threejs.org/docs/index.html?q=group#api/en/objects/Group} or [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * @param {array} arrayFuncs <b>points.geometry.attributes.position</b> array.
 	 * See <b>arrayFuncs</b> parametr of the <a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)</a> for details.

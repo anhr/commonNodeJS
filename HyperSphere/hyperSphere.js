@@ -46,6 +46,11 @@ import MyObject from '../myObject.js'
 const sHyperSphere = 'HyperSphere', sOverride = sHyperSphere + ': Please override the %s method in your child class.',
 	π = Math.PI;
 
+/**
+ * Base class for n dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}. Extends <a href="../../jsdoc/MyObject/module-myObject-MyObject.html" target="_blank">MyObject</a>.
+ * @class
+ * @extends MyObject
+ */
 class HyperSphere extends MyObject {
 
 	/**

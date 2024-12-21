@@ -44,9 +44,14 @@ import Player from '../player/player.js';
 import getShaderMaterialPoints from '../getShaderMaterialPoints/getShaderMaterialPoints.js';
 import three from '../three.js'
 import Options from '../Options.js'
-import myObject from '../myObject.js'
+import MyObject from '../myObject.js'
 
-class MyPoints extends myObject {
+/**
+ * Creating the new [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} and adding it into group. Extends &lt;a href="../../jsdoc/MyObject/module-myObject-MyObject.html" target="_blank">MyObject&lt;/a>.
+ * @class
+ * @extends MyObject
+ */
+class MyPoints extends MyObject {
 
 	/**
 	 * Creating the new [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} and adding it into group.
@@ -174,12 +179,6 @@ class MyPoints extends myObject {
 	constructor(arrayFuncs, group, settings) {
 
 		super(settings, arrayFuncs);
-/*
-		//for for compatibility with ND
-		//Что бы можно было менять позицию и цвет вершины
-		settings.object.geometry = settings.object.geometry || {};
-		settings.object.geometry.position = settings.object.geometry.position || arrayFuncs;
-*/		
 
 		const _this = this;
 		
@@ -187,15 +186,17 @@ class MyPoints extends myObject {
 
 		group = group || three.scene;
 
-		if ((typeof arrayFuncs !== 'function') &amp;&amp; (arrayFuncs.length === 0))
+		if ((arrayFuncs === undefined) &amp;&amp; !settings.bufferGeometry.attributes.position) console.error('MyPoints: Vertices was not defined')
+		if (
+			(arrayFuncs != undefined) &amp;&amp;//вершины заданы в settings.bufferGeometry
+			(typeof arrayFuncs != 'function') &amp;&amp; (arrayFuncs.length === 0)
+		)
 			arrayFuncs.push(new THREE.Vector3());
-
-		settings = settings || {};
 
 		settings.pointsOptions = settings.pointsOptions || {};
 		const pointsOptions = settings.pointsOptions;
 		settings.options = settings.options || new Options();
-		var options = settings.options;// || {};
+		var options = settings.options;
 		if (!options.boOptions) options = new Options(options);
 		pointsOptions.tMin = pointsOptions.tMin || 0;
 		pointsOptions.name = pointsOptions.name || '';
@@ -222,20 +223,26 @@ class MyPoints extends myObject {
 		Player.assign();
 
 		if (pointsOptions.shaderMaterial !== false)
-			getShaderMaterialPoints(group, arrayFuncs,// Player,
-				function (points) { Points(points); }, {
+			new getShaderMaterialPoints(group, arrayFuncs,function (points) { Points(points); }, {
 
 				options: options,
 				pointsOptions: pointsOptions,
+				object: { geometry: { position: settings.object.geometry.position, opacity: settings.object.geometry.opacity } },
+				bufferGeometry: settings.bufferGeometry,
 
 			});
 		else {
 
-			const points = new THREE.Points(
+			let buffer;
+			if ( typeof arrayFuncs === 'function' ) buffer = arrayFuncs();
+			else {
 
-				typeof arrayFuncs === 'function' ? arrayFuncs() :
-					new THREE.BufferGeometry().setFromPoints(Player.getPoints(arrayFuncs,
-						{ options: options, group: group, t: pointsOptions.tMin }), arrayFuncs[0].vector instanceof THREE.Vector3 === true ? 3 : 4),
+				const points = Player.getPoints(arrayFuncs, { options: options, group: group, t: pointsOptions.tMin });
+				this.getPoint = (i) => { return points[i]; }
+				buffer = this.setPositionAttributeFromPoints( points );
+
+			}
+			const points = new THREE.Points( buffer,
 				new THREE.PointsMaterial({
 
 					size: options.point.size / options.point.sizePointsMaterial,
@@ -257,18 +264,6 @@ class MyPoints extends myObject {
 					indexArray: pointsOptions.frustumPoints.pushArrayCloud(points.geometry),//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
 
 				}
-
-			points.geometry.setAttribute('color',
-				new THREE.Float32BufferAttribute(Player.getColors(arrayFuncs,
-					{
-
-						color: settings.pointsOptions.color,
-						colors: settings.pointsOptions.colors,
-						opacity: settings.pointsOptions.opacity,
-						positions: points.geometry.attributes.position,
-						options: options,
-
-					}), 4));
 			Points(points);
 
 		}
@@ -359,15 +354,8 @@ class MyPoints extends myObject {
 			setRotations();
 			group.add(points);
 
-//			points.userData.setPositionAttribute = ( i ) => { _this.setPositionAttribute( i ); }
 			points.userData.myObject = _this;
-			points.userData.opacity = (opacity) => {
-
-				const ca = points.geometry.attributes.ca ? points.geometry.attributes.ca : points.geometry.attributes.color, array = ca.array;
-				for (let i = 0; i &lt; ca.count; i++) array[ca.itemSize * i + 3] = opacity;
-				ca.needsUpdate = true;
-
-			}
+			points.userData.opacity = (opacity) => { _this.verticesOpacity(false, opacity); }
 
 			if (pointsOptions.boFrustumPoints) points.userData.boFrustumPoints = pointsOptions.boFrustumPoints;
 			if (options.guiSelectPoint) options.guiSelectPoint.addMesh(points);
@@ -380,6 +368,7 @@ class MyPoints extends myObject {
 		}
 
 	}
+//	get defaultColor() { return 'white'; }
 
 }
 export default MyPoints;
@@ -399,7 +388,7 @@ export default MyPoints;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Feb 03 2024 08:57:18 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Dec 21 2024 07:24:08 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -42,7 +42,7 @@
 import three from '../three.js'
 import Player from '../player/player.js';
 import Options from '../Options.js'
-import myObject from '../myObject.js'
+import MyObject from '../myObject.js'
 
 //Thanks to https://stackoverflow.com/a/27369985/5175935
 //Такая же функция есть в frustumPoints.js но если ее использовать то она будет возвращать путь на frustumPoints.js
@@ -64,7 +64,6 @@ const getCurrentScriptPath = function () {
 		path = script.substring( 0, script.lastIndexOf( '/' ) );
 	return path;
 };
-//console.warn( 'getCurrentScriptPath = ' + getCurrentScriptPath() );
 const currentScriptPath = getCurrentScriptPath(),
 	_vertex_text = {
 
@@ -89,10 +88,16 @@ const currentScriptPath = getCurrentScriptPath(),
 
 	};
 
-class getShaderMaterialPoints extends myObject {
+/**
+ * Gets [THREE.Points]{@link https://threejs.org/docs/index.html?q=Points#api/en/objects/Points} with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html?q=ShaderMaterial#api/en/materials/ShaderMaterial} material.
+ * Extends &lt;a href="../../jsdoc/MyObject/module-myObject-MyObject.html" target="_blank">MyObject&lt;/a>.
+ * @class
+ * @extends MyObject
+ */
+class getShaderMaterialPoints extends MyObject {
 
 	/**
-	 * get [THREE.Points]{@link https://threejs.org/docs/index.html?q=Points#api/en/objects/Points} with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html?q=ShaderMaterial#api/en/materials/ShaderMaterial} material
+	 * Gets [THREE.Points]{@link https://threejs.org/docs/index.html?q=Points#api/en/objects/Points} with [THREE.ShaderMaterial]{@link https://threejs.org/docs/index.html?q=ShaderMaterial#api/en/materials/ShaderMaterial} material
 	 * @param {THREE.Group|THREE.Scene} group [THREE.Group]{@link https://threejs.org/docs/index.html?q=group#api/en/objects/Group} or [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}.
 	 * @param {array} arrayFuncs &lt;b>points.geometry.attributes.position&lt;/b> array.
 	 * See &lt;b>arrayFuncs&lt;/b> parametr of the &lt;a href="../../player/jsdoc/module-Player-Player.getPoints.html" target="_blank">Player.getPoints(...)&lt;/a> for details.
@@ -111,7 +116,6 @@ class getShaderMaterialPoints extends myObject {
 	*/
 	constructor(group, arrayFuncs, onReady, settings = {}) {
 
-		//settings = settings || {};
 		super(settings, arrayFuncs);
 
 		const THREE = three.THREE, tMin = settings.pointsOptions === undefined ?
@@ -139,24 +143,26 @@ class getShaderMaterialPoints extends myObject {
 			geometry = arrayFuncs();
 		else {
 
-			const points = Player.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin, });
-			this.getPoint = (i) => { return points[i]; }
-			geometry = this.setPositionAttributeFromPoints( points );
-/*			
-			geometry = new THREE.BufferGeometry().setFromPoints
-			(Player.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin, }),
-				arrayFuncs instanceof Array ? arrayFuncs[0].vector instanceof THREE.Vector3 ? 3 : 4 :
-					arrayFuncs instanceof THREE.Vector3 ? 3 : 4);
-*/					
+			if (settings.pointsOptions.bufferGeometry)
+				geometry = settings.pointsOptions.bufferGeometry;
+			else {
+				
+				const points = arrayFuncs != undefined ? Player.getPoints(arrayFuncs, { options: settings.options, group: group, t: tMin, }) : undefined;
+				this.getPoint = (i) => { return points[i]; }
+				geometry = this.setPositionAttributeFromPoints(points);
+
+			}
 
 		}
 		const indexArrayCloud = settings.pointsOptions.frustumPoints ? settings.pointsOptions.frustumPoints.pushArrayCloud(geometry) : undefined;//индекс массива точек в FrustumPoints.arrayCloud которые принадлежат этому points
+/*
 		if ((settings.pointsOptions === undefined) || !settings.pointsOptions.boFrustumPoints) {
 
 			//если не делать эту проверку, то будет неправильный цвет точки, если не задана палитра и шкала w
 			if (!settings.options.scales.w) settings.options.scales.setW();
-
-			geometry.setAttribute('ca', new THREE.Float32BufferAttribute(Player.getColors
+			geometry.setAttribute(
+				'color',
+				new THREE.Float32BufferAttribute(Player.getColors
 				(arrayFuncs,
 					{
 
@@ -170,6 +176,7 @@ class getShaderMaterialPoints extends myObject {
 				4));
 
 		}
+*/		
 
 		const texture = new THREE.TextureLoader().load(currentScriptPath + "/textures/point.png",
 			function (texture) { }, function () { }, function () { console.error('THREE.TextureLoader: error'); });
@@ -342,7 +349,7 @@ class getShaderMaterialPoints extends myObject {
 				points.material.uniforms.palette.value.needsUpdate = true;
 			if (points.material.uniforms.cloudPoints !== undefined)
 				points.material.uniforms.cloudPoints.value.needsUpdate = true;
-			Player.selectMeshPlayScene(points, { options: settings.options });
+			//Player.selectMeshPlayScene(points, { options: settings.options });
 			//Что бы камера смотрела на выбранную точку сразу после запуска приложения
 			const cameraTarget = settings.options.playerOptions.cameraTarget.get(settings.options);
 			if (cameraTarget &amp;&amp; cameraTarget.setCameraPosition) cameraTarget.setCameraPosition();
@@ -369,7 +376,7 @@ export default getShaderMaterialPoints;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Mar 14 2024 10:12:04 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Fri Dec 20 2024 22:36:43 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

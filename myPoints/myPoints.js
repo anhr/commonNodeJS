@@ -18,6 +18,11 @@ import three from '../three.js'
 import Options from '../Options.js'
 import MyObject from '../myObject.js'
 
+/**
+ * Creating the new [THREE.Points]{@link https://threejs.org/docs/index.html?q=poi#api/en/objects/Points} and adding it into group. Extends <a href="../../jsdoc/MyObject/module-myObject-MyObject.html" target="_blank">MyObject</a>.
+ * @class
+ * @extends MyObject
+ */
 class MyPoints extends MyObject {
 
 	/**
@@ -335,7 +340,6 @@ class MyPoints extends MyObject {
 		}
 
 	}
-//	get defaultColor() { return 'white'; }
 
 }
 export default MyPoints;

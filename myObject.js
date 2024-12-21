@@ -1,6 +1,6 @@
 /**
  * @module myObject
- * @description base class for my threejs objects.
+ * @description Base class for my threejs objects.
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
@@ -21,7 +21,11 @@ const sMyObject = 'MyObject';
 /**
  * @class Base class for my threejs objects.
  * <pre>
- * Examples of child classes: <a href="../../nD/jsdoc/module-ND-ND.html" target="_blank">ND</a>, <a href="../../myPoints/jsdoc/module-MyPoints-MyPoints.html" target="_blank">MyPoints</a>.
+ * Examples of child classes:
+ *   <a href="../../getShaderMaterialPoints/jsdoc/module-getShaderMaterialPoints-getShaderMaterialPoints.html" target="_blank">getShaderMaterialPoints</a>,
+ *   <a href="../../HyperSphere/jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere</a>,
+ *   <a href="../../myPoints/jsdoc/module-MyPoints-MyPoints.html" target="_blank">MyPoints</a>,
+ *   <a href="../../nD/jsdoc/module-ND-ND.html" target="_blank">ND</a>.
  * </pre>
  */
 class MyObject {
