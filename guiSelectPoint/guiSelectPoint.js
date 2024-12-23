@@ -1260,7 +1260,7 @@ class GuiSelectPoint {
 					 :
 					 //геометрия индексирована. mesh.geometry.drawRange.count указывает на количество индексов, которые нужно рисовать
 					 mesh.geometry.attributes.position.count;//По умолчанию все вершины видно
-			mesh.userData.myObject.guiPoints.create( fPoints, cPoints, cTraceAll, count, intersectionSelected );
+			mesh.userData.myObject.guiPoints.create( fPoints, cPoints, cTrace, cTraceAll, count, intersectionSelected );
 //			intersectionSelected.index = mesh.userData.myObject.guiPoints.searchNearestEdgeVerticeId( intersectionSelected.index, intersectionSelected );
 
 		}
@@ -1371,11 +1371,8 @@ class GuiSelectPoint {
 
 					}
 					dislayEl( cPoints, displayPoints );
-					if ( cTraceAll ) {
-
-						dislayEl( cTraceAll, options.player ? displayPoints : false );
-
-					}
+					if ( cTraceAll )
+						dislayEl( cTraceAll, (cTraceAll.userData && cTraceAll.userData.display) ? cTraceAll.userData.display : options.player ? displayPoints : false );
 					if ( cFrustumPoints !== undefined )
 						cFrustumPoints.display( displayFrustumPoints );
 					setScaleControllers();
@@ -2076,19 +2073,22 @@ class GuiSelectPoint {
 				} );
 			dat.controllerNameAndTitle( cOpacity, lang.opacity, lang.opacityTitle );
 
+			options.trace ||= {
+
+//				boTraces: false,
+				onChange: ( value ) => { visibleTraceLine( intersection, value, getMesh ); },
+				
+			}
 			cTrace = fPoint.add( { trace: false }, 'trace' ).onChange( function ( value ) {
 
-				visibleTraceLine( intersection, value, getMesh );
+				options.trace.onChange( value );
+//				visibleTraceLine( intersection, value, getMesh );
 
 			} );
 			dat.controllerNameAndTitle( cTrace, lang.trace, lang.traceTitle ); //guiParams
 			dislayEl( cTrace, options.player );
 
-			if ( guiParams.pointControls ) {
-
-				guiParams.pointControls( fPoint, dislayEl, getMesh, intersection );
-
-			}
+			if ( guiParams.pointControls ) guiParams.pointControls( fPoint, dislayEl, getMesh, intersection );
 
 			//Point's world position axes controllers
 
