@@ -1526,6 +1526,19 @@ class Options {
 
 			},
 
+			/**
+			 * getter and setter
+			 * <pre>
+			 * traces
+			 * </pre>
+			 **/
+			traces: {
+
+				get: () => { return options.traces; },
+				set: ( traces ) => { options.traces = traces; }
+
+			},
+
 		} ); 
 
 		//For debugging. Find a hidden keys
@@ -1709,7 +1722,7 @@ class Raycaster {
 
 			if ( ( intersection.object.userData.isInfo !== undefined ) && !intersection.object.userData.isInfo() )
 				return;//No display information about frustum point
-			if ( options.guiSelectPoint ) {
+			if ( options.guiSelectPoint && intersection.object.userData.myObject) {
 				
 //				intersection.object.userData.myObject.guiPoints.verticeId = intersection.index;
 				const guiPoints = intersection.object.userData.myObject.guiPoints, searchNearestEdgeVerticeId = guiPoints.searchNearestEdgeVerticeId;

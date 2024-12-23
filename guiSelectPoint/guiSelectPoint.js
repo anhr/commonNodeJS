@@ -1260,7 +1260,7 @@ class GuiSelectPoint {
 					 :
 					 //геометрия индексирована. mesh.geometry.drawRange.count указывает на количество индексов, которые нужно рисовать
 					 mesh.geometry.attributes.position.count;//По умолчанию все вершины видно
-			mesh.userData.myObject.guiPoints.create( fPoints, cPoints, count, intersectionSelected );
+			mesh.userData.myObject.guiPoints.create( fPoints, cPoints, cTraceAll, count, intersectionSelected );
 //			intersectionSelected.index = mesh.userData.myObject.guiPoints.searchNearestEdgeVerticeId( intersectionSelected.index, intersectionSelected );
 
 		}
@@ -1811,13 +1811,29 @@ class GuiSelectPoint {
 				guiParams.pointsControls( fPoints, dislayEl, getMesh );
 
 			}
-			cTraceAll = fPoints.add( { trace: false }, 'trace' ).onChange( function ( value ) {
+			options.traces ||= {
 
+				boTraces: false,
+				onChange: ( value ) => {
+
+					var mesh = getMesh();
+					mesh.userData.traceAll = value;
+					for ( var i = 0; i < mesh.geometry.attributes.position.count; i++ ) visibleTraceLine( { object: mesh, index: i }, value, getMesh );
+					cTrace.setValue( value );
+					
+				},
+				
+			}
+			cTraceAll = fPoints.add( options.traces, 'boTraces' ).onChange( ( value ) => {
+
+				options.traces.onChange( value );
+/*				
 				var mesh = getMesh();
 				mesh.userData.traceAll = value;
 				for ( var i = 0; i < mesh.geometry.attributes.position.count; i++ )
 					visibleTraceLine( { object: mesh, index: i }, value, getMesh );
 				cTrace.setValue( value );
+*/				
 
 			} );
 			dat.controllerNameAndTitle( cTraceAll, lang.trace, lang.traceAllTitle );
