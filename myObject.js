@@ -534,7 +534,7 @@ class MyObject {
 		/**
 		 * Vertice opacity.
 		 * @param {number} i Vertice identifier.
-		 * @param {Array} [transparent] See [transparent]{@link https://threejs.org/docs/index.html?q=LineBasicMaterial#api/en/materials/Material.transparent}.
+		 * @param {Boolean} [transparent] See [transparent]{@link https://threejs.org/docs/index.html?q=LineBasicMaterial#api/en/materials/Material.transparent}.
 		 * @param {number} [opacity] See [opacity]{@link https://threejs.org/docs/index.html?q=LineBasicMaterial#api/en/materials/Material.opacity}.
 		 */
 		this.verticeOpacity = (i, transparent, opacity) => {
