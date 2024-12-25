@@ -2041,8 +2041,7 @@ class GuiSelectPoint {
 
 				} );
 			dat.controllerNameAndTitle( cColor, options.scales.w ? options.scales.w.name : lang.color );
-			cOpacity = fPoint.add( { opasity: 1, }, 'opasity', 0, 1, 0.01 ).
-				onChange( function ( opasity ) {
+			cOpacity = fPoint.add( { opasity: 1, }, 'opasity', 0, 1, 0.01 ).onChange( function ( opasity ) {
 
 					if ( isReadOnlyController( cOpacity ) )
 						return;
@@ -2081,7 +2080,7 @@ class GuiSelectPoint {
 			}
 			cTrace = fPoint.add( { trace: false }, 'trace' ).onChange( function ( value ) {
 
-				options.trace.onChange( value );
+				options.trace.onChange( value, cPoints.__select.selectedIndex - 1 );
 //				visibleTraceLine( intersection, value, getMesh );
 
 			} );
