@@ -344,6 +344,18 @@ class MyObject {
 			//color
 			if (_this.setW) _this.setW();
 			const itemSize = settings.object.geometry.opacity ? 4 : 3, colors = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * itemSize);
+			if (itemSize === 4){
+
+				let colorId = itemSize - 1;
+				const opacity = settings.object.geometry.opacity;
+				//set opacity
+				while(colorId < colors.length) {
+
+					colors[colorId] = opacity;
+					colorId += itemSize;
+					
+				}
+			}
 			settings.bufferGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, itemSize));
 
 		}
