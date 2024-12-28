@@ -2074,11 +2074,11 @@ class GuiSelectPoint {
 
 			options.trace ||= {
 
-//				boTraces: false,
+//				boTrace: false,не совместимо со вселенной
 				onChange: ( value ) => { visibleTraceLine( intersection, value, getMesh ); },
 				
 			}
-			cTrace = fPoint.add( { trace: false }, 'trace' ).onChange( function ( value ) {
+			cTrace = fPoint.add( { boTrace: false, }, 'boTrace' ).onChange( function ( value ) {
 
 				options.trace.onChange( value, cPoints.__select.selectedIndex - 1 );
 //				visibleTraceLine( intersection, value, getMesh );
