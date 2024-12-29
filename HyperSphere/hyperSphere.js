@@ -3162,7 +3162,7 @@ for (let i = 0; i < geometry.times.length; i++) {
 
 							const positionId = offset / bufferGeometry.attributes.position.itemSize;
 							if ((positionId >= (count + start)) || (positionId < start))
-								sError = '';
+								sError = '. positionId = ' + positionId;
 //								console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + '. positionId = ' + positionId + ' is out of range from ' + start + ' to ' + (count + start));
 							
 						} else {
