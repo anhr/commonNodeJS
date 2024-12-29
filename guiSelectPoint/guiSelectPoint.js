@@ -683,11 +683,9 @@ class GuiSelectPoint {
 			const selectedItem = cMeshs.__select.options[cMeshs.__select.options.selectedIndex];
 			if ( !selectedItem ) return;
 			const mesh = selectedItem.mesh;
-			if ( !mesh )
-				return;
+			if ( !mesh ) return;
 			const index = this.getSelectedPointIndex();
-			if ( index === -1 )
-				return;
+			if ( index === -1 ) return;
 			const position = getObjectPosition( mesh, index );
 			if( cWorld.x ) cWorld.x.setValue( position.x );
 			if( cWorld.y ) cWorld.y.setValue( position.y );
@@ -804,7 +802,7 @@ class GuiSelectPoint {
 				setControllers: (index) => {},
 				getPositionId: (index) => { return index; },
 				getVerticeId: (index) => { return index; },
-				create: (fPoints, cPoints, count) => {
+				create: (fPoints, cPoints, cTrace, cTraceAll, count) => {
 
 					for ( var iPosition = mesh.geometry.drawRange.start; iPosition < count; iPosition++ ) {
 		
@@ -1950,11 +1948,7 @@ class GuiSelectPoint {
 					}
 					if ( ( scale.min !== undefined ) && ( scale.max !== undefined ) ) {
 
-						controller = fPoint.add( { value: scale.min, }, 'value',
-							scale.min,
-							scale.max,
-							( scale.max - scale.min ) / 100
-						).onChange( function ( value ) {
+						controller = fPoint.add( { value: scale.min, }, 'value', scale.min, scale.max, ( scale.max - scale.min ) / 100 ).onChange( function ( value ) {
 
 							if ( isReadOnlyController( controller ) ) return;
 							onChange( value );
@@ -1988,11 +1982,7 @@ class GuiSelectPoint {
 					scale = ( options.axesHelper === undefined ) || ( options.axesHelper === false ) ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
 						options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
 					if ( scale.isAxis() )
-						controller = fPoint.add( { value: scale.min, }, 'value',
-							scale.min,
-							scale.max ).
-//							( scale.max - scale.min ) / 100 ).
-							onChange( function ( value ) {
+						controller = fPoint.add( { value: scale.min, }, 'value', scale.min, scale.max ).onChange( function ( value ) {
 
 								const points = intersection.object;
 
