@@ -40,8 +40,10 @@ class MyObject {
 		const _this = this;
 
 		//иммитация наследования классов
-		settings.overriddenProperties ||= {};
-		settings.overriddenProperties.setDrawRange ||= (start, count) => {}
+		//settings.overriddenProperties ||= {};uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
+		if (!settings.overriddenProperties) settings.overriddenProperties = {};
+		//settings.overriddenProperties.setDrawRange ||= (start, count) => { }uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
+		if (!settings.overriddenProperties.setDrawRange) settings.overriddenProperties.setDrawRange = (start, count) => { }
 		settings.overriddenProperties.getPlayerTimesLength = () => { return 1; }
 		
 		if (settings.guiPoints) this.guiPoints = settings.guiPoints;
@@ -55,7 +57,6 @@ class MyObject {
 			geometryPosition = geometry.position;
 		if ((timeId === 0) && (!geometryPosition || !geometryPosition.isPositionProxy)) {
 
-//if (geometryPosition) console.log(geometry.position.isPositionProxy);
 			geometry.position = new Proxy(geometryPosition || [], {
 	
 				get: (positions, name) => {
@@ -143,7 +144,6 @@ class MyObject {
 			//Когда bufferGeometry.index != null, и отображаются вершины,
 			//то в drawRange задается диапазон видимых вершин без учета размера каждой вершины bufferGeometry.attributes.positionю.itemSize
 			const itemSize = ((position && (bufferGeometry.index != null)) ? position.itemSize : 1);
-//			const itemSize = (position ? position.itemSize : 1);
 			
 			this.setDrawRange(start * itemSize, count * itemSize, bufferGeometry.drawRange.types.vertices);//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
 			
@@ -200,12 +200,6 @@ class MyObject {
 				settings.object.geometry.MAX_POINTS;
 
 			setDrawRangeTypes();
-/*
-			//Для отладки
-			settings.bufferGeometry.drawRange.types = { vertices: 0, edges: 1 };
-			//settings.bufferGeometry.drawRange.type = settings.bufferGeometry.drawRange.types.vertices Установлен диапазон видимых вершин
-			//settings.bufferGeometry.drawRange.type = settings.bufferGeometry.drawRange.types.edges Установлен диапазон видимых ребер
-*/
 			
 			if (MAX_POINTS != undefined) this.setVerticesRange(0, isRCount ?
 				pointLength * pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
@@ -501,7 +495,6 @@ class MyObject {
 			if (itemSize > 3) array [++positionId] = w;
 
 			const drawRange = settings.bufferGeometry.drawRange;
-//			if ((drawRange.count === Infinity) || ((drawRange.start + drawRange.count * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId))
 			if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
 
 				this.setVerticesRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
@@ -512,7 +505,6 @@ class MyObject {
 			//Color attribute
 
 			itemSize = attributes.color.itemSize;
-//			let colorId = i * itemSize + (timeId === undefined ? 0 : anglesLength * timeId * itemSize);
 			let colorId = i * itemSize + (timeId === undefined ? 0 : positionBlockLength * timeId * itemSize);
 			array = attributes.color.array;
 			const verticeColor = this.verticeColor(i, vertice, timeId);
@@ -521,7 +513,6 @@ class MyObject {
 				if (settings.options) {
 					
 					const wScale = settings.options.scales.w;
-//					Player.setColorAttribute(attributes, i + (timeId === undefined ? 0 : anglesLength * timeId), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 					Player.setColorAttribute(attributes, i + (timeId === undefined ? 0 : positionBlockLength * timeId), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 
 				}
@@ -605,8 +596,6 @@ class MyObject {
 	}
 	
 	//base methods
-
-//	get isSetPosition() { return false; }
 
 	/**
 	 * Returns 'white'.

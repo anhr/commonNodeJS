@@ -345,10 +345,6 @@ class GuiSelectPoint {
 				mesh.userData.player.arrayFuncs
 			) {
 
-/*				
-				const selectedPoint = mesh.userData.player.arrayFuncs[mesh.userData.myObject && mesh.userData.myObject.guiPoints ?
-					mesh.userData.myObject.guiPoints.seletedIndex(selectedPointIndex) : selectedPointIndex]
-*/
 				const selectedPoint = mesh.userData.player.arrayFuncs[mesh.userData.myObject.guiPoints.seletedIndex(selectedPointIndex)];
 				if(
 					selectedPoint &&
@@ -402,7 +398,6 @@ class GuiSelectPoint {
 			if (player && player.arrayFuncs) {
 
 				const mesh = getMesh();
-//				funcFolder.setFunction(player.arrayFuncs[mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.seletedIndex(intersectionSelected.index) : intersectionSelected.index]);
 				funcFolder.setFunction(player.arrayFuncs[mesh.userData.myObject.guiPoints.seletedIndex(intersectionSelected.index)]);
 				boDisplayFuncFolder = 'block';
 
@@ -421,11 +416,6 @@ class GuiSelectPoint {
 
 			}
 
-//			const positionLocal = getObjectLocalPosition(intersectionSelected.object, intersectionSelected.index);
-/*			
-			const myObject = intersectionSelected.object.userData.myObject;
-			if (myObject.guiPoints && myObject.guiPoints.verticeId) intersectionSelected.index = myObject.guiPoints.verticeId;
-*/			
 			const positionLocal = _this.getObjectLocalPosition(intersectionSelected);
 			setValue(cX, positionLocal.x);
 			setValue(cY, positionLocal.y);
@@ -437,9 +427,7 @@ class GuiSelectPoint {
 			if (intersectionSelected.object.userData.gui) {
 
 				const guiPoints = intersectionSelected.object.userData.myObject.guiPoints;
-//				guiPoints.getVerticeId(intersectionSelected.index);
 				guiPoints.getVerticeId(intersectionSelectedIndex);
-//				intersectionSelected.object.userData.gui.setValues(intersectionSelected.index, guiPoints.timeAngles);
 				gui.setValues(intersectionSelectedIndex, guiPoints.timeAngles);
 
 			}
@@ -497,7 +485,6 @@ class GuiSelectPoint {
 
 					function isWObject() { return (typeof func.w === 'object') && (func.w instanceof THREE.Color === false); }
 					const mesh = getMesh(), verticeColor = mesh.userData.myObject ?
-//						mesh.userData.myObject.verticeColor(intersectionSelected.index) :
 						mesh.userData.myObject.verticeColor(intersectionSelectedIndex) :
 						undefined;
 					var color = (func === undefined) || (!attributes.color && !attributes.ca) ?
@@ -790,13 +777,15 @@ class GuiSelectPoint {
 
 			}
 
-			mesh.userData.myObject ||= {
+			//mesh.userData.myObject ||= uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
+			if (!mesh.userData.myObject) mesh.userData.myObject = {
 
 				verticeColor: () => {},
 				verticeOpacity: () => {},
 				
 			};
-			mesh.userData.myObject.guiPoints ||= {
+			//mesh.userData.myObject.guiPoints ||= uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
+			if (!mesh.userData.myObject.guiPoints) mesh.userData.myObject.guiPoints = {
 
 				seletedIndex: (guiIndexStr) => { return guiIndexStr; },
 				setControllers: (index) => {},
@@ -815,7 +804,6 @@ class GuiSelectPoint {
 					}
 					
 				},
-//				positionOffset: 0,
 				getValue: (cPoints) => { return cPoints.__select.selectedOptions[0].index - 1; },
 				onChangeAngle: (verticeId, angleId, angle) => { }
 				
@@ -876,26 +864,8 @@ class GuiSelectPoint {
 			displayVerticeID( mesh );
 
 		}
-		this.getObjectLocalPosition = (intersectionSelected) => {
-/*
-			const myObject = intersectionSelected.object.userData.myObject,
-//				positionData = myObject.getPositionData ? myObject.getPositionData( intersectionSelected.index,  myObject.guiPoints.timeId ) : { verticeId: intersectionSelected.index };
-				positionData = myObject.getPositionData( intersectionSelected.index,  myObject.guiPoints.timeId );
-			return getObjectLocalPosition( intersectionSelected.object, positionData.verticeId );
-*/			
-			return getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
-			
-		}
-		this.getObjectPosition = (object, index) => {
-
-			return getObjectPosition( object, index);
-/*			
-			const mesh = getMesh();
-			return getObjectPosition( object,
-				mesh.userData.myObject.guiPoints.positionOffset + index);
-*/				
-			
-		}
+		this.getObjectLocalPosition = (intersectionSelected) => { return getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index ); }
+		this.getObjectPosition = (object, index) => { return getObjectPosition( object, index); }
 		/**
 		 * User has selected a point
 		 * @param {Object} intersectionSelected See [intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}
@@ -916,13 +886,6 @@ class GuiSelectPoint {
 			const myObject = intersectionSelected.object.userData.myObject;
 			if ( !myObject.getPositionData ) 
 				myObject.getPositionData = ( index ) => { return { verticeId: index, positionId: index * intersectionSelected.object.geometry.attributes.position.itemSize } }
-/*			
-			const mesh = getMesh();
-//			if (mesh.userData.myObject && mesh.userData.myObject.guiPoints) intersectionSelected.index += mesh.userData.myObject.guiPoints.positionOffset;
-			const position = getObjectLocalPosition( intersectionSelected.object,
-				(mesh.userData.myObject && mesh.userData.myObject.guiPoints ? mesh.userData.myObject.guiPoints.positionOffset : 0) + intersectionSelected.index );
-*/				
-//			const position = this.getObjectLocalPosition(intersectionSelected);
 
 			//f3DObjects.close();//если тут не закрывать папку, то ингода прорпадает скроллинг окна dat.GUI
 			//for testing:
@@ -960,19 +923,6 @@ class GuiSelectPoint {
 
 			this.selectPoint2 = function ( selectedMesh ) {
 
-/*				
-				let intersectionSelectedIndex = intersectionSelected.index;
-				if ( (intersectionSelectedIndex === undefined) || isNaN( intersectionSelectedIndex ) ) {
-
-					const geometryIndex = intersectionSelected.object.geometry.index;
-					if ( geometryIndex === null ) return;
-					//Пользователь нажал мышкой на LineSegments
-					intersectionSelectedIndex =  geometryIndex.getX(intersectionSelected.indexNew);
-					intersectionSelected.index = intersectionSelectedIndex;
-
-				}
-*/				
-
 				//сделал эту проверку потому что не могу придумать как удалить intersectionSelectedIndex когда пользователь вручную сменил mesh
 				if ( ( selectedMesh !== undefined ) && !Object.is( intersectionSelected.object, selectedMesh ) )
 					return;//Сначала пользователь выбрал точку с помошщью мыши
@@ -981,10 +931,6 @@ class GuiSelectPoint {
 				if ( !intersectionSelected.object.userData.boFrustumPoints ) {
 
 					//fPoints.open();много времени на открытие когда много точек
-/*					
-					const guiPoints = intersectionSelected.object.userData.myObject ? intersectionSelected.object.userData.myObject.guiPoints : undefined,
-						point = cPoints.__select[guiPoints ? cPoints.__select.selectedIndex : intersectionSelected.index + 1];
-*/						
 					const myObject = intersectionSelected.object.userData.myObject, guiPoints = myObject ? myObject.guiPoints : undefined, verticeId = guiPoints ? guiPoints.verticeId : undefined,
 						point = cPoints.__select[(verticeId? verticeId : intersectionSelectedIndex) + 1];
 					if ( point ) point.selected = true;
@@ -1051,11 +997,6 @@ class GuiSelectPoint {
 			}
 			const mesh = getMesh();
 			if ( !mesh ) return -1; //не выбран 3d объект.
-/*			
-			const index = cPoints.__select.selectedOptions[0].index;
-			return index - 1;
-*/
-//			return mesh.userData.myObject && mesh.userData.myObject.guiPoints ? cPoints.getValue() : cPoints.__select.selectedOptions[0].index - 1;
 			return mesh.userData.myObject.guiPoints.getValue(cPoints);
 
 		}
@@ -1259,7 +1200,6 @@ class GuiSelectPoint {
 					 //геометрия индексирована. mesh.geometry.drawRange.count указывает на количество индексов, которые нужно рисовать
 					 mesh.geometry.attributes.position.count;//По умолчанию все вершины видно
 			mesh.userData.myObject.guiPoints.create( fPoints, cPoints, cTrace, cTraceAll, count, intersectionSelected );
-//			intersectionSelected.index = mesh.userData.myObject.guiPoints.searchNearestEdgeVerticeId( intersectionSelected.index, intersectionSelected );
 
 		}
 
@@ -1315,10 +1255,7 @@ class GuiSelectPoint {
 				}
 				if ( mesh && mesh.userData.gui ) { fPoint.fCustomPoint = mesh.userData.gui.addControllers( fPoint, {
 					
-//					getInputEl: getInputEl,
 					readOnlyEl: readOnlyEl,
-//					isReadOnlyEl: isReadOnlyEl,
-//					setValue: setValue,
 					isReadOnlyController: isReadOnlyController,
 				
 				} ); }
@@ -1594,24 +1531,8 @@ class GuiSelectPoint {
 
 			let oldMesh;//Нужен когда пользователь сменил выбранный графический объект и когда надо сбрость настройки вершины предыдущего горафического объекта
 			cPoints = fPoints.add( { Points: lang.notSelected }, 'Points', { [lang.notSelected]: -1 } );
-/*			
-			cPoints.domElement.onmousedown = () => {
-
-//				event.returnValue = false;
-				console.log('opt.domElement.onmousedown. event.offsetX = ' + event.offsetX);
-			}
-*/			
 			cPoints.onChange( function ( pointId ) {
 
-/*				
-				const value = cPoints.__select[cPoints.__select.selectedIndex].getAttribute('value');
-				if ( value === null ) {
-
-					console.error('GuiSelectPoint: cPoints.onChange. Under constraction');//выбрать все точки для текущего времени проигрывателя
-					return;
-					
-				}
-*/				
 				pointId = parseInt( pointId );
 				if (isNaN(pointId)){
 
@@ -1630,7 +1551,6 @@ class GuiSelectPoint {
 					display = 'block';
 					const attributesPosition = mesh.geometry.attributes.position,
 						point = new THREE.Vector3().fromBufferAttribute(attributesPosition, pointId);
-//						point = (attributesPosition.itemSize === 4 ? new THREE.Vector4 :  new THREE.Vector3).fromBufferAttribute(attributesPosition, pointId);
 					const intersection = {
 						
 						object: mesh,
@@ -1645,7 +1565,6 @@ class GuiSelectPoint {
 					const setIntersectionProperties = mesh.userData.myObject.guiPoints.setIntersectionProperties;
 					if (setIntersectionProperties) setIntersectionProperties(intersection);
 					_this.select(intersection);
-//					_this.select( { object: mesh, index: mesh.userData.myObject.guiPoints.getPositionId(pointId) } );
 
 				}
 				if ( ( options.axesHelper !== false ) && ( options.axesHelper !== undefined ) )
@@ -1768,7 +1687,6 @@ class GuiSelectPoint {
 						//Если точка имеет индивидуальную cameraTarget, то камера будет следить по этим настройкам
 						if ( guiParams.cameraTarget ) guiParams.cameraTarget.camera.userData.cameraTargetPoint = point.cameraTarget;
 
-						//					if ( Player.orbitControls ) Player.orbitControls.reset();
 						if ( options.orbitControls ) options.orbitControls.reset();
 
 						if ( orbitControlsOptions ) {
@@ -1806,7 +1724,8 @@ class GuiSelectPoint {
 				guiParams.pointsControls( fPoints, dislayEl, getMesh );
 
 			}
-			options.traces ||= {
+			//options.traces ||= uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
+			if (!options.traces) options.traces = {
 
 				boTraces: false,
 				onChange: ( value ) => {
@@ -1819,20 +1738,8 @@ class GuiSelectPoint {
 				},
 				
 			}
-			cTraceAll = fPoints.add( options.traces, 'boTraces' ).onChange( ( value ) => {
-
-				options.traces.onChange( value );
-/*				
-				var mesh = getMesh();
-				mesh.userData.traceAll = value;
-				for ( var i = 0; i < mesh.geometry.attributes.position.count; i++ )
-					visibleTraceLine( { object: mesh, index: i }, value, getMesh );
-				cTrace.setValue( value );
-*/				
-
-			} );
+			cTraceAll = fPoints.add( options.traces, 'boTraces' ).onChange( ( value ) => { options.traces.onChange( value ); } );
 			dat.controllerNameAndTitle( cTraceAll, lang.trace, lang.traceAllTitle );
-			//		dislayEl( cTraceAll, Player.isCreated() );
 			dislayEl( cTraceAll, options.player );
 
 			//Restore default settings of all 3d objects button.
@@ -1938,7 +1845,6 @@ class GuiSelectPoint {
 
 						}
 						if ( options.palette ) Player.setColorAttribute( attributes, i, options.palette.toColor( value, controller.__min, controller.__max ) );
-//						if ((options.scales.w.isColor != false) && (options.scales.w.isChangeColor != false))
 						if ( options.scales.w.isColor != false )
 							attributes.position.setW( i, value );
 
@@ -1989,11 +1895,6 @@ class GuiSelectPoint {
 								if ( isReadOnlyController( controller ) ) return;
 								
 								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName);
-/*									
-									myObject = points.userData.myObject,
-									positionData = myObject.getPositionData ? myObject.getPositionData(intersection.index) : { positionId: intersection.index };
-								points.geometry.attributes.position.array[axesId + positionData.positionId] = value;
-*/
 								points.geometry.attributes.position.array[axesId + points.userData.myObject.getPositionData(intersection.index).positionId] = value;
 								points.geometry.attributes.position.needsUpdate = true;
 
@@ -2062,18 +1963,9 @@ class GuiSelectPoint {
 				} );
 			dat.controllerNameAndTitle( cOpacity, lang.opacity, lang.opacityTitle );
 
-			options.trace ||= {
-
-//				boTrace: false,не совместимо со вселенной
-				onChange: ( value ) => { visibleTraceLine( intersection, value, getMesh ); },
-				
-			}
-			cTrace = fPoint.add( { boTrace: false, }, 'boTrace' ).onChange( function ( value ) {
-
-				options.trace.onChange( value, cPoints.__select.selectedIndex - 1 );
-//				visibleTraceLine( intersection, value, getMesh );
-
-			} );
+			//options.trace ||= uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
+			if (!options.trace) options.trace = { onChange: (value) => { visibleTraceLine(intersection, value, getMesh); }, }
+			cTrace = fPoint.add( { boTrace: false, }, 'boTrace' ).onChange( function ( value ) { options.trace.onChange( value, cPoints.__select.selectedIndex - 1 ); } );
 			dat.controllerNameAndTitle( cTrace, lang.trace, lang.traceTitle ); //guiParams
 			dislayEl( cTrace, options.player );
 
@@ -2214,12 +2106,7 @@ class GuiSelectPoint {
 					
 				}
 
-			}, options, { x: '', y: '', z: '', w: '' } );/* {
-
-				getLanguageCode: getLanguageCode,
-				THREE: THREE,
-
-			} );*/
+			}, options, { x: '', y: '', z: '', w: '' } );
 
 		}
 		/**

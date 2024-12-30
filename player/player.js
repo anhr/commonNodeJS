@@ -766,7 +766,6 @@ class Player {
 
 			}
 			setMax();
-//			const axesDefault = JSON.parse( JSON.stringify( options.playerOptions ) ),//JSON преобразует Infinity в null. Поэтому неверно запоминается options.playerOptions.interval = Infinity
 			const axesDefault = {},
 				lang = getLang( {
 
@@ -776,10 +775,7 @@ class Player {
 			Object.keys( options.playerOptions ).forEach( ( key ) => { axesDefault[key] = options.playerOptions[key]; } );
 			Object.freeze( axesDefault );
 			const max = options.playerOptions.max, marks = options.playerOptions.marks;// interval = options.playerOptions.interval,
-//				playerOptionsDefault = {};
-//			Object.keys( options.playerOptions ).forEach( ( key ) => { playerOptionsDefault[key] = options.playerOptions[key]; } );
 			cookie.getObject( cookieName, options.playerOptions, axesDefault );
-//			if (interval === Infinity) options.playerOptions.interval = interval;//При копировании объекта свойство со значением Infinity превращается в null а затем я это переделываю в 1. Здесь я возвращаю значение interval = Infinity
 			if ( ( max === null ) || ( max === Infinity ) ||
 				( options.playerOptions.max === null )//раньше на веб странице плеер был настроен на бесконечное проигрыванияе а сейчас проигрывание ограничено по времени
 			) {
@@ -879,15 +875,12 @@ class Player {
 				}
 
 				//Ticks per seconds.
-				settings.options.playerOptions.intervalOptions ||= {};
+				//settings.options.playerOptions.intervalOptions ||= {};uncompatible with myThree.js → ./build/myThree.js, ./build/myThree.module.js...
+				if (!settings.options.playerOptions.intervalOptions) settings.options.playerOptions.intervalOptions = {};
 				const intervalOptions = settings.options.playerOptions.intervalOptions;
 				intervalOptions.min = intervalOptions.min != undefined ? intervalOptions.min : settings.options.playerOptions.interval < 1 ? settings.options.playerOptions.interval : 1;
 				intervalOptions.max = intervalOptions.max === null ? Infinity : //Во время JSON преобразования Infinity превращается в null. Поэтому восстанавливаю обратно
 					intervalOptions.max != undefined ? intervalOptions.max : settings.options.playerOptions.interval > 25 ? settings.options.playerOptions.interval : 25;
-/*				
-				intervalOptions.max = intervalOptions.max != undefined ? intervalOptions.max :
-					intervalOptions.max != null ? 25 : Infinity;//Во время JSON преобразования Infinity превращается в null. Поэтому восстанавливаю обратно
-*/					
 				if (intervalOptions.max === Infinity)
 					scaleControllers.interval = scaleControllers.folder.add( settings.options.playerOptions, 'interval' ).onChange( function ( value ) {
 
@@ -1823,12 +1816,6 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 		if ( t === undefined )
 			console.error( 'setPosition: t = ' + t );
 
-/*
-		if ( mesh.userData.myObject && mesh.userData.myObject.isSetPosition ) {
-
-			
-		}
-*/
 		var min, max;
 		if ( options && ( options.scales.w !== undefined ) ) {
 
@@ -2215,7 +2202,6 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 
 			object: mesh,
 			index: selectedPointIndex,
-//			point: new THREE.Vector3().fromBufferAttribute(mesh.geometry.attributes.position, selectedPointIndex),
 
 		} );
 
@@ -3094,7 +3080,6 @@ function assign( ) {
 
 		raycast: function ( raycaster, intersects ) {
 
-//console.log('raycast.');
 			const _inverseMatrix = new THREE.Matrix4();
 			const _ray = new THREE.Ray();
 			const _sphere = new THREE.Sphere();
@@ -3102,7 +3087,6 @@ function assign( ) {
 			function testPoint( point, index, localThresholdSq, matrixWorld, raycaster, intersects, object ) {
 
 				const rayPointDistanceSq = _ray.distanceSqToPoint( point );
-//console.log('testPoint. index = ' + index);
 				if ( rayPointDistanceSq < localThresholdSq ) {
 
 					const intersectPoint = new THREE.Vector3();
@@ -3141,10 +3125,8 @@ function assign( ) {
 			_sphere.applyMatrix4( matrixWorld );
 			_sphere.radius += threshold;
 
-//console.log('raycast. raycaster.ray: ' + JSON.stringify(raycaster.ray));
 			if ( raycaster.ray.intersectsSphere( _sphere ) === false ) return;
 
-//console.log('raycast. intersectsSphere');
 			//
 
 			_inverseMatrix.copy( matrixWorld ).invert();

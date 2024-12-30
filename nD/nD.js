@@ -350,8 +350,6 @@ class ND extends MyObject {
 			
 			//Find edge index
 			const drawRange = settings.bufferGeometry.drawRange;
-//			for ( var segmentIndex = 0; segmentIndex < edges.length; segmentIndex++ )
-//			for ( var segmentIndex = drawRange.start; segmentIndex < (drawRange === Infinity) ? edges.length : (drawRange.start + drawRange.count) / 2; segmentIndex++ ) {
 			for ( var segmentIndex = drawRange.start; segmentIndex < ( ( drawRange === Infinity) ? edges.length : drawRange.start + drawRange.count ); segmentIndex++ ) {
 
 				const edgeCur = edges[segmentIndex];
@@ -549,7 +547,6 @@ class ND extends MyObject {
 		function update() {
 			
 			_ND.intersection();
-//			object3D.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
 			object3D.geometry.attributes.position.needsUpdate = true;
 			if (options.guiSelectPoint) options.guiSelectPoint.update();
 			object3D.children.forEach( child => {
@@ -1113,7 +1110,6 @@ class ND extends MyObject {
 									target[name] = value;
 									if ( !isNaN( i ) ) {
 
-//										_ND.bufferGeometry.userData.position[positionId][i] = value;
 										target.positionWorld = undefined;
 										if ( _prevLine.prevLine ) {
 											
@@ -1427,7 +1423,6 @@ class ND extends MyObject {
 								case 'edges': settings.object.geometry.indices[0] = proxyEdges( value ); break;
 								case 'selected': edges.selected = value; break;
 								default: edges[prop] = value;
-//								default: console.error( 'ND settings.object.geometry.indices[0].set: invalid prop: ' + prop );
 
 							}
 							return true;
@@ -2062,11 +2057,9 @@ class ND extends MyObject {
 						}
 
 					}
-//					const indicesAndColors = _ND.indicesAndColors(this.color), indices = indicesAndColors.indices, colors = indicesAndColors.colors;
 					_ND.bufferGeometry.setIndex(indices);
 					if ( _ND.setDrawRange ) _ND.setDrawRange( 0, indices.length, _ND.bufferGeometry.drawRange.types.edges );//Если тут не установить drawRange, то будут отбражаться не все ребра в http://localhost/anhr/universe/main/hyperSphere/Examples/ 
 					return { indices: indices, colors: colors, };
-//					return indicesAndColors;
 
 				},
 

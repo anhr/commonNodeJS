@@ -83,7 +83,6 @@ class HyperSphere3D extends Sphere {
 		//сделать шаг проигрывтеля →
 		//Исчезнет ошибка HyperSphere: Invalid vertice[2] sum = 0.6560590267181396. r = 1
 		w.isColor = false;
-//		w.isChangeColor = false;
 		
 	};
 	get probabilityDensity() {
