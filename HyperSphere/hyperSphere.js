@@ -1489,6 +1489,7 @@ class HyperSphere extends MyObject {
 							getLanguageCode: options.getLanguageCode,
 							guiSelectPoint: options.guiSelectPoint,
 							renderer: options.renderer,
+							palette: options.palette,
 							
 						},
 						{
