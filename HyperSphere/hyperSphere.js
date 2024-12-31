@@ -1864,6 +1864,7 @@ class HyperSphere extends MyObject {
 													if (aAngleControls.arc) {
 
 														aAngleControls.arc.classSettings.settings.object.geometry.angles[verticeId] = verticeAngles;
+														aAngleControls.arc.object().geometry.drawRange.type = this.bufferGeometry.drawRange.types.edges;//строка выше портит drawRange.type
 														verticeId++;
 
 													} else arcAngles.push(verticeAngles);
@@ -1902,7 +1903,7 @@ class HyperSphere extends MyObject {
 
 													if (progressBar.boStop) {
 
-														//Этот процес вычисления дуги нужно остановть потому что начался другой процесс вычисления дуги
+														//Этот процес вычисления дуги нужно остановить потому что начался другой процесс вычисления дуги
 														progressBar.remove();
 														return;
 
