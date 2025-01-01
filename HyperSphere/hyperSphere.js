@@ -1807,14 +1807,10 @@ class HyperSphere extends MyObject {
 
 									}
 									let boTransparent;
-									aAngleControls.removeCross();
-									aAngleControls.removeArc();
 									if (edgeId === -1) {
 
-/*										
 										aAngleControls.removeCross();
 										aAngleControls.removeArc();
-*/										
 										aEdgeAngleControls.verticeId = undefined;
 										boTransparent = false;
 
