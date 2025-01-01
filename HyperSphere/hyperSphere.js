@@ -1504,7 +1504,8 @@ class HyperSphere extends MyObject {
 
 							} : settings.edges,
 							projectParams: { scene: classSettings.projectParams.scene, },
-							r: r * classSettings.r,
+//							r: r * classSettings.r,
+							r: r * classSettings.overriddenProperties.r(),
 							debug: classSettings.debug,
 							settings: {
 
