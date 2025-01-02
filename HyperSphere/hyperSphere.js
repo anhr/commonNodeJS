@@ -639,6 +639,7 @@ class HyperSphere extends MyObject {
 
 							switch (name) {
 
+/*									
 								//дуга между вершинами
 								case 'arcTo': return (verticeTo) => {
 
@@ -650,6 +651,7 @@ class HyperSphere extends MyObject {
 									return R * acos(ab / (R * R))
 
 								}
+*/								
 								//расстояние между вершинами по прямой в декартовой системе координат
 								//Если надо получить расстояние между вершинами по дуге в полярной системе координат, то надо вызвать 
 								//classSettings.settings.object.geometry.position.angles[verticeId].distanceTo
@@ -1505,7 +1507,7 @@ class HyperSphere extends MyObject {
 							} : settings.edges,
 							projectParams: { scene: classSettings.projectParams.scene, },
 //							r: r * classSettings.r,
-							r: r * classSettings.overriddenProperties.r(),
+							r: r * classSettings.overriddenProperties.r(classSettings.settings.guiPoints.timeId),
 							debug: classSettings.debug,
 							settings: {
 
@@ -1835,8 +1837,7 @@ class HyperSphere extends MyObject {
 										//рисуем крестик на противоположной вершине выбранного ребра
 										aAngleControls.removeCross();
 										vertices.length = 0;
-										const oppositeVertice = position[oppositeVerticeId],
-											crossSize = 0.05;
+										const oppositeVertice = position[oppositeVerticeId], crossSize = 0.05;
 										pushVertice([0, 0, crossSize]);
 										pushVertice([0, 0, -crossSize]);
 										pushVertice([-crossSize, -crossSize, 0]);
@@ -1871,7 +1872,19 @@ class HyperSphere extends MyObject {
 												d = π / arcVerticesCount,
 												cd = 1 / Math.sin(d),//Поправка для координат вершин что бы они равномерно располагались по дуге
 												vertice = position[aAngleControls.verticeId], oppositeVertice = position[aAngleControls.oppositeVerticeId],
-												distance = vertice.arcTo(oppositeVertice),
+																				//дуга между вершинами
+												arcTo = (verticeTo, vertice) => {
+				
+													//Calculate the arc length between two points over a hyper-sphere
+													//Reference: https://www.physicsforums.com/threads/calculate-the-arc-length-between-two-points-over-a-hyper-sphere.658661/post-4196208
+													const a = vertice, b = verticeTo, R = 1, acos = Math.acos;
+													let ab = 0;//dot product
+													for (let i = 0; i < a.length; i++) ab += a[i] * b[i];
+													return R * acos(ab / (R * R))
+				
+												},
+												distance = arcTo(oppositeVertice, vertice),
+//												distance = vertice.arcTo(oppositeVertice),
 												arcCount = distance * (aAngleControls.MAX_POINTS - 1) / π;
 											//Не получилось равномерно разделить дугу на части.
 											//Если начало и конец дуги расположены напротив друг друга на окружности или на сфере или на 4D hypersphere
@@ -1990,7 +2003,8 @@ class HyperSphere extends MyObject {
 
 															}
 															console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object().geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object().geometry.drawRange.count + ' Vertices count = ' + verticeId);
-															const distance = position[aAngleControls.verticeId].arcTo(position[aAngleControls.oppositeVerticeId]);
+															const distance = arcTo(position[aAngleControls.oppositeVerticeId], position[aAngleControls.verticeId]);
+//															const distance = position[aAngleControls.verticeId].arcTo(position[aAngleControls.oppositeVerticeId]);
 															if (classSettings.debug) {
 
 																let vertice, distanceDebug = 0;
