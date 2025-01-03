@@ -1507,7 +1507,7 @@ class HyperSphere extends MyObject {
 							} : settings.edges,
 							projectParams: { scene: classSettings.projectParams.scene, },
 //							r: r * classSettings.r,
-							r: r * classSettings.overriddenProperties.r(classSettings.settings.guiPoints.timeId),
+							r: r * classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0),
 							debug: classSettings.debug,
 							settings: {
 
@@ -1837,6 +1837,7 @@ class HyperSphere extends MyObject {
 										//рисуем крестик на противоположной вершине выбранного ребра
 										aAngleControls.removeCross();
 										vertices.length = 0;
+										if (settings.guiPoints) settings.bufferGeometry.userData.selectedTimeId = settings.guiPoints.timeId;
 										const oppositeVertice = position[oppositeVerticeId], crossSize = 0.05;
 										pushVertice([0, 0, crossSize]);
 										pushVertice([0, 0, -crossSize]);
@@ -1871,8 +1872,8 @@ class HyperSphere extends MyObject {
 												arcVerticesCount = 2,
 												d = π / arcVerticesCount,
 												cd = 1 / Math.sin(d),//Поправка для координат вершин что бы они равномерно располагались по дуге
-												vertice = position[aAngleControls.verticeId], oppositeVertice = position[aAngleControls.oppositeVerticeId],
-																				//дуга между вершинами
+												vertice = position[aAngleControls.verticeId],// oppositeVertice = position[aAngleControls.oppositeVerticeId],
+												//дуга между вершинами
 												arcTo = (verticeTo, vertice) => {
 				
 													//Calculate the arc length between two points over a hyper-sphere
