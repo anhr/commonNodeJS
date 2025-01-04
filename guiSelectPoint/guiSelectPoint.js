@@ -1549,8 +1549,15 @@ class GuiSelectPoint {
 				else {
 
 					display = 'block';
-					const attributesPosition = mesh.geometry.attributes.position,
-						point = new THREE.Vector3().fromBufferAttribute(attributesPosition, pointId);
+					const userData = mesh.userData.myObject.bufferGeometry.userData, oldTimeId = userData.timeId;
+					userData.timeId = mesh.userData.myObject.guiPoints.timeId;
+					const point = userData.position[pointId];
+					pointId = userData.positionOffsetId(pointId);
+					userData.timeId = oldTimeId;
+/*					
+const attributesPosition = mesh.geometry.attributes.position;
+	point = new THREE.Vector3().fromBufferAttribute(attributesPosition, pointId);
+*/	
 					const intersection = {
 						
 						object: mesh,

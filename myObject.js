@@ -210,6 +210,7 @@ class MyObject {
 			if (isRCount) settings.bufferGeometry.userData.drawRange = () => { return settings.bufferGeometry.drawRange; }
 			const positions = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * pointLength);
 			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
+			settings.bufferGeometry.userData.positionOffsetId = (positionId) => { return this.positionOffsetId(positionId) }
 			settings.bufferGeometry.userData.position = new Proxy(settings.bufferGeometry.attributes.position, {
 	
 				get: (position, name) => {
@@ -616,15 +617,25 @@ class MyObject {
 	
 	}
 	/**
-	 * 
+	 * @param {number} positionId Position identifier for start time.
+	 * @returns Offset of the position identifier for current time.
+	 */
+	positionOffsetId(positionId) {
+
+		const settings = this.classSettings.settings;
+		return settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId;
+		
+	}
+	/**
 	 * @param {object} position [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} <b>position</b> attribute of the child graphical object.
-	 * @param {number} positionId Position identifier.
-	 * @returns Offset of the position in the <b>position</b> attribute.
+	 * @param {number} positionId Position identifier for start time.
+	 * @returns Offset of the position in the <b>position</b> attribute for current time.
 	 */
 	positionOffset(position, positionId) {
 
 		const settings = this.classSettings.settings;
-		return (settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId) * position.itemSize;
+		return this.positionOffsetId(positionId) * position.itemSize;
+//		return (settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId) * position.itemSize;
 		
 	}
 
