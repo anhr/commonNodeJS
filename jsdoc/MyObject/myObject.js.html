@@ -68,8 +68,10 @@ class MyObject {
 		const _this = this;
 
 		//иммитация наследования классов
-		settings.overriddenProperties ||= {};
-		settings.overriddenProperties.setDrawRange ||= (start, count) => {}
+		//settings.overriddenProperties ||= {};uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
+		if (!settings.overriddenProperties) settings.overriddenProperties = {};
+		//settings.overriddenProperties.setDrawRange ||= (start, count) => { }uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
+		if (!settings.overriddenProperties.setDrawRange) settings.overriddenProperties.setDrawRange = (start, count) => { }
 		settings.overriddenProperties.getPlayerTimesLength = () => { return 1; }
 		
 		if (settings.guiPoints) this.guiPoints = settings.guiPoints;
@@ -83,7 +85,6 @@ class MyObject {
 			geometryPosition = geometry.position;
 		if ((timeId === 0) &amp;&amp; (!geometryPosition || !geometryPosition.isPositionProxy)) {
 
-//if (geometryPosition) console.log(geometry.position.isPositionProxy);
 			geometry.position = new Proxy(geometryPosition || [], {
 	
 				get: (positions, name) => {
@@ -171,7 +172,6 @@ class MyObject {
 			//Когда bufferGeometry.index != null, и отображаются вершины,
 			//то в drawRange задается диапазон видимых вершин без учета размера каждой вершины bufferGeometry.attributes.positionю.itemSize
 			const itemSize = ((position &amp;&amp; (bufferGeometry.index != null)) ? position.itemSize : 1);
-//			const itemSize = (position ? position.itemSize : 1);
 			
 			this.setDrawRange(start * itemSize, count * itemSize, bufferGeometry.drawRange.types.vertices);//https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry.setDrawRange
 			
@@ -228,12 +228,6 @@ class MyObject {
 				settings.object.geometry.MAX_POINTS;
 
 			setDrawRangeTypes();
-/*
-			//Для отладки
-			settings.bufferGeometry.drawRange.types = { vertices: 0, edges: 1 };
-			//settings.bufferGeometry.drawRange.type = settings.bufferGeometry.drawRange.types.vertices Установлен диапазон видимых вершин
-			//settings.bufferGeometry.drawRange.type = settings.bufferGeometry.drawRange.types.edges Установлен диапазон видимых ребер
-*/
 			
 			if (MAX_POINTS != undefined) this.setVerticesRange(0, isRCount ?
 				pointLength * pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
@@ -244,6 +238,7 @@ class MyObject {
 			if (isRCount) settings.bufferGeometry.userData.drawRange = () => { return settings.bufferGeometry.drawRange; }
 			const positions = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * pointLength);
 			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
+			settings.bufferGeometry.userData.positionOffsetId = (positionId) => { return this.positionOffsetId(positionId) }
 			settings.bufferGeometry.userData.position = new Proxy(settings.bufferGeometry.attributes.position, {
 	
 				get: (position, name) => {
@@ -372,6 +367,18 @@ class MyObject {
 			//color
 			if (_this.setW) _this.setW();
 			const itemSize = settings.object.geometry.opacity ? 4 : 3, colors = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * itemSize);
+			if (itemSize === 4){
+
+				let colorId = itemSize - 1;
+				const opacity = settings.object.geometry.opacity;
+				//set opacity
+				while(colorId &lt; colors.length) {
+
+					colors[colorId] = opacity;
+					colorId += itemSize;
+					
+				}
+			}
 			settings.bufferGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, itemSize));
 
 		}
@@ -517,7 +524,6 @@ class MyObject {
 			if (itemSize > 3) array [++positionId] = w;
 
 			const drawRange = settings.bufferGeometry.drawRange;
-//			if ((drawRange.count === Infinity) || ((drawRange.start + drawRange.count * ((settings.bufferGeometry.index === null) ? itemSize : 1)) &lt; positionId))
 			if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) &lt; positionId)){
 
 				this.setVerticesRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
@@ -528,7 +534,6 @@ class MyObject {
 			//Color attribute
 
 			itemSize = attributes.color.itemSize;
-//			let colorId = i * itemSize + (timeId === undefined ? 0 : anglesLength * timeId * itemSize);
 			let colorId = i * itemSize + (timeId === undefined ? 0 : positionBlockLength * timeId * itemSize);
 			array = attributes.color.array;
 			const verticeColor = this.verticeColor(i, vertice, timeId);
@@ -537,7 +542,6 @@ class MyObject {
 				if (settings.options) {
 					
 					const wScale = settings.options.scales.w;
-//					Player.setColorAttribute(attributes, i + (timeId === undefined ? 0 : anglesLength * timeId), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 					Player.setColorAttribute(attributes, i + (timeId === undefined ? 0 : positionBlockLength * timeId), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 
 				}
@@ -622,8 +626,6 @@ class MyObject {
 	
 	//base methods
 
-//	get isSetPosition() { return false; }
-
 	/**
 	 * Returns 'white'.
 	 */
@@ -643,15 +645,25 @@ class MyObject {
 	
 	}
 	/**
-	 * 
+	 * @param {number} positionId Position identifier for start time.
+	 * @returns Offset of the position identifier for current time.
+	 */
+	positionOffsetId(positionId) {
+
+		const settings = this.classSettings.settings;
+		return settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId;
+		
+	}
+	/**
 	 * @param {object} position [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} &lt;b>position&lt;/b> attribute of the child graphical object.
-	 * @param {number} positionId Position identifier.
-	 * @returns Offset of the position in the &lt;b>position&lt;/b> attribute.
+	 * @param {number} positionId Position identifier for start time.
+	 * @returns Offset of the position in the &lt;b>position&lt;/b> attribute for current time.
 	 */
 	positionOffset(position, positionId) {
 
 		const settings = this.classSettings.settings;
-		return (settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId) * position.itemSize;
+		return this.positionOffsetId(positionId) * position.itemSize;
+//		return (settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId) * position.itemSize;
 		
 	}
 
@@ -673,7 +685,7 @@ export default MyObject;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Wed Dec 25 2024 07:13:53 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Jan 04 2025 07:31:55 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
