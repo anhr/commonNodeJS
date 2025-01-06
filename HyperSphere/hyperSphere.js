@@ -1828,8 +1828,11 @@ class HyperSphere extends MyObject {
 										edgeAnglesDefault.length = 0;
 										for (let i = 0; i < oppositeVerticeAngles.length; i++) {
 
-											const angle = oppositeVerticeAngles[i];
-											aEdgeAngleControls[i].setValue(angle);
+											const angle = oppositeVerticeAngles[i],
+												cAngle = aEdgeAngleControls[i];
+											cAngle.boSetPosition = false;
+											cAngle.setValue(angle);
+											delete cAngle.boSetPosition;
 											edgeAnglesDefault.push(angle);
 
 										}
