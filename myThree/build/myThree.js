@@ -11827,6 +11827,9 @@ var MyObject = function () {
 			};
 			var positions = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * pointLength);
 			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
+			settings.bufferGeometry.userData.positionOffsetId = function (positionId) {
+				return _this2.positionOffsetId(positionId);
+			};
 			settings.bufferGeometry.userData.position = new Proxy(settings.bufferGeometry.attributes.position, {
 				get: function get$$1(position, name) {
 					var positionId = parseInt(name);
@@ -12070,10 +12073,16 @@ var MyObject = function () {
 		};
 	}
 	createClass(MyObject, [{
+		key: 'positionOffsetId',
+		value: function positionOffsetId(positionId) {
+			var settings = this.classSettings.settings;
+			return settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId;
+		}
+	}, {
 		key: 'positionOffset',
 		value: function positionOffset(position, positionId) {
 			var settings = this.classSettings.settings;
-			return (settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId) * position.itemSize;
+			return this.positionOffsetId(positionId) * position.itemSize;
 		}
 	}, {
 		key: 'defaultColor',
@@ -14964,8 +14973,12 @@ function GuiSelectPoint(options) {
 									if (mesh && mesh.userData.gui && mesh.userData.gui.reset) oldMesh = mesh;
 									if (pointId === -1) display = 'none';else {
 												display = 'block';
-												var attributesPosition = mesh.geometry.attributes.position,
-												    point = new THREE.Vector3().fromBufferAttribute(attributesPosition, pointId);
+												var userData = mesh.userData.myObject.bufferGeometry.userData,
+												    oldTimeId = userData.timeId;
+												userData.timeId = mesh.userData.myObject.guiPoints.timeId;
+												var point = userData.position[pointId];
+												pointId = userData.positionOffsetId(pointId);
+												userData.timeId = oldTimeId;
 												var _intersection = {
 															object: mesh,
 															index: pointId,
