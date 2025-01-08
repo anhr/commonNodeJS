@@ -45,6 +45,7 @@ class MyObject {
 		//settings.overriddenProperties.setDrawRange ||= (start, count) => { }uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
 		if (!settings.overriddenProperties.setDrawRange) settings.overriddenProperties.setDrawRange = (start, count) => { }
 		settings.overriddenProperties.getPlayerTimesLength = () => { return 1; }
+		if (!settings.overriddenProperties.positionOffsetId) settings.overriddenProperties.positionOffsetId = (positionId) => { return positionId; }
 		
 		if (settings.guiPoints) this.guiPoints = settings.guiPoints;
 
@@ -593,6 +594,19 @@ class MyObject {
 				this.defaultColor;//'lime';
 		
 		}
+		/**
+		 * @param {number} positionId Position identifier for start time.
+		 * @returns Offset of the position identifier for current time.
+		 */
+		this.positionOffsetId = (positionId) => {
+
+/*			
+			const settings = this.classSettings.settings;
+			return settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId;
+*/			
+			return settings.overriddenProperties.positionOffsetId(positionId);
+			
+		}
 		
 	}
 	
@@ -615,16 +629,6 @@ class MyObject {
 		}
 		return false;
 	
-	}
-	/**
-	 * @param {number} positionId Position identifier for start time.
-	 * @returns Offset of the position identifier for current time.
-	 */
-	positionOffsetId(positionId) {
-
-		const settings = this.classSettings.settings;
-		return settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId;
-		
 	}
 	/**
 	 * @param {object} position [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} <b>position</b> attribute of the child graphical object.

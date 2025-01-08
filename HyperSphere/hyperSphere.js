@@ -952,6 +952,12 @@ class HyperSphere extends MyObject {
 		const position = settings.object.geometry.position;
 		
 		//иммитация наследования классов
+		classSettings.settings.overriddenProperties.positionOffsetId = (positionId) => {
+			
+			const settings = classSettings.settings;
+			return settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId;
+			
+		}
 		classSettings.overriddenProperties ||= {};
 		const overriddenProperties = classSettings.overriddenProperties;
 		overriddenProperties.oppositeVertice ||= (oppositeAngleId) => { return position[oppositeAngleId]; }
