@@ -1,13 +1,13 @@
 {
-  "name": "three",
-  "version": "0.144.0",
-  "description": "JavaScript 3D library",
+  "name": "MyThree",
+  "version": "0.1.0",
+  "description": "I use MyThree in my projects for displaying of my 3D objects in the canvas.",
+  "main": "build/myThree.js",
   "type": "module",
-  "main": "./build/three.js",
-  "module": "./build/three.module.js",
+  "module": "./build/myThree.module.js",
   "exports": {
     ".": {
-      "import": "./build/three.module.js",
+      "import": "./build/myThree.module.js",
       "require": "./build/three.cjs"
     },
     "./examples/fonts/*": "./examples/fonts/*",
