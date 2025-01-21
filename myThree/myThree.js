@@ -1,6 +1,9 @@
 ﻿/**
  * @module MyThree
  * @description I use MyThree in my projects for displaying of my 3D objects in the canvas.
+ *
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ * 
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
  * @license under the Apache License, Version 2.0 (the "License");
@@ -51,11 +54,11 @@ import { getObjectPosition } from '../getPosition.js';
 //import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';
 
 import FrustumPoints from '../frustumPoints/frustumPoints.js';
-import three from '../three.js';
-if ( typeof dat !== 'undefined' )
+import three from '../three.js'
+if (typeof dat !== 'undefined')
 	three.dat = dat;
 
-import FolderPoint from '../folderPoint.js';
+import FolderPoint from '../folderPoint.js'
 
 /*проверка duplicate THREE
 //import * as THREE2 from 'https://threejs.org/build/three.module.js';
@@ -63,30 +66,28 @@ import * as THREE2 from '../../../three.js/dev/build/three.module.js';
 three.THREE = THREE2;
 */
 
-import Options from '../Options.js';
+import Options from '../Options.js'
 
-import pointLight from '../pointLight.js';
+import pointLight from '../pointLight.js'
 
 function arrayContainersF() {
 
 	const array = [];
-	this.push = function ( elContainer ) {
+	this.push = function (elContainer) {
 
-		array.push( elContainer );
-
-	};
-
-	this.display = function ( elContainer, fullScreen ) {
-
-		array.forEach( function ( itemElContainer ) {
-
-			itemElContainer.style.display = ( itemElContainer === elContainer ) || ! fullScreen ? 'block' : 'none';
-
-		} );
+		array.push(elContainer);
 
 	};
+	this.display = function (elContainer, fullScreen) {
 
-	Object.defineProperties( this, {
+		array.forEach(function (itemElContainer) {
+
+			itemElContainer.style.display = (itemElContainer === elContainer) || !fullScreen ? 'block' : 'none';
+
+		});
+
+	};
+	Object.defineProperties(this, {
 
 		/**
 		 * getter
@@ -101,17 +102,16 @@ function arrayContainersF() {
 
 		},
 
-	} );
+	});
 
-}
-
+};
 const arrayContainers = new arrayContainersF();
 
 /*
  * if you asynhronous creates two or more myThreejs same time, then you will receive the error message:
- *
+ * 
  * Uncaught ReferenceError: WEBGL is not defined
- *
+ * 
  * For resolving of the issue I have remembers myThreejs parameters in the arrayCreates
  * and creates next myThreejs only after creating of previous myThreejs.
  */
@@ -150,7 +150,7 @@ class MyThree {
 	 * &lt;/div&gt;</b>
 	 * New canvas is created inside of the div tag.
 	 * </pre>
-	 *
+	 * 
 	 * @param {THREE.PerspectiveCamera} [options.camera] [PerspectiveCamera]{@link https://threejs.org/docs/index.html#api/en/cameras/PerspectiveCamera}.
 	 * @param {THREE.Vector3} [options.camera.position=new THREE.Vector3( 0.4, 0.4, 2 )] camera position.
 	 * @param {THREE.Vector3} [options.camera.scale=new THREE.Vector3( 1, 1, 1 )] camera scale.
@@ -158,7 +158,7 @@ class MyThree {
 	 * @param {Number} [options.camera.aspect=window.innerWidth / window.innerHeight] Camera frustum aspect ratio. See [aspect]{@link https://threejs.org/docs/?q=PerspectiveCamera#api/en/cameras/PerspectiveCamera.aspect}.
 	 * @param {Number} [options.camera.near=0.01] Camera frustum near plane. See [near]{@link https://threejs.org/docs/?q=PerspectiveCamera#api/en/cameras/PerspectiveCamera.near}.
 	 * @param {Number} [options.camera.far=10] Camera frustum far plane. See [far]{@link https://threejs.org/docs/?q=PerspectiveCamera#api/en/cameras/PerspectiveCamera.far}.
-	 *
+	 * 
 	 * @param {THREE.Scene} [options.scene] [Scene]{@link https://threejs.org/docs/index.html#api/en/scenes/Scene}.
 	 * @param {THREE.Vector3} [options.scene.position=new THREE.Vector3( 0, 0, 0 )] scene position.
 	 * @param {boolean|object} [options.orbitControls] false - do not add the [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}. Allow the camera to orbit around a target.
@@ -273,7 +273,7 @@ class MyThree {
 	 * @param {event} [options.onSelectScene] New time of the <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
 	 * @param {string} [options.title] text in the top left corner of the canvas.
 	 */
-	constructor( createXDobjects, options ) {
+	constructor(createXDobjects, options) {
 
 		options = options || {};
 
@@ -281,80 +281,78 @@ class MyThree {
 
 		var myThreejs = this;
 
-		arrayCreates.push( {
+		arrayCreates.push({
 
 			createXDobjects: createXDobjects,
 			options: options,
 
-		} );
-		if ( arrayCreates.length > 1 )
+		});
+		if (arrayCreates.length > 1)
 			return;
 
 		var camera, group, scene, canvas;
 
-		var elContainer = options.elContainer === undefined ? document.getElementById( 'containerDSE' ) :
-			typeof options.elContainer === 'string' ? document.getElementById( options.elContainer ) : options.elContainer;
-		if ( elContainer === null ) {
+		var elContainer = options.elContainer === undefined ? document.getElementById("containerDSE") :
+			typeof options.elContainer === "string" ? document.getElementById(options.elContainer) : options.elContainer;
+		if (elContainer === null) {
 
-			if ( typeof options.elContainer === 'string' )
-				console.warn( 'The ' + options.elContainer + ' element was not detected.' );
-			elContainer = document.createElement( 'div' );
-			document.querySelector( 'body' ).appendChild( elContainer );
+			if (typeof options.elContainer === "string")
+				console.warn('The ' + options.elContainer + ' element was not detected.');
+			elContainer = document.createElement('div');
+			document.querySelector('body').appendChild(elContainer);
 
 		}
-
-		arrayContainers.push( elContainer );
-		if ( ! elContainer.querySelector( 'canvas' ) ) {
+		arrayContainers.push(elContainer);
+		if (!elContainer.querySelector('canvas')) {
 
 			elContainer.innerHTML = '';
-			const elDiv = document.createElement( 'div' );
+			const elDiv = document.createElement('div');
 			elDiv.className = 'container';
-			elDiv.appendChild( document.createElement( 'canvas' ) );
-			elContainer.appendChild( elDiv );
+			elDiv.appendChild(document.createElement('canvas'));
+			elContainer.appendChild(elDiv);
 			elContainer = elDiv;
 
 		}
 
-		if ( three.dat && ( options.dat !== false ) ) {
+		if (three.dat && (options.dat !== false)) {
 
 			options.dat = options.dat || {};
 			options.dat.parent = elContainer;
 
 		}
 
-		if ( options.title ) {
+		if (options.title) {
 
-			const elDiv = document.createElement( 'div' );
+			const elDiv = document.createElement('div');
 			elDiv.style.position = 'absolute';
 			elDiv.style.top = '0px';
 			elDiv.style.color = 'white';
 			elDiv.style.padding = '3px';
 			elDiv.innerHTML = options.title;
-			elContainer.appendChild( elDiv );
+			elContainer.appendChild(elDiv);
 
 		}
 
-		options = new Options( options );
+		options = new Options(options);
 
 		/**
 		* Save scale, position and rotation to the userData.default of the mesh
 		* @param {THREE.Object3D} mesh
 		*/
-		options.saveMeshDefault = function ( mesh ) {
+		options.saveMeshDefault = function (mesh) {
 
-			//			mesh.userData.default = mesh.userData.default || {};
-			if ( ! mesh.userData.default ) mesh.userData.default = {};
+			mesh.userData.default = mesh.userData.default || {};
 
 			mesh.userData.default.scale = new THREE.Vector3();
-			mesh.userData.default.scale.copy( mesh.scale );
+			mesh.userData.default.scale.copy(mesh.scale);
 
 			mesh.userData.default.position = new THREE.Vector3();
-			mesh.userData.default.position.copy( mesh.position );
+			mesh.userData.default.position.copy(mesh.position);
 
 			mesh.userData.default.rotation = new THREE.Euler();
-			mesh.userData.default.rotation.copy( mesh.rotation );
+			mesh.userData.default.rotation.copy(mesh.rotation);
 
-		};
+		}
 
 		//point size
 		const defaultPoint = {},
@@ -363,61 +361,73 @@ class MyThree {
 			mouse = new THREE.Vector2();
 
 		var renderer,
-			fOptions,
-			rendererSizeDefault, cameraPosition,
+
+			//перенес в options.dat
+			//mouseenter = false,//true - мышка находится над gui или canvasMenu
+			//В этом случае не надо обрабатывать событие elContainer 'pointerdown'
+			//по которому выбирается точка на canvas.
+			//В противном случае если пользователь щелкнет на gui, то он может случайно выбрать точку на canvas.
+			//Тогда открывается папка Meshes и все органы управления сдвигаются вниз. Это неудобно.
+			//И вообще нехорошо когда выбирается точка когда пользователь не хочет это делать.
+
+			fOptions,//canvasMenu,  axesHelper,// INTERSECTED = [], scale = options.scale, colorsHelper = 0x80,
+			rendererSizeDefault, cameraPosition,//gui, fullScreen,
+
+			//point size
 			pointSize,
+
 			stats,
 
 			//https://www.khronos.org/webgl/wiki/HandlingContextLost
 			requestId;
 
-		canvas = elContainer.querySelector( 'canvas' );
-		if ( ! canvas ) {
+		canvas = elContainer.querySelector('canvas');
+		if (!canvas) {
 
-			canvas = document.createElement( 'canvas' );
-			elContainer.appendChild( canvas );
+			canvas = document.createElement('canvas');
+			elContainer.appendChild(canvas);
 
 		}
 
 		function isFullScreen() {
 
-			if ( options.canvasMenu ) return options.canvasMenu.isFullScreen();
-			if ( options.canvas ) return options.canvas.fullScreen !== false;
+			if (options.canvasMenu) return options.canvasMenu.isFullScreen();
+			if (options.canvas) return options.canvas.fullScreen !== false;
 			return true;
 
 		}
 		//https://www.khronos.org/webgl/wiki/HandlingContextLost
 
-		const elImg = elContainer.querySelector( 'img' );
-		if ( elImg ) elContainer.removeChild( elImg );
+		const elImg = elContainer.querySelector('img');
+		if (elImg) elContainer.removeChild(elImg);
 
-		if ( typeof WebGLDebugUtils !== 'undefined' )
-			canvas = WebGLDebugUtils.makeLostContextSimulatingCanvas( canvas );
+		if (typeof WebGLDebugUtils !== 'undefined')
+			canvas = WebGLDebugUtils.makeLostContextSimulatingCanvas(canvas);
 
 		//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
-		canvas.addEventListener( 'webglcontextlost', function ( event ) {
+		canvas.addEventListener("webglcontextlost", function (event) {
 
 			event.preventDefault();
-			if ( requestId !== undefined )
-				window.cancelAnimationFrame( requestId );
-			else console.error( 'myThreejs.create.onloadScripts: requestId = ' + requestId );
-			clearThree( scene );
+			if (requestId !== undefined)
+				window.cancelAnimationFrame(requestId);
+			else console.error('myThreejs.create.onloadScripts: requestId = ' + requestId);
+			clearThree(scene);
 
 			//Не могу выполнить npm run build Получаю ошибку
 			//(babel plugin) SyntaxError: D:/My documents/MyProjects/webgl/three.js/GitHub/commonNodeJS/master/myThree/myThree.js: "raycaster" is read-only
 			//				raycaster = undefined;
 
-			rendererSizeDefault.onFullScreenToggle( true );
-			alert( lang.webglcontextlost );
+			rendererSizeDefault.onFullScreenToggle(true);
+			alert(lang.webglcontextlost);
 
-		}, false );
-		canvas.addEventListener( 'webglcontextrestored', function () {
+		}, false);
+		canvas.addEventListener("webglcontextrestored", function () {
 
-			console.warn( 'webglcontextrestored' );
+			console.warn('webglcontextrestored');
 			init();
 			animate();
 
-		}, false );
+		}, false);
 
 		//
 
@@ -428,12 +438,12 @@ class MyThree {
 
 			// CAMERA
 
-			camera = new THREE.PerspectiveCamera( options.camera.fov || 70,
+			camera = new THREE.PerspectiveCamera(options.camera.fov || 70,
 				options.camera.aspect || window.innerWidth / window.innerHeight,
 				options.camera.near || 0.01,
-				options.camera.far || 10 );
-			camera.position.copy( options.camera.position );
-			camera.scale.copy( options.camera.scale );
+				options.camera.far || 10);
+			camera.position.copy(options.camera.position);
+			camera.scale.copy(options.camera.scale);
 
 			//для возврата созданной камеры обратно в код, который вызвал new MyThree
 			//В частности это используется для создания точки, за которой будет следить камера
@@ -442,117 +452,116 @@ class MyThree {
 			options.point.sizePointsMaterial = 100;//size of points with material is not ShaderMaterial is options.point.size / options.point.sizePointsMaterial
 
 			//добавляю camera.userData.default что бы изменять положение камеры во время проигрывания
-			if ( options.cameraTarget ) {
+			if (options.cameraTarget) {
 
 				options.cameraTarget.camera = camera;
-				options.playerOptions.cameraTarget.init( options.cameraTarget, options );
+				options.playerOptions.cameraTarget.init(options.cameraTarget, options);
 
 			}
 
 			// SCENE
 
 			scene = new THREE.Scene();
-			scene.background = new THREE.Color( 0x000000 );
-			scene.fog = new THREE.Fog( 0x000000, 250, 1400 );
+			scene.background = new THREE.Color(0x000000);
+			scene.fog = new THREE.Fog(0x000000, 250, 1400);
 			scene.userData.optionsSpriteText = {
 
 				textHeight: 0.04,
 				//fov: camera.fov,
 				/*
 				rect: {
-
+	
 					displayRect: true,
 					borderRadius: 15,
-
+	
 				},
 				*/
 
-			};
+			}
 
 			group = new THREE.Group();
-			scene.add( group );
+			scene.add(group);
 
-			const gl = new FrustumPoints( camera, group, canvas, {
+			const gl = new FrustumPoints(camera, group, canvas, {
 
 				options: options,
 
-			} ).gl;
+			}).gl;
 
 			//
 
-			renderer = new THREE.WebGLRenderer( {
+			renderer = new THREE.WebGLRenderer({
 
 				antialias: true,
 				canvas: canvas,
 				context: gl,
 
-			} );
+			});
 
 			//если не выполнить эту команду то в http://localhost/anhr/commonNodeJS/master/fermatSpiral/Examples/
 			//холст будет не на весь экран потомучто там не используется меню
-			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setSize(window.innerWidth, window.innerHeight);
 
 			options.renderer = renderer;
 
 			options.cursor = renderer.domElement.style.cursor;
 
-			if ( options.stereoEffect !== false ) {
+			if (options.stereoEffect !== false) {
 
 				options.stereoEffect = options.stereoEffect || {};
 				options.stereoEffect.rememberSize = true;//remember default size of the canvas. Resize of the canvas to full screen for stereo mode and restore to default size if no stereo effacts.
 
 			}
-
-			new StereoEffect( renderer, options );
-			options.eventListeners = new Options.raycaster.EventListeners( camera, renderer, { options: options, scene: scene, } );
+			new StereoEffect(renderer, options);
+			options.eventListeners = new Options.raycaster.EventListeners(camera, renderer, { options: options, scene: scene, });
 
 			function removeTraceLines() {
 
-				group.children.forEach( function ( mesh ) {
+				group.children.forEach(function (mesh) {
 
-					if ( ( mesh.userData.player === undefined ) || ( mesh.userData.player.arrayFuncs === undefined ) || ( typeof mesh.userData.player.arrayFuncs === 'function' ) )
+					if ((mesh.userData.player === undefined) || (mesh.userData.player.arrayFuncs === undefined) || (typeof mesh.userData.player.arrayFuncs === "function"))
 						return;
-					mesh.userData.player.arrayFuncs.forEach( function ( vector ) {
+					mesh.userData.player.arrayFuncs.forEach(function (vector) {
 
-						if ( vector.line === undefined )
+						if (vector.line === undefined)
 							return;
 						vector.line.remove();
-						vector.line = new Player.traceLine( options );
+						vector.line = new Player.traceLine(options);
 
-					} );
+					});
 
-				} );
+				});
 
 			}
 
 			//Light
 
-			const pointLight1 = new pointLight( scene, {
+			const pointLight1 = new pointLight(scene, {
 
 				options: options,
 				position: options.pointLight && options.pointLight.pointLight1 && options.pointLight.pointLight1.position ? options.pointLight.pointLight1.position :
-					new THREE.Vector3( 2 * options.scale, 2 * options.scale, 2 * options.scale ),
+					new THREE.Vector3(2 * options.scale, 2 * options.scale, 2 * options.scale),
 
-			} );
-			const pointLight2 = new pointLight( scene, {
+			});
+			const pointLight2 = new pointLight(scene, {
 
 				options: options,
 				position: options.pointLight && options.pointLight.pointLight2 && options.pointLight.pointLight2.position ? options.pointLight.pointLight2.position :
-					new THREE.Vector3( - 2 * options.scale, - 2 * options.scale, - 2 * options.scale ),
+					new THREE.Vector3(-2 * options.scale, -2 * options.scale, -2 * options.scale),
 
-			} );
+			});
 
 			//
 
 			//dat-gui JavaScript Controller Library
 			//https://github.com/dataarts/dat.gui
-			if ( ( options.dat.gui ) ) {
+			if ((options.dat.gui)) {
 
 				//for debugging
-				if ( typeof WebGLDebugUtils !== 'undefined' )
-					options.dat.gui.add( {
+				if (typeof WebGLDebugUtils !== "undefined")
+					options.dat.gui.add({
 
-						loseContext: function ( value ) {
+						loseContext: function (value) {
 
 							canvas.loseContext();
 							//https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextlost_event
@@ -560,49 +569,49 @@ class MyThree {
 
 						},
 
-					}, 'loseContext' );
+					}, 'loseContext');
 
 				//Close gui window
-				if ( options.dat.gui.__closeButton.click !== undefined )//for compatibility with Safari 5.1.7 for Windows
+				if (options.dat.gui.__closeButton.click !== undefined)//for compatibility with Safari 5.1.7 for Windows
 					options.dat.gui.__closeButton.click();
 
 			}
 
-			new Player( group, {
+			new Player(group, {
 
-				onSelectScene: function ( index, t ) {
+				onSelectScene: function (index, t) {
 
 					options.boPlayer = true;
-					if ( options.frustumPoints !== undefined ) options.frustumPoints.updateCloudPoints();
-					if ( options.onSelectScene !== undefined ) return options.onSelectScene( index, t );
+					if (options.frustumPoints !== undefined) options.frustumPoints.updateCloudPoints();
+					if (options.onSelectScene !== undefined) return options.onSelectScene(index, t);
 					return false;//По умолчанию сдедующий шаг проигрывателя выполняется немедленно
 
 				},
 				options: options,
 				cameraTarget: { camera: camera, },
-				onChangeScaleT: function ( scale ) {
+				onChangeScaleT: function (scale) {
 
-					if ( options.player !== undefined )
-						options.player.onChangeScale( scale );
+					if (options.player !== undefined)
+						options.player.onChangeScale(scale);
 					removeTraceLines();
 
 				},
 
-			} );
-			if ( options.player ) new options.player.PlayController();// gui );//, getLanguageCode );
+			});
+			if (options.player) new options.player.PlayController();// gui );//, getLanguageCode );
 
-			if ( options.dat.gui ) {
+			if (options.dat.gui) {
 
-				fOptions = options.dat.gui.addFolder( lang.settings );
+				fOptions = options.dat.gui.addFolder(lang.settings);
 				fOptions.id = 'fOptions';//for hyperSphere
-				if ( options.player )
-					options.player.gui( fOptions );
+				if (options.player)
+					options.player.gui(fOptions);
 
 			}
 
 			//Settings for all SpriteText added to scene and child groups
-			if ( fOptions )
-				SpriteTextGui( scene, options, {
+			if (fOptions)
+				SpriteTextGui(scene, options, {
 
 					//settings: { zoomMultiplier: 1.5, },
 					folder: fOptions,
@@ -623,33 +632,32 @@ class MyThree {
 
 					}
 
-				} );
+				});
 
-			if ( options.stereoEffect ) {
+			if (options.stereoEffect) {
 
-				options.stereoEffect.gui( {
+				options.stereoEffect.gui({
 
 					folder: fOptions,
-					onChangeMode: function ( mode ) {
+					onChangeMode: function (mode) {
 
-						switch ( mode ) {
+						switch (mode) {
 
 							case StereoEffect.spatialMultiplexsIndexs.Mono:
 								break;
 							case StereoEffect.spatialMultiplexsIndexs.SbS:
 							case StereoEffect.spatialMultiplexsIndexs.TaB:
 								break;
-							default: console.error( 'myThreejs: Invalid spatialMultiplexIndex = ' + mode );
+							default: console.error('myThreejs: Invalid spatialMultiplexIndex = ' + mode);
 								return;
 
 						}
-
-						if ( options.frustumPoints !== undefined )
+						if (options.frustumPoints !== undefined)
 							options.frustumPoints.updateGuiSelectPoint();
 
 					},
 
-				} );
+				});
 
 			}
 
@@ -657,347 +665,332 @@ class MyThree {
 
 				var style = {
 
-						position: renderer.domElement.style.position,
-						left: renderer.domElement.style.left,
-						top: renderer.domElement.style.top,
-						width: renderer.domElement.style.width,
-						height: renderer.domElement.style.height,
+					position: renderer.domElement.style.position,
+					left: renderer.domElement.style.left,
+					top: renderer.domElement.style.top,
+					width: renderer.domElement.style.width,
+					height: renderer.domElement.style.height,
 
-					},
+				},
 					sizeOriginal = new THREE.Vector2();
-				renderer.getSize( sizeOriginal );
+				renderer.getSize(sizeOriginal);
 				return {
 
-					onFullScreenToggle: function ( fs ) {
+					onFullScreenToggle: function (fs) {
 
-						arrayContainers.display( elContainer.parentElement, ! fs );
+						arrayContainers.display(elContainer.parentElement, !fs);
 
 					},
 
 				};
 
-			}
-
+			};
 			rendererSizeDefault = getRendererSize();
 
-			renderer.setSize( ( options.canvas !== undefined ) && ( options.canvas.width !== undefined ) ? options.canvas.width : canvas.clientWidth,
-				( options.canvas !== undefined ) && ( options.canvas.height !== undefined ) ? options.canvas.height : canvas.clientHeight );
+			renderer.setSize((options.canvas !== undefined) && (options.canvas.width !== undefined) ? options.canvas.width : canvas.clientWidth,
+				(options.canvas !== undefined) && (options.canvas.height !== undefined) ? options.canvas.height : canvas.clientHeight);
 
 			//CanvasMenu вызываю после renderer.setSize
 			//потому что если задан options.canvas.fullScreen = true,
 			//то CanvasMenu изменяет размер renderer до fullScreen
-			new CanvasMenu( renderer, {
+			new CanvasMenu(renderer, {
 
 				fullScreen: {
 
 					fullScreen: options.canvas.fullScreen,
 					camera: camera,
-					arrayContainersLength: function () {
+					arrayContainersLength: function () { return arrayContainers.length; },
+					onFullScreenToggle: function (fullScreen) {
 
-						return arrayContainers.length;
-
-					},
-					onFullScreenToggle: function ( fullScreen ) {
-
-						rendererSizeDefault.onFullScreenToggle( fullScreen );
+						rendererSizeDefault.onFullScreenToggle(fullScreen);
 
 						//скрыть controllers.w.position.elSlider of arrayFuncs типа colorpicker если canvas на весь экран
 						//иначе colorpicker будет виден в canvas
-						function onFullScreenToggle( group, fullScreen ) {
+						function onFullScreenToggle(group, fullScreen) {
 
 							//если не делать этот setTimeout и если canvas по умолчанию на весь экран, то сквозь canvas будет видна палтра elSlider
 							//которую я рисую на веб станице если в настройках точек будет указана
-							setTimeout( function () {
+							setTimeout(function () {
 
-								function recursion( children ) {
+								function recursion(children) {
 
-									children.forEach( function ( mesh ) {
+									children.forEach(function (mesh) {
 
-										recursion( mesh.children );
-										if ( mesh instanceof THREE.Group ) {
+										recursion(mesh.children);
+										if (mesh instanceof THREE.Group) {
 
-											onFullScreenToggle( mesh, fullScreen );
+											onFullScreenToggle(mesh, fullScreen);
 											return;
 
 										}
-
-										if ( ( mesh.userData.player === undefined ) || ( mesh.userData.player.arrayFuncs === undefined ) || ( typeof mesh.userData.player.arrayFuncs === 'function' ) )
+										if ((mesh.userData.player === undefined) || (mesh.userData.player.arrayFuncs === undefined) || (typeof mesh.userData.player.arrayFuncs === "function"))
 											return;
-										mesh.userData.player.arrayFuncs.forEach( function ( vector ) {
+										mesh.userData.player.arrayFuncs.forEach(function (vector) {
 
-											if ( vector.controllers && vector.controllers.w && vector.controllers.w.position && vector.controllers.w.position.elSlider )
+											if (vector.controllers && vector.controllers.w && vector.controllers.w.position && vector.controllers.w.position.elSlider)
 												vector.controllers.w.position.elSlider.style.display = fullScreen ? 'block' : 'none';
-											if ( vector.line === undefined )
+											if (vector.line === undefined)
 												return;
 											vector.line.remove();
-											vector.line = new Player.traceLine( options );
+											vector.line = new Player.traceLine(options);
 
-										} );
+										});
 
-									} );
+									});
 
 								}
+								recursion(group.children);
 
-								recursion( group.children );
-
-							}, 0 );
+							}, 0);
 
 						}
-
-						onFullScreenToggle( scene, fullScreen );
+						onFullScreenToggle(scene, fullScreen);
 
 					},
 
 				},
 				options: options,
 
-			} );
+			});
 
 			//use orbit controls allow the camera to orbit around a target. https://threejs.org/docs/index.html#examples/en/controls/OrbitControls
-			options.createOrbitControls( camera, renderer, scene );
+			options.createOrbitControls(camera, renderer, scene);
 
-			if ( fOptions ) {
+			if (fOptions) {
 
-				new GuiSelectPoint( options, {
+				new GuiSelectPoint(options, {
 
 					cameraTarget: {
 
 						camera: camera,
-						orbitControls: options.orbitControls, //controls,
+						orbitControls: options.orbitControls,//controls,
 
 					},
 					//displays the trace of the movement of all points of the mesh
-					pointsControls: function ( fPoints, dislayEl, getMesh ) { },
+					pointsControls: function (fPoints, dislayEl, getMesh) { },
 					//displays the trace of the point movement
-					pointControls: function ( fPoint, dislayEl, getMesh ) { },
+					pointControls: function (fPoint, dislayEl, getMesh) { },
 
-				} );
-				if ( options.guiSelectPoint ) options.guiSelectPoint.add();
+				});
+				if (options.guiSelectPoint) options.guiSelectPoint.add();
 
 			}
 
 			defaultPoint.size = options.point.size;
 
-			const pointName = options.dat ? options.dat.getCookieName( 'Point' ) : 'Point';
-			if ( options.dat ) options.dat.cookie.getObject( pointName, options.point, options.point );
+			const pointName = options.dat ? options.dat.getCookieName('Point') : 'Point';
+			if (options.dat) options.dat.cookie.getObject(pointName, options.point, options.point);
 			three.group = group;
 
-			if ( createXDobjects ) createXDobjects( group, options );
+			if (createXDobjects) createXDobjects(group, options);
 
 			//вызываю после createXDobjects для того что бы была возможность редактировать настройки AxesHelper. Например в классе nD
-			new AxesHelper( scene, options );
+			new AxesHelper(scene, options);
 
-			if ( options.frustumPoints ) options.frustumPoints.create( renderer );
+			if (options.frustumPoints) options.frustumPoints.create(renderer);
 
 			//На случай когда указана точка, за которой следит камера и когда Player не создан
-			if ( ! options.player ) {
+			if (!options.player) {
 
-				Player.selectPlayScene( group, { options: options } );//, Player.getTime(), 0 );
+				Player.selectPlayScene(group, { options: options });//, Player.getTime(), 0 );
 
 			}
-
 			options.boPlayer = false;
 
 			//default setting for each 3D object
-			group.children.forEach( function ( mesh ) {
+			group.children.forEach(function (mesh) {
 
-				options.saveMeshDefault( mesh );
+				options.saveMeshDefault(mesh);
 
-			} );
-			if ( options.dat.gui ) {
+			});
+			if (options.dat.gui) {
 
-				AxesHelperGui( options, fOptions );
+				AxesHelperGui(options, fOptions);
 
-				new MoveGroupGui( group, options, {
+				new MoveGroupGui(group, options, {
 
 					folder: fOptions,
 
-				} );
+				});
 
 				//OrbitControls gui
 
-				if ( options.orbitControls !== false ) {
+				if (options.orbitControls !== false) {
 
-					new OrbitControlsGui( options, fOptions );
+					new OrbitControlsGui(options, fOptions);
 
 				}
 
 				//camera gui
 
-				new CameraGui( camera, options, fOptions );
+				new CameraGui(camera, options, fOptions);
 
 				// light
 
-				pointLight2.controls( { group: group, folder: fOptions, folderName: lang.light + ' 2' } );
+				pointLight2.controls({ group: group, folder: fOptions, folderName: lang.light + ' 2' });
 
 				//point
 
-				const folderPoint = new FolderPoint( options.point, function ( value ) {
+				const folderPoint = new FolderPoint(options.point, function (value) {
 
-					if ( value === undefined )
+					if (value === undefined)
 						value = options.point.size;
-					if ( value < 0 )
+					if (value < 0)
 						value = 0;
-					group.children.forEach( function ( mesh ) {
+					group.children.forEach(function (mesh) {
 
-						if ( ( mesh.type !== 'Points' ) || mesh.userData.boFrustumPoints )
+						if ((mesh.type !== 'Points') || mesh.userData.boFrustumPoints)
 							return;
-						if ( mesh.material.uniforms === undefined )
+						if (mesh.material.uniforms === undefined)
 							mesh.material.size = value / options.point.sizePointsMaterial;//PointsMaterial
 						else mesh.material.uniforms.pointSize.value = value;//shaderMaterial
 
-					} );
-					folderPoint.size.setValue( value );
+					});
+					folderPoint.size.setValue(value);
 					options.point.size = value;
-					options.dat.cookie.setObject( pointName, options.point );
+					options.dat.cookie.setObject(pointName, options.point);
 
 				}, options, {
 
 					folder: fOptions,
 					defaultPoint: defaultPoint,
 
-				} );
+				})
 
 				//Frustum points
-				if ( options.frustumPoints )// && options.dat.guiFrustumPoints )
-					options.frustumPoints.gui( fOptions );
+				if (options.frustumPoints)// && options.dat.guiFrustumPoints )
+					options.frustumPoints.gui(fOptions);
 
-				options.restoreSceneController( camera, scene );
+				options.restoreSceneController(camera, scene);
 
 			}
 
 			//https://github.com/mrdoob/stats.js/
-			if ( options.stats !== undefined ) {
+			if (options.stats !== undefined) {
 
 				try {
 
 					stats = new Stats();
-					elContainer.appendChild( stats.dom );
+					elContainer.appendChild(stats.dom);
 
-				} catch ( e ) {
+				} catch (e) {
 
-					console.error( e + '. Please import Stats from \'../../../three.js/dev/examples/jsm/libs/stats.module.js\';' );
+					console.error(e + ". Please import Stats from '../../../three.js/dev/examples/jsm/libs/stats.module.js';");
 
 				}
 
 			}
 
-			window.addEventListener( 'resize', onResize, false );
+			window.addEventListener('resize', onResize, false);
 
 		}
-
 		function onResize() {
 
 			var size;
-			if ( isFullScreen() )
-				size = new THREE.Vector2( window.innerWidth, window.innerHeight );
+			if (isFullScreen())
+				size = new THREE.Vector2(window.innerWidth, window.innerHeight);
 			else {
 
 				size = new THREE.Vector2();
-				renderer.getSize( size );
+				renderer.getSize(size);
 
 			}
-
 			camera.aspect = size.x / size.y;
 			camera.updateProjectionMatrix();
 
-			renderer.setSize( size.x, size.y );
-			if ( options.frustumPoints !== undefined )
+			renderer.setSize(size.x, size.y);
+			if (options.frustumPoints !== undefined)
 				options.frustumPoints.update();
 
 		}
+		function onObjectMouseDown(position, intersection) {
 
-		function onObjectMouseDown( position, intersection ) {
-
-			if ( ( options.axesHelper !== undefined ) && ( intersection.object.type === 'Points' ) )
-				options.axesHelper.exposePosition( position );
-			else alert( 'You are clicked the "' + intersection.object.type + '" type object.'
-				+ ( intersection.index === undefined ? '' : ' Index = ' + intersection.index + '.' )
-				+ ' Position( x: ' + position.x + ', y: ' + position.y + ', z: ' + position.z + ' )' );
+			if ((options.axesHelper !== undefined) && (intersection.object.type === "Points"))
+				options.axesHelper.exposePosition(position);
+			else alert('You are clicked the "' + intersection.object.type + '" type object.'
+				+ (intersection.index === undefined ? '' : ' Index = ' + intersection.index + '.')
+				+ ' Position( x: ' + position.x + ', y: ' + position.y + ', z: ' + position.z + ' )');
 
 		}
-
 		function animate() {
 
-			if ( stats !== undefined )
+			if (stats !== undefined)
 				stats.begin();
 
-			requestId = requestAnimationFrame( animate );
+			requestId = requestAnimationFrame(animate);
 
 			render();
 
-			if ( stats !== undefined )
+			if (stats !== undefined)
 				stats.end();
 
 		}
-
 		function render() {
 
-			if ( ! options.stereoEffect || ! options.stereoEffect.render )
-				renderer.render( scene, camera );
-			else options.stereoEffect.render( scene, camera );
-			if ( cameraPosition === undefined )
+			if (!options.stereoEffect || !options.stereoEffect.render)
+				renderer.render(scene, camera);
+			else options.stereoEffect.render(scene, camera);
+			if (cameraPosition === undefined)
 				cameraPosition = new THREE.Vector3();
-			if ( pointSize === undefined )
+			if (pointSize === undefined)
 				pointSize = options.point.size;
 			if (
-				! cameraPosition.equals( camera.position ) ||
-				( pointSize != options.point.size ) ||
-				( ( options.frustumPoints !== undefined ) && options.frustumPoints.animate() )
+				!cameraPosition.equals(camera.position) ||
+				(pointSize != options.point.size) ||
+				((options.frustumPoints !== undefined) && options.frustumPoints.animate())
 			) {
 
-				cameraPosition.copy( camera.position );
+				cameraPosition.copy(camera.position);
 				pointSize = options.point.size;
 
-				group.children.forEach( function ( mesh ) {
+				group.children.forEach(function (mesh) {
 
-					if ( mesh instanceof THREE.Points === false )
+					if (mesh instanceof THREE.Points === false)
 						return;
 
-					if ( mesh.geometry.attributes.size === undefined ) {
+					if (mesh.geometry.attributes.size === undefined) {
 
 						mesh.material.size = pointSize / options.point.sizePointsMaterial;
 						return;
 
 					}
-
-					if ( options.point.opacity !== undefined )
+					if (options.point.opacity !== undefined)
 						mesh.material.uniforms.opacity.value = options.point.opacity;
 
 					//scale
-					var scale = myPoints.getGlobalScale( mesh );
-					var cameraPosition = new THREE.Vector3( camera.position.x / scale.x, camera.position.y / scale.y, camera.position.z / scale.z );
-					scale = ( scale.x + scale.y + scale.z ) / 3;
+					var scale = myPoints.getGlobalScale(mesh);
+					var cameraPosition = new THREE.Vector3(camera.position.x / scale.x, camera.position.y / scale.y, camera.position.z / scale.z);
+					scale = (scale.x + scale.y + scale.z) / 3;
 
 					//set size of points with ShaderMaterial
 					//https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial
 					//Example https://threejs.org/examples/?q=points#webgl_custom_attributes_points2
 
 					//points with ShaderMaterial
-					for ( var i = 0; i < mesh.geometry.attributes.position.count; i ++ ) {
+					for (var i = 0; i < mesh.geometry.attributes.position.count; i++) {
 
-						var position = getObjectPosition( mesh, i ), //getObjectLocalPosition( mesh, i ),
-							position3d = new THREE.Vector3( position.x, position.y, position.z ),
-							distance = position3d.distanceTo( cameraPosition ),
+						var position = getObjectPosition(mesh, i),//getObjectLocalPosition( mesh, i ),
+							position3d = new THREE.Vector3(position.x, position.y, position.z),
+							distance = position3d.distanceTo(cameraPosition),
 							y = 1;
 						//дальние точки очень маленькие
 						//	angle = cameraPosition.angleTo( position3d ),
 						//	cameraFov = ( Math.PI / 180 ) * 0.5 * camera.fov,
 						//	y = 1 - 0.4 * ( angle / cameraFov );
 
-						mesh.geometry.attributes.size.setX( i, Math.tan(
+						mesh.geometry.attributes.size.setX(i, Math.tan(
 
 							mesh.userData.shaderMaterial.point !== undefined &&
 								mesh.userData.shaderMaterial.point.size !== undefined ?
 								mesh.userData.shaderMaterial.point.size : options.point.size
 
-						) * distance * scale * y );
+						) * distance * scale * y);
 						mesh.geometry.attributes.size.needsUpdate = true;
 
 					}
 
 
-				} );
+				});
 
 			}
 
@@ -1013,39 +1006,37 @@ class MyThree {
 		 * @param {number} width.height height of the canvas
 		 * @param {number} height height of the canvas
 		 */
-		this.setSize = function ( width, height ) {
+		this.setSize = function (width, height) {
 
-			if ( typeof width === 'object' ) {
+			if (typeof width === "object") {
 
 				height = width.height;
 				width = width.width;
 
 			}
-
-			if ( width === undefined ) {
+			if (width === undefined) {
 
 				//Используется в treeView.js для открытия ветки с холстом
 				const target = {
-					set: function ( width, height ) {
+					set: function (width, height) {
 
-						renderer.setSize( width, height );
+						renderer.setSize(width, height);
 
 					}
 				};
-				renderer.getSize( target );
+				renderer.getSize(target);
 				return;
 
 			}
+			renderer.setSize(width, height);
 
-			renderer.setSize( width, height );
-
-		};
+		}
 
 		arrayCreates.shift();
 		var params = arrayCreates.shift();
-		if ( params === undefined )
+		if (params === undefined)
 			return;
-		myThreejs.create( params.createXDobjects, params.options );
+		myThreejs.create(params.createXDobjects, params.options);
 
 	}
 
@@ -1068,7 +1059,7 @@ const lang = {
 
 };
 
-switch ( getLanguageCode() ) {
+switch (getLanguageCode()) {
 
 	case 'ru'://Russian language
 
@@ -1100,7 +1091,7 @@ MyThree.StereoEffect = {
 	 */
 	spatialMultiplexsIndexs: StereoEffect.spatialMultiplexsIndexs,
 
-};
+}
 /** @namespace
  * @description Pure JavaScript color picker.
  * @see <a href="../../colorpicker/jsdoc/index.html" target="_blank">ColorPicker</a>.
@@ -1120,20 +1111,19 @@ MyThree.getWorldPosition = getWorldPosition;
  * @description Limits angles of rotations of the mesh between 0 and 360 degrees.
  * @param {THREE.Euler} rotation angles for limitation
  */
-MyThree.limitAngles = function ( rotation ) {
+MyThree.limitAngles = function (rotation) {
 
-	function limitAngle( axisName ) {
+	function limitAngle(axisName) {
 
-		while ( rotation[ axisName ] > Math.PI * 2 )
-			rotation[ axisName ] -= Math.PI * 2;
+		while (rotation[axisName] > Math.PI * 2)
+			rotation[axisName] -= Math.PI * 2
 
 	}
+	limitAngle('x');
+	limitAngle('y');
+	limitAngle('z');
 
-	limitAngle( 'x' );
-	limitAngle( 'y' );
-	limitAngle( 'z' );
-
-};
+}
 
 /** @namespace
  * @description 3D objects animation.
@@ -1154,20 +1144,20 @@ MyThree.three = three;
 MyThree.Options = Options;
 
 window.__myThree__ = window.__myThree__ || {};
-if ( window.__myThree__.boMyThree )
-	console.error( 'myThree: duplicate myThree. Please use one instance of the myThree class.' );
+if (window.__myThree__.boMyThree)
+	console.error('myThree: duplicate myThree. Please use one instance of the myThree class.')
 window.__myThree__.boMyThree = true;
 
-//import Intersections from '../intersections/intersections.js';
+import Intersections from '../intersections/intersections.js'
 /** @namespace
  * @description Creates an intersection line for graphic objects.
  * @see <a href="../../intersections/jsdoc/index.html" target="_blank">Intersections</a>.
  */
-//MyThree.Intersections = Intersections;
-/*
+MyThree.Intersections = Intersections;
+
 import TreeView from '../treeView/treeView.js';
 MyThree.TreeView = TreeView;
-*/
+
 
 export default MyThree;
 

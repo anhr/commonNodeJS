@@ -15,9 +15,11 @@
 
 import fs from 'fs';
 import path from 'path';
+/*
 import resolve from 'rollup-plugin-node-resolve';
 import cleanup from 'rollup-plugin-cleanup';
 import babel from 'rollup-plugin-babel';
+*/
 
 const banner = fs.readFileSync( path.join( __dirname, 'licenseBanner.txt' ) );
 
@@ -80,6 +82,7 @@ export default {
   watch: {
     include: 'src/**'
   },
+/*
   plugins: [
 	  resolve(),
     babel({
@@ -88,4 +91,5 @@ export default {
     }),
     cleanup()
   ]
+*/
 };
