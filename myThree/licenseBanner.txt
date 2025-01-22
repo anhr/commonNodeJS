@@ -3,7 +3,7 @@
  *
  * I use MyThree in my projects for displaying of my 3D objects in the canvas.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author Andrej Hristoliubov https://github.com/anhr/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
