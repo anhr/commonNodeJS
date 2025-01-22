@@ -3,7 +3,6 @@
   "version": "1.4",
   "description": "I use MyThree in my projects for displaying of my 3D objects in the canvas.",
   "main": "build/myThree.js",
-  "type": "module",
   "module": "./build/myThree.module.js",
   "exports": {
     ".": {
