@@ -24,8 +24,8 @@
 	<script src="https://threejs.org/build/three.js"></script>
 	<script src="https://threejs.org/build/three.min.js"></script>
 	-->
-	<script src="../../build/myThree.js"></script>
 	<!--
+	<script src="../../build/myThree.js"></script>
 	<script src="../../build/myThree.min.js"></script>
 
 	Error: Access to XMLHttpRequest at 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/build/getShaderMaterialPoints/vertex.c'
@@ -55,7 +55,7 @@
 		//import { dat } from 'https://raw.githack.com/anhr/commonNodeJS/master/dat/dat.module.js';
 		//three.dat = dat;
 
-		//import MyThree from '../../myThree.js';
+		import MyThree from '../../myThree.js';
 		//import MyThree from '../../build/myThree.module.js';
 		//import MyThree from '../../build/myThree.module.min.js';
 		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/myThree.js';
@@ -66,9 +66,9 @@
 		//	from origin 'http://localhost' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
 		//import MyThree from 'https://raw.githack.com/anhr/commonNodeJS/master/myThree/myThree.js';
 
-		//import ND from '../../../nD/nD.js';
+		import ND from '../../../nD/nD.js';
 		//import ND from '../../../nD/build/nD.module.js';
-		import ND from '../../../nD/build/nD.module.min.js';
+		//import ND from '../../../nD/build/nD.module.min.js';
 
 		if ( MyThree.default ) MyThree = MyThree.default;
 		MyThree.three.THREE = THREE;
