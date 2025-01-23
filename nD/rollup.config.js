@@ -15,9 +15,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import resolve from 'rollup-plugin-node-resolve';
-import cleanup from 'rollup-plugin-cleanup';
-import babel from 'rollup-plugin-babel';
 
 const banner = fs.readFileSync(path.join(__dirname, 'licenseBanner.txt'));
 
@@ -30,31 +27,20 @@ fs.copyFile( path.join( __dirname, '..\\colorpicker\\colorpicker.css' ), 'build\
 
 export default {
 
-  input: 'nD.js',
+    input: 'nD.js',
 
-  output: [{
-    // TODO: Remove default exports, and this line, in v0.8.0.
-    exports: 'named',
-    file: './build/nD.js',
-    format: 'umd',
-    name: 'ND',
-    sourcemap: true,
-    banner: banner
-  }, {
-    file: './build/nD.module.js',
-    format: 'es',
-    sourcemap: true,
-    banner: banner
-  }],
-  watch: {
-    include: 'src/**'
-  },
-  plugins: [
-	  resolve(),
-    babel({
-      plugins: ['external-helpers'],
-      exclude: 'node_modules/**'
-    }),
-    cleanup()
-  ]
+    output: [{
+        // TODO: Remove default exports, and this line, in v0.8.0.
+        exports: 'named',
+        file: './build/nD.js',
+        format: 'umd',
+        name: 'ND',
+        sourcemap: true,
+        banner: banner
+    }, {
+        file: './build/nD.module.js',
+        format: 'es',
+        sourcemap: true,
+        banner: banner
+    }],
 };
