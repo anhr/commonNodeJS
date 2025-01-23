@@ -4,12 +4,6 @@
   "description": "I use MyThree in my projects for displaying of my 3D objects in the canvas.",
   "main": "build/myThree.js",
   "module": "./build/myThree.module.js",
-  "exports": {
-    ".": {
-      "import": "./build/myThree.module.js",
-      "require": "./build/three.cjs"
-    }
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/anhr/commonNodeJS/tree/master/myThree"

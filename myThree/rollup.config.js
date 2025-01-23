@@ -66,9 +66,4 @@ export default {
     sourcemap: true,
     banner: banner
   }],
-/*
-  watch: {
-    include: 'src/**'
-  },
-*/
 };
