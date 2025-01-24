@@ -274,7 +274,7 @@ class HyperSphere extends MyObject {
 	 **/
 	constructor(options, classSettings = {}) {
 
-		classSettings.onSelectScene ||= (hyperSphere, timeId, t) => { if (this.middleVertices) return this.middleVertices(timeId, t); }
+		if (!classSettings.onSelectScene) classSettings.onSelectScene = (hyperSphere, timeId, t) => { if (this.middleVertices) return this.middleVertices(timeId, t); }
 		//for playing in http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
 		options.onSelectScene = (index, t) => {
 
@@ -339,7 +339,7 @@ class HyperSphere extends MyObject {
 		if (options.dat) options.dat.cookie.getObject(this.cookieName, cookieOptions);
 
 		let edgesOld = cookieOptions.edgesOld || { project: true, };
-		if (classSettings.overriddenProperties) classSettings.overriddenProperties.edges ||= () => { return false; };
+		if (classSettings.overriddenProperties && !classSettings.overriddenProperties.edges) classSettings.overriddenProperties.edges = () => { return false; };
 		classSettings.edges = cookieOptions.edges === false ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
 		classSettings.edges = classSettings.edges === false ? classSettings.overriddenProperties.edges() : classSettings.edges;
 		if (classSettings.edges != false) classSettings.edges = classSettings.edges || {};
@@ -958,12 +958,12 @@ class HyperSphere extends MyObject {
 			return settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId;
 			
 		}
-		classSettings.overriddenProperties ||= {};
+		if (!classSettings.overriddenProperties) classSettings.overriddenProperties = {};
 		const overriddenProperties = classSettings.overriddenProperties;
-		overriddenProperties.oppositeVertice ||= (oppositeAngleId) => { return position[oppositeAngleId]; }
+		if (!overriddenProperties.oppositeVertice) overriddenProperties.oppositeVertice = (oppositeAngleId) => { return position[oppositeAngleId]; }
 		if (!overriddenProperties.position) Object.defineProperty(overriddenProperties, 'position', { get: () => { return position; }, });
 		if (!overriddenProperties.position0) Object.defineProperty(overriddenProperties, 'position0', { get: () => { return position; }, });
-		overriddenProperties.updateVertices ||= (vertices) => {
+		if (!overriddenProperties.updateVertices) overriddenProperties.updateVertices = (vertices) => {
 
 			if (vertices.length != position.length) console.error(sHyperSphere + ': classSettings.overriddenProperties.updateVertices(). Invalid vertices.length = ' + vertices.length);
 			for (let verticeId = 0; verticeId < position.length; verticeId++)
@@ -971,14 +971,14 @@ class HyperSphere extends MyObject {
 			this.bufferGeometry.attributes.position.needsUpdate = true;
 			
 		}
-		overriddenProperties.vertices ||= () => { return []; }
-		overriddenProperties.r ||= (timeId) => { return classSettings.r; }
-		overriddenProperties.pushMiddleVertice ||= () => {}
-		overriddenProperties.angles ||= (anglesId) => { return classSettings.settings.object.geometry.angles[anglesId]; }
-		overriddenProperties.verticeAngles ||= (anglesCur, verticeId) => { return anglesCur[verticeId]; }
-		overriddenProperties.verticeText ||= (intersection, text) => { return text(classSettings.settings.object.geometry.angles,  this.searchNearestEdgeVerticeId(intersection.index, intersection)); }
-		overriddenProperties.text ||= () => { return ''; }
-		overriddenProperties.onSelectSceneEndSetDrawRange ||= (timeId) => {}
+		if (!overriddenProperties.vertices) overriddenProperties.vertices = () => { return []; }
+		if (!overriddenProperties.r) overriddenProperties.r = (timeId) => { return classSettings.r; }
+		if (!overriddenProperties.pushMiddleVertice) overriddenProperties.pushMiddleVertice = () => {}
+		if (!overriddenProperties.angles) overriddenProperties.angles = (anglesId) => { return classSettings.settings.object.geometry.angles[anglesId]; }
+		if (!overriddenProperties.verticeAngles) overriddenProperties.verticeAngles = (anglesCur, verticeId) => { return anglesCur[verticeId]; }
+		if (!overriddenProperties.verticeText) overriddenProperties.verticeText = (intersection, text) => { return text(classSettings.settings.object.geometry.angles,  this.searchNearestEdgeVerticeId(intersection.index, intersection)); }
+		if (!overriddenProperties.text) overriddenProperties.text = () => { return ''; }
+		if (!overriddenProperties.onSelectSceneEndSetDrawRange) overriddenProperties.onSelectSceneEndSetDrawRange = (timeId) => {}
 
 		//нужно для classSettings.settings.object.geometry.times в проекте universe
 		//В этом случае нужно знать количество углов вершины еще до того как будет получена Universe.hyperSphere.dimension
@@ -1677,7 +1677,7 @@ class HyperSphere extends MyObject {
 									//Сделать один шаг проигрывателя →
 									//Появится ошибка:
 									//HyperSphere: Invalid vertice[2] sum = 0.999078566893569. r = 1
-//									cAngle.boSetPosition = false;
+									cAngle.boSetPosition = false;
 									
 									cAngle.setValue(angle);
 									delete cAngle.boSetPosition;
@@ -2828,7 +2828,7 @@ class HyperSphere extends MyObject {
 
 			const objectEdges = { boEdges: ((typeof classSettings.edges) === 'object') || (classSettings.edges === true) ? true : false },
 				setCockie = () => { options.dat.cookie.setObject(_this.cookieName, { edges: classSettings.edges, edgesOld: edgesOld, }); };
-			classSettings.overriddenProperties.isEdgesOnly ||= () => { return false; }
+			if (!classSettings.overriddenProperties.isEdgesOnly) classSettings.overriddenProperties.isEdgesOnly = () => { return false; }
 			cEdges = fHyperSphere.add(objectEdges, 'boEdges').onChange((boEdges) => {
 
 				if (boEdges) {

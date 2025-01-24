@@ -70,8 +70,8 @@ class HyperSphere3D extends Sphere {
 	setW() {
 
 		const classSettings = this.classSettings, options = classSettings.settings.options;
-		options.scales ||= {};
-		options.scales.w ||= {};
+		if (!options.scales) options.scales = {};
+		if (!options.scales.w) options.scales.w = {};
 		const w = options.scales.w;
 		w.max = classSettings.rRange.max;
 		w.min = classSettings.rRange.min;
