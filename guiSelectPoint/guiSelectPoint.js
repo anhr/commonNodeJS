@@ -1895,7 +1895,7 @@ const attributesPosition = mesh.geometry.attributes.position;
 					scale = ( options.axesHelper === undefined ) || ( options.axesHelper === false ) ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
 						options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
 					if ( scale.isAxis() )
-						controller = fPoint.add( { value: scale.min, }, 'value', scale.min, scale.max ).onChange( function ( value ) {
+						controller = fPoint.add( { value: scale.min, }, 'value', scale.min, scale.max, ( scale.max - scale.min ) / 1000 ).onChange( function ( value ) {
 
 								const points = intersection.object;
 
