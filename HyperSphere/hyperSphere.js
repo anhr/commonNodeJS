@@ -1908,7 +1908,7 @@ class HyperSphere extends MyObject {
 											//если maxLevel = 3 то дуга делится на 8 частей с 7 вершинами посередине
 											//Таким образом дугу можно разделит только на 2 в степени maxLevel частей
 											let count = 2;
-											while (count < arcCount) {
+											while (count <= arcCount) {
 
 												count *= 2;
 												maxLevel++;
@@ -1984,7 +1984,8 @@ class HyperSphere extends MyObject {
 
 																if (this.child) this.child.arc(aAngleControls, lang, arcAngles);
 																else {
-
+																	console.error(sHyperSphere + ': Непонятно когда сюда попадает')
+/*
 																	const arcEdges = [];
 																	for (let i = 0; i < (aAngleControls.MAX_POINTS - 1); i++) arcEdges.push([i, i + 1]);
 																	aAngleControls.arc = this.line({
@@ -2010,6 +2011,7 @@ class HyperSphere extends MyObject {
 																		},
 
 																	});
+*/																	
 
 																}
 
@@ -2913,6 +2915,10 @@ class HyperSphere extends MyObject {
 						break;
 					case 1://edges log
 						const edge = edges[i];
+/*						
+						const positionLength = position.length;
+						edge.forEach((positionId, j) => { if (positionId >= positionLength) console.error(sHyperSphere + ': logHyperSphere(). edges[' + i + '][' + j + '] = ' + positionId + ' > position.length = ' + positionLength) });
+*/						
 						console.log('edges[' + i + '] = ' + JSON.stringify(edge))
 						break;
 					default: console.error(sLogHyperSphere + '. Invalid log = ' + log);
