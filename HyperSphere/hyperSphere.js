@@ -1498,6 +1498,7 @@ class HyperSphere extends MyObject {
 							guiSelectPoint: options.guiSelectPoint,
 							renderer: options.renderer,
 							palette: options.palette,
+							scales: options.scales,
 							
 						},
 						{
