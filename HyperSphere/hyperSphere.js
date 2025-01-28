@@ -1514,7 +1514,7 @@ class HyperSphere extends MyObject {
 							} : settings.edges,
 							projectParams: { scene: classSettings.projectParams.scene, },
 //							r: r * classSettings.r,
-							r: r * classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0),
+							r: classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0),
 							debug: classSettings.debug,
 							settings: {
 
