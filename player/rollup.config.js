@@ -34,7 +34,7 @@ export default {
         exports: 'named',
         file: './build/player.js',
         format: 'umd',
-        name: 'Common',
+        name: 'Player',
         sourcemap: true,
         banner: banner
     }, {
