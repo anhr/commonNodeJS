@@ -1,60 +1,47 @@
 {
   "name": "loadFile",
-  "version": "0.1.0",
+  "version": "1.4",
   "description": "node.js version of the synchronous download of the file.",
   "main": "build/loadFile.js",
-  "scripts": {
-    "build": "rollup -c && rollup -c rollup.config.min.js"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anhr/loadFileNodeJS"
+    "url": "https://github.com/anhr/commonNodeJS/tree/master/loadFileNodeJS"
   },
-  "author": "Andrej Hristoliubov https://anhr.github.io/AboutMe/",
+  "scripts": {
+    "build": "rollup -c rollup.config.js && rollup -c rollup.config.min.js"
+  },
+  "keywords": [
+    "loadFile",
+    "loadFile.js",
+    "javascript",
+    "3d",
+    "webgl",
+    "webgl2",
+    "webgpu",
+    "canvas",
+    "html5"
+  ],
+  "author": "Andrej Hristoliubov https://github.com/anhr",
   "license": "Apache-2.0",
-  "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-preset-env": "^1.7.0",
-    "concurrently": "^3.6.1",
-    "eslint": "^3.5.0",
-    "eslint-config-airbnb-base": "^7.1.0",
-    "eslint-loader": "^1.5.0",
-    "eslint-plugin-import": "^1.15.0",
-    "extend": "^3.0.2",
-    "jsdoc-to-markdown": "^4.0.1",
-    "replace-between": "0.0.8",
-    "rollup": "^0.54.1",
-    "rollup-plugin-babel": "^3.0.7",
-    "rollup-plugin-cleanup": "^2.0.1",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-sass": "^0.6.1",
-    "rollup-plugin-uglify": "^2.0.1",
-    "serve": "^11.3.2"
+  "bugs": {
+    "url": "https://github.com/anhr/commonNodeJS/issues"
   },
-  "eslintConfig": {
-    "extends": "airbnb-base",
-    "rules": {
-      "comma-dangle": 0,
-      "func-names": 0,
-      "no-alert": 0,
-      "no-console": 1,
-      "no-use-before-define": 0,
-      "prefer-rest-params": 0,
-      "prefer-template": 0,
-      "no-mixed-operators": 0,
-      "no-undef": 0,
-      "no-underscore-dangle": 0,
-      "prefer-arrow-callback": 0,
-      "space-before-function-paren": 0,
-      "global-require": 0,
-      "object-shorthand": 0,
-      "max-len": 0,
-      "no-param-reassign": 0,
-      "consistent-return": 0,
-      "no-restricted-syntax": 0,
-      "no-bitwise": 0,
-      "no-plusplus": 0
-    }
+  "homepage": "https://github.com/anhr/commonNodeJS/tree/master/loadFileNodeJS",
+  "devDependencies": {
+    "rollup": "^2.77.2"
+  },
+  "jspm": {
+    "files": [
+      "package.json",
+      "LICENSE",
+      "README.md",
+      "build/loadFile.js",
+      "build/loadFile.min.js",
+      "build/loadFile.module.js"
+    ],
+    "directories": {}
+  },
+  "dependencies": {
+    "uglify-es": "^3.3.10"
   }
 }
