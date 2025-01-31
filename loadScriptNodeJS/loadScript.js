@@ -12,12 +12,13 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { sync, async } from './index.js';
+import { sync, async, escapeHtml } from './index.js';
 
 var loadScript = {
 
 	sync: sync,
 	async: async,
+	escapeHtml: escapeHtml,
 
 }
 export default loadScript;

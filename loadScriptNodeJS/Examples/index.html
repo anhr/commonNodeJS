@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -22,7 +22,13 @@
 		<p>
 			<div>Result of testing of async loading of JavaScript.js file: <span id="asyncres"></span></div>
 		</p>
-		<script type="text/javascript">
+		<script type="module">
+			//import loadScript from '../loadScript.js';
+			//import loadScript from '../build/loadScript.module.js';
+			//import loadScript from '../build/loadScript.module.min.js';
+			//import loadScript from 'https://github.com/anhr/commonNodeJS/blob/master/loadScriptNodeJS/build/loadScript.module.js';
+			//import loadScript from 'https://github.com/anhr/commonNodeJS/blob/master/loadScriptNodeJS/build/loadScript.module.min.js';
+			if ( loadScript.default ) loadScript = loadScript.default;
 			const elAsyncRes = document.getElementById( "asyncres" );
 			loadScript.async( "JavaScript.js",
 				{
@@ -77,7 +83,13 @@
 			<div id="appendto"></div>
 			<div id="appendtoinner"></div>
 		</p>
-		<script type="text/javascript">
+		<script type="module">
+			//import loadScript from '../loadScript.js';
+			//import loadScript from '../build/loadScript.module.js';
+			//import loadScript from '../build/loadScript.module.min.js';
+			//import loadScript from 'https://github.com/anhr/commonNodeJS/blob/master/loadScriptNodeJS/build/loadScript.module.js';
+			//import loadScript from 'https://github.com/anhr/commonNodeJS/blob/master/loadScriptNodeJS/build/loadScript.module.min.js';
+			if ( loadScript.default ) loadScript = loadScript.default;
 			const elAsyncAppendToRes = document.getElementById( "asyncappendtores" ),
 				elAppendTo = document.getElementById( "appendto" );
 			loadScript.async( "appendTo.js",
@@ -105,7 +117,13 @@
 		<p>
 			<div>Result of testing of async loading of array of JavaScript1.js and JavaScript2.js files: <span id="asyncarrayres"></span></div>
 		</p>
-		<script type="text/javascript">
+		<script type="module">
+			//import loadScript from '../loadScript.js';
+			//import loadScript from '../build/loadScript.module.js';
+			//import loadScript from '../build/loadScript.module.min.js';
+			//import loadScript from 'https://github.com/anhr/commonNodeJS/blob/master/loadScriptNodeJS/build/loadScript.module.js';
+			//import loadScript from 'https://github.com/anhr/commonNodeJS/blob/master/loadScriptNodeJS/build/loadScript.module.min.js';
+			if ( loadScript.default ) loadScript = loadScript.default;
 			const elAsyncArrayRes = document.getElementById( "asyncarrayres" );
 			loadScript.async( ["JavaScript1.js", "JavaScript2.js"],
 				{
@@ -148,7 +166,13 @@
 		<p>
 			<div>Result of testing of synchronous loading of sync.js file: <span id="syncres"></span></div>
 		</p>
-		<script type="text/javascript">
+		<script type="module">
+			//import loadScript from '../loadScript.js';
+			//import loadScript from '../build/loadScript.module.js';
+			//import loadScript from '../build/loadScript.module.min.js';
+			//import loadScript from 'https://github.com/anhr/commonNodeJS/blob/master/loadScriptNodeJS/build/loadScript.module.js';
+			//import loadScript from 'https://github.com/anhr/commonNodeJS/blob/master/loadScriptNodeJS/build/loadScript.module.min.js';
+			if ( loadScript.default ) loadScript = loadScript.default;
 			const elSyncRes = document.getElementById( "syncres" );
 			loadScript.sync( 'sync.js' );
 			if ( typeof sync === 'undefined' ) {
@@ -166,7 +190,13 @@
 			<div id="appendtosync2"></div>
 			<div id="appendtoinnersync2"></div>
 		</p>
-		<script type="text/javascript">
+		<script type="module">
+			//import loadScript from '../loadScript.js';
+			//import loadScript from '../build/loadScript.module.js';
+			//import loadScript from '../build/loadScript.module.min.js';
+			//import loadScript from 'https://github.com/anhr/commonNodeJS/blob/master/loadScriptNodeJS/build/loadScript.module.js';
+			//import loadScript from 'https://github.com/anhr/commonNodeJS/blob/master/loadScriptNodeJS/build/loadScript.module.min.js';
+			if ( loadScript.default ) loadScript = loadScript.default;
 			const elSync2Res = document.getElementById( "sync2res" ),
 				elAppendToSync2 = document.getElementById( "appendtosync2" );
 			loadScript.sync( 'sync2.js',
@@ -194,7 +224,13 @@
 			<div>Result of testing of synchronous loading of array of sync.js and sync2.js files.</div>
 			<div id="sync3res"></div>
 		</p>
-		<script type="text/javascript">
+		<script type="module">
+			//import loadScript from '../loadScript.js';
+			//import loadScript from '../build/loadScript.module.js';
+			//import loadScript from '../build/loadScript.module.min.js';
+			//import loadScript from 'https://github.com/anhr/commonNodeJS/blob/master/loadScriptNodeJS/build/loadScript.module.js';
+			//import loadScript from 'https://github.com/anhr/commonNodeJS/blob/master/loadScriptNodeJS/build/loadScript.module.min.js';
+			if ( loadScript.default ) loadScript = loadScript.default;
 		var elSync3Res = document.getElementById( "sync3res" );
 		loadScript.sync( [ 'sync.js', 'sync2.js' ],
 			{

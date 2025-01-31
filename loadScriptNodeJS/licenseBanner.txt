@@ -1,6 +1,7 @@
 /**
  * node.js version of the load JavaScript file
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ *
+ * @author Andrej Hristoliubov https://github.com/anhr
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
