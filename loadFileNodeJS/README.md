@@ -1,5 +1,5 @@
 ﻿# loadFile
-The loadFile is node.js version of the synchronous download of the file.
+The loadFile is node.js version of the download of the file.
 [Example](https://raw.githack.com/anhr/loadFileNodeJS/master/).
 
 ## Packaged Builds

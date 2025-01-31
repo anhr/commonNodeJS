@@ -1,6 +1,6 @@
 ﻿/**
  * @module loadFile
- * @description node.js version of the synchronous download of the file.
+ * @description node.js version of the download of the file.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *

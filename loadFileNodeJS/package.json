@@ -1,7 +1,7 @@
 {
   "name": "loadFile",
   "version": "1.4",
-  "description": "node.js version of the synchronous download of the file.",
+  "description": "node.js version of the download of the file.",
   "main": "build/loadFile.js",
   "repository": {
     "type": "git",
