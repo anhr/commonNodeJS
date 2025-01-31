@@ -22,11 +22,11 @@
 			<p>
 				<div>Result of testing of the synchronous download of the element.html file: <span id="syncres"></span></div>
 			</p>
-			<script  type="module">
+			<script type="module">
 				//import loadFile from '../loadFile.js';
 				//import loadFile from '../build/loadFile.module.js';
 				//import loadFile from '../build/loadFile.module.min.js';
-				//import loadFile from 'https://raw.githack.com/anhr/commonNodeJS/master/loadFileNodeJS/loadFile.module.js';
+				//import loadFile from 'https://raw.githack.com/anhr/commonNodeJS/master/loadFileNodeJS/build/loadFile.module.js';
 				//import loadFile from 'https://raw.githack.com/anhr/commonNodeJS/master/loadFileNodeJS/build/loadFile.module.min.js';
 				if ( loadFile.default ) loadFile = loadFile.default;
 				document.getElementById( "syncres" ).innerHTML = loadFile.sync( 'element.html' );
