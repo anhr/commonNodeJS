@@ -21,7 +21,7 @@ const banner = fs.readFileSync( path.join( __dirname, 'licenseBanner.txt' ) );
 
 export default {
 
-    input: 'cookie.js',
+    input: 'index.js',
 
     output: [{
         // TODO: Remove default exports, and this line, in v0.8.0.

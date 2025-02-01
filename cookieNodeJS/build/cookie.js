@@ -260,33 +260,14 @@
 
 	}
 
-	var cookie = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		isEnabled: isEnabled,
-		set: set,
-		setObject: setObject,
-		get: get,
-		getObject: getObject,
-		copyObject: copyObject,
-		remove: remove,
-		defaultCookie: defaultCookie
-	});
-
-	/**
-	 * node.js version of the cookie.
-	 *
-	 * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
-	 *
-	 * @copyright 2011 Data Arts Team, Google Creative Lab
-	 *
-	 * @license under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 */
-
-	exports["default"] = cookie;
+	exports.copyObject = copyObject;
+	exports.defaultCookie = defaultCookie;
+	exports.get = get;
+	exports.getObject = getObject;
+	exports.isEnabled = isEnabled;
+	exports.remove = remove;
+	exports.set = set;
+	exports.setObject = setObject;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
