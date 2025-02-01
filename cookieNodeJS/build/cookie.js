@@ -2,7 +2,7 @@
  * node.js version of the cookie.
  * Cookies let you store user information in web pages.
  *
- * @author Andrej Hristoliubov https://anhr.github.io/AboutMe/
+ * @author Andrej Hristoliubov https://github.com/anhr
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,132 +14,280 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.cookie = {})));
-}(this, (function (exports) { 'use strict';
+	(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.cookie = {}));
+})(this, (function (exports) { 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-  return typeof obj;
-} : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-};
+	/**
+	 * @module cookie
+	 * @description node.js version of the cookie.
+	 * Cookies let you store user information in web pages.
+	 * @see {@link https://www.w3schools.com/js/js_cookies.asp}
+	 *
+	 * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+	 *
+	 * @copyright 2011 Data Arts Team, Google Creative Lab
+	 *
+	 * @license under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 */
 
+	/**
+	 * Is the cookie enabled in your web browser?
+	 * @returns {boolean} true if cookie enabled
+	 * 
+	 * @example
+		var isCookieEnabled = cookie.isEnabled('age', 25);
+	 */
+	function isEnabled() {
 
+		return navigator.cookieEnabled;
+		//Enable cookie
+		//Chrome: Settings/Show advanced settings.../Privacy/Content settings.../Cookies/Allow local data to be set
 
-
-
-
-
-
-
-
-
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-
-/**
- * @module cookie
- * @description node.js version of the cookie.
- * Cookies let you store user information in web pages.
- * @see {@link https://www.w3schools.com/js/js_cookies.asp}
- *
- * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
- *
- * @copyright 2011 Data Arts Team, Google Creative Lab
- *
- * @license under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- */
-function isEnabled() {
-	return navigator.cookieEnabled;
-}
-function set$1(name, value, cookie_date) {
-	if (!isEnabled()) {
-		consoleCookieEnabled();
-		return;
 	}
-	value = value.toString();
-	if (cookie_date === undefined) {
-		cookie_date = new Date();
-		cookie_date.setTime(cookie_date.getTime() + 1000 * 60 * 60 * 24 * 365);
+
+	/**
+	 * Set a cookie.
+	 * @param {string} name cookie name.
+	 * @param {any} value cookie value.
+	 * @param {Date} [cookie_date] expiry date (in UTC time). Optional.
+	 * @example
+		cookie.set('age', 25);
+	 */
+	function set( name, value, cookie_date ) {
+
+		if ( !isEnabled() ) {
+
+			consoleCookieEnabled();
+			return;
+
+		}
+		value = value.toString();
+		//http://ruseller.com/lessons.php?rub=28&id=593
+		if ( cookie_date === undefined ) {
+
+			cookie_date = new Date();  // Curent date and time
+			cookie_date.setTime( cookie_date.getTime() + 1000 * 60 * 60 * 24 * 365 );//expiry date is one year
+
+		}
+		document.cookie = name + "=" + value + ( ( typeof settings == 'undefined' ) ? '' : settings ) + "; expires=" + cookie_date.toGMTString();
+		if ( document.cookie === '' )
+			console.error( 'document.cookie is empty' );
+
 	}
-	document.cookie = name + "=" + value + (typeof settings == 'undefined' ? '' : settings) + "; expires=" + cookie_date.toGMTString();
-	if (document.cookie === '') console.error('document.cookie is empty');
-}
-function setObject(name, object) {
-	set$1(name, JSON.stringify(object));
-}
-function get$1(name, defaultValue) {
-	if (!isEnabled()) {
-		consoleCookieEnabled();
-		return;
+
+	/**
+	 * sets an object into cookie.
+	 * @param {string} name cookie name.
+	 * @param {any} object an object for saving into cookie.
+	 */
+	function setObject( name, object ) {
+
+		set( name, JSON.stringify( object ) );
+
 	}
-	var results = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-	if (results) {
-		var result = results[2],
-		    type = typeof defaultValue === 'undefined' ? 'undefined' : _typeof(defaultValue);
-		return type === "number" ?
-		result % 1 === 0 ? parseInt(result) : parseFloat(result) : type === "boolean" ?
-		result === 'true' ? true : false : unescape(result);
-	}
-	if (typeof defaultValue == 'undefined') return '';
-	return defaultValue;
-}
-function getObject(name, options, optionsDefault) {
-	new defaultCookie().getObject(name, options, copyObject(name, optionsDefault));
-}
-function copyObject(name, objectDefault) {
-	return JSON.parse(get$1(name, JSON.stringify(objectDefault)));
-}
-function remove(name) {
-	if (!isEnabled()) {
-		consoleCookieEnabled();
-		return;
-	}
-	var cookie_date = new Date();
-	cookie_date.setTime(cookie_date.getTime() - 1);
-	document.cookie = name += "=; expires=" + cookie_date.toGMTString();
-}
-function consoleCookieEnabled() {
-	console.error('navigator.cookieEnabled = ' + navigator.cookieEnabled);
-}
-var defaultCookie = function defaultCookie(name) {
-	classCallCheck(this, defaultCookie);
-	this.get = function (defaultValue) {
+	/**
+	 * Get a cookie.
+	 * @param {string} name cookie name.
+	 * @param {any} [defaultValue] cookie default value. Optional.
+	 * @returns {string} cookie value or defaultValue if cookie was not found.
+	 * @example
+		var age = cookie.get('age', 25);
+	 */
+	function get( name, defaultValue ) {
+
+		if ( !isEnabled() ) {
+
+			consoleCookieEnabled();
+			return;
+
+		}
+		//http://ruseller.com/lessons.php?rub=28&id=593
+		var results = document.cookie.match( '(^|;) ?' + name + '=([^;]*)(;|$)' );
+
+		if ( results ) {
+			
+			const result = results[2], type = typeof defaultValue;
+			return type === "number" ?//number
+					result % 1 === 0 ? parseInt(result) : parseFloat(result) :
+				type === "boolean" ?//boolean
+					result === 'true' ? true : false :
+				unescape( result );//string
+
+		}
+		if ( typeof defaultValue == 'undefined' )
+			return '';
 		return defaultValue;
-	};
-	this.set = function () {};
-	this.getObject = function (name, options, optionsDefault) {
-		if (!optionsDefault) return;
-		Object.keys(optionsDefault).forEach(function (key) {
-			var option = optionsDefault[key];
-			if (option !== undefined && typeof option !== 'function') options[key] = JSON.parse(JSON.stringify(option));
-		});
-	};
-	this.copyObject = function (name, objectDefault) {
-		return JSON.parse(JSON.stringify(objectDefault));
-	};
-	this.setObject = function () {};
-	this.isTrue = function (defaultValue) {
-		return defaultValue;
-	};
-};
 
-exports.isEnabled = isEnabled;
-exports.set = set$1;
-exports.setObject = setObject;
-exports.get = get$1;
-exports.getObject = getObject;
-exports.copyObject = copyObject;
-exports.remove = remove;
-exports.defaultCookie = defaultCookie;
+	}
 
-Object.defineProperty(exports, '__esModule', { value: true });
+	/**
+	 * gets an object from cookie.
+	 * @param {string} name name of the object.
+	 * @param {Object} options load an object from cookie into options.
+	 * @param {Object} [optionsDefault=options] copy to options this default object if named object is not exists in the cookie.
+	 */
+	function getObject( name, options, optionsDefault ) {
 
-})));
-//# sourceMappingURL=cookie.js.map
+		//uncompatible with ND build
+		//optionsDefault ||= options;
+		
+		if (optionsDefault === undefined) optionsDefault = options;
+		new defaultCookie().getObject( name, options, copyObject( name, optionsDefault ) );
+
+	}
+	/**
+	 * gets an object from cookie and returns a copy of object.
+	 * @param {string} name name of the object.
+	 * @param {Object} objectDefault copy to options this default object if named object is not exists in the cookie.
+	 * @returns copy of object from cookie.
+	 */
+	function copyObject( name, objectDefault ) {
+
+		return JSON.parse( get( name, JSON.stringify( objectDefault ) ) );
+
+	}
+
+	/**
+	 * Remove cookie
+	 * @param {string} name cookie name.
+	 */
+	function remove( name ) {
+
+		if ( !isEnabled() ) {
+
+			consoleCookieEnabled();
+			return;
+
+		}
+		//http://ruseller.com/lessons.php?rub=28&id=593
+		var cookie_date = new Date();
+		cookie_date.setTime( cookie_date.getTime() - 1 );
+		document.cookie = name += "=; expires=" + cookie_date.toGMTString();
+
+	}
+
+	function consoleCookieEnabled() {
+
+		console.error( 'navigator.cookieEnabled = ' + navigator.cookieEnabled );
+
+	}
+
+	/**
+	 * Default cookie is not saving settings
+	 * @param {any} name is not using
+	 */
+	class defaultCookie {
+
+		constructor(name) {
+			/**
+			 * Default cookie is not loading settings
+			 * @param {any} defaultValue
+			 * @returns defaultValue
+			 */
+			this.get = function (defaultValue) {
+
+				return defaultValue;
+
+			};
+
+			/**
+			 * Default cookie is not saving settings
+			 */
+			this.set = function () {
+
+			};
+
+			/**
+			 * Default cookie is not loading objects
+			 * @param {string} name is not using
+			 * @param {any} options load an object from optionsDefault into options
+			 * @param {Object} optionsDefault source object
+			 */
+			this.getObject = function (name, options, optionsDefault) {
+
+				if (!optionsDefault)
+					return;//object's settings is not saving
+				Object.keys(optionsDefault).forEach(function (key) {
+
+					//I cannot modify options[key] if optionsDefault is read only and options[key] is not copy of optionsDefault[key]
+					//options[key] = optionsDefault[key];
+					//copy key
+					var option = optionsDefault[key];
+					if (
+						(option !== undefined) &&
+						(typeof option !== 'function') &&
+						
+						//Ключь со значением Infinity превращается в null во время JSON преобразования.
+						//Для проверки надо установить options.playerOptions.interval = Infinity
+						//Поэтому оставляем старое значение options[key] = Infinity
+						(option != null)
+					)
+						options[key] = JSON.parse(JSON.stringify(option));
+
+				});
+
+			};
+
+			/**
+			 * copy and returns an object from objectDefault
+			 * @param {string} name is not using
+			 * @param {any} objectDefault source object
+			 */
+			this.copyObject = function (name, objectDefault) {
+
+				return JSON.parse(JSON.stringify(objectDefault));
+
+			};
+
+			/**
+			 * Default cookie is not saving object's settings
+			 */
+			this.setObject = function () {
+
+			};
+
+			this.isTrue = function (defaultValue) {
+
+				return defaultValue;
+
+			};
+
+		}
+
+	}
+
+	var cookie = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		isEnabled: isEnabled,
+		set: set,
+		setObject: setObject,
+		get: get,
+		getObject: getObject,
+		copyObject: copyObject,
+		remove: remove,
+		defaultCookie: defaultCookie
+	});
+
+	/**
+	 * node.js version of the cookie.
+	 *
+	 * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+	 *
+	 * @copyright 2011 Data Arts Team, Google Creative Lab
+	 *
+	 * @license under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 */
+
+	exports["default"] = cookie;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
