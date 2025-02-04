@@ -1,6 +1,7 @@
-/**
- * node.js version of the DropdownMenu
- * 
+﻿/**
+ * @module dropdownMenu
+ * @description node.js version of the DropdownMenu.
+ *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
@@ -14,37 +15,25 @@
 
 import fs from 'fs';
 import path from 'path';
-import resolve from 'rollup-plugin-node-resolve';
-import cleanup from 'rollup-plugin-cleanup';
-import babel from 'rollup-plugin-babel';
 
-const banner = fs.readFileSync(path.join(__dirname, 'licenseBanner.txt'));
+const banner = fs.readFileSync( path.join( __dirname, 'licenseBanner.txt' ) );
 
 export default {
-  input: 'index.js',
-  output: [{
-    // TODO: Remove default exports, and this line, in v0.8.0.
-    exports: 'named',
-	file: './build/dropdownMenu.js',
-    format: 'umd',
-    name: 'DropdownMenu',
-    sourcemap: true,
-    banner: banner
-  }, {
-	file: './build/dropdownMenu.module.js',
-    format: 'es',
-    sourcemap: true,
-    banner: banner
-  }],
-  watch: {
-    include: 'src/**'
-  },
-  plugins: [
-	  resolve(),
-    babel({
-      plugins: ['external-helpers'],
-      exclude: 'node_modules/**'
-    }),
-    cleanup()
-  ]
+
+    input: 'dropdownMenu.js',
+
+    output: [{
+        // TODO: Remove default exports, and this line, in v0.8.0.
+        exports: 'named',
+        file: './build/dropdownMenu.js',
+        format: 'umd',
+        name: 'DropdownMenu',
+        sourcemap: true,
+        banner: banner
+    }, {
+        file: './build/dropdownMenu.module.js',
+        format: 'es',
+        sourcemap: true,
+        banner: banner
+    }],
 };

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -10,9 +10,12 @@
 
 	<meta name="author" content="Andrej Hristoliubov https://github.com/anhr">
 
-	<!--<script src="http://localhost/anhr/commonNodeJS/master/dropdownMenu/build/dropdownMenu.js"></script>-->
-	<!--<script src="../../build/dropdownMenu.min.js"></script>-->
 	<script src="../../build/dropdownMenu.js"></script>
+	<!--
+	<script src="../../build/dropdownMenu.min.js"></script>//не работает
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/build/dropdownMenu.js"></script>
+	<script src="https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/build/dropdownMenu.min.js"></script>
+	-->
 
 	<!--Attention! Load custom.css file after dropdownMenu.js file for correctly priority of the styles-->
 	<link rel="stylesheet" href="custom.css" type="text/css">
@@ -29,6 +32,7 @@
 	<h2>Simple menu.</h2>
 	<script>
 
+		const DropdownMenu = dropdownMenu.default;
 		DropdownMenu.create( [
 
 			'Menu 1 ',
@@ -125,6 +129,9 @@
 	<script type="module">
 
 		import DropdownMenu from '../../dropdownMenu.js';
+		//import DropdownMenu from '../../build/dropdownMenu.module.js';
+		//import DropdownMenu from '../../build/dropdownMenu.module.min.js';
+		//import DropdownMenu from 'https://raw.githack.com/anhr/commonNodeJS/master/DropdownMenu/build/dropdownMenu.module.js';
 		DropdownMenu.create( [
 
 			{
