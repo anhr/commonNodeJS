@@ -1384,7 +1384,7 @@ class HyperSphere extends MyObject {
 
 				if (!object) return;
 				scene.remove(object);
-				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(object);
+//				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(object);
 
 			}
 

@@ -2172,6 +2172,19 @@ class ND extends MyObject {
 			if ( settings3D.name )
 				object.name = settings3D.name;
 			
+			let parent = null;
+			Object.defineProperty(object, 'parent', {
+	
+				get: () => { return parent; },
+				set: (group) => {
+
+					parent = group;
+					if ( ( group === null ) && options.guiSelectPoint ) options.guiSelectPoint.removeMesh( object );
+				
+				},
+	
+			});
+			
 			scene.add( object );
 
 			object.userData.myObject = nD;
