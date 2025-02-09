@@ -57,6 +57,15 @@
 					//color: 'red',
 					
 				},
+				onSelectScene: (hyperSphere, timeId, t) => {
+
+					//hyperSphere.classSettings.settings.object.geometry.position.angles[2][1] = t + 0.1;
+					//hyperSphere.classSettings.settings.object.geometry.angles[2][1] = t + 0.1;
+					hyperSphere.angles[2][0] = t + 0.1;
+					//if (hyperSphere.middleVertices) return hyperSphere.middleVertices(timeId, t);
+					//if (hyperSphere.child) return hyperSphere.child.onSelectScene.copyAngles(timeId, t);
+		
+				},
 				edges: {
 
 					//creationMethod: Circle.edgesCreationMethod.Random,
@@ -99,8 +108,8 @@
 							angles: [[], [1.1], [2.6], [Math.PI], ],
 							angles: [[], [Math.PI * 2 / 3], [- Math.PI * 2 / 3]],//triangle
 							angles: [
-								//[Math.PI * 2],
-								[Math.PI * 1 / 4],
+								[Math.PI * 1 / 4 + Math.PI / 180],//ввожу маленькую погрешность чтобы проверить корректность вычисления средней вершины. 
+								//[Math.PI * 1 / 4],
 								[Math.PI * 3 / 4], [- Math.PI * 3 / 4], [- Math.PI * 1 / 4], ],//Square
 							//angles: angles,
 							//angles: { count: 300, },

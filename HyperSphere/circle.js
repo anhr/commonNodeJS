@@ -134,5 +134,11 @@ class Circle extends HyperSphere {
 	get dimension() { return 2; }//space dimension
 	get verticesCountMin() { return 3; }
 
+	getRandomMiddleAngles(oppositeVertices) {
+		
+		console.error(sCircle + ': getRandomMiddleAngles. Under constraction');//надо случайно выбирать среднюю вершину
+		return [(this.vertice2angles(oppositeVertices[0])[0] + this.vertice2angles(oppositeVertices[1])[0]) / 2];
+		
+	}
 }
 export default Circle;

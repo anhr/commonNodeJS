@@ -417,6 +417,12 @@ class HyperSphere extends MyObject {
 				const verticeId = parseInt(name);
 				if (!isNaN(verticeId)) {
 
+					if (verticeId >= angles.length) {
+
+						console.error(sHyperSphere + ': get vertice angles failed! verticeId = ' + verticeId + ' is great angles.length = ' + angles.length);
+						return;
+						
+					}
 					const length = _this.dimension - 1;
 					return new Proxy(angles[verticeId], {
 
@@ -449,6 +455,11 @@ class HyperSphere extends MyObject {
 							if (!isNaN(angleId)) {
 
 								const angle = value;
+								if (angleId >= verticeAngles.length) {
+
+									console.error(sHyperSphere + ': set vertice angles failed! angleId = ' + angleId + ' is great of verticeAngles.length = ' + verticeAngles.length);
+									return false;
+								}
 								if (verticeAngles[angleId] != angle) {
 
 									const range = angles.ranges[angleId];
@@ -457,7 +468,12 @@ class HyperSphere extends MyObject {
 									verticeAngles[angleId] = angle;
 
 									//если тут обновлять вершину то каждая вершина будет обноляться несколько раз в зависимости от количества углов. Сейчас вершина обновляется после обновления всех углов вершины
-									//_this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
+									if(_this.isSetPositionAttributeFromPoint != false) {
+										
+										_this.setPositionAttributeFromPoint(verticeId);//обновляем только одну ось в декартовой системе координат
+										_this.bufferGeometry.attributes.position.needsUpdate = true;
+
+									}
 									
 									//если тут обновлять гиперсферу, то будет тратиться лишнее время, когда одновременно изменяется несколько вершин
 									//Сейчас я сначала изменяю все вершины, а потом обновляю гиперсферу
@@ -782,7 +798,9 @@ class HyperSphere extends MyObject {
 
 											//find middle vertice between opposite vertices
 
-											//https://wiki5.ru/wiki/Mean_of_circular_quantities#Mean_of_angles Среднее значение углов
+											//Среднее значение углов
+											//ссылка не работает https://wiki5.ru/wiki/Mean_of_circular_quantities#Mean_of_angles
+											//https://en.wikipedia.org/wiki/Circular_mean
 
 											//массив для хранения сумм декартовых координат противоположных вершин
 											//для 1D гиперсферы это: aSum[0] = x, aSum[1] = y.
@@ -790,6 +808,7 @@ class HyperSphere extends MyObject {
 											//для 3D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z, aSum[3] = w.
 											const aSum = [];
 
+											const oppositeVertices = [];
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
 												const oppositeVertice = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, timeId);
@@ -799,10 +818,36 @@ class HyperSphere extends MyObject {
 													aSum[i] += axis
 												
 												});
+												oppositeVertices.push(oppositeVertice);
 
 											});
+/*
+											let sum = 0;
+											for (let i = 0; i < _this.dimension; i ++) sum += aSum[i];
+*/
+											let isZero = true;
+											for (let i = 0; i < _this.dimension; i ++) {
+												
+												if(aSum[i] != 0) {
 
-											const middleVertice = _this.vertice2angles(aSum);
+													isZero = false;
+													break;
+													
+												};
+
+											}
+											
+											//if (isZero === 0) {
+
+												//В этом случае средняя вершина не определена
+												//для 1D гиперсферы. Противополжные вершины находятся ровно на противоположных сторонах окружности.
+													//Средняя вершина, находится посередине одной из двух дуг, соеденяющих проитвоположные вершины.
+												//для 2D гиперсферы это .
+												//для 3D гиперсферы это .
+												//Думаю тут надо применить вероятностный метод определения средней вершины
+											//}
+											
+											const middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
 											if (classSettings.debug && classSettings.debug.middleVertice) {
 
 												console.log('opposite to vertice[' + verticeId + '] vertices:');
@@ -857,7 +902,9 @@ class HyperSphere extends MyObject {
 
 								const verticeAngles = angles[verticeId];
 								if (classSettings.debug && ((verticeAngles.length != (_this.dimension - 1)) || (value.length != (_this.dimension - 1)))) console.error(sHyperSphere + ': Set vertice[' + verticeId + '] angles failed. Invalid angles count.')
+								this.isSetPositionAttributeFromPoint = false;
 								for (let j = 0; j < value.length; j++) verticeAngles[j] = value[j];
+								delete this.isSetPositionAttributeFromPoint;
 								this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
 
 							} else angles[name] = value;
@@ -2879,6 +2926,8 @@ class HyperSphere extends MyObject {
 	}
 
 	get defaultColor() { return 'lime'; }
+
+	get angles() { return this.classSettings.settings.object.geometry.angles; }
 
 	get verticeEdgesLength() { return this._verticeEdgesLength; }
 	set verticeEdgesLength(length) {
