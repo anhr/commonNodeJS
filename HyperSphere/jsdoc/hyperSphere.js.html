@@ -302,13 +302,12 @@ class HyperSphere extends MyObject {
 	 **/
 	constructor(options, classSettings = {}) {
 
-		classSettings.onSelectScene ||= (hyperSphere, timeId, t) => { if (this.middleVertices) return this.middleVertices(timeId, t); }
+		if (!classSettings.onSelectScene) classSettings.onSelectScene = (hyperSphere, timeId, t) => { if (this.middleVertices) return this.middleVertices(timeId, t); }
 		//for playing in http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
 		options.onSelectScene = (index, t) => {
 
 			if (classSettings.onSelectScene) return classSettings.onSelectScene(this, index, t);
 			else if (this.middleVertices) return hyperSphere.middleVertices(index, t);
-//			else return this.onSelectScene.copyAngles(index, t);
 			return true;//Сдедующий шаг проигрывателя выполняется только после посторения всех вершин без временной задержки
 		
 		}
@@ -325,7 +324,6 @@ class HyperSphere extends MyObject {
 							
 		};
 		super( classSettings.settings );
-//		if (classSettings.settings.object.geometry.rCount === undefined) classSettings.settings.object.geometry.rCount = 1;
 		Object.defineProperty(classSettings.settings.bufferGeometry.userData, 'positionBlockLength', {
 
 			get: () => { return classSettings.settings.object.geometry.angles.length; },
@@ -353,8 +351,6 @@ class HyperSphere extends MyObject {
 	
 						case 't':
 							classSettings.settings.bufferGeometry.userData.timeId = userData.index;
-//сейчас это вызывается из options.onSelectScene
-//							if (classSettings.onSelectScene) classSettings.onSelectScene(this, userData.index, value);//время равно радиусу вселенной
 							break;
 							
 					}
@@ -371,8 +367,7 @@ class HyperSphere extends MyObject {
 		if (options.dat) options.dat.cookie.getObject(this.cookieName, cookieOptions);
 
 		let edgesOld = cookieOptions.edgesOld || { project: true, };
-		if (classSettings.overriddenProperties) classSettings.overriddenProperties.edges ||= () => { return false; };
-//		classSettings.edges = cookieOptions.edges === false ? false : cookieOptions.edges || classSettings.edges;
+		if (classSettings.overriddenProperties &amp;&amp; !classSettings.overriddenProperties.edges) classSettings.overriddenProperties.edges = () => { return false; };
 		classSettings.edges = cookieOptions.edges === false ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
 		classSettings.edges = classSettings.edges === false ? classSettings.overriddenProperties.edges() : classSettings.edges;
 		if (classSettings.edges != false) classSettings.edges = classSettings.edges || {};
@@ -432,7 +427,6 @@ class HyperSphere extends MyObject {
 
 		}
 		settings.object.geometry.angles = settings.object.geometry.angles || this.defaultAngles();
-//		if (!settings.object.geometry.angles) settings.object.geometry.angles = this.defaultAngles();
 		const anglesObject2Array = () => {
 			
 			const geometryAngles = settings.object.geometry.angles;
@@ -451,6 +445,12 @@ class HyperSphere extends MyObject {
 				const verticeId = parseInt(name);
 				if (!isNaN(verticeId)) {
 
+					if (verticeId >= angles.length) {
+
+						console.error(sHyperSphere + ': get vertice angles failed! verticeId = ' + verticeId + ' is great angles.length = ' + angles.length);
+						return;
+						
+					}
 					const length = _this.dimension - 1;
 					return new Proxy(angles[verticeId], {
 
@@ -483,6 +483,11 @@ class HyperSphere extends MyObject {
 							if (!isNaN(angleId)) {
 
 								const angle = value;
+								if (angleId >= verticeAngles.length) {
+
+									console.error(sHyperSphere + ': set vertice angles failed! angleId = ' + angleId + ' is great of verticeAngles.length = ' + verticeAngles.length);
+									return false;
+								}
 								if (verticeAngles[angleId] != angle) {
 
 									const range = angles.ranges[angleId];
@@ -491,7 +496,12 @@ class HyperSphere extends MyObject {
 									verticeAngles[angleId] = angle;
 
 									//если тут обновлять вершину то каждая вершина будет обноляться несколько раз в зависимости от количества углов. Сейчас вершина обновляется после обновления всех углов вершины
-									//_this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
+									if(_this.isSetPositionAttributeFromPoint != false) {
+										
+										_this.setPositionAttributeFromPoint(verticeId);//обновляем только одну ось в декартовой системе координат
+										_this.bufferGeometry.attributes.position.needsUpdate = true;
+
+									}
 									
 									//если тут обновлять гиперсферу, то будет тратиться лишнее время, когда одновременно изменяется несколько вершин
 									//Сейчас я сначала изменяю все вершины, а потом обновляю гиперсферу
@@ -552,8 +562,6 @@ class HyperSphere extends MyObject {
 
 							_this.removeMesh();
 							_this.pushEdges();
-//							const indicesAndColors = _this.indicesAndColors();
-//							_this.bufferGeometry.setIndex(indicesAndColors.indices);
 
 						}
 						else _this.project();
@@ -640,28 +648,11 @@ class HyperSphere extends MyObject {
 
 			get: (target, name) => {
 
-//				const _position = settings.object.geometry.angles;
 				let _position = settings.object.geometry.angles;
 				let i = parseInt(name);
 				if (!isNaN(i)) {
 
-//					if (settings.object.geometry.timesAngles)
-					if (settings.object.geometry.times){
-
-/*						
-						const timesAngles = settings.object.geometry.timesAngles;
-						let timeAnglesId = 0, positionId = timesAngles[timeAnglesId].length;
-						while(i >= positionId) {
-
-							timeAnglesId++;
-							positionId += timesAngles[timeAnglesId].length;
-							
-						}
-						_position = timesAngles[timeAnglesId];
-						i -= positionId - timesAngles[timeAnglesId].length;
-*/						
-						
-					} else {
+					if (settings.object.geometry.times){} else {
 
 						if (i > _position.length) console.error(sHyperSphere + ': position get. Invalid index = ' + i + ' position.length = ' + _position.length);
 						else if (i === _position.length)
@@ -678,7 +669,6 @@ class HyperSphere extends MyObject {
 							const vertice = _this.angles2Vertice(i, timeId);
 							if (classSettings.debug) {
 	
-	//							const sum = vertice.radius, r = settings.object.geometry.timesAngles ? settings.object.geometry.angles.player.r : classSettings.r;
 								const sum = vertice.radius, r = classSettings.overriddenProperties.r(timeId);
 								if (Math.abs(sum - r) > 9.5e-8)
 									console.error(sHyperSphere + ': Invalid vertice[' + i + '] sum = ' + sum + '. r = ' + r);
@@ -693,6 +683,7 @@ class HyperSphere extends MyObject {
 
 							switch (name) {
 
+/*									
 								//дуга между вершинами
 								case 'arcTo': return (verticeTo) => {
 
@@ -704,6 +695,7 @@ class HyperSphere extends MyObject {
 									return R * acos(ab / (R * R))
 
 								}
+*/								
 								//расстояние между вершинами по прямой в декартовой системе координат
 								//Если надо получить расстояние между вершинами по дуге в полярной системе координат, то надо вызвать 
 								//classSettings.settings.object.geometry.position.angles[verticeId].distanceTo
@@ -834,7 +826,9 @@ class HyperSphere extends MyObject {
 
 											//find middle vertice between opposite vertices
 
-											//https://wiki5.ru/wiki/Mean_of_circular_quantities#Mean_of_angles Среднее значение углов
+											//Среднее значение углов
+											//ссылка не работает https://wiki5.ru/wiki/Mean_of_circular_quantities#Mean_of_angles
+											//https://en.wikipedia.org/wiki/Circular_mean
 
 											//массив для хранения сумм декартовых координат противоположных вершин
 											//для 1D гиперсферы это: aSum[0] = x, aSum[1] = y.
@@ -842,6 +836,7 @@ class HyperSphere extends MyObject {
 											//для 3D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z, aSum[3] = w.
 											const aSum = [];
 
+											const oppositeVertices = [];
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
 												const oppositeVertice = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, timeId);
@@ -851,10 +846,36 @@ class HyperSphere extends MyObject {
 													aSum[i] += axis
 												
 												});
+												oppositeVertices.push(oppositeVertice);
 
 											});
+/*
+											let sum = 0;
+											for (let i = 0; i &lt; _this.dimension; i ++) sum += aSum[i];
+*/
+											let isZero = true;
+											for (let i = 0; i &lt; _this.dimension; i ++) {
+												
+												if(aSum[i] != 0) {
 
-											const middleVertice = _this.vertice2angles(aSum);
+													isZero = false;
+													break;
+													
+												};
+
+											}
+											
+											//if (isZero === 0) {
+
+												//В этом случае средняя вершина не определена
+												//для 1D гиперсферы. Противополжные вершины находятся ровно на противоположных сторонах окружности.
+													//Средняя вершина, находится посередине одной из двух дуг, соеденяющих проитвоположные вершины.
+												//для 2D гиперсферы это .
+												//для 3D гиперсферы это .
+												//Думаю тут надо применить вероятностный метод определения средней вершины
+											//}
+											
+											const middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
 											if (classSettings.debug &amp;&amp; classSettings.debug.middleVertice) {
 
 												console.log('opposite to vertice[' + verticeId + '] vertices:');
@@ -909,13 +930,10 @@ class HyperSphere extends MyObject {
 
 								const verticeAngles = angles[verticeId];
 								if (classSettings.debug &amp;&amp; ((verticeAngles.length != (_this.dimension - 1)) || (value.length != (_this.dimension - 1)))) console.error(sHyperSphere + ': Set vertice[' + verticeId + '] angles failed. Invalid angles count.')
+								this.isSetPositionAttributeFromPoint = false;
 								for (let j = 0; j &lt; value.length; j++) verticeAngles[j] = value[j];
+								delete this.isSetPositionAttributeFromPoint;
 								this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
-/*								
-								const object = this.object();
-								if (object.userData.player.arrayFuncs)
-									object.userData.player.arrayFuncs[verticeId].fromBufferAttribute(object.geometry.attributes.position, verticeId);
-*/									
 
 							} else angles[name] = value;
 							return true;
@@ -926,7 +944,6 @@ class HyperSphere extends MyObject {
 					case 'count': return _position.count === undefined ? _position.length : _position.count;
 					case 'forEach': return (item) => {
 
-//						const pos = settings.object.geometry.playerPosition ? settings.object.geometry.playerPosition[settings.bufferGeometry.userData.timeId] : position;
 						const pos = classSettings.overriddenProperties.position;
 						for (let verticeId = 0; verticeId &lt; pos.length; verticeId++) item(pos[verticeId], verticeId);
 					
@@ -963,7 +980,7 @@ class HyperSphere extends MyObject {
 
 							}
 							
-							const vertice = settings.object.geometry.position[verticeId], strVerticeId = 'vertice[' + verticeId + ']'
+							const vertice = settings.object.geometry.position[verticeId], strVerticeId = 'geometry.position[' + verticeId + ']'
 							_this.TestVertice(vertice, strVerticeId);
 							vertice.edges.forEach(edgeId => {
 
@@ -1010,12 +1027,18 @@ class HyperSphere extends MyObject {
 		const position = settings.object.geometry.position;
 		
 		//иммитация наследования классов
-		classSettings.overriddenProperties ||= {};
+		classSettings.settings.overriddenProperties.positionOffsetId = (positionId) => {
+			
+			const settings = classSettings.settings;
+			return settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId;
+			
+		}
+		if (!classSettings.overriddenProperties) classSettings.overriddenProperties = {};
 		const overriddenProperties = classSettings.overriddenProperties;
-		overriddenProperties.oppositeVertice ||= (oppositeAngleId) => { return position[oppositeAngleId]; }
+		if (!overriddenProperties.oppositeVertice) overriddenProperties.oppositeVertice = (oppositeAngleId) => { return position[oppositeAngleId]; }
 		if (!overriddenProperties.position) Object.defineProperty(overriddenProperties, 'position', { get: () => { return position; }, });
 		if (!overriddenProperties.position0) Object.defineProperty(overriddenProperties, 'position0', { get: () => { return position; }, });
-		overriddenProperties.updateVertices ||= (vertices) => {
+		if (!overriddenProperties.updateVertices) overriddenProperties.updateVertices = (vertices) => {
 
 			if (vertices.length != position.length) console.error(sHyperSphere + ': classSettings.overriddenProperties.updateVertices(). Invalid vertices.length = ' + vertices.length);
 			for (let verticeId = 0; verticeId &lt; position.length; verticeId++)
@@ -1023,19 +1046,14 @@ class HyperSphere extends MyObject {
 			this.bufferGeometry.attributes.position.needsUpdate = true;
 			
 		}
-		overriddenProperties.vertices ||= () => { return []; }
-		overriddenProperties.r ||= (timeId) => { return classSettings.r; }
-		overriddenProperties.pushMiddleVertice ||= () => {}
-		overriddenProperties.angles ||= (anglesId) => { return classSettings.settings.object.geometry.angles[anglesId]; }
-		overriddenProperties.verticeAngles ||= (anglesCur, verticeId) => { return anglesCur[verticeId]; }
-		overriddenProperties.verticeText ||= (intersection, text) => {
-			
-//			return text(classSettings.settings.object.geometry.angles, intersection.index);
-			return text(classSettings.settings.object.geometry.angles,  this.searchNearestEdgeVerticeId(intersection.index, intersection));
-		
-		}
-		overriddenProperties.text ||= () => { return ''; }
-		overriddenProperties.onSelectSceneEndSetDrawRange ||= (timeId) => {}
+		if (!overriddenProperties.vertices) overriddenProperties.vertices = () => { return []; }
+		if (!overriddenProperties.r) overriddenProperties.r = (timeId) => { return classSettings.r; }
+		if (!overriddenProperties.pushMiddleVertice) overriddenProperties.pushMiddleVertice = () => {}
+		if (!overriddenProperties.angles) overriddenProperties.angles = (anglesId) => { return classSettings.settings.object.geometry.angles[anglesId]; }
+		if (!overriddenProperties.verticeAngles) overriddenProperties.verticeAngles = (anglesCur, verticeId) => { return anglesCur[verticeId]; }
+		if (!overriddenProperties.verticeText) overriddenProperties.verticeText = (intersection, text) => { return text(classSettings.settings.object.geometry.angles,  this.searchNearestEdgeVerticeId(intersection.index, intersection)); }
+		if (!overriddenProperties.text) overriddenProperties.text = () => { return ''; }
+		if (!overriddenProperties.onSelectSceneEndSetDrawRange) overriddenProperties.onSelectSceneEndSetDrawRange = (timeId) => {}
 
 		//нужно для classSettings.settings.object.geometry.times в проекте universe
 		//В этом случае нужно знать количество углов вершины еще до того как будет получена Universe.hyperSphere.dimension
@@ -1441,7 +1459,7 @@ class HyperSphere extends MyObject {
 
 				if (!object) return;
 				scene.remove(object);
-				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(object);
+//				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(object);
 
 			}
 
@@ -1482,10 +1500,8 @@ class HyperSphere extends MyObject {
 
 			if (this.setW) this.setW();
 
-//			this.isUpdate = true;
 			this.update = (verticeId, changedAngleId, timeId) => {
 
-//				if (!this.isUpdate) return;
 				const points = nd &amp;&amp; (nd.object3D.visible === true) ? nd.object3D : myPoints;
 				/*
 				const vertice = settings.object.geometry.position[verticeId];
@@ -1548,7 +1564,6 @@ class HyperSphere extends MyObject {
 
 					const options = classSettings.settings.options;
 					return this.newHyperSphere(
-//						classSettings.settings.options,
 						//Если не делать копию classSettings.settings.options, то изменится classSettings.settings.options.scales.w.min и max,
 						//что приведет к неправильному цвету вершины в universe при ее ручном изменении
 						{
@@ -1557,6 +1572,8 @@ class HyperSphere extends MyObject {
 							getLanguageCode: options.getLanguageCode,
 							guiSelectPoint: options.guiSelectPoint,
 							renderer: options.renderer,
+							palette: options.palette,
+							scales: options.scales,
 							
 						},
 						{
@@ -1571,7 +1588,8 @@ class HyperSphere extends MyObject {
 
 							} : settings.edges,
 							projectParams: { scene: classSettings.projectParams.scene, },
-							r: r * classSettings.r,
+//							r: r * classSettings.r,
+							r: classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0),
 							debug: classSettings.debug,
 							settings: {
 
@@ -1628,18 +1646,6 @@ class HyperSphere extends MyObject {
 							},
 							
 						});
-/*						
-						userData.player = new Proxy(userData.player, {
-
-							set: (player, name, value) => {
-	
-								player[name] = value;
-								return true;
-								
-							}
-							
-						});
-*/						
 						
 					}
 					if (!classSettings.intersection) return;
@@ -1692,7 +1698,6 @@ class HyperSphere extends MyObject {
 
 								anglesDefault.length = 0;
 								if (!anglesCur) anglesCur = settings.object.geometry.angles;
-//								const verticeAngles = anglesCur[verticeId];
 								const verticeAngles = classSettings.overriddenProperties.verticeAngles(anglesCur, verticeId);
 
 								for (let i = (aAngleControls.cEdges.__select.length - 1); i > 0; i--)
@@ -1748,7 +1753,7 @@ class HyperSphere extends MyObject {
 									//Сделать один шаг проигрывателя →
 									//Появится ошибка:
 									//HyperSphere: Invalid vertice[2] sum = 0.999078566893569. r = 1
-//									cAngle.boSetPosition = false;
+									cAngle.boSetPosition = false;
 									
 									cAngle.setValue(angle);
 									delete cAngle.boSetPosition;
@@ -1827,42 +1832,15 @@ class HyperSphere extends MyObject {
 											cAngle = fAngles.add({ angle: 0, }, 'angle', range.min, range.max, 2 * π / 360).onChange((angle) => {
 
 												if (cAngle.boSetPosition === false) return;
-												const guiPoints = _this.object().userData.myObject.guiPoints,
-													verticeAngles = classSettings.overriddenProperties.verticeAngles(guiPoints.timeAngles || angles, aAngleControls.verticeId);
+												const guiPoints = _this.object().userData.myObject.guiPoints;
+												guiPoints.verticeId = undefined;
+												const verticeAngles = classSettings.overriddenProperties.verticeAngles(guiPoints.timeAngles || angles, aAngleControls.verticeId);
 												if (verticeAngles[angleId] === angle) return;
 												verticeAngles[angleId] = angle;
 												_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);
 												_this.update(aAngleControls.verticeId, angleId, guiPoints.timeId);
 	
 											});
-/*
-										const name = (angleId) => {
-
-											//Localization
-
-											const lang = [
-
-												'Altitude',
-												'Latitude',
-												'Longitude',
-
-											]
-
-											switch (options.getLanguageCode()) {
-
-												case 'ru'://Russian language
-
-													lang[0] = 'Высота';
-													lang[1] = 'Широта';
-													lang[2] = 'Долгота';
-													break;
-
-											}
-											return lang[angleId + 4 - _this.dimension];
-
-										}
-										dat.controllerNameAndTitle(cAngle, name(angleId));
-*/
 										dat.controllerNameAndTitle(cAngle, this.axisName(angleId));
 
 										aAngleControls.push(cAngle); 
@@ -1887,62 +1865,6 @@ class HyperSphere extends MyObject {
 								}
 								createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
 
-								//радиус вершины зависит от времени проигрывателя
-/*									
-								const getInputEl =  ( controller ) => { return controller ? controller.domElement.querySelector( 'input' ) : undefined; },
-									readOnlyEl = ( controller, boReadOnly ) => {
-						
-									const element = getInputEl( controller );
-									if ( element ) element.readOnly = boReadOnly;
-								
-								},
-									isReadOnlyEl = ( controller ) => {
-									
-									const element = getInputEl( controller );
-									if ( element ) return element.readOnly;
-								
-								},
-									setValue = ( controller, v ) => {
-						
-									if ( !controller )
-										return;
-									const input = getInputEl( controller ),//controller.domElement.querySelector( 'input' ),
-										readOnly = input.readOnly;
-									input.readOnly = false;
-									controller.object[controller.property] = v;
-									if ( controller.__onChange )
-										controller.__onChange.call( controller, v );
-									controller.initialValue = v;
-									controller.updateDisplay();
-									input.readOnly = readOnly;
-									return controller;
-						
-								},
-								const isReadOnlyController = ( controller ) => {
-					
-									if ( controller.boSetValue ) return true;
-									if ( readOnly.isReadOnlyEl( controller ) ) {
-					
-										if ( controller.getValue() !== controller.initialValue ) {
-					
-											if ( controller.boSetValue === undefined ) {
-					
-												controller.boSetValue = true;
-												readOnly.setValue( controller, controller.initialValue );
-												controller.boSetValue = undefined;
-												controller.initialValue = controller.getValue();//Эта строка нужна в случае когда новое зачения невозможно установиь точно таким же, как initialValue
-												//Иначе перепонится стек
-					
-											}
-					
-										}
-										return true;
-					
-									}
-									return false;
-					
-								}
-*/										
 								aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player.getTime(), }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).onChange((verticeRadius) => {
 
 									if (readOnly.isReadOnlyController(aAngleControls.cRadius)) return;
@@ -1951,10 +1873,6 @@ class HyperSphere extends MyObject {
 								});
 								dat.controllerNameAndTitle(aAngleControls.cRadius, lang.radius, lang.radiusTitle);
 								readOnly.readOnlyEl(aAngleControls.cRadius, true);
-/*								
-								aAngleControls.cRadius.domElement.querySelector('input').readOnly = true;
-								aAngleControls.cRadius.domElement.querySelector('.slider').readOnly = true;
-*/								
 									
 								//Edges
 
@@ -1993,8 +1911,11 @@ class HyperSphere extends MyObject {
 										edgeAnglesDefault.length = 0;
 										for (let i = 0; i &lt; oppositeVerticeAngles.length; i++) {
 
-											const angle = oppositeVerticeAngles[i];
-											aEdgeAngleControls[i].setValue(angle);
+											const angle = oppositeVerticeAngles[i],
+												cAngle = aEdgeAngleControls[i];
+											cAngle.boSetPosition = false;
+											cAngle.setValue(angle);
+											delete cAngle.boSetPosition;
 											edgeAnglesDefault.push(angle);
 
 										}
@@ -2002,8 +1923,8 @@ class HyperSphere extends MyObject {
 										//рисуем крестик на противоположной вершине выбранного ребра
 										aAngleControls.removeCross();
 										vertices.length = 0;
-										const oppositeVertice = position[oppositeVerticeId],
-											crossSize = 0.05;
+										if (settings.guiPoints) settings.bufferGeometry.userData.selectedTimeId = settings.guiPoints.timeId;
+										const oppositeVertice = position[oppositeVerticeId], crossSize = 0.05;
 										pushVertice([0, 0, crossSize]);
 										pushVertice([0, 0, -crossSize]);
 										pushVertice([-crossSize, -crossSize, 0]);
@@ -2028,6 +1949,7 @@ class HyperSphere extends MyObject {
 													if (aAngleControls.arc) {
 
 														aAngleControls.arc.classSettings.settings.object.geometry.angles[verticeId] = verticeAngles;
+														aAngleControls.arc.object().geometry.drawRange.type = this.bufferGeometry.drawRange.types.edges;//строка выше портит drawRange.type
 														verticeId++;
 
 													} else arcAngles.push(verticeAngles);
@@ -2036,8 +1958,20 @@ class HyperSphere extends MyObject {
 												arcVerticesCount = 2,
 												d = π / arcVerticesCount,
 												cd = 1 / Math.sin(d),//Поправка для координат вершин что бы они равномерно располагались по дуге
-												vertice = position[aAngleControls.verticeId], oppositeVertice = position[aAngleControls.oppositeVerticeId],
-												distance = vertice.arcTo(oppositeVertice),
+												vertice = position[aAngleControls.verticeId],// oppositeVertice = position[aAngleControls.oppositeVerticeId],
+												//дуга между вершинами
+												arcTo = (verticeTo, vertice) => {
+				
+													//Calculate the arc length between two points over a hyper-sphere
+													//Reference: https://www.physicsforums.com/threads/calculate-the-arc-length-between-two-points-over-a-hyper-sphere.658661/post-4196208
+													const a = vertice, b = verticeTo, R = 1, acos = Math.acos;
+													let ab = 0;//dot product
+													for (let i = 0; i &lt; a.length; i++) ab += a[i] * b[i];
+													return R * acos(ab / (R * R))
+				
+												},
+												distance = arcTo(oppositeVertice, vertice),
+//												distance = vertice.arcTo(oppositeVertice),
 												arcCount = distance * (aAngleControls.MAX_POINTS - 1) / π;
 											//Не получилось равномерно разделить дугу на части.
 											//Если начало и конец дуги расположены напротив друг друга на окружности или на сфере или на 4D hypersphere
@@ -2049,7 +1983,7 @@ class HyperSphere extends MyObject {
 											//если maxLevel = 3 то дуга делится на 8 частей с 7 вершинами посередине
 											//Таким образом дугу можно разделит только на 2 в степени maxLevel частей
 											let count = 2;
-											while (count &lt; arcCount) {
+											while (count &lt;= arcCount) {
 
 												count *= 2;
 												maxLevel++;
@@ -2066,7 +2000,7 @@ class HyperSphere extends MyObject {
 
 													if (progressBar.boStop) {
 
-														//Этот процес вычисления дуги нужно остановть потому что начался другой процесс вычисления дуги
+														//Этот процес вычисления дуги нужно остановить потому что начался другой процесс вычисления дуги
 														progressBar.remove();
 														return;
 
@@ -2125,7 +2059,8 @@ class HyperSphere extends MyObject {
 
 																if (this.child) this.child.arc(aAngleControls, lang, arcAngles);
 																else {
-
+																	console.error(sHyperSphere + ': Непонятно когда сюда попадает')
+/*
 																	const arcEdges = [];
 																	for (let i = 0; i &lt; (aAngleControls.MAX_POINTS - 1); i++) arcEdges.push([i, i + 1]);
 																	aAngleControls.arc = this.line({
@@ -2151,12 +2086,14 @@ class HyperSphere extends MyObject {
 																		},
 
 																	});
+*/																	
 
 																}
 
 															}
 															console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object().geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object().geometry.drawRange.count + ' Vertices count = ' + verticeId);
-															const distance = position[aAngleControls.verticeId].arcTo(position[aAngleControls.oppositeVerticeId]);
+															const distance = arcTo(position[aAngleControls.oppositeVerticeId], position[aAngleControls.verticeId]);
+//															const distance = position[aAngleControls.verticeId].arcTo(position[aAngleControls.oppositeVerticeId]);
 															if (classSettings.debug) {
 
 																let vertice, distanceDebug = 0;
@@ -2260,18 +2197,13 @@ class HyperSphere extends MyObject {
 									_this.opacity(boMiddleVertice);
 									if (boMiddleVertice) {
 
-										//непонятно зачем эта строка
-//										if (classSettings.settings.guiPoints) delete classSettings.settings.guiPoints.timeId;
-										
 										const verticeId = aAngleControls.verticeId,
 											angles = classSettings.overriddenProperties.position0.angles[verticeId],
 											oppositeVerticesId = angles.oppositeVerticesId,
 											settings = classSettings.settings,
-//											timeId = options.player.getTimeId(),
 											timeId = settings.guiPoints ? settings.guiPoints.timeId : options.player.getTimeId(),
 											middleVertice = _this.angles2Vertice(angles.middleVertice(oppositeVerticesId, timeId + 1, false), timeId),
 											userData = settings.bufferGeometry.userData;
-//											timeIdOld = userData.timeId;//Последнее время проигрывателя.
 										
 										userData.selectedTimeId = timeId;//Для корректной работы position[oppositeVerticeId] когда во вселенной пользователь выбрал вершину не на последнем времени проигрывателя.
 										//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
@@ -2286,7 +2218,6 @@ class HyperSphere extends MyObject {
 											pushVertice(position[oppositeVerticeId]);
 
 										});
-//										userData.timeId = timeIdOld;
 										delete userData.selectedTimeId;
 										middleVerticeEdges = addObject2Scene(vertices, 'blue');
 
@@ -2477,22 +2408,7 @@ class HyperSphere extends MyObject {
 
 					} else {
 
-//					const points = settings.object.geometry.position;
 					const points = undefined;
-/*						
-					const points = [],// geometry = settings.object.geometry,
-						attributesPosition = settings.bufferGeometry.attributes.position, itemSize = attributesPosition.itemSize;
-					for (let verticeId = 0; verticeId &lt; settings.bufferGeometry.drawRange.count; verticeId++) points.push((itemSize === 4 ? new THREE.Vector4 :  new THREE.Vector3).fromBufferAttribute(attributesPosition, verticeId));
-*/					
-/*						
-for (let i = 0; i &lt; geometry.times.length; i++) {
-	
-	const position = geometry.playerPosition[i];
-	position.forEach(vertice => points.push(vertice));
-
-}
-*/
-//geometry.times.forEach(timePosition => timePosition.forEach(vertice => console.log(vertice.edges)));
 
 						//for debug
 						//Выводим углы вместо вершин. Нужно для отладки равномерного распределения вершин в гиперсфре
@@ -2512,7 +2428,6 @@ for (let i = 0; i &lt; geometry.times.length; i++) {
 							classSettings.settings.options.setPalette(new ColorPicker.palette({ palette: [{ percent: 0, r: color.r * 255, g: color.g * 255, b: color.b * 255, },] }));
 
 						}
-//settings.overriddenProperties.setDrawRange(settings.bufferGeometry.drawRange.start, Infinity);console.error('Under constraction')
 						new MyPoints(points, scene, {
 
 							pointsOptions: {
@@ -2524,24 +2439,7 @@ for (let i = 0; i &lt; geometry.times.length; i++) {
 								onReady: (points) => {
 
 									myPoints = points;
-//									myPoints.material.needsUpdate = true;//for THREE.REVISION = "145dev"
 									myPoints.userData.raycaster = raycaster;
-/*
-									myPoints.userData.raycaster = { text: (intersection) => {
-
-										return classSettings.overriddenProperties.verticeText(intersection, (angles, index) => {
-
-											let text = //'\n' + lang.angles + ':'
-												classSettings.overriddenProperties.text('', angles, lang)
-												+ '\n' + 'vertice Id: ' + index
-												+ '\n' + lang.angles + ':'
-											angles[index].forEach((axisAngle, angleId) => { text += '\n\t' + this.axisName(angleId) + ': ' + axisAngle})
-											return text;
-											
-										});
-
-									}, }
-*/
 									gui(myPoints);
 									intersection(points);
 
@@ -2705,18 +2603,9 @@ for (let i = 0; i &lt; geometry.times.length; i++) {
 		this.onSelectSceneEnd = (timeId) => {
 
 			classSettings.overriddenProperties.onSelectSceneEndSetDrawRange(timeId);
-/*			
-			const bufferGeometry = this.bufferGeometry, drawRange = bufferGeometry.drawRange;
-			bufferGeometry.attributes.position.needsUpdate = true;
-			bufferGeometry.setDrawRange(drawRange.start, (settings.object.geometry.indices[0].timeEdgesCount * (timeId + 1) * 2) - drawRange.start);
-*/			
 			
 			//Если не установить это значение, то будет неверно устанавливаться значение w в 
-//			options.scales.w.isChangeColor = false;
-//			options.scales.w.isColor = false;
 			options.player.endSelect();
-//			options.scales.w.isChangeColor = true;
-//			options.scales.w.isColor = true;
 			
 			options.player.continue();
 			
@@ -2990,7 +2879,6 @@ for (let i = 0; i &lt; geometry.times.length; i++) {
 
 			});
 			const fHyperSphere = fParent.addFolder(this.name(getLanguageCode)), dat = three.dat;
-//			const fHyperSphere = options.dat.gui.addFolder(this.name(getLanguageCode)), dat = three.dat;
 			const addSettingsFolder = classSettings.overriddenProperties.addSettingsFolder;
 			if (addSettingsFolder) addSettingsFolder(fParent, getLanguageCode);
 
@@ -3016,11 +2904,9 @@ for (let i = 0; i &lt; geometry.times.length; i++) {
 
 			//edges
 
-//			classSettings.edges = cookieOptions === false ? false : cookieOptions.edges || classSettings.edges;
-
 			const objectEdges = { boEdges: ((typeof classSettings.edges) === 'object') || (classSettings.edges === true) ? true : false },
 				setCockie = () => { options.dat.cookie.setObject(_this.cookieName, { edges: classSettings.edges, edgesOld: edgesOld, }); };
-			classSettings.overriddenProperties.isEdgesOnly ||= () => { return false; }
+			if (!classSettings.overriddenProperties.isEdgesOnly) classSettings.overriddenProperties.isEdgesOnly = () => { return false; }
 			cEdges = fHyperSphere.add(objectEdges, 'boEdges').onChange((boEdges) => {
 
 				if (boEdges) {
@@ -3058,9 +2944,6 @@ for (let i = 0; i &lt; geometry.times.length; i++) {
 				}),
 				displayEdge = () => { _display(fEdge.domElement, classSettings.edges); };
 			displayEdge();
-//			classSettings.overriddenProperties.setEdges ||= () => { return cookieOptions === false ? false : cookieOptions.edges || classSettings.edges; }
-//			classSettings.edges = classSettings.overriddenProperties.edges(cEdges);
-//			classSettings.overriddenProperties.setEdges(cEdges);
 			dat.controllerNameAndTitle(cEdges, lang.edges, lang.edgesTitle);
 			dat.controllerNameAndTitle(cProject, lang.project, lang.projectTitle);
 
@@ -3070,9 +2953,24 @@ for (let i = 0; i &lt; geometry.times.length; i++) {
 
 	}
 
+	/**
+	 * get default color is 'lime'
+	 */
 	get defaultColor() { return 'lime'; }
 
+	/**
+	 * get hyper sphere angles. See &lt;b>classSettings.settings.object.geometry.angles&lt;/b> parameter of the &lt;b>hyperSphere&lt;/b> constructor.
+	 */
+	get angles() {
+
+		//без разницы какую строку выбрать
+		return this.classSettings.settings.object.geometry.angles;
+		//return this.classSettings.settings.object.geometry.position.angles
+	
+	}
+
 	get verticeEdgesLength() { return this._verticeEdgesLength; }
+/*
 	set verticeEdgesLength(length) {
 
 		this._verticeEdgesLength = length;
@@ -3080,16 +2978,28 @@ for (let i = 0; i &lt; geometry.times.length; i++) {
 		this.pushEdges();
 
 	}
+*/
 
 	//base methods
 
+	/**
+	 * Push random longitude into vertice angles
+	 * @param {array} verticeAngles vertice angles
+	 */
 	pushRandomLongitude(verticeAngles) {
 
 		const ranges = this.classSettings.settings.object.geometry.angles.ranges, longitudeRange = ranges[ranges.length - 1];
 		verticeAngles.push(Math.random() * (longitudeRange.max - longitudeRange.min) + longitudeRange.min);
 		
 	}
+	/**
+	 * Base method that returns a name of the hyper sphere in the child classes.
+	 * @returns a console error if your call this method directly.
+	 */
 	name() { console.error(sOverride.replace('%s', 'name')); }
+	/**
+	 * Writes to console an important information about hyper sphere, that can help you for debugging.
+	 */
 	logHyperSphere() {
 
 		if (!this.classSettings.debug || (this.classSettings.debug.log === false)) return;
@@ -3151,6 +3061,12 @@ for (let i = 0; i &lt; geometry.times.length; i++) {
 		});
 		
 	}
+	/**
+	 * &lt;pre>
+	 * Writes a console error, if any vertices angle is out of the angles range. Normalizes a vertices angle to available range, if out of the angles range is occures.
+	 * Writes a console error, if identifier of any edge of the vertices is incorrect.
+	 * &lt;/pre>
+	 */
 	Test(){
 
 		if (!this.classSettings.debug) return;
@@ -3162,6 +3078,11 @@ for (let i = 0; i &lt; geometry.times.length; i++) {
 		if (geometry.indices.faces) geometry.indices.faces.test();
 		
 	}
+	/**
+	 * Writes a console error, if vertice edges count is incorrect.
+	 * @param {object} vertice vertice for testing
+	 * @param {string} strVerticeId name of the vertice Id
+	 */
 	TestVertice(vertice, strVerticeId){
 
 		if (!this.boTestVertice) return;
@@ -3170,54 +3091,65 @@ for (let i = 0; i &lt; geometry.times.length; i++) {
 			console.error(sHyperSphere + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
+	/**
+	 * Converts a vertice angles to vertice position.
+	 * @param {number|array} anglesId 
+	 * &lt;pre>
+	 * number: vertice id
+	 * array: array of the vertice angles
+	 * &lt;/pre>
+	 * @param {number} timeId player time id
+	 * @returns Vertice position.
+	 */
 	angles2Vertice(anglesId, timeId) {
 
-		if (typeof anglesId === "number") {
+		if (typeof anglesId != "number")
+			return this.getPoint(anglesId, timeId);
 
-			if (this.classSettings.debug) {
+		if (this.classSettings.debug) {
 				
-				if (anglesId >= this.bufferGeometry.userData.position.length) console.error(sHyperSphere + '.angles2Vertice: Invalid anglesId = ' + anglesId);
-				//Пока что не вижу случая, когда надо получить position за пределами this.bufferGeometry.drawRange
-				else {
+			if (anglesId >= this.bufferGeometry.userData.position.length) console.error(sHyperSphere + '.angles2Vertice: Invalid anglesId = ' + anglesId);
+			//Пока что не вижу случая, когда надо получить position за пределами this.bufferGeometry.drawRange
+			else {
 
-					const bufferGeometry = this.bufferGeometry, drawRange = bufferGeometry.drawRange;
-					if (drawRange.type === drawRange.types.vertices) {
+				const bufferGeometry = this.bufferGeometry, drawRange = bufferGeometry.drawRange;
+				if (drawRange.type === drawRange.types.vertices) {
 						
-						const count = bufferGeometry.drawRange.count, start = bufferGeometry.drawRange.start,
-							offset = this.positionOffset(this.bufferGeometry.attributes.position, anglesId);
-						let sError;
-						if (bufferGeometry.index === null) {
+					const count = bufferGeometry.drawRange.count, start = bufferGeometry.drawRange.start,
+						offset = this.positionOffset(this.bufferGeometry.attributes.position, anglesId);
+					let sError;
+					if (bufferGeometry.index === null) {
 
-							const positionId = offset / bufferGeometry.attributes.position.itemSize;
-							if ((positionId >= (count + start)) || (positionId &lt; start))
-								sError = '';
-//								console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + '. positionId = ' + positionId + ' is out of range from ' + start + ' to ' + (count + start));
+						const positionId = offset / bufferGeometry.attributes.position.itemSize;
+						if ((positionId >= (count + start)) || (positionId &lt; start))
+							sError = '. positionId = ' + positionId;
 							
-						} else {
+					} else {
 							
-							if ((offset >= (count + start)) || (offset &lt; start))
-								sError = '. offset = ' + offset;
-//								console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + '. positionId = ' + positionId + ' is out of range from ' + start + ' to ' + (count + start));
-
-						}
-						if ( sError != undefined ) console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + sError + ' is out of range from ' + start + ' to ' + (count + start));
+						if ((offset >= (count + start)) || (offset &lt; start))
+							sError = '. offset = ' + offset;
 
 					}
+					if ( sError != undefined ) console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + sError + ' is out of range from ' + start + ' to ' + (count + start));
 
 				}
 
 			}
-			const userData = this.classSettings.settings.bufferGeometry.userData, playerIndexCur = userData.timeId;
-			if (timeId === undefined) timeId = playerIndexCur;
-			userData.timeId = timeId;
-			const vertice = this.bufferGeometry.userData.position[anglesId];
-			userData.timeId = playerIndexCur;
-			return vertice;
-			
+
 		}
-		return this.getPoint(anglesId, timeId);
+		const userData = this.classSettings.settings.bufferGeometry.userData, playerIndexCur = userData.timeId;
+		if (timeId === undefined) timeId = playerIndexCur;
+		userData.timeId = timeId;
+		const vertice = this.bufferGeometry.userData.position[anglesId];
+		userData.timeId = playerIndexCur;
+		return vertice;
 
 	}
+	/**
+	 * Converts a vertice position to vertice angles.
+	 * @param {array} vertice array of the vertice axes
+	 * @returns Vertice angles.
+	 */
 	vertice2angles(vertice) {
 		
 		//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
@@ -3297,6 +3229,11 @@ for (let i = 0; i &lt; geometry.times.length; i++) {
 		return φ;
 
 	}
+	/**
+	 * Normalizes a vertices angles to available range, if out of the angles range is occures.
+	 * @param {array} verticeAngles vertice angles
+	 * @returns Normalized a vertices angles.
+	 */
 	normalizeVerticeAngles(verticeAngles){ return this.vertice2angles(this.angles2Vertice(verticeAngles)); }
 
 }
@@ -3341,7 +3278,7 @@ const _display = (element, boDisplay) => { element.style.display = boDisplay ===
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sat Dec 21 2024 07:17:55 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Feb 09 2025 12:24:58 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -72,11 +72,7 @@ class Circle extends HyperSphere {
 		
 	}
 	defaultAngles() { return { count: 3, } }//random triangle
-	pushRandomAngle(verticeAngles) {
-		
-		this.pushRandomLongitude(verticeAngles);
-	
-	}
+	pushRandomAngle(verticeAngles) { this.pushRandomLongitude(verticeAngles); }
 	name(getLanguageCode) {
 
 		//Localization

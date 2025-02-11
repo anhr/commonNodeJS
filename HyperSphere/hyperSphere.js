@@ -952,7 +952,7 @@ class HyperSphere extends MyObject {
 
 							}
 							
-							const vertice = settings.object.geometry.position[verticeId], strVerticeId = 'vertice[' + verticeId + ']'
+							const vertice = settings.object.geometry.position[verticeId], strVerticeId = 'geometry.position[' + verticeId + ']'
 							_this.TestVertice(vertice, strVerticeId);
 							vertice.edges.forEach(edgeId => {
 
@@ -2925,11 +2925,24 @@ class HyperSphere extends MyObject {
 
 	}
 
+	/**
+	 * get default color is 'lime'
+	 */
 	get defaultColor() { return 'lime'; }
 
-	get angles() { return this.classSettings.settings.object.geometry.angles; }
+	/**
+	 * get hyper sphere angles. See <b>classSettings.settings.object.geometry.angles</b> parameter of the <b>hyperSphere</b> constructor.
+	 */
+	get angles() {
+
+		//без разницы какую строку выбрать
+		return this.classSettings.settings.object.geometry.angles;
+		//return this.classSettings.settings.object.geometry.position.angles
+	
+	}
 
 	get verticeEdgesLength() { return this._verticeEdgesLength; }
+/*
 	set verticeEdgesLength(length) {
 
 		this._verticeEdgesLength = length;
@@ -2937,16 +2950,28 @@ class HyperSphere extends MyObject {
 		this.pushEdges();
 
 	}
+*/
 
 	//base methods
 
+	/**
+	 * Push random longitude into vertice angles
+	 * @param {array} verticeAngles vertice angles
+	 */
 	pushRandomLongitude(verticeAngles) {
 
 		const ranges = this.classSettings.settings.object.geometry.angles.ranges, longitudeRange = ranges[ranges.length - 1];
 		verticeAngles.push(Math.random() * (longitudeRange.max - longitudeRange.min) + longitudeRange.min);
 		
 	}
+	/**
+	 * Base method that returns a name of the hyper sphere in the child classes.
+	 * @returns a console error if your call this method directly.
+	 */
 	name() { console.error(sOverride.replace('%s', 'name')); }
+	/**
+	 * Writes to console an important information about hyper sphere, that can help you for debugging.
+	 */
 	logHyperSphere() {
 
 		if (!this.classSettings.debug || (this.classSettings.debug.log === false)) return;
@@ -2964,10 +2989,6 @@ class HyperSphere extends MyObject {
 						break;
 					case 1://edges log
 						const edge = edges[i];
-/*						
-						const positionLength = position.length;
-						edge.forEach((positionId, j) => { if (positionId >= positionLength) console.error(sHyperSphere + ': logHyperSphere(). edges[' + i + '][' + j + '] = ' + positionId + ' > position.length = ' + positionLength) });
-*/						
 						console.log('edges[' + i + '] = ' + JSON.stringify(edge))
 						break;
 					default: console.error(sLogHyperSphere + '. Invalid log = ' + log);
@@ -3012,6 +3033,12 @@ class HyperSphere extends MyObject {
 		});
 		
 	}
+	/**
+	 * <pre>
+	 * Writes a console error, if any vertices angle is out of the angles range. Normalizes a vertices angle to available range, if out of the angles range is occures.
+	 * Writes a console error, if identifier of any edge of the vertices is incorrect.
+	 * </pre>
+	 */
 	Test(){
 
 		if (!this.classSettings.debug) return;
@@ -3023,6 +3050,11 @@ class HyperSphere extends MyObject {
 		if (geometry.indices.faces) geometry.indices.faces.test();
 		
 	}
+	/**
+	 * Writes a console error, if vertice edges count is incorrect.
+	 * @param {object} vertice vertice for testing
+	 * @param {string} strVerticeId name of the vertice Id
+	 */
 	TestVertice(vertice, strVerticeId){
 
 		if (!this.boTestVertice) return;
@@ -3031,52 +3063,65 @@ class HyperSphere extends MyObject {
 			console.error(sHyperSphere + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
+	/**
+	 * Converts a vertice angles to vertice position.
+	 * @param {number|array} anglesId 
+	 * <pre>
+	 * number: vertice id
+	 * array: array of the vertice angles
+	 * </pre>
+	 * @param {number} timeId player time id
+	 * @returns Vertice position.
+	 */
 	angles2Vertice(anglesId, timeId) {
 
-		if (typeof anglesId === "number") {
+		if (typeof anglesId != "number")
+			return this.getPoint(anglesId, timeId);
 
-			if (this.classSettings.debug) {
+		if (this.classSettings.debug) {
 				
-				if (anglesId >= this.bufferGeometry.userData.position.length) console.error(sHyperSphere + '.angles2Vertice: Invalid anglesId = ' + anglesId);
-				//Пока что не вижу случая, когда надо получить position за пределами this.bufferGeometry.drawRange
-				else {
+			if (anglesId >= this.bufferGeometry.userData.position.length) console.error(sHyperSphere + '.angles2Vertice: Invalid anglesId = ' + anglesId);
+			//Пока что не вижу случая, когда надо получить position за пределами this.bufferGeometry.drawRange
+			else {
 
-					const bufferGeometry = this.bufferGeometry, drawRange = bufferGeometry.drawRange;
-					if (drawRange.type === drawRange.types.vertices) {
+				const bufferGeometry = this.bufferGeometry, drawRange = bufferGeometry.drawRange;
+				if (drawRange.type === drawRange.types.vertices) {
 						
-						const count = bufferGeometry.drawRange.count, start = bufferGeometry.drawRange.start,
-							offset = this.positionOffset(this.bufferGeometry.attributes.position, anglesId);
-						let sError;
-						if (bufferGeometry.index === null) {
+					const count = bufferGeometry.drawRange.count, start = bufferGeometry.drawRange.start,
+						offset = this.positionOffset(this.bufferGeometry.attributes.position, anglesId);
+					let sError;
+					if (bufferGeometry.index === null) {
 
-							const positionId = offset / bufferGeometry.attributes.position.itemSize;
-							if ((positionId >= (count + start)) || (positionId < start))
-								sError = '. positionId = ' + positionId;
+						const positionId = offset / bufferGeometry.attributes.position.itemSize;
+						if ((positionId >= (count + start)) || (positionId < start))
+							sError = '. positionId = ' + positionId;
 							
-						} else {
+					} else {
 							
-							if ((offset >= (count + start)) || (offset < start))
-								sError = '. offset = ' + offset;
-
-						}
-						if ( sError != undefined ) console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + sError + ' is out of range from ' + start + ' to ' + (count + start));
+						if ((offset >= (count + start)) || (offset < start))
+							sError = '. offset = ' + offset;
 
 					}
+					if ( sError != undefined ) console.error(sHyperSphere + '.angles2Vertice: anglesId = ' + anglesId + sError + ' is out of range from ' + start + ' to ' + (count + start));
 
 				}
 
 			}
-			const userData = this.classSettings.settings.bufferGeometry.userData, playerIndexCur = userData.timeId;
-			if (timeId === undefined) timeId = playerIndexCur;
-			userData.timeId = timeId;
-			const vertice = this.bufferGeometry.userData.position[anglesId];
-			userData.timeId = playerIndexCur;
-			return vertice;
-			
+
 		}
-		return this.getPoint(anglesId, timeId);
+		const userData = this.classSettings.settings.bufferGeometry.userData, playerIndexCur = userData.timeId;
+		if (timeId === undefined) timeId = playerIndexCur;
+		userData.timeId = timeId;
+		const vertice = this.bufferGeometry.userData.position[anglesId];
+		userData.timeId = playerIndexCur;
+		return vertice;
 
 	}
+	/**
+	 * Converts a vertice position to vertice angles.
+	 * @param {array} vertice array of the vertice axes
+	 * @returns Vertice angles.
+	 */
 	vertice2angles(vertice) {
 		
 		//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
@@ -3156,6 +3201,11 @@ class HyperSphere extends MyObject {
 		return φ;
 
 	}
+	/**
+	 * Normalizes a vertices angles to available range, if out of the angles range is occures.
+	 * @param {array} verticeAngles vertice angles
+	 * @returns Normalized a vertices angles.
+	 */
 	normalizeVerticeAngles(verticeAngles){ return this.vertice2angles(this.angles2Vertice(verticeAngles)); }
 
 }
