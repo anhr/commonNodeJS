@@ -974,7 +974,11 @@ class GuiSelectPoint {
 		 */
 		this.isSelectedMesh = function ( meshCur ) { return getMesh() === meshCur }
 		/**
-		 * @returns index of the selected point.
+		 * @returns index of the selected point or -1 if point is not selected.
+		 */
+		this.getSelectedPointIndexShort = () => { return cPoints.__select.selectedIndex - 1 }
+		/**
+		 * @returns index of the selected point or -1 if mesh is not selected or if point is not selected.
 		 */
 		this.getSelectedPointIndex = function () {
 

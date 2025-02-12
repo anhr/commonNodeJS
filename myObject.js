@@ -493,7 +493,7 @@ class MyObject {
 			                  array [positionId] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
 			if (itemSize > 1) array [++positionId] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) array [++positionId] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
-			const w = vertice.w;
+			const w = vertice.w != undefined ? vertice.w : vertice[3];
 			if (itemSize > 3) array [++positionId] = w;
 
 			const drawRange = settings.bufferGeometry.drawRange;
@@ -503,6 +503,10 @@ class MyObject {
 				if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
 
 			}
+
+			//gui
+			const guiSelectPoint = settings.options.guiSelectPoint;
+			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(this.object())) guiSelectPoint.setPosition( { index: i, object: this.object ? this.object() : this });
 
 			//Color attribute
 

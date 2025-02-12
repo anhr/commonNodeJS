@@ -1829,16 +1829,24 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 		}
 
 		if ( !mesh.userData.myObject || !mesh.userData.myObject.isSetPosition ) {
+
+			const setPositionAttributeFromPoint = mesh.userData.myObject.setPositionAttributeFromPoint;
 			for (var i = 0; i < arrayFuncs.length; i++) {
 
 				var funcs = arrayFuncs[i], needsUpdate = false;
+				const vertice = setPositionAttributeFromPoint ? [] : undefined;
 				function setPosition(axisName, fnName) {
 
 					var value = Player.execFunc(funcs, axisName, t, options);// a, b );
 					if (value !== undefined) {
 
-						attributes.position[fnName](i, value);
-						needsUpdate = true;
+						if (setPositionAttributeFromPoint) vertice.push(value);
+						else {
+							
+							attributes.position[fnName](i, value);
+							needsUpdate = true;
+
+						}
 
 					}
 
@@ -1847,6 +1855,7 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 				setPosition('y', 'setY');
 				setPosition('z', 'setZ');
 				setPosition('w', 'setW');
+				if (setPositionAttributeFromPoint) setPositionAttributeFromPoint(i, vertice);
 
 				//если тут поставить var то цвет точки, которая определена как THREE.Vector3 будет равет цвету предыдущей точки
 				//потому что перемнные типа var видны снаружи блока {}
