@@ -641,9 +641,11 @@ class MyObject {
 	 */
 	positionOffset(position, positionId) {
 
-		const settings = this.classSettings.settings;
 		return this.positionOffsetId(positionId) * position.itemSize;
-//		return (settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId) * position.itemSize;
+/*		
+		const settings = this.classSettings.settings;
+		return (settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId) * position.itemSize;
+*/		
 		
 	}
 
