@@ -1553,28 +1553,39 @@ class GuiSelectPoint {
 				else {
 
 					display = 'block';
-					const userData = mesh.userData.myObject.bufferGeometry.userData, oldTimeId = userData.timeId;
-					userData.timeId = mesh.userData.myObject.guiPoints.timeId;
-					const point = userData.position[pointId];
-					pointId = userData.positionOffsetId(pointId);
-					userData.timeId = oldTimeId;
-/*					
-const attributesPosition = mesh.geometry.attributes.position;
-	point = new THREE.Vector3().fromBufferAttribute(attributesPosition, pointId);
-*/	
-					const intersection = {
+					const bufferGeometry = mesh.userData.myObject.bufferGeometry;
+					let intersection;
+					if (bufferGeometry) {
+						
+						const userData = bufferGeometry.userData, oldTimeId = userData.timeId;
+						userData.timeId = mesh.userData.myObject.guiPoints.timeId;
+						const point = userData.position[pointId];
+						pointId = userData.positionOffsetId(pointId);
+						userData.timeId = oldTimeId;
+	/*					
+	const attributesPosition = mesh.geometry.attributes.position;
+		point = new THREE.Vector3().fromBufferAttribute(attributesPosition, pointId);
+	*/	
+						intersection = {
+							
+							object: mesh,
+							index: pointId,
+							point: point,
+							nearestEdgeVerticeId: pointId,//если не задать это значение, то index будет интерпретироваться как индекс ребра и программа в ребре будет искать индекс вершины, ближайшей к point
+							//Для проверки открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
+							//С помошю gui выбрать вершину
+							//С помошю gui поменять углы вершины
+							
+						}
+						const setIntersectionProperties = mesh.userData.myObject.guiPoints.setIntersectionProperties;
+						if (setIntersectionProperties) setIntersectionProperties(intersection);
+
+					} else intersection = {
 						
 						object: mesh,
 						index: pointId,
-						point: point,
-						nearestEdgeVerticeId: pointId,//если не задать это значение, то index будет интерпретироваться как индекс ребра и программа в ребре будет искать индекс вершины, ближайшей к point
-						//Для проверки открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
-						//С помошю gui выбрать вершину
-						//С помошю gui поменять углы вершины
 						
 					}
-					const setIntersectionProperties = mesh.userData.myObject.guiPoints.setIntersectionProperties;
-					if (setIntersectionProperties) setIntersectionProperties(intersection);
 					_this.select(intersection);
 
 				}
