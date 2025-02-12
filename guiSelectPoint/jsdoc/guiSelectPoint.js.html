@@ -70,6 +70,8 @@ import {
 
 import three from '../three.js'
 
+const none = 'none', block = 'block';
+
 class GuiSelectPoint {
 
 	/**
@@ -268,6 +270,16 @@ class GuiSelectPoint {
 		if ( options.frustumPoints )
 			cFrustumPoints = new options.frustumPoints.guiSelectPoint();
 		//сейчас exposePosition вызывается только один раз из this.setMesh
+		function getLiEl(controller) {
+
+			var el = controller.domElement;
+			while (el.tagName.toUpperCase() !== "LI") el = el.parentElement;
+			return el;
+
+		}
+
+		//dislay element
+
 		function dislayEl( controller, displayController ) {
 
 			if ( controller === undefined )
@@ -278,11 +290,57 @@ class GuiSelectPoint {
 				displayController = 'none';
 			else if ( typeof displayController !== "string" )
 				displayController = 'block';
-			var el = controller.domElement;
-			while ( el.tagName.toUpperCase() !== "LI" ) el = el.parentElement;
-			el.style.display = displayController;
+			getLiEl(controller).style.display = displayController;
 
 		}
+		function isDislayEl( controller ) {
+
+			if ( controller === undefined )
+				return;
+			return getLiEl(controller).style.display === none ? false : true;
+
+		}
+
+		//readOnly controller
+
+		const getInputEl =  ( controller ) => { return controller ? controller.domElement.querySelector( 'input' ) : undefined; },
+			readOnlyEl = ( controller, boReadOnly ) => {
+
+			const element = getInputEl( controller );
+			if ( element ) element.readOnly = boReadOnly;
+		
+		},
+			isReadOnlyEl = ( controller ) => {
+			
+			const element = getInputEl( controller );
+			if ( element ) return element.readOnly;
+		
+		},
+			isReadOnlyController = (controller) => {
+
+			if (controller.boSetValue) return true;
+			if (isReadOnlyEl(controller)) {
+
+				if (controller.getValue() !== controller.initialValue) {
+
+					if (controller.boSetValue === undefined) {
+
+						controller.boSetValue = true;
+						setValue(controller, controller.initialValue);
+						controller.boSetValue = undefined;
+						controller.initialValue = controller.getValue();//Эта строка нужна в случае когда новое зачения невозможно установиь точно таким же, как initialValue
+						//Иначе перепонится стек
+
+					}
+
+				}
+				return true;
+
+			}
+			return false;
+
+		}
+
 		function exposePosition( selectedPointIndex ) {
 
 			if ( selectedPointIndex === undefined )
@@ -312,24 +370,30 @@ class GuiSelectPoint {
 			//Возможно не надо делать такую глубокую проверку. Не тестировал
 			if(
 				mesh.userData.player &amp;&amp;
-				mesh.userData.player.arrayFuncs &amp;&amp;
-				mesh.userData.player.arrayFuncs[selectedPointIndex] &amp;&amp;
-				mesh.userData.player.arrayFuncs[selectedPointIndex].controllers
+				mesh.userData.player.arrayFuncs
 			) {
 
-				const controllers = mesh.userData.player.arrayFuncs[selectedPointIndex].controllers;
-				if ( controllers.x &amp;&amp; controllers.x.controller ) controllers.x.controller.value = position.x;
-				if ( controllers.y &amp;&amp; controllers.y.controller ) controllers.y.controller.value = position.y;
-				if ( controllers.z &amp;&amp; controllers.z.controller ) controllers.z.controller.value = position.z;
+				const selectedPoint = mesh.userData.player.arrayFuncs[mesh.userData.myObject.guiPoints.seletedIndex(selectedPointIndex)];
+				if(
+					selectedPoint &amp;&amp;
+					selectedPoint.controllers
+				) {
+					
+					const controllers = mesh.userData.player.arrayFuncs[selectedPointIndex].controllers;
+					if ( controllers.x &amp;&amp; controllers.x.controller ) controllers.x.controller.value = position.x;
+					if ( controllers.y &amp;&amp; controllers.y.controller ) controllers.y.controller.value = position.y;
+					if ( controllers.z &amp;&amp; controllers.z.controller ) controllers.z.controller.value = position.z;
+				}
 
 			}
 
 		}
+		this.exposePosition = exposePosition;
 		function setValue( controller, v ) {
 
 			if ( !controller )
 				return;
-			const input = controller.domElement.querySelector( 'input' ),
+			const input = getInputEl( controller ),//controller.domElement.querySelector( 'input' ),
 				readOnly = input.readOnly;
 			input.readOnly = false;
 			controller.object[controller.property] = v;
@@ -348,180 +412,213 @@ class GuiSelectPoint {
 		 */
 		this.setReadOnlyPosition = function ( boReadOnly ) {
 
-			if ( cX ) cX.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-			if ( cY ) cY.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-			if ( cZ ) cZ.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-			if ( cW ) cW.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+			readOnlyEl( cX, boReadOnly );
+			readOnlyEl( cY, boReadOnly );
+			readOnlyEl( cZ, boReadOnly );
+			readOnlyEl( cW, boReadOnly );
 
 		}
-		function setPosition( intersectionSelected ) {
+		function setPosition(intersectionSelected) {
 
 			const player = intersectionSelected.object.userData.player;
 
 			var boDisplayFuncFolder = 'none';
-			if ( player &amp;&amp; player.arrayFuncs ) {
+			if (player &amp;&amp; player.arrayFuncs) {
 
-				funcFolder.setFunction( player.arrayFuncs[intersectionSelected.index] );
+				const mesh = getMesh();
+				funcFolder.setFunction(player.arrayFuncs[mesh.userData.myObject.guiPoints.seletedIndex(intersectionSelected.index)]);
 				boDisplayFuncFolder = 'block';
 
 			}
-			funcFolder.displayFolder( boDisplayFuncFolder );
+			funcFolder.displayFolder(boDisplayFuncFolder);
 			/*Для установки cCameraTarget после выбора точки. Если это оставить то неправильно учтанавливается галочка cCameraTarget если:
 			1 устанвить cCameraTarget для выбранной точки
 			2 запустить плеер
 			3 уброать cCameraTarget
 			4 запустить плеер. Снова установиться cCameraTarget
 			*/
-			if ( cCameraTarget ) {
+			if (cCameraTarget) {
 
-				options.playerOptions.cameraTarget.changeTarget( intersectionSelected.object, intersectionSelected.index );
+				options.playerOptions.cameraTarget.changeTarget(intersectionSelected.object, intersectionSelected.index);
 				cCameraTarget.updateDisplay();
 
 			}
 
-			const positionLocal = getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
-			setValue( cX, positionLocal.x );
-			setValue( cY, positionLocal.y );
-			setValue( cZ, positionLocal.z );
+			const positionLocal = _this.getObjectLocalPosition(intersectionSelected);
+			setValue(cX, positionLocal.x);
+			setValue(cY, positionLocal.y);
+			setValue(cZ, positionLocal.z);
 
-			if( intersectionSelected.object.userData.gui ) intersectionSelected.object.userData.gui.setValues( intersectionSelected.index );
+			const gui = intersectionSelected.object.userData.gui;
+			if (gui) intersectionSelected.index = gui.hyperSphere.searchNearestEdgeVerticeId(intersectionSelected.index, intersectionSelected);
+			const intersectionSelectedIndex = intersectionSelected.index;
+			if (intersectionSelected.object.userData.gui) {
 
-			const position = getObjectPosition( intersectionSelected.object, intersectionSelected.index );
-			setValue( cWorld.x, position.x );
-			setValue( cWorld.y, position.y );
-			setValue( cWorld.z, position.z );
+				const guiPoints = intersectionSelected.object.userData.myObject.guiPoints;
+				guiPoints.getVerticeId(intersectionSelectedIndex);
+				gui.setValues(intersectionSelectedIndex, guiPoints.timeAngles);
 
-			var displayControllerW, displayControllerColor, displayControllerOpacity;
-			const none = 'none', block = 'block';
-			if ( intersection.object.userData.player &amp;&amp; ( typeof intersection.object.userData.player.arrayFuncs === "function" ) ) {
+			}
+
+			const position = _this.getObjectPosition(intersectionSelected.object, intersectionSelected.index);
+			setValue(cWorld.x, position.x);
+			setValue(cWorld.y, position.y);
+			setValue(cWorld.z, position.z);
+
+			var displayControllerW, displayControllerColor;//, displayControllerOpacity;
+			if (intersection.object.userData.player &amp;&amp; (typeof intersection.object.userData.player.arrayFuncs === "function")) {
 
 				//Сюда попадает когда пользователь выбироает точку в frustumPoints
 				//console.error( 'arrayFuncs === "function" under constraction' );
 
 			}
-			var opasity;
-			const func = player &amp;&amp; player.arrayFuncs ? player.arrayFuncs[intersectionSelected.index] : undefined,
+			const func = player &amp;&amp; player.arrayFuncs ? 
+					player.arrayFuncs.intersection ?
+						player.arrayFuncs.intersection(intersectionSelected.index) :
+						player.arrayFuncs[intersectionSelected.index] :
+					undefined,
 				attributes = intersectionSelected.object.geometry.attributes;
-			if ( attributes.position.itemSize &lt; 4 ) {
+			if (!attributes.color) {
 
 				displayControllerW = none;
 				displayControllerColor = none;
-				displayControllerOpacity = none;
 
 			} else {
 
-				function isWObject() { return ( typeof func.w === 'object' ) &amp;&amp; ( func.w instanceof THREE.Color === false ); }
-				var color = ( func === undefined ) || ( !attributes.color &amp;&amp; !attributes.ca ) ?
-					undefined :
-					Array.isArray( func.w ) || ( typeof func.w === "function" ) ?
-						Player.execFunc( func, 'w', options.time, options ) :
-						isWObject() ?
-							Player.execFunc( func.w, 'func', options.time, options ) :
-							typeof func.w === "string" ?
-								Player.execFunc( func, 'w', options.time, options ) :
-								func.w;
-
-				if ( color === undefined ) {
-
-					if ( attributes.ca === undefined ) {
-
-//						console.warn( 'Under constraction. цвет frustumPoints не известен потому что он вычисляется в шейдере D:\My documents\MyProjects\webgl\three.js\GitHub\myThreejs\master\frustumPoints\vertex.c' )
-
-					} else {
-
-						const vColor = new THREE.Vector4().fromArray(
-							attributes.ca.array,
-							intersectionSelected.index * attributes.ca.itemSize );
-						color = new THREE.Color( vColor.x, vColor.y, vColor.z );
-						opasity = vColor.w;
-
-					}
-
+				const setColorControl = (color) => {
+					
+					const strColor = '#' + color.getHexString();
+					//Сначала надо установить initialValue потому что для FrustumPoints я устанвил readOnly для cColor.
+					//В этом случае я не могу отобразить цвет следующей точки FrustumPoints потому что в режиме readOnly
+					//при изменении цвета восстанвливается старый цвет из initialValue.
+					cColor.initialValue = strColor;
+					cColor.userData = { intersection: intersectionSelected, };
+					cColor.setValue(strColor);
+					
 				}
+				if (attributes.position.itemSize &lt; 4) {
 
-				if ( color instanceof THREE.Color ) {
-
-					displayControllerW = none;
-					displayControllerColor = block;
-					displayControllerOpacity = block;
-
-					//color
-					if ( intersectionSelected.object.userData.player.arrayFuncs === undefined ) {
-
-						displayControllerColor = none;
-						displayControllerOpacity = none;
-
-					} else {
-
-						const strColor = '#' + color.getHexString();
-						//Сначала надо установить initialValue потому что для FrustumPoints я устанвил readOnly для cColor.
-						//В этом случае я не могу отобразить цвет следующей точки FrustumPoints потому что в режиме readOnly
-						//при изменении цвета восстанвливается старый цвет из initialValue.
-						cColor.initialValue = strColor;
-						cColor.setValue( strColor );
-						cColor.userData = { intersection: intersectionSelected, };
-						if ( opasity !== undefined ) {
-
-							setValue( cOpacity, opasity );
-
-						} else displayControllerOpacity = none;
-						cOpacity.userData = { intersection: intersectionSelected, };
+					if (
+						intersectionSelected.object.material.vertexColors === true ||
+						(intersectionSelected.object.material instanceof THREE.ShaderMaterial === true)
+					) {
+						
+						displayControllerW = none;
+						displayControllerColor = block;
+						setColorControl( new THREE.Color().fromBufferAttribute(attributes.color, intersectionSelected.index) );
 
 					}
-
+					
 				} else {
 
-					if ( cW === undefined )
+					function isWObject() { return (typeof func.w === 'object') &amp;&amp; (func.w instanceof THREE.Color === false); }
+					const mesh = getMesh(), verticeColor = mesh.userData.myObject ?
+						mesh.userData.myObject.verticeColor(intersectionSelectedIndex) :
+						undefined;
+					var color = (func === undefined) || (!attributes.color &amp;&amp; !attributes.ca) ?
+						undefined :
+						Array.isArray(func.w) || (typeof func.w === "function") ?
+							Player.execFunc(func, 'w', options.time, options) :
+							isWObject() ?
+								Player.execFunc(func.w, 'func', options.time, options) :
+								typeof func.w === "string" ?
+									Player.execFunc(func, 'w', options.time, options) :
+									verticeColor != undefined ?
+										verticeColor :
+										func.w;
+					if (Array.isArray(color)) color = new THREE.Color(color[0], color[1], color[2]);
+					if (color instanceof THREE.Color) {
+
 						displayControllerW = none;
-					else {
+						displayControllerColor = block;
 
-						if ( color === undefined )
-							displayControllerW = none;
-						else {
+						//color
+						if (intersectionSelected.object.userData.player.arrayFuncs === undefined) {
 
-							if ( !wLimitsDefault ) {
+							displayControllerColor = none;
 
-								wLimitsDefault = {
+						} else {
 
-									min: cW.__min,
-									max: cW.__max,
-
-								}
-
-							}
-							if ( isWObject() ) {
-
-								cW.min( func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min );
-								cW.max( func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max );
-								if ( ( cW.__min !== 'undefined' ) &amp;&amp; ( cW.__max !== 'undefined' ) )
-									cW.step( ( cW.__max - cW.__min ) / 100 )
-
-							} else {
-
-								cW.min( wLimitsDefault.min );
-								cW.max( wLimitsDefault.max );
-
-							}
-							setValue( cW, color );
-							displayControllerW = block;
+							setColorControl(color);
+							cOpacity.userData = { intersection: intersectionSelected, };
 
 						}
 
+					} else {
+
+						if ( cW === undefined )
+							displayControllerW = none;
+						else {
+
+							if ( color === undefined )
+								displayControllerW = none;
+							else {
+								
+								if ( options.scales.w.isColor != false ) {
+
+									if (!wLimitsDefault) {
+	
+										wLimitsDefault = {
+	
+											min: cW.__min,
+											max: cW.__max,
+	
+										}
+	
+									}
+									if (isWObject()) {
+	
+										cW.min(func.w.min !== 'undefined' ? func.w.min : wLimitsDefault.min);
+										cW.max(func.w.max !== 'undefined' ? func.w.max : wLimitsDefault.max);
+										if ((cW.__min !== 'undefined') &amp;&amp; (cW.__max !== 'undefined'))
+											cW.step((cW.__max - cW.__min) / 100)
+	
+									} else {
+	
+										cW.min(wLimitsDefault.min);
+										cW.max(wLimitsDefault.max);
+	
+									}
+
+								}
+								setValue(cW, color);
+								displayControllerW = block;
+
+							}
+
+						}
+						displayControllerColor = none;
+
 					}
-					displayControllerColor = none;
-					displayControllerOpacity = none;
 
 				}
 
 			}
 			dislayEl( cW, displayControllerW );
 			dislayEl( cColor, displayControllerColor );
-			dislayEl( cOpacity, displayControllerOpacity );
 
-			const mesh = getMesh(), boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : mesh.userData.gui &amp;&amp; mesh.userData.gui.isLocalPositionReadOnly ? true : false;
+			const mesh = getMesh(), boReadOnly = intersectionSelected.object.userData.boFrustumPoints === true ? true : mesh.userData.gui &amp;&amp; mesh.userData.gui.isLocalPositionReadOnly ? true : false,
+				attributeColor = mesh.geometry.attributes.color,
+				boOpacity = attributeColor ?
+					(
+						( attributeColor.itemSize === 4 ) &amp;&amp;
+							(
+								( mesh.userData.myObject &amp;&amp; mesh.userData.myObject.isOpacity ) ||
+								( mesh.material.transparent &amp;&amp; mesh.material.vertexColors )
+							)
+					) :
+					false;
+			dislayEl( cOpacity, boOpacity ? block : none );
+			if ( boOpacity ) {
+
+				if ( attributeColor.itemSize != 4 ) console.error( 'GuiSelectPoint.setPosition: Invalid mesh.geometry.attributes.color.itemSize = ' + attributeColor.itemSize);
+				cOpacity.initialValue = attributeColor.array[intersectionSelected.index * attributeColor.itemSize + 3];
+				cOpacity.setValue( cOpacity.initialValue );
+
+			}
 			_this.setReadOnlyPosition(boReadOnly);
-			cColor.domElement.querySelector( 'input' ).readOnly = boReadOnly;
-			cOpacity.domElement.querySelector( 'input' ).readOnly = boReadOnly;
+			readOnlyEl( cColor, boReadOnly );
+			readOnlyEl( cOpacity, boReadOnly );
 			funcFolder.displayFolder( !boReadOnly );
 
 		}
@@ -588,11 +685,7 @@ class GuiSelectPoint {
 			for ( var i = 0; i &lt; cMeshs.__select.length; i++ ) {
 
 				var option = cMeshs.__select[i];
-				if ( option.selected &amp;&amp; Object.is( option.mesh, intersectionSelected.object ) ) {
-
-					setPosition( intersectionSelected );
-
-				}
+				if ( option.selected &amp;&amp; Object.is( option.mesh, intersectionSelected.object ) ) setPosition( intersectionSelected );
 
 			}
 
@@ -605,11 +698,9 @@ class GuiSelectPoint {
 			const selectedItem = cMeshs.__select.options[cMeshs.__select.options.selectedIndex];
 			if ( !selectedItem ) return;
 			const mesh = selectedItem.mesh;
-			if ( !mesh )
-				return;
+			if ( !mesh ) return;
 			const index = this.getSelectedPointIndex();
-			if ( index === -1 )
-				return;
+			if ( index === -1 ) return;
 			const position = getObjectPosition( mesh, index );
 			if( cWorld.x ) cWorld.x.setValue( position.x );
 			if( cWorld.y ) cWorld.y.setValue( position.y );
@@ -714,6 +805,38 @@ class GuiSelectPoint {
 
 			}
 
+			//mesh.userData.myObject ||= uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
+			if (!mesh.userData.myObject) mesh.userData.myObject = {
+
+				verticeColor: () => {},
+				verticeOpacity: () => {},
+				
+			};
+			//mesh.userData.myObject.guiPoints ||= uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
+			if (!mesh.userData.myObject.guiPoints) mesh.userData.myObject.guiPoints = {
+
+				seletedIndex: (guiIndexStr) => { return guiIndexStr; },
+				setControllers: (index) => {},
+				getPositionId: (index) => { return index; },
+				getVerticeId: (index) => { return index; },
+				create: (fPoints, cPoints, cTrace, cTraceAll, count) => {
+
+					for ( var iPosition = mesh.geometry.drawRange.start; iPosition &lt; count; iPosition++ ) {
+		
+						const opt = document.createElement( 'option' ),
+							name = mesh.userData.player &amp;&amp; mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
+						opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
+						opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
+						cPoints.__select.appendChild( opt );
+		
+					}
+					
+				},
+				getValue: (cPoints) => { return cPoints.__select.selectedOptions[0].index - 1; },
+				onChangeAngle: (verticeId, angleId, angle) => { }
+				
+			};
+
 			if ( !f3DObjects ) this.add();
 			f3DObjects.domElement.style.display = 'block';
 			
@@ -769,18 +892,28 @@ class GuiSelectPoint {
 			displayVerticeID( mesh );
 
 		}
+		this.getObjectLocalPosition = (intersectionSelected) => { return getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index ); }
+		this.getObjectPosition = (object, index) => { return getObjectPosition( object, index); }
 		/**
 		 * User has selected a point
 		 * @param {Object} intersectionSelected See [intersectObject]{@link https://threejs.org/docs/index.html#api/en/core/Raycaster.intersectObject}
 		 */
 		this.select = function ( intersectionSelected ) {
 
-			const position = getObjectLocalPosition( intersectionSelected.object, intersectionSelected.index );
-			if ( f3DObjects === undefined ) {
+			intersection = undefined;
+			let intersectionSelectedIndex = intersectionSelected.index;
+			if ( (intersectionSelectedIndex === undefined) || isNaN( intersectionSelectedIndex ) ) {
 
-				console.error( 'Не знаю как сюда попасть' );
+				//Пользователь нажал мышкой на LineSegments
+				const geometryIndex = intersectionSelected.object.geometry.index;
+				intersectionSelectedIndex =  geometryIndex.getX(intersectionSelected.indexNew);
+				intersectionSelected.object.userData.myObject.guiPoints.verticeId = intersectionSelectedIndex;
+				intersectionSelected.index = intersectionSelectedIndex;
 
 			}
+			const myObject = intersectionSelected.object.userData.myObject;
+			if ( !myObject.getPositionData ) 
+				myObject.getPositionData = ( index ) => { return { verticeId: index, positionId: index * intersectionSelected.object.geometry.attributes.position.itemSize } }
 
 			//f3DObjects.close();//если тут не закрывать папку, то ингода прорпадает скроллинг окна dat.GUI
 			//for testing:
@@ -797,24 +930,28 @@ class GuiSelectPoint {
 			if ( cMeshs.__select[index].selected === false ) {
 
 				cMeshs.__select[index].selected = true;
-				cMeshs.__onChange( index - 1 );
+				cMeshs.__onChange( index - 1, intersectionSelected );
 
-			} else if ( cCustom ) {
+			} else {
 
-				const mesh = getMesh();
-				cCustom.object(intersectionSelected.event &amp;&amp; intersectionSelected.event.button === 0 ?
-						mesh :
-						undefined,//Пользователь нажал не левую кнопку мыши. Надо восстановить выбранный nD объект
-					dat, options);
+				if (myObject.guiPoints.setIntersection) myObject.guiPoints.setIntersection(intersectionSelected);
+				if (myObject.guiPoints.changeControllers) myObject.guiPoints.changeControllers();
+				
+				if ( cCustom ) {
+
+					const mesh = getMesh();
+					cCustom.object(intersectionSelected.event &amp;&amp; intersectionSelected.event.button === 0 ?
+							mesh :
+							undefined,//Пользователь нажал не левую кнопку мыши. Надо восстановить выбранный nD объект
+						dat, options);
+
+				}
 
 			}
 
 			this.selectPoint2 = function ( selectedMesh ) {
 
-				if ( ( intersectionSelected.index === undefined ) || isNaN( intersectionSelected.index ) )
-					return;
-
-				//сделал эту проверку потому что не могу придумать как удалить intersectionSelected.index когда пользователь врусную сменил mesh
+				//сделал эту проверку потому что не могу придумать как удалить intersectionSelectedIndex когда пользователь вручную сменил mesh
 				if ( ( selectedMesh !== undefined ) &amp;&amp; !Object.is( intersectionSelected.object, selectedMesh ) )
 					return;//Сначала пользователь выбрал точку с помошщью мыши
 				//Потом сменил Meshes/Select
@@ -822,12 +959,13 @@ class GuiSelectPoint {
 				if ( !intersectionSelected.object.userData.boFrustumPoints ) {
 
 					//fPoints.open();много времени на открытие когда много точек
-					const point = cPoints.__select[intersectionSelected.index + 1];
+					const myObject = intersectionSelected.object.userData.myObject, guiPoints = myObject ? myObject.guiPoints : undefined, verticeId = guiPoints ? guiPoints.verticeId : undefined,
+						point = cPoints.__select[(verticeId? verticeId : intersectionSelectedIndex) + 1];
 					if ( point ) point.selected = true;
 
 				} else {//FrustumPoints
 
-					cFrustumPoints.pointIndexes( intersectionSelected.object.userData.pointIndexes( intersectionSelected.index ) );
+					cFrustumPoints.pointIndexes( intersectionSelected.object.userData.pointIndexes( intersectionSelectedIndex ) );
 
 				}
 				const block = 'block';
@@ -837,17 +975,16 @@ class GuiSelectPoint {
 					guiParams.setIntersection( intersectionSelected );
 				setPosition( intersectionSelected );
 
-				const mesh = getMesh();
-				const line =
-					!mesh.userData.player ||
+				const mesh = getMesh(), arrayFuncs = mesh.userData.player.arrayFuncs,
+					line = !mesh.userData.player ||
 						( mesh.userData.player.arrayFuncs === undefined ) ||
 						( typeof intersection.object.userData.player.arrayFuncs === "function" ) ?
 						undefined :
-						mesh.userData.player.arrayFuncs[intersectionSelected.index].line;//You can not trace points if you do not defined the mesh.userData.player.arrayFuncs
+						intersectionSelectedIndex != undefined ?
+							( arrayFuncs.intersection ? arrayFuncs.intersection( intersectionSelectedIndex ) : arrayFuncs[intersectionSelectedIndex] ).line ://You can not trace points if you do not defined the mesh.userData.player.arrayFuncs
+							undefined;
 				if ( cTrace )
-					cTrace.setValue( ( line === undefined )
-						//					|| ( typeof line.isVisible === 'undefined' ) ?//не создан player
-						?
+					cTrace.setValue( ( line === undefined ) ?
 						false : line.isVisible() )
 
 				cRestoreDefaultLocalPosition.domElement.parentElement.parentElement.style.display =
@@ -865,7 +1002,11 @@ class GuiSelectPoint {
 		 */
 		this.isSelectedMesh = function ( meshCur ) { return getMesh() === meshCur }
 		/**
-		 * @returns index of the selected point.
+		 * @returns index of the selected point or -1 if point is not selected.
+		 */
+		this.getSelectedPointIndexShort = () => { return cPoints.__select.selectedIndex - 1 }
+		/**
+		 * @returns index of the selected point or -1 if mesh is not selected or if point is not selected.
 		 */
 		this.getSelectedPointIndex = function () {
 
@@ -886,9 +1027,9 @@ class GuiSelectPoint {
 				return selectedPointIndex;//options.dat !== true and gui === undefined. Do not use dat.gui
 
 			}
-			if ( !getMesh() ) return -1; //не выбран 3d объект.
-			const index = cPoints.__select.selectedOptions[0].index;
-			return index - 1;
+			const mesh = getMesh();
+			if ( !mesh ) return -1; //не выбран 3d объект.
+			return mesh.userData.myObject.guiPoints.getValue(cPoints);
 
 		}
 		function getMesh() {
@@ -950,8 +1091,9 @@ class GuiSelectPoint {
 
 			if ( !intersection || !intersection.object.userData.player || intersection.object.userData.player.arrayFuncs === undefined )
 				return;
+			const arrayFuncs = intersection.object.userData.player.arrayFuncs;
 			var index = intersection.index || 0,
-				point = intersection.object.userData.player.arrayFuncs[index],
+				point = arrayFuncs.intersection ? arrayFuncs.intersection(index) : arrayFuncs[index],
 				line = point === undefined ? undefined : point.line;
 			if ( ( line !== undefined ) )
 				line.visible( value );
@@ -1064,7 +1206,8 @@ class GuiSelectPoint {
 			if (!object.geometry) return;//Probably this is Group
 			let gp = object.geometry.attributes.position;
 			object.updateMatrixWorld();
-			for ( let i = 0; i &lt; gp.count; i++ ) {
+			const drawRange = object.geometry.drawRange, count = (drawRange.count === Infinity) ? gp.count : drawRange.start + drawRange.count;
+			for ( let i = drawRange.start; i &lt; count; i++ ) {
 
 				let p = new THREE.Vector3().fromBufferAttribute( gp, i ); // set p from `position`
 				//						object.localToWorld(p); // p has wordl coords
@@ -1075,23 +1218,26 @@ class GuiSelectPoint {
 
 		}
 
-		function addPoints( mesh ) {
+		function addPoints( mesh, intersectionSelected ) {
 
-			for ( var iPosition = 0; iPosition &lt; mesh.geometry.attributes.position.count; iPosition++ ) {
-
-				const opt = document.createElement( 'option' ),
-					name = mesh.userData.player &amp;&amp; mesh.userData.player.arrayFuncs ? mesh.userData.player.arrayFuncs[iPosition].name : '';
-				opt.innerHTML = iPosition + ( name === undefined ? '' : ' ' + name );
-				opt.setAttribute( 'value', iPosition );//Эта строка нужна в случае когда пользователь отменил выбор точки. Иначе при движении камеры будут появляться пунктирные линии, указвающие на несуществующую точку
-				cPoints.__select.appendChild( opt );
-
-			}
+			//https://threejs.org/docs/index.html?q=buffer#api/en/core/BufferGeometry.setDrawRange
+			const count = mesh.geometry.userData.drawRange ?
+				mesh.geometry.userData.drawRange().count ://Во вселенной задал диапазон видимых вершин
+				mesh.geometry.index === null ?
+					 //геометрия не индексирована. Значит mesh.geometry.drawRange.count указывает на количество видимых вершин
+					 (mesh.geometry.drawRange.count + mesh.geometry.drawRange.start) > mesh.geometry.attributes.position.count ?
+						 mesh.geometry.attributes.position.count ://диапазон вершин больше количества вершин
+						 mesh.geometry.drawRange.count + mesh.geometry.drawRange.start//добавлять только вершины, которые вошли в заданный диапазон
+					 :
+					 //геометрия индексирована. mesh.geometry.drawRange.count указывает на количество индексов, которые нужно рисовать
+					 mesh.geometry.attributes.position.count;//По умолчанию все вершины видно
+			mesh.userData.myObject.guiPoints.create( fPoints, cPoints, cTrace, cTraceAll, count, intersectionSelected );
 
 		}
 
 		function createPlayerArrayFuncs( mesh ) {
 
-			if ( !mesh || mesh.userData.boFrustumPoints ) return;
+			if ( !mesh || mesh.userData.boFrustumPoints  || ( mesh.userData.player &amp;&amp; mesh.userData.player.boArrayFuncs === false ) ) return;
 			if ( !mesh.userData.player ) mesh.userData.player = {};
 			if ( !mesh.userData.player.arrayFuncs &amp;&amp; mesh.geometry ) {
 
@@ -1122,11 +1268,13 @@ class GuiSelectPoint {
 			f3DObjects.domElement.style.display = 'none';
 			var mesh, buttonScaleDefault, buttonPositionDefault, buttonRotationDefault;
 
-			cMeshs = f3DObjects.add( { Meshs: lang.notSelected }, 'Meshs', { [lang.notSelected]: -1 } ).onChange( function ( value ) {
+			cMeshs = f3DObjects.add( { Meshs: lang.notSelected }, 'Meshs', { [lang.notSelected]: -1 } ).onChange( function ( value, intersectionSelected ) {
 
 				value = parseInt( value );
 
 				cPoints.__onChange( -1 );//сбросить настройки точки
+				
+				if (mesh &amp;&amp; mesh.userData.myObject.guiPoints.resetControllers) mesh.userData.myObject.guiPoints.resetControllers();
 				
 				mesh = getMesh();
 
@@ -1137,22 +1285,14 @@ class GuiSelectPoint {
 					delete fPoint.fCustomPoint;
 					
 				}
-				if (mesh &amp;&amp; mesh.userData.gui) {
+				if ( mesh &amp;&amp; mesh.userData.gui ) { fPoint.fCustomPoint = mesh.userData.gui.addControllers( fPoint, {
 					
-					fPoint.fCustomPoint = mesh.userData.gui.addControllers(fPoint);
-/*					
-					if (mesh &amp;&amp; mesh.userData.gui.isLocalPositionReadOnly) {
-
-						if (cX) cX.domElement.querySelector( 'input' ).readOnly = true;
-						if (cY) cX.domElement.querySelector( 'input' ).readOnly = true;
-						if (cZ) cX.domElement.querySelector( 'input' ).readOnly = true;
-						
-					}
-*/	 
-
-				}
+					readOnlyEl: readOnlyEl,
+					isReadOnlyController: isReadOnlyController,
 				
-				if ( cCustom ) cCustom.object( mesh, dat, value === -1 );//options );
+				} ); }
+				
+				if ( cCustom ) cCustom.object( mesh, dat, value === -1 );
 
 				createPlayerArrayFuncs( mesh );
 
@@ -1161,7 +1301,7 @@ class GuiSelectPoint {
 
 					display = none;
 					mesh = undefined;
-					if ( options.axesHelper !== undefined )
+					if (( options.axesHelper !== undefined ) &amp;&amp; ( options.axesHelper !== false ))
 						options.axesHelper.exposePosition( getObjectPosition( getMesh(), value ) );
 
 				} else {
@@ -1189,18 +1329,17 @@ class GuiSelectPoint {
 
 						if ( mesh.geometry &amp;&amp; mesh.geometry.attributes ) {
 
-							displayfPoints = block;
-							addPoints( mesh );
+							displayfPoints =  block;
+							addPoints( mesh, intersectionSelected );
+							if (mesh.userData.myObject &amp;&amp; mesh.userData.myObject.guiPoints &amp;&amp; mesh.userData.myObject.guiPoints.pointsStyleDisplay)
+								displayPoints = mesh.userData.myObject.guiPoints.pointsStyleDisplay;
 
 						}
 
 					}
 					dislayEl( cPoints, displayPoints );
-					if ( cTraceAll ) {
-
-						dislayEl( cTraceAll, options.player ? displayPoints : false );
-
-					}
+					if ( cTraceAll )
+						dislayEl( cTraceAll, (cTraceAll.userData &amp;&amp; cTraceAll.userData.display) ? cTraceAll.userData.display : options.player ? displayPoints : false );
 					if ( cFrustumPoints !== undefined )
 						cFrustumPoints.display( displayFrustumPoints );
 					setScaleControllers();
@@ -1364,10 +1503,6 @@ class GuiSelectPoint {
 				function addRotationControllers( name ) {
 
 					const scale = options.scales[name];
-/*					
-					if ( !scale.isAxis() )
-						return;
-*/
 					cRotations[name] = fRotation.add( new THREE.Vector3(), name, 0, Math.PI * 2, 0.01 ).
 						onChange( function ( value ) {
 
@@ -1427,9 +1562,18 @@ class GuiSelectPoint {
 			fPoints = fMesh.addFolder( lang.points );
 
 			let oldMesh;//Нужен когда пользователь сменил выбранный графический объект и когда надо сбрость настройки вершины предыдущего горафического объекта
-			cPoints = fPoints.add( { Points: lang.notSelected }, 'Points', { [lang.notSelected]: -1 } ).onChange( function ( pointId ) {
+			cPoints = fPoints.add( { Points: lang.notSelected }, 'Points', { [lang.notSelected]: -1 } );
+			cPoints.onChange( function ( pointId ) {
 
 				pointId = parseInt( pointId );
+				if (isNaN(pointId)){
+
+					const onchange = this.__select[this.__select.selectedIndex].onchange;
+					if(onchange) onchange();
+					else console.error('GuiSelectPoint: cPoints.onChange. Under constraction');//во вселенной выбрать все точки для текущего времени проигрывателя
+					return;
+					
+				}
 				var display, position;
 				let mesh = getMesh();
 				if ( mesh &amp;&amp; mesh.userData.gui &amp;&amp; mesh.userData.gui.reset ) oldMesh = mesh;
@@ -1437,11 +1581,35 @@ class GuiSelectPoint {
 				else {
 
 					display = 'block';
-					_this.select( { object: mesh, index: pointId } );
+					const userData = mesh.userData.myObject.bufferGeometry.userData, oldTimeId = userData.timeId;
+					userData.timeId = mesh.userData.myObject.guiPoints.timeId;
+					const point = userData.position[pointId];
+					pointId = userData.positionOffsetId(pointId);
+					userData.timeId = oldTimeId;
+/*					
+const attributesPosition = mesh.geometry.attributes.position;
+	point = new THREE.Vector3().fromBufferAttribute(attributesPosition, pointId);
+*/	
+					const intersection = {
+						
+						object: mesh,
+						index: pointId,
+						point: point,
+						nearestEdgeVerticeId: pointId,//если не задать это значение, то index будет интерпретироваться как индекс ребра и программа в ребре будет искать индекс вершины, ближайшей к point
+						//Для проверки открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
+						//С помошю gui выбрать вершину
+						//С помошю gui поменять углы вершины
+						
+					}
+					const setIntersectionProperties = mesh.userData.myObject.guiPoints.setIntersectionProperties;
+					if (setIntersectionProperties) setIntersectionProperties(intersection);
+					_this.select(intersection);
 
 				}
 				if ( ( options.axesHelper !== false ) &amp;&amp; ( options.axesHelper !== undefined ) )
-					options.axesHelper.exposePosition( getObjectPosition( mesh, pointId ) );
+					options.axesHelper.exposePosition( getObjectPosition(
+						mesh, pointId//((pointId != -1) ? mesh.userData.myObject.guiPoints.positionOffset : 0) + pointId
+					) );
 				displayPointControllers( display );
 				if ( !mesh || !mesh.userData.gui || !mesh.userData.gui.reset) mesh = oldMesh;
 				if ( mesh &amp;&amp; mesh.userData.gui &amp;&amp; mesh.userData.gui.reset ) mesh.userData.gui.reset( pointId );
@@ -1534,7 +1702,6 @@ class GuiSelectPoint {
 
 						}
 						if ( point.cameraTarget ) point.cameraTarget.boLook = boLook;
-						//					if ( Player.player ) Player.player.selectScene();
 						if ( options.player ) options.player.selectScene();
 						if ( options.cameraGui ) options.cameraGui.look( boLook );
 						if ( boLook ) {
@@ -1559,7 +1726,6 @@ class GuiSelectPoint {
 						//Если точка имеет индивидуальную cameraTarget, то камера будет следить по этим настройкам
 						if ( guiParams.cameraTarget ) guiParams.cameraTarget.camera.userData.cameraTargetPoint = point.cameraTarget;
 
-						//					if ( Player.orbitControls ) Player.orbitControls.reset();
 						if ( options.orbitControls ) options.orbitControls.reset();
 
 						if ( orbitControlsOptions ) {
@@ -1588,7 +1754,7 @@ class GuiSelectPoint {
 			//Points world position
 			fPointWorld = fPoints.addFolder( lang.pointWorld );
 			dat.folderNameAndTitle( fPointWorld, lang.pointWorld, lang.pointWorldTitle );
-			fPointWorld.open();
+			//fPointWorld.open();
 
 			displayPointControllers( 'none' );
 
@@ -1597,17 +1763,22 @@ class GuiSelectPoint {
 				guiParams.pointsControls( fPoints, dislayEl, getMesh );
 
 			}
-			cTraceAll = fPoints.add( { trace: false }, 'trace' ).onChange( function ( value ) {
+			//options.traces ||= uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
+			if (!options.traces) options.traces = {
 
-				var mesh = getMesh();
-				mesh.userData.traceAll = value;
-				for ( var i = 0; i &lt; mesh.geometry.attributes.position.count; i++ )
-					visibleTraceLine( { object: mesh, index: i }, value, getMesh );
-				cTrace.setValue( value );
+				boTraces: false,
+				onChange: ( value ) => {
 
-			} );
+					var mesh = getMesh();
+					mesh.userData.traceAll = value;
+					for ( var i = 0; i &lt; mesh.geometry.attributes.position.count; i++ ) visibleTraceLine( { object: mesh, index: i }, value, getMesh );
+					cTrace.setValue( value );
+					
+				},
+				
+			}
+			cTraceAll = fPoints.add( options.traces, 'boTraces' ).onChange( ( value ) => { options.traces.onChange( value ); } );
 			dat.controllerNameAndTitle( cTraceAll, lang.trace, lang.traceAllTitle );
-			//		dislayEl( cTraceAll, Player.isCreated() );
 			dislayEl( cTraceAll, options.player );
 
 			//Restore default settings of all 3d objects button.
@@ -1646,27 +1817,6 @@ class GuiSelectPoint {
 			}
 
 		}
-		/* *
-		 * Sets a color attribute.
-		 * @param {Object} attributes [geometry.attributes]{@link https://threejs.org/docs/index.html?q=geometry#api/en/core/BufferGeometry.attributes} of the mesh
-		 * @param {number} i index of the color
-		 * @param {THREE.Color} color new [color]{@link https://threejs.org/docs/index.html?q=Colo#api/en/math/Color}
-		 */
-/*		
-		this.setColorAttribute = function ( attributes, i, color ) {
-
-			if ( typeof color === "string" )
-				color = new THREE.Color( color );
-			const colorAttribute = attributes.color || attributes.ca;
-			if ( colorAttribute === undefined )
-				return;
-			colorAttribute.setX( i, color.r );
-			colorAttribute.setY( i, color.g );
-			colorAttribute.setZ( i, color.b );
-			colorAttribute.needsUpdate = true;
-
-		}
-*/		
 		/**Removes all points from points list control. */
 		this.removePoints = function () {
 
@@ -1712,30 +1862,6 @@ class GuiSelectPoint {
 		}
 		function addPointControllers() {
 
-			function isReadOnlyController( controller ) {
-
-				if ( controller.domElement.querySelector( 'input' ).readOnly ) {
-
-					if ( controller.getValue() !== controller.initialValue ) {
-
-						if ( controller.boSetValue === undefined ) {
-
-							controller.boSetValue = true;
-							setValue( controller, controller.initialValue );
-							controller.boSetValue = undefined;
-							controller.initialValue = controller.getValue();//Эта строка нужна в случае когда новое зачения невозможно установиь точно таким же, как initialValue
-							//Иначе перепонится стек
-
-						}
-
-					}
-					return true;
-
-				}
-				return false;
-
-			}
-
 			//Point's attribute position axes controllers
 
 			function axesGui( axisName ) {
@@ -1757,14 +1883,9 @@ class GuiSelectPoint {
 							return;//Точка не имеет цвета. Например это вершина куба. Надо скрыть оган управления координатой w
 
 						}
-						if ( options.palette ) {
-
-							const color = options.palette.toColor( value, controller.__min, controller.__max );
-//							_this.setColorAttribute( attributes, i, color );
-							Player.setColorAttribute( attributes, i, color );
-
-						}
-						attributes.position.setW( i, value );
+						if ( options.palette ) Player.setColorAttribute( attributes, i, options.palette.toColor( value, controller.__min, controller.__max ) );
+						if ( options.scales.w.isColor != false )
+							attributes.position.setW( i, value );
 
 						if ( options.frustumPoints )
 							options.frustumPoints.updateCloudPointItem( intersection.object, intersection.index );
@@ -1772,21 +1893,13 @@ class GuiSelectPoint {
 					}
 					if ( ( scale.min !== undefined ) &amp;&amp; ( scale.max !== undefined ) ) {
 
-						controller = fPoint.add( {
-
-							value: scale.min,
-
-						}, 'value',
-							scale.min,
-							scale.max,
-							( scale.max - scale.min ) / 100
-						).onChange( function ( value ) {
+						controller = fPoint.add( { value: scale.min, }, 'value', scale.min, scale.max, ( scale.max - scale.min ) / 100 ).onChange( function ( value ) {
 
 							if ( isReadOnlyController( controller ) ) return;
 							onChange( value );
 
 						} );
-						if ( options.palette instanceof ColorPicker.palette ) {
+						if ( ( options.scales.w.isColor != false ) &amp;&amp; ( options.palette instanceof ColorPicker.palette ) ) {
 
 							controller.domElement.querySelector( '.slider-fg' ).style.height = '40%';
 							const elSlider = controller.domElement.querySelector( '.slider' );
@@ -1807,38 +1920,21 @@ class GuiSelectPoint {
 						}
 
 					} else
-						controller = fPoint.add( {
-
-							value: 0,
-
-						}, 'value'
-						).onChange( function ( value ) {
-
-							onChange( value );
-
-						} );
+						controller = fPoint.add( { value: 0, }, 'value' ).onChange( function ( value ) { onChange( value ); } );
 
 				} else {
 
 					scale = ( options.axesHelper === undefined ) || ( options.axesHelper === false ) ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
 						options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
 					if ( scale.isAxis() )
-						controller = fPoint.add( {
+						controller = fPoint.add( { value: scale.min, }, 'value', scale.min, scale.max, ( scale.max - scale.min ) / 1000 ).onChange( function ( value ) {
 
-							value: scale.min,
-
-						}, 'value',
-							scale.min,
-							scale.max,
-							( scale.max - scale.min ) / 100 ).
-							onChange( function ( value ) {
+								const points = intersection.object;
 
 								if ( isReadOnlyController( controller ) ) return;
 								
-								const points = intersection.object,
-									axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error( 'axisName:' + axisName );
-								points.geometry.attributes.position.array
-								[axesId + intersection.index * points.geometry.attributes.position.itemSize] = value;
+								const axesId = axisName === 'x' ? 0 : axisName === 'y' ? 1 : axisName === 'z' ? 2 : axisName === 'w' ? 3 : console.error('axisName:' + axisName);
+								points.geometry.attributes.position.array[axesId + points.userData.myObject.getPositionData(intersection.index).positionId] = value;
 								points.geometry.attributes.position.needsUpdate = true;
 
 								exposePosition( intersection.index );
@@ -1858,65 +1954,61 @@ class GuiSelectPoint {
 			cY = axesGui( 'y' );
 			cZ = axesGui( 'z' );
 			cW = axesGui( 'w' );
-			cColor = fPoint.addColor( {
-
-				color: '#FFFFFF',
-
-			}, 'color' ).
+			cColor = fPoint.addColor( { color: '#FFFFFF', }, 'color' ).
 				onChange( function ( value ) {
 
 					//for testing
 					//Go to http://localhost/anhr/commonNodeJS/master/player/Examples/
-					//Select '3 Ponts' 3D object
-					//Select a point
+					//Select 3 Ponts' 3D object
+					//Select a point 2
 					//Open 'Point's local position'
 					//Change 'color'
 					
-					if ( isReadOnlyController( cColor ) )
-						return;
-					if ( cColor.userData === undefined )
-						return;
+					if ( isReadOnlyController( cColor ) ) return;
+					if ( cColor.userData === undefined ) return;
 					var intersection = cColor.userData.intersection;
-//					_this.setColorAttribute( intersection.object.geometry.attributes, intersection.index, value );
 					Player.setColorAttribute( intersection.object.geometry.attributes, intersection.index, value );
 
 				} );
 			dat.controllerNameAndTitle( cColor, options.scales.w ? options.scales.w.name : lang.color );
-			cOpacity = fPoint.add( {
-
-				opasity: 1,
-
-			}, 'opasity', 0, 1, 0.01 ).
-				onChange( function ( opasity ) {
+			cOpacity = fPoint.add( { opasity: 1, }, 'opasity', 0, 1, 0.01 ).onChange( function ( opasity ) {
 
 					if ( isReadOnlyController( cOpacity ) )
 						return;
-					if ( cColor.userData === undefined )
+					const mesh = getMesh();
+					if (mesh.userData.myObject) {
+						
+						mesh.userData.myObject.verticeOpacity(intersection.index, true, opasity);
 						return;
-					const intersection = cColor.userData.intersection;
-					const points = intersection.object;
-					if ( points.geometry.attributes.ca === undefined )
-						return;//no opasity
-					points.geometry.attributes.ca.array
-					[3 + intersection.index * points.geometry.attributes.ca.itemSize] = opasity;
-					points.geometry.attributes.ca.needsUpdate = true;
+
+					}
+					if (!mesh.material.transparent) {
+
+						console.error( 'GuiSelectPoint: cOpacity.onChange. Invalid mesh.material.transparent = ' + mesh.material.transparent);
+						return;
+						
+					}
+					if (!mesh.material.vertexColors) {
+
+						console.error( 'GuiSelectPoint: cOpacity.onChange. Invalid mesh.material.vertexColors = ' + mesh.material.vertexColors);
+						return;
+						
+					}
+					const color = mesh.geometry.attributes.color;
+					if (color.itemSize &lt; 4) return;
+					color.array[3 + intersection.index * color.itemSize] = opasity;
+					color.needsUpdate = true;
 
 				} );
 			dat.controllerNameAndTitle( cOpacity, lang.opacity, lang.opacityTitle );
 
-			cTrace = fPoint.add( { trace: false }, 'trace' ).onChange( function ( value ) {
-
-				visibleTraceLine( intersection, value, getMesh );
-
-			} );
-			dat.controllerNameAndTitle( cTrace, lang.trace, lang.traceTitle ); guiParams
+			//options.trace ||= uncompatible with myThree.js → ./build/myThree.js, ./ build / myThree.module.js...
+			if (!options.trace) options.trace = { onChange: (value) => { visibleTraceLine(intersection, value, getMesh); }, }
+			cTrace = fPoint.add( { boTrace: false, }, 'boTrace' ).onChange( function ( value ) { options.trace.onChange( value, cPoints.__select.selectedIndex - 1 ); } );
+			dat.controllerNameAndTitle( cTrace, lang.trace, lang.traceTitle ); //guiParams
 			dislayEl( cTrace, options.player );
 
-			if ( guiParams.pointControls ) {
-
-				guiParams.pointControls( fPoint, dislayEl, getMesh, intersection );
-
-			}
+			if ( guiParams.pointControls ) guiParams.pointControls( fPoint, dislayEl, getMesh, intersection );
 
 			//Point's world position axes controllers
 
@@ -1927,7 +2019,7 @@ class GuiSelectPoint {
 				if ( !scale.isAxis() )
 					return;
 				const controller = dat.controllerZeroStep( fPointWorld, { value: scale.min, }, 'value' );
-				controller.domElement.querySelector( 'input' ).readOnly = true;
+				readOnlyEl( controller, true );
 				dat.controllerNameAndTitle( controller, scale.name );
 				return controller;
 
@@ -1942,16 +2034,27 @@ class GuiSelectPoint {
 				defaultF: function () {
 
 					const positionDefault = intersection.object.userData.player.arrayFuncs[intersection.index],
-						t = options.time;
-					cX.setValue( typeof positionDefault.x === "function" ?
-						positionDefault.x( t, options.a, options.b ) : positionDefault.x );
-					cY.setValue( typeof positionDefault.y === "function" ?
-						positionDefault.y( t, options.a, options.b ) : positionDefault.y );
-					cZ.setValue( typeof positionDefault.z === "function" ?
-						positionDefault.z( t, options.a, options.b ) :
-						positionDefault.z === undefined ? 0 ://default Z axis of 2D point is 0
+						t = options.time,
+						setDefaultValue = ( control, value ) => {
+							
+							if ( !control ) return;
+							control.setValue(
+								typeof value === "function" ?
+									value( t, options.a, options.b ) :
+									typeof value === "string" ?
+										Player.execFunc( { w: value } , 'w', options.time, options ) :
+										value
+							);
+							
+						};
+					setDefaultValue( cX, positionDefault.x );
+					setDefaultValue( cY, positionDefault.y );
+					setDefaultValue( cZ, positionDefault.z === undefined ? 0 ://default Z axis of 2D point is 0
 							positionDefault.z );
 
+					if ( isDislayEl( cOpacity ) ) cOpacity.setValue( cOpacity.initialValue );
+					if ( isDislayEl( cColor ) &amp;&amp; !isReadOnlyEl( cColor ) ) cColor.setValue( cColor.initialValue );
+					
 					if ( positionDefault.w !== undefined ) {
 
 						if ( positionDefault.w.r !== undefined )
@@ -1969,17 +2072,18 @@ class GuiSelectPoint {
 
 						}
 						const float = parseFloat( positionDefault.w );
-						if ( float === positionDefault.w )
-							setValue( cW, positionDefault.w );
-						else console.error( 'Restore default local position: Invalid W axis.' );
+						if ( float === positionDefault.w ) {
 
-					} else {
+							if ( isDislayEl( cW ) ) setValue( cW, positionDefault.w );
+							
+						} else if ( typeof positionDefault.w  === "string") {
+							
+							setValue( cW, Player.execFunc( positionDefault , 'w', options.time, options ) );
+							return;
+							
+						} else console.error( 'Restore default local position: Invalid W axis.' );
 
-						cColor.setValue( cColor.initialValue );
-						cOpacity.setValue( cOpacity.initialValue );
-
-					}
-
+					} else cColor.setValue( cColor.initialValue );
 
 				},
 
@@ -2041,12 +2145,7 @@ class GuiSelectPoint {
 					
 				}
 
-			}, options, { x: '', y: '', z: '', w: '' } );/* {
-
-				getLanguageCode: getLanguageCode,
-				THREE: THREE,
-
-			} );*/
+			}, options, { x: '', y: '', z: '', w: '' } );
 
 		}
 		/**
@@ -2076,7 +2175,7 @@ export default GuiSelectPoint;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Sun Jan 28 2024 11:25:02 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Feb 12 2025 07:12:35 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
