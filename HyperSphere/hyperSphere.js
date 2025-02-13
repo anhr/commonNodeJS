@@ -455,7 +455,9 @@ class HyperSphere extends MyObject {
 							if (!isNaN(angleId)) {
 
 								const angle = value;
-								if (angleId >= verticeAngles.length) {
+//								if (angleId >= verticeAngles.length)
+								if (angleId >= length)
+								{
 
 									console.error(sHyperSphere + ': set vertice angles failed! angleId = ' + angleId + ' is great of verticeAngles.length = ' + verticeAngles.length);
 									return false;
