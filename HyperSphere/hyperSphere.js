@@ -1770,8 +1770,8 @@ class HyperSphere extends MyObject {
 
 									if (!control) return;
 									const boValue = control.getValue();
-									control.setValue(false);//Убрать выделенные ребра.
-									if ((verticeId != -1) && boValue) control.setValue(boValue);//если у предыдущей вершины выделялись ребра, то и у новой вершины выделять ребра
+									control.setValue(false);
+									if ((verticeId != -1) && boValue) control.setValue(boValue);
 
 								};
 								resetControl(aAngleControls.cHighlightEdges);
