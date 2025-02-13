@@ -2205,7 +2205,11 @@ Player.selectMeshPlayScene = function ( mesh, settings = {} ) {
 	options.guiSelectPoint.setMesh();
 
 	var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
-	if ( ( selectedPointIndex !== -1 ) && options.guiSelectPoint.isSelectedMesh( mesh ) ) {
+	if (
+		( selectedPointIndex !== -1 )
+		&& options.guiSelectPoint.isSelectedMesh( mesh )
+		&& !mesh.userData.myObject.bufferGeometry//для этих графических объектов изменение позиции в gui происходит в MyObject.setPositionAttributeFromPoint
+	) {
 
 		options.guiSelectPoint.setPosition( {
 

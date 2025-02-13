@@ -506,7 +506,8 @@ class MyObject {
 
 			//gui
 			const guiSelectPoint = settings.options.guiSelectPoint;
-			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(this.object())) guiSelectPoint.setPosition( { index: i, object: this.object ? this.object() : this });
+			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(this.object ? this.object() : this.object3D))
+				guiSelectPoint.setPosition( { index: i, object: this.object ? this.object() : this.object3D });
 
 			//Color attribute
 
