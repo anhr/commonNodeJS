@@ -64,11 +64,13 @@
 
 					//hyperSphere.classSettings.settings.object.geometry.position.angles[2][1] = t + 0.1;
 					//hyperSphere.classSettings.settings.object.geometry.angles[2][1] = t + 0.1;
+					/*
 					hyperSphere.angles
 						[1]//vertice ID
 						[0]//0 - Latitude, 1 - Longitude
 						= t / 10000000000000000;
-					//if (hyperSphere.middleVertices) return hyperSphere.middleVertices(timeId, t);
+					*/
+					if (hyperSphere.middleVertices) return hyperSphere.middleVertices(timeId, t);
 					//if (hyperSphere.child) return hyperSphere.child.onSelectScene.copyAngles(timeId, t);
 		
 				},

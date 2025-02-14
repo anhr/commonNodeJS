@@ -132,8 +132,9 @@ class Circle extends HyperSphere {
 
 	getRandomMiddleAngles(oppositeVertices) {
 		
-		console.error(sCircle + ': getRandomMiddleAngles. Under constraction');//надо случайно выбирать среднюю вершину
-		return [(this.vertice2angles(oppositeVertices[0])[0] + this.vertice2angles(oppositeVertices[1])[0]) / 2];
+		//console.error(sCircle + ': getRandomMiddleAngles. Under constraction');//надо случайно выбирать среднюю вершину
+		if (this.dimension === 2) return [(this.vertice2angles(oppositeVertices[0])[0] + this.vertice2angles(oppositeVertices[1])[0]) / 2];
+		console.error(sCircle + ': getRandomMiddleAngles. Under constraction. Define getRandomMiddleAngles for current hypersphere dimension = ' + this.dimension);//переопределить getRandomMiddleAngles для текущей размерности гиперсферы
 		
 	}
 }
