@@ -549,7 +549,8 @@ class HyperSphere extends MyObject {
 				if (!isNaN(i)) {
 
 					aAngles[i] = value;
-					const object = _this.object();
+//					const object = _this.object();
+					const object = _this.object3D;
 					if (object) object.userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
 
 				}
@@ -1418,7 +1419,19 @@ class HyperSphere extends MyObject {
 			} else scene = _this.classSettings.projectParams.scene;
 
 			let nd, myPoints;
-			this.object = () => { return nd && nd.object3D ? nd.object3D : myPoints ? myPoints : undefined; }
+			this.object = () => {
+
+				console.warn(sHyperSphere + ': this.object() a was deprecated. Use this.object3D instead')
+				return nd && nd.object3D ? nd.object3D : myPoints ? myPoints : undefined;
+			
+			}
+			Object.defineProperty(this, 'object3D', {
+
+				get: () => { return nd && nd.object3D ? nd.object3D : myPoints ? myPoints : undefined; },
+//				set: (object3DNew) => { },
+//				configurable: true,//https://stackoverflow.com/a/25518045/5175935
+
+			});
 			const aAngleControls = [];
 
 			this.objectOpacity = 0.3;
@@ -1453,7 +1466,8 @@ class HyperSphere extends MyObject {
 			this.remove(scene);
 			this.removeHyperSphere = () => {
 
-				const object = _this.object();
+//				const object = _this.object();
+				const object = _this.object3D;
 				if (nd) nd = undefined;
 				if (myPoints) myPoints = undefined;
 				removeObject(object);
@@ -1595,9 +1609,10 @@ class HyperSphere extends MyObject {
 
 					{//hide userData
 						
-						const userData = this.object().userData;
+//						const userData = this.object().userData;
+						const userData = this.object3D.userData;
 						userData.player = userData.player || {};//for ND
-						userData.player.boArrayFuncs = false;//не создавать массив userData.player.arrayFuncs потому что точки объекта буду получать из this.object().geometry.attributes.position
+						userData.player.boArrayFuncs = false;//не создавать массив userData.player.arrayFuncs потому что точки объекта буду получать из this.object3D.geometry.attributes.position
 						userData.player.arrayFuncs = new Proxy([], {
 
 							get: (arrayFuncs, name) => {
@@ -1605,7 +1620,8 @@ class HyperSphere extends MyObject {
 								const verticeId = parseInt(name);
 								if (!isNaN(verticeId)) {
 
-									const position = this.object().geometry.attributes.position;
+//									const position = this.object().geometry.attributes.position;
+									const position = this.object3D.geometry.attributes.position;
 									return (
 										position.itemSize === 4 ?
 											new THREE.Vector4() :
@@ -1806,7 +1822,8 @@ class HyperSphere extends MyObject {
 											cAngle = fAngles.add({ angle: 0, }, 'angle', range.min, range.max, 2 * π / 360).onChange((angle) => {
 
 												if (cAngle.boSetPosition === false) return;
-												const guiPoints = _this.object().userData.myObject.guiPoints;
+//												const guiPoints = _this.object().userData.myObject.guiPoints;
+												const guiPoints = _this.object3D.userData.myObject.guiPoints;
 												guiPoints.verticeId = undefined;
 												const verticeAngles = classSettings.overriddenProperties.verticeAngles(guiPoints.timeAngles || angles, aAngleControls.verticeId);
 												if (verticeAngles[angleId] === angle) return;
@@ -2250,7 +2267,8 @@ class HyperSphere extends MyObject {
 											planeAngles[planeVerticeId++] = this.normalizeVerticeAngles(planeAngle);
 
 										}
-										if (plane) plane.object().geometry.attributes.position.needsUpdate = true;
+//										if (plane) plane.object().geometry.attributes.position.needsUpdate = true;
+										if (plane) plane.object3D.geometry.attributes.position.needsUpdate = true;
 
 									}
 									for (let verticeAngleId = 0; verticeAngleId < vertice.length; verticeAngleId++) {

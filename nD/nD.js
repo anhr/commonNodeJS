@@ -3326,11 +3326,7 @@ class ND extends MyObject {
 
 			},
 
-			object3D: {
-
-				get: () => { return object3D; },
-				
-			},
+			object3D: { get: () => { return object3D; }, },
 
 			object: {
 
