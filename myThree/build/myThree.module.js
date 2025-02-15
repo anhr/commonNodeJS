@@ -9599,7 +9599,7 @@ function getObjectPosition( object, index ) {
 }
 
 /**
- * node.js version of the synchronous download of the file.
+ * node.js version of the download of the file.
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
@@ -9885,6 +9885,31 @@ function sync$1( url, options ) {
 	//console.log( 'sync(' + url + ')' );
 	return response;
 
+}
+
+/**
+ * display a text to HTML
+ * @param {string} str source text
+ * @returns {string} escaped text
+ */
+function escapeHtml( str ) {
+
+	return str.replace( /[&<>"'\/]/g, function ( s ) {
+
+		var entityMap = {
+
+			"&": "&amp;",
+			"<": "&lt;",
+			">": "&gt;",
+			'"': '&quot;',
+			"'": '&#39;',
+			"/": '&#x2F;'
+
+		};
+
+		return entityMap[s];
+
+	} );
 }
 
 /**
@@ -10267,6 +10292,7 @@ var loadScript = {
 
 	sync: sync,
 	async: async,
+	escapeHtml: escapeHtml,
 
 };
 
@@ -16978,16 +17004,24 @@ Player$1.selectMeshPlayScene = function ( mesh, settings = {} ) {
 		}
 
 		if ( !mesh.userData.myObject || !mesh.userData.myObject.isSetPosition ) {
+
+			const setPositionAttributeFromPoint = mesh.userData.myObject.setPositionAttributeFromPoint;
 			for (var i = 0; i < arrayFuncs.length; i++) {
 
 				var funcs = arrayFuncs[i], needsUpdate = false;
+				const vertice = setPositionAttributeFromPoint ? [] : undefined;
 				function setPosition(axisName, fnName) {
 
 					var value = Player$1.execFunc(funcs, axisName, t, options);// a, b );
 					if (value !== undefined) {
 
-						attributes.position[fnName](i, value);
-						needsUpdate = true;
+						if (setPositionAttributeFromPoint) vertice.push(value);
+						else {
+							
+							attributes.position[fnName](i, value);
+							needsUpdate = true;
+
+						}
 
 					}
 
@@ -16996,6 +17030,7 @@ Player$1.selectMeshPlayScene = function ( mesh, settings = {} ) {
 				setPosition('y', 'setY');
 				setPosition('z', 'setZ');
 				setPosition('w', 'setW');
+				if (setPositionAttributeFromPoint) setPositionAttributeFromPoint(i, vertice);
 
 				//если тут поставить var то цвет точки, которая определена как THREE.Vector3 будет равет цвету предыдущей точки
 				//потому что перемнные типа var видны снаружи блока {}
@@ -17345,7 +17380,11 @@ Player$1.selectMeshPlayScene = function ( mesh, settings = {} ) {
 	options.guiSelectPoint.setMesh();
 
 	var selectedPointIndex = options.guiSelectPoint.getSelectedPointIndex();
-	if ( ( selectedPointIndex !== -1 ) && options.guiSelectPoint.isSelectedMesh( mesh ) ) {
+	if (
+		( selectedPointIndex !== -1 )
+		&& options.guiSelectPoint.isSelectedMesh( mesh )
+		&& !mesh.userData.myObject.bufferGeometry//для этих графических объектов изменение позиции в gui происходит в MyObject.setPositionAttributeFromPoint
+	) {
 
 		options.guiSelectPoint.setPosition( {
 
@@ -18395,7 +18434,7 @@ class MyObject {
 
 		this.isSetPosition = settings.isSetPosition;
 
-		const timeId = settings.options ? settings.options.player.getTimeId() : 0, geometry = settings.object.geometry,
+		const timeId = (settings.options && settings.options.player) ? settings.options.player.getTimeId() : 0, geometry = settings.object.geometry,
 			geometryPosition = geometry.position;
 		if ((timeId === 0) && (!geometryPosition || !geometryPosition.isPositionProxy)) {
 
@@ -18724,7 +18763,7 @@ class MyObject {
 					this.pointLength ? this.pointLength() :
 						points[0].w === undefined ? 3 : 4,
 					points.length);
-				const boLog = this.classSettings && (this.classSettings.debug != undefined) && (this.classSettings.debug.log != false);
+				const boLog = this.classSettings && (this.classSettings.debug != undefined) && (this.classSettings.debug != false) && (this.classSettings.debug.log != false);
 				for (let timeId = 0; timeId < getPlayerTimesLength(); timeId++) {
 					
 					if (boLog) console.log('timeId = ' + timeId);
@@ -18834,7 +18873,7 @@ class MyObject {
 			                  array [positionId] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
 			if (itemSize > 1) array [++positionId] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) array [++positionId] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
-			const w = vertice.w;
+			const w = vertice.w != undefined ? vertice.w : vertice[3];
 			if (itemSize > 3) array [++positionId] = w;
 
 			const drawRange = settings.bufferGeometry.drawRange;
@@ -18844,6 +18883,12 @@ class MyObject {
 				if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
 
 			}
+
+			//gui
+			const guiSelectPoint = settings.options.guiSelectPoint, object3D = this.object ? this.object() : this.object3D;
+			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(object3D))
+				guiSelectPoint.setPosition( { index: i, object: this.object ? this.object() : this.object3D });
+			if (object3D && object3D.userData.gui) object3D.userData.gui.reset();//в hyperSphere обновить выделенные ребра, среднюю вершину и плоскости вращения углов
 
 			//Color attribute
 
@@ -18978,9 +19023,11 @@ class MyObject {
 	 */
 	positionOffset(position, positionId) {
 
-		this.classSettings.settings;
 		return this.positionOffsetId(positionId) * position.itemSize;
-//		return (settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId) * position.itemSize;
+/*		
+		const settings = this.classSettings.settings;
+		return (settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId) * position.itemSize;
+*/		
 		
 	}
 
@@ -23568,7 +23615,11 @@ class GuiSelectPoint {
 		 */
 		this.isSelectedMesh = function ( meshCur ) { return getMesh() === meshCur };
 		/**
-		 * @returns index of the selected point.
+		 * @returns index of the selected point or -1 if point is not selected.
+		 */
+		this.getSelectedPointIndexShort = () => { return cPoints.__select.selectedIndex - 1 };
+		/**
+		 * @returns index of the selected point or -1 if mesh is not selected or if point is not selected.
 		 */
 		this.getSelectedPointIndex = function () {
 
@@ -24138,28 +24189,39 @@ class GuiSelectPoint {
 				else {
 
 					display = 'block';
-					const userData = mesh.userData.myObject.bufferGeometry.userData, oldTimeId = userData.timeId;
-					userData.timeId = mesh.userData.myObject.guiPoints.timeId;
-					const point = userData.position[pointId];
-					pointId = userData.positionOffsetId(pointId);
-					userData.timeId = oldTimeId;
-/*					
-const attributesPosition = mesh.geometry.attributes.position;
-	point = new THREE.Vector3().fromBufferAttribute(attributesPosition, pointId);
-*/	
-					const intersection = {
+					const bufferGeometry = mesh.userData.myObject.bufferGeometry;
+					let intersection;
+					if (bufferGeometry) {
+						
+						const userData = bufferGeometry.userData, oldTimeId = userData.timeId;
+						userData.timeId = mesh.userData.myObject.guiPoints.timeId;
+						const point = userData.position[pointId];
+						pointId = userData.positionOffsetId(pointId);
+						userData.timeId = oldTimeId;
+	/*					
+	const attributesPosition = mesh.geometry.attributes.position;
+		point = new THREE.Vector3().fromBufferAttribute(attributesPosition, pointId);
+	*/	
+						intersection = {
+							
+							object: mesh,
+							index: pointId,
+							point: point,
+							nearestEdgeVerticeId: pointId,//если не задать это значение, то index будет интерпретироваться как индекс ребра и программа в ребре будет искать индекс вершины, ближайшей к point
+							//Для проверки открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
+							//С помошю gui выбрать вершину
+							//С помошю gui поменять углы вершины
+							
+						};
+						const setIntersectionProperties = mesh.userData.myObject.guiPoints.setIntersectionProperties;
+						if (setIntersectionProperties) setIntersectionProperties(intersection);
+
+					} else intersection = {
 						
 						object: mesh,
 						index: pointId,
-						point: point,
-						nearestEdgeVerticeId: pointId,//если не задать это значение, то index будет интерпретироваться как индекс ребра и программа в ребре будет искать индекс вершины, ближайшей к point
-						//Для проверки открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
-						//С помошю gui выбрать вершину
-						//С помошю gui поменять углы вершины
 						
 					};
-					const setIntersectionProperties = mesh.userData.myObject.guiPoints.setIntersectionProperties;
-					if (setIntersectionProperties) setIntersectionProperties(intersection);
 					_this.select(intersection);
 
 				}
@@ -24484,7 +24546,7 @@ const attributesPosition = mesh.geometry.attributes.position;
 					scale = ( options.axesHelper === undefined ) || ( options.axesHelper === false ) ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
 						options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
 					if ( scale.isAxis() )
-						controller = fPoint.add( { value: scale.min, }, 'value', scale.min, scale.max ).onChange( function ( value ) {
+						controller = fPoint.add( { value: scale.min, }, 'value', scale.min, scale.max, ( scale.max - scale.min ) / 1000 ).onChange( function ( value ) {
 
 								const points = intersection.object;
 
