@@ -508,10 +508,13 @@ class MyObject {
 			const guiSelectPoint = settings.options.guiSelectPoint,
 				object3D = this.object3D;
 //				object3D = this.object ? this.object() : this.object3D;
-			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(object3D))
+			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(object3D)) {
+				
 				guiSelectPoint.setPosition( { index: i, object: object3D });
 //				guiSelectPoint.setPosition( { index: i, object: this.object ? this.object() : this.object3D });
-			if (object3D && object3D.userData.gui) object3D.userData.gui.reset()//в hyperSphere обновить выделенные ребра, среднюю вершину и плоскости вращения углов
+				if (object3D && object3D.userData.gui) object3D.userData.gui.reset()//в hyperSphere обновить выделенные ребра, среднюю вершину и плоскости вращения углов
+
+			}
 
 			//Color attribute
 
