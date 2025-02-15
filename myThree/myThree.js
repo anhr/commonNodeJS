@@ -1042,7 +1042,7 @@ class MyThree {
 
 }
 
-MyThree.release = 'v1.4';
+MyThree.release = 'v1.5';
 
 //Localization
 
