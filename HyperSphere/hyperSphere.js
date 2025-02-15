@@ -1428,8 +1428,6 @@ class HyperSphere extends MyObject {
 			Object.defineProperty(this, 'object3D', {
 
 				get: () => { return nd && nd.object3D ? nd.object3D : myPoints ? myPoints : undefined; },
-//				set: (object3DNew) => { },
-//				configurable: true,//https://stackoverflow.com/a/25518045/5175935
 
 			});
 			const aAngleControls = [];
@@ -1962,7 +1960,6 @@ class HyperSphere extends MyObject {
 				
 												},
 												distance = arcTo(oppositeVertice, vertice),
-//												distance = vertice.arcTo(oppositeVertice),
 												arcCount = distance * (aAngleControls.MAX_POINTS - 1) / π;
 											//Не получилось равномерно разделить дугу на части.
 											//Если начало и конец дуги расположены напротив друг друга на окружности или на сфере или на 4D hypersphere
@@ -2051,40 +2048,12 @@ class HyperSphere extends MyObject {
 																if (this.child) this.child.arc(aAngleControls, lang, arcAngles);
 																else {
 																	console.error(sHyperSphere + ': Непонятно когда сюда попадает')
-/*
-																	const arcEdges = [];
-																	for (let i = 0; i < (aAngleControls.MAX_POINTS - 1); i++) arcEdges.push([i, i + 1]);
-																	aAngleControls.arc = this.line({
-
-																		cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек гиперсферы
-																		//edges: false,
-																		object: {
-
-																			name: lang.arc,
-																			geometry: {
-
-																				MAX_POINTS: aAngleControls.MAX_POINTS,
-																				angles: arcAngles,
-																				//opacity: 0.3,
-																				indices: {
-
-																					edges: arcEdges,
-
-																				}
-
-																			}
-
-																		},
-
-																	});
-*/																	
 
 																}
 
 															}
 															console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object().geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object().geometry.drawRange.count + ' Vertices count = ' + verticeId);
 															const distance = arcTo(position[aAngleControls.oppositeVerticeId], position[aAngleControls.verticeId]);
-//															const distance = position[aAngleControls.verticeId].arcTo(position[aAngleControls.oppositeVerticeId]);
 															if (classSettings.debug) {
 
 																let vertice, distanceDebug = 0;
