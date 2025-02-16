@@ -1419,12 +1419,12 @@ class HyperSphere extends MyObject {
 			} else scene = _this.classSettings.projectParams.scene;
 
 			let nd, myPoints;
-			this.object = () => {
+this.object = () => {
 
-				console.warn(sHyperSphere + ': this.object() a was deprecated. Use this.object3D instead')
-				return nd && nd.object3D ? nd.object3D : myPoints ? myPoints : undefined;
-			
-			}
+	console.warn(sHyperSphere + ': this.object() a was deprecated. Use this.object3D instead')
+	return nd && nd.object3D ? nd.object3D : myPoints ? myPoints : undefined;
+
+}
 			Object.defineProperty(this, 'object3D', {
 
 				get: () => { return nd && nd.object3D ? nd.object3D : myPoints ? myPoints : undefined; },
@@ -1938,7 +1938,7 @@ class HyperSphere extends MyObject {
 													if (aAngleControls.arc) {
 
 														aAngleControls.arc.classSettings.settings.object.geometry.angles[verticeId] = verticeAngles;
-														aAngleControls.arc.object().geometry.drawRange.type = this.bufferGeometry.drawRange.types.edges;//строка выше портит drawRange.type
+														aAngleControls.arc.object3D.geometry.drawRange.type = this.bufferGeometry.drawRange.types.edges;//строка выше портит drawRange.type
 														verticeId++;
 
 													} else arcAngles.push(verticeAngles);
@@ -2036,7 +2036,7 @@ class HyperSphere extends MyObject {
 
 															if (aAngleControls.arc) {
 
-																const geometry = aAngleControls.arc.object().geometry;
+																const geometry = aAngleControls.arc.object3D.geometry;
 																if (geometry.attributes.position.count < verticeId) console.error(sHyperSphere + '.aAngleControls.createArc: Invalid geometry.attributes.position.count = ' + geometry.attributes.position.count);
 																geometry.setDrawRange(0, verticeId * 2 - 1);//geometry.attributes.position.itemSize);//Непонятно почему draw count так вычисляется. Еще смотри class ND.constructor.create3DObject
 																console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object().geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object().geometry.drawRange.count + ' Vertices count = ' + verticeId);
