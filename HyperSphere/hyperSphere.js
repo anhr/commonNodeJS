@@ -2047,7 +2047,33 @@ class HyperSphere extends MyObject {
 
 																if (this.child) this.child.arc(aAngleControls, lang, arcAngles);
 																else {
-																	console.error(sHyperSphere + ': Непонятно когда сюда попадает')
+																	
+//																	console.error(sHyperSphere + ': Непонятно когда сюда попадает')
+																	const arcEdges = [];
+																	for (let i = 0; i < (aAngleControls.MAX_POINTS - 1); i++) arcEdges.push([i, i + 1]);
+																	aAngleControls.arc = this.line({
+																	
+																		cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек гиперсферы
+																		//edges: false,
+																		object: {
+																	
+																			name: lang.arc,
+																			geometry: {
+																	
+																				MAX_POINTS: aAngleControls.MAX_POINTS,
+																				angles: arcAngles,
+																				//opacity: 0.3,
+																				indices: {
+																	
+																					edges: arcEdges,
+																	
+																				}
+																	
+																			}
+																	
+																		},
+																	
+																	});
 
 																}
 
