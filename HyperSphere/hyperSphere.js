@@ -2078,7 +2078,7 @@ class HyperSphere extends MyObject {
 																}
 
 															}
-															console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object().geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object().geometry.drawRange.count + ' Vertices count = ' + verticeId);
+															console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object3D.geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object3D.geometry.drawRange.count + ' Vertices count = ' + verticeId);
 															const distance = arcTo(position[aAngleControls.oppositeVerticeId], position[aAngleControls.verticeId]);
 															if (classSettings.debug) {
 
