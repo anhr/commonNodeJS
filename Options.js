@@ -1736,6 +1736,9 @@ class Raycaster {
 				if ( ( guiPoints.isSetIntersectionIndex != false ) && ( guiPoints.verticeId != undefined ) ) intersection.index = guiPoints.verticeId;
 				
 				options.guiSelectPoint.select( intersection );
+				
+				const mesh = intersection.object;
+				if ( mesh && mesh.userData.gui && mesh.userData.gui.reset ) mesh.userData.gui.reset( guiPoints.verticeId );
 
 				//если не удалить guiPoints.verticeId, то будет неверно изменяться позиция вершины во вселенной
 				//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
