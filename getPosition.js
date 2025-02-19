@@ -31,22 +31,24 @@ export function getObjectLocalPosition( object, index ) {
 		position = itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3(),
 		drawRange = object.geometry.drawRange,
 		offset = index * itemSize;
-	if ( object.geometry.index === null ) {
+	if ( geometry.index === null ) {
 		
 		//Отображаются вершины
+/*		
 		let sError;
 		if ( geometry.index === null ) {
 			if ( ( drawRange.count != Infinity ) && ( ( index < drawRange.start ) || ( index >= ( drawRange.start + drawRange.count ) ) ) )
 				sError = '';
 		} else if ( ( drawRange.count != Infinity ) && ( ( offset < drawRange.start ) || ( offset >= ( drawRange.start + drawRange.count ) ) ) ){
 			
-//			console.error( 'getObjectLocalPosition: index = ' + index + '. offset = ' + offset + ' is out of range = { start: ' + drawRange.start + ', count: ' + drawRange.count + ' }' );
-//			return;
 			sError = '. offset = ' + offset;
 	
 		}
 		if ( sError != undefined ) console.error( 'getObjectLocalPosition: index = ' + index + sError + ' is out of range = { start: ' + drawRange.start + ', count: ' + drawRange.count + ' }' );
-	
+*/		
+		if ( ( drawRange.count != Infinity ) && ( ( index < drawRange.start ) || ( index >= ( drawRange.start + drawRange.count ) ) ) )
+			console.error( 'getObjectLocalPosition: index = ' + index + ' is out of range = { start: ' + drawRange.start + ', count: ' + drawRange.count + ' }' );
+		
 	} else {
 		
 		//Отображаются ребра. Индекс вершины index не в ходит в диапазон видимых ребер drawRange

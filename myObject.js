@@ -499,7 +499,8 @@ class MyObject {
 			const drawRange = settings.bufferGeometry.drawRange;
 			if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
 
-				this.setVerticesRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
+//				this.setVerticesRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
+				this.setVerticesRange(drawRange.start, (positionId + 1) / itemSize - drawRange.start);
 				if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
 
 			}
@@ -507,11 +508,9 @@ class MyObject {
 			//gui
 			const guiSelectPoint = settings.options.guiSelectPoint,
 				object3D = this.object3D;
-//				object3D = this.object ? this.object() : this.object3D;
 			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(object3D)) {
 				
 				guiSelectPoint.setPosition( { index: i, object: object3D });
-//				guiSelectPoint.setPosition( { index: i, object: this.object ? this.object() : this.object3D });
 				if (object3D && object3D.userData.gui) object3D.userData.gui.reset()//в hyperSphere обновить выделенные ребра, среднюю вершину и плоскости вращения углов
 
 			}
