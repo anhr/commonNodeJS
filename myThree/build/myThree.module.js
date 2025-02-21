@@ -9514,22 +9514,24 @@ function getObjectLocalPosition( object, index ) {
 		position = itemSize >= 4 ? new THREE.Vector4( 0, 0, 0, 0 ) : new THREE.Vector3(),
 		drawRange = object.geometry.drawRange,
 		offset = index * itemSize;
-	if ( object.geometry.index === null ) {
+	if ( geometry.index === null ) {
 		
 		//Отображаются вершины
+/*		
 		let sError;
 		if ( geometry.index === null ) {
 			if ( ( drawRange.count != Infinity ) && ( ( index < drawRange.start ) || ( index >= ( drawRange.start + drawRange.count ) ) ) )
 				sError = '';
 		} else if ( ( drawRange.count != Infinity ) && ( ( offset < drawRange.start ) || ( offset >= ( drawRange.start + drawRange.count ) ) ) ){
 			
-//			console.error( 'getObjectLocalPosition: index = ' + index + '. offset = ' + offset + ' is out of range = { start: ' + drawRange.start + ', count: ' + drawRange.count + ' }' );
-//			return;
 			sError = '. offset = ' + offset;
 	
 		}
 		if ( sError != undefined ) console.error( 'getObjectLocalPosition: index = ' + index + sError + ' is out of range = { start: ' + drawRange.start + ', count: ' + drawRange.count + ' }' );
-	
+*/		
+		if ( ( drawRange.count != Infinity ) && ( ( index < drawRange.start ) || ( index >= ( drawRange.start + drawRange.count ) ) ) )
+			console.error( 'getObjectLocalPosition: index = ' + index + ' is out of range = { start: ' + drawRange.start + ', count: ' + drawRange.count + ' }' );
+		
 	}
 	position.fromArray( attributesPosition.array, offset );
 	return position;
@@ -14826,6 +14828,9 @@ class Raycaster {
 				if ( ( guiPoints.isSetIntersectionIndex != false ) && ( guiPoints.verticeId != undefined ) ) intersection.index = guiPoints.verticeId;
 				
 				options.guiSelectPoint.select( intersection );
+				
+				const mesh = intersection.object;
+				if ( mesh && mesh.userData.gui && mesh.userData.gui.reset ) mesh.userData.gui.reset( guiPoints.verticeId );
 
 				//если не удалить guiPoints.verticeId, то будет неверно изменяться позиция вершины во вселенной
 				//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
@@ -18879,7 +18884,8 @@ class MyObject {
 			const drawRange = settings.bufferGeometry.drawRange;
 			if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
 
-				this.setVerticesRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
+//				this.setVerticesRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
+				this.setVerticesRange(drawRange.start, (positionId + 1) / itemSize - drawRange.start);
 				if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
 
 			}
@@ -18887,11 +18893,9 @@ class MyObject {
 			//gui
 			const guiSelectPoint = settings.options.guiSelectPoint,
 				object3D = this.object3D;
-//				object3D = this.object ? this.object() : this.object3D;
 			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(object3D)) {
 				
 				guiSelectPoint.setPosition( { index: i, object: object3D });
-//				guiSelectPoint.setPosition( { index: i, object: this.object ? this.object() : this.object3D });
 				if (object3D && object3D.userData.gui) object3D.userData.gui.reset();//в hyperSphere обновить выделенные ребра, среднюю вершину и плоскости вращения углов
 
 			}
