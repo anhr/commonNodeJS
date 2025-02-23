@@ -2013,7 +2013,7 @@ this.object = () => {
 													if (level <= maxLevel) {
 
 														//если не делать это преобразование,
-														//то когда начало и конец дуги на ходятся на противоположных концах гиперсферы,
+														//то когда начало и конец дуги находятся на противоположных концах гиперсферы,
 														//средняя точка попадает в центр окружности или сферы или гиперсферы,
 														//а это находится вне гиперсферы.
 														//В этом случае все вершины дуги, кроме средней вершины, стягиваются к началу или концу дуги.
@@ -2482,9 +2482,9 @@ this.object = () => {
 				if ((typeof WebGPU != 'undefined') && WebGPU.isSupportWebGPU()) {
 
 					const firstMatrix = [
-						[1, 2, 3, 4],
-						[5, 6, 7, 8]
-					],
+							[1, 2, 3, 4],
+							[5, 6, 7, 8]
+						],
 						secondMatrix = [
 							[1, 2],
 							[3, 4],
@@ -2645,9 +2645,7 @@ this.object = () => {
 					})
 					const sectorValueName = _this.probabilityDensity.sectorValueName;
 					if (!sectorValueName) console.error(sHyperSphere + ': Invalid sectorValueName = ' + sectorValueName);
-					console.table(table, ['count', 'hb', 'ht', 'height',
-						sectorValueName,
-						'density']);
+					console.table(table, ['count', 'hb', 'ht', 'height', sectorValueName, 'density']);
 					console.log('');
 					classSettings.debug.logTimestamp('Push positions. ');
 
@@ -2665,12 +2663,11 @@ this.object = () => {
 						case 'ru'://Russian language
 
 							lang.progressTitle = 'Создание ребер.<br>Ребер у вершины %s из ' + this.verticeEdgesLength;
-
 							break;
 
 					}
 
-					if (classSettings.edges.creationMethod === undefined) classSettings.edges.creationMethod = edgesCreationMethod.Random;//.NearestVertice;
+					if (classSettings.edges.creationMethod === undefined) classSettings.edges.creationMethod = edgesCreationMethod.Random;
 					switch (classSettings.edges.creationMethod) {
 
 						case edgesCreationMethod.Random:
@@ -2719,7 +2716,7 @@ this.object = () => {
 													this.setEdgesRange();
 												if (classSettings.overriddenProperties.project) classSettings.overriddenProperties.project();
 												boCompleted = true;
-												return;// true;
+												return;
 
 											}
 											verticeId = 0;
