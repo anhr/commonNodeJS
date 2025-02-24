@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @module MyThree
  * @description I use MyThree in my projects for displaying of my 3D objects in the canvas.
  *
@@ -464,6 +464,7 @@ class MyThree {
 			scene = new THREE.Scene();
 			scene.background = new THREE.Color(0x000000);
 			scene.fog = new THREE.Fog(0x000000, 250, 1400);
+			scene.position.copy( options.scene.position );
 			scene.userData.optionsSpriteText = {
 
 				textHeight: 0.04,

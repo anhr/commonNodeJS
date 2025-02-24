@@ -1561,6 +1561,18 @@ class Options {
 
 			},
 
+			/**
+			 * getter
+			 * <pre>
+			 * scene
+			 * </pre>
+			 **/
+			scene: {
+
+				get: function () { return options.scene; }
+
+			},
+
 		} ); 
 
 		//For debugging. Find a hidden keys
