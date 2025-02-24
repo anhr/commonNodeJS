@@ -658,7 +658,7 @@ class Options {
 
 											get: () => {
 
-												if ( !scale || !scale.min ) return axisName === 'w' ? 0 : -1;
+												if ( !scale || ( scale.min === undefined ) ) return axisName === 'w' ? 0 : -1;
 												return scale.min;
 
 											},
@@ -671,7 +671,7 @@ class Options {
 
 												//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
 												//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
-												if ( !scale || !scale.max ) return axisName === 'w' ? new three.THREE.Vector4().w : 1;
+												if ( !scale || ( scale.max === undefined ) ) return axisName === 'w' ? new three.THREE.Vector4().w : 1;
 												return scale.max;
 
 											},
