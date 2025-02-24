@@ -62,7 +62,7 @@ folder.add( new ScaleController( function ( customController, action ) {
 
 		options = options || {};
 		options.settings = options.settings || {};
-		options.settings.zoomMultiplier = options.settings.zoomMultiplier || 1.1;
+//		options.settings.zoomMultiplier = options.settings.zoomMultiplier || 1.1;
 
 		super( {
 

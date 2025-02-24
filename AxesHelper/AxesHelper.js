@@ -96,8 +96,8 @@ class AxesHelper {
 			const scale = options.scales[axisName];
 			if ( !scale ) return;
 //			if ( scale.marks === undefined ) scale.marks = 3;
-			if ( scale.offset === undefined ) scale.offset = 0.1;
-			if ( scale.zoomMultiplier === undefined ) scale.zoomMultiplier = 1.1;
+//			if ( scale.offset === undefined ) scale.offset = 0.1;
+//			if ( scale.zoomMultiplier === undefined ) scale.zoomMultiplier = 1.1;
 
 		}
 		setScale( 'x' );

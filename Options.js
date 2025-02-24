@@ -710,6 +710,28 @@ class Options {
 //											set: function ( marks ) { scale.marks = marks; },
 
 										},
+										zoomMultiplier: {
+
+											get: () => {
+
+												if ( !scale ) return undefined;
+												if ( !scale.zoomMultiplier ) scale.zoomMultiplier = 1.1;
+												return scale.zoomMultiplier;
+
+											},
+
+										},
+										offset: {
+
+											get: () => {
+
+												if ( !scale ) return undefined;
+												if ( !scale.offset ) scale.offset = 0.1;
+												return scale.offset;
+
+											},
+
+										},
 
 									} );
 
