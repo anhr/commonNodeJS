@@ -1569,7 +1569,19 @@ class Options {
 			 **/
 			scene: {
 
-				get: function () { return options.scene; }
+				get: () => {
+
+					options.scene ||= {}
+					options.scene.position ||= new three.THREE.Vector3( 0, 0, 0 );
+					return options.scene;
+/*					
+					return options.scene || {
+
+						position : new three.THREE.Vector3( 0, 0, 0 ),
+						
+					};
+*/					
+				}
 
 			},
 
