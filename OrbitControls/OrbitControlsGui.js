@@ -121,7 +121,12 @@ class OrbitControlsGui {
 
 				setTarget( orbitControls.target[axisIndex] + shift );
 
-			} ) );
+			}, {
+				
+//				settings: { offset: 0.1 },
+				getLanguageCode: options.getLanguageCode,
+			
+			}  ) );
 
 			//target
 			const target = dat.controllerZeroStep( folder, orbitControls.target, axisIndex, function ( value ) {
