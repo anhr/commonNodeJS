@@ -25,9 +25,24 @@
 		MyThree.three.THREE = THREE;
 
 //		import Circle from '../circle.js';
+		import MyPoints from '../../myPoints/myPoints.js';
 
 		new MyThree( (scene, options) => {
 
+			new MyPoints( [[],[Math.PI, 0]], scene, {
+			
+				options: {
+			
+					point: {
+						
+						//size: 25
+					
+					},
+			
+				}
+			
+			} );
+			
 		}, {
 
 			//axesHelper: false,
@@ -39,7 +54,14 @@
 			//canvasMenu: false,
 			scales: {
 
-				x: { name: 'Arc Length', min: 0, max: Math.PI, marks: 11, zoomMultiplier: 2, offset: 0.5 },
+				x: {
+					name: 'Arc Length',
+					min: 0,
+					max: Math.PI,
+					//marks: 11,
+					//zoomMultiplier: 2,
+					//offset: 0.5
+				   },
 				y: {},
 				posAxesIntersection: new THREE.Vector3( -1, -1, 0 ),
 				text: { precision: 5, rect: { displayRect: false, }, }
@@ -48,6 +70,7 @@
 			canvas: {
 
 				noButtonFullScreen: true,
+				//width: 5000
 
 			},
 			//point: { size: 0.0 },
