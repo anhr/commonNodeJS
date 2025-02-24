@@ -28,7 +28,7 @@ class PositionController extends controllers.CustomController {
 	 * @extends controllers.CustomController.
 	 * @param {Event} onclickController
 	 * @param {object} [options={}] the following options are available:
-	 * @param {number} [options.settings={}] time settings.
+	 * @param {object} [options.settings={}] time settings.
 	 * @param {number} [options.settings.offset=0.1] offset.
 	 * @param {number} [options.min=0.1] Minimal offset.
 	 * @param {number} [options.max=10] Maximal offset.
