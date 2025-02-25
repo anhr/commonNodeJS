@@ -161,6 +161,7 @@ class MyThree {
 	 * 
 	 * @param {THREE.Scene} [options.scene] [Scene]{@link https://threejs.org/docs/index.html#api/en/scenes/Scene}.
 	 * @param {THREE.Vector3} [options.scene.position=new THREE.Vector3( 0, 0, 0 )] scene position.
+	 * @param {THREE.Vector3} [options.scene.scale=new THREE.Vector3( 1, 1, 1 )] scene scale.
 	 * @param {boolean|object} [options.orbitControls] false - do not add the [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}. Allow the camera to orbit around a target.
 	 * <pre>
 	 * or
@@ -465,7 +466,7 @@ class MyThree {
 			scene.background = new THREE.Color(0x000000);
 			scene.fog = new THREE.Fog(0x000000, 250, 1400);
 			scene.position.copy( options.scene.position );
-			scene.scale.copy( options.scene.scale );
+			if (options.scene.scale) scene.scale.copy( options.scene.scale );
 			scene.userData.optionsSpriteText = {
 
 				textHeight: 0.04,
