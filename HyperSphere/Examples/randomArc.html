@@ -29,41 +29,59 @@
 
 		new MyThree( (scene, options) => {
 
-			new MyPoints( [[],[Math.PI, 0]], scene, {
-			
-				options: {
-			
-					point: {
-						
-						//size: 25
-					
-					},
-			
-				}
-			
-			} );
+			new MyPoints( [[0, Math.PI / 2, 0],[Math.PI, 0]], scene, { options: options, } );
 			
 		}, {
 
 			//axesHelper: false,
-			orbitControls: { enableRotate: false, },
+			//orbitControls: { enableRotate: false, },
 //			dat: { guiSelectPoint: { point: (options, dat, fMesh) => { return new Circle.ND.gui(options, dat, fMesh); }, }, },
 			//dat: false,
-			camera: { position: new THREE.Vector3( 0, 0, 2 ) },
-			stereoEffect: false,
+			camera: {
+
+//				position: new THREE.Vector3( Math.PI / 2, 1, 2 ),
+//				position: new THREE.Vector3( 0, 0, 2 ),
+//				position: new THREE.Vector3( 1.8411831682008286, 1.009861071043486, 2 ),
+				scale: new THREE.Vector3( 1, 2, 1 ),		
+			},
+			/*
+			scene:  {
+
+				position: new THREE.Vector3( Math.PI / 2, Math.PI / 2, 0 ),
+			
+			},
+			*/
+			//stereoEffect: false,
 			//canvasMenu: false,
 			scales: {
 
 				x: {
-					name: 'Arc Length',
+					
+					name: 'Arc',
 					min: 0,
 					max: Math.PI,
 					//marks: 11,
 					//zoomMultiplier: 2,
 					//offset: 0.5
+					
 				   },
-				y: {},
-				posAxesIntersection: new THREE.Vector3( -1, -1, 0 ),
+				y: {
+					
+					name: 'Random Arc',
+					min: 0,
+					max: Math.PI,
+					//marks: 11,
+					
+				},
+				z: {
+					
+					//name: 'Random Arc',
+					min: 0,
+					max: -10,
+					marks: 11,
+					
+				},
+				//posAxesIntersection: new THREE.Vector3( 0, 0, 0 ),
 				text: { precision: 5, rect: { displayRect: false, }, }
 
 			},
@@ -76,8 +94,8 @@
 			//point: { size: 0.0 },
 			playerOptions: {
 				
-				max: Infinity,
-				interval: 100,
+				//max: Infinity,
+				//interval: 100,
 				
 			}
 			
