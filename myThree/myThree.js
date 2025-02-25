@@ -465,6 +465,7 @@ class MyThree {
 			scene.background = new THREE.Color(0x000000);
 			scene.fog = new THREE.Fog(0x000000, 250, 1400);
 			scene.position.copy( options.scene.position );
+			scene.scale.copy( options.scene.scale );
 			scene.userData.optionsSpriteText = {
 
 				textHeight: 0.04,
