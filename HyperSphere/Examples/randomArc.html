@@ -29,7 +29,7 @@
 
 		new MyThree( (scene, options) => {
 
-			new MyPoints( [[Math.PI / 2, Math.PI / 2, 0],[Math.PI, 0]], scene, { options: options, } );
+			new MyPoints( [[Math.PI / 2, Math.PI / 2, 5],[Math.PI, 0]], scene, { options: options, } );
 			
 		}, {
 
@@ -40,14 +40,15 @@
 			camera: {
 
 //				position: new THREE.Vector3( Math.PI / 2, 1, 2 ),
-//				position: new THREE.Vector3( 0, 0, 2 ),
+				//position: new THREE.Vector3( 0, 0, 10 ),
 //				position: new THREE.Vector3( 1.8411831682008286, 1.009861071043486, 2 ),
-				scale: new THREE.Vector3( 1, 2, 1 ),//Удаленность камеры от сцены по осям
+				//scale: new THREE.Vector3( 1, 2, 1 ),//Удаленность камеры от сцены по осям
+				//far: 50,
 			},
 			scene:  {
 
 				position: new THREE.Vector3( Math.PI / 2, Math.PI / 2, 0 ),//Позиция точки, вокруг которой вращается сцена когда пользователь двигает мышью при нажатой левой кнопке
-				scale: new THREE.Vector3( 1, 1, 0.1 ),
+				//scale: new THREE.Vector3( 4, 1, 0.8 ),
 			
 			},
 			//stereoEffect: false,

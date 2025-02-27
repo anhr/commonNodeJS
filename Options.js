@@ -1716,7 +1716,7 @@ class Raycaster {
 
 						}
 
-					}
+					},
 
 				} );
 				spriteTextIntersection.scale.divide( scene.scale );
@@ -1842,6 +1842,7 @@ class Raycaster {
 					raycaster.ray.at( three.options.camera.near + (three.options.camera.far - three.options.camera.near)/1000, intersection.pointSpriteText );
 				//Поэтому оставляю как было раньше
 				else intersection.pointSpriteText = intersection.point;
+				intersection.pointSpriteText.sub( settings.scene.position );
 
 				var boDetected = false;
 				intersectedObjects.forEach( function ( intersectedObject ) {

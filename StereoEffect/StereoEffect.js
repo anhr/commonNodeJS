@@ -1050,7 +1050,7 @@ StereoEffect.getTextIntersection = function ( intersection, options ) {
 		(//Custom text
 			intersection.object.userData.raycaster && intersection.object.userData.raycaster.text ? intersection.object.userData.raycaster.text( intersection ) : ''
 		),
-		intersection.pointSpriteText ? intersection.pointSpriteText : intersection.point,//position,
+		intersection.pointSpriteText ? intersection.pointSpriteText : intersection.point,
 		options.spriteOptions
 	);
 
