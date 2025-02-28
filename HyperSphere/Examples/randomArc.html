@@ -32,17 +32,17 @@
 
 //			new MyPoints([[Math.PI / 2, Math.PI / 2, -5],[Math.PI, Math.PI, -10]], scene, { options: options, });
 			const position = [],
-				zCount = 11, arcCount = 10,
-				dArc = PI / (arcCount - 1), dRandomArc = 0, dZ = -10 / (zCount - 1);
-			const randomArcId = 0;
+				zCount = 11, dZ = -10 / (zCount - 1),
+				xCount = 10, dX = PI / (xCount - 1),
+				yId = 0,     dY = 0;
 			const edges = [];
 			let edgeVerticeId = 0;
 			for (let zId = 0; zId < zCount; zId++) {
 				
-				for (let arcId = 0; arcId < arcCount; arcId++) {
+				for (let xId = 0; xId < xCount; xId++) {
 					
-					position.push([dArc * arcId, dRandomArc * randomArcId, dZ * zId])
-					if (arcId < (arcCount - 1 )) edges.push([edgeVerticeId++, edgeVerticeId]);
+					position.push([dX * xId, dY * yId, dZ * zId])
+					if (xId < (xCount - 1 )) edges.push([edgeVerticeId++, edgeVerticeId]);
 
 				}
 				new ND( 3, {
@@ -50,12 +50,7 @@
 					object: {
 				
 						name: 'Random Arc',
-						geometry: {
-	
-							position: position,
-							indices: [edges]
-				
-						}
+						geometry: { position: position, indices: [edges] }
 				
 					},
 					scene: scene,
