@@ -172,7 +172,8 @@ class Options {
 			}
 
 			const scenePosition = new three.THREE.Vector3().copy( scene.position ),
-				cameraPosition = new three.THREE.Vector3().copy( camera.position );
+				cameraPosition = new three.THREE.Vector3().copy( camera.position ),
+				target = new three.THREE.Vector3().copy( options.orbitControls.target );
 
 			three.dat.controllerNameAndTitle( options.dat.gui.add( {
 				defaultF: function ( value ) {
@@ -183,7 +184,8 @@ class Options {
 					scene.position.copy( scenePosition );
 					if ( options.orbitControls !== false ) {
 
-						options.orbitControls.target = new three.THREE.Vector3();
+//						options.orbitControls.target = new three.THREE.Vector3();
+						options.orbitControls.target.copy( target );
 						options.orbitControls.object.position.copy( camera.position );
 						options.orbitControls.update();
 
