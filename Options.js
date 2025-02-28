@@ -1843,6 +1843,7 @@ class Raycaster {
 				//Поэтому оставляю как было раньше
 				else intersection.pointSpriteText = intersection.point;
 				intersection.pointSpriteText.sub( settings.scene.position );
+				intersection.pointSpriteText.divide( settings.scene.scale );
 
 				var boDetected = false;
 				intersectedObjects.forEach( function ( intersectedObject ) {
