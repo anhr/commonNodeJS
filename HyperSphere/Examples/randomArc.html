@@ -24,12 +24,85 @@
 		import MyThree from '../../myThree/myThree.js';
 		MyThree.three.THREE = THREE;
 
-//		import Circle from '../circle.js';
-		import MyPoints from '../../myPoints/myPoints.js';
+		//import MyPoints from '../../myPoints/myPoints.js';
+		import ND from '../../nD/nD.js';
+		const PI = Math.PI;
 
 		new MyThree( (scene, options) => {
 
-			new MyPoints( [[Math.PI / 2, Math.PI / 2, 5],[Math.PI, 0]], scene, { options: options, } );
+//			new MyPoints([[Math.PI / 2, Math.PI / 2, -5],[Math.PI, Math.PI, -10]], scene, { options: options, });
+			const position = [],
+				zCount = 11, arcCount = 10,
+				dArc = PI / (arcCount - 1), dRandomArc = 0, dZ = -10 / (zCount - 1);
+			const randomArcId = 0;
+			const edges = [];
+			let edgeVerticeId = 0;
+			for (let zId = 0; zId < zCount; zId++) {
+				
+				for (let arcId = 0; arcId < arcCount; arcId++) {
+					
+					position.push([dArc * arcId, dRandomArc * randomArcId, dZ * zId])
+					if (arcId < (arcCount - 1 )) edges.push([edgeVerticeId++, edgeVerticeId]);
+
+				}
+				new ND( 3, {
+				
+					object: {
+				
+						name: 'Random Arc',
+						geometry: {
+	
+							position: position,
+							indices: [edges]
+				
+						}
+				
+					},
+					scene: scene,
+					options: options,
+				
+				});
+				edgeVerticeId = 0;
+				position.length = 0;
+				edges.length = 0;
+
+			}
+/*			
+			const position = [],
+				zCount = 11, arcCount = 3,
+				dArc = PI / 2, dRandomArc = 0, dZ = -10 / (zCount - 1);
+			const randomArcId = 0;
+			const edges = [];
+			let edgeVerticeId = 0;
+			for (let zId = 0; zId < zCount; zId++) {
+				
+				for (let arcId = 0; arcId < arcCount; arcId++) {
+					
+					position.push([dArc * arcId, dRandomArc * randomArcId, dZ * zId])
+					if (arcId < (arcCount - 1 )) edges.push([edgeVerticeId++, edgeVerticeId]);
+
+				}
+				edgeVerticeId++;
+
+			}
+			new ND( 3, {
+			
+				object: {
+			
+					name: 'Random Arc',
+					geometry: {
+
+						position: position,
+						indices: [edges]
+			
+					}
+			
+				},
+				scene: scene,
+				options: options,
+			
+			});
+*/			
 			
 		}, {
 
@@ -39,17 +112,17 @@
 			//dat: false,
 			camera: {
 
-//				position: new THREE.Vector3( Math.PI / 2, 1, 2 ),
-				//position: new THREE.Vector3( 0, 0, 10 ),
-//				position: new THREE.Vector3( 1.8411831682008286, 1.009861071043486, 2 ),
+				position: new THREE.Vector3( 3, 3, 4 ),
+				//position: new THREE.Vector3( 3, 3, 10 ),
 				//scale: new THREE.Vector3( 1, 2, 1 ),//Удаленность камеры от сцены по осям
 				//far: 50,
+				//fov: 50,
 			},
 			scene:  {
 
 				position: new THREE.Vector3( Math.PI / 2, Math.PI / 2, 0 ),//Позиция точки, вокруг которой вращается сцена когда пользователь двигает мышью при нажатой левой кнопке
 				//scale: new THREE.Vector3( 4, 1, 0.8 ),
-				scale: new THREE.Vector3( 1, 1, 0.1 ),
+				scale: new THREE.Vector3( 1, 1, 0.5 ),
 			
 			},
 			//stereoEffect: false,
@@ -77,13 +150,18 @@
 				z: {
 					
 					//name: 'Random Arc',
-					min: 0,
-					max: 10,
+					min: -10,
+					max: 0,
 					//marks: 11,
 					
 				},
 				//posAxesIntersection: new THREE.Vector3( 0, 0, 0 ),
-				text: { precision: 5, rect: { displayRect: false, }, }
+				text: {
+					
+					precision: 5,
+					//rect: { displayRect: false, },
+				
+				}
 
 			},
 			canvas: {
