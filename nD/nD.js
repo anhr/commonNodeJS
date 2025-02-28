@@ -3139,15 +3139,15 @@ class ND extends MyObject {
 			//Если есть scene, обязательно должен быть options. Здесь создать options неполучится
 			const scales = options.scales;
 			if ( n <= 1 ) scales.y = undefined;
-			if (n <= 2) scales.z = undefined;
+			if ( n <= 2 ) scales.z = undefined;
 /*is not compatible with build of the nD.module.min.js
 			scales.text ||= {};
 			scales.text.rect ||=  {};
 */
-			if (!scales.text) scales.text = {};
-			if (!scales.text.rect) scales.text.rect = {};
-			scales.text.rect.displayRect = false;
-			scales.text.precision = 2;
+			if ( !scales.text ) scales.text = {};
+			if ( !scales.text.rect ) scales.text.rect = {};
+			if ( scales.text.rect.displayRect === undefined ) scales.text.rect.displayRect = false;
+			if ( scales.text.precision === undefined ) scales.text.precision = 2;
 
 		}
 
