@@ -1858,17 +1858,13 @@ class Raycaster {
 					}
 
 				} );
-				if ( !boDetected ) {
-
-					intersectedObjects.push( intersection );
-
-				}
+				if ( !boDetected ) intersectedObjects.push( intersection );
 				if (
 					intersection &&
 					intersection.object.userData.raycaster &&
 					intersection.object.userData.raycaster.onIntersection
 				) 
-				intersection.object.userData.raycaster.onIntersection( intersection, mouse );
+					intersection.object.userData.raycaster.onIntersection( intersection, mouse );
 				else {
 
 					if ( !settings.scene )
