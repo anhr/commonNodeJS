@@ -31,14 +31,14 @@
 		new MyThree( (scene, options) => {
 
 //			new MyPoints([[Math.PI / 2, Math.PI / 2, -5],[Math.PI, Math.PI, -10]], scene, { options: options, });
-			const position = [],
-				zCount = 11, dZ = -10 / (zCount - 1),
-				xCount = 10, dX = PI / (xCount - 1),
-				yId = 0,     dY = 0;
-			const edges = [];
 			let edgeVerticeId = 0;
+			const zCount = 11, dZ = -10 / (zCount - 1);
 			for (let zId = 0; zId < zCount; zId++) {
 				
+				const position = [],
+					xCount = 10, dX = PI / (xCount - 1),
+					yId = 0,     dY = 0;
+				const edges = [];
 				for (let xId = 0; xId < xCount; xId++) {
 					
 					position.push([dX * xId, dY * yId, dZ * zId])
@@ -58,8 +58,8 @@
 				
 				});
 				edgeVerticeId = 0;
-				position.length = 0;
-				edges.length = 0;
+//				position.length = 0;
+//				edges.length = 0;
 
 			}
 /*			
