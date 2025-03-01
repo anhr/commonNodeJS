@@ -1576,16 +1576,18 @@ class Options {
 					options.scene ||= {}
 					options.scene.position ||= new three.THREE.Vector3( 0, 0, 0 );
 					return options.scene;
-/*					
-					return options.scene || {
-
-						position : new three.THREE.Vector3( 0, 0, 0 ),
-						
-					};
-*/					
+					
 				}
 
 			},
+
+			/**
+			 * getter
+			 * <pre>
+			 * User has changed a selected mesh event
+			 * </pre>
+			 **/
+			onChangeSelectedMesh: { get: () => { return options.onChangeSelectedMesh; } },
 
 		} ); 
 

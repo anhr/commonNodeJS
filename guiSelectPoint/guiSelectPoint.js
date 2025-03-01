@@ -1322,8 +1322,9 @@ class GuiSelectPoint {
 				}
 				fMesh.domElement.style.display = display;
 
-				if ( ( mesh !== undefined ) && ( mesh.userData.traceAll !== undefined ) )
-					cTraceAll.setValue( mesh.userData.traceAll );
+				if ( ( mesh !== undefined ) && ( mesh.userData.traceAll !== undefined ) ) cTraceAll.setValue( mesh.userData.traceAll );
+
+				if ( options.onChangeSelectedMesh ) options.onChangeSelectedMesh( value );
 
 			} );
 			dat.controllerNameAndTitle( cMeshs, lang.select );
