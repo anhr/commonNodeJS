@@ -271,8 +271,13 @@ class MyThree {
 	 * <pre>
 	 * or element <b>id</b>.
 	 * </pre>
-	 * @param {event} [options.onSelectScene] New time of the <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
 	 * @param {string} [options.title] text in the top left corner of the canvas.
+	 * @param {event} [options.onSelectScene] New time of the <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
+	 * @param {event} [options.onChangeSelectedMesh] This event occurs when user has changed a selected mesh.
+	 * <pre>
+	 * Parameters:
+	 *	<b>meshId</b> - mesh identifier.
+	 * </pre>
 	 */
 	constructor(createXDobjects, options) {
 

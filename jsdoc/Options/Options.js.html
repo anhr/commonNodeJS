@@ -200,7 +200,8 @@ class Options {
 			}
 
 			const scenePosition = new three.THREE.Vector3().copy( scene.position ),
-				cameraPosition = new three.THREE.Vector3().copy( camera.position );
+				cameraPosition = new three.THREE.Vector3().copy( camera.position ),
+				target = new three.THREE.Vector3().copy( options.orbitControls.target );
 
 			three.dat.controllerNameAndTitle( options.dat.gui.add( {
 				defaultF: function ( value ) {
@@ -211,7 +212,8 @@ class Options {
 					scene.position.copy( scenePosition );
 					if ( options.orbitControls !== false ) {
 
-						options.orbitControls.target = new three.THREE.Vector3();
+//						options.orbitControls.target = new three.THREE.Vector3();
+						options.orbitControls.target.copy( target );
 						options.orbitControls.object.position.copy( camera.position );
 						options.orbitControls.update();
 
@@ -263,7 +265,7 @@ class Options {
 					if ( playerOptions.max === null ) playerOptions.dt = playerOptions.dt || 0.1;
 					else playerOptions.dt = ( playerOptions.max - playerOptions.min ) / ( playerOptions.marks - 1 );
 					playerOptions.repeat = playerOptions.repeat || false;
-					playerOptions.interval = playerOptions.interval || 1;//25;
+					playerOptions.interval = playerOptions.interval != undefined ? playerOptions.interval : 1;
 					playerOptions.zoomMultiplier = playerOptions.zoomMultiplier || 1.1;
 					playerOptions.offset = playerOptions.offset || 0.1;
 					playerOptions.name = playerOptions.name || '';
@@ -667,16 +669,26 @@ class Options {
 										 * returns true if &lt;b>scale&lt;/b> was converted by &lt;b>new Scale( scale );&lt;/b>
 										 * &lt;/pre>
 										 **/
-										boScale: {
-
-											get: function () { return true; },
-
+										boScale: { get: function () { return true; }, },
+/*										
+										isChangeColor : {
+											
+											get: () => { return scale ? scale.isChangeColor : undefined; },
+											set: ( isChangeColor ) => { scale.isChangeColor = isChangeColor; },
+										
+										},
+*/										
+										isColor : {
+											
+											get: () => { return scale ? scale.isColor : undefined; },
+											set: ( isColor ) => { scale.isColor = isColor; },
+										
 										},
 										min: {
 
-											get: function () {
+											get: () => {
 
-												if ( !scale || !scale.min ) return axisName === 'w' ? 0 : -1;
+												if ( !scale || ( scale.min === undefined ) ) return axisName === 'w' ? 0 : -1;
 												return scale.min;
 
 											},
@@ -689,7 +701,7 @@ class Options {
 
 												//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
 												//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
-												if ( !scale || !scale.max ) return axisName === 'w' ? new three.THREE.Vector4().w : 1;
+												if ( !scale || ( scale.max === undefined ) ) return axisName === 'w' ? new three.THREE.Vector4().w : 1;
 												return scale.max;
 
 											},
@@ -726,6 +738,28 @@ class Options {
 
 											},
 //											set: function ( marks ) { scale.marks = marks; },
+
+										},
+										zoomMultiplier: {
+
+											get: () => {
+
+												if ( !scale ) return undefined;
+												if ( !scale.zoomMultiplier ) scale.zoomMultiplier = 1.1;
+												return scale.zoomMultiplier;
+
+											},
+
+										},
+										offset: {
+
+											get: () => {
+
+												if ( !scale ) return undefined;
+												if ( !scale.offset ) scale.offset = 0.1;
+												return scale.offset;
+
+											},
 
 										},
 
@@ -1343,11 +1377,7 @@ class Options {
 			 **/
 			guiSelectPoint: {
 
-				get: function () {
-
-					return options.guiSelectPoint;
-
-				},
+				get: function () { return options.guiSelectPoint; },
 				set: function ( guiSelectPoint ) {
 
 					if ( options.guiSelectPoint &amp;&amp; ( guiSelectPoint != undefined ) )
@@ -1548,6 +1578,45 @@ class Options {
 
 			},
 
+			/**
+			 * getter and setter
+			 * &lt;pre>
+			 * traces
+			 * &lt;/pre>
+			 **/
+			traces: {
+
+				get: () => { return options.traces; },
+				set: ( traces ) => { options.traces = traces; }
+
+			},
+
+			/**
+			 * getter
+			 * &lt;pre>
+			 * scene
+			 * &lt;/pre>
+			 **/
+			scene: {
+
+				get: () => {
+
+					options.scene ||= {}
+					options.scene.position ||= new three.THREE.Vector3( 0, 0, 0 );
+					return options.scene;
+					
+				}
+
+			},
+
+			/**
+			 * getter
+			 * &lt;pre>
+			 * User has changed a selected mesh event
+			 * &lt;/pre>
+			 **/
+			onChangeSelectedMesh: { get: () => { return options.onChangeSelectedMesh; } },
+
 		} ); 
 
 		//For debugging. Find a hidden keys
@@ -1642,9 +1711,14 @@ class Raycaster {
 		 */
 		this.onIntersection = function ( intersection, options, scene, camera, renderer ) {
 
+			//во вселенной запретить выводить сообщение об ошибке, когда пользователь проводит мышку над вершиной.
+			if ( intersection.object.userData.myObject ) intersection.object.userData.myObject.guiPoints.boMouseOver = true;
+			
+			const drawRange = intersection.object.geometry.drawRange;
+			if ((intersection.index &lt; drawRange.start) || ((drawRange.count != Infinity) &amp;&amp; (intersection.index >= (drawRange.start + drawRange.count)))) return false;
 			const canvas = renderer.domElement;
 			if ( intersection.object.userData.isInfo !== undefined &amp;&amp; !intersection.object.userData.isInfo() )
-				return;
+				return false;
 			var spriteTextIntersection = Options.findSpriteTextIntersection( scene );
 			if ( spriteTextIntersection &amp;&amp; ( !intersection.pointSpriteText || ( intersection.object.userData.raycaster &amp;&amp; intersection.object.userData.raycaster.text ) ) ) {
 				
@@ -1674,7 +1748,7 @@ class Raycaster {
 
 						}
 
-					}
+					},
 
 				} );
 				spriteTextIntersection.scale.divide( scene.scale );
@@ -1684,6 +1758,7 @@ class Raycaster {
 				renderer.domElement.style.cursor = 'pointer';
 
 			} else if ( intersection.pointSpriteText ) spriteTextIntersection.position.copy( intersection.pointSpriteText );
+			return true;
 
 		}
 
@@ -1709,7 +1784,8 @@ class Raycaster {
 
 			} while ( spriteTextIntersection !== undefined )
 
-			renderer.domElement.style.cursor = cursor;
+			//во вселенной разрешить выводить сообщение об ошибке, когда пользователь проводит мышку над вершиной.
+			intersectedObjects.forEach( ( intersectedObject ) => { if ( intersectedObject.object.userData.myObject )delete intersectedObject.object.userData.myObject.guiPoints.boMouseOver; } );			renderer.domElement.style.cursor = cursor;
 
 		}
 		/**
@@ -1724,9 +1800,31 @@ class Raycaster {
 
 			if ( ( intersection.object.userData.isInfo !== undefined ) &amp;&amp; !intersection.object.userData.isInfo() )
 				return;//No display information about frustum point
-			if ( options.guiSelectPoint )
+			if ( options.guiSelectPoint &amp;&amp; intersection.object.userData.myObject) {
+				
+//				intersection.object.userData.myObject.guiPoints.verticeId = intersection.index;
+				const guiPoints = intersection.object.userData.myObject.guiPoints, searchNearestEdgeVerticeId = guiPoints.searchNearestEdgeVerticeId;
+				guiPoints.verticeId = searchNearestEdgeVerticeId ? searchNearestEdgeVerticeId(intersection.index, intersection) : intersection.index;
+
+				//Заменить индекс ребра на индекс ближайшего конца ребра в гиперсфере
+				//Если убрать эту строку, то неправильно отображается гиперсфера если с помощью мыши выбрать ребро
+				//Для теста открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
+				//Отобразить ребра
+				//Щелкнуть мышом по ребру
+				if ( ( guiPoints.isSetIntersectionIndex != false ) &amp;&amp; ( guiPoints.verticeId != undefined ) ) intersection.index = guiPoints.verticeId;
+				
 				options.guiSelectPoint.select( intersection );
-			else {
+				
+				const mesh = intersection.object;
+				if ( mesh &amp;&amp; mesh.userData.gui &amp;&amp; mesh.userData.gui.reset ) mesh.userData.gui.reset( guiPoints.verticeId );
+
+				//если не удалить guiPoints.verticeId, то будет неверно изменяться позиция вершины во вселенной
+				//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
+				//Щелчком мыши выбрать вершину
+				//Сделать один шаг проигрывателя, нажав →
+				delete guiPoints.verticeId;
+				
+			} else {
 
 				if ( intersection.object.userData.onMouseDown ) intersection.object.userData.onMouseDown( intersection );
 				if ( options.axesHelper ) options.axesHelper.exposePosition( intersection );
@@ -1761,8 +1859,11 @@ class Raycaster {
 
 			}
 			getIntersects();
-			intersects.forEach( function ( intersection ) {
+//			intersects.forEach( function ( intersection )
+			for (let i = 0; i &lt; intersects.length; i++){
 
+				const intersection = intersects[i];
+				
 				//Когда создаем SpriteText с информацией об объекте, на которую наведена мышка,
 				//иногда этот текст загораживается объектами, которые расположены ближе к камере
 				//Для решения проблемы текст надо перенести ближе к камере
@@ -1773,6 +1874,8 @@ class Raycaster {
 					raycaster.ray.at( three.options.camera.near + (three.options.camera.far - three.options.camera.near)/1000, intersection.pointSpriteText );
 				//Поэтому оставляю как было раньше
 				else intersection.pointSpriteText = intersection.point;
+				intersection.pointSpriteText.sub( settings.scene.position );
+				intersection.pointSpriteText.divide( settings.scene.scale );
 
 				var boDetected = false;
 				intersectedObjects.forEach( function ( intersectedObject ) {
@@ -1785,28 +1888,22 @@ class Raycaster {
 					}
 
 				} );
-				if ( !boDetected ) {
-
-					intersectedObjects.push( intersection );
-
-				}
+				if ( !boDetected ) intersectedObjects.push( intersection );
 				if (
 					intersection &amp;&amp;
 					intersection.object.userData.raycaster &amp;&amp;
 					intersection.object.userData.raycaster.onIntersection
-				) {
-
+				) 
 					intersection.object.userData.raycaster.onIntersection( intersection, mouse );
-
-				} else {
+				else {
 
 					if ( !settings.scene )
 						console.error( 'THREE.Raycaster.setStereoEffect(): settings.scene = ' + settings.scene );
-					else Options.raycaster.onIntersection( intersection, settings.options, settings.scene, settings.camera, renderer );
+					else if (Options.raycaster.onIntersection( intersection, settings.options, settings.scene, settings.camera, renderer )) return;
 
 				}
 
-			} );
+			}
 			intersectedObjects.forEach( function ( intersectedObject ) {
 
 				var boDetected = false;
@@ -2097,13 +2194,13 @@ export default Options;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Options.raycaster.html">raycaster</a></li></ul><h3>Classes</h3><ul><li><a href="Options.html">Options</a></li><li><a href="Raycaster.html">Raycaster</a></li><li><a href="Raycaster_EventListeners.html">EventListeners</a></li></ul><h3>Global</h3><ul><li><a href="global.html#a">a</a></li><li><a href="global.html#axesHelper">axesHelper</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#boOptions">boOptions</a></li><li><a href="global.html#camera">camera</a></li><li><a href="global.html#cameraTarget">cameraTarget</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#canvasMenu">canvasMenu</a></li><li><a href="global.html#controllers">controllers</a></li><li><a href="global.html#dat">dat</a></li><li><a href="global.html#elContainer">elContainer</a></li><li><a href="global.html#eventListeners">eventListeners</a></li><li><a href="global.html#frustumPoints">frustumPoints</a></li><li><a href="global.html#getLanguageCode">getLanguageCode</a></li><li><a href="global.html#guiSelectPoint">guiSelectPoint</a></li><li><a href="global.html#orbitControls">orbitControls</a></li><li><a href="global.html#palette">palette</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#playerOptions">playerOptions</a></li><li><a href="global.html#point">point</a></li><li><a href="global.html#pointLight">pointLight</a></li><li><a href="global.html#raycaster">raycaster</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scales">scales</a></li><li><a href="global.html#spriteText">spriteText</a></li><li><a href="global.html#stereoEffect">stereoEffect</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#title">title</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Options.raycaster.html">raycaster</a></li></ul><h3>Classes</h3><ul><li><a href="Options.html">Options</a></li><li><a href="Raycaster.html">Raycaster</a></li><li><a href="Raycaster_EventListeners.html">EventListeners</a></li></ul><h3>Global</h3><ul><li><a href="global.html#a">a</a></li><li><a href="global.html#axesHelper">axesHelper</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#boOptions">boOptions</a></li><li><a href="global.html#camera">camera</a></li><li><a href="global.html#cameraTarget">cameraTarget</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#canvasMenu">canvasMenu</a></li><li><a href="global.html#controllers">controllers</a></li><li><a href="global.html#dat">dat</a></li><li><a href="global.html#elContainer">elContainer</a></li><li><a href="global.html#eventListeners">eventListeners</a></li><li><a href="global.html#frustumPoints">frustumPoints</a></li><li><a href="global.html#getLanguageCode">getLanguageCode</a></li><li><a href="global.html#guiSelectPoint">guiSelectPoint</a></li><li><a href="global.html#onChangeSelectedMesh">onChangeSelectedMesh</a></li><li><a href="global.html#orbitControls">orbitControls</a></li><li><a href="global.html#palette">palette</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#playerOptions">playerOptions</a></li><li><a href="global.html#point">point</a></li><li><a href="global.html#pointLight">pointLight</a></li><li><a href="global.html#raycaster">raycaster</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scales">scales</a></li><li><a href="global.html#scene">scene</a></li><li><a href="global.html#spriteText">spriteText</a></li><li><a href="global.html#stereoEffect">stereoEffect</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#title">title</a></li><li><a href="global.html#traces">traces</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Mon Oct 02 2023 11:52:17 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Mar 02 2025 06:33:07 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
