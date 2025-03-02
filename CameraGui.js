@@ -257,6 +257,7 @@ class CameraGui {
 		function update() {
 
 			const cameraTarget = options.playerOptions.cameraTarget.get( options );
+//console.log('camera.rotation = (' + camera.rotation.x + ', ' + camera.rotation.y + ', ' + camera.rotation.z + ')')			
 			
 			if ( controllersPosition.x ) controllersPosition.x.setValue( camera.position.x );
 			if ( controllersPosition.y ) controllersPosition.y.setValue( camera.position.y );
