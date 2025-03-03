@@ -202,7 +202,17 @@ export function SpriteText( text, position,	options = {} ) {
 		sprite.material.map.needsUpdate = true;
 
 		const th = textHeight * linesCount;// * angleDistance;
+
+		//scale
 		sprite.scale.set( th * canvas.width / canvas.height, th );
+		let parent = options.group.parent;//Если не брать тут родительскую группу, то неврно будет отображаться размер всплывающего текста, когда пользователь наводит мышку на вершину
+		while ( parent ){
+
+			sprite.scale.divide( parent.scale );
+			parent = parent.parent;
+			
+		}
+		
 		sprite.position.copy( position );
 		sprite.center = center;
 
