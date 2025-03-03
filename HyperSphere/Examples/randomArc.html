@@ -32,14 +32,12 @@
 			x = { min:   0, max: PI, name: 'Arc'       , },
 			y = { min:   0, max: PI, name: 'Random Arc', },
 			z = { min: -10, max:  0 },
-//z = { min: -2, max: 0 },
-			//scenePosition = new THREE.Vector3( PI / 2, PI / 2, (z.min + z.max) / 2);//Позиция точки, вокруг которой вращается сцена когда пользователь двигает мышью при нажатой левой кнопке
 			scenePosition = new THREE.Vector3((x.min + x.max) / 2, (y.min + y.max) / 2, (z.min + z.max) / 2);//Позиция точки, вокруг которой вращается сцена когда пользователь двигает мышью при нажатой левой кнопке
 
 		new MyThree( (scene, options) => {
 
-//			new MyPoints([[Math.PI / 2, Math.PI / 2, -5],[Math.PI, Math.PI, -10]], scene, { options: options, });
 			if (typeof MyPoints === "function") new MyPoints([{ vector: scenePosition, name: 'scene position' },[PI, PI, -10]], scene, { options: options, });
+			
 			let edgeVerticeId = 0;
 			const zCount = 11, dZ = -10 / (zCount - 1);
 			for (let zId = 0; zId < zCount; zId++) {
@@ -54,7 +52,7 @@
 					if (xId < (xCount - 1 )) edges.push([edgeVerticeId++, edgeVerticeId]);
 
 				}
-				probabilityDistributions.push(new ND( 3, {
+				probabilityDistributions.push(new ND(3, {
 				
 					object: {
 				
@@ -79,7 +77,6 @@
 			},
 			//axesHelper: false,
 			//orbitControls: { enableRotate: false, },
-//			dat: { guiSelectPoint: { point: (options, dat, fMesh) => { return new Circle.ND.gui(options, dat, fMesh); }, }, },
 			//dat: false,
 			camera: {
 
@@ -94,7 +91,7 @@
 				//position: new THREE.Vector3( PI / 2, PI / 2, 0 ),//Позиция точки, вокруг которой вращается сцена когда пользователь двигает мышью при нажатой левой кнопке
 				position: scenePosition,//Позиция точки, вокруг которой вращается сцена когда пользователь двигает мышью при нажатой левой кнопке
 				scale: new THREE.Vector3( 3, 1, 0.5 ),
-//scale: new THREE.Vector3( 1, 1, 0.5 ),
+//scale: new THREE.Vector3( 2, 1, 1 ),
 			
 			},
 			//stereoEffect: false,

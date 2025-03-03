@@ -421,10 +421,10 @@ class AxesHelper {
 						if ( !line )
 							return;//Current axis is not exists
 						var lineVertices = line.geometry.attributes.position.array;
-						
-						lineVertices[0] = axisName === 'x' ? pointVertice.x : ( verticeAxis( 'x' ) + group.position.x );
-						lineVertices[1] = axisName === 'y' ? pointVertice.y : ( verticeAxis( 'y' ) + group.position.y );
-						lineVertices[2] = axisName === 'z' ? pointVertice.z : ( verticeAxis( 'z' ) + group.position.z );
+
+						lineVertices[0] = axisName === 'x' ? pointVertice.x : ( verticeAxis( 'x' ) + group.position.x / group.scale.x );
+						lineVertices[1] = axisName === 'y' ? pointVertice.y : ( verticeAxis( 'y' ) + group.position.y / group.scale.y );
+						lineVertices[2] = axisName === 'z' ? pointVertice.z : ( verticeAxis( 'z' ) + group.position.z / group.scale.z );
 
 						lineVertices[3] = pointVertice.x;
 						lineVertices[4] = pointVertice.y;
