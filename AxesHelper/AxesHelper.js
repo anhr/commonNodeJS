@@ -91,18 +91,17 @@ class AxesHelper {
 		options.scales.text.rect = options.scales.text.rect || {};
 		options.scales.text.rect.displayRect = options.scales.text.rect.displayRect !== undefined ? options.scales.text.rect.displayRect : true;
 		options.scales.text.rect.borderRadius = options.scales.text.rect.borderRadius !== undefined ? options.scales.text.rect.borderRadius : 15;
+/*		
 		function setScale( axisName ) {
 
 			const scale = options.scales[axisName];
 			if ( !scale ) return;
-//			if ( scale.marks === undefined ) scale.marks = 3;
-//			if ( scale.offset === undefined ) scale.offset = 0.1;
-//			if ( scale.zoomMultiplier === undefined ) scale.zoomMultiplier = 1.1;
 
 		}
 		setScale( 'x' );
 		setScale( 'y' );
 		setScale( 'z' );
+*/		
 
 		/**
 		 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
@@ -191,13 +190,10 @@ class AxesHelper {
 
 			if ( scale.marks !== undefined ) {
 
-				const SpriteMark = function (
-					position,
-				) {
+				const SpriteMark = function ( position ) {
 
 					position = position || new THREE.Vector3( 0, 0, 0 );
 					const sizeAttenuation = false;
-
 
 					const sprite = new THREE.Sprite( new THREE.SpriteMaterial( {
 
@@ -222,8 +218,8 @@ class AxesHelper {
 								1//For x and z axes риска сдвигается вниз
 
 						);
-						var width = 3;//, linesCount = 1,
-						context.fillStyle = options.scales.color;//'rgba(0, 255, 0, 1)';
+						var width = 3;
+						context.fillStyle = options.scales.color;
 						context.fillRect( 0, 0, canvas.width, canvas.height );
 
 						// Inject canvas into sprite
