@@ -234,7 +234,7 @@ class AxesHelper {
 						// Inject canvas into sprite
 						sprite.material.map.image = canvas;
 						sprite.material.map.needsUpdate = true;
-
+/*
 						if ( axisName === 'y' ) {
 
 							sprite.scale.x = ( width * ( canvas.width / canvas.height ) ) / canvas.width;
@@ -256,6 +256,18 @@ class AxesHelper {
 //							sprite.scale.y = ( width / canvas.height ) / sceneScale.y;
 
 						}
+*/						
+						if ( axisName === 'y' ) {
+
+							sprite.scale.x = ( width * ( canvas.width / canvas.height ) ) / canvas.width;
+							sprite.scale.y = 1 / canvas.height;
+
+						} else {
+
+							sprite.scale.x = 1 / canvas.width;
+							sprite.scale.y = width / canvas.height;
+
+						} 
 
 /*						
 						sprite.scale.x *= options.camera.fov / ( 50 * 2 );
