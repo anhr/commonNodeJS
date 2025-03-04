@@ -3405,7 +3405,7 @@ class ND extends MyObject {
 	get defaultColor() { return 'lime'; }
 	positionOffset(position, positionId) { return positionId * position.itemSize; }
 	/**
-	 * set opacity
+	 * Sets opacity. Opacity range from 0 is transparent to 1 is opacity. Default is 1.
 	 */
 	set opacity(opacity) {
 
