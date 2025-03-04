@@ -121,6 +121,15 @@ class AxesHelper {
 
 		options.scales.posAxesIntersection = options.scales.posAxesIntersection || new THREE.Vector3();//For moving of the axes intersection to the center of the canvas ( to the camera focus )
 
+		const sceneScale = new THREE.Vector3().addScalar( 1 );
+		let parent = group;
+		while( parent ) {
+
+			sceneScale.multiply( parent.scale );
+			parent = parent.parent;
+			
+		}
+		
 		/**
 		 * create axis
 		 * @param {string} axisName axis name
@@ -229,17 +238,32 @@ class AxesHelper {
 						if ( axisName === 'y' ) {
 
 							sprite.scale.x = ( width * ( canvas.width / canvas.height ) ) / canvas.width;
+//							sprite.scale.x = ( ( width * ( canvas.width / canvas.height ) ) / canvas.width ) / sceneScale.x;
 							sprite.scale.y = 1 / canvas.height;
+//							sprite.scale.y = ( 1 / canvas.height ) / sceneScale.y;
 
-						} else {
+						} else if ( axisName === 'x' ) {
 
 							sprite.scale.x = 1 / canvas.width;
+//							sprite.scale.y = ( width / canvas.height ) / sceneScale.y;
 							sprite.scale.y = width / canvas.height;
+
+						} else {//z
+
+							sprite.scale.x = 1 / canvas.width;
+//							sprite.scale.x = ( 1 / canvas.width ) / sceneScale.x;
+							sprite.scale.y = width / canvas.height;
+//							sprite.scale.y = ( width / canvas.height ) / sceneScale.y;
 
 						}
 
+/*						
 						sprite.scale.x *= options.camera.fov / ( 50 * 2 );
 						sprite.scale.y *= options.camera.fov / ( 50 * 2 );
+*/
+						const multiplicator = options.camera.fov / ( 50 * 2 );
+						sprite.scale.x *= multiplicator / sceneScale.x;
+						sprite.scale.y *= multiplicator / sceneScale.y;
 
 						sprite.position.copy( position );
 						sprite.center = center;
