@@ -3404,6 +3404,18 @@ class ND extends MyObject {
 
 	get defaultColor() { return 'lime'; }
 	positionOffset(position, positionId) { return positionId * position.itemSize; }
+	/**
+	 * set opacity
+	 */
+	set opacity(opacity) {
+
+		if ( !this.object3D ) return;
+		const material = this.object3D.material;
+		material.opacity = opacity;
+		material.transparent = true;
+		material.needsUpdate = true;
+		
+	}
 
 }
 

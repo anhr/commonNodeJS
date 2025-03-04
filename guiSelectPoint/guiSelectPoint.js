@@ -902,7 +902,8 @@ class GuiSelectPoint {
 			if ( cMeshs.__select[index].selected === false ) {
 
 				cMeshs.__select[index].selected = true;
-				cMeshs.__onChange( index - 1, intersectionSelected );
+				//cMeshs.__onChange( index - 1, intersectionSelected );Если оставить эту строку, то в http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/randomArc.html неверно выбирается линия Probability, когда она выбирается мышью а не из gui
+				cMeshs.__onChange( index, intersectionSelected );
 
 			} else {
 
@@ -1324,7 +1325,7 @@ class GuiSelectPoint {
 
 				if ( ( mesh !== undefined ) && ( mesh.userData.traceAll !== undefined ) ) cTraceAll.setValue( mesh.userData.traceAll );
 
-				if ( options.onChangeSelectedMesh ) options.onChangeSelectedMesh( value );
+				if ( options.onChangeSelectedMesh ) options.onChangeSelectedMesh( value - 1 );
 
 			} );
 			dat.controllerNameAndTitle( cMeshs, lang.select );

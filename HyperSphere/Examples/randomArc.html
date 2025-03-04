@@ -65,7 +65,7 @@
 				
 					object: {
 				
-						name: 'Probability Distributions ' + probabilityDistributions.length,
+						name: 'Probability ' + probabilityDistributions.length,
 						geometry: { position: position, indices: [edges] }
 				
 					},
@@ -81,7 +81,15 @@
 
 			onChangeSelectedMesh: ( meshId ) => {
 
-				const probabilityDistribution = probabilityDistributions[meshId];//Случайное распределение вероятности длинны дуги зависящее от угла между вершинами дуги
+/*				
+				const probabilityDistribution = probabilityDistributions[meshId],
+					material = probabilityDistribution.object3D.material;
+				material.opacity = 0.1;
+				material.transparent = true;
+				material.needsUpdate = true;
+				probabilityDistribution.opacity = 0.1;
+*/				
+				probabilityDistributions.forEach((probabilityDistribution, i) => { probabilityDistribution.opacity = ((meshId === i) || (meshId < 0)) ? 1 : 0.1; });
 
 			},
 			//axesHelper: false,
