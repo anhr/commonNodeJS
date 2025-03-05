@@ -739,11 +739,13 @@ class Options {
 									} );
 
 									//For debugging. Find a hidden keys
+									/*Uncompatible with http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/randomArc.html
 									for ( var propertyName in scale ) {
 
 										if ( this[propertyName] === undefined ) console.error( 'Options.Scales: scale.' + propertyName + ' key is hidden' );
 
 									}
+									*/
 
 								}
 
