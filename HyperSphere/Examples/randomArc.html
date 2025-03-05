@@ -29,15 +29,17 @@
 		
 		const PI = Math.PI,
 			probabilityDistributions = [],//Случайные распределения вероятности длинны дуги зависящее от угла между вершинами дуги
-/*			
-			x = { min:   0, max: 1, name: 'Random Arc' , },
-			y = { min:   0, max: 1, name: 'Probability (%)', },
-			z = { min:   0, max: 1, name: 'Arc'        , },
-*/			
-			//const zCount = 11, dZ = -z.range / (zCount - 1);
 			x = { min:   0, max:  PI, get range() { return this.max - this.min; }, count: 10, get delta() { return   this.range / (this.count - 1); }, name: 'Random Arc'     , },
 			y = { min:   0, max: 100, get range() { return this.max - this.min; },            get delta() { return 0;                               }, name: 'Probability (%)', },
 			z = { min: -PI, max:   0, get range() { return this.max - this.min; }, count: 11, get delta() { return - this.range / (this.count - 1); }, name: 'Arc'            , },
+/*			
+			x = { min:   0,  max: 1, get range() { return this.max - this.min; }, count: 10, get delta() { return   this.range / (this.count - 1); }, name: 'Random Arc'     , },
+			y = { min:   0,  max: 1, get range() { return this.max - this.min; },            get delta() { return 0;                               }, name: 'Probability (%)', },
+			z = { min: -100, max: 0, get range() { return this.max - this.min; }, count: 11, get delta() { return - this.range / (this.count - 1); }, name: 'Arc'            , },
+*/			
+			xa = (52 - 2.5) / (100 - 1), xb = 2.5 - xa,
+			ya = (50.5 - 1) / (100 - 1), yb = 1 - xa,
+			za = (0.766 -1) / (100 - 1), zc = (1 - za + (48.5 + za) / 100) / (1 - 1 / 100), zb = (-48.5 - za - zc) / 100,
 			//arc = (arcId) -> { return z.range / ; }
 			
 			scenePosition = new THREE.Vector3((x.min + x.max) / 2, (y.min + y.max) / 2, (z.min + z.max) / 2);//Позиция точки, вокруг которой вращается сцена когда пользователь двигает мышью при нажатой левой кнопке
@@ -94,12 +96,15 @@
 			//dat: false,
 			camera: {
 
-//				position: new THREE.Vector3( 6.28, 3, -1.25 ),//z.min = -10
-//				position: new THREE.Vector3( 6.28, 3, 3 ),//z.min = -PI
-//				position: new THREE.Vector3( 6.28, 3, -1.25 ),//z.min = -10
-				position: new THREE.Vector3( 3.578, 50.48, 0.2535 ),//z.min = -10, y.max = 100
-//				position: new THREE.Vector3( 0.4, 0.4, 2 ),//default
-				//scale: new THREE.Vector3( 1, 2, 1 ),//Удаленность камеры от сцены по осям
+//				position: new THREE.Vector3( 0.4, 0.4, 2 ),//default old
+//				position: new THREE.Vector3( 3.578, 50.48, 0.2535 ),//x.range = PI, y.range = 100, z.range = -PI
+				
+//				position: new THREE.Vector3( 2.5,  1  ,   1    ),//x.range = 1  , y.range = 1  , z.range = 1
+//				position: new THREE.Vector3( 2.5, 50.5,   0.766),//x.range = 1  , y.range = 100, z.range = 1
+//				position: new THREE.Vector3(52  ,  1  ,   0.766),//x.range = 100, y.range = 1  , z.range = 1
+//				position: new THREE.Vector3( 2.5,  1  , -48.5  ),//x.range = 1  , y.range = 1  , z.range = 100
+				position: new THREE.Vector3(xa * x.range + xb, ya * y.range + yb, za * y.range + zb * z.range + zc),//x.range = 100, y.range = 1  , z.range = 1
+				//scale: new THREE.Vector3( 1, 2, 1 ),
 				far: y.max + 50,
 				//fov: 50,
 			},
