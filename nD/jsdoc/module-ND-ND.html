@@ -1229,6 +1229,68 @@
 
         
             
+<h4 class="name" id="defaultColor"><span class="type-signature"></span>defaultColor<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Gets default color of the 3D object, that added to scene.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3418">line 3418</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
 <h4 class="name" id="geometry"><span class="type-signature"></span>geometry<span class="type-signature"></span></h4>
 
 
@@ -1273,7 +1335,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3303">line 3303</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3305">line 3305</a>
     </li></ul></dd>
     
 
@@ -1291,13 +1353,13 @@
 
         
             
-<h4 class="name" id="opacity"><span class="type-signature"></span>opacity<span class="type-signature"></span></h4>
+<h4 class="name" id="object"><span class="type-signature"></span>object<span class="type-signature"></span></h4>
 
 
 
 
 <div class="description">
-    Sets opacity. Opacity range from 0 is transparent to 1 is opacity. Default is 1.
+    Gets and sets an object. See <b>settings.object</b> of the <b>ND</b> constructor parameter above.
 </div>
 
 
@@ -1335,7 +1397,131 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3410">line 3410</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3313">line 3313</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="object3D"><span class="type-signature"></span>object3D<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Gets a 3D object that created from <b>ND</b> and added to <a href="https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene" target="_blank">scene</a>.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3309">line 3309</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="object3Dopacity"><span class="type-signature"></span>object3Dopacity<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Sets an opacity of the graphical object. Opacity is range from 0 is transparent to 1 is opacity. Default is 1.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3429">line 3429</a>
     </li></ul></dd>
     
 
@@ -1359,7 +1545,7 @@
 
 
 <div class="description">
-    Returns N-dimensional vector of the plane that intersects nD object.
+    Gets N-dimensional vector of the plane that intersects nD object. See <b>settings.vectorPlane</b> of the <b>ND</b> constructor parameter above.
 </div>
 
 
@@ -1397,7 +1583,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3291">line 3291</a>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3293">line 3293</a>
     </li></ul></dd>
     
 
@@ -1714,6 +1900,176 @@
 
 
         
+            
+
+    
+
+    
+    <h4 class="name" id="positionOffset"><span class="type-signature"></span>positionOffset<span class="signature">(position, positionId)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Position offset.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><a href="https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry">BufferGeometry</a> <b>position</b> attribute of the graphical object.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>positionId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Position identifier.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="nD.js.html">nD.js</a>, <a href="nD.js.html#line3425">line 3425</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Offset of the position in the <b>position</b> attribute.
+</div>
+
+
+
+    
+
+
+
+
+
+        
     
 
     
@@ -1735,7 +2091,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Mar 04 2025 14:49:21 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Mar 05 2025 11:22:13 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

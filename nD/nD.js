@@ -3151,7 +3151,7 @@ class ND extends MyObject {
 
 		}
 
-		var object3D;
+		var object3D;//3D object that created from <b>ND</b> and added to scene.
 		function projectTo3D() {
 
 			if ( !scene ) return;
@@ -3284,9 +3284,11 @@ class ND extends MyObject {
 
 		}
 
+		//Похоже ввел эти переменные только чтобы они появились в jsdoc. На самом деле эти переменные находятся в Object.defineProperties ниже
+
 		/**
 		* @description
-		* Returns N-dimensional vector of the plane that intersects nD object.
+		* Gets N-dimensional vector of the plane that intersects nD object. See <b>settings.vectorPlane</b> of the <b>ND</b> constructor parameter above.
 		*/
 		this.vectorPlane;
 		/**
@@ -3301,6 +3303,14 @@ class ND extends MyObject {
 		* </pre>
 		*/
 		this.geometry;
+		/**
+		 * Gets a 3D object that created from <b>ND</b> and added to <a href="https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene" target="_blank">scene</a>.
+		 */
+		this.object3D;
+		/**
+		 * Gets and sets an object. See <b>settings.object</b> of the <b>ND</b> constructor parameter above.
+		 */
+		this.object;
 
 		Object.defineProperties( this, {
 
@@ -3402,12 +3412,21 @@ class ND extends MyObject {
 
 	//Overridden methods from base class
 
+	/**
+	 * Gets default color of the 3D object, that added to scene.
+	 */
 	get defaultColor() { return 'lime'; }
+	/**
+	 * Position offset.
+	 * @param {object} position [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} <b>position</b> attribute of the graphical object.
+	 * @param {number} positionId Position identifier.
+	 * @returns Offset of the position in the <b>position</b> attribute.
+	 */
 	positionOffset(position, positionId) { return positionId * position.itemSize; }
 	/**
-	 * Sets opacity. Opacity range from 0 is transparent to 1 is opacity. Default is 1.
+	 * Sets an opacity of the graphical object. Opacity is range from 0 is transparent to 1 is opacity. Default is 1.
 	 */
-	set opacity(opacity) {
+	set object3Dopacity(opacity) {
 
 		if ( !this.object3D ) return;
 		const material = this.object3D.material;
