@@ -34,38 +34,37 @@
 			y = { min:   0, max: 1, name: 'Probability (%)', },
 			z = { min:   0, max: 1, name: 'Arc'        , },
 */			
-			x = { min:   0, max:  PI, name: 'Random Arc' , },
-			y = { min:   0, max: 100, name: 'Probability (%)', },
-			z = { min: -PI, max:   0, name: 'Arc'        , },
+			//const zCount = 11, dZ = -z.range / (zCount - 1);
+			x = { min:   0, max:  PI, get range() { return this.max - this.min; }, count: 10, get delta() { return   this.range / (this.count - 1); }, name: 'Random Arc'     , },
+			y = { min:   0, max: 100, get range() { return this.max - this.min; },            get delta() { return 0;                               }, name: 'Probability (%)', },
+			z = { min: -PI, max:   0, get range() { return this.max - this.min; }, count: 11, get delta() { return - this.range / (this.count - 1); }, name: 'Arc'            , },
+			//arc = (arcId) -> { return z.range / ; }
 			
 			scenePosition = new THREE.Vector3((x.min + x.max) / 2, (y.min + y.max) / 2, (z.min + z.max) / 2);//Позиция точки, вокруг которой вращается сцена когда пользователь двигает мышью при нажатой левой кнопке
 
 		new MyThree( (scene, options) => {
 
-			if (typeof MyPoints === "function") new MyPoints([{ vector: scenePosition, name: 'scene position' },[x.max - x.min, y.max - y.min, -(z.max - z.min)]], scene, { options: options, });
+//			if (typeof MyPoints === "function") new MyPoints([{ vector: scenePosition, name: 'scene position' },[x.range, y.range, -z.range]], scene, { options: options, });
+			if (typeof MyPoints === "function") new MyPoints([{ vector: scenePosition, name: 'scene position' },{ vector: new THREE.Vector3(x.range, y.range, -z.range), name: 'maximal position' }], scene, { options: options, });
 			
 			let edgeVerticeId = 0;
-			const zCount = 11,
-//				dZ = -10 / (zCount - 1);
-				dZ = -(z.max - z.min) / (zCount - 1);
-			for (let zId = 0; zId < zCount; zId++) {
+			for (let zId = 0; zId < z.count; zId++) {
 				
 				const position = [],
-//					xCount = 10, dX = PI / (xCount - 1),
-					xCount = 10, dX = (x.max - x.min) / (xCount - 1),
-					yId    = 0 , dY = 0,
+//					xCount = 10, dX = x.range / (xCount - 1),
+					yId    = 0 ,// dY = 0,
 					edges  = [];
-				for (let xId = 0; xId < xCount; xId++) {
+				for (let xId = 0; xId < x.count; xId++) {
 					
-					position.push([dX * xId, dY * yId, dZ * zId])
-					if (xId < (xCount - 1 )) edges.push([edgeVerticeId++, edgeVerticeId]);
+					position.push([x.delta * xId, y.delta * yId, z.delta * zId])
+					if (xId < (x.count - 1 )) edges.push([edgeVerticeId++, edgeVerticeId]);
 
 				}
 				probabilityDistributions.push(new ND(3, {
 				
 					object: {
 				
-						name: 'Probability ' + probabilityDistributions.length,
+						name: 'Probability ' + (- z.delta * zId),
 						geometry: { position: position, indices: [edges] }
 				
 					},
@@ -76,11 +75,17 @@
 				edgeVerticeId = 0;
 
 			}
+
+			//probability distributions calculation for different arc angles
+			for (let zId = 0; zId < z.count; zId++) {
+			}
 			
 		}, {
 
 			onChangeSelectedMesh: ( meshId ) => {
 
+				if (meshId >= probabilityDistributions.length) return;//Users selection is not probability distributions
+				
 				probabilityDistributions.forEach((probabilityDistribution, i) => { probabilityDistribution.object3Dopacity = ((meshId === i) || (meshId < 0)) ? 1 : 0.1; });
 
 			},
@@ -101,7 +106,7 @@
 			scene:  {
 
 				position: scenePosition,//Позиция точки, вокруг которой вращается сцена когда пользователь двигает мышью при нажатой левой кнопке
-				scale: new THREE.Vector3( 4 / (x.max - x.min), 1 / (y.max - y.min), 1 / (z.max - z.min) ),
+				scale: new THREE.Vector3( 4 / x.range, 1 / y.range, 1 / z.range ),
 			
 			},
 			//stereoEffect: false,
@@ -121,10 +126,9 @@
 			canvas: {
 
 				noButtonFullScreen: true,
-				//width: 5000
 
 			},
-			//point: { size: 0.0 },
+			player: false,
 			playerOptions: {
 				
 				//max: Infinity,
