@@ -81,15 +81,7 @@
 
 			onChangeSelectedMesh: ( meshId ) => {
 
-/*				
-				const probabilityDistribution = probabilityDistributions[meshId],
-					material = probabilityDistribution.object3D.material;
-				material.opacity = 0.1;
-				material.transparent = true;
-				material.needsUpdate = true;
-				probabilityDistribution.opacity = 0.1;
-*/				
-				probabilityDistributions.forEach((probabilityDistribution, i) => { probabilityDistribution.opacity = ((meshId === i) || (meshId < 0)) ? 1 : 0.1; });
+				probabilityDistributions.forEach((probabilityDistribution, i) => { probabilityDistribution.object3Dopacity = ((meshId === i) || (meshId < 0)) ? 1 : 0.1; });
 
 			},
 			//axesHelper: false,
