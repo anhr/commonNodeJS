@@ -308,7 +308,7 @@ class MyObject {
 							set: (vertice, name, value) => {
 
 								//edit vertice in http://localhost/anhr/commonNodeJS/master/nD/Examples/ for testing
-								const axisId = parseInt(name);
+								const axisId = name === 'x' ? 0 : name === 'y' ? 1 : name === 'z' ? 2 : name === 'w' ? 3 : parseInt(name);
 								if (!isNaN(axisId)) {
 
 									array[positionOffset + axisId] = value;
