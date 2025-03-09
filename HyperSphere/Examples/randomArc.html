@@ -29,13 +29,14 @@
 		
 		const PI = Math.PI,
 			probabilityDistributions = [],//Случайные распределения вероятности длинны дуги зависящее от угла между вершинами дуги
-			x = { min:   0, max:  PI, get range() { return this.max - this.min; }, count:  11, get delta() { return   this.range / (this.count - 1); }, name: 'Random Arc'     , a: (52   - 2.5) / (100 - 1),                                                                        get b() { return 2.5 - this.a                  }, },
-			y = { min:   0, max: 100, get range() { return this.max - this.min; }, count: 101, get delta() { return   this.range / (this.count - 1); }, name: 'Probability (%)', a: (50.5 - 1  ) / (100 - 1),                                                                        get b() { return 1   -    x.a                  }, },
-			z = { min: -PI, max:   0, get range() { return this.max - this.min; }, count:  11, get delta() { return - this.range / (this.count - 1); }, name: 'Arc'            , a: (1.4  - 1  ) / (100 - 1), get c() { return (1 - this.a + (48 + this.a) / 100) / (1 - 1 / 100) }, get b() { return (-48 - this.a - this.c) / 100 }, },
+			range = (axis) => { return axis.max - axis.min; }, delta = (axis) => { return   axis.range / (axis.count - 1); },
+			x = { min:        0, max:        2 * PI, get range() { return range(this); }, count:   301, get delta() { return   delta(this); }, name: 'Random Arc'     , a: (52   - 2.5) / (100 - 1),                                                                        get b() { return 2.5 - this.a                  }, },
+			y = { min:        0, max:           100, get range() { return range(this); }, count:   301, get delta() { return   delta(this); }, name: 'Probability (%)', a: (50.5 - 1  ) / (100 - 1),                                                                        get b() { return 1   -    x.a                  }, },
+			z = { min: - 2 * PI, max:             0, get range() { return range(this); }, count:    31, get delta() { return - delta(this); }, name: 'Arc'            , a: (1.4  - 1  ) / (100 - 1), get c() { return (1 - this.a + (48 + this.a) / 100) / (1 - 1 / 100) }, get b() { return (-48 - this.a - this.c) / 100 }, },
 /*			
-			x = { min:   0,  max: 1, get range() { return this.max - this.min; }, count: 10, get delta() { return   this.range / (this.count - 1); }, name: 'Random Arc'     , },
-			y = { min:   0,  max: 1, get range() { return this.max - this.min; },            get delta() { return 0;                               }, name: 'Probability (%)', },
-			z = { min: -100, max: 0, get range() { return this.max - this.min; }, count: 11, get delta() { return - this.range / (this.count - 1); }, name: 'Arc'            , },
+			x = { min:   0,  max: 1, get range() { return range(this); }, count: 10, get delta() { return   delta(this); }, name: 'Random Arc'     , },
+			y = { min:   0,  max: 1, get range() { return range(this); },            get delta() { return 0;             }, name: 'Probability (%)', },
+			z = { min: -100, max: 0, get range() { return range(this); }, count: 11, get delta() { return - delta(this); }, name: 'Arc'            , },
 */			
 			
 			scenePosition = new THREE.Vector3((x.min + x.max) / 2, (y.min + y.max) / 2, (z.min + z.max) / 2);//Позиция точки, вокруг которой вращается сцена когда пользователь двигает мышью при нажатой левой кнопке
@@ -54,8 +55,10 @@
 					
 					position.push([
 						x.delta * xId + x.delta / 2,//x указывает на середину промежутка между x.delta * xId и x.delta * xId + 1
-						//y.delta * yId,
-						xId % 2 === 0 ? y.delta * yId : y.delta * y.count - 1,//каждая нечетная точка x равна y.max
+						
+						y.delta * yId,
+						//xId % 2 === 0 ? y.delta * yId : y.delta * y.count - 1,//каждая нечетная точка x равна y.max
+						
 						z.delta * zId
 					])
 					if (xId < (x.count - 2 )) edges.push([edgeVerticeId++, edgeVerticeId]);
@@ -78,7 +81,67 @@
 			}
 
 			//probability distributions calculation for different arc angles
-			for (let zId = 0; zId < z.count; zId++) {
+			const randomArc = x, probability = y, arc = z;
+			for (let arcId = 0; arcId < arc.count; arcId++) {
+
+				const probabilityDistribution = probabilityDistributions[arcId];
+				console.log(arc.name + ' = ' + arcId);
+/*				
+				for (let randonArkId = 0; randonArkId < (randonArk.count - 1); randonArkId++){
+
+					const vertice = probabilityDistribution.getPoint(randonArkId);
+					vertice.y = 10;
+					console.log(randonArk.name + ' = ' + randonArkId + ', ' + probability.name + ' = ' + vertice.y);
+					
+				}
+*/				
+				//Пробуем probability.count - 1 раз вычислить random arc для текущего arc
+				const arcValue = arc.max - arc.delta * arcId;
+//				const cosArc = Math.cos(arcValue), sinArc = Math.sin(arcValue);
+				for (let probabilityId = 0; probabilityId < (probability.count - 1); probabilityId++) {
+
+					let isHistogramDetected = false;
+//					const randomArcValue = Math.random() * randomArc.range * Math.cos(arcValue),//случайная arc
+//					const randomArcValue = Math.random() * randomArc.range,//Равнмерное случайное распределение
+//					const randomArcValue = Math.sin(Math.random() * randomArc.range),//случайная arc
+//					const randomArcValue =  arcValue,//Все случайные arc совпадают с текущей arc 
+//					const randomArcValue = Math.sqrt(cosArc * cosArc * arcValue + sinArc * sinArc * Math.random()) * randomArc.range,//случайная arc
+//					const randomArcValue = cosArc * arcValue + sinArc * Math.random() * randomArc.range,//случайная arc
+//					const randomArcValue = arcValue + Math.random() * (randomArc.range - arcValue),//верно при 0 > arcValue > PI
+//					const randomArcValue = arcValue < PI ? arcValue + Math.random() * (PI - arcValue) : (arcValue - PI) + Math.random() * (PI - arcValue),//при arcValue > PI максимум пояляется при RandomArc = 0
+//					const randomArcValue = arcValue < PI ? arcValue + Math.random() * (PI - arcValue) : PI - (arcValue - PI + Math.random() * (PI - arcValue)),//
+//					const randomArcValue = arcValue <= PI ? arcValue + Math.random() * (PI - arcValue) : 2 * PI - arcValue - Math.random() * (PI - arcValue),//
+//					const randomArcValue = arcValue < PI ? arcValue + Math.random() * (PI - arcValue) : 2 * PI - (arcValue + Math.random() * (PI - arcValue)),//
+					const arc = arcValue + Math.random() * (PI - arcValue);
+					const randomArcValue = arc,
+//					const randomArcValue = arcValue < PI ? arc : 2 * PI - arc,//
+//						dArc = randomArcValue - arcValue;//Отклонение случайной arc от истинной arc
+//						dArc = arcValue;//Отклонение случайной arc от истинной arc. Нет ошибок
+						dArc = randomArcValue;//Отклонение случайной arc от истинной arc
+					//строим гисторгамму отклонения arcValue от randomArcValue
+					//Гисторамма делится на arc.count - 1 столбцов
+					for (let randomArcId = 0; randomArcId < (randomArc.count - 1); randomArcId++){
+
+						const begin = randomArc.delta * randomArcId;
+						if (
+							((dArc >= begin) && (dArc < (begin + randomArc.delta)))
+//							|| ((arcId === (arc.count - 1)) && (dArc === (begin + randomArc.delta)))//Это последяя arc и randomArcValue оказался на границе допустимого диапазона 
+							|| (dArc === (begin + randomArc.delta))//randomArcValue оказался на границе допустимого диапазона 
+						) {
+
+							const vertice = probabilityDistribution.getPoint(randomArcId);
+							vertice.y += probability.delta;
+//							probabilityDistribution.setPoint(randomArcId, vertice);
+							isHistogramDetected = true;
+							break;
+							
+						}
+						
+					}
+					if (!isHistogramDetected) console.error('No histogram detected');
+					
+				}
+				
 			}
 			
 		}, {

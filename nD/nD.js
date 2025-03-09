@@ -2071,12 +2071,13 @@ class ND extends MyObject {
 			const points = [];
 			for ( var i = 0; i < geometry.position.length; i++ )
 				points.push( geometry.position[i].point );
-			this.getPoint = (i) => { return points[i]; }//Эта функция используется для создания Position Attribute. Затем эта функция заменяется на функцию ниже. Это делается для того, что бы избавиться от массива points, который дублирует Position Attribute
+			this.getPoint = ( i ) => { return points[i]; }//Эта функция используется для создания Position Attribute. Затем эта функция заменяется на функцию ниже. Это делается для того, что бы избавиться от массива points, который дублирует Position Attribute
 			this.setPositionAttributeFromPoints( points );
 			points.length = 0;
-			this.getPoint = (i) => { return settings.bufferGeometry.userData.position[i]; }
 			
 		}
+		this.getPoint = ( i ) => { return settings.bufferGeometry.userData.position[i]; }
+//		this.setPoint = ( i, point ) => { settings.bufferGeometry.userData.position[i] = point; }
 
 		vectorPlane = vectorPlane || new Vector( settings.vectorPlane );
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
