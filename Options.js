@@ -733,6 +733,7 @@ class Options {
 												return scale.offset;
 
 											},
+											set: ( offset ) => { setScale( () => { scale.offset = offset; }); },
 
 										},
 

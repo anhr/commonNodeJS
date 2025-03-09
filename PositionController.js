@@ -43,7 +43,7 @@ class PositionController extends controllers.CustomController {
 
 		if ( options.min === undefined ) options.min = 0.1;
 		if ( options.max === undefined ) options.max = 10;
-		if ( settings.offset === undefined ) settings.offset = 0.1;
+		if ( settings.offset === undefined ) { settings.offset = 0.1; }
 		if ( options.step === undefined ) options.step = 0.1;
 
 		super( {
