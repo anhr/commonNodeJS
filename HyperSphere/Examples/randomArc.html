@@ -30,8 +30,8 @@
 		const PI = Math.PI,
 			probabilityDistributions = [],//Случайные распределения вероятности длинны дуги зависящее от угла между вершинами дуги
 			range = (axis) => { return axis.max - axis.min; }, delta = (axis) => { return   axis.range / (axis.count - 1); },
-			x = { min: - PI, max:  PI, get range() { return range(this); }, count:   1001, get delta() { return delta(this); }, name: 'Random Arc'     , a: (52   - 2.5) / (100 - 1),                                                                        get b() { return 2.5 - this.a                  }, },
-			y = { min:    0, max: 100, get range() { return range(this); }, count:   1001, get delta() { return delta(this); }, name: 'Probability (%)', a: (50.5 - 1  ) / (100 - 1),                                                                        get b() { return 1   -    x.a                  }, },
+			x = { min: - PI, max:  PI, get range() { return range(this); }, count:   102, get delta() { return delta(this); }, name: 'Random Arc'     , a: (52   - 2.5) / (100 - 1),                                                                        get b() { return 2.5 - this.a                  }, },
+			y = { min:    0, max: 100, get range() { return range(this); }, count:   101, get delta() { return delta(this); }, name: 'Probability (%)', a: (50.5 - 1  ) / (100 - 1),                                                                        get b() { return 1   -    x.a                  }, },
 			z = { min: - PI, max:  PI, get range() { return range(this); }, count:   101, get delta() { return delta(this); }, name: 'Arc'            , a: (1.4  - 1  ) / (100 - 1), get c() { return (1 - this.a + (48 + this.a) / 100) / (1 - 1 / 100) }, get b() { return (-48 - this.a - this.c) / 100 }, },
 /*			
 			x = { min:   0,  max: 1, get range() { return range(this); }, count: 10, get delta() { return   delta(this); }, name: 'Random Arc'     , },
