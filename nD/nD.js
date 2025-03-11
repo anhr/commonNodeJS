@@ -1327,6 +1327,7 @@ class ND extends MyObject {
 														},
 														
 													},
+													options: options,
 													vectorPlane: vectorPlane.array,
 
 												}),
@@ -1345,6 +1346,7 @@ class ND extends MyObject {
 														},
 													
 													},
+													options: options,
 													vectorPlane: vectorPlane.array,
 
 												}),
@@ -1372,6 +1374,7 @@ class ND extends MyObject {
 														},
 													
 													},
+													options: options,
 													vectorPlane: vectorPlane.array,
 
 												});
@@ -2131,6 +2134,7 @@ class ND extends MyObject {
 					
 					plane: true,
 					object: { geometry: geometry, color: settings3D.color, },
+					options: options,
 				
 				} );
 				geometry = nD.geometry;
@@ -2950,7 +2954,7 @@ class ND extends MyObject {
 									},
 //									color: 'white',
 										 
-								}, indice: i, iSegments: iSegments, } ),
+								}, indice: i, iSegments: iSegments, options: options } ),
 								s = iSegments - 1;
 							var iIntersections;
 							if ( s !== 0 ) {//Не создавать iIntersections для ребер
@@ -3041,7 +3045,7 @@ class ND extends MyObject {
 								const nd = new ND( n, {
 									
 									plane: true,
-									object: settings.object, indice: segment[i], iSegments: iSegments - 1,
+									object: settings.object, indice: segment[i], iSegments: iSegments - 1, options: options,
 									
 								} );
 								if ( n > 4 ) {
