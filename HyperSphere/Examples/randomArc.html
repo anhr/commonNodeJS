@@ -116,7 +116,10 @@
 //					const randomArcValue =  arcValue,//Все случайные arc совпадают с текущей arc 
 //					const randomArcValue = randomArc.min + Math.random() * randomArc.range,//Равномерное случайное распределение
 //					const randomArcValue = arcValue < 0 ? arcValue * (1 - Math.random()) : 2 * PI - (arcValue + Math.random() * (PI - arcValue)),//
-					const randomArcValue = arcValue * (randomArc.min + Math.random() * randomArc.range) / PI,//
+//					const randomArcValue = arcValue * (randomArc.min + Math.random() * randomArc.range) / PI,//
+//					const randomArcValue = arcValue * (- PI + Math.random() * 2 * PI) / PI,//
+//					const randomArcValue = arcValue * (Math.random() * 2 * PI - PI) / PI,//
+					const randomArcValue = arcValue * (Math.random() * 2 - 1),//
 //						dArc = randomArcValue - arcValue;//Отклонение случайной arc от истинной arc
 //						dArc = arcValue;//Отклонение случайной arc от истинной arc. Нет ошибок
 						dArc = randomArcValue;//Отклонение случайной arc от истинной arc
