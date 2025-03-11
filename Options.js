@@ -174,7 +174,7 @@ class Options {
 
 			const scenePosition = new three.THREE.Vector3().copy( scene.position ),
 				cameraPosition = new three.THREE.Vector3().copy( camera.position ),
-				target = new three.THREE.Vector3().copy( options.orbitControls.target );
+				target = options.orbitControls != false ? new three.THREE.Vector3().copy( options.orbitControls.target ) : undefined;
 
 			three.dat.controllerNameAndTitle( options.dat.gui.add( {
 				defaultF: function ( value ) {
