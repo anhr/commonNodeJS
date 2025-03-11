@@ -2076,15 +2076,19 @@ class ND extends MyObject {
 			points.length = 0;
 			
 		}
+		/**
+		 * @param {number} i position id.
+		 * @returns Vector of the <b>i</b> position of the <b>settings.bufferGeometry.attributes.position</b>
+		 */
 		this.getPoint = ( i ) => { return settings.bufferGeometry.userData.position[i]; }
 //		this.setPoint = ( i, point ) => { settings.bufferGeometry.userData.position[i] = point; }
 
 		vectorPlane = vectorPlane || new Vector( settings.vectorPlane );
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
 
-		var objectIntersect;//порекция объека пересечения панеди с графическим объектом на 3D пространство.
+		var objectIntersect;//проекция объекта пересечения панеди с графическим объектом на 3D пространство.
 
-		this.opacity = ( object3D, transparent, opacity ) => { _ND.verticesOpacity( transparent, opacity ); }
+//		this.opacity = ( object3D, transparent, opacity ) => { _ND.verticesOpacity( transparent, opacity ); }
 
 		//The user has selected a segment of nD object
 		const selectSegment = {
@@ -2109,7 +2113,8 @@ class ND extends MyObject {
 				else {
 
 					if (!item.parent) parentObject.add(item);
-					_ND.opacity( item, transparent, opacity );
+//					_ND.opacity( item, transparent, opacity );
+					_ND.verticesOpacity( transparent, opacity );
 
 				}
 
