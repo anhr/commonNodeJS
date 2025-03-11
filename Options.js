@@ -722,6 +722,7 @@ class Options {
 												return scale.zoomMultiplier;
 
 											},
+											set: ( zoomMultiplier ) => { setScale( () => { scale.zoomMultiplier = zoomMultiplier; }); },
 
 										},
 										offset: {
