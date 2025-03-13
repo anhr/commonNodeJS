@@ -1025,9 +1025,12 @@ class ND extends MyObject {
 
 		function proxyGeometryPosition() {
 
+/*			
 			const geometry = settings.object.geometry;
 			if ( geometry.position && geometry.position.isProxy ) return geometry.position;
-			const playerPosition = geometry.playerPosition, position = playerPosition ? geometry.playerPosition[0] : geometry.position ? geometry.position : [];
+*/			
+			if ( settings.object.geometry.position && settings.object.geometry.position.isProxy ) return settings.object.geometry.position;
+			const playerPosition = settings.object.geometry.playerPosition, position = playerPosition ? geometry.playerPosition[0] : settings.object.geometry.position ? settings.object.geometry.position : [];
 			return new Proxy(
 				
 				//Эту строку нельзя использовать потому что во вселенной будет ошибка
@@ -1113,8 +1116,8 @@ class ND extends MyObject {
 										target.positionWorld = undefined;
 										if ( _prevLine.prevLine ) {
 											
-//											_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
-											_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry2.D3.points ).attributes.position.array;
+											_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
+//											_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry2.D3.points ).attributes.position.array;
 											_prevLine.prevLine.geometry.attributes.position.needsUpdate = true;
 
 										}
@@ -3202,7 +3205,7 @@ class ND extends MyObject {
 			} );
 
 		}
-const geometry2 = geometry;
+//const geometry2 = geometry;
 		projectTo3D();
 
 		//Plane

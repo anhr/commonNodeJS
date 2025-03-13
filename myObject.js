@@ -56,7 +56,15 @@ class MyObject {
 
 		const timeId = (settings.options && settings.options.player) ? settings.options.player.getTimeId() : 0, geometry = settings.object.geometry,
 			geometryPosition = geometry.position;
-		if ((timeId === 0) && (!geometryPosition || !geometryPosition.isPositionProxy)) {
+		if (
+			//(timeId === 0) && если оставить эту строку, то не смогу изменять положение вершины в nD.
+			//Для проверки открыть http://localhost/anhr/commonNodeJS/master/nD/Examples/
+			//сделать 3D на весь экран
+			//В gui выбрать Mesh\nD\Faces\Edges\Vertices и поменять одну из координат
+			//Положение ыбанной вершины должно меняться
+			
+			(!geometryPosition || !geometryPosition.isPositionProxy)
+		) {
 
 			geometry.position = new Proxy(geometryPosition || [], {
 	
