@@ -1894,7 +1894,8 @@ this.object = () => {
 										const sChangeVerticeEdge = ': Change vertice edge. ',
 											edge = edges[edgeId],
 											oppositeVerticeId = edge[0] === aAngleControls.verticeId ? edge[1] : edge[1] === aAngleControls.verticeId ? edge[0] : console.error(sHyperSphere + sChangeVerticeEdge + 'Invalid edge vertices: ' + edge),
-											oppositeVerticeAngles = position[oppositeVerticeId].angles;
+											oppositeVertice = position[oppositeVerticeId], 
+											oppositeVerticeAngles = oppositeVertice.angles;
 										if (oppositeVerticeAngles.length != aEdgeAngleControls.length) console.error(sHyperSphere + sChangeVerticeEdge + 'Invalid opposite vertice angles length = ' + oppositeVerticeAngles.length);
 										aEdgeAngleControls.verticeId = oppositeVerticeId;
 										edgeAnglesDefault.length = 0;
@@ -1913,7 +1914,7 @@ this.object = () => {
 										aAngleControls.removeCross();
 										vertices.length = 0;
 										if (settings.guiPoints) settings.bufferGeometry.userData.selectedTimeId = settings.guiPoints.timeId;
-										const oppositeVertice = position[oppositeVerticeId], crossSize = 0.05;
+										const crossSize = 0.05;
 										pushVertice([0, 0, crossSize]);
 										pushVertice([0, 0, -crossSize]);
 										pushVertice([-crossSize, -crossSize, 0]);
