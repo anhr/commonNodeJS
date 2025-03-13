@@ -1113,7 +1113,8 @@ class ND extends MyObject {
 										target.positionWorld = undefined;
 										if ( _prevLine.prevLine ) {
 											
-											_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
+//											_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
+											_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry2.D3.points ).attributes.position.array;
 											_prevLine.prevLine.geometry.attributes.position.needsUpdate = true;
 
 										}
@@ -3201,6 +3202,7 @@ class ND extends MyObject {
 			} );
 
 		}
+const geometry2 = geometry;
 		projectTo3D();
 
 		//Plane
