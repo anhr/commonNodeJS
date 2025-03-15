@@ -1594,6 +1594,32 @@ class Options {
 			 **/
 			onChangeSelectedMesh: { get: () => { return options.onChangeSelectedMesh; } },
 
+			/**
+			 * getter and setter
+			 * <pre>
+			 * renderer
+			 * </pre>
+			 **/
+			renderer: {
+				
+				get: () => { return options.renderer; },
+				set: ( renderer ) => { options.renderer = renderer; }
+			
+			},
+
+			/**
+			 * getter and setter
+			 * <pre>
+			 * New time of the <a href="./player/jsdoc/index.html" target="_blank">Player</a>.
+			 * </pre>
+			 **/
+			onSelectScene: {
+				
+				get: () => { return options.onSelectScene; },
+				set: ( onSelectScene ) => { options.onSelectScene = onSelectScene; }
+			
+			},
+
 		} ); 
 
 		//For debugging. Find a hidden keys
