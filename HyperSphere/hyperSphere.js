@@ -1559,6 +1559,7 @@ this.object = () => {
 							guiSelectPoint: options.guiSelectPoint,
 							renderer: options.renderer,
 							palette: options.palette,
+							setPalette: options.setPalette,
 							scales: options.scales,
 							
 						},
@@ -1569,7 +1570,7 @@ this.object = () => {
 							boGui: false,
 							edges: settings.edges === undefined ? {
 
-								project: true,//Если линия создается в виде ребер, то отображать ребра на холсте
+								project: settings.randomArc ? false : true,//Если линия создается в виде ребер, то отображать ребра на холсте
 								creationMethod: HyperSphere.edgesCreationMethod.Random,
 
 							} : settings.edges,
@@ -2056,9 +2057,11 @@ this.object = () => {
 																	
 																		cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек гиперсферы
 																		//edges: false,
+																		randomArc: classSettings.randomArc,
 																		object: {
 																	
 																			name: lang.arc,
+																			color: 'magenta',
 																			geometry: {
 																	
 																				MAX_POINTS: aAngleControls.MAX_POINTS,
