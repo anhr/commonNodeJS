@@ -1597,7 +1597,7 @@ class Options {
 			/**
 			 * getter and setter
 			 * <pre>
-			 * renderer
+			 * Renderer
 			 * </pre>
 			 **/
 			renderer: {
@@ -1610,7 +1610,7 @@ class Options {
 			/**
 			 * getter and setter
 			 * <pre>
-			 * New time of the <a href="./player/jsdoc/index.html" target="_blank">Player</a>.
+			 * New time of the <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
 			 * </pre>
 			 **/
 			onSelectScene: {

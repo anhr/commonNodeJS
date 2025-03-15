@@ -160,7 +160,8 @@ class Options {
 			const settings = options.orbitControls || {};
 			_this.orbitControls = new three.OrbitControls( camera, renderer.domElement );
 			if ( settings.enableRotate !== undefined ) _this.orbitControls.enableRotate = settings.enableRotate;
-			_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
+//			_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
+			_this.orbitControls.target.copy( scene.position).multiply( new three.THREE.Vector3().copy( scene.scale ).addScalar( 1 ) );
 			_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 			_this.orbitControls.update();
 
@@ -201,7 +202,7 @@ class Options {
 
 			const scenePosition = new three.THREE.Vector3().copy( scene.position ),
 				cameraPosition = new three.THREE.Vector3().copy( camera.position ),
-				target = new three.THREE.Vector3().copy( options.orbitControls.target );
+				target = options.orbitControls != false ? new three.THREE.Vector3().copy( options.orbitControls.target ) : undefined;
 
 			three.dat.controllerNameAndTitle( options.dat.gui.add( {
 				defaultF: function ( value ) {
@@ -749,6 +750,7 @@ class Options {
 												return scale.zoomMultiplier;
 
 											},
+											set: ( zoomMultiplier ) => { setScale( () => { scale.zoomMultiplier = zoomMultiplier; }); },
 
 										},
 										offset: {
@@ -760,17 +762,20 @@ class Options {
 												return scale.offset;
 
 											},
+											set: ( offset ) => { setScale( () => { scale.offset = offset; }); },
 
 										},
 
 									} );
 
 									//For debugging. Find a hidden keys
+									/*Uncompatible with http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/randomArc.html
 									for ( var propertyName in scale ) {
 
 										if ( this[propertyName] === undefined ) console.error( 'Options.Scales: scale.' + propertyName + ' key is hidden' );
 
 									}
+									*/
 
 								}
 
@@ -1617,6 +1622,32 @@ class Options {
 			 **/
 			onChangeSelectedMesh: { get: () => { return options.onChangeSelectedMesh; } },
 
+			/**
+			 * getter and setter
+			 * &lt;pre>
+			 * Renderer
+			 * &lt;/pre>
+			 **/
+			renderer: {
+				
+				get: () => { return options.renderer; },
+				set: ( renderer ) => { options.renderer = renderer; }
+			
+			},
+
+			/**
+			 * getter and setter
+			 * &lt;pre>
+			 * New time of the &lt;a href="../../player/jsdoc/index.html" target="_blank">Player&lt;/a>.
+			 * &lt;/pre>
+			 **/
+			onSelectScene: {
+				
+				get: () => { return options.onSelectScene; },
+				set: ( onSelectScene ) => { options.onSelectScene = onSelectScene; }
+			
+			},
+
 		} ); 
 
 		//For debugging. Find a hidden keys
@@ -2194,13 +2225,13 @@ export default Options;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Options.raycaster.html">raycaster</a></li></ul><h3>Classes</h3><ul><li><a href="Options.html">Options</a></li><li><a href="Raycaster.html">Raycaster</a></li><li><a href="Raycaster_EventListeners.html">EventListeners</a></li></ul><h3>Global</h3><ul><li><a href="global.html#a">a</a></li><li><a href="global.html#axesHelper">axesHelper</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#boOptions">boOptions</a></li><li><a href="global.html#camera">camera</a></li><li><a href="global.html#cameraTarget">cameraTarget</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#canvasMenu">canvasMenu</a></li><li><a href="global.html#controllers">controllers</a></li><li><a href="global.html#dat">dat</a></li><li><a href="global.html#elContainer">elContainer</a></li><li><a href="global.html#eventListeners">eventListeners</a></li><li><a href="global.html#frustumPoints">frustumPoints</a></li><li><a href="global.html#getLanguageCode">getLanguageCode</a></li><li><a href="global.html#guiSelectPoint">guiSelectPoint</a></li><li><a href="global.html#onChangeSelectedMesh">onChangeSelectedMesh</a></li><li><a href="global.html#orbitControls">orbitControls</a></li><li><a href="global.html#palette">palette</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#playerOptions">playerOptions</a></li><li><a href="global.html#point">point</a></li><li><a href="global.html#pointLight">pointLight</a></li><li><a href="global.html#raycaster">raycaster</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scales">scales</a></li><li><a href="global.html#scene">scene</a></li><li><a href="global.html#spriteText">spriteText</a></li><li><a href="global.html#stereoEffect">stereoEffect</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#title">title</a></li><li><a href="global.html#traces">traces</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Options.raycaster.html">raycaster</a></li></ul><h3>Classes</h3><ul><li><a href="Options.html">Options</a></li><li><a href="Raycaster.html">Raycaster</a></li><li><a href="Raycaster_EventListeners.html">EventListeners</a></li></ul><h3>Global</h3><ul><li><a href="global.html#a">a</a></li><li><a href="global.html#axesHelper">axesHelper</a></li><li><a href="global.html#b">b</a></li><li><a href="global.html#boOptions">boOptions</a></li><li><a href="global.html#camera">camera</a></li><li><a href="global.html#cameraTarget">cameraTarget</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#canvasMenu">canvasMenu</a></li><li><a href="global.html#controllers">controllers</a></li><li><a href="global.html#dat">dat</a></li><li><a href="global.html#elContainer">elContainer</a></li><li><a href="global.html#eventListeners">eventListeners</a></li><li><a href="global.html#frustumPoints">frustumPoints</a></li><li><a href="global.html#getLanguageCode">getLanguageCode</a></li><li><a href="global.html#guiSelectPoint">guiSelectPoint</a></li><li><a href="global.html#onChangeSelectedMesh">onChangeSelectedMesh</a></li><li><a href="global.html#onSelectScene">onSelectScene</a></li><li><a href="global.html#orbitControls">orbitControls</a></li><li><a href="global.html#palette">palette</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#playerOptions">playerOptions</a></li><li><a href="global.html#point">point</a></li><li><a href="global.html#pointLight">pointLight</a></li><li><a href="global.html#raycaster">raycaster</a></li><li><a href="global.html#renderer">renderer</a></li><li><a href="global.html#scale">scale</a></li><li><a href="global.html#scales">scales</a></li><li><a href="global.html#scene">scene</a></li><li><a href="global.html#spriteText">spriteText</a></li><li><a href="global.html#stereoEffect">stereoEffect</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#title">title</a></li><li><a href="global.html#traces">traces</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Mar 02 2025 06:33:07 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Mar 15 2025 07:44:28 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
