@@ -1685,7 +1685,10 @@ this.object = () => {
 */								
 								verticeId = parseInt(verticeId);
 
-								anglesDefault.length = 0;
+								let boPushDefaultAngles = true;
+								if (verticeId != aAngleControls.verticeId) anglesDefault.length = 0;
+								else boPushDefaultAngles = false;//Пользователь отредактировал угол в gui. Не надо изменять anglesDefault
+								
 								if (!anglesCur) anglesCur = settings.object.geometry.angles;
 								const verticeAngles = classSettings.overriddenProperties.verticeAngles(anglesCur, verticeId);
 
@@ -1776,7 +1779,7 @@ this.object = () => {
 										alert(sError);
 
 									}
-									anglesDefault.push(angle);
+									if (boPushDefaultAngles) anglesDefault.push(angle);
 
 								}
 
