@@ -84,6 +84,7 @@ class HyperSphere extends MyObject {
 	 * </pre>
 	 * @param {boolean} [classSettings.edges.project=true] false - Doesn't project edges onto canvas
 	 * @param {enum} [classSettings.edges.creationMethod=edgesCreationMethod.Random] method for creating edges. See <a href="./module-HyperSphere-HyperSphere.html#.edgesCreationMethod" target="_blank">edgesCreationMethod</a>
+	 * @param {boolean} [classSettings.randomArc=false] true - creates a random arc between two vertice.
 	 * @param {Function} [classSettings.onSelectScene] Callback function that called after <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> time was changed.
 	 * <pre>
 	 * parameter <b>hyperSphere</b> <a href="../../HyperSphere/jsdoc/" target="_blank">HyperSphere</a> object.
