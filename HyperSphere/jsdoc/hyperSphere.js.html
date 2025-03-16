@@ -1429,7 +1429,7 @@ class HyperSphere extends MyObject {
 		//Эту функцию надо содать до вызова this.pushEdges(); потому что когда используется MyPoints для вывода на холст вершин вместо ребер,
 		//вызывается this.project вместо this.pushEdges()
 		/**
-		 * Projects the hypersphere onto the canvas 
+		 * Projects the hypersphere onto the canvas.
 		 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
 		 * @param {object} [params={}] The following parameters are available
 		 * @param {object} [params.center={x: 0.0, y: 0.0, z: 0.0}] center of the hypersphere
@@ -1447,20 +1447,20 @@ class HyperSphere extends MyObject {
 			} else scene = _this.classSettings.projectParams.scene;
 
 			let nd, myPoints;
-			this.object = () => {
-
-				console.warn(sHyperSphere + ': this.object() a was deprecated. Use this.object3D instead')
-				return nd &amp;&amp; nd.object3D ? nd.object3D : myPoints ? myPoints : undefined;
-			
-			}
 			/**
-			 * returns a THREE graphical object
+			 * Is the edges displaying on the canvas?
+			 * @returns True - yes. False - otherwise.
 			 */
+			this.isDisplayEdges = () => { return nd != undefined; }
+this.object = () => {
+
+	console.warn(sHyperSphere + ': this.object() a was deprecated. Use this.object3D instead')
+	return nd &amp;&amp; nd.object3D ? nd.object3D : myPoints ? myPoints : undefined;
+
+}
 			Object.defineProperty(this, 'object3D', {
 
 				get: () => { return nd &amp;&amp; nd.object3D ? nd.object3D : myPoints ? myPoints : undefined; },
-//				set: (object3DNew) => { },
-//				configurable: true,//https://stackoverflow.com/a/25518045/5175935
 
 			});
 			const aAngleControls = [];
@@ -1592,6 +1592,7 @@ class HyperSphere extends MyObject {
 							guiSelectPoint: options.guiSelectPoint,
 							renderer: options.renderer,
 							palette: options.palette,
+							setPalette: options.setPalette,
 							scales: options.scales,
 							
 						},
@@ -1602,7 +1603,7 @@ class HyperSphere extends MyObject {
 							boGui: false,
 							edges: settings.edges === undefined ? {
 
-								project: true,//Если линия создается в виде ребер, то отображать ребра на холсте
+								project: settings.randomArc ? false : true,//Если линия создается в виде ребер, то отображать ребра на холсте
 								creationMethod: HyperSphere.edgesCreationMethod.Random,
 
 							} : settings.edges,
@@ -1717,7 +1718,10 @@ class HyperSphere extends MyObject {
 */								
 								verticeId = parseInt(verticeId);
 
-								anglesDefault.length = 0;
+								let boPushDefaultAngles = true;
+								if (verticeId != aAngleControls.verticeId) anglesDefault.length = 0;
+								else boPushDefaultAngles = false;//Пользователь отредактировал угол в gui. Не надо изменять anglesDefault
+								
 								if (!anglesCur) anglesCur = settings.object.geometry.angles;
 								const verticeAngles = classSettings.overriddenProperties.verticeAngles(anglesCur, verticeId);
 
@@ -1808,7 +1812,7 @@ class HyperSphere extends MyObject {
 										alert(sError);
 
 									}
-									anglesDefault.push(angle);
+									if (boPushDefaultAngles) anglesDefault.push(angle);
 
 								}
 
@@ -1927,7 +1931,8 @@ class HyperSphere extends MyObject {
 										const sChangeVerticeEdge = ': Change vertice edge. ',
 											edge = edges[edgeId],
 											oppositeVerticeId = edge[0] === aAngleControls.verticeId ? edge[1] : edge[1] === aAngleControls.verticeId ? edge[0] : console.error(sHyperSphere + sChangeVerticeEdge + 'Invalid edge vertices: ' + edge),
-											oppositeVerticeAngles = position[oppositeVerticeId].angles;
+											oppositeVertice = position[oppositeVerticeId], 
+											oppositeVerticeAngles = oppositeVertice.angles;
 										if (oppositeVerticeAngles.length != aEdgeAngleControls.length) console.error(sHyperSphere + sChangeVerticeEdge + 'Invalid opposite vertice angles length = ' + oppositeVerticeAngles.length);
 										aEdgeAngleControls.verticeId = oppositeVerticeId;
 										edgeAnglesDefault.length = 0;
@@ -1946,7 +1951,7 @@ class HyperSphere extends MyObject {
 										aAngleControls.removeCross();
 										vertices.length = 0;
 										if (settings.guiPoints) settings.bufferGeometry.userData.selectedTimeId = settings.guiPoints.timeId;
-										const oppositeVertice = position[oppositeVerticeId], crossSize = 0.05;
+										const crossSize = 0.05;
 										pushVertice([0, 0, crossSize]);
 										pushVertice([0, 0, -crossSize]);
 										pushVertice([-crossSize, -crossSize, 0]);
@@ -1971,7 +1976,7 @@ class HyperSphere extends MyObject {
 													if (aAngleControls.arc) {
 
 														aAngleControls.arc.classSettings.settings.object.geometry.angles[verticeId] = verticeAngles;
-														aAngleControls.arc.object().geometry.drawRange.type = this.bufferGeometry.drawRange.types.edges;//строка выше портит drawRange.type
+														aAngleControls.arc.object3D.geometry.drawRange.type = this.bufferGeometry.drawRange.types.edges;//строка выше портит drawRange.type
 														verticeId++;
 
 													} else arcAngles.push(verticeAngles);
@@ -1993,7 +1998,6 @@ class HyperSphere extends MyObject {
 				
 												},
 												distance = arcTo(oppositeVertice, vertice),
-//												distance = vertice.arcTo(oppositeVertice),
 												arcCount = distance * (aAngleControls.MAX_POINTS - 1) / π;
 											//Не получилось равномерно разделить дугу на части.
 											//Если начало и конец дуги расположены напротив друг друга на окружности или на сфере или на 4D hypersphere
@@ -2047,7 +2051,7 @@ class HyperSphere extends MyObject {
 													if (level &lt;= maxLevel) {
 
 														//если не делать это преобразование,
-														//то когда начало и конец дуги на ходятся на противоположных концах гиперсферы,
+														//то когда начало и конец дуги находятся на противоположных концах гиперсферы,
 														//средняя точка попадает в центр окружности или сферы или гиперсферы,
 														//а это находится вне гиперсферы.
 														//В этом случае все вершины дуги, кроме средней вершины, стягиваются к началу или концу дуги.
@@ -2070,10 +2074,17 @@ class HyperSphere extends MyObject {
 
 															if (aAngleControls.arc) {
 
-																const geometry = aAngleControls.arc.object().geometry;
+																const arc = aAngleControls.arc, geometry = arc.object3D.geometry;
 																if (geometry.attributes.position.count &lt; verticeId) console.error(sHyperSphere + '.aAngleControls.createArc: Invalid geometry.attributes.position.count = ' + geometry.attributes.position.count);
-																geometry.setDrawRange(0, verticeId * 2 - 1);//geometry.attributes.position.itemSize);//Непонятно почему draw count так вычисляется. Еще смотри class ND.constructor.create3DObject
-																console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object().geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object().geometry.drawRange.count + ' Vertices count = ' + verticeId);
+//																this.setEdgesRange();
+																if (arc.isDisplayEdges()) geometry.setDrawRange(0, verticeId * 2 - 1);//Кличество ребер
+																else {
+
+																	geometry.setDrawRange(0, verticeId);
+//																	arc.setVerticesRange(0, verticeId);
+
+																}
+																console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object3D.geometry.attributes.position.count + ' drawRange.count = ' + arc.object3D.geometry.drawRange.count + ' Vertices count = ' + verticeId);
 																geometry.attributes.position.needsUpdate = true;
 																geometry.attributes.color.needsUpdate = true;
 
@@ -2081,41 +2092,41 @@ class HyperSphere extends MyObject {
 
 																if (this.child) this.child.arc(aAngleControls, lang, arcAngles);
 																else {
-																	console.error(sHyperSphere + ': Непонятно когда сюда попадает')
-/*
+																	
+//																	console.error(sHyperSphere + ': Непонятно когда сюда попадает')
 																	const arcEdges = [];
 																	for (let i = 0; i &lt; (aAngleControls.MAX_POINTS - 1); i++) arcEdges.push([i, i + 1]);
 																	aAngleControls.arc = this.line({
-
+																	
 																		cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек гиперсферы
 																		//edges: false,
+																		randomArc: classSettings.randomArc,
 																		object: {
-
+																	
 																			name: lang.arc,
+																			color: 'magenta',
 																			geometry: {
-
+																	
 																				MAX_POINTS: aAngleControls.MAX_POINTS,
 																				angles: arcAngles,
 																				//opacity: 0.3,
 																				indices: {
-
+																	
 																					edges: arcEdges,
-
+																	
 																				}
-
+																	
 																			}
-
+																	
 																		},
-
+																	
 																	});
-*/																	
 
 																}
 
 															}
-															console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object().geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object().geometry.drawRange.count + ' Vertices count = ' + verticeId);
+															console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object3D.geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object3D.geometry.drawRange.count + ' Vertices count = ' + verticeId);
 															const distance = arcTo(position[aAngleControls.oppositeVerticeId], position[aAngleControls.verticeId]);
-//															const distance = position[aAngleControls.verticeId].arcTo(position[aAngleControls.oppositeVerticeId]);
 															if (classSettings.debug) {
 
 																let vertice, distanceDebug = 0;
@@ -2518,9 +2529,9 @@ class HyperSphere extends MyObject {
 				if ((typeof WebGPU != 'undefined') &amp;&amp; WebGPU.isSupportWebGPU()) {
 
 					const firstMatrix = [
-						[1, 2, 3, 4],
-						[5, 6, 7, 8]
-					],
+							[1, 2, 3, 4],
+							[5, 6, 7, 8]
+						],
 						secondMatrix = [
 							[1, 2],
 							[3, 4],
@@ -2681,9 +2692,7 @@ class HyperSphere extends MyObject {
 					})
 					const sectorValueName = _this.probabilityDensity.sectorValueName;
 					if (!sectorValueName) console.error(sHyperSphere + ': Invalid sectorValueName = ' + sectorValueName);
-					console.table(table, ['count', 'hb', 'ht', 'height',
-						sectorValueName,
-						'density']);
+					console.table(table, ['count', 'hb', 'ht', 'height', sectorValueName, 'density']);
 					console.log('');
 					classSettings.debug.logTimestamp('Push positions. ');
 
@@ -2701,12 +2710,11 @@ class HyperSphere extends MyObject {
 						case 'ru'://Russian language
 
 							lang.progressTitle = 'Создание ребер.&lt;br>Ребер у вершины %s из ' + this.verticeEdgesLength;
-
 							break;
 
 					}
 
-					if (classSettings.edges.creationMethod === undefined) classSettings.edges.creationMethod = edgesCreationMethod.Random;//.NearestVertice;
+					if (classSettings.edges.creationMethod === undefined) classSettings.edges.creationMethod = edgesCreationMethod.Random;
 					switch (classSettings.edges.creationMethod) {
 
 						case edgesCreationMethod.Random:
@@ -2755,7 +2763,7 @@ class HyperSphere extends MyObject {
 													this.setEdgesRange();
 												if (classSettings.overriddenProperties.project) classSettings.overriddenProperties.project();
 												boCompleted = true;
-												return;// true;
+												return;
 
 											}
 											verticeId = 0;
@@ -3301,7 +3309,7 @@ const _display = (element, boDisplay) => { element.style.display = boDisplay ===
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Feb 15 2025 10:20:46 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Mar 16 2025 09:03:35 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

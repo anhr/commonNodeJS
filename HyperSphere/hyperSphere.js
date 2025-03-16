@@ -1401,7 +1401,7 @@ class HyperSphere extends MyObject {
 		//Эту функцию надо содать до вызова this.pushEdges(); потому что когда используется MyPoints для вывода на холст вершин вместо ребер,
 		//вызывается this.project вместо this.pushEdges()
 		/**
-		 * Projects the hypersphere onto the canvas 
+		 * Projects the hypersphere onto the canvas.
 		 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
 		 * @param {object} [params={}] The following parameters are available
 		 * @param {object} [params.center={x: 0.0, y: 0.0, z: 0.0}] center of the hypersphere
@@ -1419,6 +1419,10 @@ class HyperSphere extends MyObject {
 			} else scene = _this.classSettings.projectParams.scene;
 
 			let nd, myPoints;
+			/**
+			 * Is the edges displaying on the canvas?
+			 * @returns True - yes. False - otherwise.
+			 */
 			this.isDisplayEdges = () => { return nd != undefined; }
 this.object = () => {
 
