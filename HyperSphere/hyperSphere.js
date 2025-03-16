@@ -1419,6 +1419,7 @@ class HyperSphere extends MyObject {
 			} else scene = _this.classSettings.projectParams.scene;
 
 			let nd, myPoints;
+			this.isDisplayEdges = () => { return nd != undefined; }
 this.object = () => {
 
 	console.warn(sHyperSphere + ': this.object() a was deprecated. Use this.object3D instead')
@@ -2041,10 +2042,17 @@ this.object = () => {
 
 															if (aAngleControls.arc) {
 
-																const geometry = aAngleControls.arc.object3D.geometry;
+																const arc = aAngleControls.arc, geometry = arc.object3D.geometry;
 																if (geometry.attributes.position.count < verticeId) console.error(sHyperSphere + '.aAngleControls.createArc: Invalid geometry.attributes.position.count = ' + geometry.attributes.position.count);
-																geometry.setDrawRange(0, verticeId * 2 - 1);//geometry.attributes.position.itemSize);//Непонятно почему draw count так вычисляется. Еще смотри class ND.constructor.create3DObject
-																console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object3D.geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object3D.geometry.drawRange.count + ' Vertices count = ' + verticeId);
+//																this.setEdgesRange();
+																if (arc.isDisplayEdges()) geometry.setDrawRange(0, verticeId * 2 - 1);//Кличество ребер
+																else {
+
+																	geometry.setDrawRange(0, verticeId);
+//																	arc.setVerticesRange(0, verticeId);
+
+																}
+																console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object3D.geometry.attributes.position.count + ' drawRange.count = ' + arc.object3D.geometry.drawRange.count + ' Vertices count = ' + verticeId);
 																geometry.attributes.position.needsUpdate = true;
 																geometry.attributes.color.needsUpdate = true;
 
