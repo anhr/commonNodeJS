@@ -26,17 +26,18 @@
 
 		import MyPoints from '../../myPoints/myPoints.js';
 		import ND from '../../nD/nD.js';
+		import HyperSphere from '../hyperSphere.js';
 		
 		const PI = Math.PI,
 			probabilityDistributions = [],//Случайные распределения вероятности длинны дуги зависящее от угла между вершинами дуги
 			range = (axis) => { return axis.max - axis.min; }, delta = (axis) => { return   axis.range / (axis.count - 1); },
+			x = { min: 0, max: 2 * PI, get range() { return range(this); }, count: 101, get delta() { return delta(this); }, name: 'Random Arc'     , a: (52   - 2.5) / (100 - 1),                                                                        get b() { return 2.5 - this.a                  }, },
+			y = { min: 0, max:    100, get range() { return range(this); }, count: 101, get delta() { return delta(this); }, name: 'Probability (%)', a: (50.5 - 1  ) / (100 - 1),                                                                        get b() { return 1   -    x.a                  }, },
+			z = { min: 0, max: 2 * PI, get range() { return range(this); }, count: 101, get delta() { return delta(this); }, name: 'Arc'            , a: (1.4  - 1  ) / (100 - 1), get c() { return (1 - this.a + (48 + this.a) / 100) / (1 - 1 / 100) }, get b() { return (-48 - this.a - this.c) / 100 }, },
+/*			
 			x = { min: - PI, max:  PI, get range() { return range(this); }, count:   102, get delta() { return delta(this); }, name: 'Random Arc'     , a: (52   - 2.5) / (100 - 1),                                                                        get b() { return 2.5 - this.a                  }, },
 			y = { min:    0, max: 100, get range() { return range(this); }, count:   101, get delta() { return delta(this); }, name: 'Probability (%)', a: (50.5 - 1  ) / (100 - 1),                                                                        get b() { return 1   -    x.a                  }, },
 			z = { min: - PI, max:  PI, get range() { return range(this); }, count:   101, get delta() { return delta(this); }, name: 'Arc'            , a: (1.4  - 1  ) / (100 - 1), get c() { return (1 - this.a + (48 + this.a) / 100) / (1 - 1 / 100) }, get b() { return (-48 - this.a - this.c) / 100 }, },
-/*			
-			x = { min:   0,  max: 1, get range() { return range(this); }, count: 10, get delta() { return   delta(this); }, name: 'Random Arc'     , },
-			y = { min:   0,  max: 1, get range() { return range(this); },            get delta() { return 0;             }, name: 'Probability (%)', },
-			z = { min: -100, max: 0, get range() { return range(this); }, count: 11, get delta() { return - delta(this); }, name: 'Arc'            , },
 */			
 			
 			scenePosition = new THREE.Vector3((x.min + x.max) / 2, (y.min + y.max) / 2, (z.min + z.max) / 2);//Позиция точки, вокруг которой вращается сцена когда пользователь двигает мышью при нажатой левой кнопке
@@ -90,6 +91,7 @@
 //				const arcValue = arc.max - arc.delta * arcId;
 				const arcValue = arc.min + arc.delta * arcId;
 				console.log(arc.name + ' = ' + arcId + ', arcValue = ' + arcValue);
+//if (arcId === 100) console.log('');
 //				const cosArc = Math.cos(arcValue), sinArc = Math.sin(arcValue);
 				for (let probabilityId = 0; probabilityId < (probability.count - 1); probabilityId++) {
 
@@ -119,10 +121,20 @@
 //					const randomArcValue = arcValue * (randomArc.min + Math.random() * randomArc.range) / PI,//
 //					const randomArcValue = arcValue * (- PI + Math.random() * 2 * PI) / PI,//
 //					const randomArcValue = arcValue * (Math.random() * 2 * PI - PI) / PI,//
-					const randomArcValue = arcValue * (Math.random() * 2 - 1),//
-//						dArc = randomArcValue - arcValue;//Отклонение случайной arc от истинной arc
-//						dArc = arcValue;//Отклонение случайной arc от истинной arc. Нет ошибок
+/*					
+					const dArc = arcValue * (Math.random() * 2 - 1);//Отклонение случайной arc от истинной arc
+//						randomArcValue = arcValue + dArc;//
+*/
+//					const randomAngle = (arcValue) => { return Math.PI * Math.sin(arcValue / 2) * Math.random() * 2; };
+//					const randomArcValue = PI * Math.sin(arcValue / 2) * Math.random() * 2,//
+					const randomArcValue = HyperSphere.randomAngle(arcValue),
 						dArc = randomArcValue;//Отклонение случайной arc от истинной arc
+/*					
+					const randomArcValue = arcValue * (Math.random() * 2 - 1),//
+						dArc = arcValue - randomArcValue;//Отклонение случайной arc от истинной arc
+*/						
+//						dArc = arcValue;
+//						dArc = randomArcValue;
 					//строим гисторгамму отклонения arcValue от randomArcValue
 					//Гисторамма делится на arc.count - 1 столбцов
 					for (let randomArcId = 0; randomArcId < (randomArc.count - 1); randomArcId++){
@@ -134,6 +146,7 @@
 							|| ((arcId === (arc.count - 1)) && (dArc === (begin + randomArc.delta)))//Это последяя arc и randomArcValue оказался на границе допустимого диапазона 
 //							|| (dArc === (begin + randomArc.delta))//randomArcValue оказался на границе допустимого диапазона 
 //							|| (dArc === randomArc.max)//randomArcValue оказался на границе допустимого диапазона 
+							|| ((begin === 0) && (Math.abs(dArc) < 3e-15))//При вычислении Math.sin(arcValue / 2) возникает погрешность, которая не позволяет отбражать пик при arcValue = 2*PI
 						) {
 
 							const vertice = probabilityDistribution.getPoint(randomArcId);
@@ -170,7 +183,8 @@
 //				position: new THREE.Vector3(52  ,  1  ,   1.4),//x.range = 100, y.range = 1  , z.range = 1
 //				position: new THREE.Vector3( 2.5,  1  , -48  ),//x.range = 1  , y.range = 1  , z.range = 100
 //				position: new THREE.Vector3(x.a * x.range + x.b, y.a * y.range + y.b, z.a * y.range + z.b * z.range + z.c),//x.range = PI, y.range = 100, z.range = PI
-				position: new THREE.Vector3( 0.8475,  51.132  , 2.07  ),//
+//				position: new THREE.Vector3( 0.8475,  51.132  , 2.07  ),//-PI > arg > PI
+				position: new THREE.Vector3( 2.587,  50.878  , 1.712  ),//0 > arg > 2 * PI
 				//scale: new THREE.Vector3( 1, 2, 1 ),
 				far: y.max + 50,
 				//fov: 50,
