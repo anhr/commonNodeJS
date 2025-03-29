@@ -2003,14 +2003,15 @@ this.object = () => {
 												if (this.dimension === 2) {
 
 													const arc = aAngleControls.arc;
-													for (let i = 0; i < 100; i++) {
+													for (let i = 0; i < 1000; i++) {
 														
 //														const distance = arcTo(oppositeVertice, vertice),
-														const arcValue = oppositeVertice.angles[0] - vertice.angles[0],
-//															distance = HyperSphere.randomAngle(arcValue),
-															dArc = HyperSphere.randomAngle(arcValue),
-//															angles = this.vertice2angles(this.angles2Vertice([vertice.angles[0] + distance]));//Приводим углы в допустимый диапазон
-															angles = this.vertice2angles(this.angles2Vertice([oppositeVertice.angles[0] + dArc]));//Приводим углы в допустимый диапазон
+														const arcValue = this.vertice2angles(this.angles2Vertice([oppositeVertice.angles[0] - vertice.angles[0]]))[0],//Приводим углы в допустимый диапазон
+															distance = HyperSphere.randomAngle(arcValue),
+															angles = this.vertice2angles(this.angles2Vertice([vertice.angles[0] + distance]));//Приводим углы в допустимый диапазон
+//															angles = [vertice.angles[0] + distance];
+//															dArc = HyperSphere.randomAngle(arcValue),
+//															angles = this.vertice2angles(this.angles2Vertice([oppositeVertice.angles[0] + dArc]));//Приводим углы в допустимый диапазон
 														if (arc) {
 
 															const arcAngles = arc.angles[i];
@@ -3371,9 +3372,10 @@ class RandomArc {
 			angles.push([x, Math.sin(x) + x]);
 			
 		}
-*/		
+*/
+/*		
 		//Normal distribution https://en.wikipedia.org/wiki/Normal_distribution
-		//1.575*(1/(0.2*Math.sqrt(2*Math.PI)))*Math.exp(-Math.pow(2*Math.PI*t - Math.PI,2)/(2*Math.pow(0.2,2)))
+		//(Math.PI/0.7978845608028654)*(1/(0.5*Math.sqrt(2*Math.PI)))*Math.exp(-Math.pow(2*Math.PI*t - Math.PI,2)/(2*Math.pow(0.5,2)))
 		const angles = [], anglesCount = 101, d = 2 * π / (anglesCount - 1),
 			μ = π, σ = 0.5;
 		for (let i = 0; i < anglesCount; i++) {
@@ -3382,25 +3384,51 @@ class RandomArc {
 			angles.push([(π/0.7978845608028654)*(1/(σ*Math.sqrt(2*π)))*Math.exp(-Math.pow(x - μ,2)/(2*σ*σ)), x]);
 			
 		}
-/*		
-		const angles = [
-				[0, 0],
-				[PI/130, 1 * PI/4],
-				[PI/90 , 2 * PI/4],
-				[PI/30 , 3 * PI/4],
-				
-				[PI    , 4 * PI/4],
-				
-				[PI    , 5 * PI/4],
-				[PI    , 6 * PI/4],
-				[PI    , 7 * PI/4],
-				[2*PI  , 8 * PI/4],
-			];
 */		
+		//Normal distribution https://en.wikipedia.org/wiki/Normal_distribution
+		//1 - (1/(0.5*Math.sqrt(2*Math.PI)))*Math.exp(-Math.pow(2*Math.PI*t - Math.PI,2)/(2*Math.pow(0.5,2)))
+/*		
+0.5*Math.sqrt(2*Math.PI)*Math.exp(-Math.pow(2*Math.PI*t-Math.PI+Math.PI/32,2)/(2*Math.pow(0.5,2)))-
+0.5*Math.sqrt(2*Math.PI)*Math.exp(-Math.pow(2*Math.PI*t-Math.PI-Math.PI/32,2)/(2*Math.pow(0.5,2)))+
+2*Math.PI*t-Math.PI
+*/
+/*		
+		const angles = [], anglesCount = 101, d = 2 * π / (anglesCount - 1),
+			μ = π, σ = 0.5;
+		for (let i = 0; i < anglesCount; i++) {
+
+//			const x = i * d;
+//			angles.push([1-(1/(σ*Math.sqrt(2*π)))*Math.exp(-Math.pow(x - μ,2)/(2*σ*σ)), x]);
+			
+			const t = i * d - π;
+//			angles.push([t, t]);
+			angles.push([
+				0.5*Math.sqrt(2*π)*Math.exp(-Math.pow(t+π/32,2)/(2*Math.pow(0.5,2)))-
+				0.5*Math.sqrt(2*π)*Math.exp(-Math.pow(t-π/32,2)/(2*Math.pow(0.5,2)))+
+				t,
+				t]);
+			
+		}
+*/		
+		/*
+		const angles = [
+				[-4*π/4, -4*π/4],
+				[-3*π/4, -3*π/4],
+				[-(2/1)*π/4, -2*π/4],
+				[-(1/1)*π/4, -1*π/4],
+				
+				[0*π/4, 0*π/4],
+				
+				[(1/1)*π/4, 1*π/4],
+				[(2/1)*π/4, 2*π/4],
+				[3*π/4, 3*π/4],
+				[4*π/4, 4*π/4],
+			];
+		*/
 		
 		// Интервал [0, 2π]
-		const start = 0,
-			end = 2 * π;
+		const start = -π,
+			end = π;
 /*		
 		// Количество строк
 		const numRows = 100,
@@ -3420,18 +3448,57 @@ class RandomArc {
 		this.randomAngle = (arcValue) => {
 
 			if ((arcValue < start) || (arcValue > end)) console.error(sHyperSphere + ': randomAngle. Invalid arcValue = ' + arcValue + ' range from ' + start + ' to ' + end);
+			/*
 			for (let i = 0; i < angles.length; i ++) {
 
 				const angle = angles[i];
 				if (angle[1] >= arcValue) {
 
-					arcValue = angle[0];
+//					arcValue = angle[0];
+//					arcValue = (angle[0] + angles[i + 1][0]) / 2;
+					if (i === 0) {
+						
+						arcValue = angle[0];
+						
+					} else {
+
+						const angleDelta = angles[i - 1],
+							a = (angle[0] - angleDelta[0]) / (angle[1] - angleDelta[1]),
+							b = angleDelta[0] - a * angleDelta[1],
+							x = arcValue,
+							y = a * x + b;
+						arcValue = y;
+//						arcValue = (c1 + c2) / 2;
+//						arcValue = (angle[0] + angles[i - 1][0]) / 2;
+
+					}
 					break;
 					
 				}
 				
 			}
-			return π * Math.sin(arcValue / 2) * Math.random() * 2;
+			*/
+/*			
+			const x = arcValue / 2.3,//При коэффициенте 3.35 случайный разброс дуги равен половине окружности когда дуга arcValue = π / 2
+				//Надеюсь при таком коэфициенте раздрос дуги будет занимать всю окружность при arcValue = π
+				//Для проверки открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/circle.html с четырьмя вершинами
+				//Выбрать вершину 0
+				//Выбрать 'Point local position'/'Advansed'/'Edges' = 0(0.1)
+				//Точки случайного разброса дуги розового цвета будут распеделены от вершины 0 = π / 4 = 0.7853981633974483 до вершины 2 = 5 * π / 4 = (5 * π / 4) - 2 * π = -2.3561944901923453
+				//
+				//При коэффициенте 2.3 случайный разброс дуги равен всей окружности когда дуга arcValue = π
+				
+				μ = 0,
+				σ = 0.4;//При σ = 0.4 сто процентов случайных дуг будет совпадать с дугой arcValue при arcValue = 0
+			return arcValue + 2*π*(Math.random() - 0.5)*(1-(1/(  σ*Math.sqrt(2*π      )))*Math.exp(-Math.pow(                 x +μ,2)/(2*Math.pow(  σ,2))))
+			//                                           1-(1/(0.4*Math.sqrt(2*Math.PI)))*Math.exp(-Math.pow(2*Math.PI*t-Math.PI+0,2)/(2*Math.pow(0.4,2)))
+*/
+			return 1/Math.random();
+//			return 2 * π * Math.sin(arcValue * (Math.random() - 0.5) * π / 2);
+//			return arcValue + 2 * π * (Math.random() - 0.5) * Math.sin(arcValue / 2);
+//			return arcValue + 2 * π * (1/(Math.random() - 0.5)) * Math.sin(arcValue / 2);
+			//(2*Math.PI*t-Math.PI)+2 * Math.PI * (Math.random() - 0.5) * Math.sin((2*Math.PI*t-Math.PI) / 2)
+//			return π * Math.sin(arcValue / 2) * Math.random() * 2;
 		
 		};
 		

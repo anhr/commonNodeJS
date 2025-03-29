@@ -31,14 +31,14 @@
 		const PI = Math.PI,
 			probabilityDistributions = [],//Случайные распределения вероятности длинны дуги зависящее от угла между вершинами дуги
 			range = (axis) => { return axis.max - axis.min; }, delta = (axis) => { return   axis.range / (axis.count - 1); },
+/*			
 			x = { min: 0, max: 2 * PI, get range() { return range(this); }, count: 101, get delta() { return delta(this); }, name: 'Random Arc'     , a: (52   - 2.5) / (100 - 1),                                                                        get b() { return 2.5 - this.a                  }, },
 			y = { min: 0, max:    100, get range() { return range(this); }, count: 101, get delta() { return delta(this); }, name: 'Probability (%)', a: (50.5 - 1  ) / (100 - 1),                                                                        get b() { return 1   -    x.a                  }, },
 			z = { min: 0, max: 2 * PI, get range() { return range(this); }, count: 101, get delta() { return delta(this); }, name: 'Arc'            , a: (1.4  - 1  ) / (100 - 1), get c() { return (1 - this.a + (48 + this.a) / 100) / (1 - 1 / 100) }, get b() { return (-48 - this.a - this.c) / 100 }, },
-/*			
-			x = { min: - PI, max:  PI, get range() { return range(this); }, count:   102, get delta() { return delta(this); }, name: 'Random Arc'     , a: (52   - 2.5) / (100 - 1),                                                                        get b() { return 2.5 - this.a                  }, },
-			y = { min:    0, max: 100, get range() { return range(this); }, count:   101, get delta() { return delta(this); }, name: 'Probability (%)', a: (50.5 - 1  ) / (100 - 1),                                                                        get b() { return 1   -    x.a                  }, },
-			z = { min: - PI, max:  PI, get range() { return range(this); }, count:   101, get delta() { return delta(this); }, name: 'Arc'            , a: (1.4  - 1  ) / (100 - 1), get c() { return (1 - this.a + (48 + this.a) / 100) / (1 - 1 / 100) }, get b() { return (-48 - this.a - this.c) / 100 }, },
 */			
+			x = { min: - 2 * PI, max: 2 * PI, get range() { return range(this); }, count:   102, get delta() { return delta(this); }, name: 'Random Arc'     , a: (52   - 2.5) / (100 - 1),                                                                        get b() { return 2.5 - this.a                  }, },
+			y = { min:        0, max:    100, get range() { return range(this); }, count:   101, get delta() { return delta(this); }, name: 'Probability (%)', a: (50.5 - 1  ) / (100 - 1),                                                                        get b() { return 1   -    x.a                  }, },
+			z = { min:     - PI, max:     PI, get range() { return range(this); }, count:   101, get delta() { return delta(this); }, name: 'Arc'            , a: (1.4  - 1  ) / (100 - 1), get c() { return (1 - this.a + (48 + this.a) / 100) / (1 - 1 / 100) }, get b() { return (-48 - this.a - this.c) / 100 }, },
 			
 			scenePosition = new THREE.Vector3((x.min + x.max) / 2, (y.min + y.max) / 2, (z.min + z.max) / 2);//Позиция точки, вокруг которой вращается сцена когда пользователь двигает мышью при нажатой левой кнопке
 
