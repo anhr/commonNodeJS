@@ -1569,6 +1569,7 @@ this.object = () => {
 							palette: options.palette,
 							setPalette: options.setPalette,
 							scales: options.scales,
+							point: { size: options.point.size, }
 							
 						},
 						{
