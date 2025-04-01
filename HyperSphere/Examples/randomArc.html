@@ -140,7 +140,7 @@
 					for (let randomArcId = 0; randomArcId < (randomArc.count - 1); randomArcId++){
 
 						const begin = randomArc.min + randomArc.delta * randomArcId;
-//if ((arcId === (arc.count - 1)) && (dArc === begin + randomArc.delta)) console.log('(arcId === (arc.count - 1)) && (dArc === begin + randomArc.delta)')
+						//console.log('dArc=' + dArc + ', begin=' + begin + ', begin + randomArc.delta=' + (begin + randomArc.delta));
 						if (
 							((dArc >= begin) && (dArc < (begin + randomArc.delta)))
 							|| ((arcId === (arc.count - 1)) && (dArc === (begin + randomArc.delta)))//Это последяя arc и randomArcValue оказался на границе допустимого диапазона 
@@ -158,7 +158,7 @@
 						}
 						
 					}
-					if (!isHistogramDetected) console.error('No histogram detected');
+					if (!isHistogramDetected) console.error('No histogram detected. dArc = ' + dArc);
 					
 				}
 				

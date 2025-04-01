@@ -3480,7 +3480,7 @@ class RandomArc {
 			}
 			*/
 /*			
-			const x = arcValue / 2.3,//При коэффициенте 3.35 случайный разброс дуги равен половине окружности когда дуга arcValue = π / 2
+			const //x = arcValue / 2.3,//При коэффициенте 3.35 случайный разброс дуги равен половине окружности когда дуга arcValue = π / 2
 				//Надеюсь при таком коэфициенте раздрос дуги будет занимать всю окружность при arcValue = π
 				//Для проверки открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/circle.html с четырьмя вершинами
 				//Выбрать вершину 0
@@ -3489,12 +3489,23 @@ class RandomArc {
 				//
 				//При коэффициенте 2.3 случайный разброс дуги равен всей окружности когда дуга arcValue = π
 				
-				μ = 0,
-				σ = 0.4;//При σ = 0.4 сто процентов случайных дуг будет совпадать с дугой arcValue при arcValue = 0
-			return arcValue + 2*π*(Math.random() - 0.5)*(1-(1/(  σ*Math.sqrt(2*π      )))*Math.exp(-Math.pow(                 x +μ,2)/(2*Math.pow(  σ,2))))
+				μ = 0.1,
+				σ = 0.2,//При σ = 0.4 сто процентов случайных дуг будет совпадать с дугой arcValue при arcValue = 0
+				sqrt = Math.sqrt, exp = Math.exp, pow = Math.pow, pi = Math.PI,
+				x = Math.random() - 0.5;
+			return arcValue + 1/(  σ*sqrt(2*pi))*exp((-1/2)*pow((x-μ)/  σ,2) )-1/(0.5*sqrt(2*pi))*exp((-1/2)*pow((x+μ)/σ,   2));
+			//                1/(0.5*sqrt(2*pi))*exp((-1/2)*   ((x-1)/0.5)^2))-1/(0.5*sqrt(2*pi))*exp((-1/2)*   ((x+1)/0.5)^2)
+//			return arcValue + 2*π*(Math.random() - 0.5)*(1-(1/(  σ*Math.sqrt(2*π      )))*Math.exp(-Math.pow(                 x +μ,2)/(2*Math.pow(  σ,2))))
 			//                                           1-(1/(0.4*Math.sqrt(2*Math.PI)))*Math.exp(-Math.pow(2*Math.PI*t-Math.PI+0,2)/(2*Math.pow(0.4,2)))
 */
-			return 1/Math.random();
+//			return 20*π*Math.pow(0.5*(Math.random() - 0.5),3)
+//			return arcValue + 2 * arcValue * (Math.random() - 0.5);
+			return arcValue + (π/4) * arcValue * arcValue * (Math.random() - 0.5);
+//			return arcValue + Math.abs(arcValue * (0.01 - 0.1)/π + 0.1) * Math.sin(arcValue / 2)/(Math.random() - 0.5);
+//			return arcValue + 0.1 * Math.sin(arcValue / 2)/(Math.random() - 0.5);
+//			return arcValue + 0.01 * Math.cos(arcValue / 2)/(Math.random() - 0.5) + 2 * π * Math.sin(arcValue / 2) * (Math.random() - 0.5);
+//			return 1/(Math.random() - 0.5);
+//			return 2 * π * Math.cos(arcValue / 2);
 //			return 2 * π * Math.sin(arcValue * (Math.random() - 0.5) * π / 2);
 //			return arcValue + 2 * π * (Math.random() - 0.5) * Math.sin(arcValue / 2);
 //			return arcValue + 2 * π * (1/(Math.random() - 0.5)) * Math.sin(arcValue / 2);
