@@ -3500,7 +3500,7 @@ class RandomArc {
 */
 //			return 20*π*Math.pow(0.5*(Math.random() - 0.5),3)
 //			return arcValue + 2 * arcValue * (Math.random() - 0.5);
-			return arcValue + (π/4) * arcValue * arcValue * (Math.random() - 0.5);
+			return arcValue + (2/π) * arcValue * arcValue * (Math.random() - 0.5);
 //			return arcValue + Math.abs(arcValue * (0.01 - 0.1)/π + 0.1) * Math.sin(arcValue / 2)/(Math.random() - 0.5);
 //			return arcValue + 0.1 * Math.sin(arcValue / 2)/(Math.random() - 0.5);
 //			return arcValue + 0.01 * Math.cos(arcValue / 2)/(Math.random() - 0.5) + 2 * π * Math.sin(arcValue / 2) * (Math.random() - 0.5);
