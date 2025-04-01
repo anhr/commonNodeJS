@@ -3480,6 +3480,7 @@ class RandomArc {
 			}
 			*/
 /*			
+			//Normal distribution https://en.wikipedia.org/wiki/Normal_distribution https://skillbox.ru/media/code/o-normalnom-raspredelenii-prostymi-slovami/
 			const //x = arcValue / 2.3,//При коэффициенте 3.35 случайный разброс дуги равен половине окружности когда дуга arcValue = π / 2
 				//Надеюсь при таком коэфициенте раздрос дуги будет занимать всю окружность при arcValue = π
 				//Для проверки открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/circle.html с четырьмя вершинами
