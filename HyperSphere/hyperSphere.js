@@ -445,6 +445,14 @@ class HyperSphere extends MyObject {
 									for (let axisId = 0; axisId < length; axisId++) item(verticeAngles[axisId] != undefined ? verticeAngles[axisId] : 0, axisId);
 
 								}
+								case 'returnSub': return (angles) => {
+
+									if (verticeAngles.length != angles.length) console.error('sHyperSphere: settings.object.geometry.angles sub failed! Invalid angles.length = ' + angles.length);
+									const res = [];
+									verticeAngles.forEach((verticeAngle, Id) => res.push(verticeAngle - angles[Id]));
+									return res;
+									
+								}
 
 							}
 							return verticeAngles[name];
@@ -1045,6 +1053,7 @@ class HyperSphere extends MyObject {
 				//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
 				const n = this.dimension, φ = [],//angles,
 					x = [], cos = Math.cos, sin = Math.sin;
+				if (angles.length != (n - 1)) console.error(sHyperSphere + ': getPoint. angles.length != ' + (n - 1));
 				//нужно для того, чтобы начало координат широты находилось на экваторе
 				for (let i = 0; i < angles.length; i++) {
 	
@@ -1997,22 +2006,32 @@ this.object = () => {
 												};
 											if (classSettings.randomArc) {
 
-/*												
-												const verticeAngles = vertice.angles,
-													oppositeVerticeAngles = this.vertice2angles(oppositeVertice.angles);
-*/													
-												if (this.dimension === 2) {
+												const arcVerticeAngles = this.normalizeVerticeAngles(oppositeVertice.angles.returnSub(vertice.angles)),//Приводим разность углов в допустимый диапазон
+													arc = aAngleControls.arc;
+												for (let angleId = 0; angleId < vertice.angles.length; angleId++) {
 
-													const arc = aAngleControls.arc;
+//													const arcValue = this.vertice2angles(this.angles2Vertice([oppositeVertice.angles[angleId] - vertice.angles[angleId]]))[angleId],//Приводим углы в допустимый диапазон
+/*													
+													const arcVerticeAngles = [];
+													for (let j = 0; j < vertice.angles.length; j++) arcVerticeAngles.push(j === angleId ? oppositeVertice.angles[angleId] - vertice.angles[angleId] : 0);
+*/													
+//													const arcValue = this.normalizeVerticeAngles(arcVerticeAngles)[angleId];//Приводим углы в допустимый диапазон
+													const arcValue = arcVerticeAngles[angleId];
+														
 													for (let i = 0; i < 1000; i++) {
 														
-//														const distance = arcTo(oppositeVertice, vertice),
-														const arcValue = this.vertice2angles(this.angles2Vertice([oppositeVertice.angles[0] - vertice.angles[0]]))[0],//Приводим углы в допустимый диапазон
-															distance = HyperSphere.randomAngle(arcValue),
-															angles = this.vertice2angles(this.angles2Vertice([vertice.angles[0] + distance]));//Приводим углы в допустимый диапазон
-//															angles = [vertice.angles[0] + distance];
+//														const arcValue = this.normalizeVerticeAngles([oppositeVertice.angles[angleId] - vertice.angles[angleId]])[angleId],//Приводим углы в допустимый диапазон
+														const distance = HyperSphere.randomAngle(arcValue);
+//															angles = this.vertice2angles(this.angles2Vertice([vertice.angles[angleId] + distance]));//Приводим углы в допустимый диапазон
+/*														
+														arcVerticeAngles.length = 0;
+														for (let j = 0; j < vertice.angles.length; j++) arcVerticeAngles.push(j === angleId ? oppositeVertice.angles[angleId] - vertice.angles[angleId] : 0);
+														const angles = this.normalizeVerticeAngles(arcVerticeAngles);//Приводим углы в допустимый диапазон
+*/														
+														const angles = this.normalizeVerticeAngles([vertice.angles[angleId] + distance]);//Приводим углы в допустимый диапазон
+//															angles = [vertice.angles[angleId] + distance];
 //															dArc = HyperSphere.randomAngle(arcValue),
-//															angles = this.vertice2angles(this.angles2Vertice([oppositeVertice.angles[0] + dArc]));//Приводим углы в допустимый диапазон
+//															angles = this.vertice2angles(this.angles2Vertice([oppositeVertice.angles[angleId] + dArc]));//Приводим углы в допустимый диапазон
 														if (arc) {
 
 															const arcAngles = arc.angles[i];
@@ -2052,7 +2071,7 @@ this.object = () => {
 														});
 													
 												}
-												else console.error(sHyperSphere + ': aAngleControls.createArc. this.dimension = ' + this.dimension + ' Under constraction')
+//												else console.error(sHyperSphere + ': aAngleControls.createArc. this.dimension = ' + this.dimension + ' Under constraction')
 												return;
 												
 											}
