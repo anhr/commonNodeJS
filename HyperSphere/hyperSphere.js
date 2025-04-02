@@ -2008,30 +2008,20 @@ this.object = () => {
 
 												const arcVerticeAngles = this.normalizeVerticeAngles(oppositeVertice.angles.returnSub(vertice.angles)),//Приводим разность углов в допустимый диапазон
 													arc = aAngleControls.arc;
-												for (let angleId = 0; angleId < vertice.angles.length; angleId++) {
+//												for (let angleId = 0; angleId < vertice.angles.length; angleId++)
+												{
 
-//													const arcValue = this.vertice2angles(this.angles2Vertice([oppositeVertice.angles[angleId] - vertice.angles[angleId]]))[angleId],//Приводим углы в допустимый диапазон
-/*													
-													const arcVerticeAngles = [];
-													for (let j = 0; j < vertice.angles.length; j++) arcVerticeAngles.push(j === angleId ? oppositeVertice.angles[angleId] - vertice.angles[angleId] : 0);
-*/													
-//													const arcValue = this.normalizeVerticeAngles(arcVerticeAngles)[angleId];//Приводим углы в допустимый диапазон
-													const arcValue = arcVerticeAngles[angleId];
+//													const arcValue = arcVerticeAngles[angleId];
 														
 													for (let i = 0; i < 1000; i++) {
-														
-//														const arcValue = this.normalizeVerticeAngles([oppositeVertice.angles[angleId] - vertice.angles[angleId]])[angleId],//Приводим углы в допустимый диапазон
-														const distance = HyperSphere.randomAngle(arcValue);
-//															angles = this.vertice2angles(this.angles2Vertice([vertice.angles[angleId] + distance]));//Приводим углы в допустимый диапазон
+
+														const arcVerticeAngle = [];
+														arcVerticeAngles.forEach((arcValue, angleId) => arcVerticeAngle.push(vertice.angles[angleId] + HyperSphere.randomAngle(arcValue)));
+														const angles = this.normalizeVerticeAngles(arcVerticeAngle);//Приводим углы в допустимый диапазон
 /*														
-														arcVerticeAngles.length = 0;
-														for (let j = 0; j < vertice.angles.length; j++) arcVerticeAngles.push(j === angleId ? oppositeVertice.angles[angleId] - vertice.angles[angleId] : 0);
-														const angles = this.normalizeVerticeAngles(arcVerticeAngles);//Приводим углы в допустимый диапазон
-*/														
+														const distance = HyperSphere.randomAngle(arcValue);
 														const angles = this.normalizeVerticeAngles([vertice.angles[angleId] + distance]);//Приводим углы в допустимый диапазон
-//															angles = [vertice.angles[angleId] + distance];
-//															dArc = HyperSphere.randomAngle(arcValue),
-//															angles = this.vertice2angles(this.angles2Vertice([oppositeVertice.angles[angleId] + dArc]));//Приводим углы в допустимый диапазон
+*/														
 														if (arc) {
 
 															const arcAngles = arc.angles[i];
