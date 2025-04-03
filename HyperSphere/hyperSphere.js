@@ -560,7 +560,12 @@ class HyperSphere extends MyObject {
 					aAngles[i] = value;
 //					const object = _this.object();
 					const object = _this.object3D;
-					if (object) object.userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
+					if (object) {
+						
+						object.userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
+						_this.bufferGeometry.attributes.position.needsUpdate = true;
+
+					}
 
 				}
 				else aAngles[name] = value;
@@ -1876,7 +1881,7 @@ this.object = () => {
 								}
 								createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
 
-								aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player.getTime(), }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).onChange((verticeRadius) => {
+								aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player ? options.player.getTime() : 0, }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).onChange((verticeRadius) => {
 
 									if (readOnly.isReadOnlyController(aAngleControls.cRadius)) return;
 									console.log('verticeRadius = ' + verticeRadius);
