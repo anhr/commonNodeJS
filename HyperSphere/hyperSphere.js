@@ -577,7 +577,7 @@ class HyperSphere extends MyObject {
 
 					switch (name) {
 
-						case 'id': return timeId != undefined ? timeId : classSettings.settings.options.player.getTimeId();
+						case 'id': return timeId != undefined ? timeId : classSettings.settings.options.player ? classSettings.settings.options.player.getTimeId() : 0;
 						case 't': return classSettings.settings.options.player.getTime(timeId);
 						case 'r': return playerProxy.t * classSettings.r;
 							
