@@ -2999,7 +2999,9 @@ this.object = () => {
 				if (id && (id === 'fOptions')) fParent = folder;
 
 			});
-			const fHyperSphere = fParent.addFolder(this.name(getLanguageCode)), dat = three.dat;
+			const name = this.name(getLanguageCode);
+			if (fParent.__folders[name]) return;//на холсте несколько гиперсфер
+			const fHyperSphere = fParent.addFolder(name), dat = three.dat;
 			const addSettingsFolder = classSettings.overriddenProperties.addSettingsFolder;
 			if (addSettingsFolder) addSettingsFolder(fParent, getLanguageCode);
 
