@@ -92,6 +92,10 @@ class HyperSphere extends MyObject {
 	 * parameter <b>t</b> current time.
 	 * Also see <a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">onSelectScene</a> type definition.
 	 * </pre>
+	 * @param {Function} [classSettings.onAddControllers] Сallback function that is called when the user has selected a hypersphere. You can add new controllers to the 'Advansed' folder.
+	 * <pre>
+	 * parameter <b>fAdvansed</b> 'Advansed' folder.
+	 * </pre>
 	 * @param {object} [classSettings.settings] The following settings are available
 	 * @param {object} [classSettings.settings.object] HyperSphere object.
 	 * @param {String} [classSettings.settings.object.name] name of hypersphere.

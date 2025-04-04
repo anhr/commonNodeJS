@@ -120,6 +120,10 @@ class HyperSphere extends MyObject {
 	 * parameter &lt;b>t&lt;/b> current time.
 	 * Also see &lt;a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">onSelectScene&lt;/a> type definition.
 	 * &lt;/pre>
+	 * @param {Function} [classSettings.onAddControllers] Сallback function that is called when the user has selected a hypersphere. You can add new controllers to the 'Advansed' folder.
+	 * &lt;pre>
+	 * parameter &lt;b>fAdvansed&lt;/b> 'Advansed' folder.
+	 * &lt;/pre>
 	 * @param {object} [classSettings.settings] The following settings are available
 	 * @param {object} [classSettings.settings.object] HyperSphere object.
 	 * @param {String} [classSettings.settings.object.name] name of hypersphere.
@@ -473,6 +477,14 @@ class HyperSphere extends MyObject {
 									for (let axisId = 0; axisId &lt; length; axisId++) item(verticeAngles[axisId] != undefined ? verticeAngles[axisId] : 0, axisId);
 
 								}
+								case 'returnSub': return (angles) => {
+
+									if (verticeAngles.length != angles.length) console.error('sHyperSphere: settings.object.geometry.angles sub failed! Invalid angles.length = ' + angles.length);
+									const res = [];
+									verticeAngles.forEach((verticeAngle, Id) => res.push(verticeAngle - angles[Id]));
+									return res;
+									
+								}
 
 							}
 							return verticeAngles[name];
@@ -580,7 +592,12 @@ class HyperSphere extends MyObject {
 					aAngles[i] = value;
 //					const object = _this.object();
 					const object = _this.object3D;
-					if (object) object.userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
+					if (object) {
+						
+						object.userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
+						_this.bufferGeometry.attributes.position.needsUpdate = true;
+
+					}
 
 				}
 				else aAngles[name] = value;
@@ -597,7 +614,7 @@ class HyperSphere extends MyObject {
 
 					switch (name) {
 
-						case 'id': return timeId != undefined ? timeId : classSettings.settings.options.player.getTimeId();
+						case 'id': return timeId != undefined ? timeId : classSettings.settings.options.player ? classSettings.settings.options.player.getTimeId() : 0;
 						case 't': return classSettings.settings.options.player.getTime(timeId);
 						case 'r': return playerProxy.t * classSettings.r;
 							
@@ -1073,6 +1090,7 @@ class HyperSphere extends MyObject {
 				//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
 				const n = this.dimension, φ = [],//angles,
 					x = [], cos = Math.cos, sin = Math.sin;
+				if (angles.length != (n - 1)) console.error(sHyperSphere + ': getPoint. angles.length != ' + (n - 1));
 				//нужно для того, чтобы начало координат широты находилось на экваторе
 				for (let i = 0; i &lt; angles.length; i++) {
 	
@@ -1583,6 +1601,8 @@ this.object = () => {
 				this.line = (settings, r = 1) => {
 
 					const options = classSettings.settings.options;
+					settings.object.geometry.indices ||= {};
+					settings.object.geometry.indices.edges ||= false;
 					return this.newHyperSphere(
 						//Если не делать копию classSettings.settings.options, то изменится classSettings.settings.options.scales.w.min и max,
 						//что приведет к неправильному цвету вершины в universe при ее ручном изменении
@@ -1595,6 +1615,7 @@ this.object = () => {
 							palette: options.palette,
 							setPalette: options.setPalette,
 							scales: options.scales,
+							point: { size: options.point.size, }
 							
 						},
 						{
@@ -1892,7 +1913,7 @@ this.object = () => {
 								}
 								createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
 
-								aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player.getTime(), }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).onChange((verticeRadius) => {
+								aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player ? options.player.getTime() : 0, }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).onChange((verticeRadius) => {
 
 									if (readOnly.isReadOnlyController(aAngleControls.cRadius)) return;
 									console.log('verticeRadius = ' + verticeRadius);
@@ -1932,7 +1953,7 @@ this.object = () => {
 										const sChangeVerticeEdge = ': Change vertice edge. ',
 											edge = edges[edgeId],
 											oppositeVerticeId = edge[0] === aAngleControls.verticeId ? edge[1] : edge[1] === aAngleControls.verticeId ? edge[0] : console.error(sHyperSphere + sChangeVerticeEdge + 'Invalid edge vertices: ' + edge),
-											oppositeVertice = position[oppositeVerticeId], 
+											oppositeVertice = position[oppositeVerticeId],
 											oppositeVerticeAngles = oppositeVertice.angles;
 										if (oppositeVerticeAngles.length != aEdgeAngleControls.length) console.error(sHyperSphere + sChangeVerticeEdge + 'Invalid opposite vertice angles length = ' + oppositeVerticeAngles.length);
 										aEdgeAngleControls.verticeId = oppositeVerticeId;
@@ -1987,6 +2008,11 @@ this.object = () => {
 												d = π / arcVerticesCount,
 												cd = 1 / Math.sin(d),//Поправка для координат вершин что бы они равномерно располагались по дуге
 												vertice = position[aAngleControls.verticeId],// oppositeVertice = position[aAngleControls.oppositeVerticeId],
+/*													
+												const randomAngle = (arcValue) => { return arcValue * (Math.random() * 2 - 1); }
+												let dArc = randomAngle(arcValue), randomArcValue = arcValue + dArc;
+*/														
+//												randomAngle = (arcValue) => { return Math.PI * Math.sin(arcValue / 2) * Math.random() * 2; },
 												//дуга между вершинами
 												arcTo = (verticeTo, vertice) => {
 				
@@ -1995,10 +2021,88 @@ this.object = () => {
 													const a = vertice, b = verticeTo, R = 1, acos = Math.acos;
 													let ab = 0;//dot product
 													for (let i = 0; i &lt; a.length; i++) ab += a[i] * b[i];
-													return R * acos(ab / (R * R))
+//													return R * acos(ab / (R * R));
+													const arcValue = R * acos(ab / (R * R));
+													if (!classSettings.randomArc) return arcValue;
+													let randomArcValue = randomAngle(arcValue);
+													/*
+													if (classSettings.debug) {
+
+														console.log(sHyperSphere + ': arcTo. arcValue = ' + arcValue);
+														for (let i = 0; i &lt; 10; i++) {
+															
+															randomArcValue = randomAngle(arcValue);
+															console.log('  randomArcValue = ' + randomArcValue);
+
+														}
+
+													}
+													*/
+													return randomArcValue;
 				
-												},
-												distance = arcTo(oppositeVertice, vertice),
+												};
+											if (classSettings.randomArc) {
+
+												const arcVerticeAngles = this.normalizeVerticeAngles(oppositeVertice.angles.returnSub(vertice.angles)),//Приводим разность углов в допустимый диапазон
+													arc = aAngleControls.arc;
+//												for (let angleId = 0; angleId &lt; vertice.angles.length; angleId++)
+												{
+
+//													const arcValue = arcVerticeAngles[angleId];
+														
+													for (let i = 0; i &lt; 1000; i++) {
+
+														const arcVerticeAngle = [];
+														arcVerticeAngles.forEach((arcValue, angleId) => arcVerticeAngle.push(vertice.angles[angleId] + HyperSphere.randomAngle(arcValue)));
+														const angles = this.normalizeVerticeAngles(arcVerticeAngle);//Приводим углы в допустимый диапазон
+/*														
+														const distance = HyperSphere.randomAngle(arcValue);
+														const angles = this.normalizeVerticeAngles([vertice.angles[angleId] + distance]);//Приводим углы в допустимый диапазон
+*/														
+														if (arc) {
+
+															const arcAngles = arc.angles[i];
+															if (classSettings.debug &amp;&amp; (arcAngles.length != angles.length)) console.error(sHyperSphere + ': aAngleControls.createArc. Invalid angles.length = ' + angles.length);
+															angles.forEach((angle, angleId) => { arcAngles[angleId] = angle; });
+															
+														}
+														else arcAngles.push(angles);
+
+													}
+													if (!arc) aAngleControls.arc = this.line({
+													
+															cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек гиперсферы
+															//edges: false,
+															randomArc: classSettings.randomArc,
+															object: {
+														
+																name: lang.arc,
+																color: 'magenta',
+																geometry: {
+														
+																	//MAX_POINTS: aAngleControls.MAX_POINTS,
+																	angles: arcAngles,
+																	//opacity: 0.3,
+	/*																
+																	indices: {
+														
+																		edges: arcEdges,
+														
+																	}
+	*/																
+														
+																}
+														
+															},
+														
+														});
+													
+												}
+//												else console.error(sHyperSphere + ': aAngleControls.createArc. this.dimension = ' + this.dimension + ' Under constraction')
+												return;
+												
+											}
+											const distance = arcTo(oppositeVertice, vertice),
 												arcCount = distance * (aAngleControls.MAX_POINTS - 1) / π;
 											//Не получилось равномерно разделить дугу на части.
 											//Если начало и конец дуги расположены напротив друг друга на окружности или на сфере или на 4D hypersphere
@@ -2016,6 +2120,15 @@ this.object = () => {
 												maxLevel++;
 
 											}
+/*											
+											const verticeAngles = this.vertice2angles(vertice);
+											if (this.dimension === 2) {
+
+												oppositeVertice = this.angles2Vertice([verticeAngles[0] + distance]);
+												
+											}
+											else console.error(sHyperSphere + ': aAngleControls.createArc. this.dimension = ' + this.dimension + ' Under constraction')
+*/											
 											let level = 1;//текущий уровень деления дуги
 											copyVertice(vertice);
 											let i = 0;
@@ -2085,7 +2198,7 @@ this.object = () => {
 //																	arc.setVerticesRange(0, verticeId);
 
 																}
-																console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object3D.geometry.attributes.position.count + ' drawRange.count = ' + arc.object3D.geometry.drawRange.count + ' Vertices count = ' + verticeId);
+																//if (classSettings.debug) console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object3D.geometry.attributes.position.count + ' drawRange.count = ' + arc.object3D.geometry.drawRange.count + ' Vertices count = ' + verticeId);
 																geometry.attributes.position.needsUpdate = true;
 																geometry.attributes.color.needsUpdate = true;
 
@@ -2126,10 +2239,11 @@ this.object = () => {
 																}
 
 															}
-															console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object3D.geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object3D.geometry.drawRange.count + ' Vertices count = ' + verticeId);
-															const distance = arcTo(position[aAngleControls.oppositeVerticeId], position[aAngleControls.verticeId]);
+															/*
 															if (classSettings.debug) {
-
+																
+																console.log(sHyperSphere + ': createArc. maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object3D.geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object3D.geometry.drawRange.count + ' Vertices count = ' + verticeId);
+//																const distance = arcTo(position[aAngleControls.oppositeVerticeId], position[aAngleControls.verticeId]);
 																let vertice, distanceDebug = 0;
 																const position = aAngleControls.arc.classSettings.settings.object.geometry.position;
 																for (let i = 0; i &lt; (verticeId === 0 ? position.length : verticeId); i++) {
@@ -2140,9 +2254,10 @@ this.object = () => {
 																	vertice = verticeCur;
 
 																}
-																console.log('distance = ' + distance + ' distanceDebug = ' + distanceDebug + ' error = ' + (distanceDebug - distance) + ' arcAngles.length = ' + arcAngles.length);
+																console.log(sHyperSphere + ': createArc. distance = ' + distance + ' distanceDebug = ' + distanceDebug + ' error = ' + (distanceDebug - distance) + ' arcAngles.length = ' + arcAngles.length);
 
 															}
+															*/
 															progressBar.remove();
 															aAngleControls.progressBar = undefined;
 
@@ -2352,6 +2467,8 @@ this.object = () => {
 								});
 								dat.controllerNameAndTitle(aAngleControls.cPlanes, lang.planes, lang.planesTitle);
 
+								if (classSettings.onAddControllers) classSettings.onAddControllers(fAdvansed);
+									
 								return fAdvansed;
 
 							},
@@ -3291,6 +3408,167 @@ HyperSphere.edgesCreationMethod = edgesCreationMethod;
  * */
 HyperSphere.ND = ND;
 
+class RandomArc {
+
+	constructor() {
+
+/*		
+		const PI = Math.PI;
+		const angles = [], anglesCount = 100, d = 2 * PI / (anglesCount - 1);
+		for (let i = 0; i &lt; anglesCount; i++) {
+
+			const x = i * d;
+			angles.push([x, Math.sin(x) + x]);
+			
+		}
+*/
+/*		
+		//Normal distribution https://en.wikipedia.org/wiki/Normal_distribution
+		//(Math.PI/0.7978845608028654)*(1/(0.5*Math.sqrt(2*Math.PI)))*Math.exp(-Math.pow(2*Math.PI*t - Math.PI,2)/(2*Math.pow(0.5,2)))
+		const angles = [], anglesCount = 101, d = 2 * π / (anglesCount - 1),
+			μ = π, σ = 0.5;
+		for (let i = 0; i &lt; anglesCount; i++) {
+
+			const x = i * d;
+			angles.push([(π/0.7978845608028654)*(1/(σ*Math.sqrt(2*π)))*Math.exp(-Math.pow(x - μ,2)/(2*σ*σ)), x]);
+			
+		}
+*/		
+		//Normal distribution https://en.wikipedia.org/wiki/Normal_distribution
+		//1 - (1/(0.5*Math.sqrt(2*Math.PI)))*Math.exp(-Math.pow(2*Math.PI*t - Math.PI,2)/(2*Math.pow(0.5,2)))
+/*		
+0.5*Math.sqrt(2*Math.PI)*Math.exp(-Math.pow(2*Math.PI*t-Math.PI+Math.PI/32,2)/(2*Math.pow(0.5,2)))-
+0.5*Math.sqrt(2*Math.PI)*Math.exp(-Math.pow(2*Math.PI*t-Math.PI-Math.PI/32,2)/(2*Math.pow(0.5,2)))+
+2*Math.PI*t-Math.PI
+*/
+/*		
+		const angles = [], anglesCount = 101, d = 2 * π / (anglesCount - 1),
+			μ = π, σ = 0.5;
+		for (let i = 0; i &lt; anglesCount; i++) {
+
+//			const x = i * d;
+//			angles.push([1-(1/(σ*Math.sqrt(2*π)))*Math.exp(-Math.pow(x - μ,2)/(2*σ*σ)), x]);
+			
+			const t = i * d - π;
+//			angles.push([t, t]);
+			angles.push([
+				0.5*Math.sqrt(2*π)*Math.exp(-Math.pow(t+π/32,2)/(2*Math.pow(0.5,2)))-
+				0.5*Math.sqrt(2*π)*Math.exp(-Math.pow(t-π/32,2)/(2*Math.pow(0.5,2)))+
+				t,
+				t]);
+			
+		}
+*/		
+		/*
+		const angles = [
+				[-4*π/4, -4*π/4],
+				[-3*π/4, -3*π/4],
+				[-(2/1)*π/4, -2*π/4],
+				[-(1/1)*π/4, -1*π/4],
+				
+				[0*π/4, 0*π/4],
+				
+				[(1/1)*π/4, 1*π/4],
+				[(2/1)*π/4, 2*π/4],
+				[3*π/4, 3*π/4],
+				[4*π/4, 4*π/4],
+			];
+		*/
+		
+		// Интервал [0, 2π]
+		const start = -π,
+			end = π;
+/*		
+		// Количество строк
+		const numRows = 100,
+		
+		// Шаг между значениями x
+			step = (end - start) / (numRows - 1); // Учитываем включение конечной точки
+		
+		// Вычисляем и выводим значения
+		for (let i = 0; i &lt; numRows; i++) {
+			
+		    const x = start + i * step; // Вычисляем x
+		    const y = Math.sin(x) + x;    // Вычисляем y
+			//angles.push([x, y]);
+			
+		}
+*/		
+		this.randomAngle = (arcValue) => {
+
+			if ((arcValue &lt; start) || (arcValue > end)) console.error(sHyperSphere + ': randomAngle. Invalid arcValue = ' + arcValue + ' range from ' + start + ' to ' + end);
+			/*
+			for (let i = 0; i &lt; angles.length; i ++) {
+
+				const angle = angles[i];
+				if (angle[1] >= arcValue) {
+
+//					arcValue = angle[0];
+//					arcValue = (angle[0] + angles[i + 1][0]) / 2;
+					if (i === 0) {
+						
+						arcValue = angle[0];
+						
+					} else {
+
+						const angleDelta = angles[i - 1],
+							a = (angle[0] - angleDelta[0]) / (angle[1] - angleDelta[1]),
+							b = angleDelta[0] - a * angleDelta[1],
+							x = arcValue,
+							y = a * x + b;
+						arcValue = y;
+//						arcValue = (c1 + c2) / 2;
+//						arcValue = (angle[0] + angles[i - 1][0]) / 2;
+
+					}
+					break;
+					
+				}
+				
+			}
+			*/
+/*			
+			//Normal distribution https://en.wikipedia.org/wiki/Normal_distribution https://skillbox.ru/media/code/o-normalnom-raspredelenii-prostymi-slovami/
+			const //x = arcValue / 2.3,//При коэффициенте 3.35 случайный разброс дуги равен половине окружности когда дуга arcValue = π / 2
+				//Надеюсь при таком коэфициенте раздрос дуги будет занимать всю окружность при arcValue = π
+				//Для проверки открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/circle.html с четырьмя вершинами
+				//Выбрать вершину 0
+				//Выбрать 'Point local position'/'Advansed'/'Edges' = 0(0.1)
+				//Точки случайного разброса дуги розового цвета будут распеделены от вершины 0 = π / 4 = 0.7853981633974483 до вершины 2 = 5 * π / 4 = (5 * π / 4) - 2 * π = -2.3561944901923453
+				//
+				//При коэффициенте 2.3 случайный разброс дуги равен всей окружности когда дуга arcValue = π
+				
+				μ = 0.1,
+				σ = 0.2,//При σ = 0.4 сто процентов случайных дуг будет совпадать с дугой arcValue при arcValue = 0
+				sqrt = Math.sqrt, exp = Math.exp, pow = Math.pow, pi = Math.PI,
+				x = Math.random() - 0.5;
+			return arcValue + 1/(  σ*sqrt(2*pi))*exp((-1/2)*pow((x-μ)/  σ,2) )-1/(0.5*sqrt(2*pi))*exp((-1/2)*pow((x+μ)/σ,   2));
+			//                1/(0.5*sqrt(2*pi))*exp((-1/2)*   ((x-1)/0.5)^2))-1/(0.5*sqrt(2*pi))*exp((-1/2)*   ((x+1)/0.5)^2)
+//			return arcValue + 2*π*(Math.random() - 0.5)*(1-(1/(  σ*Math.sqrt(2*π      )))*Math.exp(-Math.pow(                 x +μ,2)/(2*Math.pow(  σ,2))))
+			//                                           1-(1/(0.4*Math.sqrt(2*Math.PI)))*Math.exp(-Math.pow(2*Math.PI*t-Math.PI+0,2)/(2*Math.pow(0.4,2)))
+*/
+//			return 20*π*Math.pow(0.5*(Math.random() - 0.5),3)
+//			return arcValue + 2 * arcValue * (Math.random() - 0.5);
+			return arcValue + (2/π) * arcValue * arcValue * (Math.random() - 0.5);
+//			return arcValue + Math.abs(arcValue * (0.01 - 0.1)/π + 0.1) * Math.sin(arcValue / 2)/(Math.random() - 0.5);
+//			return arcValue + 0.1 * Math.sin(arcValue / 2)/(Math.random() - 0.5);
+//			return arcValue + 0.01 * Math.cos(arcValue / 2)/(Math.random() - 0.5) + 2 * π * Math.sin(arcValue / 2) * (Math.random() - 0.5);
+//			return 1/(Math.random() - 0.5);
+//			return 2 * π * Math.cos(arcValue / 2);
+//			return 2 * π * Math.sin(arcValue * (Math.random() - 0.5) * π / 2);
+//			return arcValue + 2 * π * (Math.random() - 0.5) * Math.sin(arcValue / 2);
+//			return arcValue + 2 * π * (1/(Math.random() - 0.5)) * Math.sin(arcValue / 2);
+			//(2*Math.PI*t-Math.PI)+2 * Math.PI * (Math.random() - 0.5) * Math.sin((2*Math.PI*t-Math.PI) / 2)
+//			return π * Math.sin(arcValue / 2) * Math.random() * 2;
+		
+		};
+		
+	}
+		
+}
+const randomArc = new RandomArc();
+HyperSphere.randomAngle = randomArc.randomAngle;
+
 export default HyperSphere;
 
 const _display = (element, boDisplay) => { element.style.display = boDisplay === false ? 'none' : 'block'; }
@@ -3310,7 +3588,7 @@ const _display = (element, boDisplay) => { element.style.display = boDisplay ===
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Mar 16 2025 09:13:16 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Apr 04 2025 10:19:31 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
