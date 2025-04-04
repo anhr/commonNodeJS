@@ -2435,6 +2435,8 @@ this.object = () => {
 								});
 								dat.controllerNameAndTitle(aAngleControls.cPlanes, lang.planes, lang.planesTitle);
 
+								if (classSettings.onAddControllers) classSettings.onAddControllers(fAdvansed);
+									
 								return fAdvansed;
 
 							},
