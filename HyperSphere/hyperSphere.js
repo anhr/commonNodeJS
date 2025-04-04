@@ -1803,7 +1803,7 @@ this.object = () => {
 											replace('%min', min).
 											replace('%max', max);
 										console.error(sError);
-										alert(sError);
+										//alert(sError);
 
 									}
 									if (boPushDefaultAngles) anglesDefault.push(angle);
