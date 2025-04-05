@@ -3101,13 +3101,6 @@ this.object = () => {
 			console.error(sHyperSphere + ': set angles. Invalid anglesNew.length = ' + anglesNew.length);
 			return;
 		}
-/*		
-		anglesNew.forEach((angles, anglesId) => {
-
-			this.classSettings.settings.object.geometry.angles[anglesId] = angles;
-			
-		})
-*/		
 		this.classSettings.settings.object.geometry.angles.forEach((angles, anglesId) => {
 
 			const anglesNewItem = anglesNew[anglesId];
