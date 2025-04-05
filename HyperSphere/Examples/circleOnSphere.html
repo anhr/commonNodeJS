@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Circle On Sphere</title>
+
+    <!--for mobile devices-->
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <!--<script src="./three.js/dev/build/three.js"></script>-->
+    <!--<script src="./three.js/dev/build/three.min.js"></script>-->
+    <!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+    <!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+    <!--<script src="https://threejs.org/build/three.js"></script>-->
+    <!--<script src="https://threejs.org/build/three.min.js"></script>-->
+</head>
+<body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/myThree" target="_blank" rel="noopener">Circle On Sphere</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
+
+		import MyThree from '../../myThree/myThree.js';
+		MyThree.three.THREE = THREE;
+
+		import Sphere from '../sphere.js';
+		
+		new MyThree( function ( scene, options ) {
+
+/*			
+			const r = 1;
+			
+			// Создание сферы
+			const sphereGeometry = new THREE.SphereGeometry(r, 10, 10);
+			const sphereMaterial = new THREE.MeshBasicMaterial({ 
+			    color: 0x00ff00, 
+			    wireframe: true  // Отображаем сферу как каркас для наглядности
+			});
+			const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+			scene.add(sphere);
+
+			// Создание окружности на поверхности сферы
+			const circleRadius = 1;  // Радиус окружности в мировых единицах
+//			const circlePosition = new THREE.Vector3(3, 0, 4);  // Центр окружности (должен лежать на сфере)
+			const circlePosition = new THREE.Vector3(0.5, 0, 0.6);  // Центр окружности (должен лежать на сфере)
+			//circlePosition.normalize().multiplyScalar(r);  // Нормализуем и умножаем на радиус сферы
+			
+			const circleGeometry = new THREE.CircleGeometry(circleRadius, 32);
+			const circleMaterial = new THREE.MeshBasicMaterial({ 
+			    color: 0xff0000, 
+			    side: THREE.DoubleSide 
+			});
+			const circle = new THREE.Mesh(circleGeometry, circleMaterial);
+			
+			// Поворачиваем окружность так, чтобы она была перпендикулярна вектору от центра сферы
+			circle.position.copy(circlePosition);  // Устанавливаем позицию
+			circle.lookAt(sphere.position);  // Смотрим в центр сферы
+			scene.add(circle);
+*/
+			//DeepSeek. Окружность на сфере на языке javascript
+			function getCirclePoints(center, radius, numPoints = 36) {
+			    const { lat, lng } = center; // в градусах
+			    const R = 6371000; // радиус Земли в метрах
+			    const angularDistance = radius / R; // в радианах
+			
+			    const points = [];
+			    for (let i = 0; i < numPoints; i++) {
+			        const angle = (2 * Math.PI * i) / numPoints;
+			        const latRad = lat * Math.PI / 180;
+			        const lngRad = lng * Math.PI / 180;
+			
+			        // Формулы сферической тригонометрии
+			        const newLat = Math.asin(
+			            Math.sin(latRad) * Math.cos(angularDistance) +
+			            Math.cos(latRad) * Math.sin(angularDistance) * Math.cos(angle)
+			        );
+			
+			        const newLng = lngRad + Math.atan2(
+			            Math.sin(angle) * Math.sin(angularDistance) * Math.cos(latRad),
+			            Math.cos(angularDistance) - Math.sin(latRad) * Math.sin(newLat)
+			        );
+			
+			        points.push({
+			            lat: newLat * 180 / Math.PI,
+			            lng: newLng * 180 / Math.PI
+			        });
+			    }
+			
+			    return points;
+			}
+			
+			// Пример использования:
+			const center = { lat: 55.751244, lng: 37.618423 }; // Москва
+			const radius = 10000; // 10 км
+			const circlePoints = getCirclePoints(center, radius);
+			
+			console.log(circlePoints); // Массив точек окружности	
+
+			/**
+			 * DeepSeek: Окружность на сфере (расчеты в радианах) — JavaScript
+			 * Генерирует точки окружности на сфере (в радианах)
+			 * @param {Array} center - Центр окружности [ 0 широта (рад), 1 долгота (рад) ]
+			 * @param {number=0.5} radius - Радиус
+			 * @param {number=36} numPoints - Количество точек
+			 * @returns {Array} Массив точек [ 0 широта (рад), 1 долгота (рад) ]
+			 */
+			function getCirclePointsRadians(center, radius = 0.5, numPoints = 36) {
+//			    const R = 6371000; // Радиус Земли в метрах
+			    const R = 1;
+			    const angularDistance = radius / R; // Угловое расстояние в радианах
+			
+			    const points = [];
+			    for (let i = 0; i < numPoints; i++) {
+			        const angle = (2 * Math.PI * i) / numPoints; // Текущий угол в радианах
+			
+			        // Формулы сферической тригонометрии
+			        const newLat = Math.asin(
+/*
+			            Math.sin(center.lat) * Math.cos(angularDistance) +
+			            Math.cos(center.lat) * Math.sin(angularDistance) * Math.cos(angle)
+*/
+			            Math.sin(center[0]) * Math.cos(angularDistance) +
+			            Math.cos(center[0]) * Math.sin(angularDistance) * Math.cos(angle)
+			        );
+
+/*					
+			        const newLng = center.lng + Math.atan2(
+			            Math.sin(angle) * Math.sin(angularDistance) * Math.cos(center.lat),
+			            Math.cos(angularDistance) - Math.sin(center.lat) * Math.sin(newLat)
+			        );
+*/					
+			        const newLng = center[1] + Math.atan2(
+			            Math.sin(angle) * Math.sin(angularDistance) * Math.cos(center[0]),
+			            Math.cos(angularDistance) - Math.sin(center[0]) * Math.sin(newLat)
+			        );
+			
+//			        points.push({ lat: newLat, lng: newLng });
+			        points.push([ newLat, newLng ]);
+			    }
+			
+			    return points;
+			}
+			
+			// Пример использования (вход и выход в радианах!)
+//			const centerRad = { lat: 55.751244 * Math.PI / 180, lng: 37.618423 * Math.PI / 180 };
+//			const centerRad = [ 0.9730427698827335, 0.6565653407579628 ];
+//			const radiusMeters = 10000; // 10 км
+//			const radiusMeters = 2;
+
+			//Параметры, которые может менять пользователь
+			const params = {
+
+//				radius: 2,//see appropriate getter and setter
+				r: Math.PI / 2,//радиус текущей окружности, пересекающей сферу
+				center: [ 0, 0 ],//центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
+//				arc: 0.5,//see appropriate getter and setter
+				a: 0.5,//Длинна дуги, соединяющей две вершины гиперсферы
+				
+			}
+			Object.defineProperty(params, 'radius', {
+				
+				get: () => { return params.r; },
+				set: (radius) => {
+
+					params.r = radius;
+					setAngles();
+					return true;
+
+				},
+				
+			});
+			Object.defineProperty(params.center, 'lat', {
+				
+				get: () => { return params.center[0]; },
+				set: (lat) => {
+
+					params.center[0] = lat;
+					setAngles();
+					return true;
+
+				},
+				
+			});
+			Object.defineProperty(params.center, 'lng', {
+				
+				get: () => { return params.center[1]; },
+				set: (lng) => {
+
+					params.center[1] = lng;
+					setAngles();
+					return true;
+
+				},
+				
+			});
+			Object.defineProperty(params, 'arc', {
+				
+				get: () => { return params.a; },
+				set: (arc) => {
+
+					params.a = arc;
+					setCircles();
+					return true;
+
+				},
+				
+			});
+/*			
+			const circlePointsRad = getCirclePointsRadians(params.center, params.radius);
+			console.log(circlePointsRad); // Точки в радианах
+*/			
+			//GUI
+
+			const gui = options.dat.gui;
+
+			//arc
+			gui.add( params, 'arc', 0, Math.PI / 2, 0.001 );
+/*
+			//radius
+			gui.add( params, 'radius', 0, Math.PI, 0.01 );
+//			dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
+
+			//center
+			gui.add( params.center, 'lat', -Math.PI / 2, Math.PI / 2, 0.001 );
+			gui.add( params.center, 'lng', 0, 2 * Math.PI, 0.001 );
+*/			
+
+			const setAngles = () => {
+				
+				const circlePointsRad = getCirclePointsRadians(params.center, params.radius);
+				if (circlePointsRad.length != sphere.angles.length) console.error('Invalid circlePointsRad.length = ' + circlePointsRad.length);
+				circlePointsRad.forEach((circlePoint, id) => sphere.angles[id] = circlePoint);
+				
+			}
+
+			const Circle = (radius) => {
+				
+				const circlePointsRad = getCirclePointsRadians(params.center, radius);
+				
+				return new Sphere(options,
+				{
+	
+					onAddControllers: (gui) => {
+
+/*						
+						//radius
+						gui.add( params, 'radius', 0, Math.PI, 0.01 );
+			//			dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
+			
+						//center
+						gui.add( params.center, 'lat', -Math.PI / 2, Math.PI / 2, 0.001 );
+						gui.add( params.center, 'lng', -Math.PI, Math.PI, 0.001 );
+*/						
+						
+					},
+					edges: {
+	
+						project: false,//Doesn't project edges onto canvas
+						//creationMethod: Sphere.edgesCreationMethod.Random,
+						
+					},
+					//edges: false,
+					randomArc: true,
+					projectParams:{
+						
+						scene: scene,
+						
+					},
+					//r: 0.5,
+					debug: {
+	
+						probabilityDensity: false,
+						middleVertice: false,
+						log: false,
+						
+					},
+					//debug: false,
+					settings: {
+						
+						object: {
+		
+							name: 'circle ' + radius,
+							//color: 'white',
+							geometry: {
+	
+								angles: circlePointsRad,
+							
+							}
+	
+						}
+					
+					},
+					
+					
+				});
+	
+			}
+			const spheresCount = 100, d = Math.PI / (spheresCount - 1), pi = Math.PI;
+			
+			//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
+
+			//найти элементарную функцию для массива точек (0.1,0.0033995189605183543),(0.5,0.11673555173106497),(1,0.8759691969420544),(1.5,15.890654938344866)
+			//10*(x^3)-10*(x^2)+x залазит в отрицательный y
+			//(0.027*exp(3*x)+2.718*(x^4))*0.8
+//			params.arc = 0.1;//pi/2;
+			const exp = Math.exp, pow = Math.pow,
+				k = 15.890654938344866/16.190337545114087;//Умножить b на этот множитель что бы b = 15.890654938344866 при arc = 1.5
+			let a, b, c;
+			const setAbc = () => {
+					
+					b = (0.027*exp(3*params.arc)+2.718*pow(params.arc,4))*k;//Так b зависит от длинны дуги, что бы плотность вероятностей распределялась от равномерной при arc = 0 до сводящейся в точку при arc = π/2
+					a = -b*(pi+b); c = -a/b;
+
+				};
+//			setAbc();
+			
+			//есть три точки (0,0), (0,75,2.4), (π,π)
+			//y≈ -1.17280918/(x+0.33708757)+3.47926296
+			//const b = 0.33708757, a = -1.17280918, c = 3.47926296;
+			
+			//есть три точки (0,0), (0,π), (π,π)
+			//для заданных точек решение не существует.
+
+			//есть три точки (0,0), (0.1,π-0.1), (π,π)
+			//const b = 0.01/(pi-0.2), a = -b*(pi+b), c = -a/b;
+			//const a = -0.010691460521266596, b = 0.0033995189605183543, c = 3.1449921725503116;
+
+			//есть три точки (0,0), (0.5,π-0.5), (π,π)
+			//const b = 1/(4*pi-4), a = -b*(pi+b), c = -a/b;
+			//const a = -0.3803627407690211, b = 0.11673555173106497, c = 3.258328205320858;
+			
+			//есть три точки (0,0), (1,π-1), (π,π)
+			//const b = 1/(pi-2), a = -b*(pi+b), c = -a/b;
+			//const a = -3.5192604278754165, b = 0.8759691969420544, c = 4.017561850531847;
+			
+			//есть три точки (0,0), (1.5,π-1.5), (π,π)
+			//Почти равномерное распределение
+			//const b = 2.25/(pi-3), a = -b*(pi+b), c = -a/b;
+			//const a = -302.4348791845787, b = 15.890654938344866, c = 19.03224759193466;
+
+			//есть три точки (0,0), (π/2,π/2), (π,π)
+			//Равномерное распределение
+			//Не существует функции вида y = a/(x+b)+c, которая проходила бы через все три заданные точки одновременно.
+			
+			//////////////////////////////////////////Deepseek
+
+			const circles = [],
+				setCircles = () => {
+				
+				setAbc();
+				for (let radiusId = 0; radiusId < spheresCount; radiusId++) {
+	
+					const x = radiusId * d, radius = a/(x+b)+c;
+					if (circles.length > radiusId) {
+
+						const circle = circles[radiusId], circlePointsRad = getCirclePointsRadians(params.center, radius);
+						circle.angles = circlePointsRad;
+						continue;
+					}
+					circles.push(Circle(radius));
+	
+				}
+	
+			}
+			setCircles();
+
+		}, {
+
+			scales: {
+
+				//x: x, y: y, z: z,
+				//posAxesIntersection: new THREE.Vector3( 0, 0, 0 ),
+				text: {
+					
+					precision: 5,
+					rect: { displayRect: false, },
+				
+				}
+
+			},
+			canvas: {
+
+				noButtonFullScreen: true,
+
+			},
+			player: false,
+			playerOptions: {
+				
+				//max: Infinity,
+				//interval: 100,
+				
+			}
+
+		} );
+
+	</script>
+</body>
+</html>
