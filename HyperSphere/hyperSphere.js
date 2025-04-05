@@ -3091,6 +3091,9 @@ this.object = () => {
 		//return this.classSettings.settings.object.geometry.position.angles
 	
 	}
+	/**
+	 * set hyper sphere angles. See <b>classSettings.settings.object.geometry.angles</b> parameter of the <b>hyperSphere</b> constructor.
+	 */
 	set angles(anglesNew) {
 
 		if (this.classSettings.settings.object.geometry.angles.length != anglesNew.length) {
