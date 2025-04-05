@@ -154,13 +154,18 @@
 //			const radiusMeters = 2;
 
 			//Параметры, которые может менять пользователь
-			const params = {
+			const pi = Math.PI, params = {
 
 //				radius: 2,//see appropriate getter and setter
-				r: Math.PI / 2,//радиус текущей окружности, пересекающей сферу
+				r: pi / 2,//радиус текущей окружности, пересекающей сферу
 				center: [ 0, 0 ],//центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
 //				arc: 0.5,//see appropriate getter and setter
-				a: 0.5,//Длинна дуги, соединяющей две вершины гиперсферы
+
+				//Длинна дуги, соединяющей две вершины гиперсферы
+				a: //pi / 2,//Вершины гиперсферы расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсферы.
+					//0,//Вершины гиперсферы совпадают. Длинна дуги равна нулю. Окружности вокруг вершины превращаются в точки, которые совпадают с вершиной.
+					0.5,//По умолчанию
+					//1.5,//Для вычисления коэффициента k
 				
 			}
 			Object.defineProperty(params, 'radius', {
@@ -220,15 +225,15 @@
 			const gui = options.dat.gui;
 
 			//arc
-			gui.add( params, 'arc', 0, Math.PI / 2, 0.001 );
+			gui.add( params, 'arc', 0, pi / 2, 0.001 );
 /*
 			//radius
-			gui.add( params, 'radius', 0, Math.PI, 0.01 );
+			gui.add( params, 'radius', 0, pi, 0.01 );
 //			dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
 
 			//center
-			gui.add( params.center, 'lat', -Math.PI / 2, Math.PI / 2, 0.001 );
-			gui.add( params.center, 'lng', 0, 2 * Math.PI, 0.001 );
+			gui.add( params.center, 'lat', -pi / 2, pi / 2, 0.001 );
+			gui.add( params.center, 'lng', 0, 2 * pi, 0.001 );
 */			
 
 			const setAngles = () => {
@@ -301,20 +306,21 @@
 				});
 	
 			}
-			const spheresCount = 100, d = Math.PI / (spheresCount - 1), pi = Math.PI;
+			const spheresCount = 100, d = Math.PI / (spheresCount - 1);
 			
 			//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
 
 			//найти элементарную функцию для массива точек (0.1,0.0033995189605183543),(0.5,0.11673555173106497),(1,0.8759691969420544),(1.5,15.890654938344866)
 			//10*(x^3)-10*(x^2)+x залазит в отрицательный y
 			//(0.027*exp(3*x)+2.718*(x^4))*0.8
-//			params.arc = 0.1;//pi/2;
 			const exp = Math.exp, pow = Math.pow,
-				k = 15.890654938344866/16.190337545114087;//Умножить b на этот множитель что бы b = 15.890654938344866 при arc = 1.5
+				k = 15.890654938344866/16.163337545114086;//Умножить b на этот множитель что бы b = 15.890654938344866 при arc = 1.5
 			let a, b, c;
 			const setAbc = () => {
 					
-					b = (0.027*exp(3*params.arc)+2.718*pow(params.arc,4))*k;//Так b зависит от длинны дуги, что бы плотность вероятностей распределялась от равномерной при arc = 0 до сводящейся в точку при arc = π/2
+					b = (0.027*(exp(3*params.arc)
+								-1//отнимаю единицу что бы график выходил из нуля
+							   )+2.718*pow(params.arc,4))*k;//Так b зависит от длинны дуги, что бы плотность вероятностей распределялась от равномерной при arc = π/2 до сводящейся в точку при arc = 0
 					a = -b*(pi+b); c = -a/b;
 
 				};
@@ -356,7 +362,8 @@
 				setAbc();
 				for (let radiusId = 0; radiusId < spheresCount; radiusId++) {
 	
-					const x = radiusId * d, radius = a/(x+b)+c;
+					const x = radiusId * d, radius = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+						a/(x+b)+c;
 					if (circles.length > radiusId) {
 
 						const circle = circles[radiusId], circlePointsRad = getCirclePointsRadians(params.center, radius);
