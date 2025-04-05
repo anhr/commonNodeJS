@@ -3091,6 +3091,28 @@ this.object = () => {
 		//return this.classSettings.settings.object.geometry.position.angles
 	
 	}
+	set angles(anglesNew) {
+
+		if (this.classSettings.settings.object.geometry.angles.length != anglesNew.length) {
+
+			console.error(sHyperSphere + ': set angles. Invalid anglesNew.length = ' + anglesNew.length);
+			return;
+		}
+/*		
+		anglesNew.forEach((angles, anglesId) => {
+
+			this.classSettings.settings.object.geometry.angles[anglesId] = angles;
+			
+		})
+*/		
+		this.classSettings.settings.object.geometry.angles.forEach((angles, anglesId) => {
+
+			const anglesNewItem = anglesNew[anglesId];
+			angles.forEach((angle, angleId) => { angles[angleId] = anglesNewItem[angleId] });
+			
+		})
+
+	}
 
 	get verticeEdgesLength() { return this._verticeEdgesLength; }
 /*
