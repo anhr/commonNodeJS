@@ -343,13 +343,16 @@ class HyperSphere extends MyObject {
 		const cookieOptions = {};
 		if (options.dat) options.dat.cookie.getObject(this.cookieName, cookieOptions);
 
-		let edgesOld = cookieOptions.edgesOld || { project: true, };
-		if (classSettings.overriddenProperties && !classSettings.overriddenProperties.edges) classSettings.overriddenProperties.edges = () => { return false; };
-		classSettings.edges = cookieOptions.edges === false ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
-		classSettings.edges = classSettings.edges === false ? classSettings.overriddenProperties.edges() : classSettings.edges;
-		if (classSettings.edges != false) classSettings.edges = classSettings.edges || {};
-		if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
+		if (classSettings.edges != false) {//Если в настройках запрещены ребра, то на брать настройки ребер из cookie
+			
+			let edgesOld = cookieOptions.edgesOld || { project: true, };
+			if (classSettings.overriddenProperties && !classSettings.overriddenProperties.edges) classSettings.overriddenProperties.edges = () => { return false; };
+			classSettings.edges = cookieOptions.edges === false ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
+			classSettings.edges = classSettings.edges === false ? classSettings.overriddenProperties.edges() : classSettings.edges;
+			if (classSettings.edges != false) classSettings.edges = classSettings.edges || {};
+			if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
+		}
 		if (classSettings.r === undefined) classSettings.r = 1;
 		//Нельзя менять радиус гиперсферы
 		Object.defineProperty( classSettings, "r", { writable: false, });//classSettings.r freeze. https://stackoverflow.com/a/10843598/5175935
