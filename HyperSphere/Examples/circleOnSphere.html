@@ -33,74 +33,6 @@
 		
 		new MyThree( function ( scene, options ) {
 
-/*			
-			const r = 1;
-			
-			// Создание сферы
-			const sphereGeometry = new THREE.SphereGeometry(r, 10, 10);
-			const sphereMaterial = new THREE.MeshBasicMaterial({ 
-			    color: 0x00ff00, 
-			    wireframe: true  // Отображаем сферу как каркас для наглядности
-			});
-			const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-			scene.add(sphere);
-
-			// Создание окружности на поверхности сферы
-			const circleRadius = 1;  // Радиус окружности в мировых единицах
-//			const circlePosition = new THREE.Vector3(3, 0, 4);  // Центр окружности (должен лежать на сфере)
-			const circlePosition = new THREE.Vector3(0.5, 0, 0.6);  // Центр окружности (должен лежать на сфере)
-			//circlePosition.normalize().multiplyScalar(r);  // Нормализуем и умножаем на радиус сферы
-			
-			const circleGeometry = new THREE.CircleGeometry(circleRadius, 32);
-			const circleMaterial = new THREE.MeshBasicMaterial({ 
-			    color: 0xff0000, 
-			    side: THREE.DoubleSide 
-			});
-			const circle = new THREE.Mesh(circleGeometry, circleMaterial);
-			
-			// Поворачиваем окружность так, чтобы она была перпендикулярна вектору от центра сферы
-			circle.position.copy(circlePosition);  // Устанавливаем позицию
-			circle.lookAt(sphere.position);  // Смотрим в центр сферы
-			scene.add(circle);
-*/
-/*			
-			//DeepSeek. Окружность на сфере на языке javascript
-			function getCirclePoints(center, radius, numPoints = 36) {
-			    const { lat, lng } = center; // в градусах
-			    const R = 6371000; // радиус Земли в метрах
-			    const angularDistance = radius / R; // в радианах
-			
-			    const points = [];
-			    for (let i = 0; i < numPoints; i++) {
-			        const angle = (2 * Math.PI * i) / numPoints;
-			        const latRad = lat * Math.PI / 180;
-			        const lngRad = lng * Math.PI / 180;
-			
-			        // Формулы сферической тригонометрии
-			        const newLat = Math.asin(
-			            Math.sin(latRad) * Math.cos(angularDistance) +
-			            Math.cos(latRad) * Math.sin(angularDistance) * Math.cos(angle)
-			        );
-			
-			        const newLng = lngRad + Math.atan2(
-			            Math.sin(angle) * Math.sin(angularDistance) * Math.cos(latRad),
-			            Math.cos(angularDistance) - Math.sin(latRad) * Math.sin(newLat)
-			        );
-			
-			        points.push({
-			            lat: newLat * 180 / Math.PI,
-			            lng: newLng * 180 / Math.PI
-			        });
-			    }
-			
-			    return points;
-			}
-			
-			// Пример использования:
-			const center = { lat: 55.751244, lng: 37.618423 }; // Москва
-			const radius = 10000; // 10 км
-			const circlePoints = getCirclePoints(center, radius);
-*/			
 
 			/**
 			 * DeepSeek: Окружность на сфере (расчеты в радианах) — JavaScript
@@ -262,68 +194,6 @@
 				circlePointsRad.forEach((circlePoint, id) => sphere.angles[id] = circlePoint);
 				
 			}
-/*
-			const Circle = (radius) => {
-				
-				const circlePointsRad = getCirclePointsRadians(params.center, radius);
-				
-				return new Sphere(options,
-				{
-	
-					onAddControllers: (gui) => {
-
-						//radius
-						//gui.add( params, 'radius', 0, Math.PI, 0.01 );
-			//			dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
-			
-						//center
-						//gui.add( params.center, 'lat', -Math.PI / 2, Math.PI / 2, 0.001 );
-						//gui.add( params.center, 'lng', -Math.PI, Math.PI, 0.001 );
-						
-					},
-					edges: {
-	
-						project: false,//Doesn't project edges onto canvas
-						//creationMethod: Sphere.edgesCreationMethod.Random,
-						
-					},
-					//edges: false,
-					randomArc: true,
-					projectParams:{
-						
-						scene: scene,
-						
-					},
-					//r: 0.5,
-					debug: {
-	
-						probabilityDensity: false,
-						middleVertice: false,
-						log: false,
-						
-					},
-					//debug: false,
-					settings: {
-						
-						object: {
-		
-							name: 'circle ' + radius,
-							//color: 'white',
-							geometry: {
-	
-								angles: circlePointsRad,
-							
-							}
-	
-						}
-					
-					},
-					
-					
-				});
-	
-			}
-*/			
 			const spheresCount = 100, d = Math.PI / (spheresCount - 1);
 			
 			//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
@@ -375,7 +245,6 @@
 			
 			//////////////////////////////////////////Deepseek
 
-//			const circles = [],
 			let circlesSphere, circlesPointsOptions = {};
 			const circlesPoints = [],
 				setCircles = () => {
@@ -385,15 +254,6 @@
 		
 						const x = radiusId * d, radius = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 							a/(x+b)+c;
-	/*					
-						if (circles.length > radiusId) {
-	
-							const circle = circles[radiusId], circlePointsRad = getCirclePointsRadians(params.center, radius);
-							circle.angles = circlePointsRad;
-							continue;
-						}
-						circles.push(Circle(radius));
-	*/				
 						if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
 						else circlesPointsOptions.points = circlesPoints;
 						circlesPointsOptions.radius = radius;
